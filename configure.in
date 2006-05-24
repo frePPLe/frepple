@@ -1,0 +1,304 @@
+#
+# Process this file with autoconf to produce a configure script.
+#
+
+#
+# Copyright (C) 2006 by Johan De Taeye
+#
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation; either version 2.1 of the License, or
+# (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
+#
+
+# file : $HeadURL: file:///develop/SVNrepository/frepple/trunk/configure.in $
+# revision : $LastChangedRevision$  $LastChangedBy$
+# date : $LastChangedDate$
+# email : johan_de_taeye@yahoo.com
+
+#
+# Initialization
+#
+AC_PREREQ(2.59)
+AC_INIT(frepple, 0.9.9, johan_de_taeye@yahoo.com, )
+AC_CONFIG_SRCDIR([src/main.cpp])
+AC_CONFIG_HEADER([config.h])
+AM_INIT_AUTOMAKE(frepple,0.9.9)
+
+#
+# Initilize libtool
+#
+#AC_DISABLE_SHARED
+AC_ENABLE_SHARED
+#AC_DISABLE_STATIC
+AC_ENABLE_STATIC
+AC_GNU_SOURCE
+AC_LIBTOOL_WIN32_DLL
+AC_LIBTOOL_DLOPEN
+AC_PROG_LIBTOOL
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_LANG(C++)
+
+# Note: the library version number and the package version number are 
+# INDEPENDENT. The library version is the concatenation of LIBCURRENT, 
+# LIBREVISION and LIBAGE (in this order and separated by a colon).
+# Use the following rules for updating the numbering scheme.
+# 1) Increment LIBREVISION if source code has changed at all
+# 2) If the API has changed, increment LIBCURRENT and set LIBREVISION to 0
+# 3) If the API changes compatibly (i.e. simply adding a new function
+#    without changing or removing earlier interfaces), then increment LIBAGE.
+# 4) If the API changes incompatibly set LIBAGE back to 0
+LIBRARY_VERSION=[0:0:0]
+AC_SUBST(LIBRARY_VERSION)
+
+#
+# Define an extra configure argument to enable debugging
+#
+AC_ARG_ENABLE(debug,
+AC_HELP_STRING([--enable-debug],[Turn on debugging]),
+[case "${enableval}" in
+  yes) debug=true ;;
+  no)  debug=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
+esac],[debug=false])
+AM_CONDITIONAL(DEBUG, test x$debug = xtrue)
+
+#
+# Define an extra configure argument to compile for test coverage measurement
+# This works only with the gcov tool and the gcc compiler
+#
+AC_ARG_ENABLE(coverage,
+AC_HELP_STRING([--enable-coverage],
+[Compile for test coverage measurement (GCC only, using gcov)]),
+[case "${enableval}" in
+  yes) coverage=true
+       AC_CHECK_PROGS(GCOV, gcov, nogcov)
+       if test x$GCOV = xnogcov
+       then
+          AC_MSG_ERROR([Could not find gcov, no coverage build is possible])
+       fi
+       ;;
+  no)  coverage=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-coverage]) ;;
+esac],[coverage=false])
+AM_CONDITIONAL(COVERAGE, test x$coverage = xtrue)
+
+#
+# Define an extra configure argument to compile for profiling
+# This works only with the gprof tool and the gcc compiler
+#
+AC_ARG_ENABLE(profile,
+AC_HELP_STRING([--enable-profile],
+[Compile for profiling (GCC only, using gprof)]),
+[case "${enableval}" in
+  yes) profile=true
+       AC_CHECK_PROGS(GPROF, gprof, nogprof)
+       if test x$GPROF = xnogprof
+       then
+          AC_MSG_ERROR([Could not find gprof, no profiling build is possible])
+       fi
+       ;;
+  no)  profile=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-profile]) ;;
+esac],[profile=false])
+AM_CONDITIONAL(PROFILE, test x$profile = xtrue)
+
+#
+# Define an extra configure argument to enable multi-threading
+#
+AC_ARG_ENABLE(multithread,
+AC_HELP_STRING([--enable-multithread],
+[Enable support for multi-threading (default: true)]),
+[case "${enableval}" in
+  yes) multithread=true ;;
+  no)  multithread=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-multithread]) ;;
+esac],[multithread=true])
+AM_CONDITIONAL(MT, test x$multithread = xtrue)
+
+#
+# Define an extra configure argument to enable the lp solver
+#
+AC_ARG_WITH(glpk,
+  AC_HELP_STRING([--with-glpk],
+    [Compile with the GLPK linear programming solver (default: false)]),
+  [lp=true],
+  [lp=false])
+AM_CONDITIONAL(LP, test x$lp = xtrue)
+
+#
+# Define an extra configure argument to enable building of the api documentation
+#
+AC_ARG_ENABLE(doc,
+AC_HELP_STRING([--enable-doc],
+[Enable documentation generation with doxygen (default false)]),
+[case "${enableval}" in
+  no)  builddoc=false;;
+  yes) builddoc=true
+       AC_CHECK_PROGS(DOXYGEN, doxygen, notavailable)
+       if test x$DOXYGEN = xnotavailable
+       then
+          AC_MSG_ERROR([Could not find doxygen, no documentation can be built])
+       fi
+       ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-doc]) ;;
+esac],[builddoc=false])
+AM_CONDITIONAL(DOC, test x$builddoc = xtrue)
+
+#
+# Verify installation of XERCES-C
+#
+AC_CHECK_HEADER([xercesc/util/XercesDefs.hpp], [],
+[AC_MSG_ERROR([
+  This package requires the XERCES-C XML parser...
+  Check out http://xml.apache.org/xerces-c for more information.
+])])
+AC_CHECK_LIB([xerces-c], [main], [],
+[AC_MSG_ERROR([
+  This package requires the XERCES-C XML parser...
+  Check out http://xml.apache.org/xerces-c for more information.
+])])
+
+AC_CHECKING([for xerces version >= 2.7 ])
+AC_COMPILE_IFELSE([
+	#include "xercesc/util/XercesVersion.hpp"
+	#if XERCES_VERSION_MAJOR>=2 && XERCES_VERSION_MINOR>=7
+	  int main (void) {return 1;}
+	#else
+	  force compile error;
+	#endif
+	], [],
+	[AC_MSG_ERROR([
+  This package requires Xerces 2.7 or later. Your version is older...
+	])])
+
+#
+# Verify installation of GLPK (GNU linear programming kit)
+#
+if test x$lp = xtrue
+then
+AC_CHECK_LIB(glpk, glp_lpx_create_prob, [],
+[AC_MSG_ERROR([
+  This package requires the GLPK linear programming solver...
+  Check out http://www.gnu.org/software/glpk/glpk.html to download it.
+  Alternatively, reconfigure without the option '--with-glpk'
+])])
+AC_CHECK_HEADER(glpk.h, [],
+[AC_MSG_ERROR([
+  The glpk libray has been installed, but its header file could not be found
+])])
+fi
+
+#
+# Check whether we are running on a Windows operating system
+#
+AC_CHECK_HEADER(windows.h,
+[AC_DEFINE(HAVE_WINDOWS_H, 1, [Define to 1 when running on windows platform.])
+])
+
+# Check the availability of the SWIG programs
+AC_CHECK_PROGS(SWIG, swig, noswig)
+
+# Checks for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_CHECK_HEADERS([fcntl.h malloc.h stdlib.h unistd.h perl.h python.h])
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_FUNC_MKTIME
+AC_FUNC_STAT
+AC_FUNC_STRFTIME
+AC_CHECK_FUNCS([atexit dup2 memset strncasecmp strnicmp strptime realpath])
+AC_CHECK_FUNCS([localtime_r], [],
+	if test x$multithread = xtrue
+	 then
+	 AC_MSG_ERROR([
+  	Multi-threading requires a re-entrant version of the localtime function.
+		])
+	 fi
+)
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_CHECK_HEADERS([ext/slist slist vector map set stack])
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+
+# Verify support for namespaces
+AC_TRY_COMPILE(
+	[namespace Outer { namespace Inner { int i = 0; }}],
+	[using namespace Outer::Inner; return i;],
+	[],
+	[AC_MSG_ERROR([
+  This package requires a C++ compiler that supports namespaces.
+	])])
+
+#
+# Compiler&linker flags and include&library directories
+# Todo: The check for the pthreads library doesn't work for all platforms
+#
+if test x$debug = xtrue ; then
+	# The settings on the next line are the normal debugging parameters
+  CXXFLAGS="-ggdb -Wall $CXXFLAGS"
+  AC_DEFINE([DEBUG], [], [Used for debugging builds])
+else if test x$coverage = xtrue ; then
+  # The settings on the next line are suitable for creating an executable to 
+  # be used for code coverage measurement using gcc and gprof.
+  CXXFLAGS="-fprofile-arcs -ftest-coverage $CXXFLAGS"
+  AC_DEFINE([NDEBUG], [], [Disables assertions])
+else if test x$profile = xtrue ; then
+  # The settings on the next line are suitable for creating an executable to
+  # be used for profiling using gcc and gprof.
+  # CXXFLAGS="-g -Wall -pg -fno-inline $CXXFLAGS"
+  CXXFLAGS="-g -Wall -pg $CXXFLAGS"
+  AC_DEFINE([NDEBUG], [], [Disables assertions])
+else
+  CXXFLAGS="-O3 -s $CXXFLAGS"
+  AC_DEFINE([NDEBUG], [], [Disables assertions])
+fi ; fi ; fi
+if test x$enable_static = xyes
+then
+	AC_DEFINE([STATIC], [], [Use static linkage])
+else
+	AC_DEFINE([DLL_EXPORT], [], [Export windows symbols for a DLL])
+fi
+if test x$multithread = xtrue
+then
+	AC_DEFINE([MT], [], [My flag to mark multi-threaded builds])
+fi
+case $host_os in
+  linux-gnu*)
+    LIBS="-ldl $LIBS"
+    if test x$multithread = xtrue
+    then
+      LIBS="-lpthread $LIBS"
+    fi
+    ;;
+  cygwin*)
+    if test x$multithread = xtrue
+    then
+      LIBS="-lpthread $LIBS"
+    fi
+    # Linker option to avoid some ugly warnings...
+    LDFLAGS="$LDFLAGS -Wl,--enable-auto-import"
+    ;;
+esac
+
+AC_CONFIG_FILES([Makefile bin/Makefile doc/Makefile doc/tutorial/Makefile include/Makefile lib/Makefile include/frepple/Makefile src/Makefile src/modules/Makefile  src/modules/forecast/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile test/Makefile test/cluster/Makefile test/csv/Makefile test/constraints_leadtime_1/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/datetime/Makefile test/demo1/Makefile test/dll/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/sizeof/Makefile test/xml/Makefile test/forecast/Makefile test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/problems/Makefile test/deletion/Makefile test/operation_effective/Makefile test/multithreading/Makefile test/name/Makefile test/command/Makefile  test/custom_class/Makefile test/callback/Makefile contrib/Makefile contrib/borland/Makefile contrib/vc/Makefile contrib/webservice/Makefile contrib/installer/Makefile contrib/j2ee/Makefile contrib/scripting/Makefile contrib/apache/Makefile contrib/excel/Makefile])
+AC_OUTPUT

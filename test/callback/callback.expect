@@ -1,0 +1,55 @@
+Create the model with callbacks:
+  OperationFixedTime 'make end item' receives signal ADD
+  Operation 'make end item' receives signal ADD
+  OperationFixedTime 'make end item' receives signal BEFORE_CHANGE
+  Operation 'make end item' receives signal BEFORE_CHANGE
+  OperationFixedTime 'make end item' receives signal AFTER_CHANGE
+  Operation 'make end item' receives signal AFTER_CHANGE
+  Item 'end item' receives signal ADD
+  Item 'end item' receives signal BEFORE_CHANGE
+  OperationFixedTime 'delivery end item' receives signal ADD
+  Operation 'delivery end item' receives signal ADD
+  OperationFixedTime 'delivery end item' receives signal BEFORE_CHANGE
+  Operation 'delivery end item' receives signal BEFORE_CHANGE
+  OperationFixedTime 'delivery end item' receives signal AFTER_CHANGE
+  Operation 'delivery end item' receives signal AFTER_CHANGE
+  Item 'end item' receives signal AFTER_CHANGE
+  BufferDefault 'end item' receives signal ADD
+  Buffer 'end item' receives signal ADD
+  BufferDefault 'end item' receives signal BEFORE_CHANGE
+  Buffer 'end item' receives signal BEFORE_CHANGE
+  OperationFixedTime 'delivery end item' receives signal BEFORE_CHANGE
+  Operation 'delivery end item' receives signal BEFORE_CHANGE
+  OperationFixedTime 'delivery end item' receives signal AFTER_CHANGE
+  Operation 'delivery end item' receives signal AFTER_CHANGE
+  OperationFixedTime 'make end item' receives signal BEFORE_CHANGE
+  Operation 'make end item' receives signal BEFORE_CHANGE
+  OperationFixedTime 'make end item' receives signal AFTER_CHANGE
+  Operation 'make end item' receives signal AFTER_CHANGE
+  Item 'end item' receives signal BEFORE_CHANGE
+  Item 'end item' receives signal AFTER_CHANGE
+  BufferDefault 'end item' receives signal AFTER_CHANGE
+  Buffer 'end item' receives signal AFTER_CHANGE
+  OperationFixedTime 'make end item' receives signal BEFORE_CHANGE
+  Operation 'make end item' receives signal BEFORE_CHANGE
+  OperationFixedTime 'make end item' receives signal AFTER_CHANGE
+  Operation 'make end item' receives signal AFTER_CHANGE
+  OperationFixedTime 'delivery end item' receives signal BEFORE_CHANGE
+  Operation 'delivery end item' receives signal BEFORE_CHANGE
+  OperationFixedTime 'delivery end item' receives signal AFTER_CHANGE
+  Operation 'delivery end item' receives signal AFTER_CHANGE
+  BufferDefault 'end item' receives signal BEFORE_CHANGE
+  Buffer 'end item' receives signal BEFORE_CHANGE
+  BufferDefault 'end item' receives signal AFTER_CHANGE
+  Buffer 'end item' receives signal AFTER_CHANGE
+  OperationFixedTime 'make end item' receives signal BEFORE_CHANGE
+  Operation 'make end item' receives signal BEFORE_CHANGE
+  OperationFixedTime 'make end item' receives signal AFTER_CHANGE
+  Operation 'make end item' receives signal AFTER_CHANGE
+  BufferDefault 'end item' receives signal BEFORE_CHANGE
+  Buffer 'end item' receives signal BEFORE_CHANGE
+  BufferDefault 'end item' receives signal AFTER_CHANGE
+  Buffer 'end item' receives signal AFTER_CHANGE
+  Item 'end item' receives signal BEFORE_CHANGE
+  Item 'end item' receives signal AFTER_CHANGE
+Recreate the model without callbacks:

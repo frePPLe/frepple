@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <COMMANDS>
+    <VERBOSE>false</VERBOSE>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" VERBOSE="false"/>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE">
+      <FILENAME>output.1.xml</FILENAME>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_READXMLSTRING">
+      <!-- 
+        Now we delete one of the buffers. If the callback function isn't
+        right we'll end up with dangling pointers to the deleted buffer
+        and the application will crash during the following save command.
+      -->
+      <DATA>
+        <![CDATA[
+				<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+					<BUFFERS>
+						<BUFFER NAME="product in distribution centre" ACTION="R"/>
+					</BUFFERS>
+				</PLAN>
+			]]>
+      </DATA>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE">
+      <FILENAME>output.2.xml</FILENAME>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SYSTEM" 
+      CMDLINE="echo MODEL BEFORE DELETING BUFFER:"/>
+    <COMMAND xsi:type="COMMAND_SYSTEM" 
+      CMDLINE="cat output.1.xml"/>
+    <COMMAND xsi:type="COMMAND_SYSTEM" 
+      CMDLINE="echo MODEL AFTER DELETING BUFFER:"/>
+    <COMMAND xsi:type="COMMAND_SYSTEM" 
+      CMDLINE="cat output.2.xml"/>
+  </COMMANDS>
+  <NAME>Custom class</NAME>
+  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <CALENDARS>
+    <CALENDAR NAME="capacity factory 1" xsi:type="CALENDAR_FLOAT">
+      <BUCKETS>
+        <BUCKET START="2006-01-01T00:00:00">
+          <NAME>all</NAME>
+          <VALUE>1</VALUE>
+        </BUCKET>
+      </BUCKETS>
+    </CALENDAR>
+    <CALENDAR NAME="capacity factory 2" xsi:type="CALENDAR_FLOAT">
+      <BUCKETS>
+        <BUCKET START="2006-01-01T00:00:00">
+          <NAME>all</NAME>
+          <VALUE>1</VALUE>
+        </BUCKET>
+      </BUCKETS>
+    </CALENDAR>
+  </CALENDARS>
+  <OPERATIONS>
+    <OPERATION NAME="supply distribution centre" xsi:type="OPERATION_ALTERNATE">
+      <ALTERNATES>
+        <ALTERNATE>
+          <OPERATION NAME="transport supply from factory 1" 
+          	xsi:type="OPERATION_TRANSPORT">
+            <DURATION>24:00:00</DURATION>
+            <FROM NAME="product in factory 1"/>
+            <TO NAME="product in distribution centre"/>
+          </OPERATION>
+          <PRIORITY>1</PRIORITY>
+        </ALTERNATE>
+        <ALTERNATE>
+          <OPERATION NAME="transport supply from factory 2" 
+          	xsi:type="OPERATION_TRANSPORT">
+            <DURATION>24:00:00</DURATION>
+            <FROM NAME="product in factory 2"/>
+            <TO NAME="product in distribution centre"/>
+          </OPERATION>
+          <PRIORITY>2</PRIORITY>
+        </ALTERNATE>
+      </ALTERNATES>
+    </OPERATION>
+  </OPERATIONS>
+  <LOCATIONS>
+    <LOCATION NAME="distribution centre"/>
+    <LOCATION NAME="factory 1"/>
+    <LOCATION NAME="factory 2"/>
+  </LOCATIONS>
+  <ITEMS>
+    <ITEM NAME="product"/>
+  </ITEMS>
+  <BUFFERS>
+    <BUFFER NAME="product in factory 1">
+      <LOCATION NAME="factory 1" />
+      <ITEM NAME="product" />
+      <PRODUCING NAME="make product in factory 1" 
+        xsi:type="OPERATION_FIXED_TIME" DURATION="24:00:00">
+	      <LOADS>
+          <LOAD>
+            <RESOURCE NAME="capacity of factory 1">
+              <MAXIMUM NAME="capacity factory 1" />
+            </RESOURCE>
+          </LOAD>
+        </LOADS>
+        <FLOWS>
+          <FLOW xsi:type="FLOW_END">
+            <BUFFER NAME="product in factory 1" />
+            <QUANTITY>1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </PRODUCING>
+    </BUFFER>
+    <BUFFER NAME="product in factory 2">
+      <LOCATION NAME="factory 2" />
+      <ITEM NAME="product" />
+      <PRODUCING NAME="make product in factory 2" 
+        xsi:type="OPERATION_FIXED_TIME" DURATION="24:00:00">
+  	    <LOADS>
+          <LOAD>
+            <RESOURCE NAME="capacity of factory 2">
+              <MAXIMUM NAME="capacity factory 2" />
+            </RESOURCE>
+          </LOAD>
+        </LOADS>
+        <FLOWS>
+          <FLOW xsi:type="FLOW_END">
+            <BUFFER NAME="product in factory 2" />
+            <QUANTITY>1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </PRODUCING>
+    </BUFFER>
+    <BUFFER NAME="product in distribution centre">
+      <PRODUCING NAME="supply distribution centre" />
+      <LOCATION NAME="distribution centre" />
+      <ITEM NAME="product" />
+      <ONHAND>5</ONHAND>
+    </BUFFER>
+  </BUFFERS>
+  <DEMANDS>
+    <DEMAND NAME="order 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-03T12:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="product" />
+      <OPERATION NAME="delivery product from distribution centre">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_START">
+            <BUFFER NAME="product in distribution centre" />
+            <QUANTITY>-1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </OPERATION>
+    </DEMAND>
+    <DEMAND NAME="order 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-03T12:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="product" />
+      <OPERATION NAME="delivery product from distribution centre">
+        <FLOWS>
+          <!-- 
+            This flow has already been defined. We leave it anyway, to test
+            the behavior in this particular corner case.
+          -->
+          <FLOW xsi:type="FLOW_START">
+            <BUFFER NAME="product in distribution centre" />
+            <QUANTITY>-1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </OPERATION>
+    </DEMAND>
+  </DEMANDS>
+</PLAN>

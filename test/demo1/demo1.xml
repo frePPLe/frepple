@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <COMMANDS>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+      <FILENAME>output.1.xml</FILENAME>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <VERBOSE>false</VERBOSE>
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+      <FILENAME>output.2s.xml</FILENAME>
+    </COMMAND>
+    <!--/COMMAND-->
+    <!-- Testing multi-threaded, parallel execution of commands. -->
+    <!--
+      <COMMAND xsi:type="LIST" SEQUENTIAL="FALSE">
+      <COMMAND xsi:type="LIST">
+      <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 1"/>
+      <COMMAND xsi:type="SYSTEM" CMDLINE="echo A 1 - `date`"/>
+      <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 1"/>
+      <COMMAND xsi:type="SYSTEM" CMDLINE="echo A 2 - `date`"/>
+      <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 1"/>
+      <COMMAND xsi:type="SYSTEM" CMDLINE="echo A 3 - `date`"/>
+      </COMMAND>
+      <COMMAND xsi:type="LIST">
+      <COMMAND xsi:type="SYSTEM" CMDLINE="echo B 0 - `date`"/>
+      <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 1"/>
+      <COMMAND xsi:type="SYSTEM" CMDLINE="echo B 1 - `date`"/>
+      <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 1"/>
+      <COMMAND xsi:type="SYSTEM" CMDLINE="echo B 2 - `date`"/>
+      </COMMAND>
+      <COMMAND xsi:type="LIST">
+      <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 2"/>
+      <COMMAND xsi:type="SYSTEM" CMDLINE="echo C 2 - `date`"/>
+      <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 2"/>
+      <COMMAND xsi:type="SYSTEM" CMDLINE="echo C 4 - `date`"/>
+      </COMMAND>
+      </COMMAND>
+    -->
+    <!--
+      <COMMAND xsi:type="SIZE"/>
+      <COMMAND xsi:type="ERASE">
+      <MODE>model</MODE>
+      <RESOURCE NAME="RES1" />
+      <BUFFER NAME="RM1" />
+      </COMMAND>
+      <COMMAND xsi:type="SIZE"/>
+      <COMMAND xsi:type="COMMAND_SAVE">
+      <FILENAME>output2.xml</FILENAME>
+      </COMMAND>
+      
+      <COMMAND xsi:type="LIST">
+      <ABORTONERROR>true</ABORTONERROR>
+      <COMMAND xsi:type="SYSTEM">
+      <CMDLINE>dirsdsdsd</CMDLINE>
+      </COMMAND>
+      <COMMAND xsi:type="SYSTEM">
+      <CMDLINE>dir</CMDLINE>
+      </COMMAND>
+      </COMMAND>
+      <COMMAND xsi:type="SYSTEM">
+      <CMDLINE>pwd</CMDLINE>
+      </COMMAND>
+    -->
+  </COMMANDS>
+  <NAME>Test</NAME>
+  <DESCRIPTION>
+    This model includes a number of different modeling and planning features,
+    combined in a simple model.
+  </DESCRIPTION>
+  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <DEFAULT_CALENDAR NAME="Weeks" />
+  <CALENDARS>
+    <CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
+      <BUCKETS>
+        <BUCKET START="2006-01-01T00:00:00">
+          <NAME>Jan Week1</NAME>
+        </BUCKET>
+        <BUCKET START="2006-01-07T00:00:00">
+          <NAME>Jan Week2</NAME>
+        </BUCKET>
+        <BUCKET START="2006-01-14T00:00:00">
+          <NAME>Jan Week3</NAME>
+        </BUCKET>
+        <BUCKET START="2006-01-21T00:00:00">
+          <NAME>Jan Week4</NAME>
+        </BUCKET>
+        <BUCKET START="2006-01-28T00:00:00">
+          <NAME>Jan Week5</NAME>
+        </BUCKET>
+        <BUCKET START="2006-02-04T00:00:00">
+          <NAME>Feb Week1</NAME>
+        </BUCKET>
+        <BUCKET START="2006-02-11T00:00:00">
+          <NAME>Feb Week2</NAME>
+        </BUCKET>
+        <BUCKET START="2006-02-18T00:00:00">
+          <NAME>Feb Week3</NAME>
+        </BUCKET>
+        <BUCKET START="2006-02-25T00:00:00">
+          <NAME>Feb Week4</NAME>
+        </BUCKET>
+        <BUCKET START="2006-03-04T00:00:00">
+          <NAME>Mar Week1</NAME>
+        </BUCKET>
+        <BUCKET START="2006-03-11T00:00:00">
+          <NAME>Mar Week2</NAME>
+        </BUCKET>
+        <BUCKET START="2006-03-18T00:00:00">
+          <NAME>Mar Week3</NAME>
+        </BUCKET>
+        <BUCKET START="2006-03-25T00:00:00">
+          <NAME>Mar Week4</NAME>
+        </BUCKET>
+        <BUCKET START="2006-04-01T00:00:00">
+          <NAME>Remainder</NAME>
+        </BUCKET>
+      </BUCKETS>
+    </CALENDAR>
+    <CALENDAR NAME="Months" xsi:type="CALENDAR_VOID">
+      <BUCKETS>
+        <BUCKET START="2006-01-01T00:00:00">
+          <NAME>Jan</NAME>
+        </BUCKET>
+        <BUCKET START="2006-02-01T00:00:00">
+          <NAME>Feb</NAME>
+        </BUCKET>
+        <BUCKET START="2006-03-01T00:00:00">
+          <NAME>Mar</NAME>
+        </BUCKET>
+        <BUCKET START="2006-04-01T00:00:00">
+          <NAME>Remainder</NAME>
+        </BUCKET>
+      </BUCKETS>
+    </CALENDAR>
+    <CALENDAR NAME="Capacity RES1" xsi:type="CALENDAR_FLOAT">
+      <BUCKETS>
+        <BUCKET START="2006-01-01T00:00:00">
+          <NAME>all</NAME>
+          <VALUE>4</VALUE>
+          <!-- If you set this to 2 then planning "order 4 for STCK2" is planned
+            incorrectly. The solve a capacity problem, a routing operationplan
+            is moved earlier, but this creates infeasibilities for the
+            suboperationplans.
+          -->
+        </BUCKET>
+      </BUCKETS>
+    </CALENDAR>
+  </CALENDARS>
+  <OPERATIONS>
+    <OPERATION NAME="make STCK1" xsi:type="OPERATION_FIXED_TIME">
+      <SIZE_MULTIPLE>3</SIZE_MULTIPLE>
+      <DURATION>168:00:00</DURATION>
+    </OPERATION>
+    <OPERATION NAME="make SUBAS1" xsi:type="OPERATION_ALTERNATE">
+      <ALTERNATES>
+        <ALTERNATE>
+          <OPERATION NAME="make SUBAS1 from RM3"
+            xsi:type="OPERATION_TIME_PER">
+            <DURATION>24:00:00</DURATION>
+            <DURATION_PER>1:00</DURATION_PER>
+          </OPERATION>
+          <PRIORITY>1</PRIORITY>
+        </ALTERNATE>
+        <ALTERNATE>
+          <OPERATION NAME="make SUBAS1 from RM1"
+            xsi:type="OPERATION_TIME_PER">
+            <DURATION>24:00:00</DURATION>
+            <DURATION_PER>1:00</DURATION_PER>
+          </OPERATION>
+          <PRIORITY>2</PRIORITY>
+        </ALTERNATE>
+      </ALTERNATES>
+    </OPERATION>
+    <OPERATION NAME="make STCK2" xsi:type="OPERATION_ROUTING">
+      <STEPS>
+        <OPERATION NAME="make STCK2 step1" xsi:type="OPERATION_FIXED_TIME">
+          <DURATION>168:00:00</DURATION>
+        </OPERATION>
+        <OPERATION NAME="make STCK2 step2" xsi:type="OPERATION_FIXED_TIME">
+          <DURATION>168:00:00</DURATION>
+        </OPERATION>
+        <OPERATION NAME="make STCK2 step3" xsi:type="OPERATION_FIXED_TIME">
+          <DURATION>168:00:00</DURATION>
+        </OPERATION>
+      </STEPS>
+    </OPERATION>
+  </OPERATIONS>
+  <LOCATIONS>
+    <LOCATION NAME="LOC1">
+      <DESCRIPTION>description LOC1</DESCRIPTION>
+      <OWNER NAME="Manufacturing">
+        <DESCRIPTION>description Manufacturing</DESCRIPTION>
+      </OWNER>
+    </LOCATION>
+  </LOCATIONS>
+  <ITEMS>
+    <ITEM NAME="RM1">
+      <CATEGORY>Raw Material</CATEGORY>
+      <DESCRIPTION>raw material 1</DESCRIPTION>
+    </ITEM>
+    <ITEM NAME="RM2">
+      <CATEGORY>Raw Material</CATEGORY>
+      <DESCRIPTION>raw material 2</DESCRIPTION>
+    </ITEM>
+    <ITEM NAME="RM3">
+      <CATEGORY>Raw Material</CATEGORY>
+      <DESCRIPTION>raw material 3</DESCRIPTION>
+    </ITEM>
+    <ITEM NAME="STCK1">
+      <CATEGORY>End Item</CATEGORY>
+      <OWNER NAME="End Item Family A" />
+      <DESCRIPTION>end item 1</DESCRIPTION>
+      <OPERATION NAME="delivery STCK1" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="STCK2">
+      <CATEGORY>End Item</CATEGORY>
+      <OWNER NAME="End Item Family A" />
+      <DESCRIPTION>end item 2</DESCRIPTION>
+      <OPERATION NAME="delivery STCK2" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="SUBAS1">
+      <CATEGORY>Subassembly</CATEGORY>
+      <DESCRIPTION>assembly1</DESCRIPTION>
+    </ITEM>
+  </ITEMS>
+  <BUFFERS>
+    <BUFFER NAME="STCK1">
+      <CONSUMING NAME="delivery STCK1" />
+      <PRODUCING NAME="make STCK1" />
+      <LOCATION NAME="LOC1" />
+      <ITEM NAME="STCK1" />
+    </BUFFER>
+    <BUFFER NAME="STCK2">
+      <CONSUMING NAME="delivery STCK2" />
+      <PRODUCING NAME="make STCK2" />
+      <LOCATION NAME="LOC1" />
+      <ITEM NAME="STCK2" />
+      <ONHAND>25</ONHAND>
+    </BUFFER>
+    <BUFFER NAME="SUBAS1">
+      <PRODUCING NAME="make SUBAS1" />
+      <LOCATION NAME="LOC1" />
+      <ITEM NAME="SUBAS1" />
+    </BUFFER>
+    <BUFFER NAME="RM1">
+      <CONSUMING NAME="make STCK2" />
+      <LOCATION NAME="LOC1" />
+      <ITEM NAME="RM1" />
+      <ONHAND>25</ONHAND>
+    </BUFFER>
+    <BUFFER NAME="RM2" xsi:type="BUFFER_INFINITE">
+      <CONSUMING NAME="make STCK2" />
+      <LOCATION NAME="LOC1" />
+      <ITEM NAME="RM2" />
+      <ONHAND>50</ONHAND>
+    </BUFFER>
+    <BUFFER NAME="RM3">
+      <CONSUMING NAME="make SUBAS1" />
+      <LOCATION NAME="LOC1" />
+      <ITEM NAME="RM3" />
+      <ONHAND>25</ONHAND>
+    </BUFFER>
+  </BUFFERS>
+  <FLOWS>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery STCK1" />
+      <BUFFER NAME="STCK1" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery STCK2" />
+      <BUFFER NAME="STCK2" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="make SUBAS1 from RM3" />
+      <BUFFER NAME="RM3" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="make SUBAS1 from RM1" />
+      <BUFFER NAME="RM1" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="make STCK1" />
+      <BUFFER NAME="SUBAS1" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="make STCK2 step1" />
+      <BUFFER NAME="SUBAS1" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="make STCK2 step1" />
+      <BUFFER NAME="RM2" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="make STCK2 step2" />
+      <BUFFER NAME="RM2" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="make STCK2 step3" />
+      <BUFFER NAME="STCK2" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="make STCK1" />
+      <BUFFER NAME="STCK1" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="make SUBAS1" />
+      <BUFFER NAME="SUBAS1" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+  </FLOWS>
+  <RESOURCES>
+    <RESOURCE NAME="RES1">
+      <CATEGORY>assembly</CATEGORY>
+      <DESCRIPTION>assembly resource 1</DESCRIPTION>
+      <MAXIMUM NAME="Capacity RES1" />
+      <LOADS>
+        <LOAD>
+          <OPERATION NAME="make STCK1" />
+        </LOAD>
+        <LOAD>
+          <OPERATION NAME="make STCK2" />
+        </LOAD>
+      </LOADS>
+    </RESOURCE>
+  </RESOURCES>
+  <DEMANDS>
+    <DEMAND NAME="order 1 for STCK 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-09T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="STCK1" />
+    </DEMAND>
+    <DEMAND NAME="order 2 for STCK 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-21T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="STCK1" />
+    </DEMAND>
+    <DEMAND NAME="order 3 for STCK 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-02-20T00:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="STCK1" />
+    </DEMAND>
+    <DEMAND NAME="order 4 for STCK 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-02-20T00:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="STCK1" />
+    </DEMAND>
+    <DEMAND NAME="order 1 for STCK 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-02-10T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="STCK2" />
+    </DEMAND>
+    <DEMAND NAME="order 2 for STCK 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-02-15T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="STCK2" />
+    </DEMAND>
+    <DEMAND NAME="order 3 for STCK 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-02-16T00:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="STCK2" />
+    </DEMAND>
+    <DEMAND NAME="order 4 for STCK 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-02-26T00:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="STCK2" />
+    </DEMAND>
+  </DEMANDS>
+</PLAN>

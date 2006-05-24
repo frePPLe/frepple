@@ -1,0 +1,83 @@
+
+# This makefile is built as a convenience for developers.
+# It should not be considered part of a normal distribution
+
+default: prep config clean build check dist
+
+debug: prep configdebug clean build check
+
+coverage: prep configcoverage clean build check
+
+profile: prep configprofile clean build
+
+prep:
+	@echo
+	@echo "PHASE: Configuring GNU build tools..."
+#	libtoolize --copy --force --automake
+	aclocal
+	autoheader
+# Use --include-deps, if you want to release the stuff. 
+# Don't use it for your own development builds
+#	automake --include-deps --add-missing
+	automake
+	autoconf
+
+config:
+	@echo
+	@echo "PHASE: Running configure for optimized build..."
+	./configure --enable-doc  --prefix=`pwd`/install-test --enable-shared
+#	 --disable-shared --disable-multithread
+
+configdebug:
+	@echo
+	@echo "PHASE: Running configure for debug build..."
+	./configure --disable-doc --enable-debug --prefix=`pwd`/install-test --enable-shared
+# --disable-multithread
+
+configcoverage:
+	@echo
+	@echo "PHASE: Running configure for test coverage build..."
+	./configure --disable-doc --enable-coverage --disable-shared
+
+configprofile:
+	@echo
+	@echo "PHASE: Running configure for profiling build..."
+	./configure --disable-doc --enable-profile --disable-shared
+
+clean:
+	@echo
+	@echo "PHASE: Cleaning..."
+	make clean
+
+build:
+	@echo
+	@echo "PHASE: Building..."
+	make all
+
+check:
+	@echo
+	@echo "PHASE: Testing..."
+	make check
+
+dist:
+	@echo
+	@echo "PHASE: Making a distribution..."
+	make dist
+
+# A simple way to get some code metrics
+stats:
+	#	c_count `find planner -name '*.cpp'` `find planner -name '*.h'`
+	wc -l `find src -name '*.cpp'` `find . -name '*.h' | grep -v config.h` | sort -n
+
+# A simple way to list the todo items
+todo:
+	grep -i todo `find . -name '*.cpp'` `find . -name '*.h'` `find . -name '*.xml'` | sort
+	grep -i todo `find . -name '*.cpp'` `find . -name '*.h'` `find . -name '*.xml'` | wc
+
+# Reformats the code to comply to some common standard
+# Our formatting is closely aligned with the CoreLinux standards
+astyleoptions = --style==ansi --indent=spaces=2 --indent-classes --indent-switches --break-blocks --min-conditional-indent=2
+astyle:
+	astyle --mode=c $(astyleoptions) `find . -name '*.cpp'`
+#	astyle --mode=java  `find . -name '*.java'`
+	astyle --mode=c $options$(astyleoptions) `find . -name '*.h'`

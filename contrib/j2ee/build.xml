@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="all" name="Frepple">
+	<target name="all" depends="frepple_j2ee.jar,frepple_j2ee_clients.jar,frepple.war" />
+	<target name="frepple_j2ee.jar" description="frepple_j2ee.jar">
+		<mkdir dir="lib" />
+		<jar destfile="lib/frepple_j2ee.jar">
+			<zipfileset dir="META-INF" prefix="META-INF" />
+			<zipfileset dir="bin/frepple" prefix="frepple" />
+		</jar>
+	</target>
+	<target name="frepple_j2ee_clients.jar" description="frepple_j2ee_clients.jar">
+		<mkdir dir="lib" />
+		<jar destfile="lib/frepple_j2ee_clients.jar">
+			<zipfileset dir="bin/frepple/webservice" prefix="frepple/webservice">
+				<include name="client.class" />
+			</zipfileset>
+			<zipfileset dir="bin/frepple/jms" prefix="frepple/jms">
+				<include name="Client.class" />
+			</zipfileset>
+			<zipfileset dir="bin/frepple/ejb" prefix="frepple/ejb">
+				<include name="Client.class" />
+			</zipfileset>
+			<zipfileset dir="bin/frepple/mail" prefix="frepple/mail">
+				<include name="Reader.class" />
+			</zipfileset>
+			<zipfileset dir="META-INF">
+				<include name="mail.properties" />
+			</zipfileset>
+			<zipfileset dir="META-INF">
+				<include name="log4j.properties" />
+			</zipfileset>
+		</jar>
+	</target>
+	<target name="frepple.war" description="frepple.war">
+		<mkdir dir="lib" />
+		<jar destfile="lib/frepple.war">
+			<zipfileset dir="WEB-INF" prefix="WEB-INF" />
+			<zipfileset dir="bin/frepple" prefix="WEB-INF/classes/frepple" />
+			<zipfileset dir="web"/>
+		</jar>
+	</target>
+</project>

@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html">
+  <title>Planner Library Documentation</title>
+  <link href="styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<p align="center"><b><i><u><font size="+2">
+<a name="top"></a>FREPPLE<br>
+a Free Production Planning Library
+</font></u></i></b></p>
+<p>Production planning problems are very
+common in manufacturing and distribution. System support is available
+from a
+wide range of vendors. All tools on the market have pretty much the
+following
+characteristics in common:</p>
+<p>Are expensive to purchase, implement and maintain.</p>
+<p>Are built on proprietary architectures and
+modeling constructs.</p>
+<p>Result quite often in systems that are
+complex, hard-to-use, difficult to implement and with low user
+acceptance.</p>
+<p>Faced with this, planners and small
+businesses resort to basic spreadsheets for planning their production
+environment.</p>
+<p>With this project, we are trying to
+build a light weight tool that can solve simple master planning
+problems without
+much hassle. It should allow planners to have access to more advanced
+functionality while maintaining the flexiblity, ease of use of their
+original
+spreadsheets.</p>
+<p>For the developer community, the project
+is also trying to establish some common ground framework for planning
+applications. Rather than building the basic building blocks (e.g.
+Items,
+buffers, boms...) from scratch over and over again, developers can
+leverage a
+proven and tested application set to extend. The library is written in
+C++.</p>
+<hr>
+<p align="right"><a name="platforms" href="#top">top</a></p>
+<h1>Supported Platforms</h1>
+The library has been compiled and tested on the following platforms:
+<ul>
+  <li>Windows 2000 and GCC v3.3.3 compiler (Cygwin) but deprecated</li>
+  <li>Windows 2000/XP and GCC v3.4.4 compiler (Cygwin)</li>
+  <li>Windows 2000 and Visual C++ 7.0 compiler </li>
+  <li>Windows 2000 and Intel C++ 9.0 compiler but not tested actively</li>
+  <li>Windows 2000 and Borland 5.5 compiler </li>
+  <li>Linux and GCC v3.4 compiler</li>
+</ul>
+The C++ commands and functions are as ANSI compliant as possible, with
+potentially inportable functions being configured using autoconf.
+Porting to platforms as well with a modern C++ compiler (i.e. supporting RTTI,
+namespaces, exceptions, STL, ...) should be relatively easy.
+<p>If you get it running successfully on a different platform please
+let
+<a href="mailto:johan_de_taeye@yahoo.com">us</a> know, so it can be
+documented.</p>
+<hr>
+
+<p align="right"><a name="prerequisites" href="#top">top</a></p>
+<h1>Software Prerequisites</h1>
+<p>No additional software is required to use the executables coming with a 
+binary distribution. No additional software is required also when you want to 
+develop your own applications using the compiled libraries coming with a 
+binary distribution.</p>
+<p>Developers building the library from the source code or developing extensions
+will need to install a number of additional components. These are listed as part
+of the build instructions.
+<hr>
+
+<p align="right"><a name="goal" href="#top">top</a></p>
+<h1>Project goal and concepts</h1>
+<p></p>
+Not written up yet, but believe I know where I'm heading...
+<p></p>
+<hr>
+<p align="right"><a name="xxx" href="#top">top</a></p>
+<h1>Model characteristics</h1>
+<p>Basic building blocks<br>
+Have name, category and can be nested in hierarchical trees.<br>
+Buffer, item, lot, resource, operation.<br>
+Connected by loads and flows.</p>
+<p>Higher level building blocks are based upon these.<br>
+E.g. Bom, forecast, ...</p>
+<p>Problems are flagged when the plan shows infeasibilities or
+situations
+requiring user attention.</p>
+<p>Subclassing the standard classes allows building more complex and
+customized models.</p>
+<p>Data is currently read in from XML files.<br>
+Soon a flat file based input is also expected. Later, a database
+interface could
+also be implemented.</p>
+<hr>
+<p align="right"><a name="solver" href="#top">top</a></p>
+<h1>Solver characteristics</h1>
+<p>The model and the solver are logically
+divided. This makes it possible to use mulitple with the same model.<span
+ style="">&nbsp;<br>
+The currently application comes with a single solver that is described
+in more
+detail below.</span></p>
+<p>The building blocks can be grouped in a
+number of independent clusters. Each cluster is solved seperately by a
+multi-threaded solver.</p>
+<p>The solver uses a heuristic-based algorithm.<br>
+The logic is fully deterministic.<br>
+The solver is based on common sense planning logic rather than some
+mathematical
+optimization construct.<br>
+These features result in a simple, easy to undertand and easy to extend
+solution. The plan will make sense to the planner, but is not
+necessarily a
+mathematical optimum.</p>
+<p>In the
+future, a second solver based on linear programming is expected to be
+added.
+This will allow to generate mathematically optimal solutions for
+subparts of the
+planning problem.</p>
+<p>The algorithm is able to generate a number
+of different plan types:<br>
+- material constrained plan<br>
+- lead time constrained plan<br>
+- capacity constrained plan</p>
+<p>- fully
+unconstrained plan, a.k.a. MRP run.</p>
+<p>- plans with
+multiple of the basic constraints enabled, e.g. Material and leadtime
+constrained.</p>
+<p>- fully
+constrained plan, i.e. Constrained by material, leadtime and capacity.</p>
+<p>Ask-reply.</p>
+<hr>
+<p align="right"><a name="example" href="#top">top</a></p>
+<h1>Example model</h1>
+<p>In this section we describe a small
+planning problem. We show how it is modeled and planned using our
+application.</p>
+<p>This is by no means a full user manual, but only illustrates the
+basic concepts.</p>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html">
+<title>Frepple Inventory Filter</title>
+<link href="styles.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="filter.js"></script>
+<script type="text/javascript" language="JavaScript">
+
+function init(firsttime)
+{
+  if (firsttime)
+    // First time we open this window
+    GetFilterData();
+  else {
+    // Resetting to the default filter settings
+    document.getElementById("LocationFilter").value = "";
+    document.getElementById("ItemFilter").value = "";
+    document.getElementById("BufferFilter").value = "";
+    updateLocationList();
+    updateItemList();
+    updateBufferList();
+    updateCookie();
+  }
+}
+
+</script>
+</head>
+
+<body onload="init(true);">
+<h2>Inventory Filter</h2>
+
+<form method="get" onsubmit="display(); return false;">
+<table id="table" cellpadding="1" cellspacing="1">
+<tr>
+<td width="250"><b>Locations (<span id="LocCount">0</span>)</b></td>
+<td width="250"><b>Items (<span id="ItemCount">0</span>)</b></td>
+<td width="250"><b>Buffers (<span id="BufferCount">0</span>)</b></td>
+</tr>
+<tr>
+<td><input id="LocationFilter" maxlength="2550" style="width:100%;" type="text" 
+  onChange="updateLocationList();updateBufferList();updateCookie()"></td>
+<td><input id="ItemFilter" maxlength="2550" style="width:100%;" type="text" 
+  onChange="updateItemList();updateBufferList();updateCookie()"></td>
+<td><input id="BufferFilter" maxlength="2550" style="width:100%;" type="text" 
+  onChange="updateBufferList();updateCookie()"></td>
+</tr>
+<tr>
+<td><select id="Locations" size="6" style="width:100%;" multiple 
+  onChange="locationUpdate()"> </select></td>
+<td><select id="Items" size="6" style="width:100%;" multiple 
+  onChange="itemUpdate()"></select></td>
+<td><select id="Buffers" size="6" style="width:100%;" multiple 
+  onChange="bufferUpdate();"></select></td>
+</tr>
+</table>
+<input id="submit" type="submit" value="Display">
+<input id="reset" type="reset" value="Reset filters" onClick="init(false);">
+</form>
+
+</body>
+</html>

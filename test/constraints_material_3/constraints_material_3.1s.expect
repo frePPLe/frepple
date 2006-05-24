@@ -1,0 +1,86 @@
+BUFFER	buffer 1	1970-01-01T01:00:00	10	10
+BUFFER	buffer 1	2006-01-09T00:00:00	-10	0
+BUFFER	buffer 1	2006-01-10T00:00:00	100	100
+BUFFER	buffer 1	2006-01-10T00:00:00	-100	0
+BUFFER	buffer 1	2006-01-17T00:00:00	94	94
+BUFFER	buffer 1	2006-01-17T00:00:00	-90	4
+BUFFER	buffer 2	1970-01-01T01:00:00	10	10
+BUFFER	buffer 2	2006-01-09T00:00:00	-10	0
+BUFFER	buffer 2	2006-01-10T00:00:00	100	100
+BUFFER	buffer 2	2006-01-10T00:00:00	-100	0
+BUFFER	buffer 2	2006-01-17T00:00:00	50	50
+BUFFER	buffer 2	2006-01-17T00:00:00	-50	0
+BUFFER	buffer 3	1970-01-01T01:00:00	10	10
+BUFFER	buffer 3	2006-01-09T00:00:00	-10	0
+BUFFER	buffer 3	2006-01-15T00:00:00	192	192
+BUFFER	buffer 3	2006-01-15T00:00:00	-190	2
+BUFFER	buffer 4	1970-01-01T01:00:00	10	10
+BUFFER	buffer 4	2006-01-09T00:00:00	-10	0
+BUFFER	buffer 4	2006-01-15T00:00:00	196	196
+BUFFER	buffer 4	2006-01-15T00:00:00	-190	6
+BUFFER	constraint buffer 1	2006-01-10T00:00:00	100	100
+BUFFER	constraint buffer 1	2006-01-10T00:00:00	-100	0
+BUFFER	constraint buffer 1	2006-01-17T00:00:00	200	200
+BUFFER	constraint buffer 1	2006-01-17T00:00:00	-94	106
+BUFFER	constraint buffer 2	2006-01-10T00:00:00	100	100
+BUFFER	constraint buffer 2	2006-01-10T00:00:00	-100	0
+BUFFER	constraint buffer 2	2006-01-17T00:00:00	50	50
+BUFFER	constraint buffer 2	2006-01-17T00:00:00	-50	0
+BUFFER	constraint buffer 3	2006-01-15T00:00:00	1000	1000
+BUFFER	constraint buffer 3	2006-01-15T00:00:00	-192	808
+BUFFER	constraint buffer 4	2006-01-15T00:00:00	1000	1000
+BUFFER	constraint buffer 4	2006-01-15T00:00:00	-196	804
+DEMAND	order for item 1	2006-01-18T00:00:00	45
+DEMAND	order for item 1	2006-01-11T00:00:00	50
+DEMAND	order for item 1	2006-01-10T00:00:00	5
+DEMAND	order for item 2	2006-01-18T00:00:00	25
+DEMAND	order for item 2	2006-01-11T00:00:00	50
+DEMAND	order for item 2	2006-01-10T00:00:00	5
+DEMAND	order for item 3	2006-01-16T00:00:00	95
+DEMAND	order for item 3	2006-01-10T00:00:00	5
+DEMAND	order for item 4	2006-01-16T00:00:00	95
+DEMAND	order for item 4	2006-01-10T00:00:00	5
+OPERATION	delivery 1	2006-01-09T00:00:00	2006-01-10T00:00:00	5
+OPERATION	delivery 1	2006-01-10T00:00:00	2006-01-11T00:00:00	50
+OPERATION	delivery 1	2006-01-17T00:00:00	2006-01-18T00:00:00	45
+OPERATION	delivery 2	2006-01-09T00:00:00	2006-01-10T00:00:00	5
+OPERATION	delivery 2	2006-01-10T00:00:00	2006-01-11T00:00:00	50
+OPERATION	delivery 2	2006-01-17T00:00:00	2006-01-18T00:00:00	25
+OPERATION	delivery 3	2006-01-09T00:00:00	2006-01-10T00:00:00	5
+OPERATION	delivery 3	2006-01-15T00:00:00	2006-01-16T00:00:00	95
+OPERATION	delivery 4	2006-01-09T00:00:00	2006-01-10T00:00:00	5
+OPERATION	delivery 4	2006-01-15T00:00:00	2006-01-16T00:00:00	95
+OPERATION	make 1	2006-01-10T00:00:00	2006-01-10T00:00:00	50
+OPERATION	make 1	2006-01-17T00:00:00	2006-01-17T00:00:00	47
+OPERATION	make 2	2006-01-10T00:00:00	2006-01-10T00:00:00	50
+OPERATION	make 2	2006-01-17T00:00:00	2006-01-17T00:00:00	25
+OPERATION	make 3	2006-01-15T00:00:00	2006-01-15T00:00:00	96
+OPERATION	make 4	2006-01-15T00:00:00	2006-01-15T00:00:00	98
+OPERATION	supply 1	2006-01-10T00:00:00	2006-01-10T00:00:00	100
+OPERATION	supply 1	2006-01-17T00:00:00	2006-01-17T00:00:00	200
+OPERATION	supply 2	2006-01-10T00:00:00	2006-01-10T00:00:00	100
+OPERATION	supply 2	2006-01-17T00:00:00	2006-01-17T00:00:00	50
+OPERATION	supply 3	2006-01-15T00:00:00	2006-01-15T00:00:00	1000
+OPERATION	supply 4	2006-01-15T00:00:00	2006-01-15T00:00:00	1000
+PROBLEM	material excess	Buffer 'buffer 1' has material excess of 10	1970-01-01T01:00:00 / 2006-01-09T00:00:00
+PROBLEM	material excess	Buffer 'buffer 1' has material excess of 94	2006-01-17T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'buffer 1' has material shortage of 4	2006-01-09T00:00:00 / 2006-01-10T00:00:00
+PROBLEM	material shortage	Buffer 'buffer 1' has material shortage of 4	2006-01-10T00:00:00 / 2006-01-17T00:00:00
+PROBLEM	material excess	Buffer 'buffer 2' has material excess of 10	1970-01-01T01:00:00 / 2006-01-09T00:00:00
+PROBLEM	material shortage	Buffer 'buffer 2' has material shortage of 4	2006-01-09T00:00:00 / 2006-01-10T00:00:00
+PROBLEM	material shortage	Buffer 'buffer 2' has material shortage of 4	2006-01-10T00:00:00 / 2006-01-17T00:00:00
+PROBLEM	material shortage	Buffer 'buffer 2' has material shortage of 4	2006-01-17T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'buffer 3' has material excess of 10	1970-01-01T01:00:00 / 2006-01-09T00:00:00
+PROBLEM	material excess	Buffer 'buffer 3' has material excess of 192	2006-01-15T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'buffer 3' has material shortage of 4	2006-01-09T00:00:00 / 2006-01-15T00:00:00
+PROBLEM	material excess	Buffer 'buffer 4' has material excess of 10	1970-01-01T01:00:00 / 2006-01-09T00:00:00
+PROBLEM	material excess	Buffer 'buffer 4' has material excess of 196	2006-01-15T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'buffer 4' has material shortage of 6	2006-01-09T00:00:00 / 2006-01-15T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 1' has material excess of 200	2006-01-17T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 3' has material excess of 1000	2006-01-15T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 4' has material excess of 1000	2006-01-15T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	late	Demand 'order for item 1' planned 192:00:00 after its due date	2006-01-10T00:00:00 / 2006-01-18T00:00:00
+PROBLEM	short	Demand 'order for item 2' planned 20 units short	2006-01-10T00:00:00 / 2006-01-10T00:00:00
+PROBLEM	late	Demand 'order for item 2' planned 192:00:00 after its due date	2006-01-10T00:00:00 / 2006-01-18T00:00:00
+PROBLEM	late	Demand 'order for item 3' planned 144:00:00 after its due date	2006-01-10T00:00:00 / 2006-01-16T00:00:00
+PROBLEM	late	Demand 'order for item 4' planned 144:00:00 after its due date	2006-01-10T00:00:00 / 2006-01-16T00:00:00

@@ -1,0 +1,188 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html">
+<title>Samples and tests</title>
+<link href="styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<H1>Samples and tests</H1>
+<p>This pages documents the examples available in the 'test' subdirectoy. The 
+examples can be categorized in the following functional categories:<ul>
+<li>Unit tests, which verify the behavior specific parts of the code.</li>
+<li>Performance tests, which focus on the performance (memory and/or 
+cpu-time).</li>
+<li>Samples, which provide more real-life usage of the tool.</li>
+</ul></p>
+
+<ol>
+<li><p><b>Callback</b><br>
+This test verifies the event publishing and subscription mechanism.
+</p></li>
+
+<li><p><b>Cluster</b><br>
+This test verifies the correctness of the clustering algorithm. A network is 
+built with a whole range of possible interconnections between operations, 
+buffers and resources.
+</p></li>
+
+<li><p><b>Command</b><br>
+In this test commands are being run in parallel and in sequence. The proper 
+branching and merging of the tasksis verified, and the behavior in case of 
+errors.
+</p></li>
+
+<li><p><b>Constraints_leadtime_1</b><br>
+This test verifies the solver behavior for leadtime constraints. Demands are 
+placed on the network such that operations are planned in the past in the 
+unconstrained plan. Demands are appropriately shorted or planned late in the
+constrained plan to solve the problems.<br>
+@todo Add picture
+</p></li>
+
+<li><p><b>Constraints_material_1</b><br>
+This test verifies the behavior of the buffer solver for the case where no 
+producing operation is defined.<br>
+Four variations of a base scenario are tested:
+<ul>
+<li>3 consumers, ordered in chronological order</li>
+<li>3 consumers, not ordered in chronological order</li>
+<li>extra supply arriving at a different date, causing a late order</li>
+<li>extra supply arriving at a different date, but already partially 
+used up</li>
+</ul>
+</p></li>
+
+<li><p><b>Constraints_material_2</b><br>
+@todo
+</p></li>
+
+<li><p><b>Constraints_material_3</b><br>
+@todo
+</p></li>
+
+<li><p><b>Constraints_resource_1</b><br>
+A simple capacity problem that can be resolved by moving operation plans early.
+</p></li>
+
+<li><p><b>Constraints_resource_2</b><br>
+A capacity shortage where operation plans are moved earlier till they are in
+the past. The associated demands are then shorted.
+</p></li>
+
+<li><p><b>Constraints_resource_3</b><br>
+A capacity problem where a single operation loads multiple resources.
+This test case also has capacity limits varying over time.
+</p></li>
+
+<li><p><b>CSV</b><br>
+In this test the capability of reading data from CSV-formatted data files is
+verified.
+</p></li>
+
+<li><p><b>Datetime</b><br>
+Tests the date and time classes: conversions to and from strings, additions, ...
+</p></li>
+
+<li><p><b>Deletion</b><br>
+This test verifies the capability to delete parts of the model. After loading 
+the model different entities are one-by-one being deleted. After each delete 
+we replan and save the model to make sure the deletion is working correctly: 
+an incorrect delete would crash the application!
+</p></li>
+
+<li><p><b>Demo1</b><br>
+@todo
+</p></li>
+
+<li><p><b>DLL</b><br>
+@todo
+</p></li>
+
+<li><p><b>Forecast</b><br>
+This test verifies the behavior of the FORECAST class.
+</p></li>
+
+<li><p><b>LP_solver_1</b><br>
+This test verifies the behavior of the linear program solver. If you compiled 
+the application without support for this solver this test will fail, which is 
+nothing to worry about.
+</p></li>
+
+<li><p><b>Name</b><br>
+This test reviews the data structure that is used for storing all named
+entities: functionality of the insertion, deletion and search operations,
+as well as their scalability.<br>
+The time for these operations properly fits a logaritmic profile, as expected
+with a binary tree data structure. The test tries to predict the timing
+and will report a significant mismatch with the expectations as a failure.
+</p></li>
+
+<li><p><b>Operation_effective</b><br>
+This test checks the code for creating and manipulating of operationplans of
+type "effective". The test resolves about a product that can be sourced from
+two locations. In a first part of the horizon location A is the only allowed
+source, while in the last part of the horizon only sourcing from location B
+is possible. A transition period exists where sourcing from both location is
+possible.
+</p></li>
+
+<li><p><b>Problems</b><br>
+Verifies that problems objects are created and deleted properly when the model 
+is being updated in various ways.
+</p></li>
+
+<li><p><b>Scalability_1</b><br>
+Tests the scalability of the data loading, running an MRP plan (including the 
+clustering algorithm) and saving the plan. The network in this case consists 
+of a lot of parallel clusters, which can be solved in parallel. See also the 
+test scalability_2.<br>
+The algorithms scale linearly with the model size, while the mayor underlying 
+data structures are binary trees which scale logarithmically with the model
+size...  The result is a runtime that combines both. In summary, one could say 
+that the system scales a bit worse than linear, but definately not quadratic
+or worse.<br>
+@todo picture
+</p></li>
+
+<li><p><b>Scalability_2</b><br>
+Tests the scalability of the data loading, running an MRP plan (including the 
+clustering algorithm) and saving the plan.
+The network in this case consists of a single big cluster, which is to be 
+solved in a single thread. The network is very similar to the test 
+scalability_1, with a single shared resource being the difference.<br>
+The algorithms scale linearly with the model size, while the mayor underlying 
+data structures are binary trees which scale logarithmically with the model
+size...  The result is a runtime that combines both. It depends on the data
+set, the platform and the compiler how your model will scale with the data
+size.
+</p></li>
+
+<li><p><b>Scalability_3</b><br>
+This test is designed to verify the scalability of the timeline data structure. 
+The network consists of a single buffer with a very simple operation producing 
+into it. Since the timeline data structure is currently based on a linear list 
+the scalability of the timeline is expected to be bad... A quadratic increase 
+in the runtimes can be observed.<br>
+A more scalable data structure has been designed to provide a more scalable 
+implementation.
+</p></li>
+
+<li><p><b>Sizeof</b><br>
+Echoes the size of the main model classes.<br>
+The results are based on compiling using gcc under linux on a Intel pentium 
+IV machine.<br>
+Different compilers and platforms can easily use a different organization and 
+size of the data structures, which will give different test results. A failure 
+of this test is thus nothing to worry about.
+</p></li>
+
+<li><p><b>XML</b><br>
+This is a test for the XML parser routines.
+The test consists of a complex xml document to be parsed and processed:
+<ul>
+<li>XML tags 8 nested levels deep</li>
+<li>ignore-element sections</li>
+</ul>
+</p></li>
+
+</body>

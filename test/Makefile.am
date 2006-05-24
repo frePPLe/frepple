@@ -1,0 +1,9 @@
+#
+# Process this file with automake to produce Makefile.in
+#
+
+SUBDIRS = cluster scalability_1 scalability_2 scalability_3 sizeof  datetime constraints_leadtime_1 lpsolver_1 demo1 constraints_material_1 constraints_material_2 constraints_material_3 dll xml forecast constraints_resource_1 constraints_resource_2 constraints_resource_3 problems deletion operation_effective name multithreading command csv custom_class callback
+
+EXTRA_DIST = TestLib.pm runtest.pl
+
+TESTS = runtest.pl

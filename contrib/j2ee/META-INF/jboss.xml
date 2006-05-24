@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<jboss>
+    <enterprise-beans>
+        <session>
+            <ejb-name>FreppleStatelessSessionBean</ejb-name>  
+            <jndi-name>frepple/ejb</jndi-name>          
+        </session>
+        <message-driven>
+            <ejb-name>FreppleMessageBean</ejb-name>
+            <destination-jndi-name>queue/B</destination-jndi-name>
+            <resource-ref>
+                <res-ref-name>jms/QCF</res-ref-name>
+                <jndi-name>ConnectionFactory</jndi-name>
+            </resource-ref>
+        </message-driven>
+    </enterprise-beans>
+</jboss>

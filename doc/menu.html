@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html">
+ <title>Frepple menu</title>
+ <link href="styles.css" rel="stylesheet" type="text/css">
+
+<script language="javascript1.2">
+function toggleBullet(elm) {
+ var newDisplay = "none";
+ var e = elm.nextSibling;
+ while (e != null) {
+  if (e.tagName == "UL" || e.tagName == "ul") {
+   if (e.style.display == "none") newDisplay = "block";
+   break;
+  }
+  e = e.nextSibling;
+ }
+ while (e != null) {
+  if (e.tagName == "UL" || e.tagName == "ul") e.style.display = newDisplay;
+  e = e.nextSibling;
+ }
+}
+
+function collapseAll() {
+  var lists = document.getElementsByTagName('UL');
+  for (var j = 0; j < lists.length; j++)
+   lists[j].style.display = "none";
+  lists = document.getElementsByTagName('ul');
+  for (var j = 0; j < lists.length; j++)
+   lists[j].style.display = "none";
+  var e = document.getElementById("root");
+  e.style.display = "block";
+}
+</script>
+
+</head>
+<body>
+
+<p align="center"><b><a target="main" href="home.html">
+<img src="frepple.jpg"><br><b>FREPPLE</b><br>A free production planning library
+</a></b></p>
+
+<font size="-1">
+<ul id="root" listStyleType="none">
+  <li listStyleType="none"> <a href="#" onclick="toggleBullet(this)">Main</a>
+    <ul style="display:none" listStyleType="none">
+      <li listStyleImage="none"><a target="main" href="home.html">
+        Introduction</a></li>
+      <li><a target="main" href="home.html#platforms">
+        Supported platforms</a></li>
+      <li><a target="main" href="home.html#prerequisites">
+        Software components</a></li>
+    </ul>
+  </li>
+
+  <li> <a href="#" onclick="toggleBullet(this)">User documentation</a>
+    <ul style="display:none">
+    	<li><a target="main" href="entitydiagram.pdf">
+    	  Domain model</a>(requires Acrobat Reader)</li>
+      <li><a href="#" onclick="toggleBullet(this)">Modeling documents</a>
+        <ul style="display:none">
+            <li><a target="main" href="modeling_concepts.html">
+              Conceptual model</a></li>
+            <li><a target="main" href="modeling.html">
+              Modeling</a></li>
+        </ul>
+      </li>
+      <li> <a href="#" onclick="toggleBullet(this)">Tutorial</a>
+        <ul style="display:none">
+          <li><a target="main" href="tutorial/index.html">Overview</a></li>
+          <li><a target="main" href="tutorial/lesson1.html">Lesson 1</a></li>
+          <li><a target="main" href="tutorial/lesson2.html">Lesson 2</a></li>
+        </ul>
+      </li>
+      <li><a target="main" href="solver.html">Solver algorithm</a></li>
+      <li><a target="main" href="solver.html#cluster">
+        Cluster and level algorithm</a></li>
+      <li><a target="main" href="performance.html" onclick="toggleBullet(this)">
+        Performance</a>
+        <ul style="display:none">
+            <li><a target="main" href="performance.html#reference">
+              Reference models</a></li>
+            <li><a target="main" href="performance.html#notes">
+              Various notes</a></li>
+        </ul>
+      </li>
+      <li><a target="main" href="tests.html">Samples and tests</a></li>
+    </ul>
+  </li>
+
+  <li> <a href="#" onclick="toggleBullet(this)">Developer documentation</a>
+    <ul style="display:none">
+      <li><a target="main" href="maintenance.html">
+        Build, extensions and maintenance</a></li>
+      <li><a target="main" href="maintenance.html#build">
+        Build instructions</a></li>
+      <li><a target="main" href="maintenance.html#license">
+        Software license</a></li>
+      <li><a target="main" href="maintenance.html#standards">
+        Coding standards</a></li>
+      <li><a target="main" href="reference/index.html">
+        C++ API reference</a></li>
+      <li><a target="main" href="classdiagram.pdf">
+        Class diagram</a> (requires Acrobat Reader)</li>
+      <li><a target="main" href="clients.html">
+        Library usage</a></li>
+      <li><a target="main" href="reference/todo.html">
+        To Do list</a></li>
+    </ul>
+  </li>
+
+</ul>
+</font>
+
+</body>
+</html>

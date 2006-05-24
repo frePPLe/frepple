@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wsdl:definitions
+  targetNamespace="http://localhost/axis/frepple"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:apachesoap="http://xml.apache.org/xml-soap"
+  xmlns:impl="http://localhost/axis/frepple"
+  xmlns:intf="http://localhost/axis/frepple"
+  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <!-- Data types for exceptions -->
+  <wsdl:message name="ProcessingException">
+    <wsdl:part name="ExceptionMessage" type="xsd:string"/>
+  </wsdl:message>
+
+  <!-- Data type for inputxml. -->
+  <wsdl:message name="InputXMLRequest">
+      <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="InputXMLResponse">
+      <wsdl:part name="out0" type="xsd:int"/>
+  </wsdl:message>
+
+  <!-- Data type for outputxml. -->
+  <wsdl:message name="OutputXMLRequest">
+      <wsdl:part name="in0" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="OutputXMLResponse">
+      <wsdl:part name="out0" type="xsd:string"/>
+  </wsdl:message>
+
+
+  <!-- Abstract port definition. -->
+  <wsdl:portType name="frepple">
+    <!-- InputXML operation. -->
+    <wsdl:operation name="InputXML" parameterOrder="in0">
+      <wsdl:input message="impl:InputXMLRequest" name="InputXMLRequest"/>
+      <wsdl:output message="impl:InputXMLResponse" name="InputXMLResponse"/>
+      <wsdl:fault name="ProcessingException" 
+        message="impl:ProcessingException"/>
+    </wsdl:operation>
+    <!-- OutputXML operation. -->
+    <wsdl:operation name="OutputXML" parameterOrder="in0">
+      <wsdl:input message="impl:OutputXMLRequest" name="OutputXMLRequest"/>
+      <wsdl:output message="impl:OutputXMLResponse" name="OutputXMLResponse"/>
+      <wsdl:fault name="ProcessingException" 
+        message="impl:ProcessingException"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <!-- Concrete port binding to HTTP transport -->
+  <wsdl:binding name="freppleSoapBinding" type="impl:frepple">
+    <wsdlsoap:binding
+      style="rpc"
+      transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="InputXML">
+      <wsdlsoap:operation soapAction="frepple#InputXML" style="document"/>
+      <wsdl:input name="InputXMLRequest">
+          <wsdlsoap:body parts="in0" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="InputXMLResponse">
+          <wsdlsoap:body parts="out0" use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ProcessingException">
+        <wsdlsoap:fault name="ProcessingException" use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
+          namespace="http://soapinterop.org/wsdl"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="OutputXML">
+      <wsdlsoap:operation soapAction="frepple#OutputXML" style="document"/>
+      <wsdl:output name="OutputXMLResponse">
+          <wsdlsoap:body parts="out0" use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ProcessingException">
+        <wsdlsoap:fault name="ProcessingException" use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
+          namespace="http://soapinterop.org/wsdl"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <!-- Service  definition -->
+  <wsdl:service name="frepple">
+      <wsdl:port binding="impl:freppleSoapBinding" name="frepple">
+          <wsdlsoap:address location="http://localhost/axis/frepple"/>
+      </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,227 @@
+/***************************************************************************
+  file : $URL: file:///develop/SVNrepository/frepple/trunk/src/model/flow.cpp $
+  version : $LastChangedRevision$  $LastChangedBy$
+  date : $LastChangedDate$
+  email : johan_de_taeye@yahoo.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ * Copyright (C) 2006 by Johan De Taeye                                    *
+ *                                                                         *
+ * This library is free software; you can redistribute it and/or modify it *
+ * under the terms of the GNU Lesser General Public License as published   *
+ * by the Free Software Foundation; either version 2.1 of the License, or  *
+ * (at your option) any later version.                                     *
+ *                                                                         *
+ * This library is distributed in the hope that it will be useful,         *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser *
+ * General Public License for more details.                                *
+ *                                                                         *
+ * You should have received a copy of the GNU Lesser General Public        *
+ * License along with this library; if not, write to the Free Software     *
+ * Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA *
+ *                                                                         *
+ ***************************************************************************/
+
+
+#include "frepple/model.h"
+namespace frepple
+{
+
+
+void Flow::validate(Action action)
+{
+  // Catch null operation and buffer pointers
+  Operation* oper = getOperation();
+  Buffer* buf = getBuffer();
+  if (!oper || !buf)
+  {
+    // This flow is not a valid one since it misses essential information
+    delete this;
+    if (!oper && !buf)
+      throw DataException("Missing operation and buffer on a flow");
+    else if (!oper)
+      throw DataException("Missing operation on a flow with buffer '"
+        + buf->getName() + "'");
+    else
+      throw DataException("Missing buffer on a flow with operation '"
+        + oper->getName() + "'");
+  }
+
+  // Check if a flow with identical buffer and operation already exists
+  Operation::flowlist::const_iterator i = oper->getFlows().begin();
+  for (; i != oper->getFlows().end(); ++i)
+    if ((*i)->getBuffer() == buf && *i != this) break;
+
+  // Apply the appropriate action
+  switch (action)
+  {
+    case ADD:
+      if (i != oper->getFlows().end())
+      {
+        delete this;
+        throw DataException("Flow of '" + oper->getName() + "' and '" + 
+          buf->getName() + "' already exists.");
+      }
+      break;
+    case CHANGE:
+      if (i == oper->getFlows().end())  // @todo change of flow not working?
+      {
+        delete this;
+        throw DataException("Can't update nonexistent flow of '" 
+          + oper->getName() + "' and '" + buf->getName() + "'");
+      }
+      // Note the absence of a break statement here...
+    case ADD_CHANGE:
+      // ADD is handled in the code after the switch statement
+      if (i == oper->getFlows().end()) break;
+      // Abort if the type of the flows is different
+      if (getType() != (*i)->getType())
+        throw DataException("Can't change the type of a flow");
+      // CHANGE action is coded here. We copy the attributes from the current
+      // temporary flow model to the existing one.
+      (*i)->quantity = quantity;
+      // Now we drop the temporary flow.
+      clog << "kiwi trouble" << endl;
+      // delete this; // xxx @todo this fucks up the callback!!!!
+      return;
+    case REMOVE:
+      if (i != oper->getFlows().end())
+        // Found a flow to delete
+        delete *i;
+      else
+      {
+        // Nothing to delete
+        delete this;
+        throw DataException("Can't remove nonexistent flow of '" 
+          + oper->getName() + "' and '" + buf->getName() + "'");
+      }
+      // This flow was only used temporarily during the reading process
+      delete this;
+      return;
+  }
+
+  // Attach to buffers higher up in the hierarchy
+  // Note that the owner can create more loads if it has an owner too.
+  if (buf->hasOwner()) new Flow(oper, buf->getOwner(), quantity);
+
+  // Set a flag to make sure the level computation is triggered again
+  HasLevel::triggerLazyRecomputation();
+}
+
+
+Flow::~Flow()
+{
+  // Set a flag to make sure the level computation is triggered again
+  HasLevel::triggerLazyRecomputation();
+
+  // Delete the flow from the operation and buffer
+  if (getOperation()) getOperation()->flowdata.erase(this);
+  if (getBuffer()) getBuffer()->flows.erase(this);
+}
+
+
+void Flow::writeElement (XMLOutput *o, const XMLtag& tag, mode m) const
+{
+  // If the flow has already been saved, no need to repeat it again
+  // A 'reference' to a flow is not useful to be saved.
+  if (m == REFERENCE) return;
+  assert(m != NOHEADER);
+
+  // Write the header
+  o->BeginObject(tag, Tags::tag_type, getType().type);
+
+  // If the flow is defined inside of an operation tag, we don't need to save
+  // the operation. Otherwise we do save it...
+  if (!dynamic_cast<Operation*>(o->getPreviousObject()))
+    o->writeElement(Tags::tag_operation, getOperation());
+
+  // If the flow is defined inside of an buffer tag, we don't need to save
+  // the buffer. Otherwise we do save it...
+  if (!dynamic_cast<Buffer*>(o->getPreviousObject()))
+    o->writeElement(Tags::tag_buffer, getBuffer());
+
+  // Write the quantity
+  o->writeElement(Tags::tag_quantity, quantity);
+
+  // End of flow object
+  o->EndObject(tag);
+}
+
+
+void Flow::beginElement (XMLInput& pIn, XMLElement& pElement)
+{
+  if (pElement.isA (Tags::tag_buffer))
+    pIn.readto( MetaCategory::ControllerString<Buffer>(Buffer::metadata,pIn.getAttributes()) );
+  else if (pElement.isA (Tags::tag_operation))
+    pIn.readto( MetaCategory::ControllerString<Operation>(Operation::metadata,pIn.getAttributes()) );
+}
+
+
+void Flow::endElement (XMLInput& pIn, XMLElement& pElement)
+{
+  if (pElement.isA (Tags::tag_buffer))
+  {
+    Buffer * b = dynamic_cast<Buffer*>(pIn.getPreviousObject());
+    if (b) setBuffer(b);
+    else throw LogicException("Incorrect object type during read operation");
+  }
+  else if (pElement.isA (Tags::tag_operation))
+  {
+    Operation * o = dynamic_cast<Operation*>(pIn.getPreviousObject());
+    if (o) setOperation(o);
+    else throw LogicException("Incorrect object type during read operation");
+  }
+  else if(pElement.isA(Tags::tag_quantity))
+    setQuantity(pElement.getFloat());
+  else if (pElement.isA(Tags::tag_action))
+  {
+    delete static_cast<Action*>(pIn.getUserArea());
+    pIn.setUserArea(
+      new Action(MetaData::decodeAction(pElement.getString().c_str()))
+      );
+  }
+  else if(pIn.isObjectEnd())
+  {
+    // The Flow data is now all read in. See if it makes sense now...
+    validate(!pIn.getUserArea() ?
+            ADD_CHANGE :
+            *static_cast<Action*>(pIn.getUserArea())
+            );
+    delete static_cast<Action*>(pIn.getUserArea());
+  }
+}
+
+
+void FlowEnd::writeElement
+(XMLOutput *o, const XMLtag& tag, mode m) const
+{
+  // If the flow has already been saved, no need to repeat it again
+  // A 'reference' to a flow is not useful to be saved.
+  if (m == REFERENCE) return;
+  assert(m != NOHEADER);
+
+  // Write the header
+  o->BeginObject(tag, Tags::tag_type, getType().type);
+
+  // If the flow is defined inside of an operation tag, we don't need to save
+  // the operation. Otherwise we do save it...
+  if (!dynamic_cast<Operation*>(o->getPreviousObject()))
+    o->writeElement(Tags::tag_operation, getOperation());
+
+  // If the flow is defined inside of an buffer tag, we don't need to save
+  // the buffer. Otherwise we do save it...
+  if (!dynamic_cast<Buffer*>(o->getPreviousObject()))
+    o->writeElement(Tags::tag_buffer, getBuffer());
+
+  // Write the quantity
+  o->writeElement(Tags::tag_quantity, getQuantity());
+
+  // End of flow object
+  o->EndObject(tag);
+}
+
+
+}

@@ -1,0 +1,419 @@
+/***************************************************************************
+  file : $URL: file:///develop/SVNrepository/frepple/trunk/include/frepple/solver.h $
+  version : $LastChangedRevision$  $LastChangedBy$
+  date : $LastChangedDate$
+  email : johan_de_taeye@yahoo.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ * Copyright (C) 2006 by Johan De Taeye                                    *
+ *                                                                         *
+ * This library is free software; you can redistribute it and/or modify it *
+ * under the terms of the GNU Lesser General Public License as published   *
+ * by the Free Software Foundation; either version 2.1 of the License, or  *
+ * (at your option) any later version.                                     *
+ *                                                                         *
+ * This library is distributed in the hope that it will be useful,         *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser *
+ * General Public License for more details.                                *
+ *                                                                         *
+ * You should have received a copy of the GNU Lesser General Public        *
+ * License along with this library; if not, write to the Free Software     *
+ * Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA *
+ *                                                                         *
+ ***************************************************************************/
+
+#ifndef SOLVER_H
+#define SOLVER_H
+
+#include "frepple/model.h"
+#include <deque>
+#include <cmath>
+
+#ifdef HAVE_LIBGLPK
+extern "C" {
+#include "glpk.h"
+}
+#endif
+
+
+namespace frepple
+{
+
+// Define the maximum number of threads allowed during solving. 
+#ifdef MT
+// @todo Solver can't work yet with multiple solver threads
+#define MAXTHREADS 1
+#else
+#define MAXTHREADS 1
+#endif
+
+/** This solver implements a heuristic algorithm for planning demands. One by
+  * one the demands are processed. The demand will consume step by step any
+  * upstream materials, respecting all relevant constraints on its path.<br>
+  * The solver supports all planning constraints as defined in Solver 
+  * class.<br>
+  * See the documentation of the different solve methods to understand the
+  * functionality in more detail.
+  */
+class MRPSolver : public Solver
+{
+  protected:
+    /** This variable stores the constraint which the solver should respect.
+      * By default no constraints are enabled. */
+    short constrts;
+
+    void solve(Operation*, void* = NULL);
+    void solve(OperationRouting*, void* = NULL);
+    void solve(OperationEffective*, void* = NULL);
+
+    /** Behavior of this solver method is:
+      *  - The solver loops through each alternate operation in order of
+      *    priority. On each alternate operation, the solver will try to plan
+      *    the quantity that hasn't been planned on higher priority alternates.
+      *  - As a special case, operations with zero priority are skipped in the
+      *    loop. These operations are considered to be temporarily unavailable.
+      *  - The requested operation can be planned over multiple alternates.
+      *    We don't garantuee that a request is planned using a single alternate
+      *    operation.
+      *  - The solver properly considers the quantity_per of all flows producing
+      *    into the requested buffer, if such a buffer is specified.
+      */
+    void solve(OperationAlternate*,void* = NULL);
+
+    /** Behavior of this solver method:
+      *  - No propagation to upstream buffers at all, even if a producing
+      *    operation has been specified.
+      *  - Always give an answer for the full quantity on the requested date.
+      */
+    void solve(BufferInfinite*,void* = NULL);
+
+    /** Behavior of this solver method:
+      *  - Consider 0 as the hard minimum limit. It is currently not possible
+      *    to model a 'hard' safety stock reservation.
+      *  - Minimum inventory is treated as a 'wish' inventory. When replenishing
+      *    a buffer we try to satisfy the minimum target. If that turns out
+      *    not to be possible we use whatever available supply for satisfying
+      *    the demand first.
+      *  - This method is also used for MinMax buffers. In that case, the
+      *    replenishment is to the maximum level.
+      *    The maximum level is treated as a 'wish' inventory, similar to the
+      *    minimum inventory.
+      *    When flowplans aren't planned in chronological order on the buffer
+      *    the resulting inventory profile of a MinMax buffer will NOT show 
+      *    the typical and expected sawtooth shape. @todo
+      *  - Planning for the minimum target is part of planning a demand. There
+      *    is no planning run independent of demand to satisfy the minimum
+      *    target.<br>
+      *    E.g. If a buffer has no demand on it, the solver won't try to
+      *    replenish to the minimum target.<br>
+      *    E.g. If the minimum target increases after the latest date required
+      *    for satisfying a certain demand that change will not be considered.
+      *  - The solver completely ignores the maximum target.
+      */
+    void solve(Buffer*, void* = NULL);
+
+    /** Behavior of this solver method:
+      * @todo add doc
+      * @see checkOperationMaterial
+      */
+    void solve(Flow*, void* = NULL);
+
+    /** Behavior of this solver method:
+      *  - The operationplan is checked for a capacity overload. When detected
+      *    it is moved to an earlier date. 
+      *  - This move can be repeated until no capacity is found till a suitable
+      *    time slot is found. If the fence and/or leadtime constraints are 
+      *    enabled they can restrict the feasible moving time.<br>
+      *    If a feasible timeslot is found, the method exits here.
+      *  - If no suitable time slot can be found at all, the operation plan is
+      *    put on its original date and we now try to move it to a feasible
+      *    later date. Again, successive moves are possible till a suitable
+      *    slot is found or till we reach the end of the horizon.
+      *    The result of the search is returned as the answer-date to the 
+      *    solver. 
+      */
+    void solve(Resource*, void* = NULL);
+
+    /** Behavior of this solver method:
+      *  - Always return OK.
+      */
+    void solve(ResourceInfinite*,void* = NULL);
+
+    /** Behavior of this solver method:
+      * This method simply passes on the request to the referenced resource.
+      * With the current model structure it could easily be avoided (and thus
+      * gain a bit in performance), but we wanted to include it anyway to make 
+      * the solver as generic and future-proof as possible.
+      * @see checkOperationCapacity
+      */
+    void solve(Load* l, void* d = NULL) {l->getResource()->solve(*this,d);}
+
+  public:
+    /** Behavior of this solver method:
+      *  - Respects the following demand planning policies:<br>
+      *     1) PLANSHORT - plan the demand short<br>
+      *        or PLANLATE - plan the demand late<br>
+      *     2) SINGLEDELIVERY - plan complete or plan nothing at all<br>
+      *        or MULTIDELIVERY - allow the demand to be planned in multiple
+      *        deliveries at different times<br>
+      * This method is normally called from within the main solve method, but
+      * it can also be called independently to plan a certain demand.
+      * @see solve
+      */
+    void solve(Demand*, void* = NULL);
+
+    /** This is the main solver method that will appropriately call the other 
+      * solve methods.<br>
+      * The demands in the model will all be sorted with the criteria defined in
+      * the demand_comparison() method. For each of demand the solve(Demand*) 
+      * method is called to plan it.
+      */
+    void solve(void *v = NULL);
+
+    /** Constructor. */
+    MRPSolver(const string& n) : Solver(n) {}
+
+    /** Destructor. */
+    virtual ~MRPSolver() {}
+
+    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    void endElement(XMLInput& pIn, XMLElement& pElement);
+
+    virtual const MetaData& getType() const {return metadata;}
+    static const MetaClass metadata;
+
+    /** Definition of the planning mode. */
+    static const short LEADTIME; // = 1
+    static const short MATERIAL; // = 2
+    static const short CAPACITY; // = 4
+    static const short FENCE; // = 8
+
+    /** Update the constraints to be considered by this solver. This field may
+      * not be applicable for all solvers. */
+    void setConstraints(short i) {constrts = i;}
+
+    /** Returns the constraints considered by the solve. */
+    short getConstraints() const {return constrts;}
+
+    /** Returns true if this solver respects the operation release fences. 
+      * The solver isn't allowed to create any operation plans within the
+      * release fence. 
+      */
+    bool isFenceConstrained() const {return (constrts & FENCE)>0;}
+
+    /** Returns true if this solver respects the current time of the plan.
+      * The solver isn't allowed to create any operation plans in the past.
+      */
+    bool isLeadtimeConstrained() const {return (constrts & LEADTIME)>0;}
+    bool isMaterialConstrained() const {return (constrts & MATERIAL)>0;}
+    bool isCapacityConstrained() const {return (constrts & CAPACITY)>0;}
+
+    /** Returns true if any constraint is relevant for the solver. */
+    bool isConstrained() const {return constrts>0;}
+
+  private:
+    typedef map < int, deque<Demand*>, less<int> > classified_demand;
+    typedef classified_demand::iterator cluster_iterator;
+    classified_demand demands_per_cluster;
+
+    /** This iterator is used to step through the clusters that need to be
+      * planned. */
+    cluster_iterator cur_cluster;
+
+    /** This function runs a single planning thread. Such a thread will loop
+      * through the following steps:
+      *    - Use the method next_cluster() to find another unplanned cluster.
+      *    - Exit the thread if no more cluster is found.
+      *    - Sort all demands in the cluster, using the demand_comparison()
+      *      method.
+      *    - Loop through the sorted list of demands and plan each of them.
+      *      During planning the demands exceptions are caught, and the
+      *      planning loop will simply move on to the next demand.
+      *      In this way, an error in a part of the model doesn't ruin the
+      *      complete plan.
+      * @see demand_comparison
+      * @see next_cluster
+      */
+    static void* SolverThread(void *);
+
+    /** Returns the next planning problem a thread needs to tackle. */
+    static cluster_iterator next_cluster(MRPSolver*);
+
+  protected:
+
+    /** This class is a helper class for the MRPSolver. It stores the solver 
+      * state maintained by each solver thread.
+      * @see MRPSolver
+      */
+    class MRPSolverdata
+    {
+      friend class MRPSolver;
+      public:
+        MRPSolver* getSolver() const {return sol;}
+        MRPSolverdata() : curOwnerOpplan(NULL), q_loadplan(NULL), 
+          q_flowplan(NULL), q_operationplan(NULL) {}
+
+      private:
+        /** Maintains a list of all actions triggered by the solver. */
+        CommandList actions;
+        
+        /** Which thread is running this action. */
+        unsigned int threadid;
+
+        /** Points to the solver. */
+        MRPSolver* sol;
+
+        /** Points to the demand being planned. */
+        Demand* curDemand;
+
+        /** Points to the current owner operationplan. This is used when 
+          * operations are nested. */
+        OperationPlan* curOwnerOpplan;
+
+        /** Points to the current buffer. */
+        Buffer* curBuffer;
+
+        /** This variable is used by the resource solver. It will be true when
+          * there is not a single constraint on the loads. */
+        bool AllLoadsOkay;
+
+        /** Used by the resource solver when moving in operationplans. */
+        CommandMoveOperationPlan* moveit;
+
+        /** This is the quantity we are asking for. */
+        float q_qty;
+
+        /** This is the Date we are asking for. */
+        Date q_date;
+
+        /** This is the quantity we can get by the requested Date. */
+        float a_qty;
+
+        /** This is the Date when we can get extra availability. */
+        Date a_date;
+
+        /** This is a pointer to a LoadPlan. It is used for communication 
+          * between the Operation-Solver and the Resource-Solver. */
+        LoadPlan* q_loadplan;
+
+        /** This is a pointer to a FlowPlan. It is used for communication 
+          * between the Operation-Solver and the Buffer-Solver. */
+        FlowPlan* q_flowplan;
+
+        /** A pointer to an operationplan currently being solved. */
+        OperationPlan* q_operationplan;
+    };
+
+    /** This function defines the order in which the demands are being
+      * planned. The demand priority is used as the first criterium, with the
+      * due date being used as tie break.
+      */
+    static bool demand_comparison(Demand* l1, Demand* l2);
+
+    /** This function will check all constraints for an operationplan
+      * and propagate it upstream. The check does NOT check eventual
+      * sub operationplans.
+      * The return value is a flag whether the operationplan is
+      * acceptable (sometimes in reduced quantity) or not.
+      */
+    bool checkOperation(OperationPlan*, MRPSolverdata& data);
+    bool checkOperationLeadtime(OperationPlan*, MRPSolverdata& data);
+    bool checkOperationMaterial(OperationPlan*, MRPSolverdata& data);
+    bool checkOperationCapacity(OperationPlan*, MRPSolverdata& data);
+};
+
+
+#ifdef HAVE_LIBGLPK
+
+/** This class is a prototype of an Linear Programming (LP) Solver for the
+  * planning problem or a subset of it. It is based on the GLPK (Gnu
+  * Linear Programming Kit) library.
+  * The class provides only a prototype framework, and it is definately not
+  * ready for full use in a production environment. It misses too much
+  * functionality for this purpose (e.g. no on-hand netting, doesn't plan
+  * demand late, single level supply chain, no lead times, etc).
+  * Nevertheless, the current code is currently geared towards simple
+  * alLocation Problems but could be extended relatively easy to solve
+  * other subProblems. See the documentation for further details on the LP
+  * formulation, potential uses, limitations, etc...
+  */
+class LPSolver : public Solver
+{
+  public:
+    /** This method creates a new column in the model for every demand. It's
+      * value represents the planned quantity of that demand.
+      * @exception DataException Generated when no calendar has been specified.
+      */
+    void solve(void* = NULL);
+    void solve(Demand*, void* = NULL);
+    void solve(Buffer*, void* = NULL);
+
+    Calendar * getCalendar() const {return cal;}
+    void setCalendar(Calendar* c) {cal = c;}
+
+    void beginElement(XMLInput& pIn, XMLElement& pElement);
+    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    void endElement(XMLInput& pIn, XMLElement& pElement);
+
+    LPSolver(const string n) : Solver(n), cal(NULL), rows(0), columns(0) {};
+    ~LPSolver() {};
+
+    virtual const string& getType() const {return metadata.type;}
+    static const MetaClass metadata;
+
+  private:
+    /** This is an auxilary function. GLPK requires names to contain only
+      * "graphic" characters. A space isn't one of those. Since our model
+      * can contain HasHierarchy names with a space, we call this function to
+      * replace the spaces with underscores.
+	  * Note however that we can't garantuee that the updated strings are 
+	  * all unique after the replacement!
+      */
+    static string replaceSpaces(string);
+
+    /** This object is the interface with the GLPK structures. */
+    LPX* lp;
+
+    /** Which buckets to use for the linearization of the Problem. */
+    Calendar *cal;
+
+    /** A counter for the number of rows in our LP matrix. */
+    int rows;
+
+    /** A counter for the number of columns in our LP matrix. */
+    int columns;
+
+    typedef map< int, int, less<int> > priolist;
+    /** Here we store a conversion table between a certain value of the demand
+      * priority and a row in the LP matrix. The row represents the satisfied
+      * demand of this demand priority.
+      */
+    priolist demandprio2row;
+
+    typedef map<const Buffer*, int, less<const Buffer*> > Bufferlist;
+    /** Here we store a conversion table between a Buffer pointer and a row
+      * index in the LP constraint matrix. Each Buffer has N rows in the matrix,
+      * where N is the number of buckets in the Calendar.
+      * The index stored in this table is the lowest row number -1.
+      */
+    Bufferlist Buffer2row;
+};
+
+#endif   // end HAVE_LIBGLPK
+
+
+class LibrarySolver
+{
+  public:
+    static void initialize();
+    static void finalize() {}
+};
+
+
+} // end namespace
+
+
+#endif

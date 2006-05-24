@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>plan</NAME>
+  <DESCRIPTION>XML structure test model</DESCRIPTION>
+  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" VERBOSE="false"/>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+      <FILENAME>output.1s.xml</FILENAME>
+    </COMMAND>
+  </COMMANDS>
+  <DEMANDS>
+    <!-- Level 1: Lot -->
+    <DEMAND NAME="order 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-27T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="item 1">
+        <!-- Level 2: Item -->
+        <DESCRIPTION>description item 1</DESCRIPTION>
+        <CATEGORY>item category</CATEGORY>
+        <OPERATION NAME="operation 1" xsi:type="OPERATION_ROUTING">
+          <!-- Level 3: Operation -->
+          <SIZE_MULTIPLE>3</SIZE_MULTIPLE>
+          <STEPS>
+            <OPERATION NAME="operation 1 step1"
+              xsi:type="OPERATION_FIXED_TIME">
+              <!-- Level 4: Operation -->
+              <FLOWS>
+                <FLOW xsi:type="FLOW_START">
+                  <!-- Level 5: Flow -->
+                  <QUANTITY>-1</QUANTITY>
+                  <BUFFER NAME="STCK1">
+                    <!-- Level 6: Buffer -->
+                    <ITEM NAME="item 1" CATEGORY="end item" />
+                    <ONHAND>100</ONHAND>
+                    <!-- Level 7: Location -->
+                    <LOCATION NAME="location 1" CATEGORY="manufacturing" />
+                  </BUFFER>
+                </FLOW>
+              </FLOWS>
+              <LOADS>
+                <LOAD>
+                  <!-- Level 5: Load -->
+                  <RESOURCE NAME="resource 1">
+                    <!-- Level 6: Resource -->
+                    <MAXIMUM NAME="weeks" xsi:type="CALENDAR_FLOAT">
+                      <!-- Level 7: Calendar -->
+                      <BUCKETS>
+                        <!-- Level 8: Bucket -->
+                        <BUCKET START="2006-01-01T00:00:00">
+                          <NAME>Jan Week1</NAME>
+                          <VALUE>0</VALUE>
+                        </BUCKET>
+                      </BUCKETS>
+                    </MAXIMUM>
+                  </RESOURCE>
+                </LOAD>
+              </LOADS>
+              <DURATION>168:00:00</DURATION>
+            </OPERATION>
+            <OPERATION NAME="operation 1 step2"
+              xsi:type="OPERATION_FIXED_TIME">
+              <DURATION>168:00:00</DURATION>
+            </OPERATION>
+          </STEPS>
+        </OPERATION>
+      </ITEM>
+    </DEMAND>
+  </DEMANDS>
+  <PROBLEMS>
+    <!-- Input being ignored. It is still being validated. -->
+  </PROBLEMS>
+</PLAN>

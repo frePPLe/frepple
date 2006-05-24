@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>Material constraint test model</NAME>
+  <DESCRIPTION>
+    This model test the buffer replenishment code for various material
+    constraint scenario's. All cases have in common that there is no operation
+    defined to replenish the buffer, i.e. we only consume the available supply.
+    - 1: Consumers are later than supply, and material is consumed till
+    exhausted.
+    - 2: Same as 1, but with different rank of the due date of the demand.
+    - 3: Same as 1, but with some extra supply available at a later
+    date. Some demand is delayed to consume the extra supply.
+    - 4: Similar to 3, but with the demand and supply dates shuffled around
+    a bit.
+  </DESCRIPTION>
+  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <VERBOSE>false</VERBOSE>
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+      <FILENAME>output.1s.xml</FILENAME>
+    </COMMAND>
+  </COMMANDS>
+  <ITEMS>
+    <ITEM NAME="item 1">
+      <OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="item 2">
+      <OPERATION NAME="delivery 2" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="item 3">
+      <OPERATION NAME="delivery 3" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="item 4">
+      <OPERATION NAME="delivery 4" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+  </ITEMS>
+  <OPERATIONS>
+    <OPERATION NAME="supply 1" />
+    <OPERATION NAME="supply 2" />
+    <OPERATION NAME="supply 3" />
+    <OPERATION NAME="supply 4" />
+  </OPERATIONS>
+  <BUFFERS>
+    <BUFFER NAME="buffer 1">
+      <ITEM NAME="item 1" />
+    </BUFFER>
+    <BUFFER NAME="buffer 2">
+      <ITEM NAME="item 2" />
+    </BUFFER>
+    <BUFFER NAME="buffer 3">
+      <ITEM NAME="item 3" />
+    </BUFFER>
+    <BUFFER NAME="buffer 4">
+      <ITEM NAME="item 4" />
+    </BUFFER>
+  </BUFFERS>
+  <FLOWS>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="supply 1" />
+      <BUFFER NAME="buffer 1" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery 1" />
+      <BUFFER NAME="buffer 1" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="supply 2" />
+      <BUFFER NAME="buffer 2" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery 2" />
+      <BUFFER NAME="buffer 2" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="supply 3" />
+      <BUFFER NAME="buffer 3" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery 3" />
+      <BUFFER NAME="buffer 3" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="supply 4" />
+      <BUFFER NAME="buffer 4" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery 4" />
+      <BUFFER NAME="buffer 4" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+  </FLOWS>
+  <!-- DYNAMIC DATA CASE 1 -->
+  <DEMANDS>
+    <DEMAND NAME="order prio 1 for item 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-10T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="item 1" />
+    </DEMAND>
+    <DEMAND NAME="order prio 2 for item 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-11T00:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="item 1" />
+    </DEMAND>
+    <DEMAND NAME="order prio 3 for item 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-12T00:00:00</DUE>
+      <PRIORITY>3</PRIORITY>
+      <ITEM NAME="item 1" />
+    </DEMAND>
+  </DEMANDS>
+  <OPERATION_PLANS>
+    <OPERATION_PLAN ID="2001" OPERATION="supply 1">
+      <START>2006-01-01T00:00:00</START>
+      <END>2006-01-01T00:00:00</END>
+      <QUANTITY>25</QUANTITY>
+      <LOCKED>true</LOCKED>
+    </OPERATION_PLAN>
+  </OPERATION_PLANS>
+  <!-- DYNAMIC DATA CASE 2 -->
+  <DEMANDS>
+    <DEMAND NAME="order prio 1 for item 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-10T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="item 2" />
+    </DEMAND>
+    <DEMAND NAME="order prio 2 for item 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-11T00:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="item 2" />
+    </DEMAND>
+    <DEMAND NAME="order prio 3 for item 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-05T00:00:00</DUE>
+      <PRIORITY>3</PRIORITY>
+      <ITEM NAME="item 2" />
+    </DEMAND>
+  </DEMANDS>
+  <OPERATION_PLANS>
+    <OPERATION_PLAN ID="2002" OPERATION="supply 2">
+      <START>2006-01-01T00:00:00</START>
+      <END>2006-01-01T00:00:00</END>
+      <QUANTITY>25</QUANTITY>
+      <LOCKED>true</LOCKED>
+    </OPERATION_PLAN>
+  </OPERATION_PLANS>
+  <!-- DYNAMIC DATA CASE 3 -->
+  <DEMANDS>
+    <DEMAND NAME="order prio 1 for item 3">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-10T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="item 3" />
+    </DEMAND>
+    <DEMAND NAME="order prio 2 for item 3">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-11T00:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="item 3" />
+    </DEMAND>
+    <DEMAND NAME="order prio 3 for item 3">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-05T00:00:00</DUE>
+      <PRIORITY>3</PRIORITY>
+      <ITEM NAME="item 3" />
+    </DEMAND>
+  </DEMANDS>
+  <OPERATION_PLANS>
+    <OPERATION_PLAN ID="2003" OPERATION="supply 3">
+      <START>2006-01-01T00:00:00</START>
+      <END>2006-01-01T00:00:00</END>
+      <QUANTITY>25</QUANTITY>
+      <LOCKED>true</LOCKED>
+    </OPERATION_PLAN>
+    <OPERATION_PLAN ID="2004" OPERATION="supply 3">
+      <START>2006-01-20T00:00:00</START>
+      <END>2006-01-20T00:00:00</END>
+      <QUANTITY>2</QUANTITY>
+      <LOCKED>true</LOCKED>
+    </OPERATION_PLAN>
+  </OPERATION_PLANS>
+  <!-- DYNAMIC DATA CASE 4 -->
+  <DEMANDS>
+    <DEMAND NAME="order prio 1 for item 4">
+      <QUANTITY>8</QUANTITY>
+      <DUE>2006-01-10T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="item 4" />
+    </DEMAND>
+    <DEMAND NAME="order prio 2 for item 4">
+      <QUANTITY>8</QUANTITY>
+      <DUE>2006-01-22T00:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="item 4" />
+    </DEMAND>
+    <DEMAND NAME="order prio 3 for item 4">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-05T00:00:00</DUE>
+      <PRIORITY>3</PRIORITY>
+      <ITEM NAME="item 4" />
+    </DEMAND>
+  </DEMANDS>
+  <OPERATION_PLANS>
+    <OPERATION_PLAN ID="4001" OPERATION="supply 4">
+      <START>2006-01-01T00:00:00</START>
+      <END>2006-01-01T00:00:00</END>
+      <QUANTITY>10</QUANTITY>
+      <LOCKED>true</LOCKED>
+    </OPERATION_PLAN>
+    <OPERATION_PLAN ID="4002" OPERATION="supply 4">
+      <START>2006-01-20T00:00:00</START>
+      <END>2006-01-20T00:00:00</END>
+      <QUANTITY>10</QUANTITY>
+      <LOCKED>true</LOCKED>
+    </OPERATION_PLAN>
+  </OPERATION_PLANS>
+</PLAN>

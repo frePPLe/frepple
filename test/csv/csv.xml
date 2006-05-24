@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ITEMS>
+    <!-- A test of a simple CSV data file and simple model. -->
+  	<?CSV datafile="input.1.csv" delimiter="," comment="#"
+			 <ITEM NAME="$1">
+			   <CATEGORY>$2</CATEGORY>
+			   <DESCRIPTION>$3</DESCRIPTION>
+			 </ITEM>
+		?>
+  </ITEMS>
+</PLAN>

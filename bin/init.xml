@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <!--
+  This file is a frepple command file that is automatically read by frepple
+  when the library is being initialized. It can be used to set create some
+  initial models or define some startup commands.
+
+  If no file "$FREPPLE_HOME/init.xml" is found, no startup commands are
+  executed. If the file exists but is unreadable, a warning message will be
+  printed.
+
+  If the contents of this file has validation errors, the execution is
+  aborted.
+  -->
+  <!--
+  <LOGFILE>/home/johan/workspace/frepple/contrib/apache/frepple.log</LOGFILE>
+  -->
+  <COMMANDS>
+    <VERBOSE>true</VERBOSE>
+    <ABORTONERROR>false</ABORTONERROR>
+    <COMMAND xsi:type="COMMAND_LOADLIB">
+      <FILENAME>/home/johan/workspace/frepple/src/modules/forecast/.libs/libforecast.so</FILENAME>
+      <PARAMETER NAME="test1" VALUE="val1"/>
+      <PARAMETER>
+        <NAME>test2</NAME>
+        <VALUE>val2</VALUE>
+      </PARAMETER>
+    </COMMAND>
+  </COMMANDS>
+</PLAN>

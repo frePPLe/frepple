@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="source"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Xperi/jboss-4.0.1sp1/server/default/lib/jbossmq.jar"/>
+	<classpathentry kind="lib" path="C:/Xperi/jboss-4.0.1sp1/server/default/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="C:/Xperi/jboss-4.0.1sp1/server/default/lib/jboss-j2ee.jar"/>
+	<classpathentry kind="lib" path="C:/Xperi/jboss-4.0.1sp1/server/default/lib/jnpserver.jar"/>
+	<classpathentry kind="lib" path="C:/Xperi/jboss-4.0.1sp1/server/default/lib/jboss.jar"/>
+	<classpathentry kind="lib" path="C:/Xperi/jboss-4.0.1sp1/lib/jboss-common.jar"/>
+	<classpathentry kind="lib" path="C:/Xperi/jboss-4.0.1sp1/client/axis-ws4ee.jar"/>
+	<classpathentry kind="lib" path="C:/Xperi/jboss-4.0.1sp1/server/default/lib/javax.servlet.jar"/>
+	<classpathentry kind="lib" path="C:/Xperi/jboss-4.0.1sp1/client/jbossall-client.jar"/>
+	<classpathentry kind="lib" path="C:/Xperi/jboss-4.0.1sp1/lib/endorsed/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="C:/Xperi/jboss-4.0.1sp1/server/default/lib/mail.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

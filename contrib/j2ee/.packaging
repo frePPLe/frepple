@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurations>
+<archive name="frepple_j2ee.jar" destination="lib" used="true" exploded="false">
+<folder prefix="META-INF" includes="" excludes="" project="" projectLocation="META-INF" name="META-INF" location="META-INF" used="true"/>
+<folder prefix="frepple" includes="" excludes="" project="" projectLocation="bin/frepple" name="frepple" location="bin/frepple" used="true"/>
+</archive>
+<archive name="frepple_j2ee_clients.jar" destination="lib" used="true" exploded="false">
+<file prefix="frepple/webservice" project="" projectLocation="bin/frepple/webservice/client.class" name="client.class" location="bin/frepple/webservice/client.class" used="true"/>
+<file prefix="frepple/jms" project="" projectLocation="bin/frepple/jms/Client.class" name="Client.class" location="bin/frepple/jms/Client.class" used="true"/>
+<file prefix="frepple/ejb" project="" projectLocation="bin/frepple/ejb/Client.class" name="Client.class" location="bin/frepple/ejb/Client.class" used="true"/>
+</archive>
+<archive name="frepple.war" destination="lib" used="true" exploded="false">
+<folder prefix="WEB-INF" includes="" excludes="" project="" projectLocation="WEB-INF" name="WEB-INF" location="WEB-INF" used="true"/>
+<folder prefix="WEB-INF/classes/frepple" includes="" excludes="" project="" projectLocation="bin/frepple" name="frepple" location="bin/frepple" used="true"/>
+<folder prefix="" includes="" excludes="" project="" projectLocation="web" name="web" location="web" used="true"/>
+</archive>
+</configurations>

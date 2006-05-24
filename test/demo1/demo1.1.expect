@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PLAN >
+	<BUFFERS>
+		<BUFFER NAME="RM1">
+			<ONHAND>25</ONHAND>
+			<PROFILE>
+				<FLOW>
+					<DATE>1970-01-01T01:00:00</DATE>
+					<QUANTITY>25</QUANTITY>
+					<ONHAND>25</ONHAND>
+					<MINIMUM>0</MINIMUM>
+					<ID>2</ID>
+				</FLOW>
+			</PROFILE>
+		</BUFFER>
+		<BUFFER NAME="RM2" xsi:type="INFINITE">
+			<ONHAND>50</ONHAND>
+			<PROFILE>
+				<FLOW>
+					<DATE>1970-01-01T01:00:00</DATE>
+					<QUANTITY>50</QUANTITY>
+					<ONHAND>50</ONHAND>
+					<MINIMUM>0</MINIMUM>
+					<ID>3</ID>
+				</FLOW>
+			</PROFILE>
+		</BUFFER>
+		<BUFFER NAME="RM3">
+			<ONHAND>25</ONHAND>
+			<PROFILE>
+				<FLOW>
+					<DATE>1970-01-01T01:00:00</DATE>
+					<QUANTITY>25</QUANTITY>
+					<ONHAND>25</ONHAND>
+					<MINIMUM>0</MINIMUM>
+					<ID>4</ID>
+				</FLOW>
+			</PROFILE>
+		</BUFFER>
+		<BUFFER NAME="STCK1">
+		</BUFFER>
+		<BUFFER NAME="STCK2">
+			<ONHAND>25</ONHAND>
+			<PROFILE>
+				<FLOW>
+					<DATE>1970-01-01T01:00:00</DATE>
+					<QUANTITY>25</QUANTITY>
+					<ONHAND>25</ONHAND>
+					<MINIMUM>0</MINIMUM>
+					<ID>1</ID>
+				</FLOW>
+			</PROFILE>
+		</BUFFER>
+		<BUFFER NAME="SUBAS1">
+		</BUFFER>
+	</BUFFERS>
+	<DEMANDS>
+		<DEMAND NAME="order 1 for STCK 1">
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="STCK1">
+				<CATEGORY>End Item</CATEGORY>
+				<DESCRIPTION>end item 1</DESCRIPTION>
+				<OWNER NAME="End Item Family A">
+					<MEMBERS>
+						<ITEM NAME="STCK2">
+							<CATEGORY>End Item</CATEGORY>
+							<DESCRIPTION>end item 2</DESCRIPTION>
+							<OWNER NAME="End Item Family A"/>
+							<OPERATION NAME="delivery STCK2" xsi:type="OPERATION_FIXED_TIME">
+								<LEVEL>0</LEVEL>
+								<CLUSTER>1</CLUSTER>
+								<FLOWS>
+									<FLOW>
+										<BUFFER NAME="STCK2"/>
+										<QUANTITY>-1</QUANTITY>
+									</FLOW>
+								</FLOWS>
+								<DURATION>24:00:00</DURATION>
+							</OPERATION>
+						</ITEM>
+						<ITEM NAME="STCK1"/>
+					</MEMBERS>
+				</OWNER>
+				<OPERATION NAME="delivery STCK1" xsi:type="OPERATION_FIXED_TIME">
+					<LEVEL>0</LEVEL>
+					<CLUSTER>1</CLUSTER>
+					<FLOWS>
+						<FLOW>
+							<BUFFER NAME="STCK1"/>
+							<QUANTITY>-1</QUANTITY>
+						</FLOW>
+					</FLOWS>
+					<DURATION>24:00:00</DURATION>
+				</OPERATION>
+			</ITEM>
+			<DUE>2006-01-09T00:00:00</DUE>
+			<PRIORITY>1</PRIORITY>
+		</DEMAND>
+		<DEMAND NAME="order 1 for STCK 2">
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="STCK2"/>
+			<DUE>2006-02-10T00:00:00</DUE>
+			<PRIORITY>1</PRIORITY>
+		</DEMAND>
+		<DEMAND NAME="order 2 for STCK 1">
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="STCK1"/>
+			<DUE>2006-01-21T00:00:00</DUE>
+			<PRIORITY>1</PRIORITY>
+		</DEMAND>
+		<DEMAND NAME="order 2 for STCK 2">
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="STCK2"/>
+			<DUE>2006-02-15T00:00:00</DUE>
+			<PRIORITY>1</PRIORITY>
+		</DEMAND>
+		<DEMAND NAME="order 3 for STCK 1">
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="STCK1"/>
+			<DUE>2006-02-20T00:00:00</DUE>
+			<PRIORITY>2</PRIORITY>
+		</DEMAND>
+		<DEMAND NAME="order 3 for STCK 2">
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="STCK2"/>
+			<DUE>2006-02-16T00:00:00</DUE>
+			<PRIORITY>2</PRIORITY>
+		</DEMAND>
+		<DEMAND NAME="order 4 for STCK 1">
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="STCK1"/>
+			<DUE>2006-02-20T00:00:00</DUE>
+			<PRIORITY>2</PRIORITY>
+		</DEMAND>
+		<DEMAND NAME="order 4 for STCK 2">
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="STCK2"/>
+			<DUE>2006-02-26T00:00:00</DUE>
+			<PRIORITY>2</PRIORITY>
+		</DEMAND>
+	</DEMANDS>
+	<RESOURCES>
+		<RESOURCE NAME="RES1">
+			<PROFILE>
+			</PROFILE>
+		</RESOURCE>
+	</RESOURCES>
+	<OPERATION_PLANS>
+	</OPERATION_PLANS>
+	<PROBLEMS>
+		<PROBLEM>
+			<NAME>material excess</NAME>
+			<DESCRIPTION>Buffer &apos;STCK2&apos; has material excess of 25</DESCRIPTION>
+			<DATES>1970-01-01T01:00:00 / 2030-12-31T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>material excess</NAME>
+			<DESCRIPTION>Buffer &apos;RM1&apos; has material excess of 25</DESCRIPTION>
+			<DATES>1970-01-01T01:00:00 / 2030-12-31T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>material excess</NAME>
+			<DESCRIPTION>Buffer &apos;RM3&apos; has material excess of 25</DESCRIPTION>
+			<DATES>1970-01-01T01:00:00 / 2030-12-31T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;order 1 for STCK 1&apos; is not planned</DESCRIPTION>
+			<DATES>2006-01-09T00:00:00 / 2006-01-09T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;order 2 for STCK 1&apos; is not planned</DESCRIPTION>
+			<DATES>2006-01-21T00:00:00 / 2006-01-21T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;order 3 for STCK 1&apos; is not planned</DESCRIPTION>
+			<DATES>2006-02-20T00:00:00 / 2006-02-20T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;order 4 for STCK 1&apos; is not planned</DESCRIPTION>
+			<DATES>2006-02-20T00:00:00 / 2006-02-20T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;order 1 for STCK 2&apos; is not planned</DESCRIPTION>
+			<DATES>2006-02-10T00:00:00 / 2006-02-10T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;order 2 for STCK 2&apos; is not planned</DESCRIPTION>
+			<DATES>2006-02-15T00:00:00 / 2006-02-15T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;order 3 for STCK 2&apos; is not planned</DESCRIPTION>
+			<DATES>2006-02-16T00:00:00 / 2006-02-16T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;order 4 for STCK 2&apos; is not planned</DESCRIPTION>
+			<DATES>2006-02-26T00:00:00 / 2006-02-26T00:00:00</DATES>
+		</PROBLEM>
+	</PROBLEMS>
+</PLAN>

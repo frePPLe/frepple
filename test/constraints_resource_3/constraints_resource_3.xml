@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>actual plan</NAME>
+  <DESCRIPTION>
+    Resource constraint test model. In this test the third demand can't be
+    planned in time due to leadtime and capacity constraints. It is planned
+    late.
+    The model also includes a resource with infinite capacity.
+  </DESCRIPTION>
+  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <VERBOSE>false</VERBOSE>
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+      <FILENAME>output.1s.xml</FILENAME>
+    </COMMAND>
+  </COMMANDS>
+  <CALENDARS>
+    <CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
+      <BUCKETS>
+        <BUCKET START="2006-01-01T00:00:00">
+          <NAME>Jan Week1</NAME>
+        </BUCKET>
+        <BUCKET START="2006-01-07T00:00:00">
+          <NAME>Jan Week2</NAME>
+        </BUCKET>
+        <BUCKET START="2006-01-14T00:00:00">
+          <NAME>Jan Week3</NAME>
+        </BUCKET>
+        <BUCKET START="2006-01-21T00:00:00">
+          <NAME>Jan Week4</NAME>
+        </BUCKET>
+        <BUCKET START="2006-01-28T00:00:00">
+          <NAME>Jan Week5</NAME>
+        </BUCKET>
+        <BUCKET START="2006-02-04T00:00:00">
+          <NAME>Feb Week1</NAME>
+        </BUCKET>
+        <BUCKET START="2006-02-11T00:00:00">
+          <NAME>Feb Week2</NAME>
+        </BUCKET>
+        <BUCKET START="2006-02-18T00:00:00">
+          <NAME>Feb Week3</NAME>
+        </BUCKET>
+        <BUCKET START="2006-02-25T00:00:00">
+          <NAME>Feb Week4</NAME>
+        </BUCKET>
+        <BUCKET START="2006-03-04T00:00:00">
+          <NAME>Mar Week1</NAME>
+        </BUCKET>
+        <BUCKET START="2006-03-11T00:00:00">
+          <NAME>Mar Week2</NAME>
+        </BUCKET>
+        <BUCKET START="2006-03-18T00:00:00">
+          <NAME>Mar Week3</NAME>
+        </BUCKET>
+        <BUCKET START="2006-03-25T00:00:00">
+          <NAME>Mar Week4</NAME>
+        </BUCKET>
+        <BUCKET START="2006-04-01T00:00:00">
+          <NAME>Remainder</NAME>
+        </BUCKET>
+      </BUCKETS>
+    </CALENDAR>
+  </CALENDARS>
+  <OPERATIONS>
+    <OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME">
+      <DURATION>24:00:00</DURATION>
+    </OPERATION>
+  </OPERATIONS>
+  <ITEMS>
+    <ITEM NAME="end item">
+      <OPERATION NAME="delivery end item" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+  </ITEMS>
+  <BUFFERS>
+    <BUFFER NAME="end item">
+      <CONSUMING NAME="delivery end item" />
+      <PRODUCING NAME="make end item" />
+      <ITEM NAME="end item" />
+    </BUFFER>
+  </BUFFERS>
+  <RESOURCES>
+    <RESOURCE NAME="Resource">
+      <MAXIMUM NAME="Capacity" xsi:type="CALENDAR_FLOAT">
+        <BUCKETS>
+          <BUCKET START="2006-01-01T00:00:00">
+            <VALUE>1</VALUE>
+          </BUCKET>
+        </BUCKETS>
+      </MAXIMUM>
+      <LOADS>
+        <LOAD>
+          <OPERATION NAME="make end item" />
+        </LOAD>
+      </LOADS>
+    </RESOURCE>
+    <RESOURCE NAME="Resource_Infinite" xsi:type="RESOURCE_INFINITE">
+      <LOADS>
+        <LOAD>
+          <OPERATION NAME="delivery end item" />
+        </LOAD>
+        <LOAD>
+          <OPERATION NAME="make end item" />
+        </LOAD>
+      </LOADS>
+    </RESOURCE>
+  </RESOURCES>
+  <FLOWS>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery end item" />
+      <BUFFER NAME="end item" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="make end item" />
+      <BUFFER NAME="end item" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+  </FLOWS>
+  <DEMANDS>
+    <DEMAND NAME="order 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-04T09:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="end item" />
+      <POLICY>PLANLATE</POLICY>
+    </DEMAND>
+    <DEMAND NAME="order 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-04T08:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="end item" />
+      <POLICY>PLANLATE</POLICY>
+    </DEMAND>
+    <DEMAND NAME="order 3">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-04T08:00:00</DUE>
+      <PRIORITY>3</PRIORITY>
+      <ITEM NAME="end item" />
+      <POLICY>PLANLATE</POLICY>
+    </DEMAND>
+  </DEMANDS>
+</PLAN>

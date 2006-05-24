@@ -1,0 +1,347 @@
+MODEL BEFORE DELETING BUFFER:
+<?xml version="1.0" encoding="UTF-8"?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<NAME>Custom class</NAME>
+	<CURRENT>2006-01-01T00:00:00</CURRENT>
+	<SOLVERS>
+		<SOLVER NAME="MRP" xsi:type="SOLVER_MRP">
+			<CONSTRAINTS>7</CONSTRAINTS>
+		</SOLVER>
+	</SOLVERS>
+	<LOCATIONS>
+		<LOCATION NAME="distribution centre">
+		</LOCATION>
+		<LOCATION NAME="factory 1">
+		</LOCATION>
+		<LOCATION NAME="factory 2">
+		</LOCATION>
+	</LOCATIONS>
+	<CALENDARS>
+		<CALENDAR NAME="capacity factory 1" xsi:type="CALENDAR_FLOAT">
+			<BUCKETS>
+				<BUCKET START="2006-01-01T00:00:00">
+					<NAME>all</NAME>
+					<END>2030-12-31T00:00:00</END>
+					<VALUE>1</VALUE>
+				</BUCKET>
+			</BUCKETS>
+		</CALENDAR>
+		<CALENDAR NAME="capacity factory 2" xsi:type="CALENDAR_FLOAT">
+			<BUCKETS>
+				<BUCKET START="2006-01-01T00:00:00">
+					<NAME>all</NAME>
+					<END>2030-12-31T00:00:00</END>
+					<VALUE>1</VALUE>
+				</BUCKET>
+			</BUCKETS>
+		</CALENDAR>
+	</CALENDARS>
+	<OPERATIONS>
+		<OPERATION NAME="delivery product from distribution centre" xsi:type="OPERATION_FIXED_TIME">
+		</OPERATION>
+		<OPERATION NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME">
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+		<OPERATION NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME">
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+		<OPERATION NAME="supply distribution centre" xsi:type="OPERATION_ALTERNATE">
+			<ALTERNATES>
+				<ALTERNATE>
+					<OPERATION NAME="transport supply from factory 1" xsi:type="OPERATION_TRANSPORT"/>
+					<PRIORITY>1</PRIORITY>
+				</ALTERNATE>
+				<ALTERNATE>
+					<OPERATION NAME="transport supply from factory 2" xsi:type="OPERATION_TRANSPORT"/>
+					<PRIORITY>2</PRIORITY>
+				</ALTERNATE>
+			</ALTERNATES>
+		</OPERATION>
+		<OPERATION NAME="transport supply from factory 1" xsi:type="OPERATION_TRANSPORT">
+			<FROM NAME="product in factory 1"/>
+			<TO NAME="product in distribution centre"/>
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+		<OPERATION NAME="transport supply from factory 2" xsi:type="OPERATION_TRANSPORT">
+			<FROM NAME="product in factory 2"/>
+			<TO NAME="product in distribution centre"/>
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+	</OPERATIONS>
+	<ITEMS>
+		<ITEM NAME="product">
+		</ITEM>
+	</ITEMS>
+	<BUFFERS>
+		<BUFFER NAME="product in distribution centre">
+			<PRODUCING NAME="supply distribution centre" xsi:type="OPERATION_ALTERNATE"/>
+			<ITEM NAME="product"/>
+			<LOCATION NAME="distribution centre"/>
+			<FLOWS>
+				<FLOW xsi:type="FLOW_START">
+					<OPERATION NAME="delivery product from distribution centre" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>-1</QUANTITY>
+				</FLOW>
+			</FLOWS>
+			<ONHAND>5</ONHAND>
+		</BUFFER>
+		<BUFFER NAME="product in factory 1">
+			<PRODUCING NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME"/>
+			<ITEM NAME="product"/>
+			<LOCATION NAME="factory 1"/>
+			<FLOWS>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>1</QUANTITY>
+				</FLOW>
+			</FLOWS>
+		</BUFFER>
+		<BUFFER NAME="product in factory 2">
+			<PRODUCING NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME"/>
+			<ITEM NAME="product"/>
+			<LOCATION NAME="factory 2"/>
+			<FLOWS>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>1</QUANTITY>
+				</FLOW>
+			</FLOWS>
+		</BUFFER>
+	</BUFFERS>
+	<DEMANDS>
+		<DEMAND NAME="order 1">
+			<OPERATION NAME="delivery product from distribution centre" xsi:type="OPERATION_FIXED_TIME"/>
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="product"/>
+			<DUE>2006-01-03T12:00:00</DUE>
+			<PRIORITY>1</PRIORITY>
+		</DEMAND>
+		<DEMAND NAME="order 2">
+			<OPERATION NAME="delivery product from distribution centre" xsi:type="OPERATION_FIXED_TIME"/>
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="product"/>
+			<DUE>2006-01-03T12:00:00</DUE>
+			<PRIORITY>2</PRIORITY>
+		</DEMAND>
+	</DEMANDS>
+	<RESOURCES>
+		<RESOURCE NAME="capacity of factory 1">
+			<MAXIMUM NAME="capacity factory 1" xsi:type="CALENDAR_FLOAT"/>
+			<LOADS>
+				<LOAD>
+					<OPERATION NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME"/>
+				</LOAD>
+			</LOADS>
+		</RESOURCE>
+		<RESOURCE NAME="capacity of factory 2">
+			<MAXIMUM NAME="capacity factory 2" xsi:type="CALENDAR_FLOAT"/>
+			<LOADS>
+				<LOAD>
+					<OPERATION NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME"/>
+				</LOAD>
+			</LOADS>
+		</RESOURCE>
+	</RESOURCES>
+	<OPERATION_PLANS>
+		<OPERATION_PLAN ID="10" OPERATION="delivery product from distribution centre">
+			<DEMAND NAME="order 2"/>
+			<START>2006-01-03T12:00:00</START>
+			<END>2006-01-03T12:00:00</END>
+			<QUANTITY>10</QUANTITY>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="5" OPERATION="delivery product from distribution centre">
+			<DEMAND NAME="order 1"/>
+			<START>2006-01-03T12:00:00</START>
+			<END>2006-01-03T12:00:00</END>
+			<QUANTITY>10</QUANTITY>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="2" OPERATION="make product in factory 1">
+			<START>2006-01-01T12:00:00</START>
+			<END>2006-01-02T12:00:00</END>
+			<QUANTITY>5</QUANTITY>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="7" OPERATION="make product in factory 2">
+			<START>2006-01-01T12:00:00</START>
+			<END>2006-01-02T12:00:00</END>
+			<QUANTITY>10</QUANTITY>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="9" OPERATION="supply distribution centre">
+			<START>2006-01-02T12:00:00</START>
+			<END>2006-01-03T12:00:00</END>
+			<QUANTITY>10</QUANTITY>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="4" OPERATION="supply distribution centre">
+			<START>2006-01-02T12:00:00</START>
+			<END>2006-01-03T12:00:00</END>
+			<QUANTITY>5</QUANTITY>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="3" OPERATION="transport supply from factory 1">
+			<START>2006-01-02T12:00:00</START>
+			<END>2006-01-03T12:00:00</END>
+			<QUANTITY>5</QUANTITY>
+			<OWNER ID="4" OPERATION="supply distribution centre"/>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="8" OPERATION="transport supply from factory 2">
+			<START>2006-01-02T12:00:00</START>
+			<END>2006-01-03T12:00:00</END>
+			<QUANTITY>10</QUANTITY>
+			<OWNER ID="9" OPERATION="supply distribution centre"/>
+		</OPERATION_PLAN>
+	</OPERATION_PLANS>
+	<PROBLEMS>
+		<PROBLEM>
+			<NAME>material excess</NAME>
+			<DESCRIPTION>Buffer &apos;product in distribution centre&apos; has material excess of 20</DESCRIPTION>
+			<DATES>1970-01-01T01:00:00 / 2006-01-03T12:00:00</DATES>
+		</PROBLEM>
+	</PROBLEMS>
+</PLAN>
+MODEL AFTER DELETING BUFFER:
+<?xml version="1.0" encoding="UTF-8"?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<NAME>Custom class</NAME>
+	<CURRENT>2006-01-01T00:00:00</CURRENT>
+	<SOLVERS>
+		<SOLVER NAME="MRP" xsi:type="SOLVER_MRP">
+			<CONSTRAINTS>7</CONSTRAINTS>
+		</SOLVER>
+	</SOLVERS>
+	<LOCATIONS>
+		<LOCATION NAME="distribution centre">
+		</LOCATION>
+		<LOCATION NAME="factory 1">
+		</LOCATION>
+		<LOCATION NAME="factory 2">
+		</LOCATION>
+	</LOCATIONS>
+	<CALENDARS>
+		<CALENDAR NAME="capacity factory 1" xsi:type="CALENDAR_FLOAT">
+			<BUCKETS>
+				<BUCKET START="2006-01-01T00:00:00">
+					<NAME>all</NAME>
+					<END>2030-12-31T00:00:00</END>
+					<VALUE>1</VALUE>
+				</BUCKET>
+			</BUCKETS>
+		</CALENDAR>
+		<CALENDAR NAME="capacity factory 2" xsi:type="CALENDAR_FLOAT">
+			<BUCKETS>
+				<BUCKET START="2006-01-01T00:00:00">
+					<NAME>all</NAME>
+					<END>2030-12-31T00:00:00</END>
+					<VALUE>1</VALUE>
+				</BUCKET>
+			</BUCKETS>
+		</CALENDAR>
+	</CALENDARS>
+	<OPERATIONS>
+		<OPERATION NAME="delivery product from distribution centre" xsi:type="OPERATION_FIXED_TIME">
+		</OPERATION>
+		<OPERATION NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME">
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+		<OPERATION NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME">
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+		<OPERATION NAME="supply distribution centre" xsi:type="OPERATION_ALTERNATE">
+			<ALTERNATES>
+			</ALTERNATES>
+		</OPERATION>
+	</OPERATIONS>
+	<ITEMS>
+		<ITEM NAME="product">
+		</ITEM>
+	</ITEMS>
+	<BUFFERS>
+		<BUFFER NAME="product in factory 1">
+			<PRODUCING NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME"/>
+			<ITEM NAME="product"/>
+			<LOCATION NAME="factory 1"/>
+			<FLOWS>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>1</QUANTITY>
+				</FLOW>
+			</FLOWS>
+		</BUFFER>
+		<BUFFER NAME="product in factory 2">
+			<PRODUCING NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME"/>
+			<ITEM NAME="product"/>
+			<LOCATION NAME="factory 2"/>
+			<FLOWS>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>1</QUANTITY>
+				</FLOW>
+			</FLOWS>
+		</BUFFER>
+	</BUFFERS>
+	<DEMANDS>
+		<DEMAND NAME="order 1">
+			<OPERATION NAME="delivery product from distribution centre" xsi:type="OPERATION_FIXED_TIME"/>
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="product"/>
+			<DUE>2006-01-03T12:00:00</DUE>
+			<PRIORITY>1</PRIORITY>
+		</DEMAND>
+		<DEMAND NAME="order 2">
+			<OPERATION NAME="delivery product from distribution centre" xsi:type="OPERATION_FIXED_TIME"/>
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="product"/>
+			<DUE>2006-01-03T12:00:00</DUE>
+			<PRIORITY>2</PRIORITY>
+		</DEMAND>
+	</DEMANDS>
+	<RESOURCES>
+		<RESOURCE NAME="capacity of factory 1">
+			<MAXIMUM NAME="capacity factory 1" xsi:type="CALENDAR_FLOAT"/>
+			<LOADS>
+				<LOAD>
+					<OPERATION NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME"/>
+				</LOAD>
+			</LOADS>
+		</RESOURCE>
+		<RESOURCE NAME="capacity of factory 2">
+			<MAXIMUM NAME="capacity factory 2" xsi:type="CALENDAR_FLOAT"/>
+			<LOADS>
+				<LOAD>
+					<OPERATION NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME"/>
+				</LOAD>
+			</LOADS>
+		</RESOURCE>
+	</RESOURCES>
+	<OPERATION_PLANS>
+		<OPERATION_PLAN ID="2" OPERATION="make product in factory 1">
+			<START>2006-01-01T12:00:00</START>
+			<END>2006-01-02T12:00:00</END>
+			<QUANTITY>5</QUANTITY>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="7" OPERATION="make product in factory 2">
+			<START>2006-01-01T12:00:00</START>
+			<END>2006-01-02T12:00:00</END>
+			<QUANTITY>10</QUANTITY>
+		</OPERATION_PLAN>
+	</OPERATION_PLANS>
+	<PROBLEMS>
+		<PROBLEM>
+			<NAME>material excess</NAME>
+			<DESCRIPTION>Buffer &apos;product in factory 1&apos; has material excess of 5</DESCRIPTION>
+			<DATES>2006-01-02T12:00:00 / 2030-12-31T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>material excess</NAME>
+			<DESCRIPTION>Buffer &apos;product in factory 2&apos; has material excess of 10</DESCRIPTION>
+			<DATES>2006-01-02T12:00:00 / 2030-12-31T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;order 1&apos; is not planned</DESCRIPTION>
+			<DATES>2006-01-03T12:00:00 / 2006-01-03T12:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;order 2&apos; is not planned</DESCRIPTION>
+			<DATES>2006-01-03T12:00:00 / 2006-01-03T12:00:00</DATES>
+		</PROBLEM>
+	</PROBLEMS>
+</PLAN>

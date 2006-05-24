@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>Command Test</NAME>
+  <DESCRIPTION>
+    In this test commands are being run in parallel and in sequence. The proper
+    branching and merging of the tasks is verified, and the behavior in case of
+    errors. The system commands used in this test are crafted such that they
+    work both in *nix shells and windows command shell.
+  </DESCRIPTION>
+  <COMMANDS>
+    <ABORTONERROR>true</ABORTONERROR>
+    <VERBOSE>false</VERBOSE>
+    <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="echo START >output.1.xml" />
+    <!-- Creating a bunch of parallel tasks which merge at the end. -->
+    <COMMAND xsi:type="COMMAND_SYSTEM"
+      CMDLINE="echo TEST 1: Creating parallel tasks and merge them >>output.1.xml" />
+    <COMMAND xsi:type="COMMAND_LIST" SEQUENTIAL="false">
+      <COMMAND xsi:type="COMMAND_LIST">
+        <COMMAND xsi:type="COMMAND_SYSTEM"
+          CMDLINE="sleep 1 &amp;&amp; echo  A after 1 second >>output.1.xml" />
+        <COMMAND xsi:type="COMMAND_SYSTEM"
+          CMDLINE="sleep 1 &amp;&amp; echo  A after 2 seconds >>output.1.xml" />
+        <COMMAND xsi:type="COMMAND_SYSTEM"
+          CMDLINE="sleep 3 &amp;&amp; echo  A after 5 seconds >>output.1.xml" />
+      </COMMAND>
+      <COMMAND xsi:type="COMMAND_SYSTEM"
+        CMDLINE="sleep 3 &amp;&amp; echo  B after 3 seconds >>output.1.xml" />
+      <COMMAND xsi:type="COMMAND_LIST">
+        <COMMAND xsi:type="COMMAND_SYSTEM"
+          CMDLINE="sleep 4 &amp;&amp; echo  C after 4 seconds >>output.1.xml" />
+        <COMMAND xsi:type="COMMAND_SYSTEM"
+          CMDLINE="sleep 2 &amp;&amp; echo  C after 6 seconds >>output.1.xml" />
+      </COMMAND>
+    </COMMAND>
+    <!-- Creating a command list that continues in case of an error. -->
+    <COMMAND xsi:type="COMMAND_SYSTEM"
+      CMDLINE="echo TEST 2: Command list that continues on error >>output.1.xml" />
+    <COMMAND xsi:type="COMMAND_LIST">
+      <ABORTONERROR>false</ABORTONERROR>
+      <COMMAND xsi:type="COMMAND_SYSTEM"
+        CMDLINE="echo  before failure >>output.1.xml" />
+      <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="false" />
+      <COMMAND xsi:type="COMMAND_SYSTEM"
+        CMDLINE="echo  after failure >>output.1.xml" />
+    </COMMAND>
+    <!-- Creating a command list that aborts in case of an error. -->
+    <COMMAND xsi:type="COMMAND_SYSTEM"
+      CMDLINE="echo TEST 3: Command list that aborts on error >>output.1.xml" />
+    <COMMAND xsi:type="COMMAND_LIST">
+      <ABORTONERROR>true</ABORTONERROR>
+      <COMMAND xsi:type="COMMAND_SYSTEM"
+        CMDLINE="echo  before failure >>output.1.xml" />
+      <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="false" />
+      <COMMAND xsi:type="COMMAND_SYSTEM"
+        CMDLINE="echo  after failure >>output.1.xml" />
+    </COMMAND>
+    <!-- Creating some parallel tasks one of which fails. -->
+    <COMMAND xsi:type="COMMAND_SYSTEM"
+      CMDLINE="echo TEST 4: Parallel commands with failing branch >>output.1.xml" />
+    <COMMAND xsi:type="COMMAND_LIST">
+      <!-- value has no impact on execution any more! -->
+      <ABORTONERROR>false</ABORTONERROR>
+      <SEQUENTIAL>false</SEQUENTIAL>
+      <COMMAND xsi:type="COMMAND_SYSTEM"
+        CMDLINE="echo  task 1 okay >>output.1.xml" />
+      <COMMAND xsi:type="COMMAND_SYSTEM"
+        CMDLINE="sleep 1 &amp;&amp; echo  task 2 failing >>output.1.xml &amp;&amp; false" />
+      <COMMAND xsi:type="COMMAND_SYSTEM"
+        CMDLINE="sleep 2 &amp;&amp; echo  task 3 okay >>output.1.xml" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="echo END >>output.1.xml" />
+  </COMMANDS>
+</PLAN>

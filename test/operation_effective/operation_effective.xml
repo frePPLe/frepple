@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>Test model for effective operations</NAME>
+  <DESCRIPTION>
+    This test checks the code for creating and manipulating of operationplans of
+    type "EFFECTIVE". The test resolves about a product that can be sourced from
+    2 locations. In a first part of the horizon location A is the only allowed
+    source, while in the last part of the horizon only sourcing from location B
+    is possible. A transition period exists where sourcing from both location is
+    possible.
+    Case 1: Simplest situation, no constraints.
+    Case 2: Same as 1, but with effictivity based on the start date.
+  </DESCRIPTION>
+  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <VERBOSE>true</VERBOSE>
+    <COMMAND xsi:type="COMMAND_SAVE">
+      <FILENAME>output.test.xml</FILENAME>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <VERBOSE>false</VERBOSE>
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" VERBOSE="true" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+      <FILENAME>output.1s.xml</FILENAME>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE">
+      <FILENAME>output.test.xml</FILENAME>
+    </COMMAND>
+  </COMMANDS>
+  <LOCATIONS>
+    <LOCATION NAME="Location A" />
+    <LOCATION NAME="Location B" />
+  </LOCATIONS>
+
+  <!--
+    Case 1: 2 demands are each planned with a different operation.
+    No constraints are involved, and the effectivity doesn't have an overlap
+    period. The effectivity is based on the end date of the operationplan.
+  -->
+  <BUFFERS>
+    <BUFFER NAME="1. end item in location A">
+      <ITEM NAME="1. end item" />
+      <PRODUCING NAME="1. make end item in A" xsi:type="OPERATION_FIXED_TIME"
+        DURATION="24:00:00">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_END">
+            <BUFFER NAME="1. end item in location A" />
+            <QUANTITY>1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </PRODUCING>
+      <LOCATION NAME="Location A" />
+    </BUFFER>
+    <BUFFER NAME="1. end item in location B">
+      <ITEM NAME="1. end item" />
+      <LOCATION NAME="Location B" />
+      <PRODUCING NAME="1. make end item in B" xsi:type="OPERATION_FIXED_TIME"
+        DURATION="24:00:00">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_END">
+            <BUFFER NAME="1. end item in location B" />
+            <QUANTITY>1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </PRODUCING>
+    </BUFFER>
+  </BUFFERS>
+  <OPERATIONS>
+    <OPERATION NAME="1. Source end item" xsi:type="OPERATION_EFFECTIVE">
+      <CALENDAR NAME="1. effective" xsi:type="CALENDAR_OPERATION">
+        <BUCKETS>
+          <BUCKET START="2006-01-01T00:00:00">
+            <VALUE NAME="1. sourcing from location A"
+              xsi:type="OPERATION_FIXED_TIME" DURATION="24:00:00">
+              <FLOWS>
+                <FLOW xsi:type="FLOW_START">
+                  <BUFFER NAME="1. end item in location A" />
+                  <QUANTITY>-1</QUANTITY>
+                </FLOW>
+              </FLOWS>
+            </VALUE>
+          </BUCKET>
+          <BUCKET START="2006-02-01T00:00:00">
+            <VALUE NAME="1. sourcing from location B"
+              xsi:type="OPERATION_FIXED_TIME" DURATION="48:00:00">
+              <FLOWS>
+                <FLOW xsi:type="FLOW_START">
+                  <BUFFER NAME="1. end item in location B" />
+                  <QUANTITY>-1</QUANTITY>
+                </FLOW>
+              </FLOWS>
+            </VALUE>
+          </BUCKET>
+        </BUCKETS>
+      </CALENDAR>
+    </OPERATION>
+  </OPERATIONS>
+  <ITEMS>
+    <ITEM NAME="1. end item">
+      <OPERATION NAME="1. Source end item" />
+    </ITEM>
+  </ITEMS>
+  <DEMANDS>
+    <DEMAND NAME="1. order 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-04T00:00:00</DUE>
+      <PRIORITY>11</PRIORITY>
+      <ITEM NAME="1. end item" />
+    </DEMAND>
+    <DEMAND NAME="1. order 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-02-01T12:00:00</DUE>
+      <PRIORITY>12</PRIORITY>
+      <ITEM NAME="1. end item" />
+    </DEMAND>
+    <DEMAND NAME="1. order 3">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-04-04T00:00:00</DUE>
+      <PRIORITY>13</PRIORITY>
+      <ITEM NAME="1. end item" />
+    </DEMAND>
+  </DEMANDS>
+
+
+  <!--
+    Case 2: same as case 1, but now the effectivity is based on the start
+    date of the operationplan.
+  -->
+  <BUFFERS>
+    <BUFFER NAME="2. end item in location A">
+      <ITEM NAME="2. end item" />
+      <PRODUCING NAME="2. make end item in A" xsi:type="OPERATION_FIXED_TIME"
+        DURATION="24:00:00">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_END">
+            <BUFFER NAME="2. end item in location A" />
+            <QUANTITY>1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </PRODUCING>
+      <LOCATION NAME="Location A" />
+    </BUFFER>
+    <BUFFER NAME="2. end item in location B">
+      <ITEM NAME="2. end item" />
+      <LOCATION NAME="Location B" />
+      <PRODUCING NAME="2. make end item in B" xsi:type="OPERATION_FIXED_TIME"
+        DURATION="24:00:00">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_END">
+            <BUFFER NAME="2. end item in location B" />
+            <QUANTITY>1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </PRODUCING>
+    </BUFFER>
+  </BUFFERS>
+  <OPERATIONS>
+    <OPERATION NAME="2. Source end item" xsi:type="OPERATION_EFFECTIVE">
+      <STARTOREND>false</STARTOREND>
+      <CALENDAR NAME="2. effective" xsi:type="CALENDAR_OPERATION">
+        <BUCKETS>
+          <BUCKET START="2006-01-01T00:00:00">
+            <VALUE NAME="2. sourcing from location A"
+              xsi:type="OPERATION_FIXED_TIME" DURATION="24:00:00">
+              <FLOWS>
+                <FLOW xsi:type="FLOW_START">
+                  <BUFFER NAME="2. end item in location A" />
+                  <QUANTITY>-1</QUANTITY>
+                </FLOW>
+              </FLOWS>
+            </VALUE>
+          </BUCKET>
+          <BUCKET START="2006-02-01T00:00:00">
+            <VALUE NAME="2. sourcing from location B"
+              xsi:type="OPERATION_FIXED_TIME" DURATION="48:00:00">
+              <FLOWS>
+                <FLOW xsi:type="FLOW_START">
+                  <BUFFER NAME="2. end item in location B" />
+                  <QUANTITY>-1</QUANTITY>
+                </FLOW>
+              </FLOWS>
+            </VALUE>
+          </BUCKET>
+        </BUCKETS>
+      </CALENDAR>
+    </OPERATION>
+  </OPERATIONS>
+  <ITEMS>
+    <ITEM NAME="2. end item">
+      <OPERATION NAME="2. Source end item" />
+    </ITEM>
+  </ITEMS>
+  <DEMANDS>
+    <DEMAND NAME="2. order 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-04T00:00:00</DUE>
+      <PRIORITY>21</PRIORITY>
+      <ITEM NAME="2. end item" />
+    </DEMAND>
+    <DEMAND NAME="2. order 2">
+      <!--
+        When planning this demand the first iteration will use the
+        incorrect operation. The code needs to make a loop to correct it.
+      -->
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-02-01T12:00:00</DUE>
+      <PRIORITY>22</PRIORITY>
+      <ITEM NAME="2. end item" />
+    </DEMAND>
+    <DEMAND NAME="2. order 3">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-04-04T00:00:00</DUE>
+      <PRIORITY>23</PRIORITY>
+      <ITEM NAME="2. end item" />
+    </DEMAND>
+  </DEMANDS>
+
+  <!--
+    Case 3: same as case 1, but now an extra effectivity period is added where
+    both sourcing from both locations is possible.
+  -->
+  <BUFFERS>
+    <BUFFER NAME="3. end item in location A">
+      <ITEM NAME="3. end item" />
+      <PRODUCING NAME="3. make end item in A" xsi:type="OPERATION_FIXED_TIME"
+        DURATION="24:00:00">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_END">
+            <BUFFER NAME="3. end item in location A" />
+            <QUANTITY>1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </PRODUCING>
+      <LOCATION NAME="Location A" />
+    </BUFFER>
+    <BUFFER NAME="3. end item in location B">
+      <ITEM NAME="3. end item" />
+      <LOCATION NAME="Location B" />
+      <PRODUCING NAME="3. make end item in B" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+        <FLOWS>
+          <FLOW xsi:type="FLOW_END">
+            <BUFFER NAME="3. end item in location B" />
+            <QUANTITY>1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </PRODUCING>
+    </BUFFER>
+  </BUFFERS>
+  <OPERATIONS>
+    <OPERATION NAME="3. Source end item" xsi:type="OPERATION_EFFECTIVE">
+      <STARTOREND>true</STARTOREND>
+      <CALENDAR NAME="3. effective" xsi:type="CALENDAR_OPERATION">
+        <BUCKETS>
+          <BUCKET START="2006-01-01T00:00:00">
+            <VALUE NAME="3. sourcing from location A">
+              <DURATION>24:00:00</DURATION>
+              <FLOWS>
+                <FLOW xsi:type="FLOW_START">
+                  <BUFFER NAME="3. end item in location A" />
+                  <QUANTITY>-1</QUANTITY>
+                </FLOW>
+              </FLOWS>
+            </VALUE>
+          </BUCKET>
+          <BUCKET START="2006-02-15T00:00:00">
+            <VALUE NAME="3. sourcing from location B">
+              <DURATION>48:00:00</DURATION>
+              <FLOWS>
+                <FLOW xsi:type="FLOW_START">
+                  <BUFFER NAME="3. end item in location B" />
+                  <QUANTITY>-1</QUANTITY>
+                </FLOW>
+              </FLOWS>
+            </VALUE>
+          </BUCKET>
+          <BUCKET START="2006-01-15T00:00:00">
+            <VALUE NAME="3. source from locations A or B"
+              xsi:type="OPERATION_ALTERNATE">
+              <ALTERNATES>
+                <ALTERNATE>
+                  <OPERATION NAME="3. sourcing from location A" />
+                  <PRIORITY>1</PRIORITY>
+                </ALTERNATE>
+                <ALTERNATE>
+                  <OPERATION NAME="3. sourcing from location B" />
+                  <PRIORITY>2</PRIORITY>
+                </ALTERNATE>
+              </ALTERNATES>
+            </VALUE>
+          </BUCKET>
+        </BUCKETS>
+      </CALENDAR>
+    </OPERATION>
+  </OPERATIONS>
+  <ITEMS>
+    <ITEM NAME="3. end item">
+      <OPERATION NAME="3. Source end item" />
+    </ITEM>
+  </ITEMS>
+  <DEMANDS>
+    <DEMAND NAME="3. order 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-01-04T00:00:00</DUE>
+      <PRIORITY>31</PRIORITY>
+      <ITEM NAME="3. end item" />
+    </DEMAND>
+    <DEMAND NAME="3. order 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-02-01T12:00:00</DUE>
+      <PRIORITY>32</PRIORITY>
+      <ITEM NAME="3. end item" />
+    </DEMAND>
+    <DEMAND NAME="3. order 3">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2006-04-04T00:00:00</DUE>
+      <PRIORITY>33</PRIORITY>
+      <ITEM NAME="3. end item" />
+    </DEMAND>
+  </DEMANDS>
+</PLAN>

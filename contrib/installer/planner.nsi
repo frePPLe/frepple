@@ -1,0 +1,204 @@
+;
+; NUllsoft script for creating a windows installer for Frepple
+;
+
+;
+; Copyright (C) 2006 by Johan De Taeye                                                                                                              
+;
+; This library is free software; you can redistribute it and/or modify it 
+; under the terms of the GNU Lesser General Public License as published   
+; by the Free Software Foundation; either version 2.1 of the License, or  
+; (at your option) any later version.                                     
+;                                                                         
+; This library is distributed in the hope that it will be useful,         
+; but WITHOUT ANY WARRANTY; without even the implied warranty of          
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser 
+; General Public License for more details.                                
+;                                                                         
+; You should have received a copy of the GNU Lesser General Public        
+; License along with this library; if not, write to the Free Software     
+; Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA 
+;                                                                          
+
+; This installer script is building on the GNU auto-build scripts. We first 
+; create the distribution make target, and then unzip it. The windows installer 
+; then selects subdirectories of this distribution tree to be installed.
+; To run this script successfully, you'll therefore need to have the cygwin 
+; system up and running on your machine.
+
+; Main definitions
+!define PRODUCT_NAME "Frepple"
+!define PRODUCT_VERSION "0.9.9"
+!define PRODUCT_PUBLISHER "Frepple"
+!define PRODUCT_WEB_SITE "http://frepple.sourceforge.net"
+!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
+!define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
+!define PRODUCT_UNINST_ROOT_KEY "HKLM"
+
+; MUI 1.67 compatible ------
+!include "MUI.nsh"
+
+; MUI Settings
+!define MUI_ABORTWARNING
+!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
+!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
+
+; Welcome page
+!insertmacro MUI_PAGE_WELCOME
+; License page
+!insertmacro MUI_PAGE_LICENSE "../../COPYING"
+; Components page
+!insertmacro MUI_PAGE_COMPONENTS
+; Directory page
+!insertmacro MUI_PAGE_DIRECTORY
+; Instfiles page
+!insertmacro MUI_PAGE_INSTFILES
+; Finish page
+!insertmacro MUI_PAGE_FINISH
+
+; Uninstaller pages
+!insertmacro MUI_UNPAGE_INSTFILES
+
+; Language files
+!insertmacro MUI_LANGUAGE "English"
+
+; MUI end ------
+
+Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
+OutFile "Setup.exe"
+InstallDir "$PROGRAMFILES\${PRODUCT_NAME} ${PRODUCT_VERSION}"
+InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
+CRCcheck on
+ShowInstDetails hide
+ShowUnInstDetails hide
+
+Section -Start
+  ; Create a distribution and expand it
+  !cd "../.."
+  !system "rm *.tar.gz"
+  !system "make all dist"
+  !system "tar -xzf *.tar.gz"
+  !cd "frepple-0.9.6"
+  File "COPYING"
+  File "README"
+SectionEnd
+
+Section "Application" SecAppl
+  SetOutPath "$INSTDIR\bin"
+  SetOverwrite ifnewer
+  File "..\src\frepple.exe"
+  File "*.xsd"
+  CreateDirectory "$SMPROGRAMS\Frepple"
+  CreateShortCut "$SMPROGRAMS\Frepple\Frepple.lnk" "$INSTDIR\bin\frepple.exe"
+  
+  ; Set an environment variable
+  WriteRegExpandStr HKEY_CURRENT_USER "Environment" "FREPPLE_HOME" "$INSTDIR\bin"
+SectionEnd
+
+Section "Documentation" SecDoc
+  SetOutPath "$INSTDIR"
+  SetOverwrite ifnewer
+  CreateDirectory "$SMPROGRAMS\Frepple"
+  CreateShortCut "$SMPROGRAMS\Frepple\Frepple documentation.lnk" "$INSTDIR\doc\index.html"
+  File /r "doc"
+SectionEnd
+
+Section "Examples" SecEx
+  SetOutPath "$INSTDIR"
+  SetOverwrite ifnewer
+  File /r "test"
+SectionEnd
+
+SubSection /E "Development" SecDev
+
+Section /O "Header files and libraries" SecLib
+  SetOutPath "$INSTDIR"
+  SetOverwrite ifnewer
+  File /r "include"
+  SetOutPath "$INSTDIR\bin"
+  File "..\src\.libs\libfrepple.a"
+  File "..\src\libfrepple.la"
+SectionEnd
+
+Section /O "Source code" SecSrc
+  SetOutPath "$INSTDIR"
+  File /r "src"
+SectionEnd
+
+Section /O "Add-ons" SecContrib
+  SetOutPath "$INSTDIR"
+  File /r "contrib"
+SectionEnd
+
+SubSectionEnd
+
+Section -AdditionalIcons
+  WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
+  CreateDirectory "$SMPROGRAMS\Frepple"
+  CreateShortCut "$SMPROGRAMS\Frepple\Frepple home page.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
+  CreateShortCut "$SMPROGRAMS\Frepple\Uninstall.lnk" "$INSTDIR\uninst.exe"
+SectionEnd
+
+Section -Post
+  ; Clean up the distribution files
+  !cd ".."
+  !system "rm -rf frepple-*"
+  ; Create uninstaller
+  WriteUninstaller "$INSTDIR\uninst.exe"
+  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\bin\frepple.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\bin\frepple.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
+SectionEnd
+
+; Section descriptions
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecAppl} "Installation of the compiled executables"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecDoc} "Installation of the documentation"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecEx} "Installation of example datasets and tests"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecDev} "Installation for development purposes"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecLib} "Header files and libraries"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSrc} "Installation of the complete source code"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContrib} "Installation of a number of optional add-ons and utilities"
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
+
+
+Function un.onUninstSuccess
+  HideWindow
+  MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) was successfully removed from your computer."
+FunctionEnd
+
+Function un.onInit
+  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to remove $(^Name) and all of its components?" IDYES +2
+  Abort
+FunctionEnd
+
+Section Uninstall
+  ; Remove the entries from the start menu
+  Delete "$SMPROGRAMS\Frepple\Uninstall.lnk"
+  Delete "$SMPROGRAMS\Frepple\Frepple documentation.lnk"
+  Delete "$SMPROGRAMS\Frepple\Frepple home page.lnk"
+  Delete "$SMPROGRAMS\Frepple\Frepple.lnk"
+  
+  ; Remove the folder in start menu
+  RMDir "$SMPROGRAMS\Frepple"
+
+  ; Removed the installation directory
+  RMDir /r "$INSTDIR"
+  Sleep 500
+  IfFileExists "$INSTDIR" 0 Finished
+  MessageBox MB_OK|MB_ICONEXCLAMATION "Alert: $INSTDIR could not be removed."
+  Finished:
+
+  ; Delete environment variable
+  DeleteRegValue HKEY_CURRENT_USER "Environment" "FREPPLE_HOME"
+  
+  ; Remove installation registration key
+  DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
+  DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
+  
+  SetAutoClose true
+SectionEnd

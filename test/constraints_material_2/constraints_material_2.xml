@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<NAME>Material constraint test model</NAME>
+	<DESCRIPTION>
+		This model test the solver code in situations where a supplying operation is
+		available.
+		- 1: simple test of a material constraint when the quantity-per of the flows
+		     is different than 1.0
+		- 2: identical to 1, but now including also now enforcing integer quantities
+		- 3: same as 1, but now the make operation consumes from 2 more materials
+		- 4: similar to 3, but with an updated supply picture on the additional
+		     materials. The constraining material is first b, then c and then b again.
+		- 5: based on 1, but with of an alternate producing operation and different
+		     quantities on each alternate.
+		- 6: based on 1, but with a routing producing operation with multiple flows.
+	</DESCRIPTION>
+	<CURRENT>2006-01-01T00:00:00</CURRENT>
+	<COMMANDS>
+	  <COMMAND xsi:type="COMMAND_SOLVE">
+	    <VERBOSE>false</VERBOSE>
+	    <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
+	  </COMMAND>
+	  <COMMAND xsi:type="COMMAND_SAVEPLAN">
+	    <FILENAME>output.1s.xml</FILENAME>
+	  </COMMAND>
+	</COMMANDS>
+	<ITEMS>
+	  <ITEM NAME="item 1">
+	    <OPERATION NAME="delivery 1" DURATION="24:00:00"
+	      xsi:type="OPERATION_FIXED_TIME" />
+	  </ITEM>
+	  <ITEM NAME="item 2">
+	    <OPERATION NAME="delivery 2" DURATION="24:00:00" SIZE_MULTIPLE="1"
+	      xsi:type="OPERATION_FIXED_TIME" />
+	  </ITEM>
+	  <ITEM NAME="item 3">
+	    <OPERATION NAME="delivery 3" DURATION="24:00:00"
+	      xsi:type="OPERATION_FIXED_TIME" />
+	  </ITEM>
+	  <ITEM NAME="item 4">
+	    <OPERATION NAME="delivery 4" DURATION="24:00:00"
+	      xsi:type="OPERATION_FIXED_TIME" />
+	  </ITEM>
+	  <ITEM NAME="item 5">
+	    <OPERATION NAME="delivery 5" DURATION="24:00:00"
+	      xsi:type="OPERATION_FIXED_TIME" />
+	  </ITEM>
+	  <ITEM NAME="item 6">
+	    <OPERATION NAME="delivery 6" DURATION="24:00:00"
+	      xsi:type="OPERATION_FIXED_TIME" />
+	  </ITEM>
+	</ITEMS>
+	<BUFFERS>
+	  <BUFFER NAME="buffer 1">
+	    <ITEM NAME="item 1" />
+	    <PRODUCING NAME="make 1" />
+	  </BUFFER>
+	  <BUFFER NAME="buffer 2">
+	    <ITEM NAME="item 2" />
+	    <PRODUCING NAME="make 2" SIZE_MULTIPLE="1" />
+	  </BUFFER>
+	  <BUFFER NAME="buffer 3">
+	    <ITEM NAME="item 3" />
+	    <PRODUCING NAME="make 3" />
+	  </BUFFER>
+	  <BUFFER NAME="buffer 4">
+	    <ITEM NAME="item 4" />
+	    <PRODUCING NAME="make 4" />
+	  </BUFFER>
+	  <BUFFER NAME="buffer 5">
+	    <ITEM NAME="item 5" />
+	    <PRODUCING NAME="make 5" xsi:type="OPERATION_ALTERNATE">
+	      <ALTERNATES>
+	        <ALTERNATE>
+	          <OPERATION NAME="make 5 from 5a" />
+	          <PRIORITY>1</PRIORITY>
+	        </ALTERNATE>
+	        <ALTERNATE>
+	          <OPERATION NAME="make 5 from 5b" />
+	          <PRIORITY>2</PRIORITY>
+	        </ALTERNATE>
+	      </ALTERNATES>
+	    </PRODUCING>
+	  </BUFFER>
+	  <BUFFER NAME="buffer 6">
+	    <ITEM NAME="item 6" />
+	    <PRODUCING NAME="make 6" xsi:type="OPERATION_ROUTING">
+	      <STEPS>
+	        <OPERATION NAME="make 6 step 1" xsi:type="OPERATION_FIXED_TIME"
+	          DURATION="24:00:00" />
+	        <OPERATION NAME="make 6 step 2" xsi:type="OPERATION_FIXED_TIME"
+	          DURATION="24:00:00" />
+	        <OPERATION NAME="make 6 step 3" xsi:type="OPERATION_FIXED_TIME"
+	          DURATION="24:00:00" />
+	      </STEPS>
+	    </PRODUCING>
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 1">
+	    <ITEM NAME="item 1" />
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 2">
+	    <ITEM NAME="item 2" />
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 3a">
+	    <ITEM NAME="item 3" />
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 3b">
+	    <ITEM NAME="item 3" />
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 3c">
+	    <ITEM NAME="item 3" />
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 4a">
+	    <ITEM NAME="item 4" />
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 4b">
+	    <ITEM NAME="item 4" />
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 4c">
+	    <ITEM NAME="item 4" />
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 5a">
+	    <ITEM NAME="item 5" />
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 5b">
+	    <ITEM NAME="item 5" />
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 6">
+	    <ITEM NAME="item 6" />
+	  </BUFFER>
+	</BUFFERS>
+	<FLOWS>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 1" />
+	    <BUFFER NAME="constraint buffer 1" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 1" />
+	    <BUFFER NAME="buffer 1" />
+	    <QUANTITY>5</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 1" />
+	    <BUFFER NAME="constraint buffer 1" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="delivery 1" />
+	    <BUFFER NAME="buffer 1" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 2" />
+	    <BUFFER NAME="constraint buffer 2" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 2" />
+	    <BUFFER NAME="buffer 2" />
+	    <QUANTITY>5</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 2" />
+	    <BUFFER NAME="constraint buffer 2" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="delivery 2" />
+	    <BUFFER NAME="buffer 2" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 3a" />
+	    <BUFFER NAME="constraint buffer 3a" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 3b" />
+	    <BUFFER NAME="constraint buffer 3b" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 3c" />
+	    <BUFFER NAME="constraint buffer 3c" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 3" />
+	    <BUFFER NAME="buffer 3" />
+	    <QUANTITY>5</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 3" />
+	    <BUFFER NAME="constraint buffer 3a" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 3" />
+	    <BUFFER NAME="constraint buffer 3b" />
+	    <QUANTITY>-1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 3" />
+	    <BUFFER NAME="constraint buffer 3c" />
+	    <QUANTITY>-3</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="delivery 3" />
+	    <BUFFER NAME="buffer 3" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 4a" />
+	    <BUFFER NAME="constraint buffer 4a" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 4b" />
+	    <BUFFER NAME="constraint buffer 4b" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 4c" />
+	    <BUFFER NAME="constraint buffer 4c" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 4" />
+	    <BUFFER NAME="buffer 4" />
+	    <QUANTITY>5</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 4" />
+	    <BUFFER NAME="constraint buffer 4a" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 4" />
+	    <BUFFER NAME="constraint buffer 4b" />
+	    <QUANTITY>-1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 4" />
+	    <BUFFER NAME="constraint buffer 4c" />
+	    <QUANTITY>-3</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="delivery 4" />
+	    <BUFFER NAME="buffer 4" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 5a" />
+	    <BUFFER NAME="constraint buffer 5a" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 5b" />
+	    <BUFFER NAME="constraint buffer 5b" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 5" />
+	    <BUFFER NAME="buffer 5" />
+	    <QUANTITY>5</QUANTITY>
+	  </FLOW>
+	  <!--  Adding this flow makes the model fail: the operation search on the
+	    suboperation is greedily consuming all material on the material 5b for a
+	    maximum promise. When we later check the flows on the top operationplan
+	    all supply of material 5b is gone already...
+	    <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 5" />
+	    <BUFFER NAME="constraint buffer 5b" />
+	    <QUANTITY>-1</QUANTITY>
+	    </FLOW>
+	  -->
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 5 from 5a" />
+	    <BUFFER NAME="constraint buffer 5a" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 5 from 5a" />
+	    <BUFFER NAME="buffer 5" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 5 from 5b" />
+	    <BUFFER NAME="constraint buffer 5b" />
+	    <QUANTITY>-5</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="delivery 5" />
+	    <BUFFER NAME="buffer 5" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 6" />
+	    <BUFFER NAME="constraint buffer 6" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 6" />
+	    <BUFFER NAME="buffer 6" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 6 step 1" />
+	    <BUFFER NAME="constraint buffer 6" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 6 step 1" />
+	    <BUFFER NAME="buffer 6" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 6 step 2" />
+	    <BUFFER NAME="buffer 6" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 6 step 3" />
+	    <BUFFER NAME="buffer 6" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <!--  Adding this flow makes the model fail: the operation search on the
+	    suboperation is greedily consuming all material on the material 6 for a
+	    maximum promise. When we later check the flows on the top operationplan
+	    all supply of material 6 is gone already...
+	    <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 6" />
+	    <BUFFER NAME="constraint buffer 6" />
+	    <QUANTITY>-1</QUANTITY>
+	    </FLOW>
+	  -->
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="delivery 6" />
+	    <BUFFER NAME="buffer 6" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	</FLOWS>
+	<!-- DYNAMIC DATA CASE 1 -->
+	<DEMANDS>
+	  <DEMAND NAME="order prio 1 for item 1">
+	    <QUANTITY>100</QUANTITY>
+	    <DUE>2006-01-10T00:00:00</DUE>
+	    <PRIORITY>1</PRIORITY>
+	    <ITEM NAME="item 1" />
+	  </DEMAND>
+	</DEMANDS>
+	<OPERATION_PLANS>
+	  <OPERATION_PLAN ID="1001" OPERATION="supply 1">
+	    <START>2006-01-01T00:00:00</START>
+	    <END>2006-01-01T00:00:00</END>
+	    <QUANTITY>25</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	</OPERATION_PLANS>
+	<!-- DYNAMIC DATA CASE 2 -->
+	<DEMANDS>
+	  <DEMAND NAME="order prio 1 for item 2">
+	    <QUANTITY>100</QUANTITY>
+	    <DUE>2006-01-10T00:00:00</DUE>
+	    <PRIORITY>1</PRIORITY>
+	    <ITEM NAME="item 2" />
+	  </DEMAND>
+	</DEMANDS>
+	<OPERATION_PLANS>
+	  <OPERATION_PLAN ID="2001" OPERATION="supply 2">
+	    <START>2006-01-01T00:00:00</START>
+	    <END>2006-01-01T00:00:00</END>
+	    <QUANTITY>25</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	</OPERATION_PLANS>
+	<!-- DYNAMIC DATA CASE 3 -->
+	<DEMANDS>
+	  <DEMAND NAME="order prio 1 for item 3">
+	    <QUANTITY>100</QUANTITY>
+	    <DUE>2006-01-10T00:00:00</DUE>
+	    <PRIORITY>1</PRIORITY>
+	    <ITEM NAME="item 3" />
+	  </DEMAND>
+	</DEMANDS>
+	<OPERATION_PLANS>
+	  <OPERATION_PLAN ID="3001" OPERATION="supply 3a">
+	    <START>2006-01-01T00:00:00</START>
+	    <END>2006-01-01T00:00:00</END>
+	    <QUANTITY>25</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="3002" OPERATION="supply 3b">
+	    <START>2006-01-01T00:00:00</START>
+	    <END>2006-01-01T00:00:00</END>
+	    <QUANTITY>2</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="3003" OPERATION="supply 3b">
+	    <START>2006-01-20T00:00:00</START>
+	    <END>2006-01-20T00:00:00</END>
+	    <QUANTITY>2</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="3004" OPERATION="supply 3c">
+	    <START>2006-01-01T00:00:00</START>
+	    <END>2006-01-01T00:00:00</END>
+	    <QUANTITY>30</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	</OPERATION_PLANS>
+	<!-- DYNAMIC DATA CASE 4 -->
+	<DEMANDS>
+	  <DEMAND NAME="order prio 1 for item 4">
+	    <QUANTITY>100</QUANTITY>
+	    <DUE>2006-01-10T00:00:00</DUE>
+	    <PRIORITY>1</PRIORITY>
+	    <ITEM NAME="item 4" />
+	  </DEMAND>
+	</DEMANDS>
+	<OPERATION_PLANS>
+	  <OPERATION_PLAN ID="4001" OPERATION="supply 4a">
+	    <START>2006-01-01T00:00:00</START>
+	    <END>2006-01-01T00:00:00</END>
+	    <QUANTITY>50</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="4002" OPERATION="supply 4b">
+	    <START>2006-01-01T00:00:00</START>
+	    <END>2006-01-01T00:00:00</END>
+	    <QUANTITY>2</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="4003" OPERATION="supply 4b">
+	    <START>2006-01-20T00:00:00</START>
+	    <END>2006-01-20T00:00:00</END>
+	    <QUANTITY>8</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="4004" OPERATION="supply 4b">
+	    <START>2006-01-22T00:00:00</START>
+	    <END>2006-01-22T00:00:00</END>
+	    <QUANTITY>2</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="4005" OPERATION="supply 4c">
+	    <START>2006-01-01T00:00:00</START>
+	    <END>2006-01-01T00:00:00</END>
+	    <QUANTITY>12</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="4006" OPERATION="supply 4c">
+	    <START>2006-01-21T00:00:00</START>
+	    <END>2006-01-21T00:00:00</END>
+	    <QUANTITY>21</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	</OPERATION_PLANS>
+	<!-- DYNAMIC DATA CASE 5 -->
+	<DEMANDS>
+	  <DEMAND NAME="order prio 1 for item 5">
+	    <QUANTITY>100</QUANTITY>
+	    <DUE>2006-01-10T00:00:00</DUE>
+	    <PRIORITY>1</PRIORITY>
+	    <ITEM NAME="item 5" />
+	  </DEMAND>
+	</DEMANDS>
+	<OPERATION_PLANS>
+	  <OPERATION_PLAN ID="5001" OPERATION="supply 5a">
+	    <START>2006-01-01T00:00:00</START>
+	    <END>2006-01-01T00:00:00</END>
+	    <QUANTITY>10</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="5002" OPERATION="supply 5b">
+	    <START>2006-01-01T00:00:00</START>
+	    <END>2006-01-01T00:00:00</END>
+	    <QUANTITY>20</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	</OPERATION_PLANS>
+	<!-- DYNAMIC DATA CASE 6 -->
+	<DEMANDS>
+	  <DEMAND NAME="order prio 1 for item 6">
+	    <QUANTITY>100</QUANTITY>
+	    <DUE>2006-01-10T00:00:00</DUE>
+	    <PRIORITY>1</PRIORITY>
+	    <ITEM NAME="item 6" />
+	  </DEMAND>
+	</DEMANDS>
+	<OPERATION_PLANS>
+	  <OPERATION_PLAN ID="6001" OPERATION="supply 6">
+	    <START>2006-01-01T00:00:00</START>
+	    <END>2006-01-01T00:00:00</END>
+	    <QUANTITY>50</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	</OPERATION_PLANS>
+</PLAN>

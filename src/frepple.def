@@ -1,0 +1,24 @@
+LIBRARY frepple_vcc 
+;INITGLOBAL
+;CODE	PRELOAD MOVEABLE DISCARDABLE
+;DATA	PRELOAD MOVEABLE SINGLE
+;HEAPSIZE	8192
+;STACKSIZE	1048576
+EXPORTS
+; exports for C++ clients
+; Note: The C++ name is normally expected to be the mangled name. Only Visual
+; studio exports these correctly. GCC and Borland fail to export the C++
+; functions with the syntax below.
+  FreppleInitialize
+  FreppleReadXMLData
+  FreppleReadXMLFile
+  FreppleSaveFile
+  FreppleSaveString
+  FreppleExit  
+; exports for C clients     
+  FreppleWrapperInitialize
+  FreppleWrapperReadXMLData
+  FreppleWrapperReadXMLFile
+  FreppleWrapperSaveFile
+  FreppleWrapperSaveString
+  FreppleWrapperExit   

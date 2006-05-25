@@ -2,7 +2,7 @@
 #  file     : $HeadURL: file:///develop/SVNrepository/frepple/trunk/test/scalability_1/runtest.pl $
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
-#  email    : johan_de_taeye@yahoo.com
+#  email    : jdetaeye@users.sourceforge.net
 
 use strict;
 use warnings;

@@ -2,12 +2,12 @@
 file : $URL: file:///develop/SVNrepository/frepple/trunk/contrib/j2ee/source/frepple/backend/webservice/connection.java $
 version : $LastChangedRevision$  $LastChangedBy$
 date : $LastChangedDate$
-email : johan_de_taeye@yahoo.com
+email : jdetaeye@users.sourceforge.net
 ***************************************************************************/
 
 /***************************************************************************
 *                                                                         *
-* Copyright (C) 2005 by Johan De Taeye                                    *
+* Copyright (C) 2006 by Johan De Taeye                                    *
 *                                                                         *
 * This library is free software; you can redistribute it and/or modify it *
 * under the terms of the GNU Lesser General Public License as published   *

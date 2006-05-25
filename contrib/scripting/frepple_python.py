@@ -1,8 +1,8 @@
 #!/usr/bin/python
-#  file     : $HeadURL: file:///develop/SVNrepository/frepple/trunk/test/runtest.pl $
+#  file     : $URL: file:///develop/SVNrepository/frepple/trunk/test/runtest.pl $
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
-#  email    : johan_de_taeye@yahoo.com
+#  email    : jdetaeye@users.sourceforge.net
 
 import frepple
 

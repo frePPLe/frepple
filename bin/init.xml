@@ -16,7 +16,7 @@
   <LOGFILE>/home/johan/workspace/frepple/contrib/apache/frepple.log</LOGFILE>
   -->
   <COMMANDS>
-    <VERBOSE>true</VERBOSE>
+    <VERBOSE>false</VERBOSE>
     <ABORTONERROR>false</ABORTONERROR>
     <COMMAND xsi:type="COMMAND_LOADLIB">
       <FILENAME>/home/johan/workspace/frepple/src/modules/forecast/.libs/libforecast.so</FILENAME>

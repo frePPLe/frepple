@@ -1,8 +1,8 @@
 /***************************************************************************
-    file                 : $URL: file:///develop/SVNrepository/frepple/trunk/contrib/j2ee/source/frepple/webservice/client.java $
-    revision             : $LastChangedRevision$  $LastChangedBy$
-    date                 : $LastChangedDate$
-    email                : johan_de_taeye@yahoo.com
+    file     : $URL: file:///develop/SVNrepository/frepple/trunk/contrib/j2ee/source/frepple/webservice/client.java $
+    revision : $LastChangedRevision$  $LastChangedBy$
+    date     : $LastChangedDate$
+    email    : jdetaeye@users.sourceforge.net
 ***************************************************************************/
 
 /***************************************************************************

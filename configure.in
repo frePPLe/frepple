@@ -23,16 +23,16 @@
 # file : $HeadURL: file:///develop/SVNrepository/frepple/trunk/configure.in $
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : johan_de_taeye@yahoo.com
+# email : jdetaeye@users.sourceforge.net
 
 #
 # Initialization
 #
 AC_PREREQ(2.59)
-AC_INIT(frepple, 0.9.9, johan_de_taeye@yahoo.com, )
+AC_INIT(frepple, 0.1.0, jdetaeye@users.sourceforge.net, )
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
-AM_INIT_AUTOMAKE(frepple,0.9.9)
+AM_INIT_AUTOMAKE(frepple,0.1.0)
 
 #
 # Initilize libtool

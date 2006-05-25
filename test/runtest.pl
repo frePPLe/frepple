@@ -2,7 +2,7 @@
 #  file     : $HeadURL: file:///develop/SVNrepository/frepple/trunk/test/runtest.pl $
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
-#  email    : johan_de_taeye@yahoo.com
+#  email    : jdetaeye@users.sourceforge.net
 
 #
 # This simple perl script provides a simplistic framework for executing unit

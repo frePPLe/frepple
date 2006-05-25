@@ -2,7 +2,7 @@
   file : $HeadURL: file:///develop/SVNrepository/frepple/trunk/test/datetime/main.cpp $
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : johan_de_taeye@yahoo.com
+  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************

@@ -1,8 +1,8 @@
 /***************************************************************************
   file : $URL: file:///C:/develop/SVNrepository/frepple/trunk/contrib/scripting/frepple.i $
-  version : $LastChangedRevision: 212 $  $LastChangedBy: Johan $
-  date : $LastChangedDate: 2006-04-17 12:27:17 +0200 (Mon, 17 Apr 2006) $
-  email : johan_de_taeye@yahoo.com
+  version : $LastChangedRevision$  $LastChangedBy$
+  date : $LastChangedDate$
+  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************

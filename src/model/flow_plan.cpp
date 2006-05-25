@@ -2,7 +2,7 @@
   file : $URL: file:///develop/SVNrepository/frepple/trunk/src/model/flow_plan.cpp $
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : johan_de_taeye@yahoo.com
+  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************

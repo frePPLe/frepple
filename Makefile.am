@@ -13,4 +13,4 @@ contrib:
 	cd contrib; $(MAKE) contrib; cd ..
 
 clean-local:
-	-rm -rf install-test
+	-rm -rf install-test *.exe

@@ -3,5 +3,3 @@
 #
 
 EXTRA_DIST = frepple.nsi README.txt
-
-CLEANFILES = ../../setup.exe

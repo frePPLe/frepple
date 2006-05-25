@@ -199,7 +199,7 @@ Section Uninstall
   ; Remove the entries from the start menu
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Uninstall.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple documentation.lnk"
-  Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple home page.lnk"
+  Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple web site.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple.lnk"
   
   ; Remove the folder in start menu

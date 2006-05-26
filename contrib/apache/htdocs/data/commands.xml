@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../commands.xsl"?>
+<COMMANDS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <COMMAND>
+    <NAME>Load small</NAME>
+    <DESCRIPTION>Loads a mini dataset. It contains about 100 entities only.</DESCRIPTION>
+    <FILE>smalldata.xml</FILE>
+  </COMMAND>
+  <COMMAND>
+    <NAME>Load medium</NAME>
+    <DESCRIPTION>Loads a medium size dataset. Around 1000 entities are available in the model.</DESCRIPTION>
+    <FILE>mediumdata.xml</FILE>
+  </COMMAND>
+  <COMMAND>
+    <NAME>Load large</NAME>
+    <DESCRIPTION>Loads a large dataset.</DESCRIPTION>
+    <FILE>largedata.xml</FILE>
+  </COMMAND>
+  <COMMAND>
+    <NAME>Clean model</NAME>
+    <DESCRIPTION>Removes the complete model from memory.</DESCRIPTION>
+    <FILE>clean.xml</FILE>
+  </COMMAND>
+</COMMANDS>

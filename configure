@@ -22153,8 +22153,7 @@ done
 
 
 
-
-for ac_func in atexit dup2 memset strncasecmp strnicmp strptime realpath
+for ac_func in atexit dup2 memset strncasecmp strnicmp strptime
 do
 as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
 echo "$as_me:$LINENO: checking for $ac_func" >&5
@@ -23124,7 +23123,7 @@ case $host_os in
     ;;
 esac
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ac_config_files="$ac_config_files Makefile bin/Makefile doc/Makefile doc/tutorial/Makefile include/Makefile lib/Makefile include/frepple/Makefile src/Makefile src/modules/Makefile src/modules/forecast/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile test/Makefile test/cluster/Makefile test/csv/Makefile test/constraints_leadtime_1/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/datetime/Makefile test/demo1/Makefile test/dll/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/sizeof/Makefile test/xml/Makefile test/forecast/Makefile test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/problems/Makefile test/deletion/Makefile test/operation_effective/Makefile test/multithreading/Makefile test/name/Makefile test/command/Makefile test/custom_class/Makefile test/callback/Makefile contrib/Makefile contrib/borland/Makefile contrib/vc/Makefile contrib/webservice/Makefile contrib/installer/Makefile contrib/j2ee/Makefile contrib/scripting/Makefile contrib/apache/Makefile contrib/excel/Makefile"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ac_config_files="$ac_config_files Makefile bin/Makefile doc/Makefile include/Makefile lib/Makefile include/frepple/Makefile src/Makefile src/modules/Makefile src/modules/forecast/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile test/Makefile test/cluster/Makefile test/csv/Makefile test/constraints_leadtime_1/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/datetime/Makefile test/demo1/Makefile test/dll/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/sizeof/Makefile test/xml/Makefile test/forecast/Makefile test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/problems/Makefile test/deletion/Makefile test/operation_effective/Makefile test/multithreading/Makefile test/name/Makefile test/command/Makefile test/custom_class/Makefile test/callback/Makefile contrib/Makefile contrib/borland/Makefile contrib/vc/Makefile contrib/webservice/Makefile contrib/installer/Makefile contrib/j2ee/Makefile contrib/scripting/Makefile contrib/apache/Makefile contrib/excel/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -23735,7 +23734,6 @@ do
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "bin/Makefile" ) CONFIG_FILES="$CONFIG_FILES bin/Makefile" ;;
   "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
-  "doc/tutorial/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/tutorial/Makefile" ;;
   "include/Makefile" ) CONFIG_FILES="$CONFIG_FILES include/Makefile" ;;
   "lib/Makefile" ) CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
   "include/frepple/Makefile" ) CONFIG_FILES="$CONFIG_FILES include/frepple/Makefile" ;;

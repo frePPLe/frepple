@@ -14,3 +14,7 @@ contrib:
 
 clean-local:
 	-rm -rf install-test *.exe
+
+# Avoid packaging any subversion subdirectories that may be left over
+dist-hook:
+	-cd $(top_distdir); rm -rf `find . -name .svn -type d`

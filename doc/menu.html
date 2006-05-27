@@ -4,114 +4,81 @@
  <meta http-equiv="Content-Type" content="text/html">
  <title>Frepple menu</title>
  <link href="styles.css" rel="stylesheet" type="text/css">
-
-<script language="javascript1.2">
-function toggleBullet(elm) {
- var newDisplay = "none";
- var e = elm.nextSibling;
- while (e != null) {
-  if (e.tagName == "UL" || e.tagName == "ul") {
-   if (e.style.display == "none") newDisplay = "block";
-   break;
-  }
-  e = e.nextSibling;
- }
- while (e != null) {
-  if (e.tagName == "UL" || e.tagName == "ul") e.style.display = newDisplay;
-  e = e.nextSibling;
- }
-}
-
-function collapseAll() {
-  var lists = document.getElementsByTagName('UL');
-  for (var j = 0; j < lists.length; j++)
-   lists[j].style.display = "none";
-  lists = document.getElementsByTagName('ul');
-  for (var j = 0; j < lists.length; j++)
-   lists[j].style.display = "none";
-  var e = document.getElementById("root");
-  e.style.display = "block";
-}
-</script>
-
+ <style type="text/css">
+ 
+   {
+     margin: 0px; 
+     font-family: Arial, Tahoma, =Helvetica, sans-serif; 
+   }
+   #Menu A {
+     display: block; 
+     font-size: 16px;
+     color: #222222; 
+     padding-right: 10px;
+     padding-top: 0px;
+     padding-bottom: 0px;
+     background-color: #4f639b;
+     text-align: right; 
+   }
+   A:link {text-decoration: none; color: #222222;}
+   A:visited {text-decoration: none; color: #222222;}
+   #Menu A:hover {background-color: #a5a5ff; }
+   H2 { 
+	   margin-top: 10px; 
+	   margin-bottom: 0px; 
+     font-size: 18px;
+     text-decoration: bold;
+     color: #222222; 
+     text-align: center; 
+     padding-bottom: 0px;
+     padding-top: 0px;
+   }
+   H3 { 
+     margin: 2px; 
+     vertical-align: middle; 
+     text-decoration: none
+   }
+   
+</style>
 </head>
-<body>
+<body bgcolor="#a5a5ff">
 
-<p align="center"><b><a target="main" href="home.html">
-<img src="frepple.jpg"><br><b>FREPPLE</b><br>A free production planning library
-</a></b></p>
+<center>
+<img src="frepple.bmp"><br>
+<a target="main" href="home.html" bgcolor="#a5a5ff">
+<b>FREPPLE<br>A free production planning library</b>
+</a></center><br>
 
-<font size="-1">
-<ul id="root" listStyleType="none">
-  <li listStyleType="none"> <a href="#" onclick="toggleBullet(this)">Main</a>
-    <ul style="display:none" listStyleType="none">
-      <li listStyleImage="none"><a target="main" href="home.html">
-        Introduction</a></li>
-      <li><a target="main" href="home.html#platforms">
-        Supported platforms</a></li>
-      <li><a target="main" href="home.html#prerequisites">
-        Software components</a></li>
-    </ul>
-  </li>
+<div id="Menu">
 
-  <li> <a href="#" onclick="toggleBullet(this)">User documentation</a>
-    <ul style="display:none">
-    	<li><a target="main" href="entitydiagram.pdf">
-    	  Domain model</a>(requires Acrobat Reader)</li>
-      <li><a href="#" onclick="toggleBullet(this)">Modeling documents</a>
-        <ul style="display:none">
-            <li><a target="main" href="modeling_concepts.html">
-              Conceptual model</a></li>
-            <li><a target="main" href="modeling.html">
-              Modeling</a></li>
-        </ul>
-      </li>
-      <li> <a href="#" onclick="toggleBullet(this)">Tutorial</a>
-        <ul style="display:none">
-          <li><a target="main" href="tutorial/index.html">Overview</a></li>
-          <li><a target="main" href="tutorial/lesson1.html">Lesson 1</a></li>
-          <li><a target="main" href="tutorial/lesson2.html">Lesson 2</a></li>
-        </ul>
-      </li>
-      <li><a target="main" href="solver.html">Solver algorithm</a></li>
-      <li><a target="main" href="solver.html#cluster">
-        Cluster and level algorithm</a></li>
-      <li><a target="main" href="performance.html" onclick="toggleBullet(this)">
-        Performance</a>
-        <ul style="display:none">
-            <li><a target="main" href="performance.html#reference">
-              Reference models</a></li>
-            <li><a target="main" href="performance.html#notes">
-              Various notes</a></li>
-        </ul>
-      </li>
-      <li><a target="main" href="tests.html">Samples and tests</a></li>
-    </ul>
-  </li>
+<h2>Main</h2>
+<h3><a target="main" href="home.html">Introduction</a></h3>
+<h3><a target="main" href="home.html#license">Software license</a></h3>
+<h3><a target="main" href="home.html#platforms">Supported platforms</a></h3>
+<h3><a target="main" href="home.html#prerequisites">Software components</a></h3>
 
-  <li> <a href="#" onclick="toggleBullet(this)">Developer documentation</a>
-    <ul style="display:none">
-      <li><a target="main" href="maintenance.html">
-        Build, extensions and maintenance</a></li>
-      <li><a target="main" href="maintenance.html#build">
-        Build instructions</a></li>
-      <li><a target="main" href="maintenance.html#license">
-        Software license</a></li>
-      <li><a target="main" href="maintenance.html#standards">
-        Coding standards</a></li>
-      <li><a target="main" href="reference/index.html">
-        C++ API reference</a></li>
-      <li><a target="main" href="classdiagram.pdf">
-        Class diagram</a> (requires Acrobat Reader)</li>
-      <li><a target="main" href="clients.html">
-        Library usage</a></li>
-      <li><a target="main" href="reference/todo.html">
-        To Do list</a></li>
-    </ul>
-  </li>
+<h2>User documentation</h2>
+<h3><a target="main" href="entitydiagram.pdf">Domain model (pdf)</a></h3>
+<h3><a target="main" href="modeling_concepts.html">Modeling in brief</a></h3>
+<h3><a target="main" href="modeling.html">Modeling at length</a></h3>
+<h3><a target="main" href="solver.html">Solver algorithm</a></h3>
+<h3><a target="main" href="performance.html">Performance</a></h3>
+<h3><a target="main" href="tests.html">Samples and tests</a></h3>
 
-</ul>
-</font>
+<h2>Developer documentation</h2>
+<h3><a target="main" href="maintenance.html#build">Build instructions</a></h3>
+<h3><a target="main" href="maintenance.html#standards">Coding standards</a></h3>
+<h3><a target="main" href="maintenance.html#extend">Creating extensions</a></h3>
+<h3><a target="main" href="clients.html">Library usage</a></h3>
+<h3><a target="main" href="reference/index.html">C++ API reference</a></h3>
+<h3><a target="main" href="classdiagram.pdf">Class diagram (pdf)</a></h3>
+  
+</div>
+
+<br><br>
+<center><a href="http://sourceforge.net" target="_blank">
+<img src="sourceforge.bmp" width="88" height="31" border="0" /></a></center>
+
 
 </body>
 </html>

@@ -1,9 +1,6 @@
-/* Customized style */
-BODY { background-image: url("../background.jpg"); }
-
 /* 
   All remaining style definitions are the defaults from Doxygen, ...
-  except for the above BODY style. 
+  except for the entries above. 
 */
 H1 { text-align: center; }
 CAPTION { font-weight: bold }

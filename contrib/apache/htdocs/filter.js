@@ -9,6 +9,8 @@ var buffers = 0;
 var itemfilter = "";
 var locationfilter = "";
 var bufferfilter = "";
+var trf = document.implementation.createDocument("", "test", null);
+trf.load("inventory.xsl");
 
 function kiwi(ctrl,column)
 {
@@ -49,17 +51,22 @@ function display()
   // Create a transport object
   var xmlhttp = createXMLHttpRequest();
 
-  // Send the xml to the server
+  // Callback function for reception of the results
   xmlhttp.onreadystatechange=function() {
    if (xmlhttp.readyState==4) {
-     var xsl = new ActiveXObject("Microsoft.XMLDOM");
-     xsl.async = false;
-     xsl.load("inventory.xsl");
-     top.data.document.open();
-     top.data.document.write(xmlhttp.responseXML.transformNode(xsl));
-     top.data.document.close();
+     alert ("wel " + xmlhttp.reponseText);
+     var proc = new XSLTProcessor();
+     proc.importStylesheet(trf);
+     var doc = proc.transformToDocument(xmlhttp.responseXML);
+     top.data.document = doc;
+     //top.data.document.open();
+     //top.data.document.writeln("header");
+     //top.data.document.write(doc);
+     //top.data.document.close();
    }
   }
+
+  // Send the xml to the server
   xmlhttp.open("GET", "reports/inventorydata.xml",true);
   xmlhttp.send(output);
 }

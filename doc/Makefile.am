@@ -1,5 +1,5 @@
 
-EXTRA_DIST = planner.doxyfile header.doxyfile tutorial *.html *.css *.pdf *.jpg *.gif *.bmp
+EXTRA_DIST = planner.doxyfile header.doxyfile favicon.ico tutorial *.html *.css *.pdf *.jpg *.gif *.bmp
 
 # This points to the installation directory of the documentation
 INSTALL_DIR=$(prefix)/doc/$(PACKAGE)-$(PACKAGE_VERSION)

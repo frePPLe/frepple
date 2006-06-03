@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" 
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns="http://www.w3.org/TR/REC-html40">
+<xsl:output method="html" indent="no" />
 <xsl:template match="/PLAN/BUFFERS">
   <html>
   <head>

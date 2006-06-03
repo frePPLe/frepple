@@ -4,7 +4,7 @@
 
 APACHECTL = ~/httpd/bin/apachectl
 APXS = ~/httpd/bin/apxs
-PWD = ~/workspace/frepple/contrib/apache
+PWD = `pwd`
 
 EXTRA_DIST = htdocs mod_frepple.cpp frepple.conf README.TXT filter.cpp mod_frepple.h
 CLEANFILES = *.o *.dll *.la *.slo
@@ -18,7 +18,7 @@ compile: mod_frepple.cpp filter.cpp  mod_frepple.h
 	g++ -c -fPIC -I`$(APXS) -q INCLUDEDIR` -I../../include filter.cpp
 	g++ -c -fPIC -I`$(APXS) -q INCLUDEDIR` -I../../include mod_frepple.cpp
 	g++ -shared -fPIC -I`$(APXS) -q INCLUDEDIR` -I../../include filter.o mod_frepple.o ../../src/.libs/libfrepple.a -lxerces-c -o mod_frepple.so
-	cp mod_frepple.so /home/johan/httpd/modules/mod_frepple.so
+#	${APXS} -i -c -n frepple_module -o mod_frepple.so filter.cpp mod_frepple.cpp  ../../src/.libs/libfrepple.a  -lxerces-c
 #	${APXS} -i -n frepple_module mod_frepple.so
 
 start:

@@ -4,23 +4,62 @@
  <meta http-equiv="Content-Type" content="text/html">
  <title>Frepple menu</title>
  <link href="styles.css" rel="stylesheet" type="text/css">
+ <style type="text/css">
+ 
+   {
+     margin: 0px; 
+     font-family: Arial, Tahoma, =Helvetica, sans-serif; 
+   }
+   #Menu A {
+     display: block; 
+     font-size: 16px;
+     color: #222222; 
+     padding-right: 10px;
+     padding-top: 0px;
+     padding-bottom: 0px;
+     background-color: #4f639b;
+     text-align: right; 
+   }
+   A:link {text-decoration: none; color: #222222;}
+   A:visited {text-decoration: none; color: #222222;}
+   #Menu A:hover {background-color: #a5a5ff; }
+   H2 { 
+	   margin-top: 10px; 
+	   margin-bottom: 0px; 
+     font-size: 18px;
+     text-decoration: bold;
+     color: #222222; 
+     text-align: center; 
+     padding-bottom: 0px;
+     padding-top: 0px;
+   }
+   H3 { 
+     margin: 2px; 
+     vertical-align: middle; 
+     text-decoration: none
+   }
+   
+</style>
 </head>
-<body>
+<body bgcolor="#a5a5ff">
 
-<p align="center"><b><a target="__new" href="../../doc/index.html">
-<img src="frepple.jpg"><br><b>FREPPLE</b><br>A free production planning library
-</a></b></p>
+<center><img src="frepple.bmp"><br><b>0.1.0</b></center><br>
 
-<font size="-1">
-<ul>
-  <li><a target="filter" href="filter.html" onClick="top.data.location='empty.html';">Inventory</a></li>
-  <li><a target="filter" href="filter.html" onClick="top.data.location='empty.html';">Capacity</a></li>
-  <li><a target="filter" href="filter.html" onClick="top.data.location='empty.html';">Demand</a></li>
-  <li><a target="filter" href="filter.html" onClick="top.data.location='empty.html';">Operation</a></li>
-  <li><a target="filter" href="filter.html" onClick="top.data.location='empty.html';">Problems</a></li>
-  <li><a target="filter" href="data/commands.xml" onClick="top.data.location='empty.html';">Commands</a></li>
-</ul>
-</font>
+<div id="Menu">
 
+<h2>Reports</h2>
+<h3><a target="filter" href="filter.html" onClick="top.data.location='empty.html';">Inventory</a></h3>
+<h3><a target="filter" href="filter.html" onClick="top.data.location='empty.html';">Capacity</a></h3>
+<h3><a target="filter" href="filter.html" onClick="top.data.location='empty.html';">Demand</a></h3>
+<h3><a target="filter" href="filter.html" onClick="top.data.location='empty.html';">Operation</a></h3>
+<h3><a target="filter" href="filter.html" onClick="top.data.location='empty.html';">Problems</a></h3>
+
+<h2>Commands</h2>
+<h3><a target="filter" href="data/commands.xml" onClick="top.data.location='empty.html';">Commands</a></h3>
+
+<h2>Documentation</h2>
+<h3><a target="_new" href="../../doc/index.html">Documentation</a></h3>
+  
+</div>
 </body>
 </html>

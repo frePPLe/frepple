@@ -55,9 +55,11 @@ extern "C" void initialize(const CommandLoadLibrary::ParameterList& z)
   init = true;
 
   // Print the parameters
+  /*
   for (CommandLoadLibrary::ParameterList::const_iterator 
     j = z.begin(); j!= z.end(); ++j)
     clog << "Parameter " << j->first << " = " << j->second << endl;
+  */
 
   // Initialize the metadata.
   Forecast::metadata.registerClass(

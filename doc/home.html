@@ -2,51 +2,43 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html">
-  <title>Planner Library Documentation</title>
+  <meta name="robots" content="index,nofollow">
+  <meta name="description" content="open source APS">
+  <meta name="author" content="jdetaeye@users.sourceforge.net">
+  <meta name="keywords" content="open source, APS, Advanced Planning System">
+  <title>Frepple - a Free Production Planner framework</title>
   <link href="styles.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<p align="center"><b><i><u><font size="+2">
-<a name="top"></a>FREPPLE<br>
-a Free Production Planning Library
-</font></u></i></b></p>
-<p>Production planning problems are very
-common in manufacturing and distribution. System support is available
-from a
-wide range of vendors. All tools on the market have pretty much the
-following
-characteristics in common:</p>
-<p>Are expensive to purchase, implement and maintain.</p>
-<p>Are built on proprietary architectures and
-modeling constructs.</p>
-<p>Result quite often in systems that are
-complex, hard-to-use, difficult to implement and with low user
-acceptance.</p>
-<p>Faced with this, planners and small
-businesses resort to basic spreadsheets for planning their production
-environment.</p>
-<p>With this project, we are trying to
-build a light weight tool that can solve simple master planning
-problems without
-much hassle. It should allow planners to have access to more advanced
-functionality while maintaining the flexiblity, ease of use of their
-original
-spreadsheets.</p>
-<p>For the developer community, the project
-is also trying to establish some common ground framework for planning
-applications. Rather than building the basic building blocks (e.g.
-Items,
-buffers, boms...) from scratch over and over again, developers can
-leverage a
-proven and tested application set to extend. The library is written in
-C++.</p>
+<H1><u><font size="+4"><a name="top"></a>FREPPLE<br>
+a Free Production Planning Library</font></u></H1>
+
+<p>Plenty of planning tools are available for various production problems,
+different subprocess, different solver techniques.... A bit suprising, no 
+proper solutions exist in the open source domain. Plenty of users are left 
+with  expensive and inflexible tools, and are resorting to spreadsheets to meet 
+their needs.</p>
+<p>This project aims at building a lightweight framework that easily and quickly 
+delivers a solution for production planning problems. The initial focus is on small 
+to medium sized master planning problems for the discrete manufacturing industry.</p>
+<p>For the developer community, the project is also trying to establish a 
+common ground framework for planning applications. Rather than building the 
+basic building blocks (e.g.  item, buffer, bill of material, ...) from scratch 
+over and over again, developers can leverage a proven framweork to extend 
+with their own extension modules.</p>
+<p>The word "free" in the project name refers to liberty, not price. Think of "freedomof speech" rather than "free beer": see also <a target="_blank" href="http://www.gnu.org/philosophy/free-sw.html">the free software definition</a>.
+<p><b>The software is currently in a early-beta stage. This means the software
+isn't suitable for end users yet. There's plenty of work on the code and the 
+documentation.<br>
+I released at this early stage to collect feedback and to gather some 
+interested souls to contribute to the project.</b></p>
 <hr>
 
 <p align="right"><a name="license" href="#top">top</a></p>
 <H1>License</H2>
 <p>All code of this project is released under the GNU lesser general public
 license.
-I <b>strongly</b> encourage you to visit the website of the
+I strongly encourage you to visit the website of the
 <a href="http://www.fsf.org" target="_blank">Free Software Foundation</a> and
 learn how this
 license protects my and your work.</br>
@@ -56,23 +48,14 @@ directory.</p>
 
 <p align="right"><a name="platforms" href="#top">top</a></p>
 <h1>Supported Platforms</h1>
-The library has been compiled and tested on the following platforms:
-<ul>
-  <li>Windows 2000 and GCC v3.3.3 compiler (Cygwin) but deprecated</li>
-  <li>Windows 2000/XP and GCC v3.4.4 compiler (Cygwin)</li>
-  <li>Windows 2000 and Visual C++ 7.0 compiler </li>
-  <li>Windows 2000 and Intel C++ 9.0 compiler but not tested actively</li>
-  <li>Windows 2000 and Borland 5.5 compiler </li>
-  <li>Linux and GCC v3.4 compiler</li>
-</ul>
-The C++ commands and functions are as ANSI compliant as possible, with
-potentially inportable functions being configured using autoconf.
-Porting to platforms as well with a modern C++ compiler (i.e. supporting RTTI,
-namespaces, exceptions, STL, ...) should be relatively easy.
-<p>If you get it running successfully on a different platform please
-let
-<a href="mailto:jdetaeye@users.sourceforge.net">us</a> know, so it can be
-documented.</p>
+<p>The primary platform is <b>linux</b>, using the gcc compiler.</p>
+<p>The library can also be compiled on <b>windows</b> (tested on windows 2000 and 
+windows xp), using the Microsoft Visual Studio, the Borland 5.5 or the Intel C++ 
+compiler. The windows version currently offers less functionality. Specifically, 
+multi-threading and dynamically loaded modules aren't supported on this platform.</p>
+<p>The C++ commands and functions are as ANSI compliant as possible and porting to 
+various UNIX flavors shouldn't cause too much of an effort. The developer 
+documentation has a section on porting the software.</p>
 <hr>
 
 <p align="right"><a name="prerequisites" href="#top">top</a></p>

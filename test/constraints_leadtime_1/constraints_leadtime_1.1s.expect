@@ -1,4 +1,4 @@
-BUFFER	Raw material	1970-01-01T01:00:00	20	20
+BUFFER	Raw material	1971-01-01T00:00:00	20	20
 BUFFER	Raw material	2006-01-01T00:00:00	-2	18
 BUFFER	Raw material	2006-01-01T00:00:00	-2	16
 BUFFER	Raw material	2006-01-01T00:00:00	-2	14
@@ -10,7 +10,7 @@ BUFFER	end item	2006-01-10T00:00:00	2	14
 BUFFER	end item	2006-01-10T00:00:00	-2	12
 BUFFER	end item	2006-01-10T00:00:00	-2	10
 BUFFER	end item	2006-01-10T00:00:00	-10	0
-BUFFER	subassembly	1970-01-01T01:00:00	15	15
+BUFFER	subassembly	1971-01-01T00:00:00	15	15
 BUFFER	subassembly	2006-01-01T00:00:00	-7	8
 BUFFER	subassembly	2006-01-03T00:00:00	2	10
 BUFFER	subassembly	2006-01-03T00:00:00	2	12
@@ -33,6 +33,6 @@ OPERATION	make end item	2006-01-03T00:00:00	2006-01-10T00:00:00	2
 OPERATION	make subassembly	2006-01-01T00:00:00	2006-01-03T00:00:00	2
 OPERATION	make subassembly	2006-01-01T00:00:00	2006-01-03T00:00:00	2
 OPERATION	make subassembly	2006-01-01T00:00:00	2006-01-03T00:00:00	2
-PROBLEM	material excess	Buffer 'Raw material' has material excess of 20	1970-01-01T01:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'subassembly' has material excess of 15	1970-01-01T01:00:00 / 2006-01-03T00:00:00
+PROBLEM	material excess	Buffer 'Raw material' has material excess of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'subassembly' has material excess of 15	1971-01-01T00:00:00 / 2006-01-03T00:00:00
 PROBLEM	late	Demand 'order 1' planned 144:00:00 after its due date	2006-01-03T00:00:00 / 2006-01-09T00:00:00

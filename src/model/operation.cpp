@@ -197,10 +197,9 @@ void OperationFixedTime::setOperationPlanParameters
   if (fabs(q - oplan->getQuantity()) > ROUNDING_ERROR)
     oplan->setQuantity(q);
 
-  // Respect end date and duration.
-  // The start date parameter is unused.
+  // Respect end date and duration, when an end date is given.
   if (e) oplan->setStartAndEnd(e - duration, e);
-  else if (s) oplan->setStartAndEnd(s, s + duration);
+  else oplan->setStartAndEnd(s, s + duration);
 }
 
 
@@ -409,7 +408,7 @@ void OperationRouting::setOperationPlanParameters
     {
       if ((*i)->getDates().getEnd() > e || firstOp)
       {
-        (*i)->getOperation()->setOperationPlanParameters(*i,q,0L,e);
+        (*i)->getOperation()->setOperationPlanParameters(*i,q,Date::infinitePast,e);
         e = (*i)->getDates().getStart();
         firstOp = false;
       }
@@ -427,7 +426,7 @@ void OperationRouting::setOperationPlanParameters
     {
       if ((*i)->getDates().getStart() < s || firstOp)
       {
-        (*i)->getOperation()->setOperationPlanParameters(*i,q,s,0L);
+        (*i)->getOperation()->setOperationPlanParameters(*i,q,s,Date::infinitePast);
         s = (*i)->getDates().getEnd();
         firstOp = false;
       }
@@ -758,7 +757,7 @@ void OperationEffective::setOperationPlanParameters
     {
       Operation* oper = cal->getValue(e ? e : s);
       if (oper)
-        oa->effopplan = oper->createOperationPlan(q, 0L, e, NULL, true, oa);
+        oa->effopplan = oper->createOperationPlan(q, Date::infinitePast, e, NULL, true, oa);
       else
         throw LogicException
           ("Invalid effective calendar for operation " + getName());
@@ -767,7 +766,7 @@ void OperationEffective::setOperationPlanParameters
     {
       Operation* oper = cal->getValue(s ? s : e);
       if (oper)
-        oa->effopplan = oper->createOperationPlan(q, s, 0L, NULL, true, oa);
+        oa->effopplan = oper->createOperationPlan(q, s, Date::infinitePast, NULL, true, oa);
       else
         throw LogicException
           ("Invalid effective calendar for operation " + getName());

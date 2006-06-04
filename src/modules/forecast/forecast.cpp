@@ -160,7 +160,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
   else if (pElement.isA(Tags::tag_bucket))
   {
     setQuantity(getDue(), getQuantity());
-    Demand::setDue(0L);
+    Demand::setDue(Date::infinitePast);
     Demand::setQuantity(0.0f);
   }
   else if (pElement.isA (Tags::tag_quantity))
@@ -170,7 +170,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
   else if (pIn.isObjectEnd())
   {
     // Clear the quantity and date.
-    Demand::setDue(0L);
+    Demand::setDue(Date::infinitePast);
     Demand::setQuantity(0.0f);
   }
   else

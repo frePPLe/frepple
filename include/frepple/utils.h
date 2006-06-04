@@ -1206,14 +1206,18 @@ class Date
       */
     void toCharBuffer(char*) const;
 
+    /** A private constructor used to create the infinitePast and 
+      * infiniteFuture constants. */
+    Date(const char* s, bool dummy) {parse(s);}
+
+    /** Constructor initialized with a long value. */
+    Date(const time_t l) : lval(l) {checkFinite();}
+
   public:
     /** Default constructor. */
     // This is the only constructor that can skip the check for finite dates,
     // and thus gives the best performance.
-    Date() : lval(0L) {}
-
-    /** Constructor initialized with a long value. */
-    Date(const time_t l) : lval(l) {checkFinite();}
+    Date() : lval(infinitePast.lval) {}
 
     /** Copy constructor. */
     Date(const Date& l) : lval(l.lval) {}
@@ -1265,10 +1269,10 @@ class Date
       {return static_cast<long>(lval - l.lval);}
 
     /** Check whether the date has been initialized. */
-    bool operator ! () const {return lval == 0L;}
+    bool operator ! () const {return lval == infinitePast.lval;}
 
     /** Check whether the date has been initialized. */
-    operator bool() const {return lval != 0L;}
+    operator bool() const {return lval != infinitePast.lval;}
 
     /** Static function returns a date object initialized with the current
       * Date and time. */

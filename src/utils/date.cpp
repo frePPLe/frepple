@@ -37,11 +37,11 @@ string Date::format("%Y-%m-%dT%H:%M:%S");
 string DateRange::separator = " / ";
 
 /* This is the earliest date that we can represent. */
-const Date Date::infinitePast(0L);
+const Date Date::infinitePast("1971-01-01T00:00:00",true);
 
 /* This is the latest date that we can represent. This is not the absolute
  * limit of the internal representation, but more a convenient end date. */
-const Date Date::infiniteFuture("2030-12-31T00:00:00");
+const Date Date::infiniteFuture("2030-12-31T00:00:00",true);
 
 
 void Date::checkFinite()
@@ -138,7 +138,7 @@ void Date::parse (const char* s, const string& fmt)
 {
   struct tm p;
   strptime(s, fmt.c_str(), &p);
-  // We don't know whether daylight saving time is in effect...
+  // No clue whether daylight saving time is in effect...
   p.tm_isdst = -1;
   lval = mktime(&p);
 }
@@ -203,7 +203,7 @@ char* Date::strptime(const char *buf, const char *fmt, struct tm *tm)
   char c, *ptr;
   short i, len = 0;
 
-  // No information on the daylight saving time situation.
+  // No clude whether daylight saving time is in effect...
   tm->tm_isdst = -1;
 
   ptr = (char*) fmt;

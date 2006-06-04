@@ -229,13 +229,13 @@ void CommandSavePlan::execute()
 {
 	// Message
   if (getVerbose())
-    clog << "Start saving plan to text file '" << getFileName()
+    clog << "Start saving plan to file '" << getFileName()
     << "' at " << Date::now() << endl;
   Timer t;
 
   // Output steam
   if (getFileName().empty())
-  	throw RuntimeException("No file specified for text export.");
+  	throw RuntimeException("No file specified for export.");
 	ofstream textoutput;
 
 	// Open the file, write to it and close it. Catch exceptions all along...
@@ -323,13 +323,13 @@ void CommandSavePlan::execute()
   catch (exception& e)
   {
   	textoutput.close();
-    throw RuntimeException("Error writing to text file '" 
+    throw RuntimeException("Error writing to file '" 
       + getFileName() + "':\n" + e.what());
   }
   catch (...)
   {
   	textoutput.close();
-    throw RuntimeException("Error writing to text file '" 
+    throw RuntimeException("Error writing to file '" 
       + getFileName() + "'");
   }
 

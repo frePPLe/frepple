@@ -70,9 +70,9 @@ void Buffer::setOnHand(float f)
   if (i == OperationPlan::end())
   {
     // No operationplan exists yet
-    OperationPlan *opplan = o->createOperationPlan(
-        static_cast<float>(fabs(f)), 0L, 0L, NULL, false
-        );
+    OperationPlan *opplan = o->createOperationPlan( 
+      static_cast<float>(fabs(f)), Date::infinitePast, 
+      Date::infinitePast, NULL, false);
     opplan->setLocked(true);
     opplan->initialize();
     opplan->setAllowUpdates(true);

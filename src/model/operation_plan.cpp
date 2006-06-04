@@ -159,7 +159,7 @@ OperationPlan* OperationPlan::createOperationPlan(const Attributes* atts)
 	{
 		// Create an operationplan
 	  XMLString::release(&opname);
-		opplan = oper->createOperationPlan(0.0,0L,0L,NULL,false,NULL,id,false);
+		opplan = oper->createOperationPlan(0.0,Date::infinitePast,Date::infinitePast,NULL,false,NULL,id,false);
     LockManager::getManager().obtainWriteLock(opplan);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD))
     {
@@ -326,7 +326,7 @@ void OperationPlan::setOwner(OperationPlan* o)
 void OperationPlan::setStart (Date d)
 {
   if (getLocked()) return;
-  oper->setOperationPlanParameters(this,quantity,d,0L);
+  oper->setOperationPlanParameters(this,quantity,d,Date::infinitePast);
 
   // Check if update has been allowed
   if (runupdate) update();
@@ -337,7 +337,7 @@ void OperationPlan::setStart (Date d)
 void OperationPlan::setEnd (Date d)
 {
   if (getLocked()) return;
-  oper->setOperationPlanParameters(this,quantity,0L,d);
+  oper->setOperationPlanParameters(this,quantity,Date::infinitePast,d);
 
   // Check if update has been allowed
   if (runupdate) update();
@@ -697,7 +697,7 @@ void OperationPlanRouting::initialize()
         getOperation()->getSubOperations().rbegin();
         e != getOperation()->getSubOperations().rend(); ++e)
       {
-        p = (*e)->createOperationPlan(getQuantity(), 0L,
+        p = (*e)->createOperationPlan(getQuantity(), Date::infinitePast,
           d, NULL, true, this, 0, true);
         d = p->getDates().getStart();
       }
@@ -713,7 +713,7 @@ void OperationPlanRouting::initialize()
         e != getOperation()->getSubOperations().end(); ++e)
       {
         p = (*e)->createOperationPlan(getQuantity(), d,
-          0L, NULL, true, this, 0, true);
+          Date::infinitePast, NULL, true, this, 0, true);
         d = p->getDates().getEnd();
       }
     }

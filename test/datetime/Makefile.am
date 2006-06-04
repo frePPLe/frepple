@@ -11,4 +11,4 @@ datetime_LDADD   = ../../src/utils/libutils.la
 
 EXTRA_DIST = main.cpp datetime.expect
 
-CLEANFILES = output.* *.gcda *.gcov *.gcno
+CLEANFILES = *.out *.gcda *.gcov *.gcno

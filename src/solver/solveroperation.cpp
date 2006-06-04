@@ -251,13 +251,13 @@ void MRPSolver::solve(Operation* oper, void* v)
   {
     // There is already an owner and thus also an owner command
     assert(!Solver->curDemand);
-    z = oper->createOperationPlan(Solver->q_qty / flow_qty_per, 0L,
+    z = oper->createOperationPlan(Solver->q_qty / flow_qty_per, Date::infinitePast,
          Solver->q_date, Solver->curDemand, true, Solver->curOwnerOpplan, 0);
   }
   else
   {
     // There is no owner operationplan yet. We need a new command.
-    a = new CommandCreateOperationPlan(oper,Solver->q_qty / flow_qty_per, 0L,
+    a = new CommandCreateOperationPlan(oper,Solver->q_qty / flow_qty_per, Date::infinitePast,
           Solver->q_date,Solver->curDemand,Solver->curOwnerOpplan);
     Solver->curDemand = NULL;
     z = a->getOperationPlan();
@@ -325,7 +325,7 @@ void MRPSolver::solve(OperationRouting* oper, void* v)
 
   // Create the top operationplan
   CommandCreateOperationPlan *a = new CommandCreateOperationPlan(oper, a_qty,
-    0L, Solver->q_date, Solver->curDemand, Solver->curOwnerOpplan, false);
+    Date::infinitePast, Solver->q_date, Solver->curDemand, Solver->curOwnerOpplan, false);
   Solver->curDemand = NULL;
 
   // Make sure the subopplans know their owner & store the previous value
@@ -460,7 +460,7 @@ void MRPSolver::solve(OperationAlternate* oper, void* v)
     Solver->q_date = origQDate;
     Solver->curDemand = d;
     CommandCreateOperationPlan *a = new CommandCreateOperationPlan(oper, a_qty,
-      0L, origQDate, d, prev_owner_opplan, false);
+      Date::infinitePast, origQDate, d, prev_owner_opplan, false);
     Solver->curDemand = NULL;
     Solver->curOwnerOpplan = a->getOperationPlan();
 
@@ -544,7 +544,7 @@ void MRPSolver::solve(OperationEffective* oper, void* v)
   // Create the operationplan. This automatically creates the proper 
   // suboperationplan too.
   CommandCreateOperationPlan *a = new CommandCreateOperationPlan(oper, 
-    Solver->q_qty, 0L, Solver->q_date, Solver->curDemand, 
+    Solver->q_qty, Date::infinitePast, Solver->q_date, Solver->curDemand, 
     Solver->curOwnerOpplan, false);
   OperationPlanEffective *opplan = 
     dynamic_cast<OperationPlanEffective*>(a->getOperationPlan());

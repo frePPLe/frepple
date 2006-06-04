@@ -154,7 +154,7 @@ void MRPSolver::solve(Resource* res, void* v)
             // Search for a date where we go below the maximum load.
             // and verify whether there are still some overloads
             overloaded = false;
-            newDate = 0l;
+            newDate = Date::infinitePast;
             curdate = data->q_loadplan->getDate();
             curMax = data->q_loadplan->getMax();
             double prevOnhand = data->q_loadplan->getOnhand();

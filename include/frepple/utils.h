@@ -108,15 +108,15 @@ using namespace std;
 #include <xercesc/framework/StdInInputSource.hpp>
 using namespace xercesc;
 
-#ifdef WIN32 
-  #ifdef FREPPLEUSE
-    #define DLLEXPORT __declspec (dllimport)
+#undef DECLARE_EXPORT
+#if defined(WIN32) && !defined(STATIC)
+  #ifdef FREPPLE_CORE
+    #define DECLARE_EXPORT __declspec (dllexport)
   #else
-    //#define DLLEXPORT __declspec (dllexport)
-    #define DLLEXPORT
+    #define DECLARE_EXPORT __declspec (dllimport)
   #endif
 #else
-  #define DLLEXPORT
+  #define DECLARE_EXPORT
 #endif
 
 
@@ -906,7 +906,7 @@ class MetaCategory : public MetaData
     typedef map < hashtype, const MetaCategory*, less<hashtype> > CategoryMap;
 
     /** Returns a pointer to the registry of all metadata. */
-    static DLLEXPORT const CategoryMap& getCategories();
+    static DECLARE_EXPORT const CategoryMap& getCategories();
 
     /** Looks up a category name in the registry. If the catgory can't be 
       * located the return value is NULL. */
@@ -2410,7 +2410,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
   private:
     /** Maintains a global list of all created entities. The list is keyed
       * by the name. */
-    static Tree st;
+    static DECLARE_EXPORT Tree st;
     typedef T* type;
 
   public:

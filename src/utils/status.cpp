@@ -25,6 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#define FREPPLE_CORE 
 #include "frepple/utils.h"
 
 /* Uncomment the next line to create a lot of debugging messages during

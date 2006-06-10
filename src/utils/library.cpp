@@ -25,6 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#define FREPPLE_CORE 
 #include "frepple/utils.h"
 #include <sys/stat.h>
 
@@ -167,7 +168,7 @@ void MetaCategory::registerCategory(const char* a, controller f) const
 }
 
 
-DLLEXPORT const MetaCategory::CategoryMap& MetaCategory::getCategories()
+DECLARE_EXPORT const MetaCategory::CategoryMap& MetaCategory::getCategories()
 {
   static CategoryMap m;
   return m;

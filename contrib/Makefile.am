@@ -2,12 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-SUBDIRS =
-
-EXTRA_DIST = webservice installer vc borland j2ee scripting apache excel
+SUBDIRS = vc scripting borland excel installer webservice j2ee apache 
 
 contrib:
-	for dir in $(EXTRA_DIST); do cd $$dir; $(MAKE) contrib; cd ..; done
-
-clean:
-	for dir in $(EXTRA_DIST); do cd $$dir; $(MAKE) clean; cd ..; done
+	for dir in $(SUBDIRS); do cd $$dir; $(MAKE) contrib; cd ..; done

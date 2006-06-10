@@ -26,6 +26,7 @@
  ***************************************************************************/
 
 
+#define FREPPLE_CORE 
 #include "frepple/utils.h"
 #include <sys/stat.h>
 

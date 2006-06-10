@@ -25,15 +25,13 @@
  *                                                                         *
  ***************************************************************************/
 
+#define FREPPLE_CORE 
 #include "frepple/model.h"
-
 
 namespace frepple
 {
 
-
-template<class Calendar> Tree HasName<Calendar>::st;
-
+template<class Calendar> DECLARE_EXPORT Tree HasName<Calendar>::st;
 
 Calendar::~Calendar()
 {

@@ -31,15 +31,19 @@
 
 #include <string>
 
-
-// For the windows build we want to use the C calling convention.
-// That's because only such functions can be called from VBA...
-#if (defined(HAVE_WINDOWS_H) || defined(WIN32)) && !defined(STATIC)
-#define APIDEF __stdcall
+// For a windows shared library we need to use the C calling convention: __stdcall.
+// Only such functions can be called from VBA...
+#undef DECLARE_EXPORT
+#if defined(WIN32) && !defined(STATIC) && !defined(DOXYGEN_SHOULD_SKIP_THIS)
+  #ifdef FREPPLE_CORE
+    #define DECLARE_EXPORT(type) __declspec (dllexport) type __stdcall
+  #else
+    #define DECLARE_EXPORT(type) __declspec (dllimport) type __stdcall
+  #endif
 #else
-#define APIDEF
+  #define DECLARE_EXPORT(type) type
 #endif
-  
+
 /** The complete frepple public interface is synchroneous, i.e. a client
   * function call returns only when the complete processing is finished.
   * The interface can throw exceptions, and the client is responsible for
@@ -52,7 +56,7 @@
   * If the parameter is NULL, the setting of the environment variable 
   * FREPPLE_HOME is used instead.
   */
-void APIDEF FreppleInitialize(const char*);
+DECLARE_EXPORT(void) FreppleInitialize(const char*);
 
 /** The character buffer pointed to by the first parameter contains data in
   * XML format that is passed on to Frepple for processing.<br>
@@ -62,7 +66,7 @@ void APIDEF FreppleInitialize(const char*);
   * validation and skip the actual processing.<br>
   * The client is responsible for the memory management in the data buffer.
   */
-void APIDEF FreppleReadXMLData(char*, bool, bool);
+DECLARE_EXPORT(void) FreppleReadXMLData(char*, bool, bool);
 
 /** The first parameter is the name of a file that contains data in XML 
   * format for Frepple processing. If a NULL pointer is passed, frepple 
@@ -72,21 +76,21 @@ void APIDEF FreppleReadXMLData(char*, bool, bool);
   * The last argument specifies whether Frepple needs to perform only the
   * validation and skip the actual processing.
   */
-void APIDEF FreppleReadXMLFile(const char*, bool, bool);
+DECLARE_EXPORT(void) FreppleReadXMLFile(const char*, bool, bool);
 
 /** Calling this function will save the Frepple data in the file that
   * is passed as the argument. */
-void APIDEF FreppleSaveFile(char*);
+DECLARE_EXPORT(void) FreppleSaveFile(char*);
 
 /** Calling this function returns a text buffer with the frepple data 
   * model.<br>
   * This method can consume a lot of memory for big models!
   */
-std::string APIDEF FreppleSaveString();
+DECLARE_EXPORT(std::string) FreppleSaveString();
 
 /** This function causes the frepple executable to shut down in an orderly 
   * way. */
-void APIDEF FreppleExit();
+DECLARE_EXPORT(void) FreppleExit();
 
 
 /* The functions listed below can be called from C. */
@@ -98,25 +102,25 @@ extern "C" {
   * Use this function when calling the library from C or VB applications.
   * @see FreppleInitialize
   */
-int APIDEF FreppleWrapperInitialize(const char*);
+DECLARE_EXPORT(int) FreppleWrapperInitialize(const char*);
 
 /** Same as FreppleReadXMLData, but catches all exceptions.<br>
   * Use this function when calling the library from C or VB applications.
   * @see FreppleReadXMLData
   */
-int APIDEF FreppleWrapperReadXMLData(char*, bool, bool);
+DECLARE_EXPORT(int) FreppleWrapperReadXMLData(char*, bool, bool);
 
 /** Same as FreppleReadXMLFile, but catches all exceptions.<br>
   * Use this function when calling the library from C or VB applications.
   * @see FreppleReadXMLFile
   */
-int APIDEF FreppleWrapperReadXMLFile(const char*, bool, bool);
+DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char*, bool, bool);
 
 /** Same as FreppleSaveFile, but catches all exceptions.<br>
   * Use this function when calling the library from C or VB applications.
   * @see FreppleSaveFile
   */
-int APIDEF FreppleWrapperSaveFile(char*);
+DECLARE_EXPORT(int) FreppleWrapperSaveFile(char*);
 
 /** Same as FreppleSaveString, but catches all exceptions and also 
   * leaves the memory buffer management to the user.<br>
@@ -124,13 +128,13 @@ int APIDEF FreppleWrapperSaveFile(char*);
   * Use this function when calling the library from C or VB applications.
   * @see FreppleSaveString
   */
-int APIDEF FreppleWrapperSaveString(char*, unsigned long);
+DECLARE_EXPORT(int) FreppleWrapperSaveString(char*, unsigned long);
 
 /** Same as FreppleExit, but catches all exceptions.<br>
   * Use this function when calling the library from C or VB applications.
   * @see FreppleExit
   */
-int APIDEF FreppleWrapperExit();
+DECLARE_EXPORT(int) FreppleWrapperExit();
 
 #ifdef __cplusplus
 }  // End of "extern C"

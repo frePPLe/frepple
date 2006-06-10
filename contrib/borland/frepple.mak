@@ -111,7 +111,7 @@ $(ROOT)\lib\frepple_bcc_static.lib: $(OBJFILES)
 
 $(ROOT)\bin\frepple_bcc.dll: $(OBJFILES)
   $(MAKEDIR)\BRCC32 -i $(MAKEDIR)\..\include -fo obj\dll.res -32 ..\..\src\dll.rc  
-	$(MAKEDIR)\ilink32 $(LFLAGS_DLL) -L$(LIBPATH) $(OBJFILES),$@,,$(ALLLIB),..\..\src\frepple.def,obj\dll.res
+	$(MAKEDIR)\ilink32 $(LFLAGS_DLL) -L$(LIBPATH) $(OBJFILES),$@,,$(ALLLIB),,obj\dll.res
 	move $(ROOT)\bin\frepple_bcc.lib $(ROOT)\lib\frepple_bcc.lib
 
 $(ROOT)\bin\module_forecast_bcc.dll: $(TARGETPATH)\forecast\forecast.obj

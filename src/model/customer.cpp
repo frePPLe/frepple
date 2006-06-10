@@ -25,12 +25,13 @@
  *                                                                         *
  ***************************************************************************/
 
+#define FREPPLE_CORE 
 #include "frepple/model.h"
 
 namespace frepple
 {
 
-template<class Customer> Tree HasName<Customer>::st;
+template<class Customer> DECLARE_EXPORT Tree HasName<Customer>::st;
 
 
 void Customer::writeElement(XMLOutput* o, const XMLtag& tag, mode m) const

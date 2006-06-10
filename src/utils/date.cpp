@@ -25,6 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#define FREPPLE_CORE 
 #include "frepple/utils.h"
 #include <ctime>
 #include <clocale>

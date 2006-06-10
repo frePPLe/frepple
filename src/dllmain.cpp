@@ -25,13 +25,14 @@
  *                                                                         *
  ***************************************************************************/
 
+#define FREPPLE_CORE 
 #include "frepple.h"
 #include "freppleinterface.h"
 using namespace frepple;
 #include <sys/stat.h>
 
 
-#if (defined(HAVE_WINDOWS_H) || defined(WIN32)) && !defined(STATIC)
+#if defined(WIN32) && !defined(STATIC)
 // This function is only applicable for the windows operating systems
 // and when it hasn't been explicitly disabled by setting the STATIC variable.
 #define WIN32_LEAN_AND_MEAN
@@ -65,7 +66,7 @@ BOOL APIENTRY DllMain(HANDLE hInst, DWORD ul_reason_for_call, LPVOID lpReserved)
 #endif
 
 
-void APIDEF FreppleInitialize(const char* h)
+DECLARE_EXPORT(void) FreppleInitialize(const char* h)
 {
   static bool initialized = false;
   if (!initialized)
@@ -119,25 +120,25 @@ void APIDEF FreppleInitialize(const char* h)
 }
 
 
-void APIDEF FreppleReadXMLData (char* x, bool validate, bool validateonly)
+DECLARE_EXPORT(void) FreppleReadXMLData (char* x, bool validate, bool validateonly)
 {
   if (x) CommandReadXMLString(string(x), validate, validateonly).execute();
 }
 
 
-void APIDEF FreppleReadXMLFile (const char* x, bool validate, bool validateonly)
+DECLARE_EXPORT(void) FreppleReadXMLFile (const char* x, bool validate, bool validateonly)
 {
   CommandReadXMLFile(x, validate, validateonly).execute();
 }
 
 
-void APIDEF FreppleSaveFile(char* x)
+DECLARE_EXPORT(void) FreppleSaveFile(char* x)
 {
   CommandSave(x).execute();
 }
 
 
-string APIDEF FreppleSaveString()
+DECLARE_EXPORT(string) FreppleSaveString()
 {
   XMLOutputString x;
   x.writeElementWithHeader(Tags::tag_plan, &Plan::instance());
@@ -145,7 +146,7 @@ string APIDEF FreppleSaveString()
 }
 
 
-void APIDEF FreppleExit()
+DECLARE_EXPORT(void) FreppleExit()
 {
   // Shut down the fepple executable, or the application that loaded frepple
   // as a dynamic library
@@ -154,7 +155,7 @@ void APIDEF FreppleExit()
 }
 
  
-extern "C" int APIDEF FreppleWrapperInitialize(const char* h) 
+extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize(const char* h) 
 {
   try {FreppleInitialize(h);}
   catch (...) {return EXIT_FAILURE;}
@@ -162,7 +163,7 @@ extern "C" int APIDEF FreppleWrapperInitialize(const char* h)
 }
 
 
-extern "C" int APIDEF FreppleWrapperReadXMLData(char* d, bool v, bool c)
+extern "C" DECLARE_EXPORT(int) FreppleWrapperReadXMLData(char* d, bool v, bool c)
 {
   try {FreppleReadXMLData(d, v, c);}
   catch (...) {return EXIT_FAILURE;}
@@ -170,7 +171,7 @@ extern "C" int APIDEF FreppleWrapperReadXMLData(char* d, bool v, bool c)
 }
 
 
-extern "C" int APIDEF FreppleWrapperReadXMLFile(const char* f, bool v, bool c) 
+extern "C" DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char* f, bool v, bool c) 
 {
   try {FreppleReadXMLFile(f, v, c);}
   catch (...) {return EXIT_FAILURE;}
@@ -178,7 +179,7 @@ extern "C" int APIDEF FreppleWrapperReadXMLFile(const char* f, bool v, bool c)
 }
 
 
-extern "C" int APIDEF FreppleWrapperSaveFile(char* f) 
+extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveFile(char* f) 
 {
   try {FreppleSaveFile(f);}
   catch (...) {return EXIT_FAILURE;}
@@ -186,7 +187,7 @@ extern "C" int APIDEF FreppleWrapperSaveFile(char* f)
 }
 
 
-extern "C" int APIDEF FreppleWrapperSaveString(char* buf, unsigned long sz) 
+extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveString(char* buf, unsigned long sz) 
 {
   unsigned long l = 0;
   try
@@ -197,12 +198,12 @@ extern "C" int APIDEF FreppleWrapperSaveString(char* buf, unsigned long sz)
     l = result.size();
     memcpy(buf, result.data(), l>sz ? sz : l);
   }
-  catch (...) {return -1;}
+  catch (...) {return -1;}  // xxx todo why not return FAILURE?
   return l;
 }
 
 
-extern "C" int APIDEF FreppleWrapperExit() 
+extern "C" DECLARE_EXPORT(int) FreppleWrapperExit() 
 {
   try {FreppleExit();}
   catch (...) {return EXIT_FAILURE;}

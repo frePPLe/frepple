@@ -25,6 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#define FREPPLE_CORE 
 #include "frepple/model.h"
 #include <cmath>
 
@@ -35,7 +36,7 @@
 namespace frepple
 {
 
-template<class Buffer> Tree HasName<Buffer>::st;
+template<class Buffer> DECLARE_EXPORT Tree HasName<Buffer>::st;
 
 
 void Buffer::setOnHand(float f)

@@ -26,12 +26,13 @@
  ***************************************************************************/
 
 
+#define FREPPLE_CORE 
 #include "frepple/model.h"
 
 namespace frepple
 {
 
-template<class Resource> Tree HasName<Resource>::st;
+template<class Resource> DECLARE_EXPORT Tree HasName<Resource>::st;
 
 
 void Resource::setMaximum(CalendarFloat* c)

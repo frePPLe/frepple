@@ -26,12 +26,13 @@
  ***************************************************************************/
 
 
+#define FREPPLE_CORE 
 #include "frepple/model.h"
 
 namespace frepple
 {
 
-template<class Operation> Tree HasName<Operation>::st;
+template<class Operation> DECLARE_EXPORT Tree HasName<Operation>::st;
 Operation::Operationlist Operation::nosubOperations;
 
 

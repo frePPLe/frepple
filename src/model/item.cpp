@@ -25,12 +25,13 @@
  *                                                                         *
  ***************************************************************************/
 
+#define FREPPLE_CORE 
 #include "frepple/model.h"
 
 namespace frepple
 {
 
-template<class Item> Tree HasName<Item>::st;
+template<class Item> DECLARE_EXPORT Tree HasName<Item>::st;
 
 
 Item::~Item()

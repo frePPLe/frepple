@@ -25,10 +25,11 @@
  *                                                                         *
  ***************************************************************************/
 
+#define FREPPLE_CORE 
 #include "frepple/model.h"
+
 namespace frepple
 {
-
 
 bool Plannable::anyChange = false;
 bool Plannable::computationBusy = false;

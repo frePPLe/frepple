@@ -25,12 +25,13 @@
  *                                                                         *
  ***************************************************************************/
 
+#define FREPPLE_CORE 
 #include "frepple/model.h"
 
 namespace frepple
 {
 
-template<class Demand> Tree HasName<Demand>::st;
+template<class Demand> DECLARE_EXPORT Tree HasName<Demand>::st;
 
 
 void Demand::setQuantity(float f)

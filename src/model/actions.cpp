@@ -25,12 +25,13 @@
  *                                                                         *
  ***************************************************************************/
 
+#define FREPPLE_CORE 
 #include "frepple/model.h"
 
 namespace frepple
 {
 
-template<class Solver> Tree HasName<Solver>::st;
+template<class Solver> DECLARE_EXPORT Tree HasName<Solver>::st;
 
 //
 // SOLVE

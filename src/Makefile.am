@@ -24,11 +24,11 @@ frepple_static_LDADD = ./libfrepple.la
 # Shared library
 lib_LTLIBRARIES = libfrepple.la
 libfrepple_la_SOURCES = dllmain.cpp tags.cpp
-libfrepple_la_LDFLAGS = -version-info @LIBRARY_VERSION@
+libfrepple_la_LDFLAGS = -version-info @LIBRARY_VERSION@ -no-undefined
 libfrepple_la_LIBADD = ./solver/libsolver.la ./model/libmodel.la ./utils/libutils.la
 
-SUBDIRS = utils model solver modules
+SUBDIRS = utils model solver
 
-EXTRA_DIST = frepple.def dll.rc exe.rc
+EXTRA_DIST = dll.rc exe.rc
 
 CLEANFILES = *.gcda *.gcov *.gcno

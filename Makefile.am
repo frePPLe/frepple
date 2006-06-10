@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-SUBDIRS = src include test doc contrib bin lib
+SUBDIRS = src modules include test contrib bin lib doc
 
 EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README NEWS Makefile.am Makefile.dist
 AUTOMAKE_OPTIONS = gnu

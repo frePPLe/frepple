@@ -25,7 +25,9 @@
  *                                                                         *
  ***************************************************************************/
 
+#define FREPPLE_CORE 
 #include "frepple/utils.h"
+
 
 // These headers are required for the loading of dynamic libraries
 #ifdef WIN32

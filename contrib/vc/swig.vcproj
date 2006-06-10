@@ -20,6 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="C:\develop\frepple\include;C:\develop\packages\perl\lib\CORE"
 				PreprocessorDefinitions="WIN32;_DEBUG"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
@@ -60,7 +61,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="C:\develop\frepple\include;C:\perl\lib\CORE"
+				AdditionalIncludeDirectories="C:\develop\frepple\include;C:\develop\packages\perl\lib\CORE"
 				PreprocessorDefinitions="WIN32;NDEBUG"
 				MinimalRebuild="FALSE"
 				UsePrecompiledHeader="0"
@@ -72,7 +73,7 @@
 				AdditionalDependencies="perl58.lib xerces-c_2.lib"
 				OutputFile="$(OutDir)/frepple.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\perl\lib\CORE"
+				AdditionalLibraryDirectories="C:\develop\packages\perl\lib\CORE"
 				GenerateDebugInformation="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -95,7 +96,8 @@
 			IntermediateDirectory="Swig"
 			ConfigurationType="1">
 			<Tool
-				Name="VCCLCompilerTool"/>
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="C:\develop\frepple\include;C:\develop\packages\perl\lib\CORE"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -148,7 +150,8 @@
 				<Tool
 					Name="VCCustomBuildTool"
 					Description="Swig wrapper interface generator"
-					CommandLine="swig -c++ -perl5 -o wrapper_perl.cpp frepple.i"
+					CommandLine="swig -c++ -perl5 -o wrapper_perl.cpp frepple.i
+"
 					Outputs="$(ProjectDir)\swig\wrapperl_perl.cpp"/>
 			</FileConfiguration>
 			<FileConfiguration
@@ -157,7 +160,8 @@
 					Name="VCCustomBuildTool"
 					Description="Creating Perl wrapper interface (requires SWIG)"
 					CommandLine="echo In order to function correctly, please update the project properties to include the perl include and library directories
-swig -c++ -perl5 -outdir $(OutDir) -o $(OutDir)\wrapperl_perl.cpp $(InputPath)"
+swig -c++ -perl5 -outdir $(OutDir) -o $(OutDir)\wrapperl_perl.cpp $(InputPath)
+"
 					Outputs="$(ProjectDir)\swig\wrapperl_perl.cpp"/>
 			</FileConfiguration>
 		</File>

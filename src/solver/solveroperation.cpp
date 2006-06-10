@@ -26,6 +26,7 @@
  ***************************************************************************/
 
 
+#define FREPPLE_CORE 
 #include "frepple/solver.h"
 namespace frepple
 {

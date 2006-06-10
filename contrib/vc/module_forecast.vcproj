@@ -118,8 +118,7 @@
 				DelayLoadDLLs=""
 				ProgramDatabaseFile=".\module_forecast\Release/module_forecast_vcc.pdb"
 				OptimizeReferences="2"
-				OptimizeForWindows98="1"
-				ImportLibrary="../../lib/module_forecast_vcc.lib"/>
+				OptimizeForWindows98="1"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="NDEBUG"
@@ -154,7 +153,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalLibraryDirectories="../../src"
-				ModuleDefinitionFile="../../src/frepple.def"
+				ModuleDefinitionFile=""
 				OptimizeReferences="2"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -177,17 +176,17 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
-				RelativePath="..\..\src\modules\forecast\forecast.cpp">
+				RelativePath="..\..\modules\forecast\forecast.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\tags.cpp">
+				RelativePath="..\..\tags.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
-				RelativePath="..\..\src\modules\forecast\forecast.h">
+				RelativePath="..\..\modules\forecast\forecast.h">
 			</File>
 		</Filter>
 	</Files>

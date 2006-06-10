@@ -181,9 +181,6 @@
 				RelativePath="..\..\src\dllmain.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\frepple.def">
-			</File>
-			<File
 				RelativePath="..\..\src\tags.cpp">
 			</File>
 		</Filter>

@@ -44,7 +44,6 @@
 #ifndef FORECAST_H
 #define FORECAST_H
 
-#define FREPPLEUSE
 #include "frepple.h"
 using namespace frepple;
 

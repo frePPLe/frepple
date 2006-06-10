@@ -10,4 +10,10 @@ CLEANFILES = *.gcda *.gcov *.gcno
 
 lib_LTLIBRARIES = libforecast.la
 libforecast_la_SOURCES = $(sources)
+if CYGWIN
+# Cygwin doesn't like undefined symbols in a windows dll
+libforecast_la_LDFLAGS = -module -no-undefined
+libforecast_la_libadd = ../../src/libfrepple.la 
+else
 libforecast_la_LDFLAGS = -module 
+endif

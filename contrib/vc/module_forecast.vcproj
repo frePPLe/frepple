@@ -179,7 +179,7 @@
 				RelativePath="..\..\modules\forecast\forecast.cpp">
 			</File>
 			<File
-				RelativePath="..\..\tags.cpp">
+				RelativePath="..\..\src\tags.cpp">
 			</File>
 		</Filter>
 		<Filter

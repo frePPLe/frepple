@@ -68,7 +68,7 @@ $FREPPLE_HOME = abs_path("../bin") if (!$FREPPLE_HOME);
 
 # Executable to be used for the tests. Exported as an environment variable.
 # This default executable is the one valid  for GCC cygwin and GCC *nux builds.
-$EXECUTABLE = "libtool --mode=execute ../../src/frepple.exe";  
+$EXECUTABLE = "libtool --mode=execute ../../src/frepple";  
 my $platform = "GCC";
 
 # Put command line arguments in a hash, rather than keeping in an array

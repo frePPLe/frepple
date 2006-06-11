@@ -160,7 +160,7 @@ void MetaCategory::registerCategory
     throw LogicException("Reinitializing category " + type + " isn't allowed");
 
   // Update registry
-  const_cast<CategoryMap&>(getCategories())[XMLtag::hash(a)] = this;
+  if (a) const_cast<CategoryMap&>(getCategories())[XMLtag::hash(a)] = this;
 
   // Update fields
   MetaCategory& me = const_cast<MetaCategory&>(*this);
@@ -194,6 +194,16 @@ const MetaCategory* MetaCategory::findCategory(const char* c)
     = MetaCategory::getCategories().find(XMLtag::hash(c));
   return (i!=MetaCategory::getCategories().end()) ? i->second : NULL;
 }
+
+
+const MetaCategory* MetaCategory::findCategory(const hashtype h)
+{
+  // Loop through all categories
+  MetaCategory::CategoryMap::const_iterator i 
+    = MetaCategory::getCategories().find(h);
+  return (i!=MetaCategory::getCategories().end()) ? i->second : NULL;
+}
+
 
 const MetaClass* MetaClass::findClass(const char* c)
 {

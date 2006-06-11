@@ -927,11 +927,17 @@ class MetaCategory : public MetaData
       * located the return value is NULL. */
     static const MetaCategory* findCategory(const char*);
 
-  private:
+    /** Looks up a category name in the registry. If the catgory can't be 
+      * located the return value is NULL. */
+    static const MetaCategory* findCategory(const hashtype);
+
     /** A controller function for objects of a category. 
-      * This field is used only for categories. */
+      * The controller function manamges the creation and destruction of  
+      * objects in this category. 
+      */
     controller controlFunction;
 
+  private:
     /** A map of all classes registered for this category. */
     ClassMap classes;
     

@@ -77,13 +77,16 @@ const MetaCategory Flow::metadata;
 const MetaClass FlowStart::metadata,
   FlowEnd::metadata;
 
-// Operatiopn metadata
+// Operation metadata
 const MetaCategory Operation::metadata;
 const MetaClass OperationFixedTime::metadata,
   OperationTimePer::metadata,
   OperationRouting::metadata,
   OperationAlternate::metadata,
   OperationEffective::metadata;
+
+// OperationPlan metadata
+const MetaCategory OperationPlan::metadata;
 
 // Resource metadats
 const MetaCategory Resource::metadata;
@@ -279,6 +282,10 @@ void LibraryModel::initialize()
     "OPERATION",
     "OPERATION_EFFECTIVE", 
     Object::createString<OperationEffective>);
+
+  // Initialize the operationplan metadata.
+  OperationPlan::metadata.registerCategory
+    ("OPERATION_PLAN", "OPERATION_PLANS", OperationPlan::createOperationPlan);
 
   // Initialize the resource metadata.
   Resource::metadata.registerCategory

@@ -215,53 +215,31 @@ void Plan::endElement (XMLInput& pIn, XMLElement& pElement)
 
 void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
-  // Note: This if-statement should be ordered such that statements that
-  //       have a relatively high percentage to evaluate 'true' are on top.
-  if (pElement.isA(Tags::tag_demand)
-      && pIn.getParentElement().isA(Tags::tag_demands))
-    pIn.readto(MetaCategory::ControllerString<Demand>(Demand::metadata,pIn.getAttributes()));
-  else if (pElement.isA(Tags::tag_operation_plan)
-           && pIn.getParentElement().isA(Tags::tag_operation_plans))
-    pIn.readto(OperationPlan::createOperationPlan(pIn.getAttributes()));
-  else if (pElement.isA(Tags::tag_item)
-           && pIn.getParentElement().isA(Tags::tag_items))
-    pIn.readto(MetaCategory::ControllerString<Item>(Item::metadata,pIn.getAttributes()));
-  else if (pElement.isA(Tags::tag_buffer)
-           && pIn.getParentElement().isA(Tags::tag_buffers))
-    pIn.readto(MetaCategory::ControllerString<Buffer>(Buffer::metadata,pIn.getAttributes()));
-  else if (pElement.isA(Tags::tag_resource)
-           && pIn.getParentElement().isA(Tags::tag_resources))
-    pIn.readto(MetaCategory::ControllerString<Resource>(Resource::metadata,pIn.getAttributes()));
-  else if (pElement.isA(Tags::tag_operation)
-           && pIn.getParentElement().isA(Tags::tag_operations))
-    pIn.readto(MetaCategory::ControllerString<Operation>(Operation::metadata,pIn.getAttributes()));
-  else if (pElement.isA(Tags::tag_solver)
-           && pIn.getParentElement().isA(Tags::tag_solvers))
-    pIn.readto(MetaCategory::ControllerString<Solver>(Solver::metadata,pIn.getAttributes()));
-  else if (pElement.isA(Tags::tag_flow)
-           && pIn.getParentElement().isA(Tags::tag_flows))
-    pIn.readto(MetaCategory::ControllerDefault(Flow::metadata,pIn.getAttributes()));
-  else if (pElement.isA(Tags::tag_location)
-           && pIn.getParentElement().isA(Tags::tag_locations))
-    pIn.readto(MetaCategory::ControllerString<Location>(Location::metadata,pIn.getAttributes()));
-  else if (pElement.isA(Tags::tag_calendar)
-           && pIn.getParentElement().isA(Tags::tag_calendars))
-    pIn.readto(MetaCategory::ControllerString<Calendar>(Calendar::metadata,pIn.getAttributes()));
-  else if (pElement.isA(Tags::tag_customer)
-           && pIn.getParentElement().isA(Tags::tag_customers))
-    pIn.readto(MetaCategory::ControllerString<Customer>(Customer::metadata,pIn.getAttributes()));
-  else if (pElement.isA(Tags::tag_default_calendar))
-    pIn.readto(MetaCategory::ControllerString<Calendar>(Calendar::metadata,pIn.getAttributes()));
-  else if (pElement.isA(Tags::tag_commands))
+  // Non-default categories need to be caught upfront xxx @todo
+  if (pElement.isA(Tags::tag_commands))
   {
     LockManager::getManager().obtainWriteLock(&(pIn.getCommands()));
     pIn.readto(&(pIn.getCommands()));
   }
-  else if (pElement.isA(Tags::tag_problems))
-    pIn.IgnoreElement();
+  else 
+  {
+    // For categories registered in the standard way
+    const MetaCategory * cat = MetaCategory::findCategory(pElement.getTagHash());
+    if (cat && pIn.getParentElement().isA(cat->grouptag))
+    {
+      if (cat->controlFunction)
+        // Hand over control to the controller
+        pIn.readto(cat->controlFunction(*cat, pIn.getAttributes()));
+      else
+        // There is no controller available
+        pIn.IgnoreElement();
+    }
+    else if (pElement.isA(Tags::tag_default_calendar))
+      pIn.readto(MetaCategory::ControllerString<Calendar>(Calendar::metadata,pIn.getAttributes()));
+  }
+
   /* @todo next block of code is wanted, but doesn't work now. 'own' fields
    like "current" put the plan object in ignore state...
-  else if (!pElement.isA(Tags::tag_plan))
     // If we come across unknown tags, we simply ignore them. This allows you
     // to add your own additional fields to the XML data, when required.
     pIn.IgnoreElement();

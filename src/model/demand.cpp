@@ -239,7 +239,7 @@ void Demand::beginElement(XMLInput& pIn, XMLElement& pElement)
   else if (pElement.isA (Tags::tag_customer))
     pIn.readto( MetaCategory::ControllerString<Customer>(Customer::metadata,pIn.getAttributes()) );
   else if (pElement.isA(Tags::tag_operation_plan))
-    pIn.readto(OperationPlan::createOperationPlan(pIn.getAttributes()));
+    pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn.getAttributes()));
   else
     HasHierarchy<Demand>::beginElement(pIn, pElement);
 }

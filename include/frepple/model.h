@@ -1275,7 +1275,8 @@ class OperationPlan
       * This method is intended to be used to create objects when reading
       * XML input data.
       */
-    static OperationPlan* createOperationPlan(const Attributes* atts);
+    static Object* createOperationPlan 
+      (const MetaCategory&, const Attributes* atts);
 
     /** Destructor. */
     virtual ~OperationPlan();
@@ -1479,6 +1480,8 @@ class OperationPlan
       * not the one of the operationplan class! 
       */
     const MetaData& getType() const {return getOperation()->getType();}
+    
+    static const MetaCategory metadata;
 
   protected:
     virtual void update();

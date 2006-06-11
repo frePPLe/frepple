@@ -47,7 +47,8 @@ void OperationPlan::setChanged(bool b)
 }
 
 
-OperationPlan* OperationPlan::createOperationPlan(const Attributes* atts)
+Object* OperationPlan::createOperationPlan
+  (const MetaCategory& cat, const Attributes* atts)
 {
 	// Pick up the action attribute
   Action action = MetaData::decodeAction(atts);
@@ -480,7 +481,7 @@ void OperationPlan::beginElement (XMLInput& pIn, XMLElement& pElement)
   if (pElement.isA (Tags::tag_demand))
     pIn.readto( MetaCategory::ControllerString<Demand>(Demand::metadata,pIn.getAttributes()) );
   else if (pElement.isA(Tags::tag_owner))
-    pIn.readto(createOperationPlan(pIn.getAttributes()));
+    pIn.readto(createOperationPlan(metadata,pIn.getAttributes()));
 }
 
 

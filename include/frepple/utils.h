@@ -751,6 +751,12 @@ class MetaCategory : public MetaData
   friend class MetaClass;
   friend class XMLInput;
   public:
+    /** The name used to name a collection of objects of this category. */
+    string group;
+
+    /** A reference to an XMLtag of the category. */
+    const XMLtag* grouptag;
+
     /** Type definition for a control function for categories. */
     typedef Object* (*controller)(const MetaCategory&, const Attributes* atts);
 
@@ -896,8 +902,17 @@ class MetaCategory : public MetaData
       return x;
     }
     
-    /** This constructor registers the category of classes. */
-    void registerCategory(const char*, controller = NULL) const;
+    /** Default constructor. <br>
+      * Calling the registerCategory method is required after creating a 
+      * category object. 
+      * @see registerCategory
+      */
+    MetaCategory()
+      : group("UNSPECIFIED"), grouptag(&XMLtag::find("UNSPECIFIED")) {};
+
+    /** This method is required to register the category of classes. */
+    void registerCategory
+      (const char* t, const char* g = NULL, controller = NULL) const;
 
     /** Type definition for the map of all registered classes. */
     typedef map < hashtype, const MetaClass*, less<hashtype> > ClassMap;

@@ -182,27 +182,27 @@ void LibraryModel::initialize()
 
   // Initialize the solver metadata.
   Solver::metadata.registerCategory
-    ("SOLVER", MetaCategory::ControllerString<Solver>);
+    ("SOLVER", "SOLVERS", MetaCategory::ControllerString<Solver>);
 
   // Initialize the location metadata.
   Location::metadata.registerCategory
-    ("LOCATION", MetaCategory::ControllerString<Location>);
+    ("LOCATION", "LOCATIONS", MetaCategory::ControllerString<Location>);
   LocationDefault::metadata.registerClass("LOCATION", "LOCATION", 
     Object::createString<LocationDefault>, true);
 
   // Initialize the load metadata.
   Load::metadata.registerCategory
-    ("LOAD", MetaCategory::ControllerDefault);
+    ("LOAD", "LOADS", MetaCategory::ControllerDefault);
 
   // Initialize the item metadata.
   Item::metadata.registerCategory
-    ("ITEM", MetaCategory::ControllerString<Item>);
+    ("ITEM", "ITEMS", MetaCategory::ControllerString<Item>);
   ItemDefault::metadata.registerClass("ITEM", "ITEM", 
     Object::createString<ItemDefault>, true);
 
   // Initialize the buffer metadata.
   Buffer::metadata.registerCategory
-    ("BUFFER", MetaCategory::ControllerString<Buffer>);
+    ("BUFFER", "BUFFERS", MetaCategory::ControllerString<Buffer>);
   BufferDefault::metadata.registerClass(
     "BUFFER", 
     "BUFFER", 
@@ -218,7 +218,7 @@ void LibraryModel::initialize()
 
   // Initialize the calendar metadata.
   Calendar::metadata.registerCategory
-    ("CALENDAR", MetaCategory::ControllerString<Calendar>);
+    ("CALENDAR", "CALENDARS", MetaCategory::ControllerString<Calendar>);
   CalendarVoid::metadata.registerClass(
     "CALENDAR", 
     "CALENDAR_VOID", 
@@ -246,7 +246,7 @@ void LibraryModel::initialize()
 
   // Initialize the flow metadata.
   Flow::metadata.registerCategory
-    ("FLOW", MetaCategory::ControllerDefault);
+    ("FLOW", "FLOWS", MetaCategory::ControllerDefault);
   FlowStart::metadata.registerClass(
     "FLOW", 
     "FLOW_START", 
@@ -258,7 +258,7 @@ void LibraryModel::initialize()
 
   // Initialize the operation metadata.
   Operation::metadata.registerCategory
-    ("OPERATION", MetaCategory::ControllerString<Operation>);
+    ("OPERATION", "OPERATIONS", MetaCategory::ControllerString<Operation>);
   OperationFixedTime::metadata.registerClass(
     "OPERATION", 
     "OPERATION_FIXED_TIME", 
@@ -282,7 +282,7 @@ void LibraryModel::initialize()
 
   // Initialize the resource metadata.
   Resource::metadata.registerCategory
-    ("RESOURCE",MetaCategory::ControllerString<Resource>);
+    ("RESOURCE","RESOURCES",MetaCategory::ControllerString<Resource>);
   ResourceDefault::metadata.registerClass(
     "RESOURCE", 
     "RESOURCE", 
@@ -298,7 +298,7 @@ void LibraryModel::initialize()
   
   // Initialize the customer metadata.
   Customer::metadata.registerCategory
-    ("CUSTOMER", MetaCategory::ControllerString<Customer>);
+    ("CUSTOMER", "CUSTOMERS", MetaCategory::ControllerString<Customer>);
   CustomerDefault::metadata.registerClass(
     "CUSTOMER", 
     "CUSTOMER", 
@@ -306,14 +306,14 @@ void LibraryModel::initialize()
 
   // Initialize the demand metadata.
   Demand::metadata.registerCategory
-    ("DEMAND", MetaCategory::ControllerString<Demand>);
+    ("DEMAND", "DEMANDS", MetaCategory::ControllerString<Demand>);
   DemandDefault::metadata.registerClass(
     "DEMAND", 
     "DEMAND", 
     Object::createString<DemandDefault>, true);
 
   // Initialize the problem metadata.
-  Problem::metadata.registerCategory("PROBLEM");
+  Problem::metadata.registerCategory("PROBLEM", "PROBLEMS");
   ProblemMaterialExcess::metadata.registerClass
     ("PROBLEM","material excess");
   ProblemMaterialShortage::metadata.registerClass

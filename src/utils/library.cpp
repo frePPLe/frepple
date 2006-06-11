@@ -89,7 +89,7 @@ void LibraryUtils::initialize()
 
   // Initialize the command metadata.
   Command::metadata.registerCategory
-    ("COMMAND",MetaCategory::ControllerDefault);
+    ("COMMAND", "COMMANDS", MetaCategory::ControllerDefault);
   CommandList::metadata.registerClass(
     "COMMAND", 
     "COMMAND_LIST",
@@ -104,7 +104,8 @@ void LibraryUtils::initialize()
     Object::createDefault<CommandLoadLibrary>);
 
   // Initialize the processing instruction metadata.
-  XMLinstruction::metadata.registerCategory("INSTRUCTION", MetaCategory::ControllerDefault);
+  XMLinstruction::metadata.registerCategory
+    ("INSTRUCTION", NULL, MetaCategory::ControllerDefault);
   CSVInput::metadata.registerClass(
     "INSTRUCTION",
     "CSV",
@@ -151,7 +152,8 @@ void MetaClass::registerClass (const char* a, const char* b, bool def) const
 }
 
 
-void MetaCategory::registerCategory(const char* a, controller f) const
+void MetaCategory::registerCategory
+  (const char* a, const char* gr, controller f) const
 {
   // Initialize only once
   if (type != "UNSPECIFIED") 
@@ -162,9 +164,19 @@ void MetaCategory::registerCategory(const char* a, controller f) const
 
   // Update fields
   MetaCategory& me = const_cast<MetaCategory&>(*this);
-  me.type = a;
   me.controlFunction = f;
-  me.typetag = &XMLtag::find(a);
+  if (a)
+  {
+    // Type tag
+    me.type = a;
+    me.typetag = &XMLtag::find(a);
+  }
+  if (gr)
+  {
+    // Group tag
+    me.group = gr;
+    me.grouptag = &XMLtag::find(gr);
+  }
 }
 
 

@@ -5,15 +5,16 @@
 #  email    : jdetaeye@users.sourceforge.net
 
 use frepple;
+use Env qw(FREPPLE_HOME);
 
 # The eval command is used to catch frepple exceptions
 eval {
   print "Initializing:\n";
-  FreppleInitialize();
+  frepple::FreppleInitialize($FREPPLE_HOME);
   print " OK\n";
   
 	print "Reading base data:\n";
-	frepple::readXMLData('<?xml version="1.0" encoding="UTF-8" ?>
+	frepple::FreppleReadXMLData('<?xml version="1.0" encoding="UTF-8" ?>
 		<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 			<NAME>actual plan</NAME>
 			<DESCRIPTION>Anything goes</DESCRIPTION>
@@ -25,7 +26,7 @@ eval {
 			</OPERATIONS>
 			<ITEMS>
 				<ITEM NAME="end item">
-					<OPERATION NAME="delivery end item">
+					<OPERATION NAME="delivery end item" xsi:type="OPERATION_FIXED_TIME">
 						<DURATION>24:00:00</DURATION>
 					</OPERATION>
 				</ITEM>
@@ -78,7 +79,7 @@ eval {
 	print " OK\n";
 
 	print "Adding an item:\n";
-	frepple::readXMLData('<?xml version="1.0" encoding="UTF-8" ?>
+	frepple::FreppleReadXMLData('<?xml version="1.0" encoding="UTF-8" ?>
 		<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 			<ITEMS>
 				<ITEM NAME="New Item"/>
@@ -88,15 +89,15 @@ eval {
 
 	print "Saving frepple model to a string:\n";
 	# @todo try this out for large strings. Memory consumption?
-	print frepple::saveString();
+	print frepple::FreppleSaveString();
 	print " OK\n";
 
 	print "Saving frepple model to a file:\n";
-	frepple::saveFile("turbo.perl.xml");
+	frepple::FreppleSaveFile("turbo.perl.xml");
 	print " OK\n";
 
 	print "Passing invalid XML data to frepple:\n";
-	frepple::readXMLData('<?xml version="1.0" encoding="UTF-8" ?>
+	frepple::FreppleReadXMLData('<?xml version="1.0" encoding="UTF-8" ?>
 		<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 			<XXDESCRIPTION>dummy</DESCRIPTION>
 		</PLAN> ', true, false);

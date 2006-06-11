@@ -5,14 +5,15 @@
 #  email    : jdetaeye@users.sourceforge.net
 
 import frepple
+import os
 
 try:
 	print "Initializing:"
-	print frepple.FreppleInitialize()
+	print frepple.FreppleInitialize(os.environ.get("FREPPLE_HOME"))
 	print " OK"
 
 	print "Reading base data:"
-	frepple.readXMLData('<?xml version="1.0" encoding="UTF-8" ?> \
+	frepple.FreppleReadXMLData('<?xml version="1.0" encoding="UTF-8" ?> \
 		<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
 			<NAME>actual plan</NAME> \
 			<DESCRIPTION>Anything goes</DESCRIPTION> \
@@ -24,7 +25,7 @@ try:
 			</OPERATIONS> \
 			<ITEMS> \
 				<ITEM NAME="end item"> \
-					<OPERATION NAME="delivery end item"> \
+					<OPERATION NAME="delivery end item" xsi:type="OPERATION_FIXED_TIME"> \
 						<DURATION>24:00:00</DURATION> \
 					</OPERATION> \
 				</ITEM> \
@@ -71,11 +72,11 @@ try:
 					<POLICY>PLANLATE</POLICY> \
 				</DEMAND> \
 			</DEMANDS> \
-		</PLAN> ',1,0)
+		</PLAN> ', True, False)
 	print " OK"
 
 	print "Adding an item:"
-	frepple.readXMLData('<?xml version="1.0" encoding="UTF-8" ?> \
+	frepple.FreppleReadXMLData('<?xml version="1.0" encoding="UTF-8" ?> \
 		<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
 			<ITEMS> \
 				<ITEM NAME="New Item"/> \
@@ -84,15 +85,15 @@ try:
 	print " OK"
 
 	print "Saving frepple model to a string:"
-	print frepple.saveString()
+	print frepple.FreppleSaveString()
 	print " OK"
 
 	print "Saving frepple model to a file:"
-	frepple.saveFile("turbo.python.xml")
+	frepple.FreppleSaveFile("turbo.python.xml")
 	print " OK"
 
 	print "Passing invalid XML data to frepple:"
-	frepple.readXMLData('<?xml version="1.0" encoding="UTF-8" ?> \
+	frepple.FreppleReadXMLData('<?xml version="1.0" encoding="UTF-8" ?> \
 		<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
 			<XXDESCRIPTION>Dummy</XXDESCRIPTION> \
 		</PLAN> ', 1, 0)

@@ -1,3 +1,27 @@
+/*
+
+ Copyright (C) 2006 by Johan De Taeye
+
+ This library is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
+
+ file : $HeadURL: file:///develop/SVNrepository/frepple/trunk/configure.in $
+ revision : $LastChangedRevision$  $LastChangedBy$
+ date : $LastChangedDate$
+ email : jdetaeye@users.sourceforge.net
+
+*/
 
 var objDoc;
 
@@ -6,11 +30,17 @@ var MAXLIST = 300;
 var items = 0;
 var locations = 0;
 var buffers = 0;
-var itemfilter = "";
-var locationfilter = "";
-var bufferfilter = "";
+var itemfilter = getCookie("itemfilter");
+var locationfilter = getCookie("locfilter");
+var bufferfilter = getCookie("buffilter");
 var trf = document.implementation.createDocument("", "test", null);
 trf.load("inventory.xsl");
+
+// Create a footer for a cookie that will expire in 5 days
+var date = new Date() ;
+date.setTime(date.getTime() + 5 * 86400000);
+var cookiefooter = '; expires=' +  date.toGMTString() + '; path=/;';
+
 
 function kiwi(ctrl,column)
 {
@@ -54,15 +84,10 @@ function display()
   // Callback function for reception of the results
   xmlhttp.onreadystatechange=function() {
    if (xmlhttp.readyState==4) {
-     alert ("wel " + xmlhttp.reponseText);
      var proc = new XSLTProcessor();
      proc.importStylesheet(trf);
      var doc = proc.transformToDocument(xmlhttp.responseXML);
-     top.data.document = doc;
-     //top.data.document.open();
-     //top.data.document.writeln("header");
-     //top.data.document.write(doc);
-     //top.data.document.close();
+     top.data.document.body = doc.body;
    }
   }
 
@@ -109,7 +134,6 @@ function GetFilterData() {
        updateLocationList();
        updateItemList();
        updateBufferList();
-       updateCookie();
      } else
        alert('There was a problem retrieving the filter data:\n' 
         + xmlhttp.statusText);
@@ -120,14 +144,26 @@ function GetFilterData() {
 }
 
  
-function updateCookie()
+function updateCookie(name,val)
 {
-  // @todo not working yet
-  var date = new Date() ;
-  date.setTime(date.getTime() + 5 * 86400000);
-  document.cookie = 
-    'expires=' +  date.toGMTString() 
-    + '; domain=frepple; path=/; itemfilter=kikiw; locationfilter=kikiw; ';
+  // Update cookie
+  document.cookie = name + "=" + escape(val) + cookiefooter;
+}
+
+
+function getCookie(name)
+{
+  var dc = document.cookie;
+  var arg = name + "=";
+  var begin = dc.indexOf("; " + arg);
+  if (begin == -1) {
+    begin = dc.indexOf(arg);
+    if (begin != 0) return null;
+  } else 
+    begin += 2;
+  var end = dc.indexOf(";",begin);
+  if (end == -1) end = dc.length;
+  return unescape(dc.substring(begin + arg.length, end));
 }
 
 
@@ -154,7 +190,7 @@ function updateLocationList()
   html += "</select>";
   document.getElementById('table').rows[2].cells[0].innerHTML = html;
   document.getElementById('LocCount').innerHTML = cnt;
-  loactions = cnt;
+  locations = cnt;
 }
 
 
@@ -235,10 +271,12 @@ function itemUpdate()
   if (listBox.options.length > MAXLIST && listBox.options[MAXLIST].selected) {
     document.getElementById("ItemFilter").value = itemfilter;
     document.getElementById("ItemCount").innerHTML = items;
+    updateCookie('itemfilter',itemfilter);
   }
   else {
     document.getElementById("ItemFilter").value = fltr;
     document.getElementById("ItemCount").innerHTML = cnt;
+    updateCookie('itemfilter',fltr);
   }
   updateBufferList();
 }
@@ -259,10 +297,12 @@ function locationUpdate()
   if (listBox.options.length > MAXLIST && listBox.options[MAXLIST].selected) {
     document.getElementById("LocationFilter").value = locationfilter;
     document.getElementById("LocCount").innerHTML = locations;
+    updateCookie('locfilter',locationfilter);
   }
   else {
     document.getElementById("LocationFilter").value = fltr;
     document.getElementById("LocCount").innerHTML = cnt;
+    updateCookie('locfilter',fltr);
   }
   updateBufferList();
 }
@@ -283,9 +323,11 @@ function bufferUpdate()
   if (listBox.options.length > MAXLIST && listBox.options[MAXLIST].selected) {
     document.getElementById("BufferFilter").value = bufferfilter;
     document.getElementById("BufferCount").innerHTML = buffers;
+    updateCookie('buffilter',bufferfilter);
   }
   else {
     document.getElementById("BufferFilter").value = fltr;
     document.getElementById("BufferCount").innerHTML = cnt;
+    updateCookie('buffilter',fltr);
   }
 }

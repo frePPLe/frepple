@@ -1,4 +1,28 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+
+ Copyright (C) 2006 by Johan De Taeye
+
+ This library is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
+
+ file : $HeadURL: file:///develop/SVNrepository/frepple/trunk/configure.in $
+ revision : $LastChangedRevision$  $LastChangedBy$
+ date : $LastChangedDate$
+ email : jdetaeye@users.sourceforge.net
+ 
+-->
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html">
@@ -9,9 +33,13 @@
 
 function init(firsttime)
 {
-  if (firsttime)
+  if (firsttime) {
     // First time we open this window
     GetFilterData();
+    document.getElementById("LocationFilter").value = getCookie("locfilter");
+    document.getElementById("ItemFilter").value = getCookie("itemfilter");
+    document.getElementById("BufferFilter").value = getCookie("buffilter");
+  }
   else {
     // Resetting to the default filter settings
     document.getElementById("LocationFilter").value = "";
@@ -20,7 +48,9 @@ function init(firsttime)
     updateLocationList();
     updateItemList();
     updateBufferList();
-    updateCookie();
+    updateCookie("itemfilter","");
+    updateCookie("buffilter","");
+    updateCookie("locfilter","");
   }
 }
 
@@ -39,11 +69,11 @@ function init(firsttime)
 </tr>
 <tr>
 <td><input id="LocationFilter" maxlength="2550" style="width:100%;" type="text" 
-  onChange="updateLocationList();updateBufferList();updateCookie()"></td>
+  onChange="updateLocationList();updateBufferList();updateCookie('locfilter',this.value)"></td>
 <td><input id="ItemFilter" maxlength="2550" style="width:100%;" type="text" 
-  onChange="updateItemList();updateBufferList();updateCookie()"></td>
+  onChange="updateItemList();updateBufferList();updateCookie('itemfilter',this.value)"></td>
 <td><input id="BufferFilter" maxlength="2550" style="width:100%;" type="text" 
-  onChange="updateBufferList();updateCookie()"></td>
+  onChange="updateBufferList();updateCookie('buffilter',this.value)"></td>
 </tr>
 <tr>
 <td><select id="Locations" size="6" style="width:100%;" multiple 

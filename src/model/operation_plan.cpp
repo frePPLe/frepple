@@ -442,6 +442,18 @@ void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
 }
 
 
+void OperationPlan::writer(const MetaCategory& c, XMLOutput* o)
+{
+  if (!empty())
+  {
+    o->BeginObject(*c.grouptag);
+    for(iterator i=begin(); i!=end(); ++i)
+      o->writeElement(*c.typetag, *i);
+    o->EndObject(*c.grouptag);
+  }
+}
+
+
 void OperationPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Don't export operationplans of hidden operations
@@ -479,7 +491,7 @@ void OperationPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 void OperationPlan::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_demand))
-    pIn.readto( MetaCategory::ControllerString<Demand>(Demand::metadata,pIn.getAttributes()) );
+    pIn.readto( Demand::reader(Demand::metadata,pIn.getAttributes()) );
   else if (pElement.isA(Tags::tag_owner))
     pIn.readto(createOperationPlan(metadata,pIn.getAttributes()));
 }

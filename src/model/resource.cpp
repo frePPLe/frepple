@@ -119,7 +119,7 @@ void Resource::beginElement (XMLInput& pIn, XMLElement& pElement)
     pIn.readto(l);
   }
   else if (pElement.isA (Tags::tag_maximum))
-    pIn.readto( MetaCategory::ControllerString<Calendar>(Calendar::metadata,pIn.getAttributes()) );
+    pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else if (pElement.isA(Tags::tag_profile))
     pIn.IgnoreElement();
   else

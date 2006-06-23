@@ -233,11 +233,11 @@ void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 void Demand::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_item))
-    pIn.readto( MetaCategory::ControllerString<Item>(Item::metadata,pIn.getAttributes()) );
+    pIn.readto( Item::reader(Item::metadata,pIn.getAttributes()) );
   else if (pElement.isA (Tags::tag_operation))
-    pIn.readto( MetaCategory::ControllerString<Operation>(Operation::metadata,pIn.getAttributes()) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else if (pElement.isA (Tags::tag_customer))
-    pIn.readto( MetaCategory::ControllerString<Customer>(Customer::metadata,pIn.getAttributes()) );
+    pIn.readto( Customer::reader(Customer::metadata,pIn.getAttributes()) );
   else if (pElement.isA(Tags::tag_operation_plan))
     pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn.getAttributes()));
   else

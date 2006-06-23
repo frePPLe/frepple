@@ -183,45 +183,30 @@ void LibraryModel::initialize()
     "COMMAND_ERASE", 
     Object::createDefault<CommandErase>);
 
+  // Initialize the plan metadata.
+  Plan::metadata.registerCategory("PLAN");
+
   // Initialize the solver metadata.
   Solver::metadata.registerCategory
-    ("SOLVER", "SOLVERS", MetaCategory::ControllerString<Solver>);
+    ("SOLVER", "SOLVERS", Solver::reader, Solver::writer);
 
   // Initialize the location metadata.
   Location::metadata.registerCategory
-    ("LOCATION", "LOCATIONS", MetaCategory::ControllerString<Location>);
+    ("LOCATION", "LOCATIONS", Location::reader, Location::writer);
   LocationDefault::metadata.registerClass("LOCATION", "LOCATION", 
     Object::createString<LocationDefault>, true);
 
-  // Initialize the load metadata.
-  Load::metadata.registerCategory
-    ("LOAD", "LOADS", MetaCategory::ControllerDefault);
-
-  // Initialize the item metadata.
-  Item::metadata.registerCategory
-    ("ITEM", "ITEMS", MetaCategory::ControllerString<Item>);
-  ItemDefault::metadata.registerClass("ITEM", "ITEM", 
-    Object::createString<ItemDefault>, true);
-
-  // Initialize the buffer metadata.
-  Buffer::metadata.registerCategory
-    ("BUFFER", "BUFFERS", MetaCategory::ControllerString<Buffer>);
-  BufferDefault::metadata.registerClass(
-    "BUFFER", 
-    "BUFFER", 
-    Object::createString<BufferDefault>, true);
-  BufferInfinite::metadata.registerClass(
-    "BUFFER", 
-    "BUFFER_INFINITE", 
-    Object::createString<BufferInfinite>);
-  BufferMinMax::metadata.registerClass(
-    "BUFFER", 
-    "BUFFER_MINMAX", 
-    Object::createString<BufferMinMax>);
+  // Initialize the customer metadata.
+  Customer::metadata.registerCategory
+    ("CUSTOMER", "CUSTOMERS", Customer::reader, Customer::writer);
+  CustomerDefault::metadata.registerClass(
+    "CUSTOMER", 
+    "CUSTOMER", 
+    Object::createString<CustomerDefault>, true);
 
   // Initialize the calendar metadata.
   Calendar::metadata.registerCategory
-    ("CALENDAR", "CALENDARS", MetaCategory::ControllerString<Calendar>);
+    ("CALENDAR", "CALENDARS", Calendar::reader, Calendar::writer);
   CalendarVoid::metadata.registerClass(
     "CALENDAR", 
     "CALENDAR_VOID", 
@@ -247,21 +232,9 @@ void LibraryModel::initialize()
     "CALENDAR_OPERATION", 
     Object::createString<CalendarOperation>);
 
-  // Initialize the flow metadata.
-  Flow::metadata.registerCategory
-    ("FLOW", "FLOWS", MetaCategory::ControllerDefault);
-  FlowStart::metadata.registerClass(
-    "FLOW", 
-    "FLOW_START", 
-    Object::createDefault<FlowStart>, true);
-  FlowEnd::metadata.registerClass(
-    "FLOW", 
-    "FLOW_END", 
-    Object::createDefault<FlowEnd>);
-
   // Initialize the operation metadata.
   Operation::metadata.registerCategory
-    ("OPERATION", "OPERATIONS", MetaCategory::ControllerString<Operation>);
+    ("OPERATION", "OPERATIONS", Operation::reader, Operation::writer);
   OperationFixedTime::metadata.registerClass(
     "OPERATION", 
     "OPERATION_FIXED_TIME", 
@@ -282,14 +255,40 @@ void LibraryModel::initialize()
     "OPERATION",
     "OPERATION_EFFECTIVE", 
     Object::createString<OperationEffective>);
+  
+  // Initialize the item metadata.
+  Item::metadata.registerCategory
+    ("ITEM", "ITEMS", Item::reader, Item::writer);
+  ItemDefault::metadata.registerClass("ITEM", "ITEM", 
+    Object::createString<ItemDefault>, true);
 
-  // Initialize the operationplan metadata.
-  OperationPlan::metadata.registerCategory
-    ("OPERATION_PLAN", "OPERATION_PLANS", OperationPlan::createOperationPlan);
+  // Initialize the buffer metadata.
+  Buffer::metadata.registerCategory
+    ("BUFFER", "BUFFERS", Buffer::reader, Buffer::writer);
+  BufferDefault::metadata.registerClass(
+    "BUFFER", 
+    "BUFFER", 
+    Object::createString<BufferDefault>, true);
+  BufferInfinite::metadata.registerClass(
+    "BUFFER", 
+    "BUFFER_INFINITE", 
+    Object::createString<BufferInfinite>);
+  BufferMinMax::metadata.registerClass(
+    "BUFFER", 
+    "BUFFER_MINMAX", 
+    Object::createString<BufferMinMax>);
+  
+  // Initialize the demand metadata.
+  Demand::metadata.registerCategory
+    ("DEMAND", "DEMANDS", Demand::reader, Demand::writer);
+  DemandDefault::metadata.registerClass(
+    "DEMAND", 
+    "DEMAND", 
+    Object::createString<DemandDefault>, true);
 
   // Initialize the resource metadata.
   Resource::metadata.registerCategory
-    ("RESOURCE","RESOURCES",MetaCategory::ControllerString<Resource>);
+    ("RESOURCE", "RESOURCES", Resource::reader, Resource::writer);
   ResourceDefault::metadata.registerClass(
     "RESOURCE", 
     "RESOURCE", 
@@ -300,27 +299,28 @@ void LibraryModel::initialize()
     "RESOURCE_INFINITE", 
     Object::createString<ResourceInfinite>);
 
-  // Initialize the plan metadata.
-  Plan::metadata.registerCategory("PLAN");
-  
-  // Initialize the customer metadata.
-  Customer::metadata.registerCategory
-    ("CUSTOMER", "CUSTOMERS", MetaCategory::ControllerString<Customer>);
-  CustomerDefault::metadata.registerClass(
-    "CUSTOMER", 
-    "CUSTOMER", 
-    Object::createString<CustomerDefault>, true);
+  // Initialize the load metadata.
+  Load::metadata.registerCategory
+    ("LOAD", "LOADS", MetaCategory::ControllerDefault);
 
-  // Initialize the demand metadata.
-  Demand::metadata.registerCategory
-    ("DEMAND", "DEMANDS", MetaCategory::ControllerString<Demand>);
-  DemandDefault::metadata.registerClass(
-    "DEMAND", 
-    "DEMAND", 
-    Object::createString<DemandDefault>, true);
+  // Initialize the flow metadata.
+  Flow::metadata.registerCategory
+    ("FLOW", "FLOWS", MetaCategory::ControllerDefault);
+  FlowStart::metadata.registerClass(
+    "FLOW", 
+    "FLOW_START", 
+    Object::createDefault<FlowStart>, true);
+  FlowEnd::metadata.registerClass(
+    "FLOW", 
+    "FLOW_END", 
+    Object::createDefault<FlowEnd>);
+
+  // Initialize the operationplan metadata.
+  OperationPlan::metadata.registerCategory
+    ("OPERATION_PLAN", "OPERATION_PLANS", OperationPlan::createOperationPlan, OperationPlan::writer);
 
   // Initialize the problem metadata.
-  Problem::metadata.registerCategory("PROBLEM", "PROBLEMS");
+  Problem::metadata.registerCategory("PROBLEM", "PROBLEMS", NULL, Problem::writer);
   ProblemMaterialExcess::metadata.registerClass
     ("PROBLEM","material excess");
   ProblemMaterialShortage::metadata.registerClass

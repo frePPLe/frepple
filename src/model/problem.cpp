@@ -211,6 +211,22 @@ void Problem::clearProblems(HasProblems* p, bool setchanged)
 }
 
 
+void Problem::writer(const MetaCategory& c, XMLOutput* o)
+{
+  const_iterator piter = begin();
+  if (piter != end())
+  {
+    o->BeginObject(*c.grouptag);
+    for(; piter!=end(); ++piter)
+      // Note: not the regular write, but a fast write to speed things up.
+      // This is possible since problems aren't nested and are never 
+      // referenced.
+      (*piter)->writeElement(o, *c.typetag);
+    o->EndObject(*c.grouptag);
+  }
+}
+
+
 void Problem::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // We ignore the mode, and always write the complete model

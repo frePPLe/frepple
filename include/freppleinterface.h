@@ -31,7 +31,7 @@
 
 #include <string>
 
-// For a windows shared library we need to use the C calling convention: __stdcall.
+// For a windows shared library we use the C calling convention: __stdcall.
 // Only such functions can be called from VBA...
 #undef DECLARE_EXPORT
 #if defined(WIN32) && !defined(STATIC) && !defined(DOXYGEN_SHOULD_SKIP_THIS)

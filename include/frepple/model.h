@@ -506,6 +506,7 @@ class Problem : public NonCopyable
 
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, XMLElement&  pElement) {}
+    static void writer(const MetaCategory&, XMLOutput*);
 
     /** Returns an iterator to the very first problem. The iterator can be 
       * incremented till it points past the very last problem. */
@@ -1482,6 +1483,9 @@ class OperationPlan
     const MetaData& getType() const {return getOperation()->getType();}
     
     static const MetaCategory metadata;
+    
+    /** Handles the persistence of operationplan objects. */
+    static void writer(const MetaCategory&, XMLOutput*);
 
   protected:
     virtual void update();

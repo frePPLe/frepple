@@ -289,15 +289,15 @@ void Buffer::beginElement (XMLInput& pIn, XMLElement& pElement)
     pIn.readto (f);
   }
   else if (pElement.isA(Tags::tag_producing))
-    pIn.readto( MetaCategory::ControllerString<Operation>(Operation::metadata,pIn.getAttributes()) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else if (pElement.isA(Tags::tag_consuming))
-    pIn.readto( MetaCategory::ControllerString<Operation>(Operation::metadata,pIn.getAttributes()) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else if (pElement.isA(Tags::tag_item))
-    pIn.readto( MetaCategory::ControllerString<Item>(Item::metadata,pIn.getAttributes()) );
+    pIn.readto( Item::reader(Item::metadata,pIn.getAttributes()) );
   else if (pElement.isA(Tags::tag_minimum) || pElement.isA(Tags::tag_maximum))
-    pIn.readto( MetaCategory::ControllerString<Calendar>(Calendar::metadata,pIn.getAttributes()) );
+    pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else if (pElement.isA(Tags::tag_location))
-    pIn.readto( MetaCategory::ControllerString<Location>(Location::metadata,pIn.getAttributes()) );
+    pIn.readto( Location::reader(Location::metadata,pIn.getAttributes()) );
   else if (pElement.isA(Tags::tag_profile)
     || pElement.isA(Tags::tag_bucket_profile))
     pIn.IgnoreElement();

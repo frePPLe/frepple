@@ -147,9 +147,9 @@ void Load::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 void Load::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_resource))
-    pIn.readto( MetaCategory::ControllerString<Resource>(Resource::metadata,pIn.getAttributes()) );
+    pIn.readto( Resource::reader(Resource::metadata,pIn.getAttributes()) );
   else if (pElement.isA (Tags::tag_operation))
-    pIn.readto( MetaCategory::ControllerString<Operation>(Operation::metadata,pIn.getAttributes()) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
 }
 
 

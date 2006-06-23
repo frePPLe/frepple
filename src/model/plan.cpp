@@ -75,118 +75,8 @@ void Plan::writeElement (XMLOutput *o, const XMLtag& tag, mode m) const
   o->writeElement(Tags::tag_default_calendar, def_Calendar);
   Plannable::writeElement(o, tag);
 
-  // Solvers
-  if (!Solver::empty())
-  {
-    o->BeginObject(Tags::tag_solvers);
-    for (Solver::iterator gsolv = Solver::begin(); 
-      gsolv != Solver::end(); ++gsolv)
-        o->writeElement(Tags::tag_solver, *gsolv);
-    o->EndObject(Tags::tag_solvers);
-  }
-
-  // Locations
-  if (!Location::empty())
-  {
-    o->BeginObject(Tags::tag_locations);
-    for (Location::iterator gloc = Location::begin(); 
-      gloc != Location::end(); ++gloc)
-        o->writeElement(Tags::tag_location, *gloc);
-    o->EndObject(Tags::tag_locations);
-  }
-
-  // Customers
-  if (!Customer::empty())
-  {
-    o->BeginObject(Tags::tag_customers);
-    for (Customer::iterator gcust = Customer::begin(); 
-      gcust != Customer::end(); ++gcust)
-        o->writeElement(Tags::tag_customer, *gcust);
-    o->EndObject(Tags::tag_customers);
-  }
-
-  // Calendars
-  if (!Calendar::empty())
-  {
-    o->BeginObject(Tags::tag_calendars);
-    for (Calendar::iterator gcal = Calendar::begin(); 
-      gcal != Calendar::end(); ++gcal)
-        o->writeElement(Tags::tag_calendar, *gcal);
-    o->EndObject(Tags::tag_calendars);
-  }
-
-  // Operations
-  if (!Operation::empty())
-  {
-    o->BeginObject(Tags::tag_operations);
-    for (Operation::iterator goper = Operation::begin(); 
-      goper != Operation::end(); ++goper)
-        o->writeElement(Tags::tag_operation, *goper);
-    o->EndObject(Tags::tag_operations);
-  }
-
-  // Items
-  if (!Item::empty())
-  {
-    o->BeginObject(Tags::tag_items);
-    for (Item::iterator gitem = Item::begin(); 
-      gitem != Item::end(); ++gitem)
-        o->writeElement(Tags::tag_item, *gitem);
-    o->EndObject(Tags::tag_items);
-  }
-
-  // Buffers
-  if (!Buffer::empty())
-  {
-    o->BeginObject(Tags::tag_buffers);
-    for (Buffer::iterator gbuf = Buffer::begin(); 
-      gbuf != Buffer::end(); ++gbuf)
-        o->writeElement(Tags::tag_buffer, *gbuf);
-    o->EndObject(Tags::tag_buffers);
-  }
-
-  // Demands
-  if (!Demand::empty())
-  {
-    o->BeginObject(Tags::tag_demands);
-    for (Demand::iterator gdem = Demand::begin(); 
-      gdem != Demand::end(); ++gdem)
-        o->writeElement(Tags::tag_demand, *gdem);
-    o->EndObject(Tags::tag_demands);
-  }
-
-  // Resources
-  if (!Resource::empty())
-  {
-    o->BeginObject(Tags::tag_resources);
-    for (Resource::iterator gres = Resource::begin(); 
-      gres != Resource::end(); ++gres)
-        o->writeElement(Tags::tag_resource, *gres);
-    o->EndObject(Tags::tag_resources);
-  }
-
-  // Operationplans
-  if (!OperationPlan::empty())
-  {
-    o->BeginObject(Tags::tag_operation_plans);
-    for(OperationPlan::iterator i = OperationPlan::begin();
-        i!=OperationPlan::end(); ++i)
-        o->writeElement(Tags::tag_operation_plan, *i);
-    o->EndObject(Tags::tag_operation_plans);
-  }
-
-  // Problems
-  Problem::const_iterator piter = Problem::begin();
-  if (piter != Problem::end())
-  {
-    o->BeginObject(Tags::tag_problems);
-    for(; piter!=Problem::end(); ++piter)
-      // Note: not the regular write, but a fast write to speed things up.
-      // This is possible since problems aren't nested and are never 
-      // referenced.
-      (*piter)->writeElement(o, Tags::tag_problem);
-    o->EndObject(Tags::tag_problems);
-  }
+  // Persist all categories
+  MetaCategory::persist(o);
 
   o->EndObject(tag);
 }
@@ -227,15 +117,15 @@ void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
     const MetaCategory * cat = MetaCategory::findCategory(pElement.getTagHash());
     if (cat && pIn.getParentElement().isA(cat->grouptag))
     {
-      if (cat->controlFunction)
+      if (cat->readFunction)
         // Hand over control to the controller
-        pIn.readto(cat->controlFunction(*cat, pIn.getAttributes()));
+        pIn.readto(cat->readFunction(*cat, pIn.getAttributes()));
       else
         // There is no controller available
         pIn.IgnoreElement();
     }
     else if (pElement.isA(Tags::tag_default_calendar))
-      pIn.readto(MetaCategory::ControllerString<Calendar>(Calendar::metadata,pIn.getAttributes()));
+      pIn.readto(Calendar::reader(Calendar::metadata,pIn.getAttributes()));
   }
 
   /* @todo next block of code is wanted, but doesn't work now. 'own' fields

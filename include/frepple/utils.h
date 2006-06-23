@@ -583,7 +583,7 @@ class MetaCategory;
   * IMPORTANT NOTE: Beware that C++ doesn't garantuee that a static data
   * is always created. If there is no explicit reference to it, the linker can
   * skip it. I've adopted the practice of referencing all metadata objects 
-  * from the Library::initialize() method.
+  * from the Library::initialize() method.<br>
   */
 class MetaData : public NonCopyable
 {
@@ -687,6 +687,12 @@ class MetaData : public NonCopyable
 };
 
 
+/** A MetaClass instance represents metadata for a specific instance type.
+  * A MetaCategory instance represents metadata for a category of object.
+  * For instance, 'Resource' is a category while 'ResourceDefault' and 
+  * 'ResourceInfinite' are specific classes.
+  * @see MetaCategory
+  */
 class MetaClass : public MetaData
 {
   friend class MetaCategory;
@@ -746,173 +752,56 @@ class MetaClass : public MetaData
 };
 
 
+class XMLOutput;
+/** A MetaCategory instance represents metadata for a category of object.
+  * A MetaClass instance represents metadata for a specific instance type.
+  * For instance, 'Resource' is a category while 'ResourceDefault' and 
+  * 'ResourceInfinite' are specific classes.<br>
+  * A category has the following specific pieces of data:
+  *  - A reader function for creating objects.<br>
+  *    The reader function creates objects for all classes registered with it.
+  *  - A writer function for persisting objects.<br>
+  *    The writer function will typically iterate over all objects of the 
+  *    category and call the writeElement method on them.
+  *  - A group tag used for the grouping objects of the category in the XML 
+  *    output stream.
+  * @see MetaClass
+  */
 class MetaCategory : public MetaData
 {
   friend class MetaClass;
   friend class XMLInput;
+  template<class T> friend class HasName;
   public:
     /** The name used to name a collection of objects of this category. */
     string group;
 
-    /** A reference to an XMLtag of the category. */
+    /** A XML tag grouping objects of the category. */
     const XMLtag* grouptag;
 
-    /** Type definition for a control function for categories. */
+    /** Type definition for the read control function. */
     typedef Object* (*controller)(const MetaCategory&, const Attributes* atts);
+
+    /** Type definition for the write control function. */
+    typedef void (*writeController)(const MetaCategory&, XMLOutput *o);
 
     /** This template method is available as a object creation factory for 
       * classes without key fields and which rely on a default constructor.
       */
     static Object* ControllerDefault (const MetaCategory&, const Attributes* atts);
-    
-    /** This template method is available as a object creation factory for 
-      * classes that are using a string as a key identifier, in particular 
-      * classes derived from the HasName base class.
-      * The following attributes are recognized:
-      * - NAME:<br>
-      *   Name of the entity to be created/changed/removed.
-      *   The default value is "unspecified".
-      * - TYPE:<br>
-      *   Determines the subclass to be created.
-      *   The default value is "DEFAULT".
-    	* - ACTION:<br>
-      *   Determines the action to be performed on the object.
-      *   This can be A (for 'add'), C (for 'change'), AC (for 'add_change') 
-      *   or R (for 'remove').
-      *   'add_change' is the default value.
-      * @see HasName
-      */
-    template <class T> static Object* ControllerString (const MetaCategory& cat, const Attributes* atts)
-    {
-
-      // Pick up the name attribute
-      char* name = atts ?
-        XMLString::transcode(atts->getValue(Tags::tag_name.getXMLCharacters())) :
-        NULL;
-
-      // Pick up the action attribute
-      Action act = MetaData::decodeAction(atts);
-
-      // Check if it exists already
-      bool found;
-      T *i = T::findLowerBound(name, &found);
-
-      // Validate the action
-      switch (act)
-      {
-        case ADD:
-          // Only additions are allowed
-          if (found)
-          {
-            XMLString::release(&name);
-            throw DataException("Object '" + string(name) + "' already exists.");
-          }
-          break;
-
-        case CHANGE:
-          // Only changes are allowed
-          if (!found) 
-          {
-            string msg = string("Object '") + name + "' doesn't exist.";
-            XMLString::release(&name);
-            throw DataException(msg);
-          }
-          XMLString::release(&name);
-
-          // Lock the object, which includes also the callback
-          LockManager::getManager().obtainWriteLock(i);
-          return i;
-         
-        case REMOVE:
-          // Delete the entity
-          if (found) 
-          {
-            // Send out the notification to subscribers
-            LockManager::getManager().obtainWriteLock(i);   // @todo this lock shouldn't trigger callbacks?
-            if (i->getType().raiseEvent(i,SIG_REMOVE))
-            {
-              XMLString::release(&name);
-              // Delete the object
-              delete i;
-              return NULL;
-            }
-            else
-            {
-              // The callbacks disallowed the deletion!
-              LockManager::getManager().releaseWriteLock(i);
-              string msg = string("Can't remove object '") + name + "'";
-              XMLString::release(&name);
-              throw DataException(msg);
-            }
-          }
-          else
-          {
-            // Not found
-            string msg = string("Can't find object '") + name + "' for removal";
-            XMLString::release(&name);
-            throw DataException(msg);
-          }
-        default:
-          // case ADD_CHANGE doesn't have special cases.
-          ;
-      }
-
-      // Return the existing instance
-      if (found) 
-      {
-        // Lock the object, which includes the callbacks
-        XMLString::release(&name);
-        LockManager::getManager().obtainWriteLock(i);
-        return i;
-      }
-
-      // Lookup the type in the map
-      char* type = atts ?
-        XMLString::transcode(atts->getValue(Tags::tag_type.getXMLCharacters())) :
-        NULL;
-      ClassMap::const_iterator j = 
-        cat.classes.find(type ? XMLtag::hash(type) : defaultHash);
-      if (j == cat.classes.end())
-      {
-        string msg = "No type " + string(type ? type : "DEFAULT") 
-          + " registered for category " + cat.type;
-        XMLString::release(&name);
-        XMLString::release(&type);
-        throw LogicException(msg);
-      }
-
-      // Create a new instance
-      T* x = dynamic_cast<T*>(j->second->factoryMethodString(name));
-      XMLString::release(&type);
-      if (!x->getType().raiseEvent(x,SIG_ADD))
-      {
-        // Creation isn't allowed
-        string msg = string("Can't create object") + name;
-        XMLString::release(&name);
-        delete x;
-        throw DataException(msg);
-      }
-      XMLString::release(&name);
-
-      // Lock the object, which includes the callbacks
-      LockManager::getManager().obtainWriteLock(x);
-
-      // Insert in the tree
-      T::add(x, i);
-      return x;
-    }
-    
+        
     /** Default constructor. <br>
       * Calling the registerCategory method is required after creating a 
       * category object. 
       * @see registerCategory
       */
-    MetaCategory()
-      : group("UNSPECIFIED"), grouptag(&XMLtag::find("UNSPECIFIED")) {};
+    MetaCategory() : group("UNSPECIFIED"), 
+      grouptag(&XMLtag::find("UNSPECIFIED")), nextCategory(NULL), 
+      writeFunction(NULL) {};
 
     /** This method is required to register the category of classes. */
-    void registerCategory
-      (const char* t, const char* g = NULL, controller = NULL) const;
+    void registerCategory (const char* t, const char* g = NULL, 
+      controller = NULL, writeController = NULL) const;
 
     /** Type definition for the map of all registered classes. */
     typedef map < hashtype, const MetaClass*, less<hashtype> > ClassMap;
@@ -935,7 +824,13 @@ class MetaCategory : public MetaData
       * The controller function manamges the creation and destruction of  
       * objects in this category. 
       */
-    controller controlFunction;
+    controller readFunction;
+
+    /** This method takes care of the persistence of all categories. It loops
+      * through all registered categories (in the order of their registration)
+      * and calls the persistance handler.
+      */
+    static void persist(XMLOutput *);
 
   private:
     /** A map of all classes registered for this category. */
@@ -944,6 +839,16 @@ class MetaCategory : public MetaData
     /** Compute the hash for "DEFAULT" once and store it in this variable for 
       * efficiency. */
     static const hashtype defaultHash;
+
+    /** This is the root for a linked list of all categories. 
+      * Categories are chained to the list in the order of their registration.
+      */
+    static DECLARE_EXPORT const MetaCategory* firstCategory;
+
+    /** A pointer to the next category in the singly linked list. */
+    const MetaCategory* nextCategory;
+
+    writeController writeFunction;
 };
 
 
@@ -2557,6 +2462,153 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
     static T* add(T* t, T* hint) {return static_cast<T*>(st.insert(t,hint));}
 
     void endElement(XMLInput& pIn, XMLElement& pElement) {};
+
+    /** This template method is available as a object creation factory for 
+      * classes that are using a string as a key identifier, in particular 
+      * classes derived from the HasName base class.
+      * The following attributes are recognized:
+      * - NAME:<br>
+      *   Name of the entity to be created/changed/removed.
+      *   The default value is "unspecified".
+      * - TYPE:<br>
+      *   Determines the subclass to be created.
+      *   The default value is "DEFAULT".
+    	* - ACTION:<br>
+      *   Determines the action to be performed on the object.
+      *   This can be A (for 'add'), C (for 'change'), AC (for 'add_change') 
+      *   or R (for 'remove').
+      *   'add_change' is the default value.
+      * @see HasName
+      */
+    static Object* reader (const MetaCategory& cat, const Attributes* atts)
+    {
+
+      // Pick up the name attribute
+      char* name = atts ?
+        XMLString::transcode(atts->getValue(Tags::tag_name.getXMLCharacters())) :
+        NULL;
+
+      // Pick up the action attribute
+      Action act = MetaData::decodeAction(atts);
+
+      // Check if it exists already
+      bool found;
+      T *i = T::findLowerBound(name, &found);
+
+      // Validate the action
+      switch (act)
+      {
+        case ADD:
+          // Only additions are allowed
+          if (found)
+          {
+            XMLString::release(&name);
+            throw DataException("Object '" + string(name) + "' already exists.");
+          }
+          break;
+
+        case CHANGE:
+          // Only changes are allowed
+          if (!found) 
+          {
+            string msg = string("Object '") + name + "' doesn't exist.";
+            XMLString::release(&name);
+            throw DataException(msg);
+          }
+          XMLString::release(&name);
+
+          // Lock the object, which includes also the callback
+          LockManager::getManager().obtainWriteLock(i);
+          return i;
+         
+        case REMOVE:
+          // Delete the entity
+          if (found) 
+          {
+            // Send out the notification to subscribers
+            LockManager::getManager().obtainWriteLock(i);   // @todo this lock shouldn't trigger callbacks?
+            if (i->getType().raiseEvent(i,SIG_REMOVE))
+            {
+              XMLString::release(&name);
+              // Delete the object
+              delete i;
+              return NULL;
+            }
+            else
+            {
+              // The callbacks disallowed the deletion!
+              LockManager::getManager().releaseWriteLock(i);
+              string msg = string("Can't remove object '") + name + "'";
+              XMLString::release(&name);
+              throw DataException(msg);
+            }
+          }
+          else
+          {
+            // Not found
+            string msg = string("Can't find object '") + name + "' for removal";
+            XMLString::release(&name);
+            throw DataException(msg);
+          }
+        default:
+          // case ADD_CHANGE doesn't have special cases.
+          ;
+      }
+
+      // Return the existing instance
+      if (found) 
+      {
+        // Lock the object, which includes the callbacks
+        XMLString::release(&name);
+        LockManager::getManager().obtainWriteLock(i);
+        return i;
+      }
+
+      // Lookup the type in the map
+      char* type = atts ?
+        XMLString::transcode(atts->getValue(Tags::tag_type.getXMLCharacters())) :
+        NULL;
+      MetaCategory::ClassMap::const_iterator j = 
+        cat.classes.find(type ? XMLtag::hash(type) : MetaCategory::defaultHash);
+      if (j == cat.classes.end())
+      {
+        string msg = "No type " + string(type ? type : "DEFAULT") 
+          + " registered for category " + cat.type;
+        XMLString::release(&name);
+        XMLString::release(&type);
+        throw LogicException(msg);
+      }
+
+      // Create a new instance
+      T* x = dynamic_cast<T*>(j->second->factoryMethodString(name));
+      XMLString::release(&type);
+      if (!x->getType().raiseEvent(x,SIG_ADD))
+      {
+        // Creation isn't allowed
+        string msg = string("Can't create object") + name;
+        XMLString::release(&name);
+        delete x;
+        throw DataException(msg);
+      }
+      XMLString::release(&name);
+
+      // Lock the object, which includes the callbacks
+      LockManager::getManager().obtainWriteLock(x);
+
+      // Insert in the tree
+      T::add(x, i);
+      return x;
+    }
+
+    /** A handler that is used to persist the tree. */
+    static void writer(const MetaCategory& c, XMLOutput* o)
+    {
+      if (empty()) return;
+      o->BeginObject(*(c.grouptag));
+      for (iterator i = begin(); i != end(); ++i)
+          o->writeElement(*(c.typetag), *i);
+      o->EndObject(*(c.grouptag));
+    }
 };
 
 

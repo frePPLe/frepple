@@ -358,7 +358,7 @@ void OperationRouting::writeElement
 void OperationRouting::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_operation))
-    pIn.readto( MetaCategory::ControllerString<Operation>(Operation::metadata,pIn.getAttributes()) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else
     Operation::beginElement(pIn, pElement);
 }
@@ -539,7 +539,7 @@ void OperationAlternate::writeElement
 void OperationAlternate::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_operation))
-    pIn.readto( MetaCategory::ControllerString<Operation>(Operation::metadata,pIn.getAttributes()) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else
     Operation::beginElement(pIn, pElement);
 }
@@ -663,7 +663,7 @@ void OperationEffective::writeElement
 void OperationEffective::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_calendar))
-    pIn.readto( MetaCategory::ControllerString<Calendar>(Calendar::metadata,pIn.getAttributes()) );
+    pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else
     Operation::beginElement(pIn, pElement);
 }

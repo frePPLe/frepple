@@ -181,7 +181,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
 void Forecast::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_calendar))
-    pIn.readto( MetaCategory::ControllerString<Calendar>(Calendar::metadata,pIn.getAttributes()) );
+    pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else
     Demand::beginElement(pIn,pElement);
 }

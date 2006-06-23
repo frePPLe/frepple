@@ -33,6 +33,8 @@
 namespace frepple
 {
 
+DECLARE_EXPORT const MetaCategory* MetaCategory::firstCategory = NULL;
+
 // Command metadata
 const MetaCategory Command::metadata;
 const MetaClass CommandList::metadata;
@@ -153,7 +155,7 @@ void MetaClass::registerClass (const char* a, const char* b, bool def) const
 
 
 void MetaCategory::registerCategory
-  (const char* a, const char* gr, controller f) const
+  (const char* a, const char* gr, controller f, writeController w) const
 {
   // Initialize only once
   if (type != "UNSPECIFIED") 
@@ -164,7 +166,8 @@ void MetaCategory::registerCategory
 
   // Update fields
   MetaCategory& me = const_cast<MetaCategory&>(*this);
-  me.controlFunction = f;
+  me.readFunction = f;
+  me.writeFunction = w;
   if (a)
   {
     // Type tag
@@ -176,6 +179,16 @@ void MetaCategory::registerCategory
     // Group tag
     me.group = gr;
     me.grouptag = &XMLtag::find(gr);
+  }
+  
+  // Maintain a linked list of all registered categories
+  if (!firstCategory)
+    firstCategory = this;
+  else
+  {
+    const MetaCategory *i = firstCategory;
+    while (i->nextCategory) i = i->nextCategory;
+    const_cast<MetaCategory*>(i)->nextCategory = this;
   }
 }
 
@@ -202,6 +215,13 @@ const MetaCategory* MetaCategory::findCategory(const hashtype h)
   MetaCategory::CategoryMap::const_iterator i 
     = MetaCategory::getCategories().find(h);
   return (i!=MetaCategory::getCategories().end()) ? i->second : NULL;
+}
+
+
+void MetaCategory::persist(XMLOutput *o)
+{
+  for(const MetaCategory *i = firstCategory; i; i = i->nextCategory)
+    if (i->writeFunction) i->writeFunction(*i, o);
 }
 
 

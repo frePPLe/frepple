@@ -13,7 +13,7 @@ libforecast_la_SOURCES = $(sources)
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
 libforecast_la_LDFLAGS = -module -no-undefined
-libforecast_la_libadd = ../../src/libfrepple.la 
+libforecast_la_LIBADD = ../../src/libfrepple.la 
 else
 libforecast_la_LDFLAGS = -module 
 endif

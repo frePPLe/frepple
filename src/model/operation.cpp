@@ -151,8 +151,8 @@ void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 
 void Operation::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
-  if (pElement.isA (Tags::tag_flow)
-      && pIn.getParentElement().isA(Tags::tag_flows))
+  if (pElement.isA(Tags::tag_flow)
+    && pIn.getParentElement().isA(Tags::tag_flows))
   {
     Flow *f = 
       dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn.getAttributes()));

@@ -59,14 +59,14 @@ void CommandSolve::endElement(XMLInput& pIn, XMLElement& pElement)
 
 void CommandSolve::execute()
 {
+  // Make sure the solver field is specified
+  if (!sol) throw RuntimeException("Solve command with unspecified solver");
+
   // Start message
   if (getVerbose())
     clog << "Started running the solver '" << sol->getName()
-      << " at " << Date::now() << endl;
+      << "' at " << Date::now() << endl;
 	Timer t;
-
-  // Make sure the solver field is specified
-  if (!sol) throw RuntimeException("Solve command with unspecified solver");
 
   // Running the solver now
   sol->solve();
@@ -206,12 +206,12 @@ void CommandSave::execute()
 {
 	// Message
   if (getVerbose())
-    clog << "Start saving model to file '" << getFileName()
+    clog << "Start saving model to file '" << filename
     << "' at " << Date::now() << endl;
   Timer t;
 
   // Save the plan
-  XMLOutputFile o(getFileName());
+  XMLOutputFile o(filename);
   o.writeElementWithHeader(Tags::tag_plan, &Plan::instance());
 
   // Message

@@ -316,11 +316,12 @@ void LibraryModel::initialize()
     Object::createDefault<FlowEnd>);
 
   // Initialize the operationplan metadata.
-  OperationPlan::metadata.registerCategory
-    ("OPERATION_PLAN", "OPERATION_PLANS", OperationPlan::createOperationPlan, OperationPlan::writer);
+  OperationPlan::metadata.registerCategory("OPERATION_PLAN", "OPERATION_PLANS",
+    OperationPlan::createOperationPlan, OperationPlan::writer);
 
   // Initialize the problem metadata.
-  Problem::metadata.registerCategory("PROBLEM", "PROBLEMS", NULL, Problem::writer);
+  Problem::metadata.registerCategory
+    ("PROBLEM", "PROBLEMS", NULL, Problem::writer);
   ProblemMaterialExcess::metadata.registerClass
     ("PROBLEM","material excess");
   ProblemMaterialShortage::metadata.registerClass

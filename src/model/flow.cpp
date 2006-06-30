@@ -68,39 +68,20 @@ void Flow::validate(Action action)
       }
       break;
     case CHANGE:
-      if (i == oper->getFlows().end())  // @todo change of flow not working?
-      {
-        delete this;
-        throw DataException("Can't update nonexistent flow of '" 
-          + oper->getName() + "' and '" + buf->getName() + "'");
-      }
-      // Note the absence of a break statement here...
+      delete this;
+      throw DataException("Can't update a flow"); 
     case ADD_CHANGE:
       // ADD is handled in the code after the switch statement
       if (i == oper->getFlows().end()) break;
-      // Abort if the type of the flows is different
-      if (getType() != (*i)->getType())
-        throw DataException("Can't change the type of a flow");
-      // CHANGE action is coded here. We copy the attributes from the current
-      // temporary flow model to the existing one.
-      (*i)->quantity = quantity;
-      // Now we drop the temporary flow.
-      clog << "kiwi trouble" << endl;
-      // delete this; // xxx @todo this fucks up the callback!!!!
-      return;
+      delete this;
+      throw DataException("Can't update a flow"); 
     case REMOVE:
-      if (i != oper->getFlows().end())
-        // Found a flow to delete
-        delete *i;
-      else
-      {
+      delete this;
+      if (i == oper->getFlows().end())
         // Nothing to delete
-        delete this;
         throw DataException("Can't remove nonexistent flow of '" 
           + oper->getName() + "' and '" + buf->getName() + "'");
-      }
-      // This flow was only used temporarily during the reading process
-      delete this;
+      delete *i;
       return;
   }
 

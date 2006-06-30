@@ -68,25 +68,13 @@ void Load::validate(Action action)
       }
       break;
     case CHANGE:
-      if (i == oper->getLoads().end()) break;
-      {
-        delete this;
-        throw DataException("Can't update nonexistent load of '" 
-          + oper->getName() + "' and '" + res->getName() + "'");
-      }
-      // Note the absence of a break statement here...
+      delete this;
+      throw DataException("Can't update a load"); 
     case ADD_CHANGE:
       // ADD is handled in the code after the switch statement
       if (i == oper->getLoads().end()) break;
-      // Abort if the type of the loads is different
-      if (getType() != (*i)->getType())
-        throw DataException("Can't change the type of a load");
-      // CHANGE action is coded here. We copy the attributes from the current
-      // temporary load model to the existing one.
-      (*i)->usage = usage;
-      // Now we drop the temporary load.
       delete this;
-      return;
+      throw DataException("Can't update a load"); 
     case REMOVE:
       // This load was only used temporarily during the reading process
       delete this;

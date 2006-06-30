@@ -3594,12 +3594,14 @@ class XMLInput : public NonCopyable,  private DefaultHandler
 };
 
 
-/** @todo missing doc
+/** This class is used to read data from a CSV-formatted data - instead
+  * of the regular XML-format.
   */
-class CSVInput : 
-  public XMLinstruction, private DefaultHandler, public Object
+class CSVInput : public XMLinstruction, private DefaultHandler, public Object
 {
   private:
+    /** Comment character. A line starting with this character will not be 
+      * processed and skipped. */
     char comment;
     char fieldseparator;
   public:
@@ -3620,7 +3622,6 @@ class CSVInput :
       (string &header, string &rep, string &footer, Object *pRoot);
 
   private:
-
     void endElement(XMLInput& pIn, XMLElement& pElement) {};
 
     /** Handler called when a new element tag is encountered.

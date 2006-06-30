@@ -110,30 +110,22 @@ void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
   {
     LockManager::getManager().obtainWriteLock(&(pIn.getCommands()));
     pIn.readto(&(pIn.getCommands()));
-  }
-  else 
-  {
-    // For categories registered in the standard way
-    const MetaCategory * cat = MetaCategory::findCategory(pElement.getTagHash());
-    if (cat && pIn.getParentElement().isA(cat->grouptag))
-    {
-      if (cat->readFunction)
-        // Hand over control to the controller
-        pIn.readto(cat->readFunction(*cat, pIn.getAttributes()));
-      else
-        // There is no controller available
-        pIn.IgnoreElement();
-    }
-    else if (pElement.isA(Tags::tag_default_calendar))
-      pIn.readto(Calendar::reader(Calendar::metadata,pIn.getAttributes()));
+    return;
   }
 
-  /* @todo next block of code is wanted, but doesn't work now. 'own' fields
-   like "current" put the plan object in ignore state...
-    // If we come across unknown tags, we simply ignore them. This allows you
-    // to add your own additional fields to the XML data, when required.
-    pIn.IgnoreElement();
-  */ 
+  // For categories registered in the standard way
+  const MetaCategory * cat = MetaCategory::findCategory(pElement.getTagHash());
+  if (cat && pIn.getParentElement().isA(cat->grouptag))
+  {
+    if (cat->readFunction)
+      // Hand over control to the controller
+      pIn.readto(cat->readFunction(*cat, pIn.getAttributes()));
+    else
+      // There is no controller available
+      pIn.IgnoreElement();
+  }
+  else if (pElement.isA(Tags::tag_default_calendar))
+    pIn.readto(Calendar::reader(Calendar::metadata,pIn.getAttributes()));
 }
 
 

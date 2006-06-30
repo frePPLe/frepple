@@ -198,8 +198,8 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveString(char* buf, unsigned long
     l = result.size();
     memcpy(buf, result.data(), l>sz ? sz : l);
   }
-  catch (...) {return -1;}  // xxx todo why not return FAILURE?
-  return l;
+  catch (...) {return EXIT_FAILURE;}  
+  return EXIT_SUCCESS;
 }
 
 

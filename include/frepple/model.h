@@ -2173,9 +2173,12 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     virtual ~Flow();
 
 	  /** Constructor. */
-    explicit Flow(Operation* o, Buffer* b, float q) :
-      Association<Operation,Buffer,Flow>::Node(o,b,o->getFlows(),b->getFlows()),
-      quantity(q) {validate(ADD);}
+    explicit Flow(Operation* o, Buffer* b, float q) : quantity(q) 
+    {
+      setOperation(o);
+      setBuffer(b);
+      validate(ADD);
+    }
 
 	  /** Returns the operation. */
     Operation* getOperation() const {return getPtrA();}
@@ -2184,7 +2187,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       * for each flow. In case that doesn't suit you, delete the existing flow
       * and create a new one.
       */
-    void setOperation(Operation* o) {if (!getPtrA()) setPtrA(o,o->getFlows());}
+    void setOperation(Operation* o) { if (o) setPtrA(o,o->getFlows());}
 
     /** Returns true if this flow consumes material from the buffer. */
     bool isConsumer() const {return quantity < 0;}
@@ -2209,7 +2212,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       * for each flow. In case that doesn't suit you, delete the existing flow
       * and create a new one.
       */
-    void setBuffer(Buffer* b) {if (!getPtrB()) setPtrB(b,b->getFlows());}
+    void setBuffer(Buffer* b) { if (b) setPtrB(b,b->getFlows());}
 
 	  /** A flow is considered hidden when either its buffer or operation 
 	    * are hidden. */
@@ -2450,17 +2453,45 @@ class Load
     friend class Operation;
 
   public:
-    explicit Load(Operation* o, Resource* r, float u) :
-    Association<Operation,Resource,Load>::Node(o,r,o->getLoads(),r->getLoads()),
-      usage(u)
-      {validate(ADD);}
+    /** Constructor. */
+    explicit Load(Operation* o, Resource* r, float u)
+    {
+      setOperation(o);
+      setResource(r);
+      setUsageFactor(u);
+      validate(ADD);
+    }
+
+    /** Destructor. */
     ~Load();
+
+    /** Returns the operation consuming the resource capacity. */
     Operation* getOperation() const {return getPtrA();}
-    void setOperation(Operation* o) {if (!getPtrA()) setPtrA(o,o->getLoads());}
+
+    /** Updates the operation being loaded. This method can only be called 
+      * once for a load. */
+    void setOperation(Operation* o) {if (o) setPtrA(o,o->getLoads());}
+
+    /** Returns the capacity resource being consumed. */
     Resource* getResource() const {return getPtrB();}
-    void setResource(Resource* r) {if (!getPtrB()) setPtrB(r,r->getLoads());}
+
+    /** Updates the capacity being consumed. This method can only be called 
+      * once on a resource. */
+    void setResource(Resource* r) {if (r) setPtrB(r,r->getLoads());}
+
+    /** Returns how much capacity is consumed during the duration of the 
+      * operationplan. */
     float getUsageFactor() const {return usage;}
-    void setUsageFactor(float f) {usage = f;}
+
+    /** Updates the usage factor of the load. 
+      * @exception DataException When a negative number is passed.
+      */
+    void setUsageFactor(float f) 
+    {
+      if (usage < 0) throw DataException("Load usage can't be negative");
+      usage = f;
+    }
+
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void beginElement(XMLInput&, XMLElement&);
     void endElement(XMLInput&, XMLElement&);
@@ -2482,7 +2513,8 @@ class Load
       */
     void validate(Action action);
 
-  private:
+    /** Stores how much capacity is consumed during the duration of an 
+      * operationplan. */
     float usage;
 };
 

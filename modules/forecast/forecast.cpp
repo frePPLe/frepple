@@ -31,11 +31,6 @@
 namespace module_forecast
 {
 
-  /** @todo Forecast module is statically linked with frepple ON VCC AND BCC. 
-      This means it duplicates a lot of functions and data that are already 
-      present in the main library. -> bigger lib size. 
-    */
-
 const MetaClass Forecast::metadata;
 
 

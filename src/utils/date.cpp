@@ -34,8 +34,8 @@
 namespace frepple
 {
 
-string Date::format("%Y-%m-%dT%H:%M:%S");
-string DateRange::separator = " / ";
+DECLARE_EXPORT string Date::format("%Y-%m-%dT%H:%M:%S");
+DECLARE_EXPORT string DateRange::separator = " / ";
 
 /* This is the earliest date that we can represent. */
 const Date Date::infinitePast("1971-01-01T00:00:00",true);

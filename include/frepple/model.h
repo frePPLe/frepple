@@ -787,13 +787,13 @@ class Plannable : public Object, public HasProblems, public Solvable
     /** Marks whether any entity at all has changed its status since the last
       * problem detection round.
       */
-    static bool anyChange;
+    static DECLARE_EXPORT bool anyChange;
 
     /** This flag is set to true during the problem recomputation. It is
       * required to garantuee safe access to the problems in a multi-threaded
       * environment.
       */
-    static bool computationBusy;
+    static DECLARE_EXPORT bool computationBusy;
 };
 
 
@@ -825,16 +825,16 @@ class HasLevel
       * The flag is set when new objects of this are created or updated.
       * Running the computeLevels function clears the flag.
       */
-    static bool recomputeLevels;
+    static DECLARE_EXPORT bool recomputeLevels;
 
     /** This flag is set to true during the computation of the levels. It is
       * required to ensure safe access to the level information in a
       * multi-threaded environment.
       */
-    static bool computationBusy;
+    static DECLARE_EXPORT bool computationBusy;
 
     /** Stores the total number of clusters in the model. */
-    static unsigned short numberOfClusters;
+    static DECLARE_EXPORT unsigned short numberOfClusters;
 
     /** Stores the level of this entity. Higher numbers indicate more
       * upstream entities.
@@ -1527,7 +1527,7 @@ class OperationPlan
       * unique identifier for each operationplan.
       * @see getIdentifier()
       */
-    static unsigned long counter;
+    static DECLARE_EXPORT unsigned long counter;
 
     /** Pointer to the demand. Only delivery operationplans have this field
       * set. The field is NULL for all other operationplans. */
@@ -2595,7 +2595,7 @@ class Plan : public Plannable
     Calendar* def_Calendar;
 
     /** Pointer to the singleton plan object. */
-    static Plan* thePlan;
+    static DECLARE_EXPORT Plan* thePlan;
 
     /** The only constructor of this class is made private. An object of this
       * class is created by the instance() member function.
@@ -3486,7 +3486,7 @@ class ProblemPlannedLate : public Problem
     /** This is the time that is allowed between the lpst date and the start
       * date of an operation before a problem is created.
       * The default value is 0. */
-    static TimePeriod allowedLate;
+    static DECLARE_EXPORT TimePeriod allowedLate;
 };
 
 
@@ -3524,7 +3524,7 @@ class ProblemPlannedEarly : public Problem
     /** This is the time that is allowed between the epst date and the start
       * date of an operation before a problem is created.
       * The default value is 0. */
-    static TimePeriod allowedEarly;
+    static DECLARE_EXPORT TimePeriod allowedEarly;
 };
 
 

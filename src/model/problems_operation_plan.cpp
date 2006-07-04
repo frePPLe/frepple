@@ -137,8 +137,8 @@ void OperationPlan::updateProblems()
 }
 
 
-TimePeriod ProblemPlannedEarly::allowedEarly;
-TimePeriod ProblemPlannedLate::allowedLate;
+DECLARE_EXPORT TimePeriod ProblemPlannedEarly::allowedEarly;
+DECLARE_EXPORT TimePeriod ProblemPlannedLate::allowedLate;
 
 
 void ProblemPlannedEarly::setAllowedEarly(TimePeriod p)

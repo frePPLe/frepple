@@ -32,7 +32,7 @@
 namespace frepple
 {
 
-unsigned long OperationPlan::counter = 1;
+DECLARE_EXPORT unsigned long OperationPlan::counter = 1;
 
 
 void OperationPlan::setChanged(bool b)

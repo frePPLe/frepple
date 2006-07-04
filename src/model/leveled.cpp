@@ -40,9 +40,9 @@ namespace frepple
 {
 
 
-bool HasLevel::recomputeLevels = false;
-bool HasLevel::computationBusy = false;
-short unsigned HasLevel::numberOfClusters = 0;
+DECLARE_EXPORT bool HasLevel::recomputeLevels = false;
+DECLARE_EXPORT bool HasLevel::computationBusy = false;
+DECLARE_EXPORT short unsigned HasLevel::numberOfClusters = 0;
 
 
 void HasLevel::computeLevels()

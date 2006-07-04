@@ -60,14 +60,24 @@ template <class type> class TimeLine
         friend class iterator;
       protected:
         double oh;
+        double cum_prod;
         Event* next;
         Event* prev;
-        Event() : next(NULL), prev(NULL) {};
+        Event() : oh(0), cum_prod(0), next(NULL), prev(NULL) {};
       public:
         virtual ~Event() {};
         virtual float getQuantity() const {return 0.0f;}
         virtual void setQuantity(float q) {}
+
+        /** Return the current onhand value. */
         double getOnhand() const {return oh;}
+
+        /** Return the total produced quantity till the current date. */
+        double getCumulativeProduced() const {return cum_prod;}
+
+        /** Return the total consumed quantity till the current date. */
+        double getCumulativeConsumed() const {return cum_prod - oh;}
+
         /** This functions returns the mimimum boundary valid at the time of
           * this event. */
         virtual float getMin() const
@@ -205,7 +215,8 @@ template <class type> class TimeLine
       clog << "Inspecting  " << this << ": \"" << name << "\":" << endl;
       for(const_iterator oo=begin(); oo!=end(); ++oo)
         clog << "  " << oo->getDate() << "   "
-        << oo->getQuantity() << "    " << oo->getOnhand() << endl;
+          << oo->getQuantity() << "    " << oo->getOnhand() 
+          << "    " << oo->getCumulativeProduced()  << endl;
     }
 
     /** This function is used to trace the consistency of the data structure. */
@@ -223,11 +234,19 @@ template <class type> class TimeLine
 template <class type> void TimeLine <type>::insert (Event* e)
 {
   // Loop through all entities till we find the insertion point
-  // While searching from the end, update the onhand of all nodes passed
+  // While searching from the end, update the onhand and cumulative produced 
+  // quantity of all nodes passed
   iterator i = rbegin();
   float qty = e->getQuantity();
-  for(; i!=end() && *e<*i; --i)
-    i->oh += qty;
+  if (qty > 0)
+    for(; i!=end() && *e<*i; --i)
+    {
+      i->oh += qty;
+      i->cum_prod += qty;
+    }
+  else
+    for(; i!=end() && *e<*i; --i)
+      i->oh += qty;
 
   // Insert
   if (i == end())
@@ -242,6 +261,7 @@ template <class type> void TimeLine <type>::insert (Event* e)
     e->prev = NULL;
     first = e;
     e->oh = qty;
+    if (qty>0) e->cum_prod = qty;
   }
   else
   {
@@ -255,6 +275,10 @@ template <class type> void TimeLine <type>::insert (Event* e)
       last = e;
     i->next = e;
     e->oh = i->oh + qty;
+    if (qty>0)
+      e->cum_prod = i->cum_prod + qty;
+    else
+      e->cum_prod = i->cum_prod;
   }
 
   // Final debugging check
@@ -266,8 +290,15 @@ template <class type> void TimeLine<type>::erase (Event* e)
 {
   // Update later entries
   float qty = e->getQuantity();
-  for(iterator i = begin(e); i!=end(); ++i)
-    i->oh -= qty;
+  if (qty>0)
+    for(iterator i = begin(e); i!=end(); ++i)
+    {
+      i->oh -= qty;
+      i->cum_prod -= qty;
+    }
+  else
+    for(iterator i = begin(e); i!=end(); ++i)
+      i->oh -= qty;
 
   if (e->prev)
     e->prev->next = e->next;
@@ -320,7 +351,9 @@ template <class type> void TimeLine<type>::setQuantity(Event* e, float newqty)
       last = e;
     if (first == e) first = theNext;
     e->oh = theNext->oh;
+    e->cum_prod = theNext->cum_prod;
     theNext->oh -= oldqty;
+    if (oldqty > 0) theNext->cum_prod -= oldqty;
   }
   while ( e->prev && !(*e->prev<*e) )
   {
@@ -337,12 +370,24 @@ template <class type> void TimeLine<type>::setQuantity(Event* e, float newqty)
       first = e;
     if (last == e) last = thePrev;
     thePrev->oh = e->oh;
+    thePrev->cum_prod = e->cum_prod;
     e->oh -= thePrev->getQuantity();
+    if (thePrev->getQuantity() > 0) e->cum_prod -= thePrev->getQuantity();
   }
 
   // Update the onhand for all later events
   if (fabs(delta) > ROUNDING_ERROR)
-    for (iterator i=begin(e); i!=end(); ++i) i->oh -= delta;
+  {
+    if (oldqty > 0)
+      for (iterator i=begin(e); i!=end(); ++i)
+      {
+        i->oh -= delta;
+        i->cum_prod -= delta;
+      }
+    else
+      for (iterator i=begin(e); i!=end(); ++i) 
+        i->oh -= delta;
+  }
 
   // Final debugging check commented out, since loadplans change in pairs. 
   // After changing the first one the second is affected too but not 
@@ -354,18 +399,27 @@ template <class type> void TimeLine<type>::setQuantity(Event* e, float newqty)
 template <class type> bool TimeLine<type>::check() const
 {
   double expectedOH = 0.0f;
+  double expectedCumProd = 0.0f;
   const Event *prev = NULL;
   for (const_iterator i = begin(); i!=end(); ++i)
   {
     // Problem 1: The onhands don't add up properly
     expectedOH += i->getQuantity();
+    if (i->getQuantity() > 0) expectedCumProd += i->getQuantity();
     if (fabs(expectedOH - i->oh) > ROUNDING_ERROR)
     {
       inspect("Error: timeline onhand value corrupted on " 
         + string(i->getDate()));
       return false;
     }
-    // Problem 2: Timeline is not sorted correctly
+    // Problem 2: The cumulative produced quantity isn't correct
+    if (fabs(expectedCumProd - i->cum_prod) > ROUNDING_ERROR)
+    {
+      inspect("Error: timeline cumulative produced value corrupted on " 
+        + string(i->getDate()));
+      return false;
+    }
+    // Problem 3: Timeline is not sorted correctly
     if (prev && !(*prev<*i) 
       && fabs(prev->getQuantity() - i->getQuantity())>ROUNDING_ERROR)
     {

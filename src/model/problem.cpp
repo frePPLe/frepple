@@ -31,8 +31,8 @@
 namespace frepple
 {
 
-bool Plannable::anyChange = false;
-bool Plannable::computationBusy = false;
+DECLARE_EXPORT bool Plannable::anyChange = false;
+DECLARE_EXPORT bool Plannable::computationBusy = false;
 
 
 bool Problem::operator < (const Problem& a) const

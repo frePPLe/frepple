@@ -207,7 +207,7 @@ class Environment
 {
   private:
     /** Stores the frepple home directory. */
-    static string home;
+    static DECLARE_EXPORT string home;
 
   public:
     /** Return the home directory. */
@@ -1116,7 +1116,7 @@ class Date
       * The default date format is %Y-%m-%dT%H:%M:%S, which is the standard
       * format defined in the XML Schema standard.
       */
-    static string format;
+    static DECLARE_EXPORT string format;
 
     /** The internal representation of a date is a single long value. */
     time_t lval;
@@ -1224,15 +1224,15 @@ class Date
 
     /** A constant representing the infinite past, i.e. the earliest time which
       * we can represent.<br>
-      * This value is normally 1970-01-01T00:00:00.
+      * This value is normally 1971-01-01T00:00:00.
       */
-    static const Date infinitePast;
+    static DECLARE_EXPORT const Date infinitePast;
 
     /** A constant representing the infinite future, i.e. the latest time which
       * we can represent.<br>
       * This value is currently set to 2030-12-31T00:00:00.
       */
-    static const Date infiniteFuture;
+    static DECLARE_EXPORT const Date infiniteFuture;
 
 #ifndef HAVE_STRPTIME
   private:
@@ -1342,7 +1342,7 @@ class DateRange
     Date end;
 
     /** Separator to be used when printing this string. */
-    static string separator;
+    static DECLARE_EXPORT string separator;
 };
 
 
@@ -1433,14 +1433,14 @@ class XMLOutput
       * document. The default value is:
       *   \<?xml version="1.0" encoding="UTF-8"?\>
       */
-    static string headerStart;
+    static DECLARE_EXPORT string headerStart;
 
     /** This string defines what will be attributes are printed for the root
       * element of each XML document.
       * The default value is:
       *    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       */
-    static string headerAtts;
+    static DECLARE_EXPORT string headerAtts;
 
   protected:
     /** Updating the output stream. */

@@ -33,7 +33,7 @@ namespace frepple
 {
 
 
-Plan* Plan::thePlan;
+DECLARE_EXPORT Plan* Plan::thePlan;
 
 
 Plan::~Plan()

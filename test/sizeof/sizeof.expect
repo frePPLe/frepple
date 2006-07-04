@@ -16,8 +16,8 @@ OperationTimePer	108
 Load	32
 Flow	32
 OperationPlan	80
-FlowPlan	32
-LoadPlan	36
+FlowPlan	40
+LoadPlan	44
 Problem	12
 ProblemBeforeCurrent	12
 ProblemBeforeFence	12

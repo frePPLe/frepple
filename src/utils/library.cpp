@@ -46,7 +46,7 @@ const MetaCategory XMLinstruction::metadata;
 const MetaClass CSVInput::metadata;
 
 // Home directory
-string Environment::home("[unspecified]");
+DECLARE_EXPORT string Environment::home("[unspecified]");
 
 // Hash value computed only once
 const hashtype MetaCategory::defaultHash(XMLtag::hash("DEFAULT"));

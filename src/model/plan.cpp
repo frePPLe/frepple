@@ -105,25 +105,24 @@ void Plan::endElement (XMLInput& pIn, XMLElement& pElement)
 
 void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
-  // Non-default categories need to be caught upfront xxx @todo
-  if (pElement.isA(Tags::tag_commands))
-  {
-    LockManager::getManager().obtainWriteLock(&(pIn.getCommands()));
-    pIn.readto(&(pIn.getCommands()));
-    return;
-  }
-
-  // For categories registered in the standard way
-  const MetaCategory * cat = MetaCategory::findCategory(pElement.getTagHash());
+  const MetaCategory *cat = MetaCategory::findCategory(pElement.getTagHash());
   if (cat && pIn.getParentElement().isA(cat->grouptag))
   {
     if (cat->readFunction)
-      // Hand over control to the controller
+      // Hand over control to a registered read controller
       pIn.readto(cat->readFunction(*cat, pIn.getAttributes()));
     else
-      // There is no controller available
+      // There is no controller available.
+      // This piece of code will be used to skip pieces of the XML file that
+      // Frepple doesn't need to be understand
       pIn.IgnoreElement();
   }
+  else if (pElement.isA(Tags::tag_commands))
+  {
+    // Handling of commands, a category which doesn't have a category reader
+    LockManager::getManager().obtainWriteLock(&(pIn.getCommands()));
+    pIn.readto(&(pIn.getCommands()));
+  }    
   else if (pElement.isA(Tags::tag_default_calendar))
     pIn.readto(Calendar::reader(Calendar::metadata,pIn.getAttributes()));
 }

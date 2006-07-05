@@ -90,8 +90,7 @@ void LibraryUtils::initialize()
   ios::sync_with_stdio(false);
 
   // Initialize the command metadata.
-  Command::metadata.registerCategory
-    ("COMMAND", "COMMANDS", MetaCategory::ControllerDefault);
+  Command::metadata.registerCategory("COMMAND", "COMMANDS");
   CommandList::metadata.registerClass(
     "COMMAND", 
     "COMMAND_LIST",
@@ -155,7 +154,7 @@ void MetaClass::registerClass (const char* a, const char* b, bool def) const
 
 
 void MetaCategory::registerCategory
-  (const char* a, const char* gr, controller f, writeController w) const
+  (const char* a, const char* gr, readController f, writeController w) const
 {
   // Initialize only once
   if (type != "UNSPECIFIED") 

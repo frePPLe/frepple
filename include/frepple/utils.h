@@ -780,7 +780,7 @@ class MetaCategory : public MetaData
     const XMLtag* grouptag;
 
     /** Type definition for the read control function. */
-    typedef Object* (*controller)(const MetaCategory&, const Attributes* atts);
+    typedef Object* (*readController)(const MetaCategory&, const Attributes* atts);
 
     /** Type definition for the write control function. */
     typedef void (*writeController)(const MetaCategory&, XMLOutput *o);
@@ -801,7 +801,7 @@ class MetaCategory : public MetaData
 
     /** This method is required to register the category of classes. */
     void registerCategory (const char* t, const char* g = NULL, 
-      controller = NULL, writeController = NULL) const;
+      readController = NULL, writeController = NULL) const;
 
     /** Type definition for the map of all registered classes. */
     typedef map < hashtype, const MetaClass*, less<hashtype> > ClassMap;
@@ -820,17 +820,17 @@ class MetaCategory : public MetaData
       * located the return value is NULL. */
     static const MetaCategory* findCategory(const hashtype);
 
-    /** A controller function for objects of a category. 
-      * The controller function manamges the creation and destruction of  
-      * objects in this category. 
-      */
-    controller readFunction;
-
     /** This method takes care of the persistence of all categories. It loops
       * through all registered categories (in the order of their registration)
       * and calls the persistance handler.
       */
     static void persist(XMLOutput *);
+
+    /** A control function for reading objects of a category. 
+      * The controller function manages the creation and destruction of  
+      * objects in this category. 
+      */
+    readController readFunction;
 
   private:
     /** A map of all classes registered for this category. */
@@ -848,6 +848,10 @@ class MetaCategory : public MetaData
     /** A pointer to the next category in the singly linked list. */
     const MetaCategory* nextCategory;
 
+    /** A control function for writing the category. 
+      * The controller function will loop over the objects in the category and
+      * call write them one by one. 
+      */
     writeController writeFunction;
 };
 

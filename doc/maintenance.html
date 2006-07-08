@@ -13,6 +13,7 @@ people that are extending and/or maintaining the framework.</p>
 <li><a href="#standards">Coding standards</a></li>
 <li><a href="#versioncontrol">Version control</a></li>
 <li><a href="#extend">Creating extensions</a></li>
+<li><a href="#portability">Portability</a></li>
 </ul>
 
 <H2><a name="build">Build instructions</H2>
@@ -172,7 +173,7 @@ properties is of interest when you start adding files to the project.</p>
 
 <H2><a name="extend">Creating extensions to the standard framework</H2>
 <p>Frepple is designed to be extendable. Additional modeling and solver modules
-can be included at runtime without recompiling the package. The extension 
+can be included at runtime without recompiling the library. The extension 
 modules can be shipped with Frepple, or can be developed by third parties (even
 commercial).</p>
 <p>The steps below define how a custom extension can be build on the framework.
@@ -212,6 +213,24 @@ planner-&lt;rel&gt;.tar.gz;cd planner-&lt;rel&gt;;./configure;make;make check'.
 <li>Rebuild the windows installer. Since the windows installer is based on the
 distribution, the previous step needs to finish without problems before you try
 this step.</li>
+</ul></p>
+
+<H2><a name="portability">Portability</H2>
+<p>The project is currently compiled and tested only for 32-bit linux and 
+Windows environments, with Linux being the primary development platform. Porting
+to other platforms is encouraged - you'll have all my support in helping with
+this.</p>
+<p>Here are some areas where porting may be a bit challenging:<ul>
+<li>Availability of a modern C++ compiler and STL.</li>
+<li>File system functions such as fstat, paths, directory listings</li>
+<li>Availability of the Pthreads library for threading.</li>
+<li>Availability of the Xerces-C XML parser.</li>
+<li>Shared libraries<br>
+Currently the code only supports the dlopen (Solaris, Linux and various BSD 
+flavors) and LoadLibrary (Windows) functions. HPUX uses different function name 
+shl_load, and AIX doesn’t allow shared libs depending on other shared libs.</li>
+
+
 </ul></p>
 
 <H2>Miscelaneous notes</H2>

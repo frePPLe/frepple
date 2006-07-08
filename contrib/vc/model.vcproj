@@ -109,6 +109,7 @@
 		</Configuration>
 		<Configuration
 			Name="Swig|Win32"
+			IntermediateDirectory="Swig"
 			ConfigurationType="1">
 			<Tool
 				Name="VCCLCompilerTool"/>
@@ -180,6 +181,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\model\operation_plan.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\model\pegging.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\model\plan.cpp">

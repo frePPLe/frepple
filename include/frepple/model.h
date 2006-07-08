@@ -1381,6 +1381,15 @@ class OperationPlan
       */
     OperationPlan* getOwner() const {return owner;}
 
+    /** Returns a pointer to the operationplan owning a set of 
+      * sub-operationplans. There can be multiple levels of suboperations. */
+    OperationPlan* getTopOwner() const 
+    {
+      OperationPlan* o = owner; 
+      while (o->owner) o = o->owner;
+      return o;
+    }
+
     /** Returns the start and end date of this operation_plan. */
     const DateRange & getDates() const {return dates;}
 
@@ -1428,7 +1437,7 @@ class OperationPlan
     virtual void initialize();
 
     /** Returns a reference to the list of flowplans. */
-    const slist<FlowPlan*>& getflowplans() {return flowplans;}
+    const slist<FlowPlan*>& getFlowPlans() {return flowplans;}
 
     /** Returns a reference to the list of LoadPlans. */
     const slist<LoadPlan*>& getLoadPlans() {return LoadPlans;}
@@ -3831,6 +3840,59 @@ class Problem::const_iterator
     bool operator == (const const_iterator& t) const {return iter==t.iter;}
     Problem* operator*() const {return iter;}
     Problem* operator->() const {return iter;}
+};
+
+
+/** This class allows upstream and downstream navigation through the plan.<br>
+  * Downstream navigation follows the material stream from raw materials 
+  * towards the end item demand.<br>
+  * Upstream navigation traces back the material flow from the end item till
+  * the raw materials.<br>
+  * The class is implemented as an STL-like iterator.
+  */
+class pegging_iterator
+{
+  public:
+    /** Constructor. */
+    pegging_iterator(FlowPlan* e) 
+      { if (e) stack.push(state(e->getQuantity(),0,e)); }
+    const FlowPlan& operator*() const {return *(stack.top().fl);}
+    const FlowPlan* operator->() const {return stack.top().fl;}
+    /** Move the iterator foward to the next downstream flowplan. */
+    pegging_iterator& operator++(); 
+    /** Move the iterator foward to the next downstream flowplan.<br>
+      * This post-increment operator is less efficient than the pre-increment
+      * operator.
+      */
+    pegging_iterator operator++(int) 
+      {pegging_iterator tmp = *this; ++*this; return tmp;}
+    /** Move the iterator foward to the next upstream flowplan. */
+    pegging_iterator& operator--();
+    /** Move the iterator foward to the next upstream flowplan.<br>
+      * This post-increment operator is less efficient than the pre-decrement
+      * operator.
+      */
+    pegging_iterator operator--(int) 
+      {pegging_iterator tmp = *this; --*this; return tmp;}
+    /** Comparison operator. */
+    bool operator==(const pegging_iterator& x) const {return stack == x.stack;}
+    /** Inequality operator. */
+    bool operator!=(const pegging_iterator& x) const {return stack != x.stack;}
+  private:
+    struct state
+    {
+      double cumqty;
+      unsigned int level;
+      FlowPlan* fl;
+      state(double d, unsigned int l, FlowPlan* f) 
+        : cumqty(d), level(l), fl(f) {}; 
+      bool operator != (const state& s) const 
+        {return fl!=s.fl || level!=s.level;}
+      bool operator == (const state& s) const 
+        {return fl==s.fl && level==s.level;}
+    };
+    /** A stack is used to store the iterator state. */
+    stack < state > stack;         
 };
 
 

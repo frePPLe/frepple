@@ -19,23 +19,26 @@ proper solutions exist in the open source domain. Plenty of users are left
 with  expensive and inflexible tools, and are resorting to spreadsheets to meet 
 their needs.</p>
 <p>This project aims at building a lightweight framework that easily and quickly 
-delivers a solution for production planning problems. The initial focus is on small 
-to medium sized master planning problems for the discrete manufacturing industry.</p>
+delivers a solution for production planning problems. The initial focus is on 
+small to medium sized master planning problems for the discrete manufacturing 
+industry.</p>
 <p>For the developer community, the project is also trying to establish a 
 common ground framework for planning applications. Rather than building the 
 basic building blocks (e.g.  item, buffer, bill of material, ...) from scratch 
-over and over again, developers can leverage a proven framweork to extend 
+over and over again, developers can leverage a proven framework to extend 
 with their own extension modules.</p>
-<p>The word "free" in the project name refers to liberty, not price. Think of "freedomof speech" rather than "free beer": see also <a target="_blank" href="http://www.gnu.org/philosophy/free-sw.html">the free software definition</a>.
+<p>The word "free" in the project name refers to liberty, not price. Think of 
+"freedom of speech" rather than "free beer": see also 
+<a target="_blank" href="http://www.gnu.org/philosophy/free-sw.html">the free 
+software definition</a>.
 <p><b>The software is currently in a early-beta stage. This means the software
 isn't suitable for end users yet. There's plenty of work on the code and the 
-documentation.<br>
-I released at this early stage to collect feedback and to gather some 
-interested souls to contribute to the project.</b></p>
-<hr>
+documentation. I released at this early stage to collect feedback and to gather 
+ interested souls to contribute to the project.</b><br>
+So, browse the site, have a look at the code and let 
+<a href="&#109;&#97;&#x69;&#x6c;&#x74;&#111;&#x3a;&#106;&#x64;&#101;&#116;&#x61;&#x65;&#x79;&#101;&#64;&#117;&#x73;&#x65;&#x72;&#115;&#46;&#115;&#111;&#x75;&#x72;&#x63;&#x65;&#102;&#x6f;&#x72;&#103;&#x65;&#46;&#110;&#x65;&#116;">
+me</a> know what you think.</p>
 
-<p align="right"><a name="license" href="#top">top</a></p>
-<H1>License</H2>
 <p>All code of this project is released under the GNU lesser general public
 license.
 I strongly encourage you to visit the website of the
@@ -44,101 +47,10 @@ learn how this
 license protects my and your work.</br>
 The licence agreement is provided in the file 'COPYING' in the installation
 directory.</p>
-<hr>
 
-<p align="right"><a name="platforms" href="#top">top</a></p>
-<h1>Supported Platforms</h1>
-<p>The primary platform is <b>linux</b>, using the gcc compiler.</p>
-<p>The library can also be compiled on <b>windows</b> (tested on windows 2000 and 
-windows xp), using the Microsoft Visual Studio, the Borland 5.5 or the Intel C++ 
-compiler. The windows version currently offers less functionality. Specifically, 
-multi-threading and dynamically loaded modules aren't supported on this platform.</p>
-<p>The C++ commands and functions are as ANSI compliant as possible and porting to 
-various UNIX flavors shouldn't cause too much of an effort. The developer 
-documentation has a section on porting the software.</p>
-<hr>
-
-<p align="right"><a name="prerequisites" href="#top">top</a></p>
-<h1>Software Prerequisites</h1>
-<p>No additional software is required to use the executables coming with a 
-binary distribution. No additional software is required also when you want to 
-develop your own applications using the compiled libraries coming with a 
-binary distribution.</p>
-<p>Developers building the library from the source code or developing extensions
-will need to install a number of additional components. These are listed as part
-of the build instructions.
-<hr>
-
-<p align="right"><a name="goal" href="#top">top</a></p>
-<h1>Project goal and concepts</h1>
-<p></p>
-Not written up yet, but believe I know where I'm heading...
-<p></p>
-<hr>
-<p align="right"><a name="xxx" href="#top">top</a></p>
-<h1>Model characteristics</h1>
-<p>Basic building blocks<br>
-Have name, category and can be nested in hierarchical trees.<br>
-Buffer, item, lot, resource, operation.<br>
-Connected by loads and flows.</p>
-<p>Higher level building blocks are based upon these.<br>
-E.g. Bom, forecast, ...</p>
-<p>Problems are flagged when the plan shows infeasibilities or
-situations
-requiring user attention.</p>
-<p>Subclassing the standard classes allows building more complex and
-customized models.</p>
-<p>Data is currently read in from XML files.<br>
-Soon a flat file based input is also expected. Later, a database
-interface could
-also be implemented.</p>
-<hr>
-<p align="right"><a name="solver" href="#top">top</a></p>
-<h1>Solver characteristics</h1>
-<p>The model and the solver are logically
-divided. This makes it possible to use mulitple with the same model.<span
- style="">&nbsp;<br>
-The currently application comes with a single solver that is described
-in more
-detail below.</span></p>
-<p>The building blocks can be grouped in a
-number of independent clusters. Each cluster is solved seperately by a
-multi-threaded solver.</p>
-<p>The solver uses a heuristic-based algorithm.<br>
-The logic is fully deterministic.<br>
-The solver is based on common sense planning logic rather than some
-mathematical
-optimization construct.<br>
-These features result in a simple, easy to undertand and easy to extend
-solution. The plan will make sense to the planner, but is not
-necessarily a
-mathematical optimum.</p>
-<p>In the
-future, a second solver based on linear programming is expected to be
-added.
-This will allow to generate mathematically optimal solutions for
-subparts of the
-planning problem.</p>
-<p>The algorithm is able to generate a number
-of different plan types:<br>
-- material constrained plan<br>
-- lead time constrained plan<br>
-- capacity constrained plan</p>
-<p>- fully
-unconstrained plan, a.k.a. MRP run.</p>
-<p>- plans with
-multiple of the basic constraints enabled, e.g. Material and leadtime
-constrained.</p>
-<p>- fully
-constrained plan, i.e. Constrained by material, leadtime and capacity.</p>
-<p>Ask-reply.</p>
-<hr>
-<p align="right"><a name="example" href="#top">top</a></p>
-<h1>Example model</h1>
-<p>In this section we describe a small
-planning problem. We show how it is modeled and planned using our
-application.</p>
-<p>This is by no means a full user manual, but only illustrates the
-basic concepts.</p>
+<p>The project is developped for 32-bit linux and Windows environments, with 
+Linux being the primary development platform. Porting to other platforms is 
+discussed under the developer section of the documentation. 
+</p>
 </body>
 </html>

@@ -37,6 +37,7 @@ using namespace frepple;
 // and when it hasn't been explicitly disabled by setting the STATIC variable.
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+
 BOOL APIENTRY DllMain(HANDLE hInst, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
   switch (ul_reason_for_call)

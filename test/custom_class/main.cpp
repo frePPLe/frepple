@@ -77,7 +77,7 @@ int main (int argc, char *argv[])
 void OperationTransport::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(tag_from) || pElement.isA(tag_to))
-    pIn.readto( MetaCategory::ControllerString<Buffer>(Buffer::metadata,pIn.getAttributes()) );
+    pIn.readto( Buffer::reader(Buffer::metadata,pIn.getAttributes()) );
   else 
     OperationFixedTime::beginElement (pIn, pElement);
 }

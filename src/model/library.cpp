@@ -515,7 +515,7 @@ void Plan::size() const
   {
     ++count;
     memsize += sizeof(*i) + OVERHEADTREENODE;
-    countloadplans += i->getflowplans().size();
+    countloadplans += i->getFlowPlans().size();
     countflowplans += i->getLoadPlans().size();
   }
   total += memsize;

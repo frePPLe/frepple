@@ -124,8 +124,8 @@ bool MRPSolver::checkOperationMaterial
   TimePeriod delay;
 
   // Loop through all flowplans
-  for(slist<FlowPlan*>::const_iterator g=opplan->getflowplans().begin();
-      g!=opplan->getflowplans().end(); ++g)
+  for(slist<FlowPlan*>::const_iterator g=opplan->getFlowPlans().begin();
+      g!=opplan->getFlowPlans().end(); ++g)
     if ((*g)->getFlow()->isConsumer())
     {
       // Trigger the flow solver, which will call the buffer solver

@@ -45,14 +45,12 @@ DECLARE_EXPORT bool HasLevel::computationBusy = false;
 DECLARE_EXPORT short unsigned HasLevel::numberOfClusters = 0;
 
 
-void HasLevel::computeLevels()
+DECLARE_EXPORT void HasLevel::computeLevels()
 {
 	computationBusy = true;
-#ifdef MT
   // Get exclusive access to this function in a multi-threaded environment.
-  static pthread_mutex_t levelcomputationbusy;
-  pthread_mutex_lock(&levelcomputationbusy);
-#endif
+  static Mutex levelcomputationbusy;
+  ScopeMutexLock l(levelcomputationbusy);
 
   // Another thread may already have computed the levels while this thread was
   // waiting for the lock. In that case the while loop will be skipped.
@@ -310,10 +308,7 @@ void HasLevel::computeLevels()
   } // End of while recomputeLevels. The loop will be repeated as long as model
   // changes are done during the recomputation.
 
-#ifdef MT
   // Unlock the exclusive access to this function
-  pthread_mutex_unlock(&levelcomputationbusy);
-#endif
 	computationBusy = false;
 }
 

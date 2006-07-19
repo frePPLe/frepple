@@ -117,17 +117,16 @@ void Plannable::setDetectProblems(bool b)
 }
 
 
-void Plannable::computeProblems()
+DECLARE_EXPORT void Plannable::computeProblems()
 {
   // Exit immediately if the list is up to date
   if (!anyChange && !computationBusy) return;
 
 	computationBusy = true;
-#ifdef MT
   // Get exclusive access to this function in a multi-threaded environment.
-  static pthread_mutex_t computationbusy;
-  pthread_mutex_lock(&computationbusy);
-#endif
+  static Mutex computationbusy;
+  {
+  ScopeMutexLock l(computationbusy);
 
   // Another thread may already have computed it while this thread was
   // waiting for the lock
@@ -152,11 +151,9 @@ void Plannable::computeProblems()
     }
   }
 
-#ifdef MT
   // Unlock the exclusive access to this function
-  pthread_mutex_unlock(&computationbusy);
-#endif
 	computationBusy = false;
+  }
 }
 
 

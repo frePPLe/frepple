@@ -215,7 +215,7 @@ AC_CHECK_PROGS(SWIG, swig, noswig)
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h malloc.h stdlib.h unistd.h perl.h python.h])
+AC_CHECK_HEADERS([fcntl.h malloc.h stdlib.h unistd.h perl.h python.h pthread.h])
 
 # Checks for library functions.
 AC_FUNC_MALLOC
@@ -251,7 +251,6 @@ AC_TRY_COMPILE(
 
 #
 # Compiler&linker flags and include&library directories
-# Todo: The check for the pthreads library doesn't work for all platforms
 #
 if test x$debug = xtrue ; then
 	# The settings on the next line are the normal debugging parameters

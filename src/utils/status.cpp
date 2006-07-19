@@ -657,19 +657,15 @@ XMLtag::XMLtag(string name) : strName(name)
   // Verify that the hash is "perfect".
   // To be thread-safe we make sure only a single thread at a time
   // can execute this check.
-#ifdef MT
-  static pthread_mutex_t dd;
-  pthread_mutex_lock(&dd);
-#endif
+  static Mutex dd;
+  {
+  ScopeMutexLock l(dd);
   tagtable::const_iterator i = getTags().find(dw);
   if (i!=getTags().end() && i->second->getName()!=name)
     throw LogicException("Tag XML-tag hash function clashes for " 
       + i->second->getName() + " and " + name);
   getTags().insert(make_pair(dw,this));
-
-#ifdef MT
-  pthread_mutex_unlock(&dd);
-#endif
+  }
 }
 
 
@@ -692,7 +688,7 @@ const XMLtag& XMLtag::find(char const* name)
 }
 
 
-XMLtag::tagtable& XMLtag::getTags()
+DECLARE_EXPORT XMLtag::tagtable& XMLtag::getTags()
 {
   static tagtable alltags;
   return alltags;

@@ -83,12 +83,11 @@ bool MRPSolver::demand_comparison(Demand* l1, Demand* l2)
 }
 
 
-void* MRPSolver::SolverThread(void *arg)
+void MRPSolver::MRPSolverdata::run()
 {
   // Message
-  MRPSolverdata* Solverthread = static_cast<MRPSolverdata*>(arg);
-  MRPSolver* Solver = Solverthread->getSolver();
-  unsigned int myid = Solverthread->threadid;
+  MRPSolver* Solver = getSolver();
+  unsigned int myid = threadid;
 
   if (Solver->getVerbose()) clog << "Start planning thread " << myid << endl;
 
@@ -113,7 +112,7 @@ void* MRPSolver::SolverThread(void *arg)
       for (deque<Demand*>::const_iterator i = mycluster->second.begin();
            i != mycluster->second.end(); ++i)
         // Plan the demand
-        try { (*i)->solve(*Solver,Solverthread); }
+        try { (*i)->solve(*Solver,this); }
         catch (...)
         {
           // Error message
@@ -125,7 +124,7 @@ void* MRPSolver::SolverThread(void *arg)
           catch (...) {clog << "  Unknown type" << endl;}
 
           // Cleaning up
-          Solverthread->actions.undo();
+          actions.undo();
         }
 
       // Clean the list of demands of this problem
@@ -155,26 +154,18 @@ void* MRPSolver::SolverThread(void *arg)
 
   // Message
   if (Solver->getVerbose()) clog << "End planning thread " << myid << endl;
-
-  // Return value doesn't matter. The POSIX pthread interface wants a void
-  // pointer as return value, so we just pass NULL...
-  return NULL;
 }
 
 
 MRPSolver::cluster_iterator MRPSolver::next_cluster(MRPSolver* Solver)
 {
   cluster_iterator nxt;
-#ifdef MT
-  static pthread_mutex_t dd;
-  pthread_mutex_lock(&dd);
-#endif
+  static Mutex dd;  // Doesn't allow multiple solvers at the same time @todo
+  dd.lock();
   nxt = Solver->cur_cluster;
   if (Solver->cur_cluster != Solver->demands_per_cluster.end())
     ++Solver->cur_cluster;
-#ifdef MT
-  pthread_mutex_unlock(&dd);
-#endif
+  dd.unlock();
   return nxt;
 }
 
@@ -198,59 +189,14 @@ void MRPSolver::solve(void *v)
     if (demands_per_cluster.find((*e)->getCluster())!=demands_per_cluster.end())
       (*e)->deleteOperationPlans();
 
-  // Compute how many threads to use...
-#ifdef MT
-  int numthreads = demands_per_cluster.size();
-  if(numthreads == 0) return;
-  if(numthreads > MAXTHREADS) numthreads = MAXTHREADS;
-
-  // Do we need to spawn new threads at all?
-  if (numthreads==1)
-  {
-#endif
-    // This block of code is executed in a single-threaded executable or
-    // in a multi-threaded executable with a single planning problem.
-    MRPSolverdata f;
-    f.threadid = 1;
-    f.sol = this;
-    SolverThread(&f);
-    return;
-#ifdef MT
-  }
-
-  pthread_t threads[numthreads];         // holds thread info
-  int errcode;                           // holds pthread error code
-  int status;                            // holds return value
-  MRPSolverdata data[numthreads];        // data structure per thread
-
   // Create the planning threads
-  for (int worker=0; worker<numthreads; ++worker)
-  {
-    data[worker].threadid = worker;
-    data[worker].sol = this;
-    if ((errcode=pthread_create(&threads[worker],  // thread struct
-                                NULL,              // default thread attributes
-                                SolverThread,      // start routine
-                                &data[worker])))   // arg to routine
-      {
-        // @todo Not exception safe: some threads may already be launched!
-        ostringstream ch;
-        ch << "Couldn't create thread " << worker << ", error " << errcode;
-        throw RuntimeException(ch.str());
-      }
-  }
+  ThreadGroup threads;       
+  unsigned int j = demands_per_cluster.size();
+  if (j > ThreadGroup::getMaxThreads()) j = ThreadGroup::getMaxThreads();
+  for ( ; j>0; --j) threads.addThread(new MRPSolverdata(j, this));
 
   // Wait for the planning threads as they exit
-  for (int worker=0; worker<numthreads; ++worker)
-    // Wait for thread to terminate
-    if ((errcode=pthread_join(threads[worker],(void**) &status)))
-    {
-      // @todo thread joining is not exception safe
-      ostringstream ch;
-      ch << "Couldn't join with thread " << worker << ", error " << errcode;
-      throw RuntimeException(ch.str());
-    }
-#endif
+  threads.joinAll();
 }
 
 

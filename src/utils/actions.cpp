@@ -135,7 +135,6 @@ void CommandList::execute()
   // Execute the actions
   Command *i = firstCommand;
 
-  // Need to check if multithreading is possible with this executable
 #ifndef MT
   if (!sequential)
   {

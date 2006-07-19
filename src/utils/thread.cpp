@@ -26,8 +26,14 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/utils.h"
+
+#if defined(MT) && !defined(HAVE_PTHREAD_H)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <process.h>
+#endif
 
 namespace frepple
 {
@@ -38,84 +44,22 @@ void LockManager::obtainReadLock(const Lock& l, priority p) {}
 void LockManager::obtainWriteLock(Lock& l, priority p) {}
 void LockManager::releaseReadLock(const Lock& l) {}
 void LockManager::releaseWriteLock(Lock& l) {}
+DECLARE_EXPORT unsigned int ThreadGroup::MaxThreads = 1;
 
-#ifdef MT 
+#ifdef MT
 Pool<Lock> pool_locks;
 
-/*
-  // @todo clean up...
-pthread_key_t Thread::me;
-
-Thread::Thread(threadfunc f, priority p = NORMAL) 
-  : prio(p), thr(pthread_self()), canjoin(true) 
-{
-  //thread_param param(threadfunc);
-  int err = pthread_create(&thr, NULL, f, &param);
-  if (err)
-    throw RuntimeException(string("Couldn't create thread, error ") + err);
-  //param.wait();
-};
-
-
-ThreadGroup::~ThreadGroup()
-{
-  // We shouldn't have to scoped_lock here, since referencing this object
-  // from another thread while we're deleting it in the current thread is
-  // going to lead to undefined behavior any way.
-  for (threadlist::iterator it=m_threads.begin(); it!=m_threads.end(); ++it)
-    delete *it;
-}
-
-
-Thread* ThreadGroup::createThread()
-{
-  // No scoped_lock required here since the only "shared data" that's
-  // modified here occurs inside add_thread which does scoped_lock.
-  auto_ptr<Thread> thrd(new Thread());
-  addThread(thrd.get());
-  return thrd.release();
-}
-
-
-void ThreadGroup::addThread(Thread* thrd)
-{
-  pthread_mutex_lock(&m_mutex);
-  threadlist::iterator it = find(m_threads.begin(), m_threads.end(), thrd);
-  // Append in the list, if not added yet
-  if (it == m_threads.end()) m_threads.push_back(thrd);
-  pthread_mutex_unlock(&m_mutex);
-}
-
-
-void ThreadGroup::removeThread(Thread* thrd)
-{
-  pthread_mutex_lock(&m_mutex);
-  threadlist::iterator it = find(m_threads.begin(), m_threads.end(), thrd);
-  if (it != m_threads.end()) m_threads.erase(it);
-  pthread_mutex_unlock(&m_mutex);
-}
-
-
-void ThreadGroup::joinAll()
-{
-  pthread_mutex_lock(&m_mutex);
-  for (threadlist::iterator it = m_threads.begin();
-        it != m_threads.end(); ++it)
-      (*it)->join();
-  pthread_mutex_unlock(&m_mutex);
-}
-*/
 
 void LockManager::obtainReadLock(const Object* l, priority p)
 {
   // Check if exclusivewrite is on and I am not the writer
   // if yes wait, then repeat
 
-  //if (!l->lock) 
+  //if (!l->lock)
   //  const_cast<Object*>(l)->lock = pool_locks.Alloc();
 
   //clog << "Read locking " << l << "  " << l->getType().type <<  endl;
-  // if writelock > 0 and I am not the writer, wait, then repeat 
+  // if writelock > 0 and I am not the writer, wait, then repeat
 
   // insert in the table
   // increment readers
@@ -130,7 +74,7 @@ void LockManager::obtainWriteLock(Object* l, priority p)
   l->getType().raiseEvent(l, SIG_BEFORE_CHANGE);
 
   // if readlock > 0, wait, then repeat
-  //if (!l->lock) 
+  //if (!l->lock)
   //  l->lock = pool_locks.Alloc();
 
   //clog << "Write locking " << l << "  " << l->getType().type << endl;
@@ -145,7 +89,7 @@ void LockManager::releaseReadLock(const Object* l)
   //  writers is expected to be 0
   //  exclusive write is expected to be off
 
-  //if (!l->lock) 
+  //if (!l->lock)
   //  throw RuntimeException("Releasing invalid lock");
 
   //clog << "Read unlocking " << l << "  " << l->getType().type << endl;
@@ -163,7 +107,7 @@ void LockManager::releaseWriteLock(Object* l)
 
   l->getType().raiseEvent(l, SIG_AFTER_CHANGE);
 
-  //if (!l->lock) 
+  //if (!l->lock)
     //throw RuntimeException("Releasing invalid lock");
 
   //clog << "Write unlocking " << l << "  " << l->getType().type << endl;
@@ -173,7 +117,103 @@ void LockManager::releaseWriteLock(Object* l)
   // when readers & writers & wait = 0, remove from table
 };
 
+
+bool Thread::operator==(const Thread& other) const
+{
+#ifdef HAVE_PTHREAD_H
+  return pthread_equal(m_thread, other.m_thread) != 0;
 #else
+  return other.m_id == m_id;
+#endif
+}
+
+
+void Thread::join()
+{
+#ifdef HAVE_PTHREAD_H
+  int res = pthread_join(m_thread, 0);
+  if (res) throw RuntimeException("Can't join thread, error " + res);
+#else
+  int res = WaitForSingleObject(reinterpret_cast<HANDLE>(m_thread), INFINITE);
+  if (res != WAIT_OBJECT_0)
+    throw RuntimeException("Can't join thread, error " + res);
+  res = CloseHandle(reinterpret_cast<HANDLE>(m_thread));
+  if (res) throw RuntimeException("Can't close thread handle, error " + res);
+#endif
+}
+
+
+#ifdef HAVE_PTHREAD_H
+void* ThreadGroup::wrapper(void *param)
+#else
+unsigned __stdcall ThreadGroup::wrapper(void *param)
+#endif
+{
+  try { static_cast<Thread*>(param)->run(); }
+  catch (...)
+  {
+    // Error message
+    clog << "Error: Caught an exception while running thread :" << endl;
+    try { throw; }
+    catch (bad_exception&){clog << "  bad exception" << endl;}
+    catch (exception& e) {clog << "  " << e.what() << endl;}
+    catch (...) {clog << "  Unknown type" << endl;}
+  }
+  return 0;
+}
+
+
+void ThreadGroup::joinAll()
+{
+  ScopeMutexLock l(m_mutex);
+  for (threadlist::iterator i = m_threads.begin(); i != m_threads.end(); ++i)
+      (*i)->join();
+}
+
+ThreadGroup::~ThreadGroup()
+{
+  ScopeMutexLock l(m_mutex);
+  for (threadlist::iterator it=m_threads.begin(); it!=m_threads.end(); ++it)
+  {
+#ifdef HAVE_PTHREAD_H
+    pthread_detach((*it)->m_thread);
+#else
+    int res = CloseHandle(reinterpret_cast<HANDLE>((*it)->m_thread));
+    if (res) throw RuntimeException("Can't close thread handle, error " + res);
+#endif
+    delete *it;
+  }
+}
+
+
+void ThreadGroup::addThread(Thread* thrd)
+{
+  ScopeMutexLock l(m_mutex);
+  threadlist::iterator it = find(m_threads.begin(), m_threads.end(), thrd);
+  // Append in the list, if not added yet
+  if (it == m_threads.end() && thrd)
+  {
+    m_threads.push_back(thrd);
+#ifdef HAVE_PTHREAD_H
+    int res = pthread_create(&(thrd->m_thread), 0, &wrapper, thrd);
+    if (res)throw RuntimeException("Can't create a thread, error " + res);
+#else
+    thrd->m_thread = _beginthreadex(0, 0, &Thread::wrapper, this, 0, thrd->m_id);
+    if (!m_thread) throw RuntimeException("Can't create a thread, error " + errno);
+#endif
+  }
+}
+
+
+void ThreadGroup::removeThread(Thread* thrd)
+{
+  ScopeMutexLock l(m_mutex);
+  threadlist::iterator it = find(m_threads.begin(), m_threads.end(), thrd);
+  if (it != m_threads.end()) m_threads.erase(it);
+}
+
+
+#else // Compiling without thread support
 
 
 
@@ -208,6 +248,25 @@ void LockManager::releaseWriteLock(Object* l)
   l->getType().raiseEvent(l, SIG_AFTER_CHANGE);
 };
 
+
+ThreadGroup::~ThreadGroup() {}
+void ThreadGroup::joinAll() {}
+
+
+void ThreadGroup::addThread(Thread* thrd)
+{
+  if (!thrd) return;
+  try { thrd->run(); }
+  catch (...)
+  {
+    // Error message
+    clog << "Error: Caught an exception while running thread :" << endl;
+    try { throw; }
+    catch (bad_exception&){clog << "  bad exception" << endl;}
+    catch (exception& e) {clog << "  " << e.what() << endl;}
+    catch (...) {clog << "  Unknown type" << endl;}
+  }
+}
 
 
 #endif  // endif MT

@@ -42,14 +42,6 @@ extern "C" {
 namespace frepple
 {
 
-// Define the maximum number of threads allowed during solving. 
-#ifdef MT
-// @todo Solver can't work yet with multiple solver threads
-#define MAXTHREADS 1
-#else
-#define MAXTHREADS 1
-#endif
-
 /** This solver implements a heuristic algorithm for planning demands. One by
   * one the demands are processed. The demand will consume step by step any
   * upstream materials, respecting all relevant constraints on its path.<br>
@@ -223,22 +215,6 @@ class MRPSolver : public Solver
       * planned. */
     cluster_iterator cur_cluster;
 
-    /** This function runs a single planning thread. Such a thread will loop
-      * through the following steps:
-      *    - Use the method next_cluster() to find another unplanned cluster.
-      *    - Exit the thread if no more cluster is found.
-      *    - Sort all demands in the cluster, using the demand_comparison()
-      *      method.
-      *    - Loop through the sorted list of demands and plan each of them.
-      *      During planning the demands exceptions are caught, and the
-      *      planning loop will simply move on to the next demand.
-      *      In this way, an error in a part of the model doesn't ruin the
-      *      complete plan.
-      * @see demand_comparison
-      * @see next_cluster
-      */
-    static void* SolverThread(void *);
-
     /** Returns the next planning problem a thread needs to tackle. */
     static cluster_iterator next_cluster(MRPSolver*);
 
@@ -248,14 +224,31 @@ class MRPSolver : public Solver
       * state maintained by each solver thread.
       * @see MRPSolver
       */
-    class MRPSolverdata
+    class MRPSolverdata : public Thread
     {
       friend class MRPSolver;
       public:
         MRPSolver* getSolver() const {return sol;}
-        MRPSolverdata() : curOwnerOpplan(NULL), q_loadplan(NULL), 
+        MRPSolverdata(unsigned int id, MRPSolver* s) 
+          : threadid(id), sol(s), curOwnerOpplan(NULL), q_loadplan(NULL), 
           q_flowplan(NULL), q_operationplan(NULL) {}
 
+        /** This function runs a single planning thread. Such a thread will loop
+          * through the following steps:
+          *    - Use the method next_cluster() to find another unplanned cluster.
+          *    - Exit the thread if no more cluster is found.
+          *    - Sort all demands in the cluster, using the demand_comparison()
+          *      method.
+          *    - Loop through the sorted list of demands and plan each of them.
+          *      During planning the demands exceptions are caught, and the
+          *      planning loop will simply move on to the next demand.
+          *      In this way, an error in a part of the model doesn't ruin the
+          *      complete plan.
+          * @see demand_comparison
+          * @see next_cluster
+          */
+        virtual void run();
+        
       private:
         /** Maintains a list of all actions triggered by the solver. */
         CommandList actions;

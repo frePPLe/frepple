@@ -760,7 +760,7 @@ class Plannable : public Object, public HasProblems, public Solvable
 
     /** Loops through all plannable objects and updates their problems if
       * required. */
-    static void computeProblems();
+    static DECLARE_EXPORT void computeProblems();
 
     /** See if this entity has changed since the last problem
       * problem detection run. */
@@ -880,7 +880,7 @@ class HasLevel
       *     The limit is platform dependent. On 32-bit platforms it will
       *     typically be 65535.
       */
-    static void computeLevels();
+    static DECLARE_EXPORT void computeLevels();
 
   public:
     /** Returns the total number of clusters in the system. If not up to date

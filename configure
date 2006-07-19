@@ -20913,7 +20913,8 @@ fi
 
 
 
-for ac_header in fcntl.h malloc.h stdlib.h unistd.h perl.h python.h
+
+for ac_header in fcntl.h malloc.h stdlib.h unistd.h perl.h python.h pthread.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if eval "test \"\${$as_ac_Header+set}\" = set"; then
@@ -23046,7 +23047,6 @@ rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
 
 #
 # Compiler&linker flags and include&library directories
-# Todo: The check for the pthreads library doesn't work for all platforms
 #
 if test x$debug = xtrue ; then
 	# The settings on the next line are the normal debugging parameters

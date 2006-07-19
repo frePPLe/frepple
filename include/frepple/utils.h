@@ -71,9 +71,8 @@ using namespace std;
 #include <config.h>
 #endif
 
-// For the multithreading only POSIX threads are supported.
-// Too bad for all platforms not conforming to industry standards. Sorry...
-#ifdef MT
+// Pthread header for multithreading
+#if defined(MT) && defined(HAVE_PTHREAD_H)
 #include <pthread.h>
 #endif
 
@@ -386,6 +385,46 @@ template <class T> void Pool<T>::Free (T* it)
 // UTILITY CLASSES FOR MULTITHREADING
 //
 
+/** This class is a wrapper around platform specific mutex functions. */
+class Mutex: public NonCopyable
+{
+  public:
+#ifndef MT
+    // No threading support, empty class
+    Mutex() {}
+    ~Mutex()  {}
+    void lock() {}
+    void unlock() {}
+#elif defined(HAVE_PTHREAD_H)
+    // Pthreads
+    Mutex()         { pthread_mutex_init(&mtx, 0); }
+    ~Mutex()        { pthread_mutex_destroy(&mtx); }
+    void lock()    { pthread_mutex_lock(&mtx); }
+    void unlock()    { pthread_mutex_unlock(&mtx); }
+  private:
+    pthread_mutex_t mtx;
+#else
+    // Windows critical section
+    Mutex() { InitializeCriticalSection(&critsec); }
+    ~Mutex()  { DeleteCriticalSection(&critsec); }
+    void lock() { EnterCriticalSection(&critsec); }
+    void unlock() { LeaveCriticalSection(&critsec); }
+  private:
+    CRITICAL_SECTION critsec;
+#endif
+};
+
+
+class ScopeMutexLock: public NonCopyable
+{
+  protected:
+    Mutex* mtx;
+public:
+    ScopeMutexLock(Mutex& imtx): mtx(&imtx) { mtx->lock(); }
+    ~ScopeMutexLock() { mtx->unlock(); }
+};
+
+
 class MetaData;
 
 /** This enum defines the different priority values for threads. */
@@ -446,6 +485,93 @@ class LockManager : public NonCopyable
 };
 
 
+/** This class acts as a wrapper around platform-specific threading functions.
+  * Currently Pthreads and Windows threads are supported.<br>
+  * To use the class, create a subclass and override its run() method.
+  * @see ThreadGroup
+  */
+class Thread : public NonCopyable
+{
+  friend class ThreadGroup;
+  public:
+    /** Destructor. */
+    virtual ~Thread() {}
+
+    /** This is the function that is doing the work of the thread. */
+    virtual void run() = 0;
+
+#ifdef MT
+    bool operator==(const Thread& other) const;
+    bool operator!=(const Thread& other) const {return !operator==(other);}
+
+    void join();
+
+  private:
+#ifdef HAVE_PTHREAD_H
+    pthread_t m_thread;
+    static void* wrapper(void *param);
+#else
+    HANDLE m_thread;
+    unsigned int m_id;
+    static unsigned __stdcall wrapper(void *param);
+#endif
+#endif
+};
+
+
+/** This class acts as a wrapper around platform-specific threading functions.
+  * Currently Pthreads and Windows threads are supported.
+  * @see Thread
+  */
+class  ThreadGroup : public NonCopyable
+{
+  public:    
+    /** Destructor. 
+      * The destructor also destroys all thread objects that are part of the 
+      * group.
+      */
+    ~ThreadGroup();
+
+    /** Adds a thread to the group. 
+      * The thread object is managed by the ThreadGroup after calling this 
+      * method. The ThreadGroup will destroy the Thread object in its 
+      * destructor.<br>
+      * In a multithreaded environment a thread is spawned and its execution 
+      * is triggered. The method is asynchroneous, i.e. it doesn't wait for 
+      * the threads to complete before returning.<br>
+      * In a single threaded model the thread object is executed right away
+      * and the method doesn't return before its execution is finished. In
+      * other words: synchroneous execution.
+      */
+    void addThread(Thread* thrd);
+
+    /** Removes a thread from the list. */
+    void removeThread(Thread* thrd);
+
+    /** Wait for all threads in the group to finish. 
+      * In a single threaded model this method is empty.
+      */
+    void joinAll();
+
+    /** Return the maximum allowed number of parallel threads in a group. */
+    static unsigned int getMaxThreads() {return MaxThreads;}
+
+    /** Return the maximum allowed number of parallel threads in a group. */
+    static void setMaxThreads(unsigned int i) {MaxThreads = i;}
+
+  private:
+    typedef list<Thread*> threadlist; 
+    threadlist m_threads;
+    Mutex m_mutex;
+    static DECLARE_EXPORT unsigned int MaxThreads;
+#ifdef HAVE_PTHREAD_H
+    static void* wrapper(void *param);
+#else
+    static unsigned __stdcall wrapper(void *param);
+#endif
+};
+
+
 //
 // METADATA AND OBJECT FACTORY
 //
@@ -469,10 +595,10 @@ class XMLtag : public NonCopyable
     /** Name of the string transcoded to its Xerces-internal representation. */
     XMLCh* xmlname;
 
+  public:
     /** Container for maintaining a list of all tags. */
     typedef map<hashtype,XMLtag*> tagtable;
 
-  public:
     /** This is the only constructor. */
     XMLtag(string n);
 
@@ -521,18 +647,8 @@ class XMLtag : public NonCopyable
       * will be created. */
     static const XMLtag& find(char const*);
 
-    /** Returns a pointer to a container which maintains a collection of all
-      * tags that have been defined.
-      * We need to use this special way of maintaining the list of all tags
-      * because we have a lot of static tags. If we defined a static class
-      * member for this container we can't garantuee which one is initialized
-      * first: tag or container... If the tag is first, the application would
-      * crash!
-      * @warning This function should never be inlined. If it would, we could
-      * end up with multiple instances of the static variable defined in this
-      * method. Normally your compiler will be smart enough.
-      */
-    static tagtable& getTags();
+	  /** Return a reference to a table with all defined tags. */
+	  static DECLARE_EXPORT tagtable& getTags();
 
     /** Prints a list of all tags that have been defined. This can be useful
       * for debugging and also for creating a good hashing function.<br>
@@ -597,6 +713,9 @@ class MetaData : public NonCopyable
 
     /** Default constructor. */
     MetaData() : type("UNSPECIFIED"), typetag(&XMLtag::find("UNSPECIFIED")) {}
+
+    /** Destructor. */
+    virtual ~MetaData() {}
 
     /** This function will analyze the string being passed, and return the
       * appropriate action.
@@ -718,6 +837,9 @@ class MetaClass : public MetaData
     /** Default constructor. */
     MetaClass() : factoryMethodDefault(NULL), category(NULL) {}
 
+    /** Destructor. */
+    virtual ~MetaClass() {}
+
     /** This constructor registers the metadata of a class. */
     void registerClass(const char*, const char*, bool = false) const;
 
@@ -798,6 +920,9 @@ class MetaCategory : public MetaData
     MetaCategory() : group("UNSPECIFIED"), 
       grouptag(&XMLtag::find("UNSPECIFIED")), nextCategory(NULL), 
       writeFunction(NULL) {};
+
+    /** Destructor. */
+    virtual ~MetaCategory() {}
 
     /** This method is required to register the category of classes. */
     void registerCategory (const char* t, const char* g = NULL, 

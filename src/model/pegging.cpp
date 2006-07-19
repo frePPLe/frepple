@@ -100,6 +100,7 @@ pegging_iterator& pegging_iterator::operator--()
         else      
           // Push a new element on the stack
           stack.push(state(stack.top().cumqty, stack.top().level, *i));
+        // @todo also need to pop from the stack 
       }
   }
   return *this;

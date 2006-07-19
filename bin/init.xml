@@ -19,7 +19,7 @@
     <VERBOSE>false</VERBOSE>
     <ABORTONERROR>false</ABORTONERROR>
     <COMMAND xsi:type="COMMAND_LOADLIB">
-      <FILENAME>/home/johan/workspace/frepple/src/modules/forecast/.libs/libforecast.so</FILENAME>
+      <FILENAME>/home/johan/workspace/frepple/modules/forecast/.libs/libforecast.so</FILENAME>
       <PARAMETER NAME="test1" VALUE="val1"/>
       <PARAMETER>
         <NAME>test2</NAME>

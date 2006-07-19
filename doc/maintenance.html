@@ -19,7 +19,7 @@ people that are extending and/or maintaining the framework.</p>
 <H2><a name="build">Build instructions</H2>
 <ul>
 <li><a href="#linux">Build instructions on Linux and Unix platforms</a></li>
-<li><a href="#gcc">Build instructions on Windows using Cygwin compiler</a></li>
+<li><a href="#cygwin">Build instructions on Windows using Cygwin compiler</a></li>
 <li><a href="#bcc">Build instructions on Windows using Borland C++
 compiler</a></li>
 <li><a href="#vcc">Build instructions on Windows using Microsoft Visual C++
@@ -113,13 +113,18 @@ the list of available options.</li>
 the build and test phases.</li>
 </ol>
 
-<h3><a name="gcc">Build instructions on Windows using Cygwin compiler</h3>
+<h3><a name="cygwin">Build instructions on Windows using Cygwin compiler</h3>
 The build instructions on Cygwin are similar with the Linux and Unix platforms.
 Cygwin does provide all the packages listed above (except the xerces-c version,
 which is older).<br>
 The Cygwin environment can be downloaded free of charge from the
 <a target="" href="http://www.cygwin.com" target="_blank">Cygwin website</a>.
 <br>
+To build the latest xerces library for cygwin, remove the eventual 
+previous xerces release in your cygwin director, download the source from the 
+xerces web page and then follow the build instructions. (Hint: Use the 
+following to configure the build: 
+  "./runConfigure -p cygwin -c gcc -x g++ -P /usr"<br>
 Compared to the other compilers for Windows the executables generated from the 
 cygwin compiler are considerably slower. That's the price for an emulation
 layer...

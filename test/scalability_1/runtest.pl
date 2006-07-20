@@ -14,10 +14,6 @@ use Env qw(EXECUTABLE);
 
 my %runtimes;
 
-# Warning message
-print "\nWarning: This test will take 10 minutes or more to complete.\n";
-print "Go get a coffee or hit ctrl-c to abort this testcase...\n";
-
 for (my $counter=5000; $counter < 30000; $counter+=5000)
   {
   print "\ncounter $counter\n";

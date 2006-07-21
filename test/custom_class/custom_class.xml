@@ -156,18 +156,7 @@
       <DUE>2006-01-03T12:00:00</DUE>
       <PRIORITY>2</PRIORITY>
       <ITEM NAME="product" />
-      <OPERATION NAME="delivery product from distribution centre">
-        <FLOWS>
-          <!-- 
-            This flow has already been defined. We leave it anyway, to test
-            the behavior in this particular corner case.
-          -->
-          <FLOW xsi:type="FLOW_START">
-            <BUFFER NAME="product in distribution centre" />
-            <QUANTITY>-1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </OPERATION>
+      <OPERATION NAME="delivery product from distribution centre"/>
     </DEMAND>
   </DEMANDS>
 </PLAN>

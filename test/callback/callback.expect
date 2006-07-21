@@ -34,6 +34,8 @@ Create the model with callbacks:
   Operation 'make end item' receives signal BEFORE_CHANGE
   OperationFixedTime 'make end item' receives signal AFTER_CHANGE
   Operation 'make end item' receives signal AFTER_CHANGE
+  Flow between 'NULL' and 'NULL' receives signal ADD
+  Flow between 'NULL' and 'NULL' receives signal BEFORE_CHANGE
   OperationFixedTime 'delivery end item' receives signal BEFORE_CHANGE
   Operation 'delivery end item' receives signal BEFORE_CHANGE
   OperationFixedTime 'delivery end item' receives signal AFTER_CHANGE
@@ -42,6 +44,9 @@ Create the model with callbacks:
   Buffer 'end item' receives signal BEFORE_CHANGE
   BufferDefault 'end item' receives signal AFTER_CHANGE
   Buffer 'end item' receives signal AFTER_CHANGE
+  Flow between 'end item' and 'delivery end item' receives signal AFTER_CHANGE
+  Flow between 'NULL' and 'NULL' receives signal ADD
+  Flow between 'NULL' and 'NULL' receives signal BEFORE_CHANGE
   OperationFixedTime 'make end item' receives signal BEFORE_CHANGE
   Operation 'make end item' receives signal BEFORE_CHANGE
   OperationFixedTime 'make end item' receives signal AFTER_CHANGE
@@ -50,6 +55,7 @@ Create the model with callbacks:
   Buffer 'end item' receives signal BEFORE_CHANGE
   BufferDefault 'end item' receives signal AFTER_CHANGE
   Buffer 'end item' receives signal AFTER_CHANGE
+  Flow between 'end item' and 'make end item' receives signal AFTER_CHANGE
   Item 'end item' receives signal BEFORE_CHANGE
   Item 'end item' receives signal AFTER_CHANGE
 Recreate the model without callbacks:

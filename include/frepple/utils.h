@@ -2592,7 +2592,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 
     void endElement(XMLInput& pIn, XMLElement& pElement) {};
 
-    /** This template method is available as a object creation factory for 
+    /** This method is available as a object creation factory for 
       * classes that are using a string as a key identifier, in particular 
       * classes derived from the HasName base class.
       * The following attributes are recognized:
@@ -2711,17 +2711,23 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       // Create a new instance
       T* x = dynamic_cast<T*>(j->second->factoryMethodString(name));
       XMLString::release(&type);
+
+      // Run creation callbacks
+      // During the callback there is no write lock set yet, since we can
+      // assume we are the only ones aware of this new object. We also want
+      // to make sure the 'add' signal comes before the 'before_change'
+      // callback that is part of the writelock.
       if (!x->getType().raiseEvent(x,SIG_ADD))
       {
         // Creation isn't allowed
         string msg = string("Can't create object") + name;
-        XMLString::release(&name);
         delete x;
+        XMLString::release(&name);
         throw DataException(msg);
       }
       XMLString::release(&name);
 
-      // Lock the object, which includes the callbacks
+      // Lock the object, which includes the before-change callback
       LockManager::getManager().obtainWriteLock(x);
 
       // Insert in the tree

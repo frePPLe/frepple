@@ -269,7 +269,11 @@ void XMLInput::endElement(const XMLCh* const uri,
         else
         {
           // Call also the endElement function on the owning object
-          getCurrentObject()->endElement(*this, *pElement);
+          try { getCurrentObject()->endElement(*this, *pElement); }
+          catch (DataException e) {          
+            if (abortOnDataException) throw;
+            else clog << "Continuing after data error: " << e.what() << endl;
+          }
 #ifdef PARSE_DEBUG
           clog << "   End element " << pElement->getName()
           << " - object " << getCurrentObject() << endl;
@@ -278,8 +282,12 @@ void XMLInput::endElement(const XMLCh* const uri,
       }
       else
         // This tag is not the ending tag of an object
-        // Call the function of the Object object
-        getCurrentObject()->endElement(*this, *pElement);
+        // Call the function of the Object 
+        try { getCurrentObject()->endElement(*this, *pElement); }
+        catch (DataException e) {          
+          if (abortOnDataException) throw;
+          else clog << "Continuing after data error: " << e.what() << endl;
+        }
   }
 }
 

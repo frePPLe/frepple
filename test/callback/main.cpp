@@ -112,12 +112,10 @@ int main (int argc, char *argv[])
     FunctorStatic<Item,SignalSniffer>::connect(SIG_REMOVE);
 
     // d) flows
-    /*
     FunctorStatic<Flow,SignalSniffer>::connect(SIG_ADD);
     FunctorStatic<Flow,SignalSniffer>::connect(SIG_BEFORE_CHANGE);
     FunctorStatic<Flow,SignalSniffer>::connect(SIG_AFTER_CHANGE);
     FunctorStatic<Flow,SignalSniffer>::connect(SIG_REMOVE);
-    */
 
     // 2: Read and the model
     clog << "Create the model with callbacks:" << endl;
@@ -165,12 +163,10 @@ int main (int argc, char *argv[])
     FunctorStatic<Item,SignalSniffer>::disconnect(SIG_REMOVE);
 
     // d) flows
-    /*
     FunctorStatic<Flow,SignalSniffer>::disconnect(SIG_ADD);
     FunctorStatic<Flow,SignalSniffer>::disconnect(SIG_BEFORE_CHANGE);
     FunctorStatic<Flow,SignalSniffer>::disconnect(SIG_AFTER_CHANGE);
     FunctorStatic<Flow,SignalSniffer>::disconnect(SIG_REMOVE);
-    */
 
     // 5: Reread and replan the model
     clog << "Recreate the model without callbacks:" << endl;

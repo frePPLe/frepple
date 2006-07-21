@@ -221,8 +221,13 @@ int main (int argc, char *argv[])
     XMLPlatformUtils::Initialize();
     clog << endl << "FUNCTIONAL TEST:" << endl << endl;
     functionality_test();
-    clog << endl << "SCALABILITY TEST:" << endl << endl;
-    scalability_test();
+    // The scalability test shows that the tree operations scale 
+    // logarithmically with the number of elements. 
+    // The test timings are pretty hard to reproduce reliable: different
+    // runs easily give different timings. Hence this part of the test
+    // is commented out for the regression testing.
+    //clog << endl << "SCALABILITY TEST:" << endl << endl;
+    //scalability_test();
     return EXIT_SUCCESS;
   }
   catch (exception& e)

@@ -25,15 +25,3 @@ insert phi:  alfa  alfa x  alfa y  alfa z  alfa1  alfa2  alfa4  beta  delta  ome
 alfa2
 duplicate insert alfa2:  alfa  alfa x  alfa y  alfa z  alfa1  alfa2  alfa4  beta  delta  omega  phi
 clear:
-
-SCALABILITY TEST:
-
-Elements   Time per operation
-300000   1.0
-5000   0.5
-250000   1.0  OK
-200000   0.9  OK
-150000   0.9  OK
-100000   0.8  OK
-50000   0.8  OK
-25000   0.7  OK

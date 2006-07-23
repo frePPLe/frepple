@@ -17,7 +17,7 @@ Follow these steps to get up and running:
 
 1) Install the following packages on your machine:
       - Apache 2.0.*
-   Apache 1.x and 2.2.x definately won't work.
+   Apache 1.x is incompatible with the code.
 
 2) Compile the new module with the command:
      make build

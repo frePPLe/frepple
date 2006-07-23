@@ -15,8 +15,8 @@ stop:
 	${APACHECTL} -k stop -f ${PWD}/frepple.conf
 
 compile: mod_frepple.cpp filter.cpp  mod_frepple.h
-	g++ -c -fPIC -I`$(APXS) -q INCLUDEDIR` -I../../include filter.cpp
-	g++ -c -fPIC -I`$(APXS) -q INCLUDEDIR` -I../../include mod_frepple.cpp
+	g++ -c -fPIC -DHAVE_CONFIG_H -I../.. -I`$(APXS) -q INCLUDEDIR` -I../../include filter.cpp
+	g++ -c -fPIC -DHAVE_CONFIG_H -I../.. -I`$(APXS) -q INCLUDEDIR` -I../../include mod_frepple.cpp
 	g++ -shared -fPIC -I`$(APXS) -q INCLUDEDIR` -I../../include filter.o mod_frepple.o ../../src/.libs/libfrepple.a -lxerces-c -o mod_frepple.so
 #	${APXS} -i -c -n frepple_module -o mod_frepple.so filter.cpp mod_frepple.cpp  ../../src/.libs/libfrepple.a  -lxerces-c
 #	${APXS} -i -n frepple_module mod_frepple.so
@@ -31,7 +31,7 @@ restart:
 # The Apache server coming with my linux distribution didn't have a good MPM.
 # The commands below are an example only...
 compile_apache:
-	cd /home/johan/workspace/httpd-2.0.55
+	cd ~/workspace/httpd-2.2.*
 	configure -with-mpm=worker --prefix=/home/johan/httpd --enable-deflate --disable-include --disable-env --enable-headers --disable-cgi --disable-cgid --enable-so
 	make
 	make install

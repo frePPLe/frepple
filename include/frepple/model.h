@@ -3850,34 +3850,35 @@ class Problem::const_iterator
   * the raw materials.<br>
   * The class is implemented as an STL-like iterator.
   */
-class pegging_iterator
+class PeggingIterator
 {
   public:
     /** Constructor. */
-    pegging_iterator(FlowPlan* e) 
+    PeggingIterator(FlowPlan* e, bool b = true) : depth_then_width(b) 
       { if (e) stack.push(state(e->getQuantity(),0,e)); }
     const FlowPlan& operator*() const {return *(stack.top().fl);}
     const FlowPlan* operator->() const {return stack.top().fl;}
     /** Move the iterator foward to the next downstream flowplan. */
-    pegging_iterator& operator++(); 
+    PeggingIterator& operator++(); 
     /** Move the iterator foward to the next downstream flowplan.<br>
       * This post-increment operator is less efficient than the pre-increment
       * operator.
       */
-    pegging_iterator operator++(int) 
-      {pegging_iterator tmp = *this; ++*this; return tmp;}
+    PeggingIterator operator++(int) 
+      {PeggingIterator tmp = *this; ++*this; return tmp;}
     /** Move the iterator foward to the next upstream flowplan. */
-    pegging_iterator& operator--();
+    PeggingIterator& operator--();
     /** Move the iterator foward to the next upstream flowplan.<br>
       * This post-increment operator is less efficient than the pre-decrement
       * operator.
       */
-    pegging_iterator operator--(int) 
-      {pegging_iterator tmp = *this; --*this; return tmp;}
+    PeggingIterator operator--(int) 
+      {PeggingIterator tmp = *this; --*this; return tmp;}
     /** Comparison operator. */
-    bool operator==(const pegging_iterator& x) const {return stack == x.stack;}
+    bool operator==(const PeggingIterator& x) const {return stack == x.stack;}
     /** Inequality operator. */
-    bool operator!=(const pegging_iterator& x) const {return stack != x.stack;}
+    bool operator!=(const PeggingIterator& x) const {return stack != x.stack;}
+
   private:
     struct state
     {
@@ -3891,8 +3892,18 @@ class pegging_iterator
       bool operator == (const state& s) const 
         {return fl==s.fl && level==s.level;}
     };
+
     /** A stack is used to store the iterator state. */
-    stack < state > stack;         
+    stack < state > stack;
+
+    /** In case there are multiple paths, we can either:
+      *  - follow one path complete to its end and then follow the others.
+      *    This is called depth-first" and is the default behavior.
+      *  - iterate through each alternative and only then follow each path 
+      *    further. This is called "width-first". It is a slightly less 
+      *    efficient way to navigate the pegging structures.
+      */ 
+    bool depth_then_width;
 };
 
 

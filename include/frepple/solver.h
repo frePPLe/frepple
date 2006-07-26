@@ -224,7 +224,7 @@ class MRPSolver : public Solver
       * state maintained by each solver thread.
       * @see MRPSolver
       */
-    class MRPSolverdata : public Thread
+    class MRPSolverdata : public Command
     {
       friend class MRPSolver;
       public:
@@ -247,8 +247,10 @@ class MRPSolver : public Solver
           * @see demand_comparison
           * @see next_cluster
           */
-        virtual void run();
-        
+        virtual void execute();
+
+        virtual const MetaData& getType() const {return MRPSolver::metadata;}
+
       private:
         /** Maintains a list of all actions triggered by the solver. */
         CommandList actions;

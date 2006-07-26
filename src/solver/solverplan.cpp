@@ -83,7 +83,7 @@ bool MRPSolver::demand_comparison(Demand* l1, Demand* l2)
 }
 
 
-void MRPSolver::MRPSolverdata::run()
+void MRPSolver::MRPSolverdata::execute()
 {
   // Message
   MRPSolver* Solver = getSolver();
@@ -189,14 +189,18 @@ void MRPSolver::solve(void *v)
     if (demands_per_cluster.find((*e)->getCluster())!=demands_per_cluster.end())
       (*e)->deleteOperationPlans();
 
-  // Create the planning threads
-  ThreadGroup threads;       
-  unsigned int j = demands_per_cluster.size();
-  if (j > ThreadGroup::getMaxThreads()) j = ThreadGroup::getMaxThreads();
-  for ( ; j>0; --j) threads.addThread(new MRPSolverdata(j, this));
+  // Create the planning commands
+  CommandList threads;       
+  threads.setSequential(false);
+  // A problem in one cluster should spoil the fun for all
+  threads.setAbortOnError(false); 
 
-  // Wait for the planning threads as they exit
-  threads.joinAll();
+  unsigned int j = demands_per_cluster.size();
+  // @todo control better if (j > ThreadGroup::getMaxThreads()) j = ThreadGroup::getMaxThreads();
+  for ( ; j>0; --j) threads.add(new MRPSolverdata(j, this));
+
+  // Run the planning command threads and wait for them to exit
+  threads.execute();
 }
 
 

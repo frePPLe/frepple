@@ -136,24 +136,20 @@ void CommandList::execute()
   Command *i = firstCommand;
 
 #ifndef MT
-  if (!sequential)
-  {
-    // MODE 1: Parallel execution of the commands, is not possible
-    clog << "Warning: Parallel execution of commands is not supported "
-     << "with this executable." << endl
-     << "Defaulting to sequential processing." << endl;
-    sequential = true;
-  }
+  // Compile 1: No multithreading
+  if (!sequential) sequential = true;
 #else
   if (!sequential)
   {
     // MODE 1: Parallel execution of the commands
     int numthreads = size();
+    if (numthreads>3) numthreads = 3; // @todo
     if(numthreads == 1)
       // Only a single command in the list: no need for threads
-      CommandThread(i);
+      wrapper(i);
     else if (numthreads > 1)
     {
+#ifdef HAVE_PTHREAD_H
       // Create a thread for every command list. The main thread will then
       // wait for all of them to finish.
       pthread_t threads[numthreads];     // holds thread info
@@ -166,27 +162,74 @@ void CommandList::execute()
       {
         if ((errcode=pthread_create(&threads[worker],  // thread struct
                                 NULL,              // default thread attributes
-                                CommandThread,     // start routine
+                                wrapper,     // start routine
                                 i)))               // arg to routine
         {
           ostringstream ch;
-          ch << "Couldn't create thread " << worker << ", error " << errcode;
+          ch << "Can't create thread " << worker << ", error " << errcode;
           throw RuntimeException(ch.str());
         }
         i = i->next;
-    }
+      }
 
-    // Wait for the command threads as they exit
-    for (int worker=0; worker<numthreads; ++worker)
-      // Wait for thread to terminate
-      if ((errcode=pthread_join(threads[worker],(void**) &status)))
+      // Wait for the command threads as they exit
+      for (int worker=0; worker<numthreads; ++worker)
+        // Wait for thread to terminate
+        if ((errcode=pthread_join(threads[worker],(void**) &status)))
+        {
+          ostringstream ch;
+          ch << "Can't join with thread " << worker << ", error " << errcode;
+          throw RuntimeException(ch.str());
+        }
+#else
+      // Create a thread for every command list. The main thread will then
+      // wait for all of them to finish.
+      HANDLE threads[10];   //@todo  
+      unsigned int m_id[10];
+
+      // Create the command threads
+      /** @todo implement a maximum on the number of parallel commands. */
+      for (int worker=0; worker<numthreads; ++worker)
       {
+        threads[worker] =  reinterpret_cast<HANDLE>(
+          _beginthreadex(0,  // Security atrtributes 
+          0,                 // Stack size
+          &wrapper,          // Thread function 
+          i,                 // Argument list
+          0,                 // Initial state is 0, "running"
+          &m_id[worker]));   // Address to receive the thread identifier
+        if (!threads[worker]) 
+        {
+          ostringstream ch;
+          ch << "Can't create thread " << worker << ", error " << errno;
+          throw RuntimeException(ch.str());
+        }
+        i = i->next;
+      }
+
+      // Wait for the command threads as they exit
+      int res = WaitForMultipleObjects(numthreads, threads, true, INFINITE);
+      if (res == WAIT_FAILED)
+      {
+        char error[256];
+        FormatMessage(
+          FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
+          NULL, 
+          GetLastError(),
+          0,
+          error, 
+          256, 
+          NULL );
         ostringstream ch;
-        ch << "Couldn't join with thread " << worker << ", error " << errcode;
+        ch << "Can't join threads: " << error;
         throw RuntimeException(ch.str());
       }
+      for (int worker=0; worker<numthreads; ++worker)
+        CloseHandle(threads[worker]);
+#endif 
     }
-  } else
+  } 
+  else // Else: sequential
 #endif
   if (getAbortOnError())
   {
@@ -210,7 +253,7 @@ void CommandList::execute()
   else
     // MODE 3: Sequential execution, and when a command in the sequence fails
     // the rest continues
-    for(; i; i=i->next) CommandThread(i);
+    for(; i; i=i->next) wrapper(i);
 
   // Clean it up after executing ALL actions.
   for(i=firstCommand; i; )
@@ -229,24 +272,24 @@ void CommandList::execute()
 }
 
 
-void* CommandList::CommandThread(void *arg)
+#if defined(HAVE_PTHREAD_H) || !defined(MT)
+void* CommandList::wrapper(void *arg)
+#else
+unsigned __stdcall CommandList::wrapper(void *arg)
+#endif
 {
-  // Execute the command
   Command *c = static_cast<Command*>(arg);
-  try {c->execute();}
+  try { c->execute(); }
   catch (...)
   {
-    clog << "Error: Caught an exception while executing command '"
-      << c->getDescription() << "':" <<  endl;
+    // Error message
+    clog << "Error: Caught an exception while executing command '" 
+      << c->getDescription() << "':" << endl;
     try { throw; }
     catch (exception& e) {clog << "  " << e.what() << endl;}
     catch (...) {clog << "  Unknown type" << endl;}
-    // Undo the commands executed so far
-    if (c->undoable()) c->undo();
   }
-  // Return value doesn't matter. The POSIX pthread interface wants a void
-  // pointer as return value, so we just pass NULL...
-  return NULL;
+  return 0;
 }
 
 

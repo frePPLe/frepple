@@ -32,7 +32,7 @@ namespace frepple
 {
 
 
-pegging_iterator& pegging_iterator::operator++() 
+PeggingIterator& PeggingIterator::operator++() 
 {
   if (stack.top().fl->getQuantity() > ROUNDING_ERROR)
   {
@@ -68,7 +68,7 @@ pegging_iterator& pegging_iterator::operator++()
 }
 
 
-pegging_iterator& pegging_iterator::operator--() 
+PeggingIterator& PeggingIterator::operator--() 
 {
   if (stack.top().fl->getQuantity() < ROUNDING_ERROR)
   {

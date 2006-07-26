@@ -71,9 +71,17 @@ using namespace std;
 #include <config.h>
 #endif
 
-// Pthread header for multithreading
-#if defined(MT) && defined(HAVE_PTHREAD_H)
+// Header for multithreading
+#if defined(MT) 
+#if defined(HAVE_PTHREAD_H)
 #include <pthread.h>
+#elif defined(WIN32) 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <process.h>
+#else
+#error Multithreading not supported on your platform
+#endif
 #endif
 
 // For the disabled and ansi-challenged people...
@@ -482,93 +490,6 @@ class LockManager : public NonCopyable
 
     /** A pool of lock objects. */
     //static Pool<Lock> pool_locks;
-};
-
-
-/** This class acts as a wrapper around platform-specific threading functions.
-  * Currently Pthreads and Windows threads are supported.<br>
-  * To use the class, create a subclass and override its run() method.
-  * @see ThreadGroup
-  */
-class Thread : public NonCopyable
-{
-  friend class ThreadGroup;
-  public:
-    /** Destructor. */
-    virtual ~Thread() {}
-
-    /** This is the function that is doing the work of the thread. */
-    virtual void run() = 0;
-
-#ifdef MT
-    bool operator==(const Thread& other) const;
-    bool operator!=(const Thread& other) const {return !operator==(other);}
-
-    void join();
-
-  private:
-#ifdef HAVE_PTHREAD_H
-    pthread_t m_thread;
-    static void* wrapper(void *param);
-#else
-    HANDLE m_thread;
-    unsigned int m_id;
-    static unsigned __stdcall wrapper(void *param);
-#endif
-#endif
-};
-
-
-/** This class acts as a wrapper around platform-specific threading functions.
-  * Currently Pthreads and Windows threads are supported.
-  * @see Thread
-  */
-class  ThreadGroup : public NonCopyable
-{
-  public:    
-    /** Destructor. 
-      * The destructor also destroys all thread objects that are part of the 
-      * group.
-      */
-    ~ThreadGroup();
-
-    /** Adds a thread to the group. 
-      * The thread object is managed by the ThreadGroup after calling this 
-      * method. The ThreadGroup will destroy the Thread object in its 
-      * destructor.<br>
-      * In a multithreaded environment a thread is spawned and its execution 
-      * is triggered. The method is asynchroneous, i.e. it doesn't wait for 
-      * the threads to complete before returning.<br>
-      * In a single threaded model the thread object is executed right away
-      * and the method doesn't return before its execution is finished. In
-      * other words: synchroneous execution.
-      */
-    void addThread(Thread* thrd);
-
-    /** Removes a thread from the list. */
-    void removeThread(Thread* thrd);
-
-    /** Wait for all threads in the group to finish. 
-      * In a single threaded model this method is empty.
-      */
-    void joinAll();
-
-    /** Return the maximum allowed number of parallel threads in a group. */
-    static unsigned int getMaxThreads() {return MaxThreads;}
-
-    /** Return the maximum allowed number of parallel threads in a group. */
-    static void setMaxThreads(unsigned int i) {MaxThreads = i;}
-
-  private:
-    typedef list<Thread*> threadlist; 
-    threadlist m_threads;
-    Mutex m_mutex;
-    static DECLARE_EXPORT unsigned int MaxThreads;
-#ifdef HAVE_PTHREAD_H
-    static void* wrapper(void *param);
-#else
-    static unsigned __stdcall wrapper(void *param);
-#endif
 };
 
 
@@ -3237,7 +3158,7 @@ class Command : public Object
   * implements the "composite" design pattern in order to get an efficient
   * and intuitive hierarchical grouping of tasks.
   * A command list can be executed in three different modes:
-  *   - Run the commands in parallel with each other, in seperate threads.<BR>
+  *   - Run the commands in parallel with each other, in seperate threads.<br>
   *     This is achieved by setting the sequential field to false.
   *   - Run the commands in sequence, and abort the command sequence when one
   *     of the commands in the list fails.<BR>
@@ -3247,6 +3168,8 @@ class Command : public Object
   *     some commands in the sequence fail.<BR>
   *     This mode requires the sequential field to be set to true, and the
   *     AbortOnError field to false.
+  * Currently Pthreads and Windows threads are supported as the implementation 
+  * of the multithreading.
   */
 class CommandList : public Command
 {
@@ -3278,9 +3201,14 @@ class CommandList : public Command
       */
     inheritableBool abortOnError;
 
-    /** This functions runs a single command execution thread. It is used only
-      * in multi-threaded versions of the application. */
-    static void* CommandThread(void *);
+    /** This functions runs a single command execution thread. It is used as
+      * a holder for the main routines of a trheaded routine. 
+      */
+#if defined(HAVE_PTHREAD_H) || !defined(MT)
+     static void* wrapper(void *arg);
+#else
+     static unsigned __stdcall wrapper(void *);
+#endif
 
     /** Returns the number of commands stored in this list. */
     int size() const
@@ -3309,7 +3237,7 @@ class CommandList : public Command
     bool getAbortOnError() const;
 
     /** If this field is set to true the failure of a single command in the
-      * list will abort the complete list of command.
+      * list will abort the complete list of command.<br>
       * If set to false, the remaining commands will still be run in case
       * of a failure.
       */

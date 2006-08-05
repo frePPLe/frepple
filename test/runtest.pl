@@ -58,8 +58,6 @@ use strict;
 no strict 'refs';
 use warnings;
 
-use lib ".";
-use TestLib;
 use Cwd 'abs_path';
 use Env qw(EXECUTABLE FREPPLE_HOME);
 

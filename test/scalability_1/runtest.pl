@@ -7,12 +7,36 @@
 use strict;
 use warnings;
 
-use lib "..";
-use TestLib;
 use Time::HiRes qw ( gettimeofday tv_interval );
 use Env qw(EXECUTABLE);
 
 my %runtimes;
+
+sub createdata (*;$;$;$;$;$;@) 
+{
+  # Pick up the parameters
+  my ($OUTFILE,$duplicates,$header,$body,$footer,@subst) = @_;
+  my ($curbody, $new, $cnt);
+    
+  # Print the header
+  printf $OUTFILE "$header";
+  
+  # Iteration
+  for ($cnt=1; $cnt <= $duplicates; $cnt++) 
+    {
+    $_ = $body;
+    for my $cursubst (@subst)
+      { 
+      $new = $cursubst . "_" . $cnt;
+      s/$cursubst/$new/g; 
+      }
+    printf $OUTFILE "$_";
+    }
+  
+  # Finalize
+  printf $OUTFILE "$footer";
+};
+
 
 for (my $counter=5000; $counter < 30000; $counter+=5000)
   {
@@ -24,7 +48,7 @@ for (my $counter=5000; $counter < 30000; $counter+=5000)
   open(OUTFILE, ">input.xml");
 
   my $fh = \*OUTFILE;
-  TestLib::createdata(
+  createdata(
     $fh,
     $counter,
     "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" .
@@ -37,7 +61,7 @@ for (my $counter=5000; $counter < 30000; $counter+=5000)
     "</ITEMS>\n",
     "ITEMNM","DCRP"
     );
-  TestLib::createdata(
+  createdata(
     $fh,
     $counter,
     "<OPERATIONS>\n",
@@ -46,7 +70,7 @@ for (my $counter=5000; $counter < 30000; $counter+=5000)
     "</OPERATIONS>\n",
     "ITEMNM",
     );
-  TestLib::createdata(
+  createdata(
     $fh,
     $counter,
     "<RESOURCES>\n",
@@ -55,7 +79,7 @@ for (my $counter=5000; $counter < 30000; $counter+=5000)
     "</RESOURCES>\n",
     "RESNM","ITEMNM"
     );
-  TestLib::createdata(
+  createdata(
     $fh,
     $counter,
     "<FLOWS>\n",
@@ -67,7 +91,7 @@ for (my $counter=5000; $counter < 30000; $counter+=5000)
     "</FLOWS>\n",
     "ITEMNM","BUFNM"
     );
-  TestLib::createdata(
+  createdata(
     $fh,
     $counter,
     "<DEMANDS>\n",

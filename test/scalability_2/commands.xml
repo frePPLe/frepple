@@ -1,0 +1,11 @@
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <VERBOSE>false</VERBOSE>
+    <COMMAND xsi:type="COMMAND_READXML" FILENAME="input.xml"/>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7"/>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.xml"/>
+  </COMMANDS>
+</PLAN>

@@ -2198,7 +2198,7 @@ class Tree : public NonCopyable
     };
 
     /** Default constructor. */
-    Tree() : count(0)
+    Tree(bool b = false) : count(0), clearOnDestruct(b)
     {
       // Color is used to distinguish header from root, in iterator.operator++
       header.color = red;
@@ -2207,8 +2207,9 @@ class Tree : public NonCopyable
       header.right = &header;
     }
 
-    /** Destructor. */
-    ~Tree() { clear(); }
+    // Destructor.
+    // The destructor is called 
+    ~Tree() { if(clearOnDestruct) clear(); }
 
     /** Returns an iterator to the start of the list.<br>
       * The user will need to take care of properly acquiring a read lock on
@@ -2376,6 +2377,15 @@ class Tree : public NonCopyable
 
     /** Controls concurrencny during use of the tree. */
     Lock l;
+
+    /** Controls whether the destructor needs to be clear all objects in the 
+      * tree in its destructor.<br>
+      * The default is to skip this cleanup! This is fine when you are dealing
+      * with a static tree that lives throughout your program.<br>
+      * When you create a tree with a shorter lifespan, you'll need to pass
+      * the constructor 'true' as argument in order to avoid memory leaks.
+      */
+    bool clearOnDestruct;
 };
 
 

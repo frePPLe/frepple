@@ -423,41 +423,15 @@ void CommandErase::execute()
   // Delete other models which don't have a plan
   if (deleteStaticModel)
   {
-    // Delete the operations @todo use the faster and cleaner tree::clear method
-    for(Operation::iterator gop = Operation::begin(); gop != Operation::end(); 
-      gop = Operation::begin()) delete *gop;
-
-    // Delete the buffers
-    for(Buffer::iterator gbuf = Buffer::begin(); gbuf != Buffer::end(); 
-      gbuf = Buffer::begin()) delete *gbuf;
-
-    // Delete the resources
-    for(Resource::iterator gres = Resource::begin(); gres != Resource::end(); 
-      gres = Resource::begin()) delete *gres;
-
-    // Delete the demands
-    for(Demand::iterator gdem = Demand::begin(); gdem != Demand::end(); 
-      gdem = Demand::begin()) delete *gdem;
-
-    // Locations
-    for (Location::iterator gloc = Location::begin(); 
-      gloc != Location::end(); gloc = Location::begin()) delete *gloc;
-
-    // Customers
-    for (Customer::iterator gcust = Customer::begin();
-       gcust != Customer::end(); gcust = Customer::begin()) delete *gcust;
-
-    // Items
-    for (Item::iterator gitem = Item::begin();
-       gitem != Item::end(); gitem = Item::begin()) delete *gitem;
-
-    // Solvers
-    for (Solver::iterator gsolv = Solver::begin();
-       gsolv != Solver::end(); gsolv = Solver::begin()) delete *gsolv;
-
-    // Calendars
-    for (Calendar::iterator gcal = Calendar::begin();
-       gcal != Calendar::end(); gcal = Calendar::begin()) delete *gcal;
+    Demand::clear();
+    Operation::clear();
+    Buffer::clear();
+    Resource::clear();
+    Location::clear();
+    Customer::clear();
+    Calendar::clear();
+    Solver::clear();
+    Item::clear();
   }
   else
     // Delete the operationplans only

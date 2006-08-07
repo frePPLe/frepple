@@ -2116,6 +2116,9 @@ class Tree : public NonCopyable
       friend class Tree;
 
       public:
+        /** Destructor. */
+        virtual ~TreeNode() {}
+
         /** Returns the name of this node. This name is used to sort the
           * nodes. */
         const string& getName() const {return nm;}
@@ -3294,7 +3297,6 @@ class CommandList : public Command
   * Note that access to this command can pose a <B> security threat</B>! It
   * allows anybody with access to the planner application to run operating
   * system commands with the same user rights as the planner application.
-  * @todo pipe the output of the command as frepple input
   */
 class CommandSystem : public Command
 {

@@ -41,8 +41,8 @@ void Tree::clear()
   LockManager::getManager().obtainWriteLock(l);
 
   // Erase all elements
-  // @todo the clear method currently doesn't delete the actual objects...
-  for (TreeNode* x = begin(); x != end(); x = begin()) erase(x);
+  for (TreeNode* x = begin(); x != end(); x = begin()) 
+    delete(x);  // The destructor calls the erase method
 
   // Unlock the tree
   LockManager::getManager().releaseWriteLock(l);

@@ -148,7 +148,7 @@ ALPHABETICAL_INDEX     = YES
 
 COLS_IN_ALPHA_INDEX    = 1
 
-IGNORE_PREFIX          = 
+IGNORE_PREFIX          =
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
@@ -264,7 +264,7 @@ GENERATE_AUTOGEN_DEF   = NO
 
 ENABLE_PREPROCESSING   = YES
 
-MACRO_EXPANSION        = NO
+MACRO_EXPANSION        = YES
 
 EXPAND_ONLY_PREDEF     = NO
 

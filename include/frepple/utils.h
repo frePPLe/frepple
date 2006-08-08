@@ -121,7 +121,7 @@ using namespace std;
 using namespace xercesc;
 
 #undef DECLARE_EXPORT
-#if defined(WIN32) && !defined(STATIC)
+#if defined(WIN32) && !defined(STATIC) && !defined(DOXYGEN_SHOULD_SKIP_THIS)
   #ifdef FREPPLE_CORE
     #define DECLARE_EXPORT __declspec (dllexport)
   #else

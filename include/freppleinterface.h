@@ -44,11 +44,11 @@
   #define DECLARE_EXPORT(type) type
 #endif
 
-/** The complete frepple public interface is synchroneous, i.e. a client
-  * function call returns only when the complete processing is finished.
-  * The interface can throw exceptions, and the client is responsible for
-  * defining the correct handlers for these.
-  */
+/* The complete frepple public interface is synchroneous, i.e. a client
+ * function call returns only when the complete processing is finished.
+ * The interface can throw exceptions, and the client is responsible for
+ * defining the correct handlers for these.
+ */
 
 /** This function should be called once when the client application starts, 
   * and before calling any other function in the API. 

@@ -229,6 +229,14 @@ class Calendar : public HasName<Calendar>, public Object
     virtual const MetaData& getType() const {return metadata;}
     static const MetaCategory metadata;
 
+    virtual size_t getSize() const 
+    {
+      size_t i = sizeof(Calendar);
+      for (Bucketlist::const_iterator j = buckets.begin(); j!= buckets.end(); ++j)
+        i += (*j)->getSize();
+      return i;
+    }
+
   private:
     /** List of buckets. */
     Bucketlist buckets;
@@ -390,9 +398,6 @@ template <typename T> class CalendarPointer : public Calendar
 
     virtual const MetaData& getType() const = 0;
 
-    virtual size_t getSize() const 
-      {return sizeof(CalendarPointer<T>) + getBuckets().size() * sizeof(CalendarValue<float>::BucketValue);}
-
   private:
     /** Factory method to add new buckets to the calendar.
       * @see Calendar::addBucket()
@@ -408,8 +413,6 @@ class CalendarVoid : public Calendar
     CalendarVoid(const string& n) : Calendar(n) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
-      {return sizeof(CalendarVoid) + getBuckets().size() * sizeof(Calendar::Bucket);}
 };
 
 
@@ -420,8 +423,6 @@ class CalendarFloat : public CalendarValue<float>
     CalendarFloat(const string& n) : CalendarValue<float>(n) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
-      {return sizeof(CalendarVoid) + getBuckets().size() * sizeof(CalendarValue<float>::BucketValue);}
 };
 
 
@@ -432,8 +433,6 @@ class CalendarInt : public CalendarValue<int>
     CalendarInt(const string& n) : CalendarValue<int>(n) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
-      {return sizeof(CalendarVoid) + getBuckets().size() * sizeof(CalendarValue<int>::BucketValue);}
 };
 
 
@@ -444,8 +443,6 @@ class CalendarBool : public CalendarValue<bool>
     CalendarBool(const string& n) : CalendarValue<bool>(n) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
-      {return sizeof(CalendarVoid) + getBuckets().size() * sizeof(CalendarValue<bool>::BucketValue);}
 };
 
 
@@ -456,8 +453,15 @@ class CalendarString : public CalendarValue<string>
     CalendarString(const string& n) : CalendarValue<string>(n) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const // NOOOOOOT GOOD @todo
-      {return sizeof(CalendarVoid) + getBuckets().size() * sizeof(CalendarValue<float>::BucketValue);}
+    virtual size_t getSize() const 
+    {
+      size_t i = sizeof(CalendarString);
+      for (Bucketlist::const_iterator j = getBuckets().begin(); 
+        j!= getBuckets().end(); ++j)
+        i += (*j)->getSize() 
+        + static_cast<CalendarValue<string>::BucketValue*>(*j)->getValue().size();
+      return i;
+    }
 };
 
 

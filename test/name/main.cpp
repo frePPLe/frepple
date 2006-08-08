@@ -53,17 +53,17 @@ void functionality_test()
   printlist("Start");
 
   // Inserting elements
-  Customer::add(new Customer("alfa"));
+  Customer::add(new CustomerDefault("alfa"));
   printlist("insert alfa");
-  Customer::add(new Customer("beta"));
+  Customer::add(new CustomerDefault("beta"));
   printlist("insert beta");
-  Customer::add(new Customer("alfa1"));
+  Customer::add(new CustomerDefault("alfa1"));
   printlist("insert alfa1");
-  Customer::add(new Customer("gamma"));
+  Customer::add(new CustomerDefault("gamma"));
   printlist("insert gamma");
-  Customer::add(new Customer("delta"));
+  Customer::add(new CustomerDefault("delta"));
   printlist("insert delta");
-  Customer::add(new Customer("omega"));
+  Customer::add(new CustomerDefault("omega"));
   printlist("insert omega");
 
   // Searching for some existing names
@@ -88,23 +88,23 @@ void functionality_test()
   printlist("erase hamburger");
 
   // Inserting a duplicate
-  Customer::add(new Customer("alfa2"));
+  Customer::add(new CustomerDefault("alfa2"));
   printlist("insert alfa2");
-  Customer::add(new Customer("alfa4"));
+  Customer::add(new CustomerDefault("alfa4"));
   printlist("insert alfa4");
-  Customer::add(new Customer("alfa x"));
+  Customer::add(new CustomerDefault("alfa x"));
   printlist("insert alfa x");
-  Customer::add(new Customer("alfa y"));
+  Customer::add(new CustomerDefault("alfa y"));
   printlist("insert alfa y");
-  Customer::add(new Customer("alfa z"));
+  Customer::add(new CustomerDefault("alfa z"));
   printlist("insert alfa z");
-  Customer::add(new Customer("delta"));
+  Customer::add(new CustomerDefault("delta"));
   printlist("insert delta");
-  Customer::add(new Customer("phi"));
+  Customer::add(new CustomerDefault("phi"));
   printlist("insert phi");
 
   // Inserting an already existing element
-  Customer * k = new Customer("alfa2");
+  Customer * k = new CustomerDefault("alfa2");
   clog << Customer::add(k)->getName() << endl;
   printlist("duplicate insert alfa2");
   delete k;
@@ -167,7 +167,7 @@ void scalability_test()
     Timer m;
 
     // Insert elements in the list
-    for(int i=0; i<scale; ++i) Customer::add(new Customer(names[i]));
+    for(int i=0; i<scale; ++i) Customer::add(new CustomerDefault(names[i]));
 
     // Do a number of searches and deletes
     for(int i=0; i<scale; ++i) Customer::find(names[i]);

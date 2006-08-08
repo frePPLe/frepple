@@ -34,16 +34,16 @@ int main (int argc, char *argv[])
 {
 
   cout << "Plan\t" << sizeof(Plan) << endl
-  << "Calendar\t" << sizeof(Calendar) << endl
+  << "Calendar\t" << sizeof(CalendarVoid) << endl
   << "Calendar::Bucket\t" << sizeof(Calendar::Bucket) << endl
   << "CalendarFloat\t" << sizeof(CalendarFloat) << endl
   << "CalendarFloat::Bucket\t" << sizeof(CalendarFloat::BucketValue) << endl
-  << "Item\t" << sizeof(Item) << endl
-  << "Location\t" << sizeof(Location) << endl
-  << "Customer\t" << sizeof(Customer) << endl
-  << "Buffer\t" << sizeof(Buffer) << endl
-  << "Demand\t" << sizeof(Demand) << endl
-  << "Resource\t" << sizeof(Resource) << endl
+  << "Item\t" << sizeof(ItemDefault) << endl
+  << "Location\t" << sizeof(LocationDefault) << endl
+  << "Customer\t" << sizeof(CustomerDefault) << endl
+  << "Buffer\t" << sizeof(BufferDefault) << endl
+  << "Demand\t" << sizeof(DemandDefault) << endl
+  << "Resource\t" << sizeof(ResourceDefault) << endl
   << "Operation\t" << sizeof(Operation) << endl
   << "OperationFixedTime\t" << sizeof(OperationFixedTime) << endl
   << "OperationRouting\t" << sizeof(OperationRouting) << endl

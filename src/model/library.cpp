@@ -29,10 +29,6 @@
 #include "frepple/model.h"
 #include <sys/stat.h>
 
-#ifdef HAVE_MALLOC_H
-#include <malloc.h>
-#endif
-
 namespace frepple
 {
 
@@ -391,14 +387,12 @@ void LibraryModel::initialize()
  * - AVERAGESTRINGLENGTH:
  *   Average length of the strings used in your model.
  */
-#define OVERHEADEXEC        1000000
 #define OVERHEADLISTNODE    4
 #define OVERHEADTREENODE    20
-#define AVERAGESTRINGLENGTH 12
 
 
 /** @todo avoid any class-specific internal knowledge from this method. */
-void Plan::size() const
+void CommandPlanSize::execute()
 {
   size_t count, total(0), memsize;
 
@@ -406,10 +400,6 @@ void Plan::size() const
   clog << "MEMORY USAGE:" << endl;
   clog << "MODEL        \tNUMBER\tMEMORY" << endl;
   clog << "-----        \t------\t------" << endl;
-
-  // Executable size
-  total += OVERHEADEXEC;
-  clog << "Executable   \t\t" << OVERHEADEXEC << endl;
 
   // Plan
   total += sizeof(Plan);
@@ -419,7 +409,7 @@ void Plan::size() const
   memsize = 0;
   for (Location::iterator loc = Location::begin();
        loc != Location::end(); ++loc)
-    memsize += sizeof(**loc) + (*loc)->getName().size();
+    memsize += (*loc)->getSize();
   clog << "Location     \t" << Location::size() << "\t" << memsize << endl;
   total += memsize;
 
@@ -427,7 +417,7 @@ void Plan::size() const
   memsize = 0;
   for (Customer::iterator cust = Customer::begin();
        cust != Customer::end(); ++cust)
-    memsize += sizeof(**cust) + (*cust)->getName().size();
+    memsize += (*cust)->getSize();
   clog << "Customer     \t" << Customer::size() << "\t" << memsize << endl;
   total += memsize;
 
@@ -435,7 +425,7 @@ void Plan::size() const
   memsize = 0;
   for (Buffer::iterator buf = Buffer::begin();
        buf != Buffer::end(); ++buf)
-    memsize += sizeof(**buf) + (*buf)->getName().size();
+    memsize += (*buf)->getSize();
   clog << "Buffer       \t" << Buffer::size() << "\t" << memsize << endl;
   total += memsize;
 
@@ -443,7 +433,7 @@ void Plan::size() const
   memsize = 0;
   for (Resource::iterator res = Resource::begin();
        res != Resource::end(); ++res)
-    memsize += sizeof(**res) + (*res)->getName().size();
+    memsize += (*res)->getSize();
   clog << "Resource     \t" << Resource::size() << "\t" << memsize << endl;
   total += memsize;
 
@@ -453,7 +443,7 @@ void Plan::size() const
   for (Operation::iterator oper = Operation::begin();
        oper != Operation::end(); ++oper)
   {
-    memsize += sizeof(**oper) + (*oper)->getName().size();
+    memsize += (*oper)->getSize();;
     countFlows += (*oper)->getFlows().size();
     countLoads += (*oper)->getLoads().size();
   }
@@ -475,27 +465,14 @@ void Plan::size() const
   size_t countBuckets(0), countBucketMem(0);
   for (Calendar::iterator cal = Calendar::begin();
        cal != Calendar::end(); ++cal)
-  {
-    memsize += sizeof(**cal) + (*cal)->getName().size();
-    for (Calendar::Bucketlist::const_iterator 
-      bkt = (*cal)->getBuckets().begin();
-      bkt != (*cal)->getBuckets().end(); 
-      ++bkt)
-      countBucketMem += 
-        sizeof(*bkt) + (*bkt)->getName().size() + OVERHEADLISTNODE;
-    countBuckets += (*cal)->getBuckets().size();
-  }
+    memsize += (*cal)->getSize();
   clog << "Calendar     \t" << Calendar::size() << "\t" << memsize  << endl;
   total += memsize;
-
-  // Buckets
-  total += countBucketMem;
-  clog << "Bucket       \t" << countBuckets << "\t" << countBucketMem  << endl;
 
   // Items
   memsize = 0;
   for (Item::iterator it = Item::begin(); it != Item::end(); ++it)
-    memsize += sizeof(**it) + (*it)->getName().size();
+    memsize += (*it)->getSize();
   clog << "Item         \t" << Item::size() << "\t" << memsize  << endl;
   total += memsize;
 
@@ -503,7 +480,7 @@ void Plan::size() const
   memsize = 0;
   for (Demand::iterator dm = Demand::begin();
        dm != Demand::end(); ++dm)
-    memsize += sizeof(**dm) + (*dm)->getName().size();
+    memsize += (*dm)->getSize();
   clog << "Demand       \t" << Demand::size() << "\t" << memsize  << endl;
   total += memsize;
 
@@ -533,7 +510,7 @@ void Plan::size() const
 
   // Problems
   memsize = 0;
-  count = 0;
+  count = 0; 
   for (Problem::const_iterator pr = Problem::begin(); pr!=Problem::end(); ++pr)
   {
     ++count;
@@ -544,21 +521,6 @@ void Plan::size() const
 
   // TOTAL
   clog << "TOTAL        \t\t" << total << endl;
-
-  // Also report what the operating system thinks...
-#if defined(HAVE_MALLOC_H)
-  struct mallinfo i = mallinfo();
-  /* The following components are added together to come to a number
-   * that is matching the results shown by the 'top' Command.
-   * Don't ask me more details...
-   *  Memory size =
-   *    total space in mmapped regions
-   *    + total allocated space
-   *    + total non-inuse space
-   */
-  clog << "Memory size: " << (i.hblkhd+i.uordblks+i.fordblks)
-    << " bytes" << endl;
-#endif
 }
 
 

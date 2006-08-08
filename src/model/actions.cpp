@@ -420,9 +420,12 @@ void CommandErase::execute()
       clog << "Start plan erase command at " << Date::now() << endl;
   Timer t;
 
-  // Delete other models which don't have a plan
   if (deleteStaticModel)
   {
+    // Delete all entities.
+    // The order is chosen to minimize the work of the individual destructors.
+    // E.g. the destructor of the item class recurses over all demands and 
+    // all buffers. It is much faster if there are none already.
     Demand::clear();
     Operation::clear();
     Buffer::clear();

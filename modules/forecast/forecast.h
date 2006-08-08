@@ -105,6 +105,8 @@ class Forecast : public Demand
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(Forecast) + getName().size() + HasDescription::memsize();}
 
   private:
     /** A void calendar to define the time buckets. */

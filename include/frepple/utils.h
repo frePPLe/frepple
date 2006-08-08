@@ -1997,6 +1997,9 @@ class Object
     /** This the subclass field. */
     virtual const MetaData& getType() const = 0;
 
+    /** Return the memory size of the object in bytes. */
+    virtual size_t getSize() const = 0;
+
     /** The RLock class provides an exception safe way of getting a read lock 
       * on a Object object.<br>
       * The constructor acquires the read lock and the destructor will release 
@@ -2713,6 +2716,10 @@ class HasDescription
     void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void endElement(XMLInput&, XMLElement&);
 
+  protected:
+    /** Returns the memory size in bytes. */
+    size_t memsize() const {return cat.size() + subcat.size() + descr.size();}
+
   private:
     string cat;
     string subcat;
@@ -3291,6 +3298,7 @@ class CommandList : public Command
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(CommandList);}
 
     void beginElement(XMLInput&, XMLElement& pElement);
     void endElement(XMLInput& pIn, XMLElement& pElement);
@@ -3343,6 +3351,7 @@ class CommandSystem : public Command
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(CommandSystem);}
 };
 
 
@@ -3387,6 +3396,7 @@ class CommandLoadLibrary : public Command
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(CommandLoadLibrary);}
 
   private:
     /** Name of the library to be loaded. */
@@ -3692,6 +3702,7 @@ class CSVInput : public XMLinstruction, private DefaultHandler, public Object
 
     const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(CSVInput);}
 
     char getFieldSeparator() const {return fieldseparator;}
     void setFieldSeparator(const char c) {fieldseparator = c;}

@@ -6,5 +6,8 @@
       <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0"/>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.xml"/>
+		<!--
+    <COMMAND xsi:type="COMMAND_SIZE"/>
+    -->
   </COMMANDS>
 </PLAN>

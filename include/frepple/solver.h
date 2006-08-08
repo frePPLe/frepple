@@ -176,6 +176,7 @@ class MRPSolver : public Solver
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(MRPSolver);}
 
     /** Definition of the planning mode. */
     static const short LEADTIME; // = 1
@@ -250,6 +251,7 @@ class MRPSolver : public Solver
         virtual void execute();
 
         virtual const MetaData& getType() const {return MRPSolver::metadata;}
+        virtual size_t getSize() const {return sizeof(MRPSolverdata);}
 
       private:
         /** Maintains a list of all actions triggered by the solver. */
@@ -358,6 +360,7 @@ class LPSolver : public Solver
 
     virtual const string& getType() const {return metadata.type;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(LPSolver);}
 
   private:
     /** This is an auxilary function. GLPK requires names to contain only

@@ -87,7 +87,8 @@ void Forecast::setQuantity(const Calendar::Bucket& b, float qty)
   else
   {
     // Create a new subdemand
-    Demand *l = Demand::add(string(getName()) + " - " + string(b.getStart()));
+    Demand *l = new DemandDefault(getName() + " - " + string(b.getStart()));
+    Demand::add(l);
     l->setOwner(this);
     l->setHidden(true);  // Avoid the subdemands show up in the output
     l->setItem(getItem());

@@ -166,6 +166,8 @@ class Calendar : public HasName<Calendar>, public Object
 
         virtual const MetaData& getType() const
           {return Calendar::metadata;}
+        virtual size_t getSize() const 
+          {return sizeof(Bucket) + nm.size();}
     };
 
     /** Singly linked list of all buckets. */
@@ -283,6 +285,8 @@ template <typename T> class CalendarValue : public Calendar
 
         virtual const MetaData& getType() const
           {return CalendarValue<T>::metadata;}
+        virtual size_t getSize() const 
+          {return sizeof(typename CalendarValue<T>::BucketValue) + getName().size();}
     };
 
     /** Default constructor. */
@@ -369,6 +373,8 @@ template <typename T> class CalendarPointer : public Calendar
 
         virtual const MetaData& getType() const
           {return CalendarPointer<T>::metadata;}
+        virtual size_t getSize() const 
+          {return sizeof(typename CalendarPointer<T>::BucketPointer) + getName().size();}
     };
 
     /** Default constructor. */
@@ -383,6 +389,9 @@ template <typename T> class CalendarPointer : public Calendar
       {static_cast<BucketPointer*>(findBucket(d))->setValue(v);}
 
     virtual const MetaData& getType() const = 0;
+
+    virtual size_t getSize() const 
+      {return sizeof(CalendarPointer<T>) + getBuckets().size() * sizeof(CalendarValue<float>::BucketValue);}
 
   private:
     /** Factory method to add new buckets to the calendar.
@@ -399,6 +408,8 @@ class CalendarVoid : public Calendar
     CalendarVoid(const string& n) : Calendar(n) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(CalendarVoid) + getBuckets().size() * sizeof(Calendar::Bucket);}
 };
 
 
@@ -409,6 +420,8 @@ class CalendarFloat : public CalendarValue<float>
     CalendarFloat(const string& n) : CalendarValue<float>(n) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(CalendarVoid) + getBuckets().size() * sizeof(CalendarValue<float>::BucketValue);}
 };
 
 
@@ -419,6 +432,8 @@ class CalendarInt : public CalendarValue<int>
     CalendarInt(const string& n) : CalendarValue<int>(n) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(CalendarVoid) + getBuckets().size() * sizeof(CalendarValue<int>::BucketValue);}
 };
 
 
@@ -429,6 +444,8 @@ class CalendarBool : public CalendarValue<bool>
     CalendarBool(const string& n) : CalendarValue<bool>(n) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(CalendarVoid) + getBuckets().size() * sizeof(CalendarValue<bool>::BucketValue);}
 };
 
 
@@ -439,6 +456,8 @@ class CalendarString : public CalendarValue<string>
     CalendarString(const string& n) : CalendarValue<string>(n) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const // NOOOOOOT GOOD @todo
+      {return sizeof(CalendarVoid) + getBuckets().size() * sizeof(CalendarValue<float>::BucketValue);}
 };
 
 
@@ -735,6 +754,7 @@ class CommandSolve : public Command
     void setSolver(Solver* s) {sol = s;}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(CommandSolve);}
 };
 
 
@@ -938,6 +958,8 @@ class LocationDefault : public Location
     explicit LocationDefault(const string& str) : Location(str) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(LocationDefault) + getName().size() + HasDescription::memsize();}
 };
 
 
@@ -962,6 +984,8 @@ class CustomerDefault : public Customer
     explicit CustomerDefault(const string& str) : Customer(str) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(CustomerDefault) + getName().size() + HasDescription::memsize();}
 };
 
 
@@ -1490,8 +1514,9 @@ class OperationPlan
       * not the one of the operationplan class! 
       */
     const MetaData& getType() const {return getOperation()->getType();}
-    
     static const MetaCategory metadata;
+    virtual size_t getSize() const 
+      {return sizeof(OperationPlan);}
     
     /** Handles the persistence of operationplan objects. */
     static void writer(const MetaCategory&, XMLOutput*);
@@ -1599,6 +1624,8 @@ class OperationFixedTime : public Operation
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(OperationFixedTime) + getName().size() + HasDescription::memsize();}
 
     /** A operation of this type enforces the following rules on its
       * operationplans:
@@ -1667,6 +1694,8 @@ class OperationTimePer : public Operation
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(OperationTimePer) + getName().size() + HasDescription::memsize();}
 
   private:
     /** Constant part of the operation time. */
@@ -1743,6 +1772,9 @@ class OperationRouting : public Operation
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(OperationRouting) + getName().size() + HasDescription::memsize()
+         + steps.size() * 2 * sizeof(Operation*);}
 
   private:
     Operationlist steps;
@@ -1781,6 +1813,9 @@ class OperationPlanRouting : public OperationPlan
       */
     void initialize();
     void updateProblems();
+
+    virtual size_t getSize() const 
+      {return sizeof(OperationPlanRouting) + step_opplans.size() * 2 * sizeof(OperationPlan*);}
 };
 
 
@@ -1840,6 +1875,9 @@ class OperationAlternate : public Operation
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(OperationAlternate) + getName().size() + HasDescription::memsize()
+         + alternates.size() * 2 * (sizeof(Operation*)+sizeof(float));}
 
   private:
     typedef list<float> priolist;
@@ -1923,6 +1961,8 @@ class OperationEffective : public Operation
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(OperationEffective) + getName().size() + HasDescription::memsize();}
 
     /** This is the factory method which creates all operationplans of the
       * operation.
@@ -2134,6 +2174,8 @@ class BufferDefault : public Buffer
   public:
     explicit BufferDefault(const string& str) : Buffer(str) {}
     virtual const MetaData& getType() const {return metadata;}
+    virtual size_t getSize() const 
+      {return sizeof(BufferDefault) + getName().size() + HasDescription::memsize();}
     static const MetaClass metadata;
 };
 
@@ -2148,6 +2190,8 @@ class BufferInfinite : public Buffer
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     virtual const MetaData& getType() const {return metadata;}
+    virtual size_t getSize() const 
+      {return sizeof(BufferInfinite) + getName().size() + HasDescription::memsize();}
     explicit BufferInfinite(const string& c) : Buffer(c)
       {setDetectProblems(false);}
     static const MetaClass metadata;
@@ -2164,6 +2208,8 @@ class BufferMinMax : public Buffer
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     virtual const MetaData& getType() const {return metadata;}
+    virtual size_t getSize() const 
+      {return sizeof(BufferMinMax) + getName().size() + HasDescription::memsize();}
     explicit BufferMinMax(const string& c) : Buffer(c) {}
     static const MetaClass metadata;
 };
@@ -2240,6 +2286,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaCategory metadata;
+    virtual size_t getSize() const {return sizeof(Flow);}
 
   protected:    
     /** Default constructor. */
@@ -2269,6 +2316,7 @@ class FlowStart : public Flow
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(FlowStart);}
 };
 
 
@@ -2295,6 +2343,7 @@ class FlowEnd : public Flow
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(FlowEnd);}
 };
 
 
@@ -2360,9 +2409,6 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Destructor. */
     virtual ~Resource();
-
-    /** Returns the size of of the resource. */
-    Calendar* getSize() const {return max_cal;}
 
     /** Updates the size of a resource. */
     void setMaximum(CalendarFloat* c);
@@ -2436,6 +2482,8 @@ class ResourceDefault : public Resource
     explicit ResourceDefault(const string& str) : Resource(str) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(ResourceDefault) + getName().size() + HasDescription::memsize();}
 };
 
 
@@ -2450,6 +2498,8 @@ class ResourceInfinite : public Resource
     explicit ResourceInfinite(const string& c) : Resource(c)
       {setDetectProblems(false);}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(ResourceInfinite) + getName().size() + HasDescription::memsize();}
 };
 
 
@@ -2510,6 +2560,7 @@ class Load
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaCategory metadata;
+    virtual size_t getSize() const {return sizeof(Load);}
 
   private:
     /** This private constructor is called from the plan begin_element
@@ -2570,6 +2621,8 @@ class ItemDefault : public Item
     explicit ItemDefault(const string& str) : Item(str) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(ItemDefault) + getName().size() + HasDescription::memsize();}
 };
 
 
@@ -2677,28 +2730,10 @@ class Plan : public Plannable
     /** This method basically solves the whole planning problem. */
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
-    /** This method gives a summary of all models being stored in the plan
-      * with a summary of their memory use.
-      * The memory size esimate is only an approximation, since quite a few
-      * things are not taken into account and only roughly guessed:
-      *   - The subclasses may use extra data fields, while we measure only
-      *     the base class.
-      *   - Some size parameters are hard-coded in the script. Depending on
-      *     your platform and STL implementation different constants may
-      *     need to be used in the file plan.cpp.
-      *   - Additional memory will be required during certain commands, e.g.
-      *     solving the model, saving to a file, etc...
-      * The implementation of this class requires in-depth understanding of
-      * the data structures of the classes it is measuring. Strictly speaking
-      * this is against the principles of object oriented programming, but
-      * I estimated this to be a better/easier/good enough approach.
-      * The alternative would be to add additional sizing methods in all
-      * classes...
-      */
-    void size() const;
-
     const MetaData& getType() const {return metadata;}
     static const MetaCategory metadata;
+    virtual size_t getSize() const 
+      {return sizeof(Plan) + name.size() + descr.size() + logfilename.size();}
 };
 
 
@@ -2751,6 +2786,8 @@ class CommandReadXMLFile : public Command
     }
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(CommandReadXMLFile) + filename.size();}
 
   private:
     /** Name of the input to be read. An empty string means that we want to
@@ -2807,6 +2844,8 @@ class CommandReadXMLString : public Command
     string getDescription() const {return "parsing xml input string";}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(CommandReadXMLString) + data.size();}
 
   private:
     /** Name of the input to be read. An empty string means that we want to
@@ -2846,6 +2885,8 @@ class CommandSave : public Command
       {return "saving the complete model into file '" + filename + "'";}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(CommandSave) + filename.size();}
   private:
     string filename;
 };
@@ -2870,20 +2911,28 @@ class CommandSavePlan : public CommandSave
       {return "saving the plan into text file '" + getFileName() + "'";}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(CommandSavePlan);}
 };
 
 
-/** This command prints out the model size to the standard output. */
+/** This command prints a summary of the dynamically allocated memory
+  * to the standard output. This is useful for understanding better the size
+  * of your frepple model.<br>
+  * The numbers reported by this function won't match the memory size as
+  * reported by the OS the dynamically allocated memory is only a part of
+  * the total memory used by a program.<br> 
+  */
 class CommandPlanSize : public Command
 {
   public:
     CommandPlanSize() {};
-    void execute() {Plan::instance().size();}
+    void execute();
     void undo() {}
     bool undoable() const {return true;}
     string getDescription() const {return "printing the model size";}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(CommandPlanSize);}
 };
 
 
@@ -2898,6 +2947,8 @@ class CommandPlanSize : public Command
   *  - model:<br>
   *    The dynamic as well as the static objects are removed. You'll end 
   *    up with a completely empty model.
+  *    Due to the logic required in the object destructors this mode doesn't
+  *    scale linear with the model size.
   */
 class CommandErase : public Command
 {
@@ -2912,6 +2963,7 @@ class CommandErase : public Command
     bool getDeleteStaticModel() const {return deleteStaticModel;}
     void setDeleteStaticModel(bool b) {deleteStaticModel = b;}
     virtual const MetaData& getType() const {return metadata;}
+    virtual size_t getSize() const {return sizeof(CommandErase);}
     static const MetaClass metadata;
   private:
     /** Flags whether to delete the complete static model or only the
@@ -3144,6 +3196,8 @@ class DemandDefault : public Demand
     explicit DemandDefault(const string& str) : Demand(str) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const 
+      {return sizeof(DemandDefault) + getName().size() + HasDescription::memsize();}
 };
 
 
@@ -3688,6 +3742,7 @@ class CommandCreateOperationPlan : public Command
     OperationPlan *getOperationPlan() const {return opplan;}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(CommandCreateOperationPlan);}
     string getDescription() const
     {
       return "creating a new operationplan for operation '"
@@ -3726,6 +3781,7 @@ class CommandMoveOperationPlan : public Command
     OperationPlan *getOperationPlan() const {return opplan;}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(CommandMoveOperationPlan);}
     string getDescription() const;
     /** Set another date for the operation.
       * @param newdate New start- or end date.

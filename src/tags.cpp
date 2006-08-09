@@ -119,7 +119,7 @@ const XMLtag Tags::tag_subcategory("SUBCATEGORY");
 const XMLtag Tags::tag_cmdline("CMDLINE");
 const XMLtag Tags::tag_verbose("VERBOSE");
 const XMLtag Tags::tag_abortonerror("ABORTONERROR");
-const XMLtag Tags::tag_sequential("SEQUENTIAL");
+const XMLtag Tags::tag_maxparallel("MAXPARALLEL");
 const XMLtag Tags::tag_action("ACTION");
 const XMLtag Tags::tag_validate("VALIDATE");
 const XMLtag Tags::tag_csv("CSV");

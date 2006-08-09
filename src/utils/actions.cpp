@@ -80,7 +80,12 @@ bool CommandList::getAbortOnError() const
 
 void CommandList::add(Command* c)
 {
+  // Validity check
   if (!c) throw LogicException("Adding NULL command to a command list");
+  if (curCommand) 
+    throw RuntimeException("Can't add a command to the list during execution");
+
+  // Set the owner of the command
   c->owner = this;
 
   // Maintenance of the linked list of child commands
@@ -125,28 +130,40 @@ void CommandList::undo()
 }
 
 
+Command* CommandList::selectCommand()
+{
+  ScopeMutexLock l(lock);
+  Command *c = curCommand;
+  if (curCommand) curCommand = curCommand->next;
+  return c;
+}
+
+
 void CommandList::execute()
 {
-  // Log
+  // Execute the actions
+  // This field is set asap in this method since it is used a flag to 
+  // recognize that execution is in progress.
+  curCommand = firstCommand;
+
+  // Message
   if (getVerbose())
     clog << "Start executing command list at " << Date::now() << endl;
   Timer t;
 
-  // Execute the actions
-  Command *i = firstCommand;
-
 #ifndef MT
   // Compile 1: No multithreading
-  if (!sequential) sequential = true;
+  if (maxparallel>1) maxparallel = 1;
 #else
-  if (!sequential)
+  if (maxparallel>1)
   {
     // MODE 1: Parallel execution of the commands
-    int numthreads = size();
-    if (numthreads>3) numthreads = 3; // @todo
-    if(numthreads == 1)
+    int numthreads = size(); 
+    // Limit the number of threads to the maximum allowed
+    if (numthreads>maxparallel) numthreads = maxparallel; 
+    if (numthreads == 1)
       // Only a single command in the list: no need for threads
-      wrapper(i);
+      wrapper(curCommand);
     else if (numthreads > 1)
     {
 #ifdef HAVE_PTHREAD_H
@@ -157,19 +174,17 @@ void CommandList::execute()
       int status;                        // holds return value
 
       // Create the command threads
-      /** @todo implement a maximum on the number of parallel commands. */
       for (int worker=0; worker<numthreads; ++worker)
       {
         if ((errcode=pthread_create(&threads[worker],  // thread struct
-                                NULL,              // default thread attributes
-                                wrapper,     // start routine
-                                i)))               // arg to routine
+                                NULL,                  // default thread attributes
+                                wrapper,               // start routine
+                                this)))                // arg to routine
         {
           ostringstream ch;
           ch << "Can't create thread " << worker << ", error " << errcode;
-          throw RuntimeException(ch.str());
+          throw RuntimeException(ch.str());  // @todo what if some threads were already created?
         }
-        i = i->next;
       }
 
       // Wait for the command threads as they exit
@@ -188,14 +203,13 @@ void CommandList::execute()
       unsigned int m_id[10];
 
       // Create the command threads
-      /** @todo implement a maximum on the number of parallel commands. */
       for (int worker=0; worker<numthreads; ++worker)
       {
         threads[worker] =  reinterpret_cast<HANDLE>(
           _beginthreadex(0,  // Security atrtributes 
           0,                 // Stack size
           &wrapper,          // Thread function 
-          i,                 // Argument list
+          this,              // Argument list
           0,                 // Initial state is 0, "running"
           &m_id[worker]));   // Address to receive the thread identifier
         if (!threads[worker]) 
@@ -204,7 +218,6 @@ void CommandList::execute()
           ch << "Can't create thread " << worker << ", error " << errno;
           throw RuntimeException(ch.str());
         }
-        i = i->next;
       }
 
       // Wait for the command threads as they exit
@@ -227,7 +240,7 @@ void CommandList::execute()
       for (int worker=0; worker<numthreads; ++worker)
         CloseHandle(threads[worker]);
 #endif 
-    }
+    }  // End: else if (numthreads>1)
   } 
   else // Else: sequential
 #endif
@@ -237,12 +250,12 @@ void CommandList::execute()
     // whole sequence.
     try
     {
-      for(; i; i=i->next) i->execute();
+      for(; curCommand; curCommand = curCommand->next) curCommand->execute();
     }
     catch (...)
     {
       clog << "Error: Caught an exception while executing command '"
-        << i->getDescription() << "':" <<  endl;
+        << curCommand->getDescription() << "':" <<  endl;
       try { throw; }
       catch (exception& e) {clog << "  " << e.what() << endl;}
       catch (...) {clog << "  Unknown type" << endl;}
@@ -253,10 +266,10 @@ void CommandList::execute()
   else
     // MODE 3: Sequential execution, and when a command in the sequence fails
     // the rest continues
-    for(; i; i=i->next) wrapper(i);
+    wrapper(this);
 
   // Clean it up after executing ALL actions.
-  for(i=firstCommand; i; )
+  for(Command *i=firstCommand; i; )
   {
     Command *t = i;
     i = i->next;
@@ -277,17 +290,20 @@ void* CommandList::wrapper(void *arg)
 #else
 unsigned __stdcall CommandList::wrapper(void *arg)
 #endif
-{
-  Command *c = static_cast<Command*>(arg);
-  try { c->execute(); }
-  catch (...)
+{ 
+  CommandList *l = static_cast<CommandList*>(arg);
+  for(Command *c = l->selectCommand(); c; c = l->selectCommand())
   {
-    // Error message
-    clog << "Error: Caught an exception while executing command '" 
-      << c->getDescription() << "':" << endl;
-    try { throw; }
-    catch (exception& e) {clog << "  " << e.what() << endl;}
-    catch (...) {clog << "  Unknown type" << endl;}
+    try { c->execute(); }
+    catch (...)
+    {
+      // Error message
+      clog << "Error: Caught an exception while executing command '" 
+        << c->getDescription() << "':" << endl;
+      try { throw; }
+      catch (exception& e) {clog << "  " << e.what() << endl;}
+      catch (...) {clog << "  Unknown type" << endl;}
+    }
   }
   return 0;
 }
@@ -320,8 +336,8 @@ void CommandList::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else if (pElement.isA(Tags::tag_abortonerror))
     setAbortOnError(pElement.getBool());
-  else if (pElement.isA(Tags::tag_sequential))
-    setSequential(pElement.getBool());
+  else if (pElement.isA(Tags::tag_maxparallel))
+    setMaxParallel(pElement.getInt());
   else
     Command::endElement(pIn, pElement);
 }

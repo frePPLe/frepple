@@ -48,6 +48,10 @@ const MetaClass CSVInput::metadata;
 // Home directory
 DECLARE_EXPORT string Environment::home("[unspecified]");
 
+// Number of processors.
+// The value initialized here is overwritten in the library initialization.
+DECLARE_EXPORT int Environment::processors = 2;
+
 // Hash value computed only once
 const hashtype MetaCategory::defaultHash(XMLtag::hash("DEFAULT"));
 
@@ -111,6 +115,13 @@ void LibraryUtils::initialize()
     "INSTRUCTION",
     "CSV",
     Object::createDefault<CSVInput>);
+
+  // Query the system for the number of available processors
+#ifdef WIN32
+  const char *c = getenv("NUMBER_OF_PROCESSORS");
+  int p = atoi(c);
+  Environment::setProcessors(p);
+#endif
 
 #ifdef HAVE_ATEXIT
   atexit(finalize);

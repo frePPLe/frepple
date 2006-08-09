@@ -120,7 +120,7 @@ class Tags
     static const XMLtag tag_cmdline;
     static const XMLtag tag_verbose;
     static const XMLtag tag_abortonerror;
-    static const XMLtag tag_sequential;
+    static const XMLtag tag_maxparallel;
     static const XMLtag tag_action;
     static const XMLtag tag_validate;
     static const XMLtag tag_csv;

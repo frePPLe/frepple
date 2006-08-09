@@ -14,7 +14,7 @@
     <!-- Creating a bunch of parallel tasks which merge at the end. -->
     <COMMAND xsi:type="COMMAND_SYSTEM"
       CMDLINE="echo TEST 1: Creating parallel tasks and merge them >>output.1.xml" />
-    <COMMAND xsi:type="COMMAND_LIST" SEQUENTIAL="false">
+    <COMMAND xsi:type="COMMAND_LIST" MAXPARALLEL="100">
       <COMMAND xsi:type="COMMAND_LIST">
         <COMMAND xsi:type="COMMAND_SYSTEM"
           CMDLINE="sleep 1 &amp;&amp; echo  A after 1 second >>output.1.xml" />
@@ -60,7 +60,7 @@
     <COMMAND xsi:type="COMMAND_LIST">
       <!-- value has no impact on execution any more! -->
       <ABORTONERROR>false</ABORTONERROR>
-      <SEQUENTIAL>false</SEQUENTIAL>
+      <MAXPARALLEL>100</MAXPARALLEL>
       <COMMAND xsi:type="COMMAND_SYSTEM"
         CMDLINE="echo  task 1 okay >>output.1.xml" />
       <COMMAND xsi:type="COMMAND_SYSTEM"

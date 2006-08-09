@@ -221,6 +221,12 @@ class Environment
     /** Stores the frepple home directory. */
     static DECLARE_EXPORT string home;
 
+    /** Stores the number of processors on your machine.<br>
+      * On windows it is automatically initialized to the value of the 
+      * environment variable NUMBER_OF_PROCESSORS.
+      */
+    static DECLARE_EXPORT int processors;
+
   public:
     /** Return the home directory. */
     static const string getHomeDirectory() {return home;}
@@ -230,6 +236,12 @@ class Environment
       * directory. 
       */
     static void setHomeDirectory(const string);
+
+    /** Returns the number of processors on your machine. */
+    static int getProcessors() {return processors;}
+
+    /** Updates the number of processors available on your machine. */
+    static void setProcessors(int i) {if(i>=1) processors = i;}
 };
 
 
@@ -428,11 +440,14 @@ class Mutex: public NonCopyable
 };
 
 
+/** This is a convenience class that makes it easy (and exception-safe) to 
+  * lock a mutex in a scope. 
+  */
 class ScopeMutexLock: public NonCopyable
 {
   protected:
     Mutex* mtx;
-public:
+  public:
     ScopeMutexLock(Mutex& imtx): mtx(&imtx) { mtx->lock(); }
     ~ScopeMutexLock() { mtx->unlock(); }
 };
@@ -3209,14 +3224,26 @@ class CommandList : public Command
     /** Points to the last command in the list. */
     Command* lastCommand;
 
+    /** Current command to be executed. */
+    Command* curCommand;
+
+    /** Mutex to protect the curCommand data field during multi-threaded 
+      * execution. 
+      * @see selectCommand
+      */
+    Mutex lock;
+
     /** Specifies whether the command list is undoable or not. */
     bool can_undo;
 
-    /** Specifies whether the commands in the list will be executed in parallel
-      * or sequentially. The default value is in parallel. The value of this
-      * field is NOT inherited from parent command lists.
+    /** Specifies the maximum number of commands in the list that can be 
+      * executed in parallel. 
+      * The default value is 1, i.e. sequential execution.<br>
+      * The value of this field is NOT inherited from parent command lists.<br>
+      * Note that the maximum applies to this command list only, and it isn't
+      * a system-wide limit on the creation of threads.
       */
-    bool sequential;
+    int maxparallel;
 
     /** Specifies whether or not a single failure aborts the complete command
       * list. The value is inherited from parent command lists, and will
@@ -3234,6 +3261,11 @@ class CommandList : public Command
 #else
      static unsigned __stdcall wrapper(void *);
 #endif
+
+    /** This method selects the next command to be executed.
+      * @see wrapper
+      */
+    Command* selectCommand();
 
     /** Returns the number of commands stored in this list. */
     int size() const
@@ -3271,11 +3303,22 @@ class CommandList : public Command
     /** Returns whether the command list processes its commands sequentially or
       * in parallel. The default is sequentially, and this field is NOT
       * inherited down nested command list hierarchies. */
-    bool getSequential() const {return sequential;}
+    int getMaxParallel() const {return maxparallel;}
 
     /** Updates whether the command list process its commands sequentially or
       * in parallel. */
-    void setSequential(bool b) {sequential = b;}
+    void setMaxParallel(int b) 
+    {
+      if (b<1) 
+        throw DataException("Invalid number of parallel execution threads");
+#ifndef MT
+      maxparallel = (b>1 ? 1 : b);
+#else
+      // Impose a hard limit of twice the number of available processors.
+      int max = Environment::getProcessors() * 2;
+      maxparallel = (b>max ? max : b);
+#endif
+    }
 
     /** Returns whether this command can be undone or not. */
     bool undoable() const {return can_undo;}
@@ -3288,7 +3331,8 @@ class CommandList : public Command
 
     /** Default constructor. */
     explicit CommandList() : firstCommand(NULL), lastCommand(NULL), 
-      can_undo(true), sequential(true), abortOnError(INHERIT) {}
+      curCommand(NULL), can_undo(true), maxparallel(1), 
+      abortOnError(INHERIT) {}
 
     /** Destructor. An actionlist should only be deleted when all of its
       * actions have been committed or undone. If this is not the case a

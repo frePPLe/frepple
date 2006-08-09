@@ -264,7 +264,7 @@
   <xsd:complexType name="RESOURCE">
     <xsd:annotation>
       <xsd:documentation>
-        A resource represents a workcentre, a physical or logical 
+        A resource represents a workcentre, a physical or logical
         representation of capacity.
       </xsd:documentation>
     </xsd:annotation>
@@ -414,7 +414,7 @@
   <xsd:complexType name="DEMAND">
     <xsd:annotation>
       <xsd:documentation>
-        A demand represents a independent demand to be planned. It can 
+        A demand represents a independent demand to be planned. It can
         represent a customer order or a forecast.
       </xsd:documentation>
     </xsd:annotation>
@@ -459,7 +459,7 @@
                     <xsd:all>
                       <xsd:element name="QUANTITY" type="positiveFloat"
                         minOccurs="0" />
-                      <xsd:element name="DUE" type="xsd:dateTime" 
+                      <xsd:element name="DUE" type="xsd:dateTime"
                         minOccurs="0"/>
                     </xsd:all>
                     <xsd:attribute name="QUANTITY" type="positiveFloat" />
@@ -502,11 +502,11 @@
                 <xsd:element name="BUCKET" minOccurs="0">
                   <xsd:complexType>
                     <xsd:all>
-                      <xsd:element name="NAME" type="xsd:string" 
+                      <xsd:element name="NAME" type="xsd:string"
                         minOccurs="0" />
-                      <xsd:element name="END" type="xsd:dateTime" 
+                      <xsd:element name="END" type="xsd:dateTime"
                         minOccurs="0" />
-                      <xsd:element name="VALUE" type="xsd:float" 
+                      <xsd:element name="VALUE" type="xsd:float"
                         minOccurs="0" />
                     </xsd:all>
                     <xsd:attribute name="START" type="xsd:dateTime"
@@ -536,9 +536,9 @@
                   maxOccurs="unbounded">
                   <xsd:complexType>
                     <xsd:all>
-                      <xsd:element name="NAME" type="xsd:string" 
+                      <xsd:element name="NAME" type="xsd:string"
                         minOccurs="0" />
-                      <xsd:element name="END" type="xsd:dateTime" 
+                      <xsd:element name="END" type="xsd:dateTime"
                         minOccurs="0" />
                     </xsd:all>
                     <xsd:attribute name="START" type="xsd:dateTime"
@@ -566,9 +566,9 @@
                 <xsd:element name="BUCKET">
                   <xsd:complexType>
                     <xsd:all>
-                      <xsd:element name="NAME" type="xsd:string" 
+                      <xsd:element name="NAME" type="xsd:string"
                         minOccurs="0" />
-                      <xsd:element name="END" type="xsd:dateTime" 
+                      <xsd:element name="END" type="xsd:dateTime"
                         minOccurs="0" />
                       <xsd:element name="VALUE" type="xsd:integer"
                         minOccurs="0" />
@@ -600,9 +600,9 @@
                   maxOccurs="unbounded">
                   <xsd:complexType>
                     <xsd:all>
-                      <xsd:element name="NAME" type="xsd:string" 
+                      <xsd:element name="NAME" type="xsd:string"
                         minOccurs="0" />
-                      <xsd:element name="END" type="xsd:dateTime" 
+                      <xsd:element name="END" type="xsd:dateTime"
                         minOccurs="0" />
                       <xsd:element name="VALUE" type="xsd:boolean"
                         minOccurs="0" />
@@ -634,11 +634,11 @@
                   maxOccurs="unbounded">
                   <xsd:complexType>
                     <xsd:all>
-                      <xsd:element name="NAME" type="xsd:string" 
+                      <xsd:element name="NAME" type="xsd:string"
                         minOccurs="0" />
-                      <xsd:element name="END" type="xsd:dateTime" 
+                      <xsd:element name="END" type="xsd:dateTime"
                         minOccurs="0" />
-                      <xsd:element name="VALUE" type="xsd:string" 
+                      <xsd:element name="VALUE" type="xsd:string"
                         minOccurs="0" />
                     </xsd:all>
                     <xsd:attribute name="VALUE" type="xsd:string" />
@@ -668,11 +668,11 @@
                   maxOccurs="unbounded">
                   <xsd:complexType>
                     <xsd:all>
-                      <xsd:element name="NAME" type="xsd:string" 
+                      <xsd:element name="NAME" type="xsd:string"
                         minOccurs="0" />
-                      <xsd:element name="END" type="xsd:dateTime" 
+                      <xsd:element name="END" type="xsd:dateTime"
                         minOccurs="0" />
-                      <xsd:element name="VALUE" type="OPERATION" 
+                      <xsd:element name="VALUE" type="OPERATION"
                         minOccurs="0" />
                     </xsd:all>
                     <xsd:attribute name="START" type="xsd:dateTime"
@@ -728,8 +728,8 @@
   <xsd:complexType name="PROBLEM">
     <xsd:annotation>
       <xsd:documentation>
-        This entity is used to represent inconsistencies, alerts and warnings 
-        in the model. Problems are maintained internally by the system. They 
+        This entity is used to represent inconsistencies, alerts and warnings
+        in the model. Problems are maintained internally by the system. They
         are thus export-only, meaning that we can't directly import or build
         problems.
       </xsd:documentation>
@@ -787,9 +787,9 @@
       <xsd:element name="VALUE" type="xsd:string" minOccurs="0" />
     </xsd:all>
     <xsd:attribute name="NAME" type="xsd:string" />
-    <xsd:attribute name="VALUE" type="xsd:string" />    
+    <xsd:attribute name="VALUE" type="xsd:string" />
   </xsd:complexType>
-  
+
   <xsd:complexType name="COMMAND_LOADLIB">
     <xsd:complexContent>
       <xsd:extension base="COMMAND">
@@ -810,10 +810,10 @@
           <xsd:element name="VERBOSE" type="xsd:boolean" />
           <xsd:element name="COMMAND" type="COMMAND" />
           <xsd:element name="ABORTONERROR" type="xsd:boolean" />
-          <xsd:element name="SEQUENTIAL" type="xsd:boolean" />
+          <xsd:element name="MAXPARALLEL" type="xsd:positiveInteger" />
         </xsd:choice>
         <xsd:attribute name="ABORTONERROR" type="xsd:boolean" />
-        <xsd:attribute name="SEQUENTIAL" type="xsd:boolean" />
+        <xsd:attribute name="MAXPARALLEL" type="xsd:positiveInteger" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

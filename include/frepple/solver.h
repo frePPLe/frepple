@@ -212,15 +212,7 @@ class MRPSolver : public Solver
     typedef classified_demand::iterator cluster_iterator;
     classified_demand demands_per_cluster;
 
-    /** This iterator is used to step through the clusters that need to be
-      * planned. */
-    cluster_iterator cur_cluster;
-
-    /** Returns the next planning problem a thread needs to tackle. */
-    static cluster_iterator next_cluster(MRPSolver*);
-
   protected:
-
     /** This class is a helper class for the MRPSolver. It stores the solver 
       * state maintained by each solver thread.
       * @see MRPSolver
@@ -230,9 +222,9 @@ class MRPSolver : public Solver
       friend class MRPSolver;
       public:
         MRPSolver* getSolver() const {return sol;}
-        MRPSolverdata(unsigned int id, MRPSolver* s) 
-          : threadid(id), sol(s), curOwnerOpplan(NULL), q_loadplan(NULL), 
-          q_flowplan(NULL), q_operationplan(NULL) {}
+        MRPSolverdata(MRPSolver* s, int c, deque<Demand*>& d) 
+          : sol(s), curOwnerOpplan(NULL), q_loadplan(NULL), q_flowplan(NULL),
+            q_operationplan(NULL), cluster(c), demands(d) {}
 
         /** This function runs a single planning thread. Such a thread will loop
           * through the following steps:
@@ -256,9 +248,6 @@ class MRPSolver : public Solver
       private:
         /** Maintains a list of all actions triggered by the solver. */
         CommandList actions;
-        
-        /** Which thread is running this action. */
-        unsigned int threadid;
 
         /** Points to the solver. */
         MRPSolver* sol;
@@ -302,6 +291,14 @@ class MRPSolver : public Solver
 
         /** A pointer to an operationplan currently being solved. */
         OperationPlan* q_operationplan;
+
+        /** An identifier of the cluster being replanned. Note that it isn't
+          * always the complete cluster that is being planned.
+          */
+        int cluster;
+          
+        /** A deque containing all demands to be (re-)planned. */
+        deque<Demand*>& demands;
     };
 
     /** This function defines the order in which the demands are being

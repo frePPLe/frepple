@@ -87,86 +87,63 @@ void MRPSolver::MRPSolverdata::execute()
 {
   // Message
   MRPSolver* Solver = getSolver();
-  unsigned int myid = threadid;
+  if (Solver->getVerbose()) 
+    clog << "Start solving cluster " << cluster << " at " << Date::now() << endl;
 
-  if (Solver->getVerbose()) clog << "Start planning thread " << myid << endl;
-
-  // Find the next planning problem
-  cluster_iterator mycluster;
-  while ((mycluster=next_cluster(Solver)) != Solver->demands_per_cluster.end())
+  // Solve the planning problem
+  try
   {
-    try
-    {
-      // Message
-      if (Solver->getVerbose())
-        clog << "Thread " << myid << " starts solving cluster "
-        << mycluster->first << " at " << Date::now() << endl;
+    // Sort the demands of this problem.
+    // We use a stable sort to get reproducible results between platforms
+    // and STL implementations.
+    stable_sort(demands.begin(), demands.end(), demand_comparison);
 
-      // Sort the demands of this problem.
-      // We use a stable sort to get reproducible results between platforms
-      // and STL implementations.
-      stable_sort(mycluster->second.begin(), mycluster->second.end(),
-        demand_comparison);
+    // Loop through the list of all demands in this planning problem
+    for (deque<Demand*>::const_iterator i = demands.begin();
+          i != demands.end(); ++i)
+      // Plan the demand
+      try { (*i)->solve(*Solver,this); }
+      catch (...)
+      {
+        // Error message
+        clog << "Error: Caught an exception while solving demand '" 
+          << (*i)->getName() << "':" << endl;
+        try { throw; }
+        catch (bad_exception&) {clog << "  bad exception" << endl;}
+        catch (exception& e) {clog << "  " << e.what() << endl;}
+        catch (...) {clog << "  Unknown type" << endl;}
 
-      // Loop through the list of all demands in this planning problem
-      for (deque<Demand*>::const_iterator i = mycluster->second.begin();
-           i != mycluster->second.end(); ++i)
-        // Plan the demand
-        try { (*i)->solve(*Solver,this); }
-        catch (...)
-        {
-          // Error message
-          clog << "Error: Caught an exception in thread " << myid
-          << " while solving demand '" << (*i)->getName() << "':" << endl;
-          try { throw; }
-          catch (bad_exception&) {clog << "  bad exception" << endl;}
-          catch (exception& e) {clog << "  " << e.what() << endl;}
-          catch (...) {clog << "  Unknown type" << endl;}
+        // Cleaning up
+        actions.undo();
+      }
 
-          // Cleaning up
-          actions.undo();
-        }
+    // Clean the list of demands of this problem
+    demands.clear();
+  }
+  catch (...)
+  {
+    // We come in this exception handling code only if there is a problem with
+    // with this cluster that goes beyond problems with single orders.
+    // If the problem is with single orders, the exception handling code above
+    // will do a proper rollback.
 
-      // Clean the list of demands of this problem
-      mycluster->second.clear();
-    }
-    catch (...)
-    {
-      // We come in this exception handling code only if there is a problem with
-      // with this cluster that goes beyond problems with single orders.
-      // If the problem is with single orders, the exception handling code above
-      // will do a proper rollback.
+    // Error message
+    clog << "Error: Caught an exception while solving cluster " 
+      << cluster << ":" << endl;
+    try { throw; }
+    catch (bad_exception&){clog << "  bad exception" << endl;}
+    catch (exception& e) {clog << "  " << e.what() << endl;}
+    catch (...) {clog << "  Unknown type" << endl;}
 
-      // Error message
-      clog << "Error: Caught an exception in thread " << myid
-      << " while solving cluster " << mycluster->first << ":" << endl;
-      try { throw; }
-      catch (bad_exception&){clog << "  bad exception" << endl;}
-      catch (exception& e) {clog << "  " << e.what() << endl;}
-      catch (...) {clog << "  Unknown type" << endl;}
-
-      // Clean up the operationplans of this cluster
-      for (Operation::iterator f=Operation::begin(); f!=Operation::end(); ++f)
-        if ((*f)->getCluster() == mycluster->first)
-        	(*f)->deleteOperationPlans();
-    }
+    // Clean up the operationplans of this cluster
+    for (Operation::iterator f=Operation::begin(); f!=Operation::end(); ++f)
+      if ((*f)->getCluster() == cluster)
+        (*f)->deleteOperationPlans();
   }
 
   // Message
-  if (Solver->getVerbose()) clog << "End planning thread " << myid << endl;
-}
-
-
-MRPSolver::cluster_iterator MRPSolver::next_cluster(MRPSolver* Solver)
-{
-  cluster_iterator nxt;
-  static Mutex dd;  // Doesn't allow multiple solvers at the same time @todo
-  dd.lock();
-  nxt = Solver->cur_cluster;
-  if (Solver->cur_cluster != Solver->demands_per_cluster.end())
-    ++Solver->cur_cluster;
-  dd.unlock();
-  return nxt;
+  if (Solver->getVerbose()) 
+    clog << "End solving cluster " << cluster << " at " << Date::now() << endl;
 }
 
 
@@ -176,7 +153,6 @@ void MRPSolver::solve(void *v)
   // Categorize all demands in their cluster
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
     demands_per_cluster[(*i)->getCluster()].push_back(*i);
-  cur_cluster = demands_per_cluster.begin();
 
   // Delete of operationplans of the affected clusters
   // This deletion is not multi-threaded... But on the other hand we need to
@@ -189,15 +165,15 @@ void MRPSolver::solve(void *v)
     if (demands_per_cluster.find((*e)->getCluster())!=demands_per_cluster.end())
       (*e)->deleteOperationPlans();
 
-  // Create the planning commands
+  // Create the command list to control the execution
   CommandList threads;       
-  threads.setSequential(false);
-  // A problem in one cluster should spoil the fun for all
+  // Solve in parallel threads
+  threads.setMaxParallel(1);  //Environment::getProcessors()  // @todo parallel solving not possible yet. Why not?
+  // Otherwise a problem in a single cluster could spoil it all
   threads.setAbortOnError(false); 
-
-  unsigned int j = demands_per_cluster.size();
-  // @todo control better if (j > ThreadGroup::getMaxThreads()) j = ThreadGroup::getMaxThreads();
-  for ( ; j>0; --j) threads.add(new MRPSolverdata(j, this));
+  for (classified_demand::iterator j = demands_per_cluster.begin(); 
+    j != demands_per_cluster.end(); ++j) 
+    threads.add(new MRPSolverdata(this, j->first, j->second));
 
   // Run the planning command threads and wait for them to exit
   threads.execute();

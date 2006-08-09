@@ -18,7 +18,7 @@
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP"/>
     </COMMAND>
-    <!--COMMAND xsi:type="LIST" SEQUENTIAL="FALSE"-->
+    <!--COMMAND xsi:type="LIST" MAXPARALLEL="100"-->
     <COMMAND xsi:type="COMMAND_SAVE">
       <FILENAME>output.xml</FILENAME>
     </COMMAND>
@@ -46,7 +46,7 @@
     <!--/COMMAND-->
     <!-- Testing multi-threaded, parallel execution of commands. -->
     <!--
-    <COMMAND xsi:type="LIST" SEQUENTIAL="FALSE">
+    <COMMAND xsi:type="LIST" MAXPARALLEL="100">
       <COMMAND xsi:type="LIST">
         <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 1"/>
         <COMMAND xsi:type="SYSTEM" CMDLINE="echo A 1 - `date`"/>

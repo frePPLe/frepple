@@ -44,17 +44,14 @@
   #define DECLARE_EXPORT(type) type
 #endif
 
-/* The complete frepple public interface is synchroneous, i.e. a client
- * function call returns only when the complete processing is finished.
- * The interface can throw exceptions, and the client is responsible for
- * defining the correct handlers for these.
- */
-
 /** This function should be called once when the client application starts, 
-  * and before calling any other function in the API. 
+  * and before calling any other function in the API.<br>
   * The parameter is a string with the name of the Frepple home directory.
   * If the parameter is NULL, the setting of the environment variable 
-  * FREPPLE_HOME is used instead.
+  * FREPPLE_HOME is used instead.<br>
+  * This method is synchroneous, i.e. it returns only when the complete 
+  * processing is finished. The method can throw exceptions, and the client 
+  * is responsible for defining the correct handlers for these.
   */
 DECLARE_EXPORT(void) FreppleInitialize(const char*);
 
@@ -65,6 +62,9 @@ DECLARE_EXPORT(void) FreppleInitialize(const char*);
   * The last argument specifies whether Frepple needs to perform only the
   * validation and skip the actual processing.<br>
   * The client is responsible for the memory management in the data buffer.
+  * This method is synchroneous, i.e. it returns only when the complete 
+  * processing is finished. The method can throw exceptions, and the client 
+  * is responsible for defining the correct handlers for these.
   */
 DECLARE_EXPORT(void) FreppleReadXMLData(char*, bool, bool);
 
@@ -75,21 +75,35 @@ DECLARE_EXPORT(void) FreppleReadXMLData(char*, bool, bool);
   * against the XSD schema.<br>
   * The last argument specifies whether Frepple needs to perform only the
   * validation and skip the actual processing.
+  * This method is synchroneous, i.e. it returns only when the complete 
+  * processing is finished. The method can throw exceptions, and the client 
+  * is responsible for defining the correct handlers for these.
   */
 DECLARE_EXPORT(void) FreppleReadXMLFile(const char*, bool, bool);
 
 /** Calling this function will save the Frepple data in the file that
-  * is passed as the argument. */
+  * is passed as the argument. 
+  * This method is synchroneous, i.e. it returns only when the complete 
+  * processing is finished. The method can throw exceptions, and the client 
+  * is responsible for defining the correct handlers for these.
+  */
 DECLARE_EXPORT(void) FreppleSaveFile(char*);
 
 /** Calling this function returns a text buffer with the frepple data 
   * model.<br>
-  * This method can consume a lot of memory for big models!
+  * This method can consume a lot of memory for big models!<br>
+  * This method is synchroneous, i.e. it returns only when the complete 
+  * processing is finished. The method can throw exceptions, and the client 
+  * is responsible for defining the correct handlers for these.
   */
 DECLARE_EXPORT(std::string) FreppleSaveString();
 
 /** This function causes the frepple executable to shut down in an orderly 
-  * way. */
+  * way.
+  * This method is synchroneous, i.e. it returns only when the complete 
+  * processing is finished. The method can throw exceptions, and the client 
+  * is responsible for defining the correct handlers for these.
+  */
 DECLARE_EXPORT(void) FreppleExit();
 
 
@@ -98,39 +112,44 @@ DECLARE_EXPORT(void) FreppleExit();
 extern "C" {
 #endif
 
-/** Same as FreppleInitialize, but catches all exceptions.<br>
+/** Same as FreppleInitialize, but catches all exceptions and returns a
+  * status instead.<br>
   * Use this function when calling the library from C or VB applications.
   * @see FreppleInitialize
   */
 DECLARE_EXPORT(int) FreppleWrapperInitialize(const char*);
 
-/** Same as FreppleReadXMLData, but catches all exceptions.<br>
+/** Same as FreppleReadXMLData, but catches all exceptions and returns a
+  * status instead.<br>
   * Use this function when calling the library from C or VB applications.
   * @see FreppleReadXMLData
   */
 DECLARE_EXPORT(int) FreppleWrapperReadXMLData(char*, bool, bool);
 
-/** Same as FreppleReadXMLFile, but catches all exceptions.<br>
+/** Same as FreppleReadXMLFile, but catches all exceptions and returns a
+  * status instead.<br>
   * Use this function when calling the library from C or VB applications.
   * @see FreppleReadXMLFile
   */
 DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char*, bool, bool);
 
-/** Same as FreppleSaveFile, but catches all exceptions.<br>
+/** Same as FreppleSaveFile, but catches all exceptions and returns a
+  * status instead.<br>
   * Use this function when calling the library from C or VB applications.
   * @see FreppleSaveFile
   */
 DECLARE_EXPORT(int) FreppleWrapperSaveFile(char*);
 
-/** Same as FreppleSaveString, but catches all exceptions and also 
-  * leaves the memory buffer management to the user.<br>
+/** Same as FreppleSaveString, but catches all exceptions, returns a status 
+  * code and also leaves the memory buffer management to the user.<br>
   * This function can consume a lot of memory for big models!<br>
   * Use this function when calling the library from C or VB applications.
   * @see FreppleSaveString
   */
 DECLARE_EXPORT(int) FreppleWrapperSaveString(char*, unsigned long);
 
-/** Same as FreppleExit, but catches all exceptions.<br>
+/** Same as FreppleExit, but catches all exceptions and returns a
+  * status instead.<br>
   * Use this function when calling the library from C or VB applications.
   * @see FreppleExit
   */

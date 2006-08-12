@@ -217,7 +217,7 @@ void OperationPlan::initialize()
       OperationPlan* opplan = findId(id);
       if (opplan && opplan->getOperation()!=oper)
       {
-        delete this;
+        delete this;   // @todo nasty side-effects!!!!???
         throw RuntimeException("Duplicated operplanid");
       }
     }
@@ -231,11 +231,25 @@ void OperationPlan::initialize()
     // Fresh operationplan with blank id
     id = counter++;
 
-  // Insert into the list of operationplans.  
-  // @todo insert such that sorting is more stable!
-  next = oper->opplan;
-  if (next) next->prev = this;
-  oper->opplan = this;
+  // Insert into the doubly linked list of operationplans. 
+  if (!oper->opplan)
+    // First operationplan for this operation
+    oper->opplan = this;
+  else if (id > oper->opplan->id)
+  {
+    // Insert at the front of the list. Since the id is always increasing and 
+    // the list is sorted in descending id this is the most common case.
+    next = oper->opplan;
+    next->prev = this;
+    oper->opplan = this;
+  }
+  else
+  {
+    // Insert in the middle of the list. This is an exceptional case.
+    for (next = oper->opplan; next && id < next->id; next = next->next) 
+      prev = next;
+    if (next) next->prev = this;
+  }
 
   // If we used the lazy creator, the flow- and loadplans have not been
   // created yet. We do it now...

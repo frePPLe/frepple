@@ -1,0 +1,213 @@
+
+Downstream pegging for buffer 'buffer 1' :
+
+	0  10  1971-01-01T00:00:00  buffer 1  Inventory of buffer 'buffer 1'  10
+	1  -10  2006-01-09T00:00:00  buffer 1  delivery 1  10
+
+
+	0  -10  2006-01-09T00:00:00  buffer 1  delivery 1  -10
+
+	0  100  2006-01-10T00:00:00  buffer 1  make 1  100
+	1  -100  2006-01-10T00:00:00  buffer 1  delivery 1  100
+
+	0  -100  2006-01-10T00:00:00  buffer 1  delivery 1  -100
+
+	0  94  2006-01-17T00:00:00  buffer 1  make 1  94
+	-1  94  unpegged material  4
+	1  -90  2006-01-17T00:00:00  buffer 1  delivery 1  90
+
+	0  -90  2006-01-17T00:00:00  buffer 1  delivery 1  -90
+
+Downstream pegging for buffer 'buffer 2' :
+
+	0  10  1971-01-01T00:00:00  buffer 2  Inventory of buffer 'buffer 2'  10
+	1  -10  2006-01-09T00:00:00  buffer 2  delivery 2  10
+
+
+	0  -10  2006-01-09T00:00:00  buffer 2  delivery 2  -10
+
+	0  100  2006-01-10T00:00:00  buffer 2  make 2  100
+	1  -100  2006-01-10T00:00:00  buffer 2  delivery 2  100
+
+	0  -100  2006-01-10T00:00:00  buffer 2  delivery 2  -100
+
+	0  50  2006-01-17T00:00:00  buffer 2  make 2  50
+	1  -50  2006-01-17T00:00:00  buffer 2  delivery 2  50
+
+	0  -50  2006-01-17T00:00:00  buffer 2  delivery 2  -50
+
+Downstream pegging for buffer 'buffer 3' :
+
+	0  10  1971-01-01T00:00:00  buffer 3  Inventory of buffer 'buffer 3'  10
+	1  -10  2006-01-09T00:00:00  buffer 3  delivery 3  10
+
+
+	0  -10  2006-01-09T00:00:00  buffer 3  delivery 3  -10
+
+
+	0  192  2006-01-15T00:00:00  buffer 3  make 3  192
+	-1  192  unpegged material  2
+	1  -190  2006-01-15T00:00:00  buffer 3  delivery 3  190
+
+	0  -190  2006-01-15T00:00:00  buffer 3  delivery 3  -190
+
+Downstream pegging for buffer 'buffer 4' :
+
+	0  10  1971-01-01T00:00:00  buffer 4  Inventory of buffer 'buffer 4'  10
+	1  -10  2006-01-09T00:00:00  buffer 4  delivery 4  10
+
+
+	0  -10  2006-01-09T00:00:00  buffer 4  delivery 4  -10
+
+
+	0  196  2006-01-15T00:00:00  buffer 4  make 4  196
+	1  -200  2006-06-18T00:00:00  buffer 4  delivery 4  6
+	1  -190  2006-01-15T00:00:00  buffer 4  delivery 4  190
+
+	0  -190  2006-01-15T00:00:00  buffer 4  delivery 4  -190
+
+	0  200  2006-06-18T00:00:00  buffer 4  make 4  200
+	-1  200  unpegged material  6
+	1  -200  2006-06-18T00:00:00  buffer 4  delivery 4  194
+
+	0  -200  2006-06-18T00:00:00  buffer 4  delivery 4  -200
+
+Downstream pegging for buffer 'constraint buffer 1' :
+
+	0  100  2006-01-10T00:00:00  constraint buffer 1  supply 1  100
+	1  -100  2006-01-10T00:00:00  constraint buffer 1  make 1  100
+	2  100  2006-01-10T00:00:00  buffer 1  make 1  100
+	3  -100  2006-01-10T00:00:00  buffer 1  delivery 1  100
+
+	0  -100  2006-01-10T00:00:00  constraint buffer 1  make 1  -100
+	1  100  2006-01-10T00:00:00  buffer 1  make 1  -100
+	2  -100  2006-01-10T00:00:00  buffer 1  delivery 1  100
+
+	0  200  2006-01-17T00:00:00  constraint buffer 1  supply 1  200
+	-1  200  unpegged material  106
+	1  -94  2006-01-17T00:00:00  constraint buffer 1  make 1  94
+	2  94  2006-01-17T00:00:00  buffer 1  make 1  94
+	-3  94  unpegged material  4
+	3  -90  2006-01-17T00:00:00  buffer 1  delivery 1  90
+
+	0  -94  2006-01-17T00:00:00  constraint buffer 1  make 1  -94
+	1  94  2006-01-17T00:00:00  buffer 1  make 1  -94
+	-2  94  unpegged material  4
+	2  -90  2006-01-17T00:00:00  buffer 1  delivery 1  90
+
+Downstream pegging for buffer 'constraint buffer 2' :
+
+	0  100  2006-01-10T00:00:00  constraint buffer 2  supply 2  100
+	1  -100  2006-01-10T00:00:00  constraint buffer 2  make 2  100
+	2  100  2006-01-10T00:00:00  buffer 2  make 2  100
+	3  -100  2006-01-10T00:00:00  buffer 2  delivery 2  100
+
+	0  -100  2006-01-10T00:00:00  constraint buffer 2  make 2  -100
+	1  100  2006-01-10T00:00:00  buffer 2  make 2  -100
+	2  -100  2006-01-10T00:00:00  buffer 2  delivery 2  100
+
+	0  50  2006-01-17T00:00:00  constraint buffer 2  supply 2  50
+	1  -50  2006-01-17T00:00:00  constraint buffer 2  make 2  50
+	2  50  2006-01-17T00:00:00  buffer 2  make 2  50
+	3  -50  2006-01-17T00:00:00  buffer 2  delivery 2  50
+
+	0  -50  2006-01-17T00:00:00  constraint buffer 2  make 2  -50
+	1  50  2006-01-17T00:00:00  buffer 2  make 2  -50
+	2  -50  2006-01-17T00:00:00  buffer 2  delivery 2  50
+
+Downstream pegging for buffer 'constraint buffer 3' :
+
+	0  1000  2006-01-15T00:00:00  constraint buffer 3  supply 3  1000
+	-1  1000  unpegged material  808
+	1  -192  2006-01-15T00:00:00  constraint buffer 3  make 3  192
+	2  192  2006-01-15T00:00:00  buffer 3  make 3  192
+	-3  192  unpegged material  2
+	3  -190  2006-01-15T00:00:00  buffer 3  delivery 3  190
+
+	0  -192  2006-01-15T00:00:00  constraint buffer 3  make 3  -192
+	1  192  2006-01-15T00:00:00  buffer 3  make 3  -192
+	-2  192  unpegged material  2
+	2  -190  2006-01-15T00:00:00  buffer 3  delivery 3  190
+
+Downstream pegging for buffer 'constraint buffer 4' :
+
+	0  1000  2006-01-15T00:00:00  constraint buffer 4  supply 4  1000
+	-1  1000  unpegged material  604
+	1  -200  2006-06-18T00:00:00  constraint buffer 4  make 4  200
+	2  200  2006-06-18T00:00:00  buffer 4  make 4  200
+	-3  200  unpegged material  6
+	3  -200  2006-06-18T00:00:00  buffer 4  delivery 4  194
+	1  -196  2006-01-15T00:00:00  constraint buffer 4  make 4  196
+	2  196  2006-01-15T00:00:00  buffer 4  make 4  196
+	3  -200  2006-06-18T00:00:00  buffer 4  delivery 4  6
+	3  -190  2006-01-15T00:00:00  buffer 4  delivery 4  190
+
+	0  -196  2006-01-15T00:00:00  constraint buffer 4  make 4  -196
+	1  196  2006-01-15T00:00:00  buffer 4  make 4  -196
+	2  -200  2006-06-18T00:00:00  buffer 4  delivery 4  6
+	2  -190  2006-01-15T00:00:00  buffer 4  delivery 4  190
+
+	0  -200  2006-06-18T00:00:00  constraint buffer 4  make 4  -200
+	1  200  2006-06-18T00:00:00  buffer 4  make 4  -200
+	-2  200  unpegged material  6
+	2  -200  2006-06-18T00:00:00  buffer 4  delivery 4  194
+
+Upstream pegging for demand 'order 2 for item 4' :
+
+	0  -200  2006-06-18T00:00:00  buffer 4  delivery 4  -200
+	1  196  2006-01-15T00:00:00  buffer 4  make 4  6
+	2  -196  2006-01-15T00:00:00  constraint buffer 4  make 4  6
+	3  1000  2006-01-15T00:00:00  constraint buffer 4  supply 4  196
+	1  200  2006-06-18T00:00:00  buffer 4  make 4  194
+	2  -200  2006-06-18T00:00:00  constraint buffer 4  make 4  194
+	3  1000  2006-01-15T00:00:00  constraint buffer 4  supply 4  200
+
+Upstream pegging for demand 'order for item 1' :
+
+	0  -90  2006-01-17T00:00:00  buffer 1  delivery 1  -90
+	1  94  2006-01-17T00:00:00  buffer 1  make 1  90
+	2  -94  2006-01-17T00:00:00  constraint buffer 1  make 1  90
+	3  200  2006-01-17T00:00:00  constraint buffer 1  supply 1  94
+
+	0  -100  2006-01-10T00:00:00  buffer 1  delivery 1  -100
+	1  100  2006-01-10T00:00:00  buffer 1  make 1  100
+	2  -100  2006-01-10T00:00:00  constraint buffer 1  make 1  100
+	3  100  2006-01-10T00:00:00  constraint buffer 1  supply 1  100
+
+	0  -10  2006-01-09T00:00:00  buffer 1  delivery 1  -10
+	1  10  1971-01-01T00:00:00  buffer 1  Inventory of buffer 'buffer 1'  10
+
+Upstream pegging for demand 'order for item 2' :
+
+	0  -50  2006-01-17T00:00:00  buffer 2  delivery 2  -50
+	1  50  2006-01-17T00:00:00  buffer 2  make 2  50
+	2  -50  2006-01-17T00:00:00  constraint buffer 2  make 2  50
+	3  50  2006-01-17T00:00:00  constraint buffer 2  supply 2  50
+
+	0  -100  2006-01-10T00:00:00  buffer 2  delivery 2  -100
+	1  100  2006-01-10T00:00:00  buffer 2  make 2  100
+	2  -100  2006-01-10T00:00:00  constraint buffer 2  make 2  100
+	3  100  2006-01-10T00:00:00  constraint buffer 2  supply 2  100
+
+	0  -10  2006-01-09T00:00:00  buffer 2  delivery 2  -10
+	1  10  1971-01-01T00:00:00  buffer 2  Inventory of buffer 'buffer 2'  10
+
+Upstream pegging for demand 'order for item 3' :
+
+	0  -190  2006-01-15T00:00:00  buffer 3  delivery 3  -190
+	1  192  2006-01-15T00:00:00  buffer 3  make 3  190
+	2  -192  2006-01-15T00:00:00  constraint buffer 3  make 3  190
+	3  1000  2006-01-15T00:00:00  constraint buffer 3  supply 3  192
+
+	0  -10  2006-01-09T00:00:00  buffer 3  delivery 3  -10
+	1  10  1971-01-01T00:00:00  buffer 3  Inventory of buffer 'buffer 3'  10
+
+Upstream pegging for demand 'order for item 4' :
+
+	0  -190  2006-01-15T00:00:00  buffer 4  delivery 4  -190
+	1  196  2006-01-15T00:00:00  buffer 4  make 4  190
+	2  -196  2006-01-15T00:00:00  constraint buffer 4  make 4  190
+	3  1000  2006-01-15T00:00:00  constraint buffer 4  supply 4  196
+
+	0  -10  2006-01-09T00:00:00  buffer 4  delivery 4  -10
+	1  10  1971-01-01T00:00:00  buffer 4  Inventory of buffer 'buffer 4'  10

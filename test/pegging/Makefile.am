@@ -12,4 +12,3 @@ AM_CPPFLAGS=-I@top_builddir@/include
 
 pegging_SOURCES = main.cpp
 pegging_LDADD   = ../../src/libfrepple.la
-pegging_LDFLAGS = -static

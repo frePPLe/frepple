@@ -127,8 +127,10 @@ using namespace xercesc;
   #else
     #define DECLARE_EXPORT __declspec (dllimport)
   #endif
+  #define MODULE_EXPORT  extern "C" __declspec (dllexport)
 #else
   #define DECLARE_EXPORT
+  #define MODULE_EXPORT extern "C" 
 #endif
 
 

@@ -2,75 +2,20 @@
 <xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'
   elementFormDefault="unqualified" attributeFormDefault="unqualified"
   version="1.0">
-  <!--
-    This file should not be customized. In case you want to customize the schema
-    with your own needs, you should define a new namespace and import the
-    frepple namespace into your schema.
-    Keep in mind that the application always picks up the schema from the file
-    $FREPPLE_HOME/frepple.xsd.
-  -->
-  <!--
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace">
-    <xsd:annotation>
-    <xsd:documentation>
-    The schemaLocation of the relevant file is
-    "http://www.w3.org/2001/xml.xsd"; however,
-    we don't want to assume people are always
-    connected to the 'net when playing with this file.
-    </xsd:documentation>
-    </xsd:annotation>
-    </xsd:import>
-  -->
 
-  <xsd:include schemaLocation="../../bin/frepple_core.xsd" />
+  <!-- Include the standard fields. -->
+  <xsd:include schemaLocation="../../bin/frepple.xsd" />
 
-  <xsd:element name="PLAN">
-    <xsd:annotation>
-      <xsd:documentation>
-        This is the root tag in the data schema.
-      </xsd:documentation>
-    </xsd:annotation>
-    <xsd:complexType>
-       <!-- 
-        Note: Frepple can read XML data where multiple elements of the same name 
-        are present (e.g. 2 ITEMS elements), but the Microsoft Office XML tools
-        can't deal with this.
-        To make the schema more compatible with Bill's world, replace the 
-        construct below with:
-            <xsd:all>
-               <xsd:element ... minOccurs="0">
-               ...
-            </xsd:all>
-        Each element can then be present 0 or 1 time.
-      -->
-      <xsd:choice minOccurs="0" maxOccurs="unbounded">
-
-        <!-- FIELDS -->
-        <xsd:element name="NAME" type="xsd:string" />
-        <xsd:element name="DESCRIPTION" type="xsd:string" />
-        <xsd:element name="CURRENT" type="xsd:dateTime" />
-        <xsd:element name="LOGFILE" type="xsd:string" />
-        <xsd:element name="DEFAULT_CALENDAR" type="CALENDAR" />
-        <xsd:element name="PLANNABLE" type="xsd:boolean" />
-        <xsd:element name="DETECTPROBLEMS" type="xsd:boolean" />
-
-        <!-- OBJECT LISTS -->
-        <xsd:element name="SOLVERS" type="SOLVERLIST" />
-        <xsd:element name="COMMANDS" type="COMMAND_LIST" />
-        <xsd:element name="LOCATIONS" type="LOCATIONLIST" />
-        <xsd:element name="CUSTOMERS" type="CUSTOMERLIST" />
-        <xsd:element name="CALENDARS" type="CALENDARLIST" />
-        <xsd:element name="OPERATIONS" type="OPERATIONLIST" />
-        <xsd:element name="ITEMS" type="ITEMLIST" />
-        <xsd:element name="BUFFERS" type="BUFFERLIST" />
-        <xsd:element name="FLOWS" type="FLOWLIST" />
-        <xsd:element name="DEMANDS" type="DEMANDLIST" />
-        <xsd:element name="RESOURCES" type="RESOURCELIST" />
-        <xsd:element name="OPERATION_PLANS" type="OPERATIONPLANLIST" />
-        <xsd:element name="PROBLEMS" type="PROBLEMLIST" />
-
-      </xsd:choice>
-    </xsd:complexType>
-  </xsd:element>
+  <!-- And now define the new type -->
+  <xsd:complexType name="OPERATION_TRANSPORT">
+    <xsd:complexContent>
+      <xsd:extension base="OPERATION_FIXED_TIME">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="FROM" type="BUFFER" />
+          <xsd:element name="TO" type="BUFFER" />
+        </xsd:choice>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
 
 </xsd:schema>

@@ -51,6 +51,10 @@ namespace module_forecast
 {
 
 
+/** Initialization routine for the library. */
+MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z);
+
+
 /** This class represents a bucketized demand signal.
   * The forecast object defines the item and priority of the demands.
   * A void calendar then defines the buckets. 

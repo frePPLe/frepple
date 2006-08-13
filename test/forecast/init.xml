@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <COMMANDS>
+    <VERBOSE>false</VERBOSE>
+    <ABORTONERROR>false</ABORTONERROR>
+    <COMMAND xsi:type="COMMAND_LOADLIB">
+      <FILENAME>/home/johan/workspace/frepple/modules/forecast/.libs/libforecast.so</FILENAME>
+    </COMMAND>
+  </COMMANDS>
+</PLAN>

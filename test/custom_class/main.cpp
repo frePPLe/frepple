@@ -50,10 +50,9 @@ int main (int argc, char *argv[])
       Object::createString<OperationTransport>);
     FunctorStatic<Buffer, OperationTransport>::connect(SIG_REMOVE);
 
-    // Read input file and execute all its included commands. 
+    // Read input file and execute all its included commands.
     // Yes, hard-coded file name for once...
-    // @todo XML validation should be enabled again
-    FreppleReadXMLFile("custom_class.xml", false, false);
+    FreppleReadXMLFile("custom_class.xml", true, false);
 
     // Finalize
     FreppleExit();
@@ -78,7 +77,7 @@ void OperationTransport::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(tag_from) || pElement.isA(tag_to))
     pIn.readto( Buffer::reader(Buffer::metadata,pIn.getAttributes()) );
-  else 
+  else
     OperationFixedTime::beginElement (pIn, pElement);
 }
 
@@ -96,7 +95,7 @@ void OperationTransport::writeElement
 
   // Write the complete object
   if (m != NOHEADER)
-    o->BeginObject 
+    o->BeginObject
       (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write the fields
@@ -127,20 +126,20 @@ void OperationTransport::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-// This (static) method is called when an operation is being deleted. 
+// This (static) method is called when an operation is being deleted.
 // It loops over all operations, picks up the OperationTransports instances
 // and verifies whether they are referring to the location being deleted.
-// If they refer to the operation being deleted the transport operation 
+// If they refer to the operation being deleted the transport operation
 // is deleted itself: we don't want to transport from or to a non-existing
 // location.
 // Note:
 // The execution time of this method is linear with the number of operations
-// in the model. For large models where locations are very frequently being 
+// in the model. For large models where locations are very frequently being
 // deleted the current design is not very efficient. But since deletions of
 // locations are expected to be rare the current design should do just fine.
 // Note:
-// The use of a static subscription keeps the memory overhead of the cleanup 
-// method to a handfull of bytes, regardless of the model size. 
+// The use of a static subscription keeps the memory overhead of the cleanup
+// method to a handfull of bytes, regardless of the model size.
 bool OperationTransport::callback(Buffer* l, Signal a)
 {
   // Loop over all transport operations
@@ -148,7 +147,7 @@ bool OperationTransport::callback(Buffer* l, Signal a)
     if (typeid(**i) == typeid(OperationTransport))
     {
       OperationTransport *j = static_cast<OperationTransport*>(*i);
-      if (l == j->fromBuf || l == j->toBuf) 
+      if (l == j->fromBuf || l == j->toBuf)
       {
         // Delete the operation, but increment the iterator first!
         Operation::iterator k = i++;
@@ -163,10 +162,10 @@ bool OperationTransport::callback(Buffer* l, Signal a)
 }
 
 
-void OperationTransport::setFromBuffer(Buffer *b) 
+void OperationTransport::setFromBuffer(Buffer *b)
 {
   // Don't update the operation if operationplans already exist
-  if (OperationPlan::iterator(this) != OperationPlan::end()) 
+  if (OperationPlan::iterator(this) != OperationPlan::end())
     throw DataException("Can't update an initialized transport operation");
 
   // Create a flow
@@ -174,10 +173,10 @@ void OperationTransport::setFromBuffer(Buffer *b)
   new Flow(this, b, -1);
 }
 
-void OperationTransport::setToBuffer(Buffer *b) 
+void OperationTransport::setToBuffer(Buffer *b)
 {
   // Don't update the operation if operationplans already exist
-  if (OperationPlan::iterator(this) != OperationPlan::end()) 
+  if (OperationPlan::iterator(this) != OperationPlan::end())
     throw DataException("Can't update an initialized transport operation");
 
   // Create a flow

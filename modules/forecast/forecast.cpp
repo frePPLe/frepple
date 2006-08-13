@@ -34,11 +34,7 @@ namespace module_forecast
 const MetaClass Forecast::metadata;
 
 
-#ifdef WIN32
-extern "C" __declspec (dllexport) void initialize(const CommandLoadLibrary::ParameterList& z)  // @todo make export cleaner
-#else
-extern "C" void initialize(const CommandLoadLibrary::ParameterList& z)
-#endif
+MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
 {
   // Initialize only once
   static bool init = false;

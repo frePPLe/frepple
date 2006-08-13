@@ -199,8 +199,8 @@ void CommandList::execute()
 #else
       // Create a thread for every command list. The main thread will then
       // wait for all of them to finish.
-      HANDLE threads[10];   //@todo  
-      unsigned int m_id[10];
+      HANDLE* threads = new HANDLE[numthreads];
+      unsigned int * m_id = new unsigned int[numthreads];
 
       // Create the command threads
       for (int worker=0; worker<numthreads; ++worker)
@@ -216,6 +216,8 @@ void CommandList::execute()
         {
           ostringstream ch;
           ch << "Can't create thread " << worker << ", error " << errno;
+          delete threads;
+          delete m_id;
           throw RuntimeException(ch.str());
         }
       }
@@ -235,10 +237,14 @@ void CommandList::execute()
           NULL );
         ostringstream ch;
         ch << "Can't join threads: " << error;
+        delete threads;
+        delete m_id;
         throw RuntimeException(ch.str());
       }
       for (int worker=0; worker<numthreads; ++worker)
         CloseHandle(threads[worker]);
+      delete threads;
+      delete m_id;
 #endif 
     }  // End: else if (numthreads>1)
   } 

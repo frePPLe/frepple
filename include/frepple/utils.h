@@ -644,6 +644,7 @@ class MetaCategory;
   */
 class MetaData : public NonCopyable
 {
+  template <class T, class U> friend class FunctorStatic;
   public:
     /** A string specifying the object type, i.e. the subclass within the
       * category. */
@@ -734,7 +735,7 @@ class MetaData : public NonCopyable
     void disconnect(Functor *c, Signal a) const
       {const_cast<MetaData*>(this)->subscribers[a].remove(c);}
 
-  public: // @todo private:
+  private:
     /** This is a list of objects that will receive a callback when the call 
       * method is being used.<br>
       * There is limited error checking in maintaining this list, and it is the 

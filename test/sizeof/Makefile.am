@@ -10,6 +10,6 @@ sizeof_SOURCES = main.cpp
 sizeof_LDADD   = ../../src/libfrepple.la
 sizeof_LDFLAGS = -static
 
-EXTRA_DIST = main.cpp sizeof.expect
+EXTRA_DIST = sizeof.expect
 
 CLEANFILES = output.* *.stackdump core *.gcda *.gcov *.gcno

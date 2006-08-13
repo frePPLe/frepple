@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<NAME>Material constraint test model</NAME>
+	<DESCRIPTION>
+		This model test the buffer solver code in situations where the minimum onhand
+		limit is varying.
+		- 1: Scenario of a constant, non-zero limit.
+		- 2: Same as 1, but now the supply is limited. The inventory target can't be
+		     reached and all supply is used to satisfy demand.
+		- 3: Same as 1, but with minimum target varying DEcreasing over time.
+		- 4: Same as 3, but with minimum target varying INcreasing over time.
+	</DESCRIPTION>
+	<CURRENT>2006-01-01T00:00:00</CURRENT>
+	<COMMANDS>
+	  <VERBOSE>false</VERBOSE>
+	  <COMMAND xsi:type="COMMAND_SOLVE">
+	    <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
+	  </COMMAND>
+	  <COMMAND xsi:type="COMMAND_SAVEPLAN">
+	    <FILENAME>output.1s.xml</FILENAME>
+	  </COMMAND>
+	</COMMANDS>
+	<ITEMS>
+	  <ITEM NAME="item 1">
+	    <OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME">
+	      <DURATION>24:00:00</DURATION>
+	    </OPERATION>
+	  </ITEM>
+	  <ITEM NAME="item 2">
+	    <OPERATION NAME="delivery 2" xsi:type="OPERATION_FIXED_TIME">
+	      <DURATION>24:00:00</DURATION>
+	    </OPERATION>
+	  </ITEM>
+	  <ITEM NAME="item 3">
+	    <OPERATION NAME="delivery 3" xsi:type="OPERATION_FIXED_TIME">
+	      <DURATION>24:00:00</DURATION>
+	    </OPERATION>
+	  </ITEM>
+	  <ITEM NAME="item 4">
+	    <OPERATION NAME="delivery 4" xsi:type="OPERATION_FIXED_TIME">
+	      <DURATION>24:00:00</DURATION>
+	    </OPERATION>
+	  </ITEM>
+	</ITEMS>
+	<BUFFERS>
+	  <BUFFER NAME="buffer 1">
+	    <ITEM NAME="item 1" />
+	    <PRODUCING NAME="make 1" />
+	    <MINIMUM NAME="min inv for buffer 1" xsi:type="CALENDAR_FLOAT">
+	      <BUCKETS>
+	        <BUCKET START="2006-01-01T00:00:00">
+	          <NAME>all</NAME>
+	          <VALUE>4</VALUE>
+	        </BUCKET>
+	      </BUCKETS>
+	    </MINIMUM>
+	    <ONHAND>10</ONHAND>
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 1">
+	    <ITEM NAME="item 1" />
+	  </BUFFER>
+	  <BUFFER NAME="buffer 2">
+	    <ITEM NAME="item 2" />
+	    <PRODUCING NAME="make 2" />
+	    <MINIMUM NAME="min inv for buffer 2" xsi:type="CALENDAR_FLOAT">
+	      <BUCKETS>
+	        <BUCKET START="2006-01-01T00:00:00">
+	          <NAME>all</NAME>
+	          <VALUE>4</VALUE>
+	        </BUCKET>
+	      </BUCKETS>
+	    </MINIMUM>
+	    <ONHAND>10</ONHAND>
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 2">
+	    <ITEM NAME="item 2" />
+	  </BUFFER>
+	  <BUFFER NAME="buffer 3">
+	    <ITEM NAME="item 3" />
+	    <PRODUCING NAME="make 3" />
+	    <MINIMUM NAME="min inv for buffer 3" xsi:type="CALENDAR_FLOAT">
+	      <BUCKETS>
+	        <BUCKET START="2006-01-01T00:00:00">
+	          <VALUE>4</VALUE>
+	        </BUCKET>
+	        <BUCKET START="2006-01-12T00:00:00">
+	          <VALUE>2</VALUE>
+	        </BUCKET>
+	      </BUCKETS>
+	    </MINIMUM>
+	    <ONHAND>10</ONHAND>
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 3">
+	    <ITEM NAME="item 3" />
+	  </BUFFER>
+	  <BUFFER NAME="buffer 4">
+	    <ITEM NAME="item 4" />
+	    <PRODUCING NAME="make 4" />
+	    <MINIMUM NAME="min inv for buffer 4" xsi:type="CALENDAR_FLOAT">
+	      <BUCKETS>
+	        <BUCKET START="2006-01-01T00:00:00">
+	          <VALUE>4</VALUE>
+	        </BUCKET>
+	        <BUCKET START="2006-01-12T00:00:00">
+	          <VALUE>6</VALUE>
+	        </BUCKET>
+	      </BUCKETS>
+	    </MINIMUM>
+	    <ONHAND>10</ONHAND>
+	  </BUFFER>
+	  <BUFFER NAME="constraint buffer 4">
+	    <ITEM NAME="item 4" />
+	  </BUFFER>
+	</BUFFERS>
+	<FLOWS>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 1" />
+	    <BUFFER NAME="constraint buffer 1" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 1" />
+	    <BUFFER NAME="buffer 1" />
+	    <QUANTITY>2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 1" />
+	    <BUFFER NAME="constraint buffer 1" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="delivery 1" />
+	    <BUFFER NAME="buffer 1" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 2" />
+	    <BUFFER NAME="constraint buffer 2" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 2" />
+	    <BUFFER NAME="buffer 2" />
+	    <QUANTITY>2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 2" />
+	    <BUFFER NAME="constraint buffer 2" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="delivery 2" />
+	    <BUFFER NAME="buffer 2" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 3" />
+	    <BUFFER NAME="constraint buffer 3" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 3" />
+	    <BUFFER NAME="buffer 3" />
+	    <QUANTITY>2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 3" />
+	    <BUFFER NAME="constraint buffer 3" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="delivery 3" />
+	    <BUFFER NAME="buffer 3" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="supply 4" />
+	    <BUFFER NAME="constraint buffer 4" />
+	    <QUANTITY>1</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_END">
+	    <OPERATION NAME="make 4" />
+	    <BUFFER NAME="buffer 4" />
+	    <QUANTITY>2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="make 4" />
+	    <BUFFER NAME="constraint buffer 4" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	  <FLOW xsi:type="FLOW_START">
+	    <OPERATION NAME="delivery 4" />
+	    <BUFFER NAME="buffer 4" />
+	    <QUANTITY>-2</QUANTITY>
+	  </FLOW>
+	</FLOWS>
+	<!-- DYNAMIC DATA CASE 1 -->
+	<DEMANDS>
+	  <DEMAND NAME="order for item 1">
+	    <QUANTITY>100</QUANTITY>
+	    <DUE>2006-01-10T00:00:00</DUE>
+	    <ITEM NAME="item 1" />
+	  </DEMAND>
+	</DEMANDS>
+	<OPERATION_PLANS>
+	  <OPERATION_PLAN ID="1001" OPERATION="supply 1">
+	    <START>2006-01-10T00:00:00</START>
+	    <END>2006-01-10T00:00:00</END>
+	    <QUANTITY>100</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="1002" OPERATION="supply 1">
+	    <START>2006-01-17T00:00:00</START>
+	    <END>2006-01-17T00:00:00</END>
+	    <QUANTITY>200</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	</OPERATION_PLANS>
+	<!-- DYNAMIC DATA CASE 2 -->
+	<DEMANDS>
+	  <DEMAND NAME="order for item 2">
+	    <QUANTITY>100</QUANTITY>
+	    <DUE>2006-01-10T00:00:00</DUE>
+	    <ITEM NAME="item 2" />
+	  </DEMAND>
+	</DEMANDS>
+	<OPERATION_PLANS>
+	  <OPERATION_PLAN ID="2001" OPERATION="supply 2">
+	    <START>2006-01-10T00:00:00</START>
+	    <END>2006-01-10T00:00:00</END>
+	    <QUANTITY>100</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="2002" OPERATION="supply 2">
+	    <START>2006-01-17T00:00:00</START>
+	    <END>2006-01-17T00:00:00</END>
+	    <QUANTITY>50</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	</OPERATION_PLANS>
+	<!-- DYNAMIC DATA CASE 3 -->
+	<DEMANDS>
+	  <DEMAND NAME="order for item 3">
+	    <QUANTITY>100</QUANTITY>
+	    <DUE>2006-01-10T00:00:00</DUE>
+	    <ITEM NAME="item 3" />
+	  </DEMAND>
+	</DEMANDS>
+	<OPERATION_PLANS>
+	  <OPERATION_PLAN ID="3001" OPERATION="supply 3">
+	    <START>2006-01-15T00:00:00</START>
+	    <END>2006-01-15T00:00:00</END>
+	    <QUANTITY>1000</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	</OPERATION_PLANS>
+	<!-- DYNAMIC DATA CASE 4 -->
+	<DEMANDS>
+	  <DEMAND NAME="order for item 4">
+	    <QUANTITY>100</QUANTITY>
+	    <DUE>2006-01-10T00:00:00</DUE>
+	    <ITEM NAME="item 4" />
+	  </DEMAND>
+	  <DEMAND NAME="order 2 for item 4">
+	    <QUANTITY>100</QUANTITY>
+	    <DUE>2006-06-19T00:00:00</DUE>
+	    <ITEM NAME="item 4" />
+	  </DEMAND>
+	</DEMANDS>
+	<OPERATION_PLANS>
+	  <OPERATION_PLAN ID="4001" OPERATION="supply 4">
+	    <START>2006-01-15T00:00:00</START>
+	    <END>2006-01-15T00:00:00</END>
+	    <QUANTITY>1000</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	</OPERATION_PLANS>
+</PLAN>

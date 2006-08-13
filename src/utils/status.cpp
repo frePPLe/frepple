@@ -435,7 +435,6 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
     parser->setFeature(XMLUni::fgXercesSchema, validate);
     parser->setFeature(XMLUni::fgXercesSchemaFullChecking, false);
     parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal,true);
-    parser->setInputBufferSize(1024000);  // @todo make this buffer size cfg
 
     if (validate)  // @todo make the schema user definable
     {
@@ -448,8 +447,8 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
         );
       XMLString::release(&c);
       // Preload the schema @todo  
-      // Schema pool is stored on the parser, which we dynamically create and 
-      // destroy! Need a parser pool here!
+      // Xerces stores the grammars on the parser, which we dynamically create and 
+      // destroy. Preloading the schema requires using a parser pool.
       //Grammar *g = 
       //   parser->loadGrammar("plan.xsd", Grammar::SchemaGrammarType, true);
     }

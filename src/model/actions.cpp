@@ -251,8 +251,8 @@ void CommandSavePlan::execute()
 	  {
 	  	if (!(*gbuf)->getHidden())
 		    for(Buffer::flowplanlist::const_iterator 
-		      oo=(*gbuf)->getflowplans().begin();
-		      oo!=(*gbuf)->getflowplans().end(); 
+		      oo=(*gbuf)->getFlowPlans().begin();
+		      oo!=(*gbuf)->getFlowPlans().end(); 
 		      ++oo)
 		      if (oo->getType() == 1)
 		      {

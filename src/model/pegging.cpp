@@ -32,77 +32,210 @@ namespace frepple
 {
 
 
+void PeggingIterator::updateStack(short l, double q, const FlowPlan* fl)
+{
+  if (first)
+  {
+    stack.top().fl = fl;
+    stack.top().qty = q;
+    stack.top().level = l;
+    first = false; 
+  }
+  else
+    stack.push(state(q, l, fl));
+}
+
+
 PeggingIterator& PeggingIterator::operator++() 
 {
-  if (stack.top().fl->getQuantity() > ROUNDING_ERROR)
+  // Validate
+  if (stack.empty()) 
+    throw LogicException("Incrementing the iterator beyond it's end");
+
+  first = true;  // The next element can overwrite the existing stack top
+  state& st = stack.top();
+  short nextlevel = st.level + 1;
+  const FlowPlan *curflowplan = st.fl;
+  if (stack.top().level < 0) 
+  {
+    // Handle unpegged material entries on the stack
+    stack.pop();
+    return *this;
+  }
+  else if (st.fl->getQuantity() > ROUNDING_ERROR)
   {
     // CASE 1:
     // This is a flowplan producing in a buffer. Navigating downstream means
     // finding the flowplans consuming this produced material.
-    //xxx @todo missing implementation
+
+    double peggedQty(0);
+    Buffer::flowplanlist::const_iterator f 
+      = st.fl->getFlow()->getBuffer()->getFlowPlans().begin(st.fl);
+    double endQty = f->getCumulativeProduced();
+    double startQty = endQty - f->getQuantity();
+    if (f->getCumulativeConsumed() <= startQty)
+    {
+      // CASE 1A: Not consumed enough yet: move forward
+      while (f->getCumulativeConsumed() <= startQty) ++f;
+      while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end() 
+             && ( (f->getQuantity()<=0 
+                   && f->getCumulativeConsumed()+f->getQuantity() < endQty)
+               || (f->getQuantity()>0 && f->getCumulativeConsumed() < endQty))
+            )
+      {
+        if (f->getQuantity() < -ROUNDING_ERROR)
+        {
+          double newqty = - f->getQuantity();
+          if (f->getCumulativeConsumed()+f->getQuantity() < startQty)
+            newqty -= startQty - (f->getCumulativeConsumed()+f->getQuantity());
+          if (f->getCumulativeConsumed() > endQty)
+            newqty -= f->getCumulativeConsumed() - endQty;
+          peggedQty += newqty;
+          const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
+          updateStack(nextlevel, newqty, x);
+        }
+        ++f;
+      }
+    }
+    else
+    {
+      // CASE 1B: Consumed too much already: move backward
+      while ( (f->getQuantity()<=0 && f->getCumulativeConsumed()+f->getQuantity() < endQty)
+              || (f->getQuantity()>0 && f->getCumulativeConsumed() < endQty)) --f;
+      while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
+             && f->getCumulativeConsumed() > startQty)
+      {
+        if (f->getQuantity() < -ROUNDING_ERROR)
+        {
+          double newqty = - f->getQuantity();
+          if (f->getCumulativeConsumed()+f->getQuantity() < startQty)
+            newqty -= startQty - (f->getCumulativeConsumed()+f->getQuantity());
+          if (f->getCumulativeConsumed() > endQty)
+            newqty -= f->getCumulativeConsumed() - endQty;
+          peggedQty += newqty;
+          const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
+          updateStack(nextlevel, newqty, x);
+        }
+        --f;
+      }
+    }
+   if (peggedQty < endQty - startQty)
+     // Unpegged material (i.e. material that is produced but never consumed) 
+     // is handled with a special entry on the stack.
+     updateStack(-nextlevel, endQty - startQty - peggedQty, curflowplan);
   }
-  else if (stack.top().fl->getQuantity() < ROUNDING_ERROR)
+  else if (st.fl->getQuantity() < -ROUNDING_ERROR)
   {
     // CASE 2:
     // This is a consuming flowplan. Navigating downstream means taking the 
     // producing flowplans of the owning operationplan(s).
     // @todo handle opplan hierarchies
-    bool first = true;
     for (slist<FlowPlan*>::const_iterator i 
-      = stack.top().fl->getOperationPlan()->getFlowPlans().begin();
-      i != stack.top().fl->getOperationPlan()->getFlowPlans().end();
+      = st.fl->getOperationPlan()->getFlowPlans().begin();
+      i != st.fl->getOperationPlan()->getFlowPlans().end();
       ++i)
       if ((*i)->getQuantity()>0)
-      {
-        if (first)
-        {
-          stack.top().fl = *i;
-          ++(stack.top().level);
-          first = false;
-        }
-        else      
-          stack.push(state(stack.top().cumqty, stack.top().level, *i));
-      }
+        updateStack(nextlevel, st.qty, *i);
   }
+  // No matching flow found
+  if (first) stack.pop();
   return *this;
 }
 
 
 PeggingIterator& PeggingIterator::operator--() 
 {
-  if (stack.top().fl->getQuantity() < ROUNDING_ERROR)
+  // Validate
+  if (stack.empty()) 
+    throw LogicException("Incrementing the iterator beyond it's end");
+
+  first = true;  // The next element can overwrite the existing stack top
+  state& st = stack.top();
+  short nextlevel = st.level + 1;
+  const FlowPlan *curflowplan = st.fl;
+  if (st.level < 0) 
+  {
+    // Handle unconsumed material entries on the stack
+    stack.pop();
+    return *this;
+  }
+  else if (st.fl->getQuantity() < -ROUNDING_ERROR)
   {
     // CASE 3:
     // This is a flowplan consuming from a buffer. Navigating upstream means
     // finding the flowplans producing this consumed material.
-    //xxx @todo missing implementation
+    double peggedQty(0);
+    Buffer::flowplanlist::const_iterator f 
+      = st.fl->getFlow()->getBuffer()->getFlowPlans().begin(st.fl);
+    double endQty = f->getCumulativeConsumed();
+    double startQty = endQty + f->getQuantity();
+    if (f->getCumulativeProduced() <= startQty)
+    {
+      // CASE 3A: Not produced enough yet: move forward
+      while (f->getCumulativeProduced() <= startQty) ++f;
+      while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end() 
+             && ( (f->getQuantity()<=0 && f->getCumulativeProduced() < endQty)
+               || (f->getQuantity()>0 
+                   && f->getCumulativeProduced()-f->getQuantity() < endQty))
+            )
+      {
+        if (f->getQuantity() > ROUNDING_ERROR)
+        {
+          double newqty = f->getQuantity();
+          if (f->getCumulativeProduced()-f->getQuantity() < startQty)
+            newqty -= startQty - (f->getCumulativeProduced()-f->getQuantity());
+          if (f->getCumulativeProduced() > endQty)
+            newqty -= f->getCumulativeProduced() - endQty;
+          peggedQty += newqty;
+          const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
+          updateStack(nextlevel, newqty, x);
+        }
+        ++f;
+      }
+    }
+    else
+    {
+      // CASE 3B: Produced too much already: move backward
+      while ( (f->getQuantity()<=0 && f->getCumulativeProduced() < endQty)
+              || (f->getQuantity()>0 
+                  && f->getCumulativeProduced()-f->getQuantity() < endQty)) --f;
+      while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
+             && f->getCumulativeProduced() > startQty)
+      {
+        if (f->getQuantity() > ROUNDING_ERROR)
+        {
+          double newqty = f->getQuantity();
+          if (f->getCumulativeProduced()-f->getQuantity() < startQty)
+            newqty -= startQty - (f->getCumulativeProduced()-f->getQuantity());
+          if (f->getCumulativeProduced() > endQty)
+            newqty -= f->getCumulativeProduced() - endQty;
+          peggedQty += newqty;
+          const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
+          updateStack(nextlevel, newqty, x);
+        }
+        --f;
+      }
+    }
+    if (peggedQty < endQty - startQty)
+      // Unproduced material (i.e. material that is consumed but never 
+      // produced) is handled with a special entry on the stack.
+      updateStack(-nextlevel, endQty - startQty - peggedQty, curflowplan);
   }
-  else if (stack.top().fl->getQuantity() > ROUNDING_ERROR)
+  else if (st.fl->getQuantity() > ROUNDING_ERROR)
   {
     // CASE 4:
     // This is a producing flowplan. Navigating upstream means taking the 
     // consuming flowplans of the owning operationplan(s).
     // @todo handle opplan hierarchies
-    bool first = true;
     for (slist<FlowPlan*>::const_iterator i 
-      = stack.top().fl->getOperationPlan()->getFlowPlans().begin();
-      i != stack.top().fl->getOperationPlan()->getFlowPlans().end();
+      = st.fl->getOperationPlan()->getFlowPlans().begin();
+      i != st.fl->getOperationPlan()->getFlowPlans().end();
       ++i)
       if ((*i)->getQuantity()<0)
-      {
-        if (first)
-        {
-          // First new flowplan: re-use existing stack top
-          stack.top().fl = *i;
-          ++(stack.top().level);
-          first = false;
-        }
-        else      
-          // Push a new element on the stack
-          stack.push(state(stack.top().cumqty, stack.top().level, *i));
-        // @todo also need to pop from the stack 
-      }
+        updateStack(nextlevel, st.qty, *i);
   }
+  // No matching flow found
+  if (first) stack.pop();
   return *this;
 }
 

@@ -77,14 +77,14 @@ void MRPSolver::solve(Buffer* b, void* v)
   Date extraInventoryDate(Date::infiniteFuture);
   float current_minimum(0.0f);
   float current_maximum(0.0f);
-  for(Buffer::flowplanlist::const_iterator cur=b->getflowplans().begin(); 
+  for(Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin(); 
     ; ++cur)
   {
     // Iterator has now changed to a new date or we have arrived at the end
     // If multiple flows are at the same moment in time, we are not interested
     // in the inventory changes. It gets interesting only when a certain
     // inventory level remains unchanged for a certain time.
-    if ((cur == b->getflowplans().end() || cur->getDate()>currentDate) && prev)
+    if ((cur == b->getFlowPlans().end() || cur->getDate()>currentDate) && prev)
     {
       // Some variables
       Date theDate = prev->getDate();
@@ -153,7 +153,7 @@ void MRPSolver::solve(Buffer* b, void* v)
     // We have reached the end of the flowplans. Breaking out of the loop
     // needs to be done here because in the next statements we are accessing
     // *cur, which isn't valid at the end of the list
-    if (cur == b->getflowplans().end()) break;
+    if (cur == b->getFlowPlans().end()) break;
 
     // The minimum or the maximum have changed
     // Note that these limits can be updated only after the processing of the

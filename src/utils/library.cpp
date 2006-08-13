@@ -117,11 +117,16 @@ void LibraryUtils::initialize()
     Object::createDefault<CSVInput>);
 
   // Query the system for the number of available processors
-#ifdef WIN32
+  // The environment variable NUMBER_OF_PROCESSORS is defined automatically on
+  // windows platforms. On other platforms it'll have to be explicitly set
+  // since there isn't an easy and portable way of querying this system 
+  // information.
   const char *c = getenv("NUMBER_OF_PROCESSORS");
-  int p = atoi(c);
-  Environment::setProcessors(p);
-#endif
+  if (c)
+  {
+    int p = atoi(c);
+    Environment::setProcessors(p);
+  }
 
 #ifdef HAVE_ATEXIT
   atexit(finalize);

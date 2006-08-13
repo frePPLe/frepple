@@ -166,7 +166,7 @@ class Calendar : public HasName<Calendar>, public Object
 
         virtual const MetaData& getType() const
           {return Calendar::metadata;}
-        virtual size_t getSize() const 
+        virtual size_t getSize() const
           {return sizeof(Bucket) + nm.size();}
     };
 
@@ -204,13 +204,13 @@ class Calendar : public HasName<Calendar>, public Object
       */
     Bucket* findBucket(Date d) const;
 
-    /** Returns the index of the bucket where a certain date belongs to. 
-      * A bucket (and bucket index) will always be found. 
+    /** Returns the index of the bucket where a certain date belongs to.
+      * A bucket (and bucket index) will always be found.
       * @see findBucket()
       */
     int findBucketIndex(Date d) const;
 
-    /** Returns the bucket with a certain name. 
+    /** Returns the bucket with a certain name.
       * A NULL pointer is returned in case no bucket can be found with the
       * given name.
       */
@@ -229,7 +229,7 @@ class Calendar : public HasName<Calendar>, public Object
     virtual const MetaData& getType() const {return metadata;}
     static const MetaCategory metadata;
 
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
     {
       size_t i = sizeof(Calendar);
       for (Bucketlist::const_iterator j = buckets.begin(); j!= buckets.end(); ++j)
@@ -293,7 +293,7 @@ template <typename T> class CalendarValue : public Calendar
 
         virtual const MetaData& getType() const
           {return CalendarValue<T>::metadata;}
-        virtual size_t getSize() const 
+        virtual size_t getSize() const
           {return sizeof(typename CalendarValue<T>::BucketValue) + getName().size();}
     };
 
@@ -370,7 +370,7 @@ template <typename T> class CalendarPointer : public Calendar
           if (pElement.isA(Tags::tag_value))
           {
             T *o = dynamic_cast<T*>(pIn.getPreviousObject());
-            if (!o) 
+            if (!o)
               throw LogicException
                 ("Incorrect object type during read operation");
             val = o;
@@ -381,7 +381,7 @@ template <typename T> class CalendarPointer : public Calendar
 
         virtual const MetaData& getType() const
           {return CalendarPointer<T>::metadata;}
-        virtual size_t getSize() const 
+        virtual size_t getSize() const
           {return sizeof(typename CalendarPointer<T>::BucketPointer) + getName().size();}
     };
 
@@ -453,12 +453,12 @@ class CalendarString : public CalendarValue<string>
     CalendarString(const string& n) : CalendarValue<string>(n) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
     {
       size_t i = sizeof(CalendarString);
-      for (Bucketlist::const_iterator j = getBuckets().begin(); 
+      for (Bucketlist::const_iterator j = getBuckets().begin();
         j!= getBuckets().end(); ++j)
-        i += (*j)->getSize() 
+        i += (*j)->getSize()
         + static_cast<CalendarValue<string>::BucketValue*>(*j)->getValue().size();
       return i;
     }
@@ -476,7 +476,7 @@ class CalendarOperation : public CalendarPointer<Operation>
 
 
 /** A problem represents inconsistencies, alerts and warnings in the model.
-  * Problems are maintained internally by the system. They are thus 
+  * Problems are maintained internally by the system. They are thus
   * export-only, meaning that we can't directly import or build problems.
   * This class is the pure virtual base class for all problem types.
   * The usage of the problem objects is based on the following principles:
@@ -486,7 +486,7 @@ class CalendarOperation : public CalendarPointer<Operation>
   *     objects.
   *   - Problem objects are managed in a lazy way, meaning they only are
   *     getting created when the list of problems is requested by the user.
-  *   - Given all the above, Problems are lightweight objects that consume 
+  *   - Given all the above, Problems are lightweight objects that consume
   *     limited memory.
   */
 class Problem : public NonCopyable
@@ -495,12 +495,12 @@ class Problem : public NonCopyable
     class const_iterator;
     friend class const_iterator;
 
-    /** Constructor. 
-      * Note that this method can't manipulate the problem container, since 
+    /** Constructor.
+      * Note that this method can't manipulate the problem container, since
       * the problem objects aren't fully constructed yet.
       * @see addProblem
       */
-    explicit Problem(HasProblems *p) : owner(p) 
+    explicit Problem(HasProblems *p) : owner(p)
       { if (!owner) throw LogicException("Invalid problem creation");}
 
     /** Destructor.
@@ -521,9 +521,9 @@ class Problem : public NonCopyable
       */
     virtual bool isFeasible() = 0;
 
-    /** Returns a float number reflecting the magnitude of the problem. This 
-      * allows us to focus on the significant problems and filter out the 
-      * small ones. 
+    /** Returns a float number reflecting the magnitude of the problem. This
+      * allows us to focus on the significant problems and filter out the
+      * small ones.
       */
     virtual float getWeight() = 0;
 
@@ -531,17 +531,17 @@ class Problem : public NonCopyable
     void endElement(XMLInput& pIn, XMLElement&  pElement) {}
     static void writer(const MetaCategory&, XMLOutput*);
 
-    /** Returns an iterator to the very first problem. The iterator can be 
+    /** Returns an iterator to the very first problem. The iterator can be
       * incremented till it points past the very last problem. */
     static const_iterator begin();
 
     /** Return an iterator to the first problem of this entity. The iterator
       * can be incremented till it points past the last problem of this
       * plannable entity.<br>
-      * The boolean argument specifies whether the problems need to be 
+      * The boolean argument specifies whether the problems need to be
       * recomputed as part of this method.
       */
-    static const_iterator begin(HasProblems*, bool = true); 
+    static const_iterator begin(HasProblems*, bool = true);
 
     /** Return an iterator pointing beyond the last problem. */
     static const const_iterator end();
@@ -553,8 +553,8 @@ class Problem : public NonCopyable
     static void clearProblems();
 
     /** Erases the list of problems linked with a certain plannable object.
-      * If the second parameter is set to true, the problems will be 
-      * recreated when the next problem detection round is triggered. 
+      * If the second parameter is set to true, the problems will be
+      * recreated when the next problem detection round is triggered.
       */
     static void clearProblems(HasProblems* p, bool setchanged = true);
 
@@ -576,19 +576,19 @@ class Problem : public NonCopyable
       * of Problem objects. */
     Problem *nextProblem;
 
-    /** Adds a newly created problem to the problem container. 
-      * This method needs to be called in the constructor of a problem 
+    /** Adds a newly created problem to the problem container.
+      * This method needs to be called in the constructor of a problem
       * subclass. It can't be called from the constructor of the base
-      * Problem class, since the object isn't fully created yet and thus 
+      * Problem class, since the object isn't fully created yet and thus
       * misses the proper information used by the compare method.
       * @see removeProblem
       */
     void addProblem();
 
-    /** Removes a problem from the problem container. 
+    /** Removes a problem from the problem container.
       * This method needs to be called from the destructor of a problem
       * subclass.<br>
-      * Due to the single linked list data structure, this methods' 
+      * Due to the single linked list data structure, this methods'
       * performance is linear with the number of problems of an entity.
       * This is acceptable since we don't expect entities with a huge amount
       * of problems.
@@ -597,15 +597,15 @@ class Problem : public NonCopyable
     void removeProblem();
 
     /** Comparison of 2 problems.
-      * To garantuee that the problems are sorted in a consistent and stable 
+      * To garantuee that the problems are sorted in a consistent and stable
       * way, the following sorting criteria are used (in order of priority):
-      *   1) Entity  
-      *      This sort is to be ensured by the client. This method can't 
+      *   1) Entity
+      *      This sort is to be ensured by the client. This method can't
       *      compare problems of different entities!
       *   2) Type
       *      Each problem type has a hashcode used for sorting.
-      *   3) Start date  
-      * The sorting is expected such that it can be used as a key, i.e. no 
+      *   3) Start date
+      * The sorting is expected such that it can be used as a key, i.e. no
       * two problems of will ever evaluate to be identical.
       */
     bool operator < (const Problem& a) const;
@@ -763,7 +763,7 @@ class CommandSolve : public Command
 
 
 /** This class needs to be implemented by all classes that implement dynamic
-  * behavior in the plan. 
+  * behavior in the plan.
   * The problem detection logic is implemented in the detectProblems() method.
   * For performance reasons, problem detection is "lazy", i.e. problems are
   * computed only when somebody really needs the access to the list of
@@ -962,7 +962,7 @@ class LocationDefault : public Location
     explicit LocationDefault(const string& str) : Location(str) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(LocationDefault) + getName().size() + HasDescription::memsize();}
 };
 
@@ -988,7 +988,7 @@ class CustomerDefault : public Customer
     explicit CustomerDefault(const string& str) : Customer(str) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(CustomerDefault) + getName().size() + HasDescription::memsize();}
 };
 
@@ -1003,7 +1003,7 @@ class Operation : public HasName<Operation>,
     friend class OperationRouting;   // to have access to superoplist
     friend class OperationAlternate; // to have access to superoplist
 
-  protected: 
+  protected:
     /** Constructor. Don't use it directly. */
     explicit Operation(const string& str) : HasName<Operation>(str),
       size_minimum(0.0f), size_multiple(0.0f), hidden(false), opplan(NULL) {}
@@ -1186,7 +1186,10 @@ class Operation : public HasName<Operation>,
     /** Does the operation require serialization or not. */
     bool hidden;
 
-    /** A pointer to the first OperationPlan. */
+    /** A pointer to the first operationplan of this operation.
+      * All operationplans of this operation are stored in a doubly linked
+      * list. The list is sorted in descending id's.
+      */
     OperationPlan* opplan;
 };
 
@@ -1202,10 +1205,10 @@ class OperationPlan
     friend class LoadPlan;
     friend class Demand;
     friend class Operation;
-    friend class OperationPlanAlternate;  
-    friend class OperationPlanRouting;  
-    friend class OperationPlanEffective; 
-    friend class OperationEffective;  
+    friend class OperationPlanAlternate;
+    friend class OperationPlanRouting;
+    friend class OperationPlanEffective;
+    friend class OperationEffective;
 
   public:
     /** This class models an STL-like iterator that allows us to iterate over
@@ -1217,14 +1220,16 @@ class OperationPlan
       public:
         /** Constructor. The iterator will loop only over the operationplans
           * of the operation passed. */
-        iterator(Operation* x) : op(Operation::end()) 
+        iterator(Operation* x) : op(Operation::end())
           {opplan = x ? getFirstOpPlan(x) : NULL;}
 
         /** Constructor. The iterator will loop over all operationplans. */
         iterator() : op(Operation::begin())
         {
-          while (op!=Operation::end() && !getFirstOpPlan(*op)) ++op; 
-          opplan = (op!=Operation::end()) ? getFirstOpPlan(*op) : NULL; 
+          // The while loop is required since the first operation might not
+          // have any operationplans at all
+          while (op!=Operation::end() && !getFirstOpPlan(*op)) ++op;
+          opplan = (op!=Operation::end()) ? getFirstOpPlan(*op) : NULL;
         }
 
         /** Copy constructor. */
@@ -1238,29 +1243,29 @@ class OperationPlan
 
         /** Pre-increment operator which moves the pointer to the next
           * element. */
-        iterator& operator++() 
+        iterator& operator++()
         {
-          opplan = opplan->next; 
+          opplan = opplan->next;
           // Move to a new operation
           if (!opplan && op!=Operation::end())
           {
             do ++op; while (op!=Operation::end() && !getFirstOpPlan(*op));
-            opplan = (op!=Operation::end()) ? getFirstOpPlan(*op) : NULL; 
+            opplan = (op!=Operation::end()) ? getFirstOpPlan(*op) : NULL;
           }
           return *this;
-        } 
+        }
 
         /** Post-increment operator which moves the pointer to the next
           * element. */
         iterator operator++(int)
         {
           iterator tmp(*this);
-          opplan = opplan->next; 
+          opplan = opplan->next;
           // Move to a new operation
           if (!opplan && op!=Operation::end())
           {
             do ++op; while (op!=Operation::end() && !getFirstOpPlan(*op));
-            opplan = (op!=Operation::end()) ? getFirstOpPlan(*op) : NULL; 
+            opplan = (op!=Operation::end()) ? getFirstOpPlan(*op) : NULL;
           }
           return tmp;
         }
@@ -1289,10 +1294,10 @@ class OperationPlan
     static bool empty() {return begin()==end();}
 
     /** Returns the number of operationplans in the system. This method
-      * is linear with the number of operationplans in the model, and should 
+      * is linear with the number of operationplans in the model, and should
       * therefore be used only with care.
       */
-    static unsigned long size() 
+    static unsigned long size()
     {
       unsigned long cnt = 0;
       for (OperationPlan::iterator i = begin(); i != end(); ++i) ++cnt;
@@ -1304,7 +1309,7 @@ class OperationPlan
       * This method is intended to be used to create objects when reading
       * XML input data.
       */
-    static Object* createOperationPlan 
+    static Object* createOperationPlan
       (const MetaCategory&, const Attributes* atts);
 
     /** Destructor. */
@@ -1409,11 +1414,11 @@ class OperationPlan
       */
     OperationPlan* getOwner() const {return owner;}
 
-    /** Returns a pointer to the operationplan owning a set of 
+    /** Returns a pointer to the operationplan owning a set of
       * sub-operationplans. There can be multiple levels of suboperations. */
-    OperationPlan* getTopOwner() const 
+    OperationPlan* getTopOwner() const
     {
-      OperationPlan* o = owner; 
+      OperationPlan* o = owner;
       while (o->owner) o = o->owner;
       return o;
     }
@@ -1447,10 +1452,10 @@ class OperationPlan
 
     /** Initialize the operation_plan. The initialization function should be
       * called when the operation_plan is ready to be 'officially' added. The
-      * initialization performs the following actions: 
+      * initialization performs the following actions:
       * <ol>
       * <li> assign an identifier</li>
-      * <li> create the flow and loadplans if these hadn't been created 
+      * <li> create the flow and loadplans if these hadn't been created
       * before</li>
       * <li> add the operation_plan to the global list of operation_plans</li>
       * <li> create a link with a demand object if this is a delivery
@@ -1476,7 +1481,7 @@ class OperationPlan
       */
     virtual void addSubOperationPlan(OperationPlan* o)
     {
-      throw LogicException("Adding a sub operationplan to " 
+      throw LogicException("Adding a sub operationplan to "
         + oper->getName() + " not supported");
     };
 
@@ -1486,7 +1491,7 @@ class OperationPlan
       */
     virtual void eraseSubOperationPlan(OperationPlan* o)
     {
-      throw LogicException("Removing a sub operationplan from " 
+      throw LogicException("Removing a sub operationplan from "
         + oper->getName() + " not supported");
     };
 
@@ -1514,14 +1519,14 @@ class OperationPlan
     /** Implement the pure virtual function from the HasProblem class. */
     Plannable* getEntity() const {return oper;}
 
-    /** Return the metadata. We return the metadata of the operation class, 
-      * not the one of the operationplan class! 
+    /** Return the metadata. We return the metadata of the operation class,
+      * not the one of the operationplan class!
       */
     const MetaData& getType() const {return getOperation()->getType();}
     static const MetaCategory metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(OperationPlan);}
-    
+
     /** Handles the persistence of operationplan objects. */
     static void writer(const MetaCategory&, XMLOutput*);
 
@@ -1550,7 +1555,7 @@ class OperationPlan
       * own override of the createOperationPlan method.
       * @see Operation::createOperationPlan
       */
-    OperationPlan() : owner(NULL), quantity(0.0), runupdate(false), 
+    OperationPlan() : owner(NULL), quantity(0.0), runupdate(false),
       locked(false), lt(NULL), id(0), oper(NULL), prev(NULL), next(NULL) {}
 
   private:
@@ -1593,13 +1598,13 @@ class OperationPlan
     slist<LoadPlan*> LoadPlans;
 
     /** Pointer to the previous operationplan. Operationplans are chained in
-      * a doubly linked list for each operation. 
-      * @see next 
+      * a doubly linked list for each operation.
+      * @see next
       */
     OperationPlan* prev;
 
     /** Pointer to the next operationplan. Operationplans are chained in
-      * a doubly linked list for each operation. 
+      * a doubly linked list for each operation.
       * @see prev
       */
     OperationPlan* next;
@@ -1617,7 +1622,7 @@ class OperationFixedTime : public Operation
     /** Returns the length of the operation. */
     const TimePeriod getDuration() const {return duration;}
 
-    /** Updates the duration of the operation. Existing operation plans of this 
+    /** Updates the duration of the operation. Existing operation plans of this
       * operation are not automatically refreshed to reflect the change. */
     void setDuration(TimePeriod t) {if (t>=TimePeriod(0L)) duration = t;}
 
@@ -1628,7 +1633,7 @@ class OperationFixedTime : public Operation
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(OperationFixedTime) + getName().size() + HasDescription::memsize();}
 
     /** A operation of this type enforces the following rules on its
@@ -1698,7 +1703,7 @@ class OperationTimePer : public Operation
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(OperationTimePer) + getName().size() + HasDescription::memsize();}
 
   private:
@@ -1770,13 +1775,13 @@ class OperationRouting : public Operation
       * operation.
       * @see Operation::createOperationPlan
       */
-    virtual OperationPlan* createOperationPlan (float q, Date s, Date e, 
-      Demand* l, bool updates_okay = true, OperationPlan* ow = NULL, 
+    virtual OperationPlan* createOperationPlan (float q, Date s, Date e,
+      Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
       unsigned long i = 0, bool makeflowsloads=true) const;
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(OperationRouting) + getName().size() + HasDescription::memsize()
          + steps.size() * 2 * sizeof(Operation*);}
 
@@ -1799,7 +1804,7 @@ class OperationPlanRouting : public OperationPlan
 
     /** Updates the start date of the operation. Slack can be introduced in the
       * routing by this method, i.e. the sub operationplans are only moved if
-      * required to meet the start date. 
+      * required to meet the start date.
       */
     void setStart(Date d);
     virtual void update();
@@ -1808,17 +1813,17 @@ class OperationPlanRouting : public OperationPlan
     void setQuantity(float f, bool roundDown=false);
     void eraseSubOperationPlan(OperationPlan* o);
 
-    /** Initializes the operationplan and all steps in it. 
+    /** Initializes the operationplan and all steps in it.
       * If no step operationplans had been created yet this method will create
-      * them. During this type of creation the end date of the routing 
-      * operationplan is used and step operationplans are created. After the 
-      * step operationplans are created the start date of the routing will be 
+      * them. During this type of creation the end date of the routing
+      * operationplan is used and step operationplans are created. After the
+      * step operationplans are created the start date of the routing will be
       * equal to the start of the first step.
       */
     void initialize();
     void updateProblems();
 
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(OperationPlanRouting) + step_opplans.size() * 2 * sizeof(OperationPlan*);}
 };
 
@@ -1873,13 +1878,13 @@ class OperationAlternate : public Operation
       * operation.
       * @see Operation::createOperationPlan
       */
-    virtual OperationPlan* createOperationPlan (float q, Date s, Date e, 
-      Demand* l, bool updates_okay = true, OperationPlan* ow = NULL, 
+    virtual OperationPlan* createOperationPlan (float q, Date s, Date e,
+      Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
       unsigned long i = 0, bool makeflowsloads=true) const;
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(OperationAlternate) + getName().size() + HasDescription::memsize()
          + alternates.size() * 2 * (sizeof(Operation*)+sizeof(float));}
 
@@ -1893,7 +1898,7 @@ class OperationAlternate : public Operation
     /** List of all alternate operations. The list is sorted with the operation
       * with the highest priority at the start of the list.
       * Note that the list of operations and the list of priorities go hand in
-      * hand: they have an equal number of elements and the order of the 
+      * hand: they have an equal number of elements and the order of the
       * elements is matching in both lists.
       */
     Operationlist alternates;
@@ -1965,7 +1970,7 @@ class OperationEffective : public Operation
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(OperationEffective) + getName().size() + HasDescription::memsize();}
 
     /** This is the factory method which creates all operationplans of the
@@ -2027,11 +2032,11 @@ class OperationPlanEffective : public OperationPlan
 };
 
 
-/** A buffer represents a combination of a item and location. It is the 
+/** A buffer represents a combination of a item and location. It is the
   * entity for keeping modeling inventory.
   * A synonyme is SKU or stock-keeping-unit.
   */
-class Buffer : public HasHierarchy<Buffer>, public HasLevel, 
+class Buffer : public HasHierarchy<Buffer>, public HasLevel,
   public Plannable, public HasDescription
 {
     friend class Flow;
@@ -2042,8 +2047,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     typedef Association<Operation,Buffer,Flow>::ListB flowlist;
 
     /** Constructor. Implicit creation of instances is disallowed. */
-    explicit Buffer(const string& str) : HasHierarchy<Buffer>(str), 
-      hidden(false), producing_operation(NULL), consuming_operation(NULL), 
+    explicit Buffer(const string& str) : HasHierarchy<Buffer>(str),
+      hidden(false), producing_operation(NULL), consuming_operation(NULL),
       loc(NULL), it(NULL), min_cal(NULL), max_cal(NULL) {}
 
     /** Returns the operation that is used to supply extra supply into this
@@ -2118,7 +2123,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
     /** Returns a reference to the list of all flow plans of this buffer. */
-    const flowplanlist& getflowplans() {return flowplans;}
+    const flowplanlist& getFlowPlans() {return flowplans;}
 
     /** Return the flow that is associates a given operation with this
       * buffer. Returns NULL is no such flow exists. */
@@ -2178,7 +2183,7 @@ class BufferDefault : public Buffer
   public:
     explicit BufferDefault(const string& str) : Buffer(str) {}
     virtual const MetaData& getType() const {return metadata;}
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(BufferDefault) + getName().size() + HasDescription::memsize();}
     static const MetaClass metadata;
 };
@@ -2194,7 +2199,7 @@ class BufferInfinite : public Buffer
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     virtual const MetaData& getType() const {return metadata;}
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(BufferInfinite) + getName().size() + HasDescription::memsize();}
     explicit BufferInfinite(const string& c) : Buffer(c)
       {setDetectProblems(false);}
@@ -2212,7 +2217,7 @@ class BufferMinMax : public Buffer
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     virtual const MetaData& getType() const {return metadata;}
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(BufferMinMax) + getName().size() + HasDescription::memsize();}
     explicit BufferMinMax(const string& c) : Buffer(c) {}
     static const MetaClass metadata;
@@ -2232,7 +2237,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     virtual ~Flow();
 
 	  /** Constructor. */
-    explicit Flow(Operation* o, Buffer* b, float q) : quantity(q) 
+    explicit Flow(Operation* o, Buffer* b, float q) : quantity(q)
     {
       setOperation(o);
       setBuffer(b);
@@ -2273,13 +2278,13 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       */
     void setBuffer(Buffer* b) { if (b) setPtrB(b,b->getFlows());}
 
-	  /** A flow is considered hidden when either its buffer or operation 
+	  /** A flow is considered hidden when either its buffer or operation
 	    * are hidden. */
 	  bool getHidden() const
       {return getBuffer()->getHidden() || getOperation()->getHidden();}
 
     /** Returns the date to be used for this flowplan. */
-	  virtual const Date& getFlowplanDate(const OperationPlan* o) const 
+	  virtual const Date& getFlowplanDate(const OperationPlan* o) const
 	    {return o->getDates().getStart();}
 
 	  virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2292,7 +2297,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     static const MetaCategory metadata;
     virtual size_t getSize() const {return sizeof(Flow);}
 
-  protected:    
+  protected:
     /** Default constructor. */
     explicit Flow() : quantity(0.0f) {}
 
@@ -2306,7 +2311,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
 
 /** This class defines a material flow to/from a buffer, linked with an
-  * operation. This subclass represents a flow that is at the start date of 
+  * operation. This subclass represents a flow that is at the start date of
   * the operation.
   */
 class FlowStart : public Flow
@@ -2325,7 +2330,7 @@ class FlowStart : public Flow
 
 
 /** This class defines a material flow to/from a buffer, linked with an
-  * operation. This subclass represents a flow that is at end date of the 
+  * operation. This subclass represents a flow that is at end date of the
   * operation.
   */
 class FlowEnd : public Flow
@@ -2351,9 +2356,9 @@ class FlowEnd : public Flow
 };
 
 
-/** A flowplan represents a planned material flow in or out of a buffer. 
-  * Flowplans are owned by operationplans, which manage a container to store 
-  * them. 
+/** A flowplan represents a planned material flow in or out of a buffer.
+  * Flowplans are owned by operationplans, which manage a container to store
+  * them.
   */
 class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 {
@@ -2383,7 +2388,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     {oper->setQuantity(qty / fl->getQuantity(), b);}
 
     /** Returns the date of the flowplan. */
-	const Date& getDate() const {return fl->getFlowplanDate(oper);} 
+	const Date& getDate() const {return fl->getFlowplanDate(oper);}
 
 	void update();
 
@@ -2408,7 +2413,7 @@ class Resource : public HasHierarchy<Resource>,
 
   public:
     /** Constructor. */
-    explicit Resource(const string& str) : HasHierarchy<Resource>(str), 
+    explicit Resource(const string& str) : HasHierarchy<Resource>(str),
       max_cal(NULL), loc(NULL), hidden(false) {};
 
     /** Destructor. */
@@ -2486,7 +2491,7 @@ class ResourceDefault : public Resource
     explicit ResourceDefault(const string& str) : Resource(str) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(ResourceDefault) + getName().size() + HasDescription::memsize();}
 };
 
@@ -2502,13 +2507,13 @@ class ResourceInfinite : public Resource
     explicit ResourceInfinite(const string& c) : Resource(c)
       {setDetectProblems(false);}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(ResourceInfinite) + getName().size() + HasDescription::memsize();}
 };
 
 
 /** This class links a resource to a certain operation. */
-class Load 
+class Load
   : public Object, public Association<Operation,Resource,Load>::Node,
     public Solvable
 {
@@ -2531,25 +2536,25 @@ class Load
     /** Returns the operation consuming the resource capacity. */
     Operation* getOperation() const {return getPtrA();}
 
-    /** Updates the operation being loaded. This method can only be called 
+    /** Updates the operation being loaded. This method can only be called
       * once for a load. */
     void setOperation(Operation* o) {if (o) setPtrA(o,o->getLoads());}
 
     /** Returns the capacity resource being consumed. */
     Resource* getResource() const {return getPtrB();}
 
-    /** Updates the capacity being consumed. This method can only be called 
+    /** Updates the capacity being consumed. This method can only be called
       * once on a resource. */
     void setResource(Resource* r) {if (r) setPtrB(r,r->getLoads());}
 
-    /** Returns how much capacity is consumed during the duration of the 
+    /** Returns how much capacity is consumed during the duration of the
       * operationplan. */
     float getUsageFactor() const {return usage;}
 
-    /** Updates the usage factor of the load. 
+    /** Updates the usage factor of the load.
       * @exception DataException When a negative number is passed.
       */
-    void setUsageFactor(float f) 
+    void setUsageFactor(float f)
     {
       if (usage < 0) throw DataException("Load usage can't be negative");
       usage = f;
@@ -2577,21 +2582,21 @@ class Load
       */
     void validate(Action action);
 
-    /** Stores how much capacity is consumed during the duration of an 
+    /** Stores how much capacity is consumed during the duration of an
       * operationplan. */
     float usage;
 };
 
 
-/** An item defines the products being planned, sold, stored and/or 
-  * manufactured. Buffers and demands have a reference an item. 
+/** An item defines the products being planned, sold, stored and/or
+  * manufactured. Buffers and demands have a reference an item.
   */
 class Item
   : public HasHierarchy<Item>, public HasDescription, public Object
 {
   public:
     /** Constructor. Don't use this directly! */
-    explicit Item(const string& str) 
+    explicit Item(const string& str)
       : HasHierarchy<Item> (str), deliveryOperation(NULL) {}
 
     /** Returns the delivery operation. */
@@ -2625,7 +2630,7 @@ class ItemDefault : public Item
     explicit ItemDefault(const string& str) : Item(str) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(ItemDefault) + getName().size() + HasDescription::memsize();}
 };
 
@@ -2669,9 +2674,9 @@ class Plan : public Plannable
     Plan() : cur_Date(Date::now()), def_Calendar(NULL) {}
 
   public:
-    /** Return a pointer to the singleton plan object. 
-      * The singleton object is created during the initialization of the 
-      * library. 
+    /** Return a pointer to the singleton plan object.
+      * The singleton object is created during the initialization of the
+      * library.
       */
     static Plan& instance() {return *thePlan;}
 
@@ -2736,7 +2741,7 @@ class Plan : public Plannable
 
     const MetaData& getType() const {return metadata;}
     static const MetaCategory metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(Plan) + name.size() + descr.size() + logfilename.size();}
 };
 
@@ -2790,7 +2795,7 @@ class CommandReadXMLFile : public Command
     }
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(CommandReadXMLFile) + filename.size();}
 
   private:
@@ -2820,7 +2825,7 @@ class CommandReadXMLString : public Command
       : data(s), validate(v), validate_only(o) {};
 
     /** Default constructor. */
-    CommandReadXMLString(const bool v=true, const bool o=false) 
+    CommandReadXMLString(const bool v=true, const bool o=false)
       : validate(v), validate_only(o) {};
 
     /** Updates the data string. */
@@ -2848,7 +2853,7 @@ class CommandReadXMLString : public Command
     string getDescription() const {return "parsing xml input string";}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(CommandReadXMLString) + data.size();}
 
   private:
@@ -2889,7 +2894,7 @@ class CommandSave : public Command
       {return "saving the complete model into file '" + filename + "'";}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(CommandSave) + filename.size();}
   private:
     string filename;
@@ -2924,7 +2929,7 @@ class CommandSavePlan : public CommandSave
   * of your frepple model.<br>
   * The numbers reported by this function won't match the memory size as
   * reported by the OS the dynamically allocated memory is only a part of
-  * the total memory used by a program.<br> 
+  * the total memory used by a program.<br>
   */
 class CommandPlanSize : public Command
 {
@@ -2943,13 +2948,13 @@ class CommandPlanSize : public Command
 /** This command deletes part of the model or the plan from memory.
   * The class allows the following modes to control what to delete:
   *  - plan:<br>
-  *    Deletes the dynamic modelling constructs, such as operationplans, 
-  *    loadplans and flowplans only. Locked operationplans are not 
+  *    Deletes the dynamic modelling constructs, such as operationplans,
+  *    loadplans and flowplans only. Locked operationplans are not
   *    deleted.<br>
   *    The static model is left intact.<br>
   *    This is the default mode.
   *  - model:<br>
-  *    The dynamic as well as the static objects are removed. You'll end 
+  *    The dynamic as well as the static objects are removed. You'll end
   *    up with a completely empty model.
   *    Due to the logic required in the object destructors this mode doesn't
   *    scale linear with the model size.
@@ -2976,7 +2981,7 @@ class CommandErase : public Command
 };
 
 
-/** Represents the (independent) demand in the system. 
+/** Represents the (independent) demand in the system.
   * It can represent a customer order or a forecast.
   */
 class Demand
@@ -3200,7 +3205,7 @@ class DemandDefault : public Demand
     explicit DemandDefault(const string& str) : Demand(str) {}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(DemandDefault) + getName().size() + HasDescription::memsize();}
 };
 
@@ -3220,9 +3225,9 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       * two loadplan objects.
       */
     explicit LoadPlan(OperationPlan*, Load*);
-    const Date & getDate() const 
+    const Date & getDate() const
     {
-      if(start_or_end == START) return oper->getDates().getStart(); 
+      if(start_or_end == START) return oper->getDates().getStart();
       else return oper->getDates().getEnd();
     }
     OperationPlan* getOperationPlan() const {return oper;}
@@ -3230,7 +3235,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     bool isStart() {return start_or_end == START;}
     virtual ~LoadPlan()
     {
-      ld->getResource()->setChanged(); 
+      ld->getResource()->setChanged();
       ld->getResource()->loadplans.erase(this);
     }
     void update();
@@ -3278,7 +3283,7 @@ class ProblemBeforeCurrent : public Problem
     bool isFeasible() {return false;}
     float getWeight()
     {return dynamic_cast<OperationPlan*>(getOwner())->getQuantity();}
-    explicit ProblemBeforeCurrent(OperationPlan* o) : Problem(o) 
+    explicit ProblemBeforeCurrent(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemBeforeCurrent() {removeProblem();}
     const DateRange getDateRange() const
@@ -3311,14 +3316,14 @@ class ProblemBeforeFence : public Problem
     string getDescription() const
     {
       ostringstream ch;
-      ch << "Job '" << static_cast<OperationPlan*>(getOwner())->getIdentifier() 
+      ch << "Job '" << static_cast<OperationPlan*>(getOwner())->getIdentifier()
         << "' planned before fence";
       return ch.str();
     }
     bool isFeasible() {return true;}
     float getWeight()
     {return static_cast<OperationPlan*>(getOwner())->getQuantity();}
-    explicit ProblemBeforeFence(OperationPlan* o) : Problem(o) 
+    explicit ProblemBeforeFence(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemBeforeFence() {removeProblem();}
     const DateRange getDateRange() const
@@ -3386,13 +3391,13 @@ class ProblemPrecedence : public Problem
 class ProblemDemandNotPlanned : public Problem
 {
   public:
-    string getDescription() const 
+    string getDescription() const
     {return string("Demand '") + getDemand()->getName() + "' is not planned";}
     bool isFeasible() {return false;}
     float getWeight() {return getDemand()->getQuantity();}
     explicit ProblemDemandNotPlanned(Demand* d) : Problem(d) {addProblem();}
     ~ProblemDemandNotPlanned() {removeProblem();}
-    const DateRange getDateRange() const 
+    const DateRange getDateRange() const
       {return DateRange(getDemand()->getDue(),getDemand()->getDue());}
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
 
@@ -3457,7 +3462,7 @@ class ProblemEarly : public Problem
 };
 
 
-/** A problem of this class is created when a demand is planned for less than 
+/** A problem of this class is created when a demand is planned for less than
   * the requested quantity.
   */
 class ProblemShort : public Problem
@@ -3472,7 +3477,7 @@ class ProblemShort : public Problem
       return ch.str();
     }
     bool isFeasible() {return true;}
-    float getWeight() 
+    float getWeight()
       {return getDemand()->getQuantity() - getDemand()->getPlannedQuantity();}
     explicit ProblemShort(Demand* d) : Problem(d) {addProblem();}
     ~ProblemShort() {removeProblem();}
@@ -3503,7 +3508,7 @@ class ProblemExcess : public Problem
       return ch.str();
     }
     bool isFeasible() {return true;}
-    float getWeight() 
+    float getWeight()
       {return getDemand()->getPlannedQuantity() - getDemand()->getQuantity();}
     explicit ProblemExcess(Demand* d) : Problem(d) {addProblem();}
     ~ProblemExcess() {removeProblem();}
@@ -3525,11 +3530,11 @@ class ProblemExcess : public Problem
 class ProblemPlannedLate : public Problem
 {
   public:
-    string getDescription() const 
+    string getDescription() const
       {return "Operationplan planned after its lpst date";}
     bool isFeasible() {return false;}
     float getWeight() {return 1.0f;}
-    explicit ProblemPlannedLate(OperationPlan* o) : Problem(o) 
+    explicit ProblemPlannedLate(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemPlannedLate() {removeProblem();}
     const DateRange getDateRange() const
@@ -3567,7 +3572,7 @@ class ProblemPlannedEarly : public Problem
       {return "Operationplan planned before its epst date";}
     bool isFeasible() {return false;}
     float getWeight() {return 1.0f;}
-    explicit ProblemPlannedEarly(OperationPlan* o) : Problem(o) 
+    explicit ProblemPlannedEarly(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemPlannedEarly() {removeProblem();}
     const DateRange getDateRange() const
@@ -3664,8 +3669,8 @@ class ProblemMaterialShortage : public Problem
     string getDescription() const;
     bool isFeasible() {return false;}
     float getWeight() {return 1.0f;}
-    ProblemMaterialShortage(Buffer* b, DateRange d, float q)
-      : Problem(b), qty(q), dr(d) {addProblem();}
+    ProblemMaterialShortage(Buffer* b, Date st, Date nd, float q)
+      : Problem(b), qty(q), dr(st,nd) {addProblem();}
     ~ProblemMaterialShortage() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}
@@ -3694,8 +3699,8 @@ class ProblemMaterialExcess : public Problem
     string getDescription() const;
     bool isFeasible() {return true;}
     float getWeight() {return 1.0f;}
-    ProblemMaterialExcess(Buffer* b, DateRange d, float q)
-      : Problem(b), qty(q), dr(d) {addProblem();}
+    ProblemMaterialExcess(Buffer* b, Date st, Date nd, float q)
+      : Problem(b), qty(q), dr(st,nd) {addProblem();}
       ~ProblemMaterialExcess() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}
@@ -3724,19 +3729,19 @@ class CommandCreateOperationPlan : public Command
 {
   public:
     CommandCreateOperationPlan
-      (Operation* o, float q, Date d1, Date d2, Demand* l, 
+      (Operation* o, float q, Date d1, Date d2, Demand* l,
       OperationPlan* ow=NULL, bool makeflowsloads=true)
     {
-      opplan = o ? 
-        o->createOperationPlan(q, d1, d2, l, true, ow, 0, makeflowsloads) 
+      opplan = o ?
+        o->createOperationPlan(q, d1, d2, l, true, ow, 0, makeflowsloads)
         : NULL;
     }
     void execute()
     {
-      if (opplan) 
+      if (opplan)
       {
-        opplan->setAllowUpdates(true); 
-        opplan->initialize();  
+        opplan->setAllowUpdates(true);
+        opplan->initialize();
         opplan=NULL;
       }
     }
@@ -3777,7 +3782,7 @@ class CommandMoveOperationPlan : public Command
       */
     CommandMoveOperationPlan
       (OperationPlan* opplanptr, Date newDate, bool startOrEnd=true);
-    void execute() 
+    void execute()
       {if (!opplan) return; opplan->setAllowUpdates(true); opplan=NULL;}
     void undo();
     bool undoable() const {return true;}
@@ -3808,18 +3813,18 @@ class CommandMoveOperationPlan : public Command
 /** This class models a iterator that walks over all available HasProblem
   * entities.
   * This list is containing hard-coding the classes that are implementing
-  * this class. It's not ideal, but we don't have an explicit container 
+  * this class. It's not ideal, but we don't have an explicit container
   * of the objects (and we don't want one either) and this allows us also
   * to re-use the sorting used for the container classes.
   */
 class HasProblems::EntityIterator
 {
   private:
-    /** This union contains iterators through the different entity types. 
+    /** This union contains iterators through the different entity types.
       * Only one of the different iterators will be active at a time, and
       * can thus save memory by collapsing the iterators into a single
       * union. */
-    union 
+    union
     {
       Buffer::iterator *bufIter;
       Resource::iterator *resIter;
@@ -3827,8 +3832,8 @@ class HasProblems::EntityIterator
       Demand::iterator *demIter;
     };
 
-    /** This type indicates which type of entity we are currently recursing 
-      * through. 
+    /** This type indicates which type of entity we are currently recursing
+      * through.
       *  - 0: buffers
       *  - 1: resources
       *  - 2: operationplans
@@ -3837,11 +3842,11 @@ class HasProblems::EntityIterator
     unsigned short type;
 
   public:
-    /** Default constructor, which creates an iterator to the first 
+    /** Default constructor, which creates an iterator to the first
       * HasProblems object. */
     explicit EntityIterator();
 
-    /** Used to create an iterator pointing beyond the last HasProblems 
+    /** Used to create an iterator pointing beyond the last HasProblems
       * object. */
     explicit EntityIterator(unsigned short i) : type(i) {}
 
@@ -3875,20 +3880,20 @@ class Problem::const_iterator
     HasProblems* owner;
     HasProblems::EntityIterator eiter;
 
-    /** Creates an iterator that will loop through the problems of a 
+    /** Creates an iterator that will loop through the problems of a
       * single entity only. <BR>
       * This constructor is also used to create a end-iterator, when passed
       * a NULL pointer as argument.
       */
-    explicit const_iterator(HasProblems* o) : iter(o ? o->firstProblem : NULL), 
+    explicit const_iterator(HasProblems* o) : iter(o ? o->firstProblem : NULL),
       owner(o), eiter(4) {}
 
-    /** Creates an iterator that will loop through the problems of all 
+    /** Creates an iterator that will loop through the problems of all
       * entities. */
-    explicit const_iterator() : owner(NULL) 
+    explicit const_iterator() : owner(NULL)
     {
       // Loop till we find an entity with a problem
-      while (eiter!=HasProblems::endEntity() && !(eiter->firstProblem)) 
+      while (eiter!=HasProblems::endEntity() && !(eiter->firstProblem))
         ++eiter;
       // Found a first problem, or no problem at all
       iter = (eiter!=HasProblems::endEntity()) ? eiter->firstProblem : NULL;
@@ -3904,7 +3909,7 @@ class Problem::const_iterator
 
 
 /** This class allows upstream and downstream navigation through the plan.<br>
-  * Downstream navigation follows the material stream from raw materials 
+  * Downstream navigation follows the material stream from raw materials
   * towards the end item demand.<br>
   * Upstream navigation traces back the material flow from the end item till
   * the raw materials.<br>
@@ -3914,56 +3919,80 @@ class PeggingIterator
 {
   public:
     /** Constructor. */
-    PeggingIterator(FlowPlan* e, bool b = true) : depth_then_width(b) 
+    PeggingIterator(const FlowPlan* e, bool b = true) : depth_then_width(b)
       { if (e) stack.push(state(e->getQuantity(),0,e)); }
     const FlowPlan& operator*() const {return *(stack.top().fl);}
     const FlowPlan* operator->() const {return stack.top().fl;}
+    short getLevel() const {return stack.top().level;}
+    double getQuantity() const {return stack.top().qty;}
     /** Move the iterator foward to the next downstream flowplan. */
-    PeggingIterator& operator++(); 
+    PeggingIterator& operator++();
     /** Move the iterator foward to the next downstream flowplan.<br>
       * This post-increment operator is less efficient than the pre-increment
       * operator.
       */
-    PeggingIterator operator++(int) 
+    PeggingIterator operator++(int)
       {PeggingIterator tmp = *this; ++*this; return tmp;}
+
     /** Move the iterator foward to the next upstream flowplan. */
     PeggingIterator& operator--();
+
     /** Move the iterator foward to the next upstream flowplan.<br>
       * This post-increment operator is less efficient than the pre-decrement
       * operator.
       */
-    PeggingIterator operator--(int) 
+    PeggingIterator operator--(int)
       {PeggingIterator tmp = *this; --*this; return tmp;}
+
     /** Comparison operator. */
     bool operator==(const PeggingIterator& x) const {return stack == x.stack;}
+
     /** Inequality operator. */
     bool operator!=(const PeggingIterator& x) const {return stack != x.stack;}
 
+    /** Conversion operator to a boolean value.
+      * The return value is true when the iterator still has next elements to
+      * explore. Returns false when the iteration is finished.
+      */
+    operator bool () const { return !stack.empty(); }
+
   private:
+    /** This structure is used to keep track of the iterator states during the
+      * iteration. */
     struct state
     {
-      double cumqty;
-      unsigned int level;
-      FlowPlan* fl;
-      state(double d, unsigned int l, FlowPlan* f) 
-        : cumqty(d), level(l), fl(f) {}; 
-      bool operator != (const state& s) const 
+      double qty;
+      short level;
+      const FlowPlan* fl;
+      state(double d, unsigned int l, const FlowPlan* f)
+        : qty(d), level(l), fl(f) {};
+      bool operator != (const state& s) const
         {return fl!=s.fl || level!=s.level;}
-      bool operator == (const state& s) const 
+      bool operator == (const state& s) const
         {return fl==s.fl && level==s.level;}
     };
 
     /** A stack is used to store the iterator state. */
     stack < state > stack;
 
+    /** Update the stack. */
+    void updateStack(short, double, const FlowPlan*);
+
     /** In case there are multiple paths, we can either:
       *  - follow one path complete to its end and then follow the others.
       *    This is called depth-first" and is the default behavior.
-      *  - iterate through each alternative and only then follow each path 
-      *    further. This is called "width-first". It is a slightly less 
+      *  - iterate through each alternative and only then follow each path
+      *    further. This is called "width-first". It is a slightly less
       *    efficient way to navigate the pegging structures.
-      */ 
+      * The second method is currently NOT implemented yet!
+      */
     bool depth_then_width;
+
+    /** Convenience variable during stack updates. 
+      * Depending on the value of this field, either the top element in the 
+      * stack is updated or a new state is pushed on the stack.
+      */
+    bool first;
 };
 
 

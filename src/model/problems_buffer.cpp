@@ -81,8 +81,8 @@ void Buffer::updateProblems()
       {
         // New problem now ends
         if (f->getDate() != shortageProblemStart)
-          new ProblemMaterialShortage(this, 
-            DateRange(shortageProblemStart, f->getDate()), -shortageQty);
+          new ProblemMaterialShortage
+            (this, shortageProblemStart, f->getDate(), -shortageQty);
         shortageProblem = false;
       }
     }
@@ -111,8 +111,8 @@ void Buffer::updateProblems()
         // New excess qty
         // New problem now ends
         if (f->getDate() != excessProblemStart)
-          new ProblemMaterialExcess(this, 
-            DateRange(excessProblemStart, f->getDate()), excessQty);
+          new ProblemMaterialExcess
+            (this, excessProblemStart, f->getDate(), excessQty);
         excessProblem = false;
       }
     }
@@ -121,14 +121,13 @@ void Buffer::updateProblems()
 
   // The excess lasts till the end of the horizon...
   if (excessProblem)
-    // @todo contstructor creates temporary Daterange object - avoid it!
-    new ProblemMaterialExcess(this, 
-      DateRange(excessProblemStart, Date::infiniteFuture), excessQty);
+    new ProblemMaterialExcess
+      (this, excessProblemStart, Date::infiniteFuture, excessQty);
 
   // The shortage lasts till the end of the horizon...
   if (shortageProblem)
-    new ProblemMaterialShortage(this, 
-      DateRange(shortageProblemStart, Date::infiniteFuture), -shortageQty);
+    new ProblemMaterialShortage
+      (this, shortageProblemStart, Date::infiniteFuture, -shortageQty);
 }
 
 

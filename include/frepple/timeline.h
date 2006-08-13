@@ -150,17 +150,17 @@ template <class type> class TimeLine
         virtual unsigned short getType() const {return 4;}
     };
     /** This is bi-directional iterator through the timeline. It looks a bit
-      * STL-compliant, but this is only by superficially. The class doesn't meet
+      * STL-compliant, but this is only superficially. The class doesn't meet
       * all requirements for a full STL-compliant iterator.
       * @todo Make the timeline iterators fully STL compliant.
       */
     class const_iterator
     {
       protected:
-        Event* cur;
+        const Event* cur;
       public:
         const_iterator() {}
-        const_iterator(Event* e) : cur(e) {};
+        const_iterator(const Event* e) : cur(e) {};
         const_iterator(const iterator& c) : cur(c.cur) {}
         const Event& operator*() const {return *cur;}
         const Event* operator->() const {return cur;}
@@ -178,8 +178,8 @@ template <class type> class TimeLine
       public:
         iterator() {}
         iterator(Event* e) : const_iterator(e) {};
-        Event& operator*() const {return *(this->cur);}
-        Event* operator->() const {return this->cur;}
+        Event& operator*() const {return *const_cast<Event*>(this->cur);}
+        Event* operator->() const {return const_cast<Event*>(this->cur);}
         iterator& operator++() {this->cur = this->cur->next; return *this;}
         iterator operator++(int) {iterator tmp = *this; ++*this; return tmp;}
         iterator& operator--() {this->cur = this->cur->prev; return *this; }
@@ -199,6 +199,7 @@ template <class type> class TimeLine
     iterator rbegin() {return iterator(last);}
     iterator end() {return iterator(NULL);}
     const_iterator begin() const {return const_iterator(first);}
+    const_iterator begin(const Event* e) const {return const_iterator(e);}
     const_iterator rbegin() const {return const_iterator(last);}
     const_iterator end() const {return const_iterator(NULL);}
     bool empty() const {return first==NULL;}

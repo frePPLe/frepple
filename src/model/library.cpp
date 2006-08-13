@@ -366,35 +366,22 @@ void LibraryModel::initialize()
 }
 
 
-/* The following constants are used to compute an estimate of the memory
+/* This constant is used to compute an estimate of the memory
  * consumption of the model.  The estimate is only an approximation.
  * These may vary on your platform and on the STL implementation used.
- * - OVERHEADEXEC:
- *   Memory size of the executable in memory.
- *   Estimate it to be about equal of the executable size on your hard disk.
- * - OVERHEADLISTNODE:
+ * - OVERHEADLISTNODE:     @todo remove 
  *   Memory overhead to link an object in a STL linked list.
  *   Estimate it to be 1 pointer if your STL implementation supports singly
  *   linked lists (which are a non-standard extension). If you STL
  *   implementation only implements the standard list, estimate the overhead
  *   to be 2 pointers.
- * - OVERHEADTREENODE:
- *   Memory overhead to link an object in an STL tree structure, i.e. map, set,
- *   multiset and multimap, etc...
- *   If your STL implementation uses an RB tree, estimate this overhead to be
- *   3 pointers and a short: pointers to the left, right and owner nodes and
- *   a short to specify the color.
- * - AVERAGESTRINGLENGTH:
- *   Average length of the strings used in your model.
  */
-#define OVERHEADLISTNODE    4
-#define OVERHEADTREENODE    20
+#define OVERHEADLISTNODE    4 
 
 
-/** @todo avoid any class-specific internal knowledge from this method. */
 void CommandPlanSize::execute()
 {
-  size_t count, total(0), memsize;
+  size_t count, memsize;
 
   // Intro
   clog << "MEMORY USAGE:" << endl;
@@ -402,60 +389,55 @@ void CommandPlanSize::execute()
   clog << "-----        \t------\t------" << endl;
 
   // Plan
-  total += sizeof(Plan);
-  clog << "Plan         \t1\t"<< sizeof(Plan) << endl;
+  size_t total = Plan::instance().getSize();
+  clog << "Plan         \t1\t"<< Plan::instance().getSize() << endl;
 
   // Locations
   memsize = 0;
-  for (Location::iterator loc = Location::begin();
-       loc != Location::end(); ++loc)
-    memsize += (*loc)->getSize();
+  for (Location::iterator l = Location::begin(); l != Location::end(); ++l)
+    memsize += (*l)->getSize();
   clog << "Location     \t" << Location::size() << "\t" << memsize << endl;
   total += memsize;
 
   // Customers
   memsize = 0;
-  for (Customer::iterator cust = Customer::begin();
-       cust != Customer::end(); ++cust)
-    memsize += (*cust)->getSize();
+  for (Customer::iterator c = Customer::begin(); c != Customer::end(); ++c)
+    memsize += (*c)->getSize();
   clog << "Customer     \t" << Customer::size() << "\t" << memsize << endl;
   total += memsize;
 
   // Buffers
   memsize = 0;
-  for (Buffer::iterator buf = Buffer::begin();
-       buf != Buffer::end(); ++buf)
-    memsize += (*buf)->getSize();
+  for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
+    memsize += (*b)->getSize();
   clog << "Buffer       \t" << Buffer::size() << "\t" << memsize << endl;
   total += memsize;
 
   // Resources
   memsize = 0;
-  for (Resource::iterator res = Resource::begin();
-       res != Resource::end(); ++res)
-    memsize += (*res)->getSize();
+  for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
+    memsize += (*r)->getSize();
   clog << "Resource     \t" << Resource::size() << "\t" << memsize << endl;
   total += memsize;
 
   // Operations
   size_t countFlows(0), countLoads(0);
   memsize = 0;
-  for (Operation::iterator oper = Operation::begin();
-       oper != Operation::end(); ++oper)
+  for (Operation::iterator o = Operation::begin(); o != Operation::end(); ++o)
   {
-    memsize += (*oper)->getSize();;
-    countFlows += (*oper)->getFlows().size();
-    countLoads += (*oper)->getLoads().size();
+    memsize += (*o)->getSize();;
+    countFlows += (*o)->getFlows().size();
+    countLoads += (*o)->getLoads().size();
   }
   clog << "Operation    \t" << Operation::size() << "\t" << memsize << endl;
   total += memsize;
 
-  // Flows
+  // Flows  @todo size estimate not accurate
   memsize = countFlows * (sizeof(Flow)+2*OVERHEADLISTNODE);
   total += memsize;
   clog << "Flow         \t" << countFlows << "\t" << memsize  << endl;
 
-  // Loads
+  // Loads  @todo size estimate not accurate
   memsize = countLoads * (sizeof(Load)+2*OVERHEADLISTNODE);
   total += memsize;
   clog << "Load         \t" << countLoads << "\t" << memsize  << endl;
@@ -463,23 +445,21 @@ void CommandPlanSize::execute()
   // Calendars
   memsize = 0;
   size_t countBuckets(0), countBucketMem(0);
-  for (Calendar::iterator cal = Calendar::begin();
-       cal != Calendar::end(); ++cal)
-    memsize += (*cal)->getSize();
+  for (Calendar::iterator cl = Calendar::begin(); cl != Calendar::end(); ++cl)
+    memsize += (*cl)->getSize();
   clog << "Calendar     \t" << Calendar::size() << "\t" << memsize  << endl;
   total += memsize;
 
   // Items
   memsize = 0;
-  for (Item::iterator it = Item::begin(); it != Item::end(); ++it)
-    memsize += (*it)->getSize();
+  for (Item::iterator i = Item::begin(); i != Item::end(); ++i)
+    memsize += (*i)->getSize();
   clog << "Item         \t" << Item::size() << "\t" << memsize  << endl;
   total += memsize;
 
   // Demands
   memsize = 0;
-  for (Demand::iterator dm = Demand::begin();
-       dm != Demand::end(); ++dm)
+  for (Demand::iterator dm = Demand::begin(); dm != Demand::end(); ++dm)
     memsize += (*dm)->getSize();
   clog << "Demand       \t" << Demand::size() << "\t" << memsize  << endl;
   total += memsize;
@@ -487,30 +467,29 @@ void CommandPlanSize::execute()
   // Operation_plans
   size_t countloadplans(0), countflowplans(0);
   memsize = count = 0;
-  for(OperationPlan::iterator i = OperationPlan::begin();
-        i!=OperationPlan::end(); ++i)
+  for(OperationPlan::iterator j = OperationPlan::begin();
+        j!=OperationPlan::end(); ++j)
   {
     ++count;
-    memsize += sizeof(*i) + OVERHEADTREENODE;
-    countloadplans += i->getFlowPlans().size();
-    countflowplans += i->getLoadPlans().size();
+    memsize += sizeof(*j);
+    countloadplans += j->getFlowPlans().size();
+    countflowplans += j->getLoadPlans().size();
   }
   total += memsize;
   clog << "OperationPlan\t" << count << "\t" << memsize << endl;
 
-  // Flowplans
+  // Flowplans  @todo size estimate not accurate
   memsize = countflowplans * (sizeof(FlowPlan)+2*OVERHEADLISTNODE);
   total +=  memsize;
   clog << "FlowPlan     \t" << countflowplans << "\t" << memsize << endl;
 
-  // Loadplans
+  // Loadplans  @todo size estimate not accurate
   memsize = countloadplans * (sizeof(LoadPlan)+2*OVERHEADLISTNODE);
   total +=  memsize;
   clog << "LoadPlan     \t" << countloadplans << "\t" << memsize << endl;
 
   // Problems
-  memsize = 0;
-  count = 0; 
+  memsize = count = 0; 
   for (Problem::const_iterator pr = Problem::begin(); pr!=Problem::end(); ++pr)
   {
     ++count;

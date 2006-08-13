@@ -35,7 +35,7 @@ const MetaClass Forecast::metadata;
 
 
 #ifdef WIN32
-extern "C" __declspec (dllexport) void initialize(const CommandLoadLibrary::ParameterList& z)
+extern "C" __declspec (dllexport) void initialize(const CommandLoadLibrary::ParameterList& z)  // @todo make export cleaner
 #else
 extern "C" void initialize(const CommandLoadLibrary::ParameterList& z)
 #endif

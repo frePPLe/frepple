@@ -245,7 +245,6 @@ void CSVInput::readTemplate
     parser->setFeature(XMLUni::fgXercesSchema, true);
     parser->setFeature(XMLUni::fgXercesSchemaFullChecking, false);
     parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal,true);
-    parser->setInputBufferSize(1024000);  // @todo make this buffer size cfg
 
     string schema = Environment::getHomeDirectory();
     if (*schema.rend() != '/') schema += '/';

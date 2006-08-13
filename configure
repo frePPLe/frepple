@@ -20983,8 +20983,7 @@ fi
 
 
 
-
-for ac_header in fcntl.h malloc.h stdlib.h unistd.h perl.h python.h pthread.h
+for ac_header in fcntl.h stdlib.h unistd.h perl.h python.h pthread.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if eval "test \"\${$as_ac_Header+set}\" = set"; then
@@ -23204,7 +23203,7 @@ fi
 
 
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ac_config_files="$ac_config_files Makefile bin/Makefile doc/Makefile include/Makefile lib/Makefile include/frepple/Makefile src/Makefile modules/Makefile modules/forecast/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile test/Makefile test/cluster/Makefile test/csv/Makefile test/constraints_leadtime_1/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/datetime/Makefile test/demo1/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/sizeof/Makefile test/xml/Makefile test/forecast/Makefile test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/problems/Makefile test/deletion/Makefile test/operation_effective/Makefile test/multithreading/Makefile test/name/Makefile test/command/Makefile test/custom_class/Makefile test/callback/Makefile contrib/Makefile contrib/borland/Makefile contrib/vc/Makefile contrib/webservice/Makefile contrib/installer/Makefile contrib/j2ee/Makefile contrib/scripting/Makefile contrib/apache/Makefile contrib/excel/Makefile"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ac_config_files="$ac_config_files Makefile bin/Makefile doc/Makefile include/Makefile lib/Makefile include/frepple/Makefile src/Makefile modules/Makefile modules/forecast/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile test/Makefile test/cluster/Makefile test/csv/Makefile test/constraints_leadtime_1/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/datetime/Makefile test/demo1/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/sizeof/Makefile test/xml/Makefile test/forecast/Makefile test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/problems/Makefile test/deletion/Makefile test/operation_effective/Makefile test/multithreading/Makefile test/name/Makefile test/command/Makefile test/custom_class/Makefile test/callback/Makefile test/pegging/Makefile contrib/Makefile contrib/borland/Makefile contrib/vc/Makefile contrib/webservice/Makefile contrib/installer/Makefile contrib/j2ee/Makefile contrib/scripting/Makefile contrib/apache/Makefile contrib/excel/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -23857,6 +23856,7 @@ do
   "test/command/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/command/Makefile" ;;
   "test/custom_class/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/custom_class/Makefile" ;;
   "test/callback/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/callback/Makefile" ;;
+  "test/pegging/Makefile" ) CONFIG_FILES="$CONFIG_FILES test/pegging/Makefile" ;;
   "contrib/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/Makefile" ;;
   "contrib/borland/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/borland/Makefile" ;;
   "contrib/vc/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/vc/Makefile" ;;

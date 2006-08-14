@@ -33,10 +33,10 @@ namespace frepple
 {
 
 
-LoadPlan::LoadPlan (OperationPlan *o, Load *r)
+LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
     : TimeLine<LoadPlan>::EventChangeOnhand(r->getUsageFactor())
 {
-  ld = r;
+  ld = const_cast<Load*>(r);
   oper = o;
   start_or_end = START;
   o->LoadPlans.push_front(this);    // @todo need a better data structure
@@ -50,10 +50,10 @@ LoadPlan::LoadPlan (OperationPlan *o, Load *r)
 }
 
 
-LoadPlan::LoadPlan (OperationPlan *o, Load *r, LoadPlan *lp)
+LoadPlan::LoadPlan (OperationPlan *o, const Load *r, LoadPlan *lp)
     : TimeLine<LoadPlan>::EventChangeOnhand(- r->getUsageFactor())
 {
-  ld = r;
+  ld = const_cast<Load*>(r);
   oper = o;
   start_or_end = END;
   o->LoadPlans.push_front(this);  // @todo need a better data structure

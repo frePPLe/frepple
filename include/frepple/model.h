@@ -240,7 +240,7 @@ class Calendar : public HasName<Calendar>, public Object
         BucketIterator operator--(int)
           {BucketIterator tmp = *this; --*this; return tmp;}
         Bucket* operator ->() const {return curBucket;}
-        Bucket* operator *() const {return curBucket;}
+        Bucket& operator *() const {return *curBucket;}
     };
 
     /** Returns an iterator to go through the list of buffers. */
@@ -339,7 +339,7 @@ template <typename T> class CalendarValue : public Calendar
     virtual const MetaData& getType() const = 0;
 
 	  const T& getValue(Calendar::BucketIterator& i) const
-      {return reinterpret_cast<BucketValue*>(*i)->getValue();}
+      {return reinterpret_cast<BucketValue&>(*i).getValue();}
 
   private:
     /** Factory method to add new buckets to the calendar.
@@ -486,7 +486,7 @@ class CalendarString : public CalendarValue<string>
       size_t i = sizeof(CalendarString);
       for (BucketIterator j = beginBuckets(); j!= endBuckets(); ++j)
         i += j->getSize()
-         + static_cast<CalendarValue<string>::BucketValue*>(*j)->getValue().size();
+         + static_cast<CalendarValue<string>::BucketValue&>(*j).getValue().size();
       return i;
     }
 };
@@ -583,7 +583,7 @@ class Problem : public NonCopyable
       * If the second parameter is set to true, the problems will be
       * recreated when the next problem detection round is triggered.
       */
-    static void clearProblems(HasProblems* p, bool setchanged = true);
+    static void clearProblems(HasProblems& p, bool setchanged = true);
 
     /** Returns a pointer to the plannable object that owns this problem. */
     HasProblems* getOwner() const {return owner;}
@@ -661,7 +661,7 @@ class HasProblems
 
     /** Destructor. It needs to take care of making sure all problems objects
       * are being deleted as well. */
-    virtual ~HasProblems() {Problem::clearProblems(this, false);}
+    virtual ~HasProblems() {Problem::clearProblems(*this, false);}
 
     /** Returns the plannable entity relating to this problem container. */
     virtual Plannable* getEntity() const = 0;
@@ -1248,7 +1248,7 @@ class OperationPlan
         /** Constructor. The iterator will loop only over the operationplans
           * of the operation passed. */
         iterator(Operation* x) : op(Operation::end())
-          {opplan = x ? getFirstOpPlan(x) : NULL;}
+          {opplan = x ? getFirstOpPlan(*x) : NULL;}
 
         /** Constructor. The iterator will loop over all operationplans. */
         iterator() : op(Operation::begin())
@@ -1263,7 +1263,7 @@ class OperationPlan
         iterator(const iterator& it) : opplan(it.opplan), op(it.op) {}
 
         /** Return the content of the current node. */
-        OperationPlan* operator*() const {return opplan;}
+        OperationPlan& operator*() const {return *opplan;}
 
         /** Return the content of the current node. */
         OperationPlan* operator->() const {return opplan;}
@@ -1587,7 +1587,7 @@ class OperationPlan
 
   private:
     /** Returns a pointer to the operation being instantiated. */
-    static OperationPlan* getFirstOpPlan(Operation* o) {return o->opplan;}
+    static OperationPlan* getFirstOpPlan(Operation& o) {return o.opplan;}
 
     /** Is this operationplan locked? A locked operationplan doesn't accept
       * any changes. This field is only relevant for top-operationplans. */
@@ -3250,7 +3250,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       * In other words, a single call to the constructor will create
       * two loadplan objects.
       */
-    explicit LoadPlan(OperationPlan*, Load*);
+    explicit LoadPlan(OperationPlan*, const Load*);
     const Date & getDate() const
     {
       if(start_or_end == START) return oper->getDates().getStart();
@@ -3275,7 +3275,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       * The public constructor constructs the starting loadplan, while this
       * constructor creates the ending loadplan.
       */
-    LoadPlan(OperationPlan*, Load*, LoadPlan*);
+    LoadPlan(OperationPlan*, const Load*, LoadPlan*);
 
     /** This type is used to differentiate loadplans aligned with the START date
       * or the END date of operationplan. */
@@ -3884,7 +3884,7 @@ class HasProblems::EntityIterator
 
     bool operator != (const EntityIterator& t) const;
     bool operator == (const EntityIterator& t) const {return !(*this != t);}
-    HasProblems* operator*() const;
+    HasProblems& operator*() const;
     HasProblems* operator->() const;
 };
 

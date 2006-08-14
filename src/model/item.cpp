@@ -37,14 +37,12 @@ template<class Item> DECLARE_EXPORT Tree HasName<Item>::st;
 Item::~Item()
 {
   // Remove references from the buffers
-  for (Buffer::iterator buf = Buffer::begin();
-       buf != Buffer::end(); ++buf)
-    if ((*buf)->getItem() == this) (*buf)->setItem(NULL);
+  for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
+    if (buf->getItem() == this) buf->setItem(NULL);
 
   // Remove references from the demands
-  for (Demand::iterator l = Demand::begin();
-       l != Demand::end(); ++l)
-    if ((*l)->getItem() == this) (*l)->setItem(NULL);
+  for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)
+    if (l->getItem() == this) l->setItem(NULL);
 }
 
 

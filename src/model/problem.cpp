@@ -107,7 +107,7 @@ void Plannable::setDetectProblems(bool b)
 {
   if (useProblemDetection && !b)
     // We are switching from 'yes' to 'no': delete all existing problems
-    Problem::clearProblems(this);
+    Problem::clearProblems(*this);
   else if (!useProblemDetection && b)
     // We are switching from 'no' to 'yes': mark as changed for the next
     // problem detection call
@@ -139,14 +139,14 @@ DECLARE_EXPORT void Plannable::computeProblems()
     // Loop through all entities
     for (HasProblems::EntityIterator i; i!=HasProblems::endEntity(); ++i)
     {
-      Plannable *e = (*i)->getEntity();
-      if (e->getChanged() && e->getDetectProblems()) (*i)->updateProblems();
+      Plannable *e = i->getEntity();
+      if (e->getChanged() && e->getDetectProblems()) i->updateProblems();
     }
 
     // Mark the entities as unchanged
     for (HasProblems::EntityIterator j; j!=HasProblems::endEntity(); ++j)
     {
-      Plannable *e = (*j)->getEntity();
+      Plannable *e = j->getEntity();
       if (e->getChanged() && e->getDetectProblems()) e->setChanged(false);
     }
   }
@@ -180,31 +180,32 @@ void Plannable::endElement(XMLInput& pIn, XMLElement& pElement)
 void Problem::clearProblems()
 {
   // Loop through all entities, and call clearProblems(i)
-  for (HasProblems::EntityIterator i; *i; ++i)
+  for (HasProblems::EntityIterator i = HasProblems::beginEntity(); 
+    i != HasProblems::endEntity(); ++i)
   {
     clearProblems(*i);
-    (*i)->getEntity()->setChanged(true);
+    i->getEntity()->setChanged(true);
   }
 }
 
 
-void Problem::clearProblems(HasProblems* p, bool setchanged)
+void Problem::clearProblems(HasProblems& p, bool setchanged)
 {
   // Nothing to do
-  if (!p || !p->firstProblem) return;
+  if (!p.firstProblem) return;
 
   // Delete all problems in the list
-  for (Problem *cur=p->firstProblem; cur; )
+  for (Problem *cur=p.firstProblem; cur; )
   {
     Problem *del = cur;
     cur = cur->nextProblem;
     del->owner = NULL;
     delete del;
   }
-  p->firstProblem = NULL;
+  p.firstProblem = NULL;
 
   // Mark as changed
-  if (setchanged) p->getEntity()->setChanged();
+  if (setchanged) p.getEntity()->setChanged();
 }
 
 
@@ -364,7 +365,7 @@ bool HasProblems::EntityIterator::operator != (const EntityIterator& t) const
 }
 
 
-HasProblems* HasProblems::EntityIterator::operator*() const
+HasProblems& HasProblems::EntityIterator::operator*() const
 {
   switch (type)
   {
@@ -392,16 +393,16 @@ HasProblems* HasProblems::EntityIterator::operator->() const
   {
     case 0:
       // Buffer
-      return **bufIter;
+      return &**bufIter;
     case 1:
       // Resource
-      return **resIter;
+      return &**resIter;
     case 2:
       // Operationplan
-      return **operIter;
+      return &**operIter;
     case 3:
       // Demand
-      return **demIter;
+      return &**demIter;
     default:
       throw LogicException("Unreachable code reached");
   }

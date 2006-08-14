@@ -68,9 +68,9 @@ int main (int argc, char *argv[])
 
     // Define variables for each of the 2 operation_plans
     Operation *buildoper = Operation::find("make end item");
-    OperationPlan *build = *OperationPlan::iterator(buildoper);
+    OperationPlan *build = &*OperationPlan::iterator(buildoper);
     Operation *deliveroper = Operation::find("delivery end item");
-    OperationPlan *deliver = *OperationPlan::iterator(deliveroper);
+    OperationPlan *deliver = &*OperationPlan::iterator(deliveroper);
     if (!deliver || !build) throw DataException("Can't find operationplans");
 
     // 3: Increase quantity of the delivery & report

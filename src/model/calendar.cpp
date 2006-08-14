@@ -194,7 +194,7 @@ Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
   while (x!=endBuckets() && x->startdate!=d) ++x;
 
   // Pick up the action attribute and update the bucket accordingly
-  Calendar::Bucket* result = *x;
+  Calendar::Bucket* result = &*x;
   switch (MetaData::decodeAction(atts))
   {
     case ADD:
@@ -204,8 +204,8 @@ Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
         // The first bucket (starting at minus infinite) is automatically
         // created in a calendar. In this special case, we can allow an add
         // action on a bucket that already exists.
-        LockManager::getManager().obtainWriteLock(*x);
-        return *x;
+        LockManager::getManager().obtainWriteLock(result);
+        return result;
       }
       if (x!=endBuckets()) 
         throw("Bucket " + string(d) 
@@ -225,8 +225,8 @@ Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
       if (x==endBuckets())
         throw DataException("Bucket " + string(d)
           + " doesn't exist in calendar '" + getName() + "'");
-      LockManager::getManager().obtainWriteLock(*x);
-      return *x;
+      LockManager::getManager().obtainWriteLock(result);
+      return result;
     case REMOVE:
       // Delete the entity
       if (x==endBuckets())
@@ -235,24 +235,24 @@ Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
       else
       {
         // Send out the notification to subscribers
-        LockManager::getManager().obtainWriteLock(*x);
-        if (!x->getType().raiseEvent(*x, SIG_REMOVE))
+        LockManager::getManager().obtainWriteLock(result);
+        if (!x->getType().raiseEvent(result, SIG_REMOVE))
         {
           // The callbacks disallowed the deletion!
-          LockManager::getManager().releaseWriteLock(*x);
+          LockManager::getManager().releaseWriteLock(result);
           throw DataException("Can't delete calendar bucket " + string(d)
             + " in calendar '" + getName() + "'");
         }
         // Delete it
-        removeBucket(*x);
+        removeBucket(result);
         return NULL;
       }
     case ADD_CHANGE:
       if (x!=endBuckets())
       {
         // Returning existing bucket
-        LockManager::getManager().obtainWriteLock(*x);
-        return *x;
+        LockManager::getManager().obtainWriteLock(result);
+        return result;
       }
       // Adding a new bucket
       result = addBucket(d);

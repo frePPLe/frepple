@@ -53,9 +53,8 @@ void Plan::setCurrent (Date l)
 
   // Let all operationplans check for new ProblemBeforeCurrent and
   // ProblemBeforeFence problems.
-  for(Operation::iterator i = Operation::begin();
-      i != Operation::end(); ++i)
-    (*i)->setChanged();
+  for(Operation::iterator i = Operation::begin(); i != Operation::end(); ++i)
+    i->setChanged();
 }
 
 

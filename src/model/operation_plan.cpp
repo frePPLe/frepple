@@ -181,7 +181,7 @@ OperationPlan* OperationPlan::findId(unsigned long l)
 
   // Loop through all operationplans
   for (OperationPlan::iterator i = begin(); i != end(); ++i)
-    if (i->id == l) return *i;
+    if (i->id == l) return &*i;
 
   // This ID was not found
   return NULL;
@@ -280,12 +280,12 @@ void OperationPlan::createFlowLoads()
   // Create loadplans
   for(Operation::loadlist::const_iterator g=oper->getLoads().begin();
       g!=oper->getLoads().end(); ++g)
-    new LoadPlan(this, *g);
+    new LoadPlan(this, &*g);
 
   // Create flowplans
   for(Operation::flowlist::const_iterator h=oper->getFlows().begin();
       h!=oper->getFlows().end(); ++h)
-    new FlowPlan(this, *h);
+    new FlowPlan(this, &*h);
 }
 
 

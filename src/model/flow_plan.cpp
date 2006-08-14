@@ -36,8 +36,8 @@ FlowPlan::FlowPlan (OperationPlan * opplan, const Flow * f)
     : TimeLine<FlowPlan>::EventChangeOnhand(
         f->getQuantity() * opplan->getQuantity())
 {
-  fl = (Flow*) f;
-  oper = (OperationPlan*) opplan;
+  fl = const_cast<Flow*>(f);
+  oper = opplan;
   oper->flowplans.push_front(this);   // @todo need a better data structure
   f->getBuffer()->flowplans.insert(this);
 

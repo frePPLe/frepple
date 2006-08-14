@@ -54,7 +54,7 @@ void Flow::validate(Action action)
   // Check if a flow with identical buffer and operation already exists
   Operation::flowlist::const_iterator i = oper->getFlows().begin();
   for (; i != oper->getFlows().end(); ++i)
-    if ((*i)->getBuffer() == buf && *i != this) break;
+    if (i->getBuffer() == buf && &*i != this) break;
 
   // Apply the appropriate action
   switch (action)
@@ -81,7 +81,7 @@ void Flow::validate(Action action)
         // Nothing to delete
         throw DataException("Can't remove nonexistent flow of '" 
           + oper->getName() + "' and '" + buf->getName() + "'");
-      delete *i;
+      delete &*i;
       return;
   }
 

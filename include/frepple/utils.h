@@ -1768,6 +1768,10 @@ class XMLOutput
       */
     void writeElement(const XMLtag& tag, const Object* object, mode = DEFAULT);
 
+    /** @see writeElement(const XMLtag&, const Object*, mode) */
+    void writeElement(const XMLtag& t, const Object& o, mode m = DEFAULT)
+      {writeElement(t,&o,m);}
+
     /** This method writes a serializable object with a complete XML compliant
       * header.
       * You should call this method for the root object of you xml document,
@@ -2443,7 +2447,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         iterator(const iterator& it) {node = it.node;}
 
         /** Return the content of the current node. */
-        T* operator*() const {return static_cast<T*>(node);}
+        T& operator*() const {return *static_cast<T*>(node);}
 
         /** Return the content of the current node. */
         T* operator->() const {return static_cast<T*>(node);}
@@ -2782,7 +2786,7 @@ template <class T> class HasHierarchy : public HasName<T>
         memberIterator(const memberIterator& it) {curmember = it.curmember;}
 
         /** Return the content of the current node. */
-        T* operator*() const {return static_cast<T*>(curmember);}
+        T& operator*() const {return *static_cast<T*>(curmember);}
 
         /** Return the content of the current node. */
         T* operator->() const {return static_cast<T*>(curmember);}
@@ -2909,7 +2913,8 @@ template <class A, class B, class C> class Association
             C* nodeptr;
           public:
             iterator(C* n) : nodeptr(n) {};
-            C* operator*() const {return nodeptr;}
+            C& operator*() const {return *nodeptr;}
+            C* operator->() const {return nodeptr;}
             bool operator==(const iterator& x) const
               {return nodeptr == x.nodeptr;}
             bool operator!=(const iterator& x) const
@@ -2929,7 +2934,8 @@ template <class A, class B, class C> class Association
             C* nodeptr;
           public:
             const_iterator(C* n) : nodeptr(n) {};
-            C* const operator*() const {return nodeptr;}
+            const C& operator*() const {return *nodeptr;}
+            const C* operator->() const {return nodeptr;}
             bool operator==(const const_iterator& x) const
               {return nodeptr == x.nodeptr;}
             bool operator!=(const const_iterator& x) const
@@ -2992,7 +2998,8 @@ template <class A, class B, class C> class Association
             C* nodeptr;
           public:
             iterator(C* n) : nodeptr(n) {};
-            C* operator*() const {return nodeptr;}
+            C& operator*() const {return *nodeptr;}
+            C* operator->() const {return nodeptr;}
             bool operator==(const iterator& x) const
               {return nodeptr == x.nodeptr;}
             bool operator!=(const iterator& x) const
@@ -3012,7 +3019,8 @@ template <class A, class B, class C> class Association
             C* nodeptr;
           public:
             const_iterator(C* n) : nodeptr(n) {};
-            C* const operator*() const {return nodeptr;}
+            const C& operator*() const {return *nodeptr;}
+            const C* operator->() const {return nodeptr;}
             bool operator==(const const_iterator& x) const
               {return nodeptr == x.nodeptr;}
             bool operator!=(const const_iterator& x) const

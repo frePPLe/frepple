@@ -144,14 +144,14 @@ bool OperationTransport::callback(Buffer* l, Signal a)
 {
   // Loop over all transport operations
   for (Operation::iterator i = Operation::begin(); i != Operation::end(); )
-    if (typeid(**i) == typeid(OperationTransport))
+    if (typeid(*i) == typeid(OperationTransport))
     {
-      OperationTransport *j = static_cast<OperationTransport*>(*i);
-      if (l == j->fromBuf || l == j->toBuf)
+      OperationTransport& j = static_cast<OperationTransport&>(*i);
+      if (l == j.fromBuf || l == j.toBuf)
       {
         // Delete the operation, but increment the iterator first!
         Operation::iterator k = i++;
-        delete *k;
+        delete &*k;
         if (i == Operation::end()) break;
       }
       else ++i;

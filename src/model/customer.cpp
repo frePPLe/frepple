@@ -70,7 +70,7 @@ Customer::~Customer()
 {
   // Remove all references from demands to this customer
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
-    if ((*i)->getCustomer() == this) (*i)->setCustomer(NULL);
+    if (i->getCustomer() == this) i->setCustomer(NULL);
 }
 
 

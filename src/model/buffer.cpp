@@ -56,7 +56,7 @@ void Buffer::setOnHand(float f)
   }
   else
     // Find the flow of this operation
-    fl = *(o->getFlows().begin());
+    fl = const_cast<Flow*>(&*(o->getFlows().begin()));
 
   // Check valid pointers
   if (!fl || !o) 
@@ -458,7 +458,7 @@ void Buffer::deleteOperationPlans(bool deleteLocked)
 {
   // Delete the operationplans
   for(flowlist::iterator i=flows.begin(); i!=flows.end(); ++i)
-    OperationPlan::deleteOperationPlans((*i)->getOperation(),deleteLocked);
+    OperationPlan::deleteOperationPlans(i->getOperation(),deleteLocked);
 
   // Mark to recompute the problems
   setChanged();

@@ -99,7 +99,7 @@ void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
     for (loadlist::const_iterator i = loads.begin(); i != loads.end();)
       // We use the FULL mode, to force the loads being written regardless
       // of the depth in the XML tree.
-      o->writeElement(Tags::tag_load, *(i++), FULL);
+      o->writeElement(Tags::tag_load, &(*(i++)), FULL);
     o->EndObject (Tags::tag_loads);
   }
 
@@ -159,7 +159,7 @@ void Resource::deleteOperationPlans(bool deleteLocked)
 {
   // Delete the operationplans
   for(loadlist::iterator i=loads.begin(); i!=loads.end(); ++i)
-    OperationPlan::deleteOperationPlans((*i)->getOperation(),deleteLocked);
+    OperationPlan::deleteOperationPlans(i->getOperation(),deleteLocked);
 
   // Mark to recompute the problems
   setChanged();

@@ -249,10 +249,10 @@ void CommandSavePlan::execute()
 	  for (Buffer::iterator gbuf = Buffer::begin();
 	       gbuf != Buffer::end(); ++gbuf)
 	  {
-	  	if (!(*gbuf)->getHidden())
+	  	if (!gbuf->getHidden())
 		    for(Buffer::flowplanlist::const_iterator 
-		      oo=(*gbuf)->getFlowPlans().begin();
-		      oo!=(*gbuf)->getFlowPlans().end(); 
+		      oo=gbuf->getFlowPlans().begin();
+		      oo!=gbuf->getFlowPlans().end(); 
 		      ++oo)
 		      if (oo->getType() == 1)
 		      {
@@ -267,10 +267,10 @@ void CommandSavePlan::execute()
 	  for (Demand::iterator gdem = Demand::begin();
 	       gdem != Demand::end(); ++gdem)
 	  {
-	  	if (!(*gdem)->getHidden())
+	  	if (!gdem->getHidden())
 		  	for(Demand::OperationPlan_list::const_iterator 
-		  	  pp=(*gdem)->getDelivery().begin();
-		  	  pp!=(*gdem)->getDelivery().end(); 
+		  	  pp=gdem->getDelivery().begin();
+		  	  pp!=gdem->getDelivery().end(); 
 		  	  ++pp)
 		  	{
 		  		textoutput << "DEMAND\t" << (*gdem) << '\t'
@@ -283,10 +283,10 @@ void CommandSavePlan::execute()
 	  for (Resource::iterator gres = Resource::begin();
 	       gres != Resource::end(); ++gres)
 	  {
-	  	if (!(*gres)->getHidden())
+	  	if (!gres->getHidden())
 		    for(Resource::loadplanlist::const_iterator 
-		      qq=(*gres)->getLoadPlans().begin();
-		      qq!=(*gres)->getLoadPlans().end(); 
+		      qq=gres->getLoadPlans().begin();
+		      qq!=gres->getLoadPlans().end(); 
 		      ++qq)
 		      if (qq->getType() == 1)
 		      {
@@ -440,7 +440,7 @@ void CommandErase::execute()
     // Delete the operationplans only
     for (Operation::iterator gop = Operation::begin();
         gop != Operation::end(); ++gop)
-      (*gop)->deleteOperationPlans();
+      gop->deleteOperationPlans();
 
   // Ending message
   if (getVerbose())

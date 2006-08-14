@@ -65,20 +65,20 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     for (Buffer::iterator gbuf = Buffer::begin();
          gbuf != Buffer::end(); ++gbuf)
     {
-      (*gbuf)->cluster = 0;
-      (*gbuf)->lvl = -1;
+      gbuf->cluster = 0;
+      gbuf->lvl = -1;
     }
     for (Resource::iterator gres = Resource::begin();
          gres != Resource::end(); ++gres)
     {
-      (*gres)->cluster = 0;
-      (*gres)->lvl = -1;
+      gres->cluster = 0;
+      gres->lvl = -1;
     }
     for (Operation::iterator gop = Operation::begin();
          gop != Operation::end(); ++gop)
     {
-      (*gop)->cluster = 0;
-      (*gop)->lvl = -1;
+      gop->cluster = 0;
+      gop->lvl = -1;
     }
 
     // Loop through all operations
@@ -86,7 +86,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     Operation* cur_oper;
     int cur_level;
     Buffer *cur_buf;
-    Flow* cur_Flow;
+    const Flow* cur_Flow;
     bool search_level;
     int cur_cluster;
     numberOfClusters = 0;
@@ -102,8 +102,8 @@ DECLARE_EXPORT void HasLevel::computeLevels()
 #endif
 
       // Select a new cluster number
-      if ((*g)->cluster)
-        cur_cluster = (*g)->cluster;
+      if (g->cluster)
+        cur_cluster = g->cluster;
       else
       {
         cur_cluster = ++numberOfClusters;
@@ -117,38 +117,38 @@ DECLARE_EXPORT void HasLevel::computeLevels()
       //   - Have at no producing Flow on the Operation itself
       //     or on any of its sub operations
       search_level = false;
-      if ((*g)->getSuperOperations().empty())
+      if (g->getSuperOperations().empty())
       {
         search_level = true;
         // Does the Operation itself have producing flows?
-        for(Operation::flowlist::const_iterator fl = (*g)->getFlows().begin();
-            fl != (*g)->getFlows().end() && search_level; ++fl)
-          if((*fl)->isProducer()) search_level = false;
+        for(Operation::flowlist::const_iterator fl = g->getFlows().begin();
+            fl != g->getFlows().end() && search_level; ++fl)
+          if(fl->isProducer()) search_level = false;
         if (search_level)
         {
           // Do subOperations have a producing Flow
           for (Operation::Operationlist::const_reverse_iterator 
-            i = (*g)->getSubOperations().rbegin();
-            i != (*g)->getSubOperations().rend() && search_level; 
+            i = g->getSubOperations().rbegin();
+            i != g->getSubOperations().rend() && search_level; 
             ++i)
             for(Operation::flowlist::const_iterator 
               fl = (*i)->getFlows().begin();
               fl != (*i)->getFlows().end() && search_level; 
               ++fl)
-              if((*fl)->isProducer()) search_level = false;
+              if(fl->isProducer()) search_level = false;
         }
       }
 
       // If both the level and the cluster are de-activated, then we can move on
-      if (!search_level && (*g)->cluster) continue;
+      if (!search_level && g->cluster) continue;
 
       // Start recursing
       // Note that as soon as push an operation on the stack we set its
       // cluster and/or level. This is avoid that operations are needlessly
       // pushed a second time on the stack.
-      stack.push(make_pair(*g, search_level ? 0 : -1));
-      (*g)->cluster = cur_cluster;
-      if (search_level) (*g)->lvl = 0;
+      stack.push(make_pair(&*g, search_level ? 0 : -1));
+      g->cluster = cur_cluster;
+      if (search_level) g->lvl = 0;
       while (!stack.empty())
       {
         // Take the top of the stack
@@ -210,7 +210,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
                cur_oper->getLoads().begin();
              gres != cur_oper->getLoads().end(); ++gres)
         {
-          Resource *resptr = (*gres)->getResource();
+          Resource *resptr = gres->getResource();
           // Update the level of the resource
           if (resptr->lvl < cur_level) resptr->lvl = cur_level;
           // Update the cluster of the resource and operations using it
@@ -221,10 +221,10 @@ DECLARE_EXPORT void HasLevel::computeLevels()
             for (Resource::loadlist::const_iterator resops =
                    resptr->getLoads().begin();
                  resops != resptr->getLoads().end(); ++resops)
-              if (!(*resops)->getOperation()->cluster)
+              if (!resops->getOperation()->cluster)
               {
-                stack.push(make_pair((*resops)->getOperation(),-1));
-                (*resops)->getOperation()->cluster = cur_cluster;
+                stack.push(make_pair(resops->getOperation(),-1));
+                resops->getOperation()->cluster = cur_cluster;
               }
           }
         }
@@ -235,7 +235,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
           gflow != cur_oper->getFlows().end();
           ++gflow)
         {
-          cur_Flow = *gflow;
+          cur_Flow = &*gflow;
           cur_buf = cur_Flow->getBuffer();
 
           // Check whether the level search needs to continue
@@ -256,25 +256,25 @@ DECLARE_EXPORT void HasLevel::computeLevels()
               // Check level recursion
               if (cur_Flow->isConsumer() && search_level)
               {
-                if ((*buffl)->getOperation()->lvl < cur_level+1
-                    && *buffl != cur_Flow && (*buffl)->isProducer())
+                if (buffl->getOperation()->lvl < cur_level+1
+                    && &*buffl != cur_Flow && buffl->isProducer())
                 {
-                  stack.push(make_pair((*buffl)->getOperation(),cur_level+1));
-                  (*buffl)->getOperation()->lvl = cur_level+1;
-                  (*buffl)->getOperation()->cluster = cur_cluster;
+                  stack.push(make_pair(buffl->getOperation(),cur_level+1));
+                  buffl->getOperation()->lvl = cur_level+1;
+                  buffl->getOperation()->cluster = cur_cluster;
                 }
-                else if (!(*buffl)->getOperation()->cluster)
+                else if (!buffl->getOperation()->cluster)
                 {
-                  stack.push(make_pair((*buffl)->getOperation(),-1));
-                  (*buffl)->getOperation()->cluster = cur_cluster;
+                  stack.push(make_pair(buffl->getOperation(),-1));
+                  buffl->getOperation()->cluster = cur_cluster;
                 }
                 cur_buf->lvl = cur_level+1;
               }
               // Check cluster recursion
-              else if (!(*buffl)->getOperation()->cluster)
+              else if (!buffl->getOperation()->cluster)
               {
-                stack.push(make_pair((*buffl)->getOperation(),-1));
-                (*buffl)->getOperation()->cluster = cur_cluster;
+                stack.push(make_pair(buffl->getOperation(),-1));
+                buffl->getOperation()->cluster = cur_cluster;
               }
             }
           }  // End of needs-procssing if statement
@@ -290,17 +290,17 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     // Loads at all. We catch those poor lonely fellows now...
     for (Buffer::iterator gbuf2 = Buffer::begin();
          gbuf2 != Buffer::end(); ++gbuf2)
-      if ((*gbuf2)->getFlows().empty())
+      if (gbuf2->getFlows().empty())
       {
-        (*gbuf2)->cluster = ++numberOfClusters;
+        gbuf2->cluster = ++numberOfClusters;
         if (numberOfClusters >= USHRT_MAX)
           throw LogicException("Too many clusters");
       }
     for (Resource::iterator gres2 = Resource::begin();
          gres2 != Resource::end(); ++gres2)
-      if ((*gres2)->getLoads().empty())
+      if (gres2->getLoads().empty())
       {
-        (*gres2)->cluster = ++numberOfClusters;
+        gres2->cluster = ++numberOfClusters;
         if (numberOfClusters >= USHRT_MAX)
           throw LogicException("Too many clusters");
       }

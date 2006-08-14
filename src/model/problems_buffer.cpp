@@ -36,7 +36,7 @@ namespace frepple
 void Buffer::updateProblems()
 {
   // Delete existing problems for this buffer
-  Problem::clearProblems(this);
+  Problem::clearProblems(*this);
 
   // Hidden entities don't have problems
   if (getHidden()) return;

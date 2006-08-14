@@ -46,19 +46,17 @@ Operation::~Operation()
 
   // Remove the reference to this operation from all items
   for (Item::iterator k = Item::begin(); k != Item::end(); ++k)
-    if ((*k)->getDelivery() == this) (*k)->setDelivery(NULL);
+    if (k->getDelivery() == this) k->setDelivery(NULL);
 
   // Remove the reference to this operation from all demands
   for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)
-    if ((*l)->getOperation() == this) (*l)->setOperation(NULL);
+    if (l->getOperation() == this) l->setOperation(NULL);
 
   // Remove the reference to this operation from all buffers
   for (Buffer::iterator m = Buffer::begin(); m != Buffer::end(); ++m)
   {
-    if ((*m)->getProducingOperation() == this)
-      (*m)->setProducingOperation(NULL);
-    if ((*m)->getConsumingOperation() == this)
-    	(*m)->setConsumingOperation(NULL);
+    if (m->getProducingOperation() == this) m->setProducingOperation(NULL);
+    if (m->getConsumingOperation() == this) m->setConsumingOperation(NULL);
   }
 
   // Remove the operation from its super-operations and sub-operations

@@ -75,11 +75,11 @@ void Forecast::setQuantity(const Calendar::Bucket& b, float qty)
 {
   // See if a subdemand already exists for this bucket
   memberIterator m = beginMember();
-  while (m!=endMember() && (*m)->getDue()!=b.getStart()) ++m;
+  while (m!=endMember() && m->getDue()!=b.getStart()) ++m;
 
   if (m != endMember())
     // Update existing subdemand
-    (*m)->setQuantity(qty);
+    m->setQuantity(qty);
   else
   {
     // Create a new subdemand
@@ -127,8 +127,8 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
   o->BeginObject (Tags::tag_buckets);
   for (memberIterator i = beginMember(); i != endMember(); ++i)
   {
-    o->BeginObject (Tags::tag_bucket, Tags::tag_dates, (*i)->getDue());
-    o->writeElement (Tags::tag_quantity, (*i)->getQuantity());
+    o->BeginObject (Tags::tag_bucket, Tags::tag_dates, i->getDue());
+    o->writeElement (Tags::tag_quantity, i->getQuantity());
     o->EndObject (Tags::tag_bucket);
   }
   o->EndObject(Tags::tag_buckets);
@@ -196,7 +196,7 @@ void Forecast::setItem(Item* i)
   Demand::setItem(i);
   // Update the item for all buckets/subdemands
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
-    (*m)->setItem(i);
+    m->setItem(i);
 }
 
 
@@ -205,7 +205,7 @@ void Forecast::setPriority(int i)
   Demand::setPriority(i);
   // Update the priority for all buckets/subdemands
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
-    (*m)->setPriority(i);
+    m->setPriority(i);
 }
 
 
@@ -214,7 +214,7 @@ void Forecast::setOperation(Operation *o)
   Demand::setOperation(o);
   // Update the priority for all buckets/subdemands
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
-    (*m)->setOperation(o);
+    m->setOperation(o);
 }
 
 
@@ -223,7 +223,7 @@ void Forecast::setPolicy(const string& i)
   Demand::setPolicy(i);
   // Update the priority for all buckets/subdemands
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
-    (*m)->setPolicy(i);
+    m->setPolicy(i);
 }
 
 
@@ -232,7 +232,7 @@ void Forecast::addPolicy(const string& i)
   Demand::addPolicy(i);
   // Update the priority for all buckets/subdemands
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
-    (*m)->addPolicy(i);
+    m->addPolicy(i);
 }
 
 }       // end namespace

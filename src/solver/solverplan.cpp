@@ -137,8 +137,8 @@ void MRPSolver::MRPSolverdata::execute()
 
     // Clean up the operationplans of this cluster
     for (Operation::iterator f=Operation::begin(); f!=Operation::end(); ++f)
-      if ((*f)->getCluster() == cluster)
-        (*f)->deleteOperationPlans();
+      if (f->getCluster() == cluster)
+        f->deleteOperationPlans();
   }
 
   // Message
@@ -152,7 +152,7 @@ void MRPSolver::solve(void *v)
 {
   // Categorize all demands in their cluster
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
-    demands_per_cluster[(*i)->getCluster()].push_back(*i);
+    demands_per_cluster[i->getCluster()].push_back(&*i);
 
   // Delete of operationplans of the affected clusters
   // This deletion is not multi-threaded... But on the other hand we need to
@@ -162,8 +162,8 @@ void MRPSolver::solve(void *v)
   // then delete in each thread.
   for (Operation::iterator e=Operation::begin(); e!=Operation::end(); ++e)
     // The next if-condition is actually redundant if we want to plan everything
-    if (demands_per_cluster.find((*e)->getCluster())!=demands_per_cluster.end())
-      (*e)->deleteOperationPlans();
+    if (demands_per_cluster.find(e->getCluster())!=demands_per_cluster.end())
+      e->deleteOperationPlans();
 
   // Create the command list to control the execution
   CommandList threads;       

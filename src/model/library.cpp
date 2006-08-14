@@ -395,28 +395,28 @@ void CommandPlanSize::execute()
   // Locations
   memsize = 0;
   for (Location::iterator l = Location::begin(); l != Location::end(); ++l)
-    memsize += (*l)->getSize();
+    memsize += l->getSize();
   clog << "Location     \t" << Location::size() << "\t" << memsize << endl;
   total += memsize;
 
   // Customers
   memsize = 0;
   for (Customer::iterator c = Customer::begin(); c != Customer::end(); ++c)
-    memsize += (*c)->getSize();
+    memsize += c->getSize();
   clog << "Customer     \t" << Customer::size() << "\t" << memsize << endl;
   total += memsize;
 
   // Buffers
   memsize = 0;
   for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
-    memsize += (*b)->getSize();
+    memsize += b->getSize();
   clog << "Buffer       \t" << Buffer::size() << "\t" << memsize << endl;
   total += memsize;
 
   // Resources
   memsize = 0;
   for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
-    memsize += (*r)->getSize();
+    memsize += r->getSize();
   clog << "Resource     \t" << Resource::size() << "\t" << memsize << endl;
   total += memsize;
 
@@ -425,9 +425,9 @@ void CommandPlanSize::execute()
   memsize = 0;
   for (Operation::iterator o = Operation::begin(); o != Operation::end(); ++o)
   {
-    memsize += (*o)->getSize();;
-    countFlows += (*o)->getFlows().size();
-    countLoads += (*o)->getLoads().size();
+    memsize += o->getSize();;
+    countFlows += o->getFlows().size();
+    countLoads += o->getLoads().size();
   }
   clog << "Operation    \t" << Operation::size() << "\t" << memsize << endl;
   total += memsize;
@@ -442,25 +442,24 @@ void CommandPlanSize::execute()
   total += memsize;
   clog << "Load         \t" << countLoads << "\t" << memsize  << endl;
 
-  // Calendars
+  // Calendars (which includes the buckets)
   memsize = 0;
-  size_t countBuckets(0), countBucketMem(0);
   for (Calendar::iterator cl = Calendar::begin(); cl != Calendar::end(); ++cl)
-    memsize += (*cl)->getSize();
+    memsize += cl->getSize();
   clog << "Calendar     \t" << Calendar::size() << "\t" << memsize  << endl;
   total += memsize;
 
   // Items
   memsize = 0;
   for (Item::iterator i = Item::begin(); i != Item::end(); ++i)
-    memsize += (*i)->getSize();
+    memsize += i->getSize();
   clog << "Item         \t" << Item::size() << "\t" << memsize  << endl;
   total += memsize;
 
   // Demands
   memsize = 0;
   for (Demand::iterator dm = Demand::begin(); dm != Demand::end(); ++dm)
-    memsize += (*dm)->getSize();
+    memsize += dm->getSize();
   clog << "Demand       \t" << Demand::size() << "\t" << memsize  << endl;
   total += memsize;
 

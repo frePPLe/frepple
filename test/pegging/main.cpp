@@ -45,11 +45,11 @@ int main (int argc, char *argv[])
     for (Buffer::iterator i = Buffer::begin(); i != Buffer::end(); ++i)
     {
       clog << "\nDownstream pegging for buffer '" << *i << "' :" << endl;
-      for(Buffer::flowplanlist::const_iterator oo=(*i)->getFlowPlans().begin();
-          oo!=(*i)->getFlowPlans().end(); ++oo)
+      for(Buffer::flowplanlist::const_iterator oo=i->getFlowPlans().begin();
+          oo!=i->getFlowPlans().end(); ++oo)
       {
         clog << endl;
-        for (PeggingIterator k(dynamic_cast<const FlowPlan*>(&(*oo))); k; ++k)  // @todo get rid of the ugly cast
+        for (PeggingIterator k(dynamic_cast<const FlowPlan*>(&*oo)); k; ++k)  // @todo get rid of the ugly cast
         {
           if (k.getLevel() < 0)  // @todo find better convention for recognizing unpegged material
             clog << "\t" << k.getLevel() 
@@ -72,8 +72,8 @@ int main (int argc, char *argv[])
     for (Demand::iterator j = Demand::begin(); j != Demand::end(); ++j)
     {
       clog << "\nUpstream pegging for demand '" << *j << "' :" << endl;
-      for(Demand::OperationPlan_list::const_iterator pp=(*j)->getDelivery().begin();
-          pp!=(*j)->getDelivery().end(); ++pp)
+      for(Demand::OperationPlan_list::const_iterator pp=j->getDelivery().begin();
+          pp!=j->getDelivery().end(); ++pp)
       {
         // Assumption!!! The next line assumes that a delivery operation has 
         // only a single flow.

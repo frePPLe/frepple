@@ -109,25 +109,25 @@ int main (int argc, char *argv[])
 	  for (Operation::iterator goper = Operation::begin();
      goper != Operation::end(); ++goper)
 	    check("Operation",
-	          (*goper)->getName(),
-	          (*goper)->getCluster(),
-	          (*goper)->getLevel());
+	          goper->getName(),
+	          goper->getCluster(),
+	          goper->getLevel());
 
     // 3: Verify the resources
 	  for (Resource::iterator gres = Resource::begin();
      gres != Resource::end(); ++gres)
 	    check("Resource",
-	          (*gres)->getName(),
-	          (*gres)->getCluster(),
-	          (*gres)->getLevel());
+	          gres->getName(),
+	          gres->getCluster(),
+	          gres->getLevel());
 
     // 4: Verify the buffers
 	  for (Buffer::iterator gbuf = Buffer::begin();
      gbuf != Buffer::end(); ++gbuf)
 	    check("Buffer",
-	          (*gbuf)->getName(),
-	          (*gbuf)->getCluster(),
-	          (*gbuf)->getLevel());
+	          gbuf->getName(),
+	          gbuf->getCluster(),
+	          gbuf->getLevel());
 	   
 	  // 5: Finalize
 	  FreppleExit();

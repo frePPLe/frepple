@@ -54,7 +54,7 @@ void Load::validate(Action action)
   // Check if a load with identical load and operation already exists
   Operation::loadlist::const_iterator i = oper->getLoads().begin();
   for (;i != oper->getLoads().end(); ++i)
-    if ((*i)->getResource() == res && *i != this) break;
+    if (i->getResource() == res && &*i != this) break;
 
   // Apply the appropriate action
   switch (action)
@@ -82,7 +82,7 @@ void Load::validate(Action action)
         // Nothing to delete
         throw DataException("Can't remove nonexistent load of '" 
           + oper->getName() + "' and '" + res->getName() + "'");
-      delete *i;
+      delete &*i;
       return;
   }
 

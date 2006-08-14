@@ -33,74 +33,98 @@ namespace frepple
 
 template<class Calendar> DECLARE_EXPORT Tree HasName<Calendar>::st;
 
+
 Calendar::~Calendar()
 {
-  // De-allocate all the dynamic memory used for the Bucket objects
-  for(Bucketlist::iterator i = buckets.begin(); i != buckets.end(); ++i)
-    delete *i;
+  // De-allocate all the dynamic memory used for the bucket objects
+  while (firstBucket) 
+  {
+    Bucket* tmp = firstBucket;
+    firstBucket = firstBucket->nextBucket;
+    delete tmp;
+  }
 }
 
 
 Calendar::Bucket* Calendar::addBucket (Date d)
 {
   // Create new bucket and insert in the list
-  Bucketlist::iterator i = buckets.begin(), j = buckets.end();
-  while (i!=buckets.end() && (*i)->startdate < d) j=i++;
-  if (i!=buckets.end() && (*i)->startdate == d)
+  Bucket *next = firstBucket, *prev = NULL;
+  while (next && next->startdate < d) 
+  {
+    prev = next;
+    next = next->nextBucket;
+  }
+  if (next && next->startdate == d)
   {
     clog << "Warning: Trying to create two buckets with start date " << d
-      << " in calendar '" << this << "'" << endl;
-    return *i;
+      << " in calendar '" << getName() << "'" << endl;  // @todo or throw excpetion
+    return next;
   }
+
+  // Create the new bucket
   Bucket *c = createNewBucket(d);
+  c->nextBucket = next;
+  c->prevBucket = prev;
 
-  // Set end date of previous bucket to the start of this one...
-  if (j != buckets.end()) (*j)->enddate = d;
-
-  // Set end date of this bucket equal to the start of the next one...
-  if (i != buckets.end())
+  if (prev) 
   {
-    // Inserting in the middle
-    buckets.insert(i,c);
-    c->enddate = (*i)->startdate;
+    // Set end date of previous bucket to the start of this one...
+    prev->enddate = d;
+    prev->nextBucket = c;
   }
   else
+    // This bucket is the first in the list
+    firstBucket = c;
+
+  // Set end date of this bucket equal to the start of the next one...
+  if (next)
   {
-    // Append at end
-    buckets.push_back(c);
-    c->enddate = Date::infiniteFuture;
+    next->prevBucket = c;
+    c->enddate = next->startdate;
   }
+  else
+    c->enddate = Date::infiniteFuture;
+
+  // Return the new bucket
   return c;
 }
 
 
 void Calendar::removeBucket(Calendar::Bucket* bkt)
 {
-  // Find the bucket in the list
-  Bucketlist::iterator i = buckets.begin(), j = buckets.end();
-  while (i!=buckets.end() && *i != bkt) j = i++;
+  // Verify the bucket is on this calendar indeed
+  Bucket *b = firstBucket;
+  while (b && b != bkt) b = b->nextBucket;
 
   // Error
-  if (i==buckets.end())
+  if (!b)
     throw DataException("Trying to remove unavailable bucket from calendar '" 
       + getName() + "'");
 
-  // Previous bucket (if there is one) gets a new end date
-  if (j!=buckets.end()) (*j)->enddate = bkt->enddate;
+  if (bkt->prevBucket) 
+  {
+    // Previous bucket (if there is one) gets a new end date
+    bkt->prevBucket->enddate = bkt->enddate;
+    bkt->prevBucket->nextBucket = bkt->nextBucket;
+  }
+  else
+    // Removing the first bucket, and give new head to the bucket list
+    firstBucket = bkt->nextBucket;
+
+  // Update the reference prevBucket of the next bucket
+  if (bkt->nextBucket)
+    bkt->nextBucket->prevBucket = bkt->prevBucket;
 
   // Delete the bucket
   delete bkt;
-
-  // Remove from the list of buckets
-  buckets.erase(i);
 }
 
 
 Calendar::Bucket* Calendar::findBucket(Date d) const
 {
-  for (Bucketlist::const_iterator x = buckets.begin();
-       x != buckets.end(); ++x)
-    if (d <= (*x)->enddate) return *x;
+  for (Bucket *b = firstBucket; b; b = b->nextBucket)
+    if (d <= b->enddate) return b;
   throw LogicException("Unreachable code reached");
 }
 
@@ -108,10 +132,9 @@ Calendar::Bucket* Calendar::findBucket(Date d) const
 int Calendar::findBucketIndex(Date d) const
 {
   int i = 1;
-  for (Bucketlist::const_iterator x = buckets.begin();
-       x != buckets.end(); ++x)
+  for (Bucket *b = firstBucket; b; b = b->nextBucket)
   {
-    if (d <= (*x)->enddate) return i;
+    if (d <= b->enddate) return i;
     ++i;
   }
   throw LogicException("Unreachable code reached");
@@ -120,8 +143,8 @@ int Calendar::findBucketIndex(Date d) const
 
 Calendar::Bucket* Calendar::findBucket(const string& d) const
 {
-  for (Bucketlist::const_iterator x = buckets.begin(); x != buckets.end(); ++x)
-    if ((*x)->getName() == d) return *x;
+  for (Bucket *b = firstBucket; b; b = b->nextBucket)
+    if (b->getName() == d) return b;
   return NULL;
 }
 
@@ -142,10 +165,10 @@ void Calendar::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 
   // Write all buckets
   o->BeginObject (Tags::tag_buckets);
-  for (Bucketlist::const_iterator i = buckets.begin(); i != buckets.end();)
+  for (BucketIterator i = beginBuckets(); i != endBuckets(); ++i)
     // We use the FULL mode, to force the buckets being written regardless
     // of the depth in the XML tree.
-    o->writeElement(Tags::tag_bucket, *(i++), FULL);
+    o->writeElement(Tags::tag_bucket, *i, FULL);
   o->EndObject(Tags::tag_buckets);
 
   o->EndObject(tag);
@@ -167,8 +190,8 @@ Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
 	XMLString::release(&start);
 
   // Check for existence of the bucket
-  Bucketlist::iterator x = buckets.begin();
-  while (x!=buckets.end() && (*x)->startdate!=d) ++x;
+  BucketIterator x = beginBuckets();
+  while (x!=endBuckets() && x->startdate!=d) ++x;
 
   // Pick up the action attribute and update the bucket accordingly
   Calendar::Bucket* result = *x;
@@ -176,7 +199,7 @@ Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
   {
     case ADD:
       // Only additions are allowed
-      if (x==buckets.begin())
+      if (x==beginBuckets())
       {
         // The first bucket (starting at minus infinite) is automatically
         // created in a calendar. In this special case, we can allow an add
@@ -184,7 +207,7 @@ Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
         LockManager::getManager().obtainWriteLock(*x);
         return *x;
       }
-      if (x!=buckets.end()) 
+      if (x!=endBuckets()) 
         throw("Bucket " + string(d) 
           + " already exists in calenar '" + getName() + "'");
       result = addBucket(d);
@@ -199,21 +222,21 @@ Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
       return result;
     case CHANGE:
       // Only changes are allowed
-      if (x==buckets.end())
+      if (x==endBuckets())
         throw DataException("Bucket " + string(d)
           + " doesn't exist in calendar '" + getName() + "'");
       LockManager::getManager().obtainWriteLock(*x);
       return *x;
     case REMOVE:
       // Delete the entity
-      if (x==buckets.end())
+      if (x==endBuckets())
         throw DataException("Bucket " + string(d)
           + " doesn't exist in calendar '" + getName() + "'");
       else
       {
         // Send out the notification to subscribers
         LockManager::getManager().obtainWriteLock(*x);
-        if (!(*x)->getType().raiseEvent(*x, SIG_REMOVE))
+        if (!x->getType().raiseEvent(*x, SIG_REMOVE))
         {
           // The callbacks disallowed the deletion!
           LockManager::getManager().releaseWriteLock(*x);
@@ -225,7 +248,7 @@ Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
         return NULL;
       }
     case ADD_CHANGE:
-      if (x!=buckets.end())
+      if (x!=endBuckets())
       {
         // Returning existing bucket
         LockManager::getManager().obtainWriteLock(*x);

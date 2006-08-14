@@ -80,7 +80,7 @@ class HasProblems;
 class Solvable;
 
 
-/** This class is used for initialization and finalization of functionality. */
+/** This class is used for initialization and finalization. */
 class LibraryModel
 {
   public:
@@ -96,14 +96,17 @@ class LibraryModel
 class Calendar : public HasName<Calendar>, public Object
 {
   public:
+    class BucketIterator; // Forward declaration
+
     /** This class represents a time bucket as a part of a calendar.
       * Manipulation of instances of this class need to be handled with the
       * methods on the friend class Calendar.
       * @see Calendar
-      */
+      */    
     class Bucket : public Object, public NonCopyable
     {
       friend class Calendar;
+      friend class BucketIterator;
       private:
         /** Name of the bucket. */
         string nm;
@@ -117,9 +120,15 @@ class Calendar : public HasName<Calendar>, public Object
           */
         Date enddate;
 
+        /** A pointer to the next bucket. */
+        Bucket* nextBucket;
+
+        /** A pointer to the previous bucket. */
+        Bucket* prevBucket;
+
       protected:
         /** Constructor. */
-        Bucket(Date n) : startdate(n) {}
+        Bucket(Date n) : startdate(n), nextBucket(NULL), prevBucket(NULL) {}
 
       public:
         /** This method is here only to keep the API of all calendar classes
@@ -170,14 +179,9 @@ class Calendar : public HasName<Calendar>, public Object
           {return sizeof(Bucket) + nm.size();}
     };
 
-    /** Singly linked list of all buckets. */
-    typedef list<Bucket*> Bucketlist;  // @todo replace by intrusive bucketlist
-
-		/** An STL-like iterator to recurse over the list of buckets. */
-		typedef Bucketlist::const_iterator bucket_iterator;
-
     /** Default constructor. */
-    Calendar(const string& n) : HasName<Calendar>(n) {createNewBucket(Date());}
+    Calendar(const string& n) : HasName<Calendar>(n), firstBucket(NULL) 
+      { createNewBucket(Date()); }
 
     /** Destructor, which needs to clean up the buckets too. */
     ~Calendar();
@@ -216,11 +220,34 @@ class Calendar : public HasName<Calendar>, public Object
       */
     Bucket* findBucket(const string&) const;
 
-    /** Returns a pointer to the list of buckets. Note that this list is
-      * read-only, i.e. you can use it to browse through the buckets but
-      * you can use it to update it.
-      */
-    const Bucketlist& getBuckets() const {return buckets;}
+    /** An iterator class to go through all buckets of the calendar. */
+    class BucketIterator
+    {
+      private:
+        Bucket* curBucket;
+      public:
+        BucketIterator(Bucket* b) : curBucket(b) {}
+        bool operator != (const BucketIterator &b) const 
+          {return b.curBucket != curBucket;}
+        bool operator == (const BucketIterator &b) const 
+          {return b.curBucket == curBucket;}
+        BucketIterator& operator++() 
+          { if (curBucket) curBucket = curBucket->nextBucket; return *this; }
+        BucketIterator operator++(int)
+          {BucketIterator tmp = *this; ++*this; return tmp;}
+        BucketIterator& operator--() 
+          { if(curBucket) curBucket = curBucket->prevBucket; return *this; }
+        BucketIterator operator--(int)
+          {BucketIterator tmp = *this; --*this; return tmp;}
+        Bucket* operator ->() const {return curBucket;}
+        Bucket* operator *() const {return curBucket;}
+    };
+
+    /** Returns an iterator to go through the list of buffers. */
+    BucketIterator beginBuckets() const { return BucketIterator(firstBucket); }
+
+    /** Returns an iterator to go through the list of buffers. */
+    BucketIterator endBuckets() const {return BucketIterator(NULL);}
 
     void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, XMLElement&  pElement) {}
@@ -232,14 +259,15 @@ class Calendar : public HasName<Calendar>, public Object
     virtual size_t getSize() const
     {
       size_t i = sizeof(Calendar);
-      for (Bucketlist::const_iterator j = buckets.begin(); j!= buckets.end(); ++j)
-        i += (*j)->getSize();
+      for (BucketIterator j = beginBuckets(); j!= endBuckets(); ++j)
+        i += j->getSize();
       return i;
     }
 
   private:
-    /** List of buckets. */
-    Bucketlist buckets;
+    /** A pointer to the first bucket. The buckets are stored in a doubly
+      * linked list. */
+    Bucket* firstBucket;
 
     /** This is the factory method used to generate new buckets. Each subclass
       * should provide an override for this function. */
@@ -310,8 +338,8 @@ template <typename T> class CalendarValue : public Calendar
 
     virtual const MetaData& getType() const = 0;
 
-	  const T& getValue(Calendar::Bucketlist::const_iterator& i) const
-		  {return reinterpret_cast<BucketValue*>(*i)->getValue();}
+	  const T& getValue(Calendar::BucketIterator& i) const
+      {return reinterpret_cast<BucketValue*>(*i)->getValue();}
 
   private:
     /** Factory method to add new buckets to the calendar.
@@ -456,10 +484,9 @@ class CalendarString : public CalendarValue<string>
     virtual size_t getSize() const
     {
       size_t i = sizeof(CalendarString);
-      for (Bucketlist::const_iterator j = getBuckets().begin();
-        j!= getBuckets().end(); ++j)
-        i += (*j)->getSize()
-        + static_cast<CalendarValue<string>::BucketValue*>(*j)->getValue().size();
+      for (BucketIterator j = beginBuckets(); j!= endBuckets(); ++j)
+        i += j->getSize()
+         + static_cast<CalendarValue<string>::BucketValue*>(*j)->getValue().size();
       return i;
     }
 };
@@ -2227,7 +2254,6 @@ class BufferMinMax : public Buffer
 /** This class defines a material flow to/from a buffer, linked with an
   * operation. This default implementation plans the material flow at the
   * start of the operation.
-  * @todo make the flow class really abstract
   */
 class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
   public Solvable

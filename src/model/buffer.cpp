@@ -167,19 +167,19 @@ void Buffer::writeProfile(XMLOutput* o, Calendar* hor) const
     double onhand(0.0);
     float demand, supply;
     flowplanlist::const_iterator f = flowplans.begin();
-    for (Calendar::Bucketlist::const_iterator b = hor->getBuckets().begin();
-         b != hor->getBuckets().end(); ++b)
+    for (Calendar::BucketIterator b = hor->beginBuckets();
+         b != hor->endBuckets(); ++b)
     {
       o->BeginObject(Tags::tag_bucket);
-      o->writeElement(Tags::tag_name, (*b)->getName());
-      o->writeElement(Tags::tag_start, (*b)->getStart());
-      o->writeElement(Tags::tag_end, (*b)->getEnd());
+      o->writeElement(Tags::tag_name, b->getName());
+      o->writeElement(Tags::tag_start, b->getStart());
+      o->writeElement(Tags::tag_end, b->getEnd());
       o->writeElement(Tags::tag_start_onhand, onhand);
       o->writeElement(Tags::tag_minimum, 
          f!=flowplans.end() ? f->getMin() : 0.0);
       demand = 0.0f;
       supply = 0.0f;
-      for (; f!=flowplans.end() && f->getDate()<(*b)->getEnd(); ++f)
+      for (; f!=flowplans.end() && f->getDate()<b->getEnd(); ++f)
       {
         if (f->getQuantity() > 0.0f) supply += f->getQuantity();
         else demand -= f->getQuantity();
@@ -403,13 +403,13 @@ void Buffer::setMinimum(const CalendarFloat *cal)
   // when the value changes.
   min_cal = const_cast< CalendarFloat* >(cal);
   float curMin = 0.0f;
-  for (Calendar::Bucketlist::const_iterator x = min_cal->getBuckets().begin();
-       x != min_cal->getBuckets().end(); ++x)
+  for (Calendar::BucketIterator x = min_cal->beginBuckets();
+       x != min_cal->endBuckets(); ++x)
          if (curMin != min_cal->getValue(x))
     {
       curMin = min_cal->getValue(x);
       flowplanlist::EventMinQuantity *newBucket =
-        new flowplanlist::EventMinQuantity((*x)->getStart(), curMin);
+        new flowplanlist::EventMinQuantity(x->getStart(), curMin);
       flowplans.insert(newBucket);
     }
 }
@@ -442,13 +442,13 @@ void Buffer::setMaximum(const CalendarFloat *cal)
   // when the value changes.
   max_cal = const_cast<CalendarFloat*>(cal);
   float curMax = 0.0f;
-  for (Calendar::Bucketlist::const_iterator x = max_cal->getBuckets().begin();
-       x != max_cal->getBuckets().end(); ++x)
+  for (Calendar::BucketIterator x = max_cal->beginBuckets();
+       x != max_cal->endBuckets(); ++x)
     if (curMax != max_cal->getValue(x))
     {
       curMax = max_cal->getValue(x);
       flowplanlist::EventMaxQuantity *newBucket =
-        new flowplanlist::EventMaxQuantity((*x)->getStart(), curMax);
+        new flowplanlist::EventMaxQuantity(x->getStart(), curMax);
       flowplans.insert(newBucket);
     }
 }

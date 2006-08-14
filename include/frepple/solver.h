@@ -108,7 +108,9 @@ class MRPSolver : public Solver
     void solve(Buffer*, void* = NULL);
 
     /** Behavior of this solver method:
-      * @todo add doc
+      *  - This method simply passes on the request to the referenced buffer. 
+      *    It is called from a solve(Operation*) method and passes on the 
+      *    control to a solve(Buffer*) method.
       * @see checkOperationMaterial
       */
     void solve(Flow*, void* = NULL);
@@ -135,10 +137,10 @@ class MRPSolver : public Solver
     void solve(ResourceInfinite*,void* = NULL);
 
     /** Behavior of this solver method:
-      * This method simply passes on the request to the referenced resource.
-      * With the current model structure it could easily be avoided (and thus
-      * gain a bit in performance), but we wanted to include it anyway to make 
-      * the solver as generic and future-proof as possible.
+      *  - This method simply passes on the request to the referenced resource.
+      *    With the current model structure it could easily be avoided (and 
+      *    thus gain a bit in performance), but we wanted to include it anyway
+      *    to make the solver as generic and future-proof as possible.
       * @see checkOperationCapacity
       */
     void solve(Load* l, void* d = NULL) {l->getResource()->solve(*this,d);}

@@ -18,6 +18,7 @@
   <COMMANDS>
     <VERBOSE>false</VERBOSE>
     <ABORTONERROR>false</ABORTONERROR>
+    <!--
     <COMMAND xsi:type="COMMAND_LOADLIB">
       <FILENAME>/home/johan/workspace/frepple/modules/forecast/.libs/libforecast.so</FILENAME>
       <PARAMETER NAME="test1" VALUE="val1"/>
@@ -26,5 +27,6 @@
         <VALUE>val2</VALUE>
       </PARAMETER>
     </COMMAND>
+    -->
   </COMMANDS>
 </PLAN>

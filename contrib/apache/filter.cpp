@@ -47,28 +47,28 @@ int getInventoryFilter(request_rec *r)
    "<LOCATIONS>\n", r);
   for (Location::iterator gloc = Location::begin();
     gloc != Location::end(); ++gloc)
-    if (!(*gloc)->getHidden())
-      ap_rprintf(r, "<LOCATION NAME=\"%s\"/>\n", (*gloc)->getName().c_str());
+    if (!gloc->getHidden())
+      ap_rprintf(r, "<LOCATION NAME=\"%s\"/>\n", gloc->getName().c_str());
 
   // Generating the list of items
   ap_rputs(
    "</LOCATIONS><ITEMS>\n", r);
   for (Item::iterator gitem = Item::begin();
     gitem != Item::end(); ++gitem)
-    if (!(*gitem)->getHidden())
-     ap_rprintf(r, "<ITEM NAME=\"%s\"/>\n", (*gitem)->getName().c_str());
+    if (!gitem->getHidden())
+     ap_rprintf(r, "<ITEM NAME=\"%s\"/>\n", gitem->getName().c_str());
 
   // Generating the list of buffers
   ap_rputs(
    "  </ITEMS><BUFFERS>\n", r);
   for (Buffer::iterator gbuf = Buffer::begin();
       gbuf != Buffer::end(); ++gbuf)
-    if (!(*gbuf)->getHidden())
+    if (!gbuf->getHidden())
     ap_rprintf(r,
       "<BUFFER NAME=\"%s\" LOCATION=\"%s\" ITEM=\"%s\"/>\n",
-      (*gbuf)->getName().c_str(),
-      (*gbuf)->getLocation() ? (*gbuf)->getLocation()->getName().c_str() : "",
-      (*gbuf)->getItem() ? (*gbuf)->getItem()->getName().c_str() : "");
+      gbuf->getName().c_str(),
+      gbuf->getLocation() ? gbuf->getLocation()->getName().c_str() : "",
+      gbuf->getItem() ? gbuf->getItem()->getName().c_str() : "");
   ap_rputs("</BUFFERS></PLAN>\n", r);
 
   return OK;

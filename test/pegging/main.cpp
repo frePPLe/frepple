@@ -56,6 +56,7 @@ int main (int argc, char *argv[])
               << "  " << k->getQuantity() 
               << "  unpegged material"
               << "  " << k.getQuantity() 
+              << "  " << k.getFactor() 
               << endl;
           else
             clog << "\t" << k.getLevel() 
@@ -63,6 +64,7 @@ int main (int argc, char *argv[])
               << "  " << k->getDate() << "  " << k->getFlow()->getBuffer() 
               << "  " << k->getFlow()->getOperation() 
               << "  " << k.getQuantity() 
+              << "  " << k.getFactor() 
               << endl;
         }
       }
@@ -85,6 +87,7 @@ int main (int argc, char *argv[])
             clog << "\t" << k.getLevel() 
               << "  " << k->getQuantity() 
               << "  unpegged material "
+              << "  " << k.getFactor() 
               << endl;
           else
             clog << "\t" << k.getLevel() 
@@ -92,6 +95,7 @@ int main (int argc, char *argv[])
               << "  " << k->getDate() << "  " << k->getFlow()->getBuffer() 
               << "  " << k->getFlow()->getOperation() 
               << "  " << k.getQuantity() 
+              << "  " << k.getFactor() 
               << endl;
         }
       }

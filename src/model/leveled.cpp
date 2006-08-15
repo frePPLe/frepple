@@ -123,7 +123,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
         // Does the Operation itself have producing flows?
         for(Operation::flowlist::const_iterator fl = g->getFlows().begin();
             fl != g->getFlows().end() && search_level; ++fl)
-          if(fl->isProducer()) search_level = false;
+          if (fl->isProducer()) search_level = false;
         if (search_level)
         {
           // Do subOperations have a producing Flow

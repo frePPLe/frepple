@@ -3946,13 +3946,35 @@ class PeggingIterator
   public:
     /** Constructor. */
     PeggingIterator(const FlowPlan* e, bool b = true) : depth_then_width(b)
-      { if (e) stack.push(state(e->getQuantity(),0,e)); }
+    { 
+      if (e) 
+        stack.push(state(0,e->getQuantity()>0 ? e->getQuantity() : -e->getQuantity(),1,e)); 
+    }
+
+    /** Returns a reference to the flowplan pointed to by the iterator. */
     const FlowPlan& operator*() const {return *(stack.top().fl);}
+
+    /** Returns a pointer to the flowplan pointed to by the iterator. */
     const FlowPlan* operator->() const {return stack.top().fl;}
+
+    /** Returns the recursion depth of the iterator. The original flowplan
+      * is at level 0, and each level (either upstream or downstream) 
+      * increments the value by 1.
+      */
     short getLevel() const {return stack.top().level;}
+
+    /** Returns the absolute quantity of the original flowplan that can still
+      * be traced in the current flowplan.
+      */
     double getQuantity() const {return stack.top().qty;}
+
+    /** Returns which portion of the current flowplan is fed/supplied by the 
+      * original flowplan. */
+    double getFactor() const {return stack.top().factor;}
+
     /** Move the iterator foward to the next downstream flowplan. */
     PeggingIterator& operator++();
+
     /** Move the iterator foward to the next downstream flowplan.<br>
       * This post-increment operator is less efficient than the pre-increment
       * operator.
@@ -3988,10 +4010,11 @@ class PeggingIterator
     struct state
     {
       double qty;
+      double factor;
       short level;
       const FlowPlan* fl;
-      state(double d, unsigned int l, const FlowPlan* f)
-        : qty(d), level(l), fl(f) {};
+      state(unsigned int l, double d, double f, const FlowPlan* ff)
+        : qty(d), factor(f), level(l), fl(ff) {};
       bool operator != (const state& s) const
         {return fl!=s.fl || level!=s.level;}
       bool operator == (const state& s) const
@@ -4002,7 +4025,7 @@ class PeggingIterator
     stack < state > stack;
 
     /** Update the stack. */
-    void updateStack(short, double, const FlowPlan*);
+    void updateStack(short, double, double, const FlowPlan*);
 
     /** In case there are multiple paths, we can either:
       *  - follow one path complete to its end and then follow the others.

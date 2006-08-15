@@ -32,17 +32,20 @@ namespace frepple
 {
 
 
-void PeggingIterator::updateStack(short l, double q, const FlowPlan* fl)
+void PeggingIterator::updateStack
+  (short l, double q, double f, const FlowPlan* fl)
 {
   if (first)
   {
-    stack.top().fl = fl;
-    stack.top().qty = q;
-    stack.top().level = l;
+    state& t = stack.top();
+    t.fl = fl;
+    t.qty = q;
+    t.factor = f;
+    t.level = l;
     first = false; 
   }
   else
-    stack.push(state(q, l, fl));
+    stack.push(state(l, q, f, fl));
 }
 
 
@@ -56,13 +59,15 @@ PeggingIterator& PeggingIterator::operator++()
   state& st = stack.top();
   short nextlevel = st.level + 1;
   const FlowPlan *curflowplan = st.fl;
+  double curfactor = st.factor;
+  double curqty = st.qty;
   if (stack.top().level < 0) 
   {
     // Handle unpegged material entries on the stack
     stack.pop();
     return *this;
   }
-  else if (st.fl->getQuantity() > ROUNDING_ERROR)
+  else if (curflowplan->getQuantity() > ROUNDING_ERROR)
   {
     // CASE 1:
     // This is a flowplan producing in a buffer. Navigating downstream means
@@ -92,7 +97,7 @@ PeggingIterator& PeggingIterator::operator++()
             newqty -= f->getCumulativeConsumed() - endQty;
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
-          updateStack(nextlevel, newqty, x);
+          updateStack(nextlevel, curqty*newqty/curflowplan->getQuantity(), -curfactor*newqty/f->getQuantity(), x);
         }
         ++f;
       }
@@ -114,7 +119,7 @@ PeggingIterator& PeggingIterator::operator++()
             newqty -= f->getCumulativeConsumed() - endQty;
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
-          updateStack(nextlevel, newqty, x);
+          updateStack(nextlevel, curqty*newqty/curflowplan->getQuantity(), -curfactor*newqty/f->getQuantity(), x);
         }
         --f;
       }
@@ -122,7 +127,7 @@ PeggingIterator& PeggingIterator::operator++()
    if (peggedQty < endQty - startQty)
      // Unpegged material (i.e. material that is produced but never consumed) 
      // is handled with a special entry on the stack.
-     updateStack(-nextlevel, endQty - startQty - peggedQty, curflowplan);
+     updateStack(-nextlevel, curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), st.factor, curflowplan);
   }
   else if (st.fl->getQuantity() < -ROUNDING_ERROR)
   {
@@ -135,7 +140,7 @@ PeggingIterator& PeggingIterator::operator++()
       i != st.fl->getOperationPlan()->getFlowPlans().end();
       ++i)
       if ((*i)->getQuantity()>0)
-        updateStack(nextlevel, st.qty, *i);
+        updateStack(nextlevel, st.qty, st.factor, *i);
   }
   // No matching flow found
   if (first) stack.pop();
@@ -153,13 +158,15 @@ PeggingIterator& PeggingIterator::operator--()
   state& st = stack.top();
   short nextlevel = st.level + 1;
   const FlowPlan *curflowplan = st.fl;
+  double curfactor = st.factor;
+  double curqty = st.qty;
   if (st.level < 0) 
   {
     // Handle unconsumed material entries on the stack
     stack.pop();
     return *this;
   }
-  else if (st.fl->getQuantity() < -ROUNDING_ERROR)
+  else if (curflowplan->getQuantity() < -ROUNDING_ERROR)
   {
     // CASE 3:
     // This is a flowplan consuming from a buffer. Navigating upstream means
@@ -188,7 +195,7 @@ PeggingIterator& PeggingIterator::operator--()
             newqty -= f->getCumulativeProduced() - endQty;
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
-          updateStack(nextlevel, newqty, x);
+          updateStack(nextlevel, -curqty*newqty/curflowplan->getQuantity(), curfactor*newqty/f->getQuantity(), x);
         }
         ++f;
       }
@@ -211,7 +218,7 @@ PeggingIterator& PeggingIterator::operator--()
             newqty -= f->getCumulativeProduced() - endQty;
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
-          updateStack(nextlevel, newqty, x);
+          updateStack(nextlevel, -curqty*newqty/curflowplan->getQuantity(), curfactor*newqty/f->getQuantity(), x);
         }
         --f;
       }
@@ -219,9 +226,9 @@ PeggingIterator& PeggingIterator::operator--()
     if (peggedQty < endQty - startQty)
       // Unproduced material (i.e. material that is consumed but never 
       // produced) is handled with a special entry on the stack.
-      updateStack(-nextlevel, endQty - startQty - peggedQty, curflowplan);
+      updateStack(-nextlevel, curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), st.factor, curflowplan);
   }
-  else if (st.fl->getQuantity() > ROUNDING_ERROR)
+  else if (curflowplan->getQuantity() > ROUNDING_ERROR)
   {
     // CASE 4:
     // This is a producing flowplan. Navigating upstream means taking the 
@@ -232,7 +239,7 @@ PeggingIterator& PeggingIterator::operator--()
       i != st.fl->getOperationPlan()->getFlowPlans().end();
       ++i)
       if ((*i)->getQuantity()<0)
-        updateStack(nextlevel, st.qty, *i);
+        updateStack(nextlevel, st.qty, st.factor, *i);
   }
   // No matching flow found
   if (first) stack.pop();

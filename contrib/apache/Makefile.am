@@ -6,15 +6,15 @@ APACHECTL = ~/httpd/bin/apachectl
 APXS = ~/httpd/bin/apxs
 PWD = `pwd`
 
-EXTRA_DIST = htdocs mod_frepple.cpp frepple.conf README.TXT filter.cpp mod_frepple.h
+EXTRA_DIST = htdocs mod_frepple.cpp frepple.conf README.txt filter.cpp mod_frepple.h
 CLEANFILES = *.o *.dll *.la *.slo
 
-contrib: stop compile start
+contrib: stop build start
 
 stop:
 	${APACHECTL} -k stop -f ${PWD}/frepple.conf
 
-compile: mod_frepple.cpp filter.cpp  mod_frepple.h
+build: mod_frepple.cpp filter.cpp  mod_frepple.h
 	g++ -c -fPIC -DHAVE_CONFIG_H -I../.. -I`$(APXS) -q INCLUDEDIR` -I../../include filter.cpp
 	g++ -c -fPIC -DHAVE_CONFIG_H -I../.. -I`$(APXS) -q INCLUDEDIR` -I../../include mod_frepple.cpp
 	g++ -shared -fPIC -I`$(APXS) -q INCLUDEDIR` -I../../include filter.o mod_frepple.o ../../src/.libs/libfrepple.a -lxerces-c -o mod_frepple.so
@@ -30,7 +30,7 @@ restart:
 # These are the commands I used to compile my own Apache server.
 # The Apache server coming with my linux distribution didn't have a good MPM.
 # The commands below are an example only...
-compile_apache:
+build_apache:
 	cd ~/workspace/httpd-2.2.*
 	configure -with-mpm=worker --prefix=/home/johan/httpd --enable-deflate --disable-include --disable-env --enable-headers --disable-cgi --disable-cgid --enable-so
 	make

@@ -6,32 +6,32 @@
 ;  date     : $LastChangedDate$
 ;  email    : jdetaeye@users.sourceforge.net
 ;
-; Copyright (C) 2006 by Johan De Taeye                                                                                                              
+; Copyright (C) 2006 by Johan De Taeye
 ;
-; This library is free software; you can redistribute it and/or modify it 
-; under the terms of the GNU Lesser General Public License as published   
-; by the Free Software Foundation; either version 2.1 of the License, or  
-; (at your option) any later version.                                     
-;                                                                         
-; This library is distributed in the hope that it will be useful,         
-; but WITHOUT ANY WARRANTY; without even the implied warranty of          
-; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser 
-; General Public License for more details.                                
-;                                                                         
-; You should have received a copy of the GNU Lesser General Public        
-; License along with this library; if not, write to the Free Software     
+; This library is free software; you can redistribute it and/or modify it
+; under the terms of the GNU Lesser General Public License as published
+; by the Free Software Foundation; either version 2.1 of the License, or
+; (at your option) any later version.
+;
+; This library is distributed in the hope that it will be useful,
+; but WITHOUT ANY WARRANTY; without even the implied warranty of
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+; General Public License for more details.
+;
+; You should have received a copy of the GNU Lesser General Public
+; License along with this library; if not, write to the Free Software
 ; Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA 
 ;                                                                          
 
 ; This installer script is building on the GNU auto-build scripts. We first 
 ; create the distribution make target, and then unzip it. The windows installer 
 ; then selects subdirectories of this distribution tree to be installed.
-; To run this script successfully, you'll therefore need to have the cygwin 
+; To run this script successfully, you'll therefore need to have the cygwin
 ; system up and running on your machine.
 
 ; Main definitions
 !define PRODUCT_NAME "Frepple"
-!define PRODUCT_VERSION "0.1.1"
+!define PRODUCT_VERSION "0.1.2"
 !define PRODUCT_PUBLISHER "Frepple"
 !define PRODUCT_WEB_SITE "http://frepple.sourceforge.net"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
@@ -101,7 +101,7 @@ Section "Application" SecAppl
   File /nonfatal "bin\*.xml"
   CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
   CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple.lnk" "$INSTDIR\bin\frepple.exe"
-  
+
   ; Set an environment variable
   WriteRegExpandStr HKEY_CURRENT_USER "Environment" "FREPPLE_HOME" "$INSTDIR\bin"
 SectionEnd
@@ -201,7 +201,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple documentation.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple web site.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple.lnk"
-  
+
   ; Remove the folder in start menu
   RMDir "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
 
@@ -214,10 +214,10 @@ Section Uninstall
 
   ; Delete environment variable
   DeleteRegValue HKEY_CURRENT_USER "Environment" "FREPPLE_HOME"
-  
+
   ; Remove installation registration key
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
-  
+
   SetAutoClose true
 SectionEnd

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
- file : $HeadURL: file:///develop/SVNrepository/frepple/trunk/bin/frepple_core.xsd $
+ file : $HeadURL$
  version : $LastChangedRevision$  $LastChangedBy$
  date : $LastChangedDate$
  email : jdetaeye@users.sourceforge.net
 
- Copyright (C) 2006 by Johan De Taeye                                    
-                                                                         
- This library is free software; you can redistribute it and/or modify it 
- under the terms of the GNU Lesser General Public License as published   
- by the Free Software Foundation; either version 2.1 of the License, or  
- (at your option) any later version.                                     
+ Copyright (C) 2006 by Johan De Taeye
 
- This library is distributed in the hope that it will be useful,         
- but WITHOUT ANY WARRANTY; without even the implied warranty of          
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser 
- General Public License for more details.                                
+ This library is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
 
- You should have received a copy of the GNU Lesser General Public        
- License along with this library; if not, write to the Free Software     
- Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ General Public License for more details.
+
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 -->
 <xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema' elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
 	<!--
@@ -49,11 +49,11 @@
       </xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<!-- 
-        Note: Frepple can read XML data where multiple elements of the same name 
+			<!--
+        Note: Frepple can read XML data where multiple elements of the same name
         are present (e.g. 2 ITEMS elements), but the Microsoft Office XML tools
         can't deal with this.
-        To make the schema more compatible with Bill's world, replace the 
+        To make the schema more compatible with Bill's world, replace the
         construct below with:
             <xsd:all>
                <xsd:element ... minOccurs="0">

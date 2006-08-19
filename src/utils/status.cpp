@@ -35,12 +35,6 @@
 namespace frepple
 {
 
-DECLARE_EXPORT string XMLOutput::headerStart
-  ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-DECLARE_EXPORT string XMLOutput::headerAtts
-  ("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-
-
 void 	XMLInput::processingInstruction
   (const XMLCh *const target, const XMLCh *const data)
 {
@@ -521,6 +515,8 @@ void XMLOutput::xml_init()
   numObjects = 0;
   numParents = 0;
   indentstring[0] = '\0';
+  headerStart = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+  headerAtts = "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
 }
 
 

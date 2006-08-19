@@ -2921,9 +2921,12 @@ class CommandSave : public Command
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(CommandSave) + filename.size();}
+      {return sizeof(CommandSave) 
+        + filename.size() + headerstart.size() + headeratts.size();}
   private:
     string filename;
+    string headerstart;
+    string headeratts;
 };
 
 
@@ -2937,16 +2940,22 @@ class CommandSave : public Command
   * The data file is written by the execute function.
   * @see CommandSave
   */
-class CommandSavePlan : public CommandSave
+class CommandSavePlan : public Command
 {
   public:
-    CommandSavePlan(const string& v = "plan.out") : CommandSave(v) {};
+    CommandSavePlan(const string& v = "plan.out") : filename(v) {};
+    string getFileName() const {return filename;}
+    void setFileName(const string& v) {filename = v;}
     void execute();
+    void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const
-      {return "saving the plan into text file '" + getFileName() + "'";}
+      {return "saving the plan into text file '" + filename + "'";}
     virtual const MetaData& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandSavePlan);}
+    virtual size_t getSize() const 
+      {return sizeof(CommandSavePlan) + filename.size();}
+  private:
+    string filename;
 };
 
 

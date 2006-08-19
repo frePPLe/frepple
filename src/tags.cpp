@@ -124,5 +124,7 @@ const XMLtag Tags::tag_action("ACTION");
 const XMLtag Tags::tag_validate("VALIDATE");
 const XMLtag Tags::tag_csv("CSV");
 const XMLtag Tags::tag_parameter("PARAMETER");
+const XMLtag Tags::tag_headerstart("HEADERSTART");
+const XMLtag Tags::tag_headeratts("HEADERATTS");
 
 }

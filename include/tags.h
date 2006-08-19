@@ -125,5 +125,8 @@ class Tags
     static const XMLtag tag_validate;
     static const XMLtag tag_csv;
     static const XMLtag tag_parameter;
+    static const XMLtag tag_headerstart;
+    static const XMLtag tag_headeratts;
+
 };
 

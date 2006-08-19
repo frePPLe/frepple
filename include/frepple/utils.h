@@ -1506,14 +1506,14 @@ class XMLOutput
       * document. The default value is:
       *   \<?xml version="1.0" encoding="UTF-8"?\>
       */
-    static DECLARE_EXPORT string headerStart;
+    string headerStart;
 
     /** This string defines what will be attributes are printed for the root
       * element of each XML document.
       * The default value is:
       *    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       */
-    static DECLARE_EXPORT string headerAtts;
+    string headerAtts;
 
   protected:
     /** Updating the output stream. */
@@ -1525,19 +1525,19 @@ class XMLOutput
       * The default value is:
       *   <?xml version="1.0" encoding="UTF-8"?>
       */
-    static void setHeaderStart(const string& s) {headerStart = s;}
+    void setHeaderStart(const string& s) {headerStart = s;}
 
     /** Returns the string that is printed as the first line of each XML
       * document. */
-    static const string& getHeaderStart() {return headerStart;}
+    const string& getHeaderStart() {return headerStart;}
 
     /** Updates the attributes that are written for the root element of each
       * XML document. The default value is an empty string. */
-    static void setHeaderAtts(const string& s) {headerAtts = s;}
+    void setHeaderAtts(const string& s) {headerAtts = s;}
 
     /** Returns the attributes that are written for the root element of each
       * XML document. */
-    static const string& getHeaderAtts() {return headerAtts;}
+    const string& getHeaderAtts() {return headerAtts;}
 
     /** Constructor with a given stream. */
     XMLOutput(ostream& os) {m_fp = &os; xml_init();}

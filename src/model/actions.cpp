@@ -197,6 +197,10 @@ void CommandSave::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_filename))
     pElement >> filename;
+  else if (pElement.isA(Tags::tag_headerstart))
+    pElement >> headerstart;
+  else if (pElement.isA(Tags::tag_headeratts))
+    pElement >> headeratts;
   else
     Command::endElement(pIn, pElement);
 }
@@ -212,6 +216,8 @@ void CommandSave::execute()
 
   // Save the plan
   XMLOutputFile o(filename);
+  if (!headerstart.empty()) o.setHeaderStart(headerstart);
+  if (!headeratts.empty()) o.setHeaderAtts(headeratts);
   o.writeElementWithHeader(Tags::tag_plan, &Plan::instance());
 
   // Message
@@ -224,6 +230,15 @@ void CommandSave::execute()
 //
 // SAVE PLAN SUMMARY TO TEXT FILE
 //
+
+
+void CommandSavePlan::endElement(XMLInput& pIn, XMLElement& pElement)
+{
+  if (pElement.isA(Tags::tag_filename))
+    pElement >> filename;
+  else
+    Command::endElement(pIn, pElement);
+}
 
 
 void CommandSavePlan::execute()

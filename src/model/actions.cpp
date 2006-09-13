@@ -201,6 +201,15 @@ void CommandSave::endElement(XMLInput& pIn, XMLElement& pElement)
     pElement >> headerstart;
   else if (pElement.isA(Tags::tag_headeratts))
     pElement >> headeratts;
+  else if (pElement.isA(Tags::tag_content))
+  {
+    string tmp;
+    pElement >> tmp;
+    if (tmp == "STANDARD") content = XMLOutput::STANDARD;
+    else if (tmp == "PLAN") content = XMLOutput::PLAN;
+    else if (tmp == "PLANDETAIL") content = XMLOutput::PLANDETAIL;
+    else throw DataException("Invalid content type '" + tmp + "'");    
+  }
   else
     Command::endElement(pIn, pElement);
 }
@@ -218,6 +227,7 @@ void CommandSave::execute()
   XMLOutputFile o(filename);
   if (!headerstart.empty()) o.setHeaderStart(headerstart);
   if (!headeratts.empty()) o.setHeaderAtts(headeratts);
+  o.setContentType(content);
   o.writeElementWithHeader(Tags::tag_plan, &Plan::instance());
 
   // Message

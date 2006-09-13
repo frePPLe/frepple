@@ -144,6 +144,15 @@ void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
     o->writeElement(Tags::tag_size_minimum, size_minimum);
   if (size_multiple>0.0f)
     o->writeElement(Tags::tag_size_multiple, size_multiple);
+  
+  // Write extra plan information
+  if (o->getContentType() == XMLOutput::PLAN  && opplan)
+  {
+    o->BeginObject(Tags::tag_operation_plans);
+    for(OperationPlan *i = opplan; i; i = i->next)
+      o->writeElement(Tags::tag_operation_plan, i, FULL);
+    o->EndObject(Tags::tag_operation_plans);
+  }
 }
 
 
@@ -165,6 +174,8 @@ void Operation::beginElement (XMLInput& pIn, XMLElement& pElement)
     l->setOperation(this);
     pIn.readto(l);
   }
+  else if (pElement.isA (Tags::tag_operation_plan))
+    pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn.getAttributes()));
 }
 
 

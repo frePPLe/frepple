@@ -226,6 +226,15 @@ void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
   o->writeElement(Tags::tag_due, dueDate);
   if (prio) o->writeElement(Tags::tag_priority, prio);
 
+  // Write extra plan information
+  if (o->getContentType() == XMLOutput::PLAN  && !deli.empty())
+  {
+    o->BeginObject(Tags::tag_operation_plans);
+    for(OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
+      o->writeElement(Tags::tag_operation_plan, *i, FULL);
+    o->EndObject(Tags::tag_operation_plans);
+  }
+
   o->EndObject(tag);
 }
 

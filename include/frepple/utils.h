@@ -1432,13 +1432,14 @@ inline ostream & operator << (ostream & os, const DateRange & dr)
 //
 
 
-/** This type is used to define different ways of persisting a Object
-  * object. */
+/** This type is used to define different ways of persisting an object. */
 enum mode 
 {
   /** Write the full object or a reference. If the object is nested more 
     * than one level deep a reference is written, otherwise the complete 
     * object is written.<br>
+    * This mode is the one to be used when dumping all objects to be restored
+    * later. The other modes can dump too little or too much data.
     * Eg: \<MODEL NAME="POL" TYPE="a"\>\<FIELD\>value\</FIELD\>\</MODEL\>
     */
   DEFAULT = 0,   
@@ -1464,62 +1465,20 @@ enum mode
   */
 class XMLOutput
 {
-  private:
-    /** Output stream. */
-    ostream* m_fp;
-
-    /** This variable keeps track of the indentation level.
-      * @see incIndent, decIndent
-      */
-    short int m_nIndent;
-
-    /** This string is a null terminated string containing as many spaces as
-      * indicated by the m_indent.
-      * @see incIndent, decIndent
-      */
-    char indentstring[41];
-
-    /** Initializes the fields of the parser. This method is called from the
-      * constructors. */
-    void xml_init();
-
-    /** Keep track of the number of objects being stored. */
-    unsigned long numObjects;
-
-    /** Keep track of the number of objects currently in the save stack. */
-    unsigned int numParents;
-
-    /** This stores a pointer to the object that is currently being saved. */
-    const Object *currentObject;
-
-    /** This stores a pointer to the object that has previously been saved. */
-    const Object *parentObject;
-
-    /** Increase the indentation level. The indentation level is between
-      * 0 and 40. */
-    void incIndent();
-
-    /** Decrease the indentation level. */
-    void decIndent();
-
-    /** This string defines what will be printed at the start of each XML
-      * document. The default value is:
-      *   \<?xml version="1.0" encoding="UTF-8"?\>
-      */
-    string headerStart;
-
-    /** This string defines what will be attributes are printed for the root
-      * element of each XML document.
-      * The default value is:
-      *    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      */
-    string headerAtts;
-
   protected:
     /** Updating the output stream. */
     void setOutput(ostream& o) {m_fp = &o;}
 
   public:
+    typedef unsigned short content_type;
+    static const content_type STANDARD; /** @todo doc */
+    static const content_type PLAN;
+    static const content_type PLANDETAIL;
+
+    /** @todo add doc */
+    content_type getContentType() const {return content;}
+    void setContentType(content_type c) {content = c;}
+
     /** Updates the string that is printed as the first line of each XML
       * document.
       * The default value is:
@@ -1540,10 +1499,18 @@ class XMLOutput
     const string& getHeaderAtts() {return headerAtts;}
 
     /** Constructor with a given stream. */
-    XMLOutput(ostream& os) {m_fp = &os; xml_init();}
+    XMLOutput(ostream& os) : m_nIndent(0), numObjects(0), numParents(0), 
+      currentObject(NULL), parentObject(NULL), content(STANDARD),
+      headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
+      headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
+      {m_fp = &os; indentstring[0] = '\0';}
 
     /** Default constructor. */
-    XMLOutput() {m_fp = &clog; xml_init();}
+    XMLOutput() : m_nIndent(0), numObjects(0), numParents(0), 
+      currentObject(NULL), parentObject(NULL), content(STANDARD),
+      headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
+      headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
+    {m_fp = &clog; indentstring[0] = '\0';}
 
     /** Escape a char string - remove the characters & < > " ' and replace with
       * the proper escape codes. The reverse process of un-escaping the special
@@ -1792,6 +1759,56 @@ class XMLOutput
 
     /** Returns the number of objects that have been serialized. */
     unsigned long countObjects() const {return numObjects;}
+
+  private:
+    /** Output stream. */
+    ostream* m_fp;
+
+    /** This variable keeps track of the indentation level.
+      * @see incIndent, decIndent
+      */
+    short int m_nIndent;
+
+    /** This string is a null terminated string containing as many spaces as
+      * indicated by the m_indent.
+      * @see incIndent, decIndent
+      */
+    char indentstring[41];
+
+    /** Keep track of the number of objects being stored. */
+    unsigned long numObjects;
+
+    /** Keep track of the number of objects currently in the save stack. */
+    unsigned int numParents;
+
+    /** This stores a pointer to the object that is currently being saved. */
+    const Object *currentObject;
+
+    /** This stores a pointer to the object that has previously been saved. */
+    const Object *parentObject;
+
+    /** Increase the indentation level. The indentation level is between
+      * 0 and 40. */
+    void incIndent();
+
+    /** Decrease the indentation level. */
+    void decIndent();
+
+    /** Stores the type of data to be exported. */
+    content_type content;
+
+    /** This string defines what will be printed at the start of each XML
+      * document. The default value is:
+      *   \<?xml version="1.0" encoding="UTF-8"?\>
+      */
+    string headerStart;
+
+    /** This string defines what will be attributes are printed for the root
+      * element of each XML document.
+      * The default value is:
+      *    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      */
+    string headerAtts;
 };
 
 

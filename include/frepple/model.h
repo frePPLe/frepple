@@ -2124,6 +2124,11 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     virtual void beginElement(XMLInput&, XMLElement&);
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+
+    /** @deprecated
+      * This method writes out a bucketized view of supply and demand in 
+      * the buffer. The method is to be removed. @todo
+      */
     void writeProfile(XMLOutput*, Calendar* = NULL) const;
     virtual void endElement(XMLInput&, XMLElement&);
 
@@ -2910,7 +2915,8 @@ class CommandReadXMLString : public Command
 class CommandSave : public Command
 {
   public:
-    CommandSave(const string& v = "plan.out") : filename(v){};
+    CommandSave(const string& v = "plan.out") 
+      : filename(v), content(XMLOutput::STANDARD) {};
     virtual ~CommandSave() {};
     string getFileName() const {return filename;}
     void setFileName(const string& v) {filename = v;}
@@ -2923,10 +2929,13 @@ class CommandSave : public Command
     virtual size_t getSize() const
       {return sizeof(CommandSave) 
         + filename.size() + headerstart.size() + headeratts.size();}
+    XMLOutput::content_type getContent() const {return content;}
+    void setContent(XMLOutput::content_type t) {content = t;}
   private:
     string filename;
     string headerstart;
     string headeratts;
+    XMLOutput::content_type content;
 };
 
 

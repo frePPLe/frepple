@@ -35,6 +35,12 @@
 namespace frepple
 {
 
+
+const XMLOutput::content_type XMLOutput::STANDARD = 1; 
+const XMLOutput::content_type XMLOutput::PLAN = 2;
+const XMLOutput::content_type XMLOutput::PLANDETAIL = 4;
+
+
 void 	XMLInput::processingInstruction
   (const XMLCh *const target, const XMLCh *const data)
 {
@@ -504,19 +510,6 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
   // Execute the commands defined in the input stream.
   // The commands are executed only after a successful parsing.
   executeCommands();
-}
-
-
-void XMLOutput::xml_init()
-{
-  currentObject = NULL;
-  parentObject = NULL;
-  m_nIndent = 0;
-  numObjects = 0;
-  numParents = 0;
-  indentstring[0] = '\0';
-  headerStart = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-  headerAtts = "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
 }
 
 

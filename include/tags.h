@@ -45,6 +45,8 @@ class Tags
     static const XMLtag tag_items;
     static const XMLtag tag_flows;
     static const XMLtag tag_flow;
+    static const XMLtag tag_flow_plans;
+    static const XMLtag tag_flow_plan;
     static const XMLtag tag_problems;
     static const XMLtag tag_demands;
     static const XMLtag tag_delivery;
@@ -67,6 +69,8 @@ class Tags
     static const XMLtag tag_delay;
     static const XMLtag tag_loads;
     static const XMLtag tag_load;
+    static const XMLtag tag_load_plans;
+    static const XMLtag tag_load_plan;
     static const XMLtag tag_operation_plans;
     static const XMLtag tag_operation_plan;
     static const XMLtag tag_locked;
@@ -87,7 +91,6 @@ class Tags
     static const XMLtag tag_location;
     static const XMLtag tag_size_minimum;
     static const XMLtag tag_size_multiple;
-    static const XMLtag tag_profile;
     static const XMLtag tag_default_calendar;
     static const XMLtag tag_demand;
     static const XMLtag tag_supply;
@@ -127,6 +130,7 @@ class Tags
     static const XMLtag tag_parameter;
     static const XMLtag tag_headerstart;
     static const XMLtag tag_headeratts;
+    static const XMLtag tag_content;
 
 };
 

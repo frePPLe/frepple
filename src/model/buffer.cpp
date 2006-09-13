@@ -154,72 +154,44 @@ double Buffer::getOnHand(Date d1, Date d2, bool min) const
 
 void Buffer::writeProfile(XMLOutput* o, Calendar* hor) const
 {
-  // Check whether we need to bucketize or not
-  if (hor)
+  // No bucketization given
+  if (!hor) 
+    throw DataException("Writing buffer profile requires a calendar");
+
+  // Write the header
+  o->BeginObject
+    (Tags::tag_bucket_profile, Tags::tag_calendar, hor->getName());
+
+  // Loop through both the flowplans and the buckets
+  double onhand(0.0);
+  float demand, supply;
+  flowplanlist::const_iterator f = flowplans.begin();
+  for (Calendar::BucketIterator b = hor->beginBuckets();
+        b != hor->endBuckets(); ++b)
   {
-    // Mode 2: Aggregate the supply and demand per bucket
-
-    // Write the header
-    o->BeginObject
-      (Tags::tag_bucket_profile, Tags::tag_calendar, hor->getName());
-
-    // Loop through both the flowplans and the buckets
-    double onhand(0.0);
-    float demand, supply;
-    flowplanlist::const_iterator f = flowplans.begin();
-    for (Calendar::BucketIterator b = hor->beginBuckets();
-         b != hor->endBuckets(); ++b)
+    o->BeginObject(Tags::tag_bucket);
+    o->writeElement(Tags::tag_name, b->getName());
+    o->writeElement(Tags::tag_start, b->getStart());
+    o->writeElement(Tags::tag_end, b->getEnd());
+    o->writeElement(Tags::tag_start_onhand, onhand);
+    o->writeElement(Tags::tag_minimum, 
+        f!=flowplans.end() ? f->getMin() : 0.0);
+    demand = 0.0f;
+    supply = 0.0f;
+    for (; f!=flowplans.end() && f->getDate()<b->getEnd(); ++f)
     {
-      o->BeginObject(Tags::tag_bucket);
-      o->writeElement(Tags::tag_name, b->getName());
-      o->writeElement(Tags::tag_start, b->getStart());
-      o->writeElement(Tags::tag_end, b->getEnd());
-      o->writeElement(Tags::tag_start_onhand, onhand);
-      o->writeElement(Tags::tag_minimum, 
-         f!=flowplans.end() ? f->getMin() : 0.0);
-      demand = 0.0f;
-      supply = 0.0f;
-      for (; f!=flowplans.end() && f->getDate()<b->getEnd(); ++f)
-      {
-        if (f->getQuantity() > 0.0f) supply += f->getQuantity();
-        else demand -= f->getQuantity();
-        onhand = f->getOnhand();
-      }
-      o->writeElement(Tags::tag_demand, demand);
-      o->writeElement(Tags::tag_supply, supply);
-      o->writeElement(Tags::tag_end_onhand, onhand);
-      o->EndObject(Tags::tag_bucket);
+      if (f->getQuantity() > 0.0f) supply += f->getQuantity();
+      else demand -= f->getQuantity();
+      onhand = f->getOnhand();
     }
-
-    // Finish
-    o->EndObject (Tags::tag_bucket_profile);
+    o->writeElement(Tags::tag_demand, demand);
+    o->writeElement(Tags::tag_supply, supply);
+    o->writeElement(Tags::tag_end_onhand, onhand);
+    o->EndObject(Tags::tag_bucket);
   }
-  else
-  {
-    // Mode 1: No bucketization required. Simply dump all flowplans.
 
-    // Write the header
-    o->BeginObject (Tags::tag_profile);
-
-    // Loop through both the flowplans and the buckets
-    for(flowplanlist::const_iterator oo=flowplans.begin();
-        oo!=flowplans.end(); ++oo)
-      if (oo->getType() == 1)
-      {
-        o->BeginObject (Tags::tag_flow);
-        o->writeElement (Tags::tag_date, oo->getDate());
-        o->writeElement (Tags::tag_quantity, oo->getQuantity());
-        o->writeElement (Tags::tag_onhand, oo->getOnhand());
-        o->writeElement (Tags::tag_minimum, oo->getMin());
-        const FlowPlan* x = dynamic_cast<const FlowPlan*>(&*oo);
-        if (x && x->getOperationPlan()->getIdentifier())
-          o->writeElement(Tags::tag_id, x->getOperationPlan()->getIdentifier());
-        o->EndObject (Tags::tag_flow);
-      }
-
-    // Finish
-    o->EndObject (Tags::tag_profile);
-  }
+  // Finish
+  o->EndObject (Tags::tag_bucket_profile);
 }
 
 
@@ -273,6 +245,27 @@ void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
   o->writeElement(Tags::tag_minimum, min_cal);
   o->writeElement(Tags::tag_maximum, max_cal);
 
+  // Write extra plan information
+  i = flowplans.begin();
+  if (o->getContentType() == XMLOutput::PLAN  && i!=flowplans.end())
+  {
+    o->BeginObject(Tags::tag_flow_plans);
+    for (; i!=flowplans.end(); ++i)
+      if (i->getType()==1)
+      {
+        const FlowPlan *fp = dynamic_cast<const FlowPlan*>(&*i);
+        o->BeginObject(Tags::tag_flow_plan);
+        o->writeElement(Tags::tag_date, fp->getDate()); 
+        o->writeElement(Tags::tag_quantity, fp->getQuantity());
+        o->writeElement(Tags::tag_onhand, fp->getOnhand());
+        o->writeElement(Tags::tag_minimum, fp->getMin());
+        o->writeElement(Tags::tag_maximum, fp->getMax());
+        o->writeElement(Tags::tag_operation_plan, fp->getOperationPlan(), FULL);
+        o->EndObject(Tags::tag_flow_plan);
+      }
+    o->EndObject(Tags::tag_flow_plans);
+  }
+
   // Ending tag
   o->EndObject(tag);
 }
@@ -298,8 +291,7 @@ void Buffer::beginElement (XMLInput& pIn, XMLElement& pElement)
     pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else if (pElement.isA(Tags::tag_location))
     pIn.readto( Location::reader(Location::metadata,pIn.getAttributes()) );
-  else if (pElement.isA(Tags::tag_profile)
-    || pElement.isA(Tags::tag_bucket_profile))
+  else if (pElement.isA(Tags::tag_flow_plans))
     pIn.IgnoreElement();
   else
     HasHierarchy<Buffer>::beginElement(pIn, pElement);

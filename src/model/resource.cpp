@@ -102,6 +102,27 @@ void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
       o->writeElement(Tags::tag_load, &(*(i++)), FULL);
     o->EndObject (Tags::tag_loads);
   }
+  
+  // Write extra plan information
+  loadplanlist::const_iterator i = loadplans.begin();
+  if (o->getContentType() == XMLOutput::PLAN  && i!=loadplans.end())
+  {
+    o->BeginObject(Tags::tag_load_plans);
+    for (; i!=loadplans.end(); ++i)
+      if (i->getType()==1)
+      {
+        const LoadPlan *lp = dynamic_cast<const LoadPlan*>(&*i);
+        o->BeginObject(Tags::tag_load_plan);
+        o->writeElement(Tags::tag_date, lp->getDate()); 
+        o->writeElement(Tags::tag_quantity, lp->getQuantity());
+        o->writeElement(Tags::tag_onhand, lp->getOnhand());
+        o->writeElement(Tags::tag_minimum, lp->getMin());
+        o->writeElement(Tags::tag_maximum, lp->getMax());
+        o->writeElement(Tags::tag_operation_plan, lp->getOperationPlan(), FULL);
+        o->EndObject(Tags::tag_load_plan);
+      }
+    o->EndObject(Tags::tag_load_plans);
+  }
 
   // That was it
   o->EndObject(tag);
@@ -114,13 +135,13 @@ void Resource::beginElement (XMLInput& pIn, XMLElement& pElement)
       && pIn.getParentElement().isA(Tags::tag_loads))
   {
     Load * l = new Load();
-    LockManager::getManager().obtainWriteLock(l);
+    LockManager::getManager().obtainWriteLock(l);   // @todo
     l->setResource(this);
     pIn.readto(l);
   }
   else if (pElement.isA (Tags::tag_maximum))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
-  else if (pElement.isA(Tags::tag_profile))
+  else if (pElement.isA(Tags::tag_load_plans))
     pIn.IgnoreElement();
   else
     HasHierarchy<Resource>::beginElement(pIn, pElement);

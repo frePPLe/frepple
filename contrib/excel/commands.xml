@@ -1,13 +1,17 @@
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <LOGFILE>frepple.log</LOGFILE>
   <COMMANDS>
     <VERBOSE>true</VERBOSE>
-    <COMMAND xsi:type="COMMAND_READXML" FILENAME="C:/develop/frepple/contrib/excel/frepple.xml"/>
+    <COMMAND xsi:type="COMMAND_READXML"
+      FILENAME="frepple.xml"
+      VALIDATE="true" />
     <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0"/>
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP"
+        CONSTRAINTS="7" />
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="C:/develop/frepple/contrib/excel/output.xml" CONTENT="PLAN"/>
-		<!--
+    <COMMAND xsi:type="COMMAND_SAVE"
+      FILENAME="output.xml"
+      CONTENT="PLAN" />
     <COMMAND xsi:type="COMMAND_SIZE"/>
-    -->
   </COMMANDS>
 </PLAN>

@@ -2,4 +2,18 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = frepple.xls frepple_flat.xsd preprocess.xsl commands.xml README.txt
+EXTRA_DIST = frepple.xls frepple.xsd commands.xml README.txt xercesc-LICENSE
+
+clean-local:
+	-rm -rf frepple-excel
+
+contrib:
+	-rm -rf frepple-excel
+	mkdir frepple-excel
+	cp ../../bin/frepple_vcc_static.exe frepple-excel/frepple.exe
+	cp `which xerces-c_2_7.dll` frepple-excel
+	cp ../../COPYING frepple-excel/LICENSE
+	cp frepple.xsd frepple-excel
+	cp frepple.xls frepple-excel
+	cp xercesc-LICENSE frepple-excel
+	echo Zip the folder "frepple-excel" to distribute

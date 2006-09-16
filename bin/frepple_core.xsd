@@ -296,7 +296,7 @@
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:group ref="COMMON_FIELDS" />
 			<xsd:element name="LOCATION" type="LOCATION" />
-			<xsd:element name="MAXIMUM" type="CALENDAR" />
+			<xsd:element name="MAXIMUM" type="CALENDAR_FLOAT" />
 			<xsd:element name="OWNER" type="RESOURCE" />
 			<xsd:element name="MEMBERS" type="RESOURCELIST" />
 			<xsd:element name="DETECTPROBLEMS" type="xsd:boolean" />

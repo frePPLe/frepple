@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  elementFormDefault="unqualified" attributeFormDefault="unqualified"
+<xsd:schema
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="unqualified"
+  attributeFormDefault="unqualified"
   version="1.0">
   <!--
     The normal schema of Frepple is not suitable for use in Excel.
@@ -35,17 +37,17 @@
         -->
 
         <!-- OBJECT LISTS -->
-        <xsd:element name="CALENDARS" type="CALENDARLIST" minOccurs="0" />
-        <xsd:element name="OPERATIONS" type="OPERATIONLIST" minOccurs="0" />
         <xsd:element name="LOCATIONS" type="LOCATIONLIST" minOccurs="0" />
         <xsd:element name="CUSTOMERS" type="CUSTOMERLIST" minOccurs="0" />
         <xsd:element name="ITEMS" type="ITEMLIST" minOccurs="0" />
         <xsd:element name="DEMANDS" type="DEMANDLIST" minOccurs="0" />
         <xsd:element name="BUFFERS" type="BUFFERLIST" minOccurs="0" />
-        <xsd:element name="RESOURCES" type="RESOURCELIST" minOccurs="0" />
-        <xsd:element name="OPERATION_PLANS" type="OPERATIONPLANLIST" minOccurs="0" />
         <xsd:element name="FLOWS" type="FLOWLIST" minOccurs="0" />
+        <xsd:element name="OPERATIONS" type="OPERATIONLIST" minOccurs="0" />
+        <xsd:element name="CALENDARS" type="CALENDARLIST" minOccurs="0" />
+        <xsd:element name="RESOURCES" type="RESOURCELIST" minOccurs="0" />
         <xsd:element name="LOADS" type="LOADLIST" minOccurs="0" />
+        <xsd:element name="OPERATION_PLANS" type="OPERATIONPLANLIST" minOccurs="0" />
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
@@ -390,7 +392,7 @@
 
   <xsd:complexType name="CALENDARLIST">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="CALENDAR" type="CALENDAR_FLOAT" />
+			<xsd:element name="CALENDAR" type="CALENDAR_FLOAT" />
     </xsd:sequence>
   </xsd:complexType>
 

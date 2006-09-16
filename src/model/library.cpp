@@ -206,11 +206,11 @@ void LibraryModel::initialize()
   CalendarVoid::metadata.registerClass(
     "CALENDAR", 
     "CALENDAR_VOID", 
-    Object::createString<CalendarVoid>, true);
+    Object::createString<CalendarVoid>);
   CalendarFloat::metadata.registerClass(
     "CALENDAR",
     "CALENDAR_FLOAT", 
-    Object::createString<CalendarFloat>);
+    Object::createString<CalendarFloat>, true);
   CalendarInt::metadata.registerClass(
     "CALENDAR",
     "CALENDAR_INTEGER", 

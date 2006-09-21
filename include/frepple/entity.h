@@ -34,7 +34,7 @@ template <class T> inline ostream& operator << (ostream &o, const HasName<T> &n)
 
 template <class T> inline ostream& operator << (ostream &o, const HasName<T> *n)
 {
-  return o << (n ? n->getName() : "NULL");
+  return o << (n ? n->getName() : string("NULL"));
 }
 
 

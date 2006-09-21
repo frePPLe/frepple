@@ -75,7 +75,6 @@ int main (int argc, char *argv[])
   // Storing the chosen options...
   bool validate = false;
   bool validate_only = false;
-  bool initialized = false;
   bool input = false;
   string home;
 

@@ -209,6 +209,12 @@ class MRPSolver : public Solver
     /** Returns true if any constraint is relevant for the solver. */
     bool isConstrained() const {return constrts>0;}
 
+    /** This function defines the order in which the demands are being
+      * planned. The demand priority is used as the first criterium, with the
+      * due date being used as tie break.
+      */
+    static bool demand_comparison(Demand* l1, Demand* l2);
+
   private:
     typedef map < int, deque<Demand*>, less<int> > classified_demand;
     typedef classified_demand::iterator cluster_iterator;
@@ -302,12 +308,6 @@ class MRPSolver : public Solver
         /** A deque containing all demands to be (re-)planned. */
         deque<Demand*>& demands;
     };
-
-    /** This function defines the order in which the demands are being
-      * planned. The demand priority is used as the first criterium, with the
-      * due date being used as tie break.
-      */
-    static bool demand_comparison(Demand* l1, Demand* l2);
 
     /** This function will check all constraints for an operationplan
       * and propagate it upstream. The check does NOT check eventual

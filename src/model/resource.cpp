@@ -140,7 +140,7 @@ void Resource::beginElement (XMLInput& pIn, XMLElement& pElement)
     pIn.readto(l);
   }
   else if (pElement.isA (Tags::tag_maximum))
-    pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
+    pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
   else if (pElement.isA(Tags::tag_load_plans))
     pIn.IgnoreElement();
   else

@@ -104,12 +104,14 @@ void Plan::endElement (XMLInput& pIn, XMLElement& pElement)
 
 void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
-  const MetaCategory *cat = MetaCategory::findCategory(pElement.getTagHash());
-  if (cat && pIn.getParentElement().isA(cat->grouptag))
+//  const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pElement.getTagHash());
+//  if (cat && pIn.getParentElement().isA(cat->grouptag))
+  const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pIn.getParentElement().getTagHash());
+  if (cat && pElement.isA(cat->typetag))
   {
     if (cat->readFunction)
       // Hand over control to a registered read controller
-      pIn.readto(cat->readFunction(*cat, pIn.getAttributes()));
+      pIn.readto(cat->readFunction(*cat,pIn));
     else
       // There is no controller available.
       // This piece of code will be used to skip pieces of the XML file that
@@ -123,7 +125,7 @@ void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
     pIn.readto(&(pIn.getCommands()));
   }    
   else if (pElement.isA(Tags::tag_default_calendar))
-    pIn.readto(Calendar::reader(Calendar::metadata,pIn.getAttributes()));
+    pIn.readto(Calendar::reader(Calendar::metadata,pIn));
 }
 
 

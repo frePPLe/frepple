@@ -40,7 +40,7 @@ template<class Solver> DECLARE_EXPORT Tree HasName<Solver>::st;
 void CommandSolve::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_solver))
-    pIn.readto( Solver::reader(Solver::metadata,pIn.getAttributes()) );
+    pIn.readto( Solver::reader(Solver::metadata,pIn) );
 }
 
 

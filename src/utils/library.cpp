@@ -33,7 +33,11 @@
 namespace frepple
 {
 
+
 DECLARE_EXPORT const MetaCategory* MetaCategory::firstCategory = NULL;
+DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByTag;
+DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
+
 
 // Command metadata
 const MetaCategory Command::metadata;
@@ -148,7 +152,8 @@ void MetaClass::registerClass (const char* a, const char* b, bool def) const
     throw LogicException("Reinitializing class " + type + " isn't allowed");
 
   // Find or create the category
-  MetaCategory* cat = const_cast<MetaCategory*>(MetaCategory::findCategory(a));
+  MetaCategory* cat 
+	  = const_cast<MetaCategory*>(MetaCategory::findCategoryByTag(a));
 
   // Check for a valid category
   if (!cat)
@@ -177,7 +182,8 @@ void MetaCategory::registerCategory
     throw LogicException("Reinitializing category " + type + " isn't allowed");
 
   // Update registry
-  if (a) const_cast<CategoryMap&>(getCategories())[XMLtag::hash(a)] = this;
+  if (a) categoriesByTag[XMLtag::hash(a)] = this;
+  if (gr) categoriesByGroupTag[XMLtag::hash(gr)] = this;
 
   // Update fields
   MetaCategory& me = const_cast<MetaCategory&>(*this);
@@ -208,6 +214,7 @@ void MetaCategory::registerCategory
 }
 
 
+/* xxx
 DECLARE_EXPORT const MetaCategory::CategoryMap& MetaCategory::getCategories()
 {
   static CategoryMap m;
@@ -215,21 +222,42 @@ DECLARE_EXPORT const MetaCategory::CategoryMap& MetaCategory::getCategories()
 }
 
 
-const MetaCategory* MetaCategory::findCategory(const char* c)
+DECLARE_EXPORT const MetaCategory::CategoryMap& MetaCategory::getCategoriesByGroup()
+{
+  static CategoryMap m;
+  return m;
+}
+*/
+
+const MetaCategory* MetaCategory::findCategoryByTag(const char* c)  
 {
   // Loop through all categories
-  MetaCategory::CategoryMap::const_iterator i 
-    = MetaCategory::getCategories().find(XMLtag::hash(c));
-  return (i!=MetaCategory::getCategories().end()) ? i->second : NULL;
+  CategoryMap::const_iterator i = categoriesByTag.find(XMLtag::hash(c));
+  return (i!=categoriesByTag.end()) ? i->second : NULL;
 }
 
 
-const MetaCategory* MetaCategory::findCategory(const hashtype h)
+const MetaCategory* MetaCategory::findCategoryByTag(const hashtype h)
 {
   // Loop through all categories
-  MetaCategory::CategoryMap::const_iterator i 
-    = MetaCategory::getCategories().find(h);
-  return (i!=MetaCategory::getCategories().end()) ? i->second : NULL;
+  CategoryMap::const_iterator i = categoriesByTag.find(h);
+  return (i!=categoriesByTag.end()) ? i->second : NULL;
+}
+
+
+const MetaCategory* MetaCategory::findCategoryByGroupTag(const char* c)  
+{
+  // Loop through all categories
+  CategoryMap::const_iterator i = categoriesByGroupTag.find(XMLtag::hash(c));
+  return (i!=categoriesByGroupTag.end()) ? i->second : NULL;
+}
+
+
+const MetaCategory* MetaCategory::findCategoryByGroupTag(const hashtype h)  
+{
+  // Loop through all categories
+  CategoryMap::const_iterator i = categoriesByGroupTag.find(h);
+  return (i!=categoriesByGroupTag.end()) ? i->second : NULL;
 }
 
 
@@ -243,9 +271,8 @@ void MetaCategory::persist(XMLOutput *o)
 const MetaClass* MetaClass::findClass(const char* c)
 {
   // Loop through all categories
-  const MetaCategory::CategoryMap& reg = MetaCategory::getCategories();
-  for (MetaCategory::CategoryMap::const_iterator i = reg.begin(); 
-    i != reg.end(); ++i)
+  for (MetaCategory::CategoryMap::const_iterator i = MetaCategory::categoriesByTag.begin(); 
+    i != MetaCategory::categoriesByTag.end(); ++i)
   {
     // Look up in the registered classes
     MetaCategory::ClassMap::const_iterator j 
@@ -261,9 +288,8 @@ void MetaClass::printClasses()
 {
   clog << "Registered classes:" << endl;
   // Loop through all categories
-  const MetaCategory::CategoryMap& reg = MetaCategory::getCategories();
-  for (MetaCategory::CategoryMap::const_iterator i = reg.begin(); 
-    i != reg.end(); ++i)
+  for (MetaCategory::CategoryMap::const_iterator i = MetaCategory::categoriesByTag.begin(); 
+    i != MetaCategory::categoriesByTag.end(); ++i)
   {
 	 	clog << "  " << i->second->type << endl;
     // Loop through the classes for the category
@@ -317,8 +343,9 @@ bool MetaClass::raiseEvent(Object* v, Signal a) const
 }
 
 
-Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const Attributes* atts)
+Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput& in)
 {
+  const Attributes* atts = in.getAttributes();
   Action act = ADD;
   switch (act)
   {

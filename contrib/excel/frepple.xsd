@@ -154,11 +154,16 @@
   <xsd:complexType name="OPERATIONLIST">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="OPERATION" type="OPERATION" />
+			<xsd:element name="OPERATION_FIXED_TIME" type="OPERATION_FIXED_TIME" />
+			<xsd:element name="OPERATION_TIME_PER" type="OPERATION_TIME_PER" />
+			<xsd:element name="OPERATION_ALTERNATE" type="OPERATION_ALTERNATE" />
+			<!--
+			<xsd:element name="OPERATION_ROUTING" type="OPERATION_ROUTING" />
+			<xsd:element name="OPERATION_EFFECTIVE" type="OPERATION_EFFECTIVE" />
+			-->
     </xsd:sequence>
   </xsd:complexType>
 
-
-<!--
   <xsd:complexType name="OPERATION_ALTERNATE">
     <xsd:complexContent>
       <xsd:extension base="OPERATION">
@@ -182,7 +187,6 @@
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
--->
 
   <!-- ITEM -->
   <xsd:complexType name="ITEM">
@@ -240,6 +244,7 @@
   <xsd:complexType name="RESOURCELIST">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="RESOURCE" type="RESOURCE" />
+			<xsd:element name="RESOURCE_INFINITE" type="RESOURCE_INFINITE" />
     </xsd:sequence>
   </xsd:complexType>
 
@@ -271,9 +276,16 @@
     <xsd:attribute name="DETECTPROBLEMS" type="xsd:boolean" />
   </xsd:complexType>
 
+	<xsd:complexType name="BUFFER_INFINITE">
+		<xsd:complexContent>
+			<xsd:extension base="BUFFER" />
+		</xsd:complexContent>
+	</xsd:complexType>
+
   <xsd:complexType name="BUFFERLIST">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="BUFFER" type="BUFFER" />
+			<xsd:element name="BUFFER_INFINITE" type="BUFFER_INFINITE" />
     </xsd:sequence>
   </xsd:complexType>
 
@@ -295,9 +307,23 @@
     <xsd:attribute name="QUANTITY" type="xsd:float" />
   </xsd:complexType>
 
+	<xsd:complexType name="FLOW_END">
+		<xsd:complexContent>
+			<xsd:extension base="FLOW" />
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="FLOW_START">
+		<xsd:complexContent>
+			<xsd:extension base="FLOW" />
+		</xsd:complexContent>
+	</xsd:complexType>
+
   <xsd:complexType name="FLOWLIST">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="FLOW" type="FLOW" />
+			<xsd:element name="FLOW_END" type="FLOW_END" />
+			<xsd:element name="FLOW_START" type="FLOW_START" />
     </xsd:sequence>
   </xsd:complexType>
 
@@ -392,7 +418,8 @@
 
   <xsd:complexType name="CALENDARLIST">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-			<xsd:element name="CALENDAR" type="CALENDAR_FLOAT" />
+			<xsd:element name="CALENDAR_FLOAT" type="CALENDAR_FLOAT" />
+			<xsd:element name="CALENDAR_VOID" type="CALENDAR_VOID" />
     </xsd:sequence>
   </xsd:complexType>
 

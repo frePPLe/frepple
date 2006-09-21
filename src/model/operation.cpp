@@ -162,7 +162,7 @@ void Operation::beginElement (XMLInput& pIn, XMLElement& pElement)
     && pIn.getParentElement().isA(Tags::tag_flows))
   {
     Flow *f = 
-      dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn.getAttributes()));
+      dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn));
     if (f) f->setOperation(this);
     pIn.readto(f);
   }
@@ -175,7 +175,7 @@ void Operation::beginElement (XMLInput& pIn, XMLElement& pElement)
     pIn.readto(l);
   }
   else if (pElement.isA (Tags::tag_operation_plan))
-    pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn.getAttributes()));
+    pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn));
 }
 
 
@@ -367,7 +367,7 @@ void OperationRouting::writeElement
 void OperationRouting::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn) );
   else
     Operation::beginElement(pIn, pElement);
 }
@@ -548,7 +548,7 @@ void OperationAlternate::writeElement
 void OperationAlternate::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn) );
   else
     Operation::beginElement(pIn, pElement);
 }
@@ -672,7 +672,7 @@ void OperationEffective::writeElement
 void OperationEffective::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_calendar))
-    pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
+    pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
   else
     Operation::beginElement(pIn, pElement);
 }

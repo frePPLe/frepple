@@ -113,7 +113,7 @@ template <class T> void HasHierarchy<T>::beginElement
     (pIn.getParentElement().isA(Tags::tag_members) 
        && pElement.isA(T::metadata.typetag)))
     // Start reading a member or the parent
-    pIn.readto( T::reader(T::metadata,pIn.getAttributes()) );
+    pIn.readto( T::reader(T::metadata,pIn) );
 }
 
 

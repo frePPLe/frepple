@@ -352,7 +352,7 @@ void CommandList::endElement(XMLInput& pIn, XMLElement& pElement)
 void CommandList::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_command))
-    pIn.readto( MetaCategory::ControllerDefault(Command::metadata,pIn.getAttributes()) );
+    pIn.readto( MetaCategory::ControllerDefault(Command::metadata,pIn) );
 }
 
 

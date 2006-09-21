@@ -242,13 +242,13 @@ void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 void Demand::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_item))
-    pIn.readto( Item::reader(Item::metadata,pIn.getAttributes()) );
+    pIn.readto( Item::reader(Item::metadata,pIn) );
   else if (pElement.isA (Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn) );
   else if (pElement.isA (Tags::tag_customer))
-    pIn.readto( Customer::reader(Customer::metadata,pIn.getAttributes()) );
+    pIn.readto( Customer::reader(Customer::metadata,pIn) );
   else if (pElement.isA(Tags::tag_operation_plan))
-    pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn.getAttributes()));
+    pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata,pIn));
   else
     HasHierarchy<Demand>::beginElement(pIn, pElement);
 }

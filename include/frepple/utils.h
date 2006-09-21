@@ -846,7 +846,7 @@ class MetaCategory : public MetaData
     const XMLtag* grouptag;
 
     /** Type definition for the read control function. */
-    typedef Object* (*readController)(const MetaCategory&, const Attributes* atts);
+    typedef Object* (*readController)(const MetaCategory&, const XMLInput& in);
 
     /** Type definition for the write control function. */
     typedef void (*writeController)(const MetaCategory&, XMLOutput *o);
@@ -854,7 +854,7 @@ class MetaCategory : public MetaData
     /** This template method is available as a object creation factory for 
       * classes without key fields and which rely on a default constructor.
       */
-    static Object* ControllerDefault (const MetaCategory&, const Attributes* atts);
+    static Object* ControllerDefault (const MetaCategory&, const XMLInput& in);
         
     /** Default constructor. <br>
       * Calling the registerCategory method is required after creating a 
@@ -878,16 +878,21 @@ class MetaCategory : public MetaData
     /** Type definition for the map of all categories. */
     typedef map < hashtype, const MetaCategory*, less<hashtype> > CategoryMap;
 
-    /** Returns a pointer to the registry of all metadata. */
-    static DECLARE_EXPORT const CategoryMap& getCategories();
+    /** Looks up a category name in the registry. If the catgory can't be 
+      * located the return value is NULL. */
+    static const MetaCategory* findCategoryByTag(const char*);
 
     /** Looks up a category name in the registry. If the catgory can't be 
       * located the return value is NULL. */
-    static const MetaCategory* findCategory(const char*);
+    static const MetaCategory* findCategoryByTag(const hashtype);
 
     /** Looks up a category name in the registry. If the catgory can't be 
       * located the return value is NULL. */
-    static const MetaCategory* findCategory(const hashtype);
+    static const MetaCategory* findCategoryByGroupTag(const char*);
+
+    /** Looks up a category name in the registry. If the catgory can't be 
+      * located the return value is NULL. */
+    static const MetaCategory* findCategoryByGroupTag(const hashtype);
 
     /** This method takes care of the persistence of all categories. It loops
       * through all registered categories (in the order of their registration)
@@ -922,6 +927,9 @@ class MetaCategory : public MetaData
       * call write them one by one. 
       */
     writeController writeFunction;
+
+    static DECLARE_EXPORT CategoryMap categoriesByTag;
+    static DECLARE_EXPORT CategoryMap categoriesByGroupTag;
 };
 
 
@@ -2432,707 +2440,6 @@ class Tree : public NonCopyable
 
 
 //
-//  UTILITY CLASSES "HASNAME", "HASHIERARCHY", "HASDESCRIPTION"
-//
-
-
-/** This is the base class for the main objects.
- *  Instances of this class have the following properties:
- *    - Have a unique name.
- *    - A hashtable (keyed on the name) is maintained with all active instances.
- */
-template <class T> class HasName : public NonCopyable, public Tree::TreeNode
-{
-  private:
-    /** Maintains a global list of all created entities. The list is keyed
-      * by the name. */
-    static DECLARE_EXPORT Tree st;
-    typedef T* type;
-
-  public:
-    /** This class models an STL-like iterator that allows us to iterate over
-      * the named entities in a simple and safe way.<br>
-      * Objects of this class are created by the begin() and end() functions.
-      */
-    class iterator
-    {
-      public:
-        /** Constructor. */
-        iterator(Tree::TreeNode* x) : node(x) {}
-
-        /** Copy constructor. */
-        iterator(const iterator& it) {node = it.node;}
-
-        /** Return the content of the current node. */
-        T& operator*() const {return *static_cast<T*>(node);}
-
-        /** Return the content of the current node. */
-        T* operator->() const {return static_cast<T*>(node);}
-
-        /** Pre-increment operator which moves the pointer to the next
-          * element. */
-        iterator& operator++() {node = node->increment(); return *this;}
-
-        /** Post-increment operator which moves the pointer to the next
-          * element. */
-        iterator operator++(int)
-        {
-          Tree::TreeNode* tmp = node;
-          node = node->increment();
-          return tmp;
-        }
-
-        /** Pre-decrement operator which moves the pointer to the previous
-          * element. */
-        iterator& operator--() {node = node->decrement(); return *this;}
-
-        /** Post-decrement operator which moves the pointer to the previous
-          * element. */
-        iterator operator--(int)
-        {
-          Tree::TreeNode* tmp = node;
-	        node = node->decrement();
-	        return tmp;
-        }
-
-        /** Comparison operator. */
-        bool operator==(const iterator& y) const {return node==y.node;}
-
-        /** Inequality operator. */
-        bool operator!=(const iterator& y) const {return node!=y.node;}
-
-      private:
-        Tree::TreeNode* node;
-    };
-
-    /** Returns an STL-like iterator to the end of the entity list. */
-    static iterator end() {return st.end();}
-
-    /** Returns an STL-like iterator to the start of the entity list. */
-    static iterator begin() {return st.begin();}
-
-    /** Returns false if no named entities have been defined yet. */
-    static bool empty() {return st.empty();}
-
-    /** Returns the number of defined entities. */
-    static size_t size() {return st.size();}
-
-    /** Debugging method to verify the validity of the tree.
-      * An exception is thrown when the tree is corrupted. */
-    static void verify() {st.verify();}
-
-    /** Deletes all elements from the list. */
-    static void clear() {st.clear();}
-
-    /** One and only constructor. */
-    explicit HasName(const string& n) : Tree::TreeNode(n) {}
-
-    /** Destructor. */
-    ~HasName() {st.erase(this);}
-
-    /** Find an entity given its name. In case it can't be found, a NULL
-      * pointer is returned. */
-    static T* find(const string& k)
-    {
-      Tree::TreeNode *i = st.find(k);
-      return (i!=st.end() ? static_cast<T*>(i) : NULL);
-    }
-
-    /** Find .*/
-    static T* findLowerBound(const string& k)
-    {
-      Tree::TreeNode *i = st.findLowerBound(k);
-      return (i!=st.end() ? static_cast<T*>(i) : NULL);
-    }
-
-    /** Find .*/
-    static T* findLowerBound(const string& k, bool *f)
-    {
-      Tree::TreeNode *i = st.findLowerBound(k, f);
-      return (i!=st.end() ? static_cast<T*>(i) : NULL);
-    }
-
-    /** Creates a new entity. */
-    static T* add(const string& k)
-    {
-      Tree::TreeNode *i = st.find(k);
-      if (i!=st.end()) return static_cast<T*>(i); // Exists already
-      T *t= new T(k);
-      st.insert(t);
-      return t;
-    }
-
-    /** Registers an entity created by the default constructor. */
-    static T* add(T* t) {return static_cast<T*>(st.insert(t));}
-
-    /** Registers an entity created by the default constructor. The second
-      * argument is a hint: when passing an entity with a name close to
-      * the new one, the insertion will be sped up considerably.
-      */
-    static T* add(T* t, T* hint) {return static_cast<T*>(st.insert(t,hint));}
-
-    void endElement(XMLInput& pIn, XMLElement& pElement) {};
-
-    /** This method is available as a object creation factory for 
-      * classes that are using a string as a key identifier, in particular 
-      * classes derived from the HasName base class.
-      * The following attributes are recognized:
-      * - NAME:<br>
-      *   Name of the entity to be created/changed/removed.
-      *   The default value is "unspecified".
-      * - TYPE:<br>
-      *   Determines the subclass to be created.
-      *   The default value is "DEFAULT".
-    	* - ACTION:<br>
-      *   Determines the action to be performed on the object.
-      *   This can be A (for 'add'), C (for 'change'), AC (for 'add_change') 
-      *   or R (for 'remove').
-      *   'add_change' is the default value.
-      * @see HasName
-      */
-    static Object* reader (const MetaCategory& cat, const Attributes* atts)
-    {
-
-      // Pick up the name attribute
-      char* name = atts ?
-        XMLString::transcode(atts->getValue(Tags::tag_name.getXMLCharacters())) :
-        NULL;
-
-      // Pick up the action attribute
-      Action act = MetaData::decodeAction(atts);
-
-      // Check if it exists already
-      bool found;
-      T *i = T::findLowerBound(name, &found);
-
-      // Validate the action
-      switch (act)
-      {
-        case ADD:
-          // Only additions are allowed
-          if (found)
-          {
-            XMLString::release(&name);
-            throw DataException("Object '" + string(name) + "' already exists.");
-          }
-          break;
-
-        case CHANGE:
-          // Only changes are allowed
-          if (!found) 
-          {
-            string msg = string("Object '") + name + "' doesn't exist.";
-            XMLString::release(&name);
-            throw DataException(msg);
-          }
-          XMLString::release(&name);
-
-          // Lock the object, which includes also the callback
-          LockManager::getManager().obtainWriteLock(i);
-          return i;
-         
-        case REMOVE:
-          // Delete the entity
-          if (found) 
-          {
-            // Send out the notification to subscribers
-            LockManager::getManager().obtainWriteLock(i);   // @todo this lock shouldn't trigger callbacks?
-            if (i->getType().raiseEvent(i,SIG_REMOVE))
-            {
-              XMLString::release(&name);
-              // Delete the object
-              delete i;
-              return NULL;
-            }
-            else
-            {
-              // The callbacks disallowed the deletion!
-              LockManager::getManager().releaseWriteLock(i);
-              string msg = string("Can't remove object '") + name + "'";
-              XMLString::release(&name);
-              throw DataException(msg);
-            }
-          }
-          else
-          {
-            // Not found
-            string msg = string("Can't find object '") + name + "' for removal";
-            XMLString::release(&name);
-            throw DataException(msg);
-          }
-        default:
-          // case ADD_CHANGE doesn't have special cases.
-          ;
-      }
-
-      // Return the existing instance
-      if (found) 
-      {
-        // Lock the object, which includes the callbacks
-        XMLString::release(&name);
-        LockManager::getManager().obtainWriteLock(i);
-        return i;
-      }
-
-      // Lookup the type in the map
-      char* type = atts ?
-        XMLString::transcode(atts->getValue(Tags::tag_type.getXMLCharacters())) :
-        NULL;
-      MetaCategory::ClassMap::const_iterator j = 
-        cat.classes.find(type ? XMLtag::hash(type) : MetaCategory::defaultHash);
-      if (j == cat.classes.end())
-      {
-        string msg = "No type " + string(type ? type : "DEFAULT") 
-          + " registered for category " + cat.type;
-        XMLString::release(&name);
-        XMLString::release(&type);
-        throw LogicException(msg);
-      }
-
-      // Create a new instance
-      T* x = dynamic_cast<T*>(j->second->factoryMethodString(name));
-      XMLString::release(&type);
-
-      // Run creation callbacks
-      // During the callback there is no write lock set yet, since we can
-      // assume we are the only ones aware of this new object. We also want
-      // to make sure the 'add' signal comes before the 'before_change'
-      // callback that is part of the writelock.
-      if (!x->getType().raiseEvent(x,SIG_ADD))
-      {
-        // Creation isn't allowed
-        string msg = string("Can't create object") + name;
-        delete x;
-        XMLString::release(&name);
-        throw DataException(msg);
-      }
-      XMLString::release(&name);
-
-      // Lock the object, which includes the before-change callback
-      LockManager::getManager().obtainWriteLock(x);
-
-      // Insert in the tree
-      T::add(x, i);
-      return x;
-    }
-
-    /** A handler that is used to persist the tree. */
-    static void writer(const MetaCategory& c, XMLOutput* o)
-    {
-      if (empty()) return;
-      o->BeginObject(*(c.grouptag));
-      for (iterator i = begin(); i != end(); ++i)
-          o->writeElement(*(c.typetag), *i);
-      o->EndObject(*(c.grouptag));
-    }
-};
-
-
-/** This is a decorator class for the main objects.
-  * Instances of this class have a description, category and sub_category.
-  */
-class HasDescription
-{
-  public:
-    /** Returns the category. */
-    string getCategory() const {return cat;}
-
-    /** Returns the sub_category. */
-    string getSubCategory() const {return subcat;}
-
-    /** Returns the getDescription. */
-    string getDescription() const {return descr;}
-
-    /** Sets the category field. */
-    void setCategory(const string& f) {cat = f;}
-
-    /** Sets the sub_category field. */
-    void setSubCategory(const string& f) {subcat = f;}
-
-    /** Sets the description field. */
-    void setDescription(const string& f) {descr = f;}
-
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput&, XMLElement&);
-
-  protected:
-    /** Returns the memory size in bytes. */
-    size_t memsize() const {return cat.size() + subcat.size() + descr.size();}
-
-  private:
-    string cat;
-    string subcat;
-    string descr;
-};
-
-
-/** This is a base class for the main objects.
-  * Instances of this class have the following properties:
-  *  - Unique name and global hashtable are inherited from the class HasName.
-  *  - Belongs to a hierarchy.
-  *  - Instantiations of this template can build up hierarchical trees of
-  *    arbitrary depth.
-  *  - Each object can have a single parent only.
-  *  - Each object has a parent and can have children.
-  *    This class thus implements the 'composite' design pattern.
-  * The internal data structure is a singly linked linear list, which is
-  * efficient provided the number of childre remains limited.
-  */
-template <class T> class HasHierarchy : public HasName<T>
-{
-#if  (defined _MSC_VER) || (defined __BORLANDC__)
-  // Visual C++ 6.0 and Borland C++ 5.5 seem to get confused with the private
-  // template members
-  friend class HasHierarchy<T>;
-#endif
-
-  public:
-    class memberIterator;
-    friend class memberIterator;
-    /** This class models an STL-like iterator that allows us to iterate over
-      * the members.
-      * Objects of this class are created by the begin() and end() functions.
-      */
-    class memberIterator
-    {
-      public:
-        /** Constructor. */
-        memberIterator(HasHierarchy<T>* x) : curmember(x) {}
-
-        /** Copy constructor. */
-        memberIterator(const memberIterator& it) {curmember = it.curmember;}
-
-        /** Return the content of the current node. */
-        T& operator*() const {return *static_cast<T*>(curmember);}
-
-        /** Return the content of the current node. */
-        T* operator->() const {return static_cast<T*>(curmember);}
-
-        /** Pre-increment operator which moves the pointer to the next
-          * member. */
-        memberIterator& operator++()
-          {curmember = curmember->next_brother; return *this;}
-
-        /** Post-increment operator which moves the pointer to the next
-          * element. */
-        memberIterator operator++(int)
-        {
-          memberIterator tmp = *this;
-          curmember = curmember->next_brother;
-          return tmp;
-        }
-
-        /** Comparison operator. */
-        bool operator==(const memberIterator& y) const
-          {return curmember == y.curmember;}
-
-        /** Inequality operator. */
-        bool operator!=(const memberIterator& y) const
-          {return curmember != y.curmember;}
-
-      private:
-        /** Points to a member. */
-        HasHierarchy<T>* curmember;
-    };
-
-    /** The one and only constructor. */
-    HasHierarchy(const string& n) : HasName<T>(n), parent(NULL),
-      first_child(NULL), next_brother(NULL) {}
-
-    /** Destructor.
-      * When deleting a node of the hierarchy, the children will get the
-      * current parent as the new parent.
-      * In this way the deletion of nodes doesn't create "dangling branches"
-      * in the hierarchy. We just "collapse" a certain level.
-      */
-    ~HasHierarchy();
-
-    memberIterator beginMember() const {return first_child;}
-
-    memberIterator endMember() const {return NULL;}
-
-    /** Returns true if this entity belongs to a higher hierarchical level.
-      * An entity can have only a single owner, and can't belong to multiple
-      * hierarchies.
-      */
-    bool hasOwner() const {return parent!=NULL;}
-
-    /** Returns true if this entity has lower level entities belonging to
-      * it. */
-    bool isGroup() const {return first_child!=NULL;}
-
-    /** Changes the owner of the entity.
-      * The argument must be a valid pointer to an entity of the same type.
-      * A NULL pointer can be passe to clear the existing owner.
-      */
-    void setOwner(T* f);
-
-    /** Returns the owning entity. */
-    T* getOwner() const {return parent;}
-
-    /** Returns the level in the hierarchy.
-      * Level 0 means the entity doesn't have any parent.
-      * Level 1 means the entity has a parent entity with level 0.
-      * Level "x" means the entity has a parent entity whose level is "x-1".
-      */
-    unsigned short getHierarchyLevel() const;
-
-    void beginElement(XMLInput&, XMLElement& pElement);
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput&, XMLElement&);
-
-  private:
-    T *parent;
-    T *first_child;
-    T *next_brother;
-};
-
-
-//
-// ASSOCIATION
-//
-
-/** This template class represents a data structure for a load or flow network.
-  * A node class has pointers to 2 root classes. The 2 root classes each
-  * maintain a singly linked list of nodes.
-  * An example to clarify the usage:
-  *     class node = a newspaper subscription.
-  *     class person = maintains a list of all his scubscriptions.
-  *     class newspaper = maintains a list of all subscriptions for it.
-  * This data structure could be replaced with 2 linked lists, but this
-  * specialized data type consumes considerably lower memory.
-  * Reading from the structure is safe in multi-threading mode. Updates to the
-  * data structure in a multi-threading mode require the user to properly lock
-  * and unlock the container.
-  */
-template <class A, class B, class C> class Association
-{
-  public:
-    class Node;
-  private:
-    class List
-    {
-      friend class Node;
-      public:
-        C* first;
-      public:
-        List() : first(NULL) {};
-        bool empty() const {return first==NULL;}
-    };
-  public:
-	  class ListA : public List
-    {
-      public:
-        ListA() {};
-        class iterator
-        {
-          protected:
-            C* nodeptr;
-          public:
-            iterator(C* n) : nodeptr(n) {};
-            C& operator*() const {return *nodeptr;}
-            C* operator->() const {return nodeptr;}
-            bool operator==(const iterator& x) const
-              {return nodeptr == x.nodeptr;}
-            bool operator!=(const iterator& x) const
-              {return nodeptr != x.nodeptr;}
-            iterator& operator++()
-              {nodeptr = nodeptr->nextA; return *this;}
-            iterator operator++(int i)
-            {
-              iterator j = *this;
-              nodeptr = nodeptr->nextA;
-              return j;
-            }
-        };
-        class const_iterator
-        {
-          protected:
-            C* nodeptr;
-          public:
-            const_iterator(C* n) : nodeptr(n) {};
-            const C& operator*() const {return *nodeptr;}
-            const C* operator->() const {return nodeptr;}
-            bool operator==(const const_iterator& x) const
-              {return nodeptr == x.nodeptr;}
-            bool operator!=(const const_iterator& x) const
-              {return nodeptr != x.nodeptr;}
-            const_iterator& operator++()
-              {nodeptr = nodeptr->nextA; return *this;}
-            const_iterator operator++(int i)
-            {
-              const_iterator j = *this;
-              nodeptr = nodeptr->nextA;
-              return j;
-            }
-        };
-        iterator begin() {return iterator(this->first);}
-        const_iterator begin() const {return const_iterator(this->first);}
-        iterator end() {return iterator(NULL);}
-        const_iterator end() const {return const_iterator(NULL);}
-        ~ListA()
-        {
-          C* next;
-          for (C* p=this->first; p; p=next)
-          {
-            next = p->nextA;
-            delete p;
-          }
-        }
-        void erase(const C* n)
-        {
-          if (!n) return;
-          if (n==this->first)
-            this->first = n->nextA;
-          else
-            for (C* p=this->first; p; p=p->nextA)
-              if(p->nextA == n)
-              {
-                p->nextA = n->nextA;
-                return;
-              }
-        }
-        size_t size() const
-        {
-          size_t i(0);
-          for (C* p = this->first; p; p=p->nextA) ++i;
-          return i;
-        }
-        C* find(const B* b) const
-        {
-          for (C* p=this->first; p; p=p->nextA)
-            if (p->ptrB == b) return p;
-          return NULL;
-        }
-    };
-    class ListB : public List
-    {
-      public:
-        ListB() {};
-        class iterator
-        {
-          protected:
-            C* nodeptr;
-          public:
-            iterator(C* n) : nodeptr(n) {};
-            C& operator*() const {return *nodeptr;}
-            C* operator->() const {return nodeptr;}
-            bool operator==(const iterator& x) const
-              {return nodeptr == x.nodeptr;}
-            bool operator!=(const iterator& x) const
-              {return nodeptr != x.nodeptr;}
-            iterator& operator++()
-              {nodeptr = nodeptr->nextB; return *this;}
-            iterator operator++(int i)
-            {
-              iterator j = *this;
-              nodeptr = nodeptr->nextA;
-              return j;
-            }
-        };
-        class const_iterator
-        {
-          protected:
-            C* nodeptr;
-          public:
-            const_iterator(C* n) : nodeptr(n) {};
-            const C& operator*() const {return *nodeptr;}
-            const C* operator->() const {return nodeptr;}
-            bool operator==(const const_iterator& x) const
-              {return nodeptr == x.nodeptr;}
-            bool operator!=(const const_iterator& x) const
-              {return nodeptr != x.nodeptr;}
-            const_iterator& operator++()
-              {nodeptr = nodeptr->nextB; return *this;}
-            const_iterator operator++(int i)
-            {
-              const_iterator j = *this;
-              nodeptr = nodeptr->nextA;
-              return j;
-            }
-        };
-        ~ListB()
-        {
-          C* next;
-          for (C* p=this->first; p; p=next)
-          {
-            next = p->nextB;
-            delete p;
-          }
-        }
-        iterator begin() {return iterator(this->first);}
-        const_iterator begin() const {return const_iterator(this->first);}
-        iterator end() {return iterator(NULL);}
-        const_iterator end() const {return const_iterator(NULL);}
-        void erase(const C* n)
-        {
-          if (!n) return;
-          if (n==this->first)
-            this->first = n->nextB;
-          else
-            for (C* p=this->first; p; p=p->nextB)
-              if(p->nextB == n)
-              {
-                p->nextB = n->nextB;
-                return;
-              }
-        }
-        size_t size() const
-        {
-          size_t i(0);
-          for (C* p=this->first; p; p=p->nextB) ++i;
-          return i;
-        }
-        C* find(const A* b) const
-        {
-          for (C* p=this->first; p; p=p->nextB)
-            if (p->ptrA == b) return p;
-          return NULL;
-        }
-    };
-    class Node
-    {
-      public:
-        A* ptrA;
-        B* ptrB;
-        C* nextA;
-        C* nextB;
-      public:
-        Node() : ptrA(NULL), ptrB(NULL), nextA(NULL), nextB(NULL) {};
-        Node(A* a, B* b, const ListA& al, const ListB& bl)
-            : ptrA(a), ptrB(b), nextA(al.first), nextB(bl.first)
-        {
-          ((ListA&)al).first = static_cast<C*>(this);
-          ((ListB&)bl).first = static_cast<C*>(this);
-        }
-        void setPtrA(A* a, const ListA& al)
-        {
-          // Don't allow upating an already valid link
-          if (ptrA) return;
-          ptrA = a;
-          nextA = al.first;
-          ((ListA&)al).first = static_cast<C*>(this);
-        }
-        void setPtrB(B* b, const ListB& bl)
-        {
-          // Don't allow upating an already valid link
-          if (ptrB) return;
-          ptrB = b;
-          nextB = bl.first;
-          ((ListB&)bl).first = static_cast<C*>(this);
-        }
-        void setPtrAB(A* a, B* b, const ListA& al, const ListB& bl)
-        {
-          setPtrA(a, al);
-          setPtrB(b, bl);
-        }
-        A* getPtrA() const {return ptrA;}
-        B* getPtrB() const {return ptrB;}
-    };
-};
-
-
-//
 // UTILITY CLASS "COMMAND": for executing & undoing actions
 //
 
@@ -3710,6 +3017,10 @@ class XMLInput : public NonCopyable,  private DefaultHandler
     const XMLElement& getParentElement() const
       {return m_EStack[numElements>0 ? numElements : 0];}
 
+    /** Returns a reference to the current element. */
+    const XMLElement& getCurrentElement() const
+      {return m_EStack[numElements>-1 ? numElements+1 : 0];}
+
     /** This is the core parsing function, which triggers the XML parser to
       * start processing the input. It is normally called from the method
       * parse(Object*) once a proper stream has been created.
@@ -3890,6 +3201,712 @@ class XMLInputFile : public XMLInput
   private:
     /** Name of the file to be opened. */
     string filename;
+};
+
+
+//
+//  UTILITY CLASSES "HASNAME", "HASHIERARCHY", "HASDESCRIPTION"
+//
+
+
+/** This is the base class for the main objects.
+ *  Instances of this class have the following properties:
+ *    - Have a unique name.
+ *    - A hashtable (keyed on the name) is maintained with all active instances.
+ */
+template <class T> class HasName : public NonCopyable, public Tree::TreeNode
+{
+  private:
+    /** Maintains a global list of all created entities. The list is keyed
+      * by the name. */
+    static DECLARE_EXPORT Tree st;
+    typedef T* type;
+
+  public:
+    /** This class models an STL-like iterator that allows us to iterate over
+      * the named entities in a simple and safe way.<br>
+      * Objects of this class are created by the begin() and end() functions.
+      */
+    class iterator
+    {
+      public:
+        /** Constructor. */
+        iterator(Tree::TreeNode* x) : node(x) {}
+
+        /** Copy constructor. */
+        iterator(const iterator& it) {node = it.node;}
+
+        /** Return the content of the current node. */
+        T& operator*() const {return *static_cast<T*>(node);}
+
+        /** Return the content of the current node. */
+        T* operator->() const {return static_cast<T*>(node);}
+
+        /** Pre-increment operator which moves the pointer to the next
+          * element. */
+        iterator& operator++() {node = node->increment(); return *this;}
+
+        /** Post-increment operator which moves the pointer to the next
+          * element. */
+        iterator operator++(int)
+        {
+          Tree::TreeNode* tmp = node;
+          node = node->increment();
+          return tmp;
+        }
+
+        /** Pre-decrement operator which moves the pointer to the previous
+          * element. */
+        iterator& operator--() {node = node->decrement(); return *this;}
+
+        /** Post-decrement operator which moves the pointer to the previous
+          * element. */
+        iterator operator--(int)
+        {
+          Tree::TreeNode* tmp = node;
+	        node = node->decrement();
+	        return tmp;
+        }
+
+        /** Comparison operator. */
+        bool operator==(const iterator& y) const {return node==y.node;}
+
+        /** Inequality operator. */
+        bool operator!=(const iterator& y) const {return node!=y.node;}
+
+      private:
+        Tree::TreeNode* node;
+    };
+
+    /** Returns an STL-like iterator to the end of the entity list. */
+    static iterator end() {return st.end();}
+
+    /** Returns an STL-like iterator to the start of the entity list. */
+    static iterator begin() {return st.begin();}
+
+    /** Returns false if no named entities have been defined yet. */
+    static bool empty() {return st.empty();}
+
+    /** Returns the number of defined entities. */
+    static size_t size() {return st.size();}
+
+    /** Debugging method to verify the validity of the tree.
+      * An exception is thrown when the tree is corrupted. */
+    static void verify() {st.verify();}
+
+    /** Deletes all elements from the list. */
+    static void clear() {st.clear();}
+
+    /** One and only constructor. */
+    explicit HasName(const string& n) : Tree::TreeNode(n) {}
+
+    /** Destructor. */
+    ~HasName() {st.erase(this);}
+
+    /** Find an entity given its name. In case it can't be found, a NULL
+      * pointer is returned. */
+    static T* find(const string& k)
+    {
+      Tree::TreeNode *i = st.find(k);
+      return (i!=st.end() ? static_cast<T*>(i) : NULL);
+    }
+
+    /** Find .*/
+    static T* findLowerBound(const string& k)
+    {
+      Tree::TreeNode *i = st.findLowerBound(k);
+      return (i!=st.end() ? static_cast<T*>(i) : NULL);
+    }
+
+    /** Find .*/
+    static T* findLowerBound(const string& k, bool *f)
+    {
+      Tree::TreeNode *i = st.findLowerBound(k, f);
+      return (i!=st.end() ? static_cast<T*>(i) : NULL);
+    }
+
+    /** Creates a new entity. */
+    static T* add(const string& k)
+    {
+      Tree::TreeNode *i = st.find(k);
+      if (i!=st.end()) return static_cast<T*>(i); // Exists already
+      T *t= new T(k);
+      st.insert(t);
+      return t;
+    }
+
+    /** Registers an entity created by the default constructor. */
+    static T* add(T* t) {return static_cast<T*>(st.insert(t));}
+
+    /** Registers an entity created by the default constructor. The second
+      * argument is a hint: when passing an entity with a name close to
+      * the new one, the insertion will be sped up considerably.
+      */
+    static T* add(T* t, T* hint) {return static_cast<T*>(st.insert(t,hint));}
+
+    void endElement(XMLInput& pIn, XMLElement& pElement) {};
+
+    /** This method is available as a object creation factory for 
+      * classes that are using a string as a key identifier, in particular 
+      * classes derived from the HasName base class.
+      * The following attributes are recognized:
+      * - NAME:<br>
+      *   Name of the entity to be created/changed/removed.
+      *   The default value is "unspecified".
+      * - TYPE:<br>
+      *   Determines the subclass to be created.
+      *   The default value is "DEFAULT".
+    	* - ACTION:<br>
+      *   Determines the action to be performed on the object.
+      *   This can be A (for 'add'), C (for 'change'), AC (for 'add_change') 
+      *   or R (for 'remove').
+      *   'add_change' is the default value.
+      * @see HasName
+      */
+    static Object* reader (const MetaCategory& cat, const XMLInput& in)
+    {
+      // Pick up the name attribute
+      char* name = XMLString::transcode(
+        in.getAttributes()->getValue(Tags::tag_name.getXMLCharacters())
+        );
+
+      // Pick up the action attribute
+      Action act = MetaData::decodeAction(in.getAttributes());
+
+      // Check if it exists already
+      bool found;
+      T *i = T::findLowerBound(name, &found);
+
+      // Validate the action
+      switch (act)
+      {
+        case ADD:
+          // Only additions are allowed
+          if (found)
+          {
+            XMLString::release(&name);
+            throw DataException("Object '" + string(name) + "' already exists.");
+          }
+          break;
+
+        case CHANGE:
+          // Only changes are allowed
+          if (!found) 
+          {
+            string msg = string("Object '") + name + "' doesn't exist.";
+            XMLString::release(&name);
+            throw DataException(msg);
+          }
+          XMLString::release(&name);
+
+          // Lock the object, which includes also the callback
+          LockManager::getManager().obtainWriteLock(i);
+          return i;
+         
+        case REMOVE:
+          // Delete the entity
+          if (found) 
+          {
+            // Send out the notification to subscribers
+            LockManager::getManager().obtainWriteLock(i);   // @todo this lock shouldn't trigger callbacks?
+            if (i->getType().raiseEvent(i,SIG_REMOVE))
+            {
+              XMLString::release(&name);
+              // Delete the object
+              delete i;
+              return NULL;
+            }
+            else
+            {
+              // The callbacks disallowed the deletion!
+              LockManager::getManager().releaseWriteLock(i);
+              string msg = string("Can't remove object '") + name + "'";
+              XMLString::release(&name);
+              throw DataException(msg);
+            }
+          }
+          else
+          {
+            // Not found
+            string msg = string("Can't find object '") + name + "' for removal";
+            XMLString::release(&name);
+            throw DataException(msg);
+          }
+        default:
+          // case ADD_CHANGE doesn't have special cases.
+          ;
+      }
+
+      // Return the existing instance
+      if (found) 
+      {
+        // Lock the object, which includes the callbacks
+        XMLString::release(&name);
+        LockManager::getManager().obtainWriteLock(i);
+        return i;
+      }
+
+      // Lookup the type in the map
+      char* type = XMLString::transcode(
+          in.getAttributes()->getValue(Tags::tag_type.getXMLCharacters())
+          );
+      string type2;
+      if (!type && in.getParentElement().isA(cat.grouptag))
+      {
+        if (in.getCurrentElement().isA(cat.typetag)) type2 = "DEFAULT";
+        else type2 = in.getCurrentElement().getName();
+      }
+      MetaCategory::ClassMap::const_iterator j = 
+        cat.classes.find(type ? XMLtag::hash(type) : (type2.empty() ? MetaCategory::defaultHash : XMLtag::hash(type2.c_str())));
+      if (j == cat.classes.end())
+      {
+        string msg = "No type " + string(type ? type : (type2.empty() ? "DEFAULT" : type2.c_str()))
+          + " registered for category " + cat.type;
+        XMLString::release(&name);
+        XMLString::release(&type);
+        throw LogicException(msg);
+      }
+
+      // Create a new instance
+      T* x = dynamic_cast<T*>(j->second->factoryMethodString(name));
+      XMLString::release(&type);
+
+      // Run creation callbacks
+      // During the callback there is no write lock set yet, since we can
+      // assume we are the only ones aware of this new object. We also want
+      // to make sure the 'add' signal comes before the 'before_change'
+      // callback that is part of the writelock.
+      if (!x->getType().raiseEvent(x,SIG_ADD))
+      {
+        // Creation isn't allowed
+        string msg = string("Can't create object") + name;
+        delete x;
+        XMLString::release(&name);
+        throw DataException(msg);
+      }
+      XMLString::release(&name);
+
+      // Lock the object, which includes the before-change callback
+      LockManager::getManager().obtainWriteLock(x);
+
+      // Insert in the tree
+      T::add(x, i);
+      return x;
+    }
+
+    /** A handler that is used to persist the tree. */
+    static void writer(const MetaCategory& c, XMLOutput* o)
+    {
+      if (empty()) return;
+      o->BeginObject(*(c.grouptag));
+      for (iterator i = begin(); i != end(); ++i)
+          o->writeElement(*(c.typetag), *i);
+      o->EndObject(*(c.grouptag));
+    }
+};
+
+
+/** This is a decorator class for the main objects.
+  * Instances of this class have a description, category and sub_category.
+  */
+class HasDescription
+{
+  public:
+    /** Returns the category. */
+    string getCategory() const {return cat;}
+
+    /** Returns the sub_category. */
+    string getSubCategory() const {return subcat;}
+
+    /** Returns the getDescription. */
+    string getDescription() const {return descr;}
+
+    /** Sets the category field. */
+    void setCategory(const string& f) {cat = f;}
+
+    /** Sets the sub_category field. */
+    void setSubCategory(const string& f) {subcat = f;}
+
+    /** Sets the description field. */
+    void setDescription(const string& f) {descr = f;}
+
+    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    void endElement(XMLInput&, XMLElement&);
+
+  protected:
+    /** Returns the memory size in bytes. */
+    size_t memsize() const {return cat.size() + subcat.size() + descr.size();}
+
+  private:
+    string cat;
+    string subcat;
+    string descr;
+};
+
+
+/** This is a base class for the main objects.
+  * Instances of this class have the following properties:
+  *  - Unique name and global hashtable are inherited from the class HasName.
+  *  - Belongs to a hierarchy.
+  *  - Instantiations of this template can build up hierarchical trees of
+  *    arbitrary depth.
+  *  - Each object can have a single parent only.
+  *  - Each object has a parent and can have children.
+  *    This class thus implements the 'composite' design pattern.
+  * The internal data structure is a singly linked linear list, which is
+  * efficient provided the number of childre remains limited.
+  */
+template <class T> class HasHierarchy : public HasName<T>
+{
+#if  (defined _MSC_VER) || (defined __BORLANDC__)
+  // Visual C++ 6.0 and Borland C++ 5.5 seem to get confused with the private
+  // template members
+  friend class HasHierarchy<T>;
+#endif
+
+  public:
+    class memberIterator;
+    friend class memberIterator;
+    /** This class models an STL-like iterator that allows us to iterate over
+      * the members.
+      * Objects of this class are created by the begin() and end() functions.
+      */
+    class memberIterator
+    {
+      public:
+        /** Constructor. */
+        memberIterator(HasHierarchy<T>* x) : curmember(x) {}
+
+        /** Copy constructor. */
+        memberIterator(const memberIterator& it) {curmember = it.curmember;}
+
+        /** Return the content of the current node. */
+        T& operator*() const {return *static_cast<T*>(curmember);}
+
+        /** Return the content of the current node. */
+        T* operator->() const {return static_cast<T*>(curmember);}
+
+        /** Pre-increment operator which moves the pointer to the next
+          * member. */
+        memberIterator& operator++()
+          {curmember = curmember->next_brother; return *this;}
+
+        /** Post-increment operator which moves the pointer to the next
+          * element. */
+        memberIterator operator++(int)
+        {
+          memberIterator tmp = *this;
+          curmember = curmember->next_brother;
+          return tmp;
+        }
+
+        /** Comparison operator. */
+        bool operator==(const memberIterator& y) const
+          {return curmember == y.curmember;}
+
+        /** Inequality operator. */
+        bool operator!=(const memberIterator& y) const
+          {return curmember != y.curmember;}
+
+      private:
+        /** Points to a member. */
+        HasHierarchy<T>* curmember;
+    };
+
+    /** The one and only constructor. */
+    HasHierarchy(const string& n) : HasName<T>(n), parent(NULL),
+      first_child(NULL), next_brother(NULL) {}
+
+    /** Destructor.
+      * When deleting a node of the hierarchy, the children will get the
+      * current parent as the new parent.
+      * In this way the deletion of nodes doesn't create "dangling branches"
+      * in the hierarchy. We just "collapse" a certain level.
+      */
+    ~HasHierarchy();
+
+    memberIterator beginMember() const {return first_child;}
+
+    memberIterator endMember() const {return NULL;}
+
+    /** Returns true if this entity belongs to a higher hierarchical level.
+      * An entity can have only a single owner, and can't belong to multiple
+      * hierarchies.
+      */
+    bool hasOwner() const {return parent!=NULL;}
+
+    /** Returns true if this entity has lower level entities belonging to
+      * it. */
+    bool isGroup() const {return first_child!=NULL;}
+
+    /** Changes the owner of the entity.
+      * The argument must be a valid pointer to an entity of the same type.
+      * A NULL pointer can be passe to clear the existing owner.
+      */
+    void setOwner(T* f);
+
+    /** Returns the owning entity. */
+    T* getOwner() const {return parent;}
+
+    /** Returns the level in the hierarchy.
+      * Level 0 means the entity doesn't have any parent.
+      * Level 1 means the entity has a parent entity with level 0.
+      * Level "x" means the entity has a parent entity whose level is "x-1".
+      */
+    unsigned short getHierarchyLevel() const;
+
+    void beginElement(XMLInput&, XMLElement& pElement);
+    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    void endElement(XMLInput&, XMLElement&);
+
+  private:
+    T *parent;
+    T *first_child;
+    T *next_brother;
+};
+
+
+//
+// ASSOCIATION
+//
+
+/** This template class represents a data structure for a load or flow network.
+  * A node class has pointers to 2 root classes. The 2 root classes each
+  * maintain a singly linked list of nodes.
+  * An example to clarify the usage:
+  *     class node = a newspaper subscription.
+  *     class person = maintains a list of all his scubscriptions.
+  *     class newspaper = maintains a list of all subscriptions for it.
+  * This data structure could be replaced with 2 linked lists, but this
+  * specialized data type consumes considerably lower memory.
+  * Reading from the structure is safe in multi-threading mode. Updates to the
+  * data structure in a multi-threading mode require the user to properly lock
+  * and unlock the container.
+  */
+template <class A, class B, class C> class Association
+{
+  public:
+    class Node;
+  private:
+    class List
+    {
+      friend class Node;
+      public:
+        C* first;
+      public:
+        List() : first(NULL) {};
+        bool empty() const {return first==NULL;}
+    };
+  public:
+	  class ListA : public List
+    {
+      public:
+        ListA() {};
+        class iterator
+        {
+          protected:
+            C* nodeptr;
+          public:
+            iterator(C* n) : nodeptr(n) {};
+            C& operator*() const {return *nodeptr;}
+            C* operator->() const {return nodeptr;}
+            bool operator==(const iterator& x) const
+              {return nodeptr == x.nodeptr;}
+            bool operator!=(const iterator& x) const
+              {return nodeptr != x.nodeptr;}
+            iterator& operator++()
+              {nodeptr = nodeptr->nextA; return *this;}
+            iterator operator++(int i)
+            {
+              iterator j = *this;
+              nodeptr = nodeptr->nextA;
+              return j;
+            }
+        };
+        class const_iterator
+        {
+          protected:
+            C* nodeptr;
+          public:
+            const_iterator(C* n) : nodeptr(n) {};
+            const C& operator*() const {return *nodeptr;}
+            const C* operator->() const {return nodeptr;}
+            bool operator==(const const_iterator& x) const
+              {return nodeptr == x.nodeptr;}
+            bool operator!=(const const_iterator& x) const
+              {return nodeptr != x.nodeptr;}
+            const_iterator& operator++()
+              {nodeptr = nodeptr->nextA; return *this;}
+            const_iterator operator++(int i)
+            {
+              const_iterator j = *this;
+              nodeptr = nodeptr->nextA;
+              return j;
+            }
+        };
+        iterator begin() {return iterator(this->first);}
+        const_iterator begin() const {return const_iterator(this->first);}
+        iterator end() {return iterator(NULL);}
+        const_iterator end() const {return const_iterator(NULL);}
+        ~ListA()
+        {
+          C* next;
+          for (C* p=this->first; p; p=next)
+          {
+            next = p->nextA;
+            delete p;
+          }
+        }
+        void erase(const C* n)
+        {
+          if (!n) return;
+          if (n==this->first)
+            this->first = n->nextA;
+          else
+            for (C* p=this->first; p; p=p->nextA)
+              if(p->nextA == n)
+              {
+                p->nextA = n->nextA;
+                return;
+              }
+        }
+        size_t size() const
+        {
+          size_t i(0);
+          for (C* p = this->first; p; p=p->nextA) ++i;
+          return i;
+        }
+        C* find(const B* b) const
+        {
+          for (C* p=this->first; p; p=p->nextA)
+            if (p->ptrB == b) return p;
+          return NULL;
+        }
+    };
+    class ListB : public List
+    {
+      public:
+        ListB() {};
+        class iterator
+        {
+          protected:
+            C* nodeptr;
+          public:
+            iterator(C* n) : nodeptr(n) {};
+            C& operator*() const {return *nodeptr;}
+            C* operator->() const {return nodeptr;}
+            bool operator==(const iterator& x) const
+              {return nodeptr == x.nodeptr;}
+            bool operator!=(const iterator& x) const
+              {return nodeptr != x.nodeptr;}
+            iterator& operator++()
+              {nodeptr = nodeptr->nextB; return *this;}
+            iterator operator++(int i)
+            {
+              iterator j = *this;
+              nodeptr = nodeptr->nextA;
+              return j;
+            }
+        };
+        class const_iterator
+        {
+          protected:
+            C* nodeptr;
+          public:
+            const_iterator(C* n) : nodeptr(n) {};
+            const C& operator*() const {return *nodeptr;}
+            const C* operator->() const {return nodeptr;}
+            bool operator==(const const_iterator& x) const
+              {return nodeptr == x.nodeptr;}
+            bool operator!=(const const_iterator& x) const
+              {return nodeptr != x.nodeptr;}
+            const_iterator& operator++()
+              {nodeptr = nodeptr->nextB; return *this;}
+            const_iterator operator++(int i)
+            {
+              const_iterator j = *this;
+              nodeptr = nodeptr->nextA;
+              return j;
+            }
+        };
+        ~ListB()
+        {
+          C* next;
+          for (C* p=this->first; p; p=next)
+          {
+            next = p->nextB;
+            delete p;
+          }
+        }
+        iterator begin() {return iterator(this->first);}
+        const_iterator begin() const {return const_iterator(this->first);}
+        iterator end() {return iterator(NULL);}
+        const_iterator end() const {return const_iterator(NULL);}
+        void erase(const C* n)
+        {
+          if (!n) return;
+          if (n==this->first)
+            this->first = n->nextB;
+          else
+            for (C* p=this->first; p; p=p->nextB)
+              if(p->nextB == n)
+              {
+                p->nextB = n->nextB;
+                return;
+              }
+        }
+        size_t size() const
+        {
+          size_t i(0);
+          for (C* p=this->first; p; p=p->nextB) ++i;
+          return i;
+        }
+        C* find(const A* b) const
+        {
+          for (C* p=this->first; p; p=p->nextB)
+            if (p->ptrA == b) return p;
+          return NULL;
+        }
+    };
+    class Node
+    {
+      public:
+        A* ptrA;
+        B* ptrB;
+        C* nextA;
+        C* nextB;
+      public:
+        Node() : ptrA(NULL), ptrB(NULL), nextA(NULL), nextB(NULL) {};
+        Node(A* a, B* b, const ListA& al, const ListB& bl)
+            : ptrA(a), ptrB(b), nextA(al.first), nextB(bl.first)
+        {
+          ((ListA&)al).first = static_cast<C*>(this);
+          ((ListB&)bl).first = static_cast<C*>(this);
+        }
+        void setPtrA(A* a, const ListA& al)
+        {
+          // Don't allow upating an already valid link
+          if (ptrA) return;
+          ptrA = a;
+          nextA = al.first;
+          ((ListA&)al).first = static_cast<C*>(this);
+        }
+        void setPtrB(B* b, const ListB& bl)
+        {
+          // Don't allow upating an already valid link
+          if (ptrB) return;
+          ptrB = b;
+          nextB = bl.first;
+          ((ListB&)bl).first = static_cast<C*>(this);
+        }
+        void setPtrAB(A* a, B* b, const ListA& al, const ListB& bl)
+        {
+          setPtrA(a, al);
+          setPtrB(b, bl);
+        }
+        A* getPtrA() const {return ptrA;}
+        B* getPtrB() const {return ptrB;}
+    };
 };
 
 

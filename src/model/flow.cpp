@@ -136,9 +136,9 @@ void Flow::writeElement (XMLOutput *o, const XMLtag& tag, mode m) const
 void Flow::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_buffer))
-    pIn.readto( Buffer::reader(Buffer::metadata,pIn.getAttributes()) );
+    pIn.readto( Buffer::reader(Buffer::metadata,pIn) );
   else if (pElement.isA (Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn) );
 }
 
 

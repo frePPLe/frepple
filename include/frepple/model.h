@@ -389,7 +389,7 @@ template <typename T> class CalendarPointer : public Calendar
         {
           if (pElement.isA(Tags::tag_value))
             pIn.readto(
-              MetaCategory::ControllerDefault(T::metadata,pIn.getAttributes())
+              MetaCategory::ControllerDefault(T::metadata,pIn)
               );
         }
 
@@ -1336,8 +1336,7 @@ class OperationPlan
       * This method is intended to be used to create objects when reading
       * XML input data.
       */
-    static Object* createOperationPlan
-      (const MetaCategory&, const Attributes* atts);
+    static Object* createOperationPlan (const MetaCategory&, const XMLInput&);
 
     /** Destructor. */
     virtual ~OperationPlan();

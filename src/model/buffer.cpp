@@ -277,20 +277,20 @@ void Buffer::beginElement (XMLInput& pIn, XMLElement& pElement)
       && pIn.getParentElement().isA(Tags::tag_flows))
   {
     Flow *f = 
-      dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn.getAttributes()));
+      dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn));
     if (f) f->setBuffer(this);
     pIn.readto (f);
   }
   else if (pElement.isA(Tags::tag_producing))
-    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn) );
   else if (pElement.isA(Tags::tag_consuming))
-    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn) );
   else if (pElement.isA(Tags::tag_item))
-    pIn.readto( Item::reader(Item::metadata,pIn.getAttributes()) );
+    pIn.readto( Item::reader(Item::metadata,pIn) );
   else if (pElement.isA(Tags::tag_minimum) || pElement.isA(Tags::tag_maximum))
-    pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
+    pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
   else if (pElement.isA(Tags::tag_location))
-    pIn.readto( Location::reader(Location::metadata,pIn.getAttributes()) );
+    pIn.readto( Location::reader(Location::metadata,pIn) );
   else if (pElement.isA(Tags::tag_flow_plans))
     pIn.IgnoreElement();
   else

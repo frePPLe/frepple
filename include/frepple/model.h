@@ -1238,6 +1238,28 @@ class OperationPlan
     friend class OperationEffective;
 
   public:
+    class FlowPlanIterator;
+
+    /** Returns an iterator pointing to the first flowplan. */
+    FlowPlanIterator beginFlowPlans() const;
+
+    /** Returns an iterator pointing beyond the last flowplan. */
+    FlowPlanIterator endFlowPlans() const;
+
+    /** Returns how many flowplans are created on an operationplan. */
+    int sizeFlowPlans() const;
+
+    class LoadPlanIterator;
+
+    /** Returns an iterator pointing to the first loadplan. */
+    LoadPlanIterator beginLoadPlans() const;
+
+    /** Returns an iterator pointing beyond the last loadplan. */
+    LoadPlanIterator endLoadPlans() const;
+
+    /** Returns how many loadplans are created on an operationplan. */
+    int sizeLoadPlans() const;
+
     /** This class models an STL-like iterator that allows us to iterate over
       * the operationplans in a simple and safe way.<br>
       * Objects of this class are created by the begin() and end() functions.
@@ -1496,10 +1518,10 @@ class OperationPlan
     virtual void initialize();
 
     /** Returns a reference to the list of flowplans. */
-    const slist<FlowPlan*>& getFlowPlans() {return flowplans;}
+    //xxxconst slist<FlowPlan*>& getFlowPlans() {return flowplans;}
 
     /** Returns a reference to the list of LoadPlans. */
-    const slist<LoadPlan*>& getLoadPlans() {return LoadPlans;}
+    //xxxconst slist<LoadPlan*>& getLoadPlans() {return LoadPlans;}
 
     /** Add a sub_operation_plan to the list. For normal operation_plans this
       * is only a dummy function. For alternates and routing operation_plans
@@ -1582,7 +1604,8 @@ class OperationPlan
       * @see Operation::createOperationPlan
       */
     OperationPlan() : owner(NULL), quantity(0.0), runupdate(false),
-      locked(false), lt(NULL), id(0), oper(NULL), prev(NULL), next(NULL) {}
+      locked(false), lt(NULL), id(0), oper(NULL), firstflowplan(NULL), 
+      firstloadplan(NULL), prev(NULL), next(NULL) {}
 
   private:
     /** Returns a pointer to the operation being instantiated. */
@@ -1617,11 +1640,11 @@ class OperationPlan
     /** Earliest possible start time. */
     Date lpst;
 
-    /** Single linked list of flowplans. */
-    slist<FlowPlan*> flowplans;
+    /** Root of a single linked list of flowplans. */
+    FlowPlan* firstflowplan;
 
     /** Single linked list of loadplans. */
-    slist<LoadPlan*> LoadPlans;
+    LoadPlan* firstloadplan;
 
     /** Pointer to the previous operationplan. Operationplans are chained in
       * a doubly linked list for each operation.
@@ -2392,9 +2415,16 @@ class FlowEnd : public Flow
   */
 class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 {
+  friend class OperationPlan::FlowPlanIterator;
   private:
+    /** Points to the flow instantiated by this flowplan. */
     Flow *fl;
+
+    /** Points to the operationplan owning this flowplan. */
     OperationPlan *oper;
+
+    /** Points to the next flowplan owned by the same operationplan. */
+    FlowPlan *nextFlowPlan;
 
   public:
     /** Constructor. */
@@ -3260,6 +3290,7 @@ class DemandDefault : public Demand
   */
 class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
 {
+  friend class OperationPlan::LoadPlanIterator;
   public:
     /** Public constructor.
       * This constructor constructs the starting loadplan and will
@@ -3306,6 +3337,9 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
 
     /** A pointer to the operation_plan owning this load_plan. */
     OperationPlan *oper;
+
+    /** Points to the next loadplan owned by the same operationplan. */
+    LoadPlan *nextLoadPlan;
 };
 
 
@@ -4061,6 +4095,85 @@ class PeggingIterator
     bool first;
 };
 
+
+/** An iterator class to go through all flowplans of an operationplan. 
+  * @see OperationPlan::beginFlowPlans
+  * @see OperationPlan::endFlowPlans
+  */
+class OperationPlan::FlowPlanIterator
+{
+  friend class OperationPlan;
+  private:
+    FlowPlan* curflowplan;
+    FlowPlanIterator(FlowPlan* b) : curflowplan(b) {}
+  public:
+    bool operator != (const FlowPlanIterator &b) const 
+      {return b.curflowplan != curflowplan;}
+    bool operator == (const FlowPlanIterator &b) const 
+      {return b.curflowplan == curflowplan;}
+    FlowPlanIterator& operator++() 
+    { 
+      if (curflowplan) curflowplan = curflowplan->nextFlowPlan; 
+      return *this; 
+    }
+    FlowPlanIterator operator++(int)
+      {FlowPlanIterator tmp = *this; ++*this; return tmp;}
+    FlowPlan* operator ->() const {return curflowplan;}
+    FlowPlan& operator *() const {return *curflowplan;}
+};
+
+inline OperationPlan::FlowPlanIterator OperationPlan::beginFlowPlans() const 
+  { return OperationPlan::FlowPlanIterator(firstflowplan); }
+
+inline OperationPlan::FlowPlanIterator OperationPlan::endFlowPlans() const 
+  {return OperationPlan::FlowPlanIterator(NULL);}
+
+inline int OperationPlan::sizeFlowPlans() const
+{
+  int c = 0;
+  for (FlowPlanIterator i = beginFlowPlans(); i != endFlowPlans(); ++i) ++c;
+  return c;
+}
+
+
+/** An iterator class to go through all loadplans of an operationplan. 
+  * @see OperationPlan::beginLoadPlans
+  * @see OperationPlan::endLoadPlans
+  */
+class OperationPlan::LoadPlanIterator
+{
+  friend class OperationPlan;
+  private:
+    LoadPlan* curloadplan;
+    LoadPlanIterator(LoadPlan* b) : curloadplan(b) {}
+  public:
+    bool operator != (const LoadPlanIterator &b) const 
+      {return b.curloadplan != curloadplan;}
+    bool operator == (const LoadPlanIterator &b) const 
+      {return b.curloadplan == curloadplan;}
+    LoadPlanIterator& operator++() 
+    { 
+      if (curloadplan) curloadplan = curloadplan->nextLoadPlan; 
+      return *this; 
+    }
+    LoadPlanIterator operator++(int)
+      {LoadPlanIterator tmp = *this; ++*this; return tmp;}
+    LoadPlan* operator ->() const {return curloadplan;}
+    LoadPlan& operator *() const {return *curloadplan;}
+};
+
+inline OperationPlan::LoadPlanIterator OperationPlan::beginLoadPlans() const 
+  { return OperationPlan::LoadPlanIterator(firstloadplan); }
+
+inline OperationPlan::LoadPlanIterator OperationPlan::endLoadPlans() const 
+  {return OperationPlan::LoadPlanIterator(NULL);}
+
+inline int OperationPlan::sizeLoadPlans() const
+{
+  int c = 0;
+  for (LoadPlanIterator i = beginLoadPlans(); i != endLoadPlans(); ++i) ++c;
+  return c;
+}
 
 }   // End namespace
 

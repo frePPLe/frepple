@@ -124,28 +124,28 @@ bool MRPSolver::checkOperationMaterial
   TimePeriod delay;
 
   // Loop through all flowplans
-  for(slist<FlowPlan*>::const_iterator g=opplan->getFlowPlans().begin();
-      g!=opplan->getFlowPlans().end(); ++g)
-    if ((*g)->getFlow()->isConsumer())
+  for(OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
+      g!=opplan->endFlowPlans(); ++g)
+    if (g->getFlow()->isConsumer())
     {
       // Trigger the flow solver, which will call the buffer solver
-      data.q_flowplan = *g;
+      data.q_flowplan = &*g;
       q_qty_Flow = - data.q_flowplan->getQuantity();
       q_date_Flow = data.q_flowplan->getDate();
-      (*g)->getFlow()->solve(*this,&data);
+      g->getFlow()->solve(*this,&data);
 
       // Validate the answered quantity
       if (data.a_qty < q_qty_Flow)
       {
         // Update the opplan, which is required to (1) update the flowplans
         // and to (2) take care of lot sizing constraints of this operation.
-        (*g)->setQuantity(-data.a_qty, true);
+        g->setQuantity(-data.a_qty, true);
         a_qty = opplan->getQuantity();
       }
       else
         // Never answer more than asked. The actual operationplan
         // could be bigger because of lot sizing.
-        a_qty = - q_qty_Flow / (*g)->getFlow()->getQuantity();
+        a_qty = - q_qty_Flow / g->getFlow()->getQuantity();
 
       // Validate the answered date
       if (data.a_date != Date::infiniteFuture
@@ -176,20 +176,20 @@ bool MRPSolver::checkOperationCapacity
 
   // Loop through all loadplans, and solve for the resource
   data.moveit = NULL;
-  bool hasMultipleLoads(opplan->getLoadPlans().size() > 2);
+  bool hasMultipleLoads(opplan->sizeLoadPlans() > 2);
   do
   {
     data.AllLoadsOkay = true;
-    for(slist<LoadPlan*>::const_iterator h=opplan->getLoadPlans().begin();
-        h!=opplan->getLoadPlans().end() && data.AllLoadsOkay; ++h)
+    for(OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
+        h!=opplan->endLoadPlans() && data.AllLoadsOkay; ++h)
     {
       data.q_operationplan = opplan;
-      data.q_loadplan = *h;
-      data.q_qty = (*h)->getQuantity();
-      data.q_date = (*h)->getDate();
+      data.q_loadplan = &*h;
+      data.q_qty = h->getQuantity();
+      data.q_date = h->getDate();
       // Call the resource resolver. Note that it will update the variable
       // data.AllLoadsOkay if it moves the operationplan.
-      (*h)->getLoad()->solve(*this,&data);
+      h->getLoad()->solve(*this,&data);
     }
   }
   // Imagine there are multiple loads. As soon as one of them is moved, we 

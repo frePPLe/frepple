@@ -276,7 +276,7 @@ void OperationPlan::initialize()
 void OperationPlan::createFlowLoads()
 {
   // Has been initialized already, it seems
-  if (!(flowplans.empty() && LoadPlans.empty())) return;
+  if (firstflowplan || firstloadplan) return;
 
   // Create loadplans
   for(Operation::loadlist::const_iterator g=oper->getLoads().begin();
@@ -293,14 +293,12 @@ void OperationPlan::createFlowLoads()
 OperationPlan::~OperationPlan()
 {
   // Delete the flowplans
-  for(slist<FlowPlan*>::iterator e = flowplans.begin();
-      e != flowplans.end(); ++e)
-    delete *e;
+  for(FlowPlanIterator e = beginFlowPlans(); e != endFlowPlans();)
+    delete &*(e++);
 
   // Delete the loadplans
-  for(slist<LoadPlan*>::iterator f = LoadPlans.begin();
-      f != LoadPlans.end(); ++f)
-    delete *f;
+  for(LoadPlanIterator f = beginLoadPlans(); f != endLoadPlans();)
+    delete &*(f++);
 
   // Delete also the owner
   if (owner)
@@ -411,14 +409,12 @@ void OperationPlan::setQuantity (float f, bool roundDown)
 void OperationPlan::resizeFlowLoadPlans()
 {
   // Update all flowplans
-  for (slist<FlowPlan*>::iterator ee = flowplans.begin();
-       ee != flowplans.end(); ++ee)
-    (*ee)->update();
+  for (FlowPlanIterator ee = beginFlowPlans(); ee != endFlowPlans(); ++ee)
+    ee->update();
 
   // Update all loadplans
-  for (slist<LoadPlan*>::iterator e = LoadPlans.begin();
-       e != LoadPlans.end(); ++e)
-    (*e)->update();
+  for (LoadPlanIterator e = beginLoadPlans(); e != endLoadPlans(); ++e)
+    e->update();
 
   // Allow the operation length to be changed now that the quantity has changed
   // Note that we assume that the end date remains fixed. This assumption makes
@@ -529,7 +525,7 @@ void OperationPlan::endElement (XMLInput& pIn, XMLElement& pElement)
     OperationPlan* o = dynamic_cast<OperationPlan*>(pIn.getPreviousObject());
     if (o) setOwner(o);
   }
-  else if (pIn.isObjectEnd() && flowplans.empty() && LoadPlans.empty())
+  else if (pIn.isObjectEnd() && !firstflowplan && !firstloadplan)
   {
     // Note: additional checks for empty flowplans and loadplans is to
     // seperate changes from new ops?
@@ -570,14 +566,12 @@ bool OperationPlan::check()
   bool okay = true;
 
   // Check all flowplans
-  for (slist<FlowPlan*>::iterator ee = flowplans.begin();
-       ee != flowplans.end(); ++ee)
-    okay &= (*ee)->check();
+  for (FlowPlanIterator ee = beginFlowPlans(); ee != endFlowPlans(); ++ee)
+    okay &= ee->check();
 
   // Check all loadplans
-  for (slist<LoadPlan*>::iterator e = LoadPlans.begin();
-       e != LoadPlans.end(); ++e)
-    okay &= (*e)->check();
+  for (LoadPlanIterator e = beginLoadPlans(); e != endLoadPlans(); ++e)
+    okay &= e->check();
 
   return okay;
 }
@@ -949,5 +943,6 @@ void OperationPlanEffective::eraseSubOperationPlan(OperationPlan* o)
     << *(o->getOperation()) << "' that is not registered with"
     << " its parent '" << *getOperation() << "'" << endl;
 }
+
 
 }

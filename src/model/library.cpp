@@ -471,19 +471,19 @@ void CommandPlanSize::execute()
   {
     ++count;
     memsize += sizeof(*j);
-    countloadplans += j->getFlowPlans().size();
-    countflowplans += j->getLoadPlans().size();
+    countloadplans += j->sizeFlowPlans();
+    countflowplans += j->sizeLoadPlans();
   }
   total += memsize;
   clog << "OperationPlan\t" << count << "\t" << memsize << endl;
 
-  // Flowplans  @todo size estimate not accurate
-  memsize = countflowplans * (sizeof(FlowPlan)+2*OVERHEADLISTNODE);
+  // Flowplans  
+  memsize = countflowplans * sizeof(FlowPlan);
   total +=  memsize;
   clog << "FlowPlan     \t" << countflowplans << "\t" << memsize << endl;
 
-  // Loadplans  @todo size estimate not accurate
-  memsize = countloadplans * (sizeof(LoadPlan)+2*OVERHEADLISTNODE);
+  // Loadplans
+  memsize = countloadplans * sizeof(LoadPlan);
   total +=  memsize;
   clog << "LoadPlan     \t" << countloadplans << "\t" << memsize << endl;
 

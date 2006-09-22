@@ -135,14 +135,14 @@ void MRPSolver::solve(Resource* res, void* v)
           // Find the starting loadplan. Moving an operation earlier is driven
           // by the ending loadplan, while searching for later capacity is
           // driven from the starting loadplan.
-          for(slist<LoadPlan*>::const_iterator 
-            h = data->q_operationplan->getLoadPlans().begin();
-            h != data->q_operationplan->getLoadPlans().end(); 
+          for(OperationPlan::LoadPlanIterator 
+            h = data->q_operationplan->beginLoadPlans();
+            h != data->q_operationplan->endLoadPlans(); 
             ++h)
           {
-            if ((*h)!=data->q_loadplan && (*h)->getLoad()->getResource()==res)
+            if (&*h!=data->q_loadplan && h->getLoad()->getResource()==res)
             {
-              data->q_loadplan = *h;
+              data->q_loadplan = &*h;
               break;
             }
           }

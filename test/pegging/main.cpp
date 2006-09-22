@@ -52,19 +52,19 @@ int main (int argc, char *argv[])
         for (PeggingIterator k(dynamic_cast<const FlowPlan*>(&*oo)); k; ++k)  // @todo get rid of the ugly cast
         {
           if (k.getLevel() < 0)  // @todo find better convention for recognizing unpegged material
-            clog << "\t" << k.getLevel() 
-              << "  " << k->getQuantity() 
+            clog << "\t" << k.getLevel()
+              << "  " << k->getQuantity()
               << "  unpegged material"
-              << "  " << k.getQuantity() 
-              << "  " << k.getFactor() 
+              << "  " << k.getQuantity()
+              << "  " << k.getFactor()
               << endl;
           else
-            clog << "\t" << k.getLevel() 
-              << "  " << k->getQuantity() 
-              << "  " << k->getDate() << "  " << k->getFlow()->getBuffer() 
-              << "  " << k->getFlow()->getOperation() 
-              << "  " << k.getQuantity() 
-              << "  " << k.getFactor() 
+            clog << "\t" << k.getLevel()
+              << "  " << k->getQuantity()
+              << "  " << k->getDate() << "  " << k->getFlow()->getBuffer()
+              << "  " << k->getFlow()->getOperation()
+              << "  " << k.getQuantity()
+              << "  " << k.getFactor()
               << endl;
         }
       }
@@ -77,30 +77,30 @@ int main (int argc, char *argv[])
       for(Demand::OperationPlan_list::const_iterator pp=j->getDelivery().begin();
           pp!=j->getDelivery().end(); ++pp)
       {
-        // Assumption!!! The next line assumes that a delivery operation has 
+        // Assumption!!! The next line assumes that a delivery operation has
         // only a single flow.
-        FlowPlan * qq = (*pp)->getFlowPlans().front();
+        FlowPlan * qq = &*(*pp)->beginFlowPlans();
         clog << endl;
         for (PeggingIterator k(qq); k; --k)
         {
           if (k.getLevel() < 0)
-            clog << "\t" << k.getLevel() 
-              << "  " << k->getQuantity() 
+            clog << "\t" << k.getLevel()
+              << "  " << k->getQuantity()
               << "  unpegged material "
-              << "  " << k.getFactor() 
+              << "  " << k.getFactor()
               << endl;
           else
-            clog << "\t" << k.getLevel() 
-              << "  " << k->getQuantity() 
-              << "  " << k->getDate() << "  " << k->getFlow()->getBuffer() 
-              << "  " << k->getFlow()->getOperation() 
-              << "  " << k.getQuantity() 
-              << "  " << k.getFactor() 
+            clog << "\t" << k.getLevel()
+              << "  " << k->getQuantity()
+              << "  " << k->getDate() << "  " << k->getFlow()->getBuffer()
+              << "  " << k->getFlow()->getOperation()
+              << "  " << k.getQuantity()
+              << "  " << k.getFactor()
               << endl;
         }
       }
     }
-    
+
     // 4: Finalize
     FreppleExit();
   }

@@ -15,9 +15,9 @@ OperationRouting	112
 OperationTimePer	112
 Load	32
 Flow	32
-OperationPlan	80
-FlowPlan	40
-LoadPlan	44
+OperationPlan	72
+FlowPlan	44
+LoadPlan	48
 Problem	12
 ProblemBeforeCurrent	12
 ProblemBeforeFence	12

@@ -1478,13 +1478,51 @@ class XMLOutput
     void setOutput(ostream& o) {m_fp = &o;}
 
   public:
+    /** This type is used to define different types of output.
+      * @see STANDARD
+      * @see PLAN
+      * @see PLANDETAIL
+      */
     typedef unsigned short content_type;
-    static const content_type STANDARD; /** @todo doc */
+
+    /** Constant used to mark standard export for the export.
+      * The standard export saves just enough information to persist the full
+      * state of the model as brief as possible.
+      * @see PLAN
+      * @see PLANDETAIL
+      */
+    static const content_type STANDARD;
+
+    /** Constant to mark an export of the standard information plus the plan 
+      * information. In this format, every entity is saved with the details 
+      * on how it is used in the plan.<br>
+      * E.g. a resource will be saved with a reference to all its loadplans.
+      * E.g. an operation will be saved with all its operationplans.
+      * @see STANDARD
+      * @see PLANDETAIL
+      */
     static const content_type PLAN;
+
+    /** Constant to mark an export of the lowest level of plan information.
+      * In addition to the plan information pegging information is now saved.
+      * @see STANDARD
+      * @see PLAN
+      */
     static const content_type PLANDETAIL;
 
-    /** @todo add doc */
+    /** Returns which type of export is requested. 
+      * Constants have been defined for each type.
+      * @see STANDARD
+      * @see PLAN
+      * @see PLANDETAIL
+      */
     content_type getContentType() const {return content;}
+
+    /** Specify the type of export. 
+      * @see STANDARD
+      * @see PLAN
+      * @see PLANDETAIL
+      */
     void setContentType(content_type c) {content = c;}
 
     /** Updates the string that is printed as the first line of each XML

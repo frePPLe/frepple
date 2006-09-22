@@ -135,12 +135,12 @@ PeggingIterator& PeggingIterator::operator++()
     // This is a consuming flowplan. Navigating downstream means taking the 
     // producing flowplans of the owning operationplan(s).
     // @todo handle opplan hierarchies
-    for (slist<FlowPlan*>::const_iterator i 
-      = st.fl->getOperationPlan()->getFlowPlans().begin();
-      i != st.fl->getOperationPlan()->getFlowPlans().end();
+    for (OperationPlan::FlowPlanIterator i 
+      = st.fl->getOperationPlan()->beginFlowPlans();
+      i != st.fl->getOperationPlan()->endFlowPlans();
       ++i)
-      if ((*i)->getQuantity()>0)
-        updateStack(nextlevel, st.qty, st.factor, *i);
+      if (i->getQuantity()>0)
+        updateStack(nextlevel, st.qty, st.factor, &*i);
   }
   // No matching flow found
   if (first) stack.pop();
@@ -234,12 +234,12 @@ PeggingIterator& PeggingIterator::operator--()
     // This is a producing flowplan. Navigating upstream means taking the 
     // consuming flowplans of the owning operationplan(s).
     // @todo handle opplan hierarchies
-    for (slist<FlowPlan*>::const_iterator i 
-      = st.fl->getOperationPlan()->getFlowPlans().begin();
-      i != st.fl->getOperationPlan()->getFlowPlans().end();
+    for (OperationPlan::FlowPlanIterator i 
+      = st.fl->getOperationPlan()->beginFlowPlans();
+      i != st.fl->getOperationPlan()->endFlowPlans();
       ++i)
-      if ((*i)->getQuantity()<0)
-        updateStack(nextlevel, st.qty, st.factor, *i);
+      if (i->getQuantity()<0)
+        updateStack(nextlevel, st.qty, st.factor, &*i);
   }
   // No matching flow found
   if (first) stack.pop();

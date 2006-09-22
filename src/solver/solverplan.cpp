@@ -147,7 +147,6 @@ void MRPSolver::MRPSolverdata::execute()
 }
 
 
-/** @todo enhance to allow cluster level planning */
 void MRPSolver::solve(void *v)
 {
   // Categorize all demands in their cluster
@@ -168,7 +167,7 @@ void MRPSolver::solve(void *v)
   // Create the command list to control the execution
   CommandList threads;       
   // Solve in parallel threads
-  threads.setMaxParallel(1);  //Environment::getProcessors()  // @todo parallel solving not possible yet. Why not?
+  threads.setMaxParallel(1);  // @todo parallel solving not possible yet. Why not?
   // Otherwise a problem in a single cluster could spoil it all
   threads.setAbortOnError(false); 
   for (classified_demand::iterator j = demands_per_cluster.begin(); 

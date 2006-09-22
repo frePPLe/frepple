@@ -57,9 +57,10 @@ Calendar::Bucket* Calendar::addBucket (Date d)
   }
   if (next && next->startdate == d)
   {
-    clog << "Warning: Trying to create two buckets with start date " << d
-      << " in calendar '" << getName() << "'" << endl;  // @todo or throw excpetion
-    return next;
+    ostringstream msg;
+    msg << "Trying to create two buckets with start date " << d
+      << " in calendar '" << getName() << "'";
+    throw DataException(msg.str());
   }
 
   // Create the new bucket

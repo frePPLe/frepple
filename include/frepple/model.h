@@ -2140,12 +2140,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     virtual void beginElement(XMLInput&, XMLElement&);
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-
-    /** @deprecated
-      * This method writes out a bucketized view of supply and demand in 
-      * the buffer. The method is to be removed. @todo
-      */
-    void writeProfile(XMLOutput*, Calendar* = NULL) const;
     virtual void endElement(XMLInput&, XMLElement&);
 
     /** Destructor. */

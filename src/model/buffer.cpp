@@ -152,49 +152,6 @@ double Buffer::getOnHand(Date d1, Date d2, bool min) const
 }
 
 
-void Buffer::writeProfile(XMLOutput* o, Calendar* hor) const
-{
-  // No bucketization given
-  if (!hor) 
-    throw DataException("Writing buffer profile requires a calendar");
-
-  // Write the header
-  o->BeginObject
-    (Tags::tag_bucket_profile, Tags::tag_calendar, hor->getName());
-
-  // Loop through both the flowplans and the buckets
-  double onhand(0.0);
-  float demand, supply;
-  flowplanlist::const_iterator f = flowplans.begin();
-  for (Calendar::BucketIterator b = hor->beginBuckets();
-        b != hor->endBuckets(); ++b)
-  {
-    o->BeginObject(Tags::tag_bucket);
-    o->writeElement(Tags::tag_name, b->getName());
-    o->writeElement(Tags::tag_start, b->getStart());
-    o->writeElement(Tags::tag_end, b->getEnd());
-    o->writeElement(Tags::tag_start_onhand, onhand);
-    o->writeElement(Tags::tag_minimum, 
-        f!=flowplans.end() ? f->getMin() : 0.0);
-    demand = 0.0f;
-    supply = 0.0f;
-    for (; f!=flowplans.end() && f->getDate()<b->getEnd(); ++f)
-    {
-      if (f->getQuantity() > 0.0f) supply += f->getQuantity();
-      else demand -= f->getQuantity();
-      onhand = f->getOnhand();
-    }
-    o->writeElement(Tags::tag_demand, demand);
-    o->writeElement(Tags::tag_supply, supply);
-    o->writeElement(Tags::tag_end_onhand, onhand);
-    o->EndObject(Tags::tag_bucket);
-  }
-
-  // Finish
-  o->EndObject (Tags::tag_bucket_profile);
-}
-
-
 void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
 {
   // Writing a reference

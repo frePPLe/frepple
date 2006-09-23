@@ -435,9 +435,11 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
     parser->setFeature(XMLUni::fgXercesSchema, validate);
     parser->setFeature(XMLUni::fgXercesSchemaFullChecking, false);
     parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal,true);
+    parser->setFeature(XMLUni::fgXercesIgnoreAnnotations,true);
 
-    if (validate)  // @todo make the schema user definable
+    if (validate)
     {
+      // Specify the no-namespace schema file
       string schema = Environment::getHomeDirectory();
       if (*schema.rend() != '/') schema += '/';
       schema += "frepple.xsd";

@@ -366,19 +366,6 @@ void LibraryModel::initialize()
 }
 
 
-/* This constant is used to compute an estimate of the memory
- * consumption of the model.  The estimate is only an approximation.
- * These may vary on your platform and on the STL implementation used.
- * - OVERHEADLISTNODE:     @todo remove 
- *   Memory overhead to link an object in a STL linked list.
- *   Estimate it to be 1 pointer if your STL implementation supports singly
- *   linked lists (which are a non-standard extension). If you STL
- *   implementation only implements the standard list, estimate the overhead
- *   to be 2 pointers.
- */
-#define OVERHEADLISTNODE    4 
-
-
 void CommandPlanSize::execute()
 {
   size_t count, memsize;
@@ -420,27 +407,29 @@ void CommandPlanSize::execute()
   clog << "Resource     \t" << Resource::size() << "\t" << memsize << endl;
   total += memsize;
 
-  // Operations
-  size_t countFlows(0), countLoads(0);
+  // Operations, flows and loads
+  size_t countFlows(0), memFlows(0), countLoads(0), memLoads(0);
   memsize = 0;
   for (Operation::iterator o = Operation::begin(); o != Operation::end(); ++o)
   {
-    memsize += o->getSize();;
-    countFlows += o->getFlows().size();
-    countLoads += o->getLoads().size();
+    memsize += o->getSize();
+    for (Operation::flowlist::const_iterator fl = o->getFlows().begin(); 
+      fl != o->getFlows().end(); ++ fl)
+    {
+      ++countFlows;
+      memFlows += fl->getSize();
+    }
+    for (Operation::loadlist::const_iterator ld = o->getLoads().begin(); 
+      ld != o->getLoads().end(); ++ ld)
+    {
+      ++countLoads;
+      memLoads += ld->getSize();
+    }
   }
   clog << "Operation    \t" << Operation::size() << "\t" << memsize << endl;
-  total += memsize;
-
-  // Flows  @todo size estimate not accurate
-  memsize = countFlows * (sizeof(Flow)+2*OVERHEADLISTNODE);
-  total += memsize;
-  clog << "Flow         \t" << countFlows << "\t" << memsize  << endl;
-
-  // Loads  @todo size estimate not accurate
-  memsize = countLoads * (sizeof(Load)+2*OVERHEADLISTNODE);
-  total += memsize;
-  clog << "Load         \t" << countLoads << "\t" << memsize  << endl;
+  clog << "Flow         \t" << countFlows << "\t" << memFlows  << endl;
+  clog << "Load         \t" << countLoads << "\t" << memLoads  << endl;
+  total += memsize + memFlows + memLoads;
 
   // Calendars (which includes the buckets)
   memsize = 0;
@@ -471,8 +460,8 @@ void CommandPlanSize::execute()
   {
     ++count;
     memsize += sizeof(*j);
-    countloadplans += j->sizeFlowPlans();
-    countflowplans += j->sizeLoadPlans();
+    countloadplans += j->sizeLoadPlans();
+    countflowplans += j->sizeFlowPlans();
   }
   total += memsize;
   clog << "OperationPlan\t" << count << "\t" << memsize << endl;

@@ -12,27 +12,27 @@ use Env qw(EXECUTABLE);
 
 my %runtimes;
 
-sub createdata (*;$;$;$;$;$;@) 
+sub createdata (*;$;$;$;$;$;@)
 {
   # Pick up the parameters
   my ($OUTFILE,$duplicates,$header,$body,$footer,@subst) = @_;
   my ($curbody, $new, $cnt);
-    
+
   # Print the header
   printf $OUTFILE "$header";
-  
+
   # Iteration
-  for ($cnt=1; $cnt <= $duplicates; $cnt++) 
+  for ($cnt=1; $cnt <= $duplicates; $cnt++)
     {
     $_ = $body;
     for my $cursubst (@subst)
-      { 
+      {
       $new = $cursubst . "_" . $cnt;
-      s/$cursubst/$new/g; 
+      s/$cursubst/$new/g;
       }
     printf $OUTFILE "$_";
     }
-  
+
   # Finalize
   printf $OUTFILE "$footer";
 };
@@ -86,7 +86,7 @@ for (my $counter=5000; $counter < 30000; $counter+=5000)
     "<FLOW xsi:type=\"FLOW_START\"><OPERATION NAME=\"Delivery ITEMNM\"/>" .
       "<BUFFER NAME=\"BUFNM\" ONHAND=\"10\"/>" .
       "<QUANTITY>-1</QUANTITY></FLOW>\n" .
-    "<FLOW xsi:type=\"FLOW_START\"><OPERATION NAME=\"Make ITEMNM\"/>" .
+    "<FLOW xsi:type=\"FLOW_END\"><OPERATION NAME=\"Make ITEMNM\"/>" .
       "<BUFFER NAME=\"BUFNM\"/><QUANTITY>1</QUANTITY></FLOW>\n",
     "</FLOWS>\n",
     "ITEMNM","BUFNM"

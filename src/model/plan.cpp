@@ -104,28 +104,29 @@ void Plan::endElement (XMLInput& pIn, XMLElement& pElement)
 
 void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
-//  const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pElement.getTagHash());
-//  if (cat && pIn.getParentElement().isA(cat->grouptag))
-  const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pIn.getParentElement().getTagHash());
-  if (cat && pElement.isA(cat->typetag))
-  {
-    if (cat->readFunction)
-      // Hand over control to a registered read controller
-      pIn.readto(cat->readFunction(*cat,pIn));
-    else
-      // There is no controller available.
-      // This piece of code will be used to skip pieces of the XML file that
-      // Frepple doesn't need to be understand
-      pIn.IgnoreElement();
-  }
-  else if (pElement.isA(Tags::tag_commands))
+  if (pElement.isA(Tags::tag_commands))
   {
     // Handling of commands, a category which doesn't have a category reader
     LockManager::getManager().obtainWriteLock(&(pIn.getCommands()));
     pIn.readto(&(pIn.getCommands()));
-  }    
-  else if (pElement.isA(Tags::tag_default_calendar))
-    pIn.readto(Calendar::reader(Calendar::metadata,pIn));
+  }
+  else
+  {
+    const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pIn.getParentElement().getTagHash());
+    if (cat)
+    {
+      if (cat->readFunction)
+        // Hand over control to a registered read controller
+        pIn.readto(cat->readFunction(*cat,pIn));
+      else
+        // There is no controller available.
+        // This piece of code will be used to skip pieces of the XML file that
+        // Frepple doesn't need to be understand
+        pIn.IgnoreElement();
+    }  
+    else if (pElement.isA(Tags::tag_default_calendar))
+      pIn.readto(Calendar::reader(Calendar::metadata,pIn));
+  }
 }
 
 

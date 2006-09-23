@@ -6,19 +6,19 @@
 
 #
 # This simple perl script provides a simplistic framework for executing unit
-# tests. 
-# Each test has its own subdirectory. In the description below it is referred 
+# tests.
+# Each test has its own subdirectory. In the description below it is referred
 # to as {testdir}.
-# Three categories of tests are supported. 
+# Three categories of tests are supported.
 #
 #  - Type 1: Compiled executable
 #    If an executable file {testdir} or {testdir}.exe is found in the test
-#    directory, the executable is run. The compilation/generation of the 
-#    executable is not handled by the script, but it's typically done by 
+#    directory, the executable is run. The compilation/generation of the
+#    executable is not handled by the script, but it's typically done by
 #    running the command "make check" in the test subdirectory.
 #    The test is successful if both:
 #      1) the exit code of the program is 0
-#      2) the output of the program is identical to the content of the 
+#      2) the output of the program is identical to the content of the
 #         file {testdir}.expect
 #
 #  - Type 2: Run a Perl test script
@@ -26,23 +26,23 @@
 #    and its exit code is used as the criterium for a successful test.
 #
 #  - Type 3: Process an XML file
-#    If a file {testdir}.xml is found in the test directory, the frepple 
+#    If a file {testdir}.xml is found in the test directory, the frepple
 #    commandline executable is called to process the file.
 #    The test is successful if both:
 #      1) the exit code of the program is 0
-#      2) the generated output files of the program match the content of the 
+#      2) the generated output files of the program match the content of the
 #         files {testdir}.{nr}.expect
 #    If a file init.xml is found in the test directory, the test directory
 #    is used as the frepple home directory.
 #
 #  - If the test subdirectory doesn't match the criteria of any of the above
 #    types, the directory is considered not to contain a test.
-# 
+#
 # The script can be run with the following arguments on the command line:
-#  - ./runtest.pl {test}  
+#  - ./runtest.pl {test}
 #    ./runtest.pl {test1} {test2}
 #    Execute the tests listed on the command line.
-#  - ./runtest.pl 
+#  - ./runtest.pl
 #    Execute all tests.
 #  - ./runtest.pl -vcc
 #    Execute all tests using the executables compiled with Microsofts'
@@ -66,7 +66,7 @@ $FREPPLE_HOME = abs_path("../bin") if (!$FREPPLE_HOME);
 
 # Executable to be used for the tests. Exported as an environment variable.
 # This default executable is the one valid  for GCC cygwin and GCC *nux builds.
-$EXECUTABLE = "libtool --mode=execute ../../src/frepple";  
+$EXECUTABLE = "libtool --mode=execute ../../src/frepple";
 my $platform = "GCC";
 
 # Put command line arguments in a hash, rather than keeping in an array
@@ -184,13 +184,13 @@ sub test_type_2
 sub test_type_3
 {
   # Delete previous output
-  unlink "output*";
+  unlink glob("output.*.xml"), glob("output.*.txt"), glob("output.*.tmp");
 
   # Feed the input file to the planner application.
   # This type of test enforces validation of the input data.
   # A new frepple home directory is specified when a file init.xml exists in
   # test subdirectory
-  if (-r "init.xml") 
+  if (-r "init.xml")
     { system "$EXECUTABLE -validate -home . $subdir.xml"; }
   else
     { system "$EXECUTABLE -validate $subdir.xml"; }

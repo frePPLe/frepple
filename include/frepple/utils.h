@@ -3923,7 +3923,7 @@ template <class A, class B, class C> class Association
         }
         void setPtrA(A* a, const ListA& al)
         {
-          // Don't allow upating an already valid link
+          // Don't allow updating an already valid link
           if (ptrA) return;
           ptrA = a;
           nextA = al.first;
@@ -3931,7 +3931,7 @@ template <class A, class B, class C> class Association
         }
         void setPtrB(B* b, const ListB& bl)
         {
-          // Don't allow upating an already valid link
+          // Don't allow updating an already valid link
           if (ptrB) return;
           ptrB = b;
           nextB = bl.first;

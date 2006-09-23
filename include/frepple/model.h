@@ -1517,12 +1517,6 @@ class OperationPlan
       */
     virtual void initialize();
 
-    /** Returns a reference to the list of flowplans. */
-    //xxxconst slist<FlowPlan*>& getFlowPlans() {return flowplans;}
-
-    /** Returns a reference to the list of LoadPlans. */
-    //xxxconst slist<LoadPlan*>& getLoadPlans() {return LoadPlans;}
-
     /** Add a sub_operation_plan to the list. For normal operation_plans this
       * is only a dummy function. For alternates and routing operation_plans
       * it does have a meaning.

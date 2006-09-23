@@ -6,16 +6,16 @@
   </DESCRIPTION>
   <CURRENT>2006-01-01T00:00:00</CURRENT>
   <COMMANDS>
-    <COMMAND_SOLVE>
+    <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="7" />
-    </COMMAND_SOLVE>
-    <COMMAND_SAVEPLAN>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
       <FILENAME>output.1s.xml</FILENAME>
-    </COMMAND_SAVEPLAN>
+    </COMMAND>
   </COMMANDS>
   <DEFAULT_CALENDAR NAME="Weeks" />
   <CALENDARS>
-    <CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
+    <CALENDAR_VOID NAME="Weeks">
       <BUCKETS>
         <BUCKET START="2006-01-01T00:00:00">
           <NAME>Jan Week1</NAME>
@@ -60,17 +60,17 @@
           <NAME>Remainder</NAME>
         </BUCKET>
       </BUCKETS>
-    </CALENDAR>
+    </CALENDAR_VOID>
   </CALENDARS>
   <OPERATIONS>
-    <OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME">
+    <OPERATION_FIXED_TIME NAME="make end item">
       <!--SIZE_MULTIPLE>3</SIZE_MULTIPLE-->
       <DURATION>168:00:00</DURATION>
-    </OPERATION>
-    <OPERATION NAME="make subassembly" xsi:type="OPERATION_TIME_PER">
+    </OPERATION_FIXED_TIME>
+    <OPERATION_TIME_PER NAME="make subassembly">
       <DURATION>24:00:00</DURATION>
       <DURATION_PER>12:00:00</DURATION_PER>
-    </OPERATION>
+    </OPERATION_TIME_PER>
   </OPERATIONS>
   <ITEMS>
     <ITEM NAME="end item">
@@ -99,31 +99,31 @@
     </BUFFER>
   </BUFFERS>
   <FLOWS>
-    <FLOW xsi:type="FLOW_START">
+    <FLOW_START>
       <OPERATION NAME="delivery end item" />
       <BUFFER NAME="end item" />
       <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_START">
+    </FLOW_START>
+    <FLOW_START>
       <OPERATION NAME="make subassembly" />
       <BUFFER NAME="Raw material" />
       <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_START">
+    </FLOW_START>
+    <FLOW_START>
       <OPERATION NAME="make end item" />
       <BUFFER NAME="subassembly" />
       <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
+    </FLOW_START>
+    <FLOW_END>
       <OPERATION NAME="make end item" />
       <BUFFER NAME="end item" />
       <QUANTITY>1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
+    </FLOW_END>
+    <FLOW_END>
       <OPERATION NAME="make subassembly" />
       <BUFFER NAME="subassembly" />
       <QUANTITY>1</QUANTITY>
-    </FLOW>
+    </FLOW_END>
   </FLOWS>
   <DEMANDS>
     <DEMAND NAME="order 1">

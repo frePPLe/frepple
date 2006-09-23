@@ -81,7 +81,7 @@ void Flow::validate(Action action)
         // Nothing to delete
         throw DataException("Can't remove nonexistent flow of '" 
           + oper->getName() + "' and '" + buf->getName() + "'");
-      delete &*i;
+      delete &*i;   // @todo flowplans can still be existing for this flow!
       return;
   }
 

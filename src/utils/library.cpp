@@ -214,21 +214,6 @@ void MetaCategory::registerCategory
 }
 
 
-/* xxx
-DECLARE_EXPORT const MetaCategory::CategoryMap& MetaCategory::getCategories()
-{
-  static CategoryMap m;
-  return m;
-}
-
-
-DECLARE_EXPORT const MetaCategory::CategoryMap& MetaCategory::getCategoriesByGroup()
-{
-  static CategoryMap m;
-  return m;
-}
-*/
-
 const MetaCategory* MetaCategory::findCategoryByTag(const char* c)  
 {
   // Loop through all categories
@@ -357,15 +342,20 @@ Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput
         ("Entity " + cat.type + " doesn't support CHANGE action.");
     default:
       /* Lookup for the class in the map of registered classes. */
-      char* type = atts ?
-        XMLString::transcode(atts->getValue(Tags::tag_type.getXMLCharacters())) :
-        NULL;
+      char* type = 
+        XMLString::transcode(atts->getValue(Tags::tag_type.getXMLCharacters()));
+      string type2;
+      if (!type && in.getParentElement().isA(cat.grouptag))
+      {
+        if (in.getCurrentElement().isA(cat.typetag)) type2 = "DEFAULT";
+        else type2 = in.getCurrentElement().getName();
+      }
       ClassMap::const_iterator j 
-        = cat.classes.find(type ? XMLtag::hash(type) : defaultHash);
+        = cat.classes.find(type ? XMLtag::hash(type) : (type2.empty() ? MetaCategory::defaultHash : XMLtag::hash(type2.c_str())));
       if (j == cat.classes.end())
       {
         XMLString::release(&type);
-        throw LogicException("No type " + string(type) 
+        throw LogicException("No type " + string(type ? type : (type2.empty() ? "DEFAULT" : type2.c_str())) 
           + " registered for category " + cat.type);
       }
       XMLString::release(&type);

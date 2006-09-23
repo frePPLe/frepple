@@ -82,7 +82,7 @@ void Load::validate(Action action)
         // Nothing to delete
         throw DataException("Can't remove nonexistent load of '" 
           + oper->getName() + "' and '" + res->getName() + "'");
-      delete &*i;
+      delete &*i;   // @todo loadplans can still be existing for this load!
       return;
   }
 

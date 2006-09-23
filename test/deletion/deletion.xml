@@ -15,23 +15,23 @@
     <!--
       Starting position...
     -->
-    <COMMAND_SAVE FILENAME="output.1.xml" />
-    <COMMAND_SOLVE>
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
+    <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" />
-    </COMMAND_SOLVE>
-    <COMMAND_SAVEPLAN FILENAME="output.2s.xml" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.2s.xml" />
 
     <!--
       Now we delete the plan and then recreate it. The plan summary
       and static plan should be identical.
     -->
-    <COMMAND_ERASE MODE="plan" />
-    <COMMAND_SAVE FILENAME="output.3.xml" />
-    <COMMAND_SOLVE>
+    <COMMAND xsi:type="COMMAND_ERASE" MODE="plan" />
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.3.xml" />
+    <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
-    </COMMAND_SOLVE>
-    <COMMAND_SAVEPLAN FILENAME="output.4s.xml" />
-    <COMMAND_ERASE MODE="plan" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.4s.xml" />
+    <COMMAND xsi:type="COMMAND_ERASE" MODE="plan" />
 
     <!--
       Now we delete a location. Its sublocations will get a new parent.
@@ -42,7 +42,7 @@
       special XML characters < > "    See below for examples without a
       CDATA section
     -->
-    <COMMAND_READXMLSTRING>
+    <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
         <![CDATA[
 				<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -52,14 +52,14 @@
 				</PLAN>
 			]]>
       </DATA>
-    </COMMAND_READXMLSTRING>
-    <COMMAND_SAVE FILENAME="output.5.xml" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.5.xml" />
 
     <!--
       Now we delete a customer. References to it will be removed from
       demands.
     -->
-    <COMMAND_READXMLSTRING>
+    <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
         <![CDATA[
 				<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -69,77 +69,77 @@
 				</PLAN>
 			]]>
       </DATA>
-    </COMMAND_READXMLSTRING>
-    <COMMAND_SAVE FILENAME="output.6.xml" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.6.xml" />
 
     <!--
       Now we delete a resource. Operationsplans are being deleted of
       operations that are loading the resource. The loads are also deleted.
     -->
-    <COMMAND_SOLVE>
+    <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
-    </COMMAND_SOLVE>
-    <COMMAND_READXMLSTRING>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
         &lt;PLAN&gt; &lt;RESOURCES&gt; &lt;RESOURCE NAME=&quot;assemble&quot;
         ACTION=&quot;R&quot;/&gt; &lt;/RESOURCES&gt; &lt;/PLAN&gt;
       </DATA>
-    </COMMAND_READXMLSTRING>
-    <COMMAND_SOLVE>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
-    </COMMAND_SOLVE>
-    <COMMAND_SAVEPLAN FILENAME="output.7s.xml" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.7s.xml" />
 
     <!--
       Now we delete a buffer. Operationsplans are being deleted of
       operations that are consuming or producing material from it. The flows
       are also deleted.
     -->
-    <COMMAND_READXMLSTRING>
+    <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
         &lt;PLAN&gt; &lt;BUFFERS&gt; &lt;BUFFER NAME=&quot;buffer A&quot;
         ACTION=&quot;R&quot;/&gt; &lt;/BUFFERS&gt; &lt;/PLAN&gt;
       </DATA>
-    </COMMAND_READXMLSTRING>
-    <COMMAND_SOLVE>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
-    </COMMAND_SOLVE>
-    <COMMAND_SAVEPLAN FILENAME="output.8s.xml" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.8s.xml" />
 
     <!--
       Now we delete an operation.
     -->
-    <COMMAND_READXMLSTRING>
+    <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
         &lt;PLAN&gt; &lt;OPERATIONS&gt; &lt;OPERATION NAME=
         &quot;make item 1&quot; ACTION=&quot;R&quot;/&gt; &lt;/OPERATIONS&gt;
         &lt;/PLAN&gt;
       </DATA>
-    </COMMAND_READXMLSTRING>
-    <COMMAND_SOLVE>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
-    </COMMAND_SOLVE>
-    <COMMAND_SAVE xsi:type="COMMAND_SAVE" FILENAME="output.9.xml" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.9.xml" />
 
 
     <!--
       Now we delete an item.
     -->
-    <COMMAND_READXMLSTRING>
+    <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
         &lt;PLAN&gt; &lt;ITEMS&gt; &lt;ITEM NAME=&quot;item 1&quot;
         ACTION=&quot;R&quot;/&gt; &lt;/ITEMS&gt; &lt;/PLAN&gt;
       </DATA>
-    </COMMAND_READXMLSTRING>
-    <COMMAND_SOLVE xsi:type="COMMAND_SOLVE">
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
-    </COMMAND_SOLVE>
-    <COMMAND_SAVE FILENAME="output.10.xml" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.10.xml" />
 
     <!--
       Now we delete a calendar and a calendar bucket.
     -->
-    <COMMAND_READXMLSTRING>
+    <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
         <![CDATA[
 				<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -155,14 +155,14 @@
 				</PLAN>
 			]]>
       </DATA>
-    </COMMAND_READXMLSTRING>
-    <COMMAND_SAVE FILENAME="output.11.xml" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.11.xml" />
 
     <!--
       To finish we delete the complete model.
     -->
-    <COMMAND_ERASE MODE="model" />
-    <COMMAND_SAVE FILENAME="output.12.xml" />
+    <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.12.xml" />
 
   </COMMANDS>
   <CURRENT>2006-01-01T00:00:00</CURRENT>
@@ -225,36 +225,36 @@
     </BUFFER>
   </BUFFERS>
   <FLOWS>
-    <FLOW xsi:type="FLOW_START">
+    <FLOW_START>
       <OPERATION NAME="delivery 1" />
       <BUFFER NAME="buffer 1" />
       <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
+    </FLOW_START>
+    <FLOW_END>
       <OPERATION NAME="make item 1" />
       <BUFFER NAME="buffer 1" />
       <QUANTITY>1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_START">
+    </FLOW_END>
+    <FLOW_START>
       <OPERATION NAME="make item 1" />
       <BUFFER NAME="buffer A" />
       <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_START">
+    </FLOW_START>
+    <FLOW_START>
       <OPERATION NAME="make item 1" />
       <BUFFER NAME="buffer B" />
       <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
+    </FLOW_START>
+    <FLOW_END>
       <OPERATION NAME="supply component A from supplier 1" />
       <BUFFER NAME="buffer A" />
       <QUANTITY>1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
+    </FLOW_END>
+    <FLOW_END>
       <OPERATION NAME="supply component A from supplier 2" />
       <BUFFER NAME="buffer A" />
       <QUANTITY>1</QUANTITY>
-    </FLOW>
+    </FLOW_END>
   </FLOWS>
   <RESOURCES>
     <RESOURCE NAME="assemble">

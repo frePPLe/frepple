@@ -326,7 +326,7 @@
 					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
 						<xsd:element name="RESOURCE" type="RESOURCE" />
 					</xsd:sequence>
-				</xsd:complexType>			
+				</xsd:complexType>
 			</xsd:element>
 			<xsd:element name="DETECTPROBLEMS" type="xsd:boolean" />
 			<xsd:element name="LOADS" type="LOADLIST" />
@@ -367,7 +367,7 @@
 						<xsd:element name="BUFFER" type="BUFFER" />
 					</xsd:sequence>
 				</xsd:complexType>
-			</xsd:element>			
+			</xsd:element>
 			<xsd:element name="LOCATION" type="LOCATION" />
 			<xsd:element name="ITEM" type="ITEM" />
 			<xsd:element name="ONHAND" type="xsd:float" />
@@ -537,7 +537,7 @@
 						<xsd:element name="DEMAND" type="DEMAND" />
 					</xsd:sequence>
 				</xsd:complexType>
-			</xsd:element>			
+			</xsd:element>
 			<xsd:element name="OPERATION_PLANS" type="OPERATIONPLANLIST" />
 		</xsd:choice>
 		<xsd:attributeGroup ref="COMMON_ATTRIBUTES" />
@@ -868,15 +868,6 @@
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="VERBOSE" type="xsd:boolean" />
 					<xsd:element name="COMMAND" type="COMMAND" />
-					<xsd:element name="COMMAND_SOLVE" type="COMMAND_SOLVE" />
-					<xsd:element name="COMMAND_LOADLIB" type="COMMAND_LOADLIB" />
-					<xsd:element name="COMMAND_SYSTEM" type="COMMAND_SYSTEM" />
-					<xsd:element name="COMMAND_SIZE" type="COMMAND_SIZE" />
-					<xsd:element name="COMMAND_ERASE" type="COMMAND_ERASE" />
-					<xsd:element name="COMMAND_SAVE" type="COMMAND_SAVE" />
-					<xsd:element name="COMMAND_SAVEPLAN" type="COMMAND_SAVEPLAN" />
-					<xsd:element name="COMMAND_READXML" type="COMMAND_READXML" />
-					<xsd:element name="COMMAND_READXMLSTRING" type="COMMAND_READXMLSTRING" />
 					<xsd:element name="ABORTONERROR" type="xsd:boolean" />
 					<xsd:element name="MAXPARALLEL" type="xsd:positiveInteger" />
 				</xsd:choice>

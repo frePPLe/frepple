@@ -4,7 +4,6 @@
   <meta http-equiv="Content-Type" content="text/html">
   <meta name="description" content="open source APS">
   <meta name="author" content="jdetaeye@users.sourceforge.net">
-  <meta name="keywords" content="open source, APS, Advanced Planning System">
   <title>Frepple - a FreE Production Planning Library</title>
   <link href="styles.css" rel="stylesheet" type="text/css">
 </head>
@@ -14,42 +13,76 @@ a Free Production Planning Library</font></u></H1>
 
 <p>Plenty of planning tools are available for various production problems,
 different subprocess, different solver techniques.... A bit suprising, no
-proper solutions exist in the open source domain. Plenty of users are left
-with  expensive and inflexible tools, and are resorting to spreadsheets to meet
+proper solutions exist in the open source domain. Users often are left
+with  expensive and inflexible tools and resort to spreadsheets to meet
 their needs.</p>
-<p>This project aims at building a lightweight framework that easily and quickly
-delivers a solution for production planning problems. The initial focus is on
-small to medium sized master planning problems for the discrete manufacturing
-industry.</p>
+<p>This project aims at building an open source lightweight framework that easily
+and quickly delivers a solution for production planning problems. The initial
+focus is on small to medium sized master planning problems for the discrete
+manufacturing industry.</p>
 <p>For the developer community, the project is also trying to establish a
 common ground framework for planning applications. Rather than building the
 basic building blocks (e.g.  item, buffer, bill of material, ...) from scratch
 over and over again, developers can leverage a proven framework to extend
 with their own extension modules.</p>
 <p>The word "free" in the project name refers to liberty, not price. Think of
-"freedom of speech" rather than "free beer": see also
+"freedom of speech" rather than "free beer": see
 <a target="_blank" href="http://www.gnu.org/philosophy/free-sw.html">the free
 software definition</a>.
 <p><b>The software is currently in a early-beta stage. This means the software
-isn't suitable for end users yet. There's plenty of work on the code and the
-documentation. I released at this early stage to collect feedback and to gather
- interested souls to contribute to the project.</b><br>
-So, browse the site, have a look at the code and let
+isn't suitable for end users yet. There's plenty of work left.
+I released at this early stage to collect feedback and to gather interested souls
+to contribute to the project.</b><br>
+So, browse the site, have a look at the code and mail
 <a href="&#109;&#97;&#x69;&#x6c;&#x74;&#111;&#x3a;&#106;&#x64;&#101;&#116;&#x61;&#x65;&#x79;&#101;&#64;&#117;&#x73;&#x65;&#x72;&#115;&#46;&#115;&#111;&#x75;&#x72;&#x63;&#x65;&#102;&#x6f;&#x72;&#103;&#x65;&#46;&#110;&#x65;&#116;">
-me</a> know what you think.</p>
+me</a> your feedback.</p>
 
-<p>All code of this project is released under the GNU lesser general public
-license.
-I strongly encourage you to visit the website of the
-<a href="http://www.fsf.org" target="_blank">Free Software Foundation</a> and
-learn how this
-license protects my and your work.</br>
-The licence agreement is provided in the file 'COPYING' in the installation
-directory.</p>
+<p><H2>Features:</H2>
+<ul>
+<li><p><b>Modeling and solving framework for discrete manufacturing environments.</b><br>
+Key modeling constructs are:<ul>
+<li>Item</li>
+<li>Buffer</li>
+<li>Resource</li>
+<li>Operation</li>
+<li>Demand</li>
+</ul>
+See <a href="entitydiagram.pdf">here</a> for a short domain model (requires Acrobat Reader).<br>
+A complete <a href="classdiagram.pdf">class diagram</a>
+and <a href="reference/index.html">API reference</a> are available to developers.</p></li>
 
-<p>The project is developped for 32-bit linux and Windows environments, with
-Linux being the primary development platform. Porting to other platforms is
-discussed under the developer section of the documentation.
-</p>
+<li><p><b>Heuristic, "MRP-like" solving algorithm</b> respecting capacity, material
+and leadtime constraints.</p></li>
+
+<li><p>Completely <b>XML</b>-based data input and output.</p></li>
+
+<li><p><b>Extensible and customizable architecture.</b><br>
+New modeling constructs and solving algorithms can be added as plugin modules.</p></li>
+
+<li><p>Frepple comes as a <b>'library' developed in C++</b>.<br>
+It has no graphical user interface as such and requires to be deployed in
+a 'application'.<br>
+Different applications are envisioned:
+<ul>
+<li>Standalone application for use at the command line</li>
+<li><i>Coming soon!</i> Apache module for browser based user interface and network based access</li>
+<li><i>Coming very soon!</i> Microsoft Excel frontend, using the XML editing capabilities</li>
+<li>Accessed from programming languages such as java, python, perl or visual basic
+<li>Linked into your own C or C++ application</p></li>
+</ul>
+</li>
+
+<li><p><b>Supported on 32-bit linux and Windows environments</b>, with
+Linux being the primary development platform.<br>
+Porting to other platforms is discussed under the developer section
+of the documentation.</p></li>
+
+<li><p><b>Licenced under the GNU lesser general public license.</b><br>
+Learn <a href="http://www.fsf.org" target="_blank">here</a>
+how this license protects my and your work.</p></li>
+
+<li><p>To finish, a pretty bold statement :-)<br>
+<b>Frepple will be the world's first true open source advanced planning system.</b></p></li>
+</ul>
 </body>
 </html>

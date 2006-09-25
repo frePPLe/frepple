@@ -9,65 +9,18 @@
 <p>This page introduces the modeling structure.</p>
 <p>UNFINISHED DOCUMENTATION!!!</p>
 
-<p><a target="_blank" href="entitydiagram.pdf" >Entities diagram</a>(requires
-Acrobat Reader)</p>
-
-
-See APICS / OAGIS reference
-Refer to XSD
-
 <H2>Item</H2>
-aka product, material
-Attributes are delivery operation,
 <H2>Buffer</H2>
-aka sku, inventory
-Attributes are item, location, producing operation,
 <H2>Resource</H2>
-aka workcentre, capacity
 <H2>Demand</H2>
-aka forecast, orders, backlog
-A demand represents a independent demand to be planned. It can represent
-a customer order or a forecast.
-Attributes are due date, item, quantity, priority
 <H2>Operation</H2>
-Defines an activity
-<H2>Item</H2>
-An item defines the products being planned, sold, stored and/or
-manufactured. Buffers and demands have a reference an item.
 <H2>Flow</H2>
-A flow represent the production or consumption of material from a buffer.
-A flow is attached to an operation.
 <H2>Load</H2>
-A load links a resource to a certain operation.
 <H2>Operation Plan</H2>
-Plans an activity
-Attributes are operation, quantity, start date, end date
 <H2>Calendar</H2>
 <H2>Location</H2>
-Buffers and resources are linked to a (physical or logical) location.
-Locations are merely used for simple association, and have no active use in the
-model.
 <H2>Plan</H2>
 <H2>Solver</H2>
 <H2>Command</H2>
 
-
-<H2>Modeling limitations</H2>
-<p>The model components are very generic and can easily be combined and nested
-into a wide range of models. Not all of these constructs are handled correctly 
-by the solver, either because of some implicit assumption, either because of 
-the code structure, either because of uncomplete code, etc... In this section 
-we document a number of such cases:</p>
-<ul>
-<li>Operation hierarchies should be restricted to two levels only, where
-possible.</li>
-<li>Attach flows and loads to the lowest operations only, where possible.</li>
-<li>Don't attach a consuming flow at multiple levels in an operation hierarchy.
-<br>E.g. Top operation consumes a certain material, and a suboperation consumes
-the same material again.</li>
-<li>Similarly, don't load the same resource at multiple levels in an operation
-hierarchy</li>
-<li>Hierarchy structures of resources and buffers are untested. Only demand
-hierarchies are currently supported.</li>
-</ul>
 </body>

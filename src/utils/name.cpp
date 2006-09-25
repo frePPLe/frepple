@@ -85,15 +85,16 @@ Tree::TreeNode* Tree::insert(TreeNode* z, TreeNode *hint)
 
   // Step down the tree till we found a proper empty leaf node in the tree
   for (; hint; hint = comp<0 ? hint->left : hint->right)
-	{
-	  y = hint;
+  {
+    y = hint;
     // Exit the function if the key is already found
-    if (!(comp = z->nm.compare(hint->nm)))
+    comp = z->nm.compare(hint->nm);
+    if (!comp)
     {
       LockManager::getManager().releaseWriteLock(l);
       return hint;
     }
-	}
+  }
 
   if (y == &header || z->nm < y->nm)
   {

@@ -247,7 +247,6 @@ void CSVInput::readTemplate
     parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal,true);
 
     string schema = Environment::getHomeDirectory();
-    if (*schema.rend() != '/') schema += '/';
     schema += "frepple.xsd";
     XMLCh *c = XMLString::transcode(schema.c_str());
     parser->setProperty(

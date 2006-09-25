@@ -73,6 +73,9 @@ void Environment::setHomeDirectory(const string dirname)
   else
     // Exists but it's not a directory
     throw RuntimeException("Invalid home directory '" + dirname + "'");
+
+  // Make sure the directory ends with a slash
+  if (!home.empty() && *home.rbegin() != '/') home += '/';  
 }
 
 
@@ -377,6 +380,7 @@ Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput
       // Creation accepted
       return result;
   }
+  assert("Unreachable code reached");
   return NULL;
 }
 

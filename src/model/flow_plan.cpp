@@ -36,7 +36,7 @@ FlowPlan::FlowPlan (OperationPlan * opplan, const Flow * f)
     : TimeLine<FlowPlan>::EventChangeOnhand(
         f->getQuantity() * opplan->getQuantity())
 {
-  assert(o);
+  assert(opplan);
   fl = const_cast<Flow*>(f);
   oper = opplan;
   nextFlowPlan = oper->firstflowplan;

@@ -75,15 +75,12 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
     // If a parameter is given we set the environment variable FREPPLE_HOME.
     // If the parameter is NULL, we pick up the existing value of that 
     // variable.
-    if (h)
-      Environment::setHomeDirectory(h);
+    if (h) Environment::setHomeDirectory(h);
     else
     {
       const char *c = getenv("FREPPLE_HOME");
-      if (c)
-        Environment::setHomeDirectory(c);
-      else
-        clog << "Warning: No valid home directory specified" << endl;
+      if (c) Environment::setHomeDirectory(c);
+      else clog << "Warning: No valid home directory specified" << endl;
     }
 
     // Initialize the libraries
@@ -91,16 +88,15 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
     LibrarySolver::initialize();  
       
     // Search for the initialization file
-	  if (!Environment::getHomeDirectory().empty())
-   	{
+    if (!Environment::getHomeDirectory().empty())
+    {
       string init(Environment::getHomeDirectory());
-		  if (*init.rend() != '/') init += '/';
-		  init += "init.xml";
-    	struct stat stat_p;
-  	  if (!stat(init.c_str(), &stat_p))
+      init += "init.xml";
+      struct stat stat_p;
+      if (!stat(init.c_str(), &stat_p))
       {
         // File exists
-  	    if (!(stat_p.st_mode & S_IREAD))
+        if (!(stat_p.st_mode & S_IREAD))
           // File exists but is not readable
           clog << "Warning: Initialization file 'init.xml'"
             << " exists but is not readable" << endl;
@@ -113,7 +109,7 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
             throw;
           }
       }
-	  }
+    }
 
     // Avoid executing this multiple times
     initialized = true;
@@ -190,13 +186,12 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveFile(char* f)
 
 extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveString(char* buf, unsigned long sz) 
 {
-  unsigned long l = 0;
   try
   {
     // Get the result
     string result = FreppleSaveString();
     // Copy into the reply buffer
-    l = result.size();
+    unsigned long l = result.size();
     memcpy(buf, result.data(), l>sz ? sz : l);
   }
   catch (...) {return EXIT_FAILURE;}  

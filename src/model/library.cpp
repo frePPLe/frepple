@@ -349,7 +349,6 @@ void LibraryModel::initialize()
 
   // Verify the existence of the schema file
   string env = Environment::getHomeDirectory();
-	if (*env.rend() != '/') env += '/';  
 	env += "frepple.xsd";
   struct stat stat_p;
   if (stat(env.c_str(), &stat_p))

@@ -441,7 +441,6 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
     {
       // Specify the no-namespace schema file
       string schema = Environment::getHomeDirectory();
-      if (*schema.rend() != '/') schema += '/';
       schema += "frepple.xsd";
       XMLCh *c = XMLString::transcode(schema.c_str());
       parser->setProperty(

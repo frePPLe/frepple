@@ -2354,8 +2354,11 @@ class Tree : public NonCopyable
     {
       LockManager::getManager().obtainReadLock(l);
       int comp;
-      for (TreeNode* x = header.parent; x; x = comp<0 ? x->left : x->right)
-        if (!(comp = k.compare(x->nm))) return x;
+	    for (TreeNode* x = header.parent; x; x = comp<0 ? x->left : x->right)
+      {
+		    comp = k.compare(x->nm);
+		    if (!comp) return x;
+	    }
       TreeNode* result = end();
       LockManager::getManager().releaseReadLock(l);
       return result;

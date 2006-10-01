@@ -59,6 +59,7 @@
         -->
 
         <!-- OBJECT LISTS -->
+        <xsd:element name="CALENDARS" type="CALENDARLIST" minOccurs="0" />
         <xsd:element name="LOCATIONS" type="LOCATIONLIST" minOccurs="0" />
         <xsd:element name="CUSTOMERS" type="CUSTOMERLIST" minOccurs="0" />
         <xsd:element name="ITEMS" type="ITEMLIST" minOccurs="0" />
@@ -66,7 +67,6 @@
         <xsd:element name="BUFFERS" type="BUFFERLIST" minOccurs="0" />
         <xsd:element name="FLOWS" type="FLOWLIST" minOccurs="0" />
         <xsd:element name="OPERATIONS" type="OPERATIONLIST" minOccurs="0" />
-        <xsd:element name="CALENDARS" type="CALENDARLIST" minOccurs="0" />
         <xsd:element name="RESOURCES" type="RESOURCELIST" minOccurs="0" />
         <xsd:element name="LOADS" type="LOADLIST" minOccurs="0" />
         <xsd:element name="OPERATION_PLANS" type="OPERATIONPLANLIST" minOccurs="0" />
@@ -117,11 +117,13 @@
     </xsd:sequence>
     <xsd:attributeGroup ref="COMMON_ATTRIBUTES"/>
   </xsd:complexType>
+
   <xsd:complexType name="LOCATIONLIST">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="LOCATION" type="LOCATION" />
+    <xsd:sequence>
+      <xsd:element name="LOCATION" type="LOCATION" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
+
 
   <!-- CUSTOMER -->
   <xsd:complexType name="CUSTOMER">
@@ -140,11 +142,13 @@
     </xsd:sequence>
     <xsd:attributeGroup ref="COMMON_ATTRIBUTES"/>
   </xsd:complexType>
+
   <xsd:complexType name="CUSTOMERLIST">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="CUSTOMER" type="CUSTOMER" />
+    <xsd:sequence>
+      <xsd:element name="CUSTOMER" type="CUSTOMER" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
   </xsd:complexType>
+
 
   <!-- OPERATION -->
   <xsd:complexType name="OPERATION">
@@ -162,8 +166,6 @@
       </xsd:element>
       <xsd:element name="LOADS" type="LOADLIST" />
       <xsd:element name="FLOWS" type="FLOWLIST" />
-      <xsd:element name="DURATION_PER" type="time" />
-      <xsd:element name="DURATION" type="time" />
     </xsd:choice>
     <xsd:attributeGroup ref="COMMON_ATTRIBUTES"/>
     <xsd:attribute name="DETECTPROBLEMS" type="xsd:boolean" />
@@ -174,41 +176,60 @@
   </xsd:complexType>
 
   <xsd:complexType name="OPERATIONLIST">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="OPERATION" type="OPERATION" />
-			<xsd:element name="OPERATION_FIXED_TIME" type="OPERATION_FIXED_TIME" />
-			<xsd:element name="OPERATION_TIME_PER" type="OPERATION_TIME_PER" />
-			<xsd:element name="OPERATION_ALTERNATE" type="OPERATION_ALTERNATE" />
+    <xsd:sequence>
+      <!--
+      <xsd:element name="OPERATION" type="OPERATION" minOccurs="0" maxOccurs="unbounded"/>
+      -->
+			<xsd:element name="OPERATION_FIXED_TIME" type="OPERATION_FIXED_TIME" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="OPERATION_TIME_PER" type="OPERATION_TIME_PER" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="OPERATION_ALTERNATE" type="OPERATION_ALTERNATE" minOccurs="0" maxOccurs="unbounded"/>
 			<!--
-			<xsd:element name="OPERATION_ROUTING" type="OPERATION_ROUTING" />
-			<xsd:element name="OPERATION_EFFECTIVE" type="OPERATION_EFFECTIVE" />
+			<xsd:element name="OPERATION_ROUTING" type="OPERATION_ROUTING" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="OPERATION_EFFECTIVE" type="OPERATION_EFFECTIVE" minOccurs="0" maxOccurs="unbounded"/>
 			-->
     </xsd:sequence>
   </xsd:complexType>
 
+	<xsd:complexType name="OPERATION_FIXED_TIME">
+		<xsd:complexContent>
+			<xsd:extension base="OPERATION">
+				<xsd:attribute name="DURATION" type="time" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="OPERATION_TIME_PER">
+		<xsd:complexContent>
+			<xsd:extension base="OPERATION">
+				<xsd:attribute name="DURATION_PER" type="time" />
+				<xsd:attribute name="DURATION" type="time" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
   <xsd:complexType name="OPERATION_ALTERNATE">
     <xsd:complexContent>
       <xsd:extension base="OPERATION">
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="ALTERNATES">
+        <xsd:sequence>
+          <xsd:element name="ALTERNATES" minOccurs="0" maxOccurs="unbounded">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="ALTERNATE" minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="ALTERNATE">
                   <xsd:complexType>
                     <xsd:sequence>
-                      <xsd:element name="OPERATION" type="OPERATION" />
-                      <xsd:element name="PRIORITY" type="xsd:float"
-                        minOccurs="0" />
+                      <xsd:element name="OPERATION" type="non-empty-string" minOccurs="1" />
+                      <xsd:element name="PRIORITY" type="xsd:float" minOccurs="1"/>
                     </xsd:sequence>
                   </xsd:complexType>
                 </xsd:element>
               </xsd:sequence>
             </xsd:complexType>
           </xsd:element>
-        </xsd:choice>
+        </xsd:sequence>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
+
 
   <!-- ITEM -->
   <xsd:complexType name="ITEM">
@@ -234,10 +255,11 @@
   </xsd:complexType>
 
   <xsd:complexType name="ITEMLIST">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="ITEM" type="ITEM" />
+    <xsd:sequence minOccurs="0">
+      <xsd:element name="ITEM" type="ITEM"  maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
+
 
   <!-- RESOURCE -->
   <xsd:complexType name="RESOURCE">
@@ -264,11 +286,17 @@
   </xsd:complexType>
 
   <xsd:complexType name="RESOURCELIST">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="RESOURCE" type="RESOURCE" />
-			<xsd:element name="RESOURCE_INFINITE" type="RESOURCE_INFINITE" />
+    <xsd:sequence>
+      <xsd:element name="RESOURCE" type="RESOURCE" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="RESOURCE_INFINITE" type="RESOURCE_INFINITE" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
+
+	<xsd:complexType name="RESOURCE_INFINITE">
+		<xsd:complexContent>
+			<xsd:extension base="RESOURCE" />
+		</xsd:complexContent>
+	</xsd:complexType>
 
 
   <!-- BUFFER -->
@@ -305,9 +333,9 @@
 	</xsd:complexType>
 
   <xsd:complexType name="BUFFERLIST">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="BUFFER" type="BUFFER" />
-			<xsd:element name="BUFFER_INFINITE" type="BUFFER_INFINITE" />
+    <xsd:sequence>
+      <xsd:element name="BUFFER" type="BUFFER" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="BUFFER_INFINITE" type="BUFFER_INFINITE" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
   </xsd:complexType>
 
@@ -364,11 +392,13 @@
     </xsd:all>
     <xsd:attribute name="USAGE" type="xsd:float" />
   </xsd:complexType>
+
   <xsd:complexType name="LOADLIST">
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="LOAD" type="LOAD" />
     </xsd:choice>
   </xsd:complexType>
+
 
   <!-- DEMAND -->
   <xsd:simpleType name="DEMANDPOLICY">
@@ -424,10 +454,8 @@
           <xsd:sequence>
             <xsd:element name="BUCKET">
               <xsd:complexType>
-                <xsd:attribute name="START" type="xsd:dateTime"
-                  use="required" />
+                <xsd:attribute name="START" type="xsd:dateTime" use="required" />
                 <xsd:attribute name="NAME" type="xsd:string" />
-                <xsd:attribute name="END" type="xsd:dateTime" />
                 <xsd:attribute name="VALUE" type="xsd:float" />
               </xsd:complexType>
             </xsd:element>
@@ -435,15 +463,34 @@
         </xsd:complexType>
       </xsd:element>
     </xsd:sequence>
-		<xsd:attribute name="NAME" type="xsd:string" use="required" />
+		<xsd:attribute name="NAME" type="non-empty-string" use="required" />
+  </xsd:complexType>
+
+  <xsd:complexType name="CALENDAR_VOID">
+    <xsd:sequence>
+      <xsd:element name="BUCKETS">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="BUCKET">
+              <xsd:complexType>
+                <xsd:attribute name="START" type="xsd:dateTime" use="required" />
+                <xsd:attribute name="NAME" type="xsd:string" />
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+		<xsd:attribute name="NAME" type="non-empty-string" use="required" />
   </xsd:complexType>
 
   <xsd:complexType name="CALENDARLIST">
-    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-			<xsd:element name="CALENDAR_FLOAT" type="CALENDAR_FLOAT" />
-			<xsd:element name="CALENDAR_VOID" type="CALENDAR_VOID" />
+    <xsd:sequence>
+			<xsd:element name="CALENDAR_FLOAT" type="CALENDAR_FLOAT" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="CALENDAR_VOID" type="CALENDAR_VOID" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:complexType>
+
 
   <!-- OPERATION_PLAN -->
   <xsd:complexType name="OPERATION_PLAN">

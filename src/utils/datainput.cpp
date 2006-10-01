@@ -281,8 +281,9 @@ void CSVInput::readTemplate
   catch (const SAXParseException& toCatch)
   {
     char* message = XMLString::transcode(toCatch.getMessage());
-    ostringstream msg;
-    msg << message << " at line " << toCatch.getLineNumber();
+    ostringstream msg(message);
+    if (toCatch.getLineNumber() > 0) 
+      msg << " at line " << toCatch.getLineNumber();
     XMLString::release(&message);
     throw RuntimeException("Parsing error: " + msg.str());
   }

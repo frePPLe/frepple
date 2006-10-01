@@ -153,10 +153,10 @@ void Plan::setLogFile(string x)
 
     // Print a nice header
 #ifdef VERSION
-    clog << "Start logging PLANNER " << VERSION << " ("
+    clog << "Start logging Frepple " << VERSION << " ("
       << __DATE__ << ") on " << Date::now() << endl;
 #else
-    clog << "Start logging PLANNER (" << __DATE__
+    clog << "Start logging Frepple (" << __DATE__
       << ") on " << Date::now() << endl;
 #endif
 }

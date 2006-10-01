@@ -190,6 +190,43 @@ void CommandReadXMLString::execute()
 
 
 //
+// READ XML INPUT URL
+//
+
+void CommandReadXMLURL::endElement(XMLInput& pIn, XMLElement& pElement)
+{
+  if (pElement.isA(Tags::tag_url))
+    pElement >> url;
+  else if (pElement.isA(Tags::tag_validate))
+    pElement >> validate;
+  else
+    Command::endElement(pIn, pElement);
+}
+
+
+void CommandReadXMLURL::execute()
+{
+  // Message
+  if (getVerbose())
+    clog << "Started reading model from url at " << Date::now() << endl;
+  Timer t;
+
+  // Note: Reading the data can throw exceptions...
+  if (validate_only)
+    XMLInputURL(url).parse(NULL, true);
+  else
+  {
+    LockManager::getManager().obtainWriteLock(&Plan::instance());
+    XMLInputURL(url).parse(&Plan::instance(), validate);
+  }
+
+  // Message
+  if (getVerbose())
+    clog << "Finished reading model at " << Date::now()  << " : " << t << endl;
+}
+
+
+//
 // SAVE MODEL TO XML
 //
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<CURRENT>2006-01-01T00:00:00</CURRENT>
+	<ITEMS>
+		<ITEM NAME="http://frepple.sourceforge.net/test/xml_remote.xml works!">
+		</ITEM>
+	</ITEMS>
+</PLAN>

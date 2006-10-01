@@ -118,6 +118,8 @@ using namespace std;
 #include <xercesc/framework/MemBufInputSource.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
 #include <xercesc/framework/StdInInputSource.hpp>
+#include <xercesc/framework/URLInputSource.hpp>
+#include <xercesc/util/XMLException.hpp>
 using namespace xercesc;
 
 #undef DECLARE_EXPORT
@@ -3203,6 +3205,29 @@ class XMLInputString : public XMLInput
       * used.
       */
     const string& data;
+};
+
+
+/** This class reads XML data from a URL.<br>
+  * The protocols HTTP and FILE are understood, and other protocols will
+  * throw an exception.
+  */
+class XMLInputURL : public XMLInput
+{
+  public:
+    /** Default constructor. */
+    XMLInputURL(string& s) : url(s) {};
+
+    /** Parse the specified url. */
+    void parse(Object* pRoot, bool v = false)
+    {
+      URLInputSource a(reinterpret_cast<const XMLCh *>(NULL), url.c_str());
+      XMLInput::parse(a,pRoot,v);
+    }
+
+  private:
+    /** The url to be loaded. */
+    const string& url;
 };
 
 

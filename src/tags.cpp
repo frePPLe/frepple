@@ -130,5 +130,6 @@ const XMLtag Tags::tag_parameter("PARAMETER");
 const XMLtag Tags::tag_headerstart("HEADERSTART");
 const XMLtag Tags::tag_headeratts("HEADERATTS");
 const XMLtag Tags::tag_content("CONTENT");
+const XMLtag Tags::tag_url("URL");
 
 }

@@ -561,7 +561,7 @@
         A calendar is used to represent time dependent parameters.
       </xsd:documentation>
 		</xsd:annotation>
-		<xsd:attribute name="NAME" type="xsd:string" use="required" />
+		<xsd:attribute name="NAME" type="non-empty-string" use="required" />
 		<xsd:attribute name="ACTION" type="action" />
 	</xsd:complexType>
 
@@ -987,6 +987,20 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
+	<xsd:complexType name="COMMAND_READXMLURL">
+		<xsd:complexContent>
+			<xsd:extension base="COMMAND">
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="VERBOSE" type="xsd:boolean" />
+					<xsd:element name="URL" type="xsd:string" />
+					<xsd:element name="VALIDATE" type="xsd:boolean" />
+				</xsd:choice>
+				<xsd:attribute name="URL" type="xsd:string" />
+				<xsd:attribute name="VALIDATE" type="xsd:boolean" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
 	<!-- SOLVER -->
 	<xsd:complexType name="SOLVER">
 		<xsd:annotation>
@@ -1002,11 +1016,11 @@
 	</xsd:complexType>
 
 	<xsd:complexType name="SOLVERLIST">
-		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="SOLVER" type="SOLVER" />
 			<xsd:element name="SOLVER_MRP" type="SOLVER_MRP" />
 			<xsd:element name="SOLVER_LP" type="SOLVER_LP" />
-		</xsd:sequence>
+		</xsd:choice>
 	</xsd:complexType>
 
 	<xsd:complexType name="SOLVER_MRP">

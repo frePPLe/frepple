@@ -7,7 +7,7 @@
       VALIDATE="true" />
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" xsi:type="SOLVER_MRP"
-        CONSTRAINTS="7" />
+        CONSTRAINTS="7" VERBOSE="true"/>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVE"
       FILENAME="output.xml"

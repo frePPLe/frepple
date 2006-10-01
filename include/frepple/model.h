@@ -2922,6 +2922,66 @@ class CommandReadXMLString : public Command
 };
 
 
+
+
+/** This command is used for reading XML input from a certain string. */
+class CommandReadXMLURL : public Command
+{
+  public:
+    /** Constructor. */
+    CommandReadXMLURL(const string& s, const bool v=true, const bool o=false)
+      : url(s), validate(v), validate_only(o) {};
+
+    /** Default constructor. */
+    CommandReadXMLURL(const bool v=true, const bool o=false)
+      : validate(v), validate_only(o) {};
+
+    /** Updates the data string. */
+    void setURL(const string& v) {url = v;}
+
+    /** Returns the data string. */
+    string getURL() {return url;}
+
+    /** Enables or disables the validation. */
+    void setValidate(bool b) {validate = b;}
+
+    /** Returns true if the schema validation has been enabled. */
+    bool getValidate() {return validate;}
+
+    /** Only validate the input, do not really execute it. */
+    void setValidateOnly(bool b) {validate_only = b;}
+
+    /** Returns whether we only need to validate to data, or really execute
+      * them too. */
+    bool getValidateOnly() {return validate_only;}
+
+    /** The commit action reads the input. */
+    void execute();
+    void endElement(XMLInput& pIn, XMLElement& pElement);
+    string getDescription() const {return "parsing xml input url";}
+    virtual const MetaData& getType() const {return metadata;}
+    static const MetaClass metadata;
+    virtual size_t getSize() const
+      {return sizeof(CommandReadXMLURL) + url.size();}
+
+  private:
+    /** Name of the input to be read. An empty string means that we want to
+      * read from standard input rather than a file. */
+    string url;
+
+    /** Specifies whether or not the input file needs to be validated against
+      * the schema definition. The validation is switched ON by default.
+      * Switching it ON is recommended in situations where there is not
+      * 100% garantuee on the validity of the input data.
+      */
+    bool validate;
+
+    /** If set to true the input data are validated against the schema, but the
+      * contents isn't executed. The default value is false. */
+    bool validate_only;
+};
+
+
 /** This command writes the complete model to an XML-file, both the static model
   * (i.e. items, locations, buffers, resources, calendars, etc...) and the
   * dynamic data (i.e. the actual plan including the operation_plans, demand,

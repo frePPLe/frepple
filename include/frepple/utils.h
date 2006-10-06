@@ -835,7 +835,7 @@ class XMLOutput;
   *    output stream.
   * @see MetaClass
   */
-class MetaCategory : public MetaData
+class MetaCategory : public MetaClass
 {
   friend class MetaClass;
   friend class XMLInput;
@@ -857,7 +857,7 @@ class MetaCategory : public MetaData
       * classes without key fields and which rely on a default constructor.
       */
     static Object* ControllerDefault (const MetaCategory&, const XMLInput& in);
-        
+
     /** Default constructor. <br>
       * Calling the registerCategory method is required after creating a 
       * category object. 
@@ -3431,10 +3431,15 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       */
     static Object* reader (const MetaCategory& cat, const XMLInput& in)
     {
-      // Pick up the name attribute
+      // Pick up the name attribute. An error is reported if it's missing.
       char* name = XMLString::transcode(
         in.getAttributes()->getValue(Tags::tag_name.getXMLCharacters())
         );
+      if (!name) 
+      {
+        XMLString::release(&name);
+        throw DataException("Missing NAME attribute");
+      }
 
       // Pick up the action attribute
       Action act = MetaData::decodeAction(in.getAttributes());

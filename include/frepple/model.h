@@ -2619,11 +2619,10 @@ class Load
     static const MetaCategory metadata;
     virtual size_t getSize() const {return sizeof(Load);}
 
-  private:
-    /** This private constructor is called from the plan begin_element
-      * function. */
+    /** Default constructor. */
     Load() : usage(1.0f) {}
 
+private:
     /** This method is called to check the validity of the object. It will
       * delete the invalid loads: be careful with the 'this' pointer after
       * calling this method!
@@ -2727,7 +2726,6 @@ class Plan : public Plannable
       * library.
       */
     static Plan& instance() {return *thePlan;}
-
 
     /** Destructor.
       * @warning In multi threaded applications, the destructor is never called

@@ -302,7 +302,9 @@ void LibraryModel::initialize()
 
   // Initialize the load metadata.
   Load::metadata.registerCategory
-    ("LOAD", "LOADS", MetaCategory::ControllerDefault);
+    ("LOAD", "LOADS", MetaCategory::ControllerDefault, NULL);
+  Load::metadata.registerClass
+    ("LOAD", "LOAD", Object::createDefault<Load>, true);
 
   // Initialize the flow metadata.
   Flow::metadata.registerCategory

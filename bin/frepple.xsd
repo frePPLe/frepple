@@ -80,6 +80,7 @@
 				<xsd:element name="ITEMS" type="ITEMLIST" />
 				<xsd:element name="BUFFERS" type="BUFFERLIST" />
 				<xsd:element name="FLOWS" type="FLOWLIST" />
+				<xsd:element name="LOADS" type="LOADLIST" />
 				<xsd:element name="DEMANDS" type="DEMANDLIST" />
 				<xsd:element name="RESOURCES" type="RESOURCELIST" />
 				<xsd:element name="OPERATION_PLANS" type="OPERATIONPLANLIST" />

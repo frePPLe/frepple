@@ -57,6 +57,11 @@ Object* OperationPlan::createOperationPlan
 	// Decode the attributes
 	char* opname =
 	 XMLString::transcode(atts->getValue(Tags::tag_operation.getXMLCharacters()));
+  if (!opname)
+  {
+			XMLString::release(&opname);
+      throw DataException("Missing OPERATION attribute");
+  }
 
 	// Decode the operationplan identifier
   unsigned long id = 0;

@@ -151,12 +151,12 @@ void LibraryUtils::finalize()
 void MetaClass::registerClass (const char* a, const char* b, bool def) const
 {
   // Re-initializing isn't okay
-  if (type != "UNSPECIFIED") 
-    throw LogicException("Reinitializing class " + type + " isn't allowed");
+  if (category) 
+    throw LogicException("Reinitializing class '" + type + "' isn't allowed");
 
   // Find or create the category
   MetaCategory* cat 
-	  = const_cast<MetaCategory*>(MetaCategory::findCategoryByTag(a));
+    = const_cast<MetaCategory*>(MetaCategory::findCategoryByTag(a));
 
   // Check for a valid category
   if (!cat)
@@ -177,8 +177,8 @@ void MetaClass::registerClass (const char* a, const char* b, bool def) const
 }
 
 
-void MetaCategory::registerCategory
-  (const char* a, const char* gr, readController f, writeController w) const
+void MetaCategory::registerCategory (const char* a, const char* gr, 
+  readController f, writeController w) const
 {
   // Initialize only once
   if (type != "UNSPECIFIED") 
@@ -324,10 +324,10 @@ Action MetaData::decodeAction(const Attributes* atts)
 
 bool MetaClass::raiseEvent(Object* v, Signal a) const
 {
-  assert(category);
   bool res1 = MetaData::raiseEvent(v,a);
-  bool res2 = category->raiseEvent(v,a);
-  return res1 && res2;
+  return (category && category!=this) ? 
+    (res1 && category->raiseEvent(v,a)) : 
+    res1;
 }
 
 

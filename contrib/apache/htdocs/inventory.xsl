@@ -31,7 +31,7 @@
 <xsl:template match="/PLAN/BUFFERS">
   <html>
   <head>
-  <link href="styles.css" rel="stylesheet" type="text/css"/>  
+  <link href="/styles.css" rel="stylesheet" type="text/css"/>  
   <script type="text/javascript" src="filter.js"></script>
   </head>
   <body>

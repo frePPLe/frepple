@@ -6,7 +6,7 @@ APACHECTL = ~/httpd/bin/apachectl
 APXS = ~/httpd/bin/apxs
 PWD = `pwd`
 
-EXTRA_DIST = htdocs mod_frepple.cpp frepple.conf README.txt filter.cpp mod_frepple.h
+EXTRA_DIST = htdocs mod_frepple.cpp frepple.conf README.txt inventory.cpp mod_frepple.h
 CLEANFILES = *.o *.dll *.la *.slo
 
 contrib: stop build start
@@ -14,12 +14,15 @@ contrib: stop build start
 stop:
 	${APACHECTL} -k stop -f ${PWD}/frepple.conf
 
-build: mod_frepple.cpp filter.cpp  mod_frepple.h
-	g++ -c -fPIC -DHAVE_CONFIG_H -I../.. -I`$(APXS) -q INCLUDEDIR` -I../../include filter.cpp
+build: mod_frepple.cpp inventory.cpp  mod_frepple.h
+	g++ -c -fPIC -DHAVE_CONFIG_H -I../.. -I`$(APXS) -q INCLUDEDIR` -I../../include inventory.cpp
 	g++ -c -fPIC -DHAVE_CONFIG_H -I../.. -I`$(APXS) -q INCLUDEDIR` -I../../include mod_frepple.cpp
-	g++ -shared -fPIC -I`$(APXS) -q INCLUDEDIR` -I../../include filter.o mod_frepple.o ../../src/.libs/libfrepple.a -lxerces-c -o mod_frepple.so
-#	${APXS} -i -c -n frepple_module -o mod_frepple.so filter.cpp mod_frepple.cpp  ../../src/.libs/libfrepple.a  -lxerces-c
+	g++ -shared -fPIC -I`$(APXS) -q INCLUDEDIR` -I../../include inventory.o mod_frepple.o ../../src/.libs/libfrepple.a -lxerces-c -o mod_frepple.so
+#	${APXS} -i -c -n frepple_module -o mod_frepple.so inventory.cpp mod_frepple.cpp  ../../src/.libs/libfrepple.a  -lxerces-c
 #	${APXS} -i -n frepple_module mod_frepple.so
+# 	Required for SELinux distributions!
+	chcon -c -v -t texrel_shlib_t mod_frepple.so
+
 
 start:
 	${APACHECTL} -k start -f ${PWD}/frepple.conf

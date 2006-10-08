@@ -28,7 +28,7 @@
 <xsl:template match="/">
   <html>
   <head>
-  <link href="../styles.css" rel="stylesheet" type="text/css"/>
+  <link href="/styles.css" rel="stylesheet" type="text/css"/>
   <script type="text/javascript" src="../filter.js"></script>
   <script type="text/javascript" language="JavaScript">
   <![CDATA[

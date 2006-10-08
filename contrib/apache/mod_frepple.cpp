@@ -29,40 +29,6 @@
 #include "mod_frepple.h"
 
 
-char *reportdata =
-  "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
-  "<PLAN>"
-  "  <BUFFERS>"
-  "    <BUFFER NAME=\"1\">"
-  "      <LOCATION NAME=\"Location 1\"/>"
-  "      <ITEM NAME=\"item 1\"/>"
-  "			<LEVEL>1</LEVEL>"
-  "			<CLUSTER>1</CLUSTER>"
-  "						<PROFILE>"
-  "							<FLOW>"
-  "								<DATE>2005-01-31T00:00:00</DATE>"
-  "								<QUANTITY>-1</QUANTITY>"
-  "								<ONHAND>-1</ONHAND>"
-  "								<MINIMUM>0</MINIMUM>"
-  "								<ID>55</ID>"
-  "							</FLOW>"
-  "      </PROFILE>"
-  "    </BUFFER>"
-  "    <BUFFER NAME=\"2\">"
-  "      <LOCATION NAME=\"Location 2\"/>"
-  "      <ITEM NAME=\"item 2\"/>"
-  "    </BUFFER>"
-  "    <BUFFER NAME=\"3\">"
-  "      <LOCATION NAME=\"Location 3\"/>"
-  "      <ITEM NAME=\"item 1\"/>"
-  "    </BUFFER>"
-  "  </BUFFERS>"
-  "</PLAN>";
-  
-
-#define BLOCKSIZE 256
-
-
 // Forward declaration of the module structure
 extern "C" module AP_MODULE_DECLARE_DATA frepple_module;
 
@@ -139,79 +105,11 @@ static const command_rec info_cmds[] =
 };
 
 
-// The workhorses!!!
-int getInventoryData(request_rec *r)
-{
-  const char* buf ;
-  apr_size_t bytes ;
-  apr_bucket_brigade* bb ;
-  int status = 0 ;
-  apr_bucket* b ;
-  int end = 0 ;
-  
-  // Response header: xml data that can't be cached.
-  ap_set_content_type(r, "text/xml");
-  apr_table_setn(r->headers_out, "Cache-Control", "no-cache"); 
-
-	/* Set up the read policy from the client.*/
-	int rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR);
-  if (rc != OK) return rc;
-
-  // Tell the client that we are ready to receive content and check whether 
-  // client will send content.  
-  if (ap_should_client_block(r)) 
-  {
-    //Control will pass to this block only if the request has body content
-    char *buffer;
-    char *bufferoffset;
-    int bufferspace = r->remaining + 100;
-    int bodylen = 0;
-    long res;
-    
-    // Reject too big buffers, for safety... 
-    if (r->remaining > 65536) 
-    {
-      ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, 
-       "Client sends too big body in request: %d bytes", r->remaining);
-      return HTTP_REQUEST_ENTITY_TOO_LARGE;
-    }
-
-    // Allocate a buffer in memory
-    buffer = static_cast<char*>(apr_palloc(r->pool, bufferspace));
-    bufferoffset = buffer;
-
-    // Fill the buffer with client data
-    while ((!bodylen || bufferspace >= 32) &&
-             (res = ap_get_client_block(r, bufferoffset, bufferspace)) > 0)
-    {
-      bodylen += res;
-      bufferspace -= res;
-      bufferoffset += res;
-    }
-
-    // Finish the buffer it with \0 character
-    *bufferoffset = '\0';
-
-    ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "read %d %s", bodylen, buffer);
-
-    if (res < 0) return HTTP_INTERNAL_SERVER_ERROR;
-  }
-
-  // Fake up the response
-  ap_rputs(reportdata, r);
-  return OK;
-};
-
-
 // Main dispatcher routine which will call the correct generator routine.
 static int display_info(request_rec *r)
 {
   // Another handler's job...
   if (strcmp(r->handler, "frepple")) return DECLINED;
-
-  // Only handle GET requests
-  //r->allowed |= (AP_METHOD_BIT << M_GET);
-  //if (r->method_number != M_GET) return DECLINED;
 
   // Determine the frepple action for this directory
   dir_config *cfg =
@@ -222,18 +120,47 @@ static int display_info(request_rec *r)
     // ACTION 1: Retrieving report data
     // The possible reports have pre-defined, hard-coded names.
     case REPORT:
+      // Only handle GET requests
+      r->allowed |= (AP_METHOD_BIT << M_GET);
+      if (r->method_number != M_GET) 
+      {
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Invalid http method for report %s", r->uri);
+        return HTTP_NOT_FOUND;
+      }
+
+      // Handler
       if (!strcmp(r->path_info,"/inventorydata.xml"))
         return getInventoryData(r);  
       else if (!strcmp(r->path_info,"/inventoryfilter.xml"))
         return getInventoryFilter(r);
-      break;
+      // Report doesn't exist
+      else return HTTP_NOT_FOUND;
 
     // ACTION 2: Uploading data from the request into frepple
     case UPLOAD:
+      // Only handle POST requests
+      r->allowed |= (AP_METHOD_BIT << M_POST);
+      if (r->method_number != M_POST) 
+      {
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Invalid http method for upload directory %s", r->uri);
+        return HTTP_NOT_FOUND;
+      }
+
+      // Uploading...
+      ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "upload not implemented: %s", r->uri);
       break;
 
     // ACTION 3: Execute a command file in frepple
     case COMMAND:
+      // Only handle GET requests
+      r->allowed |= (AP_METHOD_BIT << M_POST);
+      if (r->method_number != M_POST) 
+      {
+        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Invalid http method for command directory %s", r->uri);
+        return HTTP_NOT_FOUND;
+      }
+
+      // Execute
       string c = cfg->directory;
       c += r->path_info;
       ap_set_content_type(r, "text/html");

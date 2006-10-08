@@ -117,48 +117,77 @@ static int display_info(request_rec *r)
   switch (cfg->method)
   {
 
+    //
     // ACTION 1: Retrieving report data
+    //
     // The possible reports have pre-defined, hard-coded names.
     case REPORT:
       // Only handle GET requests
       r->allowed |= (AP_METHOD_BIT << M_GET);
-      if (r->method_number != M_GET) 
-      {
-        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Invalid http method for report %s", r->uri);
-        return HTTP_NOT_FOUND;
-      }
+      if (r->method_number != M_GET) return HTTP_METHOD_NOT_ALLOWED;
 
-      // Handler
+      // Call the correct report generation code
       if (!strcmp(r->path_info,"/inventorydata.xml"))
         return getInventoryData(r);  
       else if (!strcmp(r->path_info,"/inventoryfilter.xml"))
         return getInventoryFilter(r);
-      // Report doesn't exist
-      else return HTTP_NOT_FOUND;
+      else 
+        // No such report exists
+        return HTTP_NOT_FOUND;
 
+    //
     // ACTION 2: Uploading data from the request into frepple
+    //
     case UPLOAD:
+      {
       // Only handle POST requests
       r->allowed |= (AP_METHOD_BIT << M_POST);
-      if (r->method_number != M_POST) 
+      if (r->method_number != M_POST) return HTTP_METHOD_NOT_ALLOWED;
+
+      // Reading the posted data
+      if (ap_setup_client_block(r, REQUEST_NO_BODY | REQUEST_CHUNKED_ERROR)!=OK)
+        return HTTP_INTERNAL_SERVER_ERROR;
+      ap_should_client_block(r);
+      const char* contlength = apr_table_get(r->headers_in, "content-length");
+      long contentlength = contlength ? atol(contlength) : -1;
+      if (contentlength<=0 || contentlength>=64536)
       {
-        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Invalid http method for upload directory %s", r->uri);
-        return HTTP_NOT_FOUND;
+        ap_rprintf(r, "Error: Invalid content length %s", contlength ? contlength : NULL);
+        return OK;
       }
-
-      // Uploading...
-      ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "upload not implemented: %s", r->uri);
-      break;
-
+      char buff[contentlength];
+      char *b = buff;
+      long got = 0;
+      do 
+      { 
+        got = ap_get_client_block(r, b, contentlength);
+        contentlength -= got;
+        b += got;
+        *b = '\0';
+      }
+      while (got && contentlength);
+      if (got) 
+      {
+        try 
+        { 
+          // Send the posted data to Frepple
+          ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Upload %s", buff);
+          FreppleReadXMLData(buff, true, false); 
+          ap_rputs("Success", r);
+        }
+        catch (exception e)  { ap_rprintf(r, "Error: %s", e.what()); }
+        catch (...) { ap_rputs("Error: no details", r); }
+      }
+      return OK;
+      }
+      
+    //
     // ACTION 3: Execute a command file in frepple
+    //
     case COMMAND:
-      // Only handle GET requests
+      // Only handle POST requests
       r->allowed |= (AP_METHOD_BIT << M_POST);
-      if (r->method_number != M_POST) 
-      {
-        ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Invalid http method for command directory %s", r->uri);
-        return HTTP_NOT_FOUND;
-      }
+      if (r->method_number != M_POST) return HTTP_METHOD_NOT_ALLOWED;
 
       // Execute
       string c = cfg->directory;
@@ -170,20 +199,14 @@ static int display_info(request_rec *r)
         FreppleReadXMLFile(c.c_str(), true, false);
         ap_rputs("Success", r);
       }
-      catch (exception e)
-      {
-        ap_rprintf(r, "Error: %s", e.what());
-      }
-      catch (...)
-      {
-        ap_rputs("Error: no details", r);
-      }
+      catch (exception e) { ap_rprintf(r, "Error: %s", e.what()); }
+      catch (...) { ap_rputs("Error: no details", r); }
       return OK;
   }
 
   // This code is only executed if the above dispatcher code can't locate
   // a proper function to dispatch the action to.
-  ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "URL doesn't exist: %s", r->uri);
+  ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Frepple can't handle %s", r->uri);
   return HTTP_NOT_FOUND;
 }
 

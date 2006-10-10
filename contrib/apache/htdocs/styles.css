@@ -10,6 +10,9 @@ DIV.ah {
   margin-bottom: 3px; 
   margin-top: 3px 
 }
+TR.header {
+  background-color: #a5a5ff
+}
 TD.md { 
   background-color: #f2f2ff; 
   font-weight: bold; 

@@ -37,7 +37,7 @@
   <body>
     <form>
     <table border="1">
-    <tr bgcolor="#a5a5ff">
+    <tr class="header">
       <th align="left">Name</th> 
       <th align="left">Location</th> 
       <th align="left">Item</th> 

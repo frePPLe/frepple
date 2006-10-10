@@ -11,91 +11,11 @@
 </SOLVERS>
 <COMMANDS>
   <VERBOSE>true</VERBOSE>
-  <COMMAND xsi:type="COMMAND_SAVE">
-    <VERBOSE>true</VERBOSE>
-    <FILENAME>output1.xml</FILENAME>
-  </COMMAND>
   <COMMAND xsi:type="COMMAND_SOLVE">
     <SOLVER NAME="MRP"/>
   </COMMAND>
-  <!--COMMAND xsi:type="LIST" MAXPARALLEL="100"-->
-  <COMMAND xsi:type="COMMAND_SAVE">
-    <FILENAME>output.xml</FILENAME>
-  </COMMAND>
-  <COMMAND xsi:type="COMMAND_SAVEPLAN">
-    <FILENAME>plan.out</FILENAME>
-  </COMMAND>
   <COMMAND xsi:type="COMMAND_SIZE"/>
-  <COMMAND xsi:type="COMMAND_READXMLSTRING">
-    <DATA>
-      &lt;PLAN&gt;&lt;LOCATIONS&gt;
-      &lt;LOCATION NAME=&quot;LOCATION_TEST&quot;/&gt;
-      &lt;/LOCATIONS&gt;&lt;/PLAN&gt;
-    </DATA>
-  </COMMAND>
-  <!--
-      <COMMAND xsi:type="ERASE" MODE="model"/>
-      -->
-      <COMMAND xsi:type="COMMAND_SAVE">
-        <FILENAME>output2.xml</FILENAME>
-      </COMMAND>
-      <COMMAND xsi:type="COMMAND_SAVEPLAN">
-        <FILENAME>plan2.out</FILENAME>
-      </COMMAND>
-      <COMMAND xsi:type="COMMAND_SIZE"/>
-      <!--/COMMAND-->
-      <!-- Testing multi-threaded, parallel execution of commands. -->
-      <!--
-          <COMMAND xsi:type="LIST" MAXPARALLEL="100">
-            <COMMAND xsi:type="LIST">
-              <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 1"/>
-              <COMMAND xsi:type="SYSTEM" CMDLINE="echo A 1 - `date`"/>
-              <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 1"/>
-              <COMMAND xsi:type="SYSTEM" CMDLINE="echo A 2 - `date`"/>
-              <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 1"/>
-              <COMMAND xsi:type="SYSTEM" CMDLINE="echo A 3 - `date`"/>
-            </COMMAND>
-            <COMMAND xsi:type="LIST">
-              <COMMAND xsi:type="SYSTEM" CMDLINE="echo B 0 - `date`"/>
-              <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 1"/>
-              <COMMAND xsi:type="SYSTEM" CMDLINE="echo B 1 - `date`"/>
-              <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 1"/>
-              <COMMAND xsi:type="SYSTEM" CMDLINE="echo B 2 - `date`"/>
-            </COMMAND>
-            <COMMAND xsi:type="LIST">
-              <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 2"/>
-              <COMMAND xsi:type="SYSTEM" CMDLINE="echo C 2 - `date`"/>
-              <COMMAND xsi:type="SYSTEM" CMDLINE="sleep 2"/>
-              <COMMAND xsi:type="SYSTEM" CMDLINE="echo C 4 - `date`"/>
-            </COMMAND>
-          </COMMAND>
-          -->
-          <!--
-              <COMMAND xsi:type="SIZE"/>
-              <COMMAND xsi:type="ERASE">
-                <MODE>model</MODE>
-                <RESOURCE NAME="RES1"/>
-                <BUFFER NAME="RM1"/>
-              </COMMAND>
-              <COMMAND xsi:type="SIZE"/>
-              <COMMAND xsi:type="COMMAND_SAVE">
-                <FILENAME>output2.xml</FILENAME>
-              </COMMAND>
-
-              <COMMAND xsi:type="LIST">
-                <ABORTONERROR>true</ABORTONERROR>
-                <COMMAND xsi:type="SYSTEM">
-                  <CMDLINE>dirsdsdsd</CMDLINE>
-                </COMMAND>
-                <COMMAND xsi:type="SYSTEM">
-                  <CMDLINE>dir</CMDLINE>
-                </COMMAND>
-              </COMMAND>
-              <COMMAND xsi:type="SYSTEM">
-                <CMDLINE>pwd</CMDLINE>
-              </COMMAND>
-              -->
-            </COMMANDS>
+ </COMMANDS>
             <DEFAULT_CALENDAR NAME="Weeks"/>
             <CALENDARS>
               <CALENDAR NAME="TEST FLOATS" xsi:type="CALENDAR_FLOAT">

@@ -32,7 +32,7 @@
   <script type="text/javascript" src="../filter.js"></script>
   <script type="text/javascript" language="JavaScript">
   <![CDATA[
-
+  // Execute a remote xml file
   function cmd(filename)
   {
     var xmlhttp = createXMLHttpRequest();
@@ -47,16 +47,17 @@
       "<p>" + (new Date().toLocaleString()) + ": Start executing '" + filename + "'</p>";
     return false;
   }
-
   ]]>
   </script>
   </head>
   <body>
-    <h2>Commands</h2>
-    <form onsubmit="return false;">
+    <h2>Remote Commands</h2>
+    Execute pre-defined command files stored on the server:
+    <form name="remote" onsubmit="return false;">
     <table border="1">
-    <tr bgcolor="#9acd32">
+    <tr class="header">
       <th align="left">Name</th>
+      <th align="left">Execute</th>
       <th align="left">Description</th>
       <th align="left">File</th>
     </tr>
@@ -64,11 +65,13 @@
     <tr>
       <td align="center">
         <b><xsl:value-of select="NAME"/></b>
-        <input id="{FILE}" type="button" onclick="return cmd(id);" value="Run"/>
+      </td>
+      <td>
+        <input id="{FILE}" type="button" onclick="return cmd(id);" value="Execute"/>
       </td>
       <td><xsl:value-of select="DESCRIPTION"/></td>
       <td>
-        <a target="data" href="{FILE}">
+        <a target="_blank" href="{FILE}">
         <xsl:value-of select="FILE"/>
         </a>
       </td>

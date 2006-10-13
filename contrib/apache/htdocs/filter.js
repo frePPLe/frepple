@@ -91,8 +91,10 @@ function display()
    }
   }
 
-  // Send the xml to the server
-  xmlhttp.open("GET", "reports/inventorydata.xml",true);
+  // Send the xml to the server. 
+  // Unfortunately only POST requests can send a body.
+  xmlhttp.open("POST", "reports/inventorydata.xml",true);
+  xmlhttp.setRequestHeader("Content-Type","text/plain");
   xmlhttp.send(output);
 }
 

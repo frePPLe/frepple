@@ -122,9 +122,11 @@ static int display_info(request_rec *r)
     //
     // The possible reports have pre-defined, hard-coded names.
     case REPORT:
-      // Only handle GET requests
+      // Only handle GET and POST requests
       r->allowed |= (AP_METHOD_BIT << M_GET);
-      if (r->method_number != M_GET) return HTTP_METHOD_NOT_ALLOWED;
+      r->allowed |= (AP_METHOD_BIT << M_POST);
+      if (r->method_number != M_GET && r->method_number != M_POST) 
+        return HTTP_METHOD_NOT_ALLOWED;
 
       // Call the correct report generation code
       if (!strcmp(r->path_info,"/inventorydata.xml"))
@@ -144,41 +146,61 @@ static int display_info(request_rec *r)
       r->allowed |= (AP_METHOD_BIT << M_POST);
       if (r->method_number != M_POST) return HTTP_METHOD_NOT_ALLOWED;
 
-      // Reading the posted data
-      if (ap_setup_client_block(r, REQUEST_NO_BODY | REQUEST_CHUNKED_ERROR)!=OK)
-        return HTTP_INTERNAL_SERVER_ERROR;
-      ap_should_client_block(r);
-      const char* contlength = apr_table_get(r->headers_in, "content-length");
-      long contentlength = contlength ? atol(contlength) : -1;
-      if (contentlength<=0 || contentlength>=64536)
+      // Set up the read policy from the client.
+      int rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR);
+      if (rc != OK) return rc;
+    
+      // Tell the client that we are ready to receive content and check whether 
+      // client will send content.  
+      if (ap_should_client_block(r)) 
       {
-        ap_rprintf(r, "Error: Invalid content length %s", contlength ? contlength : NULL);
-        return OK;
-      }
-      char buff[contentlength];
-      char *b = buff;
-      long got = 0;
-      do 
-      { 
-        got = ap_get_client_block(r, b, contentlength);
-        contentlength -= got;
-        b += got;
-        *b = '\0';
-      }
-      while (got && contentlength);
-      if (got) 
-      {
-        try 
-        { 
-          // Send the posted data to Frepple
-          ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Upload %s", buff);
-          FreppleReadXMLData(buff, true, false); 
-          ap_rputs("Success", r);
+        // Control will pass to this block only if the request has body content
+        char *buffer;
+        char *bufferoffset;
+        int bufferspace = r->remaining + 100;
+        int bodylen = 0;
+        long res;
+        
+        // Reject too big buffers, for safety... 
+        if (r->remaining > 65536) 
+        {
+          ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, 
+           "Too big body in request: %d bytes", r->remaining);
+          return HTTP_REQUEST_ENTITY_TOO_LARGE;
         }
-        catch (exception e)  { ap_rprintf(r, "Error: %s", e.what()); }
-        catch (...) { ap_rputs("Error: no details", r); }
-      }
-      return OK;
+    
+        // Allocate a buffer in memory
+        buffer = static_cast<char*>(apr_palloc(r->pool, bufferspace));
+        bufferoffset = buffer;
+    
+        // Fill the buffer with client data
+        while ((!bodylen || bufferspace >= 32) &&
+                 (res = ap_get_client_block(r, bufferoffset, bufferspace)) > 0)
+        {
+          bodylen += res;
+          bufferspace -= res;
+          bufferoffset += res;
+        }
+        if (res < 0) return HTTP_INTERNAL_SERVER_ERROR;
+    
+        // Finish the buffer it with \0 character
+        *bufferoffset = '\0';
+
+        // Process the data in Frepple  
+        if (bodylen) 
+        {
+          try 
+          { 
+            // Send the posted data to Frepple
+            ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Upload %d bytes: %s", bodylen, buffer);
+            FreppleReadXMLData(buffer, true, false); 
+            ap_rputs("Success", r);
+          }
+          catch (exception e)  { ap_rprintf(r, "Error: %s", e.what()); }
+          catch (...) { ap_rputs("Error: no details", r); }
+        }
+        return OK;
+        }    
       }
       
     //

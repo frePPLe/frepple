@@ -87,16 +87,16 @@ int getInventoryData(request_rec *r)
   ap_set_content_type(r, "text/xml");
   apr_table_setn(r->headers_out, "Cache-Control", "no-cache"); 
 
-  /* Set up the read policy from the client.*/
+  // Set up the read policy from the client.
   int rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR);
   if (rc != OK) return rc;
 
   // Tell the client that we are ready to receive content and check whether 
   // client will send content.  
+  char *buffer = NULL;
   if (ap_should_client_block(r)) 
   {
-    //Control will pass to this block only if the request has body content
-    char *buffer;
+    // Control will pass to this block only if the request has body content
     char *bufferoffset;
     int bufferspace = r->remaining + 100;
     int bodylen = 0;
@@ -106,7 +106,7 @@ int getInventoryData(request_rec *r)
     if (r->remaining > 65536) 
     {
       ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, 
-       "Client sends too big body in request: %d bytes", r->remaining);
+       "Too big body in request: %d bytes", r->remaining);
       return HTTP_REQUEST_ENTITY_TOO_LARGE;
     }
 
@@ -122,18 +122,27 @@ int getInventoryData(request_rec *r)
       bufferspace -= res;
       bufferoffset += res;
     }
+    if (res < 0) return HTTP_INTERNAL_SERVER_ERROR;
 
     // Finish the buffer it with \0 character
     *bufferoffset = '\0';
-
     ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "read %d %s", bodylen, buffer);
-
-    if (res < 0) return HTTP_INTERNAL_SERVER_ERROR;
   }
 
-  // Fake up the response
+  // Send the response
   string o = FreppleSaveString();
-  ap_rputs(o.c_str(), r);
+  ap_rputs("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"  
+    "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><BUFFERS>", r);
+  Buffer *bufptr = Buffer::find(string("RM1"));
+  if (bufptr) 
+  {
+    XMLOutputString x;
+    x.setContentType(XMLOutput::PLAN);
+    bufptr->writeElement(&x, Tags::tag_buffer); 
+    string s = x;
+    ap_rputs(s.c_str(), r);
+  }
+  ap_rputs("</BUFFERS></PLAN>\n", r);
   return OK;
 };
 

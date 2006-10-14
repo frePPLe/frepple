@@ -86,6 +86,8 @@ OPTIMIZE_OUTPUT_JAVA   = NO
 
 SHOW_USED_FILES        = YES
 
+BUILTIN_STL_SUPPORT    = YES
+
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
 #---------------------------------------------------------------------------

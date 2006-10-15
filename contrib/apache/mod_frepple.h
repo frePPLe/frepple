@@ -63,3 +63,18 @@ typedef struct {
 typedef struct {
   char *home;
 } server_config;
+
+
+// Handler for parsing the report filter
+class ReportFilter : public DefaultHandler
+{    
+  public:
+    void startElement (const XMLCh* const, const XMLCh* const,
+      const XMLCh* const, const Attributes&);
+    ReportFilter(const XMLtag& t, XMLOutput &oo, request_rec *r) 
+      : tag(t), req(r), o(oo) {};
+  private:
+    const XMLtag &tag;
+    request_rec *req;
+    XMLOutput &o;
+};

@@ -40,7 +40,9 @@
     <tr class="header">
       <th align="left">Name</th> 
       <th align="left">Location</th> 
-      <th align="left">Item</th> 
+      <th align="left">Item</th>      
+      <th align="left">Inventory</th> 
+      <th align="left">Producing</th> 
       <th align="left"> </th> 
       <th align="left">B1</th> 
       <th align="left">B2</th> 
@@ -52,6 +54,8 @@
       <td><xsl:value-of select="@NAME" /></td>
       <td><xsl:value-of select="LOCATION/@NAME" /></td>
       <td><xsl:value-of select="ITEM/@NAME" /></td>
+      <td><xsl:value-of select="ONHAND" /></td>
+      <td><xsl:value-of select="PRODUCING/@NAME" /></td>
       <td>Supply</td>
       <td><input type="text" size="3" value="1" onChange="kiwi(this,1);"/></td>
       <td><input type="text" size="3" value="1" onChange="kiwi(this,2);"/></td>
@@ -61,12 +65,16 @@
       <td></td>
       <td></td>
       <td></td>
+      <td></td>
+      <td></td>
       <td>Demand</td>
       <td>0</td>
       <td>2</td>
       <td>0</td>
     </tr>
     <tr>
+      <td></td>
+      <td></td>
       <td></td>
       <td></td>
       <td></td>

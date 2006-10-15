@@ -94,12 +94,12 @@ int getInventoryData(request_rec *r)
   // Tell the client that we are ready to receive content and check whether 
   // client will send content.  
   char *buffer = NULL;
+  unsigned int bodylen = 0;
   if (ap_should_client_block(r)) 
   {
     // Control will pass to this block only if the request has body content
     char *bufferoffset;
     int bufferspace = r->remaining + 100;
-    int bodylen = 0;
     long res;
     
     // Reject too big buffers, for safety... 
@@ -124,25 +124,86 @@ int getInventoryData(request_rec *r)
     }
     if (res < 0) return HTTP_INTERNAL_SERVER_ERROR;
 
-    // Finish the buffer it with \0 character
+    // Finish the buffer it with a null character
     *bufferoffset = '\0';
     ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "read %d %s", bodylen, buffer);
   }
 
   // Send the response
-  string o = FreppleSaveString();
-  ap_rputs("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"  
-    "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><BUFFERS>", r);
-  Buffer *bufptr = Buffer::find(string("RM1"));
-  if (bufptr) 
+  XMLOutputString o;
+  o.setContentType(XMLOutput::PLAN);
+  o.writeHeader(Tags::tag_plan);
+  o.BeginObject(Tags::tag_buffers);
+    
+  // Create a parser
+  if (buffer)
   {
-    XMLOutputString x;
-    x.setContentType(XMLOutput::PLAN);
-    bufptr->writeElement(&x, Tags::tag_buffer); 
-    string s = x;
-    ap_rputs(s.c_str(), r);
+    try
+    {
+      SAX2XMLReader* parser = XMLReaderFactory::createXMLReader();
+      ReportFilter handler(Tags::tag_buffer, o, r);
+      parser->setProperty(XMLUni::fgXercesScannerName, 
+        const_cast<XMLCh*>(XMLUni::fgWFXMLScanner));
+      parser->setFeature(XMLUni::fgSAX2CoreNameSpaces, false);
+      parser->setFeature(XMLUni::fgSAX2CoreValidation, false);
+      parser->setFeature(XMLUni::fgSAX2CoreNameSpacePrefixes, false);
+      parser->setFeature(XMLUni::fgXercesIdentityConstraintChecking, false);   
+      parser->setFeature(XMLUni::fgXercesDynamic, false);
+      parser->setFeature(XMLUni::fgXercesSchema, false);
+      parser->setFeature(XMLUni::fgXercesSchemaFullChecking, false);
+      parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal,true);
+      parser->setFeature(XMLUni::fgXercesIgnoreAnnotations,true);
+      parser->setContentHandler(&handler);  
+      parser->setErrorHandler(&handler);
+      MemBufInputSource a(reinterpret_cast<const XMLByte*>(buffer), bodylen, "memory buffer", false);
+      parser->parse(a);
+    }
+    catch (exception e)
+    {
+      ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Exception preparing report %s", e.what());
+      return HTTP_INTERNAL_SERVER_ERROR;
+    }
+    catch (...)
+    {
+      ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Exception preparing report: unknown error");
+      return HTTP_INTERNAL_SERVER_ERROR;
+    }
   }
-  ap_rputs("</BUFFERS></PLAN>\n", r);
+  else
+  {
+    for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
+      if (!b->getHidden()) b->writeElement(&o, Tags::tag_buffer); 
+  }        
+
+  // Closing tags
+  o.EndObject(Tags::tag_buffers);
+  o.EndObject(Tags::tag_plan);
+  
+  // Send the result
+  ap_rputs(o.getData().c_str(), r);
   return OK;
 };
+
+
+void ReportFilter::startElement (const XMLCh* const uri, const XMLCh* const localname,
+      const XMLCh* const qname, const Attributes& attrs)
+{
+  char* c = XMLString::transcode(localname);
+  hashtype x = XMLtag::hash(c);
+  if (x == tag.getHash())
+  {
+    // Starting a BUFFER element. Now Pick up the NAME attribute.
+    char* name = XMLString::transcode(
+      attrs.getValue(Tags::tag_name.getXMLCharacters())
+      );
+    if (name)
+    {
+      Buffer *bufptr = Buffer::find(name);
+      // If the buffer exists, write it.
+      if (bufptr) bufptr->writeElement(&o, Tags::tag_buffer); 
+    }
+    XMLString::release(&name);
+  }
+  XMLString::release(&c);
+}
 

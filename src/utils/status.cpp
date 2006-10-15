@@ -569,7 +569,7 @@ void XMLOutput::writeElement
     object->writeElement(this, tag, m);
   else
     // Choose wether to save a reference of the object
-    object->writeElement(this, tag, numParents>2 ? REFERENCE : DEFAULT);
+    object->writeElement(this, tag, numParents>2 ? REFERENCE : DEFAULT);  // @todo not nice and generic
 
   // Adjust current and parent object pointer
   --numParents;
@@ -586,7 +586,7 @@ void XMLOutput::writeElementWithHeader(const XMLtag& tag, const Object* object)
 
   // There should not be any saved objects yet
   if (numObjects > 0)
-    throw LogicException("Can't have multiple root objects in a document");
+    throw LogicException("Can't have multiple headers in a document");
   assert(!parentObject);
   assert(!currentObject);
 
@@ -605,6 +605,23 @@ void XMLOutput::writeElementWithHeader(const XMLtag& tag, const Object* object)
   // Adjust current and parent object pointer
   currentObject = NULL;
   parentObject = NULL;
+}
+
+
+void XMLOutput::writeHeader(const XMLtag& tag)
+{
+  // There should not be any saved objects yet
+  if (numObjects > 0)
+    throw LogicException("Can't have multiple headers in a document");
+  assert(!parentObject);
+  assert(!currentObject);
+
+  // Write the first line and the opening tag
+  writeString(getHeaderStart());
+  BeginObject(tag, getHeaderAtts());
+  
+  // Fake a dummy parent
+  numParents += 2;   // @todo not nice and generic
 }
 
 

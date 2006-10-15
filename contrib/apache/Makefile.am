@@ -44,4 +44,4 @@ build_apache:
 # These is the command I used to create my SSL certificate
 # The command below is an example only...
 config_ssl:
-	openssl req -new -x509 -days 3650 -keyout frepple.key -out frepple.crt
+	openssl req -new -x509 -nodes -days 3650 -keyout frepple.key -out frepple.crt

@@ -1789,13 +1789,23 @@ class XMLOutput
 
     /** This method writes a serializable object with a complete XML compliant
       * header.
-      * You should call this method for the root object of you xml document,
+      * You should call this method for the root object of your xml document,
       * and writeElement for all objects nested in it.
       * @see writeElement(const XMLtag&, Object*)
-      * @exception RuntimeException Generated when either no or multiple root
-      *    elements are available for this output document.
+      * @see writeHeader
+      * @exception RuntimeException Generated when multiple root elements
+      *    are available for the output document.
       */
     void writeElementWithHeader(const XMLtag& tag, const Object* object);
+
+    /** This method writes the opening tag for an XML output.
+      * You should call this method or writeElementWithHeader() when writing
+      * the first element of an xml document,
+      * @see writeElementWithHeader
+      * @exception RuntimeException Generated when multiple root elements
+      *    are available for the output document.
+      */
+    void writeHeader(const XMLtag& tag);
 
     /** Returns a pointer to the object that is currently being saved. */
     Object* getCurrentObject() const
@@ -1902,9 +1912,9 @@ class XMLOutputString : public XMLOutput
     /** Default constructor. */
     XMLOutputString() {setOutput(os);}
 
-    /** Return the string where all output has been printed to. */
-    operator const string () const {return os.str();}
-
+    /** Return the output string. */
+    const string getData() const {return os.str();}
+    
   private:
     ostringstream os;
 };

@@ -139,7 +139,7 @@ DECLARE_EXPORT(string) FreppleSaveString()
 {
   XMLOutputString x;
   x.writeElementWithHeader(Tags::tag_plan, &Plan::instance());
-  return x;
+  return x.getData();
 }
 
 

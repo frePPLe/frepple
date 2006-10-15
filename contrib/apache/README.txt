@@ -52,9 +52,9 @@ Follow these steps to get up and running:
         environment variable:  export CYGWIN=server
    E.g. On *nix systems, users normally won't have permissions to start a
         server on a port number less than 1024.
-   E.g. The start up with HTTPS support, edit the Makefile.am file.
-        The password phrase for the SSL startup is 'frepple'.
-
+   E.g. The start up with HTTPS support, edit the Makefile.am file to pass the
+        extra argument -DSSL on the command line.
+ 
 6) Stopping the web server is done with the command:
      make stop
 

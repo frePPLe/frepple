@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html">
@@ -16,14 +17,14 @@ generic <a href="modeling_concepts.html">modeling concepts</a> before starting
 this document.</p>
 <p>UNFINISHED DOCUMENTATION!!!</p>
 <ul>
-<li><a href="#utility">Utility classes</a></li>
+<li><a href="#utility">Utility classes</a>
 	<ul>
-	<li><a href="#command">Command</li>
-	<li><a href="#timer">Timer</li>
-	<li><a href="#factory">Object factory</li>
-	<li><a href="#date">Date - DateRange - TimePeriod</li>
-	<li><a href="#serialization">Serialization</li>
-	</ul>
+	<li><a href="#command">Command</a></li>
+	<li><a href="#timer">Timer</a></li>
+	<li><a href="#factory">Object factory</a></li>
+	<li><a href="#date">Date - DateRange - TimePeriod</a></li>
+	<li><a href="#serialization">Serialization</a></li>
+	</ul></li>
 <li><a href="#abstractmodel">Abstract Model classes</a></li>
 <li><a href="#staticmodel">Static model classes</a></li>
 <li><a href="#dynamicmodel">Dynamic model classes</a></li>
@@ -82,14 +83,14 @@ millisecond precision.
 <H3><a name="serialization"/>Serialization</H3>
 
 
-<H2><a name="abstractmodel">Abstract Model classes</H2>
+<H2><a name="abstractmodel">Abstract Model classes</a></H2>
 A number of classes are providing some foundation functionality for the model.
 
 <H3><a name="named"/>Named</H3>
 "Things" have a name and we use names all over the place to create, find, refer
 to "things". This class is a template class that
 
-<H3><a name="entity"/>Entity</a></H3>
+<H3><a name="entity"/>Entity</H3>
 Entity is another template class that is derived from the Named class. In
 addition to having a name, this class allows for "things" to:
 <ul>
@@ -107,7 +108,7 @@ that are used to represent the network. The first three represent the actual
 entities, while Load and Flow represent associations/links between the entities.
 In such a network we can easily recognize the concepts of:
 <ul>
-<li><B>Cluster</B></li>
+<li><B>Cluster</B><br>
 Some objects are linked to each other, i.e. a path along associatons exists that
 connects boths entities. Other entities are completely independent of each
 other.
@@ -115,54 +116,54 @@ Each independent set of connected entities is given a seperate identifying
 number.
 The cluster concept allows us to classify entities and enable multithreading:
 since the clusters are independent we can use different threads to solve each
-cluster.
+cluster.</li>
 
-<li><B>Level</B></li>
+<li><B>Level</B><br>
 Operations consume certain materials. These materials are built or procured by
 other operations. This creates a sense of direction in our network which is
-expressed by the level concept.
+expressed by the level concept.</li>
 </ul>
 
-<H2><a name="staticmodel">Static model classes</H2>
+<H2><a name="staticmodel"/>Static model classes</H2>
 
-<H3><a name="operation"/>Operation</a></H3>
+<H3><a name="operation"/>Operation</H3>
 <ul>
 <li></li>
 </ul>
 
-<H3><a name="buffer"/>Buffer</a></H3>
+<H3><a name="buffer"/>Buffer</H3>
 A buffer represents a combination of a item and location. It is the entity
 for keeping modeling inventory.
 A synonyme is SKU or stock-keeping-unit.
 
-<H3><a name="resource"/>Resource</a></H3>
+<H3><a name="resource"/>Resource</H3>
 A resource represents a workcentre, a physical or logical representation
 of capacity.
 
-<H3><a name="load"/>Load</a></H3>
+<H3><a name="load"/>Load</H3>
 A load links a resource to a certain operation.
 
-<H3><a name="flow"/>Flow</a></H3>
+<H3><a name="flow"/>Flow</H3>
 A flow represent the production or consumption of material from a buffer.
 A flow is attached to an operation.
 
-<H3><a name="item"/>Item</a></H3>
+<H3><a name="item"/>Item</H3>
 An item defines the products being planned, sold, stored and/or manufactured.
 Buffers and demands have a reference an item.
 
-<H3><a name="location"/>Location</a></H3>
+<H3><a name="location"/>Location</H3>
 Buffers and resources are linked to a (physical or logical) location.
 Locations are merely used for simple association, and have no active use in the
 model.
 
-<H3><a name="calendar"/>Calendar</a></H3>
+<H3><a name="calendar"/>Calendar</H3>
 A calendar is used to represent time dependent parameters.
 
 <H3>Customer</H3>
 Demand is linked to a customer. This association currently has no further
 active use in the model.
 
-<H2><a name="dynamicmodel">Dynamic model classes</H2>
+<H2><a name="dynamicmodel"/>Dynamic model classes</H2>
 
 <H3>Plan</H3>
 

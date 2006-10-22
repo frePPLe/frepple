@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 
 <head>
@@ -47,47 +48,42 @@ contructs used.</p>
 <hr> <p align="right"><a name="overview" href="#top">top</a></p>
 <h1>Overview</h1>
 
-<p>The algorithm can create different types of plans. With the following three 
+The algorithm can create different types of plans. With the following three
 flags, a total of 8 combinations are possible:
 <ul>
-<li>Material constrained or not<br>Supply of raw material can be treated as 
+<li>Material constrained or not<br>Supply of raw material can be treated as
 finite or infinite.</li>
-<li>Capacity constrained or not<br>Production capacity can be treated as finite 
+<li>Capacity constrained or not<br>Production capacity can be treated as finite
 or infinite.</li>
-<li>Leadtime constrained or not<br>Allow or disallow plans to be created in the 
+<li>Leadtime constrained or not<br>Allow or disallow plans to be created in the
 past.</li>
-</ul></p>
+</ul>
 
 <p>The algorithm solves demand per demand. The demand is thus
 sorted in descending order of priority, and next these demands are planned one
-after the other. When planning a single demand, the algorithm basically 
-consists of a set of recursively called functions. These function work in a 
-very intuitive ask-reply pattern, as illustrated in the example below. In the 
-next sections each of the different ask-reply functions will then be discussed 
+after the other. When planning a single demand, the algorithm basically
+consists of a set of recursively called functions. These function work in a
+very intuitive ask-reply pattern, as illustrated in the example below. In the
+next sections each of the different ask-reply functions will then be discussed
 in further detail.
 
 
 <ul><li>Every demand has a certain delivery operation associated with it
 (either directly or indiretly by specifying a delivery operation for the
 requested item). We <b>ask</b> this <b>operation</b> for the requested quantity
-on the requested date.</li>
-  <ul>
-    <li>The operation </li>
-    <ul>
-      <li>The operation </li>
-       <li>@todo incomplete documentation</li>
-    </ul>
-  </ul>
+on the requested date.<br>
+@todo incomplete documentation
+</li>
 
-<li>From the <b>operation-reply</b> of the previous step, we get a reply of how 
-much of the requested delivery operation can actually be satisfied. Depending 
-on the planning result and the demand parameters (such as allow/disallow 
-satisfying the demand late or in multiple deliveries) we can now decide take 
+<li>From the <b>operation-reply</b> of the previous step, we get a reply of how
+much of the requested delivery operation can actually be satisfied. Depending
+on the planning result and the demand parameters (such as allow/disallow
+satisfying the demand late or in multiple deliveries) we can now decide take
 the following actions:<br>
 a) accept and consolidate the (eventually partial) plan for this demand<br>
 b) reject the plan for this demand<br>
-c) in addition to both previous steps we can go back to the first step, and 
-repeat the complete sequence at a date later than the requested due date. 
+c) in addition to both previous steps we can go back to the first step, and
+repeat the complete sequence at a date later than the requested due date.
 The previous step gives us the earliest date we can use.
 </li>
 </ul>
@@ -96,72 +92,72 @@ The previous step gives us the earliest date we can use.
 <p align="right"><a name="cluster" href="#top">top</a></p>
 <h1>Cluster and level algorithm</h1>
 
-<p>Resources, operations and buffers are connected with each other with loads 
-and flows. An operation has a collection of loads and flows. Each flow 
-establishes a connection with a buffer, and each load a connection with a 
-resources. The entities thus constitute a network graph. In this network 
-context we define clusters and level as follows.<p>
-<p>A cluster is a set of connected entities. When a network path across loads 
-and flows exists between 2 entities they belong to the same cluster. When no 
-such path exists they are effectively situated in independent sub-networks and 
+<p>Resources, operations and buffers are connected with each other with loads
+and flows. An operation has a collection of loads and flows. Each flow
+establishes a connection with a buffer, and each load a connection with a
+resources. The entities thus constitute a network graph. In this network
+context we define clusters and level as follows.</p>
+<p>A cluster is a set of connected entities. When a network path across loads
+and flows exists between 2 entities they belong to the same cluster. When no
+such path exists they are effectively situated in independent sub-networks and
 clusters. Internally, each cluster is represented by a number.</p>
 <p>An operation consumes and produces material, as defined by the flow entities.
-The buffers of the consumed and produced materials are thus linked in a 
-parent - child relation, typically called a bill of material or a recipe. 
-In this context the level is a number that is defined such that the level of 
-a consumed material buffer is always higher than the level of the produced 
+The buffers of the consumed and produced materials are thus linked in a
+parent - child relation, typically called a bill of material or a recipe.
+In this context the level is a number that is defined such that the level of
+a consumed material buffer is always higher than the level of the produced
 material buffer. The demand is normally (but not exclusively!) placed on the
-material buffers with level 0, and the level number increases as we recurse 
-through the different levels in the bill of material. Raw materials have the 
+material buffers with level 0, and the level number increases as we recurse
+through the different levels in the bill of material. Raw materials have the
 highest level number</p>
-<p>The level and cluster number are helpful for the various solver algorithms. 
+<p>The level and cluster number are helpful for the various solver algorithms.
 They provide valuable information on the network.</p>
 
-<p>The algorithm used to compute the level and cluster information is based on 
-a walk through the network: We select an unmarked operation and recurse through 
-the loads and flows to find all connected entities, updating the cluster and 
+<p>The algorithm used to compute the level and cluster information is based on
+a walk through the network: We select an unmarked operation and recurse through
+the loads and flows to find all connected entities, updating the cluster and
 level information as we progress.</p>
 
-<p>For efficiency, the algorithm is implemented as a lazy function, i.e. the 
-information is only computed when the user is retrieving the value of a level 
-or cluster field. The algorithm is not incremental (yet), but computes the 
-information for the complete network in a single pass: a change to a single 
-entity will trigger re-computation of all level and cluster information for 
+<p>For efficiency, the algorithm is implemented as a lazy function, i.e. the
+information is only computed when the user is retrieving the value of a level
+or cluster field. The algorithm is not incremental (yet), but computes the
+information for the complete network in a single pass: a change to a single
+entity will trigger re-computation of all level and cluster information for
 all entities.</p>
 
-<p>Note: An updated algorithm has been designed for the cluster computation. 
-It's advantage compared to the current implementation is a much better 
-effiency in the case of frequent model updates. The computation will be 
+<p>Note: An updated algorithm has been designed for the cluster computation.
+It's advantage compared to the current implementation is a much better
+effiency in the case of frequent model updates. The computation will be
 completely incremental, compared to the single pass for all entities in the
 current implementation.</p>
 
 <p class="l0">Lock the function</p>
-<p class="l0">Reset the level and cluster to -1 on all resources, operations 
+<p class="l0">Reset the level and cluster to -1 on all resources, operations
 and buffers</p>
 <p class="l0">Reset the total number of clusters</p>
 <p class="l0">Loop through all operations</p>
 <p class="l1">If the operation has no producing flow</p>
-<p class="l2">Activate the level computation</i></p>
+<p class="l2">Activate the level computation</p>
 <p class="l1">If the operation isn't part of a cluster yet</p>
-<p class="l2">Activate the cluster computation</i></p>
+<p class="l2">Activate the cluster computation</p>
 <p class="l2">Increment the cluster counter</p>
-<p class="l1">If both cluster and level computation are inactive, move on to 
+<p class="l1">If both cluster and level computation are inactive, move on to
 the next operation</p>
-<p class="l1">Push the current operation on the recursion stack, with level 
+<p class="l1">Push the current operation on the recursion stack, with level
 0 or -1</p>
 <p class="l1"> Loop until the stack is empty</p>
 <p class="l2">Pop an operation from the recursion stack </p>
 <p class="l2">Pop the value of cur_level from the stack</p>
 <p class="l2">Loop through the sub operations and super operations</p>
 <p class="l3">If their level is less than the current level</p>
-<p class="l4">Push sub operation on the stack, with the same level as the 
+<p class="l4">Push sub operation on the stack, with the same level as the
 current operation<br>
 Set the level and cluster fields</p>
 <p class="l3">Else if cluster is not set yet</p>
 <p class="l4">Push sub operation on the stack, with -1 as the level <br>
 Set the cluster field</p>
 <p class="l2">Loop through all loadplans of the operation</p>
-<p class="l3">If level search is active and the resource level is less than 
+<p class="l3">If level search is active and the resource level is less than
 the level of the current operation</p>
 <p class="l4">Update the level of the resource</p>
 <p class="l3">If the cluster of the resource is not set yet</p>
@@ -171,24 +167,24 @@ the level of the current operation</p>
 <p class="l6">Push the operation on the stack, level -1</p>
 <p class="l6">Set the cluster of the operation</p>
 <p class="l2">Loop through all flows of the current operation</p>
-<p class="l3">If this is a consuming flow and level_search is active and the 
+<p class="l3">If this is a consuming flow and level_search is active and the
 level of the buffer is less than the current level +1</p>
 <p class="l4">Level recursion is required</p>
-<p class="l3">If level recursion is required or the cluster of the buffer is 
+<p class="l3">If level recursion is required or the cluster of the buffer is
 not set yet</p>
 <p class="l4">Set the cluster of the buffer<br>
 Loop through all flows connected to the buffer</p>
-<p class="l5">If it is a consuming flow and level search recursion was 
+<p class="l5">If it is a consuming flow and level search recursion was
 enabled</p>
 <p class="l4"><br>@todo incomplete documentation<br></p>
 <p class="l0">Loop through all buffers which don't have any flow at all.</p>
-<p class="l1">// These buffers were not visited by the operation loop, so we 
+<p class="l1">// These buffers were not visited by the operation loop, so we
 cover them now</p>
 <p class="l1">Increment the totalnumber of clusters</p>
 <p class="l1">Set the cluster number to the new
 cluster<br></p>
 <p class="l0">Loop through all resources which don't have any load at all.</p>
-<p class="l1">// These resources were not visited by the operation loop, so we 
+<p class="l1">// These resources were not visited by the operation loop, so we
 cover them now</p>
 <p class="l1">Increment the total number of clusters</p>
 <p class="l1">Set the cluster number to the new cluster</p>
@@ -199,10 +195,10 @@ cover them now</p>
 <p align="right"><a name="plan" href="#top">top</a></p>
 <h1>Plan solver</h1>
 
-<p class="l0">Delete the existing operation-plans, as far as they aren't 
+<p class="l0">Delete the existing operation-plans, as far as they aren't
 locked</p>
 <p class="l0">Identify the clusters to be planned</p>
-<p class="l0">Categorize the demand to be planned by cluster and sort them 
+<p class="l0">Categorize the demand to be planned by cluster and sort them
 by priority</p>
 <p class="l0">Create parallel threads for the planning</p>
 <p class="l1">In each planning thread, loop through all demands</p>
@@ -218,15 +214,15 @@ by priority</p>
 <p class="l0">Erase previous delivery operation plans, except the ones that are
 locked</p>
 <p class="l0">Loop until the full demand quantity is planned.
-<p class="l1">Call operation-&gt;ask(missing quantity,due date), where 
+<p class="l1">Call operation-&gt;ask(missing quantity,due date), where
 operation is the demand's or the items delivery operation</p>
-<p class="l1">If planned quantity = requested quantity, or the demand planning 
+<p class="l1">If planned quantity = requested quantity, or the demand planning
 policy allows planning the demand in parts or shorts then</p>
 <p class="l2">Commit the operation plan creation</p>
 <p class="l1">Else</p>
 <p class="l2">Clear the list of scheduled operation plans</p>
-<p class="l2">If planned quantity &gt 0 then</p>
-<p class="l3">// This last step is required to make sure all supplying paths 
+<p class="l2">If planned quantity &gt; 0 then</p>
+<p class="l3">// This last step is required to make sure all supplying paths
 are planned for the quantity of the most constraining path</p>
 <p class="l3">Call operation-&gt;ask(planned quantity, due date)</p>
 <p class="l3">Commit the operation plan creation</p>
@@ -242,24 +238,24 @@ are planned for the quantity of the most constraining path</p>
 <p class="l0">Buffer is asked for a quantity Q at the date D</p>
 <p class="l1">For each flow_plan on the buffer</p>
 <p class="l2">If the on-hand value is positive</p>
-<p class="l3">Set the variable ExtraInventoryDate if it is not set before. 
-This variable stores the date when there is additional, unallocated inventory 
+<p class="l3">Set the variable ExtraInventoryDate if it is not set before.
+This variable stores the date when there is additional, unallocated inventory
 available.</p>
 <p class="l2">Else if the on-hand value is negative</p>
-<p class="l3">Compute the shortage as current onhand – required minimum 
+<p class="l3">Compute the shortage as current onhand – required minimum
 quantity + known shortage from previous dates</p>
 <p class="l3">If a producing operation exists</p>
-<p class="l4">Try to get extra supply for the shorted quantity. This 
+<p class="l4">Try to get extra supply for the shorted quantity. This
 replenishment will update the onhand value of the current flowplan</p>
-<p class="l3">If the onhand is still less than the required minimum quantity 
+<p class="l3">If the onhand is still less than the required minimum quantity
 - the known shortage</p>
-<p class="l3">This situation happens when the producing operation can’t 
-replenish the buffer enough, or when all supply in a buffer without producing 
+<p class="l3">This situation happens when the producing operation can’t
+replenish the buffer enough, or when all supply in a buffer without producing
 operation has been exhausted.</p>
-<p class="l3">Increase the variable storing the known shortage at previous 
+<p class="l3">Increase the variable storing the known shortage at previous
 dates.</p>
 <p class="l3">Reset the ExtraInventoryDate if it was set.</p>
-<p class="l1">If there is a shortage, a producing operation exists and the 
+<p class="l1">If there is a shortage, a producing operation exists and the
 above loop didn’t already do the following</p>
 <p class="l2">Try to get more supply at the requested date.<br>
 Not only can this reduce the shortage, but also important is the next-date
@@ -274,7 +270,7 @@ minimum.</p>
 <p class="l1">Returned date:</p>
 <p class="l2">= requested date if there is no shortage</p>
 <p class="l2">Or = reply date of the producing operation</p>
-<p class="l2">Or = ExtraInventoryDate if that is less than the operation reply 
+<p class="l2">Or = ExtraInventoryDate if that is less than the operation reply
 date</p>
 <br>
 
@@ -284,7 +280,7 @@ date</p>
 <h1>Operation solver</h1>
 
 <p class="l0">Routing operation</p>
-<p class="l1">Operation is asked for a quantity Q at the date D</li></p>
+<p class="l1">Operation is asked for a quantity Q at the date D</p>
 <p class="l2">Create the top operation plan</p>
 <p class="l2">Check the flowplans and loadplans of the top operation plan</p>
 <p class="l2">Initialize Q2 to Q and D2 to D</p>
@@ -297,7 +293,7 @@ date</p>
 <p class="l0">Fixed time and time-per operation</p>
 <p class="l1">Operation is asked for a quantity Q at the date D</p>
 <p class="l2">Create required operation plan descriptor</p>
-<p class="l2">Loop backward in time D until we have have found the full 
+<p class="l2">Loop backward in time D until we have have found the full
 recource capacity</p>
 <p class="l2">Call Operation-&gt;ask(Qremaining, Dupdated)</p>
 <p class="l2">For each consuming flow</p>
@@ -314,7 +310,7 @@ recource capacity</p>
 <p class="l2">Create top operation plan descriptor</p>
 <p class="l2">Call Operation-&gt;ask(Remaining quantity, D)</p>
 <p class="l2">If some quantity could be planned along the alternate</p>
-<p class="l3">Check for material and capacity constraints on the top 
+<p class="l3">Check for material and capacity constraints on the top
 operation plan</p>
 <p class="l3">Reduce the remaining quantity</p>
 <p class="l3">Break out of the loop if the requested quantity is completely
@@ -325,7 +321,7 @@ minimum, update the next ask date</p>
 <p class="l1">Return the planned quantity and the next ask date</p>
 
 
-<p class="l0"><br>@todo incomplete documentation: need description of 
+<p class="l0"><br>@todo incomplete documentation: need description of
 leadtime constraints + flowplan call + loadplan call<br></p>
 
 
@@ -335,24 +331,24 @@ leadtime constraints + flowplan call + loadplan call<br></p>
 
 <p class="l0">An operationplan is asked to be checked for capacity
 problems (NO date &amp; quantity)</p>
-<p class="l1">Set AllLoadsOkay to true</li></p>
+<p class="l1">Set AllLoadsOkay to true</p>
 <p class="l1">Loop through all loadplans of the operationplan</p>
-<p class="l2"'>Call the resource solver </p>
+<p class="l2">Call the resource solver </p>
 <p class="l3">If this is not an ending loadplan, return the function</p>
 <p class="l3">Set HasOverload to false.<span>  </span>(*)</p>
 <p class="l3">While HasOverload is still false and not yet at the very start</p>
-<p class="l4">Start recursing backwards in the timeline starting from the 
+<p class="l4">Start recursing backwards in the timeline starting from the
 ending loadplan</p>
 <p class="l5">If the resource loading &gt; maximum</p>
 <p class="l6">Continue going back  till the resource loading &lt; maximum</p>
 <p class="l6">Move the operation plan to end at that time in the timeline</p>
 <p class="l6">Set AllLoadsOkay to false.</p>
 <p class="l6">Go back to the step marked with (*)</p>
-<p class="l5">Else if we have arrived at the loadplan at the start of the 
+<p class="l5">Else if we have arrived at the loadplan at the start of the
 operationplan</p>
 <p class="l6">Exit the resource solver function</p>
-<p class="l3">If during the call of the constraint solver the operation plan 
-is moved the variable AllLoadsOkay will have been set to true. In this case, 
+<p class="l3">If during the call of the constraint solver the operation plan
+is moved the variable AllLoadsOkay will have been set to true. In this case,
 the complete loop over all loadplans must be repeated.</p>
 
 </body>

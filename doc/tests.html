@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html">
@@ -6,13 +7,13 @@
 </head>
 <body>
 <H1>Samples and tests</H1>
-<p>This pages documents the examples available in the 'test' subdirectoy. The
+This pages documents the examples available in the 'test' subdirectoy. The
 examples can be categorized in the following functional categories:<ul>
 <li>Unit tests, which verify the behavior specific parts of the code.</li>
 <li>Performance tests, which focus on the performance (memory and/or
 cpu-time).</li>
 <li>Samples, which provide more real-life usage of the tool.</li>
-</ul></p>
+</ul><br>
 
 <ol>
 <li><p><b>Callback</b><br>
@@ -39,7 +40,7 @@ constrained plan to solve the problems.<br>
 @todo Add picture
 </p></li>
 
-<li><p><b>Constraints_material_1</b><br>
+<li><b>Constraints_material_1</b><br>
 This test verifies the behavior of the buffer solver for the case where no
 producing operation is defined.<br>
 Four variations of a base scenario are tested:
@@ -49,8 +50,7 @@ Four variations of a base scenario are tested:
 <li>extra supply arriving at a different date, causing a late order</li>
 <li>extra supply arriving at a different date, but already partially
 used up</li>
-</ul>
-</p></li>
+</ul><p/></li>
 
 <li><p><b>Constraints_material_2</b><br>
 @todo
@@ -146,13 +146,13 @@ or worse.<br>
 @todo picture
 </p></li>
 
-<li><p><b>Scalability_2</b><br>
+<li><b>Scalability_2</b><br>
 In this test a model is created based on parametrizable values of:
 <ul>
 <li>Number of clusters.</li>
 <li>Number of demands per cluster.</li>
 <li>Depth of the supply chain, i.e. number of levels.</li>
-<ul>
+</ul>
 Comparing the runtime with different values of these parameters allows to
 gain a better understanding of the factors that are impacting memory and
 runtime most significantly.<br>
@@ -160,7 +160,7 @@ The algorithms scale linearly with the model size, while the mayor underlying
 data structures are binary trees which scale logarithmically with the model
 size...  The result is a runtime that combines both. It depends on the data
 set, the platform and the compiler how your model will scale.
-</p></li>
+<br></li>
 
 <li><p><b>Scalability_3</b><br>
 This test is designed to verify the scalability of the timeline data structure.
@@ -181,13 +181,21 @@ size of the data structures, which will give different test results. A failure
 of this test is thus nothing to worry about.
 </p></li>
 
-<li><p><b>XML</b><br>
+<li><b>XML</b><br>
 This is a test for the XML parser routines.
 The test consists of a complex xml document to be parsed and processed:
 <ul>
 <li>XML tags 8 nested levels deep</li>
 <li>ignore-element sections</li>
-</ul>
+</ul><p/>
+</li>
+
+<li><p><b>XML_remote</b><br>
+This test uses HTTP to pick up XML-data from the url
+<a href="http://frepple.sourceforge.net/test/xml_remote.xml" target="blank">
+http://frepple.sourceforge.net/test/xml_remote.xml</a>.
 </p></li>
 
+</ol>
 </body>
+</html>

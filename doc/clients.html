@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html">
@@ -9,22 +10,21 @@
 <p>This page discusses the different ways the framework can be accessed from
 your different environments. The list is definately not exhaustive, and is
 mentioned here to give you some possibilities and to wet your appetite...</p>
-<p>The general principles are pretty simple:
+The general principles are pretty simple:
 <ul>
-<li>The focus of frepple is on a common library and framework.<br> Usage of 
+<li>The focus of frepple is on a common library and framework.<br> Usage of
 the framework by a wide range of application and through a wide range of
 technologies is intended.</li>
 <li>All clients should normally access the library through the well-defined
-interface FreppleInterface.<br>This interface can then accessed with a wide 
+interface FreppleInterface.<br>This interface can then accessed with a wide
 range of technologies, as described below.</li>
-<li>The public interface is of the library is synchroneous, i.e. a client's 
+<li>The public interface is of the library is synchroneous, i.e. a client's
 function call returns only when the complete processing is finished.</li>
-<li>The interface can throw exceptions, and the client is responsible for 
+<li>The interface can throw exceptions, and the client is responsible for
 handling those correcty.</li>
 </ul>
-</p>
 
-<center><img src="deployment.jpg"></center>
+<center><img src="deployment.jpg" alt="Deployment diagram"></center>
 
 <H2>Standalone application</H2>
 <p>A simple command-line application is available. All you need to use it is
@@ -37,7 +37,6 @@ command | frepple</p>
 exit. The program returns an exit code reflecting any processing errors.</p>
 <p>Use the option "-help" or "-?" to get a list of possible flags that can be
 passed on the command line.</p>
-</p>
 
 <H2>C++ library</H2>
 <p>The framework can be compiled into a shared or static library which you then
@@ -66,10 +65,11 @@ capability are there...</p>
 
 <H2>Apache module</H2>
 <p>A prototype user interface is available where Frepple is running as a module
-in an Apache web server. The module generates XML content that is rendered 
+in an Apache web server. The module generates XML content that is rendered
 in a web browser application which is based on AJAX principles.<br>
-Given the large amount of data maintained by Frepple in memory, this is a 
+Given the large amount of data maintained by Frepple in memory, this is a
 pretty unorthodox usage of Apache. Frepple will need its own, dedicated Apache
 instance to live in.</p>
 
 </body>
+</html>

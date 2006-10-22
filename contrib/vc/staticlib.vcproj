@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../lib/frepple_vcc_static_debug.lib"
+				OutputFile="../../bin/frepple_vcc_staticlib_debug.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -132,7 +132,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../lib/frepple_vcc_static.lib"
+				OutputFile="../../bin/frepple_vcc_staticlib.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

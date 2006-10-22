@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="dll"
-	ProjectGUID="{7DB19B15-8C74-4EEF-B664-697E030FD67D}"
+	Name="module_lp_solver"
+	ProjectGUID="{7DB29B15-8CA4-4BAF-B696-697EA30FD67D}"
 	>
 	<Platforms>
 		<Platform
@@ -15,8 +15,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\dll\Debug"
-			IntermediateDirectory=".\dll\Debug"
+			OutputDirectory=".\module_lp_solver\Debug"
+			IntermediateDirectory=".\module_lp_solver\Debug"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
 			UseOfMFC="0"
@@ -42,7 +42,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\dll\Debug/dll.tlb"
+				TypeLibraryName=".\module_lp_solver\Debug/module_lp_solver.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -53,10 +53,10 @@
 				RuntimeLibrary="1"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\dll\Debug/dll.pch"
-				AssemblerListingLocation=".\dll\Debug/"
-				ObjectFile=".\dll\Debug/"
-				ProgramDataBaseFileName=".\dll\Debug/"
+				PrecompiledHeaderFile=".\module_lp_solver\Debug/module_lp_solver.pch"
+				AssemblerListingLocation=".\module_lp_solver\Debug/"
+				ObjectFile=".\module_lp_solver\Debug/"
+				ProgramDataBaseFileName=".\module_lp_solver\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="false"
@@ -78,7 +78,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="xerces-c_2.lib"
-				OutputFile="../../bin/frepple_vcc_debug.dll"
+				OutputFile="../../bin/mod_lp_solver_debug.so"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../src"
@@ -86,7 +86,7 @@
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\dll\Debug/frepple_vcc_debug.pdb"
 				OptimizeReferences="1"
-				ImportLibrary="../../bin/frepple_vcc_debug.lib"
+				ImportLibrary="../../lib/module_lp_solver_vcc_debug.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -115,8 +115,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\dll\Release"
-			IntermediateDirectory=".\dll\Release"
+			OutputDirectory=".\module_lp_solver\Release"
+			IntermediateDirectory=".\module_lp_solver\Release"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
 			UseOfMFC="0"
@@ -142,7 +142,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\dll\Release/dll.tlb"
+				TypeLibraryName=".\module_lp_solver\Release/module_lp_solver.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -155,10 +155,10 @@
 				ForceConformanceInForLoopScope="true"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\dll\Release/dll.pch"
-				AssemblerListingLocation=".\dll\Release/"
-				ObjectFile=".\dll\Release/"
-				ProgramDataBaseFileName=".\dll\Release/"
+				PrecompiledHeaderFile=".\module_lp_solver\Release/module_lp_solver.pch"
+				AssemblerListingLocation=".\module_lp_solver\Release/"
+				ObjectFile=".\module_lp_solver\Release/"
+				ProgramDataBaseFileName=".\module_lp_solver\Release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="false"
@@ -180,16 +180,16 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="xerces-c_2.lib"
-				OutputFile="../../bin/frepple_vcc.dll"
+				OutputFile="../../bin/mod_lp_solver.so"
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
-				ProgramDatabaseFile=".\dll\Release/frepple_vcc.pdb"
+				DelayLoadDLLs=""
+				ProgramDatabaseFile=".\module_lp_solver\Release/module_lp_solver_vcc.pdb"
 				OptimizeReferences="2"
 				OptimizeForWindows98="1"
-				ImportLibrary="../../bin/frepple_vcc.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -219,7 +219,7 @@
 		<Configuration
 			Name="Swig|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="Swig"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
 			BuildLogFile=""
@@ -254,111 +254,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalLibraryDirectories="../../src"
-				ModuleDefinitionFile="../../src/frepple.def"
-				OptimizeReferences="2"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="modules|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
-			BuildLogFile=""
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName=".\dll\Release/dll.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="../../include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DLL_EXPORT;MT;_CRT_SECURE_NO_DEPRECATE"
-				StringPooling="true"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="true"
-				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\dll\Release/dll.pch"
-				AssemblerListingLocation=".\dll\Release/"
-				ObjectFile=".\dll\Release/"
-				ProgramDataBaseFileName=".\dll\Release/"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="false"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="0"
-				ResourceOutputFileName=""
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="xerces-c_2.lib"
-				OutputFile="../../bin/frepple_vcc.dll"
-				Version="1.0"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
-				ProgramDatabaseFile=".\dll\Release/frepple_vcc.pdb"
 				OptimizeReferences="2"
-				OptimizeForWindows98="1"
-				ImportLibrary="../../lib/frepple_vcc.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -394,11 +291,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\dll.rc"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\dllmain.cpp"
+				RelativePath="..\..\modules\lp_solver\lpsolver.cpp"
 				>
 			</File>
 			<File
@@ -411,7 +304,7 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\..\include\freppleinterface.h"
+				RelativePath="..\..\modules\lp_solver\lpsolver.h"
 				>
 			</File>
 		</Filter>

@@ -63,10 +63,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="xerces-c_2.lib frepple_vcc_static_debug.lib"
+				AdditionalDependencies="xerces-c_2.lib frepple_vcc_staticlib_debug.lib"
 				OutputFile="../../bin/frepple_vcc_static_debug.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\lib"
+				AdditionalLibraryDirectories="..\..\bin"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/main_static.pdb"
 				SubSystem="1"
@@ -149,10 +149,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="xerces-c_2.lib frepple_vcc_static.lib"
+				AdditionalDependencies="xerces-c_2.lib frepple_vcc_staticlib.lib"
 				OutputFile="../../bin/frepple_vcc_static.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\lib"
+				AdditionalLibraryDirectories="..\..\bin"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				LargeAddressAware="1"
@@ -223,6 +223,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalLibraryDirectories="..\..\bin"
 			/>
 			<Tool
 				Name="VCALinkTool"

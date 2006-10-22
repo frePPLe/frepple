@@ -25,13 +25,38 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifdef HAVE_LIBGLPK
+#include "lpsolver.h"
 
-#define FREPPLE_CORE 
-#include "frepple/solver.h"
-
-namespace frepple
+namespace module_lp_solver
 {
+
+const MetaClass LPSolver::metadata;
+
+  
+MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
+{
+  // Initialize only once
+  static bool init = false;
+  if (init)
+  {
+    clog << "Warning: Initializing module lp_solver more than one." << endl;
+    return;
+  }
+  init = true;
+
+  // Print the parameters
+  /*
+  for (CommandLoadLibrary::ParameterList::const_iterator 
+    j = z.begin(); j!= z.end(); ++j)
+    clog << "Parameter " << j->first << " = " << j->second << endl;
+  */
+
+  // Initialize the metadata.
+  LPSolver::metadata.registerClass(
+    "SOLVER", 
+    "SOLVER_LP", 
+    Object::createString<LPSolver>);
+}
 
 
 void LPSolver::solve(void *v)
@@ -51,14 +76,19 @@ void LPSolver::solve(void *v)
   string x = replaceSpaces(Plan::instance().getName());
   lpx_set_prob_name(lp, (char*) x.c_str());
 
+  // Count the number of buckets
+  unsigned int buckets = 0;
+  for (Calendar::BucketIterator c=cal->beginBuckets(); c!=cal->endBuckets(); ++c)
+    ++buckets;
+
   // Determine Problem SIZE!
   lpx_add_cols(lp, Demand::size()         // Col 1 ... Demands
-               + cal->getBuckets().size() // Col Demands+1 ... Demands+Buckets
+               + buckets                  // Col Demands+1 ... Demands+Buckets
               );
   lpx_add_rows(lp, 1 +                    // Row 1: total inventory
                1 +                        // Row 2: total planned qty
                2 +                        // For each demand prio
-               cal->getBuckets().size()
+               buckets
               );
 
   // Build predefined rows
@@ -69,8 +99,8 @@ void LPSolver::solve(void *v)
   Buffer::find("RM3")->solve(*this,this);
 
   // Build problem for the demands
-  for (Demand::const_iterator j = Demand::begin(); j != Demand::end(); ++j)
-    (*j)->solve(*this,this);
+  for (Demand::iterator j = Demand::begin(); j != Demand::end(); ++j)
+    j->solve(*this,this);
 
   if (getVerbose())
     clog << "Finished Solver initialisation at " << Date::now() << endl;
@@ -90,7 +120,7 @@ void LPSolver::solve(void *v)
       clog << "Start maximizing supply for demand priority " << i->first
       << " at " << Date::now() << endl;
     // Set the right row as the objective
-    lpx_set_row_coef(lp, i->second, 1.0);
+    lpx_set_obj_coef(lp, i->second, 1.0);
     lpx_set_obj_dir(lp, LPX_MAX);
     // Solve
     lpx_simplex(lp);
@@ -100,16 +130,15 @@ void LPSolver::solve(void *v)
     // Fix the optimal solution for the next objective layers
     lpx_set_row_bnds(lp, i->second, LPX_LO, lpx_get_obj_val(lp), 0.0);
     // Remove from the objective
-    lpx_set_row_coef(lp, i->second, 0.0);
+    lpx_set_obj_coef(lp, i->second, 0.0);
   }
 
   // Additional objective: minimize the inventory
-  lpx_set_row_coef(lp, 1, 1.0);
+  lpx_set_obj_coef(lp, 1, 1.0);
   lpx_set_obj_dir(lp, LPX_MIN);
   lpx_simplex(lp);
-  lpx_write_mps(lp,"test.mps");
-  lpx_write_lpt(lp,"test.lpt");
-  lpx_print_sol(lp,"test.sol");
+  lpx_write_mps(lp,"lp_solver.mps");
+  lpx_print_sol(lp,"lp_solver.sol");
 
   // Final message
   if (getVerbose()) clog << "Finished solving at " << Date::now() << endl;
@@ -133,10 +162,10 @@ void LPSolver::solve(Demand* l, void* v)
 
   // Set the name of the column equal to the demand name
   string x = replaceSpaces(l->getName());
-  lpx_set_col_name(Solver->lp, ++(Solver->columns), (char*)x.c_str());
+  lpx_set_col_name(Sol->lp, ++(Sol->columns), const_cast<char*>(x.c_str()));
 
   // The planned quantity lies between 0 and the demand's requested quantity
-  lpx_set_col_bnds(Solver->lp, Sol->columns, LPX_DB, 0.0, l->getQuantity());
+  lpx_set_col_bnds(Sol->lp, Sol->columns, LPX_DB, 0.0, l->getQuantity());
 
   // Create a row for each priority level of demands
   if( Sol->demandprio2row.find(l->getPriority()) 
@@ -144,8 +173,8 @@ void LPSolver::solve(Demand* l, void* v)
   {
     ostringstream x;
     x << "Planned_Qty_" << l->getPriority();  
-    Sol->demandprio2row[l->getPriority()] = ++(Solver->rows);
-    lpx_set_row_name(Solver->lp, Sol->rows, x.str());
+    Sol->demandprio2row[l->getPriority()] = ++(Sol->rows);
+    lpx_set_row_name(Sol->lp, Sol->rows, const_cast<char*>(x.str().c_str()));
   }
 
   // Insert in the constraint column
@@ -158,7 +187,7 @@ void LPSolver::solve(Demand* l, void* v)
   ndx[3] = Sol->Buffer2row[Buffer::find("RM3")]
            + Sol->cal->findBucketIndex(l->getDue());
   val[3] = 1.0;
-  lpx_set_mat_col(Solver->lp, Sol->columns, 3, ndx, val);
+  lpx_set_mat_col(Sol->lp, Sol->columns, 3, ndx, val);
 
 }
 
@@ -171,26 +200,26 @@ void LPSolver::solve(Buffer* buf, void* v)
   // Insert the Buffer in a list for references
   Sol->Buffer2row[buf] = Sol->rows;
 
-  Buffer::flowplanlist::const_iterator f = buf->getflowplans().begin();
-  for(Calendar::Bucketlist::const_iterator b = Sol->cal->getBuckets().begin();
-       b != Sol->cal->getBuckets().end(); ++b)
+  Buffer::flowplanlist::const_iterator f = buf->getFlowPlans().begin();
+  for(Calendar::BucketIterator b = Sol->cal->beginBuckets();
+       b != Sol->cal->endBuckets(); ++b)
   {
 
     // Find the supply in this Bucket
     double supply(0.0);
-    for (; f!=buf->getflowplans().end() && f->getDate()<(*b)->getEnd(); ++f)
+    for (; f!=buf->getFlowPlans().end() && f->getDate()<b->getEnd(); ++f)
       if (f->getQuantity() > 0.0f) supply += f->getQuantity();
 
     // Set the name of the column equal to the Buffer & Bucket
-    string x = replaceSpaces(string(buf->getName()) + "_" + (*b)->getName());
-    lpx_set_col_name(Solver->lp, ++(Solver->columns), (char*)x.c_str());
-    lpx_set_row_name(Solver->lp, ++(Solver->rows), (char*)x.c_str());
+    string x = replaceSpaces(string(buf->getName()) + "_" + b->getName());
+    lpx_set_col_name(Sol->lp, ++(Sol->columns), const_cast<char*>(x.c_str()));
+    lpx_set_row_name(Sol->lp, ++(Sol->rows), const_cast<char*>(x.c_str()));
 
     // Set the lower bound for the inventory level column
-    lpx_set_col_bnds(Solver->lp, Sol->columns, LPX_LO, 0.0, 0.0);
+    lpx_set_col_bnds(Sol->lp, Sol->columns, LPX_LO, 0.0, 0.0);
 
     // Fix the supply row
-    lpx_set_row_bnds(Solver->lp, Sol->rows, LPX_FX, supply, supply);
+    lpx_set_row_bnds(Sol->lp, Sol->rows, LPX_FX, supply, supply);
 
     // Insert in the constraint row
     int ndx[3];
@@ -199,13 +228,13 @@ void LPSolver::solve(Buffer* buf, void* v)
     {
       ndx[1] = Sol->columns -1;
       val[1] = -1.0;
-      lpx_set_mat_row(Solver->lp, Sol->rows, 1, ndx, val);
+      lpx_set_mat_row(Sol->lp, Sol->rows, 1, ndx, val);
     }
     ndx[1] = Sol->rows;
     val[1] = 1.0;
     ndx[2] = 1;
     val[2] = 1.0;
-    lpx_set_mat_col(Solver->lp, Sol->columns, 2, ndx, val);
+    lpx_set_mat_col(Sol->lp, Sol->columns, 2, ndx, val);
     first = false;
 
   }
@@ -232,18 +261,18 @@ void LPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
     
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type.type);
+      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Fields
   o->writeElement(Tags::tag_calendar, cal);
-  Solver::writeElement(o, tag, false, false);
+  Solver::writeElement(o, tag, NOHEADER);
 }
 
 
 void LPSolver::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_calendar))
-    pIn.readto( MetaData::create("CALENDAR",pIn.getAttributes()) );
+    pIn.readto(Calendar::reader(Calendar::metadata,pIn));
 }
 
 
@@ -260,6 +289,4 @@ void LPSolver::endElement(XMLInput& pIn, XMLElement& pElement)
     Solver::endElement(pIn, pElement);
 }
 
-
-}
-#endif
+}  // End namespace

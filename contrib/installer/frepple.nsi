@@ -31,7 +31,7 @@
 
 ; Main definitions
 !define PRODUCT_NAME "Frepple"
-!define PRODUCT_VERSION "0.1.2"
+!define PRODUCT_VERSION "0.1.3"
 !define PRODUCT_PUBLISHER "Frepple"
 !define PRODUCT_WEB_SITE "http://frepple.sourceforge.net"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"

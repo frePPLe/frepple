@@ -54,25 +54,29 @@ typedef enum
   UPLOAD = 2
 } ActionType;
 
-typedef struct {
+typedef struct
+{
   ActionType method;
   char *directory;
-} dir_config;
+}
+dir_config;
 
 // Data structure for configuration data
-typedef struct {
+typedef struct
+{
   char *home;
-} server_config;
+}
+server_config;
 
 
 // Handler for parsing the report filter
 class ReportFilter : public DefaultHandler
-{    
+{
   public:
     void startElement (const XMLCh* const, const XMLCh* const,
-      const XMLCh* const, const Attributes&);
-    ReportFilter(const XMLtag& t, XMLOutput &oo, request_rec *r) 
-      : tag(t), req(r), o(oo) {};
+                       const XMLCh* const, const Attributes&);
+    ReportFilter(const XMLtag& t, XMLOutput &oo, request_rec *r)
+        : tag(t), req(r), o(oo) {};
   private:
     const XMLtag &tag;
     request_rec *req;

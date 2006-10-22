@@ -16,9 +16,13 @@ prep:
 #	libtoolize --copy --force --automake
 	aclocal
 	autoheader
-# Use --include-deps, if you want to release the stuff. 
+#
+# Use this if you want to release the stuff. 
 # Don't use it for your own development builds
-#	automake --include-deps --add-missing
+#	automake --include-deps
+#  
+# Use these option when automake versions are changing
+#	automake --add-missing --force-missing --copy
 	automake
 	autoconf
 

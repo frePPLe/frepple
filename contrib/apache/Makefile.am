@@ -6,7 +6,7 @@ APACHECTL = ~/httpd/bin/apachectl
 APXS = ~/httpd/bin/apxs
 PWD = `pwd`
 
-EXTRA_DIST = htdocs mod_frepple.cpp frepple.conf README.txt inventory.cpp mod_frepple.h frepple.key frepple.crt
+EXTRA_DIST = htdocs mod_frepple.cpp frepple.conf README.txt inventory.cpp mod_frepple.h frepple.key frepple.crt createmodel.pl
 CLEANFILES = *.o *.dll *.la *.slo
 
 contrib: stop build start

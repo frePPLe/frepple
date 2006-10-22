@@ -31,10 +31,6 @@ namespace frepple
 {
 
 const MetaClass MRPSolver::metadata;
-#ifdef HAVE_LIBGLPK
-const MetaClass LPSolver::metadata;
-#endif
-
 
 const short MRPSolver::LEADTIME = 1;
 const short MRPSolver::MATERIAL = 2;
@@ -59,12 +55,6 @@ void LibrarySolver::initialize()
     "SOLVER_MRP", 
     Object::createString<MRPSolver>, 
     true);
-#ifdef HAVE_LIBGLPK
-  LPSolver::metadata.registerClass(
-    "SOLVER", 
-    "SOLVER_LP", 
-    Object::createString<LPSolver>);
-#endif
 
   // Close the library at the end
 #ifdef HAVE_ATEXIT

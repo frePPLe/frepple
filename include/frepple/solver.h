@@ -32,13 +32,6 @@
 #include <deque>
 #include <cmath>
 
-#ifdef HAVE_LIBGLPK
-extern "C" {
-#include "glpk.h"
-}
-#endif
-
-
 namespace frepple
 {
 
@@ -320,86 +313,6 @@ class MRPSolver : public Solver
     bool checkOperationMaterial(OperationPlan*, MRPSolverdata& data);
     bool checkOperationCapacity(OperationPlan*, MRPSolverdata& data);
 };
-
-
-#ifdef HAVE_LIBGLPK
-
-/** This class is a prototype of an Linear Programming (LP) Solver for the
-  * planning problem or a subset of it. It is based on the GLPK (Gnu
-  * Linear Programming Kit) library.
-  * The class provides only a prototype framework, and it is definately not
-  * ready for full use in a production environment. It misses too much
-  * functionality for this purpose (e.g. no on-hand netting, doesn't plan
-  * demand late, single level supply chain, no lead times, etc).
-  * Nevertheless, the current code is currently geared towards simple
-  * alLocation Problems but could be extended relatively easy to solve
-  * other subProblems. See the documentation for further details on the LP
-  * formulation, potential uses, limitations, etc...
-  */
-class LPSolver : public Solver
-{
-  public:
-    /** This method creates a new column in the model for every demand. It's
-      * value represents the planned quantity of that demand.
-      * @exception DataException Generated when no calendar has been specified.
-      */
-    void solve(void* = NULL);
-    void solve(Demand*, void* = NULL);
-    void solve(Buffer*, void* = NULL);
-
-    Calendar * getCalendar() const {return cal;}
-    void setCalendar(Calendar* c) {cal = c;}
-
-    void beginElement(XMLInput& pIn, XMLElement& pElement);
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput& pIn, XMLElement& pElement);
-
-    LPSolver(const string n) : Solver(n), cal(NULL), rows(0), columns(0) {};
-    ~LPSolver() {};
-
-    virtual const string& getType() const {return metadata.type;}
-    static const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(LPSolver);}
-
-  private:
-    /** This is an auxilary function. GLPK requires names to contain only
-      * "graphic" characters. A space isn't one of those. Since our model
-      * can contain HasHierarchy names with a space, we call this function to
-      * replace the spaces with underscores.
-	  * Note however that we can't garantuee that the updated strings are 
-	  * all unique after the replacement!
-      */
-    static string replaceSpaces(string);
-
-    /** This object is the interface with the GLPK structures. */
-    LPX* lp;
-
-    /** Which buckets to use for the linearization of the Problem. */
-    Calendar *cal;
-
-    /** A counter for the number of rows in our LP matrix. */
-    int rows;
-
-    /** A counter for the number of columns in our LP matrix. */
-    int columns;
-
-    typedef map< int, int, less<int> > priolist;
-    /** Here we store a conversion table between a certain value of the demand
-      * priority and a row in the LP matrix. The row represents the satisfied
-      * demand of this demand priority.
-      */
-    priolist demandprio2row;
-
-    typedef map<const Buffer*, int, less<const Buffer*> > Bufferlist;
-    /** Here we store a conversion table between a Buffer pointer and a row
-      * index in the LP constraint matrix. Each Buffer has N rows in the matrix,
-      * where N is the number of buckets in the Calendar.
-      * The index stored in this table is the lowest row number -1.
-      */
-    Bufferlist Buffer2row;
-};
-
-#endif   // end HAVE_LIBGLPK
 
 
 class LibrarySolver

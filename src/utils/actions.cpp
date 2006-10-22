@@ -457,7 +457,7 @@ void CommandLoadLibrary::execute()
   if (err) throw RuntimeException(err);
 
   // Find the initialization routine
-  func inithandle = reinterpret_cast<func>(dlsym(handle, "initialize"));
+  func inithandle = (func)(dlsym(handle, "initialize"));
   err = dlerror(); // Pick up the error string
   if (err) throw RuntimeException(err);
 #endif

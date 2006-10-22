@@ -1019,7 +1019,6 @@
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="SOLVER" type="SOLVER" />
 			<xsd:element name="SOLVER_MRP" type="SOLVER_MRP" />
-			<xsd:element name="SOLVER_LP" type="SOLVER_LP" />
 		</xsd:choice>
 	</xsd:complexType>
 
@@ -1035,14 +1034,4 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
-	<xsd:complexType name="SOLVER_LP">
-		<xsd:complexContent>
-			<xsd:extension base="SOLVER">
-				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="VERBOSE" type="xsd:boolean" />
-					<xsd:element name="CALENDAR" type="CALENDAR" />
-				</xsd:choice>
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
 </xsd:schema>

@@ -8,12 +8,14 @@
   </COMMAND>
   <COMMAND>
     <NAME>Load medium</NAME>
-    <DESCRIPTION>Loads a medium size dataset. Around 1000 entities are available in the model.</DESCRIPTION>
+    <DESCRIPTION>Loads a medium size dataset. The supply chain is 5 levels deep, 
+    contains 5000 buffers and 10000 demands.</DESCRIPTION>
     <FILE>mediumdata.xml</FILE>
   </COMMAND>
   <COMMAND>
     <NAME>Load large</NAME>
-    <DESCRIPTION>Loads a large dataset.</DESCRIPTION>
+    <DESCRIPTION>Loads a large dataset. The supply chain is 10 levels deep, 
+    contains 100000 buffers and 100000 demands.</DESCRIPTION>
     <FILE>largedata.xml</FILE>
   </COMMAND>
   <COMMAND>

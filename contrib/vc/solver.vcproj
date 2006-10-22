@@ -241,10 +241,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\solver\lpsolver.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\solver\solverbuffer.cpp"
 				>
 			</File>

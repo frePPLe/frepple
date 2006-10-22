@@ -61,12 +61,12 @@ use warnings;
 use Cwd 'abs_path';
 use Env qw(EXECUTABLE FREPPLE_HOME);
 
-# Set the variable FREPPLE_HOME, if it hasn't been set yet.
-$FREPPLE_HOME = abs_path("../bin") if (!$FREPPLE_HOME);
+# Set the variable FREPPLE_HOME
+$FREPPLE_HOME = abs_path("../bin");
 
 # Executable to be used for the tests. Exported as an environment variable.
 # This default executable is the one valid  for GCC cygwin and GCC *nux builds.
-$EXECUTABLE = "libtool --mode=execute ../../src/frepple";
+$EXECUTABLE = "../../libtool --mode=execute ../../src/frepple";
 my $platform = "GCC";
 
 # Put command line arguments in a hash, rather than keeping in an array

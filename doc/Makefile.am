@@ -10,7 +10,7 @@ reference: clean planner.doxyfile
 	-rm -rf reference planner.tags
 	export PACKAGE_VERSION=$(PACKAGE_VERSION); @DOXYGEN@ planner.doxyfile
 else
-reference: clean
+reference: 
 	-echo Skipping generation of documentation...
 endif
 

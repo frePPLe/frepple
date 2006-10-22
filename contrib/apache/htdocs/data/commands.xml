@@ -15,7 +15,7 @@
   <COMMAND>
     <NAME>Load large</NAME>
     <DESCRIPTION>Loads a large dataset. The supply chain is 10 levels deep, 
-    contains 100000 buffers and 100000 demands.</DESCRIPTION>
+    contains 10000 buffers and 100000 demands.</DESCRIPTION>
     <FILE>largedata.xml</FILE>
   </COMMAND>
   <COMMAND>

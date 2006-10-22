@@ -10,14 +10,14 @@
     <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
         <![CDATA[
-				<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-					<COMMANDS>
+          <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <COMMANDS>
             <COMMAND xsi:type="COMMAND_SOLVE">
               <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7"/>
             </COMMAND>
-					</COMMANDS>
-				</PLAN>
-			]]>
+            </COMMANDS>
+          </PLAN>
+        ]]>
       </DATA>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SIZE"/>

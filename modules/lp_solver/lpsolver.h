@@ -31,8 +31,23 @@
   * @namespace module_lp_solver
   * @brief A solver module based on linear programming algorithm.
   *
-  * @todo missing doc of the LP solver
+  * This module uses a linear programming representation to solve simple 
+  * material allocation problems: Given a limited supply of components
+  * it establishes the most profitable mix of end items that can be 
+  * assembled from the components.
   *
+  * The representation doesn't account for a lot of the details. In its 
+  * current form the solver accounts only for the simplest of cases. 
+  * Additional development work can enhance the solver.
+  * A short list of the restrictions:
+  *  - no intermediate materials and their WIP or inventory
+  *  - no leadtimes taken into account
+  *  - no support for alternate and routing operations
+  *  - no capacity constraints
+  *  - demand can only be planned short, not late
+  *
+  * The module uses the "Gnu Linear Programming Kit" library (aka GLPK) to
+  * solve the LP model.
   */
   
 #include "frepple.h"
@@ -46,16 +61,24 @@ namespace module_lp_solver
 {
 
 /** This class is a prototype of an Linear Programming (LP) Solver for the
-  * planning problem or a subset of it. It is based on the GLPK (Gnu
-  * Linear Programming Kit) library.
-  * The class provides only a prototype framework, and it is definately not
+  * planning problem or a subset of it. 
+  * The class provides only a concept / prototype, and it is definately not
   * ready for full use in a production environment. It misses too much
-  * functionality for this purpose (e.g. no on-hand netting, doesn't plan
-  * demand late, single level supply chain, no lead times, etc).
-  * Nevertheless, the current code is currently geared towards simple
-  * alLocation Problems but could be extended relatively easy to solve
-  * other subProblems. See the documentation for further details on the LP
-  * formulation, potential uses, limitations, etc...
+  * functionality for this purpose.
+  *
+  * The XML schema extension enabled by this module is:
+  * <PRE>
+  * <xsd:complexType name="SOLVER_LP">
+  *   <xsd:complexContent>
+  *     <xsd:extension base="SOLVER">
+  *       <xsd:choice minOccurs="0" maxOccurs="unbounded">
+  *         <xsd:element name="VERBOSE" type="xsd:boolean" />
+  *         <xsd:element name="CALENDAR" type="CALENDAR" />
+  *       </xsd:choice>
+  *     </xsd:extension>
+  *   </xsd:complexContent>
+  * </xsd:complexType>
+  * </PRE>
   */
 class LPSolver : public Solver
 {

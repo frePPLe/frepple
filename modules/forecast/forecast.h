@@ -39,6 +39,37 @@
   *    All sub-demands of a forecast demand have the same item.
   *    The due date is aligned on the buckets of the forecast calendar.
   *  - The forecast nets the actual demands. As actual orders are  
+  *
+  * The XML schema extension enabled by this module is:
+  * <PRE>
+  * <xsd:complexType name="DEMAND_FORECAST">
+  *   <xsd:complexContent>
+  *     <xsd:extension base="DEMAND">
+  *       <xsd:choice minOccurs="0" maxOccurs="unbounded">
+  *         <xsd:element name="CALENDAR" type="CALENDAR" />
+  *         <xsd:element name="BUCKETS">
+  *           <xsd:complexType>
+  *             <xsd:choice minOccurs="0" maxOccurs="unbounded">
+  *               <xsd:element name="BUCKET">
+  *                 <xsd:complexType>
+  *                   <xsd:all>
+  *                     <xsd:element name="QUANTITY" type="positiveFloat"
+  *                       minOccurs="0" />
+  *                     <xsd:element name="DUE" type="xsd:dateTime"
+  *                       minOccurs="0"/>
+  *                   </xsd:all>
+  *                   <xsd:attribute name="QUANTITY" type="positiveFloat" />
+  *                   <xsd:attribute name="DUE" type="xsd:dateTime" />
+  *                 </xsd:complexType>
+  *               </xsd:element>
+  *             </xsd:choice>
+  *           </xsd:complexType>
+  *         </xsd:element>
+  *       </xsd:choice>
+  *     </xsd:extension>
+  *   </xsd:complexContent>
+  * </xsd:complexType>
+  * </PRE>
   */
 
 #ifndef FORECAST_H

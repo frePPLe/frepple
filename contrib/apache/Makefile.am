@@ -2,8 +2,8 @@
 # Process this file with automake to produce Makefile.in
 #
 
-APACHECTL = ~/httpd/bin/apachectl
-APXS = ~/httpd/bin/apxs
+APACHECTL = apachectl
+APXS = apxs
 PWD = `pwd`
 
 EXTRA_DIST = htdocs mod_frepple.cpp frepple.conf README.txt inventory.cpp mod_frepple.h frepple.key frepple.crt createmodel.pl
@@ -16,6 +16,7 @@ stop:
 	${APACHECTL} -k stop -f ${PWD}/frepple.conf
 
 # Build the frepple apache module
+# @todo make the build process cleaner...
 build: mod_frepple.cpp inventory.cpp  mod_frepple.h
 	g++ -c -fPIC -DHAVE_CONFIG_H -I../.. -I`$(APXS) -q INCLUDEDIR` -I../../include inventory.cpp
 	g++ -c -fPIC -DHAVE_CONFIG_H -I../.. -I`$(APXS) -q INCLUDEDIR` -I../../include mod_frepple.cpp
@@ -30,6 +31,10 @@ build: mod_frepple.cpp inventory.cpp  mod_frepple.h
 start:
 	${APACHECTL} -k start -f ${PWD}/frepple.conf
 
+# Start the apache server with SSL support enabled
+start_ssl:
+	${APACHECTL} -k start -f ${PWD}/frepple.conf -DSSL
+
 # These are the commands I used to compile my own Apache server.
 # The Apache server coming with my linux distribution didn't have a good MPM.
 # The commands below are an example only... (Note that I enabled SSL support 
@@ -37,7 +42,7 @@ start:
 # libraries installed)
 build_apache:
 	cd ~/workspace/httpd-2.2.*
-	configure -with-mpm=worker --prefix=/home/johan/httpd --enable-deflate --disable-include --disable-env --enable-headers --disable-cgi --disable-cgid --enable-so --enable-ssl
+	configure -with-mpm=worker --prefix=/home/frepple/httpd --enable-deflate --disable-include --disable-env --enable-headers --disable-cgi --disable-cgid --enable-so --enable-ssl
 	make
 	make install
 

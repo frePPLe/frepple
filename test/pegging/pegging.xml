@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<NAME>Material constraint test model</NAME>
-	<DESCRIPTION>
-		This model test the buffer solver code in situations where the minimum onhand
-		limit is varying.
-		- 1: Scenario of a constant, non-zero limit.
-		- 2: Same as 1, but now the supply is limited. The inventory target can't be
-		     reached and all supply is used to satisfy demand.
-		- 3: Same as 1, but with minimum target varying DEcreasing over time.
-		- 4: Same as 3, but with minimum target varying INcreasing over time.
-	</DESCRIPTION>
+	<NAME>Verify the pegging</NAME>
 	<CURRENT>2006-01-01T00:00:00</CURRENT>
 	<COMMANDS>
 	  <VERBOSE>false</VERBOSE>
 	  <COMMAND xsi:type="COMMAND_SOLVE">
 	    <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
 	  </COMMAND>
-	  <COMMAND xsi:type="COMMAND_SAVEPLAN">
-	    <FILENAME>output.1s.xml</FILENAME>
+	  <!-- 
+	     Note that it is NOT common to save the complete plan with all pegging detail.
+	     The output file gets very big and full of redundant data.
+	     Pegging info is normally extracted for a small subset of data.
+	  --> 
+	  <COMMAND xsi:type="COMMAND_SAVE">
+	    <FILENAME>output.1.xml</FILENAME>
+	    <CONTENT>PLANDETAIL</CONTENT>
 	  </COMMAND>
 	</COMMANDS>
 	<ITEMS>

@@ -108,7 +108,6 @@ const XMLtag Tags::tag_value ("VALUE");
 const XMLtag Tags::tag_mode ("MODE");
 const XMLtag Tags::tag_fence ("FENCE");
 const XMLtag Tags::tag_detectproblems ("DETECTPROBLEMS");
-const XMLtag Tags::tag_bucket_profile ("BUCKET_PROFILE");
 const XMLtag Tags::tag_maximum ("MAXIMUM");
 const XMLtag Tags::tag_minimum ("MINIMUM");
 const XMLtag Tags::tag_solver ("SOLVER");
@@ -131,5 +130,6 @@ const XMLtag Tags::tag_headerstart("HEADERSTART");
 const XMLtag Tags::tag_headeratts("HEADERATTS");
 const XMLtag Tags::tag_content("CONTENT");
 const XMLtag Tags::tag_url("URL");
+const XMLtag Tags::tag_pegging("PEGGING");
 
 }

@@ -500,6 +500,15 @@ void OperationPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
   if (lpst) o->writeElement(Tags::tag_lpst, lpst);
   o->writeElement(Tags::tag_owner, owner);
 
+  // Write out the flowplans and their pegging
+  if (o->getContentType() == XMLOutput::PLANDETAIL)
+  {
+    o->BeginObject(Tags::tag_flow_plans);      
+    for (FlowPlanIterator qq = beginFlowPlans(); qq != endFlowPlans(); ++qq)
+      qq->writeElement(o, Tags::tag_flow_plan);      
+    o->EndObject(Tags::tag_flow_plans);
+  }
+
   o->EndObject(tag);
 }
 
@@ -510,6 +519,8 @@ void OperationPlan::beginElement (XMLInput& pIn, XMLElement& pElement)
     pIn.readto( Demand::reader(Demand::metadata,pIn) );
   else if (pElement.isA(Tags::tag_owner))
     pIn.readto(createOperationPlan(metadata,pIn));
+  else if (pElement.isA(Tags::tag_flow_plans))
+    pIn.IgnoreElement();
 }
 
 

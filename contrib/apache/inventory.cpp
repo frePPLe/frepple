@@ -131,7 +131,7 @@ int getInventoryData(request_rec *r)
 
   // Send the response
   XMLOutputString o;
-  o.setContentType(XMLOutput::PLAN);
+  o.setContentType(XMLOutput::PLANDETAIL);
   o.writeHeader(Tags::tag_plan);
   o.BeginObject(Tags::tag_buffers);
 

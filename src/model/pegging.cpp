@@ -33,19 +33,22 @@ namespace frepple
 
 
 void PeggingIterator::updateStack
-  (short l, double q, double f, const FlowPlan* fl)
+  (short l, double q, double f, const FlowPlan* fl, bool p)
 {
   if (first)
   {
+    // We can update the current top element of the stack
     state& t = stack.top();
     t.fl = fl;
     t.qty = q;
     t.factor = f;
     t.level = l;
+    t.pegged = p;
     first = false; 
   }
   else
-    stack.push(state(l, q, f, fl));
+    // We need to create a new element on the stack
+    stack.push(state(l, q, f, fl, p));
 }
 
 
@@ -54,14 +57,16 @@ PeggingIterator& PeggingIterator::operator++()
   // Validate
   if (stack.empty()) 
     throw LogicException("Incrementing the iterator beyond it's end");
+  state& st = stack.top();
+  if (st.level > 0) 
+    throw LogicException("Don't yoyo a pegging iterator");
 
   first = true;  // The next element can overwrite the existing stack top
-  state& st = stack.top();
-  short nextlevel = st.level + 1;
+  short nextlevel = st.level - 1;
   const FlowPlan *curflowplan = st.fl;
   double curfactor = st.factor;
   double curqty = st.qty;
-  if (stack.top().level < 0) 
+  if (!stack.top().pegged) 
   {
     // Handle unpegged material entries on the stack
     stack.pop();
@@ -127,7 +132,7 @@ PeggingIterator& PeggingIterator::operator++()
    if (peggedQty < endQty - startQty)
      // Unpegged material (i.e. material that is produced but never consumed) 
      // is handled with a special entry on the stack.
-     updateStack(-nextlevel, curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), st.factor, curflowplan);
+     updateStack(nextlevel, curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), st.factor, curflowplan, false);
   }
   else if (st.fl->getQuantity() < -ROUNDING_ERROR)
   {
@@ -153,14 +158,16 @@ PeggingIterator& PeggingIterator::operator--()
   // Validate
   if (stack.empty()) 
     throw LogicException("Incrementing the iterator beyond it's end");
+  state& st = stack.top();
+  if (st.level < 0) 
+    throw LogicException("Dont yoyo a pegging iterator");
 
   first = true;  // The next element can overwrite the existing stack top
-  state& st = stack.top();
   short nextlevel = st.level + 1;
   const FlowPlan *curflowplan = st.fl;
   double curfactor = st.factor;
   double curqty = st.qty;
-  if (st.level < 0) 
+  if (!st.pegged) 
   {
     // Handle unconsumed material entries on the stack
     stack.pop();
@@ -226,7 +233,7 @@ PeggingIterator& PeggingIterator::operator--()
     if (peggedQty < endQty - startQty)
       // Unproduced material (i.e. material that is consumed but never 
       // produced) is handled with a special entry on the stack.
-      updateStack(-nextlevel, curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), st.factor, curflowplan);
+      updateStack(nextlevel, curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), st.factor, curflowplan, false);
   }
   else if (curflowplan->getQuantity() > ROUNDING_ERROR)
   {

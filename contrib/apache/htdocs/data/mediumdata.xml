@@ -6,7 +6,7 @@
     <ABORTONERROR>false</ABORTONERROR>
     <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
     <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="$FREPPLE_HOME/../contrib/apache/createmodel.pl 1000 5 10 $FREPPLE_HOME/../contrib/apache/input.xml"/>
-    <COMMAND xsi:type="COMMAND_READXML" FILENAME="/home/johan/workspace/frepple/contrib/apache/input.xml"/>    
+    <COMMAND xsi:type="COMMAND_READXML" FILENAME="/home/frepple/workspace/frepple/contrib/apache/input.xml"/>    
     <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
         <![CDATA[

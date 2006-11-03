@@ -146,7 +146,8 @@ void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
     o->writeElement(Tags::tag_size_multiple, size_multiple);
   
   // Write extra plan information
-  if (o->getContentType() == XMLOutput::PLAN  && opplan)
+  if ((o->getContentType() == XMLOutput::PLAN 
+       || o->getContentType() == XMLOutput::PLANDETAIL) && opplan)
   {
     o->BeginObject(Tags::tag_operation_plans);
     for(OperationPlan *i = opplan; i; i = i->next)

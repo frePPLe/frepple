@@ -79,4 +79,54 @@ bool FlowPlan::check()
 }
 
 
+// Remember that this method only superficially looks like a normal 
+// writeElement() method.
+void FlowPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+{
+  o->BeginObject(tag);
+  o->writeElement(Tags::tag_date, getDate()); 
+  o->writeElement(Tags::tag_quantity, getQuantity());
+  o->writeElement(Tags::tag_onhand, getOnhand());
+  o->writeElement(Tags::tag_minimum, getMin());
+  o->writeElement(Tags::tag_maximum, getMax());
+  if (!dynamic_cast<OperationPlan*>(o->getCurrentObject()))
+    o->writeElement(Tags::tag_operation_plan, getOperationPlan());
+
+  // Write the upstream pegging
+  PeggingIterator k(this);
+  if (k) --k;
+  for (; k; --k)
+  {
+    o->BeginObject(Tags::tag_pegging, Tags::tag_level, k.getLevel());
+    o->writeElement(Tags::tag_quantity, k.getQuantity());
+    o->writeElement(Tags::tag_usage, k.getFactor());
+    if (!k.getPegged()) o->writeElement(Tags::tag_id, "unpegged");
+    o->writeElement(Tags::tag_date, k->getDate());
+    o->writeElement(Tags::tag_buffer, Tags::tag_name, k->getFlow()->getBuffer()->getName());
+    o->writeElement(Tags::tag_operation_plan, 
+      Tags::tag_id, k->getOperationPlan()->getIdentifier(),
+      Tags::tag_operation, k->getFlow()->getOperation()->getName());
+    o->EndObject(Tags::tag_pegging);
+  }
+
+  // Write the downstream pegging
+  k = this;
+  if (k) ++k;
+  for (; k; ++k)
+  {
+    o->BeginObject(Tags::tag_pegging, Tags::tag_level, k.getLevel());
+    o->writeElement(Tags::tag_quantity, k.getQuantity());
+    o->writeElement(Tags::tag_usage, k.getFactor());
+    if (!k.getPegged()) o->writeElement(Tags::tag_id, "unpegged");
+    o->writeElement(Tags::tag_date, k->getDate());
+    o->writeElement(Tags::tag_buffer, Tags::tag_name, k->getFlow()->getBuffer()->getName());
+    o->writeElement(Tags::tag_operation_plan, 
+      Tags::tag_id, k->getOperationPlan()->getIdentifier(),
+      Tags::tag_operation, k->getFlow()->getOperation()->getName());
+    o->EndObject(Tags::tag_pegging);
+  }
+
+  o->EndObject(tag);  
+}
+
 }

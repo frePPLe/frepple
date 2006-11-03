@@ -63,12 +63,12 @@
         <xsd:element name="LOCATIONS" type="LOCATIONLIST" minOccurs="0" />
         <xsd:element name="CUSTOMERS" type="CUSTOMERLIST" minOccurs="0" />
         <xsd:element name="ITEMS" type="ITEMLIST" minOccurs="0" />
-        <xsd:element name="DEMANDS" type="DEMANDLIST" minOccurs="0" />
         <xsd:element name="BUFFERS" type="BUFFERLIST" minOccurs="0" />
         <xsd:element name="FLOWS" type="FLOWLIST" minOccurs="0" />
         <xsd:element name="OPERATIONS" type="OPERATIONLIST" minOccurs="0" />
         <xsd:element name="RESOURCES" type="RESOURCELIST" minOccurs="0" />
         <xsd:element name="LOADS" type="LOADLIST" minOccurs="0" />
+        <xsd:element name="DEMANDS" type="DEMANDLIST" minOccurs="0" />
         <xsd:element name="OPERATION_PLANS" type="OPERATIONPLANLIST" minOccurs="0" />
       </xsd:sequence>
     </xsd:complexType>

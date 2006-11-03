@@ -36,14 +36,6 @@
   * @brief Core namespace
   */
 
-// Visual C++ gives annoying warnings while compiling frepple:
-//  4800 "'int': forcing value to bool 'true' or 'false' (performance warning)"
-// The root cause is the method "typeinfo::operator==(const typeinfo&)" which
-// returns an INT rather than the expected BOOL. Myabe Bill can explain why...
-#ifdef _MSC_VER
-#pragma warning( disable : 4800 )
-#endif
-
 #include "frepple/utils.h"
 #include "frepple/timeline.h"
 
@@ -2424,8 +2416,16 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     /** Returns the operationplan owning this flowplan. */
     OperationPlan* getOperationPlan() const {return oper;}
 
+    /** Destructor. */
     virtual ~FlowPlan()
       {fl->getBuffer()->setChanged(); fl->getBuffer()->flowplans.erase(this);}
+
+    /** Writing the element. 
+      * This method has the same prototype as a usual instance of the Object
+      * class, but this is only superficial: FlowPlan isn't a subclass of 
+      * Object at all.
+      */
+    void writeElement(XMLOutput*, const XMLtag&, mode =DEFAULT) const;
 
     /** Updates the quantity of the flowplan by changing the quantity of the
       * operationplan owning this flowplan.
@@ -2436,9 +2436,9 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     {oper->setQuantity(qty / fl->getQuantity(), b);}
 
     /** Returns the date of the flowplan. */
-	const Date& getDate() const {return fl->getFlowplanDate(oper);}
+  	const Date& getDate() const {return fl->getFlowplanDate(oper);}
 
-	void update();
+	  void update();
 
     /** Returns whether the flowplan needs to be serialized. This is
       * determined by looking at whether the flow is hidden or not. */
@@ -3851,6 +3851,7 @@ class ProblemMaterialExcess : public Problem
 class CommandCreateOperationPlan : public Command
 {
   public:
+    /** Constructor. */
     CommandCreateOperationPlan
       (Operation* o, float q, Date d1, Date d2, Demand* l,
       OperationPlan* ow=NULL, bool makeflowsloads=true)
@@ -4069,6 +4070,11 @@ class PeggingIterator
       * original flowplan. */
     double getFactor() const {return stack.top().factor;}
 
+    /** Returns false if the flowplan remained unpegged, i.e. it wasn't 
+      * -either completely or paritally- unconsumed at the next level.
+      */
+    bool getPegged() const {return stack.top().pegged;}
+
     /** Move the iterator foward to the next downstream flowplan. */
     PeggingIterator& operator++();
 
@@ -4106,14 +4112,27 @@ class PeggingIterator
       * iteration. */
     struct state
     {
+      /** Stores the quantity of this flowplan that is involved. */
       double qty;
+      /** Stores what portion of the flowplan is involved with the root flowplan
+        * where the recursion started. 
+        */
       double factor;
+      /** Keeps track of the number of levels we're removed from the root 
+        * flowplan where the recursion started. 
+        */
       short level;
+      /** The current flowplan. */
       const FlowPlan* fl;
-      state(unsigned int l, double d, double f, const FlowPlan* ff)
-        : qty(d), factor(f), level(l), fl(ff) {};
+      /** Set to false when unpegged quantities are involved. */
+      bool pegged;
+      /** Constructor. */
+      state(unsigned int l, double d, double f, const FlowPlan* ff, bool p = true)
+        : qty(d), factor(f), level(l), fl(ff), pegged(p) {};
+      /** Inequality operator. */
       bool operator != (const state& s) const
         {return fl!=s.fl || level!=s.level;}
+      /** Equality operator. */
       bool operator == (const state& s) const
         {return fl==s.fl && level==s.level;}
     };
@@ -4122,7 +4141,7 @@ class PeggingIterator
     stack < state > stack;
 
     /** Update the stack. */
-    void updateStack(short, double, double, const FlowPlan*);
+    void updateStack(short, double, double, const FlowPlan*, bool = true);
 
     /** In case there are multiple paths, we can either:
       *  - follow one path complete to its end and then follow the others.
@@ -4130,7 +4149,7 @@ class PeggingIterator
       *  - iterate through each alternative and only then follow each path
       *    further. This is called "width-first". It is a slightly less
       *    efficient way to navigate the pegging structures.
-      * The second method is currently NOT implemented yet!
+      * @todo The second method is currently NOT implemented yet!
       */
     bool depth_then_width;
 

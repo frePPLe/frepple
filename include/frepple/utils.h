@@ -104,7 +104,7 @@ using namespace std;
 #endif
 
 /** This constant defines what can still be considered as a rounding error. */
-#define ROUNDING_ERROR   0.00001f
+#define ROUNDING_ERROR   0.0001f
 
 // Header files for the Xerces-c XML parser.
 #define XERCES_NEW_IOSTREAMS
@@ -2017,14 +2017,14 @@ class XMLElement
       * of appropriately unescaping special character sequences. */
     const string& getString() const {return m_strData;}
 
-    /** Interprets the element as a boolean value.
-      * Our implementation is a bit more generous and forgiving than the
+    /** Interprets the element as a boolean value.<br>
+      * <p>Our implementation is a bit more generous and forgiving than the
       * boolean datatype that is part of the XML schema v2 standard.
-      * The standard expects the following literals:
-      *   {true, false, 1, 0}
-      * Our implementation uses only the first charater of the text, and is
-      * case insensitive. It thus matches a wider range of values:
-      *   {t.*, T.*, f.*, F.*, 1.*, 0.*}
+      * The standard expects the following literals:<br>
+      *   {true, false, 1, 0}</p>
+      * <p>Our implementation uses only the first charater of the text, and is
+      * case insensitive. It thus matches a wider range of values:<br>
+      *   {t.*, T.*, f.*, F.*, 1.*, 0.*}</p>
       */
     bool getBool() const;
 };
@@ -2069,8 +2069,7 @@ class Object
     /** Called while restoring the model from an XML-file.
       * This is called for each element within the "this" element,
       * for which the "this" element is immediate parent.
-      * It is called when the open element tag is encountered,
-      * and only the Name() and Attrib() of pElement values are valid.
+      * It is called when the open element tag is encountered.
       */
     virtual void beginElement(XMLInput& pIn, XMLElement& pEl) {}
 

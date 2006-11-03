@@ -204,22 +204,13 @@ void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
 
   // Write extra plan information
   i = flowplans.begin();
-  if (o->getContentType() == XMLOutput::PLAN  && i!=flowplans.end())
+  if ((o->getContentType() == XMLOutput::PLAN 
+       || o->getContentType() == XMLOutput::PLANDETAIL) && i!=flowplans.end())
   {
     o->BeginObject(Tags::tag_flow_plans);
     for (; i!=flowplans.end(); ++i)
       if (i->getType()==1)
-      {
-        const FlowPlan *fp = dynamic_cast<const FlowPlan*>(&*i);
-        o->BeginObject(Tags::tag_flow_plan);
-        o->writeElement(Tags::tag_date, fp->getDate()); 
-        o->writeElement(Tags::tag_quantity, fp->getQuantity());
-        o->writeElement(Tags::tag_onhand, fp->getOnhand());
-        o->writeElement(Tags::tag_minimum, fp->getMin());
-        o->writeElement(Tags::tag_maximum, fp->getMax());
-        o->writeElement(Tags::tag_operation_plan, fp->getOperationPlan(), FULL);
-        o->EndObject(Tags::tag_flow_plan);
-      }
+        dynamic_cast<const FlowPlan*>(&*i)->writeElement(o, Tags::tag_flow_plan);
     o->EndObject(Tags::tag_flow_plans);
   }
 

@@ -109,7 +109,6 @@ class Tags
     static const XMLtag tag_fence;
     static const XMLtag tag_plannable;
     static const XMLtag tag_detectproblems;
-    static const XMLtag tag_bucket_profile;
     static const XMLtag tag_maximum;
     static const XMLtag tag_minimum;
     static const XMLtag tag_solver;
@@ -132,6 +131,6 @@ class Tags
     static const XMLtag tag_headeratts;
     static const XMLtag tag_content;
     static const XMLtag tag_url;
-
+    static const XMLtag tag_pegging;
 };
 

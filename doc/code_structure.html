@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Code structure</title>
+<meta http-equiv="Content-Type" content="text/html">
+<link href="styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1>Code structure</h1>
+<p>This page describes a high level description of the code structure.<br>
+It provides a quick reference that helps a developer find his/her way in the
+detailed <a href="reference/index.html">API reference</a>.</p>
+
+<p>Three layers can be distinguished among the class:</p>
+<ul>
+<li><a href="#utility">Utility classes</a> which provide infrastructure-like
+services as a foundation for the next layers.
+<ul>
+<li><a href="#object">Object</a> as an abstract base class for all Frepple
+objects.</li>
+<li><a href="#metadata">Metadata</a> about objects.</li>
+<li><a href="#date">Date, DateRange and TimePeriod</a>for working with dates
+and times.</li>
+<li><a href="#timer">Timer</a> for measuring execution time.</li>
+<li><a href="#xml">XML serialization</a> for reading and writing XML data.</li>
+
+<li><a href="#command">Command</a> for executing state changes.</li>
+<li><a href="#exception">Exception classes</a> for reporting error
+conditions.</li>
+<li><a href="#mutex">Mutex and LockManager</a> provide support for concurrent
+access to memory objects in a multihtreaded environment.</li>
+<li><a href="#name">HasName and Tree</a> for representing entities with a name
+and storing them in a binary tree container.</li>
+<li><a href="#hierarchy">HasHierarchy</a> allows objects be structured in
+a hierarchical tree, ie to refer to a parent and have children.</li>
+</ul>
+</li>
+<li><a href="#model">Model classes</a> which represent the core modeling
+objects. See the <a target="main" href="modeling_concepts.html">modeling
+concepts</a> documentation for a functional description of these.</li>
+
+<li><a href="#extension">Extension classes</a> which inherit from the core
+model classes and implement specific new models or solver techniques.</li>
+</ul>
+<h2><a name="utility" id="utility">Utility classes</a></h2>
+A number of utility classes are supporting the modeling framework with common,
+'infrastructure' functionality.
+
+<h3><a name="object" id="object">Object</a></h3>
+Object is an abstract base class.<br> It handles to following capabilities:
+<ul>
+<li>Metadata: All subclasses publish metadata about their structure and
+the memory they consume.</li>
+<li>Concurrency: Locking of objects is required in multithreaded environments.
+The implementation of the locking mechanism is delegated to the LockManager class,
+and this class provides only a pointer to a lock object and convenience guard
+classes.</li>
+<li>Callbacks: When objects are created, changing or deleted, interested classes
+or objects can get a callback notification.</li>
+<li>Serialization: Objects need to be persisted and later restored.<br>
+Subclasses that don't need to be persisted can skip the implementation of the
+writeElement method.</li>
+</ul>
+
+<h3><a name="metadata" id="metadata">MetaData</a></h3>
+<p>Frepple uses a two level structure to group metadata:</p>
+<ul>
+<li>A <b>MetaCategory</b> represents an entity type. The metacategory will
+implement a container for all instances of this type, and also a handler
+method to control persistence of the objects.<br>
+E.g. "Buffer"</li>
+<li>A <b>MetaClass</b> represents a concrete class. It belongs to a certain
+MetaCategory, and contains a factory method to generate objects.<br>
+E.g. "BufferDefault", "BufferMinMax", "BufferInfinite"... </li>
+<li><b>MetaData</b> is the abstract base class for the concrete class MetaClass
+and MetaCategory.</li>
+</ul>
+<p>After creating an MetaClass or MetaData object it needs to be registered,
+typically in the initialization of the library.</p>
+
+<h3><a name="date" id="date">Date - DateRange - TimePeriod</a></h3>
+<p>These classes allow easy and intuitive manipulation of dates, durations and
+date ranges.<br>
+The classes are implemented as a thin wrapper around the standard ansi C time
+functions and provides time accuracy of 1 second.<br>
+An example:</p>
+<pre>
+  Date start = Date::now();
+  TimePeriod duration("24:00:00");
+  Date end = d + t;
+  DateRange dr(start, end);
+  cout &lt;&lt; d &lt;&lt; "  " &lt;&lt; t &lt;&lt; "  " &lt;&lt; dr &lt;&lt; endl;
+</pre>
+
+<h3><a name="timer" id="timer">Timer</a></h3>
+<p>This is a class to measure the excution time of the application with (at
+least) millisecond precision.<br>
+An example:</p>
+<pre>
+  Timer t;
+  do_something();
+  cout &lt;&lt; "something took " &lt;&lt; t &lt;&lt; " seconds" &lt;&lt; endl;
+  t.restart();
+  do_antotherthing();
+  cout &lt;&lt; "antotherthing took " &lt;&lt; t &lt;&lt; " seconds" &lt;&lt; endl;
+</pre>
+
+<h3><a name="exception" id="exception">Exception</a></h3>
+<p>Frepple uses 3 exception classes to report errors. Each of the classes
+inherits from std::exception.</p>
+<ul>
+<li>A <b>DataException</b> is thrown when data errors are found.<br>
+The expected handling of this error is to catch the exception and allow the
+execution of the program to continue.</li>
+<li>A <b>RuntimeException</b> is thrown when the library runs into problems
+that are specific at runtime. These could either be memory problems, threading
+problems, file system problems, etc... Errors of this type can be caught by the
+client applications and the application can continue in most cases.</li>
+<li>A <b>LogicException</b> is thrown when the code runs into an unhandled and
+unexpected situation. The normal handling of this error is to exit the program,
+and report the problem. This exception always indicates a bug in the program
+code.</li>
+</ul>
+
+<h3><a name="command" id="command">Command</a></h3>
+<p>This class implements the design pattern with the same name. All state
+changes in the application are expected to be encapsulated in objects of this
+class.<br>
+Subclasses of this class are:</p>
+<ul>
+<li><b>CommandList</b> works as a wrapper for a collection of other commands,
+following the classic composite design patter. This allows complete command
+hierarchies to be constructed, which can be executed in sequence or in
+parallel.</li>
+<li><b>CommandLoadLibrary</b> enables Frepple to dynamically load
+extensions.</li>
+<li><b>CommandSystem</b> executes a operating system command.</li>
+<li><b>CommandReadXMLFile</b> processes a XML-file from the local file
+system.</li>
+<li><b>CommandReadXMLString</b> processes a XML-formatted string.</li>
+<li><b>CommandXMLURL</b> retrieves remote XML-data over an HTTP connection and
+processes it.</li>
+</ul>
+
+<h3><a name="mutex" id="mutex">Mutex and LockManager</a></h3>
+<p>Working with Frepple in a multithreaded environment requires special control
+over concurrent acces to the objects in memory.</p>
+<ul>
+<li><b>Mutex</b> allows exclusive access to a object.<br>
+Depending on your platform it is implement as a thin wrapper around a Windows
+critical_section or as pthread pthread_mutex_t.</li>
+<li><b>LockManager</b> controls the locks on objects.<br>
+Only an empty implementation is currently provided, but an implementation using
+a 'multiple read - single write' lock will follow.</li>
+<li>The <b>CommandList</b> (described above) has the capability to execute
+commands in parallel by spawning seperate threads.</li>
+</ul>
+
+<h3><a name="name" id="name">HasName and Tree</a></h3>
+<p>The classes represent classes which use a std::string / name as a unique
+identifier.<br>
+The Tree class is implemented as a red-black binary tree, using HasName objects
+as the nodes (i.e. intrusive container).</p>
+
+<h3><a name="hierarchy" id="hierarchy">HasHierarchy</a></h3>
+<p>The class allows allows objects be structured in  a hierarchical tree.
+A HasName object can point to a single parent and it maintains a linked list of
+children.</p>
+
+<h2><a name="abstractmodel" id="abstractmodel">Abstract Model classes</a></h2>
+A number of classes are providing some foundation functionality for the model.
+
+<h3><a name="plannable" id="plannable">Plannable - Solver</a></h3>
+
+<h3><a name="leveled" id="leveled">Leveled</a></h3>
+The model classes Operation, Buffer, Resource, Load and Flow are the key
+objects that are used to represent the network. The first three represent the
+actual entities, while Load and Flow represent associations/links between the
+entities. In such a network we can easily recognize the concepts of:
+<ul>
+<li><b>Cluster</b><br>
+Some objects are linked to each other, i.e. a path along associatons exists
+that connects boths entities. Other entities are completely independent of each
+other. Each independent set of connected entities is given a seperate
+identifying number. The cluster concept allows us to classify entities and
+enable multithreading: since the clusters are independent we can use different
+threads to solve each cluster.</li>
+<li><b>Level</b><br>
+Operations consume certain materials. These materials are built or procured by
+other operations. This creates a sense of direction in our network which is
+expressed by the level concept.</li>
+</ul>
+<h2><a name="staticmodel" id="staticmodel">Static model classes</a></h2>
+<h3><a name="operation" id="operation">Operation</a></h3>
+
+<h3><a name="buffer" id="buffer">Buffer</a></h3>
+A buffer represents a combination of a item and location. It is the entity for
+keeping modeling inventory. A synonyme is SKU or stock-keeping-unit.
+<h3><a name="resource" id="resource">Resource</a></h3>
+A resource represents a workcentre, a physical or logical representation of
+capacity.
+<h3><a name="load" id="load">Load</a></h3>
+A load links a resource to a certain operation.
+<h3><a name="flow" id="flow">Flow</a></h3>
+A flow represent the production or consumption of material from a buffer. A
+flow is attached to an operation.
+<h3><a name="item" id="item">Item</a></h3>
+An item defines the products being planned, sold, stored and/or manufactured.
+Buffers and demands have a reference an item.
+<h3><a name="location" id="location">Location</a></h3>
+
+Buffers and resources are linked to a (physical or logical) location. Locations
+are merely used for simple association, and have no active use in the model.
+<h3><a name="calendar" id="calendar">Calendar</a></h3>
+A calendar is used to represent time dependent parameters.
+<h3>Customer</h3>
+Demand is linked to a customer. This association currently has no further
+active use in the model.
+<h2><a name="dynamicmodel" id="dynamicmodel">Dynamic model classes</a></h2>
+<h3>Plan</h3>
+<h3>Demand</h3>
+A demand represents a independent demand to be planned. It can represent a
+customer order or a forecast.
+<h3>Operationplan</h3>
+Operationplans are created by the factory method createOperationPlan() on the
+matching operation class. Next in the lifecycle the createLoadAndFlowplans()
+can optionally be called to also create the loadplans and flowplans. Once
+you're sure about creating the operationplan, the initialize() method should be
+called. It will assign the operationplan a unique numeric identifier, register
+the operationplan in a global container, and also create loadplans and
+flowplans if this hasn't been done yet. Operationplans can be organized in
+hierarchical structure, mimicing the operation hierarchies they match with.
+
+<h3>Loadplan</h3>
+<h3>Flowplan</h3>
+<h3>Problem</h3>
+Problems are objects representing infeasibilities in the plan or other
+situations requiring the users' attention. The problems are created in a "lazy"
+way. This means that the problems in the plan are only detected (and
+corresponding problem objects created) when these are requested by the user.
+During normal planning activities we merely mark the planning entities that
+have changed, so we can easily pick up which entities to recompute the problems for.
+In this way we can avoid the cpu and memory overhead of keeping the problem list
+up to date at all times, while at the same moment still providing the user with
+the correct problem list when required.
+
+<h2><a name="extension" id="extension">Extension classes</a></h2>
+<p>The CommandLoadLibrary command allows Frepple to read a shared library.<br>
+After loading the shared library in memory, Frepple will search the function
+initialize() and execute. This initialization method of the library will typically
+register the metadata new classes and/or categories in the Frepple framework.</p>
+<p>Frepple currently includes two examples of such extension modules: a
+forecast class implementing a special type of demand, and an additional solver
+using a linear programming algorithm.</p>
+</body>
+</html>

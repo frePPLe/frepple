@@ -627,24 +627,33 @@ class Functor : public NonCopyable
 class MetaCategory;
 /** This class stores metadata about the classes in the library. The stored
   * information goes well beyond the standard 'type_info'.<br>
-  * The proper usage is to include the following code snippet in every 
-  * class:<br>
-  * @code
-  *    class X : public Object
-  *    {
-  *      public:
-  *        virtual const string& getType() {return metadata.type;}
-  *        static const MetaData metadata;
-  *    }
-  *    const MetaData X::metadata("Y", "X");
-  * @endcode
   * The metadata class also maintains subscriptions to certain events. 
   * Registered classes and objects will receive callbacks when objects are
   * being created, changed or deleted.<br>
-  * IMPORTANT NOTE: Beware that C++ doesn't garantuee that a static data
-  * is always created. If there is no explicit reference to it, the linker can
-  * skip it. I've adopted the practice of referencing all metadata objects 
-  * from the Library::initialize() method.<br>
+  * The proper usage is to include the following code snippet in every 
+  * class:<br>
+  * @code
+  *  In the header file:
+  *    class X : public Object
+  *    {
+  *      public:
+  *        virtual const MetaData& getType() {return metadata;}
+  *        static const MetaClass metadata;
+  *    }
+  *  In the implementation file:
+  *    const MetaClass X::metadata;
+  * @endcode
+  * Creating a MetaData object isn't sufficient. It needs to be registered, 
+  * typically in an initialization method:
+  * @code
+  *    void initialize()
+  *    {
+  *      ...
+  *      Y::metadata.registerCategory("Y","Ys", reader_method, writer_method);
+  *      X::metadata.registerClass("Y","X", factory_method);
+  *      ...
+  *    }
+  * @endcode
   */
 class MetaData : public NonCopyable
 {
@@ -2030,7 +2039,7 @@ class XMLElement
 };
 
 
-/** Object is the principal base class for the library.
+/** Object is the abstract base class for the main entities.
   * It handles to following capabilities:
   * - Metadata: All subclasses publish metadata about their structure.
   * - Concurrency: Locking of objects is required in multithreaded 
@@ -2793,7 +2802,7 @@ class CommandSystem : public Command
   *  - Linux
   *  - Unix systems supporting the dlopen function in the standard way.
   *    Some unix systems have other or deviating APIs. Actually, this is a
-  *    messy topic. :-)
+  *    messy topic. :-<
   */
 class CommandLoadLibrary : public Command
 {
@@ -2817,8 +2826,9 @@ class CommandLoadLibrary : public Command
     /** Returns the command line that will be run. */
     string getLibraryName() {return lib;}
 
-    /** Load the library.
-      * @exception RuntimeException When the library can't be loaded.
+    /** Load the library, and execute the initialize() method.
+      * @exception RuntimeException When the library can't be loaded 
+      *     or when the initialize() method doesn't exist in the library.
       */
     void execute();
 

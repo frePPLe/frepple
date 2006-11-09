@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-#  file     : $HeadURL: file:///develop/SVNrepository/frepple/trunk/test/scalability_2/runtest.pl $
+#  file     : $HeadURL$
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
 #  email    : jdetaeye@users.sourceforge.net

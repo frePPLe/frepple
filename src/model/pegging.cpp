@@ -1,5 +1,5 @@
 /***************************************************************************
-  file : $URL: file:///develop/SVNrepository/frepple/trunk/src/model/buffer.cpp $
+  file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
   email : jdetaeye@users.sourceforge.net

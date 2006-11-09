@@ -1,5 +1,5 @@
 /***************************************************************************
-  file : $URL: file:///develop/SVNrepository/frepple/trunk/include/frepple/erp.h $
+  file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
   email : jdetaeye@users.sourceforge.net

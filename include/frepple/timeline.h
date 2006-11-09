@@ -1,5 +1,5 @@
 /***************************************************************************
-  file : $HeadURL: file:///develop/SVNrepository/frepple/trunk/include/frepple/timeline.h $
+  file : $HeadURL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
   email : jdetaeye@users.sourceforge.net

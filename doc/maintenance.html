@@ -65,7 +65,7 @@ you'ld need on top of a bare minimum Linux distribution.
        Excellent version control tool.</li>
   </ul></li>
   <li>Used by some add-ons in the contrib subdirectory:<ul>
-   <li><b>Apache httpd</b>, v2.0 (not v2.1 or v2.2!)<br>
+   <li><b>Apache httpd</b>, v2.x<br>
       The best web server around.<br>
       You'll need a version with a threaded MPM. I needed to compile my own
       version to achieve this.</li>
@@ -86,7 +86,7 @@ you'ld need on top of a bare minimum Linux distribution.
       other related problems. It can be downloaded from
       <a href="http://www.gnu.org/software/glpk/glpk.html" target="_blank">
       http://www.gnu.org/software/glpk/glpk.html</a></li>
-   <li><b>NSIS</b>, any version should do<br>
+   <li><b>NSIS</b>, version greater or equal to 2.07<br>
       NSIS, which stands for "Nullsoft Scriptable Installation System", is a
       free scriptable win32 installer/uninstaller system that doesn't suck
       and isn't huge. This program can be downloaded from <a
@@ -214,7 +214,7 @@ check' in the root directory of the project.</li>
 <li>Regenerate the documentation extracted by DOxygen from the source code. This
 is done by running make in the doc subdirectory.</li>
 <li>Update the class diagram (in Microsoft Visio)</li>
-<li>Update the modeling document doc/modeling.html which act as the end user
+<li>Update the modeling documents which act as the end user
 reference for the API.</li>
 <li>Update the XML Schema definition files plan.xsd and planner.xsd.</li>
 <li>Rebuild and test the distribution. The command is 'make dist; tar xzf

@@ -86,7 +86,8 @@ PeggingIterator& PeggingIterator::operator++()
     if (f->getCumulativeConsumed() <= startQty)
     {
       // CASE 1A: Not consumed enough yet: move forward
-      while (f->getCumulativeConsumed() <= startQty) ++f;
+      while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end() 
+        && f->getCumulativeConsumed() <= startQty) ++f;
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end() 
              && ( (f->getQuantity()<=0 
                    && f->getCumulativeConsumed()+f->getQuantity() < endQty)
@@ -110,8 +111,9 @@ PeggingIterator& PeggingIterator::operator++()
     else
     {
       // CASE 1B: Consumed too much already: move backward
-      while ( (f->getQuantity()<=0 && f->getCumulativeConsumed()+f->getQuantity() < endQty)
-              || (f->getQuantity()>0 && f->getCumulativeConsumed() < endQty)) --f;
+      while ( f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end() 
+        && ((f->getQuantity()<=0 && f->getCumulativeConsumed()+f->getQuantity() < endQty)
+            || (f->getQuantity()>0 && f->getCumulativeConsumed() < endQty))) --f;
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
              && f->getCumulativeConsumed() > startQty)
       {
@@ -186,7 +188,8 @@ PeggingIterator& PeggingIterator::operator--()
     if (f->getCumulativeProduced() <= startQty)
     {
       // CASE 3A: Not produced enough yet: move forward
-      while (f->getCumulativeProduced() <= startQty) ++f;
+      while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
+        && f->getCumulativeProduced() <= startQty) ++f;
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end() 
              && ( (f->getQuantity()<=0 && f->getCumulativeProduced() < endQty)
                || (f->getQuantity()>0 
@@ -210,9 +213,10 @@ PeggingIterator& PeggingIterator::operator--()
     else
     {
       // CASE 3B: Produced too much already: move backward
-      while ( (f->getQuantity()<=0 && f->getCumulativeProduced() < endQty)
-              || (f->getQuantity()>0 
-                  && f->getCumulativeProduced()-f->getQuantity() < endQty)) --f;
+      while ( f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
+        && ((f->getQuantity()<=0 && f->getCumulativeProduced() < endQty)
+            || (f->getQuantity()>0 
+                  && f->getCumulativeProduced()-f->getQuantity() < endQty))) --f;
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
              && f->getCumulativeProduced() > startQty)
       {

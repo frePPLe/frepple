@@ -1,7 +1,7 @@
 ;
 ; Nullsoft script for creating a windows installer for Frepple
 ;
-;  file     : $HeadURL: file:///develop/SVNrepository/frepple/trunk/test/runtest.pl $
+;  file     : $HeadURL: https://svn.sourceforge.net/svnroot/frepple/trunk/contrib/installer/frepple.nsi $
 ;  revision : $LastChangedRevision$  $LastChangedBy$
 ;  date     : $LastChangedDate$
 ;  email    : jdetaeye@users.sourceforge.net
@@ -20,14 +20,19 @@
 ;
 ; You should have received a copy of the GNU Lesser General Public
 ; License along with this library; if not, write to the Free Software
-; Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA 
-;                                                                          
+; Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
+;
 
-; This installer script is building on the GNU auto-build scripts. We first 
-; create the distribution make target, and then unzip it. The windows installer 
+; This installer script is building on the GNU auto-build scripts. We first
+; create the distribution make target, and then unzip it. The windows installer
 ; then selects subdirectories of this distribution tree to be installed.
 ; To run this script successfully, you'll therefore need to have the cygwin
 ; system up and running on your machine.
+
+; Configuration section.
+; UPDATE THIS SECTION ACCORDING TO YOUR SETUP!!!
+!define XERCESPATH "c:\bin"
+!define XERCESDLL "xerces-c_2_7.dll"
 
 ; Main definitions
 !define PRODUCT_NAME "Frepple"
@@ -38,38 +43,45 @@
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
-;Include for Modern UI
+;Include for Modern UI and library installation
 !include "MUI.nsh"
+!include Library.nsh
+
+; MUI Settings
+!define MUI_ABORTWARNING
+!define MUI_WELCOMEFINISHPAGE_BITMAP "frepple.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP "frepple.bmp"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of Frepple.\n\nIt is recommended to uninstall a previous version before this installing a new one.\n\nClick Next to continue"
+!define MUI_HEADERIMAGE_BITMAP "..\..\doc\frepple.bmp"
+!define MUI_ICON "frepple.ico"
+!define MUI_UNICON "frepple.ico"
+
+; Installer pages
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "../../COPYING"
+!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
+
+; Uninstaller pages
+!insertmacro MUI_UNPAGE_WELCOME
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
 
 ; Language files
 !insertmacro MUI_LANGUAGE "English"
 
 ;Version Information
-VIProductVersion "0.1.0.0"
+VIProductVersion "0.1.3.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "0.1.3"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Frepple Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "Frepple Installer - Free Production Planning Library"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Frepple"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "Licenced under the GNU Lesser General Public License"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Install Frepple - Free Production Planning Library"
 
-; MUI Settings
-!define MUI_ABORTWARNING
-
-; Welcome page
-!insertmacro MUI_PAGE_WELCOME
-; License page
-!insertmacro MUI_PAGE_LICENSE "../../COPYING"
-; Components page
-!insertmacro MUI_PAGE_COMPONENTS
-; Directory page
-!insertmacro MUI_PAGE_DIRECTORY
-; Instfiles page
-!insertmacro MUI_PAGE_INSTFILES
-; Finish page
-!insertmacro MUI_PAGE_FINISH
-
-; Uninstaller pages
-!insertmacro MUI_UNPAGE_INSTFILES
 
 ; MUI end ------
 
@@ -77,15 +89,16 @@ Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "${PRODUCT_NAME}_${PRODUCT_VERSION}_setup.exe"
 InstallDir "$PROGRAMFILES\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
+BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 CRCcheck on
-ShowInstDetails hide
-ShowUnInstDetails hide
+ShowInstDetails show
+ShowUnInstDetails show
 
 Section -Start
   ; Create a distribution and expand it
   !cd "../.."
   !system "rm *.tar.gz"
-  !system "make all dist"
+  !system "make dist"
   !system "tar -xzf *.tar.gz"
   !cd "frepple-${PRODUCT_VERSION}"
   File "COPYING"
@@ -94,11 +107,24 @@ SectionEnd
 
 
 Section "Application" SecAppl
+	SectionIn RO     ; The app section can't be deselected
   SetOutPath "$INSTDIR\bin"
   SetOverwrite ifnewer
-  File "..\src\frepple.exe"
-  File /nonfatal "bin\*.xsd"
-  File /nonfatal "bin\*.xml"
+
+  ; Copy application, dll and libraries
+  File "..\bin\frepple_vcc.exe"
+  !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\bin\frepple_vcc.dll" "$INSTDIR\bin\frepple_vcc.dll" "$SYSDIR"
+  File "..\bin\frepple_vcc.lib"
+  File "..\bin\frepple_vcc.exp"
+
+  ; Copy configuration files
+  File "bin\*.xsd"
+  File "bin\*.xml"
+
+  ; Add Xerces library
+  !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "${XERCESPATH}\${XERCESDLL}" "$INSTDIR\bin\${XERCESDLL}" "$SYSDIR"
+
+  ; Create menu
   CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
   CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple.lnk" "$INSTDIR\bin\frepple.exe"
 
@@ -125,13 +151,10 @@ SectionEnd
 
 SubSection /E "Development" SecDev
 
-Section /O "Header files and libraries" SecLib
+Section /O "Header files" SecLib
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   File /r "include"
-  SetOutPath "$INSTDIR\bin"
-  File "..\src\.libs\libfrepple.a"
-  File "..\src\libfrepple.la"
 SectionEnd
 
 Section /O "Source code" SecSrc
@@ -139,12 +162,17 @@ Section /O "Source code" SecSrc
   File /r "src"
 SectionEnd
 
-Section /O "Add-ons" SecContrib
+SubSectionEnd
+
+
+Section "Add-ons" SecContrib
   SetOutPath "$INSTDIR"
   File /r "contrib"
-SectionEnd
 
-SubSectionEnd
+	; A link to the excel sheet
+  CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
+  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple on Excel.lnk" "$INSTDIR\contrib\excel\frepple.xls"
+SectionEnd
 
 
 Section -AdditionalIcons
@@ -161,7 +189,7 @@ Section -Post
   !system "rm -rf frepple-*"
   ; Create uninstaller
   WriteUninstaller "$INSTDIR\uninst.exe"
-  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\bin\frepple.exe"
+  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\bin\frepple_vcc.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\bin\frepple.exe"
@@ -201,6 +229,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple documentation.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple web site.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple.lnk"
+  Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple on Excel.lnk"
 
   ; Remove the folder in start menu
   RMDir "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"

@@ -1,8 +1,20 @@
 
 This is a script for creating a windows installer.
-You need the NSIS (Nullsoft Scriptable Install System) and cygwin installed on 
-your computer in order to rebuild the installer executable.
-Further details on http://nsis.sourceforge.net/
+To run the installer, the following steps are required:
+
+1) Install NSIS v2.7 or higher (Nullsoft Scriptable Install System)
+   This is a free package to create installers.
+   Further details on http://nsis.sourceforge.net/
+
+2) Cygwin environment.
+   This is because the creation of the installer starts by making the same
+   distribution tar-ball as for *nix environments.
+
+3) Microsoft C++ compiler
+   We distribute the executables created by the microsoft compilers.
+
+4) Before building the installer script you'll need to update the frepple.nsi
+   script to point to the directory where the xerces-c dll is stored.
 
 IMPORTANT NOTE:
 The windows installer is not the preferred way of distributing Frepple. It

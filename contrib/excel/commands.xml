@@ -2,8 +2,8 @@
   <LOGFILE>frepple.log</LOGFILE>
   <COMMANDS>
     <VERBOSE>true</VERBOSE>
-    <!-- 
-      Update this section when you define new input mappings. 
+    <!--
+      Update this section when you define new input mappings.
       Every input mapping should have an appropriate command to read the file
       with the same name.
     -->
@@ -15,16 +15,19 @@
       <SOLVER NAME="MRP" xsi:type="SOLVER_MRP"
         CONSTRAINTS="7" VERBOSE="true"/>
     </COMMAND>
-    <!-- 
-      Update this section when you define new output mappings. 
+    <!--
+      Update this section when you define new output mappings.
       Every output mapping should have an appropriate command to save the file
       with the same name.
     -->
     <COMMAND xsi:type="COMMAND_SAVE"
-      FILENAME="output.xml"
+      FILENAME="output_with_pegging.xml"
       CONTENT="PLANDETAIL" />
-    <!-- 
-      Prints some information about the memory consumption into the logfile. 
+    <COMMAND xsi:type="COMMAND_SAVE"
+      FILENAME="output.xml"
+      CONTENT="PLAN" />
+    <!--
+      Prints some information about the memory consumption into the logfile.
     -->
     <COMMAND xsi:type="COMMAND_SIZE"/>
   </COMMANDS>

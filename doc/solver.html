@@ -13,7 +13,16 @@
    p.l4 { margin-left: 100.0pt; font-style:italic; }
    p.l5 { margin-left: 125.0pt; font-style:italic; }
    p.l6 { margin-left: 150.0pt; font-style:italic; }
-</STYLE>
+   p.l7 { margin-left: 175.0pt; font-style:italic; }
+   li.l0 { }
+   li.l1 { margin-left: 25.0pt; }
+   li.l2 { margin-left: 50.0pt; }
+   li.l3 { margin-left: 75.0pt; }
+   li.l4 { margin-left: 100.0pt; }
+   li.l5 { margin-left: 125.0pt; }
+   li.l6 { margin-left: 150.0pt; }
+   li.l6 { margin-left: 175.0pt; }
+</style>
 
 </head>
 
@@ -22,14 +31,16 @@
 <a name="top"></a>Frepple solver algorithm
 </font></u></i></b></p>
 
-<p>I'll start by disappointing you. Don't expect fancy operations research
-optimization discussions here. The algorithm is pretty basic and down to
-earth, pretty much an enhanced MRP tool if you like.</p>
+<p>I'll start by disappointing you.<br>
+Don't expect fancy operations research optimization discussions here.
+The algorithm is pretty basic and down to earth, pretty much an enhanced MRP
+tool if you like.</p>
 
 <p>Simple things first, isn't it? And the simplicity of the algorithm has the
 benefits that<br>
 - it is easy to understand by users as well as programmers<br>
-- easy to extend because of its modular sturcture<br>
+- easy to extend because of its modular structure<br>
+- scalability to large problem sizes<br>
 - and finally and above all, it results in a plan of decent quality for a wide
 range of problems.</p>
 
@@ -37,12 +48,14 @@ range of problems.</p>
 contructs used.</p>
 <ul>
 <li><a href="#overview">Overview</a></li>
-<li><a href="#cluster">Clusters and levels algorithm</a></li>
 <li><a href="#plan">Plan solver</a></li>
 <li><a href="#demand">Demand solver</a></li>
 <li><a href="#buffer">Buffer solver</a></li>
 <li><a href="#operation">Operation solver</a></li>
+<li><a href="#flow">Flow solver</a></li>
+<li><a href="#load">Load solver</a></li>
 <li><a href="#resource">Resource solver</a></li>
+<li><a href="#cluster">Clusters and levels algorithm</a></li>
 </ul>
 
 <hr> <p align="right"><a name="overview" href="#top">top</a></p>
@@ -51,42 +64,267 @@ contructs used.</p>
 The algorithm can create different types of plans. With the following three
 flags, a total of 8 combinations are possible:
 <ul>
-<li>Material constrained or not<br>Supply of raw material can be treated as
+<li>Material constrained or not:<br>Supply of raw material can be treated as
 finite or infinite.</li>
-<li>Capacity constrained or not<br>Production capacity can be treated as finite
+<li>Capacity constrained or not:<br>Production capacity can be treated as finite
 or infinite.</li>
-<li>Leadtime constrained or not<br>Allow or disallow plans to be created in the
+<li>Leadtime constrained or not:<br>Allow or disallow plans to be created in the
 past.</li>
 </ul>
 
 <p>The algorithm solves demand per demand. The demand is thus
 sorted in descending order of priority, and next these demands are planned one
-after the other. When planning a single demand, the algorithm basically
-consists of a set of recursively called functions. These function work in a
-very intuitive ask-reply pattern, as illustrated in the example below. In the
-next sections each of the different ask-reply functions will then be discussed
-in further detail.
+after the other.</p>
 
-
-<ul><li>Every demand has a certain delivery operation associated with it
-(either directly or indiretly by specifying a delivery operation for the
-requested item). We <b>ask</b> this <b>operation</b> for the requested quantity
-on the requested date.<br>
-@todo incomplete documentation
-</li>
-
-<li>From the <b>operation-reply</b> of the previous step, we get a reply of how
-much of the requested delivery operation can actually be satisfied. Depending
+<p>When planning a single demand, the algorithm basically consists of a set of
+recursive functions structured in a ask-reply pattern, as illustrated in the
+example below. The indention is such that the ask and its matching reply are
+represented at the same level.
+<ul>
+<li class="l0">Every demand has a certain delivery operation associated with it
+,either directly or indirectly by specifying a delivery operation for the
+requested item. The demand <b>asks</b> this <b>operation</b> for the requested
+quantity on the due date of the demand.</li>
+<li class="l1">(*) The operation first checks for the lead time constraints.<br>
+The operation will <b>ask</b> each of the <b>loads</b> to verify the capacity
+availability.<br>
+The operation will <b>ask</b> each of the <b>flows</b> to check the availability
+of consumed materials.</li>
+<li class="l2">A load passes on the question and <b>asks</b> the
+<b>resource</b>.</li>
+<li class="l3">The <b>resource reply</b> indicates whether the capacity is
+available or not.</li>
+<li class="l2">The <b>load</b> uses the resource reply to <b>reply</b> to the
+operation.</li>
+<li class="l2">A flow passes on the question too and <b>asks</b> the
+<b>buffer</b>.</li>
+<li class="l3">The buffer checks the inventory situation.<br>
+If material is available no further recursion is required.<br>
+If the required material isn't available the buffer will <b>ask</b> an
+<b>operation</b> for a new replenishment. Each buffer has a field indicating
+which operation is to be used to generate replenishments.<br>
+Depending on the buffer inventory profile, safety stock requirements, etc...
+the operation may be asked for different quantities and on different dates
+than the original demand.</li>
+<li class="l4">When an operation is asked to generate a replenishment it
+evaluates the leadtime, material and capacity constraints. This results
+in a nested ask-sequence similar as the one described earlier - marked with
+(*)</li>
+<li class="l5">...</li>
+<li class="l6">A maximum recursion depth will be the same as the number of
+levels in the bill-of-material of the end item.<br>
+In some cases the iteration can be stopped at an intermediate level.
+Eg. When sufficient inventory is found in a buffer and no replenishment
+needs to be asked: a positive reply can be returned immediately.<br>
+Eg. When an operation would need to be planned in the past (ie leadtime
+constraint violated) a negative reply can be returned immediately.</li>
+<li class="l5">...</li>
+<li class="l4">The operation collects the replies from all its flows,
+loads and -indirectly- from all entities nested at the deeper recursion
+levels. A final <b>reply</b> of the <b>operation</b> is generated.</li>
+<li class="l3">Based on the reply of the replenishing operation the
+<b>buffer</b> evaluates whether or not the replenishments are possible,
+and <b>replies</b> back to the flow. Sometimes a buffer may need to ask
+multiple times for a replenishment before an answer can be returned.</li>
+<li class="l2">The <b>flow</b> picks up the buffer reply and <b>replies</b> to
+the operation.</li>
+<li class="l1">From the reply of all its loads and flows the <b>operation</b>
+compiles a <b>reply</b> and returns it to the demand. The interaction of
+material, leadtime and capacity constraint are pretty complex and an operation
+may require several ask-reply iterations over its flows and loads before a
+final answer can be returned.</li>
+<li class="l0">The answer of the operation indicates how much of the requested
+quantity can be satisfied on the requested date. <br>Depending
 on the planning result and the demand parameters (such as allow/disallow
-satisfying the demand late or in multiple deliveries) we can now decide take
-the following actions:<br>
-a) accept and consolidate the (eventually partial) plan for this demand<br>
-b) reject the plan for this demand<br>
-c) in addition to both previous steps we can go back to the first step, and
-repeat the complete sequence at a date later than the requested due date.
-The previous step gives us the earliest date we can use.
-</li>
+satisfying the demand late or in multiple deliveries) we can now decide to
+commit all operation plans created during the whole ask-reply sequence.<br>
+If we're not happy with the reply the operation plans created are undone again
+and we can go back to the first step and ask for the remaining material
+or at a later date.</li>
 </ul>
+<p>The answer in each of the above steps consists of 1) ask-quantity and 2)
+ask-date.<br>
+The reply used in each of the above steps consists of 1) reply-quantity and
+2) reply-date. The reply-quantity represents how much of the requested quantity
+can be made available at the requested date. The reply-date is useful when
+the ask can not -or only partially- be met: it then indicates the earliest date
+when the missing quantity might be possible.</p>
+<p>In the above sequence the steps are described at a very high level.
+In the following sections each of the different ask-reply steps are now
+explained in further detail.</p>
+<hr>
+<p align="right"><a name="demand" href="#top">top</a></p>
+<h1>Demand solver</h1>
+
+<p class="l0">Ignore the demand if quantity is 0</p>
+<p class="l0">Erase previous delivery operation plans, except the ones that are
+locked</p>
+<p class="l0">Loop until the full demand quantity is planned.
+<p class="l1">Call operation-&gt;ask(missing quantity,due date), where
+operation is the demand's or the items delivery operation</p>
+<p class="l1">If planned quantity = requested quantity, or the demand planning
+policy allows planning the demand in parts or shorts then</p>
+<p class="l2">Commit the operation plan creation</p>
+<p class="l1">Else</p>
+<p class="l2">Clear the list of scheduled operation plans</p>
+<p class="l2">If planned quantity &gt; 0 then</p>
+<p class="l3">// This last step is required to make sure all supplying paths
+are planned for the quantity of the most constraining path</p>
+<p class="l3">Call operation-&gt;ask(planned quantity, due date)</p>
+<p class="l3">Commit the operation plan creation</p>
+<p class="l1">Update the planned quantity for the next iteration in the loop</p>
+<p class="l1">Exit the loop if the demand can't be planned late</p>
+<br>
+
+
+<hr>
+<p align="right"><a name="buffer" href="#top">top</a></p>
+<h1>Buffer solver</h1>
+
+<p class="l0"><b>Standard buffer</b></p>
+<p class="l1">Buffer is asked for a quantity Q at the date D</p>
+<p class="l2">For each flow_plan on the buffer</p>
+<p class="l3">If the on-hand value is positive</p>
+<p class="l4">Set the variable ExtraInventoryDate if it is not set before.
+This variable stores the date when there is additional, unallocated inventory
+available.</p>
+<p class="l3">Else if the on-hand value is negative</p>
+<p class="l4">Compute the shortage as current onhand – required minimum
+quantity + known shortage from previous dates</p>
+<p class="l4">If a producing operation exists</p>
+<p class="l5">Try to get extra supply for the shorted quantity. This
+replenishment will update the onhand value of the current flowplan</p>
+<p class="l4">If the onhand is still less than the required minimum quantity
+- the known shortage</p>
+<p class="l4">This situation happens when the producing operation can’t
+replenish the buffer enough, or when all supply in a buffer without producing
+operation has been exhausted.</p>
+<p class="l4">Increase the variable storing the known shortage at previous
+dates.</p>
+<p class="l4">Reset the ExtraInventoryDate if it was set.</p>
+<p class="l2">If there is a shortage, a producing operation exists and the
+above loop didn’t already do the following</p>
+<p class="l3">Try to get more supply at the requested date.<br>
+Not only can this reduce the shortage, but also important is the next-date
+returned by the producing operation.<br>
+Note that if this step creates more supply to meet the demand, that supply is
+not positioned such that inventory is minimized. The flowplan loop does
+minimize the inventory by replenishing only when the inventory drops below the
+minimum.</p>
+
+<p class="l1">The final results are now:</p>
+<p class="l2">Returned quantity: requested quantity – shortages</p>
+<p class="l2">Returned date:</p>
+<p class="l3">= requested date if there is no shortage</p>
+<p class="l3">Or = reply date of the producing operation</p>
+<p class="l3">Or = ExtraInventoryDate if that is less than the operation reply
+date</p>
+<br>
+
+<p class="l0"><b>Infinite buffer</b></p>
+<p class="l1">Always reply for the full quantity.</p>
+
+
+<hr>
+<p align="right"><a name="operation" href="#top">top</a></p>
+<h1>Operation solver</h1>
+
+<p class="l0"><b>Fixed time and time-per operation</b></p>
+<p class="l1">Operation is asked for a quantity Q at the date D</p>
+<p class="l2">Create required operation plan descriptor</p>
+<p class="l2">Loop backward in time D until we have have found the full
+recource capacity</p>
+<p class="l2">Call Operation-&gt;ask(Qremaining, Dupdated)</p>
+<p class="l2">For each consuming flow</p>
+<p class="l3">Ask the buffer for the planned quantity on the requested date</p>
+<p class="l2">Update Qremaining and Dupdated</p>
+<p class="l2">Return the accumlated promise quantity</p>
+<p class="l1"><br>@todo incomplete documentation: need description of
+leadtime constraints + flowplan call + loadplan call<br></p>
+<br>
+
+<p class="l0"><b>Alternate operation</b></p>
+<p class="l1">Operation is asked for a quantity Q at the date D</p>
+<p class="l1">Remaining quantity = Q</p>
+<p class="l1">Next ask date = infinite future</p>
+<p class="l1">Loop through all alternate sub operations</p>
+<p class="l2">Create top operation plan descriptor</p>
+<p class="l2">Call Operation-&gt;ask(Remaining quantity, D)</p>
+<p class="l2">If some quantity could be planned along the alternate</p>
+<p class="l3">Check for material and capacity constraints on the top
+operation plan</p>
+<p class="l3">Reduce the remaining quantity</p>
+<p class="l3">Break out of the loop if the requested quantity is completely
+planned</p>
+<p class="l2">Else</p>
+<p class="l3">If the next ask date of the alternate is less than the current
+minimum, update the next ask date</p>
+<p class="l1">Return the planned quantity and the next ask date</p>
+<br>
+
+<p class="l0"><b>Routing operation</b></p>
+<p class="l1">Operation is asked for a quantity Q at the date D</p>
+<p class="l2">Create the top operation plan</p>
+<p class="l2">Check the flowplans and loadplans of the top operation plan</p>
+<p class="l2">Initialize Q2 to Q and D2 to D</p>
+<p class="l2">For all steps of the routing</p>
+<p class="l3">Call operation-&gt;ask(Q2,D2)</p>
+<p class="l3">Update Q2 if planned quantity&lt; Q2</p>
+<p class="l3">Update D2 with the operation time</p>
+<br>
+
+
+<hr>
+<p align="right"><a name="flow" href="#top">top</a></p>
+<h1>Flow solver</h1>
+
+<p class="l0">If the requested date is outside of the effective date range
+of the flow, reply for the full requested quantity. (@todo this date range
+isn't implemented yet in the flow model, and the check isn't implemented yet)<br>
+Otherwise, ask the buffer to generate the reply for the quantity and date.</p>
+
+
+<hr>
+<p align="right"><a name="load" href="#top">top</a></p>
+<h1>Load solver</h1>
+
+<p class="l0">If the requested date is outside of the effective date range
+of the load, reply for the full requested quantity. (@todo this date range
+isn't implemented yet in the load model, and the check isn't implemented yet)<br>
+Otherwise, ask the resource to generate the reply for the quantity and date.</p>
+
+
+<hr>
+<p align="right"><a name="resource" href="#top">top</a></p>
+<h1>Resource solver</h1>
+
+<p class="l0"><b>Standard resource</b></p>
+<p class="l1">An operationplan is asked to be checked for capacity
+problems (NO date &amp; quantity)</p>
+<p class="l2">Set AllLoadsOkay to true</p>
+<p class="l2">Loop through all loadplans of the operationplan</p>
+<p class="l3">Call the resource solver </p>
+<p class="l4">If this is not an ending loadplan, return the function</p>
+<p class="l4">Set HasOverload to false.<span>  </span>(*)</p>
+<p class="l4">While HasOverload is still false and not yet at the very start</p>
+<p class="l5">Start recursing backwards in the timeline starting from the
+ending loadplan</p>
+<p class="l6">If the resource loading &gt; maximum</p>
+<p class="l7">Continue going back  till the resource loading &lt; maximum</p>
+<p class="l7">Move the operation plan to end at that time in the timeline</p>
+<p class="l7">Set AllLoadsOkay to false.</p>
+<p class="l7">Go back to the step marked with (*)</p>
+<p class="l6">Else if we have arrived at the loadplan at the start of the
+operationplan</p>
+<p class="l7">Exit the resource solver function</p>
+<p class="l4">If during the call of the constraint solver the operation plan
+is moved the variable AllLoadsOkay will have been set to true. In this case,
+the complete loop over all loadplans must be repeated.</p>
+<br>
+
+<p class="l0"><b>Infinite resource</b></p>
+<p class="l1">Always reply for the full quantity.</p>
+
 
 <hr>
 <p align="right"><a name="cluster" href="#top">top</a></p>
@@ -204,152 +442,6 @@ by priority</p>
 <p class="l1">In each planning thread, loop through all demands</p>
 <p class="l2">Call demand-&gt;solve()</p>
 <br>
-
-
-<hr>
-<p align="right"><a name="demand" href="#top">top</a></p>
-<h1>Demand solver</h1>
-
-<p class="l0">Ignore the demand if quantity is 0</p>
-<p class="l0">Erase previous delivery operation plans, except the ones that are
-locked</p>
-<p class="l0">Loop until the full demand quantity is planned.
-<p class="l1">Call operation-&gt;ask(missing quantity,due date), where
-operation is the demand's or the items delivery operation</p>
-<p class="l1">If planned quantity = requested quantity, or the demand planning
-policy allows planning the demand in parts or shorts then</p>
-<p class="l2">Commit the operation plan creation</p>
-<p class="l1">Else</p>
-<p class="l2">Clear the list of scheduled operation plans</p>
-<p class="l2">If planned quantity &gt; 0 then</p>
-<p class="l3">// This last step is required to make sure all supplying paths
-are planned for the quantity of the most constraining path</p>
-<p class="l3">Call operation-&gt;ask(planned quantity, due date)</p>
-<p class="l3">Commit the operation plan creation</p>
-<p class="l1">Update the planned quantity for the next iteration in the loop</p>
-<p class="l1">Exit the loop if the demand can't be planned late</p>
-<br>
-
-
-<hr>
-<p align="right"><a name="buffer" href="#top">top</a></p>
-<h1>Buffer solver</h1>
-
-<p class="l0">Buffer is asked for a quantity Q at the date D</p>
-<p class="l1">For each flow_plan on the buffer</p>
-<p class="l2">If the on-hand value is positive</p>
-<p class="l3">Set the variable ExtraInventoryDate if it is not set before.
-This variable stores the date when there is additional, unallocated inventory
-available.</p>
-<p class="l2">Else if the on-hand value is negative</p>
-<p class="l3">Compute the shortage as current onhand – required minimum
-quantity + known shortage from previous dates</p>
-<p class="l3">If a producing operation exists</p>
-<p class="l4">Try to get extra supply for the shorted quantity. This
-replenishment will update the onhand value of the current flowplan</p>
-<p class="l3">If the onhand is still less than the required minimum quantity
-- the known shortage</p>
-<p class="l3">This situation happens when the producing operation can’t
-replenish the buffer enough, or when all supply in a buffer without producing
-operation has been exhausted.</p>
-<p class="l3">Increase the variable storing the known shortage at previous
-dates.</p>
-<p class="l3">Reset the ExtraInventoryDate if it was set.</p>
-<p class="l1">If there is a shortage, a producing operation exists and the
-above loop didn’t already do the following</p>
-<p class="l2">Try to get more supply at the requested date.<br>
-Not only can this reduce the shortage, but also important is the next-date
-returned by the producing operation.<br>
-Note that if this step creates more supply to meet the demand, that supply is
-not positioned such that inventory is minimized. The flowplan loop does
-minimize the inventory by replenishing only when the inventory drops below the
-minimum.</p>
-
-<p class="l0">The final results are now:</p>
-<p class="l1">Returned quantity: requested quantity – shortages</p>
-<p class="l1">Returned date:</p>
-<p class="l2">= requested date if there is no shortage</p>
-<p class="l2">Or = reply date of the producing operation</p>
-<p class="l2">Or = ExtraInventoryDate if that is less than the operation reply
-date</p>
-<br>
-
-
-<hr>
-<p align="right"><a name="operation" href="#top">top</a></p>
-<h1>Operation solver</h1>
-
-<p class="l0">Routing operation</p>
-<p class="l1">Operation is asked for a quantity Q at the date D</p>
-<p class="l2">Create the top operation plan</p>
-<p class="l2">Check the flowplans and loadplans of the top operation plan</p>
-<p class="l2">Initialize Q2 to Q and D2 to D</p>
-<p class="l2">For all steps of the routing</p>
-<p class="l3">Call operation-&gt;ask(Q2,D2)</p>
-<p class="l3">Update Q2 if planned quantity&lt; Q2</p>
-<p class="l3">Update D2 with the operation time</p>
-<br>
-
-<p class="l0">Fixed time and time-per operation</p>
-<p class="l1">Operation is asked for a quantity Q at the date D</p>
-<p class="l2">Create required operation plan descriptor</p>
-<p class="l2">Loop backward in time D until we have have found the full
-recource capacity</p>
-<p class="l2">Call Operation-&gt;ask(Qremaining, Dupdated)</p>
-<p class="l2">For each consuming flow</p>
-<p class="l3">Ask the buffer for the planned quantity on the requested date</p>
-<p class="l2">Update Qremaining and Dupdated</p>
-<p class="l2">Return the accumlated promise quantity</p>
-<br>
-
-<p class="l0">Alternate operation</p>
-<p class="l1">Operation is asked for a quantity Q at the date D</p>
-<p class="l1">Remaining quantity = Q</p>
-<p class="l1">Next ask date = infinite future</p>
-<p class="l1">Loop through all alternate sub operations</p>
-<p class="l2">Create top operation plan descriptor</p>
-<p class="l2">Call Operation-&gt;ask(Remaining quantity, D)</p>
-<p class="l2">If some quantity could be planned along the alternate</p>
-<p class="l3">Check for material and capacity constraints on the top
-operation plan</p>
-<p class="l3">Reduce the remaining quantity</p>
-<p class="l3">Break out of the loop if the requested quantity is completely
-planned</p>
-<p class="l2">Else</p>
-<p class="l3">If the next ask date of the alternate is less than the current
-minimum, update the next ask date</p>
-<p class="l1">Return the planned quantity and the next ask date</p>
-
-
-<p class="l0"><br>@todo incomplete documentation: need description of
-leadtime constraints + flowplan call + loadplan call<br></p>
-
-
-<hr>
-<p align="right"><a name="resource" href="#top">top</a></p>
-<h1>Resource solver</h1>
-
-<p class="l0">An operationplan is asked to be checked for capacity
-problems (NO date &amp; quantity)</p>
-<p class="l1">Set AllLoadsOkay to true</p>
-<p class="l1">Loop through all loadplans of the operationplan</p>
-<p class="l2">Call the resource solver </p>
-<p class="l3">If this is not an ending loadplan, return the function</p>
-<p class="l3">Set HasOverload to false.<span>  </span>(*)</p>
-<p class="l3">While HasOverload is still false and not yet at the very start</p>
-<p class="l4">Start recursing backwards in the timeline starting from the
-ending loadplan</p>
-<p class="l5">If the resource loading &gt; maximum</p>
-<p class="l6">Continue going back  till the resource loading &lt; maximum</p>
-<p class="l6">Move the operation plan to end at that time in the timeline</p>
-<p class="l6">Set AllLoadsOkay to false.</p>
-<p class="l6">Go back to the step marked with (*)</p>
-<p class="l5">Else if we have arrived at the loadplan at the start of the
-operationplan</p>
-<p class="l6">Exit the resource solver function</p>
-<p class="l3">If during the call of the constraint solver the operation plan
-is moved the variable AllLoadsOkay will have been set to true. In this case,
-the complete loop over all loadplans must be repeated.</p>
 
 </body>
 </html>

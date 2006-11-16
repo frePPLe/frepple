@@ -418,6 +418,7 @@
 			<xsd:element name="QUANTITY" type="xsd:float" minOccurs="0" />
 		</xsd:choice>
 		<xsd:attribute name="QUANTITY" type="xsd:float" />
+		<xsd:attribute name="ACTION" type="action" />
 	</xsd:complexType>
 
 	<xsd:complexType name="FLOWLIST">
@@ -470,6 +471,7 @@
 			<xsd:element name="USAGE" type="xsd:float" minOccurs="0" />
 		</xsd:all>
 		<xsd:attribute name="USAGE" type="xsd:float" />
+		<xsd:attribute name="ACTION" type="action" />
 	</xsd:complexType>
 
 	<xsd:complexType name="LOADLIST">
@@ -774,6 +776,7 @@
 		<xsd:attribute name="LPST" type="xsd:dateTime" />
 		<xsd:attribute name="QUANTITY" type="positiveFloat" />
 		<xsd:attribute name="LOCKED" type="xsd:boolean" />
+		<xsd:attribute name="ACTION" type="action" />
 	</xsd:complexType>
 
 	<xsd:complexType name="OPERATIONPLANLIST">

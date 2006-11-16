@@ -2080,7 +2080,7 @@ class Object
       * for which the "this" element is immediate parent.
       * It is called when the open element tag is encountered.
       */
-    virtual void beginElement(XMLInput& pIn, XMLElement& pEl) {}
+    virtual void beginElement(XMLInput&, XMLElement&) {}
 
     /** Called while restoring the model from an XML-file.
       * This is called when the corresponding close element
@@ -2090,7 +2090,7 @@ class Object
       * process its own element tag attributes, and its own endElement
       * so it can process its own character data.
       */
-    virtual void endElement(XMLInput& pIn, XMLElement& pElement) = 0;
+    virtual void endElement(XMLInput&, XMLElement&) = 0;
 
     /** Mark the object as hidden or not. Hidden objects are not exported
       * and are used only as dummy constructs. */
@@ -2889,7 +2889,7 @@ class XMLinstruction : public NonCopyable
 
 
 /** This class will read in an XML-file and call the appropriate handler
-  * functions of the Object classes and objects.
+  * functions of the Object classes and objects.<br>
   * This class is implemented based on the Xerces SAX XML parser.
   * For debugging purposes a flag is defined at the start of the file
   * "status.cpp". Uncomment the line and recompile to use it.
@@ -3136,9 +3136,16 @@ class CSVInput : public XMLinstruction, private DefaultHandler, public Object
 {
   private:
     /** Comment character. A line starting with this character will not be 
-      * processed and skipped. */
+      * processed and skipped.<br>
+      * The default is #.
+      */
     char comment;
+
+    /** The character to delimit fields in the data input.
+      * The default is ,
+      */
     char fieldseparator;
+
   public:
     void processInstruction(XMLInput &i, const char *d);
 
@@ -3223,30 +3230,32 @@ class XMLInputString : public XMLInput
       * calling the command to correctly create and destroy the string being
       * used.
       */
-    const string& data;
+    const string data;
 };
 
 
-/** This class reads XML data from a URL.<br>
-  * The protocols HTTP and FILE are understood, and other protocols will
-  * throw an exception.
+/** This class reads XML data from an HTTP connection.<br>
+  * The Xerces parser supports only the simplest possible setup: no proxy,
+  * no caching, no ssl, no authentication, etc...  
   */
 class XMLInputURL : public XMLInput
 {
   public:
     /** Default constructor. */
-    XMLInputURL(string& s) : url(s) {};
+    XMLInputURL(const string& s) : url(s) {};
 
     /** Parse the specified url. */
     void parse(Object* pRoot, bool v = false)
     {
+      if (url.empty()) 
+        throw DataException("Missing URL when parsing remote XML"); 
       URLInputSource a(reinterpret_cast<const XMLCh *>(NULL), url.c_str());
       XMLInput::parse(a,pRoot,v);
     }
 
   private:
     /** The url to be loaded. */
-    const string& url;
+    const string url;
 };
 
 
@@ -3297,7 +3306,8 @@ class XMLInputFile : public XMLInput
 /** This is the base class for the main objects.
  *  Instances of this class have the following properties:
  *    - Have a unique name.
- *    - A hashtable (keyed on the name) is maintained with all active instances.
+ *    - A hashtable (keyed on the name) is maintained as a container with 
+ *      all active instances.
  */
 template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 {

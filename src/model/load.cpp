@@ -82,7 +82,10 @@ void Load::validate(Action action)
         // Nothing to delete
         throw DataException("Can't remove nonexistent load of '" 
           + oper->getName() + "' and '" + res->getName() + "'");
-      delete &*i;   // @todo loadplans can still be existing for this load!
+      throw DataException("Can't delete a load"); // @todo crashes when the parser releases the writelock
+      delete &*i;   
+      // Set a flag to make sure the level computation is triggered again
+      HasLevel::triggerLazyRecomputation();
       return;
   }
 
@@ -90,7 +93,7 @@ void Load::validate(Action action)
 
   // If the resource has an owner, also load the owner
   // Note that the owner load can create more loads if it has an owner too.
-  if (res->hasOwner()) new Load(oper, res->getOwner(), usage);
+  if (res->hasOwner() && action!=REMOVE) new Load(oper, res->getOwner(), usage);
 
   // Set a flag to make sure the level computation is triggered again
   HasLevel::triggerLazyRecomputation();

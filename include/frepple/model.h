@@ -2920,9 +2920,13 @@ class CommandReadXMLString : public Command
 };
 
 
-
-
-/** This command is used for reading XML input from a certain string. */
+/** This command is used for reading XML input over an HTTP connection.<br>
+  * The Xerces parser supports only the simplest possible setup: no proxy,
+  * no caching, no ssl, no authentication, etc...
+  * If you have a more complex setup, you'll need to use a sytem command to
+  * retrieve the data first with eg wget, lynx, scp, ftp, sftp, rsynch,... After the 
+  * download read in the data file with a readXML command.
+  */
 class CommandReadXMLURL : public Command
 {
   public:
@@ -2963,8 +2967,7 @@ class CommandReadXMLURL : public Command
       {return sizeof(CommandReadXMLURL) + url.size();}
 
   private:
-    /** Name of the input to be read. An empty string means that we want to
-      * read from standard input rather than a file. */
+    /** Name of the url to be read. */
     string url;
 
     /** Specifies whether or not the input file needs to be validated against

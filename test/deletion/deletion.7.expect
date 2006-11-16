@@ -82,6 +82,9 @@
 		<OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME">
 			<DURATION>24:00:00</DURATION>
 		</OPERATION>
+		<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME">
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
 		<OPERATION NAME="supply component A" xsi:type="OPERATION_ALTERNATE">
 			<ALTERNATES>
 				<ALTERNATE>
@@ -112,16 +115,41 @@
 	</ITEMS>
 	<BUFFERS>
 		<BUFFER NAME="buffer 1">
+			<PRODUCING NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
 			<ITEM NAME="item 1"/>
 			<FLOWS>
-				<FLOW xsi:type="FLOW_START">
-					<OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>-1</QUANTITY>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>1</QUANTITY>
+				</FLOW>
+			</FLOWS>
+		</BUFFER>
+		<BUFFER NAME="buffer A">
+			<PRODUCING NAME="supply component A" xsi:type="OPERATION_ALTERNATE"/>
+			<ITEM NAME="component A"/>
+			<FLOWS>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="supply component A from supplier 2" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>1</QUANTITY>
 				</FLOW>
 			</FLOWS>
 		</BUFFER>
 		<BUFFER NAME="buffer B">
 			<ITEM NAME="component B"/>
+			<FLOWS>
+				<FLOW xsi:type="FLOW_START">
+					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>-1</QUANTITY>
+				</FLOW>
+				<FLOW xsi:type="FLOW_START">
+					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>-1</QUANTITY>
+				</FLOW>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>1</QUANTITY>
+				</FLOW>
+			</FLOWS>
 		</BUFFER>
 	</BUFFERS>
 	<DEMANDS>
@@ -146,34 +174,94 @@
 		</DEMAND>
 	</DEMANDS>
 	<RESOURCES>
+		<RESOURCE NAME="assemble">
+			<MAXIMUM NAME="assembly capacity" xsi:type="CALENDAR_FLOAT"/>
+			<LOADS>
+				<LOAD>
+					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
+				</LOAD>
+			</LOADS>
+		</RESOURCE>
 		<RESOURCE NAME="transport">
 		</RESOURCE>
 	</RESOURCES>
 	<OPERATION_PLANS>
-		<OPERATION_PLAN ID="69" OPERATION="delivery 1">
+		<OPERATION_PLAN ID="36" OPERATION="delivery 1">
 			<DEMAND NAME="order 3"/>
 			<START>2006-03-31T00:00:00</START>
 			<END>2006-04-01T00:00:00</END>
 			<QUANTITY>1</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="68" OPERATION="delivery 1">
+		<OPERATION_PLAN ID="32" OPERATION="delivery 1">
 			<DEMAND NAME="order 1"/>
 			<START>2006-02-28T00:00:00</START>
 			<END>2006-03-01T00:00:00</END>
 			<QUANTITY>1</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="67" OPERATION="delivery 1">
+		<OPERATION_PLAN ID="28" OPERATION="delivery 1">
 			<DEMAND NAME="order 2"/>
 			<START>2006-01-31T00:00:00</START>
 			<END>2006-02-01T00:00:00</END>
 			<QUANTITY>1</QUANTITY>
 		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="35" OPERATION="make item 1">
+			<START>2006-03-30T00:00:00</START>
+			<END>2006-03-31T00:00:00</END>
+			<QUANTITY>1</QUANTITY>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="31" OPERATION="make item 1">
+			<START>2006-02-27T00:00:00</START>
+			<END>2006-02-28T00:00:00</END>
+			<QUANTITY>1</QUANTITY>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="27" OPERATION="make item 1">
+			<START>2006-01-30T00:00:00</START>
+			<END>2006-01-31T00:00:00</END>
+			<QUANTITY>1</QUANTITY>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="34" OPERATION="supply component A">
+			<START>2006-03-29T00:00:00</START>
+			<END>2006-03-30T00:00:00</END>
+			<QUANTITY>1</QUANTITY>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="30" OPERATION="supply component A">
+			<START>2006-02-26T00:00:00</START>
+			<END>2006-02-27T00:00:00</END>
+			<QUANTITY>1</QUANTITY>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="33" OPERATION="supply component A from supplier 1">
+			<START>2006-03-29T00:00:00</START>
+			<END>2006-03-30T00:00:00</END>
+			<QUANTITY>1</QUANTITY>
+			<OWNER ID="34" OPERATION="supply component A"/>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="29" OPERATION="supply component A from supplier 1">
+			<START>2006-02-26T00:00:00</START>
+			<END>2006-02-27T00:00:00</END>
+			<QUANTITY>1</QUANTITY>
+			<OWNER ID="30" OPERATION="supply component A"/>
+		</OPERATION_PLAN>
 	</OPERATION_PLANS>
 	<PROBLEMS>
 		<PROBLEM>
 			<NAME>material shortage</NAME>
-			<DESCRIPTION>Buffer &apos;buffer 1&apos; has material shortage of 3</DESCRIPTION>
-			<DATES>2006-01-31T00:00:00 / 2030-12-31T00:00:00</DATES>
+			<DESCRIPTION>Buffer &apos;buffer A&apos; has material shortage of 1</DESCRIPTION>
+			<DATES>2006-01-30T00:00:00 / 2006-02-27T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>material shortage</NAME>
+			<DESCRIPTION>Buffer &apos;buffer A&apos; has material shortage of 1</DESCRIPTION>
+			<DATES>2006-02-27T00:00:00 / 2006-03-30T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>material shortage</NAME>
+			<DESCRIPTION>Buffer &apos;buffer A&apos; has material shortage of 1</DESCRIPTION>
+			<DATES>2006-03-30T00:00:00 / 2030-12-31T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>material shortage</NAME>
+			<DESCRIPTION>Buffer &apos;buffer B&apos; has material shortage of 3</DESCRIPTION>
+			<DATES>2006-01-30T00:00:00 / 2030-12-31T00:00:00</DATES>
 		</PROBLEM>
 	</PROBLEMS>
 </PLAN>

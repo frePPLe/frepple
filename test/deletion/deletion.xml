@@ -56,9 +56,13 @@
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.5.xml" />
 
     <!--
-      Now we delete a customer. References to it will be removed from
-      demands.
+      Now we delete a customer. References to it will be removed from demands.
+      Also delete a flow and a load. References to them from operations and removes any 
+      existing flowplans and loadplans.
     -->
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <SOLVER NAME="MRP" />
+    </COMMAND>
     <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
         <![CDATA[
@@ -70,7 +74,45 @@
 			]]>
       </DATA>
     </COMMAND>
+    <!--  @todo Flow and load deletion not working yet... 
+    <COMMAND xsi:type="COMMAND_READXMLSTRING">
+      <DATA>
+        <![CDATA[
+				<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   		  <FLOWS>
+				  <FLOW ACTION="R">
+        		<BUFFER NAME="buffer B"/>
+					  <OPERATION NAME="make item 1"/>
+				  </FLOW>
+				</FLOWS>
+   		  <LOADS>
+				  <LOAD ACTION="R">
+        		<RESOURCE NAME="assemble"/>
+					  <OPERATION NAME="make item 1"/>
+				  </LOAD>
+				</LOADS>
+				</PLAN>
+			]]>
+      </DATA>     
+    </COMMAND>
+    -->
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.6.xml" />
+
+    <!--
+      Now we delete an operationplan.
+    -->
+    <COMMAND xsi:type="COMMAND_READXMLSTRING">
+      <DATA>
+        <![CDATA[  
+        <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <OPERATION_PLANS>
+            <OPERATION_PLAN ID="25" ACTION="R"/>
+          </OPERATION_PLANS>
+        </PLAN>
+			  ]]>
+      </DATA>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.7.xml" />
 
     <!--
       Now we delete a resource. Operationsplans are being deleted of
@@ -88,7 +130,7 @@
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.7s.xml" />
+    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.8s.xml" />
 
     <!--
       Now we delete a buffer. Operationsplans are being deleted of
@@ -104,7 +146,7 @@
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.8s.xml" />
+    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.9s.xml" />
 
     <!--
       Now we delete an operation.
@@ -119,7 +161,7 @@
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.9.xml" />
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.10.xml" />
 
 
     <!--
@@ -134,7 +176,7 @@
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.10.xml" />
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.11.xml" />
 
     <!--
       Now we delete a calendar and a calendar bucket.
@@ -156,13 +198,13 @@
 			]]>
       </DATA>
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.11.xml" />
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.12.xml" />
 
     <!--
       To finish we delete the complete model.
     -->
     <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.12.xml" />
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.13.xml" />
 
   </COMMANDS>
   <CURRENT>2006-01-01T00:00:00</CURRENT>

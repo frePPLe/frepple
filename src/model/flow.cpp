@@ -76,18 +76,20 @@ void Flow::validate(Action action)
       delete this;
       throw DataException("Can't update a flow"); 
     case REMOVE:
+      // Delete the temporary flow object
       delete this;
+      // Nothing to delete
       if (i == oper->getFlows().end())
-        // Nothing to delete
         throw DataException("Can't remove nonexistent flow of '" 
           + oper->getName() + "' and '" + buf->getName() + "'");
-      delete &*i;   // @todo flowplans can still be existing for this flow!
-      return;
+      // Delete
+      throw DataException("Can't delete a flow"); // @todo crashes when the parser releases the writelock
+      delete &*i;
   }
 
   // Attach to buffers higher up in the hierarchy
   // Note that the owner can create more loads if it has an owner too.
-  if (buf->hasOwner()) new Flow(oper, buf->getOwner(), quantity);
+  if (buf->hasOwner() && action!=REMOVE) new Flow(oper, buf->getOwner(), quantity);
 
   // Set a flag to make sure the level computation is triggered again
   HasLevel::triggerLazyRecomputation();
@@ -172,7 +174,7 @@ void Flow::endElement (XMLInput& pIn, XMLElement& pElement)
             ADD_CHANGE :
             *static_cast<Action*>(pIn.getUserArea())
             );
-    delete static_cast<Action*>(pIn.getUserArea());
+    delete static_cast<Action*>(pIn.getUserArea());   // @todo if an exception is thrown in the validate routine, this action object may be leaked
   }
 }
 

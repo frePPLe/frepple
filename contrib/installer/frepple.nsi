@@ -116,6 +116,11 @@ Section "Application" SecAppl
   !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\bin\frepple_vcc.dll" "$INSTDIR\bin\frepple_vcc.dll" "$SYSDIR"
   File "..\bin\frepple_vcc.lib"
   File "..\bin\frepple_vcc.exp"
+  
+  ; Copy modules
+  File "bin\mod_*.exp"
+  File "bin\mod_*.lib"
+  File "bin\mod_*.so"
 
   ; Copy configuration files
   File "bin\*.xsd"

@@ -2,7 +2,7 @@
 EXTRA_DIST = planner.doxyfile header.doxyfile favicon.ico tutorial *.html *.css *.pdf *.jpg *.gif *.bmp
 
 # This points to the installation directory of the documentation
-INSTALL_DIR=$(prefix)/doc/$(PACKAGE)-$(PACKAGE_VERSION)
+INSTALL_DIR=$(prefix)/share/doc/$(PACKAGE)-$(PACKAGE_VERSION)
 
 if DOC
 EXTRA_DIST += reference
@@ -23,7 +23,11 @@ if DOC
 install-data-local:
 	$(mkinstalldirs) $(INSTALL_DIR)/reference
 	for p in $(EXTRA_DIST); do \
-	  $(INSTALL_DATA) $$p $(INSTALL_DIR)/$$p; \
+	  if test -d $$p; \
+	   then $(INSTALL_DATA) -d $$p $(INSTALL_DIR)/$$p; \
+	        $(INSTALL_DATA) $$p/* $(INSTALL_DIR)/$$p; \
+	   else $(INSTALL_DATA) $$p $(INSTALL_DIR)/$$p; \
+          fi; \
 	done
 endif
 

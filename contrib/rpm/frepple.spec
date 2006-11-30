@@ -43,7 +43,7 @@ discrete manufacturing industries.
 %setup -q
 
 %build
-./configure --enable-doc --prefix=%{buildroot}%{prefix}
+./configure --enable-doc --prefix=%{buildroot}%{prefix} --docdir=%{buildroot}%{prefix}/share/doc/frepple
 make all 
 
 %install
@@ -51,19 +51,23 @@ make install
 
 %clean 
 rm -rf %{buildroot}
-rm -rf %{prefix}/share/doc/frepple-%{version}-%{release}
 
-%post 
+%post
+/sbin/ldconfig
 echo Finished installation of frepple
 
+%postun
+/sbin/ldconfig
+
 %files
+%defattr(-,root,root)
 %{prefix}/bin/frepple
 %{prefix}/bin/frepple_static
+%{prefix}/lib/libfrepple*
+%{prefix}/lib/libforecast*
 %dir %{prefix}/include/frepple
 %{prefix}/include/frepple/*
 %{prefix}/include/tags.h
 %{prefix}/include/frepple.h
 %{prefix}/include/freppleinterface.h
-%{prefix}/lib/libfrepple*
-%{prefix}/lib/libforecast*
 %doc doc/* COPYING

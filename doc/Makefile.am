@@ -1,9 +1,6 @@
 
 EXTRA_DIST = planner.doxyfile header.doxyfile favicon.ico tutorial *.html *.css *.pdf *.jpg *.gif *.bmp
 
-# This points to the installation directory of the documentation
-INSTALL_DIR=$(prefix)/share/doc/$(PACKAGE)-$(PACKAGE_VERSION)
-
 if DOC
 EXTRA_DIST += reference
 reference: clean planner.doxyfile
@@ -21,18 +18,18 @@ all-local: reference
 
 if DOC
 install-data-local:
-	$(mkinstalldirs) $(INSTALL_DIR)/reference
+	$(mkinstalldirs) $(docdir)/reference
 	for p in $(EXTRA_DIST); do \
 	  if test -d $$p; \
-	   then $(INSTALL_DATA) -d $$p $(INSTALL_DIR)/$$p; \
-	        $(INSTALL_DATA) $$p/* $(INSTALL_DIR)/$$p; \
-	   else $(INSTALL_DATA) $$p $(INSTALL_DIR)/$$p; \
-          fi; \
+	   then $(INSTALL_DATA) -d $$p $(docdir)/$$p; \
+	        $(INSTALL_DATA) $$p/* $(docdir)/$$p; \
+	   else $(INSTALL_DATA) $$p $(docdir)/$$p; \
+    fi; \
 	done
 endif
 
 uninstall-local:
-	rm -rf $(INSTALL_DIR)
+	rm -rf $(docdir)
 
 .PHONY: reference clean-local uninstall-local install-data-local all-local
 

@@ -99,18 +99,17 @@ you'ld need on top of a bare minimum Linux distribution.
   </ul>
 </li>
 <li>Change to the frepple installation directory.</li>
-<li>This step applies only when you create a project from the SVN repository
-rather than the usual source distribution.</br>
-<b>Skip this step if you are unsure and don't know what you're doing.</b></br>
-Issue the command 'make -f Makefile.dist prep' to run the gnu autoconf
+<li>This step applies <b>only</b> when you build the project from the SVN repository
+(rather than a source tar file).<br>
+Issue the command '<i>make -f Makefile.dist prep</i>' to run the gnu autoconf
 suite.</li>
-<li>Issue the command './configure' to specify the build options and detect
-the specifics of your platform. Use the command './configure --help' to see
+<li>Issue the command '<i>./configure</i>' to specify the build options and detect
+the specifics of your platform.</br> Use the command './configure --help' to see
 the list of available options.</li>
-<li>Issue the command 'make all' to compile the code.</li>
-<li>Issue the command 'make check' to run the test suite.</li>
-<li>Issue the command 'make install' to install the files.</li>
-<li>You can issue the command 'make clean' to free the disk space used during
+<li>Issue the command '<i>make all</i>' to compile the code.</li>
+<li>Issue the command '<i>make check</i>' to run the test suite.</li>
+<li>Issue the command '<i>make install</i>' to install the files.</li>
+<li>You can issue the command '<i>make clean</i>' to free the disk space used during
 the build and test phases.</li>
 </ol>
 
@@ -135,7 +134,9 @@ The Frepple source distribution comes with a Borland C++ compiler make file
 and detailed compilation instructions in a README.txt file. Both are located
 in the subdirectory contrib/borland.<br>
 The Borland compiler can be downloaded free of charge from the
-<a href="http://www.borland.com" target="_blank">Borland website</a>.
+<a href="http://www.borland.com" target="_blank">Borland website</a>.<br>
+Disclaimer: The borland build hasn't been kept up to date for a while now. 
+Compiling the main executables should be fine, but compiling the modules will fail.
 
 <h3><a name="vcc"/>Build instructions on Windows using Microsoft Visual C++
 compiler</h3>
@@ -165,7 +166,7 @@ target="_blank">http://corelinux.sourceforge.com</a>
 <p>To format the source we will use the 'artistic style' tool. The following
 options are used:<br>
 	--style==ansi<br>
-	--indent=spaces=4<br>
+	--indent=spaces=2<br>
 	--indent-classes<br>
 	--indent-switches<br>
 	--break-blocks<br>

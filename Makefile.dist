@@ -17,10 +17,10 @@ prep:
 	aclocal
 	autoheader
 #
-# Use this if you want to release the stuff. 
+# Use this if you want to release the stuff.
 # Don't use it for your own development builds
 #	automake --include-deps
-#  
+#
 # Use these option when automake versions are changing
 #	automake --add-missing --force-missing --copy
 	automake
@@ -85,3 +85,13 @@ astyle:
 	astyle --mode=c $(astyleoptions) `find . -name '*.cpp'`
 #	astyle --mode=java  `find . -name '*.java'`
 	astyle --mode=c $options$(astyleoptions) `find . -name '*.h'`
+
+# The release number is (unfortunately) stored in a number of independent places:
+# This make target is used to update all those places in a single go.
+prevrel = 0\.1\.3
+newrel = 0.1.4
+set_release:
+	for i in "configure.in" "doc/menu.html" "contrib/installer/frepple.nsi"; do \
+		sed 's/$(prevrel)/$(newrel)/g' $$i >out.tmp; \
+		mv out.tmp $$i; \
+	done

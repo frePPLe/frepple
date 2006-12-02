@@ -1153,6 +1153,7 @@ class Operation : public HasName<Operation>,
       * overridden by all operation types that acts as a super-operation. */
     virtual void removeSubOperation(Operation *o) {}
 
+    /** Removes a super-operation from the list. */
     void removeSuperOperation(Operation *o)
     {superoplist.remove(o); o->removeSubOperation(this);}
 
@@ -1231,6 +1232,23 @@ class OperationPlan
 
   public:
     class FlowPlanIterator;
+
+    typedef list<OperationPlan*> OperationPlanList;
+
+    /** Returns a reference to the list of sub-operationplans.<br>
+      * Subclasses where multiple sub-operationplans exist must override this 
+      * method. 
+      * @see getSubOperationPlan
+      */
+    virtual const OperationPlanList& getSubOperationPlans() 
+      {return nosubOperationPlans;}
+
+    /** Returns a reference to the list of sub-operationplans.<br>
+      * Subclasses having only a single sub-operationplan must override this 
+      * method.
+      * @see getSubOperationPlans
+      */
+    virtual OperationPlan* getSubOperationPlan() {return NULL;}
 
     /** Returns an iterator pointing to the first flowplan. */
     FlowPlanIterator beginFlowPlans() const;
@@ -1458,9 +1476,16 @@ class OperationPlan
       * sub-operationplans. There can be multiple levels of suboperations. */
     OperationPlan* getTopOwner() const
     {
-      OperationPlan* o = owner;
-      while (o->owner) o = o->owner;
-      return o;
+      if (owner)
+      {
+        // There is an owner indeed
+        OperationPlan* o = owner;
+        while (o->owner) o = o->owner;
+        return o;
+      }
+      else
+        // This operationplan is itself the top of a hierarchy
+        return const_cast<OperationPlan*>(this);
     }
 
     /** Returns the start and end date of this operation_plan. */
@@ -1594,6 +1619,11 @@ class OperationPlan
       firstloadplan(NULL), prev(NULL), next(NULL) {}
 
   private:
+    /** Empty list of operationplans. For operationplan types which have no
+      * suboperationplans this list is used as the list of suboperationplans.
+      */
+    static OperationPlanList nosubOperationPlans;
+
     /** Returns a pointer to the operation being instantiated. */
     static OperationPlan* getFirstOpPlan(Operation& o) {return o.opplan;}
 
@@ -1829,7 +1859,7 @@ class OperationPlanRouting : public OperationPlan
 {
     friend class OperationRouting;
   private:
-    list<OperationPlan*> step_opplans;
+    OperationPlan::OperationPlanList step_opplans;
     OperationPlanRouting() {};
   public:
     /** Updates the end date of the operation. Slack can be introduced in the
@@ -1847,6 +1877,7 @@ class OperationPlanRouting : public OperationPlan
     ~OperationPlanRouting();
     void setQuantity(float f, bool roundDown=false);
     void eraseSubOperationPlan(OperationPlan* o);
+    virtual const OperationPlan::OperationPlanList& getSubOperationPlans() {return step_opplans;}
 
     /** Initializes the operationplan and all steps in it.
       * If no step operationplans had been created yet this method will create
@@ -1965,6 +1996,9 @@ class OperationPlanAlternate : public OperationPlan
     void setStart(Date d);
     void update();
 
+    /** Returns the sub-operationplan. */
+    virtual OperationPlan* getSubOperationPlan() {return altopplan;}
+
     /** Initializes the operationplan. If no suboperationplan was created
       * yet this method will create one, using the highest priority alternate.
       */
@@ -2059,11 +2093,13 @@ class OperationPlanEffective : public OperationPlan
     void addSubOperationPlan(OperationPlan* o);
     void setQuantity(float f, bool roundDown=false);
     void eraseSubOperationPlan(OperationPlan* o);
-    OperationPlan* getSubOperationPlan() {return effopplan;}
     void setEnd(Date d);
     void setStart(Date d);
     void update();
     void initialize();
+
+    /** Returns the sub-operationplan. */
+    virtual OperationPlan* getSubOperationPlan() {return effopplan;}
 };
 
 
@@ -4145,6 +4181,9 @@ class PeggingIterator
 
     /** Update the stack. */
     void updateStack(short, double, double, const FlowPlan*, bool = true);
+
+    /** Auxilary function to make recursive code possible. */
+    void pushflowplans(OperationPlan*, bool, short);
 
     /** In case there are multiple paths, we can either:
       *  - follow one path complete to its end and then follow the others.

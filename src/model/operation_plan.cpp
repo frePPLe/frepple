@@ -34,6 +34,7 @@ namespace frepple
 
 DECLARE_EXPORT unsigned long OperationPlan::counter = 1;
 
+OperationPlan::OperationPlanList OperationPlan::nosubOperationPlans;
 
 void OperationPlan::setChanged(bool b)
 {

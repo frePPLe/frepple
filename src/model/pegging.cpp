@@ -141,13 +141,7 @@ PeggingIterator& PeggingIterator::operator++()
     // CASE 2:
     // This is a consuming flowplan. Navigating downstream means taking the 
     // producing flowplans of the owning operationplan(s).
-    // @todo handle opplan hierarchies
-    for (OperationPlan::FlowPlanIterator i 
-      = st.fl->getOperationPlan()->beginFlowPlans();
-      i != st.fl->getOperationPlan()->endFlowPlans();
-      ++i)
-      if (i->getQuantity()>0)
-        updateStack(nextlevel, st.qty, st.factor, &*i);
+    pushflowplans(st.fl->getOperationPlan()->getTopOwner(), false, nextlevel);
   }
   // No matching flow found
   if (first) stack.pop();
@@ -229,7 +223,10 @@ PeggingIterator& PeggingIterator::operator--()
             newqty -= f->getCumulativeProduced() - endQty;
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
-          updateStack(nextlevel, -curqty*newqty/curflowplan->getQuantity(), curfactor*newqty/f->getQuantity(), x);
+          updateStack(nextlevel, 
+            -curqty*newqty/curflowplan->getQuantity(), 
+            curfactor*newqty/f->getQuantity(), 
+            x);
         }
         --f;
       }
@@ -237,24 +234,52 @@ PeggingIterator& PeggingIterator::operator--()
     if (peggedQty < endQty - startQty)
       // Unproduced material (i.e. material that is consumed but never 
       // produced) is handled with a special entry on the stack.
-      updateStack(nextlevel, curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), st.factor, curflowplan, false);
+      updateStack(nextlevel, 
+        curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), 
+        st.factor, 
+        curflowplan, 
+        false);
   }
   else if (curflowplan->getQuantity() > ROUNDING_ERROR)
   {
     // CASE 4:
     // This is a producing flowplan. Navigating upstream means taking the 
     // consuming flowplans of the owning operationplan(s).
-    // @todo handle opplan hierarchies
-    for (OperationPlan::FlowPlanIterator i 
-      = st.fl->getOperationPlan()->beginFlowPlans();
-      i != st.fl->getOperationPlan()->endFlowPlans();
-      ++i)
-      if (i->getQuantity()<0)
-        updateStack(nextlevel, st.qty, st.factor, &*i);
+    pushflowplans(st.fl->getOperationPlan()->getTopOwner(), true, nextlevel);
   }
   // No matching flow found
   if (first) stack.pop();
   return *this;
+}
+
+
+void PeggingIterator::pushflowplans(OperationPlan* op, bool downstream, short nextlevel)
+{
+  state& st = stack.top();
+
+  // Push all flowplans on the stack
+  if (downstream)
+    for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans(); 
+        i != op->endFlowPlans(); ++i)
+    {
+      if (i->getQuantity()<0) updateStack(nextlevel, st.qty, st.factor, &*i);
+    }
+  else
+    for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans(); 
+        i != op->endFlowPlans(); ++i)
+    {
+      if (i->getQuantity()>0) updateStack(nextlevel, st.qty, st.factor, &*i);
+    }
+
+  // Recursively call this function for all sub-operationplans.
+  if (op->getSubOperationPlan())
+    // Only a single suboperationplan
+    pushflowplans(op->getSubOperationPlan() , downstream, nextlevel);
+  for (OperationPlan::OperationPlanList::const_iterator 
+    j = op->getSubOperationPlans().begin();
+    j != op->getSubOperationPlans().end(); ++j)
+    // A linked list of suboperationplans
+    pushflowplans(*j, downstream, nextlevel);
 }
 
 } // End namespace

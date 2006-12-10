@@ -136,8 +136,10 @@ void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
   // Write the fields
   HasDescription::writeElement(o, tag);
   Plannable::writeElement(o, tag);
-  if (delaytime)
-    o->writeElement(Tags::tag_delay, delaytime);
+  if (post_time)
+    o->writeElement(Tags::tag_posttime, post_time);
+  if (pre_time)
+    o->writeElement(Tags::tag_pretime, pre_time);
   if (fence)
     o->writeElement(Tags::tag_fence, fence);
   if (size_minimum>0.0f)
@@ -182,14 +184,16 @@ void Operation::beginElement (XMLInput& pIn, XMLElement& pElement)
 
 void Operation::endElement (XMLInput& pIn, XMLElement& pElement)
 {
-  if (pElement.isA (Tags::tag_delay))
-    setDelay(pElement.getTimeperiod());
-  else if (pElement.isA (Tags::tag_fence))
+  if (pElement.isA (Tags::tag_fence))
     setFence(pElement.getTimeperiod());
   else if (pElement.isA (Tags::tag_size_minimum))
     setSizeMinimum(pElement.getFloat());
   else if (pElement.isA (Tags::tag_size_multiple))
     setSizeMultiple(pElement.getFloat());
+  else if (pElement.isA (Tags::tag_pretime))
+    setPreTime(pElement.getTimeperiod());
+  else if (pElement.isA (Tags::tag_posttime))
+    setPostTime(pElement.getTimeperiod());
   else
   {
     Plannable::endElement(pIn, pElement);
@@ -199,7 +203,7 @@ void Operation::endElement (XMLInput& pIn, XMLElement& pElement)
 
 
 void OperationFixedTime::setOperationPlanParameters
-  (OperationPlan* oplan, float q, Date s, Date e) const
+  (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
   // Invalid call to the function, or locked operationplan.
   if (!oplan || q<0 || oplan->getLocked()) return;
@@ -208,9 +212,14 @@ void OperationFixedTime::setOperationPlanParameters
   if (fabs(q - oplan->getQuantity()) > ROUNDING_ERROR)
     oplan->setQuantity(q);
 
-  // Respect end date and duration, when an end date is given.
-  if (e) oplan->setStartAndEnd(e - duration, e);
-  else oplan->setStartAndEnd(s, s + duration);
+  // Set the start and end date.
+  if (e && s)
+  {
+    if (preferEnd) oplan->setStartAndEnd(e - duration, e);
+    else oplan->setStartAndEnd(s, s + duration);
+  }
+  else if (s) oplan->setStartAndEnd(s, s + duration);
+  else oplan->setStartAndEnd(e - duration, e);
 }
 
 
@@ -246,7 +255,7 @@ void OperationFixedTime::endElement (XMLInput& pIn, XMLElement& pElement)
 
 
 void OperationTimePer::setOperationPlanParameters
-      (OperationPlan* oplan, float q, Date s, Date e) const
+      (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
   // Invalid call to the function.
   if (!oplan || q<0) return;
@@ -263,11 +272,22 @@ void OperationTimePer::setOperationPlanParameters
     {
       // Divide the variable duration by the duration_per time, to compute the
       // maximum number of pieces that can be produced in the timeframe
-      float max_q = (float)(e - s - duration) / duration_per;
+      float max_q = static_cast<float>(e - s - duration) / duration_per;
 
       // Set the quantity to either the maximum or the requested quantity,
       // depending on which one is smaller.
-      oplan->setQuantity(q>max_q ? max_q : q);
+      if (q < max_q)
+      {
+        // Time window is too big. Respect the end date
+        oplan->setQuantity(q);
+        if (preferEnd)
+          oplan->setStartAndEnd(e-duration-static_cast<TimePeriod>(q*static_cast<long>(duration_per)), e);
+        else
+          oplan->setStartAndEnd(s, s+duration+static_cast<TimePeriod>(q*static_cast<long>(duration_per)));
+        return;
+      }
+      else
+        oplan->setQuantity(max_q);
     }
 
     // Set the start and end date, as specified
@@ -388,7 +408,7 @@ void OperationRouting::endElement (XMLInput& pIn, XMLElement& pElement)
 
 
 void OperationRouting::setOperationPlanParameters
-  (OperationPlan* oplan, float q, Date s, Date e) const
+  (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
   OperationPlanRouting *op = dynamic_cast<OperationPlanRouting*>(oplan);
 
@@ -419,7 +439,7 @@ void OperationRouting::setOperationPlanParameters
     {
       if ((*i)->getDates().getEnd() > e || firstOp)
       {
-        (*i)->getOperation()->setOperationPlanParameters(*i,q,Date::infinitePast,e);
+        (*i)->getOperation()->setOperationPlanParameters(*i,q,Date::infinitePast,e,preferEnd);
         e = (*i)->getDates().getStart();
         firstOp = false;
       }
@@ -437,7 +457,7 @@ void OperationRouting::setOperationPlanParameters
     {
       if ((*i)->getDates().getStart() < s || firstOp)
       {
-        (*i)->getOperation()->setOperationPlanParameters(*i,q,s,Date::infinitePast);
+        (*i)->getOperation()->setOperationPlanParameters(*i,q,s,Date::infinitePast,preferEnd);
         s = (*i)->getDates().getEnd();
         firstOp = false;
       }
@@ -602,7 +622,7 @@ OperationPlan* OperationAlternate::createOperationPlan (float q, Date s,
 
 
 void OperationAlternate::setOperationPlanParameters
-  (OperationPlan* oplan, float q, Date s, Date e) const
+  (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
   // Argument passed must be a alternate operationplan
   OperationPlanAlternate *oa = dynamic_cast<OperationPlanAlternate*>(oplan);
@@ -620,7 +640,7 @@ void OperationAlternate::setOperationPlanParameters
   else
     // Pass the call to the sub-operation
     oa->altopplan->getOperation()
-      ->setOperationPlanParameters(oa->altopplan,q,s,e);
+      ->setOperationPlanParameters(oa->altopplan,q,s,e,preferEnd);
 }
 
 
@@ -715,7 +735,7 @@ OperationPlan* OperationEffective::createOperationPlan
 
 
 void OperationEffective::setOperationPlanParameters
-  (OperationPlan* opplan, float q, Date s, Date e) const
+  (OperationPlan* opplan, float q, Date s, Date e, bool preferEnd) const
 {
   // Argument passed must be a alternate operationplan
   OperationPlanEffective *oa = dynamic_cast<OperationPlanEffective*>(opplan);
@@ -740,7 +760,7 @@ void OperationEffective::setOperationPlanParameters
     {
       // Update existing suboperationplan to meet new quantity, start and end
       oa->effopplan->getOperation()
-        ->setOperationPlanParameters(oa->effopplan,q,s,e);
+        ->setOperationPlanParameters(oa->effopplan,q,s,e,preferEnd);
 
       // Look up the correct operation to use
       Operation* oper = cal->getValue( useEndDate ?

@@ -218,7 +218,7 @@ void CommandList::execute()
           ch << "Can't create thread " << worker << ", error " << errno;
           delete threads;
           delete m_id;
-          throw RuntimeException(ch.str());
+          throw RuntimeException(ch.str());   // @todo what if some threads were already created?
         }
       }
 
@@ -300,6 +300,10 @@ unsigned __stdcall CommandList::wrapper(void *arg)
   CommandList *l = static_cast<CommandList*>(arg);
   for(Command *c = l->selectCommand(); c; c = l->selectCommand())
   {
+#if defined(HAVE_PTHREAD_H) || !defined(MT)
+    // Verfiy whether there has been a cancellation request in the meantime
+    pthread_testcancel();
+#endif
     try { c->execute(); }
     catch (...)
     {
@@ -462,7 +466,7 @@ void CommandLoadLibrary::execute()
   if (err) throw RuntimeException(err);
 #endif
 
-  // Call the initialization routine with the parameter list 
+  // Call the initialization routine with the parameter list  //@todo do we need to catch exceptions here???
   (inithandle)(parameters);
 
   // Log

@@ -177,7 +177,8 @@
 			<xsd:group ref="COMMON_FIELDS" />
 			<xsd:element name="OWNER" type="OPERATION" />
 			<xsd:element name="DETECTPROBLEMS" type="xsd:boolean" />
-			<xsd:element name="DELAY" type="time" />
+			<xsd:element name="PRETIME" type="time" />
+			<xsd:element name="POSTTIME" type="time" />
 			<xsd:element name="FENCE" type="time" />
 			<xsd:element name="SIZE_MINIMUM" type="positiveFloat" />
 			<xsd:element name="SIZE_MULTIPLE" type="positiveFloat" />
@@ -187,7 +188,8 @@
 		</xsd:choice>
 		<xsd:attributeGroup ref="COMMON_ATTRIBUTES" />
 		<xsd:attribute name="DETECTPROBLEMS" type="xsd:boolean" />
-		<xsd:attribute name="DELAY" type="time" />
+		<xsd:attribute name="PRETIME" type="time" />
+		<xsd:attribute name="POSTTIME" type="time" />
 		<xsd:attribute name="FENCE" type="time" />
 		<xsd:attribute name="SIZE_MINIMUM" type="positiveFloat" />
 		<xsd:attribute name="SIZE_MULTIPLE" type="positiveFloat" />

@@ -1031,14 +1031,41 @@ class Operation : public HasName<Operation>,
     /** Destructor. */
     virtual ~Operation();
 
-    /** Returns the delay after this operation. */
-    TimePeriod getDelay() const {return delaytime;}
+    /** Returns the delay before this operation. 
+      * @see setPreTime 
+      */
+    TimePeriod getPreTime() const {return pre_time;}
 
-    /** Updates the delay after this operation. */
-    void setDelay(TimePeriod t)
+    /** Updates the delay before this operation.<br>
+      * This delay is a soft constraint. This means that solvers should try to 
+      * respect this waiting time but can choose to leave a shorter time delay
+      * if required.<br>
+      * @see setPostTime
+      */
+    void setPreTime(TimePeriod t)
     {
-      if(t<TimePeriod(0L)) return;
-      delaytime=t;
+      if(t<TimePeriod(0L)) 
+        throw DataException("No negative pre-operation time allowed");
+      pre_time=t;
+      setChanged();
+    }
+
+    /** Returns the delay after this operation. 
+      * @see setPostTime 
+      */
+    TimePeriod getPostTime() const {return post_time;}
+
+    /** Updates the delay after this operation.<br>
+      * This delay is a soft constraint. This means that solvers should try to 
+      * respect this waiting time but can choose to leave a shorter time delay
+      * if required.
+      * @see setPreTime
+      */
+    void setPostTime(TimePeriod t)
+    {
+      if(t<TimePeriod(0L)) 
+        throw DataException("No negative post-operation time allowed");
+      post_time=t;
       setChanged();
     }
 
@@ -1081,12 +1108,16 @@ class Operation : public HasName<Operation>,
       *    the constraints set by the operation. If required, some of the
       *    specified parameters may need to be violated. In case of such a
       *    violation we expect the operationplan quantity to be 0.
+      * 
+      * The pre- and post-operation times are NOT considered in this method. 
+      * This method only enforces "hard" constraints. "Soft" constraints are
+      * considered as 'hints' by the solver.
       *
       * Subclasses need to override this method to implement the correct
       * logic.
       */
     virtual void setOperationPlanParameters
-      (OperationPlan*, float, Date, Date) const = 0;
+      (OperationPlan*, float, Date, Date, bool = true) const = 0;
 
     /** Returns an reference to the list of flows. */
     const flowlist& getFlows() const {return flowdata;}
@@ -1184,11 +1215,15 @@ class Operation : public HasName<Operation>,
     static Operationlist nosubOperations;
 
     /** Represents the time between this operation and a next one. */
-    TimePeriod delaytime;
+    TimePeriod post_time;
+
+    /** Represents the time between this operation and a previous one. */
+    TimePeriod pre_time;
 
     /** Represents the release fence of this operation, i.e. a period of time
-      * (relative to the current date of the plan) in which no operationplan
-      * is allowed to be created. */
+      * (relative to the current date of the plan) in which normally no 
+      * operationplan is allowed to be created. 
+      */
     TimePeriod fence;
 
     /** Singly linked list of all flows of this operation. */
@@ -1465,15 +1500,20 @@ class OperationPlan
     void setOwner(OperationPlan* o);
 
     /** Returns a pointer to the operationplan for which this operationplan
-      * a sub-operationplan.
+      * a sub-operationplan.<br>
+      * The method returns NULL if there is no owner defined.<br>
       * E.g. Sub-operationplans of a routing refer to the overall routing
-      * operationplan.
+      * operationplan.<br>
       * E.g. An alternate sub-operationplan refers to its parent.
+      * @see getTopOwner
       */
     OperationPlan* getOwner() const {return owner;}
 
     /** Returns a pointer to the operationplan owning a set of
-      * sub-operationplans. There can be multiple levels of suboperations. */
+      * sub-operationplans. There can be multiple levels of suboperations.<br>
+      * If no owner exists the method returns the current operationplan.
+      * @see getOwner
+      */
     OperationPlan* getTopOwner() const
     {
       if (owner)
@@ -1714,7 +1754,7 @@ class OperationFixedTime : public Operation
       *  - Locked operationplans can't be updated.
       * @see Operation::setOperationPlanParameters
       */
-    void setOperationPlanParameters(OperationPlan*, float, Date, Date) const;
+    void setOperationPlanParameters(OperationPlan*, float, Date, Date, bool=true) const;
 
   private:
     /** Stores the lengh of the Operation. */
@@ -1759,7 +1799,7 @@ class OperationTimePer : public Operation
       * @see Operation::setOperationPlanParameters
       */
     void setOperationPlanParameters
-      (OperationPlan*, float, Date, Date) const;
+      (OperationPlan*, float, Date, Date, bool=true) const;
 
     void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void endElement(XMLInput&, XMLElement&);
@@ -1825,7 +1865,7 @@ class OperationRouting : public Operation
       *    blindly.
       * @see Operation::setOperationPlanParameters
       */
-    void setOperationPlanParameters(OperationPlan*, float, Date, Date) const;
+    void setOperationPlanParameters(OperationPlan*, float, Date, Date, bool=true) const;
 
     void beginElement(XMLInput& , XMLElement&  );
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -1932,7 +1972,7 @@ class OperationAlternate : public Operation
       *    suboperationplan.
       * @see Operation::setOperationPlanParameters
       */
-    void setOperationPlanParameters(OperationPlan*, float, Date, Date) const;
+    void setOperationPlanParameters(OperationPlan*, float, Date, Date, bool=true) const;
 
     void beginElement (XMLInput&, XMLElement&);
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2061,7 +2101,7 @@ class OperationEffective : public Operation
       * @see Operation::setOperationPlanParameters
       */
     void setOperationPlanParameters
-      (OperationPlan* opplan, float q, Date s, Date e) const;
+      (OperationPlan* opplan, float q, Date s, Date e, bool = true) const;
 
   private:
     /** Stores the calendar. This calendar stores for each date in the horizon

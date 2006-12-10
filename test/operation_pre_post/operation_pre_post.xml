@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>Test model for effective operations</NAME>
+  <DESCRIPTION>
+    This test verifies the behavior of pre-operation and post-operation delays.
+    These are as delay times before and after an operation, which the solver tries
+    to respect but can violate if required.
+    Post-operation time:
+      Case 1: Lead time constraints forcing the violation of the post-operation time when required.
+      Case 2: Same as 1, but with time_per operation instead.
+  </DESCRIPTION>
+  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <VERBOSE>false</VERBOSE>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <VERBOSE>false</VERBOSE>
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" VERBOSE="false" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+      <FILENAME>output.1s.xml</FILENAME>
+    </COMMAND>
+  </COMMANDS>
+
+  <!--
+    Case 1: Leadtime constraints on a fixed-time operation.
+  -->
+  <BUFFERS>
+    <BUFFER NAME="1. end item">
+      <ITEM NAME="1. end item" />
+      <PRODUCING NAME="1. make end item" xsi:type="OPERATION_FIXED_TIME"
+        DURATION="168:00:00" POSTTIME="168:00:00">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_END">
+            <BUFFER NAME="1. end item" />
+            <QUANTITY>1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </PRODUCING>
+    </BUFFER>
+  </BUFFERS>
+  <ITEMS>
+    <ITEM NAME="1. end item">
+      <OPERATION NAME="1. Deliver end item">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_START">
+            <BUFFER NAME="1. end item" />
+            <QUANTITY>-1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </OPERATION>
+    </ITEM>
+  </ITEMS>
+  <DEMANDS>
+    <DEMAND NAME="1. order 1">
+      <DESCRIPTION>Delivery is late, and post-operation time is 0 to reduce lateness.</DESCRIPTION>
+      <QUANTITY>6</QUANTITY>
+      <DUE>2006-01-05T00:00:00</DUE>
+      <PRIORITY>11</PRIORITY>
+      <ITEM NAME="1. end item" />
+    </DEMAND>
+    <DEMAND NAME="1. order 2">
+      <DESCRIPTION>Delivery is on time, but post-operation time had to be shrunk.</DESCRIPTION>
+      <QUANTITY>6</QUANTITY>
+      <DUE>2006-01-10T00:00:00</DUE>
+      <PRIORITY>12</PRIORITY>
+      <ITEM NAME="1. end item" />
+    </DEMAND>
+    <DEMAND NAME="1. order 3">
+      <DESCRIPTION>Delivery is on time.</DESCRIPTION>
+      <QUANTITY>6</QUANTITY>
+      <DUE>2006-01-31T00:00:00</DUE>
+      <PRIORITY>13</PRIORITY>
+      <ITEM NAME="1. end item" />
+    </DEMAND>
+  </DEMANDS>
+
+  <!--
+    Case 2: Leadtime constraints on a time-per operation.
+  -->
+  <BUFFERS>
+    <BUFFER NAME="2. end item">
+      <ITEM NAME="2. end item" />
+      <PRODUCING NAME="2. make end item" xsi:type="OPERATION_TIME_PER"
+        DURATION="24:00:00" DURATION_PER="24:00:00" POSTTIME="168:00:00">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_END">
+            <BUFFER NAME="2. end item" />
+            <QUANTITY>1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </PRODUCING>
+    </BUFFER>
+  </BUFFERS>
+  <ITEMS>
+    <ITEM NAME="2. end item">
+      <OPERATION NAME="2. Deliver end item">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_START">
+            <BUFFER NAME="2. end item" />
+            <QUANTITY>-1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </OPERATION>
+    </ITEM>
+  </ITEMS>
+  <DEMANDS>
+    <DEMAND NAME="2. order 1">
+      <DESCRIPTION>Delivery is late, and post-operation time is 0 to reduce lateness.</DESCRIPTION>
+      <QUANTITY>6</QUANTITY>
+      <DUE>2006-01-05T00:00:00</DUE>
+      <PRIORITY>11</PRIORITY>
+      <ITEM NAME="2. end item" />
+    </DEMAND>
+    <DEMAND NAME="2. order 2">
+      <DESCRIPTION>Delivery is on time, but post-operation time had to be shrunk.</DESCRIPTION>
+      <QUANTITY>6</QUANTITY>
+      <DUE>2006-01-10T00:00:00</DUE>
+      <PRIORITY>12</PRIORITY>
+      <ITEM NAME="2. end item" />
+    </DEMAND>
+    <DEMAND NAME="2. order 3">
+      <DESCRIPTION>Delivery is on time.</DESCRIPTION>
+      <QUANTITY>6</QUANTITY>
+      <DUE>2006-01-31T00:00:00</DUE>
+      <PRIORITY>13</PRIORITY>
+      <ITEM NAME="2. end item" />
+    </DEMAND>
+  </DEMANDS>
+
+  <!--
+    Case 3: Upstream material constraint.
+  -->
+  <BUFFERS>
+    <BUFFER NAME="3. end item">
+      <ITEM NAME="3. end item" />
+      <PRODUCING NAME="3. make end item" xsi:type="OPERATION_FIXED_TIME"
+        DURATION="168:00:00" POSTTIME="168:00:00">
+			<!--
+      <PRODUCING NAME="3. make end item" xsi:type="OPERATION_TIME_PER"
+        DURATION="24:00:00" DURATION_PER="24:00:00" POSTTIME="168:00:00">
+      -->
+        <FLOWS>
+          <FLOW xsi:type="FLOW_END">
+            <BUFFER NAME="3. end item" />
+            <QUANTITY>1</QUANTITY>
+          </FLOW>
+          <FLOW xsi:type="FLOW_START">
+            <BUFFER NAME="3. raw material" ONHAND="10"/>
+            <QUANTITY>-1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </PRODUCING>
+    </BUFFER>
+  </BUFFERS>
+  <ITEMS>
+    <ITEM NAME="3. end item">
+      <OPERATION NAME="3. Deliver end item">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_START">
+            <BUFFER NAME="3. end item" />
+            <QUANTITY>-1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </OPERATION>
+    </ITEM>
+  </ITEMS>
+  <OPERATIONS>
+  	<OPERATION NAME="3. supply raw material">
+  		<FLOWS>
+        <FLOW xsi:type="FLOW_END">
+          <BUFFER NAME="3. raw material"/>
+          <QUANTITY>1</QUANTITY>
+        </FLOW>
+  		</FLOWS>
+  	</OPERATION>
+  </OPERATIONS>
+	<OPERATION_PLANS>
+	  <OPERATION_PLAN ID="1001" OPERATION="3. supply raw material">
+	    <END>2006-01-11T00:00:00</END>
+	    <QUANTITY>5</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	</OPERATION_PLANS>
+  <DEMANDS>
+    <DEMAND NAME="3. order 1">
+      <DESCRIPTION>Delivery is late, and post-operation time is 0 to reduce lateness.</DESCRIPTION>
+      <QUANTITY>6</QUANTITY>
+      <DUE>2006-01-05T00:00:00</DUE>
+      <PRIORITY>11</PRIORITY>
+      <ITEM NAME="3. end item" />
+    </DEMAND>
+    <DEMAND NAME="3. order 2">
+      <DESCRIPTION>Delivery is on time, but post-operation time had to be shrunk.</DESCRIPTION>
+      <QUANTITY>6</QUANTITY>
+      <DUE>2006-01-10T00:00:00</DUE>
+      <PRIORITY>12</PRIORITY>
+      <ITEM NAME="3. end item" />
+    </DEMAND>
+    <DEMAND NAME="3. order 3">
+      <DESCRIPTION>Delivery is on time.</DESCRIPTION>
+      <QUANTITY>6</QUANTITY>
+      <DUE>2006-01-31T00:00:00</DUE>
+      <PRIORITY>13</PRIORITY>
+      <ITEM NAME="3. end item" />
+    </DEMAND>
+  </DEMANDS>
+</PLAN>

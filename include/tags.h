@@ -66,7 +66,8 @@ class Tags
     static const XMLtag tag_steps;
     static const XMLtag tag_duration;
     static const XMLtag tag_duration_per;
-    static const XMLtag tag_delay;
+    static const XMLtag tag_pretime;
+    static const XMLtag tag_posttime;
     static const XMLtag tag_loads;
     static const XMLtag tag_load;
     static const XMLtag tag_load_plans;

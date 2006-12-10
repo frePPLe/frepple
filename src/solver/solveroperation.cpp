@@ -37,6 +37,7 @@ bool MRPSolver::checkOperation
 {
   // The default answer...
   data.a_date = Date::infiniteFuture;
+  data.a_qty = data.q_qty;
 
   // Check the leadtime constraints
   if(!checkOperationLeadtime(opplan,data))
@@ -81,19 +82,22 @@ bool MRPSolver::checkOperationLeadtime
   // Compute how much we can supply in the current timeframe.
   // In other words, we try to resize the operation quantity to fit the
   // available timeframe: used for e.g. time-per operations
+  // Note that we allow the complete post-operation time to be eaten
   opplan->getOperation()->setOperationPlanParameters(
     opplan,opplan->getQuantity(),
-    Plan::instance().getCurrent()+delta,
-    opplan->getDates().getEnd()
+    Plan::instance().getCurrent() + delta,
+    opplan->getDates().getEnd() + opplan->getOperation()->getPostTime(),
+    opplan->getOperation()->getPostTime() ? false : true
     );
 
   // Check the result of the resize
   if (opplan->getDates().getStart() >= Plan::instance().getCurrent() + delta
+      && opplan->getDates().getEnd() <= data.q_date_max
       && opplan->getQuantity() > 0)
   {
     // Resizing did work! The operation now fits within constrained limits
     data.a_qty = opplan->getQuantity();
-    data.a_date = data.q_date; 
+    data.a_date = opplan->getDates().getEnd(); 
     // Acknowledge creation of operationplan
     return true;
   }
@@ -118,10 +122,11 @@ bool MRPSolver::checkOperationMaterial
 {
   Date a_date = data.q_date;
   Date prev_a_date = data.a_date;
-  float a_qty = data.q_qty;
+  float a_qty = opplan->getQuantity();
   float q_qty_Flow;
   Date q_date_Flow;
   TimePeriod delay;
+  bool incomplete = false;
 
   // Loop through all flowplans
   for(OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
@@ -141,6 +146,7 @@ bool MRPSolver::checkOperationMaterial
         // and to (2) take care of lot sizing constraints of this operation.
         g->setQuantity(-data.a_qty, true);
         a_qty = opplan->getQuantity();
+        incomplete = true;
       }
       else
         // Never answer more than asked. The actual operationplan
@@ -148,19 +154,27 @@ bool MRPSolver::checkOperationMaterial
         a_qty = - q_qty_Flow / g->getFlow()->getQuantity();
 
       // Validate the answered date
-      if (data.a_date != Date::infiniteFuture
+      if ((data.a_qty < q_qty_Flow) //data.a_date != Date::infiniteFuture xxx
           && (!delay || delay > data.a_date - q_date_Flow))
         // Late supply of material. We expect the end of the operation to be
-        // delayed with the same amount of time as the delay.
+        // delayed with the same amount of time as the delay.      @todo for a time_per operation this is incorrect!!!
         delay = data.a_date - q_date_Flow;
     }
 
-  // Compute the final reply
-  Date tmp = delay ? (a_date + delay) : Date::infiniteFuture;
-  data.a_date = 
-    (tmp!=Date::infiniteFuture && tmp>prev_a_date) ? tmp : prev_a_date;
-  data.a_qty = a_qty;
+  // Recheck  xxx
+  if (false && delay && a_qty <= ROUNDING_ERROR && a_date + delay <= data.q_date_max)
+  {
+    data.q_date = a_date + delay;
+    opplan->setStart(a_date + delay);
+    return checkOperation(opplan, data);
+  }
 
+  // Compute the final reply
+  Date tmp = incomplete ? (a_date + delay) : Date::infiniteFuture;
+  if (tmp==Date::infiniteFuture) data.a_date = prev_a_date;
+  else if (prev_a_date == Date::infiniteFuture) data.a_date = tmp;
+  else data.a_date = (tmp>prev_a_date) ? tmp : prev_a_date;
+  data.a_qty = a_qty;
   // Reply OK/NOK
   return a_qty > ROUNDING_ERROR;
 }
@@ -172,7 +186,6 @@ bool MRPSolver::checkOperationCapacity
 {
   // Default answer
   data.a_qty = data.q_qty;
-  data.a_date = data.q_date;
 
   // Loop through all loadplans, and solve for the resource
   data.moveit = NULL;
@@ -247,6 +260,10 @@ void MRPSolver::solve(Operation* oper, void* v)
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
+  // Subtract the post-operation time
+  Solver->q_date_max = Solver->q_date;
+  Solver->q_date -= oper->getPostTime();
+
   // Create the operation plan.
   if (Solver->curOwnerOpplan)
   {
@@ -274,9 +291,6 @@ void MRPSolver::solve(Operation* oper, void* v)
 
   // Check positive reply quantity
   assert(Solver->a_qty >= 0);
-
-  // Check reply date is later than requested date
-  // @todo this assertion sometimes fails!!! assert(Solver->a_date >= Solver->q_date);
 
   // Message
   if (Solver->getSolver()->getVerbose())

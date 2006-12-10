@@ -1,6 +1,47 @@
+#
+# Copyright (C) 2006 by Johan De Taeye
+#
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation; either version 2.1 of the License, or
+# (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
+#
 
+# file : $URL$
+# revision : $LastChangedRevision$  $LastChangedBy$
+# date : $LastChangedDate$
+# email : jdetaeye@users.sourceforge.net
+
+#
 # This makefile is built as a convenience for developers.
-# It should not be considered part of a normal distribution
+# It provides easy to use wrappers around common administration, build and maintenance tasks:
+#  BUILDING AND COMPILING
+#     - default:     Configures and recreates an optimized build from scratch.
+#     - debug:       Configures and recreates a debug build from scratch.
+#     - coverage:    Configures and recompiles the code for coverage testing.
+#     - profile:     Configures and recompiles the code suitable for profiling.
+#     - build:       Compiles a configured project.
+#     - clean:       Cleans up all intermediate files.
+#     - check:       Runs the test suite.
+#  DISTRIBTION TASKS
+#     - dist:        Creates a source code tarball.
+#  CODE ANALYSIS
+#     - stats:       Runs a simple lines-of-code metric on the source code.
+#     - todo:        Greps for todo items in the source code.
+#     - astyle:      Runs the astyle code beautifier.
+#  CODE MAINTENANCE
+#     - set_release: Updates all references to the release number from an old to a new number.
+#     - svn:         Updates the source code with the latest version in the SourceForge SVN repository.
+#
 
 default: prep config clean build check dist
 
@@ -88,10 +129,22 @@ astyle:
 
 # The release number is (unfortunately) stored in a number of independent places:
 # This make target is used to update all those places in a single go.
-prevrel = 0\.1\.3
-newrel = 0.1.4
+old1 = 0
+old2 = 1
+old3 = 3
+new1 = 0
+new2 = 1
+new3 = 4
 set_release:
 	for i in "configure.in" "doc/menu.html" "contrib/installer/frepple.nsi"; do \
-		sed 's/$(prevrel)/$(newrel)/g' $$i >out.tmp; \
+		sed 's/$(old1)\.$(old2)\.$(old3)/$(new1).$(new2).$(new3)/g' $$i >out.tmp; \
 		mv out.tmp $$i; \
 	done
+	for i in "src/dll.rc" "src/exe.rc"; do \
+		sed 's/$(old1),$(old2),$(old3)/$(new1),$(new2),$(new3)/g' $$i >out.tmp; \
+		sed 's/$(old1), $(old2), $(old3)/$(new1), $(new2), $(new3)/g' out.tmp >$$i; \
+		rm out.tmp; \
+	done
+
+svn:
+	svn update

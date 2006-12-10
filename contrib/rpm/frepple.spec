@@ -35,8 +35,8 @@ Buildroot: /tmp/frepple
 Prefix: /usr
 
 %description
-Frepple stands for "FREE Production Planning Library". It aims at building a 
-toolkit for modeling and solving production planning problems, targetted at 
+Frepple stands for "FREE Production Planning Library". It aims at building a
+toolkit for modeling and solving production planning problems, targetted at
 discrete manufacturing industries.
 
 %prep
@@ -44,12 +44,12 @@ discrete manufacturing industries.
 
 %build
 ./configure --enable-doc --prefix=%{buildroot}%{prefix} --docdir=%{buildroot}%{prefix}/share/doc/frepple
-make all 
+make all
 
 %install
 make install
 
-%clean 
+%clean
 rm -rf %{buildroot}
 
 %post

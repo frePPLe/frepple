@@ -273,8 +273,14 @@ class MRPSolver : public Solver
         /** This is the quantity we are asking for. */
         float q_qty;
 
-        /** This is the Date we are asking for. */
+        /** This is the date we are asking for. */
         Date q_date;
+
+        /** This is the maximum date we are asking for. <br>
+          * In case of a post-operation time there is a difference between 
+          * q_date and q_date_max. 
+          */
+        Date q_date_max;
 
         /** This is the quantity we can get by the requested Date. */
         float a_qty;

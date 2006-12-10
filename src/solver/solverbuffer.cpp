@@ -208,8 +208,16 @@ void MRPSolver::solve(Buffer* b, void* v)
   }
 
   // Final evaluation of the replenishment
-  if (shortage < ROUNDING_ERROR
-      || !Solver->getSolver()->isMaterialConstrained())
+  if (Solver->getSolver()->isConstrained())
+  {
+    // Use the constrained planning result
+    Solver->a_qty = static_cast<float>(requested_qty - shortage);
+    if (Solver->a_qty < 0) Solver->a_qty = 0.0;
+    Solver->a_date = (extraInventoryDate < extraSupplyDate) ? 
+      extraInventoryDate : 
+      extraSupplyDate;
+  }
+  else
   {
     // Enough inventory or supply available, or not material constrained
     // In case of a plan that is not material constrained, the buffer tries to
@@ -219,21 +227,9 @@ void MRPSolver::solve(Buffer* b, void* v)
     Solver->a_qty = requested_qty;
     Solver->a_date = Date::infiniteFuture;
   }
-  else
-  {
-    // We are short on supply
-    Solver->a_qty = static_cast<float>(requested_qty - shortage);
-    if (Solver->a_qty < 0) Solver->a_qty = 0.0;
-    Solver->a_date = (extraInventoryDate < extraSupplyDate) ? 
-      extraInventoryDate : 
-      extraSupplyDate;
-  }
 
   // Restore the owning operationplan.
   Solver->curOwnerOpplan = prev_owner_opplan;
-
-  // Reply date can never be earlier than the requested date
-  assert( Solver->a_date >= Solver->q_date );
 
   // Reply quantity must be greater than 0
   assert( Solver->a_qty >= 0 );

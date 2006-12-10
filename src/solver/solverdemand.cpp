@@ -92,7 +92,7 @@ void MRPSolver::solve (Demand* l, void* v)
     {
       // Update the date to plan in the next loop
       Date copy_plan_date = plan_date;
-      plan_date = Solver->a_date;
+      if (Solver->a_date > plan_date) plan_date = Solver->a_date;
 
       if (Solver->a_qty > ROUNDING_ERROR)
       {

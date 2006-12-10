@@ -1142,9 +1142,8 @@ class TimePeriod
       *  - +48:0:0
       *  - 47:60:00
       *  - 46:120:00
-      *  - 2880:00
+      *  - -2880:00
       *  - 172800
-      * @todo Not following the XML standard of P1Y2M3DT10H30M12.3S
       */
     void parse(const char*);
 

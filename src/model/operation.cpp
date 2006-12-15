@@ -280,10 +280,9 @@ void OperationTimePer::setOperationPlanParameters
       {
         // Time window is too big. Respect the end date
         oplan->setQuantity(q);
-        if (preferEnd)
-          oplan->setStartAndEnd(e-duration-static_cast<TimePeriod>(q*static_cast<long>(duration_per)), e);
-        else
-          oplan->setStartAndEnd(s, s+duration+static_cast<TimePeriod>(q*static_cast<long>(duration_per)));
+        TimePeriod d = static_cast<long>(q*static_cast<long>(duration_per)) + duration;
+        if (preferEnd) oplan->setStartAndEnd(e-d, e);
+        else oplan->setStartAndEnd(s, s+d);
         return;
       }
       else

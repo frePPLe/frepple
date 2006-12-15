@@ -2998,10 +2998,11 @@ class CommandReadXMLString : public Command
 
 /** This command is used for reading XML input over an HTTP connection.<br>
   * The Xerces parser supports only the simplest possible setup: no proxy,
-  * no caching, no ssl, no authentication, etc...
+  * no caching, no ssl, no authentication, etc...<br>
   * If you have a more complex setup, you'll need to use a sytem command to
   * retrieve the data first with eg wget, lynx, scp, ftp, sftp, rsynch,... After the 
   * download read in the data file with a readXML command.
+  * @todo make a module, based on the curl library, to replace this class.
   */
 class CommandReadXMLURL : public Command
 {
@@ -3124,10 +3125,10 @@ class CommandSavePlan : public Command
 
 /** This command prints a summary of the dynamically allocated memory
   * to the standard output. This is useful for understanding better the size
-  * of your frepple model.<br>
+  * of your model.<br>
   * The numbers reported by this function won't match the memory size as
-  * reported by the OS the dynamically allocated memory is only a part of
-  * the total memory used by a program.<br>
+  * reported by the operating system, since the dynamically allocated memory 
+  * is only a part of the total memory used by a program.
   */
 class CommandPlanSize : public Command
 {
@@ -3284,25 +3285,25 @@ class Demand
       * If not, only a delivery at the requested date is allowed.
       * @see planShort
       */
-    bool planLate() const {return !policy.test(2);}
+    bool planLate() const {return !policy.test(0);}
 
     /** Returns true if this demand isn't allowed to be planned late.
       * If not, only a delivery at the requested date is allowed.
       * @see planLate
       */
-    bool planShort() const {return policy.test(2);}
+    bool planShort() const {return policy.test(0);}
 
     /** Returns true if multiple delivery operationplans for this demand are
       * allowed.
       * @see planSingleDelivery
       */
-    bool planMultiDelivery() const {return !policy.test(3);}
+    bool planMultiDelivery() const {return !policy.test(1);}
 
     /** Returns true if only a single delivery operationplan is allowed for this
       * demand.
       * @see planMultiDelivery
       */
-    bool planSingleDelivery() const {return policy.test(3);}
+    bool planSingleDelivery() const {return policy.test(1);}
 
     /** Resets the demand policies to the default values, and then applies the
       * policies specified in the argument string.
@@ -3352,10 +3353,10 @@ class Demand
 
     /** Specifies whether of not this demand is to be hidden from
       * serialization. The default value is false. */
-    void setHidden(bool b) {policy.set(5,b);}
+    void setHidden(bool b) {policy.set(2,b);}
 
     /** Returns true if this demand is to be hidden from serialization. */
-    bool getHidden() const {return policy.test(5);}
+    bool getHidden() const {return policy.test(2);}
 
     virtual const MetaData& getType() const {return metadata;}
     static const MetaCategory metadata;
@@ -3380,17 +3381,14 @@ class Demand
     /** Due date. */
     Date dueDate;
 
-    /** Effiently stores a number of different policy values for the demand.
-      * The default value for each policy bit is 0.
+    /** Efficiently stores a number of different policy values for the demand.
+      * The default value for each policy bit is 0 / false.
       * The bits have the following meaning:
-      *  - 0: Unused
-      *  - 1: Unused
-      *  - 2: Late (false) or Short (true)
-      *  - 3: Multi (false) or Single (true) delivery
-      *  - 4: Unused
-      *  - 5: Hidden
+      *  - 0: Late (false) or Short (true)
+      *  - 1: Multi (false) or Single (true) delivery
+      *  - 2: Hidden
       */
-    bitset<6> policy;
+    bitset<3> policy;
 
     /** A list of operation plans to deliver this demand. */
     OperationPlan_list deli;

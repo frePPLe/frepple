@@ -117,7 +117,7 @@ const Demand::OperationPlan_list& Demand::getDelivery() const
 	  {
 	  	if ((*i)->getDates().getEnd() < (*j)->getDates().getEnd())
 	  	{
-        // Oh yes, the ordering was disruped indeed...
+        // Oh yes, the ordering was disrupted indeed...
         iter_swap(i,j);
         // The Borland compiler doesn't understand that this variable is used.
         // It gives a incorrect warning message...
@@ -317,7 +317,7 @@ void Demand::addPolicy(const string& s)
           ptr += 9;
           if (planShort()) break;
           setChanged();
-          policy.set(2);
+          policy.set(0);
         }
         else if (!strncasecmp(ptr, "PLANLATE", 8))
         {
@@ -325,7 +325,7 @@ void Demand::addPolicy(const string& s)
           ptr += 8;
           if (planLate()) break;
           setChanged();
-          policy.reset(2);
+          policy.reset(0);
         }
         else
           notfound = false;
@@ -337,7 +337,7 @@ void Demand::addPolicy(const string& s)
           ptr += 14;
           if (planSingleDelivery() ) break;
           setChanged();
-          policy.set(3);
+          policy.set(1);
         }
         else
           notfound = false;
@@ -349,7 +349,7 @@ void Demand::addPolicy(const string& s)
           ptr += 13;
           if (planMultiDelivery()) break;
           setChanged();
-          policy.reset(3);
+          policy.reset(1);
         }
         else
           notfound = false;

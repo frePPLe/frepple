@@ -340,14 +340,19 @@ class NonCopyable
 
 /** This is an object pool which holds objects of a given type.<br>
   * The parameter type should have a default constructor.<br>
-  * The class is NOT thread-safe. The user is reponsible to
-  * allow only a single thread using a pool at the same time.
+  * The size of the pool is extended automatically as additional objects are 
+  * requested. There is no maximum to the number of objects allocated in the 
+  * pool.<br> 
+  * Allocations from the pool objects is O(1), while de-allocations 
+  * are O(log(N)).<br>
+  * The class is NOT thread-safe. The user is reponsible to allow only a 
+  * single thread using a pool at the same time.
   */
 template <class T> class Pool
 {
   private:
     /** List of allocated objects. */
-    list<T*> alloced;
+    set<T*> alloced;
 
     /** List of previously allocated, but now unused objects. */
     stack<T*> freed;
@@ -362,10 +367,23 @@ template <class T> class Pool
       */
     void Free(T* Item);
 
+    /** Constructor.<br>
+      * The argument specifies the initial size of the pool. There is
+      * no maximum to the number of objects in the pool.
+      */
+    Pool (int i = 0)
+    {
+      for ( ; i>0; --i) freed.push(new T());
+    }
+
+    /** Destructor. */
     ~Pool()
     {
-      for(typename list<T*>::iterator i=alloced.begin(); i!=alloced.end(); ++i)
+      // Delete the allocated objects in use. The elements are not deleted 
+      // from the set. The set destructor will clear the set.
+      for(typename set<T*>::iterator i=alloced.begin(); i!=alloced.end(); ++i)
         delete *i;
+      // Delete the objects on the free stack
       while (!freed.empty())
       {
         delete freed.top();
@@ -387,22 +405,17 @@ template <class T> T* Pool<T>::Alloc ()
     obj = freed.top();
     freed.pop();
   }
-  alloced.push_front(obj);
+  alloced.insert(obj);
   return obj;
 }
 
 
 template <class T> void Pool<T>::Free (T* it)
 {
-  // Note: we find the most recently allocated object at the start of the
-  // list. Our implementation gives the best performance when the pool objects
-  // are used similar to a stack.
-  typename list<T*>::iterator po = alloced.begin();
-  for(; po != alloced.end(); ++po)
-    if (*po == it)
-    {
-    // Found!
-    alloced.erase(po);
+  // Erase the element from the stack
+  if (alloced.erase(it))
+  {
+    // Found! Push the object on the stack of free objects.
     freed.push(it);
     return;
     };

@@ -93,7 +93,7 @@ my @aborted;
 opendir(DIR, ".") || die "Error: Can't open current directory\n";
 foreach (sort readdir DIR)
 {
-        $subdir = $_;
+  $subdir = $_;
 
 	# Skip files and dirs that are not tests...
 	next if !(-d $subdir && $subdir ne "." && $subdir ne "..");

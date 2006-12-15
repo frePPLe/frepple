@@ -32,6 +32,7 @@ namespace frepple
 {
 
 
+/** @todo use of the variable AllLoadsOkay is not nice and clean */
 bool MRPSolver::checkOperation
     (OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
 {
@@ -41,17 +42,125 @@ bool MRPSolver::checkOperation
 
   // Check the leadtime constraints
   if(!checkOperationLeadtime(opplan,data))
-    // This operation is a wreck. It is impossible to make it meet the
+    // This operationplan is a wreck. It is impossible to make it meet the
     // leadtime constraints
     return false;
 
-  if (isCapacityConstrained())
-    // Check the capacity (which also integrates a material check)
-    return checkOperationCapacity(opplan,data);
-  else
-    // Check the material constraints. In case there are no constraints at
-    // all enabled, this step will take care of the upstream propagation.
-    return checkOperationMaterial(opplan,data);
+  // Loop till everything is okay. During this loop the operationplan can be 
+  // moved early or late, and its quantity can be changed. 
+  // However, it cannot be split.
+  bool okay = true;
+  do
+  {
+
+    if (isCapacityConstrained())
+    {
+      // Loop through all loadplans, and solve for the resource.
+      // This may move an operationplan early.
+      data.moveit = NULL;
+      bool hasMultipleLoads(opplan->sizeLoadPlans() > 2);
+      do
+      {
+        data.AllLoadsOkay = true;
+        for(OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
+            h!=opplan->endLoadPlans() && data.AllLoadsOkay; ++h)
+        {
+          data.q_operationplan = opplan;
+          data.q_loadplan = &*h;
+          data.q_qty = h->getQuantity();
+          data.q_date = h->getDate();
+          // Call the resource resolver. Note that it will update the variable
+          // data.AllLoadsOkay if it moves the operationplan.
+          h->getLoad()->solve(*this,&data);
+        }
+      }
+      // Imagine there are multiple loads. As soon as one of them is moved, we 
+      // need to redo the capacity check for the ones we already checked
+      // Repeat until no load has touched the opplan, or till proven infeasible
+      // No need to reloop if there is only a single load (= 2 loadplans)
+      while (hasMultipleLoads && !data.AllLoadsOkay && data.a_qty!=0.0f); 
+
+      // Commit to the move of the operationplan   // Is a move command really appropriate??? xxx or can we just update the existing opplan??? Easier and the creation is anyway still to be committed.
+      if (data.moveit)
+      {
+        data.actions.add(data.moveit);   // xxx how do we treat this in the big loop? Mat. check can now also move an opplan
+        data.moveit = NULL;
+      }
+
+      // Return false if no capacity is available
+      if (data.a_qty==0.0f) return false;
+    }
+
+    // Check material
+    data.q_qty = opplan->getQuantity();
+    data.q_date = opplan->getDates().getEnd();
+
+    Date a_date = data.q_date;
+    Date prev_a_date = data.a_date;
+    float a_qty = opplan->getQuantity();
+    float q_qty_Flow;
+    Date q_date_Flow;
+    TimePeriod delay;
+    bool incomplete = false;
+
+    // Loop through all flowplans
+    for(OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
+        g!=opplan->endFlowPlans(); ++g)
+      if (g->getFlow()->isConsumer())
+      {
+        // Trigger the flow solver, which will call the buffer solver
+        data.q_flowplan = &*g;
+        q_qty_Flow = - data.q_flowplan->getQuantity();
+        q_date_Flow = data.q_flowplan->getDate();
+        g->getFlow()->solve(*this,&data);
+
+        // Validate the answered quantity
+        if (data.a_qty < q_qty_Flow)
+        {
+          // Update the opplan, which is required to (1) update the flowplans
+          // and to (2) take care of lot sizing constraints of this operation.
+          g->setQuantity(-data.a_qty, true);
+          a_qty = opplan->getQuantity();
+          incomplete = true;
+        }
+        else
+          // Never answer more than asked. The actual operationplan
+          // could be bigger because of lot sizing.
+          a_qty = - q_qty_Flow / g->getFlow()->getQuantity();
+
+        // Validate the answered date
+        if ((data.a_qty < q_qty_Flow) //data.a_date != Date::infiniteFuture xxx
+            && (!delay || delay > data.a_date - q_date_Flow))
+          // Late supply of material. We expect the end of the operation to be
+          // delayed with the same amount of time as the delay.      @todo for a time_per operation this is incorrect!!!
+          delay = data.a_date - q_date_Flow;
+      }
+
+    // Recheck  xxx
+    if (false && delay && a_qty <= ROUNDING_ERROR && a_date + delay <= data.q_date_max)
+    {
+      data.q_date = a_date + delay;
+      opplan->setStart(a_date + delay);
+      return checkOperation(opplan, data);
+    }
+
+    // Compute the final reply
+    Date tmp = incomplete ? (a_date + delay) : Date::infiniteFuture;
+    if (tmp==Date::infiniteFuture) data.a_date = prev_a_date;
+    else if (prev_a_date == Date::infiniteFuture) data.a_date = tmp;
+    else data.a_date = (tmp>prev_a_date) ? tmp : prev_a_date;
+    data.a_qty = a_qty;
+    // Reply OK/NOK
+    return a_qty > ROUNDING_ERROR;   // xxx unconditionally leaves the loop
+
+    if (!okay)
+    {
+      // xxx clean up propagated operation plans before going into the loop again?
+      // Pop actions from the command "stack" in the command list
+    }
+  }
+  while (!okay);  // Repeat the loop if the operation was moved and the 
+                  // feasibility needs to be rechecked.
 }
 
 
@@ -114,117 +223,6 @@ bool MRPSolver::checkOperationLeadtime
     // Deny creation of the operationplan
     return false;
   }
-}
-
-
-bool MRPSolver::checkOperationMaterial
-  (OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
-{
-  Date a_date = data.q_date;
-  Date prev_a_date = data.a_date;
-  float a_qty = opplan->getQuantity();
-  float q_qty_Flow;
-  Date q_date_Flow;
-  TimePeriod delay;
-  bool incomplete = false;
-
-  // Loop through all flowplans
-  for(OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
-      g!=opplan->endFlowPlans(); ++g)
-    if (g->getFlow()->isConsumer())
-    {
-      // Trigger the flow solver, which will call the buffer solver
-      data.q_flowplan = &*g;
-      q_qty_Flow = - data.q_flowplan->getQuantity();
-      q_date_Flow = data.q_flowplan->getDate();
-      g->getFlow()->solve(*this,&data);
-
-      // Validate the answered quantity
-      if (data.a_qty < q_qty_Flow)
-      {
-        // Update the opplan, which is required to (1) update the flowplans
-        // and to (2) take care of lot sizing constraints of this operation.
-        g->setQuantity(-data.a_qty, true);
-        a_qty = opplan->getQuantity();
-        incomplete = true;
-      }
-      else
-        // Never answer more than asked. The actual operationplan
-        // could be bigger because of lot sizing.
-        a_qty = - q_qty_Flow / g->getFlow()->getQuantity();
-
-      // Validate the answered date
-      if ((data.a_qty < q_qty_Flow) //data.a_date != Date::infiniteFuture xxx
-          && (!delay || delay > data.a_date - q_date_Flow))
-        // Late supply of material. We expect the end of the operation to be
-        // delayed with the same amount of time as the delay.      @todo for a time_per operation this is incorrect!!!
-        delay = data.a_date - q_date_Flow;
-    }
-
-  // Recheck  xxx
-  if (false && delay && a_qty <= ROUNDING_ERROR && a_date + delay <= data.q_date_max)
-  {
-    data.q_date = a_date + delay;
-    opplan->setStart(a_date + delay);
-    return checkOperation(opplan, data);
-  }
-
-  // Compute the final reply
-  Date tmp = incomplete ? (a_date + delay) : Date::infiniteFuture;
-  if (tmp==Date::infiniteFuture) data.a_date = prev_a_date;
-  else if (prev_a_date == Date::infiniteFuture) data.a_date = tmp;
-  else data.a_date = (tmp>prev_a_date) ? tmp : prev_a_date;
-  data.a_qty = a_qty;
-  // Reply OK/NOK
-  return a_qty > ROUNDING_ERROR;
-}
-
-
-/** @todo use of the variable AllLoadsOkay is not nice and clean */
-bool MRPSolver::checkOperationCapacity
-  (OperationPlan* opplan, MRPSolverdata& data)
-{
-  // Default answer
-  data.a_qty = data.q_qty;
-
-  // Loop through all loadplans, and solve for the resource
-  data.moveit = NULL;
-  bool hasMultipleLoads(opplan->sizeLoadPlans() > 2);
-  do
-  {
-    data.AllLoadsOkay = true;
-    for(OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
-        h!=opplan->endLoadPlans() && data.AllLoadsOkay; ++h)
-    {
-      data.q_operationplan = opplan;
-      data.q_loadplan = &*h;
-      data.q_qty = h->getQuantity();
-      data.q_date = h->getDate();
-      // Call the resource resolver. Note that it will update the variable
-      // data.AllLoadsOkay if it moves the operationplan.
-      h->getLoad()->solve(*this,&data);
-    }
-  }
-  // Imagine there are multiple loads. As soon as one of them is moved, we 
-  // need to redo the capacity check for the ones we already checked
-  // Repeat until no load has touched the opplan, or till proven infeasible
-  // No need to reloop if there is only a single load (= 2 loadplans)
-  while (hasMultipleLoads && !data.AllLoadsOkay && data.a_qty!=0.0f);
-
-  // Commit to the move of the operationplan
-  if (data.moveit)
-  {
-    data.actions.add(data.moveit);
-    data.moveit = NULL;
-  }
-
-  // Return false if no capacity is available
-  if (data.a_qty==0.0f) return false;
-
-  // Check material
-  data.q_qty = opplan->getQuantity();
-  data.q_date = opplan->getDates().getEnd();
-  return checkOperationMaterial(opplan,data);
 }
 
 
@@ -302,6 +300,7 @@ void MRPSolver::solve(Operation* oper, void* v)
 }
 
 
+// No need to take post- and pre-operation times into account
 void MRPSolver::solve(OperationRouting* oper, void* v)
 {
   MRPSolverdata* Solver = (MRPSolverdata*)v;
@@ -408,6 +407,7 @@ void MRPSolver::solve(OperationRouting* oper, void* v)
 }
 
 
+// No need to take post- and pre-operation times into account
 void MRPSolver::solve(OperationAlternate* oper, void* v)
 {
   MRPSolverdata *Solver = (MRPSolverdata*)v;
@@ -540,10 +540,10 @@ void MRPSolver::solve(OperationAlternate* oper, void* v)
     clog << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
-
 }
 
 
+// No need to take post- and pre-operation times into account
 void MRPSolver::solve(OperationEffective* oper, void* v)
 {
   MRPSolverdata *Solver = (MRPSolverdata*)v;
@@ -586,7 +586,6 @@ void MRPSolver::solve(OperationEffective* oper, void* v)
     clog << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
-
 }
 
 

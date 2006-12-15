@@ -316,8 +316,6 @@ class MRPSolver : public Solver
       */
     bool checkOperation(OperationPlan*, MRPSolverdata& data);
     bool checkOperationLeadtime(OperationPlan*, MRPSolverdata& data);
-    bool checkOperationMaterial(OperationPlan*, MRPSolverdata& data);
-    bool checkOperationCapacity(OperationPlan*, MRPSolverdata& data);
 };
 
 

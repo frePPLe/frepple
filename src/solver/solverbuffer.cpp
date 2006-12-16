@@ -41,7 +41,7 @@ namespace frepple
   */
 void MRPSolver::solve(Buffer* b, void* v)
 {
-  MRPSolverdata* Solver = (MRPSolverdata*)v;
+  MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
   Date requested_date(Solver->q_date);
   float requested_qty(Solver->q_qty);
   bool tried_requested_date(false);

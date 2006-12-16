@@ -57,7 +57,6 @@ bool MRPSolver::checkOperation
     {
       // Loop through all loadplans, and solve for the resource.
       // This may move an operationplan early.
-      data.moveit = NULL;
       bool hasMultipleLoads(opplan->sizeLoadPlans() > 2);
       do
       {
@@ -79,13 +78,6 @@ bool MRPSolver::checkOperation
       // Repeat until no load has touched the opplan, or till proven infeasible
       // No need to reloop if there is only a single load (= 2 loadplans)
       while (hasMultipleLoads && !data.AllLoadsOkay && data.a_qty!=0.0f); 
-
-      // Commit to the move of the operationplan   // Is a move command really appropriate??? xxx or can we just update the existing opplan??? Easier and the creation is anyway still to be committed.
-      if (data.moveit)
-      {
-        data.actions.add(data.moveit);   // xxx how do we treat this in the big loop? Mat. check can now also move an opplan
-        data.moveit = NULL;
-      }
 
       // Return false if no capacity is available
       if (data.a_qty==0.0f) return false;
@@ -231,7 +223,7 @@ void MRPSolver::solve(Operation* oper, void* v)
   // Make sure we have a valid operation
   assert(oper);
 
-  MRPSolverdata* Solver = (MRPSolverdata*)v;
+  MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
   OperationPlan *z;
   CommandCreateOperationPlan *a = NULL;
 
@@ -303,7 +295,7 @@ void MRPSolver::solve(Operation* oper, void* v)
 // No need to take post- and pre-operation times into account
 void MRPSolver::solve(OperationRouting* oper, void* v)
 {
-  MRPSolverdata* Solver = (MRPSolverdata*)v;
+  MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
 
   // Message
   if (Solver->getSolver()->getVerbose())
@@ -410,7 +402,7 @@ void MRPSolver::solve(OperationRouting* oper, void* v)
 // No need to take post- and pre-operation times into account
 void MRPSolver::solve(OperationAlternate* oper, void* v)
 {
-  MRPSolverdata *Solver = (MRPSolverdata*)v;
+  MRPSolverdata *Solver = static_cast<MRPSolverdata*>(v);
   Date origQDate = Solver->q_date;
   float origQqty = Solver->q_qty;
   Buffer *buf = Solver->curBuffer;
@@ -546,7 +538,7 @@ void MRPSolver::solve(OperationAlternate* oper, void* v)
 // No need to take post- and pre-operation times into account
 void MRPSolver::solve(OperationEffective* oper, void* v)
 {
-  MRPSolverdata *Solver = (MRPSolverdata*)v;
+  MRPSolverdata *Solver = static_cast<MRPSolverdata*>(v);
 
   // Message
   if (Solver->getSolver()->getVerbose())

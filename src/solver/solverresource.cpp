@@ -41,7 +41,7 @@ namespace frepple
 void MRPSolver::solve(Resource* res, void* v)
 {
 
-  MRPSolverdata* data = (MRPSolverdata*)v;
+  MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
 
   // The loadplan is an increase in size, and the algorithm needs to process
   // the decreases.
@@ -58,6 +58,7 @@ void MRPSolver::solve(Resource* res, void* v)
   // Initialize the default reply
   data->a_qty = data->q_qty;
   data->a_date = data->q_date;
+  Date currentOpplanEnd = data->q_operationplan->getDates().getEnd();
 
   // Loop until we found a valid location for the operationplan
   bool HasOverload;
@@ -100,14 +101,11 @@ void MRPSolver::solve(Resource* res, void* v)
           }
         }
 
-        // Create a new move command if there is capacity found
+        // Move the operation plan if there is capacity found
         if (cur!=res->getLoadPlans().end())
         {
-          if (data->moveit)
-            data->moveit->setDate(curdate);
-          else
-            data->moveit = 
-              new CommandMoveOperationPlan(data->q_operationplan, curdate);
+          // Move the operationplan
+          data->q_operationplan->setEnd(curdate);
 
           // Check the leadtime constraints after the move
           if (isLeadtimeConstrained() || isFenceConstrained())
@@ -124,13 +122,8 @@ void MRPSolver::solve(Resource* res, void* v)
         {
           // COMPUTE EARLIEST AVAILABLE CAPACITY
 
-          // Delete and undo the movein command, if it exists.
-          if (data->moveit)
-          {
-            // The deletion of the move command also undos the move.
-            delete data->moveit;
-            data->moveit = NULL;
-          }
+          // Put the operationplan back at its original end date
+          data->q_operationplan->setEnd(currentOpplanEnd);
 
           // Find the starting loadplan. Moving an operation earlier is driven
           // by the ending loadplan, while searching for later capacity is
@@ -184,12 +177,7 @@ void MRPSolver::solve(Resource* res, void* v)
             if (overloaded && newDate && newDate!=data->q_loadplan->getDate())
             {
               // Move the operationplan to the new date
-              if (!data->moveit)
-                data->moveit = 
-                  new CommandMoveOperationPlan(data->q_operationplan, 
-                    newDate, false);
-              else
-                data->moveit->setDate(newDate);
+              data->q_operationplan->setStart(newDate);
               // Force checking for overloads again
               overloaded = true;
             }
@@ -231,7 +219,7 @@ void MRPSolver::solve(Resource* res, void* v)
 
 void MRPSolver::solve(ResourceInfinite* r, void* v)
 {
-  MRPSolverdata* Solver = (MRPSolverdata*)v;
+  MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
 
   // Message
   if (Solver->getSolver()->getVerbose())

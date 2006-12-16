@@ -35,7 +35,7 @@ namespace frepple
 
 void MRPSolver::solve (Demand* l, void* v)
 {
-  MRPSolverdata* Solver = (MRPSolverdata*)v;
+  MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
   bool verbose = Solver->getSolver()->getVerbose();
 
   // Message

@@ -3000,9 +3000,13 @@ class CommandReadXMLString : public Command
   * The Xerces parser supports only the simplest possible setup: no proxy,
   * no caching, no ssl, no authentication, etc...<br>
   * If you have a more complex setup, you'll need to use a sytem command to
-  * retrieve the data first with eg wget, lynx, scp, ftp, sftp, rsynch,... After the 
-  * download read in the data file with a readXML command.
-  * @todo make a module, based on the curl library, to replace this class.
+  * retrieve the data first with eg curl, wget, lynx, scp, ftp, sftp, 
+  * rsynch,... After the download read in the data file with a readXML 
+  * command.<br>
+  * The xerces 3.0 release will be able to use libcurl as the NetAccessor. 
+  * This will allow a much richer set of protocols to be supported. It also 
+  * means that in the meantime further development on this class simply 
+  * won't happen.
   */
 class CommandReadXMLURL : public Command
 {
@@ -3048,14 +3052,16 @@ class CommandReadXMLURL : public Command
     string url;
 
     /** Specifies whether or not the input file needs to be validated against
-      * the schema definition. The validation is switched ON by default.
+      * the schema definition. The validation is switched ON by default.<br>
       * Switching it ON is recommended in situations where there is not
       * 100% garantuee on the validity of the input data.
       */
     bool validate;
 
     /** If set to true the input data are validated against the schema, but the
-      * contents isn't executed. The default value is false. */
+      * contents isn't executed.<br>
+      * The default value is false. 
+      */
     bool validate_only;
 };
 
@@ -3063,7 +3069,7 @@ class CommandReadXMLURL : public Command
 /** This command writes the complete model to an XML-file, both the static model
   * (i.e. items, locations, buffers, resources, calendars, etc...) and the
   * dynamic data (i.e. the actual plan including the operation_plans, demand,
-  * problems, etc...).
+  * problems, etc...).<br>
   * The data is written by the execute() function.
   * @see CommandSavePlan
   */
@@ -3096,12 +3102,12 @@ class CommandSave : public Command
 
 /** This command writes the dynamic part of the plan to an  text file. This
   * covers the buffer flowplans, operation_plans, resource loading, demand,
-  * problems, etc...
+  * problems, etc...<br>
   * The main use of this function is in the test suite: a simple text file
   * comparison allows us to identify changes quickly. The output format is
   * only to be seen in this context of testing, and is not intended to be used
-  * as an official method for publishing plans to other systems.
-  * The data file is written by the execute function.
+  * as an official method for publishing plans to other systems.<br>
+  * The data file is written by the execute() function.
   * @see CommandSave
   */
 class CommandSavePlan : public Command
@@ -3180,7 +3186,7 @@ class CommandErase : public Command
 };
 
 
-/** Represents the (independent) demand in the system.
+/** Represents the (independent) demand in the system.<br>
   * It can represent a customer order or a forecast.
   */
 class Demand
@@ -3406,7 +3412,7 @@ class DemandDefault : public Demand
 };
 
 
-/** This class represents the resource capacity of an operation_plan.
+/** This class represents the resource capacity of an operation_plan.<br>
   * For both the start and the end date of the operation_plan, a load_plan
   * object is created. These are then inserted in the timeline structure
   * associated with a resource.
@@ -3415,7 +3421,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
 {
   friend class OperationPlan::LoadPlanIterator;
   public:
-    /** Public constructor.
+    /** Public constructor.<br>
       * This constructor constructs the starting loadplan and will
       * also call a private constructor to creates the ending loadplan.
       * In other words, a single call to the constructor will create
@@ -3442,7 +3448,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     bool check();
 
   private:
-    /** Private constructor. It is called from the public constructor.
+    /** Private constructor. It is called from the public constructor.<br>
       * The public constructor constructs the starting loadplan, while this
       * constructor creates the ending loadplan.
       */
@@ -3584,7 +3590,7 @@ class ProblemPrecedence : public Problem
 
 
 /** A Problem of this class is created in the model when a new demand is
-  * brought in the system, but it hasn't been planned yet.
+  * brought in the system, but it hasn't been planned yet.<br>
   * As a special case, a demand with a requested quantity of 0.0 doesn't create
   * this type of problem.
   */
@@ -4012,7 +4018,7 @@ class CommandMoveOperationPlan : public Command
 
 
 /** This class models a iterator that walks over all available HasProblem
-  * entities.
+  * entities.<br>
   * This list is containing hard-coding the classes that are implementing
   * this class. It's not ideal, but we don't have an explicit container
   * of the objects (and we don't want one either) and this allows us also

@@ -267,9 +267,6 @@ class MRPSolver : public Solver
           * there is not a single constraint on the loads. */
         bool AllLoadsOkay;
 
-        /** Used by the resource solver when moving in operationplans. */
-        CommandMoveOperationPlan* moveit;
-
         /** This is the quantity we are asking for. */
         float q_qty;
 

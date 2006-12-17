@@ -7,7 +7,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2006 by Johan De Taeye                                    *
+ * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -34,21 +34,21 @@ int main (int argc, char *argv[])
 {
 
   Date d1;
-  d1.parse("2006-02-01T01:02:03", "%Y-%m-%dT%H:%M:%S");
+  d1.parse("2007-02-01T01:02:03", "%Y-%m-%dT%H:%M:%S");
 
   Date d2;
-  d2.parse("2006-02-03T01:02:03", "%Y-%m-%dT%H:%M:%S");
+  d2.parse("2007-02-03T01:02:03", "%Y-%m-%dT%H:%M:%S");
 
   Date d3;
   // The date d3 is chosen such that daylight saving time
   // is in effect at that date.
-  d3.parse("2006-06-01T00:00:00", "%Y-%m-%dT%H:%M:%S");
+  d3.parse("2007-06-01T00:00:00", "%Y-%m-%dT%H:%M:%S");
 
   TimePeriod t1 = 10;
 
-  cout << "d1 \"2006-02-01T01:02:03\" => " << d1 << endl;
-  cout << "d2 \"2006-02-03T01:02:03\" => " << d2 << endl;
-  cout << "d3 \"2006-06-01T00:00:00\" => " << d3 << endl;
+  cout << "d1 \"2007-02-01T01:02:03\" => " << d1 << endl;
+  cout << "d2 \"2007-02-03T01:02:03\" => " << d2 << endl;
+  cout << "d3 \"2007-06-01T00:00:00\" => " << d3 << endl;
   cout << "t1: " << t1 << endl;
 
   TimePeriod t2 = d1 - d2;
@@ -62,10 +62,10 @@ int main (int argc, char *argv[])
 
   TimePeriod t3;
   t3.parse("24:00:00");
-  cout << "time \"24:00:00\" => " << t3 << "    " 
+  cout << "time \"24:00:00\" => " << t3 << "    "
     << static_cast<long>(t3) << endl;
   t3.parse("9:00");
-  cout << "time \"9:00\" => " << t3 << "    " 
+  cout << "time \"9:00\" => " << t3 << "    "
     << static_cast<long>(t3) << endl;
   try
   {
@@ -73,19 +73,19 @@ int main (int argc, char *argv[])
   }
   catch (DataException e)
   	{ cout << "Data exception caught: " << e.what() << endl; }
-  cout << "time \"00:0a:00\" => " << t3 << "    " 
+  cout << "time \"00:0a:00\" => " << t3 << "    "
     << static_cast<long>(t3) << endl;
   t3.parse("79:00");
-  cout << "time \"79:00\" => " << t3 << "    " 
+  cout << "time \"79:00\" => " << t3 << "    "
     << static_cast<long>(t3) << endl;
   t3.parse("3600");
-  cout << "time \"3600\" => " << t3 << "    " 
+  cout << "time \"3600\" => " << t3 << "    "
     << static_cast<long>(t3) << endl;
   t3.parse("00:00:00");
-  cout << "time \"00:00:00\" => " << t3 << "    " 
+  cout << "time \"00:00:00\" => " << t3 << "    "
     << static_cast<long>(t3) << endl;
   t3.parse("-01:01");
-  cout << "time \"-01:01\" => " << t3 << "    " 
+  cout << "time \"-01:01\" => " << t3 << "    "
     << static_cast<long>(t3) << endl;
 
   cout << "infinite past: " << Date::infinitePast << endl;

@@ -7,7 +7,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2006 by Johan De Taeye                                    *
+ * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -41,7 +41,7 @@ import frepple.backend.api;
  *           description="Description for StatelessSession"
  *           jndi-name="ejb/StatelessSession"
  *           type="Stateless"
- *           view-type="local"        
+ *           view-type="local"
  */
 public class StatelessSessionBean implements SessionBean, api {
 
@@ -49,7 +49,7 @@ public class StatelessSessionBean implements SessionBean, api {
 	private api connection = null;
 	private SessionContext context = null;
     private static Logger log = Logger.getLogger(StatelessSessionBean.class);
-	
+
 	/**
 	 */
 	public StatelessSessionBean() {
@@ -123,13 +123,13 @@ public class StatelessSessionBean implements SessionBean, api {
 	}
 
 	public boolean isConnected() {return true;}
-	
+
   public void disconnect() {
   }
-  
+
   public void testConnection() {
   }
-  
+
   public void reset() {
   }
 

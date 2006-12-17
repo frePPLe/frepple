@@ -1,6 +1,6 @@
 /*
 
- Copyright (C) 2006 by Johan De Taeye
+ Copyright (C) 2007 by Johan De Taeye
 
  This library is free software; you can redistribute it and/or modify it
  under the terms of the GNU Lesser General Public License as published
@@ -50,23 +50,23 @@ function kiwi(ctrl,column)
   onhand_row = demand_row.nextSibling;
   // Hide a row:
   // demand_row.style.display="none";
-  
+
   // Recompute the ending onhand values
-  var ending_onhand = 
+  var ending_onhand =
     (column==1) ? 0 : parseFloat(onhand_row.cells[column+2].innerHTML);
   for (var i = column+3; i <= 6; ++i) {
     ending_onhand -= parseFloat(demand_row.cells[i].innerHTML);
     ending_onhand += parseFloat(supply_row.cells[i].firstChild.value);
-    onhand_row.cells[i].innerHTML = ending_onhand; 
-    
+    onhand_row.cells[i].innerHTML = ending_onhand;
+
     // Display neg numbers in a different style
     onhand_row.cells[i].className = (ending_onhand < 0) ? "problem" : "okay";
   }
 }
 
 
-function display() 
-{  
+function display()
+{
   // Create xml from the selected buffers
   var listBox = document.getElementById("Buffers");
   var output = "<?xml version='1.0' encoding='UTF-8' ?>" +
@@ -77,7 +77,7 @@ function display()
     if (noBufferFilter || listBox.options[i].selected)
       output += '<BUFFER NAME="' + listBox.options[i].text + '"/>\n';
   output += "</BUFFERS></PLAN>\n";
-  
+
   // Create a transport object
   var xmlhttp = createXMLHttpRequest();
 
@@ -91,7 +91,7 @@ function display()
    }
   }
 
-  // Send the xml to the server. 
+  // Send the xml to the server.
   // Unfortunately only POST requests can send a body.
   xmlhttp.open("POST", "reports/inventorydata.xml",true);
   xmlhttp.setRequestHeader("Content-Type","text/plain");
@@ -123,7 +123,7 @@ function createXMLHttpRequest()
 
 
 function GetFilterData() {
-  
+
   // Create a transport object
   var xmlhttp = createXMLHttpRequest();
 
@@ -137,7 +137,7 @@ function GetFilterData() {
        updateItemList();
        updateBufferList();
      } else
-       alert('There was a problem retrieving the filter data:\n' 
+       alert('There was a problem retrieving the filter data:\n'
         + xmlhttp.statusText);
     }
   }
@@ -145,7 +145,7 @@ function GetFilterData() {
   xmlhttp.send(null)
 }
 
- 
+
 function updateCookie(name,val)
 {
   // Update cookie
@@ -161,7 +161,7 @@ function getCookie(name)
   if (begin == -1) {
     begin = dc.indexOf(arg);
     if (begin != 0) return null;
-  } else 
+  } else
     begin += 2;
   var end = dc.indexOf(";",begin);
   if (end == -1) end = dc.length;
@@ -171,7 +171,7 @@ function getCookie(name)
 
 function updateLocationList()
 {
-  var beginning=new Date();  
+  var beginning=new Date();
   var html = "<select id='Locations' size='6' style='width:100%;' " +
     "multiple onChange='locationUpdate()'>";
   //xxxvar nodes = objDoc.documentElement.selectNodes('LOCATIONS/LOCATION/@NAME');
@@ -187,8 +187,8 @@ function updateLocationList()
     if (noFilter || reg.test(i.value))
       if (cnt++ < MAXLIST) html += "<option>" + i.value + "</option>";
   }
-  if (cnt > MAXLIST) 
-    html += "<option>... and " + (cnt-MAXLIST) + " more</option>"; 
+  if (cnt > MAXLIST)
+    html += "<option>... and " + (cnt-MAXLIST) + " more</option>";
   html += "</select>";
   document.getElementById('table').rows[2].cells[0].innerHTML = html;
   document.getElementById('LocCount').innerHTML = cnt;
@@ -210,11 +210,11 @@ function updateItemList()
   //xxxfor (var i = nodes.nextNode(); i != null; i = nodes.nextNode()) {
   var i;
   while ((i = nodes.iterateNext())) {
-    if (noFilter || reg.test(i.value)) 
+    if (noFilter || reg.test(i.value))
       if (cnt++ < MAXLIST) html += "<option>" + i.value + "</option>";
   }
-  if (cnt > MAXLIST) 
-    html += "<option>... and " + (cnt-MAXLIST) + " more</option>"; 
+  if (cnt > MAXLIST)
+    html += "<option>... and " + (cnt-MAXLIST) + " more</option>";
   html += "</select>";
   document.getElementById('table').rows[2].cells[1].innerHTML = html;
   document.getElementById('ItemCount').innerHTML = cnt;
@@ -222,9 +222,9 @@ function updateItemList()
 }
 
 
-function updateBufferList() 
+function updateBufferList()
 {
-  var html = "<select id='Buffers' size='6' style='width:100%;' " + 
+  var html = "<select id='Buffers' size='6' style='width:100%;' " +
    "multiple onChange='bufferUpdate()'>";
   // xxx var nodes = objDoc.documentElement.selectNodes("BUFFERS/BUFFER");
   var nodes = objDoc.evaluate('PLAN/BUFFERS/BUFFER',
@@ -246,11 +246,11 @@ function updateBufferList()
       if (noItemFilter || itemRegExp.test(i.getAttribute("ITEM"))) {
         if (noLocFilter || locRegExp.test(i.getAttribute("LOCATION")))
           if (cnt++ < MAXLIST) html += "<option>" + buf + "</option>";
-      } 
-    } 
+      }
+    }
   }
-  if (cnt > MAXLIST) 
-    html += "<option>... and " + (cnt-MAXLIST) + " more</option>"; 
+  if (cnt > MAXLIST)
+    html += "<option>... and " + (cnt-MAXLIST) + " more</option>";
   html += "</select>";
   document.getElementById('table').rows[2].cells[2].innerHTML = html;
   document.getElementById("BufferCount").innerHTML = cnt;
@@ -258,7 +258,7 @@ function updateBufferList()
 }
 
 
-function itemUpdate() 
+function itemUpdate()
 {
   var cnt = 0;
   var listBox = document.getElementById("Items");
@@ -268,7 +268,7 @@ function itemUpdate()
   for (var i = 0; i < max; ++i)
     if (listBox.options[i].selected) {
       ++cnt;
-      fltr += ((fltr=="") ? "^" : "|^") + listBox.options[i].text + "$";      
+      fltr += ((fltr=="") ? "^" : "|^") + listBox.options[i].text + "$";
     }
   if (listBox.options.length > MAXLIST && listBox.options[MAXLIST].selected) {
     document.getElementById("ItemFilter").value = itemfilter;
@@ -284,7 +284,7 @@ function itemUpdate()
 }
 
 
-function locationUpdate() 
+function locationUpdate()
 {
   var cnt = 0;
   var listBox = document.getElementById("Locations");
@@ -294,7 +294,7 @@ function locationUpdate()
   for (var i = 0; i < max; ++i)
     if (listBox.options[i].selected) {
       ++cnt;
-      fltr += ((fltr=="") ? "^" : "|^") + listBox.options[i].text + "$";      
+      fltr += ((fltr=="") ? "^" : "|^") + listBox.options[i].text + "$";
     }
   if (listBox.options.length > MAXLIST && listBox.options[MAXLIST].selected) {
     document.getElementById("LocationFilter").value = locationfilter;
@@ -310,7 +310,7 @@ function locationUpdate()
 }
 
 
-function bufferUpdate() 
+function bufferUpdate()
 {
   var cnt = 0;
   var listBox = document.getElementById("Buffers");

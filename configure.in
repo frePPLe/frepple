@@ -3,7 +3,7 @@
 #
 
 #
-# Copyright (C) 2006 by Johan De Taeye
+# Copyright (C) 2007 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -29,10 +29,10 @@
 # Initialization
 #
 AC_PREREQ(2.59)
-AC_INIT(frepple, 0.1.3, jdetaeye@users.sourceforge.net, )
+AC_INIT(frepple, 0.2.0, jdetaeye@users.sourceforge.net, )
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
-AM_INIT_AUTOMAKE(frepple,0.1.3)
+AM_INIT_AUTOMAKE(frepple,0.2.0)
 
 #
 # Initilize libtool

@@ -7,7 +7,7 @@ email : jdetaeye@users.sourceforge.net
 
 /***************************************************************************
 *                                                                         *
-* Copyright (C) 2006 by Johan De Taeye                                    *
+* Copyright (C) 2007 by Johan De Taeye                                    *
 *                                                                         *
 * This library is free software; you can redistribute it and/or modify it *
 * under the terms of the GNU Lesser General Public License as published   *
@@ -38,7 +38,7 @@ public class connection implements api {
     private static Logger log = Logger.getLogger(connection.class);
 
   public connection() {}
-  
+
 	/* (non-Javadoc)
 	 * @see frepple.backend.api#initialize()
 	 */
@@ -52,7 +52,7 @@ public class connection implements api {
 	 */
 	public void readXMLData(String x) {
 		// TODO Auto-generated method stub
-		log.debug("readXMLdata " + x);	
+		log.debug("readXMLdata " + x);
 	}
 
 	/* (non-Javadoc)
@@ -73,13 +73,13 @@ public class connection implements api {
 	}
 
 	public boolean isConnected() {return true;}
-	
+
   public void disconnect() {
   }
-  
+
   public void testConnection() {
   }
-  
+
   public void reset() {
   }
 }

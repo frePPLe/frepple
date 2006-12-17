@@ -7,7 +7,7 @@ email : jdetaeye@users.sourceforge.net
 
 /***************************************************************************
 *                                                                         *
-* Copyright (C) 2006 by Johan De Taeye                                    *
+* Copyright (C) 2007 by Johan De Taeye                                    *
 *                                                                         *
 * This library is free software; you can redistribute it and/or modify it *
 * under the terms of the GNU Lesser General Public License as published   *
@@ -37,7 +37,7 @@ import javax.naming.NamingException;
 public class Client {
 
 	public static void main(String[] args) throws RemoteException, CreateException, NamingException {
-		
+
 		// Get the Profile bean's home interface
 		InitialContext iniCtx = new InitialContext();
 		Object tmp = iniCtx.lookup("frepple/ejb");
@@ -46,7 +46,7 @@ public class Client {
 		// Create a profile for a person
 		System.out.println("Creating a session bean");
 		StatelessSessionBeanRemote bean = pHome.create();
-		
+
 		// Test the session bean
 		bean.initialize();
 		bean.readXMLData("test");

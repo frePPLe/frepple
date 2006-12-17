@@ -7,7 +7,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2005 by Johan De Taeye                                    *
+ * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -105,7 +105,7 @@ typedef boolean ff;
 //
 #ifdef SWIGJAVA
   // @todo no exceptions in C!!!!
-  void FreppleInitialize(const char* x) throw (std::exception);    
+  void FreppleInitialize(const char* x) throw (std::exception);
   void FreppleReadXMLData(char* x, bool a, bool b) throw (std::exception);
   void FreppleReadXMLFile(char* x, bool a, bool b) throw (std::exception);
   void FreppleSaveFile(char* x) throw (std::exception);

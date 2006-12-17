@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006 by Johan De Taeye
+# Copyright (C) 2007 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -130,13 +130,13 @@ astyle:
 # The release number is (unfortunately) stored in a number of independent places:
 # This make target is used to update all those places in a single go.
 old1 = 0
-old2 = 1
-old3 = 3
+old2 = 2
+old3 = 0
 new1 = 0
-new2 = 1
-new3 = 4
+new2 = 2
+new3 = 1
 set_release:
-	for i in "configure.in" "doc/menu.html" "contrib/installer/frepple.nsi"; do \
+	for i in "configure.in" "doc/menu.html" "contrib/installer/frepple.nsi" "contrib/rpm/frepple.spec"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)/$(new1).$(new2).$(new3)/g' $$i >out.tmp; \
 		mv out.tmp $$i; \
 	done

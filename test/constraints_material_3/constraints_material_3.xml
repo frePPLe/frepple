@@ -10,7 +10,7 @@
 		- 3: Same as 1, but with minimum target varying DEcreasing over time.
 		- 4: Same as 3, but with minimum target varying INcreasing over time.
 	</DESCRIPTION>
-	<CURRENT>2006-01-01T00:00:00</CURRENT>
+	<CURRENT>2007-01-01T00:00:00</CURRENT>
 	<COMMANDS>
 	  <VERBOSE>false</VERBOSE>
 	  <COMMAND xsi:type="COMMAND_SOLVE">
@@ -48,7 +48,7 @@
 	    <PRODUCING NAME="make 1" />
 	    <MINIMUM NAME="min inv for buffer 1" xsi:type="CALENDAR_FLOAT">
 	      <BUCKETS>
-	        <BUCKET START="2006-01-01T00:00:00">
+	        <BUCKET START="2007-01-01T00:00:00">
 	          <NAME>all</NAME>
 	          <VALUE>4</VALUE>
 	        </BUCKET>
@@ -64,7 +64,7 @@
 	    <PRODUCING NAME="make 2" />
 	    <MINIMUM NAME="min inv for buffer 2" xsi:type="CALENDAR_FLOAT">
 	      <BUCKETS>
-	        <BUCKET START="2006-01-01T00:00:00">
+	        <BUCKET START="2007-01-01T00:00:00">
 	          <NAME>all</NAME>
 	          <VALUE>4</VALUE>
 	        </BUCKET>
@@ -80,10 +80,10 @@
 	    <PRODUCING NAME="make 3" />
 	    <MINIMUM NAME="min inv for buffer 3" xsi:type="CALENDAR_FLOAT">
 	      <BUCKETS>
-	        <BUCKET START="2006-01-01T00:00:00">
+	        <BUCKET START="2007-01-01T00:00:00">
 	          <VALUE>4</VALUE>
 	        </BUCKET>
-	        <BUCKET START="2006-01-12T00:00:00">
+	        <BUCKET START="2007-01-12T00:00:00">
 	          <VALUE>2</VALUE>
 	        </BUCKET>
 	      </BUCKETS>
@@ -98,10 +98,10 @@
 	    <PRODUCING NAME="make 4" />
 	    <MINIMUM NAME="min inv for buffer 4" xsi:type="CALENDAR_FLOAT">
 	      <BUCKETS>
-	        <BUCKET START="2006-01-01T00:00:00">
+	        <BUCKET START="2007-01-01T00:00:00">
 	          <VALUE>4</VALUE>
 	        </BUCKET>
-	        <BUCKET START="2006-01-12T00:00:00">
+	        <BUCKET START="2007-01-12T00:00:00">
 	          <VALUE>6</VALUE>
 	        </BUCKET>
 	      </BUCKETS>
@@ -198,20 +198,20 @@
 	<DEMANDS>
 	  <DEMAND NAME="order for item 1">
 	    <QUANTITY>100</QUANTITY>
-	    <DUE>2006-01-10T00:00:00</DUE>
+	    <DUE>2007-01-10T00:00:00</DUE>
 	    <ITEM NAME="item 1" />
 	  </DEMAND>
 	</DEMANDS>
 	<OPERATION_PLANS>
 	  <OPERATION_PLAN ID="1001" OPERATION="supply 1">
-	    <START>2006-01-10T00:00:00</START>
-	    <END>2006-01-10T00:00:00</END>
+	    <START>2007-01-10T00:00:00</START>
+	    <END>2007-01-10T00:00:00</END>
 	    <QUANTITY>100</QUANTITY>
 	    <LOCKED>true</LOCKED>
 	  </OPERATION_PLAN>
 	  <OPERATION_PLAN ID="1002" OPERATION="supply 1">
-	    <START>2006-01-17T00:00:00</START>
-	    <END>2006-01-17T00:00:00</END>
+	    <START>2007-01-17T00:00:00</START>
+	    <END>2007-01-17T00:00:00</END>
 	    <QUANTITY>200</QUANTITY>
 	    <LOCKED>true</LOCKED>
 	  </OPERATION_PLAN>
@@ -220,20 +220,20 @@
 	<DEMANDS>
 	  <DEMAND NAME="order for item 2">
 	    <QUANTITY>100</QUANTITY>
-	    <DUE>2006-01-10T00:00:00</DUE>
+	    <DUE>2007-01-10T00:00:00</DUE>
 	    <ITEM NAME="item 2" />
 	  </DEMAND>
 	</DEMANDS>
 	<OPERATION_PLANS>
 	  <OPERATION_PLAN ID="2001" OPERATION="supply 2">
-	    <START>2006-01-10T00:00:00</START>
-	    <END>2006-01-10T00:00:00</END>
+	    <START>2007-01-10T00:00:00</START>
+	    <END>2007-01-10T00:00:00</END>
 	    <QUANTITY>100</QUANTITY>
 	    <LOCKED>true</LOCKED>
 	  </OPERATION_PLAN>
 	  <OPERATION_PLAN ID="2002" OPERATION="supply 2">
-	    <START>2006-01-17T00:00:00</START>
-	    <END>2006-01-17T00:00:00</END>
+	    <START>2007-01-17T00:00:00</START>
+	    <END>2007-01-17T00:00:00</END>
 	    <QUANTITY>50</QUANTITY>
 	    <LOCKED>true</LOCKED>
 	  </OPERATION_PLAN>
@@ -242,14 +242,14 @@
 	<DEMANDS>
 	  <DEMAND NAME="order for item 3">
 	    <QUANTITY>100</QUANTITY>
-	    <DUE>2006-01-10T00:00:00</DUE>
+	    <DUE>2007-01-10T00:00:00</DUE>
 	    <ITEM NAME="item 3" />
 	  </DEMAND>
 	</DEMANDS>
 	<OPERATION_PLANS>
 	  <OPERATION_PLAN ID="3001" OPERATION="supply 3">
-	    <START>2006-01-15T00:00:00</START>
-	    <END>2006-01-15T00:00:00</END>
+	    <START>2007-01-15T00:00:00</START>
+	    <END>2007-01-15T00:00:00</END>
 	    <QUANTITY>1000</QUANTITY>
 	    <LOCKED>true</LOCKED>
 	  </OPERATION_PLAN>
@@ -258,14 +258,14 @@
 	<DEMANDS>
 	  <DEMAND NAME="order for item 4">
 	    <QUANTITY>100</QUANTITY>
-	    <DUE>2006-01-10T00:00:00</DUE>
+	    <DUE>2007-01-10T00:00:00</DUE>
 	    <ITEM NAME="item 4" />
 	  </DEMAND>
 	</DEMANDS>
 	<OPERATION_PLANS>
 	  <OPERATION_PLAN ID="4001" OPERATION="supply 4">
-	    <START>2006-01-15T00:00:00</START>
-	    <END>2006-01-15T00:00:00</END>
+	    <START>2007-01-15T00:00:00</START>
+	    <END>2007-01-15T00:00:00</END>
 	    <QUANTITY>1000</QUANTITY>
 	    <LOCKED>true</LOCKED>
 	  </OPERATION_PLAN>

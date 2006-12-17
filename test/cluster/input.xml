@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <DESCRIPTION>Test model for cluster and level computation</DESCRIPTION>
-  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
   <COMMANDS>
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" />
@@ -263,37 +263,37 @@
   <DEMANDS>
     <DEMAND NAME="order for Item 1">
       <QUANTITY>10</QUANTITY>
-      <DUE>2006-01-10T00:00:00</DUE>
+      <DUE>2007-01-10T00:00:00</DUE>
       <PRIORITY>1</PRIORITY>
       <ITEM NAME="Item 1" />
     </DEMAND>
     <DEMAND NAME="order for Item 2">
       <QUANTITY>10</QUANTITY>
-      <DUE>2006-01-10T00:00:00</DUE>
+      <DUE>2007-01-10T00:00:00</DUE>
       <PRIORITY>1</PRIORITY>
       <ITEM NAME="Item 2" />
     </DEMAND>
     <DEMAND NAME="order for Item 3">
       <QUANTITY>10</QUANTITY>
-      <DUE>2006-01-10T00:00:00</DUE>
+      <DUE>2007-01-10T00:00:00</DUE>
       <PRIORITY>1</PRIORITY>
       <ITEM NAME="Item 3" />
     </DEMAND>
     <DEMAND NAME="order for Item 4">
       <QUANTITY>10</QUANTITY>
-      <DUE>2006-01-10T00:00:00</DUE>
+      <DUE>2007-01-10T00:00:00</DUE>
       <PRIORITY>1</PRIORITY>
       <ITEM NAME="Item 4" />
     </DEMAND>
     <DEMAND NAME="order for Item 5">
       <QUANTITY>10</QUANTITY>
-      <DUE>2006-01-10T00:00:00</DUE>
+      <DUE>2007-01-10T00:00:00</DUE>
       <PRIORITY>1</PRIORITY>
       <ITEM NAME="Item 5" />
     </DEMAND>
     <DEMAND NAME="order for Item 6">
       <QUANTITY>10</QUANTITY>
-      <DUE>2006-01-10T00:00:00</DUE>
+      <DUE>2007-01-10T00:00:00</DUE>
       <PRIORITY>1</PRIORITY>
       <ITEM NAME="Item 6" />
     </DEMAND>

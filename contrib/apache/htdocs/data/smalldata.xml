@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <DESCRIPTION>BTS test model</DESCRIPTION>
-<CURRENT>2006-01-01T00:00:00</CURRENT>
+<CURRENT>2007-01-01T00:00:00</CURRENT>
 <SOLVERS>
   <SOLVER NAME="MRP" xsi:type="SOLVER_MRP">
     <CONSTRAINTS>0</CONSTRAINTS>
@@ -18,15 +18,15 @@
             <CALENDARS>
               <CALENDAR NAME="TEST FLOATS" xsi:type="CALENDAR_FLOAT">
                 <BUCKETS>
-                  <BUCKET START="2006-01-01T00:00:00">
+                  <BUCKET START="2007-01-01T00:00:00">
                     <NAME>Jan Week 1</NAME>
                     <VALUE>100</VALUE>
                   </BUCKET>
-                  <BUCKET START="2006-01-08T00:00:00">
+                  <BUCKET START="2007-01-08T00:00:00">
                     <NAME>Jan Week 2</NAME>
                     <VALUE>1</VALUE>
                   </BUCKET>
-                  <BUCKET START="2006-01-15T00:00:00">
+                  <BUCKET START="2007-01-15T00:00:00">
                     <NAME>Jan Week 3</NAME>
                     <VALUE>999</VALUE>
                   </BUCKET>
@@ -34,69 +34,69 @@
               </CALENDAR>
               <CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
                 <BUCKETS>
-                  <BUCKET START="2006-01-01T00:00:00">
+                  <BUCKET START="2007-01-01T00:00:00">
                     <NAME>Jan Week1</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-01-07T00:00:00">
+                  <BUCKET START="2007-01-07T00:00:00">
                     <NAME>Jan Week2</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-01-14T00:00:00">
+                  <BUCKET START="2007-01-14T00:00:00">
                     <NAME>Jan Week3</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-01-21T00:00:00">
+                  <BUCKET START="2007-01-21T00:00:00">
                     <NAME>Jan Week4</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-01-28T00:00:00">
+                  <BUCKET START="2007-01-28T00:00:00">
                     <NAME>Jan Week5</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-02-04T00:00:00">
+                  <BUCKET START="2007-02-04T00:00:00">
                     <NAME>Feb Week1</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-02-11T00:00:00">
+                  <BUCKET START="2007-02-11T00:00:00">
                     <NAME>Feb Week2</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-02-18T00:00:00">
+                  <BUCKET START="2007-02-18T00:00:00">
                     <NAME>Feb Week3</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-02-25T00:00:00">
+                  <BUCKET START="2007-02-25T00:00:00">
                     <NAME>Feb Week4</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-03-04T00:00:00">
+                  <BUCKET START="2007-03-04T00:00:00">
                     <NAME>Mar Week1</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-03-11T00:00:00">
+                  <BUCKET START="2007-03-11T00:00:00">
                     <NAME>Mar Week2</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-03-18T00:00:00">
+                  <BUCKET START="2007-03-18T00:00:00">
                     <NAME>Mar Week3</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-03-25T00:00:00">
+                  <BUCKET START="2007-03-25T00:00:00">
                     <NAME>Mar Week4</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-04-01T00:00:00">
+                  <BUCKET START="2007-04-01T00:00:00">
                     <NAME>Remainder</NAME>
                   </BUCKET>
                 </BUCKETS>
               </CALENDAR>
               <CALENDAR NAME="Months" xsi:type="CALENDAR_VOID">
                 <BUCKETS>
-                  <BUCKET START="2006-01-01T00:00:00">
+                  <BUCKET START="2007-01-01T00:00:00">
                     <NAME>Jan</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-02-04T00:00:00">
+                  <BUCKET START="2007-02-04T00:00:00">
                     <NAME>Feb</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-03-04T00:00:00">
+                  <BUCKET START="2007-03-04T00:00:00">
                     <NAME>Mar</NAME>
                   </BUCKET>
-                  <BUCKET START="2006-04-01T00:00:00">
+                  <BUCKET START="2007-04-01T00:00:00">
                     <NAME>Remainder</NAME>
                   </BUCKET>
                 </BUCKETS>
               </CALENDAR>
               <CALENDAR NAME="Capacity RES1" xsi:type="CALENDAR_FLOAT">
                 <BUCKETS>
-                  <BUCKET START="2006-01-01T00:00:00">
+                  <BUCKET START="2007-01-01T00:00:00">
                     <NAME>all</NAME>
                     <VALUE>4</VALUE>
                   </BUCKET>
@@ -143,15 +143,15 @@
                   <OPERATION NAME="test effective operations" xsi:type="OPERATION_EFFECTIVE">
                     <CALENDAR NAME="TEST OPERATION" xsi:type="OPERATION">
                       <BUCKETS>
-                        <BUCKET START="2006-01-01T00:00:00">
+                        <BUCKET START="2007-01-01T00:00:00">
                           <NAME>Jan Week 1</NAME>
                           <VALUE NAME="operation for week 1"/>
                         </BUCKET>
-                        <BUCKET START="2006-01-08T00:00:00">
+                        <BUCKET START="2007-01-08T00:00:00">
                           <NAME>Jan Week 2</NAME>
                           <VALUE NAME="operation for week 2"/>
                         </BUCKET>
-                        <BUCKET START="2006-01-15T00:00:00">
+                        <BUCKET START="2007-01-15T00:00:00">
                           <NAME>Jan Week 3</NAME>
                           <VALUE NAME="operation for week 3"/>
                         </BUCKET>
@@ -249,7 +249,7 @@
                     <ONHAND>25</ONHAND>
                     <MINIMUM NAME="Min inventory for RM3" xsi:type="CALENDAR_FLOAT">
                       <BUCKETS>
-                        <BUCKET START="2006-01-01T00:00:00">
+                        <BUCKET START="2007-01-01T00:00:00">
                           <NAME>all</NAME>
                           <VALUE>10</VALUE>
                         </BUCKET>
@@ -257,7 +257,7 @@
                     </MINIMUM>
                     <MAXIMUM NAME="Max inventory for RM3" xsi:type="CALENDAR_FLOAT">
                       <BUCKETS>
-                        <BUCKET START="2006-01-01T00:00:00">
+                        <BUCKET START="2007-01-01T00:00:00">
                           <NAME>all</NAME>
                           <VALUE>100</VALUE>
                         </BUCKET>
@@ -340,56 +340,56 @@
                 <DEMANDS>
                   <DEMAND NAME="order 1 for STCK 1">
                     <QUANTITY>10</QUANTITY>
-                    <DUE>2006-01-09T00:00:00</DUE>
+                    <DUE>2007-01-09T00:00:00</DUE>
                     <PRIORITY>1</PRIORITY>
                     <CUSTOMER NAME="customer 1"/>
                     <ITEM NAME="STCK1"/>
                   </DEMAND>
                   <DEMAND NAME="order 2 for STCK 1">
                     <QUANTITY>10</QUANTITY>
-                    <DUE>2006-01-21T00:00:00</DUE>
+                    <DUE>2007-01-21T00:00:00</DUE>
                     <CUSTOMER NAME="customer 1"/>
                     <PRIORITY>1</PRIORITY>
                     <ITEM NAME="STCK1"/>
                   </DEMAND>
                   <DEMAND NAME="order 3 for STCK 1">
                     <QUANTITY>10</QUANTITY>
-                    <DUE>2006-02-20T00:00:00</DUE>
+                    <DUE>2007-02-20T00:00:00</DUE>
                     <PRIORITY>2</PRIORITY>
                     <CUSTOMER NAME="customer 1"/>
                     <ITEM NAME="STCK1"/>
                   </DEMAND>
                   <DEMAND NAME="order 4 for STCK 1">
                     <QUANTITY>10</QUANTITY>
-                    <DUE>2006-02-20T00:00:00</DUE>
+                    <DUE>2007-02-20T00:00:00</DUE>
                     <PRIORITY>2</PRIORITY>
                     <CUSTOMER NAME="customer 1"/>
                     <ITEM NAME="STCK1"/>
                   </DEMAND>
                   <DEMAND NAME="order 1 for STCK 2">
                     <QUANTITY>10</QUANTITY>
-                    <DUE>2006-02-10T00:00:00</DUE>
+                    <DUE>2007-02-10T00:00:00</DUE>
                     <PRIORITY>1</PRIORITY>
                     <CUSTOMER NAME="customer 2"/>
                     <ITEM NAME="STCK2"/>
                   </DEMAND>
                   <DEMAND NAME="order 2 for STCK 2">
                     <QUANTITY>10</QUANTITY>
-                    <DUE>2006-02-15T00:00:00</DUE>
+                    <DUE>2007-02-15T00:00:00</DUE>
                     <PRIORITY>1</PRIORITY>
                     <CUSTOMER NAME="customer 2"/>
                     <ITEM NAME="STCK2"/>
                   </DEMAND>
                   <DEMAND NAME="order 3 for STCK 2">
                     <QUANTITY>10</QUANTITY>
-                    <DUE>2006-02-16T00:00:00</DUE>
+                    <DUE>2007-02-16T00:00:00</DUE>
                     <PRIORITY>2</PRIORITY>
                     <CUSTOMER NAME="customer 2"/>
                     <ITEM NAME="STCK2"/>
                   </DEMAND>
                   <DEMAND NAME="order 4 for STCK 2">
                     <QUANTITY>10</QUANTITY>
-                    <DUE>2006-02-26T00:00:00</DUE>
+                    <DUE>2007-02-26T00:00:00</DUE>
                     <PRIORITY>2</PRIORITY>
                     <CUSTOMER NAME="customer 2"/>
                     <ITEM NAME="STCK2"/>
@@ -399,7 +399,7 @@
                   <PROBLEM>
                     <NAME>before current</NAME>
                     <DESCRIPTION>Job &quot;6&quot; planned in the past</DESCRIPTION>
-                    <DATES>2004-12-30 23:48:00 / 2006-01-01T00:00:00</DATES>
+                    <DATES>2004-12-30 23:48:00 / 2007-01-01T00:00:00</DATES>
                   </PROBLEM>
                 </PROBLEMS>
               </PLAN>

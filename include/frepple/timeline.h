@@ -7,7 +7,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2006 by Johan De Taeye                                    *
+ * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -165,10 +165,10 @@ template <class type> class TimeLine
         const Event& operator*() const {return *cur;}
         const Event* operator->() const {return cur;}
         const_iterator& operator++() {cur = cur->next; return *this;}
-        const_iterator operator++(int) 
+        const_iterator operator++(int)
           {iterator tmp = *this; ++*this; return tmp;}
         const_iterator& operator--() {cur = cur->prev; return *this; }
-        const_iterator operator--(int) 
+        const_iterator operator--(int)
           {iterator tmp = *this; --*this; return tmp;}
         bool operator==(const const_iterator& x) const {return cur == x.cur;}
         bool operator!=(const const_iterator& x) const {return cur != x.cur;}
@@ -216,7 +216,7 @@ template <class type> class TimeLine
       clog << "Inspecting  " << this << ": \"" << name << "\":" << endl;
       for(const_iterator oo=begin(); oo!=end(); ++oo)
         clog << "  " << oo->getDate() << "   "
-          << oo->getQuantity() << "    " << oo->getOnhand() 
+          << oo->getQuantity() << "    " << oo->getOnhand()
           << "    " << oo->getCumulativeProduced()  << endl;
     }
 
@@ -235,7 +235,7 @@ template <class type> class TimeLine
 template <class type> void TimeLine <type>::insert (Event* e)
 {
   // Loop through all entities till we find the insertion point
-  // While searching from the end, update the onhand and cumulative produced 
+  // While searching from the end, update the onhand and cumulative produced
   // quantity of all nodes passed
   iterator i = rbegin();
   float qty = e->getQuantity();
@@ -386,12 +386,12 @@ template <class type> void TimeLine<type>::setQuantity(Event* e, float newqty)
         i->cum_prod -= delta;
       }
     else
-      for (iterator i=begin(e); i!=end(); ++i) 
+      for (iterator i=begin(e); i!=end(); ++i)
         i->oh -= delta;
   }
 
-  // Final debugging check commented out, since loadplans change in pairs. 
-  // After changing the first one the second is affected too but not 
+  // Final debugging check commented out, since loadplans change in pairs.
+  // After changing the first one the second is affected too but not
   // repositioned yet...
   // assert(check());
 }
@@ -409,19 +409,19 @@ template <class type> bool TimeLine<type>::check() const
     if (i->getQuantity() > 0) expectedCumProd += i->getQuantity();
     if (fabs(expectedOH - i->oh) > ROUNDING_ERROR)
     {
-      inspect("Error: timeline onhand value corrupted on " 
+      inspect("Error: timeline onhand value corrupted on "
         + string(i->getDate()));
       return false;
     }
     // Problem 2: The cumulative produced quantity isn't correct
     if (fabs(expectedCumProd - i->cum_prod) > ROUNDING_ERROR)
     {
-      inspect("Error: timeline cumulative produced value corrupted on " 
+      inspect("Error: timeline cumulative produced value corrupted on "
         + string(i->getDate()));
       return false;
     }
     // Problem 3: Timeline is not sorted correctly
-    if (prev && !(*prev<*i) 
+    if (prev && !(*prev<*i)
       && fabs(prev->getQuantity() - i->getQuantity())>ROUNDING_ERROR)
     {
       inspect("Error: timeline sort corrupted on " + string(i->getDate()));

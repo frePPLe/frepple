@@ -7,7 +7,7 @@ email : jdetaeye@users.sourceforge.net
 
 /***************************************************************************
 *                                                                         *
-* Copyright (C) 2006 by Johan De Taeye                                    *
+* Copyright (C) 2007 by Johan De Taeye                                    *
 *                                                                         *
 * This library is free software; you can redistribute it and/or modify it *
 * under the terms of the GNU Lesser General Public License as published   *
@@ -40,9 +40,9 @@ public class ConnectionFactory {
     private static Logger log = Logger.getLogger(ConnectionFactory.class);
 
 	public static api create() throws Exception {
-	    
+
 	  Object instance;
-	  
+
 	  // Pick up the class name
 		if(connectionClass == null) {
 			try {
@@ -55,7 +55,7 @@ public class ConnectionFactory {
 				throw e;
 			}
 		}
-		
+
 		// Create the connection
 		try {
 			instance = connectionClass.newInstance();
@@ -63,7 +63,7 @@ public class ConnectionFactory {
 			e.printStackTrace();
 			throw e;
 		}
-		
+
 		// Register the connection with JMX server
 		try {
 		  // MBeanServer server = MBeanServerFactory.createMBeanServer(); xxx
@@ -75,8 +75,8 @@ public class ConnectionFactory {
 		} catch (Exception e) {
       e.printStackTrace();
       throw e;
-    } 
-		
+    }
+
 		return (api) instance;
 	}
 }

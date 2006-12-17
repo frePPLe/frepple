@@ -7,7 +7,7 @@ email : jdetaeye@users.sourceforge.net
 
 /***************************************************************************
 *                                                                         *
-* Copyright (C) 2005 by Johan De Taeye                                    *
+* Copyright (C) 2007 by Johan De Taeye                                    *
 *                                                                         *
 * This library is free software; you can redistribute it and/or modify it *
 * under the terms of the GNU Lesser General Public License as published   *
@@ -45,7 +45,7 @@ public class connection implements api {
 	 */
 	public void readXMLData(String x) {
 		// TODO Auto-generated method stub
-		System.out.println("readXMLdata " + x);	
+		System.out.println("readXMLdata " + x);
 	}
 
 	/* (non-Javadoc)
@@ -66,13 +66,13 @@ public class connection implements api {
 	}
 
 	public boolean isConnected() {return true;}
-	
+
   public void disconnect() {
   }
-  
+
   public void testConnection() {
   }
-  
+
   public void reset() {
   }
 }

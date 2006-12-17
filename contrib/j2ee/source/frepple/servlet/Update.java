@@ -7,7 +7,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2006 by Johan De Taeye                                    *
+ * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -78,7 +78,7 @@ public class Update extends HttpServlet {
      * /frepple/output/buffer/... -> We can derive the required xslt -> The
      * resulting xml then has to be sent to the backend either synchroneously
      * over webservice either asynchroneously over JMS
-     * 
+     *
      * Should this transforming process be part of a servlet? Or is it part of a
      * more generic "backend preprocessor"? e.g. also webservice data may
      * benefit from such preprocessing... input would in flexible ways, and the

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <!--
 
- Copyright (C) 2006 by Johan De Taeye
+ Copyright (C) 2007 by Johan De Taeye
 
  This library is free software; you can redistribute it and/or modify it
  under the terms of the GNU Lesser General Public License as published
@@ -21,7 +21,7 @@
  revision : $LastChangedRevision$  $LastChangedBy$
  date : $LastChangedDate$
  email : jdetaeye@users.sourceforge.net
- 
+
 -->
 <html>
 <head>
@@ -68,19 +68,19 @@ function init(firsttime)
 <td width="250"><b>Buffers (<span id="BufferCount">0</span>)</b></td>
 </tr>
 <tr>
-<td><input id="LocationFilter" maxlength="2550" style="width:100%;" type="text" 
+<td><input id="LocationFilter" maxlength="2550" style="width:100%;" type="text"
   onChange="updateLocationList();updateBufferList();updateCookie('locfilter',this.value)"></td>
-<td><input id="ItemFilter" maxlength="2550" style="width:100%;" type="text" 
+<td><input id="ItemFilter" maxlength="2550" style="width:100%;" type="text"
   onChange="updateItemList();updateBufferList();updateCookie('itemfilter',this.value)"></td>
-<td><input id="BufferFilter" maxlength="2550" style="width:100%;" type="text" 
+<td><input id="BufferFilter" maxlength="2550" style="width:100%;" type="text"
   onChange="updateBufferList();updateCookie('buffilter',this.value)"></td>
 </tr>
 <tr>
-<td><select id="Locations" size="6" style="width:100%;" multiple 
+<td><select id="Locations" size="6" style="width:100%;" multiple
   onChange="locationUpdate()"> </select></td>
-<td><select id="Items" size="6" style="width:100%;" multiple 
+<td><select id="Items" size="6" style="width:100%;" multiple
   onChange="itemUpdate()"></select></td>
-<td><select id="Buffers" size="6" style="width:100%;" multiple 
+<td><select id="Buffers" size="6" style="width:100%;" multiple
   onChange="bufferUpdate();"></select></td>
 </tr>
 </table>

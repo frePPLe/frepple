@@ -9,7 +9,7 @@
       Case 1: Lead time constraints forcing the violation of the post-operation time when required.
       Case 2: Same as 1, but with time_per operation instead.
   </DESCRIPTION>
-  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
   <COMMANDS>
     <VERBOSE>false</VERBOSE>
     <COMMAND xsi:type="COMMAND_SOLVE">
@@ -54,21 +54,21 @@
     <DEMAND NAME="1. order 1">
       <DESCRIPTION>Delivery is late, and post-operation time is 0 to reduce lateness.</DESCRIPTION>
       <QUANTITY>6</QUANTITY>
-      <DUE>2006-01-05T00:00:00</DUE>
+      <DUE>2007-01-05T00:00:00</DUE>
       <PRIORITY>11</PRIORITY>
       <ITEM NAME="1. end item" />
     </DEMAND>
     <DEMAND NAME="1. order 2">
       <DESCRIPTION>Delivery is on time, but post-operation time had to be shrunk.</DESCRIPTION>
       <QUANTITY>6</QUANTITY>
-      <DUE>2006-01-10T00:00:00</DUE>
+      <DUE>2007-01-10T00:00:00</DUE>
       <PRIORITY>12</PRIORITY>
       <ITEM NAME="1. end item" />
     </DEMAND>
     <DEMAND NAME="1. order 3">
       <DESCRIPTION>Delivery is on time.</DESCRIPTION>
       <QUANTITY>6</QUANTITY>
-      <DUE>2006-01-31T00:00:00</DUE>
+      <DUE>2007-01-31T00:00:00</DUE>
       <PRIORITY>13</PRIORITY>
       <ITEM NAME="1. end item" />
     </DEMAND>
@@ -107,21 +107,21 @@
     <DEMAND NAME="2. order 1">
       <DESCRIPTION>Delivery is late, and post-operation time is 0 to reduce lateness.</DESCRIPTION>
       <QUANTITY>6</QUANTITY>
-      <DUE>2006-01-05T00:00:00</DUE>
+      <DUE>2007-01-05T00:00:00</DUE>
       <PRIORITY>11</PRIORITY>
       <ITEM NAME="2. end item" />
     </DEMAND>
     <DEMAND NAME="2. order 2">
       <DESCRIPTION>Delivery is on time, but post-operation time had to be shrunk.</DESCRIPTION>
       <QUANTITY>6</QUANTITY>
-      <DUE>2006-01-10T00:00:00</DUE>
+      <DUE>2007-01-10T00:00:00</DUE>
       <PRIORITY>12</PRIORITY>
       <ITEM NAME="2. end item" />
     </DEMAND>
     <DEMAND NAME="2. order 3">
       <DESCRIPTION>Delivery is on time.</DESCRIPTION>
       <QUANTITY>6</QUANTITY>
-      <DUE>2006-01-31T00:00:00</DUE>
+      <DUE>2007-01-31T00:00:00</DUE>
       <PRIORITY>13</PRIORITY>
       <ITEM NAME="2. end item" />
     </DEMAND>
@@ -176,7 +176,7 @@
   </OPERATIONS>
 	<OPERATION_PLANS>
 	  <OPERATION_PLAN ID="1001" OPERATION="3. supply raw material">
-	    <END>2006-01-11T00:00:00</END>
+	    <END>2007-01-11T00:00:00</END>
 	    <QUANTITY>5</QUANTITY>
 	    <LOCKED>true</LOCKED>
 	  </OPERATION_PLAN>
@@ -185,21 +185,21 @@
     <DEMAND NAME="3. order 1">
       <DESCRIPTION>Delivery is late, and post-operation time is 0 to reduce lateness.</DESCRIPTION>
       <QUANTITY>6</QUANTITY>
-      <DUE>2006-01-05T00:00:00</DUE>
+      <DUE>2007-01-05T00:00:00</DUE>
       <PRIORITY>11</PRIORITY>
       <ITEM NAME="3. end item" />
     </DEMAND>
     <DEMAND NAME="3. order 2">
       <DESCRIPTION>Delivery is on time, but post-operation time had to be shrunk.</DESCRIPTION>
       <QUANTITY>6</QUANTITY>
-      <DUE>2006-01-10T00:00:00</DUE>
+      <DUE>2007-01-10T00:00:00</DUE>
       <PRIORITY>12</PRIORITY>
       <ITEM NAME="3. end item" />
     </DEMAND>
     <DEMAND NAME="3. order 3">
       <DESCRIPTION>Delivery is on time.</DESCRIPTION>
       <QUANTITY>6</QUANTITY>
-      <DUE>2006-01-31T00:00:00</DUE>
+      <DUE>2007-01-31T00:00:00</DUE>
       <PRIORITY>13</PRIORITY>
       <ITEM NAME="3. end item" />
     </DEMAND>

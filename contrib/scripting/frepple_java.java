@@ -1,5 +1,5 @@
 /***************************************************************************
-  file : $URL: file:///C:/develop/SVNrepository/frepple/trunk/contrib/scripting/frepple.i $
+  file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
   email : jdetaeye@users.sourceforge.net
@@ -7,7 +7,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2006 by Johan De Taeye                                    *
+ * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -39,7 +39,7 @@ class frepple_java
 		"<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
 			"<NAME>actual plan</NAME>" +
 			"<DESCRIPTION>Anything goes</DESCRIPTION>" +
-			"<CURRENT>2005-01-01T00:00:01</CURRENT>" +
+			"<CURRENT>2007-01-01T00:00:01</CURRENT>" +
 			"<OPERATIONS>" +
 				"<OPERATION NAME=\"make end item\" xsi:type=\"OPERATION_FIXED_TIME\">" +
 					"<DURATION>24:00:00</DURATION>" +
@@ -63,7 +63,7 @@ class frepple_java
 				"<RESOURCE NAME=\"Resource\">" +
 					"<MAXIMUM NAME=\"Capacity\" xsi:type=\"CALENDAR_FLOAT\">" +
 						"<BUCKETS>" +
-							"<BUCKET START=\"2005-01-01T00:00:01\" VALUE=\"1\"/>" +
+							"<BUCKET START=\"2007-01-01T00:00:01\" VALUE=\"1\"/>" +
 						"</BUCKETS>" +
 					"</MAXIMUM>" +
 					"<LOADS>" +
@@ -88,7 +88,7 @@ class frepple_java
 			"<DEMANDS>" +
 				"<DEMAND NAME=\"order 1\">" +
 					"<QUANTITY>10</QUANTITY>" +
-					"<DUE>2005-01-04T09:00:00</DUE>" +
+					"<DUE>2007-01-04T09:00:00</DUE>" +
 					"<PRIORITY>1</PRIORITY>" +
 					"<ITEM NAME=\"end item\"/>" +
 					"<POLICY>PLANLATE</POLICY>" +

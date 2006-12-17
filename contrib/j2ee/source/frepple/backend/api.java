@@ -7,7 +7,7 @@ email : jdetaeye@users.sourceforge.net
 
 /***************************************************************************
 *                                                                         *
-* Copyright (C) 2006 by Johan De Taeye                                    *
+* Copyright (C) 2007 by Johan De Taeye                                    *
 *                                                                         *
 * This library is free software; you can redistribute it and/or modify it *
 * under the terms of the GNU Lesser General Public License as published   *
@@ -29,14 +29,14 @@ package frepple.backend;
 
 /** The backend package is used to store different methods to connect
  *  from the J2EE container to the frepple server.
- *  This connection can currently be provided using two different 
+ *  This connection can currently be provided using two different
  *  technologies: either using a webservice, either using Corba.
- *  This interface provides a common API for the different underlying 
+ *  This interface provides a common API for the different underlying
  *  technologies. The J2EE components can thus easily switch to different
- *  connection methods. 
+ *  connection methods.
  */
 public interface api extends apiMBean {
-	
+
 	public abstract void initialize() throws Exception;
 
 	public abstract void readXMLData(String x);

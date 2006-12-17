@@ -37,11 +37,11 @@
       CMDLINE="cat output.2.xml"/>
   </COMMANDS>
   <NAME>Custom class</NAME>
-  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
   <CALENDARS>
     <CALENDAR NAME="capacity factory 1" xsi:type="CALENDAR_FLOAT">
       <BUCKETS>
-        <BUCKET START="2006-01-01T00:00:00">
+        <BUCKET START="2007-01-01T00:00:00">
           <NAME>all</NAME>
           <VALUE>1</VALUE>
         </BUCKET>
@@ -49,7 +49,7 @@
     </CALENDAR>
     <CALENDAR NAME="capacity factory 2" xsi:type="CALENDAR_FLOAT">
       <BUCKETS>
-        <BUCKET START="2006-01-01T00:00:00">
+        <BUCKET START="2007-01-01T00:00:00">
           <NAME>all</NAME>
           <VALUE>1</VALUE>
         </BUCKET>
@@ -139,7 +139,7 @@
   <DEMANDS>
     <DEMAND NAME="order 1">
       <QUANTITY>10</QUANTITY>
-      <DUE>2006-01-03T12:00:00</DUE>
+      <DUE>2007-01-03T12:00:00</DUE>
       <PRIORITY>1</PRIORITY>
       <ITEM NAME="product" />
       <OPERATION NAME="delivery product from distribution centre">
@@ -153,7 +153,7 @@
     </DEMAND>
     <DEMAND NAME="order 2">
       <QUANTITY>10</QUANTITY>
-      <DUE>2006-01-03T12:00:00</DUE>
+      <DUE>2007-01-03T12:00:00</DUE>
       <PRIORITY>2</PRIORITY>
       <ITEM NAME="product" />
       <OPERATION NAME="delivery product from distribution centre"/>

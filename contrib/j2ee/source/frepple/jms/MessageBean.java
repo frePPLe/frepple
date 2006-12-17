@@ -7,7 +7,7 @@
 
 /***************************************************************************
 *                                                                         *
-* Copyright (C) 2006 by Johan De Taeye                                    *
+* Copyright (C) 2007 by Johan De Taeye                                    *
 *                                                                         *
 * This library is free software; you can redistribute it and/or modify it *
 * under the terms of the GNU Lesser General Public License as published   *
@@ -54,7 +54,7 @@ public class MessageBean implements MessageDrivenBean, MessageListener {
     private QueueConnection conn;
     private static Logger log = Logger.getLogger(MessageBean.class);
     private api freppleconn = null;
-    
+
 	/**
 	 * @throws Exception */
 	public MessageBean() throws Exception {
@@ -101,7 +101,7 @@ public class MessageBean implements MessageDrivenBean, MessageListener {
 
 	/**
 	 * Default create method
-	 * 
+	 *
 	 * @throws CreateException
 	 */
 	public void ejbCreate() {

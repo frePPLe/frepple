@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
- Copyright (C) 2006 by Johan De Taeye
+ Copyright (C) 2007 by Johan De Taeye
 
  This library is free software; you can redistribute it and/or modify it
  under the terms of the GNU Lesser General Public License as published
@@ -21,32 +21,32 @@
  revision : $LastChangedRevision$  $LastChangedBy$
  date : $LastChangedDate$
  email : jdetaeye@users.sourceforge.net
- 
+
   xmlns="http://www.w3.org/TR/REC-html40">
 -->
-<xsl:stylesheet version="1.0" 
+<xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   >
 <xsl:output method="html" indent="no" />
 <xsl:template match="/PLAN/BUFFERS">
   <html>
   <head>
-  <link href="/styles.css" rel="stylesheet" type="text/css"/>  
+  <link href="/styles.css" rel="stylesheet" type="text/css"/>
   <script type="text/javascript" src="filter.js"></script>
   </head>
   <body>
     <form>
     <table border="1">
     <tr class="header">
-      <th align="left">Name</th> 
-      <th align="left">Location</th> 
-      <th align="left">Item</th>      
-      <th align="left">Inventory</th> 
-      <th align="left">Producing</th> 
-      <th align="left"> </th> 
-      <th align="left">B1</th> 
-      <th align="left">B2</th> 
-      <th align="left">B3</th> 
+      <th align="left">Name</th>
+      <th align="left">Location</th>
+      <th align="left">Item</th>
+      <th align="left">Inventory</th>
+      <th align="left">Producing</th>
+      <th align="left"> </th>
+      <th align="left">B1</th>
+      <th align="left">B2</th>
+      <th align="left">B3</th>
     </tr>
     <xsl:for-each select="BUFFER">
     <!-- <xsl:sort select="@NAME"/> -->

@@ -2,7 +2,7 @@
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <NAME>plan</NAME>
   <DESCRIPTION>XML structure test model</DESCRIPTION>
-  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
   <COMMANDS>
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" VERBOSE="false"/>
@@ -15,7 +15,7 @@
     <!-- Level 1: Lot -->
     <DEMAND NAME="order 1">
       <QUANTITY>10</QUANTITY>
-      <DUE>2006-01-27T00:00:00</DUE>
+      <DUE>2007-01-27T00:00:00</DUE>
       <PRIORITY>1</PRIORITY>
       <ITEM NAME="item 1">
         <!-- Level 2: Item -->
@@ -50,7 +50,7 @@
                       <!-- Level 7: Calendar -->
                       <BUCKETS>
                         <!-- Level 8: Bucket -->
-                        <BUCKET START="2006-01-01T00:00:00">
+                        <BUCKET START="2007-01-01T00:00:00">
                           <NAME>Jan Week1</NAME>
                           <VALUE>0</VALUE>
                         </BUCKET>

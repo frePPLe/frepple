@@ -40,7 +40,7 @@ sub getDate()
   my ($month,$day) = ( int(rand(12)+1), int(rand(28)+1) );
   if ($month < 10) { $month = "0$month"; }
   if ($day < 10) { $day = "0$day"; }
-  return "2006-${month}-${day}T00:00:00";
+  return "2007-${month}-${day}T00:00:00";
 }
 
 
@@ -130,7 +130,7 @@ sub create ($;$;$;$)
   {
     my $it = sprintf("%05d",$i);
     print OUT "<OPERATION_PLAN ID=\"${i}\" OPERATION=\"Supply C${it}\" " .
-        "START=\"2006-05-01T00:00:00\" QUANTITY=\"${supplyqty}\" " .
+        "START=\"2007-05-01T00:00:00\" QUANTITY=\"${supplyqty}\" " .
         "LOCKED=\"true\" />\n";
   }
   print OUT "</OPERATION_PLANS>";

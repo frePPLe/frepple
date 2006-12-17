@@ -189,8 +189,8 @@
 						 <CALENDAR NAME="assembly capacity" ACTION="R"/>
 						 <CALENDAR NAME="months" xsi:type="CALENDAR_VOID">
 							<BUCKETS>
-								<BUCKET START="2006-01-01T00:00:00" ACTION="R"/>
-								<BUCKET START="2006-05-01T00:00:00" ACTION="R"/>
+								<BUCKET START="2007-01-01T00:00:00" ACTION="R"/>
+								<BUCKET START="2007-05-01T00:00:00" ACTION="R"/>
 							</BUCKETS>
 						</CALENDAR>
 					</CALENDARS>
@@ -207,18 +207,18 @@
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.13.xml" />
 
   </COMMANDS>
-  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
   <CALENDARS>
     <CALENDAR_VOID NAME="months">
       <BUCKETS>
-        <BUCKET START="2006-01-01T00:00:00" NAME="jan" />
-        <BUCKET START="2006-02-01T00:00:00" NAME="feb" />
-        <BUCKET START="2006-03-01T00:00:00" NAME="mar" />
-        <BUCKET START="2006-04-01T00:00:00" NAME="apr" />
-        <BUCKET START="2006-05-01T00:00:00" NAME="may" />
-        <BUCKET START="2006-06-01T00:00:00" NAME="jun" />
-        <BUCKET START="2006-07-01T00:00:00" NAME="jul" />
-        <BUCKET START="2006-08-01T00:00:00" NAME="aug" />
+        <BUCKET START="2007-01-01T00:00:00" NAME="jan" />
+        <BUCKET START="2007-02-01T00:00:00" NAME="feb" />
+        <BUCKET START="2007-03-01T00:00:00" NAME="mar" />
+        <BUCKET START="2007-04-01T00:00:00" NAME="apr" />
+        <BUCKET START="2007-05-01T00:00:00" NAME="may" />
+        <BUCKET START="2007-06-01T00:00:00" NAME="jun" />
+        <BUCKET START="2007-07-01T00:00:00" NAME="jul" />
+        <BUCKET START="2007-08-01T00:00:00" NAME="aug" />
       </BUCKETS>
     </CALENDAR_VOID>
   </CALENDARS>
@@ -303,7 +303,7 @@
       <LOCATION NAME="Location 1" />
       <MAXIMUM NAME="assembly capacity" xsi:type="CALENDAR_FLOAT">
         <BUCKETS>
-          <BUCKET START="2006-01-01T00:00:00">
+          <BUCKET START="2007-01-01T00:00:00">
             <NAME>all</NAME>
             <VALUE>2</VALUE>
           </BUCKET>
@@ -323,21 +323,21 @@
     <DEMAND NAME="order 1">
       <ITEM NAME="item 1" />
       <PRIORITY>1</PRIORITY>
-      <DUE>2006-03-01T00:00:00</DUE>
+      <DUE>2007-03-01T00:00:00</DUE>
       <QUANTITY>1</QUANTITY>
       <CUSTOMER NAME="Customer 1" />
     </DEMAND>
     <DEMAND NAME="order 2">
       <ITEM NAME="item 1" />
       <PRIORITY>1</PRIORITY>
-      <DUE>2006-02-01T00:00:00</DUE>
+      <DUE>2007-02-01T00:00:00</DUE>
       <QUANTITY>1</QUANTITY>
       <CUSTOMER NAME="Customer 1" />
     </DEMAND>
     <DEMAND NAME="order 3">
       <ITEM NAME="item 1" />
       <PRIORITY>1</PRIORITY>
-      <DUE>2006-04-01T00:00:00</DUE>
+      <DUE>2007-04-01T00:00:00</DUE>
       <QUANTITY>1</QUANTITY>
       <CUSTOMER NAME="Customer 2" />
     </DEMAND>

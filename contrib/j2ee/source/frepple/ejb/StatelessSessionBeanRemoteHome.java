@@ -7,7 +7,7 @@ email : jdetaeye@users.sourceforge.net
 
 /***************************************************************************
 *                                                                         *
-* Copyright (C) 2006 by Johan De Taeye                                    *
+* Copyright (C) 2007 by Johan De Taeye                                    *
 *                                                                         *
 * This library is free software; you can redistribute it and/or modify it *
 * under the terms of the GNU Lesser General Public License as published   *
@@ -35,7 +35,7 @@ import javax.ejb.EJBHome;
  */
 public interface StatelessSessionBeanRemoteHome extends EJBHome {
 
-	public StatelessSessionBeanRemote create() 
+	public StatelessSessionBeanRemote create()
 		throws RemoteException, CreateException;
-	
+
 }

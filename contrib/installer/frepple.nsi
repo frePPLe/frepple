@@ -6,7 +6,7 @@
 ;  date     : $LastChangedDate$
 ;  email    : jdetaeye@users.sourceforge.net
 ;
-; Copyright (C) 2006 by Johan De Taeye
+; Copyright (C) 2007 by Johan De Taeye
 ;
 ; This library is free software; you can redistribute it and/or modify it
 ; under the terms of the GNU Lesser General Public License as published
@@ -36,7 +36,7 @@
 
 ; Main definitions
 !define PRODUCT_NAME "Frepple"
-!define PRODUCT_VERSION "0.1.3"
+!define PRODUCT_VERSION "0.2.0"
 !define PRODUCT_PUBLISHER "Frepple"
 !define PRODUCT_WEB_SITE "http://frepple.sourceforge.net"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
@@ -74,8 +74,8 @@
 !insertmacro MUI_LANGUAGE "English"
 
 ;Version Information
-VIProductVersion "0.1.3.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "0.1.3"
+VIProductVersion "0.2.0.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "0.2.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Frepple Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "Frepple Installer - Free Production Planning Library"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Frepple"
@@ -116,11 +116,11 @@ Section "Application" SecAppl
   !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\bin\frepple_vcc.dll" "$INSTDIR\bin\frepple_vcc.dll" "$SYSDIR"
   File "..\bin\frepple_vcc.lib"
   File "..\bin\frepple_vcc.exp"
-  
+
   ; Copy modules
-  File "bin\mod_*.exp"
-  File "bin\mod_*.lib"
-  File "bin\mod_*.so"
+  File "..\bin\mod_*.exp"
+  File "..\bin\mod_*.lib"
+  File "..\bin\mod_*.so"
 
   ; Copy configuration files
   File "bin\*.xsd"

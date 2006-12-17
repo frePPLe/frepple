@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <CURRENT>2006-01-01T00:00:00</CURRENT>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
   <COMMANDS>
     <VERBOSE>true</VERBOSE>
     <ABORTONERROR>false</ABORTONERROR>

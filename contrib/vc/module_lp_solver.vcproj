@@ -179,7 +179,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="xerces-c_2.lib glpk411.lib"
+				AdditionalDependencies="xerces-c_2.lib glpk.lib"
 				OutputFile="../../bin/mod_lp_solver.so"
 				Version="1.0"
 				LinkIncremental="1"

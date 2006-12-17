@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#  file     : $URL: file:///develop/SVNrepository/frepple/trunk/test/runtest.pl $
+#  file     : $URL$
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
 #  email    : jdetaeye@users.sourceforge.net
@@ -17,7 +17,7 @@ try:
 		<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> \
 			<NAME>actual plan</NAME> \
 			<DESCRIPTION>Anything goes</DESCRIPTION> \
-			<CURRENT>2005-01-01T00:00:01</CURRENT> \
+			<CURRENT>2007-01-01T00:00:01</CURRENT> \
 			<OPERATIONS> \
 				<OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME"> \
 					<DURATION>24:00:00</DURATION> \
@@ -41,7 +41,7 @@ try:
 				<RESOURCE NAME="Resource"> \
 					<MAXIMUM NAME="Capacity" xsi:type="CALENDAR_FLOAT"> \
 						<BUCKETS> \
-							<BUCKET START="2005-01-01T00:00:01" VALUE="1"/> \
+							<BUCKET START="2007-01-01T00:00:01" VALUE="1"/> \
 						</BUCKETS> \
 					</MAXIMUM> \
 					<LOADS> \
@@ -66,7 +66,7 @@ try:
 			<DEMANDS> \
 				<DEMAND NAME="order 1"> \
 					<QUANTITY>10</QUANTITY> \
-					<DUE>2005-01-04T09:00:00</DUE> \
+					<DUE>2007-01-04T09:00:00</DUE> \
 					<PRIORITY>1</PRIORITY> \
 					<ITEM NAME="end item"/> \
 					<POLICY>PLANLATE</POLICY> \

@@ -7,7 +7,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2006 by Johan De Taeye                                    *
+ * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -52,13 +52,13 @@ import frepple.backend.api;
 public class Output extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private api connection = null;  
+	private api connection = null;
     private int count = 0;
     private Templates stylesheet;
-    
+
     public final static String FS = System.getProperty("file.separator");
     private static Logger log = Logger.getLogger(Output.class);
-        
+
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
@@ -69,17 +69,17 @@ public class Output extends HttpServlet {
             connection = ConnectionFactory.create();
         } catch (Exception e) {
             e.printStackTrace();
-        }  
+        }
 
         // Initialize the XSLT processor
         /*  @todo cleanup
-         *  
+         *
          * -> Pick up all xslt and their context path from a properties file
          * -> Load all xslt transformers on init
-         * -> Incoming request have a relative path 
+         * -> Incoming request have a relative path
          * 			/frepple/output/demand/...
-         *          /frepple/output/buffer/... 
-         * -> We can derive the required xslt 
+         *          /frepple/output/buffer/...
+         * -> We can derive the required xslt
          * -> how do we get the XML in a consistent and flexible way?
          *
         TransformerFactory transFact = TransformerFactory.newInstance( );
@@ -88,7 +88,7 @@ public class Output extends HttpServlet {
             curName = "/WEB-INF/xslt/test.xslt";
             URL xsltURL = getServletContext( ).getResource(curName);
             String xsltSystemID = xsltURL.toExternalForm( );
-            stylesheet = transFact.newTemplates(new StreamSource(xsltSystemID));            
+            stylesheet = transFact.newTemplates(new StreamSource(xsltSystemID));
         } catch (TransformerConfigurationException tce) {
             log("Unable to compile stylesheet", tce);
             throw new ServletException("Unable to compile stylesheet");
@@ -97,7 +97,7 @@ public class Output extends HttpServlet {
             throw new ServletException(
                     "Unable to locate XSLT file: " + curName);
         }
-        
+
         @todo set proper classpath, and set correct jaxp / xalan properties
         */
     }
@@ -109,12 +109,12 @@ public class Output extends HttpServlet {
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws IOException,
             ServletException {
-        
+
         log.debug("Receiving request " + request.getLocalName());
 
         // Set the response headers
         response.setContentType("text/html; charset=UTF-8");
-        
+
         // Output goes in the response stream.
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
@@ -130,14 +130,14 @@ public class Output extends HttpServlet {
             // Generate the transformer.
             Transformer transformer = tFactory.newTransformer(xslSource);
             // Perform the transformation, sending the output to the response.
-            transformer.transform(xmlSource, new StreamResult(out));            
+            transformer.transform(xmlSource, new StreamResult(out));
         } catch (Exception ex) {
             out.println("<h1>An Error Has Occurred</h1><pre>");
             out.write(ex.getMessage());
             ex.printStackTrace(out);
             out.println("</pre>");
         }
-        
+
         // Finalize
         out.println("</body></html>");
         out.close();

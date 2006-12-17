@@ -20,7 +20,7 @@ for (my $counter=500; $counter <= 2000; $counter+=500)
   printf OUTFILE
     "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" .
     "<DESCRIPTION>Single buffer plan with $counter demands</DESCRIPTION>\n" .
-    "<CURRENT>2006-01-01T00:00:00</CURRENT>\n" .
+    "<CURRENT>2007-01-01T00:00:00</CURRENT>\n" .
     "<COMMANDS>\n" .
     "<COMMAND xsi:type=\"COMMAND_SOLVE\" VERBOSE=\"false\">" .
     "  <SOLVER NAME=\"MRP\" xsi:type=\"SOLVER_MRP\" CONSTRAINTS=\"0\"/>" .

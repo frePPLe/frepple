@@ -7,7 +7,7 @@
 
 /***************************************************************************
 *                                                                         *
-* Copyright (C) 2005 by Johan De Taeye                                    *
+* Copyright (C) 2007 by Johan De Taeye                                    *
 *                                                                         *
 * This library is free software; you can redistribute it and/or modify it *
 * under the terms of the GNU Lesser General Public License as published   *
@@ -33,16 +33,16 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 
-/** This is a test client for the frepple backend web service. 
+/** This is a test client for the frepple backend web service.
  */
 public class client {
 
 	public static void main(String[] args) {
 		 try {
-		 	
+
 		 	// Parameter for the web service location
 		 	String endpoint = "http://localhost/axis/planner";
-		 	
+
 		 	// Set the appropriate parameters for the call
 			Service service = new Service();
 			Call call = (Call) service.createCall();
@@ -52,7 +52,7 @@ public class client {
 	        call.setEncodingStyle(null);
 	        call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.TRUE);
 	        call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-	        
+
 	        // Call the web service for the 'add' operation
 	        call.setOperationName(new QName("", "add"));
 	        call.setSOAPActionURI("planner#add");
@@ -64,7 +64,7 @@ public class client {
 	        call.setSOAPActionURI("planner#InputXML");
 			ret = (Integer) call.invoke(new Object[] {"Hello!"});
 			System.out.println("bbbb" + ret);
-			
+
 		} catch (AxisFault e) {
 			System.err.println(e.toString());
 			e.printStackTrace();

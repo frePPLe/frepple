@@ -7,7 +7,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2006 by Johan De Taeye                                    *
+ * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -128,7 +128,7 @@ int main (int argc, char *argv[])
 	          gbuf->getName(),
 	          gbuf->getCluster(),
 	          gbuf->getLevel());
-	   
+
 	  // 5: Finalize
 	  FreppleExit();
   }

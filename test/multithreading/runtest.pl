@@ -33,7 +33,7 @@ my $totalstarttime = [gettimeofday];
 frepple::readXMLData('<?xml version="1.0" encoding="UTF-8" ?>' .
   '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' .
   '<NAME>actual plan</NAME>' .
-  '<CURRENT>2006-01-01T00:00:01</CURRENT>' .
+  '<CURRENT>2007-01-01T00:00:01</CURRENT>' .
   '<DEFAULT_CALENDAR NAME="Weeks"/>' .
   '<OPERATIONS>' .
   '<OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME" ' .
@@ -49,7 +49,7 @@ frepple::readXMLData('<?xml version="1.0" encoding="UTF-8" ?>' .
   '</BUFFERS><RESOURCES>' .
   '<RESOURCE NAME="Resource">' .
   '<MAXIMUM NAME="Capacity" xsi:type="CALENDAR_FLOAT"><BUCKETS>' .
-  '<BUCKET START="2006-01-01T00:00:01"> <VALUE>1</VALUE> </BUCKET>' .
+  '<BUCKET START="2007-01-01T00:00:01"> <VALUE>1</VALUE> </BUCKET>' .
   '</BUCKETS></MAXIMUM>' . 
   '<LOADS><LOAD><OPERATION NAME="make end item"/></LOAD></LOADS>' .
   '</RESOURCE>' .
@@ -61,7 +61,7 @@ frepple::readXMLData('<?xml version="1.0" encoding="UTF-8" ?>' .
   '<BUFFER NAME="end item"/> <QUANTITY>1</QUANTITY>' .
   '</FLOW>' .
   '</FLOWS><DEMANDS>' .
-  '<DEMAND NAME="order 1" QUANTITY="10" DUE="2006-01-04T09:00:00" ' .
+  '<DEMAND NAME="order 1" QUANTITY="10" DUE="2007-01-04T09:00:00" ' .
   'PRIORITY="1" POLICY="PLANLATE> <ITEM NAME="end item"/></DEMAND>' .
   '</DEMANDS></PLAN>',1,0);
 

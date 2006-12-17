@@ -7,7 +7,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2006 by Johan De Taeye                                    *
+ * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -150,7 +150,7 @@ void scalability_test()
   // Repeat for different tree sizes, and compare the relative performance
   clog << "Elements   Time per operation"  << endl;
   double ref1=0.0f, ref2=0.0f, a=0.0f, b=0.0f, size1, size2;
-  int testpoints[] = 
+  int testpoints[] =
     {300000, 5000, 250000, 200000, 150000, 100000, 50000, 25000};
   int cnt=0;
   //for (int scale = 400000; scale >= 100; scale*=0.75)
@@ -204,8 +204,8 @@ void scalability_test()
     {
       // Other data points
       float compare = (curtime * 1000 / scale) / (a+b*log(scale));
-      clog << scale << "   " 
-        <<  (curtime * 1000 / scale) / ref1 << "  " 
+      clog << scale << "   "
+        <<  (curtime * 1000 / scale) / ref1 << "  "
         << (fabs(compare-1) < 0.05 ? "OK" : "NOK") << endl;
     }
   }
@@ -221,8 +221,8 @@ int main (int argc, char *argv[])
     XMLPlatformUtils::Initialize();
     clog << endl << "FUNCTIONAL TEST:" << endl << endl;
     functionality_test();
-    // The scalability test shows that the tree operations scale 
-    // logarithmically with the number of elements. 
+    // The scalability test shows that the tree operations scale
+    // logarithmically with the number of elements.
     // The test timings are pretty hard to reproduce reliable: different
     // runs easily give different timings. Hence this part of the test
     // is commented out for the regression testing.

@@ -52,7 +52,7 @@ for (my $counter=5000; $counter < 30000; $counter+=5000)
     $fh,
     $counter,
     "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" .
-      "<CURRENT>2006-01-01T00:00:00</CURRENT>\n" .
+      "<CURRENT>2007-01-01T00:00:00</CURRENT>\n" .
       "<ITEMS>\n",
     "<ITEM NAME=\"ITEMNM\" CATEGORY=\"cat1\" DESCRIPTION=\"DCRP\" >" .
       "\n\t<OPERATION NAME=\"Delivery ITEMNM\" " .
@@ -95,11 +95,11 @@ for (my $counter=5000; $counter < 30000; $counter+=5000)
     $fh,
     $counter,
     "<DEMANDS>\n",
-    "<DEMAND NAME=\"DEMANDNM1\" QUANTITY=\"10\" DUE=\"2006-03-03T00:00:00\" " .
+    "<DEMAND NAME=\"DEMANDNM1\" QUANTITY=\"10\" DUE=\"2007-03-03T00:00:00\" " .
      "PRIORITY=\"1\"> <ITEM NAME=\"ITEMNM\"/></DEMAND>\n" .
-     "<DEMAND NAME=\"DEMANDNM2\" QUANTITY=\"10\" DUE=\"2006-03-03T00:00:00\" " .
+     "<DEMAND NAME=\"DEMANDNM2\" QUANTITY=\"10\" DUE=\"2007-03-03T00:00:00\" " .
      "PRIORITY=\"2\"> <ITEM NAME=\"ITEMNM\"/></DEMAND>\n" .
-     "<DEMAND NAME=\"DEMANDNM3\" QUANTITY=\"10\" DUE=\"2006-03-03T00:00:00\" " .
+     "<DEMAND NAME=\"DEMANDNM3\" QUANTITY=\"10\" DUE=\"2007-03-03T00:00:00\" " .
      "PRIORITY=\"1\"> <ITEM NAME=\"ITEMNM\"/></DEMAND>\n",
     "</DEMANDS></PLAN>\n",
     "DEMANDNM1","DEMANDNM2","DEMANDNM3","ITEMNM"

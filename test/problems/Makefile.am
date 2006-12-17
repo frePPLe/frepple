@@ -10,4 +10,4 @@ problems_SOURCES = main.cpp
 problems_LDADD   = ../../src/libfrepple.la
 EXTRA_DIST = problems.xml problems.expect
 
-CLEANFILES = output.* *.gcda *.gcov *.gcno
+CLEANFILES = output.* *.gcda *.gcov *.gcno test.out

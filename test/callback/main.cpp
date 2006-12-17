@@ -7,7 +7,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2006 by Johan De Taeye                                    *
+ * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -35,39 +35,39 @@ class SignalSniffer
 {
   public:
     static bool callback(Buffer* l, Signal a)
-    { 
-      clog << "  Buffer '" << l << "' receives signal " << a << endl; 
+    {
+      clog << "  Buffer '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(BufferInfinite* l, Signal a)
-    { 
-      clog << "  BufferInfinite '" << l << "' receives signal " << a << endl; 
+    {
+      clog << "  BufferInfinite '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(BufferDefault* l, Signal a)
-    { 
-      clog << "  BufferDefault '" << l << "' receives signal " << a << endl; 
+    {
+      clog << "  BufferDefault '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Operation* l, Signal a)
-    { 
-      clog << "  Operation '" << l << "' receives signal " << a << endl; 
+    {
+      clog << "  Operation '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(OperationFixedTime* l, Signal a)
-    { 
-      clog << "  OperationFixedTime '" << l << "' receives signal " << a << endl; 
+    {
+      clog << "  OperationFixedTime '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Item* l, Signal a)
-    { 
-      clog << "  Item '" << l << "' receives signal " << a << endl; 
+    {
+      clog << "  Item '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Flow* l, Signal a)
-    { 
+    {
       clog << "  Flow between '" << l->getBuffer() << "' and '" <<
-        l->getOperation() << "' receives signal " << a << endl; 
+        l->getOperation() << "' receives signal " << a << endl;
       return true;
     }
 };
@@ -79,7 +79,7 @@ int main (int argc, char *argv[])
   {
     // 0: Initialize
     FreppleInitialize(NULL);
-    
+
     // 1: Create subscriptions
     // a) buffers
     FunctorStatic<Buffer,SignalSniffer>::connect(SIG_ADD);
@@ -130,7 +130,7 @@ int main (int argc, char *argv[])
 		  	"</COMMANDS>" \
 		  "</PLAN>", true, false
 		);
-		    
+
     // 4: Remove the subscriptions
     // a) buffers
     FunctorStatic<Buffer,SignalSniffer>::disconnect(SIG_ADD);

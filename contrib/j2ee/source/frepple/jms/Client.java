@@ -7,7 +7,7 @@
 
 /***************************************************************************
 *                                                                         *
-* Copyright (C) 2006 by Johan De Taeye                                    *
+* Copyright (C) 2007 by Johan De Taeye                                    *
 *                                                                         *
 * This library is free software; you can redistribute it and/or modify it *
 * under the terms of the GNU Lesser General Public License as published   *
@@ -40,7 +40,7 @@ public class Client {
 	public static void main(String[] args) {
 		System.out.println("Start sending messages...");
 		try {
-			
+
 			// Init
 			InitialContext iniCtx = new InitialContext();
 			Object tmp = iniCtx.lookup("ConnectionFactory");
@@ -50,7 +50,7 @@ public class Client {
 	        session = conn.createQueueSession(false,
 	                QueueSession.AUTO_ACKNOWLEDGE);
 			conn.start();
-			
+
 			// Send a few text msgs to queB
 			QueueSender send = session.createSender(queB);
 
@@ -59,7 +59,7 @@ public class Client {
 				tm.setJMSType("frepple-xml");
 				send.send(tm);
 			}
-			
+
 			// Finalize
 			conn.stop();
 	        session.close();

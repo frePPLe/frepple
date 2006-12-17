@@ -41,7 +41,7 @@ sub getDate()
   my ($month,$day) = ( int(rand(12)+1), int(rand(28)+1) );
   if ($month < 10) { $month = "0$month"; }
   if ($day < 10) { $day = "0$day"; }
-  return "2006-${month}-${day}T00:00:00";
+  return "2007-${month}-${day}T00:00:00";
 }
 
 
@@ -118,7 +118,7 @@ sub create ($;$;$)
   for (my $i=1; $i<=$cluster; $i+=1)
   {
     print OUT "<OPERATION_PLAN ID=\"${i}\" OPERATION=\"Supply C${i}\" " .
-        "START=\"2006-05-01T00:00:00\" QUANTITY=\"${supplyqty}\" " .
+        "START=\"2007-05-01T00:00:00\" QUANTITY=\"${supplyqty}\" " .
         "LOCKED=\"true\" />\n";
   }
   print OUT "</OPERATION_PLANS>";

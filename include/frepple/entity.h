@@ -7,7 +7,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2006 by Johan De Taeye                                    *
+ * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -86,7 +86,7 @@ template <class T> void HasHierarchy<T>::setOwner (T* fam)
 }
 
 
-template <class T> void HasHierarchy<T>::writeElement 
+template <class T> void HasHierarchy<T>::writeElement
   (XMLOutput* o, const XMLtag &t, mode m) const
 {
   /** Note that this function is never called on its own. It is always called
@@ -110,7 +110,7 @@ template <class T> void HasHierarchy<T>::beginElement
   (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_owner) ||
-    (pIn.getParentElement().isA(Tags::tag_members) 
+    (pIn.getParentElement().isA(Tags::tag_members)
        && pElement.isA(T::metadata.typetag)))
     // Start reading a member or the parent
     pIn.readto( T::reader(T::metadata,pIn) );

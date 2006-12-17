@@ -7,7 +7,7 @@
 
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2006 by Johan De Taeye                                    *
+ * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Lesser General Public License as published   *
@@ -81,9 +81,15 @@ class LibraryModel
 };
 
 
-/** This is the class used to divide a time horizon in a number
-  * of discrete time buckets.
-  * Typical calendars are "weeks", "months", "quarters", ...
+/** This is the class used to 1) represent varisables that are 
+  * varying over time, and 2) to divide a time horizon into 
+  * multiple buckets.<br>
+  * Some example usages for calendars:
+  *  - Defining weekly, monthly and quarterly buckets for 
+  *    reporting purposes.
+  *  - A calendar defining the available capacity of a resource
+  *    week by week.
+  *  - The minimum inventory desired in a buffer week by week.
   */
 class Calendar : public HasName<Calendar>, public Object
 {
@@ -267,11 +273,12 @@ class Calendar : public HasName<Calendar>, public Object
 };
 
 
-/**
+/** This calendar type is used to store values in its buckets.<br>
   * The template type must statisfy the following requirements:
   *   - XML import supported by the operator >> of the class XMLElement.
   *   - XML export supported by the method writeElement of the class XMLOutput.
   * Subclasses will need to implement the getType() method.
+  * @see CalendarPointer
   */
 template <typename T> class CalendarValue : public Calendar
 {
@@ -341,11 +348,13 @@ template <typename T> class CalendarValue : public Calendar
 };
 
 
-/**
+/** This calendar type is used to store object pointers in its buckets.<br>
   * The template type must statisfy the following requirements:
-  *   - subclass the Object class and implement the beginElement(),
-  *     writeElement() and endElement() as appropriate.
+  *   - It must be a subclass of the Object class and implement the 
+  *     beginElement(), writeElement() and endElement() as appropriate.
   *   - Implement a metadata data element
+  * Subclasses will need to implement the getType() method.
+  * @see CalendarValue
   */
 template <typename T> class CalendarPointer : public Calendar
 {
@@ -3980,7 +3989,7 @@ class CommandCreateOperationPlan : public Command
 class CommandMoveOperationPlan : public Command
 {
   public:
-    /** Constructor.
+    /** Constructor.<br>
       * Unlike the other commands the constructor already executes the change.
       * @param opplanptr Pointer to the operationplan being moved.
       * @param newDate New date of the operationplan.

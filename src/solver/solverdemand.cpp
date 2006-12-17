@@ -73,7 +73,7 @@ void MRPSolver::solve (Demand* l, void* v)
       << plan_qty << " - " << plan_date << endl;
 
     // Check whether the action list is empty
-    assert( Solver->actions.empty() );
+    assert( Solver->empty() );
 
     // Plan the demand by asking the delivery operation to plan
     Solver->curBuffer = NULL;
@@ -102,7 +102,7 @@ void MRPSolver::solve (Demand* l, void* v)
           // 'coordinated' planning run.
 
           // Delete operationplans created in the 'testing round'
-          Solver->actions.undo();
+          Solver->undo();
 
           // Create the correct operationplans
           bool tmp = Solver->getSolver()->getVerbose();
@@ -122,7 +122,7 @@ void MRPSolver::solve (Demand* l, void* v)
             << Solver->a_qty << " versus " << tmpqty << endl;
         }
         // Register the new operationplans
-        Solver->actions.execute();
+        Solver->CommandList::execute();
 
         // Update the quantity to plan in the next loop
         plan_qty -= Solver->a_qty;
@@ -130,7 +130,7 @@ void MRPSolver::solve (Demand* l, void* v)
       else
       {
         // Nothing planned - Delete operationplans - Undo all changes
-        Solver->actions.undo();
+        Solver->undo();
         // If there is no proper new date for the next loop, we need to exit
         if (Solver->a_date <= copy_plan_date) plan_qty = 0.0f;
       }
@@ -142,7 +142,7 @@ void MRPSolver::solve (Demand* l, void* v)
       {
         // Yes, it is fully planned
         // Commit all changes
-        Solver->actions.execute();
+        Solver->CommandList::execute();
         // Update the quantity and date to plan in the next loop
         plan_qty -= Solver->a_qty;
         plan_date = Solver->a_date;
@@ -151,7 +151,7 @@ void MRPSolver::solve (Demand* l, void* v)
       {
         // Not fully planned. Try again at a new date
         // Undo all changes
-        Solver->actions.undo();
+        Solver->undo();
         // If there is no proper new date for the next loop, we need to exit
         if (Solver->a_date <= plan_date) plan_qty = 0.0f;
         plan_date = Solver->a_date;

@@ -104,7 +104,7 @@ void MRPSolver::MRPSolverdata::execute()
         catch (...) {clog << "  Unknown type" << endl;}
 
         // Cleaning up
-        actions.undo();
+        undo();
       }
 
     // Clean the list of demands of this problem

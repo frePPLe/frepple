@@ -218,7 +218,7 @@ class MRPSolver : public Solver
       * state maintained by each solver thread.
       * @see MRPSolver
       */
-    class MRPSolverdata : public Command
+    class MRPSolverdata : public CommandList
     {
       friend class MRPSolver;
       public:
@@ -247,9 +247,6 @@ class MRPSolver : public Solver
         virtual size_t getSize() const {return sizeof(MRPSolverdata);}
 
       private:
-        /** Maintains a list of all actions triggered by the solver. */
-        CommandList actions;
-
         /** Points to the solver. */
         MRPSolver* sol;
 

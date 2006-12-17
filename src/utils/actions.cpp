@@ -107,26 +107,60 @@ void CommandList::add(Command* c)
 }
 
 
-void CommandList::undo()
+void CommandList::undo(Command *c)
 {
+  // Check validity of argument
+  if (c && c->owner != this) 
+    throw LogicException("Invalid call to CommandList::undoable(Command*)");
+
   // Don't even try to undo a list which can't be undone.
-  if (!can_undo)
-    throw RuntimeException("Trying to undo an action list which " \
-      "contains non-undoable actions.");
+  if (!undoable(c))
+    throw RuntimeException("Trying to undo a CommandList which " \
+      "contains non-undoable actions or is executed in parallel.");
 
   // Undo all commands and delete them.
   // Note that undoing an operation that hasn't been executed yet or has been
   // undone already is expected to be harmless, so we don't need to worry
   // about that...
-  for(Command *i=firstCommand; i; )
+  for(Command *i=(c?c->next:firstCommand); i; )
   {
     i->undo();
     Command *t = i;  // Temporarily store the pointer to be deleted
     i = i->next;
     delete t;
   }
-  firstCommand = NULL;
-  lastCommand = NULL;
+
+  // Maintain the linked list of commands still present
+  if (c)
+  {
+    // Partially undo
+    c->next = NULL;
+    lastCommand = c;
+  }
+  else
+  {
+    // Completely erase the list
+    firstCommand = NULL;
+    lastCommand = NULL;
+  }
+}
+
+
+bool CommandList::undoable(const Command *c) const 
+{
+  // Check validity of argument
+  if (c && c->owner!=this) 
+    throw LogicException("Invalid call to CommandList::undoable(Command*)");
+
+  // Easy cases
+  if (!c || can_undo) return can_undo;
+
+  // Parallel commands can't be undone
+  if (maxparallel > 1) return false;
+
+  // Step over the remaining commands and check whether they can be undone
+  for (; c; c = c->next) if (!c->undoable()) return false;
+  return true;
 }
 
 
@@ -158,7 +192,7 @@ void CommandList::execute()
   if (maxparallel>1)
   {
     // MODE 1: Parallel execution of the commands
-    int numthreads = size(); 
+    int numthreads = getNumberOfCommands(); 
     // Limit the number of threads to the maximum allowed
     if (numthreads>maxparallel) numthreads = maxparallel; 
     if (numthreads == 1)

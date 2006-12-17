@@ -2545,7 +2545,7 @@ class Command : public Object
       */
     Command() : verbose(INHERIT), owner(NULL), next(NULL) {};
 
-    /** This method is used to actually execute the action.
+    /** This method is used to actually execute the action.<br>
       * A couple of notes on how this method should be implemented by the
       * subclasses:
       *   - Calling the method multiple times is harmless and results in the
@@ -2553,14 +2553,14 @@ class Command : public Object
       */
     virtual void execute() = 0;
 
-    /** This method is undoing the state change of the execute() method.
+    /** This method is undoing the state change of the execute() method.<br>
       * Reversing the action is not possible for all commands. Command
       * subclasses should override the undo() and undoable() method in case
-      * they are reversible.
+      * they are reversible.<br>
       * A couple of notes on how this method should be implemented by the
       * subclasses:
-      *   - Calling the undo() method is harmless if the command hasn't
-      *     been committed yet.
+      *   - Calling the undo() method is harmless if the execute() hasn't
+      *     been called yet.
       *   - Calling the undo() method multiple times is harmless and results
       *     in the same state change as calling it only once.
       */
@@ -2675,15 +2675,15 @@ class CommandList : public Command
       */
     Command* selectCommand();
 
+  public:
     /** Returns the number of commands stored in this list. */
-    int size() const
+    int getNumberOfCommands() const
     {
       int cnt = 0;
       for(Command *i=firstCommand; i; i=i->next) ++cnt;
       return cnt;
     }
 
-  public:
     /** Append an additional command to the end of the list. */
     void add(Command* c);
 
@@ -2691,7 +2691,17 @@ class CommandList : public Command
       * actions. If one of the actions on the list is not undo-able, the whole
       * list is non-undoable and a warning message will be printed.
       */
-    void undo();
+    void undo() {undo(NULL);}
+
+    /** Undoes all actions in the list beyond the argument and clear the list 
+      * of actions.<br>
+      * As soon as one of the actions on the list is not undo-able or the 
+      * execution is not sequential, the undo is aborted and a warning message 
+      * is printed.<br>
+      * There is no need that the actions have actually been executed before 
+      * the undo() is called.
+      */
+    void undo(Command *c);
 
     /** Commits all actions on its list. At the end it also clear the list
       * of actions. */
@@ -2730,6 +2740,9 @@ class CommandList : public Command
 
     /** Returns whether this command can be undone or not. */
     bool undoable() const {return can_undo;}
+
+    /** Returns true when all commands beyond the argument can be undone. */
+    bool undoable(const Command *c) const;
 
     /** Returns a descriptive string on the command list. */
     string getDescription() const {return "Command list";}

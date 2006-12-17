@@ -121,7 +121,7 @@ bool MRPSolver::checkOperation
           a_qty = - q_qty_Flow / g->getFlow()->getQuantity();
 
         // Validate the answered date
-        if ((data.a_qty < q_qty_Flow) //data.a_date != Date::infiniteFuture xxx
+        if ((data.a_qty < q_qty_Flow)
             && (!delay || delay > data.a_date - q_date_Flow))
           // Late supply of material. We expect the end of the operation to be
           // delayed with the same amount of time as the delay.      @todo for a time_per operation this is incorrect!!!
@@ -149,6 +149,7 @@ bool MRPSolver::checkOperation
     {
       // xxx clean up propagated operation plans before going into the loop again?
       // Pop actions from the command "stack" in the command list
+      data.undo(); // xxx
     }
   }
   while (!okay);  // Repeat the loop if the operation was moved and the 
@@ -274,7 +275,7 @@ void MRPSolver::solve(Operation* oper, void* v)
 
   // Check the constraints
   Solver->getSolver()->checkOperation(z,*Solver);
-  if (a) Solver->actions.add(a);
+  if (a) Solver->add(a);
 
   // Multiply the operation reqply with the flow quantity to get a final reply
   if (Solver->curBuffer) Solver->a_qty *= flow_qty_per;
@@ -377,7 +378,7 @@ void MRPSolver::solve(OperationRouting* oper, void* v)
   Solver->a_date = (max_Date ? max_Date : Date::infiniteFuture);
 
   // Add to the list (even if zero-quantity!)
-  Solver->actions.add(a);
+  Solver->add(a);
 
   // Make other operationplans don't take this one as owner any more.
   // We restore the previous owner, which could be NULL.
@@ -480,7 +481,7 @@ void MRPSolver::solve(OperationAlternate* oper, void* v)
       // Nothing could be planned on this alternate. Need to keep the
       // create command anyway, since there may exist move commands for the
       // created operationplans!
-      Solver->actions.add(a);
+      Solver->add(a);
     else
     {
       // Multiply the operation reply with the flow quantity to obtain the
@@ -502,7 +503,7 @@ void MRPSolver::solve(OperationAlternate* oper, void* v)
       if (Solver->a_date > a_date) a_date = Solver->a_date;
 
       // Operationplan accepted
-      Solver->actions.add(a);
+      Solver->add(a);
 
       // Are we at the end already?
       if (a_qty < ROUNDING_ERROR)
@@ -557,7 +558,7 @@ void MRPSolver::solve(OperationEffective* oper, void* v)
     dynamic_cast<OperationPlanEffective*>(a->getOperationPlan());
 
   Solver->curDemand = NULL;
-  Solver->actions.add(a);
+  Solver->add(a);
 
   // Check the child operationplan
   Date origQDate = Solver->q_date;

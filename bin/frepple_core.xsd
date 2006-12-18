@@ -811,6 +811,7 @@
 	</xsd:complexType>
 
 	<!-- COMMAND -->
+	<!-- All command fields support environment variable substitution -->
 	<xsd:complexType name="COMMAND" abstract="true">
 		<xsd:annotation>
 			<xsd:documentation>

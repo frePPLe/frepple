@@ -1966,6 +1966,17 @@ class XMLElement
       m_strData.clear();
     }
 
+    /** This method is used to expand environment variables.<br>
+      * When a data field contains a construct ${ABC} the environment variable
+      * ABC is picked up from the operating system to replace it. If the
+      * environment variable doesn't exist an empty string is used.<br>
+      * Note that (for performance and security reasons) this kind of 
+      * environment variable expansion isn't enabled by default. This method 
+      * needs to be called explicitly for fields where such expansion is 
+      * desired.
+      */
+    void resolveEnvironment();
+
     /** Re-initializes an existing element.
       * @see initialize(const char*)
       */
@@ -2908,7 +2919,7 @@ class CommandLoadLibrary : public Command
     /** Default constructor. */
     explicit CommandLoadLibrary() {};
 
-    /** Updates the command line to be executed.
+    /** Updates the command line to be executed.<br>
       * @param libname Path of the library to be loaded
       */
     void setLibraryName(const string& libname) {lib = libname;}

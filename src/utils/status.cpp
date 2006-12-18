@@ -651,6 +651,39 @@ string XMLElement::getName() const
 }
 
 
+void XMLElement::resolveEnvironment()
+{
+  for (string::size_type startpos = m_strData.find("${", 0);
+       startpos < string::npos;
+       startpos = m_strData.find_first_of("${", startpos))
+  {
+    // Find closing "}"
+    string::size_type endpos = m_strData.find_first_of("}", startpos);
+    if (endpos >= string::npos)
+      throw DataException("Invalid environment variable expansion in '" 
+        + m_strData + "'");
+
+    // Search variable name
+    string var(m_strData, startpos+2, endpos - startpos - 2);
+    if (var.empty()) 
+      throw DataException("Invalid environment variable expansion in '" 
+        + m_strData + "'");
+
+    // Pick up the environment variable
+    char *c = getenv(var.c_str());
+
+    // Replace in the string
+    if (c) m_strData.replace(startpos, endpos - startpos + 1, c);
+    else m_strData.replace(startpos, endpos - startpos + 1, "");
+
+    // Advance to the end of the replaced characters. If the replaced 
+    // characters would include another ${XX} construct we could get in 
+    // an infinite loop!
+    if (c) startpos += strlen(c);
+   }
+}
+
+
 XMLtag::XMLtag(string name) : strName(name)
 {
   // Error condition: name is empty

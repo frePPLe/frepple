@@ -106,7 +106,11 @@ void Solver::endElement(XMLInput& pIn, XMLElement& pElement)
 void CommandReadXMLFile::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_filename))
+  {
+    // Replace environment variables with their value.
+    pElement.resolveEnvironment();
     pElement >> filename;
+  }
   else if (pElement.isA(Tags::tag_validate))
     pElement >> validate;
   else
@@ -232,6 +236,9 @@ void CommandReadXMLURL::execute()
 
 void CommandSave::endElement(XMLInput& pIn, XMLElement& pElement)
 {
+  // Replace environment variables with their value.
+  pElement.resolveEnvironment();
+
   if (pElement.isA(Tags::tag_filename))
     pElement >> filename;
   else if (pElement.isA(Tags::tag_headerstart))
@@ -281,6 +288,9 @@ void CommandSave::execute()
 
 void CommandSavePlan::endElement(XMLInput& pIn, XMLElement& pElement)
 {
+  // Replace environment variables with their value.
+  pElement.resolveEnvironment();
+
   if (pElement.isA(Tags::tag_filename))
     pElement >> filename;
   else
@@ -460,6 +470,9 @@ string CommandMoveOperationPlan::getDescription() const
 
 void CommandErase::endElement(XMLInput& pIn, XMLElement& pElement)
 {
+  // Replace environment variables with their value.
+  pElement.resolveEnvironment();
+
   if (pElement.isA (Tags::tag_mode))
   {
     string m = pElement.getString();

@@ -369,6 +369,9 @@ CommandList::~CommandList()
 
 void CommandList::endElement(XMLInput& pIn, XMLElement& pElement)
 {
+  // Replace environment variables with their value.
+  pElement.resolveEnvironment();
+
   if (pElement.isA(Tags::tag_command) && !pIn.isObjectEnd())  // @todo fails if the alternate input format is used
   {
     // We're unlucky with our tag names here. Subcommands end with
@@ -423,9 +426,15 @@ void CommandSystem::execute()
 void CommandSystem::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_cmdline))
+    // No need to replace environment variables here. It's done at execution 
+    // time by the command shell.
     pElement >> cmdLine;
   else
+  {
+    // Replace environment variables with their value.
+    pElement.resolveEnvironment();
     Command::endElement(pIn, pElement);
+  }
 }
 
 
@@ -512,6 +521,9 @@ void CommandLoadLibrary::execute()
 
 void CommandLoadLibrary::endElement(XMLInput& pIn, XMLElement& pElement)
 {
+  // Replace environment variables with their value.
+  pElement.resolveEnvironment();
+
   if (pElement.isA(Tags::tag_filename))
     pElement >> lib;
   else if (pElement.isA(Tags::tag_name))

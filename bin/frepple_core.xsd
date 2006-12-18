@@ -845,6 +845,20 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
+	<xsd:complexType name="COMMAND_IF">
+		<xsd:complexContent>
+			<xsd:extension base="COMMAND">
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="VERBOSE" type="xsd:boolean" />
+					<xsd:element name="CONDITION" type="xsd:string" />
+					<xsd:element name="THEN" type="COMMAND" />
+					<xsd:element name="ELSE" type="COMMAND" />
+				</xsd:choice>
+				<xsd:attribute name="CONDITION" type="xsd:string" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
 	<xsd:complexType name="PARAMETER">
 		<xsd:all>
 			<xsd:element name="NAME" type="xsd:string" minOccurs="0" />

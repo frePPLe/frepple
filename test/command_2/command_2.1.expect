@@ -1,0 +1,5 @@
+START 
+TEST 1: Executing then-command 
+TEST 2: Executing else-command 
+TEST 5: failing command  
+END 

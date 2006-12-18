@@ -301,9 +301,8 @@ class RuntimeException: public runtime_error
 // UTILITY CLASS "NON-COPYABLE"
 //
 
-/** Class NonCopyable is a base class.
-  * Derive your own class from noncopyable when you want to prohibit copy
-  * construction and copy assignment.<br>
+/** Class NonCopyable is a base class. Derive your own class from NonCopyable
+  * when you want to prohibit copy construction and copy assignment.<br>
   * Some objects, particularly those which hold complex resources like files
   * or network connections, have no sensible copy semantics.  Sometimes there
   * are possible copy semantics, but these would be of very limited usefulness
@@ -312,10 +311,10 @@ class RuntimeException: public runtime_error
   * take the time to write the appropriate functions.  Deriving from
   * noncopyable will prevent the otherwise implicitly-generated functions
   * (which don't have the proper semantics) from becoming a trap for other
-  * programmers.
+  * programmers.<br>
   * The traditional way to deal with these is to declare a private copy
   * constructor and copy assignment, and then document why this is done. But
-  * deriving from noncopyable is simpler and clearer, and doesn't require
+  * deriving from NonCopyable is simpler and clearer, and doesn't require
   * additional documentation.
   */
 class NonCopyable
@@ -324,12 +323,15 @@ class NonCopyable
     NonCopyable() {}
     ~NonCopyable(){}
   private:
-    /** This method isn't implemented.
+    /** This copy constructor isn't implemented.<br>
       * It's here just so we can declare them as private so that this, and
       * any derived class, do not have copy constructors.
       */
     NonCopyable(const NonCopyable&);
-    /** This method isn't implemented. */
+    /** This assignment operator isn't implemented.<br>
+      * It's here just so we can declare them as private so that this, and
+      * any derived class, do not have copy constructors.
+      */
     NonCopyable& operator=(const NonCopyable&);
 };
 
@@ -2518,14 +2520,15 @@ class Tree : public NonCopyable
 
 /** This is the abstract base class for all commands. All changes in the system
   * state are expected to be wrapped in a command object. The execute() and
-  * undo() methods update the model.
+  * undo() methods update the model.<br>
   * Adhering to this principle make is easy to trace, time and log changes
-  * appropriately.
+  * appropriately.<br>
   * Command objects can't be persisted.
   */
 class Command : public Object
 {
   friend class CommandList;
+  friend class CommandIf;
   public:
     /** This structure defines a boolean value that can be set to TRUE,
       * FALSE or INHERITed from a higher level.
@@ -2602,9 +2605,71 @@ class Command : public Object
 };
 
 
+/** This class allows conditional execution of commands.<br>
+  * The condition is an expression that is evaluated on the operating system.
+  */
+class CommandIf : public Command
+{
+  private:
+    /** Command to be executed if the condition returns true. */
+    Command *thenCommand;
+
+    /** Command to be executed if the condition returns false. */
+    Command *elseCommand;
+
+    /** Condition expression. */
+    string condition;
+
+  public:
+    /** Returns true if both the if- and else-command are undoable if they
+      * are specified. */
+    bool undoable() 
+    {
+      return (thenCommand ? thenCommand->undoable() : true) 
+        && (elseCommand ? elseCommand->undoable() : true);
+    }
+
+    /** Undoes either the if- or the else-clause, depending on the 
+      * condition.<br>
+      * Note that calling execute() before undo() isn't enforced. 
+      */
+    void undo();
+
+    /** Executes either the if- or the else-clause, depending on the 
+      * condition. */
+    void execute();
+
+    /** Returns a descriptive string. */
+    string getDescription() const {return "Command if";}
+
+    /** Default constructor. */
+    explicit CommandIf() : thenCommand(NULL), elseCommand(NULL) {}
+
+    /** Destructor. */
+    virtual ~CommandIf() 
+    {
+      delete thenCommand;
+      delete elseCommand;
+    }
+
+    /** Returns the condition statement. */
+    string getCondition() {return condition;}
+
+    /** Updates the condition. */
+    void setCondition(const string s) {condition = s;}
+
+    virtual const MetaData& getType() const {return metadata;}
+    static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(CommandIf);}
+
+    void beginElement(XMLInput&, XMLElement& pElement);
+    void endElement(XMLInput& pIn, XMLElement& pElement);
+};
+
+
 /** This class is used to group a series commands together. This class
   * implements the "composite" design pattern in order to get an efficient
-  * and intuitive hierarchical grouping of tasks.
+  * and intuitive hierarchical grouping of tasks.<br>
   * A command list can be executed in three different modes:
   *   - Run the commands in parallel with each other, in seperate threads.<br>
   *     This is achieved by setting the sequential field to false.

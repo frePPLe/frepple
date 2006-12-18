@@ -44,6 +44,7 @@ const MetaCategory Command::metadata;
 const MetaClass CommandList::metadata;
 const MetaClass CommandSystem::metadata;
 const MetaClass CommandLoadLibrary::metadata;
+const MetaClass CommandIf::metadata;
 
 // Processing instruction metadata
 const MetaCategory XMLinstruction::metadata;
@@ -114,6 +115,10 @@ void LibraryUtils::initialize()
     "COMMAND", 
     "COMMAND_LOADLIB",
     Object::createDefault<CommandLoadLibrary>);
+  CommandIf::metadata.registerClass(
+    "COMMAND", 
+    "COMMAND_IF",
+    Object::createDefault<CommandIf>);
 
   // Initialize the processing instruction metadata.
   XMLinstruction::metadata.registerCategory

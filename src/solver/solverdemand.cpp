@@ -121,7 +121,8 @@ void MRPSolver::solve (Demand* l, void* v)
             clog << "Demand '" << l << "' coordination screwed up: "
             << Solver->a_qty << " versus " << tmpqty << endl;
         }
-        // Register the new operationplans
+        // Register the new operationplans. We need to make sure that the 
+        // correct execute method is called!
         Solver->CommandList::execute();
 
         // Update the quantity to plan in the next loop
@@ -141,7 +142,8 @@ void MRPSolver::solve (Demand* l, void* v)
       if (Solver->a_qty + ROUNDING_ERROR > plan_qty)
       {
         // Yes, it is fully planned
-        // Commit all changes
+        // Commit all changes. We need to make sure that the correct execute
+        // method is called!
         Solver->CommandList::execute();
         // Update the quantity and date to plan in the next loop
         plan_qty -= Solver->a_qty;

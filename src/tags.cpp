@@ -132,5 +132,8 @@ const XMLtag Tags::tag_headeratts("HEADERATTS");
 const XMLtag Tags::tag_content("CONTENT");
 const XMLtag Tags::tag_url("URL");
 const XMLtag Tags::tag_pegging("PEGGING");
+const XMLtag Tags::tag_condition("CONDITION");
+const XMLtag Tags::tag_then("THEN");
+const XMLtag Tags::tag_else("ELSE");
 
 }

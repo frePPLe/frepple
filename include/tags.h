@@ -133,5 +133,8 @@ class Tags
     static const XMLtag tag_content;
     static const XMLtag tag_url;
     static const XMLtag tag_pegging;
+    static const XMLtag tag_condition;
+    static const XMLtag tag_then;
+    static const XMLtag tag_else;
 };
 

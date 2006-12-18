@@ -105,12 +105,11 @@ void Solver::endElement(XMLInput& pIn, XMLElement& pElement)
 
 void CommandReadXMLFile::endElement(XMLInput& pIn, XMLElement& pElement)
 {
+  // Replace environment variables with their value.
+  pElement.resolveEnvironment();
+
   if (pElement.isA(Tags::tag_filename))
-  {
-    // Replace environment variables with their value.
-    pElement.resolveEnvironment();
     pElement >> filename;
-  }
   else if (pElement.isA(Tags::tag_validate))
     pElement >> validate;
   else
@@ -162,6 +161,9 @@ void CommandReadXMLFile::execute()
 
 void CommandReadXMLString::endElement(XMLInput& pIn, XMLElement& pElement)
 {
+  // Replace environment variables with their value.
+  pElement.resolveEnvironment();
+
   if (pElement.isA(Tags::tag_data))
     pElement >> data;
   else if (pElement.isA(Tags::tag_validate))
@@ -199,6 +201,9 @@ void CommandReadXMLString::execute()
 
 void CommandReadXMLURL::endElement(XMLInput& pIn, XMLElement& pElement)
 {
+  // Replace environment variables with their value.
+  pElement.resolveEnvironment();
+
   if (pElement.isA(Tags::tag_url))
     pElement >> url;
   else if (pElement.isA(Tags::tag_validate))

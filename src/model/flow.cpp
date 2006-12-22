@@ -164,7 +164,7 @@ void Flow::endElement (XMLInput& pIn, XMLElement& pElement)
   {
     delete static_cast<Action*>(pIn.getUserArea());
     pIn.setUserArea(
-      new Action(MetaData::decodeAction(pElement.getString().c_str()))
+      new Action(MetaClass::decodeAction(pElement.getString().c_str()))
       );
   }
   else if(pIn.isObjectEnd())

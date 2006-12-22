@@ -62,7 +62,7 @@ class OperationTransport : public OperationFixedTime
     void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void endElement(XMLInput&, XMLElement&);
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
 
     static bool callback(Buffer*, Signal);

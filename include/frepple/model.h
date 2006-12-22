@@ -171,7 +171,7 @@ class Calendar : public HasName<Calendar>, public Object
           */
         void endElement(XMLInput& pIn, XMLElement&  pElement);
 
-        virtual const MetaData& getType() const
+        virtual const MetaClass& getType() const
           {return Calendar::metadata;}
         virtual size_t getSize() const
           {return sizeof(Bucket) + nm.size();}
@@ -251,7 +251,7 @@ class Calendar : public HasName<Calendar>, public Object
     void endElement(XMLInput& pIn, XMLElement&  pElement) {}
     void beginElement(XMLInput& pIn, XMLElement&  pElement);
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaCategory metadata;
 
     virtual size_t getSize() const
@@ -318,7 +318,7 @@ template <typename T> class CalendarValue : public Calendar
             Bucket::endElement(pIn,pElement);
         }
 
-        virtual const MetaData& getType() const
+        virtual const MetaClass& getType() const
           {return CalendarValue<T>::metadata;}
         virtual size_t getSize() const
           {return sizeof(typename CalendarValue<T>::BucketValue) + getName().size();}
@@ -335,7 +335,7 @@ template <typename T> class CalendarValue : public Calendar
     void setValue(const Date d, const T& v)
       {static_cast<BucketValue*>(findBucket(d))->setValue(v);}
 
-    virtual const MetaData& getType() const = 0;
+    virtual const MetaClass& getType() const = 0;
 
 	  const T& getValue(Calendar::BucketIterator& i) const
       {return reinterpret_cast<BucketValue&>(*i).getValue();}
@@ -408,7 +408,7 @@ template <typename T> class CalendarPointer : public Calendar
             Bucket::endElement(pIn,pElement);
         }
 
-        virtual const MetaData& getType() const
+        virtual const MetaClass& getType() const
           {return CalendarPointer<T>::metadata;}
         virtual size_t getSize() const
           {return sizeof(typename CalendarPointer<T>::BucketPointer) + getName().size();}
@@ -425,7 +425,7 @@ template <typename T> class CalendarPointer : public Calendar
     void setValue(const Date d, T* v)
       {static_cast<BucketPointer*>(findBucket(d))->setValue(v);}
 
-    virtual const MetaData& getType() const = 0;
+    virtual const MetaClass& getType() const = 0;
 
   private:
     /** Factory method to add new buckets to the calendar.
@@ -440,7 +440,7 @@ class CalendarVoid : public Calendar
 {
   public:
     CalendarVoid(const string& n) : Calendar(n) {}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
 };
 
@@ -450,7 +450,7 @@ class CalendarFloat : public CalendarValue<float>
 {
   public:
     CalendarFloat(const string& n) : CalendarValue<float>(n) {}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
 };
 
@@ -460,7 +460,7 @@ class CalendarInt : public CalendarValue<int>
 {
   public:
     CalendarInt(const string& n) : CalendarValue<int>(n) {}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
 };
 
@@ -470,7 +470,7 @@ class CalendarBool : public CalendarValue<bool>
 {
   public:
     CalendarBool(const string& n) : CalendarValue<bool>(n) {}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
 };
 
@@ -480,7 +480,7 @@ class CalendarString : public CalendarValue<string>
 {
   public:
     CalendarString(const string& n) : CalendarValue<string>(n) {}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
     {
@@ -498,7 +498,7 @@ class CalendarOperation : public CalendarPointer<Operation>
 {
   public:
     CalendarOperation(const string& n) : CalendarPointer<Operation>(n) {}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
 };
 
@@ -590,7 +590,7 @@ class Problem : public NonCopyable
     HasProblems* getOwner() const {return owner;}
 
     /** Return a reference to the metadata structure. */
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaCategory metadata;
@@ -736,7 +736,7 @@ class Solver : public Object, public HasName<Solver>
     /** Controls whether verbose output will be generated. */
     void setVerbose(bool b) {verbose = b;}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaCategory metadata;
 
   protected:
@@ -784,7 +784,7 @@ class CommandSolve : public Command
     string getDescription() const {return "running a solver";}
     Solver* getSolver() const {return sol;}
     void setSolver(Solver* s) {sol = s;}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandSolve);}
 };
@@ -979,7 +979,7 @@ class Location
     void endElement(XMLInput& pIn, XMLElement& pElement);
     explicit Location(const string& n) : HasHierarchy<Location>(n) {}
     virtual ~Location();
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaCategory metadata;
 };
 
@@ -988,7 +988,7 @@ class LocationDefault : public Location
 {
   public:
     explicit LocationDefault(const string& str) : Location(str) {}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(LocationDefault) + getName().size() + HasDescription::memsize();}
@@ -1005,7 +1005,7 @@ class Customer
     void endElement(XMLInput& pIn, XMLElement& pElement);
     Customer(const string& n) : HasHierarchy<Customer>(n) {}
     virtual ~Customer();
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaCategory metadata;
 };
 
@@ -1014,7 +1014,7 @@ class CustomerDefault : public Customer
 {
   public:
     explicit CustomerDefault(const string& str) : Customer(str) {}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(CustomerDefault) + getName().size() + HasDescription::memsize();}
@@ -1630,7 +1630,7 @@ class OperationPlan
     /** Return the metadata. We return the metadata of the operation class,
       * not the one of the operationplan class!
       */
-    const MetaData& getType() const {return getOperation()->getType();}
+    const MetaClass& getType() const {return getOperation()->getType();}
     static const MetaCategory metadata;
     virtual size_t getSize() const
       {return sizeof(OperationPlan);}
@@ -1745,7 +1745,7 @@ class OperationFixedTime : public Operation
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(OperationFixedTime) + getName().size() + HasDescription::memsize();}
@@ -1815,7 +1815,7 @@ class OperationTimePer : public Operation
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(OperationTimePer) + getName().size() + HasDescription::memsize();}
@@ -1893,7 +1893,7 @@ class OperationRouting : public Operation
       Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
       unsigned long i = 0, bool makeflowsloads=true) const;
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(OperationRouting) + getName().size() + HasDescription::memsize()
@@ -1997,7 +1997,7 @@ class OperationAlternate : public Operation
       Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
       unsigned long i = 0, bool makeflowsloads=true) const;
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(OperationAlternate) + getName().size() + HasDescription::memsize()
@@ -2086,7 +2086,7 @@ class OperationEffective : public Operation
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(OperationEffective) + getName().size() + HasDescription::memsize();}
@@ -2259,7 +2259,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     void setHidden(bool b) {if (hidden!=b) setChanged(); hidden = b;}
     bool getHidden() const {return hidden;}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaCategory metadata;
 
   private:
@@ -2301,7 +2301,7 @@ class BufferDefault : public Buffer
 {
   public:
     explicit BufferDefault(const string& str) : Buffer(str) {}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
       {return sizeof(BufferDefault) + getName().size() + HasDescription::memsize();}
     static const MetaClass metadata;
@@ -2317,7 +2317,7 @@ class BufferInfinite : public Buffer
   public:
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
       {return sizeof(BufferInfinite) + getName().size() + HasDescription::memsize();}
     explicit BufferInfinite(const string& c) : Buffer(c)
@@ -2335,7 +2335,7 @@ class BufferMinMax : public Buffer
   public:
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
       {return sizeof(BufferMinMax) + getName().size() + HasDescription::memsize();}
     explicit BufferMinMax(const string& c) : Buffer(c) {}
@@ -2411,7 +2411,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaCategory metadata;
     virtual size_t getSize() const {return sizeof(Flow);}
 
@@ -2441,7 +2441,7 @@ class FlowStart : public Flow
     /** This constructor is called from the plan begin_element function. */
     explicit FlowStart() {}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(FlowStart);}
 };
@@ -2468,7 +2468,7 @@ class FlowEnd : public Flow
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(FlowEnd);}
 };
@@ -2596,7 +2596,7 @@ class Resource : public HasHierarchy<Resource>,
     void setHidden(bool b) {if (hidden!=b) setChanged(); hidden = b;}
     bool getHidden() const {return hidden;}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaCategory metadata;
 
   private:
@@ -2622,7 +2622,7 @@ class ResourceDefault : public Resource
 {
   public:
     explicit ResourceDefault(const string& str) : Resource(str) {}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(ResourceDefault) + getName().size() + HasDescription::memsize();}
@@ -2636,7 +2636,7 @@ class ResourceInfinite : public Resource
   public:
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
     virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     explicit ResourceInfinite(const string& c) : Resource(c)
       {setDetectProblems(false);}
     static const MetaClass metadata;
@@ -2700,7 +2700,7 @@ class Load
       {return getResource()->getHidden() || getOperation()->getHidden();}
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaCategory metadata;
     virtual size_t getSize() const {return sizeof(Load);}
 
@@ -2747,7 +2747,7 @@ class Item
     /** Destructor. */
     virtual ~Item();
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaCategory metadata;
 
   private:
@@ -2760,7 +2760,7 @@ class ItemDefault : public Item
 {
   public:
     explicit ItemDefault(const string& str) : Item(str) {}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(ItemDefault) + getName().size() + HasDescription::memsize();}
@@ -2870,7 +2870,7 @@ class Plan : public Plannable
     /** This method basically solves the whole planning problem. */
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
     static const MetaCategory metadata;
     virtual size_t getSize() const
       {return sizeof(Plan) + name.size() + descr.size() + logfilename.size();}
@@ -2924,7 +2924,7 @@ class CommandReadXMLFile : public Command
       else
         return "parsing xml input from file '" + filename + "'";
     }
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(CommandReadXMLFile) + filename.size();}
@@ -2982,7 +2982,7 @@ class CommandReadXMLString : public Command
     void execute();
     void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const {return "parsing xml input string";}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(CommandReadXMLString) + data.size();}
@@ -3051,7 +3051,7 @@ class CommandReadXMLURL : public Command
     void execute();
     void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const {return "parsing xml input url";}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(CommandReadXMLURL) + url.size();}
@@ -3094,7 +3094,7 @@ class CommandSave : public Command
     void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const
       {return "saving the complete model into file '" + filename + "'";}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(CommandSave) 
@@ -3129,7 +3129,7 @@ class CommandSavePlan : public Command
     void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const
       {return "saving the plan into text file '" + filename + "'";}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const 
       {return sizeof(CommandSavePlan) + filename.size();}
@@ -3153,7 +3153,7 @@ class CommandPlanSize : public Command
     void undo() {}
     bool undoable() const {return true;}
     string getDescription() const {return "printing the model size";}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandPlanSize);}
 };
@@ -3185,7 +3185,7 @@ class CommandErase : public Command
     }
     bool getDeleteStaticModel() const {return deleteStaticModel;}
     void setDeleteStaticModel(bool b) {deleteStaticModel = b;}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const {return sizeof(CommandErase);}
     static const MetaClass metadata;
   private:
@@ -3373,7 +3373,7 @@ class Demand
     /** Returns true if this demand is to be hidden from serialization. */
     bool getHidden() const {return policy.test(2);}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaCategory metadata;
 
   private:
@@ -3414,7 +3414,7 @@ class DemandDefault : public Demand
 {
   public:
     explicit DemandDefault(const string& str) : Demand(str) {}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(DemandDefault) + getName().size() + HasDescription::memsize();}
@@ -3513,7 +3513,7 @@ class ProblemBeforeCurrent : public Problem
     }
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3554,7 +3554,7 @@ class ProblemBeforeFence : public Problem
     }
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3586,7 +3586,7 @@ class ProblemPrecedence : public Problem
     OperationPlan* getSecondOperationPlan() const {return opplan2;}
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3617,7 +3617,7 @@ class ProblemDemandNotPlanned : public Problem
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3644,7 +3644,7 @@ class ProblemLate : public Problem
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3670,7 +3670,7 @@ class ProblemEarly : public Problem
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3701,7 +3701,7 @@ class ProblemShort : public Problem
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3732,7 +3732,7 @@ class ProblemExcess : public Problem
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3764,7 +3764,7 @@ class ProblemPlannedLate : public Problem
     static void setAllowedLate(TimePeriod p);
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3802,7 +3802,7 @@ class ProblemPlannedEarly : public Problem
     static void setAllowedEarly(TimePeriod p);
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3831,7 +3831,7 @@ class ProblemCapacityOverload : public Problem
     Resource* getResource() const {return dynamic_cast<Resource*>(getOwner());}
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3861,7 +3861,7 @@ class ProblemCapacityUnderload : public Problem
     Resource* getResource() const {return dynamic_cast<Resource*>(getOwner());}
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3891,7 +3891,7 @@ class ProblemMaterialShortage : public Problem
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3921,7 +3921,7 @@ class ProblemMaterialExcess : public Problem
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}
 
     /** Return a reference to the metadata structure. */
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
     static const MetaClass metadata;
@@ -3965,7 +3965,7 @@ class CommandCreateOperationPlan : public Command
     bool undoable() const {return true;}
     ~CommandCreateOperationPlan() {delete opplan;}
     OperationPlan *getOperationPlan() const {return opplan;}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandCreateOperationPlan);}
     string getDescription() const
@@ -4004,7 +4004,7 @@ class CommandMoveOperationPlan : public Command
     bool undoable() const {return true;}
     ~CommandMoveOperationPlan() {if (opplan) undo();}
     OperationPlan *getOperationPlan() const {return opplan;}
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandMoveOperationPlan);}
     string getDescription() const;

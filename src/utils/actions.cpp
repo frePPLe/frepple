@@ -372,7 +372,7 @@ void CommandList::endElement(XMLInput& pIn, XMLElement& pElement)
   // Replace environment variables with their value.
   pElement.resolveEnvironment();
 
-  if (pElement.isA(Tags::tag_command) && !pIn.isObjectEnd())  // @todo fails if the alternate input format is used
+  if (pElement.isA(Tags::tag_command) && !pIn.isObjectEnd())  
   {
     // We're unlucky with our tag names here. Subcommands end with
     // </COMMAND>, but the command list itself also ends with that tag.

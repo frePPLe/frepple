@@ -169,7 +169,7 @@ class MRPSolver : public Solver
     void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, XMLElement& pElement);
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(MRPSolver);}
 
@@ -243,7 +243,7 @@ class MRPSolver : public Solver
           */
         virtual void execute();
 
-        virtual const MetaData& getType() const {return MRPSolver::metadata;}
+        virtual const MetaClass& getType() const {return MRPSolver::metadata;}
         virtual size_t getSize() const {return sizeof(MRPSolverdata);}
 
       private:

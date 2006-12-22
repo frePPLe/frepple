@@ -196,7 +196,7 @@ Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
 
   // Pick up the action attribute and update the bucket accordingly
   Calendar::Bucket* result = &*x;
-  switch (MetaData::decodeAction(atts))
+  switch (MetaClass::decodeAction(atts))
   {
     case ADD:
       // Only additions are allowed

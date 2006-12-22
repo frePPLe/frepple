@@ -101,7 +101,7 @@ class LPSolver : public Solver
     LPSolver(const string n) : Solver(n), cal(NULL), rows(0), columns(0) {};
     ~LPSolver() {};
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(LPSolver);}
 

@@ -138,7 +138,7 @@ class Forecast : public Demand
     /** Update the policy of the demand in all buckets. */
     virtual void addPolicy(const string&);
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const 
       {return sizeof(Forecast) + getName().size() + HasDescription::memsize();}

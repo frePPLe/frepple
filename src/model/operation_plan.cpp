@@ -53,7 +53,7 @@ Object* OperationPlan::createOperationPlan
 {
 	// Pick up the action attribute
   const Attributes* atts = in.getAttributes();
-  Action action = MetaData::decodeAction(atts);
+  Action action = MetaClass::decodeAction(atts);
 
 	// Decode the attributes
 	char* opname =

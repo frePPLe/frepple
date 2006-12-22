@@ -472,7 +472,7 @@ class ScopeMutexLock: public NonCopyable
 };
 
 
-class MetaData;
+class MetaClass;
 
 /** This enum defines the different priority values for threads. */
 enum priority 
@@ -620,7 +620,7 @@ class XMLtag : public NonCopyable
 
 
 /** This abstract class is the base class used for callbacks. 
-  * @see MetaData::callback
+  * @see MetaClass::callback
   * @see FunctorStatic
   * @see FunctorInstance
   */
@@ -642,6 +642,10 @@ class Functor : public NonCopyable
 class MetaCategory;
 /** This class stores metadata about the classes in the library. The stored
   * information goes well beyond the standard 'type_info'.<br>
+  * A MetaClass instance represents metadata for a specific instance type.
+  * A MetaCategory instance represents metadata for a category of object.
+  * For instance, 'Resource' is a category while 'ResourceDefault' and 
+  * 'ResourceInfinite' are specific classes.<br>
   * The metadata class also maintains subscriptions to certain events. 
   * Registered classes and objects will receive callbacks when objects are
   * being created, changed or deleted.<br>
@@ -652,13 +656,13 @@ class MetaCategory;
   *    class X : public Object
   *    {
   *      public:
-  *        virtual const MetaData& getType() {return metadata;}
+  *        virtual const MetaClass& getType() {return metadata;}
   *        static const MetaClass metadata;
   *    }
   *  In the implementation file:
   *    const MetaClass X::metadata;
   * @endcode
-  * Creating a MetaData object isn't sufficient. It needs to be registered, 
+  * Creating a MetaClass object isn't sufficient. It needs to be registered, 
   * typically in an initialization method:
   * @code
   *    void initialize()
@@ -669,9 +673,12 @@ class MetaCategory;
   *      ...
   *    }
   * @endcode
+  * @see MetaCategory
   */
-class MetaData : public NonCopyable
+class MetaClass : public NonCopyable
 {
+
+  friend class MetaCategory;
   template <class T, class U> friend class FunctorStatic;
   public:
     /** A string specifying the object type, i.e. the subclass within the
@@ -680,12 +687,6 @@ class MetaData : public NonCopyable
 
     /** A reference to an XMLtag of the base string. */
     const XMLtag* typetag;
-
-    /** Default constructor. */
-    MetaData() : type("UNSPECIFIED"), typetag(&XMLtag::find("UNSPECIFIED")) {}
-
-    /** Destructor. */
-    virtual ~MetaData() {}
 
     /** This function will analyze the string being passed, and return the
       * appropriate action.
@@ -704,34 +705,34 @@ class MetaData : public NonCopyable
       */
     static Action decodeAction(const Attributes*);
 
-    /** Sort two metadata objects. This is used to sort entities on their
+    /** Sort two metaclass objects. This is used to sort entities on their
       * type information in a stable and platform independent way.
       * @see operator !=
       * @see operator ==
       */
-    bool operator < (const MetaData& b) const
+    bool operator < (const MetaClass& b) const
     {
       return typetag->getHash() < b.typetag->getHash();
     }
 
-    /** Compare two metadata objects. We are not always sure that only a
+    /** Compare two metaclass objects. We are not always sure that only a
       * single instance of a metadata object exists in the system, and a
       * pointer comparison is therefore not appropriate.
       * @see operator !=
       * @see operator <
       */
-    bool operator == (const MetaData& b) const
+    bool operator == (const MetaClass& b) const
     {
       return typetag->getHash() == b.typetag->getHash();
     }
 
-    /** Compare two metadata objects. We are not always sure that only a
+    /** Compare two metaclass objects. We are not always sure that only a
       * single instance of a metadata object exists in the system, and a
       * pointer comparison is therefore not appropriate.
       * @see operator ==
       * @see operator <
       */
-    bool operator != (const MetaData& b) const
+    bool operator != (const MetaClass& b) const
     {
       return typetag->getHash() != b.typetag->getHash();
     } 
@@ -743,25 +744,15 @@ class MetaData : public NonCopyable
       * event. If false is returned, one of the callbacks disapproved it and
       * the event action should be allowed to execute.
       */
-    virtual bool raiseEvent(Object* v, Signal a) const
-    {
-      bool result(true);
-      for (list<Functor*>::const_iterator i = subscribers[a].begin(); 
-        i != subscribers[a].end(); ++i)
-        // Note that we always call all subscribers, even if one or more 
-        // already replied negatively. However, an exception thrown from a 
-        // callback method will break the publishing chain.
-        if (!(*i)->callback(v,a)) result = false;
-      return result;
-    }
+    bool raiseEvent(Object* v, Signal a) const;
 
     /** Connect a new subscriber to the class. */
     void connect(Functor *c, Signal a) const
-      {const_cast<MetaData*>(this)->subscribers[a].push_front(c);}
+      {const_cast<MetaClass*>(this)->subscribers[a].push_front(c);}
 
     /** Disconnect a subscriber from the class. */
     void disconnect(Functor *c, Signal a) const
-      {const_cast<MetaData*>(this)->subscribers[a].remove(c);}
+      {const_cast<MetaClass*>(this)->subscribers[a].remove(c);}
 
   private:
     /** This is a list of objects that will receive a callback when the call 
@@ -773,18 +764,7 @@ class MetaData : public NonCopyable
       * educated user.
       */
     list<Functor*> subscribers[4];
-};
 
-
-/** A MetaClass instance represents metadata for a specific instance type.
-  * A MetaCategory instance represents metadata for a category of object.
-  * For instance, 'Resource' is a category while 'ResourceDefault' and 
-  * 'ResourceInfinite' are specific classes.
-  * @see MetaCategory
-  */
-class MetaClass : public MetaData
-{
-  friend class MetaCategory;
   public:
     /** Type definition for a factory method calling the default 
       * constructor.. */
@@ -805,7 +785,8 @@ class MetaClass : public MetaData
     const MetaCategory* category;
 
     /** Default constructor. */
-    MetaClass() : factoryMethodDefault(NULL), category(NULL) {}
+    MetaClass() : type("UNSPECIFIED"), typetag(&XMLtag::find("UNSPECIFIED")), 
+      factoryMethodDefault(NULL), category(NULL) {}
 
     /** Destructor. */
     virtual ~MetaClass() {}
@@ -838,9 +819,6 @@ class MetaClass : public MetaData
     /** Find a particular class by its name. If it can't be located the return 
       * value is NULL. */
     static const MetaClass* findClass(const char*);
-
-    /** Publish a signal to the subscribers to the class AND the category. */
-    virtual bool raiseEvent(Object* v, Signal a) const;
 };
 
 
@@ -965,7 +943,7 @@ class MetaCategory : public MetaClass
   */
 template <class T, class U> class FunctorStatic : public Functor
 {
-  friend class MetaData;
+  friend class MetaClass;
   public:
     /** Add a signal subscriber. */
     static void connect(const Signal a) 
@@ -974,8 +952,8 @@ template <class T, class U> class FunctorStatic : public Functor
     /** Remove a signal subscriber. */
     static void disconnect(const Signal a) 
     {
-      MetaData &t = 
-        const_cast<MetaData&>(static_cast<const MetaData&>(T::metadata));
+      MetaClass &t = 
+        const_cast<MetaClass&>(static_cast<const MetaClass&>(T::metadata));
       // Loop through all subscriptions
       for (list<Functor*>::iterator i = t.subscribers[a].begin(); 
         i != t.subscribers[a].end(); ++i)
@@ -2125,7 +2103,7 @@ class Object
     virtual bool getHidden() const {return false;}
 
     /** This the subclass field. */
-    virtual const MetaData& getType() const = 0;
+    virtual const MetaClass& getType() const = 0;
 
     /** Return the memory size of the object in bytes. */
     virtual size_t getSize() const = 0;
@@ -2669,7 +2647,7 @@ class CommandIf : public Command
     /** Updates the condition. */
     void setCondition(const string s) {condition = s;}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandIf);}
 
@@ -2837,7 +2815,7 @@ class CommandList : public Command
       */
     virtual ~CommandList();
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandList);}
 
@@ -2890,7 +2868,7 @@ class CommandSystem : public Command
     string getDescription() const 
       {return "Run operating system command '" + cmdLine + "'";}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandSystem);}
 };
@@ -2936,7 +2914,7 @@ class CommandLoadLibrary : public Command
     void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const {return "Loading shared library " + lib;}
 
-    virtual const MetaData& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandLoadLibrary);}
 
@@ -3253,7 +3231,7 @@ class CSVInput : public XMLinstruction, private DefaultHandler, public Object
     /** Default constructor. */
     CSVInput() : comment('#'), fieldseparator(',') {}
 
-    const MetaData& getType() const {return metadata;}
+    const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CSVInput);}
 
@@ -3572,7 +3550,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       }
 
       // Pick up the action attribute
-      Action act = MetaData::decodeAction(in.getAttributes());
+      Action act = MetaClass::decodeAction(in.getAttributes());
 
       // Check if it exists already
       bool found;

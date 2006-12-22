@@ -298,7 +298,7 @@ void MetaClass::printClasses()
 }
 
 
-Action MetaData::decodeAction(const char *x)
+Action MetaClass::decodeAction(const char *x)
 {
   // Validate the action
   if (!x) throw LogicException("Invalid action NULL");
@@ -310,7 +310,7 @@ Action MetaData::decodeAction(const char *x)
 }
 
 
-Action MetaData::decodeAction(const Attributes* atts)
+Action MetaClass::decodeAction(const Attributes* atts)
 {
   const XMLCh * c = atts ?
   	atts->getValue(Tags::tag_action.getXMLCharacters()) :
@@ -329,10 +329,18 @@ Action MetaData::decodeAction(const Attributes* atts)
 
 bool MetaClass::raiseEvent(Object* v, Signal a) const
 {
-  bool res1 = MetaData::raiseEvent(v,a);
+  bool result(true);
+  for (list<Functor*>::const_iterator i = subscribers[a].begin(); 
+    i != subscribers[a].end(); ++i)
+    // Note that we always call all subscribers, even if one or more 
+    // already replied negatively. However, an exception thrown from a 
+    // callback method will break the publishing chain.
+    if (!(*i)->callback(v,a)) result = false;
+
+  // Raise the event also on the category, if there is a valid one
   return (category && category!=this) ? 
-    (res1 && category->raiseEvent(v,a)) : 
-    res1;
+    (result && category->raiseEvent(v,a)) : 
+    result;
 }
 
 

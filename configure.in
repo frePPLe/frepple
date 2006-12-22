@@ -217,8 +217,11 @@ fi
 #
 if test x$python = xtrue
 then
-AC_CHECK_PROG(PYTHON,python,nopython)
-PYTHON_VERSION=`$PYTHON -c "import sys; print sys.version[:3]"`
+AC_CHECK_PROGS(PYTHON,python,nopython)
+changequote(<<, >>)
+PYTHON_VERSION=`$PYTHON -c 'import sys; print sys.version[:3]'`
+changequote([, ])
+AC_SUBST(PYTHON_VERSION)
 if test xPYTHON = xnopython
 then
 AC_MSG_ERROR([
@@ -231,13 +234,8 @@ AC_CHECK_LIB(python$PYTHON_VERSION, PyModule_GetDict, [],
   This package requires the python interpreter.
   Alternatively, reconfigure without the option '--with-python'
 ])])
-AC_CHECK_HEADER(Python.h, [],
-[AC_MSG_ERROR([
-  The python libray has been installed, but its header file could not be found
-])])
 AC_CHECKING([for python linking options ])
-PYTHON_LINK=`$PYTHON -c "import distutils.sysconfig;dnl
-print distutils.sysconfig.get_config_var('LINKFORSHARED')"`
+PYTHON_LINK=`$PYTHON -c "import distutils.sysconfig; print distutils.sysconfig.get_config_var('LINKFORSHARED')"`
 AC_SUBST(PYTHON_LINK)
 fi
 
@@ -340,5 +338,5 @@ esac
 AM_CONDITIONAL(CYGWIN, test x$host_os = xcygwin)
 
 
-AC_CONFIG_FILES([Makefile bin/Makefile doc/Makefile include/Makefile include/frepple/Makefile src/Makefile modules/Makefile modules/forecast/Makefile modules/lp_solver/Makefile modules/python/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile test/Makefile test/cluster/Makefile test/csv/Makefile test/constraints_leadtime_1/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/datetime/Makefile test/demo1/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/sizeof/Makefile test/xml/Makefile test/xml_remote/Makefile test/forecast/Makefile test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/problems/Makefile test/deletion/Makefile test/operation_effective/Makefile test/operation_pre_post/Makefile test/multithreading/Makefile test/name/Makefile test/command_1/Makefile test/command_2/Makefile test/custom_class/Makefile test/callback/Makefile test/pegging/Makefile contrib/Makefile contrib/borland/Makefile contrib/vc/Makefile contrib/installer/Makefile contrib/j2ee/Makefile contrib/scripting/Makefile contrib/apache/Makefile contrib/excel/Makefile contrib/rpm/Makefile])
+AC_CONFIG_FILES([Makefile bin/Makefile doc/Makefile include/Makefile include/frepple/Makefile src/Makefile modules/Makefile modules/forecast/Makefile modules/lp_solver/Makefile modules/python/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile test/Makefile test/cluster/Makefile test/csv/Makefile test/constraints_leadtime_1/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/datetime/Makefile test/demo1/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/sizeof/Makefile test/xml/Makefile test/xml_remote/Makefile test/forecast/Makefile test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/problems/Makefile test/deletion/Makefile test/operation_effective/Makefile test/operation_pre_post/Makefile test/multithreading/Makefile test/name/Makefile test/python/Makefile test/command_1/Makefile test/command_2/Makefile test/custom_class/Makefile test/callback/Makefile test/pegging/Makefile contrib/Makefile contrib/borland/Makefile contrib/vc/Makefile contrib/installer/Makefile contrib/j2ee/Makefile contrib/scripting/Makefile contrib/apache/Makefile contrib/excel/Makefile contrib/rpm/Makefile])
 AC_OUTPUT

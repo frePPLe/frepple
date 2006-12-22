@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DESCRIPTION>
+    This test case tests the embedded python interpreter.
+  </DESCRIPTION>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
+  <COMMANDS VERBOSE="true" ABORTONERROR="false">
+    <COMMAND xsi:type="COMMAND_PYTHON" FILENAME="python.py"/>
+    <COMMAND xsi:type="COMMAND_PYTHON" FILENAME="nowheretobefound.py"/>
+    <COMMAND xsi:type="COMMAND_PYTHON">
+      <CMDLINE>
+<![CDATA[
+import sys, frepple
+myvariable = 4
+print '1. defining my variable:', myvariable
+print '1. frepple version:', frepple.version()
+]]>
+      </CMDLINE>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_PYTHON">
+      <CMDLINE>
+<![CDATA[
+print '2. retrieving a variable:', myvariable
+print '2. calling a function:', my_function(myvariable)
+]]>
+      </CMDLINE>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_PYTHON">
+      <CMDLINE>
+<![CDATA[
+print '3. a syntax error:'
+wrong
+]]>
+      </CMDLINE>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_PYTHON">
+      <CMDLINE>
+<![CDATA[
+print '4. raising an exception'
+raise ValueError, "a message"
+]]>
+      </CMDLINE>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_LIST" MAXPARALLEL="3">
+      <COMMAND xsi:type="COMMAND_PYTHON">
+        <CMDLINE>
+<![CDATA[
+import time
+print '5a. start sleep'
+time.sleep(2)
+print '5a. end sleep'
+]]>
+        </CMDLINE>
+      </COMMAND>
+      <COMMAND xsi:type="COMMAND_PYTHON">
+        <CMDLINE>
+<![CDATA[
+import time
+print '5b. start sleep'
+time.sleep(2)
+print '5b. end sleep'
+]]>
+        </CMDLINE>
+      </COMMAND>
+      <COMMAND xsi:type="COMMAND_SYSTEM">
+        <CMDLINE>echo 5c. start sleep&amp;&amp;sleep 2&amp;&amp;echo 5c. after sleep</CMDLINE>
+      </COMMAND>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE">
+      <FILENAME>output.1.xml</FILENAME>
+    </COMMAND>  
+  </COMMANDS>
+</PLAN>

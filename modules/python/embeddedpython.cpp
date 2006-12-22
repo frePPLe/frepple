@@ -31,6 +31,15 @@ namespace module_python
 {
 
 const MetaClass CommandPython::metadata;
+Mutex CommandPython::interpreterbusy;
+
+// Define the methods to be exposed into Python
+PyMethodDef CommandPython::PythonAPI[] = 
+{
+  {"version", CommandPython::python_version, METH_NOARGS, 
+     "Prints the frepple version."},
+  {NULL, NULL, 0, NULL}
+};
 
   
 MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
@@ -50,10 +59,87 @@ MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
     "COMMAND_PYTHON", 
     Object::createDefault<CommandPython>);
 
-  // Initialize the interpreter
-  Py_Initialize();
-  PyRun_SimpleString("from time import time,ctime\n"
-                     "print 'Today is',ctime(time())\n");
+  // Initialize the interpreter and the frepple module
+  Py_InitializeEx(0);
+  Py_InitModule3
+    ("frepple", CommandPython::PythonAPI, "Acces to the frepple API");
 }
+
+
+void CommandPython::execute()
+{
+  // Log
+  if (getVerbose())
+  {
+    clog << "Start executing python ";
+    if (!cmd.empty()) clog << "command";
+    if (!filename.empty()) clog << "file";
+    clog << " at " << Date::now() << endl;
+  }
+  Timer t;
+
+  // Execute the command
+  if (!cmd.empty())
+  {
+    ScopeMutexLock l(interpreterbusy);
+    cmd += "\n";  // Make sure last line is ended properly
+    if(PyRun_SimpleString(cmd.c_str()))
+      throw frepple::RuntimeException("Error executing python command");
+  } 
+  else if (!filename.empty())
+  {
+    ScopeMutexLock l(interpreterbusy);
+    FILE *fp = fopen(filename.c_str(), "r");
+    if(!fp)
+      throw frepple::RuntimeException
+        ("Can't open python file '" + filename + "'");
+    if(PyRun_SimpleFile(fp,filename.c_str()))
+      throw frepple::RuntimeException
+        ("Error executing python file '" + filename + "'");
+  }
+  else
+    throw DataException("Python command without statement or filename");
+
+  // Log
+  if (getVerbose()) clog << "Finished executing python at " 
+    << Date::now() << " : " << t << endl;
+}
+
+
+void CommandPython::endElement(XMLInput& pIn, XMLElement& pElement)
+{
+
+  if (pElement.isA(Tags::tag_cmdline))
+  {
+    // No replacement of environment variables here
+    filename.clear();
+    pElement >> cmd;
+  }
+  else if (pElement.isA(Tags::tag_filename))
+  {
+    // Replace environment variables with their value.
+    pElement.resolveEnvironment();
+    cmd.clear();
+    pElement >> filename;
+  }
+  else
+  {
+    // Replace environment variables with their value.
+    pElement.resolveEnvironment();
+    Command::endElement(pIn, pElement);
+  }
+}
+
+
+PyObject * CommandPython::python_version(PyObject *self, PyObject *args) 
+{    
+#ifdef VERSION
+  return Py_BuildValue("s", VERSION);
+#else
+  return Py_BuildValue("s", "unknown");
+#endif
+}
+
+
 
 } // End namespace

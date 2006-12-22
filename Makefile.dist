@@ -70,7 +70,7 @@ prep:
 config:
 	@echo
 	@echo "PHASE: Running configure for optimized build..."
-	./configure --enable-doc  --prefix=`pwd`/install-test --enable-shared
+	./configure --enable-doc  --prefix=`pwd`/install-test --enable-shared --with-python
 #	 --disable-shared --disable-multithread
 
 configdebug:

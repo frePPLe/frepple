@@ -2649,7 +2649,8 @@ class CommandIf : public Command
 
     virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandIf);}
+    virtual size_t getSize() const 
+      {return sizeof(CommandIf) + condition.size();}
 
     void beginElement(XMLInput&, XMLElement& pElement);
     void endElement(XMLInput& pIn, XMLElement& pElement);
@@ -2870,7 +2871,8 @@ class CommandSystem : public Command
 
     virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandSystem);}
+    virtual size_t getSize() const 
+      {return sizeof(CommandSystem) + cmdLine.size();}
 };
 
 

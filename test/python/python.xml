@@ -25,6 +25,59 @@ print '2. calling a function:', my_function(myvariable)
 ]]>
       </CMDLINE>
     </COMMAND>
+    <!-- 
+    In the next steps we are comparing the speed of 3 types of APIs each
+    achieving eaxactly the same final result:
+     1) Frepple C++ to read a XML-datafile
+     2) Python to read a CSV-datafile, which is reformatted into XML and 
+        passed to Frepple as a string
+     3) Python to read a CSV-datafile, which then calls a special C++ function
+        that creates the Frepple objects in the most direct way (i.e. no XML)
+    The relative performance is pretty interesting:
+     1) 3.19 sec
+     2) 4.28 sec
+     3) 1.69 sec
+    These numbers are based on a file with 200000 items and 100 operations
+    to create. The test is running on a 3.2GHz Intel Pentium (R) dual core 
+    Linux machine.
+    Conclusion: Overhead caused by the XML-processing is of the same order of 
+    magnitude as the overhead by the interpreted nature of Python. Both are 
+    considerable, but still acceptable for many applications.
+    Obviously a different test configuration will give different results. 
+    E.g. running small messages rather than a huge data file...
+    -->
+    <COMMAND xsi:type="COMMAND_PYTHON">
+      <CMDLINE>
+<![CDATA[
+create_files(200000)
+]]>
+      </CMDLINE>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_READXML" FILENAME="items.xml" VALIDATE="false" />
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="afterXMLread.xml" />
+    <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="aftererase1.xml" />
+    <COMMAND xsi:type="COMMAND_PYTHON">
+      <CMDLINE>
+<![CDATA[
+read_csv_file()
+]]>
+      </CMDLINE>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="afterCSVread.xml" />
+    <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="aftererase2.xml" />
+    <COMMAND xsi:type="COMMAND_PYTHON">
+      <CMDLINE>
+<![CDATA[
+read_csv_file_direct()
+]]>
+      </CMDLINE>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="afterCSVDirectread.xml" />
+    <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="aftererase3.xml" />
+<!--
     <COMMAND xsi:type="COMMAND_PYTHON">
       <CMDLINE>
 <![CDATA[
@@ -66,6 +119,7 @@ print '5b. end sleep'
         <CMDLINE>echo 5c. start sleep&amp;&amp;sleep 2&amp;&amp;echo 5c. after sleep</CMDLINE>
       </COMMAND>
     </COMMAND>
+-->
     <COMMAND xsi:type="COMMAND_SAVE">
       <FILENAME>output.1.xml</FILENAME>
     </COMMAND>  

@@ -38,6 +38,10 @@ PyMethodDef CommandPython::PythonAPI[] =
 {
   {"version", CommandPython::python_version, METH_NOARGS, 
      "Prints the frepple version."},
+  {"readXMLdata", CommandPython::python_readXMLdata, METH_VARARGS, 
+     "Processes an XML string passed as argument."},
+  {"createItem", CommandPython::python_createItem, METH_VARARGS, 
+     "Uses the C++ API to create an item."},
   {NULL, NULL, 0, NULL}
 };
 
@@ -60,7 +64,8 @@ MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
     Object::createDefault<CommandPython>);
 
   // Initialize the interpreter and the frepple module
-  Py_InitializeEx(0);
+  Py_InitializeEx(0);  // The arg 0 indicates that the interpreter doesn't 
+                       // implement its own signal handler
   Py_InitModule3
     ("frepple", CommandPython::PythonAPI, "Acces to the frepple API");
 }
@@ -83,8 +88,17 @@ void CommandPython::execute()
   {
     ScopeMutexLock l(interpreterbusy);
     cmd += "\n";  // Make sure last line is ended properly
-    if(PyRun_SimpleString(cmd.c_str()))
+  	PyObject *m = PyImport_AddModule("__main__");
+	  if (!m) 
+      throw frepple::RuntimeException("Can't initialize Python interpreter");
+	  PyObject *d = PyModule_GetDict(m);
+	  PyObject *v = PyRun_String(cmd.c_str(), Py_file_input, d, d);
+	  if (v == NULL) {
+		  PyErr_Print();
       throw frepple::RuntimeException("Error executing python command");
+	  }
+	  Py_DECREF(v);
+	  if (Py_FlushLine()) PyErr_Clear();
   } 
   else if (!filename.empty())
   {
@@ -141,5 +155,34 @@ PyObject * CommandPython::python_version(PyObject *self, PyObject *args)
 }
 
 
+PyObject * CommandPython::python_readXMLdata(PyObject *self, PyObject *args) 
+{    
+  char *data;
+  int b1, b2;
+  int ok = PyArg_ParseTuple(args, "sii", &data, &b1, &b2);
+  if (!ok) return NULL;
+  int i = FreppleWrapperReadXMLData(data,b1,b2);
+  return Py_BuildValue("i", i);
+}
+
+
+PyObject * CommandPython::python_createItem(PyObject *self, PyObject *args) 
+{    
+  // Pick up the arguments
+  char *itemname;
+  char *operationname;
+  int ok = PyArg_ParseTuple(args, "ss", &itemname, &operationname);
+  if (!ok) return NULL;  // Wrong arguments
+
+  // Create the items
+  Item *it = dynamic_cast<Item*>(Object::createString<ItemDefault>(itemname));
+  Item::add(it);   // @todo need a cleaner and safer API for this
+  Operation* op = dynamic_cast<Operation*>(Object::createString<OperationFixedTime>(operationname));
+  Operation::add(op);
+  if (it && op) it->setDelivery(op);
+  
+  // Return code for Python
+  return Py_BuildValue("i", it && op);
+}
 
 } // End namespace

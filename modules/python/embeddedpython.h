@@ -57,6 +57,7 @@
 #include "Python.h"
 
 #include "frepple.h"
+#include "freppleinterface.h"
 using namespace frepple;
 
 
@@ -68,7 +69,8 @@ namespace module_python
   * The interpreter can execute generic script, and it also has (limited)
   * access to the frepple objects.<br>
   * A single, global interpreter is used and only a single python command is
-  * allowed to run simultaneously.
+  * allowed to run simultaneously. A global Python variable or function is 
+  * thus visible across multiple executions of a CommandPython.
   */
 class CommandPython : public Command
 {
@@ -122,8 +124,23 @@ class CommandPython : public Command
     void endElement(XMLInput& pIn, XMLElement& pElement);
 
   private:
-    /** Python API: return a version string. */
+    /** Python API: return a version string.<br>
+      * No arguments required.
+      */
     static PyObject *python_version(PyObject*, PyObject*);
+
+    /** Python API: process an XML-formatted string.<br>
+      * Arguments: data (string), validate (bool), checkOnly (bool)
+      */
+    static PyObject *python_readXMLdata(PyObject*, PyObject*);
+
+    /** Python API: Create an item and a delivery operation. This function
+      * directly interacts with the frepple C++ API, without passing through
+      * XML.<br>
+      * Arguments: item name (string), operation name (string)
+      */
+    static PyObject *python_createItem(PyObject*, PyObject*);
+
 };
 
 }

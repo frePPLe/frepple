@@ -4,4 +4,4 @@
 
 EXTRA_DIST = *.expect forecast.xml frepple.xsd init.xml
 
-CLEANFILES = output.*
+CLEANFILES = output.* item.* after*

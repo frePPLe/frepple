@@ -32,7 +32,7 @@ namespace frepple
 {
 
 
-FlowPlan::FlowPlan (OperationPlan * opplan, const Flow * f)
+DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan * opplan, const Flow * f)
     : TimeLine<FlowPlan>::EventChangeOnhand(
         f->getQuantity() * opplan->getQuantity())
 {
@@ -50,7 +50,7 @@ FlowPlan::FlowPlan (OperationPlan * opplan, const Flow * f)
 }
 
 
-void FlowPlan::update()
+DECLARE_EXPORT void FlowPlan::update()
 {
   // Update the timeline data structure
   fl->getBuffer()->flowplans.setQuantity(
@@ -68,7 +68,7 @@ void FlowPlan::update()
 }
 
 
-bool FlowPlan::check()
+DECLARE_EXPORT bool FlowPlan::check()
 {
   // Quantity must match with the operationplan
   if (fabs(oper->getQuantity() * fl->getQuantity() - getQuantity()) 
@@ -81,7 +81,7 @@ bool FlowPlan::check()
 
 // Remember that this method only superficially looks like a normal 
 // writeElement() method.
-void FlowPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   o->BeginObject(tag);
   o->writeElement(Tags::tag_date, getDate()); 

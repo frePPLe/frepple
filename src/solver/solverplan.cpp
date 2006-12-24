@@ -30,7 +30,7 @@
 namespace frepple
 {
 
-const MetaClass MRPSolver::metadata;
+DECLARE_EXPORT const MetaClass MRPSolver::metadata;
 
 const short MRPSolver::LEADTIME = 1;
 const short MRPSolver::MATERIAL = 2;
@@ -64,7 +64,7 @@ void LibrarySolver::initialize()
 }
 
 
-bool MRPSolver::demand_comparison(Demand* l1, Demand* l2)
+DECLARE_EXPORT bool MRPSolver::demand_comparison(Demand* l1, Demand* l2)
 {
   if (l1->getPriority() != l2->getPriority())
     return l1->getPriority() < l2->getPriority();
@@ -73,7 +73,7 @@ bool MRPSolver::demand_comparison(Demand* l1, Demand* l2)
 }
 
 
-void MRPSolver::MRPSolverdata::execute()
+DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
 {
   // Message
   MRPSolver* Solver = getSolver();
@@ -137,7 +137,7 @@ void MRPSolver::MRPSolverdata::execute()
 }
 
 
-void MRPSolver::solve(void *v)
+DECLARE_EXPORT void MRPSolver::solve(void *v)
 {
   // Categorize all demands in their cluster
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
@@ -169,7 +169,7 @@ void MRPSolver::solve(void *v)
 }
 
 
-void MRPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void MRPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -191,7 +191,7 @@ void MRPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 }
 
 
-void MRPSolver::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void MRPSolver::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   // Replace environment variables with their value.
   pElement.resolveEnvironment();

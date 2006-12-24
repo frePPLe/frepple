@@ -37,14 +37,14 @@ template<class Solver> DECLARE_EXPORT Tree HasName<Solver>::st;
 // SOLVE
 //
 
-void CommandSolve::beginElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandSolve::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_solver))
     pIn.readto( Solver::reader(Solver::metadata,pIn) );
 }
 
 
-void CommandSolve::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandSolve::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_solver))
   {
@@ -57,7 +57,7 @@ void CommandSolve::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void CommandSolve::execute()
+DECLARE_EXPORT void CommandSolve::execute()
 {
   // Make sure the solver field is specified
   if (!sol) throw RuntimeException("Solve command with unspecified solver");
@@ -78,7 +78,7 @@ void CommandSolve::execute()
 }
 
 
-void Solver::writeElement
+DECLARE_EXPORT void Solver::writeElement
 (XMLOutput *o, const XMLtag &tag, mode m) const
 {
   // The subclass should have written its own header
@@ -92,7 +92,7 @@ void Solver::writeElement
 }
 
 
-void Solver::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_verbose))
     setVerbose(pElement.getBool());
@@ -103,7 +103,7 @@ void Solver::endElement(XMLInput& pIn, XMLElement& pElement)
 // READ XML INPUT FILE
 //
 
-void CommandReadXMLFile::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandReadXMLFile::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   // Replace environment variables with their value.
   pElement.resolveEnvironment();
@@ -117,7 +117,7 @@ void CommandReadXMLFile::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void CommandReadXMLFile::execute()
+DECLARE_EXPORT void CommandReadXMLFile::execute()
 {
 	// Message
   if (getVerbose())
@@ -159,7 +159,7 @@ void CommandReadXMLFile::execute()
 // READ XML INPUT STRING
 //
 
-void CommandReadXMLString::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandReadXMLString::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   // Replace environment variables with their value.
   pElement.resolveEnvironment();
@@ -173,7 +173,7 @@ void CommandReadXMLString::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void CommandReadXMLString::execute()
+DECLARE_EXPORT void CommandReadXMLString::execute()
 {
   // Message
   if (getVerbose())
@@ -199,7 +199,7 @@ void CommandReadXMLString::execute()
 // READ XML INPUT URL
 //
 
-void CommandReadXMLURL::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandReadXMLURL::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   // Replace environment variables with their value.
   pElement.resolveEnvironment();
@@ -213,7 +213,7 @@ void CommandReadXMLURL::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void CommandReadXMLURL::execute()
+DECLARE_EXPORT void CommandReadXMLURL::execute()
 {
   // Message
   if (getVerbose())
@@ -239,7 +239,7 @@ void CommandReadXMLURL::execute()
 // SAVE MODEL TO XML
 //
 
-void CommandSave::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandSave::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   // Replace environment variables with their value.
   pElement.resolveEnvironment();
@@ -264,7 +264,7 @@ void CommandSave::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void CommandSave::execute()
+DECLARE_EXPORT void CommandSave::execute()
 {
 	// Message
   if (getVerbose())
@@ -291,7 +291,7 @@ void CommandSave::execute()
 //
 
 
-void CommandSavePlan::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandSavePlan::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   // Replace environment variables with their value.
   pElement.resolveEnvironment();
@@ -303,7 +303,7 @@ void CommandSavePlan::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void CommandSavePlan::execute()
+DECLARE_EXPORT void CommandSavePlan::execute()
 {
 	// Message
   if (getVerbose())
@@ -421,7 +421,7 @@ void CommandSavePlan::execute()
 // MOVE OPERATIONPLAN
 //
 
-CommandMoveOperationPlan::CommandMoveOperationPlan
+DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
   (OperationPlan* o, Date newdate, bool use_end_date)
   : opplan(o), use_end(use_end_date)
 {
@@ -439,7 +439,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan
 }
 
 
-void CommandMoveOperationPlan::undo()
+DECLARE_EXPORT void CommandMoveOperationPlan::undo()
 {
   if (!opplan) return;
   if (use_end) opplan->setEnd(originaldate);
@@ -448,7 +448,7 @@ void CommandMoveOperationPlan::undo()
 }
 
 
-void CommandMoveOperationPlan::setDate(Date newdate)
+DECLARE_EXPORT void CommandMoveOperationPlan::setDate(Date newdate)
 {
   if(!opplan) return;
   if (use_end) opplan->setEnd(newdate);
@@ -456,7 +456,7 @@ void CommandMoveOperationPlan::setDate(Date newdate)
 }
 
 
-string CommandMoveOperationPlan::getDescription() const
+DECLARE_EXPORT string CommandMoveOperationPlan::getDescription() const
 {
   ostringstream ch;
   ch << "moving operationplan ";
@@ -473,7 +473,7 @@ string CommandMoveOperationPlan::getDescription() const
 // DELETE MODEL
 //
 
-void CommandErase::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandErase::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   // Replace environment variables with their value.
   pElement.resolveEnvironment();
@@ -490,7 +490,7 @@ void CommandErase::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void CommandErase::execute()
+DECLARE_EXPORT void CommandErase::execute()
 {
   // Starting message
   if (getVerbose())

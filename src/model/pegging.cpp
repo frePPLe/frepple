@@ -32,7 +32,7 @@ namespace frepple
 {
 
 
-void PeggingIterator::updateStack
+DECLARE_EXPORT void PeggingIterator::updateStack
   (short l, double q, double f, const FlowPlan* fl, bool p)
 {
   if (first)
@@ -52,7 +52,7 @@ void PeggingIterator::updateStack
 }
 
 
-PeggingIterator& PeggingIterator::operator++() 
+DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++() 
 {
   // Validate
   if (stack.empty()) 
@@ -149,7 +149,7 @@ PeggingIterator& PeggingIterator::operator++()
 }
 
 
-PeggingIterator& PeggingIterator::operator--() 
+DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--() 
 {
   // Validate
   if (stack.empty()) 
@@ -253,7 +253,7 @@ PeggingIterator& PeggingIterator::operator--()
 }
 
 
-void PeggingIterator::pushflowplans(OperationPlan* op, bool downstream, short nextlevel)
+DECLARE_EXPORT void PeggingIterator::pushflowplans(OperationPlan* op, bool downstream, short nextlevel)
 {
   state& st = stack.top();
 

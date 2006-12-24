@@ -505,17 +505,17 @@ class LockManager : public NonCopyable
 {
   friend class LibraryUtils;
   private:
-    static LockManager* mgr;
+    static DECLARE_EXPORT LockManager* mgr;
   public:
     static LockManager& getManager() {return *mgr;}
-    void obtainReadLock(const Object*, priority = NORMAL);
-    void obtainWriteLock(Object*, priority = NORMAL);
-    void releaseReadLock(const Object*);
-    void releaseWriteLock(Object*);
-    void obtainReadLock(const Lock&, priority = NORMAL);
-    void obtainWriteLock(Lock&, priority = NORMAL);
-    void releaseReadLock(const Lock&);
-    void releaseWriteLock(Lock&);
+    DECLARE_EXPORT void obtainReadLock(const Object*, priority = NORMAL);
+    DECLARE_EXPORT void obtainWriteLock(Object*, priority = NORMAL);
+    DECLARE_EXPORT void releaseReadLock(const Object*);
+    DECLARE_EXPORT void releaseWriteLock(Object*);
+    DECLARE_EXPORT void obtainReadLock(const Lock&, priority = NORMAL);
+    DECLARE_EXPORT void obtainWriteLock(Lock&, priority = NORMAL);
+    DECLARE_EXPORT void releaseReadLock(const Lock&);
+    DECLARE_EXPORT void releaseWriteLock(Lock&);
   private:
     /** Return a lock handle for this object. The locks are managed in a pool
       * to avoid constant freeing and allocating of memory. 
@@ -560,10 +560,10 @@ class XMLtag : public NonCopyable
     typedef map<hashtype,XMLtag*> tagtable;
 
     /** This is the only constructor. */
-    XMLtag(string n);
+    DECLARE_EXPORT XMLtag(string n);
 
     /** Destructor. */
-    ~XMLtag();
+    DECLARE_EXPORT ~XMLtag();
 
     /** Returns the hash value of the tag. */
     hashtype getHash() const {return dw;}
@@ -605,7 +605,7 @@ class XMLtag : public NonCopyable
 
     /** Finds a tag when passed a certain string. If no tag exists yet, it
       * will be created. */
-    static const XMLtag& find(char const*);
+    static DECLARE_EXPORT const XMLtag& find(char const*);
 
 	  /** Return a reference to a table with all defined tags. */
 	  static DECLARE_EXPORT tagtable& getTags();
@@ -615,7 +615,7 @@ class XMLtag : public NonCopyable
       * GNU gperf is a program that can generate a perfect hash function for
       * a given set of symbols.
       */
-    static void printTags();
+    static DECLARE_EXPORT void printTags();
 };
 
 
@@ -697,13 +697,13 @@ class MetaClass : public NonCopyable
       *  - 'R' for action REMOVE
       *  - Any other value will result in a data exception
       */
-    static Action decodeAction(const char*);
+    static DECLARE_EXPORT Action decodeAction(const char*);
 
     /** This method picks up the attribute named "ACTION" from the list and
       * calls the method decodeAction(const XML_Char*) to analyze it.
       * @see decodeAction(const XML_Char*)
       */
-    static Action decodeAction(const Attributes*);
+    static DECLARE_EXPORT Action decodeAction(const Attributes*);
 
     /** Sort two metaclass objects. This is used to sort entities on their
       * type information in a stable and platform independent way.
@@ -744,7 +744,7 @@ class MetaClass : public NonCopyable
       * event. If false is returned, one of the callbacks disapproved it and
       * the event action should be allowed to execute.
       */
-    bool raiseEvent(Object* v, Signal a) const;
+    DECLARE_EXPORT bool raiseEvent(Object* v, Signal a) const;
 
     /** Connect a new subscriber to the class. */
     void connect(Functor *c, Signal a) const
@@ -792,7 +792,7 @@ class MetaClass : public NonCopyable
     virtual ~MetaClass() {}
 
     /** This constructor registers the metadata of a class. */
-    void registerClass(const char*, const char*, bool = false) const;
+    DECLARE_EXPORT void registerClass(const char*, const char*, bool = false) const;
 
     /** This constructor registers the metadata of a class, with a factory 
       * method that uses the default constructor of the class. */
@@ -814,11 +814,11 @@ class MetaClass : public NonCopyable
 
     /** Print all registered factory methods to the standard output for 
       * debugging purposes. */
-    static void printClasses();
+    static DECLARE_EXPORT void printClasses();
 
     /** Find a particular class by its name. If it can't be located the return 
       * value is NULL. */
-    static const MetaClass* findClass(const char*);
+    static DECLARE_EXPORT const MetaClass* findClass(const char*);
 };
 
 
@@ -873,7 +873,7 @@ class MetaCategory : public MetaClass
     virtual ~MetaCategory() {}
 
     /** This method is required to register the category of classes. */
-    void registerCategory (const char* t, const char* g = NULL, 
+    DECLARE_EXPORT void registerCategory (const char* t, const char* g = NULL, 
       readController = NULL, writeController = NULL) const;
 
     /** Type definition for the map of all registered classes. */
@@ -884,25 +884,25 @@ class MetaCategory : public MetaClass
 
     /** Looks up a category name in the registry. If the catgory can't be 
       * located the return value is NULL. */
-    static const MetaCategory* findCategoryByTag(const char*);
+    static DECLARE_EXPORT const MetaCategory* findCategoryByTag(const char*);
 
     /** Looks up a category name in the registry. If the catgory can't be 
       * located the return value is NULL. */
-    static const MetaCategory* findCategoryByTag(const hashtype);
+    static DECLARE_EXPORT const MetaCategory* findCategoryByTag(const hashtype);
 
     /** Looks up a category name in the registry. If the catgory can't be 
       * located the return value is NULL. */
-    static const MetaCategory* findCategoryByGroupTag(const char*);
+    static DECLARE_EXPORT const MetaCategory* findCategoryByGroupTag(const char*);
 
     /** Looks up a category name in the registry. If the catgory can't be 
       * located the return value is NULL. */
-    static const MetaCategory* findCategoryByGroupTag(const hashtype);
+    static DECLARE_EXPORT const MetaCategory* findCategoryByGroupTag(const hashtype);
 
     /** This method takes care of the persistence of all categories. It loops
       * through all registered categories (in the order of their registration)
       * and calls the persistance handler.
       */
-    static void persist(XMLOutput *);
+    static DECLARE_EXPORT void persist(XMLOutput *);
 
     /** A control function for reading objects of a category. 
       * The controller function manages the creation and destruction of  
@@ -916,7 +916,7 @@ class MetaCategory : public MetaClass
     
     /** Compute the hash for "DEFAULT" once and store it in this variable for 
       * efficiency. */
-    static const hashtype defaultHash;
+    static DECLARE_EXPORT const hashtype defaultHash;
 
     /** This is the root for a linked list of all categories. 
       * Categories are chained to the list in the order of their registration.
@@ -1138,7 +1138,7 @@ class TimePeriod
       *  - -2880:00
       *  - 172800
       */
-    void parse(const char*);
+    DECLARE_EXPORT void parse(const char*);
 
   private:
     /** The time is stored as a number of seconds. */
@@ -1152,7 +1152,7 @@ class TimePeriod
       * The output format is described with the string() method.
       * @see string()
       */
-    void toCharBuffer(char*) const;
+    DECLARE_EXPORT void toCharBuffer(char*) const;
 };
 
 
@@ -1206,7 +1206,7 @@ class Date
     time_t lval;
 
     /** Checks whether we stay within the boundaries of finite Dates. */
-    void checkFinite();
+    DECLARE_EXPORT void checkFinite();
 
     /** This function fills a character buffer with a text representation of
       * the date.<br>
@@ -1214,7 +1214,7 @@ class Date
       * at least 30 characters. 30 characters should be sufficient for even
       * the most funky date format.
       */
-    void toCharBuffer(char*) const;
+    DECLARE_EXPORT void toCharBuffer(char*) const;
 
     /** A private constructor used to create the infinitePast and 
       * infiniteFuture constants. */
@@ -1298,7 +1298,7 @@ class Date
     }
 
     /** Function that parses a string according to the format string. */
-    void parse(const char*, const string& = format);
+    DECLARE_EXPORT void parse(const char*, const string& = format);
 
     /** Updates the default date format. */
     static void setFormat(string& n) {format = n;}
@@ -1320,7 +1320,7 @@ class Date
 
 #ifndef HAVE_STRPTIME
   private:
-    char* strptime(const char *buf, const char *fmt, struct tm *tm);
+    DECLARE_EXPORT char* strptime(const char *, const char *, struct tm *);
 #endif
 };
 
@@ -1410,7 +1410,7 @@ class DateRange
     bool within(const Date& d) const {return d>=start && d<end;}
 
     /** Convert the daterange to a string. */
-    operator string() const;
+    DECLARE_EXPORT operator string() const;
 
     /** Updates the default seperator. */
     static void setSeparator(const string& n) {separator = n;}
@@ -1567,7 +1567,7 @@ class XMLOutput
       * @param  pstr character pointer to a the character string to be processed
       * @return string with escaped characters
       */
-    string XMLEscape(const char *pstr);
+    DECLARE_EXPORT string XMLEscape(const char *pstr);
 
     /** Start writing a new object. This method will open a new XML-tag.
       * Output: \<TAG_T\> */
@@ -1782,7 +1782,7 @@ class XMLOutput
       * except for the root object.
       * @see writeElementWithHeader(const XMLtag&, Object*)
       */
-    void writeElement(const XMLtag& tag, const Object* object, mode = DEFAULT);
+    DECLARE_EXPORT void writeElement(const XMLtag&, const Object*, mode = DEFAULT);
 
     /** @see writeElement(const XMLtag&, const Object*, mode) */
     void writeElement(const XMLtag& t, const Object& o, mode m = DEFAULT)
@@ -1797,7 +1797,7 @@ class XMLOutput
       * @exception RuntimeException Generated when multiple root elements
       *    are available for the output document.
       */
-    void writeElementWithHeader(const XMLtag& tag, const Object* object);
+    DECLARE_EXPORT void writeElementWithHeader(const XMLtag& tag, const Object* object);
 
     /** This method writes the opening tag for an XML output.
       * You should call this method or writeElementWithHeader() when writing
@@ -1806,7 +1806,7 @@ class XMLOutput
       * @exception RuntimeException Generated when multiple root elements
       *    are available for the output document.
       */
-    void writeHeader(const XMLtag& tag);
+    DECLARE_EXPORT void writeHeader(const XMLtag& tag);
 
     /** Returns a pointer to the object that is currently being saved. */
     Object* getCurrentObject() const
@@ -1848,10 +1848,10 @@ class XMLOutput
 
     /** Increase the indentation level. The indentation level is between
       * 0 and 40. */
-    void incIndent();
+    DECLARE_EXPORT void incIndent();
 
     /** Decrease the indentation level. */
-    void decIndent();
+    DECLARE_EXPORT void decIndent();
 
     /** Stores the type of data to be exported. */
     content_type content;
@@ -1953,7 +1953,7 @@ class XMLElement
       * needs to be called explicitly for fields where such expansion is 
       * desired.
       */
-    void resolveEnvironment();
+    DECLARE_EXPORT void resolveEnvironment();
 
     /** Re-initializes an existing element.
       * @see initialize(const char*)
@@ -1981,7 +1981,7 @@ class XMLElement
       * avoided where possible. Only the hash of an element can efficiently
       * be retrieved.
       */
-    string getName() const;
+    DECLARE_EXPORT string getName() const;
 
     /** Returns true when this element is an instance of this tag. This method
       * doesn't involve a string comparison and is extremely efficient. */
@@ -2038,7 +2038,7 @@ class XMLElement
       * case insensitive. It thus matches a wider range of values:<br>
       *   {t.*, T.*, f.*, F.*, 1.*, 0.*}</p>
       */
-    bool getBool() const;
+    DECLARE_EXPORT bool getBool() const;
 };
 
 
@@ -2361,13 +2361,13 @@ class Tree : public NonCopyable
     }
 
     /** Verifies the integrity of the tree and returns true if all is okay. */
-    void verify() const;
+    DECLARE_EXPORT void verify() const;
 
     /** Remove all elements from the tree. */
-    void clear();
+    DECLARE_EXPORT void clear();
 
     /** Remove a node from the tree. */
-    void erase(TreeNode* x);
+    DECLARE_EXPORT void erase(TreeNode* x);
 
     /** Search for an element in the tree. Profiling shows this function has
       * a significant impact on the cpu time (mainly because of the string
@@ -2444,7 +2444,7 @@ class Tree : public NonCopyable
       * time (mainly because of the string comparisons), and has been
       * optimized as much as possible.
       */
-    TreeNode* insert(TreeNode* v, TreeNode* hint);
+    DECLARE_EXPORT TreeNode* insert(TreeNode* v, TreeNode* hint);
 
   private:
     /** Restructure the tree such that the depth of the branches remains
@@ -2562,18 +2562,18 @@ class Command : public Object
     /** Returns true if the execution of this command can be undone. */
     virtual bool undoable() const {return false;}
 
-    virtual void endElement(XMLInput& pIn, XMLElement& pElement);
+    virtual DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
     virtual string getDescription() const {return "No description available";}
     virtual ~Command() {};
 
     /** Returns whether verbose output is required during the execution of
       * the command. */
-    bool getVerbose() const;
+    DECLARE_EXPORT bool getVerbose() const;
 
     /** Controls whether verbose output will be generated during execution. */
     void setVerbose(bool b) {verbose = (b ? YES : NO);}
 
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
 
   private:
     /** Specifies whether the execution of the command should remain silent
@@ -2648,7 +2648,7 @@ class CommandIf : public Command
     void setCondition(const string s) {condition = s;}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const 
       {return sizeof(CommandIf) + condition.size();}
 
@@ -2728,7 +2728,7 @@ class CommandList : public Command
     /** This method selects the next command to be executed.
       * @see wrapper
       */
-    Command* selectCommand();
+    DECLARE_EXPORT Command* selectCommand();
 
   public:
     /** Returns the number of commands stored in this list. */
@@ -2740,7 +2740,7 @@ class CommandList : public Command
     }
 
     /** Append an additional command to the end of the list. */
-    void add(Command* c);
+    DECLARE_EXPORT void add(Command* c);
 
     /** Undoes all actions on the list. At the end it also clears the list of
       * actions. If one of the actions on the list is not undo-able, the whole
@@ -2756,15 +2756,15 @@ class CommandList : public Command
       * There is no need that the actions have actually been executed before 
       * the undo() is called.
       */
-    void undo(Command *c);
+    DECLARE_EXPORT void undo(Command *c);
 
     /** Commits all actions on its list. At the end it also clear the list
       * of actions. */
-    void execute();
+    DECLARE_EXPORT void execute();
 
     /** Returns whether or not a single failure aborts the complete command
       * list. */
-    bool getAbortOnError() const;
+    DECLARE_EXPORT bool getAbortOnError() const;
 
     /** If this field is set to true the failure of a single command in the
       * list will abort the complete list of command.<br>
@@ -2797,7 +2797,7 @@ class CommandList : public Command
     bool undoable() const {return can_undo;}
 
     /** Returns true when all commands beyond the argument can be undone. */
-    bool undoable(const Command *c) const;
+    DECLARE_EXPORT bool undoable(const Command *c) const;
 
     /** Returns a descriptive string on the command list. */
     string getDescription() const {return "Command list";}
@@ -2817,7 +2817,7 @@ class CommandList : public Command
     virtual ~CommandList();
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandList);}
 
     void beginElement(XMLInput&, XMLElement& pElement);
@@ -2870,7 +2870,7 @@ class CommandSystem : public Command
       {return "Run operating system command '" + cmdLine + "'";}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const 
       {return sizeof(CommandSystem) + cmdLine.size();}
 };
@@ -2917,7 +2917,7 @@ class CommandLoadLibrary : public Command
     string getDescription() const {return "Loading shared library " + lib;}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandLoadLibrary);}
 
   private:
@@ -2965,7 +2965,7 @@ class XMLinstruction : public NonCopyable
     virtual ~XMLinstruction() {}
 
     /** Metadata, registering the base tag "INSTRUCTION". */
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
 };
 
 
@@ -3126,7 +3126,7 @@ class XMLInput : public NonCopyable,  private DefaultHandler
       * object has a proper write-lock. The release of that lock is handled
       * by the parser.
       */
-    void readto(Object*);
+    DECLARE_EXPORT void readto(Object*);
 
     /** Abort the parsing.
       * The actual shutdown cannot be called inside a SAX handler function,
@@ -3206,79 +3206,7 @@ class XMLInput : public NonCopyable,  private DefaultHandler
     virtual void parse(Object* s, bool b=false) {assert(false);}
 
     /** Execute the commands that have been read from the input stream. */
-    void executeCommands();
-};
-
-
-/** This class is used to read data from a CSV-formatted data - instead
-  * of the regular XML-format.
-  */
-class CSVInput : public XMLinstruction, private DefaultHandler, public Object
-{
-  private:
-    /** Comment character. A line starting with this character will not be 
-      * processed and skipped.<br>
-      * The default is #.
-      */
-    char comment;
-
-    /** The character to delimit fields in the data input.
-      * The default is ,
-      */
-    char fieldseparator;
-
-  public:
-    void processInstruction(XMLInput &i, const char *d);
-
-    /** Default constructor. */
-    CSVInput() : comment('#'), fieldseparator(',') {}
-
-    const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CSVInput);}
-
-    char getFieldSeparator() const {return fieldseparator;}
-    void setFieldSeparator(const char c) {fieldseparator = c;}
-    char getCommentChar() const {return comment;}
-    void setCommentChar(const char c) {comment = c;}
-
-    void readTemplate
-      (string &header, string &rep, string &footer, Object *pRoot);
-
-  private:
-    void endElement(XMLInput& pIn, XMLElement& pElement) {};
-
-    /** Handler called when a new element tag is encountered.
-      * It pushes a new element on the stack and calls the current handler.
-      */
-    void startElement (const XMLCh* const, const XMLCh* const,
-      const XMLCh* const, const Attributes&);
-
-    /** Handler called when closing element tag is encountered.
-      * If this is the closing tag for the current event handler, pop it
-      * off the handler stack. If this empties the stack, shut down parser.
-      * Otherwise, just feed the element with the already completed
-      * data section to the current handler, then pop it off the element
-      * stack.
-      */
-    void endElement
-      (const XMLCh* const, const XMLCh* const s, const XMLCh* const qname);
-
-    /** Handler called when character data are read in.
-      * The data string is add it to the current element data.
-      */
-    void characters(const XMLCh *const, const unsigned int);
-
-    /** Handler called by Xerces in fatal error conditions.It throws an 
-      * exception to abort the parsing procedure. */
-    void fatalError (const SAXParseException& e) {throw e;}
-
-    /** Handler called by Xerces in error conditions. It throws an exception
-      * to abort the parsing procedure. */
-    void error (const SAXParseException& e) {throw e;}
-
-    /** Handler called by Xerces for warnings. */
-    void warning (const SAXParseException&);
+    DECLARE_EXPORT void executeCommands();
 };
 
 
@@ -3641,11 +3569,10 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         cat.classes.find(type ? XMLtag::hash(type) : (type2.empty() ? MetaCategory::defaultHash : XMLtag::hash(type2.c_str())));
       if (j == cat.classes.end())
       {
-        string msg = "No type " + string(type ? type : (type2.empty() ? "DEFAULT" : type2.c_str()))
-          + " registered for category " + cat.type;
+        string t(type ? type : (type2.empty() ? "DEFAULT" : type2.c_str()));
         XMLString::release(&name);
         XMLString::release(&type);
-        throw LogicException(msg);
+        throw LogicException("No type " + t + " registered for category " + cat.type);
       }
 
       // Create a new instance

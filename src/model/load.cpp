@@ -32,7 +32,7 @@ namespace frepple
 {
 
 
-void Load::validate(Action action)
+DECLARE_EXPORT void Load::validate(Action action)
 {
   // Catch null operation and resource pointers
   Operation *oper = getOperation();
@@ -100,7 +100,7 @@ void Load::validate(Action action)
 }
 
 
-Load::~Load()
+DECLARE_EXPORT Load::~Load()
 {
   // Set a flag to make sure the level computation is triggered again
   HasLevel::triggerLazyRecomputation();
@@ -111,7 +111,7 @@ Load::~Load()
 }
 
 
-void Load::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // If the load has already been saved, no need to repeat it again
   // A 'reference' to a load is not useful to be saved.
@@ -135,7 +135,7 @@ void Load::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 }
 
 
-void Load::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Load::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_resource))
     pIn.readto( Resource::reader(Resource::metadata,pIn) );
@@ -144,7 +144,7 @@ void Load::beginElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Load::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Load::endElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_resource))
   {

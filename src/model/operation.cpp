@@ -33,10 +33,10 @@ namespace frepple
 {
 
 template<class Operation> DECLARE_EXPORT Tree HasName<Operation>::st;
-Operation::Operationlist Operation::nosubOperations;
+DECLARE_EXPORT Operation::Operationlist Operation::nosubOperations;
 
 
-Operation::~Operation()
+DECLARE_EXPORT Operation::~Operation()
 {
   // Delete all existing operationplans (even locked ones)
   deleteOperationPlans(true);
@@ -88,7 +88,7 @@ OperationAlternate::~OperationAlternate()
 }
 
 
-OperationPlan* Operation::createOperationPlan (float q, Date s, Date e,
+DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (float q, Date s, Date e,
     Demand* l, bool updates_okay, OperationPlan* ow, unsigned long i,
     bool makeflowsloads) const
 {
@@ -127,7 +127,7 @@ void Operation::deleteOperationPlans(bool deleteLockedOpplans)
 }
 
 
-void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Note that this class is abstract and never instantiated directly. There is
   // therefore no reason to ever write a header.
@@ -159,7 +159,7 @@ void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 }
 
 
-void Operation::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_flow)
     && pIn.getParentElement().isA(Tags::tag_flows))
@@ -182,7 +182,7 @@ void Operation::beginElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Operation::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_fence))
     setFence(pElement.getTimeperiod());
@@ -202,7 +202,7 @@ void Operation::endElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void OperationFixedTime::setOperationPlanParameters
+DECLARE_EXPORT void OperationFixedTime::setOperationPlanParameters
   (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
   // Invalid call to the function, or locked operationplan.
@@ -223,7 +223,7 @@ void OperationFixedTime::setOperationPlanParameters
 }
 
 
-void OperationFixedTime::writeElement
+DECLARE_EXPORT void OperationFixedTime::writeElement
   (XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
@@ -245,7 +245,7 @@ void OperationFixedTime::writeElement
 }
 
 
-void OperationFixedTime::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationFixedTime::endElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_duration))
     setDuration (pElement.getTimeperiod());
@@ -254,7 +254,7 @@ void OperationFixedTime::endElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void OperationTimePer::setOperationPlanParameters
+DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
       (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
   // Invalid call to the function.
@@ -322,7 +322,7 @@ void OperationTimePer::setOperationPlanParameters
 }
 
 
-void OperationTimePer::writeElement
+DECLARE_EXPORT void OperationTimePer::writeElement
   (XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
@@ -345,7 +345,7 @@ void OperationTimePer::writeElement
 }
 
 
-void OperationTimePer::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationTimePer::endElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_duration))
     setDuration (pElement.getTimeperiod());
@@ -480,7 +480,7 @@ OperationPlan* OperationRouting::createOperationPlan (float q, Date s, Date e,
 }
 
 
-void OperationAlternate::addAlternate(Operation* o, float prio)
+DECLARE_EXPORT void OperationAlternate::addAlternate(Operation* o, float prio)
 {
   if (!o) return;
   Operationlist::iterator altIter = alternates.begin();
@@ -496,7 +496,7 @@ void OperationAlternate::addAlternate(Operation* o, float prio)
 }
 
 
-float OperationAlternate::getPriority(Operation* o) const
+DECLARE_EXPORT float OperationAlternate::getPriority(Operation* o) const
 {
   if (!o)
     throw LogicException("Null pointer passed when searching for a \
@@ -515,7 +515,7 @@ float OperationAlternate::getPriority(Operation* o) const
 }
 
 
-void OperationAlternate::setPriority(Operation* o, float f)
+DECLARE_EXPORT void OperationAlternate::setPriority(Operation* o, float f)
 {
   if (!o) return;
   Operationlist::const_iterator altIter = alternates.begin();
@@ -533,7 +533,7 @@ void OperationAlternate::setPriority(Operation* o, float f)
 }
 
 
-void OperationAlternate::writeElement
+DECLARE_EXPORT void OperationAlternate::writeElement
   (XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
@@ -565,7 +565,7 @@ void OperationAlternate::writeElement
 }
 
 
-void OperationAlternate::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationAlternate::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn) );
@@ -574,7 +574,7 @@ void OperationAlternate::beginElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void OperationAlternate::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& pElement)
 {
 	// Saving me some typing...
 	typedef pair<float,Operation*> tempData;
@@ -607,9 +607,9 @@ void OperationAlternate::endElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-OperationPlan* OperationAlternate::createOperationPlan (float q, Date s, 
-  Date e, Demand* l, bool updates_okay, OperationPlan* ow, unsigned long i,
-  bool makeflowsloads) const
+DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (float q, 
+  Date s, Date e, Demand* l, bool updates_okay, OperationPlan* ow, 
+  unsigned long i, bool makeflowsloads) const
 {
   // Note that the operationplan created is of a different subclass.
   OperationPlan *opplan = new OperationPlanAlternate();
@@ -620,7 +620,7 @@ OperationPlan* OperationAlternate::createOperationPlan (float q, Date s,
 }
 
 
-void OperationAlternate::setOperationPlanParameters
+DECLARE_EXPORT void OperationAlternate::setOperationPlanParameters
   (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
   // Argument passed must be a alternate operationplan
@@ -643,7 +643,7 @@ void OperationAlternate::setOperationPlanParameters
 }
 
 
-void OperationAlternate::removeSubOperation(Operation *o)
+DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
 {
   Operationlist::iterator altIter = alternates.begin();
   priolist::iterator prioIter = priorities.begin();
@@ -666,7 +666,7 @@ void OperationAlternate::removeSubOperation(Operation *o)
 }
 
 
-void OperationEffective::writeElement
+DECLARE_EXPORT void OperationEffective::writeElement
   (XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
@@ -689,7 +689,7 @@ void OperationEffective::writeElement
 }
 
 
-void OperationEffective::beginElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationEffective::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_calendar))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
@@ -698,7 +698,7 @@ void OperationEffective::beginElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void OperationEffective::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationEffective::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_calendar))
   {
@@ -722,7 +722,7 @@ void OperationEffective::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-OperationPlan* OperationEffective::createOperationPlan 
+DECLARE_EXPORT OperationPlan* OperationEffective::createOperationPlan 
   (float q, Date s, Date e, Demand* l, bool updates_okay, OperationPlan* ow, 
   unsigned long i, bool makeflowsloads) const
 {
@@ -733,7 +733,7 @@ OperationPlan* OperationEffective::createOperationPlan
 }
 
 
-void OperationEffective::setOperationPlanParameters
+DECLARE_EXPORT void OperationEffective::setOperationPlanParameters
   (OperationPlan* opplan, float q, Date s, Date e, bool preferEnd) const
 {
   // Argument passed must be a alternate operationplan

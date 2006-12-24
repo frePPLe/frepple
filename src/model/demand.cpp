@@ -34,7 +34,7 @@ namespace frepple
 template<class Demand> DECLARE_EXPORT Tree HasName<Demand>::st;
 
 
-void Demand::setQuantity(float f)
+DECLARE_EXPORT void Demand::setQuantity(float f)
 {
   // Reject negative quantities, and no-change updates
   float delta(f - qty);
@@ -46,7 +46,7 @@ void Demand::setQuantity(float f)
 }
 
 
-void Demand::deleteOperationPlans (bool deleteLockedOpplans)
+DECLARE_EXPORT void Demand::deleteOperationPlans (bool deleteLockedOpplans)
 {
   // Delete all opplans
   for(OperationPlan_list::iterator i = deli.begin(); i!=deli.end(); )
@@ -70,7 +70,7 @@ void Demand::deleteOperationPlans (bool deleteLockedOpplans)
 }
 
 
-void Demand::removeDelivery(OperationPlan * o)
+DECLARE_EXPORT void Demand::removeDelivery(OperationPlan * o)
 {
   // Valid opplan check
   if (!o) return;
@@ -100,7 +100,7 @@ void Demand::removeDelivery(OperationPlan * o)
 }
 
 
-const Demand::OperationPlan_list& Demand::getDelivery() const
+DECLARE_EXPORT const Demand::OperationPlan_list& Demand::getDelivery() const
 {
 	// We need to check the sorting order of the list first! It could be disturbed
 	// when operationplans are being moved around.
@@ -132,7 +132,7 @@ const Demand::OperationPlan_list& Demand::getDelivery() const
 }
 
 
-void Demand::addDelivery (OperationPlan * o)
+DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
 {
 	// If the policy is SINGLEDELIVERY then we need to unregister the previous
 	// delivery operationplan
@@ -173,7 +173,7 @@ void Demand::addDelivery (OperationPlan * o)
 }
 
 
-Operation* Demand::getDeliveryOperation() const
+DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
 {
   // Operation can be specified on the demand itself,
   if (oper) return oper;
@@ -184,7 +184,7 @@ Operation* Demand::getDeliveryOperation() const
 }
 
 
-float Demand::getPlannedQuantity() const
+DECLARE_EXPORT float Demand::getPlannedQuantity() const
 {
   float delivered(0.0f);
   for(OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
@@ -193,7 +193,7 @@ float Demand::getPlannedQuantity() const
 }
 
 
-void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -239,7 +239,7 @@ void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 }
 
 
-void Demand::beginElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Demand::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_item))
     pIn.readto( Item::reader(Item::metadata,pIn) );
@@ -254,7 +254,7 @@ void Demand::beginElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_quantity))
     setQuantity (pElement.getFloat());
@@ -298,7 +298,7 @@ void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Demand::addPolicy(const string& s)
+DECLARE_EXPORT void Demand::addPolicy(const string& s)
 {
   // Find words till we are the end of the string
   for(const char* ptr = s.c_str(); *ptr; ++ptr)

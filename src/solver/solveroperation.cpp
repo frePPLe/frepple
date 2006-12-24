@@ -33,7 +33,7 @@ namespace frepple
 
 
 /** @todo use of the variable AllLoadsOkay is not nice and clean */
-bool MRPSolver::checkOperation
+DECLARE_EXPORT bool MRPSolver::checkOperation
     (OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
 {
   // The default answer...
@@ -157,7 +157,7 @@ bool MRPSolver::checkOperation
 }
 
 
-bool MRPSolver::checkOperationLeadtime
+DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
   (OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
 {
   // No lead time constraints
@@ -219,7 +219,7 @@ bool MRPSolver::checkOperationLeadtime
 }
 
 
-void MRPSolver::solve(Operation* oper, void* v)
+DECLARE_EXPORT void MRPSolver::solve(Operation* oper, void* v)
 {
   // Make sure we have a valid operation
   assert(oper);
@@ -294,7 +294,7 @@ void MRPSolver::solve(Operation* oper, void* v)
 
 
 // No need to take post- and pre-operation times into account
-void MRPSolver::solve(OperationRouting* oper, void* v)
+DECLARE_EXPORT void MRPSolver::solve(OperationRouting* oper, void* v)
 {
   MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
 
@@ -401,7 +401,7 @@ void MRPSolver::solve(OperationRouting* oper, void* v)
 
 
 // No need to take post- and pre-operation times into account
-void MRPSolver::solve(OperationAlternate* oper, void* v)
+DECLARE_EXPORT void MRPSolver::solve(OperationAlternate* oper, void* v)
 {
   MRPSolverdata *Solver = static_cast<MRPSolverdata*>(v);
   Date origQDate = Solver->q_date;
@@ -537,7 +537,7 @@ void MRPSolver::solve(OperationAlternate* oper, void* v)
 
 
 // No need to take post- and pre-operation times into account
-void MRPSolver::solve(OperationEffective* oper, void* v)
+DECLARE_EXPORT void MRPSolver::solve(OperationEffective* oper, void* v)
 {
   MRPSolverdata *Solver = static_cast<MRPSolverdata*>(v);
 

@@ -33,22 +33,20 @@
 namespace frepple
 {
 
-
+// Repository of all categories and commands
 DECLARE_EXPORT const MetaCategory* MetaCategory::firstCategory = NULL;
 DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByTag;
 DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 
-
 // Command metadata
-const MetaCategory Command::metadata;
-const MetaClass CommandList::metadata;
-const MetaClass CommandSystem::metadata;
-const MetaClass CommandLoadLibrary::metadata;
-const MetaClass CommandIf::metadata;
+DECLARE_EXPORT const MetaCategory Command::metadata;
+DECLARE_EXPORT const MetaClass CommandList::metadata,
+  CommandSystem::metadata,
+  CommandLoadLibrary::metadata,
+  CommandIf::metadata;
 
 // Processing instruction metadata
-const MetaCategory XMLinstruction::metadata;
-const MetaClass CSVInput::metadata;
+DECLARE_EXPORT const MetaCategory XMLinstruction::metadata;
 
 // Home directory
 DECLARE_EXPORT string Environment::home("[unspecified]");
@@ -58,7 +56,7 @@ DECLARE_EXPORT string Environment::home("[unspecified]");
 DECLARE_EXPORT int Environment::processors = 2;
 
 // Hash value computed only once
-const hashtype MetaCategory::defaultHash(XMLtag::hash("DEFAULT"));
+DECLARE_EXPORT const hashtype MetaCategory::defaultHash(XMLtag::hash("DEFAULT"));
 
 
 void Environment::setHomeDirectory(const string dirname)
@@ -123,10 +121,6 @@ void LibraryUtils::initialize()
   // Initialize the processing instruction metadata.
   XMLinstruction::metadata.registerCategory
     ("INSTRUCTION", NULL, MetaCategory::ControllerDefault);
-  CSVInput::metadata.registerClass(
-    "INSTRUCTION",
-    "CSV",
-    Object::createDefault<CSVInput>);
 
   // Query the system for the number of available processors
   // The environment variable NUMBER_OF_PROCESSORS is defined automatically on
@@ -153,7 +147,7 @@ void LibraryUtils::finalize()
 }
 
 
-void MetaClass::registerClass (const char* a, const char* b, bool def) const
+DECLARE_EXPORT void MetaClass::registerClass (const char* a, const char* b, bool def) const
 {
   // Re-initializing isn't okay
   if (category) 
@@ -182,7 +176,7 @@ void MetaClass::registerClass (const char* a, const char* b, bool def) const
 }
 
 
-void MetaCategory::registerCategory (const char* a, const char* gr, 
+DECLARE_EXPORT void MetaCategory::registerCategory (const char* a, const char* gr, 
   readController f, writeController w) const
 {
   // Initialize only once
@@ -222,7 +216,7 @@ void MetaCategory::registerCategory (const char* a, const char* gr,
 }
 
 
-const MetaCategory* MetaCategory::findCategoryByTag(const char* c)  
+DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const char* c)  
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByTag.find(XMLtag::hash(c));
@@ -230,7 +224,7 @@ const MetaCategory* MetaCategory::findCategoryByTag(const char* c)
 }
 
 
-const MetaCategory* MetaCategory::findCategoryByTag(const hashtype h)
+DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const hashtype h)
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByTag.find(h);
@@ -238,7 +232,7 @@ const MetaCategory* MetaCategory::findCategoryByTag(const hashtype h)
 }
 
 
-const MetaCategory* MetaCategory::findCategoryByGroupTag(const char* c)  
+DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const char* c)  
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByGroupTag.find(XMLtag::hash(c));
@@ -246,7 +240,7 @@ const MetaCategory* MetaCategory::findCategoryByGroupTag(const char* c)
 }
 
 
-const MetaCategory* MetaCategory::findCategoryByGroupTag(const hashtype h)  
+DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const hashtype h)  
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByGroupTag.find(h);
@@ -254,14 +248,14 @@ const MetaCategory* MetaCategory::findCategoryByGroupTag(const hashtype h)
 }
 
 
-void MetaCategory::persist(XMLOutput *o)
+DECLARE_EXPORT void MetaCategory::persist(XMLOutput *o)
 {
   for(const MetaCategory *i = firstCategory; i; i = i->nextCategory)
     if (i->writeFunction) i->writeFunction(*i, o);
 }
 
 
-const MetaClass* MetaClass::findClass(const char* c)
+DECLARE_EXPORT const MetaClass* MetaClass::findClass(const char* c)
 {
   // Loop through all categories
   for (MetaCategory::CategoryMap::const_iterator i = MetaCategory::categoriesByTag.begin(); 
@@ -277,7 +271,7 @@ const MetaClass* MetaClass::findClass(const char* c)
 }
 
 
-void MetaClass::printClasses()
+DECLARE_EXPORT void MetaClass::printClasses()
 {
   clog << "Registered classes:" << endl;
   // Loop through all categories
@@ -291,14 +285,14 @@ void MetaClass::printClasses()
     	j != i->second->classes.end(); 
       ++j)
         if (j->first == XMLtag::hash("DEFAULT"))
-          clog << "    DEFAULT ( = " << j->second->type << " )" << endl;
+          clog << "    DEFAULT ( = " << j->second->type << " )" <<endl;
         else
           clog << "    " << j->second->type << endl;
   }
 }
 
 
-Action MetaClass::decodeAction(const char *x)
+DECLARE_EXPORT Action MetaClass::decodeAction(const char *x)
 {
   // Validate the action
   if (!x) throw LogicException("Invalid action NULL");
@@ -310,7 +304,7 @@ Action MetaClass::decodeAction(const char *x)
 }
 
 
-Action MetaClass::decodeAction(const Attributes* atts)
+DECLARE_EXPORT Action MetaClass::decodeAction(const Attributes* atts)
 {
   const XMLCh * c = atts ?
   	atts->getValue(Tags::tag_action.getXMLCharacters()) :
@@ -327,7 +321,7 @@ Action MetaClass::decodeAction(const Attributes* atts)
 }
 
 
-bool MetaClass::raiseEvent(Object* v, Signal a) const
+DECLARE_EXPORT bool MetaClass::raiseEvent(Object* v, Signal a) const
 {
   bool result(true);
   for (list<Functor*>::const_iterator i = subscribers[a].begin(); 
@@ -370,9 +364,9 @@ Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput
         = cat.classes.find(type ? XMLtag::hash(type) : (type2.empty() ? MetaCategory::defaultHash : XMLtag::hash(type2.c_str())));
       if (j == cat.classes.end())
       {
+        string t(type ? string(type) : (!type2.empty() ? type2 : "DEFAULT"));
         XMLString::release(&type);
-        throw LogicException("No type " + string(type ? type : (type2.empty() ? "DEFAULT" : type2.c_str())) 
-          + " registered for category " + cat.type);
+        throw LogicException("No type " + t + " registered for category " + cat.type);
       }
       XMLString::release(&type);
 

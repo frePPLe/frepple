@@ -39,7 +39,7 @@ namespace frepple
   * Are there some situations where the operation solver doesn't know enough
   * on the buffer behavior???
   */
-void MRPSolver::solve(Buffer* b, void* v)
+DECLARE_EXPORT void MRPSolver::solve(Buffer* b, void* v)
 {
   MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
   Date requested_date(Solver->q_date);
@@ -244,7 +244,7 @@ void MRPSolver::solve(Buffer* b, void* v)
 }
 
 
-void MRPSolver::solve(Flow* fl, void* v)
+DECLARE_EXPORT void MRPSolver::solve(Flow* fl, void* v)
 {
   MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
   data->q_qty = - data->q_flowplan->getQuantity();
@@ -253,7 +253,7 @@ void MRPSolver::solve(Flow* fl, void* v)
 }
 
 
-void MRPSolver::solve(BufferInfinite* b, void* v)
+DECLARE_EXPORT void MRPSolver::solve(BufferInfinite* b, void* v)
 {
   MRPSolverdata* Solver = (MRPSolverdata*)v;
 

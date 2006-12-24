@@ -163,13 +163,14 @@ class Calendar : public HasName<Calendar>, public Object
         /** Returns the start date of the bucket. */
         Date getStart() const {return startdate;}
 
-        virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+        virtual DECLARE_EXPORT void writeElement
+          (XMLOutput*, const XMLtag&, mode=DEFAULT) const;
 
         /** Reads the bucket information from the input. Only the fields NAME
           * and START are read in. Other fields as also written out but these
           * are information-only fields.
           */
-        void endElement(XMLInput& pIn, XMLElement&  pElement);
+        DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement&  pElement);
 
         virtual const MetaClass& getType() const
           {return Calendar::metadata;}
@@ -182,7 +183,7 @@ class Calendar : public HasName<Calendar>, public Object
       { createNewBucket(Date()); }
 
     /** Destructor, which needs to clean up the buckets too. */
-    ~Calendar();
+    DECLARE_EXPORT ~Calendar();
 
     /** This is a factory method that creates a new bucket using the start
       * date as the key field. The fields are passed as an array of character
@@ -190,13 +191,13 @@ class Calendar : public HasName<Calendar>, public Object
       * This method is intended to be used to create objects when reading
       * XML input data.
       */
-    Bucket* createBucket(const Attributes* atts);
+    DECLARE_EXPORT Bucket* createBucket(const Attributes* atts);
 
     /** Adds a new bucket to the list. */
-    Bucket* addBucket(Date);
+    DECLARE_EXPORT Bucket* addBucket(Date);
 
     /** Removes a bucket from the list. */
-    void removeBucket(Bucket* bkt);
+    DECLARE_EXPORT void removeBucket(Bucket* bkt);
 
     /** Returns the bucket where a certain date belongs to.
       * A bucket will always be returned, i.e. the data structure is such
@@ -204,19 +205,19 @@ class Calendar : public HasName<Calendar>, public Object
       * with one (and only one) bucket.
       * @see findBucketIndex()
       */
-    Bucket* findBucket(Date d) const;
+    DECLARE_EXPORT Bucket* findBucket(Date d) const;
 
     /** Returns the index of the bucket where a certain date belongs to.
       * A bucket (and bucket index) will always be found.
       * @see findBucket()
       */
-    int findBucketIndex(Date d) const;
+    DECLARE_EXPORT int findBucketIndex(Date d) const;
 
     /** Returns the bucket with a certain name.
       * A NULL pointer is returned in case no bucket can be found with the
       * given name.
       */
-    Bucket* findBucket(const string&) const;
+    DECLARE_EXPORT Bucket* findBucket(const string&) const;
 
     /** An iterator class to go through all buckets of the calendar. */
     class BucketIterator
@@ -247,12 +248,12 @@ class Calendar : public HasName<Calendar>, public Object
     /** Returns an iterator to go through the list of buffers. */
     BucketIterator endBuckets() const {return BucketIterator(NULL);}
 
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput& pIn, XMLElement&  pElement) {}
-    void beginElement(XMLInput& pIn, XMLElement&  pElement);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement&  pElement) {}
+    DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement&  pElement);
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
 
     virtual size_t getSize() const
     {
@@ -441,7 +442,7 @@ class CalendarVoid : public Calendar
   public:
     CalendarVoid(const string& n) : Calendar(n) {}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -451,7 +452,7 @@ class CalendarFloat : public CalendarValue<float>
   public:
     CalendarFloat(const string& n) : CalendarValue<float>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -461,7 +462,7 @@ class CalendarInt : public CalendarValue<int>
   public:
     CalendarInt(const string& n) : CalendarValue<int>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -471,7 +472,7 @@ class CalendarBool : public CalendarValue<bool>
   public:
     CalendarBool(const string& n) : CalendarValue<bool>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -481,7 +482,7 @@ class CalendarString : public CalendarValue<string>
   public:
     CalendarString(const string& n) : CalendarValue<string>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
     {
       size_t i = sizeof(CalendarString);
@@ -499,7 +500,7 @@ class CalendarOperation : public CalendarPointer<Operation>
   public:
     CalendarOperation(const string& n) : CalendarPointer<Operation>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -578,13 +579,13 @@ class Problem : public NonCopyable
       * memory consumption at critical points. The list of problems will be
       * recreated when the problem detection is triggered again.
       */
-    static void clearProblems();
+    static DECLARE_EXPORT void clearProblems();
 
     /** Erases the list of problems linked with a certain plannable object.
       * If the second parameter is set to true, the problems will be
       * recreated when the next problem detection round is triggered.
       */
-    static void clearProblems(HasProblems& p, bool setchanged = true);
+    static DECLARE_EXPORT void clearProblems(HasProblems& p, bool setchanged = true);
 
     /** Returns a pointer to the plannable object that owns this problem. */
     HasProblems* getOwner() const {return owner;}
@@ -593,7 +594,7 @@ class Problem : public NonCopyable
     virtual const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
 
   protected:
     /** Each Problem object references a HasProblem object as its owner. */
@@ -611,7 +612,7 @@ class Problem : public NonCopyable
       * misses the proper information used by the compare method.
       * @see removeProblem
       */
-    void addProblem();
+    DECLARE_EXPORT void addProblem();
 
     /** Removes a problem from the problem container.
       * This method needs to be called from the destructor of a problem
@@ -622,7 +623,7 @@ class Problem : public NonCopyable
       * of problems.
       * @see addproblem
       */
-    void removeProblem();
+    DECLARE_EXPORT void removeProblem();
 
     /** Comparison of 2 problems.
       * To garantuee that the problems are sorted in a consistent and stable
@@ -693,8 +694,8 @@ class Solver : public Object, public HasName<Solver>
     explicit Solver(const string& n) : HasName<Solver>(n), verbose(false) {}
     virtual ~Solver() {}
 
-    virtual void writeElement (XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    virtual void endElement(XMLInput& pIn, XMLElement& pElement);
+    virtual DECLARE_EXPORT void writeElement (XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
 
     virtual void solve(void* = NULL) = 0;
     virtual void solve(Demand*,void* = NULL)
@@ -737,7 +738,7 @@ class Solver : public Object, public HasName<Solver>
     void setVerbose(bool b) {verbose = b;}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
 
   protected:
     /** Controls how much messages we want to generate. The default value
@@ -774,18 +775,18 @@ class CommandSolve : public Command
 
     /** The core of the execute method is a call to the solve() method of the
       * solver. */
-    void execute();
+    DECLARE_EXPORT void execute();
 
     /** This type of command can't be undone. */
     void undo() {}
     bool undoable() const {return false;}
-    void beginElement(XMLInput& pIn, XMLElement& pElement);
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const {return "running a solver";}
     Solver* getSolver() const {return sol;}
     void setSolver(Solver* s) {sol = s;}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandSolve);}
 };
 
@@ -805,7 +806,7 @@ class Plannable : public Object, public HasProblems, public Solvable
      {anyChange = true;};
 
     /** Specify whether this entity reports problems. */
-    void setDetectProblems(bool b);
+    DECLARE_EXPORT void setDetectProblems(bool b);
 
     /** Returns whether or not this object needs to detect problems. */
     bool getDetectProblems() const {return useProblemDetection;}
@@ -825,8 +826,8 @@ class Plannable : public Object, public HasProblems, public Solvable
     /** Implement the pure virtual function from the HasProblem class. */
     Plannable* getEntity() const {return const_cast<Plannable*>(this);}
 
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    virtual void endElement(XMLInput& pIn, XMLElement& pElement);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
 
   private:
     /** Stores whether this entity should be skip problem detection, or not. */
@@ -974,13 +975,13 @@ class Location
   : public HasHierarchy<Location>, public HasDescription, public Object
 {
   public:
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void beginElement(XMLInput& pIn, XMLElement& pElement);
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
     explicit Location(const string& n) : HasHierarchy<Location>(n) {}
-    virtual ~Location();
+    virtual DECLARE_EXPORT ~Location();
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
 };
 
 
@@ -989,7 +990,7 @@ class LocationDefault : public Location
   public:
     explicit LocationDefault(const string& str) : Location(str) {}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(LocationDefault) + getName().size() + HasDescription::memsize();}
 };
@@ -1000,13 +1001,13 @@ class Customer
   : public HasHierarchy<Customer>, public HasDescription, public Object
 {
   public:
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void beginElement(XMLInput& pIn, XMLElement& pElement);
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
     Customer(const string& n) : HasHierarchy<Customer>(n) {}
-    virtual ~Customer();
+    virtual DECLARE_EXPORT ~Customer();
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
 };
 
 
@@ -1015,7 +1016,7 @@ class CustomerDefault : public Customer
   public:
     explicit CustomerDefault(const string& str) : Customer(str) {}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(CustomerDefault) + getName().size() + HasDescription::memsize();}
 };
@@ -1038,7 +1039,7 @@ class Operation : public HasName<Operation>,
 
   public:
     /** Destructor. */
-    virtual ~Operation();
+    virtual DECLARE_EXPORT ~Operation();
 
     /** Returns the delay before this operation. 
       * @see setPreTime 
@@ -1083,8 +1084,8 @@ class Operation : public HasName<Operation>,
 
     /** This is the factory method which creates all operationplans of the
       * operation. */
-    virtual OperationPlan* createOperationPlan (float q, Date s, Date e,
-      Demand* l, bool updates_okay=true, OperationPlan* ow=NULL,
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s,
+      Date e, Demand* l, bool updates_okay=true, OperationPlan* ow=NULL, 
       unsigned long i=0, bool makeflowsloads=true) const;
 
     /** This method stores ALL logic the operation needs to compute the
@@ -1169,9 +1170,9 @@ class Operation : public HasName<Operation>,
     /** Returns the minimum size for operationplans. */
     float getSizeMultiple() const {return size_multiple;}
 
-    void beginElement(XMLInput& , XMLElement& );
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void beginElement(XMLInput& , XMLElement& );
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
@@ -1203,12 +1204,12 @@ class Operation : public HasName<Operation>,
     /** Update the release fence of this operation. */
     void setFence(TimePeriod t) {if(fence!=t) setChanged(); fence=t;}
 
-    virtual void updateProblems();
+    virtual DECLARE_EXPORT void updateProblems();
 
     void setHidden(bool b) {if(hidden!=b) setChanged(); hidden = b;}
     bool getHidden() const {return hidden;}
 
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
 
   protected:
     void initOperationPlan (OperationPlan*, float, const Date&, const Date&,
@@ -1221,7 +1222,7 @@ class Operation : public HasName<Operation>,
     /** Empty list of operations. For operation types which have no
       * suboperations this list is used as the list of suboperations.
       */
-    static Operationlist nosubOperations;
+    static DECLARE_EXPORT Operationlist nosubOperations;
 
     /** Represents the time between this operation and a next one. */
     TimePeriod post_time;
@@ -1412,10 +1413,10 @@ class OperationPlan
       * This method is intended to be used to create objects when reading
       * XML input data.
       */
-    static Object* createOperationPlan (const MetaCategory&, const XMLInput&);
+    static DECLARE_EXPORT Object* createOperationPlan (const MetaCategory&, const XMLInput&);
 
     /** Destructor. */
-    virtual ~OperationPlan();
+    virtual DECLARE_EXPORT ~OperationPlan();
 
     virtual void setChanged(bool b = true);
 
@@ -1427,7 +1428,7 @@ class OperationPlan
       * This method can only be called on top operationplans. Sub operation
       * plans should pass on a call to the parent operationplan.
       */
-    virtual void setQuantity(float f, bool roundDown=false);
+    virtual DECLARE_EXPORT void setQuantity(float f, bool roundDown=false);
 
     /** Returns a pointer to the demand for which this operation is a delivery.
       * If the operationplan isn't a delivery operation, this is a NULL pointer.
@@ -1435,7 +1436,7 @@ class OperationPlan
     Demand* getDemand() const {return lt;}
 
     /** Updates the demand to which this operationplan is a solution. */
-    void setDemand(Demand* l);
+    DECLARE_EXPORT void setDemand(Demand* l);
 
     /** This function allows the operationplan to propagate all changes
       * to its flowplans, loadplans and problems.
@@ -1458,7 +1459,7 @@ class OperationPlan
     /** Deletes all operationplans of a certain operation. A boolean flag
       * allows to specify whether locked operationplans are to be deleted too.
       */
-    static void deleteOperationPlans(Operation* o, bool deleteLocked=false);
+    static DECLARE_EXPORT void deleteOperationPlans(Operation* o, bool deleteLocked=false);
 
     /** Locks/unlocks an operationplan. A locked operationplan is never
       * changed. Only top-operationplans can be locked. Sub-operationplans
@@ -1604,11 +1605,11 @@ class OperationPlan
     };
 
     /** This method is used to check the validity of the operationplan. */
-    bool check();
+    DECLARE_EXPORT bool check();
 
     /** This function is used to create the proper loadplan and flowplan
       * objects associated with the operation. */
-    void createFlowLoads();
+    DECLARE_EXPORT void createFlowLoads();
 
     bool getHidden() const {return getOperation()->getHidden();}
 
@@ -1631,7 +1632,7 @@ class OperationPlan
       * not the one of the operationplan class!
       */
     const MetaClass& getType() const {return getOperation()->getType();}
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
     virtual size_t getSize() const
       {return sizeof(OperationPlan);}
 
@@ -1639,8 +1640,8 @@ class OperationPlan
     static void writer(const MetaCategory&, XMLOutput*);
 
   protected:
-    virtual void update();
-    void resizeFlowLoadPlans();
+    virtual DECLARE_EXPORT void update();
+    void DECLARE_EXPORT resizeFlowLoadPlans();
 
     /** Pointer to a higher level OperationPlan. */
     OperationPlan *owner;
@@ -1740,13 +1741,13 @@ class OperationFixedTime : public Operation
       * operation are not automatically refreshed to reflect the change. */
     void setDuration(TimePeriod t) {if (t>=TimePeriod(0L)) duration = t;}
 
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(OperationFixedTime) + getName().size() + HasDescription::memsize();}
 
@@ -1763,7 +1764,7 @@ class OperationFixedTime : public Operation
       *  - Locked operationplans can't be updated.
       * @see Operation::setOperationPlanParameters
       */
-    void setOperationPlanParameters(OperationPlan*, float, Date, Date, bool=true) const;
+    DECLARE_EXPORT void setOperationPlanParameters(OperationPlan*, float, Date, Date, bool=true) const;
 
   private:
     /** Stores the lengh of the Operation. */
@@ -1807,16 +1808,16 @@ class OperationTimePer : public Operation
       *     date of the operation. A new start date is being computed.
       * @see Operation::setOperationPlanParameters
       */
-    void setOperationPlanParameters
+    DECLARE_EXPORT void setOperationPlanParameters
       (OperationPlan*, float, Date, Date, bool=true) const;
 
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(OperationTimePer) + getName().size() + HasDescription::memsize();}
 
@@ -1894,7 +1895,7 @@ class OperationRouting : public Operation
       unsigned long i = 0, bool makeflowsloads=true) const;
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(OperationRouting) + getName().size() + HasDescription::memsize()
          + steps.size() * 2 * sizeof(Operation*);}
@@ -1954,26 +1955,26 @@ class OperationAlternate : public Operation
     explicit OperationAlternate(const string& c) : Operation(c) {};
 
     /** Destructor. */
-    ~OperationAlternate();
+    DECLARE_EXPORT ~OperationAlternate();
 
     /** Add a new alternate operation. The higher the priority value, the more
       * important this alternate operation is. */
-    void addAlternate(Operation* o, float prio = 1.0f);
+    DECLARE_EXPORT void addAlternate(Operation* o, float prio = 1.0f);
 
     /** Removes an alternate from the list. */
-    void removeSubOperation(Operation *);
+    DECLARE_EXPORT void removeSubOperation(Operation *);
 
     /** Returns the priority of a certain suboperation.
       * @exception LogicException Generated when the argument operation is
       *     null or when it is not a sub-operation of this alternate.
       */
-    float getPriority(Operation* o) const;
+    DECLARE_EXPORT float getPriority(Operation* o) const;
 
     /** Updates the priority of a certain suboperation.
       * @exception LogicException Generated when the argument operation is
       *     not null and not a sub-operation of this alternate.
       */
-    void setPriority(Operation* o, float f);
+    DECLARE_EXPORT void setPriority(Operation* o, float f);
 
     /** A operation of this type enforces the following rules on its
       * operationplans:
@@ -1981,11 +1982,12 @@ class OperationAlternate : public Operation
       *    suboperationplan.
       * @see Operation::setOperationPlanParameters
       */
-    void setOperationPlanParameters(OperationPlan*, float, Date, Date, bool=true) const;
+    DECLARE_EXPORT void setOperationPlanParameters
+      (OperationPlan*, float, Date, Date, bool=true) const;
 
-    void beginElement (XMLInput&, XMLElement&);
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void beginElement (XMLInput&, XMLElement&);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
     virtual const Operationlist& getSubOperations() {return alternates;}
 
@@ -1993,12 +1995,12 @@ class OperationAlternate : public Operation
       * operation.
       * @see Operation::createOperationPlan
       */
-    virtual OperationPlan* createOperationPlan (float q, Date s, Date e,
-      Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s, 
+      Date e, Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
       unsigned long i = 0, bool makeflowsloads=true) const;
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(OperationAlternate) + getName().size() + HasDescription::memsize()
          + alternates.size() * 2 * (sizeof(Operation*)+sizeof(float));}
@@ -2080,14 +2082,14 @@ class OperationEffective : public Operation
 	  * to determine the effective operation. */
 	  void setUseEndDate(const bool b) {useEndDate = b;}
 
-    void beginElement (XMLInput&, XMLElement&);
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput&, XMLElement&);
+    void DECLARE_EXPORT beginElement (XMLInput&, XMLElement&);
+    void DECLARE_EXPORT writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    void DECLARE_EXPORT endElement(XMLInput&, XMLElement&);
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(OperationEffective) + getName().size() + HasDescription::memsize();}
 
@@ -2095,9 +2097,9 @@ class OperationEffective : public Operation
       * operation.
       * @see Operation::createOperationPlan
       */
-    virtual OperationPlan* createOperationPlan (float, Date, Date, Demand*,
-        bool updates_okay=true, OperationPlan* = NULL, unsigned long i=0,
-		    bool makeflowsloads=true) const;
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date, 
+      Date, Demand*, bool updates_okay=true, OperationPlan* = NULL, 
+      unsigned long i=0, bool makeflowsloads=true) const;
 
     /** A operation of this type enforces the following rules on its
       * operationplans:
@@ -2109,7 +2111,7 @@ class OperationEffective : public Operation
       *    effect at all.
       * @see Operation::setOperationPlanParameters
       */
-    void setOperationPlanParameters
+    DECLARE_EXPORT void setOperationPlanParameters
       (OperationPlan* opplan, float q, Date s, Date e, bool = true) const;
 
   private:
@@ -2210,32 +2212,32 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     CalendarFloat *getMaximum() const {return max_cal;}
 
     /** Updates the minimum inventory target for the buffer. */
-    void setMinimum(const CalendarFloat *cal);
+    DECLARE_EXPORT void setMinimum(const CalendarFloat *cal);
 
     /** Updates the minimum inventory target for the buffer. */
-    void setMaximum(const CalendarFloat *cal);
+    DECLARE_EXPORT void setMaximum(const CalendarFloat *cal);
 
-    virtual void beginElement(XMLInput&, XMLElement&);
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    virtual void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT virtual void beginElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT virtual void endElement(XMLInput&, XMLElement&);
 
     /** Destructor. */
-    virtual ~Buffer();
+    virtual DECLARE_EXPORT ~Buffer();
 
     /** Returns the available material on hand immediately after the
       * given date.
       */
-    double getOnHand(Date) const;
+    DECLARE_EXPORT double getOnHand(Date) const;
 
     /** Update the on-hand inventory at the start of the planning horizon. */
-    void setOnHand(float f);
+    DECLARE_EXPORT void setOnHand(float f);
 
     /** Returns minimum or maximum available material on hand in the given
       * daterange. The third parameter specifies whether we return the
       * minimum (which is the default) or the maximum value.
       * The computation is INclusive the start and end dates.
       */
-    double getOnHand(Date, Date, bool min = true) const;
+    DECLARE_EXPORT double getOnHand(Date, Date, bool min = true) const;
 
     /** Returns a reference to the list of all flows of this buffer. */
     const flowlist& getFlows() const {return flows;}
@@ -2252,15 +2254,15 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * buffer. The boolean parameter controls whether we delete also locked
       * operationplans or not.
       */
-    void deleteOperationPlans(bool deleteLockedOpplans = false);
+    DECLARE_EXPORT void deleteOperationPlans(bool deleteLockedOpplans = false);
 
-    virtual void updateProblems();
+    virtual DECLARE_EXPORT void updateProblems();
 
     void setHidden(bool b) {if (hidden!=b) setChanged(); hidden = b;}
     bool getHidden() const {return hidden;}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
 
   private:
     /** This models the dynamic part of the plan, representing all planned
@@ -2304,7 +2306,7 @@ class BufferDefault : public Buffer
     virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
       {return sizeof(BufferDefault) + getName().size() + HasDescription::memsize();}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -2316,13 +2318,13 @@ class BufferInfinite : public Buffer
 {
   public:
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
       {return sizeof(BufferInfinite) + getName().size() + HasDescription::memsize();}
     explicit BufferInfinite(const string& c) : Buffer(c)
       {setDetectProblems(false);}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -2334,12 +2336,12 @@ class BufferMinMax : public Buffer
 {
   public:
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
       {return sizeof(BufferMinMax) + getName().size() + HasDescription::memsize();}
     explicit BufferMinMax(const string& c) : Buffer(c) {}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -2352,7 +2354,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 {
   public:
 	  /** Destructor. */
-    virtual ~Flow();
+    virtual DECLARE_EXPORT ~Flow();
 
 	  /** Constructor. */
     explicit Flow(Operation* o, Buffer* b, float q) : quantity(q)
@@ -2405,14 +2407,14 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 	  virtual const Date& getFlowplanDate(const OperationPlan* o) const
 	    {return o->getDates().getStart();}
 
-	  virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void beginElement(XMLInput&, XMLElement&);
-    void endElement(XMLInput&, XMLElement&);
+	  virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
     virtual size_t getSize() const {return sizeof(Flow);}
 
   protected:
@@ -2421,7 +2423,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
   private:
     /** Verifies whether a flow meets all requirements to be valid. */
-    void validate(Action action);
+    DECLARE_EXPORT void validate(Action action);
 
 	  /** Quantity of the flow. */
     float quantity;
@@ -2442,7 +2444,7 @@ class FlowStart : public Flow
     explicit FlowStart() {}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(FlowStart);}
 };
 
@@ -2464,12 +2466,12 @@ class FlowEnd : public Flow
 	  const Date& getFlowplanDate(const OperationPlan* o) const
 	  {return o->getDates().getEnd();}
 
-	  virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+	  virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(FlowEnd);}
 };
 
@@ -2493,7 +2495,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
   public:
     /** Constructor. */
-    explicit FlowPlan(OperationPlan*, const Flow*);
+    explicit DECLARE_EXPORT FlowPlan(OperationPlan*, const Flow*);
 
     /** Returns the Flow of which this is an planning instance. */
     Flow* getFlow() const {return fl;}
@@ -2510,7 +2512,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       * class, but this is only superficial: FlowPlan isn't a subclass of 
       * Object at all.
       */
-    void writeElement(XMLOutput*, const XMLtag&, mode =DEFAULT) const;
+    void DECLARE_EXPORT writeElement(XMLOutput*, const XMLtag&, mode =DEFAULT) const;
 
     /** Updates the quantity of the flowplan by changing the quantity of the
       * operationplan owning this flowplan.
@@ -2523,7 +2525,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     /** Returns the date of the flowplan. */
   	const Date& getDate() const {return fl->getFlowplanDate(oper);}
 
-	  void update();
+	  DECLARE_EXPORT void update();
 
     /** Returns whether the flowplan needs to be serialized. This is
       * determined by looking at whether the flow is hidden or not. */
@@ -2531,7 +2533,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
     /** Verifies whether the flowplan is properly in-line with its owning
       * operationplan. */
-    bool check();
+    DECLARE_EXPORT bool check();
 };
 
 
@@ -2550,10 +2552,10 @@ class Resource : public HasHierarchy<Resource>,
       max_cal(NULL), loc(NULL), hidden(false) {};
 
     /** Destructor. */
-    virtual ~Resource();
+    virtual DECLARE_EXPORT ~Resource();
 
     /** Updates the size of a resource. */
-    void setMaximum(CalendarFloat* c);
+    DECLARE_EXPORT void setMaximum(CalendarFloat* c);
 
     /** Return a pointer to the maximum capacity profile. */
     CalendarFloat* getMaximum() const {return max_cal;}
@@ -2573,9 +2575,9 @@ class Resource : public HasHierarchy<Resource>,
       * resource. Returns NULL is no such load exists. */
     Load* findLoad(const Operation* o) const {return loads.find(o);}
 
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput&, XMLElement&);
-    void beginElement (XMLInput&, XMLElement&);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void beginElement (XMLInput&, XMLElement&);
 
     /** Returns the location of this resource. */
     Location* getLocation() const {return loc;}
@@ -2588,16 +2590,16 @@ class Resource : public HasHierarchy<Resource>,
     /** Deletes all operationplans loading this resource. The boolean parameter
       * controls whether we delete also locked operationplans or not.
       */
-    void deleteOperationPlans(bool deleteLockedOpplans = false);
+    DECLARE_EXPORT void deleteOperationPlans(bool = false);
 
     /** Recompute the problems of this resource. */
-    virtual void updateProblems();
+    virtual DECLARE_EXPORT void updateProblems();
 
     void setHidden(bool b) {if (hidden!=b) setChanged(); hidden = b;}
     bool getHidden() const {return hidden;}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
 
   private:
     /** This calendar is used to updates to the resource size. */
@@ -2623,7 +2625,7 @@ class ResourceDefault : public Resource
   public:
     explicit ResourceDefault(const string& str) : Resource(str) {}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(ResourceDefault) + getName().size() + HasDescription::memsize();}
 };
@@ -2635,11 +2637,11 @@ class ResourceInfinite : public Resource
 {
   public:
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return metadata;}
     explicit ResourceInfinite(const string& c) : Resource(c)
       {setDetectProblems(false);}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(ResourceInfinite) + getName().size() + HasDescription::memsize();}
 };
@@ -2664,7 +2666,7 @@ class Load
     }
 
     /** Destructor. */
-    ~Load();
+    DECLARE_EXPORT ~Load();
 
     /** Returns the operation consuming the resource capacity. */
     Operation* getOperation() const {return getPtrA();}
@@ -2693,15 +2695,15 @@ class Load
       usage = f;
     }
 
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void beginElement(XMLInput&, XMLElement&);
-    void endElement(XMLInput&, XMLElement&);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
     bool getHidden() const
       {return getResource()->getHidden() || getOperation()->getHidden();}
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
     virtual size_t getSize() const {return sizeof(Load);}
 
     /** Default constructor. */
@@ -2712,7 +2714,7 @@ private:
       * delete the invalid loads: be careful with the 'this' pointer after
       * calling this method!
       */
-    void validate(Action action);
+    DECLARE_EXPORT void validate(Action action);
 
     /** Stores how much capacity is consumed during the duration of an
       * operationplan. */
@@ -2740,15 +2742,15 @@ class Item
       */
     void setDelivery(Operation* o) {deliveryOperation = o;}
 
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput&, XMLElement&);
-    void beginElement (XMLInput&, XMLElement&);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void beginElement (XMLInput&, XMLElement&);
 
     /** Destructor. */
-    virtual ~Item();
+    virtual DECLARE_EXPORT ~Item();
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
 
   private:
     /** This is the operation used to satisfy a demand for this Item. */
@@ -2761,7 +2763,7 @@ class ItemDefault : public Item
   public:
     explicit ItemDefault(const string& str) : Item(str) {}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(ItemDefault) + getName().size() + HasDescription::memsize();}
 };
@@ -2818,7 +2820,7 @@ class Plan : public Plannable
       * In single-threaded applications this function is called properly, when
       * the static plan variable is deleted.
       */
-    ~Plan();
+    DECLARE_EXPORT ~Plan();
 
     /** Returns the plan name. */
     const string& getName() const {return name;}
@@ -2839,7 +2841,7 @@ class Plan : public Plannable
       * heavy in a plan where operationplans already exist, since the
       * detection for BeforeCurrent problems needs to be rerun.
       */
-    void setCurrent(Date);
+    DECLARE_EXPORT void setCurrent(Date);
 
     /** Returns the description of the plan. */
     const string& getDescription() const {return descr;}
@@ -2854,16 +2856,16 @@ class Plan : public Plannable
       * The file is also opened for writing and the standard output and
       * standard error output streams are redirected to it.
       */
-    void setLogFile(string x);
+    DECLARE_EXPORT void setLogFile(string x);
 
     /** This method writes out the model information. Depending on a flag in
       * the XMLOutput object a complete model is written, or only the
       * dynamic plan information.
       * @see CommandSave, CommandSavePlan
       */
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput& pIn, XMLElement&  pElement);
-    void beginElement(XMLInput& pIn, XMLElement&  pElement);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement&  pElement);
+    DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement&  pElement);
 
     virtual void updateProblems() {};
 
@@ -2871,7 +2873,7 @@ class Plan : public Plannable
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
     const MetaClass& getType() const {return metadata;}
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
     virtual size_t getSize() const
       {return sizeof(Plan) + name.size() + descr.size() + logfilename.size();}
 };
@@ -2913,9 +2915,9 @@ class CommandReadXMLFile : public Command
     /** The commit action reads the input. If a filename is specified (either
       * in the constructor or with the setFileName function), a flat file is
       * read. Otherwise, the standard input is read. */
-    void execute();
+    DECLARE_EXPORT void execute();
 
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
 
     string getDescription() const
     {
@@ -2925,7 +2927,7 @@ class CommandReadXMLFile : public Command
         return "parsing xml input from file '" + filename + "'";
     }
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(CommandReadXMLFile) + filename.size();}
 
@@ -2979,11 +2981,11 @@ class CommandReadXMLString : public Command
     bool getValidateOnly() {return validate_only;}
 
     /** The commit action reads the input. */
-    void execute();
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void execute();
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const {return "parsing xml input string";}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(CommandReadXMLString) + data.size();}
 
@@ -3048,11 +3050,11 @@ class CommandReadXMLURL : public Command
     bool getValidateOnly() {return validate_only;}
 
     /** The commit action reads the input. */
-    void execute();
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void execute();
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const {return "parsing xml input url";}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(CommandReadXMLURL) + url.size();}
 
@@ -3090,12 +3092,12 @@ class CommandSave : public Command
     virtual ~CommandSave() {};
     string getFileName() const {return filename;}
     void setFileName(const string& v) {filename = v;}
-    void execute();
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void execute();
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const
       {return "saving the complete model into file '" + filename + "'";}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(CommandSave) 
         + filename.size() + headerstart.size() + headeratts.size();}
@@ -3125,12 +3127,12 @@ class CommandSavePlan : public Command
     CommandSavePlan(const string& v = "plan.out") : filename(v) {};
     string getFileName() const {return filename;}
     void setFileName(const string& v) {filename = v;}
-    void execute();
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void execute();
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const
       {return "saving the plan into text file '" + filename + "'";}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const 
       {return sizeof(CommandSavePlan) + filename.size();}
   private:
@@ -3154,7 +3156,7 @@ class CommandPlanSize : public Command
     bool undoable() const {return true;}
     string getDescription() const {return "printing the model size";}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandPlanSize);}
 };
 
@@ -3177,8 +3179,8 @@ class CommandErase : public Command
 {
   public:
     CommandErase() : deleteStaticModel(false) {};
-    void execute();
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void execute();
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const
     {
       return deleteStaticModel ? "Erasing the model" : "Erasing the plan";
@@ -3187,7 +3189,7 @@ class CommandErase : public Command
     void setDeleteStaticModel(bool b) {deleteStaticModel = b;}
     virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const {return sizeof(CommandErase);}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
   private:
     /** Flags whether to delete the complete static model or only the
       * dynamic plan information. */
@@ -3217,7 +3219,7 @@ class Demand
 
     /** Updates the quantity of the demand. The quantity must be be greater
       * than or equal to 0. */
-    virtual void setQuantity(float);
+    virtual DECLARE_EXPORT void setQuantity(float);
 
     /** Returns the priority of the demand. Lower numbers indicate a
       * higher priority level.
@@ -3248,7 +3250,7 @@ class Demand
       *   2) Otherwise, use the "delivery" field of the requested item.
       *   3) Else, return NULL. This demand can't be satisfied!
       */
-    Operation* getDeliveryOperation() const;
+    DECLARE_EXPORT Operation* getDeliveryOperation() const;
 
     /** Returns the cluster which this demand belongs to. */
     int getCluster() const
@@ -3258,21 +3260,21 @@ class Demand
     virtual void setOperation(Operation* o) {oper=o; setChanged();}
 
     /** Returns the delivery operationplan list. */
-    const OperationPlan_list& getDelivery() const;
+    DECLARE_EXPORT const OperationPlan_list& getDelivery() const;
 
     /** Adds a delivery operationplan for this demand. If the policy
       * SINGLEDELIVERY is set, any previous delivery operationplan is
       * unregistered first.
       */
-    void addDelivery(OperationPlan *o);
+    DECLARE_EXPORT void addDelivery(OperationPlan *o);
 
     /** Removes a delivery operationplan for this demand. */
-    void removeDelivery(OperationPlan *o);
+    DECLARE_EXPORT void removeDelivery(OperationPlan *o);
 
     /** Deletes all delivery operationplans of this demand. The boolean
       * parameter controls whether we delete also locked operationplans or not.
       */
-    void deleteOperationPlans(bool deleteLockedOpplans = false);
+    DECLARE_EXPORT void deleteOperationPlans(bool deleteLockedOpplans = false);
 
     /** Returns the due date of the demand. */
     Date getDue() const {return dueDate;}
@@ -3287,11 +3289,11 @@ class Demand
     void setCustomer(Customer* c) { cust = c; setChanged(); }
 
     /** Returns the total amount that has been planned. */
-    float getPlannedQuantity() const;
+    DECLARE_EXPORT float getPlannedQuantity() const;
 
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    virtual void endElement(XMLInput& , XMLElement&  );
-    virtual void beginElement (XMLInput& , XMLElement&  );
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void endElement(XMLInput& , XMLElement&  );
+    virtual DECLARE_EXPORT void beginElement (XMLInput& , XMLElement&  );
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
@@ -3361,10 +3363,10 @@ class Demand
       * The policy string is case INsensitive.<br>
       * The default policy string is "PLANLATE MULTIDELIVERY"
       */
-    virtual void addPolicy(const string&);
+    virtual DECLARE_EXPORT void addPolicy(const string&);
 
     /** Recompute the problems. */
-    virtual void updateProblems();
+    virtual DECLARE_EXPORT void updateProblems();
 
     /** Specifies whether of not this demand is to be hidden from
       * serialization. The default value is false. */
@@ -3374,7 +3376,7 @@ class Demand
     bool getHidden() const {return policy.test(2);}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory metadata;
 
   private:
     /** Requested item. */
@@ -3415,7 +3417,7 @@ class DemandDefault : public Demand
   public:
     explicit DemandDefault(const string& str) : Demand(str) {}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
       {return sizeof(DemandDefault) + getName().size() + HasDescription::memsize();}
 };
@@ -3436,12 +3438,15 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       * In other words, a single call to the constructor will create
       * two loadplan objects.
       */
-    explicit LoadPlan(OperationPlan*, const Load*);
+    explicit DECLARE_EXPORT LoadPlan(OperationPlan*, const Load*);
+
+    /** Return the date of the loadplan. */
     const Date & getDate() const
     {
       if(start_or_end == START) return oper->getDates().getStart();
       else return oper->getDates().getEnd();
     }
+
     OperationPlan* getOperationPlan() const {return oper;}
     Load* getLoad() const {return ld;}
     bool isStart() {return start_or_end == START;}
@@ -3450,18 +3455,18 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       ld->getResource()->setChanged();
       ld->getResource()->loadplans.erase(this);
     }
-    void update();
+    DECLARE_EXPORT void update();
     bool getHidden() const {return ld->getHidden();}
 
     /** Validates the consistency of the loadplan. */
-    bool check();
+    DECLARE_EXPORT bool check();
 
   private:
     /** Private constructor. It is called from the public constructor.<br>
       * The public constructor constructs the starting loadplan, while this
       * constructor creates the ending loadplan.
       */
-    LoadPlan(OperationPlan*, const Load*, LoadPlan*);
+    DECLARE_EXPORT LoadPlan(OperationPlan*, const Load*, LoadPlan*);
 
     /** This type is used to differentiate loadplans aligned with the START date
       * or the END date of operationplan. */
@@ -3516,7 +3521,7 @@ class ProblemBeforeCurrent : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -3557,7 +3562,7 @@ class ProblemBeforeFence : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -3589,7 +3594,7 @@ class ProblemPrecedence : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 
   private:
     /** Pointers to the operationplans which violate the sequence.
@@ -3620,7 +3625,7 @@ class ProblemDemandNotPlanned : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -3630,7 +3635,7 @@ class ProblemDemandNotPlanned : public Problem
 class ProblemLate : public Problem
 {
   public:
-    string getDescription() const;
+    DECLARE_EXPORT string getDescription() const;
     bool isFeasible() {return true;}
     float getWeight() {return 1.0f;}
     explicit ProblemLate(Demand* d) : Problem(d) {addProblem();}
@@ -3647,7 +3652,7 @@ class ProblemLate : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -3657,7 +3662,7 @@ class ProblemLate : public Problem
 class ProblemEarly : public Problem
 {
   public:
-    string getDescription() const;
+    DECLARE_EXPORT string getDescription() const;
     bool isFeasible() {return true;}
     float getWeight() {return 1.0f;}
     explicit ProblemEarly(Demand* d) : Problem(d) {addProblem();}
@@ -3673,7 +3678,7 @@ class ProblemEarly : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -3704,7 +3709,7 @@ class ProblemShort : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -3735,7 +3740,7 @@ class ProblemExcess : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 };
 
 
@@ -3767,7 +3772,7 @@ class ProblemPlannedLate : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 
   private:
     /** This is the time that is allowed between the lpst date and the start
@@ -3805,7 +3810,7 @@ class ProblemPlannedEarly : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 
   private:
     /** This is the time that is allowed between the epst date and the start
@@ -3821,7 +3826,7 @@ class ProblemPlannedEarly : public Problem
 class ProblemCapacityOverload : public Problem
 {
   public:
-    string getDescription() const;
+    DECLARE_EXPORT string getDescription() const;
     bool isFeasible() {return false;}
     float getWeight() {return 1.0f;}
     ProblemCapacityOverload(Resource* r, DateRange d, float q)
@@ -3834,7 +3839,7 @@ class ProblemCapacityOverload : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 
   private:
     /** Overload quantity. */
@@ -3851,7 +3856,7 @@ class ProblemCapacityOverload : public Problem
 class ProblemCapacityUnderload : public Problem
 {
   public:
-    string getDescription() const;
+    DECLARE_EXPORT string getDescription() const;
     bool isFeasible() {return false;}
     float getWeight() {return 1.0f;}
     ProblemCapacityUnderload(Resource* r, DateRange d, float q)
@@ -3864,7 +3869,7 @@ class ProblemCapacityUnderload : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 
   private:
     /** Underload quantity. */
@@ -3881,7 +3886,7 @@ class ProblemCapacityUnderload : public Problem
 class ProblemMaterialShortage : public Problem
 {
   public:
-    string getDescription() const;
+    DECLARE_EXPORT string getDescription() const;
     bool isFeasible() {return false;}
     float getWeight() {return 1.0f;}
     ProblemMaterialShortage(Buffer* b, Date st, Date nd, float q)
@@ -3894,7 +3899,7 @@ class ProblemMaterialShortage : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 
   private:
     /** Shortage quantity. */
@@ -3911,7 +3916,7 @@ class ProblemMaterialShortage : public Problem
 class ProblemMaterialExcess : public Problem
 {
   public:
-    string getDescription() const;
+    DECLARE_EXPORT string getDescription() const;
     bool isFeasible() {return true;}
     float getWeight() {return 1.0f;}
     ProblemMaterialExcess(Buffer* b, Date st, Date nd, float q)
@@ -3924,7 +3929,7 @@ class ProblemMaterialExcess : public Problem
     const MetaClass& getType() const {return metadata;}
 
     /** Storing metadata on this class. */
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
 
   private:
     /** Excess quantity. */
@@ -3966,7 +3971,7 @@ class CommandCreateOperationPlan : public Command
     ~CommandCreateOperationPlan() {delete opplan;}
     OperationPlan *getOperationPlan() const {return opplan;}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandCreateOperationPlan);}
     string getDescription() const
     {
@@ -3996,22 +4001,22 @@ class CommandMoveOperationPlan : public Command
       * @param startOrEnd Specifies whether the new date is the start (=false)
       * or end date (=true). By default we use the end date.
       */
-    CommandMoveOperationPlan
+    DECLARE_EXPORT CommandMoveOperationPlan
       (OperationPlan* opplanptr, Date newDate, bool startOrEnd=true);
     void execute()
       {if (!opplan) return; opplan->setAllowUpdates(true); opplan=NULL;}
-    void undo();
+    DECLARE_EXPORT void undo();
     bool undoable() const {return true;}
     ~CommandMoveOperationPlan() {if (opplan) undo();}
     OperationPlan *getOperationPlan() const {return opplan;}
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandMoveOperationPlan);}
-    string getDescription() const;
+    DECLARE_EXPORT string getDescription() const;
     /** Set another date for the operation.
       * @param newdate New start- or end date.
       */
-    void setDate(Date newdate);
+    DECLARE_EXPORT void setDate(Date newdate);
 
   private:
     /** This is a pointer to the operation_plan being moved. */
@@ -4168,7 +4173,7 @@ class PeggingIterator
     bool getPegged() const {return stack.top().pegged;}
 
     /** Move the iterator foward to the next downstream flowplan. */
-    PeggingIterator& operator++();
+    DECLARE_EXPORT PeggingIterator& operator++();
 
     /** Move the iterator foward to the next downstream flowplan.<br>
       * This post-increment operator is less efficient than the pre-increment
@@ -4178,7 +4183,7 @@ class PeggingIterator
       {PeggingIterator tmp = *this; ++*this; return tmp;}
 
     /** Move the iterator foward to the next upstream flowplan. */
-    PeggingIterator& operator--();
+    DECLARE_EXPORT PeggingIterator& operator--();
 
     /** Move the iterator foward to the next upstream flowplan.<br>
       * This post-increment operator is less efficient than the pre-decrement
@@ -4233,10 +4238,10 @@ class PeggingIterator
     stack < state > stack;
 
     /** Update the stack. */
-    void updateStack(short, double, double, const FlowPlan*, bool = true);
+    DECLARE_EXPORT void updateStack(short, double, double, const FlowPlan*, bool = true);
 
     /** Auxilary function to make recursive code possible. */
-    void pushflowplans(OperationPlan*, bool, short);
+    DECLARE_EXPORT void pushflowplans(OperationPlan*, bool, short);
 
     /** In case there are multiple paths, we can either:
       *  - follow one path complete to its end and then follow the others.

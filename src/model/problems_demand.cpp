@@ -33,7 +33,7 @@ namespace frepple
 {
 
 
-void Demand::updateProblems()
+DECLARE_EXPORT void Demand::updateProblems()
 {
   // The relation between the Demand and the related Problem classes is such
   // that the Demand object is the only active one. The Problem objects are
@@ -133,7 +133,7 @@ void Demand::updateProblems()
 }
 
 
-string ProblemLate::getDescription() const
+DECLARE_EXPORT string ProblemLate::getDescription() const
 {
   TimePeriod t((*(getDemand()->getDelivery().begin()))->getDates().getEnd()
                - getDemand()->getDue());
@@ -142,7 +142,7 @@ string ProblemLate::getDescription() const
 }
 
 
-string ProblemEarly::getDescription() const
+DECLARE_EXPORT string ProblemEarly::getDescription() const
 {
   TimePeriod t(getDemand()->getDue()
                - (*(getDemand()->getDelivery().begin()))->getDates().getEnd());

@@ -38,23 +38,21 @@ DECLARE_EXPORT string Date::format("%Y-%m-%dT%H:%M:%S");
 DECLARE_EXPORT string DateRange::separator = " / ";
 
 /* This is the earliest date that we can represent. */
-const Date Date::infinitePast("1971-01-01T00:00:00",true);
+DECLARE_EXPORT const Date Date::infinitePast("1971-01-01T00:00:00",true);
 
 /* This is the latest date that we can represent. This is not the absolute
  * limit of the internal representation, but more a convenient end date. */
-const Date Date::infiniteFuture("2030-12-31T00:00:00",true);
+DECLARE_EXPORT const Date Date::infiniteFuture("2030-12-31T00:00:00",true);
 
 
-void Date::checkFinite()
+DECLARE_EXPORT void Date::checkFinite()
 {
-  if (lval > infiniteFuture.lval)
-    lval = infiniteFuture.lval;
-  else if (lval < infinitePast.lval)
-    lval = infinitePast.lval;
+  if (lval > infiniteFuture.lval) lval = infiniteFuture.lval;
+  else if (lval < infinitePast.lval) lval = infinitePast.lval;
 }
 
 
-void TimePeriod::toCharBuffer(char* t) const
+DECLARE_EXPORT void TimePeriod::toCharBuffer(char* t) const
 {
   long tmp = (lval>0 ? lval : -lval);
   if (lval<0) *(t++) = '-';
@@ -73,7 +71,7 @@ void TimePeriod::toCharBuffer(char* t) const
 }
 
 
-DateRange::operator string() const
+DECLARE_EXPORT DateRange::operator string() const
 {
   // Start date
   string r(start);
@@ -87,7 +85,7 @@ DateRange::operator string() const
 }
 
 
-void Date::toCharBuffer(char* str) const
+DECLARE_EXPORT void Date::toCharBuffer(char* str) const
 {
   // The standard library function localtime() is not re-entrant: the same
   // static structure is used for all calls. In a multi-threaded environment
@@ -106,7 +104,7 @@ void Date::toCharBuffer(char* str) const
 }
 
 
-void TimePeriod::parse (const char* s)
+DECLARE_EXPORT void TimePeriod::parse (const char* s)
 {
   lval = 0;
   long t = 0;
@@ -135,7 +133,7 @@ void TimePeriod::parse (const char* s)
 }
 
 
-void Date::parse (const char* s, const string& fmt)
+DECLARE_EXPORT void Date::parse (const char* s, const string& fmt)
 {
   struct tm p;
   strptime(s, fmt.c_str(), &p);
@@ -149,7 +147,7 @@ void Date::parse (const char* s, const string& fmt)
 // isn't available in your standard library.
 #ifndef HAVE_STRPTIME
 
-char* Date::strptime(const char *buf, const char *fmt, struct tm *tm)
+DECLARE_EXPORT char* Date::strptime(const char *buf, const char *fmt, struct tm *tm)
 {
   struct dtconv {
     char    *abbrev_month_names[12];

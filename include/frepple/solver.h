@@ -50,9 +50,10 @@ class MRPSolver : public Solver
       * By default no constraints are enabled. */
     short constrts;
 
-    void solve(Operation*, void* = NULL);
-    void solve(OperationRouting*, void* = NULL);
-    void solve(OperationEffective*, void* = NULL);
+    /** @todo Missing doc. */
+    DECLARE_EXPORT void solve(Operation*, void* = NULL);
+    DECLARE_EXPORT void solve(OperationRouting*, void* = NULL);
+    DECLARE_EXPORT void solve(OperationEffective*, void* = NULL);
 
     /** Behavior of this solver method is:
       *  - The solver loops through each alternate operation in order of
@@ -66,14 +67,14 @@ class MRPSolver : public Solver
       *  - The solver properly considers the quantity_per of all flows producing
       *    into the requested buffer, if such a buffer is specified.
       */
-    void solve(OperationAlternate*,void* = NULL);
+    DECLARE_EXPORT void solve(OperationAlternate*,void* = NULL);
 
     /** Behavior of this solver method:
       *  - No propagation to upstream buffers at all, even if a producing
       *    operation has been specified.
       *  - Always give an answer for the full quantity on the requested date.
       */
-    void solve(BufferInfinite*,void* = NULL);
+    DECLARE_EXPORT void solve(BufferInfinite*,void* = NULL);
 
     /** Behavior of this solver method:
       *  - Consider 0 as the hard minimum limit. It is currently not possible
@@ -98,7 +99,7 @@ class MRPSolver : public Solver
       *    for satisfying a certain demand that change will not be considered.
       *  - The solver completely ignores the maximum target.
       */
-    void solve(Buffer*, void* = NULL);
+    DECLARE_EXPORT void solve(Buffer*, void* = NULL);
 
     /** Behavior of this solver method:
       *  - This method simply passes on the request to the referenced buffer. 
@@ -106,7 +107,7 @@ class MRPSolver : public Solver
       *    control to a solve(Buffer*) method.
       * @see checkOperationMaterial
       */
-    void solve(Flow*, void* = NULL);
+    DECLARE_EXPORT void solve(Flow*, void* = NULL);
 
     /** Behavior of this solver method:
       *  - The operationplan is checked for a capacity overload. When detected
@@ -122,12 +123,12 @@ class MRPSolver : public Solver
       *    The result of the search is returned as the answer-date to the 
       *    solver. 
       */
-    void solve(Resource*, void* = NULL);
+    DECLARE_EXPORT void solve(Resource*, void* = NULL);
 
     /** Behavior of this solver method:
       *  - Always return OK.
       */
-    void solve(ResourceInfinite*,void* = NULL);
+    DECLARE_EXPORT void solve(ResourceInfinite*,void* = NULL);
 
     /** Behavior of this solver method:
       *  - This method simply passes on the request to the referenced resource.
@@ -150,7 +151,7 @@ class MRPSolver : public Solver
       * it can also be called independently to plan a certain demand.
       * @see solve
       */
-    void solve(Demand*, void* = NULL);
+    DECLARE_EXPORT void solve(Demand*, void* = NULL);
 
     /** This is the main solver method that will appropriately call the other 
       * solve methods.<br>
@@ -158,7 +159,7 @@ class MRPSolver : public Solver
       * the demand_comparison() method. For each of demand the solve(Demand*) 
       * method is called to plan it.
       */
-    void solve(void *v = NULL);
+    DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
     MRPSolver(const string& n) : Solver(n) {}
@@ -166,11 +167,11 @@ class MRPSolver : public Solver
     /** Destructor. */
     virtual ~MRPSolver() {}
 
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(MRPSolver);}
 
     /** Definition of the planning mode. */
@@ -206,7 +207,7 @@ class MRPSolver : public Solver
       * planned. The demand priority is used as the first criterium, with the
       * due date being used as tie break.
       */
-    static bool demand_comparison(Demand* l1, Demand* l2);
+    static DECLARE_EXPORT bool demand_comparison(Demand*, Demand*);
 
   private:
     typedef map < int, deque<Demand*>, less<int> > classified_demand;
@@ -241,7 +242,7 @@ class MRPSolver : public Solver
           * @see demand_comparison
           * @see next_cluster
           */
-        virtual void execute();
+        virtual DECLARE_EXPORT void execute();
 
         virtual const MetaClass& getType() const {return MRPSolver::metadata;}
         virtual size_t getSize() const {return sizeof(MRPSolverdata);}
@@ -308,8 +309,8 @@ class MRPSolver : public Solver
       * The return value is a flag whether the operationplan is
       * acceptable (sometimes in reduced quantity) or not.
       */
-    bool checkOperation(OperationPlan*, MRPSolverdata& data);
-    bool checkOperationLeadtime(OperationPlan*, MRPSolverdata& data);
+    DECLARE_EXPORT bool checkOperation(OperationPlan*, MRPSolverdata& data);
+    DECLARE_EXPORT bool checkOperationLeadtime(OperationPlan*, MRPSolverdata& data);
 };
 
 

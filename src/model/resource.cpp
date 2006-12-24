@@ -35,7 +35,7 @@ namespace frepple
 template<class Resource> DECLARE_EXPORT Tree HasName<Resource>::st;
 
 
-void Resource::setMaximum(CalendarFloat* c)
+DECLARE_EXPORT void Resource::setMaximum(CalendarFloat* c)
 {
   // Resetting the same calendar
   if (max_cal == c) return;
@@ -73,7 +73,7 @@ void Resource::setMaximum(CalendarFloat* c)
 }
 
 
-void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Write a reference
   if (m == REFERENCE)
@@ -129,7 +129,7 @@ void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 }
 
 
-void Resource::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Resource::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_load)
       && pIn.getParentElement().isA(Tags::tag_loads))
@@ -148,7 +148,7 @@ void Resource::beginElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Resource::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, XMLElement& pElement)
 {
   /* Note that while restoring the size, the parent's size is NOT
      automatically updated. The getDescription of the 'set_size' function may
@@ -176,7 +176,7 @@ void Resource::endElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Resource::deleteOperationPlans(bool deleteLocked)
+DECLARE_EXPORT void Resource::deleteOperationPlans(bool deleteLocked)
 {
   // Delete the operationplans
   for(loadlist::iterator i=loads.begin(); i!=loads.end(); ++i)
@@ -187,7 +187,7 @@ void Resource::deleteOperationPlans(bool deleteLocked)
 }
 
 
-Resource::~Resource()
+DECLARE_EXPORT Resource::~Resource()
 {
   // Delete all operationplans
   // An alternative logic would be to delete only the loadwplans for this
@@ -200,7 +200,7 @@ Resource::~Resource()
 }
 
 
-void ResourceInfinite::writeElement
+DECLARE_EXPORT void ResourceInfinite::writeElement
 (XMLOutput *o, const XMLtag &tag, mode m) const
 {
   // Writing a reference

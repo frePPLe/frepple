@@ -41,7 +41,7 @@ namespace frepple
 {
 
 
-bool Command::getVerbose() const
+DECLARE_EXPORT bool Command::getVerbose() const
 {
   if (verbose==INHERIT)
     // Note: a command gets the level INHERIT by default. In case the command
@@ -53,7 +53,7 @@ bool Command::getVerbose() const
 }
 
 
-void Command::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Command::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_verbose)) setVerbose(pElement.getBool());
 }
@@ -64,7 +64,7 @@ void Command::endElement(XMLInput& pIn, XMLElement& pElement)
 //
 
 
-bool CommandList::getAbortOnError() const
+DECLARE_EXPORT bool CommandList::getAbortOnError() const
 {
   if (abortOnError==INHERIT)
   {
@@ -78,7 +78,7 @@ bool CommandList::getAbortOnError() const
 }
 
 
-void CommandList::add(Command* c)
+DECLARE_EXPORT void CommandList::add(Command* c)
 {
   // Validity check
   if (!c) throw LogicException("Adding NULL command to a command list");
@@ -107,7 +107,7 @@ void CommandList::add(Command* c)
 }
 
 
-void CommandList::undo(Command *c)
+DECLARE_EXPORT void CommandList::undo(Command *c)
 {
   // Check validity of argument
   if (c && c->owner != this) 
@@ -146,7 +146,7 @@ void CommandList::undo(Command *c)
 }
 
 
-bool CommandList::undoable(const Command *c) const 
+DECLARE_EXPORT bool CommandList::undoable(const Command *c) const 
 {
   // Check validity of argument
   if (c && c->owner!=this) 
@@ -164,7 +164,7 @@ bool CommandList::undoable(const Command *c) const
 }
 
 
-Command* CommandList::selectCommand()
+DECLARE_EXPORT Command* CommandList::selectCommand()
 {
   ScopeMutexLock l(lock);
   Command *c = curCommand;
@@ -173,7 +173,7 @@ Command* CommandList::selectCommand()
 }
 
 
-void CommandList::execute()
+DECLARE_EXPORT void CommandList::execute()
 {
   // Execute the actions
   // This field is set asap in this method since it is used a flag to 

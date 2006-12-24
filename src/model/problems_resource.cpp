@@ -33,7 +33,7 @@ namespace frepple
 {
 
 
-void Resource::updateProblems()
+DECLARE_EXPORT void Resource::updateProblems()
 {
   // Delete existing problems for this resource
   Problem::clearProblems(*this);
@@ -126,7 +126,7 @@ void Resource::updateProblems()
 }
 
 
-string ProblemCapacityUnderload::getDescription() const
+DECLARE_EXPORT string ProblemCapacityUnderload::getDescription() const
 {
   ostringstream ch;
   ch << "Resource '" << getResource() << "' has excess capacity of " << qty;
@@ -134,7 +134,7 @@ string ProblemCapacityUnderload::getDescription() const
 }
 
 
-string ProblemCapacityOverload::getDescription() const
+DECLARE_EXPORT string ProblemCapacityOverload::getDescription() const
 {
   ostringstream ch;
   ch << "Resource '" << getResource() << "' has capacity shortage of " << qty;

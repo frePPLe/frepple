@@ -36,7 +36,7 @@ namespace frepple
 DECLARE_EXPORT Plan* Plan::thePlan;
 
 
-Plan::~Plan()
+DECLARE_EXPORT Plan::~Plan()
 {
   // Closing the logfile
   Plan::setLogFile("");
@@ -46,7 +46,7 @@ Plan::~Plan()
 }
 
 
-void Plan::setCurrent (Date l)
+DECLARE_EXPORT void Plan::setCurrent (Date l)
 {
   // Update the time
   cur_Date = l;
@@ -58,7 +58,7 @@ void Plan::setCurrent (Date l)
 }
 
 
-void Plan::writeElement (XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Plan::writeElement (XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // No references
   assert(m != REFERENCE);
@@ -81,7 +81,7 @@ void Plan::writeElement (XMLOutput *o, const XMLtag& tag, mode m) const
 }
 
 
-void Plan::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Plan::endElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_current))
     setCurrent(pElement.getDate());
@@ -102,7 +102,7 @@ void Plan::endElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_commands))
   {
@@ -130,7 +130,7 @@ void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Plan::setLogFile(string x)
+DECLARE_EXPORT void Plan::setLogFile(string x)
 {
     // Close an eventual existing log file.
   	if (!logfilename.empty()) clog << "Closing plan on " << Date::now() << endl;

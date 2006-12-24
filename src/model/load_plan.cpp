@@ -33,7 +33,7 @@ namespace frepple
 {
 
 
-LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
+DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
     : TimeLine<LoadPlan>::EventChangeOnhand(r->getUsageFactor())
 {
   assert(o);
@@ -52,7 +52,7 @@ LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
 }
 
 
-LoadPlan::LoadPlan (OperationPlan *o, const Load *r, LoadPlan *lp)
+DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r, LoadPlan *lp)
     : TimeLine<LoadPlan>::EventChangeOnhand(- r->getUsageFactor())
 {
   ld = const_cast<Load*>(r);
@@ -64,7 +64,7 @@ LoadPlan::LoadPlan (OperationPlan *o, const Load *r, LoadPlan *lp)
 }
 
 
-void LoadPlan::update()
+DECLARE_EXPORT void LoadPlan::update()
 {
   // Update the timeline
   ld->getResource()->getLoadPlans().setQuantity(
@@ -79,7 +79,7 @@ void LoadPlan::update()
 }
 
 
-bool LoadPlan::check()
+DECLARE_EXPORT bool LoadPlan::check()
 {
   // 1. Quantity must match with the operationplan
   if (fabs((start_or_end==START ? ld->getUsageFactor() : - ld->getUsageFactor())

@@ -4,7 +4,9 @@
     This test case tests the embedded python interpreter.
   </DESCRIPTION>
   <CURRENT>2007-01-01T00:00:00</CURRENT>
-  <COMMANDS VERBOSE="true" ABORTONERROR="false">
+  <COMMANDS>
+  	<VERBOSE>true</VERBOSE>
+  	<ABORTONERROR>false</ABORTONERROR>
     <COMMAND xsi:type="COMMAND_PYTHON" FILENAME="python.py"/>
     <COMMAND xsi:type="COMMAND_PYTHON" FILENAME="nowheretobefound.py"/>
     <COMMAND xsi:type="COMMAND_PYTHON">
@@ -25,11 +27,11 @@ print '2. calling a function:', my_function(myvariable)
 ]]>
       </CMDLINE>
     </COMMAND>
-    <!-- 
+    <!--
     In the next steps we are comparing the speed of 3 types of APIs each
     achieving eaxactly the same final result:
      1) Frepple C++ to read a XML-datafile
-     2) Python to read a CSV-datafile, which is reformatted into XML and 
+     2) Python to read a CSV-datafile, which is reformatted into XML and
         passed to Frepple as a string
      3) Python to read a CSV-datafile, which then calls a special C++ function
         that creates the Frepple objects in the most direct way (i.e. no XML)
@@ -38,12 +40,12 @@ print '2. calling a function:', my_function(myvariable)
      2) 4.28 sec
      3) 1.69 sec
     These numbers are based on a file with 200000 items and 100 operations
-    to create. The test is running on a 3.2GHz Intel Pentium (R) dual core 
+    to create. The test is running on a 3.2GHz Intel Pentium (R) dual core
     Linux machine.
-    Conclusion: Overhead caused by the XML-processing is of the same order of 
-    magnitude as the overhead by the interpreted nature of Python. Both are 
+    Conclusion: Overhead caused by the XML-processing is of the same order of
+    magnitude as the overhead by the interpreted nature of Python. Both are
     considerable, but still acceptable for many applications.
-    Obviously a different test configuration will give different results. 
+    Obviously a different test configuration will give different results.
     E.g. running small messages rather than a huge data file...
     -->
     <COMMAND xsi:type="COMMAND_PYTHON">
@@ -122,6 +124,6 @@ print '5b. end sleep'
 -->
     <COMMAND xsi:type="COMMAND_SAVE">
       <FILENAME>output.1.xml</FILENAME>
-    </COMMAND>  
+    </COMMAND>
   </COMMANDS>
 </PLAN>

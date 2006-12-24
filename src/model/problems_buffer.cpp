@@ -33,7 +33,7 @@ namespace frepple
 {
 
 
-void Buffer::updateProblems()
+DECLARE_EXPORT void Buffer::updateProblems()
 {
   // Delete existing problems for this buffer
   Problem::clearProblems(*this);
@@ -132,7 +132,7 @@ void Buffer::updateProblems()
 
 
 
-string ProblemMaterialExcess::getDescription() const
+DECLARE_EXPORT string ProblemMaterialExcess::getDescription() const
 {
   ostringstream ch;
   ch << "Buffer '" << getBuffer() << "' has material excess of " << qty;
@@ -140,7 +140,7 @@ string ProblemMaterialExcess::getDescription() const
 }
 
 
-string ProblemMaterialShortage::getDescription() const
+DECLARE_EXPORT string ProblemMaterialShortage::getDescription() const
 {
   ostringstream ch;
   ch << "Buffer '" << getBuffer() << "' has material shortage of " << qty;

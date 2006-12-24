@@ -32,7 +32,7 @@ namespace frepple
 {
 
 
-void Operation::updateProblems()
+DECLARE_EXPORT void Operation::updateProblems()
 {
 	// Find all operationplans, and delegate the problem detection to them
   // @todo rework the operation problem detection to be based on the op class, 

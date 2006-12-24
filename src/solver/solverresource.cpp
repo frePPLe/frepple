@@ -38,7 +38,7 @@ namespace frepple
   * We can also not check one load after the other, because they need
   * simultaneous capacity.
   */
-void MRPSolver::solve(Resource* res, void* v)
+DECLARE_EXPORT void MRPSolver::solve(Resource* res, void* v)
 {
 
   MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
@@ -217,7 +217,7 @@ void MRPSolver::solve(Resource* res, void* v)
 }
 
 
-void MRPSolver::solve(ResourceInfinite* r, void* v)
+DECLARE_EXPORT void MRPSolver::solve(ResourceInfinite* r, void* v)
 {
   MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
 

@@ -39,7 +39,7 @@ namespace frepple
 template<class Buffer> DECLARE_EXPORT Tree HasName<Buffer>::st;
 
 
-void Buffer::setOnHand(float f)
+DECLARE_EXPORT void Buffer::setOnHand(float f)
 {
   // The dummy operation to model the inventory may need to be created
   Operation *o = Operation::find(INVENTORY_OPERATION);
@@ -89,7 +89,7 @@ void Buffer::setOnHand(float f)
 }
 
 
-double Buffer::getOnHand(Date d) const
+DECLARE_EXPORT double Buffer::getOnHand(Date d) const
 {
   double tmp(0.0);
   for(flowplanlist::const_iterator oo=flowplans.begin();
@@ -107,7 +107,7 @@ double Buffer::getOnHand(Date d) const
 }
 
 
-double Buffer::getOnHand(Date d1, Date d2, bool min) const
+DECLARE_EXPORT double Buffer::getOnHand(Date d1, Date d2, bool min) const
 {
   // Swap parameters if required
   if (d2 < d1)
@@ -152,7 +152,7 @@ double Buffer::getOnHand(Date d1, Date d2, bool min) const
 }
 
 
-void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
+DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -219,7 +219,7 @@ void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
 }
 
 
-void Buffer::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Buffer::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_flow)
       && pIn.getParentElement().isA(Tags::tag_flows))
@@ -246,7 +246,7 @@ void Buffer::beginElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_producing))
   {
@@ -316,7 +316,7 @@ void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Buffer::setMinimum(const CalendarFloat *cal)
+DECLARE_EXPORT void Buffer::setMinimum(const CalendarFloat *cal)
 {
   // Resetting the same calendar
   if (min_cal == cal) return;
@@ -355,7 +355,7 @@ void Buffer::setMinimum(const CalendarFloat *cal)
 }
 
 
-void Buffer::setMaximum(const CalendarFloat *cal)
+DECLARE_EXPORT void Buffer::setMaximum(const CalendarFloat *cal)
 {
   // Resetting the same calendar
   if (max_cal == cal) return;
@@ -394,7 +394,7 @@ void Buffer::setMaximum(const CalendarFloat *cal)
 }
 
 
-void Buffer::deleteOperationPlans(bool deleteLocked)
+DECLARE_EXPORT void Buffer::deleteOperationPlans(bool deleteLocked)
 {
   // Delete the operationplans
   for(flowlist::iterator i=flows.begin(); i!=flows.end(); ++i)
@@ -405,7 +405,7 @@ void Buffer::deleteOperationPlans(bool deleteLocked)
 }
 
 
-Buffer::~Buffer()
+DECLARE_EXPORT Buffer::~Buffer()
 {
   // Delete all operationplans.
   // An alternative logic would be to delete only the flowplans for this
@@ -422,7 +422,7 @@ Buffer::~Buffer()
 }
 
 
-void BufferInfinite::writeElement
+DECLARE_EXPORT void BufferInfinite::writeElement
   (XMLOutput *o, const XMLtag &tag, mode m) const
 {
   // Writing a reference
@@ -443,7 +443,7 @@ void BufferInfinite::writeElement
 
 
 
-void BufferMinMax::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
+DECLARE_EXPORT void BufferMinMax::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)

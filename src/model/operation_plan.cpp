@@ -48,7 +48,7 @@ void OperationPlan::setChanged(bool b)
 }
 
 
-Object* OperationPlan::createOperationPlan
+DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   (const MetaCategory& cat, const XMLInput& in)
 {
 	// Pick up the action attribute
@@ -279,7 +279,7 @@ void OperationPlan::initialize()
 }
 
 
-void OperationPlan::createFlowLoads()
+DECLARE_EXPORT void OperationPlan::createFlowLoads()
 {
   // Has been initialized already, it seems
   if (firstflowplan || firstloadplan) return;
@@ -296,7 +296,7 @@ void OperationPlan::createFlowLoads()
 }
 
 
-OperationPlan::~OperationPlan()
+DECLARE_EXPORT OperationPlan::~OperationPlan()
 {
   // Delete the flowplans
   for(FlowPlanIterator e = beginFlowPlans(); e != endFlowPlans();)
@@ -365,7 +365,7 @@ void OperationPlan::setEnd (Date d)
 }
 
 
-void OperationPlan::setQuantity (float f, bool roundDown)
+DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown)
 {
   // No impact on locked operationplans
   if (getLocked()) return;
@@ -412,7 +412,7 @@ void OperationPlan::setQuantity (float f, bool roundDown)
 
 
 // @todo Investigate the interactions Flpln & oppln setEnd(getDates().getEnd());
-void OperationPlan::resizeFlowLoadPlans()
+DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 {
   // Update all flowplans
   for (FlowPlanIterator ee = beginFlowPlans(); ee != endFlowPlans(); ++ee)
@@ -433,7 +433,7 @@ void OperationPlan::resizeFlowLoadPlans()
 }
 
 
-void OperationPlan::update()
+DECLARE_EXPORT void OperationPlan::update()
 {
   // Update the flow and loadplans
   resizeFlowLoadPlans();
@@ -446,7 +446,7 @@ void OperationPlan::update()
 }
 
 
-void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
+DECLARE_EXPORT void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
 {
   if (!o) return;
   for (OperationPlan *opplan = o->opplan; opplan; )
@@ -564,7 +564,7 @@ void OperationPlan::endElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void OperationPlan::setDemand(Demand* l)
+DECLARE_EXPORT void OperationPlan::setDemand(Demand* l)
 {
   // No change
   if (l==lt) return;
@@ -578,7 +578,7 @@ void OperationPlan::setDemand(Demand* l)
 }
 
 
-bool OperationPlan::check()
+DECLARE_EXPORT bool OperationPlan::check()
 {
   bool okay = true;
 

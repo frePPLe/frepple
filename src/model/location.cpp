@@ -34,7 +34,7 @@ namespace frepple
 template<class Location> DECLARE_EXPORT Tree HasName<Location>::st;
 
 
-void Location::writeElement(XMLOutput* o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -53,20 +53,20 @@ void Location::writeElement(XMLOutput* o, const XMLtag& tag, mode m) const
 }
 
 
-void Location::beginElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Location::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   HasHierarchy<Location>::beginElement(pIn, pElement);
 }
 
 
-void Location::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Location::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   HasDescription::endElement(pIn, pElement);
   HasHierarchy<Location>::endElement(pIn, pElement);
 }
 
 
-Location::~Location()
+DECLARE_EXPORT Location::~Location()
 {
   // Remove all references from buffers to this location
   for (Buffer::iterator buf = Buffer::begin();

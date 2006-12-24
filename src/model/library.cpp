@@ -33,7 +33,7 @@ namespace frepple
 {
 
 // Command metadata
-const MetaClass CommandPlanSize::metadata,
+DECLARE_EXPORT const MetaClass CommandPlanSize::metadata,
   CommandCreateOperationPlan::metadata,
   CommandSolve::metadata,
   CommandReadXMLFile::metadata,
@@ -45,24 +45,24 @@ const MetaClass CommandPlanSize::metadata,
   CommandErase::metadata;
 
 // Solver metadata
-const MetaCategory Solver::metadata;
+DECLARE_EXPORT const MetaCategory Solver::metadata;
 
 // Load metadata
-const MetaCategory Load::metadata;
+DECLARE_EXPORT const MetaCategory Load::metadata;
 
 // Location metadata
-const MetaCategory Location::metadata;
-const MetaClass LocationDefault::metadata;
+DECLARE_EXPORT const MetaCategory Location::metadata;
+DECLARE_EXPORT const MetaClass LocationDefault::metadata;
 
 // Buffer metadata
-const MetaCategory Buffer::metadata;
-const MetaClass BufferDefault::metadata,
+DECLARE_EXPORT const MetaCategory Buffer::metadata;
+DECLARE_EXPORT const MetaClass BufferDefault::metadata,
   BufferInfinite::metadata,
   BufferMinMax::metadata;
 
 // Calendar metadata
-const MetaCategory Calendar::metadata;
-const MetaClass CalendarVoid::metadata,  
+DECLARE_EXPORT const MetaCategory Calendar::metadata;
+DECLARE_EXPORT const MetaClass CalendarVoid::metadata,  
   CalendarFloat::metadata,
   CalendarInt::metadata,
   CalendarBool::metadata,
@@ -70,44 +70,44 @@ const MetaClass CalendarVoid::metadata,
   CalendarOperation::metadata;
 
 // Flow metadata
-const MetaCategory Flow::metadata;
-const MetaClass FlowStart::metadata,
+DECLARE_EXPORT const MetaCategory Flow::metadata;
+DECLARE_EXPORT const MetaClass FlowStart::metadata,
   FlowEnd::metadata;
 
 // Operation metadata
-const MetaCategory Operation::metadata;
-const MetaClass OperationFixedTime::metadata,
+DECLARE_EXPORT const MetaCategory Operation::metadata;
+DECLARE_EXPORT const MetaClass OperationFixedTime::metadata,
   OperationTimePer::metadata,
   OperationRouting::metadata,
   OperationAlternate::metadata,
   OperationEffective::metadata;
 
 // OperationPlan metadata
-const MetaCategory OperationPlan::metadata;
+DECLARE_EXPORT const MetaCategory OperationPlan::metadata;
 
 // Resource metadats
-const MetaCategory Resource::metadata;
-const MetaClass ResourceDefault::metadata;
-const MetaClass ResourceInfinite::metadata;
+DECLARE_EXPORT const MetaCategory Resource::metadata;
+DECLARE_EXPORT const MetaClass ResourceDefault::metadata;
+DECLARE_EXPORT const MetaClass ResourceInfinite::metadata;
 
 // Item metadata
-const MetaCategory Item::metadata;
-const MetaClass ItemDefault::metadata;
+DECLARE_EXPORT const MetaCategory Item::metadata;
+DECLARE_EXPORT const MetaClass ItemDefault::metadata;
 
 // Customer metadata
-const MetaCategory Customer::metadata;
-const MetaClass CustomerDefault::metadata;
+DECLARE_EXPORT const MetaCategory Customer::metadata;
+DECLARE_EXPORT const MetaClass CustomerDefault::metadata;
 
 // Demand metadata
-const MetaCategory Demand::metadata;
-const MetaClass DemandDefault::metadata;
+DECLARE_EXPORT const MetaCategory Demand::metadata;
+DECLARE_EXPORT const MetaClass DemandDefault::metadata;
 
 // Plan metadata
-const MetaCategory Plan::metadata;
+DECLARE_EXPORT const MetaCategory Plan::metadata;
 
 // Problem metadata
-const MetaCategory Problem::metadata;
-const MetaClass ProblemMaterialExcess::metadata,
+DECLARE_EXPORT const MetaCategory Problem::metadata;
+DECLARE_EXPORT const MetaClass ProblemMaterialExcess::metadata,
   ProblemMaterialShortage::metadata,
   ProblemExcess::metadata,
   ProblemShort::metadata,

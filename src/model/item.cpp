@@ -34,7 +34,7 @@ namespace frepple
 template<class Item> DECLARE_EXPORT Tree HasName<Item>::st;
 
 
-Item::~Item()
+DECLARE_EXPORT Item::~Item()
 {
   // Remove references from the buffers
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
@@ -46,7 +46,7 @@ Item::~Item()
 }
 
 
-void Item::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Item::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -66,7 +66,7 @@ void Item::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 }
 
 
-void Item::beginElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Item::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn) );
@@ -75,7 +75,7 @@ void Item::beginElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Item::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Item::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_operation))
   {

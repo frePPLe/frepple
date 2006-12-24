@@ -32,7 +32,7 @@ namespace frepple
 {
 
 
-void Tree::clear()
+DECLARE_EXPORT void Tree::clear()
 {
   // Tree is already empty
   if (empty()) return;
@@ -375,7 +375,7 @@ void Tree::rotateRight(TreeNode* x)
 }
 
 
-void Tree::verify() const
+DECLARE_EXPORT void Tree::verify() const
 {  
   // Lock the tree
   LockManager::getManager().obtainReadLock(l);

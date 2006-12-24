@@ -32,7 +32,7 @@ namespace frepple
 {
 
 
-void Flow::validate(Action action)
+DECLARE_EXPORT void Flow::validate(Action action)
 {
   // Catch null operation and buffer pointers
   Operation* oper = getOperation();
@@ -96,7 +96,7 @@ void Flow::validate(Action action)
 }
 
 
-Flow::~Flow()
+DECLARE_EXPORT Flow::~Flow()
 {
   // Set a flag to make sure the level computation is triggered again
   HasLevel::triggerLazyRecomputation();
@@ -107,7 +107,7 @@ Flow::~Flow()
 }
 
 
-void Flow::writeElement (XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // If the flow has already been saved, no need to repeat it again
   // A 'reference' to a flow is not useful to be saved.
@@ -135,7 +135,7 @@ void Flow::writeElement (XMLOutput *o, const XMLtag& tag, mode m) const
 }
 
 
-void Flow::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Flow::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_buffer))
     pIn.readto( Buffer::reader(Buffer::metadata,pIn) );
@@ -144,7 +144,7 @@ void Flow::beginElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Flow::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_buffer))
   {
@@ -179,7 +179,7 @@ void Flow::endElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void FlowEnd::writeElement
+DECLARE_EXPORT void FlowEnd::writeElement
 (XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // If the flow has already been saved, no need to repeat it again

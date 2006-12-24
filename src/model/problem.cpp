@@ -48,7 +48,7 @@ bool Problem::operator < (const Problem& a) const
 }
 
 
-void Problem::addProblem()
+DECLARE_EXPORT void Problem::addProblem()
 {
   assert(owner);
   if ((owner->firstProblem && *this < *(owner->firstProblem))
@@ -74,7 +74,7 @@ void Problem::addProblem()
 }
 
 
-void Problem::removeProblem()
+DECLARE_EXPORT void Problem::removeProblem()
 {
   // Fast delete method: the code triggering this method is responsible of
   // maintaining the problem container
@@ -103,7 +103,7 @@ void Problem::removeProblem()
 }
 
 
-void Plannable::setDetectProblems(bool b)
+DECLARE_EXPORT void Plannable::setDetectProblems(bool b)
 {
   if (useProblemDetection && !b)
     // We are switching from 'yes' to 'no': delete all existing problems
@@ -157,7 +157,7 @@ DECLARE_EXPORT void Plannable::computeProblems()
 }
 
 
-void Plannable::writeElement (XMLOutput* o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Plannable::writeElement (XMLOutput* o, const XMLtag& tag, mode m) const
 {
   // We don't bother about the mode, since this method is only called from
   // within the writeElement() method of other classes.
@@ -167,7 +167,7 @@ void Plannable::writeElement (XMLOutput* o, const XMLtag& tag, mode m) const
 }
 
 
-void Plannable::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Plannable::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_detectproblems))
   {
@@ -177,7 +177,7 @@ void Plannable::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Problem::clearProblems()
+DECLARE_EXPORT void Problem::clearProblems()
 {
   // Loop through all entities, and call clearProblems(i)
   for (HasProblems::EntityIterator i = HasProblems::beginEntity(); 
@@ -189,7 +189,7 @@ void Problem::clearProblems()
 }
 
 
-void Problem::clearProblems(HasProblems& p, bool setchanged)
+DECLARE_EXPORT void Problem::clearProblems(HasProblems& p, bool setchanged)
 {
   // Nothing to do
   if (!p.firstProblem) return;

@@ -34,7 +34,7 @@ namespace frepple
 template<class Calendar> DECLARE_EXPORT Tree HasName<Calendar>::st;
 
 
-Calendar::~Calendar()
+DECLARE_EXPORT Calendar::~Calendar()
 {
   // De-allocate all the dynamic memory used for the bucket objects
   while (firstBucket) 
@@ -46,7 +46,7 @@ Calendar::~Calendar()
 }
 
 
-Calendar::Bucket* Calendar::addBucket (Date d)
+DECLARE_EXPORT Calendar::Bucket* Calendar::addBucket (Date d)
 {
   // Create new bucket and insert in the list
   Bucket *next = firstBucket, *prev = NULL;
@@ -92,7 +92,7 @@ Calendar::Bucket* Calendar::addBucket (Date d)
 }
 
 
-void Calendar::removeBucket(Calendar::Bucket* bkt)
+DECLARE_EXPORT void Calendar::removeBucket(Calendar::Bucket* bkt)
 {
   // Verify the bucket is on this calendar indeed
   Bucket *b = firstBucket;
@@ -122,7 +122,7 @@ void Calendar::removeBucket(Calendar::Bucket* bkt)
 }
 
 
-Calendar::Bucket* Calendar::findBucket(Date d) const
+DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d) const
 {
   for (Bucket *b = firstBucket; b; b = b->nextBucket)
     if (d <= b->enddate) return b;
@@ -130,7 +130,7 @@ Calendar::Bucket* Calendar::findBucket(Date d) const
 }
 
 
-int Calendar::findBucketIndex(Date d) const
+DECLARE_EXPORT int Calendar::findBucketIndex(Date d) const
 {
   int i = 1;
   for (Bucket *b = firstBucket; b; b = b->nextBucket)
@@ -142,7 +142,7 @@ int Calendar::findBucketIndex(Date d) const
 }
 
 
-Calendar::Bucket* Calendar::findBucket(const string& d) const
+DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(const string& d) const
 {
   for (Bucket *b = firstBucket; b; b = b->nextBucket)
     if (b->getName() == d) return b;
@@ -150,7 +150,7 @@ Calendar::Bucket* Calendar::findBucket(const string& d) const
 }
 
 
-void Calendar::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -176,7 +176,7 @@ void Calendar::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 }
 
 
-Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
+DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
 {
   // Pick up the start attribute
   char* start =
@@ -273,7 +273,7 @@ Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
 }
 
 
-void Calendar::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Calendar::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_bucket)
       && pIn.getParentElement().isA(Tags::tag_buckets))
@@ -282,7 +282,7 @@ void Calendar::beginElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Calendar::Bucket::writeElement
+DECLARE_EXPORT void Calendar::Bucket::writeElement
   (XMLOutput *o, const XMLtag& tag, mode m) const
 {
   assert(m == DEFAULT || m == FULL);
@@ -293,7 +293,7 @@ void Calendar::Bucket::writeElement
 }
 
 
-void Calendar::Bucket::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Calendar::Bucket::endElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_name))
     pElement >> nm;

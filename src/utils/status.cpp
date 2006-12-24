@@ -313,7 +313,7 @@ void XMLInput::warning(const SAXParseException& exception)
 }
 
 
-void XMLInput::readto(Object * pPI)
+DECLARE_EXPORT void XMLInput::readto(Object * pPI)
 {
   // Keep track of the tag where this object will end
   assert(numElements >= -1);
@@ -515,7 +515,7 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
 }
 
 
-string XMLOutput::XMLEscape(const char *p)
+DECLARE_EXPORT string XMLOutput::XMLEscape(const char *p)
 {
   string ret(p);
   for (string::size_type pos = ret.find_first_of("&<>\"\'", 0);
@@ -535,7 +535,7 @@ string XMLOutput::XMLEscape(const char *p)
 }
 
 
-void XMLOutput::incIndent()
+DECLARE_EXPORT void XMLOutput::incIndent()
 {
   indentstring[m_nIndent++] = '\t';
   if (m_nIndent > 40) m_nIndent = 40;
@@ -543,14 +543,14 @@ void XMLOutput::incIndent()
 }
 
 
-void XMLOutput::decIndent()
+DECLARE_EXPORT void XMLOutput::decIndent()
 {
   if (--m_nIndent < 0) m_nIndent = 0;
   indentstring[m_nIndent] = '\0';
 }
 
 
-void XMLOutput::writeElement
+DECLARE_EXPORT void XMLOutput::writeElement
   (const XMLtag& tag, const Object* object, mode m)
 {
   // Avoid NULL pointers and skip hidden objects
@@ -578,7 +578,7 @@ void XMLOutput::writeElement
 }
 
 
-void XMLOutput::writeElementWithHeader(const XMLtag& tag, const Object* object)
+DECLARE_EXPORT void XMLOutput::writeElementWithHeader(const XMLtag& tag, const Object* object)
 {
   // Root object can't be null...
   if (!object) 
@@ -608,7 +608,7 @@ void XMLOutput::writeElementWithHeader(const XMLtag& tag, const Object* object)
 }
 
 
-void XMLOutput::writeHeader(const XMLtag& tag)
+DECLARE_EXPORT void XMLOutput::writeHeader(const XMLtag& tag)
 {
   // There should not be any saved objects yet
   if (numObjects > 0)
@@ -625,7 +625,7 @@ void XMLOutput::writeHeader(const XMLtag& tag)
 }
 
 
-bool XMLElement::getBool() const
+DECLARE_EXPORT bool XMLElement::getBool() const
 {
   switch (getData()[0])
   {
@@ -642,7 +642,7 @@ bool XMLElement::getBool() const
 }
 
 
-string XMLElement::getName() const
+DECLARE_EXPORT string XMLElement::getName() const
 {
   XMLtag::tagtable::const_iterator i = XMLtag::getTags().find(m_dwTagHash);
   if (i == XMLtag::getTags().end()) 
@@ -651,7 +651,7 @@ string XMLElement::getName() const
 }
 
 
-void XMLElement::resolveEnvironment()
+DECLARE_EXPORT void XMLElement::resolveEnvironment()
 {
   for (string::size_type startpos = m_strData.find("${", 0);
        startpos < string::npos;
@@ -684,7 +684,7 @@ void XMLElement::resolveEnvironment()
 }
 
 
-XMLtag::XMLtag(string name) : strName(name)
+DECLARE_EXPORT XMLtag::XMLtag(string name) : strName(name)
 {
   // Error condition: name is empty
   if (name.empty()) throw LogicException("Creating XMLtag without name");
@@ -717,7 +717,7 @@ XMLtag::XMLtag(string name) : strName(name)
 }
 
 
-XMLtag::~XMLtag()
+DECLARE_EXPORT XMLtag::~XMLtag()
 {
   // Remove from the tag list
   tagtable::iterator i = getTags().find(dw);
@@ -729,7 +729,7 @@ XMLtag::~XMLtag()
 }
 
 
-const XMLtag& XMLtag::find(char const* name)
+DECLARE_EXPORT const XMLtag& XMLtag::find(char const* name)
 {
   tagtable::const_iterator i = getTags().find(hash(name));
   return *(i!=getTags().end() ? i->second : new XMLtag(name));
@@ -743,14 +743,14 @@ DECLARE_EXPORT XMLtag::tagtable& XMLtag::getTags()
 }
 
 
-void XMLtag::printTags()
+DECLARE_EXPORT void XMLtag::printTags()
 {
   for(tagtable::iterator i = getTags().begin(); i != getTags().end(); ++i)
     clog << i->second->getName() << "   " << i->second->dw << endl;
 }
 
 
-void XMLInput::executeCommands()
+DECLARE_EXPORT void XMLInput::executeCommands()
 {
   try { cmds.execute(); }
   catch (...)

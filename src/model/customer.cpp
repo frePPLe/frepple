@@ -34,7 +34,7 @@ namespace frepple
 template<class Customer> DECLARE_EXPORT Tree HasName<Customer>::st;
 
 
-void Customer::writeElement(XMLOutput* o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Customer::writeElement(XMLOutput* o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -53,20 +53,20 @@ void Customer::writeElement(XMLOutput* o, const XMLtag& tag, mode m) const
 }
 
 
-void Customer::beginElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Customer::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   HasHierarchy<Customer>::beginElement(pIn, pElement);
 }
 
 
-void Customer::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Customer::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   HasDescription::endElement(pIn, pElement);
   HasHierarchy<Customer>::endElement(pIn, pElement);
 }
 
 
-Customer::~Customer()
+DECLARE_EXPORT Customer::~Customer()
 {
   // Remove all references from demands to this customer
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)

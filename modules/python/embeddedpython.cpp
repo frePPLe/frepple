@@ -158,10 +158,10 @@ PyObject * CommandPython::python_version(PyObject *self, PyObject *args)
 PyObject * CommandPython::python_readXMLdata(PyObject *self, PyObject *args) 
 {    
   char *data;
-  int b1, b2;
-  int ok = PyArg_ParseTuple(args, "sii", &data, &b1, &b2);
+  int i1, i2;
+  int ok = PyArg_ParseTuple(args, "sii", &data, &i1, &i2);
   if (!ok) return NULL;
-  int i = FreppleWrapperReadXMLData(data,b1,b2);
+  int i(FreppleWrapperReadXMLData(data,i1!=0,i2!=0));
   return Py_BuildValue("i", i);
 }
 

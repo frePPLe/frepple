@@ -123,7 +123,7 @@ using namespace std;
 using namespace xercesc;
 
 #undef DECLARE_EXPORT
-#if defined(WIN32) && !defined(STATIC) && !defined(DOXYGEN_SHOULD_SKIP_THIS)
+#if defined(WIN32) && !defined(DOXYGEN_SHOULD_SKIP_THIS)
   #ifdef FREPPLE_CORE
     #define DECLARE_EXPORT __declspec (dllexport)
   #else
@@ -843,6 +843,7 @@ class MetaCategory : public MetaClass
   friend class XMLInput;
   template<class T> friend class HasName;
   public:
+    static DECLARE_EXPORT int test;
     /** The name used to name a collection of objects of this category. */
     string group;
 
@@ -2622,11 +2623,11 @@ class CommandIf : public Command
       * condition.<br>
       * Note that calling execute() before undo() isn't enforced. 
       */
-    void undo();
+    DECLARE_EXPORT void undo();
 
     /** Executes either the if- or the else-clause, depending on the 
       * condition. */
-    void execute();
+    DECLARE_EXPORT void execute();
 
     /** Returns a descriptive string. */
     string getDescription() const {return "Command if";}
@@ -2652,8 +2653,8 @@ class CommandIf : public Command
     virtual size_t getSize() const 
       {return sizeof(CommandIf) + condition.size();}
 
-    void beginElement(XMLInput&, XMLElement& pElement);
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void beginElement(XMLInput&, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
 };
 
 
@@ -2814,14 +2815,14 @@ class CommandList : public Command
       * actions have been committed or undone. If this is not the case a
       * warning will be printed.
       */
-    virtual ~CommandList();
+    virtual DECLARE_EXPORT ~CommandList();
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandList);}
 
-    void beginElement(XMLInput&, XMLElement& pElement);
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void beginElement(XMLInput&, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
 };
 
 
@@ -2863,9 +2864,9 @@ class CommandSystem : public Command
       * @exception RuntimeException Generated when the command can't be 
       *    launched, or when it's exit code is non-zero.
       */
-    void execute();
+    DECLARE_EXPORT void execute();
 
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const 
       {return "Run operating system command '" + cmdLine + "'";}
 
@@ -2911,9 +2912,9 @@ class CommandLoadLibrary : public Command
       * @exception RuntimeException When the library can't be loaded 
       *     or when the initialize() method doesn't exist in the library.
       */
-    void execute();
+    DECLARE_EXPORT void execute();
 
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
     string getDescription() const {return "Loading shared library " + lib;}
 
     virtual const MetaClass& getType() const {return metadata;}

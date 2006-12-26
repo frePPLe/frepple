@@ -15,7 +15,7 @@
 import sys, frepple
 myvariable = 4
 print '1. defining my variable:', myvariable
-print '1. frepple version:', frepple.version()
+print '1. frepple version:', frepple.version
 ]]>
       </CMDLINE>
     </COMMAND>

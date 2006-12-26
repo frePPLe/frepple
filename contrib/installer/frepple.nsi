@@ -113,7 +113,7 @@ Section "Application" SecAppl
 
   ; Copy application, dll and libraries
   File "..\bin\frepple_vcc.exe"
-  !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\bin\frepple_vcc.dll" "$INSTDIR\bin\frepple_vcc.dll" "$SYSDIR"
+  !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\bin\frepple.dll" "$INSTDIR\bin\frepple.dll" "$SYSDIR"
   File "..\bin\frepple_vcc.lib"
   File "..\bin\frepple_vcc.exp"
 

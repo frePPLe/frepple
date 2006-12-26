@@ -50,19 +50,9 @@ void usage()
     "  -validate -v  Validate the xml input for correctness.\n"
     "  -check -c     Only validate the input, without executing the content.\n"
     "  -? -h -help   Show these instructions.\n"
-#ifdef STATIC
-    "  -home {Dir}   Points to the directory where the frepple will pick up\n"
-    "                the schema file frepple.xsd and the initialization\n"
-    "                file init.xml.\n"
-    "                If the option is omitted frepple will locate these\n"
-    "                files from the directory pointed to by the environment\n"
-    "                variable FREPPLE_HOME.\n"
-    "                If both are missing a warning message is generated.\n"
-#else
     "\nEnvironment: The variable FREPPLE_HOME is required to point to a\n"
-    "               directory. The application will use the files init.xml\n"
-    "               and frepple.xsd from this directory.\n"
-#endif
+    "               directory. The application will use the files init.xml,\n"
+    "               frepple.xsd and module libraries from this directory.\n"
     "\nReturn codes: 0 when succesfull, non-zero in case of errors\n"
     "\nMore information on this program: http://frepple.sourceforge.net\n\n"
     << endl;
@@ -76,7 +66,6 @@ int main (int argc, char *argv[])
   bool validate = false;
   bool validate_only = false;
   bool input = false;
-  string home;
 
   try
   {
@@ -90,15 +79,6 @@ int main (int argc, char *argv[])
           validate = true;
         else if (!strcmp(argv[i],"-check") || !strcmp(argv[i],"-c"))
           validate_only = true;
-        else if (!strcmp(argv[i],"-home"))
-        {
-          if (i < argc - 1) home = argv[++i];
-          else
-          {
-            cout << "\nError: Option -home takes an extra parameter." << endl;
-            return EXIT_FAILURE;
-          }
-        }
         else
         {
           if (strcmp(argv[i],"-?")
@@ -116,7 +96,7 @@ int main (int argc, char *argv[])
         if (!input) 
         {
           // Initialize the library if this wasn't done before
-          FreppleInitialize(home.empty() ? NULL : home.c_str());
+          FreppleInitialize(NULL);
           input = true;
         }
         FreppleReadXMLFile(argv[i], validate, validate_only);
@@ -126,7 +106,7 @@ int main (int argc, char *argv[])
     // When no filenames are specified, we read the standard input
     if (!input) 
     {
-      FreppleInitialize(home.empty() ? NULL : home.c_str());
+      FreppleInitialize(NULL);
       FreppleReadXMLFile(NULL, validate, validate_only);
     }
   }

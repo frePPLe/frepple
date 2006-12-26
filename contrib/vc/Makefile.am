@@ -2,10 +2,10 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = frepple.sln README.txt model.vcproj utils.vcproj main.vcproj main_static.vcproj module_forecast.vcproj module_python.vcproj staticlib.vcproj solver.vcproj dll.vcproj swig.vcproj module_lp_solver.vcproj
+EXTRA_DIST = frepple.sln README.txt model.vcproj utils.vcproj main.vcproj module_forecast.vcproj module_python.vcproj solver.vcproj dll.vcproj swig.vcproj module_lp_solver.vcproj
 
 clean-local:
-	-rm -rf model erp utils module_forecast main main_static staticlib dll solver module_python module_lp_solver swig *.opt *.ncb
+	-rm -rf model erp utils module_forecast main dll solver module_python module_lp_solver swig *.opt *.ncb
 
 contrib:
 # Call the microsoft development environment from the command line

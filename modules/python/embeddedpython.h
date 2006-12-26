@@ -48,9 +48,18 @@
   *   </xsd:complexType>
   * </PRE>
   *
-  * The following Frepple functions are available from within Python.
-  * All of these are in the module frepple.
-  *   - version(): returns the version number of frepple
+  * The following Frepple functions are available from within Python.<br>
+  * All of these are in the module called frepple.
+  *   - <b>version</b>:<br> 
+  *     Returns the version number of frepple.
+  *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br> 
+  *     Processes an XML string passed as argument.
+  *   - <b>readXMLfile(string [,bool] [,bool])</b>:<br> 
+  *     Read an XML-file.
+  *   - <b>saveXMLfile(string)</b>:<br> 
+  *     Save the model to an XML-file.
+  *   - <b>createItem(string, string)</b>:<br>
+  *     Uses the C++ API to create an item and its delivery operation.
   */
 
 /* Python.h has to appear first */
@@ -123,6 +132,9 @@ class CommandPython : public Command
 
     void endElement(XMLInput& pIn, XMLElement& pElement);
 
+    /** Initiliazes the python interpreter. */
+    static void initialize();
+
   private:
     /** Python API: return a version string.<br>
       * No arguments required.
@@ -137,10 +149,30 @@ class CommandPython : public Command
     /** Python API: Create an item and a delivery operation. This function
       * directly interacts with the frepple C++ API, without passing through
       * XML.<br>
+      * This function is intended for experimental and demonstration purposes 
+      * only.<br>
       * Arguments: item name (string), operation name (string)
       */
     static PyObject *python_createItem(PyObject*, PyObject*);
 
+    /** Python API: read an xml file.<br>
+      * Arguments: data (string), validate (bool), checkOnly (bool)
+      */
+    static PyObject *python_readXMLfile(PyObject*, PyObject*);
+
+    /** Python API: save the model to a XML-file.<br>
+      * Arguments: filename (string)
+      */
+    static PyObject *python_saveXMLfile(PyObject*, PyObject*);
+
+    /** Python exception class matching with Frepple::LogicException. */
+    static PyObject* PythonLogicException;
+
+    /** Python exception class matching with Frepple::DataException. */
+    static PyObject* PythonDataException;
+
+    /** Python exception class matching with Frepple::RuntimeException. */
+    static PyObject* PythonRuntimeException;
 };
 
 }

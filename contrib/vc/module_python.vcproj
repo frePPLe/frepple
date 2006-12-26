@@ -77,16 +77,16 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="xerces-c_2.lib"
+				AdditionalDependencies="xerces-c_2.lib python25.lib"
 				OutputFile="../../bin/mod_python_debug.so"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\dll\Debug/frepple_vcc_debug.pdb"
+				ProgramDatabaseFile=".\module_python\Debug/module_python.pdb"
 				OptimizeReferences="1"
-				ImportLibrary="../../lib/module_python_vcc_debug.lib"
+				ImportLibrary="../../bin/module_python_vcc_debug.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -179,17 +179,21 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="xerces-c_2.lib"
+				AdditionalDependencies="xerces-c_2.lib python25.lib"
 				OutputFile="../../bin/mod_python.so"
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../src"
+				IgnoreAllDefaultLibraries="false"
 				ModuleDefinitionFile=""
 				DelayLoadDLLs=""
 				ProgramDatabaseFile=".\module_python\Release/module_python.pdb"
 				OptimizeReferences="2"
 				OptimizeForWindows98="1"
+				EntryPointSymbol=""
+				ResourceOnlyDLL="false"
+				SupportUnloadOfDelayLoadedDLL="false"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -253,9 +257,117 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="xerces-c_2.lib python25.lib"
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
 				OptimizeReferences="2"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="modules_debug|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			BuildLogFile=""
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\module_python\Release/module_python.tlb"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				InlineFunctionExpansion="2"
+				AdditionalIncludeDirectories="../../include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DLL_EXPORT;MT;_CRT_SECURE_NO_DEPRECATE"
+				StringPooling="true"
+				RuntimeLibrary="0"
+				EnableFunctionLevelLinking="true"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
+				UsePrecompiledHeader="0"
+				PrecompiledHeaderFile=".\module_python\Release/module_python.pch"
+				AssemblerListingLocation=".\module_python\Release/"
+				ObjectFile=".\module_python\Release/"
+				ProgramDataBaseFileName=".\module_python\Release/"
+				WarningLevel="3"
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="false"
+				CompileAs="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="0"
+				ResourceOutputFileName=""
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="xerces-c_2.lib python25.lib"
+				OutputFile="../../bin/mod_python.so"
+				Version="1.0"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="../../src"
+				IgnoreAllDefaultLibraries="false"
+				ModuleDefinitionFile=""
+				DelayLoadDLLs=""
+				ProgramDatabaseFile=".\module_python\Release/module_python.pdb"
+				OptimizeReferences="2"
+				OptimizeForWindows98="1"
+				EntryPointSymbol=""
+				ResourceOnlyDLL="false"
+				SupportUnloadOfDelayLoadedDLL="false"
 			/>
 			<Tool
 				Name="VCALinkTool"

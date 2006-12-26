@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\develop\frepple\include;C:\develop\packages\perl\lib\CORE"
+				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;MT;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -120,7 +120,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="C:\develop\frepple\include;C:\develop\packages\perl\lib\CORE"
+				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;MT;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -194,7 +194,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="C:\develop\frepple\include;C:\develop\packages\perl\lib\CORE"
+				AdditionalIncludeDirectories="..\..\include"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -207,6 +207,84 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="modules_debug|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
+			CharacterSet="2"
+			ManagedExtensions="0"
+			BuildLogFile=""
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;MT;_CRT_SECURE_NO_DEPRECATE"
+				MinimalRebuild="false"
+				RuntimeLibrary="0"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="perl58.lib xerces-c_2.lib"
+				OutputFile="$(OutDir)/frepple.dll"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="C:\develop\packages\perl\lib\CORE"
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -252,6 +330,14 @@
 						PreprocessorDefinitions="HAS_BOOL"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="modules_debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="HAS_BOOL"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -283,6 +369,16 @@
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Creating Perl wrapper interface (requires SWIG)"
+					CommandLine="echo In order to function correctly, please update the project properties to include the perl include and library directories&#x0D;&#x0A;swig -c++ -perl5 -outdir $(OutDir) -o $(OutDir)\wrapperl_perl.cpp $(InputPath)&#x0D;&#x0A;"
+					Outputs="$(ProjectDir)\swig\wrapperl_perl.cpp"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="modules_debug|Win32"
 				>
 				<Tool
 					Name="VCCustomBuildTool"

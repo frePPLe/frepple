@@ -4,7 +4,7 @@
     <VERBOSE>false</VERBOSE>
     <ABORTONERROR>false</ABORTONERROR>
     <COMMAND xsi:type="COMMAND_LOADLIB">
-      <FILENAME>${FREPPLE_HOME}/../modules/forecast/.libs/libmodforecast.so</FILENAME>
+      <FILENAME>mod_forecast.so</FILENAME>
     </COMMAND>
   </COMMANDS>
 </PLAN>

@@ -34,7 +34,7 @@
 // For a windows shared library we use the C calling convention: __stdcall.
 // Only such functions can be called from VBA...
 #undef DECLARE_EXPORT
-#if defined(WIN32) && !defined(STATIC) && !defined(DOXYGEN_SHOULD_SKIP_THIS)
+#if defined(WIN32) && !defined(DOXYGEN_SHOULD_SKIP_THIS)
   #ifdef FREPPLE_CORE
     #define DECLARE_EXPORT(type) __declspec (dllexport) type __stdcall
   #else

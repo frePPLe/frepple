@@ -32,7 +32,7 @@ using namespace frepple;
 #include <sys/stat.h>
 
 
-#if defined(WIN32) && !defined(STATIC)
+#if defined(WIN32)
 // This function is only applicable for the windows operating systems
 // and when it hasn't been explicitly disabled by setting the STATIC variable.
 #define WIN32_LEAN_AND_MEAN

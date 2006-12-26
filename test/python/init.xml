@@ -4,7 +4,7 @@
     <VERBOSE>false</VERBOSE>
     <ABORTONERROR>false</ABORTONERROR>
     <COMMAND xsi:type="COMMAND_LOADLIB">
-      <FILENAME>${FREPPLE_HOME}/../modules/python/.libs/libmodpython.so</FILENAME>
+      <FILENAME>mod_python.so</FILENAME>
     </COMMAND>
   </COMMANDS>
 </PLAN>

@@ -32,20 +32,26 @@ namespace module_python
 
 const MetaClass CommandPython::metadata;
 Mutex CommandPython::interpreterbusy;
+PyObject* CommandPython::PythonLogicException;
+PyObject* CommandPython::PythonDataException;
+PyObject* CommandPython::PythonRuntimeException;
+
 
 // Define the methods to be exposed into Python
 PyMethodDef CommandPython::PythonAPI[] = 
 {
-  {"version", CommandPython::python_version, METH_NOARGS, 
-     "Prints the frepple version."},
   {"readXMLdata", CommandPython::python_readXMLdata, METH_VARARGS, 
      "Processes an XML string passed as argument."},
   {"createItem", CommandPython::python_createItem, METH_VARARGS, 
      "Uses the C++ API to create an item."},
+  {"readXMLfile", CommandPython::python_readXMLfile, METH_VARARGS, 
+     "Read an XML-file."},
+  {"saveXMLfile", CommandPython::python_saveXMLfile, METH_VARARGS, 
+     "Save the model to an XML-file."},
   {NULL, NULL, 0, NULL}
 };
 
-  
+
 MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
 {
   // Initialize only once
@@ -63,11 +69,37 @@ MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
     "COMMAND_PYTHON", 
     Object::createDefault<CommandPython>);
 
+  // Initialize the interpreter
+  CommandPython::initialize();
+}
+
+
+void CommandPython::initialize()
+{
   // Initialize the interpreter and the frepple module
   Py_InitializeEx(0);  // The arg 0 indicates that the interpreter doesn't 
                        // implement its own signal handler
-  Py_InitModule3
-    ("frepple", CommandPython::PythonAPI, "Acces to the frepple API");
+  PyObject* m = Py_InitModule3
+    ("frepple", CommandPython::PythonAPI, "Acces to the Frepple library");
+
+  // Define python exceptions
+  PythonLogicException = PyErr_NewException("frepple.LogicException", NULL, NULL);
+  Py_IncRef(PythonLogicException);
+  PyModule_AddObject(m, "LogicException", PythonLogicException);
+  PythonDataException = PyErr_NewException("frepple.DataException", NULL, NULL);
+  Py_IncRef(PythonDataException);
+  PyModule_AddObject(m, "DataException", PythonDataException);
+  PythonRuntimeException = PyErr_NewException("frepple.RuntimeException", NULL, NULL);
+  Py_IncRef(PythonRuntimeException);
+  PyModule_AddObject(m, "RuntimeException", PythonRuntimeException);
+
+  // Add a string constant for the version
+#ifdef VERSION
+  PyModule_AddStringConstant(m, "version", VERSION);
+#else
+  PyModule_AddStringConstant(m, "version", "unknown");
+#endif
+
 }
 
 
@@ -83,36 +115,45 @@ void CommandPython::execute()
   }
   Timer t;
 
-  // Execute the command
-  if (!cmd.empty())
+  // Evaluate data fields
+  string c;
+  if (!cmd.empty()) 
+    // A command to be executed.
+    c = cmd + "\n";  // Make sure last line is ended properly
+  else if (!filename.empty()) 
   {
-    ScopeMutexLock l(interpreterbusy);
-    cmd += "\n";  // Make sure last line is ended properly
-  	PyObject *m = PyImport_AddModule("__main__");
-	  if (!m) 
-      throw frepple::RuntimeException("Can't initialize Python interpreter");
-	  PyObject *d = PyModule_GetDict(m);
-	  PyObject *v = PyRun_String(cmd.c_str(), Py_file_input, d, d);
-	  if (v == NULL) {
-		  PyErr_Print();
-      throw frepple::RuntimeException("Error executing python command");
-	  }
-	  Py_DECREF(v);
-	  if (Py_FlushLine()) PyErr_Clear();
-  } 
-  else if (!filename.empty())
-  {
-    ScopeMutexLock l(interpreterbusy);
-    FILE *fp = fopen(filename.c_str(), "r");
-    if(!fp)
-      throw frepple::RuntimeException
-        ("Can't open python file '" + filename + "'");
-    if(PyRun_SimpleFile(fp,filename.c_str()))
-      throw frepple::RuntimeException
-        ("Error executing python file '" + filename + "'");
+    // A file to be executed. 
+    // We build an equivalent python command rather than using the 
+    // PyRun_File function. On windows different versions of the 
+    // VC compiler have a different structure for FILE, thus making it
+    // impossible to use a lib compiled in version x when compiling under
+    // version y.  Quite ugly... :-( :-( :-(
+    c = filename;
+    for (string::size_type pos = c.find_first_of("'", 0);
+       pos < string::npos;
+       pos = c.find_first_of("'", pos))
+    {
+      c.replace(pos,1,"\\'",2); // Replacing ' with \'
+      pos+=2;
+    }
+    c = "execfile('" + c + "')\n";
   }
-  else
-    throw DataException("Python command without statement or filename");
+  else  throw DataException("Python command without statement or filename");
+
+
+  // Execute the command
+  ScopeMutexLock l(interpreterbusy);
+	PyObject *m = PyImport_AddModule("__main__");
+  if (!m) 
+    throw frepple::RuntimeException("Can't initialize Python interpreter");
+  PyObject *d = PyModule_GetDict(m);
+  PyObject *v = PyRun_String(c.c_str(), Py_file_input, d, d);
+  if (v == NULL) {
+	  PyErr_Print();
+    throw frepple::RuntimeException("Error executing python command");
+  }
+  Py_DECREF(v);
+  if (Py_FlushLine()) PyErr_Clear();
 
   // Log
   if (getVerbose()) clog << "Finished executing python at " 
@@ -145,28 +186,31 @@ void CommandPython::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-PyObject * CommandPython::python_version(PyObject *self, PyObject *args) 
+PyObject* CommandPython::python_readXMLdata(PyObject *self, PyObject *args) 
 {    
-#ifdef VERSION
-  return Py_BuildValue("s", VERSION);
-#else
-  return Py_BuildValue("s", "unknown");
-#endif
-}
-
-
-PyObject * CommandPython::python_readXMLdata(PyObject *self, PyObject *args) 
-{    
+  // Pick up arguments
   char *data;
-  int i1, i2;
-  int ok = PyArg_ParseTuple(args, "sii", &data, &i1, &i2);
+  int i1(1), i2(0);
+  int ok = PyArg_ParseTuple(args, "s|ii", &data, &i1, &i2);
   if (!ok) return NULL;
-  int i(FreppleWrapperReadXMLData(data,i1!=0,i2!=0));
-  return Py_BuildValue("i", i);
+
+  // Execute and catch exceptions
+  try 
+  { 
+    FreppleReadXMLData(data,i1!=0,i2!=0); 
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+  catch (LogicException e) {PyErr_SetString(PythonLogicException, e.what());}
+  catch (DataException e) {PyErr_SetString(PythonDataException, e.what());}
+  catch (frepple::RuntimeException e) {PyErr_SetString(PythonRuntimeException, e.what());}
+  catch (exception e) {PyErr_SetString(PythonRuntimeException, e.what());}
+  catch (...) {PyErr_SetString(PythonRuntimeException, "unknown type");}
+  return NULL;
 }
 
 
-PyObject * CommandPython::python_createItem(PyObject *self, PyObject *args) 
+PyObject* CommandPython::python_createItem(PyObject *self, PyObject *args) 
 {    
   // Pick up the arguments
   char *itemname;
@@ -184,5 +228,53 @@ PyObject * CommandPython::python_createItem(PyObject *self, PyObject *args)
   // Return code for Python
   return Py_BuildValue("i", it && op);
 }
+
+
+PyObject* CommandPython::python_readXMLfile(PyObject* self, PyObject* args)
+{
+  // Pick up arguments
+  char *data;
+  int i1(1), i2(0);
+  int ok = PyArg_ParseTuple(args, "s|ii", &data, &i1, &i2);
+  if (!ok) return NULL;
+
+  // Execute and catch exceptions
+  try 
+  { 
+    FreppleReadXMLFile(data,i1!=0,i2!=0); 
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+  catch (LogicException e) {PyErr_SetString(PythonLogicException, e.what());}
+  catch (DataException e) {PyErr_SetString(PythonDataException, e.what());}
+  catch (frepple::RuntimeException e) {PyErr_SetString(PythonRuntimeException, e.what());}
+  catch (exception e) {PyErr_SetString(PythonRuntimeException, e.what());}
+  catch (...) {PyErr_SetString(PythonRuntimeException, "unknown type");}
+  return NULL;
+}
+
+
+PyObject* CommandPython::python_saveXMLfile(PyObject* self, PyObject* args)
+{
+  // Pick up arguments
+  char *data;
+  int ok = PyArg_ParseTuple(args, "s", &data);
+  if (!ok) return NULL;
+
+  // Execute and catch exceptions
+  try 
+  { 
+    FreppleSaveFile(data); 
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+  catch (LogicException e) {PyErr_SetString(PythonLogicException, e.what());}
+  catch (DataException e) {PyErr_SetString(PythonDataException, e.what());}
+  catch (frepple::RuntimeException e) {PyErr_SetString(PythonRuntimeException, e.what());}
+  catch (exception e) {PyErr_SetString(PythonRuntimeException, e.what());}
+  catch (...) {PyErr_SetString(PythonRuntimeException, "unknown type");}
+  return NULL;
+}
+
 
 } // End namespace

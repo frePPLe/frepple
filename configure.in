@@ -37,10 +37,8 @@ AM_INIT_AUTOMAKE(frepple,0.2.0)
 #
 # Initilize libtool
 #
-#AC_DISABLE_SHARED
 AC_ENABLE_SHARED
-#AC_DISABLE_STATIC
-AC_ENABLE_STATIC
+AC_DISABLE_STATIC
 AC_GNU_SOURCE
 AC_LIBTOOL_WIN32_DLL
 AC_LIBTOOL_DLOPEN
@@ -308,12 +306,6 @@ else
   CXXFLAGS="-O3 -s $CXXFLAGS"
   AC_DEFINE([NDEBUG], [], [Disables assertions])
 fi ; fi ; fi
-if test x$enable_static = xyes
-then
-	AC_DEFINE([STATIC], [], [Use static linkage])
-else
-	AC_DEFINE([DLL_EXPORT], [], [Export windows symbols for a DLL])
-fi
 if test x$multithread = xtrue
 then
 	AC_DEFINE([MT], [], [My flag to mark multi-threaded builds])

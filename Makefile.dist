@@ -54,7 +54,6 @@ profile: prep configprofile clean build
 prep:
 	@echo
 	@echo "PHASE: Configuring GNU build tools..."
-#	libtoolize --copy --force --automake
 	aclocal
 	autoheader
 #
@@ -63,14 +62,22 @@ prep:
 #	automake --include-deps
 #
 # Use these option when automake versions are changing
-#	automake --add-missing --force-missing --copy
 	automake
+	autoconf
+
+prep_force:
+	@echo
+	@echo "PHASE: Configuring GNU build tools..."
+	aclocal
+	autoheader
+	libtoolize --copy --force --automake
+	automake --add-missing --force-missing --copy
 	autoconf
 
 config:
 	@echo
 	@echo "PHASE: Running configure for optimized build..."
-	./configure --enable-doc  --prefix=`pwd`/install-test --enable-shared 
+	./configure --enable-doc  --prefix=`pwd`/install-test --enable-shared
 #	 --disable-shared --disable-multithread
 
 configdebug:

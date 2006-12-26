@@ -17,7 +17,8 @@ the framework by a wide range of application and through a wide range of
 technologies is intended.</li>
 <li>All clients should normally access the library through the well-defined
 interface FreppleInterface.<br>This interface can then accessed with a wide
-range of technologies, as described below.</li>
+range of technologies, as described below.<br>
+</li>
 <li>The public interface is of the library is synchroneous, i.e. a client's
 function call returns only when the complete processing is finished.</li>
 <li>The interface can throw exceptions, and the client is responsible for
@@ -39,9 +40,10 @@ exit. The program returns an exit code reflecting any processing errors.</p>
 passed on the command line.</p>
 
 <H2>C++ library</H2>
-<p>The framework can be compiled into a shared or static library which you then
-link into your application. Use the header file plannerinterface.h for the
-interface declarations.</p>
+<p>Your application framework can be link with the Frepple shared library.
+Use the header file plannerinterface.h for the high-level interface
+declarations. Use header file frepple.h when you need low-level access
+to the framework for building extensions.</p>
 
 <H2>Access from java and scripting languages</H2>
 <p>The frepple functionality can be accessed from scripting
@@ -65,5 +67,11 @@ instance to live in.</p>
 <H2>Webservice, Corba server object, ...</H2>
 <p>More alternatives exist to access the Frepple functionality.</p>
 
+<H2>Scripting with embedded Python interpreter</H2>
+<p>Rather than letting your application access the Frepple framework, a
+different approach would be to customize and script your application in
+Frepple itself.<br>
+Frepple includes an embbedded Python interpreter that allows easy and
+flexible building of custom logic.</p>
 </body>
 </html>

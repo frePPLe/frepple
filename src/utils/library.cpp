@@ -285,9 +285,9 @@ DECLARE_EXPORT void MetaClass::printClasses()
     	j != i->second->classes.end(); 
       ++j)
         if (j->first == XMLtag::hash("DEFAULT"))
-          clog << "    DEFAULT ( = " << j->second->type << " )" <<endl;
+          clog << "    DEFAULT ( = " << j->second->type << " )" << j->second << endl;
         else
-          clog << "    " << j->second->type << endl;
+          clog << "    " << j->second->type << j->second << endl;
   }
 }
 

@@ -40,6 +40,7 @@
 namespace frepple
 {
 
+DECLARE_EXPORT int MetaCategory::test = 100;
 
 DECLARE_EXPORT bool Command::getVerbose() const
 {
@@ -353,7 +354,7 @@ unsigned __stdcall CommandList::wrapper(void *arg)
 }
 
 
-CommandList::~CommandList()
+DECLARE_EXPORT CommandList::~CommandList()
 {
   if (!firstCommand) return;
   clog << "Warning: Deleting an action list with actions that have"
@@ -367,7 +368,7 @@ CommandList::~CommandList()
 }
 
 
-void CommandList::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandList::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   // Replace environment variables with their value.
   pElement.resolveEnvironment();
@@ -390,7 +391,7 @@ void CommandList::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void CommandList::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandList::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_command))
     pIn.readto( MetaCategory::ControllerDefault(Command::metadata,pIn) );
@@ -402,7 +403,7 @@ void CommandList::beginElement (XMLInput& pIn, XMLElement& pElement)
 //
 
 
-void CommandSystem::execute()
+DECLARE_EXPORT void CommandSystem::execute()
 {
   // Log
   if (getVerbose())
@@ -423,7 +424,7 @@ void CommandSystem::execute()
 }
 
 
-void CommandSystem::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandSystem::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_cmdline))
     // No need to replace environment variables here. It's done at execution 
@@ -443,7 +444,7 @@ void CommandSystem::endElement(XMLInput& pIn, XMLElement& pElement)
 //
 
 
-void CommandLoadLibrary::execute()
+DECLARE_EXPORT void CommandLoadLibrary::execute()
 {
   // Type definition of the initialization function
   typedef void (*func)(const ParameterList&);
@@ -461,7 +462,8 @@ void CommandLoadLibrary::execute()
   // Load the library - The windows way
   // Change the error mode: we handle errors now, not the operating system
   UINT em = SetErrorMode(SEM_FAILCRITICALERRORS);
-  HINSTANCE handle = LoadLibrary(lib.c_str());
+  HINSTANCE handle = LoadLibraryEx(lib.c_str(),NULL,LOAD_WITH_ALTERED_SEARCH_PATH);
+  if (!handle) handle = LoadLibraryEx(lib.c_str(), NULL, 0);
   if (!handle) 
   {
     // Get the error description
@@ -519,7 +521,7 @@ void CommandLoadLibrary::execute()
 }
 
 
-void CommandLoadLibrary::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandLoadLibrary::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   // Replace environment variables with their value.
   pElement.resolveEnvironment();
@@ -558,7 +560,7 @@ void CommandLoadLibrary::endElement(XMLInput& pIn, XMLElement& pElement)
 //
 
 
-void CommandIf::execute()
+DECLARE_EXPORT void CommandIf::execute()
 {
   // Message
   if (getVerbose())
@@ -596,7 +598,7 @@ void CommandIf::execute()
 }
 
 
-void CommandIf::undo()
+DECLARE_EXPORT void CommandIf::undo()
 {
   if (thenCommand && elseCommand)
   {
@@ -615,14 +617,14 @@ void CommandIf::undo()
 }
 
 
-void CommandIf::beginElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandIf::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_then) || pElement.isA (Tags::tag_else))
     pIn.readto( MetaCategory::ControllerDefault(Command::metadata,pIn) );
 }
 
 
-void CommandIf::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandIf::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_condition))
     pElement >> condition;

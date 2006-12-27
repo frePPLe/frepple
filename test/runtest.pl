@@ -59,10 +59,16 @@ no strict 'refs';
 use warnings;
 
 use Cwd 'abs_path';
-use Env qw(EXECUTABLE FREPPLE_HOME);
+use Env qw(EXECUTABLE FREPPLE_HOME LD_LIBRARY_PATH LIBPATH SHLIB_PATH);
 
 # Set the variable FREPPLE_HOME
 $FREPPLE_HOME = abs_path("../bin") if (!$FREPPLE_HOME);
+
+# Update the search path for shared libraries, such that the modules
+# can be picked up. 
+$LD_LIBRARY_PATH = "$FREPPLE_HOME:$LD_LIBRARY_PATH"; # Linux, Solaris
+$LIBPATH = "$FREPPLE_HOME:$LIBPATH";  # AIX
+$SHLIB_PATH = "$FREPPLE_HOME:$SHLIB_PATH";  # HPUX
 
 # Executable to be used for the tests. Exported as an environment variable.
 # This default executable is the one valid  for GCC cygwin and GCC *nux builds.

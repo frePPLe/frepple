@@ -8,6 +8,7 @@ bin_PROGRAMS = frepple
 # output to the bin directory
 all-local: frepple$(EXEEXT)
 	cp frepple$(EXEEXT) ../bin
+	cp .libs/libfrepple.so* ../bin
 
 AM_CPPFLAGS=-I@top_builddir@/include
 

@@ -18,13 +18,18 @@ all-local: reference
 
 if DOC
 install-data-local:
-	$(mkinstalldirs) $(docdir)/reference
+	case $$prefix in \
+	    /usr*) docdir="/usr/share/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)";; \
+	    *) docdir="$(prefix)/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)";; \
+	esac; \
+	echo "installing documentation in $$docdir"; \
+	$(mkinstalldirs) $$docdir/reference; \
 	for p in $(EXTRA_DIST); do \
 	  if test -d $$p; \
-	   then $(INSTALL_DATA) -d $$p $(docdir)/$$p; \
-	        $(INSTALL_DATA) $$p/* $(docdir)/$$p; \
-	   else $(INSTALL_DATA) $$p $(docdir)/$$p; \
-    fi; \
+	  then $(mkinstalldirs) $$docdir/$$p; \
+	       $(INSTALL_DATA) $$p/* $$docdir/$$p; \
+	  else $(INSTALL_DATA) $$p $$docdir/$$p; \
+	  fi; \
 	done
 endif
 

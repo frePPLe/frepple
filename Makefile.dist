@@ -77,24 +77,24 @@ prep_force:
 config:
 	@echo
 	@echo "PHASE: Running configure for optimized build..."
-	./configure --enable-doc  --prefix=`pwd`/install-test --enable-shared
-#	 --disable-shared --disable-multithread
+	./configure --enable-doc  --prefix=`pwd`/install-test 
+#	  --disable-multithread
 
 configdebug:
 	@echo
 	@echo "PHASE: Running configure for debug build..."
-	./configure --disable-doc --enable-debug --prefix=`pwd`/install-test --enable-shared
+	./configure --disable-doc --enable-debug --prefix=`pwd`/install-test 
 # --disable-multithread
 
 configcoverage:
 	@echo
 	@echo "PHASE: Running configure for test coverage build..."
-	./configure --disable-doc --enable-coverage --disable-shared
+	./configure --disable-doc --enable-coverage 
 
 configprofile:
 	@echo
 	@echo "PHASE: Running configure for profiling build..."
-	./configure --disable-doc --enable-profile --disable-shared
+	./configure --disable-doc --enable-profile
 
 clean:
 	@echo

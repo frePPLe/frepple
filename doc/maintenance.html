@@ -110,10 +110,18 @@ you'ld need on top of a bare minimum Linux distribution.
 Issue the command '<i>make -f Makefile.dist prep</i>' to run the gnu autoconf
 suite.</li>
 <li>Issue the command '<i>./configure</i>' to specify the build options and detect
-the specifics of your platform.</br> Use the command './configure --help' to see
-the list of available options.</li>
+the specifics of your platform. Use the command './configure --help' to see
+the list of available options.<br>
+It is recommended to use the --prefix=&lt;dir&gt; configuration option to set 
+the installation directory. Installing Frepple in its own folder with normal user 
+permissions fits better with the typical usage. Only use the standard /usr or
+/usr/local installation prefixes if you are planning to link Frepple into your
+own application.
+</li>
 <li>Issue the command '<i>make all</i>' to compile the code.</li>
-<li>Issue the command '<i>make check</i>' to run the test suite.</li>
+<li>Issue the command '<i>make check</i>' to run the test suite. This is
+optional. Not all tests are currently passing, so you shouldn't be worried about
+a couple of failures.</li>
 <li>Issue the command '<i>make install</i>' to install the files.</li>
 <li>You can issue the command '<i>make clean</i>' to free the disk space used during
 the build and test phases.</li>

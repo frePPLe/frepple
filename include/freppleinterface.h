@@ -44,6 +44,9 @@
   #define DECLARE_EXPORT(type) type
 #endif
 
+/** This method returns a version string. */
+DECLARE_EXPORT(const char*) FreppleVersion();
+
 /** This function should be called once when the client application starts, 
   * and before calling any other function in the API.<br>
   * The parameter is a string with the name of the Frepple home directory.

@@ -77,19 +77,19 @@ prep_force:
 config:
 	@echo
 	@echo "PHASE: Running configure for optimized build..."
-	./configure --enable-doc  --prefix=`pwd`/install-test 
+	./configure --enable-doc  --prefix=`pwd`/install-test
 #	  --disable-multithread
 
 configdebug:
 	@echo
 	@echo "PHASE: Running configure for debug build..."
-	./configure --disable-doc --enable-debug --prefix=`pwd`/install-test 
+	./configure --disable-doc --enable-debug --prefix=`pwd`/install-test
 # --disable-multithread
 
 configcoverage:
 	@echo
 	@echo "PHASE: Running configure for test coverage build..."
-	./configure --disable-doc --enable-coverage 
+	./configure --disable-doc --enable-coverage
 
 configprofile:
 	@echo
@@ -143,7 +143,7 @@ new1 = 0
 new2 = 2
 new3 = 1
 set_release:
-	for i in "configure.in" "doc/menu.html" "contrib/installer/frepple.nsi" "contrib/rpm/frepple.spec"; do \
+	for i in "configure.in" "doc/menu.html" "contrib/installer/frepple.nsi" "contrib/rpm/frepple.spec" "include/frepple/utils.h"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)/$(new1).$(new2).$(new3)/g' $$i >out.tmp; \
 		mv out.tmp $$i; \
 	done

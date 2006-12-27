@@ -74,6 +74,9 @@ using namespace std;
 #undef PACKAGE_TARNAME
 #undef PACKAGE_VERSION
 #include <config.h>
+#else
+// Define the version for (windows) compilers that don't use autoconf
+#define PACKAGE_VERSION "0.2.0"
 #endif
 
 // Header for multithreading

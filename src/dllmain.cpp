@@ -67,6 +67,12 @@ BOOL APIENTRY DllMain(HANDLE hInst, DWORD ul_reason_for_call, LPVOID lpReserved)
 #endif
 
 
+DECLARE_EXPORT(const char*) FreppleVersion() 
+{ 
+  return PACKAGE_VERSION; 
+}
+
+
 DECLARE_EXPORT(void) FreppleInitialize(const char* h)
 {
   static bool initialized = false;

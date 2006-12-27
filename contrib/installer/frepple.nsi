@@ -118,13 +118,11 @@ Section "Application" SecAppl
   File "..\bin\frepple_vcc.exp"
 
   ; Copy modules
-  File "..\bin\mod_*.exp"
-  File "..\bin\mod_*.lib"
   File "..\bin\mod_*.so"
 
   ; Copy configuration files
-  File "bin\*.xsd"
-  File "bin\*.xml"
+  File "..\bin\*.xsd"
+  File "..\bin\init.xml"
 
   ; Add Xerces library
   !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "${XERCESPATH}\${XERCESDLL}" "$INSTDIR\bin\${XERCESDLL}" "$SYSDIR"

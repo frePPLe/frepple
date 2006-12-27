@@ -107,28 +107,28 @@ you'ld need on top of a bare minimum Linux distribution.
 <li>Change to the frepple installation directory.</li>
 <li>This step applies <b>only</b> when you build the project from the SVN repository
 (rather than a source tar file).<br>
-Issue the command '<i>make -f Makefile.dist prep</i>' to run the gnu autoconf
+Issue the command '<b>make -f Makefile.dist prep</b>' to run the gnu autoconf
 suite.</li>
-<li>Issue the command '<i>./configure</i>' to specify the build options and detect
-the specifics of your platform. Use the command './configure --help' to see
+<li>Issue the command '<b>./configure --prefix=&lt;dir&gt;</b>' to specify the build options
+and detect the specifics of your platform. Use the command './configure --help' to see
 the list of available options.<br>
-It is recommended to use the --prefix=&lt;dir&gt; configuration option to set 
-the installation directory. Installing Frepple in its own folder with normal user 
+It is <b>recommended</b> to use the --prefix=&lt;dir&gt; configuration option to set
+the installation directory. Installing Frepple in its own folder with normal user
 permissions fits better with the typical usage. Only use the standard /usr or
 /usr/local installation prefixes if you are planning to link Frepple into your
 own application.
 </li>
-<li>Issue the command '<i>make all</i>' to compile the code.</li>
-<li>Issue the command '<i>make check</i>' to run the test suite. This is
+<li>Issue the command '<b>make all</b>' to compile the code.</li>
+<li>Issue the command '<b>make check</b>' to run the test suite. This is
 optional. Not all tests are currently passing, so you shouldn't be worried about
 a couple of failures.</li>
-<li>Issue the command '<i>make install</i>' to install the files.</li>
-<li>You can issue the command '<i>make clean</i>' to free the disk space used during
+<li>Issue the command '<b>make install</b>' to install the files.</li>
+<li>You can issue the command '<b>make clean</b>' to free the disk space used during
 the build and test phases.</li>
 </ol>
 
 <h3><a name="cygwin"/>Build instructions on Windows using Cygwin compiler</h3>
-The build instructions on Cygwin are similar with the Linux and Unix platforms.
+The build instructions on Cygwin are identical to the Linux and Unix platforms.
 Cygwin does provide all the packages listed above (except the xerces-c version,
 which is older).<br>
 The Cygwin environment can be downloaded free of charge from the
@@ -139,9 +139,10 @@ previous xerces release in your cygwin director, download the source from the
 xerces web page and then follow the build instructions. (Hint: Use the
 following to configure the build:
   "./runConfigure -p cygwin -c gcc -x g++ -P /usr"<br>
-Compared to the other compilers for Windows the executables generated from the
-cygwin compiler are considerably slower. That's the price for an emulation
-layer...
+Compared to the other platforms and compilers, the Cygwin executable is considerably
+slower, breaks more often, take longer to compile, etc. That's the price for an emulation
+layer... As a result consider the Cygwin environment as a test environment for a *nix
+environment and not as a production system.<br>
 
 <h3><a name="bcc"/>Build instructions on Windows using Borland C++ compiler</h3>
 The Frepple source distribution comes with a Borland C++ compiler make file

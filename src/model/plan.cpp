@@ -152,13 +152,8 @@ DECLARE_EXPORT void Plan::setLogFile(string x)
     clog.rdbuf(log.rdbuf());
 
     // Print a nice header
-#ifdef VERSION
-    clog << "Start logging Frepple " << VERSION << " ("
+    clog << "Start logging Frepple " << PACKAGE_VERSION << " ("
       << __DATE__ << ") on " << Date::now() << endl;
-#else
-    clog << "Start logging Frepple (" << __DATE__
-      << ") on " << Date::now() << endl;
-#endif
 }
 
 

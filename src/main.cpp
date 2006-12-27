@@ -33,9 +33,7 @@ using namespace std;
 
 void usage()
 {
-#ifdef VERSION
-  cout << "\nFrepple v" << VERSION << "command line application\n";
-#endif
+  cout << "\nFrepple v" << FreppleVersion() << "command line application\n";
   cout << "\nUsage:\n"
     "  frepple [options] [files | directories]\n"
     "\nThis program reads xml input data, and executes the modeling and\n"

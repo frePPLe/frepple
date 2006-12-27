@@ -4,7 +4,7 @@
 
 SUBDIRS = src modules include test contrib bin doc
 
-EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README NEWS Makefile.am Makefile.dist 
+EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README NEWS Makefile.am Makefile.dist
 AUTOMAKE_OPTIONS = gnu
 
 .PHONY: $(.PHONY) contrib
@@ -17,14 +17,11 @@ clean-local:
 
 # Avoid packaging any subversion subdirectories that may be left over
 dist-hook:
-	-cd $(top_distdir); rm -rf `find . -name .svn -type d`
+	-cd $(top_distdir); \
+	rm -rf `find . -name .svn -type d`
 
 # Create an rpm distribution
 rpm:  dist
 	sudo cp frepple-$(VERSION).tar.gz /usr/src/redhat/SOURCES
 	sudo cp frepple.spec /usr/src/redhat/SPECS/frepple-$(VERSION).spec
 	sudo rpmbuild -ba /usr/src/redhat/SPECS/frepple-$(VERSION).spec
-#	cp /usr/src/redhat/RPMS/xxx .
-#	cp /usr/src/redhat/RPMS/xxx .
-
-	

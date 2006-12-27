@@ -94,11 +94,7 @@ void CommandPython::initialize()
   PyModule_AddObject(m, "RuntimeException", PythonRuntimeException);
 
   // Add a string constant for the version
-#ifdef VERSION
-  PyModule_AddStringConstant(m, "version", VERSION);
-#else
-  PyModule_AddStringConstant(m, "version", "unknown");
-#endif
+  PyModule_AddStringConstant(m, "version", PACKAGE_VERSION);
 
 }
 

@@ -79,7 +79,6 @@ read_csv_file_direct()
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="afterCSVDirectread.xml" />
     <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="aftererase3.xml" />
-<!--
     <COMMAND xsi:type="COMMAND_PYTHON">
       <CMDLINE>
 <![CDATA[
@@ -96,7 +95,7 @@ raise ValueError, "a message"
 ]]>
       </CMDLINE>
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_LIST" MAXPARALLEL="3">
+    <COMMAND xsi:type="COMMAND_LIST" MAXPARALLEL="4">
       <COMMAND xsi:type="COMMAND_PYTHON">
         <CMDLINE>
 <![CDATA[
@@ -118,10 +117,9 @@ print '5b. end sleep'
         </CMDLINE>
       </COMMAND>
       <COMMAND xsi:type="COMMAND_SYSTEM">
-        <CMDLINE>echo 5c. start sleep&amp;&amp;sleep 2&amp;&amp;echo 5c. after sleep</CMDLINE>
+        <CMDLINE>echo 5c. start sleep &amp;&amp; sleep 2&amp;&amp; echo 5c. after sleep</CMDLINE>
       </COMMAND>
     </COMMAND>
--->
     <COMMAND xsi:type="COMMAND_SAVE">
       <FILENAME>output.1.xml</FILENAME>
     </COMMAND>

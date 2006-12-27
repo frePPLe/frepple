@@ -79,10 +79,13 @@ void CommandPython::initialize()
   // Initialize the interpreter and the frepple module
   Py_InitializeEx(0);  // The arg 0 indicates that the interpreter doesn't 
                        // implement its own signal handler
+  PyEval_InitThreads();
   PyObject* m = Py_InitModule3
     ("frepple", CommandPython::PythonAPI, "Acces to the Frepple library");
+  if (!m)
+    throw frepple::RuntimeException("Can't initialize Python interpreter");
 
-  // Define python exceptions
+  // Create python exception types
   PythonLogicException = PyErr_NewException("frepple.LogicException", NULL, NULL);
   Py_IncRef(PythonLogicException);
   PyModule_AddObject(m, "LogicException", PythonLogicException);
@@ -95,7 +98,7 @@ void CommandPython::initialize()
 
   // Add a string constant for the version
   PyModule_AddStringConstant(m, "version", PACKAGE_VERSION);
-
+  PyEval_ReleaseLock();
 }
 
 
@@ -136,20 +139,35 @@ void CommandPython::execute()
   }
   else  throw DataException("Python command without statement or filename");
 
-
   // Execute the command
+  {
   ScopeMutexLock l(interpreterbusy);
-	PyObject *m = PyImport_AddModule("__main__");
+  PyEval_AcquireLock();
+  PyObject *m = PyImport_AddModule("__main__");
   if (!m) 
+  {
+    PyEval_ReleaseLock();
     throw frepple::RuntimeException("Can't initialize Python interpreter");
+  }
   PyObject *d = PyModule_GetDict(m);
+  if (!d) 
+  {
+    PyEval_ReleaseLock();
+    throw frepple::RuntimeException("Can't initialize Python interpreter");
+  }
+
+  // Execute the Python code
   PyObject *v = PyRun_String(c.c_str(), Py_file_input, d, d);
-  if (v == NULL) {
+  if (!v) 
+  {
 	  PyErr_Print();
-    throw frepple::RuntimeException("Error executing python command");
+    PyEval_ReleaseLock();
+    throw frepple::RuntimeException("Error executing python command"); // Leak python thread xxx
   }
   Py_DECREF(v);
   if (Py_FlushLine()) PyErr_Clear();
+  PyEval_ReleaseLock();
+  }
 
   // Log
   if (getVerbose()) clog << "Finished executing python at " 
@@ -191,18 +209,18 @@ PyObject* CommandPython::python_readXMLdata(PyObject *self, PyObject *args)
   if (!ok) return NULL;
 
   // Execute and catch exceptions
-  try 
-  { 
-    FreppleReadXMLData(data,i1!=0,i2!=0); 
-    Py_INCREF(Py_None);
-    return Py_None;
-  }
-  catch (LogicException e) {PyErr_SetString(PythonLogicException, e.what());}
-  catch (DataException e) {PyErr_SetString(PythonDataException, e.what());}
-  catch (frepple::RuntimeException e) {PyErr_SetString(PythonRuntimeException, e.what());}
-  catch (exception e) {PyErr_SetString(PythonRuntimeException, e.what());}
-  catch (...) {PyErr_SetString(PythonRuntimeException, "unknown type");}
-  return NULL;
+  bool okay = true;
+  Py_BEGIN_ALLOW_THREADS
+  try { FreppleReadXMLData(data,i1!=0,i2!=0); }
+  catch (LogicException e) {PyErr_SetString(PythonLogicException, e.what()); okay=false;}
+  catch (DataException e) {PyErr_SetString(PythonDataException, e.what()); okay=false;}
+  catch (frepple::RuntimeException e) {PyErr_SetString(PythonRuntimeException, e.what()); okay=false;}
+  catch (exception e) {PyErr_SetString(PythonRuntimeException, e.what()); okay=false;}
+  catch (...) {PyErr_SetString(PythonRuntimeException, "unknown type"); okay=false;}
+  Py_END_ALLOW_THREADS
+  if (!okay) return NULL;
+  Py_INCREF(Py_None);
+  return Py_None;
 }
 
 
@@ -235,18 +253,18 @@ PyObject* CommandPython::python_readXMLfile(PyObject* self, PyObject* args)
   if (!ok) return NULL;
 
   // Execute and catch exceptions
-  try 
-  { 
-    FreppleReadXMLFile(data,i1!=0,i2!=0); 
-    Py_INCREF(Py_None);
-    return Py_None;
-  }
-  catch (LogicException e) {PyErr_SetString(PythonLogicException, e.what());}
-  catch (DataException e) {PyErr_SetString(PythonDataException, e.what());}
-  catch (frepple::RuntimeException e) {PyErr_SetString(PythonRuntimeException, e.what());}
-  catch (exception e) {PyErr_SetString(PythonRuntimeException, e.what());}
-  catch (...) {PyErr_SetString(PythonRuntimeException, "unknown type");}
-  return NULL;
+  bool okay = true;
+  Py_BEGIN_ALLOW_THREADS
+  try { FreppleReadXMLFile(data,i1!=0,i2!=0); }
+  catch (LogicException e) {PyErr_SetString(PythonLogicException, e.what()); okay=false;}
+  catch (DataException e) {PyErr_SetString(PythonDataException, e.what()); okay=false;}
+  catch (frepple::RuntimeException e) {PyErr_SetString(PythonRuntimeException, e.what()); okay=false;}
+  catch (exception e) {PyErr_SetString(PythonRuntimeException, e.what()); okay=false;}
+  catch (...) {PyErr_SetString(PythonRuntimeException, "unknown type"); okay=false;}
+  Py_END_ALLOW_THREADS
+  if (!okay) return NULL;
+  Py_INCREF(Py_None);
+  return Py_None;
 }
 
 
@@ -258,18 +276,18 @@ PyObject* CommandPython::python_saveXMLfile(PyObject* self, PyObject* args)
   if (!ok) return NULL;
 
   // Execute and catch exceptions
-  try 
-  { 
-    FreppleSaveFile(data); 
-    Py_INCREF(Py_None);
-    return Py_None;
-  }
-  catch (LogicException e) {PyErr_SetString(PythonLogicException, e.what());}
-  catch (DataException e) {PyErr_SetString(PythonDataException, e.what());}
-  catch (frepple::RuntimeException e) {PyErr_SetString(PythonRuntimeException, e.what());}
-  catch (exception e) {PyErr_SetString(PythonRuntimeException, e.what());}
-  catch (...) {PyErr_SetString(PythonRuntimeException, "unknown type");}
-  return NULL;
+  bool okay = true;
+  Py_BEGIN_ALLOW_THREADS
+  try { FreppleSaveFile(data); }
+  catch (LogicException e) {PyErr_SetString(PythonLogicException, e.what()); okay=false;}
+  catch (DataException e) {PyErr_SetString(PythonDataException, e.what()); okay=false;}
+  catch (frepple::RuntimeException e) {PyErr_SetString(PythonRuntimeException, e.what()); okay=false;}
+  catch (exception e) {PyErr_SetString(PythonRuntimeException, e.what()); okay=false;}
+  catch (...) {PyErr_SetString(PythonRuntimeException, "unknown type"); okay=false;}
+  Py_END_ALLOW_THREADS
+  if (!okay) return NULL;
+  Py_INCREF(Py_None);
+  return Py_None;
 }
 
 

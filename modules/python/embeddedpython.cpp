@@ -31,10 +31,10 @@ namespace module_python
 {
 
 const MetaClass CommandPython::metadata;
-Mutex CommandPython::interpreterbusy;
-PyObject* CommandPython::PythonLogicException;
-PyObject* CommandPython::PythonDataException;
-PyObject* CommandPython::PythonRuntimeException;
+PyThreadState *CommandPython::mainThreadState = NULL;
+PyObject* CommandPython::PythonLogicException = NULL;
+PyObject* CommandPython::PythonDataException = NULL;
+PyObject* CommandPython::PythonRuntimeException = NULL;
 
 
 // Define the methods to be exposed into Python
@@ -79,26 +79,39 @@ void CommandPython::initialize()
   // Initialize the interpreter and the frepple module
   Py_InitializeEx(0);  // The arg 0 indicates that the interpreter doesn't 
                        // implement its own signal handler
-  PyEval_InitThreads();
+  PyEval_InitThreads();  // Initializes threads and captures global lock
   PyObject* m = Py_InitModule3
     ("frepple", CommandPython::PythonAPI, "Acces to the Frepple library");
   if (!m)
+  {
+    PyEval_ReleaseLock();
     throw frepple::RuntimeException("Can't initialize Python interpreter");
+  }
 
   // Create python exception types
+  int ok = 0;
   PythonLogicException = PyErr_NewException("frepple.LogicException", NULL, NULL);
   Py_IncRef(PythonLogicException);
-  PyModule_AddObject(m, "LogicException", PythonLogicException);
+  ok += PyModule_AddObject(m, "LogicException", PythonLogicException);
   PythonDataException = PyErr_NewException("frepple.DataException", NULL, NULL);
   Py_IncRef(PythonDataException);
-  PyModule_AddObject(m, "DataException", PythonDataException);
+  ok += PyModule_AddObject(m, "DataException", PythonDataException);
   PythonRuntimeException = PyErr_NewException("frepple.RuntimeException", NULL, NULL);
   Py_IncRef(PythonRuntimeException);
-  PyModule_AddObject(m, "RuntimeException", PythonRuntimeException);
+  ok += PyModule_AddObject(m, "RuntimeException", PythonRuntimeException);
 
   // Add a string constant for the version
-  PyModule_AddStringConstant(m, "version", PACKAGE_VERSION);
+  ok += PyModule_AddStringConstant(m, "version", PACKAGE_VERSION);
+
+  // Capture the main trhead state
+  mainThreadState = PyThreadState_Get();
+
+  // Release the lock
   PyEval_ReleaseLock();
+
+  // A final check...
+  if (!ok || !mainThreadState) 
+    throw frepple::RuntimeException("Can't initialize Python interpreter");
 }
 
 
@@ -137,21 +150,37 @@ void CommandPython::execute()
     }
     c = "execfile('" + c + "')\n";
   }
-  else  throw DataException("Python command without statement or filename");
+  else throw DataException("Python command without statement or filename");
+
+  // Get the global lock. 
+  // After this command we are the only thread executing Python code.
+  PyEval_AcquireLock();
+
+  // Initialize this thread for execution
+  PyInterpreterState *mainInterpreterState = mainThreadState->interp;
+  PyThreadState *myThreadState = PyThreadState_New(mainInterpreterState);
+  PyThreadState_Swap(myThreadState);
 
   // Execute the command
-  {
-  ScopeMutexLock l(interpreterbusy);
-  PyEval_AcquireLock();
   PyObject *m = PyImport_AddModule("__main__");
   if (!m) 
   {
+    // Clean up the thread
+    PyThreadState_Swap(NULL);
+    PyThreadState_Clear(myThreadState);
+    PyThreadState_Delete(myThreadState);
+    // Release the lock
     PyEval_ReleaseLock();
     throw frepple::RuntimeException("Can't initialize Python interpreter");
   }
   PyObject *d = PyModule_GetDict(m);
   if (!d) 
   {
+    // Clean up the thread
+    PyThreadState_Swap(NULL);
+    PyThreadState_Clear(myThreadState);
+    PyThreadState_Delete(myThreadState);
+    // Release the lock
     PyEval_ReleaseLock();
     throw frepple::RuntimeException("Can't initialize Python interpreter");
   }
@@ -160,14 +189,25 @@ void CommandPython::execute()
   PyObject *v = PyRun_String(c.c_str(), Py_file_input, d, d);
   if (!v) 
   {
+    // Print the error message
 	  PyErr_Print();
+    // Clean up the thread
+    PyThreadState_Swap(NULL);
+    PyThreadState_Clear(myThreadState);
+    PyThreadState_Delete(myThreadState);
+    // Release the lock
     PyEval_ReleaseLock();
-    throw frepple::RuntimeException("Error executing python command"); // Leak python thread xxx
+    throw frepple::RuntimeException("Error executing python command"); 
   }
   Py_DECREF(v);
   if (Py_FlushLine()) PyErr_Clear();
+  // Clean up the thread
+  PyThreadState_Swap(NULL);
+  PyThreadState_Clear(myThreadState);
+  PyThreadState_Delete(myThreadState);
+
+  // Release the lock. No more python calls now.
   PyEval_ReleaseLock();
-  }
 
   // Log
   if (getVerbose()) clog << "Finished executing python at " 
@@ -177,7 +217,6 @@ void CommandPython::execute()
 
 void CommandPython::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-
   if (pElement.isA(Tags::tag_cmdline))
   {
     // No replacement of environment variables here
@@ -209,16 +248,19 @@ PyObject* CommandPython::python_readXMLdata(PyObject *self, PyObject *args)
   if (!ok) return NULL;
 
   // Execute and catch exceptions
-  bool okay = true;
-  Py_BEGIN_ALLOW_THREADS
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try { FreppleReadXMLData(data,i1!=0,i2!=0); }
-  catch (LogicException e) {PyErr_SetString(PythonLogicException, e.what()); okay=false;}
-  catch (DataException e) {PyErr_SetString(PythonDataException, e.what()); okay=false;}
-  catch (frepple::RuntimeException e) {PyErr_SetString(PythonRuntimeException, e.what()); okay=false;}
-  catch (exception e) {PyErr_SetString(PythonRuntimeException, e.what()); okay=false;}
-  catch (...) {PyErr_SetString(PythonRuntimeException, "unknown type"); okay=false;}
-  Py_END_ALLOW_THREADS
-  if (!okay) return NULL;
+  catch (LogicException e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonLogicException, e.what()); return NULL;}
+  catch (DataException e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonDataException, e.what()); return NULL;}
+  catch (frepple::RuntimeException e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
+  catch (exception e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
+  catch (...) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, "unknown type"); return NULL;}
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   Py_INCREF(Py_None);
   return Py_None;
 }
@@ -253,16 +295,19 @@ PyObject* CommandPython::python_readXMLfile(PyObject* self, PyObject* args)
   if (!ok) return NULL;
 
   // Execute and catch exceptions
-  bool okay = true;
-  Py_BEGIN_ALLOW_THREADS
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try { FreppleReadXMLFile(data,i1!=0,i2!=0); }
-  catch (LogicException e) {PyErr_SetString(PythonLogicException, e.what()); okay=false;}
-  catch (DataException e) {PyErr_SetString(PythonDataException, e.what()); okay=false;}
-  catch (frepple::RuntimeException e) {PyErr_SetString(PythonRuntimeException, e.what()); okay=false;}
-  catch (exception e) {PyErr_SetString(PythonRuntimeException, e.what()); okay=false;}
-  catch (...) {PyErr_SetString(PythonRuntimeException, "unknown type"); okay=false;}
-  Py_END_ALLOW_THREADS
-  if (!okay) return NULL;
+  catch (LogicException e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonLogicException, e.what()); return NULL;}
+  catch (DataException e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonDataException, e.what()); return NULL;}
+  catch (frepple::RuntimeException e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
+  catch (exception e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
+  catch (...) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, "unknown type"); return NULL;}
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   Py_INCREF(Py_None);
   return Py_None;
 }
@@ -276,16 +321,19 @@ PyObject* CommandPython::python_saveXMLfile(PyObject* self, PyObject* args)
   if (!ok) return NULL;
 
   // Execute and catch exceptions
-  bool okay = true;
-  Py_BEGIN_ALLOW_THREADS
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try { FreppleSaveFile(data); }
-  catch (LogicException e) {PyErr_SetString(PythonLogicException, e.what()); okay=false;}
-  catch (DataException e) {PyErr_SetString(PythonDataException, e.what()); okay=false;}
-  catch (frepple::RuntimeException e) {PyErr_SetString(PythonRuntimeException, e.what()); okay=false;}
-  catch (exception e) {PyErr_SetString(PythonRuntimeException, e.what()); okay=false;}
-  catch (...) {PyErr_SetString(PythonRuntimeException, "unknown type"); okay=false;}
-  Py_END_ALLOW_THREADS
-  if (!okay) return NULL;
+  catch (LogicException e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonLogicException, e.what()); return NULL;}
+  catch (DataException e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonDataException, e.what()); return NULL;}
+  catch (frepple::RuntimeException e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
+  catch (exception e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
+  catch (...) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, "unknown type"); return NULL;}
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   Py_INCREF(Py_None);
   return Py_None;
 }

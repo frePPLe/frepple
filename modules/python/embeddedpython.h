@@ -60,6 +60,11 @@
   *     Save the model to an XML-file.
   *   - <b>createItem(string, string)</b>:<br>
   *     Uses the C++ API to create an item and its delivery operation.
+  *
+  * A single interpreter is used throughout the lifetime of the 
+  * application.<br>
+  * The implementation is implemented in a thread-safe way.
+  * @see CommandPython
   */
 
 /* Python.h has to appear first */
@@ -75,19 +80,20 @@ namespace module_python
 
 
 /** This class embeds an interpreter for the Python language in Frepple.<br>
-  * The interpreter can execute generic script, and it also has (limited)
+  * The interpreter can execute generic scripts, and it also has (limited)
   * access to the frepple objects.<br>
-  * A single, global interpreter is used and only a single python command is
-  * allowed to run simultaneously. A global Python variable or function is 
-  * thus visible across multiple executions of a CommandPython.
+  * The interpreter is multi-threaded. Multiple python scripts can run in 
+  * parallel. Internally Python allows only one thread at a time to 
+  * execute and the interpreter switches between the active threads, i.e.
+  * a quite primitive threading model.<br> 
+  * Frepple uses a single global interpreter. A global Python variable or 
+  * function is thus visible across multiple executions of a CommandPython.
   */
 class CommandPython : public Command
 {
   private:
-    /** The interpreter is not thread-safe. We allow only a single python
-      * command to execute at the same time. 
-      */
-    static Mutex interpreterbusy;
+    /** This is the thread state of the main execution thread. */
+    static PyThreadState *mainThreadState;
 
     /** Command to be executed if the condition returns true. */
     string cmd;
@@ -95,11 +101,11 @@ class CommandPython : public Command
     /** Command to be executed if the condition returns false. */
     string filename;
 
-  public:
     /** A static array defining all methods that can be accessed from 
       * within Python. */
     static PyMethodDef PythonAPI[];
 
+  public:
     /** Executes either the if- or the else-clause, depending on the 
       * condition. */
     void execute();
@@ -108,7 +114,7 @@ class CommandPython : public Command
     string getDescription() const {return "Python interpreter";}
 
     /** Default constructor. */
-    explicit CommandPython() {}
+    explicit CommandPython()  {}
 
     /** Destructor. */
     virtual ~CommandPython() {}

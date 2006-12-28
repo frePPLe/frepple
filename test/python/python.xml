@@ -90,8 +90,8 @@ wrong
     <COMMAND xsi:type="COMMAND_PYTHON">
       <CMDLINE>
 <![CDATA[
-print '4. raising an exception'
-raise ValueError, "a message"
+print '4. python catches exceptions thrown from the frepple C++ code'
+frepple.readXMLfile('nowheretobefound.xml')
 ]]>
       </CMDLINE>
     </COMMAND>
@@ -101,7 +101,7 @@ raise ValueError, "a message"
 <![CDATA[
 import time
 print '5a. start sleep'
-time.sleep(2)
+time.sleep(1)
 print '5a. end sleep'
 ]]>
         </CMDLINE>
@@ -111,7 +111,7 @@ print '5a. end sleep'
 <![CDATA[
 import time
 print '5b. start sleep'
-time.sleep(2)
+time.sleep(1)
 print '5b. end sleep'
 ]]>
         </CMDLINE>

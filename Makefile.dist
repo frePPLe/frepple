@@ -118,8 +118,13 @@ dist:
 
 # A simple way to get some code metrics
 stats:
-	#	c_count `find planner -name '*.cpp'` `find planner -name '*.h'`
-	wc -l `find src -name '*.cpp'` `find . -name '*.h' | grep -v config.h` | sort -n
+	wc -l `find src -name '*.cpp'` \
+		`find modules -name '*.cpp'` \
+		`find contrib -name '*.cpp'` \
+		`find src -name '*.h'` \
+		`find include -name '*.h'` \
+		`find contrib -name '*.h'` \
+		`find modules -name '*.h'` | grep -v config.h | sort -n
 
 # A simple way to list the todo items
 todo:

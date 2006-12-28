@@ -117,7 +117,7 @@ print '5b. end sleep'
         </CMDLINE>
       </COMMAND>
       <COMMAND xsi:type="COMMAND_SYSTEM">
-        <CMDLINE>echo 5c. start sleep &amp;&amp; sleep 2&amp;&amp; echo 5c. after sleep</CMDLINE>
+        <CMDLINE>echo 5c. start sleep &amp;&amp; sleep 1&amp;&amp; echo 5c. after sleep</CMDLINE>
       </COMMAND>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVE">

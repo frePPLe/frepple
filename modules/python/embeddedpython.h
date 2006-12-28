@@ -31,6 +31,10 @@
   * @namespace module_python
   * @brief An embedded interpreter for the Python language.
   *
+  * A single interpreter is used throughout the lifetime of the 
+  * application.<br>
+  * The implementation is implemented in a thread-safe way.
+  *
   * The XML schema extension enabled by this module is:
   * <PRE>
   *   <xsd:complexType name="COMMAND_PYTHON">
@@ -51,7 +55,7 @@
   * The following Frepple functions are available from within Python.<br>
   * All of these are in the module called frepple.
   *   - <b>version</b>:<br> 
-  *     Returns the version number of frepple.
+  *     A string variable with the version of frepple.
   *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br> 
   *     Processes an XML string passed as argument.
   *   - <b>readXMLfile(string [,bool] [,bool])</b>:<br> 
@@ -59,12 +63,8 @@
   *   - <b>saveXMLfile(string)</b>:<br> 
   *     Save the model to an XML-file.
   *   - <b>createItem(string, string)</b>:<br>
-  *     Uses the C++ API to create an item and its delivery operation.
-  *
-  * A single interpreter is used throughout the lifetime of the 
-  * application.<br>
-  * The implementation is implemented in a thread-safe way.
-  * @see CommandPython
+  *     Uses the C++ API to create an item and its delivery operation.<br>
+  *     For experimental purposes...
   */
 
 /* Python.h has to appear first */
@@ -114,12 +114,12 @@ class CommandPython : public Command
     string getDescription() const {return "Python interpreter";}
 
     /** Default constructor. */
-    explicit CommandPython()  {}
+    explicit CommandPython() {}
 
     /** Destructor. */
     virtual ~CommandPython() {}
 
-    /** Update the command line. */
+    /** Update the commandline field and clears the filename field. */
     void setCommandLine(string s) {cmd = s; filename.clear();}
 
     /** Return the command line. */
@@ -128,7 +128,7 @@ class CommandPython : public Command
     /** Return the filename. */
     string getFileName() {return filename;}
 
-    /** Update the filename. */
+    /** Update the filename field and clear the filename field. */
     void setFileName(string s) {filename = s; cmd.clear();}
 
     virtual const MetaClass& getType() const {return metadata;}
@@ -142,11 +142,6 @@ class CommandPython : public Command
     static void initialize();
 
   private:
-    /** Python API: return a version string.<br>
-      * No arguments required.
-      */
-    static PyObject *python_version(PyObject*, PyObject*);
-
     /** Python API: process an XML-formatted string.<br>
       * Arguments: data (string), validate (bool), checkOnly (bool)
       */

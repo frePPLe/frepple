@@ -97,9 +97,9 @@ ShowUnInstDetails show
 Section -Start
   ; Create a distribution and expand it
   !cd "../.."
-  !system "rm *.tar.gz"
-  !system "make dist"
-  !system "tar -xzf *.tar.gz"
+  !system "sh -c 'rm -f frepple-${PRODUCT_VERSION}.tar.gz frepple-${PRODUCT_VERSION}'"
+  !system "sh -c 'make dist'"
+  !system "sh -c 'tar -xzf frepple-${PRODUCT_VERSION}.tar.gz'"
   !cd "frepple-${PRODUCT_VERSION}"
   File "COPYING"
   File "README"

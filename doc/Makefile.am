@@ -1,5 +1,5 @@
 
-EXTRA_DIST = planner.doxyfile header.doxyfile favicon.ico tutorial *.html *.css *.pdf *.jpg *.gif *.bmp
+EXTRA_DIST = planner.doxyfile header.doxyfile favicon.ico *.html *.css *.pdf *.jpg *.gif *.bmp
 
 if DOC
 EXTRA_DIST += reference
@@ -7,7 +7,7 @@ reference: clean planner.doxyfile
 	-rm -rf reference planner.tags
 	export PACKAGE_VERSION=$(PACKAGE_VERSION); @DOXYGEN@ planner.doxyfile
 else
-reference: 
+reference:
 	-echo Skipping generation of documentation...
 endif
 

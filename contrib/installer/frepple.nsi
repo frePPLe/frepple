@@ -43,6 +43,9 @@
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
+; Select compressor
+SetCompressor /SOLID lzma
+
 ;Include for Modern UI and library installation
 !include "MUI.nsh"
 !include Library.nsh
@@ -95,16 +98,16 @@ ShowInstDetails show
 ShowUnInstDetails show
 
 Section -Start
-  ; Create a distribution and expand it
+  ; Create a distribution if none exists yet
   !cd "../.."
-  !system "sh -c 'rm -f frepple-${PRODUCT_VERSION}.tar.gz frepple-${PRODUCT_VERSION}'"
-  !system "sh -c 'make dist'"
-  !system "sh -c 'tar -xzf frepple-${PRODUCT_VERSION}.tar.gz'"
+  !system "bash -c 'if (test ! -f frepple-${PRODUCT_VERSION}.tar.gz ); then make dist; fi'"
+  ; Expand the distribution
+  !system "bash -c 'rm -rf frepple-${PRODUCT_VERSION}'"
+  !system "bash -c 'tar -xzf frepple-${PRODUCT_VERSION}.tar.gz'"
   !cd "frepple-${PRODUCT_VERSION}"
   File "COPYING"
   File "README"
 SectionEnd
-
 
 Section "Application" SecAppl
 	SectionIn RO     ; The app section can't be deselected
@@ -187,9 +190,9 @@ SectionEnd
 
 
 Section -Post
-  ; Clean up the distribution files
+  ; Clean up the distribution directory
   !cd ".."
-  !system "rm -rf frepple-*"
+  !system "sh -c 'rm -rf frepple-${PRODUCT_VERSION}'"
   ; Create uninstaller
   WriteUninstaller "$INSTDIR\uninst.exe"
   WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\bin\frepple_vcc.exe"

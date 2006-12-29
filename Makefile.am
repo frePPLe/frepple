@@ -17,8 +17,7 @@ clean-local:
 
 # Avoid packaging any subversion subdirectories that may be left over
 dist-hook:
-	-cd $(top_distdir); \
-	rm -rf `find . -name .svn -type d`
+	-rm -rf `find $(top_distdir) -name '.svn' -type d`
 
 # Create an rpm distribution
 rpm:  dist

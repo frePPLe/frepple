@@ -4,6 +4,11 @@
 
 sources = lpsolver.cpp lpsolver.h
 
+# Install the library in the bin directory.
+# Ain't standard practice, but in this way all binaries are consolidated in a
+# single directory.
+libdir = @bindir@
+
 EXTRA_DIST = $(sources) mod_lpsolver.xsd
 
 if LP
@@ -24,12 +29,15 @@ all-local:
 	$(STRIP) ../../bin/mod_lpsolver.so
 	cp mod_lpsolver.xsd ../../bin
 
+clean-local:
+	-rm -f ../../bin/mod_lpsolver.xsd
+	-rm -f ../../bin/mod_lpsolver.so
+
 install-exec-local:
-	cp .libs/mod_lpsolver.so $(bindir)
 	cp mod_lpsolver.xsd $(bindir)
 
 uninstall-local:
-	rm $(bindir)/mod_lpsolver.so
+	rm $(bindir)/mod_lpsolver.xsd
 
 endif
 

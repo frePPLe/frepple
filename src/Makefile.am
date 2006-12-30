@@ -4,6 +4,11 @@
 
 bin_PROGRAMS = frepple
 
+# Install the library in the bin directory. 
+# Ain't standard practice, but in this way all binaries are consolidated in a 
+# single directory.
+libdir = @bindir@
+
 # The local target builds the main executables first, and then copies the
 # output to the bin directory
 all-local: frepple$(EXEEXT)

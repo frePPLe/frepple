@@ -4,6 +4,11 @@
 
 sources = embeddedpython.cpp embeddedpython.h
 
+# Install the library in the bin directory.
+# Ain't standard practice, but in this way all binaries are consolidated in a
+# single directory.
+libdir = @bindir@
+
 EXTRA_DIST = $(sources) mod_python.xsd
 
 AM_CPPFLAGS=-I@top_builddir@/include -I/usr/include/python$(PYTHON_VERSION)
@@ -28,11 +33,14 @@ all-local:
 	$(STRIP) ../../bin/mod_python.so
 	cp mod_python.xsd ../../bin
 
+clean-local:
+	-rm -f ../../bin/mod_python.xsd
+	-rm -f ../../bin/mod_python.so
+
 install-exec-local:
-	cp .libs/mod_python.so $(bindir)
 	cp mod_python.xsd $(bindir)
 
 uninstall-local:
-	rm $(bindir)/mod_python.so
+	rm $(bindir)/mod_python.xsd
 
 endif

@@ -4,6 +4,11 @@
 
 sources = forecast.cpp forecast.h
 
+# Install the library in the bin directory.
+# Ain't standard practice, but in this way all binaries are consolidated in a
+# single directory.
+libdir = @bindir@
+
 AM_CPPFLAGS=-I@top_builddir@/include
 
 EXTRA_DIST = mod_forecast.xsd
@@ -26,9 +31,12 @@ all-local:
 	$(STRIP) ../../bin/mod_forecast.so
 	cp mod_forecast.xsd ../../bin
 
+clean-local:
+	-rm -f ../../bin/mod_forecast.xsd
+	-rm -f ../../bin/mod_forecast.so
+
 install-exec-local:
-	cp .libs/mod_forecast.so $(bindir)
 	cp mod_forecast.xsd $(bindir)
 
 uninstall-local:
-	rm $(bindir)/mod_forecast.so
+	rm $(bindir)/mod_forecast.xsd

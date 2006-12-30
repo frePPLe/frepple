@@ -34,7 +34,10 @@ install-data-local:
 endif
 
 uninstall-local:
-	rm -rf $(docdir)
+	case $$prefix in \
+	    /usr*) rm -rf "/usr/share/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)";; \
+	    *) rm -rf "$(prefix)/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)";; \
+	esac; 
 
 .PHONY: reference clean-local uninstall-local install-data-local all-local
 

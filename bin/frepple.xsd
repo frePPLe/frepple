@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
- file : $HeadUrl$
+ file : $URL$
  version : $LastChangedRevision$  $LastChangedBy$
  date : $LastChangedDate$
  email : jdetaeye@users.sourceforge.net
@@ -93,8 +93,8 @@
 	  For each module we want to use the extra schema definitions need to be included.
 	  Manually edit the section below.
 	-->
-	<xsd:include schemaLocation="mod_python.xsd" />
-	<xsd:include schemaLocation="mod_forecast.xsd" />
-	<xsd:include schemaLocation="mod_lpsolver.xsd" />
+	<!-- <xsd:include schemaLocation="mod_python.xsd" /> -->
+	<!-- <xsd:include schemaLocation="mod_forecast.xsd" /> -->
+	<!-- <xsd:include schemaLocation="mod_lpsolver.xsd" /> -->
 
 </xsd:schema>

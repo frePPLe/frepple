@@ -48,6 +48,20 @@
   *
   * The module uses the "Gnu Linear Programming Kit" library (aka GLPK) to
   * solve the LP model.
+  *
+  * The XML schema extension enabled by this module is (see mod_lpsolver.xsd):
+  * <PRE>
+  * <xsd:complexType name="SOLVER_LP">
+  *   <xsd:complexContent>
+  *     <xsd:extension base="SOLVER">
+  *       <xsd:choice minOccurs="0" maxOccurs="unbounded">
+  *         <xsd:element name="VERBOSE" type="xsd:boolean" />
+  *         <xsd:element name="CALENDAR" type="CALENDAR" />
+  *       </xsd:choice>
+  *     </xsd:extension>
+  *   </xsd:complexContent>
+  * </xsd:complexType>
+  * </PRE>
   */
   
 #include "frepple.h"
@@ -61,24 +75,10 @@ namespace module_lp_solver
 {
 
 /** This class is a prototype of an Linear Programming (LP) Solver for the
-  * planning problem or a subset of it. 
+  * planning problem or a subset of it.<br>
   * The class provides only a concept / prototype, and it is definately not
   * ready for full use in a production environment. It misses too much
   * functionality for this purpose.
-  *
-  * The XML schema extension enabled by this module is:
-  * <PRE>
-  * <xsd:complexType name="SOLVER_LP">
-  *   <xsd:complexContent>
-  *     <xsd:extension base="SOLVER">
-  *       <xsd:choice minOccurs="0" maxOccurs="unbounded">
-  *         <xsd:element name="VERBOSE" type="xsd:boolean" />
-  *         <xsd:element name="CALENDAR" type="CALENDAR" />
-  *       </xsd:choice>
-  *     </xsd:extension>
-  *   </xsd:complexContent>
-  * </xsd:complexType>
-  * </PRE>
   */
 class LPSolver : public Solver
 {

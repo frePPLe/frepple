@@ -4,7 +4,7 @@
 
 sources = lpsolver.cpp lpsolver.h
 
-EXTRA_DIST = $(sources)
+EXTRA_DIST = $(sources) mod_lpsolver.xsd
 
 if LP
 
@@ -18,12 +18,15 @@ else
 mod_lpsolver_la_LDFLAGS = -module -avoid-version
 endif
 
-all-local: 
+all-local:
+# not really portable, but does the job on linux
 	cp .libs/mod_lpsolver.so ../../bin
 	$(STRIP) ../../bin/mod_lpsolver.so
+	cp mod_lpsolver.xsd ../../bin
 
 install-exec-local:
 	cp .libs/mod_lpsolver.so $(bindir)
+	cp mod_lpsolver.xsd $(bindir)
 
 uninstall-local:
 	rm $(bindir)/mod_lpsolver.so

@@ -168,6 +168,11 @@ Section /O "Source code" SecSrc
   File /r "src"
 SectionEnd
 
+Section /O "Modules code" SecMod
+  SetOutPath "$INSTDIR"
+  File /r "modules"
+SectionEnd
+
 SubSectionEnd
 
 
@@ -212,7 +217,8 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecEx} "Installation of example datasets and tests"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDev} "Installation for development purposes"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecLib} "Header files and libraries"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSrc} "Installation of the complete source code"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSrc} "Installation of the core source code"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecMod} "Installation of the source code of optional modules"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContrib} "Installation of a number of optional add-ons and utilities"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 

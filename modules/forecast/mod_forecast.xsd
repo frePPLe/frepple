@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+  elementFormDefault="unqualified" attributeFormDefault="unqualified"
+  version="1.0">
+
+  <!-- Define the forecast type -->
+  <xsd:complexType name="DEMAND_FORECAST">
+    <xsd:complexContent>
+      <xsd:extension base="DEMAND">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="CALENDAR" type="CALENDAR" />
+          <xsd:element name="BUCKETS">
+            <xsd:complexType>
+              <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="BUCKET">
+                  <xsd:complexType>
+                    <xsd:all>
+                      <xsd:element name="QUANTITY" type="positiveFloat"
+                        minOccurs="0" />
+                      <xsd:element name="DUE" type="xsd:dateTime"
+                        minOccurs="0"/>
+                    </xsd:all>
+                    <xsd:attribute name="QUANTITY" type="positiveFloat" />
+                    <xsd:attribute name="DUE" type="xsd:dateTime" />
+                  </xsd:complexType>
+                </xsd:element>
+              </xsd:choice>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+</xsd:schema>

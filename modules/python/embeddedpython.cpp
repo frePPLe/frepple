@@ -89,28 +89,60 @@ void CommandPython::initialize()
   }
 
   // Create python exception types
-  int ok = 0;
+  int nok = 0;
   PythonLogicException = PyErr_NewException("frepple.LogicException", NULL, NULL);
   Py_IncRef(PythonLogicException);
-  ok += PyModule_AddObject(m, "LogicException", PythonLogicException);
+  nok += PyModule_AddObject(m, "LogicException", PythonLogicException);
   PythonDataException = PyErr_NewException("frepple.DataException", NULL, NULL);
   Py_IncRef(PythonDataException);
-  ok += PyModule_AddObject(m, "DataException", PythonDataException);
+  nok += PyModule_AddObject(m, "DataException", PythonDataException);
   PythonRuntimeException = PyErr_NewException("frepple.RuntimeException", NULL, NULL);
   Py_IncRef(PythonRuntimeException);
-  ok += PyModule_AddObject(m, "RuntimeException", PythonRuntimeException);
+  nok += PyModule_AddObject(m, "RuntimeException", PythonRuntimeException);
 
   // Add a string constant for the version
-  ok += PyModule_AddStringConstant(m, "version", PACKAGE_VERSION);
+  nok += PyModule_AddStringConstant(m, "version", PACKAGE_VERSION);
 
-  // Capture the main trhead state
+  // Capture the main trhead state, for use during threaded execution
   mainThreadState = PyThreadState_Get();
+
+  // Search and execute the initialization file '$FREPPLE_HOME/init.py'
+  string init = Environment::getHomeDirectory() + "init.py";
+  struct stat stat_p;
+  if (!nok && !stat(init.c_str(), &stat_p))
+  {
+    // Initialization file exists
+    PyObject *m = PyImport_AddModule("__main__");
+    if (!m) 
+    {
+      PyEval_ReleaseLock();
+      throw frepple::RuntimeException("Can't execute Python script 'init.py'");
+    }
+    PyObject *d = PyModule_GetDict(m);
+    if (!d) 
+    {
+      PyEval_ReleaseLock();
+      throw frepple::RuntimeException("Can't execute Python script 'init.py'");
+    }
+    init = "execfile('" + init + "')\n";
+    PyObject *v = PyRun_String(init.c_str(), Py_file_input, d, d);
+    if (!v) 
+    {
+      // Print the error message
+      PyErr_Print();
+      // Release the lock
+      PyEval_ReleaseLock();
+      throw frepple::RuntimeException("Error executing Python script 'init.py'"); 
+    }
+    Py_DECREF(v);
+    if (Py_FlushLine()) PyErr_Clear();
+  }
 
   // Release the lock
   PyEval_ReleaseLock();
 
   // A final check...
-  if (!ok || !mainThreadState) 
+  if (nok || !mainThreadState) 
     throw frepple::RuntimeException("Can't initialize Python interpreter");
 }
 
@@ -185,7 +217,8 @@ void CommandPython::execute()
     throw frepple::RuntimeException("Can't initialize Python interpreter");
   }
 
-  // Execute the Python code
+  // Execute the Python code. Note that during the call the python lock can be
+  // temporarily released.
   PyObject *v = PyRun_String(c.c_str(), Py_file_input, d, d);
   if (!v) 
   {
@@ -261,8 +294,8 @@ PyObject* CommandPython::python_readXMLdata(PyObject *self, PyObject *args)
   catch (...) 
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, "unknown type"); return NULL;}
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
-  Py_INCREF(Py_None);
-  return Py_None;
+  return Py_BuildValue("");  // Safer than using Py_None, which is not 
+                             // portable across compilers
 }
 
 
@@ -308,8 +341,7 @@ PyObject* CommandPython::python_readXMLfile(PyObject* self, PyObject* args)
   catch (...) 
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, "unknown type"); return NULL;}
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
-  Py_INCREF(Py_None);
-  return Py_None;
+  return Py_BuildValue("");
 }
 
 
@@ -334,8 +366,7 @@ PyObject* CommandPython::python_saveXMLfile(PyObject* self, PyObject* args)
   catch (...) 
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, "unknown type"); return NULL;}
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
-  Py_INCREF(Py_None);
-  return Py_None;
+  return Py_BuildValue("");
 }
 
 

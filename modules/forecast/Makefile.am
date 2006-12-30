@@ -6,24 +6,29 @@ sources = forecast.cpp forecast.h
 
 AM_CPPFLAGS=-I@top_builddir@/include
 
+EXTRA_DIST = mod_forecast.xsd
+
 CLEANFILES = *.gcda *.gcov *.gcno
 
 lib_LTLIBRARIES = mod_forecast.la
 mod_forecast_la_SOURCES = $(sources)
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
-mod_forecast_la_LDFLAGS = -module -no-undefined 
+mod_forecast_la_LDFLAGS = -module -no-undefined
 mod_forecast_la_LIBADD = ../../src/libfrepple.la
 else
 mod_forecast_la_LDFLAGS = -module -avoid-version
 endif
 
-all-local: 
-	cp .libs/mod_forecast.so ../../bin 
+all-local:
+# not really portable, but does the job on linux
+	cp .libs/mod_forecast.so ../../bin
 	$(STRIP) ../../bin/mod_forecast.so
+	cp mod_forecast.xsd ../../bin
 
 install-exec-local:
 	cp .libs/mod_forecast.so $(bindir)
+	cp mod_forecast.xsd $(bindir)
 
 uninstall-local:
 	rm $(bindir)/mod_forecast.so

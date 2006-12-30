@@ -1,10 +1,4 @@
 
-# Defining a function. The function is available during the complete
-# lifetime of the interpreter, which is not restricted to a single
-# command
-def my_function(x):
-	return x * x
-
 def read_csv_file():
   # This function reads a CSV-formatted file, creates an XML string and
   # then passes the string to Frepple for processing
@@ -22,7 +16,7 @@ def read_csv_file():
   return
 
 def read_csv_file_direct():
-  # This function reads a CSV file and calls a function that accesses the 
+  # This function reads a CSV file and calls a function that accesses the
   # Frepple C++ API directly, without passing through an XML format
   csvin = open('items.csv','r')
   try:
@@ -41,8 +35,8 @@ def create_files(cnt):
   try:
     xmlout.write('<?xml version="1.0" encoding="UTF-8" ?><PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n<ITEMS>\n')
     for i in range(cnt):
-      csvout.write('item%i,oper%i\n' % (i,i%100))      
-      xmlout.write('<ITEM NAME="item%i"><OPERATION NAME="oper%i"/></ITEM>\n' % (i,i%100)) 
+      csvout.write('item%i,oper%i\n' % (i,i%100))
+      xmlout.write('<ITEM NAME="item%i"><OPERATION NAME="oper%i"/></ITEM>\n' % (i,i%100))
     xmlout.write('</ITEMS>\n</PLAN>')
   finally:
     csvout.close()

@@ -7,18 +7,6 @@
   <xsd:include schemaLocation="../../bin/frepple.xsd" />
 
   <!-- And now define the new type -->
-  <xsd:complexType name="COMMAND_PYTHON">
-    <xsd:complexContent>
-      <xsd:extension base="COMMAND">
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="VERBOSE" type="xsd:boolean" />
-          <xsd:element name="CMDLINE" type="xsd:string" />
-          <xsd:element name="FILENAME" type="xsd:string" />
-        </xsd:choice>
-  			<xsd:attribute name="CMDLINE" type="xsd:string" />
-  			<xsd:attribute name="FILENAME" type="xsd:string" />
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
+  <xsd:include schemaLocation="../../modules/python/mod_python.xsd" />
 
 </xsd:schema>

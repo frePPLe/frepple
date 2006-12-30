@@ -33,9 +33,13 @@
   *
   * A single interpreter is used throughout the lifetime of the 
   * application.<br>
-  * The implementation is implemented in a thread-safe way.
+  * The implementation is implemented in a thread-safe way (within the
+  * limitations of the Python threading model, of course).<br>
+  * After loading, the module will check whether a file '$FREPPLE_HOME/init.py'
+  * exists and, if it does, will execute the statements in the file. In this 
+  * way a library of globally available functions can easily be initialized.
   *
-  * The XML schema extension enabled by this module is:
+  * The XML schema extension enabled by this module is (see mod_python.xsd):
   * <PRE>
   *   <xsd:complexType name="COMMAND_PYTHON">
   *     <xsd:complexContent>
@@ -67,7 +71,7 @@
   *     For experimental purposes...
   */
 
-/* Python.h has to appear first */
+/* Python.h has to be included first. */
 #include "Python.h"
 
 #include "frepple.h"

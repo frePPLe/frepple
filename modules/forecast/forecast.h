@@ -40,7 +40,7 @@
   *    The due date is aligned on the buckets of the forecast calendar.
   *  - The forecast nets the actual demands. As actual orders are  
   *
-  * The XML schema extension enabled by this module is:
+  * The XML schema extension enabled by this module is (see mod_forecast.xsd):
   * <PRE>
   * <xsd:complexType name="DEMAND_FORECAST">
   *   <xsd:complexContent>

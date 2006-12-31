@@ -59,10 +59,11 @@ no strict 'refs';
 use warnings;
 
 use Cwd 'abs_path';
-use Env qw(EXECUTABLE FREPPLE_HOME LD_LIBRARY_PATH LIBPATH SHLIB_PATH);
+use Env qw(EXECUTABLE FREPPLE_HOME LD_LIBRARY_PATH LIBPATH SHLIB_PATH PATH);
 
 # Set the variable FREPPLE_HOME
 $FREPPLE_HOME = abs_path("../bin") if (!$FREPPLE_HOME);
+my $originalHome = $FREPPLE_HOME;
 
 # Update the search path for shared libraries, such that the modules
 # can be picked up.
@@ -74,6 +75,9 @@ if ($LIBPATH) {$LIBPATH = "$FREPPLE_HOME:$LIBPATH";}
 else {$LIBPATH = "$FREPPLE_HOME";}
 # HPUX
 if ($SHLIB_PATH) {$SHLIB_PATH = "$FREPPLE_HOME:$SHLIB_PATH";}
+else {$SHLIB_PATH = "$FREPPLE_HOME";}
+# CYGWIN
+if ($PATH) {$PATH = "$FREPPLE_HOME:$PATH";}
 else {$SHLIB_PATH = "$FREPPLE_HOME";}
 
 # Executable to be used for the tests. Exported as an environment variable.
@@ -115,6 +119,7 @@ foreach (sort readdir DIR)
 	next if %tests && !exists $tests{$subdir};
 
 	# Determine type of test.
+	$FREPPLE_HOME = $originalHome;
 	my $type = 0;
 	if (-x "$subdir/$subdir" || -x "$subdir/$subdir.exe") {
 		# Type 1: (compiled) executable
@@ -202,10 +207,8 @@ sub test_type_3
   # This type of test enforces validation of the input data.
   # A new frepple home directory is specified when a file init.xml exists in
   # test subdirectory
-  my $oldhome = $FREPPLE_HOME;
   if (-r "init.xml") { $FREPPLE_HOME .= "/../test/$subdir"; }
   system "$EXECUTABLE -validate $subdir.xml";
-	$FREPPLE_HOME = $oldhome;
 
   # Planning failed or was aborted
   return if $? ne 0;

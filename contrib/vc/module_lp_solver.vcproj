@@ -398,10 +398,6 @@
 				RelativePath="..\..\modules\lp_solver\lpsolver.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\tags.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

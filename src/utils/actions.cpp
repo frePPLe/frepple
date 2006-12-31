@@ -40,7 +40,6 @@
 namespace frepple
 {
 
-DECLARE_EXPORT int MetaCategory::test = 100;
 
 DECLARE_EXPORT bool Command::getVerbose() const
 {

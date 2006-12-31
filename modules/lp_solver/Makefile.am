@@ -17,16 +17,16 @@ mod_lpsolver_la_SOURCES = $(sources)
 lib_LTLIBRARIES = mod_lpsolver.la
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
-mod_lpsolver_la_LDFLAGS = -module -no-undefined
+mod_lpsolver_la_LDFLAGS = -module -shrext .so -avoid-version -no-undefined
 mod_lpsolver_la_LIBADD = ../../src/libfrepple.la
 else
-mod_lpsolver_la_LDFLAGS = -module -avoid-version
+mod_lpsolver_la_LDFLAGS = -module -shrext .so -avoid-version
 endif
 
 all-local:
 # not really portable, but does the job on linux
-	cp .libs/mod_lpsolver.so ../../bin
-	$(STRIP) ../../bin/mod_lpsolver.so
+	-cp .libs/mod_lpsolver.so ../../bin
+	-$(STRIP) ../../bin/mod_lpsolver.so
 	cp mod_lpsolver.xsd ../../bin
 
 clean-local:

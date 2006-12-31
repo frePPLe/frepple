@@ -846,7 +846,6 @@ class MetaCategory : public MetaClass
   friend class XMLInput;
   template<class T> friend class HasName;
   public:
-    static DECLARE_EXPORT int test;
     /** The name used to name a collection of objects of this category. */
     string group;
 

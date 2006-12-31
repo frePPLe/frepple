@@ -21,16 +21,16 @@ lib_LTLIBRARIES = mod_python.la
 mod_python_la_SOURCES = $(sources)
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
-mod_python_la_LDFLAGS = -module -no-undefined
+mod_python_la_LDFLAGS = -module -shrext .so -avoid-version -no-undefined
 mod_python_la_LIBADD = ../../src/libfrepple.la
 else
-mod_python_la_LDFLAGS = -module -avoid-version
+mod_python_la_LDFLAGS = -module -shrext .so -avoid-version
 endif
 
 all-local:
 # not really portable, but does the job on linux
-	cp .libs/mod_python.so ../../bin
-	$(STRIP) ../../bin/mod_python.so
+	-cp .libs/mod_python.so ../../bin
+	-$(STRIP) ../../bin/mod_python.so
 	cp mod_python.xsd ../../bin
 
 clean-local:

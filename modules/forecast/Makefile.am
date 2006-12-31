@@ -19,16 +19,16 @@ lib_LTLIBRARIES = mod_forecast.la
 mod_forecast_la_SOURCES = $(sources)
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
-mod_forecast_la_LDFLAGS = -module -no-undefined
+mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version -no-undefined
 mod_forecast_la_LIBADD = ../../src/libfrepple.la
 else
-mod_forecast_la_LDFLAGS = -module -avoid-version
+mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version
 endif
 
 all-local:
 # not really portable, but does the job on linux
-	cp .libs/mod_forecast.so ../../bin
-	$(STRIP) ../../bin/mod_forecast.so
+	-cp .libs/mod_forecast.so ../../bin
+	-$(STRIP) ../../bin/mod_forecast.so
 	cp mod_forecast.xsd ../../bin
 
 clean-local:

@@ -249,7 +249,7 @@ class Calendar : public HasName<Calendar>, public Object
     BucketIterator endBuckets() const {return BucketIterator(NULL);}
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement&  pElement) {}
+    void endElement(XMLInput& pIn, XMLElement&  pElement) {}
     DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement&  pElement);
 
     virtual const MetaClass& getType() const {return metadata;}

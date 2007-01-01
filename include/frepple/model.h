@@ -967,9 +967,9 @@ class HasLevel
 };
 
 
-/** This class is used to associate buffers and resources with a physical
-  * location. This is useful for reporting but has no direct impact on the
-  * planning behavior of buffers or resources.
+/** This abstract class is used to associate buffers and resources with a 
+  * physical location. This is useful for reporting but has no direct impact 
+  * on the planning behavior.
   */
 class Location
   : public HasHierarchy<Location>, public HasDescription, public Object
@@ -985,6 +985,7 @@ class Location
 };
 
 
+/** This class implements the abstract Location class. */
 class LocationDefault : public Location
 {
   public:
@@ -996,7 +997,10 @@ class LocationDefault : public Location
 };
 
 
-/** This class represents customers, and link them to certain demands. */
+/** This abstracts class represents customers, and link them to certain 
+  * demands.<br> 
+  * There is no planning bheavior directly linked to customers.
+  */
 class Customer
   : public HasHierarchy<Customer>, public HasDescription, public Object
 {
@@ -1011,6 +1015,7 @@ class Customer
 };
 
 
+/** This class implements the abstract Customer class. */
 class CustomerDefault : public Customer
 {
   public:
@@ -1022,7 +1027,7 @@ class CustomerDefault : public Customer
 };
 
 
-/** This class represents an Operation. It's a pure virtual class. */
+/** This class represents an Operation. It's an abstract class. */
 class Operation : public HasName<Operation>,
   public HasLevel, public Plannable, public HasDescription
 {
@@ -1905,6 +1910,8 @@ class OperationRouting : public Operation
 };
 
 
+/** OperationPlans for routing operation uses this subclass for 
+  * the instances. */
 class OperationPlanRouting : public OperationPlan
 {
     friend class OperationRouting;
@@ -2299,6 +2306,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 };
 
 
+
+/** This class is the default implementation of the abstract Buffer class. */
 class BufferDefault : public Buffer
 {
   public:
@@ -2620,6 +2629,7 @@ class Resource : public HasHierarchy<Resource>,
 };
 
 
+/** This class is the default implementation of the abstract Resource class. */
 class ResourceDefault : public Resource
 {
   public:
@@ -2723,7 +2733,8 @@ private:
 
 
 /** An item defines the products being planned, sold, stored and/or
-  * manufactured. Buffers and demands have a reference an item.
+  * manufactured. Buffers and demands have a reference an item.<br>
+  * This is an abstract class.
   */
 class Item
   : public HasHierarchy<Item>, public HasDescription, public Object
@@ -2758,6 +2769,7 @@ class Item
 };
 
 
+/** This class is the default implementation of the abstract Item class. */
 class ItemDefault : public Item
 {
   public:
@@ -3197,8 +3209,9 @@ class CommandErase : public Command
 };
 
 
-/** Represents the (independent) demand in the system.<br>
-  * It can represent a customer order or a forecast.
+/** Represents the (independent) demand in the system. It can represent a 
+  * customer order or a forecast.<br>
+  * This is an abstract class.
   */
 class Demand
   : public HasHierarchy<Demand>, public Plannable, public HasDescription
@@ -3412,6 +3425,7 @@ class Demand
 };
 
 
+/** This class is the default implementation of the abstract Demand class. */
 class DemandDefault : public Demand
 {
   public:

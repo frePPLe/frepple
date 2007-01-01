@@ -4,4 +4,4 @@
 
 EXTRA_DIST = *.expect *.py python.xml frepple.xsd init.xml
 
-CLEANFILES = output.* item.* after*
+CLEANFILES = output.* items.* after*

@@ -3,8 +3,6 @@
   <COMMANDS>
     <VERBOSE>false</VERBOSE>
     <ABORTONERROR>false</ABORTONERROR>
-    <COMMAND xsi:type="COMMAND_LOADLIB">
-      <FILENAME>mod_forecast.so</FILENAME>
-    </COMMAND>
+    <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_forecast.so" />
   </COMMANDS>
 </PLAN>

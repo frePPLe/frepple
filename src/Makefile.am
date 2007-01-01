@@ -20,7 +20,12 @@ AM_CPPFLAGS=-I@top_builddir@/include
 # Shared library
 lib_LTLIBRARIES = libfrepple.la
 libfrepple_la_SOURCES = dllmain.cpp tags.cpp
+if CYGWIN
+# Cygwin doesn't like undefined symbols in a windows dll
+libfrepple_la_LDFLAGS = -version-info @LIBRARY_VERSION@ -no-undefined -Wl,--export-all-symbols
+else
 libfrepple_la_LDFLAGS = -version-info @LIBRARY_VERSION@ -no-undefined
+endif
 libfrepple_la_LIBADD = ./solver/libsolver.la ./model/libmodel.la ./utils/libutils.la
 
 # Dynamically linked executable

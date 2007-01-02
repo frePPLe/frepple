@@ -105,6 +105,7 @@ Section -Start
   !system "bash -c 'rm -rf frepple-${PRODUCT_VERSION}'"
   !system "bash -c 'tar -xzf frepple-${PRODUCT_VERSION}.tar.gz'"
   !cd "frepple-${PRODUCT_VERSION}"
+  SetOutPath "$INSTDIR"
   File "COPYING"
   File "README"
 SectionEnd

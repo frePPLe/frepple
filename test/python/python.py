@@ -2,29 +2,22 @@
 def read_csv_file():
   # This function reads a CSV-formatted file, creates an XML string and
   # then passes the string to Frepple for processing
-  csvin = open('items.csv','r')
-  try:
-    x = csvin.readlines()
-    for l in range(len(x)):
-      fields = x[l].strip().split(',')
-      x[l] = '<ITEM NAME="%s"><OPERATION NAME="%s"/></ITEM>' % (fields[0],fields[1])
-  finally:
-    csvin.close()
-  x.insert(0,'<?xml version="1.0" encoding="UTF-8" ?><PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n<ITEMS>')
+  import csv
+  csv.register_dialect('frepple', delimiter=',', quoting=csv.QUOTE_NONE)
+  x = [ '<?xml version="1.0" encoding="UTF-8" ?><PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n<ITEMS>' ]
+  for row in csv.reader(open("items.csv", "rb"), 'frepple'):
+    x.append('<ITEM NAME="%s"><OPERATION NAME="%s"/></ITEM>' % (row[0],row[1]))
   x.append('</ITEMS>\n</PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
   return
 
 def read_csv_file_direct():
   # This function reads a CSV file and calls a function that accesses the
-  # Frepple C++ API directly, without passing through an XML format
-  csvin = open('items.csv','r')
-  try:
-    for l in csvin.readlines():
-      fields = l.strip().split(',')
-      frepple.createItem(fields[0],fields[1])
-  finally:
-    csvin.close()
+  # Frepple C++ API directly, without an intermediate XML format.
+  import csv
+  csv.register_dialect('frepple', delimiter=',', quoting=csv.QUOTE_NONE)
+  for row in csv.reader(open("items.csv", "rb"), 'frepple'):
+    frepple.createItem(row[0],row[1])
   return
 
 def create_files(cnt):

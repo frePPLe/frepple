@@ -81,11 +81,11 @@ class LibraryModel
 };
 
 
-/** This is the class used to 1) represent varisables that are 
-  * varying over time, and 2) to divide a time horizon into 
+/** This is the class used to 1) represent varisables that are
+  * varying over time, and 2) to divide a time horizon into
   * multiple buckets.<br>
   * Some example usages for calendars:
-  *  - Defining weekly, monthly and quarterly buckets for 
+  *  - Defining weekly, monthly and quarterly buckets for
   *    reporting purposes.
   *  - A calendar defining the available capacity of a resource
   *    week by week.
@@ -100,7 +100,7 @@ class Calendar : public HasName<Calendar>, public Object
       * Manipulation of instances of this class need to be handled with the
       * methods on the friend class Calendar.
       * @see Calendar
-      */    
+      */
     class Bucket : public Object, public NonCopyable
     {
       friend class Calendar;
@@ -179,7 +179,7 @@ class Calendar : public HasName<Calendar>, public Object
     };
 
     /** Default constructor. */
-    Calendar(const string& n) : HasName<Calendar>(n), firstBucket(NULL) 
+    Calendar(const string& n) : HasName<Calendar>(n), firstBucket(NULL)
       { createNewBucket(Date()); }
 
     /** Destructor, which needs to clean up the buckets too. */
@@ -226,15 +226,15 @@ class Calendar : public HasName<Calendar>, public Object
         Bucket* curBucket;
       public:
         BucketIterator(Bucket* b) : curBucket(b) {}
-        bool operator != (const BucketIterator &b) const 
+        bool operator != (const BucketIterator &b) const
           {return b.curBucket != curBucket;}
-        bool operator == (const BucketIterator &b) const 
+        bool operator == (const BucketIterator &b) const
           {return b.curBucket == curBucket;}
-        BucketIterator& operator++() 
+        BucketIterator& operator++()
           { if (curBucket) curBucket = curBucket->nextBucket; return *this; }
         BucketIterator operator++(int)
           {BucketIterator tmp = *this; ++*this; return tmp;}
-        BucketIterator& operator--() 
+        BucketIterator& operator--()
           { if(curBucket) curBucket = curBucket->prevBucket; return *this; }
         BucketIterator operator--(int)
           {BucketIterator tmp = *this; --*this; return tmp;}
@@ -351,7 +351,7 @@ template <typename T> class CalendarValue : public Calendar
 
 /** This calendar type is used to store object pointers in its buckets.<br>
   * The template type must statisfy the following requirements:
-  *   - It must be a subclass of the Object class and implement the 
+  *   - It must be a subclass of the Object class and implement the
   *     beginElement(), writeElement() and endElement() as appropriate.
   *   - Implement a metadata data element
   * Subclasses will need to implement the getType() method.
@@ -967,8 +967,8 @@ class HasLevel
 };
 
 
-/** This abstract class is used to associate buffers and resources with a 
-  * physical location. This is useful for reporting but has no direct impact 
+/** This abstract class is used to associate buffers and resources with a
+  * physical location. This is useful for reporting but has no direct impact
   * on the planning behavior.
   */
 class Location
@@ -997,8 +997,8 @@ class LocationDefault : public Location
 };
 
 
-/** This abstracts class represents customers, and link them to certain 
-  * demands.<br> 
+/** This abstracts class represents customers, and link them to certain
+  * demands.<br>
   * There is no planning bheavior directly linked to customers.
   */
 class Customer
@@ -1046,39 +1046,39 @@ class Operation : public HasName<Operation>,
     /** Destructor. */
     virtual DECLARE_EXPORT ~Operation();
 
-    /** Returns the delay before this operation. 
-      * @see setPreTime 
+    /** Returns the delay before this operation.
+      * @see setPreTime
       */
     TimePeriod getPreTime() const {return pre_time;}
 
     /** Updates the delay before this operation.<br>
-      * This delay is a soft constraint. This means that solvers should try to 
+      * This delay is a soft constraint. This means that solvers should try to
       * respect this waiting time but can choose to leave a shorter time delay
       * if required.<br>
       * @see setPostTime
       */
     void setPreTime(TimePeriod t)
     {
-      if(t<TimePeriod(0L)) 
+      if(t<TimePeriod(0L))
         throw DataException("No negative pre-operation time allowed");
       pre_time=t;
       setChanged();
     }
 
-    /** Returns the delay after this operation. 
-      * @see setPostTime 
+    /** Returns the delay after this operation.
+      * @see setPostTime
       */
     TimePeriod getPostTime() const {return post_time;}
 
     /** Updates the delay after this operation.<br>
-      * This delay is a soft constraint. This means that solvers should try to 
+      * This delay is a soft constraint. This means that solvers should try to
       * respect this waiting time but can choose to leave a shorter time delay
       * if required.
       * @see setPreTime
       */
     void setPostTime(TimePeriod t)
     {
-      if(t<TimePeriod(0L)) 
+      if(t<TimePeriod(0L))
         throw DataException("No negative post-operation time allowed");
       post_time=t;
       setChanged();
@@ -1090,7 +1090,7 @@ class Operation : public HasName<Operation>,
     /** This is the factory method which creates all operationplans of the
       * operation. */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s,
-      Date e, Demand* l, bool updates_okay=true, OperationPlan* ow=NULL, 
+      Date e, Demand* l, bool updates_okay=true, OperationPlan* ow=NULL,
       unsigned long i=0, bool makeflowsloads=true) const;
 
     /** This method stores ALL logic the operation needs to compute the
@@ -1123,8 +1123,8 @@ class Operation : public HasName<Operation>,
       *    the constraints set by the operation. If required, some of the
       *    specified parameters may need to be violated. In case of such a
       *    violation we expect the operationplan quantity to be 0.
-      * 
-      * The pre- and post-operation times are NOT considered in this method. 
+      *
+      * The pre- and post-operation times are NOT considered in this method.
       * This method only enforces "hard" constraints. "Soft" constraints are
       * considered as 'hints' by the solver.
       *
@@ -1236,8 +1236,8 @@ class Operation : public HasName<Operation>,
     TimePeriod pre_time;
 
     /** Represents the release fence of this operation, i.e. a period of time
-      * (relative to the current date of the plan) in which normally no 
-      * operationplan is allowed to be created. 
+      * (relative to the current date of the plan) in which normally no
+      * operationplan is allowed to be created.
       */
     TimePeriod fence;
 
@@ -1286,15 +1286,15 @@ class OperationPlan
     typedef list<OperationPlan*> OperationPlanList;
 
     /** Returns a reference to the list of sub-operationplans.<br>
-      * Subclasses where multiple sub-operationplans exist must override this 
-      * method. 
+      * Subclasses where multiple sub-operationplans exist must override this
+      * method.
       * @see getSubOperationPlan
       */
-    virtual const OperationPlanList& getSubOperationPlans() 
+    virtual const OperationPlanList& getSubOperationPlans()
       {return nosubOperationPlans;}
 
     /** Returns a reference to the list of sub-operationplans.<br>
-      * Subclasses having only a single sub-operationplan must override this 
+      * Subclasses having only a single sub-operationplan must override this
       * method.
       * @see getSubOperationPlans
       */
@@ -1670,7 +1670,7 @@ class OperationPlan
       * @see Operation::createOperationPlan
       */
     OperationPlan() : owner(NULL), quantity(0.0), runupdate(false),
-      locked(false), lt(NULL), id(0), oper(NULL), firstflowplan(NULL), 
+      locked(false), lt(NULL), id(0), oper(NULL), firstflowplan(NULL),
       firstloadplan(NULL), prev(NULL), next(NULL) {}
 
   private:
@@ -1910,7 +1910,7 @@ class OperationRouting : public Operation
 };
 
 
-/** OperationPlans for routing operation uses this subclass for 
+/** OperationPlans for routing operation uses this subclass for
   * the instances. */
 class OperationPlanRouting : public OperationPlan
 {
@@ -2002,7 +2002,7 @@ class OperationAlternate : public Operation
       * operation.
       * @see Operation::createOperationPlan
       */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s, 
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s,
       Date e, Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
       unsigned long i = 0, bool makeflowsloads=true) const;
 
@@ -2104,8 +2104,8 @@ class OperationEffective : public Operation
       * operation.
       * @see Operation::createOperationPlan
       */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date, 
-      Date, Demand*, bool updates_okay=true, OperationPlan* = NULL, 
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
+      Date, Demand*, bool updates_okay=true, OperationPlan* = NULL,
       unsigned long i=0, bool makeflowsloads=true) const;
 
     /** A operation of this type enforces the following rules on its
@@ -2516,9 +2516,9 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     virtual ~FlowPlan()
       {fl->getBuffer()->setChanged(); fl->getBuffer()->flowplans.erase(this);}
 
-    /** Writing the element. 
+    /** Writing the element.
       * This method has the same prototype as a usual instance of the Object
-      * class, but this is only superficial: FlowPlan isn't a subclass of 
+      * class, but this is only superficial: FlowPlan isn't a subclass of
       * Object at all.
       */
     void DECLARE_EXPORT writeElement(XMLOutput*, const XMLtag&, mode =DEFAULT) const;
@@ -3022,13 +3022,16 @@ class CommandReadXMLString : public Command
 /** This command is used for reading XML input over an HTTP connection.<br>
   * The Xerces parser supports only the simplest possible setup: no proxy,
   * no caching, no ssl, no authentication, etc...<br>
-  * If you have a more complex setup, you'll need to use a sytem command to
-  * retrieve the data first with eg curl, wget, lynx, scp, ftp, sftp, 
-  * rsynch,... After the download read in the data file with a readXML 
-  * command.<br>
-  * The xerces 3.0 release will be able to use libcurl as the NetAccessor. 
-  * This will allow a much richer set of protocols to be supported. It also 
-  * means that in the meantime further development on this class simply 
+  * In more complex setup the following alternatives are available:
+  *  - Use a sytem command to retrieve the data first with eg a command line
+  *    utility such as curl, wget, lynx, rcp, scp, ftp, sftp, rsynch,...<br>
+  *    After the download read in the data file with a readXML command.
+  *  - Use the embedded Python interpreter and its rich library of
+  *    functionality to download the data.<br>
+  *    The test 'xml_remote' shows some simple code for this.
+  * The xerces 3.0 release will be able to use libcurl as the NetAccessor.
+  * This will allow a much richer set of protocols to be supported. It also
+  * means that in the meantime further development on this class simply
   * won't happen.
   */
 class CommandReadXMLURL : public Command
@@ -3083,7 +3086,7 @@ class CommandReadXMLURL : public Command
 
     /** If set to true the input data are validated against the schema, but the
       * contents isn't executed.<br>
-      * The default value is false. 
+      * The default value is false.
       */
     bool validate_only;
 };
@@ -3099,7 +3102,7 @@ class CommandReadXMLURL : public Command
 class CommandSave : public Command
 {
   public:
-    CommandSave(const string& v = "plan.out") 
+    CommandSave(const string& v = "plan.out")
       : filename(v), content(XMLOutput::STANDARD) {};
     virtual ~CommandSave() {};
     string getFileName() const {return filename;}
@@ -3111,7 +3114,7 @@ class CommandSave : public Command
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(CommandSave) 
+      {return sizeof(CommandSave)
         + filename.size() + headerstart.size() + headeratts.size();}
     XMLOutput::content_type getContent() const {return content;}
     void setContent(XMLOutput::content_type t) {content = t;}
@@ -3145,7 +3148,7 @@ class CommandSavePlan : public Command
       {return "saving the plan into text file '" + filename + "'";}
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(CommandSavePlan) + filename.size();}
   private:
     string filename;
@@ -3156,7 +3159,7 @@ class CommandSavePlan : public Command
   * to the standard output. This is useful for understanding better the size
   * of your model.<br>
   * The numbers reported by this function won't match the memory size as
-  * reported by the operating system, since the dynamically allocated memory 
+  * reported by the operating system, since the dynamically allocated memory
   * is only a part of the total memory used by a program.
   */
 class CommandPlanSize : public Command
@@ -3209,7 +3212,7 @@ class CommandErase : public Command
 };
 
 
-/** Represents the (independent) demand in the system. It can represent a 
+/** Represents the (independent) demand in the system. It can represent a
   * customer order or a forecast.<br>
   * This is an abstract class.
   */
@@ -4155,9 +4158,9 @@ class PeggingIterator
   public:
     /** Constructor. */
     PeggingIterator(const FlowPlan* e, bool b = true) : depth_then_width(b)
-    { 
-      if (e) 
-        stack.push(state(0,e->getQuantity()>0 ? e->getQuantity() : -e->getQuantity(),1,e)); 
+    {
+      if (e)
+        stack.push(state(0,e->getQuantity()>0 ? e->getQuantity() : -e->getQuantity(),1,e));
     }
 
     /** Returns a reference to the flowplan pointed to by the iterator. */
@@ -4167,7 +4170,7 @@ class PeggingIterator
     const FlowPlan* operator->() const {return stack.top().fl;}
 
     /** Returns the recursion depth of the iterator. The original flowplan
-      * is at level 0, and each level (either upstream or downstream) 
+      * is at level 0, and each level (either upstream or downstream)
       * increments the value by 1.
       */
     short getLevel() const {return stack.top().level;}
@@ -4177,11 +4180,11 @@ class PeggingIterator
       */
     double getQuantity() const {return stack.top().qty;}
 
-    /** Returns which portion of the current flowplan is fed/supplied by the 
+    /** Returns which portion of the current flowplan is fed/supplied by the
       * original flowplan. */
     double getFactor() const {return stack.top().factor;}
 
-    /** Returns false if the flowplan remained unpegged, i.e. it wasn't 
+    /** Returns false if the flowplan remained unpegged, i.e. it wasn't
       * -either completely or paritally- unconsumed at the next level.
       */
     bool getPegged() const {return stack.top().pegged;}
@@ -4226,11 +4229,11 @@ class PeggingIterator
       /** Stores the quantity of this flowplan that is involved. */
       double qty;
       /** Stores what portion of the flowplan is involved with the root flowplan
-        * where the recursion started. 
+        * where the recursion started.
         */
       double factor;
-      /** Keeps track of the number of levels we're removed from the root 
-        * flowplan where the recursion started. 
+      /** Keeps track of the number of levels we're removed from the root
+        * flowplan where the recursion started.
         */
       short level;
       /** The current flowplan. */
@@ -4267,15 +4270,15 @@ class PeggingIterator
       */
     bool depth_then_width;
 
-    /** Convenience variable during stack updates. 
-      * Depending on the value of this field, either the top element in the 
+    /** Convenience variable during stack updates.
+      * Depending on the value of this field, either the top element in the
       * stack is updated or a new state is pushed on the stack.
       */
     bool first;
 };
 
 
-/** An iterator class to go through all flowplans of an operationplan. 
+/** An iterator class to go through all flowplans of an operationplan.
   * @see OperationPlan::beginFlowPlans
   * @see OperationPlan::endFlowPlans
   */
@@ -4286,14 +4289,14 @@ class OperationPlan::FlowPlanIterator
     FlowPlan* curflowplan;
     FlowPlanIterator(FlowPlan* b) : curflowplan(b) {}
   public:
-    bool operator != (const FlowPlanIterator &b) const 
+    bool operator != (const FlowPlanIterator &b) const
       {return b.curflowplan != curflowplan;}
-    bool operator == (const FlowPlanIterator &b) const 
+    bool operator == (const FlowPlanIterator &b) const
       {return b.curflowplan == curflowplan;}
-    FlowPlanIterator& operator++() 
-    { 
-      if (curflowplan) curflowplan = curflowplan->nextFlowPlan; 
-      return *this; 
+    FlowPlanIterator& operator++()
+    {
+      if (curflowplan) curflowplan = curflowplan->nextFlowPlan;
+      return *this;
     }
     FlowPlanIterator operator++(int)
       {FlowPlanIterator tmp = *this; ++*this; return tmp;}
@@ -4301,10 +4304,10 @@ class OperationPlan::FlowPlanIterator
     FlowPlan& operator *() const {return *curflowplan;}
 };
 
-inline OperationPlan::FlowPlanIterator OperationPlan::beginFlowPlans() const 
+inline OperationPlan::FlowPlanIterator OperationPlan::beginFlowPlans() const
   { return OperationPlan::FlowPlanIterator(firstflowplan); }
 
-inline OperationPlan::FlowPlanIterator OperationPlan::endFlowPlans() const 
+inline OperationPlan::FlowPlanIterator OperationPlan::endFlowPlans() const
   {return OperationPlan::FlowPlanIterator(NULL);}
 
 inline int OperationPlan::sizeFlowPlans() const
@@ -4315,7 +4318,7 @@ inline int OperationPlan::sizeFlowPlans() const
 }
 
 
-/** An iterator class to go through all loadplans of an operationplan. 
+/** An iterator class to go through all loadplans of an operationplan.
   * @see OperationPlan::beginLoadPlans
   * @see OperationPlan::endLoadPlans
   */
@@ -4326,14 +4329,14 @@ class OperationPlan::LoadPlanIterator
     LoadPlan* curloadplan;
     LoadPlanIterator(LoadPlan* b) : curloadplan(b) {}
   public:
-    bool operator != (const LoadPlanIterator &b) const 
+    bool operator != (const LoadPlanIterator &b) const
       {return b.curloadplan != curloadplan;}
-    bool operator == (const LoadPlanIterator &b) const 
+    bool operator == (const LoadPlanIterator &b) const
       {return b.curloadplan == curloadplan;}
-    LoadPlanIterator& operator++() 
-    { 
-      if (curloadplan) curloadplan = curloadplan->nextLoadPlan; 
-      return *this; 
+    LoadPlanIterator& operator++()
+    {
+      if (curloadplan) curloadplan = curloadplan->nextLoadPlan;
+      return *this;
     }
     LoadPlanIterator operator++(int)
       {LoadPlanIterator tmp = *this; ++*this; return tmp;}
@@ -4341,10 +4344,10 @@ class OperationPlan::LoadPlanIterator
     LoadPlan& operator *() const {return *curloadplan;}
 };
 
-inline OperationPlan::LoadPlanIterator OperationPlan::beginLoadPlans() const 
+inline OperationPlan::LoadPlanIterator OperationPlan::beginLoadPlans() const
   { return OperationPlan::LoadPlanIterator(firstloadplan); }
 
-inline OperationPlan::LoadPlanIterator OperationPlan::endLoadPlans() const 
+inline OperationPlan::LoadPlanIterator OperationPlan::endLoadPlans() const
   {return OperationPlan::LoadPlanIterator(NULL);}
 
 inline int OperationPlan::sizeLoadPlans() const

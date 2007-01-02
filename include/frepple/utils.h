@@ -80,10 +80,10 @@ using namespace std;
 #endif
 
 // Header for multithreading
-#if defined(MT) 
+#if defined(MT)
 #if defined(HAVE_PTHREAD_H)
 #include <pthread.h>
-#elif defined(WIN32) 
+#elif defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <process.h>
@@ -126,6 +126,7 @@ using namespace std;
 using namespace xercesc;
 
 #undef DECLARE_EXPORT
+#undef MODULE_EXPORT
 #if defined(WIN32) && !defined(DOXYGEN_SHOULD_SKIP_THIS)
   #ifdef FREPPLE_CORE
     #define DECLARE_EXPORT __declspec (dllexport)
@@ -135,7 +136,7 @@ using namespace xercesc;
   #define MODULE_EXPORT  extern "C" __declspec (dllexport)
 #else
   #define DECLARE_EXPORT
-  #define MODULE_EXPORT extern "C" 
+  #define MODULE_EXPORT extern "C"
 #endif
 
 
@@ -153,21 +154,21 @@ class XMLInput;
 
 
 /** This type defines what operation we want to do with the entity. */
-enum Action 
+enum Action
 {
   /** or A.<br>
     * Add an new entity, and report an error if the entity already exists. */
   ADD = 0,
   /** or C.<br>
-    * Change an existing entity, and report an error if the entity doesn't 
+    * Change an existing entity, and report an error if the entity doesn't
     * exist yet. */
-  CHANGE = 1, 
+  CHANGE = 1,
   /** or D.<br>
     * Delete an entity, and report an error if the entity doesn't exist. */
-  REMOVE = 2, 
+  REMOVE = 2,
   /** or AC.<br>
     * Change an entity or create a new one if it doesn't exist yet.<br>
-    * This is the default action. 
+    * This is the default action.
     */
   ADD_CHANGE = 3
 };
@@ -188,7 +189,7 @@ inline ostream & operator << (ostream & os, const Action & d)
 
 
 /** This type defines the types of callback events possible. */
-enum Signal 
+enum Signal
 {
   /** Adding a new entity. */
   SIG_ADD = 0,
@@ -197,7 +198,7 @@ enum Signal
   /** After changing an entity. */
   SIG_AFTER_CHANGE = 2,
   /** Deleting an entity. */
-  SIG_REMOVE = 3 
+  SIG_REMOVE = 3
 };
 
 
@@ -219,8 +220,8 @@ inline ostream & operator << (ostream & os, const Signal & d)
 typedef unsigned int hashtype;
 
 
-/** This class groups some functions used to interact with the operating 
-  * system environment. 
+/** This class groups some functions used to interact with the operating
+  * system environment.
   */
 class Environment
 {
@@ -229,7 +230,7 @@ class Environment
     static DECLARE_EXPORT string home;
 
     /** Stores the number of processors on your machine.<br>
-      * On windows it is automatically initialized to the value of the 
+      * On windows it is automatically initialized to the value of the
       * environment variable NUMBER_OF_PROCESSORS.
       */
     static DECLARE_EXPORT int processors;
@@ -239,8 +240,8 @@ class Environment
     static const string getHomeDirectory() {return home;}
 
     /** Updates the home directory.
-      * A runtime exception is thrown when the string points to an invalid 
-      * directory. 
+      * A runtime exception is thrown when the string points to an invalid
+      * directory.
       */
     static void setHomeDirectory(const string);
 
@@ -310,7 +311,7 @@ class RuntimeException: public runtime_error
   * or network connections, have no sensible copy semantics.  Sometimes there
   * are possible copy semantics, but these would be of very limited usefulness
   * and be very difficult to implement correctly. Sometimes you're implementing
-  * a class that doesn't need to be copied just yet and you don't want to 
+  * a class that doesn't need to be copied just yet and you don't want to
   * take the time to write the appropriate functions.  Deriving from
   * noncopyable will prevent the otherwise implicitly-generated functions
   * (which don't have the proper semantics) from becoming a trap for other
@@ -345,12 +346,12 @@ class NonCopyable
 
 /** This is an object pool which holds objects of a given type.<br>
   * The parameter type should have a default constructor.<br>
-  * The size of the pool is extended automatically as additional objects are 
-  * requested. There is no maximum to the number of objects allocated in the 
-  * pool.<br> 
-  * Allocations from the pool objects is O(1), while de-allocations 
+  * The size of the pool is extended automatically as additional objects are
+  * requested. There is no maximum to the number of objects allocated in the
+  * pool.<br>
+  * Allocations from the pool objects is O(1), while de-allocations
   * are O(log(N)).<br>
-  * The class is NOT thread-safe. The user is reponsible to allow only a 
+  * The class is NOT thread-safe. The user is reponsible to allow only a
   * single thread using a pool at the same time.
   */
 template <class T> class Pool
@@ -384,7 +385,7 @@ template <class T> class Pool
     /** Destructor. */
     ~Pool()
     {
-      // Delete the allocated objects in use. The elements are not deleted 
+      // Delete the allocated objects in use. The elements are not deleted
       // from the set. The set destructor will clear the set.
       for(typename set<T*>::iterator i=alloced.begin(); i!=alloced.end(); ++i)
         delete *i;
@@ -462,8 +463,8 @@ class Mutex: public NonCopyable
 };
 
 
-/** This is a convenience class that makes it easy (and exception-safe) to 
-  * lock a mutex in a scope. 
+/** This is a convenience class that makes it easy (and exception-safe) to
+  * lock a mutex in a scope.
   */
 class ScopeMutexLock: public NonCopyable
 {
@@ -478,20 +479,20 @@ class ScopeMutexLock: public NonCopyable
 class MetaClass;
 
 /** This enum defines the different priority values for threads. */
-enum priority 
+enum priority
 {
   /** Tasks with this priority are only executed when the system is idle. */
-  IDLE = 0, 
+  IDLE = 0,
   /** Priority is lower than normal. */
-  LOW = 1, 
+  LOW = 1,
   /** The default priority level. */
-  NORMAL = 2, 
+  NORMAL = 2,
   /** Priority is higher than normal. */
   HIGH = 3
 };
 
 
-class Lock 
+class Lock
 {
   private:
     unsigned int readers;
@@ -521,10 +522,10 @@ class LockManager : public NonCopyable
     DECLARE_EXPORT void releaseWriteLock(Lock&);
   private:
     /** Return a lock handle for this object. The locks are managed in a pool
-      * to avoid constant freeing and allocating of memory. 
+      * to avoid constant freeing and allocating of memory.
       * @todo needs to be atomic...
       */
-    //Lock* getLock() const 
+    //Lock* getLock() const
     //  { if (!l) const_cast<Object*>(this)->l = pool_locks.Alloc(); return l;}
 
     //typedef map <Lockable*, pair<unsigned int, unsigned int> > table;
@@ -622,7 +623,7 @@ class XMLtag : public NonCopyable
 };
 
 
-/** This abstract class is the base class used for callbacks. 
+/** This abstract class is the base class used for callbacks.
   * @see MetaClass::callback
   * @see FunctorStatic
   * @see FunctorInstance
@@ -631,10 +632,10 @@ class Functor : public NonCopyable
 {
   public:
     /** This is the callback method.<br>
-      * The return value should be true in case the action is allowed to 
+      * The return value should be true in case the action is allowed to
       * happen. In case a subscriber disapproves the action false is
       * returned.<br>
-      * It is important that the callback methods are implemented in a 
+      * It is important that the callback methods are implemented in a
       * thread-safe and re-entrant way!!!
       */
     virtual bool callback(Object* v, Signal a) const = 0;
@@ -647,12 +648,12 @@ class MetaCategory;
   * information goes well beyond the standard 'type_info'.<br>
   * A MetaClass instance represents metadata for a specific instance type.
   * A MetaCategory instance represents metadata for a category of object.
-  * For instance, 'Resource' is a category while 'ResourceDefault' and 
+  * For instance, 'Resource' is a category while 'ResourceDefault' and
   * 'ResourceInfinite' are specific classes.<br>
-  * The metadata class also maintains subscriptions to certain events. 
+  * The metadata class also maintains subscriptions to certain events.
   * Registered classes and objects will receive callbacks when objects are
   * being created, changed or deleted.<br>
-  * The proper usage is to include the following code snippet in every 
+  * The proper usage is to include the following code snippet in every
   * class:<br>
   * @code
   *  In the header file:
@@ -665,7 +666,7 @@ class MetaCategory;
   *  In the implementation file:
   *    const MetaClass X::metadata;
   * @endcode
-  * Creating a MetaClass object isn't sufficient. It needs to be registered, 
+  * Creating a MetaClass object isn't sufficient. It needs to be registered,
   * typically in an initialization method:
   * @code
   *    void initialize()
@@ -738,7 +739,7 @@ class MetaClass : public NonCopyable
     bool operator != (const MetaClass& b) const
     {
       return typetag->getHash() != b.typetag->getHash();
-    } 
+    }
 
     /** This method should be called whenever objects of this class are being
       * created, updated or deleted. It will run the callback method of all
@@ -758,27 +759,27 @@ class MetaClass : public NonCopyable
       {const_cast<MetaClass*>(this)->subscribers[a].remove(c);}
 
   private:
-    /** This is a list of objects that will receive a callback when the call 
+    /** This is a list of objects that will receive a callback when the call
       * method is being used.<br>
-      * There is limited error checking in maintaining this list, and it is the 
-      * user's responsability of calling the connect() and disconnect() methods 
+      * There is limited error checking in maintaining this list, and it is the
+      * user's responsability of calling the connect() and disconnect() methods
       * correctly.<br>
-      * This design garantuees maximum performance, but assumes a properly 
+      * This design garantuees maximum performance, but assumes a properly
       * educated user.
       */
     list<Functor*> subscribers[4];
 
   public:
-    /** Type definition for a factory method calling the default 
+    /** Type definition for a factory method calling the default
       * constructor.. */
     typedef Object* (*creatorDefault)();
 
-    /** Type definition for a factory method calling the constructor that 
+    /** Type definition for a factory method calling the constructor that
       * takes a string as argument. */
     typedef Object* (*creatorString)(string);
 
     /** A factory method for the registered class. */
-    union 
+    union
     {
       creatorDefault factoryMethodDefault;
       creatorString factoryMethodString;
@@ -788,7 +789,7 @@ class MetaClass : public NonCopyable
     const MetaCategory* category;
 
     /** Default constructor. */
-    MetaClass() : type("UNSPECIFIED"), typetag(&XMLtag::find("UNSPECIFIED")), 
+    MetaClass() : type("UNSPECIFIED"), typetag(&XMLtag::find("UNSPECIFIED")),
       factoryMethodDefault(NULL), category(NULL) {}
 
     /** Destructor. */
@@ -797,29 +798,29 @@ class MetaClass : public NonCopyable
     /** This constructor registers the metadata of a class. */
     DECLARE_EXPORT void registerClass(const char*, const char*, bool = false) const;
 
-    /** This constructor registers the metadata of a class, with a factory 
+    /** This constructor registers the metadata of a class, with a factory
       * method that uses the default constructor of the class. */
-    void registerClass (const char* cat, const char* cls, creatorDefault f, 
+    void registerClass (const char* cat, const char* cls, creatorDefault f,
       bool def = false) const
-    { 
-      const_cast<MetaClass*>(this)->factoryMethodDefault = f; 
-      registerClass(cat,cls,def); 
+    {
+      const_cast<MetaClass*>(this)->factoryMethodDefault = f;
+      registerClass(cat,cls,def);
     }
 
-    /** This constructor registers the metadata of a class, with a factory 
+    /** This constructor registers the metadata of a class, with a factory
       * method that uses a constructor with a string argument. */
-    void registerClass (const char* cat, const char* cls, creatorString f, 
+    void registerClass (const char* cat, const char* cls, creatorString f,
       bool def = false) const
-    { 
-      const_cast<MetaClass*>(this)->factoryMethodString = f; 
-      registerClass(cat,cls,def); 
+    {
+      const_cast<MetaClass*>(this)->factoryMethodString = f;
+      registerClass(cat,cls,def);
     }
 
-    /** Print all registered factory methods to the standard output for 
+    /** Print all registered factory methods to the standard output for
       * debugging purposes. */
     static DECLARE_EXPORT void printClasses();
 
-    /** Find a particular class by its name. If it can't be located the return 
+    /** Find a particular class by its name. If it can't be located the return
       * value is NULL. */
     static DECLARE_EXPORT const MetaClass* findClass(const char*);
 };
@@ -828,15 +829,15 @@ class MetaClass : public NonCopyable
 class XMLOutput;
 /** A MetaCategory instance represents metadata for a category of object.
   * A MetaClass instance represents metadata for a specific instance type.
-  * For instance, 'Resource' is a category while 'ResourceDefault' and 
+  * For instance, 'Resource' is a category while 'ResourceDefault' and
   * 'ResourceInfinite' are specific classes.<br>
   * A category has the following specific pieces of data:
   *  - A reader function for creating objects.<br>
   *    The reader function creates objects for all classes registered with it.
   *  - A writer function for persisting objects.<br>
-  *    The writer function will typically iterate over all objects of the 
+  *    The writer function will typically iterate over all objects of the
   *    category and call the writeElement method on them.
-  *  - A group tag used for the grouping objects of the category in the XML 
+  *  - A group tag used for the grouping objects of the category in the XML
   *    output stream.
   * @see MetaClass
   */
@@ -858,25 +859,25 @@ class MetaCategory : public MetaClass
     /** Type definition for the write control function. */
     typedef void (*writeController)(const MetaCategory&, XMLOutput *o);
 
-    /** This template method is available as a object creation factory for 
+    /** This template method is available as a object creation factory for
       * classes without key fields and which rely on a default constructor.
       */
     static Object* ControllerDefault (const MetaCategory&, const XMLInput& in);
 
     /** Default constructor. <br>
-      * Calling the registerCategory method is required after creating a 
-      * category object. 
+      * Calling the registerCategory method is required after creating a
+      * category object.
       * @see registerCategory
       */
-    MetaCategory() : group("UNSPECIFIED"), 
-      grouptag(&XMLtag::find("UNSPECIFIED")), nextCategory(NULL), 
+    MetaCategory() : group("UNSPECIFIED"),
+      grouptag(&XMLtag::find("UNSPECIFIED")), nextCategory(NULL),
       writeFunction(NULL) {};
 
     /** Destructor. */
     virtual ~MetaCategory() {}
 
     /** This method is required to register the category of classes. */
-    DECLARE_EXPORT void registerCategory (const char* t, const char* g = NULL, 
+    DECLARE_EXPORT void registerCategory (const char* t, const char* g = NULL,
       readController = NULL, writeController = NULL) const;
 
     /** Type definition for the map of all registered classes. */
@@ -885,19 +886,19 @@ class MetaCategory : public MetaClass
     /** Type definition for the map of all categories. */
     typedef map < hashtype, const MetaCategory*, less<hashtype> > CategoryMap;
 
-    /** Looks up a category name in the registry. If the catgory can't be 
+    /** Looks up a category name in the registry. If the catgory can't be
       * located the return value is NULL. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByTag(const char*);
 
-    /** Looks up a category name in the registry. If the catgory can't be 
+    /** Looks up a category name in the registry. If the catgory can't be
       * located the return value is NULL. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByTag(const hashtype);
 
-    /** Looks up a category name in the registry. If the catgory can't be 
+    /** Looks up a category name in the registry. If the catgory can't be
       * located the return value is NULL. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByGroupTag(const char*);
 
-    /** Looks up a category name in the registry. If the catgory can't be 
+    /** Looks up a category name in the registry. If the catgory can't be
       * located the return value is NULL. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByGroupTag(const hashtype);
 
@@ -907,21 +908,21 @@ class MetaCategory : public MetaClass
       */
     static DECLARE_EXPORT void persist(XMLOutput *);
 
-    /** A control function for reading objects of a category. 
-      * The controller function manages the creation and destruction of  
-      * objects in this category. 
+    /** A control function for reading objects of a category.
+      * The controller function manages the creation and destruction of
+      * objects in this category.
       */
     readController readFunction;
 
   private:
     /** A map of all classes registered for this category. */
     ClassMap classes;
-    
-    /** Compute the hash for "DEFAULT" once and store it in this variable for 
+
+    /** Compute the hash for "DEFAULT" once and store it in this variable for
       * efficiency. */
     static DECLARE_EXPORT const hashtype defaultHash;
 
-    /** This is the root for a linked list of all categories. 
+    /** This is the root for a linked list of all categories.
       * Categories are chained to the list in the order of their registration.
       */
     static DECLARE_EXPORT const MetaCategory* firstCategory;
@@ -929,9 +930,9 @@ class MetaCategory : public MetaClass
     /** A pointer to the next category in the singly linked list. */
     const MetaCategory* nextCategory;
 
-    /** A control function for writing the category. 
+    /** A control function for writing the category.
       * The controller function will loop over the objects in the category and
-      * call write them one by one. 
+      * call write them one by one.
       */
     writeController writeFunction;
 
@@ -941,7 +942,7 @@ class MetaCategory : public MetaClass
 
 
 /** This class represents a static subscription to a signal.<br>
-  * When the signal callback is triggered the static method callback() on the 
+  * When the signal callback is triggered the static method callback() on the
   * parameter class will be called.
   */
 template <class T, class U> class FunctorStatic : public Functor
@@ -949,16 +950,16 @@ template <class T, class U> class FunctorStatic : public Functor
   friend class MetaClass;
   public:
     /** Add a signal subscriber. */
-    static void connect(const Signal a) 
+    static void connect(const Signal a)
       {T::metadata.connect(new FunctorStatic<T,U>(), a);}
 
     /** Remove a signal subscriber. */
-    static void disconnect(const Signal a) 
+    static void disconnect(const Signal a)
     {
-      MetaClass &t = 
+      MetaClass &t =
         const_cast<MetaClass&>(static_cast<const MetaClass&>(T::metadata));
       // Loop through all subscriptions
-      for (list<Functor*>::iterator i = t.subscribers[a].begin(); 
+      for (list<Functor*>::iterator i = t.subscribers[a].begin();
         i != t.subscribers[a].end(); ++i)
       {
         // Try casting the functor to the right type
@@ -985,19 +986,19 @@ template <class T, class U> class FunctorStatic : public Functor
 
 
 /** This class represents an object subscribing to a signal.<br>
-  * When the signal callback is triggered the method callback() on the 
+  * When the signal callback is triggered the method callback() on the
   * instance object will be called.
   * @todo incomplete implementation of class FunctorInstance
   */
 template <class T, class U> class FunctorInstance : public Functor
 {
-  public: 
+  public:
     /** Connect a new subscriber to a signal.<br>
       * It is the users' responsibility to call the disconnect method
       * when the subscriber is being deleted. Otherwise the application
       * will crash.
       */
-    static void connect(U* u, Signal a) 
+    static void connect(U* u, Signal a)
       {U::metadata.connect(new FunctorInstance(u), a);}
 
     /** Disconnect from a signal. */
@@ -1219,7 +1220,7 @@ class Date
       */
     DECLARE_EXPORT void toCharBuffer(char*) const;
 
-    /** A private constructor used to create the infinitePast and 
+    /** A private constructor used to create the infinitePast and
       * infiniteFuture constants. */
     Date(const char* s, bool dummy) {parse(s);}
 
@@ -1388,11 +1389,11 @@ class DateRange
     TimePeriod getDuration() const {return end - start;}
 
     /** Equality of date ranges. */
-    bool operator == (const DateRange& b) const 
+    bool operator == (const DateRange& b) const
       {return start==b.start && end==b.end;}
 
     /** Inequality of date ranges. */
-    bool operator != (const DateRange& b) const 
+    bool operator != (const DateRange& b) const
       {return start!=b.start || end!=b.end;}
 
     /** Move the daterange later in time. */
@@ -1447,24 +1448,24 @@ inline ostream & operator << (ostream & os, const DateRange & dr)
 
 
 /** This type is used to define different ways of persisting an object. */
-enum mode 
+enum mode
 {
-  /** Write the full object or a reference. If the object is nested more 
-    * than one level deep a reference is written, otherwise the complete 
+  /** Write the full object or a reference. If the object is nested more
+    * than one level deep a reference is written, otherwise the complete
     * object is written.<br>
     * This mode is the one to be used when dumping all objects to be restored
     * later. The other modes can dump too little or too much data.
     * Eg: \<MODEL NAME="POL" TYPE="a"\>\<FIELD\>value\</FIELD\>\</MODEL\>
     */
-  DEFAULT = 0,   
+  DEFAULT = 0,
   /** Write only the key fields of the object.<br>
-    * Eg: \<MODEL NAME="POL" TYPE="a"/\> 
+    * Eg: \<MODEL NAME="POL" TYPE="a"/\>
     */
-  REFERENCE = 1, 
+  REFERENCE = 1,
   /** Write the full object, but without a header line. This method is
     * typically used when a subclass calls the write method of its parent
     * class.<br>
-    * Eg: \<FIELD\>value\</FIELD\>\</MODEL\> 
+    * Eg: \<FIELD\>value\</FIELD\>\</MODEL\>
     */
   NOHEADER = 2,
   /** Write the full object, with all its fields and a header line.<br>
@@ -1499,8 +1500,8 @@ class XMLOutput
       */
     static const content_type STANDARD;
 
-    /** Constant to mark an export of the standard information plus the plan 
-      * information. In this format, every entity is saved with the details 
+    /** Constant to mark an export of the standard information plus the plan
+      * information. In this format, every entity is saved with the details
       * on how it is used in the plan.<br>
       * E.g. a resource will be saved with a reference to all its loadplans.
       * E.g. an operation will be saved with all its operationplans.
@@ -1516,7 +1517,7 @@ class XMLOutput
       */
     static const content_type PLANDETAIL;
 
-    /** Returns which type of export is requested. 
+    /** Returns which type of export is requested.
       * Constants have been defined for each type.
       * @see STANDARD
       * @see PLAN
@@ -1524,7 +1525,7 @@ class XMLOutput
       */
     content_type getContentType() const {return content;}
 
-    /** Specify the type of export. 
+    /** Specify the type of export.
       * @see STANDARD
       * @see PLAN
       * @see PLANDETAIL
@@ -1551,14 +1552,14 @@ class XMLOutput
     const string& getHeaderAtts() {return headerAtts;}
 
     /** Constructor with a given stream. */
-    XMLOutput(ostream& os) : m_nIndent(0), numObjects(0), numParents(0), 
+    XMLOutput(ostream& os) : m_nIndent(0), numObjects(0), numParents(0),
       currentObject(NULL), parentObject(NULL), content(STANDARD),
       headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
       {m_fp = &os; indentstring[0] = '\0';}
 
     /** Default constructor. */
-    XMLOutput() : m_nIndent(0), numObjects(0), numParents(0), 
+    XMLOutput() : m_nIndent(0), numObjects(0), numParents(0),
       currentObject(NULL), parentObject(NULL), content(STANDARD),
       headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
@@ -1888,7 +1889,7 @@ class XMLOutputFile : public XMLOutput
     XMLOutputFile(const string& chFilename)
     {
       of.open(chFilename.c_str(), ios::out);
-      if(!of) throw RuntimeException("Could not open output file");     
+      if(!of) throw RuntimeException("Could not open output file");
       setOutput(of);
     }
 
@@ -1918,7 +1919,7 @@ class XMLOutputString : public XMLOutput
 
     /** Return the output string. */
     const string getData() const {return os.str();}
-    
+
   private:
     ostringstream os;
 };
@@ -1951,9 +1952,9 @@ class XMLElement
       * When a data field contains a construct ${ABC} the environment variable
       * ABC is picked up from the operating system to replace it. If the
       * environment variable doesn't exist an empty string is used.<br>
-      * Note that (for performance and security reasons) this kind of 
-      * environment variable expansion isn't enabled by default. This method 
-      * needs to be called explicitly for fields where such expansion is 
+      * Note that (for performance and security reasons) this kind of
+      * environment variable expansion isn't enabled by default. This method
+      * needs to be called explicitly for fields where such expansion is
       * desired.
       */
     DECLARE_EXPORT void resolveEnvironment();
@@ -2048,11 +2049,11 @@ class XMLElement
 /** Object is the abstract base class for the main entities.
   * It handles to following capabilities:
   * - Metadata: All subclasses publish metadata about their structure.
-  * - Concurrency: Locking of objects is required in multithreaded 
+  * - Concurrency: Locking of objects is required in multithreaded
   *   environments. The implementation of the locking algorithm is delegated
   *   to the LockManager class, and the base class provides only a pointer
   *   to a lock object and convenience guard classes.
-  * - Callbacks: When objects are created, changing or deleted, interested 
+  * - Callbacks: When objects are created, changing or deleted, interested
   *   classes or objects can get a callback notification.
   * - Serialization: Objects need to be persisted and later restored.
   *   Subclasses that don't need to be persisted can skip the implementation
@@ -2105,15 +2106,16 @@ class Object
     /** Returns whether an entity is real or dummy. */
     virtual bool getHidden() const {return false;}
 
-    /** This the subclass field. */
+    /** This returns the type information on the object, a bit similar to
+      * the standard type_info information. */
     virtual const MetaClass& getType() const = 0;
 
     /** Return the memory size of the object in bytes. */
     virtual size_t getSize() const = 0;
 
-    /** The RLock class provides an exception safe way of getting a read lock 
+    /** The RLock class provides an exception safe way of getting a read lock
       * on a Object object.<br>
-      * The constructor acquires the read lock and the destructor will release 
+      * The constructor acquires the read lock and the destructor will release
       * it again.<br>
       * RLocks should be used as temporary objects on the stack, and should
       * be accessed by a single thread only.
@@ -2124,10 +2126,10 @@ class Object
 	      /** Constructs a read-lock. This method blocks till the object
           * lock can be obtained.
           */
-        explicit RLock(const T* l) : obj(l) 
+        explicit RLock(const T* l) : obj(l)
           {LockManager::getManager().obtainReadLock(obj);}
 
-        /** Copy constructor. 
+        /** Copy constructor.
           * You should only copy a lock within the same thread!
           */
         explicit RLock(const RLock<T>& p) : obj(p.obj) {}
@@ -2147,9 +2149,9 @@ class Object
     };
 
 
-    /** The WLock class provides an exception safe way of getting 
+    /** The WLock class provides an exception safe way of getting
       * a write lock on a Object object.<br>
-      * The constructor acquires the write lock and the destructor will release 
+      * The constructor acquires the write lock and the destructor will release
       * it again.<br>
       * WLocks should be used as temporary objects on the stack, and should
       * be accessed by a single thread only.
@@ -2168,7 +2170,7 @@ class Object
           */
         explicit WLock(const WLock<T>& p) : obj(p.obj) {}
 
-	      /** Destructor. The write lock is released when the WLock object is 
+	      /** Destructor. The write lock is released when the WLock object is
           * deleted. */
   	    ~WLock() {LockManager::getManager().releaseWriteLock(obj);}
 
@@ -2185,12 +2187,12 @@ class Object
 
     /** This template function can generate a factory method for objects that
       * can be constructed with their default constructor.  */
-    template <class T> static Object* createDefault() 
+    template <class T> static Object* createDefault()
       {return new T();}
 
     /** This template function can generate a factory method for objects that
       * need a string argument in their constructor. */
-    template <class T> static Object* createString(string n) 
+    template <class T> static Object* createString(string n)
       {return new T(n);}
 
   private:
@@ -2267,7 +2269,7 @@ class Tree : public NonCopyable
         }
 
         /** Return a pointer to the node preceding this one. */
-        TreeNode* decrement() const 
+        TreeNode* decrement() const
         {
           TreeNode *node = const_cast<TreeNode*>(this);
           if (node->color == red && node->parent->parent == node)
@@ -2322,7 +2324,7 @@ class Tree : public NonCopyable
     }
 
     // Destructor.
-    // The destructor is called 
+    // The destructor is called
     ~Tree() { if(clearOnDestruct) clear(); }
 
     /** Returns an iterator to the start of the list.<br>
@@ -2339,7 +2341,7 @@ class Tree : public NonCopyable
 
     /** Returns true if the list is empty.
       * Its complexity is O(1). */
-    bool empty() const 
+    bool empty() const
     {
       LockManager::getManager().obtainReadLock(l);
       bool result = (header.parent == NULL);
@@ -2399,7 +2401,7 @@ class Tree : public NonCopyable
       for (TreeNode* x = header.parent; x;)
       {
         int comp = k.compare(x->nm);
-        if (!comp) 
+        if (!comp)
         {
           LockManager::getManager().releaseReadLock(l);
           return x; // Found
@@ -2408,12 +2410,12 @@ class Tree : public NonCopyable
         else lower = x, x = x->right;
       }
       LockManager::getManager().releaseReadLock(l);
-      return lower;    
+      return lower;
     }
 
     /** Find the element with this given key or the element
       * immediately preceding it.<br>
-      * The second argument is a boolean that is set to true when the 
+      * The second argument is a boolean that is set to true when the
       * element is found in the list.
       */
     TreeNode* findLowerBound(const string& k, bool* f) const
@@ -2428,7 +2430,7 @@ class Tree : public NonCopyable
           // Found
           *f = true;
           LockManager::getManager().releaseReadLock(l);
-          return x; 
+          return x;
         }
         if (comp<0) x = x->left;
         else lower = x, x = x->right;
@@ -2495,7 +2497,7 @@ class Tree : public NonCopyable
     /** Controls concurrencny during use of the tree. */
     Lock l;
 
-    /** Controls whether the destructor needs to be clear all objects in the 
+    /** Controls whether the destructor needs to be clear all objects in the
       * tree in its destructor.<br>
       * The default is to skip this cleanup! This is fine when you are dealing
       * with a static tree that lives throughout your program.<br>
@@ -2615,19 +2617,19 @@ class CommandIf : public Command
   public:
     /** Returns true if both the if- and else-command are undoable if they
       * are specified. */
-    bool undoable() 
+    bool undoable()
     {
-      return (thenCommand ? thenCommand->undoable() : true) 
+      return (thenCommand ? thenCommand->undoable() : true)
         && (elseCommand ? elseCommand->undoable() : true);
     }
 
-    /** Undoes either the if- or the else-clause, depending on the 
+    /** Undoes either the if- or the else-clause, depending on the
       * condition.<br>
-      * Note that calling execute() before undo() isn't enforced. 
+      * Note that calling execute() before undo() isn't enforced.
       */
     DECLARE_EXPORT void undo();
 
-    /** Executes either the if- or the else-clause, depending on the 
+    /** Executes either the if- or the else-clause, depending on the
       * condition. */
     DECLARE_EXPORT void execute();
 
@@ -2638,7 +2640,7 @@ class CommandIf : public Command
     explicit CommandIf() : thenCommand(NULL), elseCommand(NULL) {}
 
     /** Destructor. */
-    virtual ~CommandIf() 
+    virtual ~CommandIf()
     {
       delete thenCommand;
       delete elseCommand;
@@ -2652,7 +2654,7 @@ class CommandIf : public Command
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(CommandIf) + condition.size();}
 
     DECLARE_EXPORT void beginElement(XMLInput&, XMLElement& pElement);
@@ -2674,7 +2676,7 @@ class CommandIf : public Command
   *     some commands in the sequence fail.<BR>
   *     This mode requires the sequential field to be set to true, and the
   *     AbortOnError field to false.
-  * Currently Pthreads and Windows threads are supported as the implementation 
+  * Currently Pthreads and Windows threads are supported as the implementation
   * of the multithreading.
   */
 class CommandList : public Command
@@ -2693,8 +2695,8 @@ class CommandList : public Command
     /** Current command to be executed. */
     Command* curCommand;
 
-    /** Mutex to protect the curCommand data field during multi-threaded 
-      * execution. 
+    /** Mutex to protect the curCommand data field during multi-threaded
+      * execution.
       * @see selectCommand
       */
     Mutex lock;
@@ -2702,8 +2704,8 @@ class CommandList : public Command
     /** Specifies whether the command list is undoable or not. */
     bool can_undo;
 
-    /** Specifies the maximum number of commands in the list that can be 
-      * executed in parallel. 
+    /** Specifies the maximum number of commands in the list that can be
+      * executed in parallel.
       * The default value is 1, i.e. sequential execution.<br>
       * The value of this field is NOT inherited from parent command lists.<br>
       * Note that the maximum applies to this command list only, and it isn't
@@ -2720,7 +2722,7 @@ class CommandList : public Command
     inheritableBool abortOnError;
 
     /** This functions runs a single command execution thread. It is used as
-      * a holder for the main routines of a trheaded routine. 
+      * a holder for the main routines of a trheaded routine.
       */
 #if defined(HAVE_PTHREAD_H) || !defined(MT)
      static void* wrapper(void *arg);
@@ -2751,12 +2753,12 @@ class CommandList : public Command
       */
     void undo() {undo(NULL);}
 
-    /** Undoes all actions in the list beyond the argument and clear the list 
+    /** Undoes all actions in the list beyond the argument and clear the list
       * of actions.<br>
-      * As soon as one of the actions on the list is not undo-able or the 
-      * execution is not sequential, the undo is aborted and a warning message 
+      * As soon as one of the actions on the list is not undo-able or the
+      * execution is not sequential, the undo is aborted and a warning message
       * is printed.<br>
-      * There is no need that the actions have actually been executed before 
+      * There is no need that the actions have actually been executed before
       * the undo() is called.
       */
     DECLARE_EXPORT void undo(Command *c);
@@ -2783,9 +2785,9 @@ class CommandList : public Command
 
     /** Updates whether the command list process its commands sequentially or
       * in parallel. */
-    void setMaxParallel(int b) 
+    void setMaxParallel(int b)
     {
-      if (b<1) 
+      if (b<1)
         throw DataException("Invalid number of parallel execution threads");
 #ifndef MT
       maxparallel = (b>1 ? 1 : b);
@@ -2809,8 +2811,8 @@ class CommandList : public Command
     bool empty() const {return firstCommand==NULL;}
 
     /** Default constructor. */
-    explicit CommandList() : firstCommand(NULL), lastCommand(NULL), 
-      curCommand(NULL), can_undo(true), maxparallel(1), 
+    explicit CommandList() : firstCommand(NULL), lastCommand(NULL),
+      curCommand(NULL), can_undo(true), maxparallel(1),
       abortOnError(INHERIT) {}
 
     /** Destructor. An actionlist should only be deleted when all of its
@@ -2863,24 +2865,24 @@ class CommandSystem : public Command
     string getCmdLine() {return cmdLine;}
 
     /** Executes the command line.
-      * @exception RuntimeException Generated when the command can't be 
+      * @exception RuntimeException Generated when the command can't be
       *    launched, or when it's exit code is non-zero.
       */
     DECLARE_EXPORT void execute();
 
     DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
-    string getDescription() const 
+    string getDescription() const
       {return "Run operating system command '" + cmdLine + "'";}
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(CommandSystem) + cmdLine.size();}
 };
 
 
 /** This class dynamically loads a shared library in Frepple.
-  * After loading, the function "initialize" is executed. 
+  * After loading, the function "initialize" is executed.
   * The function works on the following platforms:
   *  - Windows
   *  - Linux
@@ -2911,7 +2913,7 @@ class CommandLoadLibrary : public Command
     string getLibraryName() {return lib;}
 
     /** Load the library, and execute the initialize() method.
-      * @exception RuntimeException When the library can't be loaded 
+      * @exception RuntimeException When the library can't be loaded
       *     or when the initialize() method doesn't exist in the library.
       */
     DECLARE_EXPORT void execute();
@@ -3125,7 +3127,7 @@ class XMLInput : public NonCopyable,  private DefaultHandler
     /** Redirect event stream into a new Object.<br>
       * It is also possible to pass a NULL pointer to the function. In
       * that situation, we simple ignore the content of that element.<br>
-      * Important: The user is reponsible of making sure the argument 
+      * Important: The user is reponsible of making sure the argument
       * object has a proper write-lock. The release of that lock is handled
       * by the parser.
       */
@@ -3248,7 +3250,7 @@ class XMLInputString : public XMLInput
 
 /** This class reads XML data from an HTTP connection.<br>
   * The Xerces parser supports only the simplest possible setup: no proxy,
-  * no caching, no ssl, no authentication, etc...  
+  * no caching, no ssl, no authentication, etc...
   */
 class XMLInputURL : public XMLInput
 {
@@ -3259,8 +3261,8 @@ class XMLInputURL : public XMLInput
     /** Parse the specified url. */
     void parse(Object* pRoot, bool v = false)
     {
-      if (url.empty()) 
-        throw DataException("Missing URL when parsing remote XML"); 
+      if (url.empty())
+        throw DataException("Missing URL when parsing remote XML");
       URLInputSource a(reinterpret_cast<const XMLCh *>(NULL), url.c_str());
       XMLInput::parse(a,pRoot,v);
     }
@@ -3318,7 +3320,7 @@ class XMLInputFile : public XMLInput
 /** This is the base class for the main objects.
  *  Instances of this class have the following properties:
  *    - Have a unique name.
- *    - A hashtable (keyed on the name) is maintained as a container with 
+ *    - A hashtable (keyed on the name) is maintained as a container with
  *      all active instances.
  */
 template <class T> class HasName : public NonCopyable, public Tree::TreeNode
@@ -3453,8 +3455,8 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 
     void endElement(XMLInput& pIn, XMLElement& pElement) {};
 
-    /** This method is available as a object creation factory for 
-      * classes that are using a string as a key identifier, in particular 
+    /** This method is available as a object creation factory for
+      * classes that are using a string as a key identifier, in particular
       * classes derived from the HasName base class.
       * The following attributes are recognized:
       * - NAME:<br>
@@ -3465,7 +3467,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       *   The default value is "DEFAULT".
     	* - ACTION:<br>
       *   Determines the action to be performed on the object.
-      *   This can be A (for 'add'), C (for 'change'), AC (for 'add_change') 
+      *   This can be A (for 'add'), C (for 'change'), AC (for 'add_change')
       *   or R (for 'remove').
       *   'add_change' is the default value.
       * @see HasName
@@ -3476,7 +3478,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       char* name = XMLString::transcode(
         in.getAttributes()->getValue(Tags::tag_name.getXMLCharacters())
         );
-      if (!name) 
+      if (!name)
       {
         XMLString::release(&name);
         throw DataException("Missing NAME attribute");
@@ -3503,7 +3505,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 
         case CHANGE:
           // Only changes are allowed
-          if (!found) 
+          if (!found)
           {
             string msg = string("Object '") + name + "' doesn't exist.";
             XMLString::release(&name);
@@ -3514,10 +3516,10 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
           // Lock the object, which includes also the callback
           LockManager::getManager().obtainWriteLock(i);
           return i;
-         
+
         case REMOVE:
           // Delete the entity
-          if (found) 
+          if (found)
           {
             // Send out the notification to subscribers
             LockManager::getManager().obtainWriteLock(i);   // @todo this lock shouldn't trigger callbacks?
@@ -3550,7 +3552,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       }
 
       // Return the existing instance
-      if (found) 
+      if (found)
       {
         // Lock the object, which includes the callbacks
         XMLString::release(&name);
@@ -3568,7 +3570,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         if (in.getCurrentElement().isA(cat.typetag)) type2 = "DEFAULT";
         else type2 = in.getCurrentElement().getName();
       }
-      MetaCategory::ClassMap::const_iterator j = 
+      MetaCategory::ClassMap::const_iterator j =
         cat.classes.find(type ? XMLtag::hash(type) : (type2.empty() ? MetaCategory::defaultHash : XMLtag::hash(type2.c_str())));
       if (j == cat.classes.end())
       {

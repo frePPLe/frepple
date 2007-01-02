@@ -49,32 +49,20 @@ print '2. calling a function:', my_function(myvariable)
     E.g. running small messages rather than a huge data file...
     -->
     <COMMAND xsi:type="COMMAND_PYTHON">
-      <CMDLINE>
-<![CDATA[
-create_files(200000)
-]]>
-      </CMDLINE>
+      <CMDLINE>create_files(200000)</CMDLINE>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_READXML" FILENAME="items.xml" VALIDATE="false" />
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="afterXMLread.xml" />
     <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="aftererase1.xml" />
     <COMMAND xsi:type="COMMAND_PYTHON">
-      <CMDLINE>
-<![CDATA[
-read_csv_file()
-]]>
-      </CMDLINE>
+      <CMDLINE>read_csv_file()</CMDLINE>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="afterCSVread.xml" />
     <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="aftererase2.xml" />
     <COMMAND xsi:type="COMMAND_PYTHON">
-      <CMDLINE>
-<![CDATA[
-read_csv_file_direct()
-]]>
-      </CMDLINE>
+      <CMDLINE>read_csv_file_direct()</CMDLINE>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="afterCSVDirectread.xml" />
     <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />

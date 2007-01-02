@@ -31,12 +31,12 @@
   * @namespace module_python
   * @brief An embedded interpreter for the Python language.
   *
-  * A single interpreter is used throughout the lifetime of the 
+  * A single interpreter is used throughout the lifetime of the
   * application.<br>
   * The implementation is implemented in a thread-safe way (within the
   * limitations of the Python threading model, of course).<br>
   * After loading, the module will check whether a file '$FREPPLE_HOME/init.py'
-  * exists and, if it does, will execute the statements in the file. In this 
+  * exists and, if it does, will execute the statements in the file. In this
   * way a library of globally available functions can easily be initialized.
   *
   * The XML schema extension enabled by this module is (see mod_python.xsd):
@@ -86,11 +86,11 @@ namespace module_python
 /** This class embeds an interpreter for the Python language in Frepple.<br>
   * The interpreter can execute generic scripts, and it also has (limited)
   * access to the frepple objects.<br>
-  * The interpreter is multi-threaded. Multiple python scripts can run in 
-  * parallel. Internally Python allows only one thread at a time to 
+  * The interpreter is multi-threaded. Multiple python scripts can run in
+  * parallel. Internally Python allows only one thread at a time to
   * execute and the interpreter switches between the active threads, i.e.
-  * a quite primitive threading model.<br> 
-  * Frepple uses a single global interpreter. A global Python variable or 
+  * a quite primitive threading model.<br>
+  * Frepple uses a single global interpreter. A global Python variable or
   * function is thus visible across multiple executions of a CommandPython.
   */
 class CommandPython : public Command
@@ -105,12 +105,12 @@ class CommandPython : public Command
     /** Command to be executed if the condition returns false. */
     string filename;
 
-    /** A static array defining all methods that can be accessed from 
+    /** A static array defining all methods that can be accessed from
       * within Python. */
     static PyMethodDef PythonAPI[];
 
   public:
-    /** Executes either the if- or the else-clause, depending on the 
+    /** Executes either the if- or the else-clause, depending on the
       * condition. */
     void execute();
 
@@ -137,7 +137,7 @@ class CommandPython : public Command
 
     virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(CommandPython) + cmd.size() + filename.size();}
 
     void endElement(XMLInput& pIn, XMLElement& pElement);
@@ -154,7 +154,7 @@ class CommandPython : public Command
     /** Python API: Create an item and a delivery operation. This function
       * directly interacts with the frepple C++ API, without passing through
       * XML.<br>
-      * This function is intended for experimental and demonstration purposes 
+      * This function is intended for experimental and demonstration purposes
       * only.<br>
       * Arguments: item name (string), operation name (string)
       */

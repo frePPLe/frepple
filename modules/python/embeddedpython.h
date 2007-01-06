@@ -66,6 +66,8 @@
   *     Read an XML-file.
   *   - <b>saveXMLfile(string)</b>:<br> 
   *     Save the model to an XML-file.
+  *   - <b>saveXMLstring()</b>:<br> 
+  *     Returns the complete model as an XML-formatted string.
   *   - <b>createItem(string, string)</b>:<br>
   *     Uses the C++ API to create an item and its delivery operation.<br>
   *     For experimental purposes...
@@ -169,6 +171,12 @@ class CommandPython : public Command
       * Arguments: filename (string)
       */
     static PyObject *python_saveXMLfile(PyObject*, PyObject*);
+
+    /** Python API: return the model as an XML-formatted string.<br>
+      * Arguments: none
+      * Return: string
+      */
+    static PyObject *python_saveXMLstring(PyObject*, PyObject*);
 
     /** Python exception class matching with Frepple::LogicException. */
     static PyObject* PythonLogicException;

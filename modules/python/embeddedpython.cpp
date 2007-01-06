@@ -48,6 +48,8 @@ PyMethodDef CommandPython::PythonAPI[] =
      "Read an XML-file."},
   {"saveXMLfile", CommandPython::python_saveXMLfile, METH_VARARGS, 
      "Save the model to an XML-file."},
+  {"saveXMLstring", CommandPython::python_saveXMLstring, METH_NOARGS, 
+     "Returns the model as an XML-formatted string."},
   {NULL, NULL, 0, NULL}
 };
 
@@ -367,6 +369,27 @@ PyObject* CommandPython::python_saveXMLfile(PyObject* self, PyObject* args)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, "unknown type"); return NULL;}
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");
+}
+
+
+PyObject *CommandPython::python_saveXMLstring(PyObject* self, PyObject* args)
+{
+  // Execute and catch exceptions
+  string result;
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try { result = FreppleSaveString(); }
+  catch (LogicException e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonLogicException, e.what()); return NULL;}
+  catch (DataException e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonDataException, e.what()); return NULL;}
+  catch (frepple::RuntimeException e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
+  catch (exception e) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
+  catch (...) 
+    {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, "unknown type"); return NULL;}
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("s",result.c_str());
 }
 
 

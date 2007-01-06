@@ -111,5 +111,66 @@ print '5b. end sleep'
     <COMMAND xsi:type="COMMAND_SAVE">
       <FILENAME>output.1.xml</FILENAME>
     </COMMAND>
+
+<!-- A simple user interface. -->
+<!--
+    <COMMAND xsi:type="COMMAND_PYTHON">
+        <CMDLINE>
+<![CDATA[
+import Tkinter
+
+def post_xml():
+  t.insert(Tkinter.END,"<PLAN>\n</PLAN>")
+
+root = Tkinter.Tk("Frepple","Frepple")
+Tkinter.Label(text="Edit your xml message", anchor=Tkinter.W).pack()
+s = Tkinter.Scrollbar(root)
+t = Tkinter.Text(root)
+t.insert(Tkinter.END,"<PLAN>\n</PLAN>")
+t.focus_set()
+Tkinter.Button(text="exit", command=sys.exit).pack(side=Tkinter.BOTTOM,fill=Tkinter.NONE)
+Tkinter.Button(text="submit", command=post_xml).pack(side=Tkinter.BOTTOM,fill=Tkinter.NONE)
+Tkinter.Entry(state=Tkinter.DISABLED).pack(side=Tkinter.BOTTOM,fill=Tkinter.NONE)
+s.pack(side=Tkinter.RIGHT, fill=Tkinter.Y)
+t.pack(side=Tkinter.LEFT, expand=True, fill=Tkinter.BOTH)
+s.config(command=t.yview)
+t.config(yscrollcommand=s.set)
+#Tkinter.Entry(state=Tkinter.DISABLED).pack()
+Tkinter.mainloop()
+]]>
+      </CMDLINE>
+    </COMMAND>
+-->
+
+<!-- A simple web server. -->
+<!--
+    <COMMAND xsi:type="COMMAND_PYTHON">
+        <CMDLINE>
+<![CDATA[
+import SimpleHTTPServer,SocketServer, frepple
+PORT = 8000
+
+class FreppleServer(SimpleHTTPServer.SimpleHTTPRequestHandler):
+  def do_HEAD(self):
+    # Headers
+    self.send_header("Content-type", "text/html")
+    self.send_header("Cache-Control", "no-cache")
+    self.end_headers()
+  def do_GET(self):
+    # Body
+    try:
+      # Return the complete model as an XML page
+      self.wfile.write(frepple.saveXMLstring())
+    except:
+      self.send_error(500, "Exception when saving the model")
+
+print "Started HTTP server on port ", PORT
+print "Point your browser to http://localhost:" + str(PORT) + " to see the pages."
+print "Use ctrl-c to exit..."
+SocketServer.TCPServer(("", PORT), FreppleServer).serve_forever()
+]]>
+      </CMDLINE>
+    </COMMAND>
+-->
   </COMMANDS>
 </PLAN>

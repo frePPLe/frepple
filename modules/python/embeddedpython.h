@@ -45,15 +45,18 @@
   *     <xsd:complexContent>
   *       <xsd:extension base="COMMAND">
   *         <xsd:choice minOccurs="0" maxOccurs="unbounded">
-  * 					<xsd:element name="VERBOSE" type="xsd:boolean" />
+  *           <xsd:element name="VERBOSE" type="xsd:boolean" />
   *           <xsd:element name="CMDLINE" type="xsd:string" />
   *           <xsd:element name="FILENAME" type="xsd:string" />
   *         </xsd:choice>
-  *   			<xsd:attribute name="CMDLINE" type="xsd:string" />
-  *   			<xsd:attribute name="FILENAME" type="xsd:string" />
+  *         <xsd:attribute name="CMDLINE" type="xsd:string" />
+  *         <xsd:attribute name="FILENAME" type="xsd:string" />
   *       </xsd:extension>
   *     </xsd:complexContent>
   *   </xsd:complexType>
+  * </PRE> The XML code can also include python code as a processing instruction:
+  * <PRE>
+  *   <?PYTHON your Python code comes here ?>
   * </PRE>
   *
   * The following Frepple functions are available from within Python.<br>
@@ -86,16 +89,17 @@ namespace module_python
 
 
 /** This class embeds an interpreter for the Python language in Frepple.<br>
-  * The interpreter can execute generic scripts, and it also has (limited)
-  * access to the frepple objects.<br>
+  * The interpreter can execute generic scripts, and it also has (currently 
+  * quite limited) access to the frepple objects.<br>
   * The interpreter is multi-threaded. Multiple python scripts can run in
   * parallel. Internally Python allows only one thread at a time to
   * execute and the interpreter switches between the active threads, i.e.
   * a quite primitive threading model.<br>
   * Frepple uses a single global interpreter. A global Python variable or
-  * function is thus visible across multiple executions of a CommandPython.
+  * function is thus visible across multiple invocations of the Python 
+  * interpreter.
   */
-class CommandPython : public Command
+class CommandPython : public Command, public XMLinstruction
 {
   private:
     /** This is the thread state of the main execution thread. */
@@ -138,16 +142,27 @@ class CommandPython : public Command
     void setFileName(string s) {filename = s; cmd.clear();}
 
     virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    /** Metadata for registration as a command. */
+    static const MetaClass metadata;  
+    /** Metadata for registration as an XML instruction. */
+    static const MetaClass metadata2;  
     virtual size_t getSize() const
       {return sizeof(CommandPython) + cmd.size() + filename.size();}
 
     void endElement(XMLInput& pIn, XMLElement& pElement);
 
-    /** Initiliazes the python interpreter. */
+    /** This method is called when a processing instruction is read. */
+    void processInstruction(XMLInput &i, const char *d) {executePython(d);}
+
+    /** This is the workhorse that actually executes the argument string in 
+      * the Python interpreter. */
+    void executePython(const char*);
+
+    /** Initializes the python interpreter. */
     static void initialize();
 
   private:
+
     /** Python API: process an XML-formatted string.<br>
       * Arguments: data (string), validate (bool), checkOnly (bool)
       */

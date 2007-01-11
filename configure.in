@@ -216,25 +216,26 @@ fi
 if test x$python = xtrue
 then
 AC_CHECK_PROGS(PYTHON,python,nopython)
+if test x$PYTHON = xnopython
+then
+AC_MSG_ERROR([
+  This package requires the Python interpreter...
+  Alternatively, reconfigure without the option '--with-python'
+])
+else
 changequote(<<, >>)
 PYTHON_VERSION=`$PYTHON -c 'import sys; print sys.version[:3]'`
 changequote([, ])
-AC_SUBST(PYTHON_VERSION)
-if test xPYTHON = xnopython
-then
-AC_MSG_ERROR([
-  This package requires the python interpreter...
-  Alternatively, reconfigure without the option '--with-python'
-])
-fi
 AC_CHECK_LIB(python$PYTHON_VERSION, PyModule_GetDict, [],
 [AC_MSG_ERROR([
-  This package requires the python interpreter.
-  Alternatively, reconfigure without the option '--with-python'
+  This package requires the python development libraries.
+  Install these, or reconfigure without the option '--with-python'
 ])])
 AC_CHECKING([for python linking options ])
 PYTHON_LINK=`$PYTHON -c "import distutils.sysconfig; print distutils.sysconfig.get_config_var('LINKFORSHARED')"`
+AC_SUBST(PYTHON_VERSION)
 AC_SUBST(PYTHON_LINK)
+fi
 fi
 
 #

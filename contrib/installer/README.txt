@@ -9,6 +9,9 @@ To run the installer, the following steps are required:
 2) Cygwin environment.
    This is because the creation of the installer starts by making the same
    distribution tar-ball as for *nix environments.
+   It is recommended to create the distribution file manually from a cygwin
+   shell. The installer will create the distribution too but I found this
+   method is not reliable.
 
 3) Microsoft C++ compiler
    We distribute the executables created by the microsoft compilers.

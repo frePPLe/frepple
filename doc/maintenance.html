@@ -176,17 +176,18 @@ An evaluation copy of Intel compiler can be downloaded free of charge from the
 <H2><a name="standards"/>Coding standards</H2>
 <p>The project tries to follow the coding standards outlined in the corelinux
 project. The corelinux project is an open source project hosted on
-SourceForge.com
+SourceForge.com<br>
 See the documentation on <a href="http://corelinux.sourceforge.com"
 target="_blank">http://corelinux.sourceforge.com</a>
 <p>To format the source we will use the 'artistic style' tool. The following
-options are used:<br>
-	--style==ansi<br>
-	--indent=spaces=2<br>
-	--indent-classes<br>
-	--indent-switches<br>
-	--break-blocks<br>
+options are used:<pre>
+	--style==ansi
+	--indent=spaces=2
+	--indent-classes
+	--indent-switches
+	--break-blocks
 	--min-conditional-indent=2
+</pre>
 </p>
 
 <H2><a name="versioncontrol"/>Version control</H2>
@@ -208,18 +209,25 @@ A basic assumption for this process is that we want to clearly seperate the
 custom extension from the standardized framework, in order to facilitate
 maintaining and upgrading your solution.</p>
 <ul>
+<li>The proper way to build extension is by creating modules. Other ways of
+extending the package may technically be possible, but are not recommended.</li>
+<li>Copy the code and header structure from an existing module.</li>
 <li>Create your own header files, which will need to include the file planner.h
 </li>
 <li>Create your own c++ source files implementing the defined functions. Include
-you customized header file.</li>
-<li>Create you own client. The standard client uses the standard header files,
-and at least you copy the standard client code and include your own header
-file.</li>
-<li>In your favorite development environment, set up your own processes to
-build, document, configure, version, ... your solution.</li>
-<li>All of the steps described below for the standard framework will also apply
-for your customized solution.</li>
+you customized header file. Important is to include an initialize() method, and 
+use it to register your extension in the Frepple framework. The method is 
+automatically called when the module is loaded. </li>
+<li>Update the $FREPPLE_HOME/init.xml file to load your module with a
+COMMAND_LOADLIBRARY tag.<br>
+Parameters specified with the PARAMETER tag are passed to your module's initialize()
+funtion when the module is loaded.</li>
+<li>Update the file $FREPPLE_HOME/frepple.xsd by defining the xml constructs
+enabled by your module. This is typically done by including a seperate xsd file
+rather than directly entering the definition in the file.</li>
 </ul>
+This section will be elaborated into a more detailed step-by-step guide later on...
+Any volunteers?
 
 <H2>Updating the standard framework</H2>
 <p>Such updates will need the following updates to keep everything up to

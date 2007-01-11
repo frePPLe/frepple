@@ -4,6 +4,12 @@
     This test case tests the embedded python interpreter.
   </DESCRIPTION>
   <CURRENT>2007-01-01T00:00:00</CURRENT>
+<?PYTHON 
+import sys, frepple
+print "1. Python as a processing instruction"
+myvariable = 4
+print '1. defining my variable:', myvariable
+print '1. frepple version:', frepple.version?>
   <COMMANDS>
   	<VERBOSE>true</VERBOSE>
   	<ABORTONERROR>false</ABORTONERROR>
@@ -12,18 +18,8 @@
     <COMMAND xsi:type="COMMAND_PYTHON">
       <CMDLINE>
 <![CDATA[
-import sys, frepple
-myvariable = 4
-print '1. defining my variable:', myvariable
-print '1. frepple version:', frepple.version
-]]>
-      </CMDLINE>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_PYTHON">
-      <CMDLINE>
-<![CDATA[
-print '2. retrieving a variable:', myvariable
-print '2. calling a function:', my_function(myvariable)
+print '3. retrieving a variable:', myvariable
+print '3. calling a function:', my_function(myvariable)
 ]]>
       </CMDLINE>
     </COMMAND>
@@ -70,7 +66,7 @@ print '2. calling a function:', my_function(myvariable)
     <COMMAND xsi:type="COMMAND_PYTHON">
       <CMDLINE>
 <![CDATA[
-print '3. a syntax error:'
+print '4. a syntax error:'
 wrong
 ]]>
       </CMDLINE>
@@ -78,7 +74,7 @@ wrong
     <COMMAND xsi:type="COMMAND_PYTHON">
       <CMDLINE>
 <![CDATA[
-print '4. python catches exceptions thrown from the frepple C++ code'
+print '5. python catches exceptions thrown from the frepple C++ code'
 frepple.readXMLfile('nowheretobefound.xml')
 ]]>
       </CMDLINE>
@@ -88,9 +84,9 @@ frepple.readXMLfile('nowheretobefound.xml')
         <CMDLINE>
 <![CDATA[
 import time
-print '5a. start sleep'
+print '6a. start sleep'
 time.sleep(1)
-print '5a. end sleep'
+print '6a. end sleep'
 ]]>
         </CMDLINE>
       </COMMAND>
@@ -98,14 +94,14 @@ print '5a. end sleep'
         <CMDLINE>
 <![CDATA[
 import time
-print '5b. start sleep'
+print '6b. start sleep'
 time.sleep(1)
 print '5b. end sleep'
 ]]>
         </CMDLINE>
       </COMMAND>
       <COMMAND xsi:type="COMMAND_SYSTEM">
-        <CMDLINE>echo 5c. start sleep &amp;&amp; sleep 1&amp;&amp; echo 5c. after sleep</CMDLINE>
+        <CMDLINE>echo 6c. start sleep &amp;&amp; sleep 1&amp;&amp; echo 5c. after sleep</CMDLINE>
       </COMMAND>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVE">
@@ -173,4 +169,5 @@ SocketServer.TCPServer(("", PORT), FreppleServer).serve_forever()
     </COMMAND>
 -->
   </COMMANDS>
+  <?PYTHON print "2. Python processing instructions are executed before the commands" ?>
 </PLAN>

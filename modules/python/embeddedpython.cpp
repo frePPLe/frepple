@@ -31,6 +31,7 @@ namespace module_python
 {
 
 const MetaClass CommandPython::metadata;
+const MetaClass CommandPython::metadata2;
 PyThreadState *CommandPython::mainThreadState = NULL;
 PyObject* CommandPython::PythonLogicException = NULL;
 PyObject* CommandPython::PythonDataException = NULL;
@@ -69,6 +70,12 @@ MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
   CommandPython::metadata.registerClass(
     "COMMAND", 
     "COMMAND_PYTHON", 
+    Object::createDefault<CommandPython>);
+
+  // Register python also as a processing instruction. 
+  CommandPython::metadata2.registerClass(
+    "INSTRUCTION", 
+    "PYTHON", 
     Object::createDefault<CommandPython>);
 
   // Initialize the interpreter
@@ -186,6 +193,16 @@ void CommandPython::execute()
   }
   else throw DataException("Python command without statement or filename");
 
+  // Pass to the interpreter. 
+  executePython(c.c_str());
+
+  // Log
+  if (getVerbose()) clog << "Finished executing python at " 
+    << Date::now() << " : " << t << endl;
+}
+
+void CommandPython::executePython(const char* cmd)
+{
   // Get the global lock. 
   // After this command we are the only thread executing Python code.
   PyEval_AcquireLock();
@@ -221,7 +238,7 @@ void CommandPython::execute()
 
   // Execute the Python code. Note that during the call the python lock can be
   // temporarily released.
-  PyObject *v = PyRun_String(c.c_str(), Py_file_input, d, d);
+  PyObject *v = PyRun_String(cmd, Py_file_input, d, d);
   if (!v) 
   {
     // Print the error message
@@ -243,10 +260,6 @@ void CommandPython::execute()
 
   // Release the lock. No more python calls now.
   PyEval_ReleaseLock();
-
-  // Log
-  if (getVerbose()) clog << "Finished executing python at " 
-    << Date::now() << " : " << t << endl;
 }
 
 
@@ -370,7 +383,6 @@ PyObject* CommandPython::python_saveXMLfile(PyObject* self, PyObject* args)
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");
 }
-
 
 PyObject *CommandPython::python_saveXMLstring(PyObject* self, PyObject* args)
 {

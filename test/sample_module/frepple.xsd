@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+  elementFormDefault="unqualified" attributeFormDefault="unqualified"
+  version="1.0">
+
+  <!-- Include the standard fields. -->
+  <xsd:include schemaLocation="../../bin/frepple.xsd" />
+
+  <!-- And now define the new type -->
+  <xsd:complexType name="OPERATION_TRANSPORT">
+    <xsd:complexContent>
+      <xsd:extension base="OPERATION_FIXED_TIME">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="FROM" type="BUFFER" />
+          <xsd:element name="TO" type="BUFFER" />
+        </xsd:choice>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+</xsd:schema>

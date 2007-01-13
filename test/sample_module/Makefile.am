@@ -2,15 +2,17 @@
 # Process this file with automake to produce Makefile.in
 #
 
-check_PROGRAMS = custom_class
-
 AM_CPPFLAGS=-I@top_builddir@/include
 
-custom_class_SOURCES = main.cpp
-custom_class_LDADD   = ../../src/libfrepple.la
-custom_class_LDFLAGS = -static
-
-EXTRA_DIST = main.cpp custom_class.expect custom_class.h custom_class.xml init.xml frepple.xsd
+EXTRA_DIST = sample_module.cpp sample_module.expect sample_module.h sample_module.xml init.xml frepple.xsd
 
 CLEANFILES = output.* *.stackdump core *.gcda *.gcov *.gcno *.out
 
+check_LTLIBRARIES = mod_sample.la
+mod_sample_la_SOURCES = sample_module.cpp
+mod_sample_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
+if CYGWIN
+# Cygwin doesn't like undefined symbols in a windows dll
+mod_sample_la_LDFLAGS += -no-undefined
+mod_sample_la_LIBADD = ../../src/libfrepple.la
+endif

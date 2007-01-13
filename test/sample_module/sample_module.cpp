@@ -1,5 +1,5 @@
 /***************************************************************************
-  file : $HeadURL$
+  file : $HeadURL: https://svn.sourceforge.net/svnroot/frepple/trunk/test/custom_class/main.cpp $
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
   email : jdetaeye@users.sourceforge.net
@@ -25,51 +25,28 @@
  *                                                                         *
  ***************************************************************************/
 
-
-#include "freppleinterface.h"
 #include "frepple/model.h"
 using namespace frepple;
-#include "custom_class.h"
+#include "sample_module.h"
 
+namespace sample_module
+{
 
 const MetaClass OperationTransport::metadata;
 const XMLtag tag_from("FROM");
 const XMLtag tag_to("TO");
 
-int main (int argc, char *argv[])
+
+void initialize(const CommandLoadLibrary::ParameterList& z)
 {
-  try
-  {
-    // Initialize the libraries
-    FreppleInitialize(".");
-
-    // Additional initialization
-    OperationTransport::metadata.registerClass(
-      "OPERATION",
-      "OPERATION_TRANSPORT",
-      Object::createString<OperationTransport>);
-    FunctorStatic<Buffer, OperationTransport>::connect(SIG_REMOVE);
-
-    // Read input file and execute all its included commands.
-    // Yes, hard-coded file name for once...
-    FreppleReadXMLFile("custom_class.xml", true, false);
-
-    // Finalize
-    FreppleExit();
-  }
-  catch (exception& e)
-  {
-    cout << "Error: " << e.what() << endl;
-    FreppleExit();
-    return EXIT_FAILURE;
-  }
-  catch (...)
-  {
-    cout << "Error: Unknown exception type" << endl;
-    FreppleExit();
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  // Register the new class
+  OperationTransport::metadata.registerClass(
+    "OPERATION",
+    "OPERATION_TRANSPORT",
+    Object::createString<OperationTransport>);
+      
+  // Register a callback
+  FunctorStatic<Buffer, OperationTransport>::connect(SIG_REMOVE);
 }
 
 
@@ -134,9 +111,9 @@ void OperationTransport::endElement(XMLInput& pIn, XMLElement& pElement)
 // location.
 // Note:
 // The execution time of this method is linear with the number of operations
-// in the model. For large models where locations are very frequently being
+// in the model. For large models where buffers are very frequently being
 // deleted the current design is not very efficient. But since deletions of
-// locations are expected to be rare the current design should do just fine.
+// buffers are expected to be rare the current design should do just fine.
 // Note:
 // The use of a static subscription keeps the memory overhead of the cleanup
 // method to a handfull of bytes, regardless of the model size.
@@ -183,3 +160,5 @@ void OperationTransport::setToBuffer(Buffer *b)
   toBuf = b;
   new FlowEnd(this, b, 1);
 }
+
+}  // End namespace

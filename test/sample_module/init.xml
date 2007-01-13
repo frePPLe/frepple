@@ -2,5 +2,6 @@
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <COMMANDS>
     <VERBOSE>false</VERBOSE>
+    <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME=".libs/mod_sample.so" />
   </COMMANDS>
 </PLAN>

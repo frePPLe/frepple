@@ -1,5 +1,5 @@
 /***************************************************************************
-  file : $HeadURL$
+  file : $HeadURL: https://svn.sourceforge.net/svnroot/frepple/trunk/test/custom_class/custom_class.h $
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
   email : jdetaeye@users.sourceforge.net
@@ -26,10 +26,27 @@
  ***************************************************************************/
 
 
-#ifndef CUSTOM_CLASS_H
-#define CUSTOM_CLASS_H
+#ifndef SAMPLE_MODULE_H
+#define SAMPLE_MODULE_H
 #include "frepple/model.h"
 using namespace frepple;
+
+/** Using a seperate namespace keeps things clean and simple.
+  * It keeps the code structure and the documentation are following the same
+  * modular structure as your extension modules. 
+  */
+namespace sample_module
+{
+  
+  
+/** This is the initialization routine for the extension. 
+  * Including a function with this prototype is compulsary. If it doesn't exist
+  * your module will not be able to be loaded.
+  * The function is called automatically when your module is loaded.
+  *
+  * Parameters can be passed when loading the library.
+  */
+MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z);
 
 
 class OperationTransport : public OperationFixedTime
@@ -65,7 +82,10 @@ class OperationTransport : public OperationFixedTime
     virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
 
+    /** This callback will automatically be called when a buffer is deleted. */
     static bool callback(Buffer*, Signal);
 };
 
-#endif   // endif CUSTOM_CLASS_H
+} // End namespace
+
+#endif   // endif SAMPLE_MODULE_H

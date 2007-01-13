@@ -17,12 +17,11 @@ CLEANFILES = *.gcda *.gcov *.gcno
 
 lib_LTLIBRARIES = mod_forecast.la
 mod_forecast_la_SOURCES = $(sources)
+mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
-mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version -no-undefined
+mod_forecast_la_LDFLAGS += -no-undefined
 mod_forecast_la_LIBADD = ../../src/libfrepple.la
-else
-mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version
 endif
 
 all-local:

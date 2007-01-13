@@ -78,7 +78,7 @@ if ($SHLIB_PATH) {$SHLIB_PATH = "$FREPPLE_HOME:$SHLIB_PATH";}
 else {$SHLIB_PATH = "$FREPPLE_HOME";}
 # CYGWIN
 if ($PATH) {$PATH = "$FREPPLE_HOME:$PATH";}
-else {$SHLIB_PATH = "$FREPPLE_HOME";}
+else {$PATH = "$FREPPLE_HOME";}
 
 # Executable to be used for the tests. Exported as an environment variable.
 # This default executable is the one valid  for GCC cygwin and GCC *nux builds.

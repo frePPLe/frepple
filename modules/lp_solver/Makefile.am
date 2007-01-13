@@ -15,12 +15,11 @@ if LP
 
 mod_lpsolver_la_SOURCES = $(sources)
 lib_LTLIBRARIES = mod_lpsolver.la
+mod_lpsolver_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
-mod_lpsolver_la_LDFLAGS = -module -shrext .so -avoid-version -no-undefined
+mod_lpsolver_la_LDFLAGS += -no-undefined
 mod_lpsolver_la_LIBADD = ../../src/libfrepple.la
-else
-mod_lpsolver_la_LDFLAGS = -module -shrext .so -avoid-version
 endif
 
 all-local:

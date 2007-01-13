@@ -1,4 +1,37 @@
-
-
-
-not yet
+<?xml version="1.0" encoding="UTF-8"?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<CURRENT>2007-01-01T00:00:00</CURRENT>
+	<ITEMS>
+		<ITEM NAME="item1">
+			<CATEGORY>category1</CATEGORY>
+			<DESCRIPTION>description of item1</DESCRIPTION>
+		</ITEM>
+		<ITEM NAME="item2">
+			<CATEGORY>category2</CATEGORY>
+			<DESCRIPTION>description of item2</DESCRIPTION>
+		</ITEM>
+		<ITEM NAME="item3">
+			<CATEGORY>category3</CATEGORY>
+			<DESCRIPTION>description of item3</DESCRIPTION>
+		</ITEM>
+		<ITEM NAME="item4">
+			<CATEGORY>category4</CATEGORY>
+			<DESCRIPTION>description of item4</DESCRIPTION>
+		</ITEM>
+		<ITEM NAME="item5">
+			<CATEGORY>category 5</CATEGORY>
+			<DESCRIPTION>description of item5</DESCRIPTION>
+		</ITEM>
+		<ITEM NAME="item6">
+			<CATEGORY>category 6</CATEGORY>
+		</ITEM>
+		<ITEM NAME="item7">
+			<CATEGORY>none</CATEGORY>
+			<DESCRIPTION>none</DESCRIPTION>
+		</ITEM>
+		<ITEM NAME="item8">
+			<CATEGORY>none</CATEGORY>
+			<DESCRIPTION>description of item8</DESCRIPTION>
+		</ITEM>
+	</ITEMS>
+</PLAN>

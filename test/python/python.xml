@@ -96,12 +96,12 @@ print '6a. end sleep'
 import time
 print '6b. start sleep'
 time.sleep(1)
-print '5b. end sleep'
+print '6b. end sleep'
 ]]>
         </CMDLINE>
       </COMMAND>
       <COMMAND xsi:type="COMMAND_SYSTEM">
-        <CMDLINE>echo 6c. start sleep &amp;&amp; sleep 1&amp;&amp; echo 5c. after sleep</CMDLINE>
+        <CMDLINE>echo 6c. start sleep &amp;&amp; sleep 1&amp;&amp; echo 6c. after sleep</CMDLINE>
       </COMMAND>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVE">

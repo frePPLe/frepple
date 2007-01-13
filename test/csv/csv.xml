@@ -1,12 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- Define a Python function -->
+<?PYTHON
+import csv, frepple
+def readcsv():
+  x = [ '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n<ITEMS>' ]
+  for row in csv.reader(open("input.1.csv", "rb")):
+    # Skip empty lines
+    if len(row) == 0: continue
+    # Complete incomplete lines
+    for missing in range(len(row),3): row.append('none')
+    try:
+      # Skip comment lines
+      if row[0].startswith('#'): continue
+      # Add a line to the XML output list
+      x.append('<ITEM NAME="%s" DESCRIPTION="%s" CATEGORY="%s"/>' % (row[0],row[1],row[2]))
+    except: 
+      print "error"
+  x.append('</ITEMS>\n</PLAN>')
+  # Post the XML to Frepple
+  frepple.readXMLdata('\n'.join(x),False,False)
+?>
+
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ITEMS>
-    <!-- A test of a simple CSV data file and simple model. -->
-  	<?CSV datafile="input.1.csv" delimiter="," comment="#"
-			 <ITEM NAME="$1">
-			   <CATEGORY>$2</CATEGORY>
-			   <DESCRIPTION>$3</DESCRIPTION>
-			 </ITEM>
-		?>
-  </ITEMS>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="readcsv()" />
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1s.xml" />
+  </COMMANDS>
 </PLAN>

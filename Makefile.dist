@@ -77,8 +77,8 @@ prep_force:
 config:
 	@echo
 	@echo "PHASE: Running configure for optimized build..."
-	./configure --enable-doc  --prefix=`pwd`/install-test
-#	  --disable-multithread  --with-python
+	./configure --enable-doc  --prefix=`pwd`/install-test --with-python
+#	  --disable-multithread  
 
 configdebug:
 	@echo

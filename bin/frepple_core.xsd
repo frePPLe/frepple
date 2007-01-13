@@ -34,8 +34,8 @@
     Note that these instructions are never validated or checked by the parser.
     They are only processed inside frepple.
 
-      <?CSV xxxx ?>
-      This is used to parse input from CSV input files.
+      <?PYTHON xxxx ?>
+      Include Python code in your model.
   -->
 	<!--
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace">
@@ -75,7 +75,7 @@
     </xsd:simpleType>
   -->
 	<xsd:simpleType name="time">
-		<xsd:restriction base="xsd:string">
+		<xsd:restriction base="xsd:normalizedString">
 			<xsd:pattern value="(\+\-)?(([0-9]*:)?([0-9]*:))?[0-9]*" />
 		</xsd:restriction>
 	</xsd:simpleType>
@@ -94,16 +94,16 @@
 
 	<xsd:group name="COMMON_FIELDS">
 		<xsd:choice>
-			<xsd:element name="CATEGORY" type="xsd:string" />
-			<xsd:element name="SUBCATEGORY" type="xsd:string" />
+			<xsd:element name="CATEGORY" type="xsd:normalizedString" />
+			<xsd:element name="SUBCATEGORY" type="xsd:normalizedString" />
 			<xsd:element name="DESCRIPTION" type="xsd:string" />
 		</xsd:choice>
 	</xsd:group>
 
 	<xsd:attributeGroup name="COMMON_ATTRIBUTES">
 		<xsd:attribute name="NAME" type="non-empty-string" use="required" />
-		<xsd:attribute name="CATEGORY" type="xsd:string" />
-		<xsd:attribute name="SUBCATEGORY" type="xsd:string" />
+		<xsd:attribute name="CATEGORY" type="xsd:normalizedString" />
+		<xsd:attribute name="SUBCATEGORY" type="xsd:normalizedString" />
 		<xsd:attribute name="DESCRIPTION" type="xsd:string" />
 		<xsd:attribute name="ACTION" type="action" />
 	</xsd:attributeGroup>
@@ -591,12 +591,12 @@
 								<xsd:element name="BUCKET" minOccurs="0">
 									<xsd:complexType>
 										<xsd:all>
-											<xsd:element name="NAME" type="xsd:string" minOccurs="0" />
+											<xsd:element name="NAME" type="xsd:normalizedString" minOccurs="0" />
 											<xsd:element name="END" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="VALUE" type="xsd:float" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="START" type="xsd:dateTime" use="required" />
-										<xsd:attribute name="NAME" type="xsd:string" />
+										<xsd:attribute name="NAME" type="xsd:normalizedString" />
 										<xsd:attribute name="END" type="xsd:dateTime" />
 										<xsd:attribute name="VALUE" type="xsd:float" />
 										<xsd:attribute name="ACTION" type="action" />
@@ -620,11 +620,11 @@
 								<xsd:element name="BUCKET" minOccurs="0" maxOccurs="unbounded">
 									<xsd:complexType>
 										<xsd:all>
-											<xsd:element name="NAME" type="xsd:string" minOccurs="0" />
+											<xsd:element name="NAME" type="xsd:normalizedString" minOccurs="0" />
 											<xsd:element name="END" type="xsd:dateTime" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="START" type="xsd:dateTime" use="required" />
-										<xsd:attribute name="NAME" type="xsd:string" />
+										<xsd:attribute name="NAME" type="xsd:normalizedString" />
 										<xsd:attribute name="END" type="xsd:dateTime" />
 										<xsd:attribute name="ACTION" type="action" />
 									</xsd:complexType>
@@ -647,13 +647,13 @@
 								<xsd:element name="BUCKET">
 									<xsd:complexType>
 										<xsd:all>
-											<xsd:element name="NAME" type="xsd:string" minOccurs="0" />
+											<xsd:element name="NAME" type="xsd:normalizedString" minOccurs="0" />
 											<xsd:element name="END" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="VALUE" type="xsd:integer" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="VALUE" type="xsd:integer" />
 										<xsd:attribute name="START" type="xsd:dateTime" use="required" />
-										<xsd:attribute name="NAME" type="xsd:string" />
+										<xsd:attribute name="NAME" type="xsd:normalizedString" />
 										<xsd:attribute name="END" type="xsd:dateTime" />
 										<xsd:attribute name="ACTION" type="action" />
 									</xsd:complexType>
@@ -676,13 +676,13 @@
 								<xsd:element name="BUCKET" minOccurs="0" maxOccurs="unbounded">
 									<xsd:complexType>
 										<xsd:all>
-											<xsd:element name="NAME" type="xsd:string" minOccurs="0" />
+											<xsd:element name="NAME" type="xsd:normalizedString" minOccurs="0" />
 											<xsd:element name="END" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="VALUE" type="xsd:boolean" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="VALUE" type="xsd:boolean" />
 										<xsd:attribute name="START" type="xsd:dateTime" use="required" />
-										<xsd:attribute name="NAME" type="xsd:string" />
+										<xsd:attribute name="NAME" type="xsd:normalizedString" />
 										<xsd:attribute name="END" type="xsd:dateTime" />
 										<xsd:attribute name="ACTION" type="action" />
 									</xsd:complexType>
@@ -705,13 +705,13 @@
 								<xsd:element name="BUCKET" minOccurs="0" maxOccurs="unbounded">
 									<xsd:complexType>
 										<xsd:all>
-											<xsd:element name="NAME" type="xsd:string" minOccurs="0" />
+											<xsd:element name="NAME" type="xsd:normalizedString" minOccurs="0" />
 											<xsd:element name="END" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="VALUE" type="xsd:string" minOccurs="0" />
 										</xsd:all>
-										<xsd:attribute name="VALUE" type="xsd:string" />
+										<xsd:attribute name="VALUE" type="xsd:normalizedString" />
 										<xsd:attribute name="START" type="xsd:dateTime" use="required" />
-										<xsd:attribute name="NAME" type="xsd:string" />
+										<xsd:attribute name="NAME" type="xsd:normalizedString" />
 										<xsd:attribute name="END" type="xsd:dateTime" />
 										<xsd:attribute name="ACTION" type="action" />
 									</xsd:complexType>
@@ -734,12 +734,12 @@
 								<xsd:element name="BUCKET" minOccurs="0" maxOccurs="unbounded">
 									<xsd:complexType>
 										<xsd:all>
-											<xsd:element name="NAME" type="xsd:string" minOccurs="0" />
+											<xsd:element name="NAME" type="xsd:normalizedString" minOccurs="0" />
 											<xsd:element name="END" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="VALUE" type="OPERATION" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="START" type="xsd:dateTime" use="required" />
-										<xsd:attribute name="NAME" type="xsd:string" />
+										<xsd:attribute name="NAME" type="xsd:normalizedString" />
 										<xsd:attribute name="END" type="xsd:dateTime" />
 										<xsd:attribute name="ACTION" type="action" />
 									</xsd:complexType>
@@ -771,7 +771,7 @@
 			<xsd:element name="OWNER" type="OPERATION_PLAN" minOccurs="0" />
 		</xsd:sequence>
 		<xsd:attribute name="ID" type="xsd:unsignedLong" />
-		<xsd:attribute name="OPERATION" type="xsd:string" />
+		<xsd:attribute name="OPERATION" type="non-empty-string" />
 		<xsd:attribute name="START" type="xsd:dateTime" />
 		<xsd:attribute name="END" type="xsd:dateTime" />
 		<xsd:attribute name="EPST" type="xsd:dateTime" />
@@ -798,9 +798,9 @@
       </xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="NAME" type="xsd:string" minOccurs="0" />
-			<xsd:element name="DESCRIPTION" type="xsd:string" minOccurs="0" />
-			<xsd:element name="DATES" type="xsd:string" minOccurs="0" />
+			<xsd:element name="NAME" type="xsd:normalizedString" minOccurs="0" />
+			<xsd:element name="DESCRIPTION" type="xsd:normalizedString" minOccurs="0" />
+			<xsd:element name="DATES" type="xsd:normalizedString" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -862,10 +862,10 @@
 
 	<xsd:complexType name="PARAMETER">
 		<xsd:all>
-			<xsd:element name="NAME" type="xsd:string" minOccurs="0" />
+			<xsd:element name="NAME" type="xsd:normalizedString" minOccurs="0" />
 			<xsd:element name="VALUE" type="xsd:string" minOccurs="0" />
 		</xsd:all>
-		<xsd:attribute name="NAME" type="xsd:string" />
+		<xsd:attribute name="NAME" type="xsd:normalizedString" />
 		<xsd:attribute name="VALUE" type="xsd:string" />
 	</xsd:complexType>
 
@@ -874,10 +874,10 @@
 			<xsd:extension base="COMMAND">
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="VERBOSE" type="xsd:boolean" />
-					<xsd:element name="FILENAME" type="xsd:string" />
+					<xsd:element name="FILENAME" type="xsd:normalizedString" />
 					<xsd:element name="PARAMETER" type="PARAMETER" />
 				</xsd:choice>
-				<xsd:attribute name="FILENAME" type="xsd:string" />
+				<xsd:attribute name="FILENAME" type="xsd:normalizedString" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -938,7 +938,7 @@
 			<xsd:extension base="COMMAND">
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="VERBOSE" type="xsd:boolean" />
-					<xsd:element name="FILENAME" type="xsd:string" />
+					<xsd:element name="FILENAME" type="xsd:normalizedString" />
 					<xsd:element name="HEADERSTART" type="xsd:string" />
 					<xsd:element name="HEADERATTS" type="xsd:string" />
 					<xsd:element name="CONTENT">
@@ -951,7 +951,7 @@
 						</xsd:simpleType>
 					</xsd:element>
 				</xsd:choice>
-				<xsd:attribute name="FILENAME" type="xsd:string" />
+				<xsd:attribute name="FILENAME" type="xsd:normalizedString" />
 				<xsd:attribute name="HEADERSTART" type="xsd:string" />
 				<xsd:attribute name="HEADERATTS" type="xsd:string" />
 				<xsd:attribute name="CONTENT">
@@ -972,9 +972,9 @@
 			<xsd:extension base="COMMAND">
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="VERBOSE" type="xsd:boolean" />
-					<xsd:element name="FILENAME" type="xsd:string" />
+					<xsd:element name="FILENAME" type="xsd:normalizedString" />
 				</xsd:choice>
-				<xsd:attribute name="FILENAME" type="xsd:string" />
+				<xsd:attribute name="FILENAME" type="xsd:normalizedString" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -984,10 +984,10 @@
 			<xsd:extension base="COMMAND">
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="VERBOSE" type="xsd:boolean" />
-					<xsd:element name="FILENAME" type="xsd:string" />
+					<xsd:element name="FILENAME" type="xsd:normalizedString" />
 					<xsd:element name="VALIDATE" type="xsd:boolean" />
 				</xsd:choice>
-				<xsd:attribute name="FILENAME" type="xsd:string" />
+				<xsd:attribute name="FILENAME" type="xsd:normalizedString" />
 				<xsd:attribute name="VALIDATE" type="xsd:boolean" />
 			</xsd:extension>
 		</xsd:complexContent>
@@ -1012,10 +1012,10 @@
 			<xsd:extension base="COMMAND">
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="VERBOSE" type="xsd:boolean" />
-					<xsd:element name="URL" type="xsd:string" />
+					<xsd:element name="URL" type="xsd:normalizedString" />
 					<xsd:element name="VALIDATE" type="xsd:boolean" />
 				</xsd:choice>
-				<xsd:attribute name="URL" type="xsd:string" />
+				<xsd:attribute name="URL" type="xsd:normalizedString" />
 				<xsd:attribute name="VALIDATE" type="xsd:boolean" />
 			</xsd:extension>
 		</xsd:complexContent>
@@ -1030,7 +1030,7 @@
         stocks, solvers to create production or purchase orders, etc...
       </xsd:documentation>
 		</xsd:annotation>
-		<xsd:attribute name="NAME" type="xsd:string" use="required" />
+		<xsd:attribute name="NAME" type="non-empty-string" use="required" />
 		<xsd:attribute name="ACTION" type="action" />
 		<xsd:attribute name="VERBOSE" type="xsd:boolean" />
 	</xsd:complexType>

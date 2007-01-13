@@ -80,7 +80,8 @@ This test case also has capacity limits varying over time.
 
 <li><p><b>CSV</b><br>
 In this test the capability of reading data from CSV-formatted data files is
-verified. This functionality is not developed yet.
+verified. This functionality is actually implemented as a Python function that
+is reading the data file and then creating a XML-document from it.
 </p></li>
 
 <li><p><b>Datetime</b><br>
@@ -141,6 +142,12 @@ upstream and downstream and printed to the output.
 <li><p><b>Problems</b><br>
 Verifies that problems objects are created and deleted properly when the model
 is being updated in various ways.
+</p></li>
+
+<li><p><b>Sample_module</b><br>
+A simple example on how to define an extension module for Frepple. The example
+defines a new operation type that can be used to represent transportation
+operations easier.
 </p></li>
 
 <li><p><b>Scalability_1</b><br>

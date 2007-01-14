@@ -3021,7 +3021,8 @@ class CommandReadXMLString : public Command
 
 /** This command is used for reading XML input over an HTTP connection.<br>
   * The Xerces parser supports only the simplest possible setup: no proxy,
-  * no caching, no ssl, no authentication, etc...<br>
+  * no caching, no ssl, no authentication, etc...
+  *
   * In more complex setup the following alternatives are available:
   *  - Use a sytem command to retrieve the data first with eg a command line
   *    utility such as curl, wget, lynx, rcp, scp, ftp, sftp, rsynch,...<br>
@@ -3029,6 +3030,7 @@ class CommandReadXMLString : public Command
   *  - Use the embedded Python interpreter and its rich library of
   *    functionality to download the data.<br>
   *    The test 'xml_remote' shows some simple code for this.
+  *
   * The xerces 3.0 release will be able to use libcurl as the NetAccessor.
   * This will allow a much richer set of protocols to be supported. It also
   * means that in the meantime further development on this class simply

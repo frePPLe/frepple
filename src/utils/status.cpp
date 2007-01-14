@@ -54,7 +54,7 @@ void 	XMLInput::processingInstruction
       XMLinstruction::metadata.classes.find(XMLtag::hash(type));
     if (j == XMLinstruction::metadata.classes.end())
     {
-      string msg = string("Unknown processing instruction") + type;
+      string msg = string("Unknown processing instruction ") + type;
       XMLString::release(&type);
       XMLString::release(&value);
       throw LogicException(msg);
@@ -487,9 +487,11 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
   catch (const SAXParseException& toCatch)
   {
     char* message = XMLString::transcode(toCatch.getMessage());
-    ostringstream msg(message);
+    ostringstream msg;
     if (toCatch.getLineNumber() > 0)
-      msg << " at line " << toCatch.getLineNumber();
+      msg << message << " at line " << toCatch.getLineNumber();
+    else
+      msg << message;
     XMLString::release(&message);
     reset();
     throw RuntimeException("Parsing error: " + msg.str());

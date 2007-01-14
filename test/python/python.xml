@@ -149,13 +149,15 @@ PORT = 8000
 class FreppleServer(SimpleHTTPServer.SimpleHTTPRequestHandler):
   def do_HEAD(self):
     # Headers
-    self.send_header("Content-type", "text/html")
+    self.send_header("Content-type", "application/xml")
     self.send_header("Cache-Control", "no-cache")
     self.end_headers()
   def do_GET(self):
     # Body
     try:
       # Return the complete model as an XML page
+      # For large models this will blow up browser: the xml data
+      # are being loaded in a DOM tree, consuming plenty of memory...
       self.wfile.write(frepple.saveXMLstring())
     except:
       self.send_error(500, "Exception when saving the model")

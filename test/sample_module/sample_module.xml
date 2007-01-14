@@ -24,7 +24,7 @@
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.2.xml" />
   </COMMANDS>
-  <NAME>Custom class</NAME>
+  <NAME>Sample Module</NAME>
   <CURRENT>2007-01-01T00:00:00</CURRENT>
   <CALENDARS>
     <CALENDAR NAME="capacity factory 1" xsi:type="CALENDAR_FLOAT">

@@ -1,5 +1,5 @@
 
-EXTRA_DIST = planner.doxyfile header.doxyfile favicon.ico *.html *.css *.pdf *.jpg *.gif *.bmp
+EXTRA_DIST = planner.doxyfile favicon.ico *.html *.css *.pdf *.jpg *.gif *.bmp
 
 if DOC
 EXTRA_DIST += reference

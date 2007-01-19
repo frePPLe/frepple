@@ -29,7 +29,7 @@
   * @brief Header file for the module lp_solver.
   *
   * @namespace module_lp_solver
-  * @brief A solver module based on linear programming algorithm.
+  * @brief A solver module based on a linear programming algorithm.
   *
   * This module uses a linear programming representation to solve simple 
   * material allocation problems: Given a limited supply of components

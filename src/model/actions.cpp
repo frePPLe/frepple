@@ -66,7 +66,7 @@ DECLARE_EXPORT void CommandSolve::execute()
   if (getVerbose())
     clog << "Started running the solver '" << sol->getName()
       << "' at " << Date::now() << endl;
-	Timer t;
+  Timer t;
 
   // Running the solver now
   sol->solve();
@@ -119,7 +119,7 @@ DECLARE_EXPORT void CommandReadXMLFile::endElement(XMLInput& pIn, XMLElement& pE
 
 DECLARE_EXPORT void CommandReadXMLFile::execute()
 {
-	// Message
+  // Message
   if (getVerbose())
     clog << "Started reading model from file '" << filename
     << "' at " << Date::now() << endl;
@@ -132,24 +132,24 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
     StdInInputSource in;
     if (validate_only)
       // When no root object is passed, only the input validation happens
-	    XMLInput().parse(in, NULL, true);
-	  else
+      XMLInput().parse(in, NULL, true);
+    else
     {
       LockManager::getManager().obtainWriteLock(&Plan::instance());
-	    XMLInput().parse(in, &Plan::instance(), validate);
+      XMLInput().parse(in, &Plan::instance(), validate);
     }
   }
   else if (validate_only)
     // Read and validate a file
-		XMLInputFile(filename).parse(NULL, true);
-	else
+    XMLInputFile(filename).parse(NULL, true);
+  else
   {
     // Read, execute and optionally validate a file
     LockManager::getManager().obtainWriteLock(&Plan::instance());
     XMLInputFile(filename).parse(&Plan::instance(),validate);
   }
 
-	// Message
+  // Message
   if (getVerbose())
     clog << "Finished reading model at " << Date::now()  << " : " << t << endl;
 }
@@ -266,7 +266,7 @@ DECLARE_EXPORT void CommandSave::endElement(XMLInput& pIn, XMLElement& pElement)
 
 DECLARE_EXPORT void CommandSave::execute()
 {
-	// Message
+  // Message
   if (getVerbose())
     clog << "Start saving model to file '" << filename
     << "' at " << Date::now() << endl;
@@ -305,7 +305,7 @@ DECLARE_EXPORT void CommandSavePlan::endElement(XMLInput& pIn, XMLElement& pElem
 
 DECLARE_EXPORT void CommandSavePlan::execute()
 {
-	// Message
+  // Message
   if (getVerbose())
     clog << "Start saving plan to file '" << getFileName()
     << "' at " << Date::now() << endl;
@@ -313,100 +313,99 @@ DECLARE_EXPORT void CommandSavePlan::execute()
 
   // Output steam
   if (getFileName().empty())
-  	throw RuntimeException("No file specified for export.");
-	ofstream textoutput;
+    throw RuntimeException("No file specified for export.");
+  ofstream textoutput;
 
-	// Open the file, write to it and close it. Catch exceptions all along...
+  // Open the file, write to it and close it. Catch exceptions all along...
   try
   {
-		// Open the log file
-	  textoutput.open(getFileName().c_str(), ios::out);
+    // Open the log file
+    textoutput.open(getFileName().c_str(), ios::out);
 
-	  // Write the buffer summary
-	  for (Buffer::iterator gbuf = Buffer::begin();
-	       gbuf != Buffer::end(); ++gbuf)
-	  {
-	  	if (!gbuf->getHidden())
-		    for(Buffer::flowplanlist::const_iterator 
-		      oo=gbuf->getFlowPlans().begin();
-		      oo!=gbuf->getFlowPlans().end(); 
-		      ++oo)
-		      if (oo->getType() == 1)
-		      {
-		        textoutput << "BUFFER\t" << *gbuf << '\t'
-		        	<< oo->getDate() << '\t'
-		        	<< oo->getQuantity() << '\t'
-		        	<< oo->getOnhand() << endl;
-		      }
-	  }
+    // Write the buffer summary
+    for (Buffer::iterator gbuf = Buffer::begin();
+         gbuf != Buffer::end(); ++gbuf)
+    {
+      if (!gbuf->getHidden())
+        for(Buffer::flowplanlist::const_iterator 
+          oo=gbuf->getFlowPlans().begin();
+          oo!=gbuf->getFlowPlans().end(); 
+          ++oo)
+          if (oo->getType() == 1)
+          {
+            textoutput << "BUFFER\t" << *gbuf << '\t'
+              << oo->getDate() << '\t'
+              << oo->getQuantity() << '\t'
+              << oo->getOnhand() << endl;
+          }
+    }
 
-	  // Write the demand summary
-	  for (Demand::iterator gdem = Demand::begin();
-	       gdem != Demand::end(); ++gdem)
-	  {
-	  	if (!gdem->getHidden())
-		  	for(Demand::OperationPlan_list::const_iterator 
-		  	  pp=gdem->getDelivery().begin();
-		  	  pp!=gdem->getDelivery().end(); 
-		  	  ++pp)
-		  	{
-		  		textoutput << "DEMAND\t" << (*gdem) << '\t'
-		  			<< (*pp)->getDates().getEnd() << '\t'
-		  			<< (*pp)->getQuantity() << endl;
-		  	}
-	  }
+    // Write the demand summary
+    for (Demand::iterator gdem = Demand::begin();
+         gdem != Demand::end(); ++gdem)
+    {
+      if (!gdem->getHidden())
+        for(Demand::OperationPlan_list::const_iterator 
+          pp=gdem->getDelivery().begin();
+          pp!=gdem->getDelivery().end(); 
+          ++pp)
+        {
+          textoutput << "DEMAND\t" << (*gdem) << '\t'
+            << (*pp)->getDates().getEnd() << '\t'
+            << (*pp)->getQuantity() << endl;
+        }
+    }
 
-	  // Write the resource summary
-	  for (Resource::iterator gres = Resource::begin();
-	       gres != Resource::end(); ++gres)
-	  {
-	  	if (!gres->getHidden())
-		    for(Resource::loadplanlist::const_iterator 
-		      qq=gres->getLoadPlans().begin();
-		      qq!=gres->getLoadPlans().end(); 
-		      ++qq)
-		      if (qq->getType() == 1)
-		      {
-		        textoutput << "RESOURCE\t" << *gres << '\t'
-		        	<< qq->getDate() << '\t'
-		        	<< qq->getQuantity() << '\t'
-		        	<< qq->getOnhand() << endl;
-		      }
-	  }
+    // Write the resource summary
+    for (Resource::iterator gres = Resource::begin();
+         gres != Resource::end(); ++gres)
+    {
+      if (!gres->getHidden())
+        for(Resource::loadplanlist::const_iterator 
+          qq=gres->getLoadPlans().begin();
+          qq!=gres->getLoadPlans().end(); 
+          ++qq)
+          if (qq->getType() == 1)
+          {
+            textoutput << "RESOURCE\t" << *gres << '\t'
+              << qq->getDate() << '\t'
+              << qq->getQuantity() << '\t'
+              << qq->getOnhand() << endl;
+          }
+    }
 
-	  // Write the operationplan summary - Operationplans of a certain operation
-	  // are not sorted in a specific way
-		for(OperationPlan::iterator rr = OperationPlan::begin();
-		      rr != OperationPlan::end(); ++rr)
-		  {
+    // Write the operationplan summary.
+    for(OperationPlan::iterator rr = OperationPlan::begin();
+          rr != OperationPlan::end(); ++rr)
+      {
         if (rr->getOperation()->getHidden()) continue;
         textoutput << "OPERATION\t" << rr->getOperation() << '\t'
-		      << rr->getDates().getStart() << '\t'
-		      << rr->getDates().getEnd() << '\t'
-		      << rr->getQuantity() << endl;
-		  }
+          << rr->getDates().getStart() << '\t'
+          << rr->getDates().getEnd() << '\t'
+          << rr->getQuantity() << endl;
+      }
 
-	  // Write the problem summary - Problems are not sorted in a specific way
-	  for (Problem::const_iterator gprob = Problem::begin();
-	       gprob != Problem::end(); ++gprob)
-	  {
-	    textoutput << "PROBLEM\t" << (*gprob)->getType().type << '\t'
-	    	<< (*gprob)->getDescription() << '\t'
-	    	<< (*gprob)->getDateRange() << endl;
-	  }
+    // Write the problem summary.
+    for (Problem::const_iterator gprob = Problem::begin();
+         gprob != Problem::end(); ++gprob)
+    {
+      textoutput << "PROBLEM\t" << (*gprob)->getType().type << '\t'
+        << (*gprob)->getDescription() << '\t'
+        << (*gprob)->getDateRange() << endl;
+    }
 
-	  // Close the output file
-	  textoutput.close();
+    // Close the output file
+    textoutput.close();
   }
   catch (exception& e)
   {
-  	textoutput.close();
+    textoutput.close();
     throw RuntimeException("Error writing to file '" 
       + getFileName() + "':\n" + e.what());
   }
   catch (...)
   {
-  	textoutput.close();
+    textoutput.close();
     throw RuntimeException("Error writing to file '" 
       + getFileName() + "'");
   }

@@ -17,7 +17,7 @@
 	    <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
 	  </COMMAND>
 	  <COMMAND xsi:type="COMMAND_SAVEPLAN">
-	    <FILENAME>output.1s.xml</FILENAME>
+	    <FILENAME>output.1.xml</FILENAME>
 	  </COMMAND>
 	</COMMANDS>
 	<ITEMS>

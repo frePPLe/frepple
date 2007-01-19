@@ -79,7 +79,7 @@ for (my $counter=500; $counter <= 2000; $counter+=500)
   }
 
 # Define failure criterium
-if ($runtimes{2000} > $runtimes{500}*4*1.1)
+if ($runtimes{2000} > $runtimes{500}*4*1.2)
 {
 	die "\nTest failed. Run time is not linear with model size.\n";
 }

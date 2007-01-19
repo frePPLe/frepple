@@ -242,20 +242,13 @@ void OperationPlan::initialize()
   if (!oper->opplan)
     // First operationplan for this operation
     oper->opplan = this;
-  else if (id > oper->opplan->id)
+  else
   {
-    // Insert at the front of the list. Since the id is always increasing and 
-    // the list is sorted in descending id this is the most common case.
+    // Insert at the front of the list. This insert does not put the
+    // operationplan in the correct sorted order.
     next = oper->opplan;
     next->prev = this;
     oper->opplan = this;
-  }
-  else
-  {
-    // Insert in the middle of the list. This is an exceptional case.
-    for (next = oper->opplan; next && id < next->id; next = next->next) 
-      prev = next;
-    if (next) next->prev = this;
   }
 
   // If we used the lazy creator, the flow- and loadplans have not been
@@ -276,6 +269,54 @@ void OperationPlan::initialize()
 
   // Check the validity of what we have done
   assert(check());
+}
+
+
+bool OperationPlan::operator < (const OperationPlan& a) const
+{
+  // Different operations
+  if (oper != a.oper) 
+    return oper->getName() < a.oper->getName();   // @todo use < operator for HasName class
+
+  // Different start date
+  if (dates.getStart() != a.dates.getStart())
+    return dates.getStart() < a.dates.getStart();
+
+  // Sort based on quantity
+  return quantity >= a.quantity;
+}
+
+
+void OperationPlan::sortOperationPlans(const Operation& o)
+{
+  // @todo use a better, faster sorting algorithm
+  bool sorted;
+  do
+  {
+    sorted = true;
+    OperationPlan* i = o.getFirstOpPlan();
+    while (i && i->next)
+    {
+      if (!(*i < *(i->next)))
+      {
+        // Swapping two operationplans
+        OperationPlan *c = i;
+        OperationPlan *n = i->next;
+        if (c->prev) c->prev->next = n;
+        else const_cast<Operation&>(o).opplan = n;
+        if (n->next) n->next->prev = c;
+        n->prev = c->prev;
+        c->prev = n;
+        c->next = n->next;
+        n->next = c;
+        sorted = false;
+        i = n;
+      }
+      else
+        i = i->next;
+    }
+  }
+  while (!sorted);
 }
 
 

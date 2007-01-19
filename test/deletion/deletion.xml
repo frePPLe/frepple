@@ -19,7 +19,7 @@
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" />
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.2s.xml" />
+    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.2.xml" />
 
     <!--
       Now we delete the plan and then recreate it. The plan summary
@@ -30,7 +30,7 @@
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.4s.xml" />
+    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.4.xml" />
     <COMMAND xsi:type="COMMAND_ERASE" MODE="plan" />
 
     <!--
@@ -130,7 +130,7 @@
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.8s.xml" />
+    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.8.xml" />
 
     <!--
       Now we delete a buffer. Operationsplans are being deleted of
@@ -146,7 +146,7 @@
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" />
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.9s.xml" />
+    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="output.9.xml" />
 
     <!--
       Now we delete an operation.

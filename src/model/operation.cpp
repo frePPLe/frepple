@@ -152,8 +152,8 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mod
        || o->getContentType() == XMLOutput::PLANDETAIL) && opplan)
   {
     o->BeginObject(Tags::tag_operation_plans);
-    for(OperationPlan *i = opplan; i; i = i->next)
-      o->writeElement(Tags::tag_operation_plan, i, FULL);
+    for(OperationPlan::iterator i(this); i!=OperationPlan::end(); ++i)
+      o->writeElement(Tags::tag_operation_plan, *i, FULL);
     o->EndObject(Tags::tag_operation_plans);
   }
 }

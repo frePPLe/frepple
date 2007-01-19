@@ -10,7 +10,7 @@
       <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="7" />
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVEPLAN">
-      <FILENAME>output.1s.xml</FILENAME>
+      <FILENAME>output.1.xml</FILENAME>
     </COMMAND>
   </COMMANDS>
   <DEFAULT_CALENDAR NAME="Weeks" />

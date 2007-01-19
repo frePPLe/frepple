@@ -9,7 +9,7 @@
       <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVEPLAN">
-      <FILENAME>output.2s.xml</FILENAME>
+      <FILENAME>output.2.xml</FILENAME>
     </COMMAND>
     <!--/COMMAND-->
     <!-- Testing multi-threaded, parallel execution of commands. -->

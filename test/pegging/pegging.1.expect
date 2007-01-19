@@ -54,38 +54,24 @@
 	<OPERATIONS>
 		<OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME">
 			<OPERATION_PLANS>
-				<OPERATION_PLAN ID="4006" OPERATION="delivery 1">
+				<OPERATION_PLAN ID="4002" OPERATION="delivery 1">
 					<DEMAND NAME="order for item 1"/>
-					<START>2007-01-17T00:00:00</START>
-					<END>2007-01-18T00:00:00</END>
-					<QUANTITY>45</QUANTITY>
+					<START>2007-01-09T00:00:00</START>
+					<END>2007-01-10T00:00:00</END>
+					<QUANTITY>5</QUANTITY>
 					<FLOW_PLANS>
 						<FLOW_PLAN>
-							<DATE>2007-01-17T00:00:00</DATE>
-							<QUANTITY>-90</QUANTITY>
-							<ONHAND>4</ONHAND>
+							<DATE>2007-01-09T00:00:00</DATE>
+							<QUANTITY>-10</QUANTITY>
+							<ONHAND>0</ONHAND>
 							<MINIMUM>4</MINIMUM>
 							<MAXIMUM>0</MAXIMUM>
 							<PEGGING LEVEL="1">
-								<QUANTITY>90</QUANTITY>
-								<USAGE>0.957447</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
+								<QUANTITY>10</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>1971-01-01T00:00:00</DATE>
 								<BUFFER NAME="buffer 1"/>
-								<OPERATION_PLAN ID="4005" OPERATION="make 1"/>
-							</PEGGING>
-							<PEGGING LEVEL="2">
-								<QUANTITY>90</QUANTITY>
-								<USAGE>0.957447</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 1"/>
-								<OPERATION_PLAN ID="4005" OPERATION="make 1"/>
-							</PEGGING>
-							<PEGGING LEVEL="3">
-								<QUANTITY>90</QUANTITY>
-								<USAGE>0.45</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 1"/>
-								<OPERATION_PLAN ID="1002" OPERATION="supply 1"/>
+								<OPERATION_PLAN ID="1" OPERATION="Inventory of buffer &apos;buffer 1&apos;"/>
 							</PEGGING>
 						</FLOW_PLAN>
 					</FLOW_PLANS>
@@ -126,8 +112,49 @@
 						</FLOW_PLAN>
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
-				<OPERATION_PLAN ID="4002" OPERATION="delivery 1">
+				<OPERATION_PLAN ID="4006" OPERATION="delivery 1">
 					<DEMAND NAME="order for item 1"/>
+					<START>2007-01-17T00:00:00</START>
+					<END>2007-01-18T00:00:00</END>
+					<QUANTITY>45</QUANTITY>
+					<FLOW_PLANS>
+						<FLOW_PLAN>
+							<DATE>2007-01-17T00:00:00</DATE>
+							<QUANTITY>-90</QUANTITY>
+							<ONHAND>4</ONHAND>
+							<MINIMUM>4</MINIMUM>
+							<MAXIMUM>0</MAXIMUM>
+							<PEGGING LEVEL="1">
+								<QUANTITY>90</QUANTITY>
+								<USAGE>0.957447</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="buffer 1"/>
+								<OPERATION_PLAN ID="4005" OPERATION="make 1"/>
+							</PEGGING>
+							<PEGGING LEVEL="2">
+								<QUANTITY>90</QUANTITY>
+								<USAGE>0.957447</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 1"/>
+								<OPERATION_PLAN ID="4005" OPERATION="make 1"/>
+							</PEGGING>
+							<PEGGING LEVEL="3">
+								<QUANTITY>90</QUANTITY>
+								<USAGE>0.45</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 1"/>
+								<OPERATION_PLAN ID="1002" OPERATION="supply 1"/>
+							</PEGGING>
+						</FLOW_PLAN>
+					</FLOW_PLANS>
+				</OPERATION_PLAN>
+			</OPERATION_PLANS>
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+		<OPERATION NAME="delivery 2" xsi:type="OPERATION_FIXED_TIME">
+			<OPERATION_PLANS>
+				<OPERATION_PLAN ID="4007" OPERATION="delivery 2">
+					<DEMAND NAME="order for item 2"/>
 					<START>2007-01-09T00:00:00</START>
 					<END>2007-01-10T00:00:00</END>
 					<QUANTITY>5</QUANTITY>
@@ -142,49 +169,8 @@
 								<QUANTITY>10</QUANTITY>
 								<USAGE>1</USAGE>
 								<DATE>1971-01-01T00:00:00</DATE>
-								<BUFFER NAME="buffer 1"/>
-								<OPERATION_PLAN ID="1" OPERATION="Inventory of buffer &apos;buffer 1&apos;"/>
-							</PEGGING>
-						</FLOW_PLAN>
-					</FLOW_PLANS>
-				</OPERATION_PLAN>
-			</OPERATION_PLANS>
-			<DURATION>24:00:00</DURATION>
-		</OPERATION>
-		<OPERATION NAME="delivery 2" xsi:type="OPERATION_FIXED_TIME">
-			<OPERATION_PLANS>
-				<OPERATION_PLAN ID="4011" OPERATION="delivery 2">
-					<DEMAND NAME="order for item 2"/>
-					<START>2007-01-17T00:00:00</START>
-					<END>2007-01-18T00:00:00</END>
-					<QUANTITY>25</QUANTITY>
-					<FLOW_PLANS>
-						<FLOW_PLAN>
-							<DATE>2007-01-17T00:00:00</DATE>
-							<QUANTITY>-50</QUANTITY>
-							<ONHAND>0</ONHAND>
-							<MINIMUM>4</MINIMUM>
-							<MAXIMUM>0</MAXIMUM>
-							<PEGGING LEVEL="1">
-								<QUANTITY>50</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
 								<BUFFER NAME="buffer 2"/>
-								<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
-							</PEGGING>
-							<PEGGING LEVEL="2">
-								<QUANTITY>50</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 2"/>
-								<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
-							</PEGGING>
-							<PEGGING LEVEL="3">
-								<QUANTITY>50</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 2"/>
-								<OPERATION_PLAN ID="2002" OPERATION="supply 2"/>
+								<OPERATION_PLAN ID="2" OPERATION="Inventory of buffer &apos;buffer 2&apos;"/>
 							</PEGGING>
 						</FLOW_PLAN>
 					</FLOW_PLANS>
@@ -225,11 +211,52 @@
 						</FLOW_PLAN>
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
-				<OPERATION_PLAN ID="4007" OPERATION="delivery 2">
+				<OPERATION_PLAN ID="4011" OPERATION="delivery 2">
 					<DEMAND NAME="order for item 2"/>
+					<START>2007-01-17T00:00:00</START>
+					<END>2007-01-18T00:00:00</END>
+					<QUANTITY>25</QUANTITY>
+					<FLOW_PLANS>
+						<FLOW_PLAN>
+							<DATE>2007-01-17T00:00:00</DATE>
+							<QUANTITY>-50</QUANTITY>
+							<ONHAND>0</ONHAND>
+							<MINIMUM>4</MINIMUM>
+							<MAXIMUM>0</MAXIMUM>
+							<PEGGING LEVEL="1">
+								<QUANTITY>50</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="buffer 2"/>
+								<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
+							</PEGGING>
+							<PEGGING LEVEL="2">
+								<QUANTITY>50</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 2"/>
+								<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
+							</PEGGING>
+							<PEGGING LEVEL="3">
+								<QUANTITY>50</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 2"/>
+								<OPERATION_PLAN ID="2002" OPERATION="supply 2"/>
+							</PEGGING>
+						</FLOW_PLAN>
+					</FLOW_PLANS>
+				</OPERATION_PLAN>
+			</OPERATION_PLANS>
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+		<OPERATION NAME="delivery 3" xsi:type="OPERATION_FIXED_TIME">
+			<OPERATION_PLANS>
+				<OPERATION_PLAN ID="4012" OPERATION="delivery 3">
+					<DEMAND NAME="order for item 3"/>
 					<START>2007-01-09T00:00:00</START>
 					<END>2007-01-10T00:00:00</END>
-					<QUANTITY>5</QUANTITY>
+					<QUANTITY>10</QUANTITY>
 					<FLOW_PLANS>
 						<FLOW_PLAN>
 							<DATE>2007-01-09T00:00:00</DATE>
@@ -241,17 +268,12 @@
 								<QUANTITY>10</QUANTITY>
 								<USAGE>1</USAGE>
 								<DATE>1971-01-01T00:00:00</DATE>
-								<BUFFER NAME="buffer 2"/>
-								<OPERATION_PLAN ID="2" OPERATION="Inventory of buffer &apos;buffer 2&apos;"/>
+								<BUFFER NAME="buffer 3"/>
+								<OPERATION_PLAN ID="3" OPERATION="Inventory of buffer &apos;buffer 3&apos;"/>
 							</PEGGING>
 						</FLOW_PLAN>
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
-			</OPERATION_PLANS>
-			<DURATION>24:00:00</DURATION>
-		</OPERATION>
-		<OPERATION NAME="delivery 3" xsi:type="OPERATION_FIXED_TIME">
-			<OPERATION_PLANS>
 				<OPERATION_PLAN ID="4014" OPERATION="delivery 3">
 					<DEMAND NAME="order for item 3"/>
 					<START>2007-01-15T00:00:00</START>
@@ -288,11 +310,16 @@
 						</FLOW_PLAN>
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
-				<OPERATION_PLAN ID="4012" OPERATION="delivery 3">
-					<DEMAND NAME="order for item 3"/>
+			</OPERATION_PLANS>
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+		<OPERATION NAME="delivery 4" xsi:type="OPERATION_FIXED_TIME">
+			<OPERATION_PLANS>
+				<OPERATION_PLAN ID="4015" OPERATION="delivery 4">
+					<DEMAND NAME="order for item 4"/>
 					<START>2007-01-09T00:00:00</START>
 					<END>2007-01-10T00:00:00</END>
-					<QUANTITY>10</QUANTITY>
+					<QUANTITY>5</QUANTITY>
 					<FLOW_PLANS>
 						<FLOW_PLAN>
 							<DATE>2007-01-09T00:00:00</DATE>
@@ -304,17 +331,48 @@
 								<QUANTITY>10</QUANTITY>
 								<USAGE>1</USAGE>
 								<DATE>1971-01-01T00:00:00</DATE>
-								<BUFFER NAME="buffer 3"/>
-								<OPERATION_PLAN ID="3" OPERATION="Inventory of buffer &apos;buffer 3&apos;"/>
+								<BUFFER NAME="buffer 4"/>
+								<OPERATION_PLAN ID="4" OPERATION="Inventory of buffer &apos;buffer 4&apos;"/>
 							</PEGGING>
 						</FLOW_PLAN>
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
-			</OPERATION_PLANS>
-			<DURATION>24:00:00</DURATION>
-		</OPERATION>
-		<OPERATION NAME="delivery 4" xsi:type="OPERATION_FIXED_TIME">
-			<OPERATION_PLANS>
+				<OPERATION_PLAN ID="4017" OPERATION="delivery 4">
+					<DEMAND NAME="order for item 4"/>
+					<START>2007-01-15T00:00:00</START>
+					<END>2007-01-16T00:00:00</END>
+					<QUANTITY>95</QUANTITY>
+					<FLOW_PLANS>
+						<FLOW_PLAN>
+							<DATE>2007-01-15T00:00:00</DATE>
+							<QUANTITY>-190</QUANTITY>
+							<ONHAND>6</ONHAND>
+							<MINIMUM>6</MINIMUM>
+							<MAXIMUM>0</MAXIMUM>
+							<PEGGING LEVEL="1">
+								<QUANTITY>190</QUANTITY>
+								<USAGE>0.969388</USAGE>
+								<DATE>2007-01-15T00:00:00</DATE>
+								<BUFFER NAME="buffer 4"/>
+								<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
+							</PEGGING>
+							<PEGGING LEVEL="2">
+								<QUANTITY>190</QUANTITY>
+								<USAGE>0.969388</USAGE>
+								<DATE>2007-01-15T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 4"/>
+								<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
+							</PEGGING>
+							<PEGGING LEVEL="3">
+								<QUANTITY>190</QUANTITY>
+								<USAGE>0.19</USAGE>
+								<DATE>2007-01-15T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 4"/>
+								<OPERATION_PLAN ID="4001" OPERATION="supply 4"/>
+							</PEGGING>
+						</FLOW_PLAN>
+					</FLOW_PLANS>
+				</OPERATION_PLAN>
 				<OPERATION_PLAN ID="4019" OPERATION="delivery 4">
 					<DEMAND NAME="order 2 for item 4"/>
 					<START>2007-06-18T00:00:00</START>
@@ -372,69 +430,74 @@
 						</FLOW_PLAN>
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
-				<OPERATION_PLAN ID="4017" OPERATION="delivery 4">
-					<DEMAND NAME="order for item 4"/>
-					<START>2007-01-15T00:00:00</START>
-					<END>2007-01-16T00:00:00</END>
-					<QUANTITY>95</QUANTITY>
-					<FLOW_PLANS>
-						<FLOW_PLAN>
-							<DATE>2007-01-15T00:00:00</DATE>
-							<QUANTITY>-190</QUANTITY>
-							<ONHAND>6</ONHAND>
-							<MINIMUM>6</MINIMUM>
-							<MAXIMUM>0</MAXIMUM>
-							<PEGGING LEVEL="1">
-								<QUANTITY>190</QUANTITY>
-								<USAGE>0.969388</USAGE>
-								<DATE>2007-01-15T00:00:00</DATE>
-								<BUFFER NAME="buffer 4"/>
-								<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
-							</PEGGING>
-							<PEGGING LEVEL="2">
-								<QUANTITY>190</QUANTITY>
-								<USAGE>0.969388</USAGE>
-								<DATE>2007-01-15T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 4"/>
-								<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
-							</PEGGING>
-							<PEGGING LEVEL="3">
-								<QUANTITY>190</QUANTITY>
-								<USAGE>0.19</USAGE>
-								<DATE>2007-01-15T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 4"/>
-								<OPERATION_PLAN ID="4001" OPERATION="supply 4"/>
-							</PEGGING>
-						</FLOW_PLAN>
-					</FLOW_PLANS>
-				</OPERATION_PLAN>
-				<OPERATION_PLAN ID="4015" OPERATION="delivery 4">
-					<DEMAND NAME="order for item 4"/>
-					<START>2007-01-09T00:00:00</START>
-					<END>2007-01-10T00:00:00</END>
-					<QUANTITY>5</QUANTITY>
-					<FLOW_PLANS>
-						<FLOW_PLAN>
-							<DATE>2007-01-09T00:00:00</DATE>
-							<QUANTITY>-10</QUANTITY>
-							<ONHAND>0</ONHAND>
-							<MINIMUM>4</MINIMUM>
-							<MAXIMUM>0</MAXIMUM>
-							<PEGGING LEVEL="1">
-								<QUANTITY>10</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>1971-01-01T00:00:00</DATE>
-								<BUFFER NAME="buffer 4"/>
-								<OPERATION_PLAN ID="4" OPERATION="Inventory of buffer &apos;buffer 4&apos;"/>
-							</PEGGING>
-						</FLOW_PLAN>
-					</FLOW_PLANS>
-				</OPERATION_PLAN>
 			</OPERATION_PLANS>
 			<DURATION>24:00:00</DURATION>
 		</OPERATION>
 		<OPERATION NAME="make 1" xsi:type="OPERATION_FIXED_TIME">
 			<OPERATION_PLANS>
+				<OPERATION_PLAN ID="4003" OPERATION="make 1">
+					<START>2007-01-10T00:00:00</START>
+					<END>2007-01-10T00:00:00</END>
+					<QUANTITY>50</QUANTITY>
+					<FLOW_PLANS>
+						<FLOW_PLAN>
+							<DATE>2007-01-10T00:00:00</DATE>
+							<QUANTITY>100</QUANTITY>
+							<ONHAND>100</ONHAND>
+							<MINIMUM>4</MINIMUM>
+							<MAXIMUM>0</MAXIMUM>
+							<PEGGING LEVEL="1">
+								<QUANTITY>100</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-10T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 1"/>
+								<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
+							</PEGGING>
+							<PEGGING LEVEL="2">
+								<QUANTITY>100</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-10T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 1"/>
+								<OPERATION_PLAN ID="1001" OPERATION="supply 1"/>
+							</PEGGING>
+							<PEGGING LEVEL="-1">
+								<QUANTITY>100</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-10T00:00:00</DATE>
+								<BUFFER NAME="buffer 1"/>
+								<OPERATION_PLAN ID="4004" OPERATION="delivery 1"/>
+							</PEGGING>
+						</FLOW_PLAN>
+						<FLOW_PLAN>
+							<DATE>2007-01-10T00:00:00</DATE>
+							<QUANTITY>-100</QUANTITY>
+							<ONHAND>0</ONHAND>
+							<MINIMUM>0</MINIMUM>
+							<MAXIMUM>0</MAXIMUM>
+							<PEGGING LEVEL="1">
+								<QUANTITY>100</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-10T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 1"/>
+								<OPERATION_PLAN ID="1001" OPERATION="supply 1"/>
+							</PEGGING>
+							<PEGGING LEVEL="-1">
+								<QUANTITY>100</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-10T00:00:00</DATE>
+								<BUFFER NAME="buffer 1"/>
+								<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
+							</PEGGING>
+							<PEGGING LEVEL="-2">
+								<QUANTITY>100</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-10T00:00:00</DATE>
+								<BUFFER NAME="buffer 1"/>
+								<OPERATION_PLAN ID="4004" OPERATION="delivery 1"/>
+							</PEGGING>
+						</FLOW_PLAN>
+					</FLOW_PLANS>
+				</OPERATION_PLAN>
 				<OPERATION_PLAN ID="4005" OPERATION="make 1">
 					<START>2007-01-17T00:00:00</START>
 					<END>2007-01-17T00:00:00</END>
@@ -514,136 +577,10 @@
 						</FLOW_PLAN>
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
-				<OPERATION_PLAN ID="4003" OPERATION="make 1">
-					<START>2007-01-10T00:00:00</START>
-					<END>2007-01-10T00:00:00</END>
-					<QUANTITY>50</QUANTITY>
-					<FLOW_PLANS>
-						<FLOW_PLAN>
-							<DATE>2007-01-10T00:00:00</DATE>
-							<QUANTITY>100</QUANTITY>
-							<ONHAND>100</ONHAND>
-							<MINIMUM>4</MINIMUM>
-							<MAXIMUM>0</MAXIMUM>
-							<PEGGING LEVEL="1">
-								<QUANTITY>100</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-10T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 1"/>
-								<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
-							</PEGGING>
-							<PEGGING LEVEL="2">
-								<QUANTITY>100</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-10T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 1"/>
-								<OPERATION_PLAN ID="1001" OPERATION="supply 1"/>
-							</PEGGING>
-							<PEGGING LEVEL="-1">
-								<QUANTITY>100</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-10T00:00:00</DATE>
-								<BUFFER NAME="buffer 1"/>
-								<OPERATION_PLAN ID="4004" OPERATION="delivery 1"/>
-							</PEGGING>
-						</FLOW_PLAN>
-						<FLOW_PLAN>
-							<DATE>2007-01-10T00:00:00</DATE>
-							<QUANTITY>-100</QUANTITY>
-							<ONHAND>0</ONHAND>
-							<MINIMUM>0</MINIMUM>
-							<MAXIMUM>0</MAXIMUM>
-							<PEGGING LEVEL="1">
-								<QUANTITY>100</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-10T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 1"/>
-								<OPERATION_PLAN ID="1001" OPERATION="supply 1"/>
-							</PEGGING>
-							<PEGGING LEVEL="-1">
-								<QUANTITY>100</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-10T00:00:00</DATE>
-								<BUFFER NAME="buffer 1"/>
-								<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
-							</PEGGING>
-							<PEGGING LEVEL="-2">
-								<QUANTITY>100</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-10T00:00:00</DATE>
-								<BUFFER NAME="buffer 1"/>
-								<OPERATION_PLAN ID="4004" OPERATION="delivery 1"/>
-							</PEGGING>
-						</FLOW_PLAN>
-					</FLOW_PLANS>
-				</OPERATION_PLAN>
 			</OPERATION_PLANS>
 		</OPERATION>
 		<OPERATION NAME="make 2" xsi:type="OPERATION_FIXED_TIME">
 			<OPERATION_PLANS>
-				<OPERATION_PLAN ID="4010" OPERATION="make 2">
-					<START>2007-01-17T00:00:00</START>
-					<END>2007-01-17T00:00:00</END>
-					<QUANTITY>25</QUANTITY>
-					<FLOW_PLANS>
-						<FLOW_PLAN>
-							<DATE>2007-01-17T00:00:00</DATE>
-							<QUANTITY>50</QUANTITY>
-							<ONHAND>50</ONHAND>
-							<MINIMUM>4</MINIMUM>
-							<MAXIMUM>0</MAXIMUM>
-							<PEGGING LEVEL="1">
-								<QUANTITY>50</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 2"/>
-								<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
-							</PEGGING>
-							<PEGGING LEVEL="2">
-								<QUANTITY>50</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 2"/>
-								<OPERATION_PLAN ID="2002" OPERATION="supply 2"/>
-							</PEGGING>
-							<PEGGING LEVEL="-1">
-								<QUANTITY>50</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="buffer 2"/>
-								<OPERATION_PLAN ID="4011" OPERATION="delivery 2"/>
-							</PEGGING>
-						</FLOW_PLAN>
-						<FLOW_PLAN>
-							<DATE>2007-01-17T00:00:00</DATE>
-							<QUANTITY>-50</QUANTITY>
-							<ONHAND>0</ONHAND>
-							<MINIMUM>0</MINIMUM>
-							<MAXIMUM>0</MAXIMUM>
-							<PEGGING LEVEL="1">
-								<QUANTITY>50</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 2"/>
-								<OPERATION_PLAN ID="2002" OPERATION="supply 2"/>
-							</PEGGING>
-							<PEGGING LEVEL="-1">
-								<QUANTITY>50</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="buffer 2"/>
-								<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
-							</PEGGING>
-							<PEGGING LEVEL="-2">
-								<QUANTITY>50</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="buffer 2"/>
-								<OPERATION_PLAN ID="4011" OPERATION="delivery 2"/>
-							</PEGGING>
-						</FLOW_PLAN>
-					</FLOW_PLANS>
-				</OPERATION_PLAN>
 				<OPERATION_PLAN ID="4008" OPERATION="make 2">
 					<START>2007-01-10T00:00:00</START>
 					<END>2007-01-10T00:00:00</END>
@@ -703,6 +640,69 @@
 								<DATE>2007-01-10T00:00:00</DATE>
 								<BUFFER NAME="buffer 2"/>
 								<OPERATION_PLAN ID="4009" OPERATION="delivery 2"/>
+							</PEGGING>
+						</FLOW_PLAN>
+					</FLOW_PLANS>
+				</OPERATION_PLAN>
+				<OPERATION_PLAN ID="4010" OPERATION="make 2">
+					<START>2007-01-17T00:00:00</START>
+					<END>2007-01-17T00:00:00</END>
+					<QUANTITY>25</QUANTITY>
+					<FLOW_PLANS>
+						<FLOW_PLAN>
+							<DATE>2007-01-17T00:00:00</DATE>
+							<QUANTITY>50</QUANTITY>
+							<ONHAND>50</ONHAND>
+							<MINIMUM>4</MINIMUM>
+							<MAXIMUM>0</MAXIMUM>
+							<PEGGING LEVEL="1">
+								<QUANTITY>50</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 2"/>
+								<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
+							</PEGGING>
+							<PEGGING LEVEL="2">
+								<QUANTITY>50</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 2"/>
+								<OPERATION_PLAN ID="2002" OPERATION="supply 2"/>
+							</PEGGING>
+							<PEGGING LEVEL="-1">
+								<QUANTITY>50</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="buffer 2"/>
+								<OPERATION_PLAN ID="4011" OPERATION="delivery 2"/>
+							</PEGGING>
+						</FLOW_PLAN>
+						<FLOW_PLAN>
+							<DATE>2007-01-17T00:00:00</DATE>
+							<QUANTITY>-50</QUANTITY>
+							<ONHAND>0</ONHAND>
+							<MINIMUM>0</MINIMUM>
+							<MAXIMUM>0</MAXIMUM>
+							<PEGGING LEVEL="1">
+								<QUANTITY>50</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 2"/>
+								<OPERATION_PLAN ID="2002" OPERATION="supply 2"/>
+							</PEGGING>
+							<PEGGING LEVEL="-1">
+								<QUANTITY>50</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="buffer 2"/>
+								<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
+							</PEGGING>
+							<PEGGING LEVEL="-2">
+								<QUANTITY>50</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="buffer 2"/>
+								<OPERATION_PLAN ID="4011" OPERATION="delivery 2"/>
 							</PEGGING>
 						</FLOW_PLAN>
 					</FLOW_PLANS>
@@ -794,6 +794,83 @@
 		</OPERATION>
 		<OPERATION NAME="make 4" xsi:type="OPERATION_FIXED_TIME">
 			<OPERATION_PLANS>
+				<OPERATION_PLAN ID="4016" OPERATION="make 4">
+					<START>2007-01-15T00:00:00</START>
+					<END>2007-01-15T00:00:00</END>
+					<QUANTITY>98</QUANTITY>
+					<FLOW_PLANS>
+						<FLOW_PLAN>
+							<DATE>2007-01-15T00:00:00</DATE>
+							<QUANTITY>196</QUANTITY>
+							<ONHAND>196</ONHAND>
+							<MINIMUM>6</MINIMUM>
+							<MAXIMUM>0</MAXIMUM>
+							<PEGGING LEVEL="1">
+								<QUANTITY>196</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-15T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 4"/>
+								<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
+							</PEGGING>
+							<PEGGING LEVEL="2">
+								<QUANTITY>196</QUANTITY>
+								<USAGE>0.196</USAGE>
+								<DATE>2007-01-15T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 4"/>
+								<OPERATION_PLAN ID="4001" OPERATION="supply 4"/>
+							</PEGGING>
+							<PEGGING LEVEL="-1">
+								<QUANTITY>6</QUANTITY>
+								<USAGE>0.03</USAGE>
+								<DATE>2007-06-18T00:00:00</DATE>
+								<BUFFER NAME="buffer 4"/>
+								<OPERATION_PLAN ID="4019" OPERATION="delivery 4"/>
+							</PEGGING>
+							<PEGGING LEVEL="-1">
+								<QUANTITY>190</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-15T00:00:00</DATE>
+								<BUFFER NAME="buffer 4"/>
+								<OPERATION_PLAN ID="4017" OPERATION="delivery 4"/>
+							</PEGGING>
+						</FLOW_PLAN>
+						<FLOW_PLAN>
+							<DATE>2007-01-15T00:00:00</DATE>
+							<QUANTITY>-196</QUANTITY>
+							<ONHAND>804</ONHAND>
+							<MINIMUM>0</MINIMUM>
+							<MAXIMUM>0</MAXIMUM>
+							<PEGGING LEVEL="1">
+								<QUANTITY>196</QUANTITY>
+								<USAGE>0.196</USAGE>
+								<DATE>2007-01-15T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 4"/>
+								<OPERATION_PLAN ID="4001" OPERATION="supply 4"/>
+							</PEGGING>
+							<PEGGING LEVEL="-1">
+								<QUANTITY>196</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-15T00:00:00</DATE>
+								<BUFFER NAME="buffer 4"/>
+								<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
+							</PEGGING>
+							<PEGGING LEVEL="-2">
+								<QUANTITY>6</QUANTITY>
+								<USAGE>0.03</USAGE>
+								<DATE>2007-06-18T00:00:00</DATE>
+								<BUFFER NAME="buffer 4"/>
+								<OPERATION_PLAN ID="4019" OPERATION="delivery 4"/>
+							</PEGGING>
+							<PEGGING LEVEL="-2">
+								<QUANTITY>190</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-15T00:00:00</DATE>
+								<BUFFER NAME="buffer 4"/>
+								<OPERATION_PLAN ID="4017" OPERATION="delivery 4"/>
+							</PEGGING>
+						</FLOW_PLAN>
+					</FLOW_PLANS>
+				</OPERATION_PLAN>
 				<OPERATION_PLAN ID="4018" OPERATION="make 4">
 					<START>2007-06-18T00:00:00</START>
 					<END>2007-06-18T00:00:00</END>
@@ -873,87 +950,46 @@
 						</FLOW_PLAN>
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
-				<OPERATION_PLAN ID="4016" OPERATION="make 4">
-					<START>2007-01-15T00:00:00</START>
-					<END>2007-01-15T00:00:00</END>
-					<QUANTITY>98</QUANTITY>
-					<FLOW_PLANS>
-						<FLOW_PLAN>
-							<DATE>2007-01-15T00:00:00</DATE>
-							<QUANTITY>196</QUANTITY>
-							<ONHAND>196</ONHAND>
-							<MINIMUM>6</MINIMUM>
-							<MAXIMUM>0</MAXIMUM>
-							<PEGGING LEVEL="1">
-								<QUANTITY>196</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-15T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 4"/>
-								<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
-							</PEGGING>
-							<PEGGING LEVEL="2">
-								<QUANTITY>196</QUANTITY>
-								<USAGE>0.196</USAGE>
-								<DATE>2007-01-15T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 4"/>
-								<OPERATION_PLAN ID="4001" OPERATION="supply 4"/>
-							</PEGGING>
-							<PEGGING LEVEL="-1">
-								<QUANTITY>6</QUANTITY>
-								<USAGE>0.03</USAGE>
-								<DATE>2007-06-18T00:00:00</DATE>
-								<BUFFER NAME="buffer 4"/>
-								<OPERATION_PLAN ID="4019" OPERATION="delivery 4"/>
-							</PEGGING>
-							<PEGGING LEVEL="-1">
-								<QUANTITY>190</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-15T00:00:00</DATE>
-								<BUFFER NAME="buffer 4"/>
-								<OPERATION_PLAN ID="4017" OPERATION="delivery 4"/>
-							</PEGGING>
-						</FLOW_PLAN>
-						<FLOW_PLAN>
-							<DATE>2007-01-15T00:00:00</DATE>
-							<QUANTITY>-196</QUANTITY>
-							<ONHAND>804</ONHAND>
-							<MINIMUM>0</MINIMUM>
-							<MAXIMUM>0</MAXIMUM>
-							<PEGGING LEVEL="1">
-								<QUANTITY>196</QUANTITY>
-								<USAGE>0.196</USAGE>
-								<DATE>2007-01-15T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 4"/>
-								<OPERATION_PLAN ID="4001" OPERATION="supply 4"/>
-							</PEGGING>
-							<PEGGING LEVEL="-1">
-								<QUANTITY>196</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-15T00:00:00</DATE>
-								<BUFFER NAME="buffer 4"/>
-								<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
-							</PEGGING>
-							<PEGGING LEVEL="-2">
-								<QUANTITY>6</QUANTITY>
-								<USAGE>0.03</USAGE>
-								<DATE>2007-06-18T00:00:00</DATE>
-								<BUFFER NAME="buffer 4"/>
-								<OPERATION_PLAN ID="4019" OPERATION="delivery 4"/>
-							</PEGGING>
-							<PEGGING LEVEL="-2">
-								<QUANTITY>190</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-15T00:00:00</DATE>
-								<BUFFER NAME="buffer 4"/>
-								<OPERATION_PLAN ID="4017" OPERATION="delivery 4"/>
-							</PEGGING>
-						</FLOW_PLAN>
-					</FLOW_PLANS>
-				</OPERATION_PLAN>
 			</OPERATION_PLANS>
 		</OPERATION>
 		<OPERATION NAME="supply 1" xsi:type="OPERATION_FIXED_TIME">
 			<OPERATION_PLANS>
+				<OPERATION_PLAN ID="1001" OPERATION="supply 1">
+					<START>2007-01-10T00:00:00</START>
+					<END>2007-01-10T00:00:00</END>
+					<QUANTITY>100</QUANTITY>
+					<LOCKED>true</LOCKED>
+					<FLOW_PLANS>
+						<FLOW_PLAN>
+							<DATE>2007-01-10T00:00:00</DATE>
+							<QUANTITY>100</QUANTITY>
+							<ONHAND>100</ONHAND>
+							<MINIMUM>0</MINIMUM>
+							<MAXIMUM>0</MAXIMUM>
+							<PEGGING LEVEL="-1">
+								<QUANTITY>100</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-10T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 1"/>
+								<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
+							</PEGGING>
+							<PEGGING LEVEL="-2">
+								<QUANTITY>100</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-10T00:00:00</DATE>
+								<BUFFER NAME="buffer 1"/>
+								<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
+							</PEGGING>
+							<PEGGING LEVEL="-3">
+								<QUANTITY>100</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-10T00:00:00</DATE>
+								<BUFFER NAME="buffer 1"/>
+								<OPERATION_PLAN ID="4004" OPERATION="delivery 1"/>
+							</PEGGING>
+						</FLOW_PLAN>
+					</FLOW_PLANS>
+				</OPERATION_PLAN>
 				<OPERATION_PLAN ID="1002" OPERATION="supply 1">
 					<START>2007-01-17T00:00:00</START>
 					<END>2007-01-17T00:00:00</END>
@@ -1006,82 +1042,10 @@
 						</FLOW_PLAN>
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
-				<OPERATION_PLAN ID="1001" OPERATION="supply 1">
-					<START>2007-01-10T00:00:00</START>
-					<END>2007-01-10T00:00:00</END>
-					<QUANTITY>100</QUANTITY>
-					<LOCKED>true</LOCKED>
-					<FLOW_PLANS>
-						<FLOW_PLAN>
-							<DATE>2007-01-10T00:00:00</DATE>
-							<QUANTITY>100</QUANTITY>
-							<ONHAND>100</ONHAND>
-							<MINIMUM>0</MINIMUM>
-							<MAXIMUM>0</MAXIMUM>
-							<PEGGING LEVEL="-1">
-								<QUANTITY>100</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-10T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 1"/>
-								<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
-							</PEGGING>
-							<PEGGING LEVEL="-2">
-								<QUANTITY>100</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-10T00:00:00</DATE>
-								<BUFFER NAME="buffer 1"/>
-								<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
-							</PEGGING>
-							<PEGGING LEVEL="-3">
-								<QUANTITY>100</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-10T00:00:00</DATE>
-								<BUFFER NAME="buffer 1"/>
-								<OPERATION_PLAN ID="4004" OPERATION="delivery 1"/>
-							</PEGGING>
-						</FLOW_PLAN>
-					</FLOW_PLANS>
-				</OPERATION_PLAN>
 			</OPERATION_PLANS>
 		</OPERATION>
 		<OPERATION NAME="supply 2" xsi:type="OPERATION_FIXED_TIME">
 			<OPERATION_PLANS>
-				<OPERATION_PLAN ID="2002" OPERATION="supply 2">
-					<START>2007-01-17T00:00:00</START>
-					<END>2007-01-17T00:00:00</END>
-					<QUANTITY>50</QUANTITY>
-					<LOCKED>true</LOCKED>
-					<FLOW_PLANS>
-						<FLOW_PLAN>
-							<DATE>2007-01-17T00:00:00</DATE>
-							<QUANTITY>50</QUANTITY>
-							<ONHAND>50</ONHAND>
-							<MINIMUM>0</MINIMUM>
-							<MAXIMUM>0</MAXIMUM>
-							<PEGGING LEVEL="-1">
-								<QUANTITY>50</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="constraint buffer 2"/>
-								<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
-							</PEGGING>
-							<PEGGING LEVEL="-2">
-								<QUANTITY>50</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="buffer 2"/>
-								<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
-							</PEGGING>
-							<PEGGING LEVEL="-3">
-								<QUANTITY>50</QUANTITY>
-								<USAGE>1</USAGE>
-								<DATE>2007-01-17T00:00:00</DATE>
-								<BUFFER NAME="buffer 2"/>
-								<OPERATION_PLAN ID="4011" OPERATION="delivery 2"/>
-							</PEGGING>
-						</FLOW_PLAN>
-					</FLOW_PLANS>
-				</OPERATION_PLAN>
 				<OPERATION_PLAN ID="2001" OPERATION="supply 2">
 					<START>2007-01-10T00:00:00</START>
 					<END>2007-01-10T00:00:00</END>
@@ -1114,6 +1078,42 @@
 								<DATE>2007-01-10T00:00:00</DATE>
 								<BUFFER NAME="buffer 2"/>
 								<OPERATION_PLAN ID="4009" OPERATION="delivery 2"/>
+							</PEGGING>
+						</FLOW_PLAN>
+					</FLOW_PLANS>
+				</OPERATION_PLAN>
+				<OPERATION_PLAN ID="2002" OPERATION="supply 2">
+					<START>2007-01-17T00:00:00</START>
+					<END>2007-01-17T00:00:00</END>
+					<QUANTITY>50</QUANTITY>
+					<LOCKED>true</LOCKED>
+					<FLOW_PLANS>
+						<FLOW_PLAN>
+							<DATE>2007-01-17T00:00:00</DATE>
+							<QUANTITY>50</QUANTITY>
+							<ONHAND>50</ONHAND>
+							<MINIMUM>0</MINIMUM>
+							<MAXIMUM>0</MAXIMUM>
+							<PEGGING LEVEL="-1">
+								<QUANTITY>50</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="constraint buffer 2"/>
+								<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
+							</PEGGING>
+							<PEGGING LEVEL="-2">
+								<QUANTITY>50</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="buffer 2"/>
+								<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
+							</PEGGING>
+							<PEGGING LEVEL="-3">
+								<QUANTITY>50</QUANTITY>
+								<USAGE>1</USAGE>
+								<DATE>2007-01-17T00:00:00</DATE>
+								<BUFFER NAME="buffer 2"/>
+								<OPERATION_PLAN ID="4011" OPERATION="delivery 2"/>
 							</PEGGING>
 						</FLOW_PLAN>
 					</FLOW_PLANS>
@@ -2839,38 +2839,24 @@
 		</DEMAND>
 	</DEMANDS>
 	<OPERATION_PLANS>
-		<OPERATION_PLAN ID="4006" OPERATION="delivery 1">
+		<OPERATION_PLAN ID="4002" OPERATION="delivery 1">
 			<DEMAND NAME="order for item 1"/>
-			<START>2007-01-17T00:00:00</START>
-			<END>2007-01-18T00:00:00</END>
-			<QUANTITY>45</QUANTITY>
+			<START>2007-01-09T00:00:00</START>
+			<END>2007-01-10T00:00:00</END>
+			<QUANTITY>5</QUANTITY>
 			<FLOW_PLANS>
 				<FLOW_PLAN>
-					<DATE>2007-01-17T00:00:00</DATE>
-					<QUANTITY>-90</QUANTITY>
-					<ONHAND>4</ONHAND>
+					<DATE>2007-01-09T00:00:00</DATE>
+					<QUANTITY>-10</QUANTITY>
+					<ONHAND>0</ONHAND>
 					<MINIMUM>4</MINIMUM>
 					<MAXIMUM>0</MAXIMUM>
 					<PEGGING LEVEL="1">
-						<QUANTITY>90</QUANTITY>
-						<USAGE>0.957447</USAGE>
-						<DATE>2007-01-17T00:00:00</DATE>
+						<QUANTITY>10</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>1971-01-01T00:00:00</DATE>
 						<BUFFER NAME="buffer 1"/>
-						<OPERATION_PLAN ID="4005" OPERATION="make 1"/>
-					</PEGGING>
-					<PEGGING LEVEL="2">
-						<QUANTITY>90</QUANTITY>
-						<USAGE>0.957447</USAGE>
-						<DATE>2007-01-17T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 1"/>
-						<OPERATION_PLAN ID="4005" OPERATION="make 1"/>
-					</PEGGING>
-					<PEGGING LEVEL="3">
-						<QUANTITY>90</QUANTITY>
-						<USAGE>0.45</USAGE>
-						<DATE>2007-01-17T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 1"/>
-						<OPERATION_PLAN ID="1002" OPERATION="supply 1"/>
+						<OPERATION_PLAN ID="1" OPERATION="Inventory of buffer &apos;buffer 1&apos;"/>
 					</PEGGING>
 				</FLOW_PLAN>
 			</FLOW_PLANS>
@@ -2911,8 +2897,44 @@
 				</FLOW_PLAN>
 			</FLOW_PLANS>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="4002" OPERATION="delivery 1">
+		<OPERATION_PLAN ID="4006" OPERATION="delivery 1">
 			<DEMAND NAME="order for item 1"/>
+			<START>2007-01-17T00:00:00</START>
+			<END>2007-01-18T00:00:00</END>
+			<QUANTITY>45</QUANTITY>
+			<FLOW_PLANS>
+				<FLOW_PLAN>
+					<DATE>2007-01-17T00:00:00</DATE>
+					<QUANTITY>-90</QUANTITY>
+					<ONHAND>4</ONHAND>
+					<MINIMUM>4</MINIMUM>
+					<MAXIMUM>0</MAXIMUM>
+					<PEGGING LEVEL="1">
+						<QUANTITY>90</QUANTITY>
+						<USAGE>0.957447</USAGE>
+						<DATE>2007-01-17T00:00:00</DATE>
+						<BUFFER NAME="buffer 1"/>
+						<OPERATION_PLAN ID="4005" OPERATION="make 1"/>
+					</PEGGING>
+					<PEGGING LEVEL="2">
+						<QUANTITY>90</QUANTITY>
+						<USAGE>0.957447</USAGE>
+						<DATE>2007-01-17T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 1"/>
+						<OPERATION_PLAN ID="4005" OPERATION="make 1"/>
+					</PEGGING>
+					<PEGGING LEVEL="3">
+						<QUANTITY>90</QUANTITY>
+						<USAGE>0.45</USAGE>
+						<DATE>2007-01-17T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 1"/>
+						<OPERATION_PLAN ID="1002" OPERATION="supply 1"/>
+					</PEGGING>
+				</FLOW_PLAN>
+			</FLOW_PLANS>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="4007" OPERATION="delivery 2">
+			<DEMAND NAME="order for item 2"/>
 			<START>2007-01-09T00:00:00</START>
 			<END>2007-01-10T00:00:00</END>
 			<QUANTITY>5</QUANTITY>
@@ -2927,44 +2949,8 @@
 						<QUANTITY>10</QUANTITY>
 						<USAGE>1</USAGE>
 						<DATE>1971-01-01T00:00:00</DATE>
-						<BUFFER NAME="buffer 1"/>
-						<OPERATION_PLAN ID="1" OPERATION="Inventory of buffer &apos;buffer 1&apos;"/>
-					</PEGGING>
-				</FLOW_PLAN>
-			</FLOW_PLANS>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="4011" OPERATION="delivery 2">
-			<DEMAND NAME="order for item 2"/>
-			<START>2007-01-17T00:00:00</START>
-			<END>2007-01-18T00:00:00</END>
-			<QUANTITY>25</QUANTITY>
-			<FLOW_PLANS>
-				<FLOW_PLAN>
-					<DATE>2007-01-17T00:00:00</DATE>
-					<QUANTITY>-50</QUANTITY>
-					<ONHAND>0</ONHAND>
-					<MINIMUM>4</MINIMUM>
-					<MAXIMUM>0</MAXIMUM>
-					<PEGGING LEVEL="1">
-						<QUANTITY>50</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-17T00:00:00</DATE>
 						<BUFFER NAME="buffer 2"/>
-						<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
-					</PEGGING>
-					<PEGGING LEVEL="2">
-						<QUANTITY>50</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-17T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 2"/>
-						<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
-					</PEGGING>
-					<PEGGING LEVEL="3">
-						<QUANTITY>50</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-17T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 2"/>
-						<OPERATION_PLAN ID="2002" OPERATION="supply 2"/>
+						<OPERATION_PLAN ID="2" OPERATION="Inventory of buffer &apos;buffer 2&apos;"/>
 					</PEGGING>
 				</FLOW_PLAN>
 			</FLOW_PLANS>
@@ -3005,11 +2991,47 @@
 				</FLOW_PLAN>
 			</FLOW_PLANS>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="4007" OPERATION="delivery 2">
+		<OPERATION_PLAN ID="4011" OPERATION="delivery 2">
 			<DEMAND NAME="order for item 2"/>
+			<START>2007-01-17T00:00:00</START>
+			<END>2007-01-18T00:00:00</END>
+			<QUANTITY>25</QUANTITY>
+			<FLOW_PLANS>
+				<FLOW_PLAN>
+					<DATE>2007-01-17T00:00:00</DATE>
+					<QUANTITY>-50</QUANTITY>
+					<ONHAND>0</ONHAND>
+					<MINIMUM>4</MINIMUM>
+					<MAXIMUM>0</MAXIMUM>
+					<PEGGING LEVEL="1">
+						<QUANTITY>50</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-17T00:00:00</DATE>
+						<BUFFER NAME="buffer 2"/>
+						<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
+					</PEGGING>
+					<PEGGING LEVEL="2">
+						<QUANTITY>50</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-17T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 2"/>
+						<OPERATION_PLAN ID="4010" OPERATION="make 2"/>
+					</PEGGING>
+					<PEGGING LEVEL="3">
+						<QUANTITY>50</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-17T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 2"/>
+						<OPERATION_PLAN ID="2002" OPERATION="supply 2"/>
+					</PEGGING>
+				</FLOW_PLAN>
+			</FLOW_PLANS>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="4012" OPERATION="delivery 3">
+			<DEMAND NAME="order for item 3"/>
 			<START>2007-01-09T00:00:00</START>
 			<END>2007-01-10T00:00:00</END>
-			<QUANTITY>5</QUANTITY>
+			<QUANTITY>10</QUANTITY>
 			<FLOW_PLANS>
 				<FLOW_PLAN>
 					<DATE>2007-01-09T00:00:00</DATE>
@@ -3021,8 +3043,8 @@
 						<QUANTITY>10</QUANTITY>
 						<USAGE>1</USAGE>
 						<DATE>1971-01-01T00:00:00</DATE>
-						<BUFFER NAME="buffer 2"/>
-						<OPERATION_PLAN ID="2" OPERATION="Inventory of buffer &apos;buffer 2&apos;"/>
+						<BUFFER NAME="buffer 3"/>
+						<OPERATION_PLAN ID="3" OPERATION="Inventory of buffer &apos;buffer 3&apos;"/>
 					</PEGGING>
 				</FLOW_PLAN>
 			</FLOW_PLANS>
@@ -3063,11 +3085,11 @@
 				</FLOW_PLAN>
 			</FLOW_PLANS>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="4012" OPERATION="delivery 3">
-			<DEMAND NAME="order for item 3"/>
+		<OPERATION_PLAN ID="4015" OPERATION="delivery 4">
+			<DEMAND NAME="order for item 4"/>
 			<START>2007-01-09T00:00:00</START>
 			<END>2007-01-10T00:00:00</END>
-			<QUANTITY>10</QUANTITY>
+			<QUANTITY>5</QUANTITY>
 			<FLOW_PLANS>
 				<FLOW_PLAN>
 					<DATE>2007-01-09T00:00:00</DATE>
@@ -3079,8 +3101,44 @@
 						<QUANTITY>10</QUANTITY>
 						<USAGE>1</USAGE>
 						<DATE>1971-01-01T00:00:00</DATE>
-						<BUFFER NAME="buffer 3"/>
-						<OPERATION_PLAN ID="3" OPERATION="Inventory of buffer &apos;buffer 3&apos;"/>
+						<BUFFER NAME="buffer 4"/>
+						<OPERATION_PLAN ID="4" OPERATION="Inventory of buffer &apos;buffer 4&apos;"/>
+					</PEGGING>
+				</FLOW_PLAN>
+			</FLOW_PLANS>
+		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="4017" OPERATION="delivery 4">
+			<DEMAND NAME="order for item 4"/>
+			<START>2007-01-15T00:00:00</START>
+			<END>2007-01-16T00:00:00</END>
+			<QUANTITY>95</QUANTITY>
+			<FLOW_PLANS>
+				<FLOW_PLAN>
+					<DATE>2007-01-15T00:00:00</DATE>
+					<QUANTITY>-190</QUANTITY>
+					<ONHAND>6</ONHAND>
+					<MINIMUM>6</MINIMUM>
+					<MAXIMUM>0</MAXIMUM>
+					<PEGGING LEVEL="1">
+						<QUANTITY>190</QUANTITY>
+						<USAGE>0.969388</USAGE>
+						<DATE>2007-01-15T00:00:00</DATE>
+						<BUFFER NAME="buffer 4"/>
+						<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
+					</PEGGING>
+					<PEGGING LEVEL="2">
+						<QUANTITY>190</QUANTITY>
+						<USAGE>0.969388</USAGE>
+						<DATE>2007-01-15T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 4"/>
+						<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
+					</PEGGING>
+					<PEGGING LEVEL="3">
+						<QUANTITY>190</QUANTITY>
+						<USAGE>0.19</USAGE>
+						<DATE>2007-01-15T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 4"/>
+						<OPERATION_PLAN ID="4001" OPERATION="supply 4"/>
 					</PEGGING>
 				</FLOW_PLAN>
 			</FLOW_PLANS>
@@ -3142,60 +3200,65 @@
 				</FLOW_PLAN>
 			</FLOW_PLANS>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="4017" OPERATION="delivery 4">
-			<DEMAND NAME="order for item 4"/>
-			<START>2007-01-15T00:00:00</START>
-			<END>2007-01-16T00:00:00</END>
-			<QUANTITY>95</QUANTITY>
-			<FLOW_PLANS>
-				<FLOW_PLAN>
-					<DATE>2007-01-15T00:00:00</DATE>
-					<QUANTITY>-190</QUANTITY>
-					<ONHAND>6</ONHAND>
-					<MINIMUM>6</MINIMUM>
-					<MAXIMUM>0</MAXIMUM>
-					<PEGGING LEVEL="1">
-						<QUANTITY>190</QUANTITY>
-						<USAGE>0.969388</USAGE>
-						<DATE>2007-01-15T00:00:00</DATE>
-						<BUFFER NAME="buffer 4"/>
-						<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
-					</PEGGING>
-					<PEGGING LEVEL="2">
-						<QUANTITY>190</QUANTITY>
-						<USAGE>0.969388</USAGE>
-						<DATE>2007-01-15T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 4"/>
-						<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
-					</PEGGING>
-					<PEGGING LEVEL="3">
-						<QUANTITY>190</QUANTITY>
-						<USAGE>0.19</USAGE>
-						<DATE>2007-01-15T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 4"/>
-						<OPERATION_PLAN ID="4001" OPERATION="supply 4"/>
-					</PEGGING>
-				</FLOW_PLAN>
-			</FLOW_PLANS>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="4015" OPERATION="delivery 4">
-			<DEMAND NAME="order for item 4"/>
-			<START>2007-01-09T00:00:00</START>
+		<OPERATION_PLAN ID="4003" OPERATION="make 1">
+			<START>2007-01-10T00:00:00</START>
 			<END>2007-01-10T00:00:00</END>
-			<QUANTITY>5</QUANTITY>
+			<QUANTITY>50</QUANTITY>
 			<FLOW_PLANS>
 				<FLOW_PLAN>
-					<DATE>2007-01-09T00:00:00</DATE>
-					<QUANTITY>-10</QUANTITY>
-					<ONHAND>0</ONHAND>
+					<DATE>2007-01-10T00:00:00</DATE>
+					<QUANTITY>100</QUANTITY>
+					<ONHAND>100</ONHAND>
 					<MINIMUM>4</MINIMUM>
 					<MAXIMUM>0</MAXIMUM>
 					<PEGGING LEVEL="1">
-						<QUANTITY>10</QUANTITY>
+						<QUANTITY>100</QUANTITY>
 						<USAGE>1</USAGE>
-						<DATE>1971-01-01T00:00:00</DATE>
-						<BUFFER NAME="buffer 4"/>
-						<OPERATION_PLAN ID="4" OPERATION="Inventory of buffer &apos;buffer 4&apos;"/>
+						<DATE>2007-01-10T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 1"/>
+						<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
+					</PEGGING>
+					<PEGGING LEVEL="2">
+						<QUANTITY>100</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-10T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 1"/>
+						<OPERATION_PLAN ID="1001" OPERATION="supply 1"/>
+					</PEGGING>
+					<PEGGING LEVEL="-1">
+						<QUANTITY>100</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-10T00:00:00</DATE>
+						<BUFFER NAME="buffer 1"/>
+						<OPERATION_PLAN ID="4004" OPERATION="delivery 1"/>
+					</PEGGING>
+				</FLOW_PLAN>
+				<FLOW_PLAN>
+					<DATE>2007-01-10T00:00:00</DATE>
+					<QUANTITY>-100</QUANTITY>
+					<ONHAND>0</ONHAND>
+					<MINIMUM>0</MINIMUM>
+					<MAXIMUM>0</MAXIMUM>
+					<PEGGING LEVEL="1">
+						<QUANTITY>100</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-10T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 1"/>
+						<OPERATION_PLAN ID="1001" OPERATION="supply 1"/>
+					</PEGGING>
+					<PEGGING LEVEL="-1">
+						<QUANTITY>100</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-10T00:00:00</DATE>
+						<BUFFER NAME="buffer 1"/>
+						<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
+					</PEGGING>
+					<PEGGING LEVEL="-2">
+						<QUANTITY>100</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-10T00:00:00</DATE>
+						<BUFFER NAME="buffer 1"/>
+						<OPERATION_PLAN ID="4004" OPERATION="delivery 1"/>
 					</PEGGING>
 				</FLOW_PLAN>
 			</FLOW_PLANS>
@@ -3279,7 +3342,7 @@
 				</FLOW_PLAN>
 			</FLOW_PLANS>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="4003" OPERATION="make 1">
+		<OPERATION_PLAN ID="4008" OPERATION="make 2">
 			<START>2007-01-10T00:00:00</START>
 			<END>2007-01-10T00:00:00</END>
 			<QUANTITY>50</QUANTITY>
@@ -3294,22 +3357,22 @@
 						<QUANTITY>100</QUANTITY>
 						<USAGE>1</USAGE>
 						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 1"/>
-						<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
+						<BUFFER NAME="constraint buffer 2"/>
+						<OPERATION_PLAN ID="4008" OPERATION="make 2"/>
 					</PEGGING>
 					<PEGGING LEVEL="2">
 						<QUANTITY>100</QUANTITY>
 						<USAGE>1</USAGE>
 						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 1"/>
-						<OPERATION_PLAN ID="1001" OPERATION="supply 1"/>
+						<BUFFER NAME="constraint buffer 2"/>
+						<OPERATION_PLAN ID="2001" OPERATION="supply 2"/>
 					</PEGGING>
 					<PEGGING LEVEL="-1">
 						<QUANTITY>100</QUANTITY>
 						<USAGE>1</USAGE>
 						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="buffer 1"/>
-						<OPERATION_PLAN ID="4004" OPERATION="delivery 1"/>
+						<BUFFER NAME="buffer 2"/>
+						<OPERATION_PLAN ID="4009" OPERATION="delivery 2"/>
 					</PEGGING>
 				</FLOW_PLAN>
 				<FLOW_PLAN>
@@ -3322,22 +3385,22 @@
 						<QUANTITY>100</QUANTITY>
 						<USAGE>1</USAGE>
 						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 1"/>
-						<OPERATION_PLAN ID="1001" OPERATION="supply 1"/>
+						<BUFFER NAME="constraint buffer 2"/>
+						<OPERATION_PLAN ID="2001" OPERATION="supply 2"/>
 					</PEGGING>
 					<PEGGING LEVEL="-1">
 						<QUANTITY>100</QUANTITY>
 						<USAGE>1</USAGE>
 						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="buffer 1"/>
-						<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
+						<BUFFER NAME="buffer 2"/>
+						<OPERATION_PLAN ID="4008" OPERATION="make 2"/>
 					</PEGGING>
 					<PEGGING LEVEL="-2">
 						<QUANTITY>100</QUANTITY>
 						<USAGE>1</USAGE>
 						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="buffer 1"/>
-						<OPERATION_PLAN ID="4004" OPERATION="delivery 1"/>
+						<BUFFER NAME="buffer 2"/>
+						<OPERATION_PLAN ID="4009" OPERATION="delivery 2"/>
 					</PEGGING>
 				</FLOW_PLAN>
 			</FLOW_PLANS>
@@ -3401,69 +3464,6 @@
 						<DATE>2007-01-17T00:00:00</DATE>
 						<BUFFER NAME="buffer 2"/>
 						<OPERATION_PLAN ID="4011" OPERATION="delivery 2"/>
-					</PEGGING>
-				</FLOW_PLAN>
-			</FLOW_PLANS>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="4008" OPERATION="make 2">
-			<START>2007-01-10T00:00:00</START>
-			<END>2007-01-10T00:00:00</END>
-			<QUANTITY>50</QUANTITY>
-			<FLOW_PLANS>
-				<FLOW_PLAN>
-					<DATE>2007-01-10T00:00:00</DATE>
-					<QUANTITY>100</QUANTITY>
-					<ONHAND>100</ONHAND>
-					<MINIMUM>4</MINIMUM>
-					<MAXIMUM>0</MAXIMUM>
-					<PEGGING LEVEL="1">
-						<QUANTITY>100</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 2"/>
-						<OPERATION_PLAN ID="4008" OPERATION="make 2"/>
-					</PEGGING>
-					<PEGGING LEVEL="2">
-						<QUANTITY>100</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 2"/>
-						<OPERATION_PLAN ID="2001" OPERATION="supply 2"/>
-					</PEGGING>
-					<PEGGING LEVEL="-1">
-						<QUANTITY>100</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="buffer 2"/>
-						<OPERATION_PLAN ID="4009" OPERATION="delivery 2"/>
-					</PEGGING>
-				</FLOW_PLAN>
-				<FLOW_PLAN>
-					<DATE>2007-01-10T00:00:00</DATE>
-					<QUANTITY>-100</QUANTITY>
-					<ONHAND>0</ONHAND>
-					<MINIMUM>0</MINIMUM>
-					<MAXIMUM>0</MAXIMUM>
-					<PEGGING LEVEL="1">
-						<QUANTITY>100</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 2"/>
-						<OPERATION_PLAN ID="2001" OPERATION="supply 2"/>
-					</PEGGING>
-					<PEGGING LEVEL="-1">
-						<QUANTITY>100</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="buffer 2"/>
-						<OPERATION_PLAN ID="4008" OPERATION="make 2"/>
-					</PEGGING>
-					<PEGGING LEVEL="-2">
-						<QUANTITY>100</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="buffer 2"/>
-						<OPERATION_PLAN ID="4009" OPERATION="delivery 2"/>
 					</PEGGING>
 				</FLOW_PLAN>
 			</FLOW_PLANS>
@@ -3547,6 +3547,83 @@
 				</FLOW_PLAN>
 			</FLOW_PLANS>
 		</OPERATION_PLAN>
+		<OPERATION_PLAN ID="4016" OPERATION="make 4">
+			<START>2007-01-15T00:00:00</START>
+			<END>2007-01-15T00:00:00</END>
+			<QUANTITY>98</QUANTITY>
+			<FLOW_PLANS>
+				<FLOW_PLAN>
+					<DATE>2007-01-15T00:00:00</DATE>
+					<QUANTITY>196</QUANTITY>
+					<ONHAND>196</ONHAND>
+					<MINIMUM>6</MINIMUM>
+					<MAXIMUM>0</MAXIMUM>
+					<PEGGING LEVEL="1">
+						<QUANTITY>196</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-15T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 4"/>
+						<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
+					</PEGGING>
+					<PEGGING LEVEL="2">
+						<QUANTITY>196</QUANTITY>
+						<USAGE>0.196</USAGE>
+						<DATE>2007-01-15T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 4"/>
+						<OPERATION_PLAN ID="4001" OPERATION="supply 4"/>
+					</PEGGING>
+					<PEGGING LEVEL="-1">
+						<QUANTITY>6</QUANTITY>
+						<USAGE>0.03</USAGE>
+						<DATE>2007-06-18T00:00:00</DATE>
+						<BUFFER NAME="buffer 4"/>
+						<OPERATION_PLAN ID="4019" OPERATION="delivery 4"/>
+					</PEGGING>
+					<PEGGING LEVEL="-1">
+						<QUANTITY>190</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-15T00:00:00</DATE>
+						<BUFFER NAME="buffer 4"/>
+						<OPERATION_PLAN ID="4017" OPERATION="delivery 4"/>
+					</PEGGING>
+				</FLOW_PLAN>
+				<FLOW_PLAN>
+					<DATE>2007-01-15T00:00:00</DATE>
+					<QUANTITY>-196</QUANTITY>
+					<ONHAND>804</ONHAND>
+					<MINIMUM>0</MINIMUM>
+					<MAXIMUM>0</MAXIMUM>
+					<PEGGING LEVEL="1">
+						<QUANTITY>196</QUANTITY>
+						<USAGE>0.196</USAGE>
+						<DATE>2007-01-15T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 4"/>
+						<OPERATION_PLAN ID="4001" OPERATION="supply 4"/>
+					</PEGGING>
+					<PEGGING LEVEL="-1">
+						<QUANTITY>196</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-15T00:00:00</DATE>
+						<BUFFER NAME="buffer 4"/>
+						<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
+					</PEGGING>
+					<PEGGING LEVEL="-2">
+						<QUANTITY>6</QUANTITY>
+						<USAGE>0.03</USAGE>
+						<DATE>2007-06-18T00:00:00</DATE>
+						<BUFFER NAME="buffer 4"/>
+						<OPERATION_PLAN ID="4019" OPERATION="delivery 4"/>
+					</PEGGING>
+					<PEGGING LEVEL="-2">
+						<QUANTITY>190</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-15T00:00:00</DATE>
+						<BUFFER NAME="buffer 4"/>
+						<OPERATION_PLAN ID="4017" OPERATION="delivery 4"/>
+					</PEGGING>
+				</FLOW_PLAN>
+			</FLOW_PLANS>
+		</OPERATION_PLAN>
 		<OPERATION_PLAN ID="4018" OPERATION="make 4">
 			<START>2007-06-18T00:00:00</START>
 			<END>2007-06-18T00:00:00</END>
@@ -3626,79 +3703,38 @@
 				</FLOW_PLAN>
 			</FLOW_PLANS>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="4016" OPERATION="make 4">
-			<START>2007-01-15T00:00:00</START>
-			<END>2007-01-15T00:00:00</END>
-			<QUANTITY>98</QUANTITY>
+		<OPERATION_PLAN ID="1001" OPERATION="supply 1">
+			<START>2007-01-10T00:00:00</START>
+			<END>2007-01-10T00:00:00</END>
+			<QUANTITY>100</QUANTITY>
+			<LOCKED>true</LOCKED>
 			<FLOW_PLANS>
 				<FLOW_PLAN>
-					<DATE>2007-01-15T00:00:00</DATE>
-					<QUANTITY>196</QUANTITY>
-					<ONHAND>196</ONHAND>
-					<MINIMUM>6</MINIMUM>
-					<MAXIMUM>0</MAXIMUM>
-					<PEGGING LEVEL="1">
-						<QUANTITY>196</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-15T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 4"/>
-						<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
-					</PEGGING>
-					<PEGGING LEVEL="2">
-						<QUANTITY>196</QUANTITY>
-						<USAGE>0.196</USAGE>
-						<DATE>2007-01-15T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 4"/>
-						<OPERATION_PLAN ID="4001" OPERATION="supply 4"/>
-					</PEGGING>
-					<PEGGING LEVEL="-1">
-						<QUANTITY>6</QUANTITY>
-						<USAGE>0.03</USAGE>
-						<DATE>2007-06-18T00:00:00</DATE>
-						<BUFFER NAME="buffer 4"/>
-						<OPERATION_PLAN ID="4019" OPERATION="delivery 4"/>
-					</PEGGING>
-					<PEGGING LEVEL="-1">
-						<QUANTITY>190</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-15T00:00:00</DATE>
-						<BUFFER NAME="buffer 4"/>
-						<OPERATION_PLAN ID="4017" OPERATION="delivery 4"/>
-					</PEGGING>
-				</FLOW_PLAN>
-				<FLOW_PLAN>
-					<DATE>2007-01-15T00:00:00</DATE>
-					<QUANTITY>-196</QUANTITY>
-					<ONHAND>804</ONHAND>
+					<DATE>2007-01-10T00:00:00</DATE>
+					<QUANTITY>100</QUANTITY>
+					<ONHAND>100</ONHAND>
 					<MINIMUM>0</MINIMUM>
 					<MAXIMUM>0</MAXIMUM>
-					<PEGGING LEVEL="1">
-						<QUANTITY>196</QUANTITY>
-						<USAGE>0.196</USAGE>
-						<DATE>2007-01-15T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 4"/>
-						<OPERATION_PLAN ID="4001" OPERATION="supply 4"/>
-					</PEGGING>
 					<PEGGING LEVEL="-1">
-						<QUANTITY>196</QUANTITY>
+						<QUANTITY>100</QUANTITY>
 						<USAGE>1</USAGE>
-						<DATE>2007-01-15T00:00:00</DATE>
-						<BUFFER NAME="buffer 4"/>
-						<OPERATION_PLAN ID="4016" OPERATION="make 4"/>
+						<DATE>2007-01-10T00:00:00</DATE>
+						<BUFFER NAME="constraint buffer 1"/>
+						<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
 					</PEGGING>
 					<PEGGING LEVEL="-2">
-						<QUANTITY>6</QUANTITY>
-						<USAGE>0.03</USAGE>
-						<DATE>2007-06-18T00:00:00</DATE>
-						<BUFFER NAME="buffer 4"/>
-						<OPERATION_PLAN ID="4019" OPERATION="delivery 4"/>
-					</PEGGING>
-					<PEGGING LEVEL="-2">
-						<QUANTITY>190</QUANTITY>
+						<QUANTITY>100</QUANTITY>
 						<USAGE>1</USAGE>
-						<DATE>2007-01-15T00:00:00</DATE>
-						<BUFFER NAME="buffer 4"/>
-						<OPERATION_PLAN ID="4017" OPERATION="delivery 4"/>
+						<DATE>2007-01-10T00:00:00</DATE>
+						<BUFFER NAME="buffer 1"/>
+						<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
+					</PEGGING>
+					<PEGGING LEVEL="-3">
+						<QUANTITY>100</QUANTITY>
+						<USAGE>1</USAGE>
+						<DATE>2007-01-10T00:00:00</DATE>
+						<BUFFER NAME="buffer 1"/>
+						<OPERATION_PLAN ID="4004" OPERATION="delivery 1"/>
 					</PEGGING>
 				</FLOW_PLAN>
 			</FLOW_PLANS>
@@ -3755,7 +3791,7 @@
 				</FLOW_PLAN>
 			</FLOW_PLANS>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="1001" OPERATION="supply 1">
+		<OPERATION_PLAN ID="2001" OPERATION="supply 2">
 			<START>2007-01-10T00:00:00</START>
 			<END>2007-01-10T00:00:00</END>
 			<QUANTITY>100</QUANTITY>
@@ -3771,22 +3807,22 @@
 						<QUANTITY>100</QUANTITY>
 						<USAGE>1</USAGE>
 						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 1"/>
-						<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
+						<BUFFER NAME="constraint buffer 2"/>
+						<OPERATION_PLAN ID="4008" OPERATION="make 2"/>
 					</PEGGING>
 					<PEGGING LEVEL="-2">
 						<QUANTITY>100</QUANTITY>
 						<USAGE>1</USAGE>
 						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="buffer 1"/>
-						<OPERATION_PLAN ID="4003" OPERATION="make 1"/>
+						<BUFFER NAME="buffer 2"/>
+						<OPERATION_PLAN ID="4008" OPERATION="make 2"/>
 					</PEGGING>
 					<PEGGING LEVEL="-3">
 						<QUANTITY>100</QUANTITY>
 						<USAGE>1</USAGE>
 						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="buffer 1"/>
-						<OPERATION_PLAN ID="4004" OPERATION="delivery 1"/>
+						<BUFFER NAME="buffer 2"/>
+						<OPERATION_PLAN ID="4009" OPERATION="delivery 2"/>
 					</PEGGING>
 				</FLOW_PLAN>
 			</FLOW_PLANS>
@@ -3823,42 +3859,6 @@
 						<DATE>2007-01-17T00:00:00</DATE>
 						<BUFFER NAME="buffer 2"/>
 						<OPERATION_PLAN ID="4011" OPERATION="delivery 2"/>
-					</PEGGING>
-				</FLOW_PLAN>
-			</FLOW_PLANS>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="2001" OPERATION="supply 2">
-			<START>2007-01-10T00:00:00</START>
-			<END>2007-01-10T00:00:00</END>
-			<QUANTITY>100</QUANTITY>
-			<LOCKED>true</LOCKED>
-			<FLOW_PLANS>
-				<FLOW_PLAN>
-					<DATE>2007-01-10T00:00:00</DATE>
-					<QUANTITY>100</QUANTITY>
-					<ONHAND>100</ONHAND>
-					<MINIMUM>0</MINIMUM>
-					<MAXIMUM>0</MAXIMUM>
-					<PEGGING LEVEL="-1">
-						<QUANTITY>100</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="constraint buffer 2"/>
-						<OPERATION_PLAN ID="4008" OPERATION="make 2"/>
-					</PEGGING>
-					<PEGGING LEVEL="-2">
-						<QUANTITY>100</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="buffer 2"/>
-						<OPERATION_PLAN ID="4008" OPERATION="make 2"/>
-					</PEGGING>
-					<PEGGING LEVEL="-3">
-						<QUANTITY>100</QUANTITY>
-						<USAGE>1</USAGE>
-						<DATE>2007-01-10T00:00:00</DATE>
-						<BUFFER NAME="buffer 2"/>
-						<OPERATION_PLAN ID="4009" OPERATION="delivery 2"/>
 					</PEGGING>
 				</FLOW_PLAN>
 			</FLOW_PLANS>

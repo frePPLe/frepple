@@ -41,6 +41,7 @@
 
 // We want to use singly linked lists, but these are not part of the C++
 // standard though. Sigh...
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef HAVE_EXT_SLIST
 // Singly linked lists as extension: gcc 3.x
 #include <ext/slist>
@@ -52,6 +53,7 @@ using namespace gnu_cxx;
 #else
 // Not available: use a double linked list instead
 #define slist list
+#endif
 #endif
 #endif
 
@@ -67,6 +69,9 @@ using namespace gnu_cxx;
 using namespace std;
 
 // Configuration file created by autoconf
+/** @def PACKAGE_VERSION
+  * Defines the version of Frepple.
+  */
 #ifdef HAVE_CONFIG_H
 #undef PACKAGE_BUGREPORT
 #undef PACKAGE_NAME
@@ -93,7 +98,8 @@ using namespace std;
 #endif
 
 // For the disabled and ansi-challenged people...
-#ifndef HAVE_STRNCASECMP
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef HAVE_STRNCASECMP 
 # ifdef _MSC_VER
 #   define strncasecmp _strnicmp
 # else
@@ -105,12 +111,18 @@ using namespace std;
 #   endif
 # endif
 #endif
+#endif
 
-/** This constant defines what can still be considered as a rounding error. */
+/** @def ROUNDING_ERROR
+  * This constant defines the magnitude of what can still be considered 
+  * as a rounding error. 
+  */
 #define ROUNDING_ERROR   0.0001f
 
 // Header files for the Xerces-c XML parser.
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #define XERCES_NEW_IOSTREAMS
+#endif
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/sax2/Attributes.hpp>
@@ -125,6 +137,16 @@ using namespace std;
 #include <xercesc/util/XMLException.hpp>
 using namespace xercesc;
 
+/** @def DECLARE_EXPORT
+  * Used to define which symbols to export from a Windows DLL.
+  * @def MODULE_EXPORT
+  * Signature used for a module initialization routine. It assures the 
+  * function is exported appropriately when running on Windows.<br>
+  * A module will need to define a function with the following prototype:
+  * @code
+  * MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList&);
+  * @endcode
+  */
 #undef DECLARE_EXPORT
 #undef MODULE_EXPORT
 #if defined(WIN32) && !defined(DOXYGEN_SHOULD_SKIP_THIS)
@@ -999,19 +1021,19 @@ template <class T, class U> class FunctorInstance : public Functor
       * will crash.
       */
     static void connect(U* u, Signal a)
-      {U::metadata.connect(new FunctorInstance(u), a);}
+      { if (u) U::metadata.connect(new FunctorInstance(u), a);}
 
     /** Disconnect from a signal. */
     static void disconnect(U *u, Signal a)
     {} // U::metadata.disconnect(this, a);}
 
     /** Constructor. */
-    FunctorInstance(U* up) : u(up) {assert(up);}
+    FunctorInstance(U* up) : u(up) {}
 
   private:
     /** This is the callback method. */
     virtual bool callback(void* v, Signal a) const
-      {return u->call(static_cast<T*>(v),a);}
+      { return u->call(static_cast<T*>(v),a); }
 
     /** The object whose callback method will be called. */
     U* u;
@@ -2046,20 +2068,20 @@ class XMLElement
 };
 
 
-/** Object is the abstract base class for the main entities.
+/** Object is the abstract base class for the main entities.<br>
   * It handles to following capabilities:
-  * - Metadata: All subclasses publish metadata about their structure.
-  * - Concurrency: Locking of objects is required in multithreaded
+  * - <b>Metadata:</b> All subclasses publish metadata about their structure.
+  * - <b>Concurrency:</b> Locking of objects is required in multithreaded
   *   environments. The implementation of the locking algorithm is delegated
   *   to the LockManager class, and the base class provides only a pointer
   *   to a lock object and convenience guard classes.
-  * - Callbacks: When objects are created, changing or deleted, interested
-  *   classes or objects can get a callback notification.
-  * - Serialization: Objects need to be persisted and later restored.
+  * - <b>Callbacks:</b> When objects are created, changing or deleted, 
+  *   interested classes or objects can get a callback notification.
+  * - <b>Serialization:</b> Objects need to be persisted and later restored.
   *   Subclasses that don't need to be persisted can skip the implementation
-  *   of the writeElement method.
-  * Objects of this class can be marked as hidden, which means that they
-  * are not being exported at all.
+  *   of the writeElement method.<br>
+  *   Instances can be marked as hidden, which means that they are not 
+  *   serialized at all.
   */
 class Object
 {
@@ -2987,7 +3009,18 @@ class XMLInput : public NonCopyable,  private DefaultHandler
     SAX2XMLReader* parser;
 
     /** This type defines the different states the parser can have. */
-    enum state {READOBJECT, IGNOREINPUT, SHUTDOWN, INIT};
+    enum state 
+    {
+      /** The parser is sending input to an object handler. */
+      READOBJECT, 
+      /** The parser has been instructed to ignore a tag. */
+      IGNOREINPUT, 
+      /** The parser is shutting down, and will ignore all further data. */
+      SHUTDOWN, 
+      /** This state is only used when the parser starts processing its first 
+        * tag. */
+      INIT
+    };  
 
     /** This variable defines the maximum depth of the object creation stack.
       * This maximum is intended to protect us from malicious malformed
@@ -3187,10 +3220,11 @@ class XMLInput : public NonCopyable,  private DefaultHandler
       * processing of the XML data stream. */
     void setAbortOnDataError(bool i) {abortOnDataException = i;}
 
-    /** Returns the behavior of the parser in case of data errors. When true
-      * is returned, the processing of the XML stream continues after a data
-      * exception. False indicates that the processing of the XML stream is
-      * aborted.
+    /** Returns the behavior of the parser in case of data errors.<br>
+      * When true is returned, the processing of the XML stream continues 
+      * after a DataException. Other, more critical, exceptions types will 
+      * still abort the parsing process.<br>
+      * False indicates that the processing of the XML stream is aborted.
       */
     bool getAbortOnDataError() const {return abortOnDataException;}
 

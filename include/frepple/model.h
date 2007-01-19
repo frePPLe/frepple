@@ -30,7 +30,8 @@
 
 /** @mainpage Frepple Library API
   * The Frepple class library provides a framework for modeling a
-  * manufacturing environment. This document describes its C++ API.<P>
+  * manufacturing environment.<br> 
+  * This document describes its C++ API.<P>
   *
   * @namespace frepple
   * @brief Core namespace
@@ -625,15 +626,15 @@ class Problem : public NonCopyable
       */
     DECLARE_EXPORT void removeProblem();
 
-    /** Comparison of 2 problems.
+    /** Comparison of 2 problems.<br>
       * To garantuee that the problems are sorted in a consistent and stable
       * way, the following sorting criteria are used (in order of priority):
-      *   1) Entity
-      *      This sort is to be ensured by the client. This method can't
-      *      compare problems of different entities!
-      *   2) Type
-      *      Each problem type has a hashcode used for sorting.
-      *   3) Start date
+      * <ol><li>Entity<br>
+      *    This sort is to be ensured by the client. This method can't
+      *    compare problems of different entities!</li>
+      * <li>Type<br>
+      *    Each problem type has a hashcode used for sorting.</li>
+      * <li>Start date</li></ol>
       * The sorting is expected such that it can be used as a key, i.e. no
       * two problems of will ever evaluate to be identical.
       */
@@ -1046,6 +1047,9 @@ class Operation : public HasName<Operation>,
     /** Destructor. */
     virtual DECLARE_EXPORT ~Operation();
 
+    /** Returns a pointer to the operationplan being instantiated. */
+    OperationPlan* getFirstOpPlan() const {return opplan;}
+
     /** Returns the delay before this operation.
       * @see setPreTime
       */
@@ -1329,16 +1333,30 @@ class OperationPlan
       public:
         /** Constructor. The iterator will loop only over the operationplans
           * of the operation passed. */
-        iterator(Operation* x) : op(Operation::end())
-          {opplan = x ? getFirstOpPlan(*x) : NULL;}
+        iterator(const Operation* x) : op(Operation::end())
+        {
+          if (x)
+          {
+            OperationPlan::sortOperationPlans(*x);
+            opplan = x->getFirstOpPlan();
+          }
+          else
+            opplan = NULL;
+        }
 
         /** Constructor. The iterator will loop over all operationplans. */
         iterator() : op(Operation::begin())
         {
           // The while loop is required since the first operation might not
           // have any operationplans at all
-          while (op!=Operation::end() && !getFirstOpPlan(*op)) ++op;
-          opplan = (op!=Operation::end()) ? getFirstOpPlan(*op) : NULL;
+          while (op!=Operation::end() && !op->getFirstOpPlan()) ++op;
+          if (op!=Operation::end())
+          {
+            OperationPlan::sortOperationPlans(*op);
+            opplan = op->getFirstOpPlan();
+          }
+          else
+            opplan = NULL;
         }
 
         /** Copy constructor. */
@@ -1358,8 +1376,14 @@ class OperationPlan
           // Move to a new operation
           if (!opplan && op!=Operation::end())
           {
-            do ++op; while (op!=Operation::end() && !getFirstOpPlan(*op));
-            opplan = (op!=Operation::end()) ? getFirstOpPlan(*op) : NULL;
+            do ++op; while (op!=Operation::end() && !op->getFirstOpPlan());
+            if (op!=Operation::end())
+            {
+              OperationPlan::sortOperationPlans(*op);
+              opplan = op->getFirstOpPlan();
+            }
+            else
+              opplan = NULL;
           }
           return *this;
         }
@@ -1373,8 +1397,14 @@ class OperationPlan
           // Move to a new operation
           if (!opplan && op!=Operation::end())
           {
-            do ++op; while (op!=Operation::end() && !getFirstOpPlan(*op));
-            opplan = (op!=Operation::end()) ? getFirstOpPlan(*op) : NULL;
+            do ++op; while (op!=Operation::end() && !op->getFirstOpPlan());
+            if (op!=Operation::end())
+            {
+              OperationPlan::sortOperationPlans(*op);
+              opplan = op->getFirstOpPlan();
+            }
+            else
+              opplan = NULL;
           }
           return tmp;
         }
@@ -1644,6 +1674,16 @@ class OperationPlan
     /** Handles the persistence of operationplan objects. */
     static void writer(const MetaCategory&, XMLOutput*);
 
+    /** Comparison of 2 OperationPlans.
+      * To garantuee that the problems are sorted in a consistent and stable
+      * way, the following sorting criteria are used (in order of priority):
+      * <ol><li>Operation</li>
+      * <li>Start date (earliest dates first)</li>
+      * <li>Quantity (biggest quantities first)</li></ol>
+      * Multiple operationplans for the same values of the above keys can exist.
+      */
+    bool operator < (const OperationPlan& a) const;
+
   protected:
     virtual DECLARE_EXPORT void update();
     void DECLARE_EXPORT resizeFlowLoadPlans();
@@ -1674,13 +1714,14 @@ class OperationPlan
       firstloadplan(NULL), prev(NULL), next(NULL) {}
 
   private:
-    /** Empty list of operationplans. For operationplan types which have no
-      * suboperationplans this list is used as the list of suboperationplans.
+    /** Sort the list of operationplans. */
+    static void sortOperationPlans(const Operation&);
+
+    /** Empty list of operationplans.<br>
+      * For operationplan types without suboperationplans this list is used
+      * as the list of suboperationplans.
       */
     static OperationPlanList nosubOperationPlans;
-
-    /** Returns a pointer to the operation being instantiated. */
-    static OperationPlan* getFirstOpPlan(Operation& o) {return o.opplan;}
 
     /** Is this operationplan locked? A locked operationplan doesn't accept
       * any changes. This field is only relevant for top-operationplans. */
@@ -1717,14 +1758,14 @@ class OperationPlan
     /** Single linked list of loadplans. */
     LoadPlan* firstloadplan;
 
-    /** Pointer to the previous operationplan. Operationplans are chained in
-      * a doubly linked list for each operation.
+    /** Pointer to the previous operationplan.<br>
+      * Operationplans are chained in a doubly linked list for each operation.
       * @see next
       */
     OperationPlan* prev;
 
-    /** Pointer to the next operationplan. Operationplans are chained in
-      * a doubly linked list for each operation.
+    /** Pointer to the next operationplan.<br>
+      * Operationplans are chained in a doubly linked list for each operation.
       * @see prev
       */
     OperationPlan* next;
@@ -2161,9 +2202,8 @@ class OperationPlanEffective : public OperationPlan
 };
 
 
-/** A buffer represents a combination of a item and location. It is the
-  * entity for keeping modeling inventory.
-  * A synonyme is SKU or stock-keeping-unit.
+/** A buffer represents a combination of a item and location.<br>
+  * It is the entity for keeping modeling inventory.
   */
 class Buffer : public HasHierarchy<Buffer>, public HasLevel,
   public Plannable, public HasDescription
@@ -2288,19 +2328,26 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** This is the operation used to consume material from this buffer. */
     Operation *consuming_operation;
 
-    /** Location of this buffer. This field is only used as information. The
-      * default is NULL. */
+    /** Location of this buffer.<br>
+      * This field is only used as information.<br>
+      * The default is NULL. 
+      */
     Location* loc;
 
-    /** Item being stored in this buffer. The default is NULL. */
+    /** Item being stored in this buffer.<br>
+      * The default value is NULL. 
+      */
     Item* it;
 
-    /** Points to a calendar to store the minimum inventory level. The default
-      * value is NULL, resulting in a constant minimum level of 0. */
+    /** Points to a calendar to store the minimum inventory level.<br>
+      * The default value is NULL, resulting in a constant minimum level 
+      * of 0. 
+      */
     CalendarFloat *min_cal;
 
-    /** Points to a calendar to store the minimum inventory level. The default
-      * value is NULL, resulting in a buffer without excess inventory problems.
+    /** Points to a calendar to store the minimum inventory level.<br>
+      * The default value is NULL, resulting in a buffer without excess 
+      * inventory problems.
       */
     CalendarFloat *max_cal;
 };

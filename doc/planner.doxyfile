@@ -14,7 +14,7 @@ OUTPUT_LANGUAGE        = English
 
 EXTRACT_ALL            = YES
 
-EXTRACT_PRIVATE        = YES
+EXTRACT_PRIVATE        = NO
 
 EXTRACT_STATIC         = YES
 
@@ -164,11 +164,11 @@ HTML_OUTPUT            = reference
 
 HTML_FILE_EXTENSION    = .html
 
-HTML_HEADER            = header.doxyfile
+HTML_HEADER            = 
 
 HTML_FOOTER            =
 
-HTML_STYLESHEET        = doxygen.css
+HTML_STYLESHEET        = 
 
 HTML_ALIGN_MEMBERS     = YES
 
@@ -184,7 +184,7 @@ BINARY_TOC             = NO
 
 TOC_EXPAND             = YES
 
-DISABLE_INDEX          = YES
+DISABLE_INDEX          = NO
 
 ENUM_VALUES_PER_LINE   = 4
 
@@ -285,10 +285,12 @@ INCLUDE_FILE_PATTERNS  =
 #   MT: Force documentation of multi-threading related functionality, even if
 #       this wasn't enabled.
 #   __cplusplus: Make sure we have all C++ features documented.
+#   DECLARE_EXPORT: Hide this symbol from the documentation
+#   MODULE_EXPORT: Hide this symbol from the documentation
 
-PREDEFINED             = HAVE_LIBGLPK DOXYGEN_SHOULD_SKIP_THIS MT __cplusplus
+PREDEFINED             = HAVE_LIBGLPK DOXYGEN_SHOULD_SKIP_THIS MT __cplusplus DECLARE_EXPORT:= MODULE_EXPORT:=
 
-EXPAND_AS_DEFINED      =
+EXPAND_AS_DEFINED      = DECLARE_EXPORT MODULE_EXPORT
 
 SKIP_FUNCTION_MACROS   = YES
 

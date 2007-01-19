@@ -217,20 +217,9 @@ sub test_type_3
   # The exit code of the system command is used as the test result
   my $nr = 1;
   print "\n";
-  while (-r "$subdir.${nr}.expect" || -r "$subdir.${nr}s.expect")
+  while (-r "$subdir.${nr}.expect")
   {
-    if (-r "output.${nr}s.xml")
-    {
-      print "Summarizing the plan $nr\n";  # @todo shouldnt require unix statements any more
-      system("grep -v OPERATION output.${nr}s.xml >output.${nr}s.tmp");
-      system("grep OPERATION output.${nr}s.xml | sort >>output.${nr}s.tmp");
-      system("grep -v PROBLEM output.${nr}s.tmp >output.${nr}s.txt");
-      system("grep PROBLEM output.${nr}s.tmp >>output.${nr}s.txt");
-      print "Comparing expected and actual output $nr\n";
-      system("diff -w $subdir.${nr}s.expect output.${nr}s.txt");
-      return if $? ne 0;
-    }
-    elsif (-r "output.${nr}.xml")
+    if (-r "output.${nr}.xml")
     {
       print "Comparing expected and actual output $nr\n";
       system("diff -w $subdir.${nr}.expect output.${nr}.xml");

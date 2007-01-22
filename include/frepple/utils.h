@@ -2169,17 +2169,26 @@ class Object
           */
         RLock(const RLock<T>& p) : obj(p.obj) {}
 
-	      /** Destructor. The lock is released upon deletion of this object. */
-  	    ~RLock() {LockManager::getManager().releaseReadLock(obj);}
+        /** Destructor. The lock is released upon deletion of this object. */
+        ~RLock() {LockManager::getManager().releaseReadLock(obj);}
 
         /** Returns a pointer to the locked object. */
         const T* getObject() const {return obj;}
 
-        T& operator*() const {return *obj;}
-        T* operator->() const {return obj;}
+        /** Dereference operator. */
+        const T& operator*() const {return *obj;}
+
+        /** Dereference operator. */
+        const T* operator->() const {return obj;}
+
+        /** Comparison operator. */
+        bool operator==(const RLock<T>& a) const {return obj == a.obj;}
+
+        /** Comparison operator. */
+        bool operator==(const T* a) const {return obj == a;}
 
       private:
-	      /** A pointer to the object being locked. */
+        /** A pointer to the object being locked. */
         const T* obj;
     };
 
@@ -2205,18 +2214,27 @@ class Object
           */
         WLock(const WLock<T>& p) : obj(p.obj) {}
 
-	      /** Destructor. The write lock is released when the WLock object is
+        /** Destructor. The write lock is released when the WLock object is
           * deleted. */
-  	    ~WLock() {LockManager::getManager().releaseWriteLock(obj);}
+        ~WLock() {LockManager::getManager().releaseWriteLock(obj);}
 
         /** Returns a pointer to the locked object. */
         T* getObject() const {return obj;}
 
+        /** Dereference operator. */
         T& operator*() const {return *obj;}
+
+        /** Dereference operator. */
         T* operator->() const {return obj;}
 
+        /** Comparison operator. */
+        bool operator==(const WLock<T>& a) const {return obj == a.obj;}
+
+        /** Comparison operator. */
+        bool operator==(const T* a) const {return obj == a;}
+
       private:
-	      /** A reference to the object being locked. */
+        /** A reference to the object being locked. */
         T* obj;
     };
 

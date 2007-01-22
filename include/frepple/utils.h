@@ -99,7 +99,7 @@ using namespace std;
 
 // For the disabled and ansi-challenged people...
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#ifndef HAVE_STRNCASECMP 
+#ifndef HAVE_STRNCASECMP
 # ifdef _MSC_VER
 #   define strncasecmp _strnicmp
 # else
@@ -114,8 +114,8 @@ using namespace std;
 #endif
 
 /** @def ROUNDING_ERROR
-  * This constant defines the magnitude of what can still be considered 
-  * as a rounding error. 
+  * This constant defines the magnitude of what can still be considered
+  * as a rounding error.
   */
 #define ROUNDING_ERROR   0.0001f
 
@@ -140,7 +140,7 @@ using namespace xercesc;
 /** @def DECLARE_EXPORT
   * Used to define which symbols to export from a Windows DLL.
   * @def MODULE_EXPORT
-  * Signature used for a module initialization routine. It assures the 
+  * Signature used for a module initialization routine. It assures the
   * function is exported appropriately when running on Windows.<br>
   * A module will need to define a function with the following prototype:
   * @code
@@ -160,6 +160,19 @@ using namespace xercesc;
   #define DECLARE_EXPORT
   #define MODULE_EXPORT extern "C"
 #endif
+
+
+/** @def TYPEDEF(tp)
+  * This macro is used to define a number of convenience type definitions.
+  */
+#define TYPEDEF(tp) \
+  public: \
+    typedef tp*                 pointer;  \
+    typedef const tp*           const_pointer;  \
+    typedef tp&                 reference;    \
+    typedef const tp&           const_reference; \
+    typedef Object::RLock<tp>   readpointer;  \
+    typedef Object::WLock<tp>   writepointer;  \
 
 
 namespace frepple
@@ -393,7 +406,7 @@ template <class T> class Pool
       * Note that it is only legal to free objects which were
       * allocated from the pool.
       */
-    void Free(T* Item);
+    void Free(T*);
 
     /** Constructor.<br>
       * The argument specifies the initial size of the pool. There is
@@ -2075,12 +2088,12 @@ class XMLElement
   *   environments. The implementation of the locking algorithm is delegated
   *   to the LockManager class, and the base class provides only a pointer
   *   to a lock object and convenience guard classes.
-  * - <b>Callbacks:</b> When objects are created, changing or deleted, 
+  * - <b>Callbacks:</b> When objects are created, changing or deleted,
   *   interested classes or objects can get a callback notification.
   * - <b>Serialization:</b> Objects need to be persisted and later restored.
   *   Subclasses that don't need to be persisted can skip the implementation
   *   of the writeElement method.<br>
-  *   Instances can be marked as hidden, which means that they are not 
+  *   Instances can be marked as hidden, which means that they are not
   *   serialized at all.
   */
 class Object
@@ -2136,7 +2149,7 @@ class Object
     virtual size_t getSize() const = 0;
 
     /** The RLock class provides an exception safe way of getting a read lock
-      * on a Object object.<br>
+      * on an Object.<br>
       * The constructor acquires the read lock and the destructor will release
       * it again.<br>
       * RLocks should be used as temporary objects on the stack, and should
@@ -2148,13 +2161,13 @@ class Object
 	      /** Constructs a read-lock. This method blocks till the object
           * lock can be obtained.
           */
-        explicit RLock(const T* l) : obj(l)
+        RLock(const T* l) : obj(l)
           {LockManager::getManager().obtainReadLock(obj);}
 
         /** Copy constructor.
           * You should only copy a lock within the same thread!
           */
-        explicit RLock(const RLock<T>& p) : obj(p.obj) {}
+        RLock(const RLock<T>& p) : obj(p.obj) {}
 
 	      /** Destructor. The lock is released upon deletion of this object. */
   	    ~RLock() {LockManager::getManager().releaseReadLock(obj);}
@@ -2172,7 +2185,7 @@ class Object
 
 
     /** The WLock class provides an exception safe way of getting
-      * a write lock on a Object object.<br>
+      * a write lock on an Object.<br>
       * The constructor acquires the write lock and the destructor will release
       * it again.<br>
       * WLocks should be used as temporary objects on the stack, and should
@@ -2184,13 +2197,13 @@ class Object
 	      /** Constructs a write-lock. This method blocks till the object
           * lock can be obtained.
           */
-        explicit WLock(T* l)  : obj(l)
+        WLock(T* l)  : obj(l)
           {LockManager::getManager().obtainWriteLock(obj);}
 
         /** Copy constructor.
           * You should only copy a lock within the same thread!
           */
-        explicit WLock(const WLock<T>& p) : obj(p.obj) {}
+        WLock(const WLock<T>& p) : obj(p.obj) {}
 
 	      /** Destructor. The write lock is released when the WLock object is
           * deleted. */
@@ -3009,18 +3022,18 @@ class XMLInput : public NonCopyable,  private DefaultHandler
     SAX2XMLReader* parser;
 
     /** This type defines the different states the parser can have. */
-    enum state 
+    enum state
     {
       /** The parser is sending input to an object handler. */
-      READOBJECT, 
+      READOBJECT,
       /** The parser has been instructed to ignore a tag. */
-      IGNOREINPUT, 
+      IGNOREINPUT,
       /** The parser is shutting down, and will ignore all further data. */
-      SHUTDOWN, 
-      /** This state is only used when the parser starts processing its first 
+      SHUTDOWN,
+      /** This state is only used when the parser starts processing its first
         * tag. */
       INIT
-    };  
+    };
 
     /** This variable defines the maximum depth of the object creation stack.
       * This maximum is intended to protect us from malicious malformed
@@ -3221,8 +3234,8 @@ class XMLInput : public NonCopyable,  private DefaultHandler
     void setAbortOnDataError(bool i) {abortOnDataException = i;}
 
     /** Returns the behavior of the parser in case of data errors.<br>
-      * When true is returned, the processing of the XML stream continues 
-      * after a DataException. Other, more critical, exceptions types will 
+      * When true is returned, the processing of the XML stream continues
+      * after a DataException. Other, more critical, exceptions types will
       * still abort the parsing process.<br>
       * False indicates that the processing of the XML stream is aborted.
       */

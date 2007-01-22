@@ -214,18 +214,8 @@ class freppleTest (unittest.TestCase):
         
         # Now check the output file, if there is an expected output given
         nr = 1;
-        while os.path.isfile(self.subdirectory + "." + str(nr) + ".expect") or \
-           os.path.isfile(self.subdirectory + "." + str(nr) + "s.expect"):
-            if os.path.isfile("output."+str(nr)+"s.xml"):
-                if debug: print "Summarizing the plan", nr
-                #system("grep -v OPERATION output.${nr}s.xml >output.${nr}s.tmp");
-                #system("grep OPERATION output.${nr}s.xml | sort >>output.${nr}s.tmp");
-                #system("grep -v PROBLEM output.${nr}s.tmp >output.${nr}s.txt");
-                #system("grep PROBLEM output.${nr}s.tmp >>output.${nr}s.txt");
-                #print "Comparing expected and actual output $nr\n";
-                #system("diff -w $subdir.${nr}s.expect output.${nr}s.txt");
-                #return if $? ne 0;
-            elif os.path.isfile("output."+str(nr)+".xml"):
+        while os.path.isfile(self.subdirectory + "." + str(nr) + ".expect"):
+            if os.path.isfile("output."+str(nr)+".xml"):
                 if debug: print "Comparing expected and actual output", nr
                 if not os.path.isfile("output."+str(nr)+".xml"):
                     self.assertFalse('Missing planner output file')
@@ -234,8 +224,6 @@ class freppleTest (unittest.TestCase):
                                 "output."+str(nr)+".xml"), \
                     True, \
                     "Difference in output " + str(nr))
-                #system("diff -w $subdir.${nr}.expect output.${nr}.xml");
-                #return if $? ne 0;
             else:
                 self.assertFalse('Missing planner output file')
             nr += 1;

@@ -94,6 +94,7 @@ class LibraryModel
   */
 class Calendar : public HasName<Calendar>, public Object
 {
+  TYPEDEF(Calendar);
   public:
     class BucketIterator; // Forward declaration
 
@@ -440,6 +441,7 @@ template <typename T> class CalendarPointer : public Calendar
 /** A calendar only defining time buckets and not storing any data fields. */
 class CalendarVoid : public Calendar
 {
+  TYPEDEF(CalendarVoid);
   public:
     CalendarVoid(const string& n) : Calendar(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -450,6 +452,7 @@ class CalendarVoid : public Calendar
 /** A calendar storing float values in its buckets. */
 class CalendarFloat : public CalendarValue<float>
 {
+  TYPEDEF(CalendarFloat);
   public:
     CalendarFloat(const string& n) : CalendarValue<float>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -460,6 +463,7 @@ class CalendarFloat : public CalendarValue<float>
 /** A calendar storing integer values in its buckets. */
 class CalendarInt : public CalendarValue<int>
 {
+  TYPEDEF(CalendarInt);
   public:
     CalendarInt(const string& n) : CalendarValue<int>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -470,6 +474,7 @@ class CalendarInt : public CalendarValue<int>
 /** A calendar storing boolean values in its buckets. */
 class CalendarBool : public CalendarValue<bool>
 {
+  TYPEDEF(CalendarBool);
   public:
     CalendarBool(const string& n) : CalendarValue<bool>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -480,6 +485,7 @@ class CalendarBool : public CalendarValue<bool>
 /** A calendar storing strings in its buckets. */
 class CalendarString : public CalendarValue<string>
 {
+  TYPEDEF(CalendarString);
   public:
     CalendarString(const string& n) : CalendarValue<string>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -498,6 +504,7 @@ class CalendarString : public CalendarValue<string>
 /** A calendar storing pointers to operations in its buckets. */
 class CalendarOperation : public CalendarPointer<Operation>
 {
+  TYPEDEF(CalendarOperation);
   public:
     CalendarOperation(const string& n) : CalendarPointer<Operation>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -691,6 +698,7 @@ class HasProblems
   */
 class Solver : public Object, public HasName<Solver>
 {
+  TYPEDEF(Solver);
   public:
     explicit Solver(const string& n) : HasName<Solver>(n), verbose(false) {}
     virtual ~Solver() {}
@@ -975,6 +983,7 @@ class HasLevel
 class Location
   : public HasHierarchy<Location>, public HasDescription, public Object
 {
+  TYPEDEF(Location);
   public:
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
@@ -989,6 +998,7 @@ class Location
 /** This class implements the abstract Location class. */
 class LocationDefault : public Location
 {
+  TYPEDEF(LocationDefault);
   public:
     explicit LocationDefault(const string& str) : Location(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -1005,6 +1015,7 @@ class LocationDefault : public Location
 class Customer
   : public HasHierarchy<Customer>, public HasDescription, public Object
 {
+  TYPEDEF(Customer);
   public:
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
@@ -1019,6 +1030,7 @@ class Customer
 /** This class implements the abstract Customer class. */
 class CustomerDefault : public Customer
 {
+  TYPEDEF(CustomerDefault);
   public:
     explicit CustomerDefault(const string& str) : Customer(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -1032,6 +1044,7 @@ class CustomerDefault : public Customer
 class Operation : public HasName<Operation>,
   public HasLevel, public Plannable, public HasDescription
 {
+    TYPEDEF(Operation);
     friend class Flow;
     friend class Load;
     friend class OperationPlan;
@@ -1275,6 +1288,7 @@ class Operation : public HasName<Operation>,
 class OperationPlan
  : public Object, public HasProblems, public NonCopyable
 {
+    TYPEDEF(OperationPlan);
     friend class FlowPlan;
     friend class LoadPlan;
     friend class Demand;
@@ -1776,6 +1790,7 @@ class OperationPlan
   * of the quantity. */
 class OperationFixedTime : public Operation
 {
+  TYPEDEF(OperationFixedTime);
   public:
     /** Constructor. */
     explicit OperationFixedTime(const string& s) : Operation(s) {}
@@ -1822,6 +1837,7 @@ class OperationFixedTime : public Operation
   * a cetain time per unit. */
 class OperationTimePer : public Operation
 {
+  TYPEDEF(OperationTimePer);
   public:
     /** Constructor. */
     explicit OperationTimePer(const string& s) : Operation(s) {}
@@ -1880,6 +1896,7 @@ class OperationTimePer : public Operation
   * sequential sub-operations. */
 class OperationRouting : public Operation
 {
+  TYPEDEF(OperationRouting);
   public:
     /** Constructor. */
     explicit OperationRouting(const string& c) : Operation(c) {};
@@ -1955,7 +1972,8 @@ class OperationRouting : public Operation
   * the instances. */
 class OperationPlanRouting : public OperationPlan
 {
-    friend class OperationRouting;
+  TYPEDEF(OperationPlanRouting);
+  friend class OperationRouting;
   private:
     OperationPlan::OperationPlanList step_opplans;
     OperationPlanRouting() {};
@@ -1998,6 +2016,7 @@ class OperationPlanRouting : public OperationPlan
   */
 class OperationAlternate : public Operation
 {
+  TYPEDEF(OperationAlternate);
   public:
     /** Constructor. */
     explicit OperationAlternate(const string& c) : Operation(c) {};
@@ -2077,7 +2096,8 @@ class OperationAlternate : public Operation
   */
 class OperationPlanAlternate : public OperationPlan
 {
-    friend class OperationAlternate;
+  TYPEDEF(OperationPlanAlternate);
+  friend class OperationAlternate;
 
   private:
     OperationPlan* altopplan;
@@ -2109,6 +2129,7 @@ class OperationPlanAlternate : public OperationPlan
   * on the dates. */
 class OperationEffective : public Operation
 {
+  TYPEDEF(OperationEffective);
   public:
     /** Constructor. */
     explicit OperationEffective(const string& s)
@@ -2181,6 +2202,7 @@ class OperationEffective : public Operation
   */
 class OperationPlanEffective : public OperationPlan
 {
+  TYPEDEF(OperationPlanEffective);
   friend class OperationEffective;
 
   private:
@@ -2208,6 +2230,7 @@ class OperationPlanEffective : public OperationPlan
 class Buffer : public HasHierarchy<Buffer>, public HasLevel,
   public Plannable, public HasDescription
 {
+    TYPEDEF(Buffer);
     friend class Flow;
     friend class FlowPlan;
 
@@ -2357,6 +2380,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 /** This class is the default implementation of the abstract Buffer class. */
 class BufferDefault : public Buffer
 {
+  TYPEDEF(BufferDefault);
   public:
     explicit BufferDefault(const string& str) : Buffer(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -2372,6 +2396,7 @@ class BufferDefault : public Buffer
   */
 class BufferInfinite : public Buffer
 {
+  TYPEDEF(BufferInfinite);
   public:
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2390,6 +2415,7 @@ class BufferInfinite : public Buffer
   */
 class BufferMinMax : public Buffer
 {
+  TYPEDEF(BufferMinMax);
   public:
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2408,6 +2434,7 @@ class BufferMinMax : public Buffer
 class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
   public Solvable
 {
+  TYPEDEF(Flow);
   public:
 	  /** Destructor. */
     virtual DECLARE_EXPORT ~Flow();
@@ -2492,6 +2519,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
   */
 class FlowStart : public Flow
 {
+  TYPEDEF(FlowStart);
   public:
 	  /** Constructor. */
 	  explicit FlowStart(Operation* o, Buffer* b, float q) : Flow(o,b,q) {}
@@ -2511,6 +2539,7 @@ class FlowStart : public Flow
   */
 class FlowEnd : public Flow
 {
+  TYPEDEF(FlowEnd);
   public:
 	  /** Constructor. */
 	  explicit FlowEnd(Operation* o, Buffer* b, float q) : Flow(o,b,q) {}
@@ -2538,6 +2567,7 @@ class FlowEnd : public Flow
   */
 class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 {
+  TYPEDEF(FlowPlan);
   friend class OperationPlan::FlowPlanIterator;
   private:
     /** Points to the flow instantiated by this flowplan. */
@@ -2599,8 +2629,9 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 class Resource : public HasHierarchy<Resource>,
   public HasLevel, public Plannable, public HasDescription
 {
-    friend class Load;
-    friend class LoadPlan;
+  TYPEDEF(Resource);
+  friend class Load;
+  friend class LoadPlan;
 
   public:
     /** Constructor. */
@@ -2679,6 +2710,7 @@ class Resource : public HasHierarchy<Resource>,
 /** This class is the default implementation of the abstract Resource class. */
 class ResourceDefault : public Resource
 {
+  TYPEDEF(ResourceDefault);
   public:
     explicit ResourceDefault(const string& str) : Resource(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -2692,6 +2724,7 @@ class ResourceDefault : public Resource
   */
 class ResourceInfinite : public Resource
 {
+  TYPEDEF(ResourceInfinite);
   public:
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2709,8 +2742,9 @@ class Load
   : public Object, public Association<Operation,Resource,Load>::Node,
     public Solvable
 {
-    friend class Resource;
-    friend class Operation;
+  TYPEDEF(Load);
+  friend class Resource;
+  friend class Operation;
 
   public:
     /** Constructor. */
@@ -2786,6 +2820,7 @@ private:
 class Item
   : public HasHierarchy<Item>, public HasDescription, public Object
 {
+  TYPEDEF(Item);
   public:
     /** Constructor. Don't use this directly! */
     explicit Item(const string& str)
@@ -2819,6 +2854,7 @@ class Item
 /** This class is the default implementation of the abstract Item class. */
 class ItemDefault : public Item
 {
+  TYPEDEF(ItemDefault);
   public:
     explicit ItemDefault(const string& str) : Item(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -2838,6 +2874,7 @@ class ItemDefault : public Item
   */
 class Plan : public Plannable
 {
+  TYPEDEF(Plan);
   friend void LibraryModel::initialize();
   private:
     /** Current Date of this plan. */
@@ -3268,6 +3305,7 @@ class CommandErase : public Command
 class Demand
   : public HasHierarchy<Demand>, public Plannable, public HasDescription
 {
+  TYPEDEF(Demand);
   public:
     typedef slist<OperationPlan*> OperationPlan_list;
 
@@ -3348,7 +3386,7 @@ class Demand
     virtual void setDue(Date d) {dueDate = d; setChanged();}
 
     /** Returns the customer. */
-    Customer* getCustomer() const { return cust; }
+    Customer::readpointer getCustomer() const { return cust; }
 
     /** Updates the customer. */
     void setCustomer(Customer* c) { cust = c; setChanged(); }
@@ -3480,6 +3518,7 @@ class Demand
 /** This class is the default implementation of the abstract Demand class. */
 class DemandDefault : public Demand
 {
+  TYPEDEF(DemandDefault);
   public:
     explicit DemandDefault(const string& str) : Demand(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -3496,6 +3535,7 @@ class DemandDefault : public Demand
   */
 class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
 {
+  TYPEDEF(LoadPlan);
   friend class OperationPlan::LoadPlanIterator;
   public:
     /** Public constructor.<br>

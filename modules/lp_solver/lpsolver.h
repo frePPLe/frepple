@@ -82,6 +82,7 @@ namespace module_lp_solver
   */
 class LPSolver : public Solver
 {
+  TYPEDEF(LPSolver);
   public:
     /** This method creates a new column in the model for every demand. It's
       * value represents the planned quantity of that demand.

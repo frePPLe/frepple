@@ -93,6 +93,7 @@ MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z);
   */
 class Forecast : public Demand
 {
+  TYPEDEF(Forecast);
   public:
     /** Constructor. */
     explicit Forecast(const string& nm) : Demand(nm), calptr(NULL) {}

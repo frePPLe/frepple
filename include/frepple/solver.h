@@ -45,6 +45,7 @@ namespace frepple
   */
 class MRPSolver : public Solver
 {
+  TYPEDEF(MRPSolver);
   protected:
     /** This variable stores the constraint which the solver should respect.
       * By default no constraints are enabled. */

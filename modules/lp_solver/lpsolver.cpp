@@ -33,14 +33,15 @@ namespace module_lp_solver
 const MetaClass LPSolver::metadata;
 
   
-MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
+MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 {
   // Initialize only once
   static bool init = false;
+  static const char* name = "lpsolver";
   if (init)
   {
     clog << "Warning: Initializing module lp_solver more than one." << endl;
-    return;
+    return name;
   }
   init = true;
 
@@ -56,6 +57,9 @@ MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
     "SOLVER", 
     "SOLVER_LP", 
     Object::createString<LPSolver>);
+      
+  // Return the name of the module
+  return name;
 }
 
 

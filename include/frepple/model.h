@@ -564,13 +564,13 @@ class Problem : public NonCopyable
       */
     virtual float getWeight() = 0;
 
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, XMLElement&  pElement) {}
-    static void writer(const MetaCategory&, XMLOutput*);
+    static DECLARE_EXPORT void writer(const MetaCategory&, XMLOutput*);
 
     /** Returns an iterator to the very first problem. The iterator can be
       * incremented till it points past the very last problem. */
-    static const_iterator begin();
+    static DECLARE_EXPORT const_iterator begin();
 
     /** Return an iterator to the first problem of this entity. The iterator
       * can be incremented till it points past the last problem of this
@@ -578,10 +578,10 @@ class Problem : public NonCopyable
       * The boolean argument specifies whether the problems need to be
       * recomputed as part of this method.
       */
-    static const_iterator begin(HasProblems*, bool = true);
+    static DECLARE_EXPORT const_iterator begin(HasProblems*, bool = true);
 
     /** Return an iterator pointing beyond the last problem. */
-    static const const_iterator end();
+    static DECLARE_EXPORT const const_iterator end();
 
     /** Erases the list of all problems. This methods can be used reduce the
       * memory consumption at critical points. The list of problems will be
@@ -645,7 +645,7 @@ class Problem : public NonCopyable
       * The sorting is expected such that it can be used as a key, i.e. no
       * two problems of will ever evaluate to be identical.
       */
-    bool operator < (const Problem& a) const;
+    DECLARE_EXPORT bool operator < (const Problem& a) const;
 };
 
 
@@ -661,10 +661,10 @@ class HasProblems
     class EntityIterator;
 
     /** Returns an iterator pointing to the first HasProblem object. */
-    static EntityIterator beginEntity();
+    static DECLARE_EXPORT EntityIterator beginEntity();
 
     /** Returns an iterator pointing beyond the last HasProblem object. */
-    static EntityIterator endEntity();
+    static DECLARE_EXPORT EntityIterator endEntity();
 
     /** Constructor. */
     HasProblems() : firstProblem(NULL) {}
@@ -750,8 +750,8 @@ class Solver : public Object, public HasName<Solver>
     static DECLARE_EXPORT const MetaCategory metadata;
 
   protected:
-    /** Controls how much messages we want to generate. The default value
-      * is false. */
+    /** Controls how much messages we want to generate.<br> 
+      * The default value is false. */
     bool verbose;
 };
 
@@ -778,8 +778,11 @@ class Solvable
 class CommandSolve : public Command
 {
   private:
+    /** Pointer to the solver being used. */
     Solver *sol;
+
   public:
+    /** Constructor. */
     CommandSolve() : sol(NULL) {};
 
     /** The core of the execute method is a call to the solve() method of the
@@ -788,12 +791,21 @@ class CommandSolve : public Command
 
     /** This type of command can't be undone. */
     void undo() {}
+
+    /** Running a solver can't be undone. */
     bool undoable() const {return false;}
+
     DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
     DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+
     string getDescription() const {return "running a solver";}
+
+    /** Returns the solver being run. */
     Solver* getSolver() const {return sol;}
+
+    /** Updates the solver being used. */
     void setSolver(Solver* s) {sol = s;}
+
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandSolve);}
@@ -801,12 +813,12 @@ class CommandSolve : public Command
 
 
 /** This class needs to be implemented by all classes that implement dynamic
-  * behavior in the plan.
+  * behavior in the plan.<br>
   * The problem detection logic is implemented in the detectProblems() method.
   * For performance reasons, problem detection is "lazy", i.e. problems are
   * computed only when somebody really needs the access to the list of
   * problems.
-  **/
+  */
 class Plannable : public Object, public HasProblems, public Solvable
 {
   public:
@@ -1467,7 +1479,7 @@ class OperationPlan
     /** Destructor. */
     virtual DECLARE_EXPORT ~OperationPlan();
 
-    virtual void setChanged(bool b = true);
+    virtual DECLARE_EXPORT void setChanged(bool b = true);
 
     /** Returns the quantity. */
     float getQuantity() const {return quantity;}
@@ -1556,7 +1568,7 @@ class OperationPlan
     /** Updates the operationplan owning this operationplan. In case of
       * a OperationRouting steps this will be the operationplan representing the
       * complete routing. */
-    void setOwner(OperationPlan* o);
+    void DECLARE_EXPORT setOwner(OperationPlan* o);
 
     /** Returns a pointer to the operationplan for which this operationplan
       * a sub-operationplan.<br>
@@ -1603,16 +1615,16 @@ class OperationPlan
     /** Updates the end date of the operation_plan. The start date is computed.
       * Locked operation_plans are not updated by this function.
       */
-    virtual void setEnd(Date);
+    virtual DECLARE_EXPORT void setEnd(Date);
 
     /** Updates the start date of the operation_plan. The end date is computed.
       * Locked operation_plans are not updated by this function.
       */
-    virtual void setStart(Date);
+    virtual DECLARE_EXPORT void setStart(Date);
 
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void beginElement(XMLInput&, XMLElement&);
-    void endElement(XMLInput&, XMLElement&);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
 
     /** Initialize the operation_plan. The initialization function should be
       * called when the operation_plan is ready to be 'officially' added. The
@@ -1631,7 +1643,7 @@ class OperationPlan
       * on which this function is called could not exist any more after the
       * call to this function!
       */
-    virtual void initialize();
+    virtual DECLARE_EXPORT void initialize();
 
     /** Add a sub_operation_plan to the list. For normal operation_plans this
       * is only a dummy function. For alternates and routing operation_plans
@@ -1667,7 +1679,7 @@ class OperationPlan
       * The method is of complexity O(n), i.e. involves a LINEAR search through
       * the existing operationplans, and can thus be quite slow in big models.
       */
-    static OperationPlan* findId(unsigned long l);
+    static DECLARE_EXPORT OperationPlan* findId(unsigned long l);
 
     /** Problem detection is actually done by the Operation class. That class
       * actually "delegates" the responsability to this class, for efficiency.
@@ -1686,7 +1698,7 @@ class OperationPlan
       {return sizeof(OperationPlan);}
 
     /** Handles the persistence of operationplan objects. */
-    static void writer(const MetaCategory&, XMLOutput*);
+    static DECLARE_EXPORT void writer(const MetaCategory&, XMLOutput*);
 
     /** Comparison of 2 OperationPlans.
       * To garantuee that the problems are sorted in a consistent and stable
@@ -1696,11 +1708,11 @@ class OperationPlan
       * <li>Quantity (biggest quantities first)</li></ol>
       * Multiple operationplans for the same values of the above keys can exist.
       */
-    bool operator < (const OperationPlan& a) const;
+    DECLARE_EXPORT bool operator < (const OperationPlan& a) const;
 
   protected:
     virtual DECLARE_EXPORT void update();
-    void DECLARE_EXPORT resizeFlowLoadPlans();
+    DECLARE_EXPORT void resizeFlowLoadPlans();
 
     /** Pointer to a higher level OperationPlan. */
     OperationPlan *owner;
@@ -1729,7 +1741,7 @@ class OperationPlan
 
   private:
     /** Sort the list of operationplans. */
-    static void sortOperationPlans(const Operation&);
+    static DECLARE_EXPORT void sortOperationPlans(const Operation&);
 
     /** Empty list of operationplans.<br>
       * For operationplan types without suboperationplans this list is used
@@ -1902,7 +1914,7 @@ class OperationRouting : public Operation
     explicit OperationRouting(const string& c) : Operation(c) {};
 
     /** Destructor. */
-    ~OperationRouting();
+    DECLARE_EXPORT ~OperationRouting();
 
     /** Adds a new steps to routing at the start of the routing. */
     void addStepFront(Operation *o)
@@ -1938,11 +1950,11 @@ class OperationRouting : public Operation
       *    blindly.
       * @see Operation::setOperationPlanParameters
       */
-    void setOperationPlanParameters(OperationPlan*, float, Date, Date, bool=true) const;
+    DECLARE_EXPORT void setOperationPlanParameters(OperationPlan*, float, Date, Date, bool=true) const;
 
-    void beginElement(XMLInput& , XMLElement&  );
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void beginElement(XMLInput& , XMLElement&  );
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
 
     virtual void solve(Solver &s, void* v = NULL) {s.solve(this,v);}
 
@@ -1953,8 +1965,8 @@ class OperationRouting : public Operation
       * operation.
       * @see Operation::createOperationPlan
       */
-    virtual OperationPlan* createOperationPlan (float q, Date s, Date e,
-      Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s, 
+      Date e, Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
       unsigned long i = 0, bool makeflowsloads=true) const;
 
     virtual const MetaClass& getType() const {return metadata;}
@@ -1981,18 +1993,18 @@ class OperationPlanRouting : public OperationPlan
     /** Updates the end date of the operation. Slack can be introduced in the
       * routing by this method, i.e. the sub operationplans are only moved if
       * required to meet the end date. */
-    void setEnd(Date d);
+    DECLARE_EXPORT void setEnd(Date d);
 
     /** Updates the start date of the operation. Slack can be introduced in the
       * routing by this method, i.e. the sub operationplans are only moved if
       * required to meet the start date.
       */
-    void setStart(Date d);
-    virtual void update();
-    void addSubOperationPlan(OperationPlan* o);
-    ~OperationPlanRouting();
-    void setQuantity(float f, bool roundDown=false);
-    void eraseSubOperationPlan(OperationPlan* o);
+    DECLARE_EXPORT void setStart(Date d);
+    virtual DECLARE_EXPORT void update();
+    DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
+    DECLARE_EXPORT ~OperationPlanRouting();
+    DECLARE_EXPORT void setQuantity(float f, bool roundDown=false);
+    DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
     virtual const OperationPlan::OperationPlanList& getSubOperationPlans() {return step_opplans;}
 
     /** Initializes the operationplan and all steps in it.
@@ -2002,7 +2014,7 @@ class OperationPlanRouting : public OperationPlan
       * step operationplans are created the start date of the routing will be
       * equal to the start of the first step.
       */
-    void initialize();
+    DECLARE_EXPORT void initialize();
     void updateProblems();
 
     virtual size_t getSize() const
@@ -2107,13 +2119,13 @@ class OperationPlanAlternate : public OperationPlan
     OperationPlanAlternate() : altopplan(NULL) {};
 
     /** Destructor. */
-    ~OperationPlanAlternate();
-    void addSubOperationPlan(OperationPlan* o);
-    void setQuantity(float f, bool roundDown=false);
-    void eraseSubOperationPlan(OperationPlan* o);
-    void setEnd(Date d);
-    void setStart(Date d);
-    void update();
+    DECLARE_EXPORT ~OperationPlanAlternate();
+    DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
+    DECLARE_EXPORT void setQuantity(float f, bool roundDown=false);
+    DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
+    DECLARE_EXPORT void setEnd(Date d);
+    DECLARE_EXPORT void setStart(Date d);
+    DECLARE_EXPORT void update();
 
     /** Returns the sub-operationplan. */
     virtual OperationPlan* getSubOperationPlan() {return altopplan;}
@@ -2121,7 +2133,7 @@ class OperationPlanAlternate : public OperationPlan
     /** Initializes the operationplan. If no suboperationplan was created
       * yet this method will create one, using the highest priority alternate.
       */
-    void initialize();
+    DECLARE_EXPORT void initialize();
 };
 
 
@@ -2210,14 +2222,14 @@ class OperationPlanEffective : public OperationPlan
 
   public:
     OperationPlanEffective() : effopplan(NULL) {};
-    ~OperationPlanEffective();
-    void addSubOperationPlan(OperationPlan* o);
-    void setQuantity(float f, bool roundDown=false);
-    void eraseSubOperationPlan(OperationPlan* o);
-    void setEnd(Date d);
-    void setStart(Date d);
-    void update();
-    void initialize();
+    DECLARE_EXPORT ~OperationPlanEffective();
+    DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
+    DECLARE_EXPORT void setQuantity(float f, bool roundDown=false);
+    DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
+    DECLARE_EXPORT void setEnd(Date d);
+    DECLARE_EXPORT void setStart(Date d);
+    DECLARE_EXPORT void update();
+    DECLARE_EXPORT void initialize();
 
     /** Returns the sub-operationplan. */
     virtual OperationPlan* getSubOperationPlan() {return effopplan;}
@@ -3252,7 +3264,7 @@ class CommandPlanSize : public Command
 {
   public:
     CommandPlanSize() {};
-    void execute();
+    DECLARE_EXPORT void execute();
     void undo() {}
     bool undoable() const {return true;}
     string getDescription() const {return "printing the model size";}
@@ -4171,22 +4183,33 @@ class HasProblems::EntityIterator
   public:
     /** Default constructor, which creates an iterator to the first
       * HasProblems object. */
-    explicit EntityIterator();
+    explicit DECLARE_EXPORT EntityIterator();
 
     /** Used to create an iterator pointing beyond the last HasProblems
       * object. */
     explicit EntityIterator(unsigned short i) : type(i) {}
 
     /** Destructor. */
-    ~EntityIterator();
+    DECLARE_EXPORT ~EntityIterator();
 
     /** Pre-increment operator. */
-    EntityIterator& operator++();
+    DECLARE_EXPORT EntityIterator& operator++();
 
-    bool operator != (const EntityIterator& t) const;
+    /** Inequality operator.<br>
+      * Two iterators are different when they point to different objects. 
+      */
+    DECLARE_EXPORT bool operator != (const EntityIterator& t) const;
+
+    /** Equality operator.<br>
+      * Two iterators are equal when they point to the same object. 
+      */
     bool operator == (const EntityIterator& t) const {return !(*this != t);}
-    HasProblems& operator*() const;
-    HasProblems* operator->() const;
+
+    /** Dereference operator. */
+    DECLARE_EXPORT HasProblems& operator*() const;
+
+    /** Dereference operator. */
+    DECLARE_EXPORT HasProblems* operator->() const;
 };
 
 
@@ -4227,7 +4250,7 @@ class Problem::const_iterator
     }
 
   public:
-    const_iterator& operator++();
+    DECLARE_EXPORT const_iterator& operator++();
     bool operator != (const const_iterator& t) const {return iter!=t.iter;}
     bool operator == (const const_iterator& t) const {return iter==t.iter;}
     Problem* operator*() const {return iter;}

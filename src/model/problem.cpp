@@ -35,7 +35,7 @@ DECLARE_EXPORT bool Plannable::anyChange = false;
 DECLARE_EXPORT bool Plannable::computationBusy = false;
 
 
-bool Problem::operator < (const Problem& a) const
+DECLARE_EXPORT bool Problem::operator < (const Problem& a) const
 {
   // 1. Sort based on entity
   assert(owner == a.owner);
@@ -209,7 +209,7 @@ DECLARE_EXPORT void Problem::clearProblems(HasProblems& p, bool setchanged)
 }
 
 
-void Problem::writer(const MetaCategory& c, XMLOutput* o)
+DECLARE_EXPORT void Problem::writer(const MetaCategory& c, XMLOutput* o)
 {
   const_iterator piter = begin();
   if (piter != end())
@@ -225,7 +225,7 @@ void Problem::writer(const MetaCategory& c, XMLOutput* o)
 }
 
 
-void Problem::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Problem::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // We ignore the mode, and always write the complete model
   o->BeginObject(tag);
@@ -236,7 +236,7 @@ void Problem::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 }
 
 
-HasProblems::EntityIterator::EntityIterator() : type(0)
+DECLARE_EXPORT HasProblems::EntityIterator::EntityIterator() : type(0)
 {
   // Buffer
   bufIter = new Buffer::iterator(Buffer::begin());
@@ -267,7 +267,7 @@ HasProblems::EntityIterator::EntityIterator() : type(0)
 }
 
 
-HasProblems::EntityIterator& HasProblems::EntityIterator::operator++() 
+DECLARE_EXPORT HasProblems::EntityIterator& HasProblems::EntityIterator::operator++() 
   //@todo Problem iterator is not super-efficient, shows up high in profiling
 {
   switch (type)
@@ -313,7 +313,7 @@ HasProblems::EntityIterator& HasProblems::EntityIterator::operator++()
 }
 
 
-HasProblems::EntityIterator::~EntityIterator()
+DECLARE_EXPORT HasProblems::EntityIterator::~EntityIterator()
 {
   switch (type)
   {
@@ -337,7 +337,7 @@ HasProblems::EntityIterator::~EntityIterator()
 }
 
 
-bool HasProblems::EntityIterator::operator != (const EntityIterator& t) const
+DECLARE_EXPORT bool HasProblems::EntityIterator::operator != (const EntityIterator& t) const
 {
   // Different iterator type, thus always different and return false
   if (type != t.type) return true;
@@ -365,7 +365,7 @@ bool HasProblems::EntityIterator::operator != (const EntityIterator& t) const
 }
 
 
-HasProblems& HasProblems::EntityIterator::operator*() const
+DECLARE_EXPORT HasProblems& HasProblems::EntityIterator::operator*() const
 {
   switch (type)
   {
@@ -387,7 +387,7 @@ HasProblems& HasProblems::EntityIterator::operator*() const
 }
 
 
-HasProblems* HasProblems::EntityIterator::operator->() const
+DECLARE_EXPORT HasProblems* HasProblems::EntityIterator::operator->() const
 {
   switch (type)
   {
@@ -409,13 +409,13 @@ HasProblems* HasProblems::EntityIterator::operator->() const
 }
 
 
-HasProblems::EntityIterator HasProblems::beginEntity()
+DECLARE_EXPORT HasProblems::EntityIterator HasProblems::beginEntity()
 {
   return EntityIterator();
 }
 
 
-HasProblems::EntityIterator HasProblems::endEntity()
+DECLARE_EXPORT HasProblems::EntityIterator HasProblems::endEntity()
 {
   // Note that we give call a constructor with type 4, in order to allow
   // a fast comparison.
@@ -423,7 +423,7 @@ HasProblems::EntityIterator HasProblems::endEntity()
 }
 
 
-Problem::const_iterator& Problem::const_iterator::operator++()
+DECLARE_EXPORT Problem::const_iterator& Problem::const_iterator::operator++()
 {
   // Move to the next problem
   iter = iter->nextProblem;
@@ -439,14 +439,14 @@ Problem::const_iterator& Problem::const_iterator::operator++()
 }
 
 
-Problem::const_iterator Problem::begin()
+DECLARE_EXPORT Problem::const_iterator Problem::begin()
 {
   Plannable::computeProblems();
   return const_iterator();
 }
 
 
-Problem::const_iterator Problem::begin(HasProblems* i, bool refresh)
+DECLARE_EXPORT Problem::const_iterator Problem::begin(HasProblems* i, bool refresh)
 {
   // Null pointer passed, loop through the full list anyway
   if (!i) return begin();
@@ -457,7 +457,7 @@ Problem::const_iterator Problem::begin(HasProblems* i, bool refresh)
 }
 
 
-const Problem::const_iterator Problem::end()
+DECLARE_EXPORT const Problem::const_iterator Problem::end()
 {
   return const_iterator(NULL);
 }

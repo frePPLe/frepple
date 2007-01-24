@@ -166,6 +166,7 @@ class freppleTest (unittest.TestCase):
         '''Running a compiled executable'''
         # Run the command and verify exit code
         try:
+            # @todo need fancier catching of output
             self.assertEqual(os.system("./" + self.subdirectory + ">test.out 2>&1"),0)
             self.assertEqual(filecmp.cmp("test.out",self.subdirectory + ".expect"),True)
         except KeyboardInterrupt:
@@ -203,9 +204,11 @@ class freppleTest (unittest.TestCase):
             if debug:
                 print ''
                 print 'output:'
+                # @todo Need fancier catching of output
                 self.assertEqual(os.system(os.environ['EXECUTABLE'] + " -validate " + self.subdirectory + ".xml"),0)
                 print ''
             else:
+                # @todo Need fancier catching of output
                 self.assertEqual(os.system(os.environ['EXECUTABLE'] + " -validate " + self.subdirectory + ".xml >/dev/null 2>&1"),0)
         except KeyboardInterrupt:
             # The test has been interupted, which counts as a failure

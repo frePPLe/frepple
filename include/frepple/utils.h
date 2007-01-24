@@ -144,7 +144,7 @@ using namespace xercesc;
   * function is exported appropriately when running on Windows.<br>
   * A module will need to define a function with the following prototype:
   * @code
-  * MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList&);
+  * MODULE_EXPORT string initialize(const CommandLoadLibrary::ParameterList&);
   * @endcode
   */
 #undef DECLARE_EXPORT
@@ -2946,6 +2946,9 @@ class CommandSystem : public Command
 class CommandLoadLibrary : public Command
 {
   public:
+    /** Print all modules that have been loaded. */
+    static DECLARE_EXPORT void printModules();
+
     /** Type for storing parameters. */
     typedef map<string,string> ParameterList;
 
@@ -2977,6 +2980,9 @@ class CommandLoadLibrary : public Command
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandLoadLibrary);}
+    
+    /** Returns true if a module with this name has been loaded. */
+    static bool isLoaded(string s) {return registry.find(s) != registry.end();}
 
   private:
     /** Name of the library to be loaded. */
@@ -2990,6 +2996,9 @@ class CommandLoadLibrary : public Command
 
     /** Temporary string used during the reading of the parameters. */
     string tempValue;
+    
+    /** A map of all modules that have been dynamically loaded. */
+    static DECLARE_EXPORT set<string> registry;
 };
 
 

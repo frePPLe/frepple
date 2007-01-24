@@ -372,13 +372,25 @@ void LibraryModel::initialize()
 }
 
 
-void CommandPlanSize::execute()
+DECLARE_EXPORT void CommandPlanSize::execute()
 {
   size_t count, memsize;
 
+  // Log
+  if (getVerbose())
+    clog << "Start size report at " << Date::now() << endl;
+  Timer t;
+
   // Intro
-  clog << "MEMORY USAGE:" << endl;
-  clog << "MODEL        \tNUMBER\tMEMORY" << endl;
+  clog << endl << "Size information of Frepple " << PACKAGE_VERSION 
+    << " (" << __DATE__ << ")" << endl << endl;
+
+  // Print loaded modules
+  CommandLoadLibrary::printModules();
+
+  // Header for memory size
+  clog << "Memory usage:" << endl;
+  clog << "Model        \tNumber\tMemory" << endl;
   clog << "-----        \t------\t------" << endl;
 
   // Plan
@@ -493,7 +505,11 @@ void CommandPlanSize::execute()
   clog << "Problem      \t" << count << "\t" << memsize << endl;
 
   // TOTAL
-  clog << "TOTAL        \t\t" << total << endl;
+  clog << "Total        \t\t" << total << endl << endl;
+
+  // Log
+  if (getVerbose())
+    clog << "Finished size report at " << Date::now() << " : " << t << endl;
 }
 
 

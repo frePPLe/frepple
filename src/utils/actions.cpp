@@ -446,7 +446,7 @@ DECLARE_EXPORT void CommandSystem::endElement(XMLInput& pIn, XMLElement& pElemen
 DECLARE_EXPORT void CommandLoadLibrary::execute()
 {
   // Type definition of the initialization function
-  typedef void (*func)(const ParameterList&);
+  typedef const char* (*func)(const ParameterList&);
 
   // Log
   if (getVerbose())
@@ -511,12 +511,25 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
 #endif
 
   // Call the initialization routine with the parameter list  //@todo do we need to catch exceptions here???
-  (inithandle)(parameters);
+  string x = (inithandle)(parameters);
+  if (x.empty()) throw DataException("Invalid module name returned.");
+    
+  // Insert the new module in the registry
+  registry.insert(x);
 
   // Log
   if (getVerbose())
-    clog << "Finished loading library '" << lib
+    clog << "Finished loading module '" << x << "' from library '" << lib
       << "' at " << Date::now() << " : " << t << endl;
+}
+
+
+DECLARE_EXPORT void CommandLoadLibrary::printModules()
+{
+  clog << "Loaded modules:" << endl;
+  for (set<string>::const_iterator i=registry.begin(); i!=registry.end(); ++i)
+    clog << "   " << *i << endl;
+  clog << endl;
 }
 
 

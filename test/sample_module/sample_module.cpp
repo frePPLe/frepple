@@ -37,8 +37,9 @@ const XMLtag tag_from("FROM");
 const XMLtag tag_to("TO");
 
 
-void initialize(const CommandLoadLibrary::ParameterList& z)
+MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 {
+  static const char* name = "sample";
   // Register the new class
   OperationTransport::metadata.registerClass(
     "OPERATION",
@@ -47,6 +48,9 @@ void initialize(const CommandLoadLibrary::ParameterList& z)
       
   // Register a callback
   FunctorStatic<Buffer, OperationTransport>::connect(SIG_REMOVE);
+
+  // Return the name of the module
+  return name;
 }
 
 

@@ -68,7 +68,7 @@ DECLARE_EXPORT Operation::~Operation()
 }
 
 
-OperationRouting::~OperationRouting()
+DECLARE_EXPORT OperationRouting::~OperationRouting()
 {
   // Note that we are not using a for-loop since our function is actually
   // updating the list of super-operations at the same time as we move
@@ -78,7 +78,7 @@ OperationRouting::~OperationRouting()
 }
 
 
-OperationAlternate::~OperationAlternate()
+DECLARE_EXPORT OperationAlternate::~OperationAlternate()
 {
   // Note that we are not using a for-loop since our function is actually
   // updating the list of super-operations at the same time as we move
@@ -356,7 +356,7 @@ DECLARE_EXPORT void OperationTimePer::endElement (XMLInput& pIn, XMLElement& pEl
 }
 
 
-void OperationRouting::writeElement
+DECLARE_EXPORT void OperationRouting::writeElement
   (XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
@@ -384,7 +384,7 @@ void OperationRouting::writeElement
 }
 
 
-void OperationRouting::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationRouting::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn) );
@@ -393,7 +393,7 @@ void OperationRouting::beginElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void OperationRouting::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_operation)
   && pIn.getParentElement().isA(Tags::tag_steps))
@@ -406,7 +406,7 @@ void OperationRouting::endElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void OperationRouting::setOperationPlanParameters
+DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
   (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
   OperationPlanRouting *op = dynamic_cast<OperationPlanRouting*>(oplan);
@@ -469,7 +469,7 @@ void OperationRouting::setOperationPlanParameters
 }
 
 
-OperationPlan* OperationRouting::createOperationPlan (float q, Date s, Date e,
+DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan (float q, Date s, Date e,
     Demand* l, bool updates_okay, OperationPlan* ow, unsigned long i,
     bool makeflowsloads) const
 {

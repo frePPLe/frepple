@@ -36,7 +36,8 @@ DECLARE_EXPORT unsigned long OperationPlan::counter = 1;
 
 OperationPlan::OperationPlanList OperationPlan::nosubOperationPlans;
 
-void OperationPlan::setChanged(bool b)
+
+void DECLARE_EXPORT OperationPlan::setChanged(bool b)
 {
   if (owner)
     owner->setChanged(b);
@@ -180,7 +181,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
 }
 
 
-OperationPlan* OperationPlan::findId(unsigned long l)
+DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
 {
   // We are garantueed that there are no operationplans that have an id higher
   // than the current counter. This is garantueed by the initialize() method.
@@ -195,7 +196,7 @@ OperationPlan* OperationPlan::findId(unsigned long l)
 }
 
 
-void OperationPlan::initialize()
+DECLARE_EXPORT void OperationPlan::initialize()
 {
   // At least a valid operation pointer must exist
   if (!oper) throw LogicException("Initializing an invalid operationplan");
@@ -272,7 +273,7 @@ void OperationPlan::initialize()
 }
 
 
-bool OperationPlan::operator < (const OperationPlan& a) const
+DECLARE_EXPORT bool OperationPlan::operator < (const OperationPlan& a) const
 {
   // Different operations
   if (oper != a.oper) 
@@ -287,7 +288,7 @@ bool OperationPlan::operator < (const OperationPlan& a) const
 }
 
 
-void OperationPlan::sortOperationPlans(const Operation& o)
+DECLARE_EXPORT void OperationPlan::sortOperationPlans(const Operation& o)
 {
   // @todo use a better, faster sorting algorithm
   bool sorted;
@@ -371,7 +372,7 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
 }
 
 
-void OperationPlan::setOwner(OperationPlan* o)
+void DECLARE_EXPORT OperationPlan::setOwner(OperationPlan* o)
 {
   // Special case: the same owner is set twice
   if (owner == o) return;
@@ -384,7 +385,7 @@ void OperationPlan::setOwner(OperationPlan* o)
 }
 
 
-void OperationPlan::setStart (Date d)
+void DECLARE_EXPORT OperationPlan::setStart (Date d)
 {
   if (getLocked()) return;
   oper->setOperationPlanParameters(this,quantity,d,Date::infinitePast);
@@ -395,7 +396,7 @@ void OperationPlan::setStart (Date d)
 }
 
 
-void OperationPlan::setEnd (Date d)
+void DECLARE_EXPORT OperationPlan::setEnd (Date d)
 {
   if (getLocked()) return;
   oper->setOperationPlanParameters(this,quantity,Date::infinitePast,d);
@@ -500,7 +501,7 @@ DECLARE_EXPORT void OperationPlan::deleteOperationPlans(Operation* o, bool delet
 }
 
 
-void OperationPlan::writer(const MetaCategory& c, XMLOutput* o)
+DECLARE_EXPORT void OperationPlan::writer(const MetaCategory& c, XMLOutput* o)
 {
   if (!empty())
   {
@@ -512,7 +513,7 @@ void OperationPlan::writer(const MetaCategory& c, XMLOutput* o)
 }
 
 
-void OperationPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Don't export operationplans of hidden operations
   if (oper->getHidden()) return;
@@ -555,7 +556,7 @@ void OperationPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 }
 
 
-void OperationPlan::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationPlan::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_demand))
     pIn.readto( Demand::reader(Demand::metadata,pIn) );
@@ -566,7 +567,7 @@ void OperationPlan::beginElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void OperationPlan::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, XMLElement& pElement)
 {
   // Note that the fields have been ordered more or less in the order
   // of their expected frequency.
@@ -635,7 +636,7 @@ DECLARE_EXPORT bool OperationPlan::check()
 }
 
 
-void OperationPlanRouting::addSubOperationPlan(OperationPlan* o)
+DECLARE_EXPORT void OperationPlanRouting::addSubOperationPlan(OperationPlan* o)
 {
   // The sub opplan must point to this operationplan
   assert(o->getOwner() == this);
@@ -655,7 +656,7 @@ void OperationPlanRouting::addSubOperationPlan(OperationPlan* o)
 }
 
 
-OperationPlanRouting::~OperationPlanRouting()
+DECLARE_EXPORT OperationPlanRouting::~OperationPlanRouting()
 {
   // Delete all children
   for (list<OperationPlan*>::iterator i = step_opplans.begin();
@@ -670,7 +671,7 @@ OperationPlanRouting::~OperationPlanRouting()
 }
 
 
-void OperationPlanRouting::setQuantity (float f, bool roundDown)
+DECLARE_EXPORT void OperationPlanRouting::setQuantity (float f, bool roundDown)
 {
   // First the normal resizing
   OperationPlan::setQuantity(f,roundDown);
@@ -685,13 +686,13 @@ void OperationPlanRouting::setQuantity (float f, bool roundDown)
 }
 
 
-void OperationPlanRouting::eraseSubOperationPlan(OperationPlan* o)
+DECLARE_EXPORT void OperationPlanRouting::eraseSubOperationPlan(OperationPlan* o)
 {
   step_opplans.remove(o);
 }
 
 
-void OperationPlanRouting::setEnd(Date d)
+DECLARE_EXPORT void OperationPlanRouting::setEnd(Date d)
 {
   if(step_opplans.empty())
     OperationPlan::setEnd(d);
@@ -721,7 +722,7 @@ void OperationPlanRouting::setEnd(Date d)
 }
 
 
-void OperationPlanRouting::setStart(Date d)
+DECLARE_EXPORT void OperationPlanRouting::setStart(Date d)
 {
   if(step_opplans.empty())
     OperationPlan::setStart(d);
@@ -751,7 +752,7 @@ void OperationPlanRouting::setStart(Date d)
 }
 
 
-void OperationPlanRouting::update()
+DECLARE_EXPORT void OperationPlanRouting::update()
 {
   if(!step_opplans.empty())
     // Set the dates on the top operationplan
@@ -763,7 +764,7 @@ void OperationPlanRouting::update()
 }
 
 
-void OperationPlanRouting::initialize()
+DECLARE_EXPORT void OperationPlanRouting::initialize()
 {
   // Create step suboperationplans if they don't exist yet.
   if (step_opplans.empty())
@@ -809,7 +810,7 @@ void OperationPlanRouting::initialize()
 }
 
 
-void OperationPlanAlternate::addSubOperationPlan(OperationPlan* o)
+DECLARE_EXPORT void OperationPlanAlternate::addSubOperationPlan(OperationPlan* o)
 {
   // The sub opplan must point to this operationplan
   assert(o->getOwner() == this);
@@ -828,7 +829,7 @@ void OperationPlanAlternate::addSubOperationPlan(OperationPlan* o)
 }
 
 
-OperationPlanAlternate::~OperationPlanAlternate()
+DECLARE_EXPORT OperationPlanAlternate::~OperationPlanAlternate()
 {
   if (!altopplan) return;
   altopplan->owner = NULL;
@@ -836,7 +837,7 @@ OperationPlanAlternate::~OperationPlanAlternate()
 }
 
 
-void OperationPlanAlternate::setEnd(Date d)
+DECLARE_EXPORT void OperationPlanAlternate::setEnd(Date d)
 {
   if (!altopplan) return;
   altopplan->setEnd(d);
@@ -847,7 +848,7 @@ void OperationPlanAlternate::setEnd(Date d)
 }
 
 
-void OperationPlanAlternate::setStart(Date d)
+DECLARE_EXPORT void OperationPlanAlternate::setStart(Date d)
 {
   if (!altopplan) return;
   altopplan->setStart(d);
@@ -858,7 +859,7 @@ void OperationPlanAlternate::setStart(Date d)
 }
 
 
-void OperationPlanAlternate::update()
+DECLARE_EXPORT void OperationPlanAlternate::update()
 {
   if (altopplan)
     setStartAndEnd(
@@ -869,7 +870,7 @@ void OperationPlanAlternate::update()
 }
 
 
-void OperationPlanAlternate::initialize()
+DECLARE_EXPORT void OperationPlanAlternate::initialize()
 {
   // Create an alternate suboperationplan if one doesn't exist yet.
   // We use the first alternate by default.
@@ -886,7 +887,7 @@ void OperationPlanAlternate::initialize()
 }
 
 
-void OperationPlanAlternate::setQuantity(float f, bool roundDown)
+DECLARE_EXPORT void OperationPlanAlternate::setQuantity(float f, bool roundDown)
 {
   // First the normal resizing
   OperationPlan::setQuantity(f,roundDown);
@@ -899,7 +900,7 @@ void OperationPlanAlternate::setQuantity(float f, bool roundDown)
 }
 
 
-void OperationPlanAlternate::eraseSubOperationPlan(OperationPlan* o)
+DECLARE_EXPORT void OperationPlanAlternate::eraseSubOperationPlan(OperationPlan* o)
 {
   if (altopplan == o)
     altopplan = NULL;
@@ -910,7 +911,7 @@ void OperationPlanAlternate::eraseSubOperationPlan(OperationPlan* o)
 }
 
 
-void OperationPlanEffective::addSubOperationPlan(OperationPlan* o)
+DECLARE_EXPORT void OperationPlanEffective::addSubOperationPlan(OperationPlan* o)
 {
   // The sub opplan must point to this operationplan
   assert(o->getOwner() == this);
@@ -929,7 +930,7 @@ void OperationPlanEffective::addSubOperationPlan(OperationPlan* o)
 }
 
 
-OperationPlanEffective::~OperationPlanEffective()
+DECLARE_EXPORT OperationPlanEffective::~OperationPlanEffective()
 {
   if (!effopplan) return;
   effopplan->owner = NULL;
@@ -937,7 +938,7 @@ OperationPlanEffective::~OperationPlanEffective()
 }
 
 
-void OperationPlanEffective::setEnd(Date d)
+DECLARE_EXPORT void OperationPlanEffective::setEnd(Date d)
 {
   if (!effopplan) return;
   effopplan->setEnd(d);
@@ -948,7 +949,7 @@ void OperationPlanEffective::setEnd(Date d)
 }
 
 
-void OperationPlanEffective::setStart(Date d)
+DECLARE_EXPORT void OperationPlanEffective::setStart(Date d)
 {
   if (!effopplan) return;
   effopplan->setStart(d);
@@ -959,7 +960,7 @@ void OperationPlanEffective::setStart(Date d)
 }
 
 
-void OperationPlanEffective::update()
+DECLARE_EXPORT void OperationPlanEffective::update()
 {
   if (effopplan)
     setStartAndEnd(
@@ -970,7 +971,7 @@ void OperationPlanEffective::update()
 }
 
 
-void OperationPlanEffective::initialize()
+DECLARE_EXPORT void OperationPlanEffective::initialize()
 {
   if (effopplan) effopplan->initialize();
   else throw LogicException("Can't initialize an effective operationplan " \
@@ -979,7 +980,7 @@ void OperationPlanEffective::initialize()
 }
 
 
-void OperationPlanEffective::setQuantity(float f, bool roundDown)
+DECLARE_EXPORT void OperationPlanEffective::setQuantity(float f, bool roundDown)
 {
   // First the normal resizing
   OperationPlan::setQuantity(f,roundDown);
@@ -992,7 +993,7 @@ void OperationPlanEffective::setQuantity(float f, bool roundDown)
 }
 
 
-void OperationPlanEffective::eraseSubOperationPlan(OperationPlan* o)
+DECLARE_EXPORT void OperationPlanEffective::eraseSubOperationPlan(OperationPlan* o)
 {
   if (effopplan == o)
     effopplan = NULL;

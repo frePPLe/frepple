@@ -35,9 +35,12 @@
   * application.<br>
   * The implementation is implemented in a thread-safe way (within the
   * limitations of the Python threading model, of course).<br>
-  * After loading, the module will check whether a file '$FREPPLE_HOME/init.py'
-  * exists and, if it does, will execute the statements in the file. In this
-  * way a library of globally available functions can easily be initialized.
+  * After loading, the module will check whether a file 
+  * '$FREPPLE_HOME/init.py' exists and, if it does, will execute the 
+  * statements in the file. In this way a library of globally available
+  * functions can easily be initialized.<br>
+  * The stderr and stdout streams of Python are redirected by default to
+  * the Frepple log stream.
   *
   * The XML schema extension enabled by this module is (see mod_python.xsd):
   * <PRE>
@@ -65,6 +68,9 @@
   *     A string variable with the version of frepple.
   *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br> 
   *     Processes an XML string passed as argument.
+  *   - <b>log(string)</b>:<br>
+  *     Prints a string to the frepple log file.<br>
+  *     This is used for redirecting the stdout and stderr of Python.
   *   - <b>readXMLfile(string [,bool] [,bool])</b>:<br> 
   *     Read an XML-file.
   *   - <b>saveXMLfile(string)</b>:<br> 
@@ -86,6 +92,10 @@ using namespace frepple;
 
 namespace module_python
 {
+
+
+/** Initialization routine for the library. */
+MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);
 
 
 /** This class embeds an interpreter for the Python language in Frepple.<br>
@@ -162,6 +172,12 @@ class CommandPython : public Command, public XMLinstruction
     static void initialize();
 
   private:
+
+    /** Python API: Used for redirecting the Python output to the same file 
+      * as the applciation. <br>
+      * Arguments: data (string)
+      */
+    static PyObject *python_log(PyObject*, PyObject*);
 
     /** Python API: process an XML-formatted string.<br>
       * Arguments: data (string), validate (bool), checkOnly (bool)

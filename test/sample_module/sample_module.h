@@ -40,13 +40,16 @@ namespace sample_module
   
   
 /** This is the initialization routine for the extension. 
-  * Including a function with this prototype is compulsary. If it doesn't exist
-  * your module will not be able to be loaded.
+  * Including a function with this prototype is compulsary. If it doesn't 
+  * exist your module will not be able to be loaded.
   * The function is called automatically when your module is loaded.
   *
   * Parameters can be passed when loading the library.
+  *
+  * The initialization routine returns a pointer to a constant character 
+  * buffer with the module name.
   */
-MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z);
+MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);
 
 
 class OperationTransport : public OperationFixedTime

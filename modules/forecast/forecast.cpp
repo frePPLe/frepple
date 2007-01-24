@@ -34,14 +34,15 @@ namespace module_forecast
 const MetaClass Forecast::metadata;
 
 
-MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
+MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 {
   // Initialize only once
   static bool init = false;
+  static const char* name = "forecast";
   if (init)
   {
     clog << "Warning: Initializing module forecast more than one." << endl;
-    return;
+    return name;
   }
   init = true;
 
@@ -57,6 +58,9 @@ MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
     "DEMAND", 
     "DEMAND_FORECAST", 
     Object::createString<Forecast>);
+      
+  // Return the name of the module
+  return name;
 }
 
 

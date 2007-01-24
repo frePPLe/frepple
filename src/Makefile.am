@@ -13,7 +13,8 @@ libdir = @bindir@
 # output to the bin directory
 all-local: frepple$(EXEEXT)
 	cp frepple$(EXEEXT) ../bin
-	-cp .libs/libfrepple.so* ../bin
+	if test -f .libs/cygfrepple*.dll; then cp .libs/cygfrepple*.dll ../bin; fi
+	if test -f .libs/libfrepple.so*; then cp .libs/libfrepple.so* ../bin; fi
 
 AM_CPPFLAGS=-I@top_builddir@/include
 

@@ -38,6 +38,9 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::firstCategory = NULL;
 DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByTag;
 DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 
+// Repository of loaded modules
+DECLARE_EXPORT set<string> CommandLoadLibrary::registry;
+
 // Command metadata
 DECLARE_EXPORT const MetaCategory Command::metadata;
 DECLARE_EXPORT const MetaClass CommandList::metadata,

@@ -41,6 +41,8 @@ PyObject* CommandPython::PythonRuntimeException = NULL;
 // Define the methods to be exposed into Python
 PyMethodDef CommandPython::PythonAPI[] = 
 {
+  {"log", CommandPython::python_log, METH_VARARGS, 
+     "Prints a string to the frepple log file."},
   {"readXMLdata", CommandPython::python_readXMLdata, METH_VARARGS, 
      "Processes an XML string passed as argument."},
   {"createItem", CommandPython::python_createItem, METH_VARARGS, 
@@ -55,14 +57,15 @@ PyMethodDef CommandPython::PythonAPI[] =
 };
 
 
-MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
+MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 {
   // Initialize only once
   static bool init = false;
+  static const char* name = "python";
   if (init)
   {
     clog << "Warning: Initializing module lp_solver more than one." << endl;
-    return;
+    return name;
   }
   init = true;
 
@@ -80,6 +83,9 @@ MODULE_EXPORT void initialize(const CommandLoadLibrary::ParameterList& z)
 
   // Initialize the interpreter
   CommandPython::initialize();
+    
+  // Return the name of the module
+  return name;
 }
 
 
@@ -114,6 +120,16 @@ void CommandPython::initialize()
 
   // Capture the main trhead state, for use during threaded execution
   mainThreadState = PyThreadState_Get();
+  
+  // Redirect the stderr and stdout streams of Python
+  PyRun_SimpleString(
+    "import frepple, sys\n"  
+    "class redirect:\n"
+    "\tdef write(self,str):\n"
+    "\t\tfrepple.log(str)\n"
+    "sys.stdout = redirect()\n"
+    "sys.stderr = redirect()\n"
+    );
 
   // Search and execute the initialization file '$FREPPLE_HOME/init.py'
   string init = Environment::getHomeDirectory() + "init.py";
@@ -179,8 +195,8 @@ void CommandPython::execute()
     // We build an equivalent python command rather than using the 
     // PyRun_File function. On windows different versions of the 
     // VC compiler have a different structure for FILE, thus making it
-    // impossible to use a lib compiled in version x when compiling under
-    // version y.  Quite ugly... :-( :-( :-(
+    // impossible to use a lib compiled in python version x when compiling 
+    // under version y.  Quite ugly... :-( :-( :-(
     c = filename;
     for (string::size_type pos = c.find_first_of("'", 0);
        pos < string::npos;
@@ -287,6 +303,22 @@ void CommandPython::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
+PyObject* CommandPython::python_log(PyObject *self, PyObject *args)
+{
+  // Pick up arguments
+  char *data;
+  int ok = PyArg_ParseTuple(args, "s", &data);
+  if (!ok) return NULL;
+  
+  // Print 
+  clog << data;
+  
+  // Return code
+  return Py_BuildValue("");  // Safer than using Py_None, which is not 
+                             // portable across compilers  
+}
+
+
 PyObject* CommandPython::python_readXMLdata(PyObject *self, PyObject *args) 
 {    
   // Pick up arguments
@@ -383,6 +415,7 @@ PyObject* CommandPython::python_saveXMLfile(PyObject* self, PyObject* args)
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");
 }
+
 
 PyObject *CommandPython::python_saveXMLstring(PyObject* self, PyObject* args)
 {

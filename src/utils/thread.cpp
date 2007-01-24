@@ -51,7 +51,7 @@ DECLARE_EXPORT void LockManager::obtainReadLock(const Object* l, priority p)
   //if (!l->lock)
   //  const_cast<Object*>(l)->lock = pool_locks.Alloc();
 
-  //clog << "Read locking " << l << "  " << l->getType().type <<  endl;
+  //cout << "Read locking " << l << "  " << l->getType().type <<  endl;
   // if writelock > 0 and I am not the writer, wait, then repeat
 
   // insert in the table
@@ -70,7 +70,7 @@ DECLARE_EXPORT void LockManager::obtainWriteLock(Object* l, priority p)
   //if (!l->lock)
   //  l->lock = pool_locks.Alloc();
 
-  //clog << "Write locking " << l << "  " << l->getType().type << endl;
+  //cout << "Write locking " << l << "  " << l->getType().type << endl;
 
   // increment writers
 };
@@ -85,7 +85,7 @@ DECLARE_EXPORT void LockManager::releaseReadLock(const Object* l)
   //if (!l->lock)
   //  throw RuntimeException("Releasing invalid lock");
 
-  //clog << "Read unlocking " << l << "  " << l->getType().type << endl;
+  //cout << "Read unlocking " << l << "  " << l->getType().type << endl;
 
   // decrement readers
 
@@ -103,7 +103,7 @@ DECLARE_EXPORT void LockManager::releaseWriteLock(Object* l)
   //if (!l->lock)
     //throw RuntimeException("Releasing invalid lock");
 
-  //clog << "Write unlocking " << l << "  " << l->getType().type << endl;
+  //cout << "Write unlocking " << l << "  " << l->getType().type << endl;
 
   // decrement writers
 
@@ -116,7 +116,7 @@ DECLARE_EXPORT void LockManager::releaseWriteLock(Object* l)
 
 DECLARE_EXPORT void LockManager::obtainReadLock(const Object* l, priority p)
 {
-  //clog << "Read locking " << l << "  " << l->getType().type <<  endl;
+  //cout << "Read locking " << l << "  " << l->getType().type <<  endl;
 };
 
 
@@ -126,13 +126,13 @@ DECLARE_EXPORT void LockManager::obtainWriteLock(Object* l, priority p)
   if (l->lock) return;
   l->lock = reinterpret_cast<Lock*>(l);
   l->getType().raiseEvent(l, SIG_BEFORE_CHANGE);
-  //clog << "Write locking " << l << "  " << l->getType().type << endl;
+  //cout << "Write locking " << l << "  " << l->getType().type << endl;
 };
 
 
 DECLARE_EXPORT void LockManager::releaseReadLock(const Object* l)
 {
-  //clog << "Read unlocking " << l << "  " << l->getType().type << endl;
+  //cout << "Read unlocking " << l << "  " << l->getType().type << endl;
 };
 
 
@@ -140,7 +140,7 @@ DECLARE_EXPORT void LockManager::releaseWriteLock(Object* l)
 {
   // There was no lock set
   if (!l->lock) return;
-  //clog << "Write unlocking " << l << "  " << l->getType().type << endl;
+  //cout << "Write unlocking " << l << "  " << l->getType().type << endl;
   l->lock = NULL;
   l->getType().raiseEvent(l, SIG_AFTER_CHANGE);
 };

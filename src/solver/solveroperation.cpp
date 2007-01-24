@@ -246,8 +246,8 @@ DECLARE_EXPORT void MRPSolver::solve(Operation* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) clog << " ";
-    clog << "   Operation '" << oper->getName() << "' is asked: "
+    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    cout << "   Operation '" << oper->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
@@ -286,8 +286,8 @@ DECLARE_EXPORT void MRPSolver::solve(Operation* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) clog << " ";
-    clog << "   Operation '" << oper->getName() << "' answers: "
+    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    cout << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
 }
@@ -301,8 +301,8 @@ DECLARE_EXPORT void MRPSolver::solve(OperationRouting* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) clog << " ";
-    clog << "   Operation '" << oper->getName() << "' is asked: "
+    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    cout << "   Operation '" << oper->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
@@ -393,8 +393,8 @@ DECLARE_EXPORT void MRPSolver::solve(OperationRouting* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) clog << " ";
-    clog << "   Operation '" << oper->getName() << "' answers: "
+    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    cout << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
 }
@@ -411,8 +411,8 @@ DECLARE_EXPORT void MRPSolver::solve(OperationAlternate* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) clog << " ";
-    clog << "   Operation '" << oper->getName() << "' is asked: "
+    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    cout << "   Operation '" << oper->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
@@ -529,8 +529,8 @@ DECLARE_EXPORT void MRPSolver::solve(OperationAlternate* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) clog << " ";
-    clog << "   Operation '" << oper->getName() << "' answers: "
+    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    cout << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
 }
@@ -544,8 +544,8 @@ DECLARE_EXPORT void MRPSolver::solve(OperationEffective* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) clog << " ";
-    clog << "   Operation '" << oper->getName() << "' is asked: "
+    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    cout << "   Operation '" << oper->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
@@ -575,8 +575,8 @@ DECLARE_EXPORT void MRPSolver::solve(OperationEffective* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) clog << " ";
-    clog << "   Operation '" << oper->getName() << "' answers: "
+    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    cout << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
 }

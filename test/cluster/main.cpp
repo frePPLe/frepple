@@ -134,10 +134,10 @@ int main (int argc, char *argv[])
   }
   catch (...)
   {
-    clog << "Error: Caught an exception in main routine:" <<  endl;
+    cout << "Error: Caught an exception in main routine:" <<  endl;
     try { throw; }
-    catch (exception& e) {clog << "  " << e.what() << endl;}
-    catch (...) {clog << "  Unknown type" << endl;}
+    catch (exception& e) {cout << "  " << e.what() << endl;}
+    catch (...) {cout << "  Unknown type" << endl;}
     FreppleExit();
     return EXIT_FAILURE;
   }

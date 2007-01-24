@@ -182,7 +182,7 @@ DECLARE_EXPORT void CommandList::execute()
 
   // Message
   if (getVerbose())
-    clog << "Start executing command list at " << Date::now() << endl;
+    cout << "Start executing command list at " << Date::now() << endl;
   Timer t;
 
 #ifndef MT
@@ -294,11 +294,11 @@ DECLARE_EXPORT void CommandList::execute()
     }
     catch (...)
     {
-      clog << "Error: Caught an exception while executing command '"
+      cout << "Error: Caught an exception while executing command '"
         << curCommand->getDescription() << "':" <<  endl;
       try { throw; }
-      catch (exception& e) {clog << "  " << e.what() << endl;}
-      catch (...) {clog << "  Unknown type" << endl;}
+      catch (exception& e) {cout << "  " << e.what() << endl;}
+      catch (...) {cout << "  Unknown type" << endl;}
       // Undo all commands executed so far
       if (undoable()) undo();
     }
@@ -320,7 +320,7 @@ DECLARE_EXPORT void CommandList::execute()
 
   // Log
   if (getVerbose())
-    clog << "Finished executing command list at " << Date::now()
+    cout << "Finished executing command list at " << Date::now()
       << " : " << t << endl;
 }
 
@@ -342,11 +342,11 @@ unsigned __stdcall CommandList::wrapper(void *arg)
     catch (...)
     {
       // Error message
-      clog << "Error: Caught an exception while executing command '" 
+      cout << "Error: Caught an exception while executing command '" 
         << c->getDescription() << "':" << endl;
       try { throw; }
-      catch (exception& e) {clog << "  " << e.what() << endl;}
-      catch (...) {clog << "  Unknown type" << endl;}
+      catch (exception& e) {cout << "  " << e.what() << endl;}
+      catch (...) {cout << "  Unknown type" << endl;}
     }
   }
   return 0;
@@ -356,7 +356,7 @@ unsigned __stdcall CommandList::wrapper(void *arg)
 DECLARE_EXPORT CommandList::~CommandList()
 {
   if (!firstCommand) return;
-  clog << "Warning: Deleting an action list with actions that have"
+  cout << "Warning: Deleting an action list with actions that have"
     << " not been committed or undone" << endl;
   for(Command *i = firstCommand; i; )
   {
@@ -406,7 +406,7 @@ DECLARE_EXPORT void CommandSystem::execute()
 {
   // Log
   if (getVerbose())
-    clog << "Start executing system command '" << cmdLine
+    cout << "Start executing system command '" << cmdLine
     << "' at " << Date::now() << endl;
   Timer t;
 
@@ -418,7 +418,7 @@ DECLARE_EXPORT void CommandSystem::execute()
 
   // Log
   if (getVerbose())
-    clog << "Finished executing system command '" << cmdLine
+    cout << "Finished executing system command '" << cmdLine
     << "' at " << Date::now() << " : " << t << endl;
 }
 
@@ -450,7 +450,7 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
 
   // Log
   if (getVerbose())
-    clog << "Start loading library '" << lib << "' at " << Date::now() << endl;
+    cout << "Start loading library '" << lib << "' at " << Date::now() << endl;
   Timer t;
 
   // Validate
@@ -519,17 +519,17 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
 
   // Log
   if (getVerbose())
-    clog << "Finished loading module '" << x << "' from library '" << lib
+    cout << "Finished loading module '" << x << "' from library '" << lib
       << "' at " << Date::now() << " : " << t << endl;
 }
 
 
 DECLARE_EXPORT void CommandLoadLibrary::printModules()
 {
-  clog << "Loaded modules:" << endl;
+  cout << "Loaded modules:" << endl;
   for (set<string>::const_iterator i=registry.begin(); i!=registry.end(); ++i)
-    clog << "   " << *i << endl;
-  clog << endl;
+    cout << "   " << *i << endl;
+  cout << endl;
 }
 
 
@@ -576,7 +576,7 @@ DECLARE_EXPORT void CommandIf::execute()
 {
   // Message
   if (getVerbose())
-    clog << "Start executing if-command with condition '" 
+    cout << "Start executing if-command with condition '" 
       << condition << "' at " << Date::now() << endl;
   Timer t;
 
@@ -605,7 +605,7 @@ DECLARE_EXPORT void CommandIf::execute()
 
   // Log
   if (getVerbose())
-    clog << "Finished executing if-command at " << Date::now()
+    cout << "Finished executing if-command at " << Date::now()
       << " : " << t << endl;
 }
 

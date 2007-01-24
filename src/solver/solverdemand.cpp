@@ -40,7 +40,7 @@ DECLARE_EXPORT void MRPSolver::solve (Demand* l, void* v)
 
   // Message
   if (verbose)
-    clog << "Planning demand '" << l->getName() << "' (" << l->getPriority()
+    cout << "Planning demand '" << l->getName() << "' (" << l->getPriority()
     << ", " << l->getDue() << ", " << l->getQuantity() << ")" << endl;
 
   // Unattach previous delivery operationplans.
@@ -55,7 +55,7 @@ DECLARE_EXPORT void MRPSolver::solve (Demand* l, void* v)
   // Nothing to be planned any more (e.g. all deliveries are locked...)
   if (plan_qty < ROUNDING_ERROR)
   {
-    if (verbose) clog << "Nothing to be planned." << endl;
+    if (verbose) cout << "Nothing to be planned." << endl;
     return;
   }
 
@@ -69,7 +69,7 @@ DECLARE_EXPORT void MRPSolver::solve (Demand* l, void* v)
   {
     // Message
     if (verbose)
-      clog << "Demand '" << l << "' asks: "
+      cout << "Demand '" << l << "' asks: "
       << plan_qty << " - " << plan_date << endl;
 
     // Check whether the action list is empty
@@ -84,7 +84,7 @@ DECLARE_EXPORT void MRPSolver::solve (Demand* l, void* v)
 
     // Message
     if (verbose)
-      clog << "Demand '" << l << "' gets answer: "
+      cout << "Demand '" << l << "' gets answer: "
       << Solver->a_qty << " - " << Solver->a_date << endl;
 
     // Update for the next planning loop
@@ -107,7 +107,7 @@ DECLARE_EXPORT void MRPSolver::solve (Demand* l, void* v)
           // Create the correct operationplans
           bool tmp = Solver->getSolver()->getVerbose();
           double tmpqty = Solver->a_qty;
-          if (tmp) clog << "Demand '" << l << "' plans coordination." << endl;
+          if (tmp) cout << "Demand '" << l << "' plans coordination." << endl;
           Solver->getSolver()->setVerbose(false);
           Solver->q_qty = Solver->a_qty;
           Solver->q_date = copy_plan_date;
@@ -118,7 +118,7 @@ DECLARE_EXPORT void MRPSolver::solve (Demand* l, void* v)
 
           // Message
           if (fabs(Solver->a_qty - tmpqty) > ROUNDING_ERROR)
-            clog << "Demand '" << l << "' coordination screwed up: "
+            cout << "Demand '" << l << "' coordination screwed up: "
             << Solver->a_qty << " versus " << tmpqty << endl;
         }
         // Register the new operationplans. We need to make sure that the 

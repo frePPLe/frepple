@@ -64,7 +64,7 @@ DECLARE_EXPORT void CommandSolve::execute()
 
   // Start message
   if (getVerbose())
-    clog << "Started running the solver '" << sol->getName()
+    cout << "Started running the solver '" << sol->getName()
       << "' at " << Date::now() << endl;
   Timer t;
 
@@ -73,7 +73,7 @@ DECLARE_EXPORT void CommandSolve::execute()
 
   // Ending message
   if (getVerbose())
-    clog << "Finished running the solver '" << sol->getName()
+    cout << "Finished running the solver '" << sol->getName()
     << "' at " << Date::now()  << " : " << t << endl;
 }
 
@@ -121,7 +121,7 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
 {
   // Message
   if (getVerbose())
-    clog << "Started reading model from file '" << filename
+    cout << "Started reading model from file '" << filename
     << "' at " << Date::now() << endl;
   Timer t;
 
@@ -151,7 +151,7 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
 
   // Message
   if (getVerbose())
-    clog << "Finished reading model at " << Date::now()  << " : " << t << endl;
+    cout << "Finished reading model at " << Date::now()  << " : " << t << endl;
 }
 
 
@@ -177,7 +177,7 @@ DECLARE_EXPORT void CommandReadXMLString::execute()
 {
   // Message
   if (getVerbose())
-    clog << "Started reading model from string at " << Date::now() << endl;
+    cout << "Started reading model from string at " << Date::now() << endl;
   Timer t;
 
   // Note: Reading the data can throw exceptions...
@@ -191,7 +191,7 @@ DECLARE_EXPORT void CommandReadXMLString::execute()
 
   // Message
   if (getVerbose())
-    clog << "Finished reading model at " << Date::now()  << " : " << t << endl;
+    cout << "Finished reading model at " << Date::now()  << " : " << t << endl;
 }
 
 
@@ -217,7 +217,7 @@ DECLARE_EXPORT void CommandReadXMLURL::execute()
 {
   // Message
   if (getVerbose())
-    clog << "Started reading model from url at " << Date::now() << endl;
+    cout << "Started reading model from url at " << Date::now() << endl;
   Timer t;
 
   // Note: Reading the data can throw exceptions...
@@ -231,7 +231,7 @@ DECLARE_EXPORT void CommandReadXMLURL::execute()
 
   // Message
   if (getVerbose())
-    clog << "Finished reading model at " << Date::now()  << " : " << t << endl;
+    cout << "Finished reading model at " << Date::now()  << " : " << t << endl;
 }
 
 
@@ -268,7 +268,7 @@ DECLARE_EXPORT void CommandSave::execute()
 {
   // Message
   if (getVerbose())
-    clog << "Start saving model to file '" << filename
+    cout << "Start saving model to file '" << filename
     << "' at " << Date::now() << endl;
   Timer t;
 
@@ -281,7 +281,7 @@ DECLARE_EXPORT void CommandSave::execute()
 
   // Message
   if (getVerbose())
-    clog << "Finished saving " << o.countObjects()
+    cout << "Finished saving " << o.countObjects()
     << " objects at " << Date::now() << " : " << t << endl;
 }
 
@@ -307,7 +307,7 @@ DECLARE_EXPORT void CommandSavePlan::execute()
 {
   // Message
   if (getVerbose())
-    clog << "Start saving plan to file '" << getFileName()
+    cout << "Start saving plan to file '" << getFileName()
     << "' at " << Date::now() << endl;
   Timer t;
 
@@ -412,7 +412,7 @@ DECLARE_EXPORT void CommandSavePlan::execute()
 
   // Message
   if (getVerbose())
-    clog << "Finished saving plan at " << Date::now() << " : " << t << endl;
+    cout << "Finished saving plan at " << Date::now() << " : " << t << endl;
 }
 
 
@@ -494,9 +494,9 @@ DECLARE_EXPORT void CommandErase::execute()
   // Starting message
   if (getVerbose())
     if (deleteStaticModel)
-      clog << "Start model erase command at " << Date::now() << endl;
+      cout << "Start model erase command at " << Date::now() << endl;
     else
-      clog << "Start plan erase command at " << Date::now() << endl;
+      cout << "Start plan erase command at " << Date::now() << endl;
   Timer t;
 
   if (deleteStaticModel)
@@ -523,7 +523,7 @@ DECLARE_EXPORT void CommandErase::execute()
 
   // Ending message
   if (getVerbose())
-    clog << "Finished erase command at " << Date::now() 
+    cout << "Finished erase command at " << Date::now() 
       << " : " << t << endl;
 }
 

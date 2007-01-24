@@ -50,8 +50,8 @@ DECLARE_EXPORT void MRPSolver::solve(Resource* res, void* v)
   // Message
   if (data->getSolver()->getVerbose())
   {
-    for (int i=res->getLevel(); i; --i) clog << " ";
-    clog << "   Resource '" << res->getName() << "' is asked: "
+    for (int i=res->getLevel(); i; --i) cout << " ";
+    cout << "   Resource '" << res->getName() << "' is asked: "
     << (-data->q_qty) << "  " << data->q_date << endl;
   }
 
@@ -209,8 +209,8 @@ DECLARE_EXPORT void MRPSolver::solve(Resource* res, void* v)
   // Message
   if (data->getSolver()->getVerbose())
   {
-    for (int i=res->getLevel(); i; --i) clog << " ";
-    clog << "   Resource '" << res->getName() << "' answers: "
+    for (int i=res->getLevel(); i; --i) cout << " ";
+    cout << "   Resource '" << res->getName() << "' answers: "
     << (-data->a_qty) << "  " << data->a_date << endl;
   }
 
@@ -224,8 +224,8 @@ DECLARE_EXPORT void MRPSolver::solve(ResourceInfinite* r, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=r->getLevel(); i; --i) clog << " ";
-    clog << "  Resource '" << r << "' is asked: "
+    for (int i=r->getLevel(); i; --i) cout << " ";
+    cout << "  Resource '" << r << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
@@ -236,8 +236,8 @@ DECLARE_EXPORT void MRPSolver::solve(ResourceInfinite* r, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=r->getLevel(); i; --i) clog << " ";
-    clog << "  Resource '" << r << "' answers: "
+    for (int i=r->getLevel(); i; --i) cout << " ";
+    cout << "  Resource '" << r << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
 }

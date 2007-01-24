@@ -905,7 +905,7 @@ DECLARE_EXPORT void OperationPlanAlternate::eraseSubOperationPlan(OperationPlan*
   if (altopplan == o)
     altopplan = NULL;
   else if (o)
-    clog << "Warning: Trying to remove a sub operationplan '"
+    cout << "Warning: Trying to remove a sub operationplan '"
     << *(o->getOperation()) << "' that is not registered with"
     << " its parent '" << *getOperation() << "'" << endl;
 }
@@ -998,7 +998,7 @@ DECLARE_EXPORT void OperationPlanEffective::eraseSubOperationPlan(OperationPlan*
   if (effopplan == o)
     effopplan = NULL;
   else if (o)
-    clog << "Warning: Trying to remove a sub operationplan '"
+    cout << "Warning: Trying to remove a sub operationplan '"
     << *(o->getOperation()) << "' that is not registered with"
     << " its parent '" << *getOperation() << "'" << endl;
 }

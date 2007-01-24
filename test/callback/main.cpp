@@ -36,37 +36,37 @@ class SignalSniffer
   public:
     static bool callback(Buffer* l, Signal a)
     {
-      clog << "  Buffer '" << l << "' receives signal " << a << endl;
+      cout << "  Buffer '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(BufferInfinite* l, Signal a)
     {
-      clog << "  BufferInfinite '" << l << "' receives signal " << a << endl;
+      cout << "  BufferInfinite '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(BufferDefault* l, Signal a)
     {
-      clog << "  BufferDefault '" << l << "' receives signal " << a << endl;
+      cout << "  BufferDefault '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Operation* l, Signal a)
     {
-      clog << "  Operation '" << l << "' receives signal " << a << endl;
+      cout << "  Operation '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(OperationFixedTime* l, Signal a)
     {
-      clog << "  OperationFixedTime '" << l << "' receives signal " << a << endl;
+      cout << "  OperationFixedTime '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Item* l, Signal a)
     {
-      clog << "  Item '" << l << "' receives signal " << a << endl;
+      cout << "  Item '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Flow* l, Signal a)
     {
-      clog << "  Flow between '" << l->getBuffer() << "' and '" <<
+      cout << "  Flow between '" << l->getBuffer() << "' and '" <<
         l->getOperation() << "' receives signal " << a << endl;
       return true;
     }
@@ -118,7 +118,7 @@ int main (int argc, char *argv[])
     FunctorStatic<Flow,SignalSniffer>::connect(SIG_REMOVE);
 
     // 2: Read and the model
-    clog << "Create the model with callbacks:" << endl;
+    cout << "Create the model with callbacks:" << endl;
     FreppleReadXMLFile("callback.xml",true,false);
 
     // 3: Erase the model
@@ -169,15 +169,15 @@ int main (int argc, char *argv[])
     FunctorStatic<Flow,SignalSniffer>::disconnect(SIG_REMOVE);
 
     // 5: Reread and replan the model
-    clog << "Recreate the model without callbacks:" << endl;
+    cout << "Recreate the model without callbacks:" << endl;
     FreppleReadXMLFile("callback.xml",true,false);
   }
   catch (...)
   {
-    clog << "Error: Caught an exception in main routine:" <<  endl;
+    cout << "Error: Caught an exception in main routine:" <<  endl;
     try { throw; }
-    catch (exception& e) {clog << "  " << e.what() << endl;}
-    catch (...) {clog << "  Unknown type" << endl;}
+    catch (exception& e) {cout << "  " << e.what() << endl;}
+    catch (...) {cout << "  Unknown type" << endl;}
     FreppleExit();
     return EXIT_FAILURE;
   }

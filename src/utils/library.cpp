@@ -86,7 +86,7 @@ void LibraryUtils::initialize()
   static bool init = false;
   if(init)
   {
-    clog << "Warning: Calling Frepple::LibraryUtils::initialize() more " 
+    cout << "Warning: Calling Frepple::LibraryUtils::initialize() more " 
       << "than once." << endl;
     return;
   }
@@ -276,21 +276,21 @@ DECLARE_EXPORT const MetaClass* MetaClass::findClass(const char* c)
 
 DECLARE_EXPORT void MetaClass::printClasses()
 {
-  clog << "Registered classes:" << endl;
+  cout << "Registered classes:" << endl;
   // Loop through all categories
   for (MetaCategory::CategoryMap::const_iterator i = MetaCategory::categoriesByTag.begin(); 
     i != MetaCategory::categoriesByTag.end(); ++i)
   {
-	 	clog << "  " << i->second->type << endl;
+	 	cout << "  " << i->second->type << endl;
     // Loop through the classes for the category
     for (MetaCategory::ClassMap::const_iterator 
       j = i->second->classes.begin();
     	j != i->second->classes.end(); 
       ++j)
         if (j->first == XMLtag::hash("DEFAULT"))
-          clog << "    DEFAULT ( = " << j->second->type << " )" << j->second << endl;
+          cout << "    DEFAULT ( = " << j->second->type << " )" << j->second << endl;
         else
-          clog << "    " << j->second->type << j->second << endl;
+          cout << "    " << j->second->type << j->second << endl;
   }
 }
 

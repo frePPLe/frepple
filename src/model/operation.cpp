@@ -660,7 +660,7 @@ DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
     setChanged();
   }
   else
-    clog << "Warning: operation '" << *o
+    cout << "Warning: operation '" << *o
     << "' isn't a suboperation of alternate operation '" << *this
     << "'" << endl;
 }

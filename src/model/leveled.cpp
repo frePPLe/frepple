@@ -95,7 +95,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     {
 
 #ifdef CLUSTERDEBUG
-      clog << "Investigating operation '" 
+      cout << "Investigating operation '" 
         << *(static_cast<Operation*>(g->second))
         << "' - current cluster " 
         << static_cast<Operation*>(g->second)->cluster << endl;
@@ -157,7 +157,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
         stack.pop();
 
 #ifdef CLUSTERDEBUG
-        clog << "    Recursing in Operation '" << *(cur_oper)
+        cout << "    Recursing in Operation '" << *(cur_oper)
           << "' - current level " << cur_level << endl;
 #endif
 

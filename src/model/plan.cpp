@@ -133,7 +133,7 @@ DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
 DECLARE_EXPORT void Plan::setLogFile(string x)
 {
     // Close an eventual existing log file.
-  	if (!logfilename.empty()) clog << "Closing plan on " << Date::now() << endl;
+  	if (!logfilename.empty()) cout << "Closing plan on " << Date::now() << endl;
     if (log) log.close();
 
     // Pick up the file name
@@ -148,11 +148,11 @@ DECLARE_EXPORT void Plan::setLogFile(string x)
       // The log file could not be opened
       throw RuntimeException("Could not open log file '" + x + "'");
 
-    // Redirect the clog output channel.
-    clog.rdbuf(log.rdbuf());
+    // Redirect the standard output file.
+    cout.rdbuf(log.rdbuf());
 
     // Print a nice header
-    clog << "Start logging Frepple " << PACKAGE_VERSION << " ("
+    cout << "Start logging Frepple " << PACKAGE_VERSION << " ("
       << __DATE__ << ") on " << Date::now() << endl;
 }
 

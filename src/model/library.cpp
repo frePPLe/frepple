@@ -129,7 +129,7 @@ void LibraryModel::initialize()
   static bool init = false;
   if (init)
   {
-    clog << "Warning: Calling Frepple::LibraryModel::initialize() more "
+    cout << "Warning: Calling Frepple::LibraryModel::initialize() more "
      << "than once." << endl;
     return;
   }
@@ -378,51 +378,51 @@ DECLARE_EXPORT void CommandPlanSize::execute()
 
   // Log
   if (getVerbose())
-    clog << "Start size report at " << Date::now() << endl;
+    cout << "Start size report at " << Date::now() << endl;
   Timer t;
 
   // Intro
-  clog << endl << "Size information of Frepple " << PACKAGE_VERSION 
+  cout << endl << "Size information of Frepple " << PACKAGE_VERSION 
     << " (" << __DATE__ << ")" << endl << endl;
 
   // Print loaded modules
   CommandLoadLibrary::printModules();
 
   // Header for memory size
-  clog << "Memory usage:" << endl;
-  clog << "Model        \tNumber\tMemory" << endl;
-  clog << "-----        \t------\t------" << endl;
+  cout << "Memory usage:" << endl;
+  cout << "Model        \tNumber\tMemory" << endl;
+  cout << "-----        \t------\t------" << endl;
 
   // Plan
   size_t total = Plan::instance().getSize();
-  clog << "Plan         \t1\t"<< Plan::instance().getSize() << endl;
+  cout << "Plan         \t1\t"<< Plan::instance().getSize() << endl;
 
   // Locations
   memsize = 0;
   for (Location::iterator l = Location::begin(); l != Location::end(); ++l)
     memsize += l->getSize();
-  clog << "Location     \t" << Location::size() << "\t" << memsize << endl;
+  cout << "Location     \t" << Location::size() << "\t" << memsize << endl;
   total += memsize;
 
   // Customers
   memsize = 0;
   for (Customer::iterator c = Customer::begin(); c != Customer::end(); ++c)
     memsize += c->getSize();
-  clog << "Customer     \t" << Customer::size() << "\t" << memsize << endl;
+  cout << "Customer     \t" << Customer::size() << "\t" << memsize << endl;
   total += memsize;
 
   // Buffers
   memsize = 0;
   for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
     memsize += b->getSize();
-  clog << "Buffer       \t" << Buffer::size() << "\t" << memsize << endl;
+  cout << "Buffer       \t" << Buffer::size() << "\t" << memsize << endl;
   total += memsize;
 
   // Resources
   memsize = 0;
   for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
     memsize += r->getSize();
-  clog << "Resource     \t" << Resource::size() << "\t" << memsize << endl;
+  cout << "Resource     \t" << Resource::size() << "\t" << memsize << endl;
   total += memsize;
 
   // Operations, flows and loads
@@ -444,30 +444,30 @@ DECLARE_EXPORT void CommandPlanSize::execute()
       memLoads += ld->getSize();
     }
   }
-  clog << "Operation    \t" << Operation::size() << "\t" << memsize << endl;
-  clog << "Flow         \t" << countFlows << "\t" << memFlows  << endl;
-  clog << "Load         \t" << countLoads << "\t" << memLoads  << endl;
+  cout << "Operation    \t" << Operation::size() << "\t" << memsize << endl;
+  cout << "Flow         \t" << countFlows << "\t" << memFlows  << endl;
+  cout << "Load         \t" << countLoads << "\t" << memLoads  << endl;
   total += memsize + memFlows + memLoads;
 
   // Calendars (which includes the buckets)
   memsize = 0;
   for (Calendar::iterator cl = Calendar::begin(); cl != Calendar::end(); ++cl)
     memsize += cl->getSize();
-  clog << "Calendar     \t" << Calendar::size() << "\t" << memsize  << endl;
+  cout << "Calendar     \t" << Calendar::size() << "\t" << memsize  << endl;
   total += memsize;
 
   // Items
   memsize = 0;
   for (Item::iterator i = Item::begin(); i != Item::end(); ++i)
     memsize += i->getSize();
-  clog << "Item         \t" << Item::size() << "\t" << memsize  << endl;
+  cout << "Item         \t" << Item::size() << "\t" << memsize  << endl;
   total += memsize;
 
   // Demands
   memsize = 0;
   for (Demand::iterator dm = Demand::begin(); dm != Demand::end(); ++dm)
     memsize += dm->getSize();
-  clog << "Demand       \t" << Demand::size() << "\t" << memsize  << endl;
+  cout << "Demand       \t" << Demand::size() << "\t" << memsize  << endl;
   total += memsize;
 
   // Operation_plans
@@ -482,17 +482,17 @@ DECLARE_EXPORT void CommandPlanSize::execute()
     countflowplans += j->sizeFlowPlans();
   }
   total += memsize;
-  clog << "OperationPlan\t" << count << "\t" << memsize << endl;
+  cout << "OperationPlan\t" << count << "\t" << memsize << endl;
 
   // Flowplans  
   memsize = countflowplans * sizeof(FlowPlan);
   total +=  memsize;
-  clog << "FlowPlan     \t" << countflowplans << "\t" << memsize << endl;
+  cout << "FlowPlan     \t" << countflowplans << "\t" << memsize << endl;
 
   // Loadplans
   memsize = countloadplans * sizeof(LoadPlan);
   total +=  memsize;
-  clog << "LoadPlan     \t" << countloadplans << "\t" << memsize << endl;
+  cout << "LoadPlan     \t" << countloadplans << "\t" << memsize << endl;
 
   // Problems
   memsize = count = 0; 
@@ -502,14 +502,14 @@ DECLARE_EXPORT void CommandPlanSize::execute()
     memsize += sizeof(**pr);
   }
   total += memsize;
-  clog << "Problem      \t" << count << "\t" << memsize << endl;
+  cout << "Problem      \t" << count << "\t" << memsize << endl;
 
   // TOTAL
-  clog << "Total        \t\t" << total << endl << endl;
+  cout << "Total        \t\t" << total << endl << endl;
 
   // Log
   if (getVerbose())
-    clog << "Finished size report at " << Date::now() << " : " << t << endl;
+    cout << "Finished size report at " << Date::now() << " : " << t << endl;
 }
 
 

@@ -41,7 +41,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   static const char* name = "forecast";
   if (init)
   {
-    clog << "Warning: Initializing module forecast more than one." << endl;
+    cout << "Warning: Initializing module forecast more than one." << endl;
     return name;
   }
   init = true;
@@ -50,7 +50,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   /*
   for (CommandLoadLibrary::ParameterList::const_iterator 
     j = z.begin(); j!= z.end(); ++j)
-    clog << "Parameter " << j->first << " = " << j->second << endl;
+    cout << "Parameter " << j->first << " = " << j->second << endl;
   */
 
   // Initialize the metadata.
@@ -187,7 +187,7 @@ void Forecast::setCalendar(Calendar* c)
 {
   if (isGroup())
   {
-    clog << "Warning: Changing the calendar of an initialized forecast isn't " 
+    cout << "Warning: Changing the calendar of an initialized forecast isn't " 
      << "allowed." << endl;
     return;
   }

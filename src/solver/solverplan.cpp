@@ -44,7 +44,7 @@ void LibrarySolver::initialize()
   static bool init = false;
   if (init)
   {
-    clog << "Warning: Calling Frepple::LibrarySolver::initialize() more " 
+    cout << "Warning: Calling Frepple::LibrarySolver::initialize() more " 
       << "than once." << endl;
     return;
   }
@@ -78,7 +78,7 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
   // Message
   MRPSolver* Solver = getSolver();
   if (Solver->getVerbose()) 
-    clog << "Start solving cluster " << cluster << " at " << Date::now() << endl;
+    cout << "Start solving cluster " << cluster << " at " << Date::now() << endl;
 
   // Solve the planning problem
   try
@@ -96,12 +96,12 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
       catch (...)
       {
         // Error message
-        clog << "Error: Caught an exception while solving demand '" 
+        cout << "Error: Caught an exception while solving demand '" 
           << (*i)->getName() << "':" << endl;
         try { throw; }
-        catch (bad_exception&) {clog << "  bad exception" << endl;}
-        catch (exception& e) {clog << "  " << e.what() << endl;}
-        catch (...) {clog << "  Unknown type" << endl;}
+        catch (bad_exception&) {cout << "  bad exception" << endl;}
+        catch (exception& e) {cout << "  " << e.what() << endl;}
+        catch (...) {cout << "  Unknown type" << endl;}
 
         // Cleaning up
         undo();
@@ -118,12 +118,12 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
     // will do a proper rollback.
 
     // Error message
-    clog << "Error: Caught an exception while solving cluster " 
+    cout << "Error: Caught an exception while solving cluster " 
       << cluster << ":" << endl;
     try { throw; }
-    catch (bad_exception&){clog << "  bad exception" << endl;}
-    catch (exception& e) {clog << "  " << e.what() << endl;}
-    catch (...) {clog << "  Unknown type" << endl;}
+    catch (bad_exception&){cout << "  bad exception" << endl;}
+    catch (exception& e) {cout << "  " << e.what() << endl;}
+    catch (...) {cout << "  Unknown type" << endl;}
 
     // Clean up the operationplans of this cluster
     for (Operation::iterator f=Operation::begin(); f!=Operation::end(); ++f)
@@ -133,7 +133,7 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
 
   // Message
   if (Solver->getVerbose()) 
-    clog << "End solving cluster " << cluster << " at " << Date::now() << endl;
+    cout << "End solving cluster " << cluster << " at " << Date::now() << endl;
 }
 
 

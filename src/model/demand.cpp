@@ -167,7 +167,7 @@ DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
   // Check validity of operation being used
   Operation *tmpOper = getDeliveryOperation();
   if (tmpOper && tmpOper != o->getOperation())
-    clog << "Warning: Delivery Operation '" << o->getOperation()
+    cout << "Warning: Delivery Operation '" << o->getOperation()
     << "' different than expected '" << tmpOper
     << "' for demand '" << this << "'" << endl;
 }

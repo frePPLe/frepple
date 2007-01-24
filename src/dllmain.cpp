@@ -86,7 +86,7 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
     {
       const char *c = getenv("FREPPLE_HOME");
       if (c) Environment::setHomeDirectory(c);
-      else clog << "Warning: No valid home directory specified" << endl;
+      else cout << "Warning: No valid home directory specified" << endl;
     }
 
     // Initialize the libraries
@@ -104,14 +104,14 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
         // File exists
         if (!(stat_p.st_mode & S_IREAD))
           // File exists but is not readable
-          clog << "Warning: Initialization file 'init.xml'"
+          cout << "Warning: Initialization file 'init.xml'"
             << " exists but is not readable" << endl;
         else
           // Execute the commands in the file
           try{ CommandReadXMLFile(init).execute(); }
           catch (...)
           {
-            clog << "Exception caught during execution of 'init.xml'" << endl;
+            cout << "Exception caught during execution of 'init.xml'" << endl;
             throw;
           }
       }

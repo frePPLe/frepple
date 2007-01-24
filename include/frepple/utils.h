@@ -1598,7 +1598,7 @@ class XMLOutput
       currentObject(NULL), parentObject(NULL), content(STANDARD),
       headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
-    {m_fp = &clog; indentstring[0] = '\0';}
+    {m_fp = &cout; indentstring[0] = '\0';}
 
     /** Escape a char string - remove the characters & < > " ' and replace with
       * the proper escape codes. The reverse process of un-escaping the special
@@ -2615,7 +2615,7 @@ class Command : public Object
       *     in the same state change as calling it only once.
       */
     virtual void undo()
-    {clog << "Warning: Can't undo command" << getDescription() << endl;}
+    {cout << "Warning: Can't undo command" << getDescription() << endl;}
 
     /** Returns true if the execution of this command can be undone. */
     virtual bool undoable() const {return false;}

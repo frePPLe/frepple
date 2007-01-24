@@ -64,7 +64,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   static const char* name = "python";
   if (init)
   {
-    clog << "Warning: Initializing module lp_solver more than one." << endl;
+    cout << "Warning: Initializing module lp_solver more than one." << endl;
     return name;
   }
   init = true;
@@ -177,10 +177,10 @@ void CommandPython::execute()
   // Log
   if (getVerbose())
   {
-    clog << "Start executing python ";
-    if (!cmd.empty()) clog << "command";
-    if (!filename.empty()) clog << "file";
-    clog << " at " << Date::now() << endl;
+    cout << "Start executing python ";
+    if (!cmd.empty()) cout << "command";
+    if (!filename.empty()) cout << "file";
+    cout << " at " << Date::now() << endl;
   }
   Timer t;
 
@@ -213,7 +213,7 @@ void CommandPython::execute()
   executePython(c.c_str());
 
   // Log
-  if (getVerbose()) clog << "Finished executing python at " 
+  if (getVerbose()) cout << "Finished executing python at " 
     << Date::now() << " : " << t << endl;
 }
 
@@ -311,7 +311,7 @@ PyObject* CommandPython::python_log(PyObject *self, PyObject *args)
   if (!ok) return NULL;
   
   // Print 
-  clog << data;
+  cout << data;
   
   // Return code
   return Py_BuildValue("");  // Safer than using Py_None, which is not 

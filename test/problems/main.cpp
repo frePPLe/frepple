@@ -33,7 +33,7 @@ using namespace frepple;
 
 void reportProblems(string when)
 {
-  cout << "Problems after " << when << ": " << endl;
+  cout << "Problems after " << when << ":" << endl;
   for(Problem::const_iterator i = Problem::begin(); i != Problem::end(); ++i)
     cout << "   " << (*i)->getDateRange()
       << " - " << (*i)->getDescription() << endl;

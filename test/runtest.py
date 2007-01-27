@@ -54,17 +54,17 @@
 #    Tests of type 1 are skipped in this case.
 #
 
-import unittest, os, os.path, getopt, sys, filecmp, glob, filecmp
+import unittest, os, os.path, getopt, sys, glob, filecmp
 
 debug = False 
 
 def usage():
-    # Print help information and exit
-    print
-    print 'Usage to run all tests:'
-    print '  ./runtest.py [-v|--vcc|-b|--bcc|-d|--debug]'        
-    print 'Usage with explicit list of tests to run:'
-    print '  ./runtest.py [-v|--vcc|-b|--bcc|-d|--debug] {test1} {test2} ...'
+  # Print help information and exit
+  print
+  print 'Usage to run all tests:'
+  print '  ./runtest.py [-v|--vcc|-b|--bcc|-d|--debug]'        
+  print 'Usage with explicit list of tests to run:'
+  print '  ./runtest.py [-v|--vcc|-b|--bcc|-d|--debug] {test1} {test2} ...'
 
 def runTestSuite():
     global debug
@@ -96,7 +96,8 @@ def runTestSuite():
             debug = True
         elif o in ("-h", "--help"):
             # Print help information and exit
-            usage();
+            usage()
+            os.exit(1)
             
     # Argh... Special cases for that special platform again...
     if sys.platform == 'cygwin' and platform == 'VCC':
@@ -109,6 +110,18 @@ def runTestSuite():
         fo = os.popen("cygpath  --unix " + os.environ['FREPPLE_HOME'])
         os.environ['FREPPLE_HOME'] = fo.readline().strip()
         fo.close()
+    
+    # Update the search path for shared libraries, such that the modules
+    # can be picked up.
+    #  LD_LIBRARY_PATH variable for Linux, Solaris
+    #  LIBPATH for AIX
+    #  SHLIB_PATH for HPUX
+    #  PATH for windows, cygwin
+    for var in ('LD_LIBRARY_PATH','LIBPATH','SHLIB_PATH','PATH'):
+      if var in os.environ: 
+        os.environ[var] += os.pathsep + os.environ['FREPPLE_HOME']
+      else:
+        os.environ[var] = os.environ['FREPPLE_HOME']
             
     # Define a list with tests to run
     if len(tests) == 0:
@@ -121,7 +134,7 @@ def runTestSuite():
     else:
         # A list of tests has been specified, and we now validate it
         for i in tests:
-            if not os.path.isdir(os.path.join(testdir,i)):
+            if not os.path.isdir(os.path.join(testdir, i)):
                 print "Warning: Test directory " + i + " doesn't exist"
                 tests.remove(i)
                 
@@ -129,16 +142,16 @@ def runTestSuite():
     AllTests = unittest.TestSuite()
     for i in tests:
         i = os.path.normpath(i)
-        tmp = os.path.join(testdir,i,i)
+        tmp = os.path.join(testdir, i, i)
         if os.path.isfile(tmp) or os.path.isfile(tmp + '.exe'):
             # Type 1: (compiled) executable
-            if platform == "GCC": AllTests.addTest(freppleTest(i,'runExecutable'))  
-        elif os.path.isfile(os.path.join(testdir,i,'runtest.pl')):
+            if platform == "GCC": AllTests.addTest(freppleTest(i, 'runExecutable'))  
+        elif os.path.isfile(os.path.join(testdir, i, 'runtest.pl')):
             # Type 2: perl script runtest.pl available
-            AllTests.addTest(freppleTest(i,'runScript'))
+            AllTests.addTest(freppleTest(i, 'runScript'))
         elif os.path.isfile(tmp + '.xml'):
             # Type 3: input xml file specified
-            AllTests.addTest(freppleTest(i,'runXML'))
+            AllTests.addTest(freppleTest(i, 'runXML'))
         else:
             # Undetermined - not a test directory
             print "Warning: Unrecognized test in directory " + i
@@ -153,7 +166,7 @@ def runTestSuite():
 class freppleTest (unittest.TestCase):
     def __init__(self, directoryname, methodName):
         self.subdirectory = directoryname
-        super(freppleTest,self).__init__(methodName)
+        super(freppleTest, self).__init__(methodName)
     
     def setUp(self):
         os.chdir(os.path.join(os.environ['FREPPLE_HOME'], '..', 'test', self.subdirectory))
@@ -164,14 +177,29 @@ class freppleTest (unittest.TestCase):
     
     def runExecutable(self):
         '''Running a compiled executable'''
-        # Run the command and verify exit code
+        global debug
         try:
             # @todo need fancier catching of output
-            self.assertEqual(os.system("./" + self.subdirectory + ">test.out 2>&1"),0)
-            self.assertEqual(filecmp.cmp("test.out",self.subdirectory + ".expect"),True)
+            # Run the command and verify exit code
+            out = os.popen("./" + self.subdirectory)
+            if os.path.isfile(self.subdirectory + ".expect"):
+              cp = open('test.out','wt')
+              cp.writelines(out.readlines())
+              cp.close()
+            if out.close() != None:
+              self.assertFalse("Exit code non-zero")
+            
+            #if os.system("./" + self.subdirectory + ">test.out 2>&1") != 0:
+            #    self.assertFalse("Exit code non-zero")
+            # Verify the output
+            if os.path.isfile(self.subdirectory + ".expect"):
+                if not os.path.isfile("test.out"):
+                  self.fail("Missing output file")
+                elif diff("test.out", self.subdirectory + ".expect"):
+                    self.assertFalse("Difference in output")
         except KeyboardInterrupt:
             # The test has been interupted, which counts as a failure
-            self.assertFalse     
+            self.assertFalse("Interrupted test")    
 
     def runScript(self): 
         '''Running a test script'''
@@ -198,38 +226,52 @@ class freppleTest (unittest.TestCase):
         oldhome = os.environ['FREPPLE_HOME']
         if os.path.isfile('init.xml'):
             os.environ['FREPPLE_HOME'] = os.path.join(os.environ['FREPPLE_HOME'], '..', 'test', self.subdirectory)           
-        
+
         # Run the executable
         try:
+          try:
+            out = os.popen(os.environ['EXECUTABLE'] + " -validate " + self.subdirectory + ".xml")
             if debug:
-                print ''
-                print 'output:'
-                # @todo Need fancier catching of output
-                self.assertEqual(os.system(os.environ['EXECUTABLE'] + " -validate " + self.subdirectory + ".xml"),0)
-                print ''
-            else:
-                # @todo Need fancier catching of output
-                self.assertEqual(os.system(os.environ['EXECUTABLE'] + " -validate " + self.subdirectory + ".xml >/dev/null 2>&1"),0)
-        except KeyboardInterrupt:
+              print ''
+              print 'output:'
+              while True:
+                l = out.readline()
+                if not l: break
+              print ''
+            if out.close() != None:
+              self.assertFalse("Exit code non-zero")
+          except KeyboardInterrupt:
             # The test has been interupted, which counts as a failure
-            self.assertFalse     
-        os.environ['FREPPLE_HOME'] = oldhome
+            self.assertFalse("Interrupted test")
+        finally:
+          os.environ['FREPPLE_HOME'] = oldhome
         
         # Now check the output file, if there is an expected output given
         nr = 1;
         while os.path.isfile(self.subdirectory + "." + str(nr) + ".expect"):
             if os.path.isfile("output."+str(nr)+".xml"):
                 if debug: print "Comparing expected and actual output", nr
-                if not os.path.isfile("output."+str(nr)+".xml"):
-                    self.assertFalse('Missing planner output file')
-                self.assertEqual( \
-                    filecmp.cmp(self.subdirectory + "." + str(nr) + ".expect", \
-                                "output."+str(nr)+".xml"), \
-                    True, \
-                    "Difference in output " + str(nr))
+                if diff(self.subdirectory + "." + str(nr) + ".expect", \
+                        "output."+str(nr)+".xml"):
+                    self.assertFalse("Difference in output " + str(nr))
             else:
-                self.assertFalse('Missing planner output file')
+                self.assertFalse('Missing planner output file ' + str(nr))
             nr += 1;
+
+def diff(f1, f2):
+  '''
+  Compares 2 text files and returns True if they are different. 
+  The default one in the package is doing the job for us: we want to 
+  ignore differences in the file ending.
+  '''
+  bufsize = 8*1024
+  fp1 = open(f1, 'rt')
+  fp2 = open(f2, 'rt')
+  while True:
+    b1 = fp1.read(bufsize)
+    b2 = fp2.read(bufsize)
+    if b1 != b2: return True
+    if not b1: return False
         
 # If the file is processed as a script, run the test suite.
 # Otherwise, only define the methods.                

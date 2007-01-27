@@ -15,7 +15,7 @@ Problems after moving delivery early:
    2007-01-03T09:00:00 / 2030-12-31T00:00:00 - Buffer 'end item' has material excess of 9
    2007-01-02T09:00:00 / 2007-01-03T09:00:00 - Buffer 'end item' has material shortage of 1
    2007-01-04T09:00:00 / 2007-01-04T09:00:00 - Demand 'order 1' planned 9 units short
-   2007-01-03T09:00:00 / 2007-01-04T09:00:00 - Demand 'order 1 ' planned 24:00:00 before its due date
+   2007-01-03T09:00:00 / 2007-01-04T09:00:00 - Demand 'order 1' planned 24:00:00 before its due date
 
 Problems after moving delivery late:
    2007-01-03T09:00:00 / 2030-12-31T00:00:00 - Buffer 'end item' has material excess of 10

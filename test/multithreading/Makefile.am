@@ -4,4 +4,4 @@
 
 CLEANFILES =
 
-EXTRA_DIST = runtest.pl
+EXTRA_DIST = runtest.py

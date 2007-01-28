@@ -4,4 +4,4 @@
 
 CLEANFILES = input*.xml output*.xml
 
-EXTRA_DIST = runtest.pl
+EXTRA_DIST = runtest.py

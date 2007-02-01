@@ -31,6 +31,9 @@ The basic steps to set up this environment:
       >> execfile('execute/create.py')
       >> erase_model()
       >> create_model(1000,100,10)     <-- Pretty big model!!!
+- For deployment on a production environment: don't use the development
+  server, but see the django documentation on how to deploy using apache (with
+  mod_python or fastcgi module)
 
 For more detailed information please look at the django documentation 
 on http://www.djangoproject.com  

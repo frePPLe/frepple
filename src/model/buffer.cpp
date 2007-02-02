@@ -64,7 +64,7 @@ DECLARE_EXPORT void Buffer::setOnHand(float f)
     + getName() + "'");
 
   // Make sure the sign of the flow is correct: +1 or -1.
-  fl->setQuantity(f>0.0f ? 1.0f : -1.0f);
+  fl->setQuantity(f>=0.0f ? 1.0f : -1.0f);
 
   // Create a dummy operationplan on the inventory operation
   OperationPlan::iterator i(o);
@@ -76,7 +76,6 @@ DECLARE_EXPORT void Buffer::setOnHand(float f)
       Date::infinitePast, NULL, false);
     opplan->setLocked(true);
     opplan->initialize();
-    opplan->setAllowUpdates(true);
   }
   else
   {

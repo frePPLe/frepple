@@ -489,12 +489,12 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
     char* message = XMLString::transcode(toCatch.getMessage());
     ostringstream msg;
     if (toCatch.getLineNumber() > 0)
-      msg << message << " at line " << toCatch.getLineNumber();
+      msg << "Parsing error: " << message << " at line " << toCatch.getLineNumber();
     else
-      msg << message;
+      msg << "Parsing error: " << message;
     XMLString::release(&message);
     reset();
-    throw RuntimeException("Parsing error: " + msg.str());
+    throw RuntimeException(msg.str());
   }
   catch (const exception& toCatch)
   {

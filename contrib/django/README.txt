@@ -5,15 +5,15 @@ It is built using the incredible 'Django' web application framework.
 The basic steps to set up this environment:
 - Install python
 - Install django
-- Test your installation by starting the development server:
-      manage.py runserver
-  and then pointing your browser to http://127.0.0.1:8000/
-  A welcome page should come up...
 - Install your database: postgresql / mysql / sqlite3 / ado_mssql / (oracle)
 - Install the python database access library for the database (see django doc for details)
 - Create a database schema for frepple
 - Edit the file settings.py to point to your database schema
 - Edit the file settings.py to point correctly to the template directory
+- Test your installation by starting the development server:
+      manage.py runserver
+  and then pointing your browser to http://127.0.0.1:8000/admin
+  A login page should come up. Don't proceed until this is achieved.
 - Initialize the database schema:
       manage.py syncdb        <-- This step will also prompt you to create a django superuser.
       manage.py reset input

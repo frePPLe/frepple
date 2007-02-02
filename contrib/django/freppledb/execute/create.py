@@ -26,7 +26,7 @@
 # demands is placed on the cluster.
 
 
-from frepple.input.models import *
+from freppledb.input.models import *
 import time, os, os.path, sys, random
 from datetime import timedelta, date
 from django.db import connection

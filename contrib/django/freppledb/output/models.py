@@ -1,5 +1,5 @@
 from django.db import models
-from frepple.input.models import Operation, Demand
+from freppledb.input.models import Operation, Demand
 
 class OperationPlan(models.Model):
     identifier = models.IntegerField(primary_key=True)

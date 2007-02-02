@@ -13,8 +13,9 @@ DATABASE_ENGINE = 'mysql'           # 'postgresql', 'mysql', 'sqlite3' or 'ado_m
 DATABASE_NAME = 'frepple'             # Or path to database file if using sqlite3.
 DATABASE_USER = 'frepple'             # Not used with sqlite3.
 DATABASE_PASSWORD = 'frepple'         # Not used with sqlite3.
+#DATABASE_HOST = '192.168.0.4'             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASE_PORT = '3306'             # Set to empty string for default. Not used with sqlite3.
 
 # Local time zone for this installation. All choices can be found here:
 # http://www.postgresql.org/docs/current/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
@@ -57,12 +58,12 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.doc.XViewMiddleware',
 )
 
-ROOT_URLCONF = 'frepple.urls'
+ROOT_URLCONF = 'freppledb.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates".
     # Always use forward slashes, even on Windows.
-    '/home/johan/workspace/frepple/contrib/django/frepple/templates'
+    '/home/johan/workspace/frepple/contrib/django/freppledb/templates'
 )
 
 INSTALLED_APPS = (
@@ -71,7 +72,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     #'django.contrib.sites',
     'django.contrib.admin',
-    'frepple.input',
-    'frepple.output',
-    'frepple.execute',
+    'freppledb.input',
+    'freppledb.output',
+    'freppledb.execute',
 )

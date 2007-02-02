@@ -90,6 +90,12 @@ class Location(models.Model):
     owner = models.ForeignKey('self', null=True, blank=True, related_name='children', raw_id_admin=True)
     def __str__(self):
         return self.name
+    def xml(self):
+        x = [ '<LOCATION NAME="%s">' % self.name ]
+        if self.description: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % self.description)
+        if self.owner: x.append( '<OWNER NAME="%s">' % self.description)
+        x.append('</LOCATION>')
+        return '\n'.join(x)
     class Admin:
         list_display = ('name', 'description', 'owner')
         search_fields = ['name', 'description']
@@ -137,7 +143,7 @@ class Buffer(models.Model):
     description = models.CharField(maxlength=200, blank=True)
     location = models.ForeignKey(Location, null=True, blank=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
-    onhand = models.FloatField(max_digits=10, decimal_places=2, default='0.00')
+    onhand = models.FloatField(max_digits=10, decimal_places=2, default=0.00)
     minimum = models.ForeignKey('Calendar', null=True, blank=True, raw_id_admin=True)
     producing = models.ForeignKey('Operation', null=True, blank=True, related_name='used_producing', raw_id_admin=True)
     consuming = models.ForeignKey('Operation', null=True, blank=True, related_name='used_consuming', raw_id_admin=True)

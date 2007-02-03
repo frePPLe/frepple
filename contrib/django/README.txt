@@ -16,9 +16,6 @@ The basic steps to set up this environment:
   A login page should come up. Don't proceed until this is achieved.
 - Initialize the database schema:
       manage.py syncdb        <-- This step will also prompt you to create a django superuser.
-      manage.py reset input
-      manage.py reset output
-      manage.py reset execute
   Verify the database tables are created correctly.
 - Create an initial dataset by running the python commands:
       manage.py shell
@@ -26,14 +23,16 @@ The basic steps to set up this environment:
       >> create_model(10,20,5)
   This creates a model with 10 parallel clusters, 20 demands for each cluster, and a 
   network structure of 5 levels deep.
-  You can easily erase and recreate the model:
+  
+Later on:  
+- You can easily erase and recreate the model:
       manage.py shell
       >> execfile('execute/create.py')
       >> erase_model()
       >> create_model(1000,100,10)     <-- Pretty big model!!!
 - For deployment on a production environment: don't use the development
-  server, but see the django documentation on how to deploy using apache (with
-  mod_python or fastcgi module)
+  server as outlined above, but see the django documentation on how to deploy using 
+  apache (with mod_python or fastcgi module)
 
 For more detailed information please look at the django documentation 
 on http://www.djangoproject.com  

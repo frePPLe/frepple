@@ -1,7 +1,7 @@
 #!/usr/bin/python
-#  file     : $URL: https://frepple.svn.sourceforge.net/svnroot/frepple/trunk/test/scalability_2/runtest.py $
-#  revision : $LastChangedRevision: 167 $  $LastChangedBy: jdetaeye $
-#  date     : $LastChangedDate: 2007-01-28 11:29:43 +0100 (Sun, 28 Jan 2007) $
+#  file     : $URL$
+#  revision : $LastChangedRevision$  $LastChangedBy$
+#  date     : $LastChangedDate$
 #  email    : jdetaeye@users.sourceforge.net
 
 # This script is a simple, generic model generator. A number of different
@@ -47,6 +47,7 @@ def erase_model():
   cursor.execute('delete from frepple.input_load')
   cursor.execute('delete from frepple.input_buffer')
   cursor.execute('delete from frepple.input_resource')
+  cursor.execute('delete from frepple.input_operationplan')
   cursor.execute('delete from frepple.input_operation')
   cursor.execute('delete from frepple.input_item')
   cursor.execute('delete from frepple.input_location')
@@ -59,8 +60,9 @@ def create_model (cluster, demand, level):
   '''
   This routine populates the database with a sample dataset.
   '''
-  # Initialize random number generator to get reproducible results
-  random.seed(100)
+  # Initialization
+  random.seed(100) # Initialize random seed to get reproducible results
+  cnt = 100000     # a counter for operationplan identifiers
 
   # Loop over all clusters
   for i in range(cluster):
@@ -107,7 +109,6 @@ def create_model (cluster, demand, level):
     fl.save()
 
     # Create actual supply
-    cnt = 0
     for i in range(demand/10):
         cnt += 1
         opplan = OperationPlan(identifier=cnt, operation=oper, quantity=int(random.uniform(1,100)), start=getDate(), end=getDate())

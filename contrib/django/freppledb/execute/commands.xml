@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <COMMANDS>
+    <VERBOSE>true</VERBOSE>
+    <ABORTONERROR>true</ABORTONERROR>
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="from os import environ" />
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="sys.path.append('/home/johan/workspace/frepple/contrib/django')" />
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'" />
+    <COMMAND xsi:type="COMMAND_PYTHON" FILENAME="export.py" />
+    <COMMAND xsi:type="COMMAND_SIZE" />
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="loadfrepple()" />
+    <COMMAND xsi:type="COMMAND_SIZE" />
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="7" VERBOSE="false" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SIZE" />
+    <COMMAND xsi:type="COMMAND_SAVE">
+      <FILENAME>output.1.xml</FILENAME>
+    </COMMAND>    
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="dumpfrepple()" />
+  </COMMANDS>
+</PLAN>

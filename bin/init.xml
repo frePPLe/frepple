@@ -40,6 +40,7 @@
   <COMMANDS>
     <VERBOSE>false</VERBOSE>
     <ABORTONERROR>false</ABORTONERROR>
+    <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_python.so" />
     <!--
     <COMMAND xsi:type="COMMAND_LOADLIB">
       <FILENAME>/home/johan/workspace/frepple/modules/forecast/.libs/libforecast.so</FILENAME>

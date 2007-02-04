@@ -8,6 +8,11 @@ clean-local:
 	-rm -rf `find . -name '*.pyc'`
 	-rm -rf `find . -name '*.pyo'`
 
+# Avoid packaging compiled filed from the subdirectories
+dist-hook:
+	-rm -rf `find $(distdir) -name '*.pyc'`
+	-rm -rf `find $(distdir) -name '*.pyo'`
+
 start:
 	cd freppledb; manage.py runserver
 

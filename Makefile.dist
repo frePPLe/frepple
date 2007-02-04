@@ -83,7 +83,7 @@ config:
 configdebug:
 	@echo
 	@echo "PHASE: Running configure for debug build..."
-	./configure --disable-doc --enable-debug --prefix=`pwd`/install-test
+	./configure --disable-doc --enable-debug --prefix=`pwd`/install-test --with-python
 # --disable-multithread
 
 configcoverage:

@@ -2,10 +2,10 @@
 This directory contains a sample web application for Frepple.
 It is built using the incredible 'Django' web application framework.
 
-The basic steps to set up this environment:
+The basic steps to set up a development environment:
 - Install python
 - Install django
-- Install your database: postgresql / mysql / sqlite3 / ado_mssql / (oracle)
+- Install your database: postgresql / mysql / sqlite3 / ado_mssql
 - Install the python database access library for the database (see django doc for details)
 - Create a database schema for frepple
 - Edit the file settings.py to point to your database schema
@@ -23,20 +23,79 @@ The basic steps to set up this environment:
       >> create_model(10,20,5)
   This creates a model with 10 parallel clusters, 20 demands for each cluster, and a 
   network structure of 5 levels deep.
-  
-Later on:  
-- You can easily erase and recreate the model:
+- You can easily erase and recreate the model later on:
       manage.py shell
       >> execfile('execute/create.py')
       >> erase_model()
       >> create_model(1000,100,10)     <-- Pretty big model!!!
-- For deployment on a production environment: don't use the development
-  server as outlined above, but see the django documentation on how to deploy using 
-  apache (with mod_python or fastcgi module)
 
 For more detailed information please look at the django documentation 
 on http://www.djangoproject.com  
 The tutorial is very good, and doesn't take too much time.
 The frepple setup is very simple and doesn't use extensive customization of django at all.
+
+To install a production environment django is deployed in an apache
+web server using the mod_python module.
+Below are some instructions / notes I took during configuration on my
+Fedora Linux machine. I used fedora 5 with mysql database. 
+It doesn't serve as a complete reference but only as a brief guideline.
+- Make sure mysql runs a transactional storage engine as default.
+      vi /etc/my.cnf
+      >> [mysqld]
+      >> ...
+      >> default_storage_engine=InnoDB
+      >> ... 
+  Restart mysql after this step.
+- Create the mysql user and database
+      mysql -u root -p
+      >> drop user frepple;
+      >> drop database frepple;
+      >> create database frepple;
+      >> create user frepple identified by 'frepple';
+      >> grant all privileges on frepple.* to 'frepple'@'%' identified by 'frepple';
+- Mysqldb python module has a bug when dealing with decimal fields in the
+  database. This has been fixed in the meantime in the latest releases.
+  To work around the problem I updated the following django file:
+      vi django/contrib/admin/templatetags/admin_list.py
+      >> - result_repr = ('%%.%sf' % f.decimal_places) % field_val     <-- Original 
+      >> + result_repr = ('%%.%sf' % f.decimal_places) % float(field_val)  <-- Corrected
+- Update apache by adding a file /etc/httpd/conf.d/z_frepple.conf with the
+  following content:
+      <Location "/">
+         SetHandler python-program
+         PythonHandler django.core.handlers.modpython
+         SetEnv DJANGO_SETTINGS_MODULE freppledb.settings
+         PythonPath "['', '/home/johan/workspace/frepple/contrib/django/', <USE FULL LIST OF PYTHON PATH DIRS>"
+         #This line didn't work :-(
+         #PythonPath "['/home/johan/workspace/frepple/contrib/django/'] + sys.path"
+         PythonInterpreter freppledb
+         PythonAutoReload Off
+         PythonDebug Off
+         # Compress the data. This setting is optional but highly recommended.
+         # The compression drastically reduces the network traffic for the request.
+         # A compression ratio of 10 is typically achieved.
+         SetOutputFilter DEFLATE
+     </Location>
+
+     <Location "/media">
+         SetHandler None
+         # Cache all these static files
+         Header append Cache-Control max-age=10800
+     </Location>
+
+     <LocationMatch "\.(jpg|gif|png)$">
+         SetHandler None
+         # Cache all these static files
+         Header append Cache-Control max-age=10800
+     </LocationMatch>
+- Update the apache configuration file /etc/httpd/conf/httpd.conf:
+     - Run the web server as the same user used for the django development project
+     - Switch keepalive on
+     - Comment out some redundant modules
+     - Choose the appropriate logging level and format
+- Link the static django content into your web root directory.
+     cd /var/www/html
+     ln -s /usr/lib/python2.4/site-packages/django/contrib/admin/media .
+Your mileage with the above may vary...
 
 Enjoy!

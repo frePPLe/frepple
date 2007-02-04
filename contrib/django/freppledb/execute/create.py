@@ -38,7 +38,7 @@ def getDate():
   return startdate + timedelta(random.uniform(0,365))
 
 def erase_model():
-  ''' 
+  '''
   This routine erase all model data from the database.
   '''
   cursor = connection.cursor()
@@ -48,8 +48,8 @@ def erase_model():
   cursor.execute('delete from frepple.input_buffer')
   cursor.execute('delete from frepple.input_resource')
   cursor.execute('delete from frepple.input_operationplan')
-  cursor.execute('delete from frepple.input_operation')
   cursor.execute('delete from frepple.input_item')
+  cursor.execute('delete from frepple.input_operation')
   cursor.execute('delete from frepple.input_location')
   cursor.execute('delete from frepple.input_bucket')
   cursor.execute('delete from frepple.input_calendar')
@@ -63,6 +63,24 @@ def create_model (cluster, demand, level):
   # Initialization
   random.seed(100) # Initialize random seed to get reproducible results
   cnt = 100000     # a counter for operationplan identifiers
+
+  # Create customers
+  cust = []
+  for i in range(100):
+    c = Customer(name = 'Cust %03d' % i)
+    cust.append(c)
+    c.save()
+
+  # Create resources and their calendars
+  res = []
+  for i in range(100):
+    cal = Calendar(name='capacity for res %03d' %i)
+    bkt = Bucket(start=date(2007,1,1), value=2)
+    bkt.save()
+    cal.save()
+    r = Resource(name = 'res %03d' % i)
+    r.append(r)
+    r.save()
 
   # Loop over all clusters
   for i in range(cluster):
@@ -79,14 +97,14 @@ def create_model (cluster, demand, level):
 
     # Save the first batch
     loc.save()
-    oper.save()    
+    oper.save()
     it.save()
     fl.save()
     buf.save()
 
     # Demand
     for j in range(demand):
-      dm = Demand(name='Demand %05d %05d' % (i,j), item=it, quantity=int(random.uniform(1,11)), due=getDate(), priority=int(random.uniform(1,4)))
+      dm = Demand(name='Demand %05d %05d' % (i,j), item=it, quantity=int(random.uniform(1,11)), due=getDate(), priority=int(random.uniform(1,4)), customer=random.choice(cust))
       dm.save()
 
     # Upstream operations and buffers

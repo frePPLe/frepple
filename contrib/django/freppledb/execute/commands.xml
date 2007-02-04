@@ -10,6 +10,9 @@
     <COMMAND xsi:type="COMMAND_SIZE" />
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="loadfrepple()" />
     <COMMAND xsi:type="COMMAND_SIZE" />
+<!--
+    <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
+    <COMMAND xsi:type="COMMAND_SIZE" />
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="7" VERBOSE="false" />
     </COMMAND>
@@ -18,5 +21,6 @@
       <FILENAME>output.1.xml</FILENAME>
     </COMMAND>    
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="dumpfrepple()" />
+-->
   </COMMANDS>
 </PLAN>

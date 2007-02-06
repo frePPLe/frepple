@@ -22,6 +22,7 @@
 # email : jdetaeye@users.sourceforge.net
 
 from freppledb.input.models import *
+from freppledb.output.models import *
 from datetime import datetime
 from django.db import connection
 import time
@@ -30,9 +31,36 @@ dateformat = '%Y-%m-%dT%H:%M:%S'
 header = '<?xml version="1.0" encoding="UTF-8" ?><PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
 
 
+def strptime(str):
+  '''
+  Amazing that Python 2.4 doesn't have a datetime string parsing routine...
+  This function parses a date string in the format 2007-02-06T15:18:04
+  '''
+  dt,tm = str.split('T')
+  Y,m,d = dt.split('-') 
+  H,M,S = tm.split(':')
+  return datetime(int(Y),int(m),int(d),int(H),int(M),int(S))
+  
 def dumpfrepple():
-  print "ole"
+  '''
+  This function exports the data from the frepple memory into the 
+  database.
+  '''
+  print "Emptying database plan tables..."
+  cursor = connection.cursor()
+  starttime = time.clock()
+  cursor.execute('delete from frepple.output_problem')
+  cursor.execute('delete from frepple.output_operationplan')
+  print "Emptied plan tables in", time.clock() - starttime, 'seconds'
 
+  print "Exporting problems..."
+  cnt = 0
+  starttime = time.clock()
+  for i,j,k,l in frepple.iterator():
+     prob = Problem(name=j, description=i, start=strptime(k), end=strptime(l))
+     prob.save()
+     cnt += 1
+  print 'Exported', cnt, 'problems in', time.clock() - starttime, 'seconds'
 
 
 def loadfrepple():
@@ -50,7 +78,7 @@ def loadfrepple():
   x = [ header ]
   cursor.execute("SELECT current, name, description FROM frepple.input_plan")
   i, j, k = cursor.fetchone()
-  x.append('<CURRENT>%s</CURRENT>' %i.strftime(dateformat))
+  x.append('<CURRENT>%s</CURRENT>' % i.strftime(dateformat))
   if j: x.append('<NAME>%s</NAME>' % j)
   if k: x.append('<DESCRIPTION>%s</DESCRIPTION>' % k)
   x.append('</PLAN>')

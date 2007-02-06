@@ -40,9 +40,9 @@ class OperationPlan(models.Model):
 
 class Problem(models.Model):
     name = models.CharField(maxlength=20, db_index=True)
-    description = models.CharField(maxlength=20)
+    description = models.CharField(maxlength=80)
     start = models.DateTimeField('start date', db_index=True)
-    end = models.DateTimeField('end date')
+    end = models.DateTimeField('end date', db_index=True)
     def __str__(self):
         return str(self.name) 
     class Admin:

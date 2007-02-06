@@ -268,7 +268,7 @@ def diff(f1, f2):
   ignore differences in the file ending.
   '''
   bufsize = 8*1024
-  fp1 = open(f1, 'rt')
+  fp1 = open(f1, 'rU')
   fp2 = open(f2, 'rt')
   while True:
     b1 = fp1.read(bufsize)

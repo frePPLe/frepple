@@ -466,10 +466,11 @@ extern "C" PyObject* PythonIterator::next(PythonIterator* obj)
 {
   if (obj->iter != Problem::end())
   {
-    PyObject* result = PyTuple_New(3);
+    PyObject* result = PyTuple_New(4);
     PyTuple_SET_ITEM(result, 0, PyString_FromFormat("%s", obj->iter->getDescription().c_str()));
     PyTuple_SET_ITEM(result, 1, PyString_FromFormat("%s", obj->iter->getType().type.c_str()));
-    PyTuple_SET_ITEM(result, 2, PyString_FromFormat("%s", string(obj->iter->getDateRange()).c_str()));
+    PyTuple_SET_ITEM(result, 2, PyString_FromFormat("%s", string(obj->iter->getDateRange().getStart()).c_str()));
+    PyTuple_SET_ITEM(result, 3, PyString_FromFormat("%s", string(obj->iter->getDateRange().getEnd()).c_str()));
     ++(obj->iter);
     return result;
   }

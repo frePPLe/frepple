@@ -274,11 +274,31 @@ class Environment
     /** Return the home directory. */
     static const string getHomeDirectory() {return home;}
 
-    /** Updates the home directory.
+    /** Updates the home directory.<br>
       * A runtime exception is thrown when the string points to an invalid
       * directory.
       */
-    static void setHomeDirectory(const string);
+    static DECLARE_EXPORT void setHomeDirectory(const string);
+
+    /** Environment variables in the argument string are expanded with 
+      * their value.<br>
+      * The variable to be expanded needs to be enclosed by ${ }<br>
+      * E.g. 123${CNT}789 becomes 123456789 when the value of the environment 
+      * variable is 456.<br>
+      *
+      * Substitution with environment values is implemented for the following types
+      * of input data:
+      *  - COMMAND_SETENV: field VAL
+      *  - COMMAND_SYSTEM: field CMDLINE
+      *  - COMMAND_PYTHON: fields CMDLINE and FILENAME
+      *  - COMMAND_READXMLFILE: field FILENAME
+      *  - COMMAND_IF: field CONDITION
+      *  - COMMAND_LOADLIB: field FILENAME
+      *  - COMMAND_SAVE: field FILENAME
+      *  - COMMAND_SAVEPLAN: field FILENAME
+      *  - COMMAND_READXMLURL: field URL
+      */
+    static DECLARE_EXPORT void resolveEnvironment(string& s);
 
     /** Returns the number of processors on your machine. */
     static int getProcessors() {return processors;}
@@ -1983,17 +2003,6 @@ class XMLElement
       m_strData.clear();
     }
 
-    /** This method is used to expand environment variables.<br>
-      * When a data field contains a construct ${ABC} the environment variable
-      * ABC is picked up from the operating system to replace it. If the
-      * environment variable doesn't exist an empty string is used.<br>
-      * Note that (for performance and security reasons) this kind of
-      * environment variable expansion isn't enabled by default. This method
-      * needs to be called explicitly for fields where such expansion is
-      * desired.
-      */
-    DECLARE_EXPORT void resolveEnvironment();
-
     /** Re-initializes an existing element.
       * @see initialize(const char*)
       */
@@ -2715,6 +2724,51 @@ class CommandIf : public Command
 };
 
 
+/** This class updates an environment variable. */
+class CommandSetEnv : public Command
+{
+  private:
+    /** Condition expression. */
+    string variable;
+
+    /** Value of the variable. */
+    string value;
+
+  public:
+    /** Not undoable. */
+    bool undoable() { return false; }
+
+    /** Executes either the if- or the else-clause, depending on the
+      * condition. */
+    DECLARE_EXPORT void execute();
+
+    /** Returns a descriptive string. */
+    string getDescription() const {return "Command set environment variable";}
+
+    /** Default constructor. */
+    explicit CommandSetEnv() {}
+
+    /** Returns the variable to be updated. */
+    string getVariable() {return variable;}
+
+    /** Updates the variable to be updated. */
+    void setVariable(const string s) {variable = s;}
+
+    /** Returns the new value. */
+    string getValue() {return variable;}
+
+    /** Updates the new value. */
+    void setValue(const string s) {variable = s;}
+
+    virtual const MetaClass& getType() const {return metadata;}
+    static DECLARE_EXPORT const MetaClass metadata;
+    virtual size_t getSize() const
+      {return sizeof(CommandSetEnv) + variable.size() + value.size();}
+
+    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+};
+
+
 /** This class is used to group a series commands together. This class
   * implements the "composite" design pattern in order to get an efficient
   * and intuitive hierarchical grouping of tasks.<br>
@@ -2885,12 +2939,14 @@ class CommandList : public Command
 
 /** This command allows a user to run a system command on your operating
   * system. The command will spawn a child process to execute the command, and
-  * will wait for that process to finish before continue.
+  * will wait for that process to finish before continue.<br>
+  * Environment variables enclosed in ${ } are expanded with their value 
+  * before execution of the command.<br>
   * The class is using the standard C function system() to spawn the command.
   * The behavior of this function will depend on your platform and the
   * compiler used: the command shell spawned will vary (e.g. cmd, /bin/sh, ...)
-  * and the exit codes returned are also not standardized.
-  * Note that access to this command can pose a <B> security threat</B>! It
+  * and the exit codes returned are also not standardized.<br>
+  * Note that access to this command poses a <B> security threat</B>! It
   * allows anybody with access to the planner application to run operating
   * system commands with the same user rights as the planner application.
   */
@@ -2909,7 +2965,9 @@ class CommandSystem : public Command
     /** Default constructor. */
     explicit CommandSystem() {};
 
-    /** Updates the command line to be executed.
+    /** Updates the command line to be executed.<br>
+      * This string can contain environment variable names enclosed in ${}
+      * which are expanded to their value before execution of the command.
       * @param cmd Command line to execute on your operating system.
       */
     void setCmdLine(const string& cmd) {cmdLine = cmd;}

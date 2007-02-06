@@ -4189,6 +4189,18 @@ class HasProblems::EntityIterator
       * object. */
     explicit EntityIterator(unsigned short i) : type(i) {}
 
+    /** Copy constructor. */
+    DECLARE_EXPORT EntityIterator(const EntityIterator& o);
+
+    /** Assignment operator. */
+    DECLARE_EXPORT EntityIterator& operator=(const EntityIterator& o);
+
+    /** Resets the iterator.<br>
+      * This is usefull to initialize an iterator in uninitialized memory. 
+      * Calling this method on a properly initialized iterator will leak memory!
+      */
+    void reset() {type=4;}
+
     /** Destructor. */
     DECLARE_EXPORT ~EntityIterator();
 
@@ -4250,6 +4262,10 @@ class Problem::const_iterator
     }
 
   public:
+    /** Resetting the iterator to some dummy value.<br>
+      * This is useful when initializing an iterator in uninitialized memory. 
+      */
+    void reset() {eiter.reset();}
     DECLARE_EXPORT const_iterator& operator++();
     bool operator != (const const_iterator& t) const {return iter!=t.iter;}
     bool operator == (const const_iterator& t) const {return iter==t.iter;}

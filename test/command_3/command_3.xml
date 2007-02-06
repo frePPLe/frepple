@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>Command Test</NAME>
+  <DESCRIPTION>
+    In this test the expansion of environment variables is tested.
+    The expansion is handled in the frepple code, and is therefore transparant
+    across different platforms.
+  </DESCRIPTION>
+  <COMMANDS>
+    <ABORTONERROR>false</ABORTONERROR>
+    <VERBOSE>true</VERBOSE>
+    <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="echo START >output.1.xml" />
+
+    <!-- Variable VAR2 expands to nothing since it is undefined. -->
+    <COMMAND xsi:type="COMMAND_SETENV" VARIABLE="VAR1" VALUE="*${VAR2}*" />
+
+    <!-- Define a variable. -->
+    <COMMAND xsi:type="COMMAND_SETENV" VARIABLE="VAR2" VALUE="VAL" />
+
+    <!-- Defining a variable depending on the previous one. -->
+    <COMMAND xsi:type="COMMAND_SETENV" VARIABLE="VAR3" VALUE="*${VAR2}*" />
+
+    <!-- Showing the variables in a shell command. Note that we expand the variable before the
+         the shell does. -->
+    <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="echo -${VAR1}-${VAR2}-${VAR3}- >>output.1.xml" />
+
+    <!-- Showing the variables in a python command. -->
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="print '${VAR1} ${VAR2} ${VAR3}'" />
+    <!-- Note that the ptyhon os.environ dictionary is only updated if the SETENV command
+         is executed *BEFORE* the LOADLIBRARY command!
+    -->
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="import os" />
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="print os.environ['VAR2']" />
+
+    <!-- Some invalid examples of usage of expansion. -->
+    <COMMAND xsi:type="COMMAND_SETENV" VARIABLE="VAR4" VALUE="${VAR2" />
+    <COMMAND xsi:type="COMMAND_SETENV" VARIABLE="VAR5" VALUE="${}" />
+    <COMMAND xsi:type="COMMAND_SETENV" VARIABLE="VAR6" VALUE="}" />
+    <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="echo -${VAR4}-${VAR5}-${VAR6}- >>output.1.xml" />
+
+    <!-- Updating existing environment variables. -->
+    <!--
+    <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="echo ${PATH}" />
+    <COMMAND xsi:type="COMMAND_SETENV" VARIABLE="PATH" VALUE="." />
+    <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="echo %PATH%" />
+    -->
+
+    <!--
+      Variables are not expanded for every field.
+      Only the following fields are being expanded:
+        - COMMAND_SETENV: field VAL
+        - COMMAND_SYSTEM: field CMDLINE
+        - COMMAND_PYTHON: fields CMDLINE and FILENAME
+        - COMMAND_READXMLFILE: field FILENAME
+        - COMMAND_IF: field CONDITION
+        - COMMAND_LOADLIB: field FILENAME
+        - COMMAND_SAVE: field FILENAME
+        - COMMAND_SAVEPLAN: field FILENAME
+        - COMMAND_READXMLURL: field URL
+      An examples of each is given below.
+    -->
+    <!--
+    <COMMAND xsi:type="COMMAND_READXMLURL" URL="${VARIABLE}" />
+    <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="${VARIABLE}" />
+    <COMMAND xsi:type="COMMAND_PYTHON" FILENAME="${VARIABLE}" />
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="${VARIABLE}" />
+    <COMMAND xsi:type="COMMAND_SETENV" VARIABLE="var" VAL="${VARIABLE}" />
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="${VARIABLE}" />
+    <COMMAND xsi:type="COMMAND_SAVEPLAN" FILENAME="${VARIABLE}" />
+    <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="${VARIABLE}" />
+    <COMMAND xsi:type="COMMAND_IF" CONDITION="${VARIABLE}">
+    -->
+
+    <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="echo END >>output.1.xml" />
+
+  </COMMANDS>
+</PLAN>

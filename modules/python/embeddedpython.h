@@ -80,6 +80,8 @@
   *   - <b>createItem(string, string)</b>:<br>
   *     Uses the C++ API to create an item and its delivery operation.<br>
   *     For experimental purposes...
+  *   - class <b>frepple.iterator</b>:<br>
+  *     Implements an iterator for problems.
   */
 
 /* Python.h has to be included first. */
@@ -218,6 +220,30 @@ class CommandPython : public Command, public XMLinstruction
     /** Python exception class matching with Frepple::RuntimeException. */
     static PyObject* PythonRuntimeException;
 };
+
+
+extern "C"
+{
+/** This class is an interface between Python and the Frepple. */
+struct PythonIterator
+{
+  private:
+    PyObject_HEAD
+    Problem::const_iterator iter;
+  public:
+    /** Python type definition structure. */
+    static PyTypeObject InfoType;
+
+    /** Returns a string representation of the iterator. */
+    static PyObject* repr(PythonIterator* obj);
+
+    /** Move to the next item. */
+    static PyObject* next(PythonIterator* obj);
+
+    /** Create a new iterator. */
+    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+};
+}
 
 }
 

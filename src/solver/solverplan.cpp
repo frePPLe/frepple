@@ -193,9 +193,6 @@ DECLARE_EXPORT void MRPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mod
 
 DECLARE_EXPORT void MRPSolver::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  // Replace environment variables with their value.
-  pElement.resolveEnvironment();
-
   if (pElement.isA(Tags::tag_constraints))
     setConstraints(pElement.getInt());
   else 

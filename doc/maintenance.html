@@ -41,8 +41,7 @@ you'ld need on top of a bare minimum Linux distribution.
    <li><b>gcc-c++</b>, compatible with gcc release<br>
        GNU C++ compiler.</li>
    <li><b>xerces-c</b>, v2.7 or later
-       Xerces is a validating XML parser provided by the Apache Foundation.<br>
-       Most distributions still come with an earlier release than required.</li>
+       Xerces is a validating XML parser provided by the Apache Foundation.</li>
   </ul></li>
   <li>Extras for development, testing, debugging, documentation, version
   control, etc:<ul>
@@ -57,19 +56,22 @@ you'ld need on top of a bare minimum Linux distribution.
        for different platforms behind a consistent and portable interface.</li>
    <li><b>gdb</b>, compatible with gcc release<br>
        Debugger for the gcc environment.</li>
+   <li><b>python</b> v2.4 or higher<br>
+       Python is a modern, easy to learn interpreted programming language. See
+       <a href="http://www.python.org" target="_blank">http://www.python.org</a>
+       for more information. The language is used to a) run the test suite, b) script
+       custom logic in frepple and c) to run the web application framework django.<br>
+       You need to install the language as well as the development libraries.</li>
    <li><b>doxygen</b>, any version should do<br>
        Extracts documentation from the C++ source code.</li>
    <li><b>subversion</b>, any version should do<br>
        Excellent version control tool.</li>
-   <li><b>perl</b> and module <b>Time:HiRes</b>, v5.0.0.5 or higher<br>
-       Perl is used as the scripting language for the test suite, but it'll
-       soon be replaced by Python.</li>
   </ul></li>
   <li>Used by some add-ons in the contrib subdirectory:<ul>
    <li><b>Apache httpd</b>, v2.x<br>
-      The best web server around.<br>
-      You'll need a version with a threaded MPM. I needed to compile my own
-      version to achieve this.</li>
+      The best web server around.</li>
+   <li><b>mod_python</b>, v3.x<br>
+      This apache module is used for running the django framework.</li>
    <li><b>swig</b>, any version should do<br>
       SWIG is a software development tool that connects programs written in C
       and C++ with a variety of high-level programming languages. SWIG is used
@@ -87,12 +89,6 @@ you'ld need on top of a bare minimum Linux distribution.
       other related problems. It can be downloaded from
       <a href="http://www.gnu.org/software/glpk/glpk.html" target="_blank">
       http://www.gnu.org/software/glpk/glpk.html</a></li>
-   <li><b>Python</b>, version greater or equal to 2.4<br>
-      Python is a modern, easy to learn interpreted programming language. See
-      <a href="http://www.python.org" target="_blank">http://www.python.org</a>
-      for more information. A module is available that embeds a python
-      interpreter in frepple, allowing complex actions and operations to be
-      coded easy and flexibly.</li>
    <li><b>NSIS</b>, version greater or equal to 2.07<br>
       NSIS, which stands for "Nullsoft Scriptable Installation System", is a
       free scriptable win32 installer/uninstaller system that doesn't suck
@@ -100,8 +96,6 @@ you'ld need on top of a bare minimum Linux distribution.
        href="http://nsis.sf.net" target="_blank">http://nsis.sf.net</a> and
       you'll only need it if you are planning to create a windows installation
       package.</li>
-   <li><b>Java</b><br>
-      Java is used to demonstrate Frepple in a J2EE environment.</li>
   </ul></li>
   </ul>
 </li>
@@ -215,8 +209,8 @@ extending the package may technically be possible, but are not recommended.</li>
 <li>Create your own header files, which will need to include the file planner.h
 </li>
 <li>Create your own c++ source files implementing the defined functions. Include
-you customized header file. Important is to include an initialize() method, and 
-use it to register your extension in the Frepple framework. The method is 
+you customized header file. Important is to include an initialize() method, and
+use it to register your extension in the Frepple framework. The method is
 automatically called when the module is loaded. </li>
 <li>Update the $FREPPLE_HOME/init.xml file to load your module with a
 COMMAND_LOADLIBRARY tag.<br>

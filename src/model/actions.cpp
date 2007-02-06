@@ -105,9 +105,6 @@ DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, XMLElement& pElement)
 
 DECLARE_EXPORT void CommandReadXMLFile::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  // Replace environment variables with their value.
-  pElement.resolveEnvironment();
-
   if (pElement.isA(Tags::tag_filename))
     pElement >> filename;
   else if (pElement.isA(Tags::tag_validate))
@@ -124,6 +121,9 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
     cout << "Started reading model from file '" << filename
     << "' at " << Date::now() << endl;
   Timer t;
+
+  // Replace environment variables in the filename.
+  Environment::resolveEnvironment(filename);
 
   // Note: Reading the data files can throw exceptions...
   if (filename.empty())
@@ -161,9 +161,6 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
 
 DECLARE_EXPORT void CommandReadXMLString::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  // Replace environment variables with their value.
-  pElement.resolveEnvironment();
-
   if (pElement.isA(Tags::tag_data))
     pElement >> data;
   else if (pElement.isA(Tags::tag_validate))
@@ -201,9 +198,6 @@ DECLARE_EXPORT void CommandReadXMLString::execute()
 
 DECLARE_EXPORT void CommandReadXMLURL::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  // Replace environment variables with their value.
-  pElement.resolveEnvironment();
-
   if (pElement.isA(Tags::tag_url))
     pElement >> url;
   else if (pElement.isA(Tags::tag_validate))
@@ -217,8 +211,12 @@ DECLARE_EXPORT void CommandReadXMLURL::execute()
 {
   // Message
   if (getVerbose())
-    cout << "Started reading model from url at " << Date::now() << endl;
+    cout << "Started reading model from url '" << url 
+    << "' at " << Date::now() << endl;
   Timer t;
+
+  // Replace environment variables in the url.
+  Environment::resolveEnvironment(url);
 
   // Note: Reading the data can throw exceptions...
   if (validate_only)
@@ -241,9 +239,6 @@ DECLARE_EXPORT void CommandReadXMLURL::execute()
 
 DECLARE_EXPORT void CommandSave::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  // Replace environment variables with their value.
-  pElement.resolveEnvironment();
-
   if (pElement.isA(Tags::tag_filename))
     pElement >> filename;
   else if (pElement.isA(Tags::tag_headerstart))
@@ -272,6 +267,9 @@ DECLARE_EXPORT void CommandSave::execute()
     << "' at " << Date::now() << endl;
   Timer t;
 
+  // Replace environment variables in the filename.
+  Environment::resolveEnvironment(filename);
+
   // Save the plan
   XMLOutputFile o(filename);
   if (!headerstart.empty()) o.setHeaderStart(headerstart);
@@ -293,9 +291,6 @@ DECLARE_EXPORT void CommandSave::execute()
 
 DECLARE_EXPORT void CommandSavePlan::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  // Replace environment variables with their value.
-  pElement.resolveEnvironment();
-
   if (pElement.isA(Tags::tag_filename))
     pElement >> filename;
   else
@@ -310,6 +305,9 @@ DECLARE_EXPORT void CommandSavePlan::execute()
     cout << "Start saving plan to file '" << getFileName()
     << "' at " << Date::now() << endl;
   Timer t;
+
+  // Replace environment variables in the filename.
+  Environment::resolveEnvironment(filename);
 
   // Output steam
   if (getFileName().empty())
@@ -474,9 +472,6 @@ DECLARE_EXPORT string CommandMoveOperationPlan::getDescription() const
 
 DECLARE_EXPORT void CommandErase::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  // Replace environment variables with their value.
-  pElement.resolveEnvironment();
-
   if (pElement.isA (Tags::tag_mode))
   {
     string m = pElement.getString();

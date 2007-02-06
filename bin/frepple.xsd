@@ -21,25 +21,14 @@
  License along with this library; if not, write to the Free Software
  Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 -->
-<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema' elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
 	<!--
     This file should not be customized. In case you want to customize the schema
     with your own needs, you should define a new namespace and import the
     frepple namespace into your schema.
     Keep in mind that the application always picks up the schema from the file
     $FREPPLE_HOME/frepple.xsd.
-  -->
-	<!--
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace">
-    <xsd:annotation>
-    <xsd:documentation>
-    The schemaLocation of the relevant file is
-    "http://www.w3.org/2001/xml.xsd"; however,
-    we don't want to assume people are always
-    connected to the 'net when playing with this file.
-    </xsd:documentation>
-    </xsd:annotation>
-    </xsd:import>
   -->
 	<xsd:include schemaLocation="frepple_core.xsd" />
 	<xsd:element name="PLAN">

@@ -41,7 +41,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   static const char* name = "forecast";
   if (init)
   {
-    cout << "Warning: Initializing module forecast more than one." << endl;
+    cout << "Warning: Initializing module forecast more than once." << endl;
     return name;
   }
   init = true;

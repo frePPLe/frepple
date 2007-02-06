@@ -317,27 +317,50 @@ DECLARE_EXPORT HasProblems::EntityIterator::~EntityIterator()
 {
   switch (type)
   {
-    case 0:
-      // Buffer
-      delete bufIter;
-      return;
-    case 1:
-      // Resource
-      delete resIter;
-      return;
-    case 2:
-      // Operation
-      delete operIter;
-      return;
-    case 3:
-      // Demand
-      delete demIter;
-      return;
+    // Buffer
+    case 0: delete bufIter; return;
+    // Resource
+    case 1: delete resIter; return;
+    // Operation
+    case 2: delete operIter; return;
+    // Demand
+    case 3: delete demIter; return;
     }
 }
 
 
-DECLARE_EXPORT bool HasProblems::EntityIterator::operator != (const EntityIterator& t) const
+DECLARE_EXPORT HasProblems::EntityIterator::EntityIterator(const EntityIterator& o) 
+{
+  // Delete old iterator
+  this->~EntityIterator();
+  // Populate new values
+  type = o.type;
+  if (type==0) bufIter = new Buffer::iterator(*(o.bufIter));
+  else if (type==1) resIter = new Resource::iterator(*(o.resIter));
+  else if (type==2) operIter = new OperationPlan::iterator(*(o.operIter));
+  else if (type==3) demIter = new Demand::iterator(*(o.demIter));
+}
+
+
+DECLARE_EXPORT HasProblems::EntityIterator& 
+  HasProblems::EntityIterator::operator=(const EntityIterator& o)
+{
+  // Gracefully handle self assignment
+  if (this == &o) return *this; 
+  // Delete old iterator
+  this->~EntityIterator();
+  // Populate new values
+  type = o.type;
+  if (type==0) bufIter = new Buffer::iterator(*(o.bufIter));
+  else if (type==1) resIter = new Resource::iterator(*(o.resIter));
+  else if (type==2) operIter = new OperationPlan::iterator(*(o.operIter));
+  else if (type==3) demIter = new Demand::iterator(*(o.demIter));
+  return *this;
+}
+
+
+DECLARE_EXPORT bool 
+  HasProblems::EntityIterator::operator != (const EntityIterator& t) const
 {
   // Different iterator type, thus always different and return false
   if (type != t.type) return true;
@@ -345,22 +368,17 @@ DECLARE_EXPORT bool HasProblems::EntityIterator::operator != (const EntityIterat
   // Same iterator type, more granular comparison required
   switch (type)
   {
-    case 0:
-      // Buffer
-      return *bufIter != *(t.bufIter);
-    case 1:
-      // Resource
-      return *resIter != *(t.resIter);
-    case 2:
-      // Operationplan
-      return *operIter != *(t.operIter);
-    case 3:
-      // Demand
-      return *demIter != *(t.demIter);
-    default:
-      // Always return true for higher type numbers. This should happen only
-      // when comparing with the end of list element.
-      return false;
+    // Buffer
+    case 0: return *bufIter != *(t.bufIter);
+    // Resource
+    case 1: return *resIter != *(t.resIter);
+    // Operationplan
+    case 2: return *operIter != *(t.operIter);
+    // Demand    
+    case 3: return *demIter != *(t.demIter);
+    // Always return true for higher type numbers. This should happen only
+    // when comparing with the end of list element.
+    default: return false;
   }
 }
 
@@ -369,20 +387,15 @@ DECLARE_EXPORT HasProblems& HasProblems::EntityIterator::operator*() const
 {
   switch (type)
   {
-    case 0:
-      // Buffer
-      return **bufIter;
-    case 1:
-      // Resource
-      return **resIter;
-    case 2:
-      // Operation
-      return **operIter;
-    case 3:
-      // Demand
-      return **demIter;
-    default:
-      throw LogicException("Unreachable code reached");
+    // Buffer
+    case 0: return **bufIter;
+    // Resource
+    case 1: return **resIter;
+    // Operation
+    case 2: return **operIter;
+    // Demand
+    case 3: return **demIter;
+    default: throw LogicException("Unreachable code reached");
   }
 }
 
@@ -391,20 +404,15 @@ DECLARE_EXPORT HasProblems* HasProblems::EntityIterator::operator->() const
 {
   switch (type)
   {
-    case 0:
-      // Buffer
-      return &**bufIter;
-    case 1:
-      // Resource
-      return &**resIter;
-    case 2:
-      // Operationplan
-      return &**operIter;
-    case 3:
-      // Demand
-      return &**demIter;
-    default:
-      throw LogicException("Unreachable code reached");
+    // Buffer
+    case 0: return &**bufIter;
+    // Resource
+    case 1: return &**resIter;
+    // Operationplan
+    case 2: return &**operIter;
+    // Demand
+    case 3: return &**demIter;
+    default: throw LogicException("Unreachable code reached");
   }
 }
 
@@ -425,6 +433,9 @@ DECLARE_EXPORT HasProblems::EntityIterator HasProblems::endEntity()
 
 DECLARE_EXPORT Problem::const_iterator& Problem::const_iterator::operator++()
 {
+  // Incrementing beyond the end
+  if (!iter) 
+    throw LogicException("Incrementing problem iterator beyond the end");
   // Move to the next problem
   iter = iter->nextProblem;
 

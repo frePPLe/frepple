@@ -64,7 +64,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   static const char* name = "python";
   if (init)
   {
-    cout << "Warning: Initializing module lp_solver more than one." << endl;
+    cout << "Warning: Initializing module python more than once." << endl;
     return name;
   }
   init = true;
@@ -120,6 +120,12 @@ void CommandPython::initialize()
 
   // Capture the main trhead state, for use during threaded execution
   mainThreadState = PyThreadState_Get();
+
+  // Register our new type: iterator
+  if (PyType_Ready(&PythonIterator::InfoType) < 0) 
+    throw frepple::RuntimeException("Can't register frepple python extensions");
+  Py_INCREF(&PythonIterator::InfoType);
+  PyModule_AddObject(m, "iterator", reinterpret_cast<PyObject*>(&PythonIterator::InfoType));
   
   // Redirect the stderr and stdout streams of Python
   PyRun_SimpleString(
@@ -184,6 +190,10 @@ void CommandPython::execute()
   }
   Timer t;
 
+  // Replace environment variables in the filename and command line.
+  Environment::resolveEnvironment(filename);
+  Environment::resolveEnvironment(cmd);
+
   // Evaluate data fields
   string c;
   if (!cmd.empty()) 
@@ -216,6 +226,7 @@ void CommandPython::execute()
   if (getVerbose()) cout << "Finished executing python at " 
     << Date::now() << " : " << t << endl;
 }
+
 
 void CommandPython::executePython(const char* cmd)
 {
@@ -289,17 +300,11 @@ void CommandPython::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else if (pElement.isA(Tags::tag_filename))
   {
-    // Replace environment variables with their value.
-    pElement.resolveEnvironment();
     cmd.clear();
     pElement >> filename;
   }
   else
-  {
-    // Replace environment variables with their value.
-    pElement.resolveEnvironment();
     Command::endElement(pIn, pElement);
-  }
 }
 
 
@@ -437,5 +442,85 @@ PyObject *CommandPython::python_saveXMLstring(PyObject* self, PyObject* args)
   return Py_BuildValue("s",result.c_str());
 }
 
+
+extern "C" PyObject* PythonIterator::repr(PythonIterator* obj)
+{
+    return PyString_FromFormat("Frepple problem iterator");
+}
+
+
+extern "C" PyObject* PythonIterator::create(PyTypeObject* type, PyObject *args, PyObject *kwargs)
+{
+  // Allocate memory
+  PythonIterator* obj = PyObject_New(PythonIterator, &PythonIterator::InfoType);
+
+  // Initialize the problem iterator
+  obj->iter.reset();
+  obj->iter = Problem::begin();
+
+  return reinterpret_cast<PyObject*>(obj);
+}
+
+
+extern "C" PyObject* PythonIterator::next(PythonIterator* obj) 
+{
+  if (obj->iter != Problem::end())
+  {
+    PyObject* result = PyTuple_New(3);
+    PyTuple_SET_ITEM(result, 0, PyString_FromFormat("%s", obj->iter->getDescription().c_str()));
+    PyTuple_SET_ITEM(result, 1, PyString_FromFormat("%s", obj->iter->getType().type.c_str()));
+    PyTuple_SET_ITEM(result, 2, PyString_FromFormat("%s", string(obj->iter->getDateRange()).c_str()));
+    ++(obj->iter);
+    return result;
+  }
+  else 
+    // Reached the end of the iteration
+    return NULL;
+}
+
+
+PyTypeObject PythonIterator::InfoType = 
+{
+	PyObject_HEAD_INIT(NULL)
+	0,					/* ob_size */
+	"frepple.iterator",	/* tp_name */
+	sizeof(PythonIterator),	/* tp_basicsize */
+	0,					/* tp_itemsize */
+	0,          /* tp_dealloc */
+	0,					/* tp_print */
+	0,					/* tp_getattr */
+	0,					/* tp_setattr */
+	0,					/* tp_compare */
+	reinterpret_cast<reprfunc>(PythonIterator::repr),	/* tp_repr */
+	0,					/* tp_as_number */
+	0,					/* tp_as_sequence */
+	0,					/* tp_as_mapping */
+	0,					/* tp_hash */
+  0,          /* tp_call */
+	0,					/* tp_str */
+	0,		      /* tp_getattro */
+	0,					/* tp_setattro */
+	0,					/* tp_as_buffer */
+	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,	/* tp_flags */
+	"Iterate over frepple objects", /* tp_doc */
+	0,					/* tp_traverse */
+	0,					/* tp_clear */
+	0,					/* tp_richcompare */
+	0,					/* tp_weaklistoffset */
+	PyObject_SelfIter,  /* tp_iter */
+	reinterpret_cast<iternextfunc>(PythonIterator::next),	/* tp_iternext */
+	0,				  /* tp_methods */
+	0,					/* tp_members */
+	0,					/* tp_getset */
+	0,					/* tp_base */
+	0,					/* tp_dict */
+	0,					/* tp_descr_get */
+	0,					/* tp_descr_set */
+	0,					/* tp_dictoffset */
+	0,          /* tp_init */
+	0,          /* tp_alloc */
+	PythonIterator::create,	/* tp_new */
+	0,					/* tp_free */
+};
 
 } // End namespace

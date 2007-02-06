@@ -40,7 +40,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   static const char* name = "lpsolver";
   if (init)
   {
-    cout << "Warning: Initializing module lp_solver more than one." << endl;
+    cout << "Warning: Initializing module lpsolver more than once." << endl;
     return name;
   }
   init = true;
@@ -275,9 +275,6 @@ void LPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 
 void LPSolver::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
-  // Replace environment variables with their value.
-  pElement.resolveEnvironment();
-
   if (pElement.isA (Tags::tag_calendar))
     pIn.readto(Calendar::reader(Calendar::metadata,pIn));
 }
@@ -285,9 +282,6 @@ void LPSolver::beginElement(XMLInput& pIn, XMLElement& pElement)
 
 void LPSolver::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  // Replace environment variables with their value.
-  pElement.resolveEnvironment();
-
   if (pElement.isA(Tags::tag_calendar))
   {
     Calendar * c = dynamic_cast<Calendar*>(pIn.getPreviousObject());

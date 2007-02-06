@@ -21,7 +21,8 @@
  License along with this library; if not, write to the Free Software
  Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 -->
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
 	<!--
     This schema has no target namespace defined. It will adopt the namespace
     of the schema that is using it with an "include" statement.
@@ -856,6 +857,20 @@
 					<xsd:element name="ELSE" type="COMMAND" />
 				</xsd:choice>
 				<xsd:attribute name="CONDITION" type="xsd:string" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="COMMAND_SETENV">
+		<xsd:complexContent>
+			<xsd:extension base="COMMAND">
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="VERBOSE" type="xsd:boolean" />
+					<xsd:element name="VARIABLE" type="xsd:string" />
+					<xsd:element name="VALUE" type="xsd:string" />
+				</xsd:choice>
+				<xsd:attribute name="VARIABLE" type="xsd:string" />
+				<xsd:attribute name="VALUE" type="xsd:string" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

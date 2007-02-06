@@ -46,7 +46,8 @@ DECLARE_EXPORT const MetaCategory Command::metadata;
 DECLARE_EXPORT const MetaClass CommandList::metadata,
   CommandSystem::metadata,
   CommandLoadLibrary::metadata,
-  CommandIf::metadata;
+  CommandIf::metadata,
+  CommandSetEnv::metadata;
 
 // Processing instruction metadata
 DECLARE_EXPORT const MetaCategory XMLinstruction::metadata;
@@ -62,7 +63,7 @@ DECLARE_EXPORT int Environment::processors = 2;
 DECLARE_EXPORT const hashtype MetaCategory::defaultHash(XMLtag::hash("DEFAULT"));
 
 
-void Environment::setHomeDirectory(const string dirname)
+DECLARE_EXPORT void Environment::setHomeDirectory(const string dirname)
 {
   // Check if the parameter is the name of a directory
   struct stat stat_p;
@@ -78,6 +79,37 @@ void Environment::setHomeDirectory(const string dirname)
 
   // Make sure the directory ends with a slash
   if (!home.empty() && *home.rbegin() != '/') home += '/';  
+}
+
+
+DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
+{
+  for (string::size_type startpos = s.find("${", 0);
+       startpos < string::npos;
+       startpos = s.find_first_of("${", startpos))
+  {
+    // Find closing "}"
+    string::size_type endpos = s.find_first_of("}", startpos);
+    if (endpos >= string::npos)
+      throw DataException("Invalid variable expansion in '" + s + "'");
+
+    // Search variable name
+    string var(s, startpos+2, endpos - startpos - 2);
+    if (var.empty()) 
+      throw DataException("Invalid variable expansion in '" + s + "'");
+
+    // Pick up the environment variable
+    char *c = getenv(var.c_str());
+
+    // Replace in the string
+    if (c) s.replace(startpos, endpos - startpos + 1, c);
+    else s.replace(startpos, endpos - startpos + 1, "");
+
+    // Advance to the end of the replaced characters. If the replaced 
+    // characters would include another ${XX} construct we could get in 
+    // an infinite loop!
+    if (c) startpos += strlen(c);
+   }
 }
 
 
@@ -120,6 +152,10 @@ void LibraryUtils::initialize()
     "COMMAND", 
     "COMMAND_IF",
     Object::createDefault<CommandIf>);
+  CommandSetEnv::metadata.registerClass(
+    "COMMAND", 
+    "COMMAND_SETENV",
+    Object::createDefault<CommandSetEnv>);
 
   // Initialize the processing instruction metadata.
   XMLinstruction::metadata.registerCategory

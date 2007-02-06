@@ -136,5 +136,6 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_condition;
     static DECLARE_EXPORT const XMLtag tag_then;
     static DECLARE_EXPORT const XMLtag tag_else;
+    static DECLARE_EXPORT const XMLtag tag_variable;
 };
 

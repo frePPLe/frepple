@@ -43,7 +43,7 @@
 #     - svn:         Updates the source code with the latest version in the SourceForge SVN repository.
 #
 
-default: prep config clean build check dist
+default: prep config clean build dist check
 
 debug: prep configdebug clean build check
 
@@ -78,7 +78,7 @@ config:
 	@echo
 	@echo "PHASE: Running configure for optimized build..."
 	./configure --enable-doc  --prefix=`pwd`/install-test --with-python
-#	  --disable-multithread  
+#	  --disable-multithread
 
 configdebug:
 	@echo

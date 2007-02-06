@@ -369,9 +369,6 @@ DECLARE_EXPORT CommandList::~CommandList()
 
 DECLARE_EXPORT void CommandList::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  // Replace environment variables with their value.
-  pElement.resolveEnvironment();
-
   if (pElement.isA(Tags::tag_command) && !pIn.isObjectEnd())  
   {
     // We're unlucky with our tag names here. Subcommands end with
@@ -410,10 +407,15 @@ DECLARE_EXPORT void CommandSystem::execute()
     << "' at " << Date::now() << endl;
   Timer t;
 
-  // Execute
+  // Check
   if (cmdLine.empty())
     throw DataException("Error: Trying to execute empty system command");
-  else if (system(cmdLine.c_str()))  // Execution through system() call
+
+  // Expand environment variables on the command line with their value
+  Environment::resolveEnvironment(cmdLine);
+
+  // Execute the command
+  if (system(cmdLine.c_str()))  // Execution through system() call
     throw RuntimeException("Error while executing system command: " + cmdLine);
 
   // Log
@@ -430,11 +432,7 @@ DECLARE_EXPORT void CommandSystem::endElement(XMLInput& pIn, XMLElement& pElemen
     // time by the command shell.
     pElement >> cmdLine;
   else
-  {
-    // Replace environment variables with their value.
-    pElement.resolveEnvironment();
     Command::endElement(pIn, pElement);
-  }
 }
 
 
@@ -456,6 +454,9 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
   // Validate
   if (lib.empty())
     throw DataException("Error: No library name specified for loading");
+
+  // Expand environment variables in the library name with their value
+  Environment::resolveEnvironment(lib);
 
 #ifdef WIN32
   // Load the library - The windows way
@@ -535,9 +536,6 @@ DECLARE_EXPORT void CommandLoadLibrary::printModules()
 
 DECLARE_EXPORT void CommandLoadLibrary::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  // Replace environment variables with their value.
-  pElement.resolveEnvironment();
-
   if (pElement.isA(Tags::tag_filename))
     pElement >> lib;
   else if (pElement.isA(Tags::tag_name))
@@ -583,6 +581,9 @@ DECLARE_EXPORT void CommandIf::execute()
   // Check validity
   if(condition.empty())
     throw DataException("Missing condition in If-Command");
+
+  // Expand environment variables in the condition with their value
+  Environment::resolveEnvironment(condition);
 
   // Evaluate the expression
   int eval = system(condition.c_str());
@@ -654,6 +655,57 @@ DECLARE_EXPORT void CommandIf::endElement(XMLInput& pIn, XMLElement& pElement)
     elseCommand = b;
     elseCommand->owner = this;
   }
+  else
+    Command::endElement(pIn, pElement);
+}
+
+
+//
+// SETENV COMMAND
+//
+
+
+DECLARE_EXPORT void CommandSetEnv::execute()
+{
+  // Message
+  if (getVerbose())
+    cout << "Start updating variable '" << variable << "' to '" 
+    << value << "' at " << Date::now() << endl;
+  Timer t;
+
+  // Data exception
+  if (variable.empty())
+    throw DataException("Missing environment variable name");
+
+  // Expand variable names
+  Environment::resolveEnvironment(value);
+
+  // Update the variable
+  string tmp = variable + "=" + value;
+  #if defined(HAVE_PUTENV)
+  putenv(const_cast<char*>(tmp.c_str()));
+  #elif defined(HAVE__PUTENV) || defined(_MSC_VER)
+  _putenv(tmp.c_str());
+  #else
+  #error("missing function to set an environment variable")
+  #endif
+
+  // Log
+  if (getVerbose())
+  {
+    const char* res = getenv(variable.c_str());
+    cout << "Finished updating variable '" << variable << "' to '" 
+      << (res ? res : "NULL") << "' at " << Date::now() << endl;
+  }
+}
+
+
+DECLARE_EXPORT void CommandSetEnv::endElement(XMLInput& pIn, XMLElement& pElement)
+{
+  if (pElement.isA(Tags::tag_variable))
+    pElement >> variable;
+  if (pElement.isA(Tags::tag_value))
+    pElement >> value;
   else
     Command::endElement(pIn, pElement);
 }

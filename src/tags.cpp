@@ -136,5 +136,6 @@ DECLARE_EXPORT const XMLtag Tags::tag_pegging("PEGGING");
 DECLARE_EXPORT const XMLtag Tags::tag_condition("CONDITION");
 DECLARE_EXPORT const XMLtag Tags::tag_then("THEN");
 DECLARE_EXPORT const XMLtag Tags::tag_else("ELSE");
+DECLARE_EXPORT const XMLtag Tags::tag_variable("VARIABLE");
 
 }

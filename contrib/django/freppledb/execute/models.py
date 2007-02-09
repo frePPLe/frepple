@@ -22,3 +22,16 @@
 # email : jdetaeye@users.sourceforge.net
 
 from django.db import models
+
+class Execute(models.Model):
+    name = name = models.CharField(maxlength=20,primary_key=True)
+    def __str__(self):
+        return str(self.name) 
+    #class Admin:
+    #    pass
+    class Meta:
+        permissions = (
+            ("run_frepple", "Can run frepple"),
+            ("run_db","Can run database procedures"),
+            )
+

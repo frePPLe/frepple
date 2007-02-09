@@ -37,20 +37,21 @@
 {% else %}
     <p>{% trans "You don't have permission to edit anything." %}</p>
 {% endif %}
-
     
+{% if perms.execute %}
 <div class="module">
 <table summary="Extra commands.">
 <caption>Run</caption>
 <tr>
-<th scope="row"><a href="auth/group/">Execute</a></th>
+<th scope="row"><a href="/execute/">Execute</a></th>
 <td>&nbsp;</td><td>&nbsp;</td>
 </tr>
 </table>
 </div>
 </div>
-{% endblock %}
+{% endif %}
 
+{% endblock %}
 {% block sidebar %}
 <div id="content-related">
     <div class="module" id="recent-actions-module">

@@ -24,8 +24,8 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
-    (r'^problems/', 'frepple.output.views.problems'),
-
-    # Uncomment this for admin:
+    (r'^execute/runfrepple', 'freppledb.execute.views.runfrepple'),
+    (r'^execute/rundb', 'freppledb.execute.views.rundb'),
+    (r'^execute/', 'freppledb.execute.views.execute'),
     (r'^admin/', include('django.contrib.admin.urls')),
 )

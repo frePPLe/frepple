@@ -42,19 +42,34 @@ def erase_model():
   This routine erase all model data from the database.
   '''
   cursor = connection.cursor()
+  cursor.execute('delete from frepple.output_problem')
+  cursor.connection.commit()
+  cursor.execute('delete from frepple.output_operationplan')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.input_demand')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.input_flow')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.input_load')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.input_buffer')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.input_resource')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.input_operationplan')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.input_item')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.input_operation')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.input_location')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.input_bucket')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.input_calendar')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.input_customer')
-
+  cursor.connection.commit()
 
 def create_model (cluster, demand, level):
   '''
@@ -75,11 +90,11 @@ def create_model (cluster, demand, level):
   res = []
   for i in range(100):
     cal = Calendar(name='capacity for res %03d' %i)
-    bkt = Bucket(start=date(2007,1,1), value=2)
-    bkt.save()
+    bkt = Bucket(start=date(2007,1,1), value=2, calendar=cal)
     cal.save()
-    r = Resource(name = 'res %03d' % i)
-    r.append(r)
+    bkt.save()
+    r = Resource(name = 'res %03d' % i, maximum=cal)
+    res.append(r)
     r.save()
 
   # Loop over all clusters

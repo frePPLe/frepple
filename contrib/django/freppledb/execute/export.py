@@ -40,6 +40,16 @@ def strptime(str):
   Y,m,d = dt.split('-') 
   H,M,S = tm.split(':')
   return datetime(int(Y),int(m),int(d),int(H),int(M),int(S))
+
+def timeformat(int):
+  if int>=3600 or int<=-3600: 
+      minsec = l % 3600
+      return '%d:%02d:%02d' % (int/3600, minsec/60, minsec%60)
+  elif int>=60 or int<=-60:
+    return '%d:%02d' % (int/60, int%60)
+  else:
+    return '%d' % int
+
   
 def dumpfrepple():
   '''
@@ -50,7 +60,9 @@ def dumpfrepple():
   cursor = connection.cursor()
   starttime = time.clock()
   cursor.execute('delete from frepple.output_problem')
+  cursor.connection.commit()
   cursor.execute('delete from frepple.output_operationplan')
+  cursor.connection.commit()
   print "Emptied plan tables in", time.clock() - starttime, 'seconds'
 
   print "Exporting problems..."
@@ -155,7 +167,7 @@ def loadfrepple():
   for i, j, k, l, m, n, o in cursor.fetchall():
     cnt += 1
     x.append('<OPERATION NAME="%s">' % i)
-    if j: x.append( '<FENCE>%f</FENCE>' % j)
+    if j: x.append( '<FENCE>%s</FENCE>' % timeformat(j))
     if k: x.append( '<PRETIME>%f</PRETIME>' % k)
     if l: x.append( '<POSTTIME>%f</POSTTIME>' % l)
     if m: x.append( '<SIZE_MINIMUM>%d</SIZE_MINIMUM>' % m)

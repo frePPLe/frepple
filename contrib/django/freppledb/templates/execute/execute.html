@@ -1,0 +1,67 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
+{% block coltype %}colM{% endblock %}
+{% block bodyclass %}dashboard{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/admin">{% trans "Home" %}</a> &rsaquo; Execute</div>{% endblock %}
+{% block content %}
+<div id="content-main">
+
+{% if perms.execute %}
+
+{% if perms.execute.run_frepple %}
+<div class="module">
+<table summary="Extra commands.">
+<caption>Frepple</caption>
+
+<form method="post" action="/execute/runfrepple/">
+<tr><th scope="row"><a>Run frepple</a></th>
+<td>Load frepple from the database...  <br>
+and plan frepple...<br>
+and export results into the database...</td>
+<td><input id="run_frepple" type="submit" value="run" />
+<input type="hidden" name="action" value="run" /></td>
+</tr>
+</form>
+
+</table>
+</div>
+{% endif %}
+
+{% if perms.execute.run_frepple or perms.execute.run_db %}
+<div class="module">
+<table summary="Extra commands.">
+<caption>Database</caption>
+
+{% if perms.execute.run_frepple or perms.execute.run_db %}
+<tr><th scope="row"><a>Erase all data from the database</a></th>
+<form method="post" action="/execute/rundb/">
+<td>&nbsp;</td>
+<td><input id="erase_db" type="submit" value="run" />
+<input type="hidden" name="action" value="erase" /></td>
+</form></tr>
+{% endif %}
+
+{% if perms.execute.run_db %}
+<tr><th scope="row"><a>Create demo model</a></th>
+<form method="post" action="/execute/rundb/">
+<td>Number of end items:<input name="clusters" type="text" maxlength="5" size="5" /><br>
+Demands per end item:<input name="demands" type="text" maxlength="4" size="4" /><br>
+Depth of bill-of-material:<input name="levels" type="text" maxlength="2" size="2" /><br>
+</td>
+<td><input id="erase_db" type="submit" value="run" />
+<input type="hidden" name="action" value="create" /></td>
+</form></tr>
+{% endif %}
+
+</table>
+</div>
+{% endif %}
+
+{% else %}
+Sorry, You don't have any execute permissions...
+{% endif %}
+
+</div>
+{% endblock %}

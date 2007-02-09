@@ -89,12 +89,12 @@ configdebug:
 configcoverage:
 	@echo
 	@echo "PHASE: Running configure for test coverage build..."
-	./configure --disable-doc --enable-coverage
+	./configure --disable-doc --enable-coverage --prefix=`pwd`/install-test --with-python
 
 configprofile:
 	@echo
 	@echo "PHASE: Running configure for profiling build..."
-	./configure --disable-doc --enable-profile
+	./configure --disable-doc --enable-profile --prefix=`pwd`/install-test --with-python
 
 clean:
 	@echo

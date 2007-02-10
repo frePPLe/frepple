@@ -143,10 +143,10 @@ astyle:
 # This make target is used to update all those places in a single go.
 old1 = 0
 old2 = 2
-old3 = 0
+old3 = 1
 new1 = 0
 new2 = 2
-new3 = 1
+new3 = 2
 set_release:
 	for i in "configure.in" "doc/menu.html" "contrib/installer/frepple.nsi" "contrib/rpm/frepple.spec" "include/frepple/utils.h"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)/$(new1).$(new2).$(new3)/g' $$i >out.tmp; \

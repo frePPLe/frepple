@@ -37,12 +37,12 @@ def strptime(str):
   This function parses a date string in the format 2007-02-06T15:18:04
   '''
   dt,tm = str.split('T')
-  Y,m,d = dt.split('-') 
+  Y,m,d = dt.split('-')
   H,M,S = tm.split(':')
   return datetime(int(Y),int(m),int(d),int(H),int(M),int(S))
 
 def timeformat(int):
-  if int>=3600 or int<=-3600: 
+  if int>=3600 or int<=-3600:
       minsec = l % 3600
       return '%d:%02d:%02d' % (int/3600, minsec/60, minsec%60)
   elif int>=60 or int<=-60:
@@ -50,10 +50,10 @@ def timeformat(int):
   else:
     return '%d' % int
 
-  
+
 def dumpfrepple():
   '''
-  This function exports the data from the frepple memory into the 
+  This function exports the data from the frepple memory into the
   database.
   '''
   print "Emptying database plan tables..."
@@ -199,11 +199,14 @@ def loadfrepple():
   print 'Importing buffers...'
   cnt = 0
   starttime = time.clock()
-  cursor.execute("SELECT name, description, location_id, item_id, onhand, minimum_id, producing_id, consuming_id FROM frepple.input_buffer")
+  cursor.execute("SELECT name, description, location_id, item_id, onhand, minimum_id, producing_id, consuming_id, type FROM frepple.input_buffer")
   x = [ header, '<BUFFERS>' ]
-  for i, j, k, l, m, n, o, p in cursor.fetchall():
+  for i, j, k, l, m, n, o, p, q in cursor.fetchall():
     cnt += 1
-    x.append('<BUFFER NAME="%s">' % i)
+    if q:
+      x.append('<BUFFER NAME="%s" xsi:type="%s">' % (i,q))
+    else:
+      x.append('<BUFFER NAME="%s">' % i)
     if j: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % j)
     if k: x.append( '<LOCATION NAME="%s" />' % k)
     if l: x.append( '<ITEM NAME="%s" />' % l)
@@ -220,11 +223,14 @@ def loadfrepple():
   print 'Importing resources...'
   cnt = 0
   starttime = time.clock()
-  cursor.execute("SELECT name, description, maximum_id, location_id FROM frepple.input_resource")
+  cursor.execute("SELECT name, description, maximum_id, location_id, type FROM frepple.input_resource")
   x = [ header, '<RESOURCES>' ]
-  for i, j, k, l in cursor.fetchall():
+  for i, j, k, l, m in cursor.fetchall():
     cnt += 1
-    x.append('<RESOURCE NAME="%s">' % i)
+    if m:
+      x.append('<RESOURCE NAME="%s" xsi:type="%s">' % (i,m))
+    else:
+      x.append('<RESOURCE NAME="%s">' % i)
     if j: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % j)
     if k: x.append( '<MAXIMUM NAME="%s" />' % k)
     if l: x.append( '<LOCATION NAME="%s" />' % l)
@@ -237,11 +243,14 @@ def loadfrepple():
   print 'Importing flows...'
   cnt = 0
   starttime = time.clock()
-  cursor.execute("SELECT operation_id, thebuffer_id, quantity FROM frepple.input_flow")
+  cursor.execute("SELECT operation_id, thebuffer_id, quantity, type FROM frepple.input_flow")
   x = [ header, '<FLOWS>' ]
-  for i, j, k in cursor.fetchall():
+  for i, j, k, l in cursor.fetchall():
     cnt += 1
-    x.append('<FLOW><OPERATION NAME="%s"/><BUFFER NAME="%s"/><QUANTITY>%s</QUANTITY></FLOW>' % (i, j, k))
+    if l:
+      x.append('<FLOW xsi:type="%s"><OPERATION NAME="%s"/><BUFFER NAME="%s"/><QUANTITY>%s</QUANTITY></FLOW>' % (l, i, j, k))
+    else:
+      x.append('<FLOW><OPERATION NAME="%s"/><BUFFER NAME="%s"/><QUANTITY>%s</QUANTITY></FLOW>' % (i, j, k))
   x.append('</FLOWS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded', cnt, 'flows in', time.clock() - starttime, 'seconds'
@@ -254,7 +263,7 @@ def loadfrepple():
   x = [ header , '<LOADS>' ]
   for i, j, k in cursor.fetchall():
     cnt += 1
-    x.append('<LOAD><OPERATION NAME="%s"/><RESOURCE NAME="%s"/><USAGE>%f<USAGE></LOAD>' % (i, j, k))
+    x.append('<LOAD><OPERATION NAME="%s"/><RESOURCE NAME="%s"/><USAGE>%s</USAGE></LOAD>' % (i, j, k))
   x.append('</LOADS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded', cnt, 'loads in', time.clock() - starttime, 'seconds'

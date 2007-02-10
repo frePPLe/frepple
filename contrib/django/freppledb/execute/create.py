@@ -79,6 +79,9 @@ def create_model (cluster, demand, level):
   random.seed(100) # Initialize random seed to get reproducible results
   cnt = 100000     # a counter for operationplan identifiers
 
+  # Create a random list of categories to choose from
+  categories = [ 'cat A','cat B','cat C','cat D','cat E','cat F','cat G' ]
+
   # Create customers
   cust = []
   for i in range(100):
@@ -89,11 +92,11 @@ def create_model (cluster, demand, level):
   # Create resources and their calendars
   res = []
   for i in range(100):
-    cal = Calendar(name='capacity for res %03d' %i)
+    cal = Calendar(name='capacity for res %03d' %i, category='capacity')
     bkt = Bucket(start=date(2007,1,1), value=2, calendar=cal)
     cal.save()
     bkt.save()
-    r = Resource(name = 'res %03d' % i, maximum=cal)
+    r = Resource(name = 'Res %03d' % i, maximum=cal)
     res.append(r)
     r.save()
 
@@ -103,11 +106,15 @@ def create_model (cluster, demand, level):
     loc = Location(name='Loc %05d' % i)
 
     # Item and delivery operation
-    oper = Operation(name='Deliver %05d' % i)
-    it = Item(name='Item %05d' % i, operation=oper)
+    oper = Operation(name='Del %05d' % i)
+    it = Item(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
 
     # Level 0 buffer
-    buf = Buffer(name='Buffer %05d L00' % i, item=it, location=loc)
+    buf = Buffer(name='Buf %05d L00' % i,
+      item=it,
+      location=loc,
+      category='00'
+      )
     fl = Flow(operation=oper, thebuffer=buf, quantity=-1)
 
     # Save the first batch
@@ -119,24 +126,39 @@ def create_model (cluster, demand, level):
 
     # Demand
     for j in range(demand):
-      dm = Demand(name='Demand %05d %05d' % (i,j), item=it, quantity=int(random.uniform(1,11)), due=getDate(), priority=int(random.uniform(1,4)), customer=random.choice(cust))
+      dm = Demand(name='Dmd %05d %05d' % (i,j),
+        item=it,
+        quantity=int(random.uniform(1,11)),
+        due=getDate(),
+        priority=int(random.uniform(1,4)),
+        customer=random.choice(cust),
+        category=random.choice(categories)
+        )
       dm.save()
 
     # Upstream operations and buffers
     for k in range(level):
-      oper = Operation(name='Operation %05d L%02d' % (i,k))
-      buf.producing = oper
-      fl = Flow(operation=oper, thebuffer=buf, quantity=1)
+      oper = Operation(name='Oper %05d L%02d' % (i,k))
       oper.save()
+      if k == 1:
+        # Create a resource load
+        ld = Load(resource=random.choice(res), operation=oper)
+        ld.save()
+      buf.producing = oper
+      fl = Flow(operation=oper, thebuffer=buf, quantity=1, type="FLOW_END")
       buf.save()
       fl.save()
-      buf = Buffer(name='Buffer %05d L%02d' % (i,k+1), item=it, location=loc)
+      buf = Buffer(name='Buf %05d L%02d' % (i,k+1),
+        item=it,
+        location=loc,
+        category='%02d' % (k+1)
+        )
       fl = Flow(operation=oper, thebuffer=buf, quantity=-1)
       buf.save()
       fl.save()
 
     # Create supply operation
-    oper = Operation(name='Supply %05d' % i)
+    oper = Operation(name='Sup %05d' % i)
     fl = Flow(operation=oper, thebuffer=buf, quantity=1)
     oper.save()
     fl.save()

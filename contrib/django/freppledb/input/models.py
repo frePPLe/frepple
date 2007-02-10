@@ -27,20 +27,8 @@ import sys
 from django.http import HttpRequest
 from datetime import datetime
 
+# The date format used by the frepple XML data.
 dateformat = '%Y-%m-%dT%H:%M:%S'
-
-# @todo testing code: a simple logging decorator
-def logger(f, name=None):
-    # Closure to remember our name and function objects
-    if name is None:
-        name = f.func_name
-    def wrapped(*args, **kwargs):
-        print "Calling", name, args, kwargs
-        result = f(*args, **kwargs)
-        print "Called", name, args, kwargs, "returned", repr(result)
-        return result
-    wrapped.__doc__ = f.__doc__
-    return wrapped
 
 class Plan(models.Model):
     name = models.CharField(maxlength=60)
@@ -59,6 +47,7 @@ def get_user():
     User information is not always readily available.
     Here we are looking into the interpreter stack to find the current request
     (if there is one) and pick up the user from there.
+    @todo this is not a clean way to retrieve the user information...
     '''
     i=1
     user = None
@@ -77,7 +66,9 @@ def get_user():
 
 class Calendar(models.Model):
     name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, blank=True)
+    description = models.CharField(maxlength=200, null=True, blank=True)
+    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False)
     modifiedby = models.CharField('modified by', maxlength=30, blank=True, editable=False)
     def currentvalue(self):
@@ -95,14 +86,15 @@ class Calendar(models.Model):
     def __str__(self):
         return self.name
     class Admin:
-        list_display = ('name', 'description', 'currentvalue', 'lastmodified', 'modifiedby')
+        list_display = ('name', 'description', 'category', 'subcategory', 'currentvalue', 'lastmodified', 'modifiedby')
         search_fields = ['name','description']
+        list_filter = ['category', 'subcategory']
         save_as = True
 
 class Bucket(models.Model):
-    calendar = models.ForeignKey(Calendar, edit_inline=models.TABULAR, num_in_admin=3, related_name='buckets')
+    calendar = models.ForeignKey(Calendar, edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
     start = models.DateField('start date', core=True)
-    name = models.CharField(maxlength=60, blank=True)
+    name = models.CharField(maxlength=60, null=True, blank=True)
     value = models.FloatField(max_digits=10, decimal_places=2, default=0.00)
     def __str__(self):
         if self.name: return self.name
@@ -112,36 +104,45 @@ class Bucket(models.Model):
 
 class Location(models.Model):
     name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, blank=True)
+    description = models.CharField(maxlength=200, null=True, blank=True)
+    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
     owner = models.ForeignKey('self', null=True, blank=True, related_name='children', raw_id_admin=True)
     def __str__(self):
         return self.name
     class Admin:
-        list_display = ('name', 'description', 'owner')
+        list_display = ('name', 'description', 'category', 'subcategory', 'owner')
         search_fields = ['name', 'description']
+        list_filter = ['category', 'subcategory']
         save_as = True
 
 class Customer(models.Model):
     name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, blank=True)
+    description = models.CharField(maxlength=200, null=True, blank=True)
+    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
     owner = models.ForeignKey('self', null=True, blank=True, related_name='children', raw_id_admin=True)
     def __str__(self):
         return self.name
     class Admin:
-        list_display = ('name', 'description', 'owner')
+        list_display = ('name', 'description', 'category', 'subcategory', 'owner')
         search_fields = ['name', 'description']
+        list_filter = ['category', 'subcategory']
         save_as = True
 
 class Item(models.Model):
     name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, blank=True)
+    description = models.CharField(maxlength=200, null=True, blank=True)
+    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
     operation = models.ForeignKey('Operation', null=True, blank=True, raw_id_admin=True)
     owner = models.ForeignKey('self', null=True, blank=True, related_name='children', raw_id_admin=True)
     def __str__(self):
         return self.name
     class Admin:
-        list_display = ('name', 'description', 'operation', 'owner')
+        list_display = ('name', 'description', 'category', 'subcategory', 'operation', 'owner')
         search_fields = ['name', 'description']
+        list_filter = ['category', 'subcategory']
         save_as = True
 
 class Operation(models.Model):
@@ -160,48 +161,105 @@ class Operation(models.Model):
         save_as = True
 
 class Buffer(models.Model):
+    buffertypes = (
+      ('','Default'),
+      ('BUFFER_INFINITE','Infinite'),
+    )
     name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, blank=True)
+    description = models.CharField(maxlength=200, null=True, blank=True)
+    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    type = models.CharField(maxlength=20, null=True, blank=True, choices=buffertypes, default='')
     location = models.ForeignKey(Location, null=True, blank=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
-    onhand = models.FloatField(max_digits=10, decimal_places=2, default=0.00)
-    minimum = models.ForeignKey('Calendar', null=True, blank=True, raw_id_admin=True)
-    producing = models.ForeignKey('Operation', null=True, blank=True, related_name='used_producing', raw_id_admin=True)
-    consuming = models.ForeignKey('Operation', null=True, blank=True, related_name='used_consuming', raw_id_admin=True)
+    onhand = models.FloatField(max_digits=10, decimal_places=2, default=0.00, help_text='current inventory')
+    minimum = models.ForeignKey('Calendar', null=True, blank=True, raw_id_admin=True,
+      help_text='Calendar storing the safety stock profile')
+    producing = models.ForeignKey('Operation', null=True, blank=True,
+      related_name='used_producing', raw_id_admin=True,
+      help_text='Operation to replenish the buffer')
+    consuming = models.ForeignKey('Operation', null=True, blank=True,
+      related_name='used_consuming', raw_id_admin=True,
+      help_text='Operation to move extra inventory from the buffer')
     def __str__(self):
         return self.name
+    def save(self):
+        if self.type == 'BUFFER_INFINITE':
+            # These fields are not relevant for infinite buffers
+            self.minimum = None
+            self.producing = None
+            self.consuming = None
+        # Call the real save() method
+        super(Buffer, self).save()
     class Admin:
         fields = (
-            (None, {'fields': ('name', 'description', 'location', 'item')}),
-            ('Inventory', {'fields': ('onhand',)}),
-            ('Planning parameters', {'fields': ('minimum','producing','consuming',), 'classes': 'collapse'}),
+            (None,{
+              'fields': (('name', 'item', 'location'), 'description', ('category', 'subcategory'))}),
+            ('Inventory', {
+              'fields': ('onhand',)}),
+            ('Planning parameters', {
+              'fields': ('type','minimum','producing','consuming'),
+              'classes': 'collapse'},),
         )
-        list_display = ('name', 'description', 'location', 'item', 'onhand', 'minimum', 'producing', 'consuming')
+        # @todo hide irrelevant fields: feature not available in official releases yet
+        #hide_unless = {
+        #  'minimum': {'type': ''}
+        #  'producing': {'type': ''}
+        #  'consuming': {'type': ''}
+        #}
+        list_display = ('name', 'description', 'category', 'subcategory', 'location', 'item', 'onhand', 'type', 'minimum', 'producing', 'consuming')
         search_fields = ['name', 'description']
+        list_filter = ['category', 'subcategory']
         save_as = True
 
 class Resource(models.Model):
+    resourcetypes = (
+      ('','Default'),
+      ('RESOURCE_INFINITE','Infinite'),
+    )
     name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, blank=True)
-    maximum = models.ForeignKey('Calendar', null=True, blank=True, raw_id_admin=True)
+    description = models.CharField(maxlength=200, null=True, blank=True)
+    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    type = models.CharField(maxlength=20, null=True, blank=True, choices=resourcetypes, default='')
+    maximum = models.ForeignKey('Calendar', null=True, blank=True,
+      raw_id_admin=True, help_text='Calendar defining the available capacity')
     location = models.ForeignKey(Location, null=True, blank=True, db_index=True, raw_id_admin=True)
     def __str__(self):
         return self.name
+    def save(self):
+        if self.type == 'RESOURCE_INFINITE':
+            # These fields are not relevant for infinite resources
+            self.maximum = None
+        # Call the real save() method
+        super(Resource, self).save()
     class Admin:
-        list_display = ('name', 'description', 'maximum', 'location')
+        list_display = ('name', 'description', 'category', 'subcategory', 'location', 'type', 'maximum')
         search_fields = ['name', 'description']
+        list_filter = ['category', 'subcategory']
         save_as = True
 
 class Flow(models.Model):
+    flowtypes = (
+      ('','Start'),
+      ('FLOW_END','End'),
+    )
     operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True)
     thebuffer = models.ForeignKey(Buffer, db_index=True, raw_id_admin=True)
+    type = models.CharField(maxlength=20, null=True, blank=True,
+      choices=flowtypes,
+      default='',
+      help_text='Consume/produce material at the start or the end of the operationplan',
+      )
     quantity = models.FloatField(max_digits=10, decimal_places=2, default='1.00')
     def __str__(self):
         return '%s - %s' % (self.operation.name, self.thebuffer.name)
     class Admin:
         save_as = True
         search_fields = ['operation', 'thebuffer']
-        list_display = ('operation', 'thebuffer', 'quantity')
+        list_display = ('operation', 'thebuffer', 'type', 'quantity')
+        # @todo we don't have a hyperlink any more to edit a flow...
+        list_display_links = ('operation', 'thebuffer')
     class Meta:
         unique_together = (('operation','thebuffer'),)
 
@@ -219,12 +277,13 @@ class Load(models.Model):
         unique_together = (('operation','resource'),)
 
 class OperationPlan(models.Model):
-    identifier = models.IntegerField(primary_key=True)
+    identifier = models.IntegerField(primary_key=True,
+      help_text='Unique identifier of an operationplan')
     operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True)
     quantity = models.FloatField(max_digits=10, decimal_places=2, default='1.00')
-    start = models.DateTimeField()
-    end = models.DateTimeField()
-    locked = models.BooleanField(default=True, radio_admin=True)
+    start = models.DateTimeField(help_text='Start date')
+    end = models.DateTimeField(help_text='End date')
+    locked = models.BooleanField(default=True, radio_admin=True, help_text='Prevent or allow changes')
     def __str__(self):
         return str(self.identifier)
     class Admin:
@@ -234,12 +293,16 @@ class OperationPlan(models.Model):
         date_hierarchy = 'start'
 
 class Demand(models.Model):
+    # The priorities defined here are for convenience only. Frepple accepts any number as priority.
     demandpriorities = (
       (1,'1 - high'),
       (2,'2 - normal'),
       (3,'3 - low')
     )
     name = models.CharField(maxlength=60, primary_key=True)
+    description = models.CharField(maxlength=200, null=True, blank=True)
+    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
     customer = models.ForeignKey(Customer, null=True, blank=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
     due = models.DateField('due')
@@ -251,11 +314,11 @@ class Demand(models.Model):
         return self.name
     class Admin:
         fields = (
-            (None, {'fields': ('name', 'item', 'customer', 'due', 'quantity', 'priority','owner')}),
+            (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'quantity', 'priority','owner')}),
             ('Planning parameters', {'fields': ('operation',), 'classes': 'collapse'}),
         )
-        list_display = ('name', 'item', 'customer', 'due', 'operation', 'quantity', 'priority','owner')
+        list_display = ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'operation', 'quantity', 'priority','owner')
         search_fields = ['name','customer','item','operation']
         date_hierarchy = 'due'
-        list_filter = ['due','priority']
+        list_filter = ['due','priority','category','subcategory']
         save_as = True

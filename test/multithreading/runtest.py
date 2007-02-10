@@ -30,11 +30,11 @@ def funcSleep (id,cnt):
   '''
   A thread command to sleep for a second.
   '''
-  send2frepple( \
-    '<?xml version="1.0" encoding="UTF-8" ?>' + \
-    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' + \
-    '<COMMANDS>' + \
-    '<COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="sleep 1"/>' + \
+  send2frepple(
+    '<?xml version="1.0" encoding="UTF-8" ?>' +
+    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+    '<COMMANDS>' +
+    '<COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="sleep 1"/>' +
     '</COMMANDS></PLAN>')
 
 
@@ -42,13 +42,13 @@ def funcSolve(id,cnt):
   '''
   A thread command to solve the plan.
   '''
-  send2frepple( \
-    '<?xml version="1.0" encoding="UTF-8" ?>' + \
-    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' + \
-    '<COMMANDS>' + \
-    '<COMMAND xsi:type="COMMAND_SOLVE" VERBOSE="FALSE">' + \
-    '<SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0"/>' + \
-    '</COMMAND>' + \
+  send2frepple(
+    '<?xml version="1.0" encoding="UTF-8" ?>' +
+    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+    '<COMMANDS>' +
+    '<COMMAND xsi:type="COMMAND_SOLVE" VERBOSE="FALSE">' +
+    '<SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0"/>' +
+    '</COMMAND>' +
     '</COMMANDS></PLAN>')
 
 
@@ -56,11 +56,11 @@ def funcSave(id,cnt):
   '''
   A thread command to save the model.
   '''
-  send2frepple( \
-    ('<?xml version="1.0" encoding="UTF-8" ?>' + \
-    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' + \
-    '<COMMANDS>' + \
-    '<COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.%d.xml"/>' + \
+  send2frepple(
+    ('<?xml version="1.0" encoding="UTF-8" ?>' +
+    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+    '<COMMANDS>' +
+    '<COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.%d.xml"/>' +
     '</COMMANDS></PLAN>') % id)
 
 
@@ -68,13 +68,13 @@ def funcAddDemand(id,cnt):
   '''
   A thread command to create a demand.
   '''
-  send2frepple( \
-    ('<?xml version="1.0" encoding="UTF-8" ?>' + \
-    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' + \
-    '<DEMANDS>' + \
-    '<DEMAND NAME="order_%d_%d" QUANTITY="10" ' + \
-    'DUE="2005-01-04T09:00:00" PRIORITY="1" POLICY="PLANLATE"> ' + \
-    '<ITEM NAME="end item"/></DEMAND>' + \
+  send2frepple(
+    ('<?xml version="1.0" encoding="UTF-8" ?>' +
+    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+    '<DEMANDS>' +
+    '<DEMAND NAME="order_%d_%d" QUANTITY="10" ' +
+    'DUE="2005-01-04T09:00:00" PRIORITY="1" POLICY="PLANLATE"> ' +
+    '<ITEM NAME="end item"/></DEMAND>' +
     '</DEMANDS></PLAN>') % (id,cnt))
 
 
@@ -84,11 +84,11 @@ def funcDeleteDemand(id,cnt):
   We assume the demand is created with funcAddDemand, which is executed by
   a preceding threadid.
   '''
-  send2frepple( \
-    ('<?xml version="1.0" encoding="UTF-8" ?>' + \
-    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' + \
-    '<DEMANDS>' + \
-    '<DEMAND NAME="DEMAND%d %cnt" ACTION="REMOVE"/>' + \
+  send2frepple(
+    ('<?xml version="1.0" encoding="UTF-8" ?>' +
+    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+    '<DEMANDS>' +
+    '<DEMAND NAME="DEMAND%d %cnt" ACTION="REMOVE"/>' +
     '</DEMANDS></PLAN>') % (id-1,cnt))
 
 
@@ -136,7 +136,7 @@ class Worker (threading.Thread):
 
 
 # Creating the initial model
-send2frepple( \
+send2frepple(
   """<?xml version="1.0" encoding="UTF-8" ?>
   <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <NAME>actual plan</NAME>
@@ -172,11 +172,11 @@ send2frepple( \
   </DEMANDS></PLAN>""")
 
 # Define the test threads and the duration of the test
-threads = [ \
-     Worker("thread1", funcAddDemand, 0.25, 10), \
-     Worker("thread2", funcSleep, 0.25, 10), \
-     Worker("thread3", funcAddDemand, 0.1, 20), \
-     Worker("thread4", funcSave, 0.1, 20) \
+threads = [
+     Worker("thread1", funcAddDemand, 0.25, 10),
+     Worker("thread2", funcSleep, 0.25, 10),
+     Worker("thread3", funcAddDemand, 0.1, 20),
+     Worker("thread4", funcSave, 0.1, 20)
      ]
 maxRunTime = 10
 

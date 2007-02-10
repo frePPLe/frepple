@@ -26,7 +26,7 @@
 # In each cluster a single item is defined, and a parametrizable number of
 # demands is placed on the cluster.
 
-import time, os, os.path, sys, random
+import os, os.path, sys, random
 
 
 # This function generates a random date
@@ -48,11 +48,11 @@ def create (cluster, demand, level):
   print >>out, "<ITEMS>"
   for i in range(cluster):
     ++size
-    print >>out, ("<ITEM NAME=\"Item C%d\">" + \
-      "<OPERATION NAME=\"Del C%d\"> <FLOWS>" + \
-        "<FLOW xsi:type=\"FLOW_START\" QUANTITY=\"-1\">" + \
-        "<BUFFER NAME=\"Buffer C%dL1\"/></FLOW>" + \
-      "</FLOWS></OPERATION></ITEM>") % (i,i,i) 
+    print >>out, ("<ITEM NAME=\"Item C%d\">" +
+      "<OPERATION NAME=\"Del C%d\"> <FLOWS>" +
+        "<FLOW xsi:type=\"FLOW_START\" QUANTITY=\"-1\">" +
+        "<BUFFER NAME=\"Buffer C%dL1\"/></FLOW>" +
+      "</FLOWS></OPERATION></ITEM>") % (i,i,i)
   print >>out, "</ITEMS>"
 
   # Demands
@@ -60,8 +60,8 @@ def create (cluster, demand, level):
   for i in range(cluster):
     for j in range(demand):
       size += 2 # since a demand will result in multiple operationplans
-      print >>out, ("<DEMAND NAME=\"Demand C%dD%d\" " + \
-        "QUANTITY=\"1\" DUE=\"%s\">" + \
+      print >>out, ("<DEMAND NAME=\"Demand C%dD%d\" " +
+        "QUANTITY=\"1\" DUE=\"%s\">" +
         "<ITEM NAME=\"Item C%d\"/></DEMAND>") % (i,j,getDate(),i)
   print >>out, "</DEMANDS>"
 
@@ -70,26 +70,26 @@ def create (cluster, demand, level):
   for i in range(cluster):
     for j in range(level):
       size += 2
-      print >>out, ("<OPERATION NAME=\"Oper C%dO%d\" " + \
-        "xsi:type=\"OPERATION_FIXED_TIME\" " + \
-        "DURATION=\"%d:00:00\"> <FLOWS>" + \
-        "<FLOW xsi:type=\"FLOW_END\" QUANTITY=\"1\">" + \
-        "<BUFFER NAME=\"Buffer C%dL%d\">" + \
-        "<PRODUCING NAME=\"Oper C%dO%d\"/></BUFFER></FLOW>" + \
-        "<FLOW xsi:type=\"FLOW_START\" QUANTITY=\"-1\">" + \
-        "<BUFFER NAME=\"Buffer C%dL%d\"/></FLOW>" + \
+      print >>out, ("<OPERATION NAME=\"Oper C%dO%d\" " +
+        "xsi:type=\"OPERATION_FIXED_TIME\" " +
+        "DURATION=\"%d:00:00\"> <FLOWS>" +
+        "<FLOW xsi:type=\"FLOW_END\" QUANTITY=\"1\">" +
+        "<BUFFER NAME=\"Buffer C%dL%d\">" +
+        "<PRODUCING NAME=\"Oper C%dO%d\"/></BUFFER></FLOW>" +
+        "<FLOW xsi:type=\"FLOW_START\" QUANTITY=\"-1\">" +
+        "<BUFFER NAME=\"Buffer C%dL%d\"/></FLOW>" +
         "</FLOWS></OPERATION>") % (i, j, 24*int(random.uniform(0,10)+1), i, j, i, j, i, j+1)
 
   # Create material supply
   for i in range(cluster):
-    print >>out, ("<OPERATION NAME=\"Supply C%d\"> " + \
-        "<FLOWS><FLOW xsi:type=\"FLOW_END\" QUANTITY=\"1\">" + \
-        "<BUFFER NAME=\"Buffer C%dL%d\"/>" + \
+    print >>out, ("<OPERATION NAME=\"Supply C%d\"> " +
+        "<FLOWS><FLOW xsi:type=\"FLOW_END\" QUANTITY=\"1\">" +
+        "<BUFFER NAME=\"Buffer C%dL%d\"/>" +
         "</FLOW></FLOWS></OPERATION>") % (i, i, level+1)
   print >>out, "</OPERATIONS>\n<OPERATION_PLANS>"
   for i in range(cluster):
-    print >>out, ("<OPERATION_PLAN ID=\"%d\" OPERATION=\"Supply C%d\" " + \
-        "START=\"2007-05-01T00:00:00\" QUANTITY=\"%d\" " + \
+    print >>out, ("<OPERATION_PLAN ID=\"%d\" OPERATION=\"Supply C%d\" " +
+        "START=\"2007-05-01T00:00:00\" QUANTITY=\"%d\" " +
         "LOCKED=\"true\" />") % (i+1, i, demand)
   print >>out, "</OPERATION_PLANS>"
 
@@ -107,7 +107,7 @@ random.seed(100)
 # Loop over all cluster values
 runtimes = {}
 print "Clusters\tDemands\tLevels\tRuntime"
-for cluster in [100,200,300]: 
+for cluster in [100,200,300]:
 
   # Loop over all demand values
   for demand in [10,20,30]:
@@ -119,7 +119,7 @@ for cluster in [100,200,300]:
       size = create(cluster, demand, level)
 
       # Run the model
-      starttime = time.clock()
+      starttime = os.times()
       out = os.popen(os.environ['EXECUTABLE'] + "  ./commands.xml")
       while True:
         i = out.readline()
@@ -127,10 +127,11 @@ for cluster in [100,200,300]:
         print i.strip()
       if out.close() != None:
         print "Planner exited abnormally"
-        sys.exit(1) 
+        sys.exit(1)
 
       # Measure the time
-      runtimes[size] = time.clock() - starttime
+      endtime = os.times()
+      runtimes[size] = endtime[4]-starttime[4]
       print "%d\t%d\t%d\t%.3f" % (cluster,demand,level,runtimes[size])
 
       # Clean up the files

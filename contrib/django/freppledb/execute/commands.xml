@@ -4,7 +4,7 @@
     <VERBOSE>true</VERBOSE>
     <ABORTONERROR>true</ABORTONERROR>
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="from os import environ" />
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="sys.path.append('/home/johan/workspace/frepple/contrib/django')" />
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="sys.path.append('/home/frepple/workspace/frepple/contrib/django')" />
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'" />
     <COMMAND xsi:type="COMMAND_PYTHON" FILENAME="export.py" />
     <COMMAND xsi:type="COMMAND_SIZE" />
@@ -16,7 +16,7 @@
     <COMMAND xsi:type="COMMAND_SIZE" />
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="dumpfrepple()" />
     <!--
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />    
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
     <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
     <COMMAND xsi:type="COMMAND_SIZE" />
     -->

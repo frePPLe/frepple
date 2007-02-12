@@ -86,7 +86,7 @@ ROOT_URLCONF = 'freppledb.urls'
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates".
     # Always use forward slashes, even on Windows.
-    '/home/johan/workspace/frepple/contrib/django/freppledb/templates'
+    '/home/frepple/workspace/frepple/contrib/django/freppledb/templates'
 )
 
 INSTALLED_APPS = (

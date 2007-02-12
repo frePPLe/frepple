@@ -56,17 +56,17 @@ def rundb(request):
         request.user.message_set.create(message='Failure during database erasing:%s' % e)
 
       # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-      return HttpResponseRedirect('/execute/execute.html')  
-      
+      return HttpResponseRedirect('/execute/execute.html')
+
     elif action == 'create':
       # Erase the database contents
-      try: 
+      try:
         clusters = int(request.POST['clusters'])
         demands = int(request.POST['demands'])
         levels = int(request.POST['levels'])
-      except KeyError: 
+      except KeyError:
         raise Http404
-      except ValueError, e: 
+      except ValueError, e:
         request.user.message_set.create(message='Invalid input field' % e)
       else:
         # Execute
@@ -75,15 +75,15 @@ def rundb(request):
           request.user.message_set.create(message='Created sample model in the database')
         except Exception, e:
           request.user.message_set.create(message='Failure during sample model creation:%s' % e)
-          
+
       # Show the main screen again
       # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-      return HttpResponseRedirect('/execute/execute.html')  
-      
-    else: 
+      return HttpResponseRedirect('/execute/execute.html')
+
+    else:
       # No valid action found
       raise Http404
-      
+
 rundb = staff_member_required(never_cache(rundb))
 
 def runfrepple(request):
@@ -98,7 +98,7 @@ def runfrepple(request):
       # Run frepple
       try:
         # @todo running frepple as batch command here is not flexible and robust enough
-        frepple = '/home/johan/workspace/frepple/bin'
+        frepple = '/home/frepple/workspace/frepple/bin'
         os.environ['PATH'] = frepple + os.pathsep + os.environ['PATH']
         os.environ['FREPPLE_HOME'] = frepple
         os.environ['LD_LIBRARY_PATH'] = frepple
@@ -109,10 +109,10 @@ def runfrepple(request):
       except Exception, e:
         request.user.message_set.create(message='Failure when running frepple:%s' % e)
       # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-      return HttpResponseRedirect('/execute/execute.html')  
-        
-    else: 
+      return HttpResponseRedirect('/execute/execute.html')
+
+    else:
       # No valid action found
       raise Http404
-      
+
 runfrepple = staff_member_required(never_cache(runfrepple))

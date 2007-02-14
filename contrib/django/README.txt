@@ -59,6 +59,9 @@ It doesn't serve as a complete reference but only as a brief guideline.
       vi django/contrib/admin/templatetags/admin_list.py
       >> - result_repr = ('%%.%sf' % f.decimal_places) % field_val     <-- Original
       >> + result_repr = ('%%.%sf' % f.decimal_places) % float(field_val)  <-- Corrected
+- Update the django contrib/admin/media/css/base.css stylesheet by commenting out the
+  import of a null css sheet.
+  It results is request to the web server for a non-existent sheet, giving 404 error.
 - Update apache by adding a file /etc/httpd/conf.d/z_frepple.conf with the settings
   shown in the provided httpd.conf file. You will need to carefully review and update
   the settings!

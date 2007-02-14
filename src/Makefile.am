@@ -12,7 +12,7 @@ libdir = @bindir@
 # The local target builds the main executables first, and then copies the
 # output to the bin directory
 all-local: frepple$(EXEEXT)
-	cp frepple$(EXEEXT) ../bin
+	if test -f .libs/frepple$(EXEEXT); then cp .libs/frepple$(EXEEXT) ../bin; fi
 	if test -f .libs/cygfrepple*.dll; then cp .libs/cygfrepple*.dll ../bin; fi
 	if test -f .libs/libfrepple.so; then cp .libs/libfrepple.so* ../bin; fi
 

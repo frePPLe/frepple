@@ -681,11 +681,13 @@ DECLARE_EXPORT void CommandSetEnv::execute()
   Environment::resolveEnvironment(value);
 
   // Update the variable
-  string tmp = variable + "=" + value;
+  // Note: we have to 'leak' this string. Putenv takes it as part of 
+  // the environment.
+  string *tmp = new string(variable + "=" + value);
   #if defined(HAVE_PUTENV)
-  putenv(const_cast<char*>(tmp.c_str()));
+  putenv(const_cast<char*>(tmp->c_str()));
   #elif defined(HAVE__PUTENV) || defined(_MSC_VER)
-  _putenv(tmp.c_str());
+  _putenv(tmp->c_str());
   #else
   #error("missing function to set an environment variable")
   #endif

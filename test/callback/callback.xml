@@ -6,7 +6,7 @@
     mechanism.
   </DESCRIPTION>
 	<COMMANDS>
-    <VERBOSE>true</VERBOSE>
+    <VERBOSE>false</VERBOSE>
 		<COMMAND xsi:type="COMMAND_SOLVE">
 		  <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0"/>
 		</COMMAND>

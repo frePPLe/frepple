@@ -32,19 +32,25 @@ compiler</a></li>
 <h3><a name="linux"/>Build instructions on Linux and Unix platforms</h3>
 The following describes the steps you need to build Frepple.
 <ol>
-<li>Update your system with the development packages. The list below is what
+<li>Update your system with the development packages.<br>The list below is what
 you'ld need on top of a bare minimum Linux distribution.
  <ul>
-  <li>Required for compiling the package:<ul>
+  <li>Required for compiling the distribution package:<ul>
    <li><b>gcc</b>, v3.2 or v4.0<br>
        Front end for the GNU compiler suite.</li>
    <li><b>gcc-c++</b>, compatible with gcc release<br>
        GNU C++ compiler.</li>
-   <li><b>xerces-c</b>, v2.7 or later
-       Xerces is a validating XML parser provided by the Apache Foundation.</li>
+   <li><b>xerces-c</b>, v2.7 or later<br>
+       Xerces is a validating XML parser provided by the Apache Foundation.<br>
+       You need to install the libraries as well as the development libraries.</li>
+   <li><b>python</b> v2.4 or higher<br>
+       Python is a modern, easy to learn interpreted programming language. See
+       <a href="http://www.python.org" target="_blank">http://www.python.org</a>
+       for more information. The language is used to a) run the test suite, b) script
+       custom logic in frepple and c) to run the web application framework django.<br>
+       You need to install the language as well as the development libraries.</li>
   </ul></li>
-  <li>Extras for development, testing, debugging, documentation, version
-  control, etc:<ul>
+  <li>When working from the subversion repository you'll need the following in addition:<ul>
    <li><b>autoconf</b>, v2.59 or later<br>
        Gnu Autoconf produces shell scripts to automatically configure software
        source code packages. This makes the source code easier to port across
@@ -56,20 +62,19 @@ you'ld need on top of a bare minimum Linux distribution.
        for different platforms behind a consistent and portable interface.</li>
    <li><b>gdb</b>, compatible with gcc release<br>
        Debugger for the gcc environment.</li>
-   <li><b>python</b> v2.4 or higher<br>
-       Python is a modern, easy to learn interpreted programming language. See
-       <a href="http://www.python.org" target="_blank">http://www.python.org</a>
-       for more information. The language is used to a) run the test suite, b) script
-       custom logic in frepple and c) to run the web application framework django.<br>
-       You need to install the language as well as the development libraries.</li>
    <li><b>doxygen</b>, any version should do<br>
        Extracts documentation from the C++ source code.</li>
    <li><b>subversion</b>, any version should do<br>
        Excellent version control tool.</li>
   </ul></li>
-  <li>Used by some add-ons in the contrib subdirectory:<ul>
+  <li>The add-ons in the contrib subdirectory each have their own additional
+   dependencies. Here is a brief summary list of those.<br>
+   Please check out the README.txt file in each contrib subdirectory for the details.<ul>
+   <li><b>Django</b>, v0.95<br>
+      A web application fraework written in python.</li>
    <li><b>Apache httpd</b>, v2.x<br>
-      The best web server around.</li>
+      The best web server around.<br>
+      You need to install the server as well as its development libraries.</li>
    <li><b>mod_python</b>, v3.x<br>
       This apache module is used for running the django framework.</li>
    <li><b>swig</b>, any version should do<br>
@@ -92,7 +97,7 @@ you'ld need on top of a bare minimum Linux distribution.
    <li><b>NSIS</b>, version greater or equal to 2.07<br>
       NSIS, which stands for "Nullsoft Scriptable Installation System", is a
       free scriptable win32 installer/uninstaller system that doesn't suck
-      and isn't huge. This program can be downloaded from <a
+      and isn't huge.<br>This program can be downloaded from <a
        href="http://nsis.sf.net" target="_blank">http://nsis.sf.net</a> and
       you'll only need it if you are planning to create a windows installation
       package.</li>
@@ -103,7 +108,10 @@ you'ld need on top of a bare minimum Linux distribution.
 <li>This step applies <b>only</b> when you build the project from the SVN repository
 (rather than a source tar file).<br>
 Issue the command '<b>make -f Makefile.dist prep</b>' to run the gnu autoconf
-suite.</li>
+suite.<br>
+If this command fails, try the command '<b>make -f Makefile.dist prep_force</b>'.
+It re-initializes all automake/autoconf/libtool scripts to the version you have available on
+your machine </li>
 <li>Issue the command '<b>./configure --prefix=&lt;dir&gt;</b>' to specify the build options
 and detect the specifics of your platform. Use the command './configure --help' to see
 the list of available options.<br>
@@ -115,8 +123,9 @@ own application.
 </li>
 <li>Issue the command '<b>make all</b>' to compile the code.</li>
 <li>Issue the command '<b>make check</b>' to run the test suite. This is
-optional. Not all tests are currently passing, so you shouldn't be worried about
-a couple of failures.</li>
+optional.<br>
+Not all tests are currently passing, so you shouldn't be worried about
+a couple of failures. :-)</li>
 <li>Issue the command '<b>make install</b>' to install the files.</li>
 <li>You can issue the command '<b>make clean</b>' to free the disk space used during
 the build and test phases.</li>

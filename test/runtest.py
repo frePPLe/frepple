@@ -196,7 +196,7 @@ class freppleTest (unittest.TestCase):
                 shell = True,
                 )
             res = proc.wait()
-            if res: self.assertFalse("Exit code non-zero" + res)
+            if res: self.assertFalse("Exit code non-zero")
         except KeyboardInterrupt:
             # The test has been interupted, which counts as a failure
             self.assertFalse("Interrupted test")

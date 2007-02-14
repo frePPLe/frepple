@@ -50,6 +50,9 @@ def timeformat(int):
   else:
     return '%d' % int
 
+def escape4sql(s):
+  # Replace a single quote with a double single quote
+  return s.replace("'","''")
 
 def dumpfrepple():
   '''
@@ -69,9 +72,13 @@ def dumpfrepple():
   cnt = 0
   starttime = time.clock()
   for i,j,k,l in frepple.iterator():
-     prob = Problem(name=j, description=i, start=strptime(k), end=strptime(l))
-     prob.save()
+     # The Django api to create objects is fine but it is soooo much slower
+     # than the direct database API...
+     #prob = Problem(name=j, description=i, start=strptime(k), end=strptime(l))
+     #prob.save()
+     cursor.execute("insert into frepple.output_problem (name,description,start,end) values('%s','%s','%s','%s')" % (j,escape4sql(i),strptime(k),strptime(l)))
      cnt += 1
+  cursor.connection.commit()
   print 'Exported', cnt, 'problems in', time.clock() - starttime, 'seconds'
 
 

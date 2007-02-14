@@ -15,7 +15,7 @@ def readcsv():
       if row[0].startswith('#'): continue
       # Add a line to the XML output list
       x.append('<ITEM NAME="%s" DESCRIPTION="%s" CATEGORY="%s"/>' % (row[0],row[1],row[2]))
-    except: 
+    except:
       print "error"
   x.append('</ITEMS>\n</PLAN>')
   # Post the XML to Frepple
@@ -25,6 +25,7 @@ def readcsv():
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <CURRENT>2007-01-01T00:00:00</CURRENT>
   <COMMANDS>
+    <VERBOSE>true</VERBOSE>
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="readcsv()" />
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
   </COMMANDS>

@@ -27,24 +27,71 @@
 </head>
 
 <body>
-<p align="center"><b><i><u><font size="+2">
-<a name="top"></a>Frepple solver algorithm
-</font></u></i></b></p>
+<h1>Frepple solver algorithm</h1>
 
-<p>The algorithm is pretty basic and down to earth, pretty much an enhanced MRP
-tool if you like.<br>It is structured in a clear ask-reply pattern between the
-different entities.</p>
+<p>The default solver is based on a heuristic algorithm. It is structured in a clear
+ask-reply pattern between the different entities.</p>
 
-<p>Simple things first, isn't it? And the simplicity of the algorithm has the
-benefits that<br>
-- it is easy to understand by users as well as programmers<br>
-- easy to extend because of its modular structure<br>
-- scalability to large problem sizes<br>
-- and finally and above all, it results in a plan of decent quality for a wide
-range of problems.</p>
+<p>It is possible to build create extensions to the solver, or to create
+completely new solvers altogether. The extensions can be loaded as plugin modules
+without touching or recompiling the main application.</p>
 
-<p>As a prerequisite for this chapter you need to be familiar with the modeling
-contructs used.</p>
+<p>In brief, here are the main features of the solver:
+<table>
+<colgroup><col width="90%"/>
+
+<tbody><th>Solver</th><tr><td><ul>
+<li>Ability to create <b>unconstrained plans</b>.</li>
+<li>Ability to respect following <b>constraints: material supply, available
+  capacity, leadtime, release time fence</b>.</li>
+<li>Ability to run in <b>multi-threaded</b> mode. Different threads are solving independent
+  sub-problems.</li>
+</ul></td></tr></tbody>
+
+<tbody><th>Demand</th><tr><td><ul>
+<li><b>Demand priorities</b> are recognized, such that constraints impact the lowest
+  ranking demands only. The default ranking is based on the priority attribute
+  and the due date.</li>
+<li>Ability to respect different <b>demand policies</b>: In case of a constraint a demand can be
+  allowed to be satisfied late or not. Satisfying the demand in multiple parts can be
+  allowed or not.</li>
+</ul></td></tr></tbody>
+
+<tbody><th>Operation</th><tr><td><ul>
+<li> Models <b>multiple operation types</b>:<ul>
+  <li>Operations with fixed duration.
+  <li>Operations with variable duration, depending on quantity.</li>
+  <li>Alternate operations: When a demand can't be met from the primary operation
+the solver will plan on alternative operations.</li>
+  <li>Date-effective operations: Depending on the start date (or end date) different
+operations are used.</li>
+  <li>Multi-step operations: An operation can have multiple sub-operations that
+need to be executed in sequence.</li>
+</ul></li>
+<li>The operations can be planned as a multiple of the <b>lot-size</b> quantity.</li>
+<li>A <b>minimum size</b> can be enforced when planning an operation.</li>
+<li><b>Pre- and post-operation times</b> used as soft constraints (ie they are respected when
+feasible but will be reduced when required to meet the demand in time).</li>
+</ul></td></tr></tbody>
+
+<tbody><th>Resource</th><tr><td><ul>
+<li>Resources loaded during the complete duration of an operation.</li>
+<li>Resources with <b>finite or infinite capacity</b>.</li>
+<li>Capacity shortages are solved by <b>moving operations early</b>.</li>
+</ul></td></tr></tbody>
+
+<tbody><th>Buffer</th><tr><td><ul>
+<li>Material consumption or production happens at the start or at the end of operations.</li>
+<li>Buffers with <b>finite or infinite material supply</b>.</li>
+<li>Ability to specify a desired minimum inventory level, aka <b>safety stock</b>. The
+minimum level can be time dependent and is treated as a soft constraint (ie will be
+respected when feasible, but will be violated when constraints prevent meeting it).</li>
+</ul></td></tr></tbody>
+
+</table>
+
+<p>The remainder of this page gives a detailed overview of the logic of the
+algorithm:
 <ul>
 <li><a href="#overview">Overview</a></li>
 <li><a href="#plan">Plan solver</a></li>
@@ -55,7 +102,7 @@ contructs used.</p>
 <li><a href="#load">Load solver</a></li>
 <li><a href="#resource">Resource solver</a></li>
 <li><a href="#cluster">Clusters and levels algorithm</a></li>
-</ul>
+</ul></p>
 
 <hr> <p align="right"><a name="overview" href="#top">top</a></p>
 <h1>Overview</h1>

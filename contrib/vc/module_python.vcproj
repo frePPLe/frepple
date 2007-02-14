@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="module_python"
 	ProjectGUID="{7DB2DB15-8CF4-4EAF-B666-657E03EFD67D}"
+	RootNamespace="module_python"
 	>
 	<Platforms>
 		<Platform
@@ -218,6 +219,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy the XML schema definition file"
+				CommandLine="copy $(TargetDir)\..\modules\python\mod_python.xsd  $(TargetDir)"
 			/>
 		</Configuration>
 		<Configuration

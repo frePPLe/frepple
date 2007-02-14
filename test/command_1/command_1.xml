@@ -8,8 +8,8 @@
     work both in *nix shells and windows command shell.
   </DESCRIPTION>
   <COMMANDS>
+    <VERBOSE>true</VERBOSE>
     <ABORTONERROR>true</ABORTONERROR>
-    <VERBOSE>false</VERBOSE>
     <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="echo START >output.1.xml" />
     <!-- Creating a bunch of parallel tasks which merge at the end. -->
     <COMMAND xsi:type="COMMAND_SYSTEM"

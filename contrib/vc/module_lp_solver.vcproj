@@ -214,6 +214,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy the XML schema definition file"
+				CommandLine="copy $(TargetDir)\..\modules\lp_solver\mod_lpsolver.xsd  $(TargetDir)"
 			/>
 		</Configuration>
 		<Configuration

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <COMMANDS>
+    <VERBOSE>true</VERBOSE>
     <COMMAND xsi:type="COMMAND_SAVEPLAN">
       <FILENAME>output.1.xml</FILENAME>
     </COMMAND>

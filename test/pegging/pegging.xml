@@ -3,15 +3,15 @@
 	<NAME>Verify the pegging</NAME>
 	<CURRENT>2007-01-01T00:00:00</CURRENT>
 	<COMMANDS>
-	  <VERBOSE>false</VERBOSE>
+	  <VERBOSE>true</VERBOSE>
 	  <COMMAND xsi:type="COMMAND_SOLVE">
 	    <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
 	  </COMMAND>
-	  <!-- 
+	  <!--
 	     Note that it is NOT common to save the complete plan with all pegging detail.
 	     The output file gets very big and full of redundant data.
 	     Pegging info is normally extracted for a small subset of data.
-	  --> 
+	  -->
 	  <COMMAND xsi:type="COMMAND_SAVE">
 	    <FILENAME>output.1.xml</FILENAME>
 	    <CONTENT>PLANDETAIL</CONTENT>

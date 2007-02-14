@@ -214,6 +214,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy the XML schema definition file"
+				CommandLine="copy $(TargetDir)\..\modules\forecast\mod_forecast.xsd  $(TargetDir)"
 			/>
 		</Configuration>
 		<Configuration

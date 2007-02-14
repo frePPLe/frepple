@@ -8,7 +8,7 @@
   </DESCRIPTION>
   <COMMANDS>
     <ABORTONERROR>false</ABORTONERROR>
-    <VERBOSE>false</VERBOSE>
+    <VERBOSE>true</VERBOSE>
     <COMMAND xsi:type="COMMAND_SYSTEM" CMDLINE="echo START >output.1.xml" />
 
     <!-- Simple then-command -->

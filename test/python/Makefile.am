@@ -2,6 +2,6 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = *.expect *.py python.xml frepple.xsd init.xml
+EXTRA_DIST = *.expect *.py python.xml
 
 CLEANFILES = output.* items.* after*

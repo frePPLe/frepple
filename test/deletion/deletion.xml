@@ -9,7 +9,7 @@
     dangling pointers likely to surface soon and crash the application. Ha...
   </DESCRIPTION>
   <COMMANDS>
-    <VERBOSE>false</VERBOSE>
+    <VERBOSE>true</VERBOSE>
     <ABORTONERROR>true</ABORTONERROR>
 
     <!--
@@ -57,7 +57,7 @@
 
     <!--
       Now we delete a customer. References to it will be removed from demands.
-      Also delete a flow and a load. References to them from operations and removes any 
+      Also delete a flow and a load. References to them from operations and removes any
       existing flowplans and loadplans.
     -->
     <COMMAND xsi:type="COMMAND_SOLVE">
@@ -74,7 +74,7 @@
 			]]>
       </DATA>
     </COMMAND>
-    <!--  @todo Flow and load deletion not working yet... 
+    <!--  @todo Flow and load deletion not working yet...
     <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
         <![CDATA[
@@ -93,7 +93,7 @@
 				</LOADS>
 				</PLAN>
 			]]>
-      </DATA>     
+      </DATA>
     </COMMAND>
     -->
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.6.xml" />
@@ -103,7 +103,7 @@
     -->
     <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
-        <![CDATA[  
+        <![CDATA[
         <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <OPERATION_PLANS>
             <OPERATION_PLAN ID="25" ACTION="R"/>

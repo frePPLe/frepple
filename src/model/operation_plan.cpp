@@ -204,8 +204,8 @@ DECLARE_EXPORT void OperationPlan::initialize()
   // Avoid zero quantity on top-operationplans
   if (getQuantity() <= 0.0 && !owner)
   {
-    delete this;
-    return;
+    delete this;  // @todo is this safe???
+    return;    
   }
 
   // Create unique identifier

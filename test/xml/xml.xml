@@ -4,6 +4,7 @@
   <DESCRIPTION>XML structure test model</DESCRIPTION>
   <CURRENT>2007-01-01T00:00:00</CURRENT>
   <COMMANDS>
+    <VERBOSE>true</VERBOSE>
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" VERBOSE="false"/>
     </COMMAND>

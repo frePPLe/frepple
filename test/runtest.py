@@ -54,7 +54,8 @@
 #    Tests of type 1 are skipped in this case.
 #
 
-import unittest, os, os.path, getopt, sys, glob, filecmp
+import unittest, os, os.path, getopt, sys, glob
+from subprocess import Popen, STDOUT, PIPE
 
 debug = False
 
@@ -102,14 +103,15 @@ def runTestSuite():
     # Argh... Special cases for that special platform again...
     if sys.platform == 'cygwin' and platform == 'VCC':
         # Test running with cygwin python but testing the vcc executable
-        fo = os.popen("cygpath  --windows " + os.environ['FREPPLE_HOME'])
-        os.environ['FREPPLE_HOME'] = fo.readline().strip()
-        fo.close()
+        os.environ['FREPPLE_HOME'] = Popen(
+          "cygpath  --windows " + os.environ['FREPPLE_HOME'],
+          stdout=PIPE, shell=True).communicate()[0].strip()
     if sys.platform == 'win32' and platform == 'GCC':
         # Test running with windows python but testing the cygwin executable
-        fo = os.popen("cygpath  --unix " + os.environ['FREPPLE_HOME'])
-        os.environ['FREPPLE_HOME'] = fo.readline().strip()
-        fo.close()
+        os.environ['FREPPLE_HOME'] = Popen(
+          "cygpath  --unix " + os.environ['FREPPLE_HOME'],
+          stdout=PIPE, shell=True).communicate()[0].strip()
+    print os.environ['FREPPLE_HOME']
 
     # Update the search path for shared libraries, such that the modules
     # can be picked up.
@@ -175,45 +177,45 @@ class freppleTest (unittest.TestCase):
         ''' Use the directory name as the test name.'''
         return self.subdirectory
 
-    def runExecutable(self):
-        '''Running a compiled executable'''
+    def runProcess(self, cmd):
+        '''
+        Run a child process.
+        '''
         global debug
         try:
-            # @todo need fancier catching of output
-            # Run the command and verify exit code
-            out = os.popen("./" + self.subdirectory)
-            if os.path.isfile(self.subdirectory + ".expect"):
-              cp = open('test.out','wt')
-              cp.writelines(out.readlines())
-              cp.close()
-            if out.close() != None:
-              self.assertFalse("Exit code non-zero")
-
-            #if os.system("./" + self.subdirectory + ">test.out 2>&1") != 0:
-            #    self.assertFalse("Exit code non-zero")
-            # Verify the output
-            if os.path.isfile(self.subdirectory + ".expect"):
-                if not os.path.isfile("test.out"):
-                  self.fail("Missing output file")
-                elif diff("test.out", self.subdirectory + ".expect"):
-                    self.assertFalse("Difference in output")
+            if debug:
+              o = None
+              print "\nOutput:"
+            else:
+              o = PIPE
+            proc = Popen(cmd,
+                bufsize = 0,
+                stdout = o,
+                stderr = STDOUT,
+                universal_newlines = True,
+                shell = True,
+                )
+            res = proc.wait()
+            if res: self.assertFalse("Exit code non-zero" + res)
         except KeyboardInterrupt:
             # The test has been interupted, which counts as a failure
             self.assertFalse("Interrupted test")
+
+    def runExecutable(self):
+        '''Running a compiled executable'''
+        # Run the command and verify exit code
+        self.runProcess("./" + self.subdirectory + " >test.out")
+
+        # Verify the output
+        if os.path.isfile(self.subdirectory + ".expect"):
+            if not os.path.isfile("test.out"):
+              self.fail("Missing output file")
+            elif diff("test.out", self.subdirectory + ".expect"):
+                self.assertFalse("Difference in output")
 
     def runScript(self):
         '''Running a test script'''
-        try:
-            out = os.popen("./runtest.py")
-            while True:
-              l = out.readline().strip()
-              if not l: break
-              print l
-            if out.close() != None:
-              self.assertFalse("Exit code non-zero")
-        except KeyboardInterrupt:
-            # The test has been interupted, which counts as a failure
-            self.assertFalse("Interrupted test")
+        self.runProcess("./runtest.py")
 
     def runXML(self):
         '''Running the command line tool with an XML file as argument.'''
@@ -232,20 +234,7 @@ class freppleTest (unittest.TestCase):
 
         # Run the executable
         try:
-          try:
-            out = os.popen(os.environ['EXECUTABLE'] + " -validate " + self.subdirectory + ".xml")
-            if debug:
-              print ''
-              print 'output:'
-              while True:
-                l = out.readline()
-                if not l: break
-              print ''
-            if out.close() != None:
-              self.assertFalse("Exit code non-zero")
-          except KeyboardInterrupt:
-            # The test has been interupted, which counts as a failure
-            self.assertFalse("Interrupted test")
+          self.runProcess(os.environ['EXECUTABLE'] + " -validate " + self.subdirectory + ".xml")
         finally:
           os.environ['FREPPLE_HOME'] = oldhome
 
@@ -264,15 +253,14 @@ class freppleTest (unittest.TestCase):
 def diff(f1, f2):
   '''
   Compares 2 text files and returns True if they are different.
-  The default one in the package is doing the job for us: we want to
+  The default one in the package isn't doing the job for us: we want to
   ignore differences in the file ending.
   '''
-  bufsize = 8*1024
-  fp1 = open(f1, 'rU')
+  fp1 = open(f1, 'rt')
   fp2 = open(f2, 'rt')
   while True:
-    b1 = fp1.read(bufsize)
-    b2 = fp2.read(bufsize)
+    b1 = fp1.readline().strip()
+    b2 = fp2.readline().strip()
     if b1 != b2: return True
     if not b1: return False
 

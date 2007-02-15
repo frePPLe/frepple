@@ -38,6 +38,11 @@ PyObject* CommandPython::PythonDataException = NULL;
 PyObject* CommandPython::PythonRuntimeException = NULL;
 
 
+// Type information of our Python extensions
+PyTypeObject PythonIterator::InfoType;
+PyTypeObject PythonOperationPlan::InfoType;
+
+
 // Define the methods to be exposed into Python
 PyMethodDef CommandPython::PythonAPI[] = 
 {
@@ -55,6 +60,71 @@ PyMethodDef CommandPython::PythonAPI[] =
      "Returns the model as an XML-formatted string."},
   {NULL, NULL, 0, NULL}
 };
+
+
+PyTypeObject TemplateInfoType = 
+{
+	PyObject_HEAD_INIT(NULL)
+	0,					/* ob_size */
+	"frepple.generic",	/* WILL BE UPDATED tp_name */
+	0,	/* WILL BE UPDATED tp_basicsize */
+	0,					/* tp_itemsize */
+	0,          /* tp_dealloc */
+	0,					/* tp_print */
+	0,					/* tp_getattr */
+	0,					/* tp_setattr */
+	0,					/* tp_compare */
+	0,	        /*  tp_repr */
+	0,					/* tp_as_number */
+	0,					/* tp_as_sequence */
+	0,					/* tp_as_mapping */
+	0,					/* tp_hash */
+  0,          /* tp_call */
+	0,					/* tp_str */
+	0,		      /* tp_getattro */
+	0,					/* tp_setattro */
+	0,					/* tp_as_buffer */
+	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,	/* tp_flags */
+	"std doc", /* WILL BE UPDATED  tp_doc */
+	0,					/* tp_traverse */
+	0,					/* tp_clear */
+	0,					/* tp_richcompare */
+	0,					/* tp_weaklistoffset */
+	PyObject_SelfIter,  /* tp_iter */
+	0,	/* WILL BE UPDATED tp_iternext */
+	0,				  /* tp_methods */
+	0,					/* tp_members */
+	0,					/* tp_getset */
+	0,					/* tp_base */
+	0,					/* tp_dict */
+	0,					/* tp_descr_get */
+	0,					/* tp_descr_set */
+	0,					/* tp_dictoffset */
+	0,          /* tp_init */
+	0,          /* tp_alloc */
+	0,	/* WILL BE UPDATED tp_new */
+	0,					/* tp_free */
+};
+
+
+template<class X> static void define_type(PyObject* m, PyTypeObject* x, const string& a, const string& b)
+{
+  // Copy the default type information, and overwrite some fields
+  memcpy(x,&TemplateInfoType,sizeof(PyTypeObject));
+  x->tp_basicsize =	sizeof(X);
+  x->tp_iternext = reinterpret_cast<iternextfunc>(X::next);
+  x->tp_new = X::create;
+  string *aa = new string(string("frepple.") + a);  // Note: We need to 'leak' this string!
+  string *bb = new string(b);  // Note: We need to 'leak' this string!
+  x->tp_name = const_cast<char*>(aa->c_str());
+  x->tp_doc = const_cast<char*>(bb->c_str());
+
+  // Register the new type in the module
+  if (PyType_Ready(x) < 0) 
+    throw frepple::RuntimeException("Can't register python type " + a);
+  Py_INCREF(x);
+  PyModule_AddObject(m, const_cast<char*>(a.c_str()), reinterpret_cast<PyObject*>(x));
+}
 
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
@@ -121,12 +191,10 @@ void CommandPython::initialize()
   // Capture the main trhead state, for use during threaded execution
   mainThreadState = PyThreadState_Get();
 
-  // Register our new type: iterator
-  if (PyType_Ready(&PythonIterator::InfoType) < 0) 
-    throw frepple::RuntimeException("Can't register frepple python extensions");
-  Py_INCREF(&PythonIterator::InfoType);
-  PyModule_AddObject(m, "iterator", reinterpret_cast<PyObject*>(&PythonIterator::InfoType));
-  
+  // Register our new types
+  define_type<PythonIterator>(m, &PythonIterator::InfoType, "iterator", "Iterate over frepple objects");
+  define_type<PythonOperationPlan>(m, &PythonOperationPlan::InfoType, "operationplan", "frepple operationplan");
+
   // Redirect the stderr and stdout streams of Python
   PyRun_SimpleString(
     "import frepple, sys\n"  
@@ -443,12 +511,6 @@ PyObject *CommandPython::python_saveXMLstring(PyObject* self, PyObject* args)
 }
 
 
-extern "C" PyObject* PythonIterator::repr(PythonIterator* obj)
-{
-    return PyString_FromFormat("Frepple problem iterator");
-}
-
-
 extern "C" PyObject* PythonIterator::create(PyTypeObject* type, PyObject *args, PyObject *kwargs)
 {
   // Allocate memory
@@ -466,11 +528,12 @@ extern "C" PyObject* PythonIterator::next(PythonIterator* obj)
 {
   if (obj->iter != Problem::end())
   {
-    PyObject* result = PyTuple_New(4);
-    PyTuple_SET_ITEM(result, 0, PyString_FromFormat("%s", obj->iter->getDescription().c_str()));
-    PyTuple_SET_ITEM(result, 1, PyString_FromFormat("%s", obj->iter->getType().type.c_str()));
-    PyTuple_SET_ITEM(result, 2, PyString_FromFormat("%s", string(obj->iter->getDateRange().getStart()).c_str()));
-    PyTuple_SET_ITEM(result, 3, PyString_FromFormat("%s", string(obj->iter->getDateRange().getEnd()).c_str()));
+    PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s}",
+      "description", obj->iter->getDescription().c_str(),
+      "type", obj->iter->getType().type.c_str(),
+      "start", string(obj->iter->getDateRange().getStart()).c_str(),
+      "end", string(obj->iter->getDateRange().getEnd()).c_str()
+      );
     ++(obj->iter);
     return result;
   }
@@ -480,48 +543,34 @@ extern "C" PyObject* PythonIterator::next(PythonIterator* obj)
 }
 
 
-PyTypeObject PythonIterator::InfoType = 
+extern "C" PyObject* PythonOperationPlan::create(PyTypeObject* type, PyObject *args, PyObject *kwargs)
 {
-	PyObject_HEAD_INIT(NULL)
-	0,					/* ob_size */
-	"frepple.iterator",	/* tp_name */
-	sizeof(PythonIterator),	/* tp_basicsize */
-	0,					/* tp_itemsize */
-	0,          /* tp_dealloc */
-	0,					/* tp_print */
-	0,					/* tp_getattr */
-	0,					/* tp_setattr */
-	0,					/* tp_compare */
-	reinterpret_cast<reprfunc>(PythonIterator::repr),	/* tp_repr */
-	0,					/* tp_as_number */
-	0,					/* tp_as_sequence */
-	0,					/* tp_as_mapping */
-	0,					/* tp_hash */
-  0,          /* tp_call */
-	0,					/* tp_str */
-	0,		      /* tp_getattro */
-	0,					/* tp_setattro */
-	0,					/* tp_as_buffer */
-	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,	/* tp_flags */
-	"Iterate over frepple objects", /* tp_doc */
-	0,					/* tp_traverse */
-	0,					/* tp_clear */
-	0,					/* tp_richcompare */
-	0,					/* tp_weaklistoffset */
-	PyObject_SelfIter,  /* tp_iter */
-	reinterpret_cast<iternextfunc>(PythonIterator::next),	/* tp_iternext */
-	0,				  /* tp_methods */
-	0,					/* tp_members */
-	0,					/* tp_getset */
-	0,					/* tp_base */
-	0,					/* tp_dict */
-	0,					/* tp_descr_get */
-	0,					/* tp_descr_set */
-	0,					/* tp_dictoffset */
-	0,          /* tp_init */
-	0,          /* tp_alloc */
-	PythonIterator::create,	/* tp_new */
-	0,					/* tp_free */
-};
+  // Allocate memory
+  PythonOperationPlan* obj = PyObject_New(PythonOperationPlan, &PythonOperationPlan::InfoType);
+
+  // Initialize the iterator
+  obj->iter = OperationPlan::begin();
+
+  return reinterpret_cast<PyObject*>(obj);
+}
+
+
+extern "C" PyObject* PythonOperationPlan::next(PythonOperationPlan* obj) 
+{
+  if (obj->iter != OperationPlan::end())
+  {
+    PyObject* result = Py_BuildValue("{s:l,s:s,s:f,s:s,s:s}",
+      "identifier", obj->iter->getIdentifier(),
+      "operation", obj->iter->getOperation()->getName().c_str(),
+      "quantity", obj->iter->getQuantity(),
+      "start", string(obj->iter->getDates().getStart()).c_str(),
+      "end", string(obj->iter->getDates().getEnd()).c_str()
+      );
+    ++(obj->iter);
+    return result;
+  }
+  // Reached the end of the iteration
+  return NULL;
+}
 
 } // End namespace

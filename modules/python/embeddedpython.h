@@ -224,6 +224,8 @@ class CommandPython : public Command, public XMLinstruction
 
 extern "C"
 {
+
+
 /** This class is an interface between Python and the Frepple. */
 struct PythonIterator
 {
@@ -234,16 +236,35 @@ struct PythonIterator
     /** Python type definition structure. */
     static PyTypeObject InfoType;
 
-    /** Returns a string representation of the iterator. */
-    static PyObject* repr(PythonIterator* obj);
-
     /** Move to the next item. */
     static PyObject* next(PythonIterator* obj);
 
     /** Create a new iterator. */
     static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
 };
+
+
+/** xxx */
+struct PythonOperationPlan
+{
+  private:
+    PyObject_HEAD
+    OperationPlan::iterator iter;
+  public:
+    /** Python type definition structure. */
+    static PyTypeObject InfoType;
+
+    /** Return the current object and move to the next one. */
+    static PyObject* next(PythonOperationPlan* obj);
+
+    /** Create a new iterator. */
+    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+};
+
+
 }
+
+
 
 }
 

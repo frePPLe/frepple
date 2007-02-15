@@ -173,6 +173,9 @@ void CommandPython::initialize()
     throw frepple::RuntimeException("Can't initialize Python interpreter");
   }
 
+  // Make the datetime types available
+  PyDateTime_IMPORT;
+
   // Create python exception types
   int nok = 0;
   PythonLogicException = PyErr_NewException("frepple.LogicException", NULL, NULL);
@@ -524,16 +527,39 @@ extern "C" PyObject* PythonIterator::create(PyTypeObject* type, PyObject *args, 
 }
 
 
+PyObject* PythonDateTime(const Date& d)
+{
+  // The standard library function localtime() is not re-entrant: the same
+  // static structure is used for all calls. In a multi-threaded environment
+  // the function is not to be used.
+  // The POSIX standard defines a re-entrant version of the function:
+  // localtime_r. 
+  // Visual C++ 6.0 and Borland 5.5 are missing it, but provide a thread-safe
+  // variant without changing the function semantics.
+  time_t ticks = d.getTicks();
+#ifdef HAVE_LOCALTIME_R
+  struct tm *t;
+  localtime_r(&ticks, &t);
+  if (t == NULL) return NULL;
+  return PyDateTime_FromDateAndTime(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, 0);
+#else
+  struct tm t = *localtime(&ticks);
+  return PyDateTime_FromDateAndTime(t.tm_year+1900, t.tm_mon+1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, 0);
+#endif
+}
+
+
 extern "C" PyObject* PythonIterator::next(PythonIterator* obj) 
 {
   if (obj->iter != Problem::end())
   {
-    PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s}",
+    PyObject* result = Py_BuildValue("{s:s,s:s,s:S,s:S}",
       "description", obj->iter->getDescription().c_str(),
       "type", obj->iter->getType().type.c_str(),
-      "start", string(obj->iter->getDateRange().getStart()).c_str(),
-      "end", string(obj->iter->getDateRange().getEnd()).c_str()
-      );
+      "start", PythonDateTime(obj->iter->getDateRange().getStart()),
+      "end", PythonDateTime(obj->iter->getDateRange().getEnd())
+      ); 
+
     ++(obj->iter);
     return result;
   }
@@ -559,12 +585,12 @@ extern "C" PyObject* PythonOperationPlan::next(PythonOperationPlan* obj)
 {
   if (obj->iter != OperationPlan::end())
   {
-    PyObject* result = Py_BuildValue("{s:l,s:s,s:f,s:s,s:s}",
+    PyObject* result = Py_BuildValue("{s:l,s:s,s:f,s:N,s:N}",
       "identifier", obj->iter->getIdentifier(),
       "operation", obj->iter->getOperation()->getName().c_str(),
       "quantity", obj->iter->getQuantity(),
-      "start", string(obj->iter->getDates().getStart()).c_str(),
-      "end", string(obj->iter->getDates().getEnd()).c_str()
+      "start", PythonDateTime(obj->iter->getDates().getStart()),
+      "end", PythonDateTime(obj->iter->getDates().getEnd())
       );
     ++(obj->iter);
     return result;

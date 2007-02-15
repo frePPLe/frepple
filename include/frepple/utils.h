@@ -1356,6 +1356,10 @@ class Date
       return string(str);
     }
 
+    /** Return the seconds since the epoch, which is also the internal 
+      * representation of a date. */
+    time_t getTicks() const {return lval;}
+
     /** Function that parses a string according to the format string. */
     DECLARE_EXPORT void parse(const char*, const string& = format);
 

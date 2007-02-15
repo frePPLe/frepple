@@ -86,6 +86,7 @@
 
 /* Python.h has to be included first. */
 #include "Python.h"
+#include "datetime.h"
 
 #include "frepple.h"
 #include "freppleinterface.h"
@@ -220,6 +221,10 @@ class CommandPython : public Command, public XMLinstruction
     /** Python exception class matching with Frepple::RuntimeException. */
     static PyObject* PythonRuntimeException;
 };
+
+
+/** Conversion between the frepple date class and the Python datetime class. */
+PyObject* PythonDateTime(const Date& d);
 
 
 extern "C"

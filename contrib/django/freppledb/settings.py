@@ -23,7 +23,7 @@
 
 # Django settings for freppledb project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -104,7 +104,10 @@ INSTALLED_APPS = (
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.core.context_processors.auth',
-    'django.core.context_processors.debug',
+    # The debug context keeps track of all sql statements
+    # that are executed. Handy for debugging, but a memory killer when
+    # huge numbers of queries qre executed... 
+    #'django.core.context_processors.debug',
     #'django.core.context_processors.i18n',
 )
 

@@ -386,8 +386,9 @@ PyObject* CommandPython::python_log(PyObject *self, PyObject *args)
   int ok = PyArg_ParseTuple(args, "s", &data);
   if (!ok) return NULL;
   
-  // Print 
+  // Print and flush the output stream 
   cout << data;
+  cout.flush();
   
   // Return code
   return Py_BuildValue("");  // Safer than using Py_None, which is not 
@@ -538,14 +539,12 @@ PyObject* PythonDateTime(const Date& d)
   // variant without changing the function semantics.
   time_t ticks = d.getTicks();
 #ifdef HAVE_LOCALTIME_R
-  struct tm *t;
+  struct tm t;
   localtime_r(&ticks, &t);
-  if (t == NULL) return NULL;
-  return PyDateTime_FromDateAndTime(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, 0);
 #else
   struct tm t = *localtime(&ticks);
-  return PyDateTime_FromDateAndTime(t.tm_year+1900, t.tm_mon+1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, 0);
 #endif
+  return PyDateTime_FromDateAndTime(t.tm_year+1900, t.tm_mon+1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, 0);
 }
 
 

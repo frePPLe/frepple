@@ -307,7 +307,7 @@ DECLARE_EXPORT void Demand::addPolicy(const string& s)
     while (isspace(*ptr) || ispunct(*ptr)) ++ptr;
 
     // Jump to the right string comparison, depending on the first character
-    bool notfound = true;
+    bool found = true;
     switch (*ptr)
     {
       case 'P':
@@ -328,7 +328,7 @@ DECLARE_EXPORT void Demand::addPolicy(const string& s)
           policy.reset(0);
         }
         else
-          notfound = false;
+          found = false;
         break;
       case 'S':
         if (strncasecmp(ptr, "SINGLEDELIVERY", 14) == 0)
@@ -340,7 +340,7 @@ DECLARE_EXPORT void Demand::addPolicy(const string& s)
           policy.set(1);
         }
         else
-          notfound = false;
+          found = false;
         break;
       case 'M':
         if (strncasecmp(ptr, "MULTIDELIVERY", 13) == 0)
@@ -352,15 +352,15 @@ DECLARE_EXPORT void Demand::addPolicy(const string& s)
           policy.reset(1);
         }
         else
-          notfound = false;
+          found = false;
         break;
       default:
-        notfound = false;
+        found = false;
     }
     if (!*ptr) return;
 
     // Unrecognized policy name...
-    if (notfound)
+    if (!found)
       throw DataException("Unrecognized policy for demand '" + getName()
         + "' in value: '" + ptr + "'");
   }

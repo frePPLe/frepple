@@ -107,7 +107,8 @@ class Location(models.Model):
     description = models.CharField(maxlength=200, null=True, blank=True)
     category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    owner = models.ForeignKey('self', null=True, blank=True, related_name='children', raw_id_admin=True)
+    owner = models.ForeignKey('self', null=True, blank=True, related_name='children',
+      raw_id_admin=True, help_text='Hierarchical parent')
     def __str__(self):
         return self.name
     class Admin:
@@ -121,7 +122,8 @@ class Customer(models.Model):
     description = models.CharField(maxlength=200, null=True, blank=True)
     category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    owner = models.ForeignKey('self', null=True, blank=True, related_name='children', raw_id_admin=True)
+    owner = models.ForeignKey('self', null=True, blank=True, related_name='children',
+      raw_id_admin=True, help_text='Hierarchical parent')
     def __str__(self):
         return self.name
     class Admin:
@@ -136,7 +138,8 @@ class Item(models.Model):
     category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
     operation = models.ForeignKey('Operation', null=True, blank=True, raw_id_admin=True)
-    owner = models.ForeignKey('self', null=True, blank=True, related_name='children', raw_id_admin=True)
+    owner = models.ForeignKey('self', null=True, blank=True, related_name='children',
+      raw_id_admin=True, help_text='Hierarchical parent')
     def __str__(self):
         return self.name
     class Admin:
@@ -152,7 +155,8 @@ class Operation(models.Model):
     posttime = models.FloatField('post-op time', max_digits=10, decimal_places=2, null=True, blank=True)
     sizeminimum = models.FloatField('size minimum', max_digits=10, decimal_places=2, null=True, blank=True)
     sizemultiple = models.FloatField('size multiple', max_digits=10, decimal_places=2, null=True, blank=True)
-    owner = models.ForeignKey('self', null=True, blank=True, related_name='suboperations', raw_id_admin=True)
+    owner = models.ForeignKey('self', null=True, blank=True, related_name='suboperations',
+      raw_id_admin=True, help_text='Hierarchical parent')
     def __str__(self):
         return self.name
     class Admin:
@@ -299,6 +303,12 @@ class Demand(models.Model):
       (2,'2 - normal'),
       (3,'3 - low')
     )
+    demandpolicies = (
+      ('','late with multiple deliveries'),
+      ('SINGLEDELIVERY','late with single delivery'),
+      ('PLANSHORT', 'short with multiple deliveries'),
+      ('PLANSHORT SINGLEDELIVERY', 'short with single delivery')
+    )
     name = models.CharField(maxlength=60, primary_key=True)
     description = models.CharField(maxlength=200, null=True, blank=True)
     category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
@@ -306,16 +316,20 @@ class Demand(models.Model):
     customer = models.ForeignKey(Customer, null=True, blank=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
     due = models.DateField('due')
-    operation = models.ForeignKey('Operation', null=True, blank=True, related_name='used_demand', raw_id_admin=True)
+    operation = models.ForeignKey('Operation', null=True, blank=True,
+      related_name='used_demand', raw_id_admin=True, help_text='Operation used to satisfy this demand')
     quantity = models.FloatField(max_digits=10, decimal_places=2)
     priority = models.PositiveIntegerField(default=2, choices=demandpriorities, radio_admin=True)
-    owner = models.ForeignKey('self', null=True, blank=True, raw_id_admin=True)
+    policy = models.CharField(maxlength=25, null=True, blank=True, choices=demandpolicies,
+      help_text='Choose whether to plan the demand short or late, and with single or multiple deliveries allowed')
+    owner = models.ForeignKey('self', null=True, blank=True, raw_id_admin=True,
+      help_text='Hierarchical parent')
     def __str__(self):
         return self.name
     class Admin:
         fields = (
             (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'quantity', 'priority','owner')}),
-            ('Planning parameters', {'fields': ('operation',), 'classes': 'collapse'}),
+            ('Planning parameters', {'fields': ('operation', 'policy', ), 'classes': 'collapse'}),
         )
         list_display = ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'operation', 'quantity', 'priority','owner')
         search_fields = ['name','customer','item','operation']

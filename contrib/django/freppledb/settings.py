@@ -106,7 +106,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.auth',
     # The debug context keeps track of all sql statements
     # that are executed. Handy for debugging, but a memory killer when
-    # huge numbers of queries qre executed... 
+    # huge numbers of queries qre executed...
     #'django.core.context_processors.debug',
     #'django.core.context_processors.i18n',
 )

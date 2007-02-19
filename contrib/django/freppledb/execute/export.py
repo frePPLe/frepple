@@ -310,18 +310,19 @@ def loadfrepple():
   print 'Loaded %d operationplans in %.2f seconds' % (cnt, times()[4] - starttime)
 
   # Demand
-  cursor.execute("SELECT name, due, quantity, priority, item_id, operation_id, customer_id, owner_id FROM frepple.input_demand")
+  cursor.execute("SELECT name, due, quantity, priority, item_id, operation_id, customer_id, owner_id, policy FROM frepple.input_demand")
   cnt = 0
   starttime = times()[4]
   print 'Importing demands...'
   x = [ header, '<DEMANDS>' ]
-  for i, j, k, l, m, n, o, p in cursor.fetchall():
+  for i, j, k, l, m, n, o, p, q in cursor.fetchall():
     cnt += 1
     x.append('<DEMAND NAME="%s" DUE="%s" QUANTITY="%s" PRIORITY="%d">' % (i, j.strftime(dateformat), k, l))
     if m: x.append( '<ITEM NAME="%s" />' % m)
     if n: x.append( '<OPERATION NAME="%s" />' % n)
     if o: x.append( '<CUSTOMER NAME="%s" />' % o)
     if p: x.append( '<OWNER NAME="%s" />' % p)
+    if q: x.append( '<POLICY>%s</POLICY>' % q)
     x.append('</DEMAND>')
   x.append('</DEMANDS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)

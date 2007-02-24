@@ -509,9 +509,6 @@
 					<xsd:enumeration value="PLANLATE" />
 					<xsd:enumeration value="SINGLEDELIVERY" />
 					<xsd:enumeration value="MULTIDELIVERY" />
-					<xsd:enumeration value="AGGREGATE" />
-					<xsd:enumeration value="SUBTRACT" />
-					<xsd:enumeration value="DISAGGREGATE" />
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:list>
@@ -526,7 +523,6 @@
 		</xsd:annotation>
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:group ref="COMMON_FIELDS" />
-			<xsd:element name="NETQUANTITY" type="positiveFloat" />
 			<xsd:element name="QUANTITY" type="positiveFloat" />
 			<xsd:element name="ITEM" type="ITEM" />
 			<xsd:element name="DUE" type="xsd:dateTime" />

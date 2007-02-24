@@ -80,8 +80,20 @@
   *   - <b>createItem(string, string)</b>:<br>
   *     Uses the C++ API to create an item and its delivery operation.<br>
   *     For experimental purposes...
-  *   - class <b>frepple.iterator</b>:<br>
+  *   - class <b>frepple.problem</b>:<br>
   *     Implements an iterator for problems.
+  *   - class <b>frepple.operationplan</b>:<br>
+  *     Implements an iterator for operationplans.
+  *   - class <b>frepple.demand</b>:<br>
+  *     Implements an iterator for demand.
+  *   - class <b>frepple.buffer</b>:<br>
+  *     Implements an iterator for buffer.
+  *   - class <b>frepple.resource</b>:<br>
+  *     Implements an iterator for resource.
+  *
+  * Note that the interface between Frepple and Python is an iterator,
+  * and we stay away from the 'twin-object' approach. This is because
+  * we want frepple to remain the owner of all data.
   */
 
 /* Python.h has to be included first. */
@@ -128,7 +140,40 @@ class CommandPython : public Command, public XMLinstruction
       * within Python. */
     static PyMethodDef PythonAPI[];
 
+    /** This static variable is a template for defining our Python 
+      * objects.<br>
+      * It is copied for each interface object we define.
+      */
+    static const PyTypeObject TemplateInfoType; 
+
   public:
+    /** This template function initializes a structure as a Python class.<br>
+      * The class passed as template argument must have a verify specific 
+      * structure: see the examples.
+      */
+    template<class X> static void define_type(PyObject* m, const string& a, const string& b)
+    {
+      // Copy the default type information, and overwrite some fields
+      memcpy(&X::InfoType, &TemplateInfoType, sizeof(PyTypeObject));
+      X::InfoType.tp_basicsize =	sizeof(X);
+      X::InfoType.tp_iternext = reinterpret_cast<iternextfunc>(X::next);
+      X::InfoType.tp_new = X::create;
+      // Note: We need to 'leak' the strings allocated on the next two lines!
+      string *aa = new string(string("frepple.") + a);  
+      string *bb = new string(b);  
+      X::InfoType.tp_name = const_cast<char*>(aa->c_str());
+      X::InfoType.tp_doc = const_cast<char*>(bb->c_str());
+
+      // Allow for type-specific registration code;
+      X::define_type();
+
+      // Register the new type in the module
+      if (PyType_Ready(&X::InfoType) < 0) 
+        throw frepple::RuntimeException("Can't register python type " + a);
+      Py_INCREF(&X::InfoType);
+      PyModule_AddObject(m, const_cast<char*>(a.c_str()), reinterpret_cast<PyObject*>(&X::InfoType));
+    }
+
     /** Executes either the if- or the else-clause, depending on the
       * condition. */
     void execute();
@@ -231,39 +276,73 @@ extern "C"
 {
 
 
-/** This class is an interface between Python and the Frepple. */
-struct PythonIterator
+/** This class export Problem information to Python. */
+struct PythonProblem
 {
   private:
     PyObject_HEAD
     Problem::const_iterator iter;
   public:
-    /** Python type definition structure. */
     static PyTypeObject InfoType;
-
-    /** Move to the next item. */
-    static PyObject* next(PythonIterator* obj);
-
-    /** Create a new iterator. */
+    static PyObject* next(PythonProblem* obj);
     static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+    static void define_type() {}
 };
 
 
-/** xxx */
+/** This class export OperationPlan information to Python. */
 struct PythonOperationPlan
 {
   private:
     PyObject_HEAD
     OperationPlan::iterator iter;
   public:
-    /** Python type definition structure. */
     static PyTypeObject InfoType;
-
-    /** Return the current object and move to the next one. */
     static PyObject* next(PythonOperationPlan* obj);
-
-    /** Create a new iterator. */
     static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+    static void define_type() {}
+};
+
+
+/** This class export Demand information to Python. */
+struct PythonDemand
+{
+  private:
+    PyObject_HEAD
+    Demand::iterator iter;
+  public:
+    static PyTypeObject InfoType;
+    static PyObject* next(PythonDemand* obj);
+    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+    static void define_type() {}
+};
+
+
+/** This class export Buffer information to Python. */
+struct PythonBuffer
+{
+  private:
+    PyObject_HEAD
+    Buffer::iterator iter;
+  public:
+    static PyTypeObject InfoType;
+    static PyObject* next(PythonBuffer* obj);
+    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+    static void define_type() {}
+};
+
+
+/** This class export OperationPlan information to Python. */
+struct PythonResource
+{
+  private:
+    PyObject_HEAD
+    Resource::iterator iter;
+  public:
+    static PyTypeObject InfoType;
+    static PyObject* next(PythonResource* obj);
+    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+    static void define_type() {}
 };
 
 

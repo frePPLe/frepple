@@ -2,28 +2,37 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html">
-<title>Library usage</title>
+<title>Architecture</title>
 <link href="styles.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<H1>Library usage</H1>
-<p>This page discusses the different ways the framework can be accessed from
-your different environments. The list is definately not exhaustive, and is
-mentioned here to give you some possibilities and to wet your appetite...</p>
-The general principles are pretty simple:
-<ul>
-<li>The focus of frepple is on a common library and framework.<br> Usage of
-the framework by a wide range of application and through a wide range of
-technologies is intended.</li>
-<li>All clients should normally access the library through the well-defined
-interface FreppleInterface.<br>This interface can then accessed with a wide
-range of technologies, as described below.<br>
-</li>
-<li>The public interface is of the library is synchroneous, i.e. a client's
-function call returns only when the complete processing is finished.</li>
-<li>The interface can throw exceptions, and the client is responsible for
-handling those correcty.</li>
-</ul>
+<H1>Architecture</H1>
+<p>The Frepple binaries are a collection of shared libraries: a core
+library frepple.so (frepple.dll on windows) and an additional shared library
+for each extension module.</p>
+<p>The Frepple shared library can be used in different ways by applications.
+Below is a list of the most common ways to deploy Frepple (but additional
+scenarios are definately feasible):</p>
+
+<table>
+<colgroup><col width="100%"/><col width="400"/></colgroup>
+
+<th colspan="2"><h2>Command line application</h2></th>
+<tr><td valign="top">
+<p></p>
+</td>
+<td><img src="deployment.jpg" alt="Deployment diagram" width="400"></td></tr>
+
+<th colspan="2"><h2>Command line application</h2></th>
+<tr><td valign="top">
+<p></p>
+</td>
+<td><img src="deployment.jpg" alt="Deployment diagram" width="400"></td></tr>
+
+
+</table>
+
+
 
 <center><img src="deployment.jpg" alt="Deployment diagram"></center>
 

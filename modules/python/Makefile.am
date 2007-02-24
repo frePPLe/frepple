@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-sources = embeddedpython.cpp embeddedpython.h
+sources = frepple2python.cpp embeddedpython.cpp embeddedpython.h
 
 # Install the library in the bin directory.
 # Ain't standard practice, but in this way all binaries are consolidated in a

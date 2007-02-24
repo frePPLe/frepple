@@ -58,19 +58,19 @@ def dumpfrepple():
   sql = []
   first = True
   starttime = times()[4]
-  for i in frepple.iterator():
+  for i in frepple.problem():
      # The Django api to create objects is fine but it is soooo much slower
      # than the direct database API...
      #prob = Problem(name=j, description=i, start=strptime(k), end=strptime(l))
      #prob.save()
      if first:
         sql.append("insert into frepple.output_problem (name,description,start,end) values('%s','%s','%s','%s')" %
-           (i['type'], i['description'].replace("'","''"), i['start'], i['end']))
+           (i['TYPE'], i['DESCRIPTION'].replace("'","''"), i['START'], i['END']))
         first = False
      else:
-        sql.append(",('%s','%s','%s','%s')" % (i['type'], i['description'].replace("'","''"), i['start'], i['end']))
+        sql.append(",('%s','%s','%s','%s')" % (i['TYPE'], i['DESCRIPTION'].replace("'","''"), i['START'], i['END']))
      cnt += 1
-     if cnt % 5000 == 0: 
+     if cnt % 5000 == 0:
        cursor.execute(' '.join(sql))
        sql = []
        first = True
@@ -83,15 +83,15 @@ def dumpfrepple():
   sql = []
   first = True
   for i in frepple.operationplan():
-     if first:   
-        sql.append("insert into frepple.output_operationplan (identifier, operation_id,quantity,start,end) values (%s ,'%s' ,%s ,'%s' ,'%s')" % 
-           (i['identifier'], i['operation'].replace("'","''"), i['quantity'], i['start'], i['end']))
+     if first:
+        sql.append("insert into frepple.output_operationplan (identifier, operation_id,quantity,start,end) values (%s ,'%s' ,%s ,'%s' ,'%s')" %
+           (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], i['START'], i['END']))
         first = False
      else:
-        sql.append(",(%s ,'%s' ,%s ,'%s' ,'%s')" % 
-            (i['identifier'], i['operation'].replace("'","''"), i['quantity'], i['start'], i['end']))
+        sql.append(",(%s ,'%s' ,%s ,'%s' ,'%s')" %
+            (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], i['START'], i['END']))
      cnt += 1
-     if cnt % 5000 == 0: 
+     if cnt % 5000 == 0:
        cursor.execute(' '.join(sql))
        sql = []
        first = True

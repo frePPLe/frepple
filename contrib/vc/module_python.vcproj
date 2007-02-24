@@ -409,6 +409,10 @@
 				RelativePath="..\..\modules\python\embeddedpython.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\modules\python\frepple2python.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

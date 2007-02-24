@@ -512,19 +512,24 @@ class CalendarOperation : public CalendarPointer<Operation>
 };
 
 
-/** A problem represents inconsistencies, alerts and warnings in the model.
-  * Problems are maintained internally by the system. They are thus
-  * export-only, meaning that we can't directly import or build problems.
-  * This class is the pure virtual base class for all problem types.
+/** A problem represents infeasibilities, alerts and warnings in the plans.<br>
+  * Problems are maintained internally by the system. They are thus only
+  * exported, meaning that you can't directly import or create problems.<br>
+  * This class is the pure virtual base class for all problem types.<br>
   * The usage of the problem objects is based on the following principles:
-  *   - Problems objects are passive. They don't actively change the model
-  *     state.
-  *   - Objects of the HasProblems class actively create and destroy Problem
-  *     objects.
-  *   - Problem objects are managed in a lazy way, meaning they only are
-  *     getting created when the list of problems is requested by the user.
-  *   - Given all the above, Problems are lightweight objects that consume
-  *     limited memory.
+  *  - Problems objects are passive. They don't actively change the model
+  *    state.
+  *  - Objects of the HasProblems class actively create and destroy Problem
+  *    objects.
+  *  - Problem objects are managed in a 'lazy' way, meaning they only are
+  *    getting created when the list of problems is requested by the user.<br>
+  *    During normal planning activities we merely mark the planning entities 
+  *    that have changed, so we can easily pick up which entities to recompute 
+  *    the problems for. In this way we can avoid the cpu and memory overhead 
+  *    of keeping the problem list up to date at all times, while still 
+  *    providing the user with the correct list of problems when required.
+  *  - Given the above, Problems are lightweight objects that consume
+  *    limited memory.
   */
 class Problem : public NonCopyable
 {
@@ -1232,7 +1237,7 @@ class Operation : public HasName<Operation>,
     void removeSuperOperation(Operation *o)
     {superoplist.remove(o); o->removeSubOperation(this);}
 
-    /** Return the relase fence of this operation. */
+    /** Return the release fence of this operation. */
     TimePeriod getFence() const {return fence;}
 
     /** Update the release fence of this operation. */
@@ -1295,7 +1300,20 @@ class Operation : public HasName<Operation>,
 
 /** An operationplan is the key dynamic element of a plan. It represents
   * a certain quantity being planned along a certain operation during
-  * a certain date range.
+  * a certain date range.<br>
+  * From a coding perspective:
+  *  - Operationplans are created by the factory method createOperationPlan() 
+  *    on the matching operation class. 
+  *  - The createLoadAndFlowplans() can optionally be called to also create 
+  *    the loadplans and flowplans, to take care of the material and
+  *    capacity consumption.
+  *  - Once you're sure about creating the operationplan, the initialize() 
+  *    method should be called. It will assign the operationplan a unique 
+  *    numeric identifier, register the operationplan in a container owned
+  *    by the operation instance, and also create loadplans and flowplans 
+  *    if this hasn't been done yet.<br>
+  *  - Operationplans can be organized in hierarchical structure, matching 
+  *    the operation hierarchies they belong to.
   */
 class OperationPlan
  : public Object, public HasProblems, public NonCopyable
@@ -2309,7 +2327,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** Returns the available material on hand immediately after the
       * given date.
       */
-    DECLARE_EXPORT double getOnHand(Date) const;
+    DECLARE_EXPORT double getOnHand(Date d = Date::infinitePast) const;
 
     /** Update the on-hand inventory at the start of the planning horizon. */
     DECLARE_EXPORT void setOnHand(float f);

@@ -38,11 +38,6 @@ PyObject* CommandPython::PythonDataException = NULL;
 PyObject* CommandPython::PythonRuntimeException = NULL;
 
 
-// Type information of our Python extensions
-PyTypeObject PythonIterator::InfoType;
-PyTypeObject PythonOperationPlan::InfoType;
-
-
 // Define the methods to be exposed into Python
 PyMethodDef CommandPython::PythonAPI[] = 
 {
@@ -62,7 +57,7 @@ PyMethodDef CommandPython::PythonAPI[] =
 };
 
 
-PyTypeObject TemplateInfoType = 
+const PyTypeObject CommandPython::TemplateInfoType = 
 {
 	PyObject_HEAD_INIT(NULL)
 	0,					/* ob_size */
@@ -105,26 +100,6 @@ PyTypeObject TemplateInfoType =
 	0,	/* WILL BE UPDATED tp_new */
 	0,					/* tp_free */
 };
-
-
-template<class X> static void define_type(PyObject* m, PyTypeObject* x, const string& a, const string& b)
-{
-  // Copy the default type information, and overwrite some fields
-  memcpy(x,&TemplateInfoType,sizeof(PyTypeObject));
-  x->tp_basicsize =	sizeof(X);
-  x->tp_iternext = reinterpret_cast<iternextfunc>(X::next);
-  x->tp_new = X::create;
-  string *aa = new string(string("frepple.") + a);  // Note: We need to 'leak' this string!
-  string *bb = new string(b);  // Note: We need to 'leak' this string!
-  x->tp_name = const_cast<char*>(aa->c_str());
-  x->tp_doc = const_cast<char*>(bb->c_str());
-
-  // Register the new type in the module
-  if (PyType_Ready(x) < 0) 
-    throw frepple::RuntimeException("Can't register python type " + a);
-  Py_INCREF(x);
-  PyModule_AddObject(m, const_cast<char*>(a.c_str()), reinterpret_cast<PyObject*>(x));
-}
 
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
@@ -195,8 +170,11 @@ void CommandPython::initialize()
   mainThreadState = PyThreadState_Get();
 
   // Register our new types
-  define_type<PythonIterator>(m, &PythonIterator::InfoType, "iterator", "Iterate over frepple objects");
-  define_type<PythonOperationPlan>(m, &PythonOperationPlan::InfoType, "operationplan", "frepple operationplan");
+  define_type<PythonProblem>(m, "problem", "frepple problem");
+  define_type<PythonOperationPlan>(m, "operationplan", "frepple operationplan");
+  define_type<PythonDemand>(m, "demand", "frepple demand");
+  define_type<PythonBuffer>(m, "buffer", "frepple buffer");
+  define_type<PythonResource>(m, "resource", "frepple resource");
 
   // Redirect the stderr and stdout streams of Python
   PyRun_SimpleString(
@@ -515,19 +493,6 @@ PyObject *CommandPython::python_saveXMLstring(PyObject* self, PyObject* args)
 }
 
 
-extern "C" PyObject* PythonIterator::create(PyTypeObject* type, PyObject *args, PyObject *kwargs)
-{
-  // Allocate memory
-  PythonIterator* obj = PyObject_New(PythonIterator, &PythonIterator::InfoType);
-
-  // Initialize the problem iterator
-  obj->iter.reset();
-  obj->iter = Problem::begin();
-
-  return reinterpret_cast<PyObject*>(obj);
-}
-
-
 PyObject* PythonDateTime(const Date& d)
 {
   // The standard library function localtime() is not re-entrant: the same
@@ -544,58 +509,9 @@ PyObject* PythonDateTime(const Date& d)
 #else
   struct tm t = *localtime(&ticks);
 #endif
-  return PyDateTime_FromDateAndTime(t.tm_year+1900, t.tm_mon+1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, 0);
+  return PyDateTime_FromDateAndTime(t.tm_year+1900, t.tm_mon+1, t.tm_mday, 
+    t.tm_hour, t.tm_min, t.tm_sec, 0);
 }
 
-
-extern "C" PyObject* PythonIterator::next(PythonIterator* obj) 
-{
-  if (obj->iter != Problem::end())
-  {
-    PyObject* result = Py_BuildValue("{s:s,s:s,s:S,s:S}",
-      "description", obj->iter->getDescription().c_str(),
-      "type", obj->iter->getType().type.c_str(),
-      "start", PythonDateTime(obj->iter->getDateRange().getStart()),
-      "end", PythonDateTime(obj->iter->getDateRange().getEnd())
-      ); 
-
-    ++(obj->iter);
-    return result;
-  }
-  else 
-    // Reached the end of the iteration
-    return NULL;
-}
-
-
-extern "C" PyObject* PythonOperationPlan::create(PyTypeObject* type, PyObject *args, PyObject *kwargs)
-{
-  // Allocate memory
-  PythonOperationPlan* obj = PyObject_New(PythonOperationPlan, &PythonOperationPlan::InfoType);
-
-  // Initialize the iterator
-  obj->iter = OperationPlan::begin();
-
-  return reinterpret_cast<PyObject*>(obj);
-}
-
-
-extern "C" PyObject* PythonOperationPlan::next(PythonOperationPlan* obj) 
-{
-  if (obj->iter != OperationPlan::end())
-  {
-    PyObject* result = Py_BuildValue("{s:l,s:s,s:f,s:N,s:N}",
-      "identifier", obj->iter->getIdentifier(),
-      "operation", obj->iter->getOperation()->getName().c_str(),
-      "quantity", obj->iter->getQuantity(),
-      "start", PythonDateTime(obj->iter->getDates().getStart()),
-      "end", PythonDateTime(obj->iter->getDates().getEnd())
-      );
-    ++(obj->iter);
-    return result;
-  }
-  // Reached the end of the iteration
-  return NULL;
-}
 
 } // End namespace

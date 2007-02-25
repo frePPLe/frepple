@@ -87,9 +87,9 @@
   *   - class <b>frepple.demand</b>:<br>
   *     Implements an iterator for demand.
   *   - class <b>frepple.buffer</b>:<br>
-  *     Implements an iterator for buffer.
+  *     Implements an iterator for buffer and its flowplans.
   *   - class <b>frepple.resource</b>:<br>
-  *     Implements an iterator for resource.
+  *     Implements an iterator for resource and its loadplans.
   *
   * Note that the interface between Frepple and Python is an iterator,
   * and we stay away from the 'twin-object' approach. This is because
@@ -276,7 +276,7 @@ extern "C"
 {
 
 
-/** This class export Problem information to Python. */
+/** This class exports Problem information to Python. */
 struct PythonProblem
 {
   private:
@@ -290,7 +290,39 @@ struct PythonProblem
 };
 
 
-/** This class export OperationPlan information to Python. */
+/** This class exports FlowPlan information to Python. */
+struct PythonFlowPlan
+{
+  private:
+    PyObject_HEAD
+    Buffer::flowplanlist::const_iterator iter;
+    Buffer* buf;
+  public:
+    static PyTypeObject InfoType;
+    static PyObject* next(PythonFlowPlan* obj);
+    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
+    static void define_type() { InfoType.tp_new = 0; }
+    static PyObject* createFromBuffer(Buffer*);
+};
+
+
+/** This class exports LoadPlan information to Python. */
+struct PythonLoadPlan
+{
+  private:
+    PyObject_HEAD
+    Resource::loadplanlist::const_iterator iter;
+    Resource* res;
+  public:
+    static PyTypeObject InfoType;
+    static PyObject* next(PythonLoadPlan* obj);
+    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
+    static void define_type() { InfoType.tp_new = 0; }
+    static PyObject* createFromResource(Resource*);
+};
+
+
+/** This class exports OperationPlan information to Python. */
 struct PythonOperationPlan
 {
   private:
@@ -304,7 +336,7 @@ struct PythonOperationPlan
 };
 
 
-/** This class export Demand information to Python. */
+/** This class exports Demand information to Python. */
 struct PythonDemand
 {
   private:
@@ -318,7 +350,7 @@ struct PythonDemand
 };
 
 
-/** This class export Buffer information to Python. */
+/** This class exports Buffer information to Python. */
 struct PythonBuffer
 {
   private:
@@ -332,7 +364,7 @@ struct PythonBuffer
 };
 
 
-/** This class export OperationPlan information to Python. */
+/** This class exports Resource information to Python. */
 struct PythonResource
 {
   private:

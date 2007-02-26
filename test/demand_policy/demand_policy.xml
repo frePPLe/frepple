@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>actual plan</NAME>
+  <DESCRIPTION>
+    Verify the demand policies.
+    The supply situation is such that half of the demand can be met in time, and
+    half of it late.
+      Demand = 20 on due date 5 Jan
+      Supply = 10 available as inventory
+               + 10 arriving on 10 Jan
+    The demand policy controls how the demand is allowed to be planned:
+       A) PLANLATE MULTIDELIVERY
+          Default policy is to allow demands to be planned late and to be
+          satisfied in mutiple parts.
+          -> Delivery of 10 units on 5 Jan and a second delivery on 10 Jan
+       B) PLANSHORT MULTIDELIVERY
+          No lateness is allowed, and the order is partially met.
+          -> A delivery of 10 units on 5 Jan
+       C) PLANLATE SINGLEDELIVERY
+          Lateness is allowed, but the order is met in a single delivery
+          -> A delivery of 20 units on 10 Jan
+       D) PLANSHORT SINGLEDELIVERY
+          Not lateness is allowed, and a partial delivery is not accepted.
+          -> No delivery planned
+  </DESCRIPTION>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <VERBOSE>true</VERBOSE>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" VERBOSE="true" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+      <FILENAME>output.1.xml</FILENAME>
+    </COMMAND>
+  </COMMANDS>
+  <OPERATIONS>
+    <OPERATION NAME="supply item A" xsi:type="OPERATION_FIXED_TIME"/>
+    <OPERATION NAME="supply item B" xsi:type="OPERATION_FIXED_TIME"/>
+    <OPERATION NAME="supply item C" xsi:type="OPERATION_FIXED_TIME"/>
+    <OPERATION NAME="supply item D" xsi:type="OPERATION_FIXED_TIME"/>
+  </OPERATIONS>
+  <ITEMS>
+    <ITEM NAME="item A">
+      <OPERATION NAME="delivery item A" xsi:type="OPERATION_FIXED_TIME"/>
+    </ITEM>
+    <ITEM NAME="item B">
+      <OPERATION NAME="delivery item B" xsi:type="OPERATION_FIXED_TIME"/>
+    </ITEM>
+    <ITEM NAME="item C">
+      <OPERATION NAME="delivery item C" xsi:type="OPERATION_FIXED_TIME"/>
+    </ITEM>
+    <ITEM NAME="item D">
+      <OPERATION NAME="delivery item D" xsi:type="OPERATION_FIXED_TIME"/>
+    </ITEM>
+  </ITEMS>
+  <BUFFERS>
+    <BUFFER NAME="buffer A">
+      <ITEM NAME="item A" />
+      <ONHAND>10</ONHAND>
+    </BUFFER>
+    <BUFFER NAME="buffer B">
+      <ITEM NAME="item B" />
+      <ONHAND>10</ONHAND>
+    </BUFFER>
+    <BUFFER NAME="buffer C">
+      <ITEM NAME="item C" />
+      <ONHAND>10</ONHAND>
+    </BUFFER>
+    <BUFFER NAME="buffer D">
+      <ITEM NAME="item D" />
+      <ONHAND>10</ONHAND>
+    </BUFFER>
+  </BUFFERS>
+  <FLOWS>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery item A" />
+      <BUFFER NAME="buffer A" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="supply item A" />
+      <BUFFER NAME="buffer A" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery item B" />
+      <BUFFER NAME="buffer B" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="supply item B" />
+      <BUFFER NAME="buffer B" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery item C" />
+      <BUFFER NAME="buffer C" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="supply item C" />
+      <BUFFER NAME="buffer C" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery item D" />
+      <BUFFER NAME="buffer D" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="supply item D" />
+      <BUFFER NAME="buffer D" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+  </FLOWS>
+	<OPERATION_PLANS>
+	  <OPERATION_PLAN ID="1001" OPERATION="supply item A">
+	    <START>2007-01-10T00:00:00</START>
+	    <END>2007-01-10T00:00:00</END>
+	    <QUANTITY>10</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="1002" OPERATION="supply item B">
+	    <START>2007-01-10T00:00:00</START>
+	    <END>2007-01-10T00:00:00</END>
+	    <QUANTITY>10</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="1003" OPERATION="supply item C">
+	    <START>2007-01-10T00:00:00</START>
+	    <END>2007-01-10T00:00:00</END>
+	    <QUANTITY>10</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="1004" OPERATION="supply item D">
+	    <START>2007-01-10T00:00:00</START>
+	    <END>2007-01-10T00:00:00</END>
+	    <QUANTITY>10</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	</OPERATION_PLANS>
+  <DEMANDS>
+    <DEMAND NAME="order A">
+      <QUANTITY>20</QUANTITY>
+      <DUE>2007-01-05T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="item A" />
+      <POLICY>PLANLATE</POLICY>
+    </DEMAND>
+    <DEMAND NAME="order B">
+      <QUANTITY>20</QUANTITY>
+      <DUE>2007-01-05T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="item B" />
+      <POLICY>PLANSHORT</POLICY>
+    </DEMAND>
+    <DEMAND NAME="order C">
+      <QUANTITY>20</QUANTITY>
+      <DUE>2007-01-05T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="item C" />
+      <POLICY>PLANLATE SINGLEDELIVERY</POLICY>
+    </DEMAND>
+    <DEMAND NAME="order D">
+      <QUANTITY>20</QUANTITY>
+      <DUE>2007-01-05T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="item D" />
+      <POLICY>PLANSHORT SINGLEDELIVERY</POLICY>
+    </DEMAND>
+  </DEMANDS>
+</PLAN>

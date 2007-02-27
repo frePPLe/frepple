@@ -56,7 +56,6 @@ DECLARE_EXPORT Operation::~Operation()
   for (Buffer::iterator m = Buffer::begin(); m != Buffer::end(); ++m)
   {
     if (m->getProducingOperation() == this) m->setProducingOperation(NULL);
-    if (m->getConsumingOperation() == this) m->setConsumingOperation(NULL);
   }
 
   // Remove the operation from its super-operations and sub-operations

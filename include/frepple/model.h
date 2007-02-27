@@ -30,7 +30,7 @@
 
 /** @mainpage Frepple Library API
   * The Frepple class library provides a framework for modeling a
-  * manufacturing environment.<br> 
+  * manufacturing environment.<br>
   * This document describes its C++ API.<P>
   *
   * @namespace frepple
@@ -523,10 +523,10 @@ class CalendarOperation : public CalendarPointer<Operation>
   *    objects.
   *  - Problem objects are managed in a 'lazy' way, meaning they only are
   *    getting created when the list of problems is requested by the user.<br>
-  *    During normal planning activities we merely mark the planning entities 
-  *    that have changed, so we can easily pick up which entities to recompute 
-  *    the problems for. In this way we can avoid the cpu and memory overhead 
-  *    of keeping the problem list up to date at all times, while still 
+  *    During normal planning activities we merely mark the planning entities
+  *    that have changed, so we can easily pick up which entities to recompute
+  *    the problems for. In this way we can avoid the cpu and memory overhead
+  *    of keeping the problem list up to date at all times, while still
   *    providing the user with the correct list of problems when required.
   *  - Given the above, Problems are lightweight objects that consume
   *    limited memory.
@@ -755,7 +755,7 @@ class Solver : public Object, public HasName<Solver>
     static DECLARE_EXPORT const MetaCategory metadata;
 
   protected:
-    /** Controls how much messages we want to generate.<br> 
+    /** Controls how much messages we want to generate.<br>
       * The default value is false. */
     bool verbose;
 };
@@ -1302,17 +1302,17 @@ class Operation : public HasName<Operation>,
   * a certain quantity being planned along a certain operation during
   * a certain date range.<br>
   * From a coding perspective:
-  *  - Operationplans are created by the factory method createOperationPlan() 
-  *    on the matching operation class. 
-  *  - The createLoadAndFlowplans() can optionally be called to also create 
+  *  - Operationplans are created by the factory method createOperationPlan()
+  *    on the matching operation class.
+  *  - The createLoadAndFlowplans() can optionally be called to also create
   *    the loadplans and flowplans, to take care of the material and
   *    capacity consumption.
-  *  - Once you're sure about creating the operationplan, the initialize() 
-  *    method should be called. It will assign the operationplan a unique 
+  *  - Once you're sure about creating the operationplan, the initialize()
+  *    method should be called. It will assign the operationplan a unique
   *    numeric identifier, register the operationplan in a container owned
-  *    by the operation instance, and also create loadplans and flowplans 
+  *    by the operation instance, and also create loadplans and flowplans
   *    if this hasn't been done yet.<br>
-  *  - Operationplans can be organized in hierarchical structure, matching 
+  *  - Operationplans can be organized in hierarchical structure, matching
   *    the operation hierarchies they belong to.
   */
 class OperationPlan
@@ -1983,7 +1983,7 @@ class OperationRouting : public Operation
       * operation.
       * @see Operation::createOperationPlan
       */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s, 
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s,
       Date e, Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
       unsigned long i = 0, bool makeflowsloads=true) const;
 
@@ -2270,8 +2270,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Constructor. Implicit creation of instances is disallowed. */
     explicit Buffer(const string& str) : HasHierarchy<Buffer>(str),
-      hidden(false), producing_operation(NULL), consuming_operation(NULL),
-      loc(NULL), it(NULL), min_cal(NULL), max_cal(NULL) {}
+      hidden(false), producing_operation(NULL), loc(NULL), it(NULL), 
+      min_cal(NULL), max_cal(NULL) {}
 
     /** Returns the operation that is used to supply extra supply into this
       * buffer. */
@@ -2281,15 +2281,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * buffer. */
     void setProducingOperation(Operation* o)
       {producing_operation = o; setChanged();}
-
-    /** Returns the operation that is used to consume more material from this
-      * buffer. */
-    Operation* getConsumingOperation() const {return consuming_operation;}
-
-    /** Updates the operation that is used to consume more material from this
-      * buffer. */
-    void setConsumingOperation(Operation* o)
-      {consuming_operation = o; setChanged();}
 
     /** Returns the item stored in this buffer. */
     Item* getItem() const {return it;}
@@ -2378,28 +2369,25 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** This is the operation used to create extra material in this buffer. */
     Operation *producing_operation;
 
-    /** This is the operation used to consume material from this buffer. */
-    Operation *consuming_operation;
-
     /** Location of this buffer.<br>
       * This field is only used as information.<br>
-      * The default is NULL. 
+      * The default is NULL.
       */
     Location* loc;
 
     /** Item being stored in this buffer.<br>
-      * The default value is NULL. 
+      * The default value is NULL.
       */
     Item* it;
 
     /** Points to a calendar to store the minimum inventory level.<br>
-      * The default value is NULL, resulting in a constant minimum level 
-      * of 0. 
+      * The default value is NULL, resulting in a constant minimum level
+      * of 0.
       */
     CalendarFloat *min_cal;
 
     /** Points to a calendar to store the minimum inventory level.<br>
-      * The default value is NULL, resulting in a buffer without excess 
+      * The default value is NULL, resulting in a buffer without excess
       * inventory problems.
       */
     CalendarFloat *max_cal;
@@ -2443,7 +2431,7 @@ class BufferInfinite : public Buffer
   * whenever the inventory drops below the minimum level. The buffer is then
   * replenished to the maximum inventory level.
   */
-class BufferMinMax : public Buffer
+class BufferMinMax : public Buffer   // @todo rename to BufferProcurement and implement better!
 {
   TYPEDEF(BufferMinMax);
   public:
@@ -2856,8 +2844,18 @@ class Item
     explicit Item(const string& str)
       : HasHierarchy<Item> (str), deliveryOperation(NULL) {}
 
-    /** Returns the delivery operation. */
-    Operation* getDelivery() const {return deliveryOperation;}
+    /** Returns the delivery operation.<br>
+      * This field is inherited from a parent item, if it hasn't been
+      * specified.
+      */
+    Operation* getDelivery() const 
+    {
+      // Look for a non-empty deliveryOperation field
+      for (const Item* i = this; i; i=i->getOwner())
+        if (i->deliveryOperation) return i->deliveryOperation;
+      // The field is unspecified on the item or any of its parents.
+      return NULL;
+    }
 
     /** Updates the delivery operation.<br>
       * If some demands have already been planned using the old delivery
@@ -2876,7 +2874,9 @@ class Item
     static DECLARE_EXPORT const MetaCategory metadata;
 
   private:
-    /** This is the operation used to satisfy a demand for this Item. */
+    /** This is the operation used to satisfy a demand for this item. 
+      * @see Demand
+      */
     Operation* deliveryOperation;
 };
 
@@ -4214,7 +4214,7 @@ class HasProblems::EntityIterator
     DECLARE_EXPORT EntityIterator& operator=(const EntityIterator& o);
 
     /** Resets the iterator.<br>
-      * This is usefull to initialize an iterator in uninitialized memory. 
+      * This is usefull to initialize an iterator in uninitialized memory.
       * Calling this method on a properly initialized iterator will leak memory!
       */
     void reset() {type=4;}
@@ -4226,12 +4226,12 @@ class HasProblems::EntityIterator
     DECLARE_EXPORT EntityIterator& operator++();
 
     /** Inequality operator.<br>
-      * Two iterators are different when they point to different objects. 
+      * Two iterators are different when they point to different objects.
       */
     DECLARE_EXPORT bool operator != (const EntityIterator& t) const;
 
     /** Equality operator.<br>
-      * Two iterators are equal when they point to the same object. 
+      * Two iterators are equal when they point to the same object.
       */
     bool operator == (const EntityIterator& t) const {return !(*this != t);}
 
@@ -4281,7 +4281,7 @@ class Problem::const_iterator
 
   public:
     /** Resetting the iterator to some dummy value.<br>
-      * This is useful when initializing an iterator in uninitialized memory. 
+      * This is useful when initializing an iterator in uninitialized memory.
       */
     void reset() {eiter.reset();}
     DECLARE_EXPORT const_iterator& operator++();

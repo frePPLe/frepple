@@ -167,7 +167,6 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m
   HasDescription::writeElement(o, tag);
   HasHierarchy<Buffer>::writeElement(o, tag);
   o->writeElement(Tags::tag_producing, producing_operation);
-  o->writeElement(Tags::tag_consuming, consuming_operation);
   o->writeElement(Tags::tag_item, it);
   o->writeElement(Tags::tag_location, loc);
   Plannable::writeElement(o, tag);
@@ -229,8 +228,6 @@ DECLARE_EXPORT void Buffer::beginElement (XMLInput& pIn, XMLElement& pElement)
     pIn.readto (f);
   }
   else if (pElement.isA(Tags::tag_producing))
-    pIn.readto( Operation::reader(Operation::metadata,pIn) );
-  else if (pElement.isA(Tags::tag_consuming))
     pIn.readto( Operation::reader(Operation::metadata,pIn) );
   else if (pElement.isA(Tags::tag_item))
     pIn.readto( Item::reader(Item::metadata,pIn) );
@@ -298,12 +295,6 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
   {
     Location * d = dynamic_cast<Location*>(pIn.getPreviousObject());
     if (d) setLocation(d);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pElement.isA(Tags::tag_consuming))
-  {
-    Operation *c = dynamic_cast<Operation*>(pIn.getPreviousObject());
-    if (c) setConsumingOperation(c);
     else throw LogicException("Incorrect object type during read operation");
   }
   else

@@ -276,7 +276,6 @@ extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj)
       "ITEM", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
       "MINIMUM", obj->iter->getMinimum() ? obj->iter->getMinimum()->getName().c_str() : NULL,
       "MAXIMUM", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
-      "CONSUMING", obj->iter->getConsumingOperation() ? obj->iter->getConsumingOperation()->getName().c_str() : NULL,
       "PRODUCING", obj->iter->getProducingOperation() ? obj->iter->getProducingOperation()->getName().c_str() : NULL,
       "FLOWPLANS", PythonFlowPlan::createFromBuffer(&*(obj->iter))
       );

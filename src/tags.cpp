@@ -53,7 +53,6 @@ DECLARE_EXPORT const XMLtag Tags::tag_flow_plan ("FLOW_PLAN");
 DECLARE_EXPORT const XMLtag Tags::tag_problems ("PROBLEMS");
 DECLARE_EXPORT const XMLtag Tags::tag_demands ("DEMANDS");
 DECLARE_EXPORT const XMLtag Tags::tag_producing ("PRODUCING");
-DECLARE_EXPORT const XMLtag Tags::tag_consuming ("CONSUMING");
 DECLARE_EXPORT const XMLtag Tags::tag_level ("LEVEL");
 DECLARE_EXPORT const XMLtag Tags::tag_cluster ("CLUSTER");
 DECLARE_EXPORT const XMLtag Tags::tag_due ("DUE");

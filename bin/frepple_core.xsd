@@ -376,7 +376,6 @@
 			<xsd:element name="ONHAND" type="xsd:float" />
 			<xsd:element name="MINIMUM" type="CALENDAR" />
 			<xsd:element name="MAXIMUM" type="CALENDAR" />
-			<xsd:element name="CONSUMING" type="OPERATION" />
 			<xsd:element name="PRODUCING" type="OPERATION" />
 			<xsd:element name="DETECTPROBLEMS" type="xsd:boolean" />
 			<xsd:element name="FLOWS" type="FLOWLIST" />

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DESCRIPTION>
+    This test case tests the embedded python interpreter.
+  </DESCRIPTION>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
+<?PYTHON
+import frepple
+
+def printModel():
+  '''This function prints out information about the model to the output file'''
+
+  # Open the file
+  out = open("output.1.xml", "wt", 1)
+
+  # Print information
+  try:
+    print >>out, "Problems:"
+    for i in frepple.problem():
+      print >>out, i["ENTITY"], i["TYPE"], i["START"], i["END"], i["DESCRIPTION"]
+
+    print >>out, "\nOperationplans:"
+    for i in frepple.operationplan():
+      print >>out, i["IDENTIFIER"], i["OPERATION"], i["QUANTITY"], \
+        i["START"], i["END"], i["DEMAND"]
+
+    print >>out, "\nBuffers:"
+    for i in frepple.buffer():
+      print >>out, i["NAME"], i["CATEGORY"], i["SUBCATEGORY"], i["DESCRIPTION"], \
+        i["ONHAND"], i["LOCATION"], i["ITEM"], i["MAXIMUM"], i["PRODUCING"]
+      for j in i["FLOWPLANS"]:
+        print >>out, "     ", j["BUFFER"], j["OPERATION"], j["OPERATIONPLAN"], \
+          j["QUANTITY"], j["DATE"], j["ONHAND"]
+
+    print >>out, "\nResources:"
+    for i in frepple.resource():
+      print >>out, i["NAME"], i["CATEGORY"], i["SUBCATEGORY"], i["DESCRIPTION"], \
+        i["LOCATION"], i["MAXIMUM"], i["OWNER"]
+      for j in i["LOADPLANS"]:
+        print >>out, "     ", j["RESOURCE"], j["OPERATION"], j["OPERATIONPLAN"], \
+          j["QUANTITY"], j["DATE"], j["ONHAND"], j["MAXIMUM"]
+
+    print >>out, "\nDemands:"
+    for i in frepple.demand():
+      print >>out, i["NAME"], i["QUANTITY"], i["DUE"], i["PRIORITY"], \
+        i["ITEM"], i["OPERATION"], i["OWNER"]
+
+  # Close the file
+  finally:
+    out.close()
+?>
+  <COMMANDS>
+  	<VERBOSE>true</VERBOSE>
+  	<ABORTONERROR>false</ABORTONERROR>
+
+  	<!-- Read an XML file. -->
+    <COMMAND xsi:type="COMMAND_PYTHON">
+      <CMDLINE>frepple.readXMLfile(&quot;data.xml&quot;)</CMDLINE>
+    </COMMAND>
+
+    <!-- Process XML string. -->
+    <!-- The XML string executes a command to run the solver. -->
+    <COMMAND xsi:type="COMMAND_PYTHON">
+      <CMDLINE>
+<![CDATA[
+frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><COMMANDS>
+  <COMMAND xsi:type="COMMAND_SOLVE" VERBOSE="false">
+    <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
+  </COMMAND>
+</COMMANDS></PLAN>
+''')
+]]>
+      </CMDLINE>
+    </COMMAND>
+
+  	<!-- Print information to the output file. -->
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="printModel()" />
+
+  	<!-- Save the model to an XML file. -->
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="frepple.saveXMLfile(&quot;output.2.xml&quot;)" />
+
+  </COMMANDS>
+</PLAN>

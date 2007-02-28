@@ -286,13 +286,11 @@
   </ITEMS>
   <BUFFERS>
     <BUFFER NAME="STCK1">
-      <CONSUMING NAME="delivery STCK1"/>
       <PRODUCING NAME="make STCK1"/>
       <LOCATION NAME="LOC1"/>
       <ITEM NAME="STCK1"/>
     </BUFFER>
     <BUFFER NAME="STCK2">
-      <CONSUMING NAME="delivery STCK2"/>
       <PRODUCING NAME="make STCK2"/>
       <LOCATION NAME="LOC1"/>
       <ITEM NAME="STCK2"/>
@@ -304,13 +302,11 @@
       <ITEM NAME="SUBAS1"/>
     </BUFFER>
     <BUFFER NAME="RM1">
-      <CONSUMING NAME="make STCK2"/>
       <LOCATION NAME="LOC1"/>
       <ITEM NAME="RM1"/>
       <ONHAND>25</ONHAND>
     </BUFFER>
     <BUFFER NAME="RM2" xsi:type="BUFFER_INFINITE">
-      <CONSUMING NAME="make STCK2"/>
       <LOCATION NAME="LOC1"/>
       <ITEM NAME="RM2"/>
       <ONHAND>50</ONHAND>

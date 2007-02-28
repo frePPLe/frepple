@@ -2,19 +2,9 @@
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <NAME>actual plan</NAME>
   <DESCRIPTION>
-    Resource constraint test model. In this case, the last demand can't be
-    planned because it would be planned in the past.
+    Sample dataset to verify the python interface.
   </DESCRIPTION>
   <CURRENT>2007-01-01T00:00:00</CURRENT>
-  <COMMANDS>
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <VERBOSE>true</VERBOSE>
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN">
-      <FILENAME>output.1.xml</FILENAME>
-    </COMMAND>
-  </COMMANDS>
   <CALENDARS>
     <CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
       <BUCKETS>

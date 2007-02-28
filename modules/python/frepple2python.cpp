@@ -227,7 +227,7 @@ extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
 {
   if (obj->iter != Demand::end())
   {
-    PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:d,s:z,s:z,s:z}",
+    PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z}",
       "NAME", obj->iter->getName().c_str(),
       "QUANTITY", obj->iter->getQuantity(),
 			"DUE", PythonDateTime(obj->iter->getDue()),
@@ -266,7 +266,7 @@ extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj)
 {
   if (obj->iter != Buffer::end())
   {
-    PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:f,s:z,s:z,s:z,s:z,s:z,s:z,s:O}",
+    PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:f,s:z,s:z,s:z,s:z,s:z,s:O}",
       "NAME", obj->iter->getName().c_str(),
       "CATEGORY", obj->iter->getCategory().c_str(),
       "SUBCATEGORY", obj->iter->getSubCategory().c_str(),

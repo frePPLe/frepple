@@ -84,7 +84,6 @@
   </ITEMS>
   <BUFFERS>
     <BUFFER NAME="end item">
-      <CONSUMING NAME="delivery end item" />
       <PRODUCING NAME="make end item" />
       <ITEM NAME="end item" />
     </BUFFER>
@@ -94,7 +93,6 @@
       <ONHAND>15</ONHAND>
     </BUFFER>
     <BUFFER NAME="Raw material">
-      <CONSUMING NAME="make subassembly" />
       <ITEM NAME="Raw material" />
       <ONHAND>20</ONHAND>
     </BUFFER>

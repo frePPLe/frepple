@@ -2922,16 +2922,13 @@ class Plan : public Plannable
     /** The name of the log file. */
     string logfilename;
 
-    /** This is the default bucketization of the plan. */
-    Calendar* def_Calendar;
-
     /** Pointer to the singleton plan object. */
     static DECLARE_EXPORT Plan* thePlan;
 
     /** The only constructor of this class is made private. An object of this
       * class is created by the instance() member function.
       */
-    Plan() : cur_Date(Date::now()), def_Calendar(NULL) {}
+    Plan() : cur_Date(Date::now()) {}
 
   public:
     /** Return a pointer to the singleton plan object.
@@ -2953,12 +2950,6 @@ class Plan : public Plannable
 
     /** Updates the plan name. */
     void setName(const string& s) {name = s;}
-
-    /** Returns the default Bucketization Calendar of the plan. */
-    Calendar* getCalendar() const {return def_Calendar;}
-
-    /** Updates the default bucketization. */
-    void setCalendar(Calendar* h) {def_Calendar = h;}
 
     /** Returns the current Date of the plan. */
     const Date & getCurrent() const {return cur_Date;}

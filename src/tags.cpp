@@ -92,7 +92,6 @@ DECLARE_EXPORT const XMLtag Tags::tag_locations ("LOCATIONS");
 DECLARE_EXPORT const XMLtag Tags::tag_location ("LOCATION");
 DECLARE_EXPORT const XMLtag Tags::tag_size_minimum ("SIZE_MINIMUM");
 DECLARE_EXPORT const XMLtag Tags::tag_size_multiple ("SIZE_MULTIPLE");
-DECLARE_EXPORT const XMLtag Tags::tag_default_calendar ("DEFAULT_CALENDAR");
 DECLARE_EXPORT const XMLtag Tags::tag_demand ("DEMAND");
 DECLARE_EXPORT const XMLtag Tags::tag_supply ("SUPPLY");
 DECLARE_EXPORT const XMLtag Tags::tag_start_onhand ("START_ONHAND");

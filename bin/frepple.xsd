@@ -68,7 +68,6 @@
 				<xsd:element name="DESCRIPTION" type="xsd:string" />
 				<xsd:element name="CURRENT" type="xsd:dateTime" />
 				<xsd:element name="LOGFILE" type="xsd:normalizedString" />
-				<xsd:element name="DEFAULT_CALENDAR" type="CALENDAR" />
 				<xsd:element name="PLANNABLE" type="xsd:boolean" />
 				<xsd:element name="DETECTPROBLEMS" type="xsd:boolean" />
 				<!-- OBJECT LISTS -->

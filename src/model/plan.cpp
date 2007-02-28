@@ -71,7 +71,6 @@ DECLARE_EXPORT void Plan::writeElement (XMLOutput *o, const XMLtag& tag, mode m)
   o->writeElement(Tags::tag_description, descr);
   o->writeElement(Tags::tag_current, cur_Date);
   o->writeElement(Tags::tag_logfile, logfilename);
-  o->writeElement(Tags::tag_default_calendar, def_Calendar);
   Plannable::writeElement(o, tag);
 
   // Persist all categories
@@ -89,12 +88,6 @@ DECLARE_EXPORT void Plan::endElement (XMLInput& pIn, XMLElement& pElement)
     pElement >> descr;
   else if (pElement.isA(Tags::tag_name))
     pElement >> name;
-  else if (pElement.isA(Tags::tag_default_calendar))
-  {
-    Calendar * c = dynamic_cast<Calendar*>(pIn.getPreviousObject());
-    if (c) setCalendar(c);
-    else throw LogicException("Incorrect object type during read operation");
-  }
   else if (pElement.isA(Tags::tag_logfile))
     setLogFile(pElement.getString());
   else
@@ -124,8 +117,6 @@ DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
         // Frepple doesn't need to be understand
         pIn.IgnoreElement();
     }  
-    else if (pElement.isA(Tags::tag_default_calendar))
-      pIn.readto(Calendar::reader(Calendar::metadata,pIn));
   }
 }
 

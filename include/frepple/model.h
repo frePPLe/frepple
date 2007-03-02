@@ -3653,8 +3653,8 @@ class ProblemBeforeCurrent : public Problem
 
 
 /** A problem of this class is created when an operationplan is being
-  * planned its fence, i.e. it starts 1) before the "current" date of
-  * the plan plus the release fence of the operation and 2) after the
+  * planned before its fence date, i.e. it starts 1) before the "current" 
+  * date of the plan plus the release fence of the operation and 2) after the
   * current date of the plan.
   */
 class ProblemBeforeFence : public Problem
@@ -3694,7 +3694,7 @@ class ProblemBeforeFence : public Problem
 
 
 /** A problem of this class is created when the sequence of two
-  * operationplans isn't respected.
+  * operationplans in a routing isn't respected.
   */
 class ProblemPrecedence : public Problem
 {
@@ -3756,7 +3756,7 @@ class ProblemDemandNotPlanned : public Problem
 };
 
 
-/** A problem of this class is created when a demand is planned later than
+/** A problem of this class is created when a demand is satisfied later than
   * the accepted tolerance after its due date.
   */
 class ProblemLate : public Problem

@@ -823,9 +823,7 @@
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="VERBOSE" type="xsd:boolean" />
 					<xsd:element name="SOLVER" type="SOLVER" />
-					<xsd:element name="CONSTRAINTS" type="xsd:unsignedShort" />
 				</xsd:choice>
-				<xsd:attribute name="CONSTRAINTS" type="xsd:unsignedShort" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

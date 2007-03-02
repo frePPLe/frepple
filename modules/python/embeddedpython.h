@@ -114,8 +114,8 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
 
 /** This class embeds an interpreter for the Python language in Frepple.<br>
-  * The interpreter can execute generic scripts, and it also has (currently 
-  * quite limited) access to the frepple objects.<br>
+  * The interpreter can execute generic scripts, and it also has access 
+  * to the frepple objects.<br>
   * The interpreter is multi-threaded. Multiple python scripts can run in
   * parallel. Internally Python allows only one thread at a time to
   * execute and the interpreter switches between the active threads, i.e.

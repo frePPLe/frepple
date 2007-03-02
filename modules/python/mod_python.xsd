@@ -34,10 +34,10 @@
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="VERBOSE" type="xsd:boolean" />
           <xsd:element name="CMDLINE" type="xsd:string" />
-          <xsd:element name="FILENAME" type="xsd:string" />
+          <xsd:element name="FILENAME" type="xsd:normalizedString" />
         </xsd:choice>
   			<xsd:attribute name="CMDLINE" type="xsd:string" />
-  			<xsd:attribute name="FILENAME" type="xsd:string" />
+  			<xsd:attribute name="FILENAME" type="xsd:normalizedString" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

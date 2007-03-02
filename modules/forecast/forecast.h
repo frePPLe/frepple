@@ -38,7 +38,7 @@
   *    demand, ie the sub-demands are transparent to the user.
   *    All sub-demands of a forecast demand have the same item.
   *    The due date is aligned on the buckets of the forecast calendar.
-  *  - The forecast nets the actual demands. As actual orders are  
+  *  - The forecast nets the actual demands. @todo
   *
   * The XML schema extension enabled by this module is (see mod_forecast.xsd):
   * <PRE>

@@ -36,9 +36,9 @@
 
 ; Main definitions
 !define PRODUCT_NAME "Frepple"
-!define PRODUCT_VERSION "0.2.1"
+!define PRODUCT_VERSION "0.2.2"
 !define PRODUCT_PUBLISHER "Frepple"
-!define PRODUCT_WEB_SITE "http://frepple.sourceforge.net"
+!define PRODUCT_WEB_SITE "http://www.frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
@@ -77,8 +77,8 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_LANGUAGE "English"
 
 ;Version Information
-VIProductVersion "0.2.1.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "0.2.1"
+VIProductVersion "0.2.2.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "0.2.2"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Frepple Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "Frepple Installer - Free Production Planning Library"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Frepple"

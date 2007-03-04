@@ -1,18 +1,18 @@
 
-EXTRA_DIST = planner.doxyfile favicon.ico *.html *.css *.pdf *.jpg *.gif *.bmp
+EXTRA_DIST = frepple.doxyfile favicon.ico *.html *.css *.pdf *.gif *.bmp
 
 if DOC
 EXTRA_DIST += reference
-reference: clean planner.doxyfile
-	-rm -rf reference planner.tags
-	export PACKAGE_VERSION=$(PACKAGE_VERSION); @DOXYGEN@ planner.doxyfile
+reference: clean frepple.doxyfile
+	-rm -rf reference frepple.tags
+	export PACKAGE_VERSION=$(PACKAGE_VERSION); @DOXYGEN@ frepple.doxyfile
 else
 reference:
 	-echo Skipping generation of documentation...
 endif
 
 clean-local:
-	-rm -rf reference planner.tags
+	-rm -rf reference frepple.tags
 
 all-local: reference
 
@@ -37,7 +37,7 @@ uninstall-local:
 	case $$prefix in \
 	    /usr*) rm -rf "/usr/share/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)";; \
 	    *) rm -rf "$(prefix)/doc/$(PACKAGE_NAME)-$(PACKAGE_VERSION)";; \
-	esac; 
+	esac;
 
 .PHONY: reference clean-local uninstall-local install-data-local all-local
 

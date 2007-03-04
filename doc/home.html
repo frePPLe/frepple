@@ -6,38 +6,63 @@
   <meta name="author" content="jdetaeye@users.sourceforge.net">
   <title>Frepple - a FreE Production Planning Library</title>
   <link href="styles.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+   #news p {
+     padding-left: 10px;
+     padding-right: 10px;
+   }
+   #news p.header {
+     display: block;
+     padding-left: 10px;
+     background-color: #4f639b;
+     margin-left: 0px;
+     margin-top: 0px;
+     margin-right: 0px;
+     padding-top: 5px;
+     padding-bottom: 5px;
+   }
+</style>
+
 </head>
 <body>
-<H1><u><font size="+4"><a name="top"></a>FREPPLE<br>
+
+<H1><u><font size="+4"></a>frePPLe<br>
 a Free Production Planning Library</font></u></H1>
 
-<p>Plenty of planning tools are available for various production problems,
-different subprocess, different solver techniques.... A bit suprising, no
-proper solutions exist in the open source domain. Users often are left
-with  expensive and inflexible tools and resort to spreadsheets to meet
-their needs.</p>
-<p>This project aims at building an open source lightweight framework that easily
+<p>Frepple aims at building a lightweight open source framework that easily
 and quickly delivers a solution for production planning problems. The initial
-focus is on small to medium sized master planning problems for the discrete
+focus is on small to medium sized planning problems for the discrete
 manufacturing industry.</p>
+
+<p>Production planning software traditionally has been an area with plenty of
+home-grown, extremely specialised and/or very primitive solutions.
+<br>Strangely enough, while creative and innovative open source solutions pop up
+in all computing areas, production planning software still tends to be a very
+closed world full of academic, proprietary and expensive solutions.
+Till now...<br>
+Frepple is the first open source production planning toolkit for your day-to-day
+planning problems.</p>
+
 <p>For the developer community, the project is also trying to establish a
-common ground framework for planning applications. Rather than building the
-basic building blocks (e.g.  item, buffer, bill of material, ...) from scratch
-over and over again, developers can leverage a proven framework to extend
-with their own extension modules.</p>
+common ground framework for planning applications. Rather than rebuilding the
+basic foundation from scratch over and over again, developers can now leverage
+a proven framework to extend with their own extension modules.<br>
+New workflows and functionality can now be built much quicker and easier.</p>
+
 <p>The word "free" in the project name refers to liberty, not price. Think of
 "freedom of speech" rather than "free beer": see
 <a target="_blank" href="http://www.gnu.org/philosophy/free-sw.html">the free
-software definition</a>.
-<p><b>The software is currently in a early-beta stage. This means the software
-isn't suitable for end users yet. There's plenty of work left.
-I released at this early stage to collect feedback and to gather interested souls
-to contribute to the project.</b><br>
-So, browse the site, have a look at the code and mail
-<a href="&#109;&#97;&#x69;&#x6c;&#x74;&#111;&#x3a;&#106;&#x64;&#101;&#116;&#x61;&#x65;&#x79;&#101;&#64;&#117;&#x73;&#x65;&#x72;&#115;&#46;&#115;&#111;&#x75;&#x72;&#x63;&#x65;&#102;&#x6f;&#x72;&#103;&#x65;&#46;&#110;&#x65;&#116;">
-me</a> your feedback.</p>
+software definition</a>.</p>
 
-<H2>Features:</H2>
+<p>The software is still young. The functionality and API are enhanced very quickly.<br>
+Plenty of feedback is required to move the project forward. So, browse the site,
+have a look at the software and please mail
+<a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#105;&#110;&#102;&#111;&#064;&#102;&#114;&#101;&#112;&#112;&#108;&#101;&#046;&#099;&#111;&#109;">
+us</a> your feedback.<br>
+While there's plenty of work left, the software is quickly getting into a state
+where real-life problems can be handled efficiently.</p>
+
+<H2>The main features in brief:</H2>
 <ul>
 <li><p><b>Modeling and solving framework for discrete manufacturing environments.</b><br>
 Key modeling constructs are:<ul>
@@ -47,11 +72,9 @@ Key modeling constructs are:<ul>
 <li>Operation</li>
 <li>Demand</li>
 </ul>
-See <a href="entitydiagram.pdf">here</a> for a short domain model (requires Acrobat Reader).<br>
-A complete <a href="classdiagram.pdf">class diagram</a>
-and <a href="reference/index.html">API reference</a> are available to developers.</p></li>
+</p></li>
 
-<li><p><b>Heuristic, "MRP-like" solving algorithm</b> respecting capacity, material
+<li><p><b>Heuristic "MRP-like" solving algorithm</b> respecting capacity, material
 and leadtime constraints.</p></li>
 
 <li><p><b>XML</b>-based data input and output.</p></li>
@@ -59,13 +82,6 @@ and leadtime constraints.</p></li>
 <li><p><b>Extensible and customizable architecture.</b><br>
 New modeling constructs and solving algorithms can be developed in C++ and loaded
 as a plugin module.</p></li>
-
-<li><p>The <b>browser-based user interface</b> and underlying <b>database schema</b>
-are based on the powerful Django framework.<br> Both can very easily be extended and
-customized.</p></li>
-
-<li><p>Embeds <b>Python</b> as scripting language.<br>
-Allows for flexible and easy integration and customization.</p></li>
 
 <li><p>Frepple comes as a <b>'library' developed in C++</b>.<br>
 It has no graphical user interface as such and requires to be deployed in
@@ -76,21 +92,20 @@ Different applications are envisioned:
 <li>Microsoft Excel frontend</li>
 <li>Accessable from programming languages such as java, python, perl or visual basic
 <li>Can be linked into your own C or C++ application</li>
-<li>Apache module for browser based user interface and network based access</li>
+<li>A reference <b>browser-based user interface</b> and <b>database schema</b>
+are based on the powerful Django framework.<br> Both can very easily be extended and
+customized.</li>
 </ul>
 </p></li>
 
-<li><p><b>Supported on 32-bit linux and Windows environments</b>, with
-Linux being the primary development platform.<br>
-Porting to other platforms is discussed under the developer section
-of the documentation.</p></li>
+<li><p>Embeds <b>Python</b> as scripting language.<br>
+Allows for flexible and easy integration and customization.</p></li>
 
-<li><p><b>Licenced under the GNU lesser general public license.</b><br>
-Learn <a href="http://www.fsf.org" target="_blank">here</a>
-how this license protects my and your work.</p></li>
+<li><p>Supported on <b>linux</b> and <b>Windows</b> environments.</p></li>
 
-<li><p>To finish, a pretty bold statement :-)<br>
-<b>Frepple will be the world's first true open source advanced planning system.</b></p></li>
+<li><p>Licenced under the <b>GNU lesser general public license</b>.</p></li>
+
 </ul>
+
 </body>
 </html>

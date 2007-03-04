@@ -164,11 +164,11 @@ HTML_OUTPUT            = reference
 
 HTML_FILE_EXTENSION    = .html
 
-HTML_HEADER            = 
+HTML_HEADER            =
 
 HTML_FOOTER            =
 
-HTML_STYLESHEET        = 
+HTML_STYLESHEET        =
 
 HTML_ALIGN_MEMBERS     = YES
 
@@ -300,7 +300,7 @@ SKIP_FUNCTION_MACROS   = YES
 
 TAGFILES               =
 
-GENERATE_TAGFILE       = planner.tags
+GENERATE_TAGFILE       = frepple.tags
 
 ALLEXTERNALS           = NO
 

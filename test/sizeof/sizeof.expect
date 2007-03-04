@@ -1,4 +1,4 @@
-Plan	320
+Plan	316
 Calendar	36
 Calendar::Bucket	28
 CalendarFloat	36
@@ -6,7 +6,7 @@ CalendarFloat::Bucket	32
 Item	60
 Location	56
 Customer	56
-Buffer	116
+Buffer	112
 Demand	108
 Resource	100
 Operation	108

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <NAME>actual plan</NAME>
-  <DESCRIPTION>
-    A simple model used for verifying the problem detection code.
-  </DESCRIPTION>
-  <CURRENT>2007-01-01T00:00:01</CURRENT>
-  <DEFAULT_CALENDAR NAME="Weeks" />
+	<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	  <NAME>actual plan</NAME>
+	  <DESCRIPTION>
+	    A simple model used for verifying the problem detection code.
+	  </DESCRIPTION>
+	  <CURRENT>2007-01-01T00:00:01</CURRENT>
   <OPERATIONS>
     <OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME">
       <DURATION>24:00:00</DURATION>

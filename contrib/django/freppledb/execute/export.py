@@ -50,6 +50,8 @@ def dumpfrepple():
   cursor.connection.autocommit(True)
   starttime = times()[4]
   cursor.execute('delete from frepple.output_problem')
+  cursor.execute('delete from frepple.output_flowplan')
+  cursor.execute('delete from frepple.output_loadplan')
   cursor.execute('delete from frepple.output_operationplan')
   print "Emptied plan tables in %.2f seconds" % (times()[4] - starttime)
 
@@ -64,11 +66,11 @@ def dumpfrepple():
      #prob = Problem(name=j, description=i, start=strptime(k), end=strptime(l))
      #prob.save()
      if first:
-        sql.append("insert into frepple.output_problem (name,description,start,end) values('%s','%s','%s','%s')" %
-           (i['TYPE'], i['DESCRIPTION'].replace("'","''"), i['START'], i['END']))
+        sql.append("insert into frepple.output_problem (entity, name,description,start,end) values('%s', '%s','%s','%s','%s')" %
+           (i['ENTITY'], i['TYPE'], i['DESCRIPTION'].replace("'","''"), i['START'], i['END']))
         first = False
      else:
-        sql.append(",('%s','%s','%s','%s')" % (i['TYPE'], i['DESCRIPTION'].replace("'","''"), i['START'], i['END']))
+        sql.append(",('%s', '%s','%s','%s','%s')" % (i['ENTITY'], i['TYPE'], i['DESCRIPTION'].replace("'","''"), i['START'], i['END']))
      cnt += 1
      if cnt % 5000 == 0:
        cursor.execute(' '.join(sql))
@@ -83,13 +85,15 @@ def dumpfrepple():
   sql = []
   first = True
   for i in frepple.operationplan():
+     if i['DEMAND']: x = i['DEMAND'].replace("'","''")
+     else: x = ''
      if first:
-        sql.append("insert into frepple.output_operationplan (identifier, operation_id,quantity,start,end) values (%s ,'%s' ,%s ,'%s' ,'%s')" %
-           (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], i['START'], i['END']))
+        sql.append("insert into frepple.output_operationplan (identifier,operation_id,quantity,start,end,demand_id) values (%s,'%s',%s,'%s','%s','%s')" %
+           (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], i['START'], i['END'], x))
         first = False
      else:
-        sql.append(",(%s ,'%s' ,%s ,'%s' ,'%s')" %
-            (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], i['START'], i['END']))
+        sql.append(",(%s,'%s',%s,'%s','%s','%s')" %
+            (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], i['START'], i['END'], x))
      cnt += 1
      if cnt % 5000 == 0:
        cursor.execute(' '.join(sql))
@@ -97,6 +101,50 @@ def dumpfrepple():
        first = True
   if not first: cursor.execute(' '.join(sql))
   print 'Exported %d operationplans in %.2f seconds' % (cnt, times()[4] - starttime)
+
+  print "Exporting flowplans..."
+  cnt = 0
+  starttime = times()[4]
+  sql = []
+  first = True
+  for i in frepple.buffer():
+    for j in i['FLOWPLANS']:
+     if first:
+        sql.append("insert into frepple.output_flowplan (operationplan_id,operation_id,thebuffer_id,quantity,date,onhand) values (%s,'%s','%s',%s,'%s',%s)" %
+           (j['OPERATIONPLAN'], j['OPERATION'].replace("'","''"), j['BUFFER'].replace("'","''"), j['QUANTITY'], j['DATE'], j['ONHAND']))
+        first = False
+     else:
+        sql.append(",(%s,'%s','%s',%s,'%s',%s)" %
+           (j['OPERATIONPLAN'], j['OPERATION'].replace("'","''"), j['BUFFER'].replace("'","''"), j['QUANTITY'], j['DATE'], j['ONHAND']))
+     cnt += 1
+     if cnt % 5000 == 0:
+       cursor.execute(' '.join(sql))
+       sql = []
+       first = True
+  if not first: cursor.execute(' '.join(sql))
+  print 'Exported %d flowplans in %.2f seconds' % (cnt, times()[4] - starttime)
+
+  print "Exporting loadplans..."
+  cnt = 0
+  starttime = times()[4]
+  sql = []
+  first = True
+  for i in frepple.resource():
+    for j in i['LOADPLANS']:
+     if first:
+        sql.append("insert into frepple.output_loadplan (operationplan_id,operation_id,resource_id,quantity,date,onhand,maximum) values (%s,'%s','%s',%s,'%s',%s,%s)" %
+           (j['OPERATIONPLAN'], j['OPERATION'].replace("'","''"), j['RESOURCE'].replace("'","''"), j['QUANTITY'], j['DATE'], j['ONHAND'], j['MAXIMUM']))
+        first = False
+     else:
+        sql.append(",(%s,'%s','%s',%s,'%s',%s,%s)" %
+           (j['OPERATIONPLAN'], j['OPERATION'].replace("'","''"), j['RESOURCE'].replace("'","''"), j['QUANTITY'], j['DATE'], j['ONHAND'], j['MAXIMUM']))
+     cnt += 1
+     if cnt % 5000 == 0:
+       cursor.execute(' '.join(sql))
+       sql = []
+       first = True
+  if not first: cursor.execute(' '.join(sql))
+  print 'Exported %d loadplans in %.2f seconds' % (cnt, times()[4] - starttime)
 
 
 def loadfrepple():
@@ -186,17 +234,29 @@ def loadfrepple():
   print 'Importing operations...'
   cnt = 0
   starttime = times()[4]
-  cursor.execute("SELECT name, fence, pretime, posttime, sizeminimum, sizemultiple, owner_id FROM frepple.input_operation")
+  cursor.execute('''
+    SELECT name, fence, pretime, posttime, sizeminimum, sizemultiple, type, duration, duration_per
+    FROM frepple.input_operation
+    WHERE owner_id IS NULL
+    UNION
+    SELECT name, fence, pretime, posttime, sizeminimum, sizemultiple, type, duration, duration_per
+    FROM frepple.input_operation
+    WHERE owner_id IS NOT NULL
+    ''')
   x = [ header, '<OPERATIONS>' ]
-  for i, j, k, l, m, n, o in cursor.fetchall():
+  for i, j, k, l, m, n, p, q, r in cursor.fetchall():
     cnt += 1
-    x.append('<OPERATION NAME="%s">' % i)
-    if j: x.append( '<FENCE>%s</FENCE>' % timeformat(j))
-    if k: x.append( '<PRETIME>%f</PRETIME>' % k)
-    if l: x.append( '<POSTTIME>%f</POSTTIME>' % l)
-    if m: x.append( '<SIZE_MINIMUM>%d</SIZE_MINIMUM>' % m)
-    if n: x.append( '<SIZE_MULTIPLE>%d</SIZE_MULTIPLE>' % n)
-    if o: x.append( '<OWNER NAME="%s"/>' % o)
+    if p:
+      x.append('<OPERATION NAME="%s" xsi:type="%s">' % (i,p))
+    else:
+      x.append('<OPERATION NAME="%s">' % i)
+    if j: x.append('<FENCE>%s</FENCE>' % timeformat(j))
+    if k: x.append('<PRETIME>%s</PRETIME>' % timeformat(k))
+    if l: x.append('<POSTTIME>%s</POSTTIME>' % timeformat(l))
+    if m: x.append('<SIZE_MINIMUM>%d</SIZE_MINIMUM>' % m)
+    if n: x.append('<SIZE_MULTIPLE>%d</SIZE_MULTIPLE>' % n)
+    if q: x.append('<DURATION>%s</DURATION>' % timeformat(q))
+    if r: x.append('<DURATION_PER>%s</DURATION_PER>' % timeformat(r))
     x.append('</OPERATION>')
   x.append('</OPERATIONS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)

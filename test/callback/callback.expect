@@ -18,10 +18,6 @@ Create the model with callbacks:
   Buffer 'end item' receives signal ADD
   BufferDefault 'end item' receives signal BEFORE_CHANGE
   Buffer 'end item' receives signal BEFORE_CHANGE
-  OperationFixedTime 'delivery end item' receives signal BEFORE_CHANGE
-  Operation 'delivery end item' receives signal BEFORE_CHANGE
-  OperationFixedTime 'delivery end item' receives signal AFTER_CHANGE
-  Operation 'delivery end item' receives signal AFTER_CHANGE
   OperationFixedTime 'make end item' receives signal BEFORE_CHANGE
   Operation 'make end item' receives signal BEFORE_CHANGE
   OperationFixedTime 'make end item' receives signal AFTER_CHANGE

@@ -71,7 +71,6 @@
     combined in a simple model.
   </DESCRIPTION>
   <CURRENT>2007-01-01T00:00:00</CURRENT>
-  <DEFAULT_CALENDAR NAME="Weeks" />
   <CALENDARS>
     <CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
       <BUCKETS>

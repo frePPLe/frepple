@@ -14,7 +14,6 @@
       <FILENAME>output.1.xml</FILENAME>
     </COMMAND>
   </COMMANDS>
-  <DEFAULT_CALENDAR NAME="Weeks" />
   <CALENDARS>
     <CALENDAR_VOID NAME="Weeks">
       <BUCKETS>

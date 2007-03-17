@@ -193,47 +193,6 @@ DECLARE_EXPORT void CommandReadXMLString::execute()
 
 
 //
-// READ XML INPUT URL
-//
-
-DECLARE_EXPORT void CommandReadXMLURL::endElement(XMLInput& pIn, XMLElement& pElement)
-{
-  if (pElement.isA(Tags::tag_url))
-    pElement >> url;
-  else if (pElement.isA(Tags::tag_validate))
-    pElement >> validate;
-  else
-    Command::endElement(pIn, pElement);
-}
-
-
-DECLARE_EXPORT void CommandReadXMLURL::execute()
-{
-  // Message
-  if (getVerbose())
-    cout << "Started reading model from url '" << url 
-    << "' at " << Date::now() << endl;
-  Timer t;
-
-  // Replace environment variables in the url.
-  Environment::resolveEnvironment(url);
-
-  // Note: Reading the data can throw exceptions...
-  if (validate_only)
-    XMLInputURL(url).parse(NULL, true);
-  else
-  {
-    LockManager::getManager().obtainWriteLock(&Plan::instance());
-    XMLInputURL(url).parse(&Plan::instance(), validate);
-  }
-
-  // Message
-  if (getVerbose())
-    cout << "Finished reading model at " << Date::now()  << " : " << t << endl;
-}
-
-
-//
 // SAVE MODEL TO XML
 //
 

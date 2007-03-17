@@ -38,7 +38,6 @@ DECLARE_EXPORT const MetaClass CommandPlanSize::metadata,
   CommandSolve::metadata,
   CommandReadXMLFile::metadata,
   CommandReadXMLString::metadata,
-  CommandReadXMLURL::metadata,
   CommandSave::metadata,
   CommandSavePlan::metadata,
   CommandMoveOperationPlan::metadata,
@@ -164,10 +163,6 @@ void LibraryModel::initialize()
     "COMMAND", 
     "COMMAND_READXMLSTRING", 
     Object::createDefault<CommandReadXMLString>);
-  CommandReadXMLURL::metadata.registerClass(
-    "COMMAND", 
-    "COMMAND_READXMLURL", 
-    Object::createDefault<CommandReadXMLURL>);
   CommandSave::metadata.registerClass(
     "COMMAND", 
     "COMMAND_SAVE", 

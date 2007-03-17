@@ -2,7 +2,7 @@
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<CURRENT>2007-01-01T00:00:00</CURRENT>
 	<ITEMS>
-		<ITEM NAME="http://frepple.sourceforge.net/test/xml_remote.xml works!">
+		<ITEM NAME="http://www.frepple.com/test/xml_remote.xml works!">
 		</ITEM>
 	</ITEMS>
 </PLAN>

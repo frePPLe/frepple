@@ -4,28 +4,16 @@
   <COMMANDS>
     <ABORTONERROR>false</ABORTONERROR>
     <VERBOSE>true</VERBOSE>
-    <COMMAND xsi:type="COMMAND_READXMLURL"
-      URL="http://frepple.sourceforge.net/test/xml_remote.xml" />
-<!--
-  The READXMLURL command only supports the most basic HTTP network access.
-  If you require more complex functionaltiy, such as proxies, authentication,
-  https, ftp, gopher, telnet, etc... using the Python library is an easy
-  way to achieve this.
-  The code below is an example. Uncomment it and make sure the Python module
-  is loaded in frepple.
--->
-<!--
     <COMMAND xsi:type="COMMAND_PYTHON">
       <CMDLINE>
 <![CDATA[
 import urllib2
 import frepple
-f = urllib2.urlopen("http://frepple.sourceforge.net/test/xml_remote.xml")
+f = urllib2.urlopen("http://www.frepple.com/test/xml_remote.xml")
 frepple.readXMLdata(f.read(1000), False, False)
 ]]>
       </CMDLINE>
     </COMMAND>
--->
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
   </COMMANDS>
 </PLAN>

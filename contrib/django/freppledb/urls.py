@@ -28,4 +28,6 @@ urlpatterns = patterns('',
     (r'^execute/rundb', 'freppledb.execute.views.rundb'),
     (r'^execute/', 'freppledb.execute.views.execute'),
     (r'^admin/', include('django.contrib.admin.urls')),
+    (r'^buffer/(?P<type>(.*))/$', 'freppledb.output.views.buffer'),
+    (r'^buffer/$', 'freppledb.output.views.buffer'),
 )

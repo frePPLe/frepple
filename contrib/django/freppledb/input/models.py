@@ -69,8 +69,8 @@ class Calendar(models.Model):
 class Bucket(models.Model):
     calendar = models.ForeignKey(Calendar, edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
     start = models.DateField('start date', core=True)
-    name = models.CharField(maxlength=60, null=True, blank=True)
     value = models.FloatField(max_digits=10, decimal_places=2, default=0.00)
+    name = models.CharField(maxlength=60, null=True, blank=True)
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
     def __str__(self):
         if self.name: return self.name
@@ -151,13 +151,6 @@ class Operation(models.Model):
       help_text="A fixed duration for the operation")
     duration_per = models.FloatField('duration per unit', max_digits=10, decimal_places=2, null=True, blank=True,
       help_text="A variable duration for the operation")
-    # Putting the priority and owner fields in this table means that an operation can have only 1 parent.
-    # Internally however, Frepple can re-use the same operation in multiple hierarchies, ie an operation
-    # can have multiple parents.
-    priority = models.PositiveIntegerField(null=True, blank=True,
-      help_text="Priority of this operation among the members of the owning operation")
-    owner = models.ForeignKey('self', null=True, blank=True, related_name='suboperations', # todo NOT good, owner field is not read!!!
-      raw_id_admin=True, help_text='Hierarchical parent')
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
     def __str__(self):
         return self.name
@@ -170,13 +163,15 @@ class Operation(models.Model):
         # Call the real save() method
         super(Operation, self).save()
     class Admin:
-        list_display = ('name', 'type', 'fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'owner', 'priority', 'lastmodified')
+        list_display = ('name', 'type', 'fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'lastmodified')
         search_fields = ['name',]
         save_as = True
         fields = (
             (None, {'fields': ('name', 'type')}),
-            ('Hierarchy', {'fields': ('owner', 'priority')}),
-            ('Planning parameters', {'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'duration', 'duration_per')}),
+            ('Planning parameters', {
+               'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'duration', 'duration_per'),
+               'classes': 'collapse'
+               }),
         )
 
 class Buffer(models.Model):
@@ -197,9 +192,6 @@ class Buffer(models.Model):
     producing = models.ForeignKey('Operation', null=True, blank=True,
       related_name='used_producing', raw_id_admin=True,
       help_text='Operation to replenish the buffer')
-    consuming = models.ForeignKey('Operation', null=True, blank=True,
-      related_name='used_consuming', raw_id_admin=True,
-      help_text='Operation to move extra inventory from the buffer')
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
     def __str__(self):
         return self.name
@@ -208,30 +200,36 @@ class Buffer(models.Model):
             # These fields are not relevant for infinite buffers
             self.minimum = None
             self.producing = None
-            self.consuming = None
         # Call the real save() method
         super(Buffer, self).save()
     class Admin:
         fields = (
             (None,{
-              'fields': (('name', 'item', 'location'), 'description', ('category', 'subcategory'))}),
+              'fields': (('name'), ('item', 'location'), 'description', ('category', 'subcategory'))}),
             ('Inventory', {
               'fields': ('onhand',)}),
             ('Planning parameters', {
-              'fields': ('type','minimum','producing','consuming'),
+              'fields': ('type','minimum','producing'),
               'classes': 'collapse'},),
         )
-        # @todo hide irrelevant fields: feature not available in official releases yet
-        #hide_unless = {
-        #  'minimum': {'type': ''}
-        #  'producing': {'type': ''}
-        #  'consuming': {'type': ''}
-        #}
         list_display = ('name', 'description', 'category', 'subcategory', 'location', 'item',
-          'onhand', 'type', 'minimum', 'producing', 'consuming', 'lastmodified')
+          'onhand', 'type', 'minimum', 'producing', 'lastmodified')
         search_fields = ['name', 'description']
         list_filter = ['category', 'subcategory']
         save_as = True
+
+class SubOperation(models.Model):
+    #operation = models.ForeignKey(Operation, edit_inline=models.TABULAR, 
+    #  min_num_in_admin=3, num_extra_on_change=1, related_name='alfa')
+    operation = models.ForeignKey(Operation, edit_inline=models.TABULAR, 
+       min_num_in_admin=3, num_extra_on_change=1)
+    priority = models.FloatField(max_digits=5, decimal_places=2, default=0.00, core=True)
+    suboperation = models.ForeignKey(Operation, raw_id_admin=True, blank=True, related_name='beta')
+    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+    def __str__(self):
+        return str(self.priority)
+    class Meta:
+        ordering = ('priority','suboperation')
 
 class Resource(models.Model):
     resourcetypes = (
@@ -306,8 +304,8 @@ class OperationPlan(models.Model):
       help_text='Unique identifier of an operationplan')
     operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True)
     quantity = models.FloatField(max_digits=10, decimal_places=2, default='1.00')
-    start = models.DateTimeField(help_text='Start date')
-    end = models.DateTimeField(help_text='End date')
+    startdate = models.DateTimeField(help_text='Start date')
+    enddate = models.DateTimeField(help_text='End date')
     locked = models.BooleanField(default=True, radio_admin=True, help_text='Prevent or allow changes')
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
     def __str__(self):
@@ -315,8 +313,8 @@ class OperationPlan(models.Model):
     class Admin:
         save_as = True
         search_fields = ['operation']
-        list_display = ('identifier', 'operation', 'start', 'end', 'quantity', 'locked', 'lastmodified')
-        date_hierarchy = 'start'
+        list_display = ('identifier', 'operation', 'startdate', 'enddate', 'quantity', 'locked', 'lastmodified')
+        date_hierarchy = 'startdate'
 
 class Demand(models.Model):
     # The priorities defined here are for convenience only. Frepple accepts any number as priority.

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<BUFFERS>{% ifequal type "head" %}
+{% for b in buffers %}
+<BUFFER NAME="{{b.name}}" CATEGORY="{{b.category}}" LOCATION="{{b.location.name}}"/>{%  endfor  %}
+{% else %}{% ifequal type "data" %}
+{%  for b in buffers  %}
+<BUFFER NAME="{{b.name|escape}}" {% if b.type %}xsi-type="{{b.type}}"{% endif %}>
+{% if b.category %} <CATEGORY>{{b.category}}</CATEGORY>
+{% endif %}{% if b.subcategory %} <SUBCATEGORY>{{b.subcategory}}</SUBCATEGORY>
+{% endif %} <ITEM NAME="{{b.item|escape}}"/>
+{% if b.location %} <LOCATION NAME="{{b.location|escape}}"/>
+{% endif %}{% if b.minimum %} <MINIMUM NAME="{{b.minimum|escape}}"/>
+{% endif %}{% if b.producing %} <PRODUCING NAME="{{b.producing|escape}}"/>
+{% endif %}</BUFFER>{% endfor %}
+{% else %}
+{% for f in flowplans %}{% ifchanged f.thebuffer %}{% if forloop.first %}
+<BUFFER NAME="{{f.thebuffer.name|escape}}" {% if f.thebuffer.type %}xsi-type="{{f.thebuffer.type}}"{% endif %}>
+{% if f.thebuffer.category %} <CATEGORY>{{f.thebuffer.category}}</CATEGORY>
+{% endif %}{% if f.thebuffer.subcategory %} <SUBCATEGORY>{{f.thebuffer.subcategory}}</SUBCATEGORY>
+{% endif %} <ITEM NAME="{{f.thebuffer.item|escape}}"/>
+{% if b.location %} <LOCATION NAME="{{f.thebuffer.location|escape}}"/>
+{% endif %}{% if f.thebuffer.minimum %} <MINIMUM NAME="{{f.thebuffer.minimum|escape}}"/>
+{% endif %}{% if f.thebuffer.producing %} <PRODUCING NAME="{{f.thebuffer.producing|escape}}"/>
+{% endif %}<FLOW_PLANS>{% else %}
+</FLOW_PLANS>
+</BUFFER>
+<BUFFER NAME="{{f.thebuffer.name|escape}}" {% if f.thebuffer.type %}xsi-type="{{f.thebuffer.type}}"{% endif %}>
+{% if f.thebuffer.category %} <CATEGORY>{{f.thebuffer.category}}</CATEGORY>
+{% endif %}{% if f.thebuffer.subcategory %} <SUBCATEGORY>{{f.thebuffer.subcategory}}</SUBCATEGORY>
+{% endif %} <ITEM NAME="{{f.thebuffer.item|escape}}"/>
+{% if b.location %} <LOCATION NAME="{{f.thebuffer.location|escape}}"/>
+{% endif %}{% if f.thebuffer.minimum %} <MINIMUM NAME="{{f.thebuffer.minimum|escape}}"/>
+{% endif %}{% if f.thebuffer.producing %} <PRODUCING NAME="{{f.thebuffer.producing|escape}}"/>
+{% endif %}<FLOW_PLANS>{% endif %}{% endifchanged %}
+<FLOW_PLAN DATE="{{f.date}}" QUANTITY="{{f.quantity}}" ONHAND="{{f.onhand}}" OPERATION="{{f.operation}}" OPERATIONPLAN="{{f.operationplan}}"/>{% endfor %}
+{% if flowplans %}</FLOW_PLANS></BUFFER>{% endif %}
+{% endifequal %}{% endifequal %}</BUFFERS>
+</PLAN>

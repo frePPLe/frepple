@@ -29,15 +29,15 @@ class OperationPlan(models.Model):
     demand = models.ForeignKey(Demand, related_name='delivery', null=True, db_index=True, raw_id_admin=True)
     operation = models.ForeignKey(Operation, related_name='instances', db_index=True, raw_id_admin=True)
     quantity = models.FloatField(max_digits=10, decimal_places=2, default='1.00')
-    start = models.DateTimeField(db_index=True)
-    end = models.DateTimeField()
+    startdate = models.DateTimeField(db_index=True)
+    enddate = models.DateTimeField()
     owner = models.ForeignKey('self', null=True, blank=True, related_name='children', raw_id_admin=True)
     def __str__(self):
         return str(self.identifier)
     class Admin:
         search_fields = ['operation']
-        list_display = ('identifier', 'operation', 'start', 'end', 'quantity', 'owner')
-        date_hierarchy = 'start'
+        list_display = ('identifier', 'operation', 'startdate', 'enddate', 'quantity', 'owner')
+        date_hierarchy = 'startdate'
     class Meta:
         permissions = (("view_operationplan", "Can view operation plans"),)
 
@@ -45,15 +45,15 @@ class Problem(models.Model):
     entity = models.CharField(maxlength=10, db_index=True)
     name = models.CharField(maxlength=20, db_index=True)
     description = models.CharField(maxlength=80)
-    start = models.DateTimeField('start date', db_index=True)
-    end = models.DateTimeField('end date', db_index=True)
+    startdate = models.DateTimeField('start date', db_index=True)
+    enddate = models.DateTimeField('end date', db_index=True)
     def __str__(self):
         return str(self.name)
     class Admin:
-        list_display = ('entity', 'name', 'description', 'start', 'end')
+        list_display = ('entity', 'name', 'description', 'startdate', 'enddate')
         search_fields = ['description']
-        date_hierarchy = 'start'
-        list_filter = ['entity','name','start']
+        date_hierarchy = 'startdate'
+        list_filter = ['entity','name','startdate']
     class Meta:
         permissions = (("view_problem", "Can view problems"),)
 
@@ -66,7 +66,7 @@ class LoadPlan(models.Model):
     onhand = models.FloatField(max_digits=10, decimal_places=2)
     maximum = models.FloatField(max_digits=10, decimal_places=2)
     def __str__(self):
-        return str(self.name)
+        return self.resource.name + ' ' + str(self.date)
     class Admin:
         list_display = ('resource', 'operation', 'quantity', 'date', 'onhand', 'maximum', 'operationplan')
     class Meta:
@@ -80,7 +80,7 @@ class FlowPlan(models.Model):
     date = models.DateTimeField()
     onhand = models.FloatField(max_digits=10, decimal_places=2)
     def __str__(self):
-        return str(self.name)
+        return self.thebuffer.name + str(self.date) 
     class Admin:
         list_display = ('thebuffer', 'operation', 'quantity', 'date', 'onhand', 'operationplan')
     class Meta:

@@ -43,37 +43,21 @@ def erase_model():
   '''
   cursor = connection.cursor()
   cursor.execute('delete from frepple.output_problem')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.output_flowplan')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.output_loadplan')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.output_operationplan')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.input_demand')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.input_flow')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.input_load')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.input_buffer')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.input_resource')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.input_operationplan')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.input_item')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.input_operation')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.input_location')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.input_bucket')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.input_calendar')
-  cursor.connection.commit()
   cursor.execute('delete from frepple.input_customer')
-  cursor.connection.commit()
 
 def create_model (cluster, demand, level):
   '''
@@ -107,26 +91,19 @@ def create_model (cluster, demand, level):
   # Loop over all clusters
   for i in range(cluster):
     # location
-    loc = Location(name='Loc %05d' % i)
+    loc = Location.objects.create(name='Loc %05d' % i)
 
     # Item and delivery operation
-    oper = Operation(name='Del %05d' % i)
-    it = Item(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
+    oper = Operation.objects.create(name='Del %05d' % i)
+    it = Item.objects.create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
 
     # Level 0 buffer
-    buf = Buffer(name='Buf %05d L00' % i,
+    buf = Buffer.objects.create(name='Buf %05d L00' % i,
       item=it,
       location=loc,
       category='00'
       )
-    fl = Flow(operation=oper, thebuffer=buf, quantity=-1)
-
-    # Save the first batch
-    loc.save()
-    oper.save()
-    it.save()
-    fl.save()
-    buf.save()
+    fl = Flow.objects.create(operation=oper, thebuffer=buf, quantity=-1)
 
     # Demand
     for j in range(demand):
@@ -170,5 +147,5 @@ def create_model (cluster, demand, level):
     # Create actual supply
     for i in range(demand/10):
         cnt += 1
-        opplan = OperationPlan(identifier=cnt, operation=oper, quantity=int(random.uniform(1,100)), start=getDate(), end=getDate())
+        opplan = OperationPlan(identifier=cnt, operation=oper, quantity=int(random.uniform(1,100)), startdate=getDate(), enddate=getDate())
         opplan.save()

@@ -21,16 +21,22 @@
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net
 
-#from django.http import HttpResponseRedirect
-#from django.shortcuts import render_to_response, get_object_or_404
-#from django.contrib.auth import authenticate
-#from django.contrib.auth.decorators import login_required
-#from frepple.output.models import Problem
-#from django.contrib.admin.views.main import change_list
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from freppledb.output.models import FlowPlan
+from freppledb.input.models import Buffer
+from django.template import RequestContext, loader
 
-#def problems(request):
-#    #problem_list = Problem.objects.all().order_by('start')
-#    #return render_to_response('output/problems.html', {'problem_list': problem_list})
-#    return change_list(request, 'output', 'problem')
-
-
+#@login_required
+def buffer(request, type='data'):
+  response = HttpResponse(mimetype = 'application/xml')
+  c = RequestContext(request)
+  c.update({ 
+    'buffers': Buffer.objects.order_by('name'), 
+    'flowplans': FlowPlan.objects.order_by('thebuffer','date','-quantity'),
+    'type': type,
+    })      
+  response.write(loader.get_template('buffer.xml').render(c))
+  return response
+       

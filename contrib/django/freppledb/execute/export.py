@@ -25,6 +25,7 @@ from freppledb.input.models import *
 from freppledb.output.models import *
 from datetime import datetime
 from django.db import connection
+from django.db import transaction
 from os import times
 
 dateformat = '%Y-%m-%dT%H:%M:%S'
@@ -40,112 +41,65 @@ def timeformat(int):
     return '%d' % int
 
 
+@transaction.commit_manually
 def dumpfrepple():
   '''
-  This function exports the data from the frepple memory into the
-  database.
+  This function exports the data from the frepple memory into the database.
   '''
   print "Emptying database plan tables..."
   cursor = connection.cursor()
-  cursor.connection.autocommit(True)
   starttime = times()[4]
   cursor.execute('delete from frepple.output_problem')
+  transaction.commit()
   cursor.execute('delete from frepple.output_flowplan')
+  transaction.commit()
   cursor.execute('delete from frepple.output_loadplan')
+  transaction.commit()
   cursor.execute('delete from frepple.output_operationplan')
+  transaction.commit()
   print "Emptied plan tables in %.2f seconds" % (times()[4] - starttime)
 
   print "Exporting problems..."
-  cnt = 0
-  sql = []
-  first = True
   starttime = times()[4]
-  for i in frepple.problem():
-     # The Django api to create objects is fine but it is soooo much slower
-     # than the direct database API...
-     #prob = Problem(name=j, description=i, start=strptime(k), end=strptime(l))
-     #prob.save()
-     if first:
-        sql.append("insert into frepple.output_problem (entity, name,description,start,end) values('%s', '%s','%s','%s','%s')" %
-           (i['ENTITY'], i['TYPE'], i['DESCRIPTION'].replace("'","''"), i['START'], i['END']))
-        first = False
-     else:
-        sql.append(",('%s', '%s','%s','%s','%s')" % (i['ENTITY'], i['TYPE'], i['DESCRIPTION'].replace("'","''"), i['START'], i['END']))
-     cnt += 1
-     if cnt % 5000 == 0:
-       cursor.execute(' '.join(sql))
-       sql = []
-       first = True
-  if not first: cursor.execute(' '.join(sql))
-  print 'Exported %d problems in %.2f seconds' % (cnt, times()[4] - starttime)
+  cursor.executemany(
+    "insert into frepple.output_problem (entity,name,description,startdate,enddate) values(%s,%s,%s,%s,%s)",
+    [ (i['ENTITY'], i['TYPE'], i['DESCRIPTION'], str(i['START']), str(i['END'])) for i in frepple.problem() ] 
+    )
+  transaction.commit()
+  cursor.execute("select count(*) from frepple.output_problem")
+  print 'Exported %d problems in %.2f seconds' % (cursor.fetchone()[0], times()[4] - starttime)
 
   print "Exporting operationplans..."
-  cnt = 0
   starttime = times()[4]
-  sql = []
-  first = True
-  for i in frepple.operationplan():
-     if i['DEMAND']: x = i['DEMAND'].replace("'","''")
-     else: x = ''
-     if first:
-        sql.append("insert into frepple.output_operationplan (identifier,operation_id,quantity,start,end,demand_id) values (%s,'%s',%s,'%s','%s','%s')" %
-           (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], i['START'], i['END'], x))
-        first = False
-     else:
-        sql.append(",(%s,'%s',%s,'%s','%s','%s')" %
-            (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], i['START'], i['END'], x))
-     cnt += 1
-     if cnt % 5000 == 0:
-       cursor.execute(' '.join(sql))
-       sql = []
-       first = True
-  if not first: cursor.execute(' '.join(sql))
-  print 'Exported %d operationplans in %.2f seconds' % (cnt, times()[4] - starttime)
+  cursor.executemany(
+    "insert into frepple.output_operationplan (identifier,operation_id,quantity,startdate,enddate,demand_id) values (%s,%s,%s,%s,%s,%s)",
+    [ (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], str(i['START']), str(i['END']), i['DEMAND']) for i in frepple.operationplan() ] 
+    )
+  transaction.commit()
+  cursor.execute("select count(*) from frepple.output_operationplan")
+  print 'Exported %d operationplans in %.2f seconds' % (cursor.fetchone()[0], times()[4] - starttime)
 
   print "Exporting flowplans..."
-  cnt = 0
   starttime = times()[4]
-  sql = []
-  first = True
   for i in frepple.buffer():
-    for j in i['FLOWPLANS']:
-     if first:
-        sql.append("insert into frepple.output_flowplan (operationplan_id,operation_id,thebuffer_id,quantity,date,onhand) values (%s,'%s','%s',%s,'%s',%s)" %
-           (j['OPERATIONPLAN'], j['OPERATION'].replace("'","''"), j['BUFFER'].replace("'","''"), j['QUANTITY'], j['DATE'], j['ONHAND']))
-        first = False
-     else:
-        sql.append(",(%s,'%s','%s',%s,'%s',%s)" %
-           (j['OPERATIONPLAN'], j['OPERATION'].replace("'","''"), j['BUFFER'].replace("'","''"), j['QUANTITY'], j['DATE'], j['ONHAND']))
-     cnt += 1
-     if cnt % 5000 == 0:
-       cursor.execute(' '.join(sql))
-       sql = []
-       first = True
-  if not first: cursor.execute(' '.join(sql))
-  print 'Exported %d flowplans in %.2f seconds' % (cnt, times()[4] - starttime)
+    cursor.executemany(
+      "insert into frepple.output_flowplan (operationplan_id,operation_id,thebuffer_id,quantity,date,onhand) values (%s,%s,%s,%s,%s,%s)",
+      [ (j['OPERATIONPLAN'], j['OPERATION'], j['BUFFER'], j['QUANTITY'], str(j['DATE']), j['ONHAND']) for j in i['FLOWPLANS'] ] 
+      )
+  transaction.commit()
+  cursor.execute("select count(*) from frepple.output_flowplan")
+  print 'Exported %d flowplans in %.2f seconds' % (cursor.fetchone()[0], times()[4] - starttime)
 
   print "Exporting loadplans..."
-  cnt = 0
   starttime = times()[4]
-  sql = []
-  first = True
   for i in frepple.resource():
-    for j in i['LOADPLANS']:
-     if first:
-        sql.append("insert into frepple.output_loadplan (operationplan_id,operation_id,resource_id,quantity,date,onhand,maximum) values (%s,'%s','%s',%s,'%s',%s,%s)" %
-           (j['OPERATIONPLAN'], j['OPERATION'].replace("'","''"), j['RESOURCE'].replace("'","''"), j['QUANTITY'], j['DATE'], j['ONHAND'], j['MAXIMUM']))
-        first = False
-     else:
-        sql.append(",(%s,'%s','%s',%s,'%s',%s,%s)" %
-           (j['OPERATIONPLAN'], j['OPERATION'].replace("'","''"), j['RESOURCE'].replace("'","''"), j['QUANTITY'], j['DATE'], j['ONHAND'], j['MAXIMUM']))
-     cnt += 1
-     if cnt % 5000 == 0:
-       cursor.execute(' '.join(sql))
-       sql = []
-       first = True
-  if not first: cursor.execute(' '.join(sql))
-  print 'Exported %d loadplans in %.2f seconds' % (cnt, times()[4] - starttime)
-
+    cursor.executemany(
+      "insert into frepple.output_loadplan (operationplan_id,operation_id,resource_id,quantity,date,onhand,maximum) values (%s,%s,%s,%s,%s,%s,%s)",
+      [ (j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'], j['QUANTITY'], str(j['DATE']), j['ONHAND'], j['MAXIMUM']) for j in i['LOADPLANS'] ] 
+      )
+  transaction.commit()
+  cursor.execute("select count(*) from frepple.output_loadplan")
+  print 'Exported %d loadplans in %.2f seconds' % (cursor.fetchone()[0], times()[4] - starttime)
 
 def loadfrepple():
   '''
@@ -161,7 +115,9 @@ def loadfrepple():
   print 'Import plan...'
   x = [ header ]
   cursor.execute("SELECT current, name, description FROM frepple.input_plan")
-  i, j, k = cursor.fetchone()
+  d = cursor.fetchone()
+  if not d: raise ValueError('Missing a record in the plan table')
+  i, j, k = d
   x.append('<CURRENT>%s</CURRENT>' % i.strftime(dateformat))
   if j: x.append('<NAME>%s</NAME>' % j)
   if k: x.append('<DESCRIPTION>%s</DESCRIPTION>' % k)
@@ -234,16 +190,16 @@ def loadfrepple():
   print 'Importing operations...'
   cnt = 0
   starttime = times()[4]
+  x = [ header, '<OPERATIONS>' ]
   cursor.execute('''
     SELECT name, fence, pretime, posttime, sizeminimum, sizemultiple, type, duration, duration_per
     FROM frepple.input_operation
-    WHERE owner_id IS NULL
+    WHERE type is null OR type not in ('OPERATION_ROUTING','OPERATION_ALTERNATE')
     UNION
     SELECT name, fence, pretime, posttime, sizeminimum, sizemultiple, type, duration, duration_per
     FROM frepple.input_operation
-    WHERE owner_id IS NOT NULL
+    WHERE type in ('OPERATION_ROUTING','OPERATION_ALTERNATE')
     ''')
-  x = [ header, '<OPERATIONS>' ]
   for i, j, k, l, m, n, p, q, r in cursor.fetchall():
     cnt += 1
     if p:
@@ -283,9 +239,9 @@ def loadfrepple():
   print 'Importing buffers...'
   cnt = 0
   starttime = times()[4]
-  cursor.execute("SELECT name, description, location_id, item_id, onhand, minimum_id, producing_id, consuming_id, type FROM frepple.input_buffer")
+  cursor.execute("SELECT name, description, location_id, item_id, onhand, minimum_id, producing_id, type FROM frepple.input_buffer")
   x = [ header, '<BUFFERS>' ]
-  for i, j, k, l, m, n, o, p, q in cursor.fetchall():
+  for i, j, k, l, m, n, o, q in cursor.fetchall():
     cnt += 1
     if q:
       x.append('<BUFFER NAME="%s" xsi:type="%s">' % (i,q))
@@ -297,7 +253,6 @@ def loadfrepple():
     if m: x.append( '<ONHAND>%s</ONHAND>' % m)
     if n: x.append( '<MINIMUM NAME="%s" />' % n)
     if o: x.append( '<PRODUCING NAME="%s" />' % o)
-    if p: x.append( '<CONSUMING NAME="%s" />' % p)
     x.append('</BUFFER>')
   x.append('</BUFFERS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
@@ -356,13 +311,13 @@ def loadfrepple():
   print 'Importing operationplans...'
   cnt = 0
   starttime = times()[4]
-  cursor.execute("SELECT identifier, operation_id, quantity, start, end, locked FROM frepple.input_operationplan order by identifier asc")
+  cursor.execute("SELECT identifier, operation_id, quantity, startdate, enddate, locked FROM frepple.input_operationplan order by identifier asc")
   x = [ header , '<OPERATION_PLANS>' ]
   for i, j, k, l, m, n in cursor.fetchall():
     cnt += 1
     x.append('<OPERATION_PLAN ID="%d" OPERATION="%s" QUANTITY="%s">' % (i, j, k))
     if l: x.append( '<START>%s</START>' % l.strftime(dateformat))
-    if m: x.append( '<START>%s</START>' % m.strftime(dateformat))
+    if m: x.append( '<END>%s</END>' % m.strftime(dateformat))
     if n: x.append( '<LOCKED>true</LOCKED>')
     x.append('</OPERATION_PLAN>')
   x.append('</OPERATION_PLANS></PLAN>')

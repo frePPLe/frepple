@@ -53,6 +53,7 @@ def erase_model():
   cursor.execute('delete from frepple.input_resource')
   cursor.execute('delete from frepple.input_operationplan')
   cursor.execute('delete from frepple.input_item')
+  cursor.execute('delete from frepple.input_suboperation')
   cursor.execute('delete from frepple.input_operation')
   cursor.execute('delete from frepple.input_location')
   cursor.execute('delete from frepple.input_bucket')
@@ -134,6 +135,8 @@ def create_model (cluster, demand, level):
         location=loc,
         category='%02d' % (k+1)
         )
+      # Some inventory in random buffers  
+      if random.uniform(0,1) > 0.8: buf.onhand=int(random.uniform(5,20))
       fl = Flow(operation=oper, thebuffer=buf, quantity=-1)
       buf.save()
       fl.save()

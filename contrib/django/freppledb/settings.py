@@ -23,7 +23,7 @@
 
 # Django settings for freppledb project.
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (

@@ -173,7 +173,25 @@ class Operation(models.Model):
                'classes': 'collapse'
                }),
         )
-
+        
+class SubOperation(models.Model):
+    ## Django bug: @todo
+    ## We want to edit the sub-operations inline as part of the operation editor.
+    ## But django doesn't like it...
+    ## See Django ticket: http://code.djangoproject.com/ticket/1939
+    #operation = models.ForeignKey(Operation, edit_inline=models.TABULAR, 
+    #  min_num_in_admin=3, num_extra_on_change=1, related_name='alfa') 
+    operation = models.ForeignKey(Operation, raw_id_admin=True, related_name='alfa')
+    priority = models.FloatField(max_digits=5, decimal_places=2, default=1)
+    suboperation = models.ForeignKey(Operation, edit_inline=models.TABULAR, raw_id_admin=True, related_name='beta', core=True)
+    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+    def __str__(self):
+        return self.operation.name + "   " + str(self.priority) + "   " + self.suboperation.name
+    class Meta:    
+        ordering = ('priority','suboperation')
+    class Admin:
+        list_display = ('operation','priority','suboperation')        
+        
 class Buffer(models.Model):
     buffertypes = (
       ('','Default'),
@@ -217,19 +235,6 @@ class Buffer(models.Model):
         search_fields = ['name', 'description']
         list_filter = ['category', 'subcategory']
         save_as = True
-
-class SubOperation(models.Model):
-    #operation = models.ForeignKey(Operation, edit_inline=models.TABULAR, 
-    #  min_num_in_admin=3, num_extra_on_change=1, related_name='alfa')
-    operation = models.ForeignKey(Operation, edit_inline=models.TABULAR, 
-       min_num_in_admin=3, num_extra_on_change=1)
-    priority = models.FloatField(max_digits=5, decimal_places=2, default=0.00, core=True)
-    suboperation = models.ForeignKey(Operation, raw_id_admin=True, blank=True, related_name='beta')
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
-    def __str__(self):
-        return str(self.priority)
-    class Meta:
-        ordering = ('priority','suboperation')
 
 class Resource(models.Model):
     resourcetypes = (

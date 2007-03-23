@@ -128,8 +128,8 @@ stats:
 
 # A simple way to list the todo items
 todo:
-	grep -i todo `find . -name '*.cpp'` `find . -name '*.h'` `find . -name '*.xml'` | sort
-	grep -i todo `find . -name '*.cpp'` `find . -name '*.h'` `find . -name '*.xml'` | wc
+	grep -i todo `find . -name '*.cpp'` `find . -name '*.h'` `find . -name '*.xml'` `find . -name '*.py'` | sort
+	grep -i todo `find . -name '*.cpp'` `find . -name '*.h'` `find . -name '*.xml'` `find . -name '*.py'` | wc
 
 # Reformats the code to comply to some common standard
 # Our formatting is closely aligned with the CoreLinux standards

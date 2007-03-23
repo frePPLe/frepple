@@ -22,6 +22,7 @@
 # email : jdetaeye@users.sourceforge.net
 
 from django.conf.urls.defaults import *
+import sys
 
 urlpatterns = patterns('',
     (r'^execute/runfrepple', 'freppledb.execute.views.runfrepple'),
@@ -31,3 +32,11 @@ urlpatterns = patterns('',
     (r'^buffer/(?P<type>(.*))/$', 'freppledb.output.views.buffer'),
     (r'^buffer/$', 'freppledb.output.views.buffer'),
 )
+
+# Allows the standalone development server to serve the static pages.
+# In a production environment you need to configure your web server to take care of
+# these pages.
+if 'runserver' in sys.argv:
+  urlpatterns += patterns('',(r'static/(?P<path>.*)$', 'django.views.static.serve', 
+       {'document_root': 'static', 'show_indexes': False}),
+    )

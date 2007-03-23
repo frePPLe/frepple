@@ -27,7 +27,7 @@ from freppledb.input.models import Operation, Demand, Buffer, Resource
 class OperationPlan(models.Model):
     identifier = models.IntegerField(primary_key=True)
     demand = models.ForeignKey(Demand, related_name='delivery', null=True, db_index=True, raw_id_admin=True)
-    operation = models.ForeignKey(Operation, related_name='instances', db_index=True, raw_id_admin=True)
+    operation = models.ForeignKey(Operation, related_name='instances', null=True, db_index=True, raw_id_admin=True)
     quantity = models.FloatField(max_digits=10, decimal_places=2, default='1.00')
     startdate = models.DateTimeField(db_index=True)
     enddate = models.DateTimeField()

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="/static/buffer.xsl"?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <BUFFERS>{% ifequal type "head" %}
 {% for b in buffers %}
@@ -19,7 +20,7 @@
 {% if f.thebuffer.category %} <CATEGORY>{{f.thebuffer.category}}</CATEGORY>
 {% endif %}{% if f.thebuffer.subcategory %} <SUBCATEGORY>{{f.thebuffer.subcategory}}</SUBCATEGORY>
 {% endif %} <ITEM NAME="{{f.thebuffer.item|escape}}"/>
-{% if b.location %} <LOCATION NAME="{{f.thebuffer.location|escape}}"/>
+{% if f.thebuffer.location %} <LOCATION NAME="{{f.thebuffer.location|escape}}"/>
 {% endif %}{% if f.thebuffer.minimum %} <MINIMUM NAME="{{f.thebuffer.minimum|escape}}"/>
 {% endif %}{% if f.thebuffer.producing %} <PRODUCING NAME="{{f.thebuffer.producing|escape}}"/>
 {% endif %}<FLOW_PLANS>{% else %}
@@ -29,7 +30,7 @@
 {% if f.thebuffer.category %} <CATEGORY>{{f.thebuffer.category}}</CATEGORY>
 {% endif %}{% if f.thebuffer.subcategory %} <SUBCATEGORY>{{f.thebuffer.subcategory}}</SUBCATEGORY>
 {% endif %} <ITEM NAME="{{f.thebuffer.item|escape}}"/>
-{% if b.location %} <LOCATION NAME="{{f.thebuffer.location|escape}}"/>
+{% if f.thebuffer.location %} <LOCATION NAME="{{f.thebuffer.location|escape}}"/>
 {% endif %}{% if f.thebuffer.minimum %} <MINIMUM NAME="{{f.thebuffer.minimum|escape}}"/>
 {% endif %}{% if f.thebuffer.producing %} <PRODUCING NAME="{{f.thebuffer.producing|escape}}"/>
 {% endif %}<FLOW_PLANS>{% endif %}{% endifchanged %}

@@ -111,7 +111,6 @@ def runTestSuite():
         os.environ['FREPPLE_HOME'] = Popen(
           "cygpath  --unix " + os.environ['FREPPLE_HOME'],
           stdout=PIPE, shell=True).communicate()[0].strip()
-    print os.environ['FREPPLE_HOME']
 
     # Update the search path for shared libraries, such that the modules
     # can be picked up.
@@ -145,9 +144,15 @@ def runTestSuite():
     for i in tests:
         i = os.path.normpath(i)
         tmp = os.path.join(testdir, i, i)
+
+        # Only GCC runs compiled tests
+        if len(glob.glob(os.path.join(testdir, i, '*.cpp'))) > 0 and platform != "GCC":
+          continue
+
+        # Check the test type
         if os.path.isfile(tmp) or os.path.isfile(tmp + '.exe'):
             # Type 1: (compiled) executable
-            if platform == "GCC": AllTests.addTest(freppleTest(i, 'runExecutable'))
+            AllTests.addTest(freppleTest(i, 'runExecutable'))
         elif os.path.isfile(os.path.join(testdir, i, 'runtest.py')):
             # Type 2: perl script runtest.pl available
             AllTests.addTest(freppleTest(i, 'runScript'))

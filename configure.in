@@ -202,6 +202,7 @@ if test x$lp = xtrue
 then
 AC_CHECK_LIB(glpk, glp_lpx_create_prob, [],
 [AC_MSG_ERROR([
+  Can't link with the glpk library.
   This package requires the GLPK linear programming solver...
   Check out http://www.gnu.org/software/glpk/glpk.html to download it.
   Alternatively, reconfigure without the option '--with-glpk'
@@ -230,8 +231,9 @@ PYTHON_VERSION=`$PYTHON -c 'import sys; print sys.version[:3]'`
 changequote([, ])
 AC_CHECK_LIB(python$PYTHON_VERSION, PyModule_GetDict, [],
 [AC_MSG_ERROR([
+  Can't link with the python library.
   This package requires the python development libraries.
-  Install these, or reconfigure without the option '--with-python'
+  Install or configure these, or reconfigure without the option '--with-python'
 ])])
 AC_CHECKING([for python linking options ])
 PYTHON_LINK=`$PYTHON -c "import distutils.sysconfig; print distutils.sysconfig.get_config_var('LINKFORSHARED')"`

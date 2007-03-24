@@ -28,25 +28,25 @@
 
 #ifndef SAMPLE_MODULE_H
 #define SAMPLE_MODULE_H
-#include "frepple/model.h"
+#include "frepple.h"
 using namespace frepple;
 
 /** Using a seperate namespace keeps things clean and simple.
   * It keeps the code structure and the documentation are following the same
-  * modular structure as your extension modules. 
+  * modular structure as your extension modules.
   */
 namespace sample_module
 {
-  
-  
-/** This is the initialization routine for the extension. 
-  * Including a function with this prototype is compulsary. If it doesn't 
+
+
+/** This is the initialization routine for the extension.
+  * Including a function with this prototype is compulsary. If it doesn't
   * exist your module will not be able to be loaded.
   * The function is called automatically when your module is loaded.
   *
   * Parameters can be passed when loading the library.
   *
-  * The initialization routine returns a pointer to a constant character 
+  * The initialization routine returns a pointer to a constant character
   * buffer with the module name.
   */
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);

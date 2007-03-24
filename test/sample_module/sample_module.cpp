@@ -25,8 +25,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "frepple/model.h"
-using namespace frepple;
 #include "sample_module.h"
 
 namespace sample_module
@@ -45,7 +43,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     "OPERATION",
     "OPERATION_TRANSPORT",
     Object::createString<OperationTransport>);
-      
+
   // Register a callback
   FunctorStatic<Buffer, OperationTransport>::connect(SIG_REMOVE);
 

@@ -279,10 +279,10 @@ class Environment
       */
     static DECLARE_EXPORT void setHomeDirectory(const string);
 
-    /** Environment variables in the argument string are expanded with 
+    /** Environment variables in the argument string are expanded with
       * their value.<br>
       * The variable to be expanded needs to be enclosed by ${ }<br>
-      * E.g. 123${CNT}789 becomes 123456789 when the value of the environment 
+      * E.g. 123${CNT}789 becomes 123456789 when the value of the environment
       * variable is 456.<br>
       *
       * Substitution with environment values is implemented for the following types
@@ -1355,7 +1355,7 @@ class Date
       return string(str);
     }
 
-    /** Return the seconds since the epoch, which is also the internal 
+    /** Return the seconds since the epoch, which is also the internal
       * representation of a date. */
     time_t getTicks() const {return lval;}
 
@@ -2241,11 +2241,11 @@ class Object
         /** Constructor, promoting a read-lock to a writelock.<br>
           * You should only copy a lock within the same thread!
           */
-        WLock(const RLock<T>& p) : obj(const_cast<T*>(p.getObject())) 
+        WLock(const RLock<T>& p) : obj(const_cast<T*>(p.getObject()))
           {LockManager::getManager().obtainWriteLock(obj);}
 
         /** Destructor.<br>
-          * The write lock is released when the WLock object is deleted. 
+          * The write lock is released when the WLock object is deleted.
           */
         ~WLock() {LockManager::getManager().releaseWriteLock(obj);}
 
@@ -2971,7 +2971,7 @@ class CommandList : public Command
 /** This command allows a user to run a system command on your operating
   * system. The command will spawn a child process to execute the command, and
   * will wait for that process to finish before continue.<br>
-  * Environment variables enclosed in ${ } are expanded with their value 
+  * Environment variables enclosed in ${ } are expanded with their value
   * before execution of the command.<br>
   * The class is using the standard C function system() to spawn the command.
   * The behavior of this function will depend on your platform and the
@@ -3069,7 +3069,7 @@ class CommandLoadLibrary : public Command
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandLoadLibrary);}
-    
+
     /** Returns true if a module with this name has been loaded. */
     static bool isLoaded(string s) {return registry.find(s) != registry.end();}
 
@@ -3085,7 +3085,7 @@ class CommandLoadLibrary : public Command
 
     /** Temporary string used during the reading of the parameters. */
     string tempValue;
-    
+
     /** A map of all modules that have been dynamically loaded. */
     static DECLARE_EXPORT set<string> registry;
 };

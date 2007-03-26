@@ -38,7 +38,7 @@ namespace frepple
 /** This solver implements a heuristic algorithm for planning demands. One by
   * one the demands are processed. The demand will consume step by step any
   * upstream materials, respecting all relevant constraints on its path.<br>
-  * The solver supports all planning constraints as defined in Solver 
+  * The solver supports all planning constraints as defined in Solver
   * class.<br>
   * See the documentation of the different solve methods to understand the
   * functionality in more detail.
@@ -89,7 +89,7 @@ class MRPSolver : public Solver
       *    The maximum level is treated as a 'wish' inventory, similar to the
       *    minimum inventory.
       *    When flowplans aren't planned in chronological order on the buffer
-      *    the resulting inventory profile of a MinMax buffer will NOT show 
+      *    the resulting inventory profile of a MinMax buffer will NOT show
       *    the typical and expected sawtooth shape. @todo
       *  - Planning for the minimum target is part of planning a demand. There
       *    is no planning run independent of demand to satisfy the minimum
@@ -103,8 +103,8 @@ class MRPSolver : public Solver
     DECLARE_EXPORT void solve(const Buffer*, void* = NULL);
 
     /** Behavior of this solver method:
-      *  - This method simply passes on the request to the referenced buffer. 
-      *    It is called from a solve(Operation*) method and passes on the 
+      *  - This method simply passes on the request to the referenced buffer.
+      *    It is called from a solve(Operation*) method and passes on the
       *    control to a solve(Buffer*) method.
       * @see checkOperationMaterial
       */
@@ -112,17 +112,17 @@ class MRPSolver : public Solver
 
     /** Behavior of this solver method:
       *  - The operationplan is checked for a capacity overload. When detected
-      *    it is moved to an earlier date. 
+      *    it is moved to an earlier date.
       *  - This move can be repeated until no capacity is found till a suitable
-      *    time slot is found. If the fence and/or leadtime constraints are 
+      *    time slot is found. If the fence and/or leadtime constraints are
       *    enabled they can restrict the feasible moving time.<br>
       *    If a feasible timeslot is found, the method exits here.
       *  - If no suitable time slot can be found at all, the operation plan is
       *    put on its original date and we now try to move it to a feasible
       *    later date. Again, successive moves are possible till a suitable
       *    slot is found or till we reach the end of the horizon.
-      *    The result of the search is returned as the answer-date to the 
-      *    solver. 
+      *    The result of the search is returned as the answer-date to the
+      *    solver.
       */
     DECLARE_EXPORT void solve(const Resource*, void* = NULL);
 
@@ -133,7 +133,7 @@ class MRPSolver : public Solver
 
     /** Behavior of this solver method:
       *  - This method simply passes on the request to the referenced resource.
-      *    With the current model structure it could easily be avoided (and 
+      *    With the current model structure it could easily be avoided (and
       *    thus gain a bit in performance), but we wanted to include it anyway
       *    to make the solver as generic and future-proof as possible.
       * @see checkOperationCapacity
@@ -154,10 +154,10 @@ class MRPSolver : public Solver
       */
     DECLARE_EXPORT void solve(const Demand*, void* = NULL);
 
-    /** This is the main solver method that will appropriately call the other 
+    /** This is the main solver method that will appropriately call the other
       * solve methods.<br>
       * The demands in the model will all be sorted with the criteria defined in
-      * the demand_comparison() method. For each of demand the solve(Demand*) 
+      * the demand_comparison() method. For each of demand the solve(Demand*)
       * method is called to plan it.
       */
     DECLARE_EXPORT void solve(void *v = NULL);
@@ -188,9 +188,9 @@ class MRPSolver : public Solver
     /** Returns the constraints considered by the solve. */
     short getConstraints() const {return constrts;}
 
-    /** Returns true if this solver respects the operation release fences. 
+    /** Returns true if this solver respects the operation release fences.
       * The solver isn't allowed to create any operation plans within the
-      * release fence. 
+      * release fence.
       */
     bool isFenceConstrained() const {return (constrts & FENCE)>0;}
 
@@ -216,7 +216,7 @@ class MRPSolver : public Solver
     classified_demand demands_per_cluster;
 
   protected:
-    /** This class is a helper class for the MRPSolver. It stores the solver 
+    /** This class is a helper class for the MRPSolver. It stores the solver
       * state maintained by each solver thread.
       * @see MRPSolver
       */
@@ -225,7 +225,7 @@ class MRPSolver : public Solver
       friend class MRPSolver;
       public:
         MRPSolver* getSolver() const {return sol;}
-        MRPSolverdata(MRPSolver* s, int c, deque<Demand*>& d) 
+        MRPSolverdata(MRPSolver* s, int c, deque<Demand*>& d)
           : sol(s), curOwnerOpplan(NULL), q_loadplan(NULL), q_flowplan(NULL),
             q_operationplan(NULL), cluster(c), demands(d) {}
 
@@ -255,7 +255,7 @@ class MRPSolver : public Solver
         /** Points to the demand being planned. */
         const Demand* curDemand;
 
-        /** Points to the current owner operationplan. This is used when 
+        /** Points to the current owner operationplan. This is used when
           * operations are nested. */
         OperationPlan* curOwnerOpplan;
 
@@ -273,8 +273,8 @@ class MRPSolver : public Solver
         Date q_date;
 
         /** This is the maximum date we are asking for. <br>
-          * In case of a post-operation time there is a difference between 
-          * q_date and q_date_max. 
+          * In case of a post-operation time there is a difference between
+          * q_date and q_date_max.
           */
         Date q_date_max;
 
@@ -284,11 +284,11 @@ class MRPSolver : public Solver
         /** This is the Date when we can get extra availability. */
         Date a_date;
 
-        /** This is a pointer to a LoadPlan. It is used for communication 
+        /** This is a pointer to a LoadPlan. It is used for communication
           * between the Operation-Solver and the Resource-Solver. */
         LoadPlan* q_loadplan;
 
-        /** This is a pointer to a FlowPlan. It is used for communication 
+        /** This is a pointer to a FlowPlan. It is used for communication
           * between the Operation-Solver and the Buffer-Solver. */
         FlowPlan* q_flowplan;
 
@@ -299,7 +299,7 @@ class MRPSolver : public Solver
           * always the complete cluster that is being planned.
           */
         int cluster;
-          
+
         /** A deque containing all demands to be (re-)planned. */
         deque<Demand*>& demands;
     };

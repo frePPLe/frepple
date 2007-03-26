@@ -2272,7 +2272,7 @@ class Item
       * This field is inherited from a parent item, if it hasn't been
       * specified.
       */
-    Operation::pointer getDelivery() const 
+    Operation::pointer getDelivery() const
     {
       // Current item has a non-empty deliveryOperation field
       if (deliveryOperation) return deliveryOperation;
@@ -2302,7 +2302,7 @@ class Item
     static DECLARE_EXPORT const MetaCategory metadata;
 
   private:
-    /** This is the operation used to satisfy a demand for this item. 
+    /** This is the operation used to satisfy a demand for this item.
       * @see Demand
       */
     const Operation* deliveryOperation;
@@ -2338,7 +2338,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Constructor. Implicit creation of instances is disallowed. */
     explicit Buffer(const string& str) : HasHierarchy<Buffer>(str),
-      hidden(false), producing_operation(NULL), loc(NULL), it(NULL), 
+      hidden(false), producing_operation(NULL), loc(NULL), it(NULL),
       min_cal(NULL), max_cal(NULL) {}
 
     /** Returns the operation that is used to supply extra supply into this
@@ -3316,7 +3316,7 @@ class Demand
     /** Returns the cluster which this demand belongs to. */
     int getCluster() const
     {
-      Operation::pointer o = getDeliveryOperation(); 
+      Operation::pointer o = getDeliveryOperation();
       return o ? o->getCluster() : 0;
     }
 
@@ -3593,7 +3593,7 @@ class ProblemBeforeCurrent : public Problem
 
 
 /** A problem of this class is created when an operationplan is being
-  * planned before its fence date, i.e. it starts 1) before the "current" 
+  * planned before its fence date, i.e. it starts 1) before the "current"
   * date of the plan plus the release fence of the operation and 2) after the
   * current date of the plan.
   */
@@ -4072,8 +4072,8 @@ class CommandMoveOperationPlan : public Command
       (const OperationPlan* opplanptr, Date newDate, bool startOrEnd=true);
     void execute()
     {
-      if (!opplan) return; 
-      WLock<OperationPlan>(opplan)->setAllowUpdates(true); 
+      if (!opplan) return;
+      WLock<OperationPlan>(opplan)->setAllowUpdates(true);
       opplan=NULL;
     }
     DECLARE_EXPORT void undo();

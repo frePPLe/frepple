@@ -78,7 +78,7 @@ Tree::TreeNode* Tree::insert(TreeNode* z, TreeNode *hint)
     {
       comp = z->nm.compare(hint->parent->nm);
       if ((comp>0 && hint == hint->parent->left)
-        || (comp<0 && hint == hint->parent->right))
+          || (comp<0 && hint == hint->parent->right))
         // Move the hint up to the parent node
         // If I'm left child of my parent && new node needs right insert
         // or I'm right child of my parent && new node needs left insert
@@ -390,9 +390,9 @@ DECLARE_EXPORT void Tree::verify() const
   if (empty() || begin() == end())
   {
     bool ok = (empty() &&
-      begin() == end() &&
-      header.left == &header &&
-      header.right == &header);
+        begin() == end() &&
+        header.left == &header &&
+        header.right == &header);
     if (!ok)
     {
       LockManager::getManager().releaseReadLock(l);

@@ -42,7 +42,7 @@ const XMLOutput::content_type XMLOutput::PLANDETAIL = 4;
 
 
 void 	XMLInput::processingInstruction
-  (const XMLCh *const target, const XMLCh *const data)
+(const XMLCh *const target, const XMLCh *const data)
 {
   char* type = XMLString::transcode(target);
   char* value = XMLString::transcode(data);
@@ -86,7 +86,7 @@ void 	XMLInput::processingInstruction
 
 
 void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
-  const XMLCh* const qname, const Attributes& atts)
+    const XMLCh* const qname, const Attributes& atts)
 {
   // Validate the state
   assert(!states.empty());
@@ -123,8 +123,8 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
 #ifdef PARSE_DEBUG
       if (getCurrentObject())
         cout << "Initialize root tag for reading object "
-          << getCurrentObject() << " ("
-          << typeid(*getCurrentObject()).name() << ")" << endl;
+        << getCurrentObject() << " ("
+        << typeid(*getCurrentObject()).name() << ")" << endl;
       else
         cout << "Initialize root tag for reading object NULL" << endl;
 #endif
@@ -138,7 +138,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
       // Debug
 #ifdef PARSE_DEBUG
       cout << "   Start element " << pElement->getName()
-        << " - object " << getCurrentObject() << endl;
+      << " - object " << getCurrentObject() << endl;
 #endif
 
       // Call the handler of the object
@@ -167,7 +167,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
           #ifdef PARSE_DEBUG
           char* attname = XMLString::transcode(atts.getQName(i));
           cout << "   Processing attribute " << attname
-            << " - object " << getCurrentObject() << endl;
+          << " - object " << getCurrentObject() << endl;
           XMLString::release(&attname);
           #endif
           try { getCurrentObject()->endElement(*this, m_EStack[numElements]); }
@@ -190,8 +190,8 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
 
 
 void XMLInput::endElement(const XMLCh* const uri,
-                 const XMLCh* const s,
-                 const XMLCh* const qname)
+    const XMLCh* const s,
+    const XMLCh* const qname)
 {
   // Validate the state
   assert(numElements >= 0);
@@ -248,7 +248,8 @@ void XMLInput::endElement(const XMLCh* const uri,
         // flag to specify that this object is now ended
         objectEnded = true;
         try { getCurrentObject()->endElement(*this, *pElement); }
-        catch (DataException e) {
+        catch (DataException e)
+        {
           if (abortOnDataException) throw;
           else cout << "Continuing after data error: " << e.what() << endl;
         }
@@ -270,7 +271,8 @@ void XMLInput::endElement(const XMLCh* const uri,
         {
           // Call also the endElement function on the owning object
           try { getCurrentObject()->endElement(*this, *pElement); }
-          catch (DataException e) {
+          catch (DataException e)
+          {
             if (abortOnDataException) throw;
             else cout << "Continuing after data error: " << e.what() << endl;
           }
@@ -284,7 +286,8 @@ void XMLInput::endElement(const XMLCh* const uri,
         // This tag is not the ending tag of an object
         // Call the function of the Object
         try { getCurrentObject()->endElement(*this, *pElement); }
-        catch (DataException e) {
+        catch (DataException e)
+        {
           if (abortOnDataException) throw;
           else cout << "Continuing after data error: " << e.what() << endl;
         }
@@ -308,7 +311,7 @@ void XMLInput::warning(const SAXParseException& exception)
 {
   char* message = XMLString::transcode(exception.getMessage());
   cout << "Warning: " << message
-       << " at line: " << exception.getLineNumber() << endl;
+  << " at line: " << exception.getLineNumber() << endl;
   XMLString::release(&message);
 }
 
@@ -323,7 +326,7 @@ DECLARE_EXPORT void XMLInput::readto(Object * pPI)
     // Push a new object on the handler stack
 #ifdef PARSE_DEBUG
     cout << "Start reading object " << pPI
-      << " (" << typeid(*pPI).name() << ")" << endl;
+    << " (" << typeid(*pPI).name() << ")" << endl;
 #endif
     prev = getCurrentObject();
     m_EHStack.push(make_pair(pPI, static_cast<void*>(NULL)));
@@ -419,14 +422,15 @@ void XMLInput::reset()
 
 void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
 {
-  try {
+  try
+  {
     // Create a Xerces parser
     parser = XMLReaderFactory::createXMLReader();
 
     // Set the features of the parser. A bunch of the options are dependent
     // on whether we want to validate the input or not.
     parser->setProperty(XMLUni::fgXercesScannerName, const_cast<XMLCh*>
-      (validate ? XMLUni::fgSGXMLScanner : XMLUni::fgWFXMLScanner));
+        (validate ? XMLUni::fgSGXMLScanner : XMLUni::fgWFXMLScanner));
     parser->setFeature(XMLUni::fgSAX2CoreNameSpaces, validate);
     parser->setFeature(XMLUni::fgSAX2CoreValidation, validate);
     parser->setFeature(XMLUni::fgSAX2CoreNameSpacePrefixes, false);
@@ -445,7 +449,7 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
       XMLCh *c = XMLString::transcode(schema.c_str());
       parser->setProperty(
         XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, c
-        );
+      );
       XMLString::release(&c);
       // Preload the schema @todo
       // Xerces stores the grammars on the parser, which we dynamically create and
@@ -521,8 +525,8 @@ DECLARE_EXPORT string XMLOutput::XMLEscape(const char *p)
 {
   string ret(p);
   for (string::size_type pos = ret.find_first_of("&<>\"\'", 0);
-       pos < string::npos;
-       pos = ret.find_first_of("&<>\"\'", pos))
+      pos < string::npos;
+      pos = ret.find_first_of("&<>\"\'", pos))
   {
     switch (ret[pos])
     {
@@ -553,7 +557,7 @@ DECLARE_EXPORT void XMLOutput::decIndent()
 
 
 DECLARE_EXPORT void XMLOutput::writeElement
-  (const XMLtag& tag, const Object* object, mode m)
+(const XMLtag& tag, const Object* object, mode m)
 {
   // Avoid NULL pointers and skip hidden objects
   if (!object || object->getHidden()) return;
@@ -676,12 +680,12 @@ DECLARE_EXPORT XMLtag::XMLtag(string name) : strName(name)
   // can execute this check.
   static Mutex dd;
   {
-  ScopeMutexLock l(dd);
-  tagtable::const_iterator i = getTags().find(dw);
-  if (i!=getTags().end() && i->second->getName()!=name)
-    throw LogicException("Tag XML-tag hash function clashes for "
-      + i->second->getName() + " and " + name);
-  getTags().insert(make_pair(dw,this));
+    ScopeMutexLock l(dd);
+    tagtable::const_iterator i = getTags().find(dw);
+    if (i!=getTags().end() && i->second->getName()!=name)
+      throw LogicException("Tag XML-tag hash function clashes for "
+          + i->second->getName() + " and " + name);
+    getTags().insert(make_pair(dw,this));
   }
 }
 
@@ -714,7 +718,7 @@ DECLARE_EXPORT XMLtag::tagtable& XMLtag::getTags()
 
 DECLARE_EXPORT void XMLtag::printTags()
 {
-  for(tagtable::iterator i = getTags().begin(); i != getTags().end(); ++i)
+  for (tagtable::iterator i = getTags().begin(); i != getTags().end(); ++i)
     cout << i->second->getName() << "   " << i->second->dw << endl;
 }
 
@@ -726,9 +730,9 @@ DECLARE_EXPORT void XMLInput::executeCommands()
   {
     try { throw; }
     catch (exception& e)
-      {cout << "Error executing commands: " << e.what() << endl;}
+    {cout << "Error executing commands: " << e.what() << endl;}
     catch (...)
-      {cout << "Error executing commands: Unknown exception type" << endl;}
+    {cout << "Error executing commands: Unknown exception type" << endl;}
     throw;
   }
 }

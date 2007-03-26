@@ -103,7 +103,7 @@ DECLARE_EXPORT void CommandList::add(Command* c)
   }
 
   // Update the undoable field
-  if(!c->undoable()) can_undo=false;
+  if (!c->undoable()) can_undo=false;
 }
 
 
@@ -116,13 +116,13 @@ DECLARE_EXPORT void CommandList::undo(Command *c)
   // Don't even try to undo a list which can't be undone.
   if (!undoable(c))
     throw RuntimeException("Trying to undo a CommandList which " \
-      "contains non-undoable actions or is executed in parallel.");
+        "contains non-undoable actions or is executed in parallel.");
 
   // Undo all commands and delete them.
   // Note that undoing an operation that hasn't been executed yet or has been
   // undone already is expected to be harmless, so we don't need to worry
   // about that...
-  for(Command *i=(c?c->next:firstCommand); i; )
+  for (Command *i=(c?c->next:firstCommand); i; )
   {
     i->undo();
     Command *t = i;  // Temporarily store the pointer to be deleted
@@ -166,7 +166,7 @@ DECLARE_EXPORT bool CommandList::undoable(const Command *c) const
 
 DECLARE_EXPORT Command* CommandList::selectCommand()
 {
-  ScopeMutexLock l(lock);
+  ScopeMutexLock l(lock );
   Command *c = curCommand;
   if (curCommand) curCommand = curCommand->next;
   return c;
@@ -211,9 +211,9 @@ DECLARE_EXPORT void CommandList::execute()
       for (int worker=0; worker<numthreads; ++worker)
       {
         if ((errcode=pthread_create(&threads[worker],  // thread struct
-                                NULL,                  // default thread attributes
-                                wrapper,               // start routine
-                                this)))                // arg to routine
+            NULL,                  // default thread attributes
+            wrapper,               // start routine
+            this)))                // arg to routine
         {
           ostringstream ch;
           ch << "Can't create thread " << worker << ", error " << errcode;
@@ -290,12 +290,12 @@ DECLARE_EXPORT void CommandList::execute()
     // whole sequence.
     try
     {
-      for(; curCommand; curCommand = curCommand->next) curCommand->execute();
+      for (; curCommand; curCommand = curCommand->next) curCommand->execute();
     }
     catch (...)
     {
       cout << "Error: Caught an exception while executing command '"
-        << curCommand->getDescription() << "':" <<  endl;
+      << curCommand->getDescription() << "':" <<  endl;
       try { throw; }
       catch (exception& e) {cout << "  " << e.what() << endl;}
       catch (...) {cout << "  Unknown type" << endl;}
@@ -309,7 +309,7 @@ DECLARE_EXPORT void CommandList::execute()
     wrapper(this);
 
   // Clean it up after executing ALL actions.
-  for(Command *i=firstCommand; i; )
+  for (Command *i=firstCommand; i; )
   {
     Command *t = i;
     i = i->next;
@@ -321,7 +321,7 @@ DECLARE_EXPORT void CommandList::execute()
   // Log
   if (getVerbose())
     cout << "Finished executing command list at " << Date::now()
-      << " : " << t << endl;
+    << " : " << t << endl;
 }
 
 
@@ -332,7 +332,7 @@ unsigned __stdcall CommandList::wrapper(void *arg)
 #endif
 {
   CommandList *l = static_cast<CommandList*>(arg);
-  for(Command *c = l->selectCommand(); c; c = l->selectCommand())
+  for (Command *c = l->selectCommand(); c; c = l->selectCommand())
   {
 #if defined(HAVE_PTHREAD_H) || !defined(MT)
     // Verfiy whether there has been a cancellation request in the meantime
@@ -343,7 +343,7 @@ unsigned __stdcall CommandList::wrapper(void *arg)
     {
       // Error message
       cout << "Error: Caught an exception while executing command '"
-        << c->getDescription() << "':" << endl;
+      << c->getDescription() << "':" << endl;
       try { throw; }
       catch (exception& e) {cout << "  " << e.what() << endl;}
       catch (...) {cout << "  Unknown type" << endl;}
@@ -357,8 +357,8 @@ DECLARE_EXPORT CommandList::~CommandList()
 {
   if (!firstCommand) return;
   cout << "Warning: Deleting an action list with actions that have"
-    << " not been committed or undone" << endl;
-  for(Command *i = firstCommand; i; )
+  << " not been committed or undone" << endl;
+  for (Command *i = firstCommand; i; )
   {
     Command *t = i;  // Temporary storage for the object to delete
     i = i->next;
@@ -521,7 +521,7 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
   // Log
   if (getVerbose())
     cout << "Finished loading module '" << x << "' from library '" << lib
-      << "' at " << Date::now() << " : " << t << endl;
+    << "' at " << Date::now() << " : " << t << endl;
 }
 
 
@@ -575,11 +575,11 @@ DECLARE_EXPORT void CommandIf::execute()
   // Message
   if (getVerbose())
     cout << "Start executing if-command with condition '"
-      << condition << "' at " << Date::now() << endl;
+    << condition << "' at " << Date::now() << endl;
   Timer t;
 
   // Check validity
-  if(condition.empty())
+  if (condition.empty())
     throw DataException("Missing condition in If-Command");
 
   // Expand environment variables in the condition with their value
@@ -607,7 +607,7 @@ DECLARE_EXPORT void CommandIf::execute()
   // Log
   if (getVerbose())
     cout << "Finished executing if-command at " << Date::now()
-      << " : " << t << endl;
+    << " : " << t << endl;
 }
 
 
@@ -697,7 +697,7 @@ DECLARE_EXPORT void CommandSetEnv::execute()
   {
     const char* res = getenv(variable.c_str());
     cout << "Finished updating variable '" << variable << "' to '"
-      << (res ? res : "NULL") << "' at " << Date::now() << endl;
+    << (res ? res : "NULL") << "' at " << Date::now() << endl;
   }
 }
 

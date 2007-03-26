@@ -78,7 +78,7 @@ void XMLInputFile::parse(Object *pRoot, bool validate)
     string f = filename + "\\*.xml";
     WIN32_FIND_DATA dir_entry_p;
     HANDLE h = FindFirstFile(f.c_str(), &dir_entry_p);
-    if(h == INVALID_HANDLE_VALUE)
+    if (h == INVALID_HANDLE_VALUE)
       throw RuntimeException("Couldn't open input file '" + f + "'");
     do
     {

@@ -110,7 +110,7 @@ DECLARE_EXPORT void TimePeriod::parse (const char* s)
   long t = 0;
   int colons = 2;
   bool minus = false;
-  for(const char *chr = s; *chr; ++chr)
+  for (const char *chr = s; *chr; ++chr)
   {
     if (*chr>='0' && *chr<='9')
       t = t * 10 + (*chr - '0');
@@ -149,7 +149,8 @@ DECLARE_EXPORT void Date::parse (const char* s, const string& fmt)
 
 DECLARE_EXPORT char* Date::strptime(const char *buf, const char *fmt, struct tm *tm)
 {
-  struct dtconv {
+  struct dtconv
+  {
     char    *abbrev_month_names[12];
     size_t  len_abbrev_month_names[12];
     char    *month_names[12];
@@ -172,32 +173,33 @@ DECLARE_EXPORT char* Date::strptime(const char *buf, const char *fmt, struct tm 
 
   // The "length" fields in this structure MUST match the values in the strings.
   static struct dtconv En_US =
-  {
-     { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" },
-     {   3,     3,     3,     3,     3,     3,
-         3,     3,     3,     3,     3,     3},
-     { "January", "February", "March", "April", "May", "June", "July", "August",
-       "September", "October", "November", "December" },
-     {     8,         8,         5,       5,      3,     4,       4,      6,
-            9,          7,          8,          8},
-     { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" },
-     {   3,     3,     3,     3,     3,     3,     3},
-     { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
-       "Saturday" },
-     {   6,        6,         7,          9,           8,        6,
-           8},
-     "%H:%M:%S",
-     "%m/%d/%y",
-     "%a %b %e %T %Z %Y",
-     "AM",
-     2,
-     "PM",
-     2,
-     "%A, %B, %e, %Y",
-     7,
-     12
-  };
+    {
+      { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      },
+      {   3,     3,     3,     3,     3,     3,
+          3,     3,     3,     3,     3,     3},
+      { "January", "February", "March", "April", "May", "June", "July", "August",
+        "September", "October", "November", "December" },
+      {     8,         8,         5,       5,      3,     4,       4,      6,
+          9,          7,          8,          8},
+      { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" },
+      {   3,     3,     3,     3,     3,     3,     3},
+      { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+        "Saturday" },
+      {   6,        6,         7,          9,           8,        6,
+          8},
+      "%H:%M:%S",
+      "%m/%d/%y",
+      "%a %b %e %T %Z %Y",
+      "AM",
+      2,
+      "PM",
+      2,
+      "%A, %B, %e, %Y",
+      7,
+      12
+    };
 
   char c, *ptr;
   short i, len = 0;
@@ -336,9 +338,9 @@ DECLARE_EXPORT char* Date::strptime(const char *buf, const char *fmt, struct tm 
         for (i = 0; i < En_US.numWeekdays; ++i)
         {
           if (strncasecmp(buf, En_US.weekday_names[i],
-            En_US.len_weekday_names[i]) == 0) break;
+              En_US.len_weekday_names[i]) == 0) break;
           if (strncasecmp(buf, En_US.abbrev_weekday_names[i],
-            En_US.len_abbrev_weekday_names[i]) == 0) break;
+              En_US.len_abbrev_weekday_names[i]) == 0) break;
         }
         if (i == En_US.numWeekdays) return 0;
         tm->tm_wday = i;
@@ -365,9 +367,9 @@ DECLARE_EXPORT char* Date::strptime(const char *buf, const char *fmt, struct tm 
         for (i = 0; i < En_US.numMonths; ++i)
         {
           if (strncasecmp(buf, En_US.month_names[i],
-            En_US.len_month_names[i]) == 0) break;
+              En_US.len_month_names[i]) == 0) break;
           if (strncasecmp(buf, En_US.abbrev_month_names[i],
-            En_US.len_abbrev_month_names[i]) == 0) break;
+              En_US.len_abbrev_month_names[i]) == 0) break;
         }
         if (i == En_US.numMonths) return 0;
         tm->tm_mon = i;

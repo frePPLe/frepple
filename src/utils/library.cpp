@@ -85,8 +85,8 @@ DECLARE_EXPORT void Environment::setHomeDirectory(const string dirname)
 DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
 {
   for (string::size_type startpos = s.find("${", 0);
-       startpos < string::npos;
-       startpos = s.find_first_of("${", startpos))
+      startpos < string::npos;
+      startpos = s.find_first_of("${", startpos))
   {
     // Find closing "}"
     string::size_type endpos = s.find_first_of("}", startpos);
@@ -109,23 +109,23 @@ DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
     // characters would include another ${XX} construct we could get in
     // an infinite loop!
     if (c) startpos += strlen(c);
-   }
+  }
 }
 
 
 void LibraryUtils::initialize()
 {
   static bool init = false;
-  if(init)
+  if (init)
   {
     cout << "Warning: Calling Frepple::LibraryUtils::initialize() more "
-      << "than once." << endl;
+    << "than once." << endl;
     return;
   }
   init = true;
 
   // Initialize Xerces parser
-	XMLPlatformUtils::Initialize();
+  XMLPlatformUtils::Initialize();
 
   // Create a lock manager
   LockManager::mgr = new LockManager();
@@ -181,8 +181,8 @@ void LibraryUtils::initialize()
 
 void LibraryUtils::finalize()
 {
-	// Shut down the Xerces parser
-	XMLPlatformUtils::Terminate();
+  // Shut down the Xerces parser
+  XMLPlatformUtils::Terminate();
 }
 
 
@@ -199,7 +199,7 @@ DECLARE_EXPORT void MetaClass::registerClass (const char* a, const char* b, bool
   // Check for a valid category
   if (!cat)
     throw LogicException("Category " + string(a)
-      + " not found when registering class " + string(b));
+        + " not found when registering class " + string(b));
 
   // Update fields
   MetaClass& me = const_cast<MetaClass&>(*this);
@@ -216,7 +216,7 @@ DECLARE_EXPORT void MetaClass::registerClass (const char* a, const char* b, bool
 
 
 DECLARE_EXPORT void MetaCategory::registerCategory (const char* a, const char* gr,
-  readController f, writeController w) const
+    readController f, writeController w) const
 {
   // Initialize only once
   if (type != "UNSPECIFIED")
@@ -289,7 +289,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const ha
 
 DECLARE_EXPORT void MetaCategory::persist(XMLOutput *o)
 {
-  for(const MetaCategory *i = firstCategory; i; i = i->nextCategory)
+  for (const MetaCategory *i = firstCategory; i; i = i->nextCategory)
     if (i->writeFunction) i->writeFunction(*i, o);
 }
 
@@ -298,7 +298,7 @@ DECLARE_EXPORT const MetaClass* MetaClass::findClass(const char* c)
 {
   // Loop through all categories
   for (MetaCategory::CategoryMap::const_iterator i = MetaCategory::categoriesByTag.begin();
-    i != MetaCategory::categoriesByTag.end(); ++i)
+      i != MetaCategory::categoriesByTag.end(); ++i)
   {
     // Look up in the registered classes
     MetaCategory::ClassMap::const_iterator j
@@ -315,18 +315,18 @@ DECLARE_EXPORT void MetaClass::printClasses()
   cout << "Registered classes:" << endl;
   // Loop through all categories
   for (MetaCategory::CategoryMap::const_iterator i = MetaCategory::categoriesByTag.begin();
-    i != MetaCategory::categoriesByTag.end(); ++i)
+      i != MetaCategory::categoriesByTag.end(); ++i)
   {
-	 	cout << "  " << i->second->type << endl;
+    cout << "  " << i->second->type << endl;
     // Loop through the classes for the category
     for (MetaCategory::ClassMap::const_iterator
-      j = i->second->classes.begin();
-    	j != i->second->classes.end();
-      ++j)
-        if (j->first == XMLtag::hash("DEFAULT"))
-          cout << "    DEFAULT ( = " << j->second->type << " )" << j->second << endl;
-        else
-          cout << "    " << j->second->type << j->second << endl;
+        j = i->second->classes.begin();
+        j != i->second->classes.end();
+        ++j)
+      if (j->first == XMLtag::hash("DEFAULT"))
+        cout << "    DEFAULT ( = " << j->second->type << " )" << j->second << endl;
+      else
+        cout << "    " << j->second->type << j->second << endl;
   }
 }
 
@@ -346,16 +346,16 @@ DECLARE_EXPORT Action MetaClass::decodeAction(const char *x)
 DECLARE_EXPORT Action MetaClass::decodeAction(const Attributes* atts)
 {
   const XMLCh * c = atts ?
-  	atts->getValue(Tags::tag_action.getXMLCharacters()) :
-  	NULL;
+      atts->getValue(Tags::tag_action.getXMLCharacters()) :
+      NULL;
 
   // Return the default in the absence of the attribute
   if (!c) return ADD_CHANGE;
 
   // Decode the attribute
   char* ac = XMLString::transcode(c);
-	Action a = decodeAction(ac);
-	XMLString::release(&ac);
+  Action a = decodeAction(ac);
+  XMLString::release(&ac);
   return a;
 }
 
@@ -364,7 +364,7 @@ DECLARE_EXPORT bool MetaClass::raiseEvent(Object* v, Signal a) const
 {
   bool result(true);
   for (list<Functor*>::const_iterator i = subscribers[a].begin();
-    i != subscribers[a].end(); ++i)
+      i != subscribers[a].end(); ++i)
     // Note that we always call all subscribers, even if one or more
     // already replied negatively. However, an exception thrown from a
     // callback method will break the publishing chain.
@@ -372,8 +372,8 @@ DECLARE_EXPORT bool MetaClass::raiseEvent(Object* v, Signal a) const
 
   // Raise the event also on the category, if there is a valid one
   return (category && category!=this) ?
-    (result && category->raiseEvent(v,a)) :
-    result;
+      (result && category->raiseEvent(v,a)) :
+      result;
 }
 
 
@@ -385,10 +385,10 @@ Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput
   {
     case REMOVE:
       throw DataException
-        ("Entity " + cat.type + " doesn't support REMOVE action.");
+      ("Entity " + cat.type + " doesn't support REMOVE action.");
     case CHANGE:
       throw DataException
-        ("Entity " + cat.type + " doesn't support CHANGE action.");
+      ("Entity " + cat.type + " doesn't support CHANGE action.");
     default:
       /* Lookup for the class in the map of registered classes. */
       char* type =

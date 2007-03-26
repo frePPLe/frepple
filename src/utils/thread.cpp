@@ -101,7 +101,7 @@ DECLARE_EXPORT void LockManager::releaseWriteLock(Object* l)
   l->getType().raiseEvent(l, SIG_AFTER_CHANGE);
 
   //if (!l->lock)
-    //throw RuntimeException("Releasing invalid lock");
+  //throw RuntimeException("Releasing invalid lock");
 
   //cout << "Write unlocking " << l << "  " << l->getType().type << endl;
 

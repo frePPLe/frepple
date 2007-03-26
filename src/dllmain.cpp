@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple.h"
 #include "freppleinterface.h"
 using namespace frepple;
@@ -45,7 +45,7 @@ BOOL APIENTRY DllMain(HANDLE hInst, DWORD ul_reason_for_call, LPVOID lpReserved)
     case DLL_PROCESS_ATTACH:
       // Loading the library
       try { FreppleInitialize(NULL); }
-      catch (exception& e) 
+      catch (exception& e)
       {
         cout << "Error: " << e.what() << endl;
         return FALSE;
@@ -67,9 +67,9 @@ BOOL APIENTRY DllMain(HANDLE hInst, DWORD ul_reason_for_call, LPVOID lpReserved)
 #endif
 
 
-DECLARE_EXPORT(const char*) FreppleVersion() 
-{ 
-  return PACKAGE_VERSION; 
+DECLARE_EXPORT(const char*) FreppleVersion()
+{
+  return PACKAGE_VERSION;
 }
 
 
@@ -79,7 +79,7 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
   if (!initialized)
   {
     // If a parameter is given we set the environment variable FREPPLE_HOME.
-    // If the parameter is NULL, we pick up the existing value of that 
+    // If the parameter is NULL, we pick up the existing value of that
     // variable.
     if (h) Environment::setHomeDirectory(h);
     else
@@ -91,8 +91,8 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
 
     // Initialize the libraries
     LibraryModel::initialize(); // also initializes the utils library
-    LibrarySolver::initialize();  
-      
+    LibrarySolver::initialize();
+
     // Search for the initialization file
     if (!Environment::getHomeDirectory().empty())
     {
@@ -105,7 +105,7 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
         if (!(stat_p.st_mode & S_IREAD))
           // File exists but is not readable
           cout << "Warning: Initialization file 'init.xml'"
-            << " exists but is not readable" << endl;
+          << " exists but is not readable" << endl;
         else
           // Execute the commands in the file
           try{ CommandReadXMLFile(init).execute(); }
@@ -157,8 +157,8 @@ DECLARE_EXPORT(void) FreppleExit()
   std::exit(EXIT_SUCCESS);
 }
 
- 
-extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize(const char* h) 
+
+extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize(const char* h)
 {
   try {FreppleInitialize(h);}
   catch (...) {return EXIT_FAILURE;}
@@ -174,7 +174,7 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperReadXMLData(char* d, bool v, bool c
 }
 
 
-extern "C" DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char* f, bool v, bool c) 
+extern "C" DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char* f, bool v, bool c)
 {
   try {FreppleReadXMLFile(f, v, c);}
   catch (...) {return EXIT_FAILURE;}
@@ -182,7 +182,7 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char* f, bool v, 
 }
 
 
-extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveFile(char* f) 
+extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveFile(char* f)
 {
   try {FreppleSaveFile(f);}
   catch (...) {return EXIT_FAILURE;}
@@ -190,7 +190,7 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveFile(char* f)
 }
 
 
-extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveString(char* buf, unsigned long sz) 
+extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveString(char* buf, unsigned long sz)
 {
   try
   {
@@ -200,12 +200,12 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveString(char* buf, unsigned long
     unsigned long l = result.size();
     memcpy(buf, result.data(), l>sz ? sz : l);
   }
-  catch (...) {return EXIT_FAILURE;}  
+  catch (...) {return EXIT_FAILURE;}
   return EXIT_SUCCESS;
 }
 
 
-extern "C" DECLARE_EXPORT(int) FreppleWrapperExit() 
+extern "C" DECLARE_EXPORT(int) FreppleWrapperExit()
 {
   try {FreppleExit();}
   catch (...) {return EXIT_FAILURE;}

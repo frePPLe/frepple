@@ -80,10 +80,10 @@ int main (int argc, char *argv[])
         else
         {
           if (strcmp(argv[i],"-?")
-            && strcmp(argv[i],"-h")
-            && strcmp(argv[i],"-help"))
-            cout << "\nError: Option '" << argv[i] 
-              << "' not recognized." << endl;
+              && strcmp(argv[i],"-h")
+              && strcmp(argv[i],"-help"))
+            cout << "\nError: Option '" << argv[i]
+            << "' not recognized." << endl;
           usage();
           return EXIT_FAILURE;
         }
@@ -91,7 +91,7 @@ int main (int argc, char *argv[])
       else
       {
         // A file or directory name on the command line
-        if (!input) 
+        if (!input)
         {
           // Initialize the library if this wasn't done before
           FreppleInitialize(NULL);
@@ -102,7 +102,7 @@ int main (int argc, char *argv[])
     }
 
     // When no filenames are specified, we read the standard input
-    if (!input) 
+    if (!input)
     {
       FreppleInitialize(NULL);
       FreppleReadXMLFile(NULL, validate, validate_only);

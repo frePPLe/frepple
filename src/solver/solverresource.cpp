@@ -69,10 +69,10 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
     Date earliestsearchdate = data->q_operationplan->getDates().getStart();
     Date curdate = data->q_loadplan->getDate();
     float curMax = data->q_loadplan->getMax();
-    for(Resource::loadplanlist::const_iterator
-      cur=res->getLoadPlans().begin(data->q_loadplan);
-      cur!=res->getLoadPlans().end() && cur->getDate()>=earliestsearchdate;
-      --cur)
+    for (Resource::loadplanlist::const_iterator
+        cur=res->getLoadPlans().begin(data->q_loadplan);
+        cur!=res->getLoadPlans().end() && cur->getDate()>=earliestsearchdate;
+        --cur)
     {
 
       // Process changes in the maximum capacity
@@ -128,10 +128,10 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
           // Find the starting loadplan. Moving an operation earlier is driven
           // by the ending loadplan, while searching for later capacity is
           // driven from the starting loadplan.
-          for(OperationPlan::LoadPlanIterator
-            h = data->q_operationplan->beginLoadPlans();
-            h != data->q_operationplan->endLoadPlans();
-            ++h)
+          for (OperationPlan::LoadPlanIterator
+              h = data->q_operationplan->beginLoadPlans();
+              h != data->q_operationplan->endLoadPlans();
+              ++h)
           {
             if (&*h!=data->q_loadplan && h->getLoad()->getResource()==res)
             {
@@ -152,7 +152,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
             curdate = data->q_loadplan->getDate();
             curMax = data->q_loadplan->getMax();
             double prevOnhand = data->q_loadplan->getOnhand();
-            for(cur=res->getLoadPlans().begin(data->q_loadplan);
+            for (cur=res->getLoadPlans().begin(data->q_loadplan);
                 cur!=res->getLoadPlans().end() && !(overloaded && newDate);
                 ++cur)
             {

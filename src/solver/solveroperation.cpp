@@ -34,14 +34,14 @@ namespace frepple
 
 /** @todo use of the variable AllLoadsOkay is not nice and clean */
 DECLARE_EXPORT bool MRPSolver::checkOperation
-    (OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
+(OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
 {
   // The default answer...
   data.a_date = Date::infiniteFuture;
   data.a_qty = data.q_qty;
 
   // Check the leadtime constraints
-  if(!checkOperationLeadtime(opplan,data))
+  if (!checkOperationLeadtime(opplan,data))
     // This operationplan is a wreck. It is impossible to make it meet the
     // leadtime constraints
     return false;
@@ -61,7 +61,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
       do
       {
         data.AllLoadsOkay = true;
-        for(OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
+        for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
             h!=opplan->endLoadPlans() && data.AllLoadsOkay; ++h)
         {
           data.q_operationplan = opplan;
@@ -96,7 +96,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
     bool incomplete = false;
 
     // Loop through all flowplans
-    for(OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
+    for (OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
         g!=opplan->endFlowPlans(); ++g)
       if (g->getFlow()->isConsumer())
       {
@@ -158,7 +158,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
 
 
 DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
-  (OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
+(OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
 {
   // No lead time constraints
   if (!isFenceConstrained() && !isLeadtimeConstrained()) return true;
@@ -190,7 +190,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
     Plan::instance().getCurrent() + delta,
     opplan->getDates().getEnd() + opplan->getOperation()->getPostTime(),
     opplan->getOperation()->getPostTime() ? false : true
-    );
+  );
 
   // Check the result of the resize
   if (opplan->getDates().getStart() >= Plan::instance().getCurrent() + delta
@@ -240,7 +240,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
       // The producing operation doesn't have a valid flow into the current
       // buffer. Either it is missing or it is producing a negative quantity.
       throw DataException("Invalid producing operation '" + oper->getName()
-        + "' for buffer '" + Solver->curBuffer->getName() + "'");
+          + "' for buffer '" + Solver->curBuffer->getName() + "'");
   }
 
   // Message
@@ -261,7 +261,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
     // There is already an owner and thus also an owner command
     assert(!Solver->curDemand);
     z = oper->createOperationPlan(Solver->q_qty / flow_qty_per, Date::infinitePast,
-         Solver->q_date, Solver->curDemand, true, Solver->curOwnerOpplan, 0);
+        Solver->q_date, Solver->curDemand, true, Solver->curOwnerOpplan, 0);
   }
   else
   {
@@ -315,9 +315,9 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
     Flow *f = oper->findFlow(Solver->curBuffer);
     if (f) flow_qty += f->getQuantity();
     for (Operation::Operationlist::const_iterator
-      e = oper->getSubOperations().begin();
-      e != oper->getSubOperations().end();
-      ++e)
+        e = oper->getSubOperations().begin();
+        e != oper->getSubOperations().end();
+        ++e)
     {
       f = (*e)->findFlow(Solver->curBuffer);
       if (f) flow_qty += f->getQuantity();
@@ -332,7 +332,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
 
   // Create the top operationplan
   CommandCreateOperationPlan *a = new CommandCreateOperationPlan(oper, a_qty,
-    Date::infinitePast, Solver->q_date, Solver->curDemand, Solver->curOwnerOpplan, false);
+      Date::infinitePast, Solver->q_date, Solver->curDemand, Solver->curOwnerOpplan, false);
   Solver->curDemand = NULL;
 
   // Make sure the subopplans know their owner & store the previous value
@@ -342,9 +342,9 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
   // Loop through the steps
   Date max_Date;
   for (Operation::Operationlist::const_reverse_iterator
-    e = oper->getSubOperations().rbegin();
-    e != oper->getSubOperations().rend() && a_qty > 0.0f;
-    ++e)
+      e = oper->getSubOperations().rbegin();
+      e != oper->getSubOperations().rend() && a_qty > 0.0f;
+      ++e)
   {
     // Plan the next step
     Solver->q_qty = a_qty;
@@ -437,8 +437,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
   float a_qty = Solver->q_qty;
   Date a_date = Date::infiniteFuture;
   for (Operation::Operationlist::const_iterator altIter
-       = oper->getSubOperations().begin();
-       altIter != oper->getSubOperations().end(); ++altIter)
+      = oper->getSubOperations().begin();
+      altIter != oper->getSubOperations().end(); ++altIter)
   {
     // Operations with 0 priority are considered unavailable
     if (oper->getPriority(*altIter) == 0.0f) continue;
@@ -455,7 +455,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
         // Neither the top nor the sub operation have a flow in the buffer,
         // we're in trouble...
         throw DataException("Invalid producing operation '" + oper->getName()
-          + "' for buffer '" + buf->getName() + "'");
+            + "' for buffer '" + buf->getName() + "'");
     }
     else
       // Default value is 1.0, if no matching flow is required
@@ -468,7 +468,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
     Solver->q_date = origQDate;
     Solver->curDemand = d;
     CommandCreateOperationPlan *a = new CommandCreateOperationPlan(oper, a_qty,
-      Date::infinitePast, origQDate, d, prev_owner_opplan, false);
+        Date::infinitePast, origQDate, d, prev_owner_opplan, false);
     Solver->curDemand = NULL;
     Solver->curOwnerOpplan = a->getOperationPlan();
 
@@ -552,8 +552,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationEffective* oper, void* v)
   // Create the operationplan. This automatically creates the proper
   // suboperationplan too.
   CommandCreateOperationPlan *a = new CommandCreateOperationPlan(oper,
-    Solver->q_qty, Date::infinitePast, Solver->q_date, Solver->curDemand,
-    Solver->curOwnerOpplan, false);
+      Solver->q_qty, Date::infinitePast, Solver->q_date, Solver->curDemand,
+      Solver->curOwnerOpplan, false);
   OperationPlanEffective *opplan =
     dynamic_cast<OperationPlanEffective*>(a->getOperationPlan());
 

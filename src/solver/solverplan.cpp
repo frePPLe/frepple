@@ -45,7 +45,7 @@ void LibrarySolver::initialize()
   if (init)
   {
     cout << "Warning: Calling Frepple::LibrarySolver::initialize() more "
-      << "than once." << endl;
+    << "than once." << endl;
     return;
   }
 
@@ -90,14 +90,14 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
 
     // Loop through the list of all demands in this planning problem
     for (deque<Demand*>::const_iterator i = demands.begin();
-          i != demands.end(); ++i)
+        i != demands.end(); ++i)
       // Plan the demand
       try { (*i)->solve(*Solver,this); }
       catch (...)
       {
         // Error message
         cout << "Error: Caught an exception while solving demand '"
-          << (*i)->getName() << "':" << endl;
+        << (*i)->getName() << "':" << endl;
         try { throw; }
         catch (bad_exception&) {cout << "  bad exception" << endl;}
         catch (exception& e) {cout << "  " << e.what() << endl;}
@@ -119,7 +119,7 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
 
     // Error message
     cout << "Error: Caught an exception while solving cluster "
-      << cluster << ":" << endl;
+    << cluster << ":" << endl;
     try { throw; }
     catch (bad_exception&){cout << "  bad exception" << endl;}
     catch (exception& e) {cout << "  " << e.what() << endl;}
@@ -161,7 +161,7 @@ DECLARE_EXPORT void MRPSolver::solve(void *v)
   // Otherwise a problem in a single cluster could spoil it all
   threads.setAbortOnError(false);
   for (classified_demand::iterator j = demands_per_cluster.begin();
-    j != demands_per_cluster.end(); ++j)
+      j != demands_per_cluster.end(); ++j)
     threads.add(new MRPSolverdata(this, j->first, j->second));
 
   // Run the planning command threads and wait for them to exit
@@ -175,7 +175,7 @@ DECLARE_EXPORT void MRPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mod
   if (m == REFERENCE)
   {
     o->writeElement
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
 

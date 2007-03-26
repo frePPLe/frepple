@@ -77,8 +77,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   Date extraInventoryDate(Date::infiniteFuture);
   float current_minimum(0.0f);
   float current_maximum(0.0f);
-  for(Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
-    ; ++cur)
+  for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
+      ; ++cur)
   {
     // Iterator has now changed to a new date or we have arrived at the end
     // If multiple flows are at the same moment in time, we are not interested
@@ -106,10 +106,10 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
           // Create supply
           Solver->curBuffer = b;
           Solver->q_qty = static_cast<float>(
-          	isMinMaxBuffer ?
-          		(current_maximum - shortage - theOnHand) :
-          		-theDelta
-          	);
+                isMinMaxBuffer ?
+                (current_maximum - shortage - theOnHand) :
+                -theDelta
+              );
           Solver->q_date = prev->getDate();
 
           // Check whether this date doesn't match with the requested date.
@@ -214,8 +214,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
     Solver->a_qty = static_cast<float>(requested_qty - shortage);
     if (Solver->a_qty < 0) Solver->a_qty = 0.0;
     Solver->a_date = (extraInventoryDate < extraSupplyDate) ?
-      extraInventoryDate :
-      extraSupplyDate;
+        extraInventoryDate :
+        extraSupplyDate;
   }
   else
   {

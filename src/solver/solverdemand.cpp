@@ -161,8 +161,8 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
     }
   }
   while (l->planLate()
-         && plan_qty > ROUNDING_ERROR
-         && plan_date < Date::infiniteFuture);
+      && plan_qty > ROUNDING_ERROR
+      && plan_date < Date::infiniteFuture);
 }
 
 }

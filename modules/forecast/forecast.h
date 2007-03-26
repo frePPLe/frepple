@@ -110,15 +110,15 @@ class Forecast : public Demand
     void beginElement(XMLInput& pIn, XMLElement& pElement);
 
     /** Update the item to be planned, for all buckets. */
-    virtual void setItem(Item*);
+    virtual void setItem(const Item*);
 
     /** Specify a bucket calendar for the forecast. Once forecasted 
       * quantities have been entered for the forecast, the calendar 
       * can't be updated any more. */
-    virtual void setCalendar(Calendar* c);
+    virtual void setCalendar(const Calendar* c);
 
     /** Returns a reference to the calendar used for this forecast. */
-    Calendar* getCalendar() const {return calptr;}
+    Calendar::pointer getCalendar() const {return calptr;}
 
     /** Updates the due date of the demand. Lower numbers indicate a
       * higher priority level. The method also updates the priority 
@@ -127,7 +127,7 @@ class Forecast : public Demand
     virtual void setPriority(int);
 
     /** Updates the operation being used to plan the demands. */
-    virtual void setOperation(Operation *);
+    virtual void setOperation(const Operation *);
 
     /** Updates the due date of the demand. */
     virtual void setDue(Date d) 
@@ -146,7 +146,7 @@ class Forecast : public Demand
 
   private:
     /** A void calendar to define the time buckets. */
-    Calendar* calptr;
+    const Calendar* calptr;
 
     /** Update the forecast in a bucket. */
     void setQuantity(const Calendar::Bucket&, float);

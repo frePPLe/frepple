@@ -41,8 +41,14 @@ DECLARE_EXPORT void Tree::clear()
   LockManager::getManager().obtainWriteLock(l);
 
   // Erase all elements
-  for (TreeNode* x = begin(); x != end(); x = begin()) 
-    delete(x);  // The destructor calls the erase method
+  for (TreeNode* x = begin(); x != end(); x = begin())
+  {
+    Object *o = dynamic_cast<Object*>(x);
+    if (o && o->getType().raiseEvent(o, SIG_REMOVE))
+      delete(x);  // The destructor calls the erase method
+    else
+      throw DataException("Can't delete object");
+  }
 
   // Unlock the tree
   LockManager::getManager().releaseWriteLock(l);

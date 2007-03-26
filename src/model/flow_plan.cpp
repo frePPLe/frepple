@@ -32,15 +32,15 @@ namespace frepple
 {
 
 
-DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan * opplan, const Flow * f)
+DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
     : TimeLine<FlowPlan>::EventChangeOnhand(
         f->getQuantity() * opplan->getQuantity())
 {
   assert(opplan);
   fl = const_cast<Flow*>(f);
-  oper = opplan;
-  nextFlowPlan = oper->firstflowplan;
-  oper->firstflowplan = this;
+  oper = opplan; 
+  nextFlowPlan = opplan->firstflowplan;
+  opplan->firstflowplan = this;
   f->getBuffer()->flowplans.insert(this);
 
   // Mark the operation and buffer as having changed. This will trigger the
@@ -68,7 +68,7 @@ DECLARE_EXPORT void FlowPlan::update()
 }
 
 
-DECLARE_EXPORT bool FlowPlan::check()
+DECLARE_EXPORT bool FlowPlan::check() const
 {
   // Quantity must match with the operationplan
   if (fabs(oper->getQuantity() * fl->getQuantity() - getQuantity()) 
@@ -90,7 +90,7 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode
   o->writeElement(Tags::tag_minimum, getMin());
   o->writeElement(Tags::tag_maximum, getMax());
   if (!dynamic_cast<OperationPlan*>(o->getCurrentObject()))
-    o->writeElement(Tags::tag_operation_plan, getOperationPlan());
+    o->writeElement(Tags::tag_operation_plan, &*getOperationPlan());
 
   // Write pegging info
   if (o->getContentType() == XMLOutput::PLANDETAIL)

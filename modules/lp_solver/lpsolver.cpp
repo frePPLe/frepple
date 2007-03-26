@@ -160,7 +160,7 @@ void LPSolver::solve(void *v)
 }
 
 
-void LPSolver::solve(Demand* l, void* v)
+void LPSolver::solve(const Demand* l, void* v)
 {
   LPSolver* Sol = (LPSolver*)v;
 
@@ -196,7 +196,7 @@ void LPSolver::solve(Demand* l, void* v)
 }
 
 
-void LPSolver::solve(Buffer* buf, void* v)
+void LPSolver::solve(const Buffer* buf, void* v)
 {
   LPSolver* Sol = (LPSolver*)v;
   bool first = true;

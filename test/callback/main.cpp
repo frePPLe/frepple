@@ -70,6 +70,16 @@ class SignalSniffer
         l->getOperation() << "' receives signal " << a << endl;
       return true;
     }
+    static bool callback(Demand* l, Signal a)
+    {
+      cout << "  Demand '" << l << "' receives signal " << a << endl;
+      return true;
+    }
+    static bool callback(Calendar* l, Signal a)
+    {
+      cout << "  Calendar '" << l << "' receives signal " << a << endl;
+      return true;
+    }
 };
 
 
@@ -117,11 +127,37 @@ int main (int argc, char *argv[])
     FunctorStatic<Flow,SignalSniffer>::connect(SIG_AFTER_CHANGE);
     FunctorStatic<Flow,SignalSniffer>::connect(SIG_REMOVE);
 
+    // e) demands
+    FunctorStatic<Demand,SignalSniffer>::connect(SIG_ADD);
+    FunctorStatic<Demand,SignalSniffer>::connect(SIG_BEFORE_CHANGE);
+    FunctorStatic<Demand,SignalSniffer>::connect(SIG_AFTER_CHANGE);
+    FunctorStatic<Demand,SignalSniffer>::connect(SIG_REMOVE);
+
+    // f) calendars
+    FunctorStatic<Calendar,SignalSniffer>::connect(SIG_ADD);
+    FunctorStatic<Calendar,SignalSniffer>::connect(SIG_BEFORE_CHANGE);
+    FunctorStatic<Calendar,SignalSniffer>::connect(SIG_AFTER_CHANGE);
+    FunctorStatic<Calendar,SignalSniffer>::connect(SIG_REMOVE);
+
     // 2: Read and the model
     cout << "Create the model with callbacks:" << endl;
     FreppleReadXMLFile("callback.xml",true,false);
 
-    // 3: Erase the model
+    // 3: Plan erase the model
+    cout << "Plan the model:" << endl;
+    FreppleReadXMLData(
+	    "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" \
+			"<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
+	    	"<COMMANDS>" \
+		       "<COMMAND xsi:type=\"COMMAND_SOLVE\">" \
+		         "<SOLVER NAME=\"MRP\" xsi:type=\"SOLVER_MRP\" CONSTRAINTS=\"0\"/>" \
+           "</COMMAND>" \
+		  	"</COMMANDS>" \
+		  "</PLAN>", true, false
+		);
+
+    // 4: Plan erase the model
+    cout << "Erase the model:" << endl;
     FreppleReadXMLData(
 	    "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" \
 			"<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
@@ -131,7 +167,7 @@ int main (int argc, char *argv[])
 		  "</PLAN>", true, false
 		);
 
-    // 4: Remove the subscriptions
+    // 5: Remove the subscriptions
     // a) buffers
     FunctorStatic<Buffer,SignalSniffer>::disconnect(SIG_ADD);
     FunctorStatic<Buffer,SignalSniffer>::disconnect(SIG_BEFORE_CHANGE);
@@ -168,7 +204,19 @@ int main (int argc, char *argv[])
     FunctorStatic<Flow,SignalSniffer>::disconnect(SIG_AFTER_CHANGE);
     FunctorStatic<Flow,SignalSniffer>::disconnect(SIG_REMOVE);
 
-    // 5: Reread and replan the model
+    // e) demands
+    FunctorStatic<Demand,SignalSniffer>::disconnect(SIG_ADD);
+    FunctorStatic<Demand,SignalSniffer>::disconnect(SIG_BEFORE_CHANGE);
+    FunctorStatic<Demand,SignalSniffer>::disconnect(SIG_AFTER_CHANGE);
+    FunctorStatic<Demand,SignalSniffer>::disconnect(SIG_REMOVE);
+
+    // f) calendars
+    FunctorStatic<Calendar,SignalSniffer>::disconnect(SIG_ADD);
+    FunctorStatic<Calendar,SignalSniffer>::disconnect(SIG_BEFORE_CHANGE);
+    FunctorStatic<Calendar,SignalSniffer>::disconnect(SIG_AFTER_CHANGE);
+    FunctorStatic<Calendar,SignalSniffer>::disconnect(SIG_REMOVE);
+
+    // 6: Reread the model
     cout << "Recreate the model without callbacks:" << endl;
     FreppleReadXMLFile("callback.xml",true,false);
   }

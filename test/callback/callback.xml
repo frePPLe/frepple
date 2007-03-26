@@ -5,13 +5,14 @@
     A simple model used for verifying the event publishing and subscription
     mechanism.
   </DESCRIPTION>
-	<COMMANDS>
-    <VERBOSE>false</VERBOSE>
-		<COMMAND xsi:type="COMMAND_SOLVE">
-		  <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0"/>
-		</COMMAND>
-	</COMMANDS>
   <CURRENT>2007-01-01T00:00:01</CURRENT>
+  <CALENDARS>
+    <CALENDAR NAME="test" xsi:type="CALENDAR_VOID">
+      <BUCKETS>
+        <BUCKET START="2007-01-01T00:00:01"/>
+      </BUCKETS>
+    </CALENDAR>
+  </CALENDARS>
   <OPERATIONS>
     <OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME">
       <DURATION>24:00:00</DURATION>

@@ -71,12 +71,12 @@ DECLARE_EXPORT Location::~Location()
   // Remove all references from buffers to this location
   for (Buffer::iterator buf = Buffer::begin();
        buf != Buffer::end(); ++buf)
-    if (buf->getLocation() == this) buf->setLocation(NULL);
+    if (buf->getLocation() == this) WLock<Buffer>(&*buf)->setLocation(NULL);
 
   // Remove all references from resources to this location
   for (Resource::iterator res = Resource::begin();
        res != Resource::end(); ++res)
-    if (res->getLocation() == this) res->setLocation(NULL);
+    if (res->getLocation() == this) WLock<Resource>(&*res)->setLocation(NULL);
 }
 
 }

@@ -91,13 +91,13 @@ void Forecast::setQuantity(const Calendar::Bucket& b, float qty)
     Demand::add(l);
     l->setOwner(this);
     l->setHidden(true);  // Avoid the subdemands show up in the output
-    l->setItem(getItem());
+    l->setItem(&*getItem());
     l->setQuantity(qty);
     l->setDue(b.getStart());
     l->setPriority(getPriority());
     l->addPolicy(planLate() ? "PLANLATE" : "PLANSHORT");
     l->addPolicy(planSingleDelivery() ? "SINGLEDELIVERY" : "MULTIDELIVERY");
-    l->setOperation(getOperation());
+    l->setOperation(&*getOperation());
   }
 }
 
@@ -183,7 +183,7 @@ void Forecast::beginElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Forecast::setCalendar(Calendar* c)
+void Forecast::setCalendar(const Calendar* c)
 {
   if (isGroup())
   {
@@ -195,7 +195,7 @@ void Forecast::setCalendar(Calendar* c)
 }
 
 
-void Forecast::setItem(Item* i)
+void Forecast::setItem(const Item* i)
 {
   Demand::setItem(i);
   // Update the item for all buckets/subdemands
@@ -213,7 +213,7 @@ void Forecast::setPriority(int i)
 }
 
 
-void Forecast::setOperation(Operation *o)
+void Forecast::setOperation(const Operation *o)
 {
   Demand::setOperation(o);
   // Update the priority for all buckets/subdemands

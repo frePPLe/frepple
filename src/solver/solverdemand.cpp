@@ -33,7 +33,7 @@ namespace frepple
 {
 
 
-DECLARE_EXPORT void MRPSolver::solve (Demand* l, void* v)
+DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
 {
   MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
   bool verbose = Solver->getSolver()->getVerbose();
@@ -46,7 +46,7 @@ DECLARE_EXPORT void MRPSolver::solve (Demand* l, void* v)
   // Unattach previous delivery operationplans.
   // Locked operationplans will NOT be deleted, and a part of the demand can
   // still remain planned.
-  l->deleteOperationPlans();
+  WLock<Demand>(l)->deleteOperationPlans();
 
   // Determine the quantity to be planned and the date for the planning loop
   float plan_qty = l->getQuantity() - l->getPlannedQuantity();
@@ -60,7 +60,7 @@ DECLARE_EXPORT void MRPSolver::solve (Demand* l, void* v)
   }
 
   // Which operation to use?
-  Operation *deliveryoper = l->getDeliveryOperation();
+  Operation::pointer deliveryoper = l->getDeliveryOperation();
   if (!deliveryoper)
     throw DataException("Demand '" + l->getName() + "' can't be planned");
 

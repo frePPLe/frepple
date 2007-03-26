@@ -167,8 +167,7 @@ using namespace xercesc;
   */
 #define TYPEDEF(tp) \
   public: \
-    typedef tp*                 pointer;  \
-    typedef const tp*           const_pointer;  \
+    typedef Object::RLock<tp>   pointer;  \
     typedef tp&                 reference;    \
     typedef const tp&           const_reference; \
     typedef Object::RLock<tp>   readpointer;  \
@@ -2194,11 +2193,23 @@ class Object
         /** Dereference operator. */
         const T* operator->() const {return obj;}
 
+        /** Conversion operator. */
+        // xxx operator const T*() const {return obj;}
+
         /** Comparison operator. */
         bool operator==(const RLock<T>& a) const {return obj == a.obj;}
 
         /** Comparison operator. */
         bool operator==(const T* a) const {return obj == a;}
+
+        /** Inequality operator. */
+        bool operator!=(const RLock<T>& a) const {return obj != a.obj;}
+
+        /** Inequality operator. */
+        bool operator!=(const T* a) const {return obj != a;}
+
+        /** Boolean operator. */
+        operator bool() const {return obj != NULL;}
 
       private:
         /** A pointer to the object being locked. */
@@ -2219,16 +2230,23 @@ class Object
 	      /** Constructs a write-lock. This method blocks till the object
           * lock can be obtained.
           */
-        WLock(T* l)  : obj(l)
+        WLock(T* l) : obj(l)
           {LockManager::getManager().obtainWriteLock(obj);}
 
-        /** Copy constructor.
+        /** Copy constructor.<br>
           * You should only copy a lock within the same thread!
           */
         WLock(const WLock<T>& p) : obj(p.obj) {}
 
-        /** Destructor. The write lock is released when the WLock object is
-          * deleted. */
+        /** Constructor, promoting a read-lock to a writelock.<br>
+          * You should only copy a lock within the same thread!
+          */
+        WLock(const RLock<T>& p) : obj(const_cast<T*>(p.getObject())) 
+          {LockManager::getManager().obtainWriteLock(obj);}
+
+        /** Destructor.<br>
+          * The write lock is released when the WLock object is deleted. 
+          */
         ~WLock() {LockManager::getManager().releaseWriteLock(obj);}
 
         /** Returns a pointer to the locked object. */
@@ -2245,6 +2263,15 @@ class Object
 
         /** Comparison operator. */
         bool operator==(const T* a) const {return obj == a;}
+
+        /** Inequality operator. */
+        bool operator!=(const WLock<T>& a) const {return obj != a.obj;}
+
+        /** Inequality operator. */
+        bool operator!=(const T* a) const {return obj != a;}
+
+        /** Boolean operator. */
+        operator bool() const {return obj != NULL;}
 
       private:
         /** A reference to the object being locked. */
@@ -3485,7 +3512,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         T& operator*() const {return *static_cast<T*>(node);}
 
         /** Return the content of the current node. */
-        T* operator->() const {return static_cast<T*>(node);}
+        T* operator->() const {return static_cast<T*>(node);}  // @todo return writelocked object
 
         /** Pre-increment operator which moves the pointer to the next
           * element. */
@@ -3512,6 +3539,67 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 	        node = node->decrement();
 	        return tmp;
         }
+
+        /** Comparison operator. */
+        bool operator==(const iterator& y) const {return node==y.node;}
+
+        /** Inequality operator. */
+        bool operator!=(const iterator& y) const {return node!=y.node;}
+
+      private:
+        Tree::TreeNode* node;
+    };
+
+    /** This class models an STL-like iterator that allows us to iterate over
+      * the named entities in a simple and safe way.<br>
+      * Objects of this class are created by the begin() and end() functions.
+      */
+    class const_iterator
+    {
+      public:
+        /** Constructor. */
+        const_iterator(Tree::TreeNode* x) : node(x) {}
+
+        /** Copy constructor. */
+        const_iterator(const const_iterator& it) {node = it.node;}
+
+        /** Return the content of the current node. */
+        const T& operator*() const {return *static_cast<T*>(node);}
+
+        /** Return the content of the current node. */
+        typename T::pointer operator->() const {return static_cast<T*>(node);}
+
+        /** Pre-increment operator which moves the pointer to the next
+          * element. */
+        const_iterator& operator++() {node = node->increment(); return *this;}
+
+        /** Post-increment operator which moves the pointer to the next
+          * element. */
+        const_iterator operator++(int)
+        {
+          Tree::TreeNode* tmp = node;
+          node = node->increment();
+          return tmp;
+        }
+
+        /** Pre-decrement operator which moves the pointer to the previous
+          * element. */
+        const_iterator& operator--() {node = node->decrement(); return *this;}
+
+        /** Post-decrement operator which moves the pointer to the previous
+          * element. */
+        const_iterator operator--(int)
+        {
+          Tree::TreeNode* tmp = node;
+	        node = node->decrement();
+	        return tmp;
+        }
+
+        /** Comparison operator. */
+        bool operator==(const const_iterator& y) const {return node==y.node;}
+
+        /** Inequality operator. */
+        bool operator!=(const const_iterator& y) const {return node!=y.node;}
 
         /** Comparison operator. */
         bool operator==(const iterator& y) const {return node==y.node;}
@@ -3728,7 +3816,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       if (!x->getType().raiseEvent(x,SIG_ADD))
       {
         // Creation isn't allowed
-        string msg = string("Can't create object") + name;
+        string msg = string("Can't create object ") + name;
         delete x;
         XMLString::release(&name);
         throw DataException(msg);
@@ -3897,9 +3985,9 @@ template <class T> class HasHierarchy : public HasName<T>
     /** Returns the owning entity. */
     T* getOwner() const {return parent;}
 
-    /** Returns the level in the hierarchy.
-      * Level 0 means the entity doesn't have any parent.
-      * Level 1 means the entity has a parent entity with level 0.
+    /** Returns the level in the hierarchy.<br>
+      * Level 0 means the entity doesn't have any parent.<br>
+      * Level 1 means the entity has a parent entity with level 0.<br>
       * Level "x" means the entity has a parent entity whose level is "x-1".
       */
     unsigned short getHierarchyLevel() const;

@@ -46,17 +46,16 @@ DECLARE_EXPORT Operation::~Operation()
 
   // Remove the reference to this operation from all items
   for (Item::iterator k = Item::begin(); k != Item::end(); ++k)
-    if (k->getDelivery() == this) k->setDelivery(NULL);
+    if (k->getDelivery() == this) WLock<Item>(&*k)->setDelivery(NULL);
 
   // Remove the reference to this operation from all demands
   for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)
-    if (l->getOperation() == this) l->setOperation(NULL);
+    if (l->getOperation() == this) WLock<Demand>(&*l)->setOperation(NULL);
 
   // Remove the reference to this operation from all buffers
   for (Buffer::iterator m = Buffer::begin(); m != Buffer::end(); ++m)
-  {
-    if (m->getProducingOperation() == this) m->setProducingOperation(NULL);
-  }
+    if (m->getProducingOperation() == this) 
+      WLock<Buffer>(&*m)->setProducingOperation(NULL);
 
   // Remove the operation from its super-operations and sub-operations
   // Note that we are not using a for-loop since our function is actually
@@ -88,7 +87,7 @@ DECLARE_EXPORT OperationAlternate::~OperationAlternate()
 
 
 DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (float q, Date s, Date e,
-    Demand* l, bool updates_okay, OperationPlan* ow, unsigned long i,
+    const Demand* l, bool updates_okay, OperationPlan* ow, unsigned long i,
     bool makeflowsloads) const
 {
   OperationPlan *opplan = new OperationPlan();
@@ -98,7 +97,7 @@ DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (float q, Date s, D
 
 
 void Operation::initOperationPlan (OperationPlan* opplan, float q,
-   const Date& s, const Date& e, Demand* l, bool updates_okay,
+   const Date& s, const Date& e, const Demand* l, bool updates_okay,
    OperationPlan* ow, unsigned long i, bool makeflowsloads) const
 {
   opplan->oper = const_cast<Operation*>(this);
@@ -469,7 +468,7 @@ DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
 
 
 DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan (float q, Date s, Date e,
-    Demand* l, bool updates_okay, OperationPlan* ow, unsigned long i,
+    const Demand* l, bool updates_okay, OperationPlan* ow, unsigned long i,
     bool makeflowsloads) const
 {
   // Note that the created operationplan is of a specific subclass
@@ -607,7 +606,7 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
 
 
 DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (float q, 
-  Date s, Date e, Demand* l, bool updates_okay, OperationPlan* ow, 
+  Date s, Date e, const Demand* l, bool updates_okay, OperationPlan* ow, 
   unsigned long i, bool makeflowsloads) const
 {
   // Note that the operationplan created is of a different subclass.
@@ -722,7 +721,7 @@ DECLARE_EXPORT void OperationEffective::endElement(XMLInput& pIn, XMLElement& pE
 
 
 DECLARE_EXPORT OperationPlan* OperationEffective::createOperationPlan 
-  (float q, Date s, Date e, Demand* l, bool updates_okay, OperationPlan* ow, 
+  (float q, Date s, Date e, const Demand* l, bool updates_okay, OperationPlan* ow, 
   unsigned long i, bool makeflowsloads) const
 {
   // Note that the operationplan created is of a different subclass.

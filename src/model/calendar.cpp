@@ -201,32 +201,20 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
     case ADD:
       // Only additions are allowed
       if (x==beginBuckets())
-      {
         // The first bucket (starting at minus infinite) is automatically
         // created in a calendar. In this special case, we can allow an add
         // action on a bucket that already exists.
-        LockManager::getManager().obtainWriteLock(result);
         return result;
-      }
       if (x!=endBuckets()) 
         throw("Bucket " + string(d) 
           + " already exists in calenar '" + getName() + "'");
       result = addBucket(d);
-      LockManager::getManager().obtainWriteLock(result);
-      if (!result->getType().raiseEvent(result, SIG_ADD))
-      {
-        LockManager::getManager().releaseWriteLock(result);
-        removeBucket(result);
-        throw DataException("Can't create bucket " + string(d) 
-          + " in calendar '" + getName() + "'");
-      }
       return result;
     case CHANGE:
       // Only changes are allowed
       if (x==endBuckets())
         throw DataException("Bucket " + string(d)
           + " doesn't exist in calendar '" + getName() + "'");
-      LockManager::getManager().obtainWriteLock(result);
       return result;
     case REMOVE:
       // Delete the entity
@@ -235,36 +223,16 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
           + " doesn't exist in calendar '" + getName() + "'");
       else
       {
-        // Send out the notification to subscribers
-        LockManager::getManager().obtainWriteLock(result);
-        if (!x->getType().raiseEvent(result, SIG_REMOVE))
-        {
-          // The callbacks disallowed the deletion!
-          LockManager::getManager().releaseWriteLock(result);
-          throw DataException("Can't delete calendar bucket " + string(d)
-            + " in calendar '" + getName() + "'");
-        }
         // Delete it
         removeBucket(result);
         return NULL;
       }
     case ADD_CHANGE:
       if (x!=endBuckets())
-      {
         // Returning existing bucket
-        LockManager::getManager().obtainWriteLock(result);
         return result;
-      }
       // Adding a new bucket
       result = addBucket(d);
-      LockManager::getManager().obtainWriteLock(result);
-      if (!result->getType().raiseEvent(result, SIG_ADD))
-      {
-        LockManager::getManager().releaseWriteLock(result);
-        removeBucket(result);
-        throw DataException("Can't create bucket " + string(d) 
-          + " in calendar '" + getName() + "'");
-      }
       return result;
   }
 

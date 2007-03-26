@@ -92,10 +92,10 @@ class LPSolver : public Solver
       * @exception DataException Generated when no calendar has been specified.
       */
     void solve(void* = NULL);
-    void solve(Demand*, void* = NULL);
-    void solve(Buffer*, void* = NULL);
+    void solve(const Demand*, void* = NULL);
+    void solve(const Buffer*, void* = NULL);
 
-    Calendar * getCalendar() const {return cal;}
+    Calendar::pointer getCalendar() const {return cal;}
     void setCalendar(Calendar* c) {cal = c;}
 
     void beginElement(XMLInput& pIn, XMLElement& pElement);
@@ -124,7 +124,7 @@ class LPSolver : public Solver
     LPX* lp;
 
     /** Which buckets to use for the linearization of the Problem. */
-    Calendar *cal;
+    const Calendar *cal;
 
     /** A counter for the number of rows in our LP matrix. */
     int rows;

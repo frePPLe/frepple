@@ -79,7 +79,7 @@ DECLARE_EXPORT void LoadPlan::update()
 }
 
 
-DECLARE_EXPORT bool LoadPlan::check()
+DECLARE_EXPORT bool LoadPlan::check() const
 {
   // 1. Quantity must match with the operationplan
   if (fabs((start_or_end==START ? ld->getUsageFactor() : - ld->getUsageFactor())

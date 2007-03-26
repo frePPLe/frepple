@@ -141,7 +141,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
     // CASE 2:
     // This is a consuming flowplan. Navigating downstream means taking the 
     // producing flowplans of the owning operationplan(s).
-    pushflowplans(st.fl->getOperationPlan()->getTopOwner(), false, nextlevel);
+    pushflowplans(&*(st.fl->getOperationPlan()->getTopOwner()), false, nextlevel);
   }
   // No matching flow found
   if (first) stack.pop();
@@ -245,7 +245,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
     // CASE 4:
     // This is a producing flowplan. Navigating upstream means taking the 
     // consuming flowplans of the owning operationplan(s).
-    pushflowplans(st.fl->getOperationPlan()->getTopOwner(), true, nextlevel);
+    pushflowplans(&*(st.fl->getOperationPlan()->getTopOwner()), true, nextlevel);
   }
   // No matching flow found
   if (first) stack.pop();
@@ -253,7 +253,8 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 }
 
 
-DECLARE_EXPORT void PeggingIterator::pushflowplans(OperationPlan* op, bool downstream, short nextlevel)
+DECLARE_EXPORT void PeggingIterator::pushflowplans
+  (const OperationPlan* op, bool downstream, short nextlevel)
 {
   state& st = stack.top();
 

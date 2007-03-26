@@ -40,11 +40,11 @@ OperationPlan::OperationPlanList OperationPlan::nosubOperationPlans;
 void DECLARE_EXPORT OperationPlan::setChanged(bool b)
 {
   if (owner)
-    owner->setChanged(b);
+    WLock<OperationPlan>(owner)->setChanged(b);
   else
   {
     oper->setChanged(b);
-    if (lt) lt->setChanged();
+    if (lt) WLock<Demand>(lt)->setChanged();
   }
 }
 
@@ -257,8 +257,8 @@ DECLARE_EXPORT void OperationPlan::initialize()
   createFlowLoads();
 
   // Extra registration step if this is a delivery operation
-  if (lt && lt->getDeliveryOperation() == oper)
-    lt->addDelivery(this);
+  if (getDemand() && getDemand()->getDeliveryOperation() == oper)
+    WLock<Demand>(lt)->addDelivery(this);
 
   // Mark the operation to detect its problems
   // Note that a single operationplan thus retriggers the problem computation
@@ -351,7 +351,7 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
   // Delete also the owner
   if (owner)
   {
-    OperationPlan *o = owner;
+    const OperationPlan* o = owner;
     setOwner(NULL);
     delete o;
   }
@@ -362,7 +362,7 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
   if (getIdentifier())
   {
     // Delete from the list of deliveries
-    if (lt) lt->removeDelivery(this);
+    if (lt) WLock<Demand>(lt)->removeDelivery(this);
 
     // Delete from the operationplan list
     if (prev) prev->next = next;
@@ -372,16 +372,16 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
 }
 
 
-void DECLARE_EXPORT OperationPlan::setOwner(OperationPlan* o)
+void DECLARE_EXPORT OperationPlan::setOwner(const OperationPlan* o)
 {
   // Special case: the same owner is set twice
   if (owner == o) return;
   // Erase the previous owner if there is one
-  if (owner) owner->eraseSubOperationPlan(this);
+  if (owner) WLock<OperationPlan>(owner)->eraseSubOperationPlan(this);
   // Set new owner
   owner = o;
   // Register with the new owner
-  if (owner) owner->addSubOperationPlan(this);
+  if (owner) WLock<OperationPlan>(owner)->addSubOperationPlan(this);
 }
 
 
@@ -419,7 +419,7 @@ DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown)
   // Setting a quantity is only allowed on a top operationplan
   if (owner)
   {
-    owner->setQuantity(f,roundDown);
+    WLock<OperationPlan>(owner)->setQuantity(f,roundDown);
     return;
   }
 
@@ -471,7 +471,7 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
   // some material downstream.
 
   // Notify the demand of the changed delivery
-  if (lt) lt->setChanged();
+  if (lt) WLock<Demand>(lt)->setChanged();
 }
 
 
@@ -481,7 +481,7 @@ DECLARE_EXPORT void OperationPlan::update()
   resizeFlowLoadPlans();
 
   // Notify the owner operation_plan
-  if (owner) owner->update();
+  if (owner) WLock<OperationPlan>(owner)->update();
 
   // Mark as changed
   setChanged();
@@ -606,21 +606,21 @@ DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, XMLElement& pEleme
 }
 
 
-DECLARE_EXPORT void OperationPlan::setDemand(Demand* l)
+DECLARE_EXPORT void OperationPlan::setDemand(const Demand* l)
 {
   // No change
   if (l==lt) return;
 
   // Unregister from previous lot
-  if (lt) lt->removeDelivery(this);
+  if (lt) WLock<Demand>(lt)->removeDelivery(this);
 
   // Register the new lot and mark it changed
   lt = l;
-  if (l) l->setChanged();
+  if (l) WLock<Demand>(l)->setChanged();
 }
 
 
-DECLARE_EXPORT bool OperationPlan::check()
+DECLARE_EXPORT bool OperationPlan::check() const
 {
   bool okay = true;
 

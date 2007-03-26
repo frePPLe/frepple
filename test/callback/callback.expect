@@ -1,4 +1,7 @@
 Create the model with callbacks:
+  Calendar 'test' receives signal ADD
+  Calendar 'test' receives signal BEFORE_CHANGE
+  Calendar 'test' receives signal AFTER_CHANGE
   OperationFixedTime 'make end item' receives signal ADD
   Operation 'make end item' receives signal ADD
   OperationFixedTime 'make end item' receives signal BEFORE_CHANGE
@@ -26,6 +29,9 @@ Create the model with callbacks:
   Item 'end item' receives signal AFTER_CHANGE
   BufferDefault 'end item' receives signal AFTER_CHANGE
   Buffer 'end item' receives signal AFTER_CHANGE
+  Calendar 'Capacity' receives signal ADD
+  Calendar 'Capacity' receives signal BEFORE_CHANGE
+  Calendar 'Capacity' receives signal AFTER_CHANGE
   OperationFixedTime 'make end item' receives signal BEFORE_CHANGE
   Operation 'make end item' receives signal BEFORE_CHANGE
   OperationFixedTime 'make end item' receives signal AFTER_CHANGE
@@ -52,6 +58,45 @@ Create the model with callbacks:
   BufferDefault 'end item' receives signal AFTER_CHANGE
   Buffer 'end item' receives signal AFTER_CHANGE
   Flow between 'end item' and 'make end item' receives signal AFTER_CHANGE
+  Demand 'order 1' receives signal ADD
+  Demand 'order 1' receives signal BEFORE_CHANGE
   Item 'end item' receives signal BEFORE_CHANGE
   Item 'end item' receives signal AFTER_CHANGE
+  Demand 'order 1' receives signal AFTER_CHANGE
+Plan the model:
+  Demand 'order 1' receives signal BEFORE_CHANGE
+  Demand 'order 1' receives signal AFTER_CHANGE
+  Demand 'order 1' receives signal BEFORE_CHANGE
+  Demand 'order 1' receives signal AFTER_CHANGE
+  Demand 'order 1' receives signal BEFORE_CHANGE
+  Demand 'order 1' receives signal AFTER_CHANGE
+  Demand 'order 1' receives signal BEFORE_CHANGE
+  Demand 'order 1' receives signal AFTER_CHANGE
+  Demand 'order 1' receives signal BEFORE_CHANGE
+  Demand 'order 1' receives signal AFTER_CHANGE
+  Demand 'order 1' receives signal BEFORE_CHANGE
+  Demand 'order 1' receives signal AFTER_CHANGE
+  Demand 'order 1' receives signal BEFORE_CHANGE
+  Demand 'order 1' receives signal AFTER_CHANGE
+  Demand 'order 1' receives signal BEFORE_CHANGE
+  Demand 'order 1' receives signal AFTER_CHANGE
+  Demand 'order 1' receives signal BEFORE_CHANGE
+  Demand 'order 1' receives signal AFTER_CHANGE
+Erase the model:
+  Demand 'order 1' receives signal REMOVE
+  OperationFixedTime 'delivery end item' receives signal REMOVE
+  Operation 'delivery end item' receives signal REMOVE
+  Item 'end item' receives signal BEFORE_CHANGE
+  Item 'end item' receives signal AFTER_CHANGE
+  OperationFixedTime 'make end item' receives signal REMOVE
+  Operation 'make end item' receives signal REMOVE
+  BufferDefault 'end item' receives signal BEFORE_CHANGE
+  Buffer 'end item' receives signal BEFORE_CHANGE
+  BufferDefault 'end item' receives signal AFTER_CHANGE
+  Buffer 'end item' receives signal AFTER_CHANGE
+  BufferDefault 'end item' receives signal REMOVE
+  Buffer 'end item' receives signal REMOVE
+  Calendar 'Capacity' receives signal REMOVE
+  Calendar 'test' receives signal REMOVE
+  Item 'end item' receives signal REMOVE
 Recreate the model without callbacks:

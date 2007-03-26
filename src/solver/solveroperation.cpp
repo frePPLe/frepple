@@ -219,7 +219,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
 }
 
 
-DECLARE_EXPORT void MRPSolver::solve(Operation* oper, void* v)
+DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
 {
   // Make sure we have a valid operation
   assert(oper);
@@ -294,7 +294,7 @@ DECLARE_EXPORT void MRPSolver::solve(Operation* oper, void* v)
 
 
 // No need to take post- and pre-operation times into account
-DECLARE_EXPORT void MRPSolver::solve(OperationRouting* oper, void* v)
+DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
 {
   MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
 
@@ -401,12 +401,12 @@ DECLARE_EXPORT void MRPSolver::solve(OperationRouting* oper, void* v)
 
 
 // No need to take post- and pre-operation times into account
-DECLARE_EXPORT void MRPSolver::solve(OperationAlternate* oper, void* v)
+DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
 {
   MRPSolverdata *Solver = static_cast<MRPSolverdata*>(v);
   Date origQDate = Solver->q_date;
   float origQqty = Solver->q_qty;
-  Buffer *buf = Solver->curBuffer;
+  const Buffer *buf = Solver->curBuffer;
 
   // Message
   if (Solver->getSolver()->getVerbose())
@@ -418,7 +418,7 @@ DECLARE_EXPORT void MRPSolver::solve(OperationAlternate* oper, void* v)
 
   // Make sure sub-operationplans know their owner & store the previous value
   OperationPlan *prev_owner_opplan = Solver->curOwnerOpplan;
-  Demand *d = Solver->curDemand;
+  const Demand *d = Solver->curDemand;
 
   // Find the flow into the requesting buffer for the quantity-per
   float top_flow_qty_per = 0.0f;
@@ -537,7 +537,7 @@ DECLARE_EXPORT void MRPSolver::solve(OperationAlternate* oper, void* v)
 
 
 // No need to take post- and pre-operation times into account
-DECLARE_EXPORT void MRPSolver::solve(OperationEffective* oper, void* v)
+DECLARE_EXPORT void MRPSolver::solve(const OperationEffective* oper, void* v)
 {
   MRPSolverdata *Solver = static_cast<MRPSolverdata*>(v);
 

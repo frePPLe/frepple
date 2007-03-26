@@ -165,7 +165,7 @@ DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
   o->setDemand(this);
 
   // Check validity of operation being used
-  Operation *tmpOper = getDeliveryOperation();
+  Operation::pointer tmpOper = getDeliveryOperation();
   if (tmpOper && tmpOper != o->getOperation())
     cout << "Warning: Delivery Operation '" << o->getOperation()
     << "' different than expected '" << tmpOper
@@ -173,7 +173,7 @@ DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
 }
 
 
-DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
+DECLARE_EXPORT Operation::pointer Demand::getDeliveryOperation() const
 {
   // Operation can be specified on the demand itself,
   if (oper) return oper;

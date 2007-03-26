@@ -61,19 +61,22 @@ DECLARE_EXPORT void CommandSolve::execute()
 {
   // Make sure the solver field is specified
   if (!sol) throw RuntimeException("Solve command with unspecified solver");
+  
+  // Lock the solver
+  Object::WLock<Solver> s(sol);
 
   // Start message
   if (getVerbose())
-    cout << "Started running the solver '" << sol->getName()
+    cout << "Started running the solver '" << s->getName()
       << "' at " << Date::now() << endl;
   Timer t;
 
   // Running the solver now
-  sol->solve();
+  s->solve();
 
   // Ending message
   if (getVerbose())
-    cout << "Finished running the solver '" << sol->getName()
+    cout << "Finished running the solver '" << s->getName()
     << "' at " << Date::now()  << " : " << t << endl;
 }
 
@@ -378,19 +381,20 @@ DECLARE_EXPORT void CommandSavePlan::execute()
 //
 
 DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
-  (OperationPlan* o, Date newdate, bool use_end_date)
+  (const OperationPlan* o, Date newdate, bool use_end_date)
   : opplan(o), use_end(use_end_date)
 {
   if(!opplan) return;
+  WLock<OperationPlan> lopplan(opplan);
   if (use_end)
   {
-    originaldate = opplan->getDates().getEnd();
-    opplan->setEnd(newdate);
+    originaldate = lopplan->getDates().getEnd();
+    lopplan->setEnd(newdate);
   }
   else
   {
-    originaldate = opplan->getDates().getStart();
-    opplan->setStart(newdate);
+    originaldate = lopplan->getDates().getStart();
+    lopplan->setStart(newdate);
   }
 }
 
@@ -398,8 +402,9 @@ DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
 DECLARE_EXPORT void CommandMoveOperationPlan::undo()
 {
   if (!opplan) return;
-  if (use_end) opplan->setEnd(originaldate);
-  else opplan->setStart(originaldate);
+  WLock<OperationPlan> lopplan(opplan);
+  if (use_end) lopplan->setEnd(originaldate);
+  else lopplan->setStart(originaldate);
   opplan = NULL;
 }
 
@@ -407,8 +412,9 @@ DECLARE_EXPORT void CommandMoveOperationPlan::undo()
 DECLARE_EXPORT void CommandMoveOperationPlan::setDate(Date newdate)
 {
   if(!opplan) return;
-  if (use_end) opplan->setEnd(newdate);
-  else opplan->setStart(newdate);
+  WLock<OperationPlan> lopplan(opplan);
+  if (use_end) lopplan->setEnd(newdate);
+  else lopplan->setStart(newdate);
 }
 
 
@@ -473,7 +479,7 @@ DECLARE_EXPORT void CommandErase::execute()
     // Delete the operationplans only
     for (Operation::iterator gop = Operation::begin();
         gop != Operation::end(); ++gop)
-      gop->deleteOperationPlans();
+      WLock<Operation>(&*gop)->deleteOperationPlans();
 
   // Ending message
   if (getVerbose())

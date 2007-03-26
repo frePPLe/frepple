@@ -52,9 +52,9 @@ class MRPSolver : public Solver
     short constrts;
 
     /** @todo Missing doc. */
-    DECLARE_EXPORT void solve(Operation*, void* = NULL);
-    DECLARE_EXPORT void solve(OperationRouting*, void* = NULL);
-    DECLARE_EXPORT void solve(OperationEffective*, void* = NULL);
+    DECLARE_EXPORT void solve(const Operation*, void* = NULL);
+    DECLARE_EXPORT void solve(const OperationRouting*, void* = NULL);
+    DECLARE_EXPORT void solve(const OperationEffective*, void* = NULL);
 
     /** Behavior of this solver method is:
       *  - The solver loops through each alternate operation in order of
@@ -68,14 +68,14 @@ class MRPSolver : public Solver
       *  - The solver properly considers the quantity_per of all flows producing
       *    into the requested buffer, if such a buffer is specified.
       */
-    DECLARE_EXPORT void solve(OperationAlternate*,void* = NULL);
+    DECLARE_EXPORT void solve(const OperationAlternate*,void* = NULL);
 
     /** Behavior of this solver method:
       *  - No propagation to upstream buffers at all, even if a producing
       *    operation has been specified.
       *  - Always give an answer for the full quantity on the requested date.
       */
-    DECLARE_EXPORT void solve(BufferInfinite*,void* = NULL);
+    DECLARE_EXPORT void solve(const BufferInfinite*,void* = NULL);
 
     /** Behavior of this solver method:
       *  - Consider 0 as the hard minimum limit. It is currently not possible
@@ -100,7 +100,7 @@ class MRPSolver : public Solver
       *    for satisfying a certain demand that change will not be considered.
       *  - The solver completely ignores the maximum target.
       */
-    DECLARE_EXPORT void solve(Buffer*, void* = NULL);
+    DECLARE_EXPORT void solve(const Buffer*, void* = NULL);
 
     /** Behavior of this solver method:
       *  - This method simply passes on the request to the referenced buffer. 
@@ -108,7 +108,7 @@ class MRPSolver : public Solver
       *    control to a solve(Buffer*) method.
       * @see checkOperationMaterial
       */
-    DECLARE_EXPORT void solve(Flow*, void* = NULL);
+    DECLARE_EXPORT void solve(const Flow*, void* = NULL);
 
     /** Behavior of this solver method:
       *  - The operationplan is checked for a capacity overload. When detected
@@ -124,12 +124,12 @@ class MRPSolver : public Solver
       *    The result of the search is returned as the answer-date to the 
       *    solver. 
       */
-    DECLARE_EXPORT void solve(Resource*, void* = NULL);
+    DECLARE_EXPORT void solve(const Resource*, void* = NULL);
 
     /** Behavior of this solver method:
       *  - Always return OK.
       */
-    DECLARE_EXPORT void solve(ResourceInfinite*,void* = NULL);
+    DECLARE_EXPORT void solve(const ResourceInfinite*,void* = NULL);
 
     /** Behavior of this solver method:
       *  - This method simply passes on the request to the referenced resource.
@@ -138,7 +138,7 @@ class MRPSolver : public Solver
       *    to make the solver as generic and future-proof as possible.
       * @see checkOperationCapacity
       */
-    void solve(Load* l, void* d = NULL) {l->getResource()->solve(*this,d);}
+    void solve(const Load* l, void* d = NULL) {l->getResource()->solve(*this,d);}
 
   public:
     /** Behavior of this solver method:
@@ -152,7 +152,7 @@ class MRPSolver : public Solver
       * it can also be called independently to plan a certain demand.
       * @see solve
       */
-    DECLARE_EXPORT void solve(Demand*, void* = NULL);
+    DECLARE_EXPORT void solve(const Demand*, void* = NULL);
 
     /** This is the main solver method that will appropriately call the other 
       * solve methods.<br>
@@ -253,14 +253,14 @@ class MRPSolver : public Solver
         MRPSolver* sol;
 
         /** Points to the demand being planned. */
-        Demand* curDemand;
+        const Demand* curDemand;
 
         /** Points to the current owner operationplan. This is used when 
           * operations are nested. */
         OperationPlan* curOwnerOpplan;
 
         /** Points to the current buffer. */
-        Buffer* curBuffer;
+        const Buffer* curBuffer;
 
         /** This variable is used by the resource solver. It will be true when
           * there is not a single constraint on the loads. */

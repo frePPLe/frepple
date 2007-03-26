@@ -74,7 +74,7 @@ class ReportFilter : public DefaultHandler
 {
   public:
     void startElement (const XMLCh* const, const XMLCh* const,
-                       const XMLCh* const, const Attributes&);
+        const XMLCh* const, const Attributes&);
     ReportFilter(const XMLtag& t, XMLOutput &oo, request_rec *r)
         : tag(t), req(r), o(oo) {};
   private:

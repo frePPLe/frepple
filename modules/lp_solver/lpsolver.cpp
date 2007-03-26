@@ -87,12 +87,12 @@ void LPSolver::solve(void *v)
 
   // Determine Problem SIZE!
   lpx_add_cols(lp, Demand::size()         // Col 1 ... Demands
-               + buckets                  // Col Demands+1 ... Demands+Buckets
+      + buckets                  // Col Demands+1 ... Demands+Buckets
               );
   lpx_add_rows(lp, 1 +                    // Row 1: total inventory
-               1 +                        // Row 2: total planned qty
-               2 +                        // For each demand prio
-               buckets
+      1 +                        // Row 2: total planned qty
+      2 +                        // For each demand prio
+      buckets
               );
 
   // Build predefined rows
@@ -118,7 +118,7 @@ void LPSolver::solve(void *v)
 
   // Objective: maximize the planned demand of each priority
   for (priolist::iterator i = demandprio2row.begin();
-       i != demandprio2row.end(); ++i)
+      i != demandprio2row.end(); ++i)
   {
     if (getVerbose())
       cout << "Start maximizing supply for demand priority " << i->first
@@ -172,8 +172,8 @@ void LPSolver::solve(const Demand* l, void* v)
   lpx_set_col_bnds(Sol->lp, Sol->columns, LPX_DB, 0.0, l->getQuantity());
 
   // Create a row for each priority level of demands
-  if( Sol->demandprio2row.find(l->getPriority())
-    == Sol->demandprio2row.end())
+  if ( Sol->demandprio2row.find(l->getPriority())
+      == Sol->demandprio2row.end())
   {
     ostringstream x;
     x << "Planned_Qty_" << l->getPriority();
@@ -189,7 +189,7 @@ void LPSolver::solve(const Demand* l, void* v)
   ndx[2] = Sol->demandprio2row[l->getPriority()];
   val[2] = 1.0;
   ndx[3] = Sol->Buffer2row[Buffer::find("RM3")]
-           + Sol->cal->findBucketIndex(l->getDue());
+      + Sol->cal->findBucketIndex(l->getDue());
   val[3] = 1.0;
   lpx_set_mat_col(Sol->lp, Sol->columns, 3, ndx, val);
 
@@ -205,8 +205,8 @@ void LPSolver::solve(const Buffer* buf, void* v)
   Sol->Buffer2row[buf] = Sol->rows;
 
   Buffer::flowplanlist::const_iterator f = buf->getFlowPlans().begin();
-  for(Calendar::BucketIterator b = Sol->cal->beginBuckets();
-       b != Sol->cal->endBuckets(); ++b)
+  for (Calendar::BucketIterator b = Sol->cal->beginBuckets();
+      b != Sol->cal->endBuckets(); ++b)
   {
 
     // Find the supply in this Bucket
@@ -265,7 +265,7 @@ void LPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Fields
   o->writeElement(Tags::tag_calendar, cal);

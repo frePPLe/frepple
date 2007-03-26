@@ -60,7 +60,7 @@ class OperationTransport : public OperationFixedTime
   public:
     /** Constructor. */
     explicit OperationTransport(const string& s)
-      : OperationFixedTime(s), fromBuf(NULL), toBuf(NULL) {}
+        : OperationFixedTime(s), fromBuf(NULL), toBuf(NULL) {}
 
     Buffer* getFromBuffer() const {return fromBuf;}
 

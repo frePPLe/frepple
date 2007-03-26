@@ -62,10 +62,10 @@ int getInventoryFilter(request_rec *r)
     for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
       if (!b->getHidden())
         ap_rprintf(r,
-                   "<BUFFER NAME=\"%s\" LOCATION=\"%s\" ITEM=\"%s\"/>\n",
-                   b->getName().c_str(),
-                   b->getLocation() ? b->getLocation()->getName().c_str() : "",
-                   b->getItem() ? b->getItem()->getName().c_str() : "");
+            "<BUFFER NAME=\"%s\" LOCATION=\"%s\" ITEM=\"%s\"/>\n",
+            b->getName().c_str(),
+            b->getLocation() ? b->getLocation()->getName().c_str() : "",
+            b->getItem() ? b->getItem()->getName().c_str() : "");
     ap_rputs("</BUFFERS></PLAN>\n", r);
 
     return OK;
@@ -106,7 +106,7 @@ int getInventoryData(request_rec *r)
     if (r->remaining > 65536)
     {
       ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
-                    "Too big body in request: %d bytes", r->remaining);
+          "Too big body in request: %d bytes", r->remaining);
       return HTTP_REQUEST_ENTITY_TOO_LARGE;
     }
 
@@ -116,7 +116,7 @@ int getInventoryData(request_rec *r)
 
     // Fill the buffer with client data
     while ((!bodylen || bufferspace >= 32) &&
-           (res = ap_get_client_block(r, bufferoffset, bufferspace)) > 0)
+        (res = ap_get_client_block(r, bufferoffset, bufferspace)) > 0)
     {
       bodylen += res;
       bufferspace -= res;
@@ -143,7 +143,7 @@ int getInventoryData(request_rec *r)
       SAX2XMLReader* parser = XMLReaderFactory::createXMLReader();
       ReportFilter handler(Tags::tag_buffer, o, r);
       parser->setProperty(XMLUni::fgXercesScannerName,
-                          const_cast<XMLCh*>(XMLUni::fgWFXMLScanner));
+          const_cast<XMLCh*>(XMLUni::fgWFXMLScanner));
       parser->setFeature(XMLUni::fgSAX2CoreNameSpaces, false);
       parser->setFeature(XMLUni::fgSAX2CoreValidation, false);
       parser->setFeature(XMLUni::fgSAX2CoreNameSpacePrefixes, false);
@@ -186,7 +186,7 @@ int getInventoryData(request_rec *r)
 
 
 void ReportFilter::startElement (const XMLCh* const uri, const XMLCh* const localname,
-                                 const XMLCh* const qname, const Attributes& attrs)
+    const XMLCh* const qname, const Attributes& attrs)
 {
   char* c = XMLString::transcode(localname);
   hashtype x = XMLtag::hash(c);
@@ -194,8 +194,8 @@ void ReportFilter::startElement (const XMLCh* const uri, const XMLCh* const loca
   {
     // Starting a BUFFER element. Now Pick up the NAME attribute.
     char* name = XMLString::transcode(
-                   attrs.getValue(Tags::tag_name.getXMLCharacters())
-                 );
+          attrs.getValue(Tags::tag_name.getXMLCharacters())
+        );
     if (name)
     {
       Buffer *bufptr = Buffer::find(name);

@@ -93,14 +93,14 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   */
 class Forecast : public Demand
 {
-  TYPEDEF(Forecast);
+    TYPEDEF(Forecast);
   public:
     /** Constructor. */
     explicit Forecast(const string& nm) : Demand(nm), calptr(NULL) {}
 
     /** Updates the quantity of the forecast. This method is empty. */
     virtual void setQuantity(float f)
-      {throw DataException("Can't set quantity of a forecast");}
+    {throw DataException("Can't set quantity of a forecast");}
 
     /** Update the forecast in a bucket, given any date in the bucket. */
     virtual void setQuantity(Date, float);
@@ -131,7 +131,7 @@ class Forecast : public Demand
 
     /** Updates the due date of the demand. */
     virtual void setDue(Date d)
-      {throw DataException("Can't set due date of a forecast");}
+    {throw DataException("Can't set due date of a forecast");}
 
     /** Update the policy of the demand in all buckets. */
     virtual void setPolicy(const string&);

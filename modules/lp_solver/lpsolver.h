@@ -67,7 +67,8 @@
 #include "frepple.h"
 using namespace frepple;
 
-extern "C" {
+extern "C"
+{
 #include "glpk.h"
 }
 
@@ -85,7 +86,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   */
 class LPSolver : public Solver
 {
-  TYPEDEF(LPSolver);
+    TYPEDEF(LPSolver);
   public:
     /** This method creates a new column in the model for every demand. It's
       * value represents the planned quantity of that demand.
@@ -114,8 +115,8 @@ class LPSolver : public Solver
       * "graphic" characters. A space isn't one of those. Since our model
       * can contain HasHierarchy names with a space, we call this function to
       * replace the spaces with underscores.
-	    * Note however that we can't garantuee that the updated strings are
-	    * all unique after the replacement!
+     * Note however that we can't garantuee that the updated strings are
+     * all unique after the replacement!
       */
     static string replaceSpaces(string);
 

@@ -108,7 +108,7 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
   if (m == REFERENCE)
   {
     o->writeElement
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
 
@@ -188,7 +188,7 @@ void Forecast::setCalendar(const Calendar* c)
   if (isGroup())
   {
     cout << "Warning: Changing the calendar of an initialized forecast isn't "
-     << "allowed." << endl;
+    << "allowed." << endl;
     return;
   }
   calptr = c;

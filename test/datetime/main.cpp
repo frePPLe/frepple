@@ -63,30 +63,30 @@ int main (int argc, char *argv[])
   TimePeriod t3;
   t3.parse("24:00:00");
   cout << "time \"24:00:00\" => " << t3 << "    "
-    << static_cast<long>(t3) << endl;
+  << static_cast<long>(t3) << endl;
   t3.parse("9:00");
   cout << "time \"9:00\" => " << t3 << "    "
-    << static_cast<long>(t3) << endl;
+  << static_cast<long>(t3) << endl;
   try
   {
-  	t3.parse("00:0a:00");
+    t3.parse("00:0a:00");
   }
   catch (DataException e)
-  	{ cout << "Data exception caught: " << e.what() << endl; }
+  { cout << "Data exception caught: " << e.what() << endl; }
   cout << "time \"00:0a:00\" => " << t3 << "    "
-    << static_cast<long>(t3) << endl;
+  << static_cast<long>(t3) << endl;
   t3.parse("79:00");
   cout << "time \"79:00\" => " << t3 << "    "
-    << static_cast<long>(t3) << endl;
+  << static_cast<long>(t3) << endl;
   t3.parse("3600");
   cout << "time \"3600\" => " << t3 << "    "
-    << static_cast<long>(t3) << endl;
+  << static_cast<long>(t3) << endl;
   t3.parse("00:00:00");
   cout << "time \"00:00:00\" => " << t3 << "    "
-    << static_cast<long>(t3) << endl;
+  << static_cast<long>(t3) << endl;
   t3.parse("-01:01");
   cout << "time \"-01:01\" => " << t3 << "    "
-    << static_cast<long>(t3) << endl;
+  << static_cast<long>(t3) << endl;
 
   cout << "infinite past: " << Date::infinitePast << endl;
   cout << "infinite future: " << Date::infiniteFuture << endl;

@@ -66,8 +66,8 @@ class SignalSniffer
     }
     static bool callback(Flow* l, Signal a)
     {
-      cout << "  Flow between '" << l->getBuffer() << "' and '" <<
-        l->getOperation() << "' receives signal " << a << endl;
+      cout << "  Flow between '" << l->getBuffer() << "' and '"
+      << l->getOperation() << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Demand* l, Signal a)
@@ -146,26 +146,26 @@ int main (int argc, char *argv[])
     // 3: Plan erase the model
     cout << "Plan the model:" << endl;
     FreppleReadXMLData(
-	    "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" \
-			"<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
-	    	"<COMMANDS>" \
-		       "<COMMAND xsi:type=\"COMMAND_SOLVE\">" \
-		         "<SOLVER NAME=\"MRP\" xsi:type=\"SOLVER_MRP\" CONSTRAINTS=\"0\"/>" \
-           "</COMMAND>" \
-		  	"</COMMANDS>" \
-		  "</PLAN>", true, false
-		);
+      "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" \
+      "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
+      "<COMMANDS>" \
+      "<COMMAND xsi:type=\"COMMAND_SOLVE\">" \
+      "<SOLVER NAME=\"MRP\" xsi:type=\"SOLVER_MRP\" CONSTRAINTS=\"0\"/>" \
+      "</COMMAND>" \
+      "</COMMANDS>" \
+      "</PLAN>", true, false
+    );
 
     // 4: Plan erase the model
     cout << "Erase the model:" << endl;
     FreppleReadXMLData(
-	    "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" \
-			"<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
-	    	"<COMMANDS>" \
-		       "<COMMAND xsi:type=\"COMMAND_ERASE\" MODE=\"model\" />" \
-		  	"</COMMANDS>" \
-		  "</PLAN>", true, false
-		);
+      "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" \
+      "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
+      "<COMMANDS>" \
+      "<COMMAND xsi:type=\"COMMAND_ERASE\" MODE=\"model\" />" \
+      "</COMMANDS>" \
+      "</PLAN>", true, false
+    );
 
     // 5: Remove the subscriptions
     // a) buffers

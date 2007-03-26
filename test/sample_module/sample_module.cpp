@@ -62,20 +62,20 @@ void OperationTransport::beginElement(XMLInput& pIn, XMLElement& pElement)
 
 
 void OperationTransport::writeElement
-  (XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
   {
     o->writeElement
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
 
   // Write the complete object
   if (m != NOHEADER)
     o->BeginObject
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write the fields
   o->writeElement(tag_from, fromBuf, REFERENCE);

@@ -63,11 +63,11 @@ extern "C" PyObject* PythonProblem::next(PythonProblem* obj)
   if (obj->iter != Problem::end())
   {
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:N,s:N}",
-      "DESCRIPTION", obj->iter->getDescription().c_str(),
-      "ENTITY", obj->iter->getOwner()->getEntity()->getType().category->group.c_str(),
-      "TYPE", obj->iter->getType().type.c_str(),
-      "START", PythonDateTime(obj->iter->getDateRange().getStart()),
-      "END", PythonDateTime(obj->iter->getDateRange().getEnd())
+        "DESCRIPTION", obj->iter->getDescription().c_str(),
+        "ENTITY", obj->iter->getOwner()->getEntity()->getType().category->group.c_str(),
+        "TYPE", obj->iter->getType().type.c_str(),
+        "START", PythonDateTime(obj->iter->getDateRange().getStart()),
+        "END", PythonDateTime(obj->iter->getDateRange().getEnd())
       );
 
     ++(obj->iter);
@@ -230,7 +230,7 @@ extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
     PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z}",
       "NAME", obj->iter->getName().c_str(),
       "QUANTITY", obj->iter->getQuantity(),
-			"DUE", PythonDateTime(obj->iter->getDue()),
+      "DUE", PythonDateTime(obj->iter->getDue()),
       "PRIORITY", obj->iter->getPriority(),
       "ITEM", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
       "OPERATION", obj->iter->getOperation() ? obj->iter->getOperation()->getName().c_str() : NULL,
@@ -267,17 +267,17 @@ extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj)
   if (obj->iter != Buffer::end())
   {
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:f,s:z,s:z,s:z,s:z,s:z,s:O}",
-      "NAME", obj->iter->getName().c_str(),
-      "CATEGORY", obj->iter->getCategory().c_str(),
-      "SUBCATEGORY", obj->iter->getSubCategory().c_str(),
-      "DESCRIPTION", obj->iter->getDescription().c_str(),
-      "ONHAND", obj->iter->getOnHand(),
-      "LOCATION", obj->iter->getLocation() ? obj->iter->getLocation()->getName().c_str() : NULL,
-      "ITEM", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
-      "MINIMUM", obj->iter->getMinimum() ? obj->iter->getMinimum()->getName().c_str() : NULL,
-      "MAXIMUM", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
-      "PRODUCING", obj->iter->getProducingOperation() ? obj->iter->getProducingOperation()->getName().c_str() : NULL,
-      "FLOWPLANS", PythonFlowPlan::createFromBuffer(&*(obj->iter))
+        "NAME", obj->iter->getName().c_str(),
+        "CATEGORY", obj->iter->getCategory().c_str(),
+        "SUBCATEGORY", obj->iter->getSubCategory().c_str(),
+        "DESCRIPTION", obj->iter->getDescription().c_str(),
+        "ONHAND", obj->iter->getOnHand(),
+        "LOCATION", obj->iter->getLocation() ? obj->iter->getLocation()->getName().c_str() : NULL,
+        "ITEM", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
+        "MINIMUM", obj->iter->getMinimum() ? obj->iter->getMinimum()->getName().c_str() : NULL,
+        "MAXIMUM", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
+        "PRODUCING", obj->iter->getProducingOperation() ? obj->iter->getProducingOperation()->getName().c_str() : NULL,
+        "FLOWPLANS", PythonFlowPlan::createFromBuffer(&*(obj->iter))
       );
     ++(obj->iter);
     return result;

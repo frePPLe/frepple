@@ -65,7 +65,7 @@ static const char *setHome(cmd_parms *cmd, void *cfg, const char *value)
   const char *cfgFile = ap_server_root_relative(cmd->pool, value);
   if (!cfgFile)
     return apr_pstrcat
-           (cmd->pool, "Invalid frepple configuration ", value, NULL);
+        (cmd->pool, "Invalid frepple configuration ", value, NULL);
 
   conf->home = apr_pstrdup(cmd->pool, cfgFile);
   return NULL;
@@ -98,9 +98,9 @@ typedef const char* (*func)();
 static const command_rec info_cmds[] =
   {
     AP_INIT_TAKE12("FreppleMethod", (func)add_options, NULL, ACCESS_CONF,
-                   "Possible ways of working: REPORT, COMMAND <dir>, UPLOAD"),
+        "Possible ways of working: REPORT, COMMAND <dir>, UPLOAD"),
     AP_INIT_TAKE1("FreppleHome", (func) setHome, NULL, RSRC_CONF,
-                  "The home directory"),
+        "The home directory"),
     {NULL}
   };
 
@@ -141,67 +141,67 @@ static int display_info(request_rec *r)
       // ACTION 2: Uploading data from the request into frepple
       //
     case UPLOAD:
+    {
+      // Only handle POST requests
+      r->allowed |= (AP_METHOD_BIT << M_POST);
+      if (r->method_number != M_POST) return HTTP_METHOD_NOT_ALLOWED;
+
+      // Set up the read policy from the client.
+      int rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR);
+      if (rc != OK) return rc;
+
+      // Tell the client that we are ready to receive content and check whether
+      // client will send content.
+      if (ap_should_client_block(r))
       {
-        // Only handle POST requests
-        r->allowed |= (AP_METHOD_BIT << M_POST);
-        if (r->method_number != M_POST) return HTTP_METHOD_NOT_ALLOWED;
+        // Control will pass to this block only if the request has body content
+        char *buffer;
+        char *bufferoffset;
+        int bufferspace = r->remaining + 100;
+        int bodylen = 0;
+        long res;
 
-        // Set up the read policy from the client.
-        int rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR);
-        if (rc != OK) return rc;
-
-        // Tell the client that we are ready to receive content and check whether
-        // client will send content.
-        if (ap_should_client_block(r))
+        // Reject too big buffers, for safety...
+        if (r->remaining > 65536)
         {
-          // Control will pass to this block only if the request has body content
-          char *buffer;
-          char *bufferoffset;
-          int bufferspace = r->remaining + 100;
-          int bodylen = 0;
-          long res;
-
-          // Reject too big buffers, for safety...
-          if (r->remaining > 65536)
-          {
-            ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
-                          "Too big body in request: %d bytes", r->remaining);
-            return HTTP_REQUEST_ENTITY_TOO_LARGE;
-          }
-
-          // Allocate a buffer in memory
-          buffer = static_cast<char*>(apr_palloc(r->pool, bufferspace));
-          bufferoffset = buffer;
-
-          // Fill the buffer with client data
-          while ((!bodylen || bufferspace >= 32) &&
-                 (res = ap_get_client_block(r, bufferoffset, bufferspace)) > 0)
-          {
-            bodylen += res;
-            bufferspace -= res;
-            bufferoffset += res;
-          }
-          if (res < 0) return HTTP_INTERNAL_SERVER_ERROR;
-
-          // Finish the buffer it with \0 character
-          *bufferoffset = '\0';
-
-          // Process the data in Frepple
-          if (bodylen)
-          {
-            try
-            {
-              // Send the posted data to Frepple
-              ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Upload %d bytes: %s", bodylen, buffer);
-              FreppleReadXMLData(buffer, true, false);
-              ap_rputs("Success", r);
-            }
-            catch (exception e)  { ap_rprintf(r, "Error: %s", e.what()); }
-            catch (...) { ap_rputs("Error: no details", r); }
-          }
-          return OK;
+          ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
+              "Too big body in request: %d bytes", r->remaining);
+          return HTTP_REQUEST_ENTITY_TOO_LARGE;
         }
+
+        // Allocate a buffer in memory
+        buffer = static_cast<char*>(apr_palloc(r->pool, bufferspace));
+        bufferoffset = buffer;
+
+        // Fill the buffer with client data
+        while ((!bodylen || bufferspace >= 32) &&
+            (res = ap_get_client_block(r, bufferoffset, bufferspace)) > 0)
+        {
+          bodylen += res;
+          bufferspace -= res;
+          bufferoffset += res;
+        }
+        if (res < 0) return HTTP_INTERNAL_SERVER_ERROR;
+
+        // Finish the buffer it with \0 character
+        *bufferoffset = '\0';
+
+        // Process the data in Frepple
+        if (bodylen)
+        {
+          try
+          {
+            // Send the posted data to Frepple
+            ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "Upload %d bytes: %s", bodylen, buffer);
+            FreppleReadXMLData(buffer, true, false);
+            ap_rputs("Success", r);
+          }
+          catch (exception e)  { ap_rprintf(r, "Error: %s", e.what()); }
+          catch (...) { ap_rputs("Error: no details", r); }
+        }
+        return OK;
       }
+    }
 
       //
       // ACTION 3: Execute a command file in frepple

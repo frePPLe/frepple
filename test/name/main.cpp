@@ -145,7 +145,7 @@ void scalability_test()
   // Formatting of the output: We print only 1 decimal to garantuee that
   // test results are stable across runs and platforms.
   cout.precision(1);
-  cout.setf(ios_base::fixed);
+  cout.setf(ios_base::fixed );
 
   // Repeat for different tree sizes, and compare the relative performance
   cout << "Elements   Time per operation"  << endl;
@@ -160,20 +160,20 @@ void scalability_test()
     // we want to exclude it from the timing.
     string names[scale];
     srand(1000);
-    for(int i=0; i<scale; ++i)
+    for (int i=0; i<scale; ++i)
       names[i] = generate_name();
 
     // Create a timer
     Timer m;
 
     // Insert elements in the list
-    for(int i=0; i<scale; ++i) Customer::add(new CustomerDefault(names[i]));
+    for (int i=0; i<scale; ++i) Customer::add(new CustomerDefault(names[i]));
 
     // Do a number of searches and deletes
-    for(int i=0; i<scale; ++i) Customer::find(names[i]);
+    for (int i=0; i<scale; ++i) Customer::find(names[i]);
 
     // Do a number of deletes
-    for(int i=0; i<scale; ++i) delete Customer::find(names[i]);
+    for (int i=0; i<scale; ++i) delete Customer::find(names[i]);
 
     // Clear the complete list
     if (Customer::size()) throw domain_error("Tree elements not all deleted");
@@ -205,8 +205,8 @@ void scalability_test()
       // Other data points
       float compare = (curtime * 1000 / scale) / (a+b*log(scale));
       cout << scale << "   "
-        <<  (curtime * 1000 / scale) / ref1 << "  "
-        << (fabs(compare-1) < 0.05 ? "OK" : "NOK") << endl;
+      <<  (curtime * 1000 / scale) / ref1 << "  "
+      << (fabs(compare-1) < 0.05 ? "OK" : "NOK") << endl;
     }
   }
   //cout.precision(3);
@@ -234,7 +234,8 @@ int main (int argc, char *argv[])
   {
     cout << "Error: " << e.what() << endl;
     return EXIT_FAILURE;
-  } catch (...)
+  }
+  catch (...)
   {
     cout << "Error: Exception thrown." << endl;
     return EXIT_FAILURE;

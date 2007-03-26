@@ -32,7 +32,7 @@ namespace module_lp_solver
 
 const MetaClass LPSolver::metadata;
 
-  
+
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 {
   // Initialize only once
@@ -47,17 +47,17 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
   // Print the parameters
   /*
-  for (CommandLoadLibrary::ParameterList::const_iterator 
+  for (CommandLoadLibrary::ParameterList::const_iterator
     j = z.begin(); j!= z.end(); ++j)
     cout << "Parameter " << j->first << " = " << j->second << endl;
   */
 
   // Initialize the metadata.
   LPSolver::metadata.registerClass(
-    "SOLVER", 
-    "SOLVER_LP", 
+    "SOLVER",
+    "SOLVER_LP",
     Object::createString<LPSolver>);
-      
+
   // Return the name of the module
   return name;
 }
@@ -172,11 +172,11 @@ void LPSolver::solve(const Demand* l, void* v)
   lpx_set_col_bnds(Sol->lp, Sol->columns, LPX_DB, 0.0, l->getQuantity());
 
   // Create a row for each priority level of demands
-  if( Sol->demandprio2row.find(l->getPriority()) 
+  if( Sol->demandprio2row.find(l->getPriority())
     == Sol->demandprio2row.end())
   {
     ostringstream x;
-    x << "Planned_Qty_" << l->getPriority();  
+    x << "Planned_Qty_" << l->getPriority();
     Sol->demandprio2row[l->getPriority()] = ++(Sol->rows);
     lpx_set_row_name(Sol->lp, Sol->rows, const_cast<char*>(x.str().c_str()));
   }
@@ -262,7 +262,7 @@ void LPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
     o->writeElement(tag, Tags::tag_name, getName());
     return;
   }
-    
+
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
       (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);

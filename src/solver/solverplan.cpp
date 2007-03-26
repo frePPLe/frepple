@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/solver.h"
 namespace frepple
 {
@@ -44,16 +44,16 @@ void LibrarySolver::initialize()
   static bool init = false;
   if (init)
   {
-    cout << "Warning: Calling Frepple::LibrarySolver::initialize() more " 
+    cout << "Warning: Calling Frepple::LibrarySolver::initialize() more "
       << "than once." << endl;
     return;
   }
 
   // Register all classes.
   MRPSolver::metadata.registerClass(
-    "SOLVER", 
-    "SOLVER_MRP", 
-    Object::createString<MRPSolver>, 
+    "SOLVER",
+    "SOLVER_MRP",
+    Object::createString<MRPSolver>,
     true);
 
   // Close the library at the end
@@ -77,7 +77,7 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
 {
   // Message
   MRPSolver* Solver = getSolver();
-  if (Solver->getVerbose()) 
+  if (Solver->getVerbose())
     cout << "Start solving cluster " << cluster << " at " << Date::now() << endl;
 
   // Solve the planning problem
@@ -96,7 +96,7 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
       catch (...)
       {
         // Error message
-        cout << "Error: Caught an exception while solving demand '" 
+        cout << "Error: Caught an exception while solving demand '"
           << (*i)->getName() << "':" << endl;
         try { throw; }
         catch (bad_exception&) {cout << "  bad exception" << endl;}
@@ -118,7 +118,7 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
     // will do a proper rollback.
 
     // Error message
-    cout << "Error: Caught an exception while solving cluster " 
+    cout << "Error: Caught an exception while solving cluster "
       << cluster << ":" << endl;
     try { throw; }
     catch (bad_exception&){cout << "  bad exception" << endl;}
@@ -132,7 +132,7 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
   }
 
   // Message
-  if (Solver->getVerbose()) 
+  if (Solver->getVerbose())
     cout << "End solving cluster " << cluster << " at " << Date::now() << endl;
 }
 
@@ -155,13 +155,13 @@ DECLARE_EXPORT void MRPSolver::solve(void *v)
       e->deleteOperationPlans();
 
   // Create the command list to control the execution
-  CommandList threads;       
+  CommandList threads;
   // Solve in parallel threads
   threads.setMaxParallel(1);  // @todo parallel solving not possible yet. Why not?
   // Otherwise a problem in a single cluster could spoil it all
-  threads.setAbortOnError(false); 
-  for (classified_demand::iterator j = demands_per_cluster.begin(); 
-    j != demands_per_cluster.end(); ++j) 
+  threads.setAbortOnError(false);
+  for (classified_demand::iterator j = demands_per_cluster.begin();
+    j != demands_per_cluster.end(); ++j)
     threads.add(new MRPSolverdata(this, j->first, j->second));
 
   // Run the planning command threads and wait for them to exit
@@ -178,7 +178,7 @@ DECLARE_EXPORT void MRPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mod
       (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
-    
+
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
@@ -195,7 +195,7 @@ DECLARE_EXPORT void MRPSolver::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_constraints))
     setConstraints(pElement.getInt());
-  else 
+  else
     Solver::endElement(pIn, pElement);
 }
 

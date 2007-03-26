@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 #include <climits>
 
@@ -95,9 +95,9 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     {
 
 #ifdef CLUSTERDEBUG
-      cout << "Investigating operation '" 
+      cout << "Investigating operation '"
         << *(static_cast<Operation*>(g->second))
-        << "' - current cluster " 
+        << "' - current cluster "
         << static_cast<Operation*>(g->second)->cluster << endl;
 #endif
 
@@ -127,13 +127,13 @@ DECLARE_EXPORT void HasLevel::computeLevels()
         if (search_level)
         {
           // Do subOperations have a producing Flow
-          for (Operation::Operationlist::const_reverse_iterator 
+          for (Operation::Operationlist::const_reverse_iterator
             i = g->getSubOperations().rbegin();
-            i != g->getSubOperations().rend() && search_level; 
+            i != g->getSubOperations().rend() && search_level;
             ++i)
-            for(Operation::flowlist::const_iterator 
+            for(Operation::flowlist::const_iterator
               fl = (*i)->getFlows().begin();
-              fl != (*i)->getFlows().end() && search_level; 
+              fl != (*i)->getFlows().end() && search_level;
               ++fl)
               if(fl->isProducer()) search_level = false;
         }
@@ -162,9 +162,9 @@ DECLARE_EXPORT void HasLevel::computeLevels()
 #endif
 
         // Push sub operations on the stack
-        for (Operation::Operationlist::const_reverse_iterator 
+        for (Operation::Operationlist::const_reverse_iterator
           i = cur_oper->getSubOperations().rbegin();
-          i != cur_oper->getSubOperations().rend(); 
+          i != cur_oper->getSubOperations().rend();
           ++i)
         {
           if((*i)->lvl < cur_level)
@@ -184,9 +184,9 @@ DECLARE_EXPORT void HasLevel::computeLevels()
         }
 
         // Push super operations on the stack
-        for (Operation::Operationlist::const_reverse_iterator 
+        for (Operation::Operationlist::const_reverse_iterator
           j = cur_oper->getSuperOperations().rbegin();
-          j != cur_oper->getSuperOperations().rend(); 
+          j != cur_oper->getSuperOperations().rend();
           ++j)
         {
           if((*j)->lvl < cur_level)
@@ -230,8 +230,8 @@ DECLARE_EXPORT void HasLevel::computeLevels()
         }
 
         // Now loop through all flows of the operation
-        for (Operation::flowlist::const_iterator 
-          gflow = cur_oper->getFlows().begin(); 
+        for (Operation::flowlist::const_iterator
+          gflow = cur_oper->getFlows().begin();
           gflow != cur_oper->getFlows().end();
           ++gflow)
         {
@@ -248,7 +248,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
             cur_buf->cluster = cur_cluster;
 
             // Loop through all flows of the buffer
-            for (Buffer::flowlist::const_iterator 
+            for (Buffer::flowlist::const_iterator
               buffl = cur_buf->getFlows().begin();
               buffl != cur_buf->getFlows().end();
               ++buffl)

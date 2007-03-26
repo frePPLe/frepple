@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -76,7 +76,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   if (idfier)
   {
     opplan = OperationPlan::findId(id);
-    if (opplan && opname 
+    if (opplan && opname
       && strcmp(opplan->getOperation()->getName().c_str(),opname))
     {
       // Previous and current operations don't match.
@@ -114,7 +114,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
 			else
       {
         ostringstream ch;
-        ch << "Can't find operationplan with identifier " 
+        ch << "Can't find operationplan with identifier "
           << id << " for removal";
         throw DataException(ch.str());
       }
@@ -205,7 +205,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
   if (getQuantity() <= 0.0 && !owner)
   {
     delete this;  // @todo is this safe???
-    return;    
+    return;
   }
 
   // Create unique identifier
@@ -239,7 +239,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
     // Fresh operationplan with blank id
     id = counter++;
 
-  // Insert into the doubly linked list of operationplans. 
+  // Insert into the doubly linked list of operationplans.
   if (!oper->opplan)
     // First operationplan for this operation
     oper->opplan = this;
@@ -276,7 +276,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
 DECLARE_EXPORT bool OperationPlan::operator < (const OperationPlan& a) const
 {
   // Different operations
-  if (oper != a.oper) 
+  if (oper != a.oper)
     return oper->getName() < a.oper->getName();   // @todo use < operator for HasName class
 
   // Different start date
@@ -467,7 +467,7 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
   // Allow the operation length to be changed now that the quantity has changed
   // Note that we assume that the end date remains fixed. This assumption makes
   // sense if the operationplan was created to satisfy a demand.
-  // It is not valid though when the purpose of the operationplan was to push 
+  // It is not valid though when the purpose of the operationplan was to push
   // some material downstream.
 
   // Notify the demand of the changed delivery
@@ -546,9 +546,9 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const XMLtag& tag,
   // Write out the flowplans and their pegging
   if (o->getContentType() == XMLOutput::PLANDETAIL)
   {
-    o->BeginObject(Tags::tag_flow_plans);      
+    o->BeginObject(Tags::tag_flow_plans);
     for (FlowPlanIterator qq = beginFlowPlans(); qq != endFlowPlans(); ++qq)
-      qq->writeElement(o, Tags::tag_flow_plan);      
+      qq->writeElement(o, Tags::tag_flow_plan);
     o->EndObject(Tags::tag_flow_plans);
   }
 

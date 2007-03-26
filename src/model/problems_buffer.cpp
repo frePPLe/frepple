@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -50,9 +50,9 @@ DECLARE_EXPORT void Buffer::updateProblems()
   float shortageQty(0.0);
   float curMin(0.0);
   float excessQty(0.0);
-  for (flowplanlist::const_iterator 
-    f=flowplans.begin(); 
-    f!=flowplans.end(); 
+  for (flowplanlist::const_iterator
+    f=flowplans.begin();
+    f!=flowplans.end();
     ++f)
   {
     // Process changes in the maximum or minimum targets

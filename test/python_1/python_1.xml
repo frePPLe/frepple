@@ -4,7 +4,7 @@
     This test case tests the embedded python interpreter.
   </DESCRIPTION>
   <CURRENT>2007-01-01T00:00:00</CURRENT>
-<?PYTHON 
+<?PYTHON
 import sys, frepple
 print "1. Python as a processing instruction"
 myvariable = 4

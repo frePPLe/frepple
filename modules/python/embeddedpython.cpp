@@ -39,25 +39,25 @@ PyObject* CommandPython::PythonRuntimeException = NULL;
 
 
 // Define the methods to be exposed into Python
-PyMethodDef CommandPython::PythonAPI[] = 
+PyMethodDef CommandPython::PythonAPI[] =
 {
-  {"log", CommandPython::python_log, METH_VARARGS, 
+  {"log", CommandPython::python_log, METH_VARARGS,
      "Prints a string to the frepple log file."},
-  {"readXMLdata", CommandPython::python_readXMLdata, METH_VARARGS, 
+  {"readXMLdata", CommandPython::python_readXMLdata, METH_VARARGS,
      "Processes an XML string passed as argument."},
-  {"createItem", CommandPython::python_createItem, METH_VARARGS, 
+  {"createItem", CommandPython::python_createItem, METH_VARARGS,
      "Uses the C++ API to create an item."},
-  {"readXMLfile", CommandPython::python_readXMLfile, METH_VARARGS, 
+  {"readXMLfile", CommandPython::python_readXMLfile, METH_VARARGS,
      "Read an XML-file."},
-  {"saveXMLfile", CommandPython::python_saveXMLfile, METH_VARARGS, 
+  {"saveXMLfile", CommandPython::python_saveXMLfile, METH_VARARGS,
      "Save the model to an XML-file."},
-  {"saveXMLstring", CommandPython::python_saveXMLstring, METH_NOARGS, 
+  {"saveXMLstring", CommandPython::python_saveXMLstring, METH_NOARGS,
      "Returns the model as an XML-formatted string."},
   {NULL, NULL, 0, NULL}
 };
 
 
-const PyTypeObject CommandPython::TemplateInfoType = 
+const PyTypeObject CommandPython::TemplateInfoType =
 {
 	PyObject_HEAD_INIT(NULL)
 	0,					/* ob_size */
@@ -116,19 +116,19 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
   // Initialize the metadata.
   CommandPython::metadata.registerClass(
-    "COMMAND", 
-    "COMMAND_PYTHON", 
+    "COMMAND",
+    "COMMAND_PYTHON",
     Object::createDefault<CommandPython>);
 
-  // Register python also as a processing instruction. 
+  // Register python also as a processing instruction.
   CommandPython::metadata2.registerClass(
-    "INSTRUCTION", 
-    "PYTHON", 
+    "INSTRUCTION",
+    "PYTHON",
     Object::createDefault<CommandPython>);
 
   // Initialize the interpreter
   CommandPython::initialize();
-    
+
   // Return the name of the module
   return name;
 }
@@ -137,7 +137,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 void CommandPython::initialize()
 {
   // Initialize the interpreter and the frepple module
-  Py_InitializeEx(0);  // The arg 0 indicates that the interpreter doesn't 
+  Py_InitializeEx(0);  // The arg 0 indicates that the interpreter doesn't
                        // implement its own signal handler
   PyEval_InitThreads();  // Initializes threads and captures global lock
   PyObject* m = Py_InitModule3
@@ -180,7 +180,7 @@ void CommandPython::initialize()
 
   // Redirect the stderr and stdout streams of Python
   PyRun_SimpleString(
-    "import frepple, sys\n"  
+    "import frepple, sys\n"
     "class redirect:\n"
     "\tdef write(self,str):\n"
     "\t\tfrepple.log(str)\n"
@@ -195,26 +195,26 @@ void CommandPython::initialize()
   {
     // Initialization file exists
     PyObject *m = PyImport_AddModule("__main__");
-    if (!m) 
+    if (!m)
     {
       PyEval_ReleaseLock();
       throw frepple::RuntimeException("Can't execute Python script 'init.py'");
     }
     PyObject *d = PyModule_GetDict(m);
-    if (!d) 
+    if (!d)
     {
       PyEval_ReleaseLock();
       throw frepple::RuntimeException("Can't execute Python script 'init.py'");
     }
     init = "execfile('" + init + "')\n";
     PyObject *v = PyRun_String(init.c_str(), Py_file_input, d, d);
-    if (!v) 
+    if (!v)
     {
       // Print the error message
       PyErr_Print();
       // Release the lock
       PyEval_ReleaseLock();
-      throw frepple::RuntimeException("Error executing Python script 'init.py'"); 
+      throw frepple::RuntimeException("Error executing Python script 'init.py'");
     }
     Py_DECREF(v);
     if (Py_FlushLine()) PyErr_Clear();
@@ -224,7 +224,7 @@ void CommandPython::initialize()
   PyEval_ReleaseLock();
 
   // A final check...
-  if (nok || !mainThreadState) 
+  if (nok || !mainThreadState)
     throw frepple::RuntimeException("Can't initialize Python interpreter");
 }
 
@@ -247,16 +247,16 @@ void CommandPython::execute()
 
   // Evaluate data fields
   string c;
-  if (!cmd.empty()) 
+  if (!cmd.empty())
     // A command to be executed.
     c = cmd + "\n";  // Make sure last line is ended properly
-  else if (!filename.empty()) 
+  else if (!filename.empty())
   {
-    // A file to be executed. 
-    // We build an equivalent python command rather than using the 
-    // PyRun_File function. On windows different versions of the 
+    // A file to be executed.
+    // We build an equivalent python command rather than using the
+    // PyRun_File function. On windows different versions of the
     // VC compiler have a different structure for FILE, thus making it
-    // impossible to use a lib compiled in python version x when compiling 
+    // impossible to use a lib compiled in python version x when compiling
     // under version y.  Quite ugly... :-( :-( :-(
     c = filename;
     for (string::size_type pos = c.find_first_of("'", 0);
@@ -270,18 +270,18 @@ void CommandPython::execute()
   }
   else throw DataException("Python command without statement or filename");
 
-  // Pass to the interpreter. 
+  // Pass to the interpreter.
   executePython(c.c_str());
 
   // Log
-  if (getVerbose()) cout << "Finished executing python at " 
+  if (getVerbose()) cout << "Finished executing python at "
     << Date::now() << " : " << t << endl;
 }
 
 
 void CommandPython::executePython(const char* cmd)
 {
-  // Get the global lock. 
+  // Get the global lock.
   // After this command we are the only thread executing Python code.
   PyEval_AcquireLock();
 
@@ -292,7 +292,7 @@ void CommandPython::executePython(const char* cmd)
 
   // Execute the command
   PyObject *m = PyImport_AddModule("__main__");
-  if (!m) 
+  if (!m)
   {
     // Clean up the thread
     PyThreadState_Swap(NULL);
@@ -303,7 +303,7 @@ void CommandPython::executePython(const char* cmd)
     throw frepple::RuntimeException("Can't initialize Python interpreter");
   }
   PyObject *d = PyModule_GetDict(m);
-  if (!d) 
+  if (!d)
   {
     // Clean up the thread
     PyThreadState_Swap(NULL);
@@ -317,7 +317,7 @@ void CommandPython::executePython(const char* cmd)
   // Execute the Python code. Note that during the call the python lock can be
   // temporarily released.
   PyObject *v = PyRun_String(cmd, Py_file_input, d, d);
-  if (!v) 
+  if (!v)
   {
     // Print the error message
 	  PyErr_Print();
@@ -327,7 +327,7 @@ void CommandPython::executePython(const char* cmd)
     PyThreadState_Delete(myThreadState);
     // Release the lock
     PyEval_ReleaseLock();
-    throw frepple::RuntimeException("Error executing python command"); 
+    throw frepple::RuntimeException("Error executing python command");
   }
   Py_DECREF(v);
   if (Py_FlushLine()) PyErr_Clear();
@@ -365,19 +365,19 @@ PyObject* CommandPython::python_log(PyObject *self, PyObject *args)
   char *data;
   int ok = PyArg_ParseTuple(args, "s", &data);
   if (!ok) return NULL;
-  
-  // Print and flush the output stream 
+
+  // Print and flush the output stream
   cout << data;
   cout.flush();
-  
+
   // Return code
-  return Py_BuildValue("");  // Safer than using Py_None, which is not 
-                             // portable across compilers  
+  return Py_BuildValue("");  // Safer than using Py_None, which is not
+                             // portable across compilers
 }
 
 
-PyObject* CommandPython::python_readXMLdata(PyObject *self, PyObject *args) 
-{    
+PyObject* CommandPython::python_readXMLdata(PyObject *self, PyObject *args)
+{
   // Pick up arguments
   char *data;
   int i1(1), i2(0);
@@ -387,24 +387,24 @@ PyObject* CommandPython::python_readXMLdata(PyObject *self, PyObject *args)
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try { FreppleReadXMLData(data,i1!=0,i2!=0); }
-  catch (LogicException e) 
+  catch (LogicException e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonLogicException, e.what()); return NULL;}
-  catch (DataException e) 
+  catch (DataException e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonDataException, e.what()); return NULL;}
-  catch (frepple::RuntimeException e) 
+  catch (frepple::RuntimeException e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
-  catch (exception e) 
+  catch (exception e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
-  catch (...) 
+  catch (...)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, "unknown type"); return NULL;}
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
-  return Py_BuildValue("");  // Safer than using Py_None, which is not 
+  return Py_BuildValue("");  // Safer than using Py_None, which is not
                              // portable across compilers
 }
 
 
-PyObject* CommandPython::python_createItem(PyObject *self, PyObject *args) 
-{    
+PyObject* CommandPython::python_createItem(PyObject *self, PyObject *args)
+{
   // Pick up the arguments
   char *itemname;
   char *operationname;
@@ -417,7 +417,7 @@ PyObject* CommandPython::python_createItem(PyObject *self, PyObject *args)
   Operation* op = dynamic_cast<Operation*>(Object::createString<OperationFixedTime>(operationname));
   Operation::add(op);
   if (it && op) it->setDelivery(op);
-  
+
   // Return code for Python
   return Py_BuildValue("i", it && op);
 }
@@ -434,15 +434,15 @@ PyObject* CommandPython::python_readXMLfile(PyObject* self, PyObject* args)
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try { FreppleReadXMLFile(data,i1!=0,i2!=0); }
-  catch (LogicException e) 
+  catch (LogicException e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonLogicException, e.what()); return NULL;}
-  catch (DataException e) 
+  catch (DataException e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonDataException, e.what()); return NULL;}
-  catch (frepple::RuntimeException e) 
+  catch (frepple::RuntimeException e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
-  catch (exception e) 
+  catch (exception e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
-  catch (...) 
+  catch (...)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, "unknown type"); return NULL;}
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");
@@ -459,15 +459,15 @@ PyObject* CommandPython::python_saveXMLfile(PyObject* self, PyObject* args)
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try { FreppleSaveFile(data); }
-  catch (LogicException e) 
+  catch (LogicException e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonLogicException, e.what()); return NULL;}
-  catch (DataException e) 
+  catch (DataException e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonDataException, e.what()); return NULL;}
-  catch (frepple::RuntimeException e) 
+  catch (frepple::RuntimeException e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
-  catch (exception e) 
+  catch (exception e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
-  catch (...) 
+  catch (...)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, "unknown type"); return NULL;}
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");
@@ -480,15 +480,15 @@ PyObject *CommandPython::python_saveXMLstring(PyObject* self, PyObject* args)
   string result;
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try { result = FreppleSaveString(); }
-  catch (LogicException e) 
+  catch (LogicException e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonLogicException, e.what()); return NULL;}
-  catch (DataException e) 
+  catch (DataException e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonDataException, e.what()); return NULL;}
-  catch (frepple::RuntimeException e) 
+  catch (frepple::RuntimeException e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
-  catch (exception e) 
+  catch (exception e)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, e.what()); return NULL;}
-  catch (...) 
+  catch (...)
     {Py_BLOCK_THREADS; PyErr_SetString(PythonRuntimeException, "unknown type"); return NULL;}
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("s",result.c_str());
@@ -501,7 +501,7 @@ PyObject* PythonDateTime(const Date& d)
   // static structure is used for all calls. In a multi-threaded environment
   // the function is not to be used.
   // The POSIX standard defines a re-entrant version of the function:
-  // localtime_r. 
+  // localtime_r.
   // Visual C++ 6.0 and Borland 5.5 are missing it, but provide a thread-safe
   // variant without changing the function semantics.
   time_t ticks = d.getTicks();
@@ -511,7 +511,7 @@ PyObject* PythonDateTime(const Date& d)
 #else
   struct tm t = *localtime(&ticks);
 #endif
-  return PyDateTime_FromDateAndTime(t.tm_year+1900, t.tm_mon+1, t.tm_mday, 
+  return PyDateTime_FromDateAndTime(t.tm_year+1900, t.tm_mon+1, t.tm_mday,
     t.tm_hour, t.tm_min, t.tm_sec, 0);
 }
 

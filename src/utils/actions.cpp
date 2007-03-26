@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/utils.h"
 
 
@@ -82,7 +82,7 @@ DECLARE_EXPORT void CommandList::add(Command* c)
 {
   // Validity check
   if (!c) throw LogicException("Adding NULL command to a command list");
-  if (curCommand) 
+  if (curCommand)
     throw RuntimeException("Can't add a command to the list during execution");
 
   // Set the owner of the command
@@ -110,7 +110,7 @@ DECLARE_EXPORT void CommandList::add(Command* c)
 DECLARE_EXPORT void CommandList::undo(Command *c)
 {
   // Check validity of argument
-  if (c && c->owner != this) 
+  if (c && c->owner != this)
     throw LogicException("Invalid call to CommandList::undoable(Command*)");
 
   // Don't even try to undo a list which can't be undone.
@@ -146,10 +146,10 @@ DECLARE_EXPORT void CommandList::undo(Command *c)
 }
 
 
-DECLARE_EXPORT bool CommandList::undoable(const Command *c) const 
+DECLARE_EXPORT bool CommandList::undoable(const Command *c) const
 {
   // Check validity of argument
-  if (c && c->owner!=this) 
+  if (c && c->owner!=this)
     throw LogicException("Invalid call to CommandList::undoable(Command*)");
 
   // Easy cases
@@ -176,7 +176,7 @@ DECLARE_EXPORT Command* CommandList::selectCommand()
 DECLARE_EXPORT void CommandList::execute()
 {
   // Execute the actions
-  // This field is set asap in this method since it is used a flag to 
+  // This field is set asap in this method since it is used a flag to
   // recognize that execution is in progress.
   curCommand = firstCommand;
 
@@ -192,9 +192,9 @@ DECLARE_EXPORT void CommandList::execute()
   if (maxparallel>1)
   {
     // MODE 1: Parallel execution of the commands
-    int numthreads = getNumberOfCommands(); 
+    int numthreads = getNumberOfCommands();
     // Limit the number of threads to the maximum allowed
-    if (numthreads>maxparallel) numthreads = maxparallel; 
+    if (numthreads>maxparallel) numthreads = maxparallel;
     if (numthreads == 1)
       // Only a single command in the list: no need for threads
       wrapper(curCommand);
@@ -240,13 +240,13 @@ DECLARE_EXPORT void CommandList::execute()
       for (int worker=0; worker<numthreads; ++worker)
       {
         threads[worker] =  reinterpret_cast<HANDLE>(
-          _beginthreadex(0,  // Security atrtributes 
+          _beginthreadex(0,  // Security atrtributes
           0,                 // Stack size
-          &wrapper,          // Thread function 
+          &wrapper,          // Thread function
           this,              // Argument list
           0,                 // Initial state is 0, "running"
           &m_id[worker]));   // Address to receive the thread identifier
-        if (!threads[worker]) 
+        if (!threads[worker])
         {
           ostringstream ch;
           ch << "Can't create thread " << worker << ", error " << errno;
@@ -263,11 +263,11 @@ DECLARE_EXPORT void CommandList::execute()
         char error[256];
         FormatMessage(
           FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-          NULL, 
+          NULL,
           GetLastError(),
           0,
-          error, 
-          256, 
+          error,
+          256,
           NULL );
         ostringstream ch;
         ch << "Can't join threads: " << error;
@@ -279,9 +279,9 @@ DECLARE_EXPORT void CommandList::execute()
         CloseHandle(threads[worker]);
       delete threads;
       delete m_id;
-#endif 
+#endif
     }  // End: else if (numthreads>1)
-  } 
+  }
   else // Else: sequential
 #endif
   if (getAbortOnError())
@@ -330,7 +330,7 @@ void* CommandList::wrapper(void *arg)
 #else
 unsigned __stdcall CommandList::wrapper(void *arg)
 #endif
-{ 
+{
   CommandList *l = static_cast<CommandList*>(arg);
   for(Command *c = l->selectCommand(); c; c = l->selectCommand())
   {
@@ -342,7 +342,7 @@ unsigned __stdcall CommandList::wrapper(void *arg)
     catch (...)
     {
       // Error message
-      cout << "Error: Caught an exception while executing command '" 
+      cout << "Error: Caught an exception while executing command '"
         << c->getDescription() << "':" << endl;
       try { throw; }
       catch (exception& e) {cout << "  " << e.what() << endl;}
@@ -369,7 +369,7 @@ DECLARE_EXPORT CommandList::~CommandList()
 
 DECLARE_EXPORT void CommandList::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  if (pElement.isA(Tags::tag_command) && !pIn.isObjectEnd())  
+  if (pElement.isA(Tags::tag_command) && !pIn.isObjectEnd())
   {
     // We're unlucky with our tag names here. Subcommands end with
     // </COMMAND>, but the command list itself also ends with that tag.
@@ -428,7 +428,7 @@ DECLARE_EXPORT void CommandSystem::execute()
 DECLARE_EXPORT void CommandSystem::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_cmdline))
-    // No need to replace environment variables here. It's done at execution 
+    // No need to replace environment variables here. It's done at execution
     // time by the command shell.
     pElement >> cmdLine;
   else
@@ -464,17 +464,17 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
   UINT em = SetErrorMode(SEM_FAILCRITICALERRORS);
   HINSTANCE handle = LoadLibraryEx(lib.c_str(),NULL,LOAD_WITH_ALTERED_SEARCH_PATH);
   if (!handle) handle = LoadLibraryEx(lib.c_str(), NULL, 0);
-  if (!handle) 
+  if (!handle)
   {
     // Get the error description
     char error[256];
     FormatMessage(
       FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-      NULL, 
+      NULL,
       GetLastError(),
       0,
-      error, 
-      256, 
+      error,
+      256,
       NULL );
     throw RuntimeException(error);
   }
@@ -483,17 +483,17 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
   // Find the initialization routine
   func inithandle =
     reinterpret_cast<func>(GetProcAddress(HMODULE(handle), "initialize"));
-  if (!inithandle) 
+  if (!inithandle)
   {
     // Get the error description
     char error[256];
     FormatMessage(
       FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-      NULL, 
+      NULL,
       GetLastError(),
       0,
-      error, 
-      256, 
+      error,
+      256,
       NULL );
     throw RuntimeException(error);
   }
@@ -514,7 +514,7 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
   // Call the initialization routine with the parameter list  //@todo do we need to catch exceptions here???
   string x = (inithandle)(parameters);
   if (x.empty()) throw DataException("Invalid module name returned.");
-    
+
   // Insert the new module in the registry
   registry.insert(x);
 
@@ -551,7 +551,7 @@ DECLARE_EXPORT void CommandLoadLibrary::endElement(XMLInput& pIn, XMLElement& pE
       tempValue.clear();
       tempName.clear();
     }
-    else 
+    else
       // Incomplete data
       throw DataException("Invalid parameter specification");
   }
@@ -574,7 +574,7 @@ DECLARE_EXPORT void CommandIf::execute()
 {
   // Message
   if (getVerbose())
-    cout << "Start executing if-command with condition '" 
+    cout << "Start executing if-command with condition '"
       << condition << "' at " << Date::now() << endl;
   Timer t;
 
@@ -587,7 +587,7 @@ DECLARE_EXPORT void CommandIf::execute()
 
   // Evaluate the expression
   int eval = system(condition.c_str());
-  
+
   // Conditional execution
   if (!eval)
   {
@@ -669,7 +669,7 @@ DECLARE_EXPORT void CommandSetEnv::execute()
 {
   // Message
   if (getVerbose())
-    cout << "Start updating variable '" << variable << "' to '" 
+    cout << "Start updating variable '" << variable << "' to '"
     << value << "' at " << Date::now() << endl;
   Timer t;
 
@@ -681,7 +681,7 @@ DECLARE_EXPORT void CommandSetEnv::execute()
   Environment::resolveEnvironment(value);
 
   // Update the variable
-  // Note: we have to 'leak' this string. Putenv takes it as part of 
+  // Note: we have to 'leak' this string. Putenv takes it as part of
   // the environment.
   string *tmp = new string(variable + "=" + value);
   #if defined(HAVE_PUTENV)
@@ -696,7 +696,7 @@ DECLARE_EXPORT void CommandSetEnv::execute()
   if (getVerbose())
   {
     const char* res = getenv(variable.c_str());
-    cout << "Finished updating variable '" << variable << "' to '" 
+    cout << "Finished updating variable '" << variable << "' to '"
       << (res ? res : "NULL") << "' at " << Date::now() << endl;
   }
 }

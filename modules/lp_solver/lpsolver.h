@@ -31,13 +31,13 @@
   * @namespace module_lp_solver
   * @brief A solver module based on a linear programming algorithm.
   *
-  * This module uses a linear programming representation to solve simple 
+  * This module uses a linear programming representation to solve simple
   * material allocation problems: Given a limited supply of components
-  * it establishes the most profitable mix of end items that can be 
+  * it establishes the most profitable mix of end items that can be
   * assembled from the components.
   *
-  * The representation doesn't account for a lot of the details. In its 
-  * current form the solver accounts only for the simplest of cases. 
+  * The representation doesn't account for a lot of the details. In its
+  * current form the solver accounts only for the simplest of cases.
   * Additional development work can enhance the solver.
   * A short list of the restrictions:
   *  - no intermediate materials and their WIP or inventory
@@ -63,7 +63,7 @@
   * </xsd:complexType>
   * </PRE>
   */
-  
+
 #include "frepple.h"
 using namespace frepple;
 
@@ -114,7 +114,7 @@ class LPSolver : public Solver
       * "graphic" characters. A space isn't one of those. Since our model
       * can contain HasHierarchy names with a space, we call this function to
       * replace the spaces with underscores.
-	    * Note however that we can't garantuee that the updated strings are 
+	    * Note however that we can't garantuee that the updated strings are
 	    * all unique after the replacement!
       */
     static string replaceSpaces(string);

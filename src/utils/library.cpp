@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/utils.h"
 #include <sys/stat.h>
 
@@ -78,7 +78,7 @@ DECLARE_EXPORT void Environment::setHomeDirectory(const string dirname)
     throw RuntimeException("Invalid home directory '" + dirname + "'");
 
   // Make sure the directory ends with a slash
-  if (!home.empty() && *home.rbegin() != '/') home += '/';  
+  if (!home.empty() && *home.rbegin() != '/') home += '/';
 }
 
 
@@ -95,7 +95,7 @@ DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
 
     // Search variable name
     string var(s, startpos+2, endpos - startpos - 2);
-    if (var.empty()) 
+    if (var.empty())
       throw DataException("Invalid variable expansion in '" + s + "'");
 
     // Pick up the environment variable
@@ -105,8 +105,8 @@ DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
     if (c) s.replace(startpos, endpos - startpos + 1, c);
     else s.replace(startpos, endpos - startpos + 1, "");
 
-    // Advance to the end of the replaced characters. If the replaced 
-    // characters would include another ${XX} construct we could get in 
+    // Advance to the end of the replaced characters. If the replaced
+    // characters would include another ${XX} construct we could get in
     // an infinite loop!
     if (c) startpos += strlen(c);
    }
@@ -118,7 +118,7 @@ void LibraryUtils::initialize()
   static bool init = false;
   if(init)
   {
-    cout << "Warning: Calling Frepple::LibraryUtils::initialize() more " 
+    cout << "Warning: Calling Frepple::LibraryUtils::initialize() more "
       << "than once." << endl;
     return;
   }
@@ -137,23 +137,23 @@ void LibraryUtils::initialize()
   // Initialize the command metadata.
   Command::metadata.registerCategory("COMMAND", "COMMANDS");
   CommandList::metadata.registerClass(
-    "COMMAND", 
+    "COMMAND",
     "COMMAND_LIST",
     Object::createDefault<CommandList>);
   CommandSystem::metadata.registerClass(
-    "COMMAND", 
+    "COMMAND",
     "COMMAND_SYSTEM",
     Object::createDefault<CommandSystem>);
   CommandLoadLibrary::metadata.registerClass(
-    "COMMAND", 
+    "COMMAND",
     "COMMAND_LOADLIB",
     Object::createDefault<CommandLoadLibrary>);
   CommandIf::metadata.registerClass(
-    "COMMAND", 
+    "COMMAND",
     "COMMAND_IF",
     Object::createDefault<CommandIf>);
   CommandSetEnv::metadata.registerClass(
-    "COMMAND", 
+    "COMMAND",
     "COMMAND_SETENV",
     Object::createDefault<CommandSetEnv>);
 
@@ -164,7 +164,7 @@ void LibraryUtils::initialize()
   // Query the system for the number of available processors
   // The environment variable NUMBER_OF_PROCESSORS is defined automatically on
   // windows platforms. On other platforms it'll have to be explicitly set
-  // since there isn't an easy and portable way of querying this system 
+  // since there isn't an easy and portable way of querying this system
   // information.
   const char *c = getenv("NUMBER_OF_PROCESSORS");
   if (c)
@@ -189,17 +189,17 @@ void LibraryUtils::finalize()
 DECLARE_EXPORT void MetaClass::registerClass (const char* a, const char* b, bool def) const
 {
   // Re-initializing isn't okay
-  if (category) 
+  if (category)
     throw LogicException("Reinitializing class '" + type + "' isn't allowed");
 
   // Find or create the category
-  MetaCategory* cat 
+  MetaCategory* cat
     = const_cast<MetaCategory*>(MetaCategory::findCategoryByTag(a));
 
   // Check for a valid category
   if (!cat)
-    throw LogicException("Category " + string(a) 
-      + " not found when registering class " + string(b)); 
+    throw LogicException("Category " + string(a)
+      + " not found when registering class " + string(b));
 
   // Update fields
   MetaClass& me = const_cast<MetaClass&>(*this);
@@ -215,11 +215,11 @@ DECLARE_EXPORT void MetaClass::registerClass (const char* a, const char* b, bool
 }
 
 
-DECLARE_EXPORT void MetaCategory::registerCategory (const char* a, const char* gr, 
+DECLARE_EXPORT void MetaCategory::registerCategory (const char* a, const char* gr,
   readController f, writeController w) const
 {
   // Initialize only once
-  if (type != "UNSPECIFIED") 
+  if (type != "UNSPECIFIED")
     throw LogicException("Reinitializing category " + type + " isn't allowed");
 
   // Update registry
@@ -242,7 +242,7 @@ DECLARE_EXPORT void MetaCategory::registerCategory (const char* a, const char* g
     me.group = gr;
     me.grouptag = &XMLtag::find(gr);
   }
-  
+
   // Maintain a linked list of all registered categories
   if (!firstCategory)
     firstCategory = this;
@@ -255,7 +255,7 @@ DECLARE_EXPORT void MetaCategory::registerCategory (const char* a, const char* g
 }
 
 
-DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const char* c)  
+DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const char* c)
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByTag.find(XMLtag::hash(c));
@@ -271,7 +271,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const hashtyp
 }
 
 
-DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const char* c)  
+DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const char* c)
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByGroupTag.find(XMLtag::hash(c));
@@ -279,7 +279,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const ch
 }
 
 
-DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const hashtype h)  
+DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const hashtype h)
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByGroupTag.find(h);
@@ -297,11 +297,11 @@ DECLARE_EXPORT void MetaCategory::persist(XMLOutput *o)
 DECLARE_EXPORT const MetaClass* MetaClass::findClass(const char* c)
 {
   // Loop through all categories
-  for (MetaCategory::CategoryMap::const_iterator i = MetaCategory::categoriesByTag.begin(); 
+  for (MetaCategory::CategoryMap::const_iterator i = MetaCategory::categoriesByTag.begin();
     i != MetaCategory::categoriesByTag.end(); ++i)
   {
     // Look up in the registered classes
-    MetaCategory::ClassMap::const_iterator j 
+    MetaCategory::ClassMap::const_iterator j
       = i->second->classes.find(XMLtag::hash(c));
     if (j != i->second->classes.end()) return j->second;
   }
@@ -314,14 +314,14 @@ DECLARE_EXPORT void MetaClass::printClasses()
 {
   cout << "Registered classes:" << endl;
   // Loop through all categories
-  for (MetaCategory::CategoryMap::const_iterator i = MetaCategory::categoriesByTag.begin(); 
+  for (MetaCategory::CategoryMap::const_iterator i = MetaCategory::categoriesByTag.begin();
     i != MetaCategory::categoriesByTag.end(); ++i)
   {
 	 	cout << "  " << i->second->type << endl;
     // Loop through the classes for the category
-    for (MetaCategory::ClassMap::const_iterator 
+    for (MetaCategory::ClassMap::const_iterator
       j = i->second->classes.begin();
-    	j != i->second->classes.end(); 
+    	j != i->second->classes.end();
       ++j)
         if (j->first == XMLtag::hash("DEFAULT"))
           cout << "    DEFAULT ( = " << j->second->type << " )" << j->second << endl;
@@ -363,16 +363,16 @@ DECLARE_EXPORT Action MetaClass::decodeAction(const Attributes* atts)
 DECLARE_EXPORT bool MetaClass::raiseEvent(Object* v, Signal a) const
 {
   bool result(true);
-  for (list<Functor*>::const_iterator i = subscribers[a].begin(); 
+  for (list<Functor*>::const_iterator i = subscribers[a].begin();
     i != subscribers[a].end(); ++i)
-    // Note that we always call all subscribers, even if one or more 
-    // already replied negatively. However, an exception thrown from a 
+    // Note that we always call all subscribers, even if one or more
+    // already replied negatively. However, an exception thrown from a
     // callback method will break the publishing chain.
     if (!(*i)->callback(v,a)) result = false;
 
   // Raise the event also on the category, if there is a valid one
-  return (category && category!=this) ? 
-    (result && category->raiseEvent(v,a)) : 
+  return (category && category!=this) ?
+    (result && category->raiseEvent(v,a)) :
     result;
 }
 
@@ -391,7 +391,7 @@ Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput
         ("Entity " + cat.type + " doesn't support CHANGE action.");
     default:
       /* Lookup for the class in the map of registered classes. */
-      char* type = 
+      char* type =
         XMLString::transcode(atts->getValue(Tags::tag_type.getXMLCharacters()));
       string type2;
       if (!type && in.getParentElement().isA(cat.grouptag))
@@ -399,7 +399,7 @@ Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput
         if (in.getCurrentElement().isA(cat.typetag)) type2 = "DEFAULT";
         else type2 = in.getCurrentElement().getName();
       }
-      ClassMap::const_iterator j 
+      ClassMap::const_iterator j
         = cat.classes.find(type ? XMLtag::hash(type) : (type2.empty() ? MetaCategory::defaultHash : XMLtag::hash(type2.c_str())));
       if (j == cat.classes.end())
       {
@@ -434,7 +434,7 @@ Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput
 void HasDescription::writeElement(XMLOutput *o, const XMLtag &t, mode m) const
 {
   // Note that this function is never called on its own. It is always called
-  // from the writeElement() method of a subclass. 
+  // from the writeElement() method of a subclass.
   // Hence, we don't bother about the mode.
   o->writeElement(Tags::tag_category, cat);
   o->writeElement(Tags::tag_subcategory, subcat);

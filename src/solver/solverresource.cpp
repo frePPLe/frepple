@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/solver.h"
 
 namespace frepple
@@ -69,9 +69,9 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
     Date earliestsearchdate = data->q_operationplan->getDates().getStart();
     Date curdate = data->q_loadplan->getDate();
     float curMax = data->q_loadplan->getMax();
-    for(Resource::loadplanlist::const_iterator 
+    for(Resource::loadplanlist::const_iterator
       cur=res->getLoadPlans().begin(data->q_loadplan);
-      cur!=res->getLoadPlans().end() && cur->getDate()>=earliestsearchdate; 
+      cur!=res->getLoadPlans().end() && cur->getDate()>=earliestsearchdate;
       --cur)
     {
 
@@ -109,13 +109,13 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
 
           // Check the leadtime constraints after the move
           if (isLeadtimeConstrained() || isFenceConstrained())
-            // Note that the check function will update the answered date 
+            // Note that the check function will update the answered date
             // and quantity
             checkOperationLeadtime(data->q_operationplan,*data);
         }
 
         // If we are at the end, then there is no capacity available.
-        // If the answered quantity is 0, the operationplan is moved into the 
+        // If the answered quantity is 0, the operationplan is moved into the
         // past.
         // In both these cases we need to search for capacity at later dates.
         if (cur==res->getLoadPlans().end() || data->a_qty==0.0f)
@@ -128,9 +128,9 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
           // Find the starting loadplan. Moving an operation earlier is driven
           // by the ending loadplan, while searching for later capacity is
           // driven from the starting loadplan.
-          for(OperationPlan::LoadPlanIterator 
+          for(OperationPlan::LoadPlanIterator
             h = data->q_operationplan->beginLoadPlans();
-            h != data->q_operationplan->endLoadPlans(); 
+            h != data->q_operationplan->endLoadPlans();
             ++h)
           {
             if (&*h!=data->q_loadplan && h->getLoad()->getResource()==res)
@@ -153,7 +153,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
             curMax = data->q_loadplan->getMax();
             double prevOnhand = data->q_loadplan->getOnhand();
             for(cur=res->getLoadPlans().begin(data->q_loadplan);
-                cur!=res->getLoadPlans().end() && !(overloaded && newDate); 
+                cur!=res->getLoadPlans().end() && !(overloaded && newDate);
                 ++cur)
             {
               if (cur->getType() == 4)

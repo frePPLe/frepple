@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -78,7 +78,7 @@ DECLARE_EXPORT void Resource::updateProblems()
       {
         // New problem now ends
         if (f->getDate() != shortageProblemStart)
-          new ProblemCapacityUnderload(this, DateRange(shortageProblemStart, 
+          new ProblemCapacityUnderload(this, DateRange(shortageProblemStart,
           	f->getDate()), -shortageQty);
         shortageProblem = false;
       }
@@ -106,7 +106,7 @@ DECLARE_EXPORT void Resource::updateProblems()
       {
         // New problem now ends
         if (f->getDate() != excessProblemStart)
-          new ProblemCapacityOverload(this, DateRange(excessProblemStart, 
+          new ProblemCapacityOverload(this, DateRange(excessProblemStart,
           	f->getDate()), excessQty);
         excessProblem = false;
       }
@@ -116,12 +116,12 @@ DECLARE_EXPORT void Resource::updateProblems()
 
   // The excess lasts till the end of the horizon...
   if (excessProblem)
-    new ProblemCapacityOverload(this, DateRange(excessProblemStart, 
+    new ProblemCapacityOverload(this, DateRange(excessProblemStart,
     	Date::infiniteFuture), excessQty);
 
   // The shortage lasts till the end of the horizon...
   if (shortageProblem)
-    new ProblemCapacityUnderload(this, DateRange(shortageProblemStart, 
+    new ProblemCapacityUnderload(this, DateRange(shortageProblemStart,
     	Date::infiniteFuture), -shortageQty);
 }
 

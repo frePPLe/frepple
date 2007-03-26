@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 #include <sys/stat.h>
 
@@ -62,7 +62,7 @@ DECLARE_EXPORT const MetaClass BufferDefault::metadata,
 // Calendar metadata
 DECLARE_EXPORT const MetaCategory Calendar::metadata;
 DECLARE_EXPORT const MetaCategory Calendar::Bucket::metadata;
-DECLARE_EXPORT const MetaClass CalendarVoid::metadata,  
+DECLARE_EXPORT const MetaClass CalendarVoid::metadata,
   CalendarFloat::metadata,
   CalendarInt::metadata,
   CalendarBool::metadata,
@@ -139,45 +139,45 @@ void LibraryModel::initialize()
   LibraryUtils::initialize();
 
   // Create a singleton plan object
-  // Since we can count on the initialization being executed only once, also 
+  // Since we can count on the initialization being executed only once, also
   // in a multi-threaded configuration, we don't need a more advanced mechanism
   // to protect the singleton plan.
   Plan::thePlan = new Plan();
 
   // Initialize the command metadata.
   CommandPlanSize::metadata.registerClass(
-    "COMMAND", 
-    "COMMAND_SIZE", 
+    "COMMAND",
+    "COMMAND_SIZE",
     Object::createDefault<CommandPlanSize>);
   CommandCreateOperationPlan::metadata.registerClass(
     "COMMAND",
     "COMMAND_CREATE_OPPLAN");
   CommandSolve::metadata.registerClass(
-    "COMMAND", 
-    "COMMAND_SOLVE", 
+    "COMMAND",
+    "COMMAND_SOLVE",
     Object::createDefault<CommandSolve>);
   CommandReadXMLFile::metadata.registerClass(
-    "COMMAND", 
-    "COMMAND_READXML", 
+    "COMMAND",
+    "COMMAND_READXML",
     Object::createDefault<CommandReadXMLFile>);
   CommandReadXMLString::metadata.registerClass(
-    "COMMAND", 
-    "COMMAND_READXMLSTRING", 
+    "COMMAND",
+    "COMMAND_READXMLSTRING",
     Object::createDefault<CommandReadXMLString>);
   CommandSave::metadata.registerClass(
-    "COMMAND", 
-    "COMMAND_SAVE", 
+    "COMMAND",
+    "COMMAND_SAVE",
     Object::createDefault<CommandSave>);
   CommandSavePlan::metadata.registerClass(
-    "COMMAND", 
-    "COMMAND_SAVEPLAN", 
+    "COMMAND",
+    "COMMAND_SAVEPLAN",
     Object::createDefault<CommandSavePlan>);
   CommandMoveOperationPlan::metadata.registerClass(
     "COMMAND",
     "COMMAND_MOVE_OPPLAN");
   CommandErase::metadata.registerClass(
-    "COMMAND", 
-    "COMMAND_ERASE", 
+    "COMMAND",
+    "COMMAND_ERASE",
     Object::createDefault<CommandErase>);
 
   // Initialize the plan metadata.
@@ -190,15 +190,15 @@ void LibraryModel::initialize()
   // Initialize the location metadata.
   Location::metadata.registerCategory
     ("LOCATION", "LOCATIONS", Location::reader, Location::writer);
-  LocationDefault::metadata.registerClass("LOCATION", "LOCATION", 
+  LocationDefault::metadata.registerClass("LOCATION", "LOCATION",
     Object::createString<LocationDefault>, true);
 
   // Initialize the customer metadata.
   Customer::metadata.registerCategory
     ("CUSTOMER", "CUSTOMERS", Customer::reader, Customer::writer);
   CustomerDefault::metadata.registerClass(
-    "CUSTOMER", 
-    "CUSTOMER", 
+    "CUSTOMER",
+    "CUSTOMER",
     Object::createString<CustomerDefault>, true);
 
   // Initialize the calendar metadata.
@@ -206,95 +206,95 @@ void LibraryModel::initialize()
   Calendar::metadata.registerCategory
     ("CALENDAR", "CALENDARS", Calendar::reader, Calendar::writer);
   CalendarVoid::metadata.registerClass(
-    "CALENDAR", 
-    "CALENDAR_VOID", 
+    "CALENDAR",
+    "CALENDAR_VOID",
     Object::createString<CalendarVoid>);
   CalendarFloat::metadata.registerClass(
     "CALENDAR",
-    "CALENDAR_FLOAT", 
+    "CALENDAR_FLOAT",
     Object::createString<CalendarFloat>, true);
   CalendarInt::metadata.registerClass(
     "CALENDAR",
-    "CALENDAR_INTEGER", 
+    "CALENDAR_INTEGER",
     Object::createString<CalendarInt>);
   CalendarBool::metadata.registerClass(
     "CALENDAR",
-    "CALENDAR_BOOLEAN", 
+    "CALENDAR_BOOLEAN",
     Object::createString<CalendarBool>);
   CalendarString::metadata.registerClass(
     "CALENDAR",
-    "CALENDAR_STRING", 
+    "CALENDAR_STRING",
     Object::createString<CalendarString>);
   CalendarOperation::metadata.registerClass(
     "CALENDAR",
-    "CALENDAR_OPERATION", 
+    "CALENDAR_OPERATION",
     Object::createString<CalendarOperation>);
 
   // Initialize the operation metadata.
   Operation::metadata.registerCategory
     ("OPERATION", "OPERATIONS", Operation::reader, Operation::writer);
   OperationFixedTime::metadata.registerClass(
-    "OPERATION", 
-    "OPERATION_FIXED_TIME", 
+    "OPERATION",
+    "OPERATION_FIXED_TIME",
     Object::createString<OperationFixedTime>, true);
   OperationTimePer::metadata.registerClass(
     "OPERATION",
-    "OPERATION_TIME_PER", 
+    "OPERATION_TIME_PER",
     Object::createString<OperationTimePer>);
   OperationRouting::metadata.registerClass(
     "OPERATION",
-    "OPERATION_ROUTING", 
+    "OPERATION_ROUTING",
     Object::createString<OperationRouting>);
   OperationAlternate::metadata.registerClass(
     "OPERATION",
-    "OPERATION_ALTERNATE", 
+    "OPERATION_ALTERNATE",
     Object::createString<OperationAlternate>);
   OperationEffective::metadata.registerClass(
     "OPERATION",
-    "OPERATION_EFFECTIVE", 
+    "OPERATION_EFFECTIVE",
     Object::createString<OperationEffective>);
-  
+
   // Initialize the item metadata.
   Item::metadata.registerCategory
     ("ITEM", "ITEMS", Item::reader, Item::writer);
-  ItemDefault::metadata.registerClass("ITEM", "ITEM", 
+  ItemDefault::metadata.registerClass("ITEM", "ITEM",
     Object::createString<ItemDefault>, true);
 
   // Initialize the buffer metadata.
   Buffer::metadata.registerCategory
     ("BUFFER", "BUFFERS", Buffer::reader, Buffer::writer);
   BufferDefault::metadata.registerClass(
-    "BUFFER", 
-    "BUFFER", 
+    "BUFFER",
+    "BUFFER",
     Object::createString<BufferDefault>, true);
   BufferInfinite::metadata.registerClass(
-    "BUFFER", 
-    "BUFFER_INFINITE", 
+    "BUFFER",
+    "BUFFER_INFINITE",
     Object::createString<BufferInfinite>);
   BufferMinMax::metadata.registerClass(
-    "BUFFER", 
-    "BUFFER_MINMAX", 
+    "BUFFER",
+    "BUFFER_MINMAX",
     Object::createString<BufferMinMax>);
-  
+
   // Initialize the demand metadata.
   Demand::metadata.registerCategory
     ("DEMAND", "DEMANDS", Demand::reader, Demand::writer);
   DemandDefault::metadata.registerClass(
-    "DEMAND", 
-    "DEMAND", 
+    "DEMAND",
+    "DEMAND",
     Object::createString<DemandDefault>, true);
 
   // Initialize the resource metadata.
   Resource::metadata.registerCategory
     ("RESOURCE", "RESOURCES", Resource::reader, Resource::writer);
   ResourceDefault::metadata.registerClass(
-    "RESOURCE", 
-    "RESOURCE", 
-    Object::createString<ResourceDefault>, 
+    "RESOURCE",
+    "RESOURCE",
+    Object::createString<ResourceDefault>,
     true);
   ResourceInfinite::metadata.registerClass(
-    "RESOURCE", 
-    "RESOURCE_INFINITE", 
+    "RESOURCE",
+    "RESOURCE_INFINITE",
     Object::createString<ResourceInfinite>);
 
   // Initialize the load metadata.
@@ -307,12 +307,12 @@ void LibraryModel::initialize()
   Flow::metadata.registerCategory
     ("FLOW", "FLOWS", MetaCategory::ControllerDefault);
   FlowStart::metadata.registerClass(
-    "FLOW", 
-    "FLOW_START", 
+    "FLOW",
+    "FLOW_START",
     Object::createDefault<FlowStart>, true);
   FlowEnd::metadata.registerClass(
-    "FLOW", 
-    "FLOW_END", 
+    "FLOW",
+    "FLOW_END",
     Object::createDefault<FlowEnd>);
 
   // Initialize the operationplan metadata.
@@ -379,7 +379,7 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   Timer t;
 
   // Intro
-  cout << endl << "Size information of Frepple " << PACKAGE_VERSION 
+  cout << endl << "Size information of Frepple " << PACKAGE_VERSION
     << " (" << __DATE__ << ")" << endl << endl;
 
   // Print loaded modules
@@ -428,13 +428,13 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   for (Operation::iterator o = Operation::begin(); o != Operation::end(); ++o)
   {
     memsize += o->getSize();
-    for (Operation::flowlist::const_iterator fl = o->getFlows().begin(); 
+    for (Operation::flowlist::const_iterator fl = o->getFlows().begin();
       fl != o->getFlows().end(); ++ fl)
     {
       ++countFlows;
       memFlows += fl->getSize();
     }
-    for (Operation::loadlist::const_iterator ld = o->getLoads().begin(); 
+    for (Operation::loadlist::const_iterator ld = o->getLoads().begin();
       ld != o->getLoads().end(); ++ ld)
     {
       ++countLoads;
@@ -481,7 +481,7 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   total += memsize;
   cout << "OperationPlan\t" << count << "\t" << memsize << endl;
 
-  // Flowplans  
+  // Flowplans
   memsize = countflowplans * sizeof(FlowPlan);
   total +=  memsize;
   cout << "FlowPlan     \t" << countflowplans << "\t" << memsize << endl;
@@ -492,7 +492,7 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   cout << "LoadPlan     \t" << countloadplans << "\t" << memsize << endl;
 
   // Problems
-  memsize = count = 0; 
+  memsize = count = 0;
   for (Problem::const_iterator pr = Problem::begin(); pr!=Problem::end(); ++pr)
   {
     ++count;

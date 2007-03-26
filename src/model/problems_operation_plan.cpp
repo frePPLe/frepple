@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 namespace frepple
 {
@@ -35,7 +35,7 @@ namespace frepple
 DECLARE_EXPORT void Operation::updateProblems()
 {
 	// Find all operationplans, and delegate the problem detection to them
-  // @todo rework the operation problem detection to be based on the op class, 
+  // @todo rework the operation problem detection to be based on the op class,
   // not the opplan class
   for(OperationPlan *o = opplan; o; o = o->next) o->updateProblems();
 }
@@ -65,33 +65,33 @@ void OperationPlan::updateProblems()
       needsBeforeCurrent = true;
 
     // Check if a BeforeFence problem is required.
-    // Note that we either detect of beforeCurrent or a beforeFence problem, 
+    // Note that we either detect of beforeCurrent or a beforeFence problem,
     // never both simultaneously.
-    else if 
+    else if
       (dates.getStart() < Plan::instance().getCurrent() + oper->getFence())
       needsBeforeFence = true;
 
     // Check if a PlannedEarly problem is required
     if (getEpst()
-        && getDates().getStart() 
+        && getDates().getStart()
            < getEpst() - ProblemPlannedEarly::getAllowedEarly())
       needsEarly = true;
 
     // Check if a PlannedLate problem is required
     if (getLpst()
-        && getDates().getStart() 
+        && getDates().getStart()
            > getLpst() + ProblemPlannedLate::getAllowedLate())
       needsLate = true;
   }
 
   // Loop through the existing problems
   stack<Problem*> problemsToDelete;
-  for (Problem::const_iterator j = Problem::begin(this, false); 
+  for (Problem::const_iterator j = Problem::begin(this, false);
      j!=Problem::end(); ++j)
   {
-    // The if-statement keeps the problem detection code concise and 
+    // The if-statement keeps the problem detection code concise and
     // concentrated. However, a drawback of this design is that a new Problem
-    // subclass will also require a new Demand subclass. I think such a link 
+    // subclass will also require a new Demand subclass. I think such a link
     // is acceptable.
     if (typeid(**j) == typeid(ProblemBeforeCurrent))
     {
@@ -101,17 +101,17 @@ void OperationPlan::updateProblems()
       /** @todo use the fast delete method for deleting the problems. */
       else problemsToDelete.push(*j);
     }
-    else if (typeid(**j) == typeid(ProblemBeforeFence)) 
+    else if (typeid(**j) == typeid(ProblemBeforeFence))
     {
       if (needsBeforeFence) needsBeforeFence = false;
       else problemsToDelete.push(*j);
     }
-    else if (typeid(**j) == typeid(ProblemPlannedEarly)) 
+    else if (typeid(**j) == typeid(ProblemPlannedEarly))
     {
       if (needsEarly) needsEarly = false;
       else problemsToDelete.push(*j);
     }
-    else if (typeid(**j) == typeid(ProblemPlannedLate)) 
+    else if (typeid(**j) == typeid(ProblemPlannedLate))
     {
       if (needsLate) needsLate = false;
       else problemsToDelete.push(*j);
@@ -128,7 +128,7 @@ void OperationPlan::updateProblems()
 
   // Create the problems that are required but aren't existing yet.
   // There is a little trick involved here... Normally problems are owned
-  // by objects of the Plannable class. OperationPlan isn't a subclass of 
+  // by objects of the Plannable class. OperationPlan isn't a subclass of
   // Plannable, so we need a dirty cast.
   if (needsBeforeCurrent) new ProblemBeforeCurrent(this);
   if (needsBeforeFence) new ProblemBeforeFence(this);
@@ -176,7 +176,7 @@ void OperationPlanRouting::updateProblems()  // @todo test! may well be broken
 {
   // Make a list of all existing precedence problems
   list<ProblemPrecedence*> currentproblems;
-  for (Problem::const_iterator j = Problem::begin(this, false); 
+  for (Problem::const_iterator j = Problem::begin(this, false);
     j!=Problem::end(); ++j)
     if (typeid(**j) == typeid(ProblemPrecedence))
       currentproblems.push_front(static_cast<ProblemPrecedence*>(*j));
@@ -188,7 +188,7 @@ void OperationPlanRouting::updateProblems()  // @todo test! may well be broken
   {
     if (prev && prev->getDates().getEnd() > (*i)->getDates().getStart())
     {
-      // We need a precedence problem. It could already exist or we need a 
+      // We need a precedence problem. It could already exist or we need a
       // new one...
       list<ProblemPrecedence*>::iterator l;
       for (l = currentproblems.begin(); l != currentproblems.end(); ++l)

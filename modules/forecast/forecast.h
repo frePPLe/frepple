@@ -88,7 +88,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
 /** This class represents a bucketized demand signal.
   * The forecast object defines the item and priority of the demands.
-  * A void calendar then defines the buckets. 
+  * A void calendar then defines the buckets.
   * The class basically works as an interface for a hierarchy of demands.
   */
 class Forecast : public Demand
@@ -99,7 +99,7 @@ class Forecast : public Demand
     explicit Forecast(const string& nm) : Demand(nm), calptr(NULL) {}
 
     /** Updates the quantity of the forecast. This method is empty. */
-    virtual void setQuantity(float f) 
+    virtual void setQuantity(float f)
       {throw DataException("Can't set quantity of a forecast");}
 
     /** Update the forecast in a bucket, given any date in the bucket. */
@@ -112,8 +112,8 @@ class Forecast : public Demand
     /** Update the item to be planned, for all buckets. */
     virtual void setItem(const Item*);
 
-    /** Specify a bucket calendar for the forecast. Once forecasted 
-      * quantities have been entered for the forecast, the calendar 
+    /** Specify a bucket calendar for the forecast. Once forecasted
+      * quantities have been entered for the forecast, the calendar
       * can't be updated any more. */
     virtual void setCalendar(const Calendar* c);
 
@@ -121,7 +121,7 @@ class Forecast : public Demand
     Calendar::pointer getCalendar() const {return calptr;}
 
     /** Updates the due date of the demand. Lower numbers indicate a
-      * higher priority level. The method also updates the priority 
+      * higher priority level. The method also updates the priority
       * in all buckets.
       */
     virtual void setPriority(int);
@@ -130,7 +130,7 @@ class Forecast : public Demand
     virtual void setOperation(const Operation *);
 
     /** Updates the due date of the demand. */
-    virtual void setDue(Date d) 
+    virtual void setDue(Date d)
       {throw DataException("Can't set due date of a forecast");}
 
     /** Update the policy of the demand in all buckets. */
@@ -141,7 +141,7 @@ class Forecast : public Demand
 
     virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
       {return sizeof(Forecast) + getName().size() + HasDescription::memsize();}
 
   private:

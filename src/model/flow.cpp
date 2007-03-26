@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 namespace frepple
 {
@@ -63,24 +63,24 @@ DECLARE_EXPORT void Flow::validate(Action action)
       if (i != oper->getFlows().end())
       {
         delete this;
-        throw DataException("Flow of '" + oper->getName() + "' and '" + 
+        throw DataException("Flow of '" + oper->getName() + "' and '" +
           buf->getName() + "' already exists.");
       }
       break;
     case CHANGE:
       delete this;
-      throw DataException("Can't update a flow"); 
+      throw DataException("Can't update a flow");
     case ADD_CHANGE:
       // ADD is handled in the code after the switch statement
       if (i == oper->getFlows().end()) break;
       delete this;
-      throw DataException("Can't update a flow"); 
+      throw DataException("Can't update a flow");
     case REMOVE:
       // Delete the temporary flow object
       delete this;
       // Nothing to delete
       if (i == oper->getFlows().end())
-        throw DataException("Can't remove nonexistent flow of '" 
+        throw DataException("Can't remove nonexistent flow of '"
           + oper->getName() + "' and '" + buf->getName() + "'");
       // Delete
       throw DataException("Can't delete a flow"); // @todo crashes when the parser releases the writelock

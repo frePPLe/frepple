@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -45,7 +45,7 @@ DECLARE_EXPORT void Demand::updateProblems()
   bool needsLate(false);
   bool needsShort(false);
   bool needsExcess(false);
-   
+
   // Check which problems need to be created
   if (!getHidden())
   {
@@ -77,14 +77,14 @@ DECLARE_EXPORT void Demand::updateProblems()
 
   // Loop through the existing problems
   stack<Problem*> problemsToDelete;
-  for (Problem::const_iterator j = Problem::begin(this, false); 
+  for (Problem::const_iterator j = Problem::begin(this, false);
     j!=Problem::end(); ++j)
   {
-    // The if-statement keeps the problem detection code concise and 
+    // The if-statement keeps the problem detection code concise and
     // concentrated. However, a drawback of this design is that a new Problem
-    // subclass will also require a new Demand subclass. I think such a link 
+    // subclass will also require a new Demand subclass. I think such a link
     // is acceptable.
-    if (typeid(**j) == typeid(ProblemEarly)) 
+    if (typeid(**j) == typeid(ProblemEarly))
     {
       // if: problem needed and it exists already
       if (needsEarly) needsEarly = false;
@@ -92,22 +92,22 @@ DECLARE_EXPORT void Demand::updateProblems()
       /** @todo use the fast delete method for deleting the problems. */
       else problemsToDelete.push(*j);
     }
-    else if (typeid(**j) == typeid(ProblemDemandNotPlanned)) 
+    else if (typeid(**j) == typeid(ProblemDemandNotPlanned))
     {
       if (needsNotPlanned) needsNotPlanned = false;
       else problemsToDelete.push(*j);
     }
-    else if (typeid(**j) == typeid(ProblemLate)) 
+    else if (typeid(**j) == typeid(ProblemLate))
     {
       if (needsLate) needsLate = false;
       else problemsToDelete.push(*j);
     }
-    else if (typeid(**j) == typeid(ProblemShort)) 
+    else if (typeid(**j) == typeid(ProblemShort))
     {
       if (needsShort) needsShort = false;
       else problemsToDelete.push(*j);
     }
-    else if (typeid(**j) == typeid(ProblemExcess)) 
+    else if (typeid(**j) == typeid(ProblemExcess))
     {
       if (needsExcess) needsExcess = false;
       else problemsToDelete.push(*j);
@@ -123,7 +123,7 @@ DECLARE_EXPORT void Demand::updateProblems()
     delete problemsToDelete.top();
     problemsToDelete.pop();
   }
-  
+
   // Create the problems that are required but aren't existing yet.
   if (needsNotPlanned) new ProblemDemandNotPlanned(this);
   if (needsLate) new ProblemLate(this);

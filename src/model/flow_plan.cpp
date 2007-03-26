@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 namespace frepple
 {
@@ -38,7 +38,7 @@ DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
 {
   assert(opplan);
   fl = const_cast<Flow*>(f);
-  oper = opplan; 
+  oper = opplan;
   nextFlowPlan = opplan->firstflowplan;
   opplan->firstflowplan = this;
   f->getBuffer()->flowplans.insert(this);
@@ -71,7 +71,7 @@ DECLARE_EXPORT void FlowPlan::update()
 DECLARE_EXPORT bool FlowPlan::check() const
 {
   // Quantity must match with the operationplan
-  if (fabs(oper->getQuantity() * fl->getQuantity() - getQuantity()) 
+  if (fabs(oper->getQuantity() * fl->getQuantity() - getQuantity())
     > ROUNDING_ERROR)
     return false;
   else
@@ -79,12 +79,12 @@ DECLARE_EXPORT bool FlowPlan::check() const
 }
 
 
-// Remember that this method only superficially looks like a normal 
+// Remember that this method only superficially looks like a normal
 // writeElement() method.
 DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   o->BeginObject(tag);
-  o->writeElement(Tags::tag_date, getDate()); 
+  o->writeElement(Tags::tag_date, getDate());
   o->writeElement(Tags::tag_quantity, getQuantity());
   o->writeElement(Tags::tag_onhand, getOnhand());
   o->writeElement(Tags::tag_minimum, getMin());
@@ -106,7 +106,7 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode
       if (!k.getPegged()) o->writeElement(Tags::tag_id, "unpegged");
       o->writeElement(Tags::tag_date, k->getDate());
       o->writeElement(Tags::tag_buffer, Tags::tag_name, k->getFlow()->getBuffer()->getName());
-      o->writeElement(Tags::tag_operation_plan, 
+      o->writeElement(Tags::tag_operation_plan,
         Tags::tag_id, k->getOperationPlan()->getIdentifier(),
         Tags::tag_operation, k->getFlow()->getOperation()->getName());
       o->EndObject(Tags::tag_pegging);
@@ -123,14 +123,14 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode
       if (!k.getPegged()) o->writeElement(Tags::tag_id, "unpegged");
       o->writeElement(Tags::tag_date, k->getDate());
       o->writeElement(Tags::tag_buffer, Tags::tag_name, k->getFlow()->getBuffer()->getName());
-      o->writeElement(Tags::tag_operation_plan, 
+      o->writeElement(Tags::tag_operation_plan,
         Tags::tag_id, k->getOperationPlan()->getIdentifier(),
         Tags::tag_operation, k->getFlow()->getOperation()->getName());
       o->EndObject(Tags::tag_pegging);
     }
   }
 
-  o->EndObject(tag);  
+  o->EndObject(tag);
 }
 
 }

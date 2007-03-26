@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/solver.h"
 
 
@@ -121,7 +121,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
             cout << "Demand '" << l << "' coordination screwed up: "
             << Solver->a_qty << " versus " << tmpqty << endl;
         }
-        // Register the new operationplans. We need to make sure that the 
+        // Register the new operationplans. We need to make sure that the
         // correct execute method is called!
         Solver->CommandList::execute();
 

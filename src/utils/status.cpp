@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/utils.h"
 
 /* Uncomment the next line to create a lot of debugging messages during
@@ -36,7 +36,7 @@ namespace frepple
 {
 
 
-const XMLOutput::content_type XMLOutput::STANDARD = 1; 
+const XMLOutput::content_type XMLOutput::STANDARD = 1;
 const XMLOutput::content_type XMLOutput::PLAN = 2;
 const XMLOutput::content_type XMLOutput::PLANDETAIL = 4;
 
@@ -47,10 +47,10 @@ void 	XMLInput::processingInstruction
   char* type = XMLString::transcode(target);
   char* value = XMLString::transcode(data);
   XMLinstruction *x = NULL;
-  try 
+  try
   {
     // Lookup the class
-    MetaCategory::ClassMap::const_iterator j = 
+    MetaCategory::ClassMap::const_iterator j =
       XMLinstruction::metadata.classes.find(XMLtag::hash(type));
     if (j == XMLinstruction::metadata.classes.end())
     {
@@ -156,7 +156,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
       // will be processed in the next loop.
       numElements += 2;
 
-      // Now process all attributes. For attributes we only call the 
+      // Now process all attributes. For attributes we only call the
       // endElement() member and skip the beginElement() method.
       if (states.top() != IGNOREINPUT)
         for (unsigned int i=0, cnt=atts.getLength(); i<cnt; i++)
@@ -166,7 +166,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
           m_EStack[numElements].setData(val);
           #ifdef PARSE_DEBUG
           char* attname = XMLString::transcode(atts.getQName(i));
-          cout << "   Processing attribute " << attname 
+          cout << "   Processing attribute " << attname
             << " - object " << getCurrentObject() << endl;
           XMLString::release(&attname);
           #endif
@@ -248,7 +248,7 @@ void XMLInput::endElement(const XMLCh* const uri,
         // flag to specify that this object is now ended
         objectEnded = true;
         try { getCurrentObject()->endElement(*this, *pElement); }
-        catch (DataException e) {          
+        catch (DataException e) {
           if (abortOnDataException) throw;
           else cout << "Continuing after data error: " << e.what() << endl;
         }
@@ -270,7 +270,7 @@ void XMLInput::endElement(const XMLCh* const uri,
         {
           // Call also the endElement function on the owning object
           try { getCurrentObject()->endElement(*this, *pElement); }
-          catch (DataException e) {          
+          catch (DataException e) {
             if (abortOnDataException) throw;
             else cout << "Continuing after data error: " << e.what() << endl;
           }
@@ -282,9 +282,9 @@ void XMLInput::endElement(const XMLCh* const uri,
       }
       else
         // This tag is not the ending tag of an object
-        // Call the function of the Object 
+        // Call the function of the Object
         try { getCurrentObject()->endElement(*this, *pElement); }
-        catch (DataException e) {          
+        catch (DataException e) {
           if (abortOnDataException) throw;
           else cout << "Continuing after data error: " << e.what() << endl;
         }
@@ -386,7 +386,7 @@ void XMLInput::reset()
   // objects they may have allocated.
   if (!m_EHStack.empty())
   {
-    // The next line is to avoid calling the endElement handler twice for the 
+    // The next line is to avoid calling the endElement handler twice for the
     // last object. E.g. endElement handler causes and exception, and as part
     // of the exception handling we call the reset method.
     if (objectEnded) m_EHStack.pop();
@@ -430,7 +430,7 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
     parser->setFeature(XMLUni::fgSAX2CoreNameSpaces, validate);
     parser->setFeature(XMLUni::fgSAX2CoreValidation, validate);
     parser->setFeature(XMLUni::fgSAX2CoreNameSpacePrefixes, false);
-    parser->setFeature(XMLUni::fgXercesIdentityConstraintChecking, false);   
+    parser->setFeature(XMLUni::fgXercesIdentityConstraintChecking, false);
     parser->setFeature(XMLUni::fgXercesDynamic, false);
     parser->setFeature(XMLUni::fgXercesSchema, validate);
     parser->setFeature(XMLUni::fgXercesSchemaFullChecking, false);
@@ -447,10 +447,10 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
         XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, c
         );
       XMLString::release(&c);
-      // Preload the schema @todo  
-      // Xerces stores the grammars on the parser, which we dynamically create and 
+      // Preload the schema @todo
+      // Xerces stores the grammars on the parser, which we dynamically create and
       // destroy. Preloading the schema requires using a parser pool.
-      //Grammar *g = 
+      //Grammar *g =
       //   parser->loadGrammar("plan.xsd", Grammar::SchemaGrammarType, true);
     }
 
@@ -583,7 +583,7 @@ DECLARE_EXPORT void XMLOutput::writeElement
 DECLARE_EXPORT void XMLOutput::writeElementWithHeader(const XMLtag& tag, const Object* object)
 {
   // Root object can't be null...
-  if (!object) 
+  if (!object)
     throw RuntimeException("Can't accept a NULL object as XML root");
 
   // There should not be any saved objects yet
@@ -621,7 +621,7 @@ DECLARE_EXPORT void XMLOutput::writeHeader(const XMLtag& tag)
   // Write the first line and the opening tag
   writeString(getHeaderStart());
   BeginObject(tag, getHeaderAtts());
-  
+
   // Fake a dummy parent
   numParents += 2;   // @todo not nice and generic
 }
@@ -647,7 +647,7 @@ DECLARE_EXPORT bool XMLElement::getBool() const
 DECLARE_EXPORT string XMLElement::getName() const
 {
   XMLtag::tagtable::const_iterator i = XMLtag::getTags().find(m_dwTagHash);
-  if (i == XMLtag::getTags().end()) 
+  if (i == XMLtag::getTags().end())
     throw LogicException("Undefined element tag");
   return i->second->getName();
 }
@@ -679,7 +679,7 @@ DECLARE_EXPORT XMLtag::XMLtag(string name) : strName(name)
   ScopeMutexLock l(dd);
   tagtable::const_iterator i = getTags().find(dw);
   if (i!=getTags().end() && i->second->getName()!=name)
-    throw LogicException("Tag XML-tag hash function clashes for " 
+    throw LogicException("Tag XML-tag hash function clashes for "
       + i->second->getName() + " and " + name);
   getTags().insert(make_pair(dw,this));
   }

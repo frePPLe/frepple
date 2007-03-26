@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -37,7 +37,7 @@ template<class Calendar> DECLARE_EXPORT Tree HasName<Calendar>::st;
 DECLARE_EXPORT Calendar::~Calendar()
 {
   // De-allocate all the dynamic memory used for the bucket objects
-  while (firstBucket) 
+  while (firstBucket)
   {
     Bucket* tmp = firstBucket;
     firstBucket = firstBucket->nextBucket;
@@ -50,7 +50,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::addBucket (Date d)
 {
   // Create new bucket and insert in the list
   Bucket *next = firstBucket, *prev = NULL;
-  while (next && next->startdate < d) 
+  while (next && next->startdate < d)
   {
     prev = next;
     next = next->nextBucket;
@@ -68,7 +68,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::addBucket (Date d)
   c->nextBucket = next;
   c->prevBucket = prev;
 
-  if (prev) 
+  if (prev)
   {
     // Set end date of previous bucket to the start of this one...
     prev->enddate = d;
@@ -100,10 +100,10 @@ DECLARE_EXPORT void Calendar::removeBucket(Calendar::Bucket* bkt)
 
   // Error
   if (!b)
-    throw DataException("Trying to remove unavailable bucket from calendar '" 
+    throw DataException("Trying to remove unavailable bucket from calendar '"
       + getName() + "'");
 
-  if (bkt->prevBucket) 
+  if (bkt->prevBucket)
   {
     // Previous bucket (if there is one) gets a new end date
     bkt->prevBucket->enddate = bkt->enddate;
@@ -205,8 +205,8 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
         // created in a calendar. In this special case, we can allow an add
         // action on a bucket that already exists.
         return result;
-      if (x!=endBuckets()) 
-        throw("Bucket " + string(d) 
+      if (x!=endBuckets())
+        throw("Bucket " + string(d)
           + " already exists in calenar '" + getName() + "'");
       result = addBucket(d);
       return result;

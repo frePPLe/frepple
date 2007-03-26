@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -54,7 +54,7 @@ DECLARE_EXPORT Operation::~Operation()
 
   // Remove the reference to this operation from all buffers
   for (Buffer::iterator m = Buffer::begin(); m != Buffer::end(); ++m)
-    if (m->getProducingOperation() == this) 
+    if (m->getProducingOperation() == this)
       WLock<Buffer>(&*m)->setProducingOperation(NULL);
 
   // Remove the operation from its super-operations and sub-operations
@@ -144,9 +144,9 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mod
     o->writeElement(Tags::tag_size_minimum, size_minimum);
   if (size_multiple>0.0f)
     o->writeElement(Tags::tag_size_multiple, size_multiple);
-  
+
   // Write extra plan information
-  if ((o->getContentType() == XMLOutput::PLAN 
+  if ((o->getContentType() == XMLOutput::PLAN
        || o->getContentType() == XMLOutput::PLANDETAIL) && opplan)
   {
     o->BeginObject(Tags::tag_operation_plans);
@@ -162,7 +162,7 @@ DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, XMLElement& pElement
   if (pElement.isA(Tags::tag_flow)
     && pIn.getParentElement().isA(Tags::tag_flows))
   {
-    Flow *f = 
+    Flow *f =
       dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn));
     if (f) f->setOperation(this);
     pIn.readto(f);
@@ -231,7 +231,7 @@ DECLARE_EXPORT void OperationFixedTime::writeElement
       (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
-    
+
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
@@ -332,7 +332,7 @@ DECLARE_EXPORT void OperationTimePer::writeElement
   }
 
   // Write the complete object
-  if (m != NOHEADER) o->BeginObject 
+  if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write the complete object
@@ -364,7 +364,7 @@ DECLARE_EXPORT void OperationRouting::writeElement
       (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
-    
+
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
@@ -605,8 +605,8 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
 }
 
 
-DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (float q, 
-  Date s, Date e, const Demand* l, bool updates_okay, OperationPlan* ow, 
+DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (float q,
+  Date s, Date e, const Demand* l, bool updates_okay, OperationPlan* ow,
   unsigned long i, bool makeflowsloads) const
 {
   // Note that the operationplan created is of a different subclass.
@@ -674,7 +674,7 @@ DECLARE_EXPORT void OperationEffective::writeElement
       (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
-    
+
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
@@ -700,7 +700,7 @@ DECLARE_EXPORT void OperationEffective::endElement(XMLInput& pIn, XMLElement& pE
 {
   if (pElement.isA(Tags::tag_calendar))
   {
-    CalendarOperation* c = 
+    CalendarOperation* c =
       dynamic_cast<CalendarOperation*>(pIn.getPreviousObject());
     if (c)
       setCalendar(c);
@@ -720,8 +720,8 @@ DECLARE_EXPORT void OperationEffective::endElement(XMLInput& pIn, XMLElement& pE
 }
 
 
-DECLARE_EXPORT OperationPlan* OperationEffective::createOperationPlan 
-  (float q, Date s, Date e, const Demand* l, bool updates_okay, OperationPlan* ow, 
+DECLARE_EXPORT OperationPlan* OperationEffective::createOperationPlan
+  (float q, Date s, Date e, const Demand* l, bool updates_okay, OperationPlan* ow,
   unsigned long i, bool makeflowsloads) const
 {
   // Note that the operationplan created is of a different subclass.

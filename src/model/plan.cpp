@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -116,7 +116,7 @@ DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
         // This piece of code will be used to skip pieces of the XML file that
         // Frepple doesn't need to be understand
         pIn.IgnoreElement();
-    }  
+    }
   }
 }
 

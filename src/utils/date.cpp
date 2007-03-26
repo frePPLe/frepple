@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/utils.h"
 #include <ctime>
 #include <clocale>
@@ -91,7 +91,7 @@ DECLARE_EXPORT void Date::toCharBuffer(char* str) const
   // static structure is used for all calls. In a multi-threaded environment
   // the function is not to be used.
   // The POSIX standard defines a re-entrant version of the function:
-  // localtime_r. 
+  // localtime_r.
   // Visual C++ 6.0 and Borland 5.5 are missing it, but provide a thread-safe
   // variant without changing the function semantics.
 #ifdef HAVE_LOCALTIME_R
@@ -335,9 +335,9 @@ DECLARE_EXPORT char* Date::strptime(const char *buf, const char *fmt, struct tm 
       case 'a':
         for (i = 0; i < En_US.numWeekdays; ++i)
         {
-          if (strncasecmp(buf, En_US.weekday_names[i], 
+          if (strncasecmp(buf, En_US.weekday_names[i],
             En_US.len_weekday_names[i]) == 0) break;
-          if (strncasecmp(buf, En_US.abbrev_weekday_names[i], 
+          if (strncasecmp(buf, En_US.abbrev_weekday_names[i],
             En_US.len_abbrev_weekday_names[i]) == 0) break;
         }
         if (i == En_US.numWeekdays) return 0;
@@ -364,9 +364,9 @@ DECLARE_EXPORT char* Date::strptime(const char *buf, const char *fmt, struct tm 
       case 'h':
         for (i = 0; i < En_US.numMonths; ++i)
         {
-          if (strncasecmp(buf, En_US.month_names[i], 
+          if (strncasecmp(buf, En_US.month_names[i],
             En_US.len_month_names[i]) == 0) break;
-          if (strncasecmp(buf, En_US.abbrev_month_names[i], 
+          if (strncasecmp(buf, En_US.abbrev_month_names[i],
             En_US.len_abbrev_month_names[i]) == 0) break;
         }
         if (i == En_US.numMonths) return 0;

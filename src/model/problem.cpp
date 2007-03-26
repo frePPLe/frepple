@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -180,7 +180,7 @@ DECLARE_EXPORT void Plannable::endElement(XMLInput& pIn, XMLElement& pElement)
 DECLARE_EXPORT void Problem::clearProblems()
 {
   // Loop through all entities, and call clearProblems(i)
-  for (HasProblems::EntityIterator i = HasProblems::beginEntity(); 
+  for (HasProblems::EntityIterator i = HasProblems::beginEntity();
     i != HasProblems::endEntity(); ++i)
   {
     clearProblems(*i);
@@ -217,7 +217,7 @@ DECLARE_EXPORT void Problem::writer(const MetaCategory& c, XMLOutput* o)
     o->BeginObject(*c.grouptag);
     for(; piter!=end(); ++piter)
       // Note: not the regular write, but a fast write to speed things up.
-      // This is possible since problems aren't nested and are never 
+      // This is possible since problems aren't nested and are never
       // referenced.
       (*piter)->writeElement(o, *c.typetag);
     o->EndObject(*c.grouptag);
@@ -267,7 +267,7 @@ DECLARE_EXPORT HasProblems::EntityIterator::EntityIterator() : type(0)
 }
 
 
-DECLARE_EXPORT HasProblems::EntityIterator& HasProblems::EntityIterator::operator++() 
+DECLARE_EXPORT HasProblems::EntityIterator& HasProblems::EntityIterator::operator++()
   //@todo Problem iterator is not super-efficient, shows up high in profiling
 {
   switch (type)
@@ -329,7 +329,7 @@ DECLARE_EXPORT HasProblems::EntityIterator::~EntityIterator()
 }
 
 
-DECLARE_EXPORT HasProblems::EntityIterator::EntityIterator(const EntityIterator& o) 
+DECLARE_EXPORT HasProblems::EntityIterator::EntityIterator(const EntityIterator& o)
 {
   // Delete old iterator
   this->~EntityIterator();
@@ -342,11 +342,11 @@ DECLARE_EXPORT HasProblems::EntityIterator::EntityIterator(const EntityIterator&
 }
 
 
-DECLARE_EXPORT HasProblems::EntityIterator& 
+DECLARE_EXPORT HasProblems::EntityIterator&
   HasProblems::EntityIterator::operator=(const EntityIterator& o)
 {
   // Gracefully handle self assignment
-  if (this == &o) return *this; 
+  if (this == &o) return *this;
   // Delete old iterator
   this->~EntityIterator();
   // Populate new values
@@ -359,7 +359,7 @@ DECLARE_EXPORT HasProblems::EntityIterator&
 }
 
 
-DECLARE_EXPORT bool 
+DECLARE_EXPORT bool
   HasProblems::EntityIterator::operator != (const EntityIterator& t) const
 {
   // Different iterator type, thus always different and return false
@@ -374,7 +374,7 @@ DECLARE_EXPORT bool
     case 1: return *resIter != *(t.resIter);
     // Operationplan
     case 2: return *operIter != *(t.operIter);
-    // Demand    
+    // Demand
     case 3: return *demIter != *(t.demIter);
     // Always return true for higher type numbers. This should happen only
     // when comparing with the end of list element.
@@ -434,7 +434,7 @@ DECLARE_EXPORT HasProblems::EntityIterator HasProblems::endEntity()
 DECLARE_EXPORT Problem::const_iterator& Problem::const_iterator::operator++()
 {
   // Incrementing beyond the end
-  if (!iter) 
+  if (!iter)
     throw LogicException("Incrementing problem iterator beyond the end");
   // Move to the next problem
   iter = iter->nextProblem;

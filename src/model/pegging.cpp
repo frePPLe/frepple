@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -44,7 +44,7 @@ DECLARE_EXPORT void PeggingIterator::updateStack
     t.factor = f;
     t.level = l;
     t.pegged = p;
-    first = false; 
+    first = false;
   }
   else
     // We need to create a new element on the stack
@@ -52,13 +52,13 @@ DECLARE_EXPORT void PeggingIterator::updateStack
 }
 
 
-DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++() 
+DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
 {
   // Validate
-  if (stack.empty()) 
+  if (stack.empty())
     throw LogicException("Incrementing the iterator beyond it's end");
   state& st = stack.top();
-  if (st.level > 0) 
+  if (st.level > 0)
     throw LogicException("Don't yoyo a pegging iterator");
 
   first = true;  // The next element can overwrite the existing stack top
@@ -66,7 +66,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
   const FlowPlan *curflowplan = st.fl;
   double curfactor = st.factor;
   double curqty = st.qty;
-  if (!stack.top().pegged) 
+  if (!stack.top().pegged)
   {
     // Handle unpegged material entries on the stack
     stack.pop();
@@ -79,17 +79,17 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
     // finding the flowplans consuming this produced material.
 
     double peggedQty(0);
-    Buffer::flowplanlist::const_iterator f 
+    Buffer::flowplanlist::const_iterator f
       = st.fl->getFlow()->getBuffer()->getFlowPlans().begin(st.fl);
     double endQty = f->getCumulativeProduced();
     double startQty = endQty - f->getQuantity();
     if (f->getCumulativeConsumed() <= startQty)
     {
       // CASE 1A: Not consumed enough yet: move forward
-      while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end() 
+      while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
         && f->getCumulativeConsumed() <= startQty) ++f;
-      while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end() 
-             && ( (f->getQuantity()<=0 
+      while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
+             && ( (f->getQuantity()<=0
                    && f->getCumulativeConsumed()+f->getQuantity() < endQty)
                || (f->getQuantity()>0 && f->getCumulativeConsumed() < endQty))
             )
@@ -111,7 +111,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
     else
     {
       // CASE 1B: Consumed too much already: move backward
-      while ( f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end() 
+      while ( f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
         && ((f->getQuantity()<=0 && f->getCumulativeConsumed()+f->getQuantity() < endQty)
             || (f->getQuantity()>0 && f->getCumulativeConsumed() < endQty))) --f;
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
@@ -132,14 +132,14 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
       }
     }
    if (peggedQty < endQty - startQty)
-     // Unpegged material (i.e. material that is produced but never consumed) 
+     // Unpegged material (i.e. material that is produced but never consumed)
      // is handled with a special entry on the stack.
      updateStack(nextlevel, curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), st.factor, curflowplan, false);
   }
   else if (st.fl->getQuantity() < -ROUNDING_ERROR)
   {
     // CASE 2:
-    // This is a consuming flowplan. Navigating downstream means taking the 
+    // This is a consuming flowplan. Navigating downstream means taking the
     // producing flowplans of the owning operationplan(s).
     pushflowplans(&*(st.fl->getOperationPlan()->getTopOwner()), false, nextlevel);
   }
@@ -149,13 +149,13 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
 }
 
 
-DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--() 
+DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 {
   // Validate
-  if (stack.empty()) 
+  if (stack.empty())
     throw LogicException("Incrementing the iterator beyond it's end");
   state& st = stack.top();
-  if (st.level < 0) 
+  if (st.level < 0)
     throw LogicException("Dont yoyo a pegging iterator");
 
   first = true;  // The next element can overwrite the existing stack top
@@ -163,7 +163,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
   const FlowPlan *curflowplan = st.fl;
   double curfactor = st.factor;
   double curqty = st.qty;
-  if (!st.pegged) 
+  if (!st.pegged)
   {
     // Handle unconsumed material entries on the stack
     stack.pop();
@@ -175,7 +175,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
     // This is a flowplan consuming from a buffer. Navigating upstream means
     // finding the flowplans producing this consumed material.
     double peggedQty(0);
-    Buffer::flowplanlist::const_iterator f 
+    Buffer::flowplanlist::const_iterator f
       = st.fl->getFlow()->getBuffer()->getFlowPlans().begin(st.fl);
     double endQty = f->getCumulativeConsumed();
     double startQty = endQty + f->getQuantity();
@@ -184,9 +184,9 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
       // CASE 3A: Not produced enough yet: move forward
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
         && f->getCumulativeProduced() <= startQty) ++f;
-      while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end() 
+      while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
              && ( (f->getQuantity()<=0 && f->getCumulativeProduced() < endQty)
-               || (f->getQuantity()>0 
+               || (f->getQuantity()>0
                    && f->getCumulativeProduced()-f->getQuantity() < endQty))
             )
       {
@@ -209,7 +209,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
       // CASE 3B: Produced too much already: move backward
       while ( f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
         && ((f->getQuantity()<=0 && f->getCumulativeProduced() < endQty)
-            || (f->getQuantity()>0 
+            || (f->getQuantity()>0
                   && f->getCumulativeProduced()-f->getQuantity() < endQty))) --f;
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
              && f->getCumulativeProduced() > startQty)
@@ -223,27 +223,27 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
             newqty -= f->getCumulativeProduced() - endQty;
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
-          updateStack(nextlevel, 
-            -curqty*newqty/curflowplan->getQuantity(), 
-            curfactor*newqty/f->getQuantity(), 
+          updateStack(nextlevel,
+            -curqty*newqty/curflowplan->getQuantity(),
+            curfactor*newqty/f->getQuantity(),
             x);
         }
         --f;
       }
     }
     if (peggedQty < endQty - startQty)
-      // Unproduced material (i.e. material that is consumed but never 
+      // Unproduced material (i.e. material that is consumed but never
       // produced) is handled with a special entry on the stack.
-      updateStack(nextlevel, 
-        curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), 
-        st.factor, 
-        curflowplan, 
+      updateStack(nextlevel,
+        curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(),
+        st.factor,
+        curflowplan,
         false);
   }
   else if (curflowplan->getQuantity() > ROUNDING_ERROR)
   {
     // CASE 4:
-    // This is a producing flowplan. Navigating upstream means taking the 
+    // This is a producing flowplan. Navigating upstream means taking the
     // consuming flowplans of the owning operationplan(s).
     pushflowplans(&*(st.fl->getOperationPlan()->getTopOwner()), true, nextlevel);
   }
@@ -260,13 +260,13 @@ DECLARE_EXPORT void PeggingIterator::pushflowplans
 
   // Push all flowplans on the stack
   if (downstream)
-    for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans(); 
+    for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans();
         i != op->endFlowPlans(); ++i)
     {
       if (i->getQuantity()<0) updateStack(nextlevel, st.qty, st.factor, &*i);
     }
   else
-    for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans(); 
+    for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans();
         i != op->endFlowPlans(); ++i)
     {
       if (i->getQuantity()>0) updateStack(nextlevel, st.qty, st.factor, &*i);
@@ -276,7 +276,7 @@ DECLARE_EXPORT void PeggingIterator::pushflowplans
   if (op->getSubOperationPlan())
     // Only a single suboperationplan
     pushflowplans(op->getSubOperationPlan() , downstream, nextlevel);
-  for (OperationPlan::OperationPlanList::const_iterator 
+  for (OperationPlan::OperationPlanList::const_iterator
     j = op->getSubOperationPlans().begin();
     j != op->getSubOperationPlans().end(); ++j)
     // A linked list of suboperationplans

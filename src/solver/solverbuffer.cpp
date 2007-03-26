@@ -25,15 +25,15 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/solver.h"
 
 namespace frepple
 {
 
 
-/** @todo The flow quantity is handled at the wrong place. It needs to be 
-  * handled by the operation, since flows can exist on multiple suboperations 
+/** @todo The flow quantity is handled at the wrong place. It needs to be
+  * handled by the operation, since flows can exist on multiple suboperations
   * with different quantities. The buffer solve can't handle this, because
   * it only calls the solve() for the producing operation...
   * Are there some situations where the operation solver doesn't know enough
@@ -45,8 +45,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   Date requested_date(Solver->q_date);
   float requested_qty(Solver->q_qty);
   bool tried_requested_date(false);
-  // The Microsoft C++ compiler gives a warning on the following line of code. 
-  // That's because for that compiler the comparison operator returns an int 
+  // The Microsoft C++ compiler gives a warning on the following line of code.
+  // That's because for that compiler the comparison operator returns an int
   // value, not the bool one would expect.
   bool isMinMaxBuffer( typeid(*b)==typeid(BufferMinMax) );
 
@@ -77,7 +77,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   Date extraInventoryDate(Date::infiniteFuture);
   float current_minimum(0.0f);
   float current_maximum(0.0f);
-  for(Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin(); 
+  for(Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
     ; ++cur)
   {
     // Iterator has now changed to a new date or we have arrived at the end
@@ -199,7 +199,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
     Solver->q_date = requested_date;
     // Note that the supply created with the next line changes the onhand value
     // at all later dates!
-    // Note that asking at the requested date doesn't keep the material on 
+    // Note that asking at the requested date doesn't keep the material on
     // stock to a minimum.
     b->getProducingOperation()->solve(*this,v);
     // Evaluate the reply
@@ -213,8 +213,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
     // Use the constrained planning result
     Solver->a_qty = static_cast<float>(requested_qty - shortage);
     if (Solver->a_qty < 0) Solver->a_qty = 0.0;
-    Solver->a_date = (extraInventoryDate < extraSupplyDate) ? 
-      extraInventoryDate : 
+    Solver->a_date = (extraInventoryDate < extraSupplyDate) ?
+      extraInventoryDate :
       extraSupplyDate;
   }
   else

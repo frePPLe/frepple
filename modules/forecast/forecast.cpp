@@ -48,17 +48,17 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
   // Print the parameters
   /*
-  for (CommandLoadLibrary::ParameterList::const_iterator 
+  for (CommandLoadLibrary::ParameterList::const_iterator
     j = z.begin(); j!= z.end(); ++j)
     cout << "Parameter " << j->first << " = " << j->second << endl;
   */
 
   // Initialize the metadata.
   Forecast::metadata.registerClass(
-    "DEMAND", 
-    "DEMAND_FORECAST", 
+    "DEMAND",
+    "DEMAND_FORECAST",
     Object::createString<Forecast>);
-      
+
   // Return the name of the module
   return name;
 }
@@ -111,9 +111,9 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
       (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
-    
+
   // Write the complete object
-  if (m != NOHEADER) o->BeginObject 
+  if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   o->writeElement(Tags::tag_item, getItem());
@@ -187,7 +187,7 @@ void Forecast::setCalendar(const Calendar* c)
 {
   if (isGroup())
   {
-    cout << "Warning: Changing the calendar of an initialized forecast isn't " 
+    cout << "Warning: Changing the calendar of an initialized forecast isn't "
      << "allowed." << endl;
     return;
   }

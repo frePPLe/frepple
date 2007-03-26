@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -76,7 +76,7 @@ DECLARE_EXPORT void Demand::removeDelivery(OperationPlan * o)
   if (!o) return;
 
   // See if the demand field on the operationplan points to this demand
-  if (o->lt != this) 
+  if (o->lt != this)
     throw LogicException("Delivery operationplan incorrectly registered");
 
   // Remove the reference on the operationplan
@@ -177,7 +177,7 @@ DECLARE_EXPORT Operation::pointer Demand::getDeliveryOperation() const
 {
   // Operation can be specified on the demand itself,
   if (oper) return oper;
-  // ... or on the item, 
+  // ... or on the item,
   if (it) return it->getDelivery();
   // ... or it doesn't exist at all
   return NULL;
@@ -201,7 +201,7 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m
     o->writeElement(tag, Tags::tag_name, getName());
     return;
   }
-    
+
   // Write the complete object
   if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, getName());
 
@@ -227,7 +227,7 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m
   if (prio) o->writeElement(Tags::tag_priority, prio);
 
   // Write extra plan information
-  if ((o->getContentType() == XMLOutput::PLAN 
+  if ((o->getContentType() == XMLOutput::PLAN
        || o->getContentType() == XMLOutput::PLANDETAIL) && !deli.empty())
   {
     o->BeginObject(Tags::tag_operation_plans);
@@ -284,7 +284,7 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else if (pElement.isA(Tags::tag_operation_plan))
   {
-    OperationPlan* opplan 
+    OperationPlan* opplan
       = dynamic_cast<OperationPlan*>(pIn.getPreviousObject());
     if (opplan) addDelivery(opplan);
     else throw LogicException("Incorrect object type during read operation");

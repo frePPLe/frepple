@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/solver.h"
 namespace frepple
 {
@@ -46,8 +46,8 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
     // leadtime constraints
     return false;
 
-  // Loop till everything is okay. During this loop the operationplan can be 
-  // moved early or late, and its quantity can be changed. 
+  // Loop till everything is okay. During this loop the operationplan can be
+  // moved early or late, and its quantity can be changed.
   // However, it cannot be split.
   bool okay = true;
   do
@@ -73,11 +73,11 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
           h->getLoad()->solve(*this,&data);
         }
       }
-      // Imagine there are multiple loads. As soon as one of them is moved, we 
+      // Imagine there are multiple loads. As soon as one of them is moved, we
       // need to redo the capacity check for the ones we already checked
       // Repeat until no load has touched the opplan, or till proven infeasible
       // No need to reloop if there is only a single load (= 2 loadplans)
-      while (hasMultipleLoads && !data.AllLoadsOkay && data.a_qty!=0.0f); 
+      while (hasMultipleLoads && !data.AllLoadsOkay && data.a_qty!=0.0f);
 
       // Return false if no capacity is available
       if (data.a_qty==0.0f) return false;
@@ -152,7 +152,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
       data.undo(); // xxx
     }
   }
-  while (!okay);  // Repeat the loop if the operation was moved and the 
+  while (!okay);  // Repeat the loop if the operation was moved and the
                   // feasibility needs to be rechecked.
 }
 
@@ -173,7 +173,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
     delta = opplan->getOperation()->getFence();
     // Both constraints are used, and the fence is negative (which is an
     // unusual value for a fence)
-    if (isLeadtimeConstrained() && delta<0L) delta = 0L;  
+    if (isLeadtimeConstrained() && delta<0L) delta = 0L;
   }
 
   // Compare the operation plan start with the threshold date
@@ -199,7 +199,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
   {
     // Resizing did work! The operation now fits within constrained limits
     data.a_qty = opplan->getQuantity();
-    data.a_date = opplan->getDates().getEnd(); 
+    data.a_date = opplan->getDates().getEnd();
     // Acknowledge creation of operationplan
     return true;
   }
@@ -314,9 +314,9 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
     flow_qty = 0.0f;
     Flow *f = oper->findFlow(Solver->curBuffer);
     if (f) flow_qty += f->getQuantity();
-    for (Operation::Operationlist::const_iterator 
-      e = oper->getSubOperations().begin(); 
-      e != oper->getSubOperations().end(); 
+    for (Operation::Operationlist::const_iterator
+      e = oper->getSubOperations().begin();
+      e != oper->getSubOperations().end();
       ++e)
     {
       f = (*e)->findFlow(Solver->curBuffer);
@@ -327,7 +327,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
           + "' for buffer '" + Solver->curBuffer->getName() + "'");
   }
   // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
-  Solver->curBuffer = NULL;  
+  Solver->curBuffer = NULL;
   float a_qty(Solver->q_qty / flow_qty);
 
   // Create the top operationplan
@@ -341,9 +341,9 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
 
   // Loop through the steps
   Date max_Date;
-  for (Operation::Operationlist::const_reverse_iterator 
+  for (Operation::Operationlist::const_reverse_iterator
     e = oper->getSubOperations().rbegin();
-    e != oper->getSubOperations().rend() && a_qty > 0.0f; 
+    e != oper->getSubOperations().rend() && a_qty > 0.0f;
     ++e)
   {
     // Plan the next step
@@ -549,12 +549,12 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationEffective* oper, void* v)
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
-  // Create the operationplan. This automatically creates the proper 
+  // Create the operationplan. This automatically creates the proper
   // suboperationplan too.
-  CommandCreateOperationPlan *a = new CommandCreateOperationPlan(oper, 
-    Solver->q_qty, Date::infinitePast, Solver->q_date, Solver->curDemand, 
+  CommandCreateOperationPlan *a = new CommandCreateOperationPlan(oper,
+    Solver->q_qty, Date::infinitePast, Solver->q_date, Solver->curDemand,
     Solver->curOwnerOpplan, false);
-  OperationPlanEffective *opplan = 
+  OperationPlanEffective *opplan =
     dynamic_cast<OperationPlanEffective*>(a->getOperationPlan());
 
   Solver->curDemand = NULL;

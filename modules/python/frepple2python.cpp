@@ -58,7 +58,7 @@ extern "C" PyObject* PythonProblem::create(PyTypeObject* type, PyObject *args, P
 }
 
 
-extern "C" PyObject* PythonProblem::next(PythonProblem* obj) 
+extern "C" PyObject* PythonProblem::next(PythonProblem* obj)
 {
   if (obj->iter != Problem::end())
   {
@@ -68,18 +68,18 @@ extern "C" PyObject* PythonProblem::next(PythonProblem* obj)
       "TYPE", obj->iter->getType().type.c_str(),
       "START", PythonDateTime(obj->iter->getDateRange().getStart()),
       "END", PythonDateTime(obj->iter->getDateRange().getEnd())
-      ); 
+      );
 
     ++(obj->iter);
     return result;
   }
-  else 
+  else
     // Reached the end of the iteration
     return NULL;
 }
 
 
-// 
+//
 // INTERFACE FOR FLOWPLAN
 //
 
@@ -97,7 +97,7 @@ extern "C" PyObject* PythonFlowPlan::createFromBuffer(Buffer* v)
 }
 
 
-extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj) 
+extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj)
 {
   if (obj->iter != obj->buf->getFlowPlans().end())
   {
@@ -114,7 +114,7 @@ extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj)
        "OPERATIONPLAN", f->getOperationPlan()->getIdentifier(),
        "QUANTITY", obj->iter->getQuantity(),
        "DATE", PythonDateTime(obj->iter->getDate()),
-       "ONHAND", obj->iter->getOnhand()    
+       "ONHAND", obj->iter->getOnhand()
        );
     ++(obj->iter);
     return result;
@@ -124,7 +124,7 @@ extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj)
 }
 
 
-// 
+//
 // INTERFACE FOR LOADPLAN
 //
 
@@ -142,10 +142,10 @@ extern "C" PyObject* PythonLoadPlan::createFromResource(Resource* v)
 }
 
 
-extern "C" PyObject* PythonLoadPlan::next(PythonLoadPlan* obj) 
+extern "C" PyObject* PythonLoadPlan::next(PythonLoadPlan* obj)
 {
   if (obj->iter != obj->res->getLoadPlans().end())
-  { 
+  {
     const LoadPlan* f = dynamic_cast<const LoadPlan*>(&*(obj->iter));
     while (!f)
     {
@@ -170,7 +170,7 @@ extern "C" PyObject* PythonLoadPlan::next(PythonLoadPlan* obj)
 }
 
 
-// 
+//
 // INTERFACE FOR OPERATIONPLAN
 //
 
@@ -187,7 +187,7 @@ extern "C" PyObject* PythonOperationPlan::create(PyTypeObject* type, PyObject *a
 }
 
 
-extern "C" PyObject* PythonOperationPlan::next(PythonOperationPlan* obj) 
+extern "C" PyObject* PythonOperationPlan::next(PythonOperationPlan* obj)
 {
   if (obj->iter != OperationPlan::end())
   {
@@ -223,7 +223,7 @@ extern "C" PyObject* PythonDemand::create(PyTypeObject* type, PyObject *args, Py
 }
 
 
-extern "C" PyObject* PythonDemand::next(PythonDemand* obj) 
+extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
 {
   if (obj->iter != Demand::end())
   {
@@ -235,7 +235,7 @@ extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
       "ITEM", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
       "OPERATION", obj->iter->getOperation() ? obj->iter->getOperation()->getName().c_str() : NULL,
       "OWNER", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL
-      //xxx "CUSTOMER", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL     
+      //xxx "CUSTOMER", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL
       );
     ++(obj->iter);
     return result;
@@ -262,7 +262,7 @@ extern "C" PyObject* PythonBuffer::create(PyTypeObject* type, PyObject *args, Py
 }
 
 
-extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj) 
+extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj)
 {
   if (obj->iter != Buffer::end())
   {
@@ -304,7 +304,7 @@ extern "C" PyObject* PythonResource::create(PyTypeObject* type, PyObject *args, 
 }
 
 
-extern "C" PyObject* PythonResource::next(PythonResource* obj) 
+extern "C" PyObject* PythonResource::next(PythonResource* obj)
 {
   if (obj->iter != Resource::end())
   {

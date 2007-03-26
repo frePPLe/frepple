@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -61,7 +61,7 @@ DECLARE_EXPORT void CommandSolve::execute()
 {
   // Make sure the solver field is specified
   if (!sol) throw RuntimeException("Solve command with unspecified solver");
-  
+
   // Lock the solver
   Object::WLock<Solver> s(sol);
 
@@ -214,7 +214,7 @@ DECLARE_EXPORT void CommandSave::endElement(XMLInput& pIn, XMLElement& pElement)
     if (tmp == "STANDARD") content = XMLOutput::STANDARD;
     else if (tmp == "PLAN") content = XMLOutput::PLAN;
     else if (tmp == "PLANDETAIL") content = XMLOutput::PLANDETAIL;
-    else throw DataException("Invalid content type '" + tmp + "'");    
+    else throw DataException("Invalid content type '" + tmp + "'");
   }
   else
     Command::endElement(pIn, pElement);
@@ -287,9 +287,9 @@ DECLARE_EXPORT void CommandSavePlan::execute()
          gbuf != Buffer::end(); ++gbuf)
     {
       if (!gbuf->getHidden())
-        for(Buffer::flowplanlist::const_iterator 
+        for(Buffer::flowplanlist::const_iterator
           oo=gbuf->getFlowPlans().begin();
-          oo!=gbuf->getFlowPlans().end(); 
+          oo!=gbuf->getFlowPlans().end();
           ++oo)
           if (oo->getType() == 1)
           {
@@ -305,9 +305,9 @@ DECLARE_EXPORT void CommandSavePlan::execute()
          gdem != Demand::end(); ++gdem)
     {
       if (!gdem->getHidden())
-        for(Demand::OperationPlan_list::const_iterator 
+        for(Demand::OperationPlan_list::const_iterator
           pp=gdem->getDelivery().begin();
-          pp!=gdem->getDelivery().end(); 
+          pp!=gdem->getDelivery().end();
           ++pp)
         {
           textoutput << "DEMAND\t" << (*gdem) << '\t'
@@ -321,9 +321,9 @@ DECLARE_EXPORT void CommandSavePlan::execute()
          gres != Resource::end(); ++gres)
     {
       if (!gres->getHidden())
-        for(Resource::loadplanlist::const_iterator 
+        for(Resource::loadplanlist::const_iterator
           qq=gres->getLoadPlans().begin();
-          qq!=gres->getLoadPlans().end(); 
+          qq!=gres->getLoadPlans().end();
           ++qq)
           if (qq->getType() == 1)
           {
@@ -360,13 +360,13 @@ DECLARE_EXPORT void CommandSavePlan::execute()
   catch (exception& e)
   {
     textoutput.close();
-    throw RuntimeException("Error writing to file '" 
+    throw RuntimeException("Error writing to file '"
       + getFileName() + "':\n" + e.what());
   }
   catch (...)
   {
     textoutput.close();
-    throw RuntimeException("Error writing to file '" 
+    throw RuntimeException("Error writing to file '"
       + getFileName() + "'");
   }
 
@@ -463,7 +463,7 @@ DECLARE_EXPORT void CommandErase::execute()
   {
     // Delete all entities.
     // The order is chosen to minimize the work of the individual destructors.
-    // E.g. the destructor of the item class recurses over all demands and 
+    // E.g. the destructor of the item class recurses over all demands and
     // all buffers. It is much faster if there are none already.
     Demand::clear();
     Operation::clear();
@@ -483,7 +483,7 @@ DECLARE_EXPORT void CommandErase::execute()
 
   // Ending message
   if (getVerbose())
-    cout << "Finished erase command at " << Date::now() 
+    cout << "Finished erase command at " << Date::now()
       << " : " << t << endl;
 }
 

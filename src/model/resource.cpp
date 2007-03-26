@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -81,7 +81,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode
     o->writeElement(tag, Tags::tag_name, getName());
     return;
   }
-    
+
   // Write the complete object
   if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, getName());
 
@@ -102,7 +102,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode
       o->writeElement(Tags::tag_load, &(*(i++)), FULL);
     o->EndObject (Tags::tag_loads);
   }
-  
+
   // Write extra plan information
   loadplanlist::const_iterator i = loadplans.begin();
   if (o->getContentType() == XMLOutput::PLAN  && i!=loadplans.end())
@@ -113,7 +113,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode
       {
         const LoadPlan *lp = dynamic_cast<const LoadPlan*>(&*i);
         o->BeginObject(Tags::tag_load_plan);
-        o->writeElement(Tags::tag_date, lp->getDate()); 
+        o->writeElement(Tags::tag_date, lp->getDate());
         o->writeElement(Tags::tag_quantity, lp->getQuantity());
         o->writeElement(Tags::tag_onhand, lp->getOnhand());
         o->writeElement(Tags::tag_minimum, lp->getMin());
@@ -161,7 +161,7 @@ DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, XMLElement& pElement)
     else
     {
       Calendar *c = dynamic_cast<Calendar*>(pIn.getPreviousObject());
-      if (!c) 
+      if (!c)
         throw LogicException("Incorrect object type during read operation");
       throw DataException("Calendar '" + c->getName() +
         "' has invalid type for use as resource max calendar");
@@ -210,7 +210,7 @@ DECLARE_EXPORT void ResourceInfinite::writeElement
       (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
-    
+
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);

@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/utils.h"
 #include <sys/stat.h>
 
@@ -61,7 +61,7 @@ namespace frepple
 void XMLInputFile::parse(Object *pRoot, bool validate)
 {
   // Check if string has been set
-  if (filename.empty()) 
+  if (filename.empty())
     throw DataException("Missing input file or directory");
 
   // Check if the parameter is the name of a directory

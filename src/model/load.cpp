@@ -26,7 +26,7 @@
  ***************************************************************************/
 
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 namespace frepple
 {
@@ -63,27 +63,27 @@ DECLARE_EXPORT void Load::validate(Action action)
       if (i != oper->getLoads().end())
       {
         delete this;
-        throw DataException("Load of '" + oper->getName() + "' and '" 
+        throw DataException("Load of '" + oper->getName() + "' and '"
           + res->getName() + "' already exists");
       }
       break;
     case CHANGE:
       delete this;
-      throw DataException("Can't update a load"); 
+      throw DataException("Can't update a load");
     case ADD_CHANGE:
       // ADD is handled in the code after the switch statement
       if (i == oper->getLoads().end()) break;
       delete this;
-      throw DataException("Can't update a load"); 
+      throw DataException("Can't update a load");
     case REMOVE:
       // This load was only used temporarily during the reading process
       delete this;
       if (i == oper->getLoads().end())
         // Nothing to delete
-        throw DataException("Can't remove nonexistent load of '" 
+        throw DataException("Can't remove nonexistent load of '"
           + oper->getName() + "' and '" + res->getName() + "'");
       throw DataException("Can't delete a load"); // @todo crashes when the parser releases the writelock
-      delete &*i;   
+      delete &*i;
       // Set a flag to make sure the level computation is triggered again
       HasLevel::triggerLazyRecomputation();
       return;

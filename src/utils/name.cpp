@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/utils.h"
 
 namespace frepple
@@ -65,26 +65,26 @@ Tree::TreeNode* Tree::insert(TreeNode* z, TreeNode *hint)
   // Use the hint to create the proper starting point in the tree
   int comp;
   TreeNode* y;
-  if (!hint) 
+  if (!hint)
   {
     // Effectively no hint given
     hint = header.parent;
     y = &header;
   }
-  else 
+  else
   {
     // Check if the hint is a good starting point to descend
     while (hint->parent)
     {
       comp = z->nm.compare(hint->parent->nm);
-      if ((comp>0 && hint == hint->parent->left) 
+      if ((comp>0 && hint == hint->parent->left)
         || (comp<0 && hint == hint->parent->right))
         // Move the hint up to the parent node
         // If I'm left child of my parent && new node needs right insert
         // or I'm right child of my parent && new node needs left insert
         hint = hint->parent;
       else
-        break; 
+        break;
     }
     y = hint->parent;
   }
@@ -382,7 +382,7 @@ void Tree::rotateRight(TreeNode* x)
 
 
 DECLARE_EXPORT void Tree::verify() const
-{  
+{
   // Lock the tree
   LockManager::getManager().obtainReadLock(l);
 
@@ -393,7 +393,7 @@ DECLARE_EXPORT void Tree::verify() const
       begin() == end() &&
       header.left == &header &&
       header.right == &header);
-    if (!ok) 
+    if (!ok)
     {
       LockManager::getManager().releaseReadLock(l);
       throw LogicException("Invalid empty tree");

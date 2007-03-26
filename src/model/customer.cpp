@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 
 namespace frepple
@@ -42,7 +42,7 @@ DECLARE_EXPORT void Customer::writeElement(XMLOutput* o, const XMLtag& tag, mode
     o->writeElement(tag, Tags::tag_name, getName());
     return;
   }
-    
+
   // Write the complete object
   if (m != NOHEADER) o->BeginObject(tag, Tags::tag_name, getName());
 

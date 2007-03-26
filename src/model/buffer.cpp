@@ -25,7 +25,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define FREPPLE_CORE 
+#define FREPPLE_CORE
 #include "frepple/model.h"
 #include <cmath>
 
@@ -59,8 +59,8 @@ DECLARE_EXPORT void Buffer::setOnHand(float f)
     fl = const_cast<Flow*>(&*(o->getFlows().begin()));
 
   // Check valid pointers
-  if (!fl || !o) 
-    throw LogicException("Failed creating inventory operation for '" 
+  if (!fl || !o)
+    throw LogicException("Failed creating inventory operation for '"
     + getName() + "'");
 
   // Make sure the sign of the flow is correct: +1 or -1.
@@ -71,8 +71,8 @@ DECLARE_EXPORT void Buffer::setOnHand(float f)
   if (i == OperationPlan::end())
   {
     // No operationplan exists yet
-    OperationPlan *opplan = o->createOperationPlan( 
-      static_cast<float>(fabs(f)), Date::infinitePast, 
+    OperationPlan *opplan = o->createOperationPlan(
+      static_cast<float>(fabs(f)), Date::infinitePast,
       Date::infinitePast, NULL, false);
     opplan->setLocked(true);
     opplan->initialize();
@@ -159,7 +159,7 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m
     o->writeElement(tag, Tags::tag_name, getName());
     return;
   }
-    
+
   // Write the complete object
   if (m!= NOHEADER) o->BeginObject(tag, Tags::tag_name, getName());
 
@@ -202,7 +202,7 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m
 
   // Write extra plan information
   i = flowplans.begin();
-  if ((o->getContentType() == XMLOutput::PLAN 
+  if ((o->getContentType() == XMLOutput::PLAN
        || o->getContentType() == XMLOutput::PLANDETAIL) && i!=flowplans.end())
   {
     o->BeginObject(Tags::tag_flow_plans);
@@ -222,7 +222,7 @@ DECLARE_EXPORT void Buffer::beginElement (XMLInput& pIn, XMLElement& pElement)
   if (pElement.isA(Tags::tag_flow)
       && pIn.getParentElement().isA(Tags::tag_flows))
   {
-    Flow *f = 
+    Flow *f =
       dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn));
     if (f) f->setBuffer(this);
     pIn.readto (f);
@@ -263,14 +263,14 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else if (pElement.isA(Tags::tag_minimum))
   {
-    CalendarFloat *mincal = 
+    CalendarFloat *mincal =
       dynamic_cast<CalendarFloat*>(pIn.getPreviousObject());
     if (mincal)
       setMinimum(mincal);
     else
     {
       Calendar *c = dynamic_cast<Calendar*>(pIn.getPreviousObject());
-      if (!c) 
+      if (!c)
         throw LogicException("Incorrect object type during read operation");
       throw DataException("Calendar '" + c->getName() +
         "' has invalid type for use as buffer min calendar");
@@ -278,14 +278,14 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else if (pElement.isA(Tags::tag_maximum))
   {
-    CalendarFloat *maxcal = 
+    CalendarFloat *maxcal =
       dynamic_cast<CalendarFloat*>(pIn.getPreviousObject());
     if (maxcal)
       setMaximum(maxcal);
     else
     {
       Calendar *c = dynamic_cast<Calendar*>(pIn.getPreviousObject());
-      if (!c) 
+      if (!c)
         throw LogicException("Incorrect object type during read operation");
       throw DataException("Calendar '" + c->getName() +
         "' has invalid type for use as buffer max calendar");
@@ -422,7 +422,7 @@ DECLARE_EXPORT void BufferInfinite::writeElement
       (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
-    
+
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
@@ -442,7 +442,7 @@ DECLARE_EXPORT void BufferMinMax::writeElement(XMLOutput *o, const XMLtag &tag, 
       (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
     return;
   }
-    
+
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
       (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);

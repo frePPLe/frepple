@@ -35,8 +35,8 @@
   * application.<br>
   * The implementation is implemented in a thread-safe way (within the
   * limitations of the Python threading model, of course).<br>
-  * After loading, the module will check whether a file 
-  * '$FREPPLE_HOME/init.py' exists and, if it does, will execute the 
+  * After loading, the module will check whether a file
+  * '$FREPPLE_HOME/init.py' exists and, if it does, will execute the
   * statements in the file. In this way a library of globally available
   * functions can easily be initialized.<br>
   * The stderr and stdout streams of Python are redirected by default to
@@ -64,18 +64,18 @@
   *
   * The following Frepple functions are available from within Python.<br>
   * All of these are in the module called frepple.
-  *   - <b>version</b>:<br> 
+  *   - <b>version</b>:<br>
   *     A string variable with the version of frepple.
-  *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br> 
+  *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br>
   *     Processes an XML string passed as argument.
   *   - <b>log(string)</b>:<br>
   *     Prints a string to the frepple log file.<br>
   *     This is used for redirecting the stdout and stderr of Python.
-  *   - <b>readXMLfile(string [,bool] [,bool])</b>:<br> 
+  *   - <b>readXMLfile(string [,bool] [,bool])</b>:<br>
   *     Read an XML-file.
-  *   - <b>saveXMLfile(string)</b>:<br> 
+  *   - <b>saveXMLfile(string)</b>:<br>
   *     Save the model to an XML-file.
-  *   - <b>saveXMLstring()</b>:<br> 
+  *   - <b>saveXMLstring()</b>:<br>
   *     Returns the complete model as an XML-formatted string.
   *   - <b>createItem(string, string)</b>:<br>
   *     Uses the C++ API to create an item and its delivery operation.<br>
@@ -114,14 +114,14 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
 
 /** This class embeds an interpreter for the Python language in Frepple.<br>
-  * The interpreter can execute generic scripts, and it also has access 
+  * The interpreter can execute generic scripts, and it also has access
   * to the frepple objects.<br>
   * The interpreter is multi-threaded. Multiple python scripts can run in
   * parallel. Internally Python allows only one thread at a time to
   * execute and the interpreter switches between the active threads, i.e.
   * a quite primitive threading model.<br>
   * Frepple uses a single global interpreter. A global Python variable or
-  * function is thus visible across multiple invocations of the Python 
+  * function is thus visible across multiple invocations of the Python
   * interpreter.
   */
 class CommandPython : public Command, public XMLinstruction
@@ -140,15 +140,15 @@ class CommandPython : public Command, public XMLinstruction
       * within Python. */
     static PyMethodDef PythonAPI[];
 
-    /** This static variable is a template for defining our Python 
+    /** This static variable is a template for defining our Python
       * objects.<br>
       * It is copied for each interface object we define.
       */
-    static const PyTypeObject TemplateInfoType; 
+    static const PyTypeObject TemplateInfoType;
 
   public:
     /** This template function initializes a structure as a Python class.<br>
-      * The class passed as template argument must have a verify specific 
+      * The class passed as template argument must have a verify specific
       * structure: see the examples.
       */
     template<class X> static void define_type(PyObject* m, const string& a, const string& b)
@@ -159,8 +159,8 @@ class CommandPython : public Command, public XMLinstruction
       X::InfoType.tp_iternext = reinterpret_cast<iternextfunc>(X::next);
       X::InfoType.tp_new = X::create;
       // Note: We need to 'leak' the strings allocated on the next two lines!
-      string *aa = new string(string("frepple.") + a);  
-      string *bb = new string(b);  
+      string *aa = new string(string("frepple.") + a);
+      string *bb = new string(b);
       X::InfoType.tp_name = const_cast<char*>(aa->c_str());
       X::InfoType.tp_doc = const_cast<char*>(bb->c_str());
 
@@ -168,7 +168,7 @@ class CommandPython : public Command, public XMLinstruction
       X::define_type();
 
       // Register the new type in the module
-      if (PyType_Ready(&X::InfoType) < 0) 
+      if (PyType_Ready(&X::InfoType) < 0)
         throw frepple::RuntimeException("Can't register python type " + a);
       Py_INCREF(&X::InfoType);
       PyModule_AddObject(m, const_cast<char*>(a.c_str()), reinterpret_cast<PyObject*>(&X::InfoType));
@@ -201,9 +201,9 @@ class CommandPython : public Command, public XMLinstruction
 
     virtual const MetaClass& getType() const {return metadata;}
     /** Metadata for registration as a command. */
-    static const MetaClass metadata;  
+    static const MetaClass metadata;
     /** Metadata for registration as an XML instruction. */
-    static const MetaClass metadata2;  
+    static const MetaClass metadata2;
     virtual size_t getSize() const
       {return sizeof(CommandPython) + cmd.size() + filename.size();}
 
@@ -212,7 +212,7 @@ class CommandPython : public Command, public XMLinstruction
     /** This method is called when a processing instruction is read. */
     void processInstruction(XMLInput &i, const char *d) {executePython(d);}
 
-    /** This is the workhorse that actually executes the argument string in 
+    /** This is the workhorse that actually executes the argument string in
       * the Python interpreter. */
     void executePython(const char*);
 
@@ -221,7 +221,7 @@ class CommandPython : public Command, public XMLinstruction
 
   private:
 
-    /** Python API: Used for redirecting the Python output to the same file 
+    /** Python API: Used for redirecting the Python output to the same file
       * as the applciation. <br>
       * Arguments: data (string)
       */

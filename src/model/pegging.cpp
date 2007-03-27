@@ -33,7 +33,7 @@ namespace frepple
 
 
 DECLARE_EXPORT void PeggingIterator::updateStack
-  (short l, double q, double f, const FlowPlan* fl, bool p)
+(short l, double q, double f, const FlowPlan* fl, bool p)
 {
   if (first)
   {
@@ -87,11 +87,11 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
     {
       // CASE 1A: Not consumed enough yet: move forward
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
-        && f->getCumulativeConsumed() <= startQty) ++f;
+          && f->getCumulativeConsumed() <= startQty) ++f;
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
-             && ( (f->getQuantity()<=0
-                   && f->getCumulativeConsumed()+f->getQuantity() < endQty)
-               || (f->getQuantity()>0 && f->getCumulativeConsumed() < endQty))
+          && ( (f->getQuantity()<=0
+              && f->getCumulativeConsumed()+f->getQuantity() < endQty)
+              || (f->getQuantity()>0 && f->getCumulativeConsumed() < endQty))
             )
       {
         if (f->getQuantity() < -ROUNDING_ERROR)
@@ -112,10 +112,10 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
     {
       // CASE 1B: Consumed too much already: move backward
       while ( f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
-        && ((f->getQuantity()<=0 && f->getCumulativeConsumed()+f->getQuantity() < endQty)
-            || (f->getQuantity()>0 && f->getCumulativeConsumed() < endQty))) --f;
+          && ((f->getQuantity()<=0 && f->getCumulativeConsumed()+f->getQuantity() < endQty)
+              || (f->getQuantity()>0 && f->getCumulativeConsumed() < endQty))) --f;
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
-             && f->getCumulativeConsumed() > startQty)
+          && f->getCumulativeConsumed() > startQty)
       {
         if (f->getQuantity() < -ROUNDING_ERROR)
         {
@@ -131,10 +131,10 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
         --f;
       }
     }
-   if (peggedQty < endQty - startQty)
-     // Unpegged material (i.e. material that is produced but never consumed)
-     // is handled with a special entry on the stack.
-     updateStack(nextlevel, curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), st.factor, curflowplan, false);
+    if (peggedQty < endQty - startQty)
+      // Unpegged material (i.e. material that is produced but never consumed)
+      // is handled with a special entry on the stack.
+      updateStack(nextlevel, curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), st.factor, curflowplan, false);
   }
   else if (st.fl->getQuantity() < -ROUNDING_ERROR)
   {
@@ -183,11 +183,11 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
     {
       // CASE 3A: Not produced enough yet: move forward
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
-        && f->getCumulativeProduced() <= startQty) ++f;
+          && f->getCumulativeProduced() <= startQty) ++f;
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
-             && ( (f->getQuantity()<=0 && f->getCumulativeProduced() < endQty)
-               || (f->getQuantity()>0
-                   && f->getCumulativeProduced()-f->getQuantity() < endQty))
+          && ( (f->getQuantity()<=0 && f->getCumulativeProduced() < endQty)
+              || (f->getQuantity()>0
+                  && f->getCumulativeProduced()-f->getQuantity() < endQty))
             )
       {
         if (f->getQuantity() > ROUNDING_ERROR)
@@ -208,11 +208,11 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
     {
       // CASE 3B: Produced too much already: move backward
       while ( f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
-        && ((f->getQuantity()<=0 && f->getCumulativeProduced() < endQty)
-            || (f->getQuantity()>0
+          && ((f->getQuantity()<=0 && f->getCumulativeProduced() < endQty)
+              || (f->getQuantity()>0
                   && f->getCumulativeProduced()-f->getQuantity() < endQty))) --f;
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
-             && f->getCumulativeProduced() > startQty)
+          && f->getCumulativeProduced() > startQty)
       {
         if (f->getQuantity() > ROUNDING_ERROR)
         {
@@ -224,9 +224,9 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
           updateStack(nextlevel,
-            -curqty*newqty/curflowplan->getQuantity(),
-            curfactor*newqty/f->getQuantity(),
-            x);
+              -curqty*newqty/curflowplan->getQuantity(),
+              curfactor*newqty/f->getQuantity(),
+              x);
         }
         --f;
       }
@@ -235,10 +235,10 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
       // Unproduced material (i.e. material that is consumed but never
       // produced) is handled with a special entry on the stack.
       updateStack(nextlevel,
-        curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(),
-        st.factor,
-        curflowplan,
-        false);
+          curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(),
+          st.factor,
+          curflowplan,
+          false);
   }
   else if (curflowplan->getQuantity() > ROUNDING_ERROR)
   {
@@ -254,7 +254,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 
 
 DECLARE_EXPORT void PeggingIterator::pushflowplans
-  (const OperationPlan* op, bool downstream, short nextlevel)
+(const OperationPlan* op, bool downstream, short nextlevel)
 {
   state& st = stack.top();
 
@@ -277,8 +277,8 @@ DECLARE_EXPORT void PeggingIterator::pushflowplans
     // Only a single suboperationplan
     pushflowplans(op->getSubOperationPlan() , downstream, nextlevel);
   for (OperationPlan::OperationPlanList::const_iterator
-    j = op->getSubOperationPlans().begin();
-    j != op->getSubOperationPlans().end(); ++j)
+      j = op->getSubOperationPlans().begin();
+      j != op->getSubOperationPlans().end(); ++j)
     // A linked list of suboperationplans
     pushflowplans(*j, downstream, nextlevel);
 }

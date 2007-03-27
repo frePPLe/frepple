@@ -45,10 +45,10 @@ DECLARE_EXPORT void Load::validate(Action action)
       throw DataException("Missing operation and resource on a load");
     else if (!oper)
       throw DataException("Missing operation on a load on resource '"
-        + res->getName() + "'");
+          + res->getName() + "'");
     else if (!res)
       throw DataException("Missing resource on a load on operation '"
-        + oper->getName() + "'");
+          + oper->getName() + "'");
   }
 
   // Check if a load with identical load and operation already exists
@@ -64,7 +64,7 @@ DECLARE_EXPORT void Load::validate(Action action)
       {
         delete this;
         throw DataException("Load of '" + oper->getName() + "' and '"
-          + res->getName() + "' already exists");
+            + res->getName() + "' already exists");
       }
       break;
     case CHANGE:
@@ -81,7 +81,7 @@ DECLARE_EXPORT void Load::validate(Action action)
       if (i == oper->getLoads().end())
         // Nothing to delete
         throw DataException("Can't remove nonexistent load of '"
-          + oper->getName() + "' and '" + res->getName() + "'");
+            + oper->getName() + "' and '" + res->getName() + "'");
       throw DataException("Can't delete a load"); // @todo crashes when the parser releases the writelock
       delete &*i;
       // Set a flag to make sure the level computation is triggered again
@@ -165,9 +165,9 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, XMLElement& pElement)
     delete static_cast<Action*>(pIn.getUserArea());
     pIn.setUserArea(
       new Action(MetaClass::decodeAction(pElement.getString().c_str()))
-      );
+    );
   }
-  else if(pIn.isObjectEnd())
+  else if (pIn.isObjectEnd())
   {
     // The load data is now all read in. See if it makes sense now...
     validate(!pIn.getUserArea() ?

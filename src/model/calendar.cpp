@@ -59,7 +59,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::addBucket (Date d)
   {
     ostringstream msg;
     msg << "Trying to create two buckets with start date " << d
-      << " in calendar '" << getName() << "'";
+    << " in calendar '" << getName() << "'";
     throw DataException(msg.str());
   }
 
@@ -101,7 +101,7 @@ DECLARE_EXPORT void Calendar::removeBucket(Calendar::Bucket* bkt)
   // Error
   if (!b)
     throw DataException("Trying to remove unavailable bucket from calendar '"
-      + getName() + "'");
+        + getName() + "'");
 
   if (bkt->prevBucket)
   {
@@ -180,15 +180,15 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
 {
   // Pick up the start attribute
   char* start =
-  	XMLString::transcode(atts->getValue(Tags::tag_start.getXMLCharacters()));
-	if (!start)
+    XMLString::transcode(atts->getValue(Tags::tag_start.getXMLCharacters()));
+  if (!start)
   {
-		XMLString::release(&start);
+    XMLString::release(&start);
     throw DataException("Missing the attribute START for creating a bucket");
   }
   Date d;
-	d = Date(start);
-	XMLString::release(&start);
+  d = Date(start);
+  XMLString::release(&start);
 
   // Check for existence of the bucket
   BucketIterator x = beginBuckets();
@@ -207,20 +207,20 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
         return result;
       if (x!=endBuckets())
         throw("Bucket " + string(d)
-          + " already exists in calenar '" + getName() + "'");
+            + " already exists in calenar '" + getName() + "'");
       result = addBucket(d);
       return result;
     case CHANGE:
       // Only changes are allowed
       if (x==endBuckets())
         throw DataException("Bucket " + string(d)
-          + " doesn't exist in calendar '" + getName() + "'");
+            + " doesn't exist in calendar '" + getName() + "'");
       return result;
     case REMOVE:
       // Delete the entity
       if (x==endBuckets())
         throw DataException("Bucket " + string(d)
-          + " doesn't exist in calendar '" + getName() + "'");
+            + " doesn't exist in calendar '" + getName() + "'");
       else
       {
         // Delete it
@@ -251,7 +251,7 @@ DECLARE_EXPORT void Calendar::beginElement (XMLInput& pIn, XMLElement& pElement)
 
 
 DECLARE_EXPORT void Calendar::Bucket::writeElement
-  (XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   assert(m == DEFAULT || m == FULL);
   o->BeginObject(Tags::tag_bucket, Tags::tag_start, startdate);

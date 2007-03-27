@@ -51,9 +51,9 @@ DECLARE_EXPORT void Buffer::updateProblems()
   float curMin(0.0);
   float excessQty(0.0);
   for (flowplanlist::const_iterator
-    f=flowplans.begin();
-    f!=flowplans.end();
-    ++f)
+      f=flowplans.begin();
+      f!=flowplans.end();
+      ++f)
   {
     // Process changes in the maximum or minimum targets
     if (f->getType() == 4)
@@ -71,7 +71,8 @@ DECLARE_EXPORT void Buffer::updateProblems()
         shortageProblemStart = f->getDate();
         shortageQty = delta;
         shortageProblem = true;
-      } else if (delta < shortageQty)
+      }
+      else if (delta < shortageQty)
         // New shortage qty
         shortageQty = delta;
     }

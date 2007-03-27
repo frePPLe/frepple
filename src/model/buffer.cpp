@@ -61,7 +61,7 @@ DECLARE_EXPORT void Buffer::setOnHand(float f)
   // Check valid pointers
   if (!fl || !o)
     throw LogicException("Failed creating inventory operation for '"
-    + getName() + "'");
+        + getName() + "'");
 
   // Make sure the sign of the flow is correct: +1 or -1.
   fl->setQuantity(f>=0.0f ? 1.0f : -1.0f);
@@ -72,8 +72,8 @@ DECLARE_EXPORT void Buffer::setOnHand(float f)
   {
     // No operationplan exists yet
     OperationPlan *opplan = o->createOperationPlan(
-      static_cast<float>(fabs(f)), Date::infinitePast,
-      Date::infinitePast, NULL, false);
+          static_cast<float>(fabs(f)), Date::infinitePast,
+          Date::infinitePast, NULL, false);
     opplan->setLocked(true);
     opplan->initialize();
   }
@@ -91,7 +91,7 @@ DECLARE_EXPORT void Buffer::setOnHand(float f)
 DECLARE_EXPORT double Buffer::getOnHand(Date d) const
 {
   double tmp(0.0);
-  for(flowplanlist::const_iterator oo=flowplans.begin();
+  for (flowplanlist::const_iterator oo=flowplans.begin();
       oo!=flowplans.end(); ++oo)
   {
     if (oo->getDate() > d)
@@ -119,7 +119,7 @@ DECLARE_EXPORT double Buffer::getOnHand(Date d1, Date d2, bool min) const
   // Loop through all flowplans
   double tmp(0.0), record(0.0);
   Date d, prev_Date;
-  for(flowplanlist::const_iterator oo=flowplans.begin(); true; ++oo)
+  for (flowplanlist::const_iterator oo=flowplans.begin(); true; ++oo)
   {
     if (oo==flowplans.end() || oo->getDate() > d)
     {
@@ -191,8 +191,8 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m
     // A flowplan has been found
     const FlowPlan *fp = dynamic_cast<const FlowPlan*>(&*i);
     if (fp
-      && fp->getFlow()->getOperation()->getName() == string(INVENTORY_OPERATION)
-      && fabs(fp->getQuantity()) > ROUNDING_ERROR)
+        && fp->getFlow()->getOperation()->getName() == string(INVENTORY_OPERATION)
+        && fabs(fp->getQuantity()) > ROUNDING_ERROR)
       o->writeElement(Tags::tag_onhand, fp->getQuantity());
   }
 
@@ -203,7 +203,7 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m
   // Write extra plan information
   i = flowplans.begin();
   if ((o->getContentType() == XMLOutput::PLAN
-       || o->getContentType() == XMLOutput::PLANDETAIL) && i!=flowplans.end())
+      || o->getContentType() == XMLOutput::PLANDETAIL) && i!=flowplans.end())
   {
     o->BeginObject(Tags::tag_flow_plans);
     for (; i!=flowplans.end(); ++i)
@@ -273,7 +273,7 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
       if (!c)
         throw LogicException("Incorrect object type during read operation");
       throw DataException("Calendar '" + c->getName() +
-        "' has invalid type for use as buffer min calendar");
+          "' has invalid type for use as buffer min calendar");
     }
   }
   else if (pElement.isA(Tags::tag_maximum))
@@ -288,7 +288,7 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
       if (!c)
         throw LogicException("Incorrect object type during read operation");
       throw DataException("Calendar '" + c->getName() +
-        "' has invalid type for use as buffer max calendar");
+          "' has invalid type for use as buffer max calendar");
     }
   }
   else if (pElement.isA(Tags::tag_location))
@@ -315,9 +315,9 @@ DECLARE_EXPORT void Buffer::setMinimum(const CalendarFloat *cal)
   setChanged();
 
   // Calendar is already set.
-  if(min_cal)
+  if (min_cal)
   {
-    for(flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
+    for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
       if (oo->getType() == 3)
       {
         flowplans.erase(&(*oo));
@@ -334,8 +334,8 @@ DECLARE_EXPORT void Buffer::setMinimum(const CalendarFloat *cal)
   min_cal = const_cast< CalendarFloat* >(cal);
   float curMin = 0.0f;
   for (Calendar::BucketIterator x = min_cal->beginBuckets();
-       x != min_cal->endBuckets(); ++x)
-         if (curMin != min_cal->getValue(x))
+      x != min_cal->endBuckets(); ++x)
+    if (curMin != min_cal->getValue(x))
     {
       curMin = min_cal->getValue(x);
       flowplanlist::EventMinQuantity *newBucket =
@@ -354,9 +354,9 @@ DECLARE_EXPORT void Buffer::setMaximum(const CalendarFloat *cal)
   setChanged();
 
   // Calendar is already set.
-  if(max_cal)
+  if (max_cal)
   {
-    for(flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
+    for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
       if (oo->getType() == 4)
       {
         flowplans.erase(&(*oo));
@@ -373,7 +373,7 @@ DECLARE_EXPORT void Buffer::setMaximum(const CalendarFloat *cal)
   max_cal = const_cast<CalendarFloat*>(cal);
   float curMax = 0.0f;
   for (Calendar::BucketIterator x = max_cal->beginBuckets();
-       x != max_cal->endBuckets(); ++x)
+      x != max_cal->endBuckets(); ++x)
     if (curMax != max_cal->getValue(x))
     {
       curMax = max_cal->getValue(x);
@@ -387,7 +387,7 @@ DECLARE_EXPORT void Buffer::setMaximum(const CalendarFloat *cal)
 DECLARE_EXPORT void Buffer::deleteOperationPlans(bool deleteLocked)
 {
   // Delete the operationplans
-  for(flowlist::iterator i=flows.begin(); i!=flows.end(); ++i)
+  for (flowlist::iterator i=flows.begin(); i!=flows.end(); ++i)
     OperationPlan::deleteOperationPlans(i->getOperation(),deleteLocked);
 
   // Mark to recompute the problems
@@ -413,7 +413,7 @@ DECLARE_EXPORT Buffer::~Buffer()
 
 
 DECLARE_EXPORT void BufferInfinite::writeElement
-  (XMLOutput *o, const XMLtag &tag, mode m) const
+(XMLOutput *o, const XMLtag &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -445,7 +445,7 @@ DECLARE_EXPORT void BufferMinMax::writeElement(XMLOutput *o, const XMLtag &tag, 
 
   // Write the complete object
   if (m != NOHEADER) o->BeginObject
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Write the fields
   Buffer::writeElement(o, tag, NOHEADER);

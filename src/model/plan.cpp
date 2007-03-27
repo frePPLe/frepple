@@ -41,8 +41,8 @@ DECLARE_EXPORT Plan::~Plan()
   // Closing the logfile
   Plan::setLogFile("");
 
-	// Clear the pointer to this singleton object
-	thePlan = NULL;
+  // Clear the pointer to this singleton object
+  thePlan = NULL;
 }
 
 
@@ -53,7 +53,7 @@ DECLARE_EXPORT void Plan::setCurrent (Date l)
 
   // Let all operationplans check for new ProblemBeforeCurrent and
   // ProblemBeforeFence problems.
-  for(Operation::iterator i = Operation::begin(); i != Operation::end(); ++i)
+  for (Operation::iterator i = Operation::begin(); i != Operation::end(); ++i)
     WLock<Operation>(&*i)->setChanged();
 }
 
@@ -123,28 +123,28 @@ DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
 
 DECLARE_EXPORT void Plan::setLogFile(string x)
 {
-    // Close an eventual existing log file.
-  	if (!logfilename.empty()) cout << "Closing plan on " << Date::now() << endl;
-    if (log) log.close();
+  // Close an eventual existing log file.
+  if (!logfilename.empty()) cout << "Closing plan on " << Date::now() << endl;
+  if (log) log.close();
 
-    // Pick up the file name
-    logfilename = x;
+  // Pick up the file name
+  logfilename = x;
 
-    // No new logfile specified
-    if (x.empty()) return;
+  // No new logfile specified
+  if (x.empty()) return;
 
-    // Open the file
-    log.open(x.c_str(), ios::out);
-    if (log.bad())
-      // The log file could not be opened
-      throw RuntimeException("Could not open log file '" + x + "'");
+  // Open the file
+  log.open(x.c_str(), ios::out);
+  if (log.bad())
+    // The log file could not be opened
+    throw RuntimeException("Could not open log file '" + x + "'");
 
-    // Redirect the standard output file.
-    cout.rdbuf(log.rdbuf());
+  // Redirect the standard output file.
+  cout.rdbuf(log.rdbuf());
 
-    // Print a nice header
-    cout << "Start logging Frepple " << PACKAGE_VERSION << " ("
-      << __DATE__ << ") on " << Date::now() << endl;
+  // Print a nice header
+  cout << "Start logging Frepple " << PACKAGE_VERSION << " ("
+  << __DATE__ << ") on " << Date::now() << endl;
 }
 
 

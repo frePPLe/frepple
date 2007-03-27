@@ -34,7 +34,7 @@ namespace frepple
 
 DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
     : TimeLine<FlowPlan>::EventChangeOnhand(
-        f->getQuantity() * opplan->getQuantity())
+      f->getQuantity() * opplan->getQuantity())
 {
   assert(opplan);
   fl = const_cast<Flow*>(f);
@@ -72,10 +72,10 @@ DECLARE_EXPORT bool FlowPlan::check() const
 {
   // Quantity must match with the operationplan
   if (fabs(oper->getQuantity() * fl->getQuantity() - getQuantity())
-    > ROUNDING_ERROR)
+      > ROUNDING_ERROR)
     return false;
   else
-	return true;
+    return true;
 }
 
 
@@ -107,8 +107,8 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode
       o->writeElement(Tags::tag_date, k->getDate());
       o->writeElement(Tags::tag_buffer, Tags::tag_name, k->getFlow()->getBuffer()->getName());
       o->writeElement(Tags::tag_operation_plan,
-        Tags::tag_id, k->getOperationPlan()->getIdentifier(),
-        Tags::tag_operation, k->getFlow()->getOperation()->getName());
+          Tags::tag_id, k->getOperationPlan()->getIdentifier(),
+          Tags::tag_operation, k->getFlow()->getOperation()->getName());
       o->EndObject(Tags::tag_pegging);
     }
 
@@ -124,8 +124,8 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode
       o->writeElement(Tags::tag_date, k->getDate());
       o->writeElement(Tags::tag_buffer, Tags::tag_name, k->getFlow()->getBuffer()->getName());
       o->writeElement(Tags::tag_operation_plan,
-        Tags::tag_id, k->getOperationPlan()->getIdentifier(),
-        Tags::tag_operation, k->getFlow()->getOperation()->getName());
+          Tags::tag_id, k->getOperationPlan()->getIdentifier(),
+          Tags::tag_operation, k->getFlow()->getOperation()->getName());
       o->EndObject(Tags::tag_pegging);
     }
   }

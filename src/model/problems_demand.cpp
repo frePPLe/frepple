@@ -57,7 +57,7 @@ DECLARE_EXPORT void Demand::updateProblems()
     else
     {
       // Loop through the deliveries
-      for(OperationPlan_list::iterator i = deli.begin(); i!=deli.end(); ++i)
+      for (OperationPlan_list::iterator i = deli.begin(); i!=deli.end(); ++i)
       {
         // Check for ProblemLate problem
         long d(getDue() - (*i)->getDates().getEnd());
@@ -78,7 +78,7 @@ DECLARE_EXPORT void Demand::updateProblems()
   // Loop through the existing problems
   stack<Problem*> problemsToDelete;
   for (Problem::const_iterator j = Problem::begin(this, false);
-    j!=Problem::end(); ++j)
+      j!=Problem::end(); ++j)
   {
     // The if-statement keeps the problem detection code concise and
     // concentrated. However, a drawback of this design is that a new Problem

@@ -34,18 +34,18 @@ namespace frepple
 
 DECLARE_EXPORT void Operation::updateProblems()
 {
-	// Find all operationplans, and delegate the problem detection to them
+  // Find all operationplans, and delegate the problem detection to them
   // @todo rework the operation problem detection to be based on the op class,
   // not the opplan class
-  for(OperationPlan *o = opplan; o; o = o->next) o->updateProblems();
+  for (OperationPlan *o = opplan; o; o = o->next) o->updateProblems();
 }
-  	
+
 
 //
 // BEFORECURRENT, BEFOREFENCE, PLANNEDEARLY, PLANNEDLATE
 //
 
-  	
+
 void OperationPlan::updateProblems()
 {
   // A flag for each problem type that may need to be created
@@ -54,11 +54,11 @@ void OperationPlan::updateProblems()
   bool needsEarly(false);
   bool needsLate(false);
 
-	// The following categories of operation plans can't have problems:
-	//  - locked opplans
-	//  - opplans having an owner
+  // The following categories of operation plans can't have problems:
+  //  - locked opplans
+  //  - opplans having an owner
   //  - opplans of hidden operations
-	if (!getOwner() && !getLocked() && getOperation()->getDetectProblems())
+  if (!getOwner() && !getLocked() && getOperation()->getDetectProblems())
   {
     // Check if a BeforeCurrent problem is required.
     if (dates.getStart() < Plan::instance().getCurrent())
@@ -68,7 +68,7 @@ void OperationPlan::updateProblems()
     // Note that we either detect of beforeCurrent or a beforeFence problem,
     // never both simultaneously.
     else if
-      (dates.getStart() < Plan::instance().getCurrent() + oper->getFence())
+    (dates.getStart() < Plan::instance().getCurrent() + oper->getFence())
       needsBeforeFence = true;
 
     // Check if a PlannedEarly problem is required
@@ -87,7 +87,7 @@ void OperationPlan::updateProblems()
   // Loop through the existing problems
   stack<Problem*> problemsToDelete;
   for (Problem::const_iterator j = Problem::begin(this, false);
-     j!=Problem::end(); ++j)
+      j!=Problem::end(); ++j)
   {
     // The if-statement keeps the problem detection code concise and
     // concentrated. However, a drawback of this design is that a new Problem
@@ -148,7 +148,7 @@ void ProblemPlannedEarly::setAllowedEarly(TimePeriod p)
   // Let all operationplans check for new problems
   // Note that ProblemPlannedEarly problems are subscribing to their
   // operationplan and the update() method is notifying them.
-  for(OperationPlan::iterator i = OperationPlan::begin();
+  for (OperationPlan::iterator i = OperationPlan::begin();
       i != OperationPlan::end(); ++i)
     i->getOperation()->setChanged();
 }
@@ -161,7 +161,7 @@ void ProblemPlannedLate::setAllowedLate(TimePeriod p)
   // Let all operationplans check for new problems
   // Note that ProblemPlannedLate problems are subscribing to their
   // operationplan and the update() method is notifying them.
-  for(OperationPlan::iterator i = OperationPlan::begin();
+  for (OperationPlan::iterator i = OperationPlan::begin();
       i != OperationPlan::end(); ++i)
     i->getOperation()->setChanged();
 }
@@ -177,14 +177,14 @@ void OperationPlanRouting::updateProblems()  // @todo test! may well be broken
   // Make a list of all existing precedence problems
   list<ProblemPrecedence*> currentproblems;
   for (Problem::const_iterator j = Problem::begin(this, false);
-    j!=Problem::end(); ++j)
+      j!=Problem::end(); ++j)
     if (typeid(**j) == typeid(ProblemPrecedence))
       currentproblems.push_front(static_cast<ProblemPrecedence*>(*j));
 
   // Problem detection: Check for new precedence_before problem
   OperationPlan* prev = NULL;
   for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
-       i != step_opplans.end(); ++i)
+      i != step_opplans.end(); ++i)
   {
     if (prev && prev->getDates().getEnd() > (*i)->getDates().getStart())
     {

@@ -130,7 +130,7 @@ void LibraryModel::initialize()
   if (init)
   {
     cout << "Warning: Calling Frepple::LibraryModel::initialize() more "
-     << "than once." << endl;
+    << "than once." << endl;
     return;
   }
   init = true;
@@ -353,7 +353,7 @@ void LibraryModel::initialize()
 
   // Verify the existence of the schema file
   string env = Environment::getHomeDirectory();
-	env += "frepple.xsd";
+  env += "frepple.xsd";
   struct stat stat_p;
   if (stat(env.c_str(), &stat_p))
     // Can't locate
@@ -380,7 +380,7 @@ DECLARE_EXPORT void CommandPlanSize::execute()
 
   // Intro
   cout << endl << "Size information of Frepple " << PACKAGE_VERSION
-    << " (" << __DATE__ << ")" << endl << endl;
+  << " (" << __DATE__ << ")" << endl << endl;
 
   // Print loaded modules
   CommandLoadLibrary::printModules();
@@ -429,13 +429,13 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   {
     memsize += o->getSize();
     for (Operation::flowlist::const_iterator fl = o->getFlows().begin();
-      fl != o->getFlows().end(); ++ fl)
+        fl != o->getFlows().end(); ++ fl)
     {
       ++countFlows;
       memFlows += fl->getSize();
     }
     for (Operation::loadlist::const_iterator ld = o->getLoads().begin();
-      ld != o->getLoads().end(); ++ ld)
+        ld != o->getLoads().end(); ++ ld)
     {
       ++countLoads;
       memLoads += ld->getSize();
@@ -470,8 +470,8 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   // Operation_plans
   size_t countloadplans(0), countflowplans(0);
   memsize = count = 0;
-  for(OperationPlan::iterator j = OperationPlan::begin();
-        j!=OperationPlan::end(); ++j)
+  for (OperationPlan::iterator j = OperationPlan::begin();
+      j!=OperationPlan::end(); ++j)
   {
     ++count;
     memsize += sizeof(*j);

@@ -49,7 +49,7 @@ DECLARE_EXPORT void Demand::setQuantity(float f)
 DECLARE_EXPORT void Demand::deleteOperationPlans (bool deleteLockedOpplans)
 {
   // Delete all opplans
-  for(OperationPlan_list::iterator i = deli.begin(); i!=deli.end(); )
+  for (OperationPlan_list::iterator i = deli.begin(); i!=deli.end(); )
     if (deleteLockedOpplans || !(*i)->getLocked())
     {
       // Setting the demand pointer to NULL is required to prevent the
@@ -102,41 +102,41 @@ DECLARE_EXPORT void Demand::removeDelivery(OperationPlan * o)
 
 DECLARE_EXPORT const Demand::OperationPlan_list& Demand::getDelivery() const
 {
-	// We need to check the sorting order of the list first! It could be disturbed
-	// when operationplans are being moved around.
-	// The sorting routine isn't very efficient, but should suffice since the
-	// list of delivery operationplans is short and isn't expected to be
+  // We need to check the sorting order of the list first! It could be disturbed
+  // when operationplans are being moved around.
+  // The sorting routine isn't very efficient, but should suffice since the
+  // list of delivery operationplans is short and isn't expected to be
   // disturbed very often.
-  for(bool swapped(!deli.empty()); swapped; swapped=false)
-	{
-		OperationPlan_list::iterator j = const_cast<Demand*>(this)->deli.begin();
-	  ++j;
-	  for (OperationPlan_list::iterator i =
-            const_cast<Demand*>(this)->deli.begin();
-         j!=const_cast<Demand*>(this)->deli.end(); ++j)
-	  {
-	  	if ((*i)->getDates().getEnd() < (*j)->getDates().getEnd())
-	  	{
+  for (bool swapped(!deli.empty()); swapped; swapped=false)
+  {
+    OperationPlan_list::iterator j = const_cast<Demand*>(this)->deli.begin();
+    ++j;
+    for (OperationPlan_list::iterator i =
+          const_cast<Demand*>(this)->deli.begin();
+        j!=const_cast<Demand*>(this)->deli.end(); ++j)
+    {
+      if ((*i)->getDates().getEnd() < (*j)->getDates().getEnd())
+      {
         // Oh yes, the ordering was disrupted indeed...
         iter_swap(i,j);
         // The Borland compiler doesn't understand that this variable is used.
         // It gives a incorrect warning message...
-	  		swapped = true;
+        swapped = true;
         break;
-	  	}
+      }
       ++i;
-	  }
-	}
+    }
+  }
 
-	return deli;
+  return deli;
 }
 
 
 DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
 {
-	// If the policy is SINGLEDELIVERY then we need to unregister the previous
-	// delivery operationplan
-	if (planSingleDelivery() && !deli.empty()) removeDelivery(*deli.begin());
+  // If the policy is SINGLEDELIVERY then we need to unregister the previous
+  // delivery operationplan
+  if (planSingleDelivery() && !deli.empty()) removeDelivery(*deli.begin());
 
   // Dummy call to this function
   if (!o) return;
@@ -144,7 +144,7 @@ DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
   // Check if it is already in the list.
   // If it is, simply exit the function. No need to give a warning message
   // since it's harmless.
-  for(OperationPlan_list::iterator i = deli.begin(); i!=deli.end(); ++i)
+  for (OperationPlan_list::iterator i = deli.begin(); i!=deli.end(); ++i)
     if (*i == o) return;
 
   // Add to the list of delivery operationplans. The insertion is such
@@ -187,7 +187,7 @@ DECLARE_EXPORT Operation::pointer Demand::getDeliveryOperation() const
 DECLARE_EXPORT float Demand::getPlannedQuantity() const
 {
   float delivered(0.0f);
-  for(OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
+  for (OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
     delivered += (*i)->getQuantity();
   return delivered;
 }
@@ -228,10 +228,10 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m
 
   // Write extra plan information
   if ((o->getContentType() == XMLOutput::PLAN
-       || o->getContentType() == XMLOutput::PLANDETAIL) && !deli.empty())
+      || o->getContentType() == XMLOutput::PLANDETAIL) && !deli.empty())
   {
     o->BeginObject(Tags::tag_operation_plans);
-    for(OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
+    for (OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
       o->writeElement(Tags::tag_operation_plan, *i, FULL);
     o->EndObject(Tags::tag_operation_plans);
   }
@@ -301,7 +301,7 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
 DECLARE_EXPORT void Demand::addPolicy(const string& s)
 {
   // Find words till we are the end of the string
-  for(const char* ptr = s.c_str(); *ptr; ++ptr)
+  for (const char* ptr = s.c_str(); *ptr; ++ptr)
   {
     // Skip whitespace
     while (isspace(*ptr) || ispunct(*ptr)) ++ptr;
@@ -362,7 +362,7 @@ DECLARE_EXPORT void Demand::addPolicy(const string& s)
     // Unrecognized policy name...
     if (!found)
       throw DataException("Unrecognized policy for demand '" + getName()
-        + "' in value: '" + ptr + "'");
+          + "' in value: '" + ptr + "'");
   }
 }
 

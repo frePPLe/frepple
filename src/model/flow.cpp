@@ -45,10 +45,10 @@ DECLARE_EXPORT void Flow::validate(Action action)
       throw DataException("Missing operation and buffer on a flow");
     else if (!oper)
       throw DataException("Missing operation on a flow with buffer '"
-        + buf->getName() + "'");
+          + buf->getName() + "'");
     else
       throw DataException("Missing buffer on a flow with operation '"
-        + oper->getName() + "'");
+          + oper->getName() + "'");
   }
 
   // Check if a flow with identical buffer and operation already exists
@@ -64,7 +64,7 @@ DECLARE_EXPORT void Flow::validate(Action action)
       {
         delete this;
         throw DataException("Flow of '" + oper->getName() + "' and '" +
-          buf->getName() + "' already exists.");
+            buf->getName() + "' already exists.");
       }
       break;
     case CHANGE:
@@ -81,7 +81,7 @@ DECLARE_EXPORT void Flow::validate(Action action)
       // Nothing to delete
       if (i == oper->getFlows().end())
         throw DataException("Can't remove nonexistent flow of '"
-          + oper->getName() + "' and '" + buf->getName() + "'");
+            + oper->getName() + "' and '" + buf->getName() + "'");
       // Delete
       throw DataException("Can't delete a flow"); // @todo crashes when the parser releases the writelock
       delete &*i;
@@ -158,21 +158,21 @@ DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, XMLElement& pElement)
     if (o) setOperation(o);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if(pElement.isA(Tags::tag_quantity))
+  else if (pElement.isA(Tags::tag_quantity))
     setQuantity(pElement.getFloat());
   else if (pElement.isA(Tags::tag_action))
   {
     delete static_cast<Action*>(pIn.getUserArea());
     pIn.setUserArea(
       new Action(MetaClass::decodeAction(pElement.getString().c_str()))
-      );
+    );
   }
-  else if(pIn.isObjectEnd())
+  else if (pIn.isObjectEnd())
   {
     // The Flow data is now all read in. See if it makes sense now...
     validate(!pIn.getUserArea() ?
-            ADD_CHANGE :
-            *static_cast<Action*>(pIn.getUserArea())
+        ADD_CHANGE :
+        *static_cast<Action*>(pIn.getUserArea())
             );
     delete static_cast<Action*>(pIn.getUserArea());   // @todo if an exception is thrown in the validate routine, this action object may be leaked
   }

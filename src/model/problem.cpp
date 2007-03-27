@@ -122,37 +122,37 @@ DECLARE_EXPORT void Plannable::computeProblems()
   // Exit immediately if the list is up to date
   if (!anyChange && !computationBusy) return;
 
-	computationBusy = true;
+  computationBusy = true;
   // Get exclusive access to this function in a multi-threaded environment.
   static Mutex computationbusy;
   {
-  ScopeMutexLock l(computationbusy);
+    ScopeMutexLock l(computationbusy);
 
-  // Another thread may already have computed it while this thread was
-  // waiting for the lock
-  while (anyChange)
-  {
-    // Reset to change flag. Note that during the computation the flag
-    // could be switched on again by some model change in a different thread.
-    anyChange = false;
-
-    // Loop through all entities
-    for (HasProblems::EntityIterator i; i!=HasProblems::endEntity(); ++i)
+    // Another thread may already have computed it while this thread was
+    // waiting for the lock
+    while (anyChange)
     {
-      Plannable *e = i->getEntity();
-      if (e->getChanged() && e->getDetectProblems()) i->updateProblems();
+      // Reset to change flag. Note that during the computation the flag
+      // could be switched on again by some model change in a different thread.
+      anyChange = false;
+
+      // Loop through all entities
+      for (HasProblems::EntityIterator i; i!=HasProblems::endEntity(); ++i)
+      {
+        Plannable *e = i->getEntity();
+        if (e->getChanged() && e->getDetectProblems()) i->updateProblems();
+      }
+
+      // Mark the entities as unchanged
+      for (HasProblems::EntityIterator j; j!=HasProblems::endEntity(); ++j)
+      {
+        Plannable *e = j->getEntity();
+        if (e->getChanged() && e->getDetectProblems()) e->setChanged(false);
+      }
     }
 
-    // Mark the entities as unchanged
-    for (HasProblems::EntityIterator j; j!=HasProblems::endEntity(); ++j)
-    {
-      Plannable *e = j->getEntity();
-      if (e->getChanged() && e->getDetectProblems()) e->setChanged(false);
-    }
-  }
-
-  // Unlock the exclusive access to this function
-	computationBusy = false;
+    // Unlock the exclusive access to this function
+    computationBusy = false;
   }
 }
 
@@ -163,7 +163,7 @@ DECLARE_EXPORT void Plannable::writeElement (XMLOutput* o, const XMLtag& tag, mo
   // within the writeElement() method of other classes.
 
   // Problem detection flag only written if different from the default value
-  if(!getDetectProblems()) o->writeElement(Tags::tag_detectproblems, false);
+  if (!getDetectProblems()) o->writeElement(Tags::tag_detectproblems, false);
 }
 
 
@@ -181,7 +181,7 @@ DECLARE_EXPORT void Problem::clearProblems()
 {
   // Loop through all entities, and call clearProblems(i)
   for (HasProblems::EntityIterator i = HasProblems::beginEntity();
-    i != HasProblems::endEntity(); ++i)
+      i != HasProblems::endEntity(); ++i)
   {
     clearProblems(*i);
     i->getEntity()->setChanged(true);
@@ -215,7 +215,7 @@ DECLARE_EXPORT void Problem::writer(const MetaCategory& c, XMLOutput* o)
   if (piter != end())
   {
     o->BeginObject(*c.grouptag);
-    for(; piter!=end(); ++piter)
+    for (; piter!=end(); ++piter)
       // Note: not the regular write, but a fast write to speed things up.
       // This is possible since problems aren't nested and are never
       // referenced.
@@ -268,7 +268,7 @@ DECLARE_EXPORT HasProblems::EntityIterator::EntityIterator() : type(0)
 
 
 DECLARE_EXPORT HasProblems::EntityIterator& HasProblems::EntityIterator::operator++()
-  //@todo Problem iterator is not super-efficient, shows up high in profiling
+//@todo Problem iterator is not super-efficient, shows up high in profiling
 {
   switch (type)
   {
@@ -308,7 +308,7 @@ DECLARE_EXPORT HasProblems::EntityIterator& HasProblems::EntityIterator::operato
       delete demIter;
       demIter = NULL;
       return *this;
-    }
+  }
   throw LogicException("Unreachable code reached");
 }
 
@@ -325,7 +325,7 @@ DECLARE_EXPORT HasProblems::EntityIterator::~EntityIterator()
     case 2: delete operIter; return;
     // Demand
     case 3: delete demIter; return;
-    }
+  }
 }
 
 
@@ -343,7 +343,7 @@ DECLARE_EXPORT HasProblems::EntityIterator::EntityIterator(const EntityIterator&
 
 
 DECLARE_EXPORT HasProblems::EntityIterator&
-  HasProblems::EntityIterator::operator=(const EntityIterator& o)
+HasProblems::EntityIterator::operator=(const EntityIterator& o)
 {
   // Gracefully handle self assignment
   if (this == &o) return *this;
@@ -360,7 +360,7 @@ DECLARE_EXPORT HasProblems::EntityIterator&
 
 
 DECLARE_EXPORT bool
-  HasProblems::EntityIterator::operator != (const EntityIterator& t) const
+HasProblems::EntityIterator::operator != (const EntityIterator& t) const
 {
   // Different iterator type, thus always different and return false
   if (type != t.type) return true;

@@ -97,8 +97,8 @@ DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (float q, Date s, D
 
 
 void Operation::initOperationPlan (OperationPlan* opplan, float q,
-   const Date& s, const Date& e, const Demand* l, bool updates_okay,
-   OperationPlan* ow, unsigned long i, bool makeflowsloads) const
+    const Date& s, const Date& e, const Demand* l, bool updates_okay,
+    OperationPlan* ow, unsigned long i, bool makeflowsloads) const
 {
   opplan->oper = const_cast<Operation*>(this);
   opplan->setDemand(l);
@@ -147,10 +147,10 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mod
 
   // Write extra plan information
   if ((o->getContentType() == XMLOutput::PLAN
-       || o->getContentType() == XMLOutput::PLANDETAIL) && opplan)
+      || o->getContentType() == XMLOutput::PLANDETAIL) && opplan)
   {
     o->BeginObject(Tags::tag_operation_plans);
-    for(OperationPlan::iterator i(this); i!=OperationPlan::end(); ++i)
+    for (OperationPlan::iterator i(this); i!=OperationPlan::end(); ++i)
       o->writeElement(Tags::tag_operation_plan, *i, FULL);
     o->EndObject(Tags::tag_operation_plans);
   }
@@ -160,7 +160,7 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mod
 DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_flow)
-    && pIn.getParentElement().isA(Tags::tag_flows))
+      && pIn.getParentElement().isA(Tags::tag_flows))
   {
     Flow *f =
       dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn));
@@ -201,7 +201,7 @@ DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, XMLElement& pElement)
 
 
 DECLARE_EXPORT void OperationFixedTime::setOperationPlanParameters
-  (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
+(OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
   // Invalid call to the function, or locked operationplan.
   if (!oplan || q<0 || oplan->getLocked()) return;
@@ -222,7 +222,7 @@ DECLARE_EXPORT void OperationFixedTime::setOperationPlanParameters
 
 
 DECLARE_EXPORT void OperationFixedTime::writeElement
-  (XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -253,7 +253,7 @@ DECLARE_EXPORT void OperationFixedTime::endElement (XMLInput& pIn, XMLElement& p
 
 
 DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
-      (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
+(OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
   // Invalid call to the function.
   if (!oplan || q<0) return;
@@ -315,13 +315,13 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
     oplan->setStartAndEnd(
       oplan->getDates().getEnd() - duration - t,
       oplan->getDates().getEnd()
-      );
+    );
   }
 }
 
 
 DECLARE_EXPORT void OperationTimePer::writeElement
-  (XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -355,7 +355,7 @@ DECLARE_EXPORT void OperationTimePer::endElement (XMLInput& pIn, XMLElement& pEl
 
 
 DECLARE_EXPORT void OperationRouting::writeElement
-  (XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -394,7 +394,7 @@ DECLARE_EXPORT void OperationRouting::beginElement (XMLInput& pIn, XMLElement& p
 DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_operation)
-  && pIn.getParentElement().isA(Tags::tag_steps))
+      && pIn.getParentElement().isA(Tags::tag_steps))
   {
     Operation *oper = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (oper) addStepBack (oper);
@@ -405,7 +405,7 @@ DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, XMLElement& pEl
 
 
 DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
-  (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
+(OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
   OperationPlanRouting *op = dynamic_cast<OperationPlanRouting*>(oplan);
 
@@ -432,7 +432,7 @@ DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
   {
     // Case 1: an end date is specified
     for (list<OperationPlan*>::reverse_iterator i = op->step_opplans.rbegin();
-         i != op->step_opplans.rend(); ++i)
+        i != op->step_opplans.rend(); ++i)
     {
       if ((*i)->getDates().getEnd() > e || firstOp)
       {
@@ -450,7 +450,7 @@ DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
   {
     // Case 2: a start date is specified
     for (list<OperationPlan*>::const_iterator i = op->step_opplans.begin();
-         i != op->step_opplans.end(); ++i)
+        i != op->step_opplans.end(); ++i)
     {
       if ((*i)->getDates().getStart() < s || firstOp)
       {
@@ -498,7 +498,7 @@ DECLARE_EXPORT float OperationAlternate::getPriority(Operation* o) const
 {
   if (!o)
     throw LogicException("Null pointer passed when searching for a \
-      suboperation of alternate operation '" + getName() + "'");
+        suboperation of alternate operation '" + getName() + "'");
   Operationlist::const_iterator altIter = alternates.begin();
   priolist::const_iterator prioIter = priorities.begin();
   while (altIter!=alternates.end() && *altIter != o)
@@ -509,7 +509,7 @@ DECLARE_EXPORT float OperationAlternate::getPriority(Operation* o) const
   if (*altIter == o)
     return *prioIter;
   throw DataException("Operation '" + o->getName() +
-    "' isn't a suboperation of alternate operation '" + getName() + "'");
+      "' isn't a suboperation of alternate operation '" + getName() + "'");
 }
 
 
@@ -527,12 +527,12 @@ DECLARE_EXPORT void OperationAlternate::setPriority(Operation* o, float f)
     *prioIter = f;
   else
     throw DataException("Operation '" + o->getName() +
-      "' isn't a suboperation of alternate operation '" + getName() + "'");
+        "' isn't a suboperation of alternate operation '" + getName() + "'");
 }
 
 
 DECLARE_EXPORT void OperationAlternate::writeElement
-  (XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -551,7 +551,7 @@ DECLARE_EXPORT void OperationAlternate::writeElement
   o->BeginObject(Tags::tag_alternates);
   priolist::const_iterator prioIter = priorities.begin();
   for (Operationlist::const_iterator i = alternates.begin();
-       i != alternates.end(); ++i)
+      i != alternates.end(); ++i)
   {
     o->BeginObject(Tags::tag_alternate);
     o->writeElement(Tags::tag_operation, *i, REFERENCE);
@@ -574,8 +574,8 @@ DECLARE_EXPORT void OperationAlternate::beginElement (XMLInput& pIn, XMLElement&
 
 DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& pElement)
 {
-	// Saving me some typing...
-	typedef pair<float,Operation*> tempData;
+  // Saving me some typing...
+  typedef pair<float,Operation*> tempData;
 
   /** Create a temporary object */
   if (!pIn.getUserArea()) pIn.setUserArea(new tempData(1.0,NULL));
@@ -583,8 +583,8 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
   if (pElement.isA(Tags::tag_alternate))
   {
     addAlternate(
-    	static_cast<tempData*>(pIn.getUserArea())->second,
-    	static_cast<tempData*>(pIn.getUserArea())->first);
+      static_cast<tempData*>(pIn.getUserArea())->second,
+      static_cast<tempData*>(pIn.getUserArea())->first);
     // Reset the defaults
     static_cast<tempData*>(pIn.getUserArea())->first = 1.0f;
     static_cast<tempData*>(pIn.getUserArea())->second = NULL;
@@ -592,7 +592,7 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
   else if (pElement.isA(Tags::tag_priority))
     static_cast<tempData*>(pIn.getUserArea())->first = pElement.getFloat();
   else if (pElement.isA(Tags::tag_operation)
-  && pIn.getParentElement().isA(Tags::tag_alternate))
+      && pIn.getParentElement().isA(Tags::tag_alternate))
   {
     Operation * b = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (b) static_cast<tempData*>(pIn.getUserArea())->second = b;
@@ -606,8 +606,8 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
 
 
 DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (float q,
-  Date s, Date e, const Demand* l, bool updates_okay, OperationPlan* ow,
-  unsigned long i, bool makeflowsloads) const
+    Date s, Date e, const Demand* l, bool updates_okay, OperationPlan* ow,
+    unsigned long i, bool makeflowsloads) const
 {
   // Note that the operationplan created is of a different subclass.
   OperationPlan *opplan = new OperationPlanAlternate();
@@ -619,7 +619,7 @@ DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (float q,
 
 
 DECLARE_EXPORT void OperationAlternate::setOperationPlanParameters
-  (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
+(OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
   // Argument passed must be a alternate operationplan
   OperationPlanAlternate *oa = dynamic_cast<OperationPlanAlternate*>(oplan);
@@ -628,7 +628,7 @@ DECLARE_EXPORT void OperationAlternate::setOperationPlanParameters
   if (!oa || q<0)
     throw LogicException("Incorrect parameters for alternate operationplan");
 
-  if(!oa->altopplan)
+  if (!oa->altopplan)
   {
     // Blindly accept the parameters if there is no suboperationplan
     oplan->setQuantity(q);
@@ -665,7 +665,7 @@ DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
 
 
 DECLARE_EXPORT void OperationEffective::writeElement
-  (XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -710,7 +710,7 @@ DECLARE_EXPORT void OperationEffective::endElement(XMLInput& pIn, XMLElement& pE
       if (!c)
         throw LogicException("Incorrect object type during read operation");
       throw DataException("Calendar '" + c->getName() +
-        "' has invalid type for use as effective operation calendar");
+          "' has invalid type for use as effective operation calendar");
     }
   }
   else if (pElement.isA(Tags::tag_startorend))
@@ -721,8 +721,8 @@ DECLARE_EXPORT void OperationEffective::endElement(XMLInput& pIn, XMLElement& pE
 
 
 DECLARE_EXPORT OperationPlan* OperationEffective::createOperationPlan
-  (float q, Date s, Date e, const Demand* l, bool updates_okay, OperationPlan* ow,
-  unsigned long i, bool makeflowsloads) const
+(float q, Date s, Date e, const Demand* l, bool updates_okay, OperationPlan* ow,
+ unsigned long i, bool makeflowsloads) const
 {
   // Note that the operationplan created is of a different subclass.
   OperationPlan *opplan = new OperationPlanEffective();
@@ -732,7 +732,7 @@ DECLARE_EXPORT OperationPlan* OperationEffective::createOperationPlan
 
 
 DECLARE_EXPORT void OperationEffective::setOperationPlanParameters
-  (OperationPlan* opplan, float q, Date s, Date e, bool preferEnd) const
+(OperationPlan* opplan, float q, Date s, Date e, bool preferEnd) const
 {
   // Argument passed must be a alternate operationplan
   OperationPlanEffective *oa = dynamic_cast<OperationPlanEffective*>(opplan);
@@ -743,12 +743,12 @@ DECLARE_EXPORT void OperationEffective::setOperationPlanParameters
   // Need a calendar
   if (!cal)
     throw DataException("Effective operation '" + getName()
-      + "' with unspecified calendar");
+        + "' with unspecified calendar");
 
   // Need at least 1 date
   if (!e && !s)
     throw LogicException ("Need at least 1 date when creating " \
-      "suboperationplans for operation '" + getName() + "'");
+        "suboperationplans for operation '" + getName() + "'");
 
   // Loop till we have an suboperationplan that is valid
   do
@@ -788,7 +788,7 @@ DECLARE_EXPORT void OperationEffective::setOperationPlanParameters
         oa->effopplan = oper->createOperationPlan(q, Date::infinitePast, e, NULL, true, oa);
       else
         throw LogicException
-          ("Invalid effective calendar for operation " + getName());
+        ("Invalid effective calendar for operation " + getName());
     }
     else
     {
@@ -797,14 +797,14 @@ DECLARE_EXPORT void OperationEffective::setOperationPlanParameters
         oa->effopplan = oper->createOperationPlan(q, s, Date::infinitePast, NULL, true, oa);
       else
         throw LogicException
-          ("Invalid effective calendar for operation " + getName());
+        ("Invalid effective calendar for operation " + getName());
     }
 
     // Verify the newly created operationplan
     Operation* oper = cal->getValue(
-      useEndDate ?
-        oa->effopplan->getDates().getEnd() :
-        oa->effopplan->getDates().getStart() );
+          useEndDate ?
+          oa->effopplan->getDates().getEnd() :
+          oa->effopplan->getDates().getStart() );
 
     // Compare current suboperation with the expected one
     if (oper == oa->effopplan->getOperation())

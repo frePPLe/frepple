@@ -44,9 +44,9 @@ DECLARE_EXPORT void Resource::setMaximum(CalendarFloat* c)
   setChanged();
 
   // Calendar is already set. Need to remove the current max events.
-  if(max_cal)
+  if (max_cal)
   {
-    for(loadplanlist::iterator oo=loadplans.begin(); oo!=loadplans.end(); )
+    for (loadplanlist::iterator oo=loadplans.begin(); oo!=loadplans.end(); )
       if (oo->getType() == 4)
       {
         loadplans.erase(&(*oo));
@@ -62,7 +62,7 @@ DECLARE_EXPORT void Resource::setMaximum(CalendarFloat* c)
   max_cal = c;
   float curMax = 0.0f;
   for (Calendar::BucketIterator x = max_cal->beginBuckets();
-       x != max_cal->endBuckets(); ++x)
+      x != max_cal->endBuckets(); ++x)
     if (curMax != max_cal->getValue(x))
     {
       curMax = max_cal->getValue(x);
@@ -164,7 +164,7 @@ DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, XMLElement& pElement)
       if (!c)
         throw LogicException("Incorrect object type during read operation");
       throw DataException("Calendar '" + c->getName() +
-        "' has invalid type for use as resource max calendar");
+          "' has invalid type for use as resource max calendar");
     }
   }
   else
@@ -179,7 +179,7 @@ DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, XMLElement& pElement)
 DECLARE_EXPORT void Resource::deleteOperationPlans(bool deleteLocked)
 {
   // Delete the operationplans
-  for(loadlist::iterator i=loads.begin(); i!=loads.end(); ++i)
+  for (loadlist::iterator i=loads.begin(); i!=loads.end(); ++i)
     OperationPlan::deleteOperationPlans(i->getOperation(),deleteLocked);
 
   // Mark to recompute the problems

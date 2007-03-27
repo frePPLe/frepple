@@ -83,10 +83,10 @@ DECLARE_EXPORT bool LoadPlan::check() const
 {
   // 1. Quantity must match with the operationplan
   if (fabs((start_or_end==START ? ld->getUsageFactor() : - ld->getUsageFactor())
-           - getQuantity()) > ROUNDING_ERROR)
+      - getQuantity()) > ROUNDING_ERROR)
     return false;
   // 2. Date must match with the operationplan
-  if(start_or_end==START)
+  if (start_or_end==START)
     return getDate() == oper->getDates().getStart();
   else
     return getDate() == oper->getDates().getEnd();

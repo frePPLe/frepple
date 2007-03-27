@@ -68,7 +68,7 @@ DECLARE_EXPORT void CommandSolve::execute()
   // Start message
   if (getVerbose())
     cout << "Started running the solver '" << s->getName()
-      << "' at " << Date::now() << endl;
+    << "' at " << Date::now() << endl;
   Timer t;
 
   // Running the solver now
@@ -284,74 +284,74 @@ DECLARE_EXPORT void CommandSavePlan::execute()
 
     // Write the buffer summary
     for (Buffer::iterator gbuf = Buffer::begin();
-         gbuf != Buffer::end(); ++gbuf)
+        gbuf != Buffer::end(); ++gbuf)
     {
       if (!gbuf->getHidden())
-        for(Buffer::flowplanlist::const_iterator
-          oo=gbuf->getFlowPlans().begin();
-          oo!=gbuf->getFlowPlans().end();
-          ++oo)
+        for (Buffer::flowplanlist::const_iterator
+            oo=gbuf->getFlowPlans().begin();
+            oo!=gbuf->getFlowPlans().end();
+            ++oo)
           if (oo->getType() == 1)
           {
             textoutput << "BUFFER\t" << *gbuf << '\t'
-              << oo->getDate() << '\t'
-              << oo->getQuantity() << '\t'
-              << oo->getOnhand() << endl;
+            << oo->getDate() << '\t'
+            << oo->getQuantity() << '\t'
+            << oo->getOnhand() << endl;
           }
     }
 
     // Write the demand summary
     for (Demand::iterator gdem = Demand::begin();
-         gdem != Demand::end(); ++gdem)
+        gdem != Demand::end(); ++gdem)
     {
       if (!gdem->getHidden())
-        for(Demand::OperationPlan_list::const_iterator
-          pp=gdem->getDelivery().begin();
-          pp!=gdem->getDelivery().end();
-          ++pp)
+        for (Demand::OperationPlan_list::const_iterator
+            pp=gdem->getDelivery().begin();
+            pp!=gdem->getDelivery().end();
+            ++pp)
         {
           textoutput << "DEMAND\t" << (*gdem) << '\t'
-            << (*pp)->getDates().getEnd() << '\t'
-            << (*pp)->getQuantity() << endl;
+          << (*pp)->getDates().getEnd() << '\t'
+          << (*pp)->getQuantity() << endl;
         }
     }
 
     // Write the resource summary
     for (Resource::iterator gres = Resource::begin();
-         gres != Resource::end(); ++gres)
+        gres != Resource::end(); ++gres)
     {
       if (!gres->getHidden())
-        for(Resource::loadplanlist::const_iterator
-          qq=gres->getLoadPlans().begin();
-          qq!=gres->getLoadPlans().end();
-          ++qq)
+        for (Resource::loadplanlist::const_iterator
+            qq=gres->getLoadPlans().begin();
+            qq!=gres->getLoadPlans().end();
+            ++qq)
           if (qq->getType() == 1)
           {
             textoutput << "RESOURCE\t" << *gres << '\t'
-              << qq->getDate() << '\t'
-              << qq->getQuantity() << '\t'
-              << qq->getOnhand() << endl;
+            << qq->getDate() << '\t'
+            << qq->getQuantity() << '\t'
+            << qq->getOnhand() << endl;
           }
     }
 
     // Write the operationplan summary.
-    for(OperationPlan::iterator rr = OperationPlan::begin();
-          rr != OperationPlan::end(); ++rr)
-      {
-        if (rr->getOperation()->getHidden()) continue;
-        textoutput << "OPERATION\t" << rr->getOperation() << '\t'
-          << rr->getDates().getStart() << '\t'
-          << rr->getDates().getEnd() << '\t'
-          << rr->getQuantity() << endl;
-      }
+    for (OperationPlan::iterator rr = OperationPlan::begin();
+        rr != OperationPlan::end(); ++rr)
+    {
+      if (rr->getOperation()->getHidden()) continue;
+      textoutput << "OPERATION\t" << rr->getOperation() << '\t'
+      << rr->getDates().getStart() << '\t'
+      << rr->getDates().getEnd() << '\t'
+      << rr->getQuantity() << endl;
+    }
 
     // Write the problem summary.
     for (Problem::const_iterator gprob = Problem::begin();
-         gprob != Problem::end(); ++gprob)
+        gprob != Problem::end(); ++gprob)
     {
       textoutput << "PROBLEM\t" << (*gprob)->getType().type << '\t'
-        << (*gprob)->getDescription() << '\t'
-        << (*gprob)->getDateRange() << endl;
+      << (*gprob)->getDescription() << '\t'
+      << (*gprob)->getDateRange() << endl;
     }
 
     // Close the output file
@@ -361,13 +361,13 @@ DECLARE_EXPORT void CommandSavePlan::execute()
   {
     textoutput.close();
     throw RuntimeException("Error writing to file '"
-      + getFileName() + "':\n" + e.what());
+        + getFileName() + "':\n" + e.what());
   }
   catch (...)
   {
     textoutput.close();
     throw RuntimeException("Error writing to file '"
-      + getFileName() + "'");
+        + getFileName() + "'");
   }
 
   // Message
@@ -381,10 +381,10 @@ DECLARE_EXPORT void CommandSavePlan::execute()
 //
 
 DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
-  (const OperationPlan* o, Date newdate, bool use_end_date)
-  : opplan(o), use_end(use_end_date)
+(const OperationPlan* o, Date newdate, bool use_end_date)
+    : opplan(o), use_end(use_end_date)
 {
-  if(!opplan) return;
+  if (!opplan) return;
   WLock<OperationPlan> lopplan(opplan);
   if (use_end)
   {
@@ -411,7 +411,7 @@ DECLARE_EXPORT void CommandMoveOperationPlan::undo()
 
 DECLARE_EXPORT void CommandMoveOperationPlan::setDate(Date newdate)
 {
-  if(!opplan) return;
+  if (!opplan) return;
   WLock<OperationPlan> lopplan(opplan);
   if (use_end) lopplan->setEnd(newdate);
   else lopplan->setStart(newdate);
@@ -484,7 +484,7 @@ DECLARE_EXPORT void CommandErase::execute()
   // Ending message
   if (getVerbose())
     cout << "Finished erase command at " << Date::now()
-      << " : " << t << endl;
+    << " : " << t << endl;
 }
 
 }

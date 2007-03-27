@@ -50,26 +50,26 @@ void DECLARE_EXPORT OperationPlan::setChanged(bool b)
 
 
 DECLARE_EXPORT Object* OperationPlan::createOperationPlan
-  (const MetaCategory& cat, const XMLInput& in)
+(const MetaCategory& cat, const XMLInput& in)
 {
-	// Pick up the action attribute
+  // Pick up the action attribute
   const Attributes* atts = in.getAttributes();
   Action action = MetaClass::decodeAction(atts);
 
-	// Decode the attributes
-	char* opname =
-	 XMLString::transcode(atts->getValue(Tags::tag_operation.getXMLCharacters()));
+  // Decode the attributes
+  char* opname =
+    XMLString::transcode(atts->getValue(Tags::tag_operation.getXMLCharacters()));
   if (!opname && action!=REMOVE)
   {
-			XMLString::release(&opname);
-      throw DataException("Missing OPERATION attribute");
+    XMLString::release(&opname);
+    throw DataException("Missing OPERATION attribute");
   }
 
-	// Decode the operationplan identifier
+  // Decode the operationplan identifier
   unsigned long id = 0;
   char* idfier =
-  	XMLString::transcode(atts->getValue(Tags::tag_id.getXMLCharacters()));
-	if (idfier) id = atol(idfier);
+    XMLString::transcode(atts->getValue(Tags::tag_id.getXMLCharacters()));
+  if (idfier) id = atol(idfier);
 
   // If an ID is specified, we look up this operation plan
   OperationPlan* opplan = NULL;
@@ -77,26 +77,26 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   {
     opplan = OperationPlan::findId(id);
     if (opplan && opname
-      && strcmp(opplan->getOperation()->getName().c_str(),opname))
+        && strcmp(opplan->getOperation()->getName().c_str(),opname))
     {
       // Previous and current operations don't match.
       ostringstream ch;
       ch << "Operationplan id " << id
-        << " defined multiple times with different operations: '"
-        << opplan->getOperation() << "' & '" << opname << "'";
-			XMLString::release(&opname);
-    	XMLString::release(&idfier);
+      << " defined multiple times with different operations: '"
+      << opplan->getOperation() << "' & '" << opname << "'";
+      XMLString::release(&opname);
+      XMLString::release(&idfier);
       throw DataException(ch.str());
     }
   }
-	XMLString::release(&idfier);
+  XMLString::release(&idfier);
 
-	// Execute the proper action
-	switch (action)
-	{
-		case REMOVE:
-			XMLString::release(&opname);
-			if (opplan)
+  // Execute the proper action
+  switch (action)
+  {
+    case REMOVE:
+      XMLString::release(&opname);
+      if (opplan)
       {
         // Send out the notification to subscribers
         LockManager::getManager().obtainWriteLock(opplan);
@@ -111,64 +111,64 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
           throw DataException(ch.str());
         }
       }
-			else
+      else
       {
         ostringstream ch;
         ch << "Can't find operationplan with identifier "
-          << id << " for removal";
+        << id << " for removal";
         throw DataException(ch.str());
       }
-			return NULL;
-		case ADD:
-			if (opplan)
-			{
+      return NULL;
+    case ADD:
+      if (opplan)
+      {
         ostringstream ch;
         ch << "Operationplan with identifier " << id
-				  << " already exists and can't be added again";
-				XMLString::release(&opname);
+        << " already exists and can't be added again";
+        XMLString::release(&opname);
         throw DataException(ch.str());
-			}
-			if (!opname)
-			{
-				XMLString::release(&opname);
+      }
+      if (!opname)
+      {
+        XMLString::release(&opname);
         throw DataException
-          ("Operation name missing for creating an operationplan");
-			}
-			break;
-		case CHANGE:
-			if (!opplan)
-			{
-				ostringstream ch;
+        ("Operation name missing for creating an operationplan");
+      }
+      break;
+    case CHANGE:
+      if (!opplan)
+      {
+        ostringstream ch;
         ch << "Operationplan with identifier " << id << " doesn't exist";
-				XMLString::release(&opname);
-				throw DataException(ch.str());
-			}
-			break;
-		case ADD_CHANGE: ;
-	}
+        XMLString::release(&opname);
+        throw DataException(ch.str());
+      }
+      break;
+    case ADD_CHANGE: ;
+  }
 
-	// Return the existing operationplan
-	if (opplan)
-	{
-		XMLString::release(&opname);
-    LockManager::getManager().obtainWriteLock(opplan);
-		return opplan;
-	}
-
-	// Create a new operation plan
-  Operation* oper = Operation::find(opname);
-	if (!oper)
+  // Return the existing operationplan
+  if (opplan)
   {
-  	// Can't create operationplan because the operation doesn't exist
+    XMLString::release(&opname);
+    LockManager::getManager().obtainWriteLock(opplan);
+    return opplan;
+  }
+
+  // Create a new operation plan
+  Operation* oper = Operation::find(opname);
+  if (!oper)
+  {
+    // Can't create operationplan because the operation doesn't exist
     string s(opname);
-		XMLString::release(&opname);
+    XMLString::release(&opname);
     throw DataException("Operation '" + s + "' doesn't exist");
   }
-	else
-	{
-		// Create an operationplan
-	  XMLString::release(&opname);
-		opplan = oper->createOperationPlan(0.0,Date::infinitePast,Date::infinitePast,NULL,false,NULL,id,false);
+  else
+  {
+    // Create an operationplan
+    XMLString::release(&opname);
+    opplan = oper->createOperationPlan(0.0,Date::infinitePast,Date::infinitePast,NULL,false,NULL,id,false);
     LockManager::getManager().obtainWriteLock(opplan);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD))
     {
@@ -177,7 +177,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
       throw DataException("Can't create operationplan");
     }
     return opplan;
-	}
+  }
 }
 
 
@@ -218,7 +218,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
   if (id)
   {
     // An identifier was read in from input
-		if (id < counter)
+    if (id < counter)
     {
       // The assigned id potentially clashes with an existing operationplan.
       // Check whether it clashes with existing operationplans
@@ -327,12 +327,12 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
   if (firstflowplan || firstloadplan) return;
 
   // Create loadplans
-  for(Operation::loadlist::const_iterator g=oper->getLoads().begin();
+  for (Operation::loadlist::const_iterator g=oper->getLoads().begin();
       g!=oper->getLoads().end(); ++g)
     new LoadPlan(this, &*g);
 
   // Create flowplans
-  for(Operation::flowlist::const_iterator h=oper->getFlows().begin();
+  for (Operation::flowlist::const_iterator h=oper->getFlows().begin();
       h!=oper->getFlows().end(); ++h)
     new FlowPlan(this, &*h);
 }
@@ -341,11 +341,11 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
 DECLARE_EXPORT OperationPlan::~OperationPlan()
 {
   // Delete the flowplans
-  for(FlowPlanIterator e = beginFlowPlans(); e != endFlowPlans();)
+  for (FlowPlanIterator e = beginFlowPlans(); e != endFlowPlans();)
     delete &*(e++);
 
   // Delete the loadplans
-  for(LoadPlanIterator f = beginLoadPlans(); f != endLoadPlans();)
+  for (LoadPlanIterator f = beginLoadPlans(); f != endLoadPlans();)
     delete &*(f++);
 
   // Delete also the owner
@@ -441,7 +441,7 @@ DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown)
   if (getOperation()->getSizeMultiple()>0.0f)
   {
     int mult = (int) (f / getOperation()->getSizeMultiple()
-                      + (roundDown ? 0.0f : 0.999999f));
+        + (roundDown ? 0.0f : 0.999999f));
     quantity = mult * getOperation()->getSizeMultiple();
   }
   else
@@ -506,7 +506,7 @@ DECLARE_EXPORT void OperationPlan::writer(const MetaCategory& c, XMLOutput* o)
   if (!empty())
   {
     o->BeginObject(*c.grouptag);
-    for(iterator i=begin(); i!=end(); ++i)
+    for (iterator i=begin(); i!=end(); ++i)
       o->writeElement(*c.typetag, *i);
     o->EndObject(*c.grouptag);
   }
@@ -660,7 +660,7 @@ DECLARE_EXPORT OperationPlanRouting::~OperationPlanRouting()
 {
   // Delete all children
   for (list<OperationPlan*>::iterator i = step_opplans.begin();
-       i != step_opplans.end(); ++i)
+      i != step_opplans.end(); ++i)
   {
     // We need to set the owner to NULL first to prevent the sub-operationplan
     // from RE-deleting its parent.
@@ -678,7 +678,7 @@ DECLARE_EXPORT void OperationPlanRouting::setQuantity (float f, bool roundDown)
 
   // Apply the same size also to its children
   for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
-       i != step_opplans.end(); ++i)
+      i != step_opplans.end(); ++i)
   {
     (*i)->quantity = quantity;
     (*i)->resizeFlowLoadPlans();
@@ -694,14 +694,14 @@ DECLARE_EXPORT void OperationPlanRouting::eraseSubOperationPlan(OperationPlan* o
 
 DECLARE_EXPORT void OperationPlanRouting::setEnd(Date d)
 {
-  if(step_opplans.empty())
+  if (step_opplans.empty())
     OperationPlan::setEnd(d);
   else
   {
     // Move all sub-operationplans in an orderly fashion
     bool firstMove = true;
     for (list<OperationPlan*>::reverse_iterator i = step_opplans.rbegin();
-         i != step_opplans.rend(); ++i)
+        i != step_opplans.rend(); ++i)
     {
       if ((*i)->getDates().getEnd() > d || firstMove)
       {
@@ -724,14 +724,14 @@ DECLARE_EXPORT void OperationPlanRouting::setEnd(Date d)
 
 DECLARE_EXPORT void OperationPlanRouting::setStart(Date d)
 {
-  if(step_opplans.empty())
+  if (step_opplans.empty())
     OperationPlan::setStart(d);
   else
   {
     // Move all sub-operationplans in an orderly fashion
     bool firstMove = true;
     for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
-         i != step_opplans.end(); ++i)
+        i != step_opplans.end(); ++i)
     {
       if ((*i)->getDates().getStart() < d || firstMove)
       {
@@ -754,7 +754,7 @@ DECLARE_EXPORT void OperationPlanRouting::setStart(Date d)
 
 DECLARE_EXPORT void OperationPlanRouting::update()
 {
-  if(!step_opplans.empty())
+  if (!step_opplans.empty())
     // Set the dates on the top operationplan
     setStartAndEnd(
       step_opplans.front()->getDates().getStart(),
@@ -775,11 +775,11 @@ DECLARE_EXPORT void OperationPlanRouting::initialize()
     {
       // Using the end date
       for (Operation::Operationlist::const_reverse_iterator e =
-        getOperation()->getSubOperations().rbegin();
-        e != getOperation()->getSubOperations().rend(); ++e)
+            getOperation()->getSubOperations().rbegin();
+          e != getOperation()->getSubOperations().rend(); ++e)
       {
         p = (*e)->createOperationPlan(getQuantity(), Date::infinitePast,
-          d, NULL, true, this, 0, true);
+            d, NULL, true, this, 0, true);
         d = p->getDates().getStart();
       }
     }
@@ -790,11 +790,11 @@ DECLARE_EXPORT void OperationPlanRouting::initialize()
       // Using the current date when both the start and end date are missing
       if (!d) d = Plan::instance().getCurrent();
       for (Operation::Operationlist::const_iterator e =
-        getOperation()->getSubOperations().begin();
-        e != getOperation()->getSubOperations().end(); ++e)
+            getOperation()->getSubOperations().begin();
+          e != getOperation()->getSubOperations().end(); ++e)
       {
         p = (*e)->createOperationPlan(getQuantity(), d,
-          Date::infinitePast, NULL, true, this, 0, true);
+            Date::infinitePast, NULL, true, this, 0, true);
         d = p->getDates().getEnd();
       }
     }
@@ -802,7 +802,7 @@ DECLARE_EXPORT void OperationPlanRouting::initialize()
 
   // Initialize the suboperationplans
   for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
-       i != step_opplans.end(); ++i)
+      i != step_opplans.end(); ++i)
     (*i)->initialize();
 
   // Initialize myself
@@ -975,7 +975,7 @@ DECLARE_EXPORT void OperationPlanEffective::initialize()
 {
   if (effopplan) effopplan->initialize();
   else throw LogicException("Can't initialize an effective operationplan " \
-    "without suboperationplan");
+        "without suboperationplan");
   OperationPlan::initialize();
 }
 

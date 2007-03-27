@@ -276,109 +276,109 @@ extern "C"
 {
 
 
-/** This class exports Problem information to Python. */
-struct PythonProblem
-{
-  private:
-    PyObject_HEAD
-    Problem::const_iterator iter;
-  public:
-    static PyTypeObject InfoType;
-    static PyObject* next(PythonProblem* obj);
-    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
-    static void define_type() {}
-};
+  /** This class exports Problem information to Python. */
+  struct PythonProblem
+  {
+    private:
+      PyObject_HEAD
+      Problem::const_iterator iter;
+    public:
+      static PyTypeObject InfoType;
+      static PyObject* next(PythonProblem* obj);
+      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static void define_type() {}
+  };
 
 
-/** This class exports FlowPlan information to Python. */
-struct PythonFlowPlan
-{
-  private:
-    PyObject_HEAD
-    Buffer::flowplanlist::const_iterator iter;
-    Buffer* buf;
-  public:
-    static PyTypeObject InfoType;
-    static PyObject* next(PythonFlowPlan* obj);
-    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
-    static void define_type() { InfoType.tp_new = 0; }
-    static PyObject* createFromBuffer(Buffer*);
-};
+  /** This class exports FlowPlan information to Python. */
+  struct PythonFlowPlan
+  {
+    private:
+      PyObject_HEAD
+      Buffer::flowplanlist::const_iterator iter;
+      Buffer* buf;
+    public:
+      static PyTypeObject InfoType;
+      static PyObject* next(PythonFlowPlan* obj);
+      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
+      static void define_type() { InfoType.tp_new = 0; }
+      static PyObject* createFromBuffer(Buffer*);
+  };
 
 
-/** This class exports LoadPlan information to Python. */
-struct PythonLoadPlan
-{
-  private:
-    PyObject_HEAD
-    Resource::loadplanlist::const_iterator iter;
-    Resource* res;
-  public:
-    static PyTypeObject InfoType;
-    static PyObject* next(PythonLoadPlan* obj);
-    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
-    static void define_type() { InfoType.tp_new = 0; }
-    static PyObject* createFromResource(Resource*);
-};
+  /** This class exports LoadPlan information to Python. */
+  struct PythonLoadPlan
+  {
+    private:
+      PyObject_HEAD
+      Resource::loadplanlist::const_iterator iter;
+      Resource* res;
+    public:
+      static PyTypeObject InfoType;
+      static PyObject* next(PythonLoadPlan* obj);
+      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
+      static void define_type() { InfoType.tp_new = 0; }
+      static PyObject* createFromResource(Resource*);
+  };
 
 
-/** This class exports OperationPlan information to Python. */
-struct PythonOperationPlan
-{
-  private:
-    PyObject_HEAD
-    OperationPlan::iterator iter;
-  public:
-    static PyTypeObject InfoType;
-    static PyObject* next(PythonOperationPlan* obj);
-    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
-    static void define_type() {}
-};
+  /** This class exports OperationPlan information to Python. */
+  struct PythonOperationPlan
+  {
+    private:
+      PyObject_HEAD
+      OperationPlan::iterator iter;
+    public:
+      static PyTypeObject InfoType;
+      static PyObject* next(PythonOperationPlan* obj);
+      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static void define_type() {}
+  };
 
 
-/** This class exports Demand information to Python. */
-struct PythonDemand
-{
-  private:
-    PyObject_HEAD
-    Demand::iterator iter;
-  public:
-    static PyTypeObject InfoType;
-    static PyObject* next(PythonDemand* obj);
-    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
-    static void define_type() {}
-};
+  /** This class exports Demand information to Python. */
+  struct PythonDemand
+  {
+    private:
+      PyObject_HEAD
+      Demand::iterator iter;
+    public:
+      static PyTypeObject InfoType;
+      static PyObject* next(PythonDemand* obj);
+      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static void define_type() {}
+  };
 
 
-/** This class exports Buffer information to Python. */
-struct PythonBuffer
-{
-  private:
-    PyObject_HEAD
-    Buffer::iterator iter;
-  public:
-    static PyTypeObject InfoType;
-    static PyObject* next(PythonBuffer* obj);
-    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
-    static void define_type() {}
-};
+  /** This class exports Buffer information to Python. */
+  struct PythonBuffer
+  {
+    private:
+      PyObject_HEAD
+      Buffer::iterator iter;
+    public:
+      static PyTypeObject InfoType;
+      static PyObject* next(PythonBuffer* obj);
+      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static void define_type() {}
+  };
 
 
-/** This class exports Resource information to Python. */
-struct PythonResource
-{
-  private:
-    PyObject_HEAD
-    Resource::iterator iter;
-  public:
-    static PyTypeObject InfoType;
-    static PyObject* next(PythonResource* obj);
-    static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
-    static void define_type() {}
-};
+  /** This class exports Resource information to Python. */
+  struct PythonResource
+  {
+    private:
+      PyObject_HEAD
+      Resource::iterator iter;
+    public:
+      static PyTypeObject InfoType;
+      static PyObject* next(PythonResource* obj);
+      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static void define_type() {}
+  };
 
 
-}
+}  // End extern "C"
 
 
 

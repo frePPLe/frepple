@@ -167,11 +167,11 @@ using namespace xercesc;
   */
 #define TYPEDEF(tp) \
   public: \
-    typedef Object::RLock<tp>   pointer;  \
-    typedef tp&                 reference;    \
+    typedef Object::RLock<tp>   pointer; \
+    typedef tp&                 reference; \
     typedef const tp&           const_reference; \
-    typedef Object::RLock<tp>   readpointer;  \
-    typedef Object::WLock<tp>   writepointer;  \
+    typedef Object::RLock<tp>   readpointer; \
+    typedef Object::WLock<tp>   writepointer;
 
 
 namespace frepple
@@ -303,7 +303,7 @@ class Environment
     static int getProcessors() {return processors;}
 
     /** Updates the number of processors available on your machine. */
-    static void setProcessors(int i) {if(i>=1) processors = i;}
+    static void setProcessors(int i) {if (i>=1) processors = i;}
 };
 
 
@@ -351,7 +351,7 @@ class RuntimeException: public runtime_error
 {
   public:
     RuntimeException(const char * c) : runtime_error(c) {}
-    RuntimeException(const string s) : runtime_error(s) {}
+    RuntimeException(const string s) : runtime_error(s) {}};
 };
 
 
@@ -441,8 +441,8 @@ template <class T> class Pool
     {
       // Delete the allocated objects in use. The elements are not deleted
       // from the set. The set destructor will clear the set.
-      for(typename set<T*>::iterator i=alloced.begin(); i!=alloced.end(); ++i)
-        delete *i;
+      for (typename set<T*>::iterator i=alloced.begin(); i!=alloced.end(); ++i)
+          delete *i;
       // Delete the objects on the free stack
       while (!freed.empty())
       {
@@ -478,7 +478,7 @@ template <class T> void Pool<T>::Free (T* it)
     // Found! Push the object on the stack of free objects.
     freed.push(it);
     return;
-    };
+  };
   throw LogicException("Pool frees object it didn't allocate");
 }
 
@@ -525,7 +525,7 @@ class ScopeMutexLock: public NonCopyable
   protected:
     Mutex* mtx;
   public:
-    ScopeMutexLock(Mutex& imtx): mtx(&imtx) { mtx->lock(); }
+    ScopeMutexLock(Mutex& imtx): mtx(&imtx) { mtx->lock (); }
     ~ScopeMutexLock() { mtx->unlock(); }
 };
 

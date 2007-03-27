@@ -117,8 +117,8 @@ template <class type> class TimeLine
     };
   class EventChangeOnhand : public Event
     {
-    private:
-      float quantity;
+      private:
+        float quantity;
       public:
         float getQuantity() const {return quantity;}
         void setQuantity(float q) {quantity = q;}
@@ -191,7 +191,7 @@ template <class type> class TimeLine
     int size() const
     {
       int cnt(0);
-      for(Event* p=first; p; p=p->next) ++cnt;
+      for (Event* p=first; p; p=p->next) ++cnt;
       return cnt;
     }
     iterator begin() {return iterator(first);}
@@ -214,10 +214,10 @@ template <class type> class TimeLine
     void inspect(string name) const
     {
       cout << "Inspecting  " << this << ": \"" << name << "\":" << endl;
-      for(const_iterator oo=begin(); oo!=end(); ++oo)
+      for (const_iterator oo=begin(); oo!=end(); ++oo)
         cout << "  " << oo->getDate() << "   "
-          << oo->getQuantity() << "    " << oo->getOnhand()
-          << "    " << oo->getCumulativeProduced()  << endl;
+        << oo->getQuantity() << "    " << oo->getOnhand()
+        << "    " << oo->getCumulativeProduced()  << endl;
     }
 
     /** This function is used to trace the consistency of the data structure. */
@@ -240,13 +240,13 @@ template <class type> void TimeLine <type>::insert (Event* e)
   iterator i = rbegin();
   float qty = e->getQuantity();
   if (qty > 0)
-    for(; i!=end() && *e<*i; --i)
+    for (; i!=end() && *e<*i; --i)
     {
       i->oh += qty;
       i->cum_prod += qty;
     }
   else
-    for(; i!=end() && *e<*i; --i)
+    for (; i!=end() && *e<*i; --i)
       i->oh += qty;
 
   // Insert
@@ -292,13 +292,13 @@ template <class type> void TimeLine<type>::erase (Event* e)
   // Update later entries
   float qty = e->getQuantity();
   if (qty>0)
-    for(iterator i = begin(e); i!=end(); ++i)
+    for (iterator i = begin(e); i!=end(); ++i)
     {
       i->oh -= qty;
       i->cum_prod -= qty;
     }
   else
-    for(iterator i = begin(e); i!=end(); ++i)
+    for (iterator i = begin(e); i!=end(); ++i)
       i->oh -= qty;
 
   if (e->prev)
@@ -410,19 +410,19 @@ template <class type> bool TimeLine<type>::check() const
     if (fabs(expectedOH - i->oh) > ROUNDING_ERROR)
     {
       inspect("Error: timeline onhand value corrupted on "
-        + string(i->getDate()));
+          + string(i->getDate()));
       return false;
     }
     // Problem 2: The cumulative produced quantity isn't correct
     if (fabs(expectedCumProd - i->cum_prod) > ROUNDING_ERROR)
     {
       inspect("Error: timeline cumulative produced value corrupted on "
-        + string(i->getDate()));
+          + string(i->getDate()));
       return false;
     }
     // Problem 3: Timeline is not sorted correctly
     if (prev && !(*prev<*i)
-      && fabs(prev->getQuantity() - i->getQuantity())>ROUNDING_ERROR)
+        && fabs(prev->getQuantity() - i->getQuantity())>ROUNDING_ERROR)
     {
       inspect("Error: timeline sort corrupted on " + string(i->getDate()));
       return false;

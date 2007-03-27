@@ -94,7 +94,7 @@ class LibraryModel
   */
 class Calendar : public HasName<Calendar>, public Object
 {
-  TYPEDEF(Calendar);
+    TYPEDEF(Calendar);
   public:
     class BucketIterator; // Forward declaration
 
@@ -105,8 +105,8 @@ class Calendar : public HasName<Calendar>, public Object
       */
     class Bucket : public Object, public NonCopyable
     {
-      friend class Calendar;
-      friend class BucketIterator;
+        friend class Calendar;
+        friend class BucketIterator;
       private:
         /** Name of the bucket. */
         string nm;
@@ -290,21 +290,21 @@ template <typename T> class CalendarValue : public Calendar
     /** @see Calendar::Bucket */
     class BucketValue : public Calendar::Bucket
     {
-      friend class CalendarValue<T>;
+        friend class CalendarValue<T>;
       private:
         /** This is the value stored in this bucket. */
         T val;
         /** Constructor. */
         BucketValue(Date& n) : Bucket(n) {};
       public:
-      	/** Returns the value of this bucket. */
+        /** Returns the value of this bucket. */
         const T& getValue() const {return val;}
 
         /** Updates the value of this bucket. */
         void setValue(const T& v) {val = v;}
 
         void writeElement
-          (XMLOutput *o, const XMLtag& tag, mode m = DEFAULT) const
+        (XMLOutput *o, const XMLtag& tag, mode m = DEFAULT) const
         {
           assert(m == DEFAULT || m == FULL);
           o->BeginObject(Tags::tag_bucket, Tags::tag_start, getStart());
@@ -341,7 +341,7 @@ template <typename T> class CalendarValue : public Calendar
 
     virtual const MetaClass& getType() const = 0;
 
-	  const T& getValue(Calendar::BucketIterator& i) const
+    const T& getValue(Calendar::BucketIterator& i) const
       {return reinterpret_cast<BucketValue&>(*i).getValue();}
 
   private:
@@ -366,7 +366,7 @@ template <typename T> class CalendarPointer : public Calendar
     /** @see Calendar::Bucket */
     class BucketPointer : public Calendar::Bucket
     {
-      friend class CalendarPointer<T>;
+        friend class CalendarPointer<T>;
       private:
         /** The object stored in this bucket. */
         T* val;
@@ -395,7 +395,7 @@ template <typename T> class CalendarPointer : public Calendar
           if (pElement.isA(Tags::tag_value))
             pIn.readto(
               MetaCategory::ControllerDefault(T::metadata,pIn)
-              );
+            );
         }
 
         void endElement (XMLInput& pIn, XMLElement& pElement)
@@ -405,7 +405,7 @@ template <typename T> class CalendarPointer : public Calendar
             T *o = dynamic_cast<T*>(pIn.getPreviousObject());
             if (!o)
               throw LogicException
-                ("Incorrect object type during read operation");
+              ("Incorrect object type during read operation");
             val = o;
           }
           else
@@ -442,7 +442,7 @@ template <typename T> class CalendarPointer : public Calendar
 /** A calendar only defining time buckets and not storing any data fields. */
 class CalendarVoid : public Calendar
 {
-  TYPEDEF(CalendarVoid);
+    TYPEDEF(CalendarVoid);
   public:
     CalendarVoid(const string& n) : Calendar(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -453,7 +453,7 @@ class CalendarVoid : public Calendar
 /** A calendar storing float values in its buckets. */
 class CalendarFloat : public CalendarValue<float>
 {
-  TYPEDEF(CalendarFloat);
+    TYPEDEF(CalendarFloat);
   public:
     CalendarFloat(const string& n) : CalendarValue<float>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -464,7 +464,7 @@ class CalendarFloat : public CalendarValue<float>
 /** A calendar storing integer values in its buckets. */
 class CalendarInt : public CalendarValue<int>
 {
-  TYPEDEF(CalendarInt);
+    TYPEDEF(CalendarInt);
   public:
     CalendarInt(const string& n) : CalendarValue<int>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -475,7 +475,7 @@ class CalendarInt : public CalendarValue<int>
 /** A calendar storing boolean values in its buckets. */
 class CalendarBool : public CalendarValue<bool>
 {
-  TYPEDEF(CalendarBool);
+    TYPEDEF(CalendarBool);
   public:
     CalendarBool(const string& n) : CalendarValue<bool>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -486,7 +486,7 @@ class CalendarBool : public CalendarValue<bool>
 /** A calendar storing strings in its buckets. */
 class CalendarString : public CalendarValue<string>
 {
-  TYPEDEF(CalendarString);
+    TYPEDEF(CalendarString);
   public:
     CalendarString(const string& n) : CalendarValue<string>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -496,7 +496,7 @@ class CalendarString : public CalendarValue<string>
       size_t i = sizeof(CalendarString);
       for (BucketIterator j = beginBuckets(); j!= endBuckets(); ++j)
         i += j->getSize()
-         + static_cast<CalendarValue<string>::BucketValue&>(*j).getValue().size();
+            + static_cast<CalendarValue<string>::BucketValue&>(*j).getValue().size();
       return i;
     }
 };
@@ -505,7 +505,7 @@ class CalendarString : public CalendarValue<string>
 /** A calendar storing pointers to operations in its buckets. */
 class CalendarOperation : public CalendarPointer<Operation>
 {
-  TYPEDEF(CalendarOperation);
+    TYPEDEF(CalendarOperation);
   public:
     CalendarOperation(const string& n) : CalendarPointer<Operation>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -661,8 +661,8 @@ class Problem : public NonCopyable
   */
 class HasProblems
 {
-  friend class Problem::const_iterator;
-  friend class Problem;
+    friend class Problem::const_iterator;
+    friend class Problem;
   public:
     class EntityIterator;
 
@@ -704,7 +704,7 @@ class HasProblems
   */
 class Solver : public Object, public HasName<Solver>
 {
-  TYPEDEF(Solver);
+    TYPEDEF(Solver);
   public:
     explicit Solver(const string& n) : HasName<Solver>(n), verbose(false) {}
     virtual ~Solver() {}
@@ -895,9 +895,9 @@ class HasLevel
 {
 
 #if defined(_MSC_VER) || defined(__BORLANDC__)
-  // Visual C++ 6.0 and Borland C++ 5.5. seem to get confused. Static
-  // functions can't access private members.
-  friend class HasLevel;
+    // Visual C++ 6.0 and Borland C++ 5.5. seem to get confused. Static
+    // functions can't access private members.
+    friend class HasLevel;
 #endif
 
   private:
@@ -967,21 +967,21 @@ class HasLevel
       * the recomputation will be triggered. */
     static unsigned short getNumberOfClusters()
     {
-      if(recomputeLevels || computationBusy) computeLevels();
+      if (recomputeLevels || computationBusy) computeLevels();
       return numberOfClusters;
     }
 
     /** Return the level (and recompute first if required). */
     short getLevel() const
     {
-      if(recomputeLevels || computationBusy) computeLevels();
+      if (recomputeLevels || computationBusy) computeLevels();
       return lvl;
     }
 
     /** Return the cluster number (and recompute first if required). */
     unsigned short getCluster() const
     {
-      if(recomputeLevels || computationBusy) computeLevels();
+      if (recomputeLevels || computationBusy) computeLevels();
       return cluster;
     }
 
@@ -999,9 +999,9 @@ class HasLevel
   * on the planning behavior.
   */
 class Location
-  : public HasHierarchy<Location>, public HasDescription, public Object
+      : public HasHierarchy<Location>, public HasDescription, public Object
 {
-  TYPEDEF(Location);
+    TYPEDEF(Location);
   public:
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
@@ -1016,7 +1016,7 @@ class Location
 /** This class implements the abstract Location class. */
 class LocationDefault : public Location
 {
-  TYPEDEF(LocationDefault);
+    TYPEDEF(LocationDefault);
   public:
     explicit LocationDefault(const string& str) : Location(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -1031,9 +1031,9 @@ class LocationDefault : public Location
   * There is no planning bheavior directly linked to customers.
   */
 class Customer
-  : public HasHierarchy<Customer>, public HasDescription, public Object
+      : public HasHierarchy<Customer>, public HasDescription, public Object
 {
-  TYPEDEF(Customer);
+    TYPEDEF(Customer);
   public:
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
@@ -1048,7 +1048,7 @@ class Customer
 /** This class implements the abstract Customer class. */
 class CustomerDefault : public Customer
 {
-  TYPEDEF(CustomerDefault);
+    TYPEDEF(CustomerDefault);
   public:
     explicit CustomerDefault(const string& str) : Customer(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -1060,7 +1060,7 @@ class CustomerDefault : public Customer
 
 /** This class represents an Operation. It's an abstract class. */
 class Operation : public HasName<Operation>,
-  public HasLevel, public Plannable, public HasDescription
+      public HasLevel, public Plannable, public HasDescription
 {
     TYPEDEF(Operation);
     friend class Flow;
@@ -1072,7 +1072,7 @@ class Operation : public HasName<Operation>,
   protected:
     /** Constructor. Don't use it directly. */
     explicit Operation(const string& str) : HasName<Operation>(str),
-      size_minimum(0.0f), size_multiple(0.0f), hidden(false), opplan(NULL) {}
+        size_minimum(0.0f), size_multiple(0.0f), hidden(false), opplan(NULL) {}
 
   public:
     /** Destructor. */
@@ -1094,7 +1094,7 @@ class Operation : public HasName<Operation>,
       */
     void setPreTime(TimePeriod t)
     {
-      if(t<TimePeriod(0L))
+      if (t<TimePeriod(0L))
         throw DataException("No negative pre-operation time allowed");
       pre_time=t;
       setChanged();
@@ -1113,7 +1113,7 @@ class Operation : public HasName<Operation>,
       */
     void setPostTime(TimePeriod t)
     {
-      if(t<TimePeriod(0L))
+      if (t<TimePeriod(0L))
         throw DataException("No negative post-operation time allowed");
       post_time=t;
       setChanged();
@@ -1125,8 +1125,8 @@ class Operation : public HasName<Operation>,
     /** This is the factory method which creates all operationplans of the
       * operation. */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s,
-      Date e, const Demand* l, bool updates_okay=true, OperationPlan* ow=NULL,
-      unsigned long i=0, bool makeflowsloads=true) const;
+        Date e, const Demand* l, bool updates_okay=true, OperationPlan* ow=NULL,
+        unsigned long i=0, bool makeflowsloads=true) const;
 
     /** This method stores ALL logic the operation needs to compute the
       * correct relationship between the quantity, startdate and enddate
@@ -1242,18 +1242,18 @@ class Operation : public HasName<Operation>,
     TimePeriod getFence() const {return fence;}
 
     /** Update the release fence of this operation. */
-    void setFence(TimePeriod t) {if(fence!=t) setChanged(); fence=t;}
+    void setFence(TimePeriod t) {if (fence!=t) setChanged(); fence=t;}
 
     virtual DECLARE_EXPORT void updateProblems();
 
-    void setHidden(bool b) {if(hidden!=b) setChanged(); hidden = b;}
+    void setHidden(bool b) {if (hidden!=b) setChanged(); hidden = b;}
     bool getHidden() const {return hidden;}
 
     static DECLARE_EXPORT const MetaCategory metadata;
 
   protected:
     void initOperationPlan (OperationPlan*, float, const Date&, const Date&,
-      const Demand*, bool, OperationPlan*, unsigned long, bool = true) const;
+        const Demand*, bool, OperationPlan*, unsigned long, bool = true) const;
 
   private:
     /** List of operations using this operation as a sub-operation */
@@ -1317,7 +1317,7 @@ class Operation : public HasName<Operation>,
   *    the operation hierarchies they belong to.
   */
 class OperationPlan
- : public Object, public HasProblems, public NonCopyable
+      : public Object, public HasProblems, public NonCopyable
 {
     TYPEDEF(OperationPlan);
     friend class FlowPlan;
@@ -1671,7 +1671,7 @@ class OperationPlan
     virtual void addSubOperationPlan(OperationPlan* o)
     {
       throw LogicException("Adding a sub operationplan to "
-        + oper->getName() + " not supported");
+          + oper->getName() + " not supported");
     };
 
     /** Remove a sub_operation_plan from the list. For normal operation_plans
@@ -1681,7 +1681,7 @@ class OperationPlan
     virtual void eraseSubOperationPlan(OperationPlan* o)
     {
       throw LogicException("Removing a sub operationplan from "
-        + oper->getName() + " not supported");
+          + oper->getName() + " not supported");
     };
 
     /** This method is used to check the validity of the operationplan. */
@@ -1755,8 +1755,8 @@ class OperationPlan
       * @see Operation::createOperationPlan
       */
     OperationPlan() : owner(NULL), quantity(0.0), runupdate(false),
-      locked(false), lt(NULL), id(0), oper(NULL), firstflowplan(NULL),
-      firstloadplan(NULL), prev(NULL), next(NULL) {}
+        locked(false), lt(NULL), id(0), oper(NULL), firstflowplan(NULL),
+        firstloadplan(NULL), prev(NULL), next(NULL) {}
 
   private:
     /** Sort the list of operationplans. */
@@ -1821,7 +1821,7 @@ class OperationPlan
   * of the quantity. */
 class OperationFixedTime : public Operation
 {
-  TYPEDEF(OperationFixedTime);
+    TYPEDEF(OperationFixedTime);
   public:
     /** Constructor. */
     explicit OperationFixedTime(const string& s) : Operation(s) {}
@@ -1868,7 +1868,7 @@ class OperationFixedTime : public Operation
   * a cetain time per unit. */
 class OperationTimePer : public Operation
 {
-  TYPEDEF(OperationTimePer);
+    TYPEDEF(OperationTimePer);
   public:
     /** Constructor. */
     explicit OperationTimePer(const string& s) : Operation(s) {}
@@ -1902,7 +1902,7 @@ class OperationTimePer : public Operation
       * @see Operation::setOperationPlanParameters
       */
     DECLARE_EXPORT void setOperationPlanParameters
-      (OperationPlan*, float, Date, Date, bool=true) const;
+    (OperationPlan*, float, Date, Date, bool=true) const;
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
@@ -1927,7 +1927,7 @@ class OperationTimePer : public Operation
   * sequential sub-operations. */
 class OperationRouting : public Operation
 {
-  TYPEDEF(OperationRouting);
+    TYPEDEF(OperationRouting);
   public:
     /** Constructor. */
     explicit OperationRouting(const string& c) : Operation(c) {};
@@ -1938,7 +1938,7 @@ class OperationRouting : public Operation
     /** Adds a new steps to routing at the start of the routing. */
     void addStepFront(Operation *o)
     {
-      if(!o) return;
+      if (!o) return;
       steps.push_front(o);
       o->addSuperOperation(this);
     }
@@ -1946,7 +1946,7 @@ class OperationRouting : public Operation
     /** Adds a new steps to routing at the end of the routing. */
     void addStepBack(Operation *o)
     {
-      if(!o) return;
+      if (!o) return;
       steps.push_back(o);
       o->addSuperOperation(this);
     }
@@ -1985,14 +1985,16 @@ class OperationRouting : public Operation
       * @see Operation::createOperationPlan
       */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s,
-      Date e, const Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
-      unsigned long i = 0, bool makeflowsloads=true) const;
+        Date e, const Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
+        unsigned long i = 0, bool makeflowsloads=true) const;
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(OperationRouting) + getName().size() + HasDescription::memsize()
-         + steps.size() * 2 * sizeof(Operation*);}
+    {
+      return sizeof(OperationRouting) + getName().size() + HasDescription::memsize()
+          + steps.size() * 2 * sizeof(Operation*);
+    }
 
   private:
     Operationlist steps;
@@ -2003,8 +2005,8 @@ class OperationRouting : public Operation
   * the instances. */
 class OperationPlanRouting : public OperationPlan
 {
-  TYPEDEF(OperationPlanRouting);
-  friend class OperationRouting;
+    TYPEDEF(OperationPlanRouting);
+    friend class OperationRouting;
   private:
     OperationPlan::OperationPlanList step_opplans;
     OperationPlanRouting() {};
@@ -2047,7 +2049,7 @@ class OperationPlanRouting : public OperationPlan
   */
 class OperationAlternate : public Operation
 {
-  TYPEDEF(OperationAlternate);
+    TYPEDEF(OperationAlternate);
   public:
     /** Constructor. */
     explicit OperationAlternate(const string& c) : Operation(c) {};
@@ -2094,14 +2096,16 @@ class OperationAlternate : public Operation
       * @see Operation::createOperationPlan
       */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s,
-      Date e, const Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
-      unsigned long i = 0, bool makeflowsloads=true) const;
+        Date e, const Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
+        unsigned long i = 0, bool makeflowsloads=true) const;
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(OperationAlternate) + getName().size() + HasDescription::memsize()
-         + alternates.size() * 2 * (sizeof(Operation*)+sizeof(float));}
+    {
+      return sizeof(OperationAlternate) + getName().size() + HasDescription::memsize()
+          + alternates.size() * 2 * (sizeof(Operation*)+sizeof(float));
+    }
 
   private:
     typedef list<float> priolist;
@@ -2127,8 +2131,8 @@ class OperationAlternate : public Operation
   */
 class OperationPlanAlternate : public OperationPlan
 {
-  TYPEDEF(OperationPlanAlternate);
-  friend class OperationAlternate;
+    TYPEDEF(OperationPlanAlternate);
+    friend class OperationAlternate;
 
   private:
     OperationPlan* altopplan;
@@ -2160,11 +2164,11 @@ class OperationPlanAlternate : public OperationPlan
   * on the dates. */
 class OperationEffective : public Operation
 {
-  TYPEDEF(OperationEffective);
+    TYPEDEF(OperationEffective);
   public:
     /** Constructor. */
     explicit OperationEffective(const string& s)
-      : Operation(s), cal(NULL), useEndDate(true) {}
+        : Operation(s), cal(NULL), useEndDate(true) {}
 
     /** Returns the calendar that specifies which operation to use during
       * which time period. */
@@ -2174,13 +2178,13 @@ class OperationEffective : public Operation
       * getting updated to fit the new calendar. */
     void setCalendar(const CalendarOperation* t) {cal = t;}
 
-	  /** Returns whether the end or the start date of operationplans is used
-	  * to determine the effective operation. */
+    /** Returns whether the end or the start date of operationplans is used
+    * to determine the effective operation. */
     bool getUseEndDate() const {return useEndDate;}
 
-	  /** Updates whether the end or the start date of operationplans is used
-	  * to determine the effective operation. */
-	  void setUseEndDate(const bool b) {useEndDate = b;}
+    /** Updates whether the end or the start date of operationplans is used
+    * to determine the effective operation. */
+    void setUseEndDate(const bool b) {useEndDate = b;}
 
     void DECLARE_EXPORT beginElement (XMLInput&, XMLElement&);
     void DECLARE_EXPORT writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2198,8 +2202,8 @@ class OperationEffective : public Operation
       * @see Operation::createOperationPlan
       */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
-      Date, const Demand*, bool updates_okay=true, OperationPlan* = NULL,
-      unsigned long i=0, bool makeflowsloads=true) const;
+        Date, const Demand*, bool updates_okay=true, OperationPlan* = NULL,
+        unsigned long i=0, bool makeflowsloads=true) const;
 
     /** A operation of this type enforces the following rules on its
       * operationplans:
@@ -2216,7 +2220,7 @@ class OperationEffective : public Operation
 
   private:
     /** Stores the calendar. This calendar stores for each date in the horizon
-	  * which operation is to be used. */
+    * which operation is to be used. */
     const CalendarOperation* cal;
 
     /** Specifies whether to use the start or the end date as the date to use.
@@ -2233,8 +2237,8 @@ class OperationEffective : public Operation
   */
 class OperationPlanEffective : public OperationPlan
 {
-  TYPEDEF(OperationPlanEffective);
-  friend class OperationEffective;
+    TYPEDEF(OperationPlanEffective);
+    friend class OperationEffective;
 
   private:
     OperationPlan* effopplan;
@@ -2260,13 +2264,13 @@ class OperationPlanEffective : public OperationPlan
   * This is an abstract class.
   */
 class Item
-  : public HasHierarchy<Item>, public HasDescription, public Object
+      : public HasHierarchy<Item>, public HasDescription, public Object
 {
-  TYPEDEF(Item);
+    TYPEDEF(Item);
   public:
     /** Constructor. Don't use this directly! */
     explicit Item(const string& str)
-      : HasHierarchy<Item> (str), deliveryOperation(NULL) {}
+        : HasHierarchy<Item> (str), deliveryOperation(NULL) {}
 
     /** Returns the delivery operation.<br>
       * This field is inherited from a parent item, if it hasn't been
@@ -2312,7 +2316,7 @@ class Item
 /** This class is the default implementation of the abstract Item class. */
 class ItemDefault : public Item
 {
-  TYPEDEF(ItemDefault);
+    TYPEDEF(ItemDefault);
   public:
     explicit ItemDefault(const string& str) : Item(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -2326,7 +2330,7 @@ class ItemDefault : public Item
   * It is the entity for keeping modeling inventory.
   */
 class Buffer : public HasHierarchy<Buffer>, public HasLevel,
-  public Plannable, public HasDescription
+      public Plannable, public HasDescription
 {
     TYPEDEF(Buffer);
     friend class Flow;
@@ -2338,8 +2342,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Constructor. Implicit creation of instances is disallowed. */
     explicit Buffer(const string& str) : HasHierarchy<Buffer>(str),
-      hidden(false), producing_operation(NULL), loc(NULL), it(NULL),
-      min_cal(NULL), max_cal(NULL) {}
+        hidden(false), producing_operation(NULL), loc(NULL), it(NULL),
+        min_cal(NULL), max_cal(NULL) {}
 
     /** Returns the operation that is used to supply extra supply into this
       * buffer. */
@@ -2470,7 +2474,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 /** This class is the default implementation of the abstract Buffer class. */
 class BufferDefault : public Buffer
 {
-  TYPEDEF(BufferDefault);
+    TYPEDEF(BufferDefault);
   public:
     explicit BufferDefault(const string& str) : Buffer(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -2486,7 +2490,7 @@ class BufferDefault : public Buffer
   */
 class BufferInfinite : public Buffer
 {
-  TYPEDEF(BufferInfinite);
+    TYPEDEF(BufferInfinite);
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2505,7 +2509,7 @@ class BufferInfinite : public Buffer
   */
 class BufferMinMax : public Buffer   // @todo rename to BufferProcurement and implement better!
 {
-  TYPEDEF(BufferMinMax);
+    TYPEDEF(BufferMinMax);
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2522,14 +2526,14 @@ class BufferMinMax : public Buffer   // @todo rename to BufferProcurement and im
   * start of the operation.
   */
 class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
-  public Solvable
+      public Solvable
 {
-  TYPEDEF(Flow);
+    TYPEDEF(Flow);
   public:
-	  /** Destructor. */
+    /** Destructor. */
     virtual DECLARE_EXPORT ~Flow();
 
-	  /** Constructor. */
+    /** Constructor. */
     explicit Flow(Operation* o, Buffer* b, float q) : quantity(q)
     {
       setOperation(o);
@@ -2537,7 +2541,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       validate(ADD);
     }
 
-	  /** Returns the operation. */
+    /** Returns the operation. */
     Operation* getOperation() const {return getPtrA();}
 
     /** Updates the operation of this flow. This method can be called only ONCE
@@ -2571,16 +2575,16 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       */
     void setBuffer(Buffer* b) { if (b) setPtrB(b,b->getFlows());}
 
-	  /** A flow is considered hidden when either its buffer or operation
-	    * are hidden. */
-	  bool getHidden() const
-      {return getBuffer()->getHidden() || getOperation()->getHidden();}
+    /** A flow is considered hidden when either its buffer or operation
+      * are hidden. */
+    bool getHidden() const
+    {return getBuffer()->getHidden() || getOperation()->getHidden();}
 
     /** Returns the date to be used for this flowplan. */
-	  virtual const Date& getFlowplanDate(const OperationPlan* o) const
-	    {return o->getDates().getStart();}
+    virtual const Date& getFlowplanDate(const OperationPlan* o) const
+      {return o->getDates().getStart();}
 
-	  virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
 
@@ -2598,7 +2602,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     /** Verifies whether a flow meets all requirements to be valid. */
     DECLARE_EXPORT void validate(Action action);
 
-	  /** Quantity of the flow. */
+    /** Quantity of the flow. */
     float quantity;
 };
 
@@ -2609,10 +2613,10 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
   */
 class FlowStart : public Flow
 {
-  TYPEDEF(FlowStart);
+    TYPEDEF(FlowStart);
   public:
-	  /** Constructor. */
-	  explicit FlowStart(Operation* o, Buffer* b, float q) : Flow(o,b,q) {}
+    /** Constructor. */
+    explicit FlowStart(Operation* o, Buffer* b, float q) : Flow(o,b,q) {}
 
     /** This constructor is called from the plan begin_element function. */
     explicit FlowStart() {}
@@ -2629,19 +2633,19 @@ class FlowStart : public Flow
   */
 class FlowEnd : public Flow
 {
-  TYPEDEF(FlowEnd);
+    TYPEDEF(FlowEnd);
   public:
-	  /** Constructor. */
-	  explicit FlowEnd(Operation* o, Buffer* b, float q) : Flow(o,b,q) {}
+    /** Constructor. */
+    explicit FlowEnd(Operation* o, Buffer* b, float q) : Flow(o,b,q) {}
 
     /** This constructor is called from the plan begin_element function. */
     explicit FlowEnd() {}
 
     /** Returns the date to be used for this flowplan. */
-	  const Date& getFlowplanDate(const OperationPlan* o) const
-	  {return o->getDates().getEnd();}
+    const Date& getFlowplanDate(const OperationPlan* o) const
+      {return o->getDates().getEnd();}
 
-	  virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -2657,8 +2661,8 @@ class FlowEnd : public Flow
   */
 class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 {
-  TYPEDEF(FlowPlan);
-  friend class OperationPlan::FlowPlanIterator;
+    TYPEDEF(FlowPlan);
+    friend class OperationPlan::FlowPlanIterator;
   private:
     /** Points to the flow instantiated by this flowplan. */
     const Flow *fl;
@@ -2699,9 +2703,9 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     {Object::WLock<OperationPlan>(oper)->setQuantity(qty / fl->getQuantity(), b);}
 
     /** Returns the date of the flowplan. */
-  	const Date& getDate() const {return fl->getFlowplanDate(oper);}
+    const Date& getDate() const {return fl->getFlowplanDate(oper);}
 
-	  DECLARE_EXPORT void update();
+    DECLARE_EXPORT void update();
 
     /** Returns whether the flowplan needs to be serialized. This is
       * determined by looking at whether the flow is hidden or not. */
@@ -2717,16 +2721,16 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
   * of capacity.
   */
 class Resource : public HasHierarchy<Resource>,
-  public HasLevel, public Plannable, public HasDescription
+      public HasLevel, public Plannable, public HasDescription
 {
-  TYPEDEF(Resource);
-  friend class Load;
-  friend class LoadPlan;
+    TYPEDEF(Resource);
+    friend class Load;
+    friend class LoadPlan;
 
   public:
     /** Constructor. */
     explicit Resource(const string& str) : HasHierarchy<Resource>(str),
-      max_cal(NULL), loc(NULL), hidden(false) {};
+        max_cal(NULL), loc(NULL), hidden(false) {};
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Resource();
@@ -2803,7 +2807,7 @@ class Resource : public HasHierarchy<Resource>,
 /** This class is the default implementation of the abstract Resource class. */
 class ResourceDefault : public Resource
 {
-  TYPEDEF(ResourceDefault);
+    TYPEDEF(ResourceDefault);
   public:
     explicit ResourceDefault(const string& str) : Resource(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -2817,7 +2821,7 @@ class ResourceDefault : public Resource
   */
 class ResourceInfinite : public Resource
 {
-  TYPEDEF(ResourceInfinite);
+    TYPEDEF(ResourceInfinite);
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2832,12 +2836,12 @@ class ResourceInfinite : public Resource
 
 /** This class links a resource to a certain operation. */
 class Load
-  : public Object, public Association<Operation,Resource,Load>::Node,
-    public Solvable
+      : public Object, public Association<Operation,Resource,Load>::Node,
+      public Solvable
 {
-  TYPEDEF(Load);
-  friend class Resource;
-  friend class Operation;
+    TYPEDEF(Load);
+    friend class Resource;
+    friend class Operation;
 
   public:
     /** Constructor. */
@@ -2893,7 +2897,7 @@ class Load
     /** Default constructor. */
     Load() : usage(1.0f) {}
 
-private:
+  private:
     /** This method is called to check the validity of the object. It will
       * delete the invalid loads: be careful with the 'this' pointer after
       * calling this method!
@@ -2916,8 +2920,8 @@ private:
   */
 class Plan : public Plannable
 {
-  TYPEDEF(Plan);
-  friend void LibraryModel::initialize();
+    TYPEDEF(Plan);
+    friend void LibraryModel::initialize();
   private:
     /** Current Date of this plan. */
     Date cur_Date;
@@ -3016,11 +3020,11 @@ class CommandReadXMLFile : public Command
     /** Constructor. If no file or directory name is passed or specified later
       * the standard input will be read during execution of the command. */
     CommandReadXMLFile(const char* s = NULL, bool v = true, bool o = false)
-      : validate(v), validate_only(o) {if (s) filename = s;}
+        : validate(v), validate_only(o) {if (s) filename = s;}
 
     /** Constructor. */
     CommandReadXMLFile(const string& s, bool v = true, bool o = false)
-      : filename(s), validate(v), validate_only(o) {}
+        : filename(s), validate(v), validate_only(o) {}
 
     /** Update the name of the input file. */
     void setFileName(const string& v) {filename = v;}
@@ -3084,11 +3088,11 @@ class CommandReadXMLString : public Command
   public:
     /** Constructor. */
     CommandReadXMLString(const string& s, const bool v=true, const bool o=false)
-      : data(s), validate(v), validate_only(o) {};
+        : data(s), validate(v), validate_only(o) {};
 
     /** Default constructor. */
     CommandReadXMLString(const bool v=true, const bool o=false)
-      : validate(v), validate_only(o) {};
+        : validate(v), validate_only(o) {};
 
     /** Updates the data string. */
     void setData(const string& v) {data = v;}
@@ -3147,7 +3151,7 @@ class CommandSave : public Command
 {
   public:
     CommandSave(const string& v = "plan.out")
-      : filename(v), content(XMLOutput::STANDARD) {};
+        : filename(v), content(XMLOutput::STANDARD) {};
     virtual ~CommandSave() {};
     string getFileName() const {return filename;}
     void setFileName(const string& v) {filename = v;}
@@ -3158,8 +3162,10 @@ class CommandSave : public Command
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(CommandSave)
-        + filename.size() + headerstart.size() + headeratts.size();}
+    {
+      return sizeof(CommandSave)
+          + filename.size() + headerstart.size() + headeratts.size();
+    }
     XMLOutput::content_type getContent() const {return content;}
     void setContent(XMLOutput::content_type t) {content = t;}
   private:
@@ -3261,15 +3267,15 @@ class CommandErase : public Command
   * This is an abstract class.
   */
 class Demand
-  : public HasHierarchy<Demand>, public Plannable, public HasDescription
+      : public HasHierarchy<Demand>, public Plannable, public HasDescription
 {
-  TYPEDEF(Demand);
+    TYPEDEF(Demand);
   public:
     typedef slist<OperationPlan*> OperationPlan_list;
 
     /** Constructor. */
     explicit Demand(const string& str) : HasHierarchy<Demand>(str),
-      it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0) {}
+        it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0) {}
 
     /** Destructor. Deleting the demand will also delete all delivery operation
       * plans */
@@ -3479,7 +3485,7 @@ class Demand
 /** This class is the default implementation of the abstract Demand class. */
 class DemandDefault : public Demand
 {
-  TYPEDEF(DemandDefault);
+    TYPEDEF(DemandDefault);
   public:
     explicit DemandDefault(const string& str) : Demand(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -3496,8 +3502,8 @@ class DemandDefault : public Demand
   */
 class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
 {
-  TYPEDEF(LoadPlan);
-  friend class OperationPlan::LoadPlanIterator;
+    TYPEDEF(LoadPlan);
+    friend class OperationPlan::LoadPlanIterator;
   public:
     /** Public constructor.<br>
       * This constructor constructs the starting loadplan and will
@@ -3510,7 +3516,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Return the date of the loadplan. */
     const Date & getDate() const
     {
-      if(start_or_end == START) return oper->getDates().getStart();
+      if (start_or_end == START) return oper->getDates().getStart();
       else return oper->getDates().getEnd();
     }
 
@@ -3564,7 +3570,7 @@ class ProblemBeforeCurrent : public Problem
     {
       ostringstream ch;
       ch << "Job '" << static_cast<OperationPlan*>(getOwner())->getIdentifier()
-        << "' planned in the past";
+      << "' planned in the past";
       return ch.str();
     }
     bool isFeasible() {return false;}
@@ -3578,10 +3584,10 @@ class ProblemBeforeCurrent : public Problem
       OperationPlan *o = dynamic_cast<OperationPlan*>(getOwner());
       if (o->getDates().getEnd() > Plan::instance().getCurrent())
         return DateRange(o->getDates().getStart(),
-                         Plan::instance().getCurrent());
+            Plan::instance().getCurrent());
       else
         return DateRange(o->getDates().getStart(),
-                         o->getDates().getEnd());
+            o->getDates().getEnd());
     }
 
     /** Return a reference to the metadata structure. */
@@ -3604,7 +3610,7 @@ class ProblemBeforeFence : public Problem
     {
       ostringstream ch;
       ch << "Job '" << static_cast<OperationPlan*>(getOwner())->getIdentifier()
-        << "' planned before fence";
+      << "' planned before fence";
       return ch.str();
     }
     bool isFeasible() {return true;}
@@ -3617,12 +3623,12 @@ class ProblemBeforeFence : public Problem
     {
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
       if (o->getDates().getEnd() > Plan::instance().getCurrent()
-                                        + o->getOperation()->getFence())
+          + o->getOperation()->getFence())
         return DateRange(o->getDates().getStart(),
-          Plan::instance().getCurrent() + o->getOperation()->getFence());
+            Plan::instance().getCurrent() + o->getOperation()->getFence());
       else
         return DateRange(o->getDates().getStart(),
-          o->getDates().getEnd());
+            o->getDates().getEnd());
     }
 
     /** Return a reference to the metadata structure. */
@@ -3642,18 +3648,20 @@ class ProblemPrecedence : public Problem
     string getDescription() const
     {
       return string("Operation '") + opplan2->getOperation()->getName()
-             + "' starts before Operation '"
-             + opplan1->getOperation()->getName() +"' ends";
+          + "' starts before Operation '"
+          + opplan1->getOperation()->getName() +"' ends";
     }
     bool isFeasible() {return false;}
     float getWeight() {return 1.0f;}
     explicit ProblemPrecedence
-      (Operation* o, OperationPlan* op1, OperationPlan* op2)
-      : Problem(o), opplan1(op1), opplan2(op2) {addProblem();}
+    (Operation* o, OperationPlan* op1, OperationPlan* op2)
+        : Problem(o), opplan1(op1), opplan2(op2) {addProblem();}
     ~ProblemPrecedence() {removeProblem();}
     const DateRange getDateRange() const
-      {return DateRange(opplan2->getDates().getStart(),
-                        opplan1->getDates().getEnd());}
+    {
+      return DateRange(opplan2->getDates().getStart(),
+          opplan1->getDates().getEnd());
+    }
     OperationPlan* getFirstOperationPlan() const {return opplan1;}
     OperationPlan* getSecondOperationPlan() const {return opplan2;}
 
@@ -3679,7 +3687,7 @@ class ProblemDemandNotPlanned : public Problem
 {
   public:
     string getDescription() const
-    {return string("Demand '") + getDemand()->getName() + "' is not planned";}
+      {return string("Demand '") + getDemand()->getName() + "' is not planned";}
     bool isFeasible() {return false;}
     float getWeight() {return getDemand()->getQuantity();}
     explicit ProblemDemandNotPlanned(Demand* d) : Problem(d) {addProblem();}
@@ -3711,7 +3719,7 @@ class ProblemLate : public Problem
     {
       assert(getDemand() && !getDemand()->getDelivery().empty());
       return DateRange(getDemand()->getDue(),
-        (*(getDemand()->getDelivery().begin()))->getDates().getEnd());
+          (*(getDemand()->getDelivery().begin()))->getDates().getEnd());
     }
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
 
@@ -3737,7 +3745,7 @@ class ProblemEarly : public Problem
     const DateRange getDateRange() const
     {
       return DateRange(getDemand()->getDue(),
-        (*(getDemand()->getDelivery().begin()))->getDates().getEnd());
+          (*(getDemand()->getDelivery().begin()))->getDates().getEnd());
     }
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
 
@@ -3759,8 +3767,8 @@ class ProblemShort : public Problem
     {
       ostringstream ch;
       ch << "Demand '" << getDemand()->getName() << "' planned "
-         << (getDemand()->getQuantity() - getDemand()->getPlannedQuantity())
-         << " units short";
+      << (getDemand()->getQuantity() - getDemand()->getPlannedQuantity())
+      << " units short";
       return ch.str();
     }
     bool isFeasible() {return true;}
@@ -3790,8 +3798,8 @@ class ProblemExcess : public Problem
     {
       ostringstream ch;
       ch << "Demand '" << getDemand()->getName() << "' planned "
-         << (getDemand()->getPlannedQuantity() - getDemand()->getQuantity())
-         << " units excess";
+      << (getDemand()->getPlannedQuantity() - getDemand()->getQuantity())
+      << " units excess";
       return ch.str();
     }
     bool isFeasible() {return true;}
@@ -3897,7 +3905,7 @@ class ProblemCapacityOverload : public Problem
     bool isFeasible() {return false;}
     float getWeight() {return 1.0f;}
     ProblemCapacityOverload(Resource* r, DateRange d, float q)
-      : Problem(r), qty(q), dr(d) {addProblem();}
+        : Problem(r), qty(q), dr(d) {addProblem();}
     ~ProblemCapacityOverload() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Resource* getResource() const {return dynamic_cast<Resource*>(getOwner());}
@@ -3927,7 +3935,7 @@ class ProblemCapacityUnderload : public Problem
     bool isFeasible() {return false;}
     float getWeight() {return 1.0f;}
     ProblemCapacityUnderload(Resource* r, DateRange d, float q)
-      : Problem(r), qty(q), dr(d) {addProblem();}
+        : Problem(r), qty(q), dr(d) {addProblem();}
     ~ProblemCapacityUnderload() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Resource* getResource() const {return dynamic_cast<Resource*>(getOwner());}
@@ -3957,7 +3965,7 @@ class ProblemMaterialShortage : public Problem
     bool isFeasible() {return false;}
     float getWeight() {return 1.0f;}
     ProblemMaterialShortage(Buffer* b, Date st, Date nd, float q)
-      : Problem(b), qty(q), dr(st,nd) {addProblem();}
+        : Problem(b), qty(q), dr(st,nd) {addProblem();}
     ~ProblemMaterialShortage() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}
@@ -3987,8 +3995,8 @@ class ProblemMaterialExcess : public Problem
     bool isFeasible() {return true;}
     float getWeight() {return 1.0f;}
     ProblemMaterialExcess(Buffer* b, Date st, Date nd, float q)
-      : Problem(b), qty(q), dr(st,nd) {addProblem();}
-      ~ProblemMaterialExcess() {removeProblem();}
+        : Problem(b), qty(q), dr(st,nd) {addProblem();}
+    ~ProblemMaterialExcess() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}
 
@@ -4021,8 +4029,8 @@ class CommandCreateOperationPlan : public Command
       OperationPlan* ow=NULL, bool makeflowsloads=true)
     {
       opplan = o ?
-        o->createOperationPlan(q, d1, d2, l, true, ow, 0, makeflowsloads)
-        : NULL;
+          o->createOperationPlan(q, d1, d2, l, true, ow, 0, makeflowsloads)
+          : NULL;
     }
     void execute()
     {
@@ -4043,8 +4051,8 @@ class CommandCreateOperationPlan : public Command
     string getDescription() const
     {
       return "creating a new operationplan for operation '"
-        + (opplan ? string(opplan->getOperation()->getName()) : string("NULL"))
-        + "'";
+          + (opplan ? string(opplan->getOperation()->getName()) : string("NULL"))
+          + "'";
     }
 
   private:
@@ -4187,7 +4195,7 @@ class HasProblems::EntityIterator
   */
 class Problem::const_iterator
 {
-  friend class Problem;
+    friend class Problem;
   private:
     /** A pointer to the current problem. If this pointer is NULL, we are
       * at the end of the list. */
@@ -4323,7 +4331,7 @@ class PeggingIterator
       bool pegged;
       /** Constructor. */
       state(unsigned int l, double d, double f, const FlowPlan* ff, bool p = true)
-        : qty(d), factor(f), level(l), fl(ff), pegged(p) {};
+          : qty(d), factor(f), level(l), fl(ff), pegged(p) {};
       /** Inequality operator. */
       bool operator != (const state& s) const
         {return fl!=s.fl || level!=s.level;}
@@ -4365,7 +4373,7 @@ class PeggingIterator
   */
 class OperationPlan::FlowPlanIterator
 {
-  friend class OperationPlan;
+    friend class OperationPlan;
   private:
     FlowPlan* curflowplan;
     FlowPlanIterator(FlowPlan* b) : curflowplan(b) {}
@@ -4405,7 +4413,7 @@ inline int OperationPlan::sizeFlowPlans() const
   */
 class OperationPlan::LoadPlanIterator
 {
-  friend class OperationPlan;
+    friend class OperationPlan;
   private:
     LoadPlan* curloadplan;
     LoadPlanIterator(LoadPlan* b) : curloadplan(b) {}

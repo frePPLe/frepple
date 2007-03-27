@@ -133,11 +133,10 @@ todo:
 
 # Reformats the code to comply to some common standard
 # Our formatting is closely aligned with the CoreLinux standards
-astyleoptions = --style==ansi --indent=spaces=2 --indent-classes --indent-switches --break-blocks --min-conditional-indent=2
+astyleoptions = --style=ansi --indent=spaces=2 --indent-classes --indent-switches --min-conditional-indent=2 --one-line=keep-statements --one-line=keep-blocks --max-instatement-indent=2 --convert-tabs
 astyle:
 	astyle --mode=c $(astyleoptions) `find . -name '*.cpp'`
-#	astyle --mode=java  `find . -name '*.java'`
-	astyle --mode=c $options$(astyleoptions) `find . -name '*.h'`
+	astyle --mode=c $(astyleoptions) `find . -name '*.h'`
 
 # The release number is (unfortunately) stored in a number of independent places:
 # This make target is used to update all those places in a single go.

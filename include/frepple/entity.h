@@ -48,7 +48,7 @@ template <class T> void HasHierarchy<T>::setOwner (T* fam)
   for (T *t = fam; t; t = t->parent)
     if (t == this)
       throw LogicException("Invalid hierarchy relation between \""
-      	+ this->getName() + "\" and \"" + fam->getName() + "\"");
+          + this->getName() + "\" and \"" + fam->getName() + "\"");
 
   // Clean up previous owner, if any
   if (parent)
@@ -58,7 +58,7 @@ template <class T> void HasHierarchy<T>::setOwner (T* fam)
       parent->first_child = next_brother;
     else
     {
-    	// Removed somewhere in the middle of the list of children
+      // Removed somewhere in the middle of the list of children
       T *i = parent->first_child;
       while (i && i->next_brother!=this) i = i->next_brother;
       if (!i) throw LogicException("Invalid hierarchy data");
@@ -87,7 +87,7 @@ template <class T> void HasHierarchy<T>::setOwner (T* fam)
 
 
 template <class T> void HasHierarchy<T>::writeElement
-  (XMLOutput* o, const XMLtag &t, mode m) const
+(XMLOutput* o, const XMLtag &t, mode m) const
 {
   /** Note that this function is never called on its own. It is always called
     * from the writeElement() method of a subclass. Therefore we don't need
@@ -107,10 +107,10 @@ template <class T> void HasHierarchy<T>::writeElement
 
 
 template <class T> void HasHierarchy<T>::beginElement
-  (XMLInput& pIn, XMLElement& pElement)
+(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_owner) ||
-    (pIn.getParentElement().isA(Tags::tag_members)
+      (pIn.getParentElement().isA(Tags::tag_members)
        && pElement.isA(T::metadata.typetag)))
     // Start reading a member or the parent
     pIn.readto( T::reader(T::metadata,pIn) );
@@ -121,9 +121,9 @@ template <class T> void HasHierarchy<T>::endElement (XMLInput& pIn,
     XMLElement& pElement)
 {
   if ( (pElement.isA(Tags::tag_owner) && !pIn.isObjectEnd())
-    || (pElement.isA(T::metadata.typetag)
-        && pIn.getParentElement().isA(Tags::tag_members)
-        && pIn.isObjectEnd()))
+      || (pElement.isA(T::metadata.typetag)
+          && pIn.getParentElement().isA(Tags::tag_members)
+          && pIn.isObjectEnd()))
   {
     // Either:
     // - we just ended an owner element: ...<OWNER>abc</OWNER>
@@ -171,6 +171,6 @@ template <class T> HasHierarchy<T>::~HasHierarchy()
 template <class T> unsigned short HasHierarchy<T>::getHierarchyLevel() const
 {
   unsigned short i(0);
-  for(const T* p = this; p->parent; p = p->parent) ++i;
+  for (const T* p = this; p->parent; p = p->parent) ++i;
   return i;
 }

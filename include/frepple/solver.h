@@ -45,7 +45,7 @@ namespace frepple
   */
 class MRPSolver : public Solver
 {
-  TYPEDEF(MRPSolver);
+    TYPEDEF(MRPSolver);
   protected:
     /** This variable stores the constraint which the solver should respect.
       * By default no constraints are enabled. */
@@ -222,11 +222,11 @@ class MRPSolver : public Solver
       */
     class MRPSolverdata : public CommandList
     {
-      friend class MRPSolver;
+        friend class MRPSolver;
       public:
         MRPSolver* getSolver() const {return sol;}
         MRPSolverdata(MRPSolver* s, int c, deque<Demand*>& d)
-          : sol(s), curOwnerOpplan(NULL), q_loadplan(NULL), q_flowplan(NULL),
+            : sol(s), curOwnerOpplan(NULL), q_loadplan(NULL), q_flowplan(NULL),
             q_operationplan(NULL), cluster(c), demands(d) {}
 
         /** This function runs a single planning thread. Such a thread will loop

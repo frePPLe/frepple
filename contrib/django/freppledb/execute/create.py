@@ -27,9 +27,11 @@
 
 
 from freppledb.input.models import *
+from freppledb.output.models import Dates
 import time, os, os.path, sys, random
 from datetime import timedelta, date
 from django.db import connection
+from django.db import transaction
 
 # This function generates a random date
 startdate = date(2007,1,1)
@@ -37,33 +39,75 @@ def getDate():
   global startdate
   return startdate + timedelta(random.uniform(0,365))
 
+@transaction.commit_manually
 def erase_model():
   '''
   This routine erase all model data from the database.
   '''
   cursor = connection.cursor()
+  cursor.execute('delete from frepple.output_dates')
+  transaction.commit()
   cursor.execute('delete from frepple.output_problem')
+  transaction.commit()
   cursor.execute('delete from frepple.output_flowplan')
+  transaction.commit()
   cursor.execute('delete from frepple.output_loadplan')
+  transaction.commit()
   cursor.execute('delete from frepple.output_operationplan')
+  transaction.commit()
   cursor.execute('delete from frepple.input_demand')
+  transaction.commit()
   cursor.execute('delete from frepple.input_flow')
+  transaction.commit()
   cursor.execute('delete from frepple.input_load')
+  transaction.commit()
   cursor.execute('delete from frepple.input_buffer')
+  transaction.commit()
   cursor.execute('delete from frepple.input_resource')
+  transaction.commit()
   cursor.execute('delete from frepple.input_operationplan')
+  transaction.commit()
   cursor.execute('delete from frepple.input_item')
+  transaction.commit()
   cursor.execute('delete from frepple.input_suboperation')
+  transaction.commit()
   cursor.execute('delete from frepple.input_operation')
+  transaction.commit()
   cursor.execute('delete from frepple.input_location')
+  transaction.commit()
   cursor.execute('delete from frepple.input_bucket')
+  transaction.commit()
   cursor.execute('delete from frepple.input_calendar')
+  transaction.commit()
   cursor.execute('delete from frepple.input_customer')
+  transaction.commit()
 
+@transaction.commit_manually
 def create_model (cluster, demand, level):
   '''
   This routine populates the database with a sample dataset.
   '''
+  # Dates
+  global startdate
+  for i in range(365):
+    # Loop through 1 year of daily buckets
+    curdate = startdate + timedelta(i)
+    month = int(curdate.strftime("%m"))
+    quarter = (month-1) / 3 + 1
+    year = int(curdate.strftime("%Y"))
+    d = Dates(
+      date = curdate,
+      week = curdate.strftime("%Y W%W"),
+      week_start = curdate - timedelta(int(curdate.strftime("%w"))),
+      month =  curdate.strftime("%b %Y") ,
+      month_start = curdate - timedelta(int(curdate.strftime("%d"))-1),
+      quarter = str(year) + " Q" + str(quarter),
+      quarter_start = date(year, quarter*3-2, 1),
+      year = curdate.strftime("%Y"),
+      year_start = date(year,1,1),
+      )
+    d.save()
+    
   # Initialization
   random.seed(100) # Initialize random seed to get reproducible results
   cnt = 100000     # a counter for operationplan identifiers
@@ -152,3 +196,6 @@ def create_model (cluster, demand, level):
         cnt += 1
         opplan = OperationPlan(identifier=cnt, operation=oper, quantity=int(random.uniform(1,100)), startdate=getDate(), enddate=getDate())
         opplan.save()
+  
+  # Commit it all      
+  transaction.commit()

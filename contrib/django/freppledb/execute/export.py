@@ -62,8 +62,8 @@ def dumpfrepple():
   print "Exporting problems..."
   starttime = times()[4]
   cursor.executemany(
-    "insert into frepple.output_problem (entity,name,description,startdate,enddate) values(%s,%s,%s,%s,%s)",
-    [ (i['ENTITY'], i['TYPE'], i['DESCRIPTION'], str(i['START']), str(i['END'])) for i in frepple.problem() ] 
+    "insert into frepple.output_problem (entity,name,description,startdatetime,enddatetime,startdate,enddate) values(%s,%s,%s,%s,%s,%s,%s)",
+    [ (i['ENTITY'], i['TYPE'], i['DESCRIPTION'], str(i['START']), str(i['END']), str(i['START']), str(i['END'])) for i in frepple.problem() ] 
     )
   transaction.commit()
   cursor.execute("select count(*) from frepple.output_problem")
@@ -72,8 +72,8 @@ def dumpfrepple():
   print "Exporting operationplans..."
   starttime = times()[4]
   cursor.executemany(
-    "insert into frepple.output_operationplan (identifier,operation_id,quantity,startdate,enddate,demand_id) values (%s,%s,%s,%s,%s,%s)",
-    [ (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], str(i['START']), str(i['END']), i['DEMAND']) for i in frepple.operationplan() ] 
+    "insert into frepple.output_operationplan (identifier,operation_id,quantity,startdatetime,enddatetime,startdate,enddate,demand_id) values (%s,%s,%s,%s,%s,%s,%s,%s)",
+    [ (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], str(i['START']), str(i['END']), str(i['START']), str(i['END']), i['DEMAND']) for i in frepple.operationplan() ] 
     )
   transaction.commit()
   cursor.execute("select count(*) from frepple.output_operationplan")
@@ -83,8 +83,8 @@ def dumpfrepple():
   starttime = times()[4]
   for i in frepple.buffer():
     cursor.executemany(
-      "insert into frepple.output_flowplan (operationplan_id,operation_id,thebuffer_id,quantity,date,onhand) values (%s,%s,%s,%s,%s,%s)",
-      [ (j['OPERATIONPLAN'], j['OPERATION'], j['BUFFER'], j['QUANTITY'], str(j['DATE']), j['ONHAND']) for j in i['FLOWPLANS'] ] 
+      "insert into frepple.output_flowplan (operationplan_id,operation_id,thebuffer_id,quantity,date,datetime,onhand) values (%s,%s,%s,%s,%s,%s,%s)",
+      [ (j['OPERATIONPLAN'], j['OPERATION'], j['BUFFER'], j['QUANTITY'], str(j['DATE']), str(j['DATE']), j['ONHAND']) for j in i['FLOWPLANS'] ] 
       )
   transaction.commit()
   cursor.execute("select count(*) from frepple.output_flowplan")
@@ -94,8 +94,8 @@ def dumpfrepple():
   starttime = times()[4]
   for i in frepple.resource():
     cursor.executemany(
-      "insert into frepple.output_loadplan (operationplan_id,operation_id,resource_id,quantity,date,onhand,maximum) values (%s,%s,%s,%s,%s,%s,%s)",
-      [ (j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'], j['QUANTITY'], str(j['DATE']), j['ONHAND'], j['MAXIMUM']) for j in i['LOADPLANS'] ] 
+      "insert into frepple.output_loadplan (operationplan_id,operation_id,resource_id,quantity,date,datetime,onhand,maximum) values (%s,%s,%s,%s,%s,%s,%s,%s)",
+      [ (j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'], j['QUANTITY'], str(j['DATE']), str(j['DATE']), j['ONHAND'], j['MAXIMUM']) for j in i['LOADPLANS'] ] 
       )
   transaction.commit()
   cursor.execute("select count(*) from frepple.output_loadplan")

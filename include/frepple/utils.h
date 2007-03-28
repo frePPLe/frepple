@@ -351,7 +351,7 @@ class RuntimeException: public runtime_error
 {
   public:
     RuntimeException(const char * c) : runtime_error(c) {}
-    RuntimeException(const string s) : runtime_error(s) {}};
+    RuntimeException(const string s) : runtime_error(s) {}
 };
 
 

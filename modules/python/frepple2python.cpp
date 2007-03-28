@@ -58,28 +58,28 @@ extern "C" PyObject* PythonProblem::create(PyTypeObject* type, PyObject *args, P
 }
 
 
-extern "C" PyObject* PythonProblem::next(PythonProblem* obj)
+extern "C" PyObject* PythonProblem::next(PythonProblem* obj) 
 {
   if (obj->iter != Problem::end())
   {
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:N,s:N}",
-        "DESCRIPTION", obj->iter->getDescription().c_str(),
-        "ENTITY", obj->iter->getOwner()->getEntity()->getType().category->group.c_str(),
-        "TYPE", obj->iter->getType().type.c_str(),
-        "START", PythonDateTime(obj->iter->getDateRange().getStart()),
-        "END", PythonDateTime(obj->iter->getDateRange().getEnd())
-      );
+      "DESCRIPTION", obj->iter->getDescription().c_str(),
+      "ENTITY", obj->iter->getOwner()->getEntity()->getType().category->group.c_str(),
+      "TYPE", obj->iter->getType().type.c_str(),
+      "START", PythonDateTime(obj->iter->getDateRange().getStart()),
+      "END", PythonDateTime(obj->iter->getDateRange().getEnd())
+      ); 
 
     ++(obj->iter);
     return result;
   }
-  else
+  else 
     // Reached the end of the iteration
     return NULL;
 }
 
 
-//
+// 
 // INTERFACE FOR FLOWPLAN
 //
 
@@ -97,16 +97,19 @@ extern "C" PyObject* PythonFlowPlan::createFromBuffer(Buffer* v)
 }
 
 
-extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj)
+extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj) 
 {
   if (obj->iter != obj->buf->getFlowPlans().end())
   {
     const FlowPlan* f = dynamic_cast<const FlowPlan*>(&*(obj->iter));
+    if (f && f->getHidden()) f = NULL;
     while (!f)
     {
       ++(obj->iter);
       if (obj->iter == obj->buf->getFlowPlans().end()) return NULL;
       f = dynamic_cast<const FlowPlan*>(&*(obj->iter));
+      cout << " buffer " << f->getFlow()->getBuffer() << "   " << f->getHidden() << "   " << f->getDate() << endl;
+      if (f && f->getHidden()) f = NULL;
     }
     PyObject* result = Py_BuildValue("{s:s,s:s,s:l,s:f,s:N,s:f}",
        "BUFFER", f->getFlow()->getBuffer()->getName().c_str(),
@@ -114,7 +117,7 @@ extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj)
        "OPERATIONPLAN", f->getOperationPlan()->getIdentifier(),
        "QUANTITY", obj->iter->getQuantity(),
        "DATE", PythonDateTime(obj->iter->getDate()),
-       "ONHAND", obj->iter->getOnhand()
+       "ONHAND", obj->iter->getOnhand()    
        );
     ++(obj->iter);
     return result;
@@ -124,7 +127,7 @@ extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj)
 }
 
 
-//
+// 
 // INTERFACE FOR LOADPLAN
 //
 
@@ -142,16 +145,18 @@ extern "C" PyObject* PythonLoadPlan::createFromResource(Resource* v)
 }
 
 
-extern "C" PyObject* PythonLoadPlan::next(PythonLoadPlan* obj)
+extern "C" PyObject* PythonLoadPlan::next(PythonLoadPlan* obj) 
 {
   if (obj->iter != obj->res->getLoadPlans().end())
-  {
+  { 
     const LoadPlan* f = dynamic_cast<const LoadPlan*>(&*(obj->iter));
+    if (f && f->getHidden()) f = NULL;
     while (!f)
     {
       ++(obj->iter);
       if (obj->iter == obj->res->getLoadPlans().end()) return NULL;
       f = dynamic_cast<const LoadPlan*>(&*(obj->iter));
+      if (f && f->getHidden()) f = NULL;
     }
     PyObject* result = Py_BuildValue("{s:s,s:s,s:l,s:f,s:N,s:f,s:f}",
        "RESOURCE", f->getLoad()->getResource()->getName().c_str(),
@@ -170,7 +175,7 @@ extern "C" PyObject* PythonLoadPlan::next(PythonLoadPlan* obj)
 }
 
 
-//
+// 
 // INTERFACE FOR OPERATIONPLAN
 //
 
@@ -187,7 +192,7 @@ extern "C" PyObject* PythonOperationPlan::create(PyTypeObject* type, PyObject *a
 }
 
 
-extern "C" PyObject* PythonOperationPlan::next(PythonOperationPlan* obj)
+extern "C" PyObject* PythonOperationPlan::next(PythonOperationPlan* obj) 
 {
   if (obj->iter != OperationPlan::end())
   {
@@ -223,19 +228,19 @@ extern "C" PyObject* PythonDemand::create(PyTypeObject* type, PyObject *args, Py
 }
 
 
-extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
+extern "C" PyObject* PythonDemand::next(PythonDemand* obj) 
 {
   if (obj->iter != Demand::end())
   {
     PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z}",
       "NAME", obj->iter->getName().c_str(),
       "QUANTITY", obj->iter->getQuantity(),
-      "DUE", PythonDateTime(obj->iter->getDue()),
+			"DUE", PythonDateTime(obj->iter->getDue()),
       "PRIORITY", obj->iter->getPriority(),
       "ITEM", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
       "OPERATION", obj->iter->getOperation() ? obj->iter->getOperation()->getName().c_str() : NULL,
       "OWNER", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL
-      //xxx "CUSTOMER", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL
+      //xxx "CUSTOMER", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL     
       );
     ++(obj->iter);
     return result;
@@ -262,22 +267,22 @@ extern "C" PyObject* PythonBuffer::create(PyTypeObject* type, PyObject *args, Py
 }
 
 
-extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj)
+extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj) 
 {
   if (obj->iter != Buffer::end())
   {
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:f,s:z,s:z,s:z,s:z,s:z,s:O}",
-        "NAME", obj->iter->getName().c_str(),
-        "CATEGORY", obj->iter->getCategory().c_str(),
-        "SUBCATEGORY", obj->iter->getSubCategory().c_str(),
-        "DESCRIPTION", obj->iter->getDescription().c_str(),
-        "ONHAND", obj->iter->getOnHand(),
-        "LOCATION", obj->iter->getLocation() ? obj->iter->getLocation()->getName().c_str() : NULL,
-        "ITEM", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
-        "MINIMUM", obj->iter->getMinimum() ? obj->iter->getMinimum()->getName().c_str() : NULL,
-        "MAXIMUM", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
-        "PRODUCING", obj->iter->getProducingOperation() ? obj->iter->getProducingOperation()->getName().c_str() : NULL,
-        "FLOWPLANS", PythonFlowPlan::createFromBuffer(&*(obj->iter))
+      "NAME", obj->iter->getName().c_str(),
+      "CATEGORY", obj->iter->getCategory().c_str(),
+      "SUBCATEGORY", obj->iter->getSubCategory().c_str(),
+      "DESCRIPTION", obj->iter->getDescription().c_str(),
+      "ONHAND", obj->iter->getOnHand(),
+      "LOCATION", obj->iter->getLocation() ? obj->iter->getLocation()->getName().c_str() : NULL,
+      "ITEM", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
+      "MINIMUM", obj->iter->getMinimum() ? obj->iter->getMinimum()->getName().c_str() : NULL,
+      "MAXIMUM", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
+      "PRODUCING", obj->iter->getProducingOperation() ? obj->iter->getProducingOperation()->getName().c_str() : NULL,
+      "FLOWPLANS", PythonFlowPlan::createFromBuffer(&*(obj->iter))
       );
     ++(obj->iter);
     return result;
@@ -304,7 +309,7 @@ extern "C" PyObject* PythonResource::create(PyTypeObject* type, PyObject *args, 
 }
 
 
-extern "C" PyObject* PythonResource::next(PythonResource* obj)
+extern "C" PyObject* PythonResource::next(PythonResource* obj) 
 {
   if (obj->iter != Resource::end())
   {

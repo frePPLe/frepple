@@ -1380,7 +1380,7 @@ class OperationPlan
           * of the operation passed. */
         iterator(const Operation* x) : op(Operation::end())
         {
-          if (x)
+          if (x && !x->getHidden())
           {
             OperationPlan::sortOperationPlans(*x);
             opplan = x->getFirstOpPlan();
@@ -1393,8 +1393,9 @@ class OperationPlan
         iterator() : op(Operation::begin())
         {
           // The while loop is required since the first operation might not
-          // have any operationplans at all
-          while (op!=Operation::end() && !op->getFirstOpPlan()) ++op;
+          // have any operationplans at all or can be hidden
+          while (op!=Operation::end() 
+            && (!op->getFirstOpPlan() || op->getHidden())) ++op;
           if (op!=Operation::end())
           {
             OperationPlan::sortOperationPlans(*op);
@@ -1421,7 +1422,8 @@ class OperationPlan
           // Move to a new operation
           if (!opplan && op!=Operation::end())
           {
-            do ++op; while (op!=Operation::end() && !op->getFirstOpPlan());
+            do ++op; 
+            while (op!=Operation::end() && (!op->getFirstOpPlan() || op->getHidden()));
             if (op!=Operation::end())
             {
               OperationPlan::sortOperationPlans(*op);
@@ -2685,7 +2687,11 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
     /** Destructor. */
     virtual ~FlowPlan()
-      {fl->getBuffer()->setChanged(); fl->getBuffer()->flowplans.erase(this);}
+    {
+      Object::WLock<Buffer> b = getFlow()->getBuffer();
+      b->setChanged(); 
+      b->flowplans.erase(this);
+    }
 
     /** Writing the element.
       * This method has the same prototype as a usual instance of the Object
@@ -2700,10 +2706,10 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       * in case the operation quantity must be a multiple.
       */
     void setQuantity(float qty, bool b=false)
-    {Object::WLock<OperationPlan>(oper)->setQuantity(qty / fl->getQuantity(), b);}
+    {Object::WLock<OperationPlan>(oper)->setQuantity(qty / getFlow()->getQuantity(), b);}
 
     /** Returns the date of the flowplan. */
-    const Date& getDate() const {return fl->getFlowplanDate(oper);}
+    const Date& getDate() const {return getFlow()->getFlowplanDate(oper);}
 
     DECLARE_EXPORT void update();
 

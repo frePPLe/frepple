@@ -43,4 +43,18 @@ def buffer(request, type='data'):
     })      
   response.write(loader.get_template('buffer.xml').render(c))
   return response
-       
+
+# Not included:  doesn't include all buckets
+#select thebuffer_id, week, 
+# sum(case when quantity>0 then quantity else 0 end),
+# sum(case when quantity<0 then quantity else 0 end)
+#from output_flowplan, output_dates
+#where output_flowplan.date = output_dates.date
+#group by thebuffer_id, week    
+#
+#select thebuffer_id, week, 
+# sum(case when quantity>0 then quantity else 0 end),
+# sum(case when quantity<0 then quantity else 0 end)
+#from output_dates 
+#right join output_flowplan on output_dates.date = output_flowplan.date
+#group by thebuffer_id, week   

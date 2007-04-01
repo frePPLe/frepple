@@ -43,6 +43,32 @@ class Plan(models.Model):
     class Meta:
         verbose_name_plural = 'Plan'  # There will only be 1 plan...
 
+class Dates(models.Model):
+    day = models.DateField(primary_key=True)
+    week = models.CharField(maxlength=10, db_index=True)
+    week_start = models.DateField(db_index=True)
+    month = models.CharField(maxlength=10, db_index=True)
+    month_start = models.DateField(db_index=True)
+    quarter = models.CharField(maxlength=10, db_index=True)
+    quarter_start = models.DateField(db_index=True)
+    year = models.CharField(maxlength=10, db_index=True)
+    year_start = models.DateField(db_index=True)
+    class Admin:
+        pass
+        list_display = ('day', 'week', 'month', 'quarter', 'year',
+          'week_start', 'month_start', 'quarter_start', 'year_start')
+        fields = (
+            (None, {'fields': ('day',
+                               ('week','week_start'),
+                               ('month','month_start'),
+                               ('quarter','quarter_start'),
+                               ('year','year_start'),
+                               )}),
+            )
+    class Meta:
+        verbose_name = 'Dates'  # There will only be multiple dates...
+        verbose_name_plural = 'Dates'  # There will only be multiple dates...
+        
 class Calendar(models.Model):
     name = models.CharField(maxlength=60, primary_key=True)
     description = models.CharField(maxlength=200, null=True, blank=True)
@@ -183,7 +209,7 @@ class SubOperation(models.Model):
     #  min_num_in_admin=3, num_extra_on_change=1, related_name='alfa') 
     operation = models.ForeignKey(Operation, raw_id_admin=True, related_name='alfa')
     priority = models.FloatField(max_digits=5, decimal_places=2, default=1)
-    suboperation = models.ForeignKey(Operation, edit_inline=models.TABULAR, raw_id_admin=True, related_name='beta', core=True)
+    suboperation = models.ForeignKey(Operation, raw_id_admin=True, related_name='beta', core=True)
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
     def __str__(self):
         return self.operation.name + "   " + str(self.priority) + "   " + self.suboperation.name
@@ -270,8 +296,8 @@ class Flow(models.Model):
       ('','Start'),
       ('FLOW_END','End'),
     )
-    operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True)
-    thebuffer = models.ForeignKey(Buffer, db_index=True, raw_id_admin=True)
+    operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True, related_name='flows')
+    thebuffer = models.ForeignKey(Buffer, db_index=True, raw_id_admin=True, related_name='flows')
     type = models.CharField(maxlength=20, null=True, blank=True,
       choices=flowtypes,
       default='',

@@ -27,7 +27,6 @@
 
 
 from freppledb.input.models import *
-from freppledb.output.models import Dates
 import time, os, os.path, sys, random
 from datetime import timedelta, date
 from django.db import connection
@@ -45,8 +44,6 @@ def erase_model():
   This routine erase all model data from the database.
   '''
   cursor = connection.cursor()
-  cursor.execute('delete from frepple.output_dates')
-  transaction.commit()
   cursor.execute('delete from frepple.output_problem')
   transaction.commit()
   cursor.execute('delete from frepple.output_flowplan')
@@ -54,6 +51,8 @@ def erase_model():
   cursor.execute('delete from frepple.output_loadplan')
   transaction.commit()
   cursor.execute('delete from frepple.output_operationplan')
+  transaction.commit()
+  cursor.execute('delete from frepple.input_dates')
   transaction.commit()
   cursor.execute('delete from frepple.input_demand')
   transaction.commit()
@@ -96,7 +95,7 @@ def create_model (cluster, demand, level):
     quarter = (month-1) / 3 + 1
     year = int(curdate.strftime("%Y"))
     d = Dates(
-      date = curdate,
+      day = curdate,
       week = curdate.strftime("%Y W%W"),
       week_start = curdate - timedelta(int(curdate.strftime("%w"))),
       month =  curdate.strftime("%b %Y") ,

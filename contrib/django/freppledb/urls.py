@@ -23,14 +23,16 @@
 
 from django.conf.urls.defaults import *
 import sys
+import freppledb.output.views
 
 urlpatterns = patterns('',
     (r'^execute/runfrepple', 'freppledb.execute.views.runfrepple'),
     (r'^execute/rundb', 'freppledb.execute.views.rundb'),
     (r'^execute/', 'freppledb.execute.views.execute'),
     (r'^admin/', include('django.contrib.admin.urls')),
-    (r'^buffer/(?P<type>(.*))/$', 'freppledb.output.views.buffer'),
-    (r'^buffer/$', 'freppledb.output.views.buffer'),
+    (r'^buffer/$', freppledb.output.views.bufferreport.view),
+    (r'^demand/$', freppledb.output.views.demandreport.view),
+    (r'^path/$', freppledb.output.views.pathreport.view),
 )
 
 # Allows the standalone development server to serve the static pages.

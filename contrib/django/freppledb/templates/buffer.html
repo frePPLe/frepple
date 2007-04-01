@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
+{% block coltype %}colM{% endblock %}
+{% block bodyclass %}dashboard{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/admin">{% trans "Home" %}</a> &rsaquo; Inventory Plan</div>{% endblock %}
+{% block content %}
+<div id="content-main">
+
+<table>
+<th>{% for j in bucketlist %} <td>{{j.name}} {{j.start}}</td> {% endfor %}</th>
+
+{% for i in bufferplan %}{% ifchanged i.buffer %}{% if forloop.first %}<tr><td><a href="/admin/input/buffer/{{i.buffer|urlencode}}">{{i.buffer}}</a></td>{% else %}</tr>
+<tr><td><a href="/admin/input/buffer/{{i.buffer|urlencode}}">{{i.buffer}}</a></td>{% endif %}{% endifchanged %}
+<td> {{i.week}} {{i.produced}} {{i.consumed}} </td>{% endfor %}
+{% if bufferplan %} </tr> {% endif %}
+</table>
+
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
+{% block coltype %}colM{% endblock %}
+{% block bodyclass %}dashboard{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/admin">{% trans "Home" %}</a> &rsaquo; Supply Path</div>{% endblock %}
+{% block content %}
+<div id="content-main">
+
+<table>
+<th colspan="4">Supply path of buffer {{buffer}}</th>
+
+{% for i in supplypath %}
+<tr><td><a href="/admin/input/buffer/{{i.buffer|urlencode}}">{{i.buffer}}</a></td> 
+<td>{% if i.buffer.location %}<a href="/admin/input/location/{{i.buffer.location|urlencode}}">{{i.buffer.location}}</a>{% endif %}</td> 
+<td>{% if i.producingflow %}{{i.producingflow}} {% endif %}</td> 
+<td>{% if i.operation %}<a href="/admin/input/operation/{{i.operation|urlencode}}">{{i.operation}}</a>{% endif %}</td> 
+<td>{{i.level}}</td></tr>{% endfor %}
+
+</table>
+
+</div>
+{% endblock %}

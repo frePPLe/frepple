@@ -24,32 +24,6 @@
 from django.db import models
 from freppledb.input.models import Operation, Demand, Buffer, Resource
 
-class Dates(models.Model):
-    date = models.DateField(primary_key=True)
-    week = models.CharField(maxlength=10, db_index=True)
-    week_start = models.DateField(db_index=True)
-    month = models.CharField(maxlength=10, db_index=True)
-    month_start = models.DateField(db_index=True)
-    quarter = models.CharField(maxlength=10, db_index=True)
-    quarter_start = models.DateField(db_index=True)
-    year = models.CharField(maxlength=10, db_index=True)
-    year_start = models.DateField(db_index=True)
-    class Admin:
-        pass
-        list_display = ('date', 'week', 'month', 'quarter', 'year',
-          'week_start', 'month_start', 'quarter_start', 'year_start')
-        fields = (
-            (None, {'fields': ('date',
-                               ('week','week_start'),
-                               ('month','month_start'),
-                               ('quarter','quarter_start'),
-                               ('year','year_start'),
-                               )}),
-            )
-    class Meta:
-        verbose_name = 'Dates'  # There will only be multiple dates...
-        verbose_name_plural = 'Dates'  # There will only be multiple dates...
-
 class OperationPlan(models.Model):
     identifier = models.IntegerField(primary_key=True)
     demand = models.ForeignKey(Demand, related_name='delivery', null=True, db_index=True, raw_id_admin=True)

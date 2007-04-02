@@ -108,7 +108,6 @@ extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj)
       ++(obj->iter);
       if (obj->iter == obj->buf->getFlowPlans().end()) return NULL;
       f = dynamic_cast<const FlowPlan*>(&*(obj->iter));
-      cout << " buffer " << f->getFlow()->getBuffer() << "   " << f->getHidden() << "   " << f->getDate() << endl;
       if (f && f->getHidden()) f = NULL;
     }
     PyObject* result = Py_BuildValue("{s:s,s:s,s:l,s:f,s:N,s:f}",

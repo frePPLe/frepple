@@ -103,7 +103,6 @@ def runfrepple(request):
         os.environ['FREPPLE_HOME'] = frepple
         os.environ['LD_LIBRARY_PATH'] = frepple
         os.chdir(os.path.normpath(os.path.join(frepple,'..','contrib','django','freppledb','execute')))
-        print os.path.normpath(os.path.join(frepple,'..','contrib','django','freppledb','execute'))
         os.system('frepple commands.xml')
         request.user.message_set.create(message='Successfully ran frepple')
       except Exception, e:

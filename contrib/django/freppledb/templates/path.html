@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n %}
+{% load i18n breadcrumbs %}
 {% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block bodyclass %}dashboard{% endblock %}
@@ -7,15 +7,33 @@
 {% block content %}
 <div id="content-main">
 
+Supply path of buffer {{buffer}}
+
 <table>
-<th colspan="4">Supply path of buffer {{buffer}}</th>
+<tr>
+<th rowspan="2">Level</td>
+<th rowspan="2">Buffer</td>
+<th rowspan="2">Location</td>
+<th>Operation</td>
+<th colspan="2">Consumed Qty</td>
+</tr>
+<tr>
+<th>& Resource</td>
+<th>This</td>
+<th>Cumulative</td>
+</tr>
 
 {% for i in supplypath %}
-<tr><td><a href="/admin/input/buffer/{{i.buffer|urlencode}}">{{i.buffer}}</a></td> 
-<td>{% if i.buffer.location %}<a href="/admin/input/location/{{i.buffer.location|urlencode}}">{{i.buffer.location}}</a>{% endif %}</td> 
-<td>{% if i.producingflow %}{{i.producingflow}} {% endif %}</td> 
-<td>{% if i.operation %}<a href="/admin/input/operation/{{i.operation|urlencode}}">{{i.operation}}</a>{% endif %}</td> 
-<td>{{i.level}}</td></tr>{% endfor %}
+<tr>
+<td>{{i.level}}</td>
+<td>{{i.buffer|superlink:"buffer"}}</td> 
+<td>{{i.buffer.location|superlink:"location"}}</td> 
+<td>{% if i.operation %}{{i.operation|superlink:"operation"}}</a>
+{% for j in i.operation.loads.all %}<br>{{j.resource|superlink:"resource"}}{% endfor %}
+{% endif %}</td> 
+<td>{% if i.consumingflow %} {{i.consumingflow.quantity}} {% endif %}</td>
+<td>{{i.cumquantity}}</td>
+</tr>{% endfor %}
 
 </table>
 

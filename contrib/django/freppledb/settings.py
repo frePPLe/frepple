@@ -129,3 +129,5 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False   # Whether sessions expire when a user 
 #EMAIL_HOST_PASSWORD #if required auth.
 
 CACHE_BACKEND = 'locmem:///'
+
+ALLOWED_INCLUDE_ROOTS = ('/tmp')

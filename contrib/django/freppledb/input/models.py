@@ -317,7 +317,7 @@ class Flow(models.Model):
         unique_together = (('operation','thebuffer'),)
 
 class Load(models.Model):
-    operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True)
+    operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True, related_name='loads')
     resource = models.ForeignKey(Resource, db_index=True, raw_id_admin=True)
     usagefactor = models.FloatField(max_digits=10, decimal_places=2, default='1.00')
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)

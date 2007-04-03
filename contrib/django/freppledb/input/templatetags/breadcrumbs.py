@@ -23,6 +23,7 @@
 
 from django import template
 from django.contrib.sessions.models import Session
+import urllib
 
 register = template.Library()
 
@@ -55,4 +56,16 @@ def do_crumbs(parser, token):
         raise template.TemplateSyntaxError, "%r tag requires 2 arguments" % token.contents[0]
     return CrumbsNode(url,name)
 
+def superlink(value,type):
+    '''
+    This filter creates a hyperlinked 
+    '''
+    # Fail silently if no type type or value are given
+    if value is None: return ''
+    # Convert the parameter into a string if it's not already
+    if not isinstance(value,basestring): value = str(value)  
+    # Final return value  
+    return '<a href="/admin/input/%s/%s">%s</a>' % (type,urllib.quote(value),value) 
+
 register.tag('crumbs', do_crumbs)
+register.filter('superlink', superlink)

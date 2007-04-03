@@ -26,6 +26,7 @@ import sys
 import freppledb.output.views
 
 urlpatterns = patterns('',
+    (r'^execute/log', 'django.views.generic.simple.direct_to_template', {'template': 'execute/log.html'} ),
     (r'^execute/runfrepple', 'freppledb.execute.views.runfrepple'),
     (r'^execute/rundb', 'freppledb.execute.views.rundb'),
     (r'^execute/', 'freppledb.execute.views.execute'),

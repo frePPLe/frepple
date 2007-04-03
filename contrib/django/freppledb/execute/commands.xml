@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <LOGFILE>/home/frepple/workspace/frepple/contrib/django/freppledb/execute/frepple.log</LOGFILE>
+  <LOGFILE>/tmp/frepple.log</LOGFILE>
   <COMMANDS>
     <VERBOSE>true</VERBOSE>
     <ABORTONERROR>true</ABORTONERROR>

@@ -88,24 +88,30 @@ def create_model (cluster, demand, level):
   '''
   # Dates
   global startdate
-  for i in range(365):
+  for i in range(380):
     # Loop through 1 year of daily buckets
     curdate = startdate + timedelta(i)
-    month = int(curdate.strftime("%m"))
-    quarter = (month-1) / 3 + 1
+    month = int(curdate.strftime("%m"))  # an integer in the range 1 - 12
+    quarter = (month-1) / 3 + 1          # an integer in the range 1 - 4
     year = int(curdate.strftime("%Y"))
+    print curdate
     d = Dates(
       day = curdate,
       week = curdate.strftime("%Y W%W"),
       week_start = curdate - timedelta(int(curdate.strftime("%w"))),
+      week_end = curdate - timedelta(int(curdate.strftime("%w"))-7),
       month =  curdate.strftime("%b %Y") ,
-      month_start = curdate - timedelta(int(curdate.strftime("%d"))-1),
+      month_start = date(year, month, 1),
+      month_end = date(year+month/12, month+1-12*(month/12), 1),
       quarter = str(year) + " Q" + str(quarter),
       quarter_start = date(year, quarter*3-2, 1),
+      quarter_end = date(year+quarter/4, quarter*3+1-12*(quarter/4), 1),
       year = curdate.strftime("%Y"),
       year_start = date(year,1,1),
+      year_end = date(year+1,1,1),
       )
     d.save()
+  transaction.commit()
     
   # Initialization
   random.seed(100) # Initialize random seed to get reproducible results

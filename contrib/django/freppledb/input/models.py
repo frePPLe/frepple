@@ -47,22 +47,26 @@ class Dates(models.Model):
     day = models.DateField(primary_key=True)
     week = models.CharField(maxlength=10, db_index=True)
     week_start = models.DateField(db_index=True)
+    week_end = models.DateField(db_index=True)
     month = models.CharField(maxlength=10, db_index=True)
     month_start = models.DateField(db_index=True)
+    month_end = models.DateField(db_index=True)
     quarter = models.CharField(maxlength=10, db_index=True)
     quarter_start = models.DateField(db_index=True)
+    quarter_end = models.DateField(db_index=True)
     year = models.CharField(maxlength=10, db_index=True)
     year_start = models.DateField(db_index=True)
+    year_end = models.DateField(db_index=True)
     class Admin:
         pass
         list_display = ('day', 'week', 'month', 'quarter', 'year',
           'week_start', 'month_start', 'quarter_start', 'year_start')
         fields = (
             (None, {'fields': ('day',
-                               ('week','week_start'),
-                               ('month','month_start'),
-                               ('quarter','quarter_start'),
-                               ('year','year_start'),
+                               ('week','week_start','week_end'),
+                               ('month','month_start','month_end'),
+                               ('quarter','quarter_start','quarter_end'),
+                               ('year','year_start','year_end'),
                                )}),
             )
     class Meta:

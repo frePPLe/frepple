@@ -49,6 +49,7 @@ SetCompressor /SOLID lzma
 ;Include for Modern UI and library installation
 !include "MUI.nsh"
 !include Library.nsh
+!include WinMessages.nsh
 
 ; MUI Settings
 !define MUI_ABORTWARNING
@@ -135,8 +136,9 @@ Section "Application" SecAppl
   CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
   CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple.lnk" "$INSTDIR\bin\frepple.exe"
 
-  ; Set an environment variable
+  ; Set an environment variable (and propagate immediately to other processes)
   WriteRegExpandStr HKEY_CURRENT_USER "Environment" "FREPPLE_HOME" "$INSTDIR\bin"
+  SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 SectionEnd
 
 

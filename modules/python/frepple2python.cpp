@@ -195,13 +195,14 @@ extern "C" PyObject* PythonOperationPlan::next(PythonOperationPlan* obj)
 {
   if (obj->iter != OperationPlan::end())
   {
-    PyObject* result = Py_BuildValue("{s:l,s:s,s:f,s:N,s:N,s:z}",
+    PyObject* result = Py_BuildValue("{s:l,s:s,s:f,s:N,s:N,s:z,s:b}",
       "IDENTIFIER", obj->iter->getIdentifier(),
       "OPERATION", obj->iter->getOperation()->getName().c_str(),
       "QUANTITY", obj->iter->getQuantity(),
       "START", PythonDateTime(obj->iter->getDates().getStart()),
       "END", PythonDateTime(obj->iter->getDates().getEnd()),
-      "DEMAND", obj->iter->getDemand() ? obj->iter->getDemand()->getName().c_str() : NULL
+      "DEMAND", obj->iter->getDemand() ? obj->iter->getDemand()->getName().c_str() : NULL,
+      "LOCKED", obj->iter->getLocked()
       );
     ++(obj->iter);
     return result;

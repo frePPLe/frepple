@@ -33,12 +33,13 @@ class OperationPlan(models.Model):
     enddatetime = models.DateTimeField()
     startdate = models.DateField(db_index=True)
     enddate = models.DateField(db_index=True)
+    locked = models.BooleanField(default=True, radio_admin=True)
     owner = models.ForeignKey('self', null=True, blank=True, related_name='children', raw_id_admin=True)
     def __str__(self):
         return str(self.identifier)
     class Admin:
         search_fields = ['operation']
-        list_display = ('identifier', 'operation', 'startdate', 'enddate', 'quantity', 'owner')
+        list_display = ('identifier', 'operation', 'startdate', 'enddate', 'quantity', 'locked', 'owner')
         date_hierarchy = 'startdate'
     class Meta:
         permissions = (("view_operationplan", "Can view operation plans"),)

@@ -1,0 +1,21 @@
+{% extends "admin/base_site.html" %}
+{% load i18n breadcrumbs %}
+{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
+{% block coltype %}colM{% endblock %}
+{% block bodyclass %}dashboard{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/admin">{% trans "Home" %}</a> &rsaquo; Resource Plan</div>{% endblock %}
+{% block content %}
+<div id="content-main">
+
+<table>
+<tr><th></th><th></th>{% for j in bucketlist %} <th>{{j.name}} {{j.start}}</th> {% endfor %}</tr>
+
+{% for i in resourceplan %}{% ifchanged i.resource %}{% if not forloop.first %}</tr>{% endif %}
+<tr id="{{i.resource}}"><td>{{i.resource|superlink:"resource"}}</td>
+<td>Available<br>Load<br>Utilization</td>{% endifchanged %}
+<td>{{i.available}}<br>{{i.load}}<br>{{i.utilization}}</td>{% endfor %}
+{% if resourceplan %}</tr> {% endif %}
+</table>
+
+</div>
+{% endblock %}

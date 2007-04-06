@@ -33,6 +33,8 @@ urlpatterns = patterns('',
     (r'^admin/', include('django.contrib.admin.urls')),
     (r'^buffer/$', freppledb.output.views.bufferreport.view),
     (r'^demand/$', freppledb.output.views.demandreport.view),
+    (r'^resource/$', freppledb.output.views.resourcereport.view),
+    (r'^operation/$', freppledb.output.views.operationreport.view),
     (r'^path/$', freppledb.output.views.pathreport.view),
 )
 

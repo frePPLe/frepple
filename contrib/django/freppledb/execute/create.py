@@ -139,6 +139,7 @@ def create_model (cluster, demand, level):
     r.save()
 
   # Loop over all clusters
+  durations = [ 0, 0, 0, 86400, 86400*2, 86400*3, 86400*5, 86400*6 ]
   for i in range(cluster):
     # location
     loc = Location.objects.create(name='Loc %05d' % i)
@@ -169,7 +170,7 @@ def create_model (cluster, demand, level):
 
     # Upstream operations and buffers
     for k in range(level):
-      oper = Operation(name='Oper %05d L%02d' % (i,k))
+      oper = Operation(name='Oper %05d L%02d' % (i,k), duration=random.choice(durations))
       oper.save()
       if k == 1:
         # Create a resource load
@@ -199,7 +200,8 @@ def create_model (cluster, demand, level):
     # Create actual supply
     for i in range(demand/10):
         cnt += 1
-        opplan = OperationPlan(identifier=cnt, operation=oper, quantity=int(random.uniform(1,100)), startdate=getDate(), enddate=getDate())
+        arrivaldate = getDate()
+        opplan = OperationPlan(identifier=cnt, operation=oper, quantity=int(random.uniform(1,100)), startdate=arrivaldate, enddate=arrivaldate)
         opplan.save()
   
   # Commit it all      

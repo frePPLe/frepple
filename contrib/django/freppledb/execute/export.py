@@ -31,14 +31,14 @@ from os import times
 dateformat = '%Y-%m-%dT%H:%M:%S'
 header = '<?xml version="1.0" encoding="UTF-8" ?><PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
 
-def timeformat(int):
-  if int>=3600 or int<=-3600:
-      minsec = l % 3600
-      return '%d:%02d:%02d' % (int/3600, minsec/60, minsec%60)
-  elif int>=60 or int<=-60:
-    return '%d:%02d' % (int/60, int%60)
+def timeformat(i):
+  if i>=3600 or i<=-3600:
+      minsec = i % 3600
+      return '%d:%02d:%02d' % (i/3600, minsec/60, minsec%60)
+  elif i>=60 or i<=-60:
+    return '%d:%02d' % (i/60, i%60)
   else:
-    return '%d' % int
+    return '%d' % i
 
 
 @transaction.commit_manually
@@ -72,8 +72,8 @@ def dumpfrepple():
   print "Exporting operationplans..."
   starttime = times()[4]
   cursor.executemany(
-    "insert into frepple.output_operationplan (identifier,operation_id,quantity,startdatetime,enddatetime,startdate,enddate,demand_id) values (%s,%s,%s,%s,%s,%s,%s,%s)",
-    [ (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], str(i['START']), str(i['END']), str(i['START']), str(i['END']), i['DEMAND']) for i in frepple.operationplan() ] 
+    "insert into frepple.output_operationplan (identifier,operation_id,quantity,startdatetime,enddatetime,startdate,enddate,demand_id,locked) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+    [ (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], str(i['START']), str(i['END']), str(i['START']), str(i['END']), i['DEMAND'], str(i['LOCKED'])) for i in frepple.operationplan() ] 
     )
   transaction.commit()
   cursor.execute("select count(*) from frepple.output_operationplan")

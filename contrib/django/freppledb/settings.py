@@ -131,3 +131,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user 
 CACHE_BACKEND = 'locmem:///'
 
 ALLOWED_INCLUDE_ROOTS = ('/tmp')
+
+# IP address of the machine you are browsing from. When logging in from this 
+# machine additional debugging statements can be shown.
+INTERNAL_IPS = ( '192.168.3.1' )

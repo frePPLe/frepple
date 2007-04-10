@@ -1,6 +1,6 @@
 {% extends "admin/base_site.html" %}
-{% load i18n breadcrumbs %}
-{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
+{% load i18n breadcrumbs admin_list adminmedia %}
+{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block bodyclass %}dashboard{% endblock %}
 {% block breadcrumbs %}<div class="breadcrumbs"><a href="/admin">{% trans "Home" %}</a> &rsaquo; Demand Plan</div>{% endblock %}
@@ -10,11 +10,20 @@
 <table>
 <tr><th></th><th></th>{% for j in bucketlist %} <th>{{j.name}} {{j.start}}</th> {% endfor %}</tr>
 
-{% for i in demandplan %}{% ifchanged i.item %}{% if not forloop.first %}</tr>{% endif %}
-<tr id="{{i.item}}"><td>{{i.item|superlink:"item"}}</td><td>Demand<br>Supply<br>Backlog</td>{% endifchanged %}
-<td>{{i.requested}}<br>{{i.supplied}}<br>{{i.backlog}}</td>{% endfor %}
-{% if bufferplan %} </tr> {% endif %}
+
+{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
+<tr id="{{j.item}}"><td>{{j.item|superlink:"item"}}</td>
+<td>Demand<br>Supply<br>Backlog</td>{% endif %}
+<td>{{j.requested}}<br>{{j.supplied}}<br>{{j.backlog}}</td>{% endfor %}
+</tr>{% endfor %}
 </table>
+
+{% block pagination %} <p class="paginator">
+{% if is_paginated %}
+{% for x in page_htmls %} {{x}} {% endfor %}
+{% endif %}
+&nbsp;&nbsp;{{hits}} items
+</p>{% endblock %}
 
 </div>
 {% endblock %}

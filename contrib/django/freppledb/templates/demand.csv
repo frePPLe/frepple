@@ -1,0 +1,3 @@
+#Item,Bucket,Demand,Supply,Backlog
+{% for i in objectlist %}{% for j in i %}{{j.item|addslashes}},{{j.bucket}},{{j.requested}},{{j.supplied}},{{j.backlog}}
+{% endfor %}{% endfor %}

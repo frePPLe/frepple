@@ -99,6 +99,7 @@ class Calendar(models.Model):
 class Bucket(models.Model):
     calendar = models.ForeignKey(Calendar, edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
     start = models.DateField('start date', core=True)
+    end = models.DateField('start date', editable=False, null=True)
     value = models.FloatField(max_digits=10, decimal_places=2, default=0.00)
     name = models.CharField(maxlength=60, null=True, blank=True)
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)

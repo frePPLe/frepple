@@ -115,3 +115,86 @@ def runfrepple(request):
       raise Http404
 
 runfrepple = staff_member_required(never_cache(runfrepple))
+
+
+def parseUpload(data, entity):
+    '''
+    This method reads CSV data from a string (in memory) and creates or updates 
+    the database records.
+    The data must follow the following format:
+      - the first row contains a header, listing all field names
+      - a first character # marks a comment line
+      - empty rows are skipped
+    '''
+    import csv
+    from django.db import models
+    from django.db.models import get_model
+    headers = []
+    first = True
+    
+    # Find model class
+    entityclass = get_model("input",entity)
+    if not entityclass: raise TypeError, 'Invalid entity type %s' % entity
+    
+    # Loop through the data records
+    print entityclass._meta.pk.name
+    for row in csv.reader(data.splitlines()):
+      if first:
+        # The first line is read as a header line
+        first = False
+        for col in row:
+          col = col.strip().strip('#').lower()
+          ok = False
+          for i in entityclass._meta.fields: 
+            if i.name == col:
+              headers.append(col)
+              ok = True
+              break
+          if ok == False: raise TypeError, 'Incorrect field %s' % col
+        continue
+      elif len(row) == 0 or row[0].startswith('#'):
+        # Skip empty rows and comments rows
+        continue
+      # Process a data row
+      cnt = 0
+      d = {}
+      for i in row: 
+        d[headers[cnt]] = i
+        cnt += 1
+      print d
+      print row, headers
+      try:
+        it,created = entityclass.objects.create(d)
+        it.save()
+      except Exception, e:
+        print e
+      
+      
+def upload(request):  
+    """upload function for bulk data"""  
+    # Validate request method
+    if request.method != 'POST': 
+        request.user.message_set.create(message='Only POST method allowed')
+        # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+        return HttpResponseRedirect('/execute/execute.html')
+        
+    # Validate uploaded file is present
+    if "csv_file" not in request.FILES:   
+        request.user.message_set.create(message='No file uploaded')
+        return HttpResponseRedirect('/execute/execute.html')
+        
+    # Validate entity type. It needs to be a valid model in the input application.
+    entity = request.POST['entity']
+    if not entity:
+        request.user.message_set.create(message='Missing entity type')
+        return HttpResponseRedirect('/execute/execute.html')
+        
+    # Parse the uploaded file  
+    try: fileparser = parseUpload(request.FILES['csv_file']['content'], entity)  
+    except TypeError, e:
+        request.user.message_set.create(message='Error while parsing %s' % e)
+        return HttpResponseRedirect('/execute/execute.html')
+    request.user.message_set.create(message='Uploaded file processed')
+    return HttpResponseRedirect('/execute/execute.html')
+upload = staff_member_required(never_cache(upload))
+                

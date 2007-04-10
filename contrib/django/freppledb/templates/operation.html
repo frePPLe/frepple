@@ -1,6 +1,6 @@
 {% extends "admin/base_site.html" %}
-{% load i18n breadcrumbs %}
-{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
+{% load i18n breadcrumbs admin_list adminmedia %}
+{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block bodyclass %}dashboard{% endblock %}
 {% block breadcrumbs %}<div class="breadcrumbs"><a href="/admin">{% trans "Home" %}</a> &rsaquo; Operation Plan</div>{% endblock %}
@@ -10,13 +10,21 @@
 <table>
 <tr><th></th><th></th>{% for j in bucketlist %} <th>{{j.name}} {{j.start}}</th> {% endfor %}</tr>
 
-{% for i in operationplan %}{% ifchanged i.operation %}{% if not forloop.first %}</tr>{% endif %}
-<tr id="{{i.operation}}"><td>{{i.operation|superlink:"operation"}}</td>
-<td>Quantity</td>{% endifchanged %}
-<td>{{i.quantity}}</td>{% endfor %}
-{% if operationplan %}</tr> {% endif %}
+{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
+<tr id="{{j.operation}}"><td>{{j.operation|superlink:"operation"}}</td>
+<td>Quantity</td>{% endif %}
+<td>{{j.quantity}}</td>{% endfor %}
+</tr>{% endfor %}
 </table>
+
+{% block pagination %} <p class="paginator">
+{% if is_paginated %}
+{% for x in page_htmls %} {{x}} {% endfor %}
+{% endif %}
+&nbsp;&nbsp;{{hits}} operations
+</p>{% endblock %}
 
 </div>
 {% endblock %}
+
 

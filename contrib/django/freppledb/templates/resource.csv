@@ -1,0 +1,3 @@
+#Resource, Bucket, Available, Load, Utilization
+{% for i in objectlist %}{% for j in i %}{{j.resource|addslashes}},{{j.bucket}},{{j.available}},{{j.load}},{{j.utilization}}
+{% endfor %}{% endfor %}

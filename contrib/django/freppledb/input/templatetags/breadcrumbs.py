@@ -67,5 +67,6 @@ def superlink(value,type):
     # Final return value  
     return '<a href="/admin/input/%s/%s">%s</a>' % (type,urllib.quote(value),value) 
 
+
 register.tag('crumbs', do_crumbs)
 register.filter('superlink', superlink)

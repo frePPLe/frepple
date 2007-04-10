@@ -20,7 +20,7 @@
 <td>Load frepple from the database...  <br>
 and plan frepple...<br>
 and export results into the database<br><br>
-<a href="/execute/log">View latest log file</a></td>
+<a href="/execute/log/">View latest log file</a></td>
 <td><input id="run_frepple" type="submit" value="run" />
 <input type="hidden" name="action" value="run" /></td>
 </tr>
@@ -55,7 +55,6 @@ Depth of bill-of-material:<input name="levels" type="text" maxlength="2" size="2
 <input type="hidden" name="action" value="create" /></td>
 </form></tr>
 {% endif %}
-
 </table>
 </div>
 {% endif %}
@@ -64,5 +63,34 @@ Depth of bill-of-material:<input name="levels" type="text" maxlength="2" size="2
 Sorry, You don't have any execute permissions...
 {% endif %}
 
+<div class="module">
+<table summary="Extra commands.">
+<caption>Upload data files</caption>
+
+<tr><th scope="row"><a>CSV</a></th>
+<form enctype="multipart/form-data" method="post" action="/execute/upload/">
+<td>Entity: <select name="entity" id="entity">
+<option value="-" selected="selected">-</option>
+<option value="Buffer">Buffer</option>
+<option value="Calendar">Calendar</option>
+<option value="Bucket">Calendar Bucket</option>
+<option value="Customer">Customer</option>
+<option value="Dates">Dates</option>
+<option value="Demand">Demand</option>
+<option value="Flow">Flow</option>
+<option value="Item">Item</option>
+<option value="Load">Load</option>
+<option value="Location">Location</option>
+<option value="Operation">Operation</option>
+<option value="Resource">Resource</option>
+</select><br>
+Select your csv file: <input type="file" id="csv_file" size="30" name="csv_file"/><br>                              
+</td><td><input id="upload_button" type="submit" value="Upload"/> 
+</td></tr>
+</form>
+</table>
+</div>
+
 </div>
 {% endblock %}
+                                                                                                 

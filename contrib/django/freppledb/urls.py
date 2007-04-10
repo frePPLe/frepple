@@ -26,15 +26,16 @@ import sys
 import freppledb.output.views
 
 urlpatterns = patterns('',
-    (r'^execute/log', 'django.views.generic.simple.direct_to_template', {'template': 'execute/log.html'} ),
-    (r'^execute/runfrepple', 'freppledb.execute.views.runfrepple'),
-    (r'^execute/rundb', 'freppledb.execute.views.rundb'),
+    (r'^execute/log/$', 'django.views.generic.simple.direct_to_template', {'template': 'execute/log.html'} ),
+    (r'^execute/runfrepple/$', 'freppledb.execute.views.runfrepple'),
+    (r'^execute/rundb/$', 'freppledb.execute.views.rundb'),
+    (r'^execute/upload/$', 'freppledb.execute.views.upload'),
     (r'^execute/', 'freppledb.execute.views.execute'),
     (r'^admin/', include('django.contrib.admin.urls')),
-    (r'^buffer/$', freppledb.output.views.bufferreport.view),
-    (r'^demand/$', freppledb.output.views.demandreport.view),
-    (r'^resource/$', freppledb.output.views.resourcereport.view),
-    (r'^operation/$', freppledb.output.views.operationreport.view),
+    (r'^buffer/$', freppledb.output.views.bufferreport),
+    (r'^demand/$', freppledb.output.views.demandreport),
+    (r'^resource/$', freppledb.output.views.resourcereport),
+    (r'^operation/$', freppledb.output.views.operationreport),
     (r'^path/$', freppledb.output.views.pathreport.view),
 )
 

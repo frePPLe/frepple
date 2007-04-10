@@ -1,3 +1,3 @@
-#Operation,Bucket,quantity
-{% for i in operationplan %}{{i.operation}},{{i.bucket}},{{i.quantity}}
-{% endfor %}
+#Operation,Bucket,Quantity
+{% for i in objectlist %}{% for j in i %}{{j.operation|addslashes}},{{j.bucket}},{{j.quantity}}
+{% endfor %}{% endfor %}

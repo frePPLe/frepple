@@ -31,6 +31,7 @@ import time, os, os.path, sys, random
 from datetime import timedelta, date
 from django.db import connection
 from django.db import transaction
+from django.core.cache import cache
 
 # This function generates a random date
 startdate = date(2007,1,1)
@@ -87,14 +88,14 @@ def create_model (cluster, demand, level):
   This routine populates the database with a sample dataset.
   '''
   # Dates
+  print "Creating dates..."
   global startdate
-  for i in range(380):
+  for i in range(365):
     # Loop through 1 year of daily buckets
     curdate = startdate + timedelta(i)
     month = int(curdate.strftime("%m"))  # an integer in the range 1 - 12
     quarter = (month-1) / 3 + 1          # an integer in the range 1 - 4
     year = int(curdate.strftime("%Y"))
-    print curdate
     d = Dates(
       day = curdate,
       week = curdate.strftime("%Y W%W"),
@@ -112,22 +113,29 @@ def create_model (cluster, demand, level):
       )
     d.save()
   transaction.commit()
-    
+  
   # Initialization
   random.seed(100) # Initialize random seed to get reproducible results
   cnt = 100000     # a counter for operationplan identifiers
 
+  # Plan start date
+  p = Plan.objects.all()[0]
+  p.current = startdate
+  
   # Create a random list of categories to choose from
   categories = [ 'cat A','cat B','cat C','cat D','cat E','cat F','cat G' ]
 
   # Create customers
+  print "Creating customers..."
   cust = []
   for i in range(100):
     c = Customer(name = 'Cust %03d' % i)
     cust.append(c)
     c.save()
-
+  transaction.commit()
+  
   # Create resources and their calendars
+  print "Creating resources and calendars..."
   res = []
   for i in range(100):
     cal = Calendar(name='capacity for res %03d' %i, category='capacity')
@@ -137,10 +145,13 @@ def create_model (cluster, demand, level):
     r = Resource(name = 'Res %03d' % i, maximum=cal)
     res.append(r)
     r.save()
+  transaction.commit()
 
   # Loop over all clusters
   durations = [ 0, 0, 0, 86400, 86400*2, 86400*3, 86400*5, 86400*6 ]
   for i in range(cluster):
+    print "Creating cluster %d..." % i
+
     # location
     loc = Location.objects.create(name='Loc %05d' % i)
 
@@ -203,6 +214,9 @@ def create_model (cluster, demand, level):
         arrivaldate = getDate()
         opplan = OperationPlan(identifier=cnt, operation=oper, quantity=int(random.uniform(1,100)), startdate=arrivaldate, enddate=arrivaldate)
         opplan.save()
+        
+    # Commit the current cluster
+    transaction.commit()
   
   # Commit it all      
   transaction.commit()

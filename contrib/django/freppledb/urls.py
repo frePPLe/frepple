@@ -30,7 +30,8 @@ urlpatterns = patterns('',
     (r'^execute/runfrepple/$', 'freppledb.execute.views.runfrepple'),
     (r'^execute/rundb/$', 'freppledb.execute.views.rundb'),
     (r'^execute/upload/$', 'freppledb.execute.views.upload'),
-    (r'^execute/', 'freppledb.execute.views.execute'),
+    (r'^execute/', 'django.views.generic.simple.direct_to_template', {'template': 'execute/execute.html'}),
+    (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/admin/'}),
     (r'^admin/', include('django.contrib.admin.urls')),
     (r'^buffer/$', freppledb.output.views.bufferreport),
     (r'^demand/$', freppledb.output.views.demandreport),
@@ -43,6 +44,6 @@ urlpatterns = patterns('',
 # In a production environment you need to configure your web server to take care of
 # these pages.
 if 'runserver' in sys.argv:
-  urlpatterns += patterns('',(r'static/(?P<path>.*)$', 'django.views.static.serve', 
+  urlpatterns += patterns('',(r'static/(?P<path>.*)$', 'django.views.static.serve',
        {'document_root': 'static', 'show_indexes': False}),
     )

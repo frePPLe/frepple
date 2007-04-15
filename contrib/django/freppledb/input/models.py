@@ -31,8 +31,8 @@ from datetime import datetime
 dateformat = '%Y-%m-%dT%H:%M:%S'
 
 class Plan(models.Model):
-    name = models.CharField(maxlength=60)
-    description = models.CharField(maxlength=60, blank=True)
+    name = models.CharField(maxlength=60, null=True, blank=True)
+    description = models.CharField(maxlength=60, null=True, blank=True)
     current = models.DateTimeField('current date')
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
     def __str__(self):
@@ -72,7 +72,7 @@ class Dates(models.Model):
     class Meta:
         verbose_name = 'Dates'  # There will only be multiple dates...
         verbose_name_plural = 'Dates'  # There will only be multiple dates...
-        
+
 class Calendar(models.Model):
     name = models.CharField(maxlength=60, primary_key=True)
     description = models.CharField(maxlength=200, null=True, blank=True)
@@ -82,9 +82,10 @@ class Calendar(models.Model):
     def currentvalue(self):
         ''' Returns the value of the calendar on the current day.'''
         v = 0.0
-        cur = date.today()
+        curdate = date.today()
+        curdatetime = datetime(curdate.year,curdate.month,curdate.day)
         for b in self.buckets.all():
-            if cur < b.start: return v
+            if curdatetime < b.start: return v
             v = b.value
         return v
     currentvalue.short_description = 'Current value'
@@ -98,8 +99,8 @@ class Calendar(models.Model):
 
 class Bucket(models.Model):
     calendar = models.ForeignKey(Calendar, edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
-    start = models.DateField('start date', core=True)
-    end = models.DateField('start date', editable=False, null=True)
+    start = models.DateTimeField('start date', core=True)
+    end = models.DateTimeField('start date', editable=False, null=True)
     value = models.FloatField(max_digits=10, decimal_places=2, default=0.00)
     name = models.CharField(maxlength=60, null=True, blank=True)
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
@@ -204,25 +205,25 @@ class Operation(models.Model):
                'classes': 'collapse'
                }),
         )
-        
+
 class SubOperation(models.Model):
     ## Django bug: @todo
     ## We want to edit the sub-operations inline as part of the operation editor.
     ## But django doesn't like it...
     ## See Django ticket: http://code.djangoproject.com/ticket/1939
-    #operation = models.ForeignKey(Operation, edit_inline=models.TABULAR, 
-    #  min_num_in_admin=3, num_extra_on_change=1, related_name='alfa') 
+    #operation = models.ForeignKey(Operation, edit_inline=models.TABULAR,
+    #  min_num_in_admin=3, num_extra_on_change=1, related_name='alfa')
     operation = models.ForeignKey(Operation, raw_id_admin=True, related_name='alfa')
     priority = models.FloatField(max_digits=5, decimal_places=2, default=1)
     suboperation = models.ForeignKey(Operation, raw_id_admin=True, related_name='beta', core=True)
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
     def __str__(self):
         return self.operation.name + "   " + str(self.priority) + "   " + self.suboperation.name
-    class Meta:    
-        ordering = ('priority','suboperation')
+    class Meta:
+        ordering = ('operation','priority','suboperation')
     class Admin:
-        list_display = ('operation','priority','suboperation')        
-        
+        list_display = ('operation','priority','suboperation')
+
 class Buffer(models.Model):
     buffertypes = (
       ('','Default'),
@@ -371,7 +372,7 @@ class Demand(models.Model):
     subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
     customer = models.ForeignKey(Customer, null=True, blank=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
-    due = models.DateField('due')
+    due = models.DateTimeField('due')
     operation = models.ForeignKey('Operation', null=True, blank=True,
       related_name='used_demand', raw_id_admin=True, help_text='Operation used to satisfy this demand')
     quantity = models.FloatField(max_digits=10, decimal_places=2)

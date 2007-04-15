@@ -21,6 +21,13 @@
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net
 
+
+# Frepple specific variables
+import os, os.path
+FREPPLE_HOME = os.environ['FREPPLE_HOME'] # "c:\\develop\\frepple\\bin" #
+FREPPLE_APP = os.path.normpath(os.path.join(FREPPLE_HOME,'..','contrib','django'))
+
+
 # Django settings for freppledb project.
 
 DEBUG = True
@@ -32,7 +39,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'postgresql'        # 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
+DATABASE_ENGINE = 'postgresql_psycopg2' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
 #DATABASE_ENGINE = 'mysql'            # 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
 DATABASE_NAME = 'frepple'             # Or path to database file if using sqlite3.
 DATABASE_USER = 'frepple'             # Not used with sqlite3.
@@ -86,7 +93,8 @@ ROOT_URLCONF = 'freppledb.urls'
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates".
     # Always use forward slashes, even on Windows.
-    '/home/frepple/workspace/frepple/contrib/django/freppledb/templates'
+    os.path.join(FREPPLE_APP,'freppledb','templates').replace('\\','/'),
+    FREPPLE_HOME.replace('\\','/'),
 )
 
 INSTALLED_APPS = (
@@ -130,8 +138,9 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user 
 
 CACHE_BACKEND = 'locmem:///'
 
-ALLOWED_INCLUDE_ROOTS = ('/tmp')
+# Directory from which we allow server include
+ALLOWED_INCLUDE_ROOTS = (FREPPLE_HOME)
 
-# IP address of the machine you are browsing from. When logging in from this 
+# IP address of the machine you are browsing from. When logging in from this
 # machine additional debugging statements can be shown.
 INTERNAL_IPS = ( '192.168.3.1' )

@@ -45,41 +45,41 @@ def erase_model():
   This routine erase all model data from the database.
   '''
   cursor = connection.cursor()
-  cursor.execute('delete from frepple.output_problem')
+  cursor.execute('delete from output_problem')
   transaction.commit()
-  cursor.execute('delete from frepple.output_flowplan')
+  cursor.execute('delete from output_flowplan')
   transaction.commit()
-  cursor.execute('delete from frepple.output_loadplan')
+  cursor.execute('delete from output_loadplan')
   transaction.commit()
-  cursor.execute('delete from frepple.output_operationplan')
+  cursor.execute('delete from output_operationplan')
   transaction.commit()
-  cursor.execute('delete from frepple.input_dates')
+  cursor.execute('delete from input_dates')
   transaction.commit()
-  cursor.execute('delete from frepple.input_demand')
+  cursor.execute('delete from input_demand')
   transaction.commit()
-  cursor.execute('delete from frepple.input_flow')
+  cursor.execute('delete from input_flow')
   transaction.commit()
-  cursor.execute('delete from frepple.input_load')
+  cursor.execute('delete from input_load')
   transaction.commit()
-  cursor.execute('delete from frepple.input_buffer')
+  cursor.execute('delete from input_buffer')
   transaction.commit()
-  cursor.execute('delete from frepple.input_resource')
+  cursor.execute('delete from input_resource')
   transaction.commit()
-  cursor.execute('delete from frepple.input_operationplan')
+  cursor.execute('delete from input_operationplan')
   transaction.commit()
-  cursor.execute('delete from frepple.input_item')
+  cursor.execute('delete from input_item')
   transaction.commit()
-  cursor.execute('delete from frepple.input_suboperation')
+  cursor.execute('delete from input_suboperation')
   transaction.commit()
-  cursor.execute('delete from frepple.input_operation')
+  cursor.execute('delete from input_operation')
   transaction.commit()
-  cursor.execute('delete from frepple.input_location')
+  cursor.execute('delete from input_location')
   transaction.commit()
-  cursor.execute('delete from frepple.input_bucket')
+  cursor.execute('delete from input_bucket')
   transaction.commit()
-  cursor.execute('delete from frepple.input_calendar')
+  cursor.execute('delete from input_calendar')
   transaction.commit()
-  cursor.execute('delete from frepple.input_customer')
+  cursor.execute('delete from input_customer')
   transaction.commit()
 
 @transaction.commit_manually
@@ -113,15 +113,22 @@ def create_model (cluster, demand, level):
       )
     d.save()
   transaction.commit()
-  
+
   # Initialization
   random.seed(100) # Initialize random seed to get reproducible results
   cnt = 100000     # a counter for operationplan identifiers
 
   # Plan start date
-  p = Plan.objects.all()[0]
-  p.current = startdate
-  
+  print "Creating plan..."
+  try:
+    p = Plan.objects.all()[0]
+    p.current = startdate
+    p.save()
+  except:
+    # No plan exists yet
+    p = Plan(name="frepple", current=startdate)
+    p.save()
+
   # Create a random list of categories to choose from
   categories = [ 'cat A','cat B','cat C','cat D','cat E','cat F','cat G' ]
 
@@ -133,7 +140,7 @@ def create_model (cluster, demand, level):
     cust.append(c)
     c.save()
   transaction.commit()
-  
+
   # Create resources and their calendars
   print "Creating resources and calendars..."
   res = []
@@ -196,7 +203,7 @@ def create_model (cluster, demand, level):
         location=loc,
         category='%02d' % (k+1)
         )
-      # Some inventory in random buffers  
+      # Some inventory in random buffers
       if random.uniform(0,1) > 0.8: buf.onhand=int(random.uniform(5,20))
       fl = Flow(operation=oper, thebuffer=buf, quantity=-1)
       buf.save()
@@ -214,9 +221,9 @@ def create_model (cluster, demand, level):
         arrivaldate = getDate()
         opplan = OperationPlan(identifier=cnt, operation=oper, quantity=int(random.uniform(1,100)), startdate=arrivaldate, enddate=arrivaldate)
         opplan.save()
-        
+
     # Commit the current cluster
     transaction.commit()
-  
-  # Commit it all      
+
+  # Commit it all
   transaction.commit()

@@ -28,7 +28,7 @@ import urllib
 register = template.Library()
 
 class CrumbsNode(template.Node):
-    ''' 
+    '''
     Partial attempt to create a more generic breadcrumbs framework
     Missing:
       - 'popping' from the crumb stack, only pushing
@@ -58,14 +58,14 @@ def do_crumbs(parser, token):
 
 def superlink(value,type):
     '''
-    This filter creates a hyperlinked 
+    This filter creates a hyperlinked
     '''
     # Fail silently if no type type or value are given
     if value is None: return ''
     # Convert the parameter into a string if it's not already
-    if not isinstance(value,basestring): value = str(value)  
-    # Final return value  
-    return '<a href="/admin/input/%s/%s">%s</a>' % (type,urllib.quote(value),value) 
+    if not isinstance(value,basestring): value = str(value)
+    # Final return value
+    return '<a href="/admin/input/%s/%s">%s</a>' % (type,urllib.quote(value),value.replace(' ','&nbsp;'))
 
 
 register.tag('crumbs', do_crumbs)

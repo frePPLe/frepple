@@ -140,6 +140,8 @@ astyle:
 
 # The release number is (unfortunately) stored in a number of independent places:
 # This make target is used to update all those places in a single go.
+# The following references will still have to be updated manually:
+#   - In the excel spreadsheet hit alt-F11 and edit the "about" tab in the "config" form.
 old1 = 0
 old2 = 2
 old3 = 2

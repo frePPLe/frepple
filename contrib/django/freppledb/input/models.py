@@ -108,7 +108,7 @@ class Bucket(models.Model):
         if self.name: return self.name
         return str(self.start)
     class Meta:
-        ordering = ('start','name')
+        ordering = ['start','name']
 
 class Location(models.Model):
     name = models.CharField(maxlength=60, primary_key=True)
@@ -220,7 +220,7 @@ class SubOperation(models.Model):
     def __str__(self):
         return self.operation.name + "   " + str(self.priority) + "   " + self.suboperation.name
     class Meta:
-        ordering = ('operation','priority','suboperation')
+        ordering = ['operation','priority','suboperation']
     class Admin:
         list_display = ('operation','priority','suboperation')
 

@@ -82,13 +82,9 @@ def erase_model():
   cursor.execute('delete from input_customer')
   transaction.commit()
 
+
 @transaction.commit_manually
-def create_model (cluster, demand, level):
-  '''
-  This routine populates the database with a sample dataset.
-  '''
-  # Dates
-  print "Creating dates..."
+def createDates():
   global startdate
   for i in range(365):
     # Loop through 1 year of daily buckets
@@ -114,9 +110,20 @@ def create_model (cluster, demand, level):
     d.save()
   transaction.commit()
 
+
+@transaction.commit_manually
+def create_model (cluster, demand, level):
+  '''
+  This routine populates the database with a sample dataset.
+  '''
   # Initialization
+  global startdate
   random.seed(100) # Initialize random seed to get reproducible results
   cnt = 100000     # a counter for operationplan identifiers
+
+  # Dates
+  print "Creating dates..."
+  createDates()
 
   # Plan start date
   print "Creating plan..."

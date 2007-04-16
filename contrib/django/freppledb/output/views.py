@@ -32,14 +32,14 @@ from django.http import Http404, HttpResponse
 from datetime import date
 
 from freppledb.input.models import Buffer, Flow, Operation, Plan
-   
+
 PAGINATE_BY = 20
 ON_EACH_SIDE = 3
 ON_ENDS = 2
 
-   
+
 def getBuckets(request, bucket=None, start=None, end=None):
-  ''' 
+  '''
   This function gets passed a name of a bucketization.
   It returns a list of buckets.
   The data are retrieved from the database table input_dates, and are
@@ -47,34 +47,34 @@ def getBuckets(request, bucket=None, start=None, end=None):
   '''
   # Pick up the arguments
   if not bucket: bucket = request.GET.get('bucket', 'month')
-  if not start: 
+  if not start:
     start = request.GET.get('start')
-    if start: 
+    if start:
       try:
         (y,m,d) = start.split('-')
         start = date(int(y),int(m),int(d))
       except:
         start = Plan.objects.all()[0].current.date()
-    else: 
+    else:
       start = Plan.objects.all()[0].current.date()
-  if not end: 
-    end = request.GET.get('end')     
+  if not end:
+    end = request.GET.get('end')
     if end:
       try:
         (y,m,d) = end.split('-')
-        end = date(int(y),int(m),int(d))    
+        end = date(int(y),int(m),int(d))
       except:
         end = date(2030,1,1)
     else:
       end = date(2030,1,1)
 
   # Check if the argument is valid
-  if bucket not in ('day','week','month','quarter','year'): 
+  if bucket not in ('day','week','month','quarter','year'):
     raise Http404, "bucket name %s not valid" % bucket
-    
+
   # Pick up the buckets from the cache
   dates = cache.get(bucket)
-    
+
   # Read the buckets from the database if the data isn't in the cache yet
   if not dates:
     cursor = connection.cursor()
@@ -85,48 +85,48 @@ def getBuckets(request, bucket=None, start=None, end=None):
       order by min(day)''' % (bucket,bucket))
     dates = [ {'name': i, 'start': j, 'end': k} for i,j,k in cursor.fetchall() ]
     cache.set(bucket, dates, 24 * 7 * 3600)  # Cache for 7 days
-    
+
   # Filter based on the start and end date
   if start and end:
     res = []
-    for i in dates: 
+    for i in dates:
       if i['start'] < end and i['end'] > start: res.append(i)
   elif end:
     res = []
-    for i in dates: 
+    for i in dates:
       if i['start'] > end: res.append(i)
   elif start:
     res = []
-    for i in dates: 
+    for i in dates:
       if i['end'] > start: res.append(i)
   else:
-    return (bucket,start,end,dates)   
+    return (bucket,start,end,dates)
   return (bucket,start,end,res)
 
-     
+
 def BucketedView(request, querymethod, htmltemplate, csvtemplate):
     global ON_EACH_SIDE
     global ON_ENDS
     global PAGINATE_BY
     (bucket,start,end,bucketlist) = getBuckets(request)
-    
+
     # Look up the data in the cache
     parameters = request.GET.copy()
     parameters.__setitem__('page', 0)
     key = "%s?%s" % (request.path, parameters.urlencode())
     objectlist = cache.get(key)
-    if not objectlist: 
+    if not objectlist:
       # Data not found in the cache, recompute
       objectlist = querymethod(bucket,start,end)
       cache.set(key, objectlist, 10 * 60)   # cache for 10 minutes
-    
+
     # HTML output or CSV output?
     type = request.GET.get('type','html')
-    if type == 'csv':    
-      # CSV output                                                                                                                                                                                                                                                   
+    if type == 'csv':
+      # CSV output
       (bucket,start,end,bucketlist) = getBuckets(request)
-      c = RequestContext(request, { 
-         'objectlist': objectlist, 
+      c = RequestContext(request, {
+         'objectlist': objectlist,
          'bucket': bucket,
          'startdate': start,
          'enddate': end,
@@ -142,14 +142,14 @@ def BucketedView(request, querymethod, htmltemplate, csvtemplate):
     try: results = paginator.get_page(page - 1)
     except InvalidPage: raise Http404
     page_htmls = []
- 
+
     # If there are less than 10 pages, show them all
     if paginator.pages <= 10:
       for n in range(1,paginator.pages+1):
         parameters.__setitem__('page', n)
         if n == page:
           page_htmls.append('<span class="this-page">%d</span>' % page)
-        else: 
+        else:
           page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n))
     else:
         # Insert "smart" pagination links, so that there are always ON_ENDS
@@ -160,7 +160,7 @@ def BucketedView(request, querymethod, htmltemplate, csvtemplate):
             for n in range(1, page + max(ON_EACH_SIDE, ON_ENDS) + 1):
               if n == page:
                 page_htmls.append('<span class="this-page">%d</span>' % page)
-              else: 
+              else:
                 parameters.__setitem__('page', n)
                 page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n))
             page_htmls.append('...')
@@ -176,7 +176,7 @@ def BucketedView(request, querymethod, htmltemplate, csvtemplate):
             for n in range(page - max(ON_EACH_SIDE, ON_ENDS), paginator.pages):
               if n == page:
                 page_htmls.append('<span class="this-page">%d</span>' % page)
-              else: 
+              else:
                 parameters.__setitem__('page', n)
                 page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, parameters.urlencode(),n))
         else:
@@ -190,16 +190,16 @@ def BucketedView(request, querymethod, htmltemplate, csvtemplate):
                 page_htmls.append('<span class="this-page">%s</span>' % page)
               elif n == '.':
                 page_htmls.append('...')
-              else: 
+              else:
                 parameters.__setitem__('page', n)
-                page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n))      
+                page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n))
             page_htmls.append('...')
             for n in range(paginator.pages - ON_ENDS, paginator.pages):
                 parameters.__setitem__('page', n)
                 page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, parameters.urlencode(),n))
-    return render_to_response(htmltemplate, 
-       { 
-         'objectlist': results, 
+    return render_to_response(htmltemplate,
+       {
+         'objectlist': results,
          'bucket': bucket,
          'startdate': start,
          'enddate': end,
@@ -212,9 +212,9 @@ def BucketedView(request, querymethod, htmltemplate, csvtemplate):
          'next_page': page + 1,
          'previous_page': page - 1,
          'pages': paginator.pages,
-         'hits' : paginator.hits,       
+         'hits' : paginator.hits,
          'page_htmls': page_htmls,
-       }, 
+       },
        context_instance=RequestContext(request))
 
 
@@ -222,7 +222,7 @@ def bufferquery(bucket, startdate, enddate):
       cursor = connection.cursor()
       cursor.execute('''
         select combi.thebuffer_id, combi.onhand, combi.%s, coalesce(data.produced,0), coalesce(data.consumed,0)
-          from 
+          from
            (select name as thebuffer_id, onhand, d.%s, d.start from input_buffer
             inner join (select %s, min(day) as start from input_dates where day >= '%s'
               and day < '%s' group by %s) d on 1=1
@@ -234,18 +234,18 @@ def bufferquery(bucket, startdate, enddate):
               from output_flowplan, input_dates
               where output_flowplan.date = input_dates.day
               and output_flowplan.date >= '%s'
-              and output_flowplan.date < '%s'           
+              and output_flowplan.date < '%s'
               group by thebuffer_id, %s
-            ) data 
+            ) data
           on combi.thebuffer_id = data.thebuffer_id
           and combi.%s = data.%s
-          order by combi.thebuffer_id, combi.start ''' 
+          order by combi.thebuffer_id, combi.start '''
           % (bucket,bucket,bucket,startdate,enddate,bucket,bucket,startdate,enddate,bucket,bucket,bucket))
       resultset = []
       prevbuf = None
       rowset = []
       for row in cursor.fetchall():
-        if row[0] != prevbuf: 
+        if row[0] != prevbuf:
           if prevbuf: resultset.append(rowset)
           rowset = []
           prevbuf = row[0]
@@ -257,29 +257,29 @@ def bufferquery(bucket, startdate, enddate):
           'bucket': row[2],
           'startoh': startoh,
           'produced': row[3],
-          'consumed': row[4], 
+          'consumed': row[4],
           'endoh': endoh,
-          } )      
+          } )
       if prevbuf: resultset.append(rowset)
       return resultset
-   
+
 #@login_required
 def bufferreport(request):
-    return BucketedView(request, bufferquery, 'buffer.html', 'buffer.csv')             
-  
-     
+    return BucketedView(request, bufferquery, 'buffer.html', 'buffer.csv')
+
+
 def demandquery(bucket, startdate, enddate):
       cursor = connection.cursor()
       cursor.execute('''
           select combi.item_id, combi.%s, coalesce(data.demand,0), coalesce(data.planned,0)
-          from 
+          from
            (select distinct item_id, d.%s, d.start from input_demand
             inner join (select %s, min(day) as start from input_dates where day >= '%s'
               and day < '%s' group by %s) d on 1=1
            ) as combi
           left join
-           (select inp.item_id, d.%s, sum(inp.quantity) as demand, 
-                  coalesce((select sum(output_operationplan.quantity) 
+           (select inp.item_id, d.%s, sum(inp.quantity) as demand,
+                  coalesce((select sum(output_operationplan.quantity)
                    from output_operationplan, input_dates, input_demand
                    where output_operationplan.enddate = input_dates.day
                    and input_dates.%s = d.%s
@@ -289,17 +289,17 @@ def demandquery(bucket, startdate, enddate):
                 from input_dates as d, input_demand as inp
                 where inp.due = d.day
                 and inp.due >= '%s'
-                and inp.due < '%s'           
-                group by inp.item_id, d.%s) data 
+                and inp.due < '%s'
+                group by inp.item_id, d.%s) data
           on combi.item_id = data.item_id
           and combi.%s = data.%s
-          order by combi.item_id, combi.start       
+          order by combi.item_id, combi.start
          ''' % (bucket,bucket,bucket,startdate,enddate,bucket,bucket,bucket,bucket,startdate,enddate,bucket,bucket,bucket))
       resultset = []
       previtem = None
       rowset = []
       for row in cursor.fetchall():
-        if row[0] != previtem: 
+        if row[0] != previtem:
           if previtem: resultset.append(rowset)
           rowset = []
           previtem = row[0]
@@ -309,23 +309,23 @@ def demandquery(bucket, startdate, enddate):
           'item': row[0],
           'bucket': row[1],
           'requested': row[2],
-          'supplied': row[3], 
+          'supplied': row[3],
           'backlog': backlog,
-          } )      
+          } )
       if previtem: resultset.append(rowset)
       return resultset
 
-    
+
 #@login_required
 def demandreport(request):
-    return BucketedView(request, demandquery, 'demand.html', 'demand.csv')             
+    return BucketedView(request, demandquery, 'demand.html', 'demand.csv')
 
 
 def resourcequery(bucket, startdate, enddate):
       cursor = connection.cursor()
       cursor.execute('''
         select combi.resource_id, combi.%s, coalesce(data.load,0), coalesce(data.available,0)
-          from 
+          from
            (select name as resource_id, d.%s, d.start from input_resource
             inner join (select %s, min(day) as start from input_dates where day >= '%s'
               and day < '%s' group by %s) d on 1=1
@@ -348,33 +348,33 @@ def resourcequery(bucket, startdate, enddate):
       prevres = None
       rowset = []
       for row in cursor.fetchall():
-        if row[0] != prevres: 
+        if row[0] != prevres:
           if prevres: resultset.append(rowset)
           rowset = []
           prevres = row[0]
-        if row[3] != 0: util = row[2] / row[3]
+        if row[3] != 0: util = row[2] / float(row[3])
         else: util = 0
         rowset.append( {
           'resource': row[0],
           'bucket': row[1],
           'load': row[2],
-          'available': row[3], 
-          'utilization': util, 
-          } )      
+          'available': row[3],
+          'utilization': util,
+          } )
       if prevres: resultset.append(rowset)
       return resultset
-    
-    
+
+
 #@login_required
 def resourcereport(request):
-    return BucketedView(request, resourcequery, 'resource.html', 'resource.csv')             
-         
-         
+    return BucketedView(request, resourcequery, 'resource.html', 'resource.csv')
+
+
 def operationquery(bucket, startdate, enddate):
       cursor = connection.cursor()
       cursor.execute('''
         select combi.operation_id, combi.%s, coalesce(data.quantity,0)
-          from 
+          from
            (select name as operation_id, d.%s, d.start from input_operation
             inner join (select %s, min(day) as start from input_dates where day >= '%s'
               and day < '%s' group by %s) d on 1=1
@@ -383,20 +383,20 @@ def operationquery(bucket, startdate, enddate):
            (select operation_id, %s,
               sum(quantity) as quantity
               from output_operationplan, input_dates
-              where output_operationplan.startdate = input_dates.day 
+              where output_operationplan.startdate = input_dates.day
               and startdate >= '%s'
-              and enddate < '%s'           
+              and enddate < '%s'
               group by operation_id, %s
-            ) data 
+            ) data
           on combi.operation_id = data.operation_id
           and combi.%s = data.%s
-          order by combi.operation_id, combi.start ''' 
+          order by combi.operation_id, combi.start '''
           % (bucket,bucket,bucket,startdate,enddate,bucket,bucket,startdate,enddate,bucket,bucket,bucket))
       resultset = []
       prevoper = None
       rowset = []
       for row in cursor.fetchall():
-        if row[0] != prevoper: 
+        if row[0] != prevoper:
           if prevoper: resultset.append(rowset)
           rowset = []
           prevoper = row[0]
@@ -404,13 +404,13 @@ def operationquery(bucket, startdate, enddate):
           'operation': row[0],
           'bucket': row[1],
           'quantity': row[2],
-          } )      
+          } )
       if prevoper: resultset.append(rowset)
       return resultset
 
 #@login_required
 def operationreport(request):
-   return BucketedView(request, operationquery, 'operation.html', 'operation.csv')             
+   return BucketedView(request, operationquery, 'operation.html', 'operation.csv')
 
 
 class pathreport:
@@ -419,12 +419,12 @@ class pathreport:
     # Find the buffer
     try: rootbuffer = Buffer.objects.get(name=buffer)
     except: raise Http404, "buffer %s doesn't exist" % buffer
-    
+
     # Initialize
     resultset = []
     level = 0
     bufs = [ (rootbuffer, None, 1) ]
-    
+
     # Recurse deeper in the supply chain
     while len(bufs) > 0:
        level += 1
@@ -436,35 +436,34 @@ class pathreport:
             for j in x:
                if j.thebuffer == i: f = j
             for j in x:
-               if j.quantity < 0: 
+               if j.quantity < 0:
                  # Found a new buffer
-                 if f is None: 
+                 if f is None:
                    newbufs.append( (j.thebuffer, j, - q * j.quantity) )
                  else:
                    newbufs.append( (j.thebuffer, j, - q * j.quantity / f.quantity) )
           # Append to the list of buffers
           resultset.append( {
-            'buffer': i, 
-            'producingflow': f, 
-            'operation': i.producing, 
+            'buffer': i,
+            'producingflow': f,
+            'operation': i.producing,
             'level': level,
-            'consumingflow': fl, 
+            'consumingflow': fl,
             'cumquantity': q,
             } )
        bufs = newbufs
-       
+
     # Return results
     return resultset
-    
+
   #@login_required
   @staticmethod
   def view(request):
     b = request.GET.get('buffer', 'Buf 00000 L00')  # todo hardcoded default
-    c = RequestContext(request,{ 
-       'supplypath': pathreport.getPath(b), 
+    c = RequestContext(request,{
+       'supplypath': pathreport.getPath(b),
        'buffer': b,
-       })      
+       })
     # Uncomment the next line to see the SQL statements executed for the report
     #for i in connection.queries: print i
-    return render_to_response('path.html', c)  
-                                                                                                     
+    return render_to_response('path.html', c)

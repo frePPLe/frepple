@@ -12,9 +12,9 @@
 
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr id="{{j.resource}}"><td>{{j.resource|superlink:"resource"}}</td>
-<td>Available<br>Load<br>Utilization</td>{% endif %}
-<td>{{j.available}}<br>{{j.load}}<br>{{j.utilization}}</td>{% endfor %}
-</tr>{% endfor %}  
+<td>Available<br/>Load<br/>Utilization</td>{% endif %}
+<td>{{j.available}}<br/>{{j.load}}<br/>{{j.utilization}}</td>{% endfor %}
+</tr>{% endfor %}
 </table>
 
 {% block pagination %} <p class="paginator">
@@ -23,7 +23,6 @@
 {% endif %}
 &nbsp;&nbsp;{{hits}} resources
 </p>{% endblock %}
-   
+
 </div>
 {% endblock %}
-                                                   

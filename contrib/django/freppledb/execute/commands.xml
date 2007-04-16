@@ -12,12 +12,12 @@
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="freppledb.execute.export.loadfrepple()" />
     <COMMAND xsi:type="COMMAND_SIZE" />
     <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="7" VERBOSE="true" />
+      <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="7" VERBOSE="false" />
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SIZE" />
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="freppledb.execute.export.dumpfrepple()" />
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
     <!--
+    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
     <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
     <COMMAND xsi:type="COMMAND_SIZE" />
     -->

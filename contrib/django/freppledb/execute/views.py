@@ -220,8 +220,8 @@ def upload(request):
     try:
         warnings = parseUpload(request.FILES['csv_file']['content'], entity)
         if len(warnings) > 0:
-          for i in warnings: print i
           request.user.message_set.create(message='Uploaded file processed with warnings')
+          for i in warnings: request.user.message_set.create(message=i)
         else:
           request.user.message_set.create(message='Uploaded file processed')
         return HttpResponseRedirect('/execute/execute.html')

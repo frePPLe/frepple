@@ -12,8 +12,8 @@
 
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr id="{{j.buffer}}"><td>{{j.buffer|superlink:"buffer"}}</td>
-<td>Start Inventory<br>Consumed<br>Produced<br>End inventory</td>{% endif %}
-<td>{{j.startoh}}<br>{{j.consumed}}<br>{{j.produced}}<br>{{j.endoh}}</td>{% endfor %}
+<td>Start&nbsp;Inventory<br/>Consumed<br/>Produced<br/>End&nbsp;inventory</td>{% endif %}
+<td>{{j.startoh}}<br/>{{j.consumed}}<br/>{{j.produced}}<br/>{{j.endoh}}</td>{% endfor %}
 </tr>{% endfor %}
 </table>
 

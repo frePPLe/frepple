@@ -13,8 +13,8 @@
 
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr id="{{j.item}}"><td>{{j.item|superlink:"item"}}</td>
-<td>Demand<br>Supply<br>Backlog</td>{% endif %}
-<td>{{j.requested}}<br>{{j.supplied}}<br>{{j.backlog}}</td>{% endfor %}
+<td>Demand<br/>Supply<br/>Backlog</td>{% endif %}
+<td>{{j.requested}}<br/>{{j.supplied}}<br/>{{j.backlog}}</td>{% endfor %}
 </tr>{% endfor %}
 </table>
 

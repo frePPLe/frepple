@@ -43,6 +43,7 @@ class OperationPlan(models.Model):
         date_hierarchy = 'startdate'
     class Meta:
         permissions = (("view_operationplan", "Can view operation plans"),)
+        ordering = ['operation_id','startdatetime']
 
 class Problem(models.Model):
     entity = models.CharField(maxlength=10, db_index=True)
@@ -61,6 +62,7 @@ class Problem(models.Model):
         list_filter = ['entity','name','startdate']
     class Meta:
         permissions = (("view_problem", "Can view problems"),)
+        ordering = ['startdatetime']
 
 class LoadPlan(models.Model):
     resource = models.ForeignKey(Resource, related_name='loadplans', db_index=True, raw_id_admin=True)
@@ -77,6 +79,7 @@ class LoadPlan(models.Model):
         list_display = ('resource', 'operation', 'quantity', 'date', 'onhand', 'maximum', 'operationplan')
     class Meta:
         permissions = (("view_loadplans", "Can view load plans"),)
+        ordering = ['resource_id','datetime']
 
 class FlowPlan(models.Model):
     thebuffer = models.ForeignKey(Buffer, related_name='flowplans', db_index=True, raw_id_admin=True)
@@ -87,8 +90,9 @@ class FlowPlan(models.Model):
     date = models.DateField(db_index=True)
     onhand = models.FloatField(max_digits=10, decimal_places=2)
     def __str__(self):
-        return self.thebuffer.name + str(self.date) 
+        return self.thebuffer.name + str(self.date)
     class Admin:
         list_display = ('thebuffer', 'operation', 'quantity', 'date', 'onhand', 'operationplan')
     class Meta:
         permissions = (("view_flowplans", "Can view flow plans"),)
+        ordering = ['thebuffer','datetime']

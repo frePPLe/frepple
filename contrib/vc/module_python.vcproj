@@ -87,7 +87,7 @@
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\module_python\Debug/module_python.pdb"
 				OptimizeReferences="1"
-				ImportLibrary="../../bin/module_python_vcc_debug.lib"
+				ImportLibrary="../../bin/module_python_debug.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

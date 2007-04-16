@@ -43,7 +43,7 @@ class OperationPlan(models.Model):
         date_hierarchy = 'startdate'
     class Meta:
         permissions = (("view_operationplan", "Can view operation plans"),)
-        ordering = ['operation_id','startdatetime']
+        ordering = ['operation','startdatetime']
 
 class Problem(models.Model):
     entity = models.CharField(maxlength=10, db_index=True)
@@ -79,7 +79,7 @@ class LoadPlan(models.Model):
         list_display = ('resource', 'operation', 'quantity', 'date', 'onhand', 'maximum', 'operationplan')
     class Meta:
         permissions = (("view_loadplans", "Can view load plans"),)
-        ordering = ['resource_id','datetime']
+        ordering = ['resource','datetime']
 
 class FlowPlan(models.Model):
     thebuffer = models.ForeignKey(Buffer, related_name='flowplans', db_index=True, raw_id_admin=True)

@@ -103,7 +103,7 @@ def runfrepple(request):
         os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH']
         os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
         os.chdir(settings.FREPPLE_HOME)
-        os.system('frepple_vcc %s' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','commands.xml'))
+        os.system('frepple %s' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','commands.xml'))
         request.user.message_set.create(message='Successfully ran frepple')
       except Exception, e:
         request.user.message_set.create(message='Failure when running frepple:%s' % e)

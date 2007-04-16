@@ -10,10 +10,10 @@ XERCESVERSION = 2_7_0
 # Convenience variables
 #
 TARGETPATH = $(ROOT)\contrib\borland\obj
-PROJECTS = $(ROOT)\bin\frepple_bcc.exe \
-           $(ROOT)\lib\frepple_bcc_static.lib \
-           $(ROOT)\bin\frepple_bcc.dll \
-           $(ROOT)\bin\module_forecast_bcc.dll
+PROJECTS = $(ROOT)\bin\frepple.exe \
+           $(ROOT)\lib\frepplestatic.lib \
+           $(ROOT)\bin\frepple.dll \
+           $(ROOT)\bin\module_forecast.dll
 
 #
 # Compiler and linker flags
@@ -98,25 +98,23 @@ OBJFILES = \
 all: MakeBuildDirs $(PROJECTS)
 
 # Build main executable
-$(ROOT)\bin\frepple_bcc.exe: $(OBJFILES)
-  $(MAKEDIR)\BRCC32 -i $(MAKEDIR)\..\include -fo obj\exe.res -32 ..\..\src\exe.rc  
+$(ROOT)\bin\frepple.exe: $(OBJFILES)
+  $(MAKEDIR)\BRCC32 -i $(MAKEDIR)\..\include -fo obj\exe.res -32 ..\..\src\exe.rc
 	$(MAKEDIR)\ilink32 $(LFLAGS_EXE) -L$(LIBPATH) $(OBJFILES),$@,,$(ALLLIB),,obj\exe.res
 
 # Build static library
 # @todo this is currently not complete: source files with identical names
 # existing multiple directories, and the library tool doesn't appreciate
 # that... Only one of the files is added in the library.
-$(ROOT)\lib\frepple_bcc_static.lib: $(OBJFILES)
+$(ROOT)\lib\frepple_static.lib: $(OBJFILES)
 	$(MAKEDIR)\tlib /P64 /C $@ /u $(OBJFILES), $(TARGETPATH)\frepple.lst
 
-$(ROOT)\bin\frepple_bcc.dll: $(OBJFILES)
-  $(MAKEDIR)\BRCC32 -i $(MAKEDIR)\..\include -fo obj\dll.res -32 ..\..\src\dll.rc  
+$(ROOT)\bin\frepple.dll: $(OBJFILES)
+  $(MAKEDIR)\BRCC32 -i $(MAKEDIR)\..\include -fo obj\dll.res -32 ..\..\src\dll.rc
 	$(MAKEDIR)\ilink32 $(LFLAGS_DLL) -L$(LIBPATH) $(OBJFILES),$@,,$(ALLLIB),,obj\dll.res
-	move $(ROOT)\bin\frepple_bcc.lib $(ROOT)\lib\frepple_bcc.lib
 
-$(ROOT)\bin\module_forecast_bcc.dll: $(TARGETPATH)\forecast\forecast.obj
+$(ROOT)\bin\module_forecast.dll: $(TARGETPATH)\forecast\forecast.obj
 	$(MAKEDIR)\ilink32 $(LFLAGS_DLL) -L$(LIBPATH) $(TARGETPATH)\forecast\forecast.obj,$@,,$(ALLLIB),,
-	move $(ROOT)\bin\module_forecast_bcc.lib $(ROOT)\lib\module_forecast_bcc.lib
 
 # Make build directories
 MakeBuildDirs:
@@ -129,6 +127,4 @@ MakeBuildDirs:
 # Cleanup make target
 clean:
   -del /q /s $(TARGETPATH)
-  -del $(ROOT)\bin\frepple_bcc.exe $(ROOT)\bin\frepple_bcc.dll $(ROOT)\lib\frepple_bcc_static.lib $(ROOT)\bin\*.tds
-
-
+  -del $(ROOT)\bin\frepple.exe $(ROOT)\bin\frepple.dll $(ROOT)\lib\frepple_static.lib $(ROOT)\bin\*.tds

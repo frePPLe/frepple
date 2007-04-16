@@ -8,7 +8,7 @@
 <div id="content-main">
 
 <table>
-<tr><th></th><th></th>{% for j in bucketlist %} <th>{{j.name}} {{j.start}}</th> {% endfor %}</tr>
+<tr><th></th><th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr>
 
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr id="{{j.resource}}"><td>{{j.resource|superlink:"resource"}}</td>

@@ -36,7 +36,7 @@
 
 ; Main definitions
 !define PRODUCT_NAME "Frepple"
-!define PRODUCT_VERSION "0.2.2"
+!define PRODUCT_VERSION "0.2.3"
 !define PRODUCT_PUBLISHER "Frepple"
 !define PRODUCT_WEB_SITE "http://www.frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
@@ -78,8 +78,8 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_LANGUAGE "English"
 
 ;Version Information
-VIProductVersion "0.2.2.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "0.2.2"
+VIProductVersion "0.2.3.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "0.2.3"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Frepple Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "Frepple Installer - Free Production Planning Library"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Frepple"
@@ -117,10 +117,10 @@ Section "Application" SecAppl
   SetOverwrite ifnewer
 
   ; Copy application, dll and libraries
-  File "..\bin\frepple_vcc.exe"
+  File "..\bin\frepple.exe"
   !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\bin\frepple.dll" "$INSTDIR\bin\frepple.dll" "$SYSDIR"
-  File "..\bin\frepple_vcc.lib"
-  File "..\bin\frepple_vcc.exp"
+  File "..\bin\frepple.lib"
+  File "..\bin\frepple.exp"
 
   ; Copy modules
   File "..\bin\mod_*.so"
@@ -203,7 +203,7 @@ Section -Post
   !system "sh -c 'rm -rf frepple-${PRODUCT_VERSION}'"
   ; Create uninstaller
   WriteUninstaller "$INSTDIR\uninst.exe"
-  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\bin\frepple_vcc.exe"
+  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\bin\frepple.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\bin\frepple.exe"

@@ -84,9 +84,9 @@
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\dll\Debug/frepple_vcc_debug.pdb"
+				ProgramDatabaseFile=".\dll\Debug/frepple_debug.pdb"
 				OptimizeReferences="1"
-				ImportLibrary="../../bin/module_lp_solver_vcc_debug.lib"
+				ImportLibrary="../../bin/module_lp_solver_debug.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -187,7 +187,7 @@
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
 				DelayLoadDLLs=""
-				ProgramDatabaseFile=".\module_lp_solver\Release/module_lp_solver_vcc.pdb"
+				ProgramDatabaseFile=".\module_lp_solver\Release/module_lp_solver.pdb"
 				OptimizeReferences="2"
 				OptimizeForWindows98="1"
 			/>
@@ -359,7 +359,7 @@
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
 				DelayLoadDLLs=""
-				ProgramDatabaseFile=".\module_lp_solver\Release/module_lp_solver_vcc.pdb"
+				ProgramDatabaseFile=".\module_lp_solver\Release/module_lp_solver.pdb"
 				OptimizeReferences="2"
 				OptimizeForWindows98="1"
 			/>

@@ -24,7 +24,7 @@
 
 # Frepple specific variables
 import os, os.path
-FREPPLE_HOME = os.environ['FREPPLE_HOME'] # "c:\\develop\\frepple\\bin" #
+FREPPLE_HOME = os.environ['FREPPLE_HOME']
 FREPPLE_APP = os.path.normpath(os.path.join(FREPPLE_HOME,'..','contrib','django'))
 
 

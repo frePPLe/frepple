@@ -86,7 +86,7 @@
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\mod_forecast\Debug\mod_forecast_debug.pdb"
 				OptimizeReferences="1"
-				ImportLibrary="../../bin/module_forecast_vcc_debug.lib"
+				ImportLibrary="../../bin/module_forecast_debug.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -187,7 +187,7 @@
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
 				DelayLoadDLLs=""
-				ProgramDatabaseFile=".\module_forecast\Release/module_forecast_vcc.pdb"
+				ProgramDatabaseFile=".\module_forecast\Release/module_forecast.pdb"
 				OptimizeReferences="2"
 				OptimizeForWindows98="1"
 			/>
@@ -358,7 +358,7 @@
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
 				DelayLoadDLLs=""
-				ProgramDatabaseFile=".\module_forecast\Release/module_forecast_vcc.pdb"
+				ProgramDatabaseFile=".\module_forecast\Release/module_forecast.pdb"
 				OptimizeReferences="2"
 				OptimizeForWindows98="1"
 			/>

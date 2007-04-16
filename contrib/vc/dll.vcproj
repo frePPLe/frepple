@@ -84,9 +84,9 @@
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\dll\Debug/frepple_vcc_debug.pdb"
+				ProgramDatabaseFile=".\dll\Debug/frepple_debug.pdb"
 				OptimizeReferences="1"
-				ImportLibrary="../../bin/frepple_vcc_debug.lib"
+				ImportLibrary="../../bin/frepple_debug.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -186,10 +186,10 @@
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
-				ProgramDatabaseFile=".\dll\Release/frepple_vcc.pdb"
+				ProgramDatabaseFile=".\dll\Release/frepple.pdb"
 				OptimizeReferences="2"
 				OptimizeForWindows98="1"
-				ImportLibrary="../../bin/frepple_vcc.lib"
+				ImportLibrary="../../bin/frepple.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -349,16 +349,16 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="xerces-c_2.lib"
-				OutputFile="../../bin/frepple_vcc.dll"
+				OutputFile="../../bin/frepple.dll"
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
-				ProgramDatabaseFile=".\dll\Release/frepple_vcc.pdb"
+				ProgramDatabaseFile=".\dll\Release/frepple.pdb"
 				OptimizeReferences="2"
 				OptimizeForWindows98="1"
-				ImportLibrary="../../lib/frepple_vcc.lib"
+				ImportLibrary="../../lib/frepple.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -458,10 +458,10 @@
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
-				ProgramDatabaseFile=".\dll\Release/frepple_vcc.pdb"
+				ProgramDatabaseFile=".\dll\Release/frepple.pdb"
 				OptimizeReferences="2"
 				OptimizeForWindows98="1"
-				ImportLibrary="../../bin/frepple_vcc.lib"
+				ImportLibrary="../../bin/frepple.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

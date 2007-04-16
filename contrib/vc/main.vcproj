@@ -75,11 +75,11 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="xerces-c_2.lib"
-				OutputFile="../../bin/frepple_vcc.exe"
+				OutputFile="../../bin/frepple.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
-				ProgramDatabaseFile=".\main\Release/frepple_vcc.pdb"
+				ProgramDatabaseFile=".\main\Release/frepple.pdb"
 				SubSystem="1"
 			/>
 			<Tool
@@ -168,12 +168,12 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="xerces-c_2.lib"
-				OutputFile="../../bin/frepple_vcc_debug.exe"
+				OutputFile="../../bin/frepple_debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\main\Debug/frepple_vcc_debug.pdb"
+				ProgramDatabaseFile=".\main\Debug/frepple_debug.pdb"
 				SubSystem="1"
 			/>
 			<Tool
@@ -326,11 +326,11 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="xerces-c_2.lib"
-				OutputFile="../../bin/frepple_vcc.exe"
+				OutputFile="../../bin/frepple_debug.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
-				ProgramDatabaseFile=".\main\Release/frepple_vcc.pdb"
+				ProgramDatabaseFile=".\main\Release/frepple.pdb"
 				SubSystem="1"
 			/>
 			<Tool

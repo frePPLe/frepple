@@ -45,6 +45,7 @@ class Plan(models.Model):
 
 class Dates(models.Model):
     day = models.DateField(primary_key=True)
+    dayofweek = models.SmallIntegerField()
     week = models.CharField(maxlength=10, db_index=True)
     week_start = models.DateField(db_index=True)
     week_end = models.DateField(db_index=True)
@@ -100,7 +101,7 @@ class Calendar(models.Model):
 class Bucket(models.Model):
     calendar = models.ForeignKey(Calendar, edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
     start = models.DateTimeField('start date', core=True)
-    end = models.DateTimeField('start date', editable=False, null=True)
+    end = models.DateTimeField('end date', editable=False, null=True)
     value = models.FloatField(max_digits=10, decimal_places=2, default=0.00)
     name = models.CharField(maxlength=60, null=True, blank=True)
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)

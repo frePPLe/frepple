@@ -92,12 +92,14 @@ def createDates():
     month = int(curdate.strftime("%m"))  # an integer in the range 1 - 12
     quarter = (month-1) / 3 + 1          # an integer in the range 1 - 4
     year = int(curdate.strftime("%Y"))
+    dayofweek = int(curdate.strftime("%w")) # day of the week, 0 = sunday, 1 = monday, ...
     d = Dates(
       day = curdate,
-      week = curdate.strftime("%Y W%W"),
-      week_start = curdate - timedelta(int(curdate.strftime("%w"))),
-      week_end = curdate - timedelta(int(curdate.strftime("%w"))-7),
-      month =  curdate.strftime("%b %Y") ,
+      dayofweek = dayofweek,
+      week = curdate.strftime("%Y W%W"),     # Weeks are starting on monday
+      week_start = curdate - timedelta((dayofweek+6)%7),
+      week_end = curdate - timedelta((dayofweek+6)%7-7),
+      month =  curdate.strftime("%b %Y"),
       month_start = date(year, month, 1),
       month_end = date(year+month/12, month+1-12*(month/12), 1),
       quarter = str(year) + " Q" + str(quarter),

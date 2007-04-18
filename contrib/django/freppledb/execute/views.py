@@ -100,7 +100,7 @@ def runfrepple(request):
       try:
         os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\','\\\\')
         os.environ['FREPPLE_APP'] = settings.FREPPLE_APP.replace('\\','\\\\')
-        os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH']
+        os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + '.'
         os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
         os.chdir(settings.FREPPLE_HOME)
         os.system('frepple %s' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','commands.xml'))

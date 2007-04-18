@@ -22,10 +22,12 @@
 # email : jdetaeye@users.sourceforge.net
 
 from django.db import models
-from datetime import date
+from django.db.models import signals
+from datetime import date, datetime
 import sys
 from django.http import HttpRequest
 from datetime import datetime
+from django.dispatch import dispatcher
 
 # The date format used by the frepple XML data.
 dateformat = '%Y-%m-%dT%H:%M:%S'
@@ -86,7 +88,7 @@ class Calendar(models.Model):
         curdate = date.today()
         curdatetime = datetime(curdate.year,curdate.month,curdate.day)
         for b in self.buckets.all():
-            if curdatetime < b.start: return v
+            if curdatetime < b.startdate: return v
             v = b.value
         return v
     currentvalue.short_description = 'Current value'
@@ -100,16 +102,41 @@ class Calendar(models.Model):
 
 class Bucket(models.Model):
     calendar = models.ForeignKey(Calendar, edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
-    start = models.DateTimeField('start date', core=True)
-    end = models.DateTimeField('end date', editable=False, null=True)
+    startdate = models.DateTimeField('start date', core=True)
+    enddate = models.DateTimeField('end date', editable=False, null=True)
     value = models.FloatField(max_digits=10, decimal_places=2, default=0.00)
     name = models.CharField(maxlength=60, null=True, blank=True)
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
     def __str__(self):
         if self.name: return self.name
-        return str(self.start)
+        return str(self.startdate)
     class Meta:
-        ordering = ['start','name']
+        ordering = ['startdate','name']
+    @staticmethod
+    def updateEndDate(instance):
+        '''
+        The user edits the start date of the calendar buckets.
+        This method will automatically update the end date of a bucket to be equal to the start date of the next bucket.
+        '''
+        # Loop through all buckets
+        prev = None
+        for i in instance.calendar.buckets.all():
+          if prev and i.startdate != prev.enddate:
+            # Update the end date of the previous bucket to the start date of this one
+            prev.enddate = i.startdate
+            prev.save()
+          prev = i
+        if prev and prev.enddate != datetime(2030,12,31):
+          # Update the last entry
+          prev.enddate = datetime(2030,12,31)
+          prev.save()
+
+# This dispatcher function is called after a bucket is saved. There seems no cleaner way to do this, since
+# the method calendar.buckets.all() is only up to date after the save...
+# The method is not very efficient: called for every single bucket, and recursively triggers
+# another save and dispatcher event
+dispatcher.connect(Bucket.updateEndDate, signal=signals.post_save, sender=Bucket)
+
 
 class Location(models.Model):
     name = models.CharField(maxlength=60, primary_key=True)
@@ -127,6 +154,7 @@ class Location(models.Model):
         list_filter = ['category', 'subcategory']
         save_as = True
 
+
 class Customer(models.Model):
     name = models.CharField(maxlength=60, primary_key=True)
     description = models.CharField(maxlength=200, null=True, blank=True)
@@ -142,6 +170,7 @@ class Customer(models.Model):
         search_fields = ['name', 'description']
         list_filter = ['category', 'subcategory']
         save_as = True
+
 
 class Item(models.Model):
     name = models.CharField(maxlength=60, primary_key=True)
@@ -159,6 +188,7 @@ class Item(models.Model):
         search_fields = ['name', 'description']
         list_filter = ['category', 'subcategory']
         save_as = True
+
 
 class Operation(models.Model):
     operationtypes = (
@@ -207,6 +237,7 @@ class Operation(models.Model):
                }),
         )
 
+
 class SubOperation(models.Model):
     ## Django bug: @todo
     ## We want to edit the sub-operations inline as part of the operation editor.
@@ -224,6 +255,7 @@ class SubOperation(models.Model):
         ordering = ['operation','priority','suboperation']
     class Admin:
         list_display = ('operation','priority','suboperation')
+
 
 class Buffer(models.Model):
     buffertypes = (
@@ -269,6 +301,7 @@ class Buffer(models.Model):
         list_filter = ['category', 'subcategory']
         save_as = True
 
+
 class Resource(models.Model):
     resourcetypes = (
       ('','Default'),
@@ -298,6 +331,7 @@ class Resource(models.Model):
         list_filter = ['category', 'subcategory']
         save_as = True
 
+
 class Flow(models.Model):
     flowtypes = (
       ('','Start'),
@@ -323,6 +357,7 @@ class Flow(models.Model):
     class Meta:
         unique_together = (('operation','thebuffer'),)
 
+
 class Load(models.Model):
     operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True, related_name='loads')
     resource = models.ForeignKey(Resource, db_index=True, raw_id_admin=True)
@@ -336,6 +371,7 @@ class Load(models.Model):
         save_as = True
     class Meta:
         unique_together = (('operation','resource'),)
+
 
 class OperationPlan(models.Model):
     identifier = models.IntegerField(primary_key=True,
@@ -353,6 +389,7 @@ class OperationPlan(models.Model):
         search_fields = ['operation']
         list_display = ('identifier', 'operation', 'startdate', 'enddate', 'quantity', 'locked', 'lastmodified')
         date_hierarchy = 'startdate'
+
 
 class Demand(models.Model):
     # The priorities defined here are for convenience only. Frepple accepts any number as priority.

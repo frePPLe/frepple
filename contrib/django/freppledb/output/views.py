@@ -33,7 +33,7 @@ from datetime import date
 
 from freppledb.input.models import Buffer, Flow, Operation, Plan
 
-PAGINATE_BY = 20
+PAGINATE_BY = 50
 ON_EACH_SIDE = 3
 ON_ENDS = 2
 
@@ -322,47 +322,68 @@ def demandreport(request):
 
 
 def resourcequery(bucket, startdate, enddate):
-      cursor = connection.cursor()
-      cursor.execute('''
-        select combi.resource_id, combi.%s, coalesce(data.load,0), coalesce(data.available,0)
-          from
-           (select name as resource_id, d.%s, d.start from input_resource
-            inner join (select %s, min(day) as start from input_dates where day >= '%s'
-              and day < '%s' group by %s) d on 1=1
-           ) as combi
-          left join
-           (select resource_id, %s,
-              sum(quantity * extract(epoch from (%s_end - output_loadplan.datetime)))/86400 as load,
-              min(maximum * (%s_end - %s_start)) as available
-              from output_loadplan, input_dates
-              where output_loadplan.date = input_dates.day
-              and output_loadplan.date >= '%s'
-              and output_loadplan.date < '%s'           
-              group by resource_id, %s
-            ) data 
-          on combi.resource_id = data.resource_id
-          and combi.%s = data.%s
-          order by combi.resource_id, combi.start ''' 
-          % (bucket,bucket,bucket,startdate,enddate,bucket,bucket,bucket,bucket,bucket,startdate,enddate,bucket,bucket,bucket))
-      resultset = []
-      prevres = None
-      rowset = []
-      for row in cursor.fetchall():
-        if row[0] != prevres:
-          if prevres: resultset.append(rowset)
-          rowset = []
-          prevres = row[0]
-        if row[3] != 0: util = row[2] / float(row[3])
-        else: util = 0
-        rowset.append( {
-          'resource': row[0],
-          'bucket': row[1],
-          'load': row[2],
-          'available': row[3],
-          'utilization': util,
-          } )
+  cursor = connection.cursor()
+  cursor.execute('''
+     select ddd.resource_id, ddd.bucket, min(ddd.available),
+       coalesce(sum(loaddata.usage
+                    * extract(epoch from (case loaddata.enddatetime>ddd.enddate when true then ddd.enddate else loaddata.enddatetime end)
+                                       - (case loaddata.startdatetime>ddd.startdate when true then loaddata.startdatetime else ddd.startdate end))
+                      ) / 86400 ,0) as load
+     from (
+       select dd.resource_id, dd.bucket, dd.startdate, dd.enddate,
+         coalesce(sum(input_bucket.value
+                      * extract(epoch from (case input_bucket.enddate>dd.enddate when true then dd.enddate else input_bucket.enddate end)
+                                         - (case input_bucket.startdate>dd.startdate when true then input_bucket.startdate else dd.startdate end))
+                 ) / 86400,0) as available
+       from (
+         select name as resource_id, maximum_id, d.bucket, d.startdate, d.enddate
+         from input_resource
+         inner join (
+           -- todo the next line doesnt work for daily buckets
+           select %s as bucket, %s_start as startdate, %s_end as enddate
+           from input_dates
+           where day >= '%s' and day < '%s'
+           group by %s, startdate, enddate
+           ) d on 1=1
+         ) dd
+       left join input_bucket
+       on input_bucket.calendar_id = dd.maximum_id
+          and dd.startdate <= input_bucket.enddate
+          and dd.enddate >= input_bucket.startdate
+		   group by dd.resource_id, dd.bucket, dd.startdate, dd.enddate
+	     ) ddd
+     left join (
+       select input_load.resource_id, startdatetime, enddatetime, input_load.usagefactor as usage
+       from output_operationplan, input_load
+       where output_operationplan.operation_id = input_load.operation_id
+          and output_operationplan.enddate >= '%s'
+          and output_operationplan.startdate < '%s'
+       ) loaddata
+     on loaddata.resource_id = ddd.resource_id
+       and ddd.startdate <= loaddata.enddatetime
+       and ddd.enddate >= loaddata.startdatetime
+     group by ddd.resource_id, ddd.bucket, ddd.startdate, ddd.enddate
+     order by ddd.resource_id, ddd.startdate
+     ''' % (bucket,bucket,bucket,startdate,enddate,bucket,startdate,enddate))
+  resultset = []
+  prevres = None
+  rowset = []
+  for row in cursor.fetchall():
+    if row[0] != prevres:
       if prevres: resultset.append(rowset)
-      return resultset
+      rowset = []
+      prevres = row[0]
+    if row[2] != 0: util = row[3] / float(row[2])
+    else: util = 0
+    rowset.append( {
+      'resource': row[0],
+      'bucket': row[1],
+      'load': row[3],
+      'available': row[2],
+      'utilization': util,
+      } )
+  if prevres: resultset.append(rowset)
+  return resultset
 
 
 #@login_required

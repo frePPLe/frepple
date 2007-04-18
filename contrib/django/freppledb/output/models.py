@@ -43,7 +43,10 @@ class OperationPlan(models.Model):
         date_hierarchy = 'startdate'
     class Meta:
         permissions = (("view_operationplan", "Can view operation plans"),)
-        ordering = ['operation','startdatetime']
+        # Ordering is buggy :-(
+        # Database sync expectes 'operation' and fails when it is set to 'operation_id'
+        # Ordering requires 'operation_id' and fails when it is set to 'operation'
+        #ordering = ['operation_id','startdatetime']
 
 class Problem(models.Model):
     entity = models.CharField(maxlength=10, db_index=True)
@@ -79,7 +82,10 @@ class LoadPlan(models.Model):
         list_display = ('resource', 'operation', 'quantity', 'date', 'onhand', 'maximum', 'operationplan')
     class Meta:
         permissions = (("view_loadplans", "Can view load plans"),)
-        ordering = ['resource','datetime']
+        # Ordering is buggy :-(
+        # Database sync expectes 'resource' and fails when it is set to 'resource_id'
+        # Ordering requires 'resource_id' and fails when it is set to 'resource'
+        #ordering = ['resource_id','datetime']
 
 class FlowPlan(models.Model):
     thebuffer = models.ForeignKey(Buffer, related_name='flowplans', db_index=True, raw_id_admin=True)
@@ -95,4 +101,7 @@ class FlowPlan(models.Model):
         list_display = ('thebuffer', 'operation', 'quantity', 'date', 'onhand', 'operationplan')
     class Meta:
         permissions = (("view_flowplans", "Can view flow plans"),)
-        ordering = ['thebuffer','datetime']
+        # Ordering is buggy :-(
+        # Database sync expectes 'thebuffer' and fails when it is set to 'thebuffer_id'
+        # Ordering requires 'thebuffer_id' and fails when it is set to 'thebuffer'
+        #ordering = ['thebuffer_id','datetime']

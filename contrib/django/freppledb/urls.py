@@ -26,13 +26,21 @@ import sys
 import freppledb.output.views
 
 urlpatterns = patterns('',
+
+    # Frepple execution
     (r'^execute/log/$', 'django.views.generic.simple.direct_to_template', {'template': 'execute/log.html'} ),
     (r'^execute/runfrepple/$', 'freppledb.execute.views.runfrepple'),
     (r'^execute/rundb/$', 'freppledb.execute.views.rundb'),
     (r'^execute/upload/$', 'freppledb.execute.views.upload'),
     (r'^execute/', 'django.views.generic.simple.direct_to_template', {'template': 'execute/execute.html'}),
+
+    # Main index page
     (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/admin/'}),
+
+    # Admin pages
     (r'^admin/', include('django.contrib.admin.urls')),
+
+    # Frepple custom reports
     (r'^buffer/$', freppledb.output.views.bufferreport),
     (r'^demand/$', freppledb.output.views.demandreport),
     (r'^resource/$', freppledb.output.views.resourcereport),

@@ -125,6 +125,7 @@ stats:
 		`find include -name '*.h'` \
 		`find contrib -name '*.h'` \
 		`find modules -name '*.h'` | grep -v config.h | sort -n
+	wc -l `find . -name '*.py'` | sort -n
 
 # A simple way to list the todo items
 todo:

@@ -155,7 +155,7 @@ def create_model (cluster, demand, level):
   res = []
   for i in range(100):
     cal = Calendar(name='capacity for res %03d' %i, category='capacity')
-    bkt = Bucket(start=date(2007,1,1), value=2, calendar=cal)
+    bkt = Bucket(startdate=date(2007,1,1), value=2, calendar=cal)
     cal.save()
     bkt.save()
     r = Resource(name = 'Res %03d' % i, maximum=cal)

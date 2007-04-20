@@ -40,7 +40,6 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'postgresql_psycopg2' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-#DATABASE_ENGINE = 'mysql'            # 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
 DATABASE_NAME = 'frepple'             # Or path to database file if using sqlite3.
 DATABASE_USER = 'frepple'             # Not used with sqlite3.
 DATABASE_PASSWORD = 'frepple'         # Not used with sqlite3.

@@ -22,8 +22,9 @@
 # email : jdetaeye@users.sourceforge.net
 
 from django.conf.urls.defaults import *
-import sys
+import sys, os.path
 import freppledb.output.views
+from django.conf import settings
 
 urlpatterns = patterns('',
 
@@ -41,11 +42,15 @@ urlpatterns = patterns('',
     (r'^admin/', include('django.contrib.admin.urls')),
 
     # Frepple custom reports
+    (r'^buffer/([^/]+)/$', freppledb.output.views.bufferreport),
     (r'^buffer/$', freppledb.output.views.bufferreport),
+    (r'^demand/([^/]+)/$', freppledb.output.views.demandreport),
     (r'^demand/$', freppledb.output.views.demandreport),
+    (r'^resource/([^/]+)/$', freppledb.output.views.resourcereport),
     (r'^resource/$', freppledb.output.views.resourcereport),
+    (r'^operation/([^/]+)/$', freppledb.output.views.operationreport),
     (r'^operation/$', freppledb.output.views.operationreport),
-    (r'^path/$', freppledb.output.views.pathreport.view),
+    (r'^path/([^/]+)/$', freppledb.output.views.pathreport.view),
 )
 
 # Allows the standalone development server to serve the static pages.
@@ -53,5 +58,5 @@ urlpatterns = patterns('',
 # these pages.
 if 'runserver' in sys.argv:
   urlpatterns += patterns('',(r'static/(?P<path>.*)$', 'django.views.static.serve',
-       {'document_root': 'static', 'show_indexes': False}),
+       {'document_root': os.path.join(settings.FREPPLE_APP,'freppledb','static'), 'show_indexes': False}),
     )

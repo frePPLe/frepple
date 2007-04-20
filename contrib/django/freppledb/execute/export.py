@@ -160,7 +160,7 @@ def loadfrepple():
   print 'Importing buckets...'
   cnt = 0
   starttime = times()[4]
-  cursor.execute("SELECT calendar_id, start, name, value FROM input_bucket")
+  cursor.execute("SELECT calendar_id, startdate, name, value FROM input_bucket")
   x = [ header ]
   x.append('<CALENDARS>')
   for i, j, k, l in cursor.fetchall():

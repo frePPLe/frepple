@@ -65,7 +65,7 @@ def superlink(value,type):
     # Convert the parameter into a string if it's not already
     if not isinstance(value,basestring): value = str(value)
     # Final return value
-    return '<a href="/admin/input/%s/%s">%s</a>' % (type,urllib.quote(value),value.replace(' ','&nbsp;'))
+    return '<a href="/admin/input/%s/%s" class="%s">%s</a>' % (type,urllib.quote(value),type,value.replace(' ','&nbsp;'))
 
 
 register.tag('crumbs', do_crumbs)

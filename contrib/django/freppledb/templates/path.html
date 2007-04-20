@@ -1,11 +1,41 @@
 {% extends "admin/base_site.html" %}
 {% load i18n breadcrumbs %}
+{% block extrahead %}{{ block.super }}
+<link rel="stylesheet" type="text/css" href="/static/styles.css" />
+<script type="text/javascript" src="/static/frepple.js"></script>
+<script type="text/javascript">
+		ContextMenu.setup();
+		ContextMenu.attach('buffer', 'buffercontext');
+		ContextMenu.attach('resource', 'resourcecontext');
+		ContextMenu.attach('operation', 'operationcontext');
+		ContextMenu.attach('location', 'locationcontext');
+</script>
+{% endblock %}
 {% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block bodyclass %}dashboard{% endblock %}
 {% block breadcrumbs %}<div class="breadcrumbs"><a href="/admin">{% trans "Home" %}</a> &rsaquo; Supply Path</div>{% endblock %}
 {% block content %}
 <div id="content-main">
+
+<div id="buffercontext" class="ContextMenu">
+	<a id="/admin/input/buffer/%s">Buffer</a>
+  <a id="/buffer/%s">Plan</a>
+</div>
+
+<div id="resourcecontext" class="ContextMenu">
+	<a id="/admin/input/resource/%s">Resource</a>
+	<a id="/resource/%s">Plan</a>
+</div>
+
+<div id="operationcontext" class="ContextMenu">
+	<a id="/admin/input/operation/%s">Operation</a>
+	<a id="/operation/%s">Plan</a>
+</div>
+
+<div id="locationcontext" class="ContextMenu">
+	<a id="/admin/input/location/%s">Location</a>
+</div>
 
 Supply path of buffer {{buffer}}
 
@@ -26,11 +56,11 @@ Supply path of buffer {{buffer}}
 {% for i in supplypath %}
 <tr>
 <td>{{i.level}}</td>
-<td>{{i.buffer|superlink:"buffer"}}</td> 
-<td>{{i.buffer.location|superlink:"location"}}</td> 
+<td>{{i.buffer|superlink:"buffer"}}</td>
+<td>{{i.buffer.location|superlink:"location"}}</td>
 <td>{% if i.operation %}{{i.operation|superlink:"operation"}}</a>
 {% for j in i.operation.loads.all %}<br>{{j.resource|superlink:"resource"}}{% endfor %}
-{% endif %}</td> 
+{% endif %}</td>
 <td>{% if i.consumingflow %} {{i.consumingflow.quantity}} {% endif %}</td>
 <td>{{i.cumquantity}}</td>
 </tr>{% endfor %}

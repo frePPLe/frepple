@@ -1,5 +1,13 @@
 {% extends "admin/base_site.html" %}
 {% load i18n breadcrumbs admin_list adminmedia %}
+{% block extrahead %}{{ block.super }}
+<link rel="stylesheet" type="text/css" href="/static/styles.css" />
+<script type="text/javascript" src="/static/frepple.js"></script>
+<script type="text/javascript">
+		ContextMenu.setup();
+		ContextMenu.attach('buffer', 'buffercontext');
+</script>
+{% endblock %}
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block bodyclass %}dashboard{% endblock %}
@@ -7,11 +15,16 @@
 {% block content %}
 <div id="content-main">
 
+<div id="buffercontext" class="ContextMenu">
+	<a id="/admin/input/buffer/%s">Buffer</a>
+  <a id="/path/%s">Supply Path</a>
+</div>
+
 <table>
 <tr><th></th><th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr>
 
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
-<tr id="{{j.buffer}}"><td>{{j.buffer|superlink:"buffer"}}</td>
+<tr><td>{{j.buffer|superlink:"buffer"}}</td>
 <td>Start&nbsp;Inventory<br/>Consumed<br/>Produced<br/>End&nbsp;inventory</td>{% endif %}
 <td>{{j.startoh|floatformat:1}}<br/>{{j.consumed|floatformat:1}}<br/>{{j.produced|floatformat:1}}<br/>{{j.endoh|floatformat:1}}</td>{% endfor %}
 </tr>{% endfor %}
@@ -25,4 +38,5 @@
 </p>{% endblock %}
 
 </div>
+
 {% endblock %}

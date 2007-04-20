@@ -1,0 +1,50 @@
+
+.buffer {
+  margin-right: 17px;
+  padding-right: 17px;
+  background: url(/static/context.gif) 100% 100% no-repeat;
+}
+.item {
+  margin-right: 17px;
+  padding-right: 17px;
+  background: url(/static/context.gif) 100% 100% no-repeat;
+}
+.resource {
+  margin-right: 17px;
+  padding-right: 17px;
+  background: url(/static/context.gif) 100% 100% no-repeat;
+}
+.location {
+  margin-right: 17px;
+  padding-right: 17px;
+  background: url(/static/context.gif) 100% 100% no-repeat;
+}
+.operation {
+  margin-right: 17px;
+  padding-right: 17px;
+  background: url(/static/context.gif) 100% 100% no-repeat;
+}
+
+/* Style for the context menu. */
+div.ContextMenu {
+	display: none;
+	position: absolute;
+	list-style-type: none;
+}
+
+/* Style for links in the context menu. */
+div.ContextMenu a {
+	display: block;
+  width: 100px;
+	padding: 3px 10px 3px 10px;
+	text-decoration: none;
+	color: #5b80b2;
+	background: #cccccc;
+}
+
+/* Style when hovering over links in the context menus. */
+div.ContextMenu a:hover {
+	text-decoration: none;
+	color: #ffffff;
+	background: #5b80b2;
+}

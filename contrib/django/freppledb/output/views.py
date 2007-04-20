@@ -104,7 +104,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
   return (bucket,start,end,res)
 
 
-def BucketedView(request, querymethod, htmltemplate, csvtemplate):
+def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate):
     global ON_EACH_SIDE
     global ON_ENDS
     global PAGINATE_BY
@@ -113,12 +113,15 @@ def BucketedView(request, querymethod, htmltemplate, csvtemplate):
     # Look up the data in the cache
     parameters = request.GET.copy()
     parameters.__setitem__('page', 0)
-    key = "%s?%s" % (request.path, parameters.urlencode())
-    objectlist = cache.get(key)
+    objectlist = None
+    if entity is None:
+      key = "%s?%s" % (request.path, parameters.urlencode())
+      objectlist = cache.get(key)
     if not objectlist:
       # Data not found in the cache, recompute
-      objectlist = querymethod(bucket,start,end)
-      cache.set(key, objectlist, 10 * 60)   # cache for 10 minutes
+      objectlist = querymethod(entity, bucket, start, end)
+      if entity is None:
+        cache.set(key, objectlist, 10 * 60)   # cache for 10 minutes
 
     # HTML output or CSV output?
     type = request.GET.get('type','html')
@@ -218,7 +221,13 @@ def BucketedView(request, querymethod, htmltemplate, csvtemplate):
        context_instance=RequestContext(request))
 
 
-def bufferquery(bucket, startdate, enddate):
+def bufferquery(buffer, bucket, startdate, enddate):
+      if buffer is None:
+        filterstring1 = ''
+        filterstring2 = ''
+      else:
+        filterstring1 = "where name ='%s'" % buffer
+        filterstring2 = "and thebuffer_id ='%s'" % buffer
       cursor = connection.cursor()
       cursor.execute('''
         select combi.thebuffer_id, combi.onhand, combi.%s, coalesce(data.produced,0), coalesce(data.consumed,0)
@@ -226,6 +235,7 @@ def bufferquery(bucket, startdate, enddate):
            (select name as thebuffer_id, onhand, d.%s, d.start from input_buffer
             inner join (select %s, min(day) as start from input_dates where day >= '%s'
               and day < '%s' group by %s) d on 1=1
+            %s
            ) as combi
           left join
            (select thebuffer_id, %s,
@@ -235,12 +245,13 @@ def bufferquery(bucket, startdate, enddate):
               where output_flowplan.date = input_dates.day
               and output_flowplan.date >= '%s'
               and output_flowplan.date < '%s'
+              %s
               group by thebuffer_id, %s
             ) data
           on combi.thebuffer_id = data.thebuffer_id
           and combi.%s = data.%s
           order by combi.thebuffer_id, combi.start '''
-          % (bucket,bucket,bucket,startdate,enddate,bucket,bucket,startdate,enddate,bucket,bucket,bucket))
+          % (bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,bucket,startdate,enddate,filterstring2,bucket,bucket,bucket))
       resultset = []
       prevbuf = None
       rowset = []
@@ -264,11 +275,11 @@ def bufferquery(bucket, startdate, enddate):
       return resultset
 
 #@login_required
-def bufferreport(request):
-    return BucketedView(request, bufferquery, 'buffer.html', 'buffer.csv')
+def bufferreport(request, buffer=None):
+    return BucketedView(request, buffer, bufferquery, 'buffer.html', 'buffer.csv')
 
 
-def demandquery(bucket, startdate, enddate):
+def demandquery(item, bucket, startdate, enddate):
       cursor = connection.cursor()
       cursor.execute('''
           select combi.item_id, combi.%s, coalesce(data.demand,0), coalesce(data.planned,0)
@@ -317,11 +328,17 @@ def demandquery(bucket, startdate, enddate):
 
 
 #@login_required
-def demandreport(request):
-    return BucketedView(request, demandquery, 'demand.html', 'demand.csv')
+def demandreport(request, item=None):
+    return BucketedView(request, item, demandquery, 'demand.html', 'demand.csv')
 
 
-def resourcequery(bucket, startdate, enddate):
+def resourcequery(resource, bucket, startdate, enddate):
+  if resource is None:
+    filterstring1 = ''
+    filterstring2 = ''
+  else:
+    filterstring1 = "where dd.resource_id ='%s'" % resource
+    filterstring2 = "and input_load.resource_id ='%s'" % resource
   cursor = connection.cursor()
   cursor.execute('''
      select ddd.resource_id, ddd.bucket, min(ddd.available),
@@ -350,6 +367,7 @@ def resourcequery(bucket, startdate, enddate):
        on input_bucket.calendar_id = dd.maximum_id
           and dd.startdate <= input_bucket.enddate
           and dd.enddate >= input_bucket.startdate
+       %s
 		   group by dd.resource_id, dd.bucket, dd.startdate, dd.enddate
 	     ) ddd
      left join (
@@ -358,13 +376,14 @@ def resourcequery(bucket, startdate, enddate):
        where output_operationplan.operation_id = input_load.operation_id
           and output_operationplan.enddate >= '%s'
           and output_operationplan.startdate < '%s'
+          %s
        ) loaddata
      on loaddata.resource_id = ddd.resource_id
        and ddd.startdate <= loaddata.enddatetime
        and ddd.enddate >= loaddata.startdatetime
      group by ddd.resource_id, ddd.bucket, ddd.startdate, ddd.enddate
      order by ddd.resource_id, ddd.startdate
-     ''' % (bucket,bucket,bucket,startdate,enddate,bucket,startdate,enddate))
+     ''' % (bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,startdate,enddate,filterstring2))
   resultset = []
   prevres = None
   rowset = []
@@ -387,11 +406,17 @@ def resourcequery(bucket, startdate, enddate):
 
 
 #@login_required
-def resourcereport(request):
-    return BucketedView(request, resourcequery, 'resource.html', 'resource.csv')
+def resourcereport(request, resource=None):
+    return BucketedView(request, resource, resourcequery, 'resource.html', 'resource.csv')
 
 
-def operationquery(bucket, startdate, enddate):
+def operationquery(operation, bucket, startdate, enddate):
+      if operation is None:
+        filterstring1 = ''
+        filterstring2 = ''
+      else:
+        filterstring1 = "where name ='%s'" % operation
+        filterstring2 = "and operation_id ='%s'" % operation
       cursor = connection.cursor()
       cursor.execute('''
         select combi.operation_id, combi.%s, coalesce(data.quantity,0)
@@ -399,6 +424,7 @@ def operationquery(bucket, startdate, enddate):
            (select name as operation_id, d.%s, d.start from input_operation
             inner join (select %s, min(day) as start from input_dates where day >= '%s'
               and day < '%s' group by %s) d on 1=1
+            %s
            ) as combi
           left join
            (select operation_id, %s,
@@ -407,12 +433,13 @@ def operationquery(bucket, startdate, enddate):
               where output_operationplan.startdate = input_dates.day
               and startdate >= '%s'
               and enddate < '%s'
+              %s
               group by operation_id, %s
             ) data
           on combi.operation_id = data.operation_id
           and combi.%s = data.%s
           order by combi.operation_id, combi.start '''
-          % (bucket,bucket,bucket,startdate,enddate,bucket,bucket,startdate,enddate,bucket,bucket,bucket))
+          % (bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,bucket,startdate,enddate,filterstring2,bucket,bucket,bucket))
       resultset = []
       prevoper = None
       rowset = []
@@ -430,8 +457,8 @@ def operationquery(bucket, startdate, enddate):
       return resultset
 
 #@login_required
-def operationreport(request):
-   return BucketedView(request, operationquery, 'operation.html', 'operation.csv')
+def operationreport(request, operation=None):
+   return BucketedView(request, operation, operationquery, 'operation.html', 'operation.csv')
 
 
 class pathreport:
@@ -479,8 +506,7 @@ class pathreport:
 
   #@login_required
   @staticmethod
-  def view(request):
-    b = request.GET.get('buffer', 'Buf 00000 L00')  # todo hardcoded default
+  def view(request, b):
     c = RequestContext(request,{
        'supplypath': pathreport.getPath(b),
        'buffer': b,

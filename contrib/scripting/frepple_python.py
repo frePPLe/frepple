@@ -32,7 +32,6 @@ try:
 			</ITEMS> \
 			<BUFFERS> \
 				<BUFFER NAME="end item"> \
-					<CONSUMING NAME="delivery end item"/> \
 					<PRODUCING NAME="make end item"/> \
 					<ITEM NAME="end item"/> \
 				</BUFFER> \

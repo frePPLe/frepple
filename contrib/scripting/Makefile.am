@@ -4,10 +4,15 @@
 
 EXTRA_DIST = frepple.i README.txt frepple_perl.pl frepple_python.py frepple_java.java
 
-CLEANFILES = *.so *.dll wrapper*
+CLEANFILES = *.so *.dll wrapper* *.class
 
+if CYGWIN
 JAVAHOME = /C/Program Files/Java/jdk1.5.0_07
-# JAVAHOME = /usr/lib/jvm/java-1.4.2-gcj
+PERLHOME = /lib/perl5/5.8/cygwin/core
+else
+JAVAHOME = /usr/lib/jvm/java-1.4.2-gcj
+PERLHOME = /usr/lib/perl5/5.8.8/i386-linux-thread-multi/CORE
+endif
 
 contrib: clean python perl
 
@@ -20,11 +25,11 @@ contrib: clean python perl
 perl: frepple.i
 	$(SWIG) -c++ -perl5 -o wrapper_perl.cpp frepple.i
 if CYGWIN
-	$(CXX) -c wrapper_perl.cpp -fPIC -I../../include -I/lib/perl5/5.8/cygwin/core
-	$(CXX) -shared wrapper_perl.o -L/lib/perl5/5.8/cygwin/core -L../../src/.libs -lperl -lfrepple -Wl,--add-stdcall-alias -o frepple.dll
+	$(CXX) -c wrapper_perl.cpp -fPIC -I../../include -I"$(PERLHOME)"
+	$(CXX) -shared wrapper_perl.o -L"$(PERLHOME)" -L../../src/.libs -lperl -lfrepple -Wl,--add-stdcall-alias -o frepple.dll
 else
-	$(CXX) -c wrapper_perl.cpp -fPIC -I../../include -I/usr/lib/perl5/5.8.6/i386-linux-thread-multi/CORE
-	$(CXX) -shared wrapper_perl.o -L/usr/lib/perl5/5.8.6/i386-linux-thread-multi/CORE -L../../src/.libs -lperl -lfrepple -lxerces-c -o frepple.so
+	$(CXX) -c wrapper_perl.cpp -fPIC -I../../include -I"$(PERLHOME)"
+	$(CXX) -shared wrapper_perl.o "-L$(PERLHOME)" -L../../src/.libs -lperl -lfrepple -lxerces-c -o frepple.so
 endif
 	-perl frepple_perl.pl
 

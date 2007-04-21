@@ -83,7 +83,7 @@ typedef boolean ff;
   static {
     try {
 			System.loadLibrary("frepplejava");
-			FreppleInitialize("");
+			FreppleInitialize(null);
 		} catch (UnsatisfiedLinkError e)
 		{
 			System.out.println("Frepple link error: " + e.getMessage());
@@ -104,7 +104,6 @@ typedef boolean ff;
 // DEFINE THE EXPOSED API
 //
 #ifdef SWIGJAVA
-  // @todo no exceptions in C!!!!
   void FreppleInitialize(const char* x) throw (std::exception);
   void FreppleReadXMLData(char* x, bool a, bool b) throw (std::exception);
   void FreppleReadXMLFile(char* x, bool a, bool b) throw (std::exception);

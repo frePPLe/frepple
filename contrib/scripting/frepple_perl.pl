@@ -10,13 +10,17 @@ use Env qw(FREPPLE_HOME);
 # The eval command is used to catch frepple exceptions
 eval {
   print "Initializing:\n";
-  frepple::FreppleInitialize($FREPPLE_HOME);
+  $s = $FREPPLE_HOME;
+  frepple::FreppleInitialize($s);
   print " OK\n";
 
 	print "Reading base data:\n";
 	frepple::FreppleReadXMLData('<?xml version="1.0" encoding="UTF-8" ?>
 		<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 			<NAME>actual plan</NAME>
+			<COMMANDS>
+			 <COMMAND xsi:type="COMMAND_SIZE" />
+      </COMMANDS>
 			<DESCRIPTION>Anything goes</DESCRIPTION>
 			<CURRENT>2007-01-01T00:00:01</CURRENT>
 			<OPERATIONS>
@@ -33,7 +37,6 @@ eval {
 			</ITEMS>
 			<BUFFERS>
 				<BUFFER NAME="end item">
-					<CONSUMING NAME="delivery end item"/>
 					<PRODUCING NAME="make end item"/>
 					<ITEM NAME="end item"/>
 				</BUFFER>

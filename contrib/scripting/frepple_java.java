@@ -33,8 +33,6 @@ class frepple_java
     boolean error = false;
     try
     {
-      freppleJNI.FreppleInitialize("");
-
       System.out.println("Reading base data:");
       freppleJNI.FreppleReadXMLData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
       "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
@@ -46,16 +44,15 @@ class frepple_java
             "<DURATION>24:00:00</DURATION>" +
           "</OPERATION>" +
         "</OPERATIONS>" +
-          "<ITEMS>" +
+        "<ITEMS>" +
           "<ITEM NAME=\"end item\">" +
-            "<OPERATION NAME=\"delivery end item\">" +
+            "<OPERATION NAME=\"delivery end item\" xsi:type=\"OPERATION_FIXED_TIME\">" +
               "<DURATION>24:00:00</DURATION>" +
             "</OPERATION>" +
           "</ITEM>" +
         "</ITEMS>" +
         "<BUFFERS>" +
           "<BUFFER NAME=\"end item\">" +
-            "<CONSUMING NAME=\"delivery end item\"/>" +
             "<PRODUCING NAME=\"make end item\"/>" +
             "<ITEM NAME=\"end item\"/>" +
           "</BUFFER>" +

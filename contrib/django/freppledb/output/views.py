@@ -24,6 +24,7 @@
 from django.core.paginator import ObjectPaginator, InvalidPage
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.template import RequestContext, loader
 from django.db import connection
 from django.core.cache import cache
@@ -275,7 +276,7 @@ def bufferquery(buffer, bucket, startdate, enddate):
       if prevbuf: resultset.append(rowset)
       return resultset
 
-@login_required
+@staff_member_required
 def bufferreport(request, buffer=None):
    if buffer: title = 'Inventory report for %s' % buffer
    else: title = 'Inventory report'
@@ -338,7 +339,7 @@ def demandquery(item, bucket, startdate, enddate):
       return resultset
 
 
-@login_required
+@staff_member_required
 def demandreport(request, item=None):
    if item: title = 'Demand report for %s' % item
    else: title = 'Demand report'
@@ -418,7 +419,7 @@ def resourcequery(resource, bucket, startdate, enddate):
   return resultset
 
 
-@login_required
+@staff_member_required
 def resourcereport(request, resource=None):
    if resource: title = 'Resource report for %s' % resource
    else: title = 'Resource report'
@@ -471,7 +472,7 @@ def operationquery(operation, bucket, startdate, enddate):
       if prevoper: resultset.append(rowset)
       return resultset
 
-@login_required
+@staff_member_required
 def operationreport(request, operation=None):
    if operation: title = 'Operation report for %s' % operation
    else: title = 'Operation report'
@@ -559,7 +560,7 @@ class pathreport:
     return resultset
 
   @staticmethod
-  @login_required
+  @staff_member_required
   def view(request, type, entity):
     c = RequestContext(request,{
        'title': "Supply path of %s %s" % (type, entity),

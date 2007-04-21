@@ -38,7 +38,8 @@ div.ContextMenu a {
   width: 100px;
 	padding: 3px 10px 3px 10px;
 	text-decoration: none;
-	color: #5b80b2;
+	/*color: #5b80b2;*/
+	color: #000000;
 	background: #cccccc;
 }
 

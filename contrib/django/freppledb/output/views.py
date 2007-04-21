@@ -31,7 +31,7 @@ from django.http import Http404, HttpResponse
 
 from datetime import date
 
-from freppledb.input.models import Buffer, Flow, Operation, Plan
+from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item
 
 PAGINATE_BY = 50
 ON_EACH_SIDE = 3
@@ -104,7 +104,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
   return (bucket,start,end,res)
 
 
-def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate):
+def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, title=None):
     global ON_EACH_SIDE
     global ON_ENDS
     global PAGINATE_BY
@@ -217,6 +217,7 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate):
          'pages': paginator.pages,
          'hits' : paginator.hits,
          'page_htmls': page_htmls,
+         'title': title,
        },
        context_instance=RequestContext(request))
 
@@ -274,12 +275,20 @@ def bufferquery(buffer, bucket, startdate, enddate):
       if prevbuf: resultset.append(rowset)
       return resultset
 
-#@login_required
+@login_required
 def bufferreport(request, buffer=None):
-    return BucketedView(request, buffer, bufferquery, 'buffer.html', 'buffer.csv')
+   if buffer: title = 'Inventory report for %s' % buffer
+   else: title = 'Inventory report'
+   return BucketedView(request, buffer, bufferquery, 'buffer.html', 'buffer.csv', title)
 
 
 def demandquery(item, bucket, startdate, enddate):
+      if item is None:
+        filterstring1 = ''
+        filterstring2 = ''
+      else:
+        filterstring1 = "where item_id ='%s'" % item
+        filterstring2 = "and inp.item_id ='%s'" % item
       cursor = connection.cursor()
       cursor.execute('''
           select combi.item_id, combi.%s, coalesce(data.demand,0), coalesce(data.planned,0)
@@ -287,6 +296,7 @@ def demandquery(item, bucket, startdate, enddate):
            (select distinct item_id, d.%s, d.start from input_demand
             inner join (select %s, min(day) as start from input_dates where day >= '%s'
               and day < '%s' group by %s) d on 1=1
+            %s
            ) as combi
           left join
            (select inp.item_id, d.%s, sum(inp.quantity) as demand,
@@ -301,11 +311,12 @@ def demandquery(item, bucket, startdate, enddate):
                 where inp.due = d.day
                 and inp.due >= '%s'
                 and inp.due < '%s'
+                %s
                 group by inp.item_id, d.%s) data
           on combi.item_id = data.item_id
           and combi.%s = data.%s
           order by combi.item_id, combi.start
-         ''' % (bucket,bucket,bucket,startdate,enddate,bucket,bucket,bucket,bucket,startdate,enddate,bucket,bucket,bucket))
+         ''' % (bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,bucket,bucket,bucket,startdate,enddate,filterstring2,bucket,bucket,bucket))
       resultset = []
       previtem = None
       rowset = []
@@ -327,9 +338,11 @@ def demandquery(item, bucket, startdate, enddate):
       return resultset
 
 
-#@login_required
+@login_required
 def demandreport(request, item=None):
-    return BucketedView(request, item, demandquery, 'demand.html', 'demand.csv')
+   if item: title = 'Demand report for %s' % item
+   else: title = 'Demand report'
+   return BucketedView(request, item, demandquery, 'demand.html', 'demand.csv', title)
 
 
 def resourcequery(resource, bucket, startdate, enddate):
@@ -405,9 +418,11 @@ def resourcequery(resource, bucket, startdate, enddate):
   return resultset
 
 
-#@login_required
+@login_required
 def resourcereport(request, resource=None):
-    return BucketedView(request, resource, resourcequery, 'resource.html', 'resource.csv')
+   if resource: title = 'Resource report for %s' % resource
+   else: title = 'Resource report'
+   return BucketedView(request, resource, resourcequery, 'resource.html', 'resource.csv', title)
 
 
 def operationquery(operation, bucket, startdate, enddate):
@@ -456,61 +471,103 @@ def operationquery(operation, bucket, startdate, enddate):
       if prevoper: resultset.append(rowset)
       return resultset
 
-#@login_required
+@login_required
 def operationreport(request, operation=None):
-   return BucketedView(request, operation, operationquery, 'operation.html', 'operation.csv')
+   if operation: title = 'Operation report for %s' % operation
+   else: title = 'Operation report'
+   return BucketedView(request, operation, operationquery, 'operation.html', 'operation.csv', title)
 
 
 class pathreport:
   @staticmethod
-  def getPath(buffer):
-    # Find the buffer
-    try: rootbuffer = Buffer.objects.get(name=buffer)
-    except: raise Http404, "buffer %s doesn't exist" % buffer
+  def getPath(type, entity):
+    if type == 'buffer':
+      # Find the buffer
+      try: root = [Buffer.objects.get(name=entity)]
+      except DoesNotExist: raise Http404, "buffer %s doesn't exist" % entity
+    elif type == 'operation':
+      # Find the operation
+      try: root = [Operation.objects.get(name=entity)]
+      except DoesNotExist: raise Http404, "operation %s doesn't exist" % entity
+    elif type == 'item':
+      # Find the item
+      try: root = [Item.objects.get(name=entity).operation]
+      except DoesNotExist: raise Http404, "item %s doesn't exist" % entity
+    elif type == 'resource':
+      # Find the resource
+      try: root = Resource.objects.get(name=entity)
+      except DoesNotExist: raise Http404, "resource %s doesn't exist" % entity
+      root = [i.operation for i in root.loads.all()]
+    else:
+      raise Http404, "invalid entity type %s" % type
 
     # Initialize
     resultset = []
-    level = 0
-    bufs = [ (rootbuffer, None, 1) ]
 
-    # Recurse deeper in the supply chain
-    while len(bufs) > 0:
-       level += 1
-       newbufs = []
-       for i, fl, q in bufs:
-          # Find new buffers
-          if i.producing != None:
-            x = i.producing.flows.all()
-            for j in x:
-               if j.thebuffer == i: f = j
-            for j in x:
-               if j.quantity < 0:
-                 # Found a new buffer
-                 if f is None:
-                   newbufs.append( (j.thebuffer, j, - q * j.quantity) )
-                 else:
-                   newbufs.append( (j.thebuffer, j, - q * j.quantity / f.quantity) )
-          # Append to the list of buffers
-          resultset.append( {
-            'buffer': i,
-            'producingflow': f,
-            'operation': i.producing,
-            'level': level,
-            'consumingflow': fl,
-            'cumquantity': q,
-            } )
-       bufs = newbufs
+    for r in root:
+        level = 0
+        bufs = [ (r, None, 1) ]
+
+        # Recurse deeper in the supply chain
+        while len(bufs) > 0:
+           level += 1
+           newbufs = []
+           for i, fl, q in bufs:
+
+              # Recurse upstream for a buffer
+              if isinstance(i,Buffer):
+                f = None
+                if i.producing != None:
+                  x = i.producing.flows.all()
+                  for j in x:
+                     if j.thebuffer == i: f = j
+                  for j in x:
+                     if j.quantity < 0:
+                       # Found a new buffer
+                       if f is None:
+                         newbufs.append( (j.thebuffer, j, - q * j.quantity) )
+                       else:
+                         newbufs.append( (j.thebuffer, j, - q * j.quantity / f.quantity) )
+                # Append to the list of buffers
+                resultset.append( {
+                  'buffer': i,
+                  'producingflow': f,
+                  'operation': i.producing,
+                  'level': level,
+                  'consumingflow': fl,
+                  'cumquantity': q,
+                  } )
+
+              # Recurse upstream for an operation
+              elif isinstance(i,Operation):
+                for j in i.flows.all():
+                   if j.quantity < 0:
+                     # Found a new buffer
+                     newbufs.append( (j.thebuffer, j, - q * j.quantity) )
+                # Append to the list of buffers
+                resultset.append( {
+                  'buffer': None,
+                  'producingflow': None,
+                  'operation': i,
+                  'level': level,
+                  'consumingflow': fl,
+                  'cumquantity': q,
+                  } )
+           bufs = newbufs
 
     # Return results
     return resultset
 
-  #@login_required
   @staticmethod
-  def view(request, b):
+  @login_required
+  def view(request, type, entity):
     c = RequestContext(request,{
-       'supplypath': pathreport.getPath(b),
-       'buffer': b,
+       'title': "Supply path of %s %s" % (type, entity),
+       'supplypath': pathreport.getPath(type, entity),
+       'type': type,
+       'entity': entity,
        })
     # Uncomment the next line to see the SQL statements executed for the report
+    # With the complex logic there can be quite a lot!
     #for i in connection.queries: print i
     return render_to_response('path.html', c)

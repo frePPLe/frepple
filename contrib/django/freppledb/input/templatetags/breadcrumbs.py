@@ -60,10 +60,12 @@ def superlink(value,type):
     '''
     This filter creates a hyperlinked
     '''
-    # Fail silently if no type type or value are given
+    # Fail silently if we end up with an empty string
     if value is None: return ''
     # Convert the parameter into a string if it's not already
     if not isinstance(value,basestring): value = str(value)
+    # Fail silently if we end up with an empty string
+    if value == '': return ''
     # Final return value
     return '<a href="/admin/input/%s/%s" class="%s">%s</a>' % (type,urllib.quote(value),type,value.replace(' ','&nbsp;'))
 

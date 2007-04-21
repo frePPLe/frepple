@@ -9,6 +9,7 @@
 		ContextMenu.attach('resource', 'resourcecontext');
 		ContextMenu.attach('operation', 'operationcontext');
 		ContextMenu.attach('location', 'locationcontext');
+		ContextMenu.attach('item', 'itemcontext');
 </script>
 {% endblock %}
 {% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
@@ -19,31 +20,39 @@
 <div id="content-main">
 
 <div id="buffercontext" class="ContextMenu">
-	<a id="/admin/input/buffer/%s">Buffer</a>
-  <a id="/buffer/%s">Plan</a>
+	<a href="/admin/input/buffer/%s">Buffer</a>
+  <a href="/path/buffer/%s">Supply Path</a>
+  <a href="/buffer/%s">Plan</a>
 </div>
 
 <div id="resourcecontext" class="ContextMenu">
-	<a id="/admin/input/resource/%s">Resource</a>
-	<a id="/resource/%s">Plan</a>
+	<a href="/admin/input/resource/%s">Resource</a>
+  <a href="/path/resource/%s">Supply Path</a>
+	<a href="/resource/%s">Plan</a>
 </div>
 
 <div id="operationcontext" class="ContextMenu">
-	<a id="/admin/input/operation/%s">Operation</a>
-	<a id="/operation/%s">Plan</a>
+	<a href="/admin/input/operation/%s">Operation</a>
+  <a href="/path/operation/%s">Supply Path</a>
+	<a href="/operation/%s">Plan</a>
 </div>
 
 <div id="locationcontext" class="ContextMenu">
-	<a id="/admin/input/location/%s">Location</a>
+	<a href="/admin/input/location/%s">Location</a>
 </div>
 
-Supply path of buffer {{buffer}}
+<div id="itemcontext" class="ContextMenu">
+	<a href="/admin/input/item/%s">Item</a>
+	<a href="/demand/%s">Demand</a>
+  <a href="/path/item/%s">Supply Path</a>
+</div>
 
 <table>
 <tr>
 <th rowspan="2">Level</td>
 <th rowspan="2">Buffer</td>
 <th rowspan="2">Location</td>
+<th rowspan="2">Item</td>
 <th>Operation</td>
 <th colspan="2">Consumed Qty</td>
 </tr>
@@ -58,6 +67,7 @@ Supply path of buffer {{buffer}}
 <td>{{i.level}}</td>
 <td>{{i.buffer|superlink:"buffer"}}</td>
 <td>{{i.buffer.location|superlink:"location"}}</td>
+<td>{{i.buffer.item|superlink:"item"}}</td>
 <td>{% if i.operation %}{{i.operation|superlink:"operation"}}</a>
 {% for j in i.operation.loads.all %}<br>{{j.resource|superlink:"resource"}}{% endfor %}
 {% endif %}</td>

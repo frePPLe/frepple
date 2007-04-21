@@ -41,7 +41,7 @@ urlpatterns = patterns('',
     # Admin pages
     (r'^admin/', include('django.contrib.admin.urls')),
 
-    # Frepple custom reports
+    # Frepple reports
     (r'^buffer/([^/]+)/$', freppledb.output.views.bufferreport),
     (r'^buffer/$', freppledb.output.views.bufferreport),
     (r'^demand/([^/]+)/$', freppledb.output.views.demandreport),
@@ -50,7 +50,7 @@ urlpatterns = patterns('',
     (r'^resource/$', freppledb.output.views.resourcereport),
     (r'^operation/([^/]+)/$', freppledb.output.views.operationreport),
     (r'^operation/$', freppledb.output.views.operationreport),
-    (r'^path/([^/]+)/$', freppledb.output.views.pathreport.view),
+    (r'^path/([^/]+)/([^/]+)/$', freppledb.output.views.pathreport.view),
 )
 
 # Allows the standalone development server to serve the static pages.

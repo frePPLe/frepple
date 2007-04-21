@@ -122,7 +122,7 @@ var ContextMenu = {
 			var item = ContextMenu._attachedElement.innerHTML.replace(/\&nbsp;/g," ");
 			var l = ContextMenu._menuElement.getElementsByTagName("a");
 			for (x=0; x<l.length; x++) {
-			  l[x].href = l[x].id.replace(/%s/,item);
+			  l[x].href = l[x].href.replace(/%s/,item);
 			  }
 
 			ContextMenu._menuElement.style.left = m.x + s.x + 'px';

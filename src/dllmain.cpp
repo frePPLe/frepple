@@ -75,51 +75,51 @@ DECLARE_EXPORT(const char*) FreppleVersion()
 
 DECLARE_EXPORT(void) FreppleInitialize(const char* h)
 {
+  # Initialize only once
   static bool initialized = false;
-  if (!initialized)
+  if (initialized) return;
+
+  // If a parameter is given we set the environment variable FREPPLE_HOME.
+  // If the parameter is NULL, we pick up the existing value of that
+  // variable.
+  if (h) Environment::setHomeDirectory(h);
+  else
   {
-    // If a parameter is given we set the environment variable FREPPLE_HOME.
-    // If the parameter is NULL, we pick up the existing value of that
-    // variable.
-    if (h) Environment::setHomeDirectory(h);
-    else
-    {
-      const char *c = getenv("FREPPLE_HOME");
-      if (c) Environment::setHomeDirectory(c);
-      else cout << "Warning: No valid home directory specified" << endl;
-    }
-
-    // Initialize the libraries
-    LibraryModel::initialize(); // also initializes the utils library
-    LibrarySolver::initialize();
-
-    // Search for the initialization file
-    if (!Environment::getHomeDirectory().empty())
-    {
-      string init(Environment::getHomeDirectory());
-      init += "init.xml";
-      struct stat stat_p;
-      if (!stat(init.c_str(), &stat_p))
-      {
-        // File exists
-        if (!(stat_p.st_mode & S_IREAD))
-          // File exists but is not readable
-          cout << "Warning: Initialization file 'init.xml'"
-          << " exists but is not readable" << endl;
-        else
-          // Execute the commands in the file
-          try{ CommandReadXMLFile(init).execute(); }
-          catch (...)
-          {
-            cout << "Exception caught during execution of 'init.xml'" << endl;
-            throw;
-          }
-      }
-    }
-
-    // Avoid executing this multiple times
-    initialized = true;
+    const char *c = getenv("FREPPLE_HOME");
+    if (c) Environment::setHomeDirectory(c);
+    else cout << "Warning: No valid home directory specified" << endl;
   }
+
+  // Initialize the libraries
+  LibraryModel::initialize(); // also initializes the utils library
+  LibrarySolver::initialize();
+
+  // Search for the initialization file
+  if (!Environment::getHomeDirectory().empty())
+  {
+    string init(Environment::getHomeDirectory());
+    init += "init.xml";
+    struct stat stat_p;
+    if (!stat(init.c_str(), &stat_p))
+    {
+      // File exists
+      if (!(stat_p.st_mode & S_IREAD))
+        // File exists but is not readable
+        cout << "Warning: Initialization file 'init.xml'"
+        << " exists but is not readable" << endl;
+      else
+        // Execute the commands in the file
+        try{ CommandReadXMLFile(init).execute(); }
+        catch (...)
+        {
+          cout << "Exception caught during execution of 'init.xml'" << endl;
+          throw;
+        }
+    }
+  }
+
+  // Avoid executing this multiple times
+  initialized = true;
 }
 
 

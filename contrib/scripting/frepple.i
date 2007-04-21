@@ -83,7 +83,7 @@ typedef boolean ff;
   static {
     try {
 			System.loadLibrary("frepplejava");
-			FreppleInitialize();
+			FreppleInitialize("");
 		} catch (UnsatisfiedLinkError e)
 		{
 			System.out.println("Frepple link error: " + e.getMessage());

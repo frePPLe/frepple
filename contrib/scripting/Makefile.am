@@ -6,12 +6,15 @@ EXTRA_DIST = frepple.i README.txt frepple_perl.pl frepple_python.py frepple_java
 
 CLEANFILES = *.so *.dll wrapper*
 
+JAVAHOME = /C/Program Files/Java/jdk1.5.0_07
+# JAVAHOME = /usr/lib/jvm/java-1.4.2-gcj
+
 contrib: clean python perl
 
 # Note that the name of the created shared libraries:
 # For PERL the output is frepple.dll / frepple.so
-# For PYTHON the output is _frepple.dll / _frepple.so. However if the shared 
-# library of the perl build is also available, the python swig interface won't 
+# For PYTHON the output is _frepple.dll / _frepple.so. However if the shared
+# library of the perl build is also available, the python swig interface won't
 # work. Python picks up the wrong shared library.
 
 perl: frepple.i
@@ -27,22 +30,23 @@ endif
 
 python: frepple.i
 	$(SWIG) -c++ -python -o wrapper_python.cpp frepple.i
-	$(CXX) -c wrapper_python.cpp -fPIC -I../../include -I/usr/include/python2.4
 if CYGWIN
-	$(CXX) -shared wrapper_python.o -L/lib/python2.4/config -L../../src/.libs -lpython2.4 -lfrepple -Wl,--add-stdcall-alias -o _frepple.dll
+	$(CXX) -c wrapper_python.cpp -fPIC -I../../include -I/usr/include/python2.5
+	$(CXX) -shared wrapper_python.o -L/lib/python2.4/config -L../../src/.libs -lpython2.5 -lfrepple -Wl,--add-stdcall-alias -o _frepple.dll
 else
+	$(CXX) -c wrapper_python.cpp -fPIC -I../../include -I/usr/include/python2.4
 	$(CXX) -shared wrapper_python.o -L/lib/python2.4/config -L../../src/.libs -lpython2.4 -lfrepple -lxerces-c -o _frepple.so
 endif
 	-python frepple_python.py
 
 java: frepple.i
 	$(SWIG) -c++ -java -o wrapper_java.cpp frepple.i
-	$(CXX) -c wrapper_java.cpp -fPIC -I../../include -I/C/i2/bea/jdk141_03/include -I/C/i2/bea/jdk141_03/include/win32
 if CYGWIN
-	$(CXX) -shared wrapper_java.o -L/C/i2/bea/jdk141_03/lib -L../../src/.libs -lfrepple.dll -Wl,--add-stdcall-alias -o frepplejava.dll
+	$(CXX) -c wrapper_java.cpp -fPIC -I../../include -I"$(JAVAHOME)/include" -I"$(JAVAHOME)/include/win32"
+	$(CXX) -shared wrapper_java.o -L"$(JAVAHOME)/lib" -L../../src/.libs -lfrepple.dll -Wl,--add-stdcall-alias -o frepplejava.dll
 else
-	$(CXX) -c wrapper_java.cpp -fPIC -I../../include -I/usr/lib/jvm/java-1.4.2-gcj/include -I/usr/lib/jvm/java-1.4.2-gcj/include/linux
-	$(CXX) -shared wrapper_java.o -L/usr/lib/jvm/java-1.4.2/lib -L../../src/.libs -lfrepple -lxerces-c -o libfrepplejava.so
+	$(CXX) -c wrapper_java.cpp -fPIC -I../../include -I"$(JAVAHOME)/include" -I"$(JAVAHOME)/include/linux"
+	$(CXX) -shared wrapper_java.o -L"$(JAVAHOME)/lib" -L../../src/.libs -lfrepple -lxerces-c -o libfrepplejava.so
 endif
-	javac *.java
-	-java -Djava.library.path=. frepple_java
+	"$(JAVAHOME)/bin/javac" *.java
+	-"$(JAVAHOME)/bin/java" -Djava.library.path=. frepple_java

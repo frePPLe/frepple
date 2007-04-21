@@ -28,109 +28,112 @@
 class frepple_java
 {
 
-	public static void main(String args[])
+  public static void main(String args[])
   {
-	boolean error = false;
-  	try {
-  		frepple.initialize();
+    boolean error = false;
+    try
+    {
+      freppleJNI.FreppleInitialize("");
 
-		System.out.println("Reading base data:");
-		frepple.readXMLData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
-		"<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
-			"<NAME>actual plan</NAME>" +
-			"<DESCRIPTION>Anything goes</DESCRIPTION>" +
-			"<CURRENT>2007-01-01T00:00:01</CURRENT>" +
-			"<OPERATIONS>" +
-				"<OPERATION NAME=\"make end item\" xsi:type=\"OPERATION_FIXED_TIME\">" +
-					"<DURATION>24:00:00</DURATION>" +
-				"</OPERATION>" +
-			"</OPERATIONS>" +
-				"<ITEMS>" +
-				"<ITEM NAME=\"end item\">" +
-					"<OPERATION NAME=\"delivery end item\">" +
-						"<DURATION>24:00:00</DURATION>" +
-					"</OPERATION>" +
-				"</ITEM>" +
-			"</ITEMS>" +
-			"<BUFFERS>" +
-				"<BUFFER NAME=\"end item\">" +
-					"<CONSUMING NAME=\"delivery end item\"/>" +
-					"<PRODUCING NAME=\"make end item\"/>" +
-					"<ITEM NAME=\"end item\"/>" +
-				"</BUFFER>" +
-			"</BUFFERS>" +
-			"<RESOURCES>" +
-				"<RESOURCE NAME=\"Resource\">" +
-					"<MAXIMUM NAME=\"Capacity\" xsi:type=\"CALENDAR_FLOAT\">" +
-						"<BUCKETS>" +
-							"<BUCKET START=\"2007-01-01T00:00:01\" VALUE=\"1\"/>" +
-						"</BUCKETS>" +
-					"</MAXIMUM>" +
-					"<LOADS>" +
-						"<LOAD>" +
-							"<OPERATION NAME=\"make end item\" />" +
-						"</LOAD>" +
-					"</LOADS>" +
-				"</RESOURCE>" +
-			"</RESOURCES>" +
-			"<FLOWS>" +
-				"<FLOW xsi:type=\"FLOW_START\">" +
-					"<OPERATION NAME=\"delivery end item\"/>" +
-					"<BUFFER NAME=\"end item\"/>" +
-					"<QUANTITY>-1</QUANTITY>" +
-				"</FLOW>" +
-				"<FLOW xsi:type=\"FLOW_END\">" +
-					"<OPERATION NAME=\"make end item\"/>" +
-					"<BUFFER NAME=\"end item\"/>" +
-					"<QUANTITY>1</QUANTITY>" +
-				"</FLOW>" +
-			"</FLOWS>" +
-			"<DEMANDS>" +
-				"<DEMAND NAME=\"order 1\">" +
-					"<QUANTITY>10</QUANTITY>" +
-					"<DUE>2007-01-04T09:00:00</DUE>" +
-					"<PRIORITY>1</PRIORITY>" +
-					"<ITEM NAME=\"end item\"/>" +
-					"<POLICY>PLANLATE</POLICY>" +
-				"</DEMAND>" +
-			"</DEMANDS>" +
-		"</PLAN>",true,false);
-	System.out.println(" OK");
+      System.out.println("Reading base data:");
+      freppleJNI.FreppleReadXMLData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
+      "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
+        "<NAME>actual plan</NAME>" +
+        "<DESCRIPTION>Anything goes</DESCRIPTION>" +
+        "<CURRENT>2007-01-01T00:00:01</CURRENT>" +
+        "<OPERATIONS>" +
+          "<OPERATION NAME=\"make end item\" xsi:type=\"OPERATION_FIXED_TIME\">" +
+            "<DURATION>24:00:00</DURATION>" +
+          "</OPERATION>" +
+        "</OPERATIONS>" +
+          "<ITEMS>" +
+          "<ITEM NAME=\"end item\">" +
+            "<OPERATION NAME=\"delivery end item\">" +
+              "<DURATION>24:00:00</DURATION>" +
+            "</OPERATION>" +
+          "</ITEM>" +
+        "</ITEMS>" +
+        "<BUFFERS>" +
+          "<BUFFER NAME=\"end item\">" +
+            "<CONSUMING NAME=\"delivery end item\"/>" +
+            "<PRODUCING NAME=\"make end item\"/>" +
+            "<ITEM NAME=\"end item\"/>" +
+          "</BUFFER>" +
+        "</BUFFERS>" +
+        "<RESOURCES>" +
+          "<RESOURCE NAME=\"Resource\">" +
+            "<MAXIMUM NAME=\"Capacity\" xsi:type=\"CALENDAR_FLOAT\">" +
+              "<BUCKETS>" +
+                "<BUCKET START=\"2007-01-01T00:00:01\" VALUE=\"1\"/>" +
+              "</BUCKETS>" +
+            "</MAXIMUM>" +
+            "<LOADS>" +
+              "<LOAD>" +
+                "<OPERATION NAME=\"make end item\" />" +
+              "</LOAD>" +
+            "</LOADS>" +
+          "</RESOURCE>" +
+        "</RESOURCES>" +
+        "<FLOWS>" +
+          "<FLOW xsi:type=\"FLOW_START\">" +
+            "<OPERATION NAME=\"delivery end item\"/>" +
+            "<BUFFER NAME=\"end item\"/>" +
+            "<QUANTITY>-1</QUANTITY>" +
+          "</FLOW>" +
+          "<FLOW xsi:type=\"FLOW_END\">" +
+            "<OPERATION NAME=\"make end item\"/>" +
+            "<BUFFER NAME=\"end item\"/>" +
+            "<QUANTITY>1</QUANTITY>" +
+          "</FLOW>" +
+        "</FLOWS>" +
+        "<DEMANDS>" +
+          "<DEMAND NAME=\"order 1\">" +
+            "<QUANTITY>10</QUANTITY>" +
+            "<DUE>2007-01-04T09:00:00</DUE>" +
+            "<PRIORITY>1</PRIORITY>" +
+            "<ITEM NAME=\"end item\"/>" +
+            "<POLICY>PLANLATE</POLICY>" +
+          "</DEMAND>" +
+        "</DEMANDS>" +
+      "</PLAN>",true,false);
+      System.out.println(" OK");
 
-	System.out.println("Adding an item:");
-	frepple.readXMLData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
-		"<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
-			"<ITEMS>" +
-				"<ITEM NAME=\"New Item\"/>" +
-			"</ITEMS>" +
-		"</PLAN>", true, false);
-	System.out.println(" OK");
+      System.out.println("Adding an item:");
+      freppleJNI.FreppleReadXMLData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
+        "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
+          "<ITEMS>" +
+            "<ITEM NAME=\"New Item\"/>" +
+          "</ITEMS>" +
+        "</PLAN>", true, false);
+      System.out.println(" OK");
 
-	System.out.println("Saving frepple model to a string:");
-	System.out.println(frepple.saveString());
-	System.out.println(" OK");
+      System.out.println("Saving frepple model to a string:");
+      System.out.println(freppleJNI.FreppleSaveString());
+      System.out.println(" OK");
 
-	System.out.println("Saving frepple model to a file:");
-	frepple.saveFile("turbo.java.xml");
-	System.out.println(" OK");
+      System.out.println("Saving frepple model to a file:");
+      freppleJNI.FreppleSaveFile("turbo.java.xml");
+      System.out.println(" OK");
 
-  System.out.println("Passing invalid XML data to frepple:");
-	frepple.readXMLData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
-		"<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
-			"<XXDESCRIPTION>Dummy</XXDESCRIPTION>" +
-		"</PLAN>", true, false);
-	System.out.println(" OK");
+      System.out.println("Passing invalid XML data to frepple:");
+      freppleJNI.FreppleReadXMLData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" +
+        "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
+          "<XXDESCRIPTION>Dummy</XXDESCRIPTION>" +
+        "</PLAN>", true, false);
+      System.out.println(" OK");
 
-	System.out.println("End of frepple commands");
-		} catch (Exception e)
-		{
-			System.out.println("Runtime exception caught: " + e.getMessage());
-	//print "Caught an unknown exception"
-      e.printStackTrace();
-			error = true;
-		}
- 	if (!error) System.out.println("All commands passed without error");
-	System.out.println( "Exiting...");
+      System.out.println("End of frepple commands");
+      }
+      catch (Exception e)
+      {
+        System.out.println("Runtime exception caught: " + e.getMessage());
+        //print "Caught an unknown exception"
+        e.printStackTrace();
+        error = true;
+      }
 
-	}
+    if (!error) System.out.println("All commands passed without error");
+    System.out.println( "Exiting...");
+
+  }
 }

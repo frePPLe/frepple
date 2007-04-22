@@ -4,7 +4,7 @@
 
 EXTRA_DIST = frepple.i README.txt frepple_perl.pl frepple_python.py frepple_java.java
 
-CLEANFILES = *.so *.dll wrapper* *.class
+CLEANFILES = *.so *.dll wrapper* *.class *.pyc turbo*.xml
 
 if CYGWIN
 JAVAHOME = /C/Program Files/Java/jdk1.5.0_07
@@ -26,10 +26,10 @@ perl: frepple.i
 	$(SWIG) -c++ -perl5 -o wrapper_perl.cpp frepple.i
 if CYGWIN
 	$(CXX) -c wrapper_perl.cpp -fPIC -I../../include -I"$(PERLHOME)"
-	$(CXX) -shared wrapper_perl.o -L"$(PERLHOME)" -L../../src/.libs -lperl -lfrepple -Wl,--add-stdcall-alias -o frepple.dll
+	$(CXX) -shared wrapper_perl.o -L"$(PERLHOME)" -L../../src/.libs -lperl -lfrepple -Wl,--add-stdcall-alias -o freppleperl.dll
 else
 	$(CXX) -c wrapper_perl.cpp -fPIC -I../../include -I"$(PERLHOME)"
-	$(CXX) -shared wrapper_perl.o "-L$(PERLHOME)" -L../../src/.libs -lperl -lfrepple -lxerces-c -o frepple.so
+	$(CXX) -shared wrapper_perl.o "-L$(PERLHOME)" -L../../src/.libs -lperl -lfrepple -lxerces-c -o freppleperl.so
 endif
 	-perl frepple_perl.pl
 

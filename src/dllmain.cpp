@@ -75,7 +75,7 @@ DECLARE_EXPORT(const char*) FreppleVersion()
 
 DECLARE_EXPORT(void) FreppleInitialize(const char* h)
 {
-  # Initialize only once
+  // Initialize only once
   static bool initialized = false;
   if (initialized) return;
 

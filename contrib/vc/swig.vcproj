@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="swig"
 	ProjectGUID="{EC20CA95-A33C-4A3E-A8BA-8587000F49F1}"
+	RootNamespace="swig"
 	Keyword="ManagedCProj"
 	>
 	<Platforms>
@@ -138,10 +139,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="perl58.lib xerces-c_2.lib"
-				OutputFile="$(OutDir)/frepple.dll"
+				AdditionalDependencies="xerces-c_2.lib"
+				OutputFile="$(InputDir)\..\scripting\frepplejava.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\develop\packages\perl\lib\CORE"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 			/>
 			<Tool
@@ -320,24 +321,8 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
 			<File
-				RelativePath="swig\wrapperl_perl.cpp"
+				RelativePath=".\swig\wrapper_java.cpp"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						PreprocessorDefinitions="HAS_BOOL"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="modules_debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						PreprocessorDefinitions="HAS_BOOL"
-					/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -372,9 +357,9 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					Description="Creating Perl wrapper interface (requires SWIG)"
-					CommandLine="echo In order to function correctly, please update the project properties to include the perl include and library directories&#x0D;&#x0A;swig -c++ -perl5 -outdir $(OutDir) -o $(OutDir)\wrapperl_perl.cpp $(InputPath)&#x0D;&#x0A;"
-					Outputs="$(ProjectDir)\swig\wrapperl_perl.cpp"
+					Description="Creating Java wrapper interface (requires SWIG)"
+					CommandLine="echo In order to function correctly, please update the project properties to include the java sdk include and library directories&#x0D;&#x0A;cd $(InputDir)&#x0D;&#x0A;swig -c++ -java -o wrapper_java.cpp $(InputPath)&#x0D;&#x0A;javac *.java&#x0D;&#x0A;"
+					Outputs="$(ProjectDir)\swig\wrapper_perl.cpp"
 				/>
 			</FileConfiguration>
 			<FileConfiguration

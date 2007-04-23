@@ -1,21 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <LOGFILE>frepple.log</LOGFILE>
+<?PYTHON
+# Update the python environment such that it can use the django classes
+import os
+sys.path.append(os.environ['FREPPLE_APP'])
+from freppledb.execute.export import loadfrepple, dumpfrepple
+os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
+
+# Create a solver where the constraint are defined by an environment variable
+frepple.readXMLdata(
+  '''<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SOLVERS>
+    <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="%s"/>
+  </SOLVERS>
+  </PLAN>''' % os.environ['PLAN_TYPE'], False, False)
+
+?>
   <COMMANDS>
     <VERBOSE>true</VERBOSE>
     <ABORTONERROR>true</ABORTONERROR>
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="import os, os.path" />
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="sys.path.append('${FREPPLE_APP}')" />
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="import freppledb.execute.export, frepple" />
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'" />
     <COMMAND xsi:type="COMMAND_SIZE" />
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="freppledb.execute.export.loadfrepple()" />
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="loadfrepple()" />
     <COMMAND xsi:type="COMMAND_SIZE" />
     <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="7" VERBOSE="false" />
+        <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" VERBOSE="false" />
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SIZE" />
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="freppledb.execute.export.dumpfrepple()" />
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="dumpfrepple()" />
     <!--
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
     <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />

@@ -94,10 +94,13 @@ def runfrepple(request):
     # Decode form attributes
     try: action = request.POST['action']
     except KeyError: raise Http404
+    try: type = request.POST['type']
+    except: type = 7   # Default plan is fully constrained
 
     if action == 'run':
       # Run frepple
       try:
+        os.environ['PLAN_TYPE'] = type
         os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\','\\\\')
         os.environ['FREPPLE_APP'] = settings.FREPPLE_APP.replace('\\','\\\\')
         os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + '.'

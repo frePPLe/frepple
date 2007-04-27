@@ -47,7 +47,7 @@ class Plan(models.Model):
 
 class Dates(models.Model):
     day = models.DateField(primary_key=True)
-    dayofweek = models.SmallIntegerField()
+    dayofweek = models.SmallIntegerField('Day of week')
     week = models.CharField(maxlength=10, db_index=True)
     week_start = models.DateField(db_index=True)
     week_end = models.DateField(db_index=True)
@@ -62,10 +62,11 @@ class Dates(models.Model):
     year_end = models.DateField(db_index=True)
     class Admin:
         pass
-        list_display = ('day', 'week', 'month', 'quarter', 'year',
+        list_display = ('day', 'dayofweek', 'week', 'month', 'quarter', 'year',
           'week_start', 'month_start', 'quarter_start', 'year_start')
         fields = (
             (None, {'fields': ('day',
+                               'dayofweek',
                                ('week','week_start','week_end'),
                                ('month','month_start','month_end'),
                                ('quarter','quarter_start','quarter_end'),

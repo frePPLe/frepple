@@ -242,7 +242,7 @@ def bufferquery(buffer, bucket, startdate, enddate):
           left join
            (select thebuffer_id, %s,
               sum(case when quantity>0 then quantity else 0 end) as produced,
-              sum(case when quantity<0 then quantity else 0 end) as consumed
+              -sum(case when quantity<0 then quantity else 0 end) as consumed
               from output_flowplan, input_dates
               where output_flowplan.date = input_dates.day
               and output_flowplan.date >= '%s'
@@ -264,7 +264,7 @@ def bufferquery(buffer, bucket, startdate, enddate):
           prevbuf = row[0]
           endoh = row[1]
         startoh = endoh
-        endoh += row[3] + row[4]
+        endoh += row[3] - row[4]
         rowset.append( {
           'buffer': row[0],
           'bucket': row[2],

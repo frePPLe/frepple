@@ -34,11 +34,12 @@
 namespace frepple
 {
 
-/**
-  * This class implements a "sorted list" data structure.
-  * The data structure has slow insert scalability: O(n)
-  * Moving data around in the structure is efficient though: O(1)
-  * The class leverages the STL library and also follows its api.
+/** @brief This class implements a "sorted list" data structure, sorting
+  * "events" based on a date.
+  *
+  * The data structure has slow insert scalability: O(n)<br>
+  * Moving data around in the structure is efficient though: O(1)<br>
+  * The class leverages the STL library and also follows its api.<br>
   * The class used to instantiate a timeline must support the
   * "bool operator < (TYPE)".
   *
@@ -53,6 +54,7 @@ template <class type> class TimeLine
   public:
     class iterator;
     class const_iterator;
+    /** @brief Base class for nodes in the timeline. */
     class Event : public NonCopyable
     {
         friend class TimeLine<type>;
@@ -115,7 +117,9 @@ template <class type> class TimeLine
             return this < &fl2;
         }
     };
-  class EventChangeOnhand : public Event
+
+    /** @brief A timeline event representing a change of the current value. */
+    class EventChangeOnhand : public Event
     {
       private:
         float quantity;
@@ -125,7 +129,9 @@ template <class type> class TimeLine
         EventChangeOnhand(float qty) : quantity(qty) {}
         virtual unsigned short getType() const {return 1;}
     };
-  class EventMinQuantity : public Event
+
+    /** @brief A timeline event representing a change of the minimum target. */
+    class EventMinQuantity : public Event
     {
       private:
         Date dt;
@@ -137,7 +143,9 @@ template <class type> class TimeLine
         const Date & getDate() const {return dt;}
         virtual unsigned short getType() const {return 3;}
     };
-  class EventMaxQuantity : public Event
+
+    /** @brief A timeline event representing a change of the maximum target. */
+    class EventMaxQuantity : public Event
     {
       private:
         Date dt;
@@ -149,9 +157,12 @@ template <class type> class TimeLine
         const Date & getDate() const {return dt;}
         virtual unsigned short getType() const {return 4;}
     };
-    /** This is bi-directional iterator through the timeline. It looks a bit
-      * STL-compliant, but this is only superficially. The class doesn't meet
-      * all requirements for a full STL-compliant iterator.
+
+    /** @brief This is bi-directional iterator through the timeline. 
+      *
+      * It looks a bit STL-compliant, but this is only superficially. The 
+      * class doesn't meet all requirements for a full STL-compliant 
+      * iterator.
       * @todo Make the timeline iterators fully STL compliant.
       */
     class const_iterator
@@ -173,6 +184,8 @@ template <class type> class TimeLine
         bool operator==(const const_iterator& x) const {return cur == x.cur;}
         bool operator!=(const const_iterator& x) const {return cur != x.cur;}
     };
+
+    /** @brief This is bi-directional iterator through the timeline. */ 
     class iterator : public const_iterator
     {
       public:
@@ -187,6 +200,7 @@ template <class type> class TimeLine
         bool operator==(const iterator& x) const {return this->cur == x.cur;}
         bool operator!=(const iterator& x) const {return this->cur != x.cur;}
     };
+
     TimeLine() : first(NULL), last(NULL) {}
     int size() const
     {

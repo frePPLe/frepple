@@ -73,7 +73,7 @@ class HasProblems;
 class Solvable;
 
 
-/** This class is used for initialization and finalization. */
+/** @brief This class is used for initialization and finalization. */
 class LibraryModel
 {
   public:
@@ -82,15 +82,16 @@ class LibraryModel
 };
 
 
-/** This is the class used to 1) represent varisables that are
+/** @brief This is the class used to 1) represent varisables that are
   * varying over time, and 2) to divide a time horizon into
-  * multiple buckets.<br>
+  * multiple buckets.
+  *
   * Some example usages for calendars:
-  *  - Defining weekly, monthly and quarterly buckets for
-  *    reporting purposes.
   *  - A calendar defining the available capacity of a resource
   *    week by week.
   *  - The minimum inventory desired in a buffer week by week.
+  *  - Defining weekly, monthly and quarterly buckets for
+  *    reporting purposes.
   */
 class Calendar : public HasName<Calendar>, public Object
 {
@@ -98,7 +99,8 @@ class Calendar : public HasName<Calendar>, public Object
   public:
     class BucketIterator; // Forward declaration
 
-    /** This class represents a time bucket as a part of a calendar.
+    /** @brief This class represents a time bucket as a part of a calendar.
+      *
       * Manipulation of instances of this class need to be handled with the
       * methods on the friend class Calendar.
       * @see Calendar
@@ -222,7 +224,7 @@ class Calendar : public HasName<Calendar>, public Object
       */
     DECLARE_EXPORT Bucket* findBucket(const string&) const;
 
-    /** An iterator class to go through all buckets of the calendar. */
+    /** @brief An iterator class to go through all buckets of the calendar. */
     class BucketIterator
     {
       private:
@@ -277,7 +279,8 @@ class Calendar : public HasName<Calendar>, public Object
 };
 
 
-/** This calendar type is used to store values in its buckets.<br>
+/** @brief This calendar type is used to store values in its buckets.
+  *
   * The template type must statisfy the following requirements:
   *   - XML import supported by the operator >> of the class XMLElement.
   *   - XML export supported by the method writeElement of the class XMLOutput.
@@ -287,7 +290,10 @@ class Calendar : public HasName<Calendar>, public Object
 template <typename T> class CalendarValue : public Calendar
 {
   public:
-    /** @see Calendar::Bucket */
+    /** @brief A special type of calendar bucket, designed to hold a 
+      * a value.
+      * @see Calendar::Bucket 
+      */
     class BucketValue : public Calendar::Bucket
     {
         friend class CalendarValue<T>;
@@ -352,7 +358,8 @@ template <typename T> class CalendarValue : public Calendar
 };
 
 
-/** This calendar type is used to store object pointers in its buckets.<br>
+/** @brief This calendar type is used to store object pointers in its buckets.
+  *
   * The template type must statisfy the following requirements:
   *   - It must be a subclass of the Object class and implement the
   *     beginElement(), writeElement() and endElement() as appropriate.
@@ -363,7 +370,10 @@ template <typename T> class CalendarValue : public Calendar
 template <typename T> class CalendarPointer : public Calendar
 {
   public:
-    /** @see Calendar::Bucket */
+    /** @brief A special type of calendar bucket, designed to hold a pointer 
+      * to an object.
+      * @see Calendar::Bucket 
+      */
     class BucketPointer : public Calendar::Bucket
     {
         friend class CalendarPointer<T>;
@@ -439,7 +449,8 @@ template <typename T> class CalendarPointer : public Calendar
 };
 
 
-/** A calendar only defining time buckets and not storing any data fields. */
+/** @brief A calendar only defining time buckets and not storing any data 
+  * fields. */
 class CalendarVoid : public Calendar
 {
     TYPEDEF(CalendarVoid);
@@ -450,7 +461,7 @@ class CalendarVoid : public Calendar
 };
 
 
-/** A calendar storing float values in its buckets. */
+/** @brief A calendar storing float values in its buckets. */
 class CalendarFloat : public CalendarValue<float>
 {
     TYPEDEF(CalendarFloat);
@@ -461,7 +472,7 @@ class CalendarFloat : public CalendarValue<float>
 };
 
 
-/** A calendar storing integer values in its buckets. */
+/** @brief A calendar storing integer values in its buckets. */
 class CalendarInt : public CalendarValue<int>
 {
     TYPEDEF(CalendarInt);
@@ -472,7 +483,7 @@ class CalendarInt : public CalendarValue<int>
 };
 
 
-/** A calendar storing boolean values in its buckets. */
+/** @brief A calendar storing boolean values in its buckets. */
 class CalendarBool : public CalendarValue<bool>
 {
     TYPEDEF(CalendarBool);
@@ -483,7 +494,7 @@ class CalendarBool : public CalendarValue<bool>
 };
 
 
-/** A calendar storing strings in its buckets. */
+/** @brief A calendar storing strings in its buckets. */
 class CalendarString : public CalendarValue<string>
 {
     TYPEDEF(CalendarString);
@@ -502,7 +513,7 @@ class CalendarString : public CalendarValue<string>
 };
 
 
-/** A calendar storing pointers to operations in its buckets. */
+/** @brief A calendar storing pointers to operations in its buckets. */
 class CalendarOperation : public CalendarPointer<Operation>
 {
     TYPEDEF(CalendarOperation);
@@ -513,7 +524,9 @@ class CalendarOperation : public CalendarPointer<Operation>
 };
 
 
-/** A problem represents infeasibilities, alerts and warnings in the plans.<br>
+/** @brief A problem represents infeasibilities, alerts and warnings in 
+  * the plan.
+  *
   * Problems are maintained internally by the system. They are thus only
   * exported, meaning that you can't directly import or create problems.<br>
   * This class is the pure virtual base class for all problem types.<br>
@@ -655,7 +668,9 @@ class Problem : public NonCopyable
 };
 
 
-/** Classes that keep track of problem conditions need to implment this class.
+/** @brief Classes that keep track of problem conditions need to implement 
+  * this class.
+  *
   * This class is closely related to the Problem class.
   * @see Problem
   */
@@ -697,7 +712,10 @@ class HasProblems
 };
 
 
-/** This class is an implementation of the "visitor" design pattern.
+/** @brief This class is an implementation of the "visitor" design pattern. 
+  * It is intended as a basis for different algoritms processing the frepple
+  * data.
+  *
   * The goal is to decouple the solver/algorithms from the model/data
   * representation. Different solvers can be easily be plugged in to work on
   * the same data.
@@ -762,8 +780,8 @@ class Solver : public Object, public HasName<Solver>
 };
 
 
-/** This class needs to be implemented by all classes that implement dynamic
-  * behavior, and which can be called by a solver.
+/** @brief This class needs to be implemented by all classes that implement 
+  * dynamic behavior, and which can be called by a solver.
   */
 class Solvable
 {
@@ -780,7 +798,7 @@ class Solvable
 };
 
 
-/** This command runs a specific solver. */
+/** @brief This command runs a specific solver. */
 class CommandSolve : public Command
 {
   private:
@@ -818,8 +836,9 @@ class CommandSolve : public Command
 };
 
 
-/** This class needs to be implemented by all classes that implement dynamic
-  * behavior in the plan.<br>
+/** @brief This class needs to be implemented by all classes that implement 
+  * dynamic behavior in the plan.
+  *
   * The problem detection logic is implemented in the detectProblems() method.
   * For performance reasons, problem detection is "lazy", i.e. problems are
   * computed only when somebody really needs the access to the list of
@@ -877,7 +896,7 @@ class Plannable : public Object, public HasProblems, public Solvable
 };
 
 
-/** The purpose of this class is to compute the levels of all buffers,
+/** @brief The purpose of this class is to compute the levels of all buffers,
   * operations and resources in the model, and to categorize them in clusters.
   *
   * Resources and buffers linked to the delivery operations of
@@ -994,9 +1013,11 @@ class HasLevel
 };
 
 
-/** This abstract class is used to associate buffers and resources with a
-  * physical location. This is useful for reporting but has no direct impact
-  * on the planning behavior.
+/** @brief This abstract class is used to associate buffers and resources with
+  * a physical location. 
+  *
+  * This is useful for reporting but has no direct impact on the planning 
+  * behavior.
   */
 class Location
       : public HasHierarchy<Location>, public HasDescription, public Object
@@ -1013,7 +1034,7 @@ class Location
 };
 
 
-/** This class implements the abstract Location class. */
+/** @brief This class implements the abstract Location class. */
 class LocationDefault : public Location
 {
     TYPEDEF(LocationDefault);
@@ -1022,13 +1043,16 @@ class LocationDefault : public Location
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(LocationDefault) + getName().size() + HasDescription::memsize();}
+      {return sizeof(LocationDefault) 
+        + getName().size() 
+        + HasDescription::memsize();}
 };
 
 
-/** This abstracts class represents customers, and link them to certain
-  * demands.<br>
-  * There is no planning bheavior directly linked to customers.
+/** @brief This abstracts class represents customers.
+  * 
+  * Demands can be associated with a customer, but there is no planning 
+  * behavior directly linked to customers.
   */
 class Customer
       : public HasHierarchy<Customer>, public HasDescription, public Object
@@ -1045,7 +1069,7 @@ class Customer
 };
 
 
-/** This class implements the abstract Customer class. */
+/** @brief This class implements the abstract Customer class. */
 class CustomerDefault : public Customer
 {
     TYPEDEF(CustomerDefault);
@@ -1058,7 +1082,11 @@ class CustomerDefault : public Customer
 };
 
 
-/** This class represents an Operation. It's an abstract class. */
+/** @brief This class represents an Operation. 
+  * 
+  * @todo describe operation class better
+  * It's an abstract class. 
+  */
 class Operation : public HasName<Operation>,
       public HasLevel, public Plannable, public HasDescription
 {
@@ -1299,9 +1327,10 @@ class Operation : public HasName<Operation>,
 };
 
 
-/** An operationplan is the key dynamic element of a plan. It represents
-  * a certain quantity being planned along a certain operation during
-  * a certain date range.<br>
+/** @brief An operationplan is the key dynamic element of a plan. It 
+  * represents a certain quantity being planned along a certain operation 
+  * during a certain date range.
+  *
   * From a coding perspective:
   *  - Operationplans are created by the factory method createOperationPlan()
   *    on the matching operation class.
@@ -1369,8 +1398,9 @@ class OperationPlan
     /** Returns how many loadplans are created on an operationplan. */
     int sizeLoadPlans() const;
 
-    /** This class models an STL-like iterator that allows us to iterate over
-      * the operationplans in a simple and safe way.<br>
+    /** @brief This class models an STL-like iterator that allows us to iterate over
+      * the operationplans in a simple and safe way.
+      *
       * Objects of this class are created by the begin() and end() functions.
       */
     class iterator
@@ -1819,7 +1849,7 @@ class OperationPlan
 };
 
 
-/** Models an operation that takes a fixed amount of time, independent
+/** @brief Models an operation that takes a fixed amount of time, independent
   * of the quantity. */
 class OperationFixedTime : public Operation
 {
@@ -1866,8 +1896,9 @@ class OperationFixedTime : public Operation
 };
 
 
-/** Models an operation whose duration is the sum of a constant time, plus
-  * a cetain time per unit. */
+/** @brief Models an operation whose duration is the sum of a constant time, 
+  * plus a cetain time per unit. 
+  */
 class OperationTimePer : public Operation
 {
     TYPEDEF(OperationTimePer);
@@ -1925,8 +1956,9 @@ class OperationTimePer : public Operation
 };
 
 
-/** Represents a routing operation, i.e. an operation consisting of multiple,
-  * sequential sub-operations. */
+/** @brief Represents a routing operation, i.e. an operation consisting of 
+  * multiple, sequential sub-operations. 
+  */
 class OperationRouting : public Operation
 {
     TYPEDEF(OperationRouting);
@@ -1994,8 +2026,9 @@ class OperationRouting : public Operation
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
     {
-      return sizeof(OperationRouting) + getName().size() + HasDescription::memsize()
-          + steps.size() * 2 * sizeof(Operation*);
+      return sizeof(OperationRouting) + getName().size() 
+        + HasDescription::memsize()
+        + steps.size() * 2 * sizeof(Operation*);
     }
 
   private:
@@ -2003,7 +2036,7 @@ class OperationRouting : public Operation
 };
 
 
-/** OperationPlans for routing operation uses this subclass for
+/** @brief OperationPlans for routing operation uses this subclass for
   * the instances. */
 class OperationPlanRouting : public OperationPlan
 {
@@ -2046,7 +2079,7 @@ class OperationPlanRouting : public OperationPlan
 
 
 
-/** This class represents a choice between multiple operations. The
+/** @brief This class represents a choice between multiple operations. The
   * alternates are sorted in order of priority.
   */
 class OperationAlternate : public Operation
@@ -2126,9 +2159,10 @@ class OperationAlternate : public Operation
 };
 
 
-/** This class subclasses the OperationPlan class for operations of type
-  * OperationAlternate. Such operationplans need an extra field to point to
-  * the suboperationplan.
+/** @brief This class subclasses the OperationPlan class for operations of type
+  * OperationAlternate. 
+  *
+  * Such operationplans need an extra field to point to the suboperationplan.
   * @see OperationPlan, OperationAlternate
   */
 class OperationPlanAlternate : public OperationPlan
@@ -2162,7 +2196,7 @@ class OperationPlanAlternate : public OperationPlan
 };
 
 
-/** Models an operation which has to use different operations depending
+/** @brief Models an operation which has to use different operations depending
   * on the dates. */
 class OperationEffective : public Operation
 {
@@ -2232,9 +2266,10 @@ class OperationEffective : public Operation
 };
 
 
-/** This class subclasses the OperationPlan class for operations of type
-  * OperationEffective. Such operationplans need an extra field to point to
-  * the suboperationplan.
+/** @brief This class subclasses the OperationPlan class for operations of type
+  * OperationEffective. 
+  *
+  * Such operationplans need an extra field to point to the suboperationplan.
   * @see OperationPlan, OperationEffective
   */
 class OperationPlanEffective : public OperationPlan
@@ -2261,8 +2296,9 @@ class OperationPlanEffective : public OperationPlan
 };
 
 
-/** An item defines the products being planned, sold, stored and/or
-  * manufactured. Buffers and demands have a reference an item.<br>
+/** @brief An item defines the products being planned, sold, stored and/or
+  * manufactured. Buffers and demands have a reference an item.
+  *
   * This is an abstract class.
   */
 class Item
@@ -2315,7 +2351,8 @@ class Item
 };
 
 
-/** This class is the default implementation of the abstract Item class. */
+/** @brief This class is the default implementation of the abstract Item 
+  * class. */
 class ItemDefault : public Item
 {
     TYPEDEF(ItemDefault);
@@ -2328,7 +2365,7 @@ class ItemDefault : public Item
 };
 
 
-/** A buffer represents a combination of a item and location.<br>
+/** @brief A buffer represents a combination of a item and location.<br>
   * It is the entity for keeping modeling inventory.
   */
 class Buffer : public HasHierarchy<Buffer>, public HasLevel,
@@ -2473,7 +2510,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
 
 
-/** This class is the default implementation of the abstract Buffer class. */
+/** @brief This class is the default implementation of the abstract Buffer class. */
 class BufferDefault : public Buffer
 {
     TYPEDEF(BufferDefault);
@@ -2486,9 +2523,11 @@ class BufferDefault : public Buffer
 };
 
 
-/** This class represents a material buffer with an infinite supply of extra
-  * material. In other words, it never constrains the plan and it doesn't
-  * propagate requirements upstream.
+/** @brief  This class represents a material buffer with an infinite supply of extra
+  * material. 
+  *
+  * In other words, it never constrains the plan and it doesn't propagate any 
+  * requirements upstream.
   */
 class BufferInfinite : public Buffer
 {
@@ -2505,7 +2544,9 @@ class BufferInfinite : public Buffer
 };
 
 
-/** This class represents a material buffer where a replenishment is triggered
+/** @brief This class models a buffer with a classic reorder-point policy.
+  *
+  * It represents a material buffer where a replenishment is triggered
   * whenever the inventory drops below the minimum level. The buffer is then
   * replenished to the maximum inventory level.
   */
@@ -2523,7 +2564,7 @@ class BufferMinMax : public Buffer   // @todo rename to BufferProcurement and im
 };
 
 
-/** This class defines a material flow to/from a buffer, linked with an
+/** @brief This class defines a material flow to/from a buffer, linked with an
   * operation. This default implementation plans the material flow at the
   * start of the operation.
   */
@@ -2609,7 +2650,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 };
 
 
-/** This class defines a material flow to/from a buffer, linked with an
+/** @brief This class defines a material flow to/from a buffer, linked with an
   * operation. This subclass represents a flow that is at the start date of
   * the operation.
   */
@@ -2629,7 +2670,7 @@ class FlowStart : public Flow
 };
 
 
-/** This class defines a material flow to/from a buffer, linked with an
+/** @brief This class defines a material flow to/from a buffer, linked with an
   * operation. This subclass represents a flow that is at end date of the
   * operation.
   */
@@ -2657,7 +2698,8 @@ class FlowEnd : public Flow
 };
 
 
-/** A flowplan represents a planned material flow in or out of a buffer.
+/** @brief A flowplan represents a planned material flow in or out of a buffer.
+  *
   * Flowplans are owned by operationplans, which manage a container to store
   * them.
   */
@@ -2723,8 +2765,8 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 };
 
 
-/** This class represents a workcentre, a physical or logical representation
-  * of capacity.
+/** @brief This class represents a workcentre, a physical or logical 
+  * representation of capacity.
   */
 class Resource : public HasHierarchy<Resource>,
       public HasLevel, public Plannable, public HasDescription
@@ -2810,7 +2852,9 @@ class Resource : public HasHierarchy<Resource>,
 };
 
 
-/** This class is the default implementation of the abstract Resource class. */
+/** @brief This class is the default implementation of the abstract 
+  * Resource class. 
+  */
 class ResourceDefault : public Resource
 {
     TYPEDEF(ResourceDefault);
@@ -2819,12 +2863,13 @@ class ResourceDefault : public Resource
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(ResourceDefault) + getName().size() + HasDescription::memsize();}
+      {return sizeof(ResourceDefault) 
+        + getName().size() + HasDescription::memsize();}
 };
 
 
-/** This class represents a resource that'll never have any capacity shortage.
-  */
+/** @brief This class represents a resource that'll never have any 
+  * capacity shortage. */
 class ResourceInfinite : public Resource
 {
     TYPEDEF(ResourceInfinite);
@@ -2840,7 +2885,7 @@ class ResourceInfinite : public Resource
 };
 
 
-/** This class links a resource to a certain operation. */
+/** @brief This class links a resource to a certain operation. */
 class Load
       : public Object, public Association<Operation,Resource,Load>::Node,
       public Solvable
@@ -2916,7 +2961,8 @@ class Load
 };
 
 
-/** This is the top class of the complete model.
+/** @brief This is the (logical) top class of the complete model.
+  * 
   * This is a singleton class: only a single instance can be created.
   * The data model has other limitations that make it not obvious to support
   * building multiple models/plans in memory of the same application: e.g.
@@ -3018,8 +3064,8 @@ class Plan : public Plannable
 };
 
 
-/** This command is used for reading XML input. The input comes either from
-  * a flatfile, or from the standard input. */
+/** @brief This command is used for reading XML input. The input comes either
+  * from a flatfile, or from the standard input. */
 class CommandReadXMLFile : public Command
 {
   public:
@@ -3088,7 +3134,7 @@ class CommandReadXMLFile : public Command
 };
 
 
-/** This command is used for reading XML input from a certain string. */
+/** @brief This command is used for reading XML input from a certain string. */
 class CommandReadXMLString : public Command
 {
   public:
@@ -3146,10 +3192,11 @@ class CommandReadXMLString : public Command
 };
 
 
-/** This command writes the complete model to an XML-file, both the static model
-  * (i.e. items, locations, buffers, resources, calendars, etc...) and the
-  * dynamic data (i.e. the actual plan including the operation_plans, demand,
-  * problems, etc...).<br>
+/** @brief This command writes the complete model to an XML-file.
+  * 
+  * Both the static model (i.e. items, locations, buffers, resources, 
+  * calendars, etc...) and the dynamic data (i.e. the actual plan including 
+  * the operation_plans, demand, problems, etc...).<br>
   * The data is written by the execute() function.
   * @see CommandSavePlan
   */
@@ -3182,9 +3229,10 @@ class CommandSave : public Command
 };
 
 
-/** This command writes the dynamic part of the plan to an  text file. This
-  * covers the buffer flowplans, operation_plans, resource loading, demand,
-  * problems, etc...<br>
+/** @brief This command writes the dynamic part of the plan to an  text file. 
+  *
+  * This saved information covers the buffer flowplans, operation_plans, 
+  * resource loading, demand, problems, etc...<br>
   * The main use of this function is in the test suite: a simple text file
   * comparison allows us to identify changes quickly. The output format is
   * only to be seen in this context of testing, and is not intended to be used
@@ -3211,9 +3259,10 @@ class CommandSavePlan : public Command
 };
 
 
-/** This command prints a summary of the dynamically allocated memory
+/** @brief This command prints a summary of the dynamically allocated memory
   * to the standard output. This is useful for understanding better the size
-  * of your model.<br>
+  * of your model.
+  *
   * The numbers reported by this function won't match the memory size as
   * reported by the operating system, since the dynamically allocated memory
   * is only a part of the total memory used by a program.
@@ -3232,7 +3281,8 @@ class CommandPlanSize : public Command
 };
 
 
-/** This command deletes part of the model or the plan from memory.
+/** @brief This command deletes part of the model or the plan from memory.
+  *
   * The class allows the following modes to control what to delete:
   *  - plan:<br>
   *    Deletes the dynamic modelling constructs, such as operationplans,
@@ -3268,8 +3318,9 @@ class CommandErase : public Command
 };
 
 
-/** Represents the (independent) demand in the system. It can represent a
-  * customer order or a forecast.<br>
+/** @brief Represents the (independent) demand in the system. It can represent a
+  * customer order or a forecast.
+  *
   * This is an abstract class.
   */
 class Demand
@@ -3488,7 +3539,8 @@ class Demand
 };
 
 
-/** This class is the default implementation of the abstract Demand class. */
+/** @brief This class is the default implementation of the abstract 
+  * Demand class. */
 class DemandDefault : public Demand
 {
     TYPEDEF(DemandDefault);
@@ -3501,7 +3553,8 @@ class DemandDefault : public Demand
 };
 
 
-/** This class represents the resource capacity of an operation_plan.<br>
+/** @brief This class represents the resource capacity of an operation_plan.
+  *
   * For both the start and the end date of the operation_plan, a load_plan
   * object is created. These are then inserted in the timeline structure
   * associated with a resource.
@@ -3565,7 +3618,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
 };
 
 
-/** A problem of this class is created when an operationplan is being
+/** @brief A problem of this class is created when an operationplan is being
   * planned in the past, i.e. it starts before the "current" date of
   * the plan.
   */
@@ -3604,7 +3657,7 @@ class ProblemBeforeCurrent : public Problem
 };
 
 
-/** A problem of this class is created when an operationplan is being
+/** @brief A problem of this class is created when an operationplan is being
   * planned before its fence date, i.e. it starts 1) before the "current"
   * date of the plan plus the release fence of the operation and 2) after the
   * current date of the plan.
@@ -3645,7 +3698,7 @@ class ProblemBeforeFence : public Problem
 };
 
 
-/** A problem of this class is created when the sequence of two
+/** @brief A problem of this class is created when the sequence of two
   * operationplans in a routing isn't respected.
   */
 class ProblemPrecedence : public Problem
@@ -3684,8 +3737,9 @@ class ProblemPrecedence : public Problem
 };
 
 
-/** A Problem of this class is created in the model when a new demand is
-  * brought in the system, but it hasn't been planned yet.<br>
+/** @brief A Problem of this class is created in the model when a new demand is
+  * brought in the system, but it hasn't been planned yet.
+  *
   * As a special case, a demand with a requested quantity of 0.0 doesn't create
   * this type of problem.
   */
@@ -3710,8 +3764,8 @@ class ProblemDemandNotPlanned : public Problem
 };
 
 
-/** A problem of this class is created when a demand is satisfied later than
-  * the accepted tolerance after its due date.
+/** @brief A problem of this class is created when a demand is satisfied later 
+  * than the accepted tolerance after its due date.
   */
 class ProblemLate : public Problem
 {
@@ -3737,8 +3791,8 @@ class ProblemLate : public Problem
 };
 
 
-/** A problem of this class is created when a demand is planned earlier than
-  * the accepted tolerance before its due date.
+/** @brief A problem of this class is created when a demand is planned earlier
+  * than the accepted tolerance before its due date.
   */
 class ProblemEarly : public Problem
 {
@@ -3763,7 +3817,7 @@ class ProblemEarly : public Problem
 };
 
 
-/** A problem of this class is created when a demand is planned for less than
+/** @brief A problem of this class is created when a demand is planned for less than
   * the requested quantity.
   */
 class ProblemShort : public Problem
@@ -3794,8 +3848,8 @@ class ProblemShort : public Problem
 };
 
 
-/** A problem of this class is created when a demand is planned for more than
-  * the requested quantity.
+/** @brief A problem of this class is created when a demand is planned for more 
+  * than the requested quantity.
   */
 class ProblemExcess : public Problem
 {
@@ -3825,7 +3879,7 @@ class ProblemExcess : public Problem
 };
 
 
-/** A problem of this class is created when an OperationPlan is planned
+/** @brief A problem of this class is created when an OperationPlan is planned
   * later than the accepted tolerance after its lpst Date.
   */
 class ProblemPlannedLate : public Problem
@@ -3863,8 +3917,8 @@ class ProblemPlannedLate : public Problem
 };
 
 
-/** A problem of this class is created when a demand is planned earlier than
-  * the accepted tolerance before its epst date.
+/** @brief A problem of this class is created when a demand is planned earlier 
+  * than the accepted tolerance before its epst date.
   */
 class ProblemPlannedEarly : public Problem
 {
@@ -3901,8 +3955,8 @@ class ProblemPlannedEarly : public Problem
 };
 
 
-/** A problem of this class is created when a resource is being overloaded
-  * during a certain period of time.
+/** @brief A problem of this class is created when a resource is being 
+  * overloaded during a certain period of time.
   */
 class ProblemCapacityOverload : public Problem
 {
@@ -3931,8 +3985,8 @@ class ProblemCapacityOverload : public Problem
 };
 
 
-/** A problem of this class is created when a resource is loaded below its
-  * minimum during a certain period of time.
+/** @brief A problem of this class is created when a resource is loaded below 
+  * its minimum during a certain period of time.
   */
 class ProblemCapacityUnderload : public Problem
 {
@@ -3961,8 +4015,8 @@ class ProblemCapacityUnderload : public Problem
 };
 
 
-/** A problem of this class is created when a buffer is having a material
-  * shortage during a certain period of time.
+/** @brief A problem of this class is created when a buffer is having a 
+  * material shortage during a certain period of time.
   */
 class ProblemMaterialShortage : public Problem
 {
@@ -3991,8 +4045,8 @@ class ProblemMaterialShortage : public Problem
 };
 
 
-/** A problem of this class is created when a buffer is carrying too much
-  * material during a certain period of time.
+/** @brief A problem of this class is created when a buffer is carrying too 
+  * much material during a certain period of time.
   */
 class ProblemMaterialExcess : public Problem
 {
@@ -4021,10 +4075,11 @@ class ProblemMaterialExcess : public Problem
 };
 
 
-/** This class represents the command linked with the creation of an
-  * operationplan. The operationplan will have its load and loadplans created
-  * when the command is created. It is assigned an id and added to the list of
-  * all operationplans when the command is committed.
+/** @brief This command is used to create an operationplan. 
+  * 
+  * The operationplan will have its load and loadplans created when the
+  * command is created. It is assigned an id and added to the list of all
+  * operationplans when the command is committed.
   */
 class CommandCreateOperationPlan : public Command
 {
@@ -4067,7 +4122,8 @@ class CommandCreateOperationPlan : public Command
 };
 
 
-/** This class represents the command of moving an operationplan to a new date.
+/** @brief This class represents the command of moving an operationplan to a 
+  * new date.
   * @todo Moving in a routing operation can't be undone with the current
   * implementation! The command will need to store all original dates of
   * the suboperationplans...
@@ -4116,8 +4172,9 @@ class CommandMoveOperationPlan : public Command
 };
 
 
-/** This class models a iterator that walks over all available HasProblem
-  * entities.<br>
+/** @brief This class models a iterator that walks over all available 
+  * HasProblem entities.
+  *
   * This list is containing hard-coding the classes that are implementing
   * this class. It's not ideal, but we don't have an explicit container
   * of the objects (and we don't want one either) and this allows us also
@@ -4192,8 +4249,9 @@ class HasProblems::EntityIterator
 };
 
 
-/** This class models an STL-like iterator that allows us to iterate over
-  * the named entities in a simple and safe way.<br>
+/** @brief This class models an STL-like iterator that allows us to iterate 
+  * over the named entities in a simple and safe way.
+  *
   * Objects of this class are returned by the begin() and end() functions.
   * @see Problem::begin()
   * @see Problem::begin(HasProblem*)
@@ -4241,7 +4299,9 @@ class Problem::const_iterator
 };
 
 
-/** This class allows upstream and downstream navigation through the plan.<br>
+/** @brief This class allows upstream and downstream navigation through 
+  * the plan.
+  *
   * Downstream navigation follows the material stream from raw materials
   * towards the end item demand.<br>
   * Upstream navigation traces back the material flow from the end item till
@@ -4373,7 +4433,7 @@ class PeggingIterator
 };
 
 
-/** An iterator class to go through all flowplans of an operationplan.
+/** @brief An iterator class to go through all flowplans of an operationplan.
   * @see OperationPlan::beginFlowPlans
   * @see OperationPlan::endFlowPlans
   */
@@ -4413,7 +4473,7 @@ inline int OperationPlan::sizeFlowPlans() const
 }
 
 
-/** An iterator class to go through all loadplans of an operationplan.
+/** @brief An iterator class to go through all loadplans of an operationplan.
   * @see OperationPlan::beginLoadPlans
   * @see OperationPlan::endLoadPlans
   */

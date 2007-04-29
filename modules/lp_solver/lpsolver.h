@@ -78,8 +78,9 @@ namespace module_lp_solver
 /** Initialization routine for the library. */
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);
 
-/** This class is a prototype of an Linear Programming (LP) Solver for the
-  * planning problem or a subset of it.<br>
+/** @brief This class is a prototype of an Linear Programming (LP) Solver for 
+  * the planning problem or a subset of it.
+  *
   * The class provides only a concept / prototype, and it is definately not
   * ready for full use in a production environment. It misses too much
   * functionality for this purpose.

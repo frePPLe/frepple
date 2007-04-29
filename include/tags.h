@@ -26,6 +26,12 @@
  ***************************************************************************/
 
 
+/** @brief This class holds a collection of all XML tags used by frepple.
+  *
+  * The class is a mere placeholder for a number of static instances of the 
+  * XMLtag class.<br>
+  * Nothing prevents you from creating static XMLtag instances.
+  */
 class Tags
 {
   public:

@@ -113,7 +113,8 @@ namespace module_python
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);
 
 
-/** This class embeds an interpreter for the Python language in Frepple.<br>
+/** @brief This command executes Python code in the embedded interpreter.
+  *
   * The interpreter can execute generic scripts, and it also has access
   * to the frepple objects.<br>
   * The interpreter is multi-threaded. Multiple python scripts can run in
@@ -276,7 +277,7 @@ extern "C"
 {
 
 
-  /** This class exports Problem information to Python. */
+  /** @brief This class exports Problem information to Python. */
   struct PythonProblem
   {
     private:
@@ -290,7 +291,7 @@ extern "C"
   };
 
 
-  /** This class exports FlowPlan information to Python. */
+  /** @brief This class exports FlowPlan information to Python. */
   struct PythonFlowPlan
   {
     private:
@@ -306,7 +307,7 @@ extern "C"
   };
 
 
-  /** This class exports LoadPlan information to Python. */
+  /** @brief This class exports LoadPlan information to Python. */
   struct PythonLoadPlan
   {
     private:
@@ -322,7 +323,7 @@ extern "C"
   };
 
 
-  /** This class exports OperationPlan information to Python. */
+  /** @brief This class exports OperationPlan information to Python. */
   struct PythonOperationPlan
   {
     private:
@@ -336,7 +337,7 @@ extern "C"
   };
 
 
-  /** This class exports Demand information to Python. */
+  /** @brief This class exports Demand information to Python. */
   struct PythonDemand
   {
     private:
@@ -350,7 +351,7 @@ extern "C"
   };
 
 
-  /** This class exports Buffer information to Python. */
+  /** @brief This class exports Buffer information to Python. */
   struct PythonBuffer
   {
     private:
@@ -364,7 +365,7 @@ extern "C"
   };
 
 
-  /** This class exports Resource information to Python. */
+  /** @brief This class exports Resource information to Python. */
   struct PythonResource
   {
     private:

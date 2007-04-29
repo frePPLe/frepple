@@ -254,8 +254,14 @@ inline ostream & operator << (ostream & os, const Signal & d)
 typedef unsigned int hashtype;
 
 
-/** This class groups some functions used to interact with the operating
+/** @brief This class groups some functions used to interact with the operating
   * system environment.
+  * 
+  * It handles:
+  *   - The frepple home directory, which is typically set from the environment
+  *     variable FREPPLE_HOME.
+  *   - The expansion of environment variables.
+  *   - The maximum number of processors / threads to be used by Frepple.
   */
 class Environment
 {
@@ -312,7 +318,8 @@ class Environment
 //
 
 
-/** An exception of this type is thrown when data errors are found.<br>
+/** @brief An exception of this type is thrown when data errors are found.
+  *
   * The normal handling of this error is to catch the exception and
   * continue execution of the rest of the program.<br>
   * When a DataException is thrown the object is expected to remain in
@@ -326,8 +333,9 @@ class DataException : public logic_error
 };
 
 
-/** An exception of this type is thrown when the library gets in an
+/** @brief An exception of this type is thrown when the library gets in an
   * inconsistent state from which the normal course of action can't continue.
+  *
   * The normal handling of this error is to exit the program, and report the
   * problem. This exception indicates a bug in the program code.
   */
@@ -339,9 +347,11 @@ class LogicException: public logic_error
 };
 
 
-/** An exception of this type is thrown when the library runs into problems
-  * that are specific at runtime. These could either be memory problems,
-  * threading problems, file system problems, etc...<br>
+/** @brief An exception of this type is thrown when the library runs into 
+  * problems that are specific at runtime. <br> 
+  * These could either be memory problems, threading problems, file system 
+  * problems, etc...
+  *
   * Errors of this type can be caught by the client applications and the
   * application can continue in most cases.<br>
   * This exception shouldn't be used for issueing warnings. Warnings should
@@ -359,8 +369,9 @@ class RuntimeException: public runtime_error
 // UTILITY CLASS "NON-COPYABLE"
 //
 
-/** Class NonCopyable is a base class. Derive your own class from NonCopyable
-  * when you want to prohibit copy construction and copy assignment.<br>
+/** @brief Class NonCopyable is a base class.<br>Derive your own class from 
+  * it when you want to prohibit copy construction and copy assignment.
+  *
   * Some objects, particularly those which hold complex resources like files
   * or network connections, have no sensible copy semantics.  Sometimes there
   * are possible copy semantics, but these would be of very limited usefulness
@@ -398,7 +409,8 @@ class NonCopyable
 // UTILITY CLASS "POOL"
 //
 
-/** This is an object pool which holds objects of a given type.<br>
+/** @brief This is an object pool which holds objects of a given type.
+  *
   * The parameter type should have a default constructor.<br>
   * The size of the pool is extended automatically as additional objects are
   * requested. There is no maximum to the number of objects allocated in the
@@ -487,7 +499,7 @@ template <class T> void Pool<T>::Free (T* it)
 // UTILITY CLASSES FOR MULTITHREADING
 //
 
-/** This class is a wrapper around platform specific mutex functions. */
+/** @brief This class is a wrapper around platform specific mutex functions. */
 class Mutex: public NonCopyable
 {
   public:
@@ -517,7 +529,8 @@ class Mutex: public NonCopyable
 };
 
 
-/** This is a convenience class that makes it easy (and exception-safe) to
+/** @brief This is a convenience class that makes it easy (and 
+  * exception-safe) to
   * lock a mutex in a scope.
   */
 class ScopeMutexLock: public NonCopyable
@@ -546,6 +559,10 @@ enum priority
 };
 
 
+/** @brief A lock represents a data structure to maintain a 
+  * multiple-reader / single-writer multithreading lock.<br>
+  * The current implementation is incomplete...
+  */
 class Lock
 {
   private:
@@ -558,7 +575,15 @@ class Lock
 };
 
 
-/** @todo Lock manager. First a single mngr class, later subclasses... */
+/** @brief A manager class to maintain, create and destroy mult-threading 
+  * locks.<br>The current implementation is incomplete...
+  *
+  * Different managers can be built to implement different ways of locking
+  * objects. Some implem
+  *
+  * A single lock manager is active in frepple at any point in time, but the 
+  * active manager can be switched on the fly.
+  */
 class LockManager : public NonCopyable
 {
   friend class LibraryUtils;
@@ -594,7 +619,8 @@ class LockManager : public NonCopyable
 // METADATA AND OBJECT FACTORY
 //
 
-/** This class defines an XML-tag.
+/** @brief This class defines an XML-tag.
+  *
   * Special for this class is the requirement to have a "perfect" hash
   * function, i.e. a function that returns a distinct number for each
   * defined tag. The class prints a warning message when the hash
@@ -677,7 +703,7 @@ class XMLtag : public NonCopyable
 };
 
 
-/** This abstract class is the base class used for callbacks.
+/** @brief This abstract class is the base class used for callbacks.
   * @see MetaClass::callback
   * @see FunctorStatic
   * @see FunctorInstance
@@ -698,8 +724,9 @@ class Functor : public NonCopyable
 
 
 class MetaCategory;
-/** This class stores metadata about the classes in the library. The stored
-  * information goes well beyond the standard 'type_info'.<br>
+/** @brief This class stores metadata about the classes in the library. 
+  * The stored information goes well beyond the standard 'type_info'.
+  *
   * A MetaClass instance represents metadata for a specific instance type.
   * A MetaCategory instance represents metadata for a category of object.
   * For instance, 'Resource' is a category while 'ResourceDefault' and
@@ -881,7 +908,9 @@ class MetaClass : public NonCopyable
 
 
 class XMLOutput;
-/** A MetaCategory instance represents metadata for a category of object.
+/** @brief A MetaCategory instance represents metadata for a category of 
+  * object.
+  *
   * A MetaClass instance represents metadata for a specific instance type.
   * For instance, 'Resource' is a category while 'ResourceDefault' and
   * 'ResourceInfinite' are specific classes.<br>
@@ -995,7 +1024,8 @@ class MetaCategory : public MetaClass
 };
 
 
-/** This class represents a static subscription to a signal.<br>
+/** @brief This class represents a static subscription to a signal.
+  *
   * When the signal callback is triggered the static method callback() on the
   * parameter class will be called.
   */
@@ -1039,7 +1069,8 @@ template <class T, class U> class FunctorStatic : public Functor
 };
 
 
-/** This class represents an object subscribing to a signal.<br>
+/** @brief This class represents an object subscribing to a signal.
+  *
   * When the signal callback is triggered the method callback() on the
   * instance object will be called.
   * @todo incomplete implementation of class FunctorInstance
@@ -1076,7 +1107,9 @@ template <class T, class U> class FunctorInstance : public Functor
 // UTILITY CLASS "TIMER".
 //
 
-/** This class is used to measure the processor time used by the program.
+/** @brief This class is used to measure the processor time used by the 
+  * program.
+  *
   * The accuracy of the timer is dependent on the implementation of the
   * ANSI C-function clock() by your compiler and your platform.
   * You may count on milli-second accuracy. Different platforms provide
@@ -1121,8 +1154,11 @@ inline ostream & operator << (ostream& os, const Timer& t)
 //
 
 
-/** This class represents a time duration with an accuracy of 1 second.
-  * The duration can be both positive and negative. */
+/** @brief This class represents a time duration with an accuracy of 
+  * one second.
+  *
+  * The duration can be both positive and negative. 
+  */
 class TimePeriod
 {
   friend ostream& operator << (ostream &, const TimePeriod &);
@@ -1225,7 +1261,8 @@ inline ostream & operator << (ostream & os, const TimePeriod & t)
 }
 
 
-/** This class represents a date and time with an accuracy of 1 second. */
+/** @brief This class represents a date and time with an accuracy of 
+  * one second. */
 class Date
 {
   friend ostream& operator << (ostream &, const Date &);
@@ -1396,7 +1433,8 @@ inline ostream & operator << (ostream & os, const Date & d)
 }
 
 
-/** This class defines a date-range, i.e. a start-date and end-date pair.<br>
+/** @brief This class defines a date-range, i.e. a start-date and end-date pair.
+  *
   * The behavior is such that the start date is considered as included in
   * it, but the end date is excluded from it.
   * In other words, a daterange is a halfopen date interval: [start,end[<br>
@@ -1533,8 +1571,10 @@ enum mode
 };
 
 
-/** This class writes XML formatted data to a output stream. Subclasses will
-  * implement writing to specific stream types, such as files and strings.
+/** @brief Base class for writing XML formatted data to an output stream.
+  * 
+  * Subclasses implement writing to specific stream types, such as files 
+  * and strings.
   */
 class XMLOutput
 {
@@ -1933,7 +1973,8 @@ class XMLOutput
 };
 
 
-/** This class writes XML data to a flat file.
+/** @brief This class writes XML data to a flat file.
+  *
   * Note that an object of this class can write only to a single file. If
   * multiple files are required multiple XMLOutputFile objects will be
   * required too.
@@ -1959,7 +2000,8 @@ class XMLOutputFile : public XMLOutput
 };
 
 
-/** This class writes XML data to a string.
+/** @brief This class writes XML data to a string.
+  *
   * The generated output is stored internally in the class, and can be
   * accessed by converting the XMLOutputString object to a string object.
   * This class can consume a lot of memory if large sets of objects are
@@ -1983,7 +2025,8 @@ class XMLOutputString : public XMLOutput
 };
 
 
-/** This class represents an XML element being read in from the input file. */
+/** @brief This class represents an XML element being read in from the 
+  * input file. */
 class XMLElement
 {
   private:
@@ -2093,7 +2136,8 @@ class XMLElement
 };
 
 
-/** Object is the abstract base class for the main entities.<br>
+/** @brief Object is the abstract base class for the main entities.
+  *
   * It handles to following capabilities:
   * - <b>Metadata:</b> All subclasses publish metadata about their structure.
   * - <b>Concurrency:</b> Locking of objects is required in multithreaded
@@ -2160,8 +2204,9 @@ class Object
     /** Return the memory size of the object in bytes. */
     virtual size_t getSize() const = 0;
 
-    /** The RLock class provides an exception safe way of getting a read lock
-      * on an Object.<br>
+    /** @brief The RLock class provides an exception safe way of getting a 
+      * read lock on an Object.
+      *
       * The constructor acquires the read lock and the destructor will release
       * it again.<br>
       * RLocks should be used as temporary objects on the stack, and should
@@ -2217,8 +2262,9 @@ class Object
     };
 
 
-    /** The WLock class provides an exception safe way of getting
-      * a write lock on an Object.<br>
+    /** @brief The WLock class provides an exception safe way of getting
+      * a write lock on an Object.
+      *
       * The constructor acquires the write lock and the destructor will release
       * it again.<br>
       * WLocks should be used as temporary objects on the stack, and should
@@ -2300,8 +2346,9 @@ class Object
 // RED-BLACK TREE CLASSES
 //
 
-/** This class implements a binary tree data structure. It is used as a
+/** @brief This class implements a binary tree data structure. It is used as a
   * container for entities keyed by their name.
+  * 
   * Technically, the data structure can be described as an red-black tree
   * with intrusive tree nodes.
   * @see HasName
@@ -2316,9 +2363,10 @@ class Tree : public NonCopyable
       */
     enum NodeColor { red, black, none };
 
-    /** This class represents a node in the tree. Elements which we want to
-      * represent in the tree will need to inherit from this class, since
-      * this tree container is intrusive.
+    /** @brief This class represents a node in the tree. 
+      * 
+      * Elements which we want to represent in the tree will need to inherit 
+      * from this class, since this tree container is intrusive.
       */
     class TreeNode
     {
@@ -2605,10 +2653,11 @@ class Tree : public NonCopyable
 // UTILITY CLASS "COMMAND": for executing & undoing actions
 //
 
-/** This is the abstract base class for all commands. All changes in the system
-  * state are expected to be wrapped in a command object. The execute() and
-  * undo() methods update the model.<br>
-  * Adhering to this principle make is easy to trace, time and log changes
+/** @brief Abstract base class for all commands. 
+  *
+  * All changes in the system state are expected to be wrapped in a command 
+  * object. The execute() and undo() methods update the model.<br>
+  * Adhering to this principle makes it easy to trace, time and log changes
   * appropriately.<br>
   * Command objects can't be persisted.
   */
@@ -2692,7 +2741,8 @@ class Command : public Object
 };
 
 
-/** This class allows conditional execution of commands.<br>
+/** @brief This class allows conditional execution of commands.
+  *
   * The condition is an expression that is evaluated on the operating system.
   */
 class CommandIf : public Command
@@ -2755,7 +2805,7 @@ class CommandIf : public Command
 };
 
 
-/** This class updates an environment variable. */
+/** @brief Command to update an environment variable. */
 class CommandSetEnv : public Command
 {
   private:
@@ -2800,9 +2850,10 @@ class CommandSetEnv : public Command
 };
 
 
-/** This class is used to group a series commands together. This class
-  * implements the "composite" design pattern in order to get an efficient
-  * and intuitive hierarchical grouping of tasks.<br>
+/** @brief A container command to group a series of commands together. 
+  *
+  * This class implements the "composite" design pattern in order to get an 
+  * efficient and intuitive hierarchical grouping of tasks.<br>
   * A command list can be executed in three different modes:
   *   - Run the commands in parallel with each other, in seperate threads.<br>
   *     This is achieved by setting the sequential field to false.
@@ -2968,8 +3019,10 @@ class CommandList : public Command
 };
 
 
-/** This command allows a user to run a system command on your operating
-  * system. The command will spawn a child process to execute the command, and
+/** @brief This command executes a command line on your operating
+  * system. 
+  * 
+  * The command will spawn a child process to execute the command, and
   * will wait for that process to finish before continue.<br>
   * Environment variables enclosed in ${ } are expanded with their value
   * before execution of the command.<br>
@@ -3023,7 +3076,8 @@ class CommandSystem : public Command
 };
 
 
-/** This class dynamically loads a shared library in Frepple.
+/** @brief Command to dynamically load a shared library in Frepple.
+  *
   * After loading, the function "initialize" is executed.
   * The function works on the following platforms:
   *  - Windows
@@ -3095,9 +3149,10 @@ class CommandLoadLibrary : public Command
 // INPUT PROCESSING CLASSES
 //
 
-/** This abstract class is the used for defining classes that are used to
+/** @brief This abstract class is the used for defining classes that are used to
   * implement processing functionality linked to XML processing
-  * instructions.<br>
+  * instructions.
+  *
   * Such a processing instruction looks as follows:<br>
   *   \<?TARGET data ?\>  <br>
   * Upon reading this from the XML input, the parser will look for the class
@@ -3125,8 +3180,9 @@ class XMLinstruction : public NonCopyable
 };
 
 
-/** This class will read in an XML-file and call the appropriate handler
-  * functions of the Object classes and objects.<br>
+/** @brief This class will read in an XML-file and call the appropriate 
+  * handler functions of the Object classes and objects.
+  *
   * This class is implemented based on the Xerces SAX XML parser.
   * For debugging purposes a flag is defined at the start of the file
   * "status.cpp". Uncomment the line and recompile to use it.
@@ -3378,7 +3434,7 @@ class XMLInput : public NonCopyable,  private DefaultHandler
 };
 
 
-/** This class reads XML data from a string. */
+/** @brief This class reads XML data from a string. */
 class XMLInputString : public XMLInput
 {
   public:
@@ -3411,32 +3467,8 @@ class XMLInputString : public XMLInput
 };
 
 
-/** This class reads XML data from an HTTP connection.<br>
-  * The Xerces parser supports only the simplest possible setup: no proxy,
-  * no caching, no ssl, no authentication, etc...
-  */
-class XMLInputURL : public XMLInput
-{
-  public:
-    /** Default constructor. */
-    XMLInputURL(const string& s) : url(s) {};
-
-    /** Parse the specified url. */
-    void parse(Object* pRoot, bool v = false)
-    {
-      if (url.empty())
-        throw DataException("Missing URL when parsing remote XML");
-      URLInputSource a(reinterpret_cast<const XMLCh *>(NULL), url.c_str());
-      XMLInput::parse(a,pRoot,v);
-    }
-
-  private:
-    /** The url to be loaded. */
-    const string url;
-};
-
-
-/** This class reads XML data from a file system.
+/** @brief This class reads XML data from a file system.
+  *
   * The filename argument can be the name of a file or a directory.
   * If a directory is passed, all files with the extension ".xml"
   * will be read from it. Subdirectories are not recursed.
@@ -3480,12 +3512,13 @@ class XMLInputFile : public XMLInput
 //
 
 
-/** This is the base class for the main objects.
- *  Instances of this class have the following properties:
- *    - Have a unique name.
- *    - A hashtable (keyed on the name) is maintained as a container with
- *      all active instances.
- */
+/** @brief Base class for objects using a string as their primary key.
+  *
+  * Instances of this class have the following properties:
+  *   - Have a unique name.
+  *   - A hashtable (keyed on the name) is maintained as a container with
+  *     all active instances.
+  */
 template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 {
   private:
@@ -3495,8 +3528,9 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
     typedef T* type;
 
   public:
-    /** This class models an STL-like iterator that allows us to iterate over
-      * the named entities in a simple and safe way.<br>
+    /** @brief This class models an STL-like iterator that allows us to 
+      * iterate over the named entities in a simple and safe way.
+      *
       * Objects of this class are created by the begin() and end() functions.
       */
     class iterator
@@ -3550,8 +3584,9 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         Tree::TreeNode* node;
     };
 
-    /** This class models an STL-like iterator that allows us to iterate over
-      * the named entities in a simple and safe way.<br>
+    /** @brief This class models an STL-like iterator that allows us to 
+      * iterate over the named entities in a simple and safe way.
+      *
       * Objects of this class are created by the begin() and end() functions.
       */
     class const_iterator
@@ -3843,7 +3878,8 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 };
 
 
-/** This is a decorator class for the main objects.
+/** @brief This is a decorator class for the main objects.
+  *
   * Instances of this class have a description, category and sub_category.
   */
 class HasDescription
@@ -3881,12 +3917,11 @@ class HasDescription
 };
 
 
-/** This is a base class for the main objects.
+/** @brief This is a base class for the main objects.
+  *
   * Instances of this class have the following properties:
   *  - Unique name and global hashtable are inherited from the class HasName.
-  *  - Belongs to a hierarchy.
-  *  - Instantiations of this template can build up hierarchical trees of
-  *    arbitrary depth.
+  *  - Instances build up hierarchical trees of arbitrary depth.
   *  - Each object can have a single parent only.
   *  - Each object has a parent and can have children.
   *    This class thus implements the 'composite' design pattern.
@@ -3904,8 +3939,9 @@ template <class T> class HasHierarchy : public HasName<T>
   public:
     class memberIterator;
     friend class memberIterator;
-    /** This class models an STL-like iterator that allows us to iterate over
-      * the members.
+    /** @brief This class models an STL-like iterator that allows us to 
+      * iterate over the members.
+      *
       * Objects of this class are created by the begin() and end() functions.
       */
     class memberIterator
@@ -4007,24 +4043,31 @@ template <class T> class HasHierarchy : public HasName<T>
 // ASSOCIATION
 //
 
-/** This template class represents a data structure for a load or flow network.
-  * A node class has pointers to 2 root classes. The 2 root classes each
-  * maintain a singly linked list of nodes.
+/** @brief This template class represents a data structure for a load or flow
+  * network.
+  *
+  * A node class has pointers to 2 root classes.<br> The 2 root classes each
+  * maintain a singly linked list of nodes.<br>
   * An example to clarify the usage:
-  *     class node = a newspaper subscription.
-  *     class person = maintains a list of all his scubscriptions.
-  *     class newspaper = maintains a list of all subscriptions for it.
+  *  - class "node" = a newspaper subscription.
+  *  - class "person" = maintains a list of all his subscriptions.
+  *  - class "newspaper" = maintains a list of all subscriptions for it.
+  *
   * This data structure could be replaced with 2 linked lists, but this
   * specialized data type consumes considerably lower memory.
-  * Reading from the structure is safe in multi-threading mode. Updates to the
-  * data structure in a multi-threading mode require the user to properly lock
-  * and unlock the container.
+  *
+  * Reading from the structure is safe in multi-threading mode.<br>
+  * Updates to the data structure in a multi-threading mode require the user 
+  * to properly lock and unlock the container.
   */
 template <class A, class B, class C> class Association
 {
   public:
     class Node;
   private:
+    /** @brief A abstract base class for the internal representation of the 
+      * association lists. 
+      */
     class List
     {
       friend class Node;
@@ -4034,11 +4077,14 @@ template <class A, class B, class C> class Association
         List() : first(NULL) {};
         bool empty() const {return first==NULL;}
     };
+
   public:
+    /** @brief A list type of the "first" / "from" part of the association. */
 	  class ListA : public List
     {
       public:
         ListA() {};
+        /** @brief An iterator over the associated objects. */
         class iterator
         {
           protected:
@@ -4060,6 +4106,7 @@ template <class A, class B, class C> class Association
               return j;
             }
         };
+        /** @brief An iterator over the associated objects. */
         class const_iterator
         {
           protected:
@@ -4120,10 +4167,13 @@ template <class A, class B, class C> class Association
           return NULL;
         }
     };
+
+    /** @brief A list type of the "second" / "to" part of the association. */
     class ListB : public List
     {
       public:
         ListB() {};
+        /** @brief An iterator over the associated objects. */
         class iterator
         {
           protected:
@@ -4145,6 +4195,7 @@ template <class A, class B, class C> class Association
               return j;
             }
         };
+        /** @brief An iterator over the associated objects. */
         class const_iterator
         {
           protected:
@@ -4205,6 +4256,10 @@ template <class A, class B, class C> class Association
           return NULL;
         }
     };
+
+    /** @brief A base class for the class representing the association 
+      * itself. 
+      */
     class Node
     {
       public:
@@ -4254,7 +4309,8 @@ template <class A, class B, class C> class Association
 // LIBRARY INITIALISATION
 //
 
-/** This class holds functions that used for maintenance of the library.
+/** @brief This class holds functions that used for maintenance of the library.
+  *
   * Its static member function 'initialize' should be called BEFORE the
   * first use of any class in the library.
   * The member function 'finialize' will be called automatically at the

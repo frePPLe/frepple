@@ -35,9 +35,10 @@
 namespace frepple
 {
 
-/** This solver implements a heuristic algorithm for planning demands. One by
-  * one the demands are processed. The demand will consume step by step any
-  * upstream materials, respecting all relevant constraints on its path.<br>
+/** @brief This solver implements a heuristic algorithm for planning demands. 
+  * 
+  * One by one the demands are processed. The demand will consume step by step
+  * any upstream materials, respecting all constraints on its path.<br>
   * The solver supports all planning constraints as defined in Solver
   * class.<br>
   * See the documentation of the different solve methods to understand the
@@ -216,8 +217,9 @@ class MRPSolver : public Solver
     classified_demand demands_per_cluster;
 
   protected:
-    /** This class is a helper class for the MRPSolver. It stores the solver
-      * state maintained by each solver thread.
+    /** @brief This class is a helper class of the MRPSolver class. 
+      *
+      * It stores the solver state maintained by each solver thread.
       * @see MRPSolver
       */
     class MRPSolverdata : public CommandList
@@ -315,6 +317,9 @@ class MRPSolver : public Solver
 };
 
 
+/** @brief This class holds functions that used for maintenance of the solver 
+  * code. 
+  */
 class LibrarySolver
 {
   public:

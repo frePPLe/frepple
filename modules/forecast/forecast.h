@@ -39,7 +39,7 @@
   *    All sub-demands of a forecast demand have the same item.<br>
   *    The due date is aligned on the buckets of the forecast calendar.<br>
   *  - In a later phase, functionality will be implemented to customer orders
-  *    from the forecast. @todo
+  *    from the forecast.
   *
   * The XML schema extension enabled by this module is (see mod_forecast.xsd):
   * <PRE>
@@ -71,6 +71,7 @@
   *   </xsd:complexContent>
   * </xsd:complexType>
   * </PRE>
+  * @todo Implement forecast netting
   */
 
 #ifndef FORECAST_H

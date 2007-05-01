@@ -78,7 +78,7 @@ def rundb(request):
 
       # Show the main screen again
       # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-      return HttpResponseRedirect('/execute/execute.html')
+      return HttpResponseRedirect('/execute/')
 
     else:
       # No valid action found

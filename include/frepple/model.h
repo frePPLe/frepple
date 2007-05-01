@@ -1082,10 +1082,13 @@ class CustomerDefault : public Customer
 };
 
 
-/** @brief This class represents an Operation. 
+/** @brief An operation represents an activity: these consume and produce material, 
+  * take time and also require capacity. 
   * 
-  * @todo describe operation class better
-  * It's an abstract class. 
+  * An operation consumes and produces material, modeled through flows.<br>
+  * An operation requires capacity, modeled through loads.
+  *
+  * This is an abstract base class for all different operation types. 
   */
 class Operation : public HasName<Operation>,
       public HasLevel, public Plannable, public HasDescription

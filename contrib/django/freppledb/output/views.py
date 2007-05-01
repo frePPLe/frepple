@@ -34,10 +34,11 @@ from datetime import date
 
 from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item
 
-PAGINATE_BY = 50
-ON_EACH_SIDE = 3
-ON_ENDS = 2
-
+# Parameter settings
+PAGINATE_BY = 50       # Number of entities displayed on a page
+ON_EACH_SIDE = 3       # Number of pages show left and right of the current page
+ON_ENDS = 2            # Number of pages shown at the start and the end of the page list
+CACHE_SQL_QUERY = 10   # Time in minutes during which results of SQL queries are cached
 
 def getBuckets(request, bucket=None, start=None, end=None):
   '''
@@ -47,7 +48,11 @@ def getBuckets(request, bucket=None, start=None, end=None):
   stored in the django memory cache for performance reasons
   '''
   # Pick up the arguments
-  if not bucket: bucket = request.GET.get('bucket', 'month')
+  if not bucket:
+    bucket = request.GET.get('bucket')
+    if not bucket:
+      try: bucket = request.user.get_profile().buckets
+      except: bucket = 'month'
   if not start:
     start = request.GET.get('start')
     if start:
@@ -55,9 +60,13 @@ def getBuckets(request, bucket=None, start=None, end=None):
         (y,m,d) = start.split('-')
         start = date(int(y),int(m),int(d))
       except:
-        start = Plan.objects.all()[0].current.date()
+        try: start = request.user.get_profile().startdate
+        except: pass
+        if not start: start = Plan.objects.all()[0].current.date()
     else:
-      start = Plan.objects.all()[0].current.date()
+      try: start = request.user.get_profile().startdate
+      except: pass
+      if not start: start = Plan.objects.all()[0].current.date()
   if not end:
     end = request.GET.get('end')
     if end:
@@ -65,9 +74,13 @@ def getBuckets(request, bucket=None, start=None, end=None):
         (y,m,d) = end.split('-')
         end = date(int(y),int(m),int(d))
       except:
-        end = date(2030,1,1)
+        try: end = request.user.get_profile().enddate
+        except: pass
+        if not end: end = date(2030,1,1)
     else:
-      end = date(2030,1,1)
+      try: end = request.user.get_profile().enddate
+      except: pass
+      if not end: end = date(2030,1,1)
 
   # Check if the argument is valid
   if bucket not in ('day','week','month','quarter','year'):
@@ -91,15 +104,15 @@ def getBuckets(request, bucket=None, start=None, end=None):
   if start and end:
     res = []
     for i in dates:
-      if i['start'] < end and i['end'] > start: res.append(i)
+      if i['start'] <= end and i['end'] >= start: res.append(i)
   elif end:
     res = []
     for i in dates:
-      if i['start'] > end: res.append(i)
+      if i['start'] >= end: res.append(i)
   elif start:
     res = []
     for i in dates:
-      if i['end'] > start: res.append(i)
+      if i['end'] >= start: res.append(i)
   else:
     return (bucket,start,end,dates)
   return (bucket,start,end,res)
@@ -116,13 +129,13 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, title=
     parameters.__setitem__('page', 0)
     objectlist = None
     if entity is None:
-      key = "%s?%s" % (request.path, parameters.urlencode())
+      key = (request.path,bucket,start,end)
       objectlist = cache.get(key)
     if not objectlist:
       # Data not found in the cache, recompute
       objectlist = querymethod(entity, bucket, start, end)
       if entity is None:
-        cache.set(key, objectlist, 10 * 60)   # cache for 10 minutes
+        cache.set(key, objectlist, CACHE_SQL_QUERY * 60)
 
     # HTML output or CSV output?
     type = request.GET.get('type','html')

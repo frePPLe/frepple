@@ -1,0 +1,85 @@
+{% extends "admin/base_site.html" %}
+
+{% block nav-global %}
+<div class="menuBar">
+<a class="menuButton"
+    href=""
+    onclick="return buttonClick(event, 'inputMenu');"
+    onmouseover="buttonMouseover(event, 'inputMenu');"
+>Input</a>
+<a class="menuButton"
+    href=""
+    onclick="return buttonClick(event, 'outputMenu');"
+    onmouseover="buttonMouseover(event, 'outputMenu');"
+>Output</a>
+<a class="menuButton"
+    href=""
+    onclick="return buttonClick(event, 'toolsMenu');"
+    onmouseover="buttonMouseover(event, 'toolsMenu');"
+>Tools</a>
+<a class="menuButton"
+    href=""
+    onclick="return buttonClick(event, 'userMenu');"
+    onmouseover="buttonMouseover(event, 'userMenu');"
+>User</a>
+</div>
+
+<!-- Main menus. -->
+
+<div id="inputMenu" class="menu" onmouseover="menuMouseover(event)">
+<a class="menuItem" href="blank.html" style="color:black; text-decoration: none;">File Menu Item 1</a>
+<a class="menuItem" href="" onclick="return false;" onmouseover="menuItemMouseover(event, 'fileMenu2');">
+   <span class="menuItemText">File Menu Item 2</span><span class="menuItemArrow">&#9654;</span>
+</a>
+<a class="menuItem" href="blank.html">File Menu Item 3</a>
+<a class="menuItem" href="blank.html">File Menu Item 4</a>
+<a class="menuItem" href="blank.html">File Menu Item 5</a>
+<div class="menuItemSep"></div>
+<a class="menuItem" href="blank.html">File Menu Item 6</a>
+</div>
+
+<div id="outputMenu" class="menu"
+     onmouseover="menuMouseover(event)">
+<a class="menuItem" href="/buffer/">Inventory Plan</a>
+<a class="menuItem" href="/resource/">Resource Plan</a>
+<a class="menuItem" href="/demand/">Demand Plan</a>
+<a class="menuItem" href="/operation/">Operation Plan</a>
+<div class="menuItemSep"></div>
+<a class="menuItem" href=""
+   onclick="return false;"
+   onmouseover="menuItemMouseover(event, 'rawOutputMenu');"
+><span class="menuItemText">Raw output data</span><span class="menuItemArrow">&#9654;</span></a>
+</div>
+
+<div id="toolsMenu" class="menu"
+     onmouseover="menuMouseover(event)">
+<a class="menuItem" href="/execute/">Execute</a>
+</div>
+
+<div id="userMenu" class="menu">
+<a class="menuItem" href="/admin/logout">Logout</a>
+<a class="menuItem" href="/admin/password_change">Change Password</a>
+</div>
+
+<!-- File sub menus. -->
+
+<div id="fileMenu2" class="menu">
+<a class="menuItem" href="blank.html">File Menu 2 Item 1</a>
+<a class="menuItem" href="blank.html">File Menu 2 Item 2</a>
+</div>
+
+<!-- Output sub menus. -->
+
+<div id="rawOutputMenu" class="menu"
+     onmouseover="menuMouseover(event)">
+<a class="menuItem" href="blank.html">Edit Menu 3 Item 1</a>
+<a class="menuItem" href="blank.html">Edit Menu 3 Item 2</a>
+<div class="menuItemSep"></div>
+<a class="menuItem" href=""
+   onclick="return false;"
+   onmouseover="menuItemMouseover(event, 'editMenu3_3');"
+><span class="menuItemText">Edit Menu 3 Item 3</span><span class="menuItemArrow">&#9654;</span></a>
+<a class="menuItem" href="blank.html">Edit Menu 3 Item 4</a>
+</div>
+
+{% endblock %}

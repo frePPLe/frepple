@@ -1,10 +1,15 @@
 {% extends "admin/base.html" %}
-{% load i18n %}
+{% load i18n breadcrumbs %}
 
-{% block title %}Frepple{% endblock %}
+{% block title %}Frepple{% if title %} - {{title}}{% endif %}{% endblock %}
 
 {% block branding %}
 <h1 id="site-name">Frepple</h1>
 {% endblock %}
 
-{% block nav-global %}{% endblock %}
+{% block extrahead %}{{ block.super }}
+<link rel="stylesheet" type="text/css" href="/static/styles.css" />
+<script type="text/javascript" src="/static/frepple.js"></script>
+{% endblock %}
+
+{% block breadcrumbs %}<div class="breadcrumbs">{% crumbs %}</div>{% endblock %}

@@ -105,6 +105,7 @@ INSTALLED_APPS = (
     'freppledb.input',
     'freppledb.output',
     'freppledb.execute',
+    'freppledb.user',
 )
 
 
@@ -139,6 +140,9 @@ CACHE_BACKEND = 'locmem:///'
 
 # Directory from which we allow server include
 ALLOWED_INCLUDE_ROOTS = (FREPPLE_HOME)
+
+# To add the user profile
+AUTH_PROFILE_MODULE = 'user.Preferences'
 
 # IP address of the machine you are browsing from. When logging in from this
 # machine additional debugging statements can be shown.

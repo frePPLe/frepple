@@ -23,42 +23,56 @@
 
 from django import template
 from django.contrib.sessions.models import Session
+from django.template import resolve_variable
 import urllib
 
-register = template.Library()
+HOMECRUMB = '<a href="/">Site administration</a>'
+
 
 class CrumbsNode(template.Node):
     '''
-    Partial attempt to create a more generic breadcrumbs framework
-    Missing:
-      - 'popping' from the crumb stack, only pushing
-      - behavior across sessions not as desired
-    Not happy with it...
+    A generic breadcrumbs framework.
     Usage in your templates:
         {% load breadcrumbs %}
-        {% crumbs any_url name %}
+        {% crumbs %}
+    The admin app already defines a block for crumbs, so the typical usage of the
+    crumbs tag is as follows:
+      {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
     '''
-    def __init__(self, url, name):
-        self.url = url
-        self.name = name
     def render(self, context):
+        global HOMECRUMB
         # Pick up the current crumbs from the session cookie
-        cur = context.get('request').session.get('crumbs', [])
-        cur.append((self.url,self.name))
-        context.get('request').session['crumbs'] = cur
+        req = context['request']
+        try: cur = req.session['crumbs']
+        except: cur = [HOMECRUMB]
+
+        # Pop from the stack if the same url is already in the crumbs
+        try: title = resolve_variable("title",context)
+        except: title = req.get_full_path()
+        key = '<a href="%s">%s</a>' % (req.get_full_path(), title)
+        cnt = 0
+        for i in cur:
+           if i == key:
+             cur = cur[0:cnt]   # Pop all remaining elements from the stack
+             break
+           cnt += 1
+
+        # Push current url on the stack
+        cur.append(key)
+
+        # Update the current session
+        req.session['crumbs'] = cur
+
         # Now create HTML code to return
-        return ' '.join([ ('<a href="%s">%s</a>' % (i,j))  for i,j in cur])
+        return '  >  '.join(cur)
 
 def do_crumbs(parser, token):
-    try:
-        tagname, url, name = token.split_contents()
-    except ValueError:
-        raise template.TemplateSyntaxError, "%r tag requires 2 arguments" % token.contents[0]
-    return CrumbsNode(url,name)
+    return CrumbsNode()
+
 
 def superlink(value,type):
     '''
-    This filter creates a hyperlinked
+    This filter creates a link with a context menu for right-clicks.
     '''
     # Fail silently if we end up with an empty string
     if value is None: return ''
@@ -67,8 +81,9 @@ def superlink(value,type):
     # Fail silently if we end up with an empty string
     if value == '': return ''
     # Final return value
-    return '<a href="/admin/input/%s/%s" class="%s">%s</a>' % (type,urllib.quote(value),type,value.replace(' ','&nbsp;'))
+    return '<a href="/admin/input/%s/%s" class="%s">%s</a>' % (type,urllib.quote(value),type,value)
 
 
-register.tag('crumbs', do_crumbs)
-register.filter('superlink', superlink)
+register = template.Library()
+register.tag('crumbs',do_crumbs)
+register.filter('superlink',superlink)

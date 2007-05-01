@@ -29,11 +29,17 @@ from django.conf import settings
 urlpatterns = patterns('',
 
     # Frepple execution
-    (r'^execute/log/$', 'django.views.generic.simple.direct_to_template', {'template': 'execute/log.html'} ),
+    (r'^execute/log/$', 'django.views.generic.simple.direct_to_template',
+       {'template': 'execute/log.html',
+        'extra_context': {'title': 'Frepple log file'},
+       }),
     (r'^execute/runfrepple/$', 'freppledb.execute.views.runfrepple'),
     (r'^execute/rundb/$', 'freppledb.execute.views.rundb'),
     (r'^execute/upload/$', 'freppledb.execute.views.upload'),
-    (r'^execute/', 'django.views.generic.simple.direct_to_template', {'template': 'execute/execute.html'}),
+    (r'^execute/', 'django.views.generic.simple.direct_to_template',
+       {'template': 'execute/execute.html',
+        'extra_context': {'title': 'Execute'},
+       }),
 
     # Main index page
     (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/admin/'}),

@@ -1,9 +1,8 @@
-{% extends "admin/base_site.html" %}
+{% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 {% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block bodyclass %}dashboard{% endblock %}
-{% block breadcrumbs %}<div class="breadcrumbs"><a href="/admin">{% trans "Home" %}</a> &rsaquo; <a href="/execute">Execute</a> &rsaquo; Log file</div>{% endblock %}
 {% block content %}
 <div id="content-main">
 

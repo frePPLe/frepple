@@ -26,7 +26,53 @@ from django.contrib.sessions.models import Session
 from django.template import resolve_variable
 import urllib
 
-HOMECRUMB = '<a href="/">Site administration</a>'
+HOMECRUMB = '<a href="/admin/">Site administration</a>'
+
+
+class ModelsNode(template.Node):
+    def __init__(self, appname, varname):
+        self.varname = varname
+        self.appname = appname
+
+    def render(self, context):
+        from django.db import models
+        from django.utils.text import capfirst
+        user = context['user']
+        model_list = []
+        if user.has_module_perms(self.appname):
+          for m in models.get_models(models.get_app(self.appname)):
+             # Verify if the model is allowed to be displayed in the admin ui and
+             # check the user has appropriate permissions to access it
+             if m._meta.admin and user.has_perm("%s.%s" % (self.appname, m._meta.get_change_permission())):
+                 model_list.append({
+                   'name': capfirst(m._meta.verbose_name_plural),
+                   'admin_url': '/admin/%s/%s/' % (self.appname, m.__name__.lower()),
+                   })
+          model_list.sort()
+        context[self.varname] = model_list
+        return ''
+
+
+def get_models(parser, token):
+    """
+    Returns a list of output models to which the user has permissions.
+
+    Syntax::
+
+        {% get_models from [application_name] as [context_var_containing_app_list] %}
+
+    Example usage::
+
+        {% get_models from output as modelsOut %}
+    """
+    tokens = token.contents.split()
+    if len(tokens) < 5:
+        raise template.TemplateSyntaxError, "'%s' tag requires two arguments" % tokens[0]
+    if tokens[1] != 'from':
+        raise template.TemplateSyntaxError, "First argument to '%s' tag must be 'from'" % tokens[0]
+    if tokens[3] != 'as':
+        raise template.TemplateSyntaxError, "Third argument to '%s' tag must be 'as'" % tokens[0]
+    return ModelsNode(tokens[2],tokens[4])
 
 
 class CrumbsNode(template.Node):
@@ -85,5 +131,6 @@ def superlink(value,type):
 
 
 register = template.Library()
-register.tag('crumbs',do_crumbs)
-register.filter('superlink',superlink)
+register.tag('crumbs', do_crumbs)
+register.filter('superlink', superlink)
+register.tag('get_models', get_models)

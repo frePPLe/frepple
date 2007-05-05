@@ -1,22 +1,30 @@
 {% extends "admin/base_site.html" %}
 
+
 {% block nav-global %}
+{% load breadcrumbs %}
+{% get_models from output as modelsOut %}
+{% get_models from input as modelsIn %}
 <div class="menuBar">
+{% if modelsIn %}
 <a class="menuButton"
     href=""
     onclick="return buttonClick(event, 'inputMenu');"
     onmouseover="buttonMouseover(event, 'inputMenu');"
 >Input</a>
+{% endif %}
 <a class="menuButton"
     href=""
     onclick="return buttonClick(event, 'outputMenu');"
     onmouseover="buttonMouseover(event, 'outputMenu');"
 >Output</a>
+{% if perms.execute %}
 <a class="menuButton"
     href=""
     onclick="return buttonClick(event, 'toolsMenu');"
     onmouseover="buttonMouseover(event, 'toolsMenu');"
 >Tools</a>
+{% endif %}
 <a class="menuButton"
     href=""
     onclick="return buttonClick(event, 'userMenu');"
@@ -26,17 +34,13 @@
 
 <!-- Main menus. -->
 
+{% if modelsIn %}
 <div id="inputMenu" class="menu" onmouseover="menuMouseover(event)">
-<a class="menuItem" href="blank.html" style="color:black; text-decoration: none;">File Menu Item 1</a>
-<a class="menuItem" href="" onclick="return false;" onmouseover="menuItemMouseover(event, 'fileMenu2');">
-   <span class="menuItemText">File Menu Item 2</span><span class="menuItemArrow">&#9654;</span>
-</a>
-<a class="menuItem" href="blank.html">File Menu Item 3</a>
-<a class="menuItem" href="blank.html">File Menu Item 4</a>
-<a class="menuItem" href="blank.html">File Menu Item 5</a>
-<div class="menuItemSep"></div>
-<a class="menuItem" href="blank.html">File Menu Item 6</a>
+{% for m in modelsIn %}
+<a class="menuItem" href="{{m.admin_url}}">{{ m.name }}</a>
+{% endfor %}
 </div>
+{% endif %}
 
 <div id="outputMenu" class="menu"
      onmouseover="menuMouseover(event)">
@@ -44,42 +48,36 @@
 <a class="menuItem" href="/resource/">Resource Plan</a>
 <a class="menuItem" href="/demand/">Demand Plan</a>
 <a class="menuItem" href="/operation/">Operation Plan</a>
+{% if modelsOut %}
 <div class="menuItemSep"></div>
 <a class="menuItem" href=""
    onclick="return false;"
    onmouseover="menuItemMouseover(event, 'rawOutputMenu');"
 ><span class="menuItemText">Raw output data</span><span class="menuItemArrow">&#9654;</span></a>
+{% endif %}
 </div>
 
+{% if perms.execute %}
 <div id="toolsMenu" class="menu"
      onmouseover="menuMouseover(event)">
 <a class="menuItem" href="/execute/">Execute</a>
 </div>
+{% endif %}
 
 <div id="userMenu" class="menu">
 <a class="menuItem" href="/admin/logout">Logout</a>
 <a class="menuItem" href="/admin/password_change">Change Password</a>
 </div>
 
-<!-- File sub menus. -->
-
-<div id="fileMenu2" class="menu">
-<a class="menuItem" href="blank.html">File Menu 2 Item 1</a>
-<a class="menuItem" href="blank.html">File Menu 2 Item 2</a>
-</div>
-
 <!-- Output sub menus. -->
 
+{% if modelsOut %}
 <div id="rawOutputMenu" class="menu"
      onmouseover="menuMouseover(event)">
-<a class="menuItem" href="blank.html">Edit Menu 3 Item 1</a>
-<a class="menuItem" href="blank.html">Edit Menu 3 Item 2</a>
-<div class="menuItemSep"></div>
-<a class="menuItem" href=""
-   onclick="return false;"
-   onmouseover="menuItemMouseover(event, 'editMenu3_3');"
-><span class="menuItemText">Edit Menu 3 Item 3</span><span class="menuItemArrow">&#9654;</span></a>
-<a class="menuItem" href="blank.html">Edit Menu 3 Item 4</a>
+{% for m in modelsOut %}
+<a class="menuItem" href="{{m.admin_url}}">{{ m.name }}</a>
+{% endfor %}
 </div>
+{% endif %}
 
 {% endblock %}

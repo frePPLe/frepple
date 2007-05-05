@@ -2,7 +2,6 @@
 {% load adminmedia admin_list i18n %}
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
 {% block bodyclass %}change-list{% endblock %}
-{% block userlinks %}<a href="../../password_change/">{% trans 'Change password' %}</a> / <a href="../../logout/">{% trans 'Log out' %}</a>{% endblock %}
 {% block breadcrumbs %}{% if not is_popup %}{{ block.super }}{% endif %}{% endblock %}
 {% block coltype %}flex{% endblock %}
 {% block content %}

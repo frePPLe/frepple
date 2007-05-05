@@ -13,7 +13,7 @@
 <div id="content-main">
 
 <div id="buffercontext" class="ContextMenu">
-	<a id="/admin/input/buffer/%s">Buffer</a>
+{% if perms.input.can_change_buffer %}<a id="/admin/input/buffer/%s">Buffer</a>{% endif %}
   <a id="/path/buffer/%s">Supply Path</a>
 </div>
 

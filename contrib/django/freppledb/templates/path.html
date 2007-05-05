@@ -17,29 +17,29 @@
 <div id="content-main">
 
 <div id="buffercontext" class="ContextMenu">
-	<a id="/admin/input/buffer/%s">Buffer</a>
+	{% if perms.input.can_change_buffer %}<a id="/admin/input/buffer/%s">Buffer</a>{% endif %}
   <a id="/path/buffer/%s">Supply Path</a>
   <a id="/buffer/%s">Plan</a>
 </div>
 
 <div id="resourcecontext" class="ContextMenu">
-	<a id="/admin/input/resource/%s">Resource</a>
+	{% if perms.input.can_change_resource %}<a id="/admin/input/resource/%s">Resource</a>{% endif %}
   <a id="/path/resource/%s">Supply Path</a>
 	<a id="/resource/%s">Plan</a>
 </div>
 
 <div id="operationcontext" class="ContextMenu">
-	<a id="/admin/input/operation/%s">Operation</a>
+	{% if perms.input.can_change_operation %}<a id="/admin/input/operation/%s">Operation</a>{% endif %}
   <a id="/path/operation/%s">Supply Path</a>
 	<a id="/operation/%s">Plan</a>
 </div>
 
 <div id="locationcontext" class="ContextMenu">
-	<a id="/admin/input/location/%s">Location</a>
+	{% if perms.input.can_change_location %}<a id="/admin/input/location/%s">Location</a>{% endif %}
 </div>
 
 <div id="itemcontext" class="ContextMenu">
-	<a id="/admin/input/item/%s">Item</a>
+	{% if perms.input.can_change_item %}<a id="/admin/input/item/%s">Item</a>{% endif %}
 	<a id="/demand/%s">Demand</a>
   <a id="/path/item/%s">Supply Path</a>
 </div>

@@ -23,7 +23,6 @@
 
 from django.core.paginator import ObjectPaginator, InvalidPage
 from django.shortcuts import render_to_response
-from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template import RequestContext, loader
 from django.db import connection

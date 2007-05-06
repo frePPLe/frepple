@@ -34,7 +34,7 @@ class Preferences(models.Model):
     )
     user = models.ForeignKey(User, unique=True, edit_inline=models.TABULAR,
       num_in_admin=1,min_num_in_admin=1, max_num_in_admin=1, num_extra_on_change=0)
-    buckets = models.TextField(choices=buckettype, default='month')
+    buckets = models.CharField(maxlength=10, choices=buckettype, default='month')
     startdate = models.DateField(blank=True, null=True)
     enddate = models.DateField(blank=True, null=True)
     dummy = models.SmallIntegerField(editable=False, core=True, default=1)

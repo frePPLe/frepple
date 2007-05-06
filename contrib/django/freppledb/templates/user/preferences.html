@@ -1,0 +1,16 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n admin_list adminmedia breadcrumbs %}
+{% block stylesheet %}{% admin_media_prefix %}css/forms.css{% endblock %}
+{% block coltype %}colM{% endblock %}
+{% block bodyclass %}dashboard{% endblock %}
+{% block content %}
+<div id="content-main">
+
+<form action="." method="post" class="form">
+{{ form.as_p }}
+<input type="submit" value="Save"/>
+</form>
+
+</div>
+
+{% endblock %}

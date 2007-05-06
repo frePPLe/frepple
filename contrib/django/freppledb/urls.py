@@ -24,6 +24,7 @@
 from django.conf.urls.defaults import *
 import sys, os.path
 import freppledb.output.views
+import freppledb.user.views
 from django.conf import settings
 
 urlpatterns = patterns('',
@@ -57,6 +58,9 @@ urlpatterns = patterns('',
     (r'^operation/([^/]+)/$', freppledb.output.views.operationreport),
     (r'^operation/$', freppledb.output.views.operationreport),
     (r'^path/([^/]+)/([^/]+)/$', freppledb.output.views.pathreport.view),
+
+    # User preferences
+    (r'preferences/$', freppledb.user.views.preferences),
 )
 
 # Allows the standalone development server to serve the static pages.

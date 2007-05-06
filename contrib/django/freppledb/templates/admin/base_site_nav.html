@@ -37,8 +37,7 @@
 {% if modelsIn %}
 <div id="inputMenu" class="menu" onmouseover="menuMouseover(event)">
 {% for m in modelsIn %}
-<a class="menuItem" href="{{m.admin_url}}">{{ m.name }}</a>
-{% endfor %}
+<a class="menuItem" href="{{m.admin_url}}">{{ m.name }}</a>{% endfor %}
 </div>
 {% endif %}
 
@@ -66,6 +65,7 @@
 
 <div id="userMenu" class="menu">
 <a class="menuItem" href="/admin/logout">Logout</a>
+<a class="menuItem" href="/preferences">Preferences</a>
 <a class="menuItem" href="/admin/password_change">Change Password</a>
 </div>
 
@@ -75,8 +75,7 @@
 <div id="rawOutputMenu" class="menu"
      onmouseover="menuMouseover(event)">
 {% for m in modelsOut %}
-<a class="menuItem" href="{{m.admin_url}}">{{ m.name }}</a>
-{% endfor %}
+<a class="menuItem" href="{{m.admin_url}}">{{ m.name }}</a>{% endfor %}
 </div>
 {% endif %}
 

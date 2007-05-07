@@ -114,7 +114,7 @@ def createDates():
 
 
 @transaction.commit_manually
-def create_model (cluster, demand, level):
+def create_model (cluster, demand, level, resource):
   '''
   This routine populates the database with a sample dataset.
   '''
@@ -153,7 +153,7 @@ def create_model (cluster, demand, level):
   # Create resources and their calendars
   print "Creating resources and calendars..."
   res = []
-  for i in range(100):
+  for i in range(resource):
     cal = Calendar(name='capacity for res %03d' %i, category='capacity')
     bkt = Bucket(startdate=date(2007,1,1), value=2, calendar=cal)
     cal.save()
@@ -199,7 +199,7 @@ def create_model (cluster, demand, level):
     for k in range(level):
       oper = Operation(name='Oper %05d L%02d' % (i,k), duration=random.choice(durations))
       oper.save()
-      if k == 1:
+      if k == 1 and res:
         # Create a resource load
         ld = Load(resource=random.choice(res), operation=oper)
         ld.save()

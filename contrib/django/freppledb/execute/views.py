@@ -64,14 +64,17 @@ def rundb(request):
         clusters = int(request.POST['clusters'])
         demands = int(request.POST['demands'])
         levels = int(request.POST['levels'])
+        resources = int(request.POST['resources'])
+        if clusters>=100000 or demands>=10000 or levels>=100 or resources>=1000:
+          raise ValueError("Value too big")
       except KeyError:
         raise Http404
       except ValueError, e:
-        request.user.message_set.create(message='Invalid input field' % e)
+        request.user.message_set.create(message='Invalid input field')
       else:
         # Execute
         try:
-          create_model(clusters,demands,levels)
+          create_model(clusters,demands,levels,resources)
           request.user.message_set.create(message='Created sample model in the database')
         except Exception, e:
           request.user.message_set.create(message='Failure during sample model creation:%s' % e)

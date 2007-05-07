@@ -16,14 +16,14 @@
 
 <form method="post" action="/execute/runfrepple/">
 <tr><th scope="row"><a>Run frepple</a></th>
-<td>Load frepple from the database...  <br>
+<td>Load frepple from the database...  <br/>
 and create <select name="type" id="type">
 <option value="7">constrained</option>
 <option value="3">material constrained</option>
 <option value="4">capacity constrained</option>
 <option value="0">unconstrained</option>
-</select> plan in frepple...<br>
-and export results into the database<br><br>
+</select> plan in frepple...<br/>
+and export results into the database<br/><br/>
 <a href="/execute/log/">View latest log file</a></td>
 <td><input id="run_frepple" type="submit" value="run" />
 <input type="hidden" name="action" value="run" /></td>
@@ -41,7 +41,9 @@ and export results into the database<br><br>
 
 <tr><th scope="row"><a>CSV</a></th>
 <form enctype="multipart/form-data" method="post" action="/execute/upload/">
-<td>Entity: <select name="entity" id="entity">
+<td>Create a csv text file and upload the data in the database.<br/>
+The first row of your file should contain the field names.<br/>
+Entity: <select name="entity" id="entity">
 <option value="-" selected="selected">-</option>
 <option value="Buffer">Buffer</option>
 <option value="Calendar">Calendar</option>
@@ -56,8 +58,8 @@ and export results into the database<br><br>
 <option value="Operation">Operation</option>
 <option value="OperationPlan">OperationPlan</option>
 <option value="Resource">Resource</option>
-</select><br>
-Select your csv file: <input type="file" id="csv_file" size="25" name="csv_file"/><br>
+</select><br/>
+Select your csv file: <input type="file" id="csv_file" size="25" name="csv_file"/><br/>
 </td><td><input id="upload_button" type="submit" value="Upload"/>
 </td></tr>
 </form>
@@ -69,17 +71,20 @@ Select your csv file: <input type="file" id="csv_file" size="25" name="csv_file"
 <div class="module">
 <table summary="Extra commands.">
 <caption>Database</caption>
-<tr><th scope="row"><a>Erase all data from the database</a></th>
+<tr><th scope="row"><a>Erase</a></th>
 <form method="post" action="/execute/rundb/">
-<td>&nbsp;</td>
+<td>Erase all data from the database.</td>
 <td><input id="erase_db" type="submit" value="run" />
 <input type="hidden" name="action" value="erase" /></td>
 </form></tr>
 <tr><th scope="row"><a>Create demo model</a></th>
 <form method="post" action="/execute/rundb/">
-<td>Number of end items:<input name="clusters" type="text" maxlength="5" size="5" /><br>
-Demands per end item:<input name="demands" type="text" maxlength="4" size="4" /><br>
-Depth of bill-of-material:<input name="levels" type="text" maxlength="2" size="2" /><br>
+<td>Create a simple demo model in the database.<br/>
+The parameters control the size and complexity.<br/>
+Number of end items:<input name="clusters" type="text" maxlength="5" size="5" /><br/>
+Demands per end item:<input name="demands" type="text" maxlength="4" size="4" /><br/>
+Depth of bill-of-material:<input name="levels" type="text" maxlength="2" size="2" /><br/>
+Number of resources:<input name="resources" type="text" maxlength="3" size="3" /><br/>
 </td>
 <td><input id="erase_db" type="submit" value="run" />
 <input type="hidden" name="action" value="create" /></td>

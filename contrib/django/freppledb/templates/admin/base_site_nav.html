@@ -64,9 +64,13 @@
 {% endif %}
 
 <div id="userMenu" class="menu">
+{% if request.user.is_authenticated %}
 <a class="menuItem" href="/admin/logout">Logout</a>
 <a class="menuItem" href="/preferences">Preferences</a>
 <a class="menuItem" href="/admin/password_change">Change Password</a>
+{% else %}
+<a class="menuItem" href="/admin/auth/user/">Login</a>
+{% endif %}
 </div>
 
 <!-- Output sub menus. -->

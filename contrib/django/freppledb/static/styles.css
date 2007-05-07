@@ -107,7 +107,7 @@ a {
   position: absolute;
   top: 0px;
   visibility: hidden;
-  z-index: auto;
+  z-index: 10000;
 }
 
 #header div.menu a.menuItem {

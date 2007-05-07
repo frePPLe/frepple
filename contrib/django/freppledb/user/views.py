@@ -53,5 +53,6 @@ def preferences(request):
   return render_to_response('user/preferences.html', {
      'title': 'Edit my preferences',
      'form': form,
+     'reset_crumbs': True,
      },
      context_instance=RequestContext(request))

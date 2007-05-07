@@ -39,7 +39,7 @@ urlpatterns = patterns('',
     (r'^execute/upload/$', 'freppledb.execute.views.upload'),
     (r'^execute/', 'django.views.generic.simple.direct_to_template',
        {'template': 'execute/execute.html',
-        'extra_context': {'title': 'Execute'},
+        'extra_context': {'title': 'Execute', 'reset_crumbs': True},
        }),
 
     # Main index page

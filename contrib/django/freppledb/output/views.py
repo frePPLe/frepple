@@ -117,7 +117,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
   return (bucket,start,end,res)
 
 
-def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, title=None):
+def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_context=None):
     global ON_EACH_SIDE
     global ON_ENDS
     global PAGINATE_BY
@@ -213,8 +213,7 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, title=
             for n in range(paginator.pages - ON_ENDS, paginator.pages):
                 parameters.__setitem__('page', n)
                 page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, parameters.urlencode(),n))
-    return render_to_response(htmltemplate,
-       {
+    context = {
          'objectlist': results,
          'bucket': bucket,
          'startdate': start,
@@ -230,9 +229,9 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, title=
          'pages': paginator.pages,
          'hits' : paginator.hits,
          'page_htmls': page_htmls,
-         'title': title,
-       },
-       context_instance=RequestContext(request))
+       }
+    if extra_context: context.update(extra_context)
+    return render_to_response(htmltemplate,  context, context_instance=RequestContext(request))
 
 
 def bufferquery(buffer, bucket, startdate, enddate):
@@ -290,9 +289,11 @@ def bufferquery(buffer, bucket, startdate, enddate):
 
 @staff_member_required
 def bufferreport(request, buffer=None):
-   if buffer: title = 'Inventory report for %s' % buffer
-   else: title = 'Inventory report'
-   return BucketedView(request, buffer, bufferquery, 'buffer.html', 'buffer.csv', title)
+   if buffer:
+     extra = {'title': 'Inventory report for %s' % buffer, 'reset_crumbs': False}
+   else:
+     extra = {'title': 'Inventory report', 'reset_crumbs': True}
+   return BucketedView(request, buffer, bufferquery, 'buffer.html', 'buffer.csv', extra)
 
 
 def demandquery(item, bucket, startdate, enddate):
@@ -353,9 +354,11 @@ def demandquery(item, bucket, startdate, enddate):
 
 @staff_member_required
 def demandreport(request, item=None):
-   if item: title = 'Demand report for %s' % item
-   else: title = 'Demand report'
-   return BucketedView(request, item, demandquery, 'demand.html', 'demand.csv', title)
+   if item:
+     extra = {'title': 'Demand report for %s' % item, 'reset_crumbs': False}
+   else:
+     extra = {'title': 'Demand report', 'reset_crumbs': True}
+   return BucketedView(request, item, demandquery, 'demand.html', 'demand.csv', extra)
 
 
 def resourcequery(resource, bucket, startdate, enddate):
@@ -433,9 +436,11 @@ def resourcequery(resource, bucket, startdate, enddate):
 
 @staff_member_required
 def resourcereport(request, resource=None):
-   if resource: title = 'Resource report for %s' % resource
-   else: title = 'Resource report'
-   return BucketedView(request, resource, resourcequery, 'resource.html', 'resource.csv', title)
+   if resource:
+     extra = {'title': 'Resource report for %s' % resource, 'reset_crumbs': False}
+   else:
+     extra = {'title': 'Resource report', 'reset_crumbs': True}
+   return BucketedView(request, resource, resourcequery, 'resource.html', 'resource.csv', extra)
 
 
 def operationquery(operation, bucket, startdate, enddate):
@@ -486,9 +491,11 @@ def operationquery(operation, bucket, startdate, enddate):
 
 @staff_member_required
 def operationreport(request, operation=None):
-   if operation: title = 'Operation report for %s' % operation
-   else: title = 'Operation report'
-   return BucketedView(request, operation, operationquery, 'operation.html', 'operation.csv', title)
+   if operation:
+     extra = {'title': 'Operation report for %s' % operation, 'reset_crumbs': False}
+   else:
+     extra = {'title': 'Operation report', 'reset_crumbs': True}
+   return BucketedView(request, operation, operationquery, 'operation.html', 'operation.csv', extra)
 
 
 class pathreport:

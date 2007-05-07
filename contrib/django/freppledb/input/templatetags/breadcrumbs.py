@@ -81,9 +81,16 @@ class CrumbsNode(template.Node):
     Usage in your templates:
         {% load breadcrumbs %}
         {% crumbs %}
+
     The admin app already defines a block for crumbs, so the typical usage of the
     crumbs tag is as follows:
-      {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
+        {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
+
+    When the context variable 'reset_crumbs' is defined and set to True, the trail of
+    breadcrumbs is truncated and restarted.
+    The variable can be set either as an extra context variable in the view code, or
+    with the 'set' template tag in the template:
+        {% set reset_crumbs "True" %}
     '''
     def render(self, context):
         global HOMECRUMB
@@ -91,6 +98,11 @@ class CrumbsNode(template.Node):
         req = context['request']
         try: cur = req.session['crumbs']
         except: cur = [HOMECRUMB]
+
+        # Check if we need to reset the crumbs
+        try:
+          if context['reset_crumbs']: cur = [HOMECRUMB]
+        except: pass
 
         # Pop from the stack if the same url is already in the crumbs
         try: title = resolve_variable("title",context)
@@ -116,6 +128,34 @@ def do_crumbs(parser, token):
     return CrumbsNode()
 
 
+class SetVariable(template.Node):
+  def __init__(self, varname, value):
+    self.varname = varname
+    self.value = value
+
+  def render(self, context):
+    var = template.resolve_variable(self.value,context)
+    if var:
+      context[self.varname] = var
+    else:
+      context[self.varname] = context[self.value]
+    return ''
+
+
+def set_var(parser, token):
+  '''
+  Example:
+    {% set category_list category.categories.all %}
+    {% set dir_url "../" %}
+    {% set type_list "table" %}
+  '''
+  from re import split
+  bits = split(r'\s+', token.contents, 2)
+  if len(bits) < 2:
+      raise template.TemplateSyntaxError, "'%s' tag requires two arguments" % bits[0]
+  return SetVariable(bits[1],bits[2])
+
+
 def superlink(value,type):
     '''
     This filter creates a link with a context menu for right-clicks.
@@ -134,3 +174,4 @@ register = template.Library()
 register.tag('crumbs', do_crumbs)
 register.filter('superlink', superlink)
 register.tag('get_models', get_models)
+register.tag('set', set_var)

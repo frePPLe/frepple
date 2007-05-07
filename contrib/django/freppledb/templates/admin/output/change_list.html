@@ -1,8 +1,8 @@
 {% extends "admin/base_site_nav.html" %}
-{% load adminmedia admin_list i18n %}
+{% load adminmedia admin_list i18n breadcrumbs %}
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
 {% block bodyclass %}change-list{% endblock %}
-{% block breadcrumbs %}{% if not is_popup %}{{ block.super }}{% endif %}{% endblock %}
+{% block breadcrumbs %}{% set reset_crumbs "True" %}{% if not is_popup %}{{ block.super }}{% endif %}{% endblock %}
 {% block coltype %}flex{% endblock %}
 {% block content %}
 <div id="content-main">

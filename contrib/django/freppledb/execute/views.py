@@ -28,6 +28,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.cache import never_cache
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.conf import settings
+from django.core.management import load_data
 from django.db.models.fields.related import ForeignKey, AutoField
 from django.db import models
 from django.db import transaction
@@ -202,7 +203,6 @@ def parseUpload(data, entity):
 
 
 @staff_member_required
-@never_cache
 def upload(request):
     """upload function for bulk data"""
     # Validate request method
@@ -217,7 +217,8 @@ def upload(request):
         return HttpResponseRedirect('/execute/execute.html')
 
     # Validate entity type. It needs to be a valid model in the input application.
-    entity = request.POST['entity']
+    try: entity = request.POST['entity']
+    except: entity = None
     if not entity:
         request.user.message_set.create(message='Missing entity type')
         return HttpResponseRedirect('/execute/execute.html')
@@ -233,4 +234,27 @@ def upload(request):
         return HttpResponseRedirect('/execute/execute.html')
     except TypeError, e:
         request.user.message_set.create(message='Error while parsing %s' % e)
+        return HttpResponseRedirect('/execute/execute.html')
+
+@staff_member_required
+def fixture(request):
+    """Load a dataset stored in a django fixture file."""
+
+    # Validate the request
+    if request.method != 'POST':
+      request.user.message_set.create(message='Only POST method allowed')
+      # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+      return HttpResponseRedirect('/execute/execute.html')
+    try: fixture = request.POST['datafile']
+    except:
+      request.user.message_set.create(message='Missing fixture attribute')
+      return HttpResponseRedirect('/execute/execute.html')
+
+    # Load the fixture
+    try:
+        load_data([fixture], verbosity=1)
+        request.user.message_set.create(message='Loaded fixture')
+        return HttpResponseRedirect('/execute/execute.html')
+    except Exception, e:
+        request.user.message_set.create(message='Error while loading fixture: %s' % e)
         return HttpResponseRedirect('/execute/execute.html')

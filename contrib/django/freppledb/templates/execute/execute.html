@@ -41,7 +41,7 @@ and export results into the database<br/><br/>
 
 <tr><th scope="row"><a>CSV</a></th>
 <form enctype="multipart/form-data" method="post" action="/execute/upload/">
-<td>Create a csv text file and upload the data in the database.<br/>
+<td>Load data from a csv text file in the database.<br/>
 The first row of your file should contain the field names.<br/>
 Entity: <select name="entity" id="entity">
 <option value="-" selected="selected">-</option>
@@ -59,10 +59,22 @@ Entity: <select name="entity" id="entity">
 <option value="OperationPlan">OperationPlan</option>
 <option value="Resource">Resource</option>
 </select><br/>
-Select your csv file: <input type="file" id="csv_file" size="25" name="csv_file"/><br/>
-</td><td><input id="upload_button" type="submit" value="Upload"/>
-</td></tr>
-</form>
+Select your csv file: <input type="file" id="csv_file" size="23" name="csv_file"/><br/>
+</td>
+<td><input id="upload_button" type="submit" value="Upload"/></td>
+</form></tr>
+
+<tr><th scope="row"><a>Fixtures</a></th>
+<form method="post" action="/execute/fixture/">
+<td>Load a predefined dataset from a library.<br/>
+Available datasets: <select name="datafile" id="entity">
+<option value="-" selected="selected">-</option>
+<option value="initial_data">Small demo dataset</option>
+</select>
+</td>
+<td><input id="upload_button" type="submit" value="Load"/></td>
+</form></tr>
+
 </table>
 </div>
 {% endif %}

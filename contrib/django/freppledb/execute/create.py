@@ -114,7 +114,7 @@ def createDates():
 
 
 @transaction.commit_manually
-def create_model (cluster, demand, level, resource):
+def create_model (cluster, demand, level, resource, utilization):
   '''
   This routine populates the database with a sample dataset.
   '''
@@ -150,12 +150,27 @@ def create_model (cluster, demand, level, resource):
     c.save()
   transaction.commit()
 
+  # Calculate the average duration for loading a resource, based on the
+  # following equations:
+  #   Total available capacity = Number of resources
+  #                              * 365 (ie total time)
+  #                              * resource capacity
+  #   Total capacity need = Number of items
+  #                         * number of demands per item
+  #                         * 1 (ie resource load per unit of demand)
+  #                         * 5.5 (ie average units per demand)
+  #   Utilization = Total capacity need / Total available capacity
+  capacity = float(cluster * demand * 550) / (resource * 365 * utilization)
+  print float(utilization), cluster,  demand, resource, capacity
+  capacity = int(capacity)+1
+  print capacity
+
   # Create resources and their calendars
   print "Creating resources and calendars..."
   res = []
   for i in range(resource):
     cal = Calendar(name='capacity for res %03d' %i, category='capacity')
-    bkt = Bucket(startdate=date(2007,1,1), value=2, calendar=cal)
+    bkt = Bucket(startdate=date(2007,1,1), value=capacity, calendar=cal)
     cal.save()
     bkt.save()
     r = Resource(name = 'Res %03d' % i, maximum=cal)
@@ -197,12 +212,15 @@ def create_model (cluster, demand, level, resource):
 
     # Upstream operations and buffers
     for k in range(level):
-      oper = Operation(name='Oper %05d L%02d' % (i,k), duration=random.choice(durations))
-      oper.save()
       if k == 1 and res:
-        # Create a resource load
+        # Create a resource load for operations on level 1
+        oper = Operation(name='Oper %05d L%02d' % (i,k), type='OPERATION_TIME_PER', duration_per=86400)
+        oper.save()
         ld = Load(resource=random.choice(res), operation=oper)
         ld.save()
+      else:
+        oper = Operation(name='Oper %05d L%02d' % (i,k), duration=random.choice(durations))
+        oper.save()
       buf.producing = oper
       fl = Flow(operation=oper, thebuffer=buf, quantity=1, type="FLOW_END")
       buf.save()

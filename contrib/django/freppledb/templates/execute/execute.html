@@ -37,7 +37,7 @@ and export results into the database<br/><br/>
 {% if perms.execute.upload_csv %}
 <div class="module">
 <table summary="Extra commands.">
-<caption>Upload data files</caption>
+<caption>Upload data</caption>
 
 <tr><th scope="row"><a>CSV</a></th>
 <form enctype="multipart/form-data" method="post" action="/execute/upload/">
@@ -93,10 +93,11 @@ Available datasets: <select name="datafile" id="entity">
 <form method="post" action="/execute/rundb/">
 <td>Create a simple demo model in the database.<br/>
 The parameters control the size and complexity.<br/>
-Number of end items:<input name="clusters" type="text" maxlength="5" size="5" /><br/>
-Demands per end item:<input name="demands" type="text" maxlength="4" size="4" /><br/>
-Depth of bill-of-material:<input name="levels" type="text" maxlength="2" size="2" /><br/>
-Number of resources:<input name="resources" type="text" maxlength="3" size="3" /><br/>
+Number of end items:<input name="clusters" type="text" maxlength="5" size="5" value="100"/><br/>
+Demands per end item:<input name="demands" type="text" maxlength="4" size="4" value="100"/><br/>
+Depth of bill-of-material:<input name="levels" type="text" maxlength="2" size="2" value="5"/><br/>
+Number of resources:<input name="resources" type="text" maxlength="3" size="3" value="10"/><br/>
+Average resource utilization:<input name="utilization" type="text" maxlength="3" size="3" value="80"/>%<br/>
 </td>
 <td><input id="erase_db" type="submit" value="run" />
 <input type="hidden" name="action" value="create" /></td>

@@ -106,6 +106,7 @@
       <PRIORITY>1</PRIORITY>
       <ITEM NAME="end item" />
       <POLICY>PLANSHORT</POLICY>
+      <CUSTOMER NAME="Customer"/>
     </DEMAND>
     <DEMAND NAME="order 2">
       <QUANTITY>10</QUANTITY>

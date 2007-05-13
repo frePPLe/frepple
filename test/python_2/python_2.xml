@@ -43,7 +43,7 @@ def printModel():
     print >>out, "\nDemands:"
     for i in frepple.demand():
       print >>out, i["NAME"], i["QUANTITY"], i["DUE"], i["PRIORITY"], \
-        i["ITEM"], i["OPERATION"], i["OWNER"]
+        i["ITEM"], i["OPERATION"], i["OWNER"], i["CUSTOMER"]
 
   # Close the file
   finally:

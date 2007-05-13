@@ -232,15 +232,15 @@ extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
 {
   if (obj->iter != Demand::end())
   {
-    PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z}",
+    PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z,s:z}",
       "NAME", obj->iter->getName().c_str(),
       "QUANTITY", obj->iter->getQuantity(),
 			"DUE", PythonDateTime(obj->iter->getDue()),
       "PRIORITY", obj->iter->getPriority(),
       "ITEM", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
       "OPERATION", obj->iter->getOperation() ? obj->iter->getOperation()->getName().c_str() : NULL,
-      "OWNER", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL
-      //xxx "CUSTOMER", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL     
+      "OWNER", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL,
+      "CUSTOMER", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL     
       );
     ++(obj->iter);
     return result;

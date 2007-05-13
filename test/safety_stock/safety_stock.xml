@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>actual plan</NAME>
+  <DESCRIPTION>
+    Demonstration of safety stock planning functionalities.
+    * Item 1 has a time-phased quantity-based target:
+       10 in january
+       20 in february
+       5 in march
+    * Item 2 has time-based target, set as a post-operation time of 1 week
+      on the make operation.
+  </DESCRIPTION>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <VERBOSE>true</VERBOSE>
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" VERBOSE="true"/>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+      <FILENAME>output.1.xml</FILENAME>
+    </COMMAND>
+  </COMMANDS>
+  <OPERATIONS>
+    <OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME">
+      <DURATION>24:00:00</DURATION>
+    </OPERATION>
+  </OPERATIONS>
+  <ITEMS>
+    <ITEM NAME="end item 1">
+      <OPERATION NAME="delivery end item 1" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>72:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="end item 2">
+      <OPERATION NAME="delivery end item 2" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>72:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+  </ITEMS>
+  <BUFFERS>
+    <BUFFER NAME="end item 1">
+      <!-- Notice the calendar for the safety stock target... -->
+      <PRODUCING NAME="make end item 1" />
+      <ITEM NAME="end item 1" />
+      <MINIMUM NAME="safety stock target" xsi:type="CALENDAR_FLOAT">
+	      <BUCKETS>
+	        <BUCKET START="2007-01-01T00:00:00">
+	          <NAME>january</NAME>
+	          <VALUE>10</VALUE>
+	        </BUCKET>
+	        <BUCKET START="2007-02-01T00:00:00">
+	          <NAME>february</NAME>
+	          <VALUE>20</VALUE>
+	        </BUCKET>
+	        <BUCKET START="2007-03-01T00:00:00">
+	          <NAME>march and remainder</NAME>
+	          <VALUE>5</VALUE>
+	        </BUCKET>
+	      </BUCKETS>
+      </MINIMUM>
+    </BUFFER>
+    <BUFFER NAME="end item 2">
+      <!-- Notice the post-operation time... -->
+      <PRODUCING NAME="make end item 2" POSTTIME="168:00:00"/>
+      <ITEM NAME="end item 2" />
+    </BUFFER>
+  </BUFFERS>
+  <FLOWS>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery end item 1" />
+      <BUFFER NAME="end item 1" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="make end item 1" />
+      <BUFFER NAME="end item 1" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery end item 2" />
+      <BUFFER NAME="end item 2" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="make end item 2" />
+      <BUFFER NAME="end item 2" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+  </FLOWS>
+  <DEMANDS>
+    <DEMAND NAME="order 1 - item 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-01-02T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="end item 1" />
+    </DEMAND>
+    <DEMAND NAME="order 2 - item 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-02-15T00:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="end item 1" />
+    </DEMAND>
+    <DEMAND NAME="order 3 - item 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-03-15T00:00:00</DUE>
+      <PRIORITY>3</PRIORITY>
+      <ITEM NAME="end item 1" />
+    </DEMAND>
+    <DEMAND NAME="order 1 - item 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-01-02T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="end item 2" />
+    </DEMAND>
+    <DEMAND NAME="order 2 - item 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-02-15T00:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="end item 2" />
+    </DEMAND>
+    <DEMAND NAME="order 3 - item 2">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-03-15T00:00:00</DUE>
+      <PRIORITY>3</PRIORITY>
+      <ITEM NAME="end item 2" />
+    </DEMAND>
+  </DEMANDS>
+</PLAN>

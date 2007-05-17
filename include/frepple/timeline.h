@@ -393,11 +393,12 @@ template <class type> void TimeLine<type>::setQuantity(Event* e, float newqty)
   // Update the onhand for all later events
   if (fabs(delta) > ROUNDING_ERROR)
   {
-    if (oldqty > 0)
+    float cumdelta = (oldqty>0? oldqty : 0) - (newqty>0 ? newqty : 0);
+    if (fabs(cumdelta) > 0)
       for (iterator i=begin(e); i!=end(); ++i)
       {
         i->oh -= delta;
-        i->cum_prod -= delta;
+        i->cum_prod -= cumdelta;
       }
     else
       for (iterator i=begin(e); i!=end(); ++i)
@@ -407,7 +408,7 @@ template <class type> void TimeLine<type>::setQuantity(Event* e, float newqty)
   // Final debugging check commented out, since loadplans change in pairs.
   // After changing the first one the second is affected too but not
   // repositioned yet...
-  // assert(check());
+  //assert(check());
 }
 
 

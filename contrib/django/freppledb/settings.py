@@ -27,7 +27,6 @@ import os, os.path
 FREPPLE_HOME = os.environ['FREPPLE_HOME']
 FREPPLE_APP = os.path.normpath(os.path.join(FREPPLE_HOME,'..','contrib','django'))
 
-
 # Django settings for freppledb project.
 
 DEBUG = True
@@ -147,3 +146,4 @@ AUTH_PROFILE_MODULE = 'user.Preferences'
 # IP address of the machine you are browsing from. When logging in from this
 # machine additional debugging statements can be shown.
 INTERNAL_IPS = ( '192.168.3.1' )
+

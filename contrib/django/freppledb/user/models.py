@@ -23,6 +23,9 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.dispatch import dispatcher
+from django.db.models import signals
+from datetime import date
 
 class Preferences(models.Model):
     buckettype = (
@@ -38,3 +41,14 @@ class Preferences(models.Model):
     startdate = models.DateField(blank=True, null=True)
     enddate = models.DateField(blank=True, null=True)
     dummy = models.SmallIntegerField(editable=False, core=True, default=1)
+
+def CreatePreferenceModel(instance):
+    '''Create a preference model for a new user.'''
+    pref, created = Preferences.objects.get_or_create(user=instance)
+    if created:
+      pref.startdate = date.today()
+      pref.save()
+
+# This signal will make sure a preference model is created when a user is added.
+# The preference model is automatically deleted again when the user is deleted.
+dispatcher.connect(CreatePreferenceModel, signal=signals.post_save, sender=User)

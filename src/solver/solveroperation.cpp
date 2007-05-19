@@ -57,6 +57,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
   Date a_date;
   Date prev_a_date;
   float a_qty;
+  Date orig_q_date = data.q_date;
   float orig_opplan_qty = data.q_qty;
   float q_qty_Flow;
   Date q_date_Flow;
@@ -135,8 +136,9 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
           delay = data.a_date - q_date_Flow;
       }
 
-    if (delay && a_qty <= ROUNDING_ERROR && a_date + delay <= data.q_date_max)
+    if (delay && a_qty <= ROUNDING_ERROR && a_date + delay < data.q_date_max && a_date + delay > orig_q_date)
     {
+      cout << delay << "  " << data.q_date_max << "  " << a_date << endl;
       // The reply is 0, but the next-date is still less than the maximum 
       // ask date. In this case we will violate the post-operation -soft- 
       // constraint.

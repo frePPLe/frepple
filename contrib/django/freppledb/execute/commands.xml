@@ -9,12 +9,14 @@ from freppledb.execute.export import loadfrepple, dumpfrepple
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
 
 # Create a solver where the constraint are defined by an environment variable
+try: plantype = os.environ['PLAN_TYPE']
+except KeyError: plantype = 7  # Default is a fully constrained plan
 frepple.readXMLdata(
   '''<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <SOLVERS>
     <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="%s"/>
   </SOLVERS>
-  </PLAN>''' % os.environ['PLAN_TYPE'], False, False)
+  </PLAN>''' % plantype, False, False)
 
 ?>
   <COMMANDS>

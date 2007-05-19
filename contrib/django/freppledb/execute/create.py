@@ -161,9 +161,7 @@ def create_model (cluster, demand, level, resource, utilization):
   #                         * 5.5 (ie average units per demand)
   #   Utilization = Total capacity need / Total available capacity
   capacity = float(cluster * demand * 550) / (resource * 365 * utilization)
-  print float(utilization), cluster,  demand, resource, capacity
   capacity = int(capacity)+1
-  print capacity
 
   # Create resources and their calendars
   print "Creating resources and calendars..."

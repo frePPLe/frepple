@@ -50,7 +50,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   // Message
   if (data->getSolver()->getVerbose())
   {
-    for (int i=res->getLevel(); i; --i) cout << " ";
+    for (int i=res->getLevel(); i>0; --i) cout << " ";
     cout << "   Resource '" << res->getName() << "' is asked: "
     << (-data->q_qty) << "  " << data->q_date << endl;
   }
@@ -111,7 +111,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
           if (isLeadtimeConstrained() || isFenceConstrained())
             // Note that the check function will update the answered date
             // and quantity
-            checkOperationLeadtime(data->q_operationplan,*data);
+            checkOperationLeadtime(data->q_operationplan,*data,false);
         }
 
         // If we are at the end, then there is no capacity available.
@@ -209,7 +209,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   // Message
   if (data->getSolver()->getVerbose())
   {
-    for (int i=res->getLevel(); i; --i) cout << " ";
+    for (int i=res->getLevel(); i>0; --i) cout << " ";
     cout << "   Resource '" << res->getName() << "' answers: "
     << (-data->a_qty) << "  " << data->a_date << endl;
   }
@@ -224,7 +224,7 @@ DECLARE_EXPORT void MRPSolver::solve(const ResourceInfinite* r, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=r->getLevel(); i; --i) cout << " ";
+    for (int i=r->getLevel(); i>0; --i) cout << " ";
     cout << "  Resource '" << r << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
@@ -236,7 +236,7 @@ DECLARE_EXPORT void MRPSolver::solve(const ResourceInfinite* r, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=r->getLevel(); i; --i) cout << " ";
+    for (int i=r->getLevel(); i>0; --i) cout << " ";
     cout << "  Resource '" << r << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }

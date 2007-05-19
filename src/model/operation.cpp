@@ -262,7 +262,7 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
   if (s && e && s<=e)
   {
     // Case 1: Both the start and end date are specified: Compute the quantity
-    if (e - s <= duration)
+    if (e - s < duration)
       // Start and end aren't far enough from each other to fit the constant
       // part of the operation duration. This is infeasible.
       oplan->setQuantity(0);
@@ -270,7 +270,9 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
     {
       // Divide the variable duration by the duration_per time, to compute the
       // maximum number of pieces that can be produced in the timeframe
-      float max_q = static_cast<float>(e - s - duration) / duration_per;
+      float max_q = duration_per ? 
+        static_cast<float>(e - s - duration) / duration_per :
+        q;
 
       // Set the quantity to either the maximum or the requested quantity,
       // depending on which one is smaller.

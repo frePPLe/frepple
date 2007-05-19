@@ -53,7 +53,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=b->getLevel(); i; --i) cout << " ";
+    for (int i=b->getLevel(); i>0; --i) cout << " ";
     cout << "  Buffer '" << b->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
@@ -179,10 +179,9 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   // E.g. Initial situation:              After extra consumer at time y:
   //      -------+                                --+
   //             |                                  |
-  //             |                                  |
   //             +------                            +---+
   //                                                    |
-  //      -------x------ 0                      0 --y---x-----
+  //    0 -------y------                        0 --y---x-----
   //                                                    |
   //                                                    +-----
   // The first loop only checks for supply at times x and later. If it is not
@@ -206,7 +205,6 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
     if (Solver->a_date < extraSupplyDate) extraSupplyDate = Solver->a_date;
     shortage -= Solver->a_qty;
   }
-
   // Final evaluation of the replenishment
   if (Solver->getSolver()->isConstrained())
   {
@@ -237,7 +235,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=b->getLevel(); i; --i) cout << " ";
+    for (int i=b->getLevel(); i>0; --i) cout << " ";
     cout << "  Buffer '" << b->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
@@ -260,7 +258,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferInfinite* b, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=b->getLevel(); i; --i) cout << " ";
+    for (int i=b->getLevel(); i>0; --i) cout << " ";
     cout << "  Buffer '" << b << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
@@ -273,7 +271,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferInfinite* b, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=b->getLevel(); i; --i) cout << " ";
+    for (int i=b->getLevel(); i>0; --i) cout << " ";
     cout << "  Buffer '" << b << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }

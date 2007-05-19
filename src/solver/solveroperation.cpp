@@ -40,8 +40,12 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
   data.a_date = Date::infiniteFuture;
   data.a_qty = data.q_qty;
 
+  // Store the last command in the list, in order to undo the following
+  // commands if required.
+  Command* topcommand = data.getLastCommand();
+
   // Check the leadtime constraints
-  if (!checkOperationLeadtime(opplan,data))
+  if (!checkOperationLeadtime(opplan,data,true))
     // This operationplan is a wreck. It is impossible to make it meet the
     // leadtime constraints
     return false;
@@ -50,9 +54,16 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
   // moved early or late, and its quantity can be changed.
   // However, it cannot be split.
   bool okay = true;
+  Date a_date;
+  Date prev_a_date;
+  float a_qty;
+  float orig_opplan_qty = data.q_qty;
+  float q_qty_Flow;
+  Date q_date_Flow;
+  TimePeriod delay;
+  bool incomplete;
   do
   {
-
     if (isCapacityConstrained())
     {
       // Loop through all loadplans, and solve for the resource.
@@ -86,14 +97,10 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
     // Check material
     data.q_qty = opplan->getQuantity();
     data.q_date = opplan->getDates().getEnd();
-
-    Date a_date = data.q_date;
-    Date prev_a_date = data.a_date;
-    float a_qty = opplan->getQuantity();
-    float q_qty_Flow;
-    Date q_date_Flow;
-    TimePeriod delay;
-    bool incomplete = false;
+    a_qty = opplan->getQuantity();
+    a_date = data.q_date;
+    prev_a_date = data.a_date;
+    incomplete = false;
 
     // Loop through all flowplans
     for (OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
@@ -128,37 +135,44 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
           delay = data.a_date - q_date_Flow;
       }
 
-    // Recheck  xxx
-    if (false && delay && a_qty <= ROUNDING_ERROR && a_date + delay <= data.q_date_max)
+    if (delay && a_qty <= ROUNDING_ERROR && a_date + delay <= data.q_date_max)
     {
+      // The reply is 0, but the next-date is still less than the maximum 
+      // ask date. In this case we will violate the post-operation -soft- 
+      // constraint.
       data.q_date = a_date + delay;
-      opplan->setStart(a_date + delay);
-      return checkOperation(opplan, data);
-    }
-
-    // Compute the final reply
-    Date tmp = incomplete ? (a_date + delay) : Date::infiniteFuture;
-    if (tmp==Date::infiniteFuture) data.a_date = prev_a_date;
-    else if (prev_a_date == Date::infiniteFuture) data.a_date = tmp;
-    else data.a_date = (tmp>prev_a_date) ? tmp : prev_a_date;
-    data.a_qty = a_qty;
-    // Reply OK/NOK
-    return a_qty > ROUNDING_ERROR;   // xxx unconditionally leaves the loop
-
-    if (!okay)
-    {
-      // xxx clean up propagated operation plans before going into the loop again?
+      data.q_qty = orig_opplan_qty;
+      data.a_date = Date::infiniteFuture;
+      data.a_qty = data.q_qty;
+      opplan->getOperation()->setOperationPlanParameters(opplan, orig_opplan_qty, Date::infinitePast, a_date + delay);
+      okay = false;
       // Pop actions from the command "stack" in the command list
-      data.undo(); // xxx
+      data.undo(topcommand);
+      // Echo a message
+      if (data.getVerbose())
+      {
+        for (int i=opplan->getOperation()->getLevel(); i>0; --i) cout << " ";
+        cout << "   Retrying new date." << endl;
+      }
     }
+    else
+      okay = true;
   }
   while (!okay);  // Repeat the loop if the operation was moved and the
                   // feasibility needs to be rechecked.
+
+  // Compute the final reply
+  Date tmp = incomplete ? (a_date + delay) : Date::infiniteFuture;
+  if (tmp==Date::infiniteFuture) data.a_date = prev_a_date;
+  else if (prev_a_date == Date::infiniteFuture) data.a_date = tmp;
+  else data.a_date = (tmp>prev_a_date) ? tmp : prev_a_date;
+  data.a_qty = a_qty;
+  return a_qty > ROUNDING_ERROR;
 }
 
 
 DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
-(OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
+(OperationPlan* opplan, MRPSolver::MRPSolverdata& data, bool extra)
 {
   // No lead time constraints
   if (!isFenceConstrained() && !isLeadtimeConstrained()) return true;
@@ -185,17 +199,27 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
   // In other words, we try to resize the operation quantity to fit the
   // available timeframe: used for e.g. time-per operations
   // Note that we allow the complete post-operation time to be eaten
-  opplan->getOperation()->setOperationPlanParameters(
-    opplan,opplan->getQuantity(),
-    Plan::instance().getCurrent() + delta,
-    opplan->getDates().getEnd() + opplan->getOperation()->getPostTime(),
-    opplan->getOperation()->getPostTime() ? false : true
-  );
+  if (extra)
+    // Leadtime check during operation resolver
+    opplan->getOperation()->setOperationPlanParameters(
+      opplan, opplan->getQuantity(),
+      Plan::instance().getCurrent() + delta,
+      opplan->getDates().getEnd() + opplan->getOperation()->getPostTime(),
+      false
+    );
+  else
+    // Leadtime check during capacity resolver
+    opplan->getOperation()->setOperationPlanParameters(
+      opplan, opplan->getQuantity(),
+      Plan::instance().getCurrent() + delta,
+      opplan->getDates().getEnd(),
+      true
+    );
 
   // Check the result of the resize
   if (opplan->getDates().getStart() >= Plan::instance().getCurrent() + delta
-      && opplan->getDates().getEnd() <= data.q_date_max
-      && opplan->getQuantity() > 0)
+    && (!extra || opplan->getDates().getEnd() <= data.q_date_max)
+    && opplan->getQuantity() > 0)
   {
     // Resizing did work! The operation now fits within constrained limits
     data.a_qty = opplan->getQuantity();
@@ -246,12 +270,13 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    for (int i=oper->getLevel(); i>0; --i) cout << " ";
     cout << "   Operation '" << oper->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
   // Subtract the post-operation time
+  Date prev_q_date_max = Solver->q_date_max;
   Solver->q_date_max = Solver->q_date;
   Solver->q_date -= oper->getPostTime();
 
@@ -276,6 +301,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
   // Check the constraints
   Solver->getSolver()->checkOperation(z,*Solver);
   if (a) Solver->add(a);
+  Solver->q_date_max = prev_q_date_max;
 
   // Multiply the operation reqply with the flow quantity to get a final reply
   if (Solver->curBuffer) Solver->a_qty *= flow_qty_per;
@@ -286,7 +312,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    for (int i=oper->getLevel(); i>0; --i) cout << " ";
     cout << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
@@ -301,7 +327,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    for (int i=oper->getLevel(); i>0; --i) cout << " ";
     cout << "   Operation '" << oper->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
@@ -393,7 +419,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    for (int i=oper->getLevel(); i>0; --i) cout << " ";
     cout << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
@@ -411,7 +437,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    for (int i=oper->getLevel(); i>0; --i) cout << " ";
     cout << "   Operation '" << oper->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
@@ -529,7 +555,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    for (int i=oper->getLevel(); i>0; --i) cout << " ";
     cout << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
@@ -544,7 +570,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationEffective* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    for (int i=oper->getLevel(); i>0; --i) cout << " ";
     cout << "   Operation '" << oper->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
@@ -575,7 +601,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationEffective* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=(oper->getLevel()>0?oper->getLevel():0); i; --i) cout << " ";
+    for (int i=oper->getLevel(); i>0; --i) cout << " ";
     cout << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }

@@ -2238,9 +2238,6 @@ class Object
         /** Dereference operator. */
         const T* operator->() const {return obj;}
 
-        /** Conversion operator. */
-        // xxx operator const T*() const {return obj;}
-
         /** Comparison operator. */
         bool operator==(const RLock<T>& a) const {return obj == a.obj;}
 
@@ -2936,6 +2933,9 @@ class CommandList : public Command
     /** Append an additional command to the end of the list. */
     DECLARE_EXPORT void add(Command* c);
 
+    /** Returns the last command that was added to the list. */
+    Command* getLastCommand() const {return lastCommand;}
+    
     /** Undoes all actions on the list. At the end it also clears the list of
       * actions. If one of the actions on the list is not undo-able, the whole
       * list is non-undoable and a warning message will be printed.

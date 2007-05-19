@@ -1776,15 +1776,16 @@ class OperationPlan
 
     /** Run the update method after each change? Settingthis field to false
       * allows you to do a number of changes after another and then run the
-      * update method only once.
+      * update method only once.<br>
       * This field is only relevant for top-operationplans.
+      * @todo try to get rid of this field to reduce memory consumption
       */
     bool runupdate;
 
     /** Default constructor.
       * This way of creating operationplan objects is not intended for use by
       * any client applications. Client applications should use the factory
-      * method on the operation class instead.
+      * method on the operation class instead.<br>
       * Subclasses of the Operation class may use this constructor in their
       * own override of the createOperationPlan method.
       * @see Operation::createOperationPlan

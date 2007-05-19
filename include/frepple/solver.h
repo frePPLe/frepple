@@ -231,6 +231,9 @@ class MRPSolver : public Solver
             : sol(s), curOwnerOpplan(NULL), q_loadplan(NULL), q_flowplan(NULL),
             q_operationplan(NULL), cluster(c), demands(d) {}
 
+        /** Verbose mode is inherited from the solver. */
+        bool getVerbose() const {return sol ? sol->getVerbose() : false;}
+
         /** This function runs a single planning thread. Such a thread will loop
           * through the following steps:
           *    - Use the method next_cluster() to find another unplanned cluster.
@@ -274,7 +277,7 @@ class MRPSolver : public Solver
         /** This is the date we are asking for. */
         Date q_date;
 
-        /** This is the maximum date we are asking for. <br>
+        /** This is the maximum date we are asking for.<br>
           * In case of a post-operation time there is a difference between
           * q_date and q_date_max.
           */
@@ -313,7 +316,7 @@ class MRPSolver : public Solver
       * acceptable (sometimes in reduced quantity) or not.
       */
     DECLARE_EXPORT bool checkOperation(OperationPlan*, MRPSolverdata& data);
-    DECLARE_EXPORT bool checkOperationLeadtime(OperationPlan*, MRPSolverdata& data);
+    DECLARE_EXPORT bool checkOperationLeadtime(OperationPlan*, MRPSolverdata&, bool);
 };
 
 

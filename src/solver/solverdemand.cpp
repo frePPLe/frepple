@@ -118,8 +118,12 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
 
           // Message
           if (fabs(Solver->a_qty - tmpqty) > ROUNDING_ERROR)
+          {
             cout << "Demand '" << l << "' coordination screwed up: "
             << Solver->a_qty << " versus " << tmpqty << endl;
+            if (Solver->a_qty < ROUNDING_ERROR)
+              throw LogicException("Narrowly escaping an infinite loop...");
+          }
         }
         // Register the new operationplans. We need to make sure that the
         // correct execute method is called!

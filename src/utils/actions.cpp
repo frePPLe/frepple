@@ -114,7 +114,7 @@ DECLARE_EXPORT void CommandList::undo(Command *c)
     throw LogicException("Invalid call to CommandList::undoable(Command*)");
 
   // Don't even try to undo a list which can't be undone.
-  if (!undoable(c))
+  if (!c && !undoable(c))
     throw RuntimeException("Trying to undo a CommandList which " \
         "contains non-undoable actions or is executed in parallel.");
 

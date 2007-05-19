@@ -5,7 +5,7 @@
 # Update the python environment such that it can use the django classes
 import os
 sys.path.append(os.environ['FREPPLE_APP'])
-from freppledb.execute.export import loadfrepple, dumpfrepple
+from freppledb.execute.export import loadfrepple, dumpfrepple, dumpfrepple_files
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
 
 # Create a solver where the constraint are defined by an environment variable
@@ -31,6 +31,7 @@ frepple.readXMLdata(
     <COMMAND xsi:type="COMMAND_SIZE" />
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="dumpfrepple()" />
     <!--
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="dumpfrepple_files()" />
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
     <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
     <COMMAND xsi:type="COMMAND_SIZE" />

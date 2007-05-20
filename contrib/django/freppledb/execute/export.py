@@ -47,19 +47,18 @@ def dumpfrepple_files():
   '''
   This function exports the data from the frepple memory into a series of flat files.
   '''
-
   print "Exporting problems..."
   starttime = times()[4]
   writer = csv.writer(open("problems.csv", "wb"))
-  for i in frepple.problem(): 
-    writer.writerow((i['ENTITY'], i['TYPE'], i['DESCRIPTION'], str(i['START']), str(i['END']), str(i['START']), str(i['END']))) 
+  for i in frepple.problem():
+    writer.writerow((i['ENTITY'], i['TYPE'], i['DESCRIPTION'], str(i['START']), str(i['END']), str(i['START']), str(i['END'])))
   print 'Exported problems in %.2f seconds' % (times()[4] - starttime)
 
   print "Exporting operationplans..."
   starttime = times()[4]
   writer = csv.writer(open("operations.csv", "wb"))
   for i in frepple.operationplan():
-    writer.writerow( (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], str(i['START']), str(i['END']), str(i['START']), str(i['END']), i['DEMAND'], str(i['LOCKED'])) ) 
+    writer.writerow( (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], str(i['START']), str(i['END']), str(i['START']), str(i['END']), i['DEMAND'], str(i['LOCKED'])) )
   print 'Exported operationplans in %.2f seconds' % (times()[4] - starttime)
 
   print "Exporting flowplans..."
@@ -67,55 +66,17 @@ def dumpfrepple_files():
   writer = csv.writer(open("buffers.csv", "wb"))
   for i in frepple.buffer():
     for j in i['FLOWPLANS']:
-      writer.writerow( (j['OPERATIONPLAN'], j['OPERATION'], j['BUFFER'], j['QUANTITY'], str(j['DATE']), str(j['DATE']), j['ONHAND']) ) 
+      writer.writerow( (j['OPERATIONPLAN'], j['OPERATION'], j['BUFFER'], j['QUANTITY'], str(j['DATE']), str(j['DATE']), j['ONHAND']) )
   print 'Exported flowplans in %.2f seconds' % (times()[4] - starttime)
 
   print "Exporting loadplans..."
   starttime = times()[4]
   writer = csv.writer(open("resources.csv", "wb"))
   for i in frepple.resource():
-    for j in i['LOADPLANS']: 
-      writer.writerow( (j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'], j['QUANTITY'], str(j['DATE']), str(j['DATE']), j['ONHAND'], j['MAXIMUM']) ) 
+    for j in i['LOADPLANS']:
+      writer.writerow( (j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'], j['QUANTITY'], str(j['DATE']), str(j['DATE']), j['ONHAND'], j['MAXIMUM']) )
   print 'Exported loadplans in %.2f seconds' % (times()[4] - starttime)
 
-
-def loadfrepple():
-  '''
-  This function is expected to be run by the python interpreter in the
-  frepple application.
-  It loads data from the database into the frepple memory.
-  '''
-  global header
-  cursor = connection.cursor()
-
-  # Plan (limited to the first one only)
-  print 'Import plan...'
-  x = [ header ]
-  cursor.execute("SELECT current, name, description FROM input_plan")
-  d = cursor.fetchone()
-  if not d: raise ValueError('Missing a record in the plan table')
-  i, j, k = d
-  x.append('<CURRENT>%s</CURRENT>' % i.isoformat())
-  if j: x.append('<NAME>%s</NAME>' % j)
-  if k: x.append('<DESCRIPTION>%s</DESCRIPTION>' % k)
-  x.append('</PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
-
-  # Locations
-  print 'Importing locations...'
-  cnt = 0
-  starttime = times()[4]
-  cursor.execute("SELECT name, description, owner_id FROM input_location")
-  x = [ header, '<LOCATIONS>' ]
-  for i,j,k in cursor.fetchall():
-    cnt += 1
-    x.append('<LOCATION NAME="%s">"' % i)
-    if j: x.append('<DESCRIPTION>%s</DESCRIPTION>"' % j)
-    if k: x.append('<OWNER NAME="%s"/>"' % k)
-    x.append('</LOCATION>"')
-  x.append('</LOCATIONS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d locations in %.2f seconds' % (cnt, times()[4] - starttime)
 
 @transaction.commit_manually
 def dumpfrepple():

@@ -427,13 +427,35 @@ DECLARE_EXPORT void BufferInfinite::writeElement
   if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
-  // Write the fields
+  // Write the fields and an ending tag
   Buffer::writeElement(o, tag, NOHEADER);
 }
 
 
+DECLARE_EXPORT void BufferProcure::endElement(XMLInput& pIn, XMLElement& pElement)
+{
+  if (pElement.isA(Tags::tag_leadtime))
+    setLeadtime(pElement.getTimeperiod());
+  else if (pElement.isA(Tags::tag_size_maximum))
+    setSizeMaximum(pElement.getFloat());
+  else if (pElement.isA(Tags::tag_size_minimum))
+    setSizeMinimum(pElement.getFloat());
+  else if (pElement.isA(Tags::tag_size_multiple))
+    setSizeMultiple(pElement.getFloat());
+  else if (pElement.isA(Tags::tag_mininterval))
+    setMinimumInterval(pElement.getTimeperiod());
+  else if (pElement.isA(Tags::tag_maxinterval))
+    setMaximumInterval(pElement.getTimeperiod());
+  else if (pElement.isA(Tags::tag_mininventory))
+    setMinimumInventory(pElement.getFloat());
+  else if (pElement.isA(Tags::tag_maxinventory))
+    setMaximumInventory(pElement.getFloat());
+  else 
+    Buffer::endElement(pIn, pElement);
+}
 
-DECLARE_EXPORT void BufferMinMax::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
+
+DECLARE_EXPORT void BufferProcure::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -447,7 +469,17 @@ DECLARE_EXPORT void BufferMinMax::writeElement(XMLOutput *o, const XMLtag &tag, 
   if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
-  // Write the fields
+  // Write the extra fields
+  if (leadtime) o->writeElement(Tags::tag_leadtime, leadtime);
+  if (size_maximum) o->writeElement(Tags::tag_size_maximum, size_maximum);
+  if (size_minimum) o->writeElement(Tags::tag_size_minimum, size_minimum);
+  if (size_multiple) o->writeElement(Tags::tag_size_multiple, size_multiple);
+  if (min_interval) o->writeElement(Tags::tag_mininterval, min_interval);
+  if (max_interval) o->writeElement(Tags::tag_maxinterval, max_interval);
+  if (min_inventory) o->writeElement(Tags::tag_mininventory, min_inventory);
+  if (max_inventory) o->writeElement(Tags::tag_maxinventory, max_inventory);
+
+  // Write the fields and an ending tag
   Buffer::writeElement(o, tag, NOHEADER);
 }
 

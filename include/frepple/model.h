@@ -62,7 +62,7 @@ class OperationAlternate;
 class OperationEffective;
 class Buffer;
 class BufferInfinite;
-class BufferMinMax;
+class BufferProcure;
 class Plan;
 class Plannable;
 class Calendar;
@@ -753,7 +753,7 @@ class Solver : public Object, public HasName<Solver>
       {throw LogicException("Called undefined solve(Buffer*) method");}
     virtual void solve(const BufferInfinite* b, void* v = NULL)
       {solve(reinterpret_cast<const Buffer*>(b),v);}
-    virtual void solve(const BufferMinMax* b, void* v = NULL)
+    virtual void solve(const BufferProcure* b, void* v = NULL)
       {solve(reinterpret_cast<const Buffer*>(b),v);}
     virtual void solve(const Load* b, void* v = NULL)
       {throw LogicException("Called undefined solve(Load*) method");}
@@ -2548,23 +2548,165 @@ class BufferInfinite : public Buffer
 };
 
 
-/** @brief This class models a buffer with a classic reorder-point policy.
+/** @brief This class models a buffer that is replenish by an external supplier
+  * using a reorder-point policy.
   *
   * It represents a material buffer where a replenishment is triggered
   * whenever the inventory drops below the minimum level. The buffer is then
-  * replenished to the maximum inventory level.
+  * replenished to the maximum inventory level.<br>
+  * A leadtime is taken into account for the replenishments.<br>
+  * The following parameters control this replenishment:
+  *  - <b>MinimumInventory</b>:<br>
+  *    Inventory level triggering a new replenishment.<br>
+  *    The actual inventory can drop below this value.
+  *  - <b>MaximumInventory</b>:<br>
+  *    Inventory level to which we try to replenish.<br>
+  *    The actual inventory can exceed this value.
+  *  - <b>Leadtime</b>:<br>
+  *    Time taken between placing the purchase order with the supplier and the 
+  *    delivery of the material.
+  *
+  * Using the additional parameters described below the replenishments can be 
+  * controlled in more detail. The resulting inventory profile can end up
+  * to be completely different from the classical saw-tooth pattern!
+  * 
+  * The timing of the replenishments can be constrained by the following 
+  * parameters:
+  *  - <b>MinimumInterval</b>:<br>
+  *    Minimum time between replenishments.<br>
+  *    The order quantity will be increased such that it covers at least
+  *    the demand in the minimum interval period. The actual inventory can
+  *    exceed the target set by the MinimumInventory parameter.
+  *  - <b>MaximumInterval</b>:<br>
+  *    Maximum time between replenishments.<br>
+  *    The order quantity will replenish to an inventory value less than the 
+  *    maximum when this maximum interval is reached.
+  * When the minimum and maximum interval are equal we basically define a fixed 
+  * schedule replenishment policy.
+  * 
+  * The quantity of the replenishments can be constrained by the following 
+  * parameters:
+  *  - <b>MinimumQuantity</b>:<br>
+  *    Minimum quantity for a replenishment.<br>
+  *    This parameter can cause the actual inventory to exceed the target set
+  *    by the MinimumInventory parameter.
+  *  - <b>MaximumQuantity</b>:<br>
+  *    Maximum quantity for a replenishment.<br>
+  *    This parameter can cause the maximum inventory target never to be 
+  *    reached. 
+  *  - <b>MultipleQuantity</b>:<br>
+  *    All replenishments are rounded up to a multiple of this value.
+  * When the minimum and maximum quantity are equal we basically define a fixed 
+  * quantity replenishment policy.
   */
-class BufferMinMax : public Buffer   // @todo rename to BufferProcurement and implement better!
+class BufferProcure : public Buffer
 {
-    TYPEDEF(BufferMinMax);
+    TYPEDEF(BufferProcure);
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
-      {return sizeof(BufferMinMax) + getName().size() + HasDescription::memsize();}
-    explicit BufferMinMax(const string& c) : Buffer(c) {}
+      {return sizeof(BufferProcure) + getName().size() + HasDescription::memsize();}
+    explicit BufferProcure(const string& c) : Buffer(c), min_inventory(0), 
+      max_inventory(0), size_minimum(0), size_maximum(0), size_multiple(0) {}
     static DECLARE_EXPORT const MetaClass metadata;
+
+    /** Return the purchasing leadtime. */
+    TimePeriod getLeadtime() const {return leadtime;}
+
+    /** Update the procurement leadtime. */
+    void setLeadtime(TimePeriod p) {if (p>=0L) leadtime = p;}
+
+    /** Return the inventory level that will trigger creation of a 
+      * purchasing.
+      */
+    float getMinimumInventory() const {return min_inventory;}
+
+    /** Update the minimum inventory level to trigger replenishments. */
+    void setMinimumInventory(float f) {if (f>=0) min_inventory = f;}
+
+    /** Return the maximum inventory level to which we wish to replenish. */
+    float getMaximumInventory() const {return max_inventory;}
+
+    /** Update the inventory level to replenish to. */
+    void setMaximumInventory(float f) {if (f>=0) max_inventory = f;}
+
+    /** Return the minimum interval between purchasing operations.<br>
+      * This parameter doesn't control the timing of the first purchasing
+      * operation, but only to the subsequent ones. 
+      */
+    TimePeriod getMinimumInterval() const {return min_interval;}
+
+    /** Update the minimum time between replenishments. */
+    void setMinimumInterval(TimePeriod p) {if (p>=0L) min_interval = p;}
+
+    /** Return the maximum time interval between sytem-generated replenishment
+      * operations. 
+      */
+    TimePeriod getMaximumInterval() const {return max_interval;}
+
+    /** Update the minimum time between replenishments. */
+    void setMaximumInterval(TimePeriod p) {if (p>=0L) max_interval = p;}
+
+    /** Return the minimum quantity of a purchasing operation. */
+    float getSizeMinimum() const {return size_minimum;}
+
+    /** Update the minimum replenishment quantity. */
+    void setSizeMinimum(float f) {if (f>=0) size_minimum = f;}
+
+    /** Return the maximum quantity of a purchasing operation. */
+    float getSizeMaximum() const {return size_maximum;}
+
+    /** Update the maximum replenishment quantity. */
+    void setSizeMaximum(float f) {if (f>=0) size_maximum = f;}
+
+    /** Return the multiple quantity of a purchasing operation. */
+    float getSizeMultiple() const {return size_multiple;}
+
+    /** Update the multiple quantity. */
+    void setSizeMultiple(float f) {if (f>=0) size_multiple = f;}
+
+  private:
+    /** Purchasing leadtime.<br/>
+      * Within this leadtime fence no additional purchase orders can be generated.
+      */    
+    TimePeriod leadtime;
+
+    /** Inventory level that will trigger the creation of a replenishment.<br>
+      * Because of the replenishment leadtime, the actual inventory will drop
+      * below this value. It is up to the user to set an appropriate minimum 
+      * value.
+      */
+    float min_inventory;
+
+    /** The maximum inventory level to which we plan to replenish.<br>
+      * This is not a hard limit - other parameters can make that the actual 
+      * inventory either never reaches this value or always exceeds it.
+      */
+    float max_inventory;
+
+    /** Minimum time interval between purchasing operations. */
+    TimePeriod min_interval;
+
+    /** Maximum time interval between purchasing operations. */
+    TimePeriod max_interval;
+
+    /** Minimum purchasing quantity.<br>
+      * The default value is 0, meaning no minimum. 
+      */
+    float size_minimum;
+
+    /** Maximum purchasing quantity.<br>
+      * The default value is 0, meaning no maximum limit. 
+      */
+    float size_maximum;
+
+    /** Purchases are always rounded up to a multiple of this quantity.<br>
+      * The default value is 0, meaning no multiple needs to be applied. 
+      */
+    float size_multiple;
 };
 
 

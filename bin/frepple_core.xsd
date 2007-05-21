@@ -390,7 +390,7 @@
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="BUFFER" type="BUFFER" />
 			<xsd:element name="BUFFER_INFINITE" type="BUFFER_INFINITE" />
-			<xsd:element name="BUFFER_MINMAX" type="BUFFER_MINMAX" />
+			<xsd:element name="BUFFER_PROCURE" type="BUFFER_PROCURE" />
 		</xsd:choice>
 	</xsd:complexType>
 
@@ -400,9 +400,28 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
-	<xsd:complexType name="BUFFER_MINMAX">
+	<xsd:complexType name="BUFFER_PROCURE">
 		<xsd:complexContent>
-			<xsd:extension base="BUFFER" />
+			<xsd:extension base="BUFFER">
+  			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+  				<xsd:element name="SIZE_MAXIMUM" type="positiveFloat" />
+  				<xsd:element name="SIZE_MINIMUM" type="positiveFloat" />
+  				<xsd:element name="SIZE_MULTIPLE" type="positiveFloat" />
+  				<xsd:element name="MININVENTORY" type="positiveFloat" />
+  				<xsd:element name="MAXINVENTORY" type="positiveFloat" />
+  				<xsd:element name="MININTERVAL" type="time" />
+  				<xsd:element name="MAXINTERVAL" type="time" />
+  				<xsd:element name="LEADTIME" type="time" />
+  			</xsd:choice>
+  			<xsd:attribute name="SIZE_MAXIMUM" type="positiveFloat" />
+  			<xsd:attribute name="SIZE_MINIIMUM" type="positiveFloat" />
+  			<xsd:attribute name="SIZE_MULTIPLE" type="positiveFloat" />
+  			<xsd:attribute name="MININVENTORY" type="positiveFloat" />
+  			<xsd:attribute name="MAXINVENTORY" type="positiveFloat" />
+  			<xsd:attribute name="MININTERVAL" type="time" />
+  			<xsd:attribute name="MAXINTERVAL" type="time" />
+  			<xsd:attribute name="LEADTIME" type="time" />
+			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
 

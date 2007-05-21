@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<NAME>Material constraint test model</NAME>
+	<DESCRIPTION>
+		This model test the procurement buffers.
+	</DESCRIPTION>
+	<CURRENT>2007-01-01T00:00:00</CURRENT>
+	<COMMANDS>
+	  <VERBOSE>true</VERBOSE>
+	  <COMMAND xsi:type="COMMAND_SOLVE">
+	    <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
+	  </COMMAND>
+	  <COMMAND xsi:type="COMMAND_SAVEPLAN">
+	    <FILENAME>output.1.xml</FILENAME>
+	  </COMMAND>
+	</COMMANDS>
+	<BUFFERS>
+	  <BUFFER NAME="buffer 1" xsi:type="BUFFER_PROCURE">
+	    <ITEM NAME="item 1" />
+	    <ONHAND>10</ONHAND>
+	    <LEADTIME>72:00:00</LEADTIME>
+	    <MININVENTORY>20</MININVENTORY>
+	    <MAXINVENTORY>50</MAXINVENTORY>
+	  </BUFFER>
+	</BUFFERS>
+	<ITEMS>
+	  <ITEM NAME="item 1">
+	    <OPERATION NAME="delivery 1" DURATION="24:00:00" xsi:type="OPERATION_FIXED_TIME">
+      	<FLOWS>
+      	  <FLOW xsi:type="FLOW_END">
+      	    <BUFFER NAME="buffer 1" />
+      	    <QUANTITY>-1</QUANTITY>
+      	  </FLOW>
+      	</FLOWS>
+      </OPERATION>
+	  </ITEM>
+	</ITEMS>
+	<DEMANDS>
+	  <DEMAND NAME="order 1 for item 1">
+	    <QUANTITY>10</QUANTITY>
+	    <DUE>2007-01-10T00:00:00</DUE>
+	    <ITEM NAME="item 1" />
+	  </DEMAND>
+	  <DEMAND NAME="order 2 for item 1">
+	    <QUANTITY>10</QUANTITY>
+	    <DUE>2007-01-12T00:00:00</DUE>
+	    <ITEM NAME="item 1" />
+	  </DEMAND>
+	  <DEMAND NAME="order 3 for item 1">
+	    <QUANTITY>10</QUANTITY>
+	    <DUE>2007-01-14T00:00:00</DUE>
+	    <ITEM NAME="item 1" />
+	  </DEMAND>
+	  <DEMAND NAME="order 4 for item 1">
+	    <QUANTITY>10</QUANTITY>
+	    <DUE>2007-01-16T00:00:00</DUE>
+	    <ITEM NAME="item 1" />
+	  </DEMAND>
+	  <DEMAND NAME="order 5 for item 1">
+	    <QUANTITY>10</QUANTITY>
+	    <DUE>2007-01-18T00:00:00</DUE>
+	    <ITEM NAME="item 1" />
+	  </DEMAND>
+	  <DEMAND NAME="order 6 for item 1">
+	    <QUANTITY>10</QUANTITY>
+	    <DUE>2007-01-20T00:00:00</DUE>
+	    <ITEM NAME="item 1" />
+	  </DEMAND>
+	  <DEMAND NAME="order 7 for item 1">
+	    <QUANTITY>10</QUANTITY>
+	    <DUE>2007-01-22T00:00:00</DUE>
+	    <ITEM NAME="item 1" />
+	  </DEMAND>
+	</DEMANDS>
+</PLAN>

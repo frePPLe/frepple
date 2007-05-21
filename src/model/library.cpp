@@ -57,7 +57,7 @@ DECLARE_EXPORT const MetaClass LocationDefault::metadata;
 DECLARE_EXPORT const MetaCategory Buffer::metadata;
 DECLARE_EXPORT const MetaClass BufferDefault::metadata,
   BufferInfinite::metadata,
-  BufferMinMax::metadata;
+  BufferProcure::metadata;
 
 // Calendar metadata
 DECLARE_EXPORT const MetaCategory Calendar::metadata;
@@ -271,10 +271,10 @@ void LibraryModel::initialize()
     "BUFFER",
     "BUFFER_INFINITE",
     Object::createString<BufferInfinite>);
-  BufferMinMax::metadata.registerClass(
+  BufferProcure::metadata.registerClass(
     "BUFFER",
-    "BUFFER_MINMAX",
-    Object::createString<BufferMinMax>);
+    "BUFFER_PROCURE",
+    Object::createString<BufferProcure>);
 
   // Initialize the demand metadata.
   Demand::metadata.registerCategory

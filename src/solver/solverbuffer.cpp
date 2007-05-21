@@ -45,10 +45,6 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   Date requested_date(Solver->q_date);
   float requested_qty(Solver->q_qty);
   bool tried_requested_date(false);
-  // The Microsoft C++ compiler gives a warning on the following line of code.
-  // That's because for that compiler the comparison operator returns an int
-  // value, not the bool one would expect.
-  bool isMinMaxBuffer( typeid(*b)==typeid(BufferMinMax) );
 
   // Message
   if (Solver->getSolver()->getVerbose())
@@ -105,11 +101,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
         {
           // Create supply
           Solver->curBuffer = b;
-          Solver->q_qty = static_cast<float>(
-                isMinMaxBuffer ?
-                (current_maximum - shortage - theOnHand) :
-                -theDelta
-              );
+          Solver->q_qty = static_cast<float>(-theDelta);
           Solver->q_date = prev->getDate();
 
           // Check whether this date doesn't match with the requested date.

@@ -548,8 +548,10 @@ DECLARE_EXPORT void OperationAlternate::writeElement
   if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
-  // Write the fields
+  // Write the standard fields
   Operation::writeElement(o, tag, NOHEADER);
+
+  // Write the extra fields
   o->BeginObject(Tags::tag_alternates);
   priolist::const_iterator prioIter = priorities.begin();
   for (Operationlist::const_iterator i = alternates.begin();
@@ -561,6 +563,8 @@ DECLARE_EXPORT void OperationAlternate::writeElement
     o->EndObject (Tags::tag_alternate);
   }
   o->EndObject(Tags::tag_alternates);
+
+  // Ending tag
   o->EndObject(tag);
 }
 

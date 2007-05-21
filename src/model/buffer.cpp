@@ -33,6 +33,9 @@
 // inventory.
 #define INVENTORY_OPERATION "Inventory of buffer '" + string(getName()) + "'"
 
+// This is the name used for the dummy operation used to represent procurements
+#define PROCURE_OPERATION "Procure for buffer '" + string(getName()) + "'"
+
 namespace frepple
 {
 
@@ -483,6 +486,25 @@ DECLARE_EXPORT void BufferProcure::writeElement(XMLOutput *o, const XMLtag &tag,
   Buffer::writeElement(o, tag, NOHEADER);
 }
 
+
+DECLARE_EXPORT Operation* BufferProcure::getOperation() const
+{
+  if (!oper)
+  {
+    Operation *o = Operation::find(PROCURE_OPERATION);    
+    if (!o)
+    {
+      // Create the operation if it didn't exist yet
+      o = new OperationFixedTime(PROCURE_OPERATION);
+      static_cast<OperationFixedTime*>(o)->setDuration(leadtime);
+      o->setHidden(true);
+      Operation::add(o);  // No need to check again for existance
+      new FlowEnd(o, const_cast<BufferProcure*>(this), 1);
+    }
+    const_cast<BufferProcure*>(this)->oper = o;
+  }
+  return oper;
+}
 
 }
 

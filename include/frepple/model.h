@@ -2610,7 +2610,8 @@ class BufferProcure : public Buffer
     virtual size_t getSize() const
       {return sizeof(BufferProcure) + getName().size() + HasDescription::memsize();}
     explicit BufferProcure(const string& c) : Buffer(c), min_inventory(0), 
-      max_inventory(0), size_minimum(0), size_maximum(0), size_multiple(0) {}
+      max_inventory(0), size_minimum(0), size_maximum(0), size_multiple(0), 
+      oper(NULL) {}
     static DECLARE_EXPORT const MetaClass metadata;
 
     /** Return the purchasing leadtime. */
@@ -2625,13 +2626,25 @@ class BufferProcure : public Buffer
     float getMinimumInventory() const {return min_inventory;}
 
     /** Update the minimum inventory level to trigger replenishments. */
-    void setMinimumInventory(float f) {if (f>=0) min_inventory = f;}
+    void setMinimumInventory(float f) 
+    {
+      if (f<0) return;
+      min_inventory = f;
+      // minimum is increased over the maximum: auto-increase the maximum
+      if (max_inventory < min_inventory) max_inventory = min_inventory;
+    }
 
     /** Return the maximum inventory level to which we wish to replenish. */
     float getMaximumInventory() const {return max_inventory;}
 
     /** Update the inventory level to replenish to. */
-    void setMaximumInventory(float f) {if (f>=0) max_inventory = f;}
+    void setMaximumInventory(float f) 
+    {
+      if (f<0) return;
+      max_inventory = f;
+      // maximum is lowered below the minimum: auto-decrease the minimum
+      if (max_inventory < min_inventory) min_inventory = max_inventory;
+    }
 
     /** Return the minimum interval between purchasing operations.<br>
       * This parameter doesn't control the timing of the first purchasing
@@ -2640,7 +2653,13 @@ class BufferProcure : public Buffer
     TimePeriod getMinimumInterval() const {return min_interval;}
 
     /** Update the minimum time between replenishments. */
-    void setMinimumInterval(TimePeriod p) {if (p>=0L) min_interval = p;}
+    void setMinimumInterval(TimePeriod p) 
+    {
+      if (p<0L) return;
+      min_interval = p;
+      // minimum is increased over the maximum: auto-increase the maximum
+      if (max_interval < min_interval) max_interval = min_interval;
+    }
 
     /** Return the maximum time interval between sytem-generated replenishment
       * operations. 
@@ -2648,25 +2667,48 @@ class BufferProcure : public Buffer
     TimePeriod getMaximumInterval() const {return max_interval;}
 
     /** Update the minimum time between replenishments. */
-    void setMaximumInterval(TimePeriod p) {if (p>=0L) max_interval = p;}
+    void setMaximumInterval(TimePeriod p) 
+    {
+      if (p<0L) return;
+      max_interval = p;
+      // maximum is lowered below the minimum: auto-decrease the minimum
+      if (max_interval < min_interval) min_interval = max_interval;
+    }
 
     /** Return the minimum quantity of a purchasing operation. */
     float getSizeMinimum() const {return size_minimum;}
 
     /** Update the minimum replenishment quantity. */
-    void setSizeMinimum(float f) {if (f>=0) size_minimum = f;}
+    void setSizeMinimum(float f) 
+    {
+      if (f<0) return;
+      size_minimum = f;
+      // minimum is increased over the maximum: auto-increase the maximum
+      if (size_maximum < size_minimum) size_maximum = size_minimum;
+   }
 
     /** Return the maximum quantity of a purchasing operation. */
     float getSizeMaximum() const {return size_maximum;}
 
     /** Update the maximum replenishment quantity. */
-    void setSizeMaximum(float f) {if (f>=0) size_maximum = f;}
+    void setSizeMaximum(float f) 
+    {
+      if (f<0) return;
+      size_maximum = f;
+      // maximum is lowered below the minimum: auto-decrease the minimum
+      if (size_maximum < size_minimum) size_minimum = size_maximum;
+    }
 
     /** Return the multiple quantity of a purchasing operation. */
     float getSizeMultiple() const {return size_multiple;}
 
     /** Update the multiple quantity. */
     void setSizeMultiple(float f) {if (f>=0) size_multiple = f;}
+
+    /** Returns the operation that is automatically created to represent the 
+      * procurements. 
+      */
+    DECLARE_EXPORT Operation* getOperation() const;
 
   private:
     /** Purchasing leadtime.<br/>
@@ -2707,6 +2749,9 @@ class BufferProcure : public Buffer
       * The default value is 0, meaning no multiple needs to be applied. 
       */
     float size_multiple;
+
+    /** A pointer to the procurement operation. */
+    Operation* oper;
 };
 
 

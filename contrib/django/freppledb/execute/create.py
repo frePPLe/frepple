@@ -197,6 +197,7 @@ def create_model (cluster, demand, level, resource, utilization):
     fl = Flow.objects.create(operation=oper, thebuffer=buf, quantity=-1)
 
     # Demand
+    total_demand = 0
     for j in range(demand):
       dm = Demand(name='Dmd %05d %05d' % (i,j),
         item=it,
@@ -206,6 +207,7 @@ def create_model (cluster, demand, level, resource, utilization):
         customer=random.choice(cust),
         category=random.choice(categories)
         )
+      total_demand += dm.quantity
       dm.save()
 
     # Upstream operations and buffers
@@ -241,10 +243,11 @@ def create_model (cluster, demand, level, resource, utilization):
     fl.save()
 
     # Create actual supply
-    for i in range(demand/10):
+    while total_demand > 0:
         cnt += 1
         arrivaldate = getDate()
         opplan = OperationPlan(identifier=cnt, operation=oper, quantity=int(random.uniform(1,100)), startdate=arrivaldate, enddate=arrivaldate)
+        total_demand -= opplan.quantity
         opplan.save()
 
     # Commit the current cluster

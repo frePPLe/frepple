@@ -262,7 +262,9 @@ class Buffer(models.Model):
     buffertypes = (
       ('','Default'),
       ('BUFFER_INFINITE','Infinite'),
+      ('BUFFER_PROCURE','Procure'),
     )
+    # Fields common to all buffer types
     name = models.CharField(maxlength=60, primary_key=True)
     description = models.CharField(maxlength=200, null=True, blank=True)
     category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
@@ -276,15 +278,33 @@ class Buffer(models.Model):
     producing = models.ForeignKey('Operation', null=True, blank=True,
       related_name='used_producing', raw_id_admin=True,
       help_text='Operation to replenish the buffer')
+    # Extra fields for procurement buffers
+    leadtime = models.FloatField(max_digits=10, decimal_places=0, null=True, blank=True, help_text='Leadtime for supplier of a procure buffer')
+    min_inventory = models.FloatField(max_digits=10, decimal_places=2, null=True, blank=True, help_text='Inventory level that triggers replenishment of a procure buffer')
+    max_inventory = models.FloatField(max_digits=10, decimal_places=2, null=True, blank=True, help_text='Inventory level to which a procure buffer is replenished')
+    min_interval = models.FloatField(max_digits=10, decimal_places=0, null=True, blank=True, help_text='Minimum time interval between replenishments of a procure buffer')
+    max_interval = models.FloatField(max_digits=10, decimal_places=0, null=True, blank=True, help_text='Maximum time interval between replenishments of a procure buffer')
+    size_minimum = models.FloatField(max_digits=10, decimal_places=2, null=True, blank=True, help_text='Minimum size of replenishments of a procure buffer')
+    size_multiple = models.FloatField(max_digits=10, decimal_places=2, null=True, blank=True, help_text='Replenishments of a procure buffer are a multiple of this quantity')
+    size_maximum =  models.FloatField(max_digits=10, decimal_places=2, null=True, blank=True, help_text='Maximum size of replenishments of a procure buffer')
+    # Maintenance fields
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
     def __str__(self):
         return self.name
     def save(self):
-        if self.type == 'BUFFER_INFINITE':
-            # These fields are not relevant for infinite buffers
-            self.minimum = None
+        if self.type != 'BUFFER_INFINITE' and self.type != 'BUFFER_PROCURE':
+            # Handle irrelevant fields for infinite and procure buffers
             self.producing = None
-        # Call the real save() method
+        if self.type != 'BUFFER_PROCURE':
+            # Handle irrelevant fields for non-procure buffers
+            self.leadtime = None
+            self.min_inventory = None
+            self.max_inventory = None
+            self.min_interval = None
+            self.max_interval = None
+            self.size_minimum = None
+            self.size_multiple = None
+            self.size_maximum = None
         super(Buffer, self).save()
     class Admin:
         fields = (
@@ -293,7 +313,9 @@ class Buffer(models.Model):
             ('Inventory', {
               'fields': ('onhand',)}),
             ('Planning parameters', {
-              'fields': ('type','minimum','producing'),
+              'fields': ('type','minimum','producing',)},),
+            ('Planning parameters for procurement buffers', {
+              'fields': ('leadtime','min_inventory','max_inventory','min_interval','max_interval','size_minimum','size_multiple','size_maximum'),
               'classes': 'collapse'},),
         )
         list_display = ('name', 'description', 'category', 'subcategory', 'location', 'item',

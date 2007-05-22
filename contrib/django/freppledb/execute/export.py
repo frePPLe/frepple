@@ -296,12 +296,24 @@ def loadfrepple():
   print 'Importing buffers...'
   cnt = 0
   starttime = times()[4]
-  cursor.execute("SELECT name, description, location_id, item_id, onhand, minimum_id, producing_id, type FROM input_buffer")
+  cursor.execute('''SELECT name, description, location_id, item_id, onhand, 
+     minimum_id, producing_id, type, leadtime, min_inventory, 
+     max_inventory, min_interval, max_interval, size_minimum, 
+     size_multiple, size_maximum FROM input_buffer''')
   x = [ header, '<BUFFERS>' ]
-  for i, j, k, l, m, n, o, q in cursor.fetchall():
+  for i, j, k, l, m, n, o, q, f1, f2, f3, f4, f5, f6, f7, f8 in cursor.fetchall():
     cnt += 1
     if q:
       x.append('<BUFFER NAME="%s" xsi:type="%s">' % (i,q))
+      if q == 'BUFFER_PROCURE':
+        if f1: x.append( '<LEADTIME>%s</LEADTIME>' % timeformat(f1))
+        if f2: x.append( '<MININVENTORY>%s</MININVENTORY>' % f2)
+        if f3: x.append( '<MAXINVENTORY>%s</MAXINVENTORY>' % f3)
+        if f4: x.append( '<MININTERVAL>%s</MININTERVAL>' % timeformat(f4))
+        if f5: x.append( '<MAXINTERVAL>%s</MAXINTERVAL>' % timeformat(f5))
+        if f6: x.append( '<SIZE_MINIMUM>%s</SIZE_MINIMUM>' % f6)
+        if f7: x.append( '<SIZE_MULTIPLE>%s</SIZE_MULTIPLE>' % f7)
+        if f8: x.append( '<SIZE_MAXIMUM>%s</SIZE_MAXIMUM>' % f8)
     else:
       x.append('<BUFFER NAME="%s">' % i)
     if j: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % j)

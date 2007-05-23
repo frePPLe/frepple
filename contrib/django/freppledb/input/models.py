@@ -292,7 +292,7 @@ class Buffer(models.Model):
     def __str__(self):
         return self.name
     def save(self):
-        if self.type != 'BUFFER_INFINITE' and self.type != 'BUFFER_PROCURE':
+        if self.type == 'BUFFER_INFINITE' or self.type == 'BUFFER_PROCURE':
             # Handle irrelevant fields for infinite and procure buffers
             self.producing = None
         if self.type != 'BUFFER_PROCURE':

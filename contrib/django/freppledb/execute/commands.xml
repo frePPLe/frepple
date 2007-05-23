@@ -5,7 +5,8 @@
 # Update the python environment such that it can use the django classes
 import os
 sys.path.append(os.environ['FREPPLE_APP'])
-from freppledb.execute.export import loadfrepple, dumpfrepple, dumpfrepple_files
+from freppledb.execute.export import dumpfrepple, dumpfrepple_files
+from freppledb.execute.load import loadfrepple
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
 
 # Create a solver where the constraint are defined by an environment variable

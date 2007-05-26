@@ -39,6 +39,7 @@
 
 #include "frepple/utils.h"
 #include "frepple/timeline.h"
+#include <float.h>
 
 namespace frepple
 {
@@ -2610,7 +2611,7 @@ class BufferProcure : public Buffer
     virtual size_t getSize() const
       {return sizeof(BufferProcure) + getName().size() + HasDescription::memsize();}
     explicit BufferProcure(const string& c) : Buffer(c), min_inventory(0), 
-      max_inventory(0), size_minimum(0), size_maximum(0), size_multiple(0), 
+      max_inventory(0), size_minimum(0), size_maximum(FLT_MAX), size_multiple(0), 
       oper(NULL) {}
     static DECLARE_EXPORT const MetaClass metadata;
 
@@ -2619,6 +2620,12 @@ class BufferProcure : public Buffer
 
     /** Update the procurement leadtime. */
     void setLeadtime(TimePeriod p) {if (p>=0L) leadtime = p;}
+
+    /** Return the release time fence. */
+    TimePeriod getFence() const {return fence;}
+
+    /** Update the release time fence. */
+    void setFence(TimePeriod p) {if (p>=0L) fence = p;}
 
     /** Return the inventory level that will trigger creation of a 
       * purchasing.
@@ -2715,6 +2722,11 @@ class BufferProcure : public Buffer
       * Within this leadtime fence no additional purchase orders can be generated.
       */    
     TimePeriod leadtime;
+
+    /** Time window from the current date in which all procurements are expected 
+      * to be released.
+      */
+    TimePeriod fence;
 
     /** Inventory level that will trigger the creation of a replenishment.<br>
       * Because of the replenishment leadtime, the actual inventory will drop

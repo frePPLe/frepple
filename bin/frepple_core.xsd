@@ -412,6 +412,7 @@
   				<xsd:element name="MININTERVAL" type="time" />
   				<xsd:element name="MAXINTERVAL" type="time" />
   				<xsd:element name="LEADTIME" type="time" />
+  				<xsd:element name="FENCE" type="time" />
   			</xsd:choice>
   			<xsd:attribute name="SIZE_MAXIMUM" type="positiveFloat" />
   			<xsd:attribute name="SIZE_MINIIMUM" type="positiveFloat" />
@@ -421,6 +422,7 @@
   			<xsd:attribute name="MININTERVAL" type="time" />
   			<xsd:attribute name="MAXINTERVAL" type="time" />
   			<xsd:attribute name="LEADTIME" type="time" />
+  			<xsd:attribute name="FENCE" type="time" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

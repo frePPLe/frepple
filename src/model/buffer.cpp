@@ -439,6 +439,8 @@ DECLARE_EXPORT void BufferProcure::endElement(XMLInput& pIn, XMLElement& pElemen
 {
   if (pElement.isA(Tags::tag_leadtime))
     setLeadtime(pElement.getTimeperiod());
+  else if (pElement.isA(Tags::tag_fence))
+    setFence(pElement.getTimeperiod());
   else if (pElement.isA(Tags::tag_size_maximum))
     setSizeMaximum(pElement.getFloat());
   else if (pElement.isA(Tags::tag_size_minimum))
@@ -474,6 +476,7 @@ DECLARE_EXPORT void BufferProcure::writeElement(XMLOutput *o, const XMLtag &tag,
 
   // Write the extra fields
   if (leadtime) o->writeElement(Tags::tag_leadtime, leadtime);
+  if (fence) o->writeElement(Tags::tag_fence, fence);
   if (size_maximum) o->writeElement(Tags::tag_size_maximum, size_maximum);
   if (size_minimum) o->writeElement(Tags::tag_size_minimum, size_minimum);
   if (size_multiple) o->writeElement(Tags::tag_size_multiple, size_multiple);

@@ -177,10 +177,10 @@ template <class type> class TimeLine
         const Event* operator->() const {return cur;}
         const_iterator& operator++() {cur = cur->next; return *this;}
         const_iterator operator++(int)
-          {iterator tmp = *this; ++*this; return tmp;}
+          {const_iterator tmp = *this; ++*this; return tmp;}
         const_iterator& operator--() {cur = cur->prev; return *this; }
         const_iterator operator--(int)
-          {iterator tmp = *this; --*this; return tmp;}
+          {const_iterator tmp = *this; --*this; return tmp;}
         bool operator==(const const_iterator& x) const {return cur == x.cur;}
         bool operator!=(const const_iterator& x) const {return cur != x.cur;}
     };

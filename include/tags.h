@@ -73,7 +73,6 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_duration_per;
     static DECLARE_EXPORT const XMLtag tag_else;
     static DECLARE_EXPORT const XMLtag tag_end;
-    static DECLARE_EXPORT const XMLtag tag_end_onhand;
     static DECLARE_EXPORT const XMLtag tag_epst;
     static DECLARE_EXPORT const XMLtag tag_fence;
     static DECLARE_EXPORT const XMLtag tag_filename;
@@ -134,7 +133,6 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_solver;
     static DECLARE_EXPORT const XMLtag tag_solvers;
     static DECLARE_EXPORT const XMLtag tag_start;
-    static DECLARE_EXPORT const XMLtag tag_start_onhand;
     static DECLARE_EXPORT const XMLtag tag_startorend;
     static DECLARE_EXPORT const XMLtag tag_steps;
     static DECLARE_EXPORT const XMLtag tag_subcategory;

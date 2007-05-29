@@ -136,7 +136,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
           delay = data.a_date - q_date_Flow;
       }
 
-    if (delay && a_qty <= ROUNDING_ERROR && a_date + delay < data.q_date_max && a_date + delay > orig_q_date)
+    if (delay && a_qty <= ROUNDING_ERROR && a_date + delay <= data.q_date_max && a_date + delay > orig_q_date)
     {
       // The reply is 0, but the next-date is still less than the maximum 
       // ask date. In this case we will violate the post-operation -soft- 

@@ -100,13 +100,17 @@
 
     <!--
       Now we delete an operationplan.
+      IMPORTANT: Because we rely on the operationplan id to find the
+      operationplan to delete, a change in the solver algorithm might
+      require this test to be updated. The ID of the operationplan to
+      delete is different...
     -->
     <COMMAND xsi:type="COMMAND_READXMLSTRING">
       <DATA>
         <![CDATA[
         <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           <OPERATION_PLANS>
-            <OPERATION_PLAN ID="25" ACTION="R"/>
+            <OPERATION_PLAN ID="27" ACTION="R"/>
           </OPERATION_PLANS>
         </PLAN>
 			  ]]>

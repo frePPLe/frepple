@@ -168,7 +168,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="xerces-c_2.lib"
-				OutputFile="../../bin/frepple_debug.exe"
+				OutputFile="../../bin/frepple.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""

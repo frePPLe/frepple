@@ -31,6 +31,7 @@
 namespace frepple
 {
 
+
 float suggestQuantity(const BufferProcure* b, float f)
 {
   // Standard answer
@@ -55,7 +56,8 @@ float suggestQuantity(const BufferProcure* b, float f)
     } 
     // if now bigger than max -> infeasible
     if (order_qty > b->getSizeMaximum()) 
-      throw DataException("Inconsistent procurement parameters on buffer '" + b->getName() + "'");
+      throw DataException("Inconsistent procurement parameters on buffer '" 
+        + b->getName() + "'");
   }
 
   // Respect maximum size
@@ -70,7 +72,8 @@ float suggestQuantity(const BufferProcure* b, float f)
     } 
     // if now smaller than min -> infeasible
     if (order_qty < b->getSizeMinimum()) 
-      throw DataException("Inconsistent procurement parameters on buffer '" + b->getName() + "'");
+      throw DataException("Inconsistent procurement parameters on buffer '" 
+        + b->getName() + "'");
   }
 
   // Reply
@@ -94,91 +97,130 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
   Solver->a_date = Date::infiniteFuture;
 
   // Find the latest locked procurement operation
-  Date prev_supply;
+  Date earliest_next;
   for (OperationPlan::iterator procs(b->getOperation());
     procs != OperationPlan::iterator(NULL); ++procs)
       if (procs->getLocked()) 
-        prev_supply = procs->getDates().getEnd();
+        earliest_next = procs->getDates().getEnd();
+  Date latest_next = Date::infiniteFuture;
+  if (earliest_next && b->getMaximumInterval()) 
+    latest_next = earliest_next + b->getMaximumInterval();
+  if (earliest_next && b->getMinimumInterval()) 
+    earliest_next += b->getMinimumInterval();
+  if (Solver->getSolver()->isLeadtimeConstrained()
+    && earliest_next < Plan::instance().getCurrent() + b->getLeadtime())
+    earliest_next = Plan::instance().getCurrent() + b->getLeadtime();
+  if (Solver->getSolver()->isFenceConstrained()
+    && earliest_next < Plan::instance().getCurrent() + b->getFence())
+    earliest_next = Plan::instance().getCurrent() + b->getFence();
 
   // Loop through all flowplans
   OperationPlan *last_operationplan = NULL;
-  Date next_date;
   double current_inventory = 0.0;
   Date current_date;
   const FlowPlan* current_flowplan = NULL;
   for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin(); 
-    next_date || cur != b->getFlowPlans().end(); )
+    latest_next != Date::infiniteFuture || cur != b->getFlowPlans().end(); )
   {
-   if (cur==b->getFlowPlans().end() || (next_date && next_date<cur->getDate()))
+    if (cur==b->getFlowPlans().end() || latest_next < cur->getDate())
     {
-     // Go through the loop based on the next_date variable
-      // The cur iterator points to a flowplan beyond the next_date
-      if (next_date <= current_date) break;
-      current_date = next_date;
+      current_date = latest_next;
       current_inventory = b->getOnHand(current_date);
       current_flowplan = NULL;
-      next_date = Date::infinitePast;
+    }
+    else if (earliest_next && earliest_next < cur->getDate())
+    {
+      current_date = earliest_next;
+      current_inventory = b->getOnHand(current_date);
+      current_flowplan = NULL; 
     }
     else
     {
       // Go through the loop based on consuming flowplan
       current_date = cur->getDate();
-      current_inventory = cur->getOnhand();
+      current_inventory = cur->getOnhand();       
       current_flowplan = dynamic_cast<const FlowPlan*>(&*(cur++));
     }
 
-    // Delete producers
+    // Delete producers  @todo not efficient: we recreate all operation plans every time
     if (current_flowplan 
       && current_flowplan->getQuantity() > 0.0f
       && !current_flowplan->getOperationPlan()->getLocked())
+    {
         delete &*(current_flowplan->getOperationPlan());
+        continue;
+    }
     
     // Hard limit: respect minimum interval
-    if (b->getMinimumInterval() && prev_supply &&
-      current_date < prev_supply + b->getMinimumInterval())
+    if (current_date < earliest_next)
+    {
+      if (current_inventory < -ROUNDING_ERROR 
+        && current_date >= Solver->q_date
+        && b->getMinimumInterval()
+        && Solver->a_date > earliest_next
+        && Solver->getSolver()->isMaterialConstrained())
+          Solver->a_date = earliest_next;
       continue;
-
-    // Hard limit: respect the leadtime xxx
-    //   if prevsupplydate and time < prevsupply  and leadtimeconstrained
-    //      May need to stop before the next date: order at fence...
-    //      skip to next  
-    
-    // Already higher than the maximum - allow skipping this procurement
-    if (current_inventory >= b->getMaximumInventory()) continue;
+    }
 
     // Now the normal reorder check
-    if (b->getMaximumInterval() && current_date>=prev_supply+b->getMaximumInterval())
+    if (current_inventory >= b->getMinimumInventory() 
+      && current_date<latest_next)
     {
-      if (b->getSizeMinimum()>0.0f 
-        && b->getMaximumInventory()-current_inventory < b->getSizeMinimum())
-          current_date = prev_supply+b->getMaximumInterval();
-    }
-    else if (current_inventory > b->getMinimumInventory())
+      if (current_date == earliest_next) earliest_next = Date::infinitePast;
       continue;
-    
-    // When we have just exceeded the minimum interval, we may need to increase the latest procurement
-    if (current_date==prev_supply+b->getMinimumInterval() && last_operationplan)
+    }
+
+    // When we are within the minimum interval, we may need to increase the 
+    // size of the latest procurement.
+    if (current_date==earliest_next 
+      && last_operationplan 
+      && current_inventory < b->getMinimumInventory())
+    {
       last_operationplan->setQuantity(suggestQuantity(b,
-        static_cast<float>(last_operationplan->getQuantity()+b->getMinimumInventory()-current_inventory))); 
+        static_cast<float>( last_operationplan->getQuantity()
+          + b->getMinimumInventory() - current_inventory))); 
+      current_inventory = b->getOnHand(current_date);
+      if (current_inventory < -ROUNDING_ERROR 
+        && Solver->a_date > earliest_next + b->getMinimumInterval()
+        && earliest_next + b->getMinimumInterval() > Solver->q_date
+        && Solver->getSolver()->isMaterialConstrained())
+          // Resizing didn't work, and we still have shortage
+          Solver->a_date = earliest_next + b->getMinimumInterval();
+    }
 
     // At this point, we know we need to reorder...
 
     // Create operation plan
-    float order_qty = suggestQuantity(b,static_cast<float>(b->getMaximumInventory() - current_inventory));
+    earliest_next = Date::infinitePast;
+    float order_qty = suggestQuantity(b,
+      static_cast<float>(b->getMaximumInventory() - current_inventory));
     if (order_qty > 0)
     {
       last_operationplan = b->getOperation()->createOperationPlan(
           order_qty, 
           Date::infinitePast, current_date, NULL);
       last_operationplan->initialize();
-      prev_supply = current_date;
       if (b->getMinimumInterval())
-        next_date = prev_supply + b->getMinimumInterval();
+        earliest_next = current_date + b->getMinimumInterval();
+    }
+    if (b->getMaximumInterval())
+    {
+      current_inventory = b->getOnHand(current_date);
+      if (current_inventory >= b->getMaximumInventory()
+        && cur == b->getFlowPlans().end()) 
+        // Nothing happens any more further in the future. 
+        // Abort procuring based on the max inteval
+        latest_next = Date::infiniteFuture;
+      else
+        latest_next = current_date + b->getMaximumInterval();
     }
   }
 
   // Create the answer
-  if (Solver->getSolver()->isConstrained())
+  if (Solver->getSolver()->isFenceConstrained()
+    || Solver->getSolver()->isLeadtimeConstrained()
+    || Solver->getSolver()->isMaterialConstrained())
   {
     // Check if the inventory drops below zero somewhere
     float shortage = 0;
@@ -195,7 +237,17 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
     {
       // Answer a shorted quantity
       Solver->a_qty = Solver->q_qty + shortage;
+      // Nothing to promise...
       if (Solver->a_qty < 0) Solver->a_qty = 0;
+      // Check the reply date
+      if (Solver->getSolver()->isFenceConstrained()
+        && Solver->q_date < Plan::instance().getCurrent() + b->getFence()
+        && Solver->a_date > Plan::instance().getCurrent() + b->getFence())
+        Solver->a_date = Plan::instance().getCurrent() + b->getFence();
+      if (Solver->getSolver()->isLeadtimeConstrained()
+        && Solver->q_date < Plan::instance().getCurrent() + b->getLeadtime()
+        && Solver->a_date > Plan::instance().getCurrent() + b->getLeadtime())
+        Solver->a_date = Plan::instance().getCurrent() + b->getLeadtime();
     }
     else
       // Answer the full quantity

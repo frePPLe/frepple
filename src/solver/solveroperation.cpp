@@ -138,7 +138,6 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
 
     if (delay && a_qty <= ROUNDING_ERROR && a_date + delay < data.q_date_max && a_date + delay > orig_q_date)
     {
-      cout << delay << "  " << data.q_date_max << "  " << a_date << endl;
       // The reply is 0, but the next-date is still less than the maximum 
       // ask date. In this case we will violate the post-operation -soft- 
       // constraint.
@@ -252,7 +251,6 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
 
   MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
   OperationPlan *z;
-  CommandCreateOperationPlan *a = NULL;
 
   // Find the flow for the quantity-per. This can throw an exception if no
   // valid flow can be found.
@@ -293,16 +291,18 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
   else
   {
     // There is no owner operationplan yet. We need a new command.
-    a = new CommandCreateOperationPlan(oper,Solver->q_qty / flow_qty_per, Date::infinitePast,
-          Solver->q_date,Solver->curDemand,Solver->curOwnerOpplan);
+    CommandCreateOperationPlan *a = 
+      new CommandCreateOperationPlan(oper, Solver->q_qty / flow_qty_per, 
+        Date::infinitePast, Solver->q_date, Solver->curDemand,
+        Solver->curOwnerOpplan);
     Solver->curDemand = NULL;
     z = a->getOperationPlan();
+    Solver->add(a);
   }
   assert(z);
 
   // Check the constraints
   Solver->getSolver()->checkOperation(z,*Solver);
-  if (a) Solver->add(a);
   Solver->q_date_max = prev_q_date_max;
 
   // Multiply the operation reqply with the flow quantity to get a final reply

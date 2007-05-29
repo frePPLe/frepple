@@ -97,7 +97,7 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
       {
         // Error message
         cout << "Error: Caught an exception while solving demand '"
-        << (*i)->getName() << "':" << endl;
+          << (*i)->getName() << "':" << endl;
         try { throw; }
         catch (bad_exception&) {cout << "  bad exception" << endl;}
         catch (exception& e) {cout << "  " << e.what() << endl;}

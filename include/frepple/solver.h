@@ -104,6 +104,22 @@ class MRPSolver : public Solver
     DECLARE_EXPORT void solve(const Buffer*, void* = NULL);
 
     /** Behavior of this solver method:
+      *  - When the inventory drops below the minimum inventory level, a new
+      *    replenishment is triggered.
+      *    The replenishment brings the inventory to the maximum level again.
+      *  - The minimum and maximum inventory are soft-constraints. The actual
+      *    inventory can go lower than the minimum or exceed the maximum.
+      *  - The minimum, maximum and multiple size of the replenishment are 
+      *    hard constraints, and will always be respected.
+      *  - A minimum and maximum interval between replenishment is also 
+      *    respected as a hard constraint.
+      *  - No propagation to upstream buffers at all, even if a producing
+      *    operation has been specified.
+      *  - The minimum calendar isn't used by the solver. 
+      */
+    DECLARE_EXPORT void solve(const BufferProcure*, void* = NULL);
+
+    /** Behavior of this solver method:
       *  - This method simply passes on the request to the referenced buffer.
       *    It is called from a solve(Operation*) method and passes on the
       *    control to a solve(Buffer*) method.
@@ -176,11 +192,37 @@ class MRPSolver : public Solver
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(MRPSolver);}
 
-    /** Definition of the planning mode. */
-    static const short LEADTIME; // = 1
-    static const short MATERIAL; // = 2
-    static const short CAPACITY; // = 4
-    static const short FENCE; // = 8
+    /** Static constant for the LEADTIME constraint type.<br>
+      * The numeric value is 1. 
+      * @see MATERIAL
+      * @see CAPACITY
+      * @see FENCE
+      */
+    static const short LEADTIME;
+
+    /** Static constant for the MATERIAL constraint type.<br>
+      * The numeric value is 2. 
+      * @see LEADTIME
+      * @see CAPACITY
+      * @see FENCE
+      */
+    static const short MATERIAL;
+
+    /** Static constant for the CAPACITY constraint type.<br>
+      * The numeric value is 4. 
+      * @see MATERIAL
+      * @see LEADTIME
+      * @see FENCE
+      */
+    static const short CAPACITY;
+
+    /** Static constant for the FENCE constraint type.<br>
+      * The numeric value is 8. 
+      * @see MATERIAL
+      * @see CAPACITY
+      * @see LEADTIME
+      */
+    static const short FENCE;
 
     /** Update the constraints to be considered by this solver. This field may
       * not be applicable for all solvers. */

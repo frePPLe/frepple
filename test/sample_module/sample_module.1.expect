@@ -142,49 +142,49 @@
 		</RESOURCE>
 	</RESOURCES>
 	<OPERATION_PLANS>
-		<OPERATION_PLAN ID="10" OPERATION="delivery product from distribution centre">
+		<OPERATION_PLAN ID="6" OPERATION="delivery product from distribution centre">
 			<DEMAND NAME="order 2"/>
 			<START>2007-01-03T12:00:00</START>
 			<END>2007-01-03T12:00:00</END>
 			<QUANTITY>10</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="5" OPERATION="delivery product from distribution centre">
+		<OPERATION_PLAN ID="2" OPERATION="delivery product from distribution centre">
 			<DEMAND NAME="order 1"/>
 			<START>2007-01-03T12:00:00</START>
 			<END>2007-01-03T12:00:00</END>
 			<QUANTITY>10</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="2" OPERATION="make product in factory 1">
+		<OPERATION_PLAN ID="3" OPERATION="make product in factory 1">
 			<START>2007-01-01T12:00:00</START>
 			<END>2007-01-02T12:00:00</END>
 			<QUANTITY>5</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="7" OPERATION="make product in factory 2">
+		<OPERATION_PLAN ID="8" OPERATION="make product in factory 2">
 			<START>2007-01-01T12:00:00</START>
 			<END>2007-01-02T12:00:00</END>
 			<QUANTITY>10</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="9" OPERATION="supply distribution centre">
+		<OPERATION_PLAN ID="10" OPERATION="supply distribution centre">
 			<START>2007-01-02T12:00:00</START>
 			<END>2007-01-03T12:00:00</END>
 			<QUANTITY>10</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="4" OPERATION="supply distribution centre">
+		<OPERATION_PLAN ID="5" OPERATION="supply distribution centre">
 			<START>2007-01-02T12:00:00</START>
 			<END>2007-01-03T12:00:00</END>
 			<QUANTITY>5</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="3" OPERATION="transport supply from factory 1">
+		<OPERATION_PLAN ID="4" OPERATION="transport supply from factory 1">
 			<START>2007-01-02T12:00:00</START>
 			<END>2007-01-03T12:00:00</END>
 			<QUANTITY>5</QUANTITY>
-			<OWNER ID="4" OPERATION="supply distribution centre"/>
+			<OWNER ID="5" OPERATION="supply distribution centre"/>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="8" OPERATION="transport supply from factory 2">
+		<OPERATION_PLAN ID="9" OPERATION="transport supply from factory 2">
 			<START>2007-01-02T12:00:00</START>
 			<END>2007-01-03T12:00:00</END>
 			<QUANTITY>10</QUANTITY>
-			<OWNER ID="9" OPERATION="supply distribution centre"/>
+			<OWNER ID="10" OPERATION="supply distribution centre"/>
 		</OPERATION_PLAN>
 	</OPERATION_PLANS>
 	<PROBLEMS>

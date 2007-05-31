@@ -78,6 +78,14 @@ def runTestSuite():
     testdir = os.path.dirname(os.path.abspath(sys.argv[0]))
     os.environ['FREPPLE_HOME'] = os.path.normpath(os.path.join(testdir, '..', 'bin'))
 
+    # Frepple uses the time functions from the C-library, which is senstive to
+    # timezone settings. In particular the daylight saving time of different
+    # timezones is of interest: it applies only to some timezones, and different
+    # timezones switch to summer time at various dates.
+    # The next statement makes sure the test are all running with the same timezone,
+    # and in addition a timezone without DST.
+    os.environ['TZ'] = 'CET'
+
     # Parse the command line
     opts = []
     tests = []

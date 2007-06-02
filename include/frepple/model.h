@@ -3548,13 +3548,13 @@ class Demand
       * than or equal to 0. */
     virtual DECLARE_EXPORT void setQuantity(float);
 
-    /** Returns the priority of the demand. Lower numbers indicate a
-      * higher priority level.
+    /** Returns the priority of the demand.<br>
+      * Lower numbers indicate a higher priority level.
       */
     int getPriority() const {return prio;}
 
-    /** Updates the due date of the demand. Lower numbers indicate a
-      * higher priority level.
+    /** Updates the due date of the demand.<br>
+      * Lower numbers indicate a higher priority level.
       */
     virtual void setPriority(int i) {prio=i; setChanged();}
 

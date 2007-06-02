@@ -68,8 +68,10 @@ DECLARE_EXPORT bool MRPSolver::demand_comparison(Demand* l1, Demand* l2)
 {
   if (l1->getPriority() != l2->getPriority())
     return l1->getPriority() < l2->getPriority();
-  else
+  else if (l1->getDue() != l2->getDue())
     return l1->getDue() < l2->getDue();
+  else
+    return l1->getQuantity() < l2->getQuantity();
 }
 
 

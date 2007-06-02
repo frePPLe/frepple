@@ -248,8 +248,11 @@ class MRPSolver : public Solver
     bool isConstrained() const {return constrts>0;}
 
     /** This function defines the order in which the demands are being
-      * planned. The demand priority is used as the first criterium, with the
-      * due date being used as tie break.
+      * planned.<br>
+      * The following sorting criteria are appplied in order:
+      *  - demand priority: smaller priorities first
+      *  - demand due date: earlier due dates first
+      *  - demand quantity: smaller quantities first
       */
     static DECLARE_EXPORT bool demand_comparison(Demand*, Demand*);
 

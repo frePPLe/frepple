@@ -2823,8 +2823,11 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** A flow is considered hidden when either its buffer or operation
       * are hidden. */
-    bool getHidden() const
-    {return getBuffer()->getHidden() || getOperation()->getHidden();}
+    virtual bool getHidden() const
+    {
+      return (getBuffer() && getBuffer()->getHidden()) 
+        || (getOperation() && getOperation()->getHidden());
+    }
 
     /** Returns the date to be used for this flowplan. */
     virtual const Date& getFlowplanDate(const OperationPlan* o) const
@@ -3141,7 +3144,10 @@ class Load
     DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
     bool getHidden() const
-      {return getResource()->getHidden() || getOperation()->getHidden();}
+     {
+      return (getResource() && getResource()->getHidden()) 
+        || (getOperation() && getOperation()->getHidden());
+    }
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return metadata;}

@@ -511,7 +511,7 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
   if (err) throw RuntimeException(err);
 #endif
 
-  // Call the initialization routine with the parameter list  //@todo do we need to catch exceptions here???
+  // Call the initialization routine with the parameter list
   string x = (inithandle)(parameters);
   if (x.empty()) throw DataException("Invalid module name returned.");
 

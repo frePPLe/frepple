@@ -1,5 +1,5 @@
 /***************************************************************************
-  file : $HeadURL: https://svn.sourceforge.net/svnroot/frepple/trunk/test/custom_class/custom_class.h $
+  file : $HeadURL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
   email : jdetaeye@users.sourceforge.net

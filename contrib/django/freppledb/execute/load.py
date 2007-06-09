@@ -16,7 +16,7 @@
 # Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 #
 
-# file : $URL: https://frepple.svn.sourceforge.net/svnroot/frepple/trunk/contrib/django/freppledb/execute/export.py $
+# file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net

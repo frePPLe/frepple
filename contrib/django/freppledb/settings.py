@@ -140,6 +140,11 @@ CACHE_BACKEND = 'locmem:///'
 # Directory from which we allow server include
 ALLOWED_INCLUDE_ROOTS = (FREPPLE_HOME)
 
+# To use a customized authentication backend.
+AUTHENTICATION_BACKENDS = (
+    "freppledb.user.auth.EmailBackend",
+)
+
 # To add the user profile
 AUTH_PROFILE_MODULE = 'user.Preferences'
 

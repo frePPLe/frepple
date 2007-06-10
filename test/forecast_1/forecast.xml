@@ -13,6 +13,9 @@
     <COMMAND xsi:type="COMMAND_SAVEPLAN">
       <FILENAME>output.1.xml</FILENAME>
     </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE">
+      <FILENAME>output.2.xml</FILENAME>
+    </COMMAND>
   </COMMANDS>
   <CALENDARS>
     <CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
@@ -100,6 +103,14 @@
           <QUANTITY>3</QUANTITY>
         </BUCKET>
       </BUCKETS>
+    </DEMAND>
+    <DEMAND NAME="forecast item 1 bis" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="item 1" />
+    </DEMAND>
+    <DEMAND NAME="order 1 item 1">
+      <ITEM NAME="item 1"/>
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-03-22T00:00:00</DUE>
     </DEMAND>
   </DEMANDS>
 </PLAN>

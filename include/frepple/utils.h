@@ -3078,13 +3078,14 @@ class CommandSystem : public Command
 
 /** @brief Command to dynamically load a shared library in Frepple.
   *
-  * After loading, the function "initialize" is executed.
-  * The function works on the following platforms:
+  * After loading the library, the function "initialize" of the module 
+  * is executed.
+  *
+  * The current implementation of the command works on the following platforms:
   *  - Windows
   *  - Linux
   *  - Unix systems supporting the dlopen function in the standard way.
-  *    Some unix systems have other or deviating APIs. Actually, this is a
-  *    messy topic. :-<
+  *    Some unix systems have other or deviating APIs. A pretty messy story :-<
   */
 class CommandLoadLibrary : public Command
 {
@@ -3230,7 +3231,7 @@ class XMLInput : public NonCopyable,  private DefaultHandler
       *  - A user definable pointer. The purpose of this pointer is to store
       *    status information between calls to the handler.
       */
-    stack< pair<Object*,void*> > m_EHStack;
+    vector< pair<Object*,void*> > m_EHStack;
 
     /** Stack of elements.
       * The expression m_EStack[numElements+1] returns the current element.
@@ -3366,18 +3367,27 @@ class XMLInput : public NonCopyable,  private DefaultHandler
     bool isObjectEnd() {return objectEnded;}
 
     /** Return a pointer to the current object being read in.  */
-    Object* getCurrentObject() const {return m_EHStack.top().first;}
+    Object* getCurrentObject() const 
+      {return m_EHStack.empty() ? NULL : m_EHStack.back().first;}
 
-    /** Return a pointer to the previous object being read in.
+    /** Return a pointer to the previous object being read in.<br>
       * In a typical use the returned pointer will require a dynamic_cast
-      * to a subclass type.
-      * A typical use will be as follows:
-      * E.g.
+      * to a subclass type.<br>
+      * The typical usage is as follows:
+      * <pre>
       *   Operation *o = dynamic_cast<Operation*>(pIn.getPreviousObject());
       *   if (o) doSomeThing(o);
       *   else throw LogicException("Incorrect object type");
+      * </pre>
       */
     Object* getPreviousObject() const {return prev;}
+
+    /** Clears the previously read object. */
+    Object* getParentObject() const 
+    {
+      int x = m_EHStack.size(); 
+      return x>1 ? m_EHStack[x-2].first : NULL;
+    }
 
     /** Returns a reference to the parent element. */
     const XMLElement& getParentElement() const
@@ -3396,10 +3406,12 @@ class XMLInput : public NonCopyable,  private DefaultHandler
 
     /** Updates the user definable pointer. This pointer is used to store
       * status information between handler calls. */
-    void setUserArea(void* v) {m_EHStack.top().second = v;}
+    void setUserArea(void* v) 
+      {if (!m_EHStack.empty()) m_EHStack.back().second = v;}
 
     /** Returns the user definable pointer. */
-    void* getUserArea() const {return m_EHStack.top().second;}
+    void* getUserArea() const 
+      {return m_EHStack.empty() ? NULL : m_EHStack.back().second;}
 
     /** Updates whether we ignore data exceptions or whether we abort the
       * processing of the XML data stream. */
@@ -3528,7 +3540,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
     typedef T* type;
 
   public:
-    /** @brief This class models an STL-like iterator that allows us to 
+    /** @brief This class models a STL-like iterator that allows us to 
       * iterate over the named entities in a simple and safe way.
       *
       * Objects of this class are created by the begin() and end() functions.
@@ -3546,7 +3558,8 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         T& operator*() const {return *static_cast<T*>(node);}
 
         /** Return the content of the current node. */
-        T* operator->() const {return static_cast<T*>(node);}  // @todo return writelocked object
+        //typename T::pointer operator->() const {return static_cast<T*>(node);}  // @todo return readlocked object
+        T* operator->() const {return static_cast<T*>(node);}  // @todo return readlocked object
 
         /** Pre-increment operator which moves the pointer to the next
           * element. */
@@ -3584,72 +3597,10 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         Tree::TreeNode* node;
     };
 
-    /** @brief This class models an STL-like iterator that allows us to 
-      * iterate over the named entities in a simple and safe way.
-      *
-      * Objects of this class are created by the begin() and end() functions.
-      */
-    class const_iterator
-    {
-      public:
-        /** Constructor. */
-        const_iterator(Tree::TreeNode* x) : node(x) {}
-
-        /** Copy constructor. */
-        const_iterator(const const_iterator& it) {node = it.node;}
-
-        /** Return the content of the current node. */
-        const T& operator*() const {return *static_cast<T*>(node);}
-
-        /** Return the content of the current node. */
-        typename T::pointer operator->() const {return static_cast<T*>(node);}
-
-        /** Pre-increment operator which moves the pointer to the next
-          * element. */
-        const_iterator& operator++() {node = node->increment(); return *this;}
-
-        /** Post-increment operator which moves the pointer to the next
-          * element. */
-        const_iterator operator++(int)
-        {
-          Tree::TreeNode* tmp = node;
-          node = node->increment();
-          return tmp;
-        }
-
-        /** Pre-decrement operator which moves the pointer to the previous
-          * element. */
-        const_iterator& operator--() {node = node->decrement(); return *this;}
-
-        /** Post-decrement operator which moves the pointer to the previous
-          * element. */
-        const_iterator operator--(int)
-        {
-          Tree::TreeNode* tmp = node;
-	        node = node->decrement();
-	        return tmp;
-        }
-
-        /** Comparison operator. */
-        bool operator==(const const_iterator& y) const {return node==y.node;}
-
-        /** Inequality operator. */
-        bool operator!=(const const_iterator& y) const {return node!=y.node;}
-
-        /** Comparison operator. */
-        bool operator==(const iterator& y) const {return node==y.node;}
-
-        /** Inequality operator. */
-        bool operator!=(const iterator& y) const {return node!=y.node;}
-
-      private:
-        Tree::TreeNode* node;
-    };
-
-    /** Returns an STL-like iterator to the end of the entity list. */
+    /** Returns a STL-like iterator to the end of the entity list. */
     static iterator end() {return st.end();}
 
-    /** Returns an STL-like iterator to the start of the entity list. */
+    /** Returns a STL-like iterator to the start of the entity list. */
     static iterator begin() {return st.begin();}
 
     /** Returns false if no named entities have been defined yet. */

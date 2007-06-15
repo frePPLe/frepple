@@ -157,7 +157,6 @@ class MRPSolver : public Solver
       */
     void solve(const Load* l, void* d = NULL) {l->getResource()->solve(*this,d);}
 
-  public:
     /** Behavior of this solver method:
       *  - Respects the following demand planning policies:<br>
       *     1) PLANSHORT - plan the demand short<br>
@@ -171,6 +170,7 @@ class MRPSolver : public Solver
       */
     DECLARE_EXPORT void solve(const Demand*, void* = NULL);
 
+  public:
     /** This is the main solver method that will appropriately call the other
       * solve methods.<br>
       * The demands in the model will all be sorted with the criteria defined in

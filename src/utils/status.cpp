@@ -260,7 +260,7 @@ void XMLInput::endElement(const XMLCh* const uri,
         // Pop from the handler object stack
         prev = getCurrentObject();
         LockManager::getManager().releaseWriteLock(prev);
-        m_EHStack.pop();
+        m_EHStack.pop_back();
         endingHashes.pop();
 
         // Pop from the state stack
@@ -329,7 +329,7 @@ DECLARE_EXPORT void XMLInput::readto(Object * pPI)
     << " (" << typeid(*pPI).name() << ")" << endl;
 #endif
     prev = getCurrentObject();
-    m_EHStack.push(make_pair(pPI, static_cast<void*>(NULL)));
+    m_EHStack.push_back(make_pair(pPI,static_cast<void*>(NULL)));
     states.push(READOBJECT);
   }
   else
@@ -373,7 +373,7 @@ void XMLInput::shutdown()
       else cout << "Continuing after data error: " << e.what() << endl;
     }
     LockManager::getManager().releaseWriteLock(getCurrentObject());
-    m_EHStack.pop();
+    m_EHStack.pop_back();
   }
 }
 
@@ -392,7 +392,7 @@ void XMLInput::reset()
     // The next line is to avoid calling the endElement handler twice for the
     // last object. E.g. endElement handler causes and exception, and as part
     // of the exception handling we call the reset method.
-    if (objectEnded) m_EHStack.pop();
+    if (objectEnded) m_EHStack.pop_back();
     objectEnded = true;
     m_EStack[++numElements].initialize("Not a real tag");
     while (!m_EHStack.empty())
@@ -404,7 +404,7 @@ void XMLInput::reset()
         else cout << "Continuing after data error: " << e.what() << endl;
       }
       LockManager::getManager().releaseWriteLock(getCurrentObject());
-      m_EHStack.pop();
+      m_EHStack.pop_back();
     }
   }
 
@@ -467,7 +467,7 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
       parser->setContentHandler(this);
 
       // Get the parser to read data into the object pRoot.
-      m_EHStack.push(make_pair(pRoot,static_cast<void*>(NULL)));
+      m_EHStack.push_back(make_pair(pRoot,static_cast<void*>(NULL)));
       states.push(INIT);
     }
 

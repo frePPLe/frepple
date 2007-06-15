@@ -26,6 +26,18 @@
  ***************************************************************************/
 
 
+template <class T> inline ostream& operator << (ostream &o, const Object::RLock<T> &n)
+{
+  return o << &*n;
+}
+
+
+template <class T> inline ostream& operator << (ostream &o, const Object::WLock<T> &n)
+{
+  return o << &*n;
+}
+
+
 template <class T> inline ostream& operator << (ostream &o, const HasName<T> &n)
 {
   return o << n.getName();
@@ -112,7 +124,7 @@ template <class T> void HasHierarchy<T>::beginElement
   if (pElement.isA(Tags::tag_owner) ||
       (pIn.getParentElement().isA(Tags::tag_members)
        && pElement.isA(T::metadata.typetag)))
-    // Start reading a member or the parent
+    // Start reading a member of the parent
     pIn.readto( T::reader(T::metadata,pIn) );
 }
 
@@ -120,15 +132,18 @@ template <class T> void HasHierarchy<T>::beginElement
 template <class T> void HasHierarchy<T>::endElement (XMLInput& pIn,
     XMLElement& pElement)
 {
-  if ( (pElement.isA(Tags::tag_owner) && !pIn.isObjectEnd())
-      || (pElement.isA(T::metadata.typetag)
-          && pIn.getParentElement().isA(Tags::tag_members)
-          && pIn.isObjectEnd()))
+  if (pElement.isA(Tags::tag_owner) && !pIn.isObjectEnd())
   {
-    // Either:
-    // - we just ended an owner element: ...<OWNER>abc</OWNER>
-    // - we just have ended a member element <MEMBERS><TAG>abc<TAG>...</MEMBERS>
+    // we just ended an owner element: ...<OWNER>abc</OWNER>
     T* o = dynamic_cast<T*>(pIn.getPreviousObject());
+    if (o) setOwner(o);
+  }
+  else if (pElement.isA(T::metadata.typetag)
+     && pIn.getParentElement().isA(Tags::tag_members)
+     && pIn.isObjectEnd() )
+  {
+    // we just have ended a member element <MEMBERS><TAG>abc<TAG>...</MEMBERS>
+    T* o = dynamic_cast<T*>(pIn.getParentObject());
     if (o) setOwner(o);
   }
 }

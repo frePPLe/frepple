@@ -560,10 +560,17 @@ class pathreport:
 
               # Recurse upstream for an operation
               elif isinstance(i,Operation):
+                # Flows on the main operation
                 for j in i.flows.all():
                    if j.quantity < 0:
                      # Found a new buffer
                      newbufs.append( (j.thebuffer, j, - q * j.quantity) )
+                # Flows on suboperations
+                for k in i.suboperations.all():
+                   for j in k.suboperation.flows.all():
+                     if j.quantity < 0:
+                       # Found a new buffer
+                       newbufs.append( (j.thebuffer, j, - q * j.quantity) )
                 # Append to the list of buffers
                 resultset.append( {
                   'buffer': None,

@@ -5,6 +5,7 @@
     <ABORTONERROR>false</ABORTONERROR>
     <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_forecast.so">
        <PARAMETER NAME="Customer_Then_Item_Hierarchy" VALUE="true" />
+       <PARAMETER NAME="Match_Using_Delivery_Operation" VALUE="true" />
     </COMMAND>
   </COMMANDS>
 </PLAN>

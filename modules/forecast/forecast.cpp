@@ -32,6 +32,10 @@ namespace module_forecast
 {
 
 const MetaClass Forecast::metadata;
+const MetaClass ForecastSolver::metadata;
+Forecast::MapOfForecasts Forecast::ForecastDictionary;
+bool Forecast::Customer_Then_Item_Hierarchy = true;
+bool Forecast::Match_Using_Delivery_Operation = true;
 
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
@@ -46,18 +50,64 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   }
   init = true;
 
-  // Print the parameters
-  /*
-  for (CommandLoadLibrary::ParameterList::const_iterator
-    j = z.begin(); j!= z.end(); ++j)
-    cout << "Parameter " << j->first << " = " << j->second << endl;
-  */
+  // Process the parameter "Customer_Then_Item_Hierarchy"
+  CommandLoadLibrary::ParameterList::const_iterator x 
+    = z.find("Customer_Then_Item_Hierarchy");
+  if (x != z.end())
+  {
+    switch (x->second[0])
+    {
+      case 'T':
+      case 't':
+      case '1':
+        Forecast::setCustomerThenItemHierarchy(true);
+        break;
+      case 'F':
+      case 'f':
+      case '0':
+        Forecast::setCustomerThenItemHierarchy(false);
+        break;
+      default:
+        // We can't throw an exception in a module initialization routine...
+        cout << "Error initializing " << name << " module: Invalid value '" 
+          << x->second 
+          << "' for parameter 'Customer_Then_Item_Hierarchy'" << endl;
+    }
+  }
+
+  // Process the parameter "Match_Using_Delivery_Operation"
+  x = z.find("Match_Using_Delivery_Operation");
+  if (x != z.end())
+  {
+    switch (x->second[0])
+    {
+      case 'T':
+      case 't':
+      case '1':
+        Forecast::setMatchUsingDeliveryOperation(true);
+        break;
+      case 'F':
+      case 'f':
+      case '0':
+        Forecast::setMatchUsingDeliveryOperation(false);
+        break;
+      default:
+        // We can't throw an exception in a module initialization routine...
+        cout << "Error initializing " << name << " module: Invalid value '" 
+          << x->second 
+          << "' for parameter 'Match_Using_Delivery_Operation'" << endl;
+    }
+  }
 
   // Initialize the metadata.
   Forecast::metadata.registerClass(
     "DEMAND",
     "DEMAND_FORECAST",
     Object::createString<Forecast>);
+  ForecastSolver::metadata.registerClass(
+    "SOLVER",
+    "SOLVER_FORECAST",
+    Object::createString<ForecastSolver>);
 
   // Return the name of the module
   return name;
@@ -168,6 +218,11 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
     // Clear the quantity and date.
     Demand::setDue(Date::infinitePast);
     Demand::setQuantity(0.0f);
+    // Update the dictionary
+    ForecastDictionary.insert(make_pair(
+      make_pair(&*getItem(),&*getCustomer()),
+      this
+      ));
   }
   else
     Demand::endElement (pIn, pElement);
@@ -186,21 +241,63 @@ void Forecast::beginElement(XMLInput& pIn, XMLElement& pElement)
 void Forecast::setCalendar(const Calendar* c)
 {
   if (isGroup())
-  {
-    cout << "Warning: Changing the calendar of an initialized forecast isn't "
-    << "allowed." << endl;
-    return;
-  }
+    throw DataException(
+      "Changing the calendar of an initialized forecast isn't allowed.");
   calptr = c;
 }
 
 
 void Forecast::setItem(const Item* i)
 {
+  // No change
+  if (getItem() == i) return;
+
+  // Update the dictionary
+  for (MapOfForecasts::iterator x = 
+    ForecastDictionary.lower_bound(make_pair(
+      &*getItem(),&*getCustomer()
+      ));
+    x != ForecastDictionary.end(); ++x)
+    if (x->second == this) 
+    {
+      ForecastDictionary.erase(x); 
+      break;
+    }
+  ForecastDictionary.insert(make_pair(make_pair(i,&*getCustomer()),this));
+
+  // Update data field
   Demand::setItem(i);
+
   // Update the item for all buckets/subdemands
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
     m->setItem(i);
+}
+
+
+void Forecast::setCustomer(const Customer* i)
+{
+  // No change
+  if (getCustomer() == i) return;
+
+  // Update the dictionary
+  for (MapOfForecasts::iterator x = 
+    ForecastDictionary.lower_bound(make_pair(
+      &*getItem(), &*getCustomer()
+      ));
+    x != ForecastDictionary.end(); ++x)
+    if (x->second == this) 
+    {
+      ForecastDictionary.erase(x); 
+      break;
+    }
+  ForecastDictionary.insert(make_pair(make_pair(&*getItem(),i),this));
+
+  // Update data field
+  Demand::setCustomer(i);
+
+  // Update the customer for all buckets/subdemands
+  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+    m->setCustomer(i);
 }
 
 

@@ -34,48 +34,48 @@ using namespace frepple;
 class SignalSniffer
 {
   public:
-    static bool callback(Buffer* l, Signal a)
+    static bool callback(Buffer* l, const Signal a)
     {
       cout << "  Buffer '" << l << "' receives signal " << a << endl;
       return true;
     }
-    static bool callback(BufferInfinite* l, Signal a)
+    static bool callback(BufferInfinite* l, const Signal a)
     {
       cout << "  BufferInfinite '" << l << "' receives signal " << a << endl;
       return true;
     }
-    static bool callback(BufferDefault* l, Signal a)
+    static bool callback(BufferDefault* l, const Signal a)
     {
       cout << "  BufferDefault '" << l << "' receives signal " << a << endl;
       return true;
     }
-    static bool callback(Operation* l, Signal a)
+    static bool callback(Operation* l, const Signal a)
     {
       cout << "  Operation '" << l << "' receives signal " << a << endl;
       return true;
     }
-    static bool callback(OperationFixedTime* l, Signal a)
+    static bool callback(OperationFixedTime* l, const Signal a)
     {
       cout << "  OperationFixedTime '" << l << "' receives signal " << a << endl;
       return true;
     }
-    static bool callback(Item* l, Signal a)
+    static bool callback(Item* l, const Signal a)
     {
       cout << "  Item '" << l << "' receives signal " << a << endl;
       return true;
     }
-    static bool callback(Flow* l, Signal a)
+    static bool callback(Flow* l, const Signal a)
     {
       cout << "  Flow between '" << l->getBuffer() << "' and '"
       << l->getOperation() << "' receives signal " << a << endl;
       return true;
     }
-    static bool callback(Demand* l, Signal a)
+    static bool callback(Demand* l, const Signal a)
     {
       cout << "  Demand '" << l << "' receives signal " << a << endl;
       return true;
     }
-    static bool callback(Calendar* l, Signal a)
+    static bool callback(Calendar* l, const Signal a)
     {
       cout << "  Calendar '" << l << "' receives signal " << a << endl;
       return true;

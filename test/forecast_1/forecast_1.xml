@@ -2,14 +2,24 @@
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <NAME>Forecast test model</NAME>
   <DESCRIPTION>
-    This test case test the creation and planning of the Forecast class.
+    This test case test the matching between an actual order and a forecast.
+    The different scenarios are being validated:
+      - netting at
   </DESCRIPTION>
   <CURRENT>2007-01-01T00:00:00</CURRENT>
   <COMMANDS>
     <VERBOSE>true</VERBOSE>
     <COMMAND xsi:type="COMMAND_SOLVE">
+      <SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST">
+        <VERBOSE>true</VERBOSE>
+        <AUTOMATIC>true</AUTOMATIC>
+      </SOLVER>
+    </COMMAND>
+    <!--
+    <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" />
     </COMMAND>
+    -->
     <COMMAND xsi:type="COMMAND_SAVEPLAN">
       <FILENAME>output.1.xml</FILENAME>
     </COMMAND>
@@ -65,30 +75,114 @@
       </BUCKETS>
     </CALENDAR>
   </CALENDARS>
+
+  <!-- Define a hierarchical tree of customers:
+    "All" -> "East"   -> "East - customer 1"
+                      -> "East - customer 2"
+          -> "South"
+          -> "West"
+          -> "North"
+  -->
+  <CUSTOMERS>
+    <CUSTOMER NAME="All" />
+    <CUSTOMER NAME="East">
+      <OWNER NAME="All" />
+      <MEMBERS>
+         <CUSTOMER NAME="East - customer 1"/>
+         <CUSTOMER NAME="East - customer 2"/>
+         <CUSTOMER NAME="East - customer 3"/>
+      </MEMBERS>
+    </CUSTOMER>
+    <CUSTOMER NAME="South">
+      <OWNER NAME="All" />
+    </CUSTOMER>
+    <CUSTOMER NAME="North">
+      <OWNER NAME="All" />
+    </CUSTOMER>
+    <CUSTOMER NAME="West">
+      <OWNER NAME="All" />
+    </CUSTOMER>
+  </CUSTOMERS>
+
+  <!-- Define a hierarchical tree of items:
+    "All products" -> "Family A"  -> "A Group 1" -> "A1 Product 1"
+                                                 -> "A1 Product 2"
+                   -> "Family B"  -> "B Group 1" -> "B1 Product 1"
+                                                 -> "B1 Product 2"
+                                  -> "B Group 2"
+                   -> "Family C"  -> "C Group 1" -> "C1 Product 1"
+                   -> "Family D"  -> "D Group 1" -> "D1 Product 1"
+  -->
   <ITEMS>
-    <ITEM NAME="item 1">
-      <OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME">
+    <ITEM NAME="All products">
+      <MEMBERS>
+         <ITEM NAME="Family A">
+           <MEMBERS>
+             <ITEM NAME="A Group 1"/>
+           </MEMBERS>
+         </ITEM>
+         <ITEM NAME="Family B">
+           <MEMBERS>
+             <ITEM NAME="B Group 1"/>
+             <ITEM NAME="B Group 2"/>
+           </MEMBERS>
+         </ITEM>
+         <ITEM NAME="Family C">
+           <MEMBERS>
+             <ITEM NAME="C Group 1"/>
+           </MEMBERS>
+         </ITEM>
+         <ITEM NAME="Family D">
+           <MEMBERS>
+             <ITEM NAME="D Group 1"/>
+           </MEMBERS>
+         </ITEM>
+      </MEMBERS>
+    </ITEM>
+    <ITEM NAME="A1 Product 1">
+      <OWNER NAME="A Group 1"/>
+      <OPERATION NAME="delivery A11" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="A1 Product 2">
+      <OWNER NAME="A Group 1"/>
+      <OPERATION NAME="delivery A11 bis" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="B1 Product 1">
+      <OWNER NAME="B Group 1"/>
+      <OPERATION NAME="delivery B11" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="B1 Product 2">
+      <OWNER NAME="B Group 1"/>
+      <OPERATION NAME="delivery B11 bis" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="C1 Product 1">
+      <OWNER NAME="C Group 1"/>
+      <OPERATION NAME="delivery C11" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="D1 Product 1">
+      <OWNER NAME="D Group 1"/>
+      <OPERATION NAME="delivery D11" xsi:type="OPERATION_FIXED_TIME">
         <DURATION>24:00:00</DURATION>
       </OPERATION>
     </ITEM>
   </ITEMS>
-  <BUFFERS>
-    <BUFFER NAME="buffer 1">
-      <ITEM NAME="item 1" />
-    </BUFFER>
-  </BUFFERS>
-  <FLOWS>
-    <FLOW xsi:type="FLOW_START">
-      <OPERATION NAME="delivery 1" />
-      <BUFFER NAME="buffer 1" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW>
-  </FLOWS>
+
   <DEMANDS>
-    <DEMAND NAME="forecast item 1" xsi:type="DEMAND_FORECAST">
-      <ITEM NAME="item 1" />
+    <DEMAND NAME="forecast@null@A1 product 1" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="A1 Product 1" />
       <PRIORITY>1</PRIORITY>
       <CALENDAR NAME="Weeks" />
+      <!--
       <BUCKETS>
         <BUCKET>
           <DUE>2007-03-01T00:00:00</DUE>
@@ -103,11 +197,15 @@
           <QUANTITY>3</QUANTITY>
         </BUCKET>
       </BUCKETS>
+      -->
     </DEMAND>
     <DEMAND NAME="forecast item 1 bis" xsi:type="DEMAND_FORECAST">
       <ITEM NAME="item 1" />
     </DEMAND>
+
+    <!-- Actual orders -->
     <DEMAND NAME="order 1 item 1">
+      <DESCRIPTION></DESCRIPTION>
       <ITEM NAME="item 1"/>
       <QUANTITY>10</QUANTITY>
       <DUE>2007-03-22T00:00:00</DUE>

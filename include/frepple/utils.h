@@ -718,7 +718,9 @@ class Functor : public NonCopyable
       * It is important that the callback methods are implemented in a
       * thread-safe and re-entrant way!!!
       */
-    virtual bool callback(Object* v, Signal a) const = 0;
+    virtual bool callback(Object* v, const Signal a) const = 0;
+
+    /** Destructor. */
     virtual ~Functor() {}
 };
 
@@ -765,6 +767,7 @@ class MetaClass : public NonCopyable
 
   friend class MetaCategory;
   template <class T, class U> friend class FunctorStatic;
+  template <class T, class U> friend class FunctorInstance;
   public:
     /** A string specifying the object type, i.e. the subclass within the
       * category. */
@@ -1064,7 +1067,7 @@ template <class T, class U> class FunctorStatic : public Functor
     /** This is the callback method. The functor will call the static callback
       * method of the subscribing class.
       */
-    virtual bool callback(Object* v, Signal a) const
+    virtual bool callback(Object* v, const Signal a) const
       {return U::callback(static_cast<T*>(v),a);}
 };
 
@@ -1073,7 +1076,6 @@ template <class T, class U> class FunctorStatic : public Functor
   *
   * When the signal callback is triggered the method callback() on the
   * instance object will be called.
-  * @todo incomplete implementation of class FunctorInstance
   */
 template <class T, class U> class FunctorInstance : public Functor
 {
@@ -1083,23 +1085,42 @@ template <class T, class U> class FunctorInstance : public Functor
       * when the subscriber is being deleted. Otherwise the application
       * will crash.
       */
-    static void connect(U* u, Signal a)
-      { if (u) U::metadata.connect(new FunctorInstance(u), a);}
+    static void connect(U* u, const Signal a)
+      { if (u) T::metadata.connect(new FunctorInstance(u), a);}
 
     /** Disconnect from a signal. */
-    static void disconnect(U *u, Signal a)
-    {} // U::metadata.disconnect(this, a);}
+    static void disconnect(U *u, const Signal a)
+    {
+      MetaClass &t =
+        const_cast<MetaClass&>(static_cast<const MetaClass&>(T::metadata));
+      // Loop through all subscriptions
+      for (list<Functor*>::iterator i = t.subscribers[a].begin();
+        i != t.subscribers[a].end(); ++i)
+      {
+        // Try casting the functor to the right type
+        FunctorInstance<T,U> *f = dynamic_cast< FunctorInstance<T,U>* >(*i);
+        if (f && f->instance == u)
+        {
+          // Casting was successfull. Delete the functor.
+          delete *i;
+          t.subscribers[a].erase(i);
+          return;
+        }
+      }
+      // Not found in the list of subscriptions
+      throw LogicException("Subscription doesn't exist");    
+    }
 
     /** Constructor. */
-    FunctorInstance(U* up) : u(up) {}
+    FunctorInstance(U* u) : instance(u) {}
 
   private:
     /** This is the callback method. */
-    virtual bool callback(void* v, Signal a) const
-      { return u->call(static_cast<T*>(v),a); }
+    virtual bool callback(Object* v, const Signal a) const
+    { return instance ? instance->callback(static_cast<T*>(v),a) : true; }
 
     /** The object whose callback method will be called. */
-    U* u;
+    U* instance;
 };
 
 
@@ -3558,7 +3579,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         T& operator*() const {return *static_cast<T*>(node);}
 
         /** Return the content of the current node. */
-        //typename T::pointer operator->() const {return static_cast<T*>(node);}  // @todo return readlocked object
+        //typename T::pointer operator->() const {return static_cast<T*>(node);} 
         T* operator->() const {return static_cast<T*>(node);}  // @todo return readlocked object
 
         /** Pre-increment operator which moves the pointer to the next

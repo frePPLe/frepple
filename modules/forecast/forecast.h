@@ -29,17 +29,22 @@
   * @brief Header file for the module forecast.
   *
   * @namespace module_forecast
-  * @brief Module for representing forecast demands.
+  * @brief Module for representing forecast.
   *
-  * Forecast demands behave different from other demands in the following
-  * ways:
-  *  - It models a hierarchical demand structure.<br>
-  *    The sub-demands are all managed automatically by the parent forecast
-  *    demand, ie the sub-demands are transparent to the user.<br>
-  *    All sub-demands of a forecast demand have the same item.<br>
-  *    The due date is aligned on the buckets of the forecast calendar.<br>
-  *  - In a later phase, functionality will be implemented to customer orders
-  *    from the forecast.
+  * The forecast module provides the following functionality:
+  *
+  *  - A special demand type to model forecasts.<br>
+  *    A forecast demand is bucketized. A demand is automatically
+  *    created for each bucket.<br>
+  * 
+  *  - A solver for netting orders from the forecast.<br>
+  *    As customer orders are being received they need to be deducted from
+  *    the forecast to avoid double-counting it.<br>
+  *    The netting solver will for each order search for a matching forecast
+  *    and reduce the remaining net quantity of the forecast.
+  *
+  *  - Techniques to predict/forecast the future demand based on the demand
+  *    history is NOT available in this module (yet).
   *
   * The XML schema extension enabled by this module is (see mod_forecast.xsd):
   * <PRE>
@@ -71,7 +76,21 @@
   *   </xsd:complexContent>
   * </xsd:complexType>
   * </PRE>
-  * @todo Implement forecast netting
+  * 
+  * The module support the following configuration parameters:
+  *   - Customer_Then_Item_Hierarchy:<br>
+  *     As part of the forecast netting a demand is assiociated with a certain
+  *     forecast. When no matching forecast is found for the customer and item 
+  *     of the demand, frepple looks for forecast at higher level customers 
+  *     and items.<br>
+  *     This flag allows us to control whether we first search the customer 
+  *     hierarchy and then the item hierarchy, or the other way around.<br>
+  *     The default value is true, ie search higher customer levels before 
+  *     searching higher levels of the item.
+  *   - Match_Using_Delivery_Operation:<br>
+  *     Specifies whether or not a demand and a forecast require to have the 
+  *     same delivery operation to be a match<br>
+  *     The default value is true.
   */
 
 #ifndef FORECAST_H
@@ -97,13 +116,28 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 class Forecast : public Demand
 {
     TYPEDEF(Forecast);
+    friend class ForecastSolver;
   public:
     /** Constructor. */
     explicit Forecast(const string& nm) : Demand(nm), calptr(NULL) {}
 
+    /** Destructor. */
+    ~Forecast() 
+    {
+      // Update the dictionary
+      for (MapOfForecasts::iterator x= 
+        ForecastDictionary.lower_bound(make_pair(&*getItem(),&*getCustomer()));
+        x != ForecastDictionary.end(); ++x)
+        if (x->second == this) 
+        {
+          ForecastDictionary.erase(x); 
+          return;
+        }
+    }
+
     /** Updates the quantity of the forecast. This method is empty. */
     virtual void setQuantity(float f)
-    {throw DataException("Can't set quantity of a forecast");}
+      {throw DataException("Can't set quantity of a forecast");}
 
     /** Update the forecast in a bucket, given any date in the bucket. */
     virtual void setQuantity(Date, float);
@@ -114,6 +148,9 @@ class Forecast : public Demand
 
     /** Update the item to be planned, for all buckets. */
     virtual void setItem(const Item*);
+
+    /** Update the customer, for all buckets. */
+    virtual void setCustomer(const Customer*);
 
     /** Specify a bucket calendar for the forecast. Once forecasted
       * quantities have been entered for the forecast, the calendar
@@ -147,14 +184,98 @@ class Forecast : public Demand
     virtual size_t getSize() const
       {return sizeof(Forecast) + getName().size() + HasDescription::memsize();}
 
+    /** Updates the value of the Customer_Then_Item_Hierarchy module
+      * parameter. */
+    static void setCustomerThenItemHierarchy(bool b) 
+      {Customer_Then_Item_Hierarchy = b;}
+
+    /** Returns the value of the Customer_Then_Item_Hierarchy module 
+      * parameter. */
+    bool getCustomerThenItemHierarchy() 
+      {return Customer_Then_Item_Hierarchy;}
+
+    /** Updates the value of the Match_Using_Delivery_Operation module
+      * parameter. */
+    static void setMatchUsingDeliveryOperation(bool b) 
+      {Match_Using_Delivery_Operation = b;}
+
+    /** Returns the value of the Match_Using_Delivery_Operation module 
+      * parameter. */
+    static bool getMatchUsingDeliveryOperation() 
+      {return Match_Using_Delivery_Operation;}
+
+    /** A data type to maintain a dictionary of all forecasts. */
+    typedef multimap < pair<const Item*, const Customer*>, Forecast* > MapOfForecasts;
+
   private:
     /** A void calendar to define the time buckets. */
     const Calendar* calptr;
 
     /** Update the forecast in a bucket. */
     void setQuantity(const Calendar::Bucket&, float);
+
+    /** A dictionary of all forecasts. */
+    static MapOfForecasts ForecastDictionary;
+
+    /** Controls how we search the customer and item levels when looking for a 
+      * matching forecast for a demand. 
+      */
+    static bool Customer_Then_Item_Hierarchy;
+
+    /** Controls whether or not a matching delivery operation is required
+      * between a matching order and its forecast. 
+      */
+    static bool Match_Using_Delivery_Operation;
 };
 
+
+/** @brief Implementation of a forecast netting algorithm. 
+  *
+  * @todo
+  */
+class ForecastSolver : public Solver
+{
+    TYPEDEF(ForecastSolver);
+    friend class Forecast;
+  public:
+    /** Constructor. */
+    ForecastSolver(const string& n) : Solver(n), automatic(false) {}
+
+    /** Behavior of this solver method:
+      *  - <br>
+      */
+    void solve(const Demand*, void* = NULL);
+
+    /** This is the main solver method that will appropriately call the other
+      * solve methods.<br>
+      */
+    void solve(void *v = NULL);
+
+    virtual const MetaClass& getType() const {return metadata;}
+    static const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(ForecastSolver);}
+    void endElement(XMLInput& pIn, XMLElement& pElement);
+
+    /** Updates the flag controlling incremental behavior. */
+    void setAutomatic(bool); 
+
+    /** Returns true when the solver is set up to run incrementally. */
+    bool getAutomatic() const {return automatic;}
+
+    /** Callback function, used for netting orders against the forecast. */
+    bool callback(Demand* l, const Signal a);
+
+  private:
+    /** Given a demand, this function will identify the forecast model it 
+      * links to. The demand will net from this forecast. 
+      */
+    Forecast* matchDemand2Forecast(const Demand* l);
+
+    /** When set to true, this solver will automatically adjust the
+      * netted forecast with every change in demand.
+      */
+    bool automatic;
+};
 
 }   // End namespace
 

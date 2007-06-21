@@ -79,19 +79,12 @@ class MRPSolver : public Solver
     DECLARE_EXPORT void solve(const BufferInfinite*,void* = NULL);
 
     /** Behavior of this solver method:
-      *  - Consider 0 as the hard minimum limit. It is currently not possible
-      *    to model a 'hard' safety stock reservation.
+      *  - Consider 0 as the hard minimum limit. It is not possible
+      *    to plan with a 'hard' safety stock reservation.
       *  - Minimum inventory is treated as a 'wish' inventory. When replenishing
       *    a buffer we try to satisfy the minimum target. If that turns out
       *    not to be possible we use whatever available supply for satisfying
       *    the demand first.
-      *  - This method is also used for MinMax buffers. In that case, the
-      *    replenishment is to the maximum level.
-      *    The maximum level is treated as a 'wish' inventory, similar to the
-      *    minimum inventory.
-      *    When flowplans aren't planned in chronological order on the buffer
-      *    the resulting inventory profile of a MinMax buffer will NOT show
-      *    the typical and expected sawtooth shape. @todo
       *  - Planning for the minimum target is part of planning a demand. There
       *    is no planning run independent of demand to satisfy the minimum
       *    target.<br>

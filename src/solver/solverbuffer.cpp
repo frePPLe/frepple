@@ -72,7 +72,6 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   Date extraSupplyDate(Date::infiniteFuture);
   Date extraInventoryDate(Date::infiniteFuture);
   float current_minimum(0.0f);
-  float current_maximum(0.0f);
   for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
       ; ++cur)
   {
@@ -152,7 +151,6 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
     // date change in the statement above. Otherwise the code above would
     // already use the new value before the intended date.
     if (cur->getType() == 3) current_minimum = cur->getMin();
-    if (cur->getType() == 4) current_maximum = cur->getMax();
 
     // Update the pointer to the previous flowplan.
     prev = &*cur;

@@ -63,6 +63,7 @@ DECLARE_EXPORT void LockManager::obtainWriteLock(Object* l, priority p)
 {
   // Check if exclusiveread is on
   // if yes wait, then repeat
+  if (!l) return;
 
   l->getType().raiseEvent(l, SIG_BEFORE_CHANGE);
 
@@ -81,6 +82,7 @@ DECLARE_EXPORT void LockManager::releaseReadLock(const Object* l)
   //  readers is expected to be >0
   //  writers is expected to be 0
   //  exclusive write is expected to be off
+  if (!l) return;
 
   //if (!l->lock)
   //  throw RuntimeException("Releasing invalid lock");
@@ -97,6 +99,7 @@ DECLARE_EXPORT void LockManager::releaseWriteLock(Object* l)
 {
   //  readers is expected to be = 0
   //  writers is expected to be me
+  if (!l) return;
 
   l->getType().raiseEvent(l, SIG_AFTER_CHANGE);
 
@@ -122,8 +125,8 @@ DECLARE_EXPORT void LockManager::obtainReadLock(const Object* l, priority p)
 
 DECLARE_EXPORT void LockManager::obtainWriteLock(Object* l, priority p)
 {
-  // Lock already exists
-  if (l->lock) return;
+  // Lock already exists or no object is given
+  if (!l || l->lock) return;
   l->lock = reinterpret_cast<Lock*>(l);
   l->getType().raiseEvent(l, SIG_BEFORE_CHANGE);
   //cout << "Write locking " << l << "  " << l->getType().type << endl;
@@ -138,8 +141,8 @@ DECLARE_EXPORT void LockManager::releaseReadLock(const Object* l)
 
 DECLARE_EXPORT void LockManager::releaseWriteLock(Object* l)
 {
-  // There was no lock set
-  if (!l->lock) return;
+  // Lock already exists or no object is given
+  if (!l || l->lock) return;
   //cout << "Write unlocking " << l << "  " << l->getType().type << endl;
   l->lock = NULL;
   l->getType().raiseEvent(l, SIG_AFTER_CHANGE);

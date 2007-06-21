@@ -2506,7 +2506,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       */
     const CalendarFloat *min_cal;
 
-    /** Points to a calendar to store the minimum inventory level.<br>
+    /** Points to a calendar to store the maximum inventory level.<br>
       * The default value is NULL, resulting in a buffer without excess
       * inventory problems.
       */

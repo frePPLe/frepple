@@ -1,7 +1,7 @@
 ;
 ; Nullsoft script for creating a windows installer for Frepple
 ;
-;  file     : $HeadURL: https://svn.sourceforge.net/svnroot/frepple/trunk/contrib/installer/frepple.nsi $
+;  file     : $HeadURL$
 ;  revision : $LastChangedRevision$  $LastChangedBy$
 ;  date     : $LastChangedDate$
 ;  email    : jdetaeye@users.sourceforge.net

@@ -28,7 +28,7 @@ class OperationPlan(models.Model):
     identifier = models.IntegerField(primary_key=True)
     demand = models.ForeignKey(Demand, related_name='delivery', null=True, db_index=True, raw_id_admin=True)
     operation = models.ForeignKey(Operation, related_name='instances', null=True, db_index=True, raw_id_admin=True)
-    quantity = models.FloatField(max_digits=10, decimal_places=2, default='1.00')
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, default='1.00')
     startdatetime = models.DateTimeField()
     enddatetime = models.DateTimeField()
     startdate = models.DateField(db_index=True)
@@ -71,11 +71,11 @@ class LoadPlan(models.Model):
     resource = models.ForeignKey(Resource, related_name='loadplans', db_index=True, raw_id_admin=True)
     operation = models.ForeignKey(Operation, related_name='loadplans', db_index=True, raw_id_admin=True)
     operationplan = models.ForeignKey(OperationPlan, related_name='loadplans', raw_id_admin=True)
-    quantity = models.FloatField(max_digits=10, decimal_places=2)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
     datetime = models.DateTimeField()
     date = models.DateField(db_index=True)
-    onhand = models.FloatField(max_digits=10, decimal_places=2)
-    maximum = models.FloatField(max_digits=10, decimal_places=2)
+    onhand = models.DecimalField(max_digits=10, decimal_places=2)
+    maximum = models.DecimalField(max_digits=10, decimal_places=2)
     def __str__(self):
         return self.resource.name + ' ' + str(self.date)
     class Admin:
@@ -91,10 +91,10 @@ class FlowPlan(models.Model):
     thebuffer = models.ForeignKey(Buffer, related_name='flowplans', db_index=True, raw_id_admin=True)
     operation = models.ForeignKey(Operation, related_name='flowplans', db_index=True, raw_id_admin=True)
     operationplan = models.ForeignKey(OperationPlan, related_name='flowplans', raw_id_admin=True)
-    quantity = models.FloatField(max_digits=10, decimal_places=2)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
     datetime = models.DateTimeField()
     date = models.DateField(db_index=True)
-    onhand = models.FloatField(max_digits=10, decimal_places=2)
+    onhand = models.DecimalField(max_digits=10, decimal_places=2)
     def __str__(self):
         return self.thebuffer.name + str(self.date)
     class Admin:

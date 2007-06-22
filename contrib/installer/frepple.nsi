@@ -1,7 +1,7 @@
 ;
 ; Nullsoft script for creating a windows installer for Frepple
 ;
-;  file     : $HeadURL$
+;  file     : $URL$
 ;  revision : $LastChangedRevision$  $LastChangedBy$
 ;  date     : $LastChangedDate$
 ;  email    : jdetaeye@users.sourceforge.net

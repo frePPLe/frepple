@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>Forecast test model</NAME>
+  <DESCRIPTION>
+    This test case test the matching between an actual order and a forecast.
+    The different scenarios are being validated:
+      - netting at
+  </DESCRIPTION>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <VERBOSE>true</VERBOSE>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST">
+        <VERBOSE>true</VERBOSE>
+        <AUTOMATIC>true</AUTOMATIC>
+      </SOLVER>
+    </COMMAND>
+    <!--
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" />
+    </COMMAND>
+    -->
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+      <FILENAME>output.1.xml</FILENAME>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE">
+      <FILENAME>output.2.xml</FILENAME>
+    </COMMAND>
+  </COMMANDS>
+  <CALENDARS>
+    <CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
+      <BUCKETS>
+        <BUCKET START="2007-01-01T00:00:00">
+          <NAME>Jan Week1</NAME>
+        </BUCKET>
+        <BUCKET START="2007-01-07T00:00:00">
+          <NAME>Jan Week2</NAME>
+        </BUCKET>
+        <BUCKET START="2007-01-14T00:00:00">
+          <NAME>Jan Week3</NAME>
+        </BUCKET>
+        <BUCKET START="2007-01-21T00:00:00">
+          <NAME>Jan Week4</NAME>
+        </BUCKET>
+        <BUCKET START="2007-01-28T00:00:00">
+          <NAME>Jan Week5</NAME>
+        </BUCKET>
+        <BUCKET START="2007-02-04T00:00:00">
+          <NAME>Feb Week1</NAME>
+        </BUCKET>
+        <BUCKET START="2007-02-11T00:00:00">
+          <NAME>Feb Week2</NAME>
+        </BUCKET>
+        <BUCKET START="2007-02-18T00:00:00">
+          <NAME>Feb Week3</NAME>
+        </BUCKET>
+        <BUCKET START="2007-02-25T00:00:00">
+          <NAME>Feb Week4</NAME>
+        </BUCKET>
+        <BUCKET START="2007-03-04T00:00:00">
+          <NAME>Mar Week1</NAME>
+        </BUCKET>
+        <BUCKET START="2007-03-11T00:00:00">
+          <NAME>Mar Week2</NAME>
+        </BUCKET>
+        <BUCKET START="2007-03-18T00:00:00">
+          <NAME>Mar Week3</NAME>
+        </BUCKET>
+        <BUCKET START="2007-03-25T00:00:00">
+          <NAME>Mar Week4</NAME>
+        </BUCKET>
+        <BUCKET START="2007-04-01T00:00:00">
+          <NAME>Remainder</NAME>
+        </BUCKET>
+      </BUCKETS>
+    </CALENDAR>
+  </CALENDARS>
+
+  <!-- Define a hierarchical tree of customers:
+    "All" -> "East"   -> "East - customer 1"
+                      -> "East - customer 2"
+          -> "South"
+          -> "West"
+          -> "North"
+  -->
+  <CUSTOMERS>
+    <CUSTOMER NAME="All" />
+    <CUSTOMER NAME="East">
+      <OWNER NAME="All" />
+      <MEMBERS>
+         <CUSTOMER NAME="East - customer 1"/>
+         <CUSTOMER NAME="East - customer 2"/>
+         <CUSTOMER NAME="East - customer 3"/>
+      </MEMBERS>
+    </CUSTOMER>
+    <CUSTOMER NAME="South">
+      <OWNER NAME="All" />
+    </CUSTOMER>
+    <CUSTOMER NAME="North">
+      <OWNER NAME="All" />
+    </CUSTOMER>
+    <CUSTOMER NAME="West">
+      <OWNER NAME="All" />
+    </CUSTOMER>
+  </CUSTOMERS>
+
+  <!-- Define a hierarchical tree of items:
+    "All products" -> "Family A"  -> "A Group 1" -> "A1 Product 1"
+                                                 -> "A1 Product 2"
+                   -> "Family B"  -> "B Group 1" -> "B1 Product 1"
+                                                 -> "B1 Product 2"
+                                  -> "B Group 2"
+                   -> "Family C"  -> "C Group 1" -> "C1 Product 1"
+                   -> "Family D"  -> "D Group 1" -> "D1 Product 1"
+  -->
+  <ITEMS>
+    <ITEM NAME="All products">
+      <MEMBERS>
+         <ITEM NAME="Family A">
+           <MEMBERS>
+             <ITEM NAME="A Group 1"/>
+           </MEMBERS>
+         </ITEM>
+         <ITEM NAME="Family B">
+           <MEMBERS>
+             <ITEM NAME="B Group 1"/>
+             <ITEM NAME="B Group 2"/>
+           </MEMBERS>
+         </ITEM>
+         <ITEM NAME="Family C">
+           <MEMBERS>
+             <ITEM NAME="C Group 1"/>
+           </MEMBERS>
+         </ITEM>
+         <ITEM NAME="Family D">
+           <MEMBERS>
+             <ITEM NAME="D Group 1"/>
+           </MEMBERS>
+         </ITEM>
+      </MEMBERS>
+    </ITEM>
+    <ITEM NAME="A1 Product 1">
+      <OWNER NAME="A Group 1"/>
+      <OPERATION NAME="delivery A11" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="A1 Product 2">
+      <OWNER NAME="A Group 1"/>
+      <OPERATION NAME="delivery A11 bis" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="B1 Product 1">
+      <OWNER NAME="B Group 1"/>
+      <OPERATION NAME="delivery B11" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="B1 Product 2">
+      <OWNER NAME="B Group 1"/>
+      <OPERATION NAME="delivery B11 bis" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="C1 Product 1">
+      <OWNER NAME="C Group 1"/>
+      <OPERATION NAME="delivery C11" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="D1 Product 1">
+      <OWNER NAME="D Group 1"/>
+      <OPERATION NAME="delivery D11" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>24:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+  </ITEMS>
+
+  <DEMANDS>
+    <DEMAND NAME="forecast@null@A1 product 1" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="A1 Product 1" />
+      <PRIORITY>1</PRIORITY>
+      <CALENDAR NAME="Weeks" />
+      <!--
+      <BUCKETS>
+        <BUCKET>
+          <DUE>2007-03-01T00:00:00</DUE>
+          <QUANTITY>1</QUANTITY>
+        </BUCKET>
+        <BUCKET>
+          <DUE>2007-02-18T00:00:00</DUE>
+          <QUANTITY>2</QUANTITY>
+        </BUCKET>
+        <BUCKET>
+          <DUE>2007-03-28T00:00:00</DUE>
+          <QUANTITY>3</QUANTITY>
+        </BUCKET>
+      </BUCKETS>
+      -->
+    </DEMAND>
+    <DEMAND NAME="forecast item 1 bis" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="item 1" />
+    </DEMAND>
+
+    <!-- Actual orders -->
+    <DEMAND NAME="order 1 item 1">
+      <DESCRIPTION></DESCRIPTION>
+      <ITEM NAME="item 1"/>
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-03-22T00:00:00</DUE>
+    </DEMAND>
+  </DEMANDS>
+</PLAN>

@@ -1,7 +1,365 @@
-BUFFER	buffer 1	2007-02-10T00:00:00	-2	-2
-BUFFER	buffer 1	2007-02-24T00:00:00	-1	-3
-BUFFER	buffer 1	2007-03-24T00:00:00	-3	-6
-OPERATION	delivery 1	2007-02-10T00:00:00	2007-02-11T00:00:00	2
-OPERATION	delivery 1	2007-02-24T00:00:00	2007-02-25T00:00:00	1
-OPERATION	delivery 1	2007-03-24T00:00:00	2007-03-25T00:00:00	3
-PROBLEM	material shortage	Buffer 'buffer 1' has material shortage of 6	2007-02-10T00:00:00 / 2030-12-31T00:00:00
+<?xml version="1.0" encoding="UTF-8"?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<NAME>Forecast matching test model</NAME>
+	<DESCRIPTION>
+    This test case test the matching between an actual order and a forecast.
+    Different scenarios are being validated:
+      - A: match at &apos;customer&apos;+&apos;item&apos; level
+      - B: match at &apos;item&apos; level
+      - C: match at &apos;parent customer&apos; + &apos;item&apos; level
+      - D: match at &apos;customer&apos; + &apos;parent item&apos; level
+      - E: match at &apos;parent customer&apos; + &apos;parent item&apos; level
+  </DESCRIPTION>
+	<CURRENT>2007-01-01T00:00:00</CURRENT>
+	<SOLVERS>
+		<SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST">
+			<VERBOSE>true</VERBOSE>
+		</SOLVER>
+	</SOLVERS>
+	<CUSTOMERS>
+		<CUSTOMER NAME="A customer">
+			<OWNER NAME="A parent customer"/>
+		</CUSTOMER>
+		<CUSTOMER NAME="A grandparent customer">
+			<MEMBERS>
+				<CUSTOMER NAME="A parent customer"/>
+			</MEMBERS>
+		</CUSTOMER>
+		<CUSTOMER NAME="A parent customer">
+			<OWNER NAME="A grandparent customer"/>
+			<MEMBERS>
+				<CUSTOMER NAME="A customer"/>
+			</MEMBERS>
+		</CUSTOMER>
+		<CUSTOMER NAME="B customer">
+			<OWNER NAME="B parent customer"/>
+		</CUSTOMER>
+		<CUSTOMER NAME="B grandparent customer">
+			<MEMBERS>
+				<CUSTOMER NAME="B parent customer"/>
+			</MEMBERS>
+		</CUSTOMER>
+		<CUSTOMER NAME="B parent customer">
+			<OWNER NAME="B grandparent customer"/>
+			<MEMBERS>
+				<CUSTOMER NAME="B customer"/>
+			</MEMBERS>
+		</CUSTOMER>
+		<CUSTOMER NAME="C customer">
+			<OWNER NAME="C parent customer"/>
+		</CUSTOMER>
+		<CUSTOMER NAME="C grandparent customer">
+			<MEMBERS>
+				<CUSTOMER NAME="C parent customer"/>
+			</MEMBERS>
+		</CUSTOMER>
+		<CUSTOMER NAME="C parent customer">
+			<OWNER NAME="C grandparent customer"/>
+			<MEMBERS>
+				<CUSTOMER NAME="C customer"/>
+			</MEMBERS>
+		</CUSTOMER>
+		<CUSTOMER NAME="D customer">
+			<OWNER NAME="D parent customer"/>
+		</CUSTOMER>
+		<CUSTOMER NAME="D grandparent customer">
+			<MEMBERS>
+				<CUSTOMER NAME="D parent customer"/>
+			</MEMBERS>
+		</CUSTOMER>
+		<CUSTOMER NAME="D parent customer">
+			<OWNER NAME="D grandparent customer"/>
+			<MEMBERS>
+				<CUSTOMER NAME="D customer"/>
+			</MEMBERS>
+		</CUSTOMER>
+		<CUSTOMER NAME="E customer">
+			<OWNER NAME="E parent customer"/>
+		</CUSTOMER>
+		<CUSTOMER NAME="E grandparent customer">
+			<MEMBERS>
+				<CUSTOMER NAME="E parent customer"/>
+			</MEMBERS>
+		</CUSTOMER>
+		<CUSTOMER NAME="E parent customer">
+			<OWNER NAME="E grandparent customer"/>
+			<MEMBERS>
+				<CUSTOMER NAME="E customer"/>
+			</MEMBERS>
+		</CUSTOMER>
+	</CUSTOMERS>
+	<CALENDARS>
+		<CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
+			<BUCKETS>
+				<BUCKET START="2007-01-01T00:00:00">
+					<NAME>Jan Week1</NAME>
+					<END>2007-01-07T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-01-07T00:00:00">
+					<NAME>Jan Week2</NAME>
+					<END>2007-01-14T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-01-14T00:00:00">
+					<NAME>Jan Week3</NAME>
+					<END>2007-01-21T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-01-21T00:00:00">
+					<NAME>Jan Week4</NAME>
+					<END>2007-01-28T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-01-28T00:00:00">
+					<NAME>Jan Week5</NAME>
+					<END>2007-02-04T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-02-04T00:00:00">
+					<NAME>Feb Week1</NAME>
+					<END>2007-02-11T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-02-11T00:00:00">
+					<NAME>Feb Week2</NAME>
+					<END>2007-02-18T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-02-18T00:00:00">
+					<NAME>Feb Week3</NAME>
+					<END>2007-02-25T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-02-25T00:00:00">
+					<NAME>Feb Week4</NAME>
+					<END>2007-03-04T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-03-04T00:00:00">
+					<NAME>Mar Week1</NAME>
+					<END>2007-03-11T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-03-11T00:00:00">
+					<NAME>Mar Week2</NAME>
+					<END>2007-03-18T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-03-18T00:00:00">
+					<NAME>Mar Week3</NAME>
+					<END>2007-03-25T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-03-25T00:00:00">
+					<NAME>Mar Week4</NAME>
+					<END>2007-04-01T00:00:00</END>
+				</BUCKET>
+				<BUCKET START="2007-04-01T00:00:00">
+					<NAME>Remainder</NAME>
+					<END>2030-12-31T00:00:00</END>
+				</BUCKET>
+			</BUCKETS>
+		</CALENDAR>
+	</CALENDARS>
+	<OPERATIONS>
+		<OPERATION NAME="A delivery" xsi:type="OPERATION_FIXED_TIME">
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+		<OPERATION NAME="B delivery" xsi:type="OPERATION_FIXED_TIME">
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+		<OPERATION NAME="C delivery" xsi:type="OPERATION_FIXED_TIME">
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+		<OPERATION NAME="D delivery" xsi:type="OPERATION_FIXED_TIME">
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+		<OPERATION NAME="E delivery" xsi:type="OPERATION_FIXED_TIME">
+			<DURATION>24:00:00</DURATION>
+		</OPERATION>
+	</OPERATIONS>
+	<ITEMS>
+		<ITEM NAME="A grandparent item">
+			<MEMBERS>
+				<ITEM NAME="A parent item"/>
+			</MEMBERS>
+		</ITEM>
+		<ITEM NAME="A item">
+			<OWNER NAME="A parent item"/>
+			<OPERATION NAME="A delivery" xsi:type="OPERATION_FIXED_TIME"/>
+		</ITEM>
+		<ITEM NAME="A parent item">
+			<OWNER NAME="A grandparent item"/>
+			<MEMBERS>
+				<ITEM NAME="A item"/>
+			</MEMBERS>
+		</ITEM>
+		<ITEM NAME="B grandparent item">
+			<MEMBERS>
+				<ITEM NAME="B parent item"/>
+			</MEMBERS>
+		</ITEM>
+		<ITEM NAME="B item">
+			<OWNER NAME="B parent item"/>
+			<OPERATION NAME="B delivery" xsi:type="OPERATION_FIXED_TIME"/>
+		</ITEM>
+		<ITEM NAME="B parent item">
+			<OWNER NAME="B grandparent item"/>
+			<MEMBERS>
+				<ITEM NAME="B item"/>
+			</MEMBERS>
+		</ITEM>
+		<ITEM NAME="C grandparent item">
+			<MEMBERS>
+				<ITEM NAME="C parent item"/>
+			</MEMBERS>
+		</ITEM>
+		<ITEM NAME="C item">
+			<OWNER NAME="C parent item"/>
+			<OPERATION NAME="C delivery" xsi:type="OPERATION_FIXED_TIME"/>
+		</ITEM>
+		<ITEM NAME="C parent item">
+			<OWNER NAME="C grandparent item"/>
+			<MEMBERS>
+				<ITEM NAME="C item"/>
+			</MEMBERS>
+		</ITEM>
+		<ITEM NAME="D grandparent item">
+			<MEMBERS>
+				<ITEM NAME="D parent item"/>
+			</MEMBERS>
+		</ITEM>
+		<ITEM NAME="D item">
+			<OWNER NAME="D parent item"/>
+			<OPERATION NAME="D delivery" xsi:type="OPERATION_FIXED_TIME"/>
+		</ITEM>
+		<ITEM NAME="D parent item">
+			<OWNER NAME="D grandparent item"/>
+			<MEMBERS>
+				<ITEM NAME="D item"/>
+			</MEMBERS>
+		</ITEM>
+		<ITEM NAME="E grandparent item">
+			<MEMBERS>
+				<ITEM NAME="E parent item"/>
+			</MEMBERS>
+		</ITEM>
+		<ITEM NAME="E item">
+			<OWNER NAME="E parent item"/>
+			<OPERATION NAME="E delivery" xsi:type="OPERATION_FIXED_TIME"/>
+		</ITEM>
+		<ITEM NAME="E parent item">
+			<OWNER NAME="E grandparent item"/>
+			<MEMBERS>
+				<ITEM NAME="E item"/>
+			</MEMBERS>
+		</ITEM>
+	</ITEMS>
+	<DEMANDS>
+		<DEMAND NAME="A forecast" xsi:type="DEMAND_FORECAST">
+			<ITEM>true</ITEM>
+			<CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID"/>
+			<OPERATION>false</OPERATION>
+			<BUCKETS>
+			</BUCKETS>
+		</DEMAND>
+		<DEMAND NAME="A forecast not selected" xsi:type="DEMAND_FORECAST">
+			<ITEM>true</ITEM>
+			<CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID"/>
+			<OPERATION>false</OPERATION>
+			<BUCKETS>
+			</BUCKETS>
+		</DEMAND>
+		<DEMAND NAME="A order">
+			<CUSTOMER NAME="A customer"/>
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="A item"/>
+			<DUE>2007-03-22T00:00:00</DUE>
+		</DEMAND>
+		<DEMAND NAME="B forecast" xsi:type="DEMAND_FORECAST">
+			<ITEM>true</ITEM>
+			<CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID"/>
+			<OPERATION>false</OPERATION>
+			<BUCKETS>
+			</BUCKETS>
+		</DEMAND>
+		<DEMAND NAME="B order 1">
+			<CUSTOMER NAME="B customer"/>
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="B item"/>
+			<DUE>2007-03-22T00:00:00</DUE>
+		</DEMAND>
+		<DEMAND NAME="B order 2">
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="B item"/>
+			<DUE>2007-03-22T00:00:00</DUE>
+		</DEMAND>
+		<DEMAND NAME="C forecast" xsi:type="DEMAND_FORECAST">
+			<ITEM>true</ITEM>
+			<CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID"/>
+			<OPERATION>false</OPERATION>
+			<BUCKETS>
+			</BUCKETS>
+		</DEMAND>
+		<DEMAND NAME="C forecast not selected" xsi:type="DEMAND_FORECAST">
+			<ITEM>true</ITEM>
+			<CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID"/>
+			<OPERATION>false</OPERATION>
+			<BUCKETS>
+			</BUCKETS>
+		</DEMAND>
+		<DEMAND NAME="C order">
+			<CUSTOMER NAME="C customer"/>
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="C item"/>
+			<DUE>2007-03-22T00:00:00</DUE>
+		</DEMAND>
+		<DEMAND NAME="D forecast" xsi:type="DEMAND_FORECAST">
+			<ITEM>true</ITEM>
+			<CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID"/>
+			<OPERATION>false</OPERATION>
+			<BUCKETS>
+			</BUCKETS>
+		</DEMAND>
+		<DEMAND NAME="D order">
+			<CUSTOMER NAME="D customer"/>
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="D item"/>
+			<DUE>2007-03-22T00:00:00</DUE>
+		</DEMAND>
+		<DEMAND NAME="E forecast" xsi:type="DEMAND_FORECAST">
+			<ITEM>true</ITEM>
+			<CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID"/>
+			<OPERATION>false</OPERATION>
+			<BUCKETS>
+			</BUCKETS>
+		</DEMAND>
+		<DEMAND NAME="E order">
+			<CUSTOMER NAME="E customer"/>
+			<QUANTITY>10</QUANTITY>
+			<ITEM NAME="E item"/>
+			<DUE>2007-03-22T00:00:00</DUE>
+		</DEMAND>
+	</DEMANDS>
+	<PROBLEMS>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;A order&apos; is not planned</DESCRIPTION>
+			<DATES>2007-03-22T00:00:00 / 2007-03-22T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;B order 1&apos; is not planned</DESCRIPTION>
+			<DATES>2007-03-22T00:00:00 / 2007-03-22T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;B order 2&apos; is not planned</DESCRIPTION>
+			<DATES>2007-03-22T00:00:00 / 2007-03-22T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;C order&apos; is not planned</DESCRIPTION>
+			<DATES>2007-03-22T00:00:00 / 2007-03-22T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;D order&apos; is not planned</DESCRIPTION>
+			<DATES>2007-03-22T00:00:00 / 2007-03-22T00:00:00</DATES>
+		</PROBLEM>
+		<PROBLEM>
+			<NAME>unplanned</NAME>
+			<DESCRIPTION>Demand &apos;E order&apos; is not planned</DESCRIPTION>
+			<DATES>2007-03-22T00:00:00 / 2007-03-22T00:00:00</DATES>
+		</PROBLEM>
+	</PROBLEMS>
+</PLAN>

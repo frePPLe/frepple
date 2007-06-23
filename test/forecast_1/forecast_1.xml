@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <NAME>Forecast test model</NAME>
+  <NAME>Forecast matching test model</NAME>
   <DESCRIPTION>
     This test case test the matching between an actual order and a forecast.
-    The different scenarios are being validated:
-      - netting at
+    Different scenarios are being validated:
+      - A: match at 'customer'+'item' level
+      - B: match at 'item' level
+      - C: match at 'parent customer' + 'item' level
+      - D: match at 'customer' + 'parent item' level
+      - E: match at 'parent customer' + 'parent item' level
   </DESCRIPTION>
   <CURRENT>2007-01-01T00:00:00</CURRENT>
   <COMMANDS>
@@ -12,19 +16,11 @@
     <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST">
         <VERBOSE>true</VERBOSE>
-        <AUTOMATIC>true</AUTOMATIC>
+        <AUTOMATIC>false</AUTOMATIC>
       </SOLVER>
     </COMMAND>
-    <!--
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" />
-    </COMMAND>
-    -->
-    <COMMAND xsi:type="COMMAND_SAVEPLAN">
-      <FILENAME>output.1.xml</FILENAME>
-    </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVE">
-      <FILENAME>output.2.xml</FILENAME>
+      <FILENAME>output.1.xml</FILENAME>
     </COMMAND>
   </COMMANDS>
   <CALENDARS>
@@ -77,138 +73,199 @@
   </CALENDARS>
 
   <!-- Define a hierarchical tree of customers:
-    "All" -> "East"   -> "East - customer 1"
-                      -> "East - customer 2"
-          -> "South"
-          -> "West"
-          -> "North"
+    "grandparent customer"   -> "parent customer" -> "customer"
   -->
   <CUSTOMERS>
-    <CUSTOMER NAME="All" />
-    <CUSTOMER NAME="East">
-      <OWNER NAME="All" />
+    <CUSTOMER NAME="A parent customer">
+      <OWNER NAME="A grandparent customer" />
       <MEMBERS>
-         <CUSTOMER NAME="East - customer 1"/>
-         <CUSTOMER NAME="East - customer 2"/>
-         <CUSTOMER NAME="East - customer 3"/>
+         <CUSTOMER NAME="A customer"/>
       </MEMBERS>
     </CUSTOMER>
-    <CUSTOMER NAME="South">
-      <OWNER NAME="All" />
+    <CUSTOMER NAME="B parent customer">
+      <OWNER NAME="B grandparent customer" />
+      <MEMBERS>
+         <CUSTOMER NAME="B customer"/>
+      </MEMBERS>
     </CUSTOMER>
-    <CUSTOMER NAME="North">
-      <OWNER NAME="All" />
+    <CUSTOMER NAME="C parent customer">
+      <OWNER NAME="C grandparent customer" />
+      <MEMBERS>
+         <CUSTOMER NAME="C customer"/>
+      </MEMBERS>
     </CUSTOMER>
-    <CUSTOMER NAME="West">
-      <OWNER NAME="All" />
+    <CUSTOMER NAME="D parent customer">
+      <OWNER NAME="D grandparent customer" />
+      <MEMBERS>
+         <CUSTOMER NAME="D customer"/>
+      </MEMBERS>
+    </CUSTOMER>
+    <CUSTOMER NAME="E parent customer">
+      <OWNER NAME="E grandparent customer" />
+      <MEMBERS>
+         <CUSTOMER NAME="E customer"/>
+      </MEMBERS>
     </CUSTOMER>
   </CUSTOMERS>
 
   <!-- Define a hierarchical tree of items:
-    "All products" -> "Family A"  -> "A Group 1" -> "A1 Product 1"
-                                                 -> "A1 Product 2"
-                   -> "Family B"  -> "B Group 1" -> "B1 Product 1"
-                                                 -> "B1 Product 2"
-                                  -> "B Group 2"
-                   -> "Family C"  -> "C Group 1" -> "C1 Product 1"
-                   -> "Family D"  -> "D Group 1" -> "D1 Product 1"
+    "grandparent item"   -> "parent item" -> "item"
   -->
   <ITEMS>
-    <ITEM NAME="All products">
+    <ITEM NAME="A parent item">
+      <OWNER NAME="A grandparent item" />
       <MEMBERS>
-         <ITEM NAME="Family A">
-           <MEMBERS>
-             <ITEM NAME="A Group 1"/>
-           </MEMBERS>
-         </ITEM>
-         <ITEM NAME="Family B">
-           <MEMBERS>
-             <ITEM NAME="B Group 1"/>
-             <ITEM NAME="B Group 2"/>
-           </MEMBERS>
-         </ITEM>
-         <ITEM NAME="Family C">
-           <MEMBERS>
-             <ITEM NAME="C Group 1"/>
-           </MEMBERS>
-         </ITEM>
-         <ITEM NAME="Family D">
-           <MEMBERS>
-             <ITEM NAME="D Group 1"/>
-           </MEMBERS>
+         <ITEM NAME="A item">
+            <OPERATION NAME="A delivery" xsi:type="OPERATION_FIXED_TIME">
+              <DURATION>24:00:00</DURATION>
+            </OPERATION>
          </ITEM>
       </MEMBERS>
     </ITEM>
-    <ITEM NAME="A1 Product 1">
-      <OWNER NAME="A Group 1"/>
-      <OPERATION NAME="delivery A11" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
-      </OPERATION>
+    <ITEM NAME="B parent item">
+      <OWNER NAME="B grandparent item" />
+      <MEMBERS>
+         <ITEM NAME="B item">
+            <OPERATION NAME="B delivery" xsi:type="OPERATION_FIXED_TIME">
+              <DURATION>24:00:00</DURATION>
+            </OPERATION>
+         </ITEM>
+      </MEMBERS>
     </ITEM>
-    <ITEM NAME="A1 Product 2">
-      <OWNER NAME="A Group 1"/>
-      <OPERATION NAME="delivery A11 bis" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
-      </OPERATION>
+    <ITEM NAME="C parent item">
+      <OWNER NAME="C grandparent item" />
+      <MEMBERS>
+         <ITEM NAME="C item">
+            <OPERATION NAME="C delivery" xsi:type="OPERATION_FIXED_TIME">
+              <DURATION>24:00:00</DURATION>
+            </OPERATION>
+         </ITEM>
+      </MEMBERS>
     </ITEM>
-    <ITEM NAME="B1 Product 1">
-      <OWNER NAME="B Group 1"/>
-      <OPERATION NAME="delivery B11" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
-      </OPERATION>
+    <ITEM NAME="D parent item">
+      <OWNER NAME="D grandparent item" />
+      <MEMBERS>
+         <ITEM NAME="D item">
+            <OPERATION NAME="D delivery" xsi:type="OPERATION_FIXED_TIME">
+              <DURATION>24:00:00</DURATION>
+            </OPERATION>
+         </ITEM>
+      </MEMBERS>
     </ITEM>
-    <ITEM NAME="B1 Product 2">
-      <OWNER NAME="B Group 1"/>
-      <OPERATION NAME="delivery B11 bis" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
-      </OPERATION>
-    </ITEM>
-    <ITEM NAME="C1 Product 1">
-      <OWNER NAME="C Group 1"/>
-      <OPERATION NAME="delivery C11" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
-      </OPERATION>
-    </ITEM>
-    <ITEM NAME="D1 Product 1">
-      <OWNER NAME="D Group 1"/>
-      <OPERATION NAME="delivery D11" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
-      </OPERATION>
+    <ITEM NAME="E parent item">
+      <OWNER NAME="E grandparent item" />
+      <MEMBERS>
+         <ITEM NAME="E item">
+            <OPERATION NAME="E delivery" xsi:type="OPERATION_FIXED_TIME">
+              <DURATION>24:00:00</DURATION>
+            </OPERATION>
+         </ITEM>
+      </MEMBERS>
     </ITEM>
   </ITEMS>
 
+  <!-- Case A: Match at 'customer' and 'item' level. -->
   <DEMANDS>
-    <DEMAND NAME="forecast@null@A1 product 1" xsi:type="DEMAND_FORECAST">
-      <ITEM NAME="A1 Product 1" />
-      <PRIORITY>1</PRIORITY>
+    <!-- Forecasts -->
+    <DEMAND NAME="A forecast" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="A item" />
+      <CUSTOMER NAME="A customer" />
       <CALENDAR NAME="Weeks" />
-      <!--
-      <BUCKETS>
-        <BUCKET>
-          <DUE>2007-03-01T00:00:00</DUE>
-          <QUANTITY>1</QUANTITY>
-        </BUCKET>
-        <BUCKET>
-          <DUE>2007-02-18T00:00:00</DUE>
-          <QUANTITY>2</QUANTITY>
-        </BUCKET>
-        <BUCKET>
-          <DUE>2007-03-28T00:00:00</DUE>
-          <QUANTITY>3</QUANTITY>
-        </BUCKET>
-      </BUCKETS>
-      -->
     </DEMAND>
-    <DEMAND NAME="forecast item 1 bis" xsi:type="DEMAND_FORECAST">
-      <ITEM NAME="item 1" />
+    <DEMAND NAME="A forecast not selected" xsi:type="DEMAND_FORECAST">
+      <DESCRIPTION>This forecast is not selected because lower level
+      matches take precedence.</DESCRIPTION>
+      <ITEM NAME="A parent item" />
+      <CUSTOMER NAME="A parent customer" />
+      <CALENDAR NAME="Weeks" />
     </DEMAND>
-
     <!-- Actual orders -->
-    <DEMAND NAME="order 1 item 1">
-      <DESCRIPTION></DESCRIPTION>
-      <ITEM NAME="item 1"/>
+    <DEMAND NAME="A order">
+      <ITEM NAME="A item"/>
+      <CUSTOMER NAME="A customer"/>
       <QUANTITY>10</QUANTITY>
       <DUE>2007-03-22T00:00:00</DUE>
     </DEMAND>
   </DEMANDS>
-</PLAN>
+
+  <!-- Case B: Match at 'item' level. -->
+  <DEMANDS>
+    <!-- Forecasts -->
+    <DEMAND NAME="B forecast" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="B item" />
+      <CALENDAR NAME="Weeks" />
+    </DEMAND>
+    <!-- Actual orders -->
+    <DEMAND NAME="B order 1">
+      <ITEM NAME="B item"/>
+      <CUSTOMER NAME="B customer"/>
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-03-22T00:00:00</DUE>
+    </DEMAND>
+    <DEMAND NAME="B order 2">
+      <ITEM NAME="B item"/>
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-03-22T00:00:00</DUE>
+    </DEMAND>
+  </DEMANDS>
+
+  <!-- Case C: Match at 'parent customer' + 'item' level. -->
+  <DEMANDS>
+    <!-- Forecasts -->
+    <DEMAND NAME="C forecast" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="C item" />
+      <CUSTOMER NAME="C parent customer" />
+      <CALENDAR NAME="Weeks" />
+    </DEMAND>
+    <DEMAND NAME="C forecast not selected" xsi:type="DEMAND_FORECAST">
+      <DESCRIPTION>This forecast is not selected since we search higher
+      levels in the customer dimension first.
+      Switching the flag Customer_Then_Item_Hierarchy to false will
+      flip the search order around.</DESCRIPTION>
+      <ITEM NAME="C parent item" />
+      <CUSTOMER NAME="C customer" />
+      <CALENDAR NAME="Weeks" />
+    </DEMAND>
+    <!-- Actual orders -->
+    <DEMAND NAME="C order">
+      <ITEM NAME="C item"/>
+      <CUSTOMER NAME="C customer"/>
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-03-22T00:00:00</DUE>
+    </DEMAND>
+  </DEMANDS>
+
+  <!-- Case D: Match at 'customer' + 'parent item' level. -->
+  <DEMANDS>
+    <!-- Forecasts -->
+    <DEMAND NAME="D forecast" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="D parent item" />
+      <CUSTOMER NAME="D customer" />
+      <CALENDAR NAME="Weeks" />
+    </DEMAND>
+    <!-- Actual orders -->
+    <DEMAND NAME="D order">
+      <ITEM NAME="D item"/>
+      <CUSTOMER NAME="D customer"/>
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-03-22T00:00:00</DUE>
+    </DEMAND>
+  </DEMANDS>
+
+  <!-- Case E: Match at 'parent customer' + 'parent item' level. -->
+  <DEMANDS>
+    <!-- Forecasts -->
+    <DEMAND NAME="E forecast" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="E parent item" />
+      <CUSTOMER NAME="E parent customer" />
+      <CALENDAR NAME="Weeks" />
+    </DEMAND>
+    <!-- Actual orders -->
+    <DEMAND NAME="E order">
+      <ITEM NAME="E item"/>
+      <CUSTOMER NAME="E customer"/>
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-03-22T00:00:00</DUE>
+    </DEMAND>
+  </DEMANDS>
+ </PLAN>

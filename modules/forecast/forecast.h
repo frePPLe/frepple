@@ -118,6 +118,17 @@ class Forecast : public Demand
     TYPEDEF(Forecast);
     friend class ForecastSolver;
   public:
+    /** @brief 
+      *
+      */
+    class ForecastBucket : public Demand
+    {
+      public:
+        ForecastBucket(string n) : Demand(n), weight(0) {}
+      private:
+        float weight;
+    };
+
     /** Constructor. */
     explicit Forecast(const string& nm) : Demand(nm), calptr(NULL) {}
 
@@ -146,10 +157,10 @@ class Forecast : public Demand
     void endElement(XMLInput& pIn, XMLElement& pElement);
     void beginElement(XMLInput& pIn, XMLElement& pElement);
 
-    /** Update the item to be planned, for all buckets. */
+    /** Update the item to be planned. */
     virtual void setItem(const Item*);
 
-    /** Update the customer, for all buckets. */
+    /** Update the customer. */
     virtual void setCustomer(const Customer*);
 
     /** Specify a bucket calendar for the forecast. Once forecasted
@@ -207,7 +218,16 @@ class Forecast : public Demand
     /** A data type to maintain a dictionary of all forecasts. */
     typedef multimap < pair<const Item*, const Customer*>, Forecast* > MapOfForecasts;
 
-  private:
+    /** Callback function, used for prevent a calendar from being deleted when it
+      * is used for an uninitialized forecast. */
+    static bool callback(Calendar*, const Signal);
+
+  private:    
+    /** Initializion of a forecast.<br>
+      * It creates demands for each bucket of the calendar.
+      */
+    void initialize();
+
     /** A void calendar to define the time buckets. */
     const Calendar* calptr;
 
@@ -255,6 +275,7 @@ class ForecastSolver : public Solver
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(ForecastSolver);}
     void endElement(XMLInput& pIn, XMLElement& pElement);
+    void writeElement(XMLOutput*, const XMLtag&, mode) const;
 
     /** Updates the flag controlling incremental behavior. */
     void setAutomatic(bool); 

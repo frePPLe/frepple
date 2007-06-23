@@ -52,9 +52,25 @@ class MRPSolver : public Solver
       * By default no constraints are enabled. */
     short constrts;
 
-    /** @todo Missing doc. */
+    /** Behavior of this solver method is:
+      *  - It will ask the consuming flows for the required quantity. 
+      *  - The quantity asked for takes into account the quantity_per of the
+      *    producing flow.
+      *  - The date asked for takes into account the post-operation time
+      *    of the operation.
+      */
     DECLARE_EXPORT void solve(const Operation*, void* = NULL);
+
+    /** Behavior of this solver method is:
+      *  - Asks each of the routing steps for the requested quantity, starting
+      *    with the last routing step.<br>
+      *    The time requested for the operation is based on the start date of
+      *    the next routing step.
+      */
     DECLARE_EXPORT void solve(const OperationRouting*, void* = NULL);
+
+    /** Behavior of this solver method is:
+      *  - @todo implementation and doc missing. */
     DECLARE_EXPORT void solve(const OperationEffective*, void* = NULL);
 
     /** Behavior of this solver method is:

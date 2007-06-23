@@ -73,6 +73,28 @@ bool ForecastSolver::callback(Demand* l, const Signal a)
 }
 
 
+void ForecastSolver::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+{
+  // Writing a reference
+  if (m == REFERENCE)
+  {
+    o->writeElement
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+    return;
+  }
+
+  // Write the complete object
+  if (m != NOHEADER) o->BeginObject
+    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+
+  // Write the fields
+  if (automatic) o->writeElement(tag_automatic, automatic);
+
+  // Write the parent class
+  Solver::writeElement(o, tag, NOHEADER);
+}
+
+
 void ForecastSolver::solve(const Demand* l, void* v)
 {
   // Forecast don't net themselves, and hidden demands either...
@@ -99,7 +121,7 @@ void ForecastSolver::solve(const Demand* l, void* v)
 
   // Message
   if (getVerbose())
-    cout << "     " << matchDemand2Forecast(l) << endl;
+    cout << "     " << fcst << endl;
 
 }
 
@@ -136,7 +158,7 @@ Forecast* ForecastSolver::matchDemand2Forecast(const Demand* l)
   {
     do // Loop through first dimension
     {
-      Forecast::MapOfForecasts::iterator x = Forecast::ForecastDictionary.find(key);
+      Forecast::MapOfForecasts::iterator x = Forecast::ForecastDictionary.lower_bound(key);
 
       // Loop through all matching keys
       while (x != Forecast::ForecastDictionary.end() && x->first == key)
@@ -148,25 +170,18 @@ Forecast* ForecastSolver::matchDemand2Forecast(const Demand* l)
         else
           ++ x;
       }
-
       // Not found: try a higher level match in first dimension
       if (Forecast::Customer_Then_Item_Hierarchy) 
       {
-        // First item hierarchy
-        if(key.first && key.first->getOwner())
-          key.first = key.first->getOwner();
-        else
-          // Can't go higher any more
-          break;
+        // First customer hierarchy
+        if (key.second) key.second = key.second->getOwner();
+        else break;
       }
       else 
       {
-        // First customer hierarchy
-        if(key.second && key.second->getOwner())
-          key.second = key.second->getOwner();
-        else
-          // Can't go higher any more
-          break;
+        // First item hierarchy
+        if (key.first) key.first = key.first->getOwner();
+        else break;
       }
     }
     while (true);
@@ -176,27 +191,19 @@ Forecast* ForecastSolver::matchDemand2Forecast(const Demand* l)
     // Try a new level in the second dimension
     if (Forecast::Customer_Then_Item_Hierarchy) 
     {
-      // Second is customer
-      if (key.second && key.second->getOwner())
-        // Higher level exists
-        key.second = key.second->getOwner();
-      else
-        // No more levels exist
-        return NULL;
+      // Second is item
+      if (key.first) key.first = key.first->getOwner();
+      else return NULL;
       // Reset to lowest level in the first dimension again
-      key.first = &*(l->getItem());
+      key.second = &*(l->getCustomer());
     }
     else
     {
-      // Second is item
-      if (key.first && key.first->getOwner())
-        // Higher level exists
-        key.first = key.first->getOwner();
-      else
-        // No more levels exist
-        return NULL;
+      // Second is customer
+      if (key.second) key.second = key.second->getOwner();
+      else return NULL;
       // Reset to lowest level in the first dimension again
-      key.second = &*(l->getCustomer());
+      key.first = &*(l->getItem());
     } 
   }
   while (true);

@@ -109,16 +109,46 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     "SOLVER_FORECAST",
     Object::createString<ForecastSolver>);
 
+  // Get notified when a calendar is deleted
+  FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
+
   // Return the name of the module
   return name;
+}
+
+
+bool Forecast::callback(Calendar* l, const Signal a)
+{
+  // This function is called when a calendar is about to be deleted.
+  // If that calendar is being used for a forecast we reset the calendar
+  // pointer to null.
+  for (MapOfForecasts::iterator x = ForecastDictionary.begin();
+    x != ForecastDictionary.end(); ++x)
+    if (x->second->calptr == l) 
+      // Calendar in use for this forecast
+      x->second->calptr = NULL;
+  return true;
+}
+
+
+void Forecast::initialize()
+{
+  if (!calptr) throw DataException("Missing forecast calendar");
+
+  // Create a demand for every bucket
+  for (Calendar::BucketIterator i = calptr->beginBuckets();
+    i != calptr->endBuckets(); ++i)
+  {
+    // C
+    //cout << xxx
+  }
 }
 
 
 void Forecast::setQuantity(Date d, float f)
 {
   // Does a calendar exist already
-  if (!calptr)
-    throw DataException("Need to specify a forecast calendar first");
+  if (!calptr) throw DataException("Missing forecast calendar");
 
   // Look up the bucket and call auxilary function
   setQuantity(*(calptr->findBucket(d)), f);

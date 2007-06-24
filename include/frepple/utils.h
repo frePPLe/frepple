@@ -1522,9 +1522,22 @@ class DateRange
     /** Assignment operator. */
     void operator = (const DateRange& dr) {start = dr.start; end = dr.end;}
 
-    /** Return true if two date ranges are overlapping. */
+    /** Return true if two date ranges are overlapping.<br>
+      * The start point of the first interval is included in the comparison,
+      * whereas the end point isn't. As a result this method is not 
+      * symmetrical, ie when a.intersect(b) returns true b.intersect(a) is
+      * not nessarily true.
+      */
     bool intersect(const DateRange& dr) const
-      {return dr.start<end && dr.end>start;}
+      {return dr.start<end && dr.end>=start;}
+
+    /** Returns the number of seconds the 2 dateranges overlap. */
+    TimePeriod overlap(const DateRange& dr) const
+    {
+      long x = (dr.end<end ? dr.end : end) 
+          - (dr.start>start ? dr.start : start);
+      return x>0 ? x : 0;
+    }
 
     /** Returns true if the date passed as argument does fall within the
       * daterange. */

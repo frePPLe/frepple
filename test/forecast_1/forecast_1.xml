@@ -26,48 +26,9 @@
   <CALENDARS>
     <CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
       <BUCKETS>
-        <BUCKET START="2007-01-01T00:00:00">
-          <NAME>Jan Week1</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-07T00:00:00">
-          <NAME>Jan Week2</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-14T00:00:00">
-          <NAME>Jan Week3</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-21T00:00:00">
-          <NAME>Jan Week4</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-28T00:00:00">
-          <NAME>Jan Week5</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-04T00:00:00">
-          <NAME>Feb Week1</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-11T00:00:00">
-          <NAME>Feb Week2</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-18T00:00:00">
-          <NAME>Feb Week3</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-25T00:00:00">
-          <NAME>Feb Week4</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-04T00:00:00">
-          <NAME>Mar Week1</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-11T00:00:00">
-          <NAME>Mar Week2</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-18T00:00:00">
-          <NAME>Mar Week3</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-25T00:00:00">
-          <NAME>Mar Week4</NAME>
-        </BUCKET>
-        <BUCKET START="2007-04-01T00:00:00">
-          <NAME>Remainder</NAME>
-        </BUCKET>
+        <BUCKET START="2007-01-01T00:00:00"/>
+        <BUCKET START="2007-02-01T00:00:00"/>
+        <BUCKET START="2007-03-01T00:00:00"/>
       </BUCKETS>
     </CALENDAR>
   </CALENDARS>
@@ -171,6 +132,13 @@
       <ITEM NAME="A item" />
       <CUSTOMER NAME="A customer" />
       <CALENDAR NAME="Weeks" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-02-01T00:00:00</END>
+          <QUANTITY>100</QUANTITY>
+        </BUCKET>
+      </BUCKETS>
     </DEMAND>
     <DEMAND NAME="A forecast not selected" xsi:type="DEMAND_FORECAST">
       <DESCRIPTION>This forecast is not selected because lower level
@@ -184,7 +152,7 @@
       <ITEM NAME="A item"/>
       <CUSTOMER NAME="A customer"/>
       <QUANTITY>10</QUANTITY>
-      <DUE>2007-03-22T00:00:00</DUE>
+      <DUE>2007-01-02T00:00:00</DUE>
     </DEMAND>
   </DEMANDS>
 
@@ -194,18 +162,25 @@
     <DEMAND NAME="B forecast" xsi:type="DEMAND_FORECAST">
       <ITEM NAME="B item" />
       <CALENDAR NAME="Weeks" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-02-01T00:00:00</END>
+          <QUANTITY>100</QUANTITY>
+        </BUCKET>
+      </BUCKETS>
     </DEMAND>
     <!-- Actual orders -->
     <DEMAND NAME="B order 1">
       <ITEM NAME="B item"/>
       <CUSTOMER NAME="B customer"/>
       <QUANTITY>10</QUANTITY>
-      <DUE>2007-03-22T00:00:00</DUE>
+      <DUE>2007-01-02T00:00:00</DUE>
     </DEMAND>
     <DEMAND NAME="B order 2">
       <ITEM NAME="B item"/>
       <QUANTITY>10</QUANTITY>
-      <DUE>2007-03-22T00:00:00</DUE>
+      <DUE>2007-01-02T00:00:00</DUE>
     </DEMAND>
   </DEMANDS>
 
@@ -216,6 +191,13 @@
       <ITEM NAME="C item" />
       <CUSTOMER NAME="C parent customer" />
       <CALENDAR NAME="Weeks" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-02-01T00:00:00</END>
+          <QUANTITY>100</QUANTITY>
+        </BUCKET>
+      </BUCKETS>
     </DEMAND>
     <DEMAND NAME="C forecast not selected" xsi:type="DEMAND_FORECAST">
       <DESCRIPTION>This forecast is not selected since we search higher
@@ -225,13 +207,20 @@
       <ITEM NAME="C parent item" />
       <CUSTOMER NAME="C customer" />
       <CALENDAR NAME="Weeks" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-02-01T00:00:00</END>
+          <QUANTITY>100</QUANTITY>
+        </BUCKET>
+      </BUCKETS>
     </DEMAND>
     <!-- Actual orders -->
     <DEMAND NAME="C order">
       <ITEM NAME="C item"/>
       <CUSTOMER NAME="C customer"/>
       <QUANTITY>10</QUANTITY>
-      <DUE>2007-03-22T00:00:00</DUE>
+      <DUE>2007-01-02T00:00:00</DUE>
     </DEMAND>
   </DEMANDS>
 
@@ -242,13 +231,20 @@
       <ITEM NAME="D parent item" />
       <CUSTOMER NAME="D customer" />
       <CALENDAR NAME="Weeks" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-02-01T00:00:00</END>
+          <QUANTITY>100</QUANTITY>
+        </BUCKET>
+      </BUCKETS>
     </DEMAND>
     <!-- Actual orders -->
     <DEMAND NAME="D order">
       <ITEM NAME="D item"/>
       <CUSTOMER NAME="D customer"/>
       <QUANTITY>10</QUANTITY>
-      <DUE>2007-03-22T00:00:00</DUE>
+      <DUE>2007-01-02T00:00:00</DUE>
     </DEMAND>
   </DEMANDS>
 
@@ -259,13 +255,20 @@
       <ITEM NAME="E parent item" />
       <CUSTOMER NAME="E parent customer" />
       <CALENDAR NAME="Weeks" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-02-01T00:00:00</END>
+          <QUANTITY>100</QUANTITY>
+        </BUCKET>
+      </BUCKETS>
     </DEMAND>
     <!-- Actual orders -->
     <DEMAND NAME="E order">
       <ITEM NAME="E item"/>
       <CUSTOMER NAME="E customer"/>
       <QUANTITY>10</QUANTITY>
-      <DUE>2007-03-22T00:00:00</DUE>
+      <DUE>2007-01-02T00:00:00</DUE>
     </DEMAND>
   </DEMANDS>
- </PLAN>
+</PLAN>

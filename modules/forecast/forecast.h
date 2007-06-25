@@ -117,18 +117,31 @@ class Forecast : public Demand
 {
     TYPEDEF(Forecast);
     friend class ForecastSolver;
-  public:
-    /** @brief 
+  private:
+    /** @brief @todo  missing doc
       *
       */
     class ForecastBucket : public Demand
     {
       public:
-        ForecastBucket(string n) : Demand(n), weight(0) {}
-      private:
+        ForecastBucket(Forecast* f, Date d, Date e, float w) 
+          : Demand(f->getName() + " - " + string(d)), weight(w), timebucket(d,e)
+        {
+          setOwner(f);
+          setHidden(true);  // Avoid the subdemands show up in the output
+          setItem(&*(f->getItem()));
+          setDue(d);
+          setPriority(f->getPriority());
+          addPolicy(f->planLate() ? "PLANLATE" : "PLANSHORT");
+          addPolicy(f->planSingleDelivery() ? "SINGLEDELIVERY" : "MULTIDELIVERY");
+          setOperation(&*(f->getOperation()));
+        }
         float weight;
+        DateRange timebucket;
+        virtual size_t getSize() const {return sizeof(ForecastBucket);}
     };
 
+  public:
     /** Constructor. */
     explicit Forecast(const string& nm) : Demand(nm), calptr(NULL) {}
 
@@ -150,8 +163,24 @@ class Forecast : public Demand
     virtual void setQuantity(float f)
       {throw DataException("Can't set quantity of a forecast");}
 
-    /** Update the forecast in a bucket, given any date in the bucket. */
-    virtual void setQuantity(Date, float);
+    /** Update the forecast quantity.<br> 
+      * The forecast quantity will be distributed equally among the buckets
+      * available between the two dates, taking into account also the bucket
+      * weights.<br>
+      * The logic applied is briefly summarized as follows:
+      *  - If the daterange has its start and end dates equal, we find the
+      *    matching forecast bucket and update the quantity.
+      *  - Otherwise the quantity is distributed among all intersecting 
+      *    forecast buckets. This distribution is considering the weigth of
+      *    the bucket and the time duration of the bucket.<br>
+      *    The bucket weight is the value specified on the calendar.<br>
+      *    If a forecast bucket only partially overlaps with the daterange
+      *    only the overlapping time is used as the duration.
+      *  - If only buckets with zero weigth are found in the daterange a 
+      *    dataexception is thrown. It indicates a situation where forecast
+      *    is specified for a date where no values are allowed.
+      */
+    virtual void setQuantity(const DateRange& , float);
 
     void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, XMLElement& pElement);
@@ -230,9 +259,6 @@ class Forecast : public Demand
 
     /** A void calendar to define the time buckets. */
     const Calendar* calptr;
-
-    /** Update the forecast in a bucket. */
-    void setQuantity(const Calendar::Bucket&, float);
 
     /** A dictionary of all forecasts. */
     static MapOfForecasts ForecastDictionary;

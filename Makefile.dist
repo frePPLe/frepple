@@ -145,10 +145,10 @@ astyle:
 #   - In the excel spreadsheet hit alt-F11 and edit the "about" tab in the "config" form.
 old1 = 0
 old2 = 2
-old3 = 2
+old3 = 3
 new1 = 0
 new2 = 2
-new3 = 3
+new3 = 4
 set_release:
 	for i in "configure.in" "doc/menu.html" "contrib/installer/frepple.nsi" "contrib/rpm/frepple.spec" "include/frepple/utils.h"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)/$(new1).$(new2).$(new3)/g' $$i >out.tmp; \

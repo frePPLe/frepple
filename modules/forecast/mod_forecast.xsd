@@ -17,11 +17,14 @@
                     <xsd:all>
                       <xsd:element name="QUANTITY" type="positiveFloat"
                         minOccurs="0" />
-                      <xsd:element name="DUE" type="xsd:dateTime"
+                      <xsd:element name="START" type="xsd:dateTime"
+                        minOccurs="0"/>
+                      <xsd:element name="END" type="xsd:dateTime"
                         minOccurs="0"/>
                     </xsd:all>
                     <xsd:attribute name="QUANTITY" type="positiveFloat" />
-                    <xsd:attribute name="DUE" type="xsd:dateTime" />
+                    <xsd:attribute name="START" type="xsd:dateTime" />
+                    <xsd:attribute name="END" type="xsd:dateTime" />
                   </xsd:complexType>
                 </xsd:element>
               </xsd:choice>

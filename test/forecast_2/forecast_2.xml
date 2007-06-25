@@ -2,213 +2,149 @@
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <NAME>Forecast test model</NAME>
   <DESCRIPTION>
-    This test case test the matching between an actual order and a forecast.
-    The different scenarios are being validated:
-      - netting at
+  This test verifies the forecast distribution functionality.
+  This functionality allows specifying the forecast demand for a certain
+  date range. The system will then break down the demand into smaller time
+  buckets that are used for planning the forecast.
+  Two scenarios are modelled:
+  1: A forecast broken down into daily and weekly buckets.
+  2: A forecast broken down into split across bucket boundaries
   </DESCRIPTION>
   <CURRENT>2007-01-01T00:00:00</CURRENT>
   <COMMANDS>
     <VERBOSE>true</VERBOSE>
     <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST">
-        <VERBOSE>true</VERBOSE>
-        <AUTOMATIC>true</AUTOMATIC>
-      </SOLVER>
-    </COMMAND>
-    <!--
-    <COMMAND xsi:type="COMMAND_SOLVE">
       <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" />
     </COMMAND>
-    -->
-    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+    <COMMAND xsi:type="COMMAND_SAVE">
       <FILENAME>output.1.xml</FILENAME>
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVE">
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
       <FILENAME>output.2.xml</FILENAME>
     </COMMAND>
   </COMMANDS>
+
+  <!--
+  This calendar defines how forecast values are disaggregated from the
+  -->
   <CALENDARS>
-    <CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
+    <CALENDAR NAME="planningbuckets" xsi:type="CALENDAR_FLOAT">
       <BUCKETS>
-        <BUCKET START="2007-01-01T00:00:00">
-          <NAME>Jan Week1</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-07T00:00:00">
-          <NAME>Jan Week2</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-14T00:00:00">
-          <NAME>Jan Week3</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-21T00:00:00">
-          <NAME>Jan Week4</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-28T00:00:00">
-          <NAME>Jan Week5</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-04T00:00:00">
-          <NAME>Feb Week1</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-11T00:00:00">
-          <NAME>Feb Week2</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-18T00:00:00">
-          <NAME>Feb Week3</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-25T00:00:00">
-          <NAME>Feb Week4</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-04T00:00:00">
-          <NAME>Mar Week1</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-11T00:00:00">
-          <NAME>Mar Week2</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-18T00:00:00">
-          <NAME>Mar Week3</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-25T00:00:00">
-          <NAME>Mar Week4</NAME>
-        </BUCKET>
-        <BUCKET START="2007-04-01T00:00:00">
-          <NAME>Remainder</NAME>
-        </BUCKET>
+        <!--
+          The value for saturday and sunday is set to zero.
+          The forecast is only alllowed on weekdays.
+        -->
+        <!--
+          The weight for a monday is higher than a friday.
+          This can be used to model situations where more orders are
+          expected to be shipped on monday than on fridays.
+          Another usage may be to model cases where a peak of orders is
+          expected for delivery near the end of a month.
+          The weights model the ordering profile of the customers.
+        -->
+        <BUCKET START="2007-01-01T00:00:00" NAME="Mon Jan 01" VALUE="1.2"/>
+        <BUCKET START="2007-01-02T00:00:00" NAME="Tue Jan 02" VALUE="1"/>
+        <BUCKET START="2007-01-03T00:00:00" NAME="Wed Jan 03" VALUE="1"/>
+        <BUCKET START="2007-01-04T00:00:00" NAME="Thu Jan 04" VALUE="1"/>
+        <BUCKET START="2007-01-05T00:00:00" NAME="Fri Jan 05" VALUE="0.8"/>
+        <BUCKET START="2007-01-06T00:00:00" NAME="Sat Jan 06" VALUE="0"/>
+        <BUCKET START="2007-01-07T00:00:00" NAME="Sun Jan 07" VALUE="0"/>
+        <BUCKET START="2007-01-08T00:00:00" NAME="Mon Jan 08" VALUE="1.2"/>
+        <BUCKET START="2007-01-09T00:00:00" NAME="Tue Jan 09" VALUE="1"/>
+        <BUCKET START="2007-01-10T00:00:00" NAME="Wed Jan 10" VALUE="1"/>
+        <BUCKET START="2007-01-11T00:00:00" NAME="Thu Jan 11" VALUE="1"/>
+        <BUCKET START="2007-01-12T00:00:00" NAME="Fri Jan 12" VALUE="0.8"/>
+        <BUCKET START="2007-01-13T00:00:00" NAME="Sat Jan 13" VALUE="0"/>
+        <BUCKET START="2007-01-14T00:00:00" NAME="Sun Jan 14" VALUE="0"/>
+        <BUCKET START="2007-01-15T00:00:00" NAME="Mon Jan 15" VALUE="1.2"/>
+        <BUCKET START="2007-01-16T00:00:00" NAME="Tue Jan 16" VALUE="1"/>
+        <BUCKET START="2007-01-17T00:00:00" NAME="Wed Jan 17" VALUE="1"/>
+        <BUCKET START="2007-01-18T00:00:00" NAME="Thu Jan 18" VALUE="1"/>
+        <BUCKET START="2007-01-19T00:00:00" NAME="Fri Jan 19" VALUE=".8"/>
+        <BUCKET START="2007-01-20T00:00:00" NAME="Sat Jan 20" VALUE="0"/>
+        <BUCKET START="2007-01-21T00:00:00" NAME="Sun Jan 21" VALUE="0"/>
+        <!--
+          The value of the weekly buckets is set to 5/7 to account for
+          the unavailable saturday and sunday.
+        -->
+        <BUCKET START="2007-01-22T00:00:00" NAME="Week 04" VALUE="0.7142857"/>
+        <BUCKET START="2007-01-29T00:00:00" NAME="Week 05" VALUE="0.7142857"/>
+        <BUCKET START="2007-02-05T00:00:00" NAME="Week 06" VALUE="0.7142857"/>
+        <BUCKET START="2007-02-12T00:00:00" NAME="Week 07" VALUE="0.7142857"/>
+        <BUCKET START="2007-02-19T00:00:00" NAME="Week 08" VALUE="0.7142857"/>
+        <BUCKET START="2007-02-26T00:00:00" NAME="Week 09" VALUE="0.7142857"/>
+        <BUCKET START="2007-03-05T00:00:00" NAME="Week 10" VALUE="0.7142857"/>
+        <BUCKET START="2007-03-12T00:00:00" NAME="Week 11" VALUE="0.7142857"/>
+        <BUCKET START="2007-03-19T00:00:00" NAME="Week 12" VALUE="0.7142857"/>
+        <BUCKET START="2007-03-26T00:00:00" NAME="Week 13" VALUE="0.7142857"/>
+        <BUCKET START="2007-04-02T00:00:00" NAME="Week 14" VALUE="0.7142857"/>
+        <BUCKET START="2007-04-09T00:00:00" NAME="Week 15" VALUE="0.7142857"/>
+        <BUCKET START="2007-04-16T00:00:00" NAME="Week 16" VALUE="0.7142857"/>
+        <BUCKET START="2007-04-23T00:00:00" NAME="Week 17" VALUE="0.7142857"/>
+        <BUCKET START="2007-04-30T00:00:00" NAME="Week 18" VALUE="0.7142857"/>
+        <BUCKET START="2007-05-07T00:00:00" NAME="Week 18" VALUE="0.7142857"/>
       </BUCKETS>
     </CALENDAR>
   </CALENDARS>
 
-  <!-- Define a hierarchical tree of customers:
-    "All" -> "East"   -> "East - customer 1"
-                      -> "East - customer 2"
-          -> "South"
-          -> "West"
-          -> "North"
-  -->
-  <CUSTOMERS>
-    <CUSTOMER NAME="All" />
-    <CUSTOMER NAME="East">
-      <OWNER NAME="All" />
-      <MEMBERS>
-         <CUSTOMER NAME="East - customer 1"/>
-         <CUSTOMER NAME="East - customer 2"/>
-         <CUSTOMER NAME="East - customer 3"/>
-      </MEMBERS>
-    </CUSTOMER>
-    <CUSTOMER NAME="South">
-      <OWNER NAME="All" />
-    </CUSTOMER>
-    <CUSTOMER NAME="North">
-      <OWNER NAME="All" />
-    </CUSTOMER>
-    <CUSTOMER NAME="West">
-      <OWNER NAME="All" />
-    </CUSTOMER>
-  </CUSTOMERS>
-
-  <!-- Define a hierarchical tree of items:
-    "All products" -> "Family A"  -> "A Group 1" -> "A1 Product 1"
-                                                 -> "A1 Product 2"
-                   -> "Family B"  -> "B Group 1" -> "B1 Product 1"
-                                                 -> "B1 Product 2"
-                                  -> "B Group 2"
-                   -> "Family C"  -> "C Group 1" -> "C1 Product 1"
-                   -> "Family D"  -> "D Group 1" -> "D1 Product 1"
-  -->
   <ITEMS>
-    <ITEM NAME="All products">
-      <MEMBERS>
-         <ITEM NAME="Family A">
-           <MEMBERS>
-             <ITEM NAME="A Group 1"/>
-           </MEMBERS>
-         </ITEM>
-         <ITEM NAME="Family B">
-           <MEMBERS>
-             <ITEM NAME="B Group 1"/>
-             <ITEM NAME="B Group 2"/>
-           </MEMBERS>
-         </ITEM>
-         <ITEM NAME="Family C">
-           <MEMBERS>
-             <ITEM NAME="C Group 1"/>
-           </MEMBERS>
-         </ITEM>
-         <ITEM NAME="Family D">
-           <MEMBERS>
-             <ITEM NAME="D Group 1"/>
-           </MEMBERS>
-         </ITEM>
-      </MEMBERS>
-    </ITEM>
-    <ITEM NAME="A1 Product 1">
-      <OWNER NAME="A Group 1"/>
-      <OPERATION NAME="delivery A11" xsi:type="OPERATION_FIXED_TIME">
+    <ITEM NAME="Product 1">
+      <OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME">
         <DURATION>24:00:00</DURATION>
       </OPERATION>
     </ITEM>
-    <ITEM NAME="A1 Product 2">
-      <OWNER NAME="A Group 1"/>
-      <OPERATION NAME="delivery A11 bis" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
-      </OPERATION>
-    </ITEM>
-    <ITEM NAME="B1 Product 1">
-      <OWNER NAME="B Group 1"/>
-      <OPERATION NAME="delivery B11" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
-      </OPERATION>
-    </ITEM>
-    <ITEM NAME="B1 Product 2">
-      <OWNER NAME="B Group 1"/>
-      <OPERATION NAME="delivery B11 bis" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
-      </OPERATION>
-    </ITEM>
-    <ITEM NAME="C1 Product 1">
-      <OWNER NAME="C Group 1"/>
-      <OPERATION NAME="delivery C11" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
-      </OPERATION>
-    </ITEM>
-    <ITEM NAME="D1 Product 1">
-      <OWNER NAME="D Group 1"/>
-      <OPERATION NAME="delivery D11" xsi:type="OPERATION_FIXED_TIME">
+    <ITEM NAME="Product 2">
+      <OPERATION NAME="delivery 2" xsi:type="OPERATION_FIXED_TIME">
         <DURATION>24:00:00</DURATION>
       </OPERATION>
     </ITEM>
   </ITEMS>
 
   <DEMANDS>
-    <DEMAND NAME="forecast@null@A1 product 1" xsi:type="DEMAND_FORECAST">
-      <ITEM NAME="A1 Product 1" />
+    <!--
+      The forecast value is specfied for a date range of 4 weeks.
+      For planning in frepple the forecast is spread over 21 daily buckets and
+      a weekly bucket.
+      Among the daily buckets saturdays and sundays don't get any
+      forecast. Also, mondays are busier than fridays.
+    -->
+    <DEMAND NAME="Forecast 1" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="Product 1" />
       <PRIORITY>1</PRIORITY>
-      <CALENDAR NAME="Weeks" />
-      <!--
+      <CALENDAR NAME="planningbuckets" />
       <BUCKETS>
         <BUCKET>
-          <DUE>2007-03-01T00:00:00</DUE>
-          <QUANTITY>1</QUANTITY>
-        </BUCKET>
-        <BUCKET>
-          <DUE>2007-02-18T00:00:00</DUE>
-          <QUANTITY>2</QUANTITY>
-        </BUCKET>
-        <BUCKET>
-          <DUE>2007-03-28T00:00:00</DUE>
-          <QUANTITY>3</QUANTITY>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-01-29T00:00:00</END>
+          <!-- 4 weeks with 5 working days per week, expecting an average
+          forecast of 20 per working day. -->
+          <QUANTITY>400</QUANTITY>
         </BUCKET>
       </BUCKETS>
-      -->
-    </DEMAND>
-    <DEMAND NAME="forecast item 1 bis" xsi:type="DEMAND_FORECAST">
-      <ITEM NAME="item 1" />
     </DEMAND>
 
-    <!-- Actual orders -->
-    <DEMAND NAME="order 1 item 1">
-      <DESCRIPTION></DESCRIPTION>
-      <ITEM NAME="item 1"/>
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-03-22T00:00:00</DUE>
+    <!--
+      The forecast value is specified in calendar months.
+      For planning in frepple the forecast is spread over weeks.
+      Since the week and month boundaries don't align, the forecast is
+      has to split into partial weeks.
+      This functionality is typically used to translate between the
+      time granularity of the sales department (which creates a sales forecast
+      per calendar month) and the manufacturing department (which creates
+      manufacturing and procurement plans in weekly or daily buckets).
+    -->
+    <DEMAND NAME="Forecast 2" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="Product 2" />
+      <PRIORITY>1</PRIORITY>
+      <CALENDAR NAME="planningbuckets" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-03-01T00:00:00</START>
+          <END>2007-04-01T00:00:00</END>
+          <!-- 31 days in march, expecting an average forecast of 10 per day -->
+          <QUANTITY>310</QUANTITY>
+        </BUCKET>
+      </BUCKETS>
     </DEMAND>
   </DEMANDS>
 </PLAN>

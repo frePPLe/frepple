@@ -135,49 +135,93 @@ void Forecast::initialize()
 {
   if (!calptr) throw DataException("Missing forecast calendar");
 
-  // Create a demand for every bucket
-  for (Calendar::BucketIterator i = calptr->beginBuckets();
-    i != calptr->endBuckets(); ++i)
-  {
-    // C
-    //cout << xxx
-  }
-}
-
-
-void Forecast::setQuantity(Date d, float f)
-{
-  // Does a calendar exist already
-  if (!calptr) throw DataException("Missing forecast calendar");
-
-  // Look up the bucket and call auxilary function
-  setQuantity(*(calptr->findBucket(d)), f);
-}
-
-
-void Forecast::setQuantity(const Calendar::Bucket& b, float qty)
-{
-  // See if a subdemand already exists for this bucket
-  memberIterator m = beginMember();
-  while (m!=endMember() && m->getDue()!=b.getStart()) ++m;
-
-  if (m != endMember())
-    // Update existing subdemand
-    m->setQuantity(qty);
+  // Create a demand for every bucket. The weight value depends on the 
+  // calendar type: float, integer, bool or other
+  const CalendarFloat* c = dynamic_cast<const CalendarFloat*>(calptr);
+  if (c)
+    // Float calendar
+    for (CalendarFloat::BucketIterator i = c->beginBuckets();
+      i != c->endBuckets(); ++i)
+      Demand::add(new ForecastBucket(this, i->getStart(), i->getEnd(), c->getValue(i)));
   else
   {
-    // Create a new subdemand
-    Demand *l = new DemandDefault(getName() + " - " + string(b.getStart()));
-    Demand::add(l);
-    l->setOwner(this);
-    l->setHidden(true);  // Avoid the subdemands show up in the output
-    l->setItem(&*getItem());
-    l->setQuantity(qty);
-    l->setDue(b.getStart());
-    l->setPriority(getPriority());
-    l->addPolicy(planLate() ? "PLANLATE" : "PLANSHORT");
-    l->addPolicy(planSingleDelivery() ? "SINGLEDELIVERY" : "MULTIDELIVERY");
-    l->setOperation(&*getOperation());
+    const CalendarInt* c = dynamic_cast<const CalendarInt*>(calptr);
+    if (c)
+      // Int calendar
+      for (CalendarInt::BucketIterator i = c->beginBuckets();
+        i != c->endBuckets(); ++i)
+        Demand::add(new ForecastBucket(this, i->getStart(), i->getEnd(), static_cast<float>(c->getValue(i))));
+    else
+    {
+      const CalendarBool* c = dynamic_cast<const CalendarBool*>(calptr);
+      if (c)
+        // Int calendar
+        for (CalendarBool::BucketIterator i = c->beginBuckets();
+          i != c->endBuckets(); ++i)
+          Demand::add(new ForecastBucket(this, i->getStart(), i->getEnd(), c->getValue(i) ? 1.0f : 0.0f));
+      else
+        // Other calendar
+        for (Calendar::BucketIterator i = calptr->beginBuckets();
+          i != calptr->endBuckets(); ++i)
+          Demand::add(new ForecastBucket(this, i->getStart(), i->getEnd(), 1));
+    }
+  }
+
+}
+
+
+void Forecast::setQuantity(const DateRange& d, float f)
+{
+  // Initialize, if not done yet
+  if (!isGroup()) initialize();
+
+  // Find all forecast demands, and sum their weights
+  double weights = 0;
+  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+  {
+    ForecastBucket* x = dynamic_cast<ForecastBucket*>(&*m);
+    if (!x) 
+      throw DataException("Invalid subdemand of forecast '" + getName() +"'");
+    if (d.intersect(x->timebucket))
+    {
+      // Bucket intersects with daterange
+      if (!d.getDuration()) 
+      {
+        // Single date provided. Update that one bucket.
+        x->setQuantity(f);
+        return;
+      }
+      weights += x->weight * static_cast<long>(x->timebucket.overlap(d));
+    }
+  }
+
+  // Expect to find at least one non-zero weight...
+  if (!weights) 
+    throw DataException("No valid forecast date in range " 
+      + string(d) + " of forecast '" + getName() +"'");
+
+  // Update the forecast quantity, respecting the weights
+  f /= static_cast<float>(weights);
+  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+  {
+    ForecastBucket* x = dynamic_cast<ForecastBucket*>(&*m);
+    if (d.intersect(x->timebucket))
+    {
+      // Bucket intersects with daterange
+      TimePeriod o = x->timebucket.overlap(d);
+      double percent = x->weight * static_cast<long>(o);
+      if (o < x->timebucket.getDuration())
+      {
+        // The bucket is only partially updated
+        float fraction = static_cast<float>(o) / static_cast<long>(x->timebucket.getDuration());
+        x->setQuantity( static_cast<float>(
+          x->getQuantity() + f * percent
+          ));
+      }
+      else
+        // The bucket is completely updated
+        x->setQuantity(static_cast<float>(f * percent));
+    }
   }
 }
 
@@ -199,7 +243,7 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
   o->writeElement(Tags::tag_item, getItem());
   o->writeElement(Tags::tag_calendar, calptr);
   if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
-  o->writeElement(Tags::tag_operation, getOperation());
+  o->writeElement(Tags::tag_operation, &*getOperation());
   if (!planLate() && planSingleDelivery())
     o->writeElement(Tags::tag_policy, "PLANSHORT SINGLEDELIVERY");
   else if (!planLate())
@@ -223,10 +267,9 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
 
 void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  // While reading the date and quantity of a bucket, we use the date and
-  // quantity fields of the forecast parent. When the bucket tag is closed
-  // we copy the values to a new lot and clear the values on the parent
-  // forecast.
+  // While reading forecast buckets, we use the userarea field on the input
+  // to cache the data. The temporary object is deleted when the bucket
+  // tag is closed.
   if (pElement.isA(Tags::tag_calendar))
   {
     Calendar *b = dynamic_cast<Calendar*>(pIn.getPreviousObject());
@@ -235,27 +278,64 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else if (pElement.isA(Tags::tag_bucket))
   {
-    setQuantity(getDue(), getQuantity());
-    Demand::setDue(Date::infinitePast);
-    Demand::setQuantity(0.0f);
+    pair<DateRange,float> *d = 
+      static_cast< pair<DateRange,float>* >(pIn.getUserArea());
+    if (d)
+    {
+      // Update the forecast quantities
+      setQuantity(d->first, d->second);
+      // Clear the read buffer
+      d->first.setStart(Date());
+      d->first.setEnd(Date());
+      d->second = 0;
+    }
   }
-  else if (pElement.isA (Tags::tag_quantity))
-    Demand::setQuantity (pElement.getFloat());
-  else if (pElement.isA (Tags::tag_due))
-    Demand::setDue(pElement.getDate());
-  else if (pIn.isObjectEnd())
+  else if (pIn.getParentElement().isA(Tags::tag_bucket))
   {
-    // Clear the quantity and date.
-    Demand::setDue(Date::infinitePast);
-    Demand::setQuantity(0.0f);
+    pair<DateRange,float> *d = 
+      static_cast< pair<DateRange,float>* >(pIn.getUserArea());
+    if (pElement.isA (Tags::tag_quantity))
+    {
+      if (d) d->second = pElement.getFloat();
+      else pIn.setUserArea(
+        new pair<DateRange,float>(DateRange(),pElement.getFloat())
+        );
+    }
+    else if (pElement.isA (Tags::tag_start))
+    {
+      Date x = pElement.getDate();
+      if (d) 
+      {
+        if (!d->first.getStart()) d->first.setStartAndEnd(x,x);
+        else d->first.setStart(x);
+      }
+      else pIn.setUserArea(new pair<DateRange,float>(DateRange(x,x),0));
+    }
+    else if (pElement.isA (Tags::tag_end))
+    {
+      Date x = pElement.getDate();
+      if (d)
+      {
+        if (!d->first.getStart()) d->first.setStartAndEnd(x,x);
+        else d->first.setEnd(x);
+      }
+      else pIn.setUserArea(new pair<DateRange,float>(DateRange(x,x),0));
+    }
+  }
+  else
+    Demand::endElement (pIn, pElement);
+
+  if (pIn.isObjectEnd())
+  {
     // Update the dictionary
     ForecastDictionary.insert(make_pair(
       make_pair(&*getItem(),&*getCustomer()),
       this
       ));
+    // Delete dynamically allocated temporary read object
+    if (pIn.getUserArea()) 
+      delete static_cast< pair<DateRange,float>* >(pIn.getUserArea());
   }
-  else
-    Demand::endElement (pIn, pElement);
 }
 
 

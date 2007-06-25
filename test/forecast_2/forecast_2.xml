@@ -127,7 +127,7 @@
       The forecast value is specified in calendar months.
       For planning in frepple the forecast is spread over weeks.
       Since the week and month boundaries don't align, the forecast is
-      has to split into partial weeks.
+      split into partial weeks.
       This functionality is typically used to translate between the
       time granularity of the sales department (which creates a sales forecast
       per calendar month) and the manufacturing department (which creates

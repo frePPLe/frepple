@@ -33,18 +33,32 @@
   *
   * The forecast module provides the following functionality:
   *
-  *  - A special demand type to model forecasts.<br>
+  *  - A <b>new demand type</b> to model forecasts.<br>
   *    A forecast demand is bucketized. A demand is automatically
-  *    created for each bucket.<br>
+  *    created for each time bucket.<br>
+  *    A calendar is used to define the time buckets to be used.
   * 
-  *  - A solver for netting orders from the forecast.<br>
+  *  - Functionality for <b>distributing / profiling</b> forecast numbers 
+  *    into time buckets used for planning.<br>
+  *    This functionality is typically used to translate between the time 
+  *    granularity of the sales department (which creates a sales forecast 
+  *    per e.g. calendar month) and the manufacturing department (which 
+  *    creates manufacturing and procurement plans in weekly or daily buckets
+  *    ).<br>
+  *    Another usage is to model a delivery date profile of the customers. 
+  *    Each bucket has a weight that is used to model situations where the 
+  *    demand is not evenly spread across buckets: e.g. when more orders are 
+  *    expected due on a monday than on a friday, or when a peak of orders is 
+  *    expected for delivery near the end of a month.
+  *    
+  *  - A solver for <b>netting orders from the forecast</b>.<br>
   *    As customer orders are being received they need to be deducted from
   *    the forecast to avoid double-counting it.<br>
   *    The netting solver will for each order search for a matching forecast
   *    and reduce the remaining net quantity of the forecast.
   *
   *  - Techniques to predict/forecast the future demand based on the demand
-  *    history is NOT available in this module (yet).
+  *    history are NOT available in this module (yet).
   *
   * The XML schema extension enabled by this module is (see mod_forecast.xsd):
   * <PRE>
@@ -61,11 +75,14 @@
   *                   <xsd:all>
   *                     <xsd:element name="QUANTITY" type="positiveFloat"
   *                       minOccurs="0" />
-  *                     <xsd:element name="DUE" type="xsd:dateTime"
+  *                     <xsd:element name="START" type="xsd:dateTime"
+  *                       minOccurs="0"/>
+  *                     <xsd:element name="END" type="xsd:dateTime"
   *                       minOccurs="0"/>
   *                   </xsd:all>
   *                   <xsd:attribute name="QUANTITY" type="positiveFloat" />
-  *                   <xsd:attribute name="DUE" type="xsd:dateTime" />
+  *                   <xsd:attribute name="START" type="xsd:dateTime" />
+  *                   <xsd:attribute name="END" type="xsd:dateTime" />
   *                 </xsd:complexType>
   *               </xsd:element>
   *             </xsd:choice>
@@ -78,7 +95,8 @@
   * </PRE>
   * 
   * The module support the following configuration parameters:
-  *   - Customer_Then_Item_Hierarchy:<br>
+  *
+  *   - <b>Customer_Then_Item_Hierarchy</b>:<br>
   *     As part of the forecast netting a demand is assiociated with a certain
   *     forecast. When no matching forecast is found for the customer and item 
   *     of the demand, frepple looks for forecast at higher level customers 
@@ -87,7 +105,8 @@
   *     hierarchy and then the item hierarchy, or the other way around.<br>
   *     The default value is true, ie search higher customer levels before 
   *     searching higher levels of the item.
-  *   - Match_Using_Delivery_Operation:<br>
+
+  *   - <b>Match_Using_Delivery_Operation</b>:<br>
   *     Specifies whether or not a demand and a forecast require to have the 
   *     same delivery operation to be a match<br>
   *     The default value is true.

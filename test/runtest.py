@@ -84,7 +84,7 @@ def runTestSuite():
     # timezones switch to summer time at various dates.
     # The next statement makes sure the test are all running with the same timezone,
     # and in addition a timezone without DST.
-    os.environ['TZ'] = 'CET'
+    os.environ['TZ'] = 'EST'
 
     # Parse the command line
     opts = []

@@ -48,14 +48,12 @@ void ForecastSolver::setAutomatic(bool b)
   if (automatic && !b)
   {
     // Disable the incremental solving (which is currently enabled)
-    //FunctorInstance<Demand,ForecastSolver>::disconnect(this, SIG_BEFORE_CHANGE);
     FunctorInstance<Demand,ForecastSolver>::disconnect(this, SIG_AFTER_CHANGE);
     FunctorInstance<Demand,ForecastSolver>::disconnect(this, SIG_REMOVE);
   }
   else if (!automatic && b)
   {
     // Enable the incremental solving (which is currently disabled)
-    //FunctorInstance<Demand,ForecastSolver>::connect(this, SIG_BEFORE_CHANGE);
     FunctorInstance<Demand,ForecastSolver>::connect(this, SIG_AFTER_CHANGE);
     FunctorInstance<Demand,ForecastSolver>::connect(this, SIG_REMOVE);
   }
@@ -106,10 +104,10 @@ void ForecastSolver::solve(const Demand* l, void* v)
   if (getVerbose())
     cout << "  Netting of demand '" << l << "'  ('" << l->getCustomer() 
       << "','" << l->getItem() << "', '" << l->getDeliveryOperation() 
-      << "')" << endl;
+      << "'): " << l->getDue() << ", " << l->getQuantity() << endl;
 
   // Find a matching forecast
-  Forecast *fcst = matchDemand2Forecast(l);
+  Forecast *fcst = matchDemandToForecast(l);
 
   if (!fcst)
   {
@@ -119,37 +117,47 @@ void ForecastSolver::solve(const Demand* l, void* v)
     return;
   }
 
-  // Message
-  if (getVerbose())
-    cout << "     " << fcst << endl;
-
+  // Netting the order from the forecast
+  netDemandFromForecast(l,fcst);
 }
 
 
 void ForecastSolver::solve(void *v)
 {
-  /*
-  for(Forecast::MapOfForecasts::const_iterator x = Forecast::ForecastDictionary.begin();
-    x != Forecast::ForecastDictionary.end(); ++x)
-    cout << "  FCST " << &*x << ":   " << x->first.first << "  " << x->first.second << "   " << x->second << endl;
-  */
+  // Definitions to sort the demand
 
   // Disable automated netting during this solver loop
   bool autorun = getAutomatic();
   setAutomatic(false);
 
+  // Sort the demands using the same sort function as used for 
+  // planning.
+  // Note: the memory consumption of the sorted list can be significant
+  sortedDemandList l;  
+  for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
+    // Only sort non-forecasts and non-hidden demand.
+    if (!dynamic_cast<Forecast*>(&*i) && !i->getHidden()) l.insert(&*i);
+
   // Netting loop
-  for(Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
-    if (!dynamic_cast<Forecast*>(&*i) && !i->getHidden()) 
-      // Call the netting function for non-forecasts and non-hidden demand.
-      solve(&*i, NULL);
+  for(sortedDemandList::iterator i = l.begin(); i != l.end(); ++i)
+    try {solve(*i, NULL);}
+    catch (...)
+    {
+      // Error message
+      cout << "Error: Caught an exception while netting demand '"
+        << (*i)->getName() << "':" << endl;
+      try { throw; }
+      catch (bad_exception&) {cout << "  bad exception" << endl;}
+      catch (exception& e) {cout << "  " << e.what() << endl;}
+      catch (...) {cout << "  Unknown type" << endl;}
+    }
 
   // Re-enable the automated netting if it was enabled
   if (autorun) setAutomatic(true);
 }
 
 
-Forecast* ForecastSolver::matchDemand2Forecast(const Demand* l)
+Forecast* ForecastSolver::matchDemandToForecast(const Demand* l)
 {
   pair<const Item*, const Customer*> key 
     = make_pair(&*(l->getItem()), &*(l->getCustomer()));
@@ -207,6 +215,82 @@ Forecast* ForecastSolver::matchDemand2Forecast(const Demand* l)
     } 
   }
   while (true);
+}
+
+
+void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
+{
+  // Find the bucket with the due date
+  Forecast::ForecastBucket* zerobucket = NULL;
+  for (Forecast::memberIterator i = fcst->beginMember(); i != fcst->endMember(); ++i)
+  {
+    zerobucket = dynamic_cast<Forecast::ForecastBucket*>(&*i);
+    if (zerobucket && zerobucket->timebucket.within(dmd->getDue())) break;
+  }
+  if (!zerobucket) 
+    throw LogicException("Can't find forecast bucket for " 
+      + string(dmd->getDue()) + " in forecast '" + fcst->getName() + "'");
+
+  // Netting - looking for time buckets with net forecast
+  double remaining = dmd->getQuantity();
+  Forecast::ForecastBucket* curbucket = zerobucket;
+  bool backward = true;
+  while ( remaining > 0 && curbucket 
+    && (dmd->getDue()-Forecast::getNetEarly() < curbucket->timebucket.getEnd())
+    && (dmd->getDue()+Forecast::getNetLate() >= curbucket->timebucket.getStart())
+    )
+  {
+    // Net from the current bucket
+    double available = curbucket->getQuantity();
+    if (available > 0)
+    {
+      if (available >= remaining)
+      {
+        // Partially consume a bucket
+        if (getVerbose())
+          cout << "    Consuming " << remaining << " from bucket " 
+            << curbucket->timebucket << " (" << available 
+            << " available)" << endl;
+        curbucket->setQuantity(static_cast<float>(available - remaining));
+        curbucket->consumed += static_cast<float>(remaining);
+        remaining = 0;
+      }
+      else
+      {
+        // Completely consume a bucket
+        if (getVerbose()) 
+          cout << "    Consuming " << available << " from bucket " 
+            << curbucket->timebucket << " (" << available 
+            << " available)" << endl;
+        remaining -= available;
+        curbucket->consumed += static_cast<float>(available);
+        curbucket->setQuantity(0);
+      }
+    }
+    else if (getVerbose())
+      cout << "    Nothing available in bucket " 
+        << curbucket->timebucket << endl;
+
+    // Find the next forecast bucket
+    if (backward)
+    {
+      // Moving to earlier buckets
+      curbucket = curbucket->prev;
+      if (!curbucket)
+      {
+        backward = false;
+        curbucket = zerobucket->next;
+      }
+    }
+    else
+      // Moving to later buckets
+      curbucket = curbucket->next;
+  }
+
+  // Quantity for which no bucket is found
+  if (remaining > 0 && getVerbose())
+    cout << "    Remains " << remaining << " that can't be netted" << endl;
+
 }
 
 }       // end namespace

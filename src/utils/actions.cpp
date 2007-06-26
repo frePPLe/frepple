@@ -547,7 +547,7 @@ DECLARE_EXPORT void CommandLoadLibrary::endElement(XMLInput& pIn, XMLElement& pE
     if (!tempValue.empty() && !tempName.empty())
     {
       // New parameter name+value pair ready
-      parameters[tempName] = tempValue;
+      parameters[tempName] = XMLElement(tempName,tempValue);
       tempValue.clear();
       tempName.clear();
     }

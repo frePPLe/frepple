@@ -2071,6 +2071,13 @@ class XMLElement
     hashtype m_dwTagHash;
 
   public:
+    /** Default constructor. */
+    XMLElement() {}
+
+    /** Constructor. */
+    XMLElement(string n, string v) 
+      : m_dwTagHash(XMLtag::hash(n.c_str())) , m_strData(v) {}
+
     /** Re-initializes an existing element. Using this method we can avoid
       * destroying and recreating XMLelement objects too frequently. Instead
       * we can manage them in a array.
@@ -3128,7 +3135,7 @@ class CommandLoadLibrary : public Command
     static DECLARE_EXPORT void printModules();
 
     /** Type for storing parameters. */
-    typedef map<string,string> ParameterList;
+    typedef map<string,XMLElement> ParameterList;
 
     /** Constructor.
       * @param libname File name of the library
@@ -4018,8 +4025,17 @@ template <class T> class HasHierarchy : public HasName<T>
     void endElement(XMLInput&, XMLElement&);
 
   private:
+    /** A pointer to the parent object. */
     T *parent;
+
+    /** A pointer to the first child object. */
     T *first_child;
+
+    /** A pointer to the next brother object, ie an object having the 
+      * same parent.<br>
+      * The brothers are all linked as a single linked list, with the
+      * first_child pointer on the parent being the root pointer of the list.
+      */
     T *next_brother;
 };
 

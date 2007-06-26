@@ -64,7 +64,7 @@ void LibrarySolver::initialize()
 }
 
 
-DECLARE_EXPORT bool MRPSolver::demand_comparison(Demand* l1, Demand* l2)
+DECLARE_EXPORT bool MRPSolver::demand_comparison(const Demand* l1, const Demand* l2)
 {
   if (l1->getPriority() != l2->getPriority())
     return l1->getPriority() < l2->getPriority();

@@ -263,7 +263,7 @@ class MRPSolver : public Solver
       *  - demand due date: earlier due dates first
       *  - demand quantity: smaller quantities first
       */
-    static DECLARE_EXPORT bool demand_comparison(Demand*, Demand*);
+    static DECLARE_EXPORT bool demand_comparison(const Demand*, const Demand*);
 
   private:
     typedef map < int, deque<Demand*>, less<int> > classified_demand;

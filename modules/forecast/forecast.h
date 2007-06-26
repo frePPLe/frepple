@@ -62,6 +62,7 @@
   *
   * The XML schema extension enabled by this module is (see mod_forecast.xsd):
   * <PRE>
+  * <!-- Define the forecast type -->
   * <xsd:complexType name="DEMAND_FORECAST">
   *   <xsd:complexContent>
   *     <xsd:extension base="DEMAND">
@@ -92,6 +93,19 @@
   *     </xsd:extension>
   *   </xsd:complexContent>
   * </xsd:complexType>
+  *
+  * <!-- Define the netting solver. -->
+	* <xsd:complexType name="SOLVER_FORECAST">
+	*	<xsd:complexContent>
+	*		<xsd:extension base="SOLVER">
+	*			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+	*				<xsd:element name="VERBOSE" type="xsd:boolean" />
+	*				<xsd:element name="AUTOMATIC" type="xsd:boolean" />
+	*			</xsd:choice>
+	*			<xsd:attribute name="AUTOMATIC" type="xsd:boolean" />
+	*		</xsd:extension>
+	*	</xsd:complexContent>
+	* </xsd:complexType>
   * </PRE>
   * 
   * The module support the following configuration parameters:
@@ -105,11 +119,23 @@
   *     hierarchy and then the item hierarchy, or the other way around.<br>
   *     The default value is true, ie search higher customer levels before 
   *     searching higher levels of the item.
-
+  *
   *   - <b>Match_Using_Delivery_Operation</b>:<br>
   *     Specifies whether or not a demand and a forecast require to have the 
-  *     same delivery operation to be a match<br>
+  *     same delivery operation to be a match.<br>
   *     The default value is true.
+  *
+  *   - <b>Net_Early</b>:<br>
+  *     Defines how much time before the due date of an order we are allowed
+  *     to search for a forecast bucket to net from.<br>
+  *     The default value is 0, meaning that we can net only from the bucket
+  *     where the demand is due.
+  *
+  *   - <b>Net_Late</b>:<br>
+  *     Defines how much time after the due date of an order we are allowed
+  *     to search for a forecast bucket to net from.<br>
+  *     The default value is 0, meaning that we can net only from the bucket
+  *     where the demand is due.
   */
 
 #ifndef FORECAST_H
@@ -143,9 +169,11 @@ class Forecast : public Demand
     class ForecastBucket : public Demand
     {
       public:
-        ForecastBucket(Forecast* f, Date d, Date e, float w) 
-          : Demand(f->getName() + " - " + string(d)), weight(w), timebucket(d,e)
+        ForecastBucket(Forecast* f, Date d, Date e, float w, ForecastBucket* p) 
+          : Demand(f->getName() + " - " + string(d)), weight(w), consumed(0), 
+            timebucket(d,e), prev(p), next(NULL)
         {
+          if (p) p->next = this;
           setOwner(f);
           setHidden(true);  // Avoid the subdemands show up in the output
           setItem(&*(f->getItem()));
@@ -156,7 +184,10 @@ class Forecast : public Demand
           setOperation(&*(f->getOperation()));
         }
         float weight;
+        float consumed;
         DateRange timebucket;
+        ForecastBucket* prev;
+        ForecastBucket* next;
         virtual size_t getSize() const {return sizeof(ForecastBucket);}
     };
 
@@ -165,18 +196,7 @@ class Forecast : public Demand
     explicit Forecast(const string& nm) : Demand(nm), calptr(NULL) {}
 
     /** Destructor. */
-    ~Forecast() 
-    {
-      // Update the dictionary
-      for (MapOfForecasts::iterator x= 
-        ForecastDictionary.lower_bound(make_pair(&*getItem(),&*getCustomer()));
-        x != ForecastDictionary.end(); ++x)
-        if (x->second == this) 
-        {
-          ForecastDictionary.erase(x); 
-          return;
-        }
-    }
+    ~Forecast();
 
     /** Updates the quantity of the forecast. This method is empty. */
     virtual void setQuantity(float f)
@@ -263,6 +283,18 @@ class Forecast : public Demand
     static bool getMatchUsingDeliveryOperation() 
       {return Match_Using_Delivery_Operation;}
 
+    /** Updates the value of the Net_Early module parameter. */
+    static void setNetEarly(TimePeriod t) {Net_Early = t;}
+
+    /** Returns the value of the Net_Early module parameter. */
+    static TimePeriod getNetEarly() {return Net_Early;}
+
+    /** Updates the value of the Net_Late module parameter. */
+    static void setNetLate(TimePeriod t) {Net_Late = t;}
+
+    /** Returns the value of the Net_Late module parameter. */
+    static TimePeriod getNetLate() {return Net_Late;}
+
     /** A data type to maintain a dictionary of all forecasts. */
     typedef multimap < pair<const Item*, const Customer*>, Forecast* > MapOfForecasts;
 
@@ -291,6 +323,20 @@ class Forecast : public Demand
       * between a matching order and its forecast. 
       */
     static bool Match_Using_Delivery_Operation;
+
+    /** Store the maximum time difference between an order due date and a
+      * forecast bucket to net from.<br>
+      * The default value is 0, meaning that only netting from the due 
+      * bucket is allowed.
+      */
+    static TimePeriod Net_Late;
+
+    /** Store the maximum time difference between an order due date and a
+      * forecast bucket to net from.<br>
+      * The default value is 0, meaning that only netting from the due 
+      * bucket is allowed.
+      */
+    static TimePeriod Net_Early;
 };
 
 
@@ -333,14 +379,29 @@ class ForecastSolver : public Solver
 
   private:
     /** Given a demand, this function will identify the forecast model it 
-      * links to. The demand will net from this forecast. 
+      * links to.  
       */
-    Forecast* matchDemand2Forecast(const Demand* l);
+    Forecast* matchDemandToForecast(const Demand* l);
+
+    /** Implements the netting of a customer order from a matching forecast
+      * (and its delivery plan).  
+      */
+    void netDemandFromForecast(const Demand*, Forecast*);
 
     /** When set to true, this solver will automatically adjust the
       * netted forecast with every change in demand.
       */
     bool automatic;
+
+    /** Used for sorting demands during netting. */
+    struct sorter 
+    {
+  	  bool operator()(const Demand* x, const Demand* y) const
+		    { return MRPSolver::demand_comparison(x,y); }
+	  };
+
+    /** Used for sorting demands during netting. */
+    typedef multiset < Demand*, sorter > sortedDemandList;
 };
 
 }   // End namespace

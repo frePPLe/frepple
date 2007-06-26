@@ -36,6 +36,8 @@ const MetaClass ForecastSolver::metadata;
 Forecast::MapOfForecasts Forecast::ForecastDictionary;
 bool Forecast::Customer_Then_Item_Hierarchy = true;
 bool Forecast::Match_Using_Delivery_Operation = true;
+TimePeriod Forecast::Net_Late(0);
+TimePeriod Forecast::Net_Early(0);
 
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
@@ -50,54 +52,22 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   }
   init = true;
 
-  // Process the parameter "Customer_Then_Item_Hierarchy"
-  CommandLoadLibrary::ParameterList::const_iterator x 
-    = z.find("Customer_Then_Item_Hierarchy");
-  if (x != z.end())
+  // Process the module parameters
+  for (CommandLoadLibrary::ParameterList::const_iterator x = z.begin();
+    x != z.end(); ++x)
   {
-    switch (x->second[0])
-    {
-      case 'T':
-      case 't':
-      case '1':
-        Forecast::setCustomerThenItemHierarchy(true);
-        break;
-      case 'F':
-      case 'f':
-      case '0':
-        Forecast::setCustomerThenItemHierarchy(false);
-        break;
-      default:
-        // We can't throw an exception in a module initialization routine...
-        cout << "Error initializing " << name << " module: Invalid value '" 
-          << x->second 
-          << "' for parameter 'Customer_Then_Item_Hierarchy'" << endl;
-    }
+    if (x->first == "Customer_Then_Item_Hierarchy")
+      Forecast::setCustomerThenItemHierarchy(x->second.getBool());
+    else if (x->first == "Match_Using_Delivery_Operation")
+      Forecast::setMatchUsingDeliveryOperation(x->second.getBool());
+    else if (x->first == "Net_Early")
+      Forecast::setNetEarly(x->second.getTimeperiod());
+    else if (x->first == "Net_Late")
+      Forecast::setNetLate(x->second.getTimeperiod());
+    else
+      cout << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
   }
-
-  // Process the parameter "Match_Using_Delivery_Operation"
-  x = z.find("Match_Using_Delivery_Operation");
-  if (x != z.end())
-  {
-    switch (x->second[0])
-    {
-      case 'T':
-      case 't':
-      case '1':
-        Forecast::setMatchUsingDeliveryOperation(true);
-        break;
-      case 'F':
-      case 'f':
-      case '0':
-        Forecast::setMatchUsingDeliveryOperation(false);
-        break;
-      default:
-        // We can't throw an exception in a module initialization routine...
-        cout << "Error initializing " << name << " module: Invalid value '" 
-          << x->second 
-          << "' for parameter 'Match_Using_Delivery_Operation'" << endl;
-    }
-  }
+    
 
   // Initialize the metadata.
   Forecast::metadata.registerClass(
@@ -131,6 +101,24 @@ bool Forecast::callback(Calendar* l, const Signal a)
 }
 
 
+Forecast::~Forecast()
+{
+  // Update the dictionary
+  for (MapOfForecasts::iterator x= 
+    ForecastDictionary.lower_bound(make_pair(&*getItem(),&*getCustomer()));
+    x != ForecastDictionary.end(); ++x)
+    if (x->second == this) 
+    {
+      ForecastDictionary.erase(x); 
+      return;
+    }
+
+  // Delete all children demands
+  for(memberIterator i = beginMember(); i != endMember(); i = beginMember())
+    delete &*i;
+}
+
+
 void Forecast::initialize()
 {
   if (!calptr) throw DataException("Missing forecast calendar");
@@ -138,11 +126,15 @@ void Forecast::initialize()
   // Create a demand for every bucket. The weight value depends on the 
   // calendar type: float, integer, bool or other
   const CalendarFloat* c = dynamic_cast<const CalendarFloat*>(calptr);
+  ForecastBucket* prev = NULL;
   if (c)
     // Float calendar
     for (CalendarFloat::BucketIterator i = c->beginBuckets();
       i != c->endBuckets(); ++i)
-      Demand::add(new ForecastBucket(this, i->getStart(), i->getEnd(), c->getValue(i)));
+    {
+      prev = new ForecastBucket(this, i->getStart(), i->getEnd(), c->getValue(i), prev);
+      Demand::add(prev);
+    }
   else
   {
     const CalendarInt* c = dynamic_cast<const CalendarInt*>(calptr);
@@ -150,7 +142,10 @@ void Forecast::initialize()
       // Int calendar
       for (CalendarInt::BucketIterator i = c->beginBuckets();
         i != c->endBuckets(); ++i)
-        Demand::add(new ForecastBucket(this, i->getStart(), i->getEnd(), static_cast<float>(c->getValue(i))));
+      {
+        prev = new ForecastBucket(this, i->getStart(), i->getEnd(), static_cast<float>(c->getValue(i)), prev);
+        Demand::add(prev);
+      }
     else
     {
       const CalendarBool* c = dynamic_cast<const CalendarBool*>(calptr);
@@ -158,15 +153,20 @@ void Forecast::initialize()
         // Int calendar
         for (CalendarBool::BucketIterator i = c->beginBuckets();
           i != c->endBuckets(); ++i)
-          Demand::add(new ForecastBucket(this, i->getStart(), i->getEnd(), c->getValue(i) ? 1.0f : 0.0f));
+        {
+          prev = new ForecastBucket(this, i->getStart(), i->getEnd(), c->getValue(i) ? 1.0f : 0.0f, prev);
+          Demand::add(prev);
+        }
       else
         // Other calendar
         for (Calendar::BucketIterator i = calptr->beginBuckets();
           i != calptr->endBuckets(); ++i)
-          Demand::add(new ForecastBucket(this, i->getStart(), i->getEnd(), 1));
+        {
+          prev = new ForecastBucket(this, i->getStart(), i->getEnd(), 1, prev);
+          Demand::add(prev);
+        }
     }
   }
-
 }
 
 

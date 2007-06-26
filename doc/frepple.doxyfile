@@ -274,7 +274,7 @@ EXPAND_ONLY_PREDEF     = NO
 
 SEARCH_INCLUDES        = YES
 
-INCLUDE_PATH           =
+INCLUDE_PATH           = ../include ../src
 
 INCLUDE_FILE_PATTERNS  =
 

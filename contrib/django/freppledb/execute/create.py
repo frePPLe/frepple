@@ -28,13 +28,13 @@
 
 from freppledb.input.models import *
 import time, os, os.path, sys, random
-from datetime import timedelta, date
+from datetime import timedelta, datetime
 from django.db import connection
 from django.db import transaction
 from django.core.cache import cache
 
 # This function generates a random date
-startdate = date(2007,1,1)
+startdate = datetime(2007,1,1)
 def getDate():
   global startdate
   return startdate + timedelta(random.uniform(0,365))
@@ -168,7 +168,7 @@ def create_model (cluster, demand, level, resource, utilization):
   res = []
   for i in range(resource):
     cal = Calendar(name='capacity for res %03d' %i, category='capacity')
-    bkt = Bucket(startdate=date(2007,1,1), value=capacity, calendar=cal)
+    bkt = Bucket(startdate=startdate, value=capacity, calendar=cal)
     cal.save()
     bkt.save()
     r = Resource(name = 'Res %03d' % i, maximum=cal)

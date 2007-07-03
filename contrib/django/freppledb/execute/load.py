@@ -21,7 +21,7 @@
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net
 
-from os import times
+from time import time
 from django.db import connection
 import frepple
 
@@ -63,7 +63,7 @@ def loadfrepple():
   # Locations
   print 'Importing locations...'
   cnt = 0
-  starttime = times()[4]
+  starttime = time()
   cursor.execute("SELECT name, description, owner_id FROM input_location")
   x = [ header, '<LOCATIONS>' ]
   for i,j,k in cursor.fetchall():
@@ -74,12 +74,12 @@ def loadfrepple():
     x.append('</LOCATION>"')
   x.append('</LOCATIONS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d locations in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d locations in %.2f seconds' % (cnt, time() - starttime)
 
   # Calendar
   print 'Importing calendars...'
   cnt = 0
-  starttime = times()[4]
+  starttime = time()
   cursor.execute("SELECT name, description FROM input_calendar")
   x = [ header ]
   x.append('<CALENDARS>')
@@ -89,12 +89,12 @@ def loadfrepple():
     else: x.append('<CALENDAR NAME="%s"/>' % i)
   x.append('</CALENDARS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d calendars in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime)
 
   # Bucket
   print 'Importing buckets...'
   cnt = 0
-  starttime = times()[4]
+  starttime = time()
   cursor.execute("SELECT calendar_id, startdate, name, value FROM input_bucket")
   x = [ header ]
   x.append('<CALENDARS>')
@@ -104,12 +104,12 @@ def loadfrepple():
     else: x.append('<CALENDAR NAME="%s"><BUCKETS><BUCKET START="%s" VALUE="%s"/></BUCKETS></CALENDAR>' % (i, j.isoformat(), l))
   x.append('</CALENDARS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d calendar buckets in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime)
 
   # Customers
   print 'Importing customers...'
   cnt = 0
-  starttime = times()[4]
+  starttime = time()
   cursor.execute("SELECT name, description, owner_id FROM input_customer")
   x = [ header, '<CUSTOMERS>' ]
   for i, j, k in cursor.fetchall():
@@ -120,12 +120,12 @@ def loadfrepple():
     x.append('</CUSTOMER>')
   x.append('</CUSTOMERS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d customers in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d customers in %.2f seconds' % (cnt, time() - starttime)
 
   # Operations
   print 'Importing operations...'
   cnt = 0
-  starttime = times()[4]
+  starttime = time()
   x = [ header, '<OPERATIONS>' ]
   cursor.execute('''
     SELECT name, fence, pretime, posttime, sizeminimum, sizemultiple, type, duration, duration_per
@@ -147,12 +147,12 @@ def loadfrepple():
     x.append('</OPERATION>')
   x.append('</OPERATIONS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d operations in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d operations in %.2f seconds' % (cnt, time() - starttime)
 
   # Suboperations
   print 'Importing suboperations...'
   cnt = 0
-  starttime = times()[4]
+  starttime = time()
   x = [ header, '<OPERATIONS>' ]
   cursor.execute('''
     SELECT operation_id, suboperation_id, priority
@@ -172,12 +172,12 @@ def loadfrepple():
   if curoper != '': x.append('</OPERATION>')
   x.append('</OPERATIONS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d suboperations in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d suboperations in %.2f seconds' % (cnt, time() - starttime)
 
   # Items
   print 'Importing items...'
   cnt = 0
-  starttime = times()[4]
+  starttime = time()
   cursor.execute("SELECT name, description, operation_id, owner_id FROM input_item")
   x = [ header, '<ITEMS>' ]
   for i, j, k, l in cursor.fetchall():
@@ -189,15 +189,15 @@ def loadfrepple():
     x.append('</ITEM>')
   x.append('</ITEMS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d items in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d items in %.2f seconds' % (cnt, time() - starttime)
 
   # Buffers
   print 'Importing buffers...'
   cnt = 0
-  starttime = times()[4]
-  cursor.execute('''SELECT name, description, location_id, item_id, onhand, 
-     minimum_id, producing_id, type, leadtime, min_inventory, 
-     max_inventory, min_interval, max_interval, size_minimum, 
+  starttime = time()
+  cursor.execute('''SELECT name, description, location_id, item_id, onhand,
+     minimum_id, producing_id, type, leadtime, min_inventory,
+     max_inventory, min_interval, max_interval, size_minimum,
      size_multiple, size_maximum FROM input_buffer''')
   x = [ header, '<BUFFERS>' ]
   for i, j, k, l, m, n, o, q, f1, f2, f3, f4, f5, f6, f7, f8 in cursor.fetchall():
@@ -224,12 +224,12 @@ def loadfrepple():
     x.append('</BUFFER>')
   x.append('</BUFFERS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d buffers in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime)
 
   # Resources
   print 'Importing resources...'
   cnt = 0
-  starttime = times()[4]
+  starttime = time()
   cursor.execute("SELECT name, description, maximum_id, location_id, type FROM input_resource")
   x = [ header, '<RESOURCES>' ]
   for i, j, k, l, m in cursor.fetchall():
@@ -244,12 +244,12 @@ def loadfrepple():
     x.append('</RESOURCE>')
   x.append('</RESOURCES></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d resources in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d resources in %.2f seconds' % (cnt, time() - starttime)
 
   # Flows
   print 'Importing flows...'
   cnt = 0
-  starttime = times()[4]
+  starttime = time()
   cursor.execute("SELECT operation_id, thebuffer_id, quantity, type FROM input_flow")
   x = [ header, '<FLOWS>' ]
   for i, j, k, l in cursor.fetchall():
@@ -260,12 +260,12 @@ def loadfrepple():
       x.append('<FLOW><OPERATION NAME="%s"/><BUFFER NAME="%s"/><QUANTITY>%s</QUANTITY></FLOW>' % (i, j, k))
   x.append('</FLOWS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d flows in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d flows in %.2f seconds' % (cnt, time() - starttime)
 
   # Loads
   print 'Importing loads...'
   cnt = 0
-  starttime = times()[4]
+  starttime = time()
   cursor.execute("SELECT operation_id, resource_id, usagefactor FROM input_load")
   x = [ header , '<LOADS>' ]
   for i, j, k in cursor.fetchall():
@@ -273,12 +273,12 @@ def loadfrepple():
     x.append('<LOAD><OPERATION NAME="%s"/><RESOURCE NAME="%s"/><USAGE>%s</USAGE></LOAD>' % (i, j, k))
   x.append('</LOADS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d loads in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d loads in %.2f seconds' % (cnt, time() - starttime)
 
   # OperationPlan
   print 'Importing operationplans...'
   cnt = 0
-  starttime = times()[4]
+  starttime = time()
   cursor.execute("SELECT identifier, operation_id, quantity, startdate, enddate, locked FROM input_operationplan order by identifier asc")
   x = [ header , '<OPERATION_PLANS>' ]
   for i, j, k, l, m, n in cursor.fetchall():
@@ -290,12 +290,12 @@ def loadfrepple():
     x.append('</OPERATION_PLAN>')
   x.append('</OPERATION_PLANS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d operationplans in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime)
 
   # Demand
   cursor.execute("SELECT name, due, quantity, priority, item_id, operation_id, customer_id, owner_id, policy FROM input_demand")
   cnt = 0
-  starttime = times()[4]
+  starttime = time()
   print 'Importing demands...'
   x = [ header, '<DEMANDS>' ]
   for i, j, k, l, m, n, o, p, q in cursor.fetchall():
@@ -309,7 +309,7 @@ def loadfrepple():
     x.append('</DEMAND>')
   x.append('</DEMANDS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
-  print 'Loaded %d demands in %.2f seconds' % (cnt, times()[4] - starttime)
+  print 'Loaded %d demands in %.2f seconds' % (cnt, time() - starttime)
 
   # Finalize
   print 'Done'

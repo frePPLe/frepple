@@ -39,13 +39,13 @@ def preferences(request):
     if form.is_valid():
       try:
         pref = Preferences.objects.get(user=request.user)
-        newdata = form.clean_data
+        newdata = form.cleaned_data
         pref.buckets = newdata['buckets']
         pref.startdate = newdata['startdate']
         pref.enddate = newdata['enddate']
         pref.save()
         request.user.message_set.create(message='Successfully updated preferences')
-      except e:
+      except:
         request.user.message_set.create(message='Failure updating preferences')
   else:
     pref = request.user.get_profile()

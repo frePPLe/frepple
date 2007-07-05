@@ -150,27 +150,22 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
         else cout << "Continuing after data error: " << e.what() << endl;
       }
 
-      // We only increase the number of elements at the very end. Otherwise
-      // the method getParentElement() returns the wrong element.
-      // We increment by 2 to include also an element for the attributes that
-      // will be processed in the next loop.
-      numElements += 2;
-
       // Now process all attributes. For attributes we only call the
       // endElement() member and skip the beginElement() method.
+      numElements += 1;
       if (states.top() != IGNOREINPUT)
         for (unsigned int i=0, cnt=atts.getLength(); i<cnt; i++)
         {
           char* val = XMLString::transcode(atts.getValue(i));
-          m_EStack[numElements].initialize(atts.getQName(i));
-          m_EStack[numElements].setData(val);
+          m_EStack[numElements+1].initialize(atts.getQName(i));
+          m_EStack[numElements+1].setData(val);
           #ifdef PARSE_DEBUG
           char* attname = XMLString::transcode(atts.getQName(i));
           cout << "   Processing attribute " << attname
           << " - object " << getCurrentObject() << endl;
           XMLString::release(&attname);
           #endif
-          try { getCurrentObject()->endElement(*this, m_EStack[numElements]); }
+          try { getCurrentObject()->endElement(*this, m_EStack[numElements+1]); }
           catch (DataException e)
           {
             if (abortOnDataException) throw;
@@ -180,8 +175,6 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
           // Stop processing attributes if we are now in the ignore mode
           if (states.top() == IGNOREINPUT) break;
         }
-      // Remove element used for attribute processing
-      --numElements;
   }  // End of switch statement
 
   // Outside of this handler, no attributes are available

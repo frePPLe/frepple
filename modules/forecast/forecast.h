@@ -74,14 +74,20 @@
   *               <xsd:element name="BUCKET">
   *                 <xsd:complexType>
   *                   <xsd:all>
-  *                     <xsd:element name="QUANTITY" type="positiveFloat"
+  *                     <xsd:element name="TOTAL" type="positiveFloat"
+  *                       minOccurs="0" />
+  *                     <xsd:element name="NET" type="positiveFloat"
+  *                       minOccurs="0" />
+  *                     <xsd:element name="CONSUMED" type="positiveFloat"
   *                       minOccurs="0" />
   *                     <xsd:element name="START" type="xsd:dateTime"
   *                       minOccurs="0"/>
   *                     <xsd:element name="END" type="xsd:dateTime"
   *                       minOccurs="0"/>
   *                   </xsd:all>
-  *                   <xsd:attribute name="QUANTITY" type="positiveFloat" />
+  *                   <xsd:attribute name="TOTAL" type="positiveFloat" />
+  *                   <xsd:attribute name="NET" type="positiveFloat" />
+  *                   <xsd:attribute name="CONSUMED" type="positiveFloat" />
   *                   <xsd:attribute name="START" type="xsd:dateTime" />
   *                   <xsd:attribute name="END" type="xsd:dateTime" />
   *                 </xsd:complexType>
@@ -171,7 +177,7 @@ class Forecast : public Demand
       public:
         ForecastBucket(Forecast* f, Date d, Date e, float w, ForecastBucket* p) 
           : Demand(f->getName() + " - " + string(d)), weight(w), consumed(0), 
-            timebucket(d,e), prev(p), next(NULL)
+            total(0), timebucket(d,e), prev(p), next(NULL)
         {
           if (p) p->next = this;
           setOwner(f);
@@ -185,6 +191,7 @@ class Forecast : public Demand
         }
         float weight;
         float consumed;
+        float total;
         DateRange timebucket;
         ForecastBucket* prev;
         ForecastBucket* next;
@@ -219,7 +226,7 @@ class Forecast : public Demand
       *    dataexception is thrown. It indicates a situation where forecast
       *    is specified for a date where no values are allowed.
       */
-    virtual void setQuantity(const DateRange& , float);
+    virtual void setTotalQuantity(const DateRange& , float);
 
     void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, XMLElement& pElement);

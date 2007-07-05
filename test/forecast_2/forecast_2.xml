@@ -118,7 +118,7 @@
           <END>2007-01-29T00:00:00</END>
           <!-- 4 weeks with 5 working days per week, expecting an average
           forecast of 20 per working day. -->
-          <QUANTITY>400</QUANTITY>
+          <TOTAL>400</TOTAL>
         </BUCKET>
       </BUCKETS>
     </DEMAND>
@@ -142,7 +142,7 @@
           <START>2007-03-01T00:00:00</START>
           <END>2007-04-01T00:00:00</END>
           <!-- 31 days in march, expecting an average forecast of 10 per day -->
-          <QUANTITY>310</QUANTITY>
+          <TOTAL>310</TOTAL>
         </BUCKET>
       </BUCKETS>
     </DEMAND>

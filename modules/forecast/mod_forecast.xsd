@@ -15,14 +15,20 @@
                 <xsd:element name="BUCKET">
                   <xsd:complexType>
                     <xsd:all>
-                      <xsd:element name="QUANTITY" type="positiveFloat"
+                      <xsd:element name="TOTAL" type="positiveFloat"
+                        minOccurs="0" />
+                      <xsd:element name="NET" type="positiveFloat"
+                        minOccurs="0" />
+                      <xsd:element name="CONSUMED" type="positiveFloat"
                         minOccurs="0" />
                       <xsd:element name="START" type="xsd:dateTime"
                         minOccurs="0"/>
                       <xsd:element name="END" type="xsd:dateTime"
                         minOccurs="0"/>
                     </xsd:all>
-                    <xsd:attribute name="QUANTITY" type="positiveFloat" />
+                    <xsd:attribute name="TOTAL" type="positiveFloat" />
+                    <xsd:attribute name="NET" type="positiveFloat" />
+                    <xsd:attribute name="CONSUMED" type="positiveFloat" />
                     <xsd:attribute name="START" type="xsd:dateTime" />
                     <xsd:attribute name="END" type="xsd:dateTime" />
                   </xsd:complexType>

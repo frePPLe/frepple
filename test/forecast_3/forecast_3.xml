@@ -2,7 +2,8 @@
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <NAME>Forecast test model</NAME>
   <DESCRIPTION>
-  This xxx
+  This test verifies how actual orders consume from the forecast.
+  It shows netting from earlier and later time buckets.
   </DESCRIPTION>
   <CURRENT>2007-01-01T00:00:00</CURRENT>
   <COMMANDS>
@@ -22,6 +23,20 @@
     <COMMAND xsi:type="COMMAND_SAVEPLAN">
       <FILENAME>output.2.xml</FILENAME>
     </COMMAND>
+    <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
+    <COMMAND xsi:type="COMMAND_SAVE">
+      <FILENAME>output.3.xml</FILENAME>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_READXML">
+      <FILENAME>output.1.xml</FILENAME>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <SOLVER NAME="Netting orders from forecast"/>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVE">
+      <FILENAME>output.4.xml</FILENAME>
+    </COMMAND>
+
   </COMMANDS>
 
   <!--
@@ -106,7 +121,7 @@
           <END>2007-01-29T00:00:00</END>
           <!-- 4 weeks with 5 working days per week, expecting an average
           forecast of 20 per working day. -->
-          <QUANTITY>400</QUANTITY>
+          <TOTAL>400</TOTAL>
         </BUCKET>
       </BUCKETS>
     </DEMAND>

@@ -74,6 +74,17 @@ settings.TEMPLATE_DIRS = (
     settings.FREPPLE_HOME.replace('\\','/'),
 )
 
+# Create the database if it doesn't exist yet
+print settings.DATABASE_NAME
+if DATABASE_ENGINE == 'sqlite3' and not os.path.isfile(settings.DATABASE_NAME):
+  print "\nDatabase %s doesn't exist." % settings.DATABASE_NAME
+  confirm = raw_input("Do you want to create it now? (yes/no): ")
+  while confirm not in ('yes', 'no'):
+    confirm = raw_input('Please enter either "yes" or "no": ')
+  if confirm == 'yes':
+    # Create the database
+    execute_manager(settings, ['','syncdb'])
+
 # Run the server
 print 'Frepple %s \n' % settings.FREPPLE_VERSION
 execute_manager(settings, ['','runserver',

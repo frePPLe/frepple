@@ -39,6 +39,10 @@ bool Forecast::Match_Using_Delivery_Operation = true;
 TimePeriod Forecast::Net_Late(0);
 TimePeriod Forecast::Net_Early(0);
 
+const XMLtag tag_total("TOTAL");
+const XMLtag tag_net("NET");
+const XMLtag tag_consumed("CONSUMED");
+
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 {
@@ -68,7 +72,6 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
       cout << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
   }
     
-
   // Initialize the metadata.
   Forecast::metadata.registerClass(
     "DEMAND",
@@ -170,7 +173,7 @@ void Forecast::initialize()
 }
 
 
-void Forecast::setQuantity(const DateRange& d, float f)
+void Forecast::setTotalQuantity(const DateRange& d, float f)
 {
   // Initialize, if not done yet
   if (!isGroup()) initialize();
@@ -188,7 +191,8 @@ void Forecast::setQuantity(const DateRange& d, float f)
       if (!d.getDuration()) 
       {
         // Single date provided. Update that one bucket.
-        x->setQuantity(f);
+        x->setQuantity(f>x->consumed ? (f - x->consumed) : 0);
+        x->total = f;
         return;
       }
       weights += x->weight * static_cast<long>(x->timebucket.overlap(d));
@@ -211,16 +215,12 @@ void Forecast::setQuantity(const DateRange& d, float f)
       TimePeriod o = x->timebucket.overlap(d);
       double percent = x->weight * static_cast<long>(o);
       if (o < x->timebucket.getDuration())
-      {
         // The bucket is only partially updated
-        float fraction = static_cast<float>(o) / static_cast<long>(x->timebucket.getDuration());
-        x->setQuantity( static_cast<float>(
-          x->getQuantity() + f * percent
-          ));
-      }
+        x->total += static_cast<float>(f * percent);
       else
         // The bucket is completely updated
-        x->setQuantity(static_cast<float>(f * percent));
+        x->total = static_cast<float>(f * percent);
+      x->setQuantity(x->total > x->consumed ? (x->total - x->consumed) : 0);
     }
   }
 }
@@ -240,9 +240,9 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
   if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
-  o->writeElement(Tags::tag_item, getItem());
-  o->writeElement(Tags::tag_calendar, calptr);
+  o->writeElement(Tags::tag_item, &*getItem());
   if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
+  o->writeElement(Tags::tag_calendar, calptr);
   o->writeElement(Tags::tag_operation, &*getOperation());
   if (!planLate() && planSingleDelivery())
     o->writeElement(Tags::tag_policy, "PLANSHORT SINGLEDELIVERY");
@@ -255,9 +255,12 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
   o->BeginObject (Tags::tag_buckets);
   for (memberIterator i = beginMember(); i != endMember(); ++i)
   {
-    o->BeginObject (Tags::tag_bucket, Tags::tag_dates, i->getDue());
-    o->writeElement (Tags::tag_quantity, i->getQuantity());
-    o->EndObject (Tags::tag_bucket);
+    ForecastBucket* f = dynamic_cast<ForecastBucket*>(&*i);
+    o->BeginObject(Tags::tag_bucket, Tags::tag_start, f->getDue());
+    o->writeElement(tag_total, f->total);
+    o->writeElement(tag_net, f->getQuantity());
+    o->writeElement(tag_consumed, f->consumed);
+    o->EndObject(Tags::tag_bucket);
   }
   o->EndObject(Tags::tag_buckets);
 
@@ -267,6 +270,7 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
 
 void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
 {
+  //cout << pIn.getParentElement().getName() << "   " << pElement.getName() << endl;
   // While reading forecast buckets, we use the userarea field on the input
   // to cache the data. The temporary object is deleted when the bucket
   // tag is closed.
@@ -283,7 +287,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
     if (d)
     {
       // Update the forecast quantities
-      setQuantity(d->first, d->second);
+      setTotalQuantity(d->first, d->second);
       // Clear the read buffer
       d->first.setStart(Date());
       d->first.setEnd(Date());
@@ -294,14 +298,14 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
   {
     pair<DateRange,float> *d = 
       static_cast< pair<DateRange,float>* >(pIn.getUserArea());
-    if (pElement.isA (Tags::tag_quantity))
+    if (pElement.isA(tag_total))
     {
       if (d) d->second = pElement.getFloat();
       else pIn.setUserArea(
         new pair<DateRange,float>(DateRange(),pElement.getFloat())
         );
     }
-    else if (pElement.isA (Tags::tag_start))
+    else if (pElement.isA(Tags::tag_start))
     {
       Date x = pElement.getDate();
       if (d) 
@@ -311,7 +315,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
       }
       else pIn.setUserArea(new pair<DateRange,float>(DateRange(x,x),0));
     }
-    else if (pElement.isA (Tags::tag_end))
+    else if (pElement.isA(Tags::tag_end))
     {
       Date x = pElement.getDate();
       if (d)
@@ -323,7 +327,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
     }
   }
   else
-    Demand::endElement (pIn, pElement);
+    Demand::endElement(pIn, pElement);
 
   if (pIn.isObjectEnd())
   {

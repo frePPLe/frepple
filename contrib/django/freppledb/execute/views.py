@@ -30,8 +30,8 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.core.management import load_data
 from django.db.models.fields.related import ForeignKey, AutoField
-from django.db import models
-from django.db import transaction
+from django.db import models, transaction
+
 import os, os.path
 
 from freppledb.execute.create import erase_model, create_model
@@ -112,7 +112,6 @@ def runfrepple(request):
         os.environ['FREPPLE_APP'] = settings.FREPPLE_APP.replace('\\','\\\\')
         os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + '.'
         os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
-        os.chdir(settings.FREPPLE_HOME)
         os.system('frepple %s' % os.path.join(settings.FREPPLE_APP,'freppledb','execute','commands.xml'))
         request.user.message_set.create(message='Successfully ran frepple')
       except Exception, e:
@@ -248,12 +247,16 @@ def fixture(request):
       request.user.message_set.create(message='Only POST method allowed')
       # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
       return HttpResponseRedirect('/execute/execute.html')
-    try: fixture = request.POST['datafile']
+    try:
+      fixture = request.POST['datafile']
+      if fixture == '-': raise
     except:
       request.user.message_set.create(message='Missing fixture attribute')
       return HttpResponseRedirect('/execute/execute.html')
 
     # Load the fixture
+    # The fixture loading code is unfornately such that no exceptions are
+    # or any error status returned when it fails...
     try:
         load_data([fixture], verbosity=1)
         request.user.message_set.create(message='Loaded fixture')

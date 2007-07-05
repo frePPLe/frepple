@@ -23,12 +23,21 @@
 
 
 # Frepple specific variables
-import os, os.path
+import os, os.path, re, sys
 FREPPLE_HOME = os.environ['FREPPLE_HOME']
-FREPPLE_APP = os.path.normpath(os.path.join(FREPPLE_HOME,'..','contrib','django'))
+FREPPLE_APP = os.path.normpath(os.path.join(FREPPLE_HOME,'..','contrib','django','freppledb'))
+FREPPLE_VERSION = '0.2.3'
+
+# Determing whether Django runs as a standalone application or is deployed
+# on a web server
+STANDALONE = False
+try:
+  for i in sys.argv:
+    STANDALONE = STANDALONE or (re.match(r'.*(runserver|runserver\.exe)$', i) != None)
+except:
+  pass
 
 # Django settings for freppledb project.
-
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -39,11 +48,16 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'postgresql_psycopg2' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-DATABASE_NAME = 'frepple'             # Or path to database file if using sqlite3.
+if DATABASE_ENGINE == 'sqlite3':
+  DATABASE_NAME = os.path.join(FREPPLE_HOME,'frepple.sqlite')  # Path to sqlite3 database file
+else:
+  DATABASE_NAME = 'frepple'           # Database name for other databases
 DATABASE_USER = 'frepple'             # Not used with sqlite3.
 DATABASE_PASSWORD = 'frepple'         # Not used with sqlite3.
 DATABASE_HOST = ''                    # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''                    # Set to empty string for default. Not used with sqlite3.
+# For mysql:
+#DATABASE_OPTIONS = {"init_command": "SET storage_engine=INNODB"}
 
 # Local time zone for this installation. All choices can be found here:
 # http://www.postgresql.org/docs/current/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
@@ -91,7 +105,7 @@ ROOT_URLCONF = 'freppledb.urls'
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates".
     # Always use forward slashes, even on Windows.
-    os.path.join(FREPPLE_APP,'freppledb','templates').replace('\\','/'),
+    os.path.join(FREPPLE_APP,'templates').replace('\\','/'),
     FREPPLE_HOME.replace('\\','/'),
 )
 

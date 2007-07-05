@@ -28,8 +28,9 @@ from django.template import RequestContext, loader
 from django.db import connection
 from django.core.cache import cache
 from django.http import Http404, HttpResponse
+from django.conf import settings
 
-from datetime import date
+from datetime import date, datetime
 
 from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item
 
@@ -96,8 +97,18 @@ def getBuckets(request, bucket=None, start=None, end=None):
       from input_dates
       group by %s
       order by min(day)''' % (bucket,bucket))
-    dates = [ {'name': i, 'start': j, 'end': k} for i,j,k in cursor.fetchall() ]
-    cache.set(bucket, dates, 24 * 7 * 3600)  # Cache for 7 days
+    # Compute the data to store in memory
+    if settings.DATABASE_ENGINE == 'sqlite3':
+      # Sigh... Poor data type handling in sqlite
+      dates = [ {
+        'name': i,
+        'start': datetime.strptime(j,'%Y-%m-%d').date(),
+        'end': datetime.strptime(k,'%Y-%m-%d').date()
+        } for i,j,k in cursor.fetchall() ]
+    else:
+      dates = [ {'name': i, 'start': j, 'end': k} for i,j,k in cursor.fetchall() ]
+    # Cache for 7 days
+    cache.set(bucket, dates, 24 * 7 * 3600)
 
   # Filter based on the start and end date
   if start and end:
@@ -245,7 +256,7 @@ def bufferquery(buffer, bucket, startdate, enddate):
       cursor.execute('''
         select combi.thebuffer_id, combi.onhand, combi.%s, coalesce(data.produced,0), coalesce(data.consumed,0)
           from
-           (select name as thebuffer_id, onhand, d.%s, d.start from input_buffer
+           (select name as thebuffer_id, onhand, d.%s as %s, d.start as start from input_buffer
             inner join (select %s, min(day) as start from input_dates where day >= '%s'
               and day < '%s' group by %s) d on 1=1
             %s
@@ -264,7 +275,7 @@ def bufferquery(buffer, bucket, startdate, enddate):
           on combi.thebuffer_id = data.thebuffer_id
           and combi.%s = data.%s
           order by combi.thebuffer_id, combi.start '''
-          % (bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,bucket,startdate,enddate,filterstring2,bucket,bucket,bucket))
+          % (bucket,bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,bucket,startdate,enddate,filterstring2,bucket,bucket,bucket))
       resultset = []
       prevbuf = None
       rowset = []
@@ -307,13 +318,13 @@ def demandquery(item, bucket, startdate, enddate):
       cursor.execute('''
           select combi.item_id, combi.%s, coalesce(data.demand,0), coalesce(data.planned,0)
           from
-           (select distinct item_id, d.%s, d.start from input_demand
+           (select distinct item_id as item_id, d.%s as %s, d.start as start from input_demand
             inner join (select %s, min(day) as start from input_dates where day >= '%s'
               and day < '%s' group by %s) d on 1=1
             %s
            ) as combi
           left join
-           (select inp.item_id, d.%s, sum(inp.quantity) as demand,
+           (select inp.item_id as item_id, d.%s as %s, sum(inp.quantity) as demand,
                   coalesce((select sum(output_operationplan.quantity)
                    from output_operationplan, input_dates, input_demand
                    where output_operationplan.enddate = input_dates.day
@@ -322,7 +333,8 @@ def demandquery(item, bucket, startdate, enddate):
                    and output_operationplan.demand_id = input_demand.name
                    and input_demand.item_id = inp.item_id), 0) as planned
                 from input_dates as d, input_demand as inp
-                where inp.due = d.day
+                where date_trunc('day',inp.due) = d.day
+                -- sqlite: where date(inp.due,'start of day') = d.day
                 and inp.due >= '%s'
                 and inp.due < '%s'
                 %s
@@ -330,7 +342,7 @@ def demandquery(item, bucket, startdate, enddate):
           on combi.item_id = data.item_id
           and combi.%s = data.%s
           order by combi.item_id, combi.start
-         ''' % (bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,bucket,bucket,bucket,startdate,enddate,filterstring2,bucket,bucket,bucket))
+         ''' % (bucket,bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,bucket,bucket,bucket,bucket,startdate,enddate,filterstring2,bucket,bucket,bucket))
       resultset = []
       previtem = None
       rowset = []
@@ -374,15 +386,15 @@ def resourcequery(resource, bucket, startdate, enddate):
        coalesce(sum(loaddata.usage
                     * extract(epoch from (case loaddata.enddatetime>ddd.enddate when true then ddd.enddate else loaddata.enddatetime end)
                                        - (case loaddata.startdatetime>ddd.startdate when true then loaddata.startdatetime else ddd.startdate end))
-                      ) / 86400 ,0) as load
+                      ) / 86400, 0) as load
      from (
-       select dd.resource_id, dd.bucket, dd.startdate, dd.enddate,
+       select dd.resource_id as resource_id, dd.bucket as bucket, dd.startdate as startdate, dd.enddate as enddate,
          coalesce(sum(input_bucket.value
                       * extract(epoch from (case input_bucket.enddate>dd.enddate when true then dd.enddate else input_bucket.enddate end)
                                          - (case input_bucket.startdate>dd.startdate when true then input_bucket.startdate else dd.startdate end))
-                 ) / 86400,0) as available
+                 ) / 86400, 0) as available
        from (
-         select name as resource_id, maximum_id, d.bucket, d.startdate, d.enddate
+         select name as resource_id, maximum_id, d.bucket as bucket, d.startdate as startdate, d.enddate as enddate
          from input_resource
          inner join (
            -- todo the next line doesnt work for daily buckets
@@ -400,7 +412,7 @@ def resourcequery(resource, bucket, startdate, enddate):
 		   group by dd.resource_id, dd.bucket, dd.startdate, dd.enddate
 	     ) ddd
      left join (
-       select input_load.resource_id, startdatetime, enddatetime, input_load.usagefactor as usage
+       select input_load.resource_id as resource_id, startdatetime, enddatetime, input_load.usagefactor as usage
        from output_operationplan, input_load
        where output_operationplan.operation_id = input_load.operation_id
           and output_operationplan.enddate >= '%s'
@@ -421,7 +433,7 @@ def resourcequery(resource, bucket, startdate, enddate):
       if prevres: resultset.append(rowset)
       rowset = []
       prevres = row[0]
-    if row[2] != 0: util = row[3] / float(row[2])
+    if row[2] != 0: util = row[3] / row[2]
     else: util = 0
     rowset.append( {
       'resource': row[0],
@@ -454,7 +466,7 @@ def operationquery(operation, bucket, startdate, enddate):
       cursor.execute('''
         select combi.operation_id, combi.%s, coalesce(data.quantity,0)
           from
-           (select name as operation_id, d.%s, d.start from input_operation
+           (select name as operation_id, d.%s as %s, d.start as start from input_operation
             inner join (select %s, min(day) as start from input_dates where day >= '%s'
               and day < '%s' group by %s) d on 1=1
             %s
@@ -472,7 +484,7 @@ def operationquery(operation, bucket, startdate, enddate):
           on combi.operation_id = data.operation_id
           and combi.%s = data.%s
           order by combi.operation_id, combi.start '''
-          % (bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,bucket,startdate,enddate,filterstring2,bucket,bucket,bucket))
+          % (bucket,bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,bucket,startdate,enddate,filterstring2,bucket,bucket,bucket))
       resultset = []
       prevoper = None
       rowset = []

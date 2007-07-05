@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <LOGFILE>frepple.log</LOGFILE>
 <?PYTHON
 # Update the python environment such that it can use the django classes
 import os
-sys.path.append(os.environ['FREPPLE_APP'])
+sys.path.append(os.path.join(os.environ['FREPPLE_APP'],'..'))
 from freppledb.execute.export import dumpfrepple, dumpfrepple_files
 from freppledb.execute.load import loadfrepple
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
@@ -14,11 +13,11 @@ try: plantype = os.environ['PLAN_TYPE']
 except KeyError: plantype = 7  # Default is a fully constrained plan
 frepple.readXMLdata(
   '''<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <LOGFILE>%s</LOGFILE>
   <SOLVERS>
     <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="%s"/>
   </SOLVERS>
-  </PLAN>''' % plantype, False, False)
-
+  </PLAN>''' % (os.path.join(os.environ['FREPPLE_HOME'],'frepple.log'),plantype), False, False)
 ?>
   <COMMANDS>
     <VERBOSE>true</VERBOSE>

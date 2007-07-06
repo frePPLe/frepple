@@ -178,10 +178,10 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m
   if (!flows.empty())
   {
     o->BeginObject (Tags::tag_flows);
-    for (flowlist::const_iterator i = flows.begin(); i != flows.end();)
+    for (flowlist::const_iterator i = flows.begin(); i != flows.end(); ++i)
       // We use the FULL mode, to force the flows being written regardless
       // of the depth in the XML tree.
-      o->writeElement(Tags::tag_flow, *(i++), FULL);
+      o->writeElement(Tags::tag_flow, &*i, FULL);
     o->EndObject (Tags::tag_flows);
   }
 

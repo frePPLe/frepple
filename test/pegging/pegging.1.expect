@@ -1284,6 +1284,10 @@
 					<OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME"/>
 					<QUANTITY>-2</QUANTITY>
 				</FLOW>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="make 1" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>2</QUANTITY>
+				</FLOW>
 			</FLOWS>
 			<ONHAND>10</ONHAND>
 			<MINIMUM NAME="min inv for buffer 1" xsi:type="CALENDAR_FLOAT"/>
@@ -1451,6 +1455,10 @@
 					<OPERATION NAME="delivery 2" xsi:type="OPERATION_FIXED_TIME"/>
 					<QUANTITY>-2</QUANTITY>
 				</FLOW>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="make 2" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>2</QUANTITY>
+				</FLOW>
 			</FLOWS>
 			<ONHAND>10</ONHAND>
 			<MINIMUM NAME="min inv for buffer 2" xsi:type="CALENDAR_FLOAT"/>
@@ -1610,6 +1618,10 @@
 					<OPERATION NAME="delivery 3" xsi:type="OPERATION_FIXED_TIME"/>
 					<QUANTITY>-1</QUANTITY>
 				</FLOW>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="make 3" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>1</QUANTITY>
+				</FLOW>
 			</FLOWS>
 			<ONHAND>10</ONHAND>
 			<MINIMUM NAME="min inv for buffer 3" xsi:type="CALENDAR_FLOAT"/>
@@ -1718,6 +1730,10 @@
 				<FLOW xsi:type="FLOW_START">
 					<OPERATION NAME="delivery 4" xsi:type="OPERATION_FIXED_TIME"/>
 					<QUANTITY>-2</QUANTITY>
+				</FLOW>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="make 4" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>2</QUANTITY>
 				</FLOW>
 			</FLOWS>
 			<ONHAND>10</ONHAND>
@@ -1914,8 +1930,8 @@
 					<QUANTITY>-2</QUANTITY>
 				</FLOW>
 				<FLOW xsi:type="FLOW_END">
-					<OPERATION NAME="make 1" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>2</QUANTITY>
+					<OPERATION NAME="supply 1" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>1</QUANTITY>
 				</FLOW>
 			</FLOWS>
 			<FLOW_PLANS>
@@ -2069,8 +2085,8 @@
 					<QUANTITY>-2</QUANTITY>
 				</FLOW>
 				<FLOW xsi:type="FLOW_END">
-					<OPERATION NAME="make 2" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>2</QUANTITY>
+					<OPERATION NAME="supply 2" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>1</QUANTITY>
 				</FLOW>
 			</FLOWS>
 			<FLOW_PLANS>
@@ -2200,7 +2216,7 @@
 					<QUANTITY>-2</QUANTITY>
 				</FLOW>
 				<FLOW xsi:type="FLOW_END">
-					<OPERATION NAME="make 3" xsi:type="OPERATION_FIXED_TIME"/>
+					<OPERATION NAME="supply 3" xsi:type="OPERATION_FIXED_TIME"/>
 					<QUANTITY>1</QUANTITY>
 				</FLOW>
 			</FLOWS>
@@ -2297,8 +2313,8 @@
 					<QUANTITY>-2</QUANTITY>
 				</FLOW>
 				<FLOW xsi:type="FLOW_END">
-					<OPERATION NAME="make 4" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>2</QUANTITY>
+					<OPERATION NAME="supply 4" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>1</QUANTITY>
 				</FLOW>
 			</FLOWS>
 			<FLOW_PLANS>

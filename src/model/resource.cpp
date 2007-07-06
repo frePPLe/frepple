@@ -96,10 +96,10 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode
   if (!loads.empty())
   {
     o->BeginObject (Tags::tag_loads);
-    for (loadlist::const_iterator i = loads.begin(); i != loads.end();)
+    for (loadlist::const_iterator i = loads.begin(); i != loads.end(); ++i)
       // We use the FULL mode, to force the loads being written regardless
       // of the depth in the XML tree.
-      o->writeElement(Tags::tag_load, &(*(i++)), FULL);
+      o->writeElement(Tags::tag_load, &*i, FULL);
     o->EndObject (Tags::tag_loads);
   }
 

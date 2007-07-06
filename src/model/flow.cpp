@@ -170,11 +170,11 @@ DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, XMLElement& pElement)
   else if (pIn.isObjectEnd())
   {
     // The Flow data is now all read in. See if it makes sense now...
-    validate(!pIn.getUserArea() ?
-        ADD_CHANGE :
-        *static_cast<Action*>(pIn.getUserArea())
-            );
-    delete static_cast<Action*>(pIn.getUserArea());   // @todo if an exception is thrown in the validate routine, this action object may be leaked
+    Action a = pIn.getUserArea() ? 
+      *static_cast<Action*>(pIn.getUserArea()) :
+      ADD_CHANGE;
+    delete static_cast<Action*>(pIn.getUserArea());  
+    validate(a);
   }
 }
 

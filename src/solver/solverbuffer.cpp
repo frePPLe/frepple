@@ -179,7 +179,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   // inventory, but at least the demand is met.
   // @todo The buffer solver could move backward in time from x till time y,
   // and try multiple dates.
-  if (shortage>ROUNDING_ERROR
+  if (shortage > ROUNDING_ERROR
       && b->getProducingOperation() && !tried_requested_date)
   {
     // Create supply at the requested date
@@ -200,7 +200,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   {
     // Use the constrained planning result
     Solver->a_qty = static_cast<float>(requested_qty - shortage);
-    if (Solver->a_qty < 0) Solver->a_qty = 0.0;
+    if (Solver->a_qty < ROUNDING_ERROR) Solver->a_qty = 0.0;
     Solver->a_date = (extraInventoryDate < extraSupplyDate) ?
         extraInventoryDate :
         extraSupplyDate;

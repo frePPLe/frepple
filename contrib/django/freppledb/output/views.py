@@ -33,12 +33,14 @@ from django.conf import settings
 from datetime import date, datetime
 
 from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item
+from freppledb.dbutils import *
 
 # Parameter settings
 PAGINATE_BY = 50       # Number of entities displayed on a page
 ON_EACH_SIDE = 3       # Number of pages show left and right of the current page
 ON_ENDS = 2            # Number of pages shown at the start and the end of the page list
 CACHE_SQL_QUERY = 10   # Time in minutes during which results of SQL queries are cached
+
 
 def getBuckets(request, bucket=None, start=None, end=None):
   '''
@@ -254,7 +256,7 @@ def bufferquery(buffer, bucket, startdate, enddate):
         filterstring2 = "and thebuffer_id ='%s'" % buffer
       cursor = connection.cursor()
       cursor.execute('''
-        select combi.thebuffer_id, combi.onhand, combi.%s, coalesce(data.produced,0), coalesce(data.consumed,0)
+        select combi.thebuffer_id, combi.onhand, combi.%s, coalesce(data.produced,0.0), coalesce(data.consumed,0.0)
           from
            (select name as thebuffer_id, onhand, d.%s as %s, d.start as start from input_buffer
             inner join (select %s, min(day) as start from input_dates where day >= '%s'
@@ -263,8 +265,8 @@ def bufferquery(buffer, bucket, startdate, enddate):
            ) as combi
           left join
            (select thebuffer_id, %s,
-              sum(case when quantity>0 then quantity else 0 end) as produced,
-              -sum(case when quantity<0 then quantity else 0 end) as consumed
+              sum(%s) as produced,
+              -sum(%s) as consumed
               from output_flowplan, input_dates
               where output_flowplan.date = input_dates.day
               and output_flowplan.date >= '%s'
@@ -275,7 +277,8 @@ def bufferquery(buffer, bucket, startdate, enddate):
           on combi.thebuffer_id = data.thebuffer_id
           and combi.%s = data.%s
           order by combi.thebuffer_id, combi.start '''
-          % (bucket,bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,bucket,startdate,enddate,filterstring2,bucket,bucket,bucket))
+          % (bucket,bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,
+          bucket,sql_max('quantity','0.0'),sql_min('quantity','0.0'),startdate,enddate,filterstring2,bucket,bucket,bucket))
       resultset = []
       prevbuf = None
       rowset = []
@@ -284,9 +287,9 @@ def bufferquery(buffer, bucket, startdate, enddate):
           if prevbuf: resultset.append(rowset)
           rowset = []
           prevbuf = row[0]
-          endoh = row[1]
+          endoh = float(row[1])
         startoh = endoh
-        endoh += row[3] - row[4]
+        endoh += float(row[3] - row[4])
         rowset.append( {
           'buffer': row[0],
           'bucket': row[2],
@@ -333,8 +336,7 @@ def demandquery(item, bucket, startdate, enddate):
                    and output_operationplan.demand_id = input_demand.name
                    and input_demand.item_id = inp.item_id), 0) as planned
                 from input_dates as d, input_demand as inp
-                where date_trunc('day',inp.due) = d.day
-                -- sqlite: where date(inp.due,'start of day') = d.day
+                where date(inp.due) = d.day
                 and inp.due >= '%s'
                 and inp.due < '%s'
                 %s
@@ -383,16 +385,10 @@ def resourcequery(resource, bucket, startdate, enddate):
   cursor = connection.cursor()
   cursor.execute('''
      select ddd.resource_id, ddd.bucket, min(ddd.available),
-       coalesce(sum(loaddata.usage
-                    * extract(epoch from (case loaddata.enddatetime>ddd.enddate when true then ddd.enddate else loaddata.enddatetime end)
-                                       - (case loaddata.startdatetime>ddd.startdate when true then loaddata.startdatetime else ddd.startdate end))
-                      ) / 86400, 0) as load
+       coalesce(sum(loaddata.usagefactor * %s), 0) as loading
      from (
        select dd.resource_id as resource_id, dd.bucket as bucket, dd.startdate as startdate, dd.enddate as enddate,
-         coalesce(sum(input_bucket.value
-                      * extract(epoch from (case input_bucket.enddate>dd.enddate when true then dd.enddate else input_bucket.enddate end)
-                                         - (case input_bucket.startdate>dd.startdate when true then input_bucket.startdate else dd.startdate end))
-                 ) / 86400, 0) as available
+         coalesce(sum(input_bucket.value * %s), 0) as available
        from (
          select name as resource_id, maximum_id, d.bucket as bucket, d.startdate as startdate, d.enddate as enddate
          from input_resource
@@ -412,7 +408,7 @@ def resourcequery(resource, bucket, startdate, enddate):
 		   group by dd.resource_id, dd.bucket, dd.startdate, dd.enddate
 	     ) ddd
      left join (
-       select input_load.resource_id as resource_id, startdatetime, enddatetime, input_load.usagefactor as usage
+       select input_load.resource_id as resource_id, startdatetime, enddatetime, input_load.usagefactor as usagefactor
        from output_operationplan, input_load
        where output_operationplan.operation_id = input_load.operation_id
           and output_operationplan.enddate >= '%s'
@@ -424,7 +420,9 @@ def resourcequery(resource, bucket, startdate, enddate):
        and ddd.enddate >= loaddata.startdatetime
      group by ddd.resource_id, ddd.bucket, ddd.startdate, ddd.enddate
      order by ddd.resource_id, ddd.startdate
-     ''' % (bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,startdate,enddate,filterstring2))
+     ''' % (sql_overlap('loaddata.startdatetime','loaddata.enddatetime','ddd.startdate','ddd.enddate'),
+     sql_overlap('input_bucket.startdate','input_bucket.enddate','dd.startdate','dd.enddate'),
+     bucket,bucket,bucket,startdate,enddate,bucket,filterstring1,startdate,enddate,filterstring2) )
   resultset = []
   prevres = None
   rowset = []

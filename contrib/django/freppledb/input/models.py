@@ -200,7 +200,7 @@ class Operation(models.Model):
       ('OPERATION_ALTERNATE','ALTERNATE'),
     )
     name = models.CharField(maxlength=60, primary_key=True)
-    type = models.CharField(maxlength=20, null=True, blank=True, choices=operationtypes, default='')
+    type = models.CharField(maxlength=20, null=True, blank=True, choices=operationtypes)
     fence = models.DecimalField('release fence', max_digits=10, decimal_places=2, null=True, blank=True,
       help_text="Operationplans within this time window from the current day are expected to be released to production ERP")
     pretime = models.DecimalField('pre-op time', max_digits=10, decimal_places=2, null=True, blank=True,
@@ -362,9 +362,7 @@ class Flow(models.Model):
     )
     operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True, related_name='flows')
     thebuffer = models.ForeignKey(Buffer, db_index=True, raw_id_admin=True, related_name='flows')
-    type = models.CharField(maxlength=20, null=True, blank=True,
-      choices=flowtypes,
-      default='',
+    type = models.CharField(maxlength=20, null=True, blank=True, choices=flowtypes,
       help_text='Consume/produce material at the start or the end of the operationplan',
       )
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default='1.00')

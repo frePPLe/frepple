@@ -47,7 +47,10 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'postgresql_psycopg2' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
+# Django supports the following database engines: 'postgresql_psycopg2', 'postgresql',
+# 'mysql', 'sqlite3' or 'ado_mssql'.
+# Frepple is supports only 'postgresql_psycopg2', 'mysql' and 'sqlite3'
+DATABASE_ENGINE = 'postgresql_psycopg2'
 if DATABASE_ENGINE == 'sqlite3':
   DATABASE_NAME = os.path.join(FREPPLE_HOME,'frepple.sqlite')  # Path to sqlite3 database file
 else:

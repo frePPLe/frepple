@@ -122,6 +122,10 @@
 					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
 					<QUANTITY>1</QUANTITY>
 				</FLOW>
+				<FLOW xsi:type="FLOW_START">
+					<OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>-1</QUANTITY>
+				</FLOW>
 			</FLOWS>
 		</BUFFER>
 		<BUFFER NAME="buffer A">
@@ -132,6 +136,14 @@
 					<OPERATION NAME="supply component A from supplier 2" xsi:type="OPERATION_FIXED_TIME"/>
 					<QUANTITY>1</QUANTITY>
 				</FLOW>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="supply component A from supplier 1" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>1</QUANTITY>
+				</FLOW>
+				<FLOW xsi:type="FLOW_START">
+					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>-1</QUANTITY>
+				</FLOW>
 			</FLOWS>
 		</BUFFER>
 		<BUFFER NAME="buffer B">
@@ -140,14 +152,6 @@
 				<FLOW xsi:type="FLOW_START">
 					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
 					<QUANTITY>-1</QUANTITY>
-				</FLOW>
-				<FLOW xsi:type="FLOW_START">
-					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>-1</QUANTITY>
-				</FLOW>
-				<FLOW xsi:type="FLOW_END">
-					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>1</QUANTITY>
 				</FLOW>
 			</FLOWS>
 		</BUFFER>

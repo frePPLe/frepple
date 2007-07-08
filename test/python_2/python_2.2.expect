@@ -106,6 +106,10 @@
 					<OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME"/>
 					<QUANTITY>1</QUANTITY>
 				</FLOW>
+				<FLOW xsi:type="FLOW_START">
+					<OPERATION NAME="delivery end item" xsi:type="OPERATION_FIXED_TIME"/>
+					<QUANTITY>-1</QUANTITY>
+				</FLOW>
 			</FLOWS>
 		</BUFFER>
 	</BUFFERS>

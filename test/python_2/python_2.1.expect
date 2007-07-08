@@ -3,24 +3,24 @@ BUFFERS material excess 2007-01-02 09:00:00 2007-01-03 08:00:00 Buffer 'end item
 DEMANDS unplanned 2007-01-04 08:00:00 2007-01-04 08:00:00 Demand 'order 3' is not planned
 
 Operationplans:
-4 delivery end item 10.0 2007-01-03 08:00:00 2007-01-04 08:00:00 order 2
-2 delivery end item 10.0 2007-01-03 09:00:00 2007-01-04 09:00:00 order 1
-3 make end item 10.0 2007-01-01 09:00:00 2007-01-02 09:00:00 None
-1 make end item 10.0 2007-01-02 09:00:00 2007-01-03 09:00:00 None
+3 delivery end item 10.0 2007-01-03 08:00:00 2007-01-04 08:00:00 order 2
+1 delivery end item 10.0 2007-01-03 09:00:00 2007-01-04 09:00:00 order 1
+4 make end item 10.0 2007-01-01 09:00:00 2007-01-02 09:00:00 None
+2 make end item 10.0 2007-01-02 09:00:00 2007-01-03 09:00:00 None
 
 Buffers:
 end item    0.0 None end item None make end item
-      end item make end item 3 10.0 2007-01-02 09:00:00 10.0
-      end item delivery end item 4 -10.0 2007-01-03 08:00:00 0.0
-      end item make end item 1 10.0 2007-01-03 09:00:00 10.0
-      end item delivery end item 2 -10.0 2007-01-03 09:00:00 0.0
+      end item make end item 4 10.0 2007-01-02 09:00:00 10.0
+      end item delivery end item 3 -10.0 2007-01-03 08:00:00 0.0
+      end item make end item 2 10.0 2007-01-03 09:00:00 10.0
+      end item delivery end item 1 -10.0 2007-01-03 09:00:00 0.0
 
 Resources:
 Resource    None Capacity None
-      Resource make end item 3 1.0 2007-01-01 09:00:00 1.0 1.0
-      Resource make end item 1 1.0 2007-01-02 09:00:00 2.0 1.0
-      Resource make end item 3 -1.0 2007-01-02 09:00:00 1.0 1.0
-      Resource make end item 1 -1.0 2007-01-03 09:00:00 0.0 1.0
+      Resource make end item 4 1.0 2007-01-01 09:00:00 1.0 1.0
+      Resource make end item 2 1.0 2007-01-02 09:00:00 2.0 1.0
+      Resource make end item 4 -1.0 2007-01-02 09:00:00 1.0 1.0
+      Resource make end item 2 -1.0 2007-01-03 09:00:00 0.0 1.0
 
 Demands:
 order 1 10.0 2007-01-04 09:00:00 1 end item None None Customer

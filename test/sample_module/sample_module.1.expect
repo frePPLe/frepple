@@ -81,6 +81,14 @@
 					<OPERATION NAME="delivery product from distribution centre" xsi:type="OPERATION_FIXED_TIME"/>
 					<QUANTITY>-1</QUANTITY>
 				</FLOW>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="transport supply from factory 2" xsi:type="OPERATION_TRANSPORT"/>
+					<QUANTITY>1</QUANTITY>
+				</FLOW>
+				<FLOW xsi:type="FLOW_END">
+					<OPERATION NAME="transport supply from factory 1" xsi:type="OPERATION_TRANSPORT"/>
+					<QUANTITY>1</QUANTITY>
+				</FLOW>
 			</FLOWS>
 			<ONHAND>5</ONHAND>
 		</BUFFER>
@@ -93,6 +101,10 @@
 					<OPERATION NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME"/>
 					<QUANTITY>1</QUANTITY>
 				</FLOW>
+				<FLOW xsi:type="FLOW">
+					<OPERATION NAME="transport supply from factory 1" xsi:type="OPERATION_TRANSPORT"/>
+					<QUANTITY>-1</QUANTITY>
+				</FLOW>
 			</FLOWS>
 		</BUFFER>
 		<BUFFER NAME="product in factory 2">
@@ -103,6 +115,10 @@
 				<FLOW xsi:type="FLOW_END">
 					<OPERATION NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME"/>
 					<QUANTITY>1</QUANTITY>
+				</FLOW>
+				<FLOW xsi:type="FLOW">
+					<OPERATION NAME="transport supply from factory 2" xsi:type="OPERATION_TRANSPORT"/>
+					<QUANTITY>-1</QUANTITY>
 				</FLOW>
 			</FLOWS>
 		</BUFFER>

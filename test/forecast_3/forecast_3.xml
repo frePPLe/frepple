@@ -31,7 +31,10 @@
       <FILENAME>output.1.xml</FILENAME>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="Netting orders from forecast"/>
+      <SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST">
+        <VERBOSE>true</VERBOSE>
+        <AUTOMATIC>false</AUTOMATIC>
+      </SOLVER>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVE">
       <FILENAME>output.4.xml</FILENAME>

@@ -23,8 +23,11 @@
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net
 
-import sys, py2exe, django, os, freppledb
+import sys, os, os.path
+sys.path.append(os.path.join(os.path.split(__file__)[0],'..','django'))
+import py2exe, django, freppledb
 from distutils.core import setup
+from freppledb.manage import *
 
 # Add default command lines
 if len(sys.argv) == 1:
@@ -40,7 +43,7 @@ includes = ['django.contrib.auth',
             'django.contrib.sessions',
             'django.contrib.sites',
            ]
-excludes = []
+excludes = ['MySQLdb', 'MySQLdb.constants', 'MySQLdb.converters', 'psycopg2',]
 ignores = [# Not using docutils
            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
            # Not using MySQL
@@ -80,7 +83,7 @@ ignores = [# Not using docutils
            'IPython',
            # Not sure where django references these...
            'crypt',
-           # Not needed to include frepple's python interface?
+           # Not needed to include frepple's python interface
            'frepple'
            ]
 
@@ -95,6 +98,7 @@ for srcdir, targetdir in [
    (os.path.join(freppledirectory,'static'), 'static'),
    (os.path.join(freppledirectory,'static'), 'static'),
    (os.path.join(freppledirectory,'execute'), 'execute'),
+   (os.path.join(freppledirectory,'input','fixtures'), 'fixtures'),
    ]:
    root_path_length = len(srcdir) + 1
    for dirpath, dirnames, filenames in os.walk(os.path.join(srcdir)):
@@ -123,7 +127,7 @@ setup(
           }},
     data_files = data_files,
     # Attributes
-    version = "0.3.0",
+    version = settings.FREPPLE_VERSION,
     description = "Frepple web server application",
     name = "Frepple",
     author = "www.frepple.com",

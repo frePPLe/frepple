@@ -81,7 +81,7 @@ using namespace std;
 #include <config.h>
 #else
 // Define the version for (windows) compilers that don't use autoconf
-#define PACKAGE_VERSION "0.2.3"
+#define PACKAGE_VERSION "0.3.0-beta"
 #endif
 
 // Header for multithreading
@@ -256,7 +256,7 @@ typedef unsigned int hashtype;
 
 /** @brief This class groups some functions used to interact with the operating
   * system environment.
-  * 
+  *
   * It handles:
   *   - The frepple home directory, which is typically set from the environment
   *     variable FREPPLE_HOME.
@@ -347,9 +347,9 @@ class LogicException: public logic_error
 };
 
 
-/** @brief An exception of this type is thrown when the library runs into 
-  * problems that are specific at runtime. <br> 
-  * These could either be memory problems, threading problems, file system 
+/** @brief An exception of this type is thrown when the library runs into
+  * problems that are specific at runtime. <br>
+  * These could either be memory problems, threading problems, file system
   * problems, etc...
   *
   * Errors of this type can be caught by the client applications and the
@@ -369,7 +369,7 @@ class RuntimeException: public runtime_error
 // UTILITY CLASS "NON-COPYABLE"
 //
 
-/** @brief Class NonCopyable is a base class.<br>Derive your own class from 
+/** @brief Class NonCopyable is a base class.<br>Derive your own class from
   * it when you want to prohibit copy construction and copy assignment.
   *
   * Some objects, particularly those which hold complex resources like files
@@ -529,7 +529,7 @@ class Mutex: public NonCopyable
 };
 
 
-/** @brief This is a convenience class that makes it easy (and 
+/** @brief This is a convenience class that makes it easy (and
   * exception-safe) to
   * lock a mutex in a scope.
   */
@@ -559,7 +559,7 @@ enum priority
 };
 
 
-/** @brief A lock represents a data structure to maintain a 
+/** @brief A lock represents a data structure to maintain a
   * multiple-reader / single-writer multithreading lock.<br>
   * The current implementation is incomplete...
   */
@@ -575,13 +575,13 @@ class Lock
 };
 
 
-/** @brief A manager class to maintain, create and destroy mult-threading 
+/** @brief A manager class to maintain, create and destroy mult-threading
   * locks.<br>The current implementation is incomplete...
   *
   * Different managers can be built to implement different ways of locking
   * objects. Some implem
   *
-  * A single lock manager is active in frepple at any point in time, but the 
+  * A single lock manager is active in frepple at any point in time, but the
   * active manager can be switched on the fly.
   */
 class LockManager : public NonCopyable
@@ -726,7 +726,7 @@ class Functor : public NonCopyable
 
 
 class MetaCategory;
-/** @brief This class stores metadata about the classes in the library. 
+/** @brief This class stores metadata about the classes in the library.
   * The stored information goes well beyond the standard 'type_info'.
   *
   * A MetaClass instance represents metadata for a specific instance type.
@@ -911,7 +911,7 @@ class MetaClass : public NonCopyable
 
 
 class XMLOutput;
-/** @brief A MetaCategory instance represents metadata for a category of 
+/** @brief A MetaCategory instance represents metadata for a category of
   * object.
   *
   * A MetaClass instance represents metadata for a specific instance type.
@@ -1108,7 +1108,7 @@ template <class T, class U> class FunctorInstance : public Functor
         }
       }
       // Not found in the list of subscriptions
-      throw LogicException("Subscription doesn't exist");    
+      throw LogicException("Subscription doesn't exist");
     }
 
     /** Constructor. */
@@ -1128,7 +1128,7 @@ template <class T, class U> class FunctorInstance : public Functor
 // UTILITY CLASS "TIMER".
 //
 
-/** @brief This class is used to measure the processor time used by the 
+/** @brief This class is used to measure the processor time used by the
   * program.
   *
   * The accuracy of the timer is dependent on the implementation of the
@@ -1175,10 +1175,10 @@ inline ostream & operator << (ostream& os, const Timer& t)
 //
 
 
-/** @brief This class represents a time duration with an accuracy of 
+/** @brief This class represents a time duration with an accuracy of
   * one second.
   *
-  * The duration can be both positive and negative. 
+  * The duration can be both positive and negative.
   */
 class TimePeriod
 {
@@ -1282,7 +1282,7 @@ inline ostream & operator << (ostream & os, const TimePeriod & t)
 }
 
 
-/** @brief This class represents a date and time with an accuracy of 
+/** @brief This class represents a date and time with an accuracy of
   * one second. */
 class Date
 {
@@ -1524,7 +1524,7 @@ class DateRange
 
     /** Return true if two date ranges are overlapping.<br>
       * The start point of the first interval is included in the comparison,
-      * whereas the end point isn't. As a result this method is not 
+      * whereas the end point isn't. As a result this method is not
       * symmetrical, ie when a.intersect(b) returns true b.intersect(a) is
       * not nessarily true.
       */
@@ -1534,7 +1534,7 @@ class DateRange
     /** Returns the number of seconds the 2 dateranges overlap. */
     TimePeriod overlap(const DateRange& dr) const
     {
-      long x = (dr.end<end ? dr.end : end) 
+      long x = (dr.end<end ? dr.end : end)
           - (dr.start>start ? dr.start : start);
       return x>0 ? x : 0;
     }
@@ -1606,8 +1606,8 @@ enum mode
 
 
 /** @brief Base class for writing XML formatted data to an output stream.
-  * 
-  * Subclasses implement writing to specific stream types, such as files 
+  *
+  * Subclasses implement writing to specific stream types, such as files
   * and strings.
   */
 class XMLOutput
@@ -2059,7 +2059,7 @@ class XMLOutputString : public XMLOutput
 };
 
 
-/** @brief This class represents an XML element being read in from the 
+/** @brief This class represents an XML element being read in from the
   * input file. */
 class XMLElement
 {
@@ -2075,7 +2075,7 @@ class XMLElement
     XMLElement() {}
 
     /** Constructor. */
-    XMLElement(string n, string v) 
+    XMLElement(string n, string v)
       : m_dwTagHash(XMLtag::hash(n.c_str())) , m_strData(v) {}
 
     /** Re-initializes an existing element. Using this method we can avoid
@@ -2245,7 +2245,7 @@ class Object
     /** Return the memory size of the object in bytes. */
     virtual size_t getSize() const = 0;
 
-    /** @brief The RLock class provides an exception safe way of getting a 
+    /** @brief The RLock class provides an exception safe way of getting a
       * read lock on an Object.
       *
       * The constructor acquires the read lock and the destructor will release
@@ -2386,7 +2386,7 @@ class Object
 
 /** @brief This class implements a binary tree data structure. It is used as a
   * container for entities keyed by their name.
-  * 
+  *
   * Technically, the data structure can be described as an red-black tree
   * with intrusive tree nodes.
   * @see HasName
@@ -2401,9 +2401,9 @@ class Tree : public NonCopyable
       */
     enum NodeColor { red, black, none };
 
-    /** @brief This class represents a node in the tree. 
-      * 
-      * Elements which we want to represent in the tree will need to inherit 
+    /** @brief This class represents a node in the tree.
+      *
+      * Elements which we want to represent in the tree will need to inherit
       * from this class, since this tree container is intrusive.
       */
     class TreeNode
@@ -2691,9 +2691,9 @@ class Tree : public NonCopyable
 // UTILITY CLASS "COMMAND": for executing & undoing actions
 //
 
-/** @brief Abstract base class for all commands. 
+/** @brief Abstract base class for all commands.
   *
-  * All changes in the system state are expected to be wrapped in a command 
+  * All changes in the system state are expected to be wrapped in a command
   * object. The execute() and undo() methods update the model.<br>
   * Adhering to this principle makes it easy to trace, time and log changes
   * appropriately.<br>
@@ -2888,9 +2888,9 @@ class CommandSetEnv : public Command
 };
 
 
-/** @brief A container command to group a series of commands together. 
+/** @brief A container command to group a series of commands together.
   *
-  * This class implements the "composite" design pattern in order to get an 
+  * This class implements the "composite" design pattern in order to get an
   * efficient and intuitive hierarchical grouping of tasks.<br>
   * A command list can be executed in three different modes:
   *   - Run the commands in parallel with each other, in seperate threads.<br>
@@ -2976,7 +2976,7 @@ class CommandList : public Command
 
     /** Returns the last command that was added to the list. */
     Command* getLastCommand() const {return lastCommand;}
-    
+
     /** Undoes all actions on the list. At the end it also clears the list of
       * actions. If one of the actions on the list is not undo-able, the whole
       * list is non-undoable and a warning message will be printed.
@@ -3061,8 +3061,8 @@ class CommandList : public Command
 
 
 /** @brief This command executes a command line on your operating
-  * system. 
-  * 
+  * system.
+  *
   * The command will spawn a child process to execute the command, and
   * will wait for that process to finish before continue.<br>
   * Environment variables enclosed in ${ } are expanded with their value
@@ -3119,7 +3119,7 @@ class CommandSystem : public Command
 
 /** @brief Command to dynamically load a shared library in Frepple.
   *
-  * After loading the library, the function "initialize" of the module 
+  * After loading the library, the function "initialize" of the module
   * is executed.
   *
   * The current implementation of the command works on the following platforms:
@@ -3222,7 +3222,7 @@ class XMLinstruction : public NonCopyable
 };
 
 
-/** @brief This class will read in an XML-file and call the appropriate 
+/** @brief This class will read in an XML-file and call the appropriate
   * handler functions of the Object classes and objects.
   *
   * This class is implemented based on the Xerces SAX XML parser.
@@ -3408,7 +3408,7 @@ class XMLInput : public NonCopyable,  private DefaultHandler
     bool isObjectEnd() {return objectEnded;}
 
     /** Return a pointer to the current object being read in.  */
-    Object* getCurrentObject() const 
+    Object* getCurrentObject() const
       {return m_EHStack.empty() ? NULL : m_EHStack.back().first;}
 
     /** Return a pointer to the previous object being read in.<br>
@@ -3424,9 +3424,9 @@ class XMLInput : public NonCopyable,  private DefaultHandler
     Object* getPreviousObject() const {return prev;}
 
     /** Clears the previously read object. */
-    Object* getParentObject() const 
+    Object* getParentObject() const
     {
-      int x = m_EHStack.size(); 
+      int x = m_EHStack.size();
       return x>1 ? m_EHStack[x-2].first : NULL;
     }
 
@@ -3447,11 +3447,11 @@ class XMLInput : public NonCopyable,  private DefaultHandler
 
     /** Updates the user definable pointer. This pointer is used to store
       * status information between handler calls. */
-    void setUserArea(void* v) 
+    void setUserArea(void* v)
       {if (!m_EHStack.empty()) m_EHStack.back().second = v;}
 
     /** Returns the user definable pointer. */
-    void* getUserArea() const 
+    void* getUserArea() const
       {return m_EHStack.empty() ? NULL : m_EHStack.back().second;}
 
     /** Updates whether we ignore data exceptions or whether we abort the
@@ -3581,7 +3581,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
     typedef T* type;
 
   public:
-    /** @brief This class models a STL-like iterator that allows us to 
+    /** @brief This class models a STL-like iterator that allows us to
       * iterate over the named entities in a simple and safe way.
       *
       * Objects of this class are created by the begin() and end() functions.
@@ -3599,7 +3599,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         T& operator*() const {return *static_cast<T*>(node);}
 
         /** Return the content of the current node. */
-        //typename T::pointer operator->() const {return static_cast<T*>(node);} 
+        //typename T::pointer operator->() const {return static_cast<T*>(node);}
         T* operator->() const {return static_cast<T*>(node);}  // @todo return readlocked object
 
         /** Pre-increment operator which moves the pointer to the next
@@ -3931,7 +3931,7 @@ template <class T> class HasHierarchy : public HasName<T>
   public:
     class memberIterator;
     friend class memberIterator;
-    /** @brief This class models an STL-like iterator that allows us to 
+    /** @brief This class models an STL-like iterator that allows us to
       * iterate over the members.
       *
       * Objects of this class are created by the begin() and end() functions.
@@ -4031,7 +4031,7 @@ template <class T> class HasHierarchy : public HasName<T>
     /** A pointer to the first child object. */
     T *first_child;
 
-    /** A pointer to the next brother object, ie an object having the 
+    /** A pointer to the next brother object, ie an object having the
       * same parent.<br>
       * The brothers are all linked as a single linked list, with the
       * first_child pointer on the parent being the root pointer of the list.
@@ -4058,7 +4058,7 @@ template <class T> class HasHierarchy : public HasName<T>
   * specialized data type consumes considerably lower memory.
   *
   * Reading from the structure is safe in multi-threading mode.<br>
-  * Updates to the data structure in a multi-threading mode require the user 
+  * Updates to the data structure in a multi-threading mode require the user
   * to properly lock and unlock the container.
   */
 template <class A, class B, class C> class Association
@@ -4066,8 +4066,8 @@ template <class A, class B, class C> class Association
   public:
     class Node;
   private:
-    /** @brief A abstract base class for the internal representation of the 
-      * association lists. 
+    /** @brief A abstract base class for the internal representation of the
+      * association lists.
       */
     class List
     {
@@ -4258,8 +4258,8 @@ template <class A, class B, class C> class Association
         }
     };
 
-    /** @brief A base class for the class representing the association 
-      * itself. 
+    /** @brief A base class for the class representing the association
+      * itself.
       */
     class Node
     {

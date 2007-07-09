@@ -112,7 +112,8 @@ def runfrepple(request):
         os.environ['FREPPLE_APP'] = settings.FREPPLE_APP.replace('\\','\\\\')
         os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + '.'
         os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
-        os.system('frepple %s' % os.path.join(settings.FREPPLE_APP,'execute','commands.xml'))
+        ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'execute','commands.xml'))
+        if ret: raise Exception('exit code of the batch run is %d' % ret)
         request.user.message_set.create(message='Successfully ran frepple')
       except Exception, e:
         request.user.message_set.create(message='Failure when running frepple:%s' % e)

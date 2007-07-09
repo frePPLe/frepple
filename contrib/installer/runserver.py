@@ -27,7 +27,6 @@ import sys, os, os.path, socket
 from stat import S_ISDIR, ST_MODE
 from optparse import OptionParser, OptionValueError
 
-from freppledb.settings import *
 from freppledb.manage import *
 
 # Define the command line options
@@ -66,6 +65,15 @@ except socket.error, e:
 # Update the root directory of the application
 settings.FREPPLE_APP = os.path.split(sys.path[0])[0]
 
+# Override the debugging settings
+settings.DEBUG = False
+settings.TEMPLATE_DEBUG = False
+
+# Update the directories where fixtures are searched
+settings.FIXTURE_DIRS = (
+  os.path.join(settings.FREPPLE_APP,'fixtures').replace('\\','/'),
+)
+
 # Update the template dirs
 settings.TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
@@ -75,8 +83,7 @@ settings.TEMPLATE_DIRS = (
 )
 
 # Create the database if it doesn't exist yet
-print settings.DATABASE_NAME
-if DATABASE_ENGINE == 'sqlite3' and not os.path.isfile(settings.DATABASE_NAME):
+if settings.DATABASE_ENGINE == 'sqlite3' and not os.path.isfile(settings.DATABASE_NAME):
   print "\nDatabase %s doesn't exist." % settings.DATABASE_NAME
   confirm = raw_input("Do you want to create it now? (yes/no): ")
   while confirm not in ('yes', 'no'):
@@ -86,7 +93,7 @@ if DATABASE_ENGINE == 'sqlite3' and not os.path.isfile(settings.DATABASE_NAME):
     execute_manager(settings, ['','syncdb'])
 
 # Run the server
-print 'Frepple %s \n' % settings.FREPPLE_VERSION
+print 'Running Frepple %s with database %s\n' % (settings.FREPPLE_VERSION, settings.DATABASE_NAME)
 execute_manager(settings, ['','runserver',
   '--adminmedia=%s' % os.path.join(settings.FREPPLE_APP,'media'),
   '--noreload',

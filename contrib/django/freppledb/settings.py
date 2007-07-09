@@ -26,7 +26,7 @@
 import os, os.path, re, sys
 FREPPLE_HOME = os.environ['FREPPLE_HOME']
 FREPPLE_APP = os.path.normpath(os.path.join(FREPPLE_HOME,'..','contrib','django','freppledb'))
-FREPPLE_VERSION = '0.2.3'
+FREPPLE_VERSION = '0.3.0-beta'
 
 # Determing whether Django runs as a standalone application or is deployed
 # on a web server
@@ -50,7 +50,7 @@ MANAGERS = ADMINS
 # Django supports the following database engines: 'postgresql_psycopg2', 'postgresql',
 # 'mysql', 'sqlite3' or 'ado_mssql'.
 # Frepple is supports only 'postgresql_psycopg2', 'mysql' and 'sqlite3'
-DATABASE_ENGINE = 'postgresql_psycopg2'
+DATABASE_ENGINE = 'sqlite3'
 if DATABASE_ENGINE == 'sqlite3':
   DATABASE_NAME = os.path.join(FREPPLE_HOME,'frepple.sqlite')  # Path to sqlite3 database file
 else:

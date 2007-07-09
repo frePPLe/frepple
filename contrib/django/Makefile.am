@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = freppledb README.txt httpd.conf runserver.py setup.py frepple.ico
+EXTRA_DIST = freppledb README.txt httpd.conf
 
 clean-local:
 	-rm -rf `find . -name '*.pyc'`
@@ -13,8 +13,17 @@ dist-hook:
 	-rm -rf `find $(distdir) -name '*.pyc'`
 	-rm -rf `find $(distdir) -name '*.pyo'`
 
-start:
-	cd freppledb; manage.py runserver
-
 create:
 	cd freppledb; manage.py syncdb
+
+setup:
+	setup.py
+
+check:
+	cd freppledb; manage.py test
+
+runserver:
+	cd freppledb; manage.py runserver
+
+runserver2:
+	cd dist; runserver

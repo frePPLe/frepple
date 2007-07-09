@@ -36,7 +36,7 @@
 
 ; Main definitions
 !define PRODUCT_NAME "Frepple"
-!define PRODUCT_VERSION "0.2.3"
+!define PRODUCT_VERSION "0.3.0"
 !define PRODUCT_PUBLISHER "Frepple"
 !define PRODUCT_WEB_SITE "http://www.frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
@@ -78,8 +78,8 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_LANGUAGE "English"
 
 ;Version Information
-VIProductVersion "0.2.3.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "0.2.3"
+VIProductVersion "0.3.0.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "0.3.0.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Frepple Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "Frepple Installer - Free Production Planning Library"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Frepple"
@@ -99,20 +99,27 @@ ShowInstDetails show
 ShowUnInstDetails show
 
 Section -Start
+  ; Create the python distribution and django server
+  !system "python setup.py"
+
   ; Create a distribution if none exists yet
   !cd "../.."
   !system "bash -c 'if (test ! -f frepple-${PRODUCT_VERSION}.tar.gz ); then make dist; fi'"
+
   ; Expand the distribution
   !system "bash -c 'rm -rf frepple-${PRODUCT_VERSION}'"
   !system "bash -c 'tar -xzf frepple-${PRODUCT_VERSION}.tar.gz'"
+
+  ; Default content that is always installed
   !cd "frepple-${PRODUCT_VERSION}"
   SetOutPath "$INSTDIR"
   File "COPYING"
   File "README"
 SectionEnd
 
+
 Section "Application" SecAppl
-	SectionIn RO     ; The app section can't be deselected
+  SectionIn RO     ; The app section can't be deselected
   SetOutPath "$INSTDIR\bin"
   SetOverwrite ifnewer
 
@@ -132,9 +139,17 @@ Section "Application" SecAppl
   ; Add Xerces library
   !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "${XERCESPATH}\${XERCESDLL}" "$INSTDIR\bin\${XERCESDLL}" "$SYSDIR"
 
+  ; Copy sqlite database if there is one in
+  File /nonfatal "..\bin\frepple.sqlite"
+
+  ; Create the django server directory
+  SetOutPath "$INSTDIR\server"
+  File /r "..\contrib\installer\dist\*.*"
+
   ; Create menu
   CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple.lnk" "$INSTDIR\bin\frepple.exe"
+  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple batch application.lnk" "$INSTDIR\bin\frepple.exe"
+  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple server.lnk" "$INSTDIR\server\runserver.exe"
 
   ; Set an environment variable (and propagate immediately to other processes)
   WriteRegExpandStr HKEY_CURRENT_USER "Environment" "FREPPLE_HOME" "$INSTDIR\bin"
@@ -176,17 +191,16 @@ Section /O "Modules code" SecMod
   File /r "modules"
 SectionEnd
 
-SubSectionEnd
-
-
-Section "Add-ons" SecContrib
+Section /O "Add-ons" SecContrib
   SetOutPath "$INSTDIR"
   File /r "contrib"
 
-	; A link to the excel sheet
+  ; A link to the excel sheet
   CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
   CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple on Excel.lnk" "$INSTDIR\contrib\excel\frepple.xls"
 SectionEnd
+
+SubSectionEnd
 
 
 Section -AdditionalIcons
@@ -201,6 +215,7 @@ Section -Post
   ; Clean up the distribution directory
   !cd ".."
   !system "sh -c 'rm -rf frepple-${PRODUCT_VERSION}'"
+
   ; Create uninstaller
   WriteUninstaller "$INSTDIR\uninst.exe"
   WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\bin\frepple.exe"
@@ -243,7 +258,8 @@ Section Uninstall
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Uninstall.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple documentation.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple web site.lnk"
-  Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple.lnk"
+  Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple batch application.lnk"
+  Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple server.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple on Excel.lnk"
 
   ; Remove the folder in start menu

@@ -144,16 +144,20 @@ astyle:
 # The following references will still have to be updated manually:
 #   - In the excel spreadsheet hit alt-F11 and edit the "about" tab in the "config" form.
 old1 = 0
-old2 = 2
-old3 = 3
+old2 = 3
+old3 = 0
+old4 =
 new1 = 0
 new2 = 3
 new3 = 0
+new4 = -beta
 set_release:
-	for i in "configure.in" "doc/menu.html" "contrib/installer/frepple.nsi" "contrib/rpm/frepple.spec" "include/frepple/utils.h" "contrib/django/freppledb/settings.py"; do \
-		sed 's/$(old1)\.$(old2)\.$(old3)/$(new1).$(new2).$(new3)/g' $$i >out.tmp; \
+	for i in "configure.in" "doc/menu.html" "contrib/rpm/frepple.spec" "include/frepple/utils.h" "contrib/django/freppledb/settings.py"; do \
+		sed 's/$(old1)\.$(old2)\.$(old3)$(old4)/$(new1).$(new2).$(new3)$(new4)/g' $$i >out.tmp; \
 		mv out.tmp $$i; \
 	done
+	sed 's/$(old1)\.$(old2)\.$(old3)/$(new1).$(new2).$(new3)/g' "contrib/installer/frepple.nsi" >out.tmp
+	mv out.tmp "contrib/installer/frepple.nsi"
 	for i in "src/dll.rc" "src/exe.rc"; do \
 		sed 's/$(old1),$(old2),$(old3)/$(new1),$(new2),$(new3)/g' $$i >out.tmp; \
 		sed 's/$(old1), $(old2), $(old3)/$(new1), $(new2), $(new3)/g' out.tmp >$$i; \

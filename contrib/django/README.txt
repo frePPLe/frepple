@@ -5,7 +5,8 @@ It is built using the incredible 'Django' web application framework.
 The basic steps to set up a development environment:
 - Install python
 - Install django
-- Install your database: postgresql / mysql / sqlite3 / ado_mssql
+- Install your database: postgresql / mysql / ado_mssql
+  Alternatively, you can use the sqlite3 database included with python.
 - Install the python database access library for the database (see django doc for details)
 - Create a database schema for frepple
 - Edit the file settings.py to point to your database schema

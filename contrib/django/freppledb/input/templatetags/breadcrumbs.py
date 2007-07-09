@@ -24,6 +24,7 @@
 from django import template
 from django.contrib.sessions.models import Session
 from django.template import resolve_variable
+from django.conf import settings
 import urllib
 
 HOMECRUMB = '<a href="/admin/">Site administration</a>'
@@ -170,8 +171,20 @@ def superlink(value,type):
     return '<a href="/admin/input/%s/%s" class="%s">%s</a>' % (type,urllib.quote(value),type,value)
 
 
+class VersionNode(template.Node):
+    '''
+    A simple tag returning the version of the frepple application.
+    '''
+    def render(self, context):
+        return settings.FREPPLE_VERSION
+
+def get_version(parser, token):
+    return VersionNode()
+
+
 register = template.Library()
 register.tag('crumbs', do_crumbs)
 register.filter('superlink', superlink)
 register.tag('get_models', get_models)
 register.tag('set', set_var)
+register.tag('version', get_version)

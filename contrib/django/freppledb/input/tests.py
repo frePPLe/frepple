@@ -30,16 +30,9 @@ from django.core.exceptions import ObjectDoesNotExist
 class DataLoadTest(django.test.TestCase):
 
   def setUp(self):
-    # Create a test user
-    from django.contrib.auth.models import User
-    user = User.objects.create_user('test', 'f@frepple.com', 'test')
-    user.is_staff = True
-    user.is_superuser = True
-    user.save()
-
     # Create a client
     self.client = Client()
-    self.client.login(username='test', password='test')
+    self.client.login(username='frepple', password='frepple')
 
   def test_input_customer(self):
     response = self.client.get('/admin/input/customer/')

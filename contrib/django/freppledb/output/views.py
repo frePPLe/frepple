@@ -146,8 +146,9 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
     if not objectlist:
       # Data not found in the cache, recompute
       objectlist = querymethod(entity, bucket, start, end)
-      if entity is None:
-        cache.set(key, objectlist, CACHE_SQL_QUERY * 60)
+      # Disabling the caching...
+      #if entity is None:
+      #  cache.set(key, objectlist, CACHE_SQL_QUERY * 60)
 
     # HTML output or CSV output?
     type = request.GET.get('type','html')

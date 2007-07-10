@@ -26,6 +26,9 @@
 import sys, os, os.path, socket
 from stat import S_ISDIR, ST_MODE
 from optparse import OptionParser, OptionValueError
+from django.core.handlers.wsgi import WSGIHandler
+from django.core.servers.basehttp import AdminMediaHandler
+from wsgiserver import CherryPyWSGIServer
 
 from freppledb.manage import *
 
@@ -59,7 +62,7 @@ try:
   s.bind( (options.address, options.port) )
   s.close()
 except socket.error, e:
-  print 'Invalid address and port: %s' % e
+  print 'Invalid address and/or port: %s' % e
   sys.exit(1)
 
 # Update the root directory of the application
@@ -92,10 +95,18 @@ if settings.DATABASE_ENGINE == 'sqlite3' and not os.path.isfile(settings.DATABAS
     # Create the database
     execute_manager(settings, ['','syncdb'])
 
-# Run the server
-print 'Running Frepple %s with database %s\n' % (settings.FREPPLE_VERSION, settings.DATABASE_NAME)
-execute_manager(settings, ['','runserver',
-  '--adminmedia=%s' % os.path.join(settings.FREPPLE_APP,'media'),
-  '--noreload',
-  '%s:%d' % (options.address, options.port)
-  ])
+# Print a header message
+print 'Running Frepple %s with database %s' % (settings.FREPPLE_VERSION,settings.DATABASE_NAME)
+print 'To access the server, point your browser to http://%s:%s/\n' % (options.address, options.port)
+print 'Quit the server with CTRL-C.\n'
+
+# Run the WSGI server
+os.environ["DJANGO_SETTINGS_MODULE"] = 'freppledb.settings'
+server = CherryPyWSGIServer(
+  (options.address, options.port),
+  AdminMediaHandler(WSGIHandler(), os.path.join(settings.FREPPLE_APP,'media'))
+  )
+try:
+  server.start()
+except KeyboardInterrupt:
+  server.stop()

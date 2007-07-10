@@ -17,18 +17,24 @@ To run the installer, the following steps are required:
    We distribute the executables created by the microsoft compilers.
    You'll need to compile before creating the installer.
 
-4) Install python and the module py2exe.
+4) Install python
+   Make sure to use the Windows version of Python, rather than the one included
+   with Cygwin.
+   Adjust the path appropriately, if required.
+
+5) Install the python modules py2exe and cherrypy.
    The installer uses py2exe to create a directory including python, django
    and the frepple web user interface.
-   (Make sure to use the Windows version of Python, rather than the one included
-   with Cygwin. Adjust the path appropriately, if required)
+   As the standalone web server we use WSGIServer that is provided by the
+   CherryPy project. It is a bit more scalable and robust than the Django
+   development server.
 
-5) Create sample sqlite database
+6) Create sample sqlite database
    The installer will pick up the sqlite database in the file bin\frepple.sqlite.
    You'll should make sure it is initialized correctly and contains only the
    sample dataset.
 
-6) Before building the installer script you'll need to update the frepple.nsi
+7) Before building the installer script you'll need to update the frepple.nsi
    script to point to the directory where the xerces-c dll is stored.
 
 Considering all the above, building the installer isn't for beginners. It

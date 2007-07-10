@@ -148,7 +148,6 @@ Section "Application" SecAppl
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple batch application.lnk" "$INSTDIR\bin\frepple.exe"
   CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple server.lnk" "$INSTDIR\server\runserver.exe"
 
   ; Set an environment variable (and propagate immediately to other processes)
@@ -258,7 +257,6 @@ Section Uninstall
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Uninstall.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple documentation.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple web site.lnk"
-  Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple batch application.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple server.lnk"
   Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple on Excel.lnk"
 

@@ -26,7 +26,6 @@ from freppledb.input.models import *
 from django.test.client import Client
 from django.core.exceptions import ObjectDoesNotExist
 
-
 class DataLoadTest(django.test.TestCase):
 
   def setUp(self):
@@ -104,3 +103,55 @@ class DataLoadTest(django.test.TestCase):
       if prevend:
         self.failUnlessEqual(i.startdate, prevend, 'Non-adjacent calendar buckets')
       prevend = i.enddate
+    # Verify original buckets
+    self.failUnlessEqual(
+      [(str(i.startdate), str(i.value)) for i in calendar.buckets.all()],
+      [('2007-01-01 00:00:00', '1'),
+       ('2007-02-01 00:00:00', '0')
+      ])
+    # Create a new bucket - start date aligned with existing bucket
+    calendar.setvalue(datetime(2007,2,1), datetime(2007,3,3), 12)
+    self.failUnlessEqual(
+      [(str(i.startdate), str(i.value)) for i in calendar.buckets.all()],
+      [('2007-01-01 00:00:00', '1'),
+       ('2007-02-01 00:00:00', '12'),
+       ('2007-03-03 00:00:00', '0')
+      ])
+    # Create a new bucket - end date aligned with existing bucket
+    calendar.setvalue(datetime(2007,2,10), datetime(2007,3,3), 100)
+    self.failUnlessEqual(
+      [(str(i.startdate), str(i.value)) for i in calendar.buckets.all()],
+      [('2007-01-01 00:00:00', '1'),
+       ('2007-02-01 00:00:00', '12'),
+       ('2007-02-10 00:00:00', '100'),
+       ('2007-03-03 00:00:00', '0')
+      ])
+    # 2 buckets partially updates and one deleted
+    calendar.setvalue(datetime(2007,1,10), datetime(2007,4,3), 3)
+    self.failUnlessEqual(
+      [(str(i.startdate), str(i.value)) for i in calendar.buckets.all()],
+      [('2007-01-01 00:00:00', '1'),
+       ('2007-01-10 00:00:00', '3'),
+       ('2007-03-03 00:00:00', '3'),
+       ('2007-04-03 00:00:00', '0')
+      ])
+    # Create a new bucket - end date aligned with existing bucket
+    calendar.setvalue(datetime(2007,2,10), datetime(2007,3,3), 4)
+    self.failUnlessEqual(
+      [(str(i.startdate), str(i.value)) for i in calendar.buckets.all()],
+      [('2007-01-01 00:00:00', '1'),
+       ('2007-01-10 00:00:00', '3'),
+       ('2007-02-10 00:00:00', '4'),
+       ('2007-03-03 00:00:00', '3'),
+       ('2007-04-03 00:00:00', '0')
+      ])
+    # Completely override the value of an existing bucket
+    calendar.setvalue(datetime(2007,3,3), datetime(2007,4,3), 5)
+    self.failUnlessEqual(
+      [(str(i.startdate), str(i.value)) for i in calendar.buckets.all()],
+      [('2007-01-01 00:00:00', '1'),
+       ('2007-01-10 00:00:00', '3'),
+       ('2007-02-10 00:00:00', '4'),
+       ('2007-03-03 00:00:00', '5'),
+       ('2007-04-03 00:00:00', '0')
+      ])

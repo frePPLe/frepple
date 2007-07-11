@@ -46,6 +46,7 @@ Actions:
   shell          Run an interactive Python interpreter.
   dbshell        Run an interactive SQL session on the database.
   syncdb         Create the database tables.
+  test           Run the test suite.
 ''',
   )
 parser.add_option("-m", "--model", dest="model",
@@ -124,6 +125,10 @@ try:
   elif action == 'syncdb':
     # Initializes a database
     execute_from_command_line(argv=['','syncdb'])
+    sys.exit(0)
+  elif action == 'test':
+    # Run the test suite
+    execute_from_command_line(argv=['','test'])
     sys.exit(0)
   elif action != 'runserver':
     # Unsupported action

@@ -28,18 +28,32 @@ from stat import S_ISDIR, ST_MODE
 from optparse import OptionParser, OptionValueError
 from django.core.handlers.wsgi import WSGIHandler
 from django.core.servers.basehttp import AdminMediaHandler
-from wsgiserver import CherryPyWSGIServer
+from django.core.management import execute_from_command_line
+from cherrypy.wsgiserver import CherryPyWSGIServer
 
-from freppledb.manage import *
+# Import django settings
+os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
+from django.conf import settings
 
 # Define the command line options
-parser = OptionParser(version=settings.FREPPLE_VERSION)
+parser = OptionParser(
+  version='frepple %s' % settings.FREPPLE_VERSION,
+  usage= '''usage: %prog [options] [action]
+
+Actions:
+  runserver      Run the web server.
+                 This is the default action.
+  shell          Run an interactive Python interpreter.
+  dbshell        Run an interactive SQL session on the database.
+  syncdb         Create the database tables.
+''',
+  )
 parser.add_option("-m", "--model", dest="model",
-                  help="frepple home directory", type="string")
+                  help="Frepple home directory.", type="string")
 parser.add_option("-p", "--port", dest="port", default=8000,
-                  help="port number of the server", type="int")
+                  help="Port number of the server.", type="int")
 parser.add_option("-a", "--address", dest="address",
-                  help="IP address for the server to listen", type="string",
+                  help="IP address for the server to listen.", type="string",
                   default=socket.getaddrinfo(socket.gethostname(), None)[0][4][0])
 
 # Parse the command line
@@ -52,7 +66,7 @@ if options.model == None:
   else:
     print 'Missing frepple model directory'
     sys.exit(1)
-if not S_ISDIR(os.stat(options.model)[ST_MODE]):
+if not os.path.exists(options.model)or not S_ISDIR(os.stat(options.model)[ST_MODE]):
   print "Directory %s doesn't exist" % options.model
   sys.exit(1)
 
@@ -93,15 +107,41 @@ if settings.DATABASE_ENGINE == 'sqlite3' and not os.path.isfile(settings.DATABAS
     confirm = raw_input('Please enter either "yes" or "no": ')
   if confirm == 'yes':
     # Create the database
-    execute_manager(settings, ['','syncdb'])
+    execute_from_command_line(argv=['','syncdb'])
+    sys.exit(0)
+
+# Do the action
+try:
+  action = args[0]
+  if action == 'shell':
+    # Runs a Python interactive interpreter.
+    execute_from_command_line(argv=['','shell'])
+    sys.exit(0)
+  elif action == 'dbshell':
+    # Runs a Python interactive interpreter.
+    execute_from_command_line(argv=['','dbshell'])
+    sys.exit(0)
+  elif action == 'syncdb':
+    # Initializes a database
+    execute_from_command_line(argv=['','syncdb'])
+    sys.exit(0)
+  elif action != 'runserver':
+    # Unsupported action
+    print "Invalid action '%s'" % action
+    parser.print_help()
+    sys.exit(1)
+except IndexError:
+  pass
+
+# Running the cherrypy wsgi server is the default action
 
 # Print a header message
-print 'Running Frepple %s with database %s' % (settings.FREPPLE_VERSION,settings.DATABASE_NAME)
-print 'To access the server, point your browser to http://%s:%s/\n' % (options.address, options.port)
+print 'Running Frepple %s with database %s\n' % (settings.FREPPLE_VERSION,settings.DATABASE_NAME)
+print 'To access the server, point your browser to http://%s:%s/' % (options.address, options.port)
+print 'The defautl user name and password are "frepple"\n'
 print 'Quit the server with CTRL-C.\n'
 
 # Run the WSGI server
-os.environ["DJANGO_SETTINGS_MODULE"] = 'freppledb.settings'
 server = CherryPyWSGIServer(
   (options.address, options.port),
   AdminMediaHandler(WSGIHandler(), os.path.join(settings.FREPPLE_APP,'media'))

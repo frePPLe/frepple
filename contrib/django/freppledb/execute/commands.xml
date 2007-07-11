@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <?PYTHON
-# Update the python environment such that it can use the django classes
-sys.path.append('library.zip')   # For the py2exe executable
-import os
-sys.path.append(os.path.join(os.environ['FREPPLE_APP'],'..'))
 from freppledb.execute.export import dumpfrepple, dumpfrepple_files
 from freppledb.execute.load import loadfrepple
-os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
+import os
 
 # Create a solver where the constraint are defined by an environment variable
 try: plantype = os.environ['PLAN_TYPE']

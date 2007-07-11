@@ -38,7 +38,7 @@ djangodirectory = django.__path__[0]
 freppledirectory = freppledb.__path__[0]
 
 # Define what is to be included and excluded
-packages = ['django','freppledb','email']
+packages = ['django', 'freppledb', 'email', 'cherrypy.wsgiserver', ]
 includes = ['django.contrib.auth',
             'django.contrib.sessions',
             'django.contrib.sites',
@@ -53,7 +53,7 @@ ignores = [# Not using docutils
            # Not using Microsoft ADO
            'adodbapi',
            # Not using Postgres
-           'psycopg', 'psycopg2',
+           'psycopg', 'psycopg2', 'psycopg2.extensions',
            # Not using pysqlite2 (using pysqlite3 instead)
            'pysqlite2',
            # Not using mod_python
@@ -84,7 +84,7 @@ ignores = [# Not using docutils
            # Not sure where django references these...
            'crypt',
            # Not needed to include frepple's python interface
-           'frepple'
+           'frepple',
            ]
 
 # Collect all static files to be included in the distribution
@@ -136,5 +136,5 @@ setup(
     console = [ {
        "script": "runserver.py",
        "icon_resources": [(1, "frepple.ico")]
-       } ],
+       }],
     )

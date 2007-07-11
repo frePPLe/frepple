@@ -112,6 +112,13 @@ def runfrepple(request):
         os.environ['FREPPLE_APP'] = settings.FREPPLE_APP.replace('\\','\\\\')
         os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + '.'
         os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
+        os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
+        if os.path.exists(os.path.join(os.environ['FREPPLE_APP'],'library.zip')):
+          # For the py2exe executable
+          os.environ['PYTHONPATH'] = os.path.join(os.environ['FREPPLE_APP'],'library.zip')
+        else:
+          # Other executables
+          os.environ['PYTHONPATH'] = os.path.normpath(os.path.join(os.environ['FREPPLE_APP'],'..'))
         ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'execute','commands.xml'))
         if ret: raise Exception('exit code of the batch run is %d' % ret)
         request.user.message_set.create(message='Successfully ran frepple')

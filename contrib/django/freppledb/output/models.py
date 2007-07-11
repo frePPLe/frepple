@@ -24,6 +24,9 @@
 from django.db import models
 from freppledb.input.models import Operation, Demand, Buffer, Resource
 
+# This variable defines the number of records to show in the admin lists.
+LIST_PER_PAGE = 100
+
 class OperationPlan(models.Model):
     identifier = models.IntegerField(primary_key=True)
     demand = models.ForeignKey(Demand, related_name='delivery', null=True, db_index=True, raw_id_admin=True)
@@ -40,6 +43,7 @@ class OperationPlan(models.Model):
     class Admin:
         search_fields = ['operation']
         list_display = ('identifier', 'operation', 'startdate', 'enddate', 'quantity', 'locked', 'owner')
+        list_per_page = LIST_PER_PAGE
         date_hierarchy = 'startdate'
     class Meta:
         permissions = (("view_operationplan", "Can view operation plans"),)
@@ -63,6 +67,7 @@ class Problem(models.Model):
         search_fields = ['description']
         date_hierarchy = 'startdate'
         list_filter = ['entity','name','startdate']
+        list_per_page = LIST_PER_PAGE
     class Meta:
         permissions = (("view_problem", "Can view problems"),)
         ordering = ['startdatetime']
@@ -80,6 +85,7 @@ class LoadPlan(models.Model):
         return self.resource.name + ' ' + str(self.date)
     class Admin:
         list_display = ('resource', 'operation', 'quantity', 'date', 'onhand', 'maximum', 'operationplan')
+        list_per_page = LIST_PER_PAGE
     class Meta:
         permissions = (("view_loadplans", "Can view load plans"),)
         # Ordering is buggy :-(
@@ -99,6 +105,7 @@ class FlowPlan(models.Model):
         return self.thebuffer.name + str(self.date)
     class Admin:
         list_display = ('thebuffer', 'operation', 'quantity', 'date', 'onhand', 'operationplan')
+        list_per_page = LIST_PER_PAGE
     class Meta:
         permissions = (("view_flowplans", "Can view flow plans"),)
         # Ordering is buggy :-(

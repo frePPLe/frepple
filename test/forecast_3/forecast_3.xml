@@ -30,11 +30,26 @@
     <COMMAND xsi:type="COMMAND_READXML">
       <FILENAME>output.1.xml</FILENAME>
     </COMMAND>
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST">
-        <VERBOSE>true</VERBOSE>
-        <AUTOMATIC>false</AUTOMATIC>
-      </SOLVER>
+    <COMMAND xsi:type="COMMAND_READXMLSTRING">
+      <!--
+      We need to wrap the second forecast netting round in a xml string.
+      That's because the solver created during the initial read is
+      deleted with the above erase-command...
+      -->
+      <DATA>
+        <![CDATA[
+				<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+				<COMMANDS>
+          <COMMAND xsi:type="COMMAND_SOLVE">
+            <SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST">
+              <VERBOSE>true</VERBOSE>
+              <AUTOMATIC>false</AUTOMATIC>
+            </SOLVER>
+          </COMMAND>
+				</COMMANDS>
+				</PLAN>
+			]]>
+      </DATA>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVE">
       <FILENAME>output.4.xml</FILENAME>

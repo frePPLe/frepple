@@ -130,7 +130,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.auth',
     # The debug context keeps track of all sql statements
     # that are executed. Handy for debugging, but a memory killer when
-    # huge numbers of queries qre executed...
+    # huge numbers of queries are executed...
     #'django.core.context_processors.debug',
     #'django.core.context_processors.i18n',
 )
@@ -162,7 +162,7 @@ AUTHENTICATION_BACKENDS = (
     "freppledb.user.auth.EmailBackend",
 )
 
-# To add the user profile
+# To add the user preferences to the standard admin
 AUTH_PROFILE_MODULE = 'user.Preferences'
 
 # IP address of the machine you are browsing from. When logging in from this

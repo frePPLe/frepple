@@ -23,6 +23,7 @@
 
 from django.conf.urls.defaults import *
 import sys, os.path
+import freppledb.input.views
 import freppledb.output.views
 import freppledb.user.views
 from django.conf import settings
@@ -59,6 +60,9 @@ urlpatterns = patterns('',
     (r'^operation/([^/]+)/$', freppledb.output.views.operationreport),
     (r'^operation/$', freppledb.output.views.operationreport),
     (r'^path/([^/]+)/([^/]+)/$', freppledb.output.views.pathreport.view),
+
+    # Posting special edits
+    (r'^edit/$', freppledb.input.views.uploadjson.post),
 
     # User preferences
     (r'^preferences/$', freppledb.user.views.preferences),

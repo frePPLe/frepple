@@ -14,16 +14,13 @@ dist-hook:
 	-rm -rf `find $(distdir) -name '*.pyo'`
 
 create:
-	cd freppledb; manage.py syncdb
+	cd freppledb; ./manage.py syncdb
 
 setup:
 	setup.py
 
 check:
-	cd freppledb; manage.py test
+	cd freppledb; ./manage.py test
 
 runserver:
-	cd freppledb; manage.py runserver
-
-runserver2:
-	cd dist; runserver
+	cd freppledb; ./manage.py runserver

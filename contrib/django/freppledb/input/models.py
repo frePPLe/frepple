@@ -24,10 +24,13 @@
 from django.db import models
 from django.db.models import signals
 from datetime import date, datetime
-import sys
 from django.http import HttpRequest
 from datetime import datetime
 from django.dispatch import dispatcher
+from django.contrib.admin.models import LogEntry, CHANGE
+from django.contrib.contenttypes.models import ContentType
+
+import sys
 
 
 # The date format used by the frepple XML data.
@@ -36,6 +39,7 @@ dateformat = '%Y-%m-%dT%H:%M:%S'
 # This variable defines the number of records to show in the admin lists.
 LIST_PER_PAGE = 100
 
+CALENDARID = None
 
 class Plan(models.Model):
     # Database fields
@@ -111,9 +115,20 @@ class Calendar(models.Model):
         return v
     currentvalue.short_description = 'Current value'
 
-    def setvalue(self, start, end, value):
+    def setvalue(self, start, end, value, user=None):
       '''Update calendar buckets such that the calendar value is changed
-      in the specified date range.'''
+      in the specified date range.
+      The admin log is updated if a user is passed as argument.
+      '''
+      # Create a change log entry, if a user is specified
+      if user:
+        global CALENDARID
+        if not CALENDARID:
+          CALENDARID = ContentType.objects.get_for_model(models.get_model('input','calendar')).id
+        LogEntry.objects.log_action(
+          user.id, CALENDARID, self.name, self.name, CHANGE,
+          "Updated value to %s for the daterange %s to %s" % (value, start, end)
+          )
       for b in self.buckets.all():
         if b.enddate <= start:
           # Earlier bucket
@@ -121,7 +136,7 @@ class Calendar(models.Model):
         elif b.startdate >= end:
           # Later bucket
           return
-        elif b.startdate == start and b.enddate == end:
+        elif b.startdate == start and b.enddate <= end:
           # Overwrite entire bucket
           b.value = value
           b.save()
@@ -197,6 +212,7 @@ class Bucket(models.Model):
 # The method is not very efficient: called for every single bucket, and recursively triggers
 # another save and dispatcher event
 dispatcher.connect(Bucket.updateEndDate, signal=signals.post_save, sender=Bucket)
+dispatcher.connect(Bucket.updateEndDate, signal=signals.post_delete, sender=Bucket)
 
 
 class Location(models.Model):

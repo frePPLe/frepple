@@ -176,7 +176,7 @@ class Bucket(models.Model):
     calendar = models.ForeignKey(Calendar, edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
     startdate = models.DateTimeField('start date', core=True)
     enddate = models.DateTimeField('end date', editable=False, null=True)
-    value = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    value = models.DecimalField(max_digits=10, decimal_places=4, default=0.00)
     name = models.CharField(maxlength=60, null=True, blank=True)
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
 
@@ -289,19 +289,19 @@ class Operation(models.Model):
     # Database fields
     name = models.CharField(maxlength=60, primary_key=True)
     type = models.CharField(maxlength=20, null=True, blank=True, choices=operationtypes)
-    fence = models.DecimalField('release fence', max_digits=10, decimal_places=2, null=True, blank=True,
+    fence = models.DecimalField('release fence', max_digits=10, decimal_places=4, null=True, blank=True,
       help_text="Operationplans within this time window from the current day are expected to be released to production ERP")
-    pretime = models.DecimalField('pre-op time', max_digits=10, decimal_places=2, null=True, blank=True,
+    pretime = models.DecimalField('pre-op time', max_digits=10, decimal_places=4, null=True, blank=True,
       help_text="A delay time to be respected as a soft constraint before starting the operation")
-    posttime = models.DecimalField('post-op time', max_digits=10, decimal_places=2, null=True, blank=True,
+    posttime = models.DecimalField('post-op time', max_digits=10, decimal_places=4, null=True, blank=True,
       help_text="A delay time to be respected as a soft constraint after ending the operation")
-    sizeminimum = models.DecimalField('size minimum', max_digits=10, decimal_places=2, null=True, blank=True,
+    sizeminimum = models.DecimalField('size minimum', max_digits=10, decimal_places=4, null=True, blank=True,
       help_text="A minimum lotsize quantity for operationplans")
-    sizemultiple = models.DecimalField('size multiple', max_digits=10, decimal_places=2, null=True, blank=True,
+    sizemultiple = models.DecimalField('size multiple', max_digits=10, decimal_places=4, null=True, blank=True,
       help_text="A multiple quantity for operationplans")
-    duration = models.DecimalField('duration', max_digits=10, decimal_places=2, null=True, blank=True,
+    duration = models.DecimalField('duration', max_digits=10, decimal_places=4, null=True, blank=True,
       help_text="A fixed duration for the operation")
-    duration_per = models.DecimalField('duration per unit', max_digits=10, decimal_places=2, null=True, blank=True,
+    duration_per = models.DecimalField('duration per unit', max_digits=10, decimal_places=4, null=True, blank=True,
       help_text="A variable duration for the operation")
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
 
@@ -338,7 +338,7 @@ class SubOperation(models.Model):
     #operation = models.ForeignKey(Operation, edit_inline=models.TABULAR,
     #  min_num_in_admin=3, num_extra_on_change=1, related_name='alfa')
     operation = models.ForeignKey(Operation, raw_id_admin=True, related_name='suboperations')
-    priority = models.DecimalField(max_digits=5, decimal_places=2, default=1)
+    priority = models.DecimalField(max_digits=5, decimal_places=4, default=1)
     suboperation = models.ForeignKey(Operation, raw_id_admin=True, related_name='beta', core=True)
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
 
@@ -371,7 +371,7 @@ class Buffer(models.Model):
     type = models.CharField(maxlength=20, null=True, blank=True, choices=buffertypes, default='')
     location = models.ForeignKey(Location, null=True, blank=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
-    onhand = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text='current inventory')
+    onhand = models.DecimalField(max_digits=10, decimal_places=4, default=0.00, help_text='current inventory')
     minimum = models.ForeignKey('Calendar', null=True, blank=True, raw_id_admin=True,
       help_text='Calendar storing the safety stock profile')
     producing = models.ForeignKey('Operation', null=True, blank=True,
@@ -379,13 +379,13 @@ class Buffer(models.Model):
       help_text='Operation to replenish the buffer')
     # Extra fields for procurement buffers
     leadtime = models.DecimalField(max_digits=10, decimal_places=0, null=True, blank=True, help_text='Leadtime for supplier of a procure buffer')
-    min_inventory = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text='Inventory level that triggers replenishment of a procure buffer')
-    max_inventory = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text='Inventory level to which a procure buffer is replenished')
+    min_inventory = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text='Inventory level that triggers replenishment of a procure buffer')
+    max_inventory = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text='Inventory level to which a procure buffer is replenished')
     min_interval = models.DecimalField(max_digits=10, decimal_places=0, null=True, blank=True, help_text='Minimum time interval between replenishments of a procure buffer')
     max_interval = models.DecimalField(max_digits=10, decimal_places=0, null=True, blank=True, help_text='Maximum time interval between replenishments of a procure buffer')
-    size_minimum = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text='Minimum size of replenishments of a procure buffer')
-    size_multiple = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text='Replenishments of a procure buffer are a multiple of this quantity')
-    size_maximum =  models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text='Maximum size of replenishments of a procure buffer')
+    size_minimum = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text='Minimum size of replenishments of a procure buffer')
+    size_multiple = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text='Replenishments of a procure buffer are a multiple of this quantity')
+    size_maximum =  models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text='Maximum size of replenishments of a procure buffer')
     # Maintenance fields
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
 
@@ -477,7 +477,7 @@ class Flow(models.Model):
     type = models.CharField(maxlength=20, null=True, blank=True, choices=flowtypes,
       help_text='Consume/produce material at the start or the end of the operationplan',
       )
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, default='1.00')
+    quantity = models.DecimalField(max_digits=10, decimal_places=4, default='1.00')
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
 
     def __str__(self):
@@ -498,7 +498,7 @@ class Flow(models.Model):
 class Load(models.Model):
     operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True, related_name='loads')
     resource = models.ForeignKey(Resource, db_index=True, raw_id_admin=True, related_name='loads')
-    usagefactor = models.DecimalField(max_digits=10, decimal_places=2, default='1.00')
+    usagefactor = models.DecimalField(max_digits=10, decimal_places=4, default='1.00')
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
 
     def __str__(self):
@@ -518,7 +518,7 @@ class OperationPlan(models.Model):
     identifier = models.IntegerField(primary_key=True,
       help_text='Unique identifier of an operationplan')
     operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True)
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, default='1.00')
+    quantity = models.DecimalField(max_digits=10, decimal_places=4, default='1.00')
     startdate = models.DateTimeField(help_text='Start date')
     enddate = models.DateTimeField(help_text='End date')
     locked = models.BooleanField(default=True, radio_admin=True, help_text='Prevent or allow changes')
@@ -560,7 +560,7 @@ class Demand(models.Model):
     due = models.DateTimeField('due')
     operation = models.ForeignKey(Operation, null=True, blank=True,
       related_name='used_demand', raw_id_admin=True, help_text='Operation used to satisfy this demand')
-    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.DecimalField(max_digits=10, decimal_places=4)
     priority = models.PositiveIntegerField(default=2, choices=demandpriorities, radio_admin=True)
     policy = models.CharField(maxlength=25, null=True, blank=True, choices=demandpolicies,
       help_text='Choose whether to plan the demand short or late, and with single or multiple deliveries allowed')

@@ -3,9 +3,32 @@
 {% block extrahead %}{{ block.super }}
 <link rel="stylesheet" type="text/css" href="/static/styles.css" />
 <script type="text/javascript" src="/static/frepple.js"></script>
+<script type="text/javascript" src="/static/prototype.js"></script>
 <script type="text/javascript">
 		ContextMenu.setup();
 		ContextMenu.attach('resource', 'resourcecontext');
+
+    function onChange(input)
+    {
+    var x = [{entity: 'resource.maximum',
+      name: input.form.name,
+      startdate: input.name,
+      enddate: input.id,
+      value: parseFloat(input.value)}];
+    var payload =
+      '--7d79\r\nContent-Disposition: form-data; name="data";'
+      + 'filename="data"\r\nContent-Type: application/json\r\n\r\n'
+      + Object.toJSON(x)
+      + '\r\n\r\n--7d79--\r\n'
+    new Ajax.Request("/edit/", {
+        method: 'post',
+        contentType: 'multipart/form-data; boundary=7d79',
+        postBody: payload,
+        onSuccess: function(transport) {},
+        onFailure: function(transport) {}
+        });
+    }
+
 </script>
 {% endblock %}
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
@@ -21,12 +44,11 @@
 
 <table>
 <tr><th></th><th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr>
-
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
-<tr><td>{{j.resource|superlink:"resource"}}</td>
+<tr><form name="{{j.resource}}"><td>{{j.resource|superlink:"resource"}}</td>
 <td>Available<br/>Load<br/>Utilization</td>{% endif %}
-<td>{{j.available|floatformat:1}}<br/>{{j.load|floatformat:1}}<br/>{{j.utilization|floatformat:2}}</td>{% endfor %}
-</tr>{% endfor %}
+<td>{% if perms.change_resource %}<input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.available|floatformat:2}}" size="4" onchange="onChange(this)"/>{% else %}{{j.available|floatformat:1}}{% endif %}<br/>{{j.load|floatformat:1}}<br/>{{j.utilization|floatformat:2}}</td>{% endfor %}
+</form></tr>{% endfor %}
 </table>
 
 {% block pagination %} <p class="paginator">

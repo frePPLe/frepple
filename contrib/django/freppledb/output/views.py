@@ -385,7 +385,7 @@ def resourcequery(resource, bucket, startdate, enddate):
     filterstring2 = "and input_load.resource_id ='%s'" % resource
   cursor = connection.cursor()
   cursor.execute('''
-     select ddd.resource_id, ddd.bucket, min(ddd.available),
+     select ddd.resource_id, ddd.bucket, ddd.startdate, ddd.enddate, min(ddd.available),
        coalesce(sum(loaddata.usagefactor * %s), 0) as loading
      from (
        select dd.resource_id as resource_id, dd.bucket as bucket, dd.startdate as startdate, dd.enddate as enddate,
@@ -429,16 +429,20 @@ def resourcequery(resource, bucket, startdate, enddate):
   rowset = []
   for row in cursor.fetchall():
     if row[0] != prevres:
+      count = 0
       if prevres: resultset.append(rowset)
       rowset = []
       prevres = row[0]
-    if row[2] != 0: util = row[3] / row[2]
+    if row[5] != 0: util = row[4] / row[5]
     else: util = 0
+    count += 1
     rowset.append( {
       'resource': row[0],
       'bucket': row[1],
-      'load': row[3],
-      'available': row[2],
+      'startdate': row[2],
+      'enddate': row[3],
+      'available': row[4],
+      'load': row[5],
       'utilization': util,
       } )
   if prevres: resultset.append(rowset)

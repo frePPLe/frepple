@@ -59,12 +59,13 @@ class uploadjson:
             if not res.maximum:
               raise Exception('Resource "%s" has no max calendar' % res.name)
             # c) Update the calendar
+            start = datetime.strptime(i['startdate'],'%Y-%m-%d')
+            end = datetime.strptime(i['enddate'],'%Y-%m-%d')
             res.maximum.setvalue(
-              datetime.strptime(i['startdate'],'%Y-%m-%d'),
-              datetime.strptime(i['enddate'],'%Y-%m-%d'),
-              i['value'],
+              start,
+              end,
+              float(i['value']) / (end - start).days,
               user = request.user)
-            print i['name'], i['startdate'], i['enddate'], i['value']
           else:
             raise Exception('Unknown editing action "%s"' % entity)
         except Exception, e:

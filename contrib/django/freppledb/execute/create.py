@@ -32,6 +32,7 @@ from datetime import timedelta, datetime
 from django.db import connection
 from django.db import transaction
 from django.core.cache import cache
+from django.conf import settings
 
 # This function generates a random date
 startdate = datetime(2007,1,1)
@@ -45,6 +46,8 @@ def erase_model():
   This routine erase all model data from the database.
   '''
   cursor = connection.cursor()
+  if settings.DATABASE_ENGINE == 'sqlite3':
+    cursor.execute('PRAGMA synchronous = OFF')
   cursor.execute('delete from output_problem')
   transaction.commit()
   cursor.execute('delete from output_flowplan')
@@ -81,6 +84,9 @@ def erase_model():
   transaction.commit()
   cursor.execute('delete from input_customer')
   transaction.commit()
+  if settings.DATABASE_ENGINE == 'sqlite3':
+    # Shrink the database file
+    cursor.execute('vacuum')
 
 
 @transaction.commit_manually

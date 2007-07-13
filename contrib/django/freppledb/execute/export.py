@@ -24,6 +24,7 @@
 from time import time
 from django.db import connection
 from django.db import transaction
+from django.conf import settings
 import csv
 import frepple
 
@@ -72,8 +73,14 @@ def dumpfrepple():
   This function exports the data from the frepple memory into the database.
   '''
   global ROUNDING_DECIMALS
-  print "Emptying database plan tables..."
+  # Create a database connection
   cursor = connection.cursor()
+  if settings.DATABASE_ENGINE == 'sqlite3':
+    cursor.execute('PRAGMA temp_store = MEMORY;')
+    cursor.execute('PRAGMA synchronous = OFF')
+    cursor.execute('PRAGMA cache_size = 8000')
+
+  print "Emptying database plan tables..."
   starttime = time()
   cursor.execute('delete from output_problem')
   transaction.commit()

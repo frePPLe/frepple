@@ -1,7 +1,7 @@
 {% extends "admin/base.html" %}
 {% load i18n breadcrumbs %}
 
-{% block title %}FrePPLe{% if title %} - {{title}}{% endif %}{% endblock %}
+{% block title %}FrePPLe{% if title %} - {{title|escape}}{% endif %}{% endblock %}
 
 {% block branding %}
 <h1 id="site-name">FrePPLe {% version %}</h1>
@@ -13,3 +13,5 @@
 {% endblock %}
 
 {% block breadcrumbs %}<div class="breadcrumbs">{% crumbs %}</div>{% endblock %}
+
+{% block nav-global %}{% endblock %}

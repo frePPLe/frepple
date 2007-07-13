@@ -51,16 +51,19 @@ MANAGERS = ADMINS
 # 'mysql', 'sqlite3' or 'ado_mssql'.
 # Frepple is supports only 'postgresql_psycopg2', 'mysql' and 'sqlite3'
 DATABASE_ENGINE = 'sqlite3'
-if DATABASE_ENGINE == 'sqlite3':
-  DATABASE_NAME = os.path.join(FREPPLE_HOME,'frepple.sqlite')  # Path to sqlite3 database file
-else:
-  DATABASE_NAME = 'frepple'           # Database name for other databases
+DATABASE_NAME = 'frepple'           # Database name
 DATABASE_USER = 'frepple'             # Not used with sqlite3.
 DATABASE_PASSWORD = 'frepple'         # Not used with sqlite3.
 DATABASE_HOST = ''                    # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''                    # Set to empty string for default. Not used with sqlite3.
-# For mysql:
-#DATABASE_OPTIONS = {"init_command": "SET storage_engine=INNODB"}
+
+if DATABASE_ENGINE == 'sqlite3':
+  # extra settings for SQLITE
+  DATABASE_NAME = os.path.join(FREPPLE_HOME,'%s.sqlite' % DATABASE_NAME)  # Path to sqlite3 database file
+  DATABASE_OPTIONS = {"timeout": 10, "check_same_thread": False}
+elif DATABASE_ENGINE == 'mysql':
+  # extra settings for MYSQL
+  DATABASE_OPTIONS = {"init_command": "SET storage_engine=INNODB"}
 
 # Local time zone for this installation. All choices can be found here:
 # http://www.postgresql.org/docs/current/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE

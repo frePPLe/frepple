@@ -34,11 +34,13 @@ from django.db import transaction
 from django.core.cache import cache
 from django.conf import settings
 
+
 # This function generates a random date
 startdate = datetime(2007,1,1)
 def getDate():
   global startdate
   return startdate + timedelta(random.uniform(0,365))
+
 
 @transaction.commit_manually
 def erase_model():
@@ -92,6 +94,11 @@ def erase_model():
 @transaction.commit_manually
 def createDates():
   global startdate
+
+  # Performance improvement for sqlite during the bulky creation transactions
+  if settings.DATABASE_ENGINE == 'sqlite3':
+    connection.cursor().execute('PRAGMA synchronous=OFF')
+
   for i in range(365):
     # Loop through 1 year of daily buckets
     curdate = startdate + timedelta(i)
@@ -128,6 +135,10 @@ def create_model (cluster, demand, level, resource, utilization):
   global startdate
   random.seed(100) # Initialize random seed to get reproducible results
   cnt = 100000     # a counter for operationplan identifiers
+
+  # Performance improvement for sqlite during the bulky creation transactions
+  if settings.DATABASE_ENGINE == 'sqlite3':
+    connection.cursor().execute('PRAGMA synchronous=OFF')
 
   # Dates
   print "Creating dates..."

@@ -130,33 +130,20 @@ def getBuckets(request, bucket=None, start=None, end=None):
   return (bucket,start,end,res)
 
 
-def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_context=None):
+def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_context=None, countmethod=None):
     global ON_EACH_SIDE
     global ON_ENDS
     global PAGINATE_BY
-    (bucket,start,end,bucketlist) = getBuckets(request)
 
-    # Look up the data in the cache
-    parameters = request.GET.copy()
-    parameters.__setitem__('page', 0)
-    objectlist = None
-    if entity is None:
-      key = (request.path,bucket,start,end)
-      objectlist = cache.get(key)
-    if not objectlist:
-      # Data not found in the cache, recompute
-      objectlist = querymethod(entity, bucket, start, end)
-      # Disabling the caching...
-      #if entity is None:
-      #  cache.set(key, objectlist, CACHE_SQL_QUERY * 60)
+    # Pick up the list of time buckets
+    (bucket,start,end,bucketlist) = getBuckets(request)
 
     # HTML output or CSV output?
     type = request.GET.get('type','html')
     if type == 'csv':
       # CSV output
-      (bucket,start,end,bucketlist) = getBuckets(request)
       c = RequestContext(request, {
-         'objectlist': objectlist,
+         'objectlist': querymethod(entity, bucket, start, end),
          'bucket': bucket,
          'startdate': start,
          'enddate': end,
@@ -167,13 +154,23 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
       response.write(loader.get_template(csvtemplate).render(c))
       return response
 
+    # Update the request url parameters
+    parameters = request.GET.copy()
+    parameters.__setitem__('page', 0)
+
+    # Calculate the content of the page
     page = int(request.GET.get('page', '1'))
-    paginator = ObjectPaginator(objectlist, PAGINATE_BY, 1)
-    try: results = paginator.get_page(page - 1)
-    except InvalidPage: raise Http404
-    page_htmls = []
+    if countmethod:
+      paginator = ObjectPaginator(countmethod, PAGINATE_BY, 1)
+      try: results = querymethod(entity, bucket, start, end, first=paginator.first_on_page, last=paginator.last_on_page)
+      except InvalidPage: raise Http404
+    else:
+      paginator = ObjectPaginator(querymethod(entity, bucket, start, end), PAGINATE_BY, 1)
+      try: results = paginator.get_page(page - 1)
+      except InvalidPage: raise Http404
 
     # If there are less than 10 pages, show them all
+    page_htmls = []
     if paginator.pages <= 10:
       for n in range(1,paginator.pages+1):
         parameters.__setitem__('page', n)
@@ -248,7 +245,7 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
     return render_to_response(htmltemplate,  context, context_instance=RequestContext(request))
 
 
-def bufferquery(buffer, bucket, startdate, enddate):
+def bufferquery(buffer, bucket, startdate, enddate, first=0, last=None):
       if buffer is None:
         filterstring1 = ''
         filterstring2 = ''
@@ -308,10 +305,10 @@ def bufferreport(request, buffer=None):
      extra = {'title': 'Inventory report for %s' % buffer, 'reset_crumbs': False}
    else:
      extra = {'title': 'Inventory report', 'reset_crumbs': True}
-   return BucketedView(request, buffer, bufferquery, 'buffer.html', 'buffer.csv', extra)
+   return BucketedView(request, buffer, bufferquery, 'buffer.html', 'buffer.csv', extra, countmethod=Buffer.objects)
 
 
-def demandquery(item, bucket, startdate, enddate):
+def demandquery(item, bucket, startdate, enddate, first=0, last=None):
       if item is None:
         filterstring1 = ''
         filterstring2 = ''
@@ -373,10 +370,10 @@ def demandreport(request, item=None):
      extra = {'title': 'Demand report for %s' % item, 'reset_crumbs': False}
    else:
      extra = {'title': 'Demand report', 'reset_crumbs': True}
-   return BucketedView(request, item, demandquery, 'demand.html', 'demand.csv', extra)
+   return BucketedView(request, item, demandquery, 'demand.html', 'demand.csv', extra, countmethod=Item.objects)
 
 
-def resourcequery(resource, bucket, startdate, enddate):
+def resourcequery(resource, bucket, startdate, enddate, first=0, last=None):
   if resource is None:
     filterstring1 = ''
     filterstring2 = ''
@@ -455,10 +452,10 @@ def resourcereport(request, resource=None):
      extra = {'title': 'Resource report for %s' % resource, 'reset_crumbs': False}
    else:
      extra = {'title': 'Resource report', 'reset_crumbs': True}
-   return BucketedView(request, resource, resourcequery, 'resource.html', 'resource.csv', extra)
+   return BucketedView(request, resource, resourcequery, 'resource.html', 'resource.csv', extra, countmethod=Resource.objects)
 
 
-def operationquery(operation, bucket, startdate, enddate):
+def operationquery(operation, bucket, startdate, enddate, first=0, last=None):
       if operation is None:
         filterstring1 = ''
         filterstring2 = ''
@@ -510,7 +507,7 @@ def operationreport(request, operation=None):
      extra = {'title': 'Operation report for %s' % operation, 'reset_crumbs': False}
    else:
      extra = {'title': 'Operation report', 'reset_crumbs': True}
-   return BucketedView(request, operation, operationquery, 'operation.html', 'operation.csv', extra)
+   return BucketedView(request, operation, operationquery, 'operation.html', 'operation.csv', extra, countmethod=Operation.objects)
 
 
 class pathreport:

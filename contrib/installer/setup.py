@@ -38,12 +38,21 @@ djangodirectory = django.__path__[0]
 freppledirectory = freppledb.__path__[0]
 
 # Define what is to be included and excluded
-packages = ['django', 'freppledb', 'email', 'cherrypy.wsgiserver', ]
+packages = [# Required for django standalone deployment
+            'django', 'freppledb', 'email', 'cherrypy.wsgiserver',
+            # Added to package a more complete python library with frepple
+            'ftplib', 'poplib', 'imaplib', 'telnetlib', 'xmlrpclib',
+            'gzip', 'bz2','zipfile', 'tarfile', 'SimpleXMLRPCServer',
+           ]
 includes = ['django.contrib.auth',
             'django.contrib.sessions',
             'django.contrib.sites',
            ]
-excludes = ['MySQLdb', 'MySQLdb.constants', 'MySQLdb.converters', 'psycopg2',]
+excludes = ['MySQLdb', 'MySQLdb.constants',
+            'MySQLdb.converters', 'psycopg2',
+            'pydoc',
+            'Tkinter', 'tcl', 'Tkconstants',
+            ]
 ignores = [# Not using docutils
            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
            # Not using MySQL
@@ -83,6 +92,8 @@ ignores = [# Not using docutils
            'IPython',
            # Not sure where django references these...
            'crypt',
+           # Not using SSL
+           'OpenSSL',
            # Not needed to include frepple's python interface
            'frepple',
            ]

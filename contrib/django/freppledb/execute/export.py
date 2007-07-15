@@ -25,6 +25,7 @@ from time import time
 from django.db import connection
 from django.db import transaction
 from django.conf import settings
+
 import csv
 import frepple
 
@@ -157,3 +158,7 @@ def dumpfrepple():
   transaction.commit()
   cursor.execute("select count(*) from output_loadplan")
   print 'Exported %d loadplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+
+  print "Analyzing database tables..."
+  if settings.DATABASE_ENGINE == 'sqlite3':
+    cursor.execute("analyze")

@@ -33,6 +33,12 @@ from datetime import date, datetime
 
 
 class uploadjson:
+  '''
+  This class allows us to process json-formatted post requests.
+
+  The current implementation is only temporary until a more generic REST interface
+  becomes available in Django: see http://code.google.com/p/django-rest-interface/
+  '''
   @staticmethod
   @staff_member_required
   def post(request):

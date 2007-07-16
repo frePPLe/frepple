@@ -1,6 +1,4 @@
 {% extends "admin/base_site.html" %}
-
-
 {% block nav-global %}
 {% load breadcrumbs %}
 {% get_models from output as modelsOut %}
@@ -32,8 +30,7 @@
 >User</a>
 </div>
 
-<!-- Main menus. -->
-
+<!-- input menu -->
 {% if modelsIn %}
 <div id="inputMenu" class="menu" onmouseover="menuMouseover(event)">
 {% for m in modelsIn %}
@@ -41,6 +38,7 @@
 </div>
 {% endif %}
 
+<!-- output menu -->
 <div id="outputMenu" class="menu"
      onmouseover="menuMouseover(event)">
 <a class="menuItem" href="/buffer/">Inventory Plan</a>
@@ -56,6 +54,7 @@
 {% endif %}
 </div>
 
+<!-- execute menu -->
 {% if perms.execute %}
 <div id="toolsMenu" class="menu"
      onmouseover="menuMouseover(event)">
@@ -63,6 +62,7 @@
 </div>
 {% endif %}
 
+<!-- user menu -->
 <div id="userMenu" class="menu">
 {% if request.user.is_authenticated %}
 <a class="menuItem" href="/admin/logout">Logout</a>
@@ -73,8 +73,7 @@
 {% endif %}
 </div>
 
-<!-- Output sub menus. -->
-
+<!-- output sub menus. -->
 {% if modelsOut %}
 <div id="rawOutputMenu" class="menu"
      onmouseover="menuMouseover(event)">

@@ -148,7 +148,7 @@ def create_model (cluster, demand, level, resource, utilization):
   print "Creating plan..."
   try:
     p = Plan.objects.all()[0]
-    p.current = startdate
+    p.currentdate = startdate
     p.save()
   except:
     # No plan exists yet

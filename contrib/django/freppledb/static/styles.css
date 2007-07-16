@@ -1,26 +1,26 @@
 /* Style for the context menu. */
 div.ContextMenu {
-	display: none;
-	position: absolute;
-	list-style-type: none;
+  display: none;
+  position: absolute;
+  list-style-type: none;
 }
 
 /* Style for links in the context menu. */
 div.ContextMenu a {
-	display: block;
+  display: block;
   width: 100px;
-	padding: 3px 10px 3px 10px;
-	text-decoration: none;
-	font-family: "MS Sans Serif", Arial, sans-serif;
-	color: black;
-	background: #cccccc;
+  padding: 3px 10px 3px 10px;
+  text-decoration: none;
+  font-family: "MS Sans Serif", Arial, sans-serif;
+  color: black;
+  background: #cccccc;
 }
 
 /* Style when hovering over links in the context menus. */
 div.ContextMenu a:hover {
-	text-decoration: none;
-	color: white;
-	background: #417690;
+  text-decoration: none;
+  color: white;
+  background: #417690;
 }
 
 a {
@@ -87,7 +87,6 @@ a {
   position: relative;
   text-decoration: none;
   top: 0px;
-  /*z-index: 998;*/
 }
 
 #header div.menuBar a.menuButton:hover {
@@ -100,6 +99,15 @@ a {
   background-color: #a0a0a0;
 }
 
+#header {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+
 #header div.menu {
   background-color: #cccccc;
   left: 0px;
@@ -107,7 +115,6 @@ a {
   position: absolute;
   top: 0px;
   visibility: hidden;
-  z-index: 10000;
 }
 
 #header div.menu a.menuItem {

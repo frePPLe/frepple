@@ -50,7 +50,7 @@ def loadfrepple():
   # Plan (limited to the first one only)
   print 'Import plan...'
   x = [ header ]
-  cursor.execute("SELECT current, name, description FROM input_plan")
+  cursor.execute("SELECT currentdate, name, description FROM input_plan")
   d = cursor.fetchone()
   if not d: raise ValueError('Missing a record in the plan table')
   i, j, k = d

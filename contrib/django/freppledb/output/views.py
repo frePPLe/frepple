@@ -67,11 +67,11 @@ def getBuckets(request, bucket=None, start=None, end=None):
       except:
         try: start = request.user.get_profile().startdate
         except: pass
-        if not start: start = Plan.objects.all()[0].current.date()
+        if not start: start = Plan.objects.all()[0].currentdate.date()
     else:
       try: start = request.user.get_profile().startdate
       except: pass
-      if not start: start = Plan.objects.all()[0].current.date()
+      if not start: start = Plan.objects.all()[0].currentdate.date()
   if not end:
     end = request.GET.get('end')
     if end:

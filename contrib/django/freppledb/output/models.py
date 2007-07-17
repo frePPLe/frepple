@@ -86,8 +86,8 @@ class LoadPlan(models.Model):
     operation = models.ForeignKey(Operation, related_name='loadplans', db_index=True, raw_id_admin=True)
     operationplan = models.ForeignKey(OperationPlan, related_name='loadplans', raw_id_admin=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4)
-    datetime = models.DateTimeField()
-    date = models.DateField(db_index=True)
+    loaddatetime = models.DateTimeField('datetime')
+    loaddate = models.DateField('date', db_index=True)
     onhand = models.DecimalField(max_digits=15, decimal_places=4)
     maximum = models.DecimalField(max_digits=15, decimal_places=4)
 
@@ -95,7 +95,7 @@ class LoadPlan(models.Model):
         return self.resource.name + ' ' + str(self.date)
 
     class Admin:
-        list_display = ('resource', 'operation', 'quantity', 'date', 'onhand', 'maximum', 'operationplan')
+        list_display = ('resource', 'operation', 'quantity', 'loaddate', 'onhand', 'maximum', 'operationplan')
         list_per_page = LIST_PER_PAGE
 
     class Meta:
@@ -112,15 +112,15 @@ class FlowPlan(models.Model):
     operation = models.ForeignKey(Operation, related_name='flowplans', db_index=True, raw_id_admin=True)
     operationplan = models.ForeignKey(OperationPlan, related_name='flowplans', raw_id_admin=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4)
-    datetime = models.DateTimeField()
-    date = models.DateField(db_index=True)
+    flowdatetime = models.DateTimeField('datetime')
+    flowdate = models.DateField('date', db_index=True)
     onhand = models.DecimalField(max_digits=15, decimal_places=4)
 
     def __str__(self):
         return self.thebuffer.name + str(self.date)
 
     class Admin:
-        list_display = ('thebuffer', 'operation', 'quantity', 'date', 'onhand', 'operationplan')
+        list_display = ('thebuffer', 'operation', 'quantity', 'flowdate', 'onhand', 'operationplan')
         list_per_page = LIST_PER_PAGE
 
     class Meta:

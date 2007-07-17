@@ -266,9 +266,9 @@ def bufferquery(buffer, bucket, startdate, enddate, offset=0, limit=None):
           from output_flowplan,
                input_dates,
                (select name from input_buffer %s order by name %s) as input_buffer
-          where output_flowplan.date = input_dates.day
-          and output_flowplan.date >= '%s'
-          and output_flowplan.date < '%s'
+          where output_flowplan.flowdate = input_dates.day
+          and output_flowplan.flowdate >= '%s'
+          and output_flowplan.flowdate < '%s'
           and thebuffer_id = input_buffer.name
           group by thebuffer_id, %s
         ) data

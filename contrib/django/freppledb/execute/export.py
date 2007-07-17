@@ -129,7 +129,7 @@ def dumpfrepple():
   for i in frepple.buffer():
     cursor.executemany(
       "insert into output_flowplan \
-      (operationplan_id,operation_id,thebuffer_id,quantity,date,datetime, \
+      (operationplan_id,operation_id,thebuffer_id,quantity,flowdate,flowdatetime, \
       onhand) \
       values (%s,%s,%s,%s,%s,%s,%s)",
       [(
@@ -147,8 +147,8 @@ def dumpfrepple():
   for i in frepple.resource():
     cursor.executemany(
       "insert into output_loadplan \
-      (operationplan_id,operation_id,resource_id,quantity,date, \
-      datetime,onhand,maximum) values (%s,%s,%s,%s,%s,%s,%s,%s)",
+      (operationplan_id,operation_id,resource_id,quantity,loaddate, \
+      loaddatetime,onhand,maximum) values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
          j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'],
          round(j['QUANTITY'],ROUNDING_DECIMALS), j['DATE'].date(), j['DATE'],

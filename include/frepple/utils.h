@@ -275,6 +275,12 @@ class Environment
       */
     static DECLARE_EXPORT int processors;
 
+    /** A file where output is directed to. */
+    static DECLARE_EXPORT ofstream log;
+
+    /** The name of the log file. */
+    static DECLARE_EXPORT string logfilename;
+
   public:
     /** Return the home directory. */
     static const string getHomeDirectory() {return home;}
@@ -310,6 +316,15 @@ class Environment
 
     /** Updates the number of processors available on your machine. */
     static void setProcessors(int i) {if (i>=1) processors = i;}
+
+    /** Returns the name of the logfile. */
+    static const string& getLogFile() {return logfilename;}
+
+    /** Updates the filename for logging error messages and warnings.
+      * The file is also opened for writing and the standard output and
+      * standard error output streams are redirected to it.
+      */
+    static DECLARE_EXPORT void setLogFile(string x);
 };
 
 

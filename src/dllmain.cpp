@@ -153,7 +153,7 @@ DECLARE_EXPORT(void) FreppleExit()
 {
   // Shut down the fepple executable, or the application that loaded frepple
   // as a dynamic library
-  Plan::instance().setLogFile(""); // Close the log file
+  Environment::setLogFile(""); // Close the log file
   std::exit(EXIT_SUCCESS);
 }
 

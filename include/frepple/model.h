@@ -3193,12 +3193,6 @@ class Plan : public Plannable
     /** A getDescription of this plan. */
     string descr;
 
-    /** A file where output is directed to. */
-    ofstream log;
-
-    /** The name of the log file. */
-    string logfilename;
-
     /** Pointer to the singleton plan object. */
     static DECLARE_EXPORT Plan* thePlan;
 
@@ -3243,15 +3237,6 @@ class Plan : public Plannable
     /** Updates the description of the plan. */
     void setDescription(const string& str) {descr = str;}
 
-    /** Returns the name of the logfile. */
-    const string& getLogFile() const {return logfilename;}
-
-    /** Updates the filename for logging error messages and warnings.
-      * The file is also opened for writing and the standard output and
-      * standard error output streams are redirected to it.
-      */
-    DECLARE_EXPORT void setLogFile(string x);
-
     /** This method writes out the model information. Depending on a flag in
       * the XMLOutput object a complete model is written, or only the
       * dynamic plan information.
@@ -3269,7 +3254,7 @@ class Plan : public Plannable
     const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaCategory metadata;
     virtual size_t getSize() const
-      {return sizeof(Plan) + name.size() + descr.size() + logfilename.size();}
+      {return sizeof(Plan) + name.size() + descr.size();}
 };
 
 

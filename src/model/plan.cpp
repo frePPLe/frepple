@@ -39,7 +39,7 @@ DECLARE_EXPORT Plan* Plan::thePlan;
 DECLARE_EXPORT Plan::~Plan()
 {
   // Closing the logfile
-  Plan::setLogFile("");
+  Environment::setLogFile("");
 
   // Clear the pointer to this singleton object
   thePlan = NULL;
@@ -70,7 +70,7 @@ DECLARE_EXPORT void Plan::writeElement (XMLOutput *o, const XMLtag& tag, mode m)
   o->writeElement(Tags::tag_name, name);
   o->writeElement(Tags::tag_description, descr);
   o->writeElement(Tags::tag_current, cur_Date);
-  o->writeElement(Tags::tag_logfile, logfilename);
+  o->writeElement(Tags::tag_logfile, Environment::getLogFile());
   Plannable::writeElement(o, tag);
 
   // Persist all categories
@@ -89,7 +89,7 @@ DECLARE_EXPORT void Plan::endElement (XMLInput& pIn, XMLElement& pElement)
   else if (pElement.isA(Tags::tag_name))
     pElement >> name;
   else if (pElement.isA(Tags::tag_logfile))
-    setLogFile(pElement.getString());
+    Environment::setLogFile(pElement.getString());
   else
     Plannable::endElement(pIn, pElement);
 }
@@ -118,33 +118,6 @@ DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
         pIn.IgnoreElement();
     }
   }
-}
-
-
-DECLARE_EXPORT void Plan::setLogFile(string x)
-{
-  // Close an eventual existing log file.
-  if (!logfilename.empty()) cout << "Closing plan on " << Date::now() << endl;
-  if (log) log.close();
-
-  // Pick up the file name
-  logfilename = x;
-
-  // No new logfile specified
-  if (x.empty()) return;
-
-  // Open the file
-  log.open(x.c_str(), ios::out);
-  if (log.bad())
-    // The log file could not be opened
-    throw RuntimeException("Could not open log file '" + x + "'");
-
-  // Redirect the standard output file.
-  cout.rdbuf(log.rdbuf());
-
-  // Print a nice header
-  cout << "Start logging Frepple " << PACKAGE_VERSION << " ("
-  << __DATE__ << ") on " << Date::now() << endl;
 }
 
 

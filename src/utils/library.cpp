@@ -59,6 +59,12 @@ DECLARE_EXPORT string Environment::home("[unspecified]");
 // The value initialized here is overwritten in the library initialization.
 DECLARE_EXPORT int Environment::processors = 2;
 
+// Output logging stream
+DECLARE_EXPORT ofstream Environment::log;
+
+// Name of the log file
+DECLARE_EXPORT string Environment::logfilename;
+
 // Hash value computed only once
 DECLARE_EXPORT const hashtype MetaCategory::defaultHash(XMLtag::hash("DEFAULT"));
 
@@ -110,6 +116,33 @@ DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
     // an infinite loop!
     if (c) startpos += strlen(c);
   }
+}
+
+
+DECLARE_EXPORT void Environment::setLogFile(string x)
+{
+  // Close an eventual existing log file.
+  if (!logfilename.empty()) cout << "Closing plan on " << Date::now() << endl;
+  if (log) log.close();
+
+  // Pick up the file name
+  logfilename = x;
+
+  // No new logfile specified
+  if (x.empty()) return;
+
+  // Open the file
+  log.open(x.c_str(), ios::out);
+  if (log.bad())
+    // The log file could not be opened
+    throw RuntimeException("Could not open log file '" + x + "'");
+
+  // Redirect the standard output file.
+  cout.rdbuf(log.rdbuf());
+
+  // Print a nice header
+  cout << "Start logging Frepple " << PACKAGE_VERSION << " ("
+  << __DATE__ << ") on " << Date::now() << endl;
 }
 
 

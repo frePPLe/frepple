@@ -92,7 +92,7 @@ class LoadPlan(models.Model):
     maximum = models.DecimalField(max_digits=15, decimal_places=4)
 
     def __str__(self):
-        return self.resource.name + ' ' + str(self.date)
+        return self.resource.name + ' ' + str(self.loaddatetime)
 
     class Admin:
         list_display = ('resource', 'operation', 'quantity', 'loaddate', 'onhand', 'maximum', 'operationplan')
@@ -117,7 +117,7 @@ class FlowPlan(models.Model):
     onhand = models.DecimalField(max_digits=15, decimal_places=4)
 
     def __str__(self):
-        return self.thebuffer.name + str(self.date)
+        return self.thebuffer.name + str(self.flowdatetime)
 
     class Admin:
         list_display = ('thebuffer', 'operation', 'quantity', 'flowdate', 'onhand', 'operationplan')

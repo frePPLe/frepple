@@ -398,13 +398,11 @@ def demandreport(request, item=None):
       {'title': 'Demand report for %s' % item, 'reset_crumbs': False}
       )
   else:
-    x = BucketedView(request, item, demandquery,
+    return BucketedView(request, item, demandquery,
       'demand.html', 'demand.csv',
       {'title': 'Demand report', 'reset_crumbs': True},
       countmethod=Demand.objects.values('item').distinct()
       )
-    for y in connection.queries: print y['sql'], y['time']
-    return x
 
 
 def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):

@@ -32,7 +32,7 @@ from django.conf import settings
 
 from datetime import date, datetime
 
-from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item
+from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item, Demand
 from freppledb.dbutils import *
 
 # Parameter settings
@@ -154,11 +154,11 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
   # Calculate the content of the page
   page = int(request.GET.get('p', '0'))
   if countmethod:
-    paginator = ObjectPaginator(countmethod, PAGINATE_BY, 1)
+    paginator = ObjectPaginator(countmethod, PAGINATE_BY)
     try: results = querymethod(entity, bucket, start, end, offset=paginator.first_on_page(page)-1, limit=PAGINATE_BY)
     except InvalidPage: raise Http404
   else:
-    paginator = ObjectPaginator(querymethod(entity, bucket, start, end), PAGINATE_BY, 1)
+    paginator = ObjectPaginator(querymethod(entity, bucket, start, end), PAGINATE_BY)
     try: results = paginator.get_page(page)
     except InvalidPage: raise Http404
 
@@ -398,10 +398,13 @@ def demandreport(request, item=None):
       {'title': 'Demand report for %s' % item, 'reset_crumbs': False}
       )
   else:
-    return BucketedView(request, item, demandquery,
+    x = BucketedView(request, item, demandquery,
       'demand.html', 'demand.csv',
       {'title': 'Demand report', 'reset_crumbs': True},
-      countmethod=Item.objects)
+      countmethod=Demand.objects.values('item').distinct()
+      )
+    for y in connection.queries: print y['sql'], y['time']
+    return x
 
 
 def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):

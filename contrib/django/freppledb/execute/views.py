@@ -35,6 +35,7 @@ from django.db import models, transaction
 import os, os.path
 
 from freppledb.execute.create import erase_model, create_model
+from freppledb.execute.models import log
 
 
 @staff_member_required
@@ -51,10 +52,13 @@ def rundb(request):
     if action == 'erase':
       # Erase the database contents
       try:
+        log(category='ERASE', message='Start erasing the database').save()
         erase_model()
         request.user.message_set.create(message='Erased the database')
+        log(category='ERASE', message='Finished erasing the database').save()
       except Exception, e:
         request.user.message_set.create(message='Failure during database erasing:%s' % e)
+        log(category='RUN', message='Failed erasing the database: %s' % e).save()
 
       # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
       return HttpResponseRedirect('/execute/execute.html')
@@ -78,10 +82,17 @@ def rundb(request):
       else:
         # Execute
         try:
+          log(
+            category = 'CREATE',
+            message = 'Start creating sample model with parameters: %d %d %d %d %d' \
+              % (clusters, demands, levels, resources, utilization)
+            ).save()
           create_model(clusters, demands, levels, resources, utilization)
           request.user.message_set.create(message='Created sample model in the database')
+          log(category='CREATE', message='Finished creating sample model').save()
         except Exception, e:
-          request.user.message_set.create(message='Failure during sample model creation:%s' % e)
+          request.user.message_set.create(message='Failure during sample model creation: %s' % e)
+          log(category='CREATE', message='Failed creating sample model: %s' % e).save()
 
       # Show the main screen again
       # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
@@ -107,6 +118,7 @@ def runfrepple(request):
     if action == 'run':
       # Run frepple
       try:
+        log(category='RUN', message='Start running frepple').save()
         os.environ['PLAN_TYPE'] = type
         os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\','\\\\')
         os.environ['FREPPLE_APP'] = settings.FREPPLE_APP.replace('\\','\\\\')
@@ -122,8 +134,10 @@ def runfrepple(request):
         ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'execute','commands.xml'))
         if ret: raise Exception('exit code of the batch run is %d' % ret)
         request.user.message_set.create(message='Successfully ran frepple')
+        log(category='RUN', message='Finished running frepple').save()
       except Exception, e:
-        request.user.message_set.create(message='Failure when running frepple:%s' % e)
+        request.user.message_set.create(message='Failure when running frepple: %s' % e)
+        log(category='RUN', message='Failed running frepple: %s' % e).save()
       # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
       return HttpResponseRedirect('/execute/execute.html')
 
@@ -235,16 +249,29 @@ def upload(request):
 
     # Parse the uploaded file
     try:
+        log(
+          category='LOAD',
+          message='Start loading %s data file "%s"' % (entity, request.FILES['csv_file']['filename'])
+          ).save()
         warnings = parseUpload(request.FILES['csv_file']['content'], entity)
         if len(warnings) > 0:
           request.user.message_set.create(message='Uploaded file processed with warnings')
           for i in warnings: request.user.message_set.create(message=i)
         else:
           request.user.message_set.create(message='Uploaded file processed')
+        log(
+          category='LOAD',
+          message='Finished loading %s data file "%s"' % (entity, request.FILES['csv_file']['filename'])
+          ).save()
         return HttpResponseRedirect('/execute/execute.html')
     except TypeError, e:
         request.user.message_set.create(message='Error while parsing %s' % e)
+        log(
+          category='LOAD',
+          message='Failed loading %s data file "%s": %s' % (entity, request.FILES['csv_file']['filename'], e)
+          ).save()
         return HttpResponseRedirect('/execute/execute.html')
+
 
 @staff_member_required
 def fixture(request):
@@ -266,9 +293,12 @@ def fixture(request):
     # The fixture loading code is unfornately such that no exceptions are
     # or any error status returned when it fails...
     try:
+        log(category='LOAD', message='Start loading fixture "%s"' % fixture).save()
         load_data([fixture], verbosity=1)
         request.user.message_set.create(message='Loaded fixture')
+        log(category='LOAD', message='Finished loading fixture "%s"' % fixture).save()
         return HttpResponseRedirect('/execute/execute.html')
     except Exception, e:
         request.user.message_set.create(message='Error while loading fixture: %s' % e)
+        log(category='LOAD', message='Failed loading fixture "%s": %s' % (fixture,e)).save()
         return HttpResponseRedirect('/execute/execute.html')

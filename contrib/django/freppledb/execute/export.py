@@ -31,7 +31,8 @@ import frepple
 
 # Exported numbers are rounded to this number of decimals after the comma.
 # This number should match the model definitions in models.py
-ROUNDING_DECIMALS = 2
+ROUNDING_DECIMALS = 4
+
 
 def dumpfrepple_files():
   '''

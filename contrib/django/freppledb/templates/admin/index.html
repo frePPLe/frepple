@@ -11,7 +11,7 @@
 
 {% get_admin_app_list as app_list %}
 {% if app_list %}
-    {% for app in app_list %}
+    {% for app in app_list %}{%ifnotequal app.name "Execute"%}
         <div class="module">
         <table summary="{% blocktrans with app.name as name %}Models available in the {{ name }} application.{% endblocktrans %}">
         <caption>{% blocktrans with app.name as name %}{{ name }}{% endblocktrans %}</caption>
@@ -32,7 +32,7 @@
         {% endfor %}
         </table>
         </div>
-    {% endfor %}
+    {% endifnotequal %}{% endfor %}
 {% else %}
     <p>{% trans "You don't have permission to edit anything." %}</p>
 {% endif %}
@@ -43,6 +43,10 @@
 <caption>Run</caption>
 <tr>
 <th scope="row"><a href="/execute/execute.html">Execute</a></th>
+<td>&nbsp;</td><td>&nbsp;</td>
+</tr>
+<tr>
+<th scope="row"><a href="/admin/execute/log/">Log</a></th>
 <td>&nbsp;</td><td>&nbsp;</td>
 </tr>
 </table>

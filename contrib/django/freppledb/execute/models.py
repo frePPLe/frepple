@@ -23,16 +23,34 @@
 
 from django.db import models
 
-class Execute(models.Model):
-    name = name = models.CharField(maxlength=20,primary_key=True)
-    def __str__(self):
-        return str(self.name)
-    #class Admin:
-    #    pass
-    class Meta:
-        permissions = (
-            ("run_frepple", "Can run frepple"),
-            ("run_db","Can run database procedures"),
-            ("upload_csv","Can upload csv data files"),
-            )
+# This variable defines the number of records to show in the admin lists.
+LIST_PER_PAGE = 100
 
+
+class log(models.Model):
+  # Database fields
+  category = models.CharField(maxlength=10, db_index=True)
+  message = models.TextField(maxlength=200)
+  lastmodified = models.DateTimeField(auto_now=True, editable=False, db_index=True)
+
+  def __str__(self):
+    return self.lastmodified + ' - ' + self.category
+
+  def getTime(self):
+    return str(self.lastmodified)
+  getTime.short_description = 'Date and time'
+
+  class Admin:
+      list_display = ('getTime', 'category', 'message')
+      search_fields = ['message']
+      list_filter = ['category', 'lastmodified']
+      list_per_page = LIST_PER_PAGE
+      date_hierarchy = 'lastmodified'
+
+  class Meta:
+      permissions = (
+          ("run_frepple", "Can run frepple"),
+          ("run_db","Can run database procedures"),
+          ("upload_csv","Can upload csv data files"),
+         )
+      verbose_name_plural = 'Log'  # Multiple logs entries are still called "a log"

@@ -62,14 +62,13 @@ elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
 
   def sql_overlap(s1, e1, s2, e2):
     return '(extract(epoch from ' \
-      '(case %s>%s when true then %s else %s end) - ' \
-      '(case %s>%s when true then %s else %s end)) / 86400)' % (e1,e2,e2,e1,s1,s2,s1,s2)
+      '(least(%s,%s) - greatest(%s%s))) / 86400)' % (e1,e2,s1,s2)
 
   def sql_max(d1, d2):
-    return "(case %s>%s when true then %s else %s end)" % (d1,d2,d1,d2)
+    return "greatest(%s,%s)" % (d1,d2)
 
   def sql_min(d1, d2):
-    return "(case %s>%s when true then %s else %s end)" % (d1,d2,d2,d1)
+    return "least(%s,%s)" % (d1,d2)
 
 # Functions for MYSQL
 elif settings.DATABASE_ENGINE == 'mysql':
@@ -78,15 +77,28 @@ elif settings.DATABASE_ENGINE == 'mysql':
     return 'datediff(%s,%s)' % (d1,d2)
 
   def sql_overlap(s1,e1,s2,e2):
-    return '(datediff( ' \
-      '(case %s>%s when true then %s else %s end), ' \
-      '(case %s>%s when true then %s else %s end) ))' % (e1,e2,e2,e1,s1,s2,s1,s2)
+    return 'datediff(least(%s,%s), greatest(%s%s))' % (e1,e2,s1,s2)
 
   def sql_max(d1, d2):
-    return "(case %s>%s when true then %s else %s end)" % (d1,d2,d1,d2)
+    return "greatest(%s,%s)" % (d1,d2)
 
   def sql_min(d1, d2):
-    return "(case %s>%s when true then %s else %s end)" % (d1,d2,d2,d1)
+    return "least(%s,%s)" % (d1,d2)
+
+# Functions for ORACLE
+elif settings.DATABASE_ENGINE == 'oracle':
+
+  def sql_datediff(d1,d2):
+    return '(%s - %s)' % (d1,d2)
+
+  def sql_overlap(s1,e1,s2,e2):
+    return '(least(%s,%s) - greatest(%s,%s))' % (e1,e2,s1,s2)
+
+  def sql_max(d1, d2):
+    return "greatest(%s,%s)" % (d1,d2)
+
+  def sql_min(d1, d2):
+    return "least(%s,%s)" % (d1,d2)
 
 else:
-  raise NameError('Unknown database type %s' % settings.DATABASE_ENGINE)
+  raise NameError('The %s database is not support by frePPLe' % settings.DATABASE_ENGINE)

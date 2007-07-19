@@ -21,8 +21,8 @@
 
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr id="{{j.operation}}"><td>{{j.operation|superlink:"operation"}}</td>
-<td>Quantity</td>{% endif %}
-<td>{{j.quantity|floatformat:1}}</td>{% endfor %}
+<td>Frozen&nbsp;quantity<br/>Total&nbsp;quantity</td>{% endif %}
+<td>{{j.frozen|floatformat:2}}<br/>{{j.total|floatformat:2}}</td>{% endfor %}
 </tr>{% endfor %}
 </table>
 

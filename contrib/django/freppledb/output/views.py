@@ -175,9 +175,9 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
       # Insert "smart" pagination links, so that there are always ON_ENDS
       # links at either end of the list of pages, and there are always
       # ON_EACH_SIDE links at either end of the "current page" link.
-      if page <= (1 + ON_ENDS + ON_EACH_SIDE):
+      if page <= (ON_ENDS + ON_EACH_SIDE):
           # 1 2 *3* 4 5 6 ... 99 100
-          for n in range(0, page + max(ON_EACH_SIDE, ON_ENDS)):
+          for n in range(0, page + max(ON_EACH_SIDE, ON_ENDS)+1):
             if n == page:
               page_htmls.append('<span class="this-page">%d</span>' % (page+1))
             else:
@@ -187,13 +187,13 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
           for n in range(paginator.pages - ON_EACH_SIDE, paginator.pages-1):
               parameters.__setitem__('p', n)
               page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
-      elif page > (paginator.pages - ON_EACH_SIDE - ON_ENDS - 2):
+      elif page >= (paginator.pages - ON_EACH_SIDE - ON_ENDS - 2):
           # 1 2 ... 95 96 97 *98* 99 100
           for n in range(0, ON_ENDS):
               parameters.__setitem__('p', n)
               page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
           page_htmls.append('...')
-          for n in range(page - max(ON_EACH_SIDE, ON_ENDS) - 1, paginator.pages - 1):
+          for n in range(page - max(ON_EACH_SIDE, ON_ENDS), paginator.pages - 1):
             if n == page:
               page_htmls.append('<span class="this-page">%d</span>' % (page+1))
             else:
@@ -205,7 +205,7 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
               parameters.__setitem__('p', n)
               page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, parameters.urlencode(),n+1))
           page_htmls.append('...')
-          for n in range(page - ON_EACH_SIDE - 1, page + ON_EACH_SIDE):
+          for n in range(page - ON_EACH_SIDE, page + ON_EACH_SIDE + 1):
             if n == page:
               page_htmls.append('<span class="this-page">%s</span>' % (page+1))
             elif n == '.':
@@ -511,7 +511,8 @@ def operationquery(operation, bucket, startdate, enddate, offset=0, limit=None):
   query = '''
     select combi.operation_id,
            combi.%s,
-           coalesce(data.quantity,0)
+           coalesce(data.frozen,0),
+           coalesce(data.total,0)
       from
        (select name as operation_id, d.%s as %s, d.start as start
         from (select name from input_operation %s order by name %s) as operations
@@ -520,7 +521,8 @@ def operationquery(operation, bucket, startdate, enddate, offset=0, limit=None):
        ) as combi
       left join
        (select operation_id, %s,
-          sum(quantity) as quantity
+          sum(quantity) as total,
+          sum(case locked when 1 then quantity else 0 end) as frozen
           from output_operationplan, input_dates,
             (select name from input_operation %s order by name %s) as operations
           where operations.name = output_operationplan.operation_id
@@ -548,7 +550,8 @@ def operationquery(operation, bucket, startdate, enddate, offset=0, limit=None):
     rowset.append( {
       'operation': row[0],
       'bucket': row[1],
-      'quantity': row[2],
+      'frozen': row[2],
+      'total': row[3],
       } )
   if prevoper: resultset.append(rowset)
   return resultset

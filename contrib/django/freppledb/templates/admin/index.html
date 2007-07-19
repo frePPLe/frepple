@@ -23,11 +23,13 @@
                 <th scope="row">{{ model.name|escape }}</th>
             {% endif %}
 
-            {% if model.perms.add %}
+            {%ifnotequal app.name "Output"%}{% if model.perms.add %}
                 <td><a href="{{ model.admin_url }}add/" class="addlink">{% trans 'Add' %}</a></td>
             {% else %}
                 <td>&nbsp;</td>
-            {% endif %}
+            {% endif %}{% else %}
+                <td>&nbsp;</td>
+            {% endifnotequal %}
             </tr>
         {% endfor %}
         </table>

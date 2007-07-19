@@ -84,14 +84,15 @@ def dumpfrepple():
 
   print "Emptying database plan tables..."
   starttime = time()
-  cursor.execute('delete from output_problem')
-  transaction.commit()
-  cursor.execute('delete from output_flowplan')
-  transaction.commit()
-  cursor.execute('delete from output_loadplan')
-  transaction.commit()
-  cursor.execute('delete from output_operationplan')
-  transaction.commit()
+  if settings.DATABASE_ENGINE == 'sqlite3':
+    delete = "delete from %s"
+  else:
+    delete = "truncate table %s"
+  for table in ['output_problem','output_flowplan',
+                'output_loadplan','output_operationplan',
+               ]:
+    cursor.execute(delete % table)
+    transaction.commit()
   print "Emptied plan tables in %.2f seconds" % (time() - starttime)
 
   print "Exporting problems..."

@@ -50,42 +50,20 @@ def erase_model():
   cursor = connection.cursor()
   if settings.DATABASE_ENGINE == 'sqlite3':
     cursor.execute('PRAGMA synchronous = OFF')
-  cursor.execute('delete from output_problem')
-  transaction.commit()
-  cursor.execute('delete from output_flowplan')
-  transaction.commit()
-  cursor.execute('delete from output_loadplan')
-  transaction.commit()
-  cursor.execute('delete from output_operationplan')
-  transaction.commit()
-  cursor.execute('delete from input_dates')
-  transaction.commit()
-  cursor.execute('delete from input_demand')
-  transaction.commit()
-  cursor.execute('delete from input_flow')
-  transaction.commit()
-  cursor.execute('delete from input_load')
-  transaction.commit()
-  cursor.execute('delete from input_buffer')
-  transaction.commit()
-  cursor.execute('delete from input_resource')
-  transaction.commit()
-  cursor.execute('delete from input_operationplan')
-  transaction.commit()
-  cursor.execute('delete from input_item')
-  transaction.commit()
-  cursor.execute('delete from input_suboperation')
-  transaction.commit()
-  cursor.execute('delete from input_operation')
-  transaction.commit()
-  cursor.execute('delete from input_location')
-  transaction.commit()
-  cursor.execute('delete from input_bucket')
-  transaction.commit()
-  cursor.execute('delete from input_calendar')
-  transaction.commit()
-  cursor.execute('delete from input_customer')
-  transaction.commit()
+    delete = "delete from %s"
+  else:
+    delete = "truncate table %s"
+  for table in [
+    'output_problem','output_flowplan',
+    'output_loadplan','output_operationplan',
+    'input_dates','input_demand','input_flow',
+    'input_load','input_buffer','input_resource',
+    'input_operationplan','input_item','input_suboperation',
+    'input_operation','input_location','input_bucket',
+    'input_calendar','input_customer'
+    ]:
+    cursor.execute(delete % table)
+    transaction.commit()
   if settings.DATABASE_ENGINE == 'sqlite3':
     # Shrink the database file
     cursor.execute('vacuum')

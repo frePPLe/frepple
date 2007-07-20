@@ -35,9 +35,9 @@
 !define XERCESDLL "xerces-c_2_7.dll"
 
 ; Main definitions
-!define PRODUCT_NAME "Frepple"
+!define PRODUCT_NAME "frePPLe"
 !define PRODUCT_VERSION "0.3.0"
-!define PRODUCT_PUBLISHER "Frepple"
+!define PRODUCT_PUBLISHER "frePPLe"
 !define PRODUCT_WEB_SITE "http://www.frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME} ${PRODUCT_VERSION}"

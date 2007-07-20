@@ -26,7 +26,7 @@
 import os, os.path, re, sys
 FREPPLE_HOME = os.environ['FREPPLE_HOME']
 FREPPLE_APP = os.path.normpath(os.path.join(FREPPLE_HOME,'..','contrib','django','freppledb'))
-FREPPLE_VERSION = '0.3.0-beta'
+FREPPLE_VERSION = '0.3.0'
 
 # Determing whether Django runs as a standalone application or is deployed
 # on a web server
@@ -47,8 +47,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-# Django supports the following database engines: 'postgresql_psycopg2', 'postgresql',
-# 'mysql', 'sqlite3' or 'ado_mssql'.
+# Django supports the following database engines: 'oracle', 'postgresql_psycopg2',
+# 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
 # Frepple is supports only 'postgresql_psycopg2', 'mysql' and 'sqlite3'
 DATABASE_ENGINE = 'sqlite3'
 DATABASE_NAME = 'frepple'           # Database name
@@ -58,11 +58,12 @@ DATABASE_HOST = ''                    # Set to empty string for localhost. Not u
 DATABASE_PORT = ''                    # Set to empty string for default. Not used with sqlite3.
 
 if DATABASE_ENGINE == 'sqlite3':
-  # extra settings for SQLITE
-  DATABASE_NAME = os.path.join(FREPPLE_HOME,'%s.sqlite' % DATABASE_NAME)  # Path to sqlite3 database file
+  # Extra settings for SQLITE
+  # Path to sqlite3 database file
+  DATABASE_NAME = os.path.join(FREPPLE_HOME,'%s.sqlite' % DATABASE_NAME)
   DATABASE_OPTIONS = {"timeout": 10, "check_same_thread": False}
 elif DATABASE_ENGINE == 'mysql':
-  # extra settings for MYSQL
+  # Extra settings for MYSQL
   DATABASE_OPTIONS = {"init_command": "SET storage_engine=INNODB"}
 
 # Local time zone for this installation. All choices can be found here:
@@ -155,8 +156,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True    # Whether sessions expire when a user 
 #EMAIL_HOST_USER #if required authentication to host
 #EMAIL_HOST_PASSWORD #if required auth.
 
-CACHE_BACKEND = 'locmem:///'
-
 # Directory from which we allow server include
 ALLOWED_INCLUDE_ROOTS = (FREPPLE_HOME)
 
@@ -170,5 +169,5 @@ AUTH_PROFILE_MODULE = 'user.Preferences'
 
 # IP address of the machine you are browsing from. When logging in from this
 # machine additional debugging statements can be shown.
-INTERNAL_IPS = ( '192.168.3.1' )
+INTERNAL_IPS = ( '192.168.0.3' )
 

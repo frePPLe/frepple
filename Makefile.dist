@@ -149,7 +149,7 @@ old3 = 0
 old4 =
 new1 = 0
 new2 = 3
-new3 = 0
+new3 = 1
 new4 = -beta
 set_release:
 	for i in "configure.in" "doc/menu.html" "contrib/rpm/frepple.spec" "include/frepple/utils.h" "contrib/django/freppledb/settings.py"; do \

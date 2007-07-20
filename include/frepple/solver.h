@@ -189,7 +189,7 @@ class MRPSolver : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    MRPSolver(const string& n) : Solver(n) {}
+    MRPSolver(const string& n) : Solver(n), constrts(0) {}
 
     /** Destructor. */
     virtual ~MRPSolver() {}

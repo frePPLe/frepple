@@ -30,7 +30,7 @@
     <!-- Content -->
     <div id="content" class="{% block coltype %}colM{% endblock %}">
         {% block pretitle %}{% endblock %}
-        {% block content_title %}{% if title %}<h1>{{ title|escape }}</h1>{% endif %}{% endblock %}
+        {% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1>{{ title|escape }}</h1>{% endif %}</div>{% endblock %}
         {% block content %}
         {% block object-tools %}{% endblock %}
         {{ content }}

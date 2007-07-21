@@ -1,3 +1,8 @@
+/* Style for the actions items at the top of a report */
+div.tools {
+  float: right;
+}
+
 /* Style for the context menu. */
 div.ContextMenu {
   display: none;

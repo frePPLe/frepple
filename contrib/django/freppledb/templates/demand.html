@@ -8,8 +8,9 @@
 {% endblock %}
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
 {% block coltype %}colM{% endblock %}
-{% block bodyclass %}dashboard{% endblock %}
-{% block content %}
+{% block tools %}<div class="tools">
+<a href="/demand/?type=csv" title="Export as CSV"><img src="/static/csv.png"/></a>
+</div>{% endblock %}{% block content %}
 <div id="content-main">
 
 <div id="itemcontext" class="ContextMenu">

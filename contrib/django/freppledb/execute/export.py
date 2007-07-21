@@ -84,7 +84,7 @@ def dumpfrepple():
 
   print "Emptying database plan tables..."
   starttime = time()
-  if settings.DATABASE_ENGINE == 'sqlite3':
+  if settings.DATABASE_ENGINE in ['sqlite3','postgresql_psycopg2']:
     delete = "delete from %s"
   else:
     delete = "truncate table %s"

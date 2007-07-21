@@ -22,7 +22,7 @@
 
 
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
-<tr id="{{j.item}}"><td>{{j.item|superlink:"item"}}</td>
+<tr class="{% cycle row1,row2 %}" id="{{j.item}}"><td>{{j.item|superlink:"item"}}</td>
 <td>Demand<br/>Supply<br/>Backlog</td>{% endif %}
 <td>{{j.requested|floatformat:1}}<br/>{{j.supplied|floatformat:1}}<br/>{{j.backlog|floatformat:1}}</td>{% endfor %}
 </tr>{% endfor %}

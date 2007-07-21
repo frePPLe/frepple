@@ -21,7 +21,7 @@
 <tr><th></th><th></th>{% for j in bucketlist %} <th style="white-space: nowrap;">{{j.name}}</th> {% endfor %}</tr>
 
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
-<tr><td>{{j.buffer|superlink:"buffer"}}</td>
+<tr class="{% cycle row1,row2 %}"><td>{{j.buffer|superlink:"buffer"}}</td>
 <td>Start&nbsp;Inventory<br/>Consumed<br/>Produced<br/>End&nbsp;inventory</td>{% endif %}
 <td>{{j.startoh|floatformat:1}}<br/>{{j.consumed|floatformat:1}}<br/>{{j.produced|floatformat:1}}<br/>{{j.endoh|floatformat:1}}</td>{% endfor %}
 </tr>{% endfor %}

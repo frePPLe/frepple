@@ -45,7 +45,7 @@
 <table>
 <tr><th></th><th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr>
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
-<tr><form name="{{j.resource}}"><td>{{j.resource|superlink:"resource"}}</td>
+<tr class="{% cycle row1,row2 %}"><form name="{{j.resource}}"><td>{{j.resource|superlink:"resource"}}</td>
 <td>Available<br/>Load<br/>Utilization</td>{% endif %}
 <td>{% if perms.change_resource %}<input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.available|floatformat:2}}" size="4" onchange="onChange(this)"/>{% else %}{{j.available|floatformat:1}}{% endif %}<br/>{{j.load|floatformat:1}}<br/>{{j.utilization|floatformat:2}}</td>{% endfor %}
 </form></tr>{% endfor %}

@@ -81,7 +81,7 @@ using namespace std;
 #include <config.h>
 #else
 // Define the version for (windows) compilers that don't use autoconf
-#define PACKAGE_VERSION "0.3.0"
+#define PACKAGE_VERSION "0.3.1-beta"
 #endif
 
 // Header for multithreading

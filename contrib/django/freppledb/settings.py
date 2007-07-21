@@ -26,7 +26,7 @@
 import os, os.path, re, sys
 FREPPLE_HOME = os.environ['FREPPLE_HOME']
 FREPPLE_APP = os.path.normpath(os.path.join(FREPPLE_HOME,'..','contrib','django','freppledb'))
-FREPPLE_VERSION = '0.3.0'
+FREPPLE_VERSION = '0.3.1-beta'
 
 # Determing whether Django runs as a standalone application or is deployed
 # on a web server

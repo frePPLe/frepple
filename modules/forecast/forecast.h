@@ -53,7 +53,7 @@
   *    
   *  - A solver for <b>netting orders from the forecast</b>.<br>
   *    As customer orders are being received they need to be deducted from
-  *    the forecast to avoid double-counting it.<br>
+  *    the forecast to avoid double-counting demand.<br>
   *    The netting solver will for each order search for a matching forecast
   *    and reduce the remaining net quantity of the forecast.
   *
@@ -160,9 +160,10 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
 /** @brief This class represents a bucketized demand signal.
   *
-  * The forecast object defines the item and priority of the demands.
-  * A void calendar then defines the buckets.
-  * The class basically works as an interface for a hierarchy of demands.
+  * The forecast object defines the item and priority of the demands.<br>
+  * A void calendar then defines the buckets.<br>
+  * The class basically works as an interface for a hierarchy of demands, where the
+  * lower level demands represent forecasting time buckets.
   */
 class Forecast : public Demand
 {
@@ -349,7 +350,20 @@ class Forecast : public Demand
 
 /** @brief Implementation of a forecast netting algorithm. 
   *
-  * @todo
+  * As customer orders are being received they need to be deducted from
+  * the forecast to avoid double-counting demand.<br>
+  * The netting solver will for each order:
+  * - <b>First search for a matching forecast.</b><br>
+  *   A matching forecast has the same item and customer as the order.<br>
+  *   If no match is found at this level, a match is tried at higher levels
+  *   of the customer and item.<br>
+  *   Ultimately a match is tried with a empty customer or item field.
+  * - <b>Next, the remaining net quantity of the forecast is decreased.</b><br>
+  *   The forecast bucket to be reduced is the one where the order is due.<br>
+  *   If the net quantity is already completely depleted in that bucket
+  *   the solver will look in earlier and later buckets. The parameters
+  *   Net_Early and Net_Late control the limits for the search in the
+  *   time dimension.
   */
 class ForecastSolver : public Solver
 {
@@ -359,8 +373,8 @@ class ForecastSolver : public Solver
     /** Constructor. */
     ForecastSolver(const string& n) : Solver(n), automatic(false) {}
 
-    /** Behavior of this solver method:
-      *  - <br>
+    /** This method handles the search for a matching forecast, followed
+      * by decreasing the net forecast.
       */
     void solve(const Demand*, void* = NULL);
 

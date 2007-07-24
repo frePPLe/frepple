@@ -29,7 +29,7 @@
 #ifndef FREPPLE_INTERFACE_H
 #define FREPPLE_INTERFACE_H
 
-#include <string>
+#include <string>   // @todo this is a C++ header file, making this file unusable from C
 
 // For a windows shared library we use the C calling convention: __stdcall.
 // Only such functions can be called from VBA...

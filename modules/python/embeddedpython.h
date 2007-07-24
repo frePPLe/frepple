@@ -85,7 +85,7 @@
   *   - class <b>frepple.operationplan</b>:<br>
   *     Implements an iterator for operationplans.
   *   - class <b>frepple.demand</b>:<br>
-  *     Implements an iterator for demand.
+  *     Implements an iterator for demand and its pegging.
   *   - class <b>frepple.buffer</b>:<br>
   *     Implements an iterator for buffer and its flowplans.
   *   - class <b>frepple.resource</b>:<br>
@@ -320,6 +320,22 @@ extern "C"
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
       static void define_type() { InfoType.tp_new = 0; }
       static PyObject* createFromResource(Resource*);
+  };
+
+
+  /** @brief This class exports demand pegging information to Python. */
+  struct PythonPegging
+  {
+    private:
+      PyObject_HEAD
+      PeggingIterator iter;
+      Demand* dem;
+    public:
+      static PyTypeObject InfoType;
+      static PyObject* next(PythonPegging* obj);
+      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
+      static void define_type() { InfoType.tp_new = 0; }
+      static PyObject* createFromDemand(Demand*);
   };
 
 

@@ -23,15 +23,12 @@
 
 from django.db import models
 from django.db.models import signals
-from datetime import date, datetime
 from django.http import HttpRequest
-from datetime import datetime
 from django.dispatch import dispatcher
 from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.contenttypes.models import ContentType
 
-import sys
-
+from datetime import date, datetime
 
 # The date format used by the frepple XML data.
 dateformat = '%Y-%m-%dT%H:%M:%S'
@@ -40,6 +37,7 @@ dateformat = '%Y-%m-%dT%H:%M:%S'
 LIST_PER_PAGE = 100
 
 CALENDARID = None
+
 
 class Plan(models.Model):
     # Database fields
@@ -57,6 +55,7 @@ class Plan(models.Model):
 
     class Meta:
         verbose_name_plural = 'Plan'  # There will only be 1 plan...
+        db_table = 'plan'
 
 
 class Dates(models.Model):
@@ -94,6 +93,7 @@ class Dates(models.Model):
     class Meta:
         verbose_name = 'Dates'  # There will only be multiple dates...
         verbose_name_plural = 'Dates'  # There will only be multiple dates...
+        db_table = 'dates'
 
 
 class Calendar(models.Model):
@@ -170,6 +170,9 @@ class Calendar(models.Model):
         list_per_page = LIST_PER_PAGE
         save_as = True
 
+    class Meta:
+        db_table = 'calendar'
+
 
 class Bucket(models.Model):
     # Database fields
@@ -186,6 +189,7 @@ class Bucket(models.Model):
 
     class Meta:
         ordering = ['startdate','name']
+        db_table = 'bucket'
 
     @staticmethod
     def updateEndDate(instance):
@@ -234,6 +238,9 @@ class Location(models.Model):
         list_per_page = LIST_PER_PAGE
         save_as = True
 
+    class Meta:
+        db_table = 'location'
+
 
 class Customer(models.Model):
     # Database fields
@@ -253,6 +260,9 @@ class Customer(models.Model):
         list_filter = ['category', 'subcategory']
         list_per_page = LIST_PER_PAGE
         save_as = True
+
+    class Meta:
+        db_table = 'customer'
 
 
 class Item(models.Model):
@@ -274,6 +284,9 @@ class Item(models.Model):
         list_filter = ['category', 'subcategory']
         list_per_page = LIST_PER_PAGE
         save_as = True
+
+    class Meta:
+        db_table = 'item'
 
 
 class Operation(models.Model):
@@ -329,6 +342,9 @@ class Operation(models.Model):
                }),
         )
 
+    class Meta:
+        db_table = 'operation'
+
 
 class SubOperation(models.Model):
     ## Django bug: @todo
@@ -347,12 +363,13 @@ class SubOperation(models.Model):
           + "   " + str(self.priority) \
           + "   " + self.suboperation.name
 
-    class Meta:
-        ordering = ['operation','priority','suboperation']
-
     class Admin:
         list_display = ('operation','priority','suboperation')
         list_per_page = LIST_PER_PAGE
+
+    class Meta:
+        db_table = 'suboperation'
+        ordering = ['operation','priority','suboperation']
 
 
 class Buffer(models.Model):
@@ -426,6 +443,9 @@ class Buffer(models.Model):
         list_per_page = LIST_PER_PAGE
         save_as = True
 
+    class Meta:
+        db_table = 'buffer'
+
 
 class Resource(models.Model):
     # Types of resources
@@ -463,6 +483,9 @@ class Resource(models.Model):
         list_per_page = LIST_PER_PAGE
         save_as = True
 
+    class Meta:
+        db_table = 'resource'
+
 
 class Flow(models.Model):
     # Types of flow
@@ -492,6 +515,7 @@ class Flow(models.Model):
         list_display_links = ('operation', 'thebuffer')
 
     class Meta:
+        db_table = 'flow'
         unique_together = (('operation','thebuffer'),)
 
 
@@ -511,6 +535,7 @@ class Load(models.Model):
         save_as = True
 
     class Meta:
+        db_table = 'load'
         unique_together = (('operation','resource'),)
 
 
@@ -532,6 +557,9 @@ class OperationPlan(models.Model):
         list_display = ('identifier', 'operation', 'startdate', 'enddate', 'quantity', 'locked', 'lastmodified')
         list_per_page = LIST_PER_PAGE
         date_hierarchy = 'startdate'
+
+    class Meta:
+        db_table = 'operationplan'
 
 
 class Demand(models.Model):
@@ -583,3 +611,6 @@ class Demand(models.Model):
         list_filter = ['due','priority','category','subcategory']
         list_per_page = LIST_PER_PAGE
         save_as = True
+
+    class Meta:
+        db_table = 'demand'

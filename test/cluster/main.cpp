@@ -55,7 +55,7 @@ void check(char* entity, string name, int cluster, int level)
   int expectedlevel = atoi(expectedlevelstring.c_str());
   if (expectedlevel != level)
   {
-    cout << " Error for " << entity << " '" << name << "': Level "
+    logger << " Error for " << entity << " '" << name << "': Level "
     << level << ", expected level " << expectedlevel << endl;
     exitcode = EXIT_FAILURE;
   }
@@ -87,7 +87,7 @@ void check(char* entity, string name, int cluster, int level)
     int mapped_cluster = i->second;
     if (expectedcluster != mapped_cluster)
     {
-      cout << " Error for " << entity << " '" << name << "': Cluster "
+      logger << " Error for " << entity << " '" << name << "': Cluster "
       << mapped_cluster << ", expected cluster " << expectedcluster << endl;
       exitcode = EXIT_FAILURE;
     }
@@ -134,10 +134,10 @@ int main (int argc, char *argv[])
   }
   catch (...)
   {
-    cout << "Error: Caught an exception in main routine:" <<  endl;
+    logger << "Error: Caught an exception in main routine:" <<  endl;
     try { throw; }
-    catch (exception& e) {cout << "  " << e.what() << endl;}
-    catch (...) {cout << "  Unknown type" << endl;}
+    catch (exception& e) {logger << "  " << e.what() << endl;}
+    catch (...) {logger << "  Unknown type" << endl;}
     FreppleExit();
     return EXIT_FAILURE;
   }

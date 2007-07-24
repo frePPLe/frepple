@@ -67,7 +67,7 @@ DECLARE_EXPORT void CommandSolve::execute()
 
   // Start message
   if (getVerbose())
-    cout << "Started running the solver '" << s->getName()
+    logger << "Started running the solver '" << s->getName()
     << "' at " << Date::now() << endl;
   Timer t;
 
@@ -76,7 +76,7 @@ DECLARE_EXPORT void CommandSolve::execute()
 
   // Ending message
   if (getVerbose())
-    cout << "Finished running the solver '" << s->getName()
+    logger << "Finished running the solver '" << s->getName()
     << "' at " << Date::now()  << " : " << t << endl;
 }
 
@@ -121,7 +121,7 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
 {
   // Message
   if (getVerbose())
-    cout << "Started reading model from file '" << filename
+    logger << "Started reading model from file '" << filename
     << "' at " << Date::now() << endl;
   Timer t;
 
@@ -154,7 +154,7 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
 
   // Message
   if (getVerbose())
-    cout << "Finished reading model at " << Date::now()  << " : " << t << endl;
+    logger << "Finished reading model at " << Date::now()  << " : " << t << endl;
 }
 
 
@@ -177,7 +177,7 @@ DECLARE_EXPORT void CommandReadXMLString::execute()
 {
   // Message
   if (getVerbose())
-    cout << "Started reading model from string at " << Date::now() << endl;
+    logger << "Started reading model from string at " << Date::now() << endl;
   Timer t;
 
   // Note: Reading the data can throw exceptions...
@@ -191,7 +191,7 @@ DECLARE_EXPORT void CommandReadXMLString::execute()
 
   // Message
   if (getVerbose())
-    cout << "Finished reading model at " << Date::now()  << " : " << t << endl;
+    logger << "Finished reading model at " << Date::now()  << " : " << t << endl;
 }
 
 
@@ -225,7 +225,7 @@ DECLARE_EXPORT void CommandSave::execute()
 {
   // Message
   if (getVerbose())
-    cout << "Start saving model to file '" << filename
+    logger << "Start saving model to file '" << filename
     << "' at " << Date::now() << endl;
   Timer t;
 
@@ -241,7 +241,7 @@ DECLARE_EXPORT void CommandSave::execute()
 
   // Message
   if (getVerbose())
-    cout << "Finished saving " << o.countObjects()
+    logger << "Finished saving " << o.countObjects()
     << " objects at " << Date::now() << " : " << t << endl;
 }
 
@@ -264,7 +264,7 @@ DECLARE_EXPORT void CommandSavePlan::execute()
 {
   // Message
   if (getVerbose())
-    cout << "Start saving plan to file '" << getFileName()
+    logger << "Start saving plan to file '" << getFileName()
     << "' at " << Date::now() << endl;
   Timer t;
 
@@ -372,7 +372,7 @@ DECLARE_EXPORT void CommandSavePlan::execute()
 
   // Message
   if (getVerbose())
-    cout << "Finished saving plan at " << Date::now() << " : " << t << endl;
+    logger << "Finished saving plan at " << Date::now() << " : " << t << endl;
 }
 
 
@@ -454,9 +454,9 @@ DECLARE_EXPORT void CommandErase::execute()
   // Starting message
   if (getVerbose())
     if (deleteStaticModel)
-      cout << "Start model erase command at " << Date::now() << endl;
+      logger << "Start model erase command at " << Date::now() << endl;
     else
-      cout << "Start plan erase command at " << Date::now() << endl;
+      logger << "Start plan erase command at " << Date::now() << endl;
   Timer t;
 
   if (deleteStaticModel)
@@ -483,7 +483,7 @@ DECLARE_EXPORT void CommandErase::execute()
 
   // Ending message
   if (getVerbose())
-    cout << "Finished erase command at " << Date::now()
+    logger << "Finished erase command at " << Date::now()
     << " : " << t << endl;
 }
 

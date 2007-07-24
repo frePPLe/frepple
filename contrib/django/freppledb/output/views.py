@@ -48,7 +48,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
   '''
   This function gets passed a name of a bucketization.
   It returns a list of buckets.
-  The data are retrieved from the database table input_dates, and are
+  The data are retrieved from the database table dates, and are
   stored in the django memory cache for performance reasons
   '''
   global datelist
@@ -97,7 +97,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
     cursor = connection.cursor()
     cursor.execute('''
       select %s, min(day), max(day)
-      from input_dates
+      from dates
       group by %s
       order by min(day)''' % (bucket,bucket))
     # Compute the data to store in memory
@@ -255,21 +255,21 @@ def bufferquery(buffer, bucket, startdate, enddate, offset=0, limit=None):
       from
        (select name as thebuffer_id, onhand, d.%s as %s, d.start as start
         from
-          (select name, onhand from input_buffer %s order by name %s) as input_buffer
-        inner join (select %s, min(day) as start from input_dates where day >= '%s'
+          (select name, onhand from buffer %s order by name %s) as buffer
+        inner join (select %s, min(day) as start from dates where day >= '%s'
           and day < '%s' group by %s) d on 1=1
        ) as combi
       left join
        (select thebuffer_id, %s,
           sum(%s) as produced,
           -sum(%s) as consumed
-          from output_flowplan,
-               input_dates,
-               (select name from input_buffer %s order by name %s) as input_buffer
-          where output_flowplan.flowdate = input_dates.day
-          and output_flowplan.flowdate >= '%s'
-          and output_flowplan.flowdate < '%s'
-          and thebuffer_id = input_buffer.name
+          from out_flowplan,
+               dates,
+               (select name from buffer %s order by name %s) as buffer
+          where out_flowplan.flowdate = dates.day
+          and out_flowplan.flowdate >= '%s'
+          and out_flowplan.flowdate < '%s'
+          and thebuffer_id = buffer.name
           group by thebuffer_id, %s
         ) data
       on combi.thebuffer_id = data.thebuffer_id
@@ -333,28 +333,28 @@ def demandquery(item, bucket, startdate, enddate, offset=0, limit=None):
              coalesce(data2.planned,0)
       from
        (select item_id, d.%s as %s, d.start as start
-        from (select distinct item_id from input_demand %s order by item_id %s) as items
-        inner join (select %s, min(day) as start from input_dates where day >= '%s'
+        from (select distinct item_id from demand %s order by item_id %s) as items
+        inner join (select %s, min(day) as start from dates where day >= '%s'
           and day < '%s' group by %s) d on 1=1
        ) as combi
       -- Planned quantity
       left join
-       (select items.item_id as item_id, %s, sum(output_operationplan.quantity) as planned
-        from output_operationplan, input_dates as d, input_demand as inp,
-          (select distinct item_id from input_demand %s order by item_id %s) as items
-        where output_operationplan.enddate = d.day
-        and output_operationplan.demand_id = inp.name
+       (select items.item_id as item_id, %s, sum(out_operationplan.quantity) as planned
+        from out_operationplan, dates as d, demand as inp,
+          (select distinct item_id from demand %s order by item_id %s) as items
+        where out_operationplan.enddate = d.day
+        and out_operationplan.demand_id = inp.name
         and inp.item_id = items.item_id
-        and output_operationplan.enddate >= '%s'
-        and output_operationplan.enddate < '%s'
+        and out_operationplan.enddate >= '%s'
+        and out_operationplan.enddate < '%s'
         group by items.item_id, %s) data2
       on combi.item_id = data2.item_id
       and combi.%s = data2.%s
       -- Requested quantity
       left join
        (select items.item_id as item_id, %s, sum(inp.quantity) as demand
-            from input_dates as d, input_demand as inp,
-              (select distinct item_id from input_demand %s order by item_id %s) as items
+            from dates as d, demand as inp,
+              (select distinct item_id from demand %s order by item_id %s) as items
             where date(inp.due) = d.day
             and inp.due >= '%s'
             and inp.due < '%s'
@@ -422,32 +422,32 @@ def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
             coalesce(sum(loaddata.usagefactor * %s), 0) as loading
      from (
        select dd.resource_id as resource_id, dd.bucket as bucket, dd.startdate as startdate, dd.enddate as enddate,
-         coalesce(sum(input_bucket.value * %s), 0) as available
+         coalesce(sum(bucket.value * %s), 0) as available
        from (
          select name as resource_id, maximum_id, d.bucket as bucket, d.startdate as startdate, d.enddate as enddate
-         from (select name, maximum_id from input_resource %s order by name %s) as resources
+         from (select name, maximum_id from resource %s order by name %s) as resources
          inner join (
            -- todo the next line doesnt work for daily buckets
            select %s as bucket, %s_start as startdate, %s_end as enddate
-           from input_dates
+           from dates
            where day >= '%s' and day < '%s'
            group by %s, startdate, enddate
            ) d on 1=1
          ) dd
-       left join input_bucket
-       on input_bucket.calendar_id = dd.maximum_id
-          and dd.startdate <= input_bucket.enddate
-          and dd.enddate >= input_bucket.startdate
+       left join bucket
+       on bucket.calendar_id = dd.maximum_id
+          and dd.startdate <= bucket.enddate
+          and dd.enddate >= bucket.startdate
 		   group by dd.resource_id, dd.bucket, dd.startdate, dd.enddate
 	     ) ddd
      left join (
-       select input_load.resource_id as resource_id, startdatetime, enddatetime, input_load.usagefactor as usagefactor
-       from output_operationplan, input_load,
-         (select name, maximum_id from input_resource %s order by name %s) as resources
-       where output_operationplan.operation_id = input_load.operation_id
-          and output_operationplan.enddate >= '%s'
-          and output_operationplan.startdate < '%s'
-          and resources.name = input_load.resource_id
+       select load.resource_id as resource_id, startdatetime, enddatetime, load.usagefactor as usagefactor
+       from out_operationplan, load,
+         (select name, maximum_id from resource %s order by name %s) as resources
+       where out_operationplan.operation_id = load.operation_id
+          and out_operationplan.enddate >= '%s'
+          and out_operationplan.startdate < '%s'
+          and resources.name = load.resource_id
        ) loaddata
      on loaddata.resource_id = ddd.resource_id
        and ddd.startdate <= loaddata.enddatetime
@@ -455,7 +455,7 @@ def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
      group by ddd.resource_id, ddd.bucket, ddd.startdate, ddd.enddate
      order by ddd.resource_id, ddd.startdate
      ''' % (sql_overlap('loaddata.startdatetime','loaddata.enddatetime','ddd.startdate','ddd.enddate'),
-     sql_overlap('input_bucket.startdate','input_bucket.enddate','dd.startdate','dd.enddate'),
+     sql_overlap('bucket.startdate','bucket.enddate','dd.startdate','dd.enddate'),
      filterstring,limitstring,bucket,bucket,bucket,startdate,enddate,bucket,filterstring,
      limitstring,startdate,enddate)
   if resource: cursor.execute(query, (resource,resource))
@@ -515,18 +515,18 @@ def operationquery(operation, bucket, startdate, enddate, offset=0, limit=None):
            coalesce(data.total,0)
       from
        (select name as operation_id, d.%s as %s, d.start as start
-        from (select name from input_operation %s order by name %s) as operations
-        inner join (select %s, min(day) as start from input_dates where day >= '%s'
+        from (select name from operation %s order by name %s) as operations
+        inner join (select %s, min(day) as start from dates where day >= '%s'
           and day < '%s' group by %s) d on 1=1
        ) as combi
       left join
        (select operation_id, %s,
           sum(quantity) as total,
           sum(case locked when 1 then quantity else 0 end) as frozen
-          from output_operationplan, input_dates,
-            (select name from input_operation %s order by name %s) as operations
-          where operations.name = output_operationplan.operation_id
-          and output_operationplan.startdate = input_dates.day
+          from out_operationplan, dates,
+            (select name from operation %s order by name %s) as operations
+          where operations.name = out_operationplan.operation_id
+          and out_operationplan.startdate = dates.day
           and startdate >= '%s'
           and enddate < '%s'
           group by operation_id, %s

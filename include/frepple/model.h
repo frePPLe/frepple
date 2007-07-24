@@ -4506,10 +4506,22 @@ class PeggingIterator
 {
   public:
     /** Constructor. */
-    PeggingIterator(const FlowPlan* e, bool b = true) : depth_then_width(b)
+    DECLARE_EXPORT PeggingIterator(const Demand* e);
+
+    /** Constructor. */
+    PeggingIterator(const FlowPlan* e)
     {
       if (e)
         stack.push(state(0,e->getQuantity()>0 ? e->getQuantity() : -e->getQuantity(),1,e));
+    }
+
+    /** Assignment operator. */    
+    PeggingIterator& operator=(const FlowPlan* x) 
+    {
+      while (!stack.empty()) stack.pop();
+      if (x)
+        stack.push(state(0,x->getQuantity()>0 ? x->getQuantity() : -x->getQuantity(),1,x));
+      return *this;
     }
 
     /** Returns a reference to the flowplan pointed to by the iterator. */
@@ -4570,6 +4582,13 @@ class PeggingIterator
       */
     operator bool () const { return !stack.empty(); }
 
+    /** This is useful when initializing an iterator in uninitialized memory. */
+    void reset() 
+    {
+      statestack x;
+      memcpy(&stack,&x,sizeof(statestack));
+    }
+
   private:
     /** This structure is used to keep track of the iterator states during the
       * iteration. */
@@ -4600,24 +4619,16 @@ class PeggingIterator
         {return fl==s.fl && level==s.level;}
     };
 
+    typedef stack < state > statestack;
+
     /** A stack is used to store the iterator state. */
-    stack < state > stack;
+    statestack stack;
 
     /** Update the stack. */
     DECLARE_EXPORT void updateStack(short, double, double, const FlowPlan*, bool = true);
 
     /** Auxilary function to make recursive code possible. */
-    DECLARE_EXPORT void pushflowplans(const OperationPlan*, bool, short);
-
-    /** In case there are multiple paths, we can either:
-      *  - follow one path complete to its end and then follow the others.
-      *    This is called depth-first" and is the default behavior.
-      *  - iterate through each alternative and only then follow each path
-      *    further. This is called "width-first". It is a slightly less
-      *    efficient way to navigate the pegging structures.
-      * @todo The second method is currently NOT implemented yet!
-      */
-    bool depth_then_width;
+    DECLARE_EXPORT void pushflowplans(const OperationPlan*, bool, short, double, double, bool=false);
 
     /** Convenience variable during stack updates.
       * Depending on the value of this field, either the top element in the
@@ -4638,8 +4649,9 @@ class OperationPlan::FlowPlanIterator
     FlowPlan* curflowplan;
     FlowPlanIterator(FlowPlan* b) : curflowplan(b) {}
   public:
+    FlowPlanIterator(const FlowPlanIterator& b) {curflowplan = b.curflowplan;}
     bool operator != (const FlowPlanIterator &b) const
-      {return b.curflowplan != curflowplan;}
+    {return b.curflowplan != curflowplan;}
     bool operator == (const FlowPlanIterator &b) const
       {return b.curflowplan == curflowplan;}
     FlowPlanIterator& operator++()
@@ -4678,6 +4690,7 @@ class OperationPlan::LoadPlanIterator
     LoadPlan* curloadplan;
     LoadPlanIterator(LoadPlan* b) : curloadplan(b) {}
   public:
+    LoadPlanIterator(const LoadPlanIterator& b) {curloadplan = b.curloadplan;}
     bool operator != (const LoadPlanIterator &b) const
       {return b.curloadplan != curloadplan;}
     bool operator == (const LoadPlanIterator &b) const

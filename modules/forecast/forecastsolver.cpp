@@ -102,7 +102,7 @@ void ForecastSolver::solve(const Demand* l, void* v)
 
   // Message
   if (getVerbose())
-    cout << "  Netting of demand '" << l << "'  ('" << l->getCustomer() 
+    logger << "  Netting of demand '" << l << "'  ('" << l->getCustomer() 
       << "','" << l->getItem() << "', '" << l->getDeliveryOperation() 
       << "'): " << l->getDue() << ", " << l->getQuantity() << endl;
 
@@ -113,7 +113,7 @@ void ForecastSolver::solve(const Demand* l, void* v)
   {
     // Message
     if (getVerbose())
-      cout << "     No matching forecast available" << endl;
+      logger << "     No matching forecast available" << endl;
     return;
   }
 
@@ -144,12 +144,12 @@ void ForecastSolver::solve(void *v)
     catch (...)
     {
       // Error message
-      cout << "Error: Caught an exception while netting demand '"
+      logger << "Error: Caught an exception while netting demand '"
         << (*i)->getName() << "':" << endl;
       try { throw; }
-      catch (bad_exception&) {cout << "  bad exception" << endl;}
-      catch (exception& e) {cout << "  " << e.what() << endl;}
-      catch (...) {cout << "  Unknown type" << endl;}
+      catch (bad_exception&) {logger << "  bad exception" << endl;}
+      catch (exception& e) {logger << "  " << e.what() << endl;}
+      catch (...) {logger << "  Unknown type" << endl;}
     }
 
   // Re-enable the automated netting if it was enabled
@@ -248,7 +248,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
       {
         // Partially consume a bucket
         if (getVerbose())
-          cout << "    Consuming " << remaining << " from bucket " 
+          logger << "    Consuming " << remaining << " from bucket " 
             << curbucket->timebucket << " (" << available 
             << " available)" << endl;
         curbucket->setQuantity(static_cast<float>(available - remaining));
@@ -259,7 +259,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
       {
         // Completely consume a bucket
         if (getVerbose()) 
-          cout << "    Consuming " << available << " from bucket " 
+          logger << "    Consuming " << available << " from bucket " 
             << curbucket->timebucket << " (" << available 
             << " available)" << endl;
         remaining -= available;
@@ -268,7 +268,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
       }
     }
     else if (getVerbose())
-      cout << "    Nothing available in bucket " 
+      logger << "    Nothing available in bucket " 
         << curbucket->timebucket << endl;
 
     // Find the next forecast bucket
@@ -289,7 +289,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
 
   // Quantity for which no bucket is found
   if (remaining > 0 && getVerbose())
-    cout << "    Remains " << remaining << " that can't be netted" << endl;
+    logger << "    Remains " << remaining << " that can't be netted" << endl;
 
 }
 

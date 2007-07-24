@@ -27,6 +27,7 @@ from freppledb.input.models import Operation, Demand, Buffer, Resource
 # This variable defines the number of records to show in the admin lists.
 LIST_PER_PAGE = 100
 
+
 class OperationPlan(models.Model):
     # Database fields
     identifier = models.IntegerField(primary_key=True)
@@ -49,6 +50,7 @@ class OperationPlan(models.Model):
         date_hierarchy = 'startdate'
 
     class Meta:
+        db_table = 'out_operationplan'
         permissions = (("view_operationplan", "Can view operation plans"),)
         # Ordering is buggy :-(
         # Database sync expectes 'operation' and fails when it is set to 'operation_id'
@@ -76,6 +78,7 @@ class Problem(models.Model):
         list_per_page = LIST_PER_PAGE
 
     class Meta:
+        db_table = 'out_problem'
         permissions = (("view_problem", "Can view problems"),)
         ordering = ['startdatetime']
 
@@ -99,6 +102,7 @@ class LoadPlan(models.Model):
         list_per_page = LIST_PER_PAGE
 
     class Meta:
+        db_table = 'out_loadplan'
         permissions = (("view_loadplans", "Can view load plans"),)
         # Ordering is buggy :-(
         # Database sync expectes 'resource' and fails when it is set to 'resource_id'
@@ -124,8 +128,35 @@ class FlowPlan(models.Model):
         list_per_page = LIST_PER_PAGE
 
     class Meta:
+        db_table = 'out_flowplan'
         permissions = (("view_flowplans", "Can view flow plans"),)
         # Ordering is buggy :-(
         # Database sync expectes 'thebuffer' and fails when it is set to 'thebuffer_id'
         # Ordering requires 'thebuffer_id' and fails when it is set to 'thebuffer'
         #ordering = ['thebuffer_id','datetime']
+
+
+class DemandPegging(models.Model):
+    # Database fields
+    demand = models.ForeignKey(Demand, related_name='pegging', db_index=True, raw_id_admin=True)
+    depth = models.IntegerField()
+    operationplan = models.ForeignKey(OperationPlan, related_name='pegging', db_index=True, raw_id_admin=True, null=True)
+    buffer = models.ForeignKey(Buffer, related_name='pegging', db_index=True, raw_id_admin=True, null=True)
+    quantity = models.DecimalField(max_digits=15, decimal_places=4, default='0.00')
+    factor = models.DecimalField(max_digits=15, decimal_places=4, default='1.00')
+    pegged = models.BooleanField(default=True, radio_admin=True)
+    pegdate = models.DateTimeField()
+
+    def __str__(self):
+        return self.demand.name \
+          + ' - ' + str(self.depth) + ' - ' + str(self.operationplan or 'None') \
+          + ' - ' + self.buffer.name
+
+    class Admin:
+        list_display = ('demand', 'depth', 'operationplan', 'buffer',
+          'quantity', 'factor', 'pegdate', 'pegged')
+        list_per_page = LIST_PER_PAGE
+
+    class Meta:
+        db_table = 'out_demandpegging'
+        ordering = ['id']

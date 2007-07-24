@@ -27,14 +27,15 @@
 
 
 #include "freppleinterface.h"
-#include <iostream>
+#include "frepple.h"   // @todo this header file should not be required... (was added for the logger)
 using namespace std;
+using namespace frepple;
 
 
 void usage()
 {
-  cout << "\nFrepple v" << FreppleVersion() << "command line application\n";
-  cout << "\nUsage:\n"
+  logger << "\nFrepple v" << FreppleVersion() << "command line application\n"
+    "\nUsage:\n"
     "  frepple [options] [files | directories]\n"
     "\nThis program reads xml input data, and executes the modeling and\n"
     "planning commands included in them.\n"
@@ -82,7 +83,7 @@ int main (int argc, char *argv[])
           if (strcmp(argv[i],"-?")
               && strcmp(argv[i],"-h")
               && strcmp(argv[i],"-help"))
-            cout << "\nError: Option '" << argv[i]
+            logger << "\nError: Option '" << argv[i]
             << "' not recognized." << endl;
           usage();
           return EXIT_FAILURE;
@@ -110,12 +111,12 @@ int main (int argc, char *argv[])
   }
   catch (exception& e)
   {
-    cout << "Error: " << e.what() << endl;
+    logger << "Error: " << e.what() << endl;
     return EXIT_FAILURE;
   }
   catch (...)
   {
-    cout << "Error: Unknown exception type" << endl;
+    logger << "Error: Unknown exception type" << endl;
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;

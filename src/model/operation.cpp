@@ -255,6 +255,7 @@ DECLARE_EXPORT void OperationFixedTime::endElement (XMLInput& pIn, XMLElement& p
 DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
 (OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
 {
+  logger << q << "  " <<s << "  " <<e << "  " <<preferEnd << endl;
   // Invalid call to the function.
   if (!oplan || q<0) return;
 
@@ -664,7 +665,7 @@ DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
     setChanged();
   }
   else
-    cout << "Warning: operation '" << *o
+    logger << "Warning: operation '" << *o
     << "' isn't a suboperation of alternate operation '" << *this
     << "'" << endl;
 }

@@ -34,6 +34,7 @@ namespace module_python
 PyTypeObject PythonProblem::InfoType;
 PyTypeObject PythonFlowPlan::InfoType;
 PyTypeObject PythonLoadPlan::InfoType;
+PyTypeObject PythonPegging::InfoType;
 PyTypeObject PythonOperationPlan::InfoType;
 PyTypeObject PythonDemand::InfoType;
 PyTypeObject PythonBuffer::InfoType;
@@ -50,8 +51,12 @@ extern "C" PyObject* PythonProblem::create(PyTypeObject* type, PyObject *args, P
   // Allocate memory
   PythonProblem* obj = PyObject_New(PythonProblem, &PythonProblem::InfoType);
 
+  // When the PythonProblem object is allocated, the memory isn't initialized 
+  // and also no constructor is called. As a result the problem iterator is in
+  // a very messy state... 
+  obj->iter.reset();  
+
   // Initialize the problem iterator
-  obj->iter.reset();
   obj->iter = Problem::begin();
 
   return reinterpret_cast<PyObject*>(obj);
@@ -111,13 +116,13 @@ extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj)
       if (f && f->getHidden()) f = NULL;
     }
     PyObject* result = Py_BuildValue("{s:s,s:s,s:l,s:f,s:N,s:f}",
-       "BUFFER", f->getFlow()->getBuffer()->getName().c_str(),
-       "OPERATION", f->getFlow()->getOperation()->getName().c_str(),
-       "OPERATIONPLAN", f->getOperationPlan()->getIdentifier(),
-       "QUANTITY", obj->iter->getQuantity(),
-       "DATE", PythonDateTime(obj->iter->getDate()),
-       "ONHAND", obj->iter->getOnhand()    
-       );
+      "BUFFER", f->getFlow()->getBuffer()->getName().c_str(),
+      "OPERATION", f->getFlow()->getOperation()->getName().c_str(),
+      "OPERATIONPLAN", f->getOperationPlan()->getIdentifier(),
+      "QUANTITY", obj->iter->getQuantity(),
+      "DATE", PythonDateTime(obj->iter->getDate()),
+      "ONHAND", obj->iter->getOnhand()    
+      );
     ++(obj->iter);
     return result;
   }
@@ -158,19 +163,66 @@ extern "C" PyObject* PythonLoadPlan::next(PythonLoadPlan* obj)
       if (f && f->getHidden()) f = NULL;
     }
     PyObject* result = Py_BuildValue("{s:s,s:s,s:l,s:f,s:N,s:f,s:f}",
-       "RESOURCE", f->getLoad()->getResource()->getName().c_str(),
-       "OPERATION", f->getLoad()->getOperation()->getName().c_str(),
-       "OPERATIONPLAN", f->getOperationPlan()->getIdentifier(),
-       "QUANTITY", obj->iter->getQuantity(),
-       "DATE", PythonDateTime(obj->iter->getDate()),
-       "ONHAND", obj->iter->getOnhand(),
-       "MAXIMUM", obj->iter->getMax()
-       );
+      "RESOURCE", f->getLoad()->getResource()->getName().c_str(),
+      "OPERATION", f->getLoad()->getOperation()->getName().c_str(),
+      "OPERATIONPLAN", f->getOperationPlan()->getIdentifier(),
+      "QUANTITY", obj->iter->getQuantity(),
+      "DATE", PythonDateTime(obj->iter->getDate()),
+      "ONHAND", obj->iter->getOnhand(),
+      "MAXIMUM", obj->iter->getMax()
+      );
     ++(obj->iter);
     return result;
   }
   // Reached the end of the iteration
   return NULL;
+}
+
+
+// 
+// INTERFACE FOR PEGGING
+//
+
+
+extern "C" PyObject* PythonPegging::createFromDemand(Demand* v)
+{
+  // Allocate memory
+  PythonPegging* obj = PyObject_New(PythonPegging, &PythonPegging::InfoType);
+
+  // When the PythonPegging object is allocated, the memory isn't initialized 
+  // and also no constructor is called. As a result the problem iterator is in
+  // a very messy state... 
+  obj->iter.reset();
+
+  // Cast the demand pointer and initialize the iterator
+  obj->dem = v;
+  obj->iter = PeggingIterator(v);
+
+  return reinterpret_cast<PyObject*>(obj);
+}
+
+
+extern "C" PyObject* PythonPegging::next(PythonPegging* obj) 
+{
+  // Reached the end of the iteration
+  if (!obj->iter) return NULL;
+
+  // Pass the result to Python
+  PyObject* result = Py_BuildValue("{s:i,s:f,s:f,s:N,s:z,s:l,s:i}",
+    "LEVEL", obj->iter.getLevel(),
+    "QUANTITY", obj->iter.getQuantity(),
+    "FACTOR", obj->iter.getFactor(),
+    "DATE", PythonDateTime(obj->iter->getDate()),
+    "BUFFER", obj->iter->getFlow()->getBuffer()->getHidden() ? NULL
+      : obj->iter->getFlow()->getBuffer()->getName().c_str(),
+    "OPERATIONPLAN", obj->iter->getOperationPlan()->getHidden() ? NULL 
+      : obj->iter->getOperationPlan()->getIdentifier(),
+    "PEGGED", obj->iter.getPegged() ? 1 : 0
+    );
+
+  // Increment iterator
+  --(obj->iter);
+  return result;
 }
 
 
@@ -232,7 +284,7 @@ extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
 {
   if (obj->iter != Demand::end())
   {
-    PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z,s:z}",
+    PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z,s:z,s:O}",
       "NAME", obj->iter->getName().c_str(),
       "QUANTITY", obj->iter->getQuantity(),
 			"DUE", PythonDateTime(obj->iter->getDue()),
@@ -240,7 +292,8 @@ extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
       "ITEM", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
       "OPERATION", obj->iter->getOperation() ? obj->iter->getOperation()->getName().c_str() : NULL,
       "OWNER", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL,
-      "CUSTOMER", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL     
+      "CUSTOMER", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL,     
+      "PEGGING", PythonPegging::createFromDemand(&*(obj->iter))
       );
     ++(obj->iter);
     return result;

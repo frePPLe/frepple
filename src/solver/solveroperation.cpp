@@ -138,8 +138,8 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
 
     if (delay && a_qty <= ROUNDING_ERROR && a_date + delay <= data.q_date_max && a_date + delay > orig_q_date)
     {
-      // The reply is 0, but the next-date is still less than the maximum 
-      // ask date. In this case we will violate the post-operation -soft- 
+      // The reply is 0, but the next-date is still less than the maximum
+      // ask date. In this case we will violate the post-operation -soft-
       // constraint.
       data.q_date = a_date + delay;
       data.q_qty = orig_opplan_qty;
@@ -152,8 +152,8 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
       // Echo a message
       if (data.getVerbose())
       {
-        for (int i=opplan->getOperation()->getLevel(); i>0; --i) cout << " ";
-        cout << "   Retrying new date." << endl;
+        for (int i=opplan->getOperation()->getLevel(); i>0; --i) logger << " ";
+        logger << "   Retrying new date." << endl;
       }
     }
     else
@@ -232,8 +232,8 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
   {
     // This operation doesn't fit at all within the constrained window.
     data.a_qty = 0.0f;
-    // Move to the current date
-    opplan->setStart(Plan::instance().getCurrent());
+    // Move to the earliest start date
+    opplan->setStart(Plan::instance().getCurrent() + delta);
     // Pick up the earliest date we can reply back
     data.a_date = opplan->getDates().getEnd();
     // Set the quantity to 0 (to make sure the buffer doesn't see the supply)
@@ -270,8 +270,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=oper->getLevel(); i>0; --i) cout << " ";
-    cout << "   Operation '" << oper->getName() << "' is asked: "
+    for (int i=oper->getLevel(); i>0; --i) logger << " ";
+    logger << "   Operation '" << oper->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
@@ -291,8 +291,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
   else
   {
     // There is no owner operationplan yet. We need a new command.
-    CommandCreateOperationPlan *a = 
-      new CommandCreateOperationPlan(oper, Solver->q_qty / flow_qty_per, 
+    CommandCreateOperationPlan *a =
+      new CommandCreateOperationPlan(oper, Solver->q_qty / flow_qty_per,
         Date::infinitePast, Solver->q_date, Solver->curDemand,
         Solver->curOwnerOpplan);
     Solver->curDemand = NULL;
@@ -314,8 +314,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=oper->getLevel(); i>0; --i) cout << " ";
-    cout << "   Operation '" << oper->getName() << "' answers: "
+    for (int i=oper->getLevel(); i>0; --i) logger << " ";
+    logger << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
 }
@@ -329,8 +329,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=oper->getLevel(); i>0; --i) cout << " ";
-    cout << "   Operation '" << oper->getName() << "' is asked: "
+    for (int i=oper->getLevel(); i>0; --i) logger << " ";
+    logger << "   Operation '" << oper->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
@@ -421,8 +421,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=oper->getLevel(); i>0; --i) cout << " ";
-    cout << "   Operation '" << oper->getName() << "' answers: "
+    for (int i=oper->getLevel(); i>0; --i) logger << " ";
+    logger << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
 }
@@ -439,8 +439,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=oper->getLevel(); i>0; --i) cout << " ";
-    cout << "   Operation '" << oper->getName() << "' is asked: "
+    for (int i=oper->getLevel(); i>0; --i) logger << " ";
+    logger << "   Operation '" << oper->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
@@ -528,7 +528,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
 
       // Combine the reply date of the top-opplan with the alternate check: we
       // need to return the maximum date.
-      if (Solver->a_date > a_date) a_date = Solver->a_date;
+      if (Solver->a_date > a_date && Solver->a_date != Date::infiniteFuture)
+        a_date = Solver->a_date;
 
       // Operationplan accepted
       Solver->add(a);
@@ -557,8 +558,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=oper->getLevel(); i>0; --i) cout << " ";
-    cout << "   Operation '" << oper->getName() << "' answers: "
+    for (int i=oper->getLevel(); i>0; --i) logger << " ";
+    logger << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
 }
@@ -572,8 +573,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationEffective* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=oper->getLevel(); i>0; --i) cout << " ";
-    cout << "   Operation '" << oper->getName() << "' is asked: "
+    for (int i=oper->getLevel(); i>0; --i) logger << " ";
+    logger << "   Operation '" << oper->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
@@ -603,8 +604,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationEffective* oper, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=oper->getLevel(); i>0; --i) cout << " ";
-    cout << "   Operation '" << oper->getName() << "' answers: "
+    for (int i=oper->getLevel(); i>0; --i) logger << " ";
+    logger << "   Operation '" << oper->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
 }

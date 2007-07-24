@@ -40,7 +40,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   static const char* name = "lpsolver";
   if (init)
   {
-    cout << "Warning: Initializing module lpsolver more than once." << endl;
+    logger << "Warning: Initializing module lpsolver more than once." << endl;
     return name;
   }
   init = true;
@@ -49,7 +49,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   /*
   for (CommandLoadLibrary::ParameterList::const_iterator
     j = z.begin(); j!= z.end(); ++j)
-    cout << "Parameter " << j->first << " = " << j->second << endl;
+    logger << "Parameter " << j->first << " = " << j->second << endl;
   */
 
   // Initialize the metadata.
@@ -70,7 +70,7 @@ void LPSolver::solve(void *v)
   // PART I: Problem initialisation
   //
   if (getVerbose())
-    cout << "Start Solver initialisation at " << Date::now() << endl;
+    logger << "Start Solver initialisation at " << Date::now() << endl;
 
   // We really need a calendar the lp buckets!
   if (!cal) throw DataException("No calendar specified for LP Solver");
@@ -107,21 +107,21 @@ void LPSolver::solve(void *v)
     j->solve(*this,this);
 
   if (getVerbose())
-    cout << "Finished Solver initialisation at " << Date::now() << endl;
+    logger << "Finished Solver initialisation at " << Date::now() << endl;
 
   //
   // PART II: solving...
   //
 
   // Initial message
-  if (getVerbose()) cout << "Start solving at " << Date::now() << endl;
+  if (getVerbose()) logger << "Start solving at " << Date::now() << endl;
 
   // Objective: maximize the planned demand of each priority
   for (priolist::iterator i = demandprio2row.begin();
       i != demandprio2row.end(); ++i)
   {
     if (getVerbose())
-      cout << "Start maximizing supply for demand priority " << i->first
+      logger << "Start maximizing supply for demand priority " << i->first
       << " at " << Date::now() << endl;
     // Set the right row as the objective
     lpx_set_obj_coef(lp, i->second, 1.0);
@@ -130,7 +130,7 @@ void LPSolver::solve(void *v)
     lpx_simplex(lp);
     // Results...
     if (getVerbose())
-      cout << " Satisfied " << lpx_get_obj_val(lp) << " units" << endl;
+      logger << " Satisfied " << lpx_get_obj_val(lp) << " units" << endl;
     // Fix the optimal solution for the next objective layers
     lpx_set_row_bnds(lp, i->second, LPX_LO, lpx_get_obj_val(lp), 0.0);
     // Remove from the objective
@@ -145,17 +145,17 @@ void LPSolver::solve(void *v)
   lpx_print_sol(lp,"lp_solver.sol");
 
   // Final message
-  if (getVerbose()) cout << "Finished solving at " << Date::now() << endl;
+  if (getVerbose()) logger << "Finished solving at " << Date::now() << endl;
 
   //
   // PART III: cleanup the solver
   //
 
   if (getVerbose())
-    cout << "Start solver finalisation at " << Date::now() << endl;
+    logger << "Start solver finalisation at " << Date::now() << endl;
   lpx_delete_prob(lp);
   if (getVerbose())
-    cout << "Finished solver finalisation at " << Date::now() << endl;
+    logger << "Finished solver finalisation at " << Date::now() << endl;
 
 }
 

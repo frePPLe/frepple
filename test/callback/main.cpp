@@ -36,48 +36,48 @@ class SignalSniffer
   public:
     static bool callback(Buffer* l, const Signal a)
     {
-      cout << "  Buffer '" << l << "' receives signal " << a << endl;
+      logger << "  Buffer '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(BufferInfinite* l, const Signal a)
     {
-      cout << "  BufferInfinite '" << l << "' receives signal " << a << endl;
+      logger << "  BufferInfinite '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(BufferDefault* l, const Signal a)
     {
-      cout << "  BufferDefault '" << l << "' receives signal " << a << endl;
+      logger << "  BufferDefault '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Operation* l, const Signal a)
     {
-      cout << "  Operation '" << l << "' receives signal " << a << endl;
+      logger << "  Operation '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(OperationFixedTime* l, const Signal a)
     {
-      cout << "  OperationFixedTime '" << l << "' receives signal " << a << endl;
+      logger << "  OperationFixedTime '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Item* l, const Signal a)
     {
-      cout << "  Item '" << l << "' receives signal " << a << endl;
+      logger << "  Item '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Flow* l, const Signal a)
     {
-      cout << "  Flow between '" << l->getBuffer() << "' and '"
+      logger << "  Flow between '" << l->getBuffer() << "' and '"
       << l->getOperation() << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Demand* l, const Signal a)
     {
-      cout << "  Demand '" << l << "' receives signal " << a << endl;
+      logger << "  Demand '" << l << "' receives signal " << a << endl;
       return true;
     }
     static bool callback(Calendar* l, const Signal a)
     {
-      cout << "  Calendar '" << l << "' receives signal " << a << endl;
+      logger << "  Calendar '" << l << "' receives signal " << a << endl;
       return true;
     }
 };
@@ -140,11 +140,11 @@ int main (int argc, char *argv[])
     FunctorStatic<Calendar,SignalSniffer>::connect(SIG_REMOVE);
 
     // 2: Read and the model
-    cout << "Create the model with callbacks:" << endl;
+    logger << "Create the model with callbacks:" << endl;
     FreppleReadXMLFile("callback.xml",true,false);
 
     // 3: Plan erase the model
-    cout << "Plan the model:" << endl;
+    logger << "Plan the model:" << endl;
     FreppleReadXMLData(
       "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" \
       "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
@@ -157,7 +157,7 @@ int main (int argc, char *argv[])
     );
 
     // 4: Plan erase the model
-    cout << "Erase the model:" << endl;
+    logger << "Erase the model:" << endl;
     FreppleReadXMLData(
       "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" \
       "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
@@ -217,15 +217,15 @@ int main (int argc, char *argv[])
     FunctorStatic<Calendar,SignalSniffer>::disconnect(SIG_REMOVE);
 
     // 6: Reread the model
-    cout << "Recreate the model without callbacks:" << endl;
+    logger << "Recreate the model without callbacks:" << endl;
     FreppleReadXMLFile("callback.xml",true,false);
   }
   catch (...)
   {
-    cout << "Error: Caught an exception in main routine:" <<  endl;
+    logger << "Error: Caught an exception in main routine:" <<  endl;
     try { throw; }
-    catch (exception& e) {cout << "  " << e.what() << endl;}
-    catch (...) {cout << "  Unknown type" << endl;}
+    catch (exception& e) {logger << "  " << e.what() << endl;}
+    catch (...) {logger << "  Unknown type" << endl;}
     FreppleExit();
     return EXIT_FAILURE;
   }

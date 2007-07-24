@@ -69,7 +69,7 @@ void 	XMLInput::processingInstruction
         XMLString::release(&value);
         throw;
       }
-      else cout << "Continuing after data error: " << e.what() << endl;
+      else logger << "Continuing after data error: " << e.what() << endl;
     }
     delete x;
     XMLString::release(&type);
@@ -122,11 +122,11 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
       // opening tag of the ROOT tag.
 #ifdef PARSE_DEBUG
       if (getCurrentObject())
-        cout << "Initialize root tag for reading object "
+        logger << "Initialize root tag for reading object "
         << getCurrentObject() << " ("
         << typeid(*getCurrentObject()).name() << ")" << endl;
       else
-        cout << "Initialize root tag for reading object NULL" << endl;
+        logger << "Initialize root tag for reading object NULL" << endl;
 #endif
       states.top() = READOBJECT;
       endingHashes.push(pElement->getTagHash());
@@ -137,7 +137,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
       // STATE: Parser is reading data elements of an object
       // Debug
 #ifdef PARSE_DEBUG
-      cout << "   Start element " << pElement->getName()
+      logger << "   Start element " << pElement->getName()
       << " - object " << getCurrentObject() << endl;
 #endif
 
@@ -147,7 +147,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
       catch (DataException e)
       {
         if (abortOnDataException) throw;
-        else cout << "Continuing after data error: " << e.what() << endl;
+        else logger << "Continuing after data error: " << e.what() << endl;
       }
 
       // Now process all attributes. For attributes we only call the
@@ -161,7 +161,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
           m_EStack[numElements+1].setData(val);
           #ifdef PARSE_DEBUG
           char* attname = XMLString::transcode(atts.getQName(i));
-          cout << "   Processing attribute " << attname
+          logger << "   Processing attribute " << attname
           << " - object " << getCurrentObject() << endl;
           XMLString::release(&attname);
           #endif
@@ -169,7 +169,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
           catch (DataException e)
           {
             if (abortOnDataException) throw;
-            else cout << "Continuing after data error: " << e.what() << endl;
+            else logger << "Continuing after data error: " << e.what() << endl;
           }
           XMLString::release(&val);
           // Stop processing attributes if we are now in the ignore mode
@@ -208,7 +208,7 @@ void XMLInput::endElement(const XMLCh* const uri,
     case IGNOREINPUT:
       // STATE: Parser is ignoring a part of the input
 #ifdef PARSE_DEBUG
-      cout << "   End element " << pElement->getName()
+      logger << "   End element " << pElement->getName()
       << " - IGNOREINPUT state" << endl;
 #endif
       // Continue if we aren't dealing with the tag being ignored
@@ -219,7 +219,7 @@ void XMLInput::endElement(const XMLCh* const uri,
         states.pop();
         endingHashes.pop();
 #ifdef PARSE_DEBUG
-        cout << "Finish IGNOREINPUT state" << endl;
+        logger << "Finish IGNOREINPUT state" << endl;
 #endif
       }
       else
@@ -229,7 +229,7 @@ void XMLInput::endElement(const XMLCh* const uri,
     case READOBJECT:
       // STATE: Parser is reading data elements of an object
 #ifdef PARSE_DEBUG
-      cout << "   End element " << pElement->getName()
+      logger << "   End element " << pElement->getName()
       << " - object " << getCurrentObject() << endl;
 #endif
 
@@ -244,11 +244,11 @@ void XMLInput::endElement(const XMLCh* const uri,
         catch (DataException e)
         {
           if (abortOnDataException) throw;
-          else cout << "Continuing after data error: " << e.what() << endl;
+          else logger << "Continuing after data error: " << e.what() << endl;
         }
         objectEnded = false;
 #ifdef PARSE_DEBUG
-        cout << "Finish reading object " << getCurrentObject() << endl;
+        logger << "Finish reading object " << getCurrentObject() << endl;
 #endif
         // Pop from the handler object stack
         prev = getCurrentObject();
@@ -267,10 +267,10 @@ void XMLInput::endElement(const XMLCh* const uri,
           catch (DataException e)
           {
             if (abortOnDataException) throw;
-            else cout << "Continuing after data error: " << e.what() << endl;
+            else logger << "Continuing after data error: " << e.what() << endl;
           }
 #ifdef PARSE_DEBUG
-          cout << "   End element " << pElement->getName()
+          logger << "   End element " << pElement->getName()
           << " - object " << getCurrentObject() << endl;
 #endif
         }
@@ -282,7 +282,7 @@ void XMLInput::endElement(const XMLCh* const uri,
         catch (DataException e)
         {
           if (abortOnDataException) throw;
-          else cout << "Continuing after data error: " << e.what() << endl;
+          else logger << "Continuing after data error: " << e.what() << endl;
         }
   }
 }
@@ -303,7 +303,7 @@ void XMLInput::characters(const XMLCh *const c, const unsigned int n)
 void XMLInput::warning(const SAXParseException& exception)
 {
   char* message = XMLString::transcode(exception.getMessage());
-  cout << "Warning: " << message
+  logger << "Warning: " << message
   << " at line: " << exception.getLineNumber() << endl;
   XMLString::release(&message);
 }
@@ -318,7 +318,7 @@ DECLARE_EXPORT void XMLInput::readto(Object * pPI)
   {
     // Push a new object on the handler stack
 #ifdef PARSE_DEBUG
-    cout << "Start reading object " << pPI
+    logger << "Start reading object " << pPI
     << " (" << typeid(*pPI).name() << ")" << endl;
 #endif
     prev = getCurrentObject();
@@ -329,7 +329,7 @@ DECLARE_EXPORT void XMLInput::readto(Object * pPI)
   {
     // Ignore the complete content of this element
 #ifdef PARSE_DEBUG
-    cout << "Start ignoring input" << endl;
+    logger << "Start ignoring input" << endl;
 #endif
     states.push(IGNOREINPUT);
   }
@@ -343,7 +343,7 @@ void XMLInput::shutdown()
 
   // Message
 #ifdef PARSE_DEBUG
-  cout << "   Forcing a shutdown - SHUTDOWN state" << endl;
+  logger << "   Forcing a shutdown - SHUTDOWN state" << endl;
 #endif
 
   // Change the state
@@ -363,7 +363,7 @@ void XMLInput::shutdown()
     catch (DataException e)    // @todo this exception handler can leak locked objects
     {
       if (abortOnDataException) throw;
-      else cout << "Continuing after data error: " << e.what() << endl;
+      else logger << "Continuing after data error: " << e.what() << endl;
     }
     LockManager::getManager().releaseWriteLock(getCurrentObject());
     m_EHStack.pop_back();
@@ -394,7 +394,7 @@ void XMLInput::reset()
       catch (DataException e)  //@todo leaks locks...
       {
         if (abortOnDataException) throw;
-        else cout << "Continuing after data error: " << e.what() << endl;
+        else logger << "Continuing after data error: " << e.what() << endl;
       }
       LockManager::getManager().releaseWriteLock(getCurrentObject());
       m_EHStack.pop_back();
@@ -712,7 +712,7 @@ DECLARE_EXPORT XMLtag::tagtable& XMLtag::getTags()
 DECLARE_EXPORT void XMLtag::printTags()
 {
   for (tagtable::iterator i = getTags().begin(); i != getTags().end(); ++i)
-    cout << i->second->getName() << "   " << i->second->dw << endl;
+    logger << i->second->getName() << "   " << i->second->dw << endl;
 }
 
 
@@ -723,9 +723,9 @@ DECLARE_EXPORT void XMLInput::executeCommands()
   {
     try { throw; }
     catch (exception& e)
-    {cout << "Error executing commands: " << e.what() << endl;}
+    {logger << "Error executing commands: " << e.what() << endl;}
     catch (...)
-    {cout << "Error executing commands: Unknown exception type" << endl;}
+    {logger << "Error executing commands: Unknown exception type" << endl;}
     throw;
   }
 }

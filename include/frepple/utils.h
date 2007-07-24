@@ -253,6 +253,8 @@ inline ostream & operator << (ostream & os, const Signal & d)
 /** This is the datatype used for hashing an XML-element to a numeric value. */
 typedef unsigned int hashtype;
 
+/** This stream is the general output for all logging and debugging messages. */
+extern DECLARE_EXPORT ostream logger;
 
 /** @brief This class groups some functions used to interact with the operating
   * system environment.
@@ -276,7 +278,7 @@ class Environment
     static DECLARE_EXPORT int processors;
 
     /** A file where output is directed to. */
-    static DECLARE_EXPORT ofstream log;
+    static DECLARE_EXPORT ofstream logfile;
 
     /** The name of the log file. */
     static DECLARE_EXPORT string logfilename;
@@ -1710,7 +1712,7 @@ class XMLOutput
       currentObject(NULL), parentObject(NULL), content(STANDARD),
       headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
-    {m_fp = &cout; indentstring[0] = '\0';}
+    {m_fp = &logger; indentstring[0] = '\0';}
 
     /** Escape a char string - remove the characters & < > " ' and replace with
       * the proper escape codes. The reverse process of un-escaping the special
@@ -2757,7 +2759,7 @@ class Command : public Object
       *     in the same state change as calling it only once.
       */
     virtual void undo()
-    {cout << "Warning: Can't undo command" << getDescription() << endl;}
+    {logger << "Warning: Can't undo command" << getDescription() << endl;}
 
     /** Returns true if the execution of this command can be undone. */
     virtual bool undoable() const {return false;}

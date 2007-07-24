@@ -167,7 +167,7 @@ DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
   // Check validity of operation being used
   Operation::pointer tmpOper = getDeliveryOperation();
   if (tmpOper && tmpOper != o->getOperation())
-    cout << "Warning: Delivery Operation '" << o->getOperation()
+    logger << "Warning: Delivery Operation '" << o->getOperation()
     << "' different than expected '" << tmpOper
     << "' for demand '" << this << "'" << endl;
 }

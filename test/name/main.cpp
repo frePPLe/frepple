@@ -32,10 +32,10 @@ using namespace frepple;
 /** Print the content of the list, and also verify its integrity. */
 void printlist(char* msg)
 {
-  cout << msg << ":";
+  logger << msg << ":";
   for (Customer::iterator i = Customer::begin(); i != Customer::end(); ++i)
-    cout << "  " << *i;
-  cout << endl;
+    logger << "  " << *i;
+  logger << endl;
   Customer::verify();
 }
 
@@ -68,13 +68,13 @@ void functionality_test()
 
   // Searching for some existing names
   string s("delta");
-  cout << "Find " << s << ": " << (Customer::find(s) ? "OK" : "NOK") << endl;
+  logger << "Find " << s << ": " << (Customer::find(s) ? "OK" : "NOK") << endl;
   s = "omega";
-  cout << "Find " << s << ": " << (Customer::find(s) ? "OK" : "NOK") << endl;
+  logger << "Find " << s << ": " << (Customer::find(s) ? "OK" : "NOK") << endl;
 
   // Searching for nonexistent name
   s = "hamburger";
-  cout << "Find " << s << ": " << (Customer::find(s) ? "OK" : "NOK") << endl;
+  logger << "Find " << s << ": " << (Customer::find(s) ? "OK" : "NOK") << endl;
   printlist("searches");
 
   // Erasing some existing elements
@@ -105,7 +105,7 @@ void functionality_test()
 
   // Inserting an already existing element
   Customer * k = new CustomerDefault("alfa2");
-  cout << Customer::add(k)->getName() << endl;
+  logger << Customer::add(k)->getName() << endl;
   printlist("duplicate insert alfa2");
   delete k;
 
@@ -144,11 +144,11 @@ void scalability_test()
 {
   // Formatting of the output: We print only 1 decimal to garantuee that
   // test results are stable across runs and platforms.
-  cout.precision(1);
-  cout.setf(ios_base::fixed );
+  logger.precision(1);
+  logger.setf(ios_base::fixed );
 
   // Repeat for different tree sizes, and compare the relative performance
-  cout << "Elements   Time per operation"  << endl;
+  logger << "Elements   Time per operation"  << endl;
   double ref1=0.0f, ref2=0.0f, a=0.0f, b=0.0f, size1, size2;
   int testpoints[] =
     {300000, 5000, 250000, 200000, 150000, 100000, 50000, 25000};
@@ -189,7 +189,7 @@ void scalability_test()
       // First data point
       ref1 = curtime * 1000 / scale;
       size1 = scale;
-      cout << scale << "   " << (curtime * 1000 / scale) / ref1 << endl;
+      logger << scale << "   " << (curtime * 1000 / scale) / ref1 << endl;
     }
     else if (ref2 == 0.0f)
     {
@@ -198,19 +198,19 @@ void scalability_test()
       size2 = scale;
       b = (ref1-ref2) / log(size1/size2);
       a = ref1 - b*log(size1);
-      cout << scale << "   " << (curtime * 1000 / scale) / ref1 << endl;
+      logger << scale << "   " << (curtime * 1000 / scale) / ref1 << endl;
     }
     else
     {
       // Other data points
       float compare = (curtime * 1000 / scale) / (a+b*log(scale));
-      cout << scale << "   "
+      logger << scale << "   "
       <<  (curtime * 1000 / scale) / ref1 << "  "
       << (fabs(compare-1) < 0.05 ? "OK" : "NOK") << endl;
     }
   }
-  //cout.precision(3);
-  //cout << " A: " << a << " B: " << b << endl;
+  //logger.precision(3);
+  //logger << " A: " << a << " B: " << b << endl;
 }
 
 
@@ -219,25 +219,25 @@ int main (int argc, char *argv[])
   try
   {
     XMLPlatformUtils::Initialize();
-    cout << endl << "FUNCTIONAL TEST:" << endl << endl;
+    logger << endl << "FUNCTIONAL TEST:" << endl << endl;
     functionality_test();
     // The scalability test shows that the tree operations scale
     // logarithmically with the number of elements.
     // The test timings are pretty hard to reproduce reliable: different
     // runs easily give different timings. Hence this part of the test
     // is commented out for the regression testing.
-    //cout << endl << "SCALABILITY TEST:" << endl << endl;
+    //logger << endl << "SCALABILITY TEST:" << endl << endl;
     //scalability_test();
     return EXIT_SUCCESS;
   }
   catch (exception& e)
   {
-    cout << "Error: " << e.what() << endl;
+    logger << "Error: " << e.what() << endl;
     return EXIT_FAILURE;
   }
   catch (...)
   {
-    cout << "Error: Exception thrown." << endl;
+    logger << "Error: Exception thrown." << endl;
     return EXIT_FAILURE;
   }
 }

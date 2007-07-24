@@ -88,8 +88,8 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=b->getLevel(); i>0; --i) cout << " ";
-    cout << "  Procurement buffer '" << b->getName() << "' is asked: "
+    for (int i=b->getLevel(); i>0; --i) logger << " ";
+    logger << "  Procurement buffer '" << b->getName() << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
@@ -260,8 +260,8 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
   // Message
   if (Solver->getSolver()->getVerbose())
   {
-    for (int i=b->getLevel(); i>0; --i) cout << " ";
-    cout << "  Procurement buffer '" << b->getName() << "' answers: "
+    for (int i=b->getLevel(); i>0; --i) logger << " ";
+    logger << "  Procurement buffer '" << b->getName() << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
   }
 }

@@ -182,7 +182,7 @@ DECLARE_EXPORT void CommandList::execute()
 
   // Message
   if (getVerbose())
-    cout << "Start executing command list at " << Date::now() << endl;
+    logger << "Start executing command list at " << Date::now() << endl;
   Timer t;
 
 #ifndef MT
@@ -294,11 +294,11 @@ DECLARE_EXPORT void CommandList::execute()
     }
     catch (...)
     {
-      cout << "Error: Caught an exception while executing command '"
+      logger << "Error: Caught an exception while executing command '"
       << curCommand->getDescription() << "':" <<  endl;
       try { throw; }
-      catch (exception& e) {cout << "  " << e.what() << endl;}
-      catch (...) {cout << "  Unknown type" << endl;}
+      catch (exception& e) {logger << "  " << e.what() << endl;}
+      catch (...) {logger << "  Unknown type" << endl;}
       // Undo all commands executed so far
       if (undoable()) undo();
     }
@@ -320,7 +320,7 @@ DECLARE_EXPORT void CommandList::execute()
 
   // Log
   if (getVerbose())
-    cout << "Finished executing command list at " << Date::now()
+    logger << "Finished executing command list at " << Date::now()
     << " : " << t << endl;
 }
 
@@ -342,11 +342,11 @@ unsigned __stdcall CommandList::wrapper(void *arg)
     catch (...)
     {
       // Error message
-      cout << "Error: Caught an exception while executing command '"
+      logger << "Error: Caught an exception while executing command '"
       << c->getDescription() << "':" << endl;
       try { throw; }
-      catch (exception& e) {cout << "  " << e.what() << endl;}
-      catch (...) {cout << "  Unknown type" << endl;}
+      catch (exception& e) {logger << "  " << e.what() << endl;}
+      catch (...) {logger << "  Unknown type" << endl;}
     }
   }
   return 0;
@@ -356,7 +356,7 @@ unsigned __stdcall CommandList::wrapper(void *arg)
 DECLARE_EXPORT CommandList::~CommandList()
 {
   if (!firstCommand) return;
-  cout << "Warning: Deleting an action list with actions that have"
+  logger << "Warning: Deleting an action list with actions that have"
   << " not been committed or undone" << endl;
   for (Command *i = firstCommand; i; )
   {
@@ -403,7 +403,7 @@ DECLARE_EXPORT void CommandSystem::execute()
 {
   // Log
   if (getVerbose())
-    cout << "Start executing system command '" << cmdLine
+    logger << "Start executing system command '" << cmdLine
     << "' at " << Date::now() << endl;
   Timer t;
 
@@ -420,7 +420,7 @@ DECLARE_EXPORT void CommandSystem::execute()
 
   // Log
   if (getVerbose())
-    cout << "Finished executing system command '" << cmdLine
+    logger << "Finished executing system command '" << cmdLine
     << "' at " << Date::now() << " : " << t << endl;
 }
 
@@ -448,7 +448,7 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
 
   // Log
   if (getVerbose())
-    cout << "Start loading library '" << lib << "' at " << Date::now() << endl;
+    logger << "Start loading library '" << lib << "' at " << Date::now() << endl;
   Timer t;
 
   // Validate
@@ -520,17 +520,17 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
 
   // Log
   if (getVerbose())
-    cout << "Finished loading module '" << x << "' from library '" << lib
+    logger << "Finished loading module '" << x << "' from library '" << lib
     << "' at " << Date::now() << " : " << t << endl;
 }
 
 
 DECLARE_EXPORT void CommandLoadLibrary::printModules()
 {
-  cout << "Loaded modules:" << endl;
+  logger << "Loaded modules:" << endl;
   for (set<string>::const_iterator i=registry.begin(); i!=registry.end(); ++i)
-    cout << "   " << *i << endl;
-  cout << endl;
+    logger << "   " << *i << endl;
+  logger << endl;
 }
 
 
@@ -574,7 +574,7 @@ DECLARE_EXPORT void CommandIf::execute()
 {
   // Message
   if (getVerbose())
-    cout << "Start executing if-command with condition '"
+    logger << "Start executing if-command with condition '"
     << condition << "' at " << Date::now() << endl;
   Timer t;
 
@@ -606,7 +606,7 @@ DECLARE_EXPORT void CommandIf::execute()
 
   // Log
   if (getVerbose())
-    cout << "Finished executing if-command at " << Date::now()
+    logger << "Finished executing if-command at " << Date::now()
     << " : " << t << endl;
 }
 
@@ -669,7 +669,7 @@ DECLARE_EXPORT void CommandSetEnv::execute()
 {
   // Message
   if (getVerbose())
-    cout << "Start updating variable '" << variable << "' to '"
+    logger << "Start updating variable '" << variable << "' to '"
     << value << "' at " << Date::now() << endl;
   Timer t;
 
@@ -696,7 +696,7 @@ DECLARE_EXPORT void CommandSetEnv::execute()
   if (getVerbose())
   {
     const char* res = getenv(variable.c_str());
-    cout << "Finished updating variable '" << variable << "' to '"
+    logger << "Finished updating variable '" << variable << "' to '"
     << (res ? res : "NULL") << "' at " << Date::now() << endl;
   }
 }

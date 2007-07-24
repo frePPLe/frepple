@@ -88,8 +88,8 @@ def dumpfrepple():
     delete = "delete from %s"
   else:
     delete = "truncate table %s"
-  for table in ['output_problem','output_flowplan',
-                'output_loadplan','output_operationplan',
+  for table in ['out_problem','out_demandpegging','out_flowplan',
+                'out_loadplan','out_operationplan',
                ]:
     cursor.execute(delete % table)
     transaction.commit()
@@ -98,7 +98,7 @@ def dumpfrepple():
   print "Exporting problems..."
   starttime = time()
   cursor.executemany(
-    "insert into output_problem \
+    "insert into out_problem \
     (entity,name,description,startdatetime,enddatetime,startdate,enddate) \
     values(%s,%s,%s,%s,%s,%s,%s)",
     [(
@@ -107,13 +107,13 @@ def dumpfrepple():
      ) for i in frepple.problem()
     ])
   transaction.commit()
-  cursor.execute("select count(*) from output_problem")
+  cursor.execute("select count(*) from out_problem")
   print 'Exported %d problems in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
   print "Exporting operationplans..."
   starttime = time()
   cursor.executemany(
-    "insert into output_operationplan \
+    "insert into out_operationplan \
     (identifier,operation_id,quantity,startdatetime,enddatetime,startdate, \
      enddate,demand_id,locked) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
     [(
@@ -123,14 +123,14 @@ def dumpfrepple():
      ) for i in frepple.operationplan()
     ])
   transaction.commit()
-  cursor.execute("select count(*) from output_operationplan")
+  cursor.execute("select count(*) from out_operationplan")
   print 'Exported %d operationplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
   print "Exporting flowplans..."
   starttime = time()
   for i in frepple.buffer():
     cursor.executemany(
-      "insert into output_flowplan \
+      "insert into out_flowplan \
       (operationplan_id,operation_id,thebuffer_id,quantity,flowdate,flowdatetime, \
       onhand) \
       values (%s,%s,%s,%s,%s,%s,%s)",
@@ -141,14 +141,14 @@ def dumpfrepple():
        ) for j in i['FLOWPLANS']
       ])
   transaction.commit()
-  cursor.execute("select count(*) from output_flowplan")
+  cursor.execute("select count(*) from out_flowplan")
   print 'Exported %d flowplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
   print "Exporting loadplans..."
   starttime = time()
   for i in frepple.resource():
     cursor.executemany(
-      "insert into output_loadplan \
+      "insert into out_loadplan \
       (operationplan_id,operation_id,resource_id,quantity,loaddate, \
       loaddatetime,onhand,maximum) values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
@@ -158,9 +158,26 @@ def dumpfrepple():
        ) for j in i['LOADPLANS']
       ])
   transaction.commit()
-  cursor.execute("select count(*) from output_loadplan")
+  cursor.execute("select count(*) from out_loadplan")
   print 'Exported %d loadplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
-  print "Analyzing database tables..."
+  print "Exporting pegging..."
+  starttime = time()
+  for i in frepple.demand():
+    cursor.executemany(
+      "insert into out_demandpegging \
+      (demand_id,depth,operationplan_id,buffer_id,quantity,pegdate, \
+      factor,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s)",
+      [(
+         i['NAME'], j['LEVEL'], j['OPERATIONPLAN'] or None, j['BUFFER'],
+         round(j['QUANTITY'],ROUNDING_DECIMALS), j['DATE'],
+         round(j['FACTOR'],ROUNDING_DECIMALS), str(j['PEGGED'])
+       ) for j in i['PEGGING']
+      ])
+  transaction.commit()
+  cursor.execute("select count(*) from out_demandpegging")
+  print 'Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+
   if settings.DATABASE_ENGINE == 'sqlite3':
+    print "Analyzing database tables..."
     cursor.execute("analyze")

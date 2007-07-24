@@ -47,12 +47,12 @@ BOOL APIENTRY DllMain(HANDLE hInst, DWORD ul_reason_for_call, LPVOID lpReserved)
       try { FreppleInitialize(NULL); }
       catch (exception& e)
       {
-        cout << "Error: " << e.what() << endl;
+        logger << "Error: " << e.what() << endl;
         return FALSE;
       }
       catch (...)
       {
-        cout << "Error: Unknown exception type" << endl;
+        logger << "Error: Unknown exception type" << endl;
         return FALSE;
       }
       return TRUE;
@@ -87,7 +87,7 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
   {
     const char *c = getenv("FREPPLE_HOME");
     if (c) Environment::setHomeDirectory(c);
-    else cout << "Warning: No valid home directory specified" << endl;
+    else logger << "Warning: No valid home directory specified" << endl;
   }
 
   // Initialize the libraries
@@ -105,14 +105,14 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
       // File exists
       if (!(stat_p.st_mode & S_IREAD))
         // File exists but is not readable
-        cout << "Warning: Initialization file 'init.xml'"
+        logger << "Warning: Initialization file 'init.xml'"
         << " exists but is not readable" << endl;
       else
         // Execute the commands in the file
         try{ CommandReadXMLFile(init).execute(); }
         catch (...)
         {
-          cout << "Exception caught during execution of 'init.xml'" << endl;
+          logger << "Exception caught during execution of 'init.xml'" << endl;
           throw;
         }
     }

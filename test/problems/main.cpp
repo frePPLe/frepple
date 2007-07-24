@@ -33,11 +33,11 @@ using namespace frepple;
 
 void reportProblems(string when)
 {
-  cout << "Problems after " << when << ":" << endl;
+  logger << "Problems after " << when << ":" << endl;
   for (Problem::const_iterator i = Problem::begin(); i != Problem::end(); ++i)
-    cout << "   " << (*i)->getDateRange()
+    logger << "   " << (*i)->getDateRange()
     << " - " << (*i)->getDescription() << endl;
-  cout << endl;
+  logger << endl;
 }
 
 
@@ -114,10 +114,10 @@ int main (int argc, char *argv[])
   }
   catch (...)
   {
-    cout << "Error: Caught an exception in main routine:" <<  endl;
+    logger << "Error: Caught an exception in main routine:" <<  endl;
     try { throw; }
-    catch (exception& e) {cout << "  " << e.what() << endl;}
-    catch (...) {cout << "  Unknown type" << endl;}
+    catch (exception& e) {logger << "  " << e.what() << endl;}
+    catch (...) {logger << "  Unknown type" << endl;}
     FreppleExit();
     return EXIT_FAILURE;
   }

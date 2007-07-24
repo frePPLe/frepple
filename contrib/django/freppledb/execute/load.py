@@ -50,7 +50,7 @@ def loadfrepple():
   # Plan (limited to the first one only)
   print 'Import plan...'
   x = [ header ]
-  cursor.execute("SELECT currentdate, name, description FROM input_plan")
+  cursor.execute("SELECT currentdate, name, description FROM plan")
   d = cursor.fetchone()
   if not d: raise ValueError('Missing a record in the plan table')
   i, j, k = d
@@ -64,7 +64,7 @@ def loadfrepple():
   print 'Importing locations...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, description, owner_id FROM input_location")
+  cursor.execute("SELECT name, description, owner_id FROM location")
   x = [ header, '<LOCATIONS>' ]
   for i,j,k in cursor.fetchall():
     cnt += 1
@@ -80,7 +80,7 @@ def loadfrepple():
   print 'Importing calendars...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, description FROM input_calendar")
+  cursor.execute("SELECT name, description FROM calendar")
   x = [ header ]
   x.append('<CALENDARS>')
   for i, j in cursor.fetchall():
@@ -95,7 +95,7 @@ def loadfrepple():
   print 'Importing buckets...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT calendar_id, startdate, name, value FROM input_bucket")
+  cursor.execute("SELECT calendar_id, startdate, name, value FROM bucket")
   x = [ header ]
   x.append('<CALENDARS>')
   for i, j, k, l in cursor.fetchall():
@@ -110,7 +110,7 @@ def loadfrepple():
   print 'Importing customers...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, description, owner_id FROM input_customer")
+  cursor.execute("SELECT name, description, owner_id FROM customer")
   x = [ header, '<CUSTOMERS>' ]
   for i, j, k in cursor.fetchall():
     cnt += 1
@@ -129,7 +129,7 @@ def loadfrepple():
   x = [ header, '<OPERATIONS>' ]
   cursor.execute('''
     SELECT name, fence, pretime, posttime, sizeminimum, sizemultiple, type, duration, duration_per
-    FROM input_operation
+    FROM operation
     ''')
   for i, j, k, l, m, n, p, q, r in cursor.fetchall():
     cnt += 1
@@ -156,9 +156,9 @@ def loadfrepple():
   x = [ header, '<OPERATIONS>' ]
   cursor.execute('''
     SELECT operation_id, suboperation_id, priority
-    FROM input_suboperation, input_operation
-    WHERE input_suboperation.operation_id = input_operation.name
-    AND input_operation.type = 'OPERATION_ALTERNATE'
+    FROM suboperation, operation
+    WHERE suboperation.operation_id = operation.name
+    AND operation.type = 'OPERATION_ALTERNATE'
     ORDER BY operation_id, priority
     ''')
   curoper = ''
@@ -178,7 +178,7 @@ def loadfrepple():
   print 'Importing items...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, description, operation_id, owner_id FROM input_item")
+  cursor.execute("SELECT name, description, operation_id, owner_id FROM item")
   x = [ header, '<ITEMS>' ]
   for i, j, k, l in cursor.fetchall():
     cnt += 1
@@ -198,7 +198,7 @@ def loadfrepple():
   cursor.execute('''SELECT name, description, location_id, item_id, onhand,
      minimum_id, producing_id, type, leadtime, min_inventory,
      max_inventory, min_interval, max_interval, size_minimum,
-     size_multiple, size_maximum FROM input_buffer''')
+     size_multiple, size_maximum FROM buffer''')
   x = [ header, '<BUFFERS>' ]
   for i, j, k, l, m, n, o, q, f1, f2, f3, f4, f5, f6, f7, f8 in cursor.fetchall():
     cnt += 1
@@ -230,7 +230,7 @@ def loadfrepple():
   print 'Importing resources...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, description, maximum_id, location_id, type FROM input_resource")
+  cursor.execute("SELECT name, description, maximum_id, location_id, type FROM resource")
   x = [ header, '<RESOURCES>' ]
   for i, j, k, l, m in cursor.fetchall():
     cnt += 1
@@ -250,7 +250,7 @@ def loadfrepple():
   print 'Importing flows...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT operation_id, thebuffer_id, quantity, type FROM input_flow")
+  cursor.execute("SELECT operation_id, thebuffer_id, quantity, type FROM flow")
   x = [ header, '<FLOWS>' ]
   for i, j, k, l in cursor.fetchall():
     cnt += 1
@@ -266,7 +266,7 @@ def loadfrepple():
   print 'Importing loads...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT operation_id, resource_id, usagefactor FROM input_load")
+  cursor.execute("SELECT operation_id, resource_id, usagefactor FROM load")
   x = [ header , '<LOADS>' ]
   for i, j, k in cursor.fetchall():
     cnt += 1
@@ -279,7 +279,7 @@ def loadfrepple():
   print 'Importing operationplans...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT identifier, operation_id, quantity, startdate, enddate, locked FROM input_operationplan order by identifier asc")
+  cursor.execute("SELECT identifier, operation_id, quantity, startdate, enddate, locked FROM operationplan order by identifier asc")
   x = [ header , '<OPERATION_PLANS>' ]
   for i, j, k, l, m, n in cursor.fetchall():
     cnt += 1
@@ -293,7 +293,7 @@ def loadfrepple():
   print 'Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime)
 
   # Demand
-  cursor.execute("SELECT name, due, quantity, priority, item_id, operation_id, customer_id, owner_id, policy FROM input_demand")
+  cursor.execute("SELECT name, due, quantity, priority, item_id, operation_id, customer_id, owner_id, policy FROM demand")
   cnt = 0
   starttime = time()
   print 'Importing demands...'

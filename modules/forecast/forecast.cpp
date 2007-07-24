@@ -51,7 +51,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   static const char* name = "forecast";
   if (init)
   {
-    cout << "Warning: Initializing module forecast more than once." << endl;
+    logger << "Warning: Initializing module forecast more than once." << endl;
     return name;
   }
   init = true;
@@ -69,7 +69,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     else if (x->first == "Net_Late")
       Forecast::setNetLate(x->second.getTimeperiod());
     else
-      cout << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
+      logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
   }
     
   // Initialize the metadata.
@@ -270,7 +270,6 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
 
 void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  //cout << pIn.getParentElement().getName() << "   " << pElement.getName() << endl;
   // While reading forecast buckets, we use the userarea field on the input
   // to cache the data. The temporary object is deleted when the bucket
   // tag is closed.

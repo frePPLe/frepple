@@ -59,8 +59,12 @@ DECLARE_EXPORT string Environment::home("[unspecified]");
 // The value initialized here is overwritten in the library initialization.
 DECLARE_EXPORT int Environment::processors = 2;
 
-// Output logging stream
-DECLARE_EXPORT ofstream Environment::log;
+// Output logging stream, whopse input buffer is shared with either
+// Environment::logfile or cout.
+DECLARE_EXPORT ostream logger(cout.rdbuf());
+
+// Output file stream
+DECLARE_EXPORT ofstream Environment::logfile;
 
 // Name of the log file
 DECLARE_EXPORT string Environment::logfilename;
@@ -121,28 +125,42 @@ DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
 
 DECLARE_EXPORT void Environment::setLogFile(string x)
 {
+  // Bye bye message
+  if (!logfilename.empty()) 
+    logger << "Stop logging at " << Date::now() << endl;
+
   // Close an eventual existing log file.
-  if (!logfilename.empty()) cout << "Closing plan on " << Date::now() << endl;
-  if (log) log.close();
+  if (logfile.is_open()) logfile.close();
 
-  // Pick up the file name
-  logfilename = x;
-
-  // No new logfile specified
-  if (x.empty()) return;
+  // No new logfile specified: redirect to the standard output stream
+  if (x.empty()) 
+  {
+    logfilename = x;
+    logger.rdbuf(cout.rdbuf()); 
+    return;
+  }
 
   // Open the file
-  log.open(x.c_str(), ios::out);
-  if (log.bad())
+  logfile.open(x.c_str(), ios::out);
+  if (!logfile.good())
+  {
+    // Redirect to the previous logfile (or cout if that's not possible)
+    if (logfile.is_open()) logfile.close();
+    logfile.open(logfilename.c_str(), ios::app);
+    logger.rdbuf(logfile.is_open() ? logfile.rdbuf() : cout.rdbuf());
     // The log file could not be opened
     throw RuntimeException("Could not open log file '" + x + "'");
+  }
 
-  // Redirect the standard output file.
-  cout.rdbuf(log.rdbuf());
+  // Store the file name
+  logfilename = x;
+
+  // Redirect the log file.
+  logger.rdbuf(logfile.rdbuf());
 
   // Print a nice header
-  cout << "Start logging Frepple " << PACKAGE_VERSION << " ("
-  << __DATE__ << ") on " << Date::now() << endl;
+  logger << "Start logging Frepple " << PACKAGE_VERSION << " ("
+    << __DATE__ << ") at " << Date::now() << endl;
 }
 
 
@@ -151,11 +169,14 @@ void LibraryUtils::initialize()
   static bool init = false;
   if (init)
   {
-    cout << "Warning: Calling Frepple::LibraryUtils::initialize() more "
+    logger << "Warning: Calling Frepple::LibraryUtils::initialize() more "
     << "than once." << endl;
     return;
   }
   init = true;
+
+  // Initialize the logging file
+  //Environment::setLogFile("");
 
   // Initialize Xerces parser
   XMLPlatformUtils::Initialize();
@@ -345,21 +366,21 @@ DECLARE_EXPORT const MetaClass* MetaClass::findClass(const char* c)
 
 DECLARE_EXPORT void MetaClass::printClasses()
 {
-  cout << "Registered classes:" << endl;
+  logger << "Registered classes:" << endl;
   // Loop through all categories
   for (MetaCategory::CategoryMap::const_iterator i = MetaCategory::categoriesByTag.begin();
       i != MetaCategory::categoriesByTag.end(); ++i)
   {
-    cout << "  " << i->second->type << endl;
+    logger << "  " << i->second->type << endl;
     // Loop through the classes for the category
     for (MetaCategory::ClassMap::const_iterator
         j = i->second->classes.begin();
         j != i->second->classes.end();
         ++j)
       if (j->first == XMLtag::hash("DEFAULT"))
-        cout << "    DEFAULT ( = " << j->second->type << " )" << j->second << endl;
+        logger << "    DEFAULT ( = " << j->second->type << " )" << j->second << endl;
       else
-        cout << "    " << j->second->type << j->second << endl;
+        logger << "    " << j->second->type << j->second << endl;
   }
 }
 

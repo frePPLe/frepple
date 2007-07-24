@@ -110,7 +110,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   static const char* name = "python";
   if (init)
   {
-    cout << "Warning: Initializing module python more than once." << endl;
+    logger << "Warning: Initializing module python more than once." << endl;
     return name;
   }
   init = true;
@@ -174,6 +174,7 @@ void CommandPython::initialize()
   define_type<PythonProblem>(m, "problem", "frepple problem");
   define_type<PythonFlowPlan>(m, "flowplan", "frepple flowplan");
   define_type<PythonLoadPlan>(m, "loadplan", "frepple loadplan");
+  define_type<PythonPegging>(m, "pegging", "frepple pegging");
   define_type<PythonOperationPlan>(m, "operationplan", "frepple operationplan");
   define_type<PythonDemand>(m, "demand", "frepple demand");
   define_type<PythonBuffer>(m, "buffer", "frepple buffer");
@@ -235,10 +236,10 @@ void CommandPython::execute()
   // Log
   if (getVerbose())
   {
-    cout << "Start executing python ";
-    if (!cmd.empty()) cout << "command";
-    if (!filename.empty()) cout << "file";
-    cout << " at " << Date::now() << endl;
+    logger << "Start executing python ";
+    if (!cmd.empty()) logger << "command";
+    if (!filename.empty()) logger << "file";
+    logger << " at " << Date::now() << endl;
   }
   Timer t;
 
@@ -275,7 +276,7 @@ void CommandPython::execute()
   executePython(c.c_str());
 
   // Log
-  if (getVerbose()) cout << "Finished executing python at "
+  if (getVerbose()) logger << "Finished executing python at "
     << Date::now() << " : " << t << endl;
 }
 
@@ -368,8 +369,8 @@ PyObject* CommandPython::python_log(PyObject *self, PyObject *args)
   if (!ok) return NULL;
 
   // Print and flush the output stream
-  cout << data;
-  cout.flush();
+  logger << data;
+  logger.flush();
 
   // Return code
   return Py_BuildValue("");  // Safer than using Py_None, which is not

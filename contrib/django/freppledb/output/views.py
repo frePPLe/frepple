@@ -469,7 +469,7 @@ def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
       if prevres: resultset.append(rowset)
       rowset = []
       prevres = row[0]
-    if row[5] != 0: util = row[4] / row[5]
+    if row[4] != 0: util = row[5] / row[4]
     else: util = 0
     count += 1
     rowset.append( {

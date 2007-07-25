@@ -54,6 +54,10 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
     << Solver->q_qty << "  " << Solver->q_date << endl;
   }
 
+  // Store the last command in the list, in order to undo the following
+  // commands if required.
+  Command* topcommand = Solver->getLastCommand();
+
   // Make sure the new operationplans don't inherit an owner.
   // When an operation calls the solve method of suboperations, this field is
   // used to pass the information about the owner operationplan down. When
@@ -195,12 +199,17 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
     if (Solver->a_date < extraSupplyDate) extraSupplyDate = Solver->a_date;
     shortage -= Solver->a_qty;
   }
+
   // Final evaluation of the replenishment
   if (Solver->getSolver()->isConstrained())
   {
     // Use the constrained planning result
     Solver->a_qty = static_cast<float>(requested_qty - shortage);
-    if (Solver->a_qty < ROUNDING_ERROR) Solver->a_qty = 0.0;
+    if (Solver->a_qty < ROUNDING_ERROR) 
+    {
+      Solver->undo(topcommand);
+      Solver->a_qty = 0.0;
+    }
     Solver->a_date = (extraInventoryDate < extraSupplyDate) ?
         extraInventoryDate :
         extraSupplyDate;

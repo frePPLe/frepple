@@ -168,7 +168,14 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
   else if (prev_a_date == Date::infiniteFuture) data.a_date = tmp;
   else data.a_date = (tmp>prev_a_date) ? tmp : prev_a_date;
   data.a_qty = a_qty;
-  return a_qty > ROUNDING_ERROR;
+  if (a_qty > ROUNDING_ERROR)
+    return true;
+  else
+  {
+    // Undo the plan
+    data.undo(topcommand);
+    return false;
+  }
 }
 
 
@@ -497,19 +504,25 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
     Solver->curDemand = d;
     CommandCreateOperationPlan *a = new CommandCreateOperationPlan(oper, a_qty,
         Date::infinitePast, origQDate, d, prev_owner_opplan, false);
+    Solver->add(a);
     Solver->curDemand = NULL;
     Solver->curOwnerOpplan = a->getOperationPlan();
 
     // Create a sub operationplan
     Solver->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
     Solver->q_qty = a_qty / (sub_flow_qty_per + top_flow_qty_per);
+
+    // Solve constraints
     (*altIter)->solve(*this,v);
-    if (Solver->a_date < a_date) a_date = Solver->a_date;
+
+    // Keep the lowest of all next-date answers
+    if (Solver->a_date < a_date && Solver->a_date > origQDate) 
+      a_date = Solver->a_date;
+
+    // Process the result
     if (Solver->a_qty < ROUNDING_ERROR)
-      // Nothing could be planned on this alternate. Need to keep the
-      // create command anyway, since there may exist move commands for the
-      // created operationplans!
-      Solver->add(a);
+      // Undo all operationplans along this alternate
+      Solver->undo(a);
     else
     {
       // Multiply the operation reply with the flow quantity to obtain the
@@ -527,12 +540,12 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
       Solver->getSolver()->checkOperation(Solver->curOwnerOpplan,*Solver);
 
       // Combine the reply date of the top-opplan with the alternate check: we
-      // need to return the maximum date.
-      if (Solver->a_date > a_date && Solver->a_date != Date::infiniteFuture)
+      // need to return the minimum next-date.
+      if (Solver->a_date < a_date && Solver->a_date > origQDate)
         a_date = Solver->a_date;
 
       // Operationplan accepted
-      Solver->add(a);
+      //Solver->add(a); 
 
       // Are we at the end already?
       if (a_qty < ROUNDING_ERROR)

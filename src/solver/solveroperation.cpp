@@ -227,7 +227,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
   // Check the result of the resize
   if (opplan->getDates().getStart() >= Plan::instance().getCurrent() + delta
     && (!extra || opplan->getDates().getEnd() <= data.q_date_max)
-    && opplan->getQuantity() > 0)
+    && opplan->getQuantity() > ROUNDING_ERROR)
   {
     // Resizing did work! The operation now fits within constrained limits
     data.a_qty = opplan->getQuantity();
@@ -239,6 +239,9 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
   {
     // This operation doesn't fit at all within the constrained window.
     data.a_qty = 0.0f;
+    // Resize to the minimum quantity
+    if (opplan->getQuantity() < ROUNDING_ERROR) 
+      opplan->setQuantity(1,false);
     // Move to the earliest start date
     opplan->setStart(Plan::instance().getCurrent() + delta);
     // Pick up the earliest date we can reply back
@@ -543,9 +546,6 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
       // need to return the minimum next-date.
       if (Solver->a_date < a_date && Solver->a_date > origQDate)
         a_date = Solver->a_date;
-
-      // Operationplan accepted
-      //Solver->add(a); 
 
       // Are we at the end already?
       if (a_qty < ROUNDING_ERROR)

@@ -49,7 +49,9 @@ def dumpfrepple_files():
   starttime = time()
   writer = csv.writer(open("operations.csv", "wb"))
   for i in frepple.operationplan():
-    writer.writerow( (i['IDENTIFIER'], i['OPERATION'].replace("'","''"), i['QUANTITY'], str(i['START']), str(i['END']), str(i['START']), str(i['END']), i['DEMAND'], str(i['LOCKED'])) )
+    writer.writerow( (i['IDENTIFIER'], i['OPERATION'].replace("'","''"),
+      i['QUANTITY'], str(i['START']), str(i['END']), str(i['START']),
+      str(i['END']), i['DEMAND'], str(i['LOCKED'])) )
   print 'Exported operationplans in %.2f seconds' % (time() - starttime)
 
   print "Exporting flowplans..."
@@ -57,7 +59,8 @@ def dumpfrepple_files():
   writer = csv.writer(open("buffers.csv", "wb"))
   for i in frepple.buffer():
     for j in i['FLOWPLANS']:
-      writer.writerow( (j['OPERATIONPLAN'], j['OPERATION'], j['BUFFER'], j['QUANTITY'], str(j['DATE']), str(j['DATE']), j['ONHAND']) )
+      writer.writerow( (j['OPERATIONPLAN'], j['OPERATION'], j['BUFFER'],
+        j['QUANTITY'], str(j['DATE']), str(j['DATE']), j['ONHAND']) )
   print 'Exported flowplans in %.2f seconds' % (time() - starttime)
 
   print "Exporting loadplans..."
@@ -65,8 +68,20 @@ def dumpfrepple_files():
   writer = csv.writer(open("resources.csv", "wb"))
   for i in frepple.resource():
     for j in i['LOADPLANS']:
-      writer.writerow( (j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'], j['QUANTITY'], str(j['DATE']), str(j['DATE']), j['ONHAND'], j['MAXIMUM']) )
+      writer.writerow( (j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'],
+        j['QUANTITY'], str(j['DATE']), str(j['DATE']), j['ONHAND'],
+        j['MAXIMUM']) )
   print 'Exported loadplans in %.2f seconds' % (time() - starttime)
+
+  print "Exporting pegging..."
+  starttime = time()
+  writer = csv.writer(open("demand_pegging.csv", "wb"))
+  for i in frepple.demand():
+    for j in i['PEGGING']:
+      writer.writerow( (i['NAME'], j['LEVEL'], j['OPERATIONPLAN'] or None,
+        j['BUFFER'], j['QUANTITY'], str(j['DATE']), j['FACTOR'], j['PEGGED']
+       ) )
+  print 'Exported pegging in %.2f seconds' % (time() - starttime)
 
 
 @transaction.commit_manually

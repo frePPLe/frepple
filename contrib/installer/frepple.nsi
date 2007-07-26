@@ -36,7 +36,7 @@
 
 ; Main definitions
 !define PRODUCT_NAME "frePPLe"
-!define PRODUCT_VERSION "0.3.1"
+!define PRODUCT_VERSION "0.3.1-beta"
 !define PRODUCT_PUBLISHER "frePPLe"
 !define PRODUCT_WEB_SITE "http://www.frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
@@ -50,12 +50,13 @@ SetCompressor /SOLID lzma
 !include "MUI.nsh"
 !include Library.nsh
 !include WinMessages.nsh
+!include "Sections.nsh"
 
 ; MUI Settings
 !define MUI_ABORTWARNING
 !define MUI_WELCOMEFINISHPAGE_BITMAP "frepple.bmp"
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "frepple.bmp"
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of Frepple.\n\nIt is recommended to uninstall a previous version before this installing a new one.\n\nClick Next to continue"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of frePPLe.\n\nIt is recommended to uninstall a previous version before this installing a new one.\n\nClick Next to continue"
 !define MUI_HEADERIMAGE_BITMAP "..\..\doc\frepple.bmp"
 !define MUI_ICON "frepple.ico"
 !define MUI_UNICON "frepple.ico"
@@ -65,6 +66,7 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_PAGE_LICENSE "../../COPYING"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
+Page custom database database_leave
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
@@ -79,13 +81,13 @@ SetCompressor /SOLID lzma
 
 ;Version Information
 VIProductVersion "0.3.1.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "0.3.1.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Frepple Installer"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "Frepple Installer - Free Production Planning Library"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Frepple"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "Licenced under the GNU Lesser General Public License"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Install Frepple - Free Production Planning Library"
-
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "0.3.1.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe Installer"
+VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe Installer - free Production Planning Library"
+VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright "Licenced under the GNU Lesser General Public License"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription "Install frePPLe - free Production Planning Library"
+  
 
 ; MUI end ------
 
@@ -97,6 +99,14 @@ BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 CRCcheck on
 ShowInstDetails show
 ShowUnInstDetails show
+
+ReserveFile "database.ini"
+!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+
+Function .onInit
+  ;Extract InstallOptions INI file
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "database.ini"
+FunctionEnd
 
 Section -Start
   ; Create the python distribution and django server
@@ -139,7 +149,7 @@ Section "Application" SecAppl
   ; Add Xerces library
   !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "${XERCESPATH}\${XERCESDLL}" "$INSTDIR\bin\${XERCESDLL}" "$SYSDIR"
 
-  ; Copy sqlite database if there is one in
+  ; Copy sqlite database if there is one
   File /nonfatal "..\bin\frepple.sqlite"
 
   ; Create the django server directory
@@ -153,7 +163,107 @@ Section "Application" SecAppl
   ; Set an environment variable (and propagate immediately to other processes)
   WriteRegExpandStr HKEY_CURRENT_USER "Environment" "FREPPLE_HOME" "$INSTDIR\bin"
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+
+  ; Pick up the database configuration parameters
+  ReadINIStr $0 "$PLUGINSDIR\database.ini" "Field 7" "State"   # DB engine
+  StrCmp $0 "SQLite" 0 +3
+    StrCpy $0 "sqlite3"
+    Goto ok
+  StrCmp $0 "PostgreSQL" 0 +3
+    StrCpy $0 "postgresql_psycopg2"
+    Goto ok
+  StrCmp $0 "MySQL" 0 +3
+    StrCpy $0 "mysql"
+    Goto ok
+  StrCmp $0 "Oracle" 0 +3
+    StrCpy $0 "oracle"
+    Goto ok
+  MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid database type $0!"
+  ok:
+  ReadINIStr $1 "$PLUGINSDIR\database.ini" "Field 8" "State"   # DB name
+  ReadINIStr $2 "$PLUGINSDIR\database.ini" "Field 9" "State"   # DB user
+  ReadINIStr $3 "$PLUGINSDIR\database.ini" "Field 10" "State"  # DB password
+  ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 11" "State"  # DB host
+  ReadINIStr $5 "$PLUGINSDIR\database.ini" "Field 12" "State"  # DB port
+
+  ; Create a settings file for the server
+  StrCpy $6 "$INSTDIR\server\settings.py"
+  FileOpen $6 $6 w
+  FileWrite $6 "# Django supports the following database engines: 'oracle', 'postgresql_psycopg2',$\r$\n"
+  FileWrite $6 "# 'postgresql', 'mysql', 'sqlite3' 'oracle' or 'ado_mssql'.$\r$\n"
+  FileWrite $6 "# FrePPLe supports only 'postgresql_psycopg2', 'mysql' and 'sqlite3'$\r$\n"
+  FileWrite $6 "DATABASE_ENGINE = '$0'$\r$\n"
+  FileWrite $6 "DATABASE_NAME = '$1'  # Database name$\r$\n"
+  FileWrite $6 "DATABASE_USER = '$2'  # Not used with sqlite3.$\r$\n"
+  FileWrite $6 "DATABASE_PASSWORD = '$3' # Not used with sqlite3.$\r$\n"
+  FileWrite $6 "DATABASE_HOST = '$4' # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
+  FileWrite $6 "DATABASE_PORT = '$5' # Set to empty string for default. Not used with sqlite3.$\r$\n"
+  FileClose $6
 SectionEnd
+
+
+Function database
+  StrCpy $1 "SQLite"
+
+  ; Detect MySQL installation
+  EnumRegKey $0 HKLM "software\MySQL AB" 0
+  StrCmp $0 "" +2 0
+    StrCpy $1 "$1|MySQL"
+
+  ; Detect PostgreSQL installation
+  EnumRegKey $0 HKLM "software\PostgreSQL" 0
+  StrCmp $0 "" +2 0
+    StrCpy $1 "$1|PostgreSQL"
+
+  ; Detect Oracle installation
+  ; COMMENTED OUT TILL ORACLE IS SUPPORTED BY FREPPLE
+  ;EnumRegKey $0 HKLM "software\ORACLE" 0
+  ;StrCmp $0 "" +2 0
+  ;  StrCpy $1 "$1|Oracle"
+
+  ; Update the dropdown with available databases
+  WriteIniStr "$PLUGINSDIR\database.ini" "Field 7" "ListItems" "$1"
+
+  ; Display the page
+  !insertmacro MUI_HEADER_TEXT "Database configuration" "Specify the connection details of your database."
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "database.ini"
+FunctionEnd
+
+Function database_leave
+  ReadINIStr $0 "$PLUGINSDIR\database.ini" "Settings" "State"  
+  IntCmp $0 7 0 done
+    ; Disable user name, user password, host and port when the
+    ; SQLite database engine is selected.
+    ReadINIStr $1 "$PLUGINSDIR\database.ini" "Field 7" "State"
+    StrCpy $2 ""
+    StrCpy $3 1
+    StrCmp $1 "SQLite" 0 +3
+      StrCpy $2 "DISABLED"
+      StrCpy $3 0
+    WriteIniStr "$PLUGINSDIR\database.ini" "Field 9" "Flags" "$2"
+    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 9" "HWND"
+    EnableWindow $4 $3
+    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 9" "HWND2"
+    EnableWindow $4 $3
+    WriteIniStr "$PLUGINSDIR\database.ini" "Field 10" "Flags" "$2"
+    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 10" "HWND"
+    EnableWindow $4 $3
+    ReadINIStr $4 "$PLUGINSDIR\test.ini" "Field 10" "HWND2"
+    EnableWindow $4 $3
+    WriteIniStr "$PLUGINSDIR\database.ini" "Field 11" "Flags" "$2"
+    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 11" "HWND"
+    EnableWindow $4 $3
+    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 11" "HWND2"
+    EnableWindow $4 $3
+    WriteIniStr "$PLUGINSDIR\database.ini" "Field 12" "Flags" "$2"
+    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 12" "HWND"
+    EnableWindow $4 $3
+    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 12" "HWND2"
+    EnableWindow $4 $3
+    ; Return to the page
+    Abort
+  done:
+FunctionEnd
 
 
 Section "Documentation" SecDoc
@@ -164,13 +274,11 @@ Section "Documentation" SecDoc
   File /r "doc"
 SectionEnd
 
-
 Section "Examples" SecEx
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   File /r "test"
 SectionEnd
-
 
 SubSection /E "Development" SecDev
 

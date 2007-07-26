@@ -156,8 +156,8 @@ set_release:
 		sed 's/$(old1)\.$(old2)\.$(old3)$(old4)/$(new1).$(new2).$(new3)$(new4)/g' $$i >out.tmp; \
 		mv out.tmp $$i; \
 	done
-	sed 's/$(old1)\.$(old2)\.$(old3)/$(new1).$(new2).$(new3)/g' "contrib/installer/frepple.nsi" >out.tmp
-	mv out.tmp "contrib/installer/frepple.nsi"
+	sed 's/Version "$(old1)\.$(old2)\.$(old3)/Version "$(new1).$(new2).$(new3)/g' "contrib/installer/frepple.nsi" >out.tmp
+	sed 's/PRODUCT_VERSION "$(old1)\.$(old2)\.$(old3)$(old4)"/PRODUCT_VERSION "$(new1).$(new2).$(new3)$(new4)"/' out.tmp >"contrib/installer/frepple.nsi"
 	for i in "src/dll.rc" "src/exe.rc"; do \
 		sed 's/$(old1),$(old2),$(old3)/$(new1),$(new2),$(new3)/g' $$i >out.tmp; \
 		sed 's/$(old1), $(old2), $(old3)/$(new1), $(new2), $(new3)/g' out.tmp >$$i; \

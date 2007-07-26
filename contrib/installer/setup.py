@@ -40,6 +40,12 @@ freppledirectory = freppledb.__path__[0]
 # Define what is to be included and excluded
 packages = [# Required for django standalone deployment
             'django', 'freppledb', 'email', 'cherrypy.wsgiserver',
+            # Added for MySQL
+            'MySQLdb', 'MySQLdb.constants', 'MySQLdb.converters',
+            # Added for PostgreSQL
+            'psycopg2', 'psycopg2.extensions',
+            # Added for oracle
+            'cx_Oracle',
             # Added to package a more complete python library with frepple
             'ftplib', 'poplib', 'imaplib', 'telnetlib', 'xmlrpclib',
             'gzip', 'bz2','zipfile', 'tarfile', 'SimpleXMLRPCServer',
@@ -48,21 +54,14 @@ includes = ['django.contrib.auth',
             'django.contrib.sessions',
             'django.contrib.sites',
            ]
-excludes = ['MySQLdb', 'MySQLdb.constants',
-            'MySQLdb.converters', 'psycopg2',
-            'pydoc',
-            'Tkinter', 'tcl', 'Tkconstants',
+excludes = ['pydoc','Tkinter', 'tcl', 'Tkconstants',
             ]
 ignores = [# Not using docutils
            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
-           # Not using MySQL
-           'MySQLdb', 'MySQLdb.constants', 'MySQLdb.converters',
-           # Not using oracle
-           'cx_Oracle',
            # Not using Microsoft ADO
            'adodbapi',
-           # Not using Postgres
-           'psycopg', 'psycopg2', 'psycopg2.extensions',
+           # Not using psycopg (using psycopg2 instead)
+           'psycopg',
            # Not using pysqlite2 (using pysqlite3 instead)
            'pysqlite2',
            # Not using mod_python

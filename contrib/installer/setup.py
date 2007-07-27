@@ -108,7 +108,8 @@ for srcdir, targetdir in [
    (os.path.join(freppledirectory,'static'), 'static'),
    (os.path.join(freppledirectory,'static'), 'static'),
    (os.path.join(freppledirectory,'execute'), 'execute'),
-   (os.path.join(freppledirectory,'input','fixtures'), 'fixtures'),
+   (os.path.join(freppledirectory,'input','fixtures'), os.path.join('fixtures','input')),
+   (os.path.join(freppledirectory,'user','fixtures'), os.path.join('fixtures','user')),
    ]:
    root_path_length = len(srcdir) + 1
    for dirpath, dirnames, filenames in os.walk(os.path.join(srcdir)):
@@ -137,7 +138,7 @@ setup(
           }},
     data_files = data_files,
     # Attributes
-    version = settings.FREPPLE_VERSION,
+    version = settings.FREPPLE_VERSION.split('-',1)[0].split(' ',1)[0],
     description = "Frepple web server application",
     name = "Frepple",
     author = "www.frepple.com",

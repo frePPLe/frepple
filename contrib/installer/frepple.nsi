@@ -87,7 +87,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe Installer - free Product
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"
 VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright "Licenced under the GNU Lesser General Public License"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription "Install frePPLe - free Production Planning Library"
-  
+
 
 ; MUI end ------
 
@@ -230,7 +230,7 @@ Function database
 FunctionEnd
 
 Function database_leave
-  ReadINIStr $0 "$PLUGINSDIR\database.ini" "Settings" "State"  
+  ReadINIStr $0 "$PLUGINSDIR\database.ini" "Settings" "State"
   IntCmp $0 7 0 done
     ; Disable user name, user password, host and port when the
     ; SQLite database engine is selected.

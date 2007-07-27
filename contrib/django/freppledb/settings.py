@@ -25,7 +25,10 @@
 # Frepple specific variables
 import os, os.path, re, sys
 FREPPLE_HOME = os.environ['FREPPLE_HOME']
-FREPPLE_APP = os.path.normpath(os.path.join(FREPPLE_HOME,'..','contrib','django','freppledb'))
+if 'FREPPLE_APP' in os.environ:
+  FREPPLE_APP = os.environ['FREPPLE_APP']
+else:
+  FREPPLE_APP = os.path.normpath(os.path.join(FREPPLE_HOME,'..','contrib','django','freppledb'))
 FREPPLE_VERSION = '0.3.1-beta'
 
 # Determing whether Django runs as a standalone application or is deployed
@@ -59,8 +62,6 @@ DATABASE_PORT = ''                    # Set to empty string for default. Not use
 
 if DATABASE_ENGINE == 'sqlite3':
   # Extra settings for SQLITE
-  # Path to sqlite3 database file
-  DATABASE_NAME = os.path.join(FREPPLE_HOME,'%s.sqlite' % DATABASE_NAME)
   DATABASE_OPTIONS = {"timeout": 10, "check_same_thread": False}
 elif DATABASE_ENGINE == 'mysql':
   # Extra settings for MYSQL
@@ -171,3 +172,21 @@ AUTH_PROFILE_MODULE = 'user.Preferences'
 # machine additional debugging statements can be shown.
 INTERNAL_IPS = ( '192.168.0.3' )
 
+# Allow overriding the settings
+# This is useful for the py2exe distribution: this settings file will be
+# compiled and included in library.zip, and we need to give users a way
+# to pass parameters and settings to Django.
+print (os.path.normpath(os.path.dirname(__file__)) or "ppp"), FREPPLE_APP
+if os.path.normpath(os.path.dirname(__file__)) != FREPPLE_APP:
+  try: execfile(os.path.join(FREPPLE_APP,'settings.py'))
+  except IOError:
+    pass
+  except SyntaxError, e:
+    print "Error parsing file %s:\n   %s" % (e.filename, e)
+    print "Error at character %d in line %d:\n  %s" % (e.offset, e.lineno, e.text)
+  except Exception, e:
+    print "Error parsing file %s:\n  %s" % (os.path.join(FREPPLE_APP,'settings.py'),e)
+
+if DATABASE_ENGINE == 'sqlite3':
+  # Path to sqlite3 database file
+  DATABASE_NAME = os.path.join(FREPPLE_HOME,'%s.sqlite' % DATABASE_NAME)

@@ -31,8 +31,12 @@ from django.core.servers.basehttp import AdminMediaHandler
 from django.core.management import execute_from_command_line
 from cherrypy.wsgiserver import CherryPyWSGIServer
 
-# Import django settings
+# Environment settings (which are used in the Django settings file and need
+# to be updated BEFORE importing the settings)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
+os.environ['FREPPLE_APP'] = os.path.split(sys.path[0])[0]
+
+# Import django settings
 from django.conf import settings
 
 # Define the command line options
@@ -80,16 +84,14 @@ except socket.error, e:
   print 'Invalid address and/or port: %s' % e
   sys.exit(1)
 
-# Update the root directory of the application
-settings.FREPPLE_APP = os.path.split(sys.path[0])[0]
-
 # Override the debugging settings
 settings.DEBUG = False
 settings.TEMPLATE_DEBUG = False
 
 # Update the directories where fixtures are searched
 settings.FIXTURE_DIRS = (
-  os.path.join(settings.FREPPLE_APP,'fixtures').replace('\\','/'),
+  os.path.join(settings.FREPPLE_APP,'fixtures','input').replace('\\','/'),
+  os.path.join(settings.FREPPLE_APP,'fixtures','user').replace('\\','/'),
 )
 
 # Update the template dirs
@@ -109,7 +111,6 @@ if settings.DATABASE_ENGINE == 'sqlite3' and not os.path.isfile(settings.DATABAS
   if confirm == 'yes':
     # Create the database
     execute_from_command_line(argv=['','syncdb'])
-    sys.exit(0)
 
 # Do the action
 try:

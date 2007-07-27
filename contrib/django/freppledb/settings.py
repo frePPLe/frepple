@@ -176,7 +176,6 @@ INTERNAL_IPS = ( '192.168.0.3' )
 # This is useful for the py2exe distribution: this settings file will be
 # compiled and included in library.zip, and we need to give users a way
 # to pass parameters and settings to Django.
-print (os.path.normpath(os.path.dirname(__file__)) or "ppp"), FREPPLE_APP
 if os.path.normpath(os.path.dirname(__file__)) != FREPPLE_APP:
   try: execfile(os.path.join(FREPPLE_APP,'settings.py'))
   except IOError:

@@ -2435,6 +2435,9 @@ class Tree : public NonCopyable
           * nodes. */
         const string& getName() const {return nm;}
 
+        /** Comparison operator. */
+        bool operator < (const TreeNode& o) {return nm < o.nm;}
+
         /** Constructor. */
         TreeNode(const string& n) : nm(n), color(none)
         {

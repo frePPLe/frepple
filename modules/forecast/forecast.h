@@ -161,7 +161,9 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 /** @brief This class represents a bucketized demand signal.
   *
   * The forecast object defines the item and priority of the demands.<br>
-  * A void calendar then defines the buckets.<br>
+  * A calendar (of type void, float, integer or boolean) divides the time horizon
+  * in individual time buckets. The calendar value is used to assign priorities 
+  * to the time buckets.<br>
   * The class basically works as an interface for a hierarchy of demands, where the
   * lower level demands represent forecasting time buckets.
   */
@@ -170,8 +172,10 @@ class Forecast : public Demand
     TYPEDEF(Forecast);
     friend class ForecastSolver;
   private:
-    /** @brief @todo  missing doc
+    /** @brief This class represents a forecast value in a time bucket.
       *
+      * A forecast bucket is never manipulated or created directly. Instead, 
+      * the owning forecast manages the buckets.
       */
     class ForecastBucket : public Demand
     {

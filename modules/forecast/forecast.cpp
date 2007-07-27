@@ -142,7 +142,7 @@ void Forecast::initialize()
   {
     const CalendarInt* c = dynamic_cast<const CalendarInt*>(calptr);
     if (c)
-      // Int calendar
+      // Integer calendar
       for (CalendarInt::BucketIterator i = c->beginBuckets();
         i != c->endBuckets(); ++i)
       {
@@ -153,7 +153,7 @@ void Forecast::initialize()
     {
       const CalendarBool* c = dynamic_cast<const CalendarBool*>(calptr);
       if (c)
-        // Int calendar
+        // Boolean calendar
         for (CalendarBool::BucketIterator i = c->beginBuckets();
           i != c->endBuckets(); ++i)
         {

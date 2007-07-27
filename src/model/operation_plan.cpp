@@ -277,7 +277,7 @@ DECLARE_EXPORT bool OperationPlan::operator < (const OperationPlan& a) const
 {
   // Different operations
   if (oper != a.oper)
-    return oper->getName() < a.oper->getName();   // @todo use < operator for HasName class
+    return *oper < *(a.oper);
 
   // Different start date
   if (dates.getStart() != a.dates.getStart())

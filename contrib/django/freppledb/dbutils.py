@@ -77,7 +77,7 @@ elif settings.DATABASE_ENGINE == 'mysql':
     return 'datediff(%s,%s)' % (d1,d2)
 
   def sql_overlap(s1,e1,s2,e2):
-    return 'datediff(least(%s,%s), greatest(%s%s))' % (e1,e2,s1,s2)
+    return 'datediff(least(%s,%s), greatest(%s,%s))' % (e1,e2,s1,s2)
 
   def sql_max(d1, d2):
     return "greatest(%s,%s)" % (d1,d2)

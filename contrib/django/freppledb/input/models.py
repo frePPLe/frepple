@@ -535,7 +535,7 @@ class Load(models.Model):
         save_as = True
 
     class Meta:
-        db_table = 'load'
+        db_table = 'resourceload'
         unique_together = (('operation','resource'),)
 
 

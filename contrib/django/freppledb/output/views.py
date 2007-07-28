@@ -441,7 +441,7 @@ def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
 		   group by dd.resource_id, dd.bucket, dd.startdate, dd.enddate
 	     ) ddd
      left join (
-       select resourceload.resource_id as resource_id, startdatetime, enddatetime, load.usagefactor as usagefactor
+       select resourceload.resource_id as resource_id, startdatetime, enddatetime, resourceload.usagefactor as usagefactor
        from out_operationplan, resourceload,
          (select name, maximum_id from resource %s order by name %s) as resources
        where out_operationplan.operation_id = resourceload.operation_id

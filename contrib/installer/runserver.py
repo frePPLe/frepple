@@ -60,6 +60,8 @@ parser.add_option("-p", "--port", dest="port", default=8000,
 parser.add_option("-a", "--address", dest="address",
                   help="IP address for the server to listen.", type="string",
                   default=socket.getaddrinfo(socket.gethostname(), None)[0][4][0])
+parser.add_option("-s", "--silent", dest="silent", action="store_true",
+                  help="Avoid interactive prompts.")
 
 # Parse the command line
 (options, args) = parser.parse_args()
@@ -103,14 +105,43 @@ settings.TEMPLATE_DIRS = (
 )
 
 # Create the database if it doesn't exist yet
-if settings.DATABASE_ENGINE == 'sqlite3' and not os.path.isfile(settings.DATABASE_NAME):
-  print "\nDatabase %s doesn't exist." % settings.DATABASE_NAME
-  confirm = raw_input("Do you want to create it now? (yes/no): ")
-  while confirm not in ('yes', 'no'):
-    confirm = raw_input('Please enter either "yes" or "no": ')
-  if confirm == 'yes':
-    # Create the database
-    execute_from_command_line(argv=['','syncdb'])
+noDatabaseSchema = False
+if settings.DATABASE_ENGINE == 'sqlite3':
+  # Verify if the sqlite database file exists
+  if not os.path.isfile(settings.DATABASE_NAME):
+    noDatabaseSchema = True
+elif settings.DATABASE_ENGINE not in ['postgresql_psycopg2', 'mysql']:
+    print 'Aborting: Unknown database engine %s' % settings.DATABASE_ENGINE
+    if not options.silent: raw_input("Hit any key to continue...")
+    sys.exit(1)
+else:
+  # PostgreSQL or MySQL database:
+  # Try connecting and check for a table called 'plan'.
+  from django.db import connection, transaction
+  try: cursor = connection.cursor()
+  except Exception, e:
+    print "Aborting: Can't connect to the database"
+    print "   %s" % e
+    if not options.silent: raw_input("Hit any key to continue...")
+    sys.exit(1)
+  try: cursor.execute("SELECT name FROM plan")
+  except: noDatabaseSchema = True
+  transaction.commit_unless_managed()
+
+if noDatabaseSchema:
+  print "\nDatabase schema %s doesn't exist." % settings.DATABASE_NAME
+  if not options.silent:
+    confirm = raw_input("Do you want to create it now? (yes/no): ")
+    while confirm not in ('yes', 'no'):
+      confirm = raw_input('Please enter either "yes" or "no": ')
+    if confirm == 'no':
+      # Honourable exit
+      print "Exiting..."
+      raw_input("Hit any key to continue...")
+      sys.exit(0)
+  # Create the database
+  print "\nCreating database scheme"
+  execute_from_command_line(argv=['','syncdb'])
 
 # Do the action
 try:
@@ -133,10 +164,11 @@ try:
     sys.exit(0)
   elif action != 'runserver':
     # Unsupported action
-    print "Invalid action '%s'" % action
+    print "Aborting: Invalid action '%s'" % action
     parser.print_help()
     sys.exit(1)
 except IndexError:
+  # When no arguments are given: run the server
   pass
 
 # Running the cherrypy wsgi server is the default action

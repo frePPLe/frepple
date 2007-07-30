@@ -60,13 +60,6 @@ DATABASE_PASSWORD = 'frepple'         # Not used with sqlite3.
 DATABASE_HOST = ''                    # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''                    # Set to empty string for default. Not used with sqlite3.
 
-if DATABASE_ENGINE == 'sqlite3':
-  # Extra settings for SQLITE
-  DATABASE_OPTIONS = {"timeout": 10, "check_same_thread": False}
-elif DATABASE_ENGINE == 'mysql':
-  # Extra settings for MYSQL
-  DATABASE_OPTIONS = {"init_command": "SET storage_engine=INNODB"}
-
 # Local time zone for this installation. All choices can be found here:
 # http://www.postgresql.org/docs/current/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
 TIME_ZONE = 'Europe/Brussels'
@@ -102,10 +95,9 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.doc.XViewMiddleware',
+    'django.middleware.common.CommonMiddleware',
 )
 
 ROOT_URLCONF = 'freppledb.urls'
@@ -186,6 +178,12 @@ if os.path.normpath(os.path.dirname(__file__)) != FREPPLE_APP:
   except Exception, e:
     print "Error parsing file %s:\n  %s" % (os.path.join(FREPPLE_APP,'settings.py'),e)
 
+# Extra database parameters
 if DATABASE_ENGINE == 'sqlite3':
   # Path to sqlite3 database file
   DATABASE_NAME = os.path.join(FREPPLE_HOME,'%s.sqlite' % DATABASE_NAME)
+  # Extra settings for SQLITE
+  DATABASE_OPTIONS = {"timeout": 10, "check_same_thread": False}
+elif DATABASE_ENGINE == 'mysql':
+  # Extra settings for MYSQL
+  DATABASE_OPTIONS = {"init_command": "SET storage_engine=INNODB"}

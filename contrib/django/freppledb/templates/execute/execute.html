@@ -12,17 +12,17 @@
 {% if perms.execute.run_frepple %}
 <div class="module">
 <table summary="Extra commands.">
-<caption>Frepple</caption>
+<caption>frePPLe</caption>
 
 <form method="post" action="/execute/runfrepple/">
-<tr><th scope="row"><a>Run frepple</a></th>
+<tr><th scope="row"><a>Run frePPLe</a></th>
 <td>Load frepple from the database...  <br/>
 and create <select name="type" id="type">
 <option value="7">constrained</option>
 <option value="3">material constrained</option>
 <option value="4">capacity constrained</option>
 <option value="0">unconstrained</option>
-</select> plan in frepple...<br/>
+</select> plan in frePPLe...<br/>
 and export results into the database<br/><br/>
 <a href="/execute/log/">View latest log file</a></td>
 <td><input id="run_frepple" type="submit" value="run" />

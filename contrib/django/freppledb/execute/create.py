@@ -180,7 +180,7 @@ def create_model (cluster, demand, level, resource, utilization):
       loc = Location.objects.create(name='Loc %05d' % i)
 
       # Item and delivery operation
-      oper = Operation.objects.create(name='Del %05d' % i)
+      oper = Operation.objects.create(name='Del %05d' % i, sizemultiple=1)
       it = Item.objects.create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
 
       # Level 0 buffer
@@ -209,12 +209,19 @@ def create_model (cluster, demand, level, resource, utilization):
       for k in range(level):
         if k == 1 and res:
           # Create a resource load for operations on level 1
-          oper = Operation(name='Oper %05d L%02d' % (i,k), type='OPERATION_TIME_PER', duration_per=86400)
+          oper = Operation(name='Oper %05d L%02d' % (i,k),
+            type='OPERATION_TIME_PER',
+            duration_per=86400,
+            sizemultiple=1,
+            )
           oper.save()
           ld = Load(resource=random.choice(res), operation=oper)
           ld.save()
         else:
-          oper = Operation(name='Oper %05d L%02d' % (i,k), duration=random.choice(durations))
+          oper = Operation(name='Oper %05d L%02d' % (i,k),
+            duration=random.choice(durations),
+            sizemultiple=1,
+            )
           oper.save()
         buf.producing = oper
         fl = Flow(operation=oper, thebuffer=buf, quantity=1, type="FLOW_END")
@@ -232,7 +239,7 @@ def create_model (cluster, demand, level, resource, utilization):
         fl.save()
 
       # Create supply operation
-      oper = Operation(name='Sup %05d' % i)
+      oper = Operation(name='Sup %05d' % i, sizemultiple=1)
       fl = Flow(operation=oper, thebuffer=buf, quantity=1)
       oper.save()
       fl.save()

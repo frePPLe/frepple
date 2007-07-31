@@ -15,6 +15,8 @@ EXTRA_DIST = mod_forecast.xsd
 
 CLEANFILES = *.gcda *.gcov *.gcno
 
+if FORECAST
+
 lib_LTLIBRARIES = mod_forecast.la
 mod_forecast_la_SOURCES = $(sources)
 mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
@@ -30,12 +32,14 @@ all-local:
 	-$(STRIP) ../../bin/mod_forecast.so
 	cp mod_forecast.xsd ../../bin
 
-clean-local:
-	-rm -f ../../bin/mod_forecast.xsd
-	-rm -f ../../bin/mod_forecast.so
-
 install-exec-local:
 	cp mod_forecast.xsd $(bindir)
 
 uninstall-local:
 	rm $(bindir)/mod_forecast.xsd
+
+endif
+
+clean-local:
+	-rm -f ../../bin/mod_forecast.xsd
+	-rm -f ../../bin/mod_forecast.so

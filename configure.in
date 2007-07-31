@@ -139,17 +139,33 @@ AC_ARG_WITH(glpk,
 AM_CONDITIONAL(LP, test x$lp = xtrue)
 
 #
-# Define an extra configure argument to enable the python interpreter
+# Define a configure argument to enable/disable the python module
 #
-AC_ARG_WITH(python,
-  AC_HELP_STRING([--with-python],
-    [Compile with an embedded python interpreter (default: false)]),
-  [python=true],
-  [python=false])
+AC_ARG_ENABLE(python,
+AC_HELP_STRING([--enable-python],
+[Build the python module (default: true)]),
+[case "${enableval}" in
+  yes) python=true ;;
+  no)  python=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-python]) ;;
+esac], [python=true])
 AM_CONDITIONAL(PYTHON, test x$python = xtrue)
 
 #
-# Define an extra configure argument to enable building of the api documentation
+# Define a configure argument to enable/disable the forecast module
+#
+AC_ARG_ENABLE(forecast,
+AC_HELP_STRING([--enable-forecast],
+[Build the forecast module (default: true)]),
+[case "${enableval}" in
+  yes) forecast=true ;;
+  no)  forecast=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-forecast]) ;;
+esac], [forecast=true])
+AM_CONDITIONAL(FORECAST, test x$forecast = xtrue)
+
+#
+# Define a configure argument to enable/disable building of the api documentation
 #
 AC_ARG_ENABLE(doc,
 AC_HELP_STRING([--enable-doc],
@@ -222,8 +238,8 @@ AC_CHECK_PROGS(PYTHON,python,nopython)
 if test x$PYTHON = xnopython
 then
 AC_MSG_ERROR([
-  This package requires the Python interpreter...
-  Alternatively, reconfigure without the option '--with-python'
+  This package requires the Python language...
+  Alternatively, reconfigure without the option '--disable-python'
 ])
 else
 changequote(<<, >>)

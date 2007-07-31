@@ -32,10 +32,6 @@ all-local:
 	-$(STRIP) ../../bin/mod_python.so
 	cp mod_python.xsd ../../bin
 
-clean-local:
-	-rm -f ../../bin/mod_python.xsd
-	-rm -f ../../bin/mod_python.so
-
 install-exec-local:
 	cp mod_python.xsd $(bindir)
 
@@ -43,3 +39,7 @@ uninstall-local:
 	rm $(bindir)/mod_python.xsd
 
 endif
+
+clean-local:
+	-rm -f ../../bin/mod_python.xsd
+	-rm -f ../../bin/mod_python.so

@@ -40,6 +40,10 @@ from freppledb.execute.models import log
 
 @staff_member_required
 def main(request):
+  '''
+  This view implements the overview screen with all execution
+  actions.
+  '''
   return direct_to_template(request,  template='execute/execute.html',
         extra_context={'title': 'Execute', 'reset_crumbs': True} )
 
@@ -70,7 +74,8 @@ def rundb(request):
       return HttpResponseRedirect('/execute/execute.html')
 
     elif action == 'create':
-      # Erase the database contents
+      # Populate the database with a sample model
+      # Validate the data
       try:
         clusters = int(request.POST['clusters'])
         demands = int(request.POST['demands'])
@@ -113,7 +118,7 @@ def rundb(request):
 @never_cache
 def runfrepple(request):
     '''
-    Frepple execution button.
+    FrePPLe execution button.
     '''
     # Decode form attributes
     try: action = request.POST['action']
@@ -234,7 +239,9 @@ def parseUpload(data, entity):
 
 @staff_member_required
 def upload(request):
-    """upload function for bulk data"""
+    """
+    Upload function for bulk data in CSV format.
+    """
     # Validate request method
     if request.method != 'POST':
         request.user.message_set.create(message='Only POST method allowed')
@@ -281,7 +288,9 @@ def upload(request):
 
 @staff_member_required
 def fixture(request):
-    """Load a dataset stored in a django fixture file."""
+    """
+    Load a dataset stored in a django fixture file.
+    """
 
     # Validate the request
     if request.method != 'POST':

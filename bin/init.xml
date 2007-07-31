@@ -40,16 +40,12 @@
   <COMMANDS>
     <VERBOSE>false</VERBOSE>
     <ABORTONERROR>false</ABORTONERROR>
+    <!-- Python interpreter module -->
     <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_python.so" />
-    <!--
-    <COMMAND xsi:type="COMMAND_LOADLIB">
-      <FILENAME>/home/johan/workspace/frepple/modules/forecast/.libs/libforecast.so</FILENAME>
-      <PARAMETER NAME="test1" VALUE="val1"/>
-      <PARAMETER>
-        <NAME>test2</NAME>
-        <VALUE>val2</VALUE>
-      </PARAMETER>
+    <!-- Forecast module -->
+    <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_forecast.so" />
+      <PARAMETER NAME="Customer_Then_Item_Hierarchy" VALUE="true" />
+      <PARAMETER NAME="Match_Using_Delivery_Operation" VALUE="false" />
     </COMMAND>
-    -->
   </COMMANDS>
 </PLAN>

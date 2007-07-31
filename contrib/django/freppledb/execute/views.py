@@ -31,11 +31,17 @@ from django.conf import settings
 from django.core.management import load_data
 from django.db.models.fields.related import ForeignKey, AutoField
 from django.db import models, transaction
-
+from django.views.generic.simple import direct_to_template
 import os, os.path
 
 from freppledb.execute.create import erase_model, create_model
 from freppledb.execute.models import log
+
+
+@staff_member_required
+def main(request):
+  return direct_to_template(request,  template='execute/execute.html',
+        extra_context={'title': 'Execute', 'reset_crumbs': True} )
 
 
 @staff_member_required

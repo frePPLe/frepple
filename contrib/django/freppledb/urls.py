@@ -39,10 +39,7 @@ urlpatterns = patterns('',
     (r'^execute/rundb/$', 'freppledb.execute.views.rundb'),
     (r'^execute/upload/$', 'freppledb.execute.views.upload'),
     (r'^execute/fixture/$', 'freppledb.execute.views.fixture'),
-    (r'^execute/', 'django.views.generic.simple.direct_to_template',
-       {'template': 'execute/execute.html',
-        'extra_context': {'title': 'Execute', 'reset_crumbs': True},
-       }),
+    (r'^execute/', 'freppledb.execute.views.main'),
 
     # Main index page
     (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/admin/'}),

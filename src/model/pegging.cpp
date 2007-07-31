@@ -45,6 +45,9 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
 DECLARE_EXPORT void PeggingIterator::updateStack
 (short l, double q, double f, const FlowPlan* fl, bool p)
 {
+  // Avoid very small pegging quantities
+  if (q < ROUNDING_ERROR) return;
+
   if (first)
   {
     // We can update the current top element of the stack
@@ -218,9 +221,9 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
     {
       // CASE 3B: Produced too much already: move backward
       while ( f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
-          && ((f->getQuantity()<=0 && f->getCumulativeProduced() < endQty)
+          && ((f->getQuantity()<=0 && f->getCumulativeProduced() > endQty)
               || (f->getQuantity()>0
-                  && f->getCumulativeProduced()-f->getQuantity() < endQty))) --f;
+                  && f->getCumulativeProduced()-f->getQuantity() > endQty))) --f;
       while (f!=st.fl->getFlow()->getBuffer()->getFlowPlans().end()
           && f->getCumulativeProduced() > startQty)
       {
@@ -241,11 +244,11 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
         --f;
       }
     }
-    if (peggedQty < endQty - startQty)
+    if (peggedQty < endQty - startQty - ROUNDING_ERROR)
       // Unproduced material (i.e. material that is consumed but never
       // produced) is handled with a special entry on the stack.
       updateStack(nextlevel,
-          curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(),
+          curqty*(peggedQty - endQty + startQty)/curflowplan->getQuantity(),
           st.factor,
           curflowplan,
           false);

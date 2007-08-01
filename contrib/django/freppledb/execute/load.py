@@ -22,6 +22,7 @@
 # email : jdetaeye@users.sourceforge.net
 
 from time import time
+from xml.sax.saxutils import quoteattr, escape
 from django.db import connection
 import frepple
 
@@ -55,8 +56,8 @@ def loadfrepple():
   if not d: raise ValueError('Missing a record in the plan table')
   i, j, k = d
   x.append('<CURRENT>%s</CURRENT>' % i.isoformat())
-  if j: x.append('<NAME>%s</NAME>' % j)
-  if k: x.append('<DESCRIPTION>%s</DESCRIPTION>' % k)
+  if j: x.append('<NAME>%s</NAME>' % escape(j))
+  if k: x.append('<DESCRIPTION>%s</DESCRIPTION>' % escape(k))
   x.append('</PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
 
@@ -68,9 +69,9 @@ def loadfrepple():
   x = [ header, '<LOCATIONS>' ]
   for i,j,k in cursor.fetchall():
     cnt += 1
-    x.append('<LOCATION NAME="%s">"' % i)
-    if j: x.append('<DESCRIPTION>%s</DESCRIPTION>"' % j)
-    if k: x.append('<OWNER NAME="%s"/>"' % k)
+    x.append('<LOCATION NAME=%s>"' % quoteattr(i))
+    if j: x.append('<DESCRIPTION>%s</DESCRIPTION>"' % escape(j))
+    if k: x.append('<OWNER NAME=%s/>"' % quoteattr(k))
     x.append('</LOCATION>"')
   x.append('</LOCATIONS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
@@ -85,8 +86,8 @@ def loadfrepple():
   x.append('<CALENDARS>')
   for i, j in cursor.fetchall():
     cnt += 1
-    if j: x.append('<CALENDAR NAME="%s" DESCRIPTION="%s"/>' % (i, j))
-    else: x.append('<CALENDAR NAME="%s"/>' % i)
+    if j: x.append('<CALENDAR NAME=%s DESCRIPTION=%s/>' % (quoteattr(i), quoteattr(j)))
+    else: x.append('<CALENDAR NAME=%s/>' % quoteattr(i))
   x.append('</CALENDARS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime)
@@ -100,8 +101,8 @@ def loadfrepple():
   x.append('<CALENDARS>')
   for i, j, k, l in cursor.fetchall():
     cnt += 1
-    if k: x.append('<CALENDAR NAME="%s"><BUCKETS><BUCKET START="%s" NAME="%s" VALUE="%s"/></BUCKETS></CALENDAR>' % (i, j.isoformat(), k, l))
-    else: x.append('<CALENDAR NAME="%s"><BUCKETS><BUCKET START="%s" VALUE="%s"/></BUCKETS></CALENDAR>' % (i, j.isoformat(), l))
+    if k: x.append('<CALENDAR NAME=%s><BUCKETS><BUCKET START="%s" NAME=%s VALUE="%s"/></BUCKETS></CALENDAR>' % (quoteattr(i), j.isoformat(), quoteattr(k), l))
+    else: x.append('<CALENDAR NAME=%s><BUCKETS><BUCKET START="%s" VALUE="%s"/></BUCKETS></CALENDAR>' % (quoteattr(i), j.isoformat(), l))
   x.append('</CALENDARS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime)
@@ -114,9 +115,9 @@ def loadfrepple():
   x = [ header, '<CUSTOMERS>' ]
   for i, j, k in cursor.fetchall():
     cnt += 1
-    x.append('<CUSTOMER NAME="%s">' % i)
-    if j: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % j)
-    if k: x.append( '<OWNER NAME="%s"/>' % k)
+    x.append('<CUSTOMER NAME=%s>' % quoteattr(i))
+    if j: x.append('<DESCRIPTION>%s</DESCRIPTION>' % escape(j))
+    if k: x.append('<OWNER NAME=%s/>' % quoteattr(k))
     x.append('</CUSTOMER>')
   x.append('</CUSTOMERS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
@@ -134,9 +135,9 @@ def loadfrepple():
   for i, j, k, l, m, n, p, q, r in cursor.fetchall():
     cnt += 1
     if p:
-      x.append('<OPERATION NAME="%s" xsi:type="%s">' % (i,p))
+      x.append('<OPERATION NAME=%s xsi:type="%s">' % (quoteattr(i),p))
     else:
-      x.append('<OPERATION NAME="%s">' % i)
+      x.append('<OPERATION NAME=%s>' % quoteattr(i))
     if j: x.append('<FENCE>%s</FENCE>' % timeformat(j))
     if k: x.append('<PRETIME>%s</PRETIME>' % timeformat(k))
     if l: x.append('<POSTTIME>%s</POSTTIME>' % timeformat(l))
@@ -166,9 +167,9 @@ def loadfrepple():
     cnt += 1
     if i != curoper:
       if curoper != '': x.append('</OPERATION>')
-      x.append('<OPERATION NAME="%s" xsi:type="OPERATION_ALTERNATE">' % i)
+      x.append('<OPERATION NAME=%s xsi:type="OPERATION_ALTERNATE">' % quoteattr(i))
       curoper = i
-    x.append('<ALTERNATE PRIORITY="%s"><OPERATION NAME="%s"/></ALTERNATE>' % (k,j))
+    x.append('<ALTERNATE PRIORITY="%s"><OPERATION NAME=%s/></ALTERNATE>' % (k,quoteattr(j)))
   if curoper != '': x.append('</OPERATION>')
   x.append('</OPERATIONS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
@@ -182,10 +183,10 @@ def loadfrepple():
   x = [ header, '<ITEMS>' ]
   for i, j, k, l in cursor.fetchall():
     cnt += 1
-    x.append('<ITEM NAME="%s">' % i)
-    if j: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % j)
-    if k: x.append( '<OPERATION NAME="%s"/>' % k)
-    if l: x.append( '<OWNER NAME="%s"/>' % l)
+    x.append('<ITEM NAME=%s>' % quoteattr(i))
+    if j: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % escape(j))
+    if k: x.append( '<OPERATION NAME=%s/>' % quoteattr(k))
+    if l: x.append( '<OWNER NAME=%s/>' % quoteattr(l))
     x.append('</ITEM>')
   x.append('</ITEMS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
@@ -203,7 +204,7 @@ def loadfrepple():
   for i, j, k, l, m, n, o, q, f1, f2, f3, f4, f5, f6, f7, f8 in cursor.fetchall():
     cnt += 1
     if q:
-      x.append('<BUFFER NAME="%s" xsi:type="%s">' % (i,q))
+      x.append('<BUFFER NAME=%s xsi:type="%s">' % (quoteattr(i),q))
       if q == 'BUFFER_PROCURE':
         if f1: x.append( '<LEADTIME>%s</LEADTIME>' % timeformat(f1))
         if f2: x.append( '<MININVENTORY>%s</MININVENTORY>' % f2)
@@ -214,13 +215,13 @@ def loadfrepple():
         if f7: x.append( '<SIZE_MULTIPLE>%s</SIZE_MULTIPLE>' % f7)
         if f8: x.append( '<SIZE_MAXIMUM>%s</SIZE_MAXIMUM>' % f8)
     else:
-      x.append('<BUFFER NAME="%s">' % i)
-    if j: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % j)
-    if k: x.append( '<LOCATION NAME="%s" />' % k)
-    if l: x.append( '<ITEM NAME="%s" />' % l)
+      x.append('<BUFFER NAME=%s>' % quoteattr(i))
+    if j: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % escape(j))
+    if k: x.append( '<LOCATION NAME=%s />' % quoteattr(k))
+    if l: x.append( '<ITEM NAME=%s />' % quoteattr(l))
     if m: x.append( '<ONHAND>%s</ONHAND>' % m)
-    if n: x.append( '<MINIMUM NAME="%s" />' % n)
-    if o: x.append( '<PRODUCING NAME="%s" />' % o)
+    if n: x.append( '<MINIMUM NAME=%s />' % quoteattr(n))
+    if o: x.append( '<PRODUCING NAME=%s />' % quoteattr(o))
     x.append('</BUFFER>')
   x.append('</BUFFERS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
@@ -235,12 +236,12 @@ def loadfrepple():
   for i, j, k, l, m in cursor.fetchall():
     cnt += 1
     if m:
-      x.append('<RESOURCE NAME="%s" xsi:type="%s">' % (i,m))
+      x.append('<RESOURCE NAME=%s xsi:type="%s">' % (quoteattr(i),m))
     else:
-      x.append('<RESOURCE NAME="%s">' % i)
-    if j: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % j)
-    if k: x.append( '<MAXIMUM NAME="%s" />' % k)
-    if l: x.append( '<LOCATION NAME="%s" />' % l)
+      x.append('<RESOURCE NAME=%s>' % quoteattr(i))
+    if j: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % escape(j))
+    if k: x.append( '<MAXIMUM NAME=%s />' % quoteattr(k))
+    if l: x.append( '<LOCATION NAME=%s />' % quoteattr(l))
     x.append('</RESOURCE>')
   x.append('</RESOURCES></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
@@ -255,9 +256,9 @@ def loadfrepple():
   for i, j, k, l in cursor.fetchall():
     cnt += 1
     if l:
-      x.append('<FLOW xsi:type="%s"><OPERATION NAME="%s"/><BUFFER NAME="%s"/><QUANTITY>%s</QUANTITY></FLOW>' % (l, i, j, k))
+      x.append('<FLOW xsi:type="%s"><OPERATION NAME=%s/><BUFFER NAME=%s/><QUANTITY>%s</QUANTITY></FLOW>' % (l, quoteattr(i), quoteattr(j), k))
     else:
-      x.append('<FLOW><OPERATION NAME="%s"/><BUFFER NAME="%s"/><QUANTITY>%s</QUANTITY></FLOW>' % (i, j, k))
+      x.append('<FLOW><OPERATION NAME=%s/><BUFFER NAME=%s/><QUANTITY>%s</QUANTITY></FLOW>' % (quoteattr(i), quoteattr(j), k))
   x.append('</FLOWS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d flows in %.2f seconds' % (cnt, time() - starttime)
@@ -270,7 +271,7 @@ def loadfrepple():
   x = [ header , '<LOADS>' ]
   for i, j, k in cursor.fetchall():
     cnt += 1
-    x.append('<LOAD><OPERATION NAME="%s"/><RESOURCE NAME="%s"/><USAGE>%s</USAGE></LOAD>' % (i, j, k))
+    x.append('<LOAD><OPERATION NAME=%s/><RESOURCE NAME=%s/><USAGE>%s</USAGE></LOAD>' % (quoteattr(i), quoteattr(j), k))
   x.append('</LOADS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d loads in %.2f seconds' % (cnt, time() - starttime)
@@ -283,7 +284,7 @@ def loadfrepple():
   x = [ header , '<OPERATION_PLANS>' ]
   for i, j, k, l, m, n in cursor.fetchall():
     cnt += 1
-    x.append('<OPERATION_PLAN ID="%d" OPERATION="%s" QUANTITY="%s">' % (i, j, k))
+    x.append('<OPERATION_PLAN ID="%d" OPERATION=%s QUANTITY="%s">' % (i, quoteattr(j), k))
     if l: x.append( '<START>%s</START>' % l.isoformat())
     if m: x.append( '<END>%s</END>' % m.isoformat())
     if n: x.append( '<LOCKED>true</LOCKED>')
@@ -300,11 +301,11 @@ def loadfrepple():
   x = [ header, '<DEMANDS>' ]
   for i, j, k, l, m, n, o, p, q in cursor.fetchall():
     cnt += 1
-    x.append('<DEMAND NAME="%s" DUE="%s" QUANTITY="%s" PRIORITY="%d">' % (i, j.isoformat(), k, l))
-    if m: x.append( '<ITEM NAME="%s" />' % m)
-    if n: x.append( '<OPERATION NAME="%s" />' % n)
-    if o: x.append( '<CUSTOMER NAME="%s" />' % o)
-    if p: x.append( '<OWNER NAME="%s" />' % p)
+    x.append('<DEMAND NAME=%s DUE="%s" QUANTITY="%s" PRIORITY="%d">' % (quoteattr(i), j.isoformat(), k, l))
+    if m: x.append( '<ITEM NAME=%s />' % quoteattr(m))
+    if n: x.append( '<OPERATION NAME=%s />' % quoteattr(n))
+    if o: x.append( '<CUSTOMER NAME=%s />' % quoteattr(o))
+    if p: x.append( '<OWNER NAME=%s />' % quoteattr(p))
     if q: x.append( '<POLICY>%s</POLICY>' % q)
     x.append('</DEMAND>')
   x.append('</DEMANDS></PLAN>')

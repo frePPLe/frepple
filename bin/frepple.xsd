@@ -39,7 +39,7 @@
 	  Manually edit this section.
 	-->
 	<xsd:include schemaLocation="mod_python.xsd" />
-	<!-- <xsd:include schemaLocation="mod_forecast.xsd" /> -->
+	<xsd:include schemaLocation="mod_forecast.xsd" />
 	<!-- <xsd:include schemaLocation="mod_lpsolver.xsd" /> -->
 
   <!-- Define the root element and its contents. -->

@@ -26,6 +26,7 @@ from django.contrib.sessions.models import Session
 from django.template import resolve_variable
 from django.conf import settings
 import urllib
+from django.contrib.admin.views.main import quote
 
 HOMECRUMB = '<a href="/admin/">Site administration</a>'
 
@@ -80,7 +81,6 @@ class CrumbsNode(template.Node):
     '''
     A generic breadcrumbs framework.
     Usage in your templates:
-        {% load breadcrumbs %}
         {% crumbs %}
 
     The admin app already defines a block for crumbs, so the typical usage of the
@@ -168,7 +168,7 @@ def superlink(value,type):
     # Fail silently if we end up with an empty string
     if value == '': return ''
     # Final return value
-    return '<a href="/admin/input/%s/%s" class="%s">%s</a>' % (type,urllib.quote(value),type,value)
+    return '<a href="/admin/input/%s/%s" class="%s">%s</a>' % (type,quote(value),type,value)
 
 
 class VersionNode(template.Node):

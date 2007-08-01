@@ -1,5 +1,5 @@
 {% extends "admin/base_site_nav.html" %}
-{% load adminmedia admin_list i18n breadcrumbs %}
+{% load adminmedia admin_list i18n %}
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
 {% block bodyclass %}change-list{% endblock %}
 {% block breadcrumbs %}{% set reset_crumbs "True" %}{% if not is_popup %}{{ block.super }}{% endif %}{% endblock %}

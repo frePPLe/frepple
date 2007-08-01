@@ -289,7 +289,7 @@ def bufferquery(buffer, bucket, startdate, enddate, offset=0, limit=None):
       rowset = []
       prevbuf = row[0]
       endoh = float(row[1])
-    startoh = endoh
+    startoh = endoh   # @todo the starting onhand isn't right...
     endoh += float(row[3] - row[4])
     rowset.append( {
       'buffer': row[0],

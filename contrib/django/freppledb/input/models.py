@@ -614,3 +614,59 @@ class Demand(models.Model):
 
     class Meta:
         db_table = 'demand'
+
+
+class Forecast(models.Model):
+    # Database fields
+    name = models.CharField(maxlength=60, primary_key=True)
+    description = models.CharField(maxlength=200, null=True, blank=True)
+    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    customer = models.ForeignKey(Customer, null=True, db_index=True, raw_id_admin=True)
+    item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
+    operation = models.ForeignKey(Operation, null=True, blank=True,
+      related_name='used_forecast', raw_id_admin=True, help_text='Operation used to satisfy this demand')
+    priority = models.PositiveIntegerField(default=2, choices=Demand.demandpriorities, radio_admin=True)
+    policy = models.CharField(maxlength=25, null=True, blank=True, choices=Demand.demandpolicies,
+      help_text='Choose whether to plan the demand short or late, and with single or multiple deliveries allowed')
+    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+
+    # Convenience methods
+    def __str__(self): return self.name
+
+    class Admin:
+        fields = (
+            (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'priority')}),
+            ('Planning parameters', {'fields': ('operation', 'policy', ), 'classes': 'collapse'}),
+        )
+        list_display = ('name', 'item', 'customer', 'description', 'category',
+          'subcategory', 'operation', 'priority', 'lastmodified')
+        search_fields = ['name','customer','item','operation']
+        list_filter = ['priority','category','subcategory']
+        list_per_page = LIST_PER_PAGE
+        save_as = True
+
+    class Meta:
+        db_table = 'forecast'
+
+
+class ForecastDemand(models.Model):
+    # Database fields
+    forecast = models.ForeignKey(Forecast, null=False, db_index=True, raw_id_admin=True)
+    startdate = models.DateField('startdate', null=False)
+    enddate = models.DateField('enddate', null=False)
+    quantity = models.DecimalField(max_digits=15, decimal_places=4, default=0)
+    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+
+    # Convenience methods
+    def __str__(self): return self.forecast.name + " " + str(self.startdate) + " - " + str(self.enddate)
+
+    class Admin:
+        fields = ( (None,{'fields': ('forecast', 'startdate', 'enddate', 'quantity')}), )
+        list_display = ('forecast', 'startdate', 'enddate', 'quantity', 'lastmodified')
+        search_fields = ['forecast']
+        list_per_page = LIST_PER_PAGE
+        save_as = True
+
+    class Meta:
+        db_table = 'forecastdemand'

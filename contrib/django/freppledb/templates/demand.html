@@ -19,9 +19,7 @@
 </div>
 
 <table>
-<tr><th></th><th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr>
-
-
+<tr><th>Item</th><th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr>
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}" id="{{j.item}}"><td>{{j.item|superlink:"item"}}</td>
 <td>Demand<br/>Supply<br/>Backlog</td>{% endif %}

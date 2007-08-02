@@ -61,7 +61,7 @@ class Plan(models.Model):
 class Dates(models.Model):
     # Database fields
     day = models.DateField(primary_key=True)
-    dayofweek = models.SmallIntegerField('Day of week')
+    dayofweek = models.SmallIntegerField('Day of week', help_text='0 = sunday, 1 = monday, ...')
     week = models.CharField(maxlength=10, db_index=True)
     week_start = models.DateField(db_index=True)
     week_end = models.DateField(db_index=True)
@@ -624,6 +624,7 @@ class Forecast(models.Model):
     subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
     customer = models.ForeignKey(Customer, null=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
+    calendar = models.ForeignKey(Calendar, null=False, raw_id_admin=True)
     operation = models.ForeignKey(Operation, null=True, blank=True,
       related_name='used_forecast', raw_id_admin=True, help_text='Operation used to satisfy this demand')
     priority = models.PositiveIntegerField(default=2, choices=Demand.demandpriorities, radio_admin=True)
@@ -636,10 +637,10 @@ class Forecast(models.Model):
 
     class Admin:
         fields = (
-            (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'priority')}),
+            (None, {'fields': ('name', 'item', 'customer', 'calendar', 'description', 'category','subcategory', 'priority')}),
             ('Planning parameters', {'fields': ('operation', 'policy', ), 'classes': 'collapse'}),
         )
-        list_display = ('name', 'item', 'customer', 'description', 'category',
+        list_display = ('name', 'item', 'customer', 'calendar', 'description', 'category',
           'subcategory', 'operation', 'priority', 'lastmodified')
         search_fields = ['name','customer','item','operation']
         list_filter = ['priority','category','subcategory']

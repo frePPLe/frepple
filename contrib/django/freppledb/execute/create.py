@@ -55,9 +55,9 @@ def erase_model():
     delete = "truncate table %s"
   for table in [
     'out_problem','out_flowplan','out_loadplan','out_operationplan',
-    'dates','demand','flow','resourceload','buffer','resource','operationplan',
-    'item','suboperation','operation','location','bucket','calendar',
-    'customer'
+    'dates','demand','forecastdemand','forecast','flow','resourceload','buffer',
+    'resource','operationplan','item','suboperation','operation','location',
+    'bucket','calendar','customer'
     ]:
     cursor.execute(delete % table)
     transaction.commit()

@@ -293,11 +293,43 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime)
 
-  # Demand
-  cursor.execute("SELECT name, due, quantity, priority, item_id, operation_id, customer_id, owner_id, policy FROM demand")
+  # Forecast
+  print 'Importing forecast...'
   cnt = 0
   starttime = time()
+  cursor.execute("SELECT name, customer_id, item_id, priority, operation_id, policy, calendar_id FROM forecast")
+  x = [ header, '<DEMANDS>' ]
+  for i, j, k, l, m, n, o in cursor.fetchall():
+    cnt += 1
+    x.append('<DEMAND NAME=%s xsi:type="DEMAND_FORECAST" PRIORITY="%d">' % (quoteattr(i), l))
+    if j: x.append( '<CUSTOMER NAME=%s />' % quoteattr(j))
+    if k: x.append( '<ITEM NAME=%s />' % quoteattr(k))
+    if m: x.append( '<OPERATION NAME=%s />' % quoteattr(m))
+    if n: x.append( '<POLICY>%s</POLICY>' % n)
+    if o: x.append( '<CALENDAR NAME=%s />' % quoteattr(o))
+    x.append('</DEMAND>')
+  x.append('</DEMANDS></PLAN>')
+  frepple.readXMLdata('\n'.join(x),False,False)
+  print 'Loaded %d forecasts in %.2f seconds' % (cnt, time() - starttime)
+
+  # Forecast demand
+  print 'Importing forecast demand...'
+  cnt = 0
+  starttime = time()
+  cursor.execute("SELECT forecast_id, startdate, enddate, quantity FROM forecastdemand")
+  x = [ header, '<DEMANDS>' ]
+  for i, j, k, l in cursor.fetchall():
+    cnt += 1
+    x.append('<DEMAND NAME=%s><BUCKETS><BUCKET START="%sT00:00:00" END="%sT00:00:00" TOTAL="%s"/></BUCKETS></DEMAND>' % (quoteattr(i), j.isoformat(), k.isoformat(), l))
+  x.append('</DEMANDS></PLAN>')
+  frepple.readXMLdata('\n'.join(x),False,False)
+  print 'Loaded %d forecast demands in %.2f seconds' % (cnt, time() - starttime)
+
+  # Demand
   print 'Importing demands...'
+  cnt = 0
+  starttime = time()
+  cursor.execute("SELECT name, due, quantity, priority, item_id, operation_id, customer_id, owner_id, policy FROM demand")
   x = [ header, '<DEMANDS>' ]
   for i, j, k, l, m, n, o, p, q in cursor.fetchall():
     cnt += 1

@@ -62,6 +62,24 @@ a {
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
+.forecast {
+  margin-right: 17px;
+  padding-right: 17px;
+  background: url(/static/context.gif) 100% 100% no-repeat;
+  white-space: nowrap;
+}
+.customer {
+  margin-right: 17px;
+  padding-right: 17px;
+  background: url(/static/context.gif) 100% 100% no-repeat;
+  white-space: nowrap;
+}
+.calendar {
+  margin-right: 17px;
+  padding-right: 17px;
+  background: url(/static/context.gif) 100% 100% no-repeat;
+  white-space: nowrap;
+}
 
 /* Style for main navigation menu */
 

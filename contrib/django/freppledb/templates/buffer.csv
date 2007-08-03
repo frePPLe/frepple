@@ -1,3 +1,3 @@
-#Buffer,Bucket,Start Inventory,Consumed,Produced,End inventory
-{% for i in objectlist %}{% for j in i %}{{j.buffer|addslashes}},{{j.bucket}},{{j.startoh}},{{j.consumed}},{{j.produced}},{{j.endoh}}
+#Buffer,Item,Location,Bucket,Start Inventory,Consumed,Produced,End inventory
+{% for i in objectlist %}{% for j in i %}{{j.buffer|addslashes}},{{j.item|addslashes}},{{j.location|addslashes}},{{j.bucket}},{{j.startoh}},{{j.consumed}},{{j.produced}},{{j.endoh}}
 {% endfor %}{% endfor %}

@@ -56,6 +56,8 @@ urlpatterns = patterns('',
     (r'^resource/$', freppledb.output.views.resourcereport),
     (r'^operation/([^/]+)/$', freppledb.output.views.operationreport),
     (r'^operation/$', freppledb.output.views.operationreport),
+    (r'^forecast/([^/]+)/$', freppledb.output.views.forecastreport),
+    (r'^forecast/$', freppledb.output.views.forecastreport),
     (r'^path/([^/]+)/([^/]+)/$', freppledb.output.views.pathreport.view),
 
     # Posting special edits

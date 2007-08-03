@@ -40,13 +40,13 @@ from datetime import date, datetime
 if settings.DATABASE_ENGINE == 'sqlite3':
 
   def sql_datediff(d1, d2):
-    return "((strftime('%%s',%s) - strftime('%%s',%s)) / 86400.0)" % (d1,d2)
+    return "((strftime('%%%%s',%s) - strftime('%%%%s',%s)) / 86400.0)" % (d1,d2)
 
   def sql_overlap(s1, e1, s2, e2):
-    return "((" \
+    return "max(0,((" \
       "min(strftime('%%%%s',%s),strftime('%%%%s',%s)) - " \
       "max(strftime('%%%%s',%s),strftime('%%%%s',%s)) " \
-      ") / 86400.0)" % (e1,e2,s1,s2)
+      ")) / 86400.0)" % (e1,e2,s1,s2)
 
   def sql_max(d1, d2):
     return "max(%s,%s)" % (d1,d2)
@@ -61,8 +61,8 @@ elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
     return '(extract(epoch from (%s) - (%s)) / 86400)' % (d1,d2)
 
   def sql_overlap(s1, e1, s2, e2):
-    return '(extract(epoch from ' \
-      '(least(%s,%s) - greatest(%s%s))) / 86400)' % (e1,e2,s1,s2)
+    return 'greatest(0,extract(epoch from ' \
+      '(least(%s,%s) - greatest(%s%s))) / 86400))' % (e1,e2,s1,s2)
 
   def sql_max(d1, d2):
     return "greatest(%s,%s)" % (d1,d2)
@@ -77,7 +77,7 @@ elif settings.DATABASE_ENGINE == 'mysql':
     return 'datediff(%s,%s)' % (d1,d2)
 
   def sql_overlap(s1,e1,s2,e2):
-    return 'datediff(least(%s,%s), greatest(%s,%s))' % (e1,e2,s1,s2)
+    return 'greatest(0,datediff(least(%s,%s), greatest(%s,%s)))' % (e1,e2,s1,s2)
 
   def sql_max(d1, d2):
     return "greatest(%s,%s)" % (d1,d2)
@@ -92,7 +92,7 @@ elif settings.DATABASE_ENGINE == 'oracle':
     return '(%s - %s)' % (d1,d2)
 
   def sql_overlap(s1,e1,s2,e2):
-    return '(least(%s,%s) - greatest(%s,%s))' % (e1,e2,s1,s2)
+    return 'greatest(0,least(%s,%s) - greatest(%s,%s))' % (e1,e2,s1,s2)
 
   def sql_max(d1, d2):
     return "greatest(%s,%s)" % (d1,d2)

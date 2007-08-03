@@ -27,7 +27,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.core import serializers
 from django.utils.simplejson.decoder import JSONDecoder
 
-from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item
+from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item, Forecast
 
 from datetime import date, datetime
 
@@ -55,8 +55,9 @@ class uploadjson:
       for i in JSONDecoder().decode(request.FILES['data']['content']):
         try:
           entity = i['entity']
+
+          # CASE 1: The maximum calendar of a resource is being edited
           if entity == 'resource.maximum':
-            # CASE 1: The maximum calendar of a resource is being edited
             # a) Verify permissions
             if not request.user.has_perm('input.change_resource'):
               raise Exception('No permission to change resources')
@@ -72,10 +73,23 @@ class uploadjson:
               end,
               float(i['value']) / (end - start).days,
               user = request.user)
+
+          # CASE 2: The forecast quantity is being edited
+          elif entity == 'forecast.total':
+            # a) Verify permissions
+            if not request.user.has_perm('input.change_forecastdemand'):
+              raise Exception('No permission to change forecast demand')
+            # b) Find the forecast
+            fcst = Forecast.objects.get(name = i['name'])
+            # c) Update the forecast
+            fcst.setTotal(i['startdate'],i['enddate'],i['value'])
+
+          # All the rest is garbage
           else:
             raise Exception('Unknown editing action "%s"' % entity)
+
         except Exception, e:
-          print 'error processing record %s' % e
+          print 'Error processing record: %s' % e
 
       # Processing went fine...
       return HttpResponse("OK")

@@ -32,7 +32,7 @@ from django.conf import settings
 
 from datetime import date, datetime
 
-from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item, Demand
+from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item, Demand, Forecast
 from freppledb.dbutils import *
 
 # Parameter settings
@@ -248,19 +248,21 @@ def bufferquery(buffer, bucket, startdate, enddate, offset=0, limit=None):
   cursor = connection.cursor()
   query = '''
     select combi.thebuffer_id,
+           combi.item_id,
+           combi.location_id,
            combi.onhand,
-           combi.%s,
+           combi.bucket,
            coalesce(data.produced,0.0),
            coalesce(data.consumed,0.0)
       from
-       (select name as thebuffer_id, onhand, d.%s as %s, d.start as start
+       (select name as thebuffer_id, location_id, item_id, onhand, d.bucket as bucket, d.start as start
         from
-          (select name, onhand from buffer %s order by name %s) as buffer
-        inner join (select %s, min(day) as start from dates where day >= '%s'
-          and day < '%s' group by %s) d on 1=1
+          (select name, location_id, item_id, onhand from buffer %s order by name %s) as buffer
+        inner join (select %s as bucket , min(day) as start from dates where day >= '%s'
+          and day < '%s' group by bucket) d on 1=1
        ) as combi
       left join
-       (select thebuffer_id, %s,
+       (select thebuffer_id, %s as bucket,
           sum(%s) as produced,
           -sum(%s) as consumed
           from out_flowplan,
@@ -270,14 +272,14 @@ def bufferquery(buffer, bucket, startdate, enddate, offset=0, limit=None):
           and out_flowplan.flowdate >= '%s'
           and out_flowplan.flowdate < '%s'
           and thebuffer_id = buffer.name
-          group by thebuffer_id, %s
+          group by thebuffer_id, bucket
         ) data
       on combi.thebuffer_id = data.thebuffer_id
-      and combi.%s = data.%s
+      and combi.bucket = data.bucket
       order by combi.thebuffer_id, combi.start
-    ''' % (bucket,bucket,bucket,filterstring, limitstring, bucket,startdate,enddate,bucket,
-       bucket,sql_max('quantity','0.0'),sql_min('quantity','0.0'),filterstring, limitstring,
-      startdate,enddate,bucket,bucket,bucket)
+    ''' % (filterstring,limitstring,bucket,startdate,enddate,bucket,
+           sql_max('quantity','0.0'),sql_min('quantity','0.0'),filterstring, limitstring,
+           startdate,enddate)
   if buffer: cursor.execute(query, (buffer,buffer))
   else: cursor.execute(query)
   resultset = []
@@ -288,15 +290,17 @@ def bufferquery(buffer, bucket, startdate, enddate, offset=0, limit=None):
       if prevbuf: resultset.append(rowset)
       rowset = []
       prevbuf = row[0]
-      endoh = float(row[1])
+      endoh = float(row[3])
     startoh = endoh   # @todo the starting onhand isn't right...
-    endoh += float(row[3] - row[4])
+    endoh += float(row[5] - row[6])
     rowset.append( {
       'buffer': row[0],
-      'bucket': row[2],
+      'item': row[1],
+      'location': row[2],
+      'bucket': row[4],
       'startoh': startoh,
-      'produced': row[3],
-      'consumed': row[4],
+      'produced': row[5],
+      'consumed': row[6],
       'endoh': endoh,
       } )
   if prevbuf: resultset.append(rowset)
@@ -328,18 +332,18 @@ def demandquery(item, bucket, startdate, enddate, offset=0, limit=None):
   cursor = connection.cursor()
   query = '''
       select combi.item_id,
-             combi.%s,
+             combi.bucket,
              coalesce(data.demand,0),
              coalesce(data2.planned,0)
       from
-       (select item_id, d.%s as %s, d.start as start
+       (select item_id, d.bucket as bucket, d.start as start
         from (select distinct item_id from demand %s order by item_id %s) as items
-        inner join (select %s, min(day) as start from dates where day >= '%s'
-          and day < '%s' group by %s) d on 1=1
+        inner join (select %s as bucket, min(day) as start from dates where day >= '%s'
+          and day < '%s' group by bucket) d on 1=1
        ) as combi
       -- Planned quantity
       left join
-       (select items.item_id as item_id, %s, sum(out_operationplan.quantity) as planned
+       (select items.item_id as item_id, %s as bucket, sum(out_operationplan.quantity) as planned
         from out_operationplan, dates as d, demand as inp,
           (select distinct item_id from demand %s order by item_id %s) as items
         where out_operationplan.enddate = d.day
@@ -347,26 +351,26 @@ def demandquery(item, bucket, startdate, enddate, offset=0, limit=None):
         and inp.item_id = items.item_id
         and out_operationplan.enddate >= '%s'
         and out_operationplan.enddate < '%s'
-        group by items.item_id, %s) data2
+        group by items.item_id, bucket) data2
       on combi.item_id = data2.item_id
-      and combi.%s = data2.%s
+      and combi.bucket = data2.bucket
       -- Requested quantity
       left join
-       (select items.item_id as item_id, %s, sum(inp.quantity) as demand
+       (select items.item_id as item_id, %s as bucket, sum(inp.quantity) as demand
             from dates as d, demand as inp,
               (select distinct item_id from demand %s order by item_id %s) as items
             where date(inp.due) = d.day
             and inp.due >= '%s'
             and inp.due < '%s'
             and inp.item_id = items.item_id
-            group by items.item_id, %s) data
+            group by items.item_id, bucket) data
       on combi.item_id = data.item_id
-      and combi.%s = data.%s
+      and combi.bucket = data.bucket
       -- Sort the result
       order by combi.item_id, combi.start
-     ''' % (bucket,bucket,bucket,filterstring, limitstring,bucket,startdate,enddate,bucket,
-            bucket,filterstring,limitstring,startdate,enddate,bucket,bucket,bucket,
-            bucket,filterstring,limitstring,startdate,enddate,bucket,bucket,bucket)
+     ''' % (filterstring, limitstring,bucket,startdate,enddate,
+            bucket,filterstring,limitstring,startdate,enddate,
+            bucket,filterstring,limitstring,startdate,enddate)
   if item: cursor.execute(query, (item,item,item))
   else: cursor.execute(query)
   resultset = []
@@ -405,6 +409,86 @@ def demandreport(request, item=None):
       )
 
 
+def forecastquery(fcst, bucket, startdate, enddate, offset=0, limit=None):
+  if fcst: filterstring = 'where name = %s'
+  else: filterstring = ''
+  if limit:
+    if offset == 0: limitstring = 'limit %d' % int(limit)
+    else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
+  else: limitstring = ''
+  cursor = connection.cursor()
+  query = '''
+              select combi.name,
+             combi.item_id,
+             combi.customer_id,
+             combi.bucket,
+             combi.startdate,
+             combi.enddate,
+             coalesce(data.qty,0)
+      from
+       (select
+          name, item_id, customer_id, d.bucket as bucket,
+          d.startdate as startdate, d.enddate as enddate
+        from (select distinct name, item_id, customer_id from forecast %s order by name %s) as forecasts
+        inner join (
+           select %s as bucket, %s_start as startdate, %s_end as enddate
+           from dates
+           where day >= '%s' and day < '%s'
+           group by bucket, startdate, enddate
+           ) d on 1=1
+       ) as combi
+      -- Total forecasted quantity
+      left join
+       (select name, d.bucket as bucket, sum(quantity * %s / %s) as qty
+        from forecastdemand, (select %s as bucket, %s_start as bucketstart, %s_end as bucketend from dates group by bucket) as d,
+          (select distinct name from forecast %s order by name %s) as fcst
+        where forecastdemand.forecast_id = fcst.name
+        group by name, bucket) data
+      on combi.name = data.name
+      and combi.bucket = data.bucket
+      order by combi.name, combi.startdate
+     ''' % (filterstring,limitstring,bucket,bucket,bucket,startdate,enddate,
+       sql_overlap('forecastdemand.startdate','forecastdemand.enddate','bucketstart','bucketend'),
+       sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),
+       bucket,bucket,bucket,filterstring, limitstring)
+  if fcst: cursor.execute(query, (fcst,fcst))
+  else: cursor.execute(query)
+  resultset = []
+  prevfcst = None
+  rowset = []
+  for row in cursor.fetchall():
+    if row[0] != prevfcst:
+      if prevfcst: resultset.append(rowset)
+      rowset = []
+      prevfcst = row[0]
+    rowset.append( {
+      'name': row[0],
+      'item': row[1],
+      'customer': row[2],
+      'bucket': row[3],
+      'startdate': row[4],
+      'enddate': row[5],
+      'forecast': row[6],
+      } )
+  if prevfcst: resultset.append(rowset)
+  return resultset
+
+
+@staff_member_required
+def forecastreport(request, fcst=None):
+  if fcst:
+    return BucketedView(request, fcst, forecastquery,
+      'forecast.html', 'forecast.csv',
+      {'title': 'Forecast report for %s' % fcst, 'reset_crumbs': False}
+      )
+  else:
+    return BucketedView(request, fcst, forecastquery,
+      'forecast.html', 'forecast.csv',
+      {'title': 'Forecast report', 'reset_crumbs': True},
+      countmethod=Forecast.objects.values('item').distinct()
+      )
+
+
 def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
   if resource: filterstring = 'where name = %s'
   else: filterstring = ''
@@ -415,17 +499,21 @@ def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
   cursor = connection.cursor()
   query = '''
      select ddd.resource_id,
+            ddd.location_id,
             ddd.bucket,
             ddd.startdate,
             ddd.enddate,
             min(ddd.available),
             coalesce(sum(loaddata.usagefactor * %s), 0) as loading
      from (
-       select dd.resource_id as resource_id, dd.bucket as bucket, dd.startdate as startdate, dd.enddate as enddate,
+       select dd.resource_id as resource_id, dd.bucket as bucket,
+         dd.location_id as location_id,
+         dd.startdate as startdate, dd.enddate as enddate,
          coalesce(sum(bucket.value * %s), 0) as available
        from (
-         select name as resource_id, maximum_id, d.bucket as bucket, d.startdate as startdate, d.enddate as enddate
-         from (select name, maximum_id from resource %s order by name %s) as resources
+         select name as resource_id, location_id, maximum_id, d.bucket as bucket,
+         d.startdate as startdate, d.enddate as enddate
+         from (select name, location_id, maximum_id from resource %s order by name %s) as resources
          inner join (
            -- todo the next line doesnt work for daily buckets
            select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -440,6 +528,7 @@ def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
           and dd.enddate >= bucket.startdate
 		   group by dd.resource_id, dd.bucket, dd.startdate, dd.enddate
 	     ) ddd
+	   -- Load data
      left join (
        select resourceload.resource_id as resource_id, startdatetime, enddatetime, resourceload.usagefactor as usagefactor
        from out_operationplan, resourceload,
@@ -469,16 +558,17 @@ def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
       if prevres: resultset.append(rowset)
       rowset = []
       prevres = row[0]
-    if row[4] != 0: util = row[5] / row[4]
+    if row[5] != 0: util = row[6] / row[5]
     else: util = 0
     count += 1
     rowset.append( {
       'resource': row[0],
-      'bucket': row[1],
-      'startdate': row[2],
-      'enddate': row[3],
-      'available': row[4],
-      'load': row[5],
+      'location': row[1],
+      'bucket': row[2],
+      'startdate': row[3],
+      'enddate': row[4],
+      'available': row[5],
+      'load': row[6],
       'utilization': util,
       } )
   if prevres: resultset.append(rowset)
@@ -510,17 +600,17 @@ def operationquery(operation, bucket, startdate, enddate, offset=0, limit=None):
   cursor = connection.cursor()
   query = '''
     select combi.operation_id,
-           combi.%s,
+           combi.bucket,
            coalesce(data.frozen,0),
            coalesce(data.total,0)
       from
-       (select name as operation_id, d.%s as %s, d.start as start
+       (select name as operation_id, d.bucket as bucket, d.start as start
         from (select name from operation %s order by name %s) as operations
-        inner join (select %s, min(day) as start from dates where day >= '%s'
-          and day < '%s' group by %s) d on 1=1
+        inner join (select %s as bucket, min(day) as start from dates where day >= '%s'
+          and day < '%s' group by bucket) d on 1=1
        ) as combi
       left join
-       (select operation_id, %s,
+       (select operation_id, %s as bucket,
           sum(quantity) as total,
           sum(case locked when 1 then quantity else 0 end) as frozen
           from out_operationplan, dates,
@@ -529,14 +619,13 @@ def operationquery(operation, bucket, startdate, enddate, offset=0, limit=None):
           and out_operationplan.startdate = dates.day
           and startdate >= '%s'
           and enddate < '%s'
-          group by operation_id, %s
+          group by operation_id, bucket
         ) data
       on combi.operation_id = data.operation_id
-      and combi.%s = data.%s
+      and combi.bucket = data.bucket
       order by combi.operation_id, combi.start
-    ''' % (bucket,bucket,bucket,filterstring,limitstring,
-         bucket,startdate,enddate,bucket,bucket,filterstring,limitstring,
-         startdate,enddate,bucket,bucket,bucket)
+    ''' % (filterstring,limitstring,bucket,startdate,enddate,bucket,
+       filterstring,limitstring,startdate,enddate)
   if operation: cursor.execute(query, (operation,operation))
   else: cursor.execute(query)
   resultset = []

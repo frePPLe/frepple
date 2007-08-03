@@ -635,6 +635,13 @@ class Forecast(models.Model):
     # Convenience methods
     def __str__(self): return self.name
 
+    def setTotal(self, startdate, enddate, quantity):
+      '''
+      Update the forecast quantity.
+      '''
+      print self.name, startdate, enddate, quantity
+      # NOT IMPLEMENTED YET...
+
     class Admin:
         fields = (
             (None, {'fields': ('name', 'item', 'customer', 'calendar', 'description', 'category','subcategory', 'priority')}),

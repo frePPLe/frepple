@@ -4,6 +4,8 @@
 <script type="text/javascript">
 		ContextMenu.setup();
 		ContextMenu.attach('buffer', 'buffercontext');
+		ContextMenu.attach('item', 'itemcontext');
+		ContextMenu.attach('location', 'locationcontext');
 </script>
 {% endblock %}
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
@@ -19,11 +21,19 @@
   <a id="/path/buffer/%s">Supply Path</a>
 </div>
 
-<table>
-<tr><th></th><th></th>{% for j in bucketlist %} <th style="white-space: nowrap;">{{j.name}}</th> {% endfor %}</tr>
+<div id="itemcontext" class="ContextMenu">
+{% if perms.input.can_change_item %}<a id="/admin/input/item/%s">Item</a>{% endif %}
+  <a id="/path/item/%s">Supply Path</a>
+</div>
 
+<div id="Locationcontext" class="ContextMenu">
+<a id="/admin/input/location/%s">Location</a>
+</div>
+
+<table>
+<tr><th>Buffer</th><th>Item</th><th>Location</th><th></th>{% for j in bucketlist %} <th style="white-space: nowrap;">{{j.name}}</th> {% endfor %}</tr>
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
-<tr class="{% cycle row1,row2 %}"><td>{{j.buffer|superlink:"buffer"}}</td>
+<tr class="{% cycle row1,row2 %}"><td>{{j.buffer|superlink:"buffer"}}</td><td>{{j.item|superlink:"item"}}</td><td>{% if perms.input.can_change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
 <td>Start&nbsp;Inventory<br/>Consumed<br/>Produced<br/>End&nbsp;inventory</td>{% endif %}
 <td>{{j.startoh|floatformat:1}}<br/>{{j.consumed|floatformat:1}}<br/>{{j.produced|floatformat:1}}<br/>{{j.endoh|floatformat:1}}</td>{% endfor %}
 </tr>{% endfor %}

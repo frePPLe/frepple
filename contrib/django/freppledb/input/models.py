@@ -29,6 +29,7 @@ from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.contenttypes.models import ContentType
 
 from datetime import date, datetime
+from decimal import Decimal
 
 # The date format used by the frepple XML data.
 dateformat = '%Y-%m-%dT%H:%M:%S'
@@ -653,6 +654,8 @@ class Forecast(models.Model):
         tmp = startdate
         startdate = enddate
         enddate = tmp
+      # Assure the type of the quantity
+      quantity = Decimal(quantity)
       # Step 0: Check for forecast entries intersecting with the current daterange
       entries = self.entries.filter(enddate__gt=startdate.date()).filter(startdate__lt=enddate.date())
       if entries:

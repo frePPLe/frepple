@@ -58,6 +58,12 @@ class uploadjson:
 
           # CASE 1: The maximum calendar of a resource is being edited
           if entity == 'resource.maximum':
+            # Create a message
+            try:
+              msg = "capacity change for '%s' between %s and %s to %s" % \
+                    (i['name'],i['startdate'],i['enddate'],i['value'])
+            except:
+              msg = "capacity change"
             # a) Verify permissions
             if not request.user.has_perm('input.change_resource'):
               raise Exception('No permission to change resources')
@@ -76,6 +82,12 @@ class uploadjson:
 
           # CASE 2: The forecast quantity is being edited
           elif entity == 'forecast.total':
+            # Create a message
+            try:
+              msg = "forecast change for '%s' between %s and %s to %s" % \
+                      (i['name'],i['startdate'],i['enddate'],i['value'])
+            except:
+              msg = "forecast change"
             # a) Verify permissions
             if not request.user.has_perm('input.change_forecastdemand'):
               raise Exception('No permission to change forecast demand')
@@ -88,10 +100,11 @@ class uploadjson:
 
           # All the rest is garbage
           else:
-            raise Exception('Unknown editing action "%s"' % entity)
+            msg = "unknown action"
+            raise Exception("Unknown action type '%s'" % entity)
 
         except Exception, e:
-          request.user.message_set.create(message='Error processing edit: %s' % e)
+          request.user.message_set.create(message='Error processing %s: %s' % (msg,e))
 
       # Processing went fine...
       return HttpResponse("OK")

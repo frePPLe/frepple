@@ -58,7 +58,7 @@
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}" id="{{j.name}}"><form name="{{j.name}}"><td>{{j.name|superlink:"forecast"}}</td><td>{{j.item|superlink:"item"}}</td><td>{{j.customer|superlink:"customer"}}</td>
 <td><span style="line-height:18pt;">Total</span></td>{% endif %}
-<td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.forecast|floatformat:1}}" size="5" onchange="onChange(this)"/></td>{% endfor %}
+<td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.forecast|floatformat:0}}" size="5" onchange="onChange(this)"/></td>{% endfor %}
 </form></tr>{% endfor %}
 {% else %}
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}

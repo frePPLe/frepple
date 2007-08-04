@@ -638,9 +638,135 @@ class Forecast(models.Model):
     def setTotal(self, startdate, enddate, quantity):
       '''
       Update the forecast quantity.
+      The logic followed is three-fold:
+        - If one or more forecast entries already exist in the daterange, the
+          quantities of those entries are proportionally rescaled to fit the
+          new quantity.
+        - If no forecast entries exist yet, we create a new set of entries
+          based on the bucket definition of the forecast calendar. This respects
+          the weight ratios as defined in the calendar buckets.
+        - In case no calendar or no calendar buckets can be identified, we simply
+          create a single forecast entry for the specified daterange.
       '''
-      print self.name, startdate, enddate, quantity
-      # NOT IMPLEMENTED YET...
+      # Assure the end date is later than the start date.
+      if startdate > enddate:
+        tmp = startdate
+        startdate = enddate
+        enddate = tmp
+      # Step 0: Check for forecast entries intersecting with the current daterange
+      entries = self.entries.filter(enddate__gt=startdate.date()).filter(startdate__lt=enddate.date())
+      if entries:
+        # Case 1: Entries already exist in this daterange, which will be rescaled
+        startdate = startdate.date()
+        enddate = enddate.date()
+        # Case 1, step 1: calculate current quantity and "clip" the existing entries
+        # if required.
+        current = 0
+        for i in entries:
+          # Calculate the length of this bucket in seconds
+          duration = i.enddate - i.startdate
+          duration = duration.days+86400*duration.seconds
+          if i.startdate == startdate and i.enddate == enddate:
+            # This entry has exactly the same daterange: update the quantity and exit
+            i.quantity = quantity
+            i.save()
+            return
+          elif i.startdate < startdate and i.enddate > enddate:
+            # This bucket starts before the daterange and also ends later.
+            # We need to split the entry in three.
+            # Part one: after our daterange, create a new entry
+            p = i.enddate - enddate
+            self.entries.create( \
+               startdate = enddate,
+               enddate = i.enddate,
+               quantity = i.quantity * (p.days+86400*p.seconds) / duration,
+               ).save()
+            # Part two: our date range, create a new entry
+            self.entries.create( \
+               startdate=startdate,
+               enddate=enddate,
+               quantity= quantity,
+               ).save()
+            # Part three: before our daterange, update the existing entry
+            p = startdate - i.startdate
+            i.enddate = startdate
+            i.quantity = i.quantity * (p.days+86400*p.seconds) / duration
+            i.save()
+            # Done with this case...
+            return
+          elif i.startdate >= startdate and i.enddate <= enddate:
+            # Entry falls completely in the range
+            current += i.quantity
+          elif i.startdate < enddate and i.enddate >= enddate:
+            # This entry starts in the range and ends later.
+            # Split the entry in two.
+            p = i.enddate - enddate
+            fraction = i.quantity * (p.days+86400*p.seconds) / duration
+            current += i.quantity - fraction
+            self.entries.create( \
+               startdate = i.startdate,
+               enddate = enddate,
+               quantity = i.quantity - fraction,
+               ).save()
+            i.startdate = enddate
+            i.quantity = fraction
+            i.save()
+          elif i.enddate > startdate and i.startdate <= startdate:
+            # This entry ends in the range and starts earlier.
+            # Split the entry in two.
+            p = startdate - i.startdate
+            fraction = i.quantity * (p.days+86400*p.seconds) / duration
+            current += i.quantity - fraction
+            self.entries.create( \
+               startdate = startdate,
+               enddate = i.enddate,
+               quantity = i.quantity - fraction,
+               ).save()
+            i.enddate = startdate
+            i.quantity = fraction
+            i.save()
+        # Case 1, step 2: Rescale the existing entries
+        # Note that we retrieve an updated set of buckets from the database here...
+        entries = self.entries.filter(enddate__gt=startdate).filter(startdate__lt=enddate)
+        factor = quantity / current
+        if factor == 0:
+          for i in entries: i.delete()
+        else:
+          for i in entries:
+            i.quantity *= factor
+            i.save()
+      else:
+        # Case 2: No intersecting forecast entries exist yet. We use the
+        # calendar buckets to create a new set of forecast entries, respecting
+        # the weight of each bucket.
+        # Note: if the calendar values are updated later on, such changes are
+        # obviously not reflected any more in the forecast entries.
+        cal = self.calendar
+        if cal:
+          entries = cal.buckets.filter(enddate__gt=startdate).filter(startdate__lte=enddate)
+        if entries:
+          # Case 2a: We found calendar buckets
+          # Case 2a, step 1: compute total sum of weight values
+          weights = 0
+          for i in entries:
+            p = min(i.enddate,enddate) - max(i.startdate,startdate)
+            q = i.enddate - i.startdate
+            weights +=  i.value * (p.days+86400*p.seconds) / (q.days+86400*q.seconds)
+          # Case 2a, step 2: create a forecast entry for each calendar bucket
+          for i in entries:
+            p = min(i.enddate,enddate) - max(i.startdate,startdate)
+            q = i.enddate - i.startdate
+            q = quantity * i.value * (p.days+86400*p.seconds) / (q.days+86400*q.seconds) / weights
+            if q > 0:
+              self.entries.create( \
+                startdate=max(i.startdate,startdate).date(),
+                enddate=min(i.enddate,enddate).date(),
+                quantity=q,
+                ).save()
+        else:
+          # Case 2b: No calendar buckets found at all
+          # Create a new entry for the daterange
+          self.entries.create(startdate=startdate,enddate=enddate,quantity=quantity).save()
 
     class Admin:
         fields = (
@@ -660,7 +786,7 @@ class Forecast(models.Model):
 
 class ForecastDemand(models.Model):
     # Database fields
-    forecast = models.ForeignKey(Forecast, null=False, db_index=True, raw_id_admin=True)
+    forecast = models.ForeignKey(Forecast, null=False, db_index=True, raw_id_admin=True, related_name='entries')
     startdate = models.DateField('startdate', null=False)
     enddate = models.DateField('enddate', null=False)
     quantity = models.DecimalField(max_digits=15, decimal_places=4, default=0)

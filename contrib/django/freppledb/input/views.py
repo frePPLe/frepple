@@ -80,16 +80,18 @@ class uploadjson:
             if not request.user.has_perm('input.change_forecastdemand'):
               raise Exception('No permission to change forecast demand')
             # b) Find the forecast
+            start = datetime.strptime(i['startdate'],'%Y-%m-%d')
+            end = datetime.strptime(i['enddate'],'%Y-%m-%d')
             fcst = Forecast.objects.get(name = i['name'])
             # c) Update the forecast
-            fcst.setTotal(i['startdate'],i['enddate'],i['value'])
+            fcst.setTotal(start,end,i['value'])
 
           # All the rest is garbage
           else:
             raise Exception('Unknown editing action "%s"' % entity)
 
         except Exception, e:
-          print 'Error processing record: %s' % e
+          request.user.message_set.create(message='Error processing edit: %s' % e)
 
       # Processing went fine...
       return HttpResponse("OK")

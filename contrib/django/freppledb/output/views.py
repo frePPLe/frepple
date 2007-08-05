@@ -418,7 +418,7 @@ def forecastquery(fcst, bucket, startdate, enddate, offset=0, limit=None):
   else: limitstring = ''
   cursor = connection.cursor()
   query = '''
-              select combi.name,
+      select combi.name,
              combi.item_id,
              combi.customer_id,
              combi.bucket,
@@ -440,7 +440,9 @@ def forecastquery(fcst, bucket, startdate, enddate, offset=0, limit=None):
       -- Total forecasted quantity
       left join
        (select name, d.bucket as bucket, sum(quantity * %s / %s) as qty
-        from forecastdemand, (select %s as bucket, %s_start as bucketstart, %s_end as bucketend from dates group by bucket) as d,
+        from forecastdemand,
+          (select %s as bucket, %s_start as bucketstart, %s_end as bucketend
+           from dates group by bucket, bucketstart, bucketend) as d,
           (select distinct name from forecast %s order by name %s) as fcst
         where forecastdemand.forecast_id = fcst.name
         group by name, bucket) data
@@ -526,7 +528,7 @@ def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
        on bucket.calendar_id = dd.maximum_id
           and dd.startdate <= bucket.enddate
           and dd.enddate >= bucket.startdate
-		   group by dd.resource_id, dd.bucket, dd.startdate, dd.enddate
+		   group by dd.resource_id, location_id, dd.bucket, dd.startdate, dd.enddate
 	     ) ddd
 	   -- Load data
      left join (
@@ -541,7 +543,7 @@ def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
      on loaddata.resource_id = ddd.resource_id
        and ddd.startdate <= loaddata.enddatetime
        and ddd.enddate >= loaddata.startdatetime
-     group by ddd.resource_id, ddd.bucket, ddd.startdate, ddd.enddate
+     group by ddd.resource_id, ddd.location_id, ddd.bucket, ddd.startdate, ddd.enddate
      order by ddd.resource_id, ddd.startdate
      ''' % (sql_overlap('loaddata.startdatetime','loaddata.enddatetime','ddd.startdate','ddd.enddate'),
      sql_overlap('bucket.startdate','bucket.enddate','dd.startdate','dd.enddate'),
@@ -612,7 +614,7 @@ def operationquery(operation, bucket, startdate, enddate, offset=0, limit=None):
       left join
        (select operation_id, %s as bucket,
           sum(quantity) as total,
-          sum(case locked when 1 then quantity else 0 end) as frozen
+          sum(case locked when %s then quantity else 0 end) as frozen
           from out_operationplan, dates,
             (select name from operation %s order by name %s) as operations
           where operations.name = out_operationplan.operation_id
@@ -624,7 +626,7 @@ def operationquery(operation, bucket, startdate, enddate, offset=0, limit=None):
       on combi.operation_id = data.operation_id
       and combi.bucket = data.bucket
       order by combi.operation_id, combi.start
-    ''' % (filterstring,limitstring,bucket,startdate,enddate,bucket,
+    ''' % (filterstring,limitstring,bucket,startdate,enddate,bucket,sql_true(),
        filterstring,limitstring,startdate,enddate)
   if operation: cursor.execute(query, (operation,operation))
   else: cursor.execute(query)

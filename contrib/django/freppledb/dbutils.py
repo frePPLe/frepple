@@ -39,6 +39,9 @@ from datetime import date, datetime
 # Functions for SQLITE
 if settings.DATABASE_ENGINE == 'sqlite3':
 
+  def sql_true():
+    return '1'
+
   def sql_datediff(d1, d2):
     return "((strftime('%%%%s',%s) - strftime('%%%%s',%s)) / 86400.0)" % (d1,d2)
 
@@ -57,12 +60,15 @@ if settings.DATABASE_ENGINE == 'sqlite3':
 # Functions for POSTGRESQL
 elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
 
+  def sql_true():
+    return 'true'
+
   def sql_datediff(d1, d2):
     return '(extract(epoch from (%s) - (%s)) / 86400)' % (d1,d2)
 
   def sql_overlap(s1, e1, s2, e2):
     return 'greatest(0,extract(epoch from ' \
-      '(least(%s,%s) - greatest(%s%s))) / 86400))' % (e1,e2,s1,s2)
+      '(least(%s,%s) - greatest(%s,%s))) / 86400)' % (e1,e2,s1,s2)
 
   def sql_max(d1, d2):
     return "greatest(%s,%s)" % (d1,d2)
@@ -72,6 +78,9 @@ elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
 
 # Functions for MYSQL
 elif settings.DATABASE_ENGINE == 'mysql':
+
+  def sql_true():
+    return '1'
 
   def sql_datediff(d1,d2):
     return 'datediff(%s,%s)' % (d1,d2)
@@ -87,6 +96,9 @@ elif settings.DATABASE_ENGINE == 'mysql':
 
 # Functions for ORACLE
 elif settings.DATABASE_ENGINE == 'oracle':
+
+  def sql_true():
+    return 'true'
 
   def sql_datediff(d1,d2):
     return '(%s - %s)' % (d1,d2)

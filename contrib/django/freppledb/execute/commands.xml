@@ -5,7 +5,7 @@ from freppledb.execute.export import dumpfrepple, dumpfrepple_files
 from freppledb.execute.load import loadfrepple
 import os
 
-# Create a solver where the constraint are defined by an environment variable
+# Create a solver where the plan type are defined by an environment variable
 try: plantype = os.environ['PLAN_TYPE']
 except KeyError: plantype = 7  # Default is a fully constrained plan
 frepple.readXMLdata(
@@ -23,7 +23,13 @@ frepple.readXMLdata(
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="loadfrepple()" />
     <COMMAND xsi:type="COMMAND_SIZE" />
     <COMMAND xsi:type="COMMAND_SOLVE">
-        <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" VERBOSE="false" />
+      <SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST">
+        <VERBOSE>false</VERBOSE>
+        <AUTOMATIC>false</AUTOMATIC>
+      </SOLVER>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+        <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" VERBOSE="false" MAXPARALLEL="2"/>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SIZE" />
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="dumpfrepple()" />

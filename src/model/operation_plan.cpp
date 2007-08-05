@@ -215,6 +215,9 @@ DECLARE_EXPORT void OperationPlan::initialize()
   //   - can have problems (this results from the previous point).
   //   - can be linked with a demand.
   // These properties allow us to delete operation plans without an id faster.
+  static Mutex onlyOne;
+  {
+  ScopeMutexLock l(onlyOne);  // Need to assure that ids are unique!
   if (id)
   {
     // An identifier was read in from input
@@ -238,6 +241,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
   else
     // Fresh operationplan with blank id
     id = counter++;
+  }
 
   // Insert into the doubly linked list of operationplans.
   if (!oper->opplan)

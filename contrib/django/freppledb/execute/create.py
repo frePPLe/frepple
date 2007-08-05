@@ -75,6 +75,8 @@ def createDates():
     connection.cursor().execute('PRAGMA synchronous=OFF')
 
   try:
+    cal = Calendar(name="working days")
+    cal.save()
     for i in range(365):
       # Loop through 1 year of daily buckets
       curdate = startdate + timedelta(i)
@@ -99,6 +101,12 @@ def createDates():
         year_end = date(year+1,1,1),
         )
       d.save()
+      if dayofweek == 1:
+        # A calendar bucket for the working week: monday through friday
+        Bucket(startdate = curdate, value=1, calendar=cal).save()
+      elif dayofweek == 6:
+        # A calendar bucket for the weekend
+        Bucket(startdate = curdate, value=0, calendar=cal).save()
   finally:
     transaction.commit()
 
@@ -173,6 +181,7 @@ def create_model (cluster, demand, level, resource, utilization):
 
     # Loop over all clusters
     durations = [ 0, 0, 0, 86400, 86400*2, 86400*3, 86400*5, 86400*6 ]
+    workingdays = Calendar.objects.get(name="working days")
     for i in range(cluster):
       print "Creating cluster %d..." % i
 
@@ -180,16 +189,26 @@ def create_model (cluster, demand, level, resource, utilization):
       loc = Location.objects.create(name='Loc %05d' % i)
 
       # Item and delivery operation
-      oper = Operation.objects.create(name='Del %05d' % i, sizemultiple=1)
-      it = Item.objects.create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
+      oper = Operation(name='Del %05d' % i, sizemultiple=1)
+      oper.save()
+      it = Item(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
+      it.save()
+
+      # Forecast
+      fcst = Forecast(name='Forecast item %05d' % i, calendar=workingdays, item=it)
+      fcst.save()
+      # This method will take care of distributing a forecast quantity over the entire
+      # horizon, respecting the bucket weights.
+      fcst.setTotal(startdate, startdate + timedelta(365), 780)
 
       # Level 0 buffer
-      buf = Buffer.objects.create(name='Buf %05d L00' % i,
+      buf = Buffer(name='Buf %05d L00' % i,
         item=it,
         location=loc,
         category='00'
         )
-      fl = Flow.objects.create(operation=oper, thebuffer=buf, quantity=-1)
+      fl = Flow(operation=oper, thebuffer=buf, quantity=-1)
+      fl.save()
 
       # Demand
       total_demand = 0

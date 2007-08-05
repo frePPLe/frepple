@@ -288,8 +288,8 @@ class Environment
     static const string getHomeDirectory() {return home;}
 
     /** Updates the home directory.<br>
-      * A runtime exception is thrown when the string points to an invalid
-      * directory.
+      * A runtime exception is thrown when the string points to a nonexistent or
+      * invalid directory.
       */
     static DECLARE_EXPORT void setHomeDirectory(const string);
 
@@ -324,7 +324,9 @@ class Environment
 
     /** Updates the filename for logging error messages and warnings.
       * The file is also opened for writing and the standard output and
-      * standard error output streams are redirected to it.
+      * standard error output streams are redirected to it.<br>
+      * If the filename starts with '+' the log file is appended to
+      * instead of being overwritten.
       */
     static DECLARE_EXPORT void setLogFile(string x);
 };

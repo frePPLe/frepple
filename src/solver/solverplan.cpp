@@ -152,14 +152,14 @@ DECLARE_EXPORT void MRPSolver::solve(void *v)
   // A multi-threaded alternative would be to hash the operations here, and
   // then delete in each thread.
   for (Operation::iterator e=Operation::begin(); e!=Operation::end(); ++e)
-    // The next if-condition is actually redundant if we want to plan everything
+    // The next if-condition is actually redundant if we plan everything
     if (demands_per_cluster.find(e->getCluster())!=demands_per_cluster.end())
       e->deleteOperationPlans();
 
   // Create the command list to control the execution
   CommandList threads;
   // Solve in parallel threads
-  threads.setMaxParallel(1);  // @todo parallel solving not possible yet. Why not?
+  threads.setMaxParallel(getMaxParallel());
   // Otherwise a problem in a single cluster could spoil it all
   threads.setAbortOnError(false);
   for (classified_demand::iterator j = demands_per_cluster.begin();
@@ -187,6 +187,7 @@ DECLARE_EXPORT void MRPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mod
 
   // Write the fields
   if (constrts) o->writeElement(Tags::tag_constraints, constrts);
+  if (maxparallel) o->writeElement(Tags::tag_maxparallel, maxparallel);
 
   // Write the parent class
   Solver::writeElement(o, tag, NOHEADER);
@@ -197,6 +198,8 @@ DECLARE_EXPORT void MRPSolver::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_constraints))
     setConstraints(pElement.getInt());
+  else if (pElement.isA(Tags::tag_maxparallel))
+    setMaxParallel(pElement.getInt());
   else
     Solver::endElement(pIn, pElement);
 }

@@ -57,7 +57,7 @@ DECLARE_EXPORT string Environment::home("[unspecified]");
 
 // Number of processors.
 // The value initialized here is overwritten in the library initialization.
-DECLARE_EXPORT int Environment::processors = 2;
+DECLARE_EXPORT int Environment::processors = 1;
 
 // Output logging stream, whopse input buffer is shared with either
 // Environment::logfile or cout.
@@ -133,15 +133,16 @@ DECLARE_EXPORT void Environment::setLogFile(string x)
   if (logfile.is_open()) logfile.close();
 
   // No new logfile specified: redirect to the standard output stream
-  if (x.empty()) 
+  if (x.empty() || x == "+") 
   {
     logfilename = x;
     logger.rdbuf(cout.rdbuf()); 
     return;
   }
 
-  // Open the file
-  logfile.open(x.c_str(), ios::out);
+  // Open the file: either as a new file, either appending to existing file
+  if (x[0] != '+') logfile.open(x.c_str(), ios::out);
+  else logfile.open(x.c_str()+1, ios::app);
   if (!logfile.good())
   {
     // Redirect to the previous logfile (or cout if that's not possible)

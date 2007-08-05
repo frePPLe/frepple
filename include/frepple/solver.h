@@ -189,7 +189,7 @@ class MRPSolver : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    MRPSolver(const string& n) : Solver(n), constrts(0) {}
+    MRPSolver(const string& n) : Solver(n), constrts(0), maxparallel(0) {}
 
     /** Destructor. */
     virtual ~MRPSolver() {}
@@ -265,10 +265,41 @@ class MRPSolver : public Solver
       */
     static DECLARE_EXPORT bool demand_comparison(const Demand*, const Demand*);
 
+    /** Update the number of parallel solver threads.<br>
+      * The default value depends on whether the solver is run in verbose mode
+      * or not:
+      *  - In normal mode the solver uses NUMBER_OF_PROCESSORS threads.
+      *  - In verbose mode the solver runs in a single thread to avoid
+      *    mangling the debugging output of different threads.
+      */
+    void setMaxParallel(int i) 
+    {
+      if (i >= 1) maxparallel = i; 
+      else throw DataException("Invalid number of parallel solver threads");
+    }
+
+    /** Return the number of threads used for planning. */
+    int getMaxParallel() const 
+    {
+      // Or: Explicitly specified number of threads
+      if (maxparallel) return maxparallel;
+      // Or: Default number of threads
+      else return getVerbose() ? 1 : Environment::getProcessors();
+    }
+
   private:
     typedef map < int, deque<Demand*>, less<int> > classified_demand;
     typedef classified_demand::iterator cluster_iterator;
     classified_demand demands_per_cluster;
+
+    /** Number of parallel solver threads.<br>
+      * The default value depends on whether the solver is run in verbose mode
+      * or not:
+      *  - In normal mode the solver uses NUMBER_OF_PROCESSORS threads.
+      *  - In verbose mode the solver runs in a single thread to avoid
+      *    mangling the debugging output of different threads.
+      */
+    int maxparallel;
 
   protected:
     /** @brief This class is a helper class of the MRPSolver class. 

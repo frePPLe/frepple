@@ -1076,9 +1076,11 @@
 			<xsd:extension base="SOLVER">
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="CONSTRAINTS" type="xsd:unsignedShort" />
+					<xsd:element name="MAXPARALLEL" type="xsd:positiveInteger" />
 					<xsd:element name="VERBOSE" type="xsd:boolean" />
 				</xsd:choice>
 				<xsd:attribute name="CONSTRAINTS" type="xsd:unsignedShort" />
+				<xsd:attribute name="MAXPARALLEL" type="xsd:positiveInteger" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

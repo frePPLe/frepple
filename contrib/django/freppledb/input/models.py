@@ -196,7 +196,8 @@ class Bucket(models.Model):
     def updateEndDate(instance):
         '''
         The user edits the start date of the calendar buckets.
-        This method will automatically update the end date of a bucket to be equal to the start date of the next bucket.
+        This method will automatically update the end date of a bucket to be
+        equal to the start date of the next bucket.
         '''
         # Loop through all buckets
         prev = None

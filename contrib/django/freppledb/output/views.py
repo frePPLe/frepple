@@ -258,8 +258,8 @@ def bufferquery(buffer, bucket, startdate, enddate, offset=0, limit=None):
        (select name as thebuffer_id, location_id, item_id, onhand, d.bucket as bucket, d.start as start
         from
           (select name, location_id, item_id, onhand from buffer %s order by name %s) as buffer
-        inner join (select %s as bucket , min(day) as start from dates where day >= '%s'
-          and day < '%s' group by bucket) d on 1=1
+        cross join (select %s as bucket , min(day) as start from dates where day >= '%s'
+          and day < '%s' group by bucket) d
        ) as combi
       left join
        (select thebuffer_id, %s as bucket,
@@ -338,8 +338,8 @@ def demandquery(item, bucket, startdate, enddate, offset=0, limit=None):
       from
        (select item_id, d.bucket as bucket, d.start as start
         from (select distinct item_id from demand %s order by item_id %s) as items
-        inner join (select %s as bucket, min(day) as start from dates where day >= '%s'
-          and day < '%s' group by bucket) d on 1=1
+        cross join (select %s as bucket, min(day) as start from dates where day >= '%s'
+          and day < '%s' group by bucket) d
        ) as combi
       -- Planned quantity
       left join
@@ -430,12 +430,12 @@ def forecastquery(fcst, bucket, startdate, enddate, offset=0, limit=None):
           name, item_id, customer_id, d.bucket as bucket,
           d.startdate as startdate, d.enddate as enddate
         from (select distinct name, item_id, customer_id from forecast %s order by name %s) as forecasts
-        inner join (
+        cross join (
            select %s as bucket, %s_start as startdate, %s_end as enddate
            from dates
            where day >= '%s' and day < '%s'
            group by bucket, startdate, enddate
-           ) d on 1=1
+           ) d
        ) as combi
       -- Total forecasted quantity
       left join
@@ -516,21 +516,21 @@ def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
          select name as resource_id, location_id, maximum_id, d.bucket as bucket,
          d.startdate as startdate, d.enddate as enddate
          from (select name, location_id, maximum_id from resource %s order by name %s) as resources
-         inner join (
+         cross join (
            -- todo the next line doesnt work for daily buckets
            select %s as bucket, %s_start as startdate, %s_end as enddate
            from dates
            where day >= '%s' and day < '%s'
            group by %s, startdate, enddate
-           ) d on 1=1
+           ) d
          ) dd
        left join bucket
        on bucket.calendar_id = dd.maximum_id
           and dd.startdate <= bucket.enddate
           and dd.enddate >= bucket.startdate
-		   group by dd.resource_id, location_id, dd.bucket, dd.startdate, dd.enddate
-	     ) ddd
-	   -- Load data
+       group by dd.resource_id, location_id, dd.bucket, dd.startdate, dd.enddate
+       ) ddd
+     -- Load data
      left join (
        select resourceload.resource_id as resource_id, startdatetime, enddatetime, resourceload.usagefactor as usagefactor
        from out_operationplan, resourceload,
@@ -608,8 +608,8 @@ def operationquery(operation, bucket, startdate, enddate, offset=0, limit=None):
       from
        (select name as operation_id, d.bucket as bucket, d.start as start
         from (select name from operation %s order by name %s) as operations
-        inner join (select %s as bucket, min(day) as start from dates where day >= '%s'
-          and day < '%s' group by bucket) d on 1=1
+        cross join (select %s as bucket, min(day) as start from dates where day >= '%s'
+          and day < '%s' group by bucket) d
        ) as combi
       left join
        (select operation_id, %s as bucket,

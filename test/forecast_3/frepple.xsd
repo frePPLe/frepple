@@ -6,7 +6,9 @@
   <!-- Include the standard fields. -->
   <xsd:include schemaLocation="../../bin/frepple.xsd" />
 
-  <!-- And now define the new type -->
+  <!-- And now define the forecast type, if it isn't included in the default -->
+  <!--
   <xsd:include schemaLocation="../../modules/forecast/mod_forecast.xsd" />
+  -->
 
 </xsd:schema>

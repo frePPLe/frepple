@@ -268,7 +268,8 @@ class MRPSolver : public Solver
     /** Update the number of parallel solver threads.<br>
       * The default value depends on whether the solver is run in verbose mode
       * or not:
-      *  - In normal mode the solver uses NUMBER_OF_PROCESSORS threads.
+      *  - In normal mode the solver uses as many threads as specified by 
+      *    the environment variable NUMBER_OF_PROCESSORS.
       *  - In verbose mode the solver runs in a single thread to avoid
       *    mangling the debugging output of different threads.
       */

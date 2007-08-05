@@ -159,7 +159,8 @@ DECLARE_EXPORT void MRPSolver::solve(void *v)
   // Create the command list to control the execution
   CommandList threads;
   // Solve in parallel threads
-  threads.setMaxParallel(getMaxParallel());
+  int cl = demands_per_cluster.size();
+  threads.setMaxParallel( cl > getMaxParallel() ? getMaxParallel() : cl);
   // Otherwise a problem in a single cluster could spoil it all
   threads.setAbortOnError(false);
   for (classified_demand::iterator j = demands_per_cluster.begin();

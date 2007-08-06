@@ -488,55 +488,45 @@ def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
   else: limitstring = ''
   cursor = connection.cursor()
   query = '''
-     select ddd.resource_id,
-            ddd.location_id,
-            ddd.bucket,
-            ddd.startdate,
-            ddd.enddate,
-            min(ddd.available),
-            coalesce(sum(loaddata.usagefactor * %s), 0) as loading
+     select x.name, x.location_id,
+           x.bucket, x.startdate, x.enddate,
+           min(x.available),
+           coalesce(sum(loaddata.usagefactor * %s), 0) as loading
      from (
-       select dd.resource_id as resource_id, dd.bucket as bucket,
-         dd.location_id as location_id,
-         dd.startdate as startdate, dd.enddate as enddate,
-         coalesce(sum(bucket.value * %s), 0) as available
-       from (
-         select name as resource_id, location_id, maximum_id, d.bucket as bucket,
-         d.startdate as startdate, d.enddate as enddate
-         from (select name, location_id, maximum_id from resource %s order by name %s) as resources
-         cross join (
-           -- todo the next line doesnt work for daily buckets
-           select %s as bucket, %s_start as startdate, %s_end as enddate
-           from dates
-           where day >= '%s' and day < '%s'
-           group by %s, startdate, enddate
-           ) d
-         ) dd
+       select res.name as name, res.location_id as location_id,
+             d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
+             coalesce(sum(bucket.value * %s),0) as available
+       from (select name, location_id, maximum_id from resource %s order by name %s) as res
+       -- Multiply with buckets
+       cross join (
+            select %s as bucket, %s_start as startdate, %s_end as enddate
+            from dates
+            where day >= '%s' and day < '%s'
+            group by bucket, startdate, enddate
+            ) d
+       -- Available capacity
        left join bucket
-       on bucket.calendar_id = dd.maximum_id
-          and dd.startdate <= bucket.enddate
-          and dd.enddate >= bucket.startdate
-       group by dd.resource_id, location_id, dd.bucket, dd.startdate, dd.enddate
-       ) ddd
+       on res.maximum_id = bucket.calendar_id
+       and d.startdate <= bucket.enddate
+       and d.enddate >= bucket.startdate
+       -- Grouping
+       group by res.name, res.location_id, d.bucket, d.startdate, d.enddate
+     ) x
      -- Load data
      left join (
        select resourceload.resource_id as resource_id, startdatetime, enddatetime, resourceload.usagefactor as usagefactor
-       from out_operationplan, resourceload,
-         (select name, maximum_id from resource %s order by name %s) as resources
+       from out_operationplan, resourceload
        where out_operationplan.operation_id = resourceload.operation_id
-          and out_operationplan.enddate >= '%s'
-          and out_operationplan.startdate < '%s'
-          and resources.name = resourceload.resource_id
        ) loaddata
-     on loaddata.resource_id = ddd.resource_id
-       and ddd.startdate <= loaddata.enddatetime
-       and ddd.enddate >= loaddata.startdatetime
-     group by ddd.resource_id, ddd.location_id, ddd.bucket, ddd.startdate, ddd.enddate
-     order by ddd.resource_id, ddd.startdate
-     ''' % (sql_overlap('loaddata.startdatetime','loaddata.enddatetime','ddd.startdate','ddd.enddate'),
-     sql_overlap('bucket.startdate','bucket.enddate','dd.startdate','dd.enddate'),
-     filterstring,limitstring,bucket,bucket,bucket,startdate,enddate,bucket,filterstring,
-     limitstring,startdate,enddate)
+     on x.name = loaddata.resource_id
+     and x.startdate <= loaddata.enddatetime
+     and x.enddate >= loaddata.startdatetime
+     -- Grouping and ordering
+     group by x.name, x.location_id, x.bucket, x.startdate, x.enddate
+     order by x.name, x.startdate
+     ''' % ( sql_overlap('loaddata.startdatetime','loaddata.enddatetime','x.startdate','x.enddate'),
+       sql_overlap('bucket.startdate','bucket.enddate','d.startdate','d.enddate'),
+       filterstring,limitstring,bucket,bucket,bucket,startdate,enddate)
   if resource: cursor.execute(query, (resource,resource))
   else: cursor.execute(query)
   resultset = []

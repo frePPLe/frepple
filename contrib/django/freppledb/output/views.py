@@ -418,41 +418,29 @@ def forecastquery(fcst, bucket, startdate, enddate, offset=0, limit=None):
   else: limitstring = ''
   cursor = connection.cursor()
   query = '''
-      select combi.name,
-             combi.item_id,
-             combi.customer_id,
-             combi.bucket,
-             combi.startdate,
-             combi.enddate,
-             coalesce(data.qty,0)
-      from
-       (select
-          name, item_id, customer_id, d.bucket as bucket,
-          d.startdate as startdate, d.enddate as enddate
-        from (select distinct name, item_id, customer_id from forecast %s order by name %s) as forecasts
-        cross join (
+      select fcst.name, fcst.item_id, fcst.customer_id,
+             d.bucket, d.startdate, d.enddate,
+             coalesce(sum(forecastdemand.quantity * %s / %s),0) as qty
+      from (select * from forecast %s) as fcst
+      -- Multiply with buckets
+      cross join (
            select %s as bucket, %s_start as startdate, %s_end as enddate
            from dates
            where day >= '%s' and day < '%s'
            group by bucket, startdate, enddate
            ) d
-       ) as combi
       -- Total forecasted quantity
-      left join
-       (select name, d.bucket as bucket, sum(quantity * %s / %s) as qty
-        from forecastdemand,
-          (select %s as bucket, %s_start as bucketstart, %s_end as bucketend
-           from dates group by bucket, bucketstart, bucketend) as d,
-          (select distinct name from forecast %s order by name %s) as fcst
-        where forecastdemand.forecast_id = fcst.name
-        group by name, bucket) data
-      on combi.name = data.name
-      and combi.bucket = data.bucket
-      order by combi.name, combi.startdate
-     ''' % (filterstring,limitstring,bucket,bucket,bucket,startdate,enddate,
-       sql_overlap('forecastdemand.startdate','forecastdemand.enddate','bucketstart','bucketend'),
-       sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),
-       bucket,bucket,bucket,filterstring, limitstring)
+      left join forecastdemand
+      on fcst.name = forecastdemand.forecast_id
+      and forecastdemand.enddate >= d.startdate
+      and forecastdemand.startdate <= d.enddate
+      -- Ordering and grouping
+      group by fcst.name, fcst.item_id, fcst.customer_id,
+             d.bucket, d.startdate, d.enddate
+      order by fcst.name, d.startdate
+      ''' % (sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
+       sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),limitstring,
+       bucket,bucket,bucket,startdate,enddate)
   if fcst: cursor.execute(query, (fcst,fcst))
   else: cursor.execute(query)
   resultset = []

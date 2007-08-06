@@ -64,11 +64,12 @@ elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
     return 'true'
 
   def sql_datediff(d1, d2):
-    return '(extract(epoch from (%s) - (%s)) / 86400)' % (d1,d2)
+    return '(extract(epoch from (cast(%s as timestamp) - cast(%s as timestamp))) / 86400)' % (d1,d2)
 
   def sql_overlap(s1, e1, s2, e2):
     return 'greatest(0,extract(epoch from ' \
-      '(least(%s,%s) - greatest(%s,%s))) / 86400)' % (e1,e2,s1,s2)
+      '(least(cast(%s as timestamp),cast(%s as timestamp)) ' \
+      ' - greatest(cast(%s as timestamp),cast(%s as timestamp)))) / 86400)' % (e1,e2,s1,s2)
 
   def sql_max(d1, d2):
     return "greatest(%s,%s)" % (d1,d2)

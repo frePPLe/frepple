@@ -48,8 +48,10 @@ def erase_model():
   This routine erase all model data from the database.
   '''
   cursor = connection.cursor()
-  if settings.DATABASE_ENGINE in ['sqlite3','postgresql_psycopg2']:
+  if settings.DATABASE_ENGINE == 'sqlite3':
     cursor.execute('PRAGMA synchronous = OFF')
+    delete = "delete from %s"
+  elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
     delete = "delete from %s"
   else:
     delete = "truncate table %s"

@@ -421,7 +421,7 @@ def forecastquery(fcst, bucket, startdate, enddate, offset=0, limit=None):
       select fcst.name, fcst.item_id, fcst.customer_id,
              d.bucket, d.startdate, d.enddate,
              coalesce(sum(forecastdemand.quantity * %s / %s),0) as qty
-      from (select * from forecast %s) as fcst
+      from (select * from forecast %s order by name %s) as fcst
       -- Multiply with buckets
       cross join (
            select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -439,7 +439,7 @@ def forecastquery(fcst, bucket, startdate, enddate, offset=0, limit=None):
              d.bucket, d.startdate, d.enddate
       order by fcst.name, d.startdate
       ''' % (sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
-       sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),limitstring,
+       sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),filterstring,limitstring,
        bucket,bucket,bucket,startdate,enddate)
   if fcst: cursor.execute(query, (fcst,fcst))
   else: cursor.execute(query)
@@ -589,33 +589,27 @@ def operationquery(operation, bucket, startdate, enddate, offset=0, limit=None):
   else: limitstring = ''
   cursor = connection.cursor()
   query = '''
-    select combi.operation_id,
-           combi.bucket,
-           coalesce(data.frozen,0),
-           coalesce(data.total,0)
-      from
-       (select name as operation_id, d.bucket as bucket, d.start as start
-        from (select name from operation %s order by name %s) as operations
-        cross join (select %s as bucket, min(day) as start from dates where day >= '%s'
-          and day < '%s' group by bucket) d
-       ) as combi
-      left join
-       (select operation_id, %s as bucket,
-          sum(quantity) as total,
-          sum(case locked when %s then quantity else 0 end) as frozen
-          from out_operationplan, dates,
-            (select name from operation %s order by name %s) as operations
-          where operations.name = out_operationplan.operation_id
-          and out_operationplan.startdate = dates.day
-          and startdate >= '%s'
-          and enddate < '%s'
-          group by operation_id, bucket
-        ) data
-      on combi.operation_id = data.operation_id
-      and combi.bucket = data.bucket
-      order by combi.operation_id, combi.start
-    ''' % (filterstring,limitstring,bucket,startdate,enddate,bucket,sql_true(),
-       filterstring,limitstring,startdate,enddate)
+    select oper.name,
+           d.bucket, d.startdate, d.enddate,
+           coalesce(sum(case out_operationplan.locked when %s then out_operationplan.quantity else 0 end),0),
+           coalesce(sum(out_operationplan.quantity),0)
+      from (select name from operation %s order by name %s) as oper
+      -- Multiply with buckets
+      cross join (
+           select %s as bucket, %s_start as startdate, %s_end as enddate
+           from dates
+           where day >= '%s' and day < '%s'
+           group by bucket, startdate, enddate
+           ) d
+      -- Planned and frozen quantity
+      left join out_operationplan
+      on oper.name = out_operationplan.operation_id
+      and d.startdate <= out_operationplan.startdate
+      and d.enddate > out_operationplan.startdate
+      -- Grouping and ordering
+      group by oper.name, d.bucket, d.startdate, d.enddate
+      order by oper.name, d.startdate
+    ''' % (sql_true(),filterstring,limitstring,bucket,bucket,bucket,startdate,enddate)
   if operation: cursor.execute(query, (operation,operation))
   else: cursor.execute(query)
   resultset = []
@@ -629,8 +623,10 @@ def operationquery(operation, bucket, startdate, enddate, offset=0, limit=None):
     rowset.append( {
       'operation': row[0],
       'bucket': row[1],
-      'frozen': row[2],
-      'total': row[3],
+      'startdate': row[2],
+      'enddate': row[3],
+      'frozen': row[4],
+      'total': row[5],
       } )
   if prevoper: resultset.append(rowset)
   return resultset

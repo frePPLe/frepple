@@ -18,14 +18,16 @@
   <a id="/path/item/%s">Supply Path</a>
 </div>
 
-<table>
-<tr><th>Item</th><th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr>
-{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
+<table><thead>
+<tr><th class="sorted descending"><a href="?ot=asc&amp;o=0">Item</a></th>
+<th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
+
+<tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}" id="{{j.item}}"><td>{{j.item|superlink:"item"}}</td>
 <td>Demand<br/>Supply<br/>Backlog</td>{% endif %}
 <td>{{j.requested|floatformat:1}}<br/>{{j.supplied|floatformat:1}}<br/>{{j.backlog|floatformat:1}}</td>{% endfor %}
 </tr>{% endfor %}
-</table>
+</tbody></table>
 
 {% block pagination %} <p class="paginator">
 {% if is_paginated %}

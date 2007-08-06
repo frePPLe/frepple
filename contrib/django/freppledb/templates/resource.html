@@ -46,13 +46,16 @@
 <a id="/admin/input/location/%s">Location</a>
 </div>
 
-<table>
-<tr><th>Resource</th><th>Location</th><th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr>
+<table><thead>
+<tr><th class="sorted descending"><a href="?ot=asc&amp;o=0">Resource</a></th>
+<th><a href="?ot=asc&amp;o=1">Location</a></th>
+<th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
+<tbody>
 {% if perms.change_resource %}
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}"><form name="{{j.resource}}"><td>{{j.resource|superlink:"resource"}}</td><td>{% if perms.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
 <td><span style="line-height:18pt;">Available</span><br/>Load<br/>Utilization</td>{% endif %}
-<td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.available|floatformat:2}}" size="4" onchange="onChange(this)"/><br/>{{j.load|floatformat:1}}<br/>{{j.utilization|floatformat:2}}</td>{% endfor %}
+<td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.available|floatformat:1}}" size="6" onchange="onChange(this)"/><br/>{{j.load|floatformat:1}}<br/>{{j.utilization|floatformat:2}}</td>{% endfor %}
 </form></tr>{% endfor %}
 {% else %}
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
@@ -61,7 +64,7 @@
 <td>{{j.available|floatformat:1}}<br/>{{j.load|floatformat:1}}<br/>{{j.utilization|floatformat:2}}</td>{% endfor %}
 </tr>{% endfor %}
 {% endif %}
-</table>
+</tbody></table>
 
 {% block pagination %} <p class="paginator">
 {% if is_paginated %}

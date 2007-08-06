@@ -36,7 +36,7 @@ from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item
 from freppledb.dbutils import *
 
 # Parameter settings
-PAGINATE_BY = 50       # Number of entities displayed on a page
+PAGINATE_BY = 25       # Number of entities displayed on a page
 ON_EACH_SIDE = 3       # Number of pages show left and right of the current page
 ON_ENDS = 2            # Number of pages shown at the start and the end of the page list
 CACHE_SQL_QUERY = 10   # Time in minutes during which results of SQL queries are cached
@@ -247,39 +247,29 @@ def bufferquery(buffer, bucket, startdate, enddate, offset=0, limit=None):
   else: limitstring = ''
   cursor = connection.cursor()
   query = '''
-    select combi.thebuffer_id,
-           combi.item_id,
-           combi.location_id,
-           combi.onhand,
-           combi.bucket,
-           coalesce(data.produced,0.0),
-           coalesce(data.consumed,0.0)
-      from
-       (select name as thebuffer_id, location_id, item_id, onhand, d.bucket as bucket, d.start as start
-        from
-          (select name, location_id, item_id, onhand from buffer %s order by name %s) as buffer
-        cross join (select %s as bucket , min(day) as start from dates where day >= '%s'
-          and day < '%s' group by bucket) d
-       ) as combi
-      left join
-       (select thebuffer_id, %s as bucket,
-          sum(%s) as produced,
-          -sum(%s) as consumed
-          from out_flowplan,
-               dates,
-               (select name from buffer %s order by name %s) as buffer
-          where out_flowplan.flowdate = dates.day
-          and out_flowplan.flowdate >= '%s'
-          and out_flowplan.flowdate < '%s'
-          and thebuffer_id = buffer.name
-          group by thebuffer_id, bucket
-        ) data
-      on combi.thebuffer_id = data.thebuffer_id
-      and combi.bucket = data.bucket
-      order by combi.thebuffer_id, combi.start
-    ''' % (filterstring,limitstring,bucket,startdate,enddate,bucket,
-           sql_max('quantity','0.0'),sql_min('quantity','0.0'),filterstring, limitstring,
-           startdate,enddate)
+    select buf.name, buf.item_id, buf.location_id, buf.onhand,
+           d.bucket, d.startdate, d.enddate,
+           coalesce(sum(%s),0.0) as consumed,
+           coalesce(-sum(%s),0.0) as produced
+      from (select name, item_id, location_id, onhand from buffer %s order by name %s) as buf
+      -- Multiply with buckets
+      cross join (
+           select %s as bucket, %s_start as startdate, %s_end as enddate
+           from dates
+           where day >= '%s' and day < '%s'
+           group by bucket, startdate, enddate
+           ) d
+      -- Consumed and produced quantities
+      left join out_flowplan
+      on buf.name = out_flowplan.thebuffer_id
+      and d.startdate <= out_flowplan.flowdate
+      and d.enddate > out_flowplan.flowdate
+      -- Grouping and sorting
+      group by buf.name, buf.item_id, buf.location_id, buf.onhand,
+           d.bucket, d.startdate, d.enddate
+      order by buf.name, d.startdate
+    ''' % (sql_max('out_flowplan.quantity','0.0'),sql_min('out_flowplan.quantity','0.0'),
+      filterstring,limitstring,bucket,bucket,bucket,startdate,enddate)
   if buffer: cursor.execute(query, (buffer,buffer))
   else: cursor.execute(query)
   resultset = []
@@ -292,15 +282,17 @@ def bufferquery(buffer, bucket, startdate, enddate, offset=0, limit=None):
       prevbuf = row[0]
       endoh = float(row[3])
     startoh = endoh   # @todo the starting onhand isn't right...
-    endoh += float(row[5] - row[6])
+    endoh += float(row[7] - row[8])
     rowset.append( {
       'buffer': row[0],
       'item': row[1],
       'location': row[2],
       'bucket': row[4],
+      'startdate': row[5],
+      'enddate': row[6],
       'startoh': startoh,
-      'produced': row[5],
-      'consumed': row[6],
+      'produced': row[7],
+      'consumed': row[8],
       'endoh': endoh,
       } )
   if prevbuf: resultset.append(rowset)

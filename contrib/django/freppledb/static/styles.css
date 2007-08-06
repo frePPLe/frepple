@@ -163,3 +163,8 @@ a {
   border-bottom: 1px solid #f0f0f0;
   margin: 4px 2px;
 }
+
+table thead th {
+  white-space:nowrap;
+  border: 0px
+}

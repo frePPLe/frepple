@@ -30,14 +30,17 @@
 <a id="/admin/input/location/%s">Location</a>
 </div>
 
-<table>
-<tr><th>Buffer</th><th>Item</th><th>Location</th><th></th>{% for j in bucketlist %} <th style="white-space: nowrap;">{{j.name}}</th> {% endfor %}</tr>
-{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
+<table><thead><tr>
+<th class="sorted descending"><a href="?ot=asc&amp;o=0">Buffer</a></th>
+<th><a href="?ot=asc&amp;o=1">Item</a></th>
+<th><a href="?ot=asc&amp;o=2">Location</a></th>
+<th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
+<tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}"><td>{{j.buffer|superlink:"buffer"}}</td><td>{{j.item|superlink:"item"}}</td><td>{% if perms.input.can_change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
 <td>Start&nbsp;Inventory<br/>Consumed<br/>Produced<br/>End&nbsp;inventory</td>{% endif %}
 <td>{{j.startoh|floatformat:1}}<br/>{{j.consumed|floatformat:1}}<br/>{{j.produced|floatformat:1}}<br/>{{j.endoh|floatformat:1}}</td>{% endfor %}
 </tr>{% endfor %}
-</table>
+</tbody></table>
 
 {% block pagination %} <p class="paginator">
 {% if is_paginated %}

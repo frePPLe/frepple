@@ -43,8 +43,7 @@
   <a id="/path/item/%s">Supply Path</a>
 </div>
 
-<table>
-<tr>
+<table><thead><tr>
 <th rowspan="2">Level</td>
 <th rowspan="2">Buffer</td>
 <th rowspan="2">Location</td>
@@ -56,9 +55,9 @@
 <th>& Resource</td>
 <th>This</td>
 <th>Cumulative</td>
-</tr>
+</tr></thead>
 
-{% for i in supplypath %}
+<tbody>{% for i in supplypath %}
 <tr>
 <td>{{i.level}}</td>
 <td>{{i.buffer|superlink:"buffer"}}</td>
@@ -70,8 +69,7 @@
 <td>{% if i.consumingflow %} {{i.consumingflow.quantity}} {% endif %}</td>
 <td>{{i.cumquantity}}</td>
 </tr>{% endfor %}
-
-</table>
+</tbody></table>
 
 {# {% debug %} #}
 

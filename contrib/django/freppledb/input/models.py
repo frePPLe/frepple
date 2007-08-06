@@ -51,7 +51,6 @@ class Plan(models.Model):
 
     class Admin:
         list_display = ('name', 'description', 'currentdate')
-        search_fields = ['name', 'description']
         list_per_page = LIST_PER_PAGE
 
     class Meta:

@@ -38,7 +38,7 @@
 <div id="content-main">
 
 <div id="resourcecontext" class="ContextMenu">
-  {% if perms.input.can_change_resource %}<a id="/admin/input/resource/%s">Resource</a>{% endif %}
+  {% if perms.input.change_resource %}<a id="/admin/input/resource/%s">Resource</a>{% endif %}
   <a id="/path/resource/%s">Where used</a>
 </div>
 
@@ -51,15 +51,15 @@
 <th><a href="?ot=asc&amp;o=1">Location</a></th>
 <th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
 <tbody>
-{% if perms.change_resource %}
+{% if perms.input.change_resource %}
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
-<tr class="{% cycle row1,row2 %}"><form name="{{j.resource}}"><td>{{j.resource|superlink:"resource"}}</td><td>{% if perms.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
+<tr class="{% cycle row1,row2 %}"><form name="{{j.resource}}"><td>{{j.resource|superlink:"resource"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
 <td><span style="line-height:18pt;">Available</span><br/>Load<br/>Utilization</td>{% endif %}
 <td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.available|floatformat:1}}" size="6" onchange="onChange(this)"/><br/>{{j.load|floatformat:1}}<br/>{{j.utilization|floatformat:2}}</td>{% endfor %}
 </form></tr>{% endfor %}
 {% else %}
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
-<tr class="{% cycle row1,row2 %}"><td>{{j.resource|superlink:"resource"}}</td><td>{% if perms.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
+<tr class="{% cycle row1,row2 %}"><td>{{j.resource|superlink:"resource"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
 <td>Available<br/>Load<br/>Utilization</td>{% endif %}
 <td>{{j.available|floatformat:1}}<br/>{{j.load|floatformat:1}}<br/>{{j.utilization|floatformat:2}}</td>{% endfor %}
 </tr>{% endfor %}

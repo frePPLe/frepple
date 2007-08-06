@@ -39,17 +39,17 @@
 <div id="content-main">
 
 <div id="itemcontext" class="ContextMenu">
-	{% if perms.input.can_change_item %}<a id="/admin/input/item/%s">Item</a>{% endif %}
+	{% if perms.input.change_item %}<a id="/admin/input/item/%s">Item</a>{% endif %}
   <a id="/path/item/%s">Supply Path</a>
 </div>
 
 <div id="forecastcontext" class="ContextMenu">
-	{% if perms.input.can_change_forecast %}<a id="/admin/input/forecast/%s">Forecast</a>{% endif %}
+	{% if perms.input.change_forecast %}<a id="/admin/input/forecast/%s">Forecast</a>{% endif %}
   <a id="/path/item/%s">Supply Path</a> <!-- Need to point to the calendar of the forecast... -->
 </div>
 
 <div id="customercontext" class="ContextMenu">
-	{% if perms.input.can_change_customer %}<a id="/admin/input/customer/%s">Customer</a>{% endif %}
+	{% if perms.input.change_customer %}<a id="/admin/input/customer/%s">Customer</a>{% endif %}
 </div>
 
 <table><thead>
@@ -57,7 +57,7 @@
 <th><a href="?ot=asc&amp;o=1">Item</a></th>
 <th><a href="?ot=asc&amp;o=2">Customer</a></th>
 <th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
-<tbody>{% if perms.change_forecastdemand %}
+<tbody>{% if perms.input.change_forecastdemand %}
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}" id="{{j.name}}"><form name="{{j.name}}"><td>{{j.name|superlink:"forecast"}}</td><td>{{j.item|superlink:"item"}}</td><td>{{j.customer|superlink:"customer"}}</td>
 <td><span style="line-height:18pt;">Total</span></td>{% endif %}

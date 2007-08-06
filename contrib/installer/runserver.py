@@ -176,7 +176,7 @@ except IndexError:
 # Print a header message
 print 'Running Frepple %s with database %s\n' % (settings.FREPPLE_VERSION,settings.DATABASE_NAME)
 print 'To access the server, point your browser to http://%s:%s/' % (options.address, options.port)
-print 'Two users are created by default: "frepple" and "guest" (the password is equal to the user name)\n'
+print 'Three users are created by default: "admin", "frepple" and "guest" (the password is equal to the user name)\n'
 print 'Quit the server with CTRL-C.\n'
 
 # Run the WSGI server

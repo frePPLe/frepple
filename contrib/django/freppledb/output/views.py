@@ -21,7 +21,6 @@
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net
 
-from django.core.paginator import ObjectPaginator, InvalidPage
 from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template import RequestContext, loader
@@ -34,231 +33,7 @@ from datetime import date, datetime
 
 from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item, Demand, Forecast
 from freppledb.dbutils import *
-
-# Parameter settings
-PAGINATE_BY = 25       # Number of entities displayed on a page
-ON_EACH_SIDE = 3       # Number of pages show left and right of the current page
-ON_ENDS = 2            # Number of pages shown at the start and the end of the page list
-CACHE_SQL_QUERY = 10   # Time in minutes during which results of SQL queries are cached
-
-# A variable to cache bucket information in memory
-datelist = {}
-
-def getBuckets(request, bucket=None, start=None, end=None):
-  '''
-  This function gets passed a name of a bucketization.
-  It returns a list of buckets.
-  The data are retrieved from the database table dates, and are
-  stored in the django memory cache for performance reasons
-  '''
-  global datelist
-  # Pick up the arguments
-  if not bucket:
-    bucket = request.GET.get('bucket')
-    if not bucket:
-      try: bucket = request.user.get_profile().buckets
-      except: bucket = 'month'
-  if not start:
-    start = request.GET.get('start')
-    if start:
-      try:
-        (y,m,d) = start.split('-')
-        start = date(int(y),int(m),int(d))
-      except:
-        try: start = request.user.get_profile().startdate
-        except: pass
-        if not start: start = Plan.objects.all()[0].currentdate.date()
-    else:
-      try: start = request.user.get_profile().startdate
-      except: pass
-      if not start: start = Plan.objects.all()[0].currentdate.date()
-  if not end:
-    end = request.GET.get('end')
-    if end:
-      try:
-        (y,m,d) = end.split('-')
-        end = date(int(y),int(m),int(d))
-      except:
-        try: end = request.user.get_profile().enddate
-        except: pass
-        if not end: end = date(2030,1,1)
-    else:
-      try: end = request.user.get_profile().enddate
-      except: pass
-      if not end: end = date(2030,1,1)
-
-  # Check if the argument is valid
-  if bucket not in ('day','week','month','quarter','year'):
-    raise Http404, "bucket name %s not valid" % bucket
-
-  # Pick up the buckets from the cache
-  if not bucket in datelist:
-    # Read the buckets from the database if the data isn't in the cache yet
-    cursor = connection.cursor()
-    cursor.execute('''
-      select %s, min(day), max(day)
-      from dates
-      group by %s
-      order by min(day)''' % (bucket,bucket))
-    # Compute the data to store in memory
-    if settings.DATABASE_ENGINE == 'sqlite3':
-      # Sigh... Poor data type handling in sqlite
-      datelist[bucket] = [{
-        'name': i,
-        'start': datetime.strptime(j,'%Y-%m-%d').date(),
-        'end': datetime.strptime(k,'%Y-%m-%d').date()
-        } for i,j,k in cursor.fetchall()]
-    else:
-      datelist[bucket] = [{'name': i, 'start': j, 'end': k} for i,j,k in cursor.fetchall()]
-
-  # Filter based on the start and end date
-  if start and end:
-    res = filter(lambda b: b['start'] <= end and b['end'] >= start, datelist[bucket])
-  elif end:
-    res = filter(lambda b: b['start'] <= end, datelist[bucket])
-  elif start:
-    res = filter(lambda b: b['end'] >= start, datelist[bucket])
-  else:
-    res = datelist[bucket]
-  return (bucket,start,end,res)
-
-
-class Report(object):
-  '''
-  The base class for all reports
-  '''
-  template = {}
-  title = ''
-
-
-@staff_member_required
-def view_report(request, entity=None, **args):
-  global ON_EACH_SIDE
-  global ON_ENDS
-  global PAGINATE_BY
-
-  # Pick up the report class
-  try:
-    reportclass = args['report']
-  except:
-    raise Http404('Missing report parameter in url context')
-
-  if entity:
-    extra_context = {'title': '%s for %s' % (reportclass.title,entity), 'reset_crumbs': False}
-    countmethod = None
-  else:
-    extra_context = {'title': reportclass.title, 'reset_crumbs': True}
-    countmethod = reportclass.countquery
-
-  # Pick up the list of time buckets
-  (bucket,start,end,bucketlist) = getBuckets(request)
-
-  # HTML output or CSV output?
-  type = request.GET.get('type','html')
-  if type == 'csv':
-    # CSV output
-    c = RequestContext(request, {
-       'objectlist': reportclass.resultquery(entity, bucket, start, end),
-       'bucket': bucket,
-       'startdate': start,
-       'enddate': end,
-       'bucketlist': bucketlist,
-       })
-    response = HttpResponse(mimetype='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=%s' % reportclass.template['csv']
-    response.write(loader.get_template(reportclass.template['csv']).render(c))
-    return response
-
-  # Create a copy of the request url parameters
-  parameters = request.GET.copy()
-  parameters.__setitem__('p', 0)
-
-  # Calculate the content of the page
-  page = int(request.GET.get('p', '0'))
-  if countmethod:
-    paginator = ObjectPaginator(countmethod, PAGINATE_BY)
-    try: results = reportclass.resultquery(entity, bucket, start, end, offset=paginator.first_on_page(page)-1, limit=PAGINATE_BY)
-    except InvalidPage: raise Http404
-  else:
-    paginator = ObjectPaginator(reportclass.resultquery(entity, bucket, start, end), PAGINATE_BY)
-    try: results = paginator.get_page(page)
-    except InvalidPage: raise Http404
-
-  # If there are less than 10 pages, show them all
-  page_htmls = []
-  if paginator.pages <= 10:
-    for n in range(0,paginator.pages):
-      parameters.__setitem__('p', n)
-      if n == page:
-        page_htmls.append('<span class="this-page">%d</span>' % (page+1))
-      else:
-        page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
-  else:
-      # Insert "smart" pagination links, so that there are always ON_ENDS
-      # links at either end of the list of pages, and there are always
-      # ON_EACH_SIDE links at either end of the "current page" link.
-      if page <= (ON_ENDS + ON_EACH_SIDE):
-          # 1 2 *3* 4 5 6 ... 99 100
-          for n in range(0, page + max(ON_EACH_SIDE, ON_ENDS)+1):
-            if n == page:
-              page_htmls.append('<span class="this-page">%d</span>' % (page+1))
-            else:
-              parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
-          page_htmls.append('...')
-          for n in range(paginator.pages - ON_EACH_SIDE, paginator.pages):
-              parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
-      elif page >= (paginator.pages - ON_EACH_SIDE - ON_ENDS - 2):
-          # 1 2 ... 95 96 97 *98* 99 100
-          for n in range(0, ON_ENDS):
-              parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
-          page_htmls.append('...')
-          for n in range(page - max(ON_EACH_SIDE, ON_ENDS), paginator.pages):
-            if n == page:
-              page_htmls.append('<span class="this-page">%d</span>' % (page+1))
-            else:
-              parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, parameters.urlencode(),n+1))
-      else:
-          # 1 2 ... 45 46 47 *48* 49 50 51 ... 99 100
-          for n in range(0, ON_ENDS):
-              parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, parameters.urlencode(),n+1))
-          page_htmls.append('...')
-          for n in range(page - ON_EACH_SIDE, page + ON_EACH_SIDE + 1):
-            if n == page:
-              page_htmls.append('<span class="this-page">%s</span>' % (page+1))
-            elif n == '.':
-              page_htmls.append('...')
-            else:
-              parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
-          page_htmls.append('...')
-          for n in range(paginator.pages - ON_ENDS - 1, paginator.pages):
-              parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, parameters.urlencode(),n+1))
-  context = {
-       'objectlist': results,
-       'bucket': bucket,
-       'startdate': start,
-       'enddate': end,
-       'bucketlist': bucketlist,
-       'paginator': paginator,
-       'is_paginated': paginator.pages > 1,
-       'has_next': paginator.has_next_page(page - 1),
-       'has_previous': paginator.has_previous_page(page - 1),
-       'current_page': page,
-       'next_page': page + 1,
-       'previous_page': page - 1,
-       'pages': paginator.pages,
-       'hits' : paginator.hits,
-       'page_htmls': page_htmls,
-     }
-  if extra_context: context.update(extra_context)
-  return render_to_response(args['report'].template['html'],  context, context_instance=RequestContext(request))
-
+from freppledb.report import Report
 
 class BufferReport(Report):
   '''
@@ -267,9 +42,12 @@ class BufferReport(Report):
   template = {'html': 'buffer.html', 'csv': 'buffer.csv',}
   title = "Inventory report"
   countquery = Buffer.objects
+  rows = ['Buffer','Item','Location']
+  crosses = ['Start Inventory', 'Consumed','Produced', 'End inventory']
+  columns = ['Bucket',]
 
   @staticmethod
-  def resultquery(buffer, bucket, startdate, enddate, offset=0, limit=None):
+  def resultquery(buffer, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
     if buffer: filterstring = 'where name = %s'
     else: filterstring = ''
     if limit:
@@ -282,7 +60,7 @@ class BufferReport(Report):
              d.bucket, d.startdate, d.enddate,
              coalesce(sum(%s),0.0) as consumed,
              coalesce(-sum(%s),0.0) as produced
-        from (select name, item_id, location_id, onhand from buffer %s order by name %s) as buf
+        from (select name, item_id, location_id, onhand from buffer %s order by %s %s) as buf
         -- Multiply with buckets
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -298,9 +76,9 @@ class BufferReport(Report):
         -- Grouping and sorting
         group by buf.name, buf.item_id, buf.location_id, buf.onhand,
              d.bucket, d.startdate, d.enddate
-        order by buf.name, d.startdate
+        order by %s, d.startdate
       ''' % (sql_max('out_flowplan.quantity','0.0'),sql_min('out_flowplan.quantity','0.0'),
-        filterstring,limitstring,bucket,bucket,bucket,startdate,enddate)
+        filterstring,sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
     if buffer: cursor.execute(query, (buffer,))
     else: cursor.execute(query)
     resultset = []
@@ -337,9 +115,12 @@ class DemandReport(Report):
   template = {'html': 'demand.html', 'csv': 'demand.csv',}
   title = 'Demand report'
   countquery = Demand.objects.values('item').distinct()
+  rows = ['Item',]
+  crosses = ['Demand', 'Supply','Backlog']
+  columns = ['Bucket',]
 
   @staticmethod
-  def resultquery(item, bucket, startdate, enddate, offset=0, limit=None):
+  def resultquery(item, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
     if item: filterstring = 'where item_id = %s'
     else: filterstring = ''
     if limit:
@@ -352,7 +133,7 @@ class DemandReport(Report):
                d.bucket, d.startdate, d.enddate,
                coalesce(sum(demand.quantity),0),
                coalesce(sum(pln.quantity),0)
-        from (select distinct item_id from demand %s order by item_id %s) as items
+        from (select distinct item_id from demand %s order by %s %s) as items
         -- Multiply with buckets
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -377,8 +158,8 @@ class DemandReport(Report):
         and d.enddate > date(demand.due)
         -- Ordering and grouping
         group by items.item_id, d.bucket, d.startdate, d.enddate
-        order by items.item_id, d.startdate
-       ''' % (filterstring, limitstring,bucket,bucket,bucket,startdate,enddate)
+        order by %s, d.startdate
+       ''' % (filterstring,sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
     if item: cursor.execute(query, (item,))
     else: cursor.execute(query)
     resultset = []
@@ -412,9 +193,12 @@ class ForecastReport(Report):
   template = {'html': 'forecast.html', 'csv': 'forecast.csv',}
   title = 'Forecast report'
   countquery = Forecast.objects
+  rows = ['Forecast','Item','Customer']
+  crosses = ['Total']
+  columns = ['Bucket',]
 
   @staticmethod
-  def resultquery(fcst, bucket, startdate, enddate, offset=0, limit=None):
+  def resultquery(fcst, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
     if fcst: filterstring = 'where name = %s'
     else: filterstring = ''
     if limit:
@@ -426,7 +210,7 @@ class ForecastReport(Report):
         select fcst.name, fcst.item_id, fcst.customer_id,
                d.bucket, d.startdate, d.enddate,
                coalesce(sum(forecastdemand.quantity * %s / %s),0) as qty
-        from (select * from forecast %s order by name %s) as fcst
+        from (select name, item_id, customer_id from forecast %s order by %s %s) as fcst
         -- Multiply with buckets
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -442,10 +226,10 @@ class ForecastReport(Report):
         -- Ordering and grouping
         group by fcst.name, fcst.item_id, fcst.customer_id,
                d.bucket, d.startdate, d.enddate
-        order by fcst.name, d.startdate
+        order by %s, d.startdate
         ''' % (sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
-         sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),filterstring,limitstring,
-         bucket,bucket,bucket,startdate,enddate)
+         sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),filterstring,sortsql,limitstring,
+         bucket,bucket,bucket,startdate,enddate,sortsql)
     if fcst: cursor.execute(query, (fcst,))
     else: cursor.execute(query)
     resultset = []
@@ -476,9 +260,12 @@ class ResourceReport(Report):
   template = {'html': 'resource.html', 'csv': 'resource.csv',}
   title = 'Resource report'
   countquery = Resource.objects
+  rows = ['Resource','Location']
+  crosses = ['Available','Load','Utilization']
+  columns = ['Bucket',]
 
   @staticmethod
-  def resultquery(resource, bucket, startdate, enddate, offset=0, limit=None):
+  def resultquery(resource, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
     if resource: filterstring = 'where name = %s'
     else: filterstring = ''
     if limit:
@@ -495,7 +282,7 @@ class ResourceReport(Report):
          select res.name as name, res.location_id as location_id,
                d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
                coalesce(sum(bucket.value * %s),0) as available
-         from (select name, location_id, maximum_id from resource %s order by name %s) as res
+         from (select name, location_id, maximum_id from resource %s order by %s %s) as res
          -- Multiply with buckets
          cross join (
               select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -522,10 +309,10 @@ class ResourceReport(Report):
        and x.enddate >= loaddata.startdatetime
        -- Grouping and ordering
        group by x.name, x.location_id, x.bucket, x.startdate, x.enddate
-       order by x.name, x.startdate
+       order by %s, x.startdate
        ''' % ( sql_overlap('loaddata.startdatetime','loaddata.enddatetime','x.startdate','x.enddate'),
          sql_overlap('bucket.startdate','bucket.enddate','d.startdate','d.enddate'),
-         filterstring,limitstring,bucket,bucket,bucket,startdate,enddate)
+         filterstring,sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
     if resource: cursor.execute(query, (resource,))
     else: cursor.execute(query)
     resultset = []
@@ -563,7 +350,7 @@ class OperationReport(Report):
   countquery = Operation.objects
 
   @staticmethod
-  def resultquery(operation, bucket, startdate, enddate, offset=0, limit=None):
+  def resultquery(operation, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
     if operation: filterstring = 'where name = %s'
     else: filterstring = ''
     if limit:
@@ -576,7 +363,7 @@ class OperationReport(Report):
              d.bucket, d.startdate, d.enddate,
              coalesce(sum(case out_operationplan.locked when %s then out_operationplan.quantity else 0 end),0),
              coalesce(sum(out_operationplan.quantity),0)
-        from (select name from operation %s order by name %s) as oper
+        from (select name from operation %s order by %s %s) as oper
         -- Multiply with buckets
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -591,8 +378,8 @@ class OperationReport(Report):
         and d.enddate > out_operationplan.startdate
         -- Grouping and ordering
         group by oper.name, d.bucket, d.startdate, d.enddate
-        order by oper.name, d.startdate
-      ''' % (sql_true(),filterstring,limitstring,bucket,bucket,bucket,startdate,enddate)
+        order by %s, d.startdate
+      ''' % (sql_true(),filterstring,sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
     if operation: cursor.execute(query, (operation,))
     else: cursor.execute(query)
     resultset = []

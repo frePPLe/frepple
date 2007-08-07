@@ -18,8 +18,8 @@
   <a id="/path/item/%s">Supply Path</a>
 </div>
 
-<table><thead>
-<tr><th class="sorted descending"><a href="?ot=asc&amp;o=0">Item</a></th>
+<table><thead><tr>
+{% reportheader Item 1 %}
 <th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
 
 <tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}

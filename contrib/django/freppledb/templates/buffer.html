@@ -31,13 +31,13 @@
 </div>
 
 <table><thead><tr>
-<th class="sorted descending"><a href="?ot=asc&amp;o=0">Buffer</a></th>
-<th><a href="?ot=asc&amp;o=1">Item</a></th>
-<th><a href="?ot=asc&amp;o=2">Location</a></th>
+{% reportheader Buffer 1 %}
+{% reportheader Item 2 %}
+{% reportheader Location 3 %}
 <th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
 <tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}"><td>{{j.buffer|superlink:"buffer"}}</td><td>{{j.item|superlink:"item"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
-<td>Start&nbsp;Inventory<br/>Consumed<br/>Produced<br/>End&nbsp;inventory</td>{% endif %}
+<td>Start&nbsp;inventory<br/>Consumed<br/>Produced<br/>End&nbsp;inventory</td>{% endif %}
 <td>{{j.startoh|floatformat:1}}<br/>{{j.consumed|floatformat:1}}<br/>{{j.produced|floatformat:1}}<br/>{{j.endoh|floatformat:1}}</td>{% endfor %}
 </tr>{% endfor %}
 </tbody></table>

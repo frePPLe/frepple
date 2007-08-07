@@ -52,10 +52,10 @@
 	{% if perms.input.change_customer %}<a id="/admin/input/customer/%s">Customer</a>{% endif %}
 </div>
 
-<table><thead>
-<tr><th class="sorted descending"><a href="?ot=asc&amp;o=0">Forecast</a></th>
-<th><a href="?ot=asc&amp;o=1">Item</a></th>
-<th><a href="?ot=asc&amp;o=2">Customer</a></th>
+<table><thead><tr>
+{% reportheader Forecast 1 %}
+{% reportheader Item 2 %}
+{% reportheader Customer 3 %}
 <th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
 <tbody>{% if perms.input.change_forecastdemand %}
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}

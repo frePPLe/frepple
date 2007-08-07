@@ -46,9 +46,9 @@
 <a id="/admin/input/location/%s">Location</a>
 </div>
 
-<table><thead>
-<tr><th class="sorted descending"><a href="?ot=asc&amp;o=0">Resource</a></th>
-<th><a href="?ot=asc&amp;o=1">Location</a></th>
+<table><thead><tr>
+{% reportheader Resource 1 %}
+{% reportheader Location 2 %}
 <th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
 <tbody>
 {% if perms.input.change_resource %}

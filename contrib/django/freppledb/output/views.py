@@ -323,46 +323,40 @@ def demandquery(item, bucket, startdate, enddate, offset=0, limit=None):
   else: limitstring = ''
   cursor = connection.cursor()
   query = '''
-      select combi.item_id,
-             combi.bucket,
-             coalesce(data.demand,0),
-             coalesce(data2.planned,0)
-      from
-       (select item_id, d.bucket as bucket, d.start as start
-        from (select distinct item_id from demand %s order by item_id %s) as items
-        cross join (select %s as bucket, min(day) as start from dates where day >= '%s'
-          and day < '%s' group by bucket) d
-       ) as combi
+      select items.item_id,
+             d.bucket, d.startdate, d.enddate,
+             coalesce(sum(demand.quantity),0),
+             coalesce(sum(pln.quantity),0)
+      from (select distinct item_id from demand %s order by item_id %s) as items
+      -- Multiply with buckets
+      cross join (
+           select %s as bucket, %s_start as startdate, %s_end as enddate
+           from dates
+           where day >= '%s' and day < '%s'
+           group by bucket, startdate, enddate
+           ) d
       -- Planned quantity
-      left join
-       (select items.item_id as item_id, %s as bucket, sum(out_operationplan.quantity) as planned
-        from out_operationplan, dates as d, demand as inp,
-          (select distinct item_id from demand %s order by item_id %s) as items
-        where out_operationplan.enddate = d.day
-        and out_operationplan.demand_id = inp.name
-        and inp.item_id = items.item_id
-        and out_operationplan.enddate >= '%s'
-        and out_operationplan.enddate < '%s'
-        group by items.item_id, bucket) data2
-      on combi.item_id = data2.item_id
-      and combi.bucket = data2.bucket
+      left join (
+        select inp.item_id as item_id, out_operationplan.enddate as date, out_operationplan.quantity as quantity
+        from out_operationplan
+        inner join demand as inp
+        on out_operationplan.demand_id = inp.name
+        ) as pln
+      on items.item_id = pln.item_id
+      and d.startdate <= pln.date
+      and d.enddate > pln.date
+
+
+
       -- Requested quantity
-      left join
-       (select items.item_id as item_id, %s as bucket, sum(inp.quantity) as demand
-            from dates as d, demand as inp,
-              (select distinct item_id from demand %s order by item_id %s) as items
-            where date(inp.due) = d.day
-            and inp.due >= '%s'
-            and inp.due < '%s'
-            and inp.item_id = items.item_id
-            group by items.item_id, bucket) data
-      on combi.item_id = data.item_id
-      and combi.bucket = data.bucket
-      -- Sort the result
-      order by combi.item_id, combi.start
-     ''' % (filterstring, limitstring,bucket,startdate,enddate,
-            bucket,filterstring,limitstring,startdate,enddate,
-            bucket,filterstring,limitstring,startdate,enddate)
+      left join demand
+      on items.item_id = demand.item_id
+      and d.startdate <= date(demand.due)
+      and d.enddate > date(demand.due)
+      -- Ordering and grouping
+      group by items.item_id, d.bucket, d.startdate, d.enddate
+      order by items.item_id, d.startdate
+     ''' % (filterstring, limitstring,bucket,bucket,bucket,startdate,enddate)
   if item: cursor.execute(query, (item,item,item))
   else: cursor.execute(query)
   resultset = []
@@ -374,13 +368,16 @@ def demandquery(item, bucket, startdate, enddate, offset=0, limit=None):
       rowset = []
       previtem = row[0]
       backlog = 0         # @todo Setting the backlog to 0 is not correct: it may be non-zero from the plan before the start date
-    backlog += row[2] - row[3]
+    backlog += row[4] - row[5]
     rowset.append( {
       'item': row[0],
       'bucket': row[1],
-      'requested': row[2],
-      'supplied': row[3],
+      'startdate': row[2],
+      'enddate': row[3],
+      'requested': row[4],
+      'supplied': row[5],
       'backlog': backlog,
+
       } )
   if previtem: resultset.append(rowset)
   return resultset
@@ -394,11 +391,13 @@ def demandreport(request, item=None):
       {'title': 'Demand report for %s' % item, 'reset_crumbs': False}
       )
   else:
-    return BucketedView(request, item, demandquery,
+    x = BucketedView(request, item, demandquery,
       'demand.html', 'demand.csv',
       {'title': 'Demand report', 'reset_crumbs': True},
       countmethod=Demand.objects.values('item').distinct()
       )
+    for i in connection.queries: print i['time'], i['sql']
+    return x
 
 
 def forecastquery(fcst, bucket, startdate, enddate, offset=0, limit=None):

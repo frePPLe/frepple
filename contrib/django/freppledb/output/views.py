@@ -123,10 +123,32 @@ def getBuckets(request, bucket=None, start=None, end=None):
   return (bucket,start,end,res)
 
 
-def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_context=None, countmethod=None):
+class Report(object):
+  '''
+  The base class for all reports
+  '''
+  template = {}
+  title = ''
+
+
+@staff_member_required
+def view_report(request, entity=None, **args):
   global ON_EACH_SIDE
   global ON_ENDS
   global PAGINATE_BY
+
+  # Pick up the report class
+  try:
+    reportclass = args['report']
+  except:
+    raise Http404('Missing report parameter in url context')
+
+  if entity:
+    extra_context = {'title': '%s for %s' % (reportclass.title,entity), 'reset_crumbs': False}
+    countmethod = None
+  else:
+    extra_context = {'title': reportclass.title, 'reset_crumbs': True}
+    countmethod = reportclass.countquery
 
   # Pick up the list of time buckets
   (bucket,start,end,bucketlist) = getBuckets(request)
@@ -136,15 +158,15 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
   if type == 'csv':
     # CSV output
     c = RequestContext(request, {
-       'objectlist': querymethod(entity, bucket, start, end),
+       'objectlist': reportclass.resultquery(entity, bucket, start, end),
        'bucket': bucket,
        'startdate': start,
        'enddate': end,
        'bucketlist': bucketlist,
        })
     response = HttpResponse(mimetype='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=%s' % csvtemplate
-    response.write(loader.get_template(csvtemplate).render(c))
+    response['Content-Disposition'] = 'attachment; filename=%s' % reportclass.template['csv']
+    response.write(loader.get_template(reportclass.template['csv']).render(c))
     return response
 
   # Create a copy of the request url parameters
@@ -155,10 +177,10 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
   page = int(request.GET.get('p', '0'))
   if countmethod:
     paginator = ObjectPaginator(countmethod, PAGINATE_BY)
-    try: results = querymethod(entity, bucket, start, end, offset=paginator.first_on_page(page)-1, limit=PAGINATE_BY)
+    try: results = reportclass.resultquery(entity, bucket, start, end, offset=paginator.first_on_page(page)-1, limit=PAGINATE_BY)
     except InvalidPage: raise Http404
   else:
-    paginator = ObjectPaginator(querymethod(entity, bucket, start, end), PAGINATE_BY)
+    paginator = ObjectPaginator(reportclass.resultquery(entity, bucket, start, end), PAGINATE_BY)
     try: results = paginator.get_page(page)
     except InvalidPage: raise Http404
 
@@ -184,7 +206,7 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
               parameters.__setitem__('p', n)
               page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
           page_htmls.append('...')
-          for n in range(paginator.pages - ON_EACH_SIDE, paginator.pages-1):
+          for n in range(paginator.pages - ON_EACH_SIDE, paginator.pages):
               parameters.__setitem__('p', n)
               page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
       elif page >= (paginator.pages - ON_EACH_SIDE - ON_ENDS - 2):
@@ -193,7 +215,7 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
               parameters.__setitem__('p', n)
               page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
           page_htmls.append('...')
-          for n in range(page - max(ON_EACH_SIDE, ON_ENDS), paginator.pages - 1):
+          for n in range(page - max(ON_EACH_SIDE, ON_ENDS), paginator.pages):
             if n == page:
               page_htmls.append('<span class="this-page">%d</span>' % (page+1))
             else:
@@ -214,7 +236,7 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
               parameters.__setitem__('p', n)
               page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
           page_htmls.append('...')
-          for n in range(paginator.pages - ON_ENDS - 1, paginator.pages - 1):
+          for n in range(paginator.pages - ON_ENDS - 1, paginator.pages):
               parameters.__setitem__('p', n)
               page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, parameters.urlencode(),n+1))
   context = {
@@ -235,396 +257,362 @@ def BucketedView(request, entity, querymethod, htmltemplate, csvtemplate, extra_
        'page_htmls': page_htmls,
      }
   if extra_context: context.update(extra_context)
-  return render_to_response(htmltemplate,  context, context_instance=RequestContext(request))
+  return render_to_response(args['report'].template['html'],  context, context_instance=RequestContext(request))
 
 
-def bufferquery(buffer, bucket, startdate, enddate, offset=0, limit=None):
-  if buffer: filterstring = 'where name = %s'
-  else: filterstring = ''
-  if limit:
-    if offset == 0: limitstring = 'limit %d' % int(limit)
-    else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
-  else: limitstring = ''
-  cursor = connection.cursor()
-  query = '''
-    select buf.name, buf.item_id, buf.location_id, buf.onhand,
-           d.bucket, d.startdate, d.enddate,
-           coalesce(sum(%s),0.0) as consumed,
-           coalesce(-sum(%s),0.0) as produced
-      from (select name, item_id, location_id, onhand from buffer %s order by name %s) as buf
-      -- Multiply with buckets
-      cross join (
-           select %s as bucket, %s_start as startdate, %s_end as enddate
-           from dates
-           where day >= '%s' and day < '%s'
-           group by bucket, startdate, enddate
-           ) d
-      -- Consumed and produced quantities
-      left join out_flowplan
-      on buf.name = out_flowplan.thebuffer_id
-      and d.startdate <= out_flowplan.flowdate
-      and d.enddate > out_flowplan.flowdate
-      -- Grouping and sorting
-      group by buf.name, buf.item_id, buf.location_id, buf.onhand,
-           d.bucket, d.startdate, d.enddate
-      order by buf.name, d.startdate
-    ''' % (sql_max('out_flowplan.quantity','0.0'),sql_min('out_flowplan.quantity','0.0'),
-      filterstring,limitstring,bucket,bucket,bucket,startdate,enddate)
-  if buffer: cursor.execute(query, (buffer,buffer))
-  else: cursor.execute(query)
-  resultset = []
-  prevbuf = None
-  rowset = []
-  for row in cursor.fetchall():
-    if row[0] != prevbuf:
-      if prevbuf: resultset.append(rowset)
-      rowset = []
-      prevbuf = row[0]
-      endoh = float(row[3])
-    startoh = endoh   # @todo the starting onhand isn't right...
-    endoh += float(row[7] - row[8])
-    rowset.append( {
-      'buffer': row[0],
-      'item': row[1],
-      'location': row[2],
-      'bucket': row[4],
-      'startdate': row[5],
-      'enddate': row[6],
-      'startoh': startoh,
-      'produced': row[7],
-      'consumed': row[8],
-      'endoh': endoh,
-      } )
-  if prevbuf: resultset.append(rowset)
-  return resultset
+class BufferReport(Report):
+  '''
+  A report showing the inventory profile of buffers.
+  '''
+  template = {'html': 'buffer.html', 'csv': 'buffer.csv',}
+  title = "Inventory report"
+  countquery = Buffer.objects
 
-
-@staff_member_required
-def bufferreport(request, buffer=None):
-  if buffer:
-    return BucketedView(request, buffer, bufferquery,
-      'buffer.html', 'buffer.csv',
-      {'title': 'Inventory report for %s' % buffer, 'reset_crumbs': False}
-      )
-  else:
-    return BucketedView(request, buffer, bufferquery,
-      'buffer.html', 'buffer.csv',
-      {'title': 'Inventory report', 'reset_crumbs': True},
-      countmethod=Buffer.objects
-      )
-
-
-def demandquery(item, bucket, startdate, enddate, offset=0, limit=None):
-  if item: filterstring = 'where item_id = %s'
-  else: filterstring = ''
-  if limit:
-    if offset == 0: limitstring = 'limit %d' % int(limit)
-    else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
-  else: limitstring = ''
-  cursor = connection.cursor()
-  query = '''
-      select items.item_id,
+  @staticmethod
+  def resultquery(buffer, bucket, startdate, enddate, offset=0, limit=None):
+    if buffer: filterstring = 'where name = %s'
+    else: filterstring = ''
+    if limit:
+      if offset == 0: limitstring = 'limit %d' % int(limit)
+      else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
+    else: limitstring = ''
+    cursor = connection.cursor()
+    query = '''
+      select buf.name, buf.item_id, buf.location_id, buf.onhand,
              d.bucket, d.startdate, d.enddate,
-             coalesce(sum(demand.quantity),0),
-             coalesce(sum(pln.quantity),0)
-      from (select distinct item_id from demand %s order by item_id %s) as items
-      -- Multiply with buckets
-      cross join (
-           select %s as bucket, %s_start as startdate, %s_end as enddate
-           from dates
-           where day >= '%s' and day < '%s'
-           group by bucket, startdate, enddate
-           ) d
-      -- Planned quantity
-      left join (
-        select inp.item_id as item_id, out_operationplan.enddate as date, out_operationplan.quantity as quantity
-        from out_operationplan
-        inner join demand as inp
-        on out_operationplan.demand_id = inp.name
-        ) as pln
-      on items.item_id = pln.item_id
-      and d.startdate <= pln.date
-      and d.enddate > pln.date
-
-
-
-      -- Requested quantity
-      left join demand
-      on items.item_id = demand.item_id
-      and d.startdate <= date(demand.due)
-      and d.enddate > date(demand.due)
-      -- Ordering and grouping
-      group by items.item_id, d.bucket, d.startdate, d.enddate
-      order by items.item_id, d.startdate
-     ''' % (filterstring, limitstring,bucket,bucket,bucket,startdate,enddate)
-  if item: cursor.execute(query, (item,item,item))
-  else: cursor.execute(query)
-  resultset = []
-  previtem = None
-  rowset = []
-  for row in cursor.fetchall():
-    if row[0] != previtem:
-      if previtem: resultset.append(rowset)
-      rowset = []
-      previtem = row[0]
-      backlog = 0         # @todo Setting the backlog to 0 is not correct: it may be non-zero from the plan before the start date
-    backlog += row[4] - row[5]
-    rowset.append( {
-      'item': row[0],
-      'bucket': row[1],
-      'startdate': row[2],
-      'enddate': row[3],
-      'requested': row[4],
-      'supplied': row[5],
-      'backlog': backlog,
-
-      } )
-  if previtem: resultset.append(rowset)
-  return resultset
-
-
-@staff_member_required
-def demandreport(request, item=None):
-  if item:
-    return BucketedView(request, item, demandquery,
-      'demand.html', 'demand.csv',
-      {'title': 'Demand report for %s' % item, 'reset_crumbs': False}
-      )
-  else:
-    x = BucketedView(request, item, demandquery,
-      'demand.html', 'demand.csv',
-      {'title': 'Demand report', 'reset_crumbs': True},
-      countmethod=Demand.objects.values('item').distinct()
-      )
-    for i in connection.queries: print i['time'], i['sql']
-    return x
-
-
-def forecastquery(fcst, bucket, startdate, enddate, offset=0, limit=None):
-  if fcst: filterstring = 'where name = %s'
-  else: filterstring = ''
-  if limit:
-    if offset == 0: limitstring = 'limit %d' % int(limit)
-    else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
-  else: limitstring = ''
-  cursor = connection.cursor()
-  query = '''
-      select fcst.name, fcst.item_id, fcst.customer_id,
-             d.bucket, d.startdate, d.enddate,
-             coalesce(sum(forecastdemand.quantity * %s / %s),0) as qty
-      from (select * from forecast %s order by name %s) as fcst
-      -- Multiply with buckets
-      cross join (
-           select %s as bucket, %s_start as startdate, %s_end as enddate
-           from dates
-           where day >= '%s' and day < '%s'
-           group by bucket, startdate, enddate
-           ) d
-      -- Total forecasted quantity
-      left join forecastdemand
-      on fcst.name = forecastdemand.forecast_id
-      and forecastdemand.enddate >= d.startdate
-      and forecastdemand.startdate <= d.enddate
-      -- Ordering and grouping
-      group by fcst.name, fcst.item_id, fcst.customer_id,
+             coalesce(sum(%s),0.0) as consumed,
+             coalesce(-sum(%s),0.0) as produced
+        from (select name, item_id, location_id, onhand from buffer %s order by name %s) as buf
+        -- Multiply with buckets
+        cross join (
+             select %s as bucket, %s_start as startdate, %s_end as enddate
+             from dates
+             where day >= '%s' and day < '%s'
+             group by bucket, startdate, enddate
+             ) d
+        -- Consumed and produced quantities
+        left join out_flowplan
+        on buf.name = out_flowplan.thebuffer_id
+        and d.startdate <= out_flowplan.flowdate
+        and d.enddate > out_flowplan.flowdate
+        -- Grouping and sorting
+        group by buf.name, buf.item_id, buf.location_id, buf.onhand,
              d.bucket, d.startdate, d.enddate
-      order by fcst.name, d.startdate
-      ''' % (sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
-       sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),filterstring,limitstring,
-       bucket,bucket,bucket,startdate,enddate)
-  if fcst: cursor.execute(query, (fcst,fcst))
-  else: cursor.execute(query)
-  resultset = []
-  prevfcst = None
-  rowset = []
-  for row in cursor.fetchall():
-    if row[0] != prevfcst:
-      if prevfcst: resultset.append(rowset)
-      rowset = []
-      prevfcst = row[0]
-    rowset.append( {
-      'name': row[0],
-      'item': row[1],
-      'customer': row[2],
-      'bucket': row[3],
-      'startdate': row[4],
-      'enddate': row[5],
-      'forecast': row[6],
-      } )
-  if prevfcst: resultset.append(rowset)
-  return resultset
+        order by buf.name, d.startdate
+      ''' % (sql_max('out_flowplan.quantity','0.0'),sql_min('out_flowplan.quantity','0.0'),
+        filterstring,limitstring,bucket,bucket,bucket,startdate,enddate)
+    if buffer: cursor.execute(query, (buffer,))
+    else: cursor.execute(query)
+    resultset = []
+    prevbuf = None
+    rowset = []
+    for row in cursor.fetchall():
+      if row[0] != prevbuf:
+        if prevbuf: resultset.append(rowset)
+        rowset = []
+        prevbuf = row[0]
+        endoh = float(row[3])
+      startoh = endoh   # @todo the starting onhand isn't right...
+      endoh += float(row[7] - row[8])
+      rowset.append( {
+        'buffer': row[0],
+        'item': row[1],
+        'location': row[2],
+        'bucket': row[4],
+        'startdate': row[5],
+        'enddate': row[6],
+        'startoh': startoh,
+        'produced': row[7],
+        'consumed': row[8],
+        'endoh': endoh,
+        } )
+    if prevbuf: resultset.append(rowset)
+    return resultset
 
 
-@staff_member_required
-def forecastreport(request, fcst=None):
-  if fcst:
-    return BucketedView(request, fcst, forecastquery,
-      'forecast.html', 'forecast.csv',
-      {'title': 'Forecast report for %s' % fcst, 'reset_crumbs': False}
-      )
-  else:
-    return BucketedView(request, fcst, forecastquery,
-      'forecast.html', 'forecast.csv',
-      {'title': 'Forecast report', 'reset_crumbs': True},
-      countmethod=Forecast.objects.values('item').distinct()
-      )
+class DemandReport(Report):
+  '''
+  A report showing the independent demand for each item.
+  '''
+  template = {'html': 'demand.html', 'csv': 'demand.csv',}
+  title = 'Demand report'
+  countquery = Demand.objects.values('item').distinct()
+
+  @staticmethod
+  def resultquery(item, bucket, startdate, enddate, offset=0, limit=None):
+    if item: filterstring = 'where item_id = %s'
+    else: filterstring = ''
+    if limit:
+      if offset == 0: limitstring = 'limit %d' % int(limit)
+      else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
+    else: limitstring = ''
+    cursor = connection.cursor()
+    query = '''
+        select items.item_id,
+               d.bucket, d.startdate, d.enddate,
+               coalesce(sum(demand.quantity),0),
+               coalesce(sum(pln.quantity),0)
+        from (select distinct item_id from demand %s order by item_id %s) as items
+        -- Multiply with buckets
+        cross join (
+             select %s as bucket, %s_start as startdate, %s_end as enddate
+             from dates
+             where day >= '%s' and day < '%s'
+             group by bucket, startdate, enddate
+             ) d
+        -- Planned quantity
+        left join (
+          select inp.item_id as item_id, out_operationplan.enddate as date, out_operationplan.quantity as quantity
+          from out_operationplan
+          inner join demand as inp
+          on out_operationplan.demand_id = inp.name
+          ) as pln
+        on items.item_id = pln.item_id
+        and d.startdate <= pln.date
+        and d.enddate > pln.date
+        -- Requested quantity
+        left join demand
+        on items.item_id = demand.item_id
+        and d.startdate <= date(demand.due)
+        and d.enddate > date(demand.due)
+        -- Ordering and grouping
+        group by items.item_id, d.bucket, d.startdate, d.enddate
+        order by items.item_id, d.startdate
+       ''' % (filterstring, limitstring,bucket,bucket,bucket,startdate,enddate)
+    if item: cursor.execute(query, (item,))
+    else: cursor.execute(query)
+    resultset = []
+    previtem = None
+    rowset = []
+    for row in cursor.fetchall():
+      if row[0] != previtem:
+        if previtem: resultset.append(rowset)
+        rowset = []
+        previtem = row[0]
+        backlog = 0         # @todo Setting the backlog to 0 is not correct: it may be non-zero from the plan before the start date
+      backlog += row[4] - row[5]
+      rowset.append( {
+        'item': row[0],
+        'bucket': row[1],
+        'startdate': row[2],
+        'enddate': row[3],
+        'requested': row[4],
+        'supplied': row[5],
+        'backlog': backlog,
+
+        } )
+    if previtem: resultset.append(rowset)
+    return resultset
 
 
-def resourcequery(resource, bucket, startdate, enddate, offset=0, limit=None):
-  if resource: filterstring = 'where name = %s'
-  else: filterstring = ''
-  if limit:
-    if offset == 0: limitstring = 'limit %d' % int(limit)
-    else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
-  else: limitstring = ''
-  cursor = connection.cursor()
-  query = '''
-     select x.name, x.location_id,
-           x.bucket, x.startdate, x.enddate,
-           min(x.available),
-           coalesce(sum(loaddata.usagefactor * %s), 0) as loading
-     from (
-       select res.name as name, res.location_id as location_id,
-             d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
-             coalesce(sum(bucket.value * %s),0) as available
-       from (select name, location_id, maximum_id from resource %s order by name %s) as res
-       -- Multiply with buckets
-       cross join (
-            select %s as bucket, %s_start as startdate, %s_end as enddate
-            from dates
-            where day >= '%s' and day < '%s'
-            group by bucket, startdate, enddate
-            ) d
-       -- Available capacity
-       left join bucket
-       on res.maximum_id = bucket.calendar_id
-       and d.startdate <= bucket.enddate
-       and d.enddate >= bucket.startdate
-       -- Grouping
-       group by res.name, res.location_id, d.bucket, d.startdate, d.enddate
-     ) x
-     -- Load data
-     left join (
-       select resourceload.resource_id as resource_id, startdatetime, enddatetime, resourceload.usagefactor as usagefactor
-       from out_operationplan, resourceload
-       where out_operationplan.operation_id = resourceload.operation_id
-       ) loaddata
-     on x.name = loaddata.resource_id
-     and x.startdate <= loaddata.enddatetime
-     and x.enddate >= loaddata.startdatetime
-     -- Grouping and ordering
-     group by x.name, x.location_id, x.bucket, x.startdate, x.enddate
-     order by x.name, x.startdate
-     ''' % ( sql_overlap('loaddata.startdatetime','loaddata.enddatetime','x.startdate','x.enddate'),
-       sql_overlap('bucket.startdate','bucket.enddate','d.startdate','d.enddate'),
-       filterstring,limitstring,bucket,bucket,bucket,startdate,enddate)
-  if resource: cursor.execute(query, (resource,resource))
-  else: cursor.execute(query)
-  resultset = []
-  prevres = None
-  rowset = []
-  for row in cursor.fetchall():
-    if row[0] != prevres:
-      count = 0
-      if prevres: resultset.append(rowset)
-      rowset = []
-      prevres = row[0]
-    if row[5] != 0: util = row[6] / row[5]
-    else: util = 0
-    count += 1
-    rowset.append( {
-      'resource': row[0],
-      'location': row[1],
-      'bucket': row[2],
-      'startdate': row[3],
-      'enddate': row[4],
-      'available': row[5],
-      'load': row[6],
-      'utilization': util,
-      } )
-  if prevres: resultset.append(rowset)
-  return resultset
+class ForecastReport(Report):
+  '''
+  A report allowing easy editing of forecast numbers.
+  '''
+  template = {'html': 'forecast.html', 'csv': 'forecast.csv',}
+  title = 'Forecast report'
+  countquery = Forecast.objects
+
+  @staticmethod
+  def resultquery(fcst, bucket, startdate, enddate, offset=0, limit=None):
+    if fcst: filterstring = 'where name = %s'
+    else: filterstring = ''
+    if limit:
+      if offset == 0: limitstring = 'limit %d' % int(limit)
+      else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
+    else: limitstring = ''
+    cursor = connection.cursor()
+    query = '''
+        select fcst.name, fcst.item_id, fcst.customer_id,
+               d.bucket, d.startdate, d.enddate,
+               coalesce(sum(forecastdemand.quantity * %s / %s),0) as qty
+        from (select * from forecast %s order by name %s) as fcst
+        -- Multiply with buckets
+        cross join (
+             select %s as bucket, %s_start as startdate, %s_end as enddate
+             from dates
+             where day >= '%s' and day < '%s'
+             group by bucket, startdate, enddate
+             ) d
+        -- Total forecasted quantity
+        left join forecastdemand
+        on fcst.name = forecastdemand.forecast_id
+        and forecastdemand.enddate >= d.startdate
+        and forecastdemand.startdate <= d.enddate
+        -- Ordering and grouping
+        group by fcst.name, fcst.item_id, fcst.customer_id,
+               d.bucket, d.startdate, d.enddate
+        order by fcst.name, d.startdate
+        ''' % (sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
+         sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),filterstring,limitstring,
+         bucket,bucket,bucket,startdate,enddate)
+    if fcst: cursor.execute(query, (fcst,))
+    else: cursor.execute(query)
+    resultset = []
+    prevfcst = None
+    rowset = []
+    for row in cursor.fetchall():
+      if row[0] != prevfcst:
+        if prevfcst: resultset.append(rowset)
+        rowset = []
+        prevfcst = row[0]
+      rowset.append( {
+        'name': row[0],
+        'item': row[1],
+        'customer': row[2],
+        'bucket': row[3],
+        'startdate': row[4],
+        'enddate': row[5],
+        'forecast': row[6],
+        } )
+    if prevfcst: resultset.append(rowset)
+    return resultset
 
 
-@staff_member_required
-def resourcereport(request, resource=None):
-   if resource:
-     return BucketedView(request, resource, resourcequery,
-      'resource.html', 'resource.csv',
-      {'title': 'Resource report for %s' % resource, 'reset_crumbs': False}
-      )
-   else:
-     return BucketedView(request, resource, resourcequery,
-      'resource.html', 'resource.csv',
-      {'title': 'Resource report', 'reset_crumbs': True},
-      countmethod=Resource.objects
-      )
+class ResourceReport(Report):
+  '''
+  A report showing the loading of each resource.
+  '''
+  template = {'html': 'resource.html', 'csv': 'resource.csv',}
+  title = 'Resource report'
+  countquery = Resource.objects
+
+  @staticmethod
+  def resultquery(resource, bucket, startdate, enddate, offset=0, limit=None):
+    if resource: filterstring = 'where name = %s'
+    else: filterstring = ''
+    if limit:
+      if offset == 0: limitstring = 'limit %d' % int(limit)
+      else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
+    else: limitstring = ''
+    cursor = connection.cursor()
+    query = '''
+       select x.name, x.location_id,
+             x.bucket, x.startdate, x.enddate,
+             min(x.available),
+             coalesce(sum(loaddata.usagefactor * %s), 0) as loading
+       from (
+         select res.name as name, res.location_id as location_id,
+               d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
+               coalesce(sum(bucket.value * %s),0) as available
+         from (select name, location_id, maximum_id from resource %s order by name %s) as res
+         -- Multiply with buckets
+         cross join (
+              select %s as bucket, %s_start as startdate, %s_end as enddate
+              from dates
+              where day >= '%s' and day < '%s'
+              group by bucket, startdate, enddate
+              ) d
+         -- Available capacity
+         left join bucket
+         on res.maximum_id = bucket.calendar_id
+         and d.startdate <= bucket.enddate
+         and d.enddate >= bucket.startdate
+         -- Grouping
+         group by res.name, res.location_id, d.bucket, d.startdate, d.enddate
+       ) x
+       -- Load data
+       left join (
+         select resourceload.resource_id as resource_id, startdatetime, enddatetime, resourceload.usagefactor as usagefactor
+         from out_operationplan, resourceload
+         where out_operationplan.operation_id = resourceload.operation_id
+         ) loaddata
+       on x.name = loaddata.resource_id
+       and x.startdate <= loaddata.enddatetime
+       and x.enddate >= loaddata.startdatetime
+       -- Grouping and ordering
+       group by x.name, x.location_id, x.bucket, x.startdate, x.enddate
+       order by x.name, x.startdate
+       ''' % ( sql_overlap('loaddata.startdatetime','loaddata.enddatetime','x.startdate','x.enddate'),
+         sql_overlap('bucket.startdate','bucket.enddate','d.startdate','d.enddate'),
+         filterstring,limitstring,bucket,bucket,bucket,startdate,enddate)
+    if resource: cursor.execute(query, (resource,))
+    else: cursor.execute(query)
+    resultset = []
+    prevres = None
+    rowset = []
+    for row in cursor.fetchall():
+      if row[0] != prevres:
+        count = 0
+        if prevres: resultset.append(rowset)
+        rowset = []
+        prevres = row[0]
+      if row[5] != 0: util = row[6] / row[5]
+      else: util = 0
+      count += 1
+      rowset.append( {
+        'resource': row[0],
+        'location': row[1],
+        'bucket': row[2],
+        'startdate': row[3],
+        'enddate': row[4],
+        'available': row[5],
+        'load': row[6],
+        'utilization': util,
+        } )
+    if prevres: resultset.append(rowset)
+    return resultset
 
 
-def operationquery(operation, bucket, startdate, enddate, offset=0, limit=None):
-  if operation: filterstring = 'where name = %s'
-  else: filterstring = ''
-  if limit:
-    if offset == 0: limitstring = 'limit %d' % int(limit)
-    else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
-  else: limitstring = ''
-  cursor = connection.cursor()
-  query = '''
-    select oper.name,
-           d.bucket, d.startdate, d.enddate,
-           coalesce(sum(case out_operationplan.locked when %s then out_operationplan.quantity else 0 end),0),
-           coalesce(sum(out_operationplan.quantity),0)
-      from (select name from operation %s order by name %s) as oper
-      -- Multiply with buckets
-      cross join (
-           select %s as bucket, %s_start as startdate, %s_end as enddate
-           from dates
-           where day >= '%s' and day < '%s'
-           group by bucket, startdate, enddate
-           ) d
-      -- Planned and frozen quantity
-      left join out_operationplan
-      on oper.name = out_operationplan.operation_id
-      and d.startdate <= out_operationplan.startdate
-      and d.enddate > out_operationplan.startdate
-      -- Grouping and ordering
-      group by oper.name, d.bucket, d.startdate, d.enddate
-      order by oper.name, d.startdate
-    ''' % (sql_true(),filterstring,limitstring,bucket,bucket,bucket,startdate,enddate)
-  if operation: cursor.execute(query, (operation,operation))
-  else: cursor.execute(query)
-  resultset = []
-  prevoper = None
-  rowset = []
-  for row in cursor.fetchall():
-    if row[0] != prevoper:
-      if prevoper: resultset.append(rowset)
-      rowset = []
-      prevoper = row[0]
-    rowset.append( {
-      'operation': row[0],
-      'bucket': row[1],
-      'startdate': row[2],
-      'enddate': row[3],
-      'frozen': row[4],
-      'total': row[5],
-      } )
-  if prevoper: resultset.append(rowset)
-  return resultset
+class OperationReport(Report):
+  '''
+  A report showing the planned starts of each operation.
+  '''
+  template = {'html': 'operation.html', 'csv': 'operation.csv',}
+  title = 'Operation report'
+  countquery = Operation.objects
 
-
-@staff_member_required
-def operationreport(request, operation=None):
-  if operation:
-    return BucketedView(request, operation, operationquery,
-      'operation.html', 'operation.csv',
-      {'title': 'Operation report for %s' % operation, 'reset_crumbs': False}
-      )
-  else:
-    return BucketedView(request, operation, operationquery,
-      'operation.html', 'operation.csv',
-      {'title': 'Operation report', 'reset_crumbs': True},
-      countmethod=Operation.objects)
+  @staticmethod
+  def resultquery(operation, bucket, startdate, enddate, offset=0, limit=None):
+    if operation: filterstring = 'where name = %s'
+    else: filterstring = ''
+    if limit:
+      if offset == 0: limitstring = 'limit %d' % int(limit)
+      else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
+    else: limitstring = ''
+    cursor = connection.cursor()
+    query = '''
+      select oper.name,
+             d.bucket, d.startdate, d.enddate,
+             coalesce(sum(case out_operationplan.locked when %s then out_operationplan.quantity else 0 end),0),
+             coalesce(sum(out_operationplan.quantity),0)
+        from (select name from operation %s order by name %s) as oper
+        -- Multiply with buckets
+        cross join (
+             select %s as bucket, %s_start as startdate, %s_end as enddate
+             from dates
+             where day >= '%s' and day < '%s'
+             group by bucket, startdate, enddate
+             ) d
+        -- Planned and frozen quantity
+        left join out_operationplan
+        on oper.name = out_operationplan.operation_id
+        and d.startdate <= out_operationplan.startdate
+        and d.enddate > out_operationplan.startdate
+        -- Grouping and ordering
+        group by oper.name, d.bucket, d.startdate, d.enddate
+        order by oper.name, d.startdate
+      ''' % (sql_true(),filterstring,limitstring,bucket,bucket,bucket,startdate,enddate)
+    if operation: cursor.execute(query, (operation,))
+    else: cursor.execute(query)
+    resultset = []
+    prevoper = None
+    rowset = []
+    for row in cursor.fetchall():
+      if row[0] != prevoper:
+        if prevoper: resultset.append(rowset)
+        rowset = []
+        prevoper = row[0]
+      rowset.append( {
+        'operation': row[0],
+        'bucket': row[1],
+        'startdate': row[2],
+        'enddate': row[3],
+        'frozen': row[4],
+        'total': row[5],
+        } )
+    if prevoper: resultset.append(rowset)
+    return resultset
 
 
 class pathreport:

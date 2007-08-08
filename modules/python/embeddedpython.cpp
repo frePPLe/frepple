@@ -290,29 +290,27 @@ void CommandPython::executePython(const char* cmd)
   // Initialize this thread for execution
   PyInterpreterState *mainInterpreterState = mainThreadState->interp;
   PyThreadState *myThreadState = PyThreadState_New(mainInterpreterState);
-  PyThreadState_Swap(myThreadState);
+  PyThreadState *prevThreadState = PyThreadState_Swap(myThreadState);
 
   // Execute the command
   PyObject *m = PyImport_AddModule("__main__");
   if (!m)
   {
-    // Clean up the thread
-    PyThreadState_Swap(NULL);
+    // Clean up the thread and release the global python lock
+    myThreadState = PyThreadState_Swap(prevThreadState);
     PyThreadState_Clear(myThreadState);
-    PyThreadState_Delete(myThreadState);
-    // Release the lock
     PyEval_ReleaseLock();
+    PyThreadState_Delete(myThreadState);
     throw frepple::RuntimeException("Can't initialize Python interpreter");
   }
   PyObject *d = PyModule_GetDict(m);
   if (!d)
   {
-    // Clean up the thread
-    PyThreadState_Swap(NULL);
+    // Clean up the thread and release the global python lock
+    myThreadState = PyThreadState_Swap(prevThreadState);
     PyThreadState_Clear(myThreadState);
-    PyThreadState_Delete(myThreadState);
-    // Release the lock
     PyEval_ReleaseLock();
+    PyThreadState_Delete(myThreadState);
     throw frepple::RuntimeException("Can't initialize Python interpreter");
   }
 
@@ -323,23 +321,21 @@ void CommandPython::executePython(const char* cmd)
   {
     // Print the error message
     PyErr_Print();
-    // Clean up the thread
-    PyThreadState_Swap(NULL);
+    // Clean up the thread and release the global python lock
+    myThreadState = PyThreadState_Swap(prevThreadState);
     PyThreadState_Clear(myThreadState);
-    PyThreadState_Delete(myThreadState);
-    // Release the lock
     PyEval_ReleaseLock();
+    PyThreadState_Delete(myThreadState);
     throw frepple::RuntimeException("Error executing python command");
   }
   Py_DECREF(v);
   if (Py_FlushLine()) PyErr_Clear();
-  // Clean up the thread
-  PyThreadState_Swap(NULL);
-  PyThreadState_Clear(myThreadState);
-  PyThreadState_Delete(myThreadState);
 
-  // Release the lock. No more python calls now.
+  // Clean up the thread and release the global python lock
+  myThreadState = PyThreadState_Swap(prevThreadState);
+  PyThreadState_Clear(myThreadState);
   PyEval_ReleaseLock();
+  PyThreadState_Delete(myThreadState);
 }
 
 

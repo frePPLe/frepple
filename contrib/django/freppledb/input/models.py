@@ -388,7 +388,7 @@ class Buffer(models.Model):
     subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
     type = models.CharField(maxlength=20, null=True, blank=True, choices=buffertypes, default='')
     location = models.ForeignKey(Location, null=True, blank=True, db_index=True, raw_id_admin=True)
-    item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
+    item = models.ForeignKey(Item, db_index=True, null=True, raw_id_admin=True)
     onhand = models.DecimalField(max_digits=15, decimal_places=4, default=0.00, help_text='current inventory')
     minimum = models.ForeignKey('Calendar', null=True, blank=True, raw_id_admin=True,
       help_text='Calendar storing the safety stock profile')

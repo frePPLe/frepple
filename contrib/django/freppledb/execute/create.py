@@ -197,7 +197,12 @@ def create_model (cluster, demand, level, resource, utilization):
       it.save()
 
       # Forecast
-      fcst = Forecast(name='Forecast item %05d' % i, calendar=workingdays, item=it)
+      fcst = Forecast( \
+        name='Forecast item %05d' % i,
+        calendar=workingdays,
+        item=it,
+        priority=3, # Low priority: prefer planning orders over forecast
+        )
       fcst.save()
       # This method will take care of distributing a forecast quantity over the entire
       # horizon, respecting the bucket weights.
@@ -219,7 +224,7 @@ def create_model (cluster, demand, level, resource, utilization):
           item=it,
           quantity=int(random.uniform(1,11)),
           due=getDate(),
-          priority=int(random.uniform(1,4)),
+          priority=random.choice([1,2]), # Orders have higher priority than forecast
           customer=random.choice(cust),
           category=random.choice(categories)
           )

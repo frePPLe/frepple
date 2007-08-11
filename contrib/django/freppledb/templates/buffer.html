@@ -11,7 +11,7 @@
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
-<a href="/buffer/?type=csv" title="Export as CSV"><img src="/static/csv.png"/></a>
+<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
 </div>{% endblock %}
 {% block content %}
 <div id="content-main">
@@ -30,11 +30,13 @@
 <a id="/admin/input/location/%s">Location</a>
 </div>
 
-<table><thead><tr>
-{% reportheader Buffer 1 %}
-{% reportheader Item 2 %}
-{% reportheader Location 3 %}
-<th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
+<table><thead><tr><form>
+{% rowheader 1 %}
+{% rowheader 2 %}
+{% rowheader 3 %}
+<th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form>
+{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
+
 <tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}"><td>{{j.buffer|superlink:"buffer"}}</td><td>{{j.item|superlink:"item"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
 <td>Start&nbsp;inventory<br/>Consumed<br/>Produced<br/>End&nbsp;inventory</td>{% endif %}
@@ -46,7 +48,7 @@
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} buffers
+&nbsp;&nbsp;{{hits}} buffers {% ifnotequal hits fullhits %} (total {{fullhits}}){% endifnotequal %}
 </p>{% endblock %}
 
 </div>

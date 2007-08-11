@@ -166,5 +166,10 @@ a {
 
 table thead th {
   white-space:nowrap;
-  border: 0px
+  border: 0px;
+  vertical-align: bottom;
+}
+
+table thead th.sorted {
+  background: #ddd;
 }

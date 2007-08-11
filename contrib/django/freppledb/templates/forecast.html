@@ -34,7 +34,7 @@
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
-<a href="/forecast/?type=csv" title="Export as CSV"><img src="/static/csv.png"/></a>
+<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
 </div>{% endblock %}{% block content %}
 <div id="content-main">
 
@@ -52,11 +52,13 @@
 	{% if perms.input.change_customer %}<a id="/admin/input/customer/%s">Customer</a>{% endif %}
 </div>
 
-<table><thead><tr>
-{% reportheader Forecast 1 %}
-{% reportheader Item 2 %}
-{% reportheader Customer 3 %}
-<th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
+<table><thead><tr><form>
+{% rowheader 1 %}
+{% rowheader 2 %}
+{% rowheader 3 %}
+<th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form>
+{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
+
 <tbody>{% if perms.input.change_forecastdemand %}
 {% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}" id="{{j.name}}"><form name="{{j.name}}"><td>{{j.name|superlink:"forecast"}}</td><td>{{j.item|superlink:"item"}}</td><td>{{j.customer|superlink:"customer"}}</td>
@@ -76,7 +78,7 @@
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} forecasts
+&nbsp;&nbsp;{{hits}} forecasts {% ifnotequal hits fullhits %} (total {{fullhits}}){% endifnotequal %}
 </p>{% endblock %}
 
 </div>

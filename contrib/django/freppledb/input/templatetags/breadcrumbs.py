@@ -21,11 +21,13 @@
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net
 
-from django.template import Library, Node, resolve_variable, TemplateSyntaxError, resolve_variable
+from django.template import Library, Node, resolve_variable, TemplateSyntaxError
 from django.contrib.sessions.models import Session
 from django.conf import settings
-import urllib
 from django.contrib.admin.views.main import quote
+
+from freppledb.report import ReportRowHeader
+
 
 HOMECRUMB = '<a href="/admin/">Home</a>'
 
@@ -211,42 +213,49 @@ def version():
 
 
 #
-# A tag to generate report headers
+# A tag to generate report row headers
 #
 
-class ReportHeader(Node):
-  def __init__(self, text, num):
-    self.number = int(num)
-    self.text = text
-
-  def render(self, context):
-    try:
-      var = resolve_variable('sort',context)
-      if int(var[0]) == self.number:
-        if var[1] == 'a':
-          return '<th class="sorted ascending"><a href="?o=%dd">%s</a></th>' % (self.number, self.text)
-        else:
-          return '<th class="sorted descending"><a href="?o=%da">%s</a></th>' % (self.number, self.text)
-      else:
-        return '<th><a href="?o=%da">%s</a></th>' % (self.number, self.text)
-    except:
-      return '<th><a href="?o=%da">%s</a></th>' % (self.number, self.text)
-
-
-def reportheader(parser, token):
+def rowheader(parser, token):
   '''
   Example:
-    {% reportheader Buffer 1 %}
+    {% reportheader 1 %}
+  '''
+  from re import split
+  bits = split(r'\s+', token.contents, 1)
+  if len(bits) < 1:
+      raise TemplateSyntaxError, "'%s' tag requires one arguments" % bits[0]
+  return ReportRowHeader(bits[1])
+
+register.tag('rowheader', rowheader)
+
+
+#
+# A tag to add a parameter to the current url
+#
+
+class AddParameter(Node):
+  def __init__(self, varname, value):
+    self.varname = varname
+    self.value = value
+
+  def render(self, context):
+    req = resolve_variable('request',context)
+    params = req.GET.copy()
+    params[self.varname] = self.value
+    return '%s?%s' % (req.path, params.urlencode())
+
+def addurlparameter(parser, token):
+  '''
+  Example:
+    {% addurlparameter type csv %}
+  If the current page url is "/mypage/?p=1" the tag will return the
+  url "/mypage/?p=1&type=csv"
   '''
   from re import split
   bits = split(r'\s+', token.contents, 2)
   if len(bits) < 2:
       raise TemplateSyntaxError, "'%s' tag requires two arguments" % bits[0]
-  return ReportHeader(bits[1],bits[2])
+  return AddParameter(bits[1],bits[2])
 
-register.tag('reportheader', reportheader)
-
-
-
-
-
+register.tag('addurlparameter', addurlparameter)

@@ -9,7 +9,7 @@
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
-<a href="/demand/?type=csv" title="Export as CSV"><img src="/static/csv.png"/></a>
+<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
 </div>{% endblock %}{% block content %}
 <div id="content-main">
 
@@ -18,9 +18,10 @@
   <a id="/path/item/%s">Supply Path</a>
 </div>
 
-<table><thead><tr>
-{% reportheader Item 1 %}
-<th></th>{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
+<table><thead><tr><form>
+{% rowheader 1 %}
+<th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form>
+{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
 
 <tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}" id="{{j.item}}"><td>{{j.item|superlink:"item"}}</td>
@@ -33,7 +34,7 @@
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} items
+&nbsp;&nbsp;{{hits}} items {% ifnotequal hits fullhits %} (total {{fullhits}}){% endifnotequal %}
 </p>{% endblock %}
 
 </div>

@@ -28,6 +28,7 @@ from django.template import RequestContext, loader
 from django.db import connection
 from django.http import Http404, HttpResponse
 from django.conf import settings
+from django.template import Library, Node, resolve_variable
 
 from datetime import date, datetime
 
@@ -142,6 +143,7 @@ def getSortSQL(param, fields=0):
       else: return ('1a','1 asc')
     else:
       x = int(param[0])
+      if x > fields: raise Exception
       if param[1] == 'd': return ('%dd' % x,'%d desc, 1 asc' % x)
       else: return ('%da' % x,'%d asc, 1 asc' % x)
   except:
@@ -173,8 +175,19 @@ def view_report(request, entity=None, **args):
   # Pick up the list of time buckets
   (bucket,start,end,bucketlist) = getBuckets(request)
 
-  # Pick up the sort parameters
-  (sortparam,sortsql) = getSortSQL(request.GET.get('o','1a'), len(reportclass.fields))
+  # Pick up the filter parameters from the url
+  filterargs = [ request.GET.get(f[0]) for f in reportclass.rows ]
+  counter = reportclass.countquery
+  fullhits = counter.count()
+  if entity:
+    counter = counter.filter(pk__exact=entity)
+  else:
+    for f in reportclass.rows:
+      x = request.GET.get(f[0], None)
+      if x: counter = counter.filter(**{f[1]['countfilter']:x})
+
+  # Pick up the sort parameter from the url
+  (sortparam,sortsql) = getSortSQL(request.GET.get('o','1a'), len(reportclass.rows))
 
   # HTML output or CSV output?
   type = request.GET.get('type','html')
@@ -198,14 +211,9 @@ def view_report(request, entity=None, **args):
 
   # Calculate the content of the page
   page = int(request.GET.get('p', '0'))
-  if not entity and reportclass.countquery:
-    paginator = ObjectPaginator(reportclass.countquery, reportclass.paginate_by)
-    try: results = reportclass.resultquery(entity, bucket, start, end, offset=paginator.first_on_page(page)-1, limit=reportclass.paginate_by, sortsql=sortsql)
-    except InvalidPage: raise Http404
-  else:
-    paginator = ObjectPaginator(reportclass.resultquery(entity, bucket, start, end, sortsql=sortsql), reportclass.paginate_by)
-    try: results = paginator.get_page(page)
-    except InvalidPage: raise Http404
+  paginator = ObjectPaginator(counter, reportclass.paginate_by)
+  try: results = reportclass.resultquery(counter, bucket, start, end, offset=paginator.first_on_page(page)-1, limit=reportclass.paginate_by, sortsql=sortsql)
+  except InvalidPage: raise Http404
 
   # If there are less than 10 pages, show them all
   page_htmls = []
@@ -279,16 +287,49 @@ def view_report(request, entity=None, **args):
        'previous_page': page - 1,
        'pages': paginator.pages,
        'hits' : paginator.hits,
+       'fullhits': fullhits,
        'page_htmls': page_htmls,
        # Reset the breadcrumbs if no argument entity was passed
        'reset_crumbs': entity == None,
        'title': (entity and '%s for %s' % (reportclass.title,entity)) or reportclass.title,
        'sort': sortparam,
+       'class': reportclass,
      }
   if 'extra_context' in args: context.update(args['extra_context'])
 
   # Uncomment this line to see which sql got executed
-  #for i in connection.queries: print i['time'], i['sql']
+  # for i in connection.queries: print i['time'], i['sql']
 
   # Render the view
-  return render_to_response(args['report'].template['html'],  context, context_instance=RequestContext(request))
+  return render_to_response(args['report'].template['html'],
+    context, context_instance=RequestContext(request))
+
+
+class ReportRowHeader(Node):
+  def __init__(self, num):
+    self.number = int(num)
+
+  def render(self, context):
+    req = resolve_variable('request',context)
+    sort = resolve_variable('sort',context)
+    cls = resolve_variable('class',context)
+    x = req.GET.copy()
+    if int(sort[0]) == self.number:
+      if sort[1] == 'a':
+        # Currently sorting in ascending order on this column
+        x['o'] = '%dd' % self.number
+        y = '<th class="sorted ascending">'
+      else:
+        # Currently sorting in descending order on this column
+        x['o'] = '%da' % self.number
+        y = '<th class="sorted descending">'
+    else:
+      # Sorted on another column
+      x['o'] = '%da' % self.number
+      y = '<th>'
+    return '%s<a href="%s?%s">%s</a><br/><input type="text" value="%s" name="%s" tabindex="%d"/></th>' \
+      % (y, req.path, x.urlencode(),
+         cls.rows[self.number-1][0][0].upper()+cls.rows[self.number-1][0][1:],
+         x.get(cls.rows[self.number-1][0],''),
+         cls.rows[self.number-1][0], self.number+1000,
+         )

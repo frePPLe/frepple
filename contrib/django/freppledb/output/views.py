@@ -35,32 +35,46 @@ from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item
 from freppledb.dbutils import *
 from freppledb.report import Report
 
+
 class BufferReport(Report):
   '''
   A report showing the inventory profile of buffers.
   '''
   template = {'html': 'buffer.html', 'csv': 'buffer.csv',}
   title = "Inventory report"
-  countquery = Buffer.objects
-  rows = ['Buffer','Item','Location']
-  crosses = ['Start Inventory', 'Consumed','Produced', 'End inventory']
-  columns = ['Bucket',]
+  countquery = Buffer.objects.values('name','item','location')
+  rows = (
+    ('buffer',{'countfilter': 'name__icontains'}),
+    ('item',{'countfilter': 'item__name__icontains'}),
+    ('location',{'countfilter': 'location__name__icontains'}),
+    )
+  crosses = (
+    ('start inventory',{}),
+    ('consumed',{}),
+    ('produced',{}),
+    ('end inventory',{}),
+    )
+  columns = ['bucket',]
 
   @staticmethod
-  def resultquery(buffer, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
-    if buffer: filterstring = 'where name = %s'
-    else: filterstring = ''
+  def resultquery(basequery, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
+    # Build the SQL filter
+    basesql = basequery._get_sql_clause()
+
+    # Build the SQL limit
     if limit:
       if offset == 0: limitstring = 'limit %d' % int(limit)
       else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
     else: limitstring = ''
+
+    # Execute the query
     cursor = connection.cursor()
     query = '''
-      select buf.name, buf.item_id, buf.location_id, buf.onhand,
-             d.bucket, d.startdate, d.enddate,
+      select buf.name as row1, buf.item_id as row2, buf.location_id as row3, buf.onhand as row4,
+             d.bucket as col1, d.startdate as col2, d.enddate as col3,
              coalesce(sum(%s),0.0) as consumed,
              coalesce(-sum(%s),0.0) as produced
-        from (select name, item_id, location_id, onhand from buffer %s order by %s %s) as buf
+        from (select buffer.name as name, buffer.item_id as item_id, buffer.location_id as location_id, buffer.onhand as onhand %s order by %s %s) as buf
         -- Multiply with buckets
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -74,13 +88,13 @@ class BufferReport(Report):
         and d.startdate <= out_flowplan.flowdate
         and d.enddate > out_flowplan.flowdate
         -- Grouping and sorting
-        group by buf.name, buf.item_id, buf.location_id, buf.onhand,
-             d.bucket, d.startdate, d.enddate
+        group by row1, row2, row3, row4, col1, col2, col3
         order by %s, d.startdate
       ''' % (sql_max('out_flowplan.quantity','0.0'),sql_min('out_flowplan.quantity','0.0'),
-        filterstring,sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
-    if buffer: cursor.execute(query, (buffer,))
-    else: cursor.execute(query)
+        basesql[1],sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
+    cursor.execute(query, basesql[2])
+
+    # Build the python result
     resultset = []
     prevbuf = None
     rowset = []
@@ -114,26 +128,38 @@ class DemandReport(Report):
   '''
   template = {'html': 'demand.html', 'csv': 'demand.csv',}
   title = 'Demand report'
-  countquery = Demand.objects.values('item').distinct()
-  rows = ['Item',]
-  crosses = ['Demand', 'Supply','Backlog']
-  columns = ['Bucket',]
+  countquery = Item.objects.extra(where=('name in (select item_id from demand)',))
+  rows = (
+    ('item',{'countfilter': 'name__icontains'}),
+    )
+  crosses = (
+    ('demand',{}),
+    ('supply',{}),
+    ('backlog',{}),
+    )
+  columns = (
+    ('bucket',{}),
+    )
 
   @staticmethod
-  def resultquery(item, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
-    if item: filterstring = 'where item_id = %s'
-    else: filterstring = ''
+  def resultquery(basequery, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
+    # Build the SQL filter
+    basesql = basequery._get_sql_clause()
+
+    # Build the SQL limit
     if limit:
       if offset == 0: limitstring = 'limit %d' % int(limit)
       else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
     else: limitstring = ''
+
+    # Execute the query
     cursor = connection.cursor()
     query = '''
-        select items.item_id,
-               d.bucket, d.startdate, d.enddate,
+        select items.name as row1,
+               d.bucket as col1, d.startdate as col2, d.enddate as col3,
                coalesce(sum(demand.quantity),0),
                coalesce(sum(pln.quantity),0)
-        from (select distinct item_id from demand %s order by %s %s) as items
+        from (select name %s order by %s %s) as items
         -- Multiply with buckets
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -148,20 +174,21 @@ class DemandReport(Report):
           inner join demand as inp
           on out_operationplan.demand_id = inp.name
           ) as pln
-        on items.item_id = pln.item_id
+        on items.name = pln.item_id
         and d.startdate <= pln.date
         and d.enddate > pln.date
         -- Requested quantity
         left join demand
-        on items.item_id = demand.item_id
+        on items.name = demand.item_id
         and d.startdate <= date(demand.due)
         and d.enddate > date(demand.due)
         -- Ordering and grouping
-        group by items.item_id, d.bucket, d.startdate, d.enddate
+        group by row1, col1, col2, col3
         order by %s, d.startdate
-       ''' % (filterstring,sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
-    if item: cursor.execute(query, (item,))
-    else: cursor.execute(query)
+       ''' % (basesql[1],sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
+    cursor.execute(query,basesql[2])
+
+    # Build the python result
     resultset = []
     previtem = None
     rowset = []
@@ -192,25 +219,37 @@ class ForecastReport(Report):
   '''
   template = {'html': 'forecast.html', 'csv': 'forecast.csv',}
   title = 'Forecast report'
-  countquery = Forecast.objects
-  rows = ['Forecast','Item','Customer']
-  crosses = ['Total']
-  columns = ['Bucket',]
+  countquery = Forecast.objects.all()
+  rows = (
+    ('forecast',{'countfilter': 'name__icontains'}),
+    ('item',{'countfilter': 'item__name__icontains'}),
+    ('customer',{'countfilter': 'customer__name__icontains'}),
+    )
+  crosses = (
+    ('total',{}),
+    )
+  columns = (
+    ('bucket',{}),
+    )
 
   @staticmethod
-  def resultquery(fcst, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
-    if fcst: filterstring = 'where name = %s'
-    else: filterstring = ''
+  def resultquery(basequery, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
+    # Build the SQL filter
+    basesql = basequery._get_sql_clause()
+
+    # Build the SQL limit
     if limit:
       if offset == 0: limitstring = 'limit %d' % int(limit)
       else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
     else: limitstring = ''
+
+    # Execute the query
     cursor = connection.cursor()
     query = '''
-        select fcst.name, fcst.item_id, fcst.customer_id,
-               d.bucket, d.startdate, d.enddate,
+        select fcst.name as row1, fcst.item_id as row2, fcst.customer_id as row3,
+               d.bucket as col1, d.startdate as col2, d.enddate as col3,
                coalesce(sum(forecastdemand.quantity * %s / %s),0) as qty
-        from (select name, item_id, customer_id from forecast %s order by %s %s) as fcst
+        from (select forecast.name as name, forecast.item_id as item_id, forecast.customer_id as customer_id %s order by %s %s) as fcst
         -- Multiply with buckets
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -224,14 +263,14 @@ class ForecastReport(Report):
         and forecastdemand.enddate >= d.startdate
         and forecastdemand.startdate <= d.enddate
         -- Ordering and grouping
-        group by fcst.name, fcst.item_id, fcst.customer_id,
-               d.bucket, d.startdate, d.enddate
+        group by row1, row2, row3, col1, col2, col3
         order by %s, d.startdate
         ''' % (sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
-         sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),filterstring,sortsql,limitstring,
+         sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),basesql[1],sortsql,limitstring,
          bucket,bucket,bucket,startdate,enddate,sortsql)
-    if fcst: cursor.execute(query, (fcst,))
-    else: cursor.execute(query)
+    cursor.execute(query, basesql[2])
+
+    # Build the python result
     resultset = []
     prevfcst = None
     rowset = []
@@ -259,30 +298,43 @@ class ResourceReport(Report):
   '''
   template = {'html': 'resource.html', 'csv': 'resource.csv',}
   title = 'Resource report'
-  countquery = Resource.objects
-  rows = ['Resource','Location']
-  crosses = ['Available','Load','Utilization']
-  columns = ['Bucket',]
+  countquery = Resource.objects.values('name','location')
+  rows = (
+    ('resource',{'countfilter': 'name__icontains'}),
+    ('location',{'countfilter': 'location__name__icontains'}),
+    )
+  crosses = (
+    ('available',{}),
+    ('load',{}),
+    ('utilization',{}),
+    )
+  columns = (
+    ('bucket',{}),
+    )
 
   @staticmethod
-  def resultquery(resource, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
-    if resource: filterstring = 'where name = %s'
-    else: filterstring = ''
+  def resultquery(basequery, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
+    # Build the SQL filter
+    basesql = basequery._get_sql_clause()
+
+    # Build the SQL limit
     if limit:
       if offset == 0: limitstring = 'limit %d' % int(limit)
       else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
     else: limitstring = ''
+
+    # Execute the query
     cursor = connection.cursor()
     query = '''
-       select x.name, x.location_id,
-             x.bucket, x.startdate, x.enddate,
+       select x.name as row1, x.location_id as row2,
+             x.bucket as col1, x.startdate as col2, x.enddate as col3,
              min(x.available),
              coalesce(sum(loaddata.usagefactor * %s), 0) as loading
        from (
          select res.name as name, res.location_id as location_id,
                d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
                coalesce(sum(bucket.value * %s),0) as available
-         from (select name, location_id, maximum_id from resource %s order by %s %s) as res
+         from (select resource.name as name, resource.location_id as location_id, resource.maximum_id as maximum_id %s order by %s %s) as res
          -- Multiply with buckets
          cross join (
               select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -308,13 +360,14 @@ class ResourceReport(Report):
        and x.startdate <= loaddata.enddatetime
        and x.enddate >= loaddata.startdatetime
        -- Grouping and ordering
-       group by x.name, x.location_id, x.bucket, x.startdate, x.enddate
+       group by row1, row2, col1, col2, col3
        order by %s, x.startdate
        ''' % ( sql_overlap('loaddata.startdatetime','loaddata.enddatetime','x.startdate','x.enddate'),
          sql_overlap('bucket.startdate','bucket.enddate','d.startdate','d.enddate'),
-         filterstring,sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
-    if resource: cursor.execute(query, (resource,))
-    else: cursor.execute(query)
+         basesql[1],sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
+    cursor.execute(query, basesql[2])
+
+    # Build the python result
     resultset = []
     prevres = None
     rowset = []
@@ -347,23 +400,37 @@ class OperationReport(Report):
   '''
   template = {'html': 'operation.html', 'csv': 'operation.csv',}
   title = 'Operation report'
-  countquery = Operation.objects
+  countquery = Operation.objects.values('name')
+  rows = (
+    ('operation',{'countfilter': 'name__icontains'}),
+    )
+  crosses = (
+    ('frozen quantity',{}),
+    ('total quantity',{}),
+    )
+  columns = (
+    ('bucket',{}),
+    )
 
   @staticmethod
-  def resultquery(operation, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
-    if operation: filterstring = 'where name = %s'
-    else: filterstring = ''
+  def resultquery(basequery, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
+    # Build the SQL filter
+    basesql = basequery._get_sql_clause()
+
+    # Build the SQL limit
     if limit:
       if offset == 0: limitstring = 'limit %d' % int(limit)
       else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
     else: limitstring = ''
+
+    # Run the query
     cursor = connection.cursor()
     query = '''
-      select oper.name,
-             d.bucket, d.startdate, d.enddate,
+      select oper.name as row1,
+             d.bucket as col1, d.startdate as col2, d.enddate as col3,
              coalesce(sum(case out_operationplan.locked when %s then out_operationplan.quantity else 0 end),0),
              coalesce(sum(out_operationplan.quantity),0)
-        from (select name from operation %s order by %s %s) as oper
+        from (select name %s order by %s %s) as oper
         -- Multiply with buckets
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -377,11 +444,12 @@ class OperationReport(Report):
         and d.startdate <= out_operationplan.startdate
         and d.enddate > out_operationplan.startdate
         -- Grouping and ordering
-        group by oper.name, d.bucket, d.startdate, d.enddate
+        group by row1, col1, col2, col3
         order by %s, d.startdate
-      ''' % (sql_true(),filterstring,sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
-    if operation: cursor.execute(query, (operation,))
-    else: cursor.execute(query)
+      ''' % (sql_true(),basesql[1],sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
+    cursor.execute(query, basesql[2])
+
+    # Convert the SQl results to python
     resultset = []
     prevoper = None
     rowset = []

@@ -92,11 +92,12 @@ def getBuckets(request, bucket=None, start=None, end=None):
   if not bucket in datelist:
     # Read the buckets from the database if the data isn't available yet
     cursor = connection.cursor()
+    field = (bucket=='day' and 'day_start') or bucket
     cursor.execute('''
-      select %s, min(day), max(day)
+      select %s, min(day_start), max(day_end)
       from dates
       group by %s
-      order by min(day)''' % (bucket,bucket))
+      order by min(day_start)''' % (field,field))
     # Compute the data to store in memory
     if settings.DATABASE_ENGINE == 'sqlite3':
       # Sigh... Poor data type handling in sqlite
@@ -132,23 +133,27 @@ class Report(object):
   title = ''
   # The default number of entities to put on a page
   paginate_by = 25
-  # Field definitions
-  fields = []
 
+  # The resultset that returns a list of entities that are to be
+  # included in the report.
+  countquery = None
 
-def getSortSQL(param, fields=0):
-  try:
-    if param[0] == '1':
-      if param[1] == 'd': return ('1d','1 desc')
-      else: return ('1a','1 asc')
-    else:
-      x = int(param[0])
-      if x > fields: raise Exception
-      if param[1] == 'd': return ('%dd' % x,'%d desc, 1 asc' % x)
-      else: return ('%da' % x,'%d asc, 1 asc' % x)
-  except:
-    # A silent and safe exit in case of any exception
-    return ('1a','1 asc')
+  # Row definitions
+  # Possible attributes for a row field are:
+  #   - countfilter:
+  #     Specifies how a value in the search field affects the base query.
+  #   - filter_size:
+  #     Specifies the size of the search field.
+  #     The default value is 10 characters.
+  rows = ()
+
+  # Cross definitions.
+  # Currently not really used.
+  crosses = ()
+
+  # Column definitions
+  # Currently not really used.
+  columns = ()
 
 
 @staff_member_required
@@ -187,7 +192,29 @@ def view_report(request, entity=None, **args):
       if x: counter = counter.filter(**{f[1]['countfilter']:x})
 
   # Pick up the sort parameter from the url
-  (sortparam,sortsql) = getSortSQL(request.GET.get('o','1a'), len(reportclass.rows))
+  sortparam = request.GET.get('o','1a')
+  try:
+    if sortparam[0] == '1':
+      if sortparam[1] == 'd':
+        sortsql = '1 desc'
+      else:
+        sortparam = '1a'
+        sortsql = '1 asc'
+    else:
+      x = int(sortparam[0])
+      if x > len(reportclass.rows) or x < 0:
+        sortparam = '1a'
+        sortsql = '1 asc'
+      if sortparam[1] == 'd':
+        sortparm = '%dd' % x
+        sortsql = '%d desc, 1 asc' % x
+      else:
+        sortparam = '%da' % x
+        sortsql = '%d asc, 1 asc' % x
+  except:
+    # A silent and safe exit in case of any exception
+    sortparam = '1a'
+    sortsql = '1 asc'
 
   # HTML output or CSV output?
   type = request.GET.get('type','html')
@@ -327,9 +354,10 @@ class ReportRowHeader(Node):
       # Sorted on another column
       x['o'] = '%da' % self.number
       y = '<th>'
-    return '%s<a href="%s?%s">%s</a><br/><input type="text" value="%s" name="%s" tabindex="%d"/></th>' \
+    return '%s<a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
       % (y, req.path, x.urlencode(),
-         cls.rows[self.number-1][0][0].upper()+cls.rows[self.number-1][0][1:],
+         cls.rows[self.number-1][0][0].upper(),cls.rows[self.number-1][0][1:],
+         (cls.rows[self.number-1][1].has_key('filter_size') and cls.rows[self.number-1][1]['filter_size']) or 10,
          x.get(cls.rows[self.number-1][0],''),
          cls.rows[self.number-1][0], self.number+1000,
          )

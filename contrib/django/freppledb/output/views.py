@@ -79,7 +79,7 @@ class BufferReport(Report):
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
              from dates
-             where day >= '%s' and day < '%s'
+             where day_start >= '%s' and day_start < '%s'
              group by bucket, startdate, enddate
              ) d
         -- Consumed and produced quantities
@@ -130,7 +130,7 @@ class DemandReport(Report):
   title = 'Demand report'
   countquery = Item.objects.extra(where=('name in (select item_id from demand)',))
   rows = (
-    ('item',{'countfilter': 'name__icontains'}),
+    ('item',{'countfilter': 'name__icontains',}),
     )
   crosses = (
     ('demand',{}),
@@ -164,7 +164,7 @@ class DemandReport(Report):
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
              from dates
-             where day >= '%s' and day < '%s'
+             where day_start >= '%s' and day_start < '%s'
              group by bucket, startdate, enddate
              ) d
         -- Planned quantity
@@ -254,7 +254,7 @@ class ForecastReport(Report):
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
              from dates
-             where day >= '%s' and day < '%s'
+             where day_start >= '%s' and day_start < '%s'
              group by bucket, startdate, enddate
              ) d
         -- Total forecasted quantity
@@ -339,7 +339,7 @@ class ResourceReport(Report):
          cross join (
               select %s as bucket, %s_start as startdate, %s_end as enddate
               from dates
-              where day >= '%s' and day < '%s'
+              where day_start >= '%s' and day_start < '%s'
               group by bucket, startdate, enddate
               ) d
          -- Available capacity
@@ -405,8 +405,10 @@ class OperationReport(Report):
     ('operation',{'countfilter': 'name__icontains'}),
     )
   crosses = (
-    ('frozen quantity',{}),
-    ('total quantity',{}),
+    ('frozen starts',{}),
+    ('total starts',{}),
+    ('frozen ends',{}),
+    ('total ends',{}),
     )
   columns = (
     ('bucket',{}),
@@ -426,27 +428,40 @@ class OperationReport(Report):
     # Run the query
     cursor = connection.cursor()
     query = '''
-      select oper.name as row1,
-             d.bucket as col1, d.startdate as col2, d.enddate as col3,
-             coalesce(sum(case out_operationplan.locked when %s then out_operationplan.quantity else 0 end),0),
-             coalesce(sum(out_operationplan.quantity),0)
-        from (select name %s order by %s %s) as oper
-        -- Multiply with buckets
-        cross join (
-             select %s as bucket, %s_start as startdate, %s_end as enddate
-             from dates
-             where day >= '%s' and day < '%s'
-             group by bucket, startdate, enddate
-             ) d
-        -- Planned and frozen quantity
-        left join out_operationplan
-        on oper.name = out_operationplan.operation_id
-        and d.startdate <= out_operationplan.startdate
-        and d.enddate > out_operationplan.startdate
+        select x.row1, x.col1, x.col2, x.col3,
+          min(x.frozen_start), min(x.total_start),
+          coalesce(sum(case o2.locked when %s then o2.quantity else 0 end),0),
+          coalesce(sum(o2.quantity),0)
+        from (
+          select oper.name as row1,
+               d.bucket as col1, d.startdate as col2, d.enddate as col3,
+               coalesce(sum(case o1.locked when %s then o1.quantity else 0 end),0) as frozen_start,
+               coalesce(sum(o1.quantity),0) as total_start
+          from (select name %s order by %s %s) as oper
+          -- Multiply with buckets
+          cross join (
+               select %s as bucket, %s_start as startdate, %s_end as enddate
+               from dates
+               where day_start >= '%s' and day_start < '%s'
+               group by bucket, startdate, enddate
+               ) d
+          -- Planned and frozen quantity, based on start date
+          left join out_operationplan o1
+          on oper.name = o1.operation_id
+          and d.startdate <= o1.startdate
+          and d.enddate > o1.startdate
+          -- Grouping
+          group by row1, col1, col2, col3
+        ) x
+        -- Planned and frozen quantity, based on end date
+        left join out_operationplan o2
+        on x.row1 = o2.operation_id
+        and x.col2 <= o2.enddate
+        and x.col3 > o2.enddate
         -- Grouping and ordering
         group by row1, col1, col2, col3
-        order by %s, d.startdate
-      ''' % (sql_true(),basesql[1],sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
+        order by %s, x.col2
+      ''' % (sql_true(),sql_true(),basesql[1],sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
     cursor.execute(query, basesql[2])
 
     # Convert the SQl results to python
@@ -463,8 +478,10 @@ class OperationReport(Report):
         'bucket': row[1],
         'startdate': row[2],
         'enddate': row[3],
-        'frozen': row[4],
-        'total': row[5],
+        'frozen_start': row[4],
+        'total_start': row[5],
+        'frozen_end': row[6],
+        'total_end': row[7],
         } )
     if prevoper: resultset.append(rowset)
     return resultset

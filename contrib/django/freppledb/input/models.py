@@ -60,7 +60,9 @@ class Plan(models.Model):
 
 class Dates(models.Model):
     # Database fields
-    day = models.DateField(primary_key=True)
+    day = models.DateField('day', primary_key=True)
+    day_start = models.DateField(db_index=True)
+    day_end = models.DateField(db_index=True)
     dayofweek = models.SmallIntegerField('Day of week', help_text='0 = sunday, 1 = monday, ...')
     week = models.CharField(maxlength=10, db_index=True)
     week_start = models.DateField(db_index=True)
@@ -80,7 +82,7 @@ class Dates(models.Model):
         list_display = ('day', 'dayofweek', 'week', 'month', 'quarter', 'year',
           'week_start', 'month_start', 'quarter_start', 'year_start')
         fields = (
-            (None, {'fields': ('day',
+            (None, {'fields': (('day_start','day_end'),
                                'dayofweek',
                                ('week','week_start','week_end'),
                                ('month','month_start','month_end'),

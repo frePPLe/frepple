@@ -48,13 +48,16 @@ def erase_model():
   This routine erase all model data from the database.
   '''
   cursor = connection.cursor()
+  # Which delete command can we use?
   if settings.DATABASE_ENGINE == 'sqlite3':
     cursor.execute('PRAGMA synchronous = OFF')
     delete = "delete from %s"
   elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
-    delete = "delete from %s"
+    delete = "delete from %s cascade"
   else:
     delete = "truncate table %s"
+  # Delete all the tables, in the correct sequence.
+  # Note that we don't delete the content of the singleton table "plan".
   for table in [
     'out_problem','out_flowplan','out_loadplan','out_demandpegging',
     'out_operationplan','dates','demand','forecastdemand','forecast','flow',
@@ -88,6 +91,8 @@ def createDates():
       dayofweek = int(curdate.strftime("%w")) # day of the week, 0 = sunday, 1 = monday, ...
       d = Dates(
         day = curdate,
+        day_start = curdate,
+        day_end = curdate + timedelta(1),
         dayofweek = dayofweek,
         week = curdate.strftime("%Y W%W"),     # Weeks are starting on monday
         week_start = curdate - timedelta((dayofweek+6)%7),
@@ -172,11 +177,13 @@ def create_model (cluster, demand, level, resource, utilization):
     print "Creating resources and calendars..."
     res = []
     for i in range(resource):
+      loc = Location(name='Loc %05d' % int(random.uniform(1,cluster)))
+      loc.save()
       cal = Calendar(name='capacity for res %03d' %i, category='capacity')
       bkt = Bucket(startdate=startdate, value=capacity, calendar=cal)
       cal.save()
       bkt.save()
-      r = Resource(name = 'Res %03d' % i, maximum=cal)
+      r = Resource(name = 'Res %03d' % i, maximum=cal, location=loc)
       res.append(r)
       r.save()
     transaction.commit()
@@ -188,7 +195,8 @@ def create_model (cluster, demand, level, resource, utilization):
       print "Creating cluster %d..." % i
 
       # location
-      loc = Location.objects.create(name='Loc %05d' % i)
+      loc = Location(name='Loc %05d' % i)
+      loc.save()
 
       # Item and delivery operation
       oper = Operation(name='Del %05d' % i, sizemultiple=1)

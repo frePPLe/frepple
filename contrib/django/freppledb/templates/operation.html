@@ -24,8 +24,9 @@
 
 <tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}" id="{{j.operation}}"><td>{{j.operation|superlink:"operation"}}</td>
-<td>Frozen&nbsp;quantity<br/>Total&nbsp;quantity</td>{% endif %}
-<td>{{j.frozen|floatformat:2}}<br/><a href="/admin/output/operationplan/?operation={{j.operation|urlencode}}&ot=asc&o=2">{{j.total|floatformat:2}}</a></td>{% endfor %}
+<td>Frozen&nbsp;starts<br/>Total&nbsp;starts<br/>Frozen&nbsp;ends<br/>Total&nbsp;ends</td>{% endif %}
+<td>{{j.frozen_start|floatformat:2}}<br/><a href="/admin/output/operationplan/?operation={{j.operation|urlencode}}&ot=asc&o=2">{{j.total_start|floatformat:2}}</a><br/>
+{{j.frozen_end|floatformat:2}}<br/><a href="/admin/output/operationplan/?operation={{j.operation|urlencode}}&ot=asc&o=2">{{j.total_end|floatformat:2}}</a></td>{% endfor %}
 </tr>{% endfor %}
 </tbody></table>
 

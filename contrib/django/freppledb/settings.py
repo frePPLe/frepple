@@ -186,4 +186,6 @@ if DATABASE_ENGINE == 'sqlite3':
   DATABASE_OPTIONS = {"timeout": 10, "check_same_thread": False}
 elif DATABASE_ENGINE == 'mysql':
   # Extra settings for MYSQL
+  # InnoDB has the proper support for transactions that is required for
+  # frePPLe in a production environment.
   DATABASE_OPTIONS = {"init_command": "SET storage_engine=INNODB"}

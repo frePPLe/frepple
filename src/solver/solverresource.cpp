@@ -206,6 +206,11 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   }       // end of while-loop
   while (HasOverload && data->a_qty!=0.0f);
 
+  // In case of a zero reply, we resize the operationplan to 0 right away.
+  // This is required to make sure that the buffer inventory profile also 
+  // respects this answer.
+  if (data->a_qty == 0.0f) data->q_operationplan->setQuantity(0);
+
   // Message
   if (data->getSolver()->getVerbose())
   {

@@ -227,9 +227,9 @@ template <class type> class TimeLine
       */
     void inspect(string name) const
     {
-      cout << "Inspecting  " << this << ": \"" << name << "\":" << endl;
+      logger << "Inspecting  " << this << ": \"" << name << "\":" << endl;
       for (const_iterator oo=begin(); oo!=end(); ++oo)
-        cout << "  " << oo->getDate() << "   "
+        logger << "  " << oo->getDate() << "   "
         << oo->getQuantity() << "    " << oo->getOnhand()
         << "    " << oo->getCumulativeProduced()  << endl;
     }

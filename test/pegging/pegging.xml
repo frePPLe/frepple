@@ -5,7 +5,7 @@
 	<COMMANDS>
 	  <VERBOSE>true</VERBOSE>
 	  <COMMAND xsi:type="COMMAND_SOLVE">
-	    <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
+	    <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" MAXPARALLEL="1" />
 	  </COMMAND>
 	  <!--
 	     Note that it is NOT common to save the complete plan with all pegging detail.

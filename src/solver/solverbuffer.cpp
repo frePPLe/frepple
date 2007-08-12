@@ -236,7 +236,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   {
     for (int i=b->getLevel(); i>0; --i) logger << " ";
     logger << "  Buffer '" << b->getName() << "' answers: "
-    << Solver->a_qty << "  " << Solver->a_date << endl;
+    << Solver->a_qty << "  " << Solver->a_date << endl;    
   }
 }
 

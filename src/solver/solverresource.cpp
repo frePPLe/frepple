@@ -153,12 +153,11 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
             curMax = data->q_loadplan->getMax();
             double prevOnhand = data->q_loadplan->getOnhand();
             for (cur=res->getLoadPlans().begin(data->q_loadplan);
-                cur!=res->getLoadPlans().end() && !(overloaded && newDate);
-                ++cur)
+                !(overloaded && newDate); ++cur)
             {
-              if (cur->getType() == 4)
+              if (cur!=res->getLoadPlans().end() && cur->getType() == 4)
                 curMax = cur->getMax();
-              if (cur->getDate() != curdate)
+              if (cur==res->getLoadPlans().end() || cur->getDate() != curdate)
               {
                 if (prevOnhand > curMax)
                   // There is still a capacity problem
@@ -168,6 +167,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
                   // first time now.
                   // This means that the previous date may be a proper start.
                   newDate = curdate;
+                if (cur == res->getLoadPlans().end()) break;
                 curdate = cur->getDate();
               }
               prevOnhand = cur->getOnhand();

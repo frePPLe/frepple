@@ -23,10 +23,7 @@ frepple.readXMLdata(
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="loadfrepple()" />
     <COMMAND xsi:type="COMMAND_SIZE" />
     <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST">
-        <VERBOSE>false</VERBOSE>
-        <AUTOMATIC>false</AUTOMATIC>
-      </SOLVER>
+      <SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST" VERBOSE="false"/>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SOLVE">
         <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" VERBOSE="false" MAXPARALLEL="2"/>

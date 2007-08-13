@@ -53,6 +53,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
   // Loop till everything is okay. During this loop the operationplan can be
   // moved early or late, and its quantity can be changed.
   // However, it cannot be split.
+  DateRange orig_dates = opplan->getDates();
   bool okay = true;
   Date a_date;
   Date prev_a_date;
@@ -154,6 +155,40 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
       {
         for (int i=opplan->getOperation()->getLevel(); i>0; --i) logger << " ";
         logger << "   Retrying new date." << endl;
+      }
+    }
+    else if (delay>0L && a_qty <= ROUNDING_ERROR && delay < orig_dates.getDuration())
+    {
+      // The reply is 0, but the next-date is not too far out.
+      // If the operationplan would fit in a smaller timeframe we can potentially
+      // create a non-zero reply...
+      // Resize the operationplan
+      opplan->getOperation()->setOperationPlanParameters(opplan, orig_opplan_qty, orig_dates.getStart() + delay, orig_dates.getEnd());
+      if (opplan->getDates().getStart() >= orig_dates.getStart() + delay 
+        && opplan->getDates().getEnd() <= orig_dates.getEnd()
+        && opplan->getQuantity() > ROUNDING_ERROR)
+      {
+        // It worked
+        orig_dates = opplan->getDates();
+        data.q_date = a_date;
+        data.q_qty = opplan->getQuantity();
+        data.a_date = Date::infiniteFuture;
+        data.a_qty = data.q_qty;
+        okay = false;
+        // Pop actions from the command "stack" in the command list
+        data.undo(topcommand);
+        // Echo a message
+        if (data.getVerbose())
+        {
+          for (int i=opplan->getOperation()->getLevel(); i>0; --i) logger << " ";
+          logger << "   Retrying with a smaller quantity." << endl;
+        }
+      }
+      else
+      {
+        // Didn't work
+        opplan->setQuantity(0);
+        okay = true;
       }
     }
     else

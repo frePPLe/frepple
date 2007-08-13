@@ -92,7 +92,6 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
     {
       // Update the date to plan in the next loop
       Date copy_plan_date = plan_date;
-      if (Solver->a_date > plan_date) plan_date = Solver->a_date;
 
       if (Solver->a_qty > ROUNDING_ERROR)
       {
@@ -138,6 +137,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
         Solver->undo();
         // If there is no proper new date for the next loop, we need to exit
         if (Solver->a_date <= copy_plan_date) plan_qty = 0.0f;
+        else plan_date = Solver->a_date;
       }
     }
     else if (l->planSingleDelivery())
@@ -151,7 +151,6 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
         Solver->CommandList::execute();
         // Update the quantity and date to plan in the next loop
         plan_qty -= Solver->a_qty;
-        plan_date = Solver->a_date;
       }
       else
       {

@@ -72,7 +72,7 @@
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} resources {% ifnotequal hits fullhits %} (total {{fullhits}}){% endifnotequal %}
+&nbsp;&nbsp;{{hits}} resources {% ifnotequal hits fullhits %} (total <a class="showall" href="/resource/">{{fullhits}}<a>){% endifnotequal %}
 </p>{% endblock %}
 
 </div>

@@ -34,7 +34,7 @@
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} operations {% ifnotequal hits fullhits %} (total {{fullhits}}){% endifnotequal %}
+&nbsp;&nbsp;{{hits}} operations {% ifnotequal hits fullhits %} (total <a class="showall" href="/operation/">{{fullhits}}<a>){% endifnotequal %}
 </p>{% endblock %}
 
 </div>

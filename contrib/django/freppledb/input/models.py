@@ -82,7 +82,7 @@ class Dates(models.Model):
         list_display = ('day', 'dayofweek', 'week', 'month', 'quarter', 'year',
           'week_start', 'month_start', 'quarter_start', 'year_start')
         fields = (
-            (None, {'fields': (('day_start','day_end'),
+            (None, {'fields': (('day','day_start','day_end'),
                                'dayofweek',
                                ('week','week_start','week_end'),
                                ('month','month_start','month_end'),
@@ -657,7 +657,7 @@ class Forecast(models.Model):
         startdate = enddate
         enddate = tmp
       # Assure the type of the quantity
-      quantity = Decimal(quantity)
+      if not isinstance(quantity,Decimal): quantity = Decimal(str(quantity))
       # Step 0: Check for forecast entries intersecting with the current daterange
       entries = self.entries.filter(enddate__gt=startdate.date()).filter(startdate__lt=enddate.date())
       if entries:

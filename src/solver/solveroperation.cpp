@@ -64,13 +64,13 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
   Date q_date_Flow;
   TimePeriod delay;
   bool incomplete;
+  bool hasMultipleLoads(opplan->sizeLoadPlans() > 2);
   do
   {
     if (isCapacityConstrained())
     {
       // Loop through all loadplans, and solve for the resource.
       // This may move an operationplan early.
-      bool hasMultipleLoads(opplan->sizeLoadPlans() > 2);
       do
       {
         data.AllLoadsOkay = true;

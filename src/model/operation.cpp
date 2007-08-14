@@ -258,14 +258,27 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
   // Invalid call to the function.
   if (!oplan || q<0) return;
 
+  // Respect minimum size
+  if (q < getSizeMinimum() && q>0) q = getSizeMinimum();
+
   // The logic depends on which dates are being passed along
-  if (s && e && s<=e)
+  if (s && e)
   {
+    if (s > e)
+    {
+      // End date is later than the start. Swap the dates.
+      Date tmp = s;
+      s = e;
+      e = tmp;
+    }
     // Case 1: Both the start and end date are specified: Compute the quantity
     if (e - s < duration)
+    {
       // Start and end aren't far enough from each other to fit the constant
       // part of the operation duration. This is infeasible.
       oplan->setQuantity(0);
+      oplan->setEnd(e);
+    }
     else
     {
       // Divide the variable duration by the duration_per time, to compute the
@@ -276,44 +289,36 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
 
       // Set the quantity to either the maximum or the requested quantity,
       // depending on which one is smaller.
-      if (q < max_q)
-      {
-        // Time window is too big. Respect the end date
-        oplan->setQuantity(q);
-        TimePeriod d = static_cast<long>(q*static_cast<long>(duration_per)) + duration;
-        if (preferEnd) oplan->setStartAndEnd(e-d, e);
-        else oplan->setStartAndEnd(s, s+d);
-        return;
-      }
-      else
-        oplan->setQuantity(max_q);
+      oplan->setQuantity(q < max_q ? q : max_q, true);
+      
+      // Updates the dates
+      TimePeriod d = static_cast<long>(oplan->getQuantity()*static_cast<long>(duration_per)) + duration;
+      if (preferEnd) oplan->setStartAndEnd(e-d, e);
+      else oplan->setStartAndEnd(s, s+d);
     }
-
-    // Set the start and end date, as specified
-    oplan->setStartAndEnd(s,e);
   }
   else if (e)
   {
     // Case 2: Only an end date is specified. Respect the quantity and
     // compute the start date
-    oplan->setQuantity(q);
-    TimePeriod t(static_cast<long>(duration_per * q));
+    oplan->setQuantity(q,true);
+    TimePeriod t(static_cast<long>(duration_per * oplan->getQuantity()));
     oplan->setStartAndEnd(e - duration - t, e);
   }
   else if (s)
   {
     // Case 3: Only a start date is specified. Respect the quantity and compute
     // the end date
-    oplan->setQuantity(q);
-    TimePeriod t(static_cast<long>(duration_per * q));
+    oplan->setQuantity(q,true);
+    TimePeriod t(static_cast<long>(duration_per * oplan->getQuantity()));
     oplan->setStartAndEnd(s, s + duration + t);
   }
   else
   {
     // Case 4: No date was given at all. Respect the quantity and the existing
     // end date of the operationplan.
-    oplan->setQuantity(q);
-    TimePeriod t(static_cast<long>(duration_per * q));
+    oplan->setQuantity(q,true);
+    TimePeriod t(static_cast<long>(duration_per * oplan->getQuantity()));
     oplan->setStartAndEnd(
       oplan->getDates().getEnd() - duration - t,
       oplan->getDates().getEnd()

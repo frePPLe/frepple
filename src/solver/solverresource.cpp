@@ -45,7 +45,12 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
 
   // The loadplan is an increase in size, and the algorithm needs to process
   // the decreases.
-  if (data->q_loadplan->getQuantity() > 0) return;
+  if (data->q_qty >= 0) 
+  {
+    data->a_qty = data->q_qty;
+    data->a_date = data->q_date;
+    return;
+  }
 
   // Message
   if (data->getSolver()->getVerbose())
@@ -224,26 +229,26 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
 
 DECLARE_EXPORT void MRPSolver::solve(const ResourceInfinite* r, void* v)
 {
-  MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
+  MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (data->getSolver()->getVerbose() && data->q_qty < 0)
   {
     for (int i=r->getLevel(); i>0; --i) logger << " ";
     logger << "  Resource '" << r << "' is asked: "
-    << Solver->q_qty << "  " << Solver->q_date << endl;
+    << (-data->q_qty) << "  " << data->q_date << endl;
   }
 
   // Reply whatever is requested, regardless of date and quantity.
-  Solver->a_qty = Solver->q_qty;
-  Solver->a_date = Solver->q_date;
+  data->a_qty = data->q_qty;
+  data->a_date = data->q_date;
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (data->getSolver()->getVerbose() && data->q_qty < 0)
   {
     for (int i=r->getLevel(); i>0; --i) logger << " ";
     logger << "  Resource '" << r << "' answers: "
-    << Solver->a_qty << "  " << Solver->a_date << endl;
+    << (-data->a_qty) << "  " << data->a_date << endl;
   }
 }
 

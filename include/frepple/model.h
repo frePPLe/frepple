@@ -1539,8 +1539,8 @@ class OperationPlan
     /** Returns the quantity. */
     float getQuantity() const {return quantity;}
 
-    /** Updates the quantity.
-      * The quantity of an operationplan must be greater than to 0.
+    /** Updates the quantity.<br/>
+      * The quantity of an operationplan must be greater than to 0.<br/>
       * This method can only be called on top operationplans. Sub operation
       * plans should pass on a call to the parent operationplan.
       */

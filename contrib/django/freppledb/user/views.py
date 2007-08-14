@@ -29,8 +29,14 @@ from freppledb.user.models import Preferences
 
 class PreferencesForm(forms.Form):
   buckets = forms.ChoiceField(initial='Month', choices=Preferences.buckettype, help_text="Default bucket size for reports")
-  startdate = forms.DateField(required=False, help_text="Start date for filtering report data")
-  enddate = forms.DateField(required=False, help_text="End date for filtering report data")
+  startdate = forms.DateField(required=False,
+    help_text="Start date for filtering report data",
+    widget=forms.TextInput(attrs={'class':"vDateField"}),
+    )
+  enddate = forms.DateField(required=False,
+    help_text="End date for filtering report data",
+    widget=forms.TextInput(attrs={'class':"vDateField"}),
+    )
 
 @login_required
 def preferences(request):

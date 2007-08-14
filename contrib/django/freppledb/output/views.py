@@ -79,7 +79,7 @@ class BufferReport(Report):
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
              from dates
-             where day_start >= '%s' and day_start < '%s'
+             where day_start >= '%s' and day_start <= '%s'
              group by bucket, startdate, enddate
              ) d
         -- Consumed and produced quantities
@@ -164,7 +164,7 @@ class DemandReport(Report):
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
              from dates
-             where day_start >= '%s' and day_start < '%s'
+             where day_start >= '%s' and day_start <= '%s'
              group by bucket, startdate, enddate
              ) d
         -- Planned quantity
@@ -254,7 +254,7 @@ class ForecastReport(Report):
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
              from dates
-             where day_start >= '%s' and day_start < '%s'
+             where day_start >= '%s' and day_start <= '%s'
              group by bucket, startdate, enddate
              ) d
         -- Total forecasted quantity
@@ -339,7 +339,7 @@ class ResourceReport(Report):
          cross join (
               select %s as bucket, %s_start as startdate, %s_end as enddate
               from dates
-              where day_start >= '%s' and day_start < '%s'
+              where day_start >= '%s' and day_start <= '%s'
               group by bucket, startdate, enddate
               ) d
          -- Available capacity
@@ -442,7 +442,7 @@ class OperationReport(Report):
           cross join (
                select %s as bucket, %s_start as startdate, %s_end as enddate
                from dates
-               where day_start >= '%s' and day_start < '%s'
+               where day_start >= '%s' and day_start <= '%s'
                group by bucket, startdate, enddate
                ) d
           -- Planned and frozen quantity, based on start date

@@ -2,14 +2,21 @@
 {% load i18n admin_list adminmedia %}
 {% block stylesheet %}{% admin_media_prefix %}css/forms.css{% endblock %}
 {% block coltype %}colM{% endblock %}
+{% block extrahead %}{{ block.super }}
+<link rel="stylesheet" type="text/css" href="/media/css/widgets.css" />
+<script type="text/javascript" src="/admin/jsi18n/"></script>
+<script type="text/javascript" src="/media/js/core.js"></script>
+<script type="text/javascript" src="/media/js/calendar.js"></script>
+<script type="text/javascript" src="/media/js/admin/DateTimeShortcuts.js"></script>
+{% endblock %}
 {% block bodyclass %}dashboard{% endblock %}
 {% block content %}
 <div id="content-main">
 
 <form action="." method="post" class="form">
-{{ form.as_p }}
-<input type="submit" value="Save"/>
-</form>
+<table>{{ form.as_table }}
+<tr><td><input type="submit" value="Save"/></td></tr>
+</table></form>
 
 </div>
 

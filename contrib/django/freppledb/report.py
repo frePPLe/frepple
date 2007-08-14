@@ -94,7 +94,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
     cursor = connection.cursor()
     field = (bucket=='day' and 'day_start') or bucket
     cursor.execute('''
-      select %s, min(day_start), max(day_end)
+      select %s, min(day_start), max(day_start)
       from dates
       group by %s
       order by min(day_start)''' % (field,field))

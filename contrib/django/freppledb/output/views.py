@@ -155,36 +155,43 @@ class DemandReport(Report):
     # Execute the query
     cursor = connection.cursor()
     query = '''
-        select items.name as row1,
-               d.bucket as col1, d.startdate as col2, d.enddate as col3,
+        select x.name as row1,
+               x.bucket as col1, x.startdate as col2, x.enddate as col3,
                coalesce(sum(demand.quantity),0),
-               coalesce(sum(pln.quantity),0)
-        from (select name %s order by %s %s) as items
-        -- Multiply with buckets
-        cross join (
-             select %s as bucket, %s_start as startdate, %s_end as enddate
-             from dates
-             where day_start >= '%s' and day_start <= '%s'
-             group by bucket, startdate, enddate
-             ) d
-        -- Planned quantity
-        left join (
-          select inp.item_id as item_id, out_operationplan.enddate as date, out_operationplan.quantity as quantity
-          from out_operationplan
-          inner join demand as inp
-          on out_operationplan.demand_id = inp.name
-          ) as pln
-        on items.name = pln.item_id
-        and d.startdate <= pln.date
-        and d.enddate > pln.date
+               min(x.planned)
+        from (
+          select items.name as name,
+                 d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
+                 coalesce(sum(pln.quantity),0) as planned
+          from (select name %s order by %s %s) as items
+          -- Multiply with buckets
+          cross join (
+               select %s as bucket, %s_start as startdate, %s_end as enddate
+               from dates
+               where day_start >= '%s' and day_start <= '%s'
+               group by bucket, startdate, enddate
+               ) d
+          -- Planned quantity
+          left join (
+            select inp.item_id as item_id, out_operationplan.enddate as date, out_operationplan.quantity as quantity
+            from out_operationplan
+            inner join demand as inp
+            on out_operationplan.demand_id = inp.name
+            ) as pln
+          on items.name = pln.item_id
+          and d.startdate <= pln.date
+          and d.enddate > pln.date
+          -- Grouping
+          group by items.name, d.bucket, d.startdate, d.enddate
+        ) x
         -- Requested quantity
         left join demand
-        on items.name = demand.item_id
-        and d.startdate <= date(demand.due)
-        and d.enddate > date(demand.due)
+        on x.name = demand.item_id
+        and x.startdate <= date(demand.due)
+        and x.enddate > date(demand.due)
         -- Ordering and grouping
         group by row1, col1, col2, col3
-        order by %s, d.startdate
+        order by %s, x.startdate
        ''' % (basesql[1],sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
     cursor.execute(query,basesql[2])
 

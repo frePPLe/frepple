@@ -40,7 +40,10 @@
 <tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}"><td>{{j.buffer|superlink:"buffer"}}</td><td>{{j.item|superlink:"item"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
 <td>Start&nbsp;inventory<br/>Consumed<br/>Produced<br/>End&nbsp;inventory</td>{% endif %}
-<td>{{j.startoh|floatformat:1}}<br/>{{j.consumed|floatformat:1}}<br/>{{j.produced|floatformat:1}}<br/>{{j.endoh|floatformat:1}}</td>{% endfor %}
+<td>{{j.startoh|floatformat:1}}<br/>
+<a href="/admin/output/flowplan/?thebuffer__exact={{j.buffer|urlencode}}&ot=asc&o=6&flowdate__gte={{j.startdate}}&flowdate__lt={{j.enddate}}&quantity__lt=0">{{j.consumed|floatformat:1}}</a><br/>
+<a href="/admin/output/flowplan/?thebuffer__exact={{j.buffer|urlencode}}&ot=asc&o=6&flowdate__gte={{j.startdate}}&flowdate__lt={{j.enddate}}&quantity__gte=0">{{j.produced|floatformat:1}}</a><br/>
+<a href="/admin/output/flowplan/?thebuffer__exact={{j.buffer|urlencode}}&ot=asc&o=6&flowdate__gte={{j.startdate}}&flowdate__lt={{j.enddate}}">{{j.endoh|floatformat:1}}<a></td>{% endfor %}
 </tr>{% endfor %}
 </tbody></table>
 

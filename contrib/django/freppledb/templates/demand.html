@@ -26,7 +26,9 @@
 <tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}" id="{{j.item}}"><td>{{j.item|superlink:"item"}}</td>
 <td>Demand<br/>Supply<br/>Backlog</td>{% endif %}
-<td>{{j.requested|floatformat:1}}<br/>{{j.supplied|floatformat:1}}<br/>{{j.backlog|floatformat:1}}</td>{% endfor %}
+<td><a href="/admin/input/demand/?item__exact={{j.item|urlencode}}&ot=asc&o=6&due__gte={{j.startdate}}&due__lt={{j.enddate}}">{{j.requested|floatformat:1}}</a><br/>
+{{j.supplied|floatformat:1}}<br/>
+{{j.backlog|floatformat:1}}</td>{% endfor %}
 </tr>{% endfor %}
 </tbody></table>
 

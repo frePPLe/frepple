@@ -62,6 +62,7 @@ DECLARE_EXPORT const XMLtag Tags::tag_demand("DEMAND");
 DECLARE_EXPORT const XMLtag Tags::tag_demands("DEMANDS");
 DECLARE_EXPORT const XMLtag Tags::tag_description("DESCRIPTION");
 DECLARE_EXPORT const XMLtag Tags::tag_detectproblems("DETECTPROBLEMS");
+DECLARE_EXPORT const XMLtag Tags::tag_discrete("DISCRETE");
 DECLARE_EXPORT const XMLtag Tags::tag_due("DUE");
 DECLARE_EXPORT const XMLtag Tags::tag_duration("DURATION");
 DECLARE_EXPORT const XMLtag Tags::tag_duration_per("DURATION_PER");

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>Forecast test model</NAME>
+  <DESCRIPTION>
+  This test verifies how forecast can be rounded during the forecast
+  distribution.
+  </DESCRIPTION>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <VERBOSE>true</VERBOSE>
+    <COMMAND xsi:type="COMMAND_SAVE">
+      <FILENAME>output.1.xml</FILENAME>
+    </COMMAND>
+  </COMMANDS>
+
+  <!--
+  This calendar defines how forecast values are disaggregated.
+  -->
+  <CALENDARS>
+    <CALENDAR NAME="planningbuckets" xsi:type="CALENDAR_FLOAT">
+      <BUCKETS>
+        <BUCKET START="2007-01-01T00:00:00" NAME="Mon Jan 01" VALUE="1"/>
+        <BUCKET START="2007-01-02T00:00:00" NAME="Tue Jan 02" VALUE="1"/>
+        <BUCKET START="2007-01-03T00:00:00" NAME="Wed Jan 03" VALUE="1"/>
+        <BUCKET START="2007-01-04T00:00:00" NAME="Thu Jan 04" VALUE="1"/>
+        <BUCKET START="2007-01-05T00:00:00" NAME="Fri Jan 05" VALUE="1"/>
+        <BUCKET START="2007-01-06T00:00:00" NAME="Sat Jan 06" VALUE="1"/>
+        <BUCKET START="2007-01-07T00:00:00" NAME="Sun Jan 07" VALUE="1"/>
+        <BUCKET START="2007-01-08T00:00:00" NAME="Mon Jan 08" VALUE="1"/>
+        <BUCKET START="2007-01-09T00:00:00" NAME="Tue Jan 09" VALUE="1"/>
+        <BUCKET START="2007-01-10T00:00:00" NAME="Wed Jan 10" VALUE="1"/>
+        <BUCKET START="2007-01-11T00:00:00" NAME="Thu Jan 11" VALUE="1"/>
+        <BUCKET START="2007-01-12T00:00:00" NAME="Fri Jan 12" VALUE="1"/>
+        <BUCKET START="2007-01-13T00:00:00" NAME="Sat Jan 13" VALUE="1"/>
+        <BUCKET START="2007-01-14T00:00:00" NAME="Sun Jan 14" VALUE="1"/>
+        <BUCKET START="2007-01-15T00:00:00" NAME="Mon Jan 15" VALUE="1"/>
+        <BUCKET START="2007-01-16T00:00:00" NAME="Tue Jan 16" VALUE="1"/>
+        <BUCKET START="2007-01-17T00:00:00" NAME="Wed Jan 17" VALUE="1"/>
+        <BUCKET START="2007-01-18T00:00:00" NAME="Thu Jan 18" VALUE="1"/>
+        <BUCKET START="2007-01-19T00:00:00" NAME="Fri Jan 19" VALUE="1"/>
+        <BUCKET START="2007-01-20T00:00:00" NAME="Sat Jan 20" VALUE="1"/>
+        <BUCKET START="2007-01-21T00:00:00" NAME="Sun Jan 21" VALUE="1"/>
+        <BUCKET START="2007-01-22T00:00:00" NAME="Mon Jan 22" VALUE="1"/>
+        <BUCKET START="2007-01-23T00:00:00" NAME="Tue Jan 23" VALUE="1"/>
+        <BUCKET START="2007-01-24T00:00:00" NAME="Wed Jan 24" VALUE="1"/>
+        <BUCKET START="2007-01-25T00:00:00" NAME="Thu Jan 25" VALUE="1"/>
+        <BUCKET START="2007-01-26T00:00:00" NAME="Fri Jan 26" VALUE="1"/>
+        <BUCKET START="2007-01-27T00:00:00" NAME="Sat Jan 27" VALUE="1"/>
+        <BUCKET START="2007-01-28T00:00:00" NAME="Sun Jan 28" VALUE="1"/>
+        <BUCKET START="2007-01-29T00:00:00" NAME="Mon Jan 29" VALUE="1"/>
+        <BUCKET START="2007-01-30T00:00:00" NAME="Tue Jan 30" VALUE="1"/>
+        <BUCKET START="2007-01-31T00:00:00" NAME="Wed Jan 31" VALUE="1"/>
+      </BUCKETS>
+    </CALENDAR>
+  </CALENDARS>
+
+  <DEMANDS>
+    <DEMAND NAME="Forecast 1" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="Product 1" />
+      <PRIORITY>1</PRIORITY>
+      <CALENDAR NAME="planningbuckets" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-01-29T00:00:00</END>
+          <TOTAL>1</TOTAL>
+        </BUCKET>
+      </BUCKETS>
+    </DEMAND>
+    <DEMAND NAME="Forecast 2" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="Product 1" />
+      <PRIORITY>1</PRIORITY>
+      <CALENDAR NAME="planningbuckets" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-01-29T00:00:00</END>
+          <TOTAL>2</TOTAL>
+        </BUCKET>
+      </BUCKETS>
+    </DEMAND>
+    <DEMAND NAME="Forecast 3" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="Product 1" />
+      <PRIORITY>1</PRIORITY>
+      <CALENDAR NAME="planningbuckets" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-01-29T00:00:00</END>
+          <TOTAL>3</TOTAL>
+        </BUCKET>
+      </BUCKETS>
+    </DEMAND>
+    <DEMAND NAME="Forecast 4" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="Product 1" />
+      <PRIORITY>1</PRIORITY>
+      <CALENDAR NAME="planningbuckets" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-01-29T00:00:00</END>
+          <TOTAL>4</TOTAL>
+        </BUCKET>
+      </BUCKETS>
+    </DEMAND>
+    <DEMAND NAME="Forecast 5" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="Product 1" />
+      <PRIORITY>1</PRIORITY>
+      <CALENDAR NAME="planningbuckets" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-01-29T00:00:00</END>
+          <TOTAL>5</TOTAL>
+        </BUCKET>
+      </BUCKETS>
+    </DEMAND>
+    <DEMAND NAME="Forecast 27" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="Product 1" />
+      <PRIORITY>1</PRIORITY>
+      <CALENDAR NAME="planningbuckets" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-01-29T00:00:00</END>
+          <TOTAL>27</TOTAL>
+        </BUCKET>
+      </BUCKETS>
+    </DEMAND>
+    <DEMAND NAME="Forecast 26" xsi:type="DEMAND_FORECAST">
+      <ITEM NAME="Product 1" />
+      <PRIORITY>1</PRIORITY>
+      <CALENDAR NAME="planningbuckets" />
+      <BUCKETS>
+        <BUCKET>
+          <START>2007-01-01T00:00:00</START>
+          <END>2007-01-29T00:00:00</END>
+          <TOTAL>26</TOTAL>
+        </BUCKET>
+      </BUCKETS>
+    </DEMAND>
+  </DEMANDS>
+</PLAN>

@@ -68,6 +68,7 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_demands;
     static DECLARE_EXPORT const XMLtag tag_description;
     static DECLARE_EXPORT const XMLtag tag_detectproblems;
+    static DECLARE_EXPORT const XMLtag tag_discrete;
     static DECLARE_EXPORT const XMLtag tag_due;
     static DECLARE_EXPORT const XMLtag tag_duration;
     static DECLARE_EXPORT const XMLtag tag_duration_per;

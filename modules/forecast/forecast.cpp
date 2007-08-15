@@ -173,7 +173,19 @@ void Forecast::initialize()
 }
 
 
-void Forecast::setTotalQuantity(const DateRange& d, float f)
+void Forecast::setDiscrete(const bool b)
+{
+  // Update the flag
+  discrete = b;
+
+  // Round down any forecast demands that may already exist.
+  if (discrete)
+    for (memberIterator m = beginMember(); m!=endMember(); ++m)
+      m->setQuantity(floor(m->getQuantity()));
+}
+
+
+void Forecast::setTotalQuantity(const DateRange& d, double f)
 {
   // Initialize, if not done yet
   if (!isGroup()) initialize();
@@ -191,8 +203,8 @@ void Forecast::setTotalQuantity(const DateRange& d, float f)
       if (!d.getDuration()) 
       {
         // Single date provided. Update that one bucket.
-        x->setQuantity(f>x->consumed ? (f - x->consumed) : 0);
-        x->total = f;
+        x->setQuantity(f>x->consumed ? static_cast<float>(f - x->consumed) : 0);
+        x->total = static_cast<float>(f);
         return;
       }
       weights += x->weight * static_cast<long>(x->timebucket.overlap(d));
@@ -206,6 +218,7 @@ void Forecast::setTotalQuantity(const DateRange& d, float f)
 
   // Update the forecast quantity, respecting the weights
   f /= static_cast<float>(weights);
+  double carryover = 0.0;
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
   {
     ForecastBucket* x = dynamic_cast<ForecastBucket*>(&*m);
@@ -214,12 +227,29 @@ void Forecast::setTotalQuantity(const DateRange& d, float f)
       // Bucket intersects with daterange
       TimePeriod o = x->timebucket.overlap(d);
       double percent = x->weight * static_cast<long>(o);
-      if (o < x->timebucket.getDuration())
-        // The bucket is only partially updated
-        x->total += static_cast<float>(f * percent);
+      if (getDiscrete())
+      {
+        // Rounding to discrete numbers 
+        carryover += f * percent;
+        int intdelta = static_cast<int>(ceil(carryover - 0.5));
+        carryover -= intdelta;
+        if (o < x->timebucket.getDuration())
+          // The bucket is only partially updated
+          x->total += static_cast<float>(intdelta);
+        else
+          // The bucket is completely updated
+          x->total = static_cast<float>(intdelta);
+      }
       else
-        // The bucket is completely updated
-        x->total = static_cast<float>(f * percent);
+      {
+        // No rounding
+        if (o < x->timebucket.getDuration())
+          // The bucket is only partially updated
+          x->total += static_cast<float>(f * percent);
+        else
+          // The bucket is completely updated
+          x->total = static_cast<float>(f * percent);      
+      }
       x->setQuantity(x->total > x->consumed ? (x->total - x->consumed) : 0);
     }
   }
@@ -243,6 +273,7 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
   o->writeElement(Tags::tag_item, &*getItem());
   if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
   o->writeElement(Tags::tag_calendar, calptr);
+  if (!getDiscrete()) o->writeElement(Tags::tag_discrete, getDiscrete());
   o->writeElement(Tags::tag_operation, &*getOperation());
   if (!planLate() && planSingleDelivery())
     o->writeElement(Tags::tag_policy, "PLANSHORT SINGLEDELIVERY");
@@ -279,10 +310,12 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
     if (b) setCalendar(b);
     else throw LogicException("Incorrect object type during read operation");
   }
+  else if (pElement.isA(Tags::tag_discrete))
+    setDiscrete(pElement.getBool());
   else if (pElement.isA(Tags::tag_bucket))
   {
-    pair<DateRange,float> *d = 
-      static_cast< pair<DateRange,float>* >(pIn.getUserArea());
+    pair<DateRange,double> *d = 
+      static_cast< pair<DateRange,double>* >(pIn.getUserArea());
     if (d)
     {
       // Update the forecast quantities
@@ -295,13 +328,13 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else if (pIn.getParentElement().isA(Tags::tag_bucket))
   {
-    pair<DateRange,float> *d = 
-      static_cast< pair<DateRange,float>* >(pIn.getUserArea());
+    pair<DateRange,double> *d = 
+      static_cast< pair<DateRange,double>* >(pIn.getUserArea());
     if (pElement.isA(tag_total))
     {
       if (d) d->second = pElement.getFloat();
       else pIn.setUserArea(
-        new pair<DateRange,float>(DateRange(),pElement.getFloat())
+        new pair<DateRange,double>(DateRange(),pElement.getDouble())
         );
     }
     else if (pElement.isA(Tags::tag_start))
@@ -312,7 +345,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
         if (!d->first.getStart()) d->first.setStartAndEnd(x,x);
         else d->first.setStart(x);
       }
-      else pIn.setUserArea(new pair<DateRange,float>(DateRange(x,x),0));
+      else pIn.setUserArea(new pair<DateRange,double>(DateRange(x,x),0));
     }
     else if (pElement.isA(Tags::tag_end))
     {
@@ -322,7 +355,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
         if (!d->first.getStart()) d->first.setStartAndEnd(x,x);
         else d->first.setEnd(x);
       }
-      else pIn.setUserArea(new pair<DateRange,float>(DateRange(x,x),0));
+      else pIn.setUserArea(new pair<DateRange,double>(DateRange(x,x),0));
     }
   }
   else
@@ -337,7 +370,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
       ));
     // Delete dynamically allocated temporary read object
     if (pIn.getUserArea()) 
-      delete static_cast< pair<DateRange,float>* >(pIn.getUserArea());
+      delete static_cast< pair<DateRange,double>* >(pIn.getUserArea());
   }
 }
 

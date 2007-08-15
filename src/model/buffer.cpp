@@ -27,7 +27,7 @@
 
 #define FREPPLE_CORE
 #include "frepple/model.h"
-#include <cmath>
+#include <math.h>
 
 // This is the name used for the dummy operation used to represent the
 // inventory.

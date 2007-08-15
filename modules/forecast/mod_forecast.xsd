@@ -9,6 +9,7 @@
       <xsd:extension base="DEMAND">
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
           <xsd:element name="CALENDAR" type="CALENDAR" />
+          <xsd:element name="DISCRETE" type="xsd:boolean" />
           <xsd:element name="BUCKETS">
             <xsd:complexType>
               <xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -37,6 +38,7 @@
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
+        <xsd:attribute name="DISCRETE" type="xsd:boolean" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

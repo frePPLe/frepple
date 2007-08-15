@@ -68,6 +68,7 @@
   *     <xsd:extension base="DEMAND">
   *       <xsd:choice minOccurs="0" maxOccurs="unbounded">
   *         <xsd:element name="CALENDAR" type="CALENDAR" />
+  *         <xsd:element name="DISCRETE" type="xsd:boolean" />
   *         <xsd:element name="BUCKETS">
   *           <xsd:complexType>
   *             <xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -96,6 +97,7 @@
   *           </xsd:complexType>
   *         </xsd:element>
   *       </xsd:choice>
+  *       <xsd:attribute name="DISCRETE" type="xsd:boolean" />
   *     </xsd:extension>
   *   </xsd:complexContent>
   * </xsd:complexType>
@@ -205,7 +207,8 @@ class Forecast : public Demand
 
   public:
     /** Constructor. */
-    explicit Forecast(const string& nm) : Demand(nm), calptr(NULL) {}
+    explicit Forecast(const string& nm) 
+      : Demand(nm), calptr(NULL), discrete(true) {}
 
     /** Destructor. */
     ~Forecast();
@@ -231,11 +234,19 @@ class Forecast : public Demand
       *    dataexception is thrown. It indicates a situation where forecast
       *    is specified for a date where no values are allowed.
       */
-    virtual void setTotalQuantity(const DateRange& , float);
+    virtual void setTotalQuantity(const DateRange& , double);
 
     void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, XMLElement& pElement);
     void beginElement(XMLInput& pIn, XMLElement& pElement);
+
+    /** Returns whether fractional forecasts are allowed or not.<br/>
+      * The default is true.
+      */
+    bool getDiscrete() const {return discrete;}
+
+    /** Updates forecast discreteness flag. */
+    void setDiscrete(const bool b);
 
     /** Update the item to be planned. */
     virtual void setItem(const Item*);
@@ -322,6 +333,9 @@ class Forecast : public Demand
 
     /** A void calendar to define the time buckets. */
     const Calendar* calptr;
+
+    /** Flags whether fractional forecasts are allowed. */
+    bool discrete;
 
     /** A dictionary of all forecasts. */
     static MapOfForecasts ForecastDictionary;

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <COMMANDS>
+    <VERBOSE>false</VERBOSE>
+    <ABORTONERROR>false</ABORTONERROR>
+    <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_forecast.so">
+       <PARAMETER NAME="Customer_Then_Item_Hierarchy" VALUE="true" />
+       <PARAMETER NAME="Match_Using_Delivery_Operation" VALUE="true" />
+       <PARAMETER NAME="Net_Early" VALUE="48:00:00" />
+       <PARAMETER NAME="Net_Late" VALUE="96:00:00" />
+    </COMMAND>
+  </COMMANDS>
+</PLAN>

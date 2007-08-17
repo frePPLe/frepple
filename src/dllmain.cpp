@@ -78,6 +78,7 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
   // Initialize only once
   static bool initialized = false;
   if (initialized) return;
+  initialized = true;
 
   // If a parameter is given we set the environment variable FREPPLE_HOME.
   // If the parameter is NULL, we pick up the existing value of that
@@ -117,9 +118,6 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
         }
     }
   }
-
-  // Avoid executing this multiple times
-  initialized = true;
 }
 
 

@@ -5,6 +5,7 @@
 	<SOLVERS>
 		<SOLVER NAME="MRP" xsi:type="SOLVER_MRP">
 			<CONSTRAINTS>7</CONSTRAINTS>
+			<MAXPARALLEL>1</MAXPARALLEL>
 		</SOLVER>
 	</SOLVERS>
 	<LOCATIONS>
@@ -170,37 +171,37 @@
 			<END>2007-01-03T12:00:00</END>
 			<QUANTITY>10</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="3" OPERATION="make product in factory 1">
+		<OPERATION_PLAN ID="5" OPERATION="make product in factory 1">
 			<START>2007-01-01T12:00:00</START>
 			<END>2007-01-02T12:00:00</END>
 			<QUANTITY>5</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="8" OPERATION="make product in factory 2">
+		<OPERATION_PLAN ID="10" OPERATION="make product in factory 2">
 			<START>2007-01-01T12:00:00</START>
 			<END>2007-01-02T12:00:00</END>
 			<QUANTITY>10</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="10" OPERATION="supply distribution centre">
+		<OPERATION_PLAN ID="9" OPERATION="supply distribution centre">
 			<START>2007-01-02T12:00:00</START>
 			<END>2007-01-03T12:00:00</END>
 			<QUANTITY>10</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="5" OPERATION="supply distribution centre">
+		<OPERATION_PLAN ID="4" OPERATION="supply distribution centre">
 			<START>2007-01-02T12:00:00</START>
 			<END>2007-01-03T12:00:00</END>
 			<QUANTITY>5</QUANTITY>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="4" OPERATION="transport supply from factory 1">
+		<OPERATION_PLAN ID="3" OPERATION="transport supply from factory 1">
 			<START>2007-01-02T12:00:00</START>
 			<END>2007-01-03T12:00:00</END>
 			<QUANTITY>5</QUANTITY>
-			<OWNER ID="5" OPERATION="supply distribution centre"/>
+			<OWNER ID="4" OPERATION="supply distribution centre"/>
 		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="9" OPERATION="transport supply from factory 2">
+		<OPERATION_PLAN ID="8" OPERATION="transport supply from factory 2">
 			<START>2007-01-02T12:00:00</START>
 			<END>2007-01-03T12:00:00</END>
 			<QUANTITY>10</QUANTITY>
-			<OWNER ID="10" OPERATION="supply distribution centre"/>
+			<OWNER ID="9" OPERATION="supply distribution centre"/>
 		</OPERATION_PLAN>
 	</OPERATION_PLANS>
 	<PROBLEMS>

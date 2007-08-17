@@ -215,7 +215,7 @@ extern "C" PyObject* PythonPegging::next(PythonPegging* obj)
     "DATE", PythonDateTime(obj->iter->getDate()),
     "BUFFER", obj->iter->getFlow()->getBuffer()->getHidden() ? NULL
       : obj->iter->getFlow()->getBuffer()->getName().c_str(),
-    "OPERATIONPLAN", obj->iter->getOperationPlan()->getHidden() ? NULL 
+    "OPERATIONPLAN", obj->iter->getOperationPlan()->getHidden() ? 0 
       : obj->iter->getOperationPlan()->getIdentifier(),
     "PEGGED", obj->iter.getPegged() ? 1 : 0
     );

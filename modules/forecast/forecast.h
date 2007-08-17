@@ -240,7 +240,7 @@ class Forecast : public Demand
     void endElement(XMLInput& pIn, XMLElement& pElement);
     void beginElement(XMLInput& pIn, XMLElement& pElement);
 
-    /** Returns whether fractional forecasts are allowed or not.<br/>
+    /** Returns whether fractional forecasts are allowed or not.<br>
       * The default is true.
       */
     bool getDiscrete() const {return discrete;}

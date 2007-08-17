@@ -59,7 +59,7 @@ DECLARE_EXPORT string Environment::home("[unspecified]");
 // The value initialized here is overwritten in the library initialization.
 DECLARE_EXPORT int Environment::processors = 1;
 
-// Output logging stream, whopse input buffer is shared with either
+// Output logging stream, whose input buffer is shared with either
 // Environment::logfile or cout.
 DECLARE_EXPORT ostream logger(cout.rdbuf());
 
@@ -167,6 +167,7 @@ DECLARE_EXPORT void Environment::setLogFile(string x)
 
 void LibraryUtils::initialize()
 {
+  // Initialize only once
   static bool init = false;
   if (init)
   {
@@ -176,18 +177,11 @@ void LibraryUtils::initialize()
   }
   init = true;
 
-  // Initialize the logging file
-  //Environment::setLogFile("");
-
   // Initialize Xerces parser
   XMLPlatformUtils::Initialize();
 
   // Create a lock manager
   LockManager::mgr = new LockManager();
-
-  // Don't use the same buffer for C and C++ stream operations. This should
-  // provide better performance on some platforms.
-  ios::sync_with_stdio(false);
 
   // Initialize the command metadata.
   Command::metadata.registerCategory("COMMAND", "COMMANDS");

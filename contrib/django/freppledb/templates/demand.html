@@ -18,6 +18,7 @@
   <a id="/path/item/%s">Supply Path</a>
 </div>
 
+<div style="overflow-x: scroll; overflow-y: auto;">
 <table><thead><tr><form>
 {% rowheader 1 %}
 <th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form>
@@ -31,6 +32,7 @@
 {{j.backlog|floatformat:1}}</td>{% endfor %}
 </tr>{% endfor %}
 </tbody></table>
+</div>
 
 {% block pagination %} <p class="paginator">
 {% if is_paginated %}

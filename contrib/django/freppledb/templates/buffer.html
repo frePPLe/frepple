@@ -30,6 +30,7 @@
 <a id="/admin/input/location/%s">Location</a>
 </div>
 
+<div style="overflow-x: scroll; overflow-y: auto;">
 <table><thead><tr><form>
 {% rowheader 1 %}
 {% rowheader 2 %}
@@ -46,6 +47,7 @@
 <a href="/admin/output/flowplan/?thebuffer__exact={{j.buffer|urlencode}}&ot=asc&o=6&flowdate__gte={{j.startdate}}&flowdate__lt={{j.enddate}}">{{j.endoh|floatformat:1}}<a></td>{% endfor %}
 </tr>{% endfor %}
 </tbody></table>
+</div>
 
 {% block pagination %}<p class="paginator">
 {% if is_paginated %}

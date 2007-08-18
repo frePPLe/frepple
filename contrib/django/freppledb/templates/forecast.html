@@ -52,6 +52,7 @@
 	{% if perms.input.change_customer %}<a id="/admin/input/customer/%s">Customer</a>{% endif %}
 </div>
 
+<div style="overflow-x: scroll; overflow-y: auto;">
 <table><thead><tr><form>
 {% rowheader 1 %}
 {% rowheader 2 %}
@@ -73,6 +74,7 @@
 </tr>{% endfor %}
 {% endif %}
 </tbody></table>
+</div>
 
 {% block pagination %} <p class="paginator">
 {% if is_paginated %}

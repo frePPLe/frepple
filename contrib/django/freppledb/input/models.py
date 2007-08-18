@@ -60,27 +60,37 @@ class Plan(models.Model):
 
 class Dates(models.Model):
     # Database fields
+    # Daily buckets
     day = models.DateField('day', primary_key=True)
     day_start = models.DateField(db_index=True)
     day_end = models.DateField(db_index=True)
     dayofweek = models.SmallIntegerField('Day of week', help_text='0 = sunday, 1 = monday, ...')
+    # Weekly buckets
     week = models.CharField(maxlength=10, db_index=True)
     week_start = models.DateField(db_index=True)
     week_end = models.DateField(db_index=True)
+    # Monthly buckets
     month = models.CharField(maxlength=10, db_index=True)
     month_start = models.DateField(db_index=True)
     month_end = models.DateField(db_index=True)
+    # Quarterly buckets
     quarter = models.CharField(maxlength=10, db_index=True)
     quarter_start = models.DateField(db_index=True)
     quarter_end = models.DateField(db_index=True)
+    # Yearly buckets
     year = models.CharField(maxlength=10, db_index=True)
     year_start = models.DateField(db_index=True)
     year_end = models.DateField(db_index=True)
+    # Default buckets: days + weeks + months
+    default = models.CharField(maxlength=10, db_index=True, null=True)
+    default_start = models.DateField(db_index=True, null=True)
+    default_end = models.DateField(db_index=True, null=True)
 
     class Admin:
         pass
         list_display = ('day', 'dayofweek', 'week', 'month', 'quarter', 'year',
-          'week_start', 'month_start', 'quarter_start', 'year_start')
+          'default', 'week_start', 'month_start', 'quarter_start',
+          'year_start', 'default_start')
         fields = (
             (None, {'fields': (('day','day_start','day_end'),
                                'dayofweek',
@@ -88,6 +98,7 @@ class Dates(models.Model):
                                ('month','month_start','month_end'),
                                ('quarter','quarter_start','quarter_end'),
                                ('year','year_start','year_end'),
+                               ('default','default_start','default_end'),
                                )}),
             )
         list_per_page = LIST_PER_PAGE
@@ -180,7 +191,7 @@ class Bucket(models.Model):
     # Database fields
     calendar = models.ForeignKey(Calendar, edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
     startdate = models.DateTimeField('start date', core=True)
-    enddate = models.DateTimeField('end date', editable=False, null=True)
+    enddate = models.DateTimeField('end date', editable=False, null=True, default=datetime(2030,12,31))
     value = models.DecimalField(max_digits=15, decimal_places=4, default=0.00)
     name = models.CharField(maxlength=60, null=True, blank=True)
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
@@ -324,7 +335,7 @@ class Operation(models.Model):
     def __str__(self): return self.name
 
     def save(self):
-        if self.type == '' or self.type == 'OPERATION_FIXED_TIME':
+        if self.type is None or self.type == '' or self.type == 'OPERATION_FIXED_TIME':
           self.duration_per = None
         elif self.type != 'OPERATION_TIME_PER':
           self.duration = None
@@ -633,6 +644,7 @@ class Forecast(models.Model):
     priority = models.PositiveIntegerField(default=2, choices=Demand.demandpriorities, radio_admin=True)
     policy = models.CharField(maxlength=25, null=True, blank=True, choices=Demand.demandpolicies,
       help_text='Choose whether to plan the demand short or late, and with single or multiple deliveries allowed')
+    discrete = models.BooleanField(default=True, radio_admin=True, help_text='Round forecast numbers to integers')
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
 
     # Convenience methods
@@ -776,7 +788,7 @@ class Forecast(models.Model):
     class Admin:
         fields = (
             (None, {'fields': ('name', 'item', 'customer', 'calendar', 'description', 'category','subcategory', 'priority')}),
-            ('Planning parameters', {'fields': ('operation', 'policy', ), 'classes': 'collapse'}),
+            ('Planning parameters', {'fields': ('discrete', 'operation', 'policy', ), 'classes': 'collapse'}),
         )
         list_display = ('name', 'item', 'customer', 'calendar', 'description', 'category',
           'subcategory', 'operation', 'priority', 'lastmodified')

@@ -24,7 +24,7 @@
 from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template import RequestContext, loader
-from django.db import connection
+from django.db import connection, backend
 from django.core.cache import cache
 from django.http import Http404, HttpResponse
 from django.conf import settings
@@ -91,7 +91,7 @@ class BufferReport(Report):
         group by row1, row2, row3, row4, col1, col2, col3
         order by %s, d.startdate
       ''' % (sql_max('out_flowplan.quantity','0.0'),sql_min('out_flowplan.quantity','0.0'),
-        basesql[1],sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
+        basesql[1],sortsql,limitstring,backend.quote_name(bucket),bucket,bucket,startdate,enddate,sortsql)
     cursor.execute(query, basesql[2])
 
     # Build the python result
@@ -192,7 +192,7 @@ class DemandReport(Report):
         -- Ordering and grouping
         group by row1, col1, col2, col3
         order by %s, x.startdate
-       ''' % (basesql[1],sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
+       ''' % (basesql[1],sortsql,limitstring,backend.quote_name(bucket),bucket,bucket,startdate,enddate,sortsql)
     cursor.execute(query,basesql[2])
 
     # Build the python result
@@ -274,7 +274,7 @@ class ForecastReport(Report):
         order by %s, d.startdate
         ''' % (sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
          sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),basesql[1],sortsql,limitstring,
-         bucket,bucket,bucket,startdate,enddate,sortsql)
+         backend.quote_name(bucket),bucket,bucket,startdate,enddate,sortsql)
     cursor.execute(query, basesql[2])
 
     # Build the python result
@@ -371,7 +371,7 @@ class ResourceReport(Report):
        order by %s, x.startdate
        ''' % ( sql_overlap('loaddata.startdatetime','loaddata.enddatetime','x.startdate','x.enddate'),
          sql_overlap('bucket.startdate','bucket.enddate','d.startdate','d.enddate'),
-         basesql[1],sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
+         basesql[1],sortsql,limitstring,backend.quote_name(bucket),bucket,bucket,startdate,enddate,sortsql)
     cursor.execute(query, basesql[2])
 
     # Build the python result
@@ -468,7 +468,7 @@ class OperationReport(Report):
         -- Grouping and ordering
         group by row1, col1, col2, col3
         order by %s, x.col2
-      ''' % (sql_true(),sql_true(),basesql[1],sortsql,limitstring,bucket,bucket,bucket,startdate,enddate,sortsql)
+      ''' % (sql_true(),sql_true(),basesql[1],sortsql,limitstring,backend.quote_name(bucket),bucket,bucket,startdate,enddate,sortsql)
     cursor.execute(query, basesql[2])
 
     # Convert the SQl results to python

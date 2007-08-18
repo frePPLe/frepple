@@ -1,7 +1,26 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
-
 {% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript">
+  function calcUtil()
+  {
+    var clusters = parseInt(document.getElementById("0").value);
+    var fcst = parseInt(document.getElementById("1").value);
+    var demands = parseInt(document.getElementById("2").value);
+    var levels = parseInt(document.getElementById("3").value);
+    var rsrc_number = parseInt(document.getElementById("4").value);
+    var rsrc_size = parseInt(document.getElementById("5").value);
+    // Available capacity:  rsrc_number * rsrc_size * 365 days/year
+    // Required capacity: clusters * fcst * 12 months/day * 1 day/unit
+    // Levels has no influence since we load a resource only at 1 step
+    // Demands also has no influence, as we assume that the forecast quantity is bigger than the orders.
+    var util = (clusters * fcst * 12) / (rsrc_number * rsrc_size * 365)
+	  document.getElementById("util").innerHTML = (util * 100).toFixed(1);
+  }
+</script>
+
+{% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block bodyclass %}dashboard{% endblock %}
 {% block content %}
@@ -95,12 +114,13 @@ Available datasets: <select name="datafile" id="entity">
 <form method="post" action="/execute/rundb/">
 <td>Create a sample model in the database.<br/>
 The parameters control the size and complexity.<br/>
-Number of end items: <input name="clusters" type="text" maxlength="5" size="5" value="100"/><br/>
-Demands per end item: <input name="demands" type="text" maxlength="4" size="4" value="100"/><br/>
-Depth of bill-of-material: <input name="levels" type="text" maxlength="2" size="2" value="5"/><br/>
-Number of resources: <input name="rsrc_number" type="text" maxlength="3" size="3" value="50"/><br/>
-Size of each resource: <input name="rsrc_size" type="text" maxlength="3" size="3" value="10"/><br/>
-Average resource utilization: <input name="utilization" type="text" maxlength="3" size="3" value="80"/>%<br/>
+Number of end items: <input id="0" name="clusters" type="text" maxlength="5" size="5" value="100" onchange="calcUtil()"/><br/>
+Monthly forecast per end item: <input id="1" name="fcst" type="text" maxlength="4" size="4" value="50" onchange="calcUtil()"/><br/>
+Demands per end item: <input id="2" name="demands" type="text" maxlength="4" size="4" value="40" onchange="calcUtil()"/><br/>
+Depth of bill-of-material: <input id="3" name="levels" type="text" maxlength="2" size="2" value="5" onchange="calcUtil()"/><br/>
+Number of resources: <input id="4" name="rsrc_number" type="text" maxlength="3" size="3" value="50" onchange="calcUtil()"/><br/>
+Size of each resource: <input id="5" name="rsrc_size" type="text" maxlength="3" size="3" value="4" onchange="calcUtil()"/><br/>
+Expected average resource utilization: <span id="util">82.2</span>%<br/>
 </td>
 <td><input id="erase_db" type="submit" value="Run" />
 <input type="hidden" name="action" value="create" /></td>

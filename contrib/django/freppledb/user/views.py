@@ -27,8 +27,12 @@ from django.template import RequestContext
 from django import newforms as forms
 from freppledb.user.models import Preferences
 
+
 class PreferencesForm(forms.Form):
-  buckets = forms.ChoiceField(initial='Month', choices=Preferences.buckettype, help_text="Default bucket size for reports")
+  buckets = forms.ChoiceField(initial='Default',
+    choices=Preferences.buckettype,
+    help_text="Bucket size for reports",
+    )
   startdate = forms.DateField(required=False,
     help_text="Start date for filtering report data",
     widget=forms.TextInput(attrs={'class':"vDateField"}),
@@ -37,6 +41,7 @@ class PreferencesForm(forms.Form):
     help_text="End date for filtering report data",
     widget=forms.TextInput(attrs={'class':"vDateField"}),
     )
+
 
 @login_required
 def preferences(request):

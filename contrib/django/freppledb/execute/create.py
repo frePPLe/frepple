@@ -26,59 +26,55 @@
 # demands is placed on the cluster.
 
 
-from freppledb.input.models import *
-import time, os, os.path, sys, random
-from datetime import timedelta, datetime
-from django.db import connection
-from django.db import transaction
-from django.core.cache import cache
+import os, os.path, sys, random
+from datetime import timedelta, datetime, date
+
 from django.conf import settings
+from django.db import connection, transaction, backend
+from django.core.management.color import no_style
 
+from freppledb.input.models import *
 
-# This function generates a random date
 startdate = datetime(2007,1,1)
-def getDate():
-  global startdate
-  return startdate + timedelta(random.uniform(0,365))
 
 
 @transaction.commit_manually
 def erase_model():
   '''
   This routine erase all model data from the database.
+  All exceptions are propagated to a higher level.
   '''
   cursor = connection.cursor()
-  # Which delete command can we use?
+  # SQLite specials
   if settings.DATABASE_ENGINE == 'sqlite3':
-    cursor.execute('PRAGMA synchronous = OFF')
-    delete = "delete from %s"
-  elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
-    delete = "delete from %s cascade"
-  else:
-    delete = "truncate table %s"
-  # Delete all the tables, in the correct sequence.
-  # Note that we don't delete the content of the singleton table "plan".
-  for table in [
+    cursor.execute('PRAGMA synchronous = OFF')  # Performance improvement
+  # Delete all records from the tables
+  sql_list = backend.get_sql_flush(no_style(), [
     'out_problem','out_flowplan','out_loadplan','out_demandpegging',
     'out_operationplan','dates','demand','forecastdemand','forecast','flow',
     'resourceload','buffer','resource','operationplan','item','suboperation',
     'operation','location','bucket','calendar','customer'
-    ]:
-    cursor.execute(delete % table)
+    ], [] )
+  try:
+    for sql in sql_list: cursor.execute(sql)
+  finally:
     transaction.commit()
+  # SQLite specials
   if settings.DATABASE_ENGINE == 'sqlite3':
-    # Shrink the database file
-    cursor.execute('vacuum')
+    cursor.execute('vacuum')   # Shrink the database file
 
 
 @transaction.commit_manually
 def createDates():
+  '''
+  Populate the bucketization table 'dates' and a calendar that marks the
+  working days monday through friday.
+  '''
   global startdate
 
   # Performance improvement for sqlite during the bulky creation transactions
   if settings.DATABASE_ENGINE == 'sqlite3':
     connection.cursor().execute('PRAGMA synchronous=OFF')
-
   try:
     cal = Calendar(name="working days")
     cal.save()
@@ -89,37 +85,79 @@ def createDates():
       quarter = (month-1) / 3 + 1          # an integer in the range 1 - 4
       year = int(curdate.strftime("%Y"))
       dayofweek = int(curdate.strftime("%w")) # day of the week, 0 = sunday, 1 = monday, ...
-      d = Dates(
+
+      # Main entry
+      Dates(
         day = curdate,
         day_start = curdate,
         day_end = curdate + timedelta(1),
         dayofweek = dayofweek,
-        week = curdate.strftime("%Y W%W"),     # Weeks are starting on monday
+        week = curdate.strftime("%y W%W"),     # Weeks are starting on monday
         week_start = curdate - timedelta((dayofweek+6)%7),
         week_end = curdate - timedelta((dayofweek+6)%7-7),
-        month =  curdate.strftime("%b %Y"),
+        month =  curdate.strftime("%b %y"),
         month_start = date(year, month, 1),
         month_end = date(year+month/12, month+1-12*(month/12), 1),
-        quarter = str(year) + " Q" + str(quarter),
+        quarter = "%02d Q%s" % (year-2000,quarter),
         quarter_start = date(year, quarter*3-2, 1),
         quarter_end = date(year+quarter/4, quarter*3+1-12*(quarter/4), 1),
         year = curdate.strftime("%Y"),
         year_start = date(year,1,1),
         year_end = date(year+1,1,1),
-        )
-      d.save()
+        ).save()
+
+      # Create a calendar bucket
       if dayofweek == 1:
-        # A calendar bucket for the working week: monday through friday
+        # A bucket for the working week: monday through friday
         Bucket(startdate = curdate, value=1, calendar=cal).save()
       elif dayofweek == 6:
-        # A calendar bucket for the weekend
+        # A bucket for the weekend
         Bucket(startdate = curdate, value=0, calendar=cal).save()
   finally:
     transaction.commit()
 
 
 @transaction.commit_manually
-def create_model (cluster, demand, level, resource, utilization):
+def updateTelescope(min_day_horizon, min_week_horizon):
+  '''
+  Update for the telescopic horizon.
+  The first argument specifies the minimum number of daily buckets. Additional
+  daily buckets will be appended till we come to a monday. At that date weekly
+  buckets are starting.
+  The second argument specifies the minimum horizon with weeks before the
+  monthly buckets. The last weekly bucket can be a partial one: starting on
+  monday and ending on the first day of the next calendar month.
+  '''
+  # Performance improvement for sqlite during the bulky creation transactions
+  if settings.DATABASE_ENGINE == 'sqlite3':
+    connection.cursor().execute('PRAGMA synchronous=OFF')
+  mode = 'day'
+  limit = (Plan.objects.all()[0].currentdate + timedelta(min_day_horizon)).date()
+  try:
+    for i in Dates.objects.all():
+      if mode == 'day':
+        i.default = str(i.day)[2:]  # Leave away the leading century, ie "20"
+        i.default_start = i.day_start
+        i.default_end = i.day_end
+        if i.day >= limit and i.dayofweek == 0:
+          mode = 'week'
+          limit = (Plan.objects.all()[0].currentdate + timedelta(min_week_horizon)).date()
+          limit =  date(limit.year+limit.month/12, limit.month+1-12*(limit.month/12), 1)
+      elif i.day < limit:
+        i.default = i.week
+        i.default_start = i.week_start
+        i.default_end = (i.week_end > limit and limit) or i.week_end
+      else:
+        i.default = i.month
+        i.default_start = i.month_start
+        i.default_end = i.month_end
+      i.save()
+  finally:
+    transaction.commit()
+
+
+@transaction.commit_manually
+def create_model (cluster, demand, forecast_per_item, level, resource, resource_size):
   '''
   This routine populates the database with a sample dataset.
   '''
@@ -136,6 +174,7 @@ def create_model (cluster, demand, level, resource, utilization):
     # Dates
     print "Creating dates..."
     createDates()
+    updateTelescope(10, 40)
 
     # Plan start date
     print "Creating plan..."
@@ -160,19 +199,6 @@ def create_model (cluster, demand, level, resource, utilization):
       c.save()
     transaction.commit()
 
-    # Calculate the average duration for loading a resource, based on the
-    # following equations:
-    #   Total available capacity = Number of resources
-    #                              * 365 (ie total time)
-    #                              * resource capacity
-    #   Total capacity need = Number of items
-    #                         * number of demands per item
-    #                         * 1 (ie resource load per unit of demand)
-    #                         * 5.5 (ie average units per demand)
-    #   Utilization = Total capacity need / Total available capacity
-    capacity = float(cluster * demand * 550) / (resource * 365 * utilization)
-    capacity = int(capacity)+1
-
     # Create resources and their calendars
     print "Creating resources and calendars..."
     res = []
@@ -180,7 +206,7 @@ def create_model (cluster, demand, level, resource, utilization):
       loc = Location(name='Loc %05d' % int(random.uniform(1,cluster)))
       loc.save()
       cal = Calendar(name='capacity for res %03d' %i, category='capacity')
-      bkt = Bucket(startdate=startdate, value=capacity, calendar=cal)
+      bkt = Bucket(startdate=startdate, value=resource_size, calendar=cal)
       cal.save()
       bkt.save()
       r = Resource(name = 'Res %03d' % i, maximum=cal, location=loc)
@@ -189,7 +215,7 @@ def create_model (cluster, demand, level, resource, utilization):
     transaction.commit()
 
     # Loop over all clusters
-    durations = [ 0, 0, 0, 86400, 86400*2, 86400*3, 86400*5, 86400*6 ]
+    durations = [ 86400, 86400*2, 86400*3, 86400*5, 86400*6 ]
     workingdays = Calendar.objects.get(name="working days")
     for i in range(cluster):
       print "Creating cluster %d..." % i
@@ -214,7 +240,7 @@ def create_model (cluster, demand, level, resource, utilization):
       fcst.save()
       # This method will take care of distributing a forecast quantity over the entire
       # horizon, respecting the bucket weights.
-      fcst.setTotal(startdate, startdate + timedelta(365), 780)
+      fcst.setTotal(startdate, startdate + timedelta(365), forecast_per_item)
 
       # Level 0 buffer
       buf = Buffer(name='Buf %05d L00' % i,
@@ -226,17 +252,17 @@ def create_model (cluster, demand, level, resource, utilization):
       fl.save()
 
       # Demand
-      total_demand = 0
       for j in range(demand):
         dm = Demand(name='Dmd %05d %05d' % (i,j),
           item=it,
-          quantity=int(random.uniform(1,11)),
-          due=getDate(),
-          priority=random.choice([1,2]), # Orders have higher priority than forecast
+          quantity=int(random.uniform(1,6)),
+          # Exponential distribution of due dates, with an average of 30 days.
+          due= startdate + timedelta(random.expovariate(float(1)/30)),
+          # Orders have higher priority than forecast
+          priority=random.choice([1,2]),
           customer=random.choice(cust),
           category=random.choice(categories)
           )
-        total_demand += dm.quantity
         dm.save()
 
       # Upstream operations and buffers
@@ -249,8 +275,7 @@ def create_model (cluster, demand, level, resource, utilization):
             sizemultiple=1,
             )
           oper.save()
-          ld = Load(resource=random.choice(res), operation=oper)
-          ld.save()
+          Load(resource=random.choice(res), operation=oper).save()
         else:
           oper = Operation(name='Oper %05d L%02d' % (i,k),
             duration=random.choice(durations),
@@ -258,9 +283,8 @@ def create_model (cluster, demand, level, resource, utilization):
             )
           oper.save()
         buf.producing = oper
-        fl = Flow(operation=oper, thebuffer=buf, quantity=1, type="FLOW_END")
         buf.save()
-        fl.save()
+        Flow(operation=oper, thebuffer=buf, quantity=1, type="FLOW_END").save()
         buf = Buffer(name='Buf %05d L%02d' % (i,k+1),
           item=it,
           location=loc,
@@ -268,22 +292,26 @@ def create_model (cluster, demand, level, resource, utilization):
           )
         # Some inventory in random buffers
         if random.uniform(0,1) > 0.8: buf.onhand=int(random.uniform(5,20))
-        fl = Flow(operation=oper, thebuffer=buf, quantity=-1)
         buf.save()
-        fl.save()
+        Flow(operation=oper, thebuffer=buf, quantity=-1).save()
 
       # Create supply operation
       oper = Operation(name='Sup %05d' % i, sizemultiple=1)
-      fl = Flow(operation=oper, thebuffer=buf, quantity=1)
       oper.save()
-      fl.save()
+      Flow(operation=oper, thebuffer=buf, quantity=1).save()
 
       # Create actual supply
-      while total_demand > 0:
+      total_supply = forecast_per_item * 12
+      while total_supply > 0:
           cnt += 1
-          arrivaldate = getDate()
-          opplan = OperationPlan(identifier=cnt, operation=oper, quantity=int(random.uniform(1,100)), startdate=arrivaldate, enddate=arrivaldate)
-          total_demand -= opplan.quantity
+          arrivaldate = startdate + timedelta(int(random.uniform(0,365)*12)/12)
+          opplan = OperationPlan(identifier=cnt,
+            operation=oper,
+            quantity=int(random.uniform(10,20)),
+            startdate=arrivaldate,
+            enddate=arrivaldate,
+            )
+          total_supply -= opplan.quantity
           opplan.save()
 
       # Commit the current cluster

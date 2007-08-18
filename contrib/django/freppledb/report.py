@@ -25,7 +25,7 @@ from django.core.paginator import ObjectPaginator, InvalidPage
 from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template import RequestContext, loader
-from django.db import connection
+from django.db import connection, backend
 from django.http import Http404, HttpResponse
 from django.conf import settings
 from django.template import Library, Node, resolve_variable
@@ -54,7 +54,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
     bucket = request.GET.get('bucket')
     if not bucket:
       try: bucket = request.user.get_profile().buckets
-      except: bucket = 'month'
+      except: bucket = 'default'
   if not start:
     start = request.GET.get('start')
     if start:
@@ -85,7 +85,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
       if not end: end = date(2030,1,1)
 
   # Check if the argument is valid
-  if bucket not in ('day','week','month','quarter','year'):
+  if bucket not in ('default','day','week','month','quarter','year'):
     raise Http404, "bucket name %s not valid" % bucket
 
   # Pick up the buckets
@@ -97,7 +97,8 @@ def getBuckets(request, bucket=None, start=None, end=None):
       select %s, min(day_start), max(day_start)
       from dates
       group by %s
-      order by min(day_start)''' % (field,field))
+      order by min(day_start)''' \
+      % (backend.quote_name(field),backend.quote_name(field)))
     # Compute the data to store in memory
     if settings.DATABASE_ENGINE == 'sqlite3':
       # Sigh... Poor data type handling in sqlite
@@ -221,7 +222,7 @@ def view_report(request, entity=None, **args):
   if type == 'csv':
     # CSV output
     c = RequestContext(request, {
-       'objectlist': reportclass.resultquery(entity, bucket, start, end, sortsql=sortsql),
+       'objectlist': reportclass.resultquery(counter, bucket, start, end, sortsql=sortsql),
        'bucket': bucket,
        'startdate': start,
        'enddate': end,

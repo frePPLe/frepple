@@ -72,6 +72,7 @@ class Problem(models.Model):
 
     class Admin:
         list_display = ('entity', 'name', 'description', 'startdate', 'enddate')
+        list_display_links = ('description',)
         search_fields = ['description']
         date_hierarchy = 'startdate'
         list_filter = ['entity','name','startdate']

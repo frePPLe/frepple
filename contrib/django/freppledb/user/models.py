@@ -27,8 +27,12 @@ from django.dispatch import dispatcher
 from django.db.models import signals
 from datetime import date
 
+from freppledb.input.models import Plan
+
+
 class Preferences(models.Model):
     buckettype = (
+      ('default','Default'),
       ('day','Day'),
       ('week','Week'),
       ('month','Month'),
@@ -37,16 +41,18 @@ class Preferences(models.Model):
     )
     user = models.ForeignKey(User, unique=True, edit_inline=models.TABULAR,
       num_in_admin=1,min_num_in_admin=1, max_num_in_admin=1, num_extra_on_change=0)
-    buckets = models.CharField(maxlength=10, choices=buckettype, default='month')
+    buckets = models.CharField(maxlength=10, choices=buckettype, default='default')
     startdate = models.DateField(blank=True, null=True)
     enddate = models.DateField(blank=True, null=True)
     dummy = models.SmallIntegerField(editable=False, core=True, default=1)
+
 
 def CreatePreferenceModel(instance):
     '''Create a preference model for a new user.'''
     pref, created = Preferences.objects.get_or_create(user=instance)
     if created:
-      pref.startdate = date.today()
+      try: pref.startdate = Plan.objects.all()[0].currentdate.date()
+      except: pass  # No real problem when this fails
       pref.save()
 
 # This signal will make sure a preference model is created when a user is added.

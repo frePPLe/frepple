@@ -297,9 +297,9 @@ def loadfrepple():
   print 'Importing forecast...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, customer_id, item_id, priority, operation_id, policy, calendar_id FROM forecast")
+  cursor.execute("SELECT name, customer_id, item_id, priority, operation_id, policy, calendar_id, discrete FROM forecast")
   x = [ header, '<DEMANDS>' ]
-  for i, j, k, l, m, n, o in cursor.fetchall():
+  for i, j, k, l, m, n, o, p in cursor.fetchall():
     cnt += 1
     x.append('<DEMAND NAME=%s xsi:type="DEMAND_FORECAST" PRIORITY="%d">' % (quoteattr(i), l))
     if j: x.append( '<CUSTOMER NAME=%s />' % quoteattr(j))
@@ -307,6 +307,7 @@ def loadfrepple():
     if m: x.append( '<OPERATION NAME=%s />' % quoteattr(m))
     if n: x.append( '<POLICY>%s</POLICY>' % n)
     if o: x.append( '<CALENDAR NAME=%s />' % quoteattr(o))
+    if not p: x.append( '<DISCRETE>false<DISCRETE>')
     x.append('</DEMAND>')
   x.append('</DEMANDS></PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)

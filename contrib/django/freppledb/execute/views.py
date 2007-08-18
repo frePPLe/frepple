@@ -28,10 +28,11 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.cache import never_cache
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.conf import settings
-from django.core.management import load_data
+from django.core import management
 from django.db.models.fields.related import ForeignKey, AutoField
 from django.db import models, transaction
 from django.views.generic.simple import direct_to_template
+
 import os, os.path
 
 from freppledb.execute.create import erase_model, create_model
@@ -79,13 +80,16 @@ def rundb(request):
       try:
         clusters = int(request.POST['clusters'])
         demands = int(request.POST['demands'])
+        fcstqty = int(request.POST['fcst'])
         levels = int(request.POST['levels'])
-        resources = int(request.POST['resources'])
-        utilization = int(request.POST['utilization'])
-        if clusters>=100000 or demands>=10000 or levels>=100 or resources>=1000:
-          raise ValueError("Invalid parameters")
-        if clusters<=0 or demands<=0 or levels<=0 or utilization<1:
-          raise ValueError("Invalid parameters")
+        resources = int(request.POST['rsrc_number'])
+        resource_size = int(request.POST['rsrc_size'])
+        if clusters>=100000 or clusters<=0 \
+          or fcstqty<0 or demands>=10000 or demands<0 \
+          or levels<0 or levels>=50 \
+          or resources>=1000 or resources<0 \
+          or resource_size>100 or resource_size<0:
+            raise ValueError("Invalid parameters")
       except KeyError:
         raise Http404
       except ValueError, e:
@@ -95,10 +99,10 @@ def rundb(request):
         try:
           log(
             category = 'CREATE',
-            message = 'Start creating sample model with parameters: %d %d %d %d %d' \
-              % (clusters, demands, levels, resources, utilization)
+            message = 'Start creating sample model with parameters: %d %d %d %d %d %d' \
+              % (clusters, demands, fcstqty, levels, resources, resource_size)
             ).save()
-          create_model(clusters, demands, levels, resources, utilization)
+          create_model(clusters, demands, fcstqty, levels, resources, resource_size)
           request.user.message_set.create(message='Created sample model in the database')
           log(category='CREATE', message='Finished creating sample model').save()
         except Exception, e:
@@ -309,7 +313,7 @@ def fixture(request):
     # or any error status returned when it fails...
     try:
         log(category='LOAD', message='Start loading fixture "%s"' % fixture).save()
-        load_data([fixture], verbosity=1)
+        management.call_command('loaddata', fixture, verbosity=1)
         request.user.message_set.create(message='Loaded fixture')
         log(category='LOAD', message='Finished loading fixture "%s"' % fixture).save()
         return HttpResponseRedirect('/execute/execute.html')

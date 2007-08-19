@@ -45,7 +45,7 @@ class OperationPlan(models.Model):
 
     class Admin:
         search_fields = ['operation']
-        list_display = ('identifier', 'operation', 'startdate', 'enddate', 'quantity', 'locked', 'owner')
+        list_display = ('identifier', 'operation', 'startdatetime', 'enddatetime', 'quantity', 'locked', 'owner')
         list_per_page = LIST_PER_PAGE
         date_hierarchy = 'startdate'
 
@@ -99,7 +99,7 @@ class LoadPlan(models.Model):
         return self.resource.name + ' ' + str(self.loaddatetime)
 
     class Admin:
-        list_display = ('resource', 'operation', 'quantity', 'loaddate', 'onhand', 'maximum', 'operationplan')
+        list_display = ('resource', 'operation', 'quantity', 'loaddatetime', 'onhand', 'maximum', 'operationplan')
         list_per_page = LIST_PER_PAGE
 
     class Meta:
@@ -125,7 +125,7 @@ class FlowPlan(models.Model):
         return self.thebuffer.name + str(self.flowdatetime)
 
     class Admin:
-        list_display = ('thebuffer', 'operation', 'quantity', 'flowdate', 'onhand', 'operationplan')
+        list_display = ('thebuffer', 'operation', 'quantity', 'flowdatetime', 'onhand', 'operationplan')
         list_per_page = LIST_PER_PAGE
 
     class Meta:

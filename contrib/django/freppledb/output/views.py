@@ -313,7 +313,7 @@ class ResourceReport(Report):
   crosses = (
     ('available',{}),
     ('load',{}),
-    ('utilization',{}),
+    ('utilization %',{}),
     )
   columns = (
     ('bucket',{}),
@@ -384,7 +384,7 @@ class ResourceReport(Report):
         if prevres: resultset.append(rowset)
         rowset = []
         prevres = row[0]
-      if row[5] != 0: util = row[6] / row[5]
+      if row[5] != 0: util = row[6] / row[5] * 100
       else: util = 0
       count += 1
       rowset.append( {

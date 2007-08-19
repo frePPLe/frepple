@@ -240,7 +240,7 @@ def create_model (cluster, demand, forecast_per_item, level, resource, resource_
       fcst.save()
       # This method will take care of distributing a forecast quantity over the entire
       # horizon, respecting the bucket weights.
-      fcst.setTotal(startdate, startdate + timedelta(365), forecast_per_item)
+      fcst.setTotal(startdate, startdate + timedelta(365), forecast_per_item * 12)
 
       # Level 0 buffer
       buf = Buffer(name='Buf %05d L00' % i,

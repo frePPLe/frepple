@@ -55,7 +55,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   // Nothing to be planned any more (e.g. all deliveries are locked...)
   if (plan_qty < ROUNDING_ERROR)
   {
-    if (verbose) logger << "Nothing to be planned." << endl;
+    if (verbose) logger << "  Nothing to be planned." << endl;
     return;
   }
 

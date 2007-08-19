@@ -67,12 +67,13 @@ extern "C" PyObject* PythonProblem::next(PythonProblem* obj)
 {
   if (obj->iter != Problem::end())
   {
-    PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:N,s:N}",
+    PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:N,s:N,s:f}",
       "DESCRIPTION", obj->iter->getDescription().c_str(),
       "ENTITY", obj->iter->getOwner()->getEntity()->getType().category->group.c_str(),
       "TYPE", obj->iter->getType().type.c_str(),
       "START", PythonDateTime(obj->iter->getDateRange().getStart()),
-      "END", PythonDateTime(obj->iter->getDateRange().getEnd())
+      "END", PythonDateTime(obj->iter->getDateRange().getEnd()),
+      "WEIGHT", obj->iter->getWeight()
       ); 
 
     ++(obj->iter);

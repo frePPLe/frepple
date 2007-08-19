@@ -32,7 +32,6 @@ namespace frepple
 {
 
 
-/** @todo use of the variable AllLoadsOkay is not nice and clean */
 DECLARE_EXPORT bool MRPSolver::checkOperation
 (OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
 {
@@ -71,26 +70,26 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
     {
       // Loop through all loadplans, and solve for the resource.
       // This may move an operationplan early.
+      DateRange orig;
       do
-      {
-        data.AllLoadsOkay = true;
+      {        
+        orig = opplan->getDates();
         for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
-            h!=opplan->endLoadPlans() && data.AllLoadsOkay; ++h)
-        {
+          h!=opplan->endLoadPlans() && opplan->getDates()==orig; ++h)
+        { 
           data.q_operationplan = opplan;
           data.q_loadplan = &*h;
           data.q_qty = h->getQuantity();
           data.q_date = h->getDate();
-          // Call the resource resolver. Note that it will update the variable
-          // data.AllLoadsOkay if it moves the operationplan.
+          // Call the resource resolver. 
           h->getLoad()->solve(*this,&data);
-        }
+        }        
       }
       // Imagine there are multiple loads. As soon as one of them is moved, we
       // need to redo the capacity check for the ones we already checked
       // Repeat until no load has touched the opplan, or till proven infeasible
       // No need to reloop if there is only a single load (= 2 loadplans)
-      while (hasMultipleLoads && !data.AllLoadsOkay && data.a_qty!=0.0f);
+      while (hasMultipleLoads && opplan->getDates()!=orig && data.a_qty!=0.0f);
 
       // Return false if no capacity is available
       if (data.a_qty==0.0f) return false;

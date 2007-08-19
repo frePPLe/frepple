@@ -353,10 +353,6 @@ class MRPSolver : public Solver
         /** Points to the current buffer. */
         const Buffer* curBuffer;
 
-        /** This variable is used by the resource solver. It will be true when
-          * there is not a single constraint on the loads. */
-        bool AllLoadsOkay;
-
         /** This is the quantity we are asking for. */
         float q_qty;
 

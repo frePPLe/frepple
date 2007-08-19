@@ -67,11 +67,12 @@ class Problem(models.Model):
     enddatetime = models.DateTimeField('end date')
     startdate = models.DateField(db_index=True)
     enddate = models.DateField(db_index=True)
+    weight = models.DecimalField(max_digits=15, decimal_places=4)
 
     def __str__(self): return str(self.name)
 
     class Admin:
-        list_display = ('entity', 'name', 'description', 'startdate', 'enddate')
+        list_display = ('entity', 'name', 'description', 'startdate', 'enddate', 'weight')
         list_display_links = ('description',)
         search_fields = ['description']
         date_hierarchy = 'startdate'

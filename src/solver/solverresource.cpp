@@ -198,13 +198,11 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
 
           // Create a zero quantity reply
           data->a_qty = 0.0f;
-          data->AllLoadsOkay = false;
           break;
         }
 
         // Make sure the capacity check is redone, stay in do-while loop
         HasOverload = true;
-        data->AllLoadsOkay = false;
         break;
       }   // end of if-statement
     }     // end of for-loop

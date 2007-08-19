@@ -113,9 +113,11 @@ void ForecastSolver::solve(const Demand* l, void* v)
   {
     // Message
     if (getVerbose())
-      logger << "     No matching forecast available" << endl;
+      logger << "    No matching forecast available" << endl;
     return;
-  }
+  } 
+  else if (getVerbose())
+    logger << "    Matching forecast: " << fcst << endl;
 
   // Netting the order from the forecast
   netDemandFromForecast(l,fcst);

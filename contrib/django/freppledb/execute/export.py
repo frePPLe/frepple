@@ -42,7 +42,7 @@ def dumpfrepple_files():
   starttime = time()
   writer = csv.writer(open("problems.csv", "wb"))
   for i in frepple.problem():
-    writer.writerow((i['ENTITY'], i['TYPE'], i['DESCRIPTION'], str(i['START']), str(i['END']), str(i['START']), str(i['END'])))
+    writer.writerow((i['ENTITY'], i['TYPE'], i['DESCRIPTION'], str(i['START']), str(i['END']), str(i['START']), str(i['END']), i['WEIGHT']))
   print 'Exported problems in %.2f seconds' % (time() - starttime)
 
   print "Exporting operationplans..."
@@ -114,11 +114,11 @@ def dumpfrepple():
   starttime = time()
   cursor.executemany(
     "insert into out_problem \
-    (entity,name,description,startdatetime,enddatetime,startdate,enddate) \
-    values(%s,%s,%s,%s,%s,%s,%s)",
+    (entity,name,description,startdatetime,enddatetime,startdate,enddate,weight) \
+    values(%s,%s,%s,%s,%s,%s,%s,%s)",
     [(
        i['ENTITY'], i['TYPE'], i['DESCRIPTION'], i['START'], i['END'],
-       i['START'].date(), i['END'].date()
+       i['START'].date(), i['END'].date(), i['WEIGHT']
      ) for i in frepple.problem()
     ])
   transaction.commit()

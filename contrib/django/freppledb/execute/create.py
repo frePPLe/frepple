@@ -30,7 +30,7 @@ import os, os.path, sys, random
 from datetime import timedelta, datetime, date
 
 from django.conf import settings
-from django.db import connection, transaction, backend
+from django.db import connection, transaction
 from django.core.management.color import no_style
 
 from freppledb.input.models import *
@@ -49,7 +49,7 @@ def erase_model():
   if settings.DATABASE_ENGINE == 'sqlite3':
     cursor.execute('PRAGMA synchronous = OFF')  # Performance improvement
   # Delete all records from the tables
-  sql_list = backend.get_sql_flush(no_style(), [
+  sql_list = connection.ops.sql_flush(no_style(), [
     'out_problem','out_flowplan','out_loadplan','out_demandpegging',
     'out_operationplan','dates','demand','forecastdemand','forecast','flow',
     'resourceload','buffer','resource','operationplan','item','suboperation',

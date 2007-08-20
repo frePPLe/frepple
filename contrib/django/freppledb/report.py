@@ -21,16 +21,16 @@
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net
 
+from datetime import date, datetime
+
 from django.core.paginator import ObjectPaginator, InvalidPage
 from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template import RequestContext, loader
-from django.db import connection, backend
+from django.db import connection
 from django.http import Http404, HttpResponse
 from django.conf import settings
 from django.template import Library, Node, resolve_variable
-
-from datetime import date, datetime
 
 from freppledb.input.models import Plan
 
@@ -98,7 +98,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
       from dates
       group by %s
       order by min(day_start)''' \
-      % (backend.quote_name(field),backend.quote_name(field)))
+      % (connection.ops.quote_name(field),connection.ops.quote_name(field)))
     # Compute the data to store in memory
     if settings.DATABASE_ENGINE == 'sqlite3':
       # Sigh... Poor data type handling in sqlite

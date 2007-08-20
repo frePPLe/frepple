@@ -137,8 +137,10 @@ void ForecastSolver::solve(void *v)
   // Note: the memory consumption of the sorted list can be significant
   sortedDemandList l;  
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
-    // Only sort non-forecasts and non-hidden demand.
-    if (!dynamic_cast<Forecast*>(&*i) && !i->getHidden()) l.insert(&*i);
+    // Only sort non-forecast demand.
+    if (!dynamic_cast<Forecast*>(&*i) 
+      && !dynamic_cast<Forecast::ForecastBucket*>(&*i))
+        l.insert(&*i);
 
   // Netting loop
   for(sortedDemandList::iterator i = l.begin(); i != l.end(); ++i)

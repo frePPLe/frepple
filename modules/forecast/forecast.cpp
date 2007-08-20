@@ -135,7 +135,9 @@ void Forecast::initialize()
     for (CalendarFloat::BucketIterator i = c->beginBuckets();
       i != c->endBuckets(); ++i)
     {
-      prev = new ForecastBucket(this, i->getStart(), i->getEnd(), c->getValue(i), prev);
+      if (c->getValue(i) > 0.0f)
+        prev = new ForecastBucket
+          (this, i->getStart(), i->getEnd(), c->getValue(i), prev);
       Demand::add(prev);
     }
   else
@@ -146,7 +148,9 @@ void Forecast::initialize()
       for (CalendarInt::BucketIterator i = c->beginBuckets();
         i != c->endBuckets(); ++i)
       {
-        prev = new ForecastBucket(this, i->getStart(), i->getEnd(), static_cast<float>(c->getValue(i)), prev);
+        if (c->getValue(i) > 0)
+          prev = new ForecastBucket
+            (this, i->getStart(), i->getEnd(), static_cast<float>(c->getValue(i)), prev);
         Demand::add(prev);
       }
     else
@@ -157,7 +161,9 @@ void Forecast::initialize()
         for (CalendarBool::BucketIterator i = c->beginBuckets();
           i != c->endBuckets(); ++i)
         {
-          prev = new ForecastBucket(this, i->getStart(), i->getEnd(), c->getValue(i) ? 1.0f : 0.0f, prev);
+          if (c->getValue(i))
+            prev = new ForecastBucket
+              (this, i->getStart(), i->getEnd(), 1.0f, prev);
           Demand::add(prev);
         }
       else

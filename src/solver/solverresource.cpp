@@ -64,6 +64,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   data->a_qty = data->q_qty;
   data->a_date = data->q_date;
   Date currentOpplanEnd = data->q_operationplan->getDates().getEnd();
+  float currentQuantity = data->q_operationplan->getQuantity();
 
   // Loop until we found a valid location for the operationplan
   bool HasOverload;
@@ -89,46 +90,53 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
       curdate = cur->getDate();
 
       // Check overloads: New date reached, and we are exceeding the limit!
-      if (cur->getOnhand() > curMax)
+      if (cur->getOnhand() > curMax || data->forceLate)
       {
-        // Search backward in time to a period where there is no overload
-        for (; cur!=res->getLoadPlans().end(); --cur)
+        if (!data->forceLate)
         {
-
-          if (cur->getType() == 4)
-            curMax = cur->getMax();
-          if (cur->getDate() != curdate)
+          // Search backward in time to a period where there is no overload
+          for (; cur!=res->getLoadPlans().end(); --cur)
           {
-            if (cur->getOnhand()<=curMax)
-              // New date reached and we are below the max limit now
-              break;
-            curdate = cur->getDate();
+
+            if (cur->getType() == 4)
+              curMax = cur->getMax();
+            if (cur->getDate() != curdate)
+            {
+              if (cur->getOnhand()<=curMax)
+                // New date reached and we are below the max limit now
+                break;
+              curdate = cur->getDate();
+            }
           }
-        }
 
-        // Move the operation plan if there is capacity found
-        if (cur!=res->getLoadPlans().end())
-        {
-          // Move the operationplan
-          data->q_operationplan->setEnd(curdate);
+          // Move the operation plan if there is capacity found
+          if (cur!=res->getLoadPlans().end())
+          {
+            // Move the operationplan
+            data->q_operationplan->setEnd(curdate);
 
-          // Check the leadtime constraints after the move
-          if (isLeadtimeConstrained() || isFenceConstrained())
-            // Note that the check function will update the answered date
-            // and quantity
-            checkOperationLeadtime(data->q_operationplan,*data,false);
+            // Check the leadtime constraints after the move
+            if (isLeadtimeConstrained() || isFenceConstrained())
+              // Note that the check function will update the answered date
+              // and quantity
+              checkOperationLeadtime(data->q_operationplan,*data,false);
+          }
         }
 
         // If we are at the end, then there is no capacity available.
         // If the answered quantity is 0, the operationplan is moved into the
         // past.
         // In both these cases we need to search for capacity at later dates.
-        if (cur==res->getLoadPlans().end() || data->a_qty==0.0f)
+        if (data->forceLate || cur==res->getLoadPlans().end() || data->a_qty==0.0f)
         {
           // COMPUTE EARLIEST AVAILABLE CAPACITY
 
           // Put the operationplan back at its original end date
-          data->q_operationplan->setEnd(currentOpplanEnd);
+          if (!data->forceLate) 
+          {
+            data->q_operationplan->setQuantity(currentQuantity);
+            data->q_operationplan->setEnd(currentOpplanEnd);
+          }
 
           // Find the starting loadplan. Moving an operation earlier is driven
           // by the ending loadplan, while searching for later capacity is
@@ -219,7 +227,9 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   {
     for (int i=res->getLevel(); i>0; --i) logger << " ";
     logger << "   Resource '" << res->getName() << "' answers: "
-    << (-data->a_qty) << "  " << data->a_date << endl;
+      << (-data->a_qty) << "  " << data->a_date 
+      << ((currentOpplanEnd>data->q_operationplan->getDates().getEnd()) 
+          ? " using earlier capacity" : "") << endl;
   }
 
 }

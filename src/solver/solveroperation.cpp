@@ -32,6 +32,36 @@ namespace frepple
 {
 
 
+DECLARE_EXPORT void MRPSolver::checkOperationCapacity
+  (OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
+{
+  bool hasMultipleLoads(opplan->sizeLoadPlans() > 2);
+  DateRange orig;
+
+  // Loop through all loadplans, and solve for the resource.
+  // This may move an operationplan early or late.
+  do
+  {        
+    orig = opplan->getDates();
+    for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
+      h!=opplan->endLoadPlans() && opplan->getDates()==orig; ++h)
+    { 
+      data.q_operationplan = opplan;
+      data.q_loadplan = &*h;
+      data.q_qty = h->getQuantity();
+      data.q_date = h->getDate();
+      // Call the resource resolver. 
+      h->getLoad()->solve(*this,&data);
+    }        
+  }
+  // Imagine there are multiple loads. As soon as one of them is moved, we
+  // need to redo the capacity check for the ones we already checked
+  // Repeat until no load has touched the opplan, or till proven infeasible
+  // No need to reloop if there is only a single load (= 2 loadplans)
+  while (hasMultipleLoads && opplan->getDates()!=orig && data.a_qty!=0.0f);
+}
+
+
 DECLARE_EXPORT bool MRPSolver::checkOperation
 (OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
 {
@@ -62,35 +92,15 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
   float q_qty_Flow;
   Date q_date_Flow;
   TimePeriod delay;
-  bool incomplete;
-  bool hasMultipleLoads(opplan->sizeLoadPlans() > 2);
+  bool incomplete;  
+  bool tmp_forceLate = data.forceLate;
+  data.forceLate = false;
   do
   {
     if (isCapacityConstrained())
     {
-      // Loop through all loadplans, and solve for the resource.
-      // This may move an operationplan early.
-      DateRange orig;
-      do
-      {        
-        orig = opplan->getDates();
-        for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
-          h!=opplan->endLoadPlans() && opplan->getDates()==orig; ++h)
-        { 
-          data.q_operationplan = opplan;
-          data.q_loadplan = &*h;
-          data.q_qty = h->getQuantity();
-          data.q_date = h->getDate();
-          // Call the resource resolver. 
-          h->getLoad()->solve(*this,&data);
-        }        
-      }
-      // Imagine there are multiple loads. As soon as one of them is moved, we
-      // need to redo the capacity check for the ones we already checked
-      // Repeat until no load has touched the opplan, or till proven infeasible
-      // No need to reloop if there is only a single load (= 2 loadplans)
-      while (hasMultipleLoads && opplan->getDates()!=orig && data.a_qty!=0.0f);
-
+      // Verify the capacity. This can move the operationplan early or late.
+      checkOperationCapacity(opplan,data);
       // Return false if no capacity is available
       if (data.a_qty==0.0f) return false;
     }
@@ -131,12 +141,16 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
         // Validate the answered date
         if ((data.a_qty < q_qty_Flow)
             && (!delay || delay > data.a_date - q_date_Flow))
-          // Late supply of material. We expect the end of the operation to be
-          // delayed with the same amount of time as the delay.      @todo for a time_per operation this is incorrect!!!
+          // Late supply of material. We expect the end of the operation 
+          // to be delayed with the same amount of time as the delay.
+          // Note that the delay variable only reflects the delay due to 
+          // material constraints. If the operationplan is moved early or late
+          // for capacity constraints, this is not included.
           delay = data.a_date - q_date_Flow;
       }
 
-    if (delay && a_qty <= ROUNDING_ERROR && a_date + delay <= data.q_date_max && a_date + delay > orig_q_date)
+    if (delay>0L && a_qty <= ROUNDING_ERROR 
+      && a_date + delay <= data.q_date_max && a_date + delay > orig_q_date)
     {
       // The reply is 0, but the next-date is still less than the maximum
       // ask date. In this case we will violate the post-operation -soft-
@@ -156,7 +170,8 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
         logger << "   Retrying new date." << endl;
       }
     }
-    else if (delay>0L && a_qty <= ROUNDING_ERROR && delay < orig_dates.getDuration())
+    else if (delay>0L && a_qty <= ROUNDING_ERROR 
+      && delay < orig_dates.getDuration())
     {
       // The reply is 0, but the next-date is not too far out.
       // If the operationplan would fit in a smaller timeframe we can potentially
@@ -180,7 +195,8 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
         if (data.getVerbose())
         {
           for (int i=opplan->getOperation()->getLevel(); i>0; --i) logger << " ";
-          logger << "   Retrying with a smaller quantity." << endl;
+          logger << "   Retrying with a smaller quantity: " 
+            << opplan->getQuantity() << endl;
         }
       }
       else
@@ -189,6 +205,28 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
         opplan->setQuantity(0);
         okay = true;
       }
+    }
+    else if (a_qty <= ROUNDING_ERROR && !data.forceLate
+      && opplan->getDates().getEnd() < orig_dates.getEnd()
+      && a_date != Date::infiniteFuture && isCapacityConstrained())
+    {
+      // The operationplan was moved early (because of a resource constraint)
+      // and we can't properly trust the reply date in such cases...
+      // We want to enforce rechecking the next date.
+      
+      // Move the operationplan to the next date where the material is feasible
+      opplan->getOperation()->setOperationPlanParameters
+        (opplan, orig_opplan_qty, a_date + delay, Date::infinitePast);
+
+      // Move the operationplan to a later date where it is feasible.
+      data.forceLate = true;
+      checkOperationCapacity(opplan,data);      
+      
+      // Reply of this function
+      a_qty = 0.0f;
+      delay = 0L;
+      a_date = opplan->getDates().getEnd();      
+      okay = true;
     }
     else
       okay = true;
@@ -202,6 +240,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
   else if (prev_a_date == Date::infiniteFuture) data.a_date = tmp;
   else data.a_date = (tmp>prev_a_date) ? tmp : prev_a_date;
   data.a_qty = a_qty;
+  data.forceLate = tmp_forceLate;
   if (a_qty > ROUNDING_ERROR)
     return true;
   else

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>actual plan</NAME>
+  <DESCRIPTION>
+    Resource constraint test model.
+    This test shows a complex load profile and interaction between material
+    and capacity constraints. A few passes of the solver are required to fill
+    the available capacity slots.
+  </DESCRIPTION>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <VERBOSE>true</VERBOSE>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" VERBOSE="true"/>
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+      <FILENAME>output.1.xml</FILENAME>
+    </COMMAND>
+  </COMMANDS>
+  <CALENDARS>
+    <CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
+      <BUCKETS>
+        <BUCKET START="2007-01-01T00:00:00">
+          <NAME>Jan Week1</NAME>
+        </BUCKET>
+        <BUCKET START="2007-01-07T00:00:00">
+          <NAME>Jan Week2</NAME>
+        </BUCKET>
+        <BUCKET START="2007-01-14T00:00:00">
+          <NAME>Jan Week3</NAME>
+        </BUCKET>
+        <BUCKET START="2007-01-21T00:00:00">
+          <NAME>Jan Week4</NAME>
+        </BUCKET>
+        <BUCKET START="2007-01-28T00:00:00">
+          <NAME>Jan Week5</NAME>
+        </BUCKET>
+        <BUCKET START="2007-02-04T00:00:00">
+          <NAME>Feb Week1</NAME>
+        </BUCKET>
+        <BUCKET START="2007-02-11T00:00:00">
+          <NAME>Feb Week2</NAME>
+        </BUCKET>
+        <BUCKET START="2007-02-18T00:00:00">
+          <NAME>Feb Week3</NAME>
+        </BUCKET>
+        <BUCKET START="2007-02-25T00:00:00">
+          <NAME>Feb Week4</NAME>
+        </BUCKET>
+        <BUCKET START="2007-03-04T00:00:00">
+          <NAME>Mar Week1</NAME>
+        </BUCKET>
+        <BUCKET START="2007-03-11T00:00:00">
+          <NAME>Mar Week2</NAME>
+        </BUCKET>
+        <BUCKET START="2007-03-18T00:00:00">
+          <NAME>Mar Week3</NAME>
+        </BUCKET>
+        <BUCKET START="2007-03-25T00:00:00">
+          <NAME>Mar Week4</NAME>
+        </BUCKET>
+        <BUCKET START="2007-04-01T00:00:00">
+          <NAME>Remainder</NAME>
+        </BUCKET>
+      </BUCKETS>
+    </CALENDAR>
+  </CALENDARS>
+  <OPERATIONS>
+    <OPERATION NAME="make end item" xsi:type="OPERATION_TIME_PER">
+      <DURATION_PER>24:00:00</DURATION_PER>
+    </OPERATION>
+  </OPERATIONS>
+  <ITEMS>
+    <ITEM NAME="end item">
+      <OPERATION NAME="delivery end item" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>00:00:00</DURATION>
+      </OPERATION>
+    </ITEM>
+    <ITEM NAME="component"/>
+  </ITEMS>
+  <BUFFERS>
+    <BUFFER NAME="end item">
+      <PRODUCING NAME="make end item" />
+      <ITEM NAME="end item" />
+    </BUFFER>
+    <BUFFER NAME="component">
+      <PRODUCING NAME="buy component" xsi:type="OPERATION_FIXED_TIME">
+        <DURATION>240:00:00</DURATION>
+      </PRODUCING>
+      <ITEM NAME="component" />
+      <ONHAND>10</ONHAND>
+    </BUFFER>
+  </BUFFERS>
+  <RESOURCES>
+    <RESOURCE NAME="Resource">
+      <MAXIMUM NAME="Capacity" xsi:type="CALENDAR_FLOAT">
+        <BUCKETS>
+          <BUCKET START="2004-01-01T00:00:00">
+            <VALUE>3</VALUE>
+          </BUCKET>
+        </BUCKETS>
+      </MAXIMUM>
+      <LOADS>
+        <LOAD>
+          <OPERATION NAME="make end item" />
+        </LOAD>
+      </LOADS>
+    </RESOURCE>
+  </RESOURCES>
+  <FLOWS>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery end item" />
+      <BUFFER NAME="end item" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="make end item" />
+      <BUFFER NAME="end item" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="buy component" />
+      <BUFFER NAME="component" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="make end item" />
+      <BUFFER NAME="component" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+  </FLOWS>
+  <DEMANDS>
+    <!-- No mat or cap problem -->
+    <DEMAND NAME="order 1">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-01-20T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="end item" />
+      <POLICY>PLANLATE</POLICY>
+    </DEMAND>
+    <!-- No mat or cap problem -->
+    <DEMAND NAME="order 2">
+      <QUANTITY>5</QUANTITY>
+      <DUE>2007-01-17T00:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="end item" />
+      <POLICY>PLANLATE</POLICY>
+    </DEMAND>
+    <!-- No mat or cap problem -->
+    <DEMAND NAME="order 3">
+      <QUANTITY>2</QUANTITY>
+      <DUE>2007-01-16T00:00:00</DUE>
+      <PRIORITY>3</PRIORITY>
+      <ITEM NAME="end item" />
+      <POLICY>PLANLATE</POLICY>
+    </DEMAND>
+    <!-- Creates a capcity overload, and needs to be planned late.
+        Planning earlier is not possible due to material constraints.
+    -->
+    <DEMAND NAME="order 4">
+      <QUANTITY>8</QUANTITY>
+      <DUE>2007-01-18T00:00:00</DUE>
+      <PRIORITY>4</PRIORITY>
+      <ITEM NAME="end item" />
+      <POLICY>PLANLATE</POLICY>
+    </DEMAND>
+  </DEMANDS>
+</PLAN>

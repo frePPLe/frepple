@@ -118,7 +118,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
           // Message
           if (fabs(Solver->a_qty - tmpqty) > ROUNDING_ERROR)
           {
-            logger << "Demand '" << l << "' coordination screwed up: "
+            logger << "Warning: Demand '" << l << "' coordination screwed up: "
             << Solver->a_qty << " versus " << tmpqty << endl;
             if (Solver->a_qty < ROUNDING_ERROR)
               throw LogicException("Narrowly escaping an infinite loop...");
@@ -136,7 +136,17 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
         // Nothing planned - Delete operationplans - Undo all changes
         Solver->undo();
         // If there is no proper new date for the next loop, we need to exit
-        if (Solver->a_date <= copy_plan_date) plan_qty = 0.0f;
+        if (Solver->a_date <= copy_plan_date) 
+        {
+          if (copy_plan_date < l->getDue() + TimePeriod(60L*86400L)) // xxx hardcoded max!!!
+          {
+            // Try a day later
+            logger << "Warning: Demand '" << l << "': Lazy retry" << endl;
+            plan_date = copy_plan_date + TimePeriod(2*86400L); // xxx hardcoded increments of 2 days
+          }
+          // Don't try it any more
+          else plan_qty = 0.0f;
+        }
         else plan_date = Solver->a_date;
       }
     }

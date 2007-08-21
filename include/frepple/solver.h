@@ -353,6 +353,13 @@ class MRPSolver : public Solver
         /** Points to the current buffer. */
         const Buffer* curBuffer;
 
+        /** A flag to force the resource solver to move the operationplan to
+          * a later date where it is feasible.<br>
+          * Admittedly this is an ugly hack... 
+          * @todo avoid the need for the forceLate variable
+          */
+        bool forceLate;
+
         /** This is the quantity we are asking for. */
         float q_qty;
 
@@ -398,7 +405,16 @@ class MRPSolver : public Solver
       * acceptable (sometimes in reduced quantity) or not.
       */
     DECLARE_EXPORT bool checkOperation(OperationPlan*, MRPSolverdata& data);
+
+    /** Verifies whether this operationplan violates the leadtime 
+      * constraints. */
     DECLARE_EXPORT bool checkOperationLeadtime(OperationPlan*, MRPSolverdata&, bool);
+
+    /** Verifies whether this operationplan violates the capacity constraint.
+      * In case it does the operationplan is moved to an earlier or later
+      * feasible date.
+      */
+    DECLARE_EXPORT void MRPSolver::checkOperationCapacity(OperationPlan*, MRPSolverdata&);
 };
 
 

@@ -61,6 +61,13 @@ SetCompressor /SOLID lzma
 !define MUI_ICON "frepple.ico"
 !define MUI_UNICON "frepple.ico"
 
+; Definition of the finish page
+!define MUI_FINISHPAGE_RUN_TEXT "Start the server right now"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\server\runserver.exe"
+!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\index.html"
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "View documentation"
+
 ; Installer pages
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "../../COPYING"

@@ -257,7 +257,7 @@ def create_model (cluster, demand, forecast_per_item, level, resource, resource_
           item=it,
           quantity=int(random.uniform(1,6)),
           # Exponential distribution of due dates, with an average of 30 days.
-          due= startdate + timedelta(random.expovariate(float(1)/30)),
+          due= startdate + timedelta(days=round(random.expovariate(float(1)/30/24))/24),
           # Orders have higher priority than forecast
           priority=random.choice([1,2]),
           customer=random.choice(cust),

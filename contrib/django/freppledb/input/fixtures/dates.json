@@ -1,4 +1,5 @@
 [
+{"pk": "1", "model": "input.plan", "fields": {"currentdate": "2007-01-01 00:00:00", "name": "frePPLe"}},
 {"pk": "Working Days", "model": "input.calendar", "fields": {"category": "", "description": "", "subcategory": ""}},
 {"pk": "4", "model": "input.bucket", "fields": {"startdate": "2007-01-01 00:00:00", "enddate": "2007-01-06 00:00:00", "name": "", "value": "1", "calendar": "Working Days"}},
 {"pk": "5", "model": "input.bucket", "fields": {"startdate": "2007-01-06 00:00:00", "enddate": "2007-01-08 00:00:00", "name": "", "value": "0", "calendar": "Working Days"}},

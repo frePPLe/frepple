@@ -28,7 +28,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.cache import never_cache
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.conf import settings
-from django.core import management
+from django.core import management, serializers
 from django.db.models.fields.related import ForeignKey, AutoField
 from django.db import models, transaction
 from django.views.generic.simple import direct_to_template
@@ -51,71 +51,77 @@ def main(request):
 
 @staff_member_required
 @never_cache
-def rundb(request):
+def erase(request):
     '''
-    Database execution button.
+    Erase the contents of the database.
     '''
-    # Decode form attributes
-    try: action = request.POST['action']
-    except KeyError: raise Http404
-
-    # Execute appropriate action
-    if action == 'erase':
-      # Erase the database contents
-      try:
-        log(category='ERASE', message='Start erasing the database').save()
-        erase_model()
-        request.user.message_set.create(message='Erased the database')
-        log(category='ERASE', message='Finished erasing the database').save()
-      except Exception, e:
-        request.user.message_set.create(message='Failure during database erasing:%s' % e)
-        log(category='RUN', message='Failed erasing the database: %s' % e).save()
-
-      # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+    # Allow only post
+    if request.method != 'POST':
+      request.user.message_set.create(message='Only POST method allowed')
       return HttpResponseRedirect('/execute/execute.html')
 
-    elif action == 'create':
-      # Populate the database with a sample model
-      # Validate the data
-      try:
-        clusters = int(request.POST['clusters'])
-        demands = int(request.POST['demands'])
-        fcstqty = int(request.POST['fcst'])
-        levels = int(request.POST['levels'])
-        resources = int(request.POST['rsrc_number'])
-        resource_size = int(request.POST['rsrc_size'])
-        if clusters>=100000 or clusters<=0 \
-          or fcstqty<0 or demands>=10000 or demands<0 \
-          or levels<0 or levels>=50 \
-          or resources>=1000 or resources<0 \
-          or resource_size>100 or resource_size<0:
-            raise ValueError("Invalid parameters")
-      except KeyError:
-        raise Http404
-      except ValueError, e:
-        request.user.message_set.create(message='Invalid input field')
-      else:
-        # Execute
-        try:
-          log(
-            category = 'CREATE',
-            message = 'Start creating sample model with parameters: %d %d %d %d %d %d' \
-              % (clusters, demands, fcstqty, levels, resources, resource_size)
-            ).save()
-          create_model(clusters, demands, fcstqty, levels, resources, resource_size)
-          request.user.message_set.create(message='Created sample model in the database')
-          log(category='CREATE', message='Finished creating sample model').save()
-        except Exception, e:
-          request.user.message_set.create(message='Failure during sample model creation: %s' % e)
-          log(category='CREATE', message='Failed creating sample model: %s' % e).save()
+    # Erase the database contents
+    try:
+      log(category='ERASE', message='Start erasing the database').save()
+      erase_model()
+      request.user.message_set.create(message='Erased the database')
+      log(category='ERASE', message='Finished erasing the database').save()
+    except Exception, e:
+      request.user.message_set.create(message='Failure during database erasing:%s' % e)
+      log(category='RUN', message='Failed erasing the database: %s' % e).save()
 
-      # Show the main screen again
-      # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-      return HttpResponseRedirect('/execute/')
+    # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+    return HttpResponseRedirect('/execute/execute.html')
 
-    else:
-      # No valid action found
+
+@staff_member_required
+@never_cache
+def create(request):
+    '''
+    Create a sample model in the database.
+    '''
+    # Allow only post
+    if request.method != 'POST':
+      request.user.message_set.create(message='Only POST method allowed')
+      return HttpResponseRedirect('/execute/execute.html')
+
+    # Validate the input form data
+    try:
+      clusters = int(request.POST['clusters'])
+      demands = int(request.POST['demands'])
+      fcstqty = int(request.POST['fcst'])
+      levels = int(request.POST['levels'])
+      resources = int(request.POST['rsrc_number'])
+      resource_size = int(request.POST['rsrc_size'])
+      if clusters>=100000 or clusters<=0 \
+        or fcstqty<0 or demands>=10000 or demands<0 \
+        or levels<0 or levels>=50 \
+        or resources>=1000 or resources<0 \
+        or resource_size>100 or resource_size<0:
+          raise ValueError("Invalid parameters")
+    except KeyError:
       raise Http404
+    except ValueError, e:
+      request.user.message_set.create(message='Invalid input field')
+    else:
+      # Execute
+      try:
+        log(
+          category = 'CREATE',
+          message = 'Start creating sample model with parameters: %d %d %d %d %d %d' \
+            % (clusters, demands, fcstqty, levels, resources, resource_size)
+          ).save()
+        erase_model()
+        create_model(clusters, demands, fcstqty, levels, resources, resource_size)
+        request.user.message_set.create(message='Created sample model in the database')
+        log(category='CREATE', message='Finished creating sample model').save()
+      except Exception, e:
+        request.user.message_set.create(message='Failure during sample model creation: %s' % e)
+        log(category='CREATE', message='Failed creating sample model: %s' % e).save()
+
+    # Show the main screen again
+    # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+    return HttpResponseRedirect('/execute/')
 
 
 @staff_member_required
@@ -124,41 +130,34 @@ def runfrepple(request):
     '''
     FrePPLe execution button.
     '''
-    # Decode form attributes
-    try: action = request.POST['action']
-    except KeyError: raise Http404
+    # Decode form input
     try: type = request.POST['type']
     except: type = 7   # Default plan is fully constrained
 
-    if action == 'run':
-      # Run frepple
-      try:
-        log(category='RUN', message='Start running frepple').save()
-        os.environ['PLAN_TYPE'] = type
-        os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\','\\\\')
-        os.environ['FREPPLE_APP'] = settings.FREPPLE_APP
-        os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + '.'
-        os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
-        os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-        if os.path.exists(os.path.join(os.environ['FREPPLE_APP'],'library.zip')):
-          # For the py2exe executable
-          os.environ['PYTHONPATH'] = os.path.join(os.environ['FREPPLE_APP'],'library.zip')
-        else:
-          # Other executables
-          os.environ['PYTHONPATH'] = os.path.normpath(os.path.join(os.environ['FREPPLE_APP'],'..'))
-        ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'execute','commands.xml'))
-        if ret: raise Exception('exit code of the batch run is %d' % ret)
-        request.user.message_set.create(message='Successfully ran frepple')
-        log(category='RUN', message='Finished running frepple').save()
-      except Exception, e:
-        request.user.message_set.create(message='Failure when running frepple: %s' % e)
-        log(category='RUN', message='Failed running frepple: %s' % e).save()
-      # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-      return HttpResponseRedirect('/execute/execute.html')
-
-    else:
-      # No valid action found
-      raise Http404
+    # Run frepple
+    try:
+      log(category='RUN', message='Start running frepple').save()
+      os.environ['PLAN_TYPE'] = type
+      os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\','\\\\')
+      os.environ['FREPPLE_APP'] = settings.FREPPLE_APP
+      os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + '.'
+      os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
+      os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
+      if os.path.exists(os.path.join(os.environ['FREPPLE_APP'],'library.zip')):
+        # For the py2exe executable
+        os.environ['PYTHONPATH'] = os.path.join(os.environ['FREPPLE_APP'],'library.zip')
+      else:
+        # Other executables
+        os.environ['PYTHONPATH'] = os.path.normpath(os.path.join(os.environ['FREPPLE_APP'],'..'))
+      ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'execute','commands.xml'))
+      if ret: raise Exception('exit code of the batch run is %d' % ret)
+      request.user.message_set.create(message='Successfully ran frepple')
+      log(category='RUN', message='Finished running frepple').save()
+    except Exception, e:
+      request.user.message_set.create(message='Failure when running frepple: %s' % e)
+      log(category='RUN', message='Failed running frepple: %s' % e).save()
+    # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+    return HttpResponseRedirect('/execute/execute.html')
 
 
 @transaction.commit_manually
@@ -292,32 +291,33 @@ def upload(request):
 
 @staff_member_required
 def fixture(request):
-    """
-    Load a dataset stored in a django fixture file.
-    """
+  """
+  Load a dataset stored in a django fixture file.
+  """
 
-    # Validate the request
-    if request.method != 'POST':
-      request.user.message_set.create(message='Only POST method allowed')
-      # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-      return HttpResponseRedirect('/execute/execute.html')
-    try:
-      fixture = request.POST['datafile']
-      if fixture == '-': raise
-    except:
-      request.user.message_set.create(message='Missing fixture attribute')
-      return HttpResponseRedirect('/execute/execute.html')
+  # Validate the request
+  if request.method != 'POST':
+    request.user.message_set.create(message='Only POST method allowed')
+    # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+    return HttpResponseRedirect('/execute/execute.html')
 
-    # Load the fixture
-    # The fixture loading code is unfornately such that no exceptions are
-    # or any error status returned when it fails...
-    try:
-        log(category='LOAD', message='Start loading fixture "%s"' % fixture).save()
-        management.call_command('loaddata', fixture, verbosity=1)
-        request.user.message_set.create(message='Loaded fixture')
-        log(category='LOAD', message='Finished loading fixture "%s"' % fixture).save()
-        return HttpResponseRedirect('/execute/execute.html')
-    except Exception, e:
-        request.user.message_set.create(message='Error while loading fixture: %s' % e)
-        log(category='LOAD', message='Failed loading fixture "%s": %s' % (fixture,e)).save()
-        return HttpResponseRedirect('/execute/execute.html')
+  # Decode the input data from the form
+  try:
+    fixture = request.POST['datafile']
+    if fixture == '-': raise
+  except:
+    request.user.message_set.create(message='Missing dataset name')
+    return HttpResponseRedirect('/execute/execute.html')
+
+  # Load the fixture
+  # The fixture loading code is unfornately such that no exceptions are
+  # or any error status returned when it fails...
+  try:
+    log(category='LOAD', message='Start loading dataset "%s"' % fixture).save()
+    management.call_command('loaddata', fixture, verbosity=1)
+    request.user.message_set.create(message='Loaded dataset')
+    log(category='LOAD', message='Finished loading dataset "%s"' % fixture).save()
+  except Exception, e:
+    request.user.message_set.create(message='Error while loading dataset: %s' % e)
+    log(category='LOAD', message='Failed loading dataset "%s": %s' % (fixture,e)).save()
+  return HttpResponseRedirect('/execute/execute.html')

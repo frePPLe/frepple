@@ -95,6 +95,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
   bool incomplete;  
   bool tmp_forceLate = data.forceLate;
   data.forceLate = false;
+  bool isPlannedEarly;
   do
   {
     if (isCapacityConstrained())
@@ -110,7 +111,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
     data.q_date = opplan->getDates().getEnd();
     a_qty = opplan->getQuantity();
     a_date = data.q_date;
-    prev_a_date = data.a_date;
+    //xxxprev_a_date = data.a_date;
     incomplete = false;
 
     // Loop through all flowplans
@@ -148,6 +149,8 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
           // for capacity constraints, this is not included.
           delay = data.a_date - q_date_Flow;
       }
+
+    isPlannedEarly = opplan->getDates().getEnd() < orig_dates.getEnd();
 
     if (delay>0L && a_qty <= ROUNDING_ERROR 
       && a_date + delay <= data.q_date_max && a_date + delay > orig_q_date)
@@ -201,13 +204,19 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
       }
       else
       {
-        // Didn't work
+        // It didn't work
         opplan->setQuantity(0);
         okay = true;
       }
     }
-    else if (a_qty <= ROUNDING_ERROR && !data.forceLate
-      && opplan->getDates().getEnd() < orig_dates.getEnd()
+    else
+      okay = true;
+  }
+  while (!okay);  // Repeat the loop if the operation was moved and the
+                  // feasibility needs to be rechecked.
+
+  if (a_qty <= ROUNDING_ERROR && !data.forceLate 
+      && isPlannedEarly 
       && a_date != Date::infiniteFuture && isCapacityConstrained())
     {
       // The operationplan was moved early (because of a resource constraint)
@@ -225,23 +234,17 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
       // Reply of this function
       a_qty = 0.0f;
       delay = 0L;
-      a_date = opplan->getDates().getEnd();      
-      okay = true;
+      a_date = opplan->getDates().getEnd();   
+
+      // Shrink all material consumption and production
+      //opplan->setQuantity(0);
     }
-    else
-      okay = true;
-  }
-  while (!okay);  // Repeat the loop if the operation was moved and the
-                  // feasibility needs to be rechecked.
 
   // Compute the final reply
-  Date tmp = incomplete ? (a_date + delay) : Date::infiniteFuture;
-  if (tmp==Date::infiniteFuture) data.a_date = prev_a_date;
-  else if (prev_a_date == Date::infiniteFuture) data.a_date = tmp;
-  else data.a_date = (tmp>prev_a_date) ? tmp : prev_a_date;
+  data.a_date = incomplete ? (a_date + delay) : Date::infiniteFuture;
   data.a_qty = a_qty;
   data.forceLate = tmp_forceLate;
-  if (a_qty > ROUNDING_ERROR)
+  if (a_qty > ROUNDING_ERROR) 
     return true;
   else
   {

@@ -1402,11 +1402,19 @@ class Date
 
     /** Adding a time to a date returns a new date. */
     Date operator + (const TimePeriod& l) const
-      {return lval + static_cast<long>(l);}
+    {
+      Date d(lval + static_cast<long>(l)); 
+      d.checkFinite();
+      return d;
+    }
 
     /** Subtracting a time to a date returns a new date. */
-    Date operator - (const TimePeriod& l) const
-      {return lval - static_cast<long>(l);}
+    Date operator - (const TimePeriod& l) const 
+    {
+      Date d(lval - static_cast<long>(l)); 
+      d.checkFinite();
+      return d;
+    }
 
     /** Subtracting two date values returns the time difference in a
       * TimePeriod object. */

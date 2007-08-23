@@ -118,7 +118,7 @@ def dumpfrepple():
     values(%s,%s,%s,%s,%s,%s,%s,%s)",
     [(
        i['ENTITY'], i['TYPE'], i['DESCRIPTION'], i['START'], i['END'],
-       i['START'].date(), i['END'].date(), i['WEIGHT']
+       i['START'].date(), i['END'].date(), round(i['WEIGHT'],ROUNDING_DECIMALS)
      ) for i in frepple.problem()
     ])
   transaction.commit()

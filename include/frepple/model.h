@@ -3966,7 +3966,17 @@ class ProblemLate : public Problem
   public:
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() {return true;}
-    float getWeight() {return 1.0f;}
+
+    /** The weight is equal to the delay, expressed in days.<br>
+      * The quantity being delayed is not included.
+      */
+    float getWeight() 
+    {
+      return static_cast<float>(DateRange(
+        getDemand()->getDue(),
+        (*(getDemand()->getDelivery().begin()))->getDates().getEnd()
+        ).getDuration()) / 86400;
+    }
     explicit ProblemLate(Demand* d) : Problem(d) {addProblem();}
     ~ProblemLate() {removeProblem();}
     const DateRange getDateRange() const

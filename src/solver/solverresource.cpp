@@ -227,9 +227,11 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   {
     for (int i=res->getLevel(); i>0; --i) logger << " ";
     logger << "   Resource '" << res->getName() << "' answers: "
-      << (-data->a_qty) << "  " << data->a_date 
-      << ((currentOpplanEnd>data->q_operationplan->getDates().getEnd()) 
-          ? " using earlier capacity" : "") << endl;
+      << (-data->a_qty) << "  " << data->a_date;
+    if (currentOpplanEnd > data->q_operationplan->getDates().getEnd())
+      logger << " using earlier capacity " 
+        << data->q_operationplan->getDates().getEnd();
+    logger << endl;
   }
 
 }

@@ -35,8 +35,8 @@
 namespace frepple
 {
 
-/** @brief This solver implements a heuristic algorithm for planning demands. 
-  * 
+/** @brief This solver implements a heuristic algorithm for planning demands.
+  *
   * One by one the demands are processed. The demand will consume step by step
   * any upstream materials, respecting all constraints on its path.<br>
   * The solver supports all planning constraints as defined in Solver
@@ -53,7 +53,7 @@ class MRPSolver : public Solver
     short constrts;
 
     /** Behavior of this solver method is:
-      *  - It will ask the consuming flows for the required quantity. 
+      *  - It will ask the consuming flows for the required quantity.
       *  - The quantity asked for takes into account the quantity_per of the
       *    producing flow.
       *  - The date asked for takes into account the post-operation time
@@ -118,13 +118,13 @@ class MRPSolver : public Solver
       *    The replenishment brings the inventory to the maximum level again.
       *  - The minimum and maximum inventory are soft-constraints. The actual
       *    inventory can go lower than the minimum or exceed the maximum.
-      *  - The minimum, maximum and multiple size of the replenishment are 
+      *  - The minimum, maximum and multiple size of the replenishment are
       *    hard constraints, and will always be respected.
-      *  - A minimum and maximum interval between replenishment is also 
+      *  - A minimum and maximum interval between replenishment is also
       *    respected as a hard constraint.
       *  - No propagation to upstream buffers at all, even if a producing
       *    operation has been specified.
-      *  - The minimum calendar isn't used by the solver. 
+      *  - The minimum calendar isn't used by the solver.
       */
     DECLARE_EXPORT void solve(const BufferProcure*, void* = NULL);
 
@@ -202,7 +202,7 @@ class MRPSolver : public Solver
     virtual size_t getSize() const {return sizeof(MRPSolver);}
 
     /** Static constant for the LEADTIME constraint type.<br>
-      * The numeric value is 1. 
+      * The numeric value is 1.
       * @see MATERIAL
       * @see CAPACITY
       * @see FENCE
@@ -210,7 +210,7 @@ class MRPSolver : public Solver
     static const short LEADTIME;
 
     /** Static constant for the MATERIAL constraint type.<br>
-      * The numeric value is 2. 
+      * The numeric value is 2.
       * @see LEADTIME
       * @see CAPACITY
       * @see FENCE
@@ -218,7 +218,7 @@ class MRPSolver : public Solver
     static const short MATERIAL;
 
     /** Static constant for the CAPACITY constraint type.<br>
-      * The numeric value is 4. 
+      * The numeric value is 4.
       * @see MATERIAL
       * @see LEADTIME
       * @see FENCE
@@ -226,7 +226,7 @@ class MRPSolver : public Solver
     static const short CAPACITY;
 
     /** Static constant for the FENCE constraint type.<br>
-      * The numeric value is 8. 
+      * The numeric value is 8.
       * @see MATERIAL
       * @see CAPACITY
       * @see LEADTIME
@@ -268,19 +268,19 @@ class MRPSolver : public Solver
     /** Update the number of parallel solver threads.<br>
       * The default value depends on whether the solver is run in verbose mode
       * or not:
-      *  - In normal mode the solver uses as many threads as specified by 
+      *  - In normal mode the solver uses as many threads as specified by
       *    the environment variable NUMBER_OF_PROCESSORS.
       *  - In verbose mode the solver runs in a single thread to avoid
       *    mangling the debugging output of different threads.
       */
-    void setMaxParallel(int i) 
+    void setMaxParallel(int i)
     {
-      if (i >= 1) maxparallel = i; 
+      if (i >= 1) maxparallel = i;
       else throw DataException("Invalid number of parallel solver threads");
     }
 
     /** Return the number of threads used for planning. */
-    int getMaxParallel() const 
+    int getMaxParallel() const
     {
       // Or: Explicitly specified number of threads
       if (maxparallel) return maxparallel;
@@ -303,7 +303,7 @@ class MRPSolver : public Solver
     int maxparallel;
 
   protected:
-    /** @brief This class is a helper class of the MRPSolver class. 
+    /** @brief This class is a helper class of the MRPSolver class.
       *
       * It stores the solver state maintained by each solver thread.
       * @see MRPSolver
@@ -355,7 +355,7 @@ class MRPSolver : public Solver
 
         /** A flag to force the resource solver to move the operationplan to
           * a later date where it is feasible.<br>
-          * Admittedly this is an ugly hack... 
+          * Admittedly this is an ugly hack...
           * @todo avoid the need for the forceLate variable
           */
         bool forceLate;
@@ -406,7 +406,7 @@ class MRPSolver : public Solver
       */
     DECLARE_EXPORT bool checkOperation(OperationPlan*, MRPSolverdata& data);
 
-    /** Verifies whether this operationplan violates the leadtime 
+    /** Verifies whether this operationplan violates the leadtime
       * constraints. */
     DECLARE_EXPORT bool checkOperationLeadtime(OperationPlan*, MRPSolverdata&, bool);
 
@@ -414,12 +414,12 @@ class MRPSolver : public Solver
       * In case it does the operationplan is moved to an earlier or later
       * feasible date.
       */
-    DECLARE_EXPORT void MRPSolver::checkOperationCapacity(OperationPlan*, MRPSolverdata&);
+    DECLARE_EXPORT void checkOperationCapacity(OperationPlan*, MRPSolverdata&);
 };
 
 
-/** @brief This class holds functions that used for maintenance of the solver 
-  * code. 
+/** @brief This class holds functions that used for maintenance of the solver
+  * code.
   */
 class LibrarySolver
 {

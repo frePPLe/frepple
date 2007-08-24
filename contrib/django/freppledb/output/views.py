@@ -176,7 +176,7 @@ class DemandReport(Report):
             select inp.item_id as item_id, out_operationplan.enddate as date, out_operationplan.quantity as quantity
             from out_operationplan
             inner join demand as inp
-            on out_operationplan.demand_id = inp.name
+            on out_operationplan.demand = inp.name
             ) as pln
           on items.name = pln.item_id
           and d.startdate <= pln.date

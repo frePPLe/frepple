@@ -248,13 +248,17 @@ extern "C" PyObject* PythonOperationPlan::next(PythonOperationPlan* obj)
 {
   if (obj->iter != OperationPlan::end())
   {
+    // Find a non-hidden demand linked to this operation plan
+    const Demand *dem = obj->iter->getDemand();
+    while (dem && dem->getHidden()) dem = dem->getOwner();
+    // Build a python dictionary
     PyObject* result = Py_BuildValue("{s:l,s:s,s:f,s:N,s:N,s:z,s:b}",
       "IDENTIFIER", obj->iter->getIdentifier(),
       "OPERATION", obj->iter->getOperation()->getName().c_str(),
       "QUANTITY", obj->iter->getQuantity(),
       "START", PythonDateTime(obj->iter->getDates().getStart()),
       "END", PythonDateTime(obj->iter->getDates().getEnd()),
-      "DEMAND", obj->iter->getDemand() ? obj->iter->getDemand()->getName().c_str() : NULL,
+      "DEMAND", dem ? dem->getName().c_str() : NULL,
       "LOCKED", obj->iter->getLocked()
       );
     ++(obj->iter);
@@ -285,8 +289,12 @@ extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
 {
   if (obj->iter != Demand::end())
   {
+    // Find a non-hidden demand owning this demand
+    const Demand *dem = &*(obj->iter);
+    while (dem && dem->getHidden()) dem = dem->getOwner();
+    // Build a python dictionary
     PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z,s:z,s:O}",
-      "NAME", obj->iter->getName().c_str(),
+      "NAME", dem ? dem->getName().c_str() : "unspecified",
       "QUANTITY", obj->iter->getQuantity(),
 			"DUE", PythonDateTime(obj->iter->getDue()),
       "PRIORITY", obj->iter->getPriority(),
@@ -325,8 +333,12 @@ extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj)
 {
   if (obj->iter != Buffer::end())
   {
+    // Find a non-hidden buffer
+    const Buffer *buf = &*(obj->iter);
+    while (buf && buf->getHidden()) buf = buf->getOwner();
+    // Build a python dictionary
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:f,s:z,s:z,s:z,s:z,s:z,s:O}",
-      "NAME", obj->iter->getName().c_str(),
+      "NAME", buf ? buf->getName().c_str() : "unspecified",
       "CATEGORY", obj->iter->getCategory().c_str(),
       "SUBCATEGORY", obj->iter->getSubCategory().c_str(),
       "DESCRIPTION", obj->iter->getDescription().c_str(),
@@ -367,8 +379,12 @@ extern "C" PyObject* PythonResource::next(PythonResource* obj)
 {
   if (obj->iter != Resource::end())
   {
+    // Find a non-hidden resource
+    const Resource *res = &*(obj->iter);
+    while (res && res->getHidden()) res = res->getOwner();
+    // Build a python dictionary
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:z,s:z,s:z,s:O}",
-      "NAME", obj->iter->getName().c_str(),
+      "NAME", res ? res->getName().c_str() : "unspecified",
       "CATEGORY", obj->iter->getCategory().c_str(),
       "SUBCATEGORY", obj->iter->getSubCategory().c_str(),
       "DESCRIPTION", obj->iter->getDescription().c_str(),

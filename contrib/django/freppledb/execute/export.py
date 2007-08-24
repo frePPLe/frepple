@@ -127,22 +127,35 @@ def dumpfrepple():
 
   print "Exporting operationplans..."
   starttime = time()
-  cursor.executemany(
-    "insert into out_operationplan \
-    (identifier,operation_id,quantity,startdatetime,enddatetime,startdate, \
-     enddate,demand_id,locked) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-    [(
+  objects = []
+  cnt = 0
+  for i in frepple.operationplan():
+    objects.append( (\
        i['IDENTIFIER'], i['OPERATION'].replace("'","''"),
        round(i['QUANTITY'],ROUNDING_DECIMALS), i['START'], i['END'],
        i['START'].date(), i['END'].date(), i['DEMAND'], str(i['LOCKED'])
-     ) for i in frepple.operationplan()
-    ])
-  transaction.commit()
+     ) )
+    cnt += 1
+    if cnt >= 10000:
+      cursor.executemany(
+        "insert into out_operationplan \
+        (identifier,operation_id,quantity,startdatetime,enddatetime,startdate, \
+         enddate,demand,locked) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
+      transaction.commit()
+      objects = []
+      cnt = 0
+  if cnt > 0:
+    cursor.executemany(
+      "insert into out_operationplan \
+      (identifier,operation_id,quantity,startdatetime,enddatetime,startdate, \
+      enddate,demand,locked) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
+    transaction.commit()
   cursor.execute("select count(*) from out_operationplan")
   print 'Exported %d operationplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
   print "Exporting flowplans..."
   starttime = time()
+  cnt = 0
   for i in frepple.buffer():
     cursor.executemany(
       "insert into out_flowplan \
@@ -155,12 +168,15 @@ def dumpfrepple():
          round(j['ONHAND'],ROUNDING_DECIMALS)
        ) for j in i['FLOWPLANS']
       ])
+    cnt += 1
+    if cnt % 20 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_flowplan")
   print 'Exported %d flowplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
   print "Exporting loadplans..."
   starttime = time()
+  cnt = 0
   for i in frepple.resource():
     cursor.executemany(
       "insert into out_loadplan \
@@ -172,16 +188,19 @@ def dumpfrepple():
          round(j['ONHAND'],ROUNDING_DECIMALS), round(j['MAXIMUM'],ROUNDING_DECIMALS)
        ) for j in i['LOADPLANS']
       ])
+    cnt += 1
+    if cnt % 20 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_loadplan")
   print 'Exported %d loadplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
   print "Exporting pegging..."
   starttime = time()
+  cnt = 0
   for i in frepple.demand():
     cursor.executemany(
       "insert into out_demandpegging \
-      (demand_id,depth,operationplan_id,buffer_id,quantity,pegdate, \
+      (demand,depth,operationplan_id,buffer_id,quantity,pegdate, \
       factor,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
          i['NAME'], j['LEVEL'], j['OPERATIONPLAN'] or None, j['BUFFER'],
@@ -189,6 +208,8 @@ def dumpfrepple():
          round(j['FACTOR'],ROUNDING_DECIMALS), str(j['PEGGED'])
        ) for j in i['PEGGING']
       ])
+    cnt += 1
+    if cnt % 20 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_demandpegging")
   print 'Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)

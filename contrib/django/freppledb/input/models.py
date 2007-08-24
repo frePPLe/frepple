@@ -670,6 +670,8 @@ class Forecast(models.Model):
         enddate = tmp
       # Assure the type of the quantity
       if not isinstance(quantity,Decimal): quantity = Decimal(str(quantity))
+      # Round the quantity, if discrete flag is on
+      if self.discrete: quantity = quantity.to_integral()
       # Step 0: Check for forecast entries intersecting with the current daterange
       entries = self.entries.filter(enddate__gt=startdate.date()).filter(startdate__lt=enddate.date())
       if entries:
@@ -693,10 +695,12 @@ class Forecast(models.Model):
             # We need to split the entry in three.
             # Part one: after our daterange, create a new entry
             p = i.enddate - enddate
+            q = i.quantity * (p.days+86400*p.seconds) / duration
+            if self.discrete: q = round(q.round)
             self.entries.create( \
                startdate = enddate,
                enddate = i.enddate,
-               quantity = i.quantity * (p.days+86400*p.seconds) / duration,
+               quantity = q,
                ).save()
             # Part two: our date range, create a new entry
             self.entries.create( \
@@ -708,6 +712,7 @@ class Forecast(models.Model):
             p = startdate - i.startdate
             i.enddate = startdate
             i.quantity = i.quantity * (p.days+86400*p.seconds) / duration
+            if self.discrete: i.quantity = round(i.quantity)
             i.save()
             # Done with this case...
             return
@@ -718,7 +723,7 @@ class Forecast(models.Model):
             # This entry starts in the range and ends later.
             # Split the entry in two.
             p = i.enddate - enddate
-            fraction = i.quantity * (p.days+86400*p.seconds) / duration
+            fraction = Decimal(i.quantity * (p.days+86400*p.seconds) / duration)
             current += i.quantity - fraction
             self.entries.create( \
                startdate = i.startdate,
@@ -726,13 +731,14 @@ class Forecast(models.Model):
                quantity = i.quantity - fraction,
                ).save()
             i.startdate = enddate
-            i.quantity = fraction
+            if self.discrete: i.quantity = round(fraction)
+            else: i.quantity = fraction
             i.save()
           elif i.enddate > startdate and i.startdate <= startdate:
             # This entry ends in the range and starts earlier.
             # Split the entry in two.
             p = startdate - i.startdate
-            fraction = i.quantity * (p.days+86400*p.seconds) / duration
+            fraction = Decimal(i.quantity * (p.days+86400*p.seconds) / duration)
             current += i.quantity - fraction
             self.entries.create( \
                startdate = startdate,
@@ -740,15 +746,25 @@ class Forecast(models.Model):
                quantity = i.quantity - fraction,
                ).save()
             i.enddate = startdate
-            i.quantity = fraction
+            if self.discrete: i.quantity = round(fraction)
+            else: i.quantity = fraction
             i.save()
         # Case 1, step 2: Rescale the existing entries
         # Note that we retrieve an updated set of buckets from the database here...
         entries = self.entries.filter(enddate__gt=startdate).filter(startdate__lt=enddate)
-        factor = quantity / current
+        factor = quantity / current  # todo: what if current is 0
         if factor == 0:
           for i in entries: i.delete()
+        elif self.discrete:
+          # Only put integers
+          remainder = 0
+          for i in entries:
+            q = Decimal(i.quantity * factor + remainder)
+            i.quantity = q.to_integral()
+            remainder = q - i.quantity
+            i.save()
         else:
+          # No rounding required
           for i in entries:
             i.quantity *= factor
             i.save()
@@ -770,10 +786,16 @@ class Forecast(models.Model):
             q = i.enddate - i.startdate
             weights +=  i.value * (p.days+86400*p.seconds) / (q.days+86400*q.seconds)
           # Case 2a, step 2: create a forecast entry for each calendar bucket
+          remainder = Decimal(0)
           for i in entries:
             p = min(i.enddate,enddate) - max(i.startdate,startdate)
             q = i.enddate - i.startdate
-            q = quantity * i.value * (p.days+86400*p.seconds) / (q.days+86400*q.seconds) / weights
+            q = Decimal(quantity * i.value * (p.days+86400*p.seconds) / (q.days+86400*q.seconds) / weights)
+            if self.discrete:
+              q += remainder
+              k = q.to_integral()
+              remainder = q - k
+              q = k
             if q > 0:
               self.entries.create( \
                 startdate=max(i.startdate,startdate).date(),

@@ -2103,7 +2103,7 @@ class XMLElement
 
     /** Constructor. */
     XMLElement(string n, string v)
-      : m_dwTagHash(XMLtag::hash(n.c_str())) , m_strData(v) {}
+      : m_strData(v), m_dwTagHash(XMLtag::hash(n.c_str())) {}
 
     /** Re-initializes an existing element. Using this method we can avoid
       * destroying and recreating XMLelement objects too frequently. Instead

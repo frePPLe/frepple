@@ -108,22 +108,25 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
           double tmpqty = Solver->a_qty;
           if (tmp) logger << "Demand '" << l << "' plans coordination." << endl;
           Solver->getSolver()->setVerbose(false);
-          Solver->q_qty = Solver->a_qty;
-          Solver->q_date = copy_plan_date;
-          Solver->curDemand = l;
-          Solver->curBuffer = NULL;
-          deliveryoper->solve(*this,v);
-          Solver->getSolver()->setVerbose(tmp);
-
-          // Message
-          if (fabs(Solver->a_qty - tmpqty) > ROUNDING_ERROR)
+          float tmpresult = Solver->a_qty;
+          for(float remainder = Solver->a_qty; 
+            remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
           {
-            logger << "Warning: Demand '" << l << "' coordination screwed up: "
-            << Solver->a_qty << " versus " << tmpqty << endl;
+            Solver->q_qty = remainder;
+            Solver->q_date = copy_plan_date;
+            Solver->curDemand = l;
+            Solver->curBuffer = NULL;
+            deliveryoper->solve(*this,v);
             if (Solver->a_qty < ROUNDING_ERROR)
-              throw LogicException("Narrowly escaping an infinite loop...");
+            {
+              logger << "Warning: Demand '" << l << "': Failing coordination" << endl;
+              break;
+            }
           }
+          Solver->getSolver()->setVerbose(tmp);
+          Solver->a_qty = tmpresult;
         }
+
         // Register the new operationplans. We need to make sure that the
         // correct execute method is called!
         Solver->CommandList::execute();

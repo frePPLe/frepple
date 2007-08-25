@@ -159,6 +159,7 @@ class CommandPython : public Command, public XMLinstruction
       X::InfoType.tp_basicsize =	sizeof(X);
       X::InfoType.tp_iternext = reinterpret_cast<iternextfunc>(X::next);
       X::InfoType.tp_new = X::create;
+      X::InfoType.tp_dealloc = reinterpret_cast<destructor>(X::destroy);
       // Note: We need to 'leak' the strings allocated on the next two lines!
       string *aa = new string(string("frepple.") + a);
       string *bb = new string(b);
@@ -287,6 +288,7 @@ extern "C"
       static PyTypeObject InfoType;
       static PyObject* next(PythonProblem* obj);
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static void destroy(PythonProblem* obj) {PyObject_Del(obj);}
       static void define_type() {}
   };
 
@@ -302,6 +304,7 @@ extern "C"
       static PyTypeObject InfoType;
       static PyObject* next(PythonFlowPlan* obj);
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
+      static void destroy(PythonFlowPlan* obj) {PyObject_Del(obj);}
       static void define_type() { InfoType.tp_new = 0; }
       static PyObject* createFromBuffer(Buffer*);
   };
@@ -318,6 +321,7 @@ extern "C"
       static PyTypeObject InfoType;
       static PyObject* next(PythonLoadPlan* obj);
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
+      static void destroy(PythonLoadPlan* obj) {PyObject_Del(obj);}
       static void define_type() { InfoType.tp_new = 0; }
       static PyObject* createFromResource(Resource*);
   };
@@ -334,6 +338,7 @@ extern "C"
       static PyTypeObject InfoType;
       static PyObject* next(PythonPegging* obj);
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
+      static void destroy(PythonPegging* obj) {PyObject_Del(obj);}
       static void define_type() { InfoType.tp_new = 0; }
       static PyObject* createFromDemand(Demand*);
   };
@@ -349,6 +354,7 @@ extern "C"
       static PyTypeObject InfoType;
       static PyObject* next(PythonOperationPlan* obj);
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static void destroy(PythonOperationPlan* obj) {PyObject_Del(obj);}
       static void define_type() {}
   };
 
@@ -363,6 +369,7 @@ extern "C"
       static PyTypeObject InfoType;
       static PyObject* next(PythonDemand* obj);
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static void destroy(PythonDemand* obj) {PyObject_Del(obj);}
       static void define_type() {}
   };
 
@@ -377,6 +384,7 @@ extern "C"
       static PyTypeObject InfoType;
       static PyObject* next(PythonBuffer* obj);
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static void destroy(PythonBuffer* obj) {PyObject_Del(obj);}
       static void define_type() {}
   };
 
@@ -391,6 +399,7 @@ extern "C"
       static PyTypeObject InfoType;
       static PyObject* next(PythonResource* obj);
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static void destroy(PythonResource* obj) {PyObject_Del(obj);}
       static void define_type() {}
   };
 

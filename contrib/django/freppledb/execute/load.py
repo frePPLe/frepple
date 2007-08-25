@@ -23,7 +23,10 @@
 
 from time import time
 from xml.sax.saxutils import quoteattr, escape
+
 from django.db import connection
+from django.conf import settings
+
 import frepple
 
 header = '<?xml version="1.0" encoding="UTF-8" ?><PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
@@ -47,6 +50,12 @@ def loadfrepple():
   '''
   global header
   cursor = connection.cursor()
+
+  # Make sure the debug flag is not set!
+  # When it is set, the django database wrapper collects a list of all sql
+  # statements executed and their timings. This consumes plenty of memory
+  # and cpu time.
+  settings.DEBUG = False
 
   # Plan (limited to the first one only)
   print 'Import plan...'

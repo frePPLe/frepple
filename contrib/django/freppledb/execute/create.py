@@ -44,24 +44,35 @@ def erase_model():
   This routine erase all model data from the database.
   All exceptions are propagated to a higher level.
   '''
-  cursor = connection.cursor()
-  # SQLite specials
-  if settings.DATABASE_ENGINE == 'sqlite3':
-    cursor.execute('PRAGMA synchronous = OFF')  # Performance improvement
-  # Delete all records from the tables
-  sql_list = connection.ops.sql_flush(no_style(), [
-    'out_problem','out_flowplan','out_loadplan','out_demandpegging',
-    'out_operationplan','dates','demand','forecastdemand','forecast','flow',
-    'resourceload','buffer','resource','operationplan','item','suboperation',
-    'operation','location','bucket','calendar','customer'
-    ], [] )
+
+  # Make sure the debug flag is not set!
+  # When it is set, the django database wrapper collects a list of all sql
+  # statements executed and their timings. This consumes plenty of memory
+  # and cpu time.
+  tmp_debug = settings.DEBUG
+  settings.DEBUG = False
+
   try:
-    for sql in sql_list: cursor.execute(sql)
+    cursor = connection.cursor()
+    # SQLite specials
+    if settings.DATABASE_ENGINE == 'sqlite3':
+      cursor.execute('PRAGMA synchronous = OFF')  # Performance improvement
+    # Delete all records from the tables
+    sql_list = connection.ops.sql_flush(no_style(), [
+      'out_problem','out_flowplan','out_loadplan','out_demandpegging',
+      'out_operationplan','dates','demand','forecastdemand','forecast','flow',
+      'resourceload','buffer','resource','operationplan','item','suboperation',
+      'operation','location','bucket','calendar','customer'
+      ], [] )
+    for sql in sql_list:
+      cursor.execute(sql)
+      transaction.commit()
+    # SQLite specials
+    if settings.DATABASE_ENGINE == 'sqlite3':
+      cursor.execute('vacuum')   # Shrink the database file
   finally:
     transaction.commit()
-  # SQLite specials
-  if settings.DATABASE_ENGINE == 'sqlite3':
-    cursor.execute('vacuum')   # Shrink the database file
+    settings.DEBUG = tmp_debug
 
 
 @transaction.commit_manually
@@ -71,6 +82,13 @@ def createDates():
   working days monday through friday.
   '''
   global startdate
+
+  # Make sure the debug flag is not set!
+  # When it is set, the django database wrapper collects a list of all sql
+  # statements executed and their timings. This consumes plenty of memory
+  # and cpu time.
+  tmp_debug = settings.DEBUG
+  settings.DEBUG = False
 
   # Performance improvement for sqlite during the bulky creation transactions
   if settings.DATABASE_ENGINE == 'sqlite3':
@@ -115,6 +133,7 @@ def createDates():
         Bucket(startdate = curdate, value=0, calendar=cal).save()
   finally:
     transaction.commit()
+    settings.DEBUG = tmp_debug
 
 
 @transaction.commit_manually
@@ -128,6 +147,14 @@ def updateTelescope(min_day_horizon, min_week_horizon):
   monthly buckets. The last weekly bucket can be a partial one: starting on
   monday and ending on the first day of the next calendar month.
   '''
+
+  # Make sure the debug flag is not set!
+  # When it is set, the django database wrapper collects a list of all sql
+  # statements executed and their timings. This consumes plenty of memory
+  # and cpu time.
+  tmp_debug = settings.DEBUG
+  settings.DEBUG = False
+
   # Performance improvement for sqlite during the bulky creation transactions
   if settings.DATABASE_ENGINE == 'sqlite3':
     connection.cursor().execute('PRAGMA synchronous=OFF')
@@ -154,6 +181,7 @@ def updateTelescope(min_day_horizon, min_week_horizon):
       i.save()
   finally:
     transaction.commit()
+    settings.DEBUG = tmp_debug
 
 
 @transaction.commit_manually
@@ -165,6 +193,13 @@ def create_model (cluster, demand, forecast_per_item, level, resource, resource_
   global startdate
   random.seed(100) # Initialize random seed to get reproducible results
   cnt = 100000     # a counter for operationplan identifiers
+
+  # Make sure the debug flag is not set!
+  # When it is set, the django database wrapper collects a list of all sql
+  # statements executed and their timings. This consumes plenty of memory
+  # and cpu time.
+  tmp_debug = settings.DEBUG
+  settings.DEBUG = False
 
   # Performance improvement for sqlite during the bulky creation transactions
   if settings.DATABASE_ENGINE == 'sqlite3':
@@ -320,3 +355,4 @@ def create_model (cluster, demand, forecast_per_item, level, resource, resource_
   finally:
     # Commit it all, even in case of exceptions
     transaction.commit()
+    settings.DEBUG = tmp_debug

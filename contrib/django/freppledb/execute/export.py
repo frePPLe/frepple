@@ -90,6 +90,13 @@ def dumpfrepple():
   This function exports the data from the frepple memory into the database.
   '''
   global ROUNDING_DECIMALS
+
+  # Make sure the debug flag is not set!
+  # When it is set, the django database wrapper collects a list of all sql
+  # statements executed and their timings. This consumes plenty of memory
+  # and cpu time.
+  settings.DEBUG = False
+
   # Create a database connection
   cursor = connection.cursor()
   if settings.DATABASE_ENGINE == 'sqlite3':

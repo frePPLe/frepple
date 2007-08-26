@@ -291,9 +291,9 @@ class Calendar : public HasName<Calendar>, public Object
 template <typename T> class CalendarValue : public Calendar
 {
   public:
-    /** @brief A special type of calendar bucket, designed to hold a 
+    /** @brief A special type of calendar bucket, designed to hold a
       * a value.
-      * @see Calendar::Bucket 
+      * @see Calendar::Bucket
       */
     class BucketValue : public Calendar::Bucket
     {
@@ -371,9 +371,9 @@ template <typename T> class CalendarValue : public Calendar
 template <typename T> class CalendarPointer : public Calendar
 {
   public:
-    /** @brief A special type of calendar bucket, designed to hold a pointer 
+    /** @brief A special type of calendar bucket, designed to hold a pointer
       * to an object.
-      * @see Calendar::Bucket 
+      * @see Calendar::Bucket
       */
     class BucketPointer : public Calendar::Bucket
     {
@@ -450,7 +450,7 @@ template <typename T> class CalendarPointer : public Calendar
 };
 
 
-/** @brief A calendar only defining time buckets and not storing any data 
+/** @brief A calendar only defining time buckets and not storing any data
   * fields. */
 class CalendarVoid : public Calendar
 {
@@ -525,7 +525,7 @@ class CalendarOperation : public CalendarPointer<Operation>
 };
 
 
-/** @brief A problem represents infeasibilities, alerts and warnings in 
+/** @brief A problem represents infeasibilities, alerts and warnings in
   * the plan.
   *
   * Problems are maintained internally by the system. They are thus only
@@ -669,7 +669,7 @@ class Problem : public NonCopyable
 };
 
 
-/** @brief Classes that keep track of problem conditions need to implement 
+/** @brief Classes that keep track of problem conditions need to implement
   * this class.
   *
   * This class is closely related to the Problem class.
@@ -713,7 +713,7 @@ class HasProblems
 };
 
 
-/** @brief This class is an implementation of the "visitor" design pattern. 
+/** @brief This class is an implementation of the "visitor" design pattern.
   * It is intended as a basis for different algoritms processing the frepple
   * data.
   *
@@ -781,7 +781,7 @@ class Solver : public Object, public HasName<Solver>
 };
 
 
-/** @brief This class needs to be implemented by all classes that implement 
+/** @brief This class needs to be implemented by all classes that implement
   * dynamic behavior, and which can be called by a solver.
   */
 class Solvable
@@ -837,7 +837,7 @@ class CommandSolve : public Command
 };
 
 
-/** @brief This class needs to be implemented by all classes that implement 
+/** @brief This class needs to be implemented by all classes that implement
   * dynamic behavior in the plan.
   *
   * The problem detection logic is implemented in the detectProblems() method.
@@ -1015,9 +1015,9 @@ class HasLevel
 
 
 /** @brief This abstract class is used to associate buffers and resources with
-  * a physical location. 
+  * a physical location.
   *
-  * This is useful for reporting but has no direct impact on the planning 
+  * This is useful for reporting but has no direct impact on the planning
   * behavior.
   */
 class Location
@@ -1044,15 +1044,15 @@ class LocationDefault : public Location
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(LocationDefault) 
-        + getName().size() 
+      {return sizeof(LocationDefault)
+        + getName().size()
         + HasDescription::memsize();}
 };
 
 
 /** @brief This abstracts class represents customers.
-  * 
-  * Demands can be associated with a customer, but there is no planning 
+  *
+  * Demands can be associated with a customer, but there is no planning
   * behavior directly linked to customers.
   */
 class Customer
@@ -1083,13 +1083,13 @@ class CustomerDefault : public Customer
 };
 
 
-/** @brief An operation represents an activity: these consume and produce material, 
-  * take time and also require capacity. 
-  * 
+/** @brief An operation represents an activity: these consume and produce material,
+  * take time and also require capacity.
+  *
   * An operation consumes and produces material, modeled through flows.<br>
   * An operation requires capacity, modeled through loads.
   *
-  * This is an abstract base class for all different operation types. 
+  * This is an abstract base class for all different operation types.
   */
 class Operation : public HasName<Operation>,
       public HasLevel, public Plannable, public HasDescription
@@ -1331,8 +1331,8 @@ class Operation : public HasName<Operation>,
 };
 
 
-/** @brief An operationplan is the key dynamic element of a plan. It 
-  * represents a certain quantity being planned along a certain operation 
+/** @brief An operationplan is the key dynamic element of a plan. It
+  * represents a certain quantity being planned along a certain operation
   * during a certain date range.
   *
   * From a coding perspective:
@@ -1428,7 +1428,7 @@ class OperationPlan
         {
           // The while loop is required since the first operation might not
           // have any operationplans at all or can be hidden
-          while (op!=Operation::end() 
+          while (op!=Operation::end()
             && (!op->getFirstOpPlan() || op->getHidden())) ++op;
           if (op!=Operation::end())
           {
@@ -1456,7 +1456,7 @@ class OperationPlan
           // Move to a new operation
           if (!opplan && op!=Operation::end())
           {
-            do ++op; 
+            do ++op;
             while (op!=Operation::end() && (!op->getFirstOpPlan() || op->getHidden()));
             if (op!=Operation::end())
             {
@@ -1901,8 +1901,8 @@ class OperationFixedTime : public Operation
 };
 
 
-/** @brief Models an operation whose duration is the sum of a constant time, 
-  * plus a cetain time per unit. 
+/** @brief Models an operation whose duration is the sum of a constant time,
+  * plus a cetain time per unit.
   */
 class OperationTimePer : public Operation
 {
@@ -1961,8 +1961,8 @@ class OperationTimePer : public Operation
 };
 
 
-/** @brief Represents a routing operation, i.e. an operation consisting of 
-  * multiple, sequential sub-operations. 
+/** @brief Represents a routing operation, i.e. an operation consisting of
+  * multiple, sequential sub-operations.
   */
 class OperationRouting : public Operation
 {
@@ -2031,7 +2031,7 @@ class OperationRouting : public Operation
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
     {
-      return sizeof(OperationRouting) + getName().size() 
+      return sizeof(OperationRouting) + getName().size()
         + HasDescription::memsize()
         + steps.size() * 2 * sizeof(Operation*);
     }
@@ -2165,7 +2165,7 @@ class OperationAlternate : public Operation
 
 
 /** @brief This class subclasses the OperationPlan class for operations of type
-  * OperationAlternate. 
+  * OperationAlternate.
   *
   * Such operationplans need an extra field to point to the suboperationplan.
   * @see OperationPlan, OperationAlternate
@@ -2272,7 +2272,7 @@ class OperationEffective : public Operation
 
 
 /** @brief This class subclasses the OperationPlan class for operations of type
-  * OperationEffective. 
+  * OperationEffective.
   *
   * Such operationplans need an extra field to point to the suboperationplan.
   * @see OperationPlan, OperationEffective
@@ -2356,7 +2356,7 @@ class Item
 };
 
 
-/** @brief This class is the default implementation of the abstract Item 
+/** @brief This class is the default implementation of the abstract Item
   * class. */
 class ItemDefault : public Item
 {
@@ -2529,9 +2529,9 @@ class BufferDefault : public Buffer
 
 
 /** @brief  This class represents a material buffer with an infinite supply of extra
-  * material. 
+  * material.
   *
-  * In other words, it never constrains the plan and it doesn't propagate any 
+  * In other words, it never constrains the plan and it doesn't propagate any
   * requirements upstream.
   */
 class BufferInfinite : public Buffer
@@ -2564,14 +2564,14 @@ class BufferInfinite : public Buffer
   *    Inventory level to which we try to replenish.<br>
   *    The actual inventory can exceed this value.
   *  - <b>Leadtime</b>:<br>
-  *    Time taken between placing the purchase order with the supplier and the 
+  *    Time taken between placing the purchase order with the supplier and the
   *    delivery of the material.
   *
-  * Using the additional parameters described below the replenishments can be 
+  * Using the additional parameters described below the replenishments can be
   * controlled in more detail. The resulting inventory profile can end up
   * to be completely different from the classical saw-tooth pattern!
-  * 
-  * The timing of the replenishments can be constrained by the following 
+  *
+  * The timing of the replenishments can be constrained by the following
   * parameters:
   *  - <b>MinimumInterval</b>:<br>
   *    Minimum time between replenishments.<br>
@@ -2580,12 +2580,12 @@ class BufferInfinite : public Buffer
   *    exceed the target set by the MinimumInventory parameter.
   *  - <b>MaximumInterval</b>:<br>
   *    Maximum time between replenishments.<br>
-  *    The order quantity will replenish to an inventory value less than the 
+  *    The order quantity will replenish to an inventory value less than the
   *    maximum when this maximum interval is reached.
-  * When the minimum and maximum interval are equal we basically define a fixed 
+  * When the minimum and maximum interval are equal we basically define a fixed
   * schedule replenishment policy.
-  * 
-  * The quantity of the replenishments can be constrained by the following 
+  *
+  * The quantity of the replenishments can be constrained by the following
   * parameters:
   *  - <b>MinimumQuantity</b>:<br>
   *    Minimum quantity for a replenishment.<br>
@@ -2593,11 +2593,11 @@ class BufferInfinite : public Buffer
   *    by the MinimumInventory parameter.
   *  - <b>MaximumQuantity</b>:<br>
   *    Maximum quantity for a replenishment.<br>
-  *    This parameter can cause the maximum inventory target never to be 
-  *    reached. 
+  *    This parameter can cause the maximum inventory target never to be
+  *    reached.
   *  - <b>MultipleQuantity</b>:<br>
   *    All replenishments are rounded up to a multiple of this value.
-  * When the minimum and maximum quantity are equal we basically define a fixed 
+  * When the minimum and maximum quantity are equal we basically define a fixed
   * quantity replenishment policy.
   */
 class BufferProcure : public Buffer
@@ -2610,8 +2610,8 @@ class BufferProcure : public Buffer
     virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
       {return sizeof(BufferProcure) + getName().size() + HasDescription::memsize();}
-    explicit BufferProcure(const string& c) : Buffer(c), min_inventory(0), 
-      max_inventory(0), size_minimum(0), size_maximum(FLT_MAX), size_multiple(0), 
+    explicit BufferProcure(const string& c) : Buffer(c), min_inventory(0),
+      max_inventory(0), size_minimum(0), size_maximum(FLT_MAX), size_multiple(0),
       oper(NULL) {}
     static DECLARE_EXPORT const MetaClass metadata;
 
@@ -2627,13 +2627,13 @@ class BufferProcure : public Buffer
     /** Update the release time fence. */
     void setFence(TimePeriod p) {if (p>=0L) fence = p;}
 
-    /** Return the inventory level that will trigger creation of a 
+    /** Return the inventory level that will trigger creation of a
       * purchasing.
       */
     float getMinimumInventory() const {return min_inventory;}
 
     /** Update the minimum inventory level to trigger replenishments. */
-    void setMinimumInventory(float f) 
+    void setMinimumInventory(float f)
     {
       if (f<0) return;
       min_inventory = f;
@@ -2645,7 +2645,7 @@ class BufferProcure : public Buffer
     float getMaximumInventory() const {return max_inventory;}
 
     /** Update the inventory level to replenish to. */
-    void setMaximumInventory(float f) 
+    void setMaximumInventory(float f)
     {
       if (f<0) return;
       max_inventory = f;
@@ -2655,12 +2655,12 @@ class BufferProcure : public Buffer
 
     /** Return the minimum interval between purchasing operations.<br>
       * This parameter doesn't control the timing of the first purchasing
-      * operation, but only to the subsequent ones. 
+      * operation, but only to the subsequent ones.
       */
     TimePeriod getMinimumInterval() const {return min_interval;}
 
     /** Update the minimum time between replenishments. */
-    void setMinimumInterval(TimePeriod p) 
+    void setMinimumInterval(TimePeriod p)
     {
       if (p<0L) return;
       min_interval = p;
@@ -2669,12 +2669,12 @@ class BufferProcure : public Buffer
     }
 
     /** Return the maximum time interval between sytem-generated replenishment
-      * operations. 
+      * operations.
       */
     TimePeriod getMaximumInterval() const {return max_interval;}
 
     /** Update the minimum time between replenishments. */
-    void setMaximumInterval(TimePeriod p) 
+    void setMaximumInterval(TimePeriod p)
     {
       if (p<0L) return;
       max_interval = p;
@@ -2686,7 +2686,7 @@ class BufferProcure : public Buffer
     float getSizeMinimum() const {return size_minimum;}
 
     /** Update the minimum replenishment quantity. */
-    void setSizeMinimum(float f) 
+    void setSizeMinimum(float f)
     {
       if (f<0) return;
       size_minimum = f;
@@ -2698,7 +2698,7 @@ class BufferProcure : public Buffer
     float getSizeMaximum() const {return size_maximum;}
 
     /** Update the maximum replenishment quantity. */
-    void setSizeMaximum(float f) 
+    void setSizeMaximum(float f)
     {
       if (f<0) return;
       size_maximum = f;
@@ -2712,31 +2712,31 @@ class BufferProcure : public Buffer
     /** Update the multiple quantity. */
     void setSizeMultiple(float f) {if (f>=0) size_multiple = f;}
 
-    /** Returns the operation that is automatically created to represent the 
-      * procurements. 
+    /** Returns the operation that is automatically created to represent the
+      * procurements.
       */
     DECLARE_EXPORT Operation* getOperation() const;
 
   private:
     /** Purchasing leadtime.<br/>
       * Within this leadtime fence no additional purchase orders can be generated.
-      */    
+      */
     TimePeriod leadtime;
 
-    /** Time window from the current date in which all procurements are expected 
+    /** Time window from the current date in which all procurements are expected
       * to be released.
       */
     TimePeriod fence;
 
     /** Inventory level that will trigger the creation of a replenishment.<br>
       * Because of the replenishment leadtime, the actual inventory will drop
-      * below this value. It is up to the user to set an appropriate minimum 
+      * below this value. It is up to the user to set an appropriate minimum
       * value.
       */
     float min_inventory;
 
     /** The maximum inventory level to which we plan to replenish.<br>
-      * This is not a hard limit - other parameters can make that the actual 
+      * This is not a hard limit - other parameters can make that the actual
       * inventory either never reaches this value or always exceeds it.
       */
     float max_inventory;
@@ -2748,17 +2748,17 @@ class BufferProcure : public Buffer
     TimePeriod max_interval;
 
     /** Minimum purchasing quantity.<br>
-      * The default value is 0, meaning no minimum. 
+      * The default value is 0, meaning no minimum.
       */
     float size_minimum;
 
     /** Maximum purchasing quantity.<br>
-      * The default value is 0, meaning no maximum limit. 
+      * The default value is 0, meaning no maximum limit.
       */
     float size_maximum;
 
     /** Purchases are always rounded up to a multiple of this quantity.<br>
-      * The default value is 0, meaning no multiple needs to be applied. 
+      * The default value is 0, meaning no multiple needs to be applied.
       */
     float size_multiple;
 
@@ -2825,7 +2825,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       * are hidden. */
     virtual bool getHidden() const
     {
-      return (getBuffer() && getBuffer()->getHidden()) 
+      return (getBuffer() && getBuffer()->getHidden())
         || (getOperation() && getOperation()->getHidden());
     }
 
@@ -2937,7 +2937,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     virtual ~FlowPlan()
     {
       Object::WLock<Buffer> b = getFlow()->getBuffer();
-      b->setChanged(); 
+      b->setChanged();
       b->flowplans.erase(this);
     }
 
@@ -2971,7 +2971,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 };
 
 
-/** @brief This class represents a workcentre, a physical or logical 
+/** @brief This class represents a workcentre, a physical or logical
   * representation of capacity.
   */
 class Resource : public HasHierarchy<Resource>,
@@ -3058,8 +3058,8 @@ class Resource : public HasHierarchy<Resource>,
 };
 
 
-/** @brief This class is the default implementation of the abstract 
-  * Resource class. 
+/** @brief This class is the default implementation of the abstract
+  * Resource class.
   */
 class ResourceDefault : public Resource
 {
@@ -3069,12 +3069,12 @@ class ResourceDefault : public Resource
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(ResourceDefault) 
+      {return sizeof(ResourceDefault)
         + getName().size() + HasDescription::memsize();}
 };
 
 
-/** @brief This class represents a resource that'll never have any 
+/** @brief This class represents a resource that'll never have any
   * capacity shortage. */
 class ResourceInfinite : public Resource
 {
@@ -3145,7 +3145,7 @@ class Load
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
     bool getHidden() const
      {
-      return (getResource() && getResource()->getHidden()) 
+      return (getResource() && getResource()->getHidden())
         || (getOperation() && getOperation()->getHidden());
     }
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
@@ -3171,7 +3171,7 @@ class Load
 
 
 /** @brief This is the (logical) top class of the complete model.
-  * 
+  *
   * This is a singleton class: only a single instance can be created.
   * The data model has other limitations that make it not obvious to support
   * building multiple models/plans in memory of the same application: e.g.
@@ -3387,9 +3387,9 @@ class CommandReadXMLString : public Command
 
 
 /** @brief This command writes the complete model to an XML-file.
-  * 
-  * Both the static model (i.e. items, locations, buffers, resources, 
-  * calendars, etc...) and the dynamic data (i.e. the actual plan including 
+  *
+  * Both the static model (i.e. items, locations, buffers, resources,
+  * calendars, etc...) and the dynamic data (i.e. the actual plan including
   * the operation_plans, demand, problems, etc...).<br>
   * The data is written by the execute() function.
   * @see CommandSavePlan
@@ -3423,9 +3423,9 @@ class CommandSave : public Command
 };
 
 
-/** @brief This command writes the dynamic part of the plan to an  text file. 
+/** @brief This command writes the dynamic part of the plan to an  text file.
   *
-  * This saved information covers the buffer flowplans, operation_plans, 
+  * This saved information covers the buffer flowplans, operation_plans,
   * resource loading, demand, problems, etc...<br>
   * The main use of this function is in the test suite: a simple text file
   * comparison allows us to identify changes quickly. The output format is
@@ -3733,7 +3733,7 @@ class Demand
 };
 
 
-/** @brief This class is the default implementation of the abstract 
+/** @brief This class is the default implementation of the abstract
   * Demand class. */
 class DemandDefault : public Demand
 {
@@ -3958,7 +3958,7 @@ class ProblemDemandNotPlanned : public Problem
 };
 
 
-/** @brief A problem of this class is created when a demand is satisfied later 
+/** @brief A problem of this class is created when a demand is satisfied later
   * than the accepted tolerance after its due date.
   */
 class ProblemLate : public Problem
@@ -3970,7 +3970,7 @@ class ProblemLate : public Problem
     /** The weight is equal to the delay, expressed in days.<br>
       * The quantity being delayed is not included.
       */
-    float getWeight() 
+    float getWeight()
     {
       return static_cast<float>(DateRange(
         getDemand()->getDue(),
@@ -4052,7 +4052,7 @@ class ProblemShort : public Problem
 };
 
 
-/** @brief A problem of this class is created when a demand is planned for more 
+/** @brief A problem of this class is created when a demand is planned for more
   * than the requested quantity.
   */
 class ProblemExcess : public Problem
@@ -4121,7 +4121,7 @@ class ProblemPlannedLate : public Problem
 };
 
 
-/** @brief A problem of this class is created when a demand is planned earlier 
+/** @brief A problem of this class is created when a demand is planned earlier
   * than the accepted tolerance before its epst date.
   */
 class ProblemPlannedEarly : public Problem
@@ -4159,7 +4159,7 @@ class ProblemPlannedEarly : public Problem
 };
 
 
-/** @brief A problem of this class is created when a resource is being 
+/** @brief A problem of this class is created when a resource is being
   * overloaded during a certain period of time.
   */
 class ProblemCapacityOverload : public Problem
@@ -4189,7 +4189,7 @@ class ProblemCapacityOverload : public Problem
 };
 
 
-/** @brief A problem of this class is created when a resource is loaded below 
+/** @brief A problem of this class is created when a resource is loaded below
   * its minimum during a certain period of time.
   */
 class ProblemCapacityUnderload : public Problem
@@ -4219,7 +4219,7 @@ class ProblemCapacityUnderload : public Problem
 };
 
 
-/** @brief A problem of this class is created when a buffer is having a 
+/** @brief A problem of this class is created when a buffer is having a
   * material shortage during a certain period of time.
   */
 class ProblemMaterialShortage : public Problem
@@ -4249,7 +4249,7 @@ class ProblemMaterialShortage : public Problem
 };
 
 
-/** @brief A problem of this class is created when a buffer is carrying too 
+/** @brief A problem of this class is created when a buffer is carrying too
   * much material during a certain period of time.
   */
 class ProblemMaterialExcess : public Problem
@@ -4279,8 +4279,8 @@ class ProblemMaterialExcess : public Problem
 };
 
 
-/** @brief This command is used to create an operationplan. 
-  * 
+/** @brief This command is used to create an operationplan.
+  *
   * The operationplan will have its load and loadplans created when the
   * command is created. It is assigned an id and added to the list of all
   * operationplans when the command is committed.
@@ -4326,7 +4326,7 @@ class CommandCreateOperationPlan : public Command
 };
 
 
-/** @brief This class represents the command of moving an operationplan to a 
+/** @brief This class represents the command of moving an operationplan to a
   * new date.
   * @todo Moving in a routing operation can't be undone with the current
   * implementation! The command will need to store all original dates of
@@ -4376,7 +4376,7 @@ class CommandMoveOperationPlan : public Command
 };
 
 
-/** @brief This class models a iterator that walks over all available 
+/** @brief This class models a iterator that walks over all available
   * HasProblem entities.
   *
   * This list is containing hard-coding the classes that are implementing
@@ -4423,12 +4423,6 @@ class HasProblems::EntityIterator
     /** Assignment operator. */
     DECLARE_EXPORT EntityIterator& operator=(const EntityIterator& o);
 
-    /** Resets the iterator.<br>
-      * This is usefull to initialize an iterator in uninitialized memory.
-      * Calling this method on a properly initialized iterator will leak memory!
-      */
-    void reset() {type=4;}
-
     /** Destructor. */
     DECLARE_EXPORT ~EntityIterator();
 
@@ -4453,7 +4447,7 @@ class HasProblems::EntityIterator
 };
 
 
-/** @brief This class models an STL-like iterator that allows us to iterate 
+/** @brief This class models an STL-like iterator that allows us to iterate
   * over the named entities in a simple and safe way.
   *
   * Objects of this class are returned by the begin() and end() functions.
@@ -4471,6 +4465,7 @@ class Problem::const_iterator
     HasProblems* owner;
     HasProblems::EntityIterator eiter;
 
+  public:
     /** Creates an iterator that will loop through the problems of a
       * single entity only. <BR>
       * This constructor is also used to create a end-iterator, when passed
@@ -4490,11 +4485,6 @@ class Problem::const_iterator
       iter = (eiter!=HasProblems::endEntity()) ? eiter->firstProblem : NULL;
     }
 
-  public:
-    /** Resetting the iterator to some dummy value.<br>
-      * This is useful when initializing an iterator in uninitialized memory.
-      */
-    void reset() {eiter.reset();}
     DECLARE_EXPORT const_iterator& operator++();
     bool operator != (const const_iterator& t) const {return iter!=t.iter;}
     bool operator == (const const_iterator& t) const {return iter==t.iter;}
@@ -4503,7 +4493,7 @@ class Problem::const_iterator
 };
 
 
-/** @brief This class allows upstream and downstream navigation through 
+/** @brief This class allows upstream and downstream navigation through
   * the plan.
   *
   * Downstream navigation follows the material stream from raw materials
@@ -4525,8 +4515,8 @@ class PeggingIterator
         stack.push(state(0,e->getQuantity()>0 ? e->getQuantity() : -e->getQuantity(),1,e));
     }
 
-    /** Assignment operator. */    
-    PeggingIterator& operator=(const FlowPlan* x) 
+    /** Assignment operator. */
+    PeggingIterator& operator=(const FlowPlan* x)
     {
       while (!stack.empty()) stack.pop();
       if (x)
@@ -4592,13 +4582,6 @@ class PeggingIterator
       */
     operator bool () const { return !stack.empty(); }
 
-    /** This is useful when initializing an iterator in uninitialized memory. */
-    void reset() 
-    {
-      statestack x;
-      memcpy(&stack,&x,sizeof(statestack));
-    }
-
   private:
     /** This structure is used to keep track of the iterator states during the
       * iteration. */
@@ -4606,29 +4589,37 @@ class PeggingIterator
     {
       /** Stores the quantity of this flowplan that is involved. */
       double qty;
+
       /** Stores what portion of the flowplan is involved with the root flowplan
         * where the recursion started.
         */
       double factor;
+
       /** Keeps track of the number of levels we're removed from the root
         * flowplan where the recursion started.
         */
       short level;
+
       /** The current flowplan. */
       const FlowPlan* fl;
+
       /** Set to false when unpegged quantities are involved. */
       bool pegged;
+
       /** Constructor. */
       state(unsigned int l, double d, double f, const FlowPlan* ff, bool p = true)
           : qty(d), factor(f), level(l), fl(ff), pegged(p) {};
+
       /** Inequality operator. */
       bool operator != (const state& s) const
         {return fl!=s.fl || level!=s.level;}
+
       /** Equality operator. */
       bool operator == (const state& s) const
         {return fl==s.fl && level==s.level;}
     };
 
+    /** A type to hold the iterator state. */
     typedef stack < state > statestack;
 
     /** A stack is used to store the iterator state. */

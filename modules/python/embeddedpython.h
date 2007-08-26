@@ -283,12 +283,12 @@ extern "C"
   {
     private:
       PyObject_HEAD
-      Problem::const_iterator iter;
+      Problem::const_iterator *iter;
     public:
       static PyTypeObject InfoType;
       static PyObject* next(PythonProblem* obj);
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
-      static void destroy(PythonProblem* obj) {PyObject_Del(obj);}
+      static void destroy(PythonProblem* obj) {delete obj->iter; PyObject_Del(obj);}
       static void define_type() {}
   };
 
@@ -332,13 +332,13 @@ extern "C"
   {
     private:
       PyObject_HEAD
-      PeggingIterator iter;
+      PeggingIterator* iter;
       Demand* dem;
     public:
       static PyTypeObject InfoType;
       static PyObject* next(PythonPegging* obj);
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
-      static void destroy(PythonPegging* obj) {PyObject_Del(obj);}
+      static void destroy(PythonPegging* obj) {delete obj->iter; PyObject_Del(obj);}
       static void define_type() { InfoType.tp_new = 0; }
       static PyObject* createFromDemand(Demand*);
   };

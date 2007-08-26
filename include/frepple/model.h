@@ -609,7 +609,7 @@ class Problem : public NonCopyable
       */
     static DECLARE_EXPORT void clearProblems();
 
-    /** Erases the list of problems linked with a certain plannable object.
+    /** Erases the list of problems linked with a certain plannable object.<br>
       * If the second parameter is set to true, the problems will be
       * recreated when the next problem detection round is triggered.
       */

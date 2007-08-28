@@ -24,11 +24,15 @@
 
 # Frepple specific variables
 import os, os.path, re, sys
-FREPPLE_HOME = os.environ['FREPPLE_HOME']
+try:
+  FREPPLE_HOME = os.environ['FREPPLE_HOME']
+except:
+  print 'Error: Environment variable FREPPLE_HOME is not defined'
+  sys.exit(1)
 if 'FREPPLE_APP' in os.environ:
   FREPPLE_APP = os.environ['FREPPLE_APP']
 else:
-  FREPPLE_APP = os.path.normpath(os.path.join(FREPPLE_HOME,'..','contrib','django','freppledb'))
+  FREPPLE_APP = os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','django','freppledb'))
 FREPPLE_VERSION = '0.3.1'
 
 # Determing whether Django runs as a standalone application or is deployed
@@ -168,7 +172,7 @@ INTERNAL_IPS = ( '192.168.0.3' )
 # This is useful for the py2exe distribution: this settings file will be
 # compiled and included in library.zip, and we need to give users a way
 # to pass parameters and settings to Django.
-if os.path.normcase(os.path.normpath(os.path.dirname(__file__))) != os.path.normcase(FREPPLE_APP):
+if os.path.normcase(os.path.abspath(os.path.dirname(__file__))) != os.path.normcase(FREPPLE_APP):
   try: execfile(os.path.join(FREPPLE_APP,'settings.py'))
   except IOError:
     pass

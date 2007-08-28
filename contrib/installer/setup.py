@@ -46,6 +46,8 @@ packages = [# Required for django standalone deployment
             'psycopg2', 'psycopg2.extensions',
             # Added for oracle
             'cx_Oracle',
+            # Required for the python initialization
+            'site',
             # Added to package a more complete python library with frepple
             'ftplib', 'poplib', 'imaplib', 'telnetlib', 'xmlrpclib',
             'gzip', 'bz2','zipfile', 'tarfile', 'SimpleXMLRPCServer',
@@ -146,6 +148,9 @@ setup(
     # Targets to build
     console = [ {
        "script": "runserver.py",
+       "icon_resources": [(1, "frepple.ico")]
+       }, {
+       "script": "../../test/runtest.py",
        "icon_resources": [(1, "frepple.ico")]
        }],
     )

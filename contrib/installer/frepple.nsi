@@ -1,5 +1,5 @@
 ;
-; Nullsoft script for creating a windows installer for Frepple
+; Nullsoft script for creating a windows installer for frePPLe
 ;
 ;  file     : $URL$
 ;  revision : $LastChangedRevision$  $LastChangedBy$
@@ -164,10 +164,11 @@ Section "Application" SecAppl
   File /r "..\contrib\installer\dist\*.*"
 
   ; Create menu
-  CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple server.lnk" "$INSTDIR\server\runserver.exe"
+  CreateDirectory "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
+  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\server\runserver.exe"
 
   ; Set an environment variable (and propagate immediately to other processes)
+  System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("FREPPLE_HOME", "$INSTDIR\bin").r0'
   WriteRegExpandStr HKEY_CURRENT_USER "Environment" "FREPPLE_HOME" "$INSTDIR\bin"
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 
@@ -255,8 +256,6 @@ Function database_leave
     WriteIniStr "$PLUGINSDIR\database.ini" "Field 10" "Flags" "$2"
     ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 10" "HWND"
     EnableWindow $4 $3
-    ReadINIStr $4 "$PLUGINSDIR\test.ini" "Field 10" "HWND2"
-    EnableWindow $4 $3
     WriteIniStr "$PLUGINSDIR\database.ini" "Field 11" "Flags" "$2"
     ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 11" "HWND"
     EnableWindow $4 $3
@@ -277,7 +276,7 @@ Section "Documentation" SecDoc
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple documentation.lnk" "$INSTDIR\doc\index.html"
+  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Documentation.lnk" "$INSTDIR\doc\index.html"
   File /r "doc"
 SectionEnd
 
@@ -285,6 +284,8 @@ Section "Examples" SecEx
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   File /r "test"
+  SetOutPath "$INSTDIR\test"
+  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Run test suite.lnk" "$INSTDIR\server\runtest.exe"
 SectionEnd
 
 SubSection /E "Development" SecDev
@@ -311,7 +312,7 @@ Section /O "Add-ons" SecContrib
 
   ; A link to the excel sheet
   CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple on Excel.lnk" "$INSTDIR\contrib\excel\frepple.xls"
+  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\frePPLe on Excel.lnk" "$INSTDIR\contrib\excel\frepple.xls"
 SectionEnd
 
 SubSectionEnd
@@ -319,9 +320,9 @@ SubSectionEnd
 
 Section -AdditionalIcons
   WriteIniStr "$INSTDIR\${PRODUCT_NAME} web site.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
-  CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple web site.lnk" "${PRODUCT_WEB_SITE}"
-  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Uninstall.lnk" "$INSTDIR\uninst.exe"
+  CreateDirectory "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
+  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\frePPLe web site.lnk" "${PRODUCT_WEB_SITE}"
+  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Uninstall.lnk" "$INSTDIR\uninst.exe"
 SectionEnd
 
 
@@ -369,14 +370,15 @@ FunctionEnd
 
 Section Uninstall
   ; Remove the entries from the start menu
-  Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Uninstall.lnk"
-  Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple documentation.lnk"
-  Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple web site.lnk"
-  Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple server.lnk"
-  Delete "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Frepple on Excel.lnk"
+  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Uninstall.lnk"
+  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Documentation.lnk"
+  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run test suite.lnk"
+  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk"
+  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\frePPLe web site.lnk"
+  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\frePPLe on Excel.lnk"
 
   ; Remove the folder in start menu
-  RMDir "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
+  RMDir "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
 
   ; Removed the installation directory
   RMDir /r "$INSTDIR"
@@ -387,6 +389,7 @@ Section Uninstall
 
   ; Delete environment variable
   DeleteRegValue HKEY_CURRENT_USER "Environment" "FREPPLE_HOME"
+  SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 
   ; Remove installation registration key
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"

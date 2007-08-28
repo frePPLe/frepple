@@ -184,6 +184,9 @@ server = CherryPyWSGIServer(
   (options.address, options.port),
   AdminMediaHandler(WSGIHandler(), os.path.join(settings.FREPPLE_APP,'media'))
   )
+# Want SSL support? Just set these attributes.
+#  server.ssl_certificate = <filename>
+#  server.ssl_private_key = <filename>
 try:
   server.start()
 except KeyboardInterrupt:

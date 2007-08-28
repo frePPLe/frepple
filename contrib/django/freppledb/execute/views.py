@@ -140,7 +140,7 @@ def runfrepple(request):
       os.environ['PLAN_TYPE'] = type
       os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\','\\\\')
       os.environ['FREPPLE_APP'] = settings.FREPPLE_APP
-      os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + '.'
+      os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
       os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
       os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
       if os.path.exists(os.path.join(os.environ['FREPPLE_APP'],'library.zip')):

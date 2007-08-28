@@ -28,7 +28,7 @@ from stat import S_ISDIR, ST_MODE
 from optparse import OptionParser, OptionValueError
 from django.core.handlers.wsgi import WSGIHandler
 from django.core.servers.basehttp import AdminMediaHandler
-from django.core.management import execute_from_command_line
+from django.core import management
 from cherrypy.wsgiserver import CherryPyWSGIServer
 
 # Environment settings (which are used in the Django settings file and need
@@ -141,26 +141,26 @@ if noDatabaseSchema:
       sys.exit(0)
   # Create the database
   print "\nCreating database scheme"
-  execute_from_command_line(argv=['','syncdb'])
+  management.call_command('syncdb', verbosity=1)
 
 # Do the action
 try:
   action = args[0]
   if action == 'shell':
     # Runs a Python interactive interpreter.
-    execute_from_command_line(argv=['','shell'])
+    management.call_command('shell', verbosity=1)
     sys.exit(0)
   elif action == 'dbshell':
     # Runs a Python interactive interpreter.
-    execute_from_command_line(argv=['','dbshell'])
+    management.call_command('dbshell', verbosity=1)
     sys.exit(0)
   elif action == 'syncdb':
     # Initializes a database
-    execute_from_command_line(argv=['','syncdb'])
+    management.call_command('syncdb', verbosity=1)
     sys.exit(0)
   elif action == 'test':
     # Run the test suite
-    execute_from_command_line(argv=['','test'])
+    management.call_command('test', verbosity=1)
     sys.exit(0)
   elif action != 'runserver':
     # Unsupported action

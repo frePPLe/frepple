@@ -149,8 +149,5 @@ setup(
     console = [ {
        "script": "runserver.py",
        "icon_resources": [(1, "frepple.ico")]
-       }, {
-       "script": "../../test/runtest.py",
-       "icon_resources": [(1, "frepple.ico")]
-       }],
+       }, ],
     )

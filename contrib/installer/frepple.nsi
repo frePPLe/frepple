@@ -285,7 +285,6 @@ Section "Examples" SecEx
   SetOverwrite ifnewer
   File /r "test"
   SetOutPath "$INSTDIR\test"
-  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\Run test suite.lnk" "$INSTDIR\server\runtest.exe"
 SectionEnd
 
 SubSection /E "Development" SecDev
@@ -372,7 +371,6 @@ Section Uninstall
   ; Remove the entries from the start menu
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Uninstall.lnk"
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Documentation.lnk"
-  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run test suite.lnk"
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk"
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\frePPLe web site.lnk"
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\frePPLe on Excel.lnk"

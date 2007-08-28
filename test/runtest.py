@@ -59,14 +59,6 @@ from subprocess import Popen, STDOUT, PIPE
 
 debug = False
 
-# Detect whether we are running a py2exe executable or a script.
-# The py2exe executable doesn't set the __file__ attribute.
-try:
-  __file__
-except:
-  py2exe = True
-else:
-  py2exe = False
 
 # Directory names for tests and frepple_home
 testdir = os.getcwd()
@@ -74,30 +66,19 @@ testdir = os.getcwd()
 
 def usage():
   # Print help information and exit
-  if py2exe:
-    print '\nUsage to run all tests:'
-    print '  ./runtest.py [-d|--debug]\n'
-    print 'Usage with list of tests to run:'
-    print '  ./runtest.py [-d|--debug] {test1} {test2} ...\n'
-    print 'Flags:'
-    print '  -d  --debug:\n     Verbose output of the test'
-  else:
-    print '\nUsage to run all tests:'
-    print '  ./runtest.py [-v|--vcc|-b|--bcc|-d|--debug]\n'
-    print 'Usage with list of tests to run:'
-    print '  ./runtest.py [-v|--vcc|-b|--bcc|-d|--debug] {test1} {test2} ...\n'
-    print 'Flags:'
-    print '  -v  --vcc:\n     Test executables created by Microsoft Visual Studio C++ compiler'
-    print '  -b  --bcc:\n     Test executables created by Borland C++ compiler'
-    print '  -d  --debug:\n     Verbose output of the test'
+  print '\nUsage to run all tests:'
+  print '  ./runtest.py [-d|--debug]\n'
+  print 'Usage with list of tests to run:'
+  print '  ./runtest.py [-d|--debug] {test1} {test2} ...\n'
+  print 'Flags:'
+  print '  -v  --vcc:\n     Test executables created by Microsoft Visual Studio C++ compiler'
+  print '  -b  --bcc:\n     Test executables created by Borland C++ compiler'
+  print '  -d  --debug:\n     Verbose output of the test'
 
 
 def runTestSuite():
     global debug, testdir
-    # Executable to be used for the tests. Exported as an environment variable.
-    # This default executable is the one valid  for GCC cygwin and GCC *nux builds.
-    # Py2exe executables only use the VCC build.
-    platform = (py2exe and 'VCC') or 'GCC'
+    platform = 'GCC'
 
     # Frepple uses the time functions from the C-library, which is senstive to
     # timezone settings. In particular the daylight saving time of different
@@ -111,9 +92,6 @@ def runTestSuite():
     opts = []
     tests = []
     try:
-      if py2exe:
-        opts, tests = getopt.getopt(sys.argv[1:], "dh", ["debug", "help"])
-      else:
         opts, tests = getopt.getopt(sys.argv[1:], "dvbh", ["debug", "vcc", "bcc", "help"])
     except getopt.GetoptError:
       usage()
@@ -134,9 +112,11 @@ def runTestSuite():
 
     # Executable to run
     if platform in ['VCC','BCC']:
-      os.environ['EXECUTABLE'] = "..\\..\\bin\\frepple.exe";
+      os.environ['EXECUTABLE'] = os.path.join("..","..","bin","frepple.exe");
     else:
-      os.environ['EXECUTABLE'] = "../../libtool --mode=execute ../../src/frepple"
+      # Executable to be used for the tests. Exported as an environment variable.
+      # This default executable is the one valid  for GCC cygwin and GCC *nux builds.
+      os.environ['EXECUTABLE'] = "%s  --mode=execute %s" % (os.path.join("..","..","libtool"), os.path.join("..","..","src","frepple"))
 
     # Argh... Special cases for that special platform again...
     if sys.platform == 'cygwin' and platform == 'VCC':
@@ -312,6 +292,4 @@ def diff(f1, f2):
 
 # If the file is processed as a script, run the test suite.
 # Otherwise, only define the methods.
-if __name__ == "__main__":
-  runTestSuite()
-  if py2exe: raw_input("Hit ENTER to exit")
+if __name__ == "__main__": runTestSuite()

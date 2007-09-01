@@ -44,9 +44,9 @@ class BufferReport(Report):
   title = "Inventory report"
   countquery = Buffer.objects.values('name','item','location')
   rows = (
-    ('buffer',{'countfilter': 'name__icontains'}),
-    ('item',{'countfilter': 'item__name__icontains'}),
-    ('location',{'countfilter': 'location__name__icontains'}),
+    ('buffer', {'filter': 'name__icontains'}),
+    ('item', {'filter': 'item__name__icontains'}),
+    ('location', {'filter': 'location__name__icontains'}),
     )
   crosses = (
     ('startoh', {'title':'start inventory',}),
@@ -132,7 +132,7 @@ class DemandReport(Report):
   title = 'Demand report'
   countquery = Item.objects.extra(where=('name in (select item_id from demand)',))
   rows = (
-    ('item',{'countfilter': 'name__icontains',}),
+    ('item',{'filter': 'name__icontains',}),
     )
   crosses = (
     ('demand',{}),
@@ -229,9 +229,9 @@ class ForecastReport(Report):
   title = 'Forecast report'
   countquery = Forecast.objects.all()
   rows = (
-    ('forecast',{'countfilter': 'name__icontains'}),
-    ('item',{'countfilter': 'item__name__icontains'}),
-    ('customer',{'countfilter': 'customer__name__icontains'}),
+    ('forecast',{'filter': 'name__icontains'}),
+    ('item',{'filter': 'item__name__icontains'}),
+    ('customer',{'filter': 'customer__name__icontains'}),
     )
   crosses = (
     ('total',{}),
@@ -308,8 +308,8 @@ class ResourceReport(Report):
   title = 'Resource report'
   countquery = Resource.objects.values('name','location')
   rows = (
-    ('resource',{'countfilter': 'name__icontains'}),
-    ('location',{'countfilter': 'location__name__icontains'}),
+    ('resource',{'filter': 'name__icontains'}),
+    ('location',{'filter': 'location__name__icontains'}),
     )
   crosses = (
     ('available',{}),
@@ -410,7 +410,7 @@ class OperationReport(Report):
   title = 'Operation report'
   countquery = Operation.objects.values('name')
   rows = (
-    ('operation',{'countfilter': 'name__icontains'}),
+    ('operation',{'filter': 'name__icontains'}),
     )
   crosses = (
     ('frozen_start', {'title':'frozen starts',}),

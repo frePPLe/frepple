@@ -87,7 +87,6 @@ class Dates(models.Model):
     default_end = models.DateField(db_index=True, null=True)
 
     class Admin:
-        pass
         list_display = ('day', 'dayofweek', 'week', 'month', 'quarter', 'year',
           'default', 'week_start', 'month_start', 'quarter_start',
           'year_start', 'default_start')

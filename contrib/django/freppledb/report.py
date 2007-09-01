@@ -141,19 +141,28 @@ class Report(object):
 
   # Row definitions
   # Possible attributes for a row field are:
-  #   - countfilter:
+  #   - filter:
   #     Specifies how a value in the search field affects the base query.
   #   - filter_size:
   #     Specifies the size of the search field.
   #     The default value is 10 characters.
+  #   - title:
+  #     Name of the row that is displayed to the user.
+  #     It defaults to the name of the field.
   rows = ()
 
   # Cross definitions.
-  # Currently not really used.
+  # Possible attributes for a row field are:
+  #   - title:
+  #     Name of the cross that is displayed to the user.
+  #     It defaults to the name of the field.
   crosses = ()
 
   # Column definitions
-  # Currently not really used.
+  # Possible attributes for a row field are:
+  #   - title:
+  #     Name of the cross that is displayed to the user.
+  #     It defaults to the name of the field.
   columns = ()
 
 
@@ -186,7 +195,7 @@ def _generate_csv(rep, qs):
       yield sf.getvalue()
 
 
-#@staff_member_required
+@staff_member_required
 def view_report(request, entity=None, **args):
   '''
   This is a generic view for reports having buckets in the time dimension.
@@ -219,7 +228,7 @@ def view_report(request, entity=None, **args):
   else:
     for f in reportclass.rows:
       x = request.GET.get(f[0], None)
-      if x: counter = counter.filter(**{f[1]['countfilter']:x})
+      if x: counter = counter.filter(**{f[1]['filter']:x})
 
   # Pick up the sort parameter from the url
   sortparam = request.GET.get('o','1a')
@@ -378,9 +387,10 @@ class ReportRowHeader(Node):
       # Sorted on another column
       x['o'] = '%da' % self.number
       y = '<th>'
+    title = (cls.rows[self.number-1][1].has_key('title') and cls.rows[self.number-1][1]['title']) or cls.rows[self.number-1][0]
     return '%s<a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
       % (y, req.path, x.urlencode(),
-         cls.rows[self.number-1][0][0].upper(),cls.rows[self.number-1][0][1:],
+         title[0].upper(), title[1:],
          (cls.rows[self.number-1][1].has_key('filter_size') and cls.rows[self.number-1][1]['filter_size']) or 10,
          x.get(cls.rows[self.number-1][0],''),
          cls.rows[self.number-1][0], self.number+1000,

@@ -1,3 +1,0 @@
-#Forecast,Item,Customer,Bucket,Quantity
-{% for i in objectlist %}{% for j in i %}{{j.name|addslashes}},{{j.item|addslashes}},{{j.customer|addslashes}},{{j.bucket}},{{j.forecast}}
-{% endfor %}{% endfor %}

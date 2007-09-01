@@ -40,7 +40,7 @@ class BufferReport(Report):
   '''
   A report showing the inventory profile of buffers.
   '''
-  template = {'html': 'buffer.html', 'csv': 'buffer.csv',}
+  template = 'buffer.html'
   title = "Inventory report"
   countquery = Buffer.objects.values('name','item','location')
   rows = (
@@ -49,12 +49,14 @@ class BufferReport(Report):
     ('location',{'countfilter': 'location__name__icontains'}),
     )
   crosses = (
-    ('start inventory',{}),
-    ('consumed',{}),
-    ('produced',{}),
-    ('end inventory',{}),
+    ('startoh', {'title':'start inventory',}),
+    ('consumed', {}),
+    ('produced', {}),
+    ('endoh', {'title': 'end inventory',}),
     )
-  columns = ['bucket',]
+  columns = (
+    ('bucket', {}),
+    )
 
   @staticmethod
   def resultquery(basequery, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
@@ -126,7 +128,7 @@ class DemandReport(Report):
   '''
   A report showing the independent demand for each item.
   '''
-  template = {'html': 'demand.html', 'csv': 'demand.csv',}
+  template = 'demand.html'
   title = 'Demand report'
   countquery = Item.objects.extra(where=('name in (select item_id from demand)',))
   rows = (
@@ -211,10 +213,9 @@ class DemandReport(Report):
         'bucket': row[1],
         'startdate': row[2],
         'enddate': row[3],
-        'requested': row[4],
-        'supplied': row[5],
+        'demand': row[4],
+        'supply': row[5],
         'backlog': backlog,
-
         } )
     if previtem: resultset.append(rowset)
     return resultset
@@ -224,7 +225,7 @@ class ForecastReport(Report):
   '''
   A report allowing easy editing of forecast numbers.
   '''
-  template = {'html': 'forecast.html', 'csv': 'forecast.csv',}
+  template = 'forecast.html'
   title = 'Forecast report'
   countquery = Forecast.objects.all()
   rows = (
@@ -287,13 +288,13 @@ class ForecastReport(Report):
         rowset = []
         prevfcst = row[0]
       rowset.append( {
-        'name': row[0],
+        'forecast': row[0],
         'item': row[1],
         'customer': row[2],
         'bucket': row[3],
         'startdate': row[4],
         'enddate': row[5],
-        'forecast': row[6],
+        'total': row[6],
         } )
     if prevfcst: resultset.append(rowset)
     return resultset
@@ -303,7 +304,7 @@ class ResourceReport(Report):
   '''
   A report showing the loading of each resource.
   '''
-  template = {'html': 'resource.html', 'csv': 'resource.csv',}
+  template = 'resource.html'
   title = 'Resource report'
   countquery = Resource.objects.values('name','location')
   rows = (
@@ -313,7 +314,7 @@ class ResourceReport(Report):
   crosses = (
     ('available',{}),
     ('load',{}),
-    ('utilization %',{}),
+    ('utilization',{'title':'utilization %',}),
     )
   columns = (
     ('bucket',{}),
@@ -405,17 +406,17 @@ class OperationReport(Report):
   '''
   A report showing the planned starts of each operation.
   '''
-  template = {'html': 'operation.html', 'csv': 'operation.csv',}
+  template = 'operation.html'
   title = 'Operation report'
   countquery = Operation.objects.values('name')
   rows = (
     ('operation',{'countfilter': 'name__icontains'}),
     )
   crosses = (
-    ('frozen starts',{}),
-    ('total starts',{}),
-    ('frozen ends',{}),
-    ('total ends',{}),
+    ('frozen_start', {'title':'frozen starts',}),
+    ('total_start', {'title':'total starts',}),
+    ('frozen_end', {'title':'frozen ends',}),
+    ('total_end', {'title':'total ends',}),
     )
   columns = (
     ('bucket',{}),

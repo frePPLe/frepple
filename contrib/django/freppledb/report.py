@@ -157,7 +157,36 @@ class Report(object):
   columns = ()
 
 
-@staff_member_required
+def _generate_csv(rep, qs):
+  '''This is a generator function that iterates over the report data and
+  returns the data row by row in CSV format.'''
+  import csv
+  import StringIO
+  sf = StringIO.StringIO()
+  writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC)
+
+  # Write a header row
+  fields = [ ('title' in s[1] and s[1]['title']) or s[0] for s in rep.rows ]
+  fields.extend([ ('title' in s[1] and s[1]['title']) or s[0] for s in rep.columns ])
+  fields.extend([ ('title' in s[1] and s[1]['title']) or s[0] for s in rep.crosses ])
+  writer.writerow(fields)
+  yield sf.getvalue()
+
+  # Iterate over all rows and columns
+  for row in qs:
+    for col in row:
+      # Clear the return string buffer
+      sf.truncate(0)
+      # Build the return value
+      fields = [ col[s[0]] for s in rep.rows ]
+      fields.extend([ col[s[0]] for s in rep.columns ])
+      fields.extend([ col[s[0]] for s in rep.crosses ])
+      # Return string
+      writer.writerow(fields)
+      yield sf.getvalue()
+
+
+#@staff_member_required
 def view_report(request, entity=None, **args):
   '''
   This is a generic view for reports having buckets in the time dimension.
@@ -221,16 +250,10 @@ def view_report(request, entity=None, **args):
   type = request.GET.get('type','html')
   if type == 'csv':
     # CSV output
-    c = RequestContext(request, {
-       'objectlist': reportclass.resultquery(counter, bucket, start, end, sortsql=sortsql),
-       'bucket': bucket,
-       'startdate': start,
-       'enddate': end,
-       'bucketlist': bucketlist,
-       })
     response = HttpResponse(mimetype='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=%s' % reportclass.template['csv']
-    response.write(loader.get_template(reportclass.template['csv']).render(c))
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % reportclass.title.lower()
+    response._container = _generate_csv(reportclass, reportclass.resultquery(counter, bucket, start, end, sortsql=sortsql))
+    response._is_string = False
     return response
 
   # Create a copy of the request url parameters
@@ -329,7 +352,7 @@ def view_report(request, entity=None, **args):
   # for i in connection.queries: print i['time'], i['sql']
 
   # Render the view
-  return render_to_response(args['report'].template['html'],
+  return render_to_response(args['report'].template,
     context, context_instance=RequestContext(request))
 
 

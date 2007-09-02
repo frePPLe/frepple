@@ -228,7 +228,8 @@ def view_report(request, entity=None, **args):
   else:
     for f in reportclass.rows:
       x = request.GET.get(f[0], None)
-      if x: counter = counter.filter(**{f[1]['filter']:x})
+      if x and 'filter' in f[1]:
+        counter = counter.filter(**{f[1]['filter']:x})
 
   # Pick up the sort parameter from the url
   sortparam = request.GET.get('o','1a')
@@ -378,20 +379,26 @@ class ReportRowHeader(Node):
       if sort[1] == 'a':
         # Currently sorting in ascending order on this column
         x['o'] = '%dd' % self.number
-        y = '<th class="sorted ascending">'
+        y = 'class="sorted ascending"'
       else:
         # Currently sorting in descending order on this column
         x['o'] = '%da' % self.number
-        y = '<th class="sorted descending">'
+        y = 'class="sorted descending"'
     else:
       # Sorted on another column
       x['o'] = '%da' % self.number
-      y = '<th>'
+      y = ''
     title = (cls.rows[self.number-1][1].has_key('title') and cls.rows[self.number-1][1]['title']) or cls.rows[self.number-1][0]
-    return '%s<a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
-      % (y, req.path, x.urlencode(),
-         title[0].upper(), title[1:],
-         (cls.rows[self.number-1][1].has_key('filter_size') and cls.rows[self.number-1][1]['filter_size']) or 10,
-         x.get(cls.rows[self.number-1][0],''),
-         cls.rows[self.number-1][0], self.number+1000,
-         )
+    if 'filter' in cls.rows[self.number-1][1]:
+      return '<th %s><a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
+        % (y, req.path, x.urlencode(),
+           title[0].upper(), title[1:],
+           (cls.rows[self.number-1][1].has_key('filter_size') and cls.rows[self.number-1][1]['filter_size']) or 10,
+           x.get(cls.rows[self.number-1][0],''),
+           cls.rows[self.number-1][0], self.number+1000,
+           )
+    else:
+      return '<th %s style="vertical-align:top"><a href="%s?%s">%s%s</a></th>' \
+        % (y, req.path, x.urlencode(),
+           title[0].upper(), title[1:],
+          )

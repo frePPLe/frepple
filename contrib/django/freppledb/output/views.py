@@ -45,7 +45,7 @@ class BufferReport(Report):
   countquery = Buffer.objects.values('name','item','location')
   rows = (
     ('buffer', {'filter': 'name__icontains'}),
-    ('item', {'filter': 'item__name__icontains'}),
+    ('item', {}), #'filter': 'item__name__icontains'}),
     ('location', {'filter': 'location__name__icontains'}),
     )
   crosses = (

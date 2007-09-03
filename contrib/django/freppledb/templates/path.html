@@ -23,7 +23,7 @@
 
 <div id="resourcecontext" class="ContextMenu">
 	{% if perms.input.change_resource %}<a id="/admin/input/resource/%s">Resource</a>{% endif %}
-  <a id="/path/resource/%s">Supply Path</a>
+  <a id="/path/resource/%s">Where used</a>
 	<a id="/resource/%s">Plan</a>
 </div>
 
@@ -44,17 +44,17 @@
 </div>
 
 <table><thead><tr>
-<th rowspan="2">Level</td>
-<th rowspan="2">Buffer</td>
-<th rowspan="2">Location</td>
-<th rowspan="2">Item</td>
-<th>Operation</td>
-<th colspan="2">Consumed Qty</td>
+<th rowspan="2">Level</th>
+<th rowspan="2">Buffer</th>
+<th rowspan="2">Location</th>
+<th rowspan="2">Item</th>
+<th rowspan="2">Operation</th>
+<th rowspan="2">Resource</th>
+<th colspan="2">Consumed Qty</th>
 </tr>
 <tr>
-<th>& Resource</td>
-<th>This</td>
-<th>Cumulative</td>
+<th>This</th>
+<th>Cumulative</th>
 </tr></thead>
 
 <tbody>{% for i in supplypath %}
@@ -63,15 +63,15 @@
 <td>{{i.buffer|superlink:"buffer"}}</td>
 <td>{{i.buffer.location|superlink:"location"}}</td>
 <td>{{i.buffer.item|superlink:"item"}}</td>
-<td>{% if i.operation %}{{i.operation|superlink:"operation"}}</a>
-{% for j in i.operation.loads.all %}<br>{{j.resource|superlink:"resource"}}{% endfor %}
+<td>{% if i.operation %}{{i.operation|superlink:"operation"}}</td>
+<td>{% for j in i.operation.loads.all %}{{j.resource|superlink:"resource"}}{% endfor %}
+{% else %}
+</td><td>
 {% endif %}</td>
 <td>{% if i.consumingflow %} {{i.consumingflow.quantity}} {% endif %}</td>
 <td>{{i.cumquantity}}</td>
 </tr>{% endfor %}
 </tbody></table>
-
-{# {% debug %} #}
 
 </div>
 {% endblock %}

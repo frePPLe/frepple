@@ -22,6 +22,7 @@
 # email : jdetaeye@users.sourceforge.net
 
 from datetime import date, datetime
+from xml.sax.saxutils import escape
 
 from django.core.paginator import ObjectPaginator, InvalidPage
 from django.shortcuts import render_to_response
@@ -284,7 +285,7 @@ def view_report(request, entity=None, **args):
       if n == page:
         page_htmls.append('<span class="this-page">%d</span>' % (page+1))
       else:
-        page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
+        page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
   else:
       # Insert "smart" pagination links, so that there are always ON_ENDS
       # links at either end of the list of pages, and there are always
@@ -296,28 +297,28 @@ def view_report(request, entity=None, **args):
               page_htmls.append('<span class="this-page">%d</span>' % (page+1))
             else:
               parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
+              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
           page_htmls.append('...')
           for n in range(paginator.pages - ON_EACH_SIDE, paginator.pages):
               parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
+              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
       elif page >= (paginator.pages - ON_EACH_SIDE - ON_ENDS - 2):
           # 1 2 ... 95 96 97 *98* 99 100
           for n in range(0, ON_ENDS):
               parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
+              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
           page_htmls.append('...')
           for n in range(page - max(ON_EACH_SIDE, ON_ENDS), paginator.pages):
             if n == page:
               page_htmls.append('<span class="this-page">%d</span>' % (page+1))
             else:
               parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, parameters.urlencode(),n+1))
+              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n+1))
       else:
           # 1 2 ... 45 46 47 *48* 49 50 51 ... 99 100
           for n in range(0, ON_ENDS):
               parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, parameters.urlencode(),n+1))
+              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n+1))
           page_htmls.append('...')
           for n in range(page - ON_EACH_SIDE, page + ON_EACH_SIDE + 1):
             if n == page:
@@ -326,11 +327,11 @@ def view_report(request, entity=None, **args):
               page_htmls.append('...')
             else:
               parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, parameters.urlencode(),n+1))
+              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
           page_htmls.append('...')
           for n in range(paginator.pages - ON_ENDS - 1, paginator.pages):
               parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, parameters.urlencode(),n+1))
+              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n+1))
 
   # Prepare template context
   context = {
@@ -391,7 +392,7 @@ class ReportRowHeader(Node):
     title = (cls.rows[self.number-1][1].has_key('title') and cls.rows[self.number-1][1]['title']) or cls.rows[self.number-1][0]
     if 'filter' in cls.rows[self.number-1][1]:
       return '<th %s><a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
-        % (y, req.path, x.urlencode(),
+        % (y, req.path, escape(x.urlencode()),
            title[0].upper(), title[1:],
            (cls.rows[self.number-1][1].has_key('filter_size') and cls.rows[self.number-1][1]['filter_size']) or 10,
            x.get(cls.rows[self.number-1][0],''),
@@ -399,6 +400,6 @@ class ReportRowHeader(Node):
            )
     else:
       return '<th %s style="vertical-align:top"><a href="%s?%s">%s%s</a></th>' \
-        % (y, req.path, x.urlencode(),
+        % (y, req.path, escape(x.urlencode()),
            title[0].upper(), title[1:],
           )

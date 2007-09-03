@@ -80,7 +80,7 @@
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} forecasts {% ifnotequal hits fullhits %} (total <a class="showall" href="/forecast/">{{fullhits}}<a>){% endifnotequal %}
+&nbsp;&nbsp;{{hits}} forecasts {% ifnotequal hits fullhits %} (total <a class="showall" href="/forecast/">{{fullhits}}</a>){% endifnotequal %}
 </p>{% endblock %}
 
 </div>

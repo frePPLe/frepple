@@ -593,5 +593,5 @@ class pathreport:
        })
     # Uncomment the next line to see the SQL statements executed for the report
     # With the complex logic there can be quite a lot!
-    #for i in connection.queries: print i
+    #for i in connection.queries: print i['time'], i['sql']
     return render_to_response('path.html', c)

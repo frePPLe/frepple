@@ -42,9 +42,9 @@
 <tr class="{% cycle row1,row2 %}"><td>{{j.buffer|superlink:"buffer"}}</td><td>{{j.item|superlink:"item"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
 <td>Start&nbsp;inventory<br/>Consumed<br/>Produced<br/>End&nbsp;inventory</td>{% endif %}
 <td>{{j.startoh|floatformat:1}}<br/>
-<a href="/admin/output/flowplan/?thebuffer__exact={{j.buffer|urlencode}}&ot=asc&o=6&flowdate__gte={{j.startdate}}&flowdate__lt={{j.enddate}}&quantity__lt=0">{{j.consumed|floatformat:1}}</a><br/>
-<a href="/admin/output/flowplan/?thebuffer__exact={{j.buffer|urlencode}}&ot=asc&o=6&flowdate__gte={{j.startdate}}&flowdate__lt={{j.enddate}}&quantity__gte=0">{{j.produced|floatformat:1}}</a><br/>
-<a href="/admin/output/flowplan/?thebuffer__exact={{j.buffer|urlencode}}&ot=asc&o=6&flowdate__gte={{j.startdate}}&flowdate__lt={{j.enddate}}">{{j.endoh|floatformat:1}}<a></td>{% endfor %}
+<a href="/admin/output/flowplan/?thebuffer__exact={{j.buffer|urlencode}}&amp;ot=asc&amp;o=6&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__lt=0">{{j.consumed|floatformat:1}}</a><br/>
+<a href="/admin/output/flowplan/?thebuffer__exact={{j.buffer|urlencode}}&amp;ot=asc&amp;o=6&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__gte=0">{{j.produced|floatformat:1}}</a><br/>
+<a href="/admin/output/flowplan/?thebuffer__exact={{j.buffer|urlencode}}&amp;ot=asc&amp;o=6&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}">{{j.endoh|floatformat:1}}</a></td>{% endfor %}
 </tr>{% endfor %}
 </tbody></table>
 </div>
@@ -53,7 +53,7 @@
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} buffers {% ifnotequal hits fullhits %} (total <a class="showall" href="/buffer/">{{fullhits}}<a>){% endifnotequal %}
+&nbsp;&nbsp;{{hits}} buffers {% ifnotequal hits fullhits %} (total <a class="showall" href="/buffer/">{{fullhits}}</a>){% endifnotequal %}
 {% endblock %}</p></div>
 
 {% endblock %}

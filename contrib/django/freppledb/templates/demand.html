@@ -27,7 +27,7 @@
 <tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}" id="{{j.item}}"><td>{{j.item|superlink:"item"}}</td>
 <td>Demand<br/>Supply<br/>Backlog</td>{% endif %}
-<td><a href="/admin/input/demand/?item__exact={{j.item|urlencode}}&ot=asc&o=6&due__gte={{j.startdate}}&due__lt={{j.enddate}}">{{j.demand|floatformat:1}}</a><br/>
+<td><a href="/admin/input/demand/?item__exact={{j.item|urlencode}}&amp;ot=asc&amp;o=6&amp;due__gte={{j.startdate}}&amp;due__lt={{j.enddate}}">{{j.demand|floatformat:1}}</a><br/>
 {{j.supply|floatformat:1}}<br/>
 {{j.backlog|floatformat:1}}</td>{% endfor %}
 </tr>{% endfor %}
@@ -38,7 +38,7 @@
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} items {% ifnotequal hits fullhits %} (total <a class="showall" href="/demand/">{{fullhits}}<a>){% endifnotequal %}
+&nbsp;&nbsp;{{hits}} items {% ifnotequal hits fullhits %} (total <a class="showall" href="/demand/">{{fullhits}}</a>){% endifnotequal %}
 </p>{% endblock %}
 
 </div>

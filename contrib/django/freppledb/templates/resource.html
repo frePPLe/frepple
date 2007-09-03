@@ -67,7 +67,7 @@
 <tr class="{% cycle row1,row2 %}"><form name="{{j.resource}}"><td>{{j.resource|superlink:"resource"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
 <td><span style="line-height:18pt;">Available</span><br/>Load<br/>Utilization&nbsp;%</td>{% endif %}
 <td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.available|floatformat:1}}" size="6" onchange="onChange(this)"/><br/>
-<a href="/admin/output/loadplan/?resource__exact={{j.resource|urlencode}}&ot=asc&o=3&loaddate__gte={{j.startdate}}&loaddate__lt={{j.enddate}}">{{j.load|floatformat:2}}</a><br/>
+<a href="/admin/output/loadplan/?resource__exact={{j.resource|urlencode}}&amp;ot=asc&amp;o=3&amp;loaddate__gte={{j.startdate}}&amp;loaddate__lt={{j.enddate}}">{{j.load|floatformat:2}}</a><br/>
 <label>{{j.utilization|floatformat:0}}</label></td>{% endfor %}
 </form></tr>{% endfor %}
 {% else %}
@@ -75,7 +75,7 @@
 <tr class="{% cycle row1,row2 %}"><td>{{j.resource|superlink:"resource"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
 <td>Available<br/>Load<br/>Utilization&nbsp;%</td>{% endif %}
 <td>{{j.available|floatformat:1}}<br/>
-<a href="/admin/output/loadplan/?resource__exact={{j.resource|urlencode}}&ot=asc&o=6&loaddate__gte={{j.startdate}}&loaddate__lt={{j.enddate}}">{{j.load|floatformat:2}}</a><br/>
+<a href="/admin/output/loadplan/?resource__exact={{j.resource|urlencode}}&amp;ot=asc&amp;o=6&amp;loaddate__gte={{j.startdate}}&amp;loaddate__lt={{j.enddate}}">{{j.load|floatformat:2}}</a><br/>
 {{j.utilization|floatformat:0}}</td>{% endfor %}
 </tr>{% endfor %}
 {% endif %}
@@ -86,7 +86,7 @@
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} resources {% ifnotequal hits fullhits %} (total <a class="showall" href="/resource/">{{fullhits}}<a>){% endifnotequal %}
+&nbsp;&nbsp;{{hits}} resources {% ifnotequal hits fullhits %} (total <a class="showall" href="/resource/">{{fullhits}}</a>){% endifnotequal %}
 </p>{% endblock %}
 
 </div>

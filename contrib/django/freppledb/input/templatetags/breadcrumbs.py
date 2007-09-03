@@ -21,6 +21,8 @@
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net
 
+from xml.sax.saxutils import escape
+
 from django.template import Library, Node, resolve_variable, TemplateSyntaxError
 from django.contrib.sessions.models import Session
 from django.conf import settings
@@ -123,7 +125,7 @@ class CrumbsNode(Node):
         except: title = req.get_full_path()
         # A special case to work around the hardcoded title of the main admin page
         if title == 'Site administration': title = 'Home'
-        key = '<a href="%s">%s</a>' % (req.get_full_path(), title)
+        key = '<a href="%s">%s</a>' % (escape(req.get_full_path()), title)
         cnt = 0
         for i in cur:
            if i == key:
@@ -243,14 +245,14 @@ class AddParameter(Node):
     req = resolve_variable('request',context)
     params = req.GET.copy()
     params[self.varname] = self.value
-    return '%s?%s' % (req.path, params.urlencode())
+    return escape('%s?%s' % (req.path, params.urlencode()))
 
 def addurlparameter(parser, token):
   '''
   Example:
     {% addurlparameter type csv %}
   If the current page url is "/mypage/?p=1" the tag will return the
-  url "/mypage/?p=1&type=csv"
+  url "/mypage/?p=1&amp;type=csv"
   '''
   from re import split
   bits = split(r'\s+', token.contents, 2)

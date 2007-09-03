@@ -27,9 +27,9 @@
 <tr class="{% cycle row1,row2 %}" id="{{j.operation}}"><td>{{j.operation|superlink:"operation"}}</td>
 <td>Frozen&nbsp;starts<br/>Total&nbsp;starts<br/>Frozen&nbsp;ends<br/>Total&nbsp;ends</td>{% endif %}
 <td>{{j.frozen_start|floatformat:2}}<br/>
-<a href="/admin/output/operationplan/?operation={{j.operation|urlencode}}&ot=asc&o=2&startdate__gte={{j.startdate}}&startdate__lt={{j.enddate}}">{{j.total_start|floatformat:2}}</a><br/>
+<a href="/admin/output/operationplan/?operation={{j.operation|urlencode}}&amp;ot=asc&amp;o=2&amp;startdate__gte={{j.startdate}}&amp;startdate__lt={{j.enddate}}">{{j.total_start|floatformat:2}}</a><br/>
 {{j.frozen_end|floatformat:2}}<br/>
-<a href="/admin/output/operationplan/?operation={{j.operation|urlencode}}&ot=asc&o=2&enddate__gte={{j.startdate}}&enddate__lt={{j.enddate}}">{{j.total_end|floatformat:2}}</a></td>{% endfor %}
+<a href="/admin/output/operationplan/?operation={{j.operation|urlencode}}&amp;ot=asc&amp;o=2&amp;enddate__gte={{j.startdate}}&amp;enddate__lt={{j.enddate}}">{{j.total_end|floatformat:2}}</a></td>{% endfor %}
 </tr>{% endfor %}
 </tbody></table>
 </div>
@@ -38,7 +38,7 @@
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} operations {% ifnotequal hits fullhits %} (total <a class="showall" href="/operation/">{{fullhits}}<a>){% endifnotequal %}
+&nbsp;&nbsp;{{hits}} operations {% ifnotequal hits fullhits %} (total <a class="showall" href="/operation/">{{fullhits}}</a>){% endifnotequal %}
 </p>{% endblock %}
 
 </div>

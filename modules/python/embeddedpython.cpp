@@ -174,9 +174,10 @@ void CommandPython::initialize()
   define_type<PythonProblem>(m, "problem", "frepple problem");
   define_type<PythonFlowPlan>(m, "flowplan", "frepple flowplan");
   define_type<PythonLoadPlan>(m, "loadplan", "frepple loadplan");
-  define_type<PythonPegging>(m, "pegging", "frepple pegging");
   define_type<PythonOperationPlan>(m, "operationplan", "frepple operationplan");
   define_type<PythonDemand>(m, "demand", "frepple demand");
+  define_type<PythonDemandPegging>(m, "pegging", "frepple demand pegging");
+  define_type<PythonDemandDelivery>(m, "delivery", "frepple demand delivery");
   define_type<PythonBuffer>(m, "buffer", "frepple buffer");
   define_type<PythonResource>(m, "resource", "frepple resource");
 

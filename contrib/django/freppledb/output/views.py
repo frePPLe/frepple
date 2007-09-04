@@ -86,7 +86,7 @@ class BufferReport(Report):
              ) d
         -- Consumed and produced quantities
         left join out_flowplan
-        on buf.name = out_flowplan.thebuffer_id
+        on buf.name = out_flowplan.thebuffer
         and d.startdate <= out_flowplan.flowdate
         and d.enddate > out_flowplan.flowdate
         -- Grouping and sorting
@@ -362,7 +362,7 @@ class ResourceReport(Report):
        left join (
          select resourceload.resource_id as resource_id, startdatetime, enddatetime, resourceload.usagefactor as usagefactor
          from out_operationplan, resourceload
-         where out_operationplan.operation_id = resourceload.operation_id
+         where out_operationplan.operation = resourceload.operation_id
          ) loaddata
        on x.name = loaddata.resource_id
        and x.startdate <= loaddata.enddatetime
@@ -455,7 +455,7 @@ class OperationReport(Report):
                ) d
           -- Planned and frozen quantity, based on start date
           left join out_operationplan o1
-          on oper.name = o1.operation_id
+          on oper.name = o1.operation
           and d.startdate <= o1.startdate
           and d.enddate > o1.startdate
           -- Grouping
@@ -463,7 +463,7 @@ class OperationReport(Report):
         ) x
         -- Planned and frozen quantity, based on end date
         left join out_operationplan o2
-        on x.row1 = o2.operation_id
+        on x.row1 = o2.operation
         and x.col2 <= o2.enddate
         and x.col3 > o2.enddate
         -- Grouping and ordering

@@ -73,6 +73,17 @@ def dumpfrepple_files():
         j['MAXIMUM']) )
   print 'Exported loadplans in %.2f seconds' % (time() - starttime)
 
+  print "Exporting demands..."
+  starttime = time()
+  writer = csv.writer(open("demands.csv", "wb"))
+  for i in frepple.demand():
+    for j in i['DELIVERY']:
+      writer.writerow( (i['NAME'], str(i['DUE']), j['QUANTITY'],
+        (j['PLANDATE'] and str(j['PLANDATE'])) or '',
+        j['PLANQUANTITY'] or '', j['OPERATIONPLAN'] or '',
+       ) )
+  print 'Exported demands in %.2f seconds' % (time() - starttime)
+
   print "Exporting pegging..."
   starttime = time()
   writer = csv.writer(open("demand_pegging.csv", "wb"))
@@ -84,39 +95,24 @@ def dumpfrepple_files():
   print 'Exported pegging in %.2f seconds' % (time() - starttime)
 
 
-@transaction.commit_manually
-def dumpfrepple():
-  '''
-  This function exports the data from the frepple memory into the database.
-  '''
-  global ROUNDING_DECIMALS
-
-  # Make sure the debug flag is not set!
-  # When it is set, the django database wrapper collects a list of all sql
-  # statements executed and their timings. This consumes plenty of memory
-  # and cpu time.
-  settings.DEBUG = False
-
-  # Create a database connection
-  cursor = connection.cursor()
-  if settings.DATABASE_ENGINE == 'sqlite3':
-    cursor.execute('PRAGMA temp_store = MEMORY;')
-    cursor.execute('PRAGMA synchronous = OFF')
-    cursor.execute('PRAGMA cache_size = 8000')
-
+def truncate(cursor):
   print "Emptying database plan tables..."
   starttime = time()
   if settings.DATABASE_ENGINE in ['sqlite3','postgresql_psycopg2']:
     delete = "delete from %s"
   else:
     delete = "truncate table %s"
-  for table in ['out_problem','out_demandpegging','out_flowplan',
-                'out_loadplan','out_operationplan',
+  for table in ['out_problem', 'out_demandpegging', 'out_flowplan',
+                'out_loadplan', 'out_demand', #xxx'out_forecast',
+                'out_operationplan',
                ]:
     cursor.execute(delete % table)
     transaction.commit()
   print "Emptied plan tables in %.2f seconds" % (time() - starttime)
 
+
+def exportProblems(cursor):
+  global ROUNDING_DECIMALS
   print "Exporting problems..."
   starttime = time()
   cursor.executemany(
@@ -132,6 +128,9 @@ def dumpfrepple():
   cursor.execute("select count(*) from out_problem")
   print 'Exported %d problems in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
+
+def exportOperationplans(cursor):
+  global ROUNDING_DECIMALS
   print "Exporting operationplans..."
   starttime = time()
   objects = []
@@ -146,7 +145,7 @@ def dumpfrepple():
     if cnt >= 10000:
       cursor.executemany(
         "insert into out_operationplan \
-        (identifier,operation_id,quantity,startdatetime,enddatetime,startdate, \
+        (identifier,operation,quantity,startdatetime,enddatetime,startdate, \
          enddate,demand,locked) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
       transaction.commit()
       objects = []
@@ -154,19 +153,22 @@ def dumpfrepple():
   if cnt > 0:
     cursor.executemany(
       "insert into out_operationplan \
-      (identifier,operation_id,quantity,startdatetime,enddatetime,startdate, \
+      (identifier,operation,quantity,startdatetime,enddatetime,startdate, \
       enddate,demand,locked) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
     transaction.commit()
   cursor.execute("select count(*) from out_operationplan")
   print 'Exported %d operationplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
+
+def exportFlowplans(cursor):
+  global ROUNDING_DECIMALS
   print "Exporting flowplans..."
   starttime = time()
   cnt = 0
   for i in frepple.buffer():
     cursor.executemany(
       "insert into out_flowplan \
-      (operationplan_id,operation_id,thebuffer_id,quantity,flowdate,flowdatetime, \
+      (operationplan_id,operation,thebuffer,quantity,flowdate,flowdatetime, \
       onhand) \
       values (%s,%s,%s,%s,%s,%s,%s)",
       [(
@@ -181,13 +183,16 @@ def dumpfrepple():
   cursor.execute("select count(*) from out_flowplan")
   print 'Exported %d flowplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
+
+def exportLoadplans(cursor):
+  global ROUNDING_DECIMALS
   print "Exporting loadplans..."
   starttime = time()
   cnt = 0
   for i in frepple.resource():
     cursor.executemany(
       "insert into out_loadplan \
-      (operationplan_id,operation_id,resource_id,quantity,loaddate, \
+      (operationplan_id,operation,resource,quantity,loaddate, \
       loaddatetime,onhand,maximum) values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
          j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'],
@@ -201,13 +206,40 @@ def dumpfrepple():
   cursor.execute("select count(*) from out_loadplan")
   print 'Exported %d loadplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
+
+def exportDemand(cursor):
+  global ROUNDING_DECIMALS
+  print "Exporting demand..."
+  starttime = time()
+  cnt = 0
+  for i in frepple.demand():
+    cursor.executemany(
+      "insert into out_demand \
+      (demand,due,quantity,plandate,planquantity,operationplan_id) \
+      values (%s,%s,%s,%s,%s,%s)",
+      [(
+         i['NAME'], i['DUE'].date(), round(j['QUANTITY'],ROUNDING_DECIMALS),
+         (j['PLANDATE'] and j['PLANDATE'].date()) or None,
+         (j['PLANQUANTITY'] and round(j['PLANQUANTITY'],ROUNDING_DECIMALS)) or None,
+         j['OPERATIONPLAN'] or None
+       ) for j in i['DELIVERY']
+      ])
+    cnt += 1
+    if cnt % 100 == 0: transaction.commit()
+  transaction.commit()
+  cursor.execute("select count(*) from out_demand")
+  print 'Exported %d demands in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+
+
+def exportPegging(cursor):
+  global ROUNDING_DECIMALS
   print "Exporting pegging..."
   starttime = time()
   cnt = 0
   for i in frepple.demand():
     cursor.executemany(
       "insert into out_demandpegging \
-      (demand,depth,operationplan_id,buffer_id,quantity,pegdate, \
+      (demand,depth,operationplan_id,buffer,quantity,pegdate, \
       factor,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
          i['NAME'], j['LEVEL'], j['OPERATIONPLAN'] or None, j['BUFFER'],
@@ -221,6 +253,63 @@ def dumpfrepple():
   cursor.execute("select count(*) from out_demandpegging")
   print 'Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
+
+def exportForecast(cursor):
+  global ROUNDING_DECIMALS
+  import frepple.forecast
+  print "Exporting forecast..."
+  starttime = time()
+  cnt = 0
+  for i in frepple.demand():
+    cursor.executemany(
+      "insert into out_forecast \
+      (operationplan_id,operation_id,resource_id,quantity,loaddate, \
+      loaddatetime,onhand,maximum) values (%s,%s,%s,%s,%s,%s,%s,%s)",
+      [(
+         j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'],
+         round(j['QUANTITY'],ROUNDING_DECIMALS), j['DATE'].date(), j['DATE'],
+         round(j['ONHAND'],ROUNDING_DECIMALS), round(j['MAXIMUM'],ROUNDING_DECIMALS)
+       ) for j in i['LOADPLANS']
+      ])
+    cnt += 1
+    if cnt % 20 == 0: transaction.commit()
+  transaction.commit()
+  cursor.execute("select count(*) from out_forecast")
+  print 'Exported %d forecasts in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+
+
+@transaction.commit_manually
+def dumpfrepple():
+  '''
+  This function exports the data from the frepple memory into the database.
+  '''
+
+  # Make sure the debug flag is not set!
+  # When it is set, the django database wrapper collects a list of all sql
+  # statements executed and their timings. This consumes plenty of memory
+  # and cpu time.
+  settings.DEBUG = False
+
+  # Create a database connection
+  cursor = connection.cursor()
+  if settings.DATABASE_ENGINE == 'sqlite3':
+    cursor.execute('PRAGMA temp_store = MEMORY;')
+    cursor.execute('PRAGMA synchronous = OFF')
+    cursor.execute('PRAGMA cache_size = 8000')
+
+  # Erase previous output
+  truncate(cursor)
+
+  # Export data
+  exportProblems(cursor)
+  exportOperationplans(cursor)
+  exportFlowplans(cursor)
+  exportLoadplans(cursor)
+  exportDemand(cursor)
+  #xxxexportForecast(cursor)
+  exportPegging(cursor)
+
+  # Analyze
   if settings.DATABASE_ENGINE == 'sqlite3':
     print "Analyzing database tables..."
     cursor.execute("analyze")

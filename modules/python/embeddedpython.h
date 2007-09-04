@@ -85,7 +85,8 @@
   *   - class <b>frepple.operationplan</b>:<br>
   *     Implements an iterator for operationplans.
   *   - class <b>frepple.demand</b>:<br>
-  *     Implements an iterator for demand and its pegging.
+  *     Implements an iterator for demand, its delivery operationplans
+  *     and its pegging.
   *   - class <b>frepple.buffer</b>:<br>
   *     Implements an iterator for buffer and its flowplans.
   *   - class <b>frepple.resource</b>:<br>
@@ -286,9 +287,10 @@ extern "C"
       Problem::const_iterator *iter;
     public:
       static PyTypeObject InfoType;
-      static PyObject* next(PythonProblem* obj);
-      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
-      static void destroy(PythonProblem* obj) {delete obj->iter; PyObject_Del(obj);}
+      static PyObject* next(PythonProblem*);
+      static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
+      static void destroy(PythonProblem* obj) 
+      {delete obj->iter; PyObject_Del(obj);}
       static void define_type() {}
   };
 
@@ -302,7 +304,7 @@ extern "C"
       Buffer* buf;
     public:
       static PyTypeObject InfoType;
-      static PyObject* next(PythonFlowPlan* obj);
+      static PyObject* next(PythonFlowPlan*);
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
       static void destroy(PythonFlowPlan* obj) {PyObject_Del(obj);}
       static void define_type() { InfoType.tp_new = 0; }
@@ -319,7 +321,7 @@ extern "C"
       Resource* res;
     public:
       static PyTypeObject InfoType;
-      static PyObject* next(PythonLoadPlan* obj);
+      static PyObject* next(PythonLoadPlan*);
       static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
       static void destroy(PythonLoadPlan* obj) {PyObject_Del(obj);}
       static void define_type() { InfoType.tp_new = 0; }
@@ -328,7 +330,7 @@ extern "C"
 
 
   /** @brief This class exports demand pegging information to Python. */
-  struct PythonPegging
+  struct PythonDemandPegging
   {
     private:
       PyObject_HEAD
@@ -336,9 +338,10 @@ extern "C"
       Demand* dem;
     public:
       static PyTypeObject InfoType;
-      static PyObject* next(PythonPegging* obj);
-      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
-      static void destroy(PythonPegging* obj) {delete obj->iter; PyObject_Del(obj);}
+      static PyObject* next(PythonDemandPegging*);
+      static PyObject* create(PyTypeObject* , PyObject *args, PyObject *kwargs) {return NULL;}
+      static void destroy(PythonDemandPegging* obj) 
+      {delete obj->iter; PyObject_Del(obj);}
       static void define_type() { InfoType.tp_new = 0; }
       static PyObject* createFromDemand(Demand*);
   };
@@ -352,8 +355,8 @@ extern "C"
       OperationPlan::iterator iter;
     public:
       static PyTypeObject InfoType;
-      static PyObject* next(PythonOperationPlan* obj);
-      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static PyObject* next(PythonOperationPlan*);
+      static PyObject* create(PyTypeObject* , PyObject *, PyObject *);
       static void destroy(PythonOperationPlan* obj) {PyObject_Del(obj);}
       static void define_type() {}
   };
@@ -367,10 +370,29 @@ extern "C"
       Demand::iterator iter;
     public:
       static PyTypeObject InfoType;
-      static PyObject* next(PythonDemand* obj);
-      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static PyObject* next(PythonDemand*);
+      static PyObject* create(PyTypeObject*, PyObject *, PyObject *);
       static void destroy(PythonDemand* obj) {PyObject_Del(obj);}
       static void define_type() {}
+  };
+
+
+  /** @brief This class exports a delivery operationplan iterator to Python. */
+  struct PythonDemandDelivery
+  {
+    private:
+      PyObject_HEAD
+      Demand::OperationPlan_list::const_iterator iter;
+      const Demand* dem;
+      const Demand* dem_owner;
+      float cumPlanned;
+    public:
+      static PyTypeObject InfoType;
+      static PyObject* next(PythonDemandDelivery*);
+      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
+      static void destroy(PythonDemandDelivery* obj) {PyObject_Del(obj);}
+      static void define_type() {}
+      static PyObject* createFromDemand(Demand*);
   };
 
 
@@ -382,8 +404,8 @@ extern "C"
       Buffer::iterator iter;
     public:
       static PyTypeObject InfoType;
-      static PyObject* next(PythonBuffer* obj);
-      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static PyObject* next(PythonBuffer*);
+      static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
       static void destroy(PythonBuffer* obj) {PyObject_Del(obj);}
       static void define_type() {}
   };
@@ -397,15 +419,14 @@ extern "C"
       Resource::iterator iter;
     public:
       static PyTypeObject InfoType;
-      static PyObject* next(PythonResource* obj);
-      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs);
+      static PyObject* next(PythonResource*);
+      static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
       static void destroy(PythonResource* obj) {PyObject_Del(obj);}
       static void define_type() {}
   };
 
 
 }  // End extern "C"
-
 
 
 }

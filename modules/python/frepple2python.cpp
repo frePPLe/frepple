@@ -34,9 +34,10 @@ namespace module_python
 PyTypeObject PythonProblem::InfoType;
 PyTypeObject PythonFlowPlan::InfoType;
 PyTypeObject PythonLoadPlan::InfoType;
-PyTypeObject PythonPegging::InfoType;
 PyTypeObject PythonOperationPlan::InfoType;
 PyTypeObject PythonDemand::InfoType;
+PyTypeObject PythonDemandPegging::InfoType;
+PyTypeObject PythonDemandDelivery::InfoType;
 PyTypeObject PythonBuffer::InfoType;
 PyTypeObject PythonResource::InfoType;
 
@@ -177,14 +178,14 @@ extern "C" PyObject* PythonLoadPlan::next(PythonLoadPlan* obj)
 
 
 //
-// INTERFACE FOR PEGGING
+// INTERFACE FOR DEMAND PEGGING
 //
 
 
-extern "C" PyObject* PythonPegging::createFromDemand(Demand* v)
+extern "C" PyObject* PythonDemandPegging::createFromDemand(Demand* v)
 {
   // Allocate memory
-  PythonPegging* obj = PyObject_New(PythonPegging, &PythonPegging::InfoType);
+  PythonDemandPegging* obj = PyObject_New(PythonDemandPegging, &PythonDemandPegging::InfoType);
 
   // Cast the demand pointer and initialize the iterator
   obj->dem = v;
@@ -194,7 +195,7 @@ extern "C" PyObject* PythonPegging::createFromDemand(Demand* v)
 }
 
 
-extern "C" PyObject* PythonPegging::next(PythonPegging* obj)
+extern "C" PyObject* PythonDemandPegging::next(PythonDemandPegging* obj)
 {
   // Reached the end of the iteration
   if (!obj->iter || !*(obj->iter)) return NULL;
@@ -284,7 +285,7 @@ extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
     const Demand *dem = &*(obj->iter);
     while (dem && dem->getHidden()) dem = dem->getOwner();
     // Build a python dictionary
-    PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z,s:z,s:O}",
+    PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z,s:z,s:O,s:O}",
       "NAME", dem ? dem->getName().c_str() : "unspecified",
       "QUANTITY", obj->iter->getQuantity(),
 			"DUE", PythonDateTime(obj->iter->getDue()),
@@ -293,11 +294,82 @@ extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
       "OPERATION", obj->iter->getOperation() ? obj->iter->getOperation()->getName().c_str() : NULL,
       "OWNER", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL,
       "CUSTOMER", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL,
-      "PEGGING", PythonPegging::createFromDemand(&*(obj->iter))
+      "PEGGING", PythonDemandPegging::createFromDemand(&*(obj->iter)),
+      "DELIVERY", PythonDemandDelivery::createFromDemand(&*(obj->iter))
       );
     ++(obj->iter);
     return result;
   }
+  // Reached the end of the iteration
+  return NULL;
+}
+
+
+//
+// INTERFACE FOR DEMAND DELIVERIES
+//
+
+
+extern "C" PyObject* PythonDemandDelivery::createFromDemand(Demand* v)
+{
+  // Allocate memory
+  PythonDemandDelivery* obj = PyObject_New(PythonDemandDelivery, &PythonDemandDelivery::InfoType);
+
+  // Cast the demand pointer and initialize the iterator
+  obj->dem = v;
+  obj->iter = v->getDelivery().begin();
+  obj->cumPlanned = 0.0f;
+  // Find a non-hidden demand owning this demand
+  obj->dem_owner = v;
+  while (obj->dem_owner && obj->dem_owner->getHidden()) 
+    obj->dem_owner = obj->dem_owner->getOwner();  
+    
+  return reinterpret_cast<PyObject*>(obj);
+}
+
+
+extern "C" PyObject* PythonDemandDelivery::next(PythonDemandDelivery* obj)
+{
+  if (!obj->dem) return NULL;
+  
+  if (obj->iter != obj->dem->getDelivery().end())
+  {
+    float p = (*(obj->iter))->getQuantity();
+    obj->cumPlanned += (*(obj->iter))->getQuantity();
+    if (obj->cumPlanned > obj->dem->getQuantity())
+    {
+      // Planned more than requested
+      p -= (obj->cumPlanned - obj->dem->getQuantity());
+      if (p < 0.0f) p = 0.0f;
+    }
+    // Build a python dictionary
+    PyObject* result = Py_BuildValue("{s:z,s:N,s:f,s:N,s:f,s:l}",
+      "DEMAND", obj->dem_owner ? obj->dem_owner->getName().c_str() : NULL,
+			"DUE", PythonDateTime(obj->dem->getDue()),
+      "QUANTITY", p,
+			"PLANDATE", PythonDateTime((*(obj->iter))->getDates().getEnd()),
+      "PLANQUANTITY", (*(obj->iter))->getQuantity(),
+      "OPERATIONPLAN", (*(obj->iter))->getIdentifier()
+      );
+    ++(obj->iter);
+    return result;
+  }
+
+  // A last record for cases where the demand is planned short
+  if (obj->cumPlanned < obj->dem->getQuantity())
+  {
+    PyObject* result = Py_BuildValue("{s:z,s:N,s:f,s:z,s:z,s:z}",
+      "DEMAND", obj->dem_owner ? obj->dem_owner->getName().c_str() : NULL,
+			"DUE", PythonDateTime(obj->dem->getDue()),
+      "QUANTITY", obj->dem->getQuantity() - obj->cumPlanned,
+			"PLANDATE", NULL,
+      "PLANQUANTITY", NULL,
+      "OPERATIONPLAN", NULL
+      );
+    obj->dem = NULL; // To make sure this is the last iteration
+    return result;
+  }
+
   // Reached the end of the iteration
   return NULL;
 }

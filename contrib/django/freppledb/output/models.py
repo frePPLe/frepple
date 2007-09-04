@@ -22,7 +22,7 @@
 # email : jdetaeye@users.sourceforge.net
 
 from django.db import models
-from freppledb.input.models import Operation, Demand, Buffer, Resource, Forecast
+from freppledb.input.models import Operation, Buffer, Resource, Forecast
 
 # This variable defines the number of records to show in the admin lists.
 LIST_PER_PAGE = 100
@@ -31,10 +31,8 @@ LIST_PER_PAGE = 100
 class OperationPlan(models.Model):
     # Database fields
     identifier = models.IntegerField(primary_key=True)
-    # We can't make 'demand' a foreign key to the demand table, since there
-    # are also demands created from eg the forecast table.
     demand = models.CharField(maxlength=60, null=True, db_index=True)
-    operation = models.ForeignKey(Operation, related_name='instances', null=True, db_index=True, raw_id_admin=True)
+    operation = models.CharField(maxlength=60, db_index=True, null=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4, default='1.00')
     startdatetime = models.DateTimeField()
     enddatetime = models.DateTimeField()
@@ -89,8 +87,8 @@ class Problem(models.Model):
 
 class LoadPlan(models.Model):
     # Database fields
-    resource = models.ForeignKey(Resource, related_name='loadplans', db_index=True, raw_id_admin=True)
-    operation = models.ForeignKey(Operation, related_name='loadplans', db_index=True, raw_id_admin=True)
+    resource = models.CharField(maxlength=60, db_index=True)
+    operation = models.CharField(maxlength=60, db_index=True)
     operationplan = models.ForeignKey(OperationPlan, related_name='loadplans', raw_id_admin=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4)
     loaddatetime = models.DateTimeField('datetime')
@@ -116,8 +114,8 @@ class LoadPlan(models.Model):
 
 class FlowPlan(models.Model):
     # Database fields
-    thebuffer = models.ForeignKey(Buffer, related_name='flowplans', db_index=True, raw_id_admin=True)
-    operation = models.ForeignKey(Operation, related_name='flowplans', db_index=True, raw_id_admin=True)
+    thebuffer = models.CharField(maxlength=60, db_index=True)
+    operation = models.CharField(maxlength=60, db_index=True)
     operationplan = models.ForeignKey(OperationPlan, related_name='flowplans', raw_id_admin=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4)
     flowdatetime = models.DateTimeField('datetime')
@@ -140,12 +138,34 @@ class FlowPlan(models.Model):
         #ordering = ['thebuffer_id','datetime']
 
 
+class Demand(models.Model):
+    # Database fields
+    demand = models.CharField(maxlength=60, db_index=True, null=True)
+    due = models.DateField()
+    quantity = models.DecimalField(max_digits=15, decimal_places=4, default='0.00')
+    planquantity = models.DecimalField(max_digits=15, decimal_places=4, default='0.00', null=True)
+    plandate = models.DateField(null=True)
+    operationplan = models.ForeignKey(OperationPlan, related_name='demands', raw_id_admin=True, null=True)
+
+    def __str__(self):
+        return self.demand.name
+
+    class Admin:
+        list_display = ('demand', 'due', 'quantity', 'planquantity',
+          'plandate', 'operationplan')
+        list_per_page = LIST_PER_PAGE
+
+    class Meta:
+        db_table = 'out_demand'
+        ordering = ['id']
+
+
 class DemandPegging(models.Model):
     # Database fields
     demand = models.CharField(maxlength=60, db_index=True)
     depth = models.IntegerField()
     operationplan = models.ForeignKey(OperationPlan, related_name='pegging', db_index=True, raw_id_admin=True, null=True)
-    buffer = models.ForeignKey(Buffer, related_name='pegging', db_index=True, raw_id_admin=True, null=True)
+    buffer = models.CharField(maxlength=60, db_index=True, null=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4, default='0.00')
     factor = models.DecimalField(max_digits=15, decimal_places=4, default='1.00')
     pegged = models.BooleanField(default=True, radio_admin=True)

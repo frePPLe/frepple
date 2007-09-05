@@ -152,22 +152,20 @@ extern "C" PyObject* PythonLoadPlan::next(PythonLoadPlan* obj)
   if (obj->iter != obj->res->getLoadPlans().end())
   {
     const LoadPlan* f = dynamic_cast<const LoadPlan*>(&*(obj->iter));
-    if (f && f->getHidden()) f = NULL;
+    if (f && (f->getHidden() || f->getQuantity()<0)) f = NULL;
     while (!f)
     {
       ++(obj->iter);
       if (obj->iter == obj->res->getLoadPlans().end()) return NULL;
       f = dynamic_cast<const LoadPlan*>(&*(obj->iter));
-      if (f && f->getHidden()) f = NULL;
+      if (f && (f->getHidden() || f->getQuantity()<0)) f = NULL;
     }
-    PyObject* result = Py_BuildValue("{s:s,s:s,s:l,s:f,s:N,s:f,s:f}",
+    PyObject* result = Py_BuildValue("{s:s,s:l,s:f,s:N,s:N}",
       "RESOURCE", f->getLoad()->getResource()->getName().c_str(),
-      "OPERATION", f->getLoad()->getOperation()->getName().c_str(),
       "OPERATIONPLAN", f->getOperationPlan()->getIdentifier(),
       "QUANTITY", obj->iter->getQuantity(),
-      "DATE", PythonDateTime(obj->iter->getDate()),
-      "ONHAND", obj->iter->getOnhand(),
-      "MAXIMUM", obj->iter->getMax()
+      "STARTDATE", PythonDateTime(f->getDate()),
+      "ENDDATE", PythonDateTime(f->getOtherLoadPlan()->getDate())
       );
     ++(obj->iter);
     return result;

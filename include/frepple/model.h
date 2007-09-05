@@ -3787,6 +3787,13 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Validates the consistency of the loadplan. */
     DECLARE_EXPORT bool check() const;
 
+    /** Each operationplan has 2 loadplans per load: one at the start, 
+      * when the capacity consumption starts, and one at the end, when the
+      * capacity consumption ends.<br>
+      * This method returns the "companion" loadplan.
+      */
+    DECLARE_EXPORT LoadPlan* getOtherLoadPlan() const;
+
   private:
     /** Private constructor. It is called from the public constructor.<br>
       * The public constructor constructs the starting loadplan, while this

@@ -175,10 +175,10 @@ class DemandReport(Report):
                ) d
           -- Planned quantity
           left join (
-            select inp.item_id as item_id, out_operationplan.enddate as date, out_operationplan.quantity as quantity
-            from out_operationplan
+            select inp.item_id as item_id, out_demand.plandate as date, out_demand.planquantity as quantity
+            from out_demand
             inner join demand as inp
-            on out_operationplan.demand = inp.name
+            on out_demand.demand = inp.name
             ) as pln
           on items.name = pln.item_id
           and d.startdate <= pln.date
@@ -360,9 +360,8 @@ class ResourceReport(Report):
        ) x
        -- Load data
        left join (
-         select resourceload.resource_id as resource_id, startdatetime, enddatetime, resourceload.usagefactor as usagefactor
-         from out_operationplan, resourceload
-         where out_operationplan.operation = resourceload.operation_id
+         select resource as resource_id, startdatetime, enddatetime, quantity as usagefactor
+         from out_loadplan
          ) loaddata
        on x.name = loaddata.resource_id
        and x.startdate <= loaddata.enddatetime

@@ -168,8 +168,8 @@ def exportFlowplans(cursor):
   for i in frepple.buffer():
     cursor.executemany(
       "insert into out_flowplan \
-      (operationplan_id,operation,thebuffer,quantity,flowdate,flowdatetime, \
-      onhand) \
+      (operationplan_id, operation, thebuffer, quantity, flowdate, \
+       flowdatetime, onhand) \
       values (%s,%s,%s,%s,%s,%s,%s)",
       [(
          j['OPERATIONPLAN'], j['OPERATION'], j['BUFFER'],
@@ -192,12 +192,13 @@ def exportLoadplans(cursor):
   for i in frepple.resource():
     cursor.executemany(
       "insert into out_loadplan \
-      (operationplan_id,operation,resource,quantity,loaddate, \
-      loaddatetime,onhand,maximum) values (%s,%s,%s,%s,%s,%s,%s,%s)",
+      (operationplan_id, resource, quantity, startdate, \
+      startdatetime, enddate, enddatetime) values (%s,%s,%s,%s,%s,%s,%s)",
       [(
-         j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'],
-         round(j['QUANTITY'],ROUNDING_DECIMALS), j['DATE'].date(), j['DATE'],
-         round(j['ONHAND'],ROUNDING_DECIMALS), round(j['MAXIMUM'],ROUNDING_DECIMALS)
+         j['OPERATIONPLAN'], j['RESOURCE'],
+         round(j['QUANTITY'],ROUNDING_DECIMALS),
+         j['STARTDATE'].date(), j['STARTDATE'],
+         j['ENDDATE'].date(), j['ENDDATE'],
        ) for j in i['LOADPLANS']
       ])
     cnt += 1
@@ -215,11 +216,11 @@ def exportDemand(cursor):
   for i in frepple.demand():
     cursor.executemany(
       "insert into out_demand \
-      (demand,due,quantity,plandate,planquantity,operationplan_id) \
-      values (%s,%s,%s,%s,%s,%s)",
+      (demand,duedate,duedatetime,quantity,plandate,plandatetime,planquantity,operationplan_id) \
+      values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
-         i['NAME'], i['DUE'].date(), round(j['QUANTITY'],ROUNDING_DECIMALS),
-         (j['PLANDATE'] and j['PLANDATE'].date()) or None,
+         i['NAME'], i['DUE'].date(), i['DUE'], round(j['QUANTITY'],ROUNDING_DECIMALS),
+         (j['PLANDATE'] and j['PLANDATE'].date()) or None, j['PLANDATE'],
          (j['PLANQUANTITY'] and round(j['PLANQUANTITY'],ROUNDING_DECIMALS)) or None,
          j['OPERATIONPLAN'] or None
        ) for j in i['DELIVERY']

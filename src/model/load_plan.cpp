@@ -64,6 +64,14 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r, LoadPlan *lp
 }
 
 
+DECLARE_EXPORT LoadPlan* LoadPlan::getOtherLoadPlan() const
+{
+  for (LoadPlan *i = oper->firstloadplan; i; i = i->nextLoadPlan)
+    if (i->oper == oper && i != this) return i;
+  throw LogicException("No matching loadplan found");
+}
+
+
 DECLARE_EXPORT void LoadPlan::update()
 {
   // Update the timeline

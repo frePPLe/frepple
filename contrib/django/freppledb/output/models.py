@@ -88,28 +88,24 @@ class Problem(models.Model):
 class LoadPlan(models.Model):
     # Database fields
     resource = models.CharField(maxlength=60, db_index=True)
-    operation = models.CharField(maxlength=60, db_index=True)
-    operationplan = models.ForeignKey(OperationPlan, related_name='loadplans', raw_id_admin=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4)
-    loaddatetime = models.DateTimeField('datetime')
-    loaddate = models.DateField('date', db_index=True)
-    onhand = models.DecimalField(max_digits=15, decimal_places=4)
-    maximum = models.DecimalField(max_digits=15, decimal_places=4)
+    startdatetime = models.DateTimeField('datetime')
+    startdate = models.DateField('date', db_index=True)
+    enddatetime = models.DateTimeField('datetime')
+    enddate = models.DateField('date', db_index=True)
+    operationplan = models.ForeignKey(OperationPlan, related_name='loadplans', raw_id_admin=True)
 
     def __str__(self):
-        return self.resource.name + ' ' + str(self.loaddatetime)
+        return self.resource.name + ' ' + str(self.startdatetime) + ' ' + str(self.enddatetime)
 
     class Admin:
-        list_display = ('resource', 'operation', 'quantity', 'loaddatetime', 'onhand', 'maximum', 'operationplan')
+        list_display = ('resource', 'quantity', 'startdatetime', 'enddatetime', 'operationplan')
         list_per_page = LIST_PER_PAGE
 
     class Meta:
         db_table = 'out_loadplan'
         permissions = (("view_loadplans", "Can view load plans"),)
-        # Ordering is buggy :-(
-        # Database sync expectes 'resource' and fails when it is set to 'resource_id'
-        # Ordering requires 'resource_id' and fails when it is set to 'resource'
-        #ordering = ['resource_id','datetime']
+        ordering = ['resource','startdatetime']
 
 
 class FlowPlan(models.Model):
@@ -141,17 +137,19 @@ class FlowPlan(models.Model):
 class Demand(models.Model):
     # Database fields
     demand = models.CharField(maxlength=60, db_index=True, null=True)
-    due = models.DateField()
+    duedate = models.DateField()
+    duedatetime = models.DateTimeField()
     quantity = models.DecimalField(max_digits=15, decimal_places=4, default='0.00')
     planquantity = models.DecimalField(max_digits=15, decimal_places=4, default='0.00', null=True)
     plandate = models.DateField(null=True)
+    plandatetime = models.DateTimeField(null=True)
     operationplan = models.ForeignKey(OperationPlan, related_name='demands', raw_id_admin=True, null=True)
 
     def __str__(self):
         return self.demand.name
 
     class Admin:
-        list_display = ('demand', 'due', 'quantity', 'planquantity',
+        list_display = ('demand', 'duedate', 'quantity', 'planquantity',
           'plandate', 'operationplan')
         list_per_page = LIST_PER_PAGE
 

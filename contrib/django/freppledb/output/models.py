@@ -88,10 +88,10 @@ class LoadPlan(models.Model):
     # Database fields
     resource = models.CharField(maxlength=60, db_index=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4)
-    startdatetime = models.DateTimeField('datetime')
-    startdate = models.DateField('date', db_index=True)
-    enddatetime = models.DateTimeField('datetime')
-    enddate = models.DateField('date', db_index=True)
+    startdatetime = models.DateTimeField('start')
+    startdate = models.DateField('startdate', db_index=True)
+    enddatetime = models.DateTimeField('end')
+    enddate = models.DateField('enddate', db_index=True)
     operationplan = models.IntegerField(db_index=True)
 
     def __str__(self):

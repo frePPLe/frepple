@@ -22,11 +22,12 @@
 # email : jdetaeye@users.sourceforge.net
 
 from time import time
+from threading import Thread
+
 from django.db import connection
 from django.db import transaction
 from django.conf import settings
 
-import csv
 import frepple
 
 # Exported numbers are rounded to this number of decimals after the comma.
@@ -38,6 +39,7 @@ def dumpfrepple_files():
   '''
   This function exports the data from the frepple memory into a series of flat files.
   '''
+  import csv
   print "Exporting problems..."
   starttime = time()
   writer = csv.writer(open("problems.csv", "wb"))
@@ -139,14 +141,14 @@ def exportOperationplans(cursor):
     objects.append( (\
        i['IDENTIFIER'], i['OPERATION'].replace("'","''"),
        round(i['QUANTITY'],ROUNDING_DECIMALS), i['START'], i['END'],
-       i['START'].date(), i['END'].date(), i['DEMAND'], str(i['LOCKED'])
+       i['START'].date(), i['END'].date(), i['DEMAND'], str(i['LOCKED']), i['OWNER'] or None
      ) )
     cnt += 1
     if cnt >= 10000:
       cursor.executemany(
         "insert into out_operationplan \
         (identifier,operation,quantity,startdatetime,enddatetime,startdate, \
-         enddate,demand,locked) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
+         enddate,demand,locked,owner_id) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
       transaction.commit()
       objects = []
       cnt = 0
@@ -154,7 +156,7 @@ def exportOperationplans(cursor):
     cursor.executemany(
       "insert into out_operationplan \
       (identifier,operation,quantity,startdatetime,enddatetime,startdate, \
-      enddate,demand,locked) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
+      enddate,demand,locked,owner_id) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
     transaction.commit()
   cursor.execute("select count(*) from out_operationplan")
   print 'Exported %d operationplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
@@ -168,7 +170,7 @@ def exportFlowplans(cursor):
   for i in frepple.buffer():
     cursor.executemany(
       "insert into out_flowplan \
-      (operationplan_id, operation, thebuffer, quantity, flowdate, \
+      (operationplan, operation, thebuffer, quantity, flowdate, \
        flowdatetime, onhand) \
       values (%s,%s,%s,%s,%s,%s,%s)",
       [(
@@ -192,7 +194,7 @@ def exportLoadplans(cursor):
   for i in frepple.resource():
     cursor.executemany(
       "insert into out_loadplan \
-      (operationplan_id, resource, quantity, startdate, \
+      (operationplan, resource, quantity, startdate, \
       startdatetime, enddate, enddatetime) values (%s,%s,%s,%s,%s,%s,%s)",
       [(
          j['OPERATIONPLAN'], j['RESOURCE'],
@@ -216,7 +218,7 @@ def exportDemand(cursor):
   for i in frepple.demand():
     cursor.executemany(
       "insert into out_demand \
-      (demand,duedate,duedatetime,quantity,plandate,plandatetime,planquantity,operationplan_id) \
+      (demand,duedate,duedatetime,quantity,plandate,plandatetime,planquantity,operationplan) \
       values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
          i['NAME'], i['DUE'].date(), i['DUE'], round(j['QUANTITY'],ROUNDING_DECIMALS),
@@ -240,7 +242,7 @@ def exportPegging(cursor):
   for i in frepple.demand():
     cursor.executemany(
       "insert into out_demandpegging \
-      (demand,depth,operationplan_id,buffer,quantity,pegdate, \
+      (demand,depth,operationplan,buffer,quantity,pegdate, \
       factor,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
          i['NAME'], j['LEVEL'], j['OPERATIONPLAN'] or None, j['BUFFER'],
@@ -249,7 +251,7 @@ def exportPegging(cursor):
        ) for j in i['PEGGING']
       ])
     cnt += 1
-    if cnt % 20 == 0: transaction.commit()
+    if cnt % 50 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_demandpegging")
   print 'Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
@@ -264,7 +266,7 @@ def exportForecast(cursor):
   for i in frepple.demand():
     cursor.executemany(
       "insert into out_forecast \
-      (operationplan_id,operation_id,resource_id,quantity,loaddate, \
+      (operationplan,operation_id,resource_id,quantity,loaddate, \
       loaddatetime,onhand,maximum) values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
          j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'],
@@ -277,6 +279,29 @@ def exportForecast(cursor):
   transaction.commit()
   cursor.execute("select count(*) from out_forecast")
   print 'Exported %d forecasts in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+
+
+class runDatabaseThread(Thread):
+  '''
+  An auxiliary class that allows us to run an export function with its own
+  database connection in its own thread.
+  '''
+  def __init__(self, *f):
+    super(runDatabaseThread, self).__init__()
+    self.functions = f
+
+  @transaction.commit_manually
+  def run(self):
+    # Create a database connection
+    cursor = connection.cursor()
+    if settings.DATABASE_ENGINE == 'sqlite3':
+      cursor.execute('PRAGMA temp_store = MEMORY;')
+      cursor.execute('PRAGMA synchronous = OFF')
+      cursor.execute('PRAGMA cache_size = 8000')
+    # Run the functions sequentially
+    for f in self.functions:
+      try: f(cursor)
+      except Exception, e: print "Error in export:", e
 
 
 @transaction.commit_manually
@@ -301,14 +326,33 @@ def dumpfrepple():
   # Erase previous output
   truncate(cursor)
 
-  # Export data
-  exportProblems(cursor)
-  exportOperationplans(cursor)
-  exportFlowplans(cursor)
-  exportLoadplans(cursor)
-  exportDemand(cursor)
-  #xxxexportForecast(cursor)
-  exportPegging(cursor)
+  if True or settings.DATABASE_ENGINE == 'sqlite3':
+    # OPTION 1: Sequential export of each entity
+    # For sqlite this is required since a writer blocks the database file.
+    # For other databases the parallel export normally gives a better
+    # performance, but you could still choose a sequential export.
+    exportProblems(cursor)
+    exportOperationplans(cursor)
+    exportFlowplans(cursor)
+    exportLoadplans(cursor)
+    exportDemand(cursor)
+    #exportForecast(cursor)
+    exportPegging(cursor)
+  else:
+    # OPTION 2: Parallel export of entities in groups.
+    # The groups are running in seperate threads, and all functions in a group
+    # are run in sequence.
+    t = (
+      runDatabaseThread(exportProblems, exportDemand),
+      runDatabaseThread(exportOperationplans),
+      runDatabaseThread(exportFlowplans),
+      runDatabaseThread(exportLoadplans),
+      runDatabaseThread(exportPegging),
+      )
+    # Start all threads
+    for i in t: i.start()
+    # Wait for all threads to finish
+    for i in t: i.join()
 
   # Analyze
   if settings.DATABASE_ENGINE == 'sqlite3':

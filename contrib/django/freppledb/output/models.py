@@ -22,7 +22,6 @@
 # email : jdetaeye@users.sourceforge.net
 
 from django.db import models
-from freppledb.input.models import Operation, Buffer, Resource, Forecast
 
 # This variable defines the number of records to show in the admin lists.
 LIST_PER_PAGE = 100
@@ -93,7 +92,7 @@ class LoadPlan(models.Model):
     startdate = models.DateField('date', db_index=True)
     enddatetime = models.DateTimeField('datetime')
     enddate = models.DateField('date', db_index=True)
-    operationplan = models.ForeignKey(OperationPlan, related_name='loadplans', raw_id_admin=True)
+    operationplan = models.IntegerField(db_index=True)
 
     def __str__(self):
         return self.resource.name + ' ' + str(self.startdatetime) + ' ' + str(self.enddatetime)
@@ -112,7 +111,7 @@ class FlowPlan(models.Model):
     # Database fields
     thebuffer = models.CharField(maxlength=60, db_index=True)
     operation = models.CharField(maxlength=60, db_index=True)
-    operationplan = models.ForeignKey(OperationPlan, related_name='flowplans', raw_id_admin=True)
+    operationplan = models.IntegerField(db_index=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4)
     flowdatetime = models.DateTimeField('datetime')
     flowdate = models.DateField('date', db_index=True)
@@ -143,7 +142,7 @@ class Demand(models.Model):
     planquantity = models.DecimalField(max_digits=15, decimal_places=4, default='0.00', null=True)
     plandate = models.DateField(null=True)
     plandatetime = models.DateTimeField(null=True)
-    operationplan = models.ForeignKey(OperationPlan, related_name='demands', raw_id_admin=True, null=True)
+    operationplan = models.IntegerField(null=True, db_index=True)
 
     def __str__(self):
         return self.demand.name
@@ -162,7 +161,7 @@ class DemandPegging(models.Model):
     # Database fields
     demand = models.CharField(maxlength=60, db_index=True)
     depth = models.IntegerField()
-    operationplan = models.ForeignKey(OperationPlan, related_name='pegging', db_index=True, raw_id_admin=True, null=True)
+    operationplan = models.IntegerField(db_index=True, null=True)
     buffer = models.CharField(maxlength=60, db_index=True, null=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4, default='0.00')
     factor = models.DecimalField(max_digits=15, decimal_places=4, default='1.00')

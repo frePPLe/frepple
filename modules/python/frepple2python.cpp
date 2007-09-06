@@ -242,14 +242,15 @@ extern "C" PyObject* PythonOperationPlan::next(PythonOperationPlan* obj)
     const Demand *dem = obj->iter->getDemand();
     while (dem && dem->getHidden()) dem = dem->getOwner();
     // Build a python dictionary
-    PyObject* result = Py_BuildValue("{s:l,s:s,s:f,s:N,s:N,s:z,s:b}",
+    PyObject* result = Py_BuildValue("{s:l,s:s,s:f,s:N,s:N,s:z,s:b,s:l}",
       "IDENTIFIER", obj->iter->getIdentifier(),
       "OPERATION", obj->iter->getOperation()->getName().c_str(),
       "QUANTITY", obj->iter->getQuantity(),
       "START", PythonDateTime(obj->iter->getDates().getStart()),
       "END", PythonDateTime(obj->iter->getDates().getEnd()),
       "DEMAND", dem ? dem->getName().c_str() : NULL,
-      "LOCKED", obj->iter->getLocked()
+      "LOCKED", obj->iter->getLocked(),
+      "OWNER", obj->iter->getOwner() ? obj->iter->getOwner()->getIdentifier() : 0
       );
     ++(obj->iter);
     return result;

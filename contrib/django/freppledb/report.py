@@ -108,6 +108,9 @@ def getBuckets(request, bucket=None, start=None, end=None):
         'start': datetime.strptime(j,'%Y-%m-%d').date(),
         'end': datetime.strptime(k,'%Y-%m-%d').date()
         } for i,j,k in cursor.fetchall()]
+    elif settings.DATABASE_ENGINE == 'oracle':
+      # Sigh... Oracle 'date' type converts to a python datetime
+      datelist[bucket] = [{'name': i, 'start': j.date(), 'end': k.date()} for i,j,k in cursor.fetchall()]
     else:
       datelist[bucket] = [{'name': i, 'start': j, 'end': k} for i,j,k in cursor.fetchall()]
 

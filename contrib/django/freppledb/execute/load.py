@@ -240,7 +240,7 @@ def loadfrepple():
   print 'Importing resources...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, description, maximum_id, location_id, type FROM resource")
+  cursor.execute('SELECT name, description, maximum_id, location_id, type FROM %s' % connection.ops.quote_name('resource'))
   x = [ header, '<RESOURCES>' ]
   for i, j, k, l, m in cursor.fetchall():
     cnt += 1

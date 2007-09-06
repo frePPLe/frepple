@@ -76,7 +76,7 @@ class BufferReport(Report):
              d.bucket as col1, d.startdate as col2, d.enddate as col3,
              coalesce(sum(%s),0.0) as consumed,
              coalesce(-sum(%s),0.0) as produced
-        from (select buffer.name as name, buffer.item_id as item_id, buffer.location_id as location_id, buffer.onhand as onhand %s order by %s %s) as buf
+        from (select buffer.name as name, buffer.item_id as item_id, buffer.location_id as location_id, buffer.onhand as onhand %s order by %s %s) buf
         -- Multiply with buckets
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -342,7 +342,7 @@ class ResourceReport(Report):
          select res.name as name, res.location_id as location_id,
                d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
                coalesce(sum(bucket.value * %s),0) as available
-         from (select resource.name as name, resource.location_id as location_id, resource.maximum_id as maximum_id %s order by %s %s) as res
+         from (select resource.name as name, resource.location_id as location_id, resource.maximum_id as maximum_id %s order by %s %s) res
          -- Multiply with buckets
          cross join (
               select %s as bucket, %s_start as startdate, %s_end as enddate
@@ -444,7 +444,7 @@ class OperationReport(Report):
                d.bucket as col1, d.startdate as col2, d.enddate as col3,
                coalesce(sum(case o1.locked when %s then o1.quantity else 0 end),0) as frozen_start,
                coalesce(sum(o1.quantity),0) as total_start
-          from (select name %s order by %s %s) as oper
+          from (select name %s order by %s %s) oper
           -- Multiply with buckets
           cross join (
                select %s as bucket, %s_start as startdate, %s_end as enddate

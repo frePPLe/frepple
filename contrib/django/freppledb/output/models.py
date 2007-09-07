@@ -127,10 +127,7 @@ class FlowPlan(models.Model):
     class Meta:
         db_table = 'out_flowplan'
         permissions = (("view_flowplans", "Can view flow plans"),)
-        # Ordering is buggy :-(
-        # Database sync expectes 'thebuffer' and fails when it is set to 'thebuffer_id'
-        # Ordering requires 'thebuffer_id' and fails when it is set to 'thebuffer'
-        #ordering = ['thebuffer_id','datetime']
+        ordering = ['thebuffer','flowdatetime']
 
 
 class Demand(models.Model):

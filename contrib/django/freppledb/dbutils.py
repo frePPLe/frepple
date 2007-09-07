@@ -99,13 +99,17 @@ elif settings.DATABASE_ENGINE == 'mysql':
 elif settings.DATABASE_ENGINE == 'oracle':
 
   def sql_true():
-    return 'true'
+    return '1'
 
   def sql_datediff(d1,d2):
-    return '(%s - %s)' % (d1,d2)
+    # Ridiculously complex code. Bad marks for Oracle!
+    # Straightforward subtraction gives use an "interval" data type, from which it is hard to extract the total time as a number.
+    # We force subtracting 2 dates, which does give the difference in days
+    return "(to_date(to_char(%s,'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS')) - to_date(to_char(%s,'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS')) )" % (d1,d2)
 
   def sql_overlap(s1,e1,s2,e2):
-    return 'greatest(0,least(%s,%s) - greatest(%s,%s))' % (e1,e2,s1,s2)
+    # Ridiculously complex code. Bad marks for Oracle!
+    return "greatest(0,to_date(to_char(least(%s,%s),'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS') - to_date(to_char(greatest(%s,%s),'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS') )" % (e1,e2,s1,s2)
 
   def sql_max(d1, d2):
     return "greatest(%s,%s)" % (d1,d2)

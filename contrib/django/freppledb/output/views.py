@@ -31,7 +31,7 @@ from django.core.cache import cache
 from django.http import Http404, HttpResponse
 from django.conf import settings
 
-from freppledb.input.models import Buffer, Flow, Operation, Plan, Resource, Item, Demand, Forecast
+from freppledb.input.models import Buffer, Operation, Resource, Item, Forecast
 from freppledb.dbutils import *
 from freppledb.report import Report
 
@@ -42,9 +42,9 @@ class BufferReport(Report):
   '''
   template = 'buffer.html'
   title = "Inventory report"
-  countquery = Buffer.objects.values('name','item','location')
+  basequeryset = Buffer.objects.all()
   rows = (
-    ('buffer', {'filter': 'name__icontains'}),
+    ('buffer', {'filter': 'name__icontains', 'order_by': 'name'}),
     ('item', {'filter': 'item__name__icontains'}),
     ('location', {'filter': 'location__name__icontains'}),
     )
@@ -59,16 +59,7 @@ class BufferReport(Report):
     )
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
-    # Build the SQL filter
-    basesql = basequery._get_sql_clause()
-
-    # Build the SQL limit
-    if limit:
-      if offset == 0: limitstring = 'limit %d' % int(limit)
-      else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
-    else: limitstring = ''
-
+  def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connection.cursor()
     query = '''
@@ -76,13 +67,13 @@ class BufferReport(Report):
              d.bucket as col1, d.startdate as col2, d.enddate as col3,
              coalesce(sum(%s),0.0) as consumed,
              coalesce(-sum(%s),0.0) as produced
-        from (select buffer.name as name, buffer.item_id as item_id, buffer.location_id as location_id, buffer.onhand as onhand %s order by %s %s) buf
+        from (%s) buf
         -- Multiply with buckets
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
              from dates
              where day_start >= '%s' and day_start <= '%s'
-             group by bucket, startdate, enddate
+             group by %s, %s_start, %s_end
              ) d
         -- Consumed and produced quantities
         left join out_flowplan
@@ -90,11 +81,12 @@ class BufferReport(Report):
         and d.startdate <= out_flowplan.flowdate
         and d.enddate > out_flowplan.flowdate
         -- Grouping and sorting
-        group by row1, row2, row3, row4, col1, col2, col3
+        group by buf.name, buf.item_id, buf.location_id, buf.onhand, d.bucket, d.startdate, d.enddate
         order by %s, d.startdate
       ''' % (sql_max('out_flowplan.quantity','0.0'),sql_min('out_flowplan.quantity','0.0'),
-        basesql[1],sortsql,limitstring,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,sortsql)
-    cursor.execute(query, basesql[2])
+        basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
+        connection.ops.quote_name(bucket),bucket,bucket,sortsql)
+    cursor.execute(query, baseparams)
 
     # Build the python result
     resultset = []
@@ -130,9 +122,9 @@ class DemandReport(Report):
   '''
   template = 'demand.html'
   title = 'Demand report'
-  countquery = Item.objects.extra(where=('name in (select item_id from demand)',))
+  basequeryset = Item.objects.extra(where=('name in (select item_id from demand)',))
   rows = (
-    ('item',{'filter': 'name__icontains',}),
+    ('item',{'filter': 'name__icontains', 'order_by': 'name'}),
     )
   crosses = (
     ('demand',{}),
@@ -144,16 +136,7 @@ class DemandReport(Report):
     )
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
-    # Build the SQL filter
-    basesql = basequery._get_sql_clause()
-
-    # Build the SQL limit
-    if limit:
-      if offset == 0: limitstring = 'limit %d' % int(limit)
-      else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
-    else: limitstring = ''
-
+  def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connection.cursor()
     query = '''
@@ -165,37 +148,38 @@ class DemandReport(Report):
           select items.name as name,
                  d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
                  coalesce(sum(pln.quantity),0) as planned
-          from (select name %s order by %s %s) as items
+          from (%s) items
           -- Multiply with buckets
           cross join (
                select %s as bucket, %s_start as startdate, %s_end as enddate
                from dates
                where day_start >= '%s' and day_start <= '%s'
-               group by bucket, startdate, enddate
+               group by %s, %s_start, %s_end
                ) d
           -- Planned quantity
           left join (
-            select inp.item_id as item_id, out_demand.plandate as date, out_demand.planquantity as quantity
+            select item_id as item_id, out_demand.plandate as plandate, out_demand.planquantity as quantity
             from out_demand
-            inner join demand as inp
-            on out_demand.demand = inp.name
-            ) as pln
+            inner join demand
+            on out_demand.demand = demand.name
+            ) pln
           on items.name = pln.item_id
-          and d.startdate <= pln.date
-          and d.enddate > pln.date
+          and d.startdate <= pln.plandate
+          and d.enddate > pln.plandate
           -- Grouping
           group by items.name, d.bucket, d.startdate, d.enddate
         ) x
         -- Requested quantity
         left join demand
         on x.name = demand.item_id
-        and x.startdate <= date(demand.due)
-        and x.enddate > date(demand.due)
+        and x.startdate <= demand.due
+        and x.enddate > demand.due
         -- Ordering and grouping
-        group by row1, col1, col2, col3
+        group by x.name, x.bucket, x.startdate, x.enddate
         order by %s, x.startdate
-       ''' % (basesql[1],sortsql,limitstring,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,sortsql)
-    cursor.execute(query,basesql[2])
+       ''' % (basesql,connection.ops.quote_name(bucket),bucket,bucket,
+       startdate,enddate,connection.ops.quote_name(bucket),bucket,bucket,sortsql)
+    cursor.execute(query,baseparams)
 
     # Build the python result
     resultset = []
@@ -227,9 +211,9 @@ class ForecastReport(Report):
   '''
   template = 'forecast.html'
   title = 'Forecast report'
-  countquery = Forecast.objects.all()
+  basequeryset = Forecast.objects.all()
   rows = (
-    ('forecast',{'filter': 'name__icontains'}),
+    ('forecast',{'filter': 'name__icontains', 'order_by': 'name'}),
     ('item',{'filter': 'item__name__icontains'}),
     ('customer',{'filter': 'customer__name__icontains'}),
     )
@@ -241,29 +225,20 @@ class ForecastReport(Report):
     )
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
-    # Build the SQL filter
-    basesql = basequery._get_sql_clause()
-
-    # Build the SQL limit
-    if limit:
-      if offset == 0: limitstring = 'limit %d' % int(limit)
-      else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
-    else: limitstring = ''
-
+  def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connection.cursor()
     query = '''
         select fcst.name as row1, fcst.item_id as row2, fcst.customer_id as row3,
                d.bucket as col1, d.startdate as col2, d.enddate as col3,
                coalesce(sum(forecastdemand.quantity * %s / %s),0) as qty
-        from (select forecast.name as name, forecast.item_id as item_id, forecast.customer_id as customer_id %s order by %s %s) as fcst
+        from (%s) fcst
         -- Multiply with buckets
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
              from dates
              where day_start >= '%s' and day_start <= '%s'
-             group by bucket, startdate, enddate
+             group by %s, %s_start, %s_end
              ) d
         -- Total forecasted quantity
         left join forecastdemand
@@ -271,12 +246,14 @@ class ForecastReport(Report):
         and forecastdemand.enddate >= d.startdate
         and forecastdemand.startdate <= d.enddate
         -- Ordering and grouping
-        group by row1, row2, row3, col1, col2, col3
+        group by fcst.name, fcst.item_id, fcst.customer_id,
+          d.bucket, d.startdate, d.enddate
         order by %s, d.startdate
         ''' % (sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
-         sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),basesql[1],sortsql,limitstring,
-         connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,sortsql)
-    cursor.execute(query, basesql[2])
+         sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),
+         basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
+         connection.ops.quote_name(bucket),bucket,bucket,sortsql)
+    cursor.execute(query, baseparams)
 
     # Build the python result
     resultset = []
@@ -306,9 +283,9 @@ class ResourceReport(Report):
   '''
   template = 'resource.html'
   title = 'Resource report'
-  countquery = Resource.objects.values('name','location')
+  basequeryset = Resource.objects.all()
   rows = (
-    ('resource',{'filter': 'name__icontains'}),
+    ('resource',{'filter': 'name__icontains', 'order_by': 'name'}),
     ('location',{'filter': 'location__name__icontains'}),
     )
   crosses = (
@@ -321,16 +298,7 @@ class ResourceReport(Report):
     )
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
-    # Build the SQL filter
-    basesql = basequery._get_sql_clause()
-
-    # Build the SQL limit
-    if limit:
-      if offset == 0: limitstring = 'limit %d' % int(limit)
-      else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
-    else: limitstring = ''
-
+  def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connection.cursor()
     query = '''
@@ -342,13 +310,13 @@ class ResourceReport(Report):
          select res.name as name, res.location_id as location_id,
                d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
                coalesce(sum(bucket.value * %s),0) as available
-         from (select resource.name as name, resource.location_id as location_id, resource.maximum_id as maximum_id %s order by %s %s) res
+         from (%s) res
          -- Multiply with buckets
          cross join (
               select %s as bucket, %s_start as startdate, %s_end as enddate
               from dates
               where day_start >= '%s' and day_start <= '%s'
-              group by bucket, startdate, enddate
+              group by %s, %s_start, %s_end
               ) d
          -- Available capacity
          left join bucket
@@ -360,19 +328,20 @@ class ResourceReport(Report):
        ) x
        -- Load data
        left join (
-         select resource as resource_id, startdatetime, enddatetime, quantity as usagefactor
+         select %s as resource_id, startdatetime, enddatetime, quantity as usagefactor
          from out_loadplan
          ) loaddata
        on x.name = loaddata.resource_id
        and x.startdate <= loaddata.enddatetime
        and x.enddate >= loaddata.startdatetime
        -- Grouping and ordering
-       group by row1, row2, col1, col2, col3
+       group by x.name, x.location_id, x.bucket, x.startdate, x.enddate
        order by %s, x.startdate
        ''' % ( sql_overlap('loaddata.startdatetime','loaddata.enddatetime','x.startdate','x.enddate'),
          sql_overlap('bucket.startdate','bucket.enddate','d.startdate','d.enddate'),
-         basesql[1],sortsql,limitstring,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,sortsql)
-    cursor.execute(query, basesql[2])
+         basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
+         connection.ops.quote_name(bucket),bucket,bucket,connection.ops.quote_name('resource'),sortsql)
+    cursor.execute(query, baseparams)
 
     # Build the python result
     resultset = []
@@ -407,9 +376,9 @@ class OperationReport(Report):
   '''
   template = 'operation.html'
   title = 'Operation report'
-  countquery = Operation.objects.values('name')
+  basequeryset = Operation.objects.all()
   rows = (
-    ('operation',{'filter': 'name__icontains'}),
+    ('operation',{'filter': 'name__icontains', 'order_by': 'name'}),
     )
   crosses = (
     ('frozen_start', {'title':'frozen starts',}),
@@ -422,16 +391,7 @@ class OperationReport(Report):
     )
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, offset=0, limit=None, sortsql='1 asc'):
-    # Build the SQL filter
-    basesql = basequery._get_sql_clause()
-
-    # Build the SQL limit
-    if limit:
-      if offset == 0: limitstring = 'limit %d' % int(limit)
-      else: limitstring = 'limit %d offset %d' % (int(limit),int(offset))
-    else: limitstring = ''
-
+  def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
     # Run the query
     cursor = connection.cursor()
     query = '''
@@ -444,13 +404,13 @@ class OperationReport(Report):
                d.bucket as col1, d.startdate as col2, d.enddate as col3,
                coalesce(sum(case o1.locked when %s then o1.quantity else 0 end),0) as frozen_start,
                coalesce(sum(o1.quantity),0) as total_start
-          from (select name %s order by %s %s) oper
+          from (%s) oper
           -- Multiply with buckets
           cross join (
                select %s as bucket, %s_start as startdate, %s_end as enddate
                from dates
                where day_start >= '%s' and day_start <= '%s'
-               group by bucket, startdate, enddate
+               group by %s, %s_start, %s_end
                ) d
           -- Planned and frozen quantity, based on start date
           left join out_operationplan o1
@@ -458,7 +418,7 @@ class OperationReport(Report):
           and d.startdate <= o1.startdate
           and d.enddate > o1.startdate
           -- Grouping
-          group by row1, col1, col2, col3
+          group by oper.name, d.bucket, d.startdate, d.enddate
         ) x
         -- Planned and frozen quantity, based on end date
         left join out_operationplan o2
@@ -466,10 +426,12 @@ class OperationReport(Report):
         and x.col2 <= o2.enddate
         and x.col3 > o2.enddate
         -- Grouping and ordering
-        group by row1, col1, col2, col3
+        group by x.row1, x.col1, x.col2, x.col3
         order by %s, x.col2
-      ''' % (sql_true(),sql_true(),basesql[1],sortsql,limitstring,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,sortsql)
-    cursor.execute(query, basesql[2])
+      ''' % (sql_true(),sql_true(),basesql,
+      connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
+      connection.ops.quote_name(bucket),bucket,bucket,sortsql)
+    cursor.execute(query, baseparams)
 
     # Convert the SQl results to python
     resultset = []

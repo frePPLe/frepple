@@ -141,7 +141,7 @@ class Report(object):
 
   # The resultset that returns a list of entities that are to be
   # included in the report.
-  countquery = None
+  basequeryset = None
 
   # Row definitions
   # Possible attributes for a row field are:
@@ -150,6 +150,9 @@ class Report(object):
   #   - filter_size:
   #     Specifies the size of the search field.
   #     The default value is 10 characters.
+  #   - order_by:
+  #     Model field to user for the sorting.
+  #     It defaults to the name of the field.
   #   - title:
   #     Name of the row that is displayed to the user.
   #     It defaults to the name of the field.
@@ -225,7 +228,7 @@ def view_report(request, entity=None, **args):
 
   # Pick up the filter parameters from the url
   filterargs = [ request.GET.get(f[0]) for f in reportclass.rows ]
-  counter = reportclass.countquery
+  counter = reportclass.basequeryset
   fullhits = counter.count()
   if entity:
     counter = counter.filter(pk__exact=entity)
@@ -240,33 +243,49 @@ def view_report(request, entity=None, **args):
   try:
     if sortparam[0] == '1':
       if sortparam[1] == 'd':
+        counter = counter.order_by('-%s' % (('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0]))
         sortsql = '1 desc'
       else:
         sortparam = '1a'
+        counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
         sortsql = '1 asc'
     else:
       x = int(sortparam[0])
       if x > len(reportclass.rows) or x < 0:
         sortparam = '1a'
+        counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
         sortsql = '1 asc'
-      if sortparam[1] == 'd':
+      elif sortparam[1] == 'd':
         sortparm = '%dd' % x
+        counter = counter.order_by(
+          '-%s' % (('order_by' in reportclass.rows[x-1][1] and reportclass.rows[x-1][1]['order_by']) or reportclass.rows[x-1][0]),
+          ('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0]
+          )
         sortsql = '%d desc, 1 asc' % x
       else:
         sortparam = '%da' % x
+        counter = counter.order_by(
+          ('order_by' in reportclass.rows[x-1][1] and reportclass.rows[x-1][1]['order_by']) or reportclass.rows[x-1][0],
+          ('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0]
+          )
         sortsql = '%d asc, 1 asc' % x
   except:
     # A silent and safe exit in case of any exception
     sortparam = '1a'
+    counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
     sortsql = '1 asc'
 
   # HTML output or CSV output?
   type = request.GET.get('type','html')
+  if settings.DATABASE_ENGINE == 'oracle':
+    basesql = counter._get_sql_clause(get_full_query=True)
+  else:
+    basesql = counter._get_sql_clause()
   if type == 'csv':
     # CSV output
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % reportclass.title.lower()
-    response._container = _generate_csv(reportclass, reportclass.resultquery(counter, bucket, start, end, sortsql=sortsql))
+    response._container = _generate_csv(reportclass, reportclass.resultquery(basesql, bucket, start, end, sortsql=sortsql))
     response._is_string = False
     return response
 
@@ -277,7 +296,16 @@ def view_report(request, entity=None, **args):
   # Calculate the content of the page
   page = int(request.GET.get('p', '0'))
   paginator = ObjectPaginator(counter, reportclass.paginate_by)
-  try: results = reportclass.resultquery(counter, bucket, start, end, offset=paginator.first_on_page(page)-1, limit=reportclass.paginate_by, sortsql=sortsql)
+  counter = counter[paginator.first_on_page(page)-1:paginator.first_on_page(page)-1+(reportclass.paginate_by or 0)]
+  if settings.DATABASE_ENGINE == 'oracle':
+    basesql = counter._get_sql_clause(get_full_query=True)
+  else:
+    basesql = counter._get_sql_clause()
+  try:
+    if settings.DATABASE_ENGINE == 'oracle':
+      results = reportclass.resultquery(basesql[3], basesql[2], bucket, start, end, sortsql=sortsql)
+    else:
+      results = reportclass.resultquery('select * %s' % basesql[1], basesql[2], bucket, start, end, sortsql=sortsql)
   except InvalidPage: raise Http404
 
   # If there are less than 10 pages, show them all
@@ -363,7 +391,7 @@ def view_report(request, entity=None, **args):
   if 'extra_context' in args: context.update(args['extra_context'])
 
   # Uncomment this line to see which sql got executed
-  # for i in connection.queries: print i['time'], i['sql']
+  for i in connection.queries: print i['time'], i['sql']
 
   # Render the view
   return render_to_response(args['report'].template,

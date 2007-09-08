@@ -35,68 +35,6 @@ import frepple
 ROUNDING_DECIMALS = 4
 
 
-def dumpfrepple_files():
-  '''
-  This function exports the data from the frepple memory into a series of flat files.
-  '''
-  import csv
-  print "Exporting problems..."
-  starttime = time()
-  writer = csv.writer(open("problems.csv", "wb"))
-  for i in frepple.problem():
-    writer.writerow((i['ENTITY'], i['TYPE'], i['DESCRIPTION'], str(i['START']), str(i['END']), str(i['START']), str(i['END']), i['WEIGHT']))
-  print 'Exported problems in %.2f seconds' % (time() - starttime)
-
-  print "Exporting operationplans..."
-  starttime = time()
-  writer = csv.writer(open("operations.csv", "wb"))
-  for i in frepple.operationplan():
-    writer.writerow( (i['IDENTIFIER'], i['OPERATION'].replace("'","''"),
-      i['QUANTITY'], str(i['START']), str(i['END']), str(i['START']),
-      str(i['END']), i['DEMAND'], str(i['LOCKED'])) )
-  print 'Exported operationplans in %.2f seconds' % (time() - starttime)
-
-  print "Exporting flowplans..."
-  starttime = time()
-  writer = csv.writer(open("buffers.csv", "wb"))
-  for i in frepple.buffer():
-    for j in i['FLOWPLANS']:
-      writer.writerow( (j['OPERATIONPLAN'], j['OPERATION'], j['BUFFER'],
-        j['QUANTITY'], str(j['DATE']), str(j['DATE']), j['ONHAND']) )
-  print 'Exported flowplans in %.2f seconds' % (time() - starttime)
-
-  print "Exporting loadplans..."
-  starttime = time()
-  writer = csv.writer(open("resources.csv", "wb"))
-  for i in frepple.resource():
-    for j in i['LOADPLANS']:
-      writer.writerow( (j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'],
-        j['QUANTITY'], str(j['DATE']), str(j['DATE']), j['ONHAND'],
-        j['MAXIMUM']) )
-  print 'Exported loadplans in %.2f seconds' % (time() - starttime)
-
-  print "Exporting demands..."
-  starttime = time()
-  writer = csv.writer(open("demands.csv", "wb"))
-  for i in frepple.demand():
-    for j in i['DELIVERY']:
-      writer.writerow( (i['NAME'], str(i['DUE']), j['QUANTITY'],
-        (j['PLANDATE'] and str(j['PLANDATE'])) or '',
-        j['PLANQUANTITY'] or '', j['OPERATIONPLAN'] or '',
-       ) )
-  print 'Exported demands in %.2f seconds' % (time() - starttime)
-
-  print "Exporting pegging..."
-  starttime = time()
-  writer = csv.writer(open("demand_pegging.csv", "wb"))
-  for i in frepple.demand():
-    for j in i['PEGGING']:
-      writer.writerow( (i['NAME'], j['LEVEL'], j['OPERATIONPLAN'] or None,
-        j['BUFFER'], j['QUANTITY'], str(j['DATE']), j['FACTOR'], j['PEGGED']
-       ) )
-  print 'Exported pegging in %.2f seconds' % (time() - starttime)
-
-
 def truncate(cursor):
   print "Emptying database plan tables..."
   starttime = time()
@@ -180,7 +118,7 @@ def exportFlowplans(cursor):
        ) for j in i['FLOWPLANS']
       ])
     cnt += 1
-    if cnt % 20 == 0: transaction.commit()
+    if cnt % 300 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_flowplan")
   print 'Exported %d flowplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
@@ -191,11 +129,13 @@ def exportLoadplans(cursor):
   print "Exporting loadplans..."
   starttime = time()
   cnt = 0
+  sql = 'insert into out_loadplan \
+      (operationplan, %s, quantity, startdate, \
+      startdatetime, enddate, enddatetime) values \
+      (%%s,%%s,%%s,%%s,%%s,%%s,%%s)' % connection.ops.quote_name('resource')
   for i in frepple.resource():
     cursor.executemany(
-      "insert into out_loadplan \
-      (operationplan, resource, quantity, startdate, \
-      startdatetime, enddate, enddatetime) values (%s,%s,%s,%s,%s,%s,%s)",
+      sql,
       [(
          j['OPERATIONPLAN'], j['RESOURCE'],
          round(j['QUANTITY'],ROUNDING_DECIMALS),
@@ -204,7 +144,7 @@ def exportLoadplans(cursor):
        ) for j in i['LOADPLANS']
       ])
     cnt += 1
-    if cnt % 20 == 0: transaction.commit()
+    if cnt % 50 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_loadplan")
   print 'Exported %d loadplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
@@ -251,7 +191,7 @@ def exportPegging(cursor):
        ) for j in i['PEGGING']
       ])
     cnt += 1
-    if cnt % 50 == 0: transaction.commit()
+    if cnt % 100 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_demandpegging")
   print 'Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
@@ -259,7 +199,6 @@ def exportPegging(cursor):
 
 def exportForecast(cursor):
   global ROUNDING_DECIMALS
-  import frepple.forecast
   print "Exporting forecast..."
   starttime = time()
   cnt = 0
@@ -275,19 +214,19 @@ def exportForecast(cursor):
        ) for j in i['LOADPLANS']
       ])
     cnt += 1
-    if cnt % 20 == 0: transaction.commit()
+    if cnt % 50 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_forecast")
   print 'Exported %d forecasts in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
 
-class runDatabaseThread(Thread):
+class DatabaseTask(Thread):
   '''
-  An auxiliary class that allows us to run an export function with its own
+  An auxiliary class that allows us to run a function with its own
   database connection in its own thread.
   '''
   def __init__(self, *f):
-    super(runDatabaseThread, self).__init__()
+    super(DatabaseTask, self).__init__()
     self.functions = f
 
   @transaction.commit_manually
@@ -301,11 +240,11 @@ class runDatabaseThread(Thread):
     # Run the functions sequentially
     for f in self.functions:
       try: f(cursor)
-      except Exception, e: print "Error in export:", e
+      except Exception, e: print e
 
 
 @transaction.commit_manually
-def dumpfrepple():
+def exportfrepple():
   '''
   This function exports the data from the frepple memory into the database.
   '''
@@ -326,7 +265,7 @@ def dumpfrepple():
   # Erase previous output
   truncate(cursor)
 
-  if True or settings.DATABASE_ENGINE == 'sqlite3':
+  if settings.DATABASE_ENGINE == 'sqlite3':
     # OPTION 1: Sequential export of each entity
     # For sqlite this is required since a writer blocks the database file.
     # For other databases the parallel export normally gives a better
@@ -342,17 +281,17 @@ def dumpfrepple():
     # OPTION 2: Parallel export of entities in groups.
     # The groups are running in seperate threads, and all functions in a group
     # are run in sequence.
-    t = (
-      runDatabaseThread(exportProblems, exportDemand),
-      runDatabaseThread(exportOperationplans),
-      runDatabaseThread(exportFlowplans),
-      runDatabaseThread(exportLoadplans),
-      runDatabaseThread(exportPegging),
+    tasks = (
+      DatabaseTask(exportProblems, exportDemand),
+      DatabaseTask(exportOperationplans),
+      DatabaseTask(exportFlowplans),
+      DatabaseTask(exportLoadplans),
+      DatabaseTask(exportPegging),
       )
     # Start all threads
-    for i in t: i.start()
+    for i in tasks: i.start()
     # Wait for all threads to finish
-    for i in t: i.join()
+    for i in tasks: i.join()
 
   # Analyze
   if settings.DATABASE_ENGINE == 'sqlite3':

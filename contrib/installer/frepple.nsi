@@ -216,18 +216,17 @@ Function database
   ; Detect MySQL installation
   EnumRegKey $0 HKLM "software\MySQL AB" 0
   StrCmp $0 "" +2 0
-    StrCpy $1 "$1|MySQL"
+  StrCpy $1 "$1|MySQL"
 
   ; Detect PostgreSQL installation
   EnumRegKey $0 HKLM "software\PostgreSQL" 0
   StrCmp $0 "" +2 0
-    StrCpy $1 "$1|PostgreSQL"
+  StrCpy $1 "$1|PostgreSQL"
 
   ; Detect Oracle installation
-  ; COMMENTED OUT TILL ORACLE IS SUPPORTED BY FREPPLE
-  ;EnumRegKey $0 HKLM "software\ORACLE" 0
-  ;StrCmp $0 "" +2 0
-  ;  StrCpy $1 "$1|Oracle"
+  EnumRegKey $0 HKLM "software\ORACLE" 0
+  StrCmp $0 "" +2 0
+  StrCpy $1 "$1|Oracle"
 
   ; Update the dropdown with available databases
   WriteIniStr "$PLUGINSDIR\database.ini" "Field 7" "ListItems" "$1"

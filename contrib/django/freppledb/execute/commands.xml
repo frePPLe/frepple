@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <?PYTHON
-from freppledb.execute.export import dumpfrepple, dumpfrepple_files
+from freppledb.execute.export_database import exportfrepple as export_to_database
+from freppledb.execute.export_file import exportfrepple as export_to_file
 from freppledb.execute.load import loadfrepple
 import os
 
@@ -29,9 +30,9 @@ frepple.readXMLdata(
         <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" VERBOSE="false" MAXPARALLEL="2"/>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SIZE" />
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="dumpfrepple()" />
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="export_to_database()" />
     <!--
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="dumpfrepple_files()" />
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="export_to_file()" />
     <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
     <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
     <COMMAND xsi:type="COMMAND_SIZE" />

@@ -27,7 +27,7 @@ import csv
 import frepple
 
 
-def exportProblems_csv():
+def exportProblems():
   print "Exporting problems..."
   starttime = time()
   writer = csv.writer(open("problems.csv", "wb"), quoting=csv.QUOTE_ALL)
@@ -38,7 +38,7 @@ def exportProblems_csv():
   print 'Exported problems in %.2f seconds' % (time() - starttime)
 
 
-def exportOperationplans_csv():
+def exportOperationplans():
   print "Exporting operationplans..."
   starttime = time()
   writer = csv.writer(open("operations.csv", "wb"), quoting=csv.QUOTE_ALL)
@@ -50,7 +50,7 @@ def exportOperationplans_csv():
   print 'Exported operationplans in %.2f seconds' % (time() - starttime)
 
 
-def exportFlowplans_csv():
+def exportFlowplans():
   print "Exporting flowplans..."
   starttime = time()
   writer = csv.writer(open("buffers.csv", "wb"), quoting=csv.QUOTE_ALL)
@@ -63,7 +63,7 @@ def exportFlowplans_csv():
   print 'Exported flowplans in %.2f seconds' % (time() - starttime)
 
 
-def exportLoadplans_csv():
+def exportLoadplans():
   print "Exporting loadplans..."
   starttime = time()
   writer = csv.writer(open("resources.csv", "wb"), quoting=csv.QUOTE_ALL)
@@ -76,7 +76,7 @@ def exportLoadplans_csv():
   print 'Exported loadplans in %.2f seconds' % (time() - starttime)
 
 
-def exportDemand_csv():
+def exportDemand():
   print "Exporting demands..."
   starttime = time()
   writer = csv.writer(open("demands.csv", "wb"), quoting=csv.QUOTE_ALL)
@@ -89,7 +89,7 @@ def exportDemand_csv():
   print 'Exported demands in %.2f seconds' % (time() - starttime)
 
 
-def exportPegging_csv():
+def exportPegging():
   print "Exporting pegging..."
   starttime = time()
   writer = csv.writer(open("demand_pegging.csv", "wb"), quoting=csv.QUOTE_ALL)
@@ -103,9 +103,9 @@ def exportPegging_csv():
 
 
 def exportfrepple():
-  exportProblems_csv()
-  exportOperationplans_csv()
-  exportFlowplans_csv()
-  exportLoadplans_csv()
-  exportDemand_csv()
-  exportPegging_csv()
+  exportProblems()
+  exportOperationplans()
+  exportFlowplans()
+  exportLoadplans()
+  exportDemand()
+  exportPegging()

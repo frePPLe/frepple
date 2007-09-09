@@ -60,8 +60,8 @@ def exportProblems(cursor):
     (entity,name,description,startdatetime,enddatetime,startdate,enddate,weight) \
     values(%s,%s,%s,%s,%s,%s,%s,%s)",
     [(
-       i['ENTITY'], i['TYPE'], i['DESCRIPTION'], i['START'], i['END'],
-       i['START'].date(), i['END'].date(), round(i['WEIGHT'],ROUNDING_DECIMALS)
+       i['ENTITY'], i['TYPE'], i['DESCRIPTION'], str(i['START']), str(i['END']),
+       str(i['START'].date()), str(i['END'].date()), round(i['WEIGHT'],ROUNDING_DECIMALS)
      ) for i in frepple.problem()
     ])
   transaction.commit()
@@ -78,11 +78,11 @@ def exportOperationplans(cursor):
   for i in frepple.operationplan():
     objects.append( (\
        i['IDENTIFIER'], i['OPERATION'].replace("'","''"),
-       round(i['QUANTITY'],ROUNDING_DECIMALS), i['START'], i['END'],
-       i['START'].date(), i['END'].date(), i['DEMAND'], str(i['LOCKED']), i['OWNER'] or None
+       round(i['QUANTITY'],ROUNDING_DECIMALS), str(i['START']), str(i['END']),
+       str(i['START'].date()), str(i['END'].date()), i['DEMAND'], str(i['LOCKED']), i['OWNER'] or None
      ) )
     cnt += 1
-    if cnt >= 10000:
+    if cnt >= 20000:
       cursor.executemany(
         "insert into out_operationplan \
         (identifier,operation,quantity,startdatetime,enddatetime,startdate, \
@@ -113,7 +113,7 @@ def exportFlowplans(cursor):
       values (%s,%s,%s,%s,%s,%s,%s)",
       [(
          j['OPERATIONPLAN'], j['OPERATION'], j['BUFFER'],
-         round(j['QUANTITY'],ROUNDING_DECIMALS), j['DATE'].date(), j['DATE'],
+         round(j['QUANTITY'],ROUNDING_DECIMALS), str(j['DATE'].date()), str(j['DATE']),
          round(j['ONHAND'],ROUNDING_DECIMALS)
        ) for j in i['FLOWPLANS']
       ])
@@ -139,12 +139,12 @@ def exportLoadplans(cursor):
       [(
          j['OPERATIONPLAN'], j['RESOURCE'],
          round(j['QUANTITY'],ROUNDING_DECIMALS),
-         j['STARTDATE'].date(), j['STARTDATE'],
-         j['ENDDATE'].date(), j['ENDDATE'],
+         str(j['STARTDATE'].date()), str(j['STARTDATE']),
+         str(j['ENDDATE'].date()), str(j['ENDDATE']),
        ) for j in i['LOADPLANS']
       ])
     cnt += 1
-    if cnt % 50 == 0: transaction.commit()
+    if cnt % 100 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_loadplan")
   print 'Exported %d loadplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
@@ -161,14 +161,14 @@ def exportDemand(cursor):
       (demand,duedate,duedatetime,quantity,plandate,plandatetime,planquantity,operationplan) \
       values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
-         i['NAME'], i['DUE'].date(), i['DUE'], round(j['QUANTITY'],ROUNDING_DECIMALS),
-         (j['PLANDATE'] and j['PLANDATE'].date()) or None, j['PLANDATE'],
+         i['NAME'], str(i['DUE'].date()), str(i['DUE']), round(j['QUANTITY'],ROUNDING_DECIMALS),
+         (j['PLANDATE'] and str(j['PLANDATE'].date())) or None, (j['PLANDATE'] and str(j['PLANDATE'])) or None,
          (j['PLANQUANTITY'] and round(j['PLANQUANTITY'],ROUNDING_DECIMALS)) or None,
          j['OPERATIONPLAN'] or None
        ) for j in i['DELIVERY']
       ])
     cnt += 1
-    if cnt % 100 == 0: transaction.commit()
+    if cnt % 500 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_demand")
   print 'Exported %d demands in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
@@ -185,13 +185,13 @@ def exportPegging(cursor):
       (demand,depth,operationplan,buffer,quantity,pegdate, \
       factor,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
-         i['NAME'], j['LEVEL'], j['OPERATIONPLAN'] or None, j['BUFFER'],
-         round(j['QUANTITY'],ROUNDING_DECIMALS), j['DATE'],
+         i['NAME'], str(j['LEVEL']), j['OPERATIONPLAN'] or None, j['BUFFER'],
+         round(j['QUANTITY'],ROUNDING_DECIMALS), str(j['DATE']),
          round(j['FACTOR'],ROUNDING_DECIMALS), str(j['PEGGED'])
        ) for j in i['PEGGING']
       ])
     cnt += 1
-    if cnt % 100 == 0: transaction.commit()
+    if cnt % 500 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_demandpegging")
   print 'Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
@@ -277,6 +277,7 @@ def exportfrepple():
     exportDemand(cursor)
     #exportForecast(cursor)
     exportPegging(cursor)
+
   else:
     # OPTION 2: Parallel export of entities in groups.
     # The groups are running in seperate threads, and all functions in a group
@@ -297,3 +298,4 @@ def exportfrepple():
   if settings.DATABASE_ENGINE == 'sqlite3':
     print "Analyzing database tables..."
     cursor.execute("analyze")
+

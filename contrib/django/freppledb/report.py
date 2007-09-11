@@ -391,7 +391,7 @@ def view_report(request, entity=None, **args):
   if 'extra_context' in args: context.update(args['extra_context'])
 
   # Uncomment this line to see which sql got executed
-  for i in connection.queries: print i['time'], i['sql']
+  #for i in connection.queries: print i['time'], i['sql']
 
   # Render the view
   return render_to_response(args['report'].template,

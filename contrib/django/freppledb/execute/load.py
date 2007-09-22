@@ -23,6 +23,7 @@
 
 from time import time
 from xml.sax.saxutils import quoteattr, escape
+from threading import Thread
 
 from django.db import connection
 from django.conf import settings
@@ -41,22 +42,8 @@ def timeformat(i):
   else:
     return '%d' % i
 
-
-def loadfrepple():
-  '''
-  This function is expected to be run by the python interpreter in the
-  frepple application.
-  It loads data from the database into the frepple memory.
-  '''
-  global header
-  cursor = connection.cursor()
-
-  # Make sure the debug flag is not set!
-  # When it is set, the django database wrapper collects a list of all sql
-  # statements executed and their timings. This consumes plenty of memory
-  # and cpu time.
-  settings.DEBUG = False
-
+  
+def loadPlan(cursor):
   # Plan (limited to the first one only)
   print 'Import plan...'
   x = [ header ]
@@ -70,7 +57,8 @@ def loadfrepple():
   x.append('</PLAN>')
   frepple.readXMLdata('\n'.join(x),False,False)
 
-  # Locations
+
+def loadLocations(cursor):
   print 'Importing locations...'
   cnt = 0
   starttime = time()
@@ -86,7 +74,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d locations in %.2f seconds' % (cnt, time() - starttime)
 
-  # Calendar
+
+def loadCalendars(cursor):
   print 'Importing calendars...'
   cnt = 0
   starttime = time()
@@ -116,7 +105,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime)
 
-  # Customers
+
+def loadCustomers(cursor):
   print 'Importing customers...'
   cnt = 0
   starttime = time()
@@ -132,7 +122,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d customers in %.2f seconds' % (cnt, time() - starttime)
 
-  # Operations
+
+def loadOperations(cursor):
   print 'Importing operations...'
   cnt = 0
   starttime = time()
@@ -159,7 +150,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d operations in %.2f seconds' % (cnt, time() - starttime)
 
-  # Suboperations
+
+def loadSuboperations(cursor):
   print 'Importing suboperations...'
   cnt = 0
   starttime = time()
@@ -184,7 +176,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d suboperations in %.2f seconds' % (cnt, time() - starttime)
 
-  # Items
+
+def loadItems(cursor):
   print 'Importing items...'
   cnt = 0
   starttime = time()
@@ -201,7 +194,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d items in %.2f seconds' % (cnt, time() - starttime)
 
-  # Buffers
+
+def loadBuffers(cursor):
   print 'Importing buffers...'
   cnt = 0
   starttime = time()
@@ -236,7 +230,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime)
 
-  # Resources
+
+def loadResources(cursor):
   print 'Importing resources...'
   cnt = 0
   starttime = time()
@@ -256,7 +251,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d resources in %.2f seconds' % (cnt, time() - starttime)
 
-  # Flows
+
+def loadFlows(cursor):
   print 'Importing flows...'
   cnt = 0
   starttime = time()
@@ -272,7 +268,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d flows in %.2f seconds' % (cnt, time() - starttime)
 
-  # Loads
+
+def loadLoads(cursor):
   print 'Importing loads...'
   cnt = 0
   starttime = time()
@@ -285,7 +282,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d loads in %.2f seconds' % (cnt, time() - starttime)
 
-  # OperationPlan
+
+def loadOperationPlans(cursor):
   print 'Importing operationplans...'
   cnt = 0
   starttime = time()
@@ -302,7 +300,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime)
 
-  # Forecast
+
+def loadForecast(cursor):
   print 'Importing forecast...'
   cnt = 0
   starttime = time()
@@ -322,7 +321,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d forecasts in %.2f seconds' % (cnt, time() - starttime)
 
-  # Forecast demand
+
+def loadForecastdemand(cursor):
   print 'Importing forecast demand...'
   cnt = 0
   starttime = time()
@@ -335,7 +335,8 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d forecast demands in %.2f seconds' % (cnt, time() - starttime)
 
-  # Demand
+
+def loadDemand(cursor):
   print 'Importing demands...'
   cnt = 0
   starttime = time()
@@ -354,6 +355,91 @@ def loadfrepple():
   frepple.readXMLdata('\n'.join(x),False,False)
   print 'Loaded %d demands in %.2f seconds' % (cnt, time() - starttime)
 
+
+class DatabaseTask(Thread):
+  '''
+  An auxiliary class that allows us to run a function with its own
+  database connection in its own thread.
+  '''
+  def __init__(self, *f):
+    super(DatabaseTask, self).__init__()
+    self.functions = f
+
+  def run(self):
+    # Create a database connection
+    cursor = connection.cursor()
+    # Run the functions sequentially
+    for f in self.functions:
+      try: f(cursor)
+      except Exception, e: print e
+      
+      
+def loadfrepple():
+  '''
+  This function is expected to be run by the python interpreter in the
+  frepple application.
+  It loads data from the database into the frepple memory.
+  '''
+  global header
+  cursor = connection.cursor()
+
+  # Make sure the debug flag is not set!
+  # When it is set, the django database wrapper collects a list of all sql
+  # statements executed and their timings. This consumes plenty of memory
+  # and cpu time.
+  settings.DEBUG = False
+
+  if True:
+    # Sequential load of all entities
+    loadPlan(cursor)
+    loadLocations(cursor)
+    loadCalendars(cursor)
+    loadOperations(cursor)
+    loadSuboperations(cursor)
+    loadItems(cursor)
+    loadBuffers(cursor)
+    loadResources(cursor)
+    loadFlows(cursor)
+    loadLoads(cursor)
+    loadOperationPlans(cursor)
+    loadForecast(cursor)
+    loadForecastdemand(cursor)
+    loadDemand(cursor)
+  else:
+    # Loading of entities in a number of 'groups'.
+    # The groups are executed in sequence, while the tasks within a group
+    # are executed in parallel.
+    # The entities are grouped based on their relations.
+    #
+    # The parallel loading is currently in a "experimental" state only.
+    # Reason being that so far parallel loading doesn't bring a clear 
+    # performance gain. 
+    # Unclear what the limiting bottleneck is: python or frepple, definately
+    # not the database...
+    tasks = (
+      DatabaseTask(loadPlan),
+      DatabaseTask(loadLocations),
+      DatabaseTask(loadCalendars),
+      DatabaseTask(loadCustomers),
+      DatabaseTask(loadOperations,loadSuboperations), 
+      )
+    for i in tasks: i.start()
+    for i in tasks: i.join()
+    loadItems(cursor)
+    tasks = (
+      DatabaseTask(loadBuffers,loadFlows),
+      DatabaseTask(loadResources, loadLoads),
+      DatabaseTask(loadForecast),
+      )
+    for i in tasks: i.start()
+    for i in tasks: i.join()
+    tasks = (
+      DatabaseTask(loadOperationPlans),
+      DatabaseTask(loadForecastdemand,loadDemand),
+      )
+    for i in tasks: i.start()
+    for i in tasks: i.join()
+    
   # Finalize
   print 'Done'
   cursor.close()

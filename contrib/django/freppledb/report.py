@@ -285,7 +285,7 @@ def view_report(request, entity=None, **args):
     # CSV output
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % reportclass.title.lower()
-    response._container = _generate_csv(reportclass, reportclass.resultquery(basesql, bucket, start, end, sortsql=sortsql))
+    response._container = _generate_csv(reportclass, reportclass.resultquery('select * %s' % basesql[1], basesql[2], bucket, start, end, sortsql=sortsql))
     response._is_string = False
     return response
 

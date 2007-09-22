@@ -38,7 +38,7 @@ class OperationPlan(models.Model):
     startdate = models.DateField(db_index=True)
     enddate = models.DateField(db_index=True)
     locked = models.BooleanField(default=True, radio_admin=True)
-    owner = models.ForeignKey('self', null=True, blank=True, related_name='children', raw_id_admin=True)
+    owner = models.IntegerField(null=True, blank=True, db_index=True)
 
     def __str__(self): return str(self.identifier)
 

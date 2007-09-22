@@ -31,7 +31,7 @@ from django.contrib.admin.views.main import quote
 from freppledb.report import ReportRowHeader
 
 
-HOMECRUMB = '<a href="/admin/">Home</a>'
+HOMECRUMB = '<a href="/admin/">%s</a>'
 
 register = Library()
 
@@ -113,18 +113,18 @@ class CrumbsNode(Node):
         # Pick up the current crumbs from the session cookie
         req = context['request']
         try: cur = req.session['crumbs']
-        except: cur = [HOMECRUMB]
+        except: cur = [HOMECRUMB % _('Home')]
 
         # Check if we need to reset the crumbs
         try:
-          if context['reset_crumbs']: cur = [HOMECRUMB]
+          if context['reset_crumbs']: cur = [HOMECRUMB % _('Home')]
         except: pass
 
         # Pop from the stack if the same url is already in the crumbs
         try: title = resolve_variable("title",context)
         except: title = req.get_full_path()
         # A special case to work around the hardcoded title of the main admin page
-        if title == 'Site administration': title = 'Home'
+        if title == 'Site administration': title = _('Home')
         key = '<a href="%s">%s</a>' % (escape(req.get_full_path()), title)
         cnt = 0
         for i in cur:

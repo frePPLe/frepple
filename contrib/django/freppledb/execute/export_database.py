@@ -86,7 +86,7 @@ def exportOperationplans(cursor):
       cursor.executemany(
         "insert into out_operationplan \
         (identifier,operation,quantity,startdatetime,enddatetime,startdate, \
-         enddate,demand,locked,owner_id) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
+         enddate,demand,locked,owner) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
       transaction.commit()
       objects = []
       cnt = 0
@@ -94,7 +94,7 @@ def exportOperationplans(cursor):
     cursor.executemany(
       "insert into out_operationplan \
       (identifier,operation,quantity,startdatetime,enddatetime,startdate, \
-      enddate,demand,locked,owner_id) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
+      enddate,demand,locked,owner) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
     transaction.commit()
   cursor.execute("select count(*) from out_operationplan")
   print 'Exported %d operationplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
@@ -196,7 +196,6 @@ def exportPegging(cursor):
   cursor.execute("select count(*) from out_demandpegging")
   print 'Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
-
 def exportForecast(cursor):
   global ROUNDING_DECIMALS
   print "Exporting forecast..."
@@ -237,6 +236,8 @@ class DatabaseTask(Thread):
       cursor.execute('PRAGMA temp_store = MEMORY;')
       cursor.execute('PRAGMA synchronous = OFF')
       cursor.execute('PRAGMA cache_size = 8000')
+    elif settings.DATABASE_ENGINE == 'oracle':
+      cursor.execute("ALTER SESSION SET COMMIT_WRITE='BATCH,NOWAIT'")
     # Run the functions sequentially
     for f in self.functions:
       try: f(cursor)
@@ -261,6 +262,8 @@ def exportfrepple():
     cursor.execute('PRAGMA temp_store = MEMORY;')
     cursor.execute('PRAGMA synchronous = OFF')
     cursor.execute('PRAGMA cache_size = 8000')
+  elif settings.DATABASE_ENGINE == 'oracle':
+    cursor.execute("ALTER SESSION SET COMMIT_WRITE='BATCH,NOWAIT'")
 
   # Erase previous output
   truncate(cursor)
@@ -298,4 +301,3 @@ def exportfrepple():
   if settings.DATABASE_ENGINE == 'sqlite3':
     print "Analyzing database tables..."
     cursor.execute("analyze")
-

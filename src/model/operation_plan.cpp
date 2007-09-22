@@ -183,11 +183,12 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
 
 DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
 {
-  // We are garantueed that there are no operationplans that have an id higher
-  // than the current counter. This is garantueed by the initialize() method.
-  if (l > counter) return NULL;
+  // We are garantueed that there are no operationplans that have an id equal
+  // or higher than the current counter. This is garantueed by the 
+  // initialize() method.
+  if (l >= counter) return NULL;
 
-  // Loop through all operationplans
+  // Loop through all operationplans.
   for (OperationPlan::iterator i = begin(); i != end(); ++i)
     if (i->id == l) return &*i;
 

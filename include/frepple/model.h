@@ -1729,10 +1729,12 @@ class OperationPlan
 
     bool getHidden() const {return getOperation()->getHidden();}
 
-    /** Searches for an OperationPlan with a given identifier. Returns a NULL
-      * pointer if no such OperationPlan can be found.
+    /** Searches for an OperationPlan with a given identifier.<br>
+      * Returns a NULL pointer if no such OperationPlan can be found.<br>
       * The method is of complexity O(n), i.e. involves a LINEAR search through
-      * the existing operationplans, and can thus be quite slow in big models.
+      * the existing operationplans, and can thus be quite slow in big models.<br>
+      * The method is O(1), i.e. constant time regardless of the model size, 
+      * when the parameter passed is bigger than the operationplan counter.
       */
     static DECLARE_EXPORT OperationPlan* findId(unsigned long l);
 
@@ -1810,7 +1812,9 @@ class OperationPlan
     bool locked;
 
     /** Counter of OperationPlans, which is used to automatically assign a
-      * unique identifier for each operationplan.
+      * unique identifier for each operationplan.<br>
+      * The value of the counter is the first available identifier value that
+      * can be used for a new operationplan.
       * @see getIdentifier()
       */
     static DECLARE_EXPORT unsigned long counter;

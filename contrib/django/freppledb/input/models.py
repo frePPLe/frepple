@@ -409,6 +409,7 @@ class Buffer(models.Model):
       help_text='Operation to replenish the buffer')
     # Extra fields for procurement buffers
     leadtime = models.DecimalField(max_digits=15, decimal_places=0, null=True, blank=True, help_text='Leadtime for supplier of a procure buffer')
+    fence = models.DecimalField(max_digits=15, decimal_places=0, null=True, blank=True, help_text='Frozen fence for creating new procurements')
     min_inventory = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text='Inventory level that triggers replenishment of a procure buffer')
     max_inventory = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text='Inventory level to which a procure buffer is replenished')
     min_interval = models.DecimalField(max_digits=15, decimal_places=0, null=True, blank=True, help_text='Minimum time interval between replenishments of a procure buffer')
@@ -428,6 +429,7 @@ class Buffer(models.Model):
         if self.type != 'BUFFER_PROCURE':
             # Handle irrelevant fields for non-procure buffers
             self.leadtime = None
+            self.fence = None
             self.min_inventory = None
             self.max_inventory = None
             self.min_interval = None
@@ -446,7 +448,7 @@ class Buffer(models.Model):
             ('Planning parameters', {
               'fields': ('type','minimum','producing',)},),
             ('Planning parameters for procurement buffers', {
-              'fields': ('leadtime','min_inventory','max_inventory','min_interval','max_interval','size_minimum','size_multiple','size_maximum'),
+              'fields': ('leadtime','fence','min_inventory','max_inventory','min_interval','max_interval','size_minimum','size_multiple','size_maximum'),
               'classes': 'collapse'},),
         )
         list_display = ('name', 'description', 'category', 'subcategory', 'location', 'item',

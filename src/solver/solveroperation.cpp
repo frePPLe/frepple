@@ -111,8 +111,8 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
     data.q_date = opplan->getDates().getEnd();
     a_qty = opplan->getQuantity();
     a_date = data.q_date;
-    //xxxprev_a_date = data.a_date;
     incomplete = false;
+    delay = 0L;
 
     // Loop through all flowplans
     for (OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
@@ -148,6 +148,10 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
           // material constraints. If the operationplan is moved early or late
           // for capacity constraints, this is not included.
           delay = data.a_date - q_date_Flow;
+
+        // Jump out of the loop if the answered quantity is 0. There is 
+        // absolutely no need to check other flowplans.
+        if (a_qty <= ROUNDING_ERROR) break;
       }
 
     isPlannedEarly = opplan->getDates().getEnd() < orig_dates.getEnd();

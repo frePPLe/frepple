@@ -185,7 +185,8 @@ def updateTelescope(min_day_horizon, min_week_horizon):
 
 
 @transaction.commit_manually
-def create_model (cluster, demand, forecast_per_item, level, resource, resource_size):
+def create_model (cluster, demand, forecast_per_item, level, resource,
+  resource_size, components, components_per, deliver_lt, procure_lt):
   '''
   This routine populates the database with a sample dataset.
   '''
@@ -249,6 +250,30 @@ def create_model (cluster, demand, forecast_per_item, level, resource, resource_
       r.save()
     transaction.commit()
 
+    # Create the components
+    print "Creating raw materials..."
+    comps = []
+    comploc = Location(name='Procured materials')
+    comploc.save()
+    for i in range(components):
+      it = Item(name = 'Component %04d' % i, category='Procured')
+      it.save()
+      ld = abs(round(random.normalvariate(procure_lt,procure_lt/3)))
+      c = Buffer(name = 'Component %04d' % i,
+           location = comploc,
+           category = 'Procured',
+           item = it,
+           type = 'BUFFER_PROCURE',
+           min_inventory = 20,
+           max_inventory = 100,
+           size_multiple = 10,
+           leadtime = ld * 86400,
+           onhand = round(forecast_per_item * random.uniform(0.9,2) * ld / 30),
+           )
+      comps.append(c)
+      c.save()
+    transaction.commit()
+
     # Loop over all clusters
     durations = [ 86400, 86400*2, 86400*3, 86400*5, 86400*6 ]
     workingdays = Calendar.objects.get(name="working days")
@@ -291,8 +316,8 @@ def create_model (cluster, demand, forecast_per_item, level, resource, resource_
         dm = Demand(name='Dmd %05d %05d' % (i,j),
           item=it,
           quantity=int(random.uniform(1,6)),
-          # Exponential distribution of due dates, with an average of 30 days.
-          due= startdate + timedelta(days=round(random.expovariate(float(1)/30/24))/24),
+          # Exponential distribution of due dates, with an average of deliver_lt days.
+          due = startdate + timedelta(days=round(random.expovariate(float(1)/deliver_lt/24))/24),
           # Orders have higher priority than forecast
           priority=random.choice([1,2]),
           customer=random.choice(cust),
@@ -300,7 +325,8 @@ def create_model (cluster, demand, forecast_per_item, level, resource, resource_
           )
         dm.save()
 
-      # Upstream operations and buffers
+      # Create upstream operations and buffers
+      ops = []
       for k in range(level):
         if k == 1 and res:
           # Create a resource load for operations on level 1
@@ -317,37 +343,33 @@ def create_model (cluster, demand, forecast_per_item, level, resource, resource_
             sizemultiple=1,
             )
           oper.save()
+        ops.append(oper)
         buf.producing = oper
-        buf.save()
-        Flow(operation=oper, thebuffer=buf, quantity=1, type="FLOW_END").save()
-        buf = Buffer(name='Buf %05d L%02d' % (i,k+1),
-          item=it,
-          location=loc,
-          category='%02d' % (k+1)
-          )
         # Some inventory in random buffers
         if random.uniform(0,1) > 0.8: buf.onhand=int(random.uniform(5,20))
         buf.save()
-        Flow(operation=oper, thebuffer=buf, quantity=-1).save()
-
-      # Create supply operation
-      oper = Operation(name='Sup %05d' % i, sizemultiple=1)
-      oper.save()
-      Flow(operation=oper, thebuffer=buf, quantity=1).save()
-
-      # Create actual supply
-      total_supply = forecast_per_item * 12
-      while total_supply > 0:
-          cnt += 1
-          arrivaldate = startdate + timedelta(int(random.uniform(0,365)*12)/12)
-          opplan = OperationPlan(identifier=cnt,
-            operation=oper,
-            quantity=int(random.uniform(10,20)),
-            startdate=arrivaldate,
-            enddate=arrivaldate,
+        Flow(operation=oper, thebuffer=buf, quantity=1, type="FLOW_END").save()
+        if k != level-1:
+          # Consume from the next level in the bill of material
+          buf = Buffer(name='Buf %05d L%02d' % (i,k+1),
+            item=it,
+            location=loc,
+            category='%02d' % (k+1)
             )
-          total_supply -= opplan.quantity
-          opplan.save()
+          buf.save()
+          Flow(operation=oper, thebuffer=buf, quantity=-1).save()
+
+      # Consume raw materials / components
+      c = []
+      for j in range(components_per):
+        o = operation = random.choice(ops)
+        b = random.choice(comps)
+        while (o,b) in c:
+          # A flow with the same operation and buffer already exists
+          o = operation = random.choice(ops)
+          b = random.choice(comps)
+        c.append( (o,b) )
+        fl = Flow(operation = o, thebuffer = b, quantity = -1).save()
 
       # Commit the current cluster
       transaction.commit()

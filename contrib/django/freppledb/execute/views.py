@@ -93,11 +93,18 @@ def create(request):
       levels = int(request.POST['levels'])
       resources = int(request.POST['rsrc_number'])
       resource_size = int(request.POST['rsrc_size'])
-      if clusters>=100000 or clusters<=0 \
+      procure_lt = int(request.POST['procure_lt'])
+      components_per = int(request.POST['components_per'])
+      components = int(request.POST['components'])
+      deliver_lt = int(request.POST['deliver_lt'])
+      if clusters>100000 or clusters<=0 \
         or fcstqty<0 or demands>=10000 or demands<0 \
         or levels<0 or levels>=50 \
         or resources>=1000 or resources<0 \
-        or resource_size>100 or resource_size<0:
+        or resource_size>100 or resource_size<0 \
+        or deliver_lt<=0 or procure_lt<=0 \
+        or components<0 or components>=100000 \
+        or components_per<0:
           raise ValueError("Invalid parameters")
     except KeyError:
       raise Http404
@@ -108,11 +115,12 @@ def create(request):
       try:
         log(
           category = 'CREATE',
-          message = 'Start creating sample model with parameters: %d %d %d %d %d %d' \
-            % (clusters, demands, fcstqty, levels, resources, resource_size)
+          message = 'Start creating sample model with parameters: %d %d %d %d %d %d %d %d %d %d' \
+            % (clusters, demands, fcstqty, levels, resources, resource_size,
+               components, components_per, deliver_lt, procure_lt)
           ).save()
         erase_model()
-        create_model(clusters, demands, fcstqty, levels, resources, resource_size)
+        create_model(clusters, demands, fcstqty, levels, resources, resource_size, components, components_per, deliver_lt, procure_lt)
         request.user.message_set.create(message='Created sample model in the database')
         log(category='CREATE', message='Finished creating sample model').save()
       except Exception, e:

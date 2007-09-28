@@ -103,6 +103,8 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
       if (procs->getLocked()) 
         earliest_next = procs->getDates().getEnd();
   Date latest_next = Date::infiniteFuture;
+
+  // Find constraints on earliest and latest date for the next procurement
   if (earliest_next && b->getMaximumInterval()) 
     latest_next = earliest_next + b->getMaximumInterval();
   if (earliest_next && b->getMinimumInterval()) 

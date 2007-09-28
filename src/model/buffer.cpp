@@ -500,7 +500,10 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
       // Create the operation if it didn't exist yet
       o = new OperationFixedTime(PROCURE_OPERATION);
       static_cast<OperationFixedTime*>(o)->setDuration(leadtime);
-      o->setHidden(true);
+      // Ideally we would like to hide the procurement operation itself.
+      // But in that case we need a different way to show the procurements
+      // to the outside world.
+      // o->setHidden(true);
       Operation::add(o);  // No need to check again for existance
       new FlowEnd(o, const_cast<BufferProcure*>(this), 1);
     }

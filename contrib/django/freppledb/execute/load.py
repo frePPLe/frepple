@@ -42,7 +42,7 @@ def timeformat(i):
   else:
     return '%d' % i
 
-  
+
 def loadPlan(cursor):
   # Plan (limited to the first one only)
   print 'Import plan...'
@@ -202,9 +202,9 @@ def loadBuffers(cursor):
   cursor.execute('''SELECT name, description, location_id, item_id, onhand,
      minimum_id, producing_id, type, leadtime, min_inventory,
      max_inventory, min_interval, max_interval, size_minimum,
-     size_multiple, size_maximum FROM buffer''')
+     size_multiple, size_maximum, fence FROM buffer''')
   x = [ header, '<BUFFERS>' ]
-  for i, j, k, l, m, n, o, q, f1, f2, f3, f4, f5, f6, f7, f8 in cursor.fetchall():
+  for i, j, k, l, m, n, o, q, f1, f2, f3, f4, f5, f6, f7, f8, f9 in cursor.fetchall():
     cnt += 1
     if q:
       x.append('<BUFFER NAME=%s xsi:type="%s">' % (quoteattr(i),q))
@@ -217,6 +217,7 @@ def loadBuffers(cursor):
         if f6: x.append( '<SIZE_MINIMUM>%s</SIZE_MINIMUM>' % f6)
         if f7: x.append( '<SIZE_MULTIPLE>%s</SIZE_MULTIPLE>' % f7)
         if f8: x.append( '<SIZE_MAXIMUM>%s</SIZE_MAXIMUM>' % f8)
+        if f9: x.append( '<FENCE>%s</FENCE>' % timeformat(f9))
     else:
       x.append('<BUFFER NAME=%s>' % quoteattr(i))
     if j: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % escape(j))
@@ -372,8 +373,8 @@ class DatabaseTask(Thread):
     for f in self.functions:
       try: f(cursor)
       except Exception, e: print e
-      
-      
+
+
 def loadfrepple():
   '''
   This function is expected to be run by the python interpreter in the
@@ -412,8 +413,8 @@ def loadfrepple():
     # The entities are grouped based on their relations.
     #
     # The parallel loading is currently in a "experimental" state only.
-    # Reason being that so far parallel loading doesn't bring a clear 
-    # performance gain. 
+    # Reason being that so far parallel loading doesn't bring a clear
+    # performance gain.
     # Unclear what the limiting bottleneck is: python or frepple, definately
     # not the database...
     tasks = (
@@ -421,7 +422,7 @@ def loadfrepple():
       DatabaseTask(loadLocations),
       DatabaseTask(loadCalendars),
       DatabaseTask(loadCustomers),
-      DatabaseTask(loadOperations,loadSuboperations), 
+      DatabaseTask(loadOperations,loadSuboperations),
       )
     for i in tasks: i.start()
     for i in tasks: i.join()
@@ -439,7 +440,7 @@ def loadfrepple():
       )
     for i in tasks: i.start()
     for i in tasks: i.join()
-    
+
   # Finalize
   print 'Done'
   cursor.close()

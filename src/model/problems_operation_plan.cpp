@@ -37,7 +37,7 @@ DECLARE_EXPORT void Operation::updateProblems()
   // Find all operationplans, and delegate the problem detection to them
   // @todo rework the operation problem detection to be based on the op class,
   // not the opplan class
-  for (OperationPlan *o = opplan; o; o = o->next) o->updateProblems();
+  for (OperationPlan *o = first_opplan; o; o = o->next) o->updateProblems();
 }
 
 

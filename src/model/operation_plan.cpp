@@ -205,7 +205,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
   // Avoid zero quantity on top-operationplans
   if (getQuantity() <= 0.0 && !owner)
   {
-    delete this;  // @todo is this safe???
+    delete this;  
     return;
   }
 
@@ -245,16 +245,40 @@ DECLARE_EXPORT void OperationPlan::initialize()
   }
 
   // Insert into the doubly linked list of operationplans.
-  if (!oper->opplan)
-    // First operationplan for this operation
-    oper->opplan = this;
+  if (!oper->first_opplan)
+  {
+    // First operationplan in the list
+    oper->first_opplan = this;
+    oper->last_opplan = this;
+  }
+  else if (*this < *(oper->first_opplan))
+  {
+    // First in the list
+    next = oper->first_opplan;
+    next->prev = this;
+    oper->first_opplan = this;
+  }
+  else if (*(oper->last_opplan) < *this)
+  {
+    // Last in the list
+    prev = oper->last_opplan;
+    prev->next = this;
+    oper->last_opplan = this;
+  }
   else
   {
-    // Insert at the front of the list. This insert does not put the
-    // operationplan in the correct sorted order.
-    next = oper->opplan;
-    next->prev = this;
-    oper->opplan = this;
+    // Insert in the middle of the list
+    OperationPlan *x = oper->last_opplan;
+    OperationPlan *y = NULL;
+    while (!(*x < *this))
+    {
+      y = x;
+      x = x->prev;
+    }
+    next = y;
+    prev = x;
+    if (x) x->next = this;
+    if (y) y->prev = this;
   }
 
   // If we used the lazy creator, the flow- and loadplans have not been
@@ -293,36 +317,38 @@ DECLARE_EXPORT bool OperationPlan::operator < (const OperationPlan& a) const
 }
 
 
-DECLARE_EXPORT void OperationPlan::sortOperationPlans(const Operation& o)
+DECLARE_EXPORT void OperationPlan::updateSorting()
 {
-  // @todo use a better, faster sorting algorithm
-  bool sorted;
-  do
+  // Verify that we are smaller than the next operationplan
+  while (next && !(*this < *next))
   {
-    sorted = true;
-    OperationPlan* i = o.getFirstOpPlan();
-    while (i && i->next)
-    {
-      if (!(*i < *(i->next)))
-      {
-        // Swapping two operationplans
-        OperationPlan *c = i;
-        OperationPlan *n = i->next;
-        if (c->prev) c->prev->next = n;
-        else const_cast<Operation&>(o).opplan = n;
-        if (n->next) n->next->prev = c;
-        n->prev = c->prev;
-        c->prev = n;
-        c->next = n->next;
-        n->next = c;
-        sorted = false;
-        i = n;
-      }
-      else
-        i = i->next;
-    }
+    // Swap places with the next
+    OperationPlan *tmp = next;
+    tmp->prev = prev;
+    tmp->next = this;
+    prev = tmp;
+    next = tmp->next;
   }
-  while (!sorted);
+
+  // Verify that we are bigger than the previous operationplan
+  while (prev && !(*prev < *this))
+  {
+    // Swap places with the next
+    OperationPlan *tmp = prev;
+    tmp->prev = this;
+    tmp->next = next;
+    prev = tmp->prev;
+    next = tmp;
+
+  }
+
+  // Only valid for operationplans that are initialized and linked in the 
+  // list of operationplans.
+  if (id)
+  {
+    if (!next) oper->last_opplan = this;
+    if (!prev) oper->first_opplan = this;
+  }
 }
 
 
@@ -371,8 +397,9 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
 
     // Delete from the operationplan list
     if (prev) prev->next = next;
-    else oper->opplan = next; // First opplan in the list of this operation
+    else oper->first_opplan = next; // First opplan in the list of this operation
     if (next) next->prev = prev;
+    else oper->last_opplan = prev; // Last opplan in the list of this operation
   }
 }
 
@@ -477,6 +504,9 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 
   // Notify the demand of the changed delivery
   if (lt) WLock<Demand>(lt)->setChanged();
+
+  // Update the sorting of the operationplan in the list
+  updateSorting();
 }
 
 
@@ -496,7 +526,7 @@ DECLARE_EXPORT void OperationPlan::update()
 DECLARE_EXPORT void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
 {
   if (!o) return;
-  for (OperationPlan *opplan = o->opplan; opplan; )
+  for (OperationPlan *opplan = o->first_opplan; opplan; )
   {
     OperationPlan *tmp = opplan;
     opplan = opplan->next;
@@ -589,13 +619,8 @@ DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, XMLElement& pEleme
     OperationPlan* o = dynamic_cast<OperationPlan*>(pIn.getPreviousObject());
     if (o) setOwner(o);
   }
-  else if (pIn.isObjectEnd() && !firstflowplan && !firstloadplan)
-  {
-    // Note: additional checks for empty flowplans and loadplans is to
-    // seperate changes from new ops?
-    setAllowUpdates(true);
+  else if (pIn.isObjectEnd())
     initialize();
-  }
   else if (pElement.isA (Tags::tag_demand))
   {
     Demand * d = dynamic_cast<Demand*>(pIn.getPreviousObject());

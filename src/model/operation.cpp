@@ -147,7 +147,7 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mod
 
   // Write extra plan information
   if ((o->getContentType() == XMLOutput::PLAN
-      || o->getContentType() == XMLOutput::PLANDETAIL) && opplan)
+      || o->getContentType() == XMLOutput::PLANDETAIL) && first_opplan)
   {
     o->BeginObject(Tags::tag_operation_plans);
     for (OperationPlan::iterator i(this); i!=OperationPlan::end(); ++i)

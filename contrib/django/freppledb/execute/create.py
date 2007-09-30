@@ -268,7 +268,7 @@ def create_model (cluster, demand, forecast_per_item, level, resource,
            max_inventory = 100,
            size_multiple = 10,
            leadtime = ld * 86400,
-           onhand = round(forecast_per_item * random.uniform(0.9,2) * ld / 30),
+           onhand = round(forecast_per_item * random.uniform(1,3) * ld / 30),
            )
       comps.append(c)
       c.save()
@@ -369,7 +369,7 @@ def create_model (cluster, demand, forecast_per_item, level, resource,
           o = operation = random.choice(ops)
           b = random.choice(comps)
         c.append( (o,b) )
-        fl = Flow(operation = o, thebuffer = b, quantity = -1).save()
+        fl = Flow(operation = o, thebuffer = b, quantity = random.choice([-1,-1,-1,-2,-3])).save()
 
       # Commit the current cluster
       transaction.commit()

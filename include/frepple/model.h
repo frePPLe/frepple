@@ -1104,14 +1104,15 @@ class Operation : public HasName<Operation>,
   protected:
     /** Constructor. Don't use it directly. */
     explicit Operation(const string& str) : HasName<Operation>(str),
-        size_minimum(0.0f), size_multiple(0.0f), hidden(false), opplan(NULL) {}
+        size_minimum(0.0f), size_multiple(0.0f), hidden(false), 
+        first_opplan(NULL), last_opplan(NULL) {}
 
   public:
     /** Destructor. */
     virtual DECLARE_EXPORT ~Operation();
 
     /** Returns a pointer to the operationplan being instantiated. */
-    OperationPlan* getFirstOpPlan() const {return opplan;}
+    OperationPlan* getFirstOpPlan() const {return first_opplan;}
 
     /** Returns the delay before this operation.
       * @see setPreTime
@@ -1323,11 +1324,17 @@ class Operation : public HasName<Operation>,
     /** Does the operation require serialization or not. */
     bool hidden;
 
-    /** A pointer to the first operationplan of this operation.
-      * All operationplans of this operation are stored in a doubly linked
-      * list. The list is sorted in descending id's.
+    /** A pointer to the first operationplan of this operation.<br>
+      * All operationplans of this operation are stored in a sorted 
+      * doubly linked list.
       */
-    OperationPlan* opplan;
+    OperationPlan* first_opplan;    
+    
+    /** A pointer to the last operationplan of this operation.<br>
+      * All operationplans of this operation are stored in a sorted 
+      * doubly linked list.
+      */
+    OperationPlan* last_opplan;
 };
 
 
@@ -1415,10 +1422,7 @@ class OperationPlan
         iterator(const Operation* x) : op(Operation::end())
         {
           if (x && !x->getHidden())
-          {
-            OperationPlan::sortOperationPlans(*x);
             opplan = x->getFirstOpPlan();
-          }
           else
             opplan = NULL;
         }
@@ -1431,10 +1435,7 @@ class OperationPlan
           while (op!=Operation::end()
             && (!op->getFirstOpPlan() || op->getHidden())) ++op;
           if (op!=Operation::end())
-          {
-            OperationPlan::sortOperationPlans(*op);
             opplan = op->getFirstOpPlan();
-          }
           else
             opplan = NULL;
         }
@@ -1459,10 +1460,7 @@ class OperationPlan
             do ++op;
             while (op!=Operation::end() && (!op->getFirstOpPlan() || op->getHidden()));
             if (op!=Operation::end())
-            {
-              OperationPlan::sortOperationPlans(*op);
               opplan = op->getFirstOpPlan();
-            }
             else
               opplan = NULL;
           }
@@ -1480,10 +1478,7 @@ class OperationPlan
           {
             do ++op; while (op!=Operation::end() && !op->getFirstOpPlan());
             if (op!=Operation::end())
-            {
-              OperationPlan::sortOperationPlans(*op);
               opplan = op->getFirstOpPlan();
-            }
             else
               opplan = NULL;
           }
@@ -1609,7 +1604,7 @@ class OperationPlan
     /** Fixes the start and end Date of an operationplan. Note that this
       * overrules the standard duration given on the operation, i.e. no logic
       * kicks in to verify the data makes sense. This is up to the user to
-      * take care of.
+      * take care of.<br>
       * The methods setStart(Date) and setEnd(Date) are therefore preferred
       * since they properly apply all appropriate logic.
       */
@@ -1694,7 +1689,7 @@ class OperationPlan
       * </ol>
       * Every operation_plan subclass that has sub-operations will normally
       * need to create an override of this function.
-      * Calling this function will DELETE the current operationplan. The object
+      * Calling this function can DELETE the current operationplan. The object
       * on which this function is called could not exist any more after the
       * call to this function!
       */
@@ -1767,6 +1762,13 @@ class OperationPlan
       */
     DECLARE_EXPORT bool operator < (const OperationPlan& a) const;
 
+    /** This method should be called when an operationplan is updated in a way
+      * that can affect it's position in the sorted list: ie changes of the 
+      * start date or quantity.<br>
+      * The method will verify the correct sorting an update it if necessary.
+      */
+    DECLARE_EXPORT void updateSorting();
+
   protected:
     virtual DECLARE_EXPORT void update();
     DECLARE_EXPORT void resizeFlowLoadPlans();
@@ -1798,9 +1800,6 @@ class OperationPlan
         firstloadplan(NULL), prev(NULL), next(NULL) {}
 
   private:
-    /** Sort the list of operationplans. */
-    static DECLARE_EXPORT void sortOperationPlans(const Operation&);
-
     /** Empty list of operationplans.<br>
       * For operationplan types without suboperationplans this list is used
       * as the list of suboperationplans.

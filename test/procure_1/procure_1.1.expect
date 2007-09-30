@@ -660,6 +660,84 @@ DEMAND	order 36 for item 6	2007-06-01T00:00:00	15
 DEMAND	order 36 for item 7	2007-06-01T00:00:00	15
 DEMAND	order 36 for item 8	2007-06-01T00:00:00	15
 DEMAND	order 36 for item 9	2007-06-01T00:00:00	15
+OPERATION	Procure for buffer 'buffer 1'	2006-12-28T12:00:00	2007-01-01T00:00:00	55
+OPERATION	Procure for buffer 'buffer 1'	2007-01-03T12:00:00	2007-01-07T00:00:00	60
+OPERATION	Procure for buffer 'buffer 1'	2007-01-09T12:00:00	2007-01-13T00:00:00	60
+OPERATION	Procure for buffer 'buffer 1'	2007-01-16T12:00:00	2007-01-20T00:00:00	55
+OPERATION	Procure for buffer 'buffer 1'	2007-01-27T12:00:00	2007-01-31T00:00:00	55
+OPERATION	Procure for buffer 'buffer 1'	2007-04-27T12:00:00	2007-05-01T00:00:00	60
+OPERATION	Procure for buffer 'buffer 2'	2006-12-28T12:00:00	2007-01-01T00:00:00	57
+OPERATION	Procure for buffer 'buffer 2'	2007-01-03T12:00:00	2007-01-07T00:00:00	60
+OPERATION	Procure for buffer 'buffer 2'	2007-01-09T12:00:00	2007-01-13T00:00:00	60
+OPERATION	Procure for buffer 'buffer 2'	2007-01-16T12:00:00	2007-01-20T00:00:00	54
+OPERATION	Procure for buffer 'buffer 2'	2007-01-27T12:00:00	2007-01-31T00:00:00	54
+OPERATION	Procure for buffer 'buffer 2'	2007-04-27T12:00:00	2007-05-01T00:00:00	60
+OPERATION	Procure for buffer 'buffer 3'	2006-12-28T12:00:00	2007-01-01T00:00:00	60
+OPERATION	Procure for buffer 'buffer 3'	2007-01-03T12:00:00	2007-01-07T00:00:00	60
+OPERATION	Procure for buffer 'buffer 3'	2007-01-09T12:00:00	2007-01-13T00:00:00	60
+OPERATION	Procure for buffer 'buffer 3'	2007-01-17T12:00:00	2007-01-21T00:00:00	60
+OPERATION	Procure for buffer 'buffer 3'	2007-01-28T12:00:00	2007-02-01T00:00:00	60
+OPERATION	Procure for buffer 'buffer 3'	2007-05-28T12:00:00	2007-06-01T00:00:00	60
+OPERATION	Procure for buffer 'buffer 5'	2006-12-28T12:00:00	2007-01-01T00:00:00	105
+OPERATION	Procure for buffer 'buffer 5'	2007-01-07T12:00:00	2007-01-11T00:00:00	80
+OPERATION	Procure for buffer 'buffer 5'	2007-01-17T12:00:00	2007-01-21T00:00:00	50
+OPERATION	Procure for buffer 'buffer 5'	2007-01-28T12:00:00	2007-02-01T00:00:00	65
+OPERATION	Procure for buffer 'buffer 5'	2007-03-05T12:00:00	2007-03-09T00:00:00	15
+OPERATION	Procure for buffer 'buffer 5'	2007-03-29T12:00:00	2007-04-02T00:00:00	15
+OPERATION	Procure for buffer 'buffer 5'	2007-05-04T12:00:00	2007-05-08T00:00:00	15
+OPERATION	Procure for buffer 'buffer 5'	2007-05-28T12:00:00	2007-06-01T00:00:00	15
+OPERATION	Procure for buffer 'buffer 6'	2006-12-28T12:00:00	2007-01-01T00:00:00	72
+OPERATION	Procure for buffer 'buffer 6'	2007-01-07T12:00:00	2007-01-11T00:00:00	72
+OPERATION	Procure for buffer 'buffer 6'	2007-01-17T12:00:00	2007-01-21T00:00:00	72
+OPERATION	Procure for buffer 'buffer 6'	2007-01-27T12:00:00	2007-01-31T00:00:00	69
+OPERATION	Procure for buffer 'buffer 6'	2007-02-08T12:00:00	2007-02-12T00:00:00	30
+OPERATION	Procure for buffer 'buffer 6'	2007-02-20T12:00:00	2007-02-24T00:00:00	30
+OPERATION	Procure for buffer 'buffer 6'	2007-03-04T12:00:00	2007-03-08T00:00:00	30
+OPERATION	Procure for buffer 'buffer 6'	2007-03-16T12:00:00	2007-03-20T00:00:00	30
+OPERATION	Procure for buffer 'buffer 6'	2007-03-28T12:00:00	2007-04-01T00:00:00	30
+OPERATION	Procure for buffer 'buffer 6'	2007-04-09T12:00:00	2007-04-13T00:00:00	30
+OPERATION	Procure for buffer 'buffer 6'	2007-04-21T12:00:00	2007-04-25T00:00:00	30
+OPERATION	Procure for buffer 'buffer 6'	2007-05-03T12:00:00	2007-05-07T00:00:00	30
+OPERATION	Procure for buffer 'buffer 6'	2007-05-15T12:00:00	2007-05-19T00:00:00	30
+OPERATION	Procure for buffer 'buffer 6'	2007-05-27T12:00:00	2007-05-31T00:00:00	30
+OPERATION	Procure for buffer 'buffer 6'	2007-06-08T12:00:00	2007-06-12T00:00:00	30
+OPERATION	Procure for buffer 'buffer 7'	2006-12-28T12:00:00	2007-01-01T00:00:00	75
+OPERATION	Procure for buffer 'buffer 7'	2007-01-04T12:00:00	2007-01-08T00:00:00	70
+OPERATION	Procure for buffer 'buffer 7'	2007-01-11T12:00:00	2007-01-15T00:00:00	50
+OPERATION	Procure for buffer 'buffer 7'	2007-01-18T12:00:00	2007-01-22T00:00:00	45
+OPERATION	Procure for buffer 'buffer 7'	2007-01-25T12:00:00	2007-01-29T00:00:00	35
+OPERATION	Procure for buffer 'buffer 7'	2007-02-01T12:00:00	2007-02-05T00:00:00	25
+OPERATION	Procure for buffer 'buffer 7'	2007-03-01T12:00:00	2007-03-05T00:00:00	15
+OPERATION	Procure for buffer 'buffer 7'	2007-03-29T12:00:00	2007-04-02T00:00:00	15
+OPERATION	Procure for buffer 'buffer 7'	2007-05-03T12:00:00	2007-05-07T00:00:00	15
+OPERATION	Procure for buffer 'buffer 7'	2007-05-31T12:00:00	2007-06-04T00:00:00	15
+OPERATION	Procure for buffer 'buffer 8'	2006-12-28T12:00:00	2007-01-01T00:00:00	90
+OPERATION	Procure for buffer 'buffer 8'	2007-01-06T12:00:00	2007-01-10T00:00:00	90
+OPERATION	Procure for buffer 'buffer 8'	2007-01-17T12:00:00	2007-01-21T00:00:00	90
+OPERATION	Procure for buffer 'buffer 8'	2007-03-28T12:00:00	2007-04-01T00:00:00	90
+OPERATION	Procure for buffer 'buffer 9'	2006-12-28T12:00:00	2007-01-01T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-01-04T12:00:00	2007-01-08T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-01-11T12:00:00	2007-01-15T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-01-18T12:00:00	2007-01-22T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-01-25T12:00:00	2007-01-29T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-02-01T12:00:00	2007-02-05T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-02-08T12:00:00	2007-02-12T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-02-15T12:00:00	2007-02-19T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-02-22T12:00:00	2007-02-26T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-03-01T12:00:00	2007-03-05T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-03-08T12:00:00	2007-03-12T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-03-15T12:00:00	2007-03-19T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-03-22T12:00:00	2007-03-26T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-03-29T12:00:00	2007-04-02T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-04-05T12:00:00	2007-04-09T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-04-12T12:00:00	2007-04-16T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-04-19T12:00:00	2007-04-23T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-04-26T12:00:00	2007-04-30T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-05-03T12:00:00	2007-05-07T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-05-10T12:00:00	2007-05-14T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-05-17T12:00:00	2007-05-21T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-05-24T12:00:00	2007-05-28T00:00:00	40
+OPERATION	Procure for buffer 'buffer 9'	2007-05-31T12:00:00	2007-06-04T00:00:00	40
 OPERATION	delivery 1	2007-01-01T00:00:00	2007-01-01T00:00:00	10
 OPERATION	delivery 1	2007-01-02T00:00:00	2007-01-02T00:00:00	10
 OPERATION	delivery 1	2007-01-03T00:00:00	2007-01-03T00:00:00	10
@@ -966,4 +1044,12 @@ PROBLEM	material shortage	Buffer 'buffer 9' has material shortage of 5	2007-01-0
 PROBLEM	material shortage	Buffer 'buffer 9' has material shortage of 35	2007-01-11T00:00:00 / 2007-01-15T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 9' has material shortage of 45	2007-01-15T00:00:00 / 2007-01-29T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 9' has material shortage of 30	2007-01-29T00:00:00 / 2007-02-05T00:00:00
+PROBLEM	before current	Job '297' planned in the past	2006-12-28T12:00:00 / 2007-01-01T00:00:00
+PROBLEM	before current	Job '303' planned in the past	2006-12-28T12:00:00 / 2007-01-01T00:00:00
+PROBLEM	before current	Job '592' planned in the past	2006-12-28T12:00:00 / 2007-01-01T00:00:00
+PROBLEM	before current	Job '626' planned in the past	2006-12-28T12:00:00 / 2007-01-01T00:00:00
+PROBLEM	before current	Job '1154' planned in the past	2006-12-28T12:00:00 / 2007-01-01T00:00:00
+PROBLEM	before current	Job '982' planned in the past	2006-12-28T12:00:00 / 2007-01-01T00:00:00
+PROBLEM	before current	Job '1237' planned in the past	2006-12-28T12:00:00 / 2007-01-01T00:00:00
+PROBLEM	before current	Job '1455' planned in the past	2006-12-28T12:00:00 / 2007-01-01T00:00:00
 PROBLEM	unplanned	Demand 'order 01 for item 4' is not planned	2007-01-01T00:00:00 / 2007-01-01T00:00:00

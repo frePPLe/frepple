@@ -62,8 +62,6 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_data;
     static DECLARE_EXPORT const XMLtag tag_date;
     static DECLARE_EXPORT const XMLtag tag_dates;
-    static DECLARE_EXPORT const XMLtag tag_default_calendar;
-    static DECLARE_EXPORT const XMLtag tag_delivery;
     static DECLARE_EXPORT const XMLtag tag_demand;
     static DECLARE_EXPORT const XMLtag tag_demands;
     static DECLARE_EXPORT const XMLtag tag_description;
@@ -76,12 +74,12 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_end;
     static DECLARE_EXPORT const XMLtag tag_epst;
     static DECLARE_EXPORT const XMLtag tag_fence;
+    static DECLARE_EXPORT const XMLtag tag_factor;
     static DECLARE_EXPORT const XMLtag tag_filename;
     static DECLARE_EXPORT const XMLtag tag_flow;
     static DECLARE_EXPORT const XMLtag tag_flow_plan;
     static DECLARE_EXPORT const XMLtag tag_flow_plans;
     static DECLARE_EXPORT const XMLtag tag_flows;
-    static DECLARE_EXPORT const XMLtag tag_flowtype;
     static DECLARE_EXPORT const XMLtag tag_headeratts;
     static DECLARE_EXPORT const XMLtag tag_headerstart;
     static DECLARE_EXPORT const XMLtag tag_id;
@@ -117,7 +115,6 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_parameter;
     static DECLARE_EXPORT const XMLtag tag_pegging;
     static DECLARE_EXPORT const XMLtag tag_plan;
-    static DECLARE_EXPORT const XMLtag tag_plannable;
     static DECLARE_EXPORT const XMLtag tag_policy;
     static DECLARE_EXPORT const XMLtag tag_posttime;
     static DECLARE_EXPORT const XMLtag tag_pretime;

@@ -565,9 +565,10 @@ class PeggingReport(ListReport):
   '''
   template = 'pegging.html'
   title = "Pegging report"
+  reset_crumbs = False
   basequeryset = DemandPegging.objects.all()
   rows = (
-    ('demand', {'filter': 'demand__icontains',}),
+    ('demand', {'filter': 'demand__icontains', 'filter_size': 15}),
     ('buffer', {'filter': 'buffer__icontains',}),
     ('depth', {'order_by': 'depth'}),
     ('cons_date', {}),
@@ -586,6 +587,7 @@ class FlowPlanReport(ListReport):
   '''
   template = 'flowplan.html'
   title = "Material flow report"
+  reset_crumbs = False
   basequeryset = FlowPlan.objects.all()
   rows = (
     ('thebuffer', {'filter': 'thebuffer__icontains', 'title': 'buffer'}),
@@ -620,11 +622,12 @@ class OperationPlanReport(ListReport):
   '''
   template = 'operationplan.html'
   title = "Operation plan report"
+  reset_crumbs = False
   basequeryset = OperationPlan.objects.all()
   rows = (
     ('identifier', {'filter': 'identifier__icontains', 'title': 'operationplan'}),
-    ('demand', {'filter': 'demand__icontains'}),
-    ('operation', {'filter': 'operation__icontains'}),
+    ('demand', {'filter': 'demand__icontains', 'filter_size': 15}),
+    ('operation', {'filter': 'operation__icontains', 'filter_size': 15}),
     ('quantity', {}),
     ('startdatetime', {'title': 'start'}),
     ('enddatetime', {'title': 'end'}),
@@ -639,9 +642,14 @@ class DemandPlanReport(ListReport):
   '''
   template = 'demandplan.html'
   title = "Demand plan report"
-  basequeryset = Demand.objects.all()
+  reset_crumbs = False
+  basequeryset = Demand.objects.extra(
+    select={'item_id':'demand.item_id'},
+    where=['demand.name = out_demand.demand'],
+    tables=['demand'])
   rows = (
     ('demand', {'filter': 'demand__icontains', 'title': 'demand'}),
+    ('item_id', {'title': 'item'}),
     ('quantity', {}),
     ('planquantity', {'title': 'Planned Quantity'}),
     ('duedatetime', {'filter': 'duedatetime__icontains', 'title': 'Due Date'}),
@@ -656,6 +664,7 @@ class LoadPlanReport(ListReport):
   '''
   template = 'loadplan.html'
   title = "Resource load report"
+  reset_crumbs = False
   basequeryset = LoadPlan.objects.all()
   rows = (
     ('operationplan', {'filter': 'operationplan__icontains',}),

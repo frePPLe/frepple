@@ -44,6 +44,12 @@ a {
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
+.demand {
+  margin-right: 17px;
+  padding-right: 17px;
+  background: url(/static/context.gif) 100% 100% no-repeat;
+  white-space: nowrap;
+}
 .resource {
   margin-right: 17px;
   padding-right: 17px;

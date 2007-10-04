@@ -144,6 +144,9 @@ class Report(object):
   # included in the report.
   basequeryset = None
 
+  # Whether or not the breadcrumbs are reset when we open the report
+  reset_crumbs = True
+
 
 class ListReport(Report):
   # Row definitions
@@ -265,16 +268,29 @@ def view_report(request, entity=None, **args):
   (bucket,start,end,bucketlist) = getBuckets(request)
 
   # Pick up the filter parameters from the url
-  filterargs = [ request.GET.get(f[0]) for f in reportclass.rows ]
   counter = reportclass.basequeryset
   fullhits = counter.count()
   if entity:
+    # The url path specifies a single entity.
+    # We ignore all other filters.
     counter = counter.filter(pk__exact=entity)
   else:
-    for f in reportclass.rows:
-      x = request.GET.get(f[0], None)
-      if x and 'filter' in f[1]:
-        counter = counter.filter(**{f[1]['filter']:x})
+    # The url doesn't specify a single entity, but may specify filters
+    # Convert url parameters into queryset filters.
+    # This block of code is copied from the django admin code.
+    qs_args = dict(request.GET.items())
+    for i in ('o', 'p', 'type'):
+      # Filter out arguments which we aren't filters
+      if i in qs_args: del qs_args[i]
+    for key, value in qs_args.items():
+      # Ignore empty filter values
+      if not value or len(value) == 0: del qs_args[key]
+      elif not isinstance(key, str):
+        # 'key' will be used as a keyword argument later, so Python
+        # requires it to be a string.
+        del qs_args[key]
+        qs_args[smart_str(key)] = value
+    counter = counter.filter(**qs_args)
 
   # Pick up the sort parameter from the url
   sortparam = request.GET.get('o','1a')
@@ -312,20 +328,6 @@ def view_report(request, entity=None, **args):
     sortparam = '1a'
     counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
     sortsql = '1 asc'
-
-  # Convert url parameters into queryset filters.
-  # This block of code is copied from the django admin code.
-  qs_args = dict(request.GET.items())
-  for i in ('o', 'p', 'type'):
-    if i in qs_args: del qs_args[i]
-  for key, value in qs_args.items():
-    if not isinstance(key, str):
-      print 'converting', key
-      # 'key' will be used as a keyword argument later, so Python
-      # requires it to be a string.
-      del qs_args[key]
-      qs_args[smart_str(key)] = value
-  counter = counter.filter(**qs_args)
 
   # HTML output or CSV output?
   type = request.GET.get('type','html')
@@ -444,8 +446,9 @@ def view_report(request, entity=None, **args):
        'hits' : paginator.hits,
        'fullhits': fullhits,
        'page_htmls': page_htmls,
-       # Reset the breadcrumbs if no argument entity was passed
-       'reset_crumbs': entity == None,
+       # Never reset the breadcrumbs if an argument entity was passed.
+       # Otherwise depend on the value in the report class.
+       'reset_crumbs': reportclass.reset_crumbs and entity == None,
        'title': (entity and '%s for %s' % (reportclass.title,entity)) or reportclass.title,
        'sort': sortparam,
        'class': reportclass,
@@ -453,7 +456,7 @@ def view_report(request, entity=None, **args):
   if 'extra_context' in args: context.update(args['extra_context'])
 
   # Uncomment this line to see which sql got executed
-  #for i in connection.queries: print i['time'], i['sql']
+  # for i in connection.queries: print i['time'], i['sql']
 
   # Render the view
   return render_to_response(args['report'].template,
@@ -490,8 +493,8 @@ class ReportRowHeader(Node):
           % (y, req.path, escape(x.urlencode()),
              title[0].upper(), title[1:],
              (row[1].has_key('filter_size') and row[1]['filter_size']) or 10,
-             x.get(row[0],''),
-             row[0], number+1000,
+             x.get(cls.rows[number-1][1]['filter'],''),
+             cls.rows[number-1][1]['filter'], number+1000,
              ) )
       else:
         result.append( '<th %s style="vertical-align:top"><a href="%s?%s">%s%s</a></th>' \

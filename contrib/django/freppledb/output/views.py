@@ -597,40 +597,6 @@ class FlowPlanReport(ListReport):
     )
 
 
-class ConsFlowPlanReport(ListReport):
-  '''
-  A list report to show CONSUMING flowplans.
-  '''
-  template = 'flowplan.html'
-  title = "Material flow report"
-  basequeryset = FlowPlan.objects.filter(quantity__lt=0)
-  rows = (
-    ('thebuffer', {'filter': 'thebuffer__icontains', 'title': 'buffer'}),
-    ('operation', {'filter': 'operation__icontains'}),
-    ('operationplan', {'filter': 'operationplan__icontains'}),
-    ('quantity', {}),
-    ('flowdatetime', {'title': 'date'}),
-    ('onhand', {}),
-    )
-
-
-class ProdFlowPlanReport(ListReport):
-  '''
-  A list report to show PRODUCING flowplans.
-  '''
-  template = 'flowplan.html'
-  title = "Material flow report"
-  basequeryset = FlowPlan.objects.filter(quantity__gte=0)
-  rows = (
-    ('thebuffer', {'filter': 'thebuffer__icontains', 'title': 'buffer'}),
-    ('operation', {'filter': 'operation__icontains'}),
-    ('operationplan', {'filter': 'operationplan__icontains'}),
-    ('quantity', {}),
-    ('flowdatetime', {'title': 'date'}),
-    ('onhand', {}),
-    )
-
-
 class ProblemReport(ListReport):
   '''
   A list report to show problems.

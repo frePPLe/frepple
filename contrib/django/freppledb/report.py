@@ -32,6 +32,7 @@ from django.db import connection
 from django.http import Http404, HttpResponse
 from django.conf import settings
 from django.template import Library, Node, resolve_variable
+from django.utils.encoding import smart_str
 
 from freppledb.input.models import Plan
 
@@ -311,6 +312,20 @@ def view_report(request, entity=None, **args):
     sortparam = '1a'
     counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
     sortsql = '1 asc'
+
+  # Convert url parameters into queryset filters.
+  # This block of code is copied from the django admin code.
+  qs_args = dict(request.GET.items())
+  for i in ('o', 'p', 'type'):
+    if i in qs_args: del qs_args[i]
+  for key, value in qs_args.items():
+    if not isinstance(key, str):
+      print 'converting', key
+      # 'key' will be used as a keyword argument later, so Python
+      # requires it to be a string.
+      del qs_args[key]
+      qs_args[smart_str(key)] = value
+  counter = counter.filter(**qs_args)
 
   # HTML output or CSV output?
   type = request.GET.get('type','html')

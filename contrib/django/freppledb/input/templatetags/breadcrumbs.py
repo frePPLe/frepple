@@ -220,14 +220,12 @@ def version():
 
 def rowheader(parser, token):
   '''
+  Takes the rows of a report and creates an appropriate header row.
+  The header row provides functionality for sorting and filtering.
   Example:
-    {% reportheader 1 %}
+    {% rowheader %}
   '''
-  from re import split
-  bits = split(r'\s+', token.contents, 1)
-  if len(bits) < 1:
-      raise TemplateSyntaxError, "'%s' tag requires one arguments" % bits[0]
-  return ReportRowHeader(bits[1])
+  return ReportRowHeader()
 
 register.tag('rowheader', rowheader)
 

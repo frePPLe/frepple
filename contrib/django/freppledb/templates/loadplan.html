@@ -21,24 +21,24 @@
 <table><thead><tr><form>
 {% rowheader %}
 <th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form>
-{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
 
-<tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
-<tr class="{% cycle row1,row2 %}" id="{{j.operation}}"><td>{{j.operation|superlink:"operation"}}</td>
-<td>Frozen&nbsp;starts<br/>Total&nbsp;starts<br/>Frozen&nbsp;ends<br/>Total&nbsp;ends</td>{% endif %}
-<td>{{j.frozen_start|floatformat:2}}<br/>
-<a href="/admin/output/operationplan/?operation={{j.operation|urlencode}}&amp;ot=asc&amp;o=2&amp;startdate__gte={{j.startdate}}&amp;startdate__lt={{j.enddate}}">{{j.total_start|floatformat:2}}</a><br/>
-{{j.frozen_end|floatformat:2}}<br/>
-<a href="/admin/output/operationplan/?operation={{j.operation|urlencode}}&amp;ot=asc&amp;o=2&amp;enddate__gte={{j.startdate}}&amp;enddate__lt={{j.enddate}}">{{j.total_end|floatformat:2}}</a></td>{% endfor %}
+<tbody>{% for i in objectlist %}
+<tr class="{% cycle row1,row2 %}">
+<td>{{i.operationplan}}</td>
+<td>{{i.resource}}</td>
+<td>{{i.startdatetime}}</td>
+<td>{{i.enddatetime}}</td>
+<td>{{i.quantity}}</td>
 </tr>{% endfor %}
 </tbody></table>
 </div>
+
 
 {% block pagination %} <p class="paginator">
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} operations {% ifnotequal hits fullhits %} (total <a class="showall" href="/operation/">{{fullhits}}</a>){% endifnotequal %}
+&nbsp;&nbsp;{{hits}} resource load plans {% ifnotequal hits fullhits %} (total <a class="showall" href="/loadplan/">{{fullhits}}</a>){% endifnotequal %}
 </p>{% endblock %}
 
 </div>

@@ -143,6 +143,25 @@ class Report(object):
   # included in the report.
   basequeryset = None
 
+
+class ListReport(Report):
+  # Row definitions
+  # Possible attributes for a row field are:
+  #   - filter:
+  #     Specifies how a value in the search field affects the base query.
+  #   - filter_size:
+  #     Specifies the size of the search field.
+  #     The default value is 10 characters.
+  #   - order_by:
+  #     Model field to user for the sorting.
+  #     It defaults to the name of the field.
+  #   - title:
+  #     Name of the row that is displayed to the user.
+  #     It defaults to the name of the field.
+  rows = ()
+
+
+class TableReport(Report):
   # Row definitions
   # Possible attributes for a row field are:
   #   - filter:
@@ -174,8 +193,10 @@ class Report(object):
 
 
 def _generate_csv(rep, qs):
-  '''This is a generator function that iterates over the report data and
-  returns the data row by row in CSV format.'''
+  '''
+  This is a generator function that iterates over the report data and
+  returns the data row by row in CSV format.
+  '''
   import csv
   import StringIO
   sf = StringIO.StringIO()
@@ -183,29 +204,47 @@ def _generate_csv(rep, qs):
 
   # Write a header row
   fields = [ ('title' in s[1] and s[1]['title']) or s[0] for s in rep.rows ]
-  fields.extend([ ('title' in s[1] and s[1]['title']) or s[0] for s in rep.columns ])
-  fields.extend([ ('title' in s[1] and s[1]['title']) or s[0] for s in rep.crosses ])
+  try:
+    fields.extend([ ('title' in s[1] and s[1]['title']) or s[0] for s in rep.columns ])
+    fields.extend([ ('title' in s[1] and s[1]['title']) or s[0] for s in rep.crosses ])
+  except:
+    pass
   writer.writerow(fields)
   yield sf.getvalue()
 
-  # Iterate over all rows and columns
-  for row in qs:
-    for col in row:
+  if issubclass(rep,ListReport):
+    # A "list report": Iterate over all rows
+    for row in qs:
       # Clear the return string buffer
       sf.truncate(0)
       # Build the return value
-      fields = [ col[s[0]] for s in rep.rows ]
-      fields.extend([ col[s[0]] for s in rep.columns ])
-      fields.extend([ col[s[0]] for s in rep.crosses ])
+      fields = [ getattr(row,s[0]) for s in rep.rows ]
       # Return string
       writer.writerow(fields)
       yield sf.getvalue()
+  elif issubclass(rep,TableReport):
+    # A "table report": Iterate over all rows and columns
+    for row in qs:
+      for col in row:
+        # Clear the return string buffer
+        sf.truncate(0)
+        # Build the return value
+        fields = [ col[s[0]] for s in rep.rows ]
+        fields.extend([ col[s[0]] for s in rep.columns ])
+        fields.extend([ col[s[0]] for s in rep.crosses ])
+        # Return string
+        writer.writerow(fields)
+        yield sf.getvalue()
+  else:
+    raise Http404('Unknown report type')
 
 
 @staff_member_required
 def view_report(request, entity=None, **args):
   '''
-  This is a generic view for reports having buckets in the time dimension.
+  This is a generic view for two types of reports:
+    - List reports, showing a list of values are rows
+    - Table reports, showing in addition values per time buckets as columns
   The following arguments can be passed to the view:
     - report:
       Points to a subclass of Report.
@@ -213,8 +252,6 @@ def view_report(request, entity=None, **args):
     - extra_context:
       An additional set of records added to the context for rendering the
       view.
-    - paginate_by:
-      Number of entities to report on a page.
   '''
   global ON_EACH_SIDE
   global ON_ENDS
@@ -285,7 +322,12 @@ def view_report(request, entity=None, **args):
     # CSV output
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % reportclass.title.lower()
-    response._container = _generate_csv(reportclass, reportclass.resultquery('select * %s' % basesql[1], basesql[2], bucket, start, end, sortsql=sortsql))
+    if hasattr(reportclass,'resultquery'):
+      # SQL override provided
+      response._container = _generate_csv(reportclass, reportclass.resultquery('select * %s' % basesql[1], basesql[2], bucket, start, end, sortsql=sortsql))
+    else:
+      # No SQL override provided
+      response._container = _generate_csv(reportclass, counter)
     response._is_string = False
     return response
 
@@ -297,16 +339,21 @@ def view_report(request, entity=None, **args):
   page = int(request.GET.get('p', '0'))
   paginator = ObjectPaginator(counter, reportclass.paginate_by)
   counter = counter[paginator.first_on_page(page)-1:paginator.first_on_page(page)-1+(reportclass.paginate_by or 0)]
-  if settings.DATABASE_ENGINE == 'oracle':
-    basesql = counter._get_sql_clause(get_full_query=True)
-  else:
-    basesql = counter._get_sql_clause()
-  try:
+  if hasattr(reportclass,'resultquery'):
+    # SQL override provided
     if settings.DATABASE_ENGINE == 'oracle':
-      results = reportclass.resultquery(basesql[3], basesql[2], bucket, start, end, sortsql=sortsql)
+      basesql = counter._get_sql_clause(get_full_query=True)
     else:
-      results = reportclass.resultquery('select * %s' % basesql[1], basesql[2], bucket, start, end, sortsql=sortsql)
-  except InvalidPage: raise Http404
+      basesql = counter._get_sql_clause()
+    try:
+      if settings.DATABASE_ENGINE == 'oracle':
+        results = reportclass.resultquery(basesql[3], basesql[2], bucket, start, end, sortsql=sortsql)
+      else:
+        results = reportclass.resultquery('select * %s' % basesql[1], basesql[2], bucket, start, end, sortsql=sortsql)
+    except InvalidPage: raise Http404
+  else:
+    # No SQL override provided
+    results = counter
 
   # If there are less than 10 pages, show them all
   page_htmls = []
@@ -399,38 +446,41 @@ def view_report(request, entity=None, **args):
 
 
 class ReportRowHeader(Node):
-  def __init__(self, num):
-    self.number = int(num)
 
   def render(self, context):
     req = resolve_variable('request',context)
     sort = resolve_variable('sort',context)
     cls = resolve_variable('class',context)
-    x = req.GET.copy()
-    if int(sort[0]) == self.number:
-      if sort[1] == 'a':
-        # Currently sorting in ascending order on this column
-        x['o'] = '%dd' % self.number
-        y = 'class="sorted ascending"'
+    result = []
+    number = 0
+    for row in cls.rows:
+      number = number + 1
+      x = req.GET.copy()
+      if int(sort[0]) == number:
+        if sort[1] == 'a':
+          # Currently sorting in ascending order on this column
+          x['o'] = '%dd' % number
+          y = 'class="sorted ascending"'
+        else:
+          # Currently sorting in descending order on this column
+          x['o'] = '%da' % number
+          y = 'class="sorted descending"'
       else:
-        # Currently sorting in descending order on this column
-        x['o'] = '%da' % self.number
-        y = 'class="sorted descending"'
-    else:
-      # Sorted on another column
-      x['o'] = '%da' % self.number
-      y = ''
-    title = (cls.rows[self.number-1][1].has_key('title') and cls.rows[self.number-1][1]['title']) or cls.rows[self.number-1][0]
-    if 'filter' in cls.rows[self.number-1][1]:
-      return '<th %s><a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
-        % (y, req.path, escape(x.urlencode()),
-           title[0].upper(), title[1:],
-           (cls.rows[self.number-1][1].has_key('filter_size') and cls.rows[self.number-1][1]['filter_size']) or 10,
-           x.get(cls.rows[self.number-1][0],''),
-           cls.rows[self.number-1][0], self.number+1000,
-           )
-    else:
-      return '<th %s style="vertical-align:top"><a href="%s?%s">%s%s</a></th>' \
-        % (y, req.path, escape(x.urlencode()),
-           title[0].upper(), title[1:],
-          )
+        # Sorted on another column
+        x['o'] = '%da' % number
+        y = ''
+      title = (row[1].has_key('title') and row[1]['title']) or row[0]
+      if 'filter' in cls.rows[number-1][1]:
+        result.append( '<th %s><a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
+          % (y, req.path, escape(x.urlencode()),
+             title[0].upper(), title[1:],
+             (row[1].has_key('filter_size') and row[1]['filter_size']) or 10,
+             x.get(row[0],''),
+             row[0], number+1000,
+             ) )
+      else:
+        result.append( '<th %s style="vertical-align:top"><a href="%s?%s">%s%s</a></th>' \
+          % (y, req.path, escape(x.urlencode()),
+             title[0].upper(), title[1:],
+            ) )
+    return '\n'.join(result)

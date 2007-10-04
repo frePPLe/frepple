@@ -182,11 +182,13 @@ def exportPegging(cursor):
   for i in frepple.demand():
     cursor.executemany(
       "insert into out_demandpegging \
-      (demand,depth,operationplan,buffer,quantity,pegdate, \
-      factor,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s)",
+      (demand,depth,cons_operationplan,cons_date,prod_operationplan,prod_date, \
+       buffer,quantity,factor,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
-         i['NAME'], str(j['LEVEL']), j['OPERATIONPLAN'] or None, j['BUFFER'],
-         round(j['QUANTITY'],ROUNDING_DECIMALS), str(j['DATE']),
+         i['NAME'], str(j['LEVEL']),
+         j['CONS_OPERATIONPLAN'] or None, str(j['CONS_DATE']),
+         j['PROD_OPERATIONPLAN'] or None, str(j['PROD_DATE']),
+         j['BUFFER'], round(j['QUANTITY'],ROUNDING_DECIMALS),
          round(j['FACTOR'],ROUNDING_DECIMALS), str(j['PEGGED'])
        ) for j in i['PEGGING']
       ])
@@ -195,6 +197,7 @@ def exportPegging(cursor):
   transaction.commit()
   cursor.execute("select count(*) from out_demandpegging")
   print 'Exported %d pegging in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+
 
 def exportForecast(cursor):
   global ROUNDING_DECIMALS

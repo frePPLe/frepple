@@ -23,9 +23,6 @@
 
 from django.db import models
 
-# This variable defines the number of records to show in the admin lists.
-LIST_PER_PAGE = 100
-
 
 class OperationPlan(models.Model):
     # Database fields
@@ -42,19 +39,9 @@ class OperationPlan(models.Model):
 
     def __str__(self): return str(self.identifier)
 
-    class Admin:
-        search_fields = ['operation']
-        list_display = ('identifier', 'operation', 'startdatetime', 'enddatetime', 'quantity', 'locked', 'owner')
-        list_per_page = LIST_PER_PAGE
-        date_hierarchy = 'startdate'
-
     class Meta:
         db_table = 'out_operationplan'
         permissions = (("view_operationplan", "Can view operation plans"),)
-        # Ordering is buggy :-(
-        # Database sync expectes 'operation' and fails when it is set to 'operation_id'
-        # Ordering requires 'operation_id' and fails when it is set to 'operation'
-        #ordering = ['operation_id','startdatetime']
 
 
 class Problem(models.Model):
@@ -69,14 +56,6 @@ class Problem(models.Model):
     weight = models.DecimalField(max_digits=15, decimal_places=4)
 
     def __str__(self): return str(self.name)
-
-    class Admin:
-        list_display = ('entity', 'name', 'description', 'startdate', 'enddate', 'weight')
-        list_display_links = ('description',)
-        search_fields = ['description']
-        date_hierarchy = 'startdate'
-        list_filter = ['entity','name','startdate']
-        list_per_page = LIST_PER_PAGE
 
     class Meta:
         db_table = 'out_problem'
@@ -97,10 +76,6 @@ class LoadPlan(models.Model):
     def __str__(self):
         return self.resource.name + ' ' + str(self.startdatetime) + ' ' + str(self.enddatetime)
 
-    class Admin:
-        list_display = ('resource', 'quantity', 'startdatetime', 'enddatetime', 'operationplan')
-        list_per_page = LIST_PER_PAGE
-
     class Meta:
         db_table = 'out_loadplan'
         permissions = (("view_loadplans", "Can view load plans"),)
@@ -119,10 +94,6 @@ class FlowPlan(models.Model):
 
     def __str__(self):
         return self.thebuffer.name + str(self.flowdatetime)
-
-    class Admin:
-        list_display = ('thebuffer', 'operation', 'quantity', 'flowdatetime', 'onhand', 'operationplan')
-        list_per_page = LIST_PER_PAGE
 
     class Meta:
         db_table = 'out_flowplan'
@@ -144,11 +115,6 @@ class Demand(models.Model):
     def __str__(self):
         return self.demand.name
 
-    class Admin:
-        list_display = ('demand', 'duedate', 'quantity', 'planquantity',
-          'plandate', 'operationplan')
-        list_per_page = LIST_PER_PAGE
-
     class Meta:
         db_table = 'out_demand'
         ordering = ['id']
@@ -158,22 +124,19 @@ class DemandPegging(models.Model):
     # Database fields
     demand = models.CharField(maxlength=60, db_index=True)
     depth = models.IntegerField()
-    operationplan = models.IntegerField(db_index=True, null=True)
+    cons_operationplan = models.IntegerField(db_index=True, null=True)
+    cons_date = models.DateTimeField()
+    prod_operationplan = models.IntegerField(db_index=True, null=True)
+    prod_date = models.DateTimeField()
     buffer = models.CharField(maxlength=60, db_index=True, null=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4, default='0.00')
     factor = models.DecimalField(max_digits=15, decimal_places=4, default='1.00')
     pegged = models.BooleanField(default=True, radio_admin=True)
-    pegdate = models.DateTimeField()
 
     def __str__(self):
         return self.demand.name \
           + ' - ' + str(self.depth) + ' - ' + str(self.operationplan or 'None') \
           + ' - ' + self.buffer.name
-
-    class Admin:
-        list_display = ('demand', 'depth', 'operationplan', 'buffer',
-          'quantity', 'factor', 'pegdate', 'pegged')
-        list_per_page = LIST_PER_PAGE
 
     class Meta:
         db_table = 'out_demandpegging'

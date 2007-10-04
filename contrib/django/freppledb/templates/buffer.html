@@ -32,9 +32,7 @@
 
 <div style="overflow-x: scroll; overflow-y: auto;">
 <table><thead><tr><form>
-{% rowheader 1 %}
-{% rowheader 2 %}
-{% rowheader 3 %}
+{% rowheader %}
 <th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form>
 {% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
 

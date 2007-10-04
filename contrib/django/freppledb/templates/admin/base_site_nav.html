@@ -1,6 +1,5 @@
 {% extends "admin/base_site.html" %}
 {% block nav-global %}
-{% get_models from output as modelsOut %}
 {% get_models from input as modelsIn %}
 <div class="menuBar">
 {% if modelsIn %}
@@ -14,7 +13,7 @@
     href=""
     onclick="return buttonClick(event, 'outputMenu');"
     onmouseover="buttonMouseover(event, 'outputMenu');"
->Output</a>
+>Reports</a>
 {% if perms.execute %}
 <a class="menuButton"
     href=""
@@ -40,18 +39,12 @@
 <!-- output menu -->
 <div id="outputMenu" class="menu"
      onmouseover="menuMouseover(event)">
+<a class="menuItem" href="/problem/">Problems</a>
 <a class="menuItem" href="/buffer/">Inventory Plan</a>
 <a class="menuItem" href="/resource/">Resource Plan</a>
 <a class="menuItem" href="/demand/">Demand Plan</a>
 <a class="menuItem" href="/forecast/">Forecast Plan</a>
 <a class="menuItem" href="/operation/">Operation Plan</a>
-{% if modelsOut %}
-<div class="menuItemSep"></div>
-<a class="menuItem" href=""
-   onclick="return false;"
-   onmouseover="menuItemMouseover(event, 'rawOutputMenu');"
-><span class="menuItemText">Raw output data</span><span class="menuItemArrow">&#9654;</span></a>
-{% endif %}
 </div>
 
 <!-- execute menu -->
@@ -73,14 +66,5 @@
 <a class="menuItem" href="/admin/auth/user/">Login</a>
 {% endif %}
 </div>
-
-<!-- output sub menus. -->
-{% if modelsOut %}
-<div id="rawOutputMenu" class="menu"
-     onmouseover="menuMouseover(event)">
-{% for m in modelsOut %}
-<a class="menuItem" href="{{m.admin_url}}">{{ m.name }}</a>{% endfor %}
-</div>
-{% endif %}
 
 {% endblock %}

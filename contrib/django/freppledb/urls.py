@@ -60,6 +60,12 @@ urlpatterns = patterns('',
     (r'^forecast/([^/]+)/$', 'freppledb.report.view_report', {'report': freppledb.output.views.ForecastReport,}),
     (r'^forecast/$', 'freppledb.report.view_report', {'report': freppledb.output.views.ForecastReport,}),
     (r'^path/([^/]+)/([^/]+)/$', freppledb.output.views.pathreport.view),
+    (r'^pegging/$', 'freppledb.report.view_report', {'report': freppledb.output.views.PeggingReport,}),
+    (r'^flowplan/$', 'freppledb.report.view_report', {'report': freppledb.output.views.FlowPlanReport,}),
+    (r'^problem/$', 'freppledb.report.view_report', {'report': freppledb.output.views.ProblemReport,}),
+    (r'^operationplan/$', 'freppledb.report.view_report', {'report': freppledb.output.views.OperationPlanReport,}),
+    (r'^loadplan/$', 'freppledb.report.view_report', {'report': freppledb.output.views.LoadPlanReport,}),
+    (r'^demandplan/$', 'freppledb.report.view_report', {'report': freppledb.output.views.DemandPlanReport,}),
 
     # Posting special edits
     (r'^edit/$', freppledb.input.views.uploadjson.post),

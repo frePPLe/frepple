@@ -32,11 +32,12 @@ from django.http import Http404, HttpResponse
 from django.conf import settings
 
 from freppledb.input.models import Buffer, Operation, Resource, Item, Forecast
+from freppledb.output.models import DemandPegging, FlowPlan, Problem, OperationPlan, LoadPlan, Demand
 from freppledb.dbutils import *
-from freppledb.report import Report
+from freppledb.report import TableReport, ListReport
 
 
-class BufferReport(Report):
+class BufferReport(TableReport):
   '''
   A report showing the inventory profile of buffers.
   '''
@@ -116,7 +117,7 @@ class BufferReport(Report):
     return resultset
 
 
-class DemandReport(Report):
+class DemandReport(TableReport):
   '''
   A report showing the independent demand for each item.
   '''
@@ -205,7 +206,7 @@ class DemandReport(Report):
     return resultset
 
 
-class ForecastReport(Report):
+class ForecastReport(TableReport):
   '''
   A report allowing easy editing of forecast numbers.
   '''
@@ -277,7 +278,7 @@ class ForecastReport(Report):
     return resultset
 
 
-class ResourceReport(Report):
+class ResourceReport(TableReport):
   '''
   A report showing the loading of each resource.
   '''
@@ -370,7 +371,7 @@ class ResourceReport(Report):
     return resultset
 
 
-class OperationReport(Report):
+class OperationReport(TableReport):
   '''
   A report showing the planned starts of each operation.
   '''
@@ -556,3 +557,144 @@ class pathreport:
     # With the complex logic there can be quite a lot!
     #for i in connection.queries: print i['time'], i['sql']
     return render_to_response('path.html', c)
+
+
+class PeggingReport(ListReport):
+  '''
+  A list report to show peggings.
+  '''
+  template = 'pegging.html'
+  title = "Pegging report"
+  basequeryset = DemandPegging.objects.all()
+  rows = (
+    ('demand', {'filter': 'demand__icontains',}),
+    ('buffer', {'filter': 'buffer__icontains',}),
+    ('depth', {'order_by': 'depth'}),
+    ('cons_date', {}),
+    ('prod_date', {}),
+    ('cons_operationplan', {}),
+    ('prod_operationplan', {}),
+    ('quantity', {}),
+    ('factor', {}),
+    ('pegged', {}),
+    )
+
+
+class FlowPlanReport(ListReport):
+  '''
+  A list report to show flowplans.
+  '''
+  template = 'flowplan.html'
+  title = "Material flow report"
+  basequeryset = FlowPlan.objects.all()
+  rows = (
+    ('thebuffer', {'filter': 'thebuffer__icontains', 'title': 'buffer'}),
+    ('operation', {'filter': 'operation__icontains'}),
+    ('operationplan', {'filter': 'operationplan__icontains'}),
+    ('quantity', {}),
+    ('flowdatetime', {'title': 'date'}),
+    ('onhand', {}),
+    )
+
+
+class ConsFlowPlanReport(ListReport):
+  '''
+  A list report to show CONSUMING flowplans.
+  '''
+  template = 'flowplan.html'
+  title = "Material flow report"
+  basequeryset = FlowPlan.objects.filter(quantity__lt=0)
+  rows = (
+    ('thebuffer', {'filter': 'thebuffer__icontains', 'title': 'buffer'}),
+    ('operation', {'filter': 'operation__icontains'}),
+    ('operationplan', {'filter': 'operationplan__icontains'}),
+    ('quantity', {}),
+    ('flowdatetime', {'title': 'date'}),
+    ('onhand', {}),
+    )
+
+
+class ProdFlowPlanReport(ListReport):
+  '''
+  A list report to show PRODUCING flowplans.
+  '''
+  template = 'flowplan.html'
+  title = "Material flow report"
+  basequeryset = FlowPlan.objects.filter(quantity__gte=0)
+  rows = (
+    ('thebuffer', {'filter': 'thebuffer__icontains', 'title': 'buffer'}),
+    ('operation', {'filter': 'operation__icontains'}),
+    ('operationplan', {'filter': 'operationplan__icontains'}),
+    ('quantity', {}),
+    ('flowdatetime', {'title': 'date'}),
+    ('onhand', {}),
+    )
+
+
+class ProblemReport(ListReport):
+  '''
+  A list report to show problems.
+  '''
+  template = 'problem.html'
+  title = "Problem report"
+  basequeryset = Problem.objects.all()
+  rows = (
+    ('entity', {'filter': 'entity__icontains', }),
+    ('name', {'filter': 'name__icontains'}),
+    ('description', {'filter': 'description__icontains', 'filter_size': 30}),
+    ('startdatetime', {'title': 'start'}),
+    ('enddatetime', {'title': 'end'}),
+    ('weight', {}),
+    )
+
+
+class OperationPlanReport(ListReport):
+  '''
+  A list report to show operationplans.
+  '''
+  template = 'operationplan.html'
+  title = "Operation plan report"
+  basequeryset = OperationPlan.objects.all()
+  rows = (
+    ('identifier', {'filter': 'identifier__icontains', 'title': 'operationplan'}),
+    ('demand', {'filter': 'demand__icontains'}),
+    ('operation', {'filter': 'operation__icontains'}),
+    ('quantity', {}),
+    ('startdatetime', {'title': 'start'}),
+    ('enddatetime', {'title': 'end'}),
+    ('locked', {}),
+    ('owner', {}),
+    )
+
+
+class DemandPlanReport(ListReport):
+  '''
+  A list report to show delivery plans for demand.
+  '''
+  template = 'demandplan.html'
+  title = "Demand plan report"
+  basequeryset = Demand.objects.all()
+  rows = (
+    ('demand', {'filter': 'demand__icontains', 'title': 'demand'}),
+    ('quantity', {}),
+    ('planquantity', {'title': 'Planned Quantity'}),
+    ('duedatetime', {'filter': 'duedatetime__icontains', 'title': 'Due Date'}),
+    ('plandatetime', {'title': 'Planned Date'}),
+    ('operationplan', {}),
+    )
+
+
+class LoadPlanReport(ListReport):
+  '''
+  A list report to show loadplans.
+  '''
+  template = 'loadplan.html'
+  title = "Resource load report"
+  basequeryset = LoadPlan.objects.all()
+  rows = (
+    ('operationplan', {'filter': 'operationplan__icontains',}),
+    ('resource', {'filter': 'resource__icontains',}),
+    ('startdatetime', {'title': 'start'}),
+    ('enddatetime', {'title': 'end'}),
+    ('quantity', {}),
+    )

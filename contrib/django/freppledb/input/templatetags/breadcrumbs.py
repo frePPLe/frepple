@@ -113,11 +113,11 @@ class CrumbsNode(Node):
         # Pick up the current crumbs from the session cookie
         req = context['request']
         try: cur = req.session['crumbs']
-        except: cur = [HOMECRUMB % _('Home')]
+        except: cur = [('Home',HOMECRUMB % _('Home'))]
 
         # Check if we need to reset the crumbs
         try:
-          if context['reset_crumbs']: cur = [HOMECRUMB % _('Home')]
+          if context['reset_crumbs']: cur = [('Home',HOMECRUMB % _('Home'))]
         except: pass
 
         # Pop from the stack if the same url is already in the crumbs
@@ -125,22 +125,21 @@ class CrumbsNode(Node):
         except: title = req.get_full_path()
         # A special case to work around the hardcoded title of the main admin page
         if title == 'Site administration': title = _('Home')
-        key = '<a href="%s">%s</a>' % (escape(req.get_full_path()), title)
         cnt = 0
         for i in cur:
-           if i == key:
+           if i[0] == title:
              cur = cur[0:cnt]   # Pop all remaining elements from the stack
              break
            cnt += 1
 
         # Push current url on the stack
-        cur.append(key)
+        cur.append( (title,'<a href="%s">%s</a>' % (escape(req.get_full_path()), title)) )
 
         # Update the current session
         req.session['crumbs'] = cur
 
         # Now create HTML code to return
-        return '  >  '.join(cur)
+        return '  >  '.join([i[1] for i in cur])
 
 def do_crumbs(parser, token):
     return CrumbsNode()

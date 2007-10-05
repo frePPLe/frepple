@@ -1536,7 +1536,15 @@ class OperationPlan
     float getQuantity() const {return quantity;}
 
     /** Updates the quantity.<br>
-      * The quantity of an operationplan must be greater than to 0.<br>
+      * The operationplan quantity is subject to the following rules:
+      *  - The quantity must be greater than the minimum size.<br>
+      *    The value is rounded up to the minimum size ir required,
+      *    or rounded down to 0.
+      *  - The quantity must be a multiple of the multiple_size field.<br>
+      *    The value is rounded up or down to meet this constraint.
+      *  - There is no maximum size to an operationplan.
+      *  - Setting the quantity of an operationplan to 0 is always possible,
+      *    regardless of the minimum and multiples values.
       * This method can only be called on top operationplans. Sub operation
       * plans should pass on a call to the parent operationplan.
       */

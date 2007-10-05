@@ -326,7 +326,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
     opplan->setStart(Plan::instance().getCurrent() + delta);
     // Pick up the earliest date we can reply back
     data.a_date = opplan->getDates().getEnd();
-    // Set the quantity to 0 (to make sure the buffer doesn't see the supply)
+    // Set the quantity to 0 (to make sure the buffer doesn't see the supply).
     opplan->setQuantity(0.0f);
     // Deny creation of the operationplan
     return false;

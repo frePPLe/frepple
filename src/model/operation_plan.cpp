@@ -456,7 +456,7 @@ DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown)
   }
 
   // Compute the correct size for the operationplan
-  if (getOperation()->getSizeMinimum()>0.0f
+  if (f!=0.0f && getOperation()->getSizeMinimum()>0.0f
       && f < getOperation()->getSizeMinimum())
   {
     if (roundDown)
@@ -470,7 +470,7 @@ DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown)
     }
     f = getOperation()->getSizeMinimum();
   }
-  if (getOperation()->getSizeMultiple()>0.0f)
+  if (f!=0.0f && getOperation()->getSizeMultiple()>0.0f)
   {
     int mult = (int) (f / getOperation()->getSizeMultiple()  
         + (roundDown ? 0.0f : 0.999999f));

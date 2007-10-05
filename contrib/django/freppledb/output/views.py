@@ -575,8 +575,8 @@ class PeggingReport(ListReport):
     ('prod_date', {}),
     ('cons_operationplan', {}),
     ('prod_operationplan', {}),
-    ('quantity', {}),
-    ('factor', {}),
+    ('quantity_demand', {}),
+    ('quantity_buffer', {}),
     ('pegged', {}),
     )
 

@@ -183,13 +183,13 @@ def exportPegging(cursor):
     cursor.executemany(
       "insert into out_demandpegging \
       (demand,depth,cons_operationplan,cons_date,prod_operationplan,prod_date, \
-       buffer,quantity,factor,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+       buffer,quantity_demand,quantity_buffer,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
          i['NAME'], str(j['LEVEL']),
          j['CONS_OPERATIONPLAN'] or None, str(j['CONS_DATE']),
          j['PROD_OPERATIONPLAN'] or None, str(j['PROD_DATE']),
-         j['BUFFER'], round(j['QUANTITY'],ROUNDING_DECIMALS),
-         round(j['FACTOR'],ROUNDING_DECIMALS), str(j['PEGGED'])
+         j['BUFFER'], round(j['QUANTITY_DEMAND'],ROUNDING_DECIMALS),
+         round(j['QUANTITY_BUFFER'],ROUNDING_DECIMALS), str(j['PEGGED'])
        ) for j in i['PEGGING']
       ])
     cnt += 1

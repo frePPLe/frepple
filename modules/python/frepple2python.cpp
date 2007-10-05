@@ -199,15 +199,20 @@ extern "C" PyObject* PythonDemandPegging::next(PythonDemandPegging* obj)
   if (!obj->iter || !*(obj->iter)) return NULL;
 
   // Pass the result to Python
-  PyObject* result = Py_BuildValue("{s:i,s:f,s:f,s:N,s:z,s:l,s:i}",
+  OperationPlan::pointer p_opplan = obj->iter->getProducingOperationplan();
+  OperationPlan::pointer c_opplan = obj->iter->getConsumingOperationplan();
+  PyObject* result = Py_BuildValue("{s:i,s:l,s:N,s:l,s:N,s:z,s:f,s:f,s:i}",
     "LEVEL", obj->iter->getLevel(),
-    "QUANTITY", obj->iter->getQuantity(),
-    "FACTOR", obj->iter->getFactor(),
-    "DATE", PythonDateTime((*(obj->iter))->getDate()),
-    "BUFFER", (*(obj->iter))->getFlow()->getBuffer()->getHidden() ? NULL
-      : (*(obj->iter))->getFlow()->getBuffer()->getName().c_str(),
-    "OPERATIONPLAN", (*(obj->iter))->getOperationPlan()->getHidden() ? 0
-      : (*(obj->iter))->getOperationPlan()->getIdentifier(),
+    "CONS_OPERATIONPLAN", 
+      (!c_opplan || c_opplan->getHidden()) ? 0 : c_opplan->getIdentifier(),
+    "CONS_DATE", PythonDateTime(obj->iter->getConsumingDate()),
+    "PROD_OPERATIONPLAN",       
+      (!p_opplan || p_opplan->getHidden()) ? 0 : p_opplan->getIdentifier(),
+    "PROD_DATE", PythonDateTime(obj->iter->getProducingDate()), 
+    "BUFFER", obj->iter->getBuffer()->getHidden() ? NULL
+      : obj->iter->getBuffer()->getName().c_str(),
+    "QUANTITY_DEMAND", obj->iter->getQuantityDemand(),
+    "QUANTITY_BUFFER", obj->iter->getQuantityBuffer(), 
     "PEGGED", obj->iter->getPegged() ? 1 : 0
     );
 

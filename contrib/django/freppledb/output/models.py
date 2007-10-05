@@ -129,8 +129,8 @@ class DemandPegging(models.Model):
     prod_operationplan = models.IntegerField(db_index=True, null=True)
     prod_date = models.DateTimeField()
     buffer = models.CharField(maxlength=60, db_index=True, null=True)
-    quantity = models.DecimalField(max_digits=15, decimal_places=4, default='0.00')
-    factor = models.DecimalField(max_digits=15, decimal_places=4, default='1.00')
+    quantity_demand = models.DecimalField(max_digits=15, decimal_places=4, default='0.00')
+    quantity_buffer = models.DecimalField(max_digits=15, decimal_places=4, default='0.00')
     pegged = models.BooleanField(default=True, radio_admin=True)
 
     def __str__(self):

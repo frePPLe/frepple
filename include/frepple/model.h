@@ -72,6 +72,7 @@ class Location;
 class Customer;
 class HasProblems;
 class Solvable;
+class PeggingIterator;
 
 
 /** @brief This class is used for initialization and finalization. */
@@ -2478,6 +2479,12 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaCategory metadata;
 
+    /** This function matches producing and consuming operationplans 
+      * with each other, and updates the pegging iterator accordingly.
+      */
+    virtual DECLARE_EXPORT void followPegging
+      (PeggingIterator&, FlowPlan*, short, double, double);
+
   private:
     /** This models the dynamic part of the plan, representing all planned
       * material flows on this buffer. */
@@ -4519,26 +4526,50 @@ class PeggingIterator
     DECLARE_EXPORT PeggingIterator(const Demand* e);
 
     /** Constructor. */
-    PeggingIterator(const FlowPlan* e)
+    PeggingIterator(const FlowPlan* e, bool b = true) : downstream(b)
     {
-      if (e)
-        stack.push(state(0,e->getQuantity()>0 ? e->getQuantity() : -e->getQuantity(),1,e));
+      if (!e) return;
+      if (downstream)
+        stack.push(state(0,abs(e->getQuantity()),1.0,e,NULL));
+      else
+        stack.push(state(0,abs(e->getQuantity()),1.0,NULL,e));
     }
 
-    /** Assignment operator. */
-    PeggingIterator& operator=(const FlowPlan* x)
+    /** Return the operationplan consuming the material. */
+    OperationPlan::pointer getConsumingOperationplan() const 
     {
-      while (!stack.empty()) stack.pop();
-      if (x)
-        stack.push(state(0,x->getQuantity()>0 ? x->getQuantity() : -x->getQuantity(),1,x));
-      return *this;
+      const FlowPlan* x = stack.top().cons_flowplan;
+      return x ? x->getOperationPlan() : NULL;
     }
 
-    /** Returns a reference to the flowplan pointed to by the iterator. */
-    const FlowPlan& operator*() const {return *(stack.top().fl);}
+    /** Return the material buffer through which we are pegging. */
+    Buffer *getBuffer() const 
+    {
+      const FlowPlan* x = stack.top().prod_flowplan;
+      if (!x) x = stack.top().cons_flowplan;
+      return x ? x->getFlow()->getBuffer() : NULL;
+    }
 
-    /** Returns a pointer to the flowplan pointed to by the iterator. */
-    const FlowPlan* operator->() const {return stack.top().fl;}
+    /** Return the operationplan producing the material. */
+    OperationPlan::pointer getProducingOperationplan() const 
+    {
+      const FlowPlan* x = stack.top().prod_flowplan;
+      return x ? x->getOperationPlan() : NULL;
+    }
+
+    /** Return the date when the material is consumed. */
+    Date getConsumingDate() const 
+    {
+      const FlowPlan* x = stack.top().cons_flowplan;
+      return x ? x->getDate() : Date::infinitePast;
+    }
+
+    /** Return the date when the material is produced. */
+    Date getProducingDate() const 
+    {
+      const FlowPlan* x = stack.top().prod_flowplan;
+      return x ? x->getDate() : Date::infinitePast;
+    }
 
     /** Returns the recursion depth of the iterator. The original flowplan
       * is at level 0, and each level (either upstream or downstream)
@@ -4546,10 +4577,21 @@ class PeggingIterator
       */
     short getLevel() const {return stack.top().level;}
 
-    /** Returns the absolute quantity of the original flowplan that can still
-      * be traced in the current flowplan.
+    /** Returns the quantity of the demand that is linked to this pegging
+      * record.
       */
-    double getQuantity() const {return stack.top().qty;}
+    double getQuantityDemand() const {return stack.top().qty;}
+
+    /** Returns the quantity of the buffer flowplans that is linked to this
+      * pegging record.
+      */
+    double getQuantityBuffer() const 
+    {
+      const state& t = stack.top();
+      return t.prod_flowplan 
+        ? t.factor * t.prod_flowplan->getOperationPlan()->getQuantity() 
+        : 0;
+    }
 
     /** Returns which portion of the current flowplan is fed/supplied by the
       * original flowplan. */
@@ -4592,6 +4634,12 @@ class PeggingIterator
       */
     operator bool () const { return !stack.empty(); }
 
+    /** Update the stack. */
+    DECLARE_EXPORT void updateStack(short, double, double, const FlowPlan*, const FlowPlan*, bool = true);
+
+    /** Returns true if this is a downstream iterator. */
+    bool isDownstream() {return downstream;}
+
   private:
     /** This structure is used to keep track of the iterator states during the
       * iteration. */
@@ -4611,22 +4659,35 @@ class PeggingIterator
       short level;
 
       /** The current flowplan. */
-      const FlowPlan* fl;
+      const FlowPlan* cons_flowplan;
+
+      /** The current flowplan. */
+      const FlowPlan* prod_flowplan;
 
       /** Set to false when unpegged quantities are involved. */
       bool pegged;
 
       /** Constructor. */
-      state(unsigned int l, double d, double f, const FlowPlan* ff, bool p = true)
-          : qty(d), factor(f), level(l), fl(ff), pegged(p) {};
+      state(unsigned int l, double d, double f, 
+        const FlowPlan* fc, const FlowPlan* fp, bool p = true)
+          : qty(d), factor(f), level(l), 
+          cons_flowplan(fc), prod_flowplan(fp), pegged(p) {};
 
       /** Inequality operator. */
       bool operator != (const state& s) const
-        {return fl!=s.fl || level!=s.level;}
+      {
+        return cons_flowplan != s.cons_flowplan 
+          || prod_flowplan != s.prod_flowplan 
+          || level != s.level;
+      }
 
       /** Equality operator. */
       bool operator == (const state& s) const
-        {return fl==s.fl && level==s.level;}
+      {
+        return cons_flowplan == s.cons_flowplan 
+          && prod_flowplan == s.prod_flowplan 
+          && level == s.level;
+      }
     };
 
     /** A type to hold the iterator state. */
@@ -4635,17 +4696,17 @@ class PeggingIterator
     /** A stack is used to store the iterator state. */
     statestack stack;
 
-    /** Update the stack. */
-    DECLARE_EXPORT void updateStack(short, double, double, const FlowPlan*, bool = true);
-
-    /** Auxilary function to make recursive code possible. */
-    DECLARE_EXPORT void pushflowplans(const OperationPlan*, bool, short, double, double, bool=false);
+    /* Auxilary function to make recursive code possible. */
+    DECLARE_EXPORT void followPegging(OperationPlan::pointer, short, double, double);
 
     /** Convenience variable during stack updates.
       * Depending on the value of this field, either the top element in the
       * stack is updated or a new state is pushed on the stack.
       */
     bool first;
+
+    /** Downstream or upstream iterator. */
+    bool downstream;
 };
 
 

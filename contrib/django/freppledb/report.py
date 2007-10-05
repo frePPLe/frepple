@@ -35,6 +35,7 @@ from django.template import Library, Node, resolve_variable
 from django.utils.encoding import smart_str
 
 from freppledb.input.models import Plan
+from freppledb.dbutils import python_date
 
 # Parameter settings
 ON_EACH_SIDE = 3       # Number of pages show left and right of the current page
@@ -102,18 +103,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
       order by min(day_start)''' \
       % (connection.ops.quote_name(field),connection.ops.quote_name(field)))
     # Compute the data to store in memory
-    if settings.DATABASE_ENGINE == 'sqlite3':
-      # Sigh... Poor data type handling in sqlite
-      datelist[bucket] = [{
-        'name': i,
-        'start': datetime.strptime(j,'%Y-%m-%d').date(),
-        'end': datetime.strptime(k,'%Y-%m-%d').date()
-        } for i,j,k in cursor.fetchall()]
-    elif settings.DATABASE_ENGINE == 'oracle':
-      # Sigh... Oracle 'date' type converts to a python datetime
-      datelist[bucket] = [{'name': i, 'start': j.date(), 'end': k.date()} for i,j,k in cursor.fetchall()]
-    else:
-      datelist[bucket] = [{'name': i, 'start': j, 'end': k} for i,j,k in cursor.fetchall()]
+    datelist[bucket] = [{'name': i, 'start': python_date(j), 'end': python_date(k)} for i,j,k in cursor.fetchall()]
 
   # Filter based on the start and end date
   if start and end:
@@ -329,19 +319,31 @@ def view_report(request, entity=None, **args):
     counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
     sortsql = '1 asc'
 
+  # Construct SQL statement, if the report has an SQL override method
+  if hasattr(reportclass,'resultquery'):
+    if settings.DATABASE_ENGINE == 'oracle':
+      # Oracle
+      basesql = counter._get_sql_clause(get_full_query=True)
+      sql = basesql[3] or 'select %s %s' % (",".join(basesql[0]), basesql[1])
+    elif settings.DATABASE_ENGINE == 'sqlite3':
+      # SQLite
+      basesql = counter._get_sql_clause()
+      sql = 'select * %s' % basesql[1]
+    else:
+      # PostgreSQL and mySQL
+      basesql = counter._get_sql_clause()
+      sql = 'select %s %s' % (",".join(basesql[0]), basesql[1])
+    sqlargs = basesql[2]
+
   # HTML output or CSV output?
   type = request.GET.get('type','html')
-  if settings.DATABASE_ENGINE == 'oracle':
-    basesql = counter._get_sql_clause(get_full_query=True)
-  else:
-    basesql = counter._get_sql_clause()
   if type == 'csv':
     # CSV output
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % reportclass.title.lower()
     if hasattr(reportclass,'resultquery'):
       # SQL override provided
-      response._container = _generate_csv(reportclass, reportclass.resultquery('select * %s' % basesql[1], basesql[2], bucket, start, end, sortsql=sortsql))
+      response._container = _generate_csv(reportclass, reportclass.resultquery(sql, sqlargs, bucket, start, end, sortsql=sortsql))
     else:
       # No SQL override provided
       response._container = _generate_csv(reportclass, counter)
@@ -358,15 +360,8 @@ def view_report(request, entity=None, **args):
   counter = counter[paginator.first_on_page(page)-1:paginator.first_on_page(page)-1+(reportclass.paginate_by or 0)]
   if hasattr(reportclass,'resultquery'):
     # SQL override provided
-    if settings.DATABASE_ENGINE == 'oracle':
-      basesql = counter._get_sql_clause(get_full_query=True)
-    else:
-      basesql = counter._get_sql_clause()
     try:
-      if settings.DATABASE_ENGINE == 'oracle':
-        results = reportclass.resultquery(basesql[3], basesql[2], bucket, start, end, sortsql=sortsql)
-      else:
-        results = reportclass.resultquery('select * %s' % basesql[1], basesql[2], bucket, start, end, sortsql=sortsql)
+      results = reportclass.resultquery(sql, sqlargs, bucket, start, end, sortsql=sortsql)
     except InvalidPage: raise Http404
   else:
     # No SQL override provided

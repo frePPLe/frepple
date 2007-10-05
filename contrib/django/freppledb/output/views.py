@@ -99,15 +99,15 @@ class BufferReport(TableReport):
         rowset = []
         prevbuf = row[0]
         endoh = float(row[3])
-      startoh = endoh   # @todo the starting onhand isn't right...
+      startoh = endoh   # @todo the starting onhand isn't right for the first bucket...
       endoh += float(row[7] - row[8])
       rowset.append( {
         'buffer': row[0],
         'item': row[1],
         'location': row[2],
         'bucket': row[4],
-        'startdate': row[5],
-        'enddate': row[6],
+        'startdate': python_date(row[5]),
+        'enddate': python_date(row[6]),
         'startoh': startoh,
         'produced': row[7],
         'consumed': row[8],
@@ -196,8 +196,8 @@ class DemandReport(TableReport):
       rowset.append( {
         'item': row[0],
         'bucket': row[1],
-        'startdate': row[2],
-        'enddate': row[3],
+        'startdate': python_date(row[2]),
+        'enddate': python_date(row[3]),
         'demand': row[4],
         'supply': row[5],
         'backlog': backlog,
@@ -270,8 +270,8 @@ class ForecastReport(TableReport):
         'item': row[1],
         'customer': row[2],
         'bucket': row[3],
-        'startdate': row[4],
-        'enddate': row[5],
+        'startdate': python_date(row[4]),
+        'enddate': python_date(row[5]),
         'total': row[6],
         } )
     if prevfcst: resultset.append(rowset)
@@ -361,8 +361,8 @@ class ResourceReport(TableReport):
         'resource': row[0],
         'location': row[1],
         'bucket': row[2],
-        'startdate': row[3],
-        'enddate': row[4],
+        'startdate': python_date(row[3]),
+        'enddate': python_date(row[4]),
         'available': row[5],
         'load': row[6],
         'utilization': util,
@@ -446,8 +446,8 @@ class OperationReport(TableReport):
       rowset.append( {
         'operation': row[0],
         'bucket': row[1],
-        'startdate': row[2],
-        'enddate': row[3],
+        'startdate': python_date(row[2]),
+        'enddate': python_date(row[3]),
         'frozen_start': row[4],
         'total_start': row[5],
         'frozen_end': row[6],

@@ -35,6 +35,14 @@ from datetime import date, datetime
 #    Returns the maximum of 2 numbers.
 #  - sql_max:
 #    Returns the minimum of 2 numbers.
+#  - python_date:
+#    A date database field is represented differently by the different
+#    database connectors.
+#    Oracle returns a python datetime object.
+#    SQLite returns a string.
+#    PostgreSQL and mySQL both return a date object.
+#    This method does what one might intuitively expect: a date field in the
+#    database is always returned as a python date object.
 
 # Functions for SQLITE
 if settings.DATABASE_ENGINE == 'sqlite3':
@@ -57,6 +65,9 @@ if settings.DATABASE_ENGINE == 'sqlite3':
   def sql_min(d1, d2):
     return "min(%s,%s)" % (d1,d2)
 
+  def python_date(d):
+    return datetime.strptime(d,'%Y-%m-%d').date()
+
 # Functions for POSTGRESQL
 elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
 
@@ -77,6 +88,9 @@ elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
   def sql_min(d1, d2):
     return "least(%s,%s)" % (d1,d2)
 
+  def python_date(d):
+    return d
+
 # Functions for MYSQL
 elif settings.DATABASE_ENGINE == 'mysql':
 
@@ -94,6 +108,9 @@ elif settings.DATABASE_ENGINE == 'mysql':
 
   def sql_min(d1, d2):
     return "least(%s,%s)" % (d1,d2)
+
+  def python_date(d):
+    return d
 
 # Functions for ORACLE
 elif settings.DATABASE_ENGINE == 'oracle':
@@ -116,6 +133,9 @@ elif settings.DATABASE_ENGINE == 'oracle':
 
   def sql_min(d1, d2):
     return "least(%s,%s)" % (d1,d2)
+
+  def python_date(d):
+    return d.date()
 
 else:
   raise NameError('The %s database is not support by frePPLe' % settings.DATABASE_ENGINE)

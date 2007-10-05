@@ -123,7 +123,7 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode
     for (; l; ++l)
     {
       o->BeginObject(Tags::tag_pegging, Tags::tag_level, l.getLevel());
-      o->writeElement(Tags::tag_quantity, l.getQuantity());
+      o->writeElement(Tags::tag_quantity, l.getQuantityDemand());
       o->writeElement(Tags::tag_factor, l.getFactor());
       if (!l.getPegged()) o->writeElement(Tags::tag_id, "unpegged");
       o->writeElement(Tags::tag_buffer, Tags::tag_name, l.getBuffer()->getName());

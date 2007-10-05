@@ -90,12 +90,11 @@ class BufferReport(TableReport):
     cursor.execute(query, baseparams)
 
     # Build the python result
-    resultset = []
     prevbuf = None
     rowset = []
     for row in cursor.fetchall():
       if row[0] != prevbuf:
-        if prevbuf: resultset.append(rowset)
+        if prevbuf: yield rowset
         rowset = []
         prevbuf = row[0]
         endoh = float(row[3])
@@ -113,8 +112,7 @@ class BufferReport(TableReport):
         'consumed': row[8],
         'endoh': endoh,
         } )
-    if prevbuf: resultset.append(rowset)
-    return resultset
+    if prevbuf: yield rowset
 
 
 class DemandReport(TableReport):
@@ -183,12 +181,11 @@ class DemandReport(TableReport):
     cursor.execute(query,baseparams)
 
     # Build the python result
-    resultset = []
     previtem = None
     rowset = []
     for row in cursor.fetchall():
       if row[0] != previtem:
-        if previtem: resultset.append(rowset)
+        if previtem: yield rowset
         rowset = []
         previtem = row[0]
         backlog = 0         # @todo Setting the backlog to 0 is not correct: it may be non-zero from the plan before the start date
@@ -202,8 +199,7 @@ class DemandReport(TableReport):
         'supply': row[5],
         'backlog': backlog,
         } )
-    if previtem: resultset.append(rowset)
-    return resultset
+    if previtem: yield rowset
 
 
 class ForecastReport(TableReport):
@@ -257,12 +253,11 @@ class ForecastReport(TableReport):
     cursor.execute(query, baseparams)
 
     # Build the python result
-    resultset = []
     prevfcst = None
     rowset = []
     for row in cursor.fetchall():
       if row[0] != prevfcst:
-        if prevfcst: resultset.append(rowset)
+        if prevfcst: yield rowset
         rowset = []
         prevfcst = row[0]
       rowset.append( {
@@ -274,8 +269,7 @@ class ForecastReport(TableReport):
         'enddate': python_date(row[5]),
         'total': row[6],
         } )
-    if prevfcst: resultset.append(rowset)
-    return resultset
+    if prevfcst: yield rowset
 
 
 class ResourceReport(TableReport):
@@ -345,13 +339,12 @@ class ResourceReport(TableReport):
     cursor.execute(query, baseparams)
 
     # Build the python result
-    resultset = []
     prevres = None
     rowset = []
     for row in cursor.fetchall():
       if row[0] != prevres:
         count = 0
-        if prevres: resultset.append(rowset)
+        if prevres: yield rowset
         rowset = []
         prevres = row[0]
       if row[5] != 0: util = row[6] / row[5] * 100
@@ -367,8 +360,7 @@ class ResourceReport(TableReport):
         'load': row[6],
         'utilization': util,
         } )
-    if prevres: resultset.append(rowset)
-    return resultset
+    if prevres: yield rowset
 
 
 class OperationReport(TableReport):
@@ -435,12 +427,11 @@ class OperationReport(TableReport):
     cursor.execute(query, baseparams)
 
     # Convert the SQl results to python
-    resultset = []
     prevoper = None
     rowset = []
     for row in cursor.fetchall():
       if row[0] != prevoper:
-        if prevoper: resultset.append(rowset)
+        if prevoper: yield rowset
         rowset = []
         prevoper = row[0]
       rowset.append( {
@@ -453,8 +444,7 @@ class OperationReport(TableReport):
         'frozen_end': row[6],
         'total_end': row[7],
         } )
-    if prevoper: resultset.append(rowset)
-    return resultset
+    if prevoper: yield rowset
 
 
 class pathreport:
@@ -479,9 +469,6 @@ class pathreport:
       root = [i.operation for i in root.loads.all()]
     else:
       raise Http404, "invalid entity type %s" % type
-
-    # Initialize
-    resultset = []
 
     for r in root:
         level = 0
@@ -508,14 +495,14 @@ class pathreport:
                        else:
                          newbufs.append( (j.thebuffer, j, - q * j.quantity / f.quantity) )
                 # Append to the list of buffers
-                resultset.append( {
+                yield {
                   'buffer': i,
                   'producingflow': f,
                   'operation': i.producing,
                   'level': level,
                   'consumingflow': fl,
                   'cumquantity': q,
-                  } )
+                  }
 
               # Recurse upstream for an operation
               elif isinstance(i,Operation):
@@ -531,18 +518,16 @@ class pathreport:
                        # Found a new buffer
                        newbufs.append( (j.thebuffer, j, - q * j.quantity) )
                 # Append to the list of buffers
-                resultset.append( {
+                yield {
                   'buffer': None,
                   'producingflow': None,
                   'operation': i,
                   'level': level,
                   'consumingflow': fl,
                   'cumquantity': q,
-                  } )
+                  }
            bufs = newbufs
 
-    # Return results
-    return resultset
 
   @staticmethod
   @staff_member_required

@@ -256,6 +256,7 @@ def view_report(request, entity=None, **args):
 
   # Pick up the list of time buckets
   (bucket,start,end,bucketlist) = getBuckets(request)
+  type = request.GET.get('type','html')  # HTML or CSV output
 
   # Pick up the filter parameters from the url
   counter = reportclass.basequeryset
@@ -319,6 +320,12 @@ def view_report(request, entity=None, **args):
     counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
     sortsql = '1 asc'
 
+  # Build paginator
+  if type == 'html':
+    page = int(request.GET.get('p', '0'))
+    paginator = ObjectPaginator(counter, reportclass.paginate_by)
+    counter = counter[paginator.first_on_page(page)-1:paginator.first_on_page(page)-1+(reportclass.paginate_by or 0)]
+
   # Construct SQL statement, if the report has an SQL override method
   if hasattr(reportclass,'resultquery'):
     if settings.DATABASE_ENGINE == 'oracle':
@@ -355,9 +362,6 @@ def view_report(request, entity=None, **args):
   parameters.__setitem__('p', 0)
 
   # Calculate the content of the page
-  page = int(request.GET.get('p', '0'))
-  paginator = ObjectPaginator(counter, reportclass.paginate_by)
-  counter = counter[paginator.first_on_page(page)-1:paginator.first_on_page(page)-1+(reportclass.paginate_by or 0)]
   if hasattr(reportclass,'resultquery'):
     # SQL override provided
     try:

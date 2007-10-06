@@ -448,8 +448,21 @@ class OperationReport(TableReport):
 
 
 class pathreport:
+  '''
+  A report showing the upstream supply path or following downstream a
+  where-used path.
+  The supply path report shows all the materials, operations and resources
+  used to make a certain item.
+  The where-used report shows all the materials and operations that use
+  a specific item.
+  '''
+
   @staticmethod
   def getPath(type, entity):
+    '''
+    A generator function that recurses upstream or downstream in the supply
+    chain.
+    '''
     if type == 'buffer':
       # Find the buffer
       try: root = [Buffer.objects.get(name=entity)]
@@ -532,16 +545,12 @@ class pathreport:
   @staticmethod
   @staff_member_required
   def view(request, type, entity):
-    c = RequestContext(request,{
+    return render_to_response('path.html', RequestContext(request,{
        'title': "Supply path of %s %s" % (type, entity),
        'supplypath': pathreport.getPath(type, entity),
        'type': type,
        'entity': entity,
-       })
-    # Uncomment the next line to see the SQL statements executed for the report
-    # With the complex logic there can be quite a lot!
-    #for i in connection.queries: print i['time'], i['sql']
-    return render_to_response('path.html', c)
+       }))
 
 
 class PeggingReport(ListReport):
@@ -606,9 +615,11 @@ class OperationPlanReport(ListReport):
   A list report to show operationplans.
   '''
   template = 'operationplan.html'
-  title = "Operation plan report"
+  title = "Operation plan detail"
   reset_crumbs = False
-  basequeryset = OperationPlan.objects.all()
+  basequeryset = OperationPlan.objects.extra(
+    select={'fcst_or_actual':'demand in (select distinct name from forecast)'}
+    )
   rows = (
     ('identifier', {'filter': 'identifier__icontains', 'title': 'operationplan'}),
     ('demand', {'filter': 'demand__icontains', 'filter_size': 15}),
@@ -626,7 +637,7 @@ class DemandPlanReport(ListReport):
   A list report to show delivery plans for demand.
   '''
   template = 'demandplan.html'
-  title = "Demand plan report"
+  title = "Demand plan detail"
   reset_crumbs = False
   basequeryset = Demand.objects.extra(
     select={'item_id':'demand.item_id'},
@@ -648,7 +659,7 @@ class LoadPlanReport(ListReport):
   A list report to show loadplans.
   '''
   template = 'loadplan.html'
-  title = "Resource load report"
+  title = "Resource load detail"
   reset_crumbs = False
   basequeryset = LoadPlan.objects.all()
   rows = (

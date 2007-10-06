@@ -5,6 +5,7 @@
 		ContextMenu.setup();
 		ContextMenu.attach('demand', 'demandcontext');
 		ContextMenu.attach('operation', 'operationcontext');
+		ContextMenu.attach('forecast', 'forecastcontext');
 </script>
 {% endblock %}
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
@@ -20,9 +21,15 @@
 <a id="/pegging/?demand=%s">Pegging</a>
 </div>
 
+<div id="forecastcontext" class="ContextMenu">
+{% if perms.input.change_forecast %}<a id="/admin/input/forecast/%s">Forecast</a>{% endif %}
+<a id="/pegging/?demand=%s">Pegging</a>
+<a id="/forecast/%s">Edit values</a>
+</div>
+
 <div id="operationcontext" class="ContextMenu">
-	{% if perms.input.change_operation %}<a id="/admin/input/operation/%s">Operation</a>{% endif %}
-  <a id="/path/operation/%s">Supply Path</a>
+{% if perms.input.change_operation %}<a id="/admin/input/operation/%s">Operation</a>{% endif %}
+<a id="/path/operation/%s">Supply Path</a>
 </div>
 
 <div style="overflow-x: scroll; overflow-y: auto;">
@@ -34,7 +41,7 @@
 <tr class="{% cycle row1,row2 %}">
 
 <td>{{i.identifier}}</td>
-<td>{{i.demand|superlink:"demand"}}</td>
+<td>{% if i.fcst_or_actual %}{{i.demand|superlink:"forecast"}}{% else %}{{i.demand|superlink:"demand"}}{% endif %}</td>
 <td>{{i.operation|superlink:"operation"}}</td>
 <td>{{i.quantity}}</td>
 <td>{{i.startdatetime}}</td>

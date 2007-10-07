@@ -140,8 +140,16 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
     {
       // Go through the loop based on consuming flowplan
       current_date = cur->getDate();
-      current_inventory = cur->getOnhand();       
-      current_flowplan = dynamic_cast<const FlowPlan*>(&*(cur++));
+      do 
+      {
+        current_inventory = cur->getOnhand();
+        current_flowplan = dynamic_cast<const FlowPlan*>(&*(cur++));
+      } 
+      // Loop to pick up the last consuming flowplan on the given date, or
+      // a producing flowplan.
+      while (cur != b->getFlowPlans().end() 
+        && current_flowplan->getQuantity() <= 0 
+        && cur->getDate() == current_date);  
     }
 
     // Delete producers  @todo not efficient: we recreate all operation plans every time
@@ -149,8 +157,8 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
       && current_flowplan->getQuantity() > 0.0f
       && !current_flowplan->getOperationPlan()->getLocked())
     {
-        delete &*(current_flowplan->getOperationPlan());
-        continue;
+      delete &*(current_flowplan->getOperationPlan());
+      continue;
     }
     
     // Hard limit: respect minimum interval
@@ -167,7 +175,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
 
     // Now the normal reorder check
     if (current_inventory >= b->getMinimumInventory() 
-      && current_date<latest_next)
+      && current_date < latest_next)
     {
       if (current_date == earliest_next) earliest_next = Date::infinitePast;
       continue;
@@ -175,7 +183,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
 
     // When we are within the minimum interval, we may need to increase the 
     // size of the latest procurement.
-    if (current_date==earliest_next 
+    if (current_date == earliest_next 
       && last_operationplan 
       && current_inventory < b->getMinimumInventory())
     {

@@ -152,7 +152,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
         && cur->getDate() == current_date);  
     }
 
-    // Delete producers  @todo not efficient: we recreate all operation plans every time
+    // Delete producers
     if (current_flowplan 
       && current_flowplan->getQuantity() > 0.0f
       && !current_flowplan->getOperationPlan()->getLocked())
@@ -210,6 +210,12 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
       last_operationplan = b->getOperation()->createOperationPlan(
           order_qty, 
           Date::infinitePast, current_date, NULL);
+      // @todo initializing an operationplan here is fundamentally incorrect: 
+      // if the consumer is cancelled later (for any other constraint than this 
+      // procured material), the procured supply can't be undone any more...
+      // We overcome this partially by replanning all procurements with 
+      // every demand, but that is a stopgap that wastes a lot of cpu power 
+      // and doesn't fundamentally solve the problem. @todo
       last_operationplan->initialize();
       if (b->getMinimumInterval())
         earliest_next = current_date + b->getMinimumInterval();

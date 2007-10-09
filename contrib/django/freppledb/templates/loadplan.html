@@ -13,14 +13,14 @@
 <div id="content-main">
 
 <div id="operationcontext" class="ContextMenu">
-	{% if perms.input.change_operation %}<a id="/admin/input/operation/%s">Operation</a>{% endif %}
-  <a id="/path/operation/%s">Supply Path</a>
+{% if perms.input.change_operation %}<a id="/admin/input/operation/%s">Operation</a>{% endif %}
+<a id="/supplypath/operation/%s">Supply Path</a>
+<a id="/whereused/operation/%s">Where Used</a>
 </div>
 
 <div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr><form>
-{% rowheader %}
-<th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form>
+<table>
+<thead><tr>{% rowheader %}</tr></thead>
 
 <tbody>{% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">

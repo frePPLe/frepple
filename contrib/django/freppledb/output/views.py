@@ -215,7 +215,8 @@ class ForecastReport(TableReport):
     ('customer',{'filter': 'customer__name__icontains'}),
     )
   crosses = (
-    ('total',{}),
+    ('demand',{'title': 'Gross Forecast'}),
+    ('planned',{}),
     )
   columns = (
     ('bucket',{}),
@@ -226,26 +227,40 @@ class ForecastReport(TableReport):
     # Execute the query
     cursor = connection.cursor()
     query = '''
-        select fcst.name as row1, fcst.item_id as row2, fcst.customer_id as row3,
-               d.bucket as col1, d.startdate as col2, d.enddate as col3,
-               coalesce(sum(forecastdemand.quantity * %s / %s),0) as qty
-        from (%s) fcst
-        -- Multiply with buckets
-        cross join (
-             select %s as bucket, %s_start as startdate, %s_end as enddate
-             from dates
-             where day_start >= '%s' and day_start <= '%s'
-             group by %s, %s_start, %s_end
-             ) d
-        -- Total forecasted quantity
-        left join forecastdemand
-        on fcst.name = forecastdemand.forecast_id
-        and forecastdemand.enddate >= d.startdate
-        and forecastdemand.startdate <= d.enddate
+        select x.name as row1, x.item_id as row2, x.customer_id as row3,
+               x.bucket as col1, x.startdate as col2, x.enddate as col3,
+               min(x.demand),
+               coalesce(sum(out_demand.planquantity),0)
+        from (
+          select fcst.name as name, fcst.item_id as item_id, fcst.customer_id as customer_id,
+                 d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
+                 coalesce(sum(forecastdemand.quantity * %s / %s),0) as demand
+          from (%s) fcst
+          -- Multiply with buckets
+          cross join (
+               select %s as bucket, %s_start as startdate, %s_end as enddate
+               from dates
+               where day_start >= '%s' and day_start <= '%s'
+               group by %s, %s_start, %s_end
+               ) d
+          -- Total forecast demand quantity
+          left join forecastdemand
+          on fcst.name = forecastdemand.forecast_id
+          and forecastdemand.enddate >= d.startdate
+          and forecastdemand.startdate <= d.enddate
+          -- Grouping
+          group by fcst.name, fcst.item_id, fcst.customer_id,
+                 d.bucket, d.startdate, d.enddate
+          ) x
+        -- Planned quantity
+        left join out_demand
+        on x.name = out_demand.demand
+        and x.startdate <= out_demand.plandatetime
+        and x.enddate > out_demand.plandatetime
         -- Ordering and grouping
-        group by fcst.name, fcst.item_id, fcst.customer_id,
-          d.bucket, d.startdate, d.enddate
-        order by %s, d.startdate
+        group by x.name, x.item_id, x.customer_id,
+           x.bucket, x.startdate, x.enddate
+        order by %s, x.startdate
         ''' % (sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
          sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),
          basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
@@ -267,7 +282,8 @@ class ForecastReport(TableReport):
         'bucket': row[3],
         'startdate': python_date(row[4]),
         'enddate': python_date(row[5]),
-        'total': row[6],
+        'demand': row[6],
+        'planned': row[7],
         } )
     if prevfcst: yield rowset
 
@@ -458,98 +474,131 @@ class pathreport:
   '''
 
   @staticmethod
-  def getPath(type, entity):
+  def getPath(type, entity, downstream):
     '''
     A generator function that recurses upstream or downstream in the supply
     chain.
+    @todo The current code only supports 1 level of super- or sub-operations.
+    @todo When the supply chain contains loops this function wont work fine.
     '''
+    from decimal import Decimal
+    from django.core.exceptions import ObjectDoesNotExist
     if type == 'buffer':
       # Find the buffer
-      try: root = [Buffer.objects.get(name=entity)]
-      except DoesNotExist: raise Http404, "buffer %s doesn't exist" % entity
-    elif type == 'operation':
-      # Find the operation
-      try: root = [Operation.objects.get(name=entity)]
-      except DoesNotExist: raise Http404, "operation %s doesn't exist" % entity
+      try: root = [ (0, Buffer.objects.get(name=entity), None, None, None, Decimal(1)) ]
+      except ObjectDoesNotExist: raise Http404, "buffer %s doesn't exist" % entity
     elif type == 'item':
       # Find the item
-      try: root = [Item.objects.get(name=entity).operation]
-      except DoesNotExist: raise Http404, "item %s doesn't exist" % entity
+      try:
+        root = [ (0, r, None, None, None, Decimal(1)) for r in Buffer.objects.filter(item=entity) ]
+      except ObjectDoesNotExist: raise Http404, "item %s doesn't exist" % entity
+    elif type == 'operation':
+      # Find the operation
+      try: root = [ (0, None, None, Operation.objects.get(name=entity), None, Decimal(1)) ]
+      except ObjectDoesNotExist: raise Http404, "operation %s doesn't exist" % entity
     elif type == 'resource':
       # Find the resource
       try: root = Resource.objects.get(name=entity)
-      except DoesNotExist: raise Http404, "resource %s doesn't exist" % entity
-      root = [i.operation for i in root.loads.all()]
+      except ObjectDoesNotExist: raise Http404, "resource %s doesn't exist" % entity
+      root = [ (0, None, None, i.operation, None, Decimal(1)) for i in root.loads.all() ]
     else:
       raise Http404, "invalid entity type %s" % type
 
-    for r in root:
-        level = 0
-        bufs = [ (r, None, 1) ]
+    # Note that the root to start with can be either buffer or operation.
+    while len(root) > 0:
+      level, curbuffer, curprodflow, curoperation, curconsflow, curqty = root.pop()
+      yield {
+        'buffer': curbuffer,
+        'producingflow': curprodflow,
+        'operation': curoperation,
+        'level': level,
+        'consumingflow': curconsflow,
+        'cumquantity': curqty,
+        }
 
-        # Recurse deeper in the supply chain
-        while len(bufs) > 0:
-           level += 1
-           newbufs = []
-           for i, fl, q in bufs:
+      if downstream:
+        # Find all operations consuming from this buffer...
+        if curbuffer:
+          start = [ (i, i.operation) for i in curbuffer.flows.filter(quantity__lt=0) ]
+        else:
+          start = [ (None, curoperation) ]
+        for cons_flow, curoperation in start:
+          if not cons_flow and not curoperation: continue
+          # ... and pick up the buffer they produce into
+          ok = False
 
-              # Recurse upstream for a buffer
-              if isinstance(i,Buffer):
-                f = None
-                if i.producing != None:
-                  x = i.producing.flows.all()
-                  for j in x:
-                     if j.thebuffer == i: f = j
-                  for j in x:
-                     if j.quantity < 0:
-                       # Found a new buffer
-                       if f is None:
-                         newbufs.append( (j.thebuffer, j, - q * j.quantity) )
-                       else:
-                         newbufs.append( (j.thebuffer, j, - q * j.quantity / f.quantity) )
-                # Append to the list of buffers
-                yield {
-                  'buffer': i,
-                  'producingflow': f,
-                  'operation': i.producing,
-                  'level': level,
-                  'consumingflow': fl,
-                  'cumquantity': q,
-                  }
+          # Push the next buffer on the stack, based on current operation
+          for prod_flow in curoperation.flows.filter(quantity__gt=0):
+            ok = True
+            root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
 
-              # Recurse upstream for an operation
-              elif isinstance(i,Operation):
-                # Flows on the main operation
-                for j in i.flows.all():
-                   if j.quantity < 0:
-                     # Found a new buffer
-                     newbufs.append( (j.thebuffer, j, - q * j.quantity) )
-                # Flows on suboperations
-                for k in i.suboperations.all():
-                   for j in k.suboperation.flows.all():
-                     if j.quantity < 0:
-                       # Found a new buffer
-                       newbufs.append( (j.thebuffer, j, - q * j.quantity) )
-                # Append to the list of buffers
-                yield {
-                  'buffer': None,
-                  'producingflow': None,
-                  'operation': i,
-                  'level': level,
-                  'consumingflow': fl,
-                  'cumquantity': q,
-                  }
-           bufs = newbufs
+          # Push the next buffer on the stack, based on super-operations
+          for x in curoperation.superoperations.all():
+            for prod_flow in x.suboperation.flows.filter(quantity__gt=0):
+              ok = True
+              root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
+
+          # Push the next buffer on the stack, based on sub-operations
+          for x in curoperation.suboperations.all():
+            for prod_flow in x.operation.flows.filter(quantity__gt=0):
+              ok = True
+              root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
+
+          if not ok and cons_flow:
+            # No producing flow found: there are no more buffers downstream
+            root.append( (level+1, None, None, curoperation, cons_flow, curqty * (cons_flow and cons_flow.quantity * -1 or 1)) )
+
+      else:
+        # Find all operations producing into this buffer...
+        if curbuffer: start = curbuffer.producing
+        else: start = curoperation
+        if not start: continue
+        for prod_flow in start.flows.filter(quantity__gt=0):
+          # ... and pick up the buffer they produce into
+          ok = False
+          # Push the next buffer on the stack, based on current operation
+          for cons_flow in prod_flow.operation.flows.filter(quantity__lt=0):
+            ok = True
+            root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / prod_flow.quantity * cons_flow.quantity * -1) )
+
+          # Push the next buffer on the stack, based on super-operations
+          for x in prod_flow.operation.superoperations.all():
+            for cons_flow in x.suboperation.flows.filter(quantity__lt=0):
+              ok = True
+              root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / prod_flow.quantity * cons_flow.quantity * -1) )
+
+          # Push the next buffer on the stack, based on sub-operations
+          for x in prod_flow.operation.suboperations.all():
+            for cons_flow in x.operation.flows.filter(quantity__lt=0):
+              ok = True
+              root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / prod_flow.quantity * cons_flow.quantity * -1) )
+
+          if not ok and prod_flow.operation != curoperation:
+            # No consuming flow found: there are no more buffers upstream
+            root.append( (level-1, None, prod_flow, prod_flow.operation, None, curqty * prod_flow.quantity) )
 
 
   @staticmethod
   @staff_member_required
-  def view(request, type, entity):
+  def viewdownstream(request, type, entity):
     return render_to_response('path.html', RequestContext(request,{
-       'title': "Supply path of %s %s" % (type, entity),
-       'supplypath': pathreport.getPath(type, entity),
+       'title': "Where-used report for %s %s" % (type, entity),
+       'supplypath': pathreport.getPath(type, entity, True),
        'type': type,
        'entity': entity,
+       'downstream': True,
+       }))
+
+
+  @staticmethod
+  @staff_member_required
+  def viewupstream(request, type, entity):
+    return render_to_response('path.html', RequestContext(request,{
+       'title': "Supply path report for %s %s" % (type, entity),
+       'supplypath': pathreport.getPath(type, entity, False),
+       'type': type,
+       'entity': entity,
+       'downstream': False,
        }))
 
 
@@ -639,16 +688,18 @@ class DemandPlanReport(ListReport):
   template = 'demandplan.html'
   title = "Demand plan detail"
   reset_crumbs = False
-  basequeryset = Demand.objects.extra(
-    select={'item_id':'demand.item_id'},
-    where=['demand.name = out_demand.demand'],
-    tables=['demand'])
+  # Eagerly awaiting the Django queryset refactoring to be able to add the item field.
+  #basequeryset = Demand.objects.extra(
+  #  select={'item_id':'demand.item_id'},
+  #  where=['demand.name = out_demand.demand'],
+  #  tables=['demand'])
+  basequeryset = Demand.objects.all()
   rows = (
-    ('demand', {'filter': 'demand__icontains', 'title': 'demand'}),
-    ('item_id', {'title': 'item'}),
+    ('demand', {'filter': 'demand__icontains', 'title': 'Demand'}),
+    #('item_id', {'title': 'item'}),
     ('quantity', {}),
     ('planquantity', {'title': 'Planned Quantity'}),
-    ('duedatetime', {'filter': 'duedatetime__icontains', 'title': 'Due Date'}),
+    ('duedatetime', {'title': 'Due Date'}),
     ('plandatetime', {'title': 'Planned Date'}),
     ('operationplan', {}),
     )

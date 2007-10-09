@@ -46,8 +46,8 @@
 <div id="content-main">
 
 <div id="resourcecontext" class="ContextMenu">
-  {% if perms.input.change_resource %}<a id="/admin/input/resource/%s">Resource</a>{% endif %}
-  <a id="/path/resource/%s">Where used</a>
+{% if perms.input.change_resource %}<a id="/admin/input/resource/%s">Resource</a>{% endif %}
+<a id="/whereused/resource/%s">Where used</a>
 </div>
 
 <div id="locationcontext" class="ContextMenu">
@@ -55,9 +55,8 @@
 </div>
 
 <div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr><form>
+<table><thead><tr>
 {% rowheader %}
-<th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form>
 {% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
 
 <tbody>

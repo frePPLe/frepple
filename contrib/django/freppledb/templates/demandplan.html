@@ -18,14 +18,13 @@
 </div>
 
 <div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr><form>
-{% rowheader %}
-<th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form>
+<table>
+<thead><tr>{% rowheader %}</tr></thead>
 
 <tbody>{% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
 <td>{{i.demand|superlink:"demand"}}</td>
-<td>{{i.item_id}}</td>
+<!--<td>{{i.item_id}}</td>-->
 <td>{{i.quantity}}</td>
 <td>{{i.planquantity}}</td>
 <td>{{i.duedatetime}}</td>
@@ -39,7 +38,7 @@
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} demand delivery plans {% ifnotequal hits fullhits %} (total <a class="showall" href="/loadplan/">{{fullhits}}</a>){% endifnotequal %}
+&nbsp;&nbsp;{{hits}} demand delivery plans {% ifnotequal hits fullhits %} (total <a class="showall" href="/demandplan/">{{fullhits}}</a>){% endifnotequal %}
 </p>{% endblock %}
 
 </div>

@@ -16,14 +16,14 @@
 
 <div id="buffercontext" class="ContextMenu">
 {% if perms.input.change_buffer %}<a id="/admin/input/buffer/%s">Buffer</a>{% endif %}
-  <a id="/path/buffer/%s">Supply Path</a>
-  <a id="/buffer/%s">Plan</a>
+<a id="/supplypath/buffer/%s">Supply Path</a>
+<a id="/whereused/buffer/%s">Where Used</a>
+<a id="/buffer/%s">Plan</a>
 </div>
 
 <div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr><form>
-{% rowheader %}
-<th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form>
+<table>
+<thead><tr>{% rowheader %}</tr></thead>
 
 <tbody>{% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">

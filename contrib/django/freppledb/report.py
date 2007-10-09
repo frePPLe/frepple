@@ -465,36 +465,48 @@ class ReportRowHeader(Node):
     req = resolve_variable('request',context)
     sort = resolve_variable('sort',context)
     cls = resolve_variable('class',context)
-    result = []
+    result = ['<form>']
     number = 0
+    args = req.GET.copy()
+    args2 = req.GET.copy()
+
+    # A header cell for each row
     for row in cls.rows:
       number = number + 1
-      x = req.GET.copy()
       if int(sort[0]) == number:
         if sort[1] == 'a':
           # Currently sorting in ascending order on this column
-          x['o'] = '%dd' % number
+          args['o'] = '%dd' % number
           y = 'class="sorted ascending"'
         else:
           # Currently sorting in descending order on this column
-          x['o'] = '%da' % number
+          args['o'] = '%da' % number
           y = 'class="sorted descending"'
       else:
         # Sorted on another column
-        x['o'] = '%da' % number
+        args['o'] = '%da' % number
         y = ''
       title = (row[1].has_key('title') and row[1]['title']) or row[0]
       if 'filter' in cls.rows[number-1][1]:
         result.append( '<th %s><a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
-          % (y, req.path, escape(x.urlencode()),
+          % (y, req.path, escape(args.urlencode()),
              title[0].upper(), title[1:],
              (row[1].has_key('filter_size') and row[1]['filter_size']) or 10,
-             x.get(cls.rows[number-1][1]['filter'],''),
+             args.get(cls.rows[number-1][1]['filter'],''),
              cls.rows[number-1][1]['filter'], number+1000,
              ) )
+        if cls.rows[number-1][1]['filter'] in args2: del args2[cls.rows[number-1][1]['filter']]
       else:
         result.append( '<th %s style="vertical-align:top"><a href="%s?%s">%s%s</a></th>' \
-          % (y, req.path, escape(x.urlencode()),
+          % (y, req.path, escape(args.urlencode()),
              title[0].upper(), title[1:],
             ) )
+        if row[0] in args2: del args2[row[0]]
+
+    # Extra hidden fields for query parameters that aren't rows
+    for key in args2:
+      result.append( '<th><input type="hidden" name="%s" value="%s"/>' % (key, args[key]))
+
+    # 'Go' button
+    result.append( '<th><input type="submit" value="Go" tabindex="1100"/></th></form>' )
     return '\n'.join(result)

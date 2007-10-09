@@ -9,9 +9,8 @@
 <div id="content-main">
 
 <div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr><form>
-{% rowheader %}
-<th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form>
+<table>
+<thead><tr>{% rowheader %}</tr></thead>
 
 <tbody>{% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">

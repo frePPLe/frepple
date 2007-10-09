@@ -18,12 +18,15 @@
 
 <div id="buffercontext" class="ContextMenu">
 {% if perms.input.change_buffer %}<a id="/admin/input/buffer/%s">Buffer</a>{% endif %}
-  <a id="/path/buffer/%s">Supply Path</a>
+<a id="/supplypath/buffer/%s">Supply Path</a>
+<a id="/whereused/buffer/%s">Where Used</a>
 </div>
 
 <div id="itemcontext" class="ContextMenu">
 {% if perms.input.change_item %}<a id="/admin/input/item/%s">Item</a>{% endif %}
-  <a id="/path/item/%s">Supply Path</a>
+<a id="/supplypath/item/%s">Supply Path</a>
+<a id="/whereused/item/%s">Where Used</a>
+<a id="/demand/%s">Demand</a>
 </div>
 
 <div id="Locationcontext" class="ContextMenu">
@@ -31,9 +34,8 @@
 </div>
 
 <div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr><form>
+<table><thead><tr>
 {% rowheader %}
-<th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form>
 {% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
 
 <tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}

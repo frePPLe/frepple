@@ -17,20 +17,20 @@
 
 <div id="buffercontext" class="ContextMenu">
 {% if perms.input.change_buffer %}<a id="/admin/input/buffer/%s">Buffer</a>{% endif %}
-  <a id="/path/buffer/%s">Supply Path</a>
-  <a id="/buffer/%s">Plan</a>
+<a id="/supplypath/buffer/%s">Supply Path</a>
+<a id="/whereused/buffer/%s">Where Used</a>
+<a id="/buffer/%s">Plan</a>
 </div>
 
 <div id="operationcontext" class="ContextMenu">
-	{% if perms.input.change_operation %}<a id="/admin/input/operation/%s">Operation</a>{% endif %}
-  <a id="/path/operation/%s">Supply Path</a>
-	<a id="/operation/%s">Plan</a>
+{% if perms.input.change_operation %}<a id="/admin/input/operation/%s">Operation</a>{% endif %}
+<a id="/supplypath/operation/%s">Supply Path</a>
+<a id="/operation/%s">Plan</a>
 </div>
 
 <div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr><form>
-{% rowheader %}
-<th><input type="hidden" name="o" value="{{sort}}"/><input type="submit" value="Go" tabindex="1100"/></th></form></tr></thead>
+<table>
+<thead><tr>{% rowheader %}</tr></thead>
 
 <tbody>{% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
@@ -50,7 +50,7 @@
 {% if is_paginated %}
 {% for x in page_htmls %} {{x}} {% endfor %}
 {% endif %}
-&nbsp;&nbsp;{{hits}} material flowplans {% ifnotequal hits fullhits %} (total <a class="showall" href="/buffer/">{{fullhits}}</a>){% endifnotequal %}
+&nbsp;&nbsp;{{hits}} material flowplans {% ifnotequal hits fullhits %} (total <a class="showall" href="/flowplan/">{{fullhits}}</a>){% endifnotequal %}
 {% endblock %}</p></div>
 
 {% endblock %}

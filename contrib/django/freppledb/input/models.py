@@ -368,7 +368,7 @@ class SubOperation(models.Model):
     #  min_num_in_admin=3, num_extra_on_change=1, related_name='alfa')
     operation = models.ForeignKey(Operation, raw_id_admin=True, related_name='suboperations')
     priority = models.DecimalField(max_digits=5, decimal_places=4, default=1)
-    suboperation = models.ForeignKey(Operation, raw_id_admin=True, related_name='beta', core=True)
+    suboperation = models.ForeignKey(Operation, raw_id_admin=True, related_name='superoperations', core=True)
     lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
 
     def __str__(self):

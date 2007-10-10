@@ -546,36 +546,43 @@ class pathreport:
 
           if not ok and cons_flow:
             # No producing flow found: there are no more buffers downstream
-            root.append( (level+1, None, None, curoperation, cons_flow, curqty * (cons_flow and cons_flow.quantity * -1 or 1)) )
+            root.append( (level+1, None, None, curoperation, cons_flow, curqty * cons_flow.quantity * -1) )
 
       else:
         # Find all operations producing into this buffer...
-        if curbuffer: start = curbuffer.producing
-        else: start = curoperation
-        if not start: continue
-        for prod_flow in start.flows.filter(quantity__gt=0).select_related(depth=1):
+        if curbuffer:
+          if curbuffer.producing:
+            start = [ (i, i.operation) for i in curbuffer.producing.flows.filter(quantity__gt=0).select_related(depth=1) ]
+          else:
+            start = []
+        else:
+          start = [ (None, curoperation) ]
+        for prod_flow, curoperation in start:
+          if not prod_flow and not curoperation: continue
           # ... and pick up the buffer they produce into
           ok = False
+
           # Push the next buffer on the stack, based on current operation
-          for cons_flow in prod_flow.operation.flows.filter(quantity__lt=0).select_related(depth=1):
+          for cons_flow in curoperation.flows.filter(quantity__lt=0).select_related(depth=1):
             ok = True
-            root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / prod_flow.quantity * cons_flow.quantity * -1) )
+            root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
 
           # Push the next buffer on the stack, based on super-operations
-          for x in prod_flow.operation.superoperations.select_related(depth=1):
+          for x in curoperation.superoperations.select_related(depth=1):
             for cons_flow in x.suboperation.flows.filter(quantity__lt=0):
               ok = True
-              root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / prod_flow.quantity * cons_flow.quantity * -1) )
+              root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
 
           # Push the next buffer on the stack, based on sub-operations
-          for x in prod_flow.operation.suboperations.select_related(depth=1):
+          for x in curoperation.suboperations.select_related(depth=1):
             for cons_flow in x.operation.flows.filter(quantity__lt=0):
               ok = True
-              root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / prod_flow.quantity * cons_flow.quantity * -1) )
+              root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
 
-          if not ok and prod_flow.operation != curoperation:
+          if not ok and prod_flow:
             # No consuming flow found: there are no more buffers upstream
-            root.append( (level-1, None, prod_flow, prod_flow.operation, None, curqty * prod_flow.quantity) )
+            ok = True
+            root.append( (level-1, None, prod_flow, prod_flow.operation, None, curqty / prod_flow.quantity) )
 
 
   @staticmethod
@@ -613,7 +620,7 @@ class PeggingReport(ListReport):
   rows = (
     ('demand', {'filter': 'demand__icontains', 'filter_size': 15}),
     ('buffer', {'filter': 'buffer__icontains',}),
-    ('depth', {'order_by': 'depth'}),
+    ('depth', {'filter': 'depth', 'filter_size': 2}),
     ('cons_date', {}),
     ('prod_date', {}),
     ('cons_operationplan', {}),

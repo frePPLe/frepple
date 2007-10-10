@@ -62,9 +62,9 @@
 
 <tbody>{% for i in supplypath %}
 <tr>
-<td>{{i.level}}</td>
-<td>{% ifchanged i.operation %}{{i.operation|superlink:"operation"}}{% endifchanged %}</td>
-<td>{% ifchanged i.operation %}{% if i.operation %}{% for j in i.operation.loads.all %}{{j.resource|superlink:"resource"}} {% endfor %}{% endif %}{% endifchanged %}</td>
+<td>{% ifchanged i.level i.operation %}{{i.level}}{% endifchanged %}</td>
+<td>{% ifchanged i.level i.operation %}{{i.operation|superlink:"operation"}}{% endifchanged %}</td>
+<td>{% ifchanged i.level i.operation %}{% if i.operation %}{% for j in i.operation.loads.all %}{{j.resource|superlink:"resource"}} {% endfor %}{% endif %}{% endifchanged %}</td>
 <td>{{i.buffer|superlink:"buffer"}}</td>
 <td>{{i.buffer.location|superlink:"location"}}</td>
 <td>{{i.buffer.item|superlink:"item"}}</td>

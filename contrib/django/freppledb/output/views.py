@@ -629,16 +629,21 @@ class FlowPlanReport(ListReport):
   A list report to show flowplans.
   '''
   template = 'flowplan.html'
-  title = "Material flow report"
+  title = "Inventory detail report"
   reset_crumbs = False
-  basequeryset = FlowPlan.objects.all()
+  basequeryset = FlowPlan.objects.extra(
+    select={'operation':'out_operationplan.operation'},
+    where=['out_operationplan.identifier = out_flowplan.operationplan'],
+    tables=['out_operationplan'])
   rows = (
     ('thebuffer', {'filter': 'thebuffer__icontains', 'title': 'buffer'}),
-    ('operation', {'filter': 'operation__icontains'}),
-    ('operationplan', {'filter': 'operationplan__icontains'}),
+    # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the operation field.
+    # ('operation', {'filter': 'operation__icontains'}),
+    ('operation', {'sort': False}),
     ('quantity', {}),
     ('flowdatetime', {'title': 'date'}),
     ('onhand', {}),
+    ('operationplan', {'filter': 'operationplan__icontains'}),
     )
 
 
@@ -688,15 +693,15 @@ class DemandPlanReport(ListReport):
   template = 'demandplan.html'
   title = "Demand plan detail"
   reset_crumbs = False
-  # Eagerly awaiting the Django queryset refactoring to be able to add the item field.
-  #basequeryset = Demand.objects.extra(
-  #  select={'item_id':'demand.item_id'},
-  #  where=['demand.name = out_demand.demand'],
-  #  tables=['demand'])
-  basequeryset = Demand.objects.all()
+  basequeryset = Demand.objects.extra(
+    select={'item':'demand.item_id'},
+    where=['demand.name = out_demand.demand'],
+    tables=['demand'])
   rows = (
     ('demand', {'filter': 'demand__icontains', 'title': 'Demand'}),
-    #('item_id', {'title': 'item'}),
+    # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the item field.
+    # ('item_id', {'filter': 'item__icontains'}),
+    ('item', {'sort': False}),
     ('quantity', {}),
     ('planquantity', {'title': 'Planned Quantity'}),
     ('duedatetime', {'title': 'Due Date'}),
@@ -712,11 +717,17 @@ class LoadPlanReport(ListReport):
   template = 'loadplan.html'
   title = "Resource load detail"
   reset_crumbs = False
-  basequeryset = LoadPlan.objects.all()
+  basequeryset = LoadPlan.objects.extra(
+    select={'operation':'out_operationplan.operation'},
+    where=['out_operationplan.identifier = out_loadplan.operationplan'],
+    tables=['out_operationplan'])
   rows = (
-    ('operationplan', {'filter': 'operationplan__icontains',}),
     ('resource', {'filter': 'resource__icontains',}),
+    # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the operation field.
+    #('operation', {'filter': 'operation__icontains'}),
+    ('operation', {'sort': False}),
     ('startdatetime', {'title': 'start'}),
     ('enddatetime', {'title': 'end'}),
     ('quantity', {}),
+    ('operationplan', {'filter': 'operationplan__icontains',}),
     )

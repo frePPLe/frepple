@@ -152,6 +152,9 @@ class ListReport(Report):
   #   - title:
   #     Name of the row that is displayed to the user.
   #     It defaults to the name of the field.
+  #   - sort:
+  #     Whether or not this column can be used for sorting or not.
+  #     The default is true.
   rows = ()
 
 
@@ -169,6 +172,9 @@ class TableReport(Report):
   #   - title:
   #     Name of the row that is displayed to the user.
   #     It defaults to the name of the field.
+  #   - sort:
+  #     Whether or not this column can be used for sorting or not.
+  #     The default is true.
   rows = ()
 
   # Cross definitions.
@@ -473,35 +479,41 @@ class ReportRowHeader(Node):
     # A header cell for each row
     for row in cls.rows:
       number = number + 1
-      if int(sort[0]) == number:
-        if sort[1] == 'a':
-          # Currently sorting in ascending order on this column
-          args['o'] = '%dd' % number
-          y = 'class="sorted ascending"'
-        else:
-          # Currently sorting in descending order on this column
-          args['o'] = '%da' % number
-          y = 'class="sorted descending"'
-      else:
-        # Sorted on another column
-        args['o'] = '%da' % number
-        y = ''
       title = (row[1].has_key('title') and row[1]['title']) or row[0]
-      if 'filter' in cls.rows[number-1][1]:
-        result.append( '<th %s><a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
-          % (y, req.path, escape(args.urlencode()),
-             title[0].upper(), title[1:],
-             (row[1].has_key('filter_size') and row[1]['filter_size']) or 10,
-             args.get(cls.rows[number-1][1]['filter'],''),
-             cls.rows[number-1][1]['filter'], number+1000,
-             ) )
-        if cls.rows[number-1][1]['filter'] in args2: del args2[cls.rows[number-1][1]['filter']]
+      if not row[1].has_key('sort') or row[1]['sort']:
+        # Sorting is allowed
+        if int(sort[0]) == number:
+          if sort[1] == 'a':
+            # Currently sorting in ascending order on this column
+            args['o'] = '%dd' % number
+            y = 'class="sorted ascending"'
+          else:
+            # Currently sorting in descending order on this column
+            args['o'] = '%da' % number
+            y = 'class="sorted descending"'
+        else:
+          # Sorted on another column
+          args['o'] = '%da' % number
+          y = ''
+        if 'filter' in cls.rows[number-1][1]:
+          result.append( '<th %s><a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
+            % (y, req.path, escape(args.urlencode()),
+               title[0].upper(), title[1:],
+               (row[1].has_key('filter_size') and row[1]['filter_size']) or 10,
+               args.get(cls.rows[number-1][1]['filter'],''),
+               cls.rows[number-1][1]['filter'], number+1000,
+               ) )
+          if cls.rows[number-1][1]['filter'] in args2: del args2[cls.rows[number-1][1]['filter']]
+        else:
+          result.append( '<th %s style="vertical-align:top"><a href="%s?%s">%s%s</a></th>' \
+            % (y, req.path, escape(args.urlencode()),
+               title[0].upper(), title[1:],
+              ) )
+          if row[0] in args2: del args2[row[0]]
       else:
-        result.append( '<th %s style="vertical-align:top"><a href="%s?%s">%s%s</a></th>' \
-          % (y, req.path, escape(args.urlencode()),
-             title[0].upper(), title[1:],
-            ) )
-        if row[0] in args2: del args2[row[0]]
+        # No sorting is allowed on this field
+          result.append( '<th style="vertical-align:top">%s%s</th>' \
+            % (title[0].upper(), title[1:]) )
 
     # Extra hidden fields for query parameters that aren't rows
     for key in args2:

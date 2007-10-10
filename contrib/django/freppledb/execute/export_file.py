@@ -57,8 +57,8 @@ def exportFlowplans():
   for i in frepple.buffer():
     for j in i['FLOWPLANS']:
       writer.writerow(
-       (j['OPERATIONPLAN'], j['OPERATION'].encode("utf-8"), j['BUFFER'].encode("utf-8"),
-        j['QUANTITY'], j['DATE'], j['ONHAND'])
+       (j['OPERATIONPLAN'], j['BUFFER'].encode("utf-8"), j['QUANTITY'],
+        j['DATE'], j['ONHAND'])
        )
   print 'Exported flowplans in %.2f seconds' % (time() - starttime)
 

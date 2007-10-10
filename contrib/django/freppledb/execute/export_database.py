@@ -108,13 +108,12 @@ def exportFlowplans(cursor):
   for i in frepple.buffer():
     cursor.executemany(
       "insert into out_flowplan \
-      (operationplan, operation, thebuffer, quantity, flowdate, \
-       flowdatetime, onhand) \
-      values (%s,%s,%s,%s,%s,%s,%s)",
+      (operationplan, thebuffer, quantity, flowdate, flowdatetime, onhand) \
+      values (%s,%s,%s,%s,%s,%s)",
       [(
-         j['OPERATIONPLAN'], j['OPERATION'], j['BUFFER'],
-         round(j['QUANTITY'],ROUNDING_DECIMALS), str(j['DATE'].date()), str(j['DATE']),
-         round(j['ONHAND'],ROUNDING_DECIMALS)
+         j['OPERATIONPLAN'], j['BUFFER'],
+         round(j['QUANTITY'],ROUNDING_DECIMALS), str(j['DATE'].date()),
+         str(j['DATE']), round(j['ONHAND'],ROUNDING_DECIMALS)
        ) for j in i['FLOWPLANS']
       ])
     cnt += 1

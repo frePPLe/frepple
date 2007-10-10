@@ -85,7 +85,6 @@ class LoadPlan(models.Model):
 class FlowPlan(models.Model):
     # Database fields
     thebuffer = models.CharField(maxlength=60, db_index=True)
-    operation = models.CharField(maxlength=60, db_index=True)
     operationplan = models.IntegerField(db_index=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4)
     flowdatetime = models.DateTimeField('datetime')

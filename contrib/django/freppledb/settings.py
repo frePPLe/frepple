@@ -136,7 +136,15 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     #'django.core.context_processors.i18n',
 )
 
-# Disable internationalization
+# Internationalization is switched off by default.
+# FrePPLe hasn't translated any of the custom reports yet...
+# To enable internationalization, you will need to do the following:
+#  - switch this setting to True
+#  - enable the i18n middleware
+#  - If you want to apply the same language for all users:
+#    sSet the variable LANGUAGE_CODE to the language you want
+#  - Alternatively, if you prefer the user's browser settings to choose the
+#    language, you also need to enable the locale middleware.
 USE_I18N = False
 
 # Sessions
@@ -166,7 +174,7 @@ AUTH_PROFILE_MODULE = 'user.Preferences'
 
 # IP address of the machine you are browsing from. When logging in from this
 # machine additional debugging statements can be shown.
-INTERNAL_IPS = ( '192.168.0.3' )
+INTERNAL_IPS = ( '127.0.0.1' )
 
 # Allow overriding the settings
 # This is useful for the py2exe distribution: this settings file will be

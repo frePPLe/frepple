@@ -519,7 +519,7 @@ class pathreport:
       if downstream:
         # Find all operations consuming from this buffer...
         if curbuffer:
-          start = [ (i, i.operation) for i in curbuffer.flows.filter(quantity__lt=0) ]
+          start = [ (i, i.operation) for i in curbuffer.flows.filter(quantity__lt=0).select_related(depth=1) ]
         else:
           start = [ (None, curoperation) ]
         for cons_flow, curoperation in start:
@@ -528,18 +528,18 @@ class pathreport:
           ok = False
 
           # Push the next buffer on the stack, based on current operation
-          for prod_flow in curoperation.flows.filter(quantity__gt=0):
+          for prod_flow in curoperation.flows.filter(quantity__gt=0).select_related(depth=1):
             ok = True
             root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
 
           # Push the next buffer on the stack, based on super-operations
-          for x in curoperation.superoperations.all():
+          for x in curoperation.superoperations.select_related(depth=1):
             for prod_flow in x.suboperation.flows.filter(quantity__gt=0):
               ok = True
               root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
 
           # Push the next buffer on the stack, based on sub-operations
-          for x in curoperation.suboperations.all():
+          for x in curoperation.suboperations.select_related(depth=1):
             for prod_flow in x.operation.flows.filter(quantity__gt=0):
               ok = True
               root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
@@ -553,22 +553,22 @@ class pathreport:
         if curbuffer: start = curbuffer.producing
         else: start = curoperation
         if not start: continue
-        for prod_flow in start.flows.filter(quantity__gt=0):
+        for prod_flow in start.flows.filter(quantity__gt=0).select_related(depth=1):
           # ... and pick up the buffer they produce into
           ok = False
           # Push the next buffer on the stack, based on current operation
-          for cons_flow in prod_flow.operation.flows.filter(quantity__lt=0):
+          for cons_flow in prod_flow.operation.flows.filter(quantity__lt=0).select_related(depth=1):
             ok = True
             root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / prod_flow.quantity * cons_flow.quantity * -1) )
 
           # Push the next buffer on the stack, based on super-operations
-          for x in prod_flow.operation.superoperations.all():
+          for x in prod_flow.operation.superoperations.select_related(depth=1):
             for cons_flow in x.suboperation.flows.filter(quantity__lt=0):
               ok = True
               root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / prod_flow.quantity * cons_flow.quantity * -1) )
 
           # Push the next buffer on the stack, based on sub-operations
-          for x in prod_flow.operation.suboperations.all():
+          for x in prod_flow.operation.suboperations.select_related(depth=1):
             for cons_flow in x.operation.flows.filter(quantity__lt=0):
               ok = True
               root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / prod_flow.quantity * cons_flow.quantity * -1) )

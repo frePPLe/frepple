@@ -68,10 +68,17 @@ DATABASE_PORT = ''                    # Set to empty string for default. Not use
 # http://www.postgresql.org/docs/current/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
 TIME_ZONE = 'Europe/Brussels'
 
+# Internationalization is switched on by default.
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 # http://blogs.law.harvard.edu/tech/stories/storyReader$15
+ugettext = lambda s: s
+USE_I18N = True
 LANGUAGE_CODE = 'en-us'
+LANGUAGES = (
+  ('nl', ugettext('Dutch')),
+  ('en', ugettext('English')),
+)
 
 SITE_ID = 1
 
@@ -101,6 +108,7 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
 )
 
@@ -133,19 +141,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # that are executed. Handy for debugging, but a memory killer when
     # huge numbers of queries are executed...
     #'django.core.context_processors.debug',
-    #'django.core.context_processors.i18n',
+    'django.core.context_processors.i18n',
 )
-
-# Internationalization is switched off by default.
-# FrePPLe hasn't translated any of the custom reports yet...
-# To enable internationalization, you will need to do the following:
-#  - switch this setting to True
-#  - enable the i18n middleware
-#  - If you want to apply the same language for all users:
-#    sSet the variable LANGUAGE_CODE to the language you want
-#  - Alternatively, if you prefer the user's browser settings to choose the
-#    language, you also need to enable the locale middleware.
-USE_I18N = False
 
 # Sessions
 SESSION_COOKIE_NAME = 'sessionid'         # Cookie name. This can be whatever you want.

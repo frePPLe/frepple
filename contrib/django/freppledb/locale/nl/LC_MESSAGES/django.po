@@ -1,0 +1,231 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-10-11 10:25+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: report.py:461
+msgid "for"
+msgstr ""
+
+#: settings.py:79
+msgid "Dutch"
+msgstr ""
+
+#: settings.py:80
+msgid "English"
+msgstr ""
+
+#: input/templatetags/breadcrumbs.py:116 input/templatetags/breadcrumbs.py:120
+#: input/templatetags/breadcrumbs.py:127 templates/admin/base.html:25
+#: templates/registration/password_change_done.html:10
+#: templates/registration/password_change_form.html:10
+msgid "Home"
+msgstr ""
+
+#: templates/404.html:4 templates/404.html.py:8
+msgid "Page not found"
+msgstr ""
+
+#: templates/404.html:10
+msgid "We're sorry, but the requested page could not be found."
+msgstr ""
+
+#: templates/500.html:4
+msgid "Server error"
+msgstr ""
+
+#: templates/500.html:7
+msgid "Server Error <em>(500)</em>"
+msgstr ""
+
+#: templates/500.html:8
+msgid ""
+"There's been an error. It's been reported to the site administrators via e-"
+"mail and should be fixed shortly. Thanks for your patience."
+msgstr ""
+
+#: templates/admin/base.html:20
+msgid "Welcome,"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:11
+msgid "Input"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:17
+msgid "Reports"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:23
+msgid "Tools"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:29
+msgid "User"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:42
+msgid "Problems"
+msgstr "Problemen"
+
+#: templates/admin/base_site_nav.html:43
+msgid "Inventory Report"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:44
+msgid "Resource Report"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:45
+msgid "Demand Report"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:46
+msgid "Forecast Report"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:47
+msgid "Operation Report"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:54
+msgid "Execute"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:55
+msgid "Log"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:62
+msgid "Logout"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:63
+msgid "Preferences"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:64
+msgid "Change Password"
+msgstr ""
+
+#: templates/admin/base_site_nav.html:66
+msgid "Login"
+msgstr ""
+
+#: templates/admin/change_form.html:14
+msgid "History"
+msgstr ""
+
+#: templates/admin/change_form.html:15
+msgid "View on site"
+msgstr ""
+
+#: templates/admin/change_form.html:25
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/admin/change_form.html:43
+msgid "Ordering"
+msgstr ""
+
+#: templates/admin/change_form.html:46
+msgid "Order:"
+msgstr ""
+
+#: templates/admin/change_list.html:10
+#, python-format
+msgid "Add %(name)s"
+msgstr ""
+
+#: templates/admin/index.html:16
+#, python-format
+msgid "Models available in the %(name)s application."
+msgstr ""
+
+#: templates/admin/index.html:17
+#, python-format
+msgid "%(name)s"
+msgstr ""
+
+#: templates/admin/index.html:27
+msgid "Add"
+msgstr ""
+
+#: templates/admin/index.html:39
+msgid "You don't have permission to edit anything."
+msgstr ""
+
+#: templates/admin/index.html:99
+msgid "Recent Actions"
+msgstr ""
+
+#: templates/admin/index.html:100
+msgid "My Actions"
+msgstr ""
+
+#: templates/admin/index.html:104
+msgid "None available"
+msgstr ""
+
+#: templates/registration/password_change_done.html:9
+#: templates/registration/password_change_form.html:9
+msgid "Change password"
+msgstr ""
+
+#: templates/registration/password_change_done.html:9
+#: templates/registration/password_change_form.html:9
+msgid "Log out"
+msgstr ""
+
+#: templates/registration/password_change_done.html:10
+#: templates/registration/password_change_form.html:10
+#: templates/registration/password_change_form.html:12
+#: templates/registration/password_change_form.html:16
+msgid "Password change"
+msgstr ""
+
+#: templates/registration/password_change_done.html:12
+#: templates/registration/password_change_done.html:16
+msgid "Password change successful"
+msgstr ""
+
+#: templates/registration/password_change_done.html:18
+msgid "Your password was changed."
+msgstr ""
+
+#: templates/registration/password_change_form.html:18
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+
+#: templates/registration/password_change_form.html:23
+msgid "Old password:"
+msgstr ""
+
+#: templates/registration/password_change_form.html:25
+msgid "New password:"
+msgstr ""
+
+#: templates/registration/password_change_form.html:27
+msgid "Confirm password:"
+msgstr ""
+
+#: templates/registration/password_change_form.html:29
+msgid "Change my password"
+msgstr ""

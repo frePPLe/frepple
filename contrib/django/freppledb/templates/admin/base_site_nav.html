@@ -8,25 +8,25 @@
     href=""
     onclick="return buttonClick(event, 'inputMenu');"
     onmouseover="buttonMouseover(event, 'inputMenu');"
->{% trans "Input" %}</a>
+>{% trans 'Input' %}</a>
 {% endif %}
 <a class="menuButton"
     href=""
     onclick="return buttonClick(event, 'outputMenu');"
     onmouseover="buttonMouseover(event, 'outputMenu');"
->{% trans "Reports" %}</a>
+>{% trans 'Reports' %}</a>
 {% if perms.execute %}
 <a class="menuButton"
     href=""
     onclick="return buttonClick(event, 'toolsMenu');"
     onmouseover="buttonMouseover(event, 'toolsMenu');"
->{% trans "Tools" %}</a>
+>{% trans 'Tools' %}</a>
 {% endif %}
 <a class="menuButton"
     href=""
     onclick="return buttonClick(event, 'userMenu');"
     onmouseover="buttonMouseover(event, 'userMenu');"
->{% trans "User" %}</a>
+>{% trans 'User' %}</a>
 </div>
 
 <!-- input menu -->
@@ -51,19 +51,19 @@
 {% if perms.execute %}
 <div id="toolsMenu" class="menu"
      onmouseover="menuMouseover(event)">
-<a class="menuItem" href="/execute/">{% trans "Execute" %}</a>
-<a class="menuItem" href="/admin/execute/log/">{% trans "Log" %}</a>
+<a class="menuItem" href="/execute/">{% trans 'Execute' %}</a>
+<a class="menuItem" href="/admin/execute/log/">{% trans 'Log' %}</a>
 </div>
 {% endif %}
 
 <!-- user menu -->
 <div id="userMenu" class="menu">
 {% if request.user.is_authenticated %}
-<a class="menuItem" href="/admin/logout">{% trans "Logout" %}</a>
-<a class="menuItem" href="/preferences">{% trans "Preferences" %}</a>
-<a class="menuItem" href="/admin/password_change">{% trans "Change Password" %}</a>
+<a class="menuItem" href="/admin/logout">{% trans 'Logout' %}</a>
+<a class="menuItem" href="/preferences">{% trans 'Preferences' %}</a>
+<a class="menuItem" href="/admin/password_change">{% trans 'Change Password' %}</a>
 {% else %}
-<a class="menuItem" href="/admin/auth/user/">{% trans "Login" %}</a>
+<a class="menuItem" href="/admin/auth/user/">{% trans 'Login' %}</a>
 {% endif %}
 </div>
 

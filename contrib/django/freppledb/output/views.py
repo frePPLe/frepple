@@ -42,7 +42,7 @@ class BufferReport(TableReport):
   A report showing the inventory profile of buffers.
   '''
   template = 'buffer.html'
-  title = "Inventory report"
+  title = 'Inventory report'
   basequeryset = Buffer.objects.all()
   rows = (
     ('buffer', {'filter': 'name__icontains', 'order_by': 'name'}),

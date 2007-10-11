@@ -33,6 +33,7 @@ from django.http import Http404, HttpResponse
 from django.conf import settings
 from django.template import Library, Node, resolve_variable
 from django.utils.encoding import smart_str
+from django.utils.translation import ugettext as _
 
 from freppledb.input.models import Plan
 from freppledb.dbutils import python_date
@@ -261,7 +262,10 @@ def view_report(request, entity=None, **args):
   except: raise Http404('Missing report parameter in url context')
 
   # Pick up the list of time buckets
-  (bucket,start,end,bucketlist) = getBuckets(request)
+  if issubclass(reportclass, TableReport):
+    (bucket,start,end,bucketlist) = getBuckets(request)
+  else:
+    bucket = start = end = bucketlist = None
   type = request.GET.get('type','html')  # HTML or CSV output
 
   # Pick up the filter parameters from the url
@@ -454,7 +458,7 @@ def view_report(request, entity=None, **args):
        # Never reset the breadcrumbs if an argument entity was passed.
        # Otherwise depend on the value in the report class.
        'reset_crumbs': reportclass.reset_crumbs and entity == None,
-       'title': (entity and '%s for %s' % (reportclass.title,entity)) or reportclass.title,
+       'title': (entity and '%s %s %s' % (_(reportclass.title),_('for'),entity)) or _(reportclass.title),
        'sort': sortparam,
        'class': reportclass,
      }
@@ -479,7 +483,7 @@ class ReportRowHeader(Node):
     # A header cell for each row
     for row in cls.rows:
       number = number + 1
-      title = (row[1].has_key('title') and row[1]['title']) or row[0]
+      title = _((row[1].has_key('title') and row[1]['title']) or row[0])
       if not row[1].has_key('sort') or row[1]['sort']:
         # Sorting is allowed
         if int(sort[0]) == number:

@@ -9,10 +9,10 @@ Customer	56
 Buffer	112
 Demand	108
 Resource	100
-Operation	108
-OperationFixedTime	112
-OperationRouting	116
-OperationTimePer	116
+Operation	112
+OperationFixedTime	116
+OperationRouting	120
+OperationTimePer	120
 Load	32
 Flow	32
 OperationPlan	72

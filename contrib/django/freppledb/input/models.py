@@ -27,6 +27,7 @@ from django.http import HttpRequest
 from django.dispatch import dispatcher
 from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import ugettext_lazy as _
 
 from datetime import date, datetime
 from decimal import Decimal
@@ -42,10 +43,10 @@ CALENDARID = None
 
 class Plan(models.Model):
     # Database fields
-    name = models.CharField(maxlength=60, null=True, blank=True)
-    description = models.CharField(maxlength=60, null=True, blank=True)
-    currentdate = models.DateTimeField('current date')
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+    name = models.CharField(_('name'), maxlength=60, null=True, blank=True)
+    description = models.CharField(_('description'), maxlength=60, null=True, blank=True)
+    currentdate = models.DateTimeField(_('current date'))
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __str__(self): return self.name
 
@@ -54,37 +55,38 @@ class Plan(models.Model):
         list_per_page = LIST_PER_PAGE
 
     class Meta:
-        verbose_name_plural = 'Plan'  # There will only be 1 plan...
         db_table = 'plan'
+        verbose_name = _('plan')
+        verbose_name_plural = _('plan') # There will only be 1 plan...
 
 
 class Dates(models.Model):
     # Database fields
     # Daily buckets
-    day = models.DateField('day', primary_key=True)
-    day_start = models.DateField(db_index=True)
-    day_end = models.DateField(db_index=True)
-    dayofweek = models.SmallIntegerField('Day of week', help_text='0 = sunday, 1 = monday, ...')
+    day = models.DateField(_('day'), primary_key=True)
+    day_start = models.DateField(_('day start'),db_index=True)
+    day_end = models.DateField(_('day end'),db_index=True)
+    dayofweek = models.SmallIntegerField(_('Day of week'), help_text=_('0 = sunday, 1 = monday, ...'))
     # Weekly buckets
-    week = models.CharField(maxlength=10, db_index=True)
-    week_start = models.DateField(db_index=True)
-    week_end = models.DateField(db_index=True)
+    week = models.CharField(_('week'),maxlength=10, db_index=True)
+    week_start = models.DateField(_('week start'),db_index=True)
+    week_end = models.DateField(_('week end'),db_index=True)
     # Monthly buckets
-    month = models.CharField(maxlength=10, db_index=True)
-    month_start = models.DateField(db_index=True)
-    month_end = models.DateField(db_index=True)
+    month = models.CharField(_('month'),maxlength=10, db_index=True)
+    month_start = models.DateField(_('month start'),db_index=True)
+    month_end = models.DateField(_('month end'),db_index=True)
     # Quarterly buckets
-    quarter = models.CharField(maxlength=10, db_index=True)
-    quarter_start = models.DateField(db_index=True)
-    quarter_end = models.DateField(db_index=True)
+    quarter = models.CharField(_('quarter'),maxlength=10, db_index=True)
+    quarter_start = models.DateField(_('quarter start'),db_index=True)
+    quarter_end = models.DateField(_('quarter end'),db_index=True)
     # Yearly buckets
-    year = models.CharField(maxlength=10, db_index=True)
-    year_start = models.DateField(db_index=True)
-    year_end = models.DateField(db_index=True)
+    year = models.CharField(_('year'),maxlength=10, db_index=True)
+    year_start = models.DateField(_('year start'),db_index=True)
+    year_end = models.DateField(_('year end'),db_index=True)
     # Default buckets: days + weeks + months
-    default = models.CharField(maxlength=10, db_index=True, null=True)
-    default_start = models.DateField(db_index=True, null=True)
-    default_end = models.DateField(db_index=True, null=True)
+    default = models.CharField(_('default'),maxlength=10, db_index=True, null=True)
+    default_start = models.DateField(_('default start'),db_index=True, null=True)
+    default_end = models.DateField(_('default end'),db_index=True, null=True)
 
     class Admin:
         list_display = ('day', 'dayofweek', 'week', 'month', 'quarter', 'year',
@@ -103,18 +105,18 @@ class Dates(models.Model):
         list_per_page = LIST_PER_PAGE
 
     class Meta:
-        verbose_name = 'Dates'  # There will only be multiple dates...
-        verbose_name_plural = 'Dates'  # There will only be multiple dates...
-        db_table = 'dates'
+        verbose_name = _('dates')  # There will only be multiple dates...
+        verbose_name_plural = _('dates')  # There will only be multiple dates...
+        db_table = _('dates')
 
 
 class Calendar(models.Model):
     # Database fields
-    name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, null=True, blank=True)
-    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+    name = models.CharField(_('name'), maxlength=60, primary_key=True)
+    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
+    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def currentvalue(self):
         ''' Returns the value of the calendar on the current day.'''
@@ -184,6 +186,8 @@ class Calendar(models.Model):
 
     class Meta:
         db_table = 'calendar'
+        verbose_name = _('calendar')
+        verbose_name_plural = _('calendars')
 
 
 class Bucket(models.Model):
@@ -191,9 +195,9 @@ class Bucket(models.Model):
     calendar = models.ForeignKey(Calendar, edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
     startdate = models.DateTimeField('start date', core=True)
     enddate = models.DateTimeField('end date', editable=False, null=True, default=datetime(2030,12,31))
-    value = models.DecimalField(max_digits=15, decimal_places=4, default=0.00)
-    name = models.CharField(maxlength=60, null=True, blank=True)
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+    value = models.DecimalField(_('value'), max_digits=15, decimal_places=4, default=0.00)
+    name = models.CharField(_('name'), maxlength=60, null=True, blank=True)
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __str__(self):
         if self.name: return self.name
@@ -202,6 +206,8 @@ class Bucket(models.Model):
     class Meta:
         ordering = ['startdate','name']
         db_table = 'bucket'
+        verbose_name = _('calendar bucket')
+        verbose_name_plural = _('calendar buckets')
 
     @staticmethod
     def updateEndDate(instance):
@@ -234,13 +240,13 @@ dispatcher.connect(Bucket.updateEndDate, signal=signals.post_delete, sender=Buck
 
 class Location(models.Model):
     # Database fields
-    name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, null=True, blank=True)
-    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    name = models.CharField(_('name'), maxlength=60, primary_key=True)
+    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
+    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
     owner = models.ForeignKey('self', null=True, blank=True, related_name='children',
-      raw_id_admin=True, help_text='Hierarchical parent')
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+      raw_id_admin=True, help_text=_('Hierarchical parent'))
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __str__(self): return self.name
 
@@ -253,17 +259,19 @@ class Location(models.Model):
 
     class Meta:
         db_table = 'location'
+        verbose_name = _('location')
+        verbose_name_plural = _('locations')
 
 
 class Customer(models.Model):
     # Database fields
-    name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, null=True, blank=True)
-    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    name = models.CharField(_('name'), maxlength=60, primary_key=True)
+    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
+    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
     owner = models.ForeignKey('self', null=True, blank=True, related_name='children',
-      raw_id_admin=True, help_text='Hierarchical parent')
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+      raw_id_admin=True, help_text=_('Hierarchical parent'))
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __str__(self): return self.name
 
@@ -276,18 +284,20 @@ class Customer(models.Model):
 
     class Meta:
         db_table = 'customer'
+        verbose_name = _('customer')
+        verbose_name_plural = _('customers')
 
 
 class Item(models.Model):
     # Database fields
-    name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, null=True, blank=True)
-    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    name = models.CharField(_('name'), maxlength=60, primary_key=True)
+    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
+    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
     operation = models.ForeignKey('Operation', null=True, blank=True, raw_id_admin=True)
     owner = models.ForeignKey('self', null=True, blank=True, related_name='children',
-      raw_id_admin=True, help_text='Hierarchical parent')
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+      raw_id_admin=True, help_text=_('Hierarchical parent'))
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __str__(self): return self.name
 
@@ -300,6 +310,8 @@ class Item(models.Model):
 
     class Meta:
         db_table = 'item'
+        verbose_name = _('item')
+        verbose_name_plural = _('items')
 
 
 class Operation(models.Model):
@@ -313,23 +325,23 @@ class Operation(models.Model):
     )
 
     # Database fields
-    name = models.CharField(maxlength=60, primary_key=True)
-    type = models.CharField(maxlength=20, null=True, blank=True, choices=operationtypes)
+    name = models.CharField(_('name'), maxlength=60, primary_key=True)
+    type = models.CharField(_('type'), _('type'), maxlength=20, null=True, blank=True, choices=operationtypes)
     fence = models.DecimalField('release fence', max_digits=15, decimal_places=4, null=True, blank=True,
-      help_text="Operationplans within this time window from the current day are expected to be released to production ERP")
+      help_text=_("Operationplans within this time window from the current day are expected to be released to production ERP"))
     pretime = models.DecimalField('pre-op time', max_digits=15, decimal_places=4, null=True, blank=True,
-      help_text="A delay time to be respected as a soft constraint before starting the operation")
+      help_text=_("A delay time to be respected as a soft constraint before starting the operation"))
     posttime = models.DecimalField('post-op time', max_digits=15, decimal_places=4, null=True, blank=True,
-      help_text="A delay time to be respected as a soft constraint after ending the operation")
+      help_text=_("A delay time to be respected as a soft constraint after ending the operation"))
     sizeminimum = models.DecimalField('size minimum', max_digits=15, decimal_places=4, null=True, blank=True,
-      help_text="A minimum lotsize quantity for operationplans")
+      help_text=_("A minimum lotsize quantity for operationplans"))
     sizemultiple = models.DecimalField('size multiple', max_digits=15, decimal_places=4, null=True, blank=True,
-      help_text="A multiple quantity for operationplans")
+      help_text=_("A multiple quantity for operationplans"))
     duration = models.DecimalField('duration', max_digits=15, decimal_places=4, null=True, blank=True,
-      help_text="A fixed duration for the operation")
+      help_text=_("A fixed duration for the operation"))
     duration_per = models.DecimalField('duration per unit', max_digits=15, decimal_places=4, null=True, blank=True,
-      help_text="A variable duration for the operation")
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+      help_text=_("A variable duration for the operation"))
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __str__(self): return self.name
 
@@ -357,6 +369,8 @@ class Operation(models.Model):
 
     class Meta:
         db_table = 'operation'
+        verbose_name = _('operation')
+        verbose_name_plural = _('operations')
 
 
 class SubOperation(models.Model):
@@ -367,9 +381,9 @@ class SubOperation(models.Model):
     #operation = models.ForeignKey(Operation, edit_inline=models.TABULAR,
     #  min_num_in_admin=3, num_extra_on_change=1, related_name='alfa')
     operation = models.ForeignKey(Operation, raw_id_admin=True, related_name='suboperations')
-    priority = models.DecimalField(max_digits=5, decimal_places=4, default=1)
+    priority = models.DecimalField(_('priority'), max_digits=5, decimal_places=4, default=1)
     suboperation = models.ForeignKey(Operation, raw_id_admin=True, related_name='superoperations', core=True)
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __str__(self):
         return self.operation.name \
@@ -383,42 +397,53 @@ class SubOperation(models.Model):
     class Meta:
         db_table = 'suboperation'
         ordering = ['operation','priority','suboperation']
+        verbose_name = _('suboperation')
+        verbose_name_plural = _('suboperations')
 
 
 class Buffer(models.Model):
     # Types of buffers
     buffertypes = (
       ('','Default'),
-      ('BUFFER_INFINITE','Infinite'),
-      ('BUFFER_PROCURE','Procure'),
+      ('BUFFER_INFINITE',_('Infinite')),
+      ('BUFFER_PROCURE',_('Procure')),
     )
 
     # Fields common to all buffer types
-    name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, null=True, blank=True)
-    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    type = models.CharField(maxlength=20, null=True, blank=True, choices=buffertypes, default='')
+    name = models.CharField(_('name'), maxlength=60, primary_key=True)
+    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
+    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
+    type = models.CharField(_('type'), maxlength=20, null=True, blank=True, choices=buffertypes, default='')
     location = models.ForeignKey(Location, null=True, blank=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, db_index=True, null=True, raw_id_admin=True)
-    onhand = models.DecimalField(max_digits=15, decimal_places=4, default=0.00, help_text='current inventory')
-    minimum = models.ForeignKey('Calendar', null=True, blank=True, raw_id_admin=True,
-      help_text='Calendar storing the safety stock profile')
-    producing = models.ForeignKey('Operation', null=True, blank=True,
+    onhand = models.DecimalField(_('onhand'),max_digits=15, decimal_places=4, default=0.00, help_text=_('current inventory'))
+    minimum = models.ForeignKey(Calendar, null=True, blank=True, raw_id_admin=True,
+      help_text=_('Calendar storing the safety stock profile'))
+    producing = models.ForeignKey(Operation, null=True, blank=True,
       related_name='used_producing', raw_id_admin=True,
-      help_text='Operation to replenish the buffer')
+      help_text=_('Operation to replenish the buffer'))
     # Extra fields for procurement buffers
-    leadtime = models.DecimalField(max_digits=15, decimal_places=0, null=True, blank=True, help_text='Leadtime for supplier of a procure buffer')
-    fence = models.DecimalField(max_digits=15, decimal_places=0, null=True, blank=True, help_text='Frozen fence for creating new procurements')
-    min_inventory = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text='Inventory level that triggers replenishment of a procure buffer')
-    max_inventory = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text='Inventory level to which a procure buffer is replenished')
-    min_interval = models.DecimalField(max_digits=15, decimal_places=0, null=True, blank=True, help_text='Minimum time interval between replenishments of a procure buffer')
-    max_interval = models.DecimalField(max_digits=15, decimal_places=0, null=True, blank=True, help_text='Maximum time interval between replenishments of a procure buffer')
-    size_minimum = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text='Minimum size of replenishments of a procure buffer')
-    size_multiple = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text='Replenishments of a procure buffer are a multiple of this quantity')
-    size_maximum =  models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True, help_text='Maximum size of replenishments of a procure buffer')
+    leadtime = models.DecimalField(_('leadtime'),max_digits=15, decimal_places=0, null=True, blank=True,
+      help_text=_('Leadtime for supplier of a procure buffer'))
+    fence = models.DecimalField(_('fence'),max_digits=15, decimal_places=0, null=True, blank=True,
+      help_text=_('Frozen fence for creating new procurements'))
+    min_inventory = models.DecimalField(_('min_inventory'),max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_('Inventory level that triggers replenishment of a procure buffer'))
+    max_inventory = models.DecimalField(_('max_inventory'),max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_('Inventory level to which a procure buffer is replenished'))
+    min_interval = models.DecimalField(_('min_interval'),max_digits=15, decimal_places=0, null=True, blank=True,
+      help_text=_('Minimum time interval between replenishments of a procure buffer'))
+    max_interval = models.DecimalField(_('max_interval'),max_digits=15, decimal_places=0, null=True, blank=True,
+      help_text=_('Maximum time interval between replenishments of a procure buffer'))
+    size_minimum = models.DecimalField(_('size_minimum'),max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_('Minimum size of replenishments of a procure buffer'))
+    size_multiple = models.DecimalField(_('size_multiple'),max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_('Replenishments of a procure buffer are a multiple of this quantity'))
+    size_maximum =  models.DecimalField(_('size_maximum'),max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_('Maximum size of replenishments of a procure buffer'))
     # Maintenance fields
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __str__(self): return self.name
 
@@ -460,25 +485,27 @@ class Buffer(models.Model):
 
     class Meta:
         db_table = 'buffer'
+        verbose_name = _('buffer')
+        verbose_name_plural = _('buffers')
 
 
 class Resource(models.Model):
     # Types of resources
     resourcetypes = (
       ('','Default'),
-      ('RESOURCE_INFINITE','Infinite'),
+      ('RESOURCE_INFINITE',_('Infinite')),
     )
 
     # Database fields
-    name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, null=True, blank=True)
-    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    type = models.CharField(maxlength=20, null=True, blank=True, choices=resourcetypes, default='')
-    maximum = models.ForeignKey('Calendar', null=True, blank=True,
-      raw_id_admin=True, help_text='Calendar defining the available capacity')
+    name = models.CharField(_('name'), maxlength=60, primary_key=True)
+    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
+    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
+    type = models.CharField(_('type'), maxlength=20, null=True, blank=True, choices=resourcetypes, default='')
+    maximum = models.ForeignKey(Calendar, null=True, blank=True,
+      raw_id_admin=True, help_text=_('Calendar defining the available capacity'))
     location = models.ForeignKey(Location, null=True, blank=True, db_index=True, raw_id_admin=True)
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     # Methods
     def __str__(self): return self.name
@@ -500,6 +527,8 @@ class Resource(models.Model):
 
     class Meta:
         db_table = 'resource'
+        verbose_name = _('resource')
+        verbose_name_plural = _('resources')
 
 
 class Flow(models.Model):
@@ -512,11 +541,11 @@ class Flow(models.Model):
     # Database fields
     operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True, related_name='flows')
     thebuffer = models.ForeignKey(Buffer, db_index=True, raw_id_admin=True, related_name='flows')
-    type = models.CharField(maxlength=20, null=True, blank=True, choices=flowtypes,
-      help_text='Consume/produce material at the start or the end of the operationplan',
+    type = models.CharField(_('type'), maxlength=20, null=True, blank=True, choices=flowtypes,
+      help_text=_('Consume/produce material at the start or the end of the operationplan'),
       )
-    quantity = models.DecimalField(max_digits=15, decimal_places=4, default='1.00')
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+    quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __str__(self):
         return '%s - %s' % (self.operation.name, self.thebuffer.name)
@@ -532,13 +561,15 @@ class Flow(models.Model):
     class Meta:
         db_table = 'flow'
         unique_together = (('operation','thebuffer'),)
+        verbose_name = _('flow')
+        verbose_name_plural = _('flows')
 
 
 class Load(models.Model):
     operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True, related_name='loads')
     resource = models.ForeignKey(Resource, db_index=True, raw_id_admin=True, related_name='loads')
-    usagefactor = models.DecimalField(max_digits=15, decimal_places=4, default='1.00')
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+    usagefactor = models.DecimalField(_('usagefactor'),max_digits=15, decimal_places=4, default='1.00')
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __str__(self):
         return '%s - %s' % (self.operation.name, self.resource.name)
@@ -552,17 +583,20 @@ class Load(models.Model):
     class Meta:
         db_table = 'resourceload'
         unique_together = (('operation','resource'),)
+        verbose_name = _('load')
+        verbose_name_plural = _('loads')
 
 
 class OperationPlan(models.Model):
-    identifier = models.IntegerField(primary_key=True,
-      help_text='Unique identifier of an operationplan')
+    identifier = models.IntegerField(_('identifier'),primary_key=True,
+      help_text=_('Unique identifier of an operationplan'))
     operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True)
-    quantity = models.DecimalField(max_digits=15, decimal_places=4, default='1.00')
-    startdate = models.DateTimeField(help_text='Start date')
-    enddate = models.DateTimeField(help_text='End date')
-    locked = models.BooleanField(default=True, radio_admin=True, help_text='Prevent or allow changes')
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+    quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
+    startdate = models.DateTimeField(_('start date'),help_text=_('start date'))
+    enddate = models.DateTimeField(_('end date'),help_text=_('end date'))
+    locked = models.BooleanField(_('locked'),default=True, radio_admin=True,
+      help_text=_('Prevent or allow changes'))
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __str__(self): return str(self.identifier)
 
@@ -575,41 +609,43 @@ class OperationPlan(models.Model):
 
     class Meta:
         db_table = 'operationplan'
+        verbose_name = _('operationplan')
+        verbose_name_plural = _('operationplans')
 
 
 class Demand(models.Model):
     # The priorities defined here are for convenience only. Frepple accepts any number as priority.
     demandpriorities = (
-      (1,'1 - high'),
-      (2,'2 - normal'),
-      (3,'3 - low')
+      (1,_('1 - high')),
+      (2,_('2 - normal')),
+      (3,_('3 - low'))
     )
 
     # Delivery policies to plan the demand
     demandpolicies = (
-      ('','late with multiple deliveries'),
-      ('SINGLEDELIVERY','late with single delivery'),
-      ('PLANSHORT', 'short with multiple deliveries'),
-      ('PLANSHORT SINGLEDELIVERY', 'short with single delivery')
+      ('', _('late with multiple deliveries')),
+      ('SINGLEDELIVERY', _('late with single delivery')),
+      ('PLANSHORT', _('short with multiple deliveries')),
+      ('PLANSHORT SINGLEDELIVERY', _('short with single delivery'))
     )
 
     # Database fields
-    name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, null=True, blank=True)
-    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    name = models.CharField(_('name'), maxlength=60, primary_key=True)
+    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
+    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
     customer = models.ForeignKey(Customer, null=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
-    due = models.DateTimeField('due')
+    due = models.DateTimeField(_('due'))
     operation = models.ForeignKey(Operation, null=True, blank=True,
-      related_name='used_demand', raw_id_admin=True, help_text='Operation used to satisfy this demand')
-    quantity = models.DecimalField(max_digits=15, decimal_places=4)
-    priority = models.PositiveIntegerField(default=2, choices=demandpriorities, radio_admin=True)
-    policy = models.CharField(maxlength=25, null=True, blank=True, choices=demandpolicies,
-      help_text='Choose whether to plan the demand short or late, and with single or multiple deliveries allowed')
+      related_name='used_demand', raw_id_admin=True, help_text=_('Operation used to satisfy this demand'))
+    quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4)
+    priority = models.PositiveIntegerField(_('priority'),default=2, choices=demandpriorities, radio_admin=True)
+    policy = models.CharField(_('policy'),maxlength=25, null=True, blank=True, choices=demandpolicies,
+      help_text=_('Choose whether to plan the demand short or late, and with single or multiple deliveries allowed'))
     owner = models.ForeignKey('self', null=True, blank=True, raw_id_admin=True,
-      help_text='Hierarchical parent')
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+      help_text=_('Hierarchical parent'))
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     # Convenience methods
     def __str__(self): return self.name
@@ -629,24 +665,26 @@ class Demand(models.Model):
 
     class Meta:
         db_table = 'demand'
+        verbose_name = _('demand')
+        verbose_name_plural = _('demands')
 
 
 class Forecast(models.Model):
     # Database fields
-    name = models.CharField(maxlength=60, primary_key=True)
-    description = models.CharField(maxlength=200, null=True, blank=True)
-    category = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(maxlength=20, null=True, blank=True, db_index=True)
+    name = models.CharField(_('name'), maxlength=60, primary_key=True)
+    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
+    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
     customer = models.ForeignKey(Customer, null=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
     calendar = models.ForeignKey(Calendar, null=False, raw_id_admin=True)
     operation = models.ForeignKey(Operation, null=True, blank=True,
-      related_name='used_forecast', raw_id_admin=True, help_text='Operation used to satisfy this demand')
-    priority = models.PositiveIntegerField(default=2, choices=Demand.demandpriorities, radio_admin=True)
-    policy = models.CharField(maxlength=25, null=True, blank=True, choices=Demand.demandpolicies,
-      help_text='Choose whether to plan the demand short or late, and with single or multiple deliveries allowed')
-    discrete = models.BooleanField(default=True, radio_admin=True, help_text='Round forecast numbers to integers')
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+      related_name='used_forecast', raw_id_admin=True, help_text=_('Operation used to satisfy this demand'))
+    priority = models.PositiveIntegerField(_('priority'),default=2, choices=Demand.demandpriorities, radio_admin=True)
+    policy = models.CharField(_('policy'),maxlength=25, null=True, blank=True, choices=Demand.demandpolicies,
+      help_text=_('Choose whether to plan the demand short or late, and with single or multiple deliveries allowed'))
+    discrete = models.BooleanField(_('discrete'),default=True, radio_admin=True, help_text=_('Round forecast numbers to integers'))
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     # Convenience methods
     def __str__(self): return self.name
@@ -822,15 +860,17 @@ class Forecast(models.Model):
 
     class Meta:
         db_table = 'forecast'
+        verbose_name = _('forecast')
+        verbose_name_plural = _('forecasts')
 
 
 class ForecastDemand(models.Model):
     # Database fields
     forecast = models.ForeignKey(Forecast, null=False, db_index=True, raw_id_admin=True, related_name='entries')
-    startdate = models.DateField('startdate', null=False)
-    enddate = models.DateField('enddate', null=False)
-    quantity = models.DecimalField(max_digits=15, decimal_places=4, default=0)
-    lastmodified = models.DateTimeField('last modified', auto_now=True, editable=False, db_index=True)
+    startdate = models.DateField(_('start date'), null=False)
+    enddate = models.DateField(_('end date'), null=False)
+    quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default=0)
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     # Convenience methods
     def __str__(self): return self.forecast.name + " " + str(self.startdate) + " - " + str(self.enddate)
@@ -844,3 +884,5 @@ class ForecastDemand(models.Model):
 
     class Meta:
         db_table = 'forecastdemand'
+        verbose_name = _('forecast demand')
+        verbose_name_plural = _('forecast demands')

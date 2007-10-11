@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-10-11 10:25+0200\n"
+"POT-Creation-Date: 2007-10-11 13:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,6 +26,496 @@ msgstr ""
 
 #: settings.py:80
 msgid "English"
+msgstr ""
+
+#: input/models.py:46 input/models.py:115 input/models.py:199
+#: input/models.py:243 input/models.py:268 input/models.py:293
+#: input/models.py:328 input/models.py:413 input/models.py:500
+#: input/models.py:633 input/models.py:674
+msgid "name"
+msgstr "naam"
+
+#: input/models.py:47 input/models.py:116 input/models.py:244
+#: input/models.py:269 input/models.py:294 input/models.py:414
+#: input/models.py:501 input/models.py:634 input/models.py:675
+msgid "description"
+msgstr "omschrijving"
+
+#: input/models.py:49 input/models.py:119 input/models.py:200
+#: input/models.py:249 input/models.py:274 input/models.py:300
+#: input/models.py:344 input/models.py:386 input/models.py:446
+#: input/models.py:508 input/models.py:548 input/models.py:572
+#: input/models.py:599 input/models.py:648 input/models.py:687
+#: input/models.py:873
+msgid "last modified"
+msgstr "laatste wijziging"
+
+#: input/models.py:59 input/models.py:60
+msgid "plan"
+msgstr ""
+
+#: input/models.py:66
+msgid "day"
+msgstr "dag"
+
+#: input/models.py:67
+msgid "day start"
+msgstr ""
+
+#: input/models.py:68
+#, fuzzy
+msgid "day end"
+msgstr "dag"
+
+#: input/models.py:69
+msgid "Day of week"
+msgstr ""
+
+#: input/models.py:69
+msgid "0 = sunday, 1 = monday, ..."
+msgstr ""
+
+#: input/models.py:71
+msgid "week"
+msgstr ""
+
+#: input/models.py:72
+msgid "week start"
+msgstr ""
+
+#: input/models.py:73
+msgid "week end"
+msgstr ""
+
+#: input/models.py:75
+msgid "month"
+msgstr ""
+
+#: input/models.py:76
+msgid "month start"
+msgstr ""
+
+#: input/models.py:77
+msgid "month end"
+msgstr ""
+
+#: input/models.py:79
+msgid "quarter"
+msgstr ""
+
+#: input/models.py:80
+msgid "quarter start"
+msgstr ""
+
+#: input/models.py:81
+msgid "quarter end"
+msgstr ""
+
+#: input/models.py:83
+msgid "year"
+msgstr ""
+
+#: input/models.py:84
+msgid "year start"
+msgstr ""
+
+#: input/models.py:85
+msgid "year end"
+msgstr ""
+
+#: input/models.py:87
+msgid "default"
+msgstr ""
+
+#: input/models.py:88
+msgid "default start"
+msgstr ""
+
+#: input/models.py:89
+msgid "default end"
+msgstr ""
+
+#: input/models.py:108 input/models.py:109 input/models.py:110
+msgid "dates"
+msgstr ""
+
+#: input/models.py:117 input/models.py:245 input/models.py:270
+#: input/models.py:295 input/models.py:415 input/models.py:502
+#: input/models.py:635 input/models.py:676
+msgid "category"
+msgstr ""
+
+#: input/models.py:118 input/models.py:246 input/models.py:271
+#: input/models.py:296 input/models.py:416 input/models.py:503
+#: input/models.py:636 input/models.py:677
+msgid "subcategory"
+msgstr ""
+
+#: input/models.py:189
+msgid "calendar"
+msgstr ""
+
+#: input/models.py:190
+msgid "calendars"
+msgstr ""
+
+#: input/models.py:198
+msgid "value"
+msgstr ""
+
+#: input/models.py:209
+msgid "calendar bucket"
+msgstr ""
+
+#: input/models.py:210
+msgid "calendar buckets"
+msgstr ""
+
+#: input/models.py:248 input/models.py:273 input/models.py:299
+#: input/models.py:647
+msgid "Hierarchical parent"
+msgstr ""
+
+#: input/models.py:262
+msgid "location"
+msgstr "locatie"
+
+#: input/models.py:263
+msgid "locations"
+msgstr "locaties"
+
+#: input/models.py:287
+msgid "customer"
+msgstr "klant"
+
+#: input/models.py:288
+msgid "customers"
+msgstr "klanten"
+
+#: input/models.py:313
+msgid "item"
+msgstr ""
+
+#: input/models.py:314
+msgid "items"
+msgstr ""
+
+#: input/models.py:329 input/models.py:417 input/models.py:504
+#: input/models.py:544
+msgid "type"
+msgstr ""
+
+#: input/models.py:331
+msgid ""
+"Operationplans within this time window from the current day are expected to "
+"be released to production ERP"
+msgstr ""
+
+#: input/models.py:333
+msgid ""
+"A delay time to be respected as a soft constraint before starting the "
+"operation"
+msgstr ""
+
+#: input/models.py:335
+msgid ""
+"A delay time to be respected as a soft constraint after ending the operation"
+msgstr ""
+
+#: input/models.py:337
+msgid "A minimum lotsize quantity for operationplans"
+msgstr ""
+
+#: input/models.py:339
+msgid "A multiple quantity for operationplans"
+msgstr ""
+
+#: input/models.py:341
+msgid "A fixed duration for the operation"
+msgstr ""
+
+#: input/models.py:343
+msgid "A variable duration for the operation"
+msgstr ""
+
+#: input/models.py:372
+#, fuzzy
+msgid "operation"
+msgstr "locatie"
+
+#: input/models.py:373
+#, fuzzy
+msgid "operations"
+msgstr "locaties"
+
+#: input/models.py:384 input/models.py:643 input/models.py:683
+msgid "priority"
+msgstr ""
+
+#: input/models.py:400
+#, fuzzy
+msgid "suboperation"
+msgstr "locatie"
+
+#: input/models.py:401
+#, fuzzy
+msgid "suboperations"
+msgstr "locaties"
+
+#: input/models.py:408 input/models.py:496
+msgid "Infinite"
+msgstr ""
+
+#: input/models.py:409
+msgid "Procure"
+msgstr ""
+
+#: input/models.py:420
+msgid "onhand"
+msgstr ""
+
+#: input/models.py:420
+msgid "current inventory"
+msgstr ""
+
+#: input/models.py:422
+msgid "Calendar storing the safety stock profile"
+msgstr ""
+
+#: input/models.py:425
+msgid "Operation to replenish the buffer"
+msgstr ""
+
+#: input/models.py:427
+msgid "leadtime"
+msgstr ""
+
+#: input/models.py:428
+msgid "Leadtime for supplier of a procure buffer"
+msgstr ""
+
+#: input/models.py:429
+msgid "fence"
+msgstr ""
+
+#: input/models.py:430
+msgid "Frozen fence for creating new procurements"
+msgstr ""
+
+#: input/models.py:431
+msgid "min_inventory"
+msgstr ""
+
+#: input/models.py:432
+msgid "Inventory level that triggers replenishment of a procure buffer"
+msgstr ""
+
+#: input/models.py:433
+msgid "max_inventory"
+msgstr ""
+
+#: input/models.py:434
+msgid "Inventory level to which a procure buffer is replenished"
+msgstr ""
+
+#: input/models.py:435
+msgid "min_interval"
+msgstr ""
+
+#: input/models.py:436
+msgid "Minimum time interval between replenishments of a procure buffer"
+msgstr ""
+
+#: input/models.py:437
+msgid "max_interval"
+msgstr ""
+
+#: input/models.py:438
+msgid "Maximum time interval between replenishments of a procure buffer"
+msgstr ""
+
+#: input/models.py:439
+msgid "size_minimum"
+msgstr ""
+
+#: input/models.py:440
+msgid "Minimum size of replenishments of a procure buffer"
+msgstr ""
+
+#: input/models.py:441
+msgid "size_multiple"
+msgstr ""
+
+#: input/models.py:442
+msgid "Replenishments of a procure buffer are a multiple of this quantity"
+msgstr ""
+
+#: input/models.py:443
+msgid "size_maximum"
+msgstr ""
+
+#: input/models.py:444
+msgid "Maximum size of replenishments of a procure buffer"
+msgstr ""
+
+#: input/models.py:488
+msgid "buffer"
+msgstr ""
+
+#: input/models.py:489
+msgid "buffers"
+msgstr ""
+
+#: input/models.py:506
+msgid "Calendar defining the available capacity"
+msgstr ""
+
+#: input/models.py:530
+msgid "resource"
+msgstr ""
+
+#: input/models.py:531
+msgid "resources"
+msgstr ""
+
+#: input/models.py:545
+msgid "Consume/produce material at the start or the end of the operationplan"
+msgstr ""
+
+#: input/models.py:547 input/models.py:594 input/models.py:642
+#: input/models.py:872
+msgid "quantity"
+msgstr ""
+
+#: input/models.py:564
+msgid "flow"
+msgstr ""
+
+#: input/models.py:565
+msgid "flows"
+msgstr ""
+
+#: input/models.py:571
+msgid "usagefactor"
+msgstr ""
+
+#: input/models.py:586
+msgid "load"
+msgstr ""
+
+#: input/models.py:587
+msgid "loads"
+msgstr ""
+
+#: input/models.py:591
+msgid "identifier"
+msgstr ""
+
+#: input/models.py:592
+msgid "Unique identifier of an operationplan"
+msgstr ""
+
+#: input/models.py:595 input/models.py:870
+msgid "start date"
+msgstr ""
+
+#: input/models.py:596 input/models.py:871
+msgid "end date"
+msgstr ""
+
+#: input/models.py:597
+msgid "locked"
+msgstr ""
+
+#: input/models.py:598
+msgid "Prevent or allow changes"
+msgstr ""
+
+#: input/models.py:612
+msgid "operationplan"
+msgstr ""
+
+#: input/models.py:613
+#, fuzzy
+msgid "operationplans"
+msgstr "locaties"
+
+#: input/models.py:619
+msgid "1 - high"
+msgstr "1 - hoog"
+
+#: input/models.py:620
+msgid "2 - normal"
+msgstr "2 - normaal"
+
+#: input/models.py:621
+msgid "3 - low"
+msgstr "3 - laag"
+
+#: input/models.py:626
+msgid "late with multiple deliveries"
+msgstr ""
+
+#: input/models.py:627
+msgid "late with single delivery"
+msgstr ""
+
+#: input/models.py:628
+msgid "short with multiple deliveries"
+msgstr ""
+
+#: input/models.py:629
+msgid "short with single delivery"
+msgstr ""
+
+#: input/models.py:639
+msgid "due"
+msgstr ""
+
+#: input/models.py:641 input/models.py:682
+msgid "Operation used to satisfy this demand"
+msgstr ""
+
+#: input/models.py:644 input/models.py:684
+msgid "policy"
+msgstr ""
+
+#: input/models.py:645 input/models.py:685
+msgid ""
+"Choose whether to plan the demand short or late, and with single or multiple "
+"deliveries allowed"
+msgstr ""
+
+#: input/models.py:668
+msgid "demand"
+msgstr ""
+
+#: input/models.py:669
+msgid "demands"
+msgstr ""
+
+#: input/models.py:686
+msgid "discrete"
+msgstr ""
+
+#: input/models.py:686
+msgid "Round forecast numbers to integers"
+msgstr ""
+
+#: input/models.py:863
+msgid "forecast"
+msgstr ""
+
+#: input/models.py:864
+msgid "forecasts"
+msgstr ""
+
+#: input/models.py:887
+msgid "forecast demand"
+msgstr ""
+
+#: input/models.py:888
+msgid "forecast demands"
 msgstr ""
 
 #: input/templatetags/breadcrumbs.py:116 input/templatetags/breadcrumbs.py:120

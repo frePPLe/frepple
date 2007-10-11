@@ -4547,7 +4547,9 @@ class PeggingIterator
     OperationPlan::pointer getConsumingOperationplan() const 
     {
       const FlowPlan* x = stack.top().cons_flowplan;
-      return x ? x->getOperationPlan() : NULL;
+      return x ? 
+        x->getOperationPlan() : 
+        OperationPlan::pointer(NULL);
     }
 
     /** Return the material buffer through which we are pegging. */
@@ -4562,7 +4564,9 @@ class PeggingIterator
     OperationPlan::pointer getProducingOperationplan() const 
     {
       const FlowPlan* x = stack.top().prod_flowplan;
-      return x ? x->getOperationPlan() : NULL;
+      return x ? 
+        x->getOperationPlan() : 
+        OperationPlan::pointer(NULL);
     }
 
     /** Return the date when the material is consumed. */

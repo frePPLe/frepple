@@ -107,7 +107,7 @@ class Dates(models.Model):
     class Meta:
         verbose_name = _('dates')  # There will only be multiple dates...
         verbose_name_plural = _('dates')  # There will only be multiple dates...
-        db_table = _('dates')
+        db_table = 'dates'
 
 
 class Calendar(models.Model):

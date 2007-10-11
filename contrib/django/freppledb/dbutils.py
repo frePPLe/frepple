@@ -66,6 +66,7 @@ if settings.DATABASE_ENGINE == 'sqlite3':
     return "min(%s,%s)" % (d1,d2)
 
   def python_date(d):
+    if isinstance(d,date): return d
     return datetime.strptime(d,'%Y-%m-%d').date()
 
 # Functions for POSTGRESQL

@@ -130,14 +130,14 @@ for counter in [5000, 10000, 15000, 20000, 25000]:
   print "time: %.3f" % (endtime[4]-starttime[4])
 
   # Clean up the input and the output
-  #os.remove("input.xml")
-  #os.remove("output.xml")
-  if os.path.isfile("input_%d.xml" % counter):
-    os.remove("input_%d.xml" % counter)
-  os.rename("input.xml", "input_%d.xml" % counter)
-  if os.path.isfile("output_%d.xml" % counter):
-    os.remove("output_%d.xml" % counter)
-  os.rename("output.xml", "output_%d.xml" % counter)
+  os.remove("input.xml")
+  os.remove("output.xml")
+  #if os.path.isfile("input_%d.xml" % counter):
+  #  os.remove("input_%d.xml" % counter)
+  #os.rename("input.xml", "input_%d.xml" % counter)
+  #if os.path.isfile("output_%d.xml" % counter):
+  #  os.remove("output_%d.xml" % counter)
+  #os.rename("output.xml", "output_%d.xml" % counter)
 
 # Define failure criterium
 if runtimes[25000] > runtimes[5000]*5*1.05:

@@ -33,8 +33,8 @@
 <table summary="Extra commands.">
 <caption>frePPLe</caption>
 
-<form method="post" action="/execute/runfrepple/">
-<tr><th scope="row"><a>Run frePPLe</a></th>
+<form method="post" action="/execute/runfrepple/"><tr>
+{% blocktrans %}<th scope="row"><a>Run frePPLe</a></th>
 <td>Load frepple from the database...  <br/>
 and create <select name="type" id="type">
 <option value="7">constrained</option>
@@ -43,10 +43,9 @@ and create <select name="type" id="type">
 <option value="0">unconstrained</option>
 </select> plan in frePPLe...<br/>
 and export results into the database<br/><br/>
-<a href="/execute/log/">View latest log file</a></td>
-<td><input id="run" type="submit" value="Run" /></td>
-</tr>
-</form>
+<a href="/execute/logfrepple/">View latest log file</a></td>
+<td><input id="run" type="submit" value="Run" /></td>{% endblocktrans %}
+</tr></form>
 
 </table>
 </div>
@@ -55,16 +54,16 @@ and export results into the database<br/><br/>
 {% if perms.execute.run_db %}
 <div class="module">
 <table summary="Extra commands.">
-<caption>Database</caption>
+<caption>{% trans "Database" %}</caption>
 
-<tr><th scope="row"><a>Erase</a></th>
-<form method="post" action="/execute/erase/">
+<form method="post" action="/execute/erase/"><tr>
+{% blocktrans %}<th scope="row"><a>Erase</a></th>
 <td>Erase all data from the database.</td>
-<td><input id="erase" type="submit" value="Erase" /></td>
-</form></tr>
+<td><input id="erase" type="submit" value="Erase" /></td>{% endblocktrans %}
+</tr></form>
 
-<tr><th scope="row"><a>Load a dataset</a></th>
-<form method="post" action="/execute/fixture/">
+<form method="post" action="/execute/fixture/"><tr>
+{% blocktrans %}<th scope="row"><a>Load a dataset</a></th>
 <td>Load a dataset from a file in the database.<br/>
 Available datasets: <select name="datafile" id="entity">
 <option value="-" selected="selected">-</option>
@@ -72,8 +71,8 @@ Available datasets: <select name="datafile" id="entity">
 <option value="dates">Dates</option>
 </select>
 </td>
-<td><input id="load" type="submit" value="Load"/></td>
-</form></tr>
+<td><input id="load" type="submit" value="Load"/></td>{% endblocktrans %}
+</tr></form>
 
 </table>
 </div>
@@ -82,10 +81,10 @@ Available datasets: <select name="datafile" id="entity">
 {% if perms.execute.upload_csv %}
 <div class="module">
 <table summary="Extra commands.">
-<caption>Upload data</caption>
+<caption>{% trans "Upload data" %}</caption>
 
-<tr><th scope="row"><a>CSV</a></th>
-<form enctype="multipart/form-data" method="post" action="/execute/upload/">
+<form enctype="multipart/form-data" method="post" action="/execute/upload/"><tr>
+{% blocktrans %}<th scope="row"><a>CSV</a></th>
 <td>Load data from a csv text file in the database.<br/>
 The first row of your file should contain the field names.<br/>
 Entity: <select name="entity" id="entity">
@@ -108,8 +107,8 @@ Entity: <select name="entity" id="entity">
 </select><br/>
 Select your csv file: <input type="file" id="csv_file" size="23" name="csv_file"/><br/>
 </td>
-<td><input id="upload" type="submit" value="Upload"/></td>
-</form></tr>
+<td><input id="upload" type="submit" value="Upload"/></td>{% endblocktrans %}
+</tr></form>
 
 </table>
 </div>
@@ -119,10 +118,10 @@ Select your csv file: <input type="file" id="csv_file" size="23" name="csv_file"
 {% if perms.execute.run_db %}
 <div class="module">
 <table summary="Extra commands.">
-<caption>Model generator</caption>
+<caption>{% trans "Model generator" %}</caption>
 
-<tr><th scope="row"><a>Create a model</a></th>
-<form method="post" action="/execute/create/">
+<form method="post" action="/execute/create/"><tr>
+{% blocktrans %}<th scope="row"><a>Create a model</a></th>
 <td>Create a sample model in the database.<br/>
 The parameters control the size and complexity.<br/>
 Number of end items: <input id="0" name="clusters" type="text" maxlength="5" size="5" value="100" onchange="calcUtil()"/><br/>
@@ -138,17 +137,17 @@ Number of end items: <input id="0" name="clusters" type="text" maxlength="5" siz
 <b>Capacity:</b></br>
 &nbsp;&nbsp;Number of resources: <input id="4" name="rsrc_number" type="text" maxlength="3" size="3" value="50" onchange="calcUtil()"/><br/>
 &nbsp;&nbsp;Size of each resource: <input id="5" name="rsrc_size" type="text" maxlength="3" size="3" value="4" onchange="calcUtil()"/><br/>
-&nbsp;&nbsp;Expected average resource utilization: <span id="util">82.2</span>%<br/>
+&nbsp;&nbsp;Expected average resource utilization: <span id="util">82.2</span>%%<br/>
 </td>
-<td><input id="create" type="submit" value="Create"/></td>
-</form></tr>
+<td><input id="create" type="submit" value="Create"/></td>{% endblocktrans %}
+</tr></form>
 
 </table>
 </div>
 {% endif %}
 
 {% else %}
-Sorry, You don't have any execute permissions...
+{% trans "Sorry, You don't have any execute permissions..." %}
 {% endif %}
 
 </div>

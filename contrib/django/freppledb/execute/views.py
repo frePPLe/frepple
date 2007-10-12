@@ -37,6 +37,7 @@ import os, os.path
 
 from freppledb.execute.create import erase_model, create_model
 from freppledb.execute.models import log
+from freppledb.report import ListReport
 
 
 @staff_member_required
@@ -329,3 +330,19 @@ def fixture(request):
     request.user.message_set.create(message='Error while loading dataset: %s' % e)
     log(category='LOAD', message='Failed loading dataset "%s": %s' % (fixture,e)).save()
   return HttpResponseRedirect('/execute/execute.html')
+
+
+class LogReport(ListReport):
+  '''
+  A list report to review the history of actions.
+  '''
+  template = 'log.html'
+  title = _("Command log")
+  reset_crumbs = True
+  basequeryset = log.objects.all()
+  rows = (
+    ('category', {'filter': 'category__icontains', 'title': _('category')}),
+    ('message', {'filter': 'message__icontains', 'filter_size': 30, 'title':_('message')}),
+    ('lastmodified', {'title':_('last modified')}),
+    )
+  

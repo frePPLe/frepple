@@ -22,30 +22,17 @@
 # email : jdetaeye@users.sourceforge.net
 
 from django.db import models
-
-# This variable defines the number of records to show in the admin lists.
-LIST_PER_PAGE = 100
+from django.utils.translation import ugettext_lazy as _
 
 
 class log(models.Model):
   # Database fields
-  category = models.CharField(maxlength=10, db_index=True)
-  message = models.TextField(maxlength=200)
-  lastmodified = models.DateTimeField(auto_now=True, editable=False, db_index=True)
+  category = models.CharField(_('category'), maxlength=10, db_index=True)
+  message = models.TextField(_('message'), maxlength=200)
+  lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
   def __str__(self):
     return self.lastmodified + ' - ' + self.category
-
-  def getTime(self):
-    return str(self.lastmodified)
-  getTime.short_description = 'Date and time'
-
-  class Admin:
-      list_display = ('getTime', 'category', 'message')
-      search_fields = ['message']
-      list_filter = ['category', 'lastmodified']
-      list_per_page = LIST_PER_PAGE
-      date_hierarchy = 'lastmodified'
 
   class Meta:
       permissions = (
@@ -53,4 +40,6 @@ class log(models.Model):
           ("run_db","Can run database procedures"),
           ("upload_csv","Can upload csv data files"),
          )
-      verbose_name_plural = 'Log'  # Multiple logs entries are still called "a log"
+      verbose_name_plural = 'log entries'  # Multiple logs entries are still called "a log"
+      verbose_name = _('log')
+

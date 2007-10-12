@@ -25,16 +25,18 @@ from django.conf.urls.defaults import *
 import sys, os.path
 import freppledb.input.views
 import freppledb.output.views
+import freppledb.execute.views
 import freppledb.user.views
 from django.conf import settings
 
 urlpatterns = patterns('',
 
     # Frepple execution
-    (r'^execute/log/$', 'django.views.generic.simple.direct_to_template',
+    (r'^execute/logfrepple/$', 'django.views.generic.simple.direct_to_template',
        {'template': 'execute/log.html',
         'extra_context': {'title': 'Frepple log file'},
        }),
+    (r'^execute/log/$', 'freppledb.report.view_report', {'report': freppledb.execute.views.LogReport,}),
     (r'^execute/runfrepple/$', 'freppledb.execute.views.runfrepple'),
     (r'^execute/erase/$', 'freppledb.execute.views.erase'),
     (r'^execute/create/$', 'freppledb.execute.views.create'),

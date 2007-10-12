@@ -30,6 +30,7 @@ from django.db import connection
 from django.core.cache import cache
 from django.http import Http404, HttpResponse
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Buffer, Operation, Resource, Item, Forecast
 from freppledb.output.models import DemandPegging, FlowPlan, Problem, OperationPlan, LoadPlan, Demand
@@ -42,21 +43,21 @@ class BufferReport(TableReport):
   A report showing the inventory profile of buffers.
   '''
   template = 'buffer.html'
-  title = 'Inventory report'
+  title = _('Inventory Report')
   basequeryset = Buffer.objects.all()
   rows = (
-    ('buffer', {'filter': 'name__icontains', 'order_by': 'name'}),
-    ('item', {'filter': 'item__name__icontains'}),
-    ('location', {'filter': 'location__name__icontains'}),
+    ('buffer', {'filter': 'name__icontains', 'order_by': 'name', 'title':_('buffer')}),
+    ('item', {'filter': 'item__name__icontains', 'title':_('item')}),
+    ('location', {'filter': 'location__name__icontains', 'title':_('location')}),
     )
   crosses = (
-    ('startoh', {'title':'start inventory',}),
-    ('consumed', {}),
-    ('produced', {}),
-    ('endoh', {'title': 'end inventory',}),
+    ('startoh', {'title':_('start inventory'),}),
+    ('consumed', {'title':_('consumed'),}),
+    ('produced', {'title':_('produced'),}),
+    ('endoh', {'title':_('end inventory'),}),
     )
   columns = (
-    ('bucket', {}),
+    ('bucket', {'title':_('bucket')}),
     )
 
   @staticmethod
@@ -120,18 +121,18 @@ class DemandReport(TableReport):
   A report showing the independent demand for each item.
   '''
   template = 'demand.html'
-  title = 'Demand report'
+  title = _('Demand Report')
   basequeryset = Item.objects.extra(where=('name in (select item_id from demand)',))
   rows = (
-    ('item',{'filter': 'name__icontains', 'order_by': 'name'}),
+    ('item',{'filter': 'name__icontains', 'order_by': 'name', 'title':_('item')}),
     )
   crosses = (
-    ('demand',{}),
-    ('supply',{}),
-    ('backlog',{}),
+    ('demand',{'title':_('demand')}),
+    ('supply',{'title':_('supply')}),
+    ('backlog',{'title':_('backlog')}),
     )
   columns = (
-    ('bucket',{}),
+    ('bucket',{'title':_('bucket')}),
     )
 
   @staticmethod
@@ -207,19 +208,19 @@ class ForecastReport(TableReport):
   A report allowing easy editing of forecast numbers.
   '''
   template = 'forecast.html'
-  title = 'Forecast report'
+  title = _('Forecast Report')
   basequeryset = Forecast.objects.all()
   rows = (
-    ('forecast',{'filter': 'name__icontains', 'order_by': 'name'}),
-    ('item',{'filter': 'item__name__icontains'}),
-    ('customer',{'filter': 'customer__name__icontains'}),
+    ('forecast',{'filter': 'name__icontains', 'order_by': 'name', 'title':_('forecast')}),
+    ('item',{'filter': 'item__name__icontains', 'title':_('item')}),
+    ('customer',{'filter': 'customer__name__icontains', 'title':_('customer')}),
     )
   crosses = (
-    ('demand',{'title': 'Gross Forecast'}),
-    ('planned',{}),
+    ('demand',{'title': _('gross forecast')}),
+    ('planned',{'title':_('planned forecast')}),
     )
   columns = (
-    ('bucket',{}),
+    ('bucket',{'title':_('bucket')}),
     )
 
   @staticmethod
@@ -293,19 +294,19 @@ class ResourceReport(TableReport):
   A report showing the loading of each resource.
   '''
   template = 'resource.html'
-  title = 'Resource report'
+  title = _('Resource Report')
   basequeryset = Resource.objects.all()
   rows = (
-    ('resource',{'filter': 'name__icontains', 'order_by': 'name'}),
-    ('location',{'filter': 'location__name__icontains'}),
+    ('resource',{'filter': 'name__icontains', 'order_by': 'name', 'title':_('resource')}),
+    ('location',{'filter': 'location__name__icontains', 'title':_('location')}),
     )
   crosses = (
-    ('available',{}),
-    ('load',{}),
-    ('utilization',{'title':'utilization %',}),
+    ('available',{'title':_('available')}),
+    ('load',{'title':_('load')}),
+    ('utilization',{'title':_('utilization %'),}),
     )
   columns = (
-    ('bucket',{}),
+    ('bucket',{'title':_('bucket')}),
     )
 
   @staticmethod
@@ -384,19 +385,19 @@ class OperationReport(TableReport):
   A report showing the planned starts of each operation.
   '''
   template = 'operation.html'
-  title = 'Operation report'
+  title = _('Operation Report')
   basequeryset = Operation.objects.all()
   rows = (
-    ('operation',{'filter': 'name__icontains', 'order_by': 'name'}),
+    ('operation',{'filter': 'name__icontains', 'order_by': 'name', 'title':_('operation')}),
     )
   crosses = (
-    ('frozen_start', {'title':'frozen starts',}),
-    ('total_start', {'title':'total starts',}),
-    ('frozen_end', {'title':'frozen ends',}),
-    ('total_end', {'title':'total ends',}),
+    ('frozen_start', {'title':_('frozen starts'),}),
+    ('total_start', {'title':_('total starts'),}),
+    ('frozen_end', {'title':_('frozen ends'),}),
+    ('total_end', {'title':_('total ends'),}),
     )
   columns = (
-    ('bucket',{}),
+    ('bucket',{'title':_('bucket')}),
     )
 
   @staticmethod
@@ -589,7 +590,7 @@ class pathreport:
   @staff_member_required
   def viewdownstream(request, type, entity):
     return render_to_response('path.html', RequestContext(request,{
-       'title': "Where-used report for %s %s" % (type, entity),
+       'title': '%s %s %s' % (_("Where-used report for"),type, entity),
        'supplypath': pathreport.getPath(type, entity, True),
        'type': type,
        'entity': entity,
@@ -601,7 +602,7 @@ class pathreport:
   @staff_member_required
   def viewupstream(request, type, entity):
     return render_to_response('path.html', RequestContext(request,{
-       'title': "Supply path report for %s %s" % (type, entity),
+       'title': '%s %s %s' % (_("Supply path report for"),type, entity),
        'supplypath': pathreport.getPath(type, entity, False),
        'type': type,
        'entity': entity,
@@ -614,20 +615,20 @@ class PeggingReport(ListReport):
   A list report to show peggings.
   '''
   template = 'pegging.html'
-  title = "Pegging report"
+  title = _("Pegging Report")
   reset_crumbs = False
   basequeryset = DemandPegging.objects.all()
   rows = (
-    ('demand', {'filter': 'demand__icontains', 'filter_size': 15}),
-    ('buffer', {'filter': 'buffer__icontains',}),
-    ('depth', {'filter': 'depth', 'filter_size': 2}),
-    ('cons_date', {}),
-    ('prod_date', {}),
-    ('cons_operationplan', {}),
-    ('prod_operationplan', {}),
-    ('quantity_demand', {}),
-    ('quantity_buffer', {}),
-    ('pegged', {}),
+    ('demand', {'filter': 'demand__icontains', 'filter_size': 15, 'title':_('demand')}),
+    ('buffer', {'filter': 'buffer__icontains', 'title':_('buffer')}),
+    ('depth', {'filter': 'depth', 'filter_size': 2, 'title':_('depth')}),
+    ('cons_date', {'title':_('consuming date')}),
+    ('prod_date', {'title':_('producing date')}),
+    ('cons_operationplan', {'title':_('consuming operationplan')}),
+    ('prod_operationplan', {'title':_('producing operationplan')}),
+    ('quantity_demand', {'title':_('quantity demand')}),
+    ('quantity_buffer', {'title':_('quantity buffer')}),
+    ('pegged', {'title':_('pegged')}),
     )
 
 
@@ -636,21 +637,21 @@ class FlowPlanReport(ListReport):
   A list report to show flowplans.
   '''
   template = 'flowplan.html'
-  title = "Inventory detail report"
+  title = _("Inventory Detail Report")
   reset_crumbs = False
   basequeryset = FlowPlan.objects.extra(
     select={'operation':'out_operationplan.operation'},
     where=['out_operationplan.identifier = out_flowplan.operationplan'],
     tables=['out_operationplan'])
   rows = (
-    ('thebuffer', {'filter': 'thebuffer__icontains', 'title': 'buffer'}),
+    ('thebuffer', {'filter': 'thebuffer__icontains', 'title': _('buffer')}),
     # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the operation field.
-    # ('operation', {'filter': 'operation__icontains'}),
-    ('operation', {'sort': False}),
-    ('quantity', {}),
-    ('flowdatetime', {'title': 'date'}),
-    ('onhand', {}),
-    ('operationplan', {'filter': 'operationplan__icontains'}),
+    # ('operation', {'filter': 'operation__icontains', 'title':_('operation')}),
+    ('operation', {'sort': False, 'title':_('operation')}),
+    ('quantity', {'title':_('quantity')}),
+    ('flowdatetime', {'title': _('date')}),
+    ('onhand', {'title':_('onhand')}),
+    ('operationplan', {'filter': 'operationplan__icontains', 'title':_('operationplan')}),
     )
 
 
@@ -659,15 +660,15 @@ class ProblemReport(ListReport):
   A list report to show problems.
   '''
   template = 'problem.html'
-  title = "Problem report"
+  title = _("Problem Report")
   basequeryset = Problem.objects.all()
   rows = (
-    ('entity', {'filter': 'entity__icontains', }),
-    ('name', {'filter': 'name__icontains'}),
-    ('description', {'filter': 'description__icontains', 'filter_size': 30}),
-    ('startdatetime', {'title': 'start'}),
-    ('enddatetime', {'title': 'end'}),
-    ('weight', {}),
+    ('entity', {'filter': 'entity__icontains', 'title':_('entity')}),
+    ('name', {'filter': 'name__icontains', 'title':_('name')}),
+    ('description', {'filter': 'description__icontains', 'filter_size': 30, 'title':_('description')}),
+    ('startdatetime', {'title': _('startdate')}),
+    ('enddatetime', {'title': _('enddate')}),
+    ('weight', {'title':_('weight')}),
     )
 
 
@@ -676,20 +677,20 @@ class OperationPlanReport(ListReport):
   A list report to show operationplans.
   '''
   template = 'operationplan.html'
-  title = "Operation plan detail"
+  title = _("Operationplan Detail Report")
   reset_crumbs = False
   basequeryset = OperationPlan.objects.extra(
     select={'fcst_or_actual':'demand in (select distinct name from forecast)'}
     )
   rows = (
-    ('identifier', {'filter': 'identifier__icontains', 'title': 'operationplan'}),
-    ('demand', {'filter': 'demand__icontains', 'filter_size': 15}),
-    ('operation', {'filter': 'operation__icontains', 'filter_size': 15}),
-    ('quantity', {}),
-    ('startdatetime', {'title': 'start'}),
-    ('enddatetime', {'title': 'end'}),
-    ('locked', {}),
-    ('owner', {}),
+    ('identifier', {'filter': 'identifier__icontains', 'title': _('operationplan')}),
+    ('demand', {'filter': 'demand__icontains', 'filter_size': 15, 'title':_('demand')}),
+    ('operation', {'filter': 'operation__icontains', 'filter_size': 15, 'title':_('operation')}),
+    ('quantity', {'title':_('quantity')}),
+    ('startdatetime', {'title': _('startdate')}),
+    ('enddatetime', {'title': _('enddate')}),
+    ('locked', {'title':_('locked')}),
+    ('owner', {'title':_('owner')}),
     )
 
 
@@ -698,22 +699,22 @@ class DemandPlanReport(ListReport):
   A list report to show delivery plans for demand.
   '''
   template = 'demandplan.html'
-  title = "Demand plan detail"
+  title = _("Demand Plan Detail")
   reset_crumbs = False
   basequeryset = Demand.objects.extra(
     select={'item':'demand.item_id'},
     where=['demand.name = out_demand.demand'],
     tables=['demand'])
   rows = (
-    ('demand', {'filter': 'demand__icontains', 'title': 'Demand'}),
+    ('demand', {'filter': 'demand__icontains', 'title': _('Demand')}),
     # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the item field.
-    # ('item_id', {'filter': 'item__icontains'}),
-    ('item', {'sort': False}),
-    ('quantity', {}),
-    ('planquantity', {'title': 'Planned Quantity'}),
-    ('duedatetime', {'title': 'Due Date'}),
-    ('plandatetime', {'title': 'Planned Date'}),
-    ('operationplan', {}),
+    # ('item_id', {'filter': 'item__icontains', 'title':_('item')}),
+    ('item', {'sort': False, 'title':_('item')}),
+    ('quantity', {'title':_('quantity')}),
+    ('planquantity', {'title': _('planned quantity')}),
+    ('duedatetime', {'title': _('due date')}),
+    ('plandatetime', {'title': _('planned date')}),
+    ('operationplan', {'title':_('operationplan')}),
     )
 
 
@@ -722,19 +723,19 @@ class LoadPlanReport(ListReport):
   A list report to show loadplans.
   '''
   template = 'loadplan.html'
-  title = "Resource load detail"
+  title = _("Resource Load Detail")
   reset_crumbs = False
   basequeryset = LoadPlan.objects.extra(
     select={'operation':'out_operationplan.operation'},
     where=['out_operationplan.identifier = out_loadplan.operationplan'],
     tables=['out_operationplan'])
   rows = (
-    ('resource', {'filter': 'resource__icontains',}),
+    ('resource', {'filter': 'resource__icontains', 'title':_('resource')}),
     # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the operation field.
-    #('operation', {'filter': 'operation__icontains'}),
-    ('operation', {'sort': False}),
-    ('startdatetime', {'title': 'start'}),
-    ('enddatetime', {'title': 'end'}),
-    ('quantity', {}),
-    ('operationplan', {'filter': 'operationplan__icontains',}),
+    #('operation', {'filter': 'operation__icontains', 'title':_('operation')}),
+    ('operation', {'sort': False, 'title':_('operation')}),
+    ('startdatetime', {'title': _('startdate')}),
+    ('enddatetime', {'title': _('enddate')}),
+    ('quantity', {'title':_('quantity')}),
+    ('operationplan', {'filter': 'operationplan__icontains', 'title':_('operationplan')}),
     )

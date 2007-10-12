@@ -458,7 +458,7 @@ def view_report(request, entity=None, **args):
        # Never reset the breadcrumbs if an argument entity was passed.
        # Otherwise depend on the value in the report class.
        'reset_crumbs': reportclass.reset_crumbs and entity == None,
-       'title': (entity and '%s %s %s' % (_(reportclass.title),_('for'),entity)) or _(reportclass.title),
+       'title': (entity and '%s %s %s' % (reportclass.title,_('for'),entity)) or reportclass.title,
        'sort': sortparam,
        'class': reportclass,
      }
@@ -483,7 +483,7 @@ class ReportRowHeader(Node):
     # A header cell for each row
     for row in cls.rows:
       number = number + 1
-      title = _((row[1].has_key('title') and row[1]['title']) or row[0])
+      title = unicode((row[1].has_key('title') and row[1]['title']) or row[0])
       if not row[1].has_key('sort') or row[1]['sort']:
         # Sorting is allowed
         if int(sort[0]) == number:

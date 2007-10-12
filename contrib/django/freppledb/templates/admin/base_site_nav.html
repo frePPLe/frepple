@@ -39,7 +39,7 @@
 
 <!-- output menu -->
 <div id="outputMenu" class="menu" onmouseover="menuMouseover(event)">
-<a class="menuItem" href="/problem/">{% trans "Problems" %}</a>
+<a class="menuItem" href="/problem/">{% trans "problems" %}</a>
 <a class="menuItem" href="/buffer/">{% trans "Inventory Report" %}</a>
 <a class="menuItem" href="/resource/">{% trans "Resource Report" %}</a>
 <a class="menuItem" href="/demand/">{% trans "Demand Report" %}</a>
@@ -59,11 +59,11 @@
 <!-- user menu -->
 <div id="userMenu" class="menu">
 {% if request.user.is_authenticated %}
-<a class="menuItem" href="/admin/logout">{% trans 'Logout' %}</a>
+<a class="menuItem" href="/admin/logout">{% trans 'Log out' %}</a>
 <a class="menuItem" href="/preferences">{% trans 'Preferences' %}</a>
 <a class="menuItem" href="/admin/password_change">{% trans 'Change Password' %}</a>
 {% else %}
-<a class="menuItem" href="/admin/auth/user/">{% trans 'Login' %}</a>
+<a class="menuItem" href="/admin/auth/user/">{% trans 'Log in' %}</a>
 {% endif %}
 </div>
 

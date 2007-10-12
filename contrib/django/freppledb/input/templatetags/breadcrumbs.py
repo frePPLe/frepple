@@ -27,6 +27,7 @@ from django.template import Library, Node, resolve_variable, TemplateSyntaxError
 from django.contrib.sessions.models import Session
 from django.conf import settings
 from django.contrib.admin.views.main import quote
+from django.utils.translation import ugettext as _
 
 from freppledb.report import ReportRowHeader
 
@@ -113,18 +114,18 @@ class CrumbsNode(Node):
         # Pick up the current crumbs from the session cookie
         req = context['request']
         try: cur = req.session['crumbs']
-        except: cur = [('Home',HOMECRUMB % _('Home'))]
+        except: cur = [(_('Home'),HOMECRUMB % _('Home'))]
 
         # Check if we need to reset the crumbs
         try:
-          if context['reset_crumbs']: cur = [('Home',HOMECRUMB % _('Home'))]
+          if context['reset_crumbs']: cur = [(_('Home'),HOMECRUMB % _('Home'))]
         except: pass
 
         # Pop from the stack if the same url is already in the crumbs
         try: title = resolve_variable("title",context)
         except: title = req.get_full_path()
         # A special case to work around the hardcoded title of the main admin page
-        if title == 'Site administration': title = _('Home')
+        if title == _('Site administration'): title = _('Home')
         cnt = 0
         for i in cur:
            if i[0] == title:

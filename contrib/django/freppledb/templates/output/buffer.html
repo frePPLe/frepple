@@ -1,0 +1,59 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n admin_list adminmedia %}
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript">
+		ContextMenu.setup();
+		ContextMenu.attach('buffer', 'buffercontext');
+		ContextMenu.attach('item', 'itemcontext');
+		ContextMenu.attach('location', 'locationcontext');
+</script>
+{% endblock %}
+{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
+{% block coltype %}colM{% endblock %}
+{% block tools %}<div class="tools">
+<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
+</div>{% endblock %}
+{% block content %}
+<div id="content-main">
+
+<div id="buffercontext" class="ContextMenu">
+{% if perms.input.change_buffer %}<a id="/admin/input/buffer/%s">Buffer</a>{% endif %}
+<a id="/supplypath/buffer/%s">Supply Path</a>
+<a id="/whereused/buffer/%s">Where Used</a>
+</div>
+
+<div id="itemcontext" class="ContextMenu">
+{% if perms.input.change_item %}<a id="/admin/input/item/%s">Item</a>{% endif %}
+<a id="/supplypath/item/%s">Supply Path</a>
+<a id="/whereused/item/%s">Where Used</a>
+<a id="/demand/%s">Demand</a>
+</div>
+
+<div id="Locationcontext" class="ContextMenu">
+<a id="/admin/input/location/%s">Location</a>
+</div>
+
+<div style="overflow-x: scroll; overflow-y: auto;">
+<table><thead><tr>
+{% rowheader %}
+{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
+
+<tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
+<tr class="{% cycle row1,row2 %}"><td>{{j.buffer|superlink:"buffer"}}</td><td>{{j.item|superlink:"item"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
+<td>Start&nbsp;inventory<br/>Consumed<br/>Produced<br/>End&nbsp;inventory</td>{% endif %}
+<td>{{j.startoh|floatformat:1}}<br/>
+{% if j.consumed %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=5a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__lt=0">{{j.consumed|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
+{% if j.produced %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=5a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__gte=0">{{j.produced|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
+{% if j.consumed or j.produced %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=5a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}">{{j.endoh|floatformat:1}}</a>{% else %}0.0{% endif %}</td>{% endfor %}
+</tr>{% endfor %}
+</tbody></table>
+</div>
+
+{% block pagination %}<p class="paginator">
+{% if is_paginated %}
+{% for x in page_htmls %} {{x}} {% endfor %}
+{% endif %}
+&nbsp;&nbsp;{{hits}} buffers {% ifnotequal hits fullhits %} (total <a class="showall" href="/buffer/">{{fullhits}}</a>){% endifnotequal %}
+{% endblock %}</p></div>
+
+{% endblock %}

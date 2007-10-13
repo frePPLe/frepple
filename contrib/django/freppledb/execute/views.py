@@ -336,7 +336,7 @@ class LogReport(ListReport):
   '''
   A list report to review the history of actions.
   '''
-  template = 'log.html'
+  template = 'execute/log.html'
   title = _("Command log")
   reset_crumbs = True
   basequeryset = log.objects.all()
@@ -345,4 +345,4 @@ class LogReport(ListReport):
     ('message', {'filter': 'message__icontains', 'filter_size': 30, 'title':_('message')}),
     ('lastmodified', {'title':_('last modified')}),
     )
-  
+

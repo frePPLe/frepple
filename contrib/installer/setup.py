@@ -51,6 +51,8 @@ packages = [# Required for django standalone deployment
             # Added to package a more complete python library with frepple
             'ftplib', 'poplib', 'imaplib', 'telnetlib', 'xmlrpclib',
             'gzip', 'bz2','zipfile', 'tarfile', 'SimpleXMLRPCServer',
+            # Added for unicode and internationalization
+            'encodings',
            ]
 includes = ['django.contrib.auth',
             'django.contrib.sessions',
@@ -106,9 +108,11 @@ data_files = []
 for srcdir, targetdir in [
    (os.path.join(djangodirectory,'contrib','admin','templates'), 'templates1'),
    (os.path.join(djangodirectory,'contrib','admin','media'), 'media'),
+   (os.path.join(djangodirectory,'conf','locale'), os.path.join('conf','locale')),
    (os.path.join(freppledirectory,'templates'), 'templates2'),
    (os.path.join(freppledirectory,'static'), 'static'),
    (os.path.join(freppledirectory,'static'), 'static'),
+   (os.path.join(freppledirectory,'locale'), 'locale'),
    (os.path.join(freppledirectory,'execute'), 'execute'),
    (os.path.join(freppledirectory,'input','fixtures'), os.path.join('fixtures','input')),
    (os.path.join(freppledirectory,'user','fixtures'), os.path.join('fixtures','user')),

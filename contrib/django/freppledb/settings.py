@@ -79,6 +79,9 @@ LANGUAGES = (
   ('nl', ugettext('Dutch')),
   ('en', ugettext('English')),
 )
+if (STANDALONE):
+  LOCALE_PATHS = [ os.path.join(FREPPLE_APP, 'conf', 'locale'), os.path.join(FREPPLE_APP,'locale'), ]
+
 
 SITE_ID = 1
 
@@ -108,7 +111,7 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
+    #'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
 )
 

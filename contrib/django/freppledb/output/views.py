@@ -42,7 +42,7 @@ class BufferReport(TableReport):
   '''
   A report showing the inventory profile of buffers.
   '''
-  template = 'buffer.html'
+  template = 'output/buffer.html'
   title = _('Inventory Report')
   basequeryset = Buffer.objects.all()
   rows = (
@@ -120,7 +120,7 @@ class DemandReport(TableReport):
   '''
   A report showing the independent demand for each item.
   '''
-  template = 'demand.html'
+  template = 'output/demand.html'
   title = _('Demand Report')
   basequeryset = Item.objects.extra(where=('name in (select item_id from demand)',))
   rows = (
@@ -207,7 +207,7 @@ class ForecastReport(TableReport):
   '''
   A report allowing easy editing of forecast numbers.
   '''
-  template = 'forecast.html'
+  template = 'output/forecast.html'
   title = _('Forecast Report')
   basequeryset = Forecast.objects.all()
   rows = (
@@ -293,7 +293,7 @@ class ResourceReport(TableReport):
   '''
   A report showing the loading of each resource.
   '''
-  template = 'resource.html'
+  template = 'output/resource.html'
   title = _('Resource Report')
   basequeryset = Resource.objects.all()
   rows = (
@@ -384,7 +384,7 @@ class OperationReport(TableReport):
   '''
   A report showing the planned starts of each operation.
   '''
-  template = 'operation.html'
+  template = 'output/operation.html'
   title = _('Operation Report')
   basequeryset = Operation.objects.all()
   rows = (
@@ -614,7 +614,7 @@ class PeggingReport(ListReport):
   '''
   A list report to show peggings.
   '''
-  template = 'pegging.html'
+  template = 'output/pegging.html'
   title = _("Pegging Report")
   reset_crumbs = False
   basequeryset = DemandPegging.objects.all()
@@ -636,7 +636,7 @@ class FlowPlanReport(ListReport):
   '''
   A list report to show flowplans.
   '''
-  template = 'flowplan.html'
+  template = 'output/flowplan.html'
   title = _("Inventory Detail Report")
   reset_crumbs = False
   basequeryset = FlowPlan.objects.extra(
@@ -659,7 +659,7 @@ class ProblemReport(ListReport):
   '''
   A list report to show problems.
   '''
-  template = 'problem.html'
+  template = 'output/problem.html'
   title = _("Problem Report")
   basequeryset = Problem.objects.all()
   rows = (
@@ -676,7 +676,7 @@ class OperationPlanReport(ListReport):
   '''
   A list report to show operationplans.
   '''
-  template = 'operationplan.html'
+  template = 'output/operationplan.html'
   title = _("Operationplan Detail Report")
   reset_crumbs = False
   basequeryset = OperationPlan.objects.extra(
@@ -698,7 +698,7 @@ class DemandPlanReport(ListReport):
   '''
   A list report to show delivery plans for demand.
   '''
-  template = 'demandplan.html'
+  template = 'output/demandplan.html'
   title = _("Demand Plan Detail")
   reset_crumbs = False
   basequeryset = Demand.objects.extra(
@@ -722,7 +722,7 @@ class LoadPlanReport(ListReport):
   '''
   A list report to show loadplans.
   '''
-  template = 'loadplan.html'
+  template = 'output/loadplan.html'
   title = _("Resource Load Detail")
   reset_crumbs = False
   basequeryset = LoadPlan.objects.extra(

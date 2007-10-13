@@ -111,7 +111,6 @@ for srcdir, targetdir in [
    (os.path.join(djangodirectory,'conf','locale'), os.path.join('conf','locale')),
    (os.path.join(freppledirectory,'templates'), 'templates2'),
    (os.path.join(freppledirectory,'static'), 'static'),
-   (os.path.join(freppledirectory,'static'), 'static'),
    (os.path.join(freppledirectory,'locale'), 'locale'),
    (os.path.join(freppledirectory,'execute'), 'execute'),
    (os.path.join(freppledirectory,'input','fixtures'), os.path.join('fixtures','input')),

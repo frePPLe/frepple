@@ -32,6 +32,7 @@ from django.core import management, serializers
 from django.db.models.fields.related import ForeignKey, AutoField
 from django.db import models, transaction
 from django.views.generic.simple import direct_to_template
+from django.utils.translation import ugettext_lazy as _
 
 import os, os.path
 

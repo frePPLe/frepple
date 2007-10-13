@@ -174,7 +174,7 @@ AUTH_PROFILE_MODULE = 'user.Preferences'
 
 # IP address of the machine you are browsing from. When logging in from this
 # machine additional debugging statements can be shown.
-INTERNAL_IPS = ( '127.0.0.1' )
+INTERNAL_IPS = ( '127.0.0.1', )
 
 # Allow overriding the settings
 # This is useful for the py2exe distribution: this settings file will be

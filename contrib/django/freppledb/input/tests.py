@@ -47,7 +47,7 @@ class DataLoadTest(django.test.TestCase):
 
   def test_input_calendar(self):
     response = self.client.get('/admin/input/calendar/')
-    self.assertContains(response, '2 calendars')
+    self.assertContains(response, '3 calendars')
 
   def test_input_demand(self):
     response = self.client.get('/admin/input/demand/')
@@ -71,7 +71,7 @@ class DataLoadTest(django.test.TestCase):
 
   def test_input_operationplan(self):
     response = self.client.get('/admin/input/operationplan/')
-    self.assertContains(response, '4 operation plans')
+    self.assertContains(response, '4 operationplans')
 
   def test_input_plan(self):
     response = self.client.get('/admin/input/plan/')
@@ -83,7 +83,7 @@ class DataLoadTest(django.test.TestCase):
 
   def test_input_suboperation(self):
     response = self.client.get('/admin/input/suboperation/')
-    self.assertContains(response, '4 sub operations')
+    self.assertContains(response, '4 suboperations')
 
   def test_buckets(self):
     # Find the calendar

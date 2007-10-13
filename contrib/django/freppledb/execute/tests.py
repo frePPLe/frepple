@@ -49,8 +49,8 @@ class ExecuteTest(django.test.TestCase):
     response = self.client.post('/execute/runfrepple/', {'action':'run', 'type':7})
     # The answer is a redirect to a new page, which also contains the success message
     self.failUnlessEqual(response.status_code, 302)
-    response = self.client.get(response['Location'])
-    self.assertContains(response, 'Successfully ran frepple')
+    response = self.client.get(response._headers['location'])
+    self.assertContains(response.content, 'Successfully ran frepple')
     # xxx problem: frepple doesn't export in the test database...
 
     # Count the output records

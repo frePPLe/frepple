@@ -1,0 +1,54 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n admin_list adminmedia %}
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript">
+		ContextMenu.setup();
+		ContextMenu.attach('buffer', 'buffercontext');
+		ContextMenu.attach('operation', 'operationcontext');
+</script>
+{% endblock %}
+{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
+{% block coltype %}colM{% endblock %}
+{% block tools %}<div class="tools">
+<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
+</div>{% endblock %}
+{% block content %}
+<div id="content-main">
+
+<div id="buffercontext" class="ContextMenu">
+{% if perms.input.change_buffer %}<a id="/admin/input/buffer/%s">Buffer</a>{% endif %}
+<a id="/supplypath/buffer/%s">Supply Path</a>
+<a id="/whereused/buffer/%s">Where Used</a>
+<a id="/buffer/%s">Plan</a>
+</div>
+
+<div id="operationcontext" class="ContextMenu">
+{% if perms.input.change_operation %}<a id="/admin/input/operation/%s">Operation</a>{% endif %}
+<a id="/supplypath/operation/%s">Supply Path</a>
+<a id="/operation/%s">Plan</a>
+</div>
+
+<div style="overflow-x: scroll; overflow-y: auto;">
+<table>
+<thead><tr>{% rowheader %}</tr></thead>
+
+<tbody>{% for i in objectlist %}
+<tr class="{% cycle row1,row2 %}">
+<td>{{i.thebuffer|superlink:"buffer"}}</td>
+<td>{{i.operation|superlink:"operation"}}</td>
+<td>{{i.quantity}}</td>
+<td>{{i.flowdatetime}}</td>
+<td>{{i.onhand}}</td>
+<td>{{i.operationplan}}</td>
+</tr>{% endfor %}
+</tbody></table>
+</div>
+
+{% block pagination %}<p class="paginator">
+{% if is_paginated %}
+{% for x in page_htmls %} {{x}} {% endfor %}
+{% endif %}
+&nbsp;&nbsp;{{hits}} material flowplans {% ifnotequal hits fullhits %} (total <a class="showall" href="/flowplan/">{{fullhits}}</a>){% endifnotequal %}
+{% endblock %}</p></div>
+
+{% endblock %}

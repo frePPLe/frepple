@@ -19,13 +19,11 @@
 </div>
 
 <div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr>
-{% rowheader %}
-{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
+<table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>
 
 <tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}" id="{{j.operation}}"><td>{{j.operation|superlink:"operation"}}</td>
-<td>Frozen&nbsp;starts<br/>Total&nbsp;starts<br/>Frozen&nbsp;ends<br/>Total&nbsp;ends</td>{% endif %}
+<td>{{ crossheader }}</td>{% endif %}
 <td>{% if j.frozen_start %}<a href="/operationplan/?operation={{j.operation|urlencode}}&amp;o=2a&amp;startdate__gte={{j.startdate}}&amp;startdate__lt={{j.enddate}}&amp;locked=1">{{j.frozen_start|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
 {% if j.total_start %}<a href="/operationplan/?operation={{j.operation|urlencode}}&amp;o=2a&amp;startdate__gte={{j.startdate}}&amp;startdate__lt={{j.enddate}}">{{j.total_start|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
 {% if j.frozen_end %}<a href="/operationplan/?operation={{j.operation|urlencode}}&amp;o=2a&amp;enddate__gte={{j.startdate}}&amp;enddate__lt={{j.enddate}}&amp;locked=1">{{j.frozen_end|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>

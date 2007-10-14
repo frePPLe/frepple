@@ -20,13 +20,11 @@
 </div>
 
 <div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr>
-{% rowheader %}
-{% for j in bucketlist %} <th>{{j.name}}</th> {% endfor %}</tr></thead>
+<table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>
 
 <tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
 <tr class="{% cycle row1,row2 %}" id="{{j.item}}"><td>{{j.item|superlink:"item"}}</td>
-<td>Demand<br/>Supply<br/>Backlog</td>{% endif %}
+<td>{{ crossheader }}</td>{% endif %}
 <!-- @todo not possible to filter on item yet... -->
 <td>{% if j.demand %}<a href="/demandplan/?o=4a&amp;duedate__gte={{j.startdate}}&amp;duedate__lt={{j.enddate}}">{{j.demand|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
 {% if j.supply %}<a href="/demandplan/?o=5a&amp;plandate__gte={{j.startdate}}&amp;plandate__lt={{j.enddate}}">{{j.supply|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>

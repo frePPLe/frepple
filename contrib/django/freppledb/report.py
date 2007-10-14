@@ -183,6 +183,9 @@ class TableReport(Report):
   #   - title:
   #     Name of the cross that is displayed to the user.
   #     It defaults to the name of the field.
+  #   - editable:
+  #     True when the field is editable in the page.
+  #     The default value is false.
   crosses = ()
 
   # Column definitions
@@ -443,7 +446,6 @@ def view_report(request, entity=None, **args):
        'bucket': bucket,
        'startdate': start,
        'enddate': end,
-       'bucketlist': bucketlist,
        'paginator': paginator,
        'is_paginated': paginator.pages > 1,
        'has_next': paginator.has_next_page(page - 1),
@@ -459,8 +461,9 @@ def view_report(request, entity=None, **args):
        # Otherwise depend on the value in the report class.
        'reset_crumbs': reportclass.reset_crumbs and entity == None,
        'title': (entity and '%s %s %s' % (reportclass.title,_('for'),entity)) or reportclass.title,
-       'sort': sortparam,
-       'class': reportclass,
+       'rowheader': _create_rowheader(request, sortparam, reportclass),
+       'crossheader': issubclass(reportclass, TableReport) and _create_crossheader(request, reportclass),
+       'columnheader': issubclass(reportclass, TableReport) and _create_columnheader(request, reportclass, bucketlist),
      }
   if 'extra_context' in args: context.update(args['extra_context'])
 
@@ -469,60 +472,82 @@ def view_report(request, entity=None, **args):
     context, context_instance=RequestContext(request))
 
 
-class ReportRowHeader(Node):
+def _create_columnheader(req, cls, bucketlist):
+  '''
+  Generate html header row for the columns of a table report.
+  '''
+  # @todo not very clean and consistent with cross and row
+  return ' '.join(['<th>%s</th>' % j['name'] for j in bucketlist])
 
-  def render(self, context):
-    req = resolve_variable('request',context)
-    sort = resolve_variable('sort',context)
-    cls = resolve_variable('class',context)
-    result = ['<form>']
-    number = 0
-    args = req.GET.copy()
-    args2 = req.GET.copy()
 
-    # A header cell for each row
-    for row in cls.rows:
-      number = number + 1
-      title = unicode((row[1].has_key('title') and row[1]['title']) or row[0])
-      if not row[1].has_key('sort') or row[1]['sort']:
-        # Sorting is allowed
-        if int(sort[0]) == number:
-          if sort[1] == 'a':
-            # Currently sorting in ascending order on this column
-            args['o'] = '%dd' % number
-            y = 'class="sorted ascending"'
-          else:
-            # Currently sorting in descending order on this column
-            args['o'] = '%da' % number
-            y = 'class="sorted descending"'
+def _create_crossheader(req, cls):
+  '''
+  Generate html for the crosses of a table report.
+  '''
+  res = []
+  for crs in cls.crosses:
+    title = unicode((crs[1].has_key('title') and crs[1]['title']) or crs[0]).replace(' ','&nbsp;')
+    # Editable crosses need to be a bit higher...
+    if crs[1].has_key('editable'):
+      if (callable(crs[1]['editable']) and crs[1]['editable'](req)) \
+      or (not callable(crs[1]['editable']) and crs[1]['editable']):
+        title = '<span style="line-height:18pt;">' + title + '</span>'
+    res.append(title)
+  return '<br/>'.join(res)
+
+
+def _create_rowheader(req, sort, cls):
+  '''
+  Generate html header row for the columns of a table or list report.
+  '''
+  result = ['<form>']
+  number = 0
+  args = req.GET.copy()
+  args2 = req.GET.copy()
+
+  # A header cell for each row
+  for row in cls.rows:
+    number = number + 1
+    title = unicode((row[1].has_key('title') and row[1]['title']) or row[0])
+    if not row[1].has_key('sort') or row[1]['sort']:
+      # Sorting is allowed
+      if int(sort[0]) == number:
+        if sort[1] == 'a':
+          # Currently sorting in ascending order on this column
+          args['o'] = '%dd' % number
+          y = 'class="sorted ascending"'
         else:
-          # Sorted on another column
+          # Currently sorting in descending order on this column
           args['o'] = '%da' % number
-          y = ''
-        if 'filter' in cls.rows[number-1][1]:
-          result.append( '<th %s><a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
-            % (y, req.path, escape(args.urlencode()),
-               title[0].upper(), title[1:],
-               (row[1].has_key('filter_size') and row[1]['filter_size']) or 10,
-               args.get(cls.rows[number-1][1]['filter'],''),
-               cls.rows[number-1][1]['filter'], number+1000,
-               ) )
-          if cls.rows[number-1][1]['filter'] in args2: del args2[cls.rows[number-1][1]['filter']]
-        else:
-          result.append( '<th %s style="vertical-align:top"><a href="%s?%s">%s%s</a></th>' \
-            % (y, req.path, escape(args.urlencode()),
-               title[0].upper(), title[1:],
-              ) )
-          if row[0] in args2: del args2[row[0]]
+          y = 'class="sorted descending"'
       else:
-        # No sorting is allowed on this field
-          result.append( '<th style="vertical-align:top">%s%s</th>' \
-            % (title[0].upper(), title[1:]) )
+        # Sorted on another column
+        args['o'] = '%da' % number
+        y = ''
+      if 'filter' in cls.rows[number-1][1]:
+        result.append( '<th %s><a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
+          % (y, req.path, escape(args.urlencode()),
+             title[0].upper(), title[1:],
+             (row[1].has_key('filter_size') and row[1]['filter_size']) or 10,
+             args.get(cls.rows[number-1][1]['filter'],''),
+             cls.rows[number-1][1]['filter'], number+1000,
+             ) )
+        if cls.rows[number-1][1]['filter'] in args2: del args2[cls.rows[number-1][1]['filter']]
+      else:
+        result.append( '<th %s style="vertical-align:top"><a href="%s?%s">%s%s</a></th>' \
+          % (y, req.path, escape(args.urlencode()),
+             title[0].upper(), title[1:],
+            ) )
+        if row[0] in args2: del args2[row[0]]
+    else:
+      # No sorting is allowed on this field
+        result.append( '<th style="vertical-align:top">%s%s</th>' \
+          % (title[0].upper(), title[1:]) )
 
-    # Extra hidden fields for query parameters that aren't rows
-    for key in args2:
-      result.append( '<th><input type="hidden" name="%s" value="%s"/>' % (key, args[key]))
+  # Extra hidden fields for query parameters that aren't rows
+  for key in args2:
+    result.append( '<th><input type="hidden" name="%s" value="%s"/>' % (key, args[key]))
 
-    # 'Go' button
-    result.append( '<th><input type="submit" value="Go" tabindex="1100"/></th></form>' )
-    return '\n'.join(result)
+  # 'Go' button
+  result.append( '<th><input type="submit" value="Go" tabindex="1100"/></th></form>' )
+  return '\n'.join(result)

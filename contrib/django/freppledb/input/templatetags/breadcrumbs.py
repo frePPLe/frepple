@@ -29,8 +29,6 @@ from django.conf import settings
 from django.contrib.admin.views.main import quote
 from django.utils.translation import ugettext as _
 
-from freppledb.report import ReportRowHeader
-
 
 HOMECRUMB = '<a href="/admin/">%s</a>'
 
@@ -212,22 +210,6 @@ def version():
   A simple tag returning the version of the frepple application.
   '''
   return settings.FREPPLE_VERSION
-
-
-#
-# A tag to generate report row headers
-#
-
-def rowheader(parser, token):
-  '''
-  Takes the rows of a report and creates an appropriate header row.
-  The header row provides functionality for sorting and filtering.
-  Example:
-    {% rowheader %}
-  '''
-  return ReportRowHeader()
-
-register.tag('rowheader', rowheader)
 
 
 #

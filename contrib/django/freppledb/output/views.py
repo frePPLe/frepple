@@ -51,10 +51,10 @@ class BufferReport(TableReport):
     ('location', {'filter': 'location__name__icontains', 'title':_('location')}),
     )
   crosses = (
-    ('startoh', {'title':_('start inventory'),}),
-    ('consumed', {'title':_('consumed'),}),
-    ('produced', {'title':_('produced'),}),
-    ('endoh', {'title':_('end inventory'),}),
+    ('startoh', {'title':_('Start Inventory'),}),
+    ('consumed', {'title':_('Consumed'),}),
+    ('produced', {'title':_('Produced'),}),
+    ('endoh', {'title':_('End Inventory'),}),
     )
   columns = (
     ('bucket', {'title':_('bucket')}),
@@ -127,9 +127,9 @@ class DemandReport(TableReport):
     ('item',{'filter': 'name__icontains', 'order_by': 'name', 'title':_('item')}),
     )
   crosses = (
-    ('demand',{'title':_('demand')}),
-    ('supply',{'title':_('supply')}),
-    ('backlog',{'title':_('backlog')}),
+    ('demand',{'title':_('Demand')}),
+    ('supply',{'title':_('Supply')}),
+    ('backlog',{'title':_('Backlog')}),
     )
   columns = (
     ('bucket',{'title':_('bucket')}),
@@ -216,8 +216,8 @@ class ForecastReport(TableReport):
     ('customer',{'filter': 'customer__name__icontains', 'title':_('customer')}),
     )
   crosses = (
-    ('demand',{'title': _('gross forecast')}),
-    ('planned',{'title':_('planned forecast')}),
+    ('demand',{'title': _('Gross Forecast'), 'editable': lambda req: req.user.has_perm('input.change_forecastdemand'),}),
+    ('planned',{'title':_('Planned Forecast')}),
     )
   columns = (
     ('bucket',{'title':_('bucket')}),
@@ -301,9 +301,9 @@ class ResourceReport(TableReport):
     ('location',{'filter': 'location__name__icontains', 'title':_('location')}),
     )
   crosses = (
-    ('available',{'title':_('available')}),
-    ('load',{'title':_('load')}),
-    ('utilization',{'title':_('utilization %'),}),
+    ('available',{'title':_('Available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),
+    ('load',{'title':_('Load')}),
+    ('utilization',{'title':_('Utilization %'),}),
     )
   columns = (
     ('bucket',{'title':_('bucket')}),
@@ -391,10 +391,10 @@ class OperationReport(TableReport):
     ('operation',{'filter': 'name__icontains', 'order_by': 'name', 'title':_('operation')}),
     )
   crosses = (
-    ('frozen_start', {'title':_('frozen starts'),}),
-    ('total_start', {'title':_('total starts'),}),
-    ('frozen_end', {'title':_('frozen ends'),}),
-    ('total_end', {'title':_('total ends'),}),
+    ('frozen_start', {'title':_('Frozen Starts'),}),
+    ('total_start', {'title':_('Total Starts'),}),
+    ('frozen_end', {'title':_('Frozen Ends'),}),
+    ('total_end', {'title':_('Total Ends'),}),
     )
   columns = (
     ('bucket',{'title':_('bucket')}),

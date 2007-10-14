@@ -25,20 +25,22 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django import newforms as forms
+from django.utils.translation import ugettext_lazy as _
+
 from freppledb.user.models import Preferences
 
 
 class PreferencesForm(forms.Form):
-  buckets = forms.ChoiceField(initial='Default',
+  buckets = forms.ChoiceField(initial=_('Default'),
     choices=Preferences.buckettype,
-    help_text="Bucket size for reports",
+    help_text=_("Bucket size for reports"),
     )
   startdate = forms.DateField(required=False,
-    help_text="Start date for filtering report data",
+    help_text=_("Start date for filtering report data"),
     widget=forms.TextInput(attrs={'class':"vDateField"}),
     )
   enddate = forms.DateField(required=False,
-    help_text="End date for filtering report data",
+    help_text=_("End date for filtering report data"),
     widget=forms.TextInput(attrs={'class':"vDateField"}),
     )
 
@@ -60,9 +62,10 @@ def preferences(request):
         request.user.message_set.create(message='Failure updating preferences')
   else:
     pref = request.user.get_profile()
-    form = PreferencesForm({'buckets': pref.buckets, 'startdate': pref.startdate, 'enddate': pref.enddate})
+    form = PreferencesForm({'buckets': pref.buckets,
+      'startdate': pref.startdate, 'enddate': pref.enddate})
   return render_to_response('user/preferences.html', {
-     'title': 'Edit my preferences',
+     'title': _('Edit my preferences'),
      'form': form,
      'reset_crumbs': True,
      },

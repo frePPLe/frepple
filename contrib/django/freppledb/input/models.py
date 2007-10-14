@@ -192,7 +192,7 @@ class Calendar(models.Model):
 
 class Bucket(models.Model):
     # Database fields
-    calendar = models.ForeignKey(Calendar, edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
+    calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
     startdate = models.DateTimeField('start date', core=True)
     enddate = models.DateTimeField('end date', editable=False, null=True, default=datetime(2030,12,31))
     value = models.DecimalField(_('value'), max_digits=15, decimal_places=4, default=0.00)
@@ -244,7 +244,7 @@ class Location(models.Model):
     description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
     category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
-    owner = models.ForeignKey('self', null=True, blank=True, related_name='children',
+    owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
       raw_id_admin=True, help_text=_('Hierarchical parent'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
@@ -269,7 +269,7 @@ class Customer(models.Model):
     description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
     category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
-    owner = models.ForeignKey('self', null=True, blank=True, related_name='children',
+    owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
       raw_id_admin=True, help_text=_('Hierarchical parent'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
@@ -294,8 +294,8 @@ class Item(models.Model):
     description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
     category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
-    operation = models.ForeignKey('Operation', null=True, blank=True, raw_id_admin=True)
-    owner = models.ForeignKey('self', null=True, blank=True, related_name='children',
+    operation = models.ForeignKey('Operation', verbose_name=_('delivery operation'), null=True, blank=True, raw_id_admin=True)
+    owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
       raw_id_admin=True, help_text=_('Hierarchical parent'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
@@ -380,10 +380,13 @@ class SubOperation(models.Model):
     ## See Django ticket: http://code.djangoproject.com/ticket/1939
     #operation = models.ForeignKey(Operation, edit_inline=models.TABULAR,
     #  min_num_in_admin=3, num_extra_on_change=1, related_name='alfa')
-    operation = models.ForeignKey(Operation, raw_id_admin=True, related_name='suboperations')
+    operation = models.ForeignKey(Operation, verbose_name=_('operation'),
+      raw_id_admin=True, related_name='suboperations')
     priority = models.DecimalField(_('priority'), max_digits=5, decimal_places=4, default=1)
-    suboperation = models.ForeignKey(Operation, raw_id_admin=True, related_name='superoperations', core=True)
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
+    suboperation = models.ForeignKey(Operation, verbose_name=_('suboperation'),
+      raw_id_admin=True, related_name='superoperations', core=True)
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True,
+      editable=False, db_index=True)
 
     def __str__(self):
         return self.operation.name \
@@ -415,13 +418,15 @@ class Buffer(models.Model):
     category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
     type = models.CharField(_('type'), maxlength=20, null=True, blank=True, choices=buffertypes, default='')
-    location = models.ForeignKey(Location, null=True, blank=True, db_index=True, raw_id_admin=True)
+    location = models.ForeignKey(Location, verbose_name=_('location'), null=True,
+      blank=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, db_index=True, null=True, raw_id_admin=True)
     onhand = models.DecimalField(_('onhand'),max_digits=15, decimal_places=4, default=0.00, help_text=_('current inventory'))
-    minimum = models.ForeignKey(Calendar, null=True, blank=True, raw_id_admin=True,
+    minimum = models.ForeignKey(Calendar, verbose_name=_('minimum'),
+      null=True, blank=True, raw_id_admin=True,
       help_text=_('Calendar storing the safety stock profile'))
-    producing = models.ForeignKey(Operation, null=True, blank=True,
-      related_name='used_producing', raw_id_admin=True,
+    producing = models.ForeignKey(Operation, verbose_name=_('producing'),
+      null=True, blank=True, related_name='used_producing', raw_id_admin=True,
       help_text=_('Operation to replenish the buffer'))
     # Extra fields for procurement buffers
     leadtime = models.DecimalField(_('leadtime'),max_digits=15, decimal_places=0, null=True, blank=True,
@@ -502,10 +507,12 @@ class Resource(models.Model):
     category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
     type = models.CharField(_('type'), maxlength=20, null=True, blank=True, choices=resourcetypes, default='')
-    maximum = models.ForeignKey(Calendar, null=True, blank=True,
+    maximum = models.ForeignKey(Calendar, verbose_name=_('maximum'), null=True, blank=True,
       raw_id_admin=True, help_text=_('Calendar defining the available capacity'))
-    location = models.ForeignKey(Location, null=True, blank=True, db_index=True, raw_id_admin=True)
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
+    location = models.ForeignKey(Location, verbose_name=_('location'),
+      null=True, blank=True, db_index=True, raw_id_admin=True)
+    lastmodified = models.DateTimeField(_('last modified'), auto_now=True,
+      editable=False, db_index=True)
 
     # Methods
     def __str__(self): return self.name
@@ -539,9 +546,12 @@ class Flow(models.Model):
     )
 
     # Database fields
-    operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True, related_name='flows')
-    thebuffer = models.ForeignKey(Buffer, db_index=True, raw_id_admin=True, related_name='flows')
-    type = models.CharField(_('type'), maxlength=20, null=True, blank=True, choices=flowtypes,
+    operation = models.ForeignKey(Operation, verbose_name=_('operation'),
+      db_index=True, raw_id_admin=True, related_name='flows')
+    thebuffer = models.ForeignKey(Buffer, verbose_name=_('buffer'),
+      db_index=True, raw_id_admin=True, related_name='flows')
+    type = models.CharField(_('type'), maxlength=20, null=True, blank=True,
+      choices=flowtypes,
       help_text=_('Consume/produce material at the start or the end of the operationplan'),
       )
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
@@ -566,8 +576,8 @@ class Flow(models.Model):
 
 
 class Load(models.Model):
-    operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True, related_name='loads')
-    resource = models.ForeignKey(Resource, db_index=True, raw_id_admin=True, related_name='loads')
+    operation = models.ForeignKey(Operation, verbose_name=_('operation'), db_index=True, raw_id_admin=True, related_name='loads')
+    resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, raw_id_admin=True, related_name='loads')
     usagefactor = models.DecimalField(_('usagefactor'),max_digits=15, decimal_places=4, default='1.00')
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
@@ -590,8 +600,10 @@ class Load(models.Model):
 class OperationPlan(models.Model):
     identifier = models.IntegerField(_('identifier'),primary_key=True,
       help_text=_('Unique identifier of an operationplan'))
-    operation = models.ForeignKey(Operation, db_index=True, raw_id_admin=True)
-    quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
+    operation = models.ForeignKey(Operation, verbose_name=_('operation'),
+      db_index=True, raw_id_admin=True)
+    quantity = models.DecimalField(_('quantity'),max_digits=15,
+      decimal_places=4, default='1.00')
     startdate = models.DateTimeField(_('start date'),help_text=_('start date'))
     enddate = models.DateTimeField(_('end date'),help_text=_('end date'))
     locked = models.BooleanField(_('locked'),default=True, radio_admin=True,
@@ -634,16 +646,18 @@ class Demand(models.Model):
     description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
     category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
-    customer = models.ForeignKey(Customer, null=True, db_index=True, raw_id_admin=True)
-    item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
+    customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, db_index=True, raw_id_admin=True)
+    item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, raw_id_admin=True)
     due = models.DateTimeField(_('due'))
-    operation = models.ForeignKey(Operation, null=True, blank=True,
-      related_name='used_demand', raw_id_admin=True, help_text=_('Operation used to satisfy this demand'))
+    operation = models.ForeignKey(Operation,
+      verbose_name=_('delivery operation'), null=True, blank=True,
+      related_name='used_demand', raw_id_admin=True,
+      help_text=_('Operation used to satisfy this demand'))
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4)
     priority = models.PositiveIntegerField(_('priority'),default=2, choices=demandpriorities, radio_admin=True)
     policy = models.CharField(_('policy'),maxlength=25, null=True, blank=True, choices=demandpolicies,
       help_text=_('Choose whether to plan the demand short or late, and with single or multiple deliveries allowed'))
-    owner = models.ForeignKey('self', null=True, blank=True, raw_id_admin=True,
+    owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, raw_id_admin=True,
       help_text=_('Hierarchical parent'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
@@ -675,10 +689,10 @@ class Forecast(models.Model):
     description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
     category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
-    customer = models.ForeignKey(Customer, null=True, db_index=True, raw_id_admin=True)
-    item = models.ForeignKey(Item, db_index=True, raw_id_admin=True)
-    calendar = models.ForeignKey(Calendar, null=False, raw_id_admin=True)
-    operation = models.ForeignKey(Operation, null=True, blank=True,
+    customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, db_index=True, raw_id_admin=True)
+    item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, raw_id_admin=True)
+    calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), null=False, raw_id_admin=True)
+    operation = models.ForeignKey(Operation, verbose_name=_('delivery operation'), null=True, blank=True,
       related_name='used_forecast', raw_id_admin=True, help_text=_('Operation used to satisfy this demand'))
     priority = models.PositiveIntegerField(_('priority'),default=2, choices=Demand.demandpriorities, radio_admin=True)
     policy = models.CharField(_('policy'),maxlength=25, null=True, blank=True, choices=Demand.demandpolicies,
@@ -866,7 +880,7 @@ class Forecast(models.Model):
 
 class ForecastDemand(models.Model):
     # Database fields
-    forecast = models.ForeignKey(Forecast, null=False, db_index=True, raw_id_admin=True, related_name='entries')
+    forecast = models.ForeignKey(Forecast, verbose_name=_('forecast'), null=False, db_index=True, raw_id_admin=True, related_name='entries')
     startdate = models.DateField(_('start date'), null=False)
     enddate = models.DateField(_('end date'), null=False)
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default=0)

@@ -21,29 +21,32 @@
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net
 
+#from datetime import date
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.dispatch import dispatcher
 from django.db.models import signals
-from datetime import date
+from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Plan
 
 
 class Preferences(models.Model):
     buckettype = (
-      ('default','Default'),
-      ('day','Day'),
-      ('week','Week'),
-      ('month','Month'),
-      ('quarter','Quarter'),
-      ('year','Year'),
+      ('default',_('Default')),
+      ('day',_('Day')),
+      ('week',_('Week')),
+      ('month',_('Month')),
+      ('quarter',_('Quarter')),
+      ('year',_('Year')),
     )
-    user = models.ForeignKey(User, unique=True, edit_inline=models.TABULAR,
-      num_in_admin=1,min_num_in_admin=1, max_num_in_admin=1, num_extra_on_change=0)
-    buckets = models.CharField(maxlength=10, choices=buckettype, default='default')
-    startdate = models.DateField(blank=True, null=True)
-    enddate = models.DateField(blank=True, null=True)
+    user = models.ForeignKey(User, verbose_name=_('user'), unique=True,
+      edit_inline=models.TABULAR, num_in_admin=1, min_num_in_admin=1,
+      max_num_in_admin=1, num_extra_on_change=0)
+    buckets = models.CharField(_('buckets'), maxlength=10, choices=buckettype, default='default')
+    startdate = models.DateField(_('startdate'), blank=True, null=True)
+    enddate = models.DateField(_('enddate'), blank=True, null=True)
     dummy = models.SmallIntegerField(editable=False, core=True, default=1)
 
 

@@ -16,11 +16,11 @@ dist-hook:
 create:
 	cd freppledb; ./manage.py syncdb
 
-setup:
-	setup.py
-
 check:
 	cd freppledb; ./manage.py test
 
 runserver:
 	cd freppledb; ./manage.py runserver
+
+international:
+	cd freppledb; make-messages.py -a && compile-messages.py 

@@ -74,7 +74,7 @@ TIME_ZONE = 'Europe/Brussels'
 # http://blogs.law.harvard.edu/tech/stories/storyReader$15
 ugettext = lambda s: s
 USE_I18N = True
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'nl'
 LANGUAGES = (
   ('nl', ugettext('Dutch')),
   ('en', ugettext('English')),

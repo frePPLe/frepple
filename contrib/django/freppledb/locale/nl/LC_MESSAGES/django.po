@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 0.3.2-beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-10-15 11:25+0200\n"
-"PO-Revision-Date: 2007-10-15 11:58+0100\n"
+"PO-Revision-Date: 2007-10-15 12:24+0100\n"
 "Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
 "Language-Team: info@frepple.com\n"
 "MIME-Version: 1.0\n"
@@ -393,7 +393,7 @@ msgstr "Kalendar met het safety stock profiel"
 
 #: input/models.py:428
 msgid "producing"
-msgstr ""
+msgstr "productieoperatie"
 
 #: input/models.py:430
 msgid "Operation to replenish the buffer"
@@ -507,11 +507,11 @@ msgstr "Kalendar die de beschikbare capaciteit definieert"
 #: output/views.py:300
 #: output/views.py:733
 msgid "resource"
-msgstr ""
+msgstr "machine"
 
 #: input/models.py:538
 msgid "resources"
-msgstr ""
+msgstr "machines"
 
 #: input/models.py:555
 msgid "Consume/produce material at the start or the end of the operationplan"
@@ -533,11 +533,11 @@ msgstr "waarde"
 
 #: input/models.py:574
 msgid "flow"
-msgstr ""
+msgstr "flow"
 
 #: input/models.py:575
 msgid "flows"
-msgstr ""
+msgstr "flows"
 
 #: input/models.py:581
 msgid "usagefactor"
@@ -1144,7 +1144,7 @@ msgstr ""
 "<option value=\"0\">unconstrained</option>\n"
 "</select> plan in frePPLe...<br/>\n"
 "en bewaar de resultaten in de databank<br/><br/>\n"
-"<a href=\"/execute/logfrepple/\">Bekijk laatste logbestand</a></td>\n"
+"<a href=\"/execute/logfrepple/\">Bekijk het laatste logbestand</a></td>\n"
 "<td><input id=\"run\" type=\"submit\" value=\"Uitvoeren\" /></td>"
 
 #: templates/execute/execute.html:57
@@ -1266,25 +1266,25 @@ msgid ""
 "</td>\n"
 "<td><input id=\"create\" type=\"submit\" value=\"Create\"/></td>"
 msgstr ""
-"<th scope=\"row\"><a>Create a model</a></th>\n"
-"<td>Create a sample model in the database.<br/>\n"
-"The parameters control the size and complexity.<br/>\n"
-"Number of end items: <input id=\"0\" name=\"clusters\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br/>\n"
-"<b>Demand:</b></br>\n"
-"&nbsp;&nbsp;Monthly forecast per end item: <input id=\"1\" name=\"fcst\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Demands per end item: <input id=\"2\" name=\"demands\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Average delivery lead time: <input id=\"2\" name=\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/> days<br/>\n"
-"<b>Raw Materials:</b></br>\n"
-"&nbsp;&nbsp;Depth of bill-of-material: <input id=\"3\" name=\"levels\" type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Total number of components: <input id=\"0\" name=\"components\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Number of components per end item: <input id=\"0\" name=\"components_per\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"4\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Average procurement lead time: <input id=\"2\" name=\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" onchange=\"calcUtil()\"/> days<br/>\n"
-"<b>Capacity:</b></br>\n"
-"&nbsp;&nbsp;Number of resources: <input id=\"4\" name=\"rsrc_number\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"50\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Size of each resource: <input id=\"5\" name=\"rsrc_size\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"4\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Expected average resource utilization: <span id=\"util\">82.2</span>%%<br/>\n"
+"<th scope=\"row\"><a>Creeer een model</a></th>\n"
+"<td>Genereer een voorbeeld model in de databank.<br/>\n"
+"De volgende parameters controleren de grootte en complexiteit.<br/>\n"
+"Aand eindproducten: <input id=\"0\" name=\"clusters\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br/>\n"
+"<b>Vraag:</b></br>\n"
+"&nbsp;&nbsp;Maandelijkse forecast per eindproduct: <input id=\"1\" name=\"fcst\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Orders per eindproduct: <input id=\"2\" name=\"demands\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Gemiddelde levertijd: <input id=\"2\" name=\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/> days<br/>\n"
+"<b>Grondstoffen:</b></br>\n"
+"&nbsp;&nbsp;Diepte van de bill-of-material: <input id=\"3\" name=\"levels\" type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Aantal componenten: <input id=\"0\" name=\"components\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Aantal componenten per eindproduct: <input id=\"0\" name=\"components_per\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"4\" onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Gemiddelde levertijd van leveranciers: <input id=\"2\" name=\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" onchange=\"calcUtil()\"/> days<br/>\n"
+"<b>Capaciteit:</b></br>\n"
+"&nbsp;&nbsp;Aantal machines: <input id=\"4\" name=\"rsrc_number\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"50\" onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Capaciteit van elke machine: <input id=\"5\" name=\"rsrc_size\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"4\" onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Verwachte gemiddelde bezettingsgraad: <span id=\"util\">82.2</span>%%<br/>\n"
 "</td>\n"
-"<td><input id=\"create\" type=\"submit\" value=\"Create\"/></td>"
+"<td><input id=\"create\" type=\"submit\" value=\"Genereer\"/></td>"
 
 #: templates/execute/execute.html:150
 msgid "Sorry, You don't have any execute permissions..."

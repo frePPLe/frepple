@@ -179,3 +179,5 @@ table thead th {
 table thead th.sorted {
   background: #ddd;
 }
+
+.dashboard #content { width: 550px; }

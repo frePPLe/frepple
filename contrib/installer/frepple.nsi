@@ -107,12 +107,12 @@ CRCcheck on
 ShowInstDetails show
 ShowUnInstDetails show
 
-ReserveFile "database.ini"
+ReserveFile "parameters.ini"
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
 Function .onInit
   ;Extract InstallOptions INI file
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "database.ini"
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "parameters.ini"
 FunctionEnd
 
 Section -Start
@@ -172,8 +172,17 @@ Section "Application" SecAppl
   WriteRegExpandStr HKEY_CURRENT_USER "Environment" "FREPPLE_HOME" "$INSTDIR\bin"
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 
-  ; Pick up the database configuration parameters
-  ReadINIStr $0 "$PLUGINSDIR\database.ini" "Field 7" "State"   # DB engine
+  ; Pick up the installation parameters
+  ReadINIStr $6 "$PLUGINSDIR\parameters.ini" "Field 8" "State"  # Language
+  StrCmp $6 "English" 0 +3
+    StrCpy $6 "en-us"
+    Goto ok2
+  StrCmp $6 "Dutch" 0 +3
+    StrCpy $6 "nl"
+    Goto ok2
+  MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid language selection $6!"
+  ok2:
+  ReadINIStr $0 "$PLUGINSDIR\parameters.ini" "Field 9" "State"   # DB engine
   StrCmp $0 "SQLite" 0 +3
     StrCpy $0 "sqlite3"
     Goto ok
@@ -188,25 +197,26 @@ Section "Application" SecAppl
     Goto ok
   MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid database type $0!"
   ok:
-  ReadINIStr $1 "$PLUGINSDIR\database.ini" "Field 8" "State"   # DB name
-  ReadINIStr $2 "$PLUGINSDIR\database.ini" "Field 9" "State"   # DB user
-  ReadINIStr $3 "$PLUGINSDIR\database.ini" "Field 10" "State"  # DB password
-  ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 11" "State"  # DB host
-  ReadINIStr $5 "$PLUGINSDIR\database.ini" "Field 12" "State"  # DB port
+  ReadINIStr $1 "$PLUGINSDIR\parameters.ini" "Field 10" "State"   # DB name
+  ReadINIStr $2 "$PLUGINSDIR\parameters.ini" "Field 11" "State"   # DB user
+  ReadINIStr $3 "$PLUGINSDIR\parameters.ini" "Field 12" "State"  # DB password
+  ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 13" "State"  # DB host
+  ReadINIStr $5 "$PLUGINSDIR\parameters.ini" "Field 14" "State"  # DB port
 
   ; Create a settings file for the server
-  StrCpy $6 "$INSTDIR\server\settings.py"
-  FileOpen $6 $6 w
-  FileWrite $6 "# Django supports the following database engines: 'oracle', 'postgresql_psycopg2',$\r$\n"
-  FileWrite $6 "# 'postgresql', 'mysql', 'sqlite3' 'oracle' or 'ado_mssql'.$\r$\n"
-  FileWrite $6 "# FrePPLe supports only 'postgresql_psycopg2', 'mysql' and 'sqlite3'$\r$\n"
-  FileWrite $6 "DATABASE_ENGINE = '$0'$\r$\n"
-  FileWrite $6 "DATABASE_NAME = '$1'  # Database name$\r$\n"
-  FileWrite $6 "DATABASE_USER = '$2'  # Not used with sqlite3.$\r$\n"
-  FileWrite $6 "DATABASE_PASSWORD = '$3' # Not used with sqlite3.$\r$\n"
-  FileWrite $6 "DATABASE_HOST = '$4' # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
-  FileWrite $6 "DATABASE_PORT = '$5' # Set to empty string for default. Not used with sqlite3.$\r$\n"
-  FileClose $6
+  StrCpy $9 "$INSTDIR\server\settings.py"
+  FileOpen $9 $9 w
+  FileWrite $9 "# Django supports the following database engines: 'oracle', 'postgresql_psycopg2',$\r$\n"
+  FileWrite $9 "# 'postgresql', 'mysql', 'sqlite3' 'oracle' or 'ado_mssql'.$\r$\n"
+  FileWrite $9 "# FrePPLe supports only 'postgresql_psycopg2', 'mysql' and 'sqlite3'$\r$\n"
+  FileWrite $9 "DATABASE_ENGINE = '$0'$\r$\n"
+  FileWrite $9 "DATABASE_NAME = '$1'  # Database name$\r$\n"
+  FileWrite $9 "DATABASE_USER = '$2'  # Not used with sqlite3.$\r$\n"
+  FileWrite $9 "DATABASE_PASSWORD = '$3' # Not used with sqlite3.$\r$\n"
+  FileWrite $9 "DATABASE_HOST = '$4' # Set to empty string for localhost. Not used with sqlite3.$\r$\n"
+  FileWrite $9 "DATABASE_PORT = '$5' # Set to empty string for default. Not used with sqlite3.$\r$\n"
+  FileWrite $9 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
+  FileClose $9
 SectionEnd
 
 
@@ -229,41 +239,44 @@ Function database
   StrCpy $1 "$1|Oracle"
 
   ; Update the dropdown with available databases
-  WriteIniStr "$PLUGINSDIR\database.ini" "Field 7" "ListItems" "$1"
+  WriteIniStr "$PLUGINSDIR\parameters.ini" "Field 9" "ListItems" "$1"
 
   ; Display the page
-  !insertmacro MUI_HEADER_TEXT "Database configuration" "Specify the connection details of your database."
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "database.ini"
+  !insertmacro MUI_HEADER_TEXT "Language selection and database configuration" "Specify the installation parameters."
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "parameters.ini"
 FunctionEnd
 
+
 Function database_leave
-  ReadINIStr $0 "$PLUGINSDIR\database.ini" "Settings" "State"
+  ReadINIStr $0 "$PLUGINSDIR\parameters.ini" "Settings" "State"
   IntCmp $0 7 0 done
     ; Disable user name, user password, host and port when the
     ; SQLite database engine is selected.
-    ReadINIStr $1 "$PLUGINSDIR\database.ini" "Field 7" "State"
+    ReadINIStr $1 "$PLUGINSDIR\parameters.ini" "Field 9" "State"
     StrCpy $2 ""
     StrCpy $3 1
     StrCmp $1 "SQLite" 0 +3
       StrCpy $2 "DISABLED"
       StrCpy $3 0
-    WriteIniStr "$PLUGINSDIR\database.ini" "Field 9" "Flags" "$2"
-    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 9" "HWND"
+    WriteIniStr "$PLUGINSDIR\parameters.ini" "Field 11" "Flags" "$2"
+    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 11" "HWND"
     EnableWindow $4 $3
-    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 9" "HWND2"
+    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 11" "HWND2"
     EnableWindow $4 $3
-    WriteIniStr "$PLUGINSDIR\database.ini" "Field 10" "Flags" "$2"
-    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 10" "HWND"
+    WriteIniStr "$PLUGINSDIR\parameters.ini" "Field 12" "Flags" "$2"
+    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 12" "HWND"
     EnableWindow $4 $3
-    WriteIniStr "$PLUGINSDIR\database.ini" "Field 11" "Flags" "$2"
-    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 11" "HWND"
+    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 12" "HWND2"
     EnableWindow $4 $3
-    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 11" "HWND2"
+    WriteIniStr "$PLUGINSDIR\parameters.ini" "Field 13" "Flags" "$2"
+    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 13" "HWND"
     EnableWindow $4 $3
-    WriteIniStr "$PLUGINSDIR\database.ini" "Field 12" "Flags" "$2"
-    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 12" "HWND"
+    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 13" "HWND2"
     EnableWindow $4 $3
-    ReadINIStr $4 "$PLUGINSDIR\database.ini" "Field 12" "HWND2"
+    WriteIniStr "$PLUGINSDIR\parameters.ini" "Field 14" "Flags" "$2"
+    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 14" "HWND"
+    EnableWindow $4 $3
+    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 14" "HWND2"
     EnableWindow $4 $3
     ; Return to the page
     Abort

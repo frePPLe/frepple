@@ -361,7 +361,7 @@ class Operation(models.Model):
         save_as = True
         fields = (
             (None, {'fields': ('name', 'type')}),
-            ('Planning parameters', {
+            (_('Planning parameters'), {
                'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'duration', 'duration_per'),
                'classes': 'collapse'
                }),
@@ -473,11 +473,11 @@ class Buffer(models.Model):
         fields = (
             (None,{
               'fields': (('name'), ('item', 'location'), 'description', ('category', 'subcategory'))}),
-            ('Inventory', {
+            (_('Inventory'), {
               'fields': ('onhand',)}),
-            ('Planning parameters', {
+            (_('Planning parameters'), {
               'fields': ('type','minimum','producing',)},),
-            ('Planning parameters for procurement buffers', {
+            (_('Planning parameters for procurement buffers'), {
               'fields': ('leadtime','fence','min_inventory','max_inventory','min_interval','max_interval','size_minimum','size_multiple','size_maximum'),
               'classes': 'collapse'},),
         )
@@ -667,7 +667,7 @@ class Demand(models.Model):
     class Admin:
         fields = (
             (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'quantity', 'priority','owner')}),
-            ('Planning parameters', {'fields': ('operation', 'policy', ), 'classes': 'collapse'}),
+            (_('Planning parameters'), {'fields': ('operation', 'policy', ), 'classes': 'collapse'}),
         )
         list_display = ('name', 'item', 'customer', 'description', 'category',
           'subcategory', 'due', 'operation', 'quantity', 'priority','owner', 'lastmodified')
@@ -863,7 +863,7 @@ class Forecast(models.Model):
     class Admin:
         fields = (
             (None, {'fields': ('name', 'item', 'customer', 'calendar', 'description', 'category','subcategory', 'priority')}),
-            ('Planning parameters', {'fields': ('discrete', 'operation', 'policy', ), 'classes': 'collapse'}),
+            (_('Planning parameters'), {'fields': ('discrete', 'operation', 'policy', ), 'classes': 'collapse'}),
         )
         list_display = ('name', 'item', 'customer', 'calendar', 'description', 'category',
           'subcategory', 'operation', 'priority', 'lastmodified')

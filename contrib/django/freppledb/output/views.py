@@ -400,6 +400,7 @@ class OperationReport(TableReport):
     ('bucket',{'title':_('bucket')}),
     )
 
+
   @staticmethod
   def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
     # Run the query

@@ -29,7 +29,7 @@ from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template import RequestContext, loader
 from django.db import connection
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.conf import settings
 from django.template import Library, Node, resolve_variable
 from django.utils.encoding import smart_str
@@ -37,6 +37,7 @@ from django.utils.translation import ugettext as _
 
 from freppledb.input.models import Plan
 from freppledb.dbutils import python_date
+from freppledb.reportfilter import _create_rowheader
 
 # Parameter settings
 ON_EACH_SIDE = 3       # Number of pages show left and right of the current page
@@ -157,6 +158,9 @@ class ListReport(Report):
   #     Whether or not this column can be used for sorting or not.
   #     The default is true.
   rows = ()
+  
+  # A list with required user permissions to view the report
+  permissions = []
 
 
 class TableReport(Report):
@@ -194,6 +198,9 @@ class TableReport(Report):
   #     Name of the cross that is displayed to the user.
   #     It defaults to the name of the field.
   columns = ()
+  
+  # A list with required user permissions to view the report
+  permissions = []
 
 
 def _generate_csv(rep, qs):
@@ -264,6 +271,11 @@ def view_report(request, entity=None, **args):
   try: reportclass = args['report']
   except: raise Http404('Missing report parameter in url context')
 
+  # Verify the user is authorirzed to view the report
+  for perm in reportclass.permissions:
+    if not request.user.has_perm(perm):
+      return HttpResponseForbidden('<h1>Permission denied</h1>')  
+    
   # Pick up the list of time buckets
   if issubclass(reportclass, TableReport):
     (bucket,start,end,bucketlist) = getBuckets(request)
@@ -495,59 +507,3 @@ def _create_crossheader(req, cls):
     res.append(title)
   return '<br/>'.join(res)
 
-
-def _create_rowheader(req, sort, cls):
-  '''
-  Generate html header row for the columns of a table or list report.
-  '''
-  result = ['<form>']
-  number = 0
-  args = req.GET.copy()
-  args2 = req.GET.copy()
-
-  # A header cell for each row
-  for row in cls.rows:
-    number = number + 1
-    title = unicode((row[1].has_key('title') and row[1]['title']) or row[0])
-    if not row[1].has_key('sort') or row[1]['sort']:
-      # Sorting is allowed
-      if int(sort[0]) == number:
-        if sort[1] == 'a':
-          # Currently sorting in ascending order on this column
-          args['o'] = '%dd' % number
-          y = 'class="sorted ascending"'
-        else:
-          # Currently sorting in descending order on this column
-          args['o'] = '%da' % number
-          y = 'class="sorted descending"'
-      else:
-        # Sorted on another column
-        args['o'] = '%da' % number
-        y = ''
-      if 'filter' in cls.rows[number-1][1]:
-        result.append( '<th %s><a href="%s?%s">%s%s</a><br/><input type="text" size="%d" value="%s" name="%s" tabindex="%d"/></th>' \
-          % (y, req.path, escape(args.urlencode()),
-             title[0].upper(), title[1:],
-             (row[1].has_key('filter_size') and row[1]['filter_size']) or 10,
-             args.get(cls.rows[number-1][1]['filter'],''),
-             cls.rows[number-1][1]['filter'], number+1000,
-             ) )
-        if cls.rows[number-1][1]['filter'] in args2: del args2[cls.rows[number-1][1]['filter']]
-      else:
-        result.append( '<th %s style="vertical-align:top"><a href="%s?%s">%s%s</a></th>' \
-          % (y, req.path, escape(args.urlencode()),
-             title[0].upper(), title[1:],
-            ) )
-        if row[0] in args2: del args2[row[0]]
-    else:
-      # No sorting is allowed on this field
-        result.append( '<th style="vertical-align:top">%s%s</th>' \
-          % (title[0].upper(), title[1:]) )
-
-  # Extra hidden fields for query parameters that aren't rows
-  for key in args2:
-    result.append( '<th><input type="hidden" name="%s" value="%s"/>' % (key, args[key]))
-
-  # 'Go' button
-  result.append( '<th><input type="submit" value="Go" tabindex="1100"/></th></form>' )
-  return '\n'.join(result)

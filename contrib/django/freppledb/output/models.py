@@ -38,7 +38,7 @@ class OperationPlan(models.Model):
     locked = models.BooleanField(_('locked'), default=True, radio_admin=True)
     owner = models.IntegerField(_('owner'), null=True, blank=True, db_index=True)
 
-    def __str__(self): return str(self.identifier)
+    def __unicode__(self): return str(self.identifier)
 
     class Meta:
         db_table = 'out_operationplan'
@@ -58,7 +58,7 @@ class Problem(models.Model):
     enddate = models.DateField(_('end date'), db_index=True)
     weight = models.DecimalField(_('weight'), max_digits=15, decimal_places=4)
 
-    def __str__(self): return str(self.name)
+    def __unicode__(self): return str(self.name)
 
     class Meta:
         db_table = 'out_problem'
@@ -78,7 +78,7 @@ class LoadPlan(models.Model):
     enddate = models.DateField(_('end date'), db_index=True)
     operationplan = models.IntegerField(_('operationplan'), db_index=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.resource.name + ' ' + str(self.startdatetime) + ' ' + str(self.enddatetime)
 
     class Meta:
@@ -98,7 +98,7 @@ class FlowPlan(models.Model):
     flowdate = models.DateField(_('date'), db_index=True)
     onhand = models.DecimalField(_('onhand'), max_digits=15, decimal_places=4)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.thebuffer.name + str(self.flowdatetime)
 
     class Meta:
@@ -120,7 +120,7 @@ class Demand(models.Model):
     plandatetime = models.DateTimeField(_('planned datetime'), null=True)
     operationplan = models.IntegerField(_('operationplan'), null=True, db_index=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.demand.name
 
     class Meta:
@@ -143,7 +143,7 @@ class DemandPegging(models.Model):
     quantity_buffer = models.DecimalField(_('quantity buffer'), max_digits=15, decimal_places=4, default='0.00')
     pegged = models.BooleanField(_('pegged'), default=True, radio_admin=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.demand.name \
           + ' - ' + str(self.depth) + ' - ' + str(self.operationplan or 'None') \
           + ' - ' + self.buffer.name

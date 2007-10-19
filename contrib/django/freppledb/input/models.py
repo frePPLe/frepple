@@ -48,7 +48,7 @@ class Plan(models.Model):
     currentdate = models.DateTimeField(_('current date'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
 
     class Admin:
         list_display = ('name', 'description', 'currentdate')
@@ -175,7 +175,7 @@ class Calendar(models.Model):
         Bucket(calendar=self, startdate=end, value=0).save()
       return
 
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
 
     class Admin:
         list_display = ('name', 'description', 'category', 'subcategory', 'currentvalue', 'lastmodified')
@@ -199,7 +199,7 @@ class Bucket(models.Model):
     name = models.CharField(_('name'), maxlength=60, null=True, blank=True)
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
-    def __str__(self):
+    def __unicode__(self):
         if self.name: return self.name
         return str(self.startdate)
 
@@ -248,7 +248,7 @@ class Location(models.Model):
       raw_id_admin=True, help_text=_('Hierarchical parent'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
 
     class Admin:
         list_display = ('name', 'description', 'category', 'subcategory', 'owner', 'lastmodified')
@@ -273,7 +273,7 @@ class Customer(models.Model):
       raw_id_admin=True, help_text=_('Hierarchical parent'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
 
     class Admin:
         list_display = ('name', 'description', 'category', 'subcategory', 'owner', 'lastmodified')
@@ -299,7 +299,7 @@ class Item(models.Model):
       raw_id_admin=True, help_text=_('Hierarchical parent'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
 
     class Admin:
         list_display = ('name', 'description', 'category', 'subcategory', 'operation', 'owner', 'lastmodified')
@@ -343,7 +343,7 @@ class Operation(models.Model):
       help_text=_("A variable duration for the operation"))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
 
     def save(self):
         if self.type is None or self.type == '' or self.type == 'OPERATION_FIXED_TIME':
@@ -388,7 +388,7 @@ class SubOperation(models.Model):
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True,
       editable=False, db_index=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.operation.name \
           + "   " + str(self.priority) \
           + "   " + self.suboperation.name
@@ -450,7 +450,7 @@ class Buffer(models.Model):
     # Maintenance fields
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
 
     def save(self):
         if self.type == 'BUFFER_INFINITE' or self.type == 'BUFFER_PROCURE':
@@ -515,7 +515,7 @@ class Resource(models.Model):
       editable=False, db_index=True)
 
     # Methods
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
 
     def save(self):
         if self.type == 'RESOURCE_INFINITE':
@@ -557,7 +557,7 @@ class Flow(models.Model):
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return '%s - %s' % (self.operation.name, self.thebuffer.name)
 
     class Admin:
@@ -581,7 +581,7 @@ class Load(models.Model):
     usagefactor = models.DecimalField(_('usagefactor'),max_digits=15, decimal_places=4, default='1.00')
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return '%s - %s' % (self.operation.name, self.resource.name)
 
     class Admin:
@@ -610,7 +610,7 @@ class OperationPlan(models.Model):
       help_text=_('Prevent or allow changes'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
-    def __str__(self): return str(self.identifier)
+    def __unicode__(self): return str(self.identifier)
 
     class Admin:
         save_as = True
@@ -662,7 +662,7 @@ class Demand(models.Model):
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     # Convenience methods
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
 
     class Admin:
         fields = (
@@ -701,7 +701,7 @@ class Forecast(models.Model):
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     # Convenience methods
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
 
     def setTotal(self, startdate, enddate, quantity):
       '''
@@ -887,7 +887,7 @@ class ForecastDemand(models.Model):
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     # Convenience methods
-    def __str__(self): return self.forecast.name + " " + str(self.startdate) + " - " + str(self.enddate)
+    def __unicode__(self): return self.forecast.name + " " + str(self.startdate) + " - " + str(self.enddate)
 
     class Admin:
         fields = ( (None,{'fields': ('forecast', 'startdate', 'enddate', 'quantity')}), )

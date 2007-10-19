@@ -31,7 +31,7 @@ class log(models.Model):
   message = models.TextField(_('message'), maxlength=200)
   lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
-  def __str__(self):
+  def __unicode__(self):
     return self.lastmodified + ' - ' + self.category
 
   class Meta:

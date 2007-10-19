@@ -23,13 +23,12 @@
 
 from datetime import date, datetime
 
+from django.conf import settings
 from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
-from django.template import RequestContext, loader
+from django.template import RequestContext
 from django.db import connection
-from django.core.cache import cache
 from django.http import Http404, HttpResponse
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Buffer, Operation, Resource, Item, Forecast

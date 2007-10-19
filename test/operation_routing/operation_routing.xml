@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NAME>Test model for effective operations</NAME>
+  <DESCRIPTION>
+    This test verifies the behavior of routing operations.
+  </DESCRIPTION>
+  <CURRENT>2007-01-01T00:00:00</CURRENT>
+  <COMMANDS>
+    <VERBOSE>true</VERBOSE>
+    <COMMAND xsi:type="COMMAND_SOLVE">
+      <VERBOSE>false</VERBOSE>
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" VERBOSE="true" />
+    </COMMAND>
+    <COMMAND xsi:type="COMMAND_SAVEPLAN">
+      <FILENAME>output.1.xml</FILENAME>
+    </COMMAND>
+  </COMMANDS>
+
+  <BUFFERS>
+    <BUFFER NAME="subassembly" xsi:type="BUFFER_INFINITE">
+      <ITEM NAME="subassembly" />
+    </BUFFER>
+    <BUFFER NAME="component A" xsi:type="BUFFER_PROCURE">
+      <ITEM NAME="component A" />
+      <ONHAND>20</ONHAND>
+      <LEADTIME>3600:00:00</LEADTIME>
+    </BUFFER>
+    <BUFFER NAME="component B1" xsi:type="BUFFER_INFINITE">
+      <ITEM NAME="component B1" />
+    </BUFFER>
+    <BUFFER NAME="component B2" xsi:type="BUFFER_INFINITE">
+      <ITEM NAME="component B2" />
+    </BUFFER>
+    <BUFFER NAME="component C" xsi:type="BUFFER_INFINITE">
+      <ITEM NAME="component C" />
+    </BUFFER>
+    <BUFFER NAME="component D">
+      <ITEM NAME="component D" />
+      <ONHAND>30</ONHAND>
+    </BUFFER>
+    <BUFFER NAME="product">
+      <ITEM NAME="product" />
+      <PRODUCING NAME="assemble product" xsi:type="OPERATION_ROUTING">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_END">
+            <BUFFER NAME="product"/>
+            <QUANTITY>1</QUANTITY>
+          </FLOW>
+          <FLOW xsi:type="FLOW_START">
+            <BUFFER NAME="subassembly" />
+            <QUANTITY>-1</QUANTITY>
+          </FLOW>
+          <FLOW xsi:type="FLOW_START">
+            <BUFFER NAME="component D" />
+            <QUANTITY>-1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+        <STEPS>
+          <OPERATION NAME="assemble product step A" xsi:type="OPERATION_FIXED_TIME" DURATION="24:00:00">
+            <FLOWS>
+              <FLOW xsi:type="FLOW_START">
+                <BUFFER NAME="component A" />
+                <QUANTITY>-1</QUANTITY>
+              </FLOW>
+            </FLOWS>
+          </OPERATION>
+          <OPERATION NAME="assemble product step B" xsi:type="OPERATION_TIME_PER" DURATION="24:00:00" DURATION_PER="24:00:00">
+            <FLOWS>
+              <FLOW xsi:type="FLOW_START">
+                <BUFFER NAME="component B1" />
+                <QUANTITY>-1</QUANTITY>
+              </FLOW>
+              <FLOW xsi:type="FLOW_START">
+                <BUFFER NAME="component B2" />
+                <QUANTITY>-1</QUANTITY>
+              </FLOW>
+            </FLOWS>
+          </OPERATION>
+          <OPERATION NAME="assemble product step C" xsi:type="OPERATION_FIXED_TIME" DURATION="24:00:00">
+            <FLOWS>
+              <FLOW xsi:type="FLOW_START">
+                <BUFFER NAME="component C" />
+                <QUANTITY>-1</QUANTITY>
+              </FLOW>
+            </FLOWS>
+          </OPERATION>
+        </STEPS>
+      </PRODUCING>
+    </BUFFER>
+  </BUFFERS>
+  <RESOURCES>
+    <RESOURCE NAME="operator A &amp; B">
+      <MAXIMUM NAME="Capacity A &amp; B" xsi:type="CALENDAR_FLOAT">
+        <BUCKETS>
+          <BUCKET START="2007-01-01T00:00:00">
+            <VALUE>1</VALUE>
+          </BUCKET>
+        </BUCKETS>
+      </MAXIMUM>
+      <LOADS>
+        <LOAD>
+          <OPERATION NAME="assemble product step A" />
+        </LOAD>
+        <LOAD>
+          <OPERATION NAME="assemble product step B" />
+        </LOAD>
+      </LOADS>
+    </RESOURCE>
+    <RESOURCE NAME="operator C">
+      <MAXIMUM NAME="Capacity C" xsi:type="CALENDAR_FLOAT">
+        <BUCKETS>
+          <BUCKET START="2007-01-01T00:00:00" VALUE="1" />
+          <BUCKET START="2007-02-11T00:00:00" VALUE="2" />
+        </BUCKETS>
+      </MAXIMUM>
+      <LOADS>
+        <LOAD>
+          <OPERATION NAME="assemble product step C" />
+        </LOAD>
+      </LOADS>
+    </RESOURCE>
+    <RESOURCE NAME="assemble">
+      <MAXIMUM NAME="Capacity assembly" xsi:type="CALENDAR_FLOAT">
+        <BUCKETS>
+          <BUCKET START="2007-01-01T00:00:00">
+            <VALUE>2</VALUE>
+          </BUCKET>
+        </BUCKETS>
+      </MAXIMUM>
+      <LOADS>
+        <LOAD>
+          <OPERATION NAME="assemble product" />
+        </LOAD>
+      </LOADS>
+    </RESOURCE>
+  </RESOURCES>
+  <ITEMS>
+    <ITEM NAME="product">
+      <OPERATION NAME="Deliver product">
+        <FLOWS>
+          <FLOW xsi:type="FLOW_START">
+            <BUFFER NAME="product" />
+            <QUANTITY>-1</QUANTITY>
+          </FLOW>
+        </FLOWS>
+      </OPERATION>
+    </ITEM>
+  </ITEMS>
+
+  <DEMANDS>
+    <!--
+      Case 1: No constraints
+    -->
+    <DEMAND NAME="order 1">
+      <QUANTITY>5</QUANTITY>
+      <DUE>2007-01-25T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="product" />
+    </DEMAND>
+
+    <!--
+      Case 2: Lead time constraint
+    -->
+    <DEMAND NAME="order 2">
+      <QUANTITY>5</QUANTITY>
+      <DUE>2007-01-05T00:00:00</DUE>
+      <PRIORITY>2</PRIORITY>
+      <ITEM NAME="product" />
+    </DEMAND>
+
+    <!--
+      Case 3: Capacity constraint on last routing step
+    -->
+    <DEMAND NAME="order 3a">
+      <QUANTITY>1</QUANTITY>
+      <DUE>2007-02-10T00:00:00</DUE>
+      <PRIORITY>3</PRIORITY>
+      <ITEM NAME="product" />
+    </DEMAND>
+    <DEMAND NAME="order 3b">
+      <QUANTITY>1</QUANTITY>
+      <DUE>2007-02-10T00:00:00</DUE>
+      <PRIORITY>4</PRIORITY>
+      <ITEM NAME="product" />
+    </DEMAND>
+
+    <!--
+      Case 4: Capacity constraint on middle routing step
+    -->
+    <DEMAND NAME="order 4a">
+      <QUANTITY>1</QUANTITY>
+      <DUE>2007-02-20T00:00:00</DUE>
+      <PRIORITY>5</PRIORITY>
+      <ITEM NAME="product" />
+    </DEMAND>
+    <DEMAND NAME="order 4b">
+      <QUANTITY>1</QUANTITY>
+      <DUE>2007-02-20T00:00:00</DUE>
+      <PRIORITY>6</PRIORITY>
+      <ITEM NAME="product" />
+    </DEMAND>
+
+    <!--
+      Case 5: Capacity constraint on total routing
+    -->
+    <DEMAND NAME="order 5a">
+      <QUANTITY>1</QUANTITY>
+      <DUE>2007-03-20T00:00:00</DUE>
+      <PRIORITY>7</PRIORITY>
+      <ITEM NAME="product" />
+    </DEMAND>
+    <DEMAND NAME="order 5b">
+      <QUANTITY>1</QUANTITY>
+      <DUE>2007-03-20T00:00:00</DUE>
+      <PRIORITY>8</PRIORITY>
+      <ITEM NAME="product" />
+    </DEMAND>
+    <DEMAND NAME="order 5c">
+      <QUANTITY>1</QUANTITY>
+      <DUE>2007-03-20T00:00:00</DUE>
+      <PRIORITY>9</PRIORITY>
+      <ITEM NAME="product" />
+    </DEMAND>
+
+    <!--
+      Case 6: Material constraint on first routing step
+    -->
+    <DEMAND NAME="order 6">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-04-20T00:00:00</DUE>
+      <PRIORITY>10</PRIORITY>
+      <ITEM NAME="product" />
+    </DEMAND>
+
+    <!--
+      Case 7: Material constraint on total routing
+    -->
+    <DEMAND NAME="order 7">
+      <QUANTITY>10</QUANTITY>
+      <DUE>2007-07-20T00:00:00</DUE>
+      <PRIORITY>11</PRIORITY>
+      <ITEM NAME="product" />
+    </DEMAND>
+
+  </DEMANDS>
+</PLAN>

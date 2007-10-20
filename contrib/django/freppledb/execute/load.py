@@ -55,10 +55,11 @@ def loadPlan(cursor):
   if j: x.append('<NAME>%s</NAME>' % escape(j))
   if k: x.append('<DESCRIPTION>%s</DESCRIPTION>' % escape(k))
   x.append('</PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
 
 
 def loadLocations(cursor):
+
   print 'Importing locations...'
   cnt = 0
   starttime = time()
@@ -66,12 +67,12 @@ def loadLocations(cursor):
   x = [ header, '<LOCATIONS>' ]
   for i,j,k in cursor.fetchall():
     cnt += 1
-    x.append('<LOCATION NAME=%s>"' % quoteattr(i))
-    if j: x.append('<DESCRIPTION>%s</DESCRIPTION>"' % escape(j))
-    if k: x.append('<OWNER NAME=%s/>"' % quoteattr(k))
+    x.append(u'<LOCATION NAME=%s>' % quoteattr(i))
+    if j: x.append(u'<DESCRIPTION>%s</DESCRIPTION>"' % escape(j))
+    if k: x.append(u'<OWNER NAME=%s/>"' % quoteattr(k))
     x.append('</LOCATION>"')
   x.append('</LOCATIONS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d locations in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -87,7 +88,7 @@ def loadCalendars(cursor):
     if j: x.append('<CALENDAR NAME=%s DESCRIPTION=%s/>' % (quoteattr(i), quoteattr(j)))
     else: x.append('<CALENDAR NAME=%s/>' % quoteattr(i))
   x.append('</CALENDARS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime)
 
   # Bucket
@@ -102,7 +103,7 @@ def loadCalendars(cursor):
     if k: x.append('<CALENDAR NAME=%s><BUCKETS><BUCKET START="%s" NAME=%s VALUE="%s"/></BUCKETS></CALENDAR>' % (quoteattr(i), j.isoformat(), quoteattr(k), l))
     else: x.append('<CALENDAR NAME=%s><BUCKETS><BUCKET START="%s" VALUE="%s"/></BUCKETS></CALENDAR>' % (quoteattr(i), j.isoformat(), l))
   x.append('</CALENDARS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -119,7 +120,7 @@ def loadCustomers(cursor):
     if k: x.append('<OWNER NAME=%s/>' % quoteattr(k))
     x.append('</CUSTOMER>')
   x.append('</CUSTOMERS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d customers in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -147,7 +148,7 @@ def loadOperations(cursor):
     if r: x.append('<DURATION_PER>%s</DURATION_PER>' % timeformat(r))
     x.append('</OPERATION>')
   x.append('</OPERATIONS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d operations in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -173,7 +174,7 @@ def loadSuboperations(cursor):
     x.append('<ALTERNATE PRIORITY="%s"><OPERATION NAME=%s/></ALTERNATE>' % (k,quoteattr(j)))
   if curoper != '': x.append('</OPERATION>')
   x.append('</OPERATIONS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d suboperations in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -191,7 +192,7 @@ def loadItems(cursor):
     if l: x.append( '<OWNER NAME=%s/>' % quoteattr(l))
     x.append('</ITEM>')
   x.append('</ITEMS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d items in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -228,7 +229,7 @@ def loadBuffers(cursor):
     if o: x.append( '<PRODUCING NAME=%s />' % quoteattr(o))
     x.append('</BUFFER>')
   x.append('</BUFFERS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -249,7 +250,7 @@ def loadResources(cursor):
     if l: x.append( '<LOCATION NAME=%s />' % quoteattr(l))
     x.append('</RESOURCE>')
   x.append('</RESOURCES></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d resources in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -266,7 +267,7 @@ def loadFlows(cursor):
     else:
       x.append('<FLOW><OPERATION NAME=%s/><BUFFER NAME=%s/><QUANTITY>%s</QUANTITY></FLOW>' % (quoteattr(i), quoteattr(j), k))
   x.append('</FLOWS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d flows in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -280,7 +281,7 @@ def loadLoads(cursor):
     cnt += 1
     x.append('<LOAD><OPERATION NAME=%s/><RESOURCE NAME=%s/><USAGE>%s</USAGE></LOAD>' % (quoteattr(i), quoteattr(j), k))
   x.append('</LOADS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d loads in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -298,7 +299,7 @@ def loadOperationPlans(cursor):
     if n: x.append( '<LOCKED>true</LOCKED>')
     x.append('</OPERATION_PLAN>')
   x.append('</OPERATION_PLANS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -319,7 +320,7 @@ def loadForecast(cursor):
     if not p: x.append( '<DISCRETE>false<DISCRETE>')
     x.append('</DEMAND>')
   x.append('</DEMANDS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d forecasts in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -333,7 +334,7 @@ def loadForecastdemand(cursor):
     cnt += 1
     x.append('<DEMAND NAME=%s><BUCKETS><BUCKET START="%sT00:00:00" END="%sT00:00:00" TOTAL="%s"/></BUCKETS></DEMAND>' % (quoteattr(i), j.isoformat(), k.isoformat(), l))
   x.append('</DEMANDS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d forecast demands in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -353,7 +354,7 @@ def loadDemand(cursor):
     if q: x.append( '<POLICY>%s</POLICY>' % q)
     x.append('</DEMAND>')
   x.append('</DEMANDS></PLAN>')
-  frepple.readXMLdata('\n'.join(x),False,False)
+  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d demands in %.2f seconds' % (cnt, time() - starttime)
 
 

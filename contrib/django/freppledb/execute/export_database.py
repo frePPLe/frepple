@@ -60,7 +60,7 @@ def exportProblems(cursor):
     (entity,name,description,startdatetime,enddatetime,startdate,enddate,weight) \
     values(%s,%s,%s,%s,%s,%s,%s,%s)",
     [(
-       i['ENTITY'], i['TYPE'], i['DESCRIPTION'], str(i['START']), str(i['END']),
+       i['ENTITY'], i['TYPE'], i['DESCRIPTION'][0:79], str(i['START']), str(i['END']),
        str(i['START'].date()), str(i['END'].date()), round(i['WEIGHT'],ROUNDING_DECIMALS)
      ) for i in frepple.problem()
     ])

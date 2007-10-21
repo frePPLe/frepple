@@ -2129,7 +2129,10 @@ class XMLElement
     /** Returns the hash value of this tag. */
     hashtype getTagHash() const {return m_dwTagHash;}
 
-    /** Add some characters to this data field of this element. */
+    /** Add some characters to this data field of this element.<br>
+      * The second argument is the number of bytes, not the number of 
+      * characters.
+      */
     void addData(const char *pData, size_t len) {m_strData.append(pData,len);}
 
     /** Set the data value of this element. */

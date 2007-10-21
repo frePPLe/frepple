@@ -68,9 +68,9 @@ def loadLocations(cursor):
   for i,j,k in cursor.fetchall():
     cnt += 1
     x.append(u'<LOCATION NAME=%s>' % quoteattr(i))
-    if j: x.append(u'<DESCRIPTION>%s</DESCRIPTION>"' % escape(j))
-    if k: x.append(u'<OWNER NAME=%s/>"' % quoteattr(k))
-    x.append('</LOCATION>"')
+    if j: x.append(u'<DESCRIPTION>%s</DESCRIPTION>' % escape(j))
+    if k: x.append(u'<OWNER NAME=%s/>' % quoteattr(k))
+    x.append('</LOCATION>')
   x.append('</LOCATIONS></PLAN>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d locations in %.2f seconds' % (cnt, time() - starttime)

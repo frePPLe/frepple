@@ -161,7 +161,7 @@ def superlink(value,type):
     # Fail silently if we end up with an empty string
     if value == '': return ''
     # Final return value
-    return '<a href="/admin/input/%s/%s" class="%s">%s</a>' % (type,quote(value),type,value)
+    return '<a href="/admin/input/%s/%s" class="%s">%s</a>' % (type,quote(value),type,escape(value))
 
 register.filter('superlink', superlink)
 

@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.3.2-beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-10-15 11:25+0200\n"
-"PO-Revision-Date: 2007-10-15 12:24+0100\n"
+"POT-Creation-Date: 2007-10-22 11:04+0200\n"
+"PO-Revision-Date: 2007-10-22 11:06+0100\n"
 "Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
 "Language-Team: info@frepple.com\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: report.py:463
+#: report.py:475
 msgid "for"
 msgstr "voor"
 
@@ -250,8 +250,8 @@ msgstr "Hierarchische ouder"
 #: input/models.py:262
 #: input/models.py:421
 #: input/models.py:512
-#: output/views.py:51
-#: output/views.py:301
+#: output/views.py:50
+#: output/views.py:300
 msgid "location"
 msgstr "locatie"
 
@@ -262,7 +262,7 @@ msgstr "locaties"
 #: input/models.py:287
 #: input/models.py:649
 #: input/models.py:692
-#: output/views.py:216
+#: output/views.py:215
 msgid "customer"
 msgstr "klant"
 
@@ -279,9 +279,9 @@ msgstr "leveringsoperatie"
 #: input/models.py:313
 #: input/models.py:650
 #: input/models.py:693
-#: output/views.py:50
-#: output/views.py:127
-#: output/views.py:215
+#: output/views.py:49
+#: output/views.py:126
+#: output/views.py:214
 #: output/views.py:712
 msgid "item"
 msgstr "product"
@@ -338,7 +338,7 @@ msgstr "Planning parameters"
 #: input/models.py:579
 #: input/models.py:603
 #: output/models.py:32
-#: output/views.py:391
+#: output/views.py:390
 #: output/views.py:650
 #: output/views.py:688
 #: output/views.py:736
@@ -483,7 +483,7 @@ msgstr "Planning parameters voor aankoopbuffers"
 #: input/models.py:551
 #: output/models.py:94
 #: output/models.py:141
-#: output/views.py:49
+#: output/views.py:48
 #: output/views.py:623
 #: output/views.py:647
 msgid "buffer"
@@ -504,7 +504,7 @@ msgstr "Kalendar die de beschikbare capaciteit definieert"
 #: input/models.py:537
 #: input/models.py:580
 #: output/models.py:73
-#: output/views.py:300
+#: output/views.py:299
 #: output/views.py:733
 msgid "resource"
 msgstr "machine"
@@ -675,7 +675,7 @@ msgstr "Afronden van forecast waarden"
 
 #: input/models.py:877
 #: input/models.py:883
-#: output/views.py:214
+#: output/views.py:213
 msgid "forecast"
 msgstr "forecast"
 
@@ -731,7 +731,6 @@ msgid "problem"
 msgstr "probleem"
 
 #: output/models.py:68
-#: templates/admin/base_site_nav.html:42
 msgid "problems"
 msgstr "problemen"
 
@@ -833,106 +832,106 @@ msgstr "order pegging"
 msgid "demand peggings"
 msgstr "order peggings"
 
-#: output/views.py:46
+#: output/views.py:45
 #: templates/admin/base_site_nav.html:43
 #: templates/admin/index.html:67
 msgid "Inventory Report"
 msgstr "Voorraad Rapport"
 
-#: output/views.py:54
+#: output/views.py:53
 msgid "Start Inventory"
 msgstr "Beginvoorraad"
 
-#: output/views.py:55
+#: output/views.py:54
 msgid "Consumed"
 msgstr ""
 
-#: output/views.py:56
+#: output/views.py:55
 msgid "Produced"
 msgstr "Geproduceerd"
 
-#: output/views.py:57
+#: output/views.py:56
 msgid "End Inventory"
 msgstr "Eindvoorraad"
 
-#: output/views.py:60
-#: output/views.py:135
-#: output/views.py:223
-#: output/views.py:309
-#: output/views.py:400
+#: output/views.py:59
+#: output/views.py:134
+#: output/views.py:222
+#: output/views.py:308
+#: output/views.py:399
 msgid "bucket"
 msgstr ""
 
-#: output/views.py:124
+#: output/views.py:123
 #: templates/admin/base_site_nav.html:45
 #: templates/admin/index.html:77
 msgid "Demand Report"
 msgstr "Order Rapport"
 
-#: output/views.py:130
+#: output/views.py:129
 #: output/views.py:709
 msgid "Demand"
 msgstr "Demand"
 
-#: output/views.py:131
+#: output/views.py:130
 msgid "Supply"
 msgstr "Supply"
 
-#: output/views.py:132
+#: output/views.py:131
 msgid "Backlog"
 msgstr ""
 
-#: output/views.py:211
+#: output/views.py:210
 #: templates/admin/base_site_nav.html:46
 #: templates/admin/index.html:82
 msgid "Forecast Report"
 msgstr "Forecast Rapport"
 
-#: output/views.py:219
+#: output/views.py:218
 msgid "Gross Forecast"
 msgstr "Totale forecast"
 
-#: output/views.py:220
+#: output/views.py:219
 msgid "Planned Forecast"
 msgstr "Ingeplande forecast"
 
-#: output/views.py:297
+#: output/views.py:296
 #: templates/admin/base_site_nav.html:44
 #: templates/admin/index.html:72
 msgid "Resource Report"
 msgstr "Capaciteit Rapport"
 
-#: output/views.py:304
+#: output/views.py:303
 msgid "Available"
 msgstr "Beschikbaar"
 
-#: output/views.py:305
+#: output/views.py:304
 msgid "Load"
 msgstr ""
 
-#: output/views.py:306
+#: output/views.py:305
 msgid "Utilization %"
 msgstr "Bezettingsgraad %"
 
-#: output/views.py:388
+#: output/views.py:387
 #: templates/admin/base_site_nav.html:47
 #: templates/admin/index.html:87
 msgid "Operation Report"
 msgstr "Operatie Rapport"
 
-#: output/views.py:394
+#: output/views.py:393
 msgid "Frozen Starts"
 msgstr "Bevroren Starts"
 
-#: output/views.py:395
+#: output/views.py:394
 msgid "Total Starts"
 msgstr "Totaal Starts"
 
-#: output/views.py:396
+#: output/views.py:395
 msgid "Frozen Ends"
 msgstr "Bevroren Ends"
 
-#: output/views.py:397
+#: output/views.py:396
 msgid "Total Ends"
 msgstr "Totaal Ends"
 
@@ -961,6 +960,8 @@ msgid "Inventory Detail Report"
 msgstr "Voorraad Detailrapport"
 
 #: output/views.py:663
+#: templates/admin/base_site_nav.html:42
+#: templates/admin/index.html:62
 msgid "Problem Report"
 msgstr "Probleem Rapport"
 
@@ -1105,10 +1106,6 @@ msgstr ""
 msgid "You don't have permission to edit anything."
 msgstr ""
 
-#: templates/admin/index.html:62
-msgid "Problems"
-msgstr "Problemen"
-
 #: templates/admin/index.html:99
 msgid "Recent Actions"
 msgstr ""
@@ -1169,6 +1166,7 @@ msgid ""
 "<option value=\"-\" selected=\"selected\">-</option>\n"
 "<option value=\"initial_data\">Small demo dataset</option>\n"
 "<option value=\"dates\">Dates</option>\n"
+"<option value=\"unicode_test\">Unicode test</option>\n"
 "</select>\n"
 "</td>\n"
 "<td><input id=\"load\" type=\"submit\" value=\"Load\"/></td>"
@@ -1178,16 +1176,17 @@ msgstr ""
 "Beschikbare datasets: <select name=\"datafile\" id=\"entity\">\n"
 "<option value=\"-\" selected=\"selected\">-</option>\n"
 "<option value=\"initial_data\">Kleine demo dataset</option>\n"
-"<option value=\"dates\">Data</option>\n"
+"<option value=\"dates\">Datums</option>\n"
+"<option value=\"unicode_test\">Unicode testdata</option>\n"
 "</select>\n"
 "</td>\n"
 "<td><input id=\"load\" type=\"submit\" value=\"Laad\"/></td>"
 
-#: templates/execute/execute.html:84
+#: templates/execute/execute.html:85
 msgid "Upload data"
 msgstr "Laad gegevens"
 
-#: templates/execute/execute.html:87
+#: templates/execute/execute.html:88
 msgid ""
 "<th scope=\"row\"><a>CSV</a></th>\n"
 "<td>Load data from a csv text file in the database.<br/>\n"
@@ -1239,11 +1238,11 @@ msgstr ""
 "</td>\n"
 "<td><input id=\"upload\" type=\"submit\" value=\"Laad\"/></td>"
 
-#: templates/execute/execute.html:121
+#: templates/execute/execute.html:122
 msgid "Model generator"
 msgstr "Model generator"
 
-#: templates/execute/execute.html:124
+#: templates/execute/execute.html:125
 #, python-format
 msgid ""
 "<th scope=\"row\"><a>Create a model</a></th>\n"
@@ -1286,7 +1285,7 @@ msgstr ""
 "</td>\n"
 "<td><input id=\"create\" type=\"submit\" value=\"Genereer\"/></td>"
 
-#: templates/execute/execute.html:150
+#: templates/execute/execute.html:151
 msgid "Sorry, You don't have any execute permissions..."
 msgstr "Sorry, U heeft geen gebruikersrechten om commandors uit te voeren..."
 
@@ -1383,6 +1382,9 @@ msgstr "Einddatum voor het filteren van rapport data"
 #: user/views.py:68
 msgid "Edit my preferences"
 msgstr "Aanpassen van mijn voorkeuren"
+
+#~ msgid "Problems"
+#~ msgstr "Problemen"
 
 #, fuzzy
 #~ msgid "lastmodified"

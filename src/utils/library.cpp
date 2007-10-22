@@ -94,12 +94,12 @@ DECLARE_EXPORT void Environment::setHomeDirectory(const string dirname)
 
 DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
 {
-  for (string::size_type startpos = s.find("${", 0);
+  for (string::size_type startpos = s.find("${", 0); //@todo not multi-byte utf-8 safe
       startpos < string::npos;
-      startpos = s.find_first_of("${", startpos))
+      startpos = s.find_first_of("${", startpos))  //@todo not multi-byte utf-8 safe
   {
     // Find closing "}"
-    string::size_type endpos = s.find_first_of("}", startpos);
+    string::size_type endpos = s.find_first_of("}", startpos); //@todo not multi-byte utf-8 safe
     if (endpos >= string::npos)
       throw DataException("Invalid variable expansion in '" + s + "'");
 
@@ -112,8 +112,8 @@ DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
     char *c = getenv(var.c_str());
 
     // Replace in the string
-    if (c) s.replace(startpos, endpos - startpos + 1, c);
-    else s.replace(startpos, endpos - startpos + 1, "");
+    if (c) s.replace(startpos, endpos - startpos + 1, c);  
+    else s.replace(startpos, endpos - startpos + 1, "");   
 
     // Advance to the end of the replaced characters. If the replaced
     // characters would include another ${XX} construct we could get in

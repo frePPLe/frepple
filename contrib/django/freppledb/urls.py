@@ -34,7 +34,7 @@ urlpatterns = patterns('',
     # Frepple execution
     (r'^execute/logfrepple/$', 'django.views.generic.simple.direct_to_template',
        {'template': 'execute/logfrepple.html',
-        'extra_context': {'title': 'Frepple log file'},
+        'extra_context': {'title': 'frePPLe log file'},
        }),
     (r'^execute/log/$', 'freppledb.report.view_report', {'report': freppledb.execute.views.LogReport,}),
     (r'^execute/runfrepple/$', 'freppledb.execute.views.runfrepple'),

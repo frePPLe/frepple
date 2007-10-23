@@ -21,6 +21,21 @@
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net
 
+# The code in this file is executed NOT by Django, but by the embedded Python 
+# interpreter from the frePPLe engine.
+# It extracts the information fields from the database, and then uses Python 
+# to compose an XML string that is then processed by the C++ core engine.
+
+
+# A small experiment with an alternative design showed an interesting 
+# performance improvement. By composing the XML documents in the database (and 
+# thus keeping the processing in Python minimal) a speedup with a factor 2 
+# can easily be achieved. 
+# However, since the SQL statements for such an extract are quickly becoming
+# non-portable between databases :-( I decided to stick to the current design.
+# After all, the performance of the current adapters is pretty okay anyway...
+
+
 from time import time
 from xml.sax.saxutils import quoteattr, escape
 from threading import Thread

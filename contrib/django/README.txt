@@ -7,9 +7,9 @@ The basic steps to set up a development environment:
   Lower versions may work, but are not tested...
 - Install django
   FREPPLE NEEDS THE DEVELOPMENT VERSION OF DJANGO. AT THE TIME FREPPLE 0.3.2 IS
-  RELEASED DJANGO WAS AT REVISION 6020.
+  RELEASED DJANGO WAS AT REVISION 6603.
   To get this version of django use the following command:
-    svn co --revision 6020 http://code.djangoproject.com/svn/django/trunk/ django_src
+    svn co --revision 6603 http://code.djangoproject.com/svn/django/trunk/ django_src
   Later versions of django may or may not work with frePPLe...
 - Install your database: postgresql / mysql / ado_mssql
   Alternatively, you can use the sqlite3 database included with python.
@@ -54,6 +54,8 @@ It doesn't serve as a complete reference but only as a brief guideline.
       >> create database frepple;
       >> create user frepple identified by 'frepple';
       >> grant all privileges on frepple.* to 'frepple'@'%' identified by 'frepple';
+  In case you'll have non-ascii characters in the data (and who doesnt't?) it
+  is recommended to use utf-8 for encoding the database character data.
 - Some patches are required to django.
   These are included at the bottom of this file. Copy these into a patch file to apply,
   or make the updates manually yourself.
@@ -70,7 +72,7 @@ It doesn't serve as a complete reference but only as a brief guideline.
      - Choose the appropriate logging level and format
 - Link the static django content into your web root directory.
      cd /var/www/html
-     ln -s /usr/lib/python2.4/site-packages/django/contrib/admin/media .
+     ln -s /usr/lib/python2.5/site-packages/django/contrib/admin/media .
 Your mileage with the above may vary...
 
 Enjoy!
@@ -79,7 +81,7 @@ Enjoy!
 <<< START DJANGO PATCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Index: contrib/admin/models.py
 ===================================================================
---- contrib/admin/models.py	(revision 5992)
+--- contrib/admin/models.py	(revision 6603)
 +++ contrib/admin/models.py	(working copy)
 @@ -49,4 +49,5 @@
          Returns the admin URL to edit the object represented by this log entry.
@@ -88,9 +90,47 @@ Index: contrib/admin/models.py
 -        return u"%s/%s/%s/" % (self.content_type.app_label, self.content_type.model, self.object_id)
 +        from django.contrib.admin.views.main import quote
 +        return u"%s/%s/%s/" % (self.content_type.app_label, self.content_type.model, quote(self.object_id))
+Index: contrib/admin/templates/widget/foreign.html
+===================================================================
+--- contrib/admin/templates/widget/foreign.html	(revision 6603)
++++ contrib/admin/templates/widget/foreign.html	(working copy)
+@@ -2,9 +2,9 @@
+ {% output_all bound_field.form_fields %}
+ {% if bound_field.raw_id_admin %}
+     {% if bound_field.field.rel.limit_choices_to %}
+-        <a href="{{ bound_field.related_url }}?{% for limit_choice in bound_field.field.rel.limit_choices_to.items %}{% if not forloop.first %}&amp;{% endif %}{{ limit_choice|join:"=" }}{% endfor %}" class="related-lookup" id="lookup_{{ bound_field.element_id }}" onclick="return showRelatedObjectLookupPopup(this);"> <img src="{% admin_media_prefix %}img/admin/selector-search.gif" width="16" height="16" alt="Lookup"></a>
++        <a href="{{ bound_field.related_url }}?{% for limit_choice in bound_field.field.rel.limit_choices_to.items %}{% if not forloop.first %}&amp;{% endif %}{{ limit_choice|join:"=" }}{% endfor %}" class="related-lookup" id="lookup_{{ bound_field.element_id }}" onclick="return showRelatedObjectLookupPopup(this);"> <img src="{% admin_media_prefix %}img/admin/selector-search.gif" width="16" height="16" alt="Lookup"/></a>
+     {% else %}
+-        <a href="{{ bound_field.related_url }}" class="related-lookup" id="lookup_{{ bound_field.element_id }}" onclick="return showRelatedObjectLookupPopup(this);"> <img src="{% admin_media_prefix %}img/admin/selector-search.gif" width="16" height="16" alt="Lookup"></a>
++        <a href="{{ bound_field.related_url }}" class="related-lookup" id="lookup_{{ bound_field.element_id }}" onclick="return showRelatedObjectLookupPopup(this);"> <img src="{% admin_media_prefix %}img/admin/selector-search.gif" width="16" height="16" alt="Lookup"/></a>
+     {% endif %}
+ {% else %}
+ {% if bound_field.needs_add_label %}
+Index: contrib/admin/views/decorators.py
+===================================================================
+--- contrib/admin/views/decorators.py	(revision 6603)
++++ contrib/admin/views/decorators.py	(working copy)
+@@ -22,7 +22,7 @@
+         post_data = _encode_post_data({})
+     return render_to_response('admin/login.html', {
+         'title': _('Log in'),
+-        'app_path': request.path,
++        'app_path': request.get_full_path(),
+         'post_data': post_data,
+         'error_message': error_message
+     }, context_instance=template.RequestContext(request))
+@@ -99,7 +99,7 @@
+                         return view_func(request, *args, **kwargs)
+                     else:
+                         request.session.delete_test_cookie()
+-                        return http.HttpResponseRedirect(request.path)
++                        return http.HttpResponseRedirect(request.get_full_path())
+             else:
+                 return _display_login_form(request, ERROR_MESSAGE)
+
 Index: contrib/admin/views/main.py
 ===================================================================
---- contrib/admin/views/main.py	(revision 5992)
+--- contrib/admin/views/main.py	(revision 6603)
 +++ contrib/admin/views/main.py	(working copy)
 @@ -56,12 +56,11 @@
      quoting is slightly different so that it doesn't get automatically
@@ -145,21 +185,19 @@ Index: contrib/admin/views/main.py
 
 Index: db/backends/sqlite3/base.py
 ===================================================================
---- db/backends/sqlite3/base.py	(revision 5992)
+--- db/backends/sqlite3/base.py	(revision 6603)
 +++ db/backends/sqlite3/base.py	(working copy)
-@@ -129,8 +129,12 @@
-         return Database.Cursor.execute(self, query, params)
-
-     def executemany(self, query, param_list):
--        query = self.convert_query(query, len(param_list[0]))
--        return Database.Cursor.executemany(self, query, param_list)
-+        try:
-+          query = self.convert_query(query, len(param_list[0]))
-+          return Database.Cursor.executemany(self, query, param_list)
-+        except IndexError:
-+          # No parameter list provided
-+          return None
-
-     def convert_query(self, query, num_params):
-         return query % tuple("?" * num_params)
+@@ -67,7 +67,11 @@
+         # NB: The generated SQL below is specific to SQLite
+         # Note: The DELETE FROM... SQL generated below works for SQLite databases
+         # because constraints don't exist
+-        sql = ['%s %s %s;' % \
++        sql = ['%s %s = %s' % \
++                (style.SQL_KEYWORD('PRAGMA'),
++                 style.SQL_KEYWORD('SYNCHRONOUS'),
++                 style.SQL_KEYWORD('OFF'))] + \
++               ['%s %s %s;' % \
+                 (style.SQL_KEYWORD('DELETE'),
+                  style.SQL_KEYWORD('FROM'),
+                  style.SQL_FIELD(self.quote_name(table))
 <<< END DJANGO PATCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

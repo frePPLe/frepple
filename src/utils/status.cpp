@@ -517,13 +517,13 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
 DECLARE_EXPORT string XMLOutput::XMLEscape(const char *p)
 {
   string ret(p);
-  for (string::size_type pos = ret.find_first_of("&<>\"\'", 0);  //@todo not multi-byte utf-8 safe
+  for (string::size_type pos = ret.find_first_of("&<>\"\'", 0);
       pos < string::npos;
-      pos = ret.find_first_of("&<>\"\'", pos))  //@todo not multi-byte utf-8 safe
+      pos = ret.find_first_of("&<>\"\'", pos))
   {
     switch (ret[pos])
     {
-      case '&': ret.replace(pos,1,"&amp;",5); pos+=5; break;    //@todo not multi-byte utf-8 safe
+      case '&': ret.replace(pos,1,"&amp;",5); pos+=5; break;
       case '<': ret.replace(pos,1,"&lt;",4); pos+=4; break;
       case '>': ret.replace(pos,1,"&gt;",4); pos+=4; break;
       case '"': ret.replace(pos,1,"&quot;",6); pos+=6; break;

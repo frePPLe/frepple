@@ -94,12 +94,12 @@ DECLARE_EXPORT void Environment::setHomeDirectory(const string dirname)
 
 DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
 {
-  for (string::size_type startpos = s.find("${", 0); //@todo not multi-byte utf-8 safe
+  for (string::size_type startpos = s.find("${", 0); 
       startpos < string::npos;
-      startpos = s.find_first_of("${", startpos))  //@todo not multi-byte utf-8 safe
+      startpos = s.find_first_of("${", startpos))  
   {
     // Find closing "}"
-    string::size_type endpos = s.find_first_of("}", startpos); //@todo not multi-byte utf-8 safe
+    string::size_type endpos = s.find_first_of("}", startpos); 
     if (endpos >= string::npos)
       throw DataException("Invalid variable expansion in '" + s + "'");
 

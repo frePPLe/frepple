@@ -262,14 +262,14 @@ void CommandPython::execute()
     // impossible to use a lib compiled in python version x when compiling
     // under version y.  Quite ugly... :-( :-( :-(
     c = filename;
-    for (string::size_type pos = c.find_first_of("'", 0);   //@todo not multi-byte utf-8 safe
+    for (string::size_type pos = c.find_first_of("'", 0);   
         pos < string::npos;
-        pos = c.find_first_of("'", pos))   //@todo not multi-byte utf-8 safe
+        pos = c.find_first_of("'", pos))   
     {
-      c.replace(pos,1,"\\'",2); // Replacing ' with \'   //@todo not multi-byte utf-8 safe
+      c.replace(pos,1,"\\'",2); // Replacing ' with \'
       pos+=2;
     }
-    c = "execfile('" + c + "')\n";
+    c = "execfile(u'" + c + "')\n";
   }
   else throw DataException("Python command without statement or filename");
 

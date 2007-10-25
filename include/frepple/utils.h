@@ -299,8 +299,8 @@ class Environment
       * E.g. 123${CNT}789 becomes 123456789 when the value of the environment
       * variable is 456.<br>
       *
-      * Substitution with environment values is implemented for the following types
-      * of input data:
+      * Substitution with environment values is implemented for the following 
+      * types of input data:
       *  - COMMAND_SETENV: field VAL
       *  - COMMAND_SYSTEM: field CMDLINE
       *  - COMMAND_PYTHON: fields CMDLINE and FILENAME
@@ -310,6 +310,9 @@ class Environment
       *  - COMMAND_SAVE: field FILENAME
       *  - COMMAND_SAVEPLAN: field FILENAME
       *  - COMMAND_READXMLURL: field URL
+      *
+      * This method works fine with utf-8 and single-byte encodings, but will 
+      * NOT work with other multibyte encodings (such as utf-116 or utf-32).
       */
     static DECLARE_EXPORT void resolveEnvironment(string& s);
 
@@ -1727,6 +1730,10 @@ class XMLOutput
     /** Escape a char string - remove the characters & < > " ' and replace with
       * the proper escape codes. The reverse process of un-escaping the special
       * character sequences is taken care of by the xml library.
+      *
+      * This method works fine with utf-8 and single-byte encodings, but will 
+      * NOT work with other multibyte encodings (such as utf-116 or utf-32).
+      *
       * @param  pstr character pointer to a the character string to be processed
       * @return string with escaped characters
       */

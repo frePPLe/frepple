@@ -144,13 +144,13 @@ astyle:
 # The following references will still have to be updated manually:
 #   - In the excel spreadsheet hit alt-F11 and edit the "about" tab in the "config" form.
 old1 = 0
-old2 = 3
-old3 = 2
-old4 =
+old2 = 4
+old3 = 0
+old4 = -beta
 new1 = 0
 new2 = 4
 new3 = 0
-new4 = -beta
+new4 =
 set_release:
 	for i in "configure.in" "doc/menu.html" "contrib/rpm/frepple.spec" "include/frepple/utils.h" "contrib/django/freppledb/settings.py"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)$(old4)/$(new1).$(new2).$(new3)$(new4)/g' $$i >out.tmp; \

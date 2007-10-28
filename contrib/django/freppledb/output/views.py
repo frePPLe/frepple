@@ -512,7 +512,7 @@ class pathreport:
         'buffer': curbuffer,
         'producingflow': curprodflow,
         'operation': curoperation,
-        'level': level,
+        'level': abs(level),
         'consumingflow': curconsflow,
         'cumquantity': curqty,
         }
@@ -590,7 +590,7 @@ class pathreport:
   @staff_member_required
   def viewdownstream(request, type, entity):
     return render_to_response('output/path.html', RequestContext(request,{
-       'title': '%s %s %s' % (_("Where-used report for"),type, entity),
+       'title': _('%s %s %s' % ("Where-used report for",type, entity)),
        'supplypath': pathreport.getPath(type, entity, True),
        'type': type,
        'entity': entity,
@@ -602,7 +602,7 @@ class pathreport:
   @staff_member_required
   def viewupstream(request, type, entity):
     return render_to_response('output/path.html', RequestContext(request,{
-       'title': '%s %s %s' % (_("Supply path report for"),type, entity),
+       'title': _('%s %s %s' % ("Supply path report for",type, entity)),
        'supplypath': pathreport.getPath(type, entity, False),
        'type': type,
        'entity': entity,

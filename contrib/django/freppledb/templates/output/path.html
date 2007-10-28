@@ -25,6 +25,7 @@
 <div id="resourcecontext" class="ContextMenu">
 {% if perms.input.change_resource %}<a id="/admin/input/resource/%s">Resource</a>{% endif %}
 <a id="/whereused/resource/%s">Where used</a>
+<a id="/supplypath/resource/%s">Supply Path</a>
 <a id="/resource/%s">Plan</a>
 </div>
 
@@ -47,7 +48,6 @@
 </div>
 
 <table><thead><tr>
-<th rowspan="2">Level</th>
 <th rowspan="2">Operation</th>
 <th rowspan="2">Resource</th>
 <th rowspan="2">Buffer</th>
@@ -61,9 +61,8 @@
 </tr></thead>
 
 <tbody>{% for i in supplypath %}
-<tr>
-<td>{% ifchanged i.level i.operation %}{{i.level}}{% endifchanged %}</td>
-<td>{% ifchanged i.level i.operation %}{{i.operation|superlink:"operation"}}{% endifchanged %}</td>
+<tr class="level{{i.level}}">
+<td class="level{{i.level}}">{% ifchanged i.level i.operation %}{{i.operation|superlink:"operation"}}{% endifchanged %}</td>
 <td>{% ifchanged i.level i.operation %}{% if i.operation %}{% for j in i.operation.loads.all %}{{j.resource|superlink:"resource"}} {% endfor %}{% endif %}{% endifchanged %}</td>
 <td>{{i.buffer|superlink:"buffer"}}</td>
 <td>{{i.buffer.location|superlink:"location"}}</td>

@@ -1,0 +1,76 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n %}
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript">
+		ContextMenu.setup();
+		ContextMenu.attach('buffer', 'buffercontext');
+		ContextMenu.attach('resource', 'resourcecontext');
+		ContextMenu.attach('operation', 'operationcontext');
+		ContextMenu.attach('location', 'locationcontext');
+		ContextMenu.attach('item', 'itemcontext');
+</script>
+{% endblock %}
+{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
+{% block coltype %}colM{% endblock %}
+{% block content %}
+<div id="content-main">
+
+<div id="buffercontext" class="ContextMenu">
+{% if perms.input.change_buffer %}<a id="/admin/input/buffer/%s">Buffer</a>{% endif %}
+<a id="/supplypath/buffer/%s">Supply Path</a>
+<a id="/whereused/buffer/%s">Where Used</a>
+<a id="/buffer/%s">Plan</a>
+</div>
+
+<div id="resourcecontext" class="ContextMenu">
+{% if perms.input.change_resource %}<a id="/admin/input/resource/%s">Resource</a>{% endif %}
+<a id="/whereused/resource/%s">Where used</a>
+<a id="/supplypath/resource/%s">Supply Path</a>
+<a id="/resource/%s">Plan</a>
+</div>
+
+<div id="operationcontext" class="ContextMenu">
+{% if perms.input.change_operation %}<a id="/admin/input/operation/%s">Operation</a>{% endif %}
+<a id="/supplypath/operation/%s">Supply Path</a>
+<a id="/whereused/operation/%s">Where Used</a>
+<a id="/operation/%s">Plan</a>
+</div>
+
+<div id="locationcontext" class="ContextMenu">
+{% if perms.input.change_location %}<a id="/admin/input/location/%s">Location</a>{% endif %}
+</div>
+
+<div id="itemcontext" class="ContextMenu">
+{% if perms.input.change_item %}<a id="/admin/input/item/%s">Item</a>{% endif %}
+<a id="/supplypath/item/%s">Supply Path</a>
+<a id="/whereused/item/%s">Where Used</a>
+<a id="/demand/%s">Demand</a>
+</div>
+
+<table><thead><tr>
+<th rowspan="2">Operation</th>
+<th rowspan="2">Resource</th>
+<th rowspan="2">Buffer</th>
+<th rowspan="2">Location</th>
+<th rowspan="2">Item</th>
+<th colspan="2">Consumed Qty</th>
+</tr>
+<tr>
+<th>This</th>
+<th>Cumulative</th>
+</tr></thead>
+
+<tbody>{% for i in supplypath %}
+<tr class="level{{i.level}}">
+<td class="level{{i.level}}">{% ifchanged i.level i.operation %}{{i.operation|superlink:"operation"}}{% endifchanged %}</td>
+<td>{% ifchanged i.level i.operation %}{% if i.operation %}{% for j in i.operation.loads.all %}{{j.resource|superlink:"resource"}} {% endfor %}{% endif %}{% endifchanged %}</td>
+<td>{{i.buffer|superlink:"buffer"}}</td>
+<td>{{i.buffer.location|superlink:"location"}}</td>
+<td>{{i.buffer.item|superlink:"item"}}</td>
+<td>{% if i.consumingflow %}<center>{{i.consumingflow.quantity|floatformat:2}}</center>{% endif %}</td>
+<td><center>{{i.cumquantity|floatformat:2}}</center></td>
+</tr>{% endfor %}
+</tbody></table>
+
+</div>
+{% endblock %}

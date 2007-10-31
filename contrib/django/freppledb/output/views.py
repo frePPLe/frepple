@@ -24,9 +24,7 @@
 from datetime import date, datetime
 
 from django.conf import settings
-from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
-from django.template import RequestContext
 from django.db import connection
 from django.http import Http404, HttpResponse
 from django.utils.translation import ugettext_lazy as _
@@ -34,6 +32,7 @@ from django.utils.translation import ugettext_lazy as _
 from freppledb.input.models import Buffer, Operation, Resource, Item, Forecast
 from freppledb.output.models import DemandPegging, FlowPlan, Problem, OperationPlan, LoadPlan, Demand
 from freppledb.dbutils import *
+from freppledb.reportfilter import FilterNumber, FilterText, FilterBool, FilterDate
 from freppledb.report import TableReport, ListReport
 
 
@@ -45,18 +44,28 @@ class BufferReport(TableReport):
   title = _('Inventory Report')
   basequeryset = Buffer.objects.all()
   rows = (
-    ('buffer', {'filter': 'name__icontains', 'order_by': 'name', 'title':_('buffer')}),
-    ('item', {'filter': 'item__name__icontains', 'title':_('item')}),
-    ('location', {'filter': 'location__name__icontains', 'title':_('location')}),
+    ('buffer', {
+      'filter': FilterText(field='name'),
+      'order_by': 'name',
+      'title': _('buffer')
+      }),
+    ('item', {
+      'filter': FilterText(field='item__name'),
+      'title': _('item')
+      }),
+    ('location', {
+      'filter': FilterText(field='location__name'),
+      'title': _('location')
+      }),
     )
   crosses = (
-    ('startoh', {'title':_('Start Inventory'),}),
-    ('consumed', {'title':_('Consumed'),}),
-    ('produced', {'title':_('Produced'),}),
-    ('endoh', {'title':_('End Inventory'),}),
+    ('startoh', {'title': _('Start Inventory'),}),
+    ('consumed', {'title': _('Consumed'),}),
+    ('produced', {'title': _('Produced'),}),
+    ('endoh', {'title': _('End Inventory'),}),
     )
   columns = (
-    ('bucket', {'title':_('bucket')}),
+    ('bucket', {'title': _('bucket')}),
     )
 
   @staticmethod
@@ -123,15 +132,19 @@ class DemandReport(TableReport):
   title = _('Demand Report')
   basequeryset = Item.objects.extra(where=('name in (select item_id from demand)',))
   rows = (
-    ('item',{'filter': 'name__icontains', 'order_by': 'name', 'title':_('item')}),
+    ('item',{
+      'filter': FilterText(field='name'),
+      'order_by': 'name',
+      'title': _('item')
+      }),
     )
   crosses = (
-    ('demand',{'title':_('Demand')}),
-    ('supply',{'title':_('Supply')}),
-    ('backlog',{'title':_('Backlog')}),
+    ('demand',{'title': _('Demand')}),
+    ('supply',{'title': _('Supply')}),
+    ('backlog',{'title': _('Backlog')}),
     )
   columns = (
-    ('bucket',{'title':_('bucket')}),
+    ('bucket',{'title': _('bucket')}),
     )
 
   @staticmethod
@@ -210,17 +223,27 @@ class ForecastReport(TableReport):
   title = _('Forecast Report')
   basequeryset = Forecast.objects.all()
   rows = (
-    ('forecast',{'filter': 'name__icontains', 'order_by': 'name', 'title':_('forecast')}),
-    ('item',{'filter': 'item__name__icontains', 'title':_('item')}),
-    ('customer',{'filter': 'customer__name__icontains', 'title':_('customer')}),
+    ('forecast',{
+      'filter': FilterText(field='name'),
+      'order_by': 'name',
+      'title': _('forecast')}),
+    ('item',{
+      'filter': FilterText(field='item__name'),
+      'title': _('item')
+      }),
+    ('customer',{
+      'filter': FilterText(field='customer__name'),
+      'title': _('customer')
+      }),
     )
   crosses = (
     ('demand',{'title': _('Gross Forecast'), 'editable': lambda req: req.user.has_perm('input.change_forecastdemand'),}),
-    ('planned',{'title':_('Planned Forecast')}),
+    ('planned',{'title': _('Planned Forecast')}),
     )
   columns = (
-    ('bucket',{'title':_('bucket')}),
+    ('bucket',{'title': _('bucket')}),
     )
+  javascript_imports = [ "/static/prototype.js", ]
 
   @staticmethod
   def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
@@ -296,17 +319,25 @@ class ResourceReport(TableReport):
   title = _('Resource Report')
   basequeryset = Resource.objects.all()
   rows = (
-    ('resource',{'filter': 'name__icontains', 'order_by': 'name', 'title':_('resource')}),
-    ('location',{'filter': 'location__name__icontains', 'title':_('location')}),
+    ('resource',{
+      'filter': FilterText(field='name'),
+      'order_by': 'name',
+      'title': _('resource'),
+      }),
+    ('location',{
+      'filter': FilterText(field='location__name'),
+      'title': _('location'),
+      }),
     )
   crosses = (
-    ('available',{'title':_('Available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),
-    ('load',{'title':_('Load')}),
-    ('utilization',{'title':_('Utilization %'),}),
+    ('available',{'title': _('Available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),
+    ('load',{'title': _('Load')}),
+    ('utilization',{'title': _('Utilization %'),}),
     )
   columns = (
-    ('bucket',{'title':_('bucket')}),
+    ('bucket',{'title': _('bucket')}),
     )
+  javascript_imports = [ "/static/prototype.js", ]
 
   @staticmethod
   def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
@@ -387,16 +418,20 @@ class OperationReport(TableReport):
   title = _('Operation Report')
   basequeryset = Operation.objects.all()
   rows = (
-    ('operation',{'filter': 'name__icontains', 'order_by': 'name', 'title':_('operation')}),
+    ('operation',{
+      'filter': FilterText(field='name'),
+      'order_by': 'name',
+      'title': _('operation'),
+      }),
     )
   crosses = (
-    ('frozen_start', {'title':_('Frozen Starts'),}),
-    ('total_start', {'title':_('Total Starts'),}),
-    ('frozen_end', {'title':_('Frozen Ends'),}),
-    ('total_end', {'title':_('Total Ends'),}),
+    ('frozen_start', {'title': _('Frozen Starts'),}),
+    ('total_start', {'title': _('Total Starts'),}),
+    ('frozen_end', {'title': _('Frozen Ends'),}),
+    ('total_end', {'title': _('Total Ends'),}),
     )
   columns = (
-    ('bucket',{'title':_('bucket')}),
+    ('bucket',{'title': _('bucket')}),
     )
 
 
@@ -464,152 +499,6 @@ class OperationReport(TableReport):
     if prevoper: yield rowset
 
 
-class pathreport:
-  '''
-  A report showing the upstream supply path or following downstream a
-  where-used path.
-  The supply path report shows all the materials, operations and resources
-  used to make a certain item.
-  The where-used report shows all the materials and operations that use
-  a specific item.
-  '''
-
-  @staticmethod
-  def getPath(type, entity, downstream):
-    '''
-    A generator function that recurses upstream or downstream in the supply
-    chain.
-    @todo The current code only supports 1 level of super- or sub-operations.
-    @todo When the supply chain contains loops this function wont work fine.
-    '''
-    from decimal import Decimal
-    from django.core.exceptions import ObjectDoesNotExist
-    if type == 'buffer':
-      # Find the buffer
-      try: root = [ (0, Buffer.objects.get(name=entity), None, None, None, Decimal(1)) ]
-      except ObjectDoesNotExist: raise Http404, "buffer %s doesn't exist" % entity
-    elif type == 'item':
-      # Find the item
-      try:
-        root = [ (0, r, None, None, None, Decimal(1)) for r in Buffer.objects.filter(item=entity) ]
-      except ObjectDoesNotExist: raise Http404, "item %s doesn't exist" % entity
-    elif type == 'operation':
-      # Find the operation
-      try: root = [ (0, None, None, Operation.objects.get(name=entity), None, Decimal(1)) ]
-      except ObjectDoesNotExist: raise Http404, "operation %s doesn't exist" % entity
-    elif type == 'resource':
-      # Find the resource
-      try: root = Resource.objects.get(name=entity)
-      except ObjectDoesNotExist: raise Http404, "resource %s doesn't exist" % entity
-      root = [ (0, None, None, i.operation, None, Decimal(1)) for i in root.loads.all() ]
-    else:
-      raise Http404, "invalid entity type %s" % type
-
-    # Note that the root to start with can be either buffer or operation.
-    while len(root) > 0:
-      level, curbuffer, curprodflow, curoperation, curconsflow, curqty = root.pop()
-      yield {
-        'buffer': curbuffer,
-        'producingflow': curprodflow,
-        'operation': curoperation,
-        'level': abs(level),
-        'consumingflow': curconsflow,
-        'cumquantity': curqty,
-        }
-
-      if downstream:
-        # Find all operations consuming from this buffer...
-        if curbuffer:
-          start = [ (i, i.operation) for i in curbuffer.flows.filter(quantity__lt=0).select_related(depth=1) ]
-        else:
-          start = [ (None, curoperation) ]
-        for cons_flow, curoperation in start:
-          if not cons_flow and not curoperation: continue
-          # ... and pick up the buffer they produce into
-          ok = False
-
-          # Push the next buffer on the stack, based on current operation
-          for prod_flow in curoperation.flows.filter(quantity__gt=0).select_related(depth=1):
-            ok = True
-            root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
-
-          # Push the next buffer on the stack, based on super-operations
-          for x in curoperation.superoperations.select_related(depth=1):
-            for prod_flow in x.suboperation.flows.filter(quantity__gt=0):
-              ok = True
-              root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
-
-          # Push the next buffer on the stack, based on sub-operations
-          for x in curoperation.suboperations.select_related(depth=1):
-            for prod_flow in x.operation.flows.filter(quantity__gt=0):
-              ok = True
-              root.append( (level+1, prod_flow.thebuffer, prod_flow, curoperation, cons_flow, curqty / prod_flow.quantity * (cons_flow and cons_flow.quantity * -1 or 1)) )
-
-          if not ok and cons_flow:
-            # No producing flow found: there are no more buffers downstream
-            root.append( (level+1, None, None, curoperation, cons_flow, curqty * cons_flow.quantity * -1) )
-
-      else:
-        # Find all operations producing into this buffer...
-        if curbuffer:
-          if curbuffer.producing:
-            start = [ (i, i.operation) for i in curbuffer.producing.flows.filter(quantity__gt=0).select_related(depth=1) ]
-          else:
-            start = []
-        else:
-          start = [ (None, curoperation) ]
-        for prod_flow, curoperation in start:
-          if not prod_flow and not curoperation: continue
-          # ... and pick up the buffer they produce into
-          ok = False
-
-          # Push the next buffer on the stack, based on current operation
-          for cons_flow in curoperation.flows.filter(quantity__lt=0).select_related(depth=1):
-            ok = True
-            root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
-
-          # Push the next buffer on the stack, based on super-operations
-          for x in curoperation.superoperations.select_related(depth=1):
-            for cons_flow in x.suboperation.flows.filter(quantity__lt=0):
-              ok = True
-              root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
-
-          # Push the next buffer on the stack, based on sub-operations
-          for x in curoperation.suboperations.select_related(depth=1):
-            for cons_flow in x.operation.flows.filter(quantity__lt=0):
-              ok = True
-              root.append( (level-1, cons_flow.thebuffer, prod_flow, cons_flow.operation, cons_flow, curqty / (prod_flow and prod_flow.quantity or 1) * cons_flow.quantity * -1) )
-
-          if not ok and prod_flow:
-            # No consuming flow found: there are no more buffers upstream
-            ok = True
-            root.append( (level-1, None, prod_flow, prod_flow.operation, None, curqty / prod_flow.quantity) )
-
-
-  @staticmethod
-  @staff_member_required
-  def viewdownstream(request, type, entity):
-    return render_to_response('output/path.html', RequestContext(request,{
-       'title': _('%s %s %s' % ("Where-used report for",type, entity)),
-       'supplypath': pathreport.getPath(type, entity, True),
-       'type': type,
-       'entity': entity,
-       'downstream': True,
-       }))
-
-
-  @staticmethod
-  @staff_member_required
-  def viewupstream(request, type, entity):
-    return render_to_response('output/path.html', RequestContext(request,{
-       'title': _('%s %s %s' % ("Supply path report for",type, entity)),
-       'supplypath': pathreport.getPath(type, entity, False),
-       'type': type,
-       'entity': entity,
-       'downstream': False,
-       }))
-
-
 class PeggingReport(ListReport):
   '''
   A list report to show peggings.
@@ -619,16 +508,39 @@ class PeggingReport(ListReport):
   reset_crumbs = False
   basequeryset = DemandPegging.objects.all()
   rows = (
-    ('demand', {'filter': 'demand__icontains', 'filter_size': 15, 'title':_('demand')}),
-    ('buffer', {'filter': 'buffer__icontains', 'title':_('buffer')}),
-    ('depth', {'filter': 'depth', 'filter_size': 2, 'title':_('depth')}),
-    ('cons_date', {'title':_('consuming date')}),
-    ('prod_date', {'title':_('producing date')}),
-    ('cons_operationplan', {'title':_('consuming operationplan')}),
-    ('prod_operationplan', {'title':_('producing operationplan')}),
-    ('quantity_demand', {'title':_('quantity demand')}),
-    ('quantity_buffer', {'title':_('quantity buffer')}),
-    ('pegged', {'title':_('pegged')}),
+    ('demand', {
+      'filter': FilterText(size=15),
+      'title': _('demand')}),
+    ('buffer', {
+      'filter': 'buffer__icontains',
+      'title': _('buffer')
+      }),
+    ('depth', {
+      'filter': FilterText(size=2),
+      'title': _('depth')
+      }),
+    ('cons_date', {
+      'title': _('consuming date'),
+      'filter': FilterDate(),
+      }),
+    ('prod_date', {
+      'title': _('producing date'),
+      'filter': FilterDate(),
+      }),
+    ('cons_operationplan', {'title': _('consuming operationplan')}),
+    ('prod_operationplan', {'title': _('producing operationplan')}),
+    ('quantity_demand', {
+      'title': _('quantity demand'),
+      'filter': FilterNumber(),
+      }),
+    ('quantity_buffer', {
+      'title': _('quantity buffer'),
+      'filter': FilterNumber(),
+      }),
+    ('pegged', {
+      'title': _('pegged'),
+      'filter': FilterBool(),
+      }),
     )
 
 
@@ -644,14 +556,29 @@ class FlowPlanReport(ListReport):
     where=['out_operationplan.identifier = out_flowplan.operationplan'],
     tables=['out_operationplan'])
   rows = (
-    ('thebuffer', {'filter': 'thebuffer__icontains', 'title': _('buffer')}),
+    ('thebuffer', {
+      'filter': FilterText(),
+      'title': _('buffer')
+      }),
     # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the operation field.
-    # ('operation', {'filter': 'operation__icontains', 'title':_('operation')}),
-    ('operation', {'sort': False, 'title':_('operation')}),
-    ('quantity', {'title':_('quantity')}),
-    ('flowdatetime', {'title': _('date')}),
-    ('onhand', {'title':_('onhand')}),
-    ('operationplan', {'filter': 'operationplan__icontains', 'title':_('operationplan')}),
+    # ('operation', {'filter': 'operation__icontains', 'title': _('operation')}),
+    ('operation', {'sort': False, 'title': _('operation')}),
+    ('quantity', {
+      'title': _('quantity'),
+      'filter': FilterNumber(),
+      }),
+    ('flowdatetime', {
+      'title': _('date'),
+      'filter': FilterDate(field='flowdate'),
+      }),
+    ('onhand', {
+      'title': _('onhand'),
+      'filter': FilterNumber(),
+      }),
+    ('operationplan', {
+      'filter': FilterText(),
+      'title': _('operationplan'),
+      }),
     )
 
 
@@ -663,12 +590,30 @@ class ProblemReport(ListReport):
   title = _("Problem Report")
   basequeryset = Problem.objects.all()
   rows = (
-    ('entity', {'filter': 'entity__icontains', 'title':_('entity')}),
-    ('name', {'filter': 'name__icontains', 'title':_('name')}),
-    ('description', {'filter': 'description__icontains', 'filter_size': 30, 'title':_('description')}),
-    ('startdatetime', {'title': _('startdate')}),
-    ('enddatetime', {'title': _('enddate')}),
-    ('weight', {'title':_('weight')}),
+    ('entity', {
+      'title': _('entity'),
+      'filter': FilterText(),
+      }),
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(operator='exact', ),
+      }),
+    ('description', {
+      'title': _('description'),
+      'filter': FilterText(size=30),
+      }),
+    ('startdatetime', {
+      'title': _('startdate'),
+      'filter': FilterDate(),
+      }),
+    ('enddatetime', {
+      'title': _('enddate'),
+      'filter': FilterDate(),
+      }),
+    ('weight', {
+      'title': _('weight'),
+      'filter': FilterNumber(size=5, operator="lt"),
+      }),
     )
 
 
@@ -683,14 +628,34 @@ class OperationPlanReport(ListReport):
     select={'fcst_or_actual':'demand in (select distinct name from forecast)'}
     )
   rows = (
-    ('identifier', {'filter': 'identifier__icontains', 'title': _('operationplan')}),
-    ('demand', {'filter': 'demand__icontains', 'filter_size': 15, 'title':_('demand')}),
-    ('operation', {'filter': 'operation__icontains', 'filter_size': 15, 'title':_('operation')}),
-    ('quantity', {'title':_('quantity')}),
-    ('startdatetime', {'title': _('startdate')}),
-    ('enddatetime', {'title': _('enddate')}),
-    ('locked', {'title':_('locked')}),
-    ('owner', {'title':_('owner')}),
+    ('identifier', {
+      'filter': FilterText(),
+      'title': _('operationplan'),
+      }),
+    ('demand', {
+      'filter': FilterText(size=15),
+      'title': _('demand'),
+      }),
+    ('operation', {
+      'filter': FilterText(size=15),
+      'title': _('operation')}),
+    ('quantity', {
+      'title': _('quantity'),
+      'filter': FilterNumber(),
+      }),
+    ('startdate', {
+      'title': _('startdate'),
+      'filter': FilterDate(),
+      }),
+    ('enddate', {
+      'title': _('enddate'),
+      'filter': FilterDate(),
+      }),
+    ('locked', {
+      'title': _('locked'),
+      'filter': FilterBool(),
+      }),
+    ('owner', {'title': _('owner')}),
     )
 
 
@@ -706,15 +671,30 @@ class DemandPlanReport(ListReport):
     where=['demand.name = out_demand.demand'],
     tables=['demand'])
   rows = (
-    ('demand', {'filter': 'demand__icontains', 'title': _('Demand')}),
+    ('demand', {
+      'filter': FilterText(),
+      'title': _('Demand')
+      }),
     # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the item field.
-    # ('item_id', {'filter': 'item__icontains', 'title':_('item')}),
-    ('item', {'sort': False, 'title':_('item')}),
-    ('quantity', {'title':_('quantity')}),
-    ('planquantity', {'title': _('planned quantity')}),
-    ('duedatetime', {'title': _('due date')}),
-    ('plandatetime', {'title': _('planned date')}),
-    ('operationplan', {'title':_('operationplan')}),
+    # ('item_id', {'filter': 'item__icontains', 'title': _('item')}),
+    ('item', {'sort': False, 'title': _('item')}),
+    ('quantity', {
+      'title': _('quantity'),
+      'filter': FilterNumber(),
+      }),
+    ('planquantity', {
+      'title': _('planned quantity'),
+      'filter': FilterNumber(),
+      }),
+    ('duedatetime', {
+      'title': _('due date'),
+      'filter': FilterDate(field='duedate'),
+      }),
+    ('plandatetime', {
+      'title': _('planned date'),
+      'filter': FilterDate(field='plandate'),
+      }),
+    ('operationplan', {'title': _('operationplan')}),
     )
 
 
@@ -730,12 +710,27 @@ class LoadPlanReport(ListReport):
     where=['out_operationplan.identifier = out_loadplan.operationplan'],
     tables=['out_operationplan'])
   rows = (
-    ('resource', {'filter': 'resource__icontains', 'title':_('resource')}),
+    ('resource', {
+      'filter': FilterText(),
+      'title': _('resource')
+      }),
     # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the operation field.
-    #('operation', {'filter': 'operation__icontains', 'title':_('operation')}),
-    ('operation', {'sort': False, 'title':_('operation')}),
-    ('startdatetime', {'title': _('startdate')}),
-    ('enddatetime', {'title': _('enddate')}),
-    ('quantity', {'title':_('quantity')}),
-    ('operationplan', {'filter': 'operationplan__icontains', 'title':_('operationplan')}),
+    #('operation', {'filter': 'operation__icontains', 'title': _('operation')}),
+    ('operation', {'sort': False, 'title': _('operation')}),
+    ('startdatetime', {
+      'title': _('startdate'),
+      'filter': FilterDate(field='startdate'),
+      }),
+    ('enddatetime', {
+      'title': _('enddate'),
+      'filter': FilterDate(field='enddate'),
+      }),
+    ('quantity', {
+      'title': _('quantity'),
+      'filter': FilterNumber(),
+      }),
+    ('operationplan', {
+      'filter': FilterText(),
+      'title': _('operationplan')
+      }),
     )

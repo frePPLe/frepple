@@ -80,12 +80,14 @@ a {
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
+/* clashes with the django calendar styles...
 .calendar {
   margin-right: 17px;
   padding-right: 17px;
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
+*/
 
 /* Style for main navigation menu */
 
@@ -173,7 +175,7 @@ a {
 table thead th {
   white-space:nowrap;
   border: 0px;
-  vertical-align: bottom;
+  vertical-align: top;
 }
 
 table thead th.sorted {
@@ -196,3 +198,20 @@ td.level9 {padding-left: 90px;}
 td.level10 {padding-left: 100px;}
 td.level11 {padding-left: 110px;}
 td.level12 {padding-left: 120px;}
+
+/* Make sure the operator isn't put in bold, as the header line does. */
+thead th span {
+  font-weight: normal;
+  text-align: center;
+}
+
+/* Make sure the calendar icons for date filtering don't get a
+ * sorting arrow, as the header line does. */
+table thead th.ascending span a { background: None; }
+table thead th.descending span a { background: None; }
+
+/* Make the calendar link doesn't behave as a block element, as the
+ * row header line does. */
+thead th span a:link, thead th span a:visited { display: inline; }
+
+.calendarbox { text-align: center; }

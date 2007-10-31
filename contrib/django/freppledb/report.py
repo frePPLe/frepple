@@ -37,7 +37,7 @@ from django.utils.translation import ugettext as _
 
 from freppledb.input.models import Plan
 from freppledb.dbutils import python_date
-from freppledb.reportfilter import _create_rowheader
+from freppledb.reportfilter import _create_rowheader, FilterDate
 
 # Parameter settings
 ON_EACH_SIDE = 3       # Number of pages show left and right of the current page
@@ -139,47 +139,52 @@ class Report(object):
   # Whether or not the breadcrumbs are reset when we open the report
   reset_crumbs = True
 
+  # Extra javascript files to import for running the report
+  javascript_imports = []
+
 
 class ListReport(Report):
-  # Row definitions
-  # Possible attributes for a row field are:
-  #   - filter:
-  #     Specifies how a value in the search field affects the base query.
-  #   - filter_size:
-  #     Specifies the size of the search field.
-  #     The default value is 10 characters.
-  #   - order_by:
-  #     Model field to user for the sorting.
-  #     It defaults to the name of the field.
-  #   - title:
-  #     Name of the row that is displayed to the user.
-  #     It defaults to the name of the field.
-  #   - sort:
-  #     Whether or not this column can be used for sorting or not.
-  #     The default is true.
+  '''
+  Row definitions
+  Possible attributes for a row field are:
+    - filter:
+      Specifies a widget for filtering the data.
+    - order_by:
+      Model field to user for the sorting.
+      It defaults to the name of the field.
+    - title:
+      Name of the row that is displayed to the user.
+      It defaults to the name of the field.
+    - sort:
+      Whether or not this column can be used for sorting or not.
+      The default is true.
+    - javascript_imports:
+      Extra javascript files to import for running the report
+  '''
   rows = ()
-  
+
   # A list with required user permissions to view the report
   permissions = []
 
 
 class TableReport(Report):
-  # Row definitions
-  # Possible attributes for a row field are:
-  #   - filter:
-  #     Specifies how a value in the search field affects the base query.
-  #   - filter_size:
-  #     Specifies the size of the search field.
-  #     The default value is 10 characters.
-  #   - order_by:
-  #     Model field to user for the sorting.
-  #     It defaults to the name of the field.
-  #   - title:
-  #     Name of the row that is displayed to the user.
-  #     It defaults to the name of the field.
-  #   - sort:
-  #     Whether or not this column can be used for sorting or not.
-  #     The default is true.
+  '''
+  Row definitions
+  Possible attributes for a row field are:
+    - filter:
+      Specifies a widget for filtering the data.
+    - order_by:
+      Model field to user for the sorting.
+      It defaults to the name of the field.
+    - title:
+      Name of the row that is displayed to the user.
+      It defaults to the name of the field.
+    - sort:
+      Whether or not this column can be used for sorting or not.
+      The default is true.
+    - javascript_imports:
+      Extra javascript files to import for running the report
+  '''
   rows = ()
 
   # Cross definitions.
@@ -198,7 +203,7 @@ class TableReport(Report):
   #     Name of the cross that is displayed to the user.
   #     It defaults to the name of the field.
   columns = ()
-  
+
   # A list with required user permissions to view the report
   permissions = []
 
@@ -274,8 +279,8 @@ def view_report(request, entity=None, **args):
   # Verify the user is authorirzed to view the report
   for perm in reportclass.permissions:
     if not request.user.has_perm(perm):
-      return HttpResponseForbidden('<h1>Permission denied</h1>')  
-    
+      return HttpResponseForbidden('<h1>Permission denied</h1>')
+
   # Pick up the list of time buckets
   if issubclass(reportclass, TableReport):
     (bucket,start,end,bucketlist) = getBuckets(request)
@@ -469,6 +474,7 @@ def view_report(request, entity=None, **args):
        'hits' : paginator.hits,
        'fullhits': fullhits,
        'page_htmls': page_htmls,
+       'javascript_imports': _get_javascript_imports(reportclass),
        # Never reset the breadcrumbs if an argument entity was passed.
        # Otherwise depend on the value in the report class.
        'reset_crumbs': reportclass.reset_crumbs and entity == None,
@@ -507,3 +513,18 @@ def _create_crossheader(req, cls):
     res.append(title)
   return '<br/>'.join(res)
 
+
+def _get_javascript_imports(reportclass):
+  '''
+  Put in any necessary JavaScript imports.
+  '''
+  # Check for the presence of a date filter
+  for row in reportclass.rows:
+    if 'filter' in row[1] and isinstance(row[1]['filter'], FilterDate):
+      return reportclass.javascript_imports + [
+          "/admin/jsi18n/",
+          "/media/js/core.js",
+          "/media/js/calendar.js",
+          "/media/js/admin/DateTimeShortcuts.js",
+          ]
+  return reportclass.javascript_imports

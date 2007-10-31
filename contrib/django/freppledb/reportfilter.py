@@ -24,20 +24,27 @@
 
 from xml.sax.saxutils import escape
 
+from django.utils.translation import ugettext as _
+
+
 IntegerOperator = {
   'lte': '&lt;=',
   'gte': '&gt;=',
   'lt': '&lt;&nbsp;',
   'gt': '&gt;&nbsp;',
-  'exact': 'exact',
+  'exact': '==',
   }
 TextOperator = {
-  'icontains': 'icontains',
-  'contains': 'contains',
-  'startswith': 'startswith',
-  'endswith': 'endswith',
-  'exact': 'exact',
+  'icontains': 'i in',
+  'contains': 'in',
+  'istartswith': 'i starts',
+  'startswith': 'starts',
+  'iendswith': 'i ends',
+  'endswith': 'ends',
+  'iexact': 'i is',
+  'exact': 'is',
   }
+
 
 def _create_rowheader(req, sort, cls):
   '''
@@ -47,6 +54,9 @@ def _create_rowheader(req, sort, cls):
   number = 0
   args = req.GET.copy()
   args2 = req.GET.copy()
+
+  # When we update the filter, we always want to see page 1 again
+  if 'p'in args2: del args2['p']
 
   # A header cell for each row
   for row in cls.rows:
@@ -68,34 +78,33 @@ def _create_rowheader(req, sort, cls):
         args['o'] = '%da' % number
         y = ''
       # Which widget to use
-      widget = ('filter_widget' in row[1] and row[1]['filter_widget']) or FilterText
-      if 'filter' in row[1] or 'filter_widget' in row[1]:
+      if 'filter' in row[1]:
+        # Filtering allowed
         result.append( '<th %s><a href="%s?%s">%s%s</a><br/>%s</th>' \
           % (y, req.path, escape(args.urlencode()),
              title[0].upper(), title[1:],
-             widget.output(row, number, args)
+             row[1]['filter'].output(row, number, args)
              ) )
-        #for i in args:
-        #  field, sep, operator = i.rpartition('__')
-        #  if field == row[1]['filter'] and i in args2: del args2[i]
-        if cls.rows[number-1][1]['filter'] in args2: del args2[cls.rows[number-1][1]['filter']]
+        rowfield = row[1]['filter'].field or row[0]
       else:
-        result.append( '<th %s style="vertical-align:top"><a href="%s?%s">%s%s</a></th>' \
+        # No filtering allowed
+        result.append( '<th %s><a href="%s?%s">%s%s</a></th>' \
           % (y, req.path, escape(args.urlencode()),
              title[0].upper(), title[1:],
             ) )
-        #for i in args:
-        #  field, sep, operator = i.rpartition('__')
-        #  if field == row[0] and i in args2: del args2[i]
-        if row[0] in args2: del args2[row[0]]
+        rowfield = row[0]
+      for i in args:
+        field, sep, operator = i.rpartition('__')
+        if (field or operator) == rowfield and i in args2: del args2[i]
     else:
       # No sorting is allowed on this field
-      result.append( '<th style="vertical-align:top">%s%s</th>' \
+      # If there is no sorting allowed, then there is also no filtering
+      result.append( '<th>%s%s</th>' \
           % (title[0].upper(), title[1:]) )
 
   # Extra hidden fields for query parameters that aren't rows
   for key in args2:
-    result.append( '<th><input type="hidden" name="%s" value="%s"/>' % (key, args[key]))
+    result.append( '<th><input type="hidden" name="%s" value="%s"/>' % (key, args2[key]))
 
   # 'Go' button
   result.append( '<th><input type="submit" value="Go" tabindex="1100"/></th></form>' )
@@ -103,36 +112,124 @@ def _create_rowheader(req, sort, cls):
 
 
 class FilterText:
-  @classmethod
-  def output(cls, row, number, args):
+  def __init__(self, operator="icontains", field=None, size=10):
+    self.operator = operator
+    self.field = field
+    self.size = size
+
+  def output(self, row, number, args):
     global TextOperator
-    return '<input type="text" size="%d" value="%s" name="%s" tabindex="%d"/>' \
-          % ((row[1].has_key('filter_size') and row[1]['filter_size']) or 10,
-             args.get(row[1]['filter'],''),
-             row[1]['filter'], number+1000,
+    rowfield = self.field or row[0]
+    res = []
+    for i in args:
+      field, sep, operator = i.rpartition('__')
+      if field == '':
+        field = operator
+        operator = 'exact'
+      if field == rowfield:
+        res.append('<span id="%d">%s</span><input type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (number+1000, TextOperator[operator], self.size,
+             args.get(i),
+             rowfield, operator, number+1000,
+             ))
+    if len(res) > 0:
+      return '<br/>'.join(res)
+    else:
+      return '<span id="%d">%s</span><input type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (number+1000, TextOperator[self.operator], self.size,
+             args.get("%s__%s" % (rowfield,self.operator),''),
+             rowfield, operator, number+1000,
              )
 
 
-#class FilterInteger:
-#  @classmethod
-#  def output(cls, row, number, args):
-#    global IntegerOperator
-#    res = []
-#    rowfield = (row[1].has_key('filter') and row[1]['filter']) or row[0]
-#    for i  in args:
-#      field, sep, operator = i.rpartition('__')
-#      if field == rowfield:
-#        res.append('<span id="b" oncontextmenu="ole(event)">&gt;</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-#          % (IntegerOperator[operator],
-#             (row[1].has_key('filter_size') and row[1]['filter_size']) or 9,
-#             args.get(i), #row[1]['filter'],''),
-#             rowfield, operator, number+1000,
-#             ))
-#    if len(res) > 0:
-#      return '<br/>'.join(res)
-#    else:
-#      return '<span id="a" oncontextmenu="ole(event)">&gt;</span><input id="olie" type="text" size="%d" value="%s" name="%s" tabindex="%d"/>' \
-#          % ((row[1].has_key('filter_size') and row[1]['filter_size']) or 9,
-#             args.get(row[1]['filter'],''),
-#             row[1]['filter'], number+1000,
-#             )
+class FilterBool:
+  def __init__(self, operator="exact", field=None):
+    self.operator = operator
+    self.field = field
+
+  def output(self, row, number, args):
+    global TextOperator
+    rowfield = self.field or row[0]
+    try: value = args[rowfield]
+    except: value = None
+    if value == '' or value == None:
+      return '''<select name="%s"> <option value ="" selected="yes">%s</option>
+        <option value ="1">%s</option>
+        <option value ="0">%s</option>
+        </select>''' \
+        % (rowfield, _('All'), _('True'), _('False'))
+    elif value == '1':
+      return '''<select name="%s"> <option value ="">%s</option>
+        <option value ="1" selected="yes">%s</option>
+        <option value ="0">%s</option>
+        </select>''' \
+        % (rowfield, _('All'), _('True'), _('False'))
+    else:
+      return '''<select name="%s"> <option value ="">%s</option>
+        <option value ="1">%s</option>
+        <option value ="0" selected="yes">%s</option>
+        </select>''' \
+        % (rowfield, _('All'), _('True'), _('False'))
+
+
+class FilterNumber:
+  def __init__(self, operator="lt", field=None, size=9):
+    self.operator = operator
+    self.field = field
+    self.size = size
+
+  def output(self, row, number, args):
+    global IntegerOperator
+    res = []
+    rowfield = self.field or row[0]
+    for i in args:
+      field, sep, operator = i.rpartition('__')
+      if field == '':
+        field = operator
+        operator = 'exact'
+      if field == rowfield:
+        res.append('<span id="b" oncontextmenu="ole(event)">%s</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (IntegerOperator[operator],
+             self.size,
+             args.get(i),
+             rowfield, operator, number+1000,
+             ))
+    if len(res) > 0:
+      return '<br/>'.join(res)
+    else:
+      return '<span id="a" oncontextmenu="ole(event)">%s</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (IntegerOperator[self.operator], self.size,
+             args.get("%s__%s" % (rowfield,self.operator),''),
+             rowfield, self.operator, number+1000,
+             )
+
+class FilterDate:
+  def __init__(self, operator="lt", field=None, size=9):
+    self.operator = operator
+    self.field = field
+    self.size = size
+
+  def output(self, row, number, args):
+    global IntegerOperator
+    res = []
+    rowfield = self.field or row[0]
+    for i in args:
+      field, sep, operator = i.rpartition('__')
+      if field == '':
+        field = operator
+        operator = 'exact'
+      if field == rowfield:
+        res.append('<span id="b" oncontextmenu="ole(event)">%s</span><input class="vDateField" id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (IntegerOperator[operator],
+             self.size,
+             args.get(i),
+             rowfield, operator, number+1000,
+             ))
+    if len(res) > 0:
+      return '<br/>'.join(res)
+    else:
+      return '<span id="a" oncontextmenu="ole(event)">%s</span><input class="vDateField" id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (IntegerOperator[self.operator], self.size,
+             args.get("%s__%s" % (rowfield,self.operator),''),
+             rowfield, self.operator, number+1000,
+             )

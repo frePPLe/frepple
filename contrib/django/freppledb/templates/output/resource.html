@@ -1,7 +1,8 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n admin_list adminmedia %}
 {% block extrahead %}{{ block.super }}
-<script type="text/javascript" src="/static/prototype.js"></script>
+{% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
+{% endfor %}
 <script type="text/javascript">
 		ContextMenu.setup();
 		ContextMenu.attach('resource', 'resourcecontext');

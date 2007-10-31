@@ -1,6 +1,8 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n admin_list adminmedia %}
 {% block extrahead %}{{ block.super }}
+{% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
+{% endfor %}
 <script type="text/javascript">
 		ContextMenu.setup();
 		ContextMenu.attach('buffer', 'buffercontext');
@@ -40,9 +42,9 @@
 <tr class="{% cycle row1,row2 %}"><td>{{j.buffer|superlink:"buffer"}}</td><td>{{j.item|superlink:"item"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
 <td>{{ crossheader }}</td>{% endif %}
 <td>{{j.startoh|floatformat:1}}<br/>
-{% if j.consumed %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=5a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__lt=0">{{j.consumed|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
-{% if j.produced %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=5a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__gte=0">{{j.produced|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
-{% if j.consumed or j.produced %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=5a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}">{{j.endoh|floatformat:1}}</a>{% else %}0.0{% endif %}</td>{% endfor %}
+{% if j.consumed %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=4a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__lt=0">{{j.consumed|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
+{% if j.produced %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=4a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__gte=0">{{j.produced|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
+{% if j.consumed or j.produced %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=4a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}">{{j.endoh|floatformat:1}}</a>{% else %}0.0{% endif %}</td>{% endfor %}
 </tr>{% endfor %}
 </tbody></table>
 </div>

@@ -510,14 +510,15 @@ class PeggingReport(ListReport):
   rows = (
     ('demand', {
       'filter': FilterText(size=15),
-      'title': _('demand')}),
+      'title': _('demand'),
+      }),
     ('buffer', {
-      'filter': 'buffer__icontains',
-      'title': _('buffer')
+      'filter': FilterText(),
+      'title': _('buffer'),
       }),
     ('depth', {
       'filter': FilterText(size=2),
-      'title': _('depth')
+      'title': _('depth'),
       }),
     ('cons_date', {
       'title': _('consuming date'),

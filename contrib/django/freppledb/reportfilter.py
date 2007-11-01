@@ -138,7 +138,7 @@ class FilterText:
       return '<span id="%d">%s</span><input type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
           % (number+1000, TextOperator[self.operator], self.size,
              args.get("%s__%s" % (rowfield,self.operator),''),
-             rowfield, operator, number+1000,
+             rowfield, self.operator, number+1000,
              )
 
 
@@ -183,6 +183,9 @@ class FilterNumber:
     res = []
     rowfield = self.field or row[0]
     for i in args:
+      # Skip empty filters
+      if args.get(i) == '': continue
+      # Determine field and operator
       field, sep, operator = i.rpartition('__')
       if field == '':
         field = operator
@@ -214,6 +217,9 @@ class FilterDate:
     res = []
     rowfield = self.field or row[0]
     for i in args:
+      # Skip empty filters
+      if args.get(i) == '': continue
+      # Determine field and operator
       field, sep, operator = i.rpartition('__')
       if field == '':
         field = operator

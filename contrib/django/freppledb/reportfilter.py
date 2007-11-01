@@ -122,16 +122,20 @@ class FilterText:
     rowfield = self.field or row[0]
     res = []
     for i in args:
-      field, sep, operator = i.rpartition('__')
-      if field == '':
-        field = operator
-        operator = 'exact'
-      if field == rowfield:
-        res.append('<span id="%d">%s</span><input type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-          % (number+1000, TextOperator[operator], self.size,
-             args.get(i),
-             rowfield, operator, number+1000,
-             ))
+      try:
+        field, sep, operator = i.rpartition('__')
+        if field == '':
+          field = operator
+          operator = 'exact'
+        if field == rowfield:
+          res.append('<span id="%d">%s</span><input type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            % (number+1000, TextOperator[operator], self.size,
+               args.get(i),
+               rowfield, operator, number+1000,
+               ))
+      except:
+        # Silently ignore invalid filters
+        pass
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
@@ -183,20 +187,24 @@ class FilterNumber:
     res = []
     rowfield = self.field or row[0]
     for i in args:
-      # Skip empty filters
-      if args.get(i) == '': continue
-      # Determine field and operator
-      field, sep, operator = i.rpartition('__')
-      if field == '':
-        field = operator
-        operator = 'exact'
-      if field == rowfield:
-        res.append('<span id="b" oncontextmenu="ole(event)">%s</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-          % (IntegerOperator[operator],
-             self.size,
-             args.get(i),
-             rowfield, operator, number+1000,
-             ))
+      try:
+        # Skip empty filters
+        if args.get(i) == '': continue
+        # Determine field and operator
+        field, sep, operator = i.rpartition('__')
+        if field == '':
+          field = operator
+          operator = 'exact'
+        if field == rowfield:
+          res.append('<span id="b" oncontextmenu="ole(event)">%s</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            % (IntegerOperator[operator],
+               self.size,
+               args.get(i),
+               rowfield, operator, number+1000,
+               ))
+      except:
+        # Silently ignore invalid filters
+        pass
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
@@ -217,20 +225,24 @@ class FilterDate:
     res = []
     rowfield = self.field or row[0]
     for i in args:
-      # Skip empty filters
-      if args.get(i) == '': continue
-      # Determine field and operator
-      field, sep, operator = i.rpartition('__')
-      if field == '':
-        field = operator
-        operator = 'exact'
-      if field == rowfield:
-        res.append('<span id="b" oncontextmenu="ole(event)">%s</span><input class="vDateField" id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-          % (IntegerOperator[operator],
-             self.size,
-             args.get(i),
-             rowfield, operator, number+1000,
-             ))
+      try:
+        # Skip empty filters
+        if args.get(i) == '': continue
+        # Determine field and operator
+        field, sep, operator = i.rpartition('__')
+        if field == '':
+          field = operator
+          operator = 'exact'
+        if field == rowfield:
+          res.append('<span id="b" oncontextmenu="ole(event)">%s</span><input class="vDateField" id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            % (IntegerOperator[operator],
+               self.size,
+               args.get(i),
+               rowfield, operator, number+1000,
+               ))
+      except:
+        # Silently ignore invalid filters
+        pass
     if len(res) > 0:
       return '<br/>'.join(res)
     else:

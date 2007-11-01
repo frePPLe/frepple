@@ -219,10 +219,10 @@ def _generate_csv(rep, qs):
   writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC)
 
   # Write a header row
-  fields = [ ('title' in s[1] and s[1]['title']) or s[0] for s in rep.rows ]
+  fields = [ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.rows ]
   try:
-    fields.extend([ ('title' in s[1] and s[1]['title']) or s[0] for s in rep.columns ])
-    fields.extend([ ('title' in s[1] and s[1]['title']) or s[0] for s in rep.crosses ])
+    fields.extend([ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.columns ])
+    fields.extend([ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.crosses ])
   except:
     pass
   writer.writerow(fields)

@@ -382,11 +382,14 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   logger << endl << "Size information of Frepple " << PACKAGE_VERSION
   << " (" << __DATE__ << ")" << endl << endl;
 
+  // Print current locale
+  logger << "Locale: " << setlocale(LC_ALL,NULL) << endl << endl;
+
   // Print loaded modules
   CommandLoadLibrary::printModules();
 
   // Print the number of clusters
-  logger << "Independent clusters: " 
+  logger << "Clusters: " 
     << HasLevel::getNumberOfClusters() << endl << endl;
 
   // Header for memory size

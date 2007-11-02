@@ -31,19 +31,26 @@ from freppledb.user.models import Preferences
 
 
 class PreferencesForm(forms.Form):
-  buckets = forms.ChoiceField(initial=_('Default'),
+  buckets = forms.ChoiceField(label = _("Buckets"),
+    initial=_('Default'),
     choices=Preferences.buckettype,
     help_text=_("Bucket size for reports"),
     )
-  startdate = forms.DateField(required=False,
+  startdate = forms.DateField(label = _("Report start date"),
+    required=False,
     help_text=_("Start date for filtering report data"),
     widget=forms.TextInput(attrs={'class':"vDateField"}),
     )
-  enddate = forms.DateField(required=False,
+  enddate = forms.DateField(label = _("Report end date"),
+    required=False,
     help_text=_("End date for filtering report data"),
     widget=forms.TextInput(attrs={'class':"vDateField"}),
     )
-
+  csvformat = forms.ChoiceField(label = _("CSV output format"),
+    initial = _('Table'),
+    choices=Preferences.csvOutputType,
+    help_text = _("Exporting CSV data as a table or a list"),
+    )
 
 @login_required
 def preferences(request):
@@ -56,14 +63,19 @@ def preferences(request):
         pref.buckets = newdata['buckets']
         pref.startdate = newdata['startdate']
         pref.enddate = newdata['enddate']
+        pref.csvformat = newdata['csvformat']
         pref.save()
         request.user.message_set.create(message='Successfully updated preferences')
       except:
         request.user.message_set.create(message='Failure updating preferences')
   else:
     pref = request.user.get_profile()
-    form = PreferencesForm({'buckets': pref.buckets,
-      'startdate': pref.startdate, 'enddate': pref.enddate})
+    form = PreferencesForm({
+      'buckets': pref.buckets,
+      'startdate': pref.startdate,
+      'enddate': pref.enddate,
+      'csvformat': pref.csvformat
+      })
   return render_to_response('user/preferences.html', {
      'title': _('Edit my preferences'),
      'form': form,

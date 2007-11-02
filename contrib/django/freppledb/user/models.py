@@ -41,12 +41,19 @@ class Preferences(models.Model):
       ('quarter',_('Quarter')),
       ('year',_('Year')),
     )
+    csvOutputType = (
+      ('table',_('Table')),
+      ('list',_('List')),
+    )
     user = models.ForeignKey(User, verbose_name=_('user'), unique=True,
       edit_inline=models.TABULAR, num_in_admin=1, min_num_in_admin=1,
       max_num_in_admin=1, num_extra_on_change=0)
-    buckets = models.CharField(_('buckets'), maxlength=10, choices=buckettype, default='default')
+    buckets = models.CharField(_('buckets'), maxlength=10, choices=buckettype,
+      default='default')
     startdate = models.DateField(_('startdate'), blank=True, null=True)
     enddate = models.DateField(_('enddate'), blank=True, null=True)
+    csvformat = models.CharField(_('csv output format'), maxlength=5,
+      blank=True, null=True, default='table', choices=csvOutputType)
     dummy = models.SmallIntegerField(editable=False, core=True, default=1)
 
 

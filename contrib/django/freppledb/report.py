@@ -22,7 +22,6 @@
 # email : jdetaeye@users.sourceforge.net
 
 from datetime import date, datetime
-from xml.sax.saxutils import escape
 
 from django.core.paginator import ObjectPaginator, InvalidPage
 from django.shortcuts import render_to_response
@@ -34,6 +33,7 @@ from django.conf import settings
 from django.template import Library, Node, resolve_variable
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
+from django.utils.html import escape
 
 from freppledb.input.models import Plan
 from freppledb.dbutils import python_date
@@ -208,7 +208,7 @@ class TableReport(Report):
   permissions = []
 
 
-def _generate_csv(rep, qs):
+def _generate_csv(rep, qs, format, bucketlist):
   '''
   This is a generator function that iterates over the report data and
   returns the data row by row in CSV format.
@@ -220,16 +220,19 @@ def _generate_csv(rep, qs):
 
   # Write a header row
   fields = [ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.rows ]
-  try:
-    fields.extend([ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.columns ])
-    fields.extend([ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.crosses ])
-  except:
-    pass
+  if issubclass(rep,TableReport):
+    if format == 'csvlist':
+      fields.extend([ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.columns ])
+      fields.extend([ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.crosses ])
+    else:
+      fields.extend( [''])
+      fields.extend([ b['name'] for b in bucketlist])
   writer.writerow(fields)
   yield sf.getvalue()
 
   if issubclass(rep,ListReport):
-    # A "list report": Iterate over all rows
+    # Type 1: A "list report"
+    # Iterate over all rows
     for row in qs:
       # Clear the return string buffer
       sf.truncate(0)
@@ -239,18 +242,34 @@ def _generate_csv(rep, qs):
       writer.writerow(fields)
       yield sf.getvalue()
   elif issubclass(rep,TableReport):
-    # A "table report": Iterate over all rows and columns
-    for row in qs:
-      for col in row:
+    if format == 'csvlist':
+      # Type 2: "table report in list format"
+      # Iterate over all rows and columns
+      for row in qs:
+        for col in row:
+          # Clear the return string buffer
+          sf.truncate(0)
+          # Build the return value
+          fields = [ col[s[0]] for s in rep.rows ]
+          fields.extend([ col[s[0]] for s in rep.columns ])
+          fields.extend([ col[s[0]] for s in rep.crosses ])
+          # Return string
+          writer.writerow(fields)
+          yield sf.getvalue()
+    else:
+      # Type 3: A "table report in table formtat"
+      # Iterate over all rows, crosses and columns
+      for row in qs:
         # Clear the return string buffer
-        sf.truncate(0)
-        # Build the return value
-        fields = [ col[s[0]] for s in rep.rows ]
-        fields.extend([ col[s[0]] for s in rep.columns ])
-        fields.extend([ col[s[0]] for s in rep.crosses ])
-        # Return string
-        writer.writerow(fields)
-        yield sf.getvalue()
+        for cross in rep.crosses:
+          sf.truncate(0)
+          fields = [ row[0][s[0]] for s in rep.rows ]
+          fields.extend( [('title' in cross[1] and _(cross[1]['title'])) or _(cross[0])] )
+          fields.extend([ bucket[cross[0]] for bucket in row ])
+          #fields.extend([ s[cross] for s in row ])
+          # Return string
+          writer.writerow(fields)
+          yield sf.getvalue()
   else:
     raise Http404('Unknown report type')
 
@@ -279,7 +298,7 @@ def view_report(request, entity=None, **args):
   # Verify the user is authorirzed to view the report
   for perm in reportclass.permissions:
     if not request.user.has_perm(perm):
-      return HttpResponseForbidden('<h1>Permission denied</h1>')
+      return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
 
   # Pick up the list of time buckets
   if issubclass(reportclass, TableReport):
@@ -301,7 +320,7 @@ def view_report(request, entity=None, **args):
     # This block of code is copied from the django admin code.
     qs_args = dict(request.GET.items())
     for i in ('o', 'p', 'type'):
-      # Filter out arguments which we aren't filters
+      # Remove arguments that aren't filters
       if i in qs_args: del qs_args[i]
     for key, value in qs_args.items():
       # Ignore empty filter values
@@ -351,7 +370,7 @@ def view_report(request, entity=None, **args):
     sortsql = '1 asc'
 
   # Build paginator
-  if type == 'html':
+  if type[:3] != 'csv':
     page = int(request.GET.get('p', '0'))
     paginator = ObjectPaginator(counter, reportclass.paginate_by)
     counter = counter[paginator.first_on_page(page)-1:paginator.first_on_page(page)-1+(reportclass.paginate_by or 0)]
@@ -373,17 +392,20 @@ def view_report(request, entity=None, **args):
     sqlargs = basesql[2]
 
   # HTML output or CSV output?
-  type = request.GET.get('type','html')
-  if type == 'csv':
+  if type[:3] == 'csv':
     # CSV output
+    if type == 'csv':
+      # Only csv is specified: use the user's preferences to determin whether
+      # we want a list or table
+      type = type + request.user.get_profile().csvformat
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % reportclass.title.lower()
     if hasattr(reportclass,'resultquery'):
       # SQL override provided
-      response._container = _generate_csv(reportclass, reportclass.resultquery(sql, sqlargs, bucket, start, end, sortsql=sortsql))
+      response._container = _generate_csv(reportclass, reportclass.resultquery(sql, sqlargs, bucket, start, end, sortsql=sortsql), type, bucketlist)
     else:
       # No SQL override provided
-      response._container = _generate_csv(reportclass, counter)
+      response._container = _generate_csv(reportclass, counter, type, bucketlist)
     response._is_string = False
     return response
 
@@ -478,7 +500,7 @@ def view_report(request, entity=None, **args):
        # Never reset the breadcrumbs if an argument entity was passed.
        # Otherwise depend on the value in the report class.
        'reset_crumbs': reportclass.reset_crumbs and entity == None,
-       'title': (entity and '%s %s %s' % (reportclass.title,_('for'),entity)) or reportclass.title,
+       'title': (entity and '%s %s %s' % (unicode(reportclass.title),_('for'),entity)) or reportclass.title,
        'rowheader': _create_rowheader(request, sortparam, reportclass),
        'crossheader': issubclass(reportclass, TableReport) and _create_crossheader(request, reportclass),
        'columnheader': issubclass(reportclass, TableReport) and _create_columnheader(request, reportclass, bucketlist),

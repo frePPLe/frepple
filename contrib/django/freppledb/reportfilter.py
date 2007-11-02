@@ -22,9 +22,9 @@
 # email : jdetaeye@users.sourceforge.net
 
 
-from xml.sax.saxutils import escape
-
 from django.utils.translation import ugettext as _
+from django.utils.html import escape
+from django.utils.text import capfirst
 
 
 IntegerOperator = {
@@ -61,7 +61,7 @@ def _create_rowheader(req, sort, cls):
   # A header cell for each row
   for row in cls.rows:
     number = number + 1
-    title = unicode((row[1].has_key('title') and row[1]['title']) or row[0])
+    title = capfirst(escape((row[1].has_key('title') and row[1]['title']) or row[0]))
     if not row[1].has_key('sort') or row[1]['sort']:
       # Sorting is allowed
       if int(sort[0]) == number:
@@ -80,18 +80,15 @@ def _create_rowheader(req, sort, cls):
       # Which widget to use
       if 'filter' in row[1]:
         # Filtering allowed
-        result.append( '<th %s><a href="%s?%s">%s%s</a><br/>%s</th>' \
-          % (y, req.path, escape(args.urlencode()),
-             title[0].upper(), title[1:],
-             row[1]['filter'].output(row, number, args)
+        result.append( '<th %s><a href="%s?%s">%s</a><br/>%s</th>' \
+          % (y, escape(req.path), escape(args.urlencode()),
+             title, row[1]['filter'].output(row, number, args)
              ) )
         rowfield = row[1]['filter'].field or row[0]
       else:
         # No filtering allowed
-        result.append( '<th %s><a href="%s?%s">%s%s</a></th>' \
-          % (y, req.path, escape(args.urlencode()),
-             title[0].upper(), title[1:],
-            ) )
+        result.append( '<th %s><a href="%s?%s">%s</a></th>' \
+          % (y, escape(req.path), escape(args.urlencode()), title) )
         rowfield = row[0]
       for i in args:
         field, sep, operator = i.rpartition('__')
@@ -99,8 +96,7 @@ def _create_rowheader(req, sort, cls):
     else:
       # No sorting is allowed on this field
       # If there is no sorting allowed, then there is also no filtering
-      result.append( '<th>%s%s</th>' \
-          % (title[0].upper(), title[1:]) )
+      result.append( '<th>%s</th>' % title )
 
   # Extra hidden fields for query parameters that aren't rows
   for key in args2:
@@ -130,7 +126,7 @@ class FilterText:
         if field == rowfield:
           res.append('<span id="%d">%s</span><input type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
             % (number+1000, TextOperator[operator], self.size,
-               args.get(i),
+               escape(args.get(i)),
                rowfield, operator, number+1000,
                ))
       except:
@@ -141,7 +137,7 @@ class FilterText:
     else:
       return '<span id="%d">%s</span><input type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
           % (number+1000, TextOperator[self.operator], self.size,
-             args.get("%s__%s" % (rowfield,self.operator),''),
+             escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
              )
 
@@ -199,7 +195,7 @@ class FilterNumber:
           res.append('<span id="b" oncontextmenu="ole(event)">%s</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
             % (IntegerOperator[operator],
                self.size,
-               args.get(i),
+               escape(args.get(i)),
                rowfield, operator, number+1000,
                ))
       except:
@@ -210,7 +206,7 @@ class FilterNumber:
     else:
       return '<span id="a" oncontextmenu="ole(event)">%s</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
           % (IntegerOperator[self.operator], self.size,
-             args.get("%s__%s" % (rowfield,self.operator),''),
+             escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
              )
 
@@ -237,7 +233,7 @@ class FilterDate:
           res.append('<span id="b" oncontextmenu="ole(event)">%s</span><input class="vDateField" id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
             % (IntegerOperator[operator],
                self.size,
-               args.get(i),
+               escape(args.get(i)),
                rowfield, operator, number+1000,
                ))
       except:
@@ -248,6 +244,6 @@ class FilterDate:
     else:
       return '<span id="a" oncontextmenu="ole(event)">%s</span><input class="vDateField" id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
           % (IntegerOperator[self.operator], self.size,
-             args.get("%s__%s" % (rowfield,self.operator),''),
+             escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
              )

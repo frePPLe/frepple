@@ -26,7 +26,7 @@ from datetime import date, datetime
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connection
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Buffer, Operation, Resource, Item, Forecast
@@ -550,7 +550,7 @@ class FlowPlanReport(ListReport):
   A list report to show flowplans.
   '''
   template = 'output/flowplan.html'
-  title = _("Inventory Detail Report")
+  title = _("Inventory detail report")
   reset_crumbs = False
   basequeryset = FlowPlan.objects.extra(
     select={'operation':'out_operationplan.operation'},

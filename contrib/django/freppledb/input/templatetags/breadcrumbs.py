@@ -21,14 +21,15 @@
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net
 
-from xml.sax.saxutils import escape
-
 from django.template import Library, Node, resolve_variable, TemplateSyntaxError
 from django.contrib.sessions.models import Session
 from django.conf import settings
 from django.contrib.admin.views.main import quote
 from django.utils.translation import ugettext as _
-
+from django.utils.http import urlquote
+from django.utils.encoding import iri_to_uri
+from django.utils.encoding import smart_unicode
+from django.utils.html import escape
 
 HOMECRUMB = '<a href="/admin/">%s</a>'
 
@@ -132,7 +133,7 @@ class CrumbsNode(Node):
            cnt += 1
 
         # Push current url on the stack
-        cur.append( (title,'<a href="%s">%s</a>' % (escape(req.get_full_path()), title)) )
+        cur.append( (title,'<a href="%s">%s</a>' % (escape(req.get_full_path()), escape(title))) )
 
         # Update the current session
         req.session['crumbs'] = cur
@@ -161,7 +162,8 @@ def superlink(value,type):
     # Fail silently if we end up with an empty string
     if value == '': return ''
     # Final return value
-    return '<a href="/admin/input/%s/%s" class="%s">%s</a>' % (type,quote(value),type,escape(value))
+    return '<a href="/admin/input/%s/%s" class="%s">%s</a>' % \
+      (type, iri_to_uri(urlquote(value)), type, smart_unicode(value))
 
 register.filter('superlink', superlink)
 

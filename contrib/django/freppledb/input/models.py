@@ -407,7 +407,7 @@ class SubOperation(models.Model):
 class Buffer(models.Model):
     # Types of buffers
     buffertypes = (
-      ('','Default'),
+      ('',_('Default')),
       ('BUFFER_INFINITE',_('Infinite')),
       ('BUFFER_PROCURE',_('Procure')),
     )
@@ -497,7 +497,7 @@ class Buffer(models.Model):
 class Resource(models.Model):
     # Types of resources
     resourcetypes = (
-      ('','Default'),
+      ('',_('Default')),
       ('RESOURCE_INFINITE',_('Infinite')),
     )
 
@@ -541,8 +541,8 @@ class Resource(models.Model):
 class Flow(models.Model):
     # Types of flow
     flowtypes = (
-      ('','Start'),
-      ('FLOW_END','End'),
+      ('',_('Start')),
+      ('FLOW_END',_('End')),
     )
 
     # Database fields
@@ -635,10 +635,10 @@ class Demand(models.Model):
 
     # Delivery policies to plan the demand
     demandpolicies = (
-      ('', _('late with multiple deliveries')),
-      ('SINGLEDELIVERY', _('late with single delivery')),
-      ('PLANSHORT', _('short with multiple deliveries')),
-      ('PLANSHORT SINGLEDELIVERY', _('short with single delivery'))
+      ('', _('Late with multiple deliveries')),
+      ('SINGLEDELIVERY', _('Late with single delivery')),
+      ('PLANSHORT', _('Short with multiple deliveries')),
+      ('PLANSHORT SINGLEDELIVERY', _('Short with single delivery'))
     )
 
     # Database fields

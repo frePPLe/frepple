@@ -36,7 +36,7 @@ from django.utils.translation import ugettext as _
 from django.utils.html import escape
 
 from freppledb.input.models import Plan
-from freppledb.dbutils import python_date
+from freppledb.utils.db import python_date
 from freppledb.reportfilter import _create_rowheader, FilterDate
 
 # Parameter settings

@@ -38,8 +38,8 @@ import os, os.path
 
 from freppledb.execute.create import erase_model, create_model
 from freppledb.execute.models import log
-from freppledb.report import ListReport
-from freppledb.reportfilter import FilterText, FilterDate
+from freppledb.utils.report import ListReport
+from freppledb.utils.reportfilter import FilterText, FilterDate
 
 
 @staff_member_required

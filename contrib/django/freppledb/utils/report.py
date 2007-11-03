@@ -37,7 +37,7 @@ from django.utils.html import escape
 
 from freppledb.input.models import Plan
 from freppledb.utils.db import python_date
-from freppledb.reportfilter import _create_rowheader, FilterDate
+from freppledb.utils.reportfilter import _create_rowheader, FilterDate
 
 # Parameter settings
 ON_EACH_SIDE = 3       # Number of pages show left and right of the current page

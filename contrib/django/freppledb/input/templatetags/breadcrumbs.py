@@ -158,12 +158,12 @@ def superlink(value,type):
     # Fail silently if we end up with an empty string
     if value is None: return ''
     # Convert the parameter into a string if it's not already
-    if not isinstance(value,basestring): value = str(value)
+    if not isinstance(value,basestring): value = unicode(value)
     # Fail silently if we end up with an empty string
     if value == '': return ''
     # Final return value
-    return '<a href="/admin/input/%s/%s" class="%s">%s</a>' % \
-      (type, iri_to_uri(urlquote(value)), type, smart_unicode(value))
+    return '<a href="/admin/input/%s/%s/" class="%s">%s</a>' % \
+      (type, iri_to_uri(urlquote(value)), type, escape(value))
 
 register.filter('superlink', superlink)
 

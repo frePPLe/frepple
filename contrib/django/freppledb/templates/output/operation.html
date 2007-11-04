@@ -25,7 +25,7 @@
 <table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>
 
 <tbody>{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
-<tr class="{% cycle row1,row2 %}" id="{{j.operation|escape}}"><td>{{j.operation|superlink:"operation"}}</td>
+<tr class="{% cycle row1,row2 %}" id="{{j.operation|urlencode}}"><td>{{j.operation|superlink:"operation"}}</td>
 <td>{{ crossheader }}</td>{% endif %}
 <td>{% if j.frozen_start %}<a href="/operationplan/?operation={{j.operation|urlencode}}&amp;o=2a&amp;startdate__gte={{j.startdate}}&amp;startdate__lt={{j.enddate}}&amp;locked=1">{{j.frozen_start|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
 {% if j.total_start %}<a href="/operationplan/?operation={{j.operation|urlencode}}&amp;o=2a&amp;startdate__gte={{j.startdate}}&amp;startdate__lt={{j.enddate}}">{{j.total_start|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>

@@ -122,10 +122,11 @@ var ContextMenu = {
       // Get the entity name
 			var item = ContextMenu._attachedElement.innerHTML;
 
-			// Unescape all escaped characters
-			item = item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-			  .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"');
+			// Unescape all escaped characters and urlencode the result for usage as a url
+			item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+			  .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"'));
 
+			// Build the urls for the menu
 			var l = ContextMenu._menuElement.getElementsByTagName("a");
 			for (x=0; x<l.length; x++) {
 			  l[x].href = l[x].id.replace(/%s/,item);

@@ -32,7 +32,7 @@ from django.utils.translation import ugettext_lazy as _
 from freppledb.input.models import Buffer, Operation, Resource, Item, Forecast
 from freppledb.output.models import DemandPegging, FlowPlan, Problem, OperationPlan, LoadPlan, Demand
 from freppledb.utils.db import *
-from freppledb.utils.reportfilter import FilterNumber, FilterText, FilterBool, FilterDate
+from freppledb.utils.reportfilter import FilterNumber, FilterText, FilterBool, FilterDate, FilterChoice
 from freppledb.utils.report import TableReport, ListReport
 
 

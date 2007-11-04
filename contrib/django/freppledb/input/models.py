@@ -317,11 +317,11 @@ class Item(models.Model):
 class Operation(models.Model):
     # Types of operations
     operationtypes = (
-      ('','FIXED_TIME'),
-      ('OPERATION_FIXED_TIME','FIXED_TIME'),
-      ('OPERATION_TIME_PER','TIME_PER'),
-      ('OPERATION_ROUTING','ROUTING'),
-      ('OPERATION_ALTERNATE','ALTERNATE'),
+      ('',_('FIXED_TIME')),
+      ('OPERATION_FIXED_TIME',_('FIXED_TIME')),
+      ('OPERATION_TIME_PER',_('TIME_PER')),
+      ('OPERATION_ROUTING',_('ROUTING')),
+      ('OPERATION_ALTERNATE',_('ALTERNATE')),
     )
 
     # Database fields

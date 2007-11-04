@@ -107,7 +107,7 @@ def _create_rowheader(req, sort, cls):
   return '\n'.join(result)
 
 
-class FilterText:
+class FilterText(object):
   def __init__(self, operator="icontains", field=None, size=10):
     self.operator = operator
     self.field = field
@@ -142,37 +142,7 @@ class FilterText:
              )
 
 
-class FilterBool:
-  def __init__(self, operator="exact", field=None):
-    self.operator = operator
-    self.field = field
-
-  def output(self, row, number, args):
-    global TextOperator
-    rowfield = self.field or row[0]
-    try: value = args[rowfield]
-    except: value = None
-    if value == '' or value == None:
-      return '''<select name="%s"> <option value ="" selected="yes">%s</option>
-        <option value ="1">%s</option>
-        <option value ="0">%s</option>
-        </select>''' \
-        % (rowfield, _('All'), _('True'), _('False'))
-    elif value == '1':
-      return '''<select name="%s"> <option value ="">%s</option>
-        <option value ="1" selected="yes">%s</option>
-        <option value ="0">%s</option>
-        </select>''' \
-        % (rowfield, _('All'), _('True'), _('False'))
-    else:
-      return '''<select name="%s"> <option value ="">%s</option>
-        <option value ="1">%s</option>
-        <option value ="0" selected="yes">%s</option>
-        </select>''' \
-        % (rowfield, _('All'), _('True'), _('False'))
-
-
-class FilterNumber:
+class FilterNumber(object):
   def __init__(self, operator="lt", field=None, size=9):
     self.operator = operator
     self.field = field
@@ -210,7 +180,8 @@ class FilterNumber:
              rowfield, self.operator, number+1000,
              )
 
-class FilterDate:
+
+class FilterDate(object):
   def __init__(self, operator="lt", field=None, size=9):
     self.operator = operator
     self.field = field
@@ -247,3 +218,31 @@ class FilterDate:
              escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
              )
+
+
+class FilterChoice(object):
+  def __init__(self, field=None, choices=None):
+    self.field = field
+    self.choices = choices
+
+  def output(self, row, number, args):
+    rowfield = self.field or row[0]
+    value = args.get(rowfield, None)
+    result = ['<select name="%s"> <option value="">%s</option>' \
+      % (rowfield, _('All')) ]
+    for code, label in self.choices:
+      if code != '':
+        if (code == value):
+          result.append('<option value="%s" selected="yes">%s</option>' % (code, unicode(label)))
+        else:
+          result.append('<option value="%s">%s</option>' % (code, unicode(label)))
+    result.append('</select>')
+    return ' '.join(result)
+
+
+class FilterBool(FilterChoice):
+  def __init__(self, field=None):
+    super(FilterBool, self).__init__(
+      field=field,
+      choices=( ('0',_('False')), ('1',_('True')), ),
+      )

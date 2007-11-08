@@ -411,10 +411,8 @@ PyObject* CommandPython::python_createItem(PyObject *self, PyObject *args)
   if (!ok) return NULL;  // Wrong arguments
 
   // Create the items
-  Item *it = dynamic_cast<Item*>(Object::createString<ItemDefault>(itemname));
-  Item::add(it);   // @todo need a cleaner and safer API for this
-  Operation* op = dynamic_cast<Operation*>(Object::createString<OperationFixedTime>(operationname));
-  Operation::add(op);
+  Item* it = Item::add(itemname, BufferDefault::metadata);
+  Operation* op = Operation::add(operationname, OperationFixedTime::metadata);
   if (it && op) it->setDelivery(op);
 
   // Return code for Python

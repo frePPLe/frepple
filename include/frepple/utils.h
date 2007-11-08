@@ -3733,11 +3733,14 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
     }
 
     /** Creates a new entity. */
-    static T* add(const string& k)
+    static T* add(const string& k, const MetaClass& cls)
     {
       Tree::TreeNode *i = st.find(k);
       if (i!=st.end()) return static_cast<T*>(i); // Exists already
-      T *t= new T(k);
+      if (*(cls.category) != T.metadata)
+        throw LogicException("Invalid type " + cls.type + 
+          " for creating an object of category " + T.metadata.type);
+      T *t = dynamic_cast<T*>(cls.factoryMethodString(k));
       st.insert(t);
       return t;
     }

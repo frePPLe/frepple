@@ -129,7 +129,7 @@ void LibraryModel::initialize()
   static bool init = false;
   if (init)
   {
-    logger << "Warning: Calling Frepple::LibraryModel::initialize() more "
+    logger << "Warning: Calling frepple::LibraryModel::initialize() more "
     << "than once." << endl;
     return;
   }

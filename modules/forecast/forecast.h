@@ -121,7 +121,7 @@
   *   - <b>Customer_Then_Item_Hierarchy</b>:<br>
   *     As part of the forecast netting a demand is assiociated with a certain
   *     forecast. When no matching forecast is found for the customer and item 
-  *     of the demand, frepple looks for forecast at higher level customers 
+  *     of the demand, frePPLe looks for forecast at higher level customers 
   *     and items.<br>
   *     This flag allows us to control whether we first search the customer 
   *     hierarchy and then the item hierarchy, or the other way around.<br>

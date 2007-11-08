@@ -35,9 +35,9 @@ namespace frepple
 
 DECLARE_EXPORT void Demand::updateProblems()
 {
-  // The relation between the Demand and the related Problem classes is such
-  // that the Demand object is the only active one. The Problem objects are
-  // fully controlled and managed by the associated Demand object.
+  // The relation between the demand and the related problem classes is such
+  // that the demand object is the only active one. The problem objects are
+  // fully controlled and managed by the associated demand object.
 
   // A flag for each problem type that may need to be created
   bool needsNotPlanned(false);
@@ -76,52 +76,46 @@ DECLARE_EXPORT void Demand::updateProblems()
   }
 
   // Loop through the existing problems
-  stack<Problem*> problemsToDelete;
   for (Problem::const_iterator j = Problem::begin(this, false);
-      j!=Problem::end(); ++j)
+      j!=Problem::end(); )
   {
+    // Need to increment now and define a pointer to the problem, since the 
+    // problem can be deleted soon (which invalidates the iterator).
+    Problem* curprob = *j;
+    ++j;
     // The if-statement keeps the problem detection code concise and
     // concentrated. However, a drawback of this design is that a new Problem
     // subclass will also require a new Demand subclass. I think such a link
     // is acceptable.
-    if (typeid(**j) == typeid(ProblemEarly))
+    if (typeid(*curprob) == typeid(ProblemEarly))
     {
       // if: problem needed and it exists already
       if (needsEarly) needsEarly = false;
       // else: problem not needed but it exists already
-      /** @todo use the fast delete method for deleting the problems. */
-      else problemsToDelete.push(*j);
+      else delete curprob;
     }
-    else if (typeid(**j) == typeid(ProblemDemandNotPlanned))
+    else if (typeid(*curprob) == typeid(ProblemDemandNotPlanned))
     {
       if (needsNotPlanned) needsNotPlanned = false;
-      else problemsToDelete.push(*j);
+      else delete curprob;
     }
-    else if (typeid(**j) == typeid(ProblemLate))
+    else if (typeid(*curprob) == typeid(ProblemLate))
     {
       if (needsLate) needsLate = false;
-      else problemsToDelete.push(*j);
+      else delete curprob;
     }
-    else if (typeid(**j) == typeid(ProblemShort))
+    else if (typeid(*curprob) == typeid(ProblemShort))
     {
       if (needsShort) needsShort = false;
-      else problemsToDelete.push(*j);
+      else delete curprob;
     }
-    else if (typeid(**j) == typeid(ProblemExcess))
+    else if (typeid(*curprob) == typeid(ProblemExcess))
     {
       if (needsExcess) needsExcess = false;
-      else problemsToDelete.push(*j);
+      else delete curprob;
     }
     // Note that there may be other demand exceptions that are not caught in
     // this loop. These are problems defined and managed by subclasses.
-  }
-
-  // Delete the problems that need to go. This couldn't be integrated in the
-  // previous loop since it would mess up the problem iterator.
-  while (!problemsToDelete.empty())
-  {
-    delete problemsToDelete.top();
-    problemsToDelete.pop();
   }
 
   // Create the problems that are required but aren't existing yet.

@@ -160,7 +160,7 @@ DECLARE_EXPORT void Environment::setLogFile(string x)
   logger.rdbuf(logfile.rdbuf());
 
   // Print a nice header
-  logger << "Start logging Frepple " << PACKAGE_VERSION << " ("
+  logger << "Start logging frePPLe " << PACKAGE_VERSION << " ("
     << __DATE__ << ") at " << Date::now() << endl;
 }
 
@@ -171,7 +171,7 @@ void LibraryUtils::initialize()
   static bool init = false;
   if (init)
   {
-    logger << "Warning: Calling Frepple::LibraryUtils::initialize() more "
+    logger << "Warning: Calling frepple::LibraryUtils::initialize() more "
     << "than once." << endl;
     return;
   }

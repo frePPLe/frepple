@@ -444,11 +444,6 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
         XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, c
       );
       XMLString::release(&c);
-      // Preload the schema @todo
-      // Xerces stores the grammars on the parser, which we dynamically create and
-      // destroy. Preloading the schema requires using a parser pool.
-      //Grammar *g =
-      //   parser->loadGrammar("plan.xsd", Grammar::SchemaGrammarType, true);
     }
 
     // If we are reading into a NULL object, there is no need to use a

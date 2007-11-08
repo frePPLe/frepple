@@ -44,7 +44,7 @@ void LibrarySolver::initialize()
   static bool init = false;
   if (init)
   {
-    logger << "Warning: Calling Frepple::LibrarySolver::initialize() more "
+    logger << "Warning: Calling frepple::LibrarySolver::initialize() more "
     << "than once." << endl;
     return;
   }

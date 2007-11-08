@@ -28,8 +28,8 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-/** @mainpage Frepple Library API
-  * The Frepple class library provides a framework for modeling a
+/** @mainpage frePPLe Library API
+  * The frePPLe class library provides a framework for modeling a
   * manufacturing environment.<br>
   * This document describes its C++ API.<P>
   *
@@ -715,7 +715,7 @@ class HasProblems
 
 
 /** @brief This class is an implementation of the "visitor" design pattern.
-  * It is intended as a basis for different algoritms processing the frepple
+  * It is intended as a basis for different algoritms processing the frePPLe
   * data.
   *
   * The goal is to decouple the solver/algorithms from the model/data
@@ -2736,7 +2736,7 @@ class BufferProcure : public Buffer
     DECLARE_EXPORT Operation* getOperation() const;
 
   private:
-    /** Purchasing leadtime.<br/>
+    /** Purchasing leadtime.<br>
       * Within this leadtime fence no additional purchase orders can be generated.
       */
     TimePeriod leadtime;

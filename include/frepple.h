@@ -28,6 +28,15 @@
 #ifndef FREPPLE_H
 #define FREPPLE_H
 
+/** @file frepple.h
+  * @brief Public header file for C++.
+  *
+  * This is the public header file for C++ users of the library.<br>
+  * It provides low-level access to the C++ objects.
+  *
+  * When you need only a high-level interface to the library, use the header 
+  * file freppleinterface.h instead.
+  */ 
 #include "frepple/model.h"
 #include "frepple/solver.h"
 

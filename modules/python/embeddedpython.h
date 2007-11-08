@@ -40,7 +40,7 @@
   * statements in the file. In this way a library of globally available
   * functions can easily be initialized.<br>
   * The stderr and stdout streams of Python are redirected by default to
-  * the Frepple log stream.
+  * the frePPLe log stream.
   *
   * The XML schema extension enabled by this module is (see mod_python.xsd):
   * <PRE>
@@ -62,14 +62,14 @@
   *   <?PYTHON your Python code comes here ?>
   * </PRE>
   *
-  * The following Frepple functions are available from within Python.<br>
-  * All of these are in the module called frepple.
+  * The following frePPLe functions are available from within Python.<br>
+  * All of these are in the module called frePPLe.
   *   - <b>version</b>:<br>
-  *     A string variable with the version of frepple.
+  *     A string variable with the version number.
   *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br>
   *     Processes an XML string passed as argument.
   *   - <b>log(string)</b>:<br>
-  *     Prints a string to the frepple log file.<br>
+  *     Prints a string to the frePPLe log file.<br>
   *     This is used for redirecting the stdout and stderr of Python.
   *   - <b>readXMLfile(string [,bool] [,bool])</b>:<br>
   *     Read an XML-file.
@@ -92,9 +92,9 @@
   *   - class <b>frepple.resource</b>:<br>
   *     Implements an iterator for resource and its loadplans.
   *
-  * Note that the interface between Frepple and Python is an iterator,
+  * Note that the interface between frePPLe and Python is an iterator,
   * and we stay away from the 'twin-object' approach. This is because
-  * we want frepple to remain the owner of all data.
+  * we want frePPLe to remain the owner of all data.
   */
 
 /* Python.h has to be included first. */
@@ -117,12 +117,12 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 /** @brief This command executes Python code in the embedded interpreter.
   *
   * The interpreter can execute generic scripts, and it also has access
-  * to the frepple objects.<br>
+  * to the frePPLe objects.<br>
   * The interpreter is multi-threaded. Multiple python scripts can run in
   * parallel. Internally Python allows only one thread at a time to
   * execute and the interpreter switches between the active threads, i.e.
   * a quite primitive threading model.<br>
-  * Frepple uses a single global interpreter. A global Python variable or
+  * FrePPLe uses a single global interpreter. A global Python variable or
   * function is thus visible across multiple invocations of the Python
   * interpreter.
   */
@@ -236,7 +236,7 @@ class CommandPython : public Command, public XMLinstruction
     static PyObject *python_readXMLdata(PyObject*, PyObject*);
 
     /** Python API: Create an item and a delivery operation. This function
-      * directly interacts with the frepple C++ API, without passing through
+      * directly interacts with the frePPLe C++ API, without passing through
       * XML.<br>
       * This function is intended for experimental and demonstration purposes
       * only.<br>
@@ -260,18 +260,18 @@ class CommandPython : public Command, public XMLinstruction
       */
     static PyObject *python_saveXMLstring(PyObject*, PyObject*);
 
-    /** Python exception class matching with Frepple::LogicException. */
+    /** Python exception class matching with frepple::LogicException. */
     static PyObject* PythonLogicException;
 
-    /** Python exception class matching with Frepple::DataException. */
+    /** Python exception class matching with frepple::DataException. */
     static PyObject* PythonDataException;
 
-    /** Python exception class matching with Frepple::RuntimeException. */
+    /** Python exception class matching with frepple::RuntimeException. */
     static PyObject* PythonRuntimeException;
 };
 
 
-/** Conversion between the frepple date class and the Python datetime class. */
+/** Conversion between the frePPLe date class and the Python datetime class. */
 PyObject* PythonDateTime(const Date& d);
 
 

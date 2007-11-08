@@ -122,7 +122,6 @@ using namespace std;
 // Header files for the Xerces-c XML parser.
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #define XERCES_NEW_IOSTREAMS
-#endif
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/sax2/Attributes.hpp>
@@ -136,6 +135,7 @@ using namespace std;
 #include <xercesc/framework/URLInputSource.hpp>
 #include <xercesc/util/XMLException.hpp>
 using namespace xercesc;
+#endif
 
 /** @def DECLARE_EXPORT
   * Used to define which symbols to export from a Windows DLL.
@@ -260,7 +260,7 @@ extern DECLARE_EXPORT ostream logger;
   * system environment.
   *
   * It handles:
-  *   - The frepple home directory, which is typically set from the environment
+  *   - The frePPLe home directory, which is typically set from the environment
   *     variable FREPPLE_HOME.
   *   - The expansion of environment variables.
   *   - The maximum number of processors / threads to be used by Frepple.
@@ -3157,7 +3157,7 @@ class CommandSystem : public Command
 };
 
 
-/** @brief Command to dynamically load a shared library in Frepple.
+/** @brief Command to dynamically load a shared library in frePPLe.
   *
   * After loading the library, the function "initialize" of the module
   * is executed.
@@ -3268,6 +3268,13 @@ class XMLinstruction : public NonCopyable
   * This class is implemented based on the Xerces SAX XML parser.
   * For debugging purposes a flag is defined at the start of the file
   * "status.cpp". Uncomment the line and recompile to use it.
+  *
+  * FrePPLe creates a new parser and loads the XML schema every time
+  * XML data need to be parsed. When this happens only a few times during a
+  * run this is good enough.<br>
+  * However, when the libary has to parse plenty of small XML messages this
+  * will create a significant overhead. The code would need to be enhanced
+  * to maintain a pool of parsers and cache their grammars.
   */
 class XMLInput : public NonCopyable,  private DefaultHandler
 {

@@ -149,10 +149,21 @@ DECLARE_EXPORT(string) FreppleSaveString()
 
 DECLARE_EXPORT(void) FreppleExit()
 {
-  // Shut down the fepple executable, or the application that loaded frepple
-  // as a dynamic library
+  // Shut down the application that loaded frePPLe as a dynamic library
   Environment::setLogFile(""); // Close the log file
   std::exit(EXIT_SUCCESS);
+}
+
+
+DECLARE_EXPORT(void) FreppleLog(const char* msg)
+{
+  logger << msg << endl;
+}
+
+
+DECLARE_EXPORT(void) FreppleLog(const string msg)
+{
+  logger << msg << endl;
 }
 
 

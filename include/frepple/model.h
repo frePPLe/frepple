@@ -1661,13 +1661,13 @@ class OperationPlan
     /** Returns the start and end date of this operation_plan. */
     const DateRange & getDates() const {return dates;}
 
-    /** Returns a unique identifier of the operationplan.
+    /** Returns a unique identifier of the operationplan.<br>
       * The identifier can be specified in the data input (in which case
-      * we check for the uniqueness during the read operation).
-      * For operationplans created during a solver run, we start with the
-      * highest identifier read in from the input and start incrementing for
-      * every operationplan.
-      * The identifier is assigned when the  function is called.
+      * we check for the uniqueness during the read operation).<br>
+      * For operationplans created during a solver run, the identifier is 
+      * assigned in the initialize() function. The numbering starts with the
+      * highest identifier read in from the input and is then incremented
+      * for every operationplan that is registered.
       */
     unsigned long getIdentifier() const {return id;}
 

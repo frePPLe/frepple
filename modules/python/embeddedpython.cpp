@@ -411,7 +411,7 @@ PyObject* CommandPython::python_createItem(PyObject *self, PyObject *args)
   if (!ok) return NULL;  // Wrong arguments
 
   // Create the items
-  Item* it = Item::add(itemname, BufferDefault::metadata);
+  Item* it = Item::add(itemname, ItemDefault::metadata);
   Operation* op = Operation::add(operationname, OperationFixedTime::metadata);
   if (it && op) it->setDelivery(op);
 

@@ -3632,6 +3632,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       * iterate over the named entities in a simple and safe way.
       *
       * Objects of this class are created by the begin() and end() functions.
+      * @todo not thread-safe: needs to lock objects during iteration
       */
     class iterator
     {
@@ -3646,8 +3647,8 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         T& operator*() const {return *static_cast<T*>(node);}
 
         /** Return the content of the current node. */
+        T* operator->() const {return static_cast<T*>(node);}
         //typename T::pointer operator->() const {return static_cast<T*>(node);}
-        T* operator->() const {return static_cast<T*>(node);}  // @todo return readlocked object
 
         /** Pre-increment operator which moves the pointer to the next
           * element. */
@@ -3737,9 +3738,9 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
     {
       Tree::TreeNode *i = st.find(k);
       if (i!=st.end()) return static_cast<T*>(i); // Exists already
-      if (*(cls.category) != T.metadata)
+      if (*(cls.category) != T::metadata)
         throw LogicException("Invalid type " + cls.type + 
-          " for creating an object of category " + T.metadata.type);
+        " for creating an object of category " + T::metadata.type);
       T *t = dynamic_cast<T*>(cls.factoryMethodString(k));
       st.insert(t);
       return t;

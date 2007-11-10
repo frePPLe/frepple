@@ -200,6 +200,7 @@ DECLARE_EXPORT void CommandList::execute()
       wrapper(curCommand);
     else if (numthreads > 1)
     {
+      int worker = 0;
 #ifdef HAVE_PTHREAD_H
       // Create a thread for every command list. The main thread will then
       // wait for all of them to finish.
@@ -207,22 +208,29 @@ DECLARE_EXPORT void CommandList::execute()
       int errcode;                       // holds pthread error code
       int status;                        // holds return value
 
-      // Create the command threads
-      for (int worker=0; worker<numthreads; ++worker)
+      // Create the threads
+      for (; worker<numthreads; ++worker)
       {
         if ((errcode=pthread_create(&threads[worker],  // thread struct
             NULL,                  // default thread attributes
             wrapper,               // start routine
             this)))                // arg to routine
         {
-          ostringstream ch;
-          ch << "Can't create thread " << worker << ", error " << errcode;
-          throw RuntimeException(ch.str());  // @todo what if some threads were already created?
+          if (!worker)
+          {
+            ostringstream ch;
+            ch << "Can't create any threads, error " << errcode;
+            throw RuntimeException(ch.str());
+          }
+          // Some threads could be created. 
+          // Let these threads run and do all the work.
+          logger << "Warning: Could create only " << worker 
+            << " threads, error " << errcode << endl;
         }
       }
 
-      // Wait for the command threads as they exit
-      for (int worker=0; worker<numthreads; ++worker)
+      // Wait for the threads as they exit
+      for (--worker; worker>=0; --worker)
         // Wait for thread to terminate
         if ((errcode=pthread_join(threads[worker],(void**) &status)))
         {
@@ -236,8 +244,8 @@ DECLARE_EXPORT void CommandList::execute()
       HANDLE* threads = new HANDLE[numthreads];
       unsigned int * m_id = new unsigned int[numthreads];
 
-      // Create the command threads
-      for (int worker=0; worker<numthreads; ++worker)
+      // Create the threads
+      for (; worker<numthreads; ++worker)
       {
         threads[worker] =  reinterpret_cast<HANDLE>(
           _beginthreadex(0,  // Security atrtributes
@@ -248,16 +256,23 @@ DECLARE_EXPORT void CommandList::execute()
           &m_id[worker]));   // Address to receive the thread identifier
         if (!threads[worker])
         {
-          ostringstream ch;
-          ch << "Can't create thread " << worker << ", error " << errno;
-          delete threads;
-          delete m_id;
-          throw RuntimeException(ch.str());   // @todo what if some threads were already created?
+          if (!worker)
+          {
+            // No threads could be created at all.
+            delete threads;
+            delete m_id;
+            throw RuntimeException("Can't create any threads, error " + errno);
+          }
+          // Some threads could be created. 
+          // Let these threads run and do all the work.
+          logger << "Warning: Could create only " << worker 
+            << " threads, error " << errno << endl;
+          break; // Step out of the thread creation loop
         }
       }
 
-      // Wait for the command threads as they exit
-      int res = WaitForMultipleObjects(numthreads, threads, true, INFINITE);
+      // Wait for the threads as they exit
+      int res = WaitForMultipleObjects(worker, threads, true, INFINITE);
       if (res == WAIT_FAILED)
       {
         char error[256];
@@ -269,13 +284,13 @@ DECLARE_EXPORT void CommandList::execute()
           error,
           256,
           NULL );
-        ostringstream ch;
-        ch << "Can't join threads: " << error;
         delete threads;
         delete m_id;
-        throw RuntimeException(ch.str());
+        throw RuntimeException(string("Can't join threads: ") + error);
       }
-      for (int worker=0; worker<numthreads; ++worker)
+
+      // Cleanup
+      for (--worker; worker>=0; --worker)
         CloseHandle(threads[worker]);
       delete threads;
       delete m_id;

@@ -100,16 +100,13 @@ class BufferReport(TableReport):
 
     # Build the python result
     prevbuf = None
-    rowset = []
     for row in cursor.fetchall():
       if row[0] != prevbuf:
-        if prevbuf: yield rowset
-        rowset = []
         prevbuf = row[0]
         endoh = float(row[3])
       startoh = endoh   # @todo the starting onhand isn't right for the first bucket...
       endoh += float(row[7] - row[8])
-      rowset.append( {
+      yield {
         'buffer': row[0],
         'item': row[1],
         'location': row[2],
@@ -120,8 +117,7 @@ class BufferReport(TableReport):
         'produced': row[7],
         'consumed': row[8],
         'endoh': endoh,
-        } )
-    if prevbuf: yield rowset
+        }
 
 
 class DemandReport(TableReport):
@@ -195,15 +191,13 @@ class DemandReport(TableReport):
 
     # Build the python result
     previtem = None
-    rowset = []
     for row in cursor.fetchall():
       if row[0] != previtem:
-        if previtem: yield rowset
-        rowset = []
+        backlog = row[4] - row[5]  # @todo Setting the backlog to 0 is not correct: it may be non-zero from the plan before the start date
         previtem = row[0]
-        backlog = 0         # @todo Setting the backlog to 0 is not correct: it may be non-zero from the plan before the start date
-      backlog += row[4] - row[5]
-      rowset.append( {
+      else:
+        backlog += row[4] - row[5]
+      yield {
         'item': row[0],
         'bucket': row[1],
         'startdate': python_date(row[2]),
@@ -211,8 +205,7 @@ class DemandReport(TableReport):
         'demand': row[4],
         'supply': row[5],
         'backlog': backlog,
-        } )
-    if previtem: yield rowset
+        } 
 
 
 class ForecastReport(TableReport):
@@ -291,14 +284,8 @@ class ForecastReport(TableReport):
     cursor.execute(query, baseparams)
 
     # Build the python result
-    prevfcst = None
-    rowset = []
     for row in cursor.fetchall():
-      if row[0] != prevfcst:
-        if prevfcst: yield rowset
-        rowset = []
-        prevfcst = row[0]
-      rowset.append( {
+      yield {
         'forecast': row[0],
         'item': row[1],
         'customer': row[2],
@@ -307,8 +294,7 @@ class ForecastReport(TableReport):
         'enddate': python_date(row[5]),
         'demand': row[6],
         'planned': row[7],
-        } )
-    if prevfcst: yield rowset
+        }
 
 
 class ResourceReport(TableReport):
@@ -386,18 +372,10 @@ class ResourceReport(TableReport):
     cursor.execute(query, baseparams)
 
     # Build the python result
-    prevres = None
-    rowset = []
     for row in cursor.fetchall():
-      if row[0] != prevres:
-        count = 0
-        if prevres: yield rowset
-        rowset = []
-        prevres = row[0]
       if row[5] != 0: util = row[6] / row[5] * 100
       else: util = 0
-      count += 1
-      rowset.append( {
+      yield {
         'resource': row[0],
         'location': row[1],
         'bucket': row[2],
@@ -406,8 +384,7 @@ class ResourceReport(TableReport):
         'available': row[5],
         'load': row[6],
         'utilization': util,
-        } )
-    if prevres: yield rowset
+        }
 
 
 class OperationReport(TableReport):
@@ -479,14 +456,8 @@ class OperationReport(TableReport):
     cursor.execute(query, baseparams)
 
     # Convert the SQl results to python
-    prevoper = None
-    rowset = []
     for row in cursor.fetchall():
-      if row[0] != prevoper:
-        if prevoper: yield rowset
-        rowset = []
-        prevoper = row[0]
-      rowset.append( {
+      yield {
         'operation': row[0],
         'bucket': row[1],
         'startdate': python_date(row[2]),
@@ -495,8 +466,7 @@ class OperationReport(TableReport):
         'total_start': row[5],
         'frozen_end': row[6],
         'total_end': row[7],
-        } )
-    if prevoper: yield rowset
+        }
 
 
 class PeggingReport(ListReport):

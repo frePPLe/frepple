@@ -62,21 +62,21 @@
 
 <tbody>
 {% if perms.input.change_resource %}
-{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
+{% for j in objectlist %}{% ifchanged j.resource %}{% if not forloop.first %}</form></tr>{% endif %}
 <tr class="{% cycle row1,row2 %}"><form name="{{j.resource|escape}}"><td>{{j.resource|superlink:"resource"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
-<td>{{ crossheader }}</td>{% endif %}
+<td>{{ crossheader }}</td>{% endifchanged %}
 <td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.available|floatformat:1}}" size="6" onchange="onChange(this)"/><br/>
 {% if j.load %}<a href="/loadplan/?resource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
-<label>{{j.utilization|floatformat:0}}</label></td>{% endfor %}
-</form></tr>{% endfor %}
+<label>{{j.utilization|floatformat:0}}</label></td>
+{% if forloop.last %}</form></tr>{% endif %}{% endfor %}
 {% else %}
-{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
+{% for j in objectlist %}{% ifchanged j.resource %}{% if not forloop.first %}</tr>{% endif %}
 <tr class="{% cycle row1,row2 %}"><td>{{j.resource|superlink:"resource"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
-<td>{{ crossheader }}</td>{% endif %}
+<td>{{ crossheader }}</td>{% endifchanged %}
 <td>{{j.available|floatformat:1}}<br/>
 {% if j.load %}<a href="/loadplan/?resource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
-{{j.utilization|floatformat:0}}</td>{% endfor %}
-</tr>{% endfor %}
+{{j.utilization|floatformat:0}}</td>
+{% if forloop.last %}</tr>{% endif %}{% endfor %}
 {% endif %}
 </tbody></table>
 </div>

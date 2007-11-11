@@ -110,8 +110,9 @@ class CrumbsNode(Node):
     '''
     def render(self, context):
         global HOMECRUMB
+        try: req = context['request']
+        except: return ''  # No request found in the context: no crumbs...
         # Pick up the current crumbs from the session cookie
-        req = context['request']
         try: cur = req.session['crumbs']
         except: cur = [(_('Home'),HOMECRUMB % _('Home'))]
 

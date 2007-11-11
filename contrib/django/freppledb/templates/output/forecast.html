@@ -58,19 +58,19 @@
 <table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>
 
 <tbody>{% if perms.input.change_forecastdemand %}
-{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
-<tr class="{% cycle row1,row2 %}" id="{{j.forecast||urlencode}}"><form name="{{j.forecast|escape}}"><td>{{j.forecast|superlink:"forecast"}}</td><td>{{j.item|superlink:"item"}}</td><td>{{j.customer|superlink:"customer"}}</td>
-<td>{{ crossheader }}</td>{% endif %}
+{% for j in objectlist %}{% ifchanged j.forecast %}{% if not forloop.first %}</form></tr>{% endif %}
+<tr class="{% cycle row1,row2 %}" id="{{j.forecast|urlencode}}"><form name="{{j.forecast|escape}}"><td>{{j.forecast|superlink:"forecast"}}</td><td>{{j.item|superlink:"item"}}</td><td>{{j.customer|superlink:"customer"}}</td>
+<td>{{ crossheader }}</td>{% endifchanged %}
 <td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.demand|floatformat:0}}" size="5" onchange="onChange(this)"/><br/>
-{% if j.planned %}<a href="/demandplan/?demand={{j.forecast|urlencode}}&amp;o=5a&amp;plandate__gte={{j.startdate}}&amp;plandate__lt={{j.enddate}}">{{j.planned|floatformat:1}}</a>{% else %}0.0{% endif %}</td>{% endfor %}
-</form></tr>{% endfor %}
+{% if j.planned %}<a href="/demandplan/?demand={{j.forecast|urlencode}}&amp;o=5a&amp;plandate__gte={{j.startdate}}&amp;plandate__lt={{j.enddate}}">{{j.planned|floatformat:1}}</a>{% else %}0.0{% endif %}</td>
+{% if forloop.last %}</form></tr>{% endif %}{% endfor %}
 {% else %}
-{% for i in objectlist %}{% for j in i %}{% if forloop.first %}
+{% for j in objectlist %}{% ifchanged j.forecast %}{% if not forloop.first %}</form></tr>{% endif %}
 <tr class="{% cycle row1,row2 %}" id="{{j.forecast|urlencode}}"><td>{{j.forecast|superlink:"forecast"}}</td><td>{{j.item|superlink:"item"}}</td><td>{{j.customer|superlink:"customer"}}</td>
-<td>{{ crossheader }}</td>{% endif %}
+<td>{{ crossheader }}</td>{% endifchanged %}
 <td>{{j.demand|floatformat:0}}<br/>
-{% if j.planned %}<a href="/demandplan/?demand={{j.forecast|urlencode}}&amp;o=5a&amp;plandate__gte={{j.startdate}}&amp;plandate__lt={{j.enddate}}">{{j.planned|floatformat:1}}</a>{% else %}0.0{% endif %}</td>{% endfor %}
-</tr>{% endfor %}
+{% if j.planned %}<a href="/demandplan/?demand={{j.forecast|urlencode}}&amp;o=5a&amp;plandate__gte={{j.startdate}}&amp;plandate__lt={{j.enddate}}">{{j.planned|floatformat:1}}</a>{% else %}0.0{% endif %}</td>
+{% if forloop.last %}</tr>{% endif %}{% endfor %}
 {% endif %}
 </tbody></table>
 </div>

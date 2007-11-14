@@ -31,9 +31,15 @@
 #include "frepple.h"
 using namespace frepple;
 
-/** Using a seperate namespace keeps things clean and simple.
-  * It keeps the code structure and the documentation are following the same
-  * modular structure as your extension modules.
+/** @file sample_module.h
+  * @brief Header file for a sample module.
+  *
+  * @namespace sample_module
+  * @brief A sample module.
+  *
+  * Using a seperate namespace keeps things clean and simple.
+  * It keeps the code structured. The auto-generated documentation will also
+  * follow the same modular structure as your extension modules.
   */
 namespace sample_module
 {
@@ -52,6 +58,13 @@ namespace sample_module
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);
 
 
+/** @brief Operation type for modeling transportation efficiently.
+  *
+  * A transport operation has the following characteristics:
+  *  - consumes 1 unit from a source buffer
+  *  - produces 1 unit into a destination buffer
+  *  - takes a fixed duration of time
+  */
 class OperationTransport : public OperationFixedTime
 {
   private:
@@ -62,6 +75,7 @@ class OperationTransport : public OperationFixedTime
     explicit OperationTransport(const string& s)
         : OperationFixedTime(s), fromBuf(NULL), toBuf(NULL) {}
 
+    /** Returns a pointer to the source buffer. */
     Buffer* getFromBuffer() const {return fromBuf;}
 
     /** Update the source buffer of the transport.<br>
@@ -70,6 +84,7 @@ class OperationTransport : public OperationFixedTime
       */
     void setFromBuffer(Buffer *l);
 
+    /** Returns a pointer to the destination buffer. */
     Buffer* getToBuffer() const {return toBuf;}
 
     /** Update the destination buffer of the transport.<br>
@@ -78,11 +93,19 @@ class OperationTransport : public OperationFixedTime
       */
     void setToBuffer(Buffer *l);
 
+    /** Start handler for processing SAX events during XML parsing. */
     void beginElement(XMLInput& , XMLElement&  );
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+
+    /** End handler for processing SAX events during XML parsing. */
     void endElement(XMLInput&, XMLElement&);
 
+    /** Handler for writing out the objects in XML format. */
+    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+
+    /** Returns a reference to this class' metadata. */
     virtual const MetaClass& getType() const {return metadata;}
+
+    /** A static metadata object. */
     static const MetaClass metadata;
 
     /** This callback will automatically be called when a buffer is deleted. */

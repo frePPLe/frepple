@@ -27,7 +27,7 @@ from django.template import RequestContext
 from django import newforms as forms
 from django.utils.translation import ugettext_lazy as _
 
-from freppledb.user.models import Preferences
+from user.models import Preferences
 
 
 class PreferencesForm(forms.Form):

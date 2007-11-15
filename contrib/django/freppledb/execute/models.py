@@ -27,12 +27,13 @@ from django.utils.translation import ugettext_lazy as _
 
 class log(models.Model):
   # Database fields
-  category = models.CharField(_('category'), maxlength=10, db_index=True)
-  message = models.TextField(_('message'), maxlength=200)
   lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
+  category = models.CharField(_('category'), maxlength=10, db_index=True)
+  message = models.TextField(_('message'), maxlength=200, null=True)
+  user = models.CharField(_('user'), max_length=30, null=True)
 
   def __unicode__(self):
-    return self.lastmodified + ' - ' + self.category
+    return self.lastmodified + ' - ' + self.category + ' - ' + self.user
 
   class Meta:
       permissions = (
@@ -42,4 +43,3 @@ class log(models.Model):
          )
       verbose_name_plural = 'log entries'  # Multiple logs entries are still called "a log"
       verbose_name = _('log')
-

@@ -29,11 +29,11 @@ from django.db import connection
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 
-from freppledb.input.models import Buffer, Operation, Resource, Item, Forecast
-from freppledb.output.models import DemandPegging, FlowPlan, Problem, OperationPlan, LoadPlan, Demand
-from freppledb.utils.db import *
-from freppledb.utils.reportfilter import FilterNumber, FilterText, FilterBool, FilterDate, FilterChoice
-from freppledb.utils.report import TableReport, ListReport
+from input.models import Buffer, Operation, Resource, Item, Forecast
+from output.models import DemandPegging, FlowPlan, Problem, OperationPlan, LoadPlan, Demand
+from utils.db import *
+from utils.reportfilter import FilterNumber, FilterText, FilterBool, FilterDate, FilterChoice
+from utils.report import TableReport, ListReport
 
 
 class BufferReport(TableReport):
@@ -205,7 +205,7 @@ class DemandReport(TableReport):
         'demand': row[4],
         'supply': row[5],
         'backlog': backlog,
-        } 
+        }
 
 
 class ForecastReport(TableReport):

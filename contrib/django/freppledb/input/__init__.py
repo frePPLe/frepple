@@ -13,4 +13,4 @@ from django import template
 
 # Make our tags built-in, so we don't have to load them any more in our
 # templates with a 'load' tag.
-template.add_to_builtins('freppledb.input.templatetags.breadcrumbs')
+template.add_to_builtins('input.templatetags.breadcrumbs')

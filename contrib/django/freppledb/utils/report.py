@@ -34,10 +34,11 @@ from django.template import Library, Node, resolve_variable
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
+from django.utils.safestring import mark_safe
 
-from freppledb.input.models import Plan
-from freppledb.utils.db import python_date
-from freppledb.utils.reportfilter import _create_rowheader, FilterDate
+from input.models import Plan
+from utils.db import python_date
+from utils.reportfilter import _create_rowheader, FilterDate
 
 # Parameter settings
 ON_EACH_SIDE = 3       # Number of pages show left and right of the current page
@@ -141,6 +142,9 @@ class Report(object):
 
   # Extra javascript files to import for running the report
   javascript_imports = []
+
+  # Specifies which column is used for an initial filter
+  default_sort = '1a'
 
 
 class ListReport(Report):
@@ -333,7 +337,7 @@ def view_report(request, entity=None, **args):
     counter = counter.filter(**qs_args)
 
   # Pick up the sort parameter from the url
-  sortparam = request.GET.get('o','1a')
+  sortparam = request.GET.get('o', reportclass.default_sort)
   try:
     if sortparam[0] == '1':
       if sortparam[1] == 'd':
@@ -425,14 +429,14 @@ def view_report(request, entity=None, **args):
 
   # If there are less than 10 pages, show them all
   page_htmls = []
-  if paginator.pages <= 10:
+  if paginator.pages <= 10 and paginator.pages > 1:
     for n in range(0,paginator.pages):
       parameters.__setitem__('p', n)
       if n == page:
         page_htmls.append('<span class="this-page">%d</span>' % (page+1))
       else:
         page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
-  else:
+  elif paginator.pages > 1:
       # Insert "smart" pagination links, so that there are always ON_ENDS
       # links at either end of the list of pages, and there are always
       # ON_EACH_SIDE links at either end of the "current page" link.
@@ -478,6 +482,7 @@ def view_report(request, entity=None, **args):
           for n in range(paginator.pages - ON_ENDS - 1, paginator.pages):
               parameters.__setitem__('p', n)
               page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n+1))
+  page_htmls = mark_safe(' '.join(page_htmls))
 
   # Prepare template context
   context = {
@@ -486,7 +491,6 @@ def view_report(request, entity=None, **args):
        'startdate': start,
        'enddate': end,
        'paginator': paginator,
-       'is_paginated': paginator.pages > 1,
        'has_next': paginator.has_next_page(page - 1),
        'has_previous': paginator.has_previous_page(page - 1),
        'current_page': page,
@@ -495,7 +499,7 @@ def view_report(request, entity=None, **args):
        'pages': paginator.pages,
        'hits' : paginator.hits,
        'fullhits': fullhits,
-       'page_htmls': page_htmls,
+       'paginator_html': mark_safe(page_htmls),
        'javascript_imports': _get_javascript_imports(reportclass),
        # Never reset the breadcrumbs if an argument entity was passed.
        # Otherwise depend on the value in the report class.
@@ -517,7 +521,7 @@ def _create_columnheader(req, cls, bucketlist):
   Generate html header row for the columns of a table report.
   '''
   # @todo not very clean and consistent with cross and row
-  return ' '.join(['<th>%s</th>' % j['name'] for j in bucketlist])
+  return mark_safe(' '.join(['<th>%s</th>' % j['name'] for j in bucketlist]))
 
 
 def _create_crossheader(req, cls):
@@ -533,7 +537,7 @@ def _create_crossheader(req, cls):
       or (not callable(crs[1]['editable']) and crs[1]['editable']):
         title = '<span style="line-height:18pt;">' + title + '</span>'
     res.append(title)
-  return '<br/>'.join(res)
+  return mark_safe('<br/>'.join(res))
 
 
 def _get_javascript_imports(reportclass):

@@ -36,10 +36,9 @@ from django.utils.translation import ugettext_lazy as _
 
 import os, os.path
 
-from freppledb.execute.create import erase_model, create_model
-from freppledb.execute.models import log
-from freppledb.utils.report import ListReport
-from freppledb.utils.reportfilter import FilterText, FilterDate
+from execute.models import log
+from utils.report import ListReport
+from utils.reportfilter import FilterText, FilterDate
 
 
 @staff_member_required
@@ -49,7 +48,7 @@ def main(request):
   actions.
   '''
   return direct_to_template(request,  template='execute/execute.html',
-        extra_context={'title': 'Execute', 'reset_crumbs': True} )
+        extra_context={'title': _('Execute'), 'reset_crumbs': True} )
 
 
 @staff_member_required
@@ -65,13 +64,10 @@ def erase(request):
 
     # Erase the database contents
     try:
-      log(category='ERASE', message='Start erasing the database').save()
-      erase_model()
+      management.call_command('frepple_flush', user=request.user.username)
       request.user.message_set.create(message='Erased the database')
-      log(category='ERASE', message='Finished erasing the database').save()
     except Exception, e:
       request.user.message_set.create(message='Failure during database erasing:%s' % e)
-      log(category='RUN', message='Failed erasing the database: %s' % e).save()
 
     # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
     return HttpResponseRedirect('/execute/execute.html')
@@ -116,19 +112,17 @@ def create(request):
     else:
       # Execute
       try:
-        log(
-          category = 'CREATE',
-          message = 'Start creating sample model with parameters: %d %d %d %d %d %d %d %d %d %d' \
-            % (clusters, demands, fcstqty, levels, resources, resource_size,
-               components, components_per, deliver_lt, procure_lt)
-          ).save()
-        erase_model()
-        create_model(clusters, demands, fcstqty, levels, resources, resource_size, components, components_per, deliver_lt, procure_lt)
+        management.call_command('frepple_flush', user=request.user.username)
+        management.call_command('frepple_createmodel',
+          verbosity=0, cluster=clusters, demand=demands,
+          forecast_per_item=fcstqty, level=levels, resource=resources,
+          resource_size=resource_size, components=components,
+          components_per=components_per, deliver_lt=deliver_lt,
+          procure_lt=procure_lt, user=request.user.username
+          )
         request.user.message_set.create(message='Created sample model in the database')
-        log(category='CREATE', message='Finished creating sample model').save()
       except Exception, e:
         request.user.message_set.create(message='Failure during sample model creation: %s' % e)
-        log(category='CREATE', message='Failed creating sample model: %s' % e).save()
 
     # Show the main screen again
     # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
@@ -147,26 +141,10 @@ def runfrepple(request):
 
     # Run frepple
     try:
-      log(category='RUN', message='Start running frepple').save()
-      os.environ['PLAN_TYPE'] = type
-      os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\','\\\\')
-      os.environ['FREPPLE_APP'] = settings.FREPPLE_APP
-      os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
-      os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
-      os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-      if os.path.exists(os.path.join(os.environ['FREPPLE_APP'],'library.zip')):
-        # For the py2exe executable
-        os.environ['PYTHONPATH'] = os.path.join(os.environ['FREPPLE_APP'],'library.zip')
-      else:
-        # Other executables
-        os.environ['PYTHONPATH'] = os.path.normpath(os.path.join(os.environ['FREPPLE_APP'],'..'))
-      ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'execute','commands.xml'))
-      if ret: raise Exception('exit code of the batch run is %d' % ret)
+      management.call_command('frepple_run', user=request.user.username, type=type)
       request.user.message_set.create(message='Successfully ran frepple')
-      log(category='RUN', message='Finished running frepple').save()
     except Exception, e:
       request.user.message_set.create(message='Failure when running frepple: %s' % e)
-      log(category='RUN', message='Failed running frepple: %s' % e).save()
     # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
     return HttpResponseRedirect('/execute/execute.html')
 
@@ -339,21 +317,26 @@ class LogReport(ListReport):
   A list report to review the history of actions.
   '''
   template = 'execute/log.html'
-  title = _("Command log")
+  title = _('Command log')
   reset_crumbs = True
   basequeryset = log.objects.all()
+  default_sort = '1d'
   rows = (
+    ('lastmodified', {
+      'title':_('last modified'),
+      'filter': FilterDate(),
+      }),
     ('category', {
       'filter': FilterText(),
       'title': _('category'),
       }),
+    ('user', {
+      'filter': FilterText(),
+      'title': _('user'),
+      }),
     ('message', {
       'filter': FilterText(size=30),
       'title':_('message'),
-      }),
-    ('lastmodified', {
-      'title':_('last modified'),
-      'filter': FilterDate(),
       }),
     )
 

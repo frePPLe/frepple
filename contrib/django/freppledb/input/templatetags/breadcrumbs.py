@@ -30,6 +30,7 @@ from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri
 from django.utils.encoding import smart_unicode
 from django.utils.html import escape
+from django.utils.safestring import mark_safe
 
 HOMECRUMB = '<a href="/admin/">%s</a>'
 
@@ -134,7 +135,7 @@ class CrumbsNode(Node):
            cnt += 1
 
         # Push current url on the stack
-        cur.append( (title,'<a href="%s">%s</a>' % (escape(req.get_full_path()), escape(title))) )
+        cur.append( (unicode(title),'<a href="%s">%s</a>' % (escape(req.get_full_path()), escape(title))) )
 
         # Update the current session
         req.session['crumbs'] = cur
@@ -163,9 +164,10 @@ def superlink(value,type):
     # Fail silently if we end up with an empty string
     if value == '': return ''
     # Final return value
-    return '<a href="/admin/input/%s/%s/" class="%s">%s</a>' % \
-      (type, iri_to_uri(urlquote(value)), type, escape(value))
+    return mark_safe('<a href="/admin/input/%s/%s/" class="%s">%s</a>' % \
+      (type, iri_to_uri(urlquote(value)), type, escape(value)))
 
+superlink.is_safe = True  # No HTML escaping required any more
 register.filter('superlink', superlink)
 
 

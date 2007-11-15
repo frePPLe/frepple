@@ -57,10 +57,7 @@
 </div>
 
 {% block pagination %}<p class="paginator">
-{% if is_paginated %}
-{% for x in page_htmls %} {{x}} {% endfor %}
-{% endif %}
-&nbsp;&nbsp;{{hits}} operation plans {% ifnotequal hits fullhits %} (total <a class="showall" href="/operationplan/">{{fullhits}}</a>){% endifnotequal %}
+{{paginator_html}}&nbsp;&nbsp;{{hits}} operation plans {% ifnotequal hits fullhits %} (total <a class="showall" href="/operationplan/">{{fullhits}}</a>){% endifnotequal %}
 {% endblock %}</p></div>
 
 {% endblock %}

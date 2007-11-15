@@ -23,16 +23,16 @@
 
 from django.conf.urls.defaults import *
 import os.path
-import freppledb.input.views
-import freppledb.output.views
-import freppledb.user.views
+import input.views
+import output.views
+import user.views
 from django.conf import settings
 
 
 urlpatterns = patterns('',
 
     # frePPLe execution application
-    (r'^execute/', include('freppledb.execute.urls')),
+    (r'^execute/', include('execute.urls')),
 
     # Main index page
     (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/admin/'}),
@@ -42,46 +42,46 @@ urlpatterns = patterns('',
     (r'^admin/', include('django.contrib.admin.urls')),
 
     # Output reports
-    (r'^buffer/([^/]+)/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.BufferReport,}),
-    (r'^buffer/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.BufferReport,}),
-    (r'^demand/([^/]+)/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.DemandReport,}),
-    (r'^demand/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.DemandReport,}),
-    (r'^resource/([^/]+)/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.ResourceReport,}),
-    (r'^resource/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.ResourceReport,}),
-    (r'^operation/([^/]+)/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.OperationReport,}),
-    (r'^operation/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.OperationReport,}),
-    (r'^forecast/([^/]+)/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.ForecastReport,}),
-    (r'^forecast/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.ForecastReport,}),
-    (r'^pegging/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.PeggingReport,}),
-    (r'^flowplan/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.FlowPlanReport,}),
-    (r'^problem/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.ProblemReport,}),
-    (r'^operationplan/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.OperationPlanReport,}),
-    (r'^loadplan/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.LoadPlanReport,}),
-    (r'^demandplan/$', 'freppledb.utils.report.view_report',
-      {'report': freppledb.output.views.DemandPlanReport,}),
+    (r'^buffer/([^/]+)/$', 'utils.report.view_report',
+      {'report': output.views.BufferReport,}),
+    (r'^buffer/$', 'utils.report.view_report',
+      {'report': output.views.BufferReport,}),
+    (r'^demand/([^/]+)/$', 'utils.report.view_report',
+      {'report': output.views.DemandReport,}),
+    (r'^demand/$', 'utils.report.view_report',
+      {'report': output.views.DemandReport,}),
+    (r'^resource/([^/]+)/$', 'utils.report.view_report',
+      {'report': output.views.ResourceReport,}),
+    (r'^resource/$', 'utils.report.view_report',
+      {'report': output.views.ResourceReport,}),
+    (r'^operation/([^/]+)/$', 'utils.report.view_report',
+      {'report': output.views.OperationReport,}),
+    (r'^operation/$', 'utils.report.view_report',
+      {'report': output.views.OperationReport,}),
+    (r'^forecast/([^/]+)/$', 'utils.report.view_report',
+      {'report': output.views.ForecastReport,}),
+    (r'^forecast/$', 'utils.report.view_report',
+      {'report': output.views.ForecastReport,}),
+    (r'^pegging/$', 'utils.report.view_report',
+      {'report': output.views.PeggingReport,}),
+    (r'^flowplan/$', 'utils.report.view_report',
+      {'report': output.views.FlowPlanReport,}),
+    (r'^problem/$', 'utils.report.view_report',
+      {'report': output.views.ProblemReport,}),
+    (r'^operationplan/$', 'utils.report.view_report',
+      {'report': output.views.OperationPlanReport,}),
+    (r'^loadplan/$', 'utils.report.view_report',
+      {'report': output.views.LoadPlanReport,}),
+    (r'^demandplan/$', 'utils.report.view_report',
+      {'report': output.views.DemandPlanReport,}),
 
     # Input reports
-    (r'^supplypath/([^/]+)/([^/]+)/$', freppledb.input.views.pathreport.viewupstream),
-    (r'^whereused/([^/]+)/([^/]+)/$', freppledb.input.views.pathreport.viewdownstream),
-    (r'^edit/$', freppledb.input.views.uploadjson.post),
+    (r'^supplypath/([^/]+)/([^/]+)/$', input.views.pathreport.viewupstream),
+    (r'^whereused/([^/]+)/([^/]+)/$', input.views.pathreport.viewdownstream),
+    (r'^edit/$', input.views.uploadjson.post),
 
     # User preferences
-    (r'^preferences/$', freppledb.user.views.preferences),
+    (r'^preferences/$', user.views.preferences),
 )
 
 # Allows the standalone development server (and the py2exe executable) to serve

@@ -19,19 +19,17 @@
 <tbody>{% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
 
-<td>{{i.category}}</td>
-<td>{{i.message}}</td>
 <td>{{i.lastmodified}}</td>
+<td>{{i.category}}</td>
+<td>{{i.user}}</td>
+<td>{{i.message}}</td>
 
 </tr>{% endfor %}
 </tbody></table>
 </div>
 
 {% block pagination %}<p class="paginator">
-{% if is_paginated %}
-{% for x in page_htmls %} {{x}} {% endfor %}
-{% endif %}
-&nbsp;&nbsp;{{hits}} log entries {% ifnotequal hits fullhits %} (total <a class="showall" href="/execute/log">{{fullhits}}</a>){% endifnotequal %}
+{{paginator_html}}&nbsp;&nbsp;{{hits}} log entries {% ifnotequal hits fullhits %} (total <a class="showall" href="/execute/log">{{fullhits}}</a>){% endifnotequal %}
 {% endblock %}</p></div>
 
 {% endblock %}

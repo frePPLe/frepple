@@ -22,7 +22,7 @@
 # email : jdetaeye@users.sourceforge.net
 
 import django.test
-from freppledb.input.models import *
+from input.models import *
 from django.test.client import Client
 from django.core.exceptions import ObjectDoesNotExist
 

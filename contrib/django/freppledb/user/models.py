@@ -29,7 +29,7 @@ from django.dispatch import dispatcher
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 
-from freppledb.input.models import Plan
+from input.models import Plan
 
 
 class Preferences(models.Model):

@@ -130,10 +130,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     #'django.contrib.sites',
     'django.contrib.admin',
-    'freppledb.input',
-    'freppledb.output',
-    'freppledb.execute',
-    'freppledb.user',
+    'input',
+    'output',
+    'execute',
+    'user',
 )
 
 
@@ -166,7 +166,7 @@ ALLOWED_INCLUDE_ROOTS = (FREPPLE_HOME)
 
 # To use a customized authentication backend.
 AUTHENTICATION_BACKENDS = (
-    "freppledb.user.auth.EmailBackend",
+    "user.auth.EmailBackend",
 )
 
 # To add the user preferences to the standard admin

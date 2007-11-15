@@ -7,6 +7,7 @@
 		ContextMenu.setup();
 		ContextMenu.attach('buffer', 'buffercontext');
 		ContextMenu.attach('operation', 'operationcontext');
+		ContextMenu.attach('operator', 'operator');
 </script>
 {% endblock %}
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
@@ -16,6 +17,14 @@
 </div>{% endblock %}
 {% block content %}
 <div id="content-main">
+
+<div id="operator" class="OperatorMenu">
+<a id="lt" onclick="chooseDateFilter(event,4)">&lt;&nbsp;</a>
+<a id="lte" onclick="chooseDateFilter(event,4)">&lt;=</a>
+<a id="exact" onclick="chooseDateFilter(event,4)">==</a>
+<a id="gt" onclick="chooseDateFilter(event,4)">&gt;&nbsp;</a>
+<a id="gte" onclick="chooseDateFilter(event,4)">&gt;=</a>
+</div>
 
 <div id="buffercontext" class="ContextMenu">
 {% if perms.input.change_buffer %}<a id="/admin/input/buffer/%s/">Buffer</a>{% endif %}
@@ -47,10 +56,7 @@
 </div>
 
 {% block pagination %}<p class="paginator">
-{% if is_paginated %}
-{% for x in page_htmls %} {{x}} {% endfor %}
-{% endif %}
-&nbsp;&nbsp;{{hits}} material flowplans {% ifnotequal hits fullhits %} (total <a class="showall" href="/flowplan/">{{fullhits}}</a>){% endifnotequal %}
+{{paginator_html}}&nbsp;&nbsp;{{hits}} material flowplans {% ifnotequal hits fullhits %} (total <a class="showall" href="/flowplan/">{{fullhits}}</a>){% endifnotequal %}
 {% endblock %}</p></div>
 
 {% endblock %}

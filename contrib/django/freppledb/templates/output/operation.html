@@ -22,7 +22,7 @@
 </div>
 
 <div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>
+<table><thead><tr>{{ rowheader }}{{ columnheaderafe }}</tr></thead>
 
 <tbody>{% for j in objectlist %}{% ifchanged j.operation %}{% if not forloop.first %}</tr>{% endif %}
 <tr class="{% cycle row1,row2 %}" id="{{j.operation|urlencode}}"><td>{{j.operation|superlink:"operation"}}</td>
@@ -36,10 +36,7 @@
 </div>
 
 {% block pagination %} <p class="paginator">
-{% if is_paginated %}
-{% for x in page_htmls %} {{x}} {% endfor %}
-{% endif %}
-&nbsp;&nbsp;{{hits}} operations {% ifnotequal hits fullhits %} (total <a class="showall" href="/operation/">{{fullhits}}</a>){% endifnotequal %}
+{{paginator_html}}&nbsp;&nbsp;{{hits}} operations {% ifnotequal hits fullhits %} (total <a class="showall" href="/operation/">{{fullhits}}</a>){% endifnotequal %}
 </p>{% endblock %}
 
 </div>

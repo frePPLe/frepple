@@ -22,8 +22,8 @@
 # email : jdetaeye@users.sourceforge.net
 
 import django.test
-from freppledb.input.models import *
-import freppledb.output.models
+from input.models import *
+import output.models
 from django.test.client import Client
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -40,10 +40,10 @@ class ExecuteTest(django.test.TestCase):
 
   def test_run_frepple(self):
     # Verify the output tables are empty
-    self.failUnlessEqual(freppledb.output.models.Problem.objects.count(),0)
-    self.failUnlessEqual(freppledb.output.models.FlowPlan.objects.count(),0)
-    self.failUnlessEqual(freppledb.output.models.LoadPlan.objects.count(),0)
-    self.failUnlessEqual(freppledb.output.models.OperationPlan.objects.count(),0)
+    self.failUnlessEqual(output.models.Problem.objects.count(),0)
+    self.failUnlessEqual(output.models.FlowPlan.objects.count(),0)
+    self.failUnlessEqual(output.models.LoadPlan.objects.count(),0)
+    self.failUnlessEqual(output.models.OperationPlan.objects.count(),0)
 
     # Run frepple
     response = self.client.post('/execute/runfrepple/', {'action':'run', 'type':7})
@@ -54,7 +54,7 @@ class ExecuteTest(django.test.TestCase):
     # xxx problem: frepple doesn't export in the test database...
 
     # Count the output records
-    self.failIfEqual(freppledb.output.models.Problem.objects.count(),0)
-    self.failIfEqual(freppledb.output.models.Flowplan.objects.count(),0)
-    self.failIfEqual(freppledb.output.models.LoadPlan.objects.count(),0)
-    self.failIfEqual(freppledb.output.models.OperationPlan.objects.count(),0)
+    self.failIfEqual(output.models.Problem.objects.count(),0)
+    self.failIfEqual(output.models.Flowplan.objects.count(),0)
+    self.failIfEqual(output.models.LoadPlan.objects.count(),0)
+    self.failIfEqual(output.models.OperationPlan.objects.count(),0)

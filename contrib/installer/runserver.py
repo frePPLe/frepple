@@ -36,6 +36,11 @@ from cherrypy.wsgiserver import CherryPyWSGIServer
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
 os.environ['FREPPLE_APP'] = os.path.split(sys.path[0])[0]
 
+# Sys.path contains the zip file with all packages. We need to put the
+# freppledb subdirectory from the zip-file separately on the path because
+# our django applications never refer to the project name.
+sys.path = [ os.path.join(sys.path[0],'freppledb'), sys.path[0] ]
+
 # Import django settings
 from django.conf import settings
 

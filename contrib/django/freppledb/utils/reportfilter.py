@@ -25,6 +25,7 @@
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
 from django.utils.text import capfirst
+from django.utils.safestring import mark_safe
 
 
 IntegerOperator = {
@@ -104,7 +105,7 @@ def _create_rowheader(req, sort, cls):
 
   # 'Go' button
   result.append( '<th><input type="submit" value="Go" tabindex="1100"/></th></form>' )
-  return '\n'.join(result)
+  return mark_safe('\n'.join(result))
 
 
 class FilterText(object):
@@ -162,8 +163,8 @@ class FilterNumber(object):
           field = operator
           operator = 'exact'
         if field == rowfield:
-          res.append('<span id="b" oncontextmenu="ole(event)">%s</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-            % (IntegerOperator[operator],
+          res.append('<span id="%d" oncontextmenu="ole(event)">%s</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            % (number+1000, IntegerOperator[operator],
                self.size,
                escape(args.get(i)),
                rowfield, operator, number+1000,
@@ -174,8 +175,8 @@ class FilterNumber(object):
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
-      return '<span id="a" oncontextmenu="ole(event)">%s</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-          % (IntegerOperator[self.operator], self.size,
+      return '<span id="%d" oncontextmenu="ole(event)">%s</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (number+1000, IntegerOperator[self.operator], self.size,
              escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
              )
@@ -191,6 +192,7 @@ class FilterDate(object):
     global IntegerOperator
     res = []
     rowfield = self.field or row[0]
+    counter = number*10
     for i in args:
       try:
         # Skip empty filters
@@ -201,20 +203,21 @@ class FilterDate(object):
           field = operator
           operator = 'exact'
         if field == rowfield:
-          res.append('<span id="b" oncontextmenu="ole(event)">%s</span><input class="vDateField" id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-            % (IntegerOperator[operator],
-               self.size,
+          res.append('<u><span class="operator">%s</span></u><input class="vDateField" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            % (IntegerOperator[operator], counter, self.size,
                escape(args.get(i)),
                rowfield, operator, number+1000,
                ))
       except:
         # Silently ignore invalid filters
         pass
+      counter = counter + 1
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
-      return '<span id="a" oncontextmenu="ole(event)">%s</span><input class="vDateField" id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-          % (IntegerOperator[self.operator], self.size,
+      #oncontextmenu="chooseDateFilter(event,%d)"
+      return '<u><span class="operator">%s</span></u><input class="vDateField" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (IntegerOperator[self.operator], number, self.size,
              escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
              )
@@ -241,6 +244,10 @@ class FilterChoice(object):
 
 
 class FilterBool(FilterChoice):
+  '''
+  A boolean filter is a special case of the choice filter: the choices
+  are limited to 0/false and 1/true.
+  '''
   def __init__(self, field=None):
     super(FilterBool, self).__init__(
       field=field,

@@ -148,7 +148,7 @@ class Command(BaseCommand):
       workingdays = Calendar(name="Working Days")
       workingdays.save()
       for i in Dates.objects.all():
-        curdate = i.day
+        curdate = datetime(i.day.year, i.day.month, i.day.day)
         dayofweek = int(curdate.strftime("%w")) # day of the week, 0 = sunday, 1 = monday, ...
         if dayofweek == 1:
           # A bucket for the working week: monday through friday
@@ -317,7 +317,6 @@ class Command(BaseCommand):
       # Log failure and rethrow exception
       log(category='CREATE', user = options['user'],
         message=u'%s: %s' % (_('Failure creating sample model'),e)).save()
-      transaction.commit()
       raise e
 
     finally:

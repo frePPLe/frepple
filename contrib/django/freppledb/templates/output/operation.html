@@ -22,7 +22,7 @@
 </div>
 
 <div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr>{{ rowheader }}{{ columnheaderafe }}</tr></thead>
+<table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>
 
 <tbody>{% for j in objectlist %}{% ifchanged j.operation %}{% if not forloop.first %}</tr>{% endif %}
 <tr class="{% cycle row1,row2 %}" id="{{j.operation|urlencode}}"><td>{{j.operation|superlink:"operation"}}</td>

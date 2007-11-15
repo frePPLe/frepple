@@ -21,7 +21,7 @@
 # date : $LastChangedDate$
 # email : jdetaeye@users.sourceforge.net
 
-#from datetime import date
+from datetime import timedelta
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -54,6 +54,8 @@ class Preferences(models.Model):
     enddate = models.DateField(_('enddate'), blank=True, null=True)
     csvformat = models.CharField(_('csv output format'), maxlength=5,
       blank=True, null=True, default='table', choices=csvOutputType)
+    # This dummy field is required since django expects at least 1 field
+    # with core set to True
     dummy = models.SmallIntegerField(editable=False, core=True, default=1)
 
 
@@ -61,7 +63,9 @@ def CreatePreferenceModel(instance):
     '''Create a preference model for a new user.'''
     pref, created = Preferences.objects.get_or_create(user=instance)
     if created:
-      try: pref.startdate = Plan.objects.all()[0].currentdate.date()
+      try:
+        pref.startdate = Plan.objects.all()[0].currentdate.date()
+        pref.enddate = pref.startdate + timedelta(365)
       except: pass  # No real problem when this fails
       pref.save()
 

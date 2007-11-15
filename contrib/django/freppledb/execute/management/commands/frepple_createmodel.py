@@ -82,7 +82,7 @@ class Command(BaseCommand):
       make_option('--procure_lt', dest='procure_lt', type="int",
         default=40, help='Average procurement lead time'),
       make_option('--currentdate', dest='currentdate', type="string",
-        default='2007-01-01', help='Current date of the plan in YYYY-MM-DD format'),
+        default='2007-01-01', help='Current date of the plan in YYYY-MM-DD format')
   )
 
   requires_model_validation = False
@@ -106,9 +106,10 @@ class Command(BaseCommand):
     # Pick up the startdate
     try:
       startdate = datetime.strptime(options['currentdate'],'%Y-%m-%d')
-    except Exception, e:
-      print "Error: current date is not matching format YYYY-MM-DD"
-      return
+    except KeyError:
+      startdate = datetime(2007,1,1)
+    except:
+      raise Exception("Error: current date is not matching format YYYY-MM-DD")
 
     try:
       # Logging the action

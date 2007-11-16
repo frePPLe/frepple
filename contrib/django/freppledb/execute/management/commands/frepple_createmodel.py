@@ -29,6 +29,7 @@ from django.core.management.base import BaseCommand
 from django.db import connection, transaction
 from django.conf import settings
 from django.utils.translation import ugettext as _
+from django.contrib.auth.models import User
 
 from input.models import *
 from execute.models import log
@@ -139,7 +140,17 @@ class Command(BaseCommand):
         p = Plan(name="frePPLe", currentdate=startdate)
         p.save()
 
-      # Dates
+      # Update the user horizon
+      try:
+        userprofile = User.objects.get(username=options['user']).get_profile()
+        userprofile.startdate = startdate.date()
+        userprofile.enddate = (startdate + timedelta(365)).date()
+        userprofile.save()
+      except:
+        pass # It's not important if this fails
+
+      # Planning horizon
+      # minimum 10 daily buckets, weekly buckets till 40 days after current
       if options['verbosity']>0: print "Updating horizon telescope..."
       updateTelescope(10, 40)
 

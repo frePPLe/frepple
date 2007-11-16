@@ -22,13 +22,11 @@
 # email : jdetaeye@users.sourceforge.net
 
 from django.template import Library, Node, resolve_variable, TemplateSyntaxError
-from django.contrib.sessions.models import Session
 from django.conf import settings
 from django.contrib.admin.views.main import quote
 from django.utils.translation import ugettext as _
 from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri
-from django.utils.encoding import smart_unicode
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 

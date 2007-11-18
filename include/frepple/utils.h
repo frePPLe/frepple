@@ -3719,14 +3719,14 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       return (i!=st.end() ? static_cast<T*>(i) : NULL);
     }
 
-    /** Find .*/
+    /** Find @todo missing doc.*/
     static T* findLowerBound(const string& k)
     {
       Tree::TreeNode *i = st.findLowerBound(k);
       return (i!=st.end() ? static_cast<T*>(i) : NULL);
     }
 
-    /** Find .*/
+    /** Find @todo missing doc.*/
     static T* findLowerBound(const string& k, bool *f)
     {
       Tree::TreeNode *i = st.findLowerBound(k, f);

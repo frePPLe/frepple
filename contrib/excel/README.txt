@@ -1,5 +1,5 @@
 
-This directory contains an Excel add-in for Frepple.
+This directory contains an Excel add-in for frePPLe.
 The goal of the add-in is to demonstrate a modeling tool that is as intuitive 
 and simple as possible for end users.
 

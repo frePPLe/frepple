@@ -165,6 +165,19 @@ esac], [forecast=true])
 AM_CONDITIONAL(FORECAST, test x$forecast = xtrue)
 
 #
+# Define a configure argument to enable/disable the webservice
+#
+AC_ARG_ENABLE(webservice,
+AC_HELP_STRING([--enable-webservice],
+[Build the webservice (default: true)]),
+[case "${enableval}" in
+  yes) webservice=true ;;
+  no)  webservice=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-webservice]) ;;
+esac], [webservice=true])
+AM_CONDITIONAL(WEBSERVICE, test x$webservice = xtrue)
+
+#
 # Define a configure argument to enable/disable building of the api documentation
 #
 AC_ARG_ENABLE(doc,
@@ -177,6 +190,7 @@ AC_HELP_STRING([--enable-doc],
        if test x$DOXYGEN = xnotavailable
        then
           AC_MSG_ERROR([Could not find doxygen, no documentation can be built])
+          builddoc=false
        fi
        ;;
   *) AC_MSG_ERROR([bad value ${enableval} for --enable-doc]) ;;
@@ -219,13 +233,14 @@ then
 AC_CHECK_LIB(glpk, glp_lpx_create_prob, [],
 [AC_MSG_ERROR([
   Can't link with the glpk library.
-  This package requires the GLPK linear programming solver...
-  Check out http://www.gnu.org/software/glpk/glpk.html to download it.
-  Alternatively, reconfigure without the option '--with-glpk'
+  This package requires the GLPK linear programming solver.
+  Install or configure it, or reconfigure without the option '--with-glpk'
 ])])
 AC_CHECK_HEADER(glpk.h, [],
 [AC_MSG_ERROR([
   The glpk libray has been installed, but its header file could not be found
+  This package requires the GLPK linear programming solver.
+  Install or configure it, or reconfigure without the option '--with-glpk'
 ])])
 fi
 
@@ -239,7 +254,7 @@ if test x$PYTHON = xnopython
 then
 AC_MSG_ERROR([
   This package requires the Python language...
-  Alternatively, reconfigure without the option '--disable-python'
+  Install Python, or reconfigure with the option '--disable-python'
 ])
 else
 changequote(<<, >>)
@@ -249,12 +264,37 @@ AC_CHECK_LIB(python$PYTHON_VERSION, PyModule_GetDict, [],
 [AC_MSG_ERROR([
   Can't link with the python library.
   This package requires the python development libraries.
-  Install or configure these, or reconfigure without the option '--with-python'
+  Install or configure it, or reconfigure with the option '--disable-python'
 ])])
-AC_CHECKING([for python linking options ])
-PYTHON_LINK=`$PYTHON -c "import distutils.sysconfig; print distutils.sysconfig.get_config_var('LINKFORSHARED')"`
 AC_SUBST(PYTHON_VERSION)
-AC_SUBST(PYTHON_LINK)
+fi
+fi
+
+#
+# Verify installation of gSOAP
+#
+if test x$webservice = xtrue
+then
+AC_CHECK_PROGS(SOAPCPP2, soapcpp2, notavailable)
+if test x$SOAPCPP2 = xnotavailable
+then
+AC_MSG_ERROR([
+  This package requires the gSOAP toolkit...
+  Install gSOAP, or reconfigure with the option '--disable-webservice'
+])
+else
+#AC_CHECK_LIB(gsoap, soap_init, [],      @todo not working...
+#[AC_MSG_ERROR([
+#  Can't link with the gsoap library.
+#  This package requires the gsoap development library.
+#  Install or configure it, or reconfigure with the option '--without-webservice'
+#])])
+AC_CHECK_HEADER(stdsoap2.h, [],
+[AC_MSG_ERROR([
+  The gsoap libray has been installed, but its header file could not be found.
+  This package requires the gsoap development library.
+  Install or configure it, or reconfigure with the option '--without-webservice'
+])])
 fi
 fi
 
@@ -351,7 +391,7 @@ esac
 AM_CONDITIONAL(CYGWIN, test x$host_os = xcygwin)
 
 
-AC_CONFIG_FILES([Makefile bin/Makefile doc/Makefile include/Makefile include/frepple/Makefile src/Makefile modules/Makefile modules/forecast/Makefile modules/lp_solver/Makefile modules/python/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile test/Makefile test/cluster/Makefile test/csv/Makefile test/constraints_leadtime_1/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/datetime/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/sizeof/Makefile test/xml/Makefile test/xml_remote/Makefile test/forecast_1/Makefile test/forecast_2/Makefile test/forecast_3/Makefile test/forecast_4/Makefile test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/constraints_resource_4/Makefile test/problems/Makefile test/deletion/Makefile test/demand_policy/Makefile test/operation_effective/Makefile test/operation_pre_post/Makefile test/operation_routing/Makefile test/multithreading/Makefile test/name/Makefile test/python_1/Makefile test/python_2/Makefile test/command_1/Makefile test/command_2/Makefile test/command_3/Makefile test/sample_module/Makefile test/callback/Makefile test/pegging/Makefile test/safety_stock/Makefile test/procure_1/Makefile contrib/Makefile contrib/vc/Makefile contrib/django/Makefile contrib/installer/Makefile contrib/scripting/Makefile contrib/excel/Makefile contrib/rpm/Makefile])
+AC_CONFIG_FILES([Makefile bin/Makefile doc/Makefile include/Makefile include/frepple/Makefile src/Makefile modules/Makefile modules/forecast/Makefile modules/lp_solver/Makefile modules/python/Makefile modules/webservice/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile test/Makefile test/cluster/Makefile test/csv/Makefile test/constraints_leadtime_1/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/datetime/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/sizeof/Makefile test/xml/Makefile test/xml_remote/Makefile test/forecast_1/Makefile test/forecast_2/Makefile test/forecast_3/Makefile test/forecast_4/Makefile test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/constraints_resource_4/Makefile test/problems/Makefile test/deletion/Makefile test/demand_policy/Makefile test/operation_effective/Makefile test/operation_pre_post/Makefile test/operation_routing/Makefile test/multithreading/Makefile test/name/Makefile test/python_1/Makefile test/python_2/Makefile test/command_1/Makefile test/command_2/Makefile test/command_3/Makefile test/sample_module/Makefile test/callback/Makefile test/pegging/Makefile test/safety_stock/Makefile test/procure_1/Makefile contrib/Makefile contrib/vc/Makefile contrib/django/Makefile contrib/installer/Makefile contrib/scripting/Makefile contrib/excel/Makefile contrib/rpm/Makefile])
 AC_OUTPUT
 
 echo

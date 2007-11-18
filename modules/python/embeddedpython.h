@@ -132,10 +132,10 @@ class CommandPython : public Command, public XMLinstruction
     /** This is the thread state of the main execution thread. */
     static PyThreadState *mainThreadState;
 
-    /** Command to be executed if the condition returns true. */
+    /** Python commands to be executed. */
     string cmd;
 
-    /** Command to be executed if the condition returns false. */
+    /** Python source file to be executed. */
     string filename;
 
     /** A static array defining all methods that can be accessed from
@@ -177,8 +177,7 @@ class CommandPython : public Command, public XMLinstruction
       PyModule_AddObject(m, const_cast<char*>(a.c_str()), reinterpret_cast<PyObject*>(&X::InfoType));
     }
 
-    /** Executes either the if- or the else-clause, depending on the
-      * condition. */
+    /** Executes the python command or source file. */
     void execute();
 
     /** Returns a descriptive string. */

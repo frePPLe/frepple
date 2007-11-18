@@ -114,11 +114,11 @@ FILE_PATTERNS          = *.h *.cpp
 
 RECURSIVE              = YES
 
-EXCLUDE                = ../include/frepple/entity.h ../src/tags.cpp
+EXCLUDE                = ../include/frepple/entity.h ../src/tags.cpp 
 
 EXCLUDE_SYMLINKS       = NO
 
-EXCLUDE_PATTERNS       =
+EXCLUDE_PATTERNS       = */modules/webservice/module_webservice* */modules/webservice/fault*
 
 EXAMPLE_PATH           =
 

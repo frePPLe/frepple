@@ -11,7 +11,7 @@ libdir = @bindir@
 
 AM_CPPFLAGS=-I@top_builddir@/include
 
-EXTRA_DIST = mod_forecast.xsd
+EXTRA_DIST = mod_forecast.xsd $(sources)
 
 CLEANFILES = *.gcda *.gcov *.gcno
 

@@ -62,10 +62,8 @@ extern "C" PyObject* PythonProblem::create(PyTypeObject* type, PyObject *args, P
 
 extern "C" PyObject* PythonProblem::next(PythonProblem* obj)
 {
-  logger << "puree" << endl;
   if (*(obj->iter) != Problem::end())
   {
-    logger << "puree2" << (*(obj->iter))->getDescription() <<  (*(obj->iter))->getDateRange() << endl;
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:N,s:N,s:f}",
       "DESCRIPTION", (*(obj->iter))->getDescription().c_str(),
       "ENTITY", (*(obj->iter))->getOwner()->getEntity()->getType().category->group.c_str(),
@@ -74,8 +72,7 @@ extern "C" PyObject* PythonProblem::next(PythonProblem* obj)
       "END", PythonDateTime((*(obj->iter))->getDateRange().getEnd()),
       "WEIGHT", (*(obj->iter))->getWeight()
       );
-    logger << "puree3" << endl;
-    ++*(obj->iter);
+     ++*(obj->iter);
     return result;
   }
   else

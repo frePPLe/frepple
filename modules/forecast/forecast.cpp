@@ -31,63 +31,9 @@
 namespace module_forecast
 {
 
-const MetaClass Forecast::metadata;
-const MetaClass ForecastSolver::metadata;
-Forecast::MapOfForecasts Forecast::ForecastDictionary;
-bool Forecast::Customer_Then_Item_Hierarchy = true;
-bool Forecast::Match_Using_Delivery_Operation = true;
-TimePeriod Forecast::Net_Late(0);
-TimePeriod Forecast::Net_Early(0);
-
 const XMLtag tag_total("TOTAL");
 const XMLtag tag_net("NET");
 const XMLtag tag_consumed("CONSUMED");
-
-
-MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
-{
-  // Initialize only once
-  static bool init = false;
-  static const char* name = "forecast";
-  if (init)
-  {
-    logger << "Warning: Initializing module forecast more than once." << endl;
-    return name;
-  }
-  init = true;
-
-  // Process the module parameters
-  for (CommandLoadLibrary::ParameterList::const_iterator x = z.begin();
-    x != z.end(); ++x)
-  {
-    if (x->first == "Customer_Then_Item_Hierarchy")
-      Forecast::setCustomerThenItemHierarchy(x->second.getBool());
-    else if (x->first == "Match_Using_Delivery_Operation")
-      Forecast::setMatchUsingDeliveryOperation(x->second.getBool());
-    else if (x->first == "Net_Early")
-      Forecast::setNetEarly(x->second.getTimeperiod());
-    else if (x->first == "Net_Late")
-      Forecast::setNetLate(x->second.getTimeperiod());
-    else
-      logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
-  }
-    
-  // Initialize the metadata.
-  Forecast::metadata.registerClass(
-    "DEMAND",
-    "DEMAND_FORECAST",
-    Object::createString<Forecast>);
-  ForecastSolver::metadata.registerClass(
-    "SOLVER",
-    "SOLVER_FORECAST",
-    Object::createString<ForecastSolver>);
-
-  // Get notified when a calendar is deleted
-  FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
-
-  // Return the name of the module
-  return name;
-}
 
 
 bool Forecast::callback(Calendar* l, const Signal a)

@@ -403,6 +403,10 @@
 				RelativePath="..\..\modules\forecast\forecastsolver.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\modules\forecast\module.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

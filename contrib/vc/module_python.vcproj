@@ -413,6 +413,10 @@
 				RelativePath="..\..\modules\python\frepple2python.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\modules\python\module.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

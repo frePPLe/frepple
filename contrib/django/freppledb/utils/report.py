@@ -110,9 +110,9 @@ def getBuckets(request, bucket=None, start=None, end=None):
 
   # Filter based on the start and end date
   if start and end:
-    res = filter(lambda b: b['start'] <= end and b['end'] >= start, datelist[bucket])
+    res = filter(lambda b: b['start'] < end and b['end'] >= start, datelist[bucket])
   elif end:
-    res = filter(lambda b: b['start'] <= end, datelist[bucket])
+    res = filter(lambda b: b['start'] < end, datelist[bucket])
   elif start:
     res = filter(lambda b: b['end'] >= start, datelist[bucket])
   else:

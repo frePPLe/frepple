@@ -82,7 +82,7 @@ class BufferReport(TableReport):
         cross join (
              select %s as bucket, %s_start as startdate, %s_end as enddate
              from dates
-             where day_start >= '%s' and day_start <= '%s'
+             where day_start >= '%s' and day_start < '%s'
              group by %s, %s_start, %s_end
              ) d
         -- Consumed and produced quantities
@@ -161,7 +161,7 @@ class DemandReport(TableReport):
           cross join (
                select %s as bucket, %s_start as startdate, %s_end as enddate
                from dates
-               where day_start >= '%s' and day_start <= '%s'
+               where day_start >= '%s' and day_start < '%s'
                group by %s, %s_start, %s_end
                ) d
           -- Planned quantity
@@ -256,7 +256,7 @@ class ForecastReport(TableReport):
           cross join (
                select %s as bucket, %s_start as startdate, %s_end as enddate
                from dates
-               where day_start >= '%s' and day_start <= '%s'
+               where day_start >= '%s' and day_start < '%s'
                group by %s, %s_start, %s_end
                ) d
           -- Total forecast demand quantity
@@ -343,7 +343,7 @@ class ResourceReport(TableReport):
          cross join (
               select %s as bucket, %s_start as startdate, %s_end as enddate
               from dates
-              where day_start >= '%s' and day_start <= '%s'
+              where day_start >= '%s' and day_start < '%s'
               group by %s, %s_start, %s_end
               ) d
          -- Available capacity
@@ -431,7 +431,7 @@ class OperationReport(TableReport):
           cross join (
                select %s as bucket, %s_start as startdate, %s_end as enddate
                from dates
-               where day_start >= '%s' and day_start <= '%s'
+               where day_start >= '%s' and day_start < '%s'
                group by %s, %s_start, %s_end
                ) d
           -- Planned and frozen quantity, based on start date

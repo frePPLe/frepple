@@ -34,17 +34,22 @@ namespace module_webservice
 int frepple__demand(struct soap *soap, xsd__string name, struct frepple__DemandInfoResponse &result)
 {
   // Search for the demand
-  const string x(name);
-  Demand* i = Demand::find(x);
+  if (!name)
+    return soap_sender_fault(soap, "Missing demand name", "NULL demand name passed");
+  Demand* i = Demand::find(name);
   if (!i)
-    soap_receiver_fault(soap, "Demand not found", 
-      "The demand with name '" + x + "' couldn't be found");
-  
+  {
+    ostringstream msg;
+    msg << "The demand with name '" << name << "' couldn't be found";
+    return soap_sender_fault(soap, "Demand not found", msg.str().c_str());
+  }
+
   // Retrieve demand data
   result._return.name = const_cast<char*>(i->getName().c_str());
   if (i->getItem())
     result._return.item = const_cast<char*>(i->getItem()->getName().c_str());
   result._return.priority = i->getPriority();
+  result._return.due = i->getDue().getTicks();
   return SOAP_OK;
 }
 

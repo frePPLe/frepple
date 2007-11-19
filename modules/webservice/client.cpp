@@ -33,9 +33,18 @@
 int main()
 {
    module_webservice::frepple svc; 
-
    struct module_webservice::frepple__DemandInfoResponse result;
+
    if (svc.frepple__demand("order 1", result) == SOAP_OK)
+   {
+      std::cout << result._return.name << "  " 
+         << result._return.item << "  " << result._return.priority << "  " 
+         << asctime(gmtime(&result._return.due)) << std::endl;
+   }
+   else
+      soap_print_fault(svc.soap, stderr);
+
+   if (svc.frepple__demand(NULL, result) == SOAP_OK)
       std::cout << result._return.name << "  " << result._return.item << "  " << result._return.priority << std::endl;
    else
       soap_print_fault(svc.soap, stderr);

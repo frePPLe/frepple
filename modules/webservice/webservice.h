@@ -40,6 +40,7 @@ typedef double xsd__double;
 typedef long int xsd__int; 
 typedef bool xsd__boolean; 
 typedef char* xsd__string;
+typedef time_t 	xsd__dateTime;
 
 //gsoap frepple service name: frepple
 //gsoap frepple service namespace: urn:frepple 
@@ -51,10 +52,11 @@ typedef char* xsd__string;
 
 class frepple__DemandInfo
 {
-   public:
-   xsd__string name;
-   xsd__string item;
-   xsd__int priority;
+  public:
+    xsd__string name;
+    xsd__string item;
+    xsd__int priority;
+    xsd__dateTime due;
 }; 
 struct frepple__DemandInfoResponse {frepple__DemandInfo _return;}; 
 

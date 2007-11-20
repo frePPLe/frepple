@@ -226,9 +226,7 @@ int main (int argc, char *argv[])
     try { throw; }
     catch (exception& e) {logger << "  " << e.what() << endl;}
     catch (...) {logger << "  Unknown type" << endl;}
-    FreppleExit();
     return EXIT_FAILURE;
   }
-  FreppleExit();
   return EXIT_SUCCESS;
 }

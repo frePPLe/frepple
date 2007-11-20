@@ -128,9 +128,6 @@ int main (int argc, char *argv[])
           gbuf->getName(),
           gbuf->getCluster(),
           gbuf->getLevel());
-
-    // 5: Finalize
-    FreppleExit();
   }
   catch (...)
   {
@@ -138,7 +135,6 @@ int main (int argc, char *argv[])
     try { throw; }
     catch (exception& e) {logger << "  " << e.what() << endl;}
     catch (...) {logger << "  Unknown type" << endl;}
-    FreppleExit();
     return EXIT_FAILURE;
   }
   return exitcode;

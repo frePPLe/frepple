@@ -12,18 +12,20 @@ def printModel():
 
   # Open the file
   out = open("output.1.xml", "wt", 1)
-
+  print "kiwi"
   # Print information
   try:
+    print "10"
     print >>out, "Problems:"
     for i in frepple.problem():
+      print "11a"
       print >>out, i["ENTITY"], i["TYPE"], i["START"], i["END"], i["DESCRIPTION"]
-
+    print "11"
     print >>out, "\nOperationplans:"
     for i in frepple.operationplan():
       print >>out, i["IDENTIFIER"], i["OPERATION"], i["QUANTITY"], \
         i["START"], i["END"], i["DEMAND"]
-
+    print "12"
     print >>out, "\nBuffers:"
     for i in frepple.buffer():
       print >>out, i["NAME"], i["CATEGORY"], i["SUBCATEGORY"], i["DESCRIPTION"], \
@@ -31,6 +33,7 @@ def printModel():
       for j in i["FLOWPLANS"]:
         print >>out, "     ", j["BUFFER"], j["OPERATION"], j["OPERATIONPLAN"], \
           j["QUANTITY"], j["DATE"], j["ONHAND"]
+    print "13"
 
     print >>out, "\nResources:"
     for i in frepple.resource():
@@ -39,11 +42,13 @@ def printModel():
       for j in i["LOADPLANS"]:
         print >>out, "     ", j["RESOURCE"], j["OPERATION"], j["OPERATIONPLAN"], \
           j["QUANTITY"], j["DATE"], j["ONHAND"], j["MAXIMUM"]
+    print "14"
 
     print >>out, "\nDemands:"
     for i in frepple.demand():
       print >>out, i["NAME"], i["QUANTITY"], i["DUE"], i["PRIORITY"], \
         i["ITEM"], i["OPERATION"], i["OWNER"], i["CUSTOMER"]
+    print "15"
 
   # Close the file
   finally:
@@ -57,7 +62,8 @@ def printModel():
     <COMMAND xsi:type="COMMAND_PYTHON">
       <CMDLINE>frepple.readXMLfile(&quot;data.xml&quot;)</CMDLINE>
     </COMMAND>
-
+    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="printModel()" />
+    <COMMAND xsi:type="COMMAND_SIZE"/>
     <!-- Process XML string. -->
     <!-- The XML string executes a command to run the solver. -->
     <COMMAND xsi:type="COMMAND_PYTHON">
@@ -73,12 +79,15 @@ frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
 ]]>
       </CMDLINE>
     </COMMAND>
+    <COMMAND xsi:type="COMMAND_SIZE"/>
 
   	<!-- Print information to the output file. -->
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="printModel()" />
+    <COMMAND xsi:type="COMMAND_SIZE"/>
 
   	<!-- Save the model to an XML file. -->
     <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="frepple.saveXMLfile(&quot;output.2.xml&quot;)" />
+    <COMMAND xsi:type="COMMAND_SIZE"/>
 
   </COMMANDS>
 </PLAN>

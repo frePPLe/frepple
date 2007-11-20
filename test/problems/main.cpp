@@ -108,9 +108,6 @@ int main (int argc, char *argv[])
     // 10: Restoring the original build plan & report
     build->setStart(oldstart);
     reportProblems("restoring original build plan");
-
-    // 11: Finalize
-    FreppleExit();
   }
   catch (...)
   {
@@ -118,7 +115,6 @@ int main (int argc, char *argv[])
     try { throw; }
     catch (exception& e) {logger << "  " << e.what() << endl;}
     catch (...) {logger << "  Unknown type" << endl;}
-    FreppleExit();
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;

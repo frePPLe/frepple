@@ -2612,27 +2612,6 @@ class Tree : public NonCopyable
     }
 
     /** Find the element with this given key or the element
-      * immediately preceding it. */
-    TreeNode* findLowerBound(const string& k) const
-    {
-      LockManager::getManager().obtainReadLock(l);
-      TreeNode* lower = end();
-      for (TreeNode* x = header.parent; x;)
-      {
-        int comp = k.compare(x->nm);
-        if (!comp)
-        {
-          LockManager::getManager().releaseReadLock(l);
-          return x; // Found
-        }
-        if (comp<0) x = x->left;
-        else lower = x, x = x->right;
-      }
-      LockManager::getManager().releaseReadLock(l);
-      return lower;
-    }
-
-    /** Find the element with this given key or the element
       * immediately preceding it.<br>
       * The second argument is a boolean that is set to true when the
       * element is found in the list.
@@ -2647,15 +2626,15 @@ class Tree : public NonCopyable
         if (!comp)
         {
           // Found
-          *f = true;
           LockManager::getManager().releaseReadLock(l);
+          if (f) *f = true;
           return x;
         }
         if (comp<0) x = x->left;
         else lower = x, x = x->right;
       }
-      *f = false;
       LockManager::getManager().releaseReadLock(l);
+      if (f) *f = false;
       return lower;
     }
 
@@ -3719,15 +3698,12 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       return (i!=st.end() ? static_cast<T*>(i) : NULL);
     }
 
-    /** Find @todo missing doc.*/
-    static T* findLowerBound(const string& k)
-    {
-      Tree::TreeNode *i = st.findLowerBound(k);
-      return (i!=st.end() ? static_cast<T*>(i) : NULL);
-    }
-
-    /** Find @todo missing doc.*/
-    static T* findLowerBound(const string& k, bool *f)
+    /** Find the element with this given key or the element
+      * immediately preceding it.<br>
+      * The optional second argument is a boolean that is set to true when 
+      * the element is found in the list.
+      */
+    static T* findLowerBound(const string& k, bool *f = NULL)
     {
       Tree::TreeNode *i = st.findLowerBound(k, f);
       return (i!=st.end() ? static_cast<T*>(i) : NULL);

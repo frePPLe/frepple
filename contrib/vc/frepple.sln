@@ -156,7 +156,6 @@ Global
 		{2BBF982D-BECB-4004-BCBE-DEF4856A2B86}.modules_debug|Win32.ActiveCfg = Release|Win32
 		{2BBF982D-BECB-4004-BCBE-DEF4856A2B86}.modules_debug|Win32.Build.0 = Release|Win32
 		{2BBF982D-BECB-4004-BCBE-DEF4856A2B86}.modules|Win32.ActiveCfg = Release|Win32
-		{2BBF982D-BECB-4004-BCBE-DEF4856A2B86}.modules|Win32.Build.0 = Release|Win32
 		{2BBF982D-BECB-4004-BCBE-DEF4856A2B86}.Release_and_Swig|Win32.ActiveCfg = Release|Win32
 		{2BBF982D-BECB-4004-BCBE-DEF4856A2B86}.Release_and_Swig|Win32.Build.0 = Release|Win32
 		{2BBF982D-BECB-4004-BCBE-DEF4856A2B86}.Release|Win32.ActiveCfg = Release|Win32

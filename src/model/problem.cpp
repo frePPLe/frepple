@@ -434,8 +434,8 @@ DECLARE_EXPORT HasProblems::EntityIterator HasProblems::endEntity()
 DECLARE_EXPORT Problem::const_iterator& Problem::const_iterator::operator++()
 {
   // Incrementing beyond the end
-  if (!iter)
-    throw LogicException("Incrementing problem iterator beyond the end");
+  if (!iter) return *this;
+
   // Move to the next problem
   iter = iter->nextProblem;
 

@@ -39,8 +39,8 @@ class Command(BaseCommand):
         help='Verbosity level; 0=minimal output, 1=normal output, 2=all output'),
     make_option('--user', dest='user', default='',
         type='string', help='User running the command'),
-    make_option('--type', dest='type',
-        type='choice', choices=['0', '1', '2'], default='1',
+    make_option('--type', dest='type', type='choice',
+        choices=[0,1,2,3,4,5,6,7], default=7,
         help='Plan type; 0=minimal output, 1=normal output, 2=all output'),
   )
   help = "Runs frePPLe to generate a plan"
@@ -51,8 +51,8 @@ class Command(BaseCommand):
   def handle(self, **options):
     try:
       log(category='RUN', user=options['user'],
-        message=_('Start running frepple')).save()
-      os.environ['PLAN_TYPE'] = options['type']
+        message=_('Start running frepple with plan type ') + str(options['type'])).save()
+      os.environ['PLAN_TYPE'] = str(options['type'])
       os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\','\\\\')
       os.environ['FREPPLE_APP'] = settings.FREPPLE_APP
       os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP

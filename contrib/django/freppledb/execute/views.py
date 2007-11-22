@@ -136,7 +136,7 @@ def runfrepple(request):
     FrePPLe execution button.
     '''
     # Decode form input
-    try: type = request.POST['type']
+    try: type = int(request.POST['type'])
     except: type = 7   # Default plan is fully constrained
 
     # Run frepple

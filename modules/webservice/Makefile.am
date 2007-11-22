@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-sources = module.cpp server.cpp webservice.cpp 
+sources = module.cpp server.cpp webservice.cpp
 
 # Install the library in the bin directory.
 # Ain't standard practice, but in this way all binaries are consolidated in a
@@ -24,7 +24,8 @@ lib_LTLIBRARIES = mod_webservice.la
 #mod_webservice_la_CPPFLAGS = -DDEBUG -I../../include
 #mod_webservice_la_SOURCES = faultC.cpp soapServerLib.cpp $(sources)
 #mod_webservice_la_LIBADD = -lgsoap++
-mod_webservice_la_SOURCES = faultC.cpp module_webserviceServerLib.cpp $(sources) /home/frepple/workspace/gsoap-2.7/soapcpp2/stdsoap2.cpp
+#mod_webservice_la_SOURCES = faultC.cpp module_webserviceServerLib.cpp $(sources) /home/frepple/workspace/gsoap-2.7/soapcpp2/stdsoap2.cpp
+mod_webservice_la_SOURCES = $(sources)
 mod_webservice_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
@@ -38,7 +39,7 @@ module_webserviceServerLib.cpp: webservice.h
 faultC.cpp:
 	touch fault.h
 	@SOAPCPP2@ -pfault fault.h
-  
+
 # An example client application
 client: client.cpp module_webserviceServerLib.cpp
 	g++ -o client client.cpp faultC.cpp module_webserviceClient.cpp module_webserviceC.cpp /home/frepple/workspace/gsoap-2.7/soapcpp2/stdsoap2.cpp

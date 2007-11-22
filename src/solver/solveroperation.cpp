@@ -376,7 +376,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
     // There is already an owner and thus also an owner command
     assert(!Solver->curDemand);
     z = oper->createOperationPlan(Solver->q_qty / flow_qty_per, Date::infinitePast,
-        Solver->q_date, Solver->curDemand, true, Solver->curOwnerOpplan, 0);
+        Solver->q_date, Solver->curDemand, Solver->curOwnerOpplan, 0);
   }
   else
   {

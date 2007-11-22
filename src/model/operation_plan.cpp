@@ -168,7 +168,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   {
     // Create an operationplan
     XMLString::release(&opname);
-    opplan = oper->createOperationPlan(0.0,Date::infinitePast,Date::infinitePast,NULL,false,NULL,id,false);
+    opplan = oper->createOperationPlan(0.0,Date::infinitePast,Date::infinitePast,NULL,NULL,id,false);
     LockManager::getManager().obtainWriteLock(opplan);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD))
     {
@@ -319,11 +319,18 @@ DECLARE_EXPORT bool OperationPlan::operator < (const OperationPlan& a) const
 
 DECLARE_EXPORT void OperationPlan::updateSorting()
 {
+  // Get out right away if this operationplan isn't initialized yet
+  if (!(next || prev || oper->last_opplan==this || oper->first_opplan==this)) 
+    return;
+
   // Verify that we are smaller than the next operationplan
   while (next && !(*this < *next))
   {
     // Swap places with the next
     OperationPlan *tmp = next;
+    if (oper->first_opplan == this) 
+      // New first operationplan
+      oper->first_opplan = tmp;
     tmp->prev = prev;
     tmp->next = this;
     prev = tmp;
@@ -333,22 +340,20 @@ DECLARE_EXPORT void OperationPlan::updateSorting()
   // Verify that we are bigger than the previous operationplan
   while (prev && !(*prev < *this))
   {
-    // Swap places with the next
+    // Swap places with the previous
     OperationPlan *tmp = prev;
+    if (oper->last_opplan == this) 
+      // New last operationplan
+      oper->last_opplan = tmp;
     tmp->prev = this;
     tmp->next = next;
     prev = tmp->prev;
     next = tmp;
-
   }
 
-  // Only valid for operationplans that are initialized and linked in the 
-  // list of operationplans.
-  if (id)
-  {
-    if (!next) oper->last_opplan = this;
-    if (!prev) oper->first_opplan = this;
-  }
+  // Update operation if we have become the first or the last operationplan
+  if (!next) oper->last_opplan = this;
+  if (!prev) oper->first_opplan = this;
 }
 
 
@@ -422,9 +427,8 @@ void DECLARE_EXPORT OperationPlan::setStart (Date d)
   if (getLocked()) return;
   oper->setOperationPlanParameters(this,quantity,d,Date::infinitePast);
 
-  // Check if update has been allowed
-  if (runupdate) update();
-  else setChanged();
+  // Update flow and loadplans
+  update();
 }
 
 
@@ -433,13 +437,12 @@ void DECLARE_EXPORT OperationPlan::setEnd (Date d)
   if (getLocked()) return;
   oper->setOperationPlanParameters(this,quantity,Date::infinitePast,d);
 
-  // Check if update has been allowed
-  if (runupdate) update();
-  else setChanged();
+  // Update flow and loadplans
+  update();
 }
 
 
-DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown)
+DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown, bool upd)
 {
   // No impact on locked operationplans
   if (getLocked()) return;
@@ -451,7 +454,7 @@ DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown)
   // Setting a quantity is only allowed on a top operationplan
   if (owner)
   {
-    WLock<OperationPlan>(owner)->setQuantity(f,roundDown);
+    WLock<OperationPlan>(owner)->setQuantity(f,roundDown,upd);
     return;
   }
 
@@ -464,8 +467,7 @@ DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown)
       // Smaller than the minimum quantity, rounding down means... nothing
       quantity = 0.0f;
       // Update the flow and loadplans, and mark for problem detection
-      if (runupdate) update();
-      else setChanged();
+      if (upd) update();
       return;
     }
     f = getOperation()->getSizeMinimum();
@@ -480,14 +482,14 @@ DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown)
     quantity = f;
 
   // Update the flow and loadplans, and mark for problem detection
-  if (runupdate) update();
-  else setChanged();
+  if (upd) update();
 }
 
 
 // @todo Investigate the interactions Flpln & oppln setEnd(getDates().getEnd());
 DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 {
+
   // Update all flowplans
   for (FlowPlanIterator ee = beginFlowPlans(); ee != endFlowPlans(); ++ee)
     ee->update();
@@ -680,9 +682,8 @@ DECLARE_EXPORT void OperationPlanRouting::addSubOperationPlan(OperationPlan* o)
     step_opplans.back()->getDates().getEnd()
   );
 
-  // Update if allowed
-  if (runupdate) update();
-  else setChanged();
+  // Update the flow and loadplans
+  update();
 }
 
 
@@ -701,17 +702,17 @@ DECLARE_EXPORT OperationPlanRouting::~OperationPlanRouting()
 }
 
 
-DECLARE_EXPORT void OperationPlanRouting::setQuantity (float f, bool roundDown)
+DECLARE_EXPORT void OperationPlanRouting::setQuantity (float f, bool roundDown, bool update)
 {
   // First the normal resizing
-  OperationPlan::setQuantity(f,roundDown);
+  OperationPlan::setQuantity(f,roundDown,update);
 
   // Apply the same size also to its children
   for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
       i != step_opplans.end(); ++i)
   {
     (*i)->quantity = quantity;
-    (*i)->resizeFlowLoadPlans();
+    if (update) (*i)->resizeFlowLoadPlans();
   }
 }
 
@@ -809,7 +810,7 @@ DECLARE_EXPORT void OperationPlanRouting::initialize()
           e != getOperation()->getSubOperations().rend(); ++e)
       {
         p = (*e)->createOperationPlan(getQuantity(), Date::infinitePast,
-            d, NULL, true, this, 0, true);
+            d, NULL, this, 0, true);
         d = p->getDates().getStart();
       }
     }
@@ -824,7 +825,7 @@ DECLARE_EXPORT void OperationPlanRouting::initialize()
           e != getOperation()->getSubOperations().end(); ++e)
       {
         p = (*e)->createOperationPlan(getQuantity(), d,
-            Date::infinitePast, NULL, true, this, 0, true);
+            Date::infinitePast, NULL, this, 0, true);
         d = p->getDates().getEnd();
       }
     }
@@ -854,8 +855,8 @@ DECLARE_EXPORT void OperationPlanAlternate::addSubOperationPlan(OperationPlan* o
     altopplan->getDates().getEnd()
   );
 
-  // Update if allowed
-  if (runupdate) update();
+  // Update the flow and loadplans
+  update();
 }
 
 
@@ -908,7 +909,7 @@ DECLARE_EXPORT void OperationPlanAlternate::initialize()
   {
     altopplan = getOperation()->getSubOperations().front()->
       createOperationPlan(getQuantity(), getDates().getStart(),
-      getDates().getEnd(), NULL, true, this, 0, true);
+      getDates().getEnd(), NULL, this, 0, true);
   }
 
   // Initialize this operationplan and its child
@@ -917,15 +918,16 @@ DECLARE_EXPORT void OperationPlanAlternate::initialize()
 }
 
 
-DECLARE_EXPORT void OperationPlanAlternate::setQuantity(float f, bool roundDown)
+DECLARE_EXPORT void OperationPlanAlternate::setQuantity(float f, bool roundDown, bool update)
 {
   // First the normal resizing
-  OperationPlan::setQuantity(f,roundDown);
+  OperationPlan::setQuantity(f,roundDown,update);
+
   // Apply the same size also to the children operationplan
   if (altopplan)
   {
     altopplan->quantity = quantity;
-    altopplan->resizeFlowLoadPlans();
+    if (update) altopplan->resizeFlowLoadPlans();
   }
 }
 
@@ -955,8 +957,8 @@ DECLARE_EXPORT void OperationPlanEffective::addSubOperationPlan(OperationPlan* o
     effopplan->getDates().getEnd()
   );
 
-  // Update if allowed
-  if (runupdate) update();
+  // Update the flow and loadplans
+  update();
 }
 
 
@@ -1010,15 +1012,16 @@ DECLARE_EXPORT void OperationPlanEffective::initialize()
 }
 
 
-DECLARE_EXPORT void OperationPlanEffective::setQuantity(float f, bool roundDown)
+DECLARE_EXPORT void OperationPlanEffective::setQuantity(float f, bool roundDown, bool update)
 {
   // First the normal resizing
-  OperationPlan::setQuantity(f,roundDown);
+  OperationPlan::setQuantity(f,roundDown, update);
+  
   // Apply the same size also to the children operationplan
   if (effopplan)
   {
     effopplan->quantity = quantity;
-    effopplan->resizeFlowLoadPlans();
+    if (update) effopplan->resizeFlowLoadPlans();
   }
 }
 

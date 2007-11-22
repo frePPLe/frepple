@@ -75,8 +75,7 @@ DECLARE_EXPORT void Buffer::setOnHand(float f)
   {
     // No operationplan exists yet
     OperationPlan *opplan = o->createOperationPlan(
-          static_cast<float>(fabs(f)), Date::infinitePast,
-          Date::infinitePast, NULL, false);
+      static_cast<float>(fabs(f)), Date::infinitePast, Date::infinitePast);
     opplan->setLocked(true);
     opplan->initialize();
   }

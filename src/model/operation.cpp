@@ -87,18 +87,18 @@ DECLARE_EXPORT OperationAlternate::~OperationAlternate()
 
 
 DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (float q, Date s, Date e,
-    const Demand* l, bool updates_okay, OperationPlan* ow, unsigned long i,
+    const Demand* l, OperationPlan* ow, unsigned long i,
     bool makeflowsloads) const
 {
   OperationPlan *opplan = new OperationPlan();
-  initOperationPlan(opplan,q,s,e,l,updates_okay,ow,i,makeflowsloads);
+  initOperationPlan(opplan,q,s,e,l,ow,i,makeflowsloads);
   return opplan;
 }
 
 
 void Operation::initOperationPlan (OperationPlan* opplan, float q,
-    const Date& s, const Date& e, const Demand* l, bool updates_okay,
-    OperationPlan* ow, unsigned long i, bool makeflowsloads) const
+    const Date& s, const Date& e, const Demand* l, OperationPlan* ow,
+    unsigned long i, bool makeflowsloads) const
 {
   opplan->oper = const_cast<Operation*>(this);
   opplan->setDemand(l);
@@ -114,8 +114,8 @@ void Operation::initOperationPlan (OperationPlan* opplan, float q,
   // Create the loadplans and flowplans, if allowed
   if (makeflowsloads) opplan->createFlowLoads();
 
-  // Allow immediate propagation of changes, or not
-  opplan->setAllowUpdates(updates_okay);
+  // Update flow and loadplans, and mark for problem detection
+  opplan->update();
 }
 
 
@@ -208,7 +208,7 @@ DECLARE_EXPORT void OperationFixedTime::setOperationPlanParameters
 
   // All quantities are valid
   if (fabs(q - oplan->getQuantity()) > ROUNDING_ERROR)
-    oplan->setQuantity(q);
+    oplan->setQuantity(q, false, false);
 
   // Set the start and end date.
   if (e && s)
@@ -276,7 +276,7 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
     {
       // Start and end aren't far enough from each other to fit the constant
       // part of the operation duration. This is infeasible.
-      oplan->setQuantity(0);
+      oplan->setQuantity(0,false,false);
       oplan->setEnd(e);
     }
     else
@@ -289,7 +289,7 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
 
       // Set the quantity to either the maximum or the requested quantity,
       // depending on which one is smaller.
-      oplan->setQuantity(q < max_q ? q : max_q, true);
+      oplan->setQuantity(q < max_q ? q : max_q, true, false);
       
       // Updates the dates
       TimePeriod d = static_cast<long>(oplan->getQuantity()*static_cast<long>(duration_per)) + duration;
@@ -301,7 +301,7 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
   {
     // Case 2: Only an end date is specified. Respect the quantity and
     // compute the start date
-    oplan->setQuantity(q,true);
+    oplan->setQuantity(q,true,false);
     TimePeriod t(static_cast<long>(duration_per * oplan->getQuantity()));
     oplan->setStartAndEnd(e - duration - t, e);
   }
@@ -309,7 +309,7 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
   {
     // Case 3: Only a start date is specified. Respect the quantity and compute
     // the end date
-    oplan->setQuantity(q,true);
+    oplan->setQuantity(q,true,false);
     TimePeriod t(static_cast<long>(duration_per * oplan->getQuantity()));
     oplan->setStartAndEnd(s, s + duration + t);
   }
@@ -317,7 +317,7 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
   {
     // Case 4: No date was given at all. Respect the quantity and the existing
     // end date of the operationplan.
-    oplan->setQuantity(q,true);
+    oplan->setQuantity(q,true,false);
     TimePeriod t(static_cast<long>(duration_per * oplan->getQuantity()));
     oplan->setStartAndEnd(
       oplan->getDates().getEnd() - duration - t,
@@ -424,7 +424,7 @@ DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
   {
     // No step operationplans to work with. Just apply the requested quantity
     // and dates.
-    oplan->setQuantity(q);
+    oplan->setQuantity(q,false,false);
     if (!s && e) s = e;
     if (s && !e) e = s;
     oplan->setStartAndEnd(s,e);
@@ -475,12 +475,12 @@ DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
 
 
 DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan (float q, Date s, Date e,
-    const Demand* l, bool updates_okay, OperationPlan* ow, unsigned long i,
+    const Demand* l, OperationPlan* ow, unsigned long i,
     bool makeflowsloads) const
 {
   // Note that the created operationplan is of a specific subclass
   OperationPlan *opplan = new OperationPlanRouting();
-  initOperationPlan(opplan,q,s,e,l,updates_okay,ow,i,makeflowsloads);
+  initOperationPlan(opplan,q,s,e,l,ow,i,makeflowsloads);
   return opplan;
 }
 
@@ -617,14 +617,14 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
 
 
 DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (float q,
-    Date s, Date e, const Demand* l, bool updates_okay, OperationPlan* ow,
+    Date s, Date e, const Demand* l, OperationPlan* ow,
     unsigned long i, bool makeflowsloads) const
 {
   // Note that the operationplan created is of a different subclass.
   OperationPlan *opplan = new OperationPlanAlternate();
   if (!s) s = e;
   if (!e) e = s;
-  initOperationPlan(opplan,q,s,e,l,updates_okay,ow,i,makeflowsloads);
+  initOperationPlan(opplan,q,s,e,l,ow,i,makeflowsloads);
   return opplan;
 }
 
@@ -642,7 +642,7 @@ DECLARE_EXPORT void OperationAlternate::setOperationPlanParameters
   if (!oa->altopplan)
   {
     // Blindly accept the parameters if there is no suboperationplan
-    oplan->setQuantity(q);
+    oplan->setQuantity(q,false,false);
     oplan->setStartAndEnd(s, e);
   }
   else
@@ -732,12 +732,12 @@ DECLARE_EXPORT void OperationEffective::endElement(XMLInput& pIn, XMLElement& pE
 
 
 DECLARE_EXPORT OperationPlan* OperationEffective::createOperationPlan
-(float q, Date s, Date e, const Demand* l, bool updates_okay, OperationPlan* ow,
+(float q, Date s, Date e, const Demand* l, OperationPlan* ow,
  unsigned long i, bool makeflowsloads) const
 {
   // Note that the operationplan created is of a different subclass.
   OperationPlan *opplan = new OperationPlanEffective();
-  initOperationPlan(opplan,q,s,e,l,updates_okay,ow,i,makeflowsloads);
+  initOperationPlan(opplan,q,s,e,l,ow,i,makeflowsloads);
   return opplan;
 }
 
@@ -796,7 +796,7 @@ DECLARE_EXPORT void OperationEffective::setOperationPlanParameters
     {
       Operation* oper = cal->getValue(e ? e : s);
       if (oper)
-        oa->effopplan = oper->createOperationPlan(q, Date::infinitePast, e, NULL, true, oa);
+        oa->effopplan = oper->createOperationPlan(q, Date::infinitePast, e, NULL, oa);
       else
         throw LogicException
         ("Invalid effective calendar for operation " + getName());
@@ -805,7 +805,7 @@ DECLARE_EXPORT void OperationEffective::setOperationPlanParameters
     {
       Operation* oper = cal->getValue(s ? s : e);
       if (oper)
-        oa->effopplan = oper->createOperationPlan(q, s, Date::infinitePast, NULL, true, oa);
+        oa->effopplan = oper->createOperationPlan(q, s, Date::infinitePast, NULL, oa);
       else
         throw LogicException
         ("Invalid effective calendar for operation " + getName());

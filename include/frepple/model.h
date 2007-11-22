@@ -1158,9 +1158,9 @@ class Operation : public HasName<Operation>,
 
     /** This is the factory method which creates all operationplans of the
       * operation. */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s,
-        Date e, const Demand* l, bool updates_okay=true, OperationPlan* ow=NULL,
-        unsigned long i=0, bool makeflowsloads=true) const;
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
+      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0, 
+      bool makeflowsloads=true) const;
 
     /** This method stores ALL logic the operation needs to compute the
       * correct relationship between the quantity, startdate and enddate
@@ -1287,7 +1287,7 @@ class Operation : public HasName<Operation>,
 
   protected:
     void initOperationPlan (OperationPlan*, float, const Date&, const Date&,
-        const Demand*, bool, OperationPlan*, unsigned long, bool = true) const;
+        const Demand*, OperationPlan*, unsigned long, bool = true) const;
 
   private:
     /** List of operations using this operation as a sub-operation */
@@ -1548,7 +1548,8 @@ class OperationPlan
       * This method can only be called on top operationplans. Sub operation
       * plans should pass on a call to the parent operationplan.
       */
-    virtual DECLARE_EXPORT void setQuantity(float f, bool roundDown=false);
+    virtual DECLARE_EXPORT void setQuantity
+      (float f, bool roundDown = false, bool update = true);
 
     /** Returns a pointer to the demand for which this operation is a delivery.
       * If the operationplan isn't a delivery operation, this is a NULL pointer.
@@ -1557,14 +1558,6 @@ class OperationPlan
 
     /** Updates the demand to which this operationplan is a solution. */
     DECLARE_EXPORT void setDemand(const Demand* l);
-
-    /** This function allows the operationplan to propagate all changes
-      * to its flowplans, loadplans and problems.
-      * Temporarily disabling updates can be handy if multiple changes to the
-      * operationplan are required. Using this feature we can then propagate
-      * all changes in one go.
-      */
-    void setAllowUpdates(bool u = true) {runupdate = u; if (u) update();}
 
     /** Returns whether the operationplan is locked. A locked operationplan
       * is never changed. Only top-operationplans can be locked.
@@ -1620,8 +1613,7 @@ class OperationPlan
     void setStartAndEnd(Date st, Date nd)
     {
       dates.setStartAndEnd(st,nd);
-      if (runupdate) OperationPlan::update();
-      else setChanged();
+      OperationPlan::update();
     }
 
     /** Updates the operationplan owning this operationplan. In case of
@@ -1788,14 +1780,6 @@ class OperationPlan
     /** Quantity. */
     float quantity;
 
-    /** Run the update method after each change? Settingthis field to false
-      * allows you to do a number of changes after another and then run the
-      * update method only once.<br>
-      * This field is only relevant for top-operationplans.
-      * @todo try to get rid of this field to reduce memory consumption
-      */
-    bool runupdate;
-
     /** Default constructor.
       * This way of creating operationplan objects is not intended for use by
       * any client applications. Client applications should use the factory
@@ -1804,9 +1788,9 @@ class OperationPlan
       * own override of the createOperationPlan method.
       * @see Operation::createOperationPlan
       */
-    OperationPlan() : owner(NULL), quantity(0.0), runupdate(false),
-        locked(false), lt(NULL), id(0), oper(NULL), firstflowplan(NULL),
-        firstloadplan(NULL), prev(NULL), next(NULL) {}
+    OperationPlan() : owner(NULL), quantity(0.0), locked(false), lt(NULL), 
+      id(0), oper(NULL), firstflowplan(NULL), firstloadplan(NULL), 
+      prev(NULL), next(NULL) {}
 
   private:
     /** Empty list of operationplans.<br>
@@ -2035,9 +2019,9 @@ class OperationRouting : public Operation
       * operation.
       * @see Operation::createOperationPlan
       */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s,
-        Date e, const Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
-        unsigned long i = 0, bool makeflowsloads=true) const;
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
+      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0, 
+      bool makeflowsloads=true) const;
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
@@ -2076,7 +2060,7 @@ class OperationPlanRouting : public OperationPlan
     virtual DECLARE_EXPORT void update();
     DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
     DECLARE_EXPORT ~OperationPlanRouting();
-    DECLARE_EXPORT void setQuantity(float f, bool roundDown=false);
+    DECLARE_EXPORT void setQuantity(float f, bool roundDown = false, bool update = true);
     DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
     virtual const OperationPlan::OperationPlanList& getSubOperationPlans() const {return step_opplans;}
 
@@ -2147,9 +2131,9 @@ class OperationAlternate : public Operation
       * operation.
       * @see Operation::createOperationPlan
       */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float q, Date s,
-        Date e, const Demand* l, bool updates_okay = true, OperationPlan* ow = NULL,
-        unsigned long i = 0, bool makeflowsloads=true) const;
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
+      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0, 
+      bool makeflowsloads=true) const;
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
@@ -2197,7 +2181,7 @@ class OperationPlanAlternate : public OperationPlan
     /** Destructor. */
     DECLARE_EXPORT ~OperationPlanAlternate();
     DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
-    DECLARE_EXPORT void setQuantity(float f, bool roundDown=false);
+    DECLARE_EXPORT void setQuantity(float f, bool roundDown = false, bool update = true);
     DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
     DECLARE_EXPORT void setEnd(Date d);
     DECLARE_EXPORT void setStart(Date d);
@@ -2255,8 +2239,8 @@ class OperationEffective : public Operation
       * @see Operation::createOperationPlan
       */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
-        Date, const Demand*, bool updates_okay=true, OperationPlan* = NULL,
-        unsigned long i=0, bool makeflowsloads=true) const;
+      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0, 
+      bool makeflowsloads = true) const;
 
     /** A operation of this type enforces the following rules on its
       * operationplans:
@@ -2301,7 +2285,7 @@ class OperationPlanEffective : public OperationPlan
     OperationPlanEffective() : effopplan(NULL) {};
     DECLARE_EXPORT ~OperationPlanEffective();
     DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
-    DECLARE_EXPORT void setQuantity(float f, bool roundDown=false);
+    DECLARE_EXPORT void setQuantity(float f, bool roundDown = false, bool update = true);
     DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
     DECLARE_EXPORT void setEnd(Date d);
     DECLARE_EXPORT void setStart(Date d);
@@ -2967,12 +2951,12 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     void DECLARE_EXPORT writeElement(XMLOutput*, const XMLtag&, mode =DEFAULT) const;
 
     /** Updates the quantity of the flowplan by changing the quantity of the
-      * operationplan owning this flowplan.
+      * operationplan owning this flowplan.<br>
       * The boolean parameter is used to control whether to round up or down
       * in case the operation quantity must be a multiple.
       */
-    void setQuantity(float qty, bool b=false)
-    {Object::WLock<OperationPlan>(oper)->setQuantity(qty / getFlow()->getQuantity(), b);}
+    void setQuantity(float qty, bool b=false, bool u = true)
+    {Object::WLock<OperationPlan>(oper)->setQuantity(qty / getFlow()->getQuantity(), b, u);}
 
     /** Returns the date of the flowplan. */
     const Date& getDate() const {return getFlow()->getFlowplanDate(oper);}
@@ -4319,14 +4303,13 @@ class CommandCreateOperationPlan : public Command
       OperationPlan* ow=NULL, bool makeflowsloads=true)
     {
       opplan = o ?
-          o->createOperationPlan(q, d1, d2, l, true, ow, 0, makeflowsloads)
+          o->createOperationPlan(q, d1, d2, l, ow, 0, makeflowsloads)
           : NULL;
     }
     void execute()
     {
       if (opplan)
       {
-        opplan->setAllowUpdates(true);
         opplan->initialize();
         opplan=NULL;
       }
@@ -4369,14 +4352,9 @@ class CommandMoveOperationPlan : public Command
       */
     DECLARE_EXPORT CommandMoveOperationPlan
       (const OperationPlan* opplanptr, Date newDate, bool startOrEnd=true);
-    void execute()
-    {
-      if (!opplan) return;
-      WLock<OperationPlan>(opplan)->setAllowUpdates(true);
-      opplan=NULL;
-    }
+    void execute() { opplan=NULL; }
     DECLARE_EXPORT void undo();
-    bool undoable() const {return true;}
+    bool undoable() const {return opplan != NULL;}
     ~CommandMoveOperationPlan() {if (opplan) undo();}
     OperationPlan::pointer getOperationPlan() const {return opplan;}
     virtual const MetaClass& getType() const {return metadata;}

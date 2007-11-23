@@ -4334,8 +4334,49 @@ class CommandCreateOperationPlan : public Command
 };
 
 
+/** @brief This command is used to delete an operationplan.
+  *
+  * The operationplan will be deleted when the .
+  */
+class CommandDeleteOperationPlan : public Command
+{
+  public:
+    /** Constructor.<br>
+      * Unlike most other commands the constructor already executes the deletion.
+      */
+    DECLARE_EXPORT CommandDeleteOperationPlan(OperationPlan* o);
+    void execute() {oper = NULL;}
+    DECLARE_EXPORT void undo(); 
+    bool undoable() const {return true;}
+    ~CommandDeleteOperationPlan() {undo();}
+    virtual const MetaClass& getType() const {return metadata;}
+    static DECLARE_EXPORT const MetaClass metadata;
+    virtual size_t getSize() const {return sizeof(CommandDeleteOperationPlan);}
+    DECLARE_EXPORT string getDescription() const;
+
+  private:
+    /** Operation pointer of the original operationplan. */
+    Operation *oper;
+
+    /** Daterange of the original operationplan. */
+    DateRange dates;
+
+    /** Quantity of the original operationplan. */
+    float qty;
+
+    /** Identifier of the original operationplan. */
+    long unsigned id;
+
+    /** Demand pointer of the original operationplan. */
+    const Demand *dmd;
+
+    /** Owner of the original operationplan. */
+    const OperationPlan *ow;
+};
+
+
 /** @brief This class represents the command of moving an operationplan to a
-  * new date.
+  * new date and/or resizing it.
   * @todo Moving in a routing operation can't be undone with the current
   * implementation! The command will need to store all original dates of
   * the suboperationplans...
@@ -4344,14 +4385,16 @@ class CommandMoveOperationPlan : public Command
 {
   public:
     /** Constructor.<br>
-      * Unlike the other commands the constructor already executes the change.
+      * Unlike most other commands the constructor already executes the change.
       * @param opplanptr Pointer to the operationplan being moved.
       * @param newDate New date of the operationplan.
       * @param startOrEnd Specifies whether the new date is the start (=false)
       * or end date (=true). By default we use the end date.
+      * @param newQty New quantity of the operationplan.The default is -1, 
+      * which indicates to leave the quantity unchanged.
       */
-    DECLARE_EXPORT CommandMoveOperationPlan
-      (const OperationPlan* opplanptr, Date newDate, bool startOrEnd=true);
+    DECLARE_EXPORT CommandMoveOperationPlan (OperationPlan* opplanptr, 
+      Date newDate, bool startOrEnd=true, float newQty = -1.0);
     void execute() { opplan=NULL; }
     DECLARE_EXPORT void undo();
     bool undoable() const {return opplan != NULL;}
@@ -4361,21 +4404,30 @@ class CommandMoveOperationPlan : public Command
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandMoveOperationPlan);}
     DECLARE_EXPORT string getDescription() const;
-    /** Set another date for the operation.
+
+    /** Set another date for the operationplan.
       * @param newdate New start- or end date.
       */
     DECLARE_EXPORT void setDate(Date newdate);
 
+    /** Set another quantity for the operationplan.
+      * @param newqty New quantity.
+      */
+    DECLARE_EXPORT void setQuantity(float newqty);
+
   private:
     /** This is a pointer to the operation_plan being moved. */
-    const OperationPlan *opplan;
+    OperationPlan *opplan;
 
     /** This flag specifies whether we keep the new date is a new start or a
       * new end date for the operation_plan. */
-    bool use_end;
+    bool prefer_end;
 
-    /** This is the start- or enddate of the operation_plan before its move. */
-    Date originaldate;
+    /** These are the original dates of the operation_plan before its move. */
+    DateRange originaldates;
+
+    /** This is the quantity of the operation_plan before the command. */
+    float originalqty;
 };
 
 

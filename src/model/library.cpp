@@ -35,12 +35,13 @@ namespace frepple
 // Command metadata
 DECLARE_EXPORT const MetaClass CommandPlanSize::metadata,
   CommandCreateOperationPlan::metadata,
+  CommandDeleteOperationPlan::metadata,
+  CommandMoveOperationPlan::metadata,
   CommandSolve::metadata,
   CommandReadXMLFile::metadata,
   CommandReadXMLString::metadata,
   CommandSave::metadata,
   CommandSavePlan::metadata,
-  CommandMoveOperationPlan::metadata,
   CommandErase::metadata;
 
 // Solver metadata
@@ -149,9 +150,15 @@ void LibraryModel::initialize()
     "COMMAND",
     "COMMAND_SIZE",
     Object::createDefault<CommandPlanSize>);
-  CommandCreateOperationPlan::metadata.registerClass(
+  CommandCreateOperationPlan::metadata.registerClass( 
     "COMMAND",
-    "COMMAND_CREATE_OPPLAN");
+    "COMMAND_CREATE_OPPLAN"); // No factory method: cmd not created with xml
+  CommandDeleteOperationPlan::metadata.registerClass(
+    "COMMAND",
+    "COMMAND_DELETE_OPPLAN"); // No factory method: cmd not created with xml
+  CommandMoveOperationPlan::metadata.registerClass(
+    "COMMAND",
+    "COMMAND_MOVE_OPPLAN"); // No factory method: cmd not created with xml
   CommandSolve::metadata.registerClass(
     "COMMAND",
     "COMMAND_SOLVE",
@@ -172,9 +179,6 @@ void LibraryModel::initialize()
     "COMMAND",
     "COMMAND_SAVEPLAN",
     Object::createDefault<CommandSavePlan>);
-  CommandMoveOperationPlan::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_MOVE_OPPLAN");
   CommandErase::metadata.registerClass(
     "COMMAND",
     "COMMAND_ERASE",

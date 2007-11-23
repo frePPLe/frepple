@@ -113,7 +113,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
           if (cur!=res->getLoadPlans().end())
           {
             // Move the operationplan
-            data->q_operationplan->setEnd(curdate);
+            data->q_operationplan->setEnd(curdate); // @todo resource solver should be using a move command rather than direct move
 
             // Check the leadtime constraints after the move
             if (isLeadtimeConstrained() || isFenceConstrained())
@@ -134,7 +134,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
           // Put the operationplan back at its original end date
           if (!data->forceLate) 
           {
-            data->q_operationplan->setQuantity(currentQuantity);
+            data->q_operationplan->setQuantity(currentQuantity); // @todo resource solver should be using a move command rather than direct move
             data->q_operationplan->setEnd(currentOpplanEnd);
           }
 
@@ -190,7 +190,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
             if (overloaded && newDate && newDate!=data->q_loadplan->getDate())
             {
               // Move the operationplan to the new date
-              data->q_operationplan->setStart(newDate);
+              data->q_operationplan->setStart(newDate);  // @todo resource solver should be using a move command rather than direct move
               // Force checking for overloads again
               overloaded = true;
             }

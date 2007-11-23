@@ -381,21 +381,22 @@ DECLARE_EXPORT void CommandSavePlan::execute()
 //
 
 DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
-(const OperationPlan* o, Date newdate, bool use_end_date)
-    : opplan(o), use_end(use_end_date)
+(OperationPlan* o, Date newdate, bool pref_end, float newQty)
+    : opplan(o), prefer_end(pref_end)
 {
   if (!opplan) return;
   WLock<OperationPlan> lopplan(opplan);
-  if (use_end)
-  {
-    originaldate = lopplan->getDates().getEnd();
-    lopplan->setEnd(newdate);
-  }
+  originalqty = lopplan->getQuantity();
+  if (newQty == -1.0f) newQty = originalqty;
+  originaldates = lopplan->getDates();
+  if (prefer_end)
+    lopplan->getOperation()->setOperationPlanParameters(
+      opplan, newQty, Date::infinitePast, newdate, prefer_end
+    );
   else
-  {
-    originaldate = lopplan->getDates().getStart();
-    lopplan->setStart(newdate);
-  }
+    lopplan->getOperation()->setOperationPlanParameters(
+      opplan, newQty, newdate, Date::infiniteFuture, prefer_end
+    );
 }
 
 
@@ -403,8 +404,9 @@ DECLARE_EXPORT void CommandMoveOperationPlan::undo()
 {
   if (!opplan) return;
   WLock<OperationPlan> lopplan(opplan);
-  if (use_end) lopplan->setEnd(originaldate);
-  else lopplan->setStart(originaldate);
+  lopplan->getOperation()->setOperationPlanParameters(
+    opplan, originalqty, originaldates.getStart(), originaldates.getEnd(), prefer_end
+  );
   opplan = NULL;
 }
 
@@ -413,20 +415,97 @@ DECLARE_EXPORT void CommandMoveOperationPlan::setDate(Date newdate)
 {
   if (!opplan) return;
   WLock<OperationPlan> lopplan(opplan);
-  if (use_end) lopplan->setEnd(newdate);
-  else lopplan->setStart(newdate);
+  if (prefer_end)
+    lopplan->getOperation()->setOperationPlanParameters(
+      opplan, lopplan->getQuantity(), Date::infinitePast, newdate, prefer_end
+    );
+  else
+    lopplan->getOperation()->setOperationPlanParameters(
+      opplan, lopplan->getQuantity(), newdate, Date::infiniteFuture, prefer_end
+    );
+}
+
+
+DECLARE_EXPORT void CommandMoveOperationPlan::setQuantity(float newqty)
+{
+  if (!opplan) return;
+  WLock<OperationPlan> lopplan(opplan);
+  if (prefer_end)
+    lopplan->getOperation()->setOperationPlanParameters(
+      opplan, newqty, lopplan->getDates().getStart(), lopplan->getDates().getEnd(), prefer_end
+    );
+  else
+    lopplan->getOperation()->setOperationPlanParameters(
+      opplan, newqty, lopplan->getDates().getStart(), lopplan->getDates().getEnd(), prefer_end
+    );
 }
 
 
 DECLARE_EXPORT string CommandMoveOperationPlan::getDescription() const
 {
   ostringstream ch;
-  ch << "moving operationplan ";
+  ch << "updating operationplan ";
   if (opplan)
     ch << "of operation '" << opplan->getOperation()
     << "' with identifier " << opplan->getIdentifier();
   else
     ch << "NULL";
+  return ch.str();
+}
+
+
+//
+// DELETE OPERATIONPLAN
+//
+
+DECLARE_EXPORT CommandDeleteOperationPlan::CommandDeleteOperationPlan
+  (OperationPlan* o)
+{
+  // Validate input
+  if (!o) 
+  {
+    oper = NULL;
+    return;
+  }
+
+  // Avoid deleting locked operationplans
+  if (o->getLocked())
+    throw DataException("Can't delete a locked operationplan.");
+
+  // Register the fields of the operationplan before deletion
+  oper = o->getOperation();
+  qty = o->getQuantity();
+  dates = o->getDates();
+  id = o->getIdentifier();
+  dmd = o->getDemand();
+  ow = &*(o->getOwner());
+
+  // Delete the operationplan
+  delete o;
+}
+
+
+DECLARE_EXPORT void CommandDeleteOperationPlan::undo()
+{
+  // Already executed, or never initialized completely
+  if (!oper) return;
+
+  // Recreate and register the operationplan
+  OperationPlan* opplan = oper->createOperationPlan(qty, dates.getStart(),
+    dates.getEnd(), dmd, const_cast<OperationPlan*>(ow), id);
+  if (opplan) opplan->initialize();
+
+  // Avoid undoing multiple times!
+  oper = NULL;
+}
+
+
+DECLARE_EXPORT string CommandDeleteOperationPlan::getDescription() const
+{
+  ostringstream ch;
+  ch << "deleting operationplan";
+  if (oper) ch << " for operation '" << oper->getName() << "'";
+  if (id) ch << " with identifier " << id;
   return ch.str();
 }
 

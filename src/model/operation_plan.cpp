@@ -332,9 +332,9 @@ DECLARE_EXPORT void OperationPlan::updateSorting()
       // New first operationplan
       oper->first_opplan = tmp;
     tmp->prev = prev;
+    next = tmp->next;
     tmp->next = this;
     prev = tmp;
-    next = tmp->next;
   }
 
   // Verify that we are bigger than the previous operationplan
@@ -345,9 +345,9 @@ DECLARE_EXPORT void OperationPlan::updateSorting()
     if (oper->last_opplan == this) 
       // New last operationplan
       oper->last_opplan = tmp;
+    prev = tmp->prev;
     tmp->prev = this;
     tmp->next = next;
-    prev = tmp->prev;
     next = tmp;
   }
 

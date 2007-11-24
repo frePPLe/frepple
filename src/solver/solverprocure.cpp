@@ -96,7 +96,15 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
   // Standard reply date
   Solver->a_date = Date::infiniteFuture;
 
-  // Find the latest locked procurement operation
+  // Initialize an iterator over reusable existing procurements
+  OperationPlan *last_operationplan = NULL;
+  OperationPlan::iterator curProcure(b->getOperation());
+  while (curProcure != OperationPlan::iterator(NULL) 
+    && curProcure->getLocked()) 
+      ++curProcure;
+
+  // Find the latest locked procurement operation. It is used to know what
+  // the earliest date is for a new procurement.
   Date earliest_next;
   for (OperationPlan::iterator procs(b->getOperation());
     procs != OperationPlan::iterator(NULL); ++procs)
@@ -117,50 +125,49 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
     earliest_next = Plan::instance().getCurrent() + b->getFence();
 
   // Loop through all flowplans
-  OperationPlan *last_operationplan = NULL;
-  double current_inventory = 0.0;
   Date current_date;
+  double produced = 0.0;
+  double consumed = 0.0;
+  double current_inventory = 0.0;
   const FlowPlan* current_flowplan = NULL;
   for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin(); 
     latest_next != Date::infiniteFuture || cur != b->getFlowPlans().end(); )
   {
     if (cur==b->getFlowPlans().end() || latest_next < cur->getDate())
     {
+      // Latest procument time is reached
       current_date = latest_next;
-      current_inventory = b->getOnHand(current_date);
       current_flowplan = NULL;
     }
     else if (earliest_next && earliest_next < cur->getDate())
     {
+      // Earliest procument time was reached
       current_date = earliest_next;
-      current_inventory = b->getOnHand(current_date);
       current_flowplan = NULL; 
     }
     else
     {
-      // Go through the loop based on consuming flowplan
+      // Date with flowplans found
       current_date = cur->getDate();
       do 
       {
-        current_inventory = cur->getOnhand();
         current_flowplan = dynamic_cast<const FlowPlan*>(&*(cur++));
+        if (current_flowplan->getQuantity() < 0)
+          consumed -= current_flowplan->getQuantity();
+        else if (current_flowplan->getOperationPlan()->getLocked())
+          produced += current_flowplan->getQuantity();
       } 
-      // Loop to pick up the last consuming flowplan on the given date, or
-      // a producing flowplan.
-      while (cur != b->getFlowPlans().end() 
-        && current_flowplan->getQuantity() <= 0 
-        && cur->getDate() == current_date);  
+      // Loop to pick up the last consuming flowplan on the given date
+      while (cur != b->getFlowPlans().end() && cur->getDate() == current_date);  
+      // No further interest in dates with only producing flowplans.
+      // We rely on the fact that producers are sorted before consumers.
+      if (current_flowplan->getQuantity() > 0.0f) continue;
     }
 
-    // Delete producers
-    if (current_flowplan 
-      && current_flowplan->getQuantity() > 0.0f
-      && !current_flowplan->getOperationPlan()->getLocked())
-    {
-      delete &*(current_flowplan->getOperationPlan());
-      continue;
-    }
-    
+    // Compute current inventory. The actual onhand in the buffer may be 
+    // different since we count only consumers and *locked* producers.
+    current_inventory = produced - consumed;
+
     // Hard limit: respect minimum interval
     if (current_date < earliest_next)
     {
@@ -169,6 +176,8 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
         && b->getMinimumInterval()
         && Solver->a_date > earliest_next
         && Solver->getSolver()->isMaterialConstrained())
+          // The inventory goes negative here and we can't procure more
+          // material because of the minimum interval...
           Solver->a_date = earliest_next;
       continue;
     }
@@ -187,10 +196,12 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
       && last_operationplan 
       && current_inventory < b->getMinimumInventory())
     {
-      last_operationplan->setQuantity(suggestQuantity(b,
+      float origqty = last_operationplan->getQuantity();
+      last_operationplan->setQuantity(suggestQuantity(b,  //xxx should happen by updating the move or create command
         static_cast<float>( last_operationplan->getQuantity()
-          + b->getMinimumInventory() - current_inventory))); 
-      current_inventory = b->getOnHand(current_date);
+          + b->getMinimumInventory() - current_inventory)));
+      produced += last_operationplan->getQuantity() - origqty;
+      current_inventory = produced - consumed;
       if (current_inventory < -ROUNDING_ERROR 
         && Solver->a_date > earliest_next + b->getMinimumInterval()
         && earliest_next + b->getMinimumInterval() > Solver->q_date
@@ -200,29 +211,52 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
     }
 
     // At this point, we know we need to reorder...
-
-    // Create operation plan
     earliest_next = Date::infinitePast;
     float order_qty = suggestQuantity(b,
       static_cast<float>(b->getMaximumInventory() - current_inventory));
     if (order_qty > 0)
-    {
-      last_operationplan = b->getOperation()->createOperationPlan(
-          order_qty, 
-          Date::infinitePast, current_date, NULL);
-      // @todo initializing an operationplan here is fundamentally incorrect: 
-      // if the consumer is cancelled later (for any other constraint than this 
-      // procured material), the procured supply can't be undone any more...
-      // We overcome this partially by replanning all procurements with 
-      // every demand, but that is a stopgap that wastes a lot of cpu power 
-      // and doesn't fundamentally solve the problem. @todo
-      last_operationplan->initialize();
+    {      
+      // Create a procurement or update an existing one
+      if (curProcure == OperationPlan::iterator(NULL))
+      { 
+        // No existing procurement can be reused. Create a new one.
+        CommandCreateOperationPlan *a =
+          new CommandCreateOperationPlan(b->getOperation(), order_qty,
+            Date::infinitePast, current_date, Solver->curDemand);
+        last_operationplan = a->getOperationPlan();
+        produced += last_operationplan->getQuantity();
+        Solver->add(a);
+      }
+      else if (curProcure->getDates().getEnd() == current_date 
+        && curProcure->getQuantity() == order_qty)
+      {
+        // We can reuse this existing procurement unchanged.
+        produced += order_qty;
+        last_operationplan = &*curProcure;
+        do
+          ++curProcure;
+        while (curProcure != OperationPlan::iterator(NULL) 
+          && curProcure->getLocked());             
+      }
+      else 
+      {
+        // Update an existing procurement to meet current needs
+        CommandMoveOperationPlan *a =
+          new CommandMoveOperationPlan(&*curProcure, current_date, true, order_qty);   
+        last_operationplan = a->getOperationPlan();
+        Solver->add(a);
+        produced += last_operationplan->getQuantity();
+        do
+          ++curProcure;
+        while (curProcure != OperationPlan::iterator(NULL) 
+          && curProcure->getLocked());            
+      }
       if (b->getMinimumInterval())
         earliest_next = current_date + b->getMinimumInterval();
     }
     if (b->getMaximumInterval())
     {
-      current_inventory = b->getOnHand(current_date);
+      current_inventory = produced - consumed;
       if (current_inventory >= b->getMaximumInventory()
         && cur == b->getFlowPlans().end()) 
         // Nothing happens any more further in the future. 
@@ -231,6 +265,14 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
       else
         latest_next = current_date + b->getMaximumInterval();
     }
+  }
+
+  // Get rid of extra procurements that have become redundant
+  while (curProcure != OperationPlan::iterator(NULL))
+  {
+    OperationPlan *opplan = &*(curProcure++);
+    if (!opplan->getLocked())
+      Solver->add(new CommandDeleteOperationPlan(opplan));
   }
 
   // Create the answer

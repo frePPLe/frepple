@@ -4399,7 +4399,7 @@ class CommandMoveOperationPlan : public Command
     DECLARE_EXPORT void undo();
     bool undoable() const {return opplan != NULL;}
     ~CommandMoveOperationPlan() {if (opplan) undo();}
-    OperationPlan::pointer getOperationPlan() const {return opplan;}
+    OperationPlan* getOperationPlan() const {return opplan;}
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandMoveOperationPlan);}

@@ -40,9 +40,9 @@ HasName<type>	24
 HasDescription	12
 TimeLine<type>	8
 XMLtag	28
-XMLInput	220
-XMLInputFile	224
-XMLInputString	224
+XMLInput	224
+XMLInputFile	228
+XMLInputString	228
 Object	8
-Command	20
-CommandList	68
+Command	24
+CommandList	72

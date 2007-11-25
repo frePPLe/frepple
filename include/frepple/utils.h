@@ -2739,7 +2739,7 @@ class Command : public Object
       * command yet. The execute() method needs to be called explicitly to
       * do so.
       */
-    Command() : verbose(INHERIT), owner(NULL), next(NULL) {};
+    Command() : verbose(INHERIT), owner(NULL), next(NULL), prev(NULL) {};
 
     /** This method is used to actually execute the action.<br>
       * A couple of notes on how this method should be implemented by the
@@ -2792,9 +2792,13 @@ class Command : public Object
       * is NULL, meaning there is no owner. */
     Command *owner;
 
-    /** Points to the next command in the owner command list. The commands of
-      * command list are chained in a singly linked list data structure.*/
+    /** Points to the next command in the owner command list.<br>
+      * The commands are chained in a double linked list data structure. */
     Command *next;
+
+    /** Points to the previous command in the owner command list.<br>
+      * The commands are chained in a double linked list data structure. */
+    Command *prev;
 };
 
 
@@ -2928,10 +2932,10 @@ class CommandSetEnv : public Command
 class CommandList : public Command
 {
   private:
-    /** Points to the first command in the list.
-      * Following commands can be found by following the nextCommand pointers
-      * on the commands.
-      * The commands are this chained in a single linked list data structure.
+    /** Points to the first command in the list.<br>
+      * Following commands can be found by following the next pointers
+      * on the commands.<br>
+      * The commands are this chained in a double linked list data structure.
       */
     Command* firstCommand;
 

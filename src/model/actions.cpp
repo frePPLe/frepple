@@ -490,7 +490,10 @@ DECLARE_EXPORT void CommandDeleteOperationPlan::undo()
   // Already executed, or never initialized completely
   if (!oper) return;
 
-  // Recreate and register the operationplan
+  // Recreate and register the operationplan. 
+  // Note that the recreated operationplan has the same field values as the
+  // original one, but has a different memory address. Any pointers to the
+  // original operationplan are now dangling.
   OperationPlan* opplan = oper->createOperationPlan(qty, dates.getStart(),
     dates.getEnd(), dmd, const_cast<OperationPlan*>(ow), id);
   if (opplan) opplan->initialize();

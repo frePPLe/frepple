@@ -4311,12 +4311,12 @@ class CommandCreateOperationPlan : public Command
       if (opplan)
       {
         opplan->initialize();
-        opplan=NULL;
+        opplan = NULL; // Avoid executing / initializing more than once
       }
     }
-    void undo() {if (opplan) delete opplan; opplan=NULL;}
+    void undo() {delete opplan; opplan = NULL;}
     bool undoable() const {return true;}
-    ~CommandCreateOperationPlan() {delete opplan;}
+    ~CommandCreateOperationPlan() {if (opplan) delete opplan;}
     OperationPlan *getOperationPlan() const {return opplan;}
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
@@ -4348,7 +4348,7 @@ class CommandDeleteOperationPlan : public Command
     void execute() {oper = NULL;}
     DECLARE_EXPORT void undo(); 
     bool undoable() const {return true;}
-    ~CommandDeleteOperationPlan() {undo();}
+    ~CommandDeleteOperationPlan() {if (oper) undo();}
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandDeleteOperationPlan);}
@@ -4397,8 +4397,8 @@ class CommandMoveOperationPlan : public Command
       Date newDate, bool startOrEnd=true, float newQty = -1.0);
     void execute() { opplan=NULL; }
     DECLARE_EXPORT void undo();
-    bool undoable() const {return opplan != NULL;}
-    ~CommandMoveOperationPlan() {if (opplan) undo();}
+    bool undoable() const {return true;}
+    ~CommandMoveOperationPlan() { if (opplan) undo();}
     OperationPlan* getOperationPlan() const {return opplan;}
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;

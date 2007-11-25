@@ -169,12 +169,12 @@ AM_CONDITIONAL(FORECAST, test x$forecast = xtrue)
 #
 AC_ARG_ENABLE(webservice,
 AC_HELP_STRING([--enable-webservice],
-[Build the webservice (default: true)]),
+[Build the webservice (default: false)]),
 [case "${enableval}" in
   yes) webservice=true ;;
   no)  webservice=false ;;
   *) AC_MSG_ERROR([bad value ${enableval} for --enable-webservice]) ;;
-esac], [webservice=true])
+esac], [webservice=false])
 AM_CONDITIONAL(WEBSERVICE, test x$webservice = xtrue)
 
 #

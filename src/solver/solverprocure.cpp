@@ -102,6 +102,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
   while (curProcure != OperationPlan::iterator(NULL) 
     && curProcure->getLocked()) 
       ++curProcure;
+  set<OperationPlan*> moved;
 
   // Find the latest locked procurement operation. It is used to know what
   // the earliest date is for a new procurement.
@@ -197,7 +198,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
       && current_inventory < b->getMinimumInventory())
     {
       float origqty = last_operationplan->getQuantity();
-      last_operationplan->setQuantity(suggestQuantity(b,  //xxx should happen by updating the move or create command
+      last_operationplan->setQuantity(suggestQuantity(b,  
         static_cast<float>( last_operationplan->getQuantity()
           + b->getMinimumInventory() - current_inventory)));
       produced += last_operationplan->getQuantity() - origqty;
@@ -233,10 +234,11 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
         // We can reuse this existing procurement unchanged.
         produced += order_qty;
         last_operationplan = &*curProcure;
+        moved.insert(last_operationplan);
         do
           ++curProcure;
         while (curProcure != OperationPlan::iterator(NULL) 
-          && curProcure->getLocked());             
+          && curProcure->getLocked() && moved.find(&*curProcure)!=moved.end());             
       }
       else 
       {
@@ -244,12 +246,13 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
         CommandMoveOperationPlan *a =
           new CommandMoveOperationPlan(&*curProcure, current_date, true, order_qty);   
         last_operationplan = a->getOperationPlan();
+        moved.insert(last_operationplan);
         Solver->add(a);
         produced += last_operationplan->getQuantity();
         do
           ++curProcure;
         while (curProcure != OperationPlan::iterator(NULL) 
-          && curProcure->getLocked());            
+          && curProcure->getLocked() && moved.find(&*curProcure)!=moved.end());            
       }
       if (b->getMinimumInterval())
         earliest_next = current_date + b->getMinimumInterval();
@@ -271,7 +274,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
   while (curProcure != OperationPlan::iterator(NULL))
   {
     OperationPlan *opplan = &*(curProcure++);
-    if (!opplan->getLocked())
+    if (!opplan->getLocked() && moved.find(opplan)!=moved.end())
       Solver->add(new CommandDeleteOperationPlan(opplan));
   }
 

@@ -89,21 +89,17 @@ DECLARE_EXPORT void CommandList::add(Command* c)
   c->owner = this;
 
   // Maintenance of the linked list of child commands
+  c->prev = lastCommand;
   if (lastCommand)
-  {
     // Let the last command in the chain point to this new extra command
     lastCommand->next = c;
-    lastCommand = c;
-  }
   else
-  {
     // This is the first command in this command list
     firstCommand = c;
-    lastCommand = c;
-  }
+  lastCommand = c;
 
   // Update the undoable field
-  if (!c->undoable()) can_undo=false;
+  if (!c->undoable()) can_undo = false;
 }
 
 
@@ -122,12 +118,11 @@ DECLARE_EXPORT void CommandList::undo(Command *c)
   // Note that undoing an operation that hasn't been executed yet or has been
   // undone already is expected to be harmless, so we don't need to worry
   // about that...
-  for (Command *i=(c?c->next:firstCommand); i; )
+  for (Command *i = lastCommand; i != c; )
   {
-    i->undo();
     Command *t = i;  // Temporarily store the pointer to be deleted
-    i = i->next;
-    delete t;
+    i = i->prev;
+    delete t; // The delete is expected to also undo the command!
   }
 
   // Maintain the linked list of commands still present
@@ -152,11 +147,11 @@ DECLARE_EXPORT bool CommandList::undoable(const Command *c) const
   if (c && c->owner!=this)
     throw LogicException("Invalid call to CommandList::undoable(Command*)");
 
-  // Easy cases
-  if (!c || can_undo) return can_undo;
-
   // Parallel commands can't be undone
   if (maxparallel > 1) return false;
+
+  // Easy cases
+  if (!c || can_undo) return can_undo;
 
   // Step over the remaining commands and check whether they can be undone
   for (; c; c = c->next) if (!c->undoable()) return false;
@@ -324,10 +319,10 @@ DECLARE_EXPORT void CommandList::execute()
     wrapper(this);
 
   // Clean it up after executing ALL actions.
-  for (Command *i=firstCommand; i; )
+  for (Command *i=lastCommand; i; )
   {
     Command *t = i;
-    i = i->next;
+    i = i->prev;
     delete t;
   }
   firstCommand = NULL;
@@ -372,11 +367,11 @@ DECLARE_EXPORT CommandList::~CommandList()
 {
   if (!firstCommand) return;
   logger << "Warning: Deleting an action list with actions that have"
-  << " not been committed or undone" << endl;
-  for (Command *i = firstCommand; i; )
+    << " not been committed or undone" << endl;
+  for (Command *i = lastCommand; i; )
   {
     Command *t = i;  // Temporary storage for the object to delete
-    i = i->next;
+    i = i->prev;
     delete t;
   }
 }

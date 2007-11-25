@@ -78,10 +78,6 @@ Plan the model:
   Demand 'order 1' receives signal AFTER_CHANGE
   Demand 'order 1' receives signal BEFORE_CHANGE
   Demand 'order 1' receives signal AFTER_CHANGE
-  Demand 'order 1' receives signal BEFORE_CHANGE
-  Demand 'order 1' receives signal AFTER_CHANGE
-  Demand 'order 1' receives signal BEFORE_CHANGE
-  Demand 'order 1' receives signal AFTER_CHANGE
 Erase the model:
   Demand 'order 1' receives signal REMOVE
   BufferDefault 'end item' receives signal BEFORE_CHANGE

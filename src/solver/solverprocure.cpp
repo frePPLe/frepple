@@ -149,20 +149,30 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
     else
     {
       // Date with flowplans found
+      if (current_date && current_date >= cur->getDate())
+      {
+        // When procurements are being moved, it happens that we revisit the 
+        // same consuming flowplans twice. This check catches this case.
+        cur++;
+        continue;
+      }
       current_date = cur->getDate();
+      bool noConsumers = true;
       do 
       {
         current_flowplan = dynamic_cast<const FlowPlan*>(&*(cur++));
         if (current_flowplan->getQuantity() < 0)
+        {
           consumed -= current_flowplan->getQuantity();
+          noConsumers = false;
+        }
         else if (current_flowplan->getOperationPlan()->getLocked())
           produced += current_flowplan->getQuantity();
       } 
       // Loop to pick up the last consuming flowplan on the given date
       while (cur != b->getFlowPlans().end() && cur->getDate() == current_date);  
       // No further interest in dates with only producing flowplans.
-      // We rely on the fact that producers are sorted before consumers.
-      if (current_flowplan->getQuantity() > 0.0f) continue;
+      if (noConsumers) continue;
     }
 
     // Compute current inventory. The actual onhand in the buffer may be 

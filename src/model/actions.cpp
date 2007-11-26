@@ -138,7 +138,8 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
       XMLInput().parse(in, NULL, true);
     else
     {
-      LockManager::getManager().obtainWriteLock(&Plan::instance());
+      // Locking the plan assures a single read command is running at any time.
+      // LockManager::getManager().obtainWriteLock(&Plan::instance());
       XMLInput().parse(in, &Plan::instance(), validate);
     }
   }
@@ -148,7 +149,8 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
   else
   {
     // Read, execute and optionally validate a file
-    LockManager::getManager().obtainWriteLock(&Plan::instance());
+    // Locking the plan assures a single read command is running at any time.
+    // LockManager::getManager().obtainWriteLock(&Plan::instance());
     XMLInputFile(filename).parse(&Plan::instance(),validate);
   }
 
@@ -185,7 +187,8 @@ DECLARE_EXPORT void CommandReadXMLString::execute()
     XMLInputString(data).parse(NULL, true);
   else
   {
-    LockManager::getManager().obtainWriteLock(&Plan::instance());
+    // Locking the plan assures a single read command is running at any time.
+    // LockManager::getManager().obtainWriteLock(&Plan::instance());
     XMLInputString(data).parse(&Plan::instance(), validate);
   }
 

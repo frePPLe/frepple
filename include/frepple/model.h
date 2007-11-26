@@ -3261,7 +3261,11 @@ class Plan : public Plannable
 
 
 /** @brief This command is used for reading XML input. The input comes either
-  * from a flatfile, or from the standard input. */
+  * from a flatfile, or from the standard input. 
+  *
+  * The command is not thread-safe: multiple threads can simultaneously access
+  * the same objects.
+  */
 class CommandReadXMLFile : public Command
 {
   public:
@@ -3330,7 +3334,11 @@ class CommandReadXMLFile : public Command
 };
 
 
-/** @brief This command is used for reading XML input from a certain string. */
+/** @brief This command is used for reading XML input from a certain string. 
+  *
+  * The command is not thread-safe: multiple threads can simultaneously access
+  * the same objects.
+  */
 class CommandReadXMLString : public Command
 {
   public:

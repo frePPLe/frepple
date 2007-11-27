@@ -95,6 +95,7 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_locations;
     static DECLARE_EXPORT const XMLtag tag_locked;
     static DECLARE_EXPORT const XMLtag tag_logfile;
+    static DECLARE_EXPORT const XMLtag tag_loglevel;
     static DECLARE_EXPORT const XMLtag tag_lpst;
     static DECLARE_EXPORT const XMLtag tag_maximum;
     static DECLARE_EXPORT const XMLtag tag_maxinterval;

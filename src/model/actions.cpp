@@ -88,7 +88,7 @@ DECLARE_EXPORT void Solver::writeElement
   assert(m == NOHEADER);
 
   // Fields
-  if (verbose) o->writeElement(Tags::tag_verbose, verbose);
+  if (loglevel) o->writeElement(Tags::tag_loglevel, loglevel);
 
   // End object
   o->EndObject(tag);
@@ -97,8 +97,13 @@ DECLARE_EXPORT void Solver::writeElement
 
 DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  if (pElement.isA(Tags::tag_verbose))
-    setVerbose(pElement.getBool());
+  if (pElement.isA(Tags::tag_loglevel))
+  {
+    int i = pElement.getInt();
+    if (i<0 || i>USHRT_MAX)
+      throw DataException("Invalid log level" + pElement.getString()); 
+    setLogLevel(i);
+  }
 }
 
 

@@ -134,10 +134,9 @@ DECLARE_EXPORT void Resource::beginElement (XMLInput& pIn, XMLElement& pElement)
   if (pElement.isA (Tags::tag_load)
       && pIn.getParentElement().isA(Tags::tag_loads))
   {
-    Load * l = new Load();
-    LockManager::getManager().obtainWriteLock(l);   // @todo
+    Object::WLock<Load> l = new Load();
     l->setResource(this);
-    pIn.readto(l);
+    pIn.readto(&*l);
   }
   else if (pElement.isA (Tags::tag_maximum))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn) );

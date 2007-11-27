@@ -86,7 +86,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
   MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=b->getLevel(); i>0; --i) logger << " ";
     logger << "  Procurement buffer '" << b->getName() << "' is asked: "
@@ -329,7 +329,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
     Solver->a_qty = Solver->q_qty;
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=b->getLevel(); i>0; --i) logger << " ";
     logger << "  Procurement buffer '" << b->getName() << "' answers: "

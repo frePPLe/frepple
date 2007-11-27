@@ -101,7 +101,7 @@ void ForecastSolver::solve(const Demand* l, void* v)
   Object::WLock<Demand> x(!getAutomatic() ? l : NULL);
 
   // Message
-  if (getVerbose())
+  if (getLogLevel()>0)
     logger << "  Netting of demand '" << l << "'  ('" << l->getCustomer() 
       << "','" << l->getItem() << "', '" << l->getDeliveryOperation() 
       << "'): " << l->getDue() << ", " << l->getQuantity() << endl;
@@ -112,11 +112,11 @@ void ForecastSolver::solve(const Demand* l, void* v)
   if (!fcst)
   {
     // Message
-    if (getVerbose())
+    if (getLogLevel()>0)
       logger << "    No matching forecast available" << endl;
     return;
   } 
-  else if (getVerbose())
+  else if (getLogLevel()>0)
     logger << "    Matching forecast: " << fcst << endl;
 
   // Netting the order from the forecast
@@ -251,7 +251,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
       if (available >= remaining)
       {
         // Partially consume a bucket
-        if (getVerbose())
+        if (getLogLevel()>=2)
           logger << "    Consuming " << remaining << " from bucket " 
             << curbucket->timebucket << " (" << available 
             << " available)" << endl;
@@ -262,7 +262,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
       else
       {
         // Completely consume a bucket
-        if (getVerbose()) 
+        if (getLogLevel()>=2) 
           logger << "    Consuming " << available << " from bucket " 
             << curbucket->timebucket << " (" << available 
             << " available)" << endl;
@@ -271,7 +271,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
         curbucket->setQuantity(0);
       }
     }
-    else if (getVerbose())
+    else if (getLogLevel()>=2)
       logger << "    Nothing available in bucket " 
         << curbucket->timebucket << endl;
 
@@ -292,7 +292,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
   }
 
   // Quantity for which no bucket is found
-  if (remaining > 0 && getVerbose())
+  if (remaining > 0 && getLogLevel()>=2)
     logger << "    Remains " << remaining << " that can't be netted" << endl;
 
 }

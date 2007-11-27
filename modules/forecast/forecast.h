@@ -107,7 +107,7 @@
 	*	<xsd:complexContent>
 	*		<xsd:extension base="SOLVER">
 	*			<xsd:choice minOccurs="0" maxOccurs="unbounded">
-	*				<xsd:element name="VERBOSE" type="xsd:boolean" />
+	*				<xsd:element name="LOGLEVEL" type="loglevel" />
 	*				<xsd:element name="AUTOMATIC" type="xsd:boolean" />
 	*			</xsd:choice>
 	*			<xsd:attribute name="AUTOMATIC" type="xsd:boolean" />
@@ -369,8 +369,9 @@ class Forecast : public Demand
 /** @brief Implementation of a forecast netting algorithm. 
   *
   * As customer orders are being received they need to be deducted from
-  * the forecast to avoid double-counting demand.<br>
-  * The netting solver will for each order:
+  * the forecast to avoid double-counting demand.
+  *
+  * The netting solver will process each order as follows:
   * - <b>First search for a matching forecast.</b><br>
   *   A matching forecast has the same item and customer as the order.<br>
   *   If no match is found at this level, a match is tried at higher levels
@@ -382,6 +383,11 @@ class Forecast : public Demand
   *   the solver will look in earlier and later buckets. The parameters
   *   Net_Early and Net_Late control the limits for the search in the
   *   time dimension.
+  * 
+  * The logging levels have the following meaning:
+  * - 0: Silent operation. Default logging level. 
+  * - 1: Log demands being netted and the matching forecast.
+  * - 2: Same as 1, plus details on forecast buckets being netted.
   */
 class ForecastSolver : public Solver
 {

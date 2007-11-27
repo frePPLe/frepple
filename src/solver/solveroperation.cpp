@@ -358,7 +358,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
   }
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=oper->getLevel(); i>0; --i) logger << " ";
     logger << "   Operation '" << oper->getName() << "' is asked: "
@@ -402,7 +402,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
   assert(Solver->a_qty >= 0);
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=oper->getLevel(); i>0; --i) logger << " ";
     logger << "   Operation '" << oper->getName() << "' answers: "
@@ -417,7 +417,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
   MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=oper->getLevel(); i>0; --i) logger << " ";
     logger << "   Operation '" << oper->getName() << "' is asked: "
@@ -509,7 +509,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
   assert(Solver->a_date >= Solver->q_date);
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=oper->getLevel(); i>0; --i) logger << " ";
     logger << "   Operation '" << oper->getName() << "' answers: "
@@ -527,7 +527,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
   const Buffer *buf = Solver->curBuffer;
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=oper->getLevel(); i>0; --i) logger << " ";
     logger << "   Operation '" << oper->getName() << "' is asked: "
@@ -649,7 +649,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
   assert(Solver->a_date >= Solver->q_date);
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=oper->getLevel(); i>0; --i) logger << " ";
     logger << "   Operation '" << oper->getName() << "' answers: "
@@ -664,7 +664,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationEffective* oper, void* v)
   MRPSolverdata *Solver = static_cast<MRPSolverdata*>(v);
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=oper->getLevel(); i>0; --i) logger << " ";
     logger << "   Operation '" << oper->getName() << "' is asked: "
@@ -695,7 +695,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationEffective* oper, void* v)
   if (Solver->a_date < aDate) Solver->a_date = aDate;
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=oper->getLevel(); i>0; --i) logger << " ";
     logger << "   Operation '" << oper->getName() << "' answers: "

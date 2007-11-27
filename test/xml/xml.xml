@@ -6,7 +6,7 @@
   <COMMANDS>
     <VERBOSE>true</VERBOSE>
     <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" VERBOSE="false"/>
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" LOGLEVEL="0"/>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVEPLAN">
       <FILENAME>output.1.xml</FILENAME>

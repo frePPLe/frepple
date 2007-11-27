@@ -92,6 +92,7 @@ DECLARE_EXPORT const XMLtag Tags::tag_location("LOCATION");
 DECLARE_EXPORT const XMLtag Tags::tag_locations("LOCATIONS");
 DECLARE_EXPORT const XMLtag Tags::tag_locked("LOCKED");
 DECLARE_EXPORT const XMLtag Tags::tag_logfile("LOGFILE");
+DECLARE_EXPORT const XMLtag Tags::tag_loglevel("LOGLEVEL");
 DECLARE_EXPORT const XMLtag Tags::tag_lpst("LPST");
 DECLARE_EXPORT const XMLtag Tags::tag_maximum("MAXIMUM");
 DECLARE_EXPORT const XMLtag Tags::tag_maxinterval("MAXINTERVAL");

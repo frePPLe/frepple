@@ -69,7 +69,7 @@ void LPSolver::solve(void *v)
   //
   // PART I: Problem initialisation
   //
-  if (getVerbose())
+  if (getLogLevel()>0)
     logger << "Start Solver initialisation at " << Date::now() << endl;
 
   // We really need a calendar the lp buckets!
@@ -106,7 +106,7 @@ void LPSolver::solve(void *v)
   for (Demand::iterator j = Demand::begin(); j != Demand::end(); ++j)
     j->solve(*this,this);
 
-  if (getVerbose())
+  if (getLogLevel()>0)
     logger << "Finished Solver initialisation at " << Date::now() << endl;
 
   //
@@ -114,13 +114,13 @@ void LPSolver::solve(void *v)
   //
 
   // Initial message
-  if (getVerbose()) logger << "Start solving at " << Date::now() << endl;
+  if (getLogLevel()>0) logger << "Start solving at " << Date::now() << endl;
 
   // Objective: maximize the planned demand of each priority
   for (priolist::iterator i = demandprio2row.begin();
       i != demandprio2row.end(); ++i)
   {
-    if (getVerbose())
+    if (getLogLevel()>0)
       logger << "Start maximizing supply for demand priority " << i->first
       << " at " << Date::now() << endl;
     // Set the right row as the objective
@@ -129,7 +129,7 @@ void LPSolver::solve(void *v)
     // Solve
     lpx_simplex(lp);
     // Results...
-    if (getVerbose())
+    if (getLogLevel()>0)
       logger << " Satisfied " << lpx_get_obj_val(lp) << " units" << endl;
     // Fix the optimal solution for the next objective layers
     lpx_set_row_bnds(lp, i->second, LPX_LO, lpx_get_obj_val(lp), 0.0);
@@ -145,16 +145,16 @@ void LPSolver::solve(void *v)
   lpx_print_sol(lp,"lp_solver.sol");
 
   // Final message
-  if (getVerbose()) logger << "Finished solving at " << Date::now() << endl;
+  if (getLogLevel()>0) logger << "Finished solving at " << Date::now() << endl;
 
   //
   // PART III: cleanup the solver
   //
 
-  if (getVerbose())
+  if (getLogLevel()>0)
     logger << "Start solver finalisation at " << Date::now() << endl;
   lpx_delete_prob(lp);
-  if (getVerbose())
+  if (getLogLevel()>0)
     logger << "Finished solver finalisation at " << Date::now() << endl;
 
 }

@@ -726,7 +726,7 @@ class Solver : public Object, public HasName<Solver>
 {
     TYPEDEF(Solver);
   public:
-    explicit Solver(const string& n) : HasName<Solver>(n), verbose(false) {}
+    explicit Solver(const string& n) : HasName<Solver>(n), loglevel(0) {}
     virtual ~Solver() {}
 
     virtual DECLARE_EXPORT void writeElement (XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -766,19 +766,30 @@ class Solver : public Object, public HasName<Solver>
     virtual void solve(const Solvable*,void* = NULL)
       {throw LogicException("Called undefined solve(Solvable*) method");}
 
-    /** Returns true if elaborate and verbose output is requested. */
-    bool getVerbose() const {return verbose;}
+    /** Returns how elaborate and verbose output is requested.<br>
+      * As a guideline solvers should respect the following guidelines:
+      * - 0:<br> 
+      *   Completely silent.<br>
+      *   This is the default value.
+      * - 1:<br>
+      *   Minimal and high-level messages on the progress that are sufficient
+      *   for logging normal operation.<br>
+      * - 2:<br>
+      *   Higher numbers are solver dependent. These levels are typically
+      *   used for debugging and tracing, and provide more detail on the 
+      *   solver's progress.
+      */
+    unsigned short getLogLevel() const {return loglevel;}
 
     /** Controls whether verbose output will be generated. */
-    void setVerbose(bool b) {verbose = b;}
+    void setLogLevel(unsigned short v) {loglevel = v;}
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaCategory metadata;
 
   protected:
-    /** Controls how much messages we want to generate.<br>
-      * The default value is false. */
-    bool verbose;
+    /** Controls the amount of tracing and debugging messages. */
+    unsigned short loglevel;
 };
 
 

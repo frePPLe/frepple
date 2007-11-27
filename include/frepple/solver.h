@@ -43,6 +43,12 @@ namespace frepple
   * class.<br>
   * See the documentation of the different solve methods to understand the
   * functionality in more detail.
+  *
+  * The logging levels have the following meaning:
+  * - 0: Silent operation. Default logging level.
+  * - 1: Show solver progress for each demand.
+  * - 2: Show the complete ask&reply communication of the solver.
+  * - 3: Trace the status of all entities.
   */
 class MRPSolver : public Solver
 {
@@ -285,7 +291,7 @@ class MRPSolver : public Solver
       // Or: Explicitly specified number of threads
       if (maxparallel) return maxparallel;
       // Or: Default number of threads
-      else return getVerbose() ? 1 : Environment::getProcessors();
+      else return getLogLevel()>0 ? 1 : Environment::getProcessors();
     }
 
   private:
@@ -318,7 +324,7 @@ class MRPSolver : public Solver
             q_operationplan(NULL), cluster(c), demands(d) {}
 
         /** Verbose mode is inherited from the solver. */
-        bool getVerbose() const {return sol ? sol->getVerbose() : false;}
+        unsigned short getLogLevel() const {return sol ? sol->getLogLevel() : 0;}
 
         /** This function runs a single planning thread. Such a thread will loop
           * through the following steps:

@@ -36,10 +36,10 @@ namespace frepple
 DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
 {
   MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
-  bool verbose = Solver->getSolver()->getVerbose();
+  unsigned int loglevel = Solver->getSolver()->getLogLevel();
 
   // Message
-  if (verbose)
+  if (loglevel>0)
     logger << "Planning demand '" << l->getName() << "' (" << l->getPriority()
     << ", " << l->getDue() << ", " << l->getQuantity() << ")" << endl;
 
@@ -55,7 +55,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   // Nothing to be planned any more (e.g. all deliveries are locked...)
   if (plan_qty < ROUNDING_ERROR)
   {
-    if (verbose) logger << "  Nothing to be planned." << endl;
+    if (loglevel>0) logger << "  Nothing to be planned." << endl;
     return;
   }
 
@@ -68,7 +68,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   do
   {
     // Message
-    if (verbose)
+    if (loglevel>0)
       logger << "Demand '" << l << "' asks: "
       << plan_qty << " - " << plan_date << endl;
 
@@ -83,7 +83,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
     deliveryoper->solve(*this,v);
 
     // Message
-    if (verbose)
+    if (loglevel>0)
       logger << "Demand '" << l << "' gets answer: "
       << Solver->a_qty << " - " << Solver->a_date << endl;
 
@@ -104,10 +104,9 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
           Solver->undo();
 
           // Create the correct operationplans
-          bool tmp = Solver->getSolver()->getVerbose();
           double tmpqty = Solver->a_qty;
-          if (tmp) logger << "Demand '" << l << "' plans coordination." << endl;
-          Solver->getSolver()->setVerbose(false);
+          if (loglevel>=2) logger << "Demand '" << l << "' plans coordination." << endl;
+          Solver->getSolver()->setLogLevel(0);
           float tmpresult = Solver->a_qty;
           for(float remainder = Solver->a_qty; 
             remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
@@ -123,7 +122,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
               break;
             }
           }
-          Solver->getSolver()->setVerbose(tmp);
+          Solver->getSolver()->setLogLevel(loglevel);
           Solver->a_qty = tmpresult;
         }
 

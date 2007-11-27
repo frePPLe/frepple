@@ -170,10 +170,9 @@ DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, XMLElement& pElement
   else if (pElement.isA (Tags::tag_load)
       && pIn.getParentElement().isA(Tags::tag_loads))
   {
-    Load * l = new Load();
-    LockManager::getManager().obtainWriteLock(l);
+    Object::WLock<Load> l = new Load();
     l->setOperation(this);
-    pIn.readto(l);
+    pIn.readto(&*l);
   }
   else if (pElement.isA (Tags::tag_operation_plan))
     pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn));

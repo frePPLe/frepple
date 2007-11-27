@@ -53,7 +53,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   }
 
   // Message
-  if (data->getSolver()->getVerbose())
+  if (data->getSolver()->getLogLevel()>1)
   {
     for (int i=res->getLevel(); i>0; --i) logger << " ";
     logger << "   Resource '" << res->getName() << "' is asked: "
@@ -223,7 +223,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   if (data->a_qty == 0.0f) data->q_operationplan->setQuantity(0);
 
   // Message
-  if (data->getSolver()->getVerbose())
+  if (data->getSolver()->getLogLevel()>1)
   {
     for (int i=res->getLevel(); i>0; --i) logger << " ";
     logger << "   Resource '" << res->getName() << "' answers: "
@@ -242,7 +242,7 @@ DECLARE_EXPORT void MRPSolver::solve(const ResourceInfinite* r, void* v)
   MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
 
   // Message
-  if (data->getSolver()->getVerbose() && data->q_qty < 0)
+  if (data->getSolver()->getLogLevel()>1 && data->q_qty < 0)
   {
     for (int i=r->getLevel(); i>0; --i) logger << " ";
     logger << "  Resource '" << r << "' is asked: "
@@ -254,7 +254,7 @@ DECLARE_EXPORT void MRPSolver::solve(const ResourceInfinite* r, void* v)
   data->a_date = data->q_date;
 
   // Message
-  if (data->getSolver()->getVerbose() && data->q_qty < 0)
+  if (data->getSolver()->getLogLevel()>1 && data->q_qty < 0)
   {
     for (int i=r->getLevel(); i>0; --i) logger << " ";
     logger << "  Resource '" << r << "' answers: "

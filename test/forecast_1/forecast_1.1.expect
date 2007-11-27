@@ -13,7 +13,7 @@
 	<CURRENT>2007-01-01T00:00:00</CURRENT>
 	<SOLVERS>
 		<SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST">
-			<VERBOSE>true</VERBOSE>
+			<LOGLEVEL>2</LOGLEVEL>
 		</SOLVER>
 	</SOLVERS>
 	<CUSTOMERS>

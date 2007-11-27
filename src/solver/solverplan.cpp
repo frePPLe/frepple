@@ -79,7 +79,7 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
 {
   // Message
   MRPSolver* Solver = getSolver();
-  if (Solver->getVerbose())
+  if (Solver->getLogLevel()>0)
     logger << "Start solving cluster " << cluster << " at " << Date::now() << endl;
 
   // Solve the planning problem
@@ -134,7 +134,7 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
   }
 
   // Message
-  if (Solver->getVerbose())
+  if (Solver->getLogLevel()>0)
     logger << "End solving cluster " << cluster << " at " << Date::now() << endl;
 }
 
@@ -151,7 +151,7 @@ DECLARE_EXPORT void MRPSolver::solve(void *v)
   // are clusters)
   // A multi-threaded alternative would be to hash the operations here, and
   // then delete in each thread.
-  if (getVerbose()) logger << "Deleting previous plan" << endl;
+  if (getLogLevel()>0) logger << "Deleting previous plan" << endl;
   for (Operation::iterator e=Operation::begin(); e!=Operation::end(); ++e)
     // The next if-condition is actually redundant if we plan everything
     if (demands_per_cluster.find(e->getCluster())!=demands_per_cluster.end())
@@ -160,7 +160,7 @@ DECLARE_EXPORT void MRPSolver::solve(void *v)
   // Create the command list to control the execution
   CommandList threads;
   // Solve in parallel threads, if not in verbose mode
-  if (getVerbose())
+  if (getLogLevel()>0)
     threads.setMaxParallel(1);
   else
   {

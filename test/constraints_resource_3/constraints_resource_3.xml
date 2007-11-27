@@ -11,7 +11,7 @@
   <COMMANDS>
     <VERBOSE>true</VERBOSE>
     <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" VERBOSE="true"/>
+      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" LOGLEVEL="2"/>
     </COMMAND>
     <COMMAND xsi:type="COMMAND_SAVEPLAN">
       <FILENAME>output.1.xml</FILENAME>

@@ -1051,6 +1051,12 @@
 	</xsd:complexType>
 
 	<!-- SOLVER -->
+  <xsd:simpleType name="loglevel" id="loglevel">
+    <xsd:restriction base="xsd:int">
+      <xsd:minInclusive value="0"/>
+      <xsd:maxInclusive value="65535"/>
+    </xsd:restriction>
+  </xsd:simpleType>
 	<xsd:complexType name="SOLVER">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1061,7 +1067,7 @@
 		</xsd:annotation>
 		<xsd:attribute name="NAME" type="non-empty-string" use="required" />
 		<xsd:attribute name="ACTION" type="action" />
-		<xsd:attribute name="VERBOSE" type="xsd:boolean" />
+		<xsd:attribute name="LOGLEVEL" type="loglevel" />
 	</xsd:complexType>
 
 	<xsd:complexType name="SOLVERLIST">
@@ -1077,7 +1083,7 @@
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="CONSTRAINTS" type="xsd:unsignedShort" />
 					<xsd:element name="MAXPARALLEL" type="xsd:positiveInteger" />
-					<xsd:element name="VERBOSE" type="xsd:boolean" />
+					<xsd:element name="LOGLEVEL" type="loglevel" />
 				</xsd:choice>
 				<xsd:attribute name="CONSTRAINTS" type="xsd:unsignedShort" />
 				<xsd:attribute name="MAXPARALLEL" type="xsd:positiveInteger" />

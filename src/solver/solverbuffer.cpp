@@ -47,7 +47,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   bool tried_requested_date(false);
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=b->getLevel(); i>0; --i) logger << " ";
     logger << "  Buffer '" << b->getName() << "' is asked: "
@@ -232,7 +232,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   assert( Solver->a_qty >= 0 );
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=b->getLevel(); i>0; --i) logger << " ";
     logger << "  Buffer '" << b->getName() << "' answers: "
@@ -255,7 +255,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferInfinite* b, void* v)
   MRPSolverdata* Solver = (MRPSolverdata*)v;
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=b->getLevel(); i>0; --i) logger << " ";
     logger << "  Buffer '" << b << "' is asked: "
@@ -268,7 +268,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferInfinite* b, void* v)
   Solver->a_date = Solver->q_date;
 
   // Message
-  if (Solver->getSolver()->getVerbose())
+  if (Solver->getSolver()->getLogLevel()>1)
   {
     for (int i=b->getLevel(); i>0; --i) logger << " ";
     logger << "  Buffer '" << b << "' answers: "

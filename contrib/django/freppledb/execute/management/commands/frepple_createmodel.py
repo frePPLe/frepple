@@ -158,15 +158,23 @@ class Command(BaseCommand):
       if options['verbosity']>0: print "Creating working days..."
       workingdays = Calendar(name="Working Days")
       workingdays.save()
+      cur = None
       for i in Dates.objects.all():
         curdate = datetime(i.day.year, i.day.month, i.day.day)
         dayofweek = int(curdate.strftime("%w")) # day of the week, 0 = sunday, 1 = monday, ...
         if dayofweek == 1:
           # A bucket for the working week: monday through friday
-          Bucket(startdate=curdate, value=1, calendar=workingdays).save()
+          if cur:
+            cur.enddate = curdate
+            cur.save()
+          cur = Bucket(startdate=curdate, value=1, calendar=workingdays)
         elif dayofweek == 6:
           # A bucket for the weekend
-          Bucket(startdate=curdate, value=0, calendar=workingdays).save()
+          if cur:
+            cur.enddate = curdate
+            cur.save()
+          cur = Bucket(startdate=curdate, value=0, calendar=workingdays)
+      if cur: cur.save()
       transaction.commit()
 
       # Create a random list of categories to choose from

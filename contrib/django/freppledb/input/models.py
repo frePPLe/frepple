@@ -232,12 +232,19 @@ class Bucket(models.Model):
           prev.enddate = datetime(2030,12,31)
           prev.save()
 
+    @staticmethod
+    def insertBucket(instance):
+      # If the end date is specified, we take it for granted.
+      # Ideally we would check all inserts, but that is very time consuming
+      # when creating or restoring big datasets.
+      if instance.enddate == datetime(2030,12,31):
+        Bucket.updateEndDate(instance)
 
 # This dispatcher function is called after a bucket is saved. There seems no cleaner way to do this, since
 # the method calendar.buckets.all() is only up to date after the save...
 # The method is not very efficient: called for every single bucket, and recursively triggers
 # another save and dispatcher event
-dispatcher.connect(Bucket.updateEndDate, signal=signals.post_save, sender=Bucket)
+dispatcher.connect(Bucket.insertBucket, signal=signals.post_save, sender=Bucket)
 dispatcher.connect(Bucket.updateEndDate, signal=signals.post_delete, sender=Bucket)
 
 

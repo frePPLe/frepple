@@ -150,7 +150,7 @@ setup(
     url = "http://www.frepple.com",
     # Targets to build
     console = [ {
-       "script": "runserver.py",
+       "script": "manage.py",
        "icon_resources": [(1, "frepple.ico")]
        }, ],
     )

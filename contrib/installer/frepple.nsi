@@ -63,7 +63,7 @@ SetCompressor /SOLID lzma
 
 ; Definition of the finish page
 !define MUI_FINISHPAGE_RUN_TEXT "Start the server right now"
-!define MUI_FINISHPAGE_RUN "$INSTDIR\server\runserver.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\server\manage.exe"
 !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
 !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\index.html"
 !define MUI_FINISHPAGE_SHOWREADME_TEXT "View documentation"
@@ -165,7 +165,7 @@ Section "Application" SecAppl
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\server\runserver.exe"
+  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\server\manage.exe"
 
   ; Set an environment variable (and propagate immediately to other processes)
   System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("FREPPLE_HOME", "$INSTDIR\bin").r0'

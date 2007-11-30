@@ -23,7 +23,7 @@
 
 
 # Frepple specific variables
-import os, os.path, re, sys
+import os, os.path, sys
 try:
   FREPPLE_HOME = os.environ['FREPPLE_HOME']
 except:
@@ -40,7 +40,7 @@ FREPPLE_VERSION = '0.4.0-beta'
 STANDALONE = False
 try:
   for i in sys.argv:
-    STANDALONE = STANDALONE or (re.match(r'.*(runserver|runserver\.exe)$', i) != None)
+    STANDALONE = STANDALONE or i.find('runserver')>=0
 except:
   pass
 

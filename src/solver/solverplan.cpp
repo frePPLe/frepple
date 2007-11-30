@@ -157,17 +157,20 @@ DECLARE_EXPORT void MRPSolver::solve(void *v)
     if (demands_per_cluster.find(e->getCluster())!=demands_per_cluster.end())
       e->deleteOperationPlans();
 
+  // Count how many clusters we have to plan
+  int cl = demands_per_cluster.size();
+  if (cl<1) return;
+
   // Create the command list to control the execution
   CommandList threads;
+
   // Solve in parallel threads, if not in verbose mode
   if (getLogLevel()>0)
     threads.setMaxParallel(1);
   else
-  {
-    int cl = demands_per_cluster.size();
     threads.setMaxParallel( cl > getMaxParallel() ? getMaxParallel() : cl);
-  }
-  // Otherwise a problem in a single cluster could spoil it all
+
+  // Make sure a problem in a single cluster could spoil it all
   threads.setAbortOnError(false);
   for (classified_demand::iterator j = demands_per_cluster.begin();
       j != demands_per_cluster.end(); ++j)

@@ -337,19 +337,19 @@ class Operation(models.Model):
     # Database fields
     name = models.CharField(_('name'), maxlength=60, primary_key=True)
     type = models.CharField(_('type'), _('type'), maxlength=20, null=True, blank=True, choices=operationtypes)
-    fence = models.DecimalField('release fence', max_digits=15, decimal_places=4, null=True, blank=True,
+    fence = models.DecimalField(_('release fence'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Operationplans within this time window from the current day are expected to be released to production ERP"))
-    pretime = models.DecimalField('pre-op time', max_digits=15, decimal_places=4, null=True, blank=True,
+    pretime = models.DecimalField(_('pre-op time'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("A delay time to be respected as a soft constraint before starting the operation"))
-    posttime = models.DecimalField('post-op time', max_digits=15, decimal_places=4, null=True, blank=True,
+    posttime = models.DecimalField(_('post-op time'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("A delay time to be respected as a soft constraint after ending the operation"))
-    sizeminimum = models.DecimalField('size minimum', max_digits=15, decimal_places=4, null=True, blank=True,
+    sizeminimum = models.DecimalField(_('size minimum'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("A minimum lotsize quantity for operationplans"))
-    sizemultiple = models.DecimalField('size multiple', max_digits=15, decimal_places=4, null=True, blank=True,
+    sizemultiple = models.DecimalField(_('size multiple'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("A multiple quantity for operationplans"))
-    duration = models.DecimalField('duration', max_digits=15, decimal_places=4, null=True, blank=True,
+    duration = models.DecimalField(_('duration'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("A fixed duration for the operation"))
-    duration_per = models.DecimalField('duration per unit', max_digits=15, decimal_places=4, null=True, blank=True,
+    duration_per = models.DecimalField(_('duration per unit'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("A variable duration for the operation"))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 

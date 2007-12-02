@@ -83,7 +83,7 @@ def exportDemand():
   for i in frepple.demand():
     for j in i['DELIVERY']:
       writer.writerow(
-       (i['NAME'], i['DUE'], j['QUANTITY'], j['PLANDATE'] or '',
+       (i['NAME'], i['ITEM'], i['DUE'], j['QUANTITY'], j['PLANDATE'] or '',
         j['PLANQUANTITY'] or '', j['OPERATIONPLAN'] or '')
        )
   print 'Exported demands in %.2f seconds' % (time() - starttime)

@@ -48,11 +48,11 @@ class Preferences(models.Model):
     user = models.ForeignKey(User, verbose_name=_('user'), unique=True,
       edit_inline=models.TABULAR, num_in_admin=1, min_num_in_admin=1,
       max_num_in_admin=1, num_extra_on_change=0)
-    buckets = models.CharField(_('buckets'), maxlength=10, choices=buckettype,
+    buckets = models.CharField(_('buckets'), max_length=10, choices=buckettype,
       default='default')
     startdate = models.DateField(_('startdate'), blank=True, null=True)
     enddate = models.DateField(_('enddate'), blank=True, null=True)
-    csvformat = models.CharField(_('csv output format'), maxlength=5,
+    csvformat = models.CharField(_('csv output format'), max_length=5,
       blank=True, null=True, default='table', choices=csvOutputType)
     # This dummy field is required since django expects at least 1 field
     # with core set to True

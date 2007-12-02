@@ -43,8 +43,8 @@ CALENDARID = None
 
 class Plan(models.Model):
     # Database fields
-    name = models.CharField(_('name'), maxlength=60, null=True, blank=True)
-    description = models.CharField(_('description'), maxlength=60, null=True, blank=True)
+    name = models.CharField(_('name'), max_length=60, null=True, blank=True)
+    description = models.CharField(_('description'), max_length=60, null=True, blank=True)
     currentdate = models.DateTimeField(_('current date'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
@@ -68,23 +68,23 @@ class Dates(models.Model):
     day_end = models.DateField(_('day end'),db_index=True)
     dayofweek = models.SmallIntegerField(_('Day of week'), help_text=_('0 = sunday, 1 = monday, ...'))
     # Weekly buckets
-    week = models.CharField(_('week'),maxlength=10, db_index=True)
+    week = models.CharField(_('week'),max_length=10, db_index=True)
     week_start = models.DateField(_('week start'),db_index=True)
     week_end = models.DateField(_('week end'),db_index=True)
     # Monthly buckets
-    month = models.CharField(_('month'),maxlength=10, db_index=True)
+    month = models.CharField(_('month'),max_length=10, db_index=True)
     month_start = models.DateField(_('month start'),db_index=True)
     month_end = models.DateField(_('month end'),db_index=True)
     # Quarterly buckets
-    quarter = models.CharField(_('quarter'),maxlength=10, db_index=True)
+    quarter = models.CharField(_('quarter'),max_length=10, db_index=True)
     quarter_start = models.DateField(_('quarter start'),db_index=True)
     quarter_end = models.DateField(_('quarter end'),db_index=True)
     # Yearly buckets
-    year = models.CharField(_('year'),maxlength=10, db_index=True)
+    year = models.CharField(_('year'),max_length=10, db_index=True)
     year_start = models.DateField(_('year start'),db_index=True)
     year_end = models.DateField(_('year end'),db_index=True)
     # Default buckets: days + weeks + months
-    default = models.CharField(_('default'),maxlength=10, db_index=True, null=True)
+    default = models.CharField(_('default'),max_length=10, db_index=True, null=True)
     default_start = models.DateField(_('default start'),db_index=True, null=True)
     default_end = models.DateField(_('default end'),db_index=True, null=True)
 
@@ -112,10 +112,10 @@ class Dates(models.Model):
 
 class Calendar(models.Model):
     # Database fields
-    name = models.CharField(_('name'), maxlength=60, primary_key=True)
-    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
-    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
+    name = models.CharField(_('name'), max_length=60, primary_key=True)
+    description = models.CharField(_('description'), max_length=200, null=True, blank=True)
+    category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def currentvalue(self):
@@ -196,7 +196,7 @@ class Bucket(models.Model):
     startdate = models.DateTimeField('start date', core=True)
     enddate = models.DateTimeField('end date', editable=False, null=True, default=datetime(2030,12,31))
     value = models.DecimalField(_('value'), max_digits=15, decimal_places=4, default=0.00)
-    name = models.CharField(_('name'), maxlength=60, null=True, blank=True)
+    name = models.CharField(_('name'), max_length=60, null=True, blank=True)
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __unicode__(self):
@@ -250,10 +250,10 @@ dispatcher.connect(Bucket.updateEndDate, signal=signals.post_delete, sender=Buck
 
 class Location(models.Model):
     # Database fields
-    name = models.CharField(_('name'), maxlength=60, primary_key=True)
-    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
-    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
+    name = models.CharField(_('name'), max_length=60, primary_key=True)
+    description = models.CharField(_('description'), max_length=200, null=True, blank=True)
+    category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
       raw_id_admin=True, help_text=_('Hierarchical parent'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
@@ -275,10 +275,10 @@ class Location(models.Model):
 
 class Customer(models.Model):
     # Database fields
-    name = models.CharField(_('name'), maxlength=60, primary_key=True)
-    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
-    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
+    name = models.CharField(_('name'), max_length=60, primary_key=True)
+    description = models.CharField(_('description'), max_length=200, null=True, blank=True)
+    category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
       raw_id_admin=True, help_text=_('Hierarchical parent'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
@@ -300,10 +300,10 @@ class Customer(models.Model):
 
 class Item(models.Model):
     # Database fields
-    name = models.CharField(_('name'), maxlength=60, primary_key=True)
-    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
-    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
+    name = models.CharField(_('name'), max_length=60, primary_key=True)
+    description = models.CharField(_('description'), max_length=200, null=True, blank=True)
+    category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     operation = models.ForeignKey('Operation', verbose_name=_('delivery operation'), null=True, blank=True, raw_id_admin=True)
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
       raw_id_admin=True, help_text=_('Hierarchical parent'))
@@ -335,8 +335,8 @@ class Operation(models.Model):
     )
 
     # Database fields
-    name = models.CharField(_('name'), maxlength=60, primary_key=True)
-    type = models.CharField(_('type'), _('type'), maxlength=20, null=True, blank=True, choices=operationtypes)
+    name = models.CharField(_('name'), max_length=60, primary_key=True)
+    type = models.CharField(_('type'), _('type'), max_length=20, null=True, blank=True, choices=operationtypes)
     fence = models.DecimalField(_('release fence'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Operationplans within this time window from the current day are expected to be released to production ERP"))
     pretime = models.DecimalField(_('pre-op time'), max_digits=15, decimal_places=4, null=True, blank=True,
@@ -423,11 +423,11 @@ class Buffer(models.Model):
     )
 
     # Fields common to all buffer types
-    name = models.CharField(_('name'), maxlength=60, primary_key=True)
-    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
-    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
-    type = models.CharField(_('type'), maxlength=20, null=True, blank=True, choices=buffertypes, default='')
+    name = models.CharField(_('name'), max_length=60, primary_key=True)
+    description = models.CharField(_('description'), max_length=200, null=True, blank=True)
+    category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
+    type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=buffertypes, default='')
     location = models.ForeignKey(Location, verbose_name=_('location'), null=True,
       blank=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, db_index=True, null=True, raw_id_admin=True)
@@ -512,11 +512,11 @@ class Resource(models.Model):
     )
 
     # Database fields
-    name = models.CharField(_('name'), maxlength=60, primary_key=True)
-    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
-    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
-    type = models.CharField(_('type'), maxlength=20, null=True, blank=True, choices=resourcetypes, default='')
+    name = models.CharField(_('name'), max_length=60, primary_key=True)
+    description = models.CharField(_('description'), max_length=200, null=True, blank=True)
+    category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
+    type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=resourcetypes, default='')
     maximum = models.ForeignKey(Calendar, verbose_name=_('maximum'), null=True, blank=True,
       raw_id_admin=True, help_text=_('Calendar defining the available capacity'))
     location = models.ForeignKey(Location, verbose_name=_('location'),
@@ -560,7 +560,7 @@ class Flow(models.Model):
       db_index=True, raw_id_admin=True, related_name='flows')
     thebuffer = models.ForeignKey(Buffer, verbose_name=_('buffer'),
       db_index=True, raw_id_admin=True, related_name='flows')
-    type = models.CharField(_('type'), maxlength=20, null=True, blank=True,
+    type = models.CharField(_('type'), max_length=20, null=True, blank=True,
       choices=flowtypes,
       help_text=_('Consume/produce material at the start or the end of the operationplan'),
       )
@@ -652,10 +652,10 @@ class Demand(models.Model):
     )
 
     # Database fields
-    name = models.CharField(_('name'), maxlength=60, primary_key=True)
-    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
-    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
+    name = models.CharField(_('name'), max_length=60, primary_key=True)
+    description = models.CharField(_('description'), max_length=200, null=True, blank=True)
+    category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, raw_id_admin=True)
     due = models.DateTimeField(_('due'))
@@ -665,7 +665,7 @@ class Demand(models.Model):
       help_text=_('Operation used to satisfy this demand'))
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4)
     priority = models.PositiveIntegerField(_('priority'),default=2, choices=demandpriorities, radio_admin=True)
-    policy = models.CharField(_('policy'),maxlength=25, null=True, blank=True, choices=demandpolicies,
+    policy = models.CharField(_('policy'),max_length=25, null=True, blank=True, choices=demandpolicies,
       help_text=_('Choose whether to plan the demand short or late, and with single or multiple deliveries allowed'))
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, raw_id_admin=True,
       help_text=_('Hierarchical parent'))
@@ -695,17 +695,17 @@ class Demand(models.Model):
 
 class Forecast(models.Model):
     # Database fields
-    name = models.CharField(_('name'), maxlength=60, primary_key=True)
-    description = models.CharField(_('description'), maxlength=200, null=True, blank=True)
-    category = models.CharField(_('category'), maxlength=20, null=True, blank=True, db_index=True)
-    subcategory = models.CharField(_('subcategory'), maxlength=20, null=True, blank=True, db_index=True)
+    name = models.CharField(_('name'), max_length=60, primary_key=True)
+    description = models.CharField(_('description'), max_length=200, null=True, blank=True)
+    category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
+    subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, raw_id_admin=True)
     calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), null=False, raw_id_admin=True)
     operation = models.ForeignKey(Operation, verbose_name=_('delivery operation'), null=True, blank=True,
       related_name='used_forecast', raw_id_admin=True, help_text=_('Operation used to satisfy this demand'))
     priority = models.PositiveIntegerField(_('priority'),default=2, choices=Demand.demandpriorities, radio_admin=True)
-    policy = models.CharField(_('policy'),maxlength=25, null=True, blank=True, choices=Demand.demandpolicies,
+    policy = models.CharField(_('policy'),max_length=25, null=True, blank=True, choices=Demand.demandpolicies,
       help_text=_('Choose whether to plan the demand short or late, and with single or multiple deliveries allowed'))
     discrete = models.BooleanField(_('discrete'),default=True, radio_admin=True, help_text=_('Round forecast numbers to integers'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)

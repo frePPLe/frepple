@@ -28,8 +28,8 @@ from django.utils.translation import ugettext_lazy as _
 class log(models.Model):
   # Database fields
   lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
-  category = models.CharField(_('category'), maxlength=10, db_index=True)
-  message = models.TextField(_('message'), maxlength=200, null=True)
+  category = models.CharField(_('category'), max_length=10, db_index=True)
+  message = models.TextField(_('message'), max_length=200, null=True)
   user = models.CharField(_('user'), max_length=30, null=True)
 
   def __unicode__(self):

@@ -101,7 +101,7 @@ def _create_rowheader(req, sort, cls):
 
   # Extra hidden fields for query parameters that aren't rows
   for key in args2:
-    result.append( '<th><input type="hidden" name="%s" value="%s"/>' % (key, args2[key]))
+    result.append('<input type="hidden" name="%s" value="%s"/>' % (key, args2[key]))
 
   # 'Go' button
   result.append( '<th><input type="submit" value="Go" tabindex="1100"/></th></form>' )

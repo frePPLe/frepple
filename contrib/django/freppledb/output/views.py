@@ -126,7 +126,7 @@ class DemandReport(TableReport):
   '''
   template = 'output/demand.html'
   title = _('Demand Report')
-  basequeryset = Item.objects.extra(where=('name in (select item_id from demand)',))
+  basequeryset = Item.objects.extra(where=('name in (select distinct item_id from demand union select distinct item_id from forecast)',))
   rows = (
     ('item',{
       'filter': FilterText(field='name'),
@@ -135,8 +135,10 @@ class DemandReport(TableReport):
       }),
     )
   crosses = (
-    ('demand',{'title': _('Demand')}),
-    ('supply',{'title': _('Supply')}),
+    ('forecast',{'title': _('Forecast')}),
+    ('orders',{'title': _('Orders')}),
+    ('demand',{'title': _('Total demand')}),
+    ('supply',{'title': _('Total supply')}),
     ('backlog',{'title': _('Backlog')}),
     )
   columns = (
@@ -148,14 +150,20 @@ class DemandReport(TableReport):
     # Execute the query
     cursor = connection.cursor()
     query = '''
-        select x.name as row1,
-               x.bucket as col1, x.startdate as col2, x.enddate as col3,
-               coalesce(sum(demand.quantity),0),
-               min(x.planned)
+        select y.name as row1,
+               y.bucket as col1, y.startdate as col2, y.enddate as col3,
+               min(y.orders),
+               coalesce(sum(fcst.quantity * %s / %s),0),
+               min(y.planned)
         from (
+          select x.name as name,
+               x.bucket as bucket, x.startdate as startdate, x.enddate as enddate,
+               coalesce(sum(demand.quantity),0) as orders,
+               min(x.planned) as planned
+          from (
           select items.name as name,
                  d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
-                 coalesce(sum(pln.quantity),0) as planned
+                 coalesce(sum(out_demand.quantity),0) as planned
           from (%s) items
           -- Multiply with buckets
           cross join (
@@ -165,15 +173,10 @@ class DemandReport(TableReport):
                group by %s, %s_start, %s_end
                ) d
           -- Planned quantity
-          left join (
-            select item_id as item_id, out_demand.plandate as plandate, out_demand.planquantity as quantity
-            from out_demand
-            inner join demand
-            on out_demand.demand = demand.name
-            ) pln
-          on items.name = pln.item_id
-          and d.startdate <= pln.plandate
-          and d.enddate > pln.plandate
+          left join out_demand
+          on items.name = out_demand.item
+          and d.startdate <= out_demand.plandate
+          and d.enddate > out_demand.plandate
           -- Grouping
           group by items.name, d.bucket, d.startdate, d.enddate
         ) x
@@ -182,10 +185,24 @@ class DemandReport(TableReport):
         on x.name = demand.item_id
         and x.startdate <= demand.due
         and x.enddate > demand.due
-        -- Ordering and grouping
+        -- Grouping
         group by x.name, x.bucket, x.startdate, x.enddate
-        order by %s, x.startdate
-       ''' % (basesql,connection.ops.quote_name(bucket),bucket,bucket,
+        ) y
+        -- Forecasted quantity
+        left join (select forecast.item_id as item_id, forecastdemand.startdate as startdate,
+		        forecastdemand.enddate as enddate, forecastdemand.quantity as quantity
+          from forecastdemand, forecast
+          where forecastdemand.forecast_id = forecast.name
+          ) fcst
+        on y.name = fcst.item_id
+        and fcst.enddate >= y.startdate
+        and fcst.startdate <= y.enddate
+        -- Ordering and grouping
+        group by y.name, y.bucket, y.startdate, y.enddate
+        order by %s, y.startdate
+       ''' % (sql_overlap('fcst.startdate','fcst.enddate','y.startdate','y.enddate'),
+         sql_datediff('fcst.enddate','fcst.startdate'),
+         basesql,connection.ops.quote_name(bucket),bucket,bucket,
        startdate,enddate,connection.ops.quote_name(bucket),bucket,bucket,sortsql)
     cursor.execute(query,baseparams)
 
@@ -193,17 +210,19 @@ class DemandReport(TableReport):
     previtem = None
     for row in cursor.fetchall():
       if row[0] != previtem:
-        backlog = row[4] - row[5]  # @todo Setting the backlog to 0 is not correct: it may be non-zero from the plan before the start date
+        backlog = float(row[4]) + float(row[5]) - float(row[6])  # @todo Setting the backlog to 0 is not correct: it may be non-zero from the plan before the start date
         previtem = row[0]
       else:
-        backlog += row[4] - row[5]
+        backlog += float(row[4]) + float(row[5]) - float(row[6])
       yield {
         'item': row[0],
         'bucket': row[1],
         'startdate': python_date(row[2]),
         'enddate': python_date(row[3]),
-        'demand': row[4],
-        'supply': row[5],
+        'orders': row[4],
+        'forecast': row[5],
+        'demand': float(row[4]) + float(row[5]),
+        'supply': row[6],
         'backlog': backlog,
         }
 
@@ -533,7 +552,9 @@ class FlowPlanReport(ListReport):
       }),
     # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the operation field.
     # ('operation', {'filter': 'operation__icontains', 'title': _('operation')}),
-    ('operation', {'sort': False, 'title': _('operation')}),
+    ('operation', {
+      'title': _('operation'),
+      }),
     ('quantity', {
       'title': _('quantity'),
       'filter': FilterNumber(),
@@ -637,18 +658,16 @@ class DemandPlanReport(ListReport):
   template = 'output/demandplan.html'
   title = _("Demand Plan Detail")
   reset_crumbs = False
-  basequeryset = Demand.objects.extra(
-    select={'item':'demand.item_id'},
-    where=['demand.name = out_demand.demand'],
-    tables=['demand'])
+  basequeryset = Demand.objects.all()
   rows = (
     ('demand', {
       'filter': FilterText(),
-      'title': _('Demand')
+      'title': _('demand')
       }),
-    # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the item field.
-    # ('item_id', {'filter': 'item__icontains', 'title': _('item')}),
-    ('item', {'sort': False, 'title': _('item')}),
+    ('item', {
+      'title': _('item'),
+      'filter': FilterText(),
+      }),
     ('quantity', {
       'title': _('quantity'),
       'filter': FilterNumber(),

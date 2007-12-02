@@ -28,8 +28,8 @@ from django.db import models
 class OperationPlan(models.Model):
     # Database fields
     identifier = models.IntegerField(_('identifier'), primary_key=True)
-    demand = models.CharField(_('demand'), maxlength=60, null=True, db_index=True)
-    operation = models.CharField(_('operation'), maxlength=60, db_index=True, null=True)
+    demand = models.CharField(_('demand'), max_length=60, null=True, db_index=True)
+    operation = models.CharField(_('operation'), max_length=60, db_index=True, null=True)
     quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4, default='1.00')
     startdatetime = models.DateTimeField(_('start datetime'), )
     enddatetime = models.DateTimeField(_('end datetime'), )
@@ -49,9 +49,9 @@ class OperationPlan(models.Model):
 
 class Problem(models.Model):
     # Database fields
-    entity = models.CharField(_('entity'), maxlength=10, db_index=True)
-    name = models.CharField(_('name'), maxlength=20, db_index=True)
-    description = models.CharField(_('description'), maxlength=80)
+    entity = models.CharField(_('entity'), max_length=10, db_index=True)
+    name = models.CharField(_('name'), max_length=20, db_index=True)
+    description = models.CharField(_('description'), max_length=80)
     startdatetime = models.DateTimeField(_('start datetime'))
     enddatetime = models.DateTimeField(_('end datetime'))
     startdate = models.DateField(_('start date'), db_index=True)
@@ -70,7 +70,7 @@ class Problem(models.Model):
 
 class LoadPlan(models.Model):
     # Database fields
-    resource = models.CharField(_('resource'), maxlength=60, db_index=True)
+    resource = models.CharField(_('resource'), max_length=60, db_index=True)
     quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4)
     startdatetime = models.DateTimeField(_('start datetime'))
     startdate = models.DateField(_('start date'), db_index=True)
@@ -91,7 +91,7 @@ class LoadPlan(models.Model):
 
 class FlowPlan(models.Model):
     # Database fields
-    thebuffer = models.CharField(_('buffer'), maxlength=60, db_index=True)
+    thebuffer = models.CharField(_('buffer'), max_length=60, db_index=True)
     operationplan = models.IntegerField(_('operationplan'), db_index=True)
     quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4)
     flowdatetime = models.DateTimeField(_('datetime'))
@@ -111,7 +111,8 @@ class FlowPlan(models.Model):
 
 class Demand(models.Model):
     # Database fields
-    demand = models.CharField(_('demand'), maxlength=60, db_index=True, null=True)
+    demand = models.CharField(_('demand'), max_length=60, db_index=True, null=True)
+    item = models.CharField(_('item'), max_length=60, db_index=True, null=True)
     duedate = models.DateField(_('due date'))
     duedatetime = models.DateTimeField(_('due datetime'))
     quantity = models.DecimalField(_('demand quantity'), max_digits=15, decimal_places=4, default='0.00')
@@ -132,13 +133,13 @@ class Demand(models.Model):
 
 class DemandPegging(models.Model):
     # Database fields
-    demand = models.CharField(_('demand'), maxlength=60, db_index=True)
+    demand = models.CharField(_('demand'), max_length=60, db_index=True)
     depth = models.IntegerField(_('depth'))
     cons_operationplan = models.IntegerField(_('consuming operationplan'), db_index=True, null=True)
     cons_date = models.DateTimeField(_('consuming datetime'))
     prod_operationplan = models.IntegerField(_('producing operationplan'), db_index=True, null=True)
     prod_date = models.DateTimeField(_('producing datetime'))
-    buffer = models.CharField(_('buffer'), maxlength=60, db_index=True, null=True)
+    buffer = models.CharField(_('buffer'), max_length=60, db_index=True, null=True)
     quantity_demand = models.DecimalField(_('quantity demand'), max_digits=15, decimal_places=4, default='0.00')
     quantity_buffer = models.DecimalField(_('quantity buffer'), max_digits=15, decimal_places=4, default='0.00')
     pegged = models.BooleanField(_('pegged'), default=True, radio_admin=True)

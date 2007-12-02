@@ -22,7 +22,7 @@
 # email : jdetaeye@users.sourceforge.net
 
 
-# The code in this file is executed NOT by Django, but by the embedded Python 
+# The code in this file is executed NOT by Django, but by the embedded Python
 # interpreter from the frePPLe engine.
 # The code iterates over all objects in the C++ core engine, and creates
 # database records with the information. Django's database wrappers are used
@@ -165,10 +165,10 @@ def exportDemand(cursor):
   for i in frepple.demand():
     cursor.executemany(
       "insert into out_demand \
-      (demand,duedate,duedatetime,quantity,plandate,plandatetime,planquantity,operationplan) \
-      values (%s,%s,%s,%s,%s,%s,%s,%s)",
+      (demand,item,duedate,duedatetime,quantity,plandate,plandatetime,planquantity,operationplan) \
+      values (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
-         i['NAME'], str(i['DUE'].date()), str(i['DUE']), round(j['QUANTITY'],ROUNDING_DECIMALS),
+         i['NAME'], i['ITEM'], str(i['DUE'].date()), str(i['DUE']), round(j['QUANTITY'],ROUNDING_DECIMALS),
          (j['PLANDATE'] and str(j['PLANDATE'].date())) or None, (j['PLANDATE'] and str(j['PLANDATE'])) or None,
          (j['PLANQUANTITY'] and round(j['PLANQUANTITY'],ROUNDING_DECIMALS)) or None,
          j['OPERATIONPLAN'] or None

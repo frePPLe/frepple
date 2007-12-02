@@ -705,8 +705,9 @@ class LoadPlanReport(ListReport):
       'title': _('resource')
       }),
     # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the operation field.
-    #('operation', {'filter': 'operation__icontains', 'title': _('operation')}),
-    ('operation', {'sort': False, 'title': _('operation')}),
+    ('operation', {
+      'title': _('operation'),
+      }),
     ('startdatetime', {
       'title': _('startdate'),
       'filter': FilterDate(field='startdate'),

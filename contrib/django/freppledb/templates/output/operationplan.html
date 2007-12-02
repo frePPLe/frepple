@@ -18,23 +18,9 @@
 {% block content %}
 <div id="content-main">
 
-<div id="demandcontext" class="ContextMenu">
-{% if perms.input.change_demand %}<a id="/admin/input/demand/%s/">Demand</a>{% endif %}
-<a id="/pegging/?demand=%s/">Pegging</a>
-</div>
-
-<div id="forecastcontext" class="ContextMenu">
-{% if perms.input.change_forecast %}<a id="/admin/input/forecast/%s/">Forecast</a>{% endif %}
-<a id="/pegging/?demand=%s/">Pegging</a>
-<a id="/forecast/%s/">Edit values</a>
-</div>
-
-<div id="operationcontext" class="ContextMenu">
-{% if perms.input.change_operation %}<a id="/admin/input/operation/%s/">Operation</a>{% endif %}
-<a id="/supplypath/operation/%s/">Supply Path</a>
-<a id="/whereused/operation/%s/">Where Used</a>
-<a id="/operation/%s/">Plan</a>
-</div>
+{% include "demandcontext.html" %}
+{% include "forecastcontext.html" %}
+{% include "operationcontext.html" %}
 
 <div style="overflow-x: scroll; overflow-y: auto;">
 <table>

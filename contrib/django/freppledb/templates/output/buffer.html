@@ -18,23 +18,9 @@
 {% block content %}
 <div id="content-main">
 
-<div id="buffercontext" class="ContextMenu">
-{% if perms.input.change_buffer %}<a id="/admin/input/buffer/%s/">Buffer</a>{% endif %}
-<a id="/supplypath/buffer/%s/">Supply Path</a>
-<a id="/whereused/buffer/%s/">Where Used</a>
-<a id="/buffer/%s/">Plan</a>
-</div>
-
-<div id="itemcontext" class="ContextMenu">
-{% if perms.input.change_item %}<a id="/admin/input/item/%s/">Item</a>{% endif %}
-<a id="/supplypath/item/%s/">Supply Path</a>
-<a id="/whereused/item/%s/">Where Used</a>
-<a id="/demand/%s/">Demand</a>
-</div>
-
-<div id="locationcontext" class="ContextMenu">
-<a id="/admin/input/location/%s/">Location</a>
-</div>
+{% include "buffercontext.html" %}
+{% include "itemcontext.html" %}
+{% include "locationcontext.html" %}
 
 <div style="overflow-x: scroll; overflow-y: auto;">
 <table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>

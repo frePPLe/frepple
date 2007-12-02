@@ -46,16 +46,8 @@
 </div>{% endblock %}{% block content %}
 <div id="content-main">
 
-<div id="resourcecontext" class="ContextMenu">
-{% if perms.input.change_resource %}<a id="/admin/input/resource/%s/">Resource</a>{% endif %}
-<a id="/whereused/resource/%s/">Where used</a>
-<a id="/supplypath/resource/%s/">Supply Path</a>
-<a id="/resource/%s/">Plan</a>
-</div>
-
-<div id="locationcontext" class="ContextMenu">
-<a id="/admin/input/location/%s/">Location</a>
-</div>
+{% include "resourcecontext.html" %}
+{% include "locationcontext.html" %}
 
 <div style="overflow-x: scroll; overflow-y: auto;">
 <table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>

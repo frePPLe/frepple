@@ -15,19 +15,8 @@
 </div>{% endblock %}{% block content %}
 <div id="content-main">
 
-<div id="operationcontext" class="ContextMenu">
-{% if perms.input.change_operation %}<a id="/admin/input/operation/%s/">Operation</a>{% endif %}
-<a id="/supplypath/operation/%s/">Supply Path</a>
-<a id="/whereused/operation/%s/">Where Used</a>
-<a id="/operation/%s/">Plan</a>
-</div>
-
-<div id="resourcecontext" class="ContextMenu">
-{% if perms.input.change_resource %}<a id="/admin/input/resource/%s/">Resource</a>{% endif %}
-<a id="/whereused/resource/%s/">Where used</a>
-<a id="/supplypath/resource/%s/">Supply Path</a>
-<a id="/resource/%s/">Plan</a>
-</div>
+{% include "operationcontext.html" %}
+{% include "resourcecontext.html" %}
 
 <div style="overflow-x: scroll; overflow-y: auto;">
 <table>
@@ -44,7 +33,6 @@
 </tr>{% endfor %}
 </tbody></table>
 </div>
-
 
 {% block pagination %} <p class="paginator">
 {{paginator_html}}&nbsp;&nbsp;{{hits}} resource load plans {% ifnotequal hits fullhits %} (total <a class="showall" href="/loadplan/">{{fullhits}}</a>){% endifnotequal %}

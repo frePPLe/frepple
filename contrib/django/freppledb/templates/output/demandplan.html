@@ -15,17 +15,8 @@
 </div>{% endblock %}{% block content %}
 <div id="content-main">
 
-<div id="demandcontext" class="ContextMenu">
-{% if perms.input.change_demand %}<a id="/admin/input/demand/%s/">Demand</a>{% endif %}
-<a id="/pegging/?demand=%s/">Pegging</a>
-</div>
-
-<div id="itemcontext" class="ContextMenu">
-{% if perms.input.change_item %}<a id="/admin/input/item/%s/">Item</a>{% endif %}
-<a id="/supplypath/item/%s/">Supply Path</a>
-<a id="/whereused/item/%s/">Where Used</a>
-<a id="/demand/%s/">Demand</a>
-</div>
+{% include "demandcontext.html" %}
+{% include "itemcontext.html" %}
 
 <div style="overflow-x: scroll; overflow-y: auto;">
 <table>

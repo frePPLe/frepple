@@ -14,12 +14,7 @@
 </div>{% endblock %}{% block content %}
 <div id="content-main">
 
-<div id="operationcontext" class="ContextMenu">
-{% if perms.input.change_operation %}<a id="/admin/input/operation/%s/">Operation</a>{% endif %}
-<a id="/supplypath/operation/%s/">Supply Path</a>
-<a id="/whereused/operation/%s/">Where Used</a>
-<a id="/operation/%s/">Plan</a>
-</div>
+{% include "operationcontext.html" %}
 
 <div style="overflow-x: scroll; overflow-y: auto;">
 <table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>

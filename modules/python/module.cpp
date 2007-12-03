@@ -171,15 +171,15 @@ void CommandPython::initialize()
   mainThreadState = PyThreadState_Get();
 
   // Register our new types
-  define_type<PythonProblem>(m, "problem", "frepple problem");
-  define_type<PythonFlowPlan>(m, "flowplan", "frepple flowplan");
-  define_type<PythonLoadPlan>(m, "loadplan", "frepple loadplan");
-  define_type<PythonOperationPlan>(m, "operationplan", "frepple operationplan");
-  define_type<PythonDemand>(m, "demand", "frepple demand");
-  define_type<PythonDemandPegging>(m, "pegging", "frepple demand pegging");
-  define_type<PythonDemandDelivery>(m, "delivery", "frepple demand delivery");
-  define_type<PythonBuffer>(m, "buffer", "frepple buffer");
-  define_type<PythonResource>(m, "resource", "frepple resource");
+  define_type<PythonProblem>(m, "problem", "frePPLe problem");
+  define_type<PythonFlowPlan>(m, "flowplan", "frePPLe flowplan");
+  define_type<PythonLoadPlan>(m, "loadplan", "frePPLe loadplan");
+  define_type<PythonOperationPlan>(m, "operationplan", "frePPLe operationplan");
+  define_type<PythonDemand>(m, "demand", "frePPLe demand");
+  define_type<PythonDemandPegging>(m, "pegging", "frePPLe demand pegging");
+  define_type<PythonDemandDelivery>(m, "delivery", "frePPLe demand delivery");
+  define_type<PythonBuffer>(m, "buffer", "frePPLe buffer");
+  define_type<PythonResource>(m, "resource", "frePPLe resource");
 
   // Redirect the stderr and stdout streams of Python
   PyRun_SimpleString(

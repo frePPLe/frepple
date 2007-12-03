@@ -103,6 +103,24 @@ def exportPegging():
   print 'Exported pegging in %.2f seconds' % (time() - starttime)
 
 
+def exportForecast():
+  # Detect whether the forecast module is available
+  try: import freppleforecast
+  except: return
+
+  print "Exporting forecast..."
+  starttime = time()
+  writer = csv.writer(open("forecast.csv", "wb"), quoting=csv.QUOTE_ALL)
+  for i in freppleforecast.forecast():
+    for j in i['BUCKETS']:
+      if j['TOTALQTY'] > 0:
+        writer.writerow((
+          i['NAME'], j['START_DATE'], j['END_DATE'], j['TOTALQTY'],
+          j['NETQTY'], j['CONSUMEDQTY']
+         ))
+  print 'Exported forecast in %.2f seconds' % (time() - starttime)
+
+
 def exportfrepple():
   exportProblems()
   exportOperationplans()
@@ -110,3 +128,4 @@ def exportfrepple():
   exportLoadplans()
   exportDemand()
   exportPegging()
+  exportForecast()

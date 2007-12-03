@@ -265,13 +265,13 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
   else if (pElement.isA (Tags::tag_operation))
   {
     Operation *o = dynamic_cast<Operation*>(pIn.getPreviousObject());
-    if (o) oper = o;
+    if (o) setOperation(o);
     else throw LogicException("Incorrect object type during read operation");
   }
   else if (pElement.isA (Tags::tag_customer))
   {
     Customer *c = dynamic_cast<Customer*>(pIn.getPreviousObject());
-    if (c) cust = c;
+    if (c) setCustomer(c);
     else throw LogicException("Incorrect object type during read operation");
   }
   else if (pElement.isA (Tags::tag_policy))
@@ -279,7 +279,7 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
   else if (pElement.isA (Tags::tag_item))
   {
     Item *i = dynamic_cast<Item*>(pIn.getPreviousObject());
-    if (i) it = i;
+    if (i) setItem(i);
     else throw LogicException("Incorrect object type during read operation");
   }
   else if (pElement.isA(Tags::tag_operation_plan))

@@ -9,17 +9,22 @@ sources = forecast.cpp forecast.h forecastsolver.cpp module.cpp
 # single directory.
 libdir = @bindir@
 
-AM_CPPFLAGS=-I@top_builddir@/include
-
-EXTRA_DIST = mod_forecast.xsd $(sources)
+EXTRA_DIST = mod_forecast.xsd $(sources) pythonforecast.cpp
 
 CLEANFILES = *.gcda *.gcov *.gcno
 
 if FORECAST
 
 lib_LTLIBRARIES = mod_forecast.la
+if PYTHON
+AM_CPPFLAGS=-I@top_builddir@/include -I/usr/include/python$(PYTHON_VERSION)
+mod_forecast_la_SOURCES = $(sources) pythonforecast.cpp
+mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
+else
+AM_CPPFLAGS=-I@top_builddir@/include
 mod_forecast_la_SOURCES = $(sources)
 mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
+endif
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
 mod_forecast_la_LDFLAGS += -no-undefined

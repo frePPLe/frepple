@@ -154,3 +154,23 @@ class DemandPegging(models.Model):
         ordering = ['id']
         verbose_name = _('demand pegging')
         verbose_name_plural = _('demand peggings')
+
+
+class Forecast(models.Model):
+    # Database fields
+    forecast = models.CharField(_('forecast'), max_length=60, db_index=True)
+    startdate = models.DateField(_('start date'), null=False)
+    enddate = models.DateField(_('end date'), null=False)
+    total = models.DecimalField(_('total quantity'), max_digits=15, decimal_places=4, default='0.00')
+    net = models.DecimalField(_('net quantity'), max_digits=15, decimal_places=4, default='0.00')
+    consumed = models.DecimalField(_('consumed quantity'), max_digits=15, decimal_places=4, default='0.00')
+
+    def __unicode__(self):
+        return self.forecast.name \
+          + ' - ' + str(self.startdate) + ' - ' + str(self.enddate)
+
+    class Meta:
+        db_table = 'out_forecast'
+        ordering = ['id']
+        verbose_name = _('forecast plan')
+        verbose_name_plural = _('forecast plans')

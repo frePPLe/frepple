@@ -114,7 +114,7 @@ FILE_PATTERNS          = *.h *.cpp
 
 RECURSIVE              = YES
 
-EXCLUDE                = ../include/frepple/entity.h ../src/tags.cpp 
+EXCLUDE                = ../include/frepple/entity.h ../src/tags.cpp
 
 EXCLUDE_SYMLINKS       = NO
 
@@ -278,17 +278,15 @@ INCLUDE_PATH           = ../include ../src
 
 INCLUDE_FILE_PATTERNS  =
 
-# The 2 predefined preprocessor symbols are required for the following:
-#   HAVE_LIBGLPK: Force documenting of the LP solver related classes, even
-#                 if the package is configured not to use it.
-#   DOXYGEN_SHOULD_SKIP_THIS: Allows us to prevent documenting something.
+# The predefined preprocessor symbols are required for the following:
+#   DOXYGEN: Allows us to selectively include or hide something.
 #   MT: Force documentation of multi-threading related functionality, even if
 #       this wasn't enabled.
 #   __cplusplus: Make sure we have all C++ features documented.
 #   DECLARE_EXPORT: Hide this symbol from the documentation
 #   MODULE_EXPORT: Hide this symbol from the documentation
 
-PREDEFINED             = HAVE_LIBGLPK DOXYGEN_SHOULD_SKIP_THIS MT __cplusplus DECLARE_EXPORT:= MODULE_EXPORT:=
+PREDEFINED             = DOXYGEN MT __cplusplus DECLARE_EXPORT:= MODULE_EXPORT:=
 
 EXPAND_AS_DEFINED      = DECLARE_EXPORT MODULE_EXPORT
 

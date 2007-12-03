@@ -81,9 +81,12 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   // Get notified when a calendar is deleted
   FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
 
+  // Register the python functions if the python module is loaded
+  if (CommandLoadLibrary::isLoaded("python")) 
+    initializePython();
+
   // Return the name of the module
   return name;
 }
-
 
 }       // end namespace

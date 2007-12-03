@@ -51,7 +51,7 @@ def truncate(cursor):
   else:
     delete = "truncate table %s"
   for table in ['out_problem', 'out_demandpegging', 'out_flowplan',
-                'out_loadplan', 'out_demand', #xxx'out_forecast',
+                'out_loadplan', 'out_demand', 'out_forecast',
                 'out_operationplan',
                ]:
     cursor.execute(delete % table)
@@ -207,23 +207,26 @@ def exportPegging(cursor):
 
 
 def exportForecast(cursor):
+  # Detect whether the forecast module is available
+  try: import freppleforecast
+  except: return
+
   global ROUNDING_DECIMALS
   print "Exporting forecast..."
   starttime = time()
   cnt = 0
-  for i in frepple.demand():
+  for i in freppleforecast.forecast():
     cursor.executemany(
       "insert into out_forecast \
-      (operationplan,operation_id,resource_id,quantity,loaddate, \
-      loaddatetime,onhand,maximum) values (%s,%s,%s,%s,%s,%s,%s,%s)",
+      (forecast,startdate,enddate,total,net,consumed) \
+      values (%s,%s,%s,%s,%s,%s)",
       [(
-         j['OPERATIONPLAN'], j['OPERATION'], j['RESOURCE'],
-         round(j['QUANTITY'],ROUNDING_DECIMALS), j['DATE'].date(), j['DATE'],
-         round(j['ONHAND'],ROUNDING_DECIMALS), round(j['MAXIMUM'],ROUNDING_DECIMALS)
-       ) for j in i['LOADPLANS']
+         i['NAME'], j['START_DATE'], j['END_DATE'], round(j['TOTALQTY'],ROUNDING_DECIMALS),
+        round(j['NETQTY'],ROUNDING_DECIMALS), round(j['CONSUMEDQTY'],ROUNDING_DECIMALS)
+       ) for j in i['BUCKETS'] if j['TOTALQTY'] > 0
       ])
     cnt += 1
-    if cnt % 50 == 0: transaction.commit()
+    if cnt % 100 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_forecast")
   print 'Exported %d forecasts in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
@@ -288,7 +291,7 @@ def exportfrepple():
     exportFlowplans(cursor)
     exportLoadplans(cursor)
     exportDemand(cursor)
-    #exportForecast(cursor)
+    exportForecast(cursor)
     exportPegging(cursor)
 
   else:
@@ -297,7 +300,7 @@ def exportfrepple():
     # are run in sequence.
     tasks = (
       DatabaseTask(exportProblems, exportDemand),
-      DatabaseTask(exportOperationplans),
+      DatabaseTask(exportOperationplans, exportForecast),
       DatabaseTask(exportFlowplans),
       DatabaseTask(exportLoadplans),
       DatabaseTask(exportPegging),

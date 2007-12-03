@@ -315,11 +315,6 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
 
   if (pIn.isObjectEnd())
   {
-    // Update the dictionary
-    ForecastDictionary.insert(make_pair(
-      make_pair(&*getItem(),&*getCustomer()),
-      this
-      ));
     // Delete dynamically allocated temporary read object
     if (pIn.getUserArea()) 
       delete static_cast< pair<DateRange,double>* >(pIn.getUserArea());

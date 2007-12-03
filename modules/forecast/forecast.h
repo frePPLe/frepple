@@ -157,8 +157,13 @@ namespace module_forecast
 
 
 /** Initialization routine for the library. */
-MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);
+MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList&);
 
+
+/** Initializes python extensions enabled by the module. */
+void initializePython();
+
+struct PythonForecastBucket;
 
 /** @brief This class represents a bucketized demand signal.
   *
@@ -173,6 +178,7 @@ class Forecast : public Demand
 {
     TYPEDEF(Forecast);
     friend class ForecastSolver;
+    friend struct PythonForecastBucket;
   private:
     /** @brief This class represents a forecast value in a time bucket.
       *
@@ -181,6 +187,7 @@ class Forecast : public Demand
       */
     class ForecastBucket : public Demand
     {
+      
       public:
         ForecastBucket(Forecast* f, Date d, Date e, float w, ForecastBucket* p) 
           : Demand(f->getName() + " - " + string(d)), weight(w), consumed(0), 
@@ -325,6 +332,9 @@ class Forecast : public Demand
       * is used for an uninitialized forecast. */
     static bool callback(Calendar*, const Signal);
 
+    /** Return a reference to a dictionary with all forecast objects. */
+    static const MapOfForecasts& getForecasts() {return ForecastDictionary;}
+
   private:    
     /** Initializion of a forecast.<br>
       * It creates demands for each bucket of the calendar.
@@ -448,6 +458,44 @@ class ForecastSolver : public Solver
     /** Used for sorting demands during netting. */
     typedef multiset < Demand*, sorter > sortedDemandList;
 };
+
+
+#if defined(Py_PYTHON_H) || defined(DOXYGEN)
+
+extern "C"
+{
+
+  /** @brief This struct exports forecast information to Python. */
+  struct PythonForecast
+  {
+    private:
+      PyObject_HEAD
+      Forecast::MapOfForecasts::const_iterator iter;
+    public:
+      static PyTypeObject InfoType;
+      static PyObject* next(PythonForecast*);
+      static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
+      static void destroy(PythonForecast* obj) {PyObject_Del(obj);}
+  };
+
+
+  /** @brief This struct exports forecast bucket information to Python. */
+  struct PythonForecastBucket
+  {
+    private:
+      PyObject_HEAD
+      Forecast::ForecastBucket *iter;
+    public:
+      static PyTypeObject InfoType;
+      static PyObject* next(PythonForecastBucket*);
+      static PyObject* create(PyTypeObject*, PyObject*, PyObject*) {return NULL;}
+      static void destroy(PythonForecastBucket* obj) {PyObject_Del(obj);}
+      static PyObject* createFromForecast(Forecast*);
+  };
+
+}
+
+#endif
 
 }   // End namespace
 

@@ -3628,7 +3628,7 @@ class Demand
     Customer::pointer getCustomer() const { return cust; }
 
     /** Updates the customer. */
-    void setCustomer(const Customer* c) { cust = c; setChanged(); }
+    virtual void setCustomer(const Customer* c) { cust = c; setChanged(); }
 
     /** Returns the total amount that has been planned. */
     DECLARE_EXPORT float getPlannedQuantity() const;

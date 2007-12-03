@@ -400,7 +400,7 @@ extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj)
   {
     // Find a non-hidden buffer
     const Buffer *buf = &*(obj->iter);
-    while (buf && buf->getHidden()) buf = buf->getOwner();
+    while (buf && buf->getHidden()) buf = buf->getOwner();  
     // Build a python dictionary
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:f,s:z,s:z,s:z,s:z,s:z,s:O}",
       "NAME", buf ? buf->getName().c_str() : "unspecified",

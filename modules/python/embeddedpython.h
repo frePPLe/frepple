@@ -97,6 +97,9 @@
   * we want frePPLe to remain the owner of all data.
   */
 
+#ifndef PYTHON_H
+#define PYTHON_H
+
 /* Python.h has to be included first. */
 #include "Python.h"
 #include "datetime.h"
@@ -172,7 +175,10 @@ class CommandPython : public Command, public XMLinstruction
 
       // Register the new type in the module
       if (PyType_Ready(&X::InfoType) < 0)
+      {
+        PyEval_ReleaseLock();
         throw frepple::RuntimeException("Can't register python type " + a);
+      }
       Py_INCREF(&X::InfoType);
       PyModule_AddObject(m, const_cast<char*>(a.c_str()), reinterpret_cast<PyObject*>(&X::InfoType));
     }
@@ -430,3 +436,4 @@ extern "C"
 
 }
 
+#endif

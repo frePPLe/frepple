@@ -132,8 +132,7 @@ void ForecastSolver::solve(void *v)
   bool autorun = getAutomatic();
   setAutomatic(false);
 
-  // Sort the demands using the same sort function as used for 
-  // planning.
+  // Sort the demands using the same sort function as used for planning.
   // Note: the memory consumption of the sorted list can be significant
   sortedDemandList l;  
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)

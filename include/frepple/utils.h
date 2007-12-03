@@ -41,7 +41,7 @@
 
 // We want to use singly linked lists, but these are not part of the C++
 // standard though. Sigh...
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef DOXYGEN
 #ifdef HAVE_EXT_SLIST
 // Singly linked lists as extension: gcc 3.x
 #include <ext/slist>
@@ -98,7 +98,7 @@ using namespace std;
 #endif
 
 // For the disabled and ansi-challenged people...
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef DOXYGEN
 #ifndef HAVE_STRNCASECMP
 # ifdef _MSC_VER
 #   define strncasecmp _strnicmp
@@ -120,7 +120,7 @@ using namespace std;
 #define ROUNDING_ERROR   0.0001f
 
 // Header files for the Xerces-c XML parser.
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef DOXYGEN
 #define XERCES_NEW_IOSTREAMS
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
@@ -149,7 +149,7 @@ using namespace xercesc;
   */
 #undef DECLARE_EXPORT
 #undef MODULE_EXPORT
-#if defined(WIN32) && !defined(DOXYGEN_SHOULD_SKIP_THIS)
+#if defined(WIN32) && !defined(DOXYGEN)
   #ifdef FREPPLE_CORE
     #define DECLARE_EXPORT __declspec (dllexport)
   #else

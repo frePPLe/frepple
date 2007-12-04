@@ -133,25 +133,21 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
           g->setQuantity(-data.a_qty, true);
           a_qty = opplan->getQuantity();
           incomplete = true;
-        }
-        else
-          // Never answer more than asked. The actual operationplan
-          // could be bigger because of lot sizing.
-          a_qty = - q_qty_Flow / g->getFlow()->getQuantity();
 
-        // Validate the answered date
-        if ((data.a_qty < q_qty_Flow)
-            && (!delay || delay > data.a_date - q_date_Flow))
-          // Late supply of material. We expect the end of the operation 
-          // to be delayed with the same amount of time as the delay.
+          // Validate the answered date of the most limiting flowplan.
           // Note that the delay variable only reflects the delay due to 
           // material constraints. If the operationplan is moved early or late
           // for capacity constraints, this is not included.
           delay = data.a_date - q_date_Flow;
 
-        // Jump out of the loop if the answered quantity is 0. There is 
-        // absolutely no need to check other flowplans.
-        if (a_qty <= ROUNDING_ERROR) break;
+          // Jump out of the loop if the answered quantity is 0. There is 
+          // absolutely no need to check other flowplans.
+          if (a_qty <= ROUNDING_ERROR) break;
+        }
+        else if (data.a_qty >+ q_qty_Flow + ROUNDING_ERROR) 
+          // Never answer more than asked. 
+          // The actual operationplan could be bigger because of lot sizing.
+          a_qty = - q_qty_Flow / g->getFlow()->getQuantity();
       }
 
     isPlannedEarly = opplan->getDates().getEnd() < orig_dates.getEnd();
@@ -239,9 +235,6 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
       a_qty = 0.0f;
       delay = 0L;
       a_date = opplan->getDates().getEnd();   
-
-      // Shrink all material consumption and production
-      //opplan->setQuantity(0);
     }
 
   // Compute the final reply

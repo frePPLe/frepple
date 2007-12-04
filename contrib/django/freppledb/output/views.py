@@ -433,9 +433,9 @@ class OperationReport(TableReport):
       }),
     )
   crosses = (
-    ('frozen_start', {'title': _('Frozen Starts'),}),
+    ('locked_start', {'title': _('Locked Starts'),}),
     ('total_start', {'title': _('Total Starts'),}),
-    ('frozen_end', {'title': _('Frozen Ends'),}),
+    ('locked_end', {'title': _('Locked Ends'),}),
     ('total_end', {'title': _('Total Ends'),}),
     )
   columns = (

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <?PYTHON
+import os
+
 from freppledb.execute.export_database import exportfrepple as export_to_database
 from freppledb.execute.export_file import exportfrepple as export_to_file
 from freppledb.execute.load import loadfrepple
-import os
+from django.conf import settings
 
 # Create a solver where the plan type are defined by an environment variable
 try: plantype = os.environ['PLAN_TYPE']
@@ -16,6 +18,14 @@ frepple.readXMLdata(
     <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="%s"/>
   </SOLVERS>
   </PLAN>''' % (os.path.join(os.environ['FREPPLE_HOME'],'frepple.log'),plantype), False, False)
+
+if settings.DATABASE_ENGINE == 'sqlite3':
+  print "Using sqlite3 database '%s'" % settings.DATABASE_NAME
+else:
+  print "Using %s database '%s' as '%s' on '%s:%s'" % (settings.DATABASE_ENGINE, \
+    settings.DATABASE_NAME, settings.DATABASE_USER, settings.DATABASE_HOST, \
+    settings.DATABASE_PORT)
+
 ?>
   <COMMANDS>
     <VERBOSE>true</VERBOSE>

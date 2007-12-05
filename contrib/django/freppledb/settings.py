@@ -200,3 +200,10 @@ elif DATABASE_ENGINE == 'mysql':
   # InnoDB has the proper support for transactions that is required for
   # frePPLe in a production environment.
   DATABASE_OPTIONS = {"init_command": "SET storage_engine=INNODB"}
+
+# Always use the same database for testing and a normal run.
+# This is required since the test suite runs frePPLe in batch as a seperate
+# process. The frePPLe batch process doesn't know whether it's running in test 
+# mode or in normal mode, so we assure here that both refer to the same 
+# database.
+TEST_DATABASE_NAME = DATABASE_NAME

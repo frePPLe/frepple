@@ -29,8 +29,7 @@ from django.core.exceptions import ObjectDoesNotExist
 class DataLoadTest(django.test.TestCase):
 
   def setUp(self):
-    # Create a client
-    self.client = Client()
+    # Login
     self.client.login(username='frepple', password='frepple')
 
   def test_input_customer(self):

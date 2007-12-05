@@ -30,8 +30,7 @@ from django.core.exceptions import ObjectDoesNotExist
 class ExecuteTest(django.test.TestCase):
 
   def setUp(self):
-    # Create a client
-    self.client = Client()
+    # Login
     self.client.login(username='frepple', password='frepple')
 
   def test_execute_page(self):
@@ -48,13 +47,10 @@ class ExecuteTest(django.test.TestCase):
     # Run frepple
     response = self.client.post('/execute/runfrepple/', {'action':'run', 'type':7})
     # The answer is a redirect to a new page, which also contains the success message
-    self.failUnlessEqual(response.status_code, 302)
-    response = self.client.get(response._headers['location'])
-    self.assertContains(response.content, 'Successfully ran frepple')
-    # xxx problem: frepple doesn't export in the test database...
+    self.assertRedirects(response, '/execute/execute.html')
 
     # Count the output records
-    self.failIfEqual(output.models.Problem.objects.count(),0)
-    self.failIfEqual(output.models.Flowplan.objects.count(),0)
-    self.failIfEqual(output.models.LoadPlan.objects.count(),0)
-    self.failIfEqual(output.models.OperationPlan.objects.count(),0)
+    self.failUnlessEqual(output.models.Problem.objects.count(),11)
+    self.failUnlessEqual(output.models.FlowPlan.objects.count(),158)
+    self.failUnlessEqual(output.models.LoadPlan.objects.count(),36)
+    self.failUnlessEqual(output.models.OperationPlan.objects.count(),105)

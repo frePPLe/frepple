@@ -229,7 +229,7 @@ def _generate_csv(rep, qs, format, bucketlist):
       fields.extend([ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.columns ])
       fields.extend([ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.crosses ])
     else:
-      fields.extend( [''])
+      fields.extend( [_('data field')])
       fields.extend([ b['name'] for b in bucketlist])
   writer.writerow(fields)
   yield sf.getvalue()
@@ -250,30 +250,48 @@ def _generate_csv(rep, qs, format, bucketlist):
       # Type 2: "table report in list format"
       # Iterate over all rows and columns
       for row in qs:
-        for col in row:
-          # Clear the return string buffer
-          sf.truncate(0)
-          # Build the return value
-          fields = [ col[s[0]] for s in rep.rows ]
-          fields.extend([ col[s[0]] for s in rep.columns ])
-          fields.extend([ col[s[0]] for s in rep.crosses ])
-          # Return string
-          writer.writerow(fields)
-          yield sf.getvalue()
+        # Clear the return string buffer
+        sf.truncate(0)
+        # Build the return value
+        fields = [ row[s[0]] for s in rep.rows ]
+        fields.extend([ row[s[0]] for s in rep.columns ])
+        fields.extend([ row[s[0]] for s in rep.crosses ])
+        # Return string
+        writer.writerow(fields)
+        yield sf.getvalue()
     else:
       # Type 3: A "table report in table formtat"
       # Iterate over all rows, crosses and columns
+      prev_row = None
       for row in qs:
+        if not prev_row:
+          prev_row = row[rep.rows[0][0]]
+          row_of_buckets = [row]
+        elif prev_row == row[rep.rows[0][0]]:
+          row_of_buckets.append(row)
+        else:
+          # Write an entity
+          for cross in rep.crosses:
+            # Clear the return string buffer
+            sf.truncate(0)
+            fields = [ row_of_buckets[0][s[0]] for s in rep.rows ]
+            fields.extend( [('title' in cross[1] and _(cross[1]['title'])) or _(cross[0])] )
+            fields.extend([ bucket[cross[0]] for bucket in row_of_buckets ])
+            # Return string
+            writer.writerow(fields)
+            yield sf.getvalue()
+          prev_row = row[rep.rows[0][0]]
+          row_of_buckets = [row]
+      # Write the last entity
+      for cross in rep.crosses:
         # Clear the return string buffer
-        for cross in rep.crosses:
-          sf.truncate(0)
-          fields = [ row[0][s[0]] for s in rep.rows ]
-          fields.extend( [('title' in cross[1] and _(cross[1]['title'])) or _(cross[0])] )
-          fields.extend([ bucket[cross[0]] for bucket in row ])
-          #fields.extend([ s[cross] for s in row ])
-          # Return string
-          writer.writerow(fields)
-          yield sf.getvalue()
+        sf.truncate(0)
+        fields = [ row_of_buckets[0][s[0]] for s in rep.rows ]
+        fields.extend( [('title' in cross[1] and _(cross[1]['title'])) or _(cross[0])] )
+        fields.extend([ bucket[cross[0]] for bucket in row_of_buckets ])
+        # Return string
+        writer.writerow(fields)
+        yield sf.getvalue()
   else:
     raise Http404('Unknown report type')
 
@@ -309,7 +327,7 @@ def view_report(request, entity=None, **args):
     (bucket,start,end,bucketlist) = getBuckets(request)
   else:
     bucket = start = end = bucketlist = None
-  type = request.GET.get('type','html')  # HTML or CSV output
+  type = request.GET.get('type','html')  # HTML or CSV (table or list) output
 
   # Pick up the filter parameters from the url
   counter = reportclass.basequeryset
@@ -399,7 +417,7 @@ def view_report(request, entity=None, **args):
   if type[:3] == 'csv':
     # CSV output
     if type == 'csv':
-      # Only csv is specified: use the user's preferences to determin whether
+      # Only csv is specified: use the user's preferences to determine whether
       # we want a list or table
       type = type + request.user.get_profile().csvformat
     response = HttpResponse(mimetype='text/csv')

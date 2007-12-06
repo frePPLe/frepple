@@ -3547,7 +3547,8 @@ class Demand
 
     /** Constructor. */
     explicit Demand(const string& str) : HasHierarchy<Demand>(str),
-        it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0) {}
+      it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0), 
+      maxLateness(TimePeriod::MAX) {}
 
     /** Destructor. Deleting the demand will also delete all delivery operation
       * plans */
@@ -3639,30 +3640,33 @@ class Demand
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
-    /** Returns true if this demand is allowed to be planned late.
-      * If so, the system will try to satisfy the demand at a later date.
-      * If not, only a delivery at the requested date is allowed.
-      * @see planShort
+    /** Return the maximum delay allowed in satisfying this demand.<br>
+      * The default value is infinite.
       */
-    bool planLate() const {return !policy.test(0);}
+    TimePeriod getMaxLateness() const {return maxLateness;}
 
-    /** Returns true if this demand isn't allowed to be planned late.
-      * If not, only a delivery at the requested date is allowed.
-      * @see planLate
+    /** Updates the maximum allowed lateness for this demand.<br>
+      * The default value is infinite.<br>
+      * The argument must be a positive time period.
       */
-    bool planShort() const {return policy.test(0);}
+    virtual void setMaxLateness(TimePeriod m)
+    {
+      if (m<0L) 
+        throw DataException("The maximum demand lateness must be positive");
+      maxLateness = m;
+    }
 
     /** Returns true if multiple delivery operationplans for this demand are
       * allowed.
       * @see planSingleDelivery
       */
-    bool planMultiDelivery() const {return !policy.test(1);}
+    bool planMultiDelivery() const {return !policy.test(0);}
 
     /** Returns true if only a single delivery operationplan is allowed for this
       * demand.
       * @see planMultiDelivery
       */
-    bool planSingleDelivery() const {return policy.test(1);}
+    bool planSingleDelivery() const {return policy.test(0);}
 
     /** Resets the demand policies to the default values, and then applies the
       * policies specified in the argument string.
@@ -3682,15 +3686,6 @@ class Demand
       * <li> 'whitespace' is a series of seperators (spaces, tabs, punctuations)
       * <li> 'policy' is one of the values:
       *    <ul>
-      *    <li>PLANSHORT<br>
-      *      A demand with this policy will be planned short if it can't be
-      *      planned on time.<br>
-      *      Opposite of PLANLATE policy.
-      *    <li>PLANLATE<br>
-      *      A demand with this policy will be planned late if it can't be
-      *      planned on time.<br>
-      *      Opposite of PLANSHORT policy.<br>
-      *      This policy is applied by default.
       *    <li>SINGLEDELIVERY<br>
       *      A demand with this policy can have only a single delivery
       *      operationplan.<br>
@@ -3703,7 +3698,7 @@ class Demand
       *    </ul>
       * </ul>
       * The policy string is case INsensitive.<br>
-      * The default policy string is "PLANLATE MULTIDELIVERY"
+      * The default policy string is "MULTIDELIVERY"
       */
     virtual DECLARE_EXPORT void addPolicy(const string&);
 
@@ -3712,10 +3707,10 @@ class Demand
 
     /** Specifies whether of not this demand is to be hidden from
       * serialization. The default value is false. */
-    void setHidden(bool b) {policy.set(2,b);}
+    void setHidden(bool b) {policy.set(1,b);}
 
     /** Returns true if this demand is to be hidden from serialization. */
-    bool getHidden() const {return policy.test(2);}
+    bool getHidden() const {return policy.test(1);}
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaCategory metadata;
@@ -3740,14 +3735,18 @@ class Demand
     /** Due date. */
     Date dueDate;
 
+    /** Maximum lateness allowed when planning this demand.<br>
+      * The default value is TimePeriod::MAX.
+      */
+    TimePeriod maxLateness;
+
     /** Efficiently stores a number of different policy values for the demand.
       * The default value for each policy bit is 0 / false.
       * The bits have the following meaning:
-      *  - 0: Late (false) or Short (true)
-      *  - 1: Multi (false) or Single (true) delivery
-      *  - 2: Hidden
+      *  - 0: Multi (false) or Single (true) delivery
+      *  - 1: Normal (false) or Hidden (true) demand
       */
-    bitset<3> policy;
+    bitset<2> policy;
 
     /** A list of operation plans to deliver this demand. */
     OperationPlan_list deli;

@@ -645,10 +645,8 @@ class Demand(models.Model):
 
     # Delivery policies to plan the demand
     demandpolicies = (
-      ('', _('Late with multiple deliveries')),
-      ('SINGLEDELIVERY', _('Late with single delivery')),
-      ('PLANSHORT', _('Short with multiple deliveries')),
-      ('PLANSHORT SINGLEDELIVERY', _('Short with single delivery'))
+      ('', _('Allow multiple deliveries')),
+      ('SINGLEDELIVERY', _('Allow only a single delivery')),
     )
 
     # Database fields
@@ -667,6 +665,8 @@ class Demand(models.Model):
     priority = models.PositiveIntegerField(_('priority'),default=2, choices=demandpriorities, radio_admin=True)
     policy = models.CharField(_('policy'),max_length=25, null=True, blank=True, choices=demandpolicies,
       help_text=_('Choose whether to plan the demand short or late, and with single or multiple deliveries allowed'))
+    maxlateness = models.DecimalField(_('maximum lateness'), max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_("Maximum lateness allowed when planning this demand"))
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, raw_id_admin=True,
       help_text=_('Hierarchical parent'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
@@ -677,7 +677,7 @@ class Demand(models.Model):
     class Admin:
         fields = (
             (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'quantity', 'priority','owner')}),
-            (_('Planning parameters'), {'fields': ('operation', 'policy', ), 'classes': 'collapse'}),
+            (_('Planning parameters'), {'fields': ('operation', 'policy', 'maxlateness'), 'classes': 'collapse'}),
         )
         list_display = ('name', 'item', 'customer', 'description', 'category',
           'subcategory', 'due', 'operation', 'quantity', 'priority','owner', 'lastmodified')
@@ -707,6 +707,8 @@ class Forecast(models.Model):
     priority = models.PositiveIntegerField(_('priority'),default=2, choices=Demand.demandpriorities, radio_admin=True)
     policy = models.CharField(_('policy'),max_length=25, null=True, blank=True, choices=Demand.demandpolicies,
       help_text=_('Choose whether to plan the demand short or late, and with single or multiple deliveries allowed'))
+    maxlateness = models.DecimalField(_('maximum lateness'), max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_("Maximum lateness allowed when planning this demand"))
     discrete = models.BooleanField(_('discrete'),default=True, radio_admin=True, help_text=_('Round forecast numbers to integers'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
@@ -873,7 +875,7 @@ class Forecast(models.Model):
     class Admin:
         fields = (
             (None, {'fields': ('name', 'item', 'customer', 'calendar', 'description', 'category','subcategory', 'priority')}),
-            (_('Planning parameters'), {'fields': ('discrete', 'operation', 'policy', ), 'classes': 'collapse'}),
+            (_('Planning parameters'), {'fields': ('discrete', 'operation', 'policy', 'maxlateness'), 'classes': 'collapse'}),
         )
         list_display = ('name', 'item', 'customer', 'calendar', 'description', 'category',
           'subcategory', 'operation', 'priority', 'lastmodified')

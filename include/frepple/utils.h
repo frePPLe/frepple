@@ -1277,6 +1277,12 @@ class TimePeriod
       */
     DECLARE_EXPORT void parse(const char*);
 
+    /** The maximum value for a timeperiod. */
+    DECLARE_EXPORT static const TimePeriod MAX;
+
+    /** The minimum value for a timeperiod. */
+    DECLARE_EXPORT static const TimePeriod MIN;
+
   private:
     /** The time is stored as a number of seconds. */
     long lval;

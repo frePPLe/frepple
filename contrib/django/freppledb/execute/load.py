@@ -326,9 +326,9 @@ def loadForecast(cursor):
   print 'Importing forecast...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, customer_id, item_id, priority, operation_id, policy, calendar_id, discrete FROM forecast")
+  cursor.execute("SELECT name, customer_id, item_id, priority, operation_id, policy, calendar_id, discrete, maxlateness FROM forecast")
   x = [ header, '<DEMANDS>' ]
-  for i, j, k, l, m, n, o, p in cursor.fetchall():
+  for i, j, k, l, m, n, o, p, q in cursor.fetchall():
     cnt += 1
     x.append('<DEMAND NAME=%s xsi:type="DEMAND_FORECAST" PRIORITY="%d">' % (quoteattr(i), l))
     if j: x.append( '<CUSTOMER NAME=%s />' % quoteattr(j))
@@ -337,6 +337,7 @@ def loadForecast(cursor):
     if n: x.append( '<POLICY>%s</POLICY>' % n)
     if o: x.append( '<CALENDAR NAME=%s />' % quoteattr(o))
     if not p: x.append( '<DISCRETE>false<DISCRETE>')
+    if q != None: x.append( '<MAXLATENESS>%s</MAXLATENESS>' % timeformat(q))
     x.append('</DEMAND>')
   x.append('</DEMANDS></PLAN>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
@@ -365,9 +366,9 @@ def loadDemand(cursor):
   print 'Importing demands...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, due, quantity, priority, item_id, operation_id, customer_id, owner_id, policy FROM demand")
+  cursor.execute("SELECT name, due, quantity, priority, item_id, operation_id, customer_id, owner_id, policy, maxlateness FROM demand")
   x = [ header, '<DEMANDS>' ]
-  for i, j, k, l, m, n, o, p, q in cursor.fetchall():
+  for i, j, k, l, m, n, o, p, q, r in cursor.fetchall():
     cnt += 1
     x.append('<DEMAND NAME=%s DUE="%s" QUANTITY="%s" PRIORITY="%d">' % (quoteattr(i), j.isoformat(), k, l))
     if m: x.append( '<ITEM NAME=%s />' % quoteattr(m))
@@ -375,6 +376,7 @@ def loadDemand(cursor):
     if o: x.append( '<CUSTOMER NAME=%s />' % quoteattr(o))
     if p: x.append( '<OWNER NAME=%s />' % quoteattr(p))
     if q: x.append( '<POLICY>%s</POLICY>' % q)
+    if r != None: x.append( '<MAXLATENESS>%s</MAXLATENESS>' % timeformat(r))
     x.append('</DEMAND>')
   x.append('</DEMANDS></PLAN>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)

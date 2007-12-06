@@ -227,11 +227,7 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
   o->writeElement(Tags::tag_calendar, calptr);
   if (!getDiscrete()) o->writeElement(Tags::tag_discrete, getDiscrete());
   o->writeElement(Tags::tag_operation, &*getOperation());
-  if (!planLate() && planSingleDelivery())
-    o->writeElement(Tags::tag_policy, "PLANSHORT SINGLEDELIVERY");
-  else if (!planLate())
-    o->writeElement(Tags::tag_policy, "PLANSHORT");
-  else if (planSingleDelivery())
+  if (planSingleDelivery()) 
     o->writeElement(Tags::tag_policy, "SINGLEDELIVERY");
 
   // Write all entries
@@ -391,6 +387,15 @@ void Forecast::setCustomer(const Customer* i)
   // Update the customer for all buckets/subdemands
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
     m->setCustomer(i);
+}
+
+
+void Forecast::setMaxLateness(TimePeriod i)
+{
+  Demand::setMaxLateness(i);
+  // Update the priority for all buckets/subdemands
+  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+    m->setMaxLateness(i);
 }
 
 

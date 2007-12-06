@@ -34,6 +34,8 @@
 namespace frepple
 {
 
+DECLARE_EXPORT const TimePeriod TimePeriod::MAX(LONG_MAX);
+DECLARE_EXPORT const TimePeriod TimePeriod::MIN(LONG_MIN);
 DECLARE_EXPORT string Date::format("%Y-%m-%dT%H:%M:%S");
 DECLARE_EXPORT string DateRange::separator = " / ";
 

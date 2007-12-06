@@ -97,6 +97,7 @@ DECLARE_EXPORT const XMLtag Tags::tag_lpst("LPST");
 DECLARE_EXPORT const XMLtag Tags::tag_maximum("MAXIMUM");
 DECLARE_EXPORT const XMLtag Tags::tag_maxinterval("MAXINTERVAL");
 DECLARE_EXPORT const XMLtag Tags::tag_maxinventory("MAXINVENTORY");
+DECLARE_EXPORT const XMLtag Tags::tag_maxlateness("MAXLATENESS");
 DECLARE_EXPORT const XMLtag Tags::tag_maxparallel("MAXPARALLEL");
 DECLARE_EXPORT const XMLtag Tags::tag_members("MEMBERS");
 DECLARE_EXPORT const XMLtag Tags::tag_minimum("MINIMUM");

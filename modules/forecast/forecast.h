@@ -199,7 +199,7 @@ class Forecast : public Demand
           setItem(&*(f->getItem()));
           setDue(d);
           setPriority(f->getPriority());
-          addPolicy(f->planLate() ? "PLANLATE" : "PLANSHORT");
+          setMaxLateness(f->getMaxLateness());
           addPolicy(f->planSingleDelivery() ? "SINGLEDELIVERY" : "MULTIDELIVERY");
           setOperation(&*(f->getOperation()));
         }
@@ -260,6 +260,9 @@ class Forecast : public Demand
 
     /** Update the customer. */
     virtual void setCustomer(const Customer*);
+
+    /* Update the maximum allowed lateness for planning. */
+    void setMaxLateness(TimePeriod);
 
     /** Specify a bucket calendar for the forecast. Once forecasted
       * quantities have been entered for the forecast, the calendar

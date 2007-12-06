@@ -136,7 +136,6 @@
       <DUE>2007-01-20T00:00:00</DUE>
       <PRIORITY>1</PRIORITY>
       <ITEM NAME="end item" />
-      <POLICY>PLANLATE</POLICY>
     </DEMAND>
     <!-- No mat or cap problem -->
     <DEMAND NAME="order 2">
@@ -144,7 +143,6 @@
       <DUE>2007-01-17T00:00:00</DUE>
       <PRIORITY>2</PRIORITY>
       <ITEM NAME="end item" />
-      <POLICY>PLANLATE</POLICY>
     </DEMAND>
     <!-- No mat or cap problem -->
     <DEMAND NAME="order 3">
@@ -152,7 +150,6 @@
       <DUE>2007-01-16T00:00:00</DUE>
       <PRIORITY>3</PRIORITY>
       <ITEM NAME="end item" />
-      <POLICY>PLANLATE</POLICY>
     </DEMAND>
     <!-- Creates a capcity overload, and needs to be planned late.
         Planning earlier is not possible due to material constraints.
@@ -162,7 +159,6 @@
       <DUE>2007-01-18T00:00:00</DUE>
       <PRIORITY>4</PRIORITY>
       <ITEM NAME="end item" />
-      <POLICY>PLANLATE</POLICY>
     </DEMAND>
   </DEMANDS>
 </PLAN>

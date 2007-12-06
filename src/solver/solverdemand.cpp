@@ -175,9 +175,10 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
       }
     }
   }
-  while (l->planLate()
-      && plan_qty > ROUNDING_ERROR
-      && plan_date < Date::infiniteFuture);
+  // Repeat while there is still a quantity left to plan and we aren't
+  // exceeding the maximum delivery delay.
+  while (plan_qty > ROUNDING_ERROR   
+      && plan_date < l->getDue() + l->getMaxLateness());
 }
 
 }

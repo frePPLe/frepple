@@ -100,6 +100,7 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_maximum;
     static DECLARE_EXPORT const XMLtag tag_maxinterval;
     static DECLARE_EXPORT const XMLtag tag_maxinventory;
+    static DECLARE_EXPORT const XMLtag tag_maxlateness;
     static DECLARE_EXPORT const XMLtag tag_maxparallel;
     static DECLARE_EXPORT const XMLtag tag_members;
     static DECLARE_EXPORT const XMLtag tag_minimum;

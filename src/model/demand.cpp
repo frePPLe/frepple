@@ -215,7 +215,6 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m
     // We only need to save if the policy is different from the default.
     // It is important to stick to the convention that the default is a zero!
     string p;
-    if (planShort()) p += "PLANSHORT ";
     if (planSingleDelivery()) p += "SINGLEDELIVERY ";
     o->writeElement(Tags::tag_policy, p);
   }
@@ -224,7 +223,9 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m
   o->writeElement(Tags::tag_quantity, qty);
   o->writeElement(Tags::tag_item, it);
   o->writeElement(Tags::tag_due, dueDate);
-  if (prio) o->writeElement(Tags::tag_priority, prio);
+  if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
+  if (getMaxLateness() != TimePeriod::MAX) 
+    o->writeElement(Tags::tag_maxlateness, getMaxLateness());
 
   // Write extra plan information
   if ((o->getContentType() == XMLOutput::PLAN
@@ -282,6 +283,8 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
     if (i) setItem(i);
     else throw LogicException("Incorrect object type during read operation");
   }
+  else if (pElement.isA (Tags::tag_maxlateness))
+    setMaxLateness(pElement.getTimeperiod());
   else if (pElement.isA(Tags::tag_operation_plan))
   {
     OperationPlan* opplan
@@ -310,26 +313,6 @@ DECLARE_EXPORT void Demand::addPolicy(const string& s)
     bool found = true;
     switch (*ptr)
     {
-      case 'P':
-        if (!strncasecmp(ptr, "PLANSHORT", 9))
-        {
-          // planshort
-          ptr += 9;
-          if (planShort()) break;
-          setChanged();
-          policy.set(0);
-        }
-        else if (!strncasecmp(ptr, "PLANLATE", 8))
-        {
-          // planlate
-          ptr += 8;
-          if (planLate()) break;
-          setChanged();
-          policy.reset(0);
-        }
-        else
-          found = false;
-        break;
       case 'S':
         if (strncasecmp(ptr, "SINGLEDELIVERY", 14) == 0)
         {
@@ -337,7 +320,7 @@ DECLARE_EXPORT void Demand::addPolicy(const string& s)
           ptr += 14;
           if (planSingleDelivery() ) break;
           setChanged();
-          policy.set(1);
+          policy.set(0);
         }
         else
           found = false;
@@ -349,7 +332,7 @@ DECLARE_EXPORT void Demand::addPolicy(const string& s)
           ptr += 13;
           if (planMultiDelivery()) break;
           setChanged();
-          policy.reset(1);
+          policy.reset(0);
         }
         else
           found = false;

@@ -174,8 +174,7 @@ class MRPSolver : public Solver
 
     /** Behavior of this solver method:
       *  - Respects the following demand planning policies:<br>
-      *     1) PLANSHORT - plan the demand short<br>
-      *        or PLANLATE - plan the demand late<br>
+      *     1) Maximum allowed lateness
       *     2) SINGLEDELIVERY - plan complete or plan nothing at all<br>
       *        or MULTIDELIVERY - allow the demand to be planned in multiple
       *        deliveries at different times<br>

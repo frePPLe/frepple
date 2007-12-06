@@ -525,8 +525,6 @@
 		<xsd:list>
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
-					<xsd:enumeration value="PLANSHORT" />
-					<xsd:enumeration value="PLANLATE" />
 					<xsd:enumeration value="SINGLEDELIVERY" />
 					<xsd:enumeration value="MULTIDELIVERY" />
 				</xsd:restriction>
@@ -550,6 +548,7 @@
 			<xsd:element name="OPERATION" type="OPERATION" />
 			<xsd:element name="CUSTOMER" type="CUSTOMER" />
 			<xsd:element name="POLICY" type="DEMANDPOLICY" />
+			<xsd:element name="MAXLATENESS" type="time" />
 			<xsd:element name="DETECTPROBLEMS" type="xsd:boolean" />
 			<xsd:element name="OWNER" type="DEMAND" />
 			<xsd:element name="MEMBERS">
@@ -567,6 +566,7 @@
 		<xsd:attribute name="PRIORITY" type="xsd:integer" />
 		<xsd:attribute name="DETECTPROBLEMS" type="xsd:boolean" />
 		<xsd:attribute name="POLICY" type="DEMANDPOLICY" />
+		<xsd:attribute name="MAXLATENESS" type="time" />
 	</xsd:complexType>
 
 	<xsd:complexType name="DEMANDLIST">

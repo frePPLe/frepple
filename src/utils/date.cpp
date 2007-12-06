@@ -34,23 +34,28 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const TimePeriod TimePeriod::MAX(LONG_MAX);
-DECLARE_EXPORT const TimePeriod TimePeriod::MIN(LONG_MIN);
 DECLARE_EXPORT string Date::format("%Y-%m-%dT%H:%M:%S");
 DECLARE_EXPORT string DateRange::separator = " / ";
 
-/* This is the earliest date that we can represent. */
+/* This is the earliest date that we can represent. This not the 
+ * traditional epcoh start, but a year later. 1/1/1970 gave troubles
+ * when using a timezone with positive offset to GMT.
+ */
 DECLARE_EXPORT const Date Date::infinitePast("1971-01-01T00:00:00",true);
 
 /* This is the latest date that we can represent. This is not the absolute
  * limit of the internal representation, but more a convenient end date. */
 DECLARE_EXPORT const Date Date::infiniteFuture("2030-12-31T00:00:00",true);
 
+DECLARE_EXPORT const TimePeriod TimePeriod::MAX(Date::infiniteFuture - Date::infinitePast);
+DECLARE_EXPORT const TimePeriod TimePeriod::MIN(Date::infinitePast - Date::infiniteFuture);
 
-DECLARE_EXPORT void Date::checkFinite()
+
+DECLARE_EXPORT void Date::checkFinite(long long i)
 {
-  if (lval > infiniteFuture.lval) lval = infiniteFuture.lval;
-  else if (lval < infinitePast.lval) lval = infinitePast.lval;
+  if (i > infiniteFuture.lval) lval = infiniteFuture.lval;
+  else if (i < infinitePast.lval) lval = infinitePast.lval;
+  else lval = static_cast<long>(i);
 }
 
 

@@ -1350,7 +1350,7 @@ class Date
     time_t lval;
 
     /** Checks whether we stay within the boundaries of finite Dates. */
-    DECLARE_EXPORT void checkFinite();
+    DECLARE_EXPORT void checkFinite(long long);
 
     /** This function fills a character buffer with a text representation of
       * the date.<br>
@@ -1365,7 +1365,7 @@ class Date
     Date(const char* s, bool dummy) {parse(s);}
 
     /** Constructor initialized with a long value. */
-    Date(const time_t l) : lval(l) {checkFinite();}
+    Date(const time_t l) : lval(l) {checkFinite(lval);}
 
   public:
     /** Default constructor. */
@@ -1378,7 +1378,7 @@ class Date
 
     /** Constructor initialized with a string. The string needs to be in
       * the format specified by the "format". */
-    Date(const char* s) {parse(s); checkFinite();}
+    Date(const char* s) {parse(s); checkFinite(lval);}
 
     /** Comparison between dates. */
     bool operator < (const Date& b) const {return lval < b.lval;}
@@ -1403,25 +1403,25 @@ class Date
 
     /** Adds some time to this date. */
     void operator += (const TimePeriod& l)
-    {lval += static_cast<long>(l); checkFinite();}
+    {checkFinite(static_cast<long long>(l) + lval);}
 
     /** Subtracts some time to this date. */
     void operator -= (const TimePeriod& l)
-    {lval -= static_cast<long>(l); checkFinite();}
+    {checkFinite(- static_cast<long long>(l) + lval);}
 
     /** Adding a time to a date returns a new date. */
     Date operator + (const TimePeriod& l) const
     {
-      Date d(lval + static_cast<long>(l)); 
-      d.checkFinite();
+      Date d; 
+      d.checkFinite(static_cast<long long>(l) + lval);
       return d;
     }
 
     /** Subtracting a time to a date returns a new date. */
     Date operator - (const TimePeriod& l) const 
     {
-      Date d(lval - static_cast<long>(l)); 
-      d.checkFinite();
+      Date d; 
+      d.checkFinite(- static_cast<long>(l) + lval);
       return d;
     }
 

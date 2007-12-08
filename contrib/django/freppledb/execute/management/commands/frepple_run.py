@@ -52,7 +52,7 @@ class Command(BaseCommand):
 
       # Log message
       log(category='RUN', user=user,
-        message=_('Start running frepple with plan type ') + str(type)).save()
+        message=_('Start creating frePPLe plan of type ') + str(type)).save()
 
       # Execute
       os.environ['PLAN_TYPE'] = str(type)
@@ -72,9 +72,9 @@ class Command(BaseCommand):
 
       # Log message
       log(category='RUN', user=user,
-        message=_('Finished running frepple')).save()
+        message=_('Finished creating frePPLe plan')).save()
     except Exception, e:
       try: log(category='RUN', user=user,
-        message=u'%s: %s' % (_('Failure when running frepple'),e)).save()
+        message=u'%s: %s' % (_('Failure when creating frePPLe plan'),e)).save()
       except: pass
       raise CommandError(e)

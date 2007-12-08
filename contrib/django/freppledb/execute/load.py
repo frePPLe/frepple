@@ -273,7 +273,7 @@ def loadFlows(cursor):
   print 'Importing flows...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT operation_id, thebuffer_id, quantity, type FROM flow")
+  cursor.execute("SELECT operation_id, thebuffer_id, quantity, type FROM flow order by operation_id, thebuffer_id")
   x = [ header, '<FLOWS>' ]
   for i, j, k, l in cursor.fetchall():
     cnt += 1
@@ -290,7 +290,7 @@ def loadLoads(cursor):
   print 'Importing loads...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT operation_id, resource_id, usagefactor FROM resourceload")
+  cursor.execute("SELECT operation_id, resource_id, usagefactor FROM resourceload order by operation_id, resource_id")
   x = [ header , '<LOADS>' ]
   for i, j, k in cursor.fetchall():
     cnt += 1

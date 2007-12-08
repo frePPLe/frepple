@@ -78,7 +78,7 @@ class Command(BaseCommand):
     try:
       # Logging the action
       log( category='CREATE', user=user,
-        message = _('Initializing dates')).save()
+        message = _('Start initializing dates')).save()
 
       # Performance improvement for sqlite during the bulky creation transactions
       if settings.DATABASE_ENGINE == 'sqlite3':

@@ -51,7 +51,7 @@ class Preferences(models.Model):
       default='default')
     startdate = models.DateField(_('startdate'), blank=True, null=True)
     enddate = models.DateField(_('enddate'), blank=True, null=True)
-    csvformat = models.CharField(_('csv output format'), max_length=5,
+    csvformat = models.CharField(_('CSV output format'), max_length=5,
       blank=True, null=True, default='table', choices=csvOutputType)
     # This dummy field is required since django expects at least 1 field
     # with core set to True

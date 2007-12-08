@@ -24,7 +24,7 @@ import random
 from optparse import make_option
 from datetime import timedelta, datetime, date
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import connection, transaction
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -64,17 +64,16 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     # Pick up the options
-    start = options('start','2006-1-1')
-    end = options('end','2010-1-1')
-    user = options('user','')
+    start = options.get('start','2006-1-1') or '2006-1-1'
+    end = options.get('end','2010-1-1') or '2010-1-1'
+    user = options.get('user','') or ''
 
     # Validate the date arguments
     try:
       curdate = datetime.strptime(start,'%Y-%m-%d')
       end = datetime.strptime(end,'%Y-%m-%d')
     except Exception, e:
-      print "Error: date is not matching format YYYY-MM-DD"
-      return
+      raise CommandError("Date is not matching format YYYY-MM-DD")
 
     try:
       # Logging the action
@@ -125,11 +124,13 @@ class Command(BaseCommand):
 
     except Exception, e:
       # Log failure and rethrow exception
-      log(category='CREATE', user=user,
+      try: log(category='CREATE', user=user,
         message=u'%s: %s' % (_('Failure initializing dates'),e)).save()
-      raise e
+      except: pass
+      raise CommandError(e)
 
     finally:
       # Commit it all, even in case of exceptions
-      transaction.commit()
+      try: transaction.commit()
+      except: pass
       settings.DEBUG = tmp_debug

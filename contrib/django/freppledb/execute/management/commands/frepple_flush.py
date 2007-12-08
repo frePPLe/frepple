@@ -22,7 +22,7 @@
 
 from optparse import make_option
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
 from django.db import connection, transaction
 from django.conf import settings
@@ -85,9 +85,10 @@ class Command(BaseCommand):
       log(category='ERASE', user=user,
         message=_('Finished erasing the database')).save()
     except Exception, e:
-      log(category='RUN', user=user,
+      try: log(category='RUN', user=user,
         message=u'%s: %s' % (_('Failed erasing the database'),e)).save()
-      raise e
+      except: pass
+      raise CommandError(e)
     finally:
       transaction.commit()
       settings.DEBUG = tmp_debug

@@ -23,7 +23,7 @@
 import os
 from optparse import make_option
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import ugettext as _
 from django.db import transaction
 from django.conf import settings
@@ -74,6 +74,7 @@ class Command(BaseCommand):
       log(category='RUN', user=user,
         message=_('Finished running frepple')).save()
     except Exception, e:
-      log(category='RUN', user=user,
+      try: log(category='RUN', user=user,
         message=u'%s: %s' % (_('Failure when running frepple'),e)).save()
-      raise e
+      except: pass
+      raise CommandError(e)

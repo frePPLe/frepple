@@ -24,7 +24,7 @@ import random
 from optparse import make_option
 from datetime import timedelta, datetime, date
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import connection, transaction
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -122,8 +122,11 @@ class Command(BaseCommand):
     try:
       startdate = datetime.strptime(currentdate,'%Y-%m-%d')
     except Exception, e:
-      print "X", e
-      raise Exception("Error: current date is not matching format YYYY-MM-DD")
+      raise CommandError("current date is not matching format YYYY-MM-DD")
+
+    # Check whether the database is empty
+    if Buffer.objects.count()>0 or Item.objects.count()>0:
+      raise CommandError("Database must be empty before creating a model")
 
     try:
       # Logging the action
@@ -346,9 +349,10 @@ class Command(BaseCommand):
 
     except Exception, e:
       # Log failure and rethrow exception
-      log(category='CREATE', user=user,
+      try: log(category='CREATE', user=user,
         message=u'%s: %s' % (_('Failure creating sample model'),e)).save()
-      raise e
+      except: pass
+      raise CommandError(e)
 
     finally:
       # Commit it all, even in case of exceptions

@@ -19,7 +19,6 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
 
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required

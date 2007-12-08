@@ -21,7 +21,6 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
 
 import sys, os, os.path
 sys.path.append(os.path.join(os.path.split(__file__)[0],'..','django'))

@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -61,7 +60,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     else
       logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
   }
-    
+
   // Initialize the metadata.
   CommandWebservice::metadata.registerClass(
     "COMMAND",

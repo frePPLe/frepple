@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -150,7 +149,7 @@ void LibraryModel::initialize()
     "COMMAND",
     "COMMAND_SIZE",
     Object::createDefault<CommandPlanSize>);
-  CommandCreateOperationPlan::metadata.registerClass( 
+  CommandCreateOperationPlan::metadata.registerClass(
     "COMMAND",
     "COMMAND_CREATE_OPPLAN"); // No factory method: cmd not created with xml
   CommandDeleteOperationPlan::metadata.registerClass(
@@ -393,7 +392,7 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   CommandLoadLibrary::printModules();
 
   // Print the number of clusters
-  logger << "Clusters: " 
+  logger << "Clusters: "
     << HasLevel::getNumberOfClusters() << endl << endl;
 
   // Header for memory size

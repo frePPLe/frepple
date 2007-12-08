@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -37,7 +36,7 @@ namespace frepple
 DECLARE_EXPORT string Date::format("%Y-%m-%dT%H:%M:%S");
 DECLARE_EXPORT string DateRange::separator = " / ";
 
-/* This is the earliest date that we can represent. This not the 
+/* This is the earliest date that we can represent. This not the
  * traditional epcoh start, but a year later. 1/1/1970 gave troubles
  * when using a timezone with positive offset to GMT.
  */

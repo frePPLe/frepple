@@ -2,7 +2,6 @@
 #  file     : $URL$
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
-#  email    : jdetaeye@users.sourceforge.net
 
 #
 # This python script uses the module unittest to run a series of tests.

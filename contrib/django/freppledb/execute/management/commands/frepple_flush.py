@@ -19,7 +19,6 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
 
 from optparse import make_option
 
@@ -36,13 +35,14 @@ class Command(BaseCommand):
   help = '''
   This command empties the contents of all data tables in the frePPLe database.
 
-  The results are similar to the 'flush input output' command, except that the
-  database objects are not dropped and recreated.
+  The results are similar to the 'flush input output' command, with the
+  difference that some tables are not emptied and some performance related
+  tweaks.
   Another difference is that the initial_data fixture is not loaded.
   '''
   option_list = BaseCommand.option_list + (
-      make_option('--user', dest='user', default='',
-          type='string', help='User running the command'),
+      make_option('--user', dest='user', type='string',
+        help='User running the command'),
       )
 
   requires_model_validation = False
@@ -59,9 +59,12 @@ class Command(BaseCommand):
     tmp_debug = settings.DEBUG
     settings.DEBUG = False
 
-    log(category='ERASE', user=options['user'],
-      message=_('Start erasing the database')).save()
+    # Pick up options
+    user = options.get('user','')
+
     try:
+      log(category='ERASE', user=user,
+        message=_('Start erasing the database')).save()
       cursor = connection.cursor()
       # SQLite specials
       if settings.DATABASE_ENGINE == 'sqlite3':
@@ -79,10 +82,10 @@ class Command(BaseCommand):
       # SQLite specials
       if settings.DATABASE_ENGINE == 'sqlite3':
         cursor.execute('vacuum')   # Shrink the database file
-      log(category='ERASE', user=options['user'],
+      log(category='ERASE', user=user,
         message=_('Finished erasing the database')).save()
     except Exception, e:
-      log(category='RUN', user=options['user'],
+      log(category='RUN', user=user,
         message=u'%s: %s' % (_('Failed erasing the database'),e)).save()
       raise e
     finally:

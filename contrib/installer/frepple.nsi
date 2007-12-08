@@ -4,7 +4,6 @@
 ;  file     : $URL$
 ;  revision : $LastChangedRevision$  $LastChangedBy$
 ;  date     : $LastChangedDate$
-;  email    : jdetaeye@users.sourceforge.net
 ;
 ; Copyright (C) 2007 by Johan De Taeye
 ;

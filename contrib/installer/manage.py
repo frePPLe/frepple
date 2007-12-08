@@ -19,7 +19,6 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
 
 import sys, os, os.path
 from stat import S_ISDIR, ST_MODE

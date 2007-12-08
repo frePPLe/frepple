@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -184,7 +183,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
 DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
 {
   // We are garantueed that there are no operationplans that have an id equal
-  // or higher than the current counter. This is garantueed by the 
+  // or higher than the current counter. This is garantueed by the
   // initialize() method.
   if (l >= counter) return NULL;
 
@@ -205,7 +204,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
   // Avoid zero quantity on top-operationplans
   if (getQuantity() <= 0.0 && !owner)
   {
-    delete this;  
+    delete this;
     return;
   }
 
@@ -320,7 +319,7 @@ DECLARE_EXPORT bool OperationPlan::operator < (const OperationPlan& a) const
 DECLARE_EXPORT void OperationPlan::updateSorting()
 {
   // Get out right away if this operationplan isn't initialized yet
-  if (!(next || prev || oper->last_opplan==this || oper->first_opplan==this)) 
+  if (!(next || prev || oper->last_opplan==this || oper->first_opplan==this))
     return;
 
   // Verify that we are smaller than the next operationplan
@@ -328,7 +327,7 @@ DECLARE_EXPORT void OperationPlan::updateSorting()
   {
     // Swap places with the next
     OperationPlan *tmp = next;
-    if (oper->first_opplan == this) 
+    if (oper->first_opplan == this)
       // New first operationplan
       oper->first_opplan = tmp;
     tmp->prev = prev;
@@ -342,7 +341,7 @@ DECLARE_EXPORT void OperationPlan::updateSorting()
   {
     // Swap places with the previous
     OperationPlan *tmp = prev;
-    if (oper->last_opplan == this) 
+    if (oper->last_opplan == this)
       // New last operationplan
       oper->last_opplan = tmp;
     prev = tmp->prev;
@@ -474,7 +473,7 @@ DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown, bool up
   }
   if (f!=0.0f && getOperation()->getSizeMultiple()>0.0f)
   {
-    int mult = (int) (f / getOperation()->getSizeMultiple()  
+    int mult = (int) (f / getOperation()->getSizeMultiple()
         + (roundDown ? 0.0f : 0.999999f));
     quantity = mult * getOperation()->getSizeMultiple();
   }
@@ -1016,7 +1015,7 @@ DECLARE_EXPORT void OperationPlanEffective::setQuantity(float f, bool roundDown,
 {
   // First the normal resizing
   OperationPlan::setQuantity(f,roundDown, update);
-  
+
   // Apply the same size also to the children operationplan
   if (effopplan)
   {

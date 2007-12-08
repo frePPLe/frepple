@@ -19,7 +19,6 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
 
 from datetime import timedelta
 

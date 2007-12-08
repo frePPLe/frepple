@@ -19,7 +19,7 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
+
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _

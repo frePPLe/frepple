@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -768,7 +767,7 @@ class Solver : public Object, public HasName<Solver>
 
     /** Returns how elaborate and verbose output is requested.<br>
       * As a guideline solvers should respect the following guidelines:
-      * - 0:<br> 
+      * - 0:<br>
       *   Completely silent.<br>
       *   This is the default value.
       * - 1:<br>
@@ -776,7 +775,7 @@ class Solver : public Object, public HasName<Solver>
       *   for logging normal operation.<br>
       * - 2:<br>
       *   Higher numbers are solver dependent. These levels are typically
-      *   used for debugging and tracing, and provide more detail on the 
+      *   used for debugging and tracing, and provide more detail on the
       *   solver's progress.
       */
     unsigned short getLogLevel() const {return loglevel;}
@@ -1116,7 +1115,7 @@ class Operation : public HasName<Operation>,
   protected:
     /** Constructor. Don't use it directly. */
     explicit Operation(const string& str) : HasName<Operation>(str),
-        size_minimum(0.0f), size_multiple(0.0f), hidden(false), 
+        size_minimum(0.0f), size_multiple(0.0f), hidden(false),
         first_opplan(NULL), last_opplan(NULL) {}
 
   public:
@@ -1170,7 +1169,7 @@ class Operation : public HasName<Operation>,
     /** This is the factory method which creates all operationplans of the
       * operation. */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
-      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0, 
+      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
     /** This method stores ALL logic the operation needs to compute the
@@ -1337,13 +1336,13 @@ class Operation : public HasName<Operation>,
     bool hidden;
 
     /** A pointer to the first operationplan of this operation.<br>
-      * All operationplans of this operation are stored in a sorted 
+      * All operationplans of this operation are stored in a sorted
       * doubly linked list.
       */
-    OperationPlan* first_opplan;    
-    
+    OperationPlan* first_opplan;
+
     /** A pointer to the last operationplan of this operation.<br>
-      * All operationplans of this operation are stored in a sorted 
+      * All operationplans of this operation are stored in a sorted
       * doubly linked list.
       */
     OperationPlan* last_opplan;
@@ -1667,7 +1666,7 @@ class OperationPlan
     /** Returns a unique identifier of the operationplan.<br>
       * The identifier can be specified in the data input (in which case
       * we check for the uniqueness during the read operation).<br>
-      * For operationplans created during a solver run, the identifier is 
+      * For operationplans created during a solver run, the identifier is
       * assigned in the initialize() function. The numbering starts with the
       * highest identifier read in from the input and is then incremented
       * for every operationplan that is registered.
@@ -1740,7 +1739,7 @@ class OperationPlan
       * Returns a NULL pointer if no such OperationPlan can be found.<br>
       * The method is of complexity O(n), i.e. involves a LINEAR search through
       * the existing operationplans, and can thus be quite slow in big models.<br>
-      * The method is O(1), i.e. constant time regardless of the model size, 
+      * The method is O(1), i.e. constant time regardless of the model size,
       * when the parameter passed is bigger than the operationplan counter.
       */
     static DECLARE_EXPORT OperationPlan* findId(unsigned long l);
@@ -1775,7 +1774,7 @@ class OperationPlan
     DECLARE_EXPORT bool operator < (const OperationPlan& a) const;
 
     /** This method should be called when an operationplan is updated in a way
-      * that can affect it's position in the sorted list: ie changes of the 
+      * that can affect it's position in the sorted list: ie changes of the
       * start date or quantity.<br>
       * The method will verify the correct sorting an update it if necessary.
       */
@@ -1799,8 +1798,8 @@ class OperationPlan
       * own override of the createOperationPlan method.
       * @see Operation::createOperationPlan
       */
-    OperationPlan() : owner(NULL), quantity(0.0), locked(false), lt(NULL), 
-      id(0), oper(NULL), firstflowplan(NULL), firstloadplan(NULL), 
+    OperationPlan() : owner(NULL), quantity(0.0), locked(false), lt(NULL),
+      id(0), oper(NULL), firstflowplan(NULL), firstloadplan(NULL),
       prev(NULL), next(NULL) {}
 
   private:
@@ -2031,7 +2030,7 @@ class OperationRouting : public Operation
       * @see Operation::createOperationPlan
       */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
-      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0, 
+      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
     virtual const MetaClass& getType() const {return metadata;}
@@ -2143,7 +2142,7 @@ class OperationAlternate : public Operation
       * @see Operation::createOperationPlan
       */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
-      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0, 
+      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
     virtual const MetaClass& getType() const {return metadata;}
@@ -2250,7 +2249,7 @@ class OperationEffective : public Operation
       * @see Operation::createOperationPlan
       */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
-      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0, 
+      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads = true) const;
 
     /** A operation of this type enforces the following rules on its
@@ -2482,7 +2481,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaCategory metadata;
 
-    /** This function matches producing and consuming operationplans 
+    /** This function matches producing and consuming operationplans
       * with each other, and updates the pegging iterator accordingly.
       */
     virtual DECLARE_EXPORT void followPegging
@@ -3272,7 +3271,7 @@ class Plan : public Plannable
 
 
 /** @brief This command is used for reading XML input. The input comes either
-  * from a flatfile, or from the standard input. 
+  * from a flatfile, or from the standard input.
   *
   * The command is not thread-safe: multiple threads can simultaneously access
   * the same objects.
@@ -3345,7 +3344,7 @@ class CommandReadXMLFile : public Command
 };
 
 
-/** @brief This command is used for reading XML input from a certain string. 
+/** @brief This command is used for reading XML input from a certain string.
   *
   * The command is not thread-safe: multiple threads can simultaneously access
   * the same objects.
@@ -3547,7 +3546,7 @@ class Demand
 
     /** Constructor. */
     explicit Demand(const string& str) : HasHierarchy<Demand>(str),
-      it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0), 
+      it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0),
       maxLateness(TimePeriod::MAX) {}
 
     /** Destructor. Deleting the demand will also delete all delivery operation
@@ -3651,7 +3650,7 @@ class Demand
       */
     virtual void setMaxLateness(TimePeriod m)
     {
-      if (m<0L) 
+      if (m<0L)
         throw DataException("The maximum demand lateness must be positive");
       maxLateness = m;
     }
@@ -3807,7 +3806,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Validates the consistency of the loadplan. */
     DECLARE_EXPORT bool check() const;
 
-    /** Each operationplan has 2 loadplans per load: one at the start, 
+    /** Each operationplan has 2 loadplans per load: one at the start,
       * when the capacity consumption starts, and one at the end, when the
       * capacity consumption ends.<br>
       * This method returns the "companion" loadplan.
@@ -4364,7 +4363,7 @@ class CommandDeleteOperationPlan : public Command
       */
     DECLARE_EXPORT CommandDeleteOperationPlan(OperationPlan* o);
     void execute() {oper = NULL;}
-    DECLARE_EXPORT void undo(); 
+    DECLARE_EXPORT void undo();
     bool undoable() const {return true;}
     ~CommandDeleteOperationPlan() {if (oper) undo();}
     virtual const MetaClass& getType() const {return metadata;}
@@ -4408,10 +4407,10 @@ class CommandMoveOperationPlan : public Command
       * @param newDate New date of the operationplan.
       * @param startOrEnd Specifies whether the new date is the start (=false)
       * or end date (=true). By default we use the end date.
-      * @param newQty New quantity of the operationplan.The default is -1, 
+      * @param newQty New quantity of the operationplan.The default is -1,
       * which indicates to leave the quantity unchanged.
       */
-    DECLARE_EXPORT CommandMoveOperationPlan (OperationPlan* opplanptr, 
+    DECLARE_EXPORT CommandMoveOperationPlan (OperationPlan* opplanptr,
       Date newDate, bool startOrEnd=true, float newQty = -1.0);
     void execute() { opplan=NULL; }
     DECLARE_EXPORT void undo();
@@ -4592,16 +4591,16 @@ class PeggingIterator
     }
 
     /** Return the operationplan consuming the material. */
-    OperationPlan::pointer getConsumingOperationplan() const 
+    OperationPlan::pointer getConsumingOperationplan() const
     {
       const FlowPlan* x = stack.top().cons_flowplan;
-      return x ? 
-        x->getOperationPlan() : 
+      return x ?
+        x->getOperationPlan() :
         OperationPlan::pointer(NULL);
     }
 
     /** Return the material buffer through which we are pegging. */
-    Buffer *getBuffer() const 
+    Buffer *getBuffer() const
     {
       const FlowPlan* x = stack.top().prod_flowplan;
       if (!x) x = stack.top().cons_flowplan;
@@ -4609,23 +4608,23 @@ class PeggingIterator
     }
 
     /** Return the operationplan producing the material. */
-    OperationPlan::pointer getProducingOperationplan() const 
+    OperationPlan::pointer getProducingOperationplan() const
     {
       const FlowPlan* x = stack.top().prod_flowplan;
-      return x ? 
-        x->getOperationPlan() : 
+      return x ?
+        x->getOperationPlan() :
         OperationPlan::pointer(NULL);
     }
 
     /** Return the date when the material is consumed. */
-    Date getConsumingDate() const 
+    Date getConsumingDate() const
     {
       const FlowPlan* x = stack.top().cons_flowplan;
       return x ? x->getDate() : Date::infinitePast;
     }
 
     /** Return the date when the material is produced. */
-    Date getProducingDate() const 
+    Date getProducingDate() const
     {
       const FlowPlan* x = stack.top().prod_flowplan;
       return x ? x->getDate() : Date::infinitePast;
@@ -4645,11 +4644,11 @@ class PeggingIterator
     /** Returns the quantity of the buffer flowplans that is linked to this
       * pegging record.
       */
-    double getQuantityBuffer() const 
+    double getQuantityBuffer() const
     {
       const state& t = stack.top();
-      return t.prod_flowplan 
-        ? t.factor * t.prod_flowplan->getOperationPlan()->getQuantity() 
+      return t.prod_flowplan
+        ? t.factor * t.prod_flowplan->getOperationPlan()->getQuantity()
         : 0;
     }
 
@@ -4728,24 +4727,24 @@ class PeggingIterator
       bool pegged;
 
       /** Constructor. */
-      state(unsigned int l, double d, double f, 
+      state(unsigned int l, double d, double f,
         const FlowPlan* fc, const FlowPlan* fp, bool p = true)
-          : qty(d), factor(f), level(l), 
+          : qty(d), factor(f), level(l),
           cons_flowplan(fc), prod_flowplan(fp), pegged(p) {};
 
       /** Inequality operator. */
       bool operator != (const state& s) const
       {
-        return cons_flowplan != s.cons_flowplan 
-          || prod_flowplan != s.prod_flowplan 
+        return cons_flowplan != s.cons_flowplan
+          || prod_flowplan != s.prod_flowplan
           || level != s.level;
       }
 
       /** Equality operator. */
       bool operator == (const state& s) const
       {
-        return cons_flowplan == s.cons_flowplan 
-          && prod_flowplan == s.prod_flowplan 
+        return cons_flowplan == s.cons_flowplan
+          && prod_flowplan == s.prod_flowplan
           && level == s.level;
       }
     };

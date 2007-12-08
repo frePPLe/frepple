@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -282,14 +281,14 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
     {
       // Divide the variable duration by the duration_per time, to compute the
       // maximum number of pieces that can be produced in the timeframe
-      float max_q = duration_per ? 
+      float max_q = duration_per ?
         static_cast<float>(e - s - duration) / duration_per :
         q;
 
       // Set the quantity to either the maximum or the requested quantity,
       // depending on which one is smaller.
       oplan->setQuantity(q < max_q ? q : max_q, true, false);
-      
+
       // Updates the dates
       TimePeriod d = static_cast<long>(oplan->getQuantity()*static_cast<long>(duration_per)) + duration;
       if (preferEnd) oplan->setStartAndEnd(e-d, e);

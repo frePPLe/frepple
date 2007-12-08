@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -28,15 +27,15 @@
 /** @file freppleinterface.h
   * @brief Public header file for C and C++.
   *
-  * This is the public header file for high-level access to the library 
+  * This is the public header file for high-level access to the library
   * functionality.<br>
   * The methods listed provide also a safe interface API for accessing the
-  * library functionality from C, C++, Visual Basic and other programming 
+  * library functionality from C, C++, Visual Basic and other programming
   * languages.
   *
   * When extending the library, use the header file frepple.h instead.<br>
   * It provides a more detailed API to interface with frePPLe.
-  */ 
+  */
 
 #ifndef FREPPLE_INTERFACE_H
 #define FREPPLE_INTERFACE_H
@@ -129,7 +128,7 @@ DECLARE_EXPORT(void) FreppleSaveFile(char*);
   * processing is finished. The method can throw exceptions, and the client
   * is responsible for defining the correct handlers for these.
   *
-  * This function is only available when using C++. The same functionality 
+  * This function is only available when using C++. The same functionality
   * is available to C with the function FreppleWrapperSaveString.
   * @see FreppleWrapperSaveString
   */
@@ -149,7 +148,7 @@ DECLARE_EXPORT(void) FreppleExit();
 /** Echo a message in the frePPLe log stream (which is either a file or
   * the standard output stream).
   *
-  * This function is only available when using C++. The same functionality 
+  * This function is only available when using C++. The same functionality
   * is available to C with the function FreppleLog(const char*).
   */
 DECLARE_EXPORT(void) FreppleLog(const std::string);

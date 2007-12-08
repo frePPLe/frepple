@@ -19,7 +19,6 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
 
 
 from django import template
@@ -302,13 +301,16 @@ def fixture(request):
   # The fixture loading code is unfornately such that no exceptions are
   # or any error status returned when it fails...
   try:
-    log(category='LOAD', message='Start loading dataset "%s"' % fixture).save()
-    management.call_command('loaddata', fixture, verbosity=1)
+    log(category='LOAD', user=request.user.username,
+      message='Start loading dataset "%s"' % fixture).save()
+    management.call_command('loaddata', fixture, verbosity=0)
     request.user.message_set.create(message='Loaded dataset')
-    log(category='LOAD', message='Finished loading dataset "%s"' % fixture).save()
+    log(category='LOAD', user=request.user.username,
+      message='Finished loading dataset "%s"' % fixture).save()
   except Exception, e:
     request.user.message_set.create(message='Error while loading dataset: %s' % e)
-    log(category='LOAD', message='Failed loading dataset "%s": %s' % (fixture,e)).save()
+    log(category='LOAD', user=request.user.username,
+      message='Failed loading dataset "%s": %s' % (fixture,e)).save()
   return HttpResponseRedirect('/execute/execute.html')
 
 

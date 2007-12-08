@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -108,7 +107,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
           if (loglevel>=2) logger << "Demand '" << l << "' plans coordination." << endl;
           Solver->getSolver()->setLogLevel(0);
           float tmpresult = Solver->a_qty;
-          for(float remainder = Solver->a_qty; 
+          for(float remainder = Solver->a_qty;
             remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
           {
             Solver->q_qty = remainder;
@@ -138,7 +137,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
         // Nothing planned - Delete operationplans - Undo all changes
         Solver->undo();
         // If there is no proper new date for the next loop, we need to exit
-        if (Solver->a_date <= copy_plan_date) 
+        if (Solver->a_date <= copy_plan_date)
         {
           if (copy_plan_date < l->getDue() + TimePeriod(60L*86400L)) // @todo hardcoded max!!!
           {
@@ -177,7 +176,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   }
   // Repeat while there is still a quantity left to plan and we aren't
   // exceeding the maximum delivery delay.
-  while (plan_qty > ROUNDING_ERROR   
+  while (plan_qty > ROUNDING_ERROR
       && plan_date < l->getDue() + l->getMaxLateness());
 }
 

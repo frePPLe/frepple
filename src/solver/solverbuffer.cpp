@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -205,7 +204,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   {
     // Use the constrained planning result
     Solver->a_qty = static_cast<float>(requested_qty - shortage);
-    if (Solver->a_qty < ROUNDING_ERROR) 
+    if (Solver->a_qty < ROUNDING_ERROR)
     {
       Solver->undo(topcommand);
       Solver->a_qty = 0.0;
@@ -236,7 +235,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   {
     for (int i=b->getLevel(); i>0; --i) logger << " ";
     logger << "  Buffer '" << b->getName() << "' answers: "
-    << Solver->a_qty << "  " << Solver->a_date << endl;    
+    << Solver->a_qty << "  " << Solver->a_date << endl;
   }
 }
 

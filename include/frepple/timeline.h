@@ -2,7 +2,6 @@
   file : $HeadURL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -158,10 +157,10 @@ template <class type> class TimeLine
         virtual unsigned short getType() const {return 4;}
     };
 
-    /** @brief This is bi-directional iterator through the timeline. 
+    /** @brief This is bi-directional iterator through the timeline.
       *
-      * It looks a bit STL-compliant, but this is only superficially. The 
-      * class doesn't meet all requirements for a full STL-compliant 
+      * It looks a bit STL-compliant, but this is only superficially. The
+      * class doesn't meet all requirements for a full STL-compliant
       * iterator.
       * @todo Make the timeline iterators fully STL compliant.
       */
@@ -185,7 +184,7 @@ template <class type> class TimeLine
         bool operator!=(const const_iterator& x) const {return cur != x.cur;}
     };
 
-    /** @brief This is bi-directional iterator through the timeline. */ 
+    /** @brief This is bi-directional iterator through the timeline. */
     class iterator : public const_iterator
     {
       public:

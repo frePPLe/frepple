@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -41,8 +40,8 @@ float suggestQuantity(const BufferProcure* b, float f)
   if (b->getSizeMultiple()>0.0f)
   {
     int mult = (int) (order_qty / b->getSizeMultiple() + 0.99999f);
-    order_qty = mult * b->getSizeMultiple();  
-  } 
+    order_qty = mult * b->getSizeMultiple();
+  }
 
   // Respect minimum size
   if (order_qty < b->getSizeMinimum())
@@ -52,11 +51,11 @@ float suggestQuantity(const BufferProcure* b, float f)
     if (b->getSizeMultiple()>0.0f)
     {
       int mult = (int) (order_qty / b->getSizeMultiple() + 0.99999f);
-      order_qty = mult * b->getSizeMultiple();  
-    } 
+      order_qty = mult * b->getSizeMultiple();
+    }
     // if now bigger than max -> infeasible
-    if (order_qty > b->getSizeMaximum()) 
-      throw DataException("Inconsistent procurement parameters on buffer '" 
+    if (order_qty > b->getSizeMaximum())
+      throw DataException("Inconsistent procurement parameters on buffer '"
         + b->getName() + "'");
   }
 
@@ -68,11 +67,11 @@ float suggestQuantity(const BufferProcure* b, float f)
     if (b->getSizeMultiple()>0.0f)
     {
       int mult = (int) (order_qty / b->getSizeMultiple());
-      order_qty = mult * b->getSizeMultiple();  
-    } 
+      order_qty = mult * b->getSizeMultiple();
+    }
     // if now smaller than min -> infeasible
-    if (order_qty < b->getSizeMinimum()) 
-      throw DataException("Inconsistent procurement parameters on buffer '" 
+    if (order_qty < b->getSizeMinimum())
+      throw DataException("Inconsistent procurement parameters on buffer '"
         + b->getName() + "'");
   }
 
@@ -99,8 +98,8 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
   // Initialize an iterator over reusable existing procurements
   OperationPlan *last_operationplan = NULL;
   OperationPlan::iterator curProcure(b->getOperation());
-  while (curProcure != OperationPlan::iterator(NULL) 
-    && curProcure->getLocked()) 
+  while (curProcure != OperationPlan::iterator(NULL)
+    && curProcure->getLocked())
       ++curProcure;
   set<OperationPlan*> moved;
 
@@ -109,14 +108,14 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
   Date earliest_next;
   for (OperationPlan::iterator procs(b->getOperation());
     procs != OperationPlan::iterator(NULL); ++procs)
-      if (procs->getLocked()) 
+      if (procs->getLocked())
         earliest_next = procs->getDates().getEnd();
   Date latest_next = Date::infiniteFuture;
 
   // Find constraints on earliest and latest date for the next procurement
-  if (earliest_next && b->getMaximumInterval()) 
+  if (earliest_next && b->getMaximumInterval())
     latest_next = earliest_next + b->getMaximumInterval();
-  if (earliest_next && b->getMinimumInterval()) 
+  if (earliest_next && b->getMinimumInterval())
     earliest_next += b->getMinimumInterval();
   if (Solver->getSolver()->isLeadtimeConstrained()
     && earliest_next < Plan::instance().getCurrent() + b->getLeadtime())
@@ -131,7 +130,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
   double consumed = 0.0;
   double current_inventory = 0.0;
   const FlowPlan* current_flowplan = NULL;
-  for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin(); 
+  for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
     latest_next != Date::infiniteFuture || cur != b->getFlowPlans().end(); )
   {
     if (cur==b->getFlowPlans().end() || latest_next < cur->getDate())
@@ -144,21 +143,21 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
     {
       // Earliest procument time was reached
       current_date = earliest_next;
-      current_flowplan = NULL; 
+      current_flowplan = NULL;
     }
     else
     {
       // Date with flowplans found
       if (current_date && current_date >= cur->getDate())
       {
-        // When procurements are being moved, it happens that we revisit the 
+        // When procurements are being moved, it happens that we revisit the
         // same consuming flowplans twice. This check catches this case.
         cur++;
         continue;
       }
       current_date = cur->getDate();
       bool noConsumers = true;
-      do 
+      do
       {
         current_flowplan = dynamic_cast<const FlowPlan*>(&*(cur++));
         if (current_flowplan->getQuantity() < 0)
@@ -168,21 +167,21 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
         }
         else if (current_flowplan->getOperationPlan()->getLocked())
           produced += current_flowplan->getQuantity();
-      } 
+      }
       // Loop to pick up the last consuming flowplan on the given date
-      while (cur != b->getFlowPlans().end() && cur->getDate() == current_date);  
+      while (cur != b->getFlowPlans().end() && cur->getDate() == current_date);
       // No further interest in dates with only producing flowplans.
       if (noConsumers) continue;
     }
 
-    // Compute current inventory. The actual onhand in the buffer may be 
+    // Compute current inventory. The actual onhand in the buffer may be
     // different since we count only consumers and *locked* producers.
     current_inventory = produced - consumed;
 
     // Hard limit: respect minimum interval
     if (current_date < earliest_next)
     {
-      if (current_inventory < -ROUNDING_ERROR 
+      if (current_inventory < -ROUNDING_ERROR
         && current_date >= Solver->q_date
         && b->getMinimumInterval()
         && Solver->a_date > earliest_next
@@ -194,26 +193,26 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
     }
 
     // Now the normal reorder check
-    if (current_inventory >= b->getMinimumInventory() 
+    if (current_inventory >= b->getMinimumInventory()
       && current_date < latest_next)
     {
       if (current_date == earliest_next) earliest_next = Date::infinitePast;
       continue;
     }
 
-    // When we are within the minimum interval, we may need to increase the 
+    // When we are within the minimum interval, we may need to increase the
     // size of the latest procurement.
-    if (current_date == earliest_next 
-      && last_operationplan 
+    if (current_date == earliest_next
+      && last_operationplan
       && current_inventory < b->getMinimumInventory())
     {
       float origqty = last_operationplan->getQuantity();
-      last_operationplan->setQuantity(suggestQuantity(b,  
+      last_operationplan->setQuantity(suggestQuantity(b,
         static_cast<float>( last_operationplan->getQuantity()
           + b->getMinimumInventory() - current_inventory)));
       produced += last_operationplan->getQuantity() - origqty;
       current_inventory = produced - consumed;
-      if (current_inventory < -ROUNDING_ERROR 
+      if (current_inventory < -ROUNDING_ERROR
         && Solver->a_date > earliest_next + b->getMinimumInterval()
         && earliest_next + b->getMinimumInterval() > Solver->q_date
         && Solver->getSolver()->isMaterialConstrained())
@@ -226,10 +225,10 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
     float order_qty = suggestQuantity(b,
       static_cast<float>(b->getMaximumInventory() - current_inventory));
     if (order_qty > 0)
-    {      
+    {
       // Create a procurement or update an existing one
       if (curProcure == OperationPlan::iterator(NULL))
-      { 
+      {
         // No existing procurement can be reused. Create a new one.
         CommandCreateOperationPlan *a =
           new CommandCreateOperationPlan(b->getOperation(), order_qty,
@@ -238,7 +237,7 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
         produced += last_operationplan->getQuantity();
         Solver->add(a);
       }
-      else if (curProcure->getDates().getEnd() == current_date 
+      else if (curProcure->getDates().getEnd() == current_date
         && curProcure->getQuantity() == order_qty)
       {
         // We can reuse this existing procurement unchanged.
@@ -247,22 +246,22 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
         moved.insert(last_operationplan);
         do
           ++curProcure;
-        while (curProcure != OperationPlan::iterator(NULL) 
-          && curProcure->getLocked() && moved.find(&*curProcure)!=moved.end());             
+        while (curProcure != OperationPlan::iterator(NULL)
+          && curProcure->getLocked() && moved.find(&*curProcure)!=moved.end());
       }
-      else 
+      else
       {
         // Update an existing procurement to meet current needs
         CommandMoveOperationPlan *a =
-          new CommandMoveOperationPlan(&*curProcure, current_date, true, order_qty);   
+          new CommandMoveOperationPlan(&*curProcure, current_date, true, order_qty);
         last_operationplan = a->getOperationPlan();
         moved.insert(last_operationplan);
         Solver->add(a);
         produced += last_operationplan->getQuantity();
         do
           ++curProcure;
-        while (curProcure != OperationPlan::iterator(NULL) 
-          && curProcure->getLocked() && moved.find(&*curProcure)!=moved.end());            
+        while (curProcure != OperationPlan::iterator(NULL)
+          && curProcure->getLocked() && moved.find(&*curProcure)!=moved.end());
       }
       if (b->getMinimumInterval())
         earliest_next = current_date + b->getMinimumInterval();
@@ -271,8 +270,8 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
     {
       current_inventory = produced - consumed;
       if (current_inventory >= b->getMaximumInventory()
-        && cur == b->getFlowPlans().end()) 
-        // Nothing happens any more further in the future. 
+        && cur == b->getFlowPlans().end())
+        // Nothing happens any more further in the future.
         // Abort procuring based on the max inteval
         latest_next = Date::infiniteFuture;
       else
@@ -295,10 +294,10 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
   {
     // Check if the inventory drops below zero somewhere
     float shortage = 0;
-    for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin(); 
+    for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
       cur != b->getFlowPlans().end(); ++cur)
-      if (cur->getDate() >= Solver->q_date 
-        && cur->getOnhand() < -ROUNDING_ERROR 
+      if (cur->getDate() >= Solver->q_date
+        && cur->getOnhand() < -ROUNDING_ERROR
         && cur->getOnhand() < shortage)
       {
         shortage = static_cast<float>(cur->getOnhand());

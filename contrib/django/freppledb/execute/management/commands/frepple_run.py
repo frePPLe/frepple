@@ -19,7 +19,6 @@
 #  file     : $URL$
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
-#  email    : jdetaeye@users.sourceforge.net
 
 import os
 from optparse import make_option
@@ -34,14 +33,11 @@ from execute.models import log
 
 class Command(BaseCommand):
   option_list = BaseCommand.option_list + (
-    make_option('--verbosity', dest='verbosity',
-        type='choice', choices=['0','1','2','3','4','5','6','7'], default='7',
-        help='Verbosity level; 0=minimal output, 1=normal output, 2=all output'),
-    make_option('--user', dest='user', default='',
-        type='string', help='User running the command'),
+    make_option('--user', dest='user', type='string',
+      help='User running the command'),
     make_option('--type', dest='type', type='choice',
-        choices=[0,1,2,3,4,5,6,7], default=7,
-        help='Plan type; 0=minimal output, 1=normal output, 2=all output'),
+      choices=['0','1','2','3','4','5','6','7'],
+      help='Plan type: 0=unconstrained, 7=fully constrained'),
   )
   help = "Runs frePPLe to generate a plan"
 
@@ -50,9 +46,16 @@ class Command(BaseCommand):
   @transaction.autocommit
   def handle(self, **options):
     try:
-      log(category='RUN', user=options['user'],
-        message=_('Start running frepple with plan type ') + str(options['type'])).save()
-      os.environ['PLAN_TYPE'] = str(options['type'])
+      # Pick up the options
+      user = options.get('user','')
+      type = int(options.get('type','7') or '7')
+
+      # Log message
+      log(category='RUN', user=user,
+        message=_('Start running frepple with plan type ') + str(type)).save()
+
+      # Execute
+      os.environ['PLAN_TYPE'] = str(type)
       os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\','\\\\')
       os.environ['FREPPLE_APP'] = settings.FREPPLE_APP
       os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
@@ -65,9 +68,12 @@ class Command(BaseCommand):
         # Other executables
         os.environ['PYTHONPATH'] = os.path.normpath(os.path.join(os.environ['FREPPLE_APP'],'..'))
       ret = os.system('frepple "%s"' % os.path.join(settings.FREPPLE_APP,'execute','commands.xml'))
-      if ret: raise Exception('exit code of the batch run is %d' % ret)
-      log(category='RUN', user=options['user'],
+      if ret: raise Exception('Exit code of the batch run is %d' % ret)
+
+      # Log message
+      log(category='RUN', user=user,
         message=_('Finished running frepple')).save()
     except Exception, e:
-      log(category='RUN', message=u'%s: %s' % (_('Failure when running frepple'),e)).save()
+      log(category='RUN', user=user,
+        message=u'%s: %s' % (_('Failure when running frepple'),e)).save()
       raise e

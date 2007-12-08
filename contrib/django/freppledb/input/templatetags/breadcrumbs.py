@@ -19,7 +19,6 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
 
 from django.template import Library, Node, resolve_variable, TemplateSyntaxError
 from django.conf import settings

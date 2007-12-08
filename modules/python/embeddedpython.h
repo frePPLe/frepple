@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -294,7 +293,7 @@ extern "C"
       static PyTypeObject InfoType;
       static PyObject* next(PythonProblem*);
       static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-      static void destroy(PythonProblem* obj) 
+      static void destroy(PythonProblem* obj)
       {delete obj->iter; PyObject_Del(obj);}
       static void define_type() {}
   };
@@ -345,7 +344,7 @@ extern "C"
       static PyTypeObject InfoType;
       static PyObject* next(PythonDemandPegging*);
       static PyObject* create(PyTypeObject* , PyObject *args, PyObject *kwargs) {return NULL;}
-      static void destroy(PythonDemandPegging* obj) 
+      static void destroy(PythonDemandPegging* obj)
       {delete obj->iter; PyObject_Del(obj);}
       static void define_type() { InfoType.tp_new = 0; }
       static PyObject* createFromDemand(Demand*);

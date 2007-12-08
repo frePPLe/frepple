@@ -2,7 +2,6 @@
 #  file     : $HeadURL$
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
-#  email    : jdetaeye@users.sourceforge.net
 
 use frepple;
 use Env qw(FREPPLE_HOME);

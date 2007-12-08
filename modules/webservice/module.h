@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -106,7 +105,7 @@ class CommandWebservice : public Command
     int tail; // Queue head and tail
     pthread_mutex_t queue_cs;
     pthread_cond_t queue_cv;
-       
+
   public:
     /** Runs the webservice server. */
     void execute();
@@ -126,7 +125,7 @@ class CommandWebservice : public Command
     /** Updates the port number. */
     static void setPort(int i)
     {
-      if (i <= 0 || i>65535) 
+      if (i <= 0 || i>65535)
         throw DataException("Invalid port number: valid range is 1 - 65535");
       port = i;
     }
@@ -137,7 +136,7 @@ class CommandWebservice : public Command
     /** Updates the number of threads for the server. */
     static void setThreads(int i)
     {
-      if (i <= 0 || i>100) 
+      if (i <= 0 || i>100)
         throw DataException("Invalid number of threads: valid range is 1 - 100");
       threads = i;
     }

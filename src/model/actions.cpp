@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -101,7 +100,7 @@ DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, XMLElement& pElement)
   {
     int i = pElement.getInt();
     if (i<0 || i>USHRT_MAX)
-      throw DataException("Invalid log level" + pElement.getString()); 
+      throw DataException("Invalid log level" + pElement.getString());
     setLogLevel(i);
   }
 }
@@ -470,7 +469,7 @@ DECLARE_EXPORT CommandDeleteOperationPlan::CommandDeleteOperationPlan
   (OperationPlan* o)
 {
   // Validate input
-  if (!o) 
+  if (!o)
   {
     oper = NULL;
     return;
@@ -498,7 +497,7 @@ DECLARE_EXPORT void CommandDeleteOperationPlan::undo()
   // Already executed, or never initialized completely
   if (!oper) return;
 
-  // Recreate and register the operationplan. 
+  // Recreate and register the operationplan.
   // Note that the recreated operationplan has the same field values as the
   // original one, but has a different memory address. Any pointers to the
   // original operationplan are now dangling.

@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -45,7 +44,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
 
   // The loadplan is an increase in size, and the algorithm needs to process
   // the decreases.
-  if (data->q_qty >= 0) 
+  if (data->q_qty >= 0)
   {
     data->a_qty = data->q_qty;
     data->a_date = data->q_date;
@@ -132,7 +131,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
           // COMPUTE EARLIEST AVAILABLE CAPACITY
 
           // Put the operationplan back at its original end date
-          if (!data->forceLate) 
+          if (!data->forceLate)
           {
             data->q_operationplan->setQuantity(currentQuantity); // @todo resource solver should be using a move command rather than direct move
             data->q_operationplan->setEnd(currentOpplanEnd);
@@ -218,7 +217,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   while (HasOverload && data->a_qty!=0.0f);
 
   // In case of a zero reply, we resize the operationplan to 0 right away.
-  // This is required to make sure that the buffer inventory profile also 
+  // This is required to make sure that the buffer inventory profile also
   // respects this answer.
   if (data->a_qty == 0.0f) data->q_operationplan->setQuantity(0);
 
@@ -229,7 +228,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
     logger << "   Resource '" << res->getName() << "' answers: "
       << (-data->a_qty) << "  " << data->a_date;
     if (currentOpplanEnd > data->q_operationplan->getDates().getEnd())
-      logger << " using earlier capacity " 
+      logger << " using earlier capacity "
         << data->q_operationplan->getDates().getEnd();
     logger << endl;
   }

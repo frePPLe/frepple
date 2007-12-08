@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -43,7 +42,7 @@ bool Forecast::callback(Calendar* l, const Signal a)
   // pointer to null.
   for (MapOfForecasts::iterator x = ForecastDictionary.begin();
     x != ForecastDictionary.end(); ++x)
-    if (x->second->calptr == l) 
+    if (x->second->calptr == l)
       // Calendar in use for this forecast
       x->second->calptr = NULL;
   return true;
@@ -53,12 +52,12 @@ bool Forecast::callback(Calendar* l, const Signal a)
 Forecast::~Forecast()
 {
   // Update the dictionary
-  for (MapOfForecasts::iterator x= 
+  for (MapOfForecasts::iterator x=
     ForecastDictionary.lower_bound(make_pair(&*getItem(),&*getCustomer()));
     x != ForecastDictionary.end(); ++x)
-    if (x->second == this) 
+    if (x->second == this)
     {
-      ForecastDictionary.erase(x); 
+      ForecastDictionary.erase(x);
       return;
     }
 
@@ -72,7 +71,7 @@ void Forecast::initialize()
 {
   if (!calptr) throw DataException("Missing forecast calendar");
 
-  // Create a demand for every bucket. The weight value depends on the 
+  // Create a demand for every bucket. The weight value depends on the
   // calendar type: float, integer, bool or other
   const CalendarFloat* c = dynamic_cast<const CalendarFloat*>(calptr);
   ForecastBucket* prev = NULL;
@@ -147,12 +146,12 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
   {
     ForecastBucket* x = dynamic_cast<ForecastBucket*>(&*m);
-    if (!x) 
+    if (!x)
       throw DataException("Invalid subdemand of forecast '" + getName() +"'");
     if (d.intersect(x->timebucket))
     {
       // Bucket intersects with daterange
-      if (!d.getDuration()) 
+      if (!d.getDuration())
       {
         // Single date provided. Update that one bucket.
         x->setQuantity(f>x->consumed ? static_cast<float>(f - x->consumed) : 0);
@@ -164,8 +163,8 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
   }
 
   // Expect to find at least one non-zero weight...
-  if (!weights) 
-    throw DataException("No valid forecast date in range " 
+  if (!weights)
+    throw DataException("No valid forecast date in range "
       + string(d) + " of forecast '" + getName() +"'");
 
   // Update the forecast quantity, respecting the weights
@@ -181,7 +180,7 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
       double percent = x->weight * static_cast<long>(o);
       if (getDiscrete())
       {
-        // Rounding to discrete numbers 
+        // Rounding to discrete numbers
         carryover += f * percent;
         int intdelta = static_cast<int>(ceil(carryover - 0.5));
         carryover -= intdelta;
@@ -200,7 +199,7 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
           x->total += static_cast<float>(f * percent);
         else
           // The bucket is completely updated
-          x->total = static_cast<float>(f * percent);      
+          x->total = static_cast<float>(f * percent);
       }
       x->setQuantity(x->total > x->consumed ? (x->total - x->consumed) : 0);
     }
@@ -227,7 +226,7 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
   o->writeElement(Tags::tag_calendar, calptr);
   if (!getDiscrete()) o->writeElement(Tags::tag_discrete, getDiscrete());
   o->writeElement(Tags::tag_operation, &*getOperation());
-  if (planSingleDelivery()) 
+  if (planSingleDelivery())
     o->writeElement(Tags::tag_policy, "SINGLEDELIVERY");
 
   // Write all entries
@@ -262,7 +261,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
     setDiscrete(pElement.getBool());
   else if (pElement.isA(Tags::tag_bucket))
   {
-    pair<DateRange,double> *d = 
+    pair<DateRange,double> *d =
       static_cast< pair<DateRange,double>* >(pIn.getUserArea());
     if (d)
     {
@@ -276,7 +275,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else if (pIn.getParentElement().isA(Tags::tag_bucket))
   {
-    pair<DateRange,double> *d = 
+    pair<DateRange,double> *d =
       static_cast< pair<DateRange,double>* >(pIn.getUserArea());
     if (pElement.isA(tag_total))
     {
@@ -288,7 +287,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
     else if (pElement.isA(Tags::tag_start))
     {
       Date x = pElement.getDate();
-      if (d) 
+      if (d)
       {
         if (!d->first.getStart()) d->first.setStartAndEnd(x,x);
         else d->first.setStart(x);
@@ -312,7 +311,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
   if (pIn.isObjectEnd())
   {
     // Delete dynamically allocated temporary read object
-    if (pIn.getUserArea()) 
+    if (pIn.getUserArea())
       delete static_cast< pair<DateRange,double>* >(pIn.getUserArea());
   }
 }
@@ -342,14 +341,14 @@ void Forecast::setItem(const Item* i)
   if (getItem() == i) return;
 
   // Update the dictionary
-  for (MapOfForecasts::iterator x = 
+  for (MapOfForecasts::iterator x =
     ForecastDictionary.lower_bound(make_pair(
       &*getItem(),&*getCustomer()
       ));
     x != ForecastDictionary.end(); ++x)
-    if (x->second == this) 
+    if (x->second == this)
     {
-      ForecastDictionary.erase(x); 
+      ForecastDictionary.erase(x);
       break;
     }
   ForecastDictionary.insert(make_pair(make_pair(i,&*getCustomer()),this));
@@ -369,14 +368,14 @@ void Forecast::setCustomer(const Customer* i)
   if (getCustomer() == i) return;
 
   // Update the dictionary
-  for (MapOfForecasts::iterator x = 
+  for (MapOfForecasts::iterator x =
     ForecastDictionary.lower_bound(make_pair(
       &*getItem(), &*getCustomer()
       ));
     x != ForecastDictionary.end(); ++x)
-    if (x->second == this) 
+    if (x->second == this)
     {
-      ForecastDictionary.erase(x); 
+      ForecastDictionary.erase(x);
       break;
     }
   ForecastDictionary.insert(make_pair(make_pair(&*getItem(),i),this));

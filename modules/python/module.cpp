@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -151,7 +150,7 @@ void CommandPython::initialize()
 
   // Make the datetime types available
   PyDateTime_IMPORT;
- 
+
   // Create python exception types
   int nok = 0;
   PythonLogicException = PyErr_NewException("frepple.LogicException", NULL, NULL);

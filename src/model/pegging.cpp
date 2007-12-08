@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -39,7 +38,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d) : downstream(fa
   for (Demand::OperationPlan_list::const_iterator opplaniter = d->getDelivery().begin();
     opplaniter != d->getDelivery().end(); ++opplaniter)
     followPegging(*opplaniter, 0, (*opplaniter)->getQuantity(), 1.0);
-} 
+}
 
 
 DECLARE_EXPORT void PeggingIterator::updateStack
@@ -72,7 +71,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
   if (stack.empty())
     throw LogicException("Incrementing the iterator beyond it's end");
   if (!downstream)
-    throw LogicException("Incrementing a downstream iterator"); 
+    throw LogicException("Incrementing a downstream iterator");
   state& st = stack.top();
 
   // Handle unconsumed material entries on the stack
@@ -87,7 +86,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
 
   // Take the consuming flowplan and follow the pegging
   if (st.cons_flowplan)
-    followPegging(st.cons_flowplan->getOperationPlan()->getTopOwner(), 
+    followPegging(st.cons_flowplan->getOperationPlan()->getTopOwner(),
       st.level-1, st.qty, st.factor);
 
   // Pop invalid entries from the stack
@@ -118,9 +117,9 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 
   // Take the producing flowplan and follow the pegging
   if (st.prod_flowplan)
-    followPegging(st.prod_flowplan->getOperationPlan()->getTopOwner(), 
+    followPegging(st.prod_flowplan->getOperationPlan()->getTopOwner(),
       st.level+1, st.qty, st.factor);
- 
+
   // Pop invalid entries from the stack
   if (first) stack.pop();
 
@@ -131,7 +130,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 DECLARE_EXPORT void PeggingIterator::followPegging
   (OperationPlan::pointer op, short nextlevel, double qty, double factor)
 {
-  // For each flowplan (producing or consuming depending on whether we go 
+  // For each flowplan (producing or consuming depending on whether we go
   // upstream or downstream) ask the buffer to give us the pegged flowplans.
   if (downstream)
     for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans();
@@ -139,7 +138,7 @@ DECLARE_EXPORT void PeggingIterator::followPegging
     {
       // We're interested in consuming flowplans of an operationplan when
       // walking upstream.
-      if (i->getQuantity()>ROUNDING_ERROR) 
+      if (i->getQuantity()>ROUNDING_ERROR)
         i->getFlow()->getBuffer()->followPegging(*this, &*i, nextlevel, qty, factor);
     }
   else
@@ -148,7 +147,7 @@ DECLARE_EXPORT void PeggingIterator::followPegging
     {
       // We're interested in consuming flowplans of an operationplan when
       // walking upstream.
-      if (i->getQuantity()<-ROUNDING_ERROR) 
+      if (i->getQuantity()<-ROUNDING_ERROR)
         i->getFlow()->getBuffer()->followPegging(*this, &*i, nextlevel, qty, factor);
     }
 

@@ -19,10 +19,8 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
 
-
-# Frepple specific variables
+# frePPLe specific variables
 import os, os.path, sys
 try:
   FREPPLE_HOME = os.environ['FREPPLE_HOME']
@@ -191,6 +189,8 @@ if os.path.normcase(os.path.abspath(os.path.dirname(__file__))) != os.path.normc
 
 # Extra database parameters
 if DATABASE_ENGINE == 'sqlite3':
+  # Path to the sqlite3 test database file
+  TEST_DATABASE_NAME = os.path.join(FREPPLE_HOME,'test_%s.sqlite' % DATABASE_NAME)
   # Path to sqlite3 database file
   DATABASE_NAME = os.path.join(FREPPLE_HOME,'%s.sqlite' % DATABASE_NAME)
   # Extra settings for SQLITE
@@ -200,10 +200,13 @@ elif DATABASE_ENGINE == 'mysql':
   # InnoDB has the proper support for transactions that is required for
   # frePPLe in a production environment.
   DATABASE_OPTIONS = {"init_command": "SET storage_engine=INNODB"}
-
-# Always use the same database for testing and a normal run.
-# This is required since the test suite runs frePPLe in batch as a seperate
-# process. The frePPLe batch process doesn't know whether it's running in test 
-# mode or in normal mode, so we assure here that both refer to the same 
-# database.
-TEST_DATABASE_NAME = DATABASE_NAME
+  TEST_DATABASE_NAME = 'test_%s' % DATABASE_NAME
+elif DATABASE_ENGINE == 'oracle':
+  TEST_DATABASE_NAME = DATABASE_NAME
+  TEST_DATABASE_USER = 'test_%s' % DATABASE_USER
+  TEST_DATABASE_PASSWD = DATABASE_PASSWORD
+elif DATABASE_ENGINE == 'postgresql_psycopg2':
+  TEST_DATABASE_NAME = 'test_%s' % DATABASE_NAME
+else:
+  print 'Error: Unsupported database engine %s' % DATABASE_ENGINE
+  sys.exit(1)

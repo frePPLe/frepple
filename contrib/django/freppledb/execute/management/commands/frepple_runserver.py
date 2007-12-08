@@ -19,7 +19,6 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
 
 import sys, os, os.path, socket
 from stat import S_ISDIR, ST_MODE
@@ -44,11 +43,10 @@ class Command(BaseCommand):
   '''
 
   option_list = BaseCommand.option_list + (
-    make_option("--port", dest="port", default=8000,
-                  help="Port number of the server.", type="int"),
-    make_option("--address", dest="address",
-                  help="IP address for the server to listen.", type="string",
-                  default=socket.getaddrinfo(socket.gethostname(), None)[0][4][0]),
+    make_option("--port", dest="port", type="int"
+                  help="Port number of the server."),
+    make_option("--address", dest="address", type="string"
+                  help="IP address for the server to listen."),
     )
 
   requires_model_validation = False
@@ -58,17 +56,21 @@ class Command(BaseCommand):
 
   def handle(self, **options):
 
+    # Pick up the arguments
+    port = int(options.get('port','8000'))
+    address = options.get('address', socket.getaddrinfo(socket.gethostname(), None)[0][4][0])
+
     # Validate the address and port number
     try:
       s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-      s.bind( (options['address'], options['port']) )
+      s.bind( (addres, port) )
       s.close()
     except socket.error, e:
       raise Exception('Invalid address and/or port: %s' % e)
 
     # Print a header message
     print 'Running Frepple %s with database %s\n' % (settings.FREPPLE_VERSION,settings.DATABASE_NAME)
-    print 'To access the server, point your browser to http://%s:%s/' % (options['address'], options['port'])
+    print 'To access the server, point your browser to http://%s:%s/' % (address, port)
     print 'Three users are created by default: "admin", "frepple" and "guest" (the password is equal to the user name)\n'
     print 'Quit the server with CTRL-C.\n'
 
@@ -81,8 +83,7 @@ class Command(BaseCommand):
         raise Exception("No valid media directory found")
 
     # Run the WSGI server
-    server = CherryPyWSGIServer(
-      (options['address'], options['port']),
+    server = CherryPyWSGIServer((address, port),
       AdminMediaHandler(WSGIHandler(), media)
       )
     # Want SSL support? Just set these attributes apparantly, but I haven't tested or verified this

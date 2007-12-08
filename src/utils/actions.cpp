@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -217,9 +216,9 @@ DECLARE_EXPORT void CommandList::execute()
             ch << "Can't create any threads, error " << errcode;
             throw RuntimeException(ch.str());
           }
-          // Some threads could be created. 
+          // Some threads could be created.
           // Let these threads run and do all the work.
-          logger << "Warning: Could create only " << worker 
+          logger << "Warning: Could create only " << worker
             << " threads, error " << errcode << endl;
         }
       }
@@ -258,9 +257,9 @@ DECLARE_EXPORT void CommandList::execute()
             delete m_id;
             throw RuntimeException("Can't create any threads, error " + errno);
           }
-          // Some threads could be created. 
+          // Some threads could be created.
           // Let these threads run and do all the work.
-          logger << "Warning: Could create only " << worker 
+          logger << "Warning: Could create only " << worker
             << " threads, error " << errno << endl;
           break; // Step out of the thread creation loop
         }

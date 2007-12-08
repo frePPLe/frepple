@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -448,9 +447,9 @@ DECLARE_EXPORT void Buffer::followPegging
             newqty -= f->getCumulativeProduced() - endQty;
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
-          iter.updateStack(nextlevel, 
-            -curqty*newqty/curflowplan->getQuantity(), 
-            curfactor*newqty/f->getQuantity(), 
+          iter.updateStack(nextlevel,
+            -curqty*newqty/curflowplan->getQuantity(),
+            curfactor*newqty/f->getQuantity(),
             curflowplan, x);
         }
         ++f;
@@ -493,7 +492,7 @@ DECLARE_EXPORT void Buffer::followPegging
           false);
     return;
   }
-  
+
   if (curflowplan->getQuantity() > ROUNDING_ERROR && iter.isDownstream())
   {
     // CASE 2:
@@ -521,9 +520,9 @@ DECLARE_EXPORT void Buffer::followPegging
             newqty -= f->getCumulativeConsumed() - endQty;
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
-          iter.updateStack(nextlevel, 
-            curqty*newqty/curflowplan->getQuantity(), 
-            -curfactor*newqty/f->getQuantity(), 
+          iter.updateStack(nextlevel,
+            curqty*newqty/curflowplan->getQuantity(),
+            -curfactor*newqty/f->getQuantity(),
             x, curflowplan);
         }
         ++f;
@@ -546,9 +545,9 @@ DECLARE_EXPORT void Buffer::followPegging
             newqty -= f->getCumulativeConsumed() - endQty;
           peggedQty += newqty;
           const FlowPlan *x = dynamic_cast<const FlowPlan*>(&(*f));
-          iter.updateStack(nextlevel, 
-            curqty*newqty/curflowplan->getQuantity(), 
-            -curfactor*newqty/f->getQuantity(), 
+          iter.updateStack(nextlevel,
+            curqty*newqty/curflowplan->getQuantity(),
+            -curfactor*newqty/f->getQuantity(),
             x, curflowplan);
         }
         --f;
@@ -557,10 +556,10 @@ DECLARE_EXPORT void Buffer::followPegging
     if (peggedQty < endQty - startQty)
       // Unpegged material (i.e. material that is produced but never consumed)
       // is handled with a special entry on the stack.
-      iter.updateStack(nextlevel, 
-        curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(), 
-        curfactor, 
-        NULL, curflowplan, 
+      iter.updateStack(nextlevel,
+        curqty*(endQty - startQty - peggedQty)/curflowplan->getQuantity(),
+        curfactor,
+        NULL, curflowplan,
         false);
     return;
   }
@@ -607,7 +606,7 @@ DECLARE_EXPORT void BufferProcure::endElement(XMLInput& pIn, XMLElement& pElemen
     setMinimumInventory(pElement.getFloat());
   else if (pElement.isA(Tags::tag_maxinventory))
     setMaximumInventory(pElement.getFloat());
-  else 
+  else
     Buffer::endElement(pIn, pElement);
 }
 
@@ -646,7 +645,7 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
 {
   if (!oper)
   {
-    Operation *o = Operation::find(PROCURE_OPERATION);    
+    Operation *o = Operation::find(PROCURE_OPERATION);
     if (!o)
     {
       // Create the operation if it didn't exist yet

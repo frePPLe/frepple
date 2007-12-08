@@ -19,7 +19,6 @@
 #  file     : $URL$
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
-#  email    : jdetaeye@users.sourceforge.net
 
 import random
 from optparse import make_option
@@ -57,33 +56,33 @@ class Command(BaseCommand):
     '''
 
   option_list = BaseCommand.option_list + (
-      make_option('--verbosity', dest='verbosity',
-          type='choice', choices=['0', '1', '2'], default='1',
-          help='Verbosity level; 0=minimal output, 1=normal output, 2=all output'),
-      make_option('--user', dest='user', default='',
-          type='string', help='User running the command'),
-      make_option('--cluster', dest='cluster', type="int", default=100,
+      make_option('--verbosity', dest='verbosity', type='choice',
+        choices=['0', '1', '2'],
+        help='Verbosity level; 0=minimal output, 1=normal output, 2=all output'),
+      make_option('--user', dest='user', type='string',
+        help='User running the command'),
+      make_option('--cluster', dest='cluster', type="int",
         help='Number of end items'),
-      make_option('--demand', dest='demand', type="int", default=30,
+      make_option('--demand', dest='demand', type="int",
         help='Demands per end item'),
       make_option('--forecast_per_item', dest='forecast_per_item', type="int",
-        default=50, help='Monthly forecast per end item'),
+        help='Monthly forecast per end item'),
       make_option('--level', dest='level', type="int",
-        default=5, help='Depth of bill-of-material'),
+        help='Depth of bill-of-material'),
       make_option('--resource', dest='resource', type="int",
-        default=50, help='Number of resources'),
+        help='Number of resources'),
       make_option('--resource_size', dest='resource_size', type="int",
-        default=4, help='Size of each resource'),
+        help='Size of each resource'),
       make_option('--components', dest='components', type="int",
-        default=200, help='Total number of components'),
+        help='Total number of components'),
       make_option('--components_per', dest='components_per', type="int",
-        default=5, help='Number of components per end item'),
+        help='Number of components per end item'),
       make_option('--deliver_lt', dest='deliver_lt', type="int",
-        default=30, help='Average delivery lead time of orders'),
+        help='Average delivery lead time of orders'),
       make_option('--procure_lt', dest='procure_lt', type="int",
-        default=40, help='Average procurement lead time'),
+        help='Average procurement lead time'),
       make_option('--currentdate', dest='currentdate', type="string",
-        default='2007-01-01', help='Current date of the plan in YYYY-MM-DD format')
+        help='Current date of the plan in YYYY-MM-DD format')
   )
 
   requires_model_validation = False
@@ -101,28 +100,40 @@ class Command(BaseCommand):
     tmp_debug = settings.DEBUG
     settings.DEBUG = False
 
+    # Pick up the options
+    verbosity = int(options.get('verbosity','1') or '1')
+    user = options.get('user','') or ''
+    cluster = int(options.get('cluster','100') or '100')
+    demand = int(options.get('demand','30') or '30')
+    forecast_per_item = int(options.get('forecast_per_item','50') or '50')
+    level = int(options.get('level','5') or '5')
+    resource = int(options.get('resource','50') or '50')
+    resource_size = int(options.get('resource_size','4') or '4')
+    components = int(options.get('components','200') or '200')
+    components_per = int(options.get('components_per','5') or '5')
+    deliver_lt = int(options.get('deliver_lt','30') or '30')
+    procure_lt = int(options.get('procure_lt','40') or '40')
+    currentdate = options.get('currentdate','2007-01-01') or '2007-01-01'
+
     random.seed(100) # Initialize random seed to get reproducible results
-    cnt = 100000     # a counter for operationplan identifiers
+    cnt = 100000     # A counter for operationplan identifiers
 
     # Pick up the startdate
     try:
-      startdate = datetime.strptime(options['currentdate'],'%Y-%m-%d')
-    except KeyError:
-      startdate = datetime(2007,1,1)
-    except:
+      startdate = datetime.strptime(currentdate,'%Y-%m-%d')
+    except Exception, e:
+      print "X", e
       raise Exception("Error: current date is not matching format YYYY-MM-DD")
 
     try:
       # Logging the action
       log(
-        category = 'CREATE',
-        user = options['user'],
+        category='CREATE', user=user,
         message = u'%s : %d %d %d %d %d %d %d %d %d %d'
           % (_('Start creating sample model with parameters'),
-             options['cluster'], options['demand'], options['forecast_per_item'],
-             options['level'], options['resource'], options['resource_size'],
-             options['components'], options['components_per'], options['deliver_lt'],
-             options['procure_lt'])
+             cluster, demand, forecast_per_item, level, resource,
+             resource_size, components, components_per, deliver_lt,
+             procure_lt)
         ).save()
 
       # Performance improvement for sqlite during the bulky creation transactions
@@ -130,7 +141,7 @@ class Command(BaseCommand):
         connection.cursor().execute('PRAGMA synchronous=OFF')
 
       # Plan start date
-      if options['verbosity']>0: print "Updating plan..."
+      if verbosity>0: print "Updating plan..."
       try:
         p = Plan.objects.all()[0]
         p.currentdate = startdate
@@ -142,7 +153,7 @@ class Command(BaseCommand):
 
       # Update the user horizon
       try:
-        userprofile = User.objects.get(username=options['user']).get_profile()
+        userprofile = User.objects.get(username=user).get_profile()
         userprofile.startdate = startdate.date()
         userprofile.enddate = (startdate + timedelta(365)).date()
         userprofile.save()
@@ -151,11 +162,11 @@ class Command(BaseCommand):
 
       # Planning horizon
       # minimum 10 daily buckets, weekly buckets till 40 days after current
-      if options['verbosity']>0: print "Updating horizon telescope..."
+      if verbosity>0: print "Updating horizon telescope..."
       updateTelescope(10, 40)
 
       # Working days calendar
-      if options['verbosity']>0: print "Creating working days..."
+      if verbosity>0: print "Creating working days..."
       workingdays = Calendar(name="Working Days")
       workingdays.save()
       cur = None
@@ -181,7 +192,7 @@ class Command(BaseCommand):
       categories = [ 'cat A','cat B','cat C','cat D','cat E','cat F','cat G' ]
 
       # Create customers
-      if options['verbosity']>0: print "Creating customers..."
+      if verbosity>0: print "Creating customers..."
       cust = []
       for i in range(100):
         c = Customer(name = 'Cust %03d' % i)
@@ -190,13 +201,13 @@ class Command(BaseCommand):
       transaction.commit()
 
       # Create resources and their calendars
-      if options['verbosity']>0: print "Creating resources and calendars..."
+      if verbosity>0: print "Creating resources and calendars..."
       res = []
-      for i in range(options['resource']):
-        loc = Location(name='Loc %05d' % int(random.uniform(1,options['cluster'])))
+      for i in range(resource):
+        loc = Location(name='Loc %05d' % int(random.uniform(1,cluster)))
         loc.save()
         cal = Calendar(name='capacity for res %03d' %i, category='capacity')
-        bkt = Bucket(startdate=startdate, value=options['resource_size'], calendar=cal)
+        bkt = Bucket(startdate=startdate, value=resource_size, calendar=cal)
         cal.save()
         bkt.save()
         r = Resource(name = 'Res %03d' % i, maximum=cal, location=loc)
@@ -205,14 +216,14 @@ class Command(BaseCommand):
       transaction.commit()
 
       # Create the components
-      if options['verbosity']>0: print "Creating raw materials..."
+      if verbosity>0: print "Creating raw materials..."
       comps = []
       comploc = Location(name='Procured materials')
       comploc.save()
-      for i in range(options['components']):
+      for i in range(components):
         it = Item(name = 'Component %04d' % i, category='Procured')
         it.save()
-        ld = abs(round(random.normalvariate(options['procure_lt'],options['procure_lt']/3)))
+        ld = abs(round(random.normalvariate(procure_lt,procure_lt/3)))
         c = Buffer(name = 'Component %04d' % i,
              location = comploc,
              category = 'Procured',
@@ -222,7 +233,7 @@ class Command(BaseCommand):
              max_inventory = 100,
              size_multiple = 10,
              leadtime = ld * 86400,
-             onhand = round(options['forecast_per_item'] * random.uniform(1,3) * ld / 30),
+             onhand = round(forecast_per_item * random.uniform(1,3) * ld / 30),
              )
         comps.append(c)
         c.save()
@@ -230,8 +241,8 @@ class Command(BaseCommand):
 
       # Loop over all clusters
       durations = [ 86400, 86400*2, 86400*3, 86400*5, 86400*6 ]
-      for i in range(options['cluster']):
-        if options['verbosity']>0: print "Creating cluster %d..." % i
+      for i in range(cluster):
+        if verbosity>0: print "Creating cluster %d..." % i
 
         # location
         loc = Location(name='Loc %05d' % i)
@@ -255,7 +266,7 @@ class Command(BaseCommand):
 
         # This method will take care of distributing a forecast quantity over the entire
         # horizon, respecting the bucket weights.
-        fcst.setTotal(startdate, startdate + timedelta(365), options['forecast_per_item'] * 12)
+        fcst.setTotal(startdate, startdate + timedelta(365), forecast_per_item * 12)
 
         # Level 0 buffer
         buf = Buffer(name='Buf %05d L00' % i,
@@ -267,12 +278,12 @@ class Command(BaseCommand):
         fl.save()
 
         # Demand
-        for j in range(options['demand']):
+        for j in range(demand):
           dm = Demand(name='Dmd %05d %05d' % (i,j),
             item=it,
             quantity=int(random.uniform(1,6)),
             # Exponential distribution of due dates, with an average of deliver_lt days.
-            due = startdate + timedelta(days=round(random.expovariate(float(1)/options['deliver_lt']/24))/24),
+            due = startdate + timedelta(days=round(random.expovariate(float(1)/deliver_lt/24))/24),
             # Orders have higher priority than forecast
             priority=random.choice([1,2]),
             customer=random.choice(cust),
@@ -282,7 +293,7 @@ class Command(BaseCommand):
 
         # Create upstream operations and buffers
         ops = []
-        for k in range(options['level']):
+        for k in range(level):
           if k == 1 and res:
             # Create a resource load for operations on level 1
             oper = Operation(name='Oper %05d L%02d' % (i,k),
@@ -304,7 +315,7 @@ class Command(BaseCommand):
           if random.uniform(0,1) > 0.8: buf.onhand=int(random.uniform(5,20))
           buf.save()
           Flow(operation=oper, thebuffer=buf, quantity=1, type="FLOW_END").save()
-          if k != options['level']-1:
+          if k != level-1:
             # Consume from the next level in the bill of material
             buf = Buffer(name='Buf %05d L%02d' % (i,k+1),
               item=it,
@@ -316,7 +327,7 @@ class Command(BaseCommand):
 
         # Consume raw materials / components
         c = []
-        for j in range(options['components_per']):
+        for j in range(components_per):
           o = operation = random.choice(ops)
           b = random.choice(comps)
           while (o,b) in c:
@@ -330,12 +341,12 @@ class Command(BaseCommand):
         transaction.commit()
 
       # Log success
-      log(category='CREATE', user = options['user'],
+      log(category='CREATE', user=user,
         message=_('Finished creating sample model')).save()
 
     except Exception, e:
       # Log failure and rethrow exception
-      log(category='CREATE', user = options['user'],
+      log(category='CREATE', user=user,
         message=u'%s: %s' % (_('Failure creating sample model'),e)).save()
       raise e
 

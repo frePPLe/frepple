@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -34,7 +33,7 @@
 #include <pthread.h>
 
 // Include the namespace map
-#include "frepple.nsmap" 
+#include "frepple.nsmap"
 
 
 namespace module_webservice
@@ -46,7 +45,7 @@ void CommandWebservice::execute()
   // Log
   if (getVerbose())
   {
-    logger << "Start running the web service with " << threads 
+    logger << "Start running the web service with " << threads
       << " threads on port " << port << " at " << Date::now() << endl;
   }
   Timer t;
@@ -59,7 +58,7 @@ void CommandWebservice::execute()
 
   // Bind to a port on the local machine.
   mastersocket = soap_bind(&soap, NULL, port, BACKLOG);
-  if (!soap_valid_socket(mastersocket)) 
+  if (!soap_valid_socket(mastersocket))
     throw frepple::RuntimeException("Can't bind to port " + port);
 
   // Creating execution threads in the pool
@@ -70,7 +69,7 @@ void CommandWebservice::execute()
     threadinfo[i].master = this;
     threadinfo[i].index = i;
     threadinfo[i].soap_thr = soap_copy(&soap);
-    pthread_create(&threadinfo[i].tid, NULL, (void*(*)(void*))process_queue, static_cast<void*>(&threadinfo[i]));    
+    pthread_create(&threadinfo[i].tid, NULL, (void*(*)(void*))process_queue, static_cast<void*>(&threadinfo[i]));
   }
 
   // Message
@@ -95,8 +94,8 @@ void CommandWebservice::execute()
         break;
       }
     }
-    logger << "Connection " << ((soap.ip >> 24)&0xFF) << "." 
-      << ((soap.ip >> 16)&0xFF) << "." << ((soap.ip >> 8)&0xFF) << "." 
+    logger << "Connection " << ((soap.ip >> 24)&0xFF) << "."
+      << ((soap.ip >> 16)&0xFF) << "." << ((soap.ip >> 8)&0xFF) << "."
       << (soap.ip&0xFF) << endl;
 
     // Loop until the request could be entered in the request queue
@@ -123,14 +122,14 @@ void CommandWebservice::execute()
     soap_done(threadinfo[i].soap_thr);
     free(threadinfo[i].soap_thr);
   }
-  
+
   // Cleaning up
   pthread_mutex_destroy(&queue_cs);
   pthread_cond_destroy(&queue_cv);
   soap_done(&soap);
 
   // Log
-  if (getVerbose()) 
+  if (getVerbose())
     logger << "Finished web service at " << Date::now() << " : " << t << endl;
 }
 

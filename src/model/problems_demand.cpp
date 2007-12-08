@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -79,7 +78,7 @@ DECLARE_EXPORT void Demand::updateProblems()
   for (Problem::const_iterator j = Problem::begin(this, false);
       j!=Problem::end(); )
   {
-    // Need to increment now and define a pointer to the problem, since the 
+    // Need to increment now and define a pointer to the problem, since the
     // problem can be deleted soon (which invalidates the iterator).
     Problem* curprob = *j;
     ++j;

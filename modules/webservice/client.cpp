@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -25,20 +24,20 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "module_webservicefreppleProxy.h" 
+#include "module_webservicefreppleProxy.h"
 
 // Include the namespace mapping table
-#include "frepple.nsmap" 
+#include "frepple.nsmap"
 
 int main()
 {
-   module_webservice::frepple svc; 
+   module_webservice::frepple svc;
    struct module_webservice::frepple__DemandInfoResponse result;
 
    if (svc.frepple__demand("order 1", result) == SOAP_OK)
    {
-      std::cout << result._return.name << "  " 
-         << result._return.item << "  " << result._return.priority << "  " 
+      std::cout << result._return.name << "  "
+         << result._return.item << "  " << result._return.priority << "  "
          << asctime(gmtime(&result._return.due)) << std::endl;
    }
    else

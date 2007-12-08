@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -24,11 +23,11 @@
  * Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA *
  *                                                                         *
  // frepple schema namespace: urn:frepple
-// frepple service method-action: add "tttt" 
+// frepple service method-action: add "tttt"
 ***************************************************************************/
 
-/* The contents of this file is automatically processed into a WSDL 
- * service definition file. 
+/* The contents of this file is automatically processed into a WSDL
+ * service definition file.
  * See the gsoap documentation for the right format and supported constructs.
  */
 
@@ -36,14 +35,14 @@ namespace module_webservice
 {
 
 /* Typedefs to help gsoap map the types to XML data types. */
-typedef double xsd__double; 
-typedef long int xsd__int; 
-typedef bool xsd__boolean; 
+typedef double xsd__double;
+typedef long int xsd__int;
+typedef bool xsd__boolean;
 typedef char* xsd__string;
 typedef time_t 	xsd__dateTime;
 
 //gsoap frepple service name: frepple
-//gsoap frepple service namespace: urn:frepple 
+//gsoap frepple service namespace: urn:frepple
 //gsoap frepple service style:	rpc
 //gsoap frepple service encoding:	encoded
 //gsoap frepple service namespace:	http://192.168.0.137/static/frepple.wsdl
@@ -57,11 +56,11 @@ class frepple__DemandInfo
     xsd__string item;
     xsd__int priority;
     xsd__dateTime due;
-}; 
-struct frepple__DemandInfoResponse {frepple__DemandInfo _return;}; 
+};
+struct frepple__DemandInfoResponse {frepple__DemandInfo _return;};
 
 //gsoap frepple service method-action: demand ""
 int frepple__demand(xsd__string name, struct frepple__DemandInfoResponse &result);
 
-} 
+}
 

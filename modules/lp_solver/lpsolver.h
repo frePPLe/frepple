@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -78,7 +77,7 @@ namespace module_lp_solver
 /** Initialization routine for the library. */
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);
 
-/** @brief This class is a prototype of an Linear Programming (LP) Solver for 
+/** @brief This class is a prototype of an Linear Programming (LP) Solver for
   * the planning problem or a subset of it.
   *
   * The class provides only a concept / prototype, and it is definately not

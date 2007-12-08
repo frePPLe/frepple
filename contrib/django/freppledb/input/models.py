@@ -19,7 +19,6 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
 
 from django.db import models
 from django.db.models import signals
@@ -143,7 +142,7 @@ class Calendar(models.Model):
           user.id, CALENDARID, self.name, self.name, CHANGE,
           "Updated value to %s for the daterange %s to %s" % (value, start, end)
           )
-      for b in self.buckets.all():
+      for b in self.buckets.filter(enddate__gt=start,startdate__lt=end).order_by('startdate'):
         if b.enddate <= start:
           # Earlier bucket
           continue
@@ -163,10 +162,12 @@ class Calendar(models.Model):
           Bucket(calendar=self, startdate=end, value=b.value).save()
         elif b.startdate < start:
           # An existing bucket is partially before the new daterange
-          Bucket(calendar=self, startdate=start, value=value).save()
+          b.enddate = start
+          b.save()
+          Bucket(calendar=self, startdate=start, enddate=end, value=value).save()
         elif b.enddate > end:
           # An existing bucket is partially after the new daterange
-          Bucket(calendar=self, startdate=b.startdate, value=value).save()
+          Bucket(calendar=self, startdate=b.startdate, enddate=end, value=value).save()
           b.startdate = end
           b.save()
       if self.buckets.count() == 0:

@@ -2,7 +2,6 @@
 #  file     : $URL$
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
-#  email    : jdetaeye@users.sourceforge.net
 
 
 # This script is a simple, generic model generator. A number of different

@@ -19,15 +19,17 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
 
-import django.test
-from input.models import *
+import os
+
+from django.core import management
+from django.test import TestCase
+from django.conf import settings
+
 import output.models
-from django.test.client import Client
-from django.core.exceptions import ObjectDoesNotExist
+import input.models
 
-class ExecuteTest(django.test.TestCase):
+class execute_from_user_interface(TestCase):
 
   def setUp(self):
     # Login
@@ -37,16 +39,30 @@ class ExecuteTest(django.test.TestCase):
     response = self.client.get('/execute/')
     self.failUnlessEqual(response.status_code, 200)
 
-  def test_run_frepple(self):
-    # Verify the output tables are empty
+  def test_run_ui(self):
+    # Empty the database tables
+    response = self.client.post('/execute/erase/', {'action':'erase'})
+    # The answer is a redirect to a new page, which also contains the success message
+    self.assertRedirects(response, '/execute/execute.html')
+    self.failUnlessEqual(input.models.Calendar.objects.count(),0)
+    self.failUnlessEqual(input.models.Demand.objects.count(),0)
     self.failUnlessEqual(output.models.Problem.objects.count(),0)
     self.failUnlessEqual(output.models.FlowPlan.objects.count(),0)
     self.failUnlessEqual(output.models.LoadPlan.objects.count(),0)
     self.failUnlessEqual(output.models.OperationPlan.objects.count(),0)
 
-    # Run frepple
-    response = self.client.post('/execute/runfrepple/', {'action':'run', 'type':7})
-    # The answer is a redirect to a new page, which also contains the success message
+    # Load a dataset
+    response = self.client.post('/execute/fixture/', {'action':'load', 'datafile':'small_demo'})
+    self.assertRedirects(response, '/execute/execute.html')
+    self.failIfEqual(input.models.Calendar.objects.count(),0)
+    self.failIfEqual(input.models.Demand.objects.count(),0)
+
+    # Run frePPLe,  and make sure the test database is used
+    try: os.environ['FREPPLE_DATABASE_NAME'] = settings.TEST_DATABASE_NAME
+    except: pass
+    try: os.environ['FREPPLE_DATABASE_USER'] = settings.TEST_DATABASE_USER
+    except: pass
+    response = self.client.post('/execute/runfrepple/', {'action':'run', 'type':'7'})
     self.assertRedirects(response, '/execute/execute.html')
 
     # Count the output records
@@ -54,3 +70,35 @@ class ExecuteTest(django.test.TestCase):
     self.failUnlessEqual(output.models.FlowPlan.objects.count(),158)
     self.failUnlessEqual(output.models.LoadPlan.objects.count(),36)
     self.failUnlessEqual(output.models.OperationPlan.objects.count(),105)
+
+
+class execute_with_commands(TestCase):
+
+  def test_run_cmd(self):
+    # Empty the database tables
+    self.failIfEqual(input.models.Calendar.objects.count(),0)
+    management.call_command('frepple_flush')
+    self.failUnlessEqual(input.models.Calendar.objects.count(),0)
+    self.failUnlessEqual(input.models.Demand.objects.count(),0)
+    self.failUnlessEqual(output.models.Problem.objects.count(),0)
+    self.failUnlessEqual(output.models.FlowPlan.objects.count(),0)
+    self.failUnlessEqual(output.models.LoadPlan.objects.count(),0)
+    self.failUnlessEqual(output.models.OperationPlan.objects.count(),0)
+
+    # Create a new model
+    management.call_command('frepple_createmodel', cluster='1', verbosity='0')
+    self.failIfEqual(input.models.Calendar.objects.count(),0)
+    self.failIfEqual(input.models.Demand.objects.count(),0)
+
+    # Run frePPLe, and make sure the test database is used
+    try: os.environ['FREPPLE_DATABASE_NAME'] = settings.TEST_DATABASE_NAME
+    except: pass
+    try: os.environ['FREPPLE_DATABASE_USER'] = settings.TEST_DATABASE_USER
+    except: pass
+    management.call_command('frepple_run', type='7')
+    self.failIfEqual(output.models.Problem.objects.count(),0)
+    self.failIfEqual(output.models.FlowPlan.objects.count(),0)
+    self.failIfEqual(output.models.LoadPlan.objects.count(),0)
+    self.failIfEqual(output.models.OperationPlan.objects.count(),0)
+
+# @todo test upload csv

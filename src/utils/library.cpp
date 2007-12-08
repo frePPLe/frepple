@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -94,12 +93,12 @@ DECLARE_EXPORT void Environment::setHomeDirectory(const string dirname)
 
 DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
 {
-  for (string::size_type startpos = s.find("${", 0); 
+  for (string::size_type startpos = s.find("${", 0);
       startpos < string::npos;
-      startpos = s.find_first_of("${", startpos))  
+      startpos = s.find_first_of("${", startpos))
   {
     // Find closing "}"
-    string::size_type endpos = s.find_first_of("}", startpos); 
+    string::size_type endpos = s.find_first_of("}", startpos);
     if (endpos >= string::npos)
       throw DataException("Invalid variable expansion in '" + s + "'");
 
@@ -112,8 +111,8 @@ DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
     char *c = getenv(var.c_str());
 
     // Replace in the string
-    if (c) s.replace(startpos, endpos - startpos + 1, c);  
-    else s.replace(startpos, endpos - startpos + 1, "");   
+    if (c) s.replace(startpos, endpos - startpos + 1, c);
+    else s.replace(startpos, endpos - startpos + 1, "");
 
     // Advance to the end of the replaced characters. If the replaced
     // characters would include another ${XX} construct we could get in
@@ -126,17 +125,17 @@ DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
 DECLARE_EXPORT void Environment::setLogFile(string x)
 {
   // Bye bye message
-  if (!logfilename.empty()) 
+  if (!logfilename.empty())
     logger << "Stop logging at " << Date::now() << endl;
 
   // Close an eventual existing log file.
   if (logfile.is_open()) logfile.close();
 
   // No new logfile specified: redirect to the standard output stream
-  if (x.empty() || x == "+") 
+  if (x.empty() || x == "+")
   {
     logfilename = x;
-    logger.rdbuf(cout.rdbuf()); 
+    logger.rdbuf(cout.rdbuf());
     return;
   }
 
@@ -178,15 +177,15 @@ void LibraryUtils::initialize()
   init = true;
 
   // Set the locale to the default setting.
-  // When not executed, the locale is the "C-locale", which restricts us to 
+  // When not executed, the locale is the "C-locale", which restricts us to
   // ascii data in the input.
-  // For Posix platforms the environment variable LC_ALL controls the locale. 
-  // Most Linux distributions these days have a default locale that supports 
-  // utf-8 encoding, meaning that every possible unicode character can be 
+  // For Posix platforms the environment variable LC_ALL controls the locale.
+  // Most Linux distributions these days have a default locale that supports
+  // utf-8 encoding, meaning that every possible unicode character can be
   // represented.
-  // On windows, the default is the system-default ANSI code page. The number 
+  // On windows, the default is the system-default ANSI code page. The number
   // of characters that frePPLe supports on windows is limited by this...
-  setlocale(LC_ALL, "" ); 
+  setlocale(LC_ALL, "" );
 
   // Initialize Xerces parser
   XMLPlatformUtils::Initialize();

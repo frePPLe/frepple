@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -135,8 +134,8 @@ void initializePython()
 
     // Create a new module
     PyObject* m = Py_InitModule("freppleforecast", NULL);  // @todo frepple.forecast would be a cleaner name...
-    if (!m) 
-      throw frepple::RuntimeException("Can't initialize Python extensions");  
+    if (!m)
+      throw frepple::RuntimeException("Can't initialize Python extensions");
 
     // Register new forecast type
     if (PyType_Ready(&PythonForecast::InfoType) < 0)
@@ -149,7 +148,7 @@ void initializePython()
       throw frepple::RuntimeException("Can't register python type ForecastBucket");
     Py_INCREF(&PythonForecastBucket::InfoType);
     PyModule_AddObject(m, "bucket", reinterpret_cast<PyObject*>(&PythonForecastBucket::InfoType));
-    
+
     // Make the datetime types available
     PyDateTime_IMPORT;
 

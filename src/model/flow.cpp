@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -170,10 +169,10 @@ DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, XMLElement& pElement)
   else if (pIn.isObjectEnd())
   {
     // The Flow data is now all read in. See if it makes sense now...
-    Action a = pIn.getUserArea() ? 
+    Action a = pIn.getUserArea() ?
       *static_cast<Action*>(pIn.getUserArea()) :
       ADD_CHANGE;
-    delete static_cast<Action*>(pIn.getUserArea());  
+    delete static_cast<Action*>(pIn.getUserArea());
     validate(a);
   }
 }

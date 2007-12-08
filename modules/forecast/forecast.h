@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -37,20 +36,20 @@
   *    A forecast demand is bucketized. A demand is automatically
   *    created for each time bucket.<br>
   *    A calendar is used to define the time buckets to be used.
-  * 
-  *  - Functionality for <b>distributing / profiling</b> forecast numbers 
+  *
+  *  - Functionality for <b>distributing / profiling</b> forecast numbers
   *    into time buckets used for planning.<br>
-  *    This functionality is typically used to translate between the time 
-  *    granularity of the sales department (which creates a sales forecast 
-  *    per e.g. calendar month) and the manufacturing department (which 
+  *    This functionality is typically used to translate between the time
+  *    granularity of the sales department (which creates a sales forecast
+  *    per e.g. calendar month) and the manufacturing department (which
   *    creates manufacturing and procurement plans in weekly or daily buckets
   *    ).<br>
-  *    Another usage is to model a delivery date profile of the customers. 
-  *    Each bucket has a weight that is used to model situations where the 
-  *    demand is not evenly spread across buckets: e.g. when more orders are 
-  *    expected due on a monday than on a friday, or when a peak of orders is 
+  *    Another usage is to model a delivery date profile of the customers.
+  *    Each bucket has a weight that is used to model situations where the
+  *    demand is not evenly spread across buckets: e.g. when more orders are
+  *    expected due on a monday than on a friday, or when a peak of orders is
   *    expected for delivery near the end of a month.
-  *    
+  *
   *  - A solver for <b>netting orders from the forecast</b>.<br>
   *    As customer orders are being received they need to be deducted from
   *    the forecast to avoid double-counting demand.<br>
@@ -115,21 +114,21 @@
 	*	</xsd:complexContent>
 	* </xsd:complexType>
   * </PRE>
-  * 
+  *
   * The module support the following configuration parameters:
   *
   *   - <b>Customer_Then_Item_Hierarchy</b>:<br>
   *     As part of the forecast netting a demand is assiociated with a certain
-  *     forecast. When no matching forecast is found for the customer and item 
-  *     of the demand, frePPLe looks for forecast at higher level customers 
+  *     forecast. When no matching forecast is found for the customer and item
+  *     of the demand, frePPLe looks for forecast at higher level customers
   *     and items.<br>
-  *     This flag allows us to control whether we first search the customer 
+  *     This flag allows us to control whether we first search the customer
   *     hierarchy and then the item hierarchy, or the other way around.<br>
-  *     The default value is true, ie search higher customer levels before 
+  *     The default value is true, ie search higher customer levels before
   *     searching higher levels of the item.
   *
   *   - <b>Match_Using_Delivery_Operation</b>:<br>
-  *     Specifies whether or not a demand and a forecast require to have the 
+  *     Specifies whether or not a demand and a forecast require to have the
   *     same delivery operation to be a match.<br>
   *     The default value is true.
   *
@@ -169,7 +168,7 @@ struct PythonForecastBucket;
   *
   * The forecast object defines the item and priority of the demands.<br>
   * A calendar (of type void, float, integer or boolean) divides the time horizon
-  * in individual time buckets. The calendar value is used to assign priorities 
+  * in individual time buckets. The calendar value is used to assign priorities
   * to the time buckets.<br>
   * The class basically works as an interface for a hierarchy of demands, where the
   * lower level demands represent forecasting time buckets.
@@ -182,15 +181,15 @@ class Forecast : public Demand
   private:
     /** @brief This class represents a forecast value in a time bucket.
       *
-      * A forecast bucket is never manipulated or created directly. Instead, 
+      * A forecast bucket is never manipulated or created directly. Instead,
       * the owning forecast manages the buckets.
       */
     class ForecastBucket : public Demand
     {
-      
+
       public:
-        ForecastBucket(Forecast* f, Date d, Date e, float w, ForecastBucket* p) 
-          : Demand(f->getName() + " - " + string(d)), weight(w), consumed(0), 
+        ForecastBucket(Forecast* f, Date d, Date e, float w, ForecastBucket* p)
+          : Demand(f->getName() + " - " + string(d)), weight(w), consumed(0),
             total(0), timebucket(d,e), prev(p), next(NULL)
         {
           if (p) p->next = this;
@@ -214,7 +213,7 @@ class Forecast : public Demand
 
   public:
     /** Constructor. */
-    explicit Forecast(const string& nm) 
+    explicit Forecast(const string& nm)
       : Demand(nm), calptr(NULL), discrete(true) {}
 
     /** Destructor. */
@@ -224,20 +223,20 @@ class Forecast : public Demand
     virtual void setQuantity(float f)
       {throw DataException("Can't set quantity of a forecast");}
 
-    /** Update the forecast quantity.<br> 
+    /** Update the forecast quantity.<br>
       * The forecast quantity will be distributed equally among the buckets
       * available between the two dates, taking into account also the bucket
       * weights.<br>
       * The logic applied is briefly summarized as follows:
       *  - If the daterange has its start and end dates equal, we find the
       *    matching forecast bucket and update the quantity.
-      *  - Otherwise the quantity is distributed among all intersecting 
+      *  - Otherwise the quantity is distributed among all intersecting
       *    forecast buckets. This distribution is considering the weigth of
       *    the bucket and the time duration of the bucket.<br>
       *    The bucket weight is the value specified on the calendar.<br>
       *    If a forecast bucket only partially overlaps with the daterange
       *    only the overlapping time is used as the duration.
-      *  - If only buckets with zero weigth are found in the daterange a 
+      *  - If only buckets with zero weigth are found in the daterange a
       *    dataexception is thrown. It indicates a situation where forecast
       *    is specified for a date where no values are allowed.
       */
@@ -298,22 +297,22 @@ class Forecast : public Demand
 
     /** Updates the value of the Customer_Then_Item_Hierarchy module
       * parameter. */
-    static void setCustomerThenItemHierarchy(bool b) 
+    static void setCustomerThenItemHierarchy(bool b)
       {Customer_Then_Item_Hierarchy = b;}
 
-    /** Returns the value of the Customer_Then_Item_Hierarchy module 
+    /** Returns the value of the Customer_Then_Item_Hierarchy module
       * parameter. */
-    bool getCustomerThenItemHierarchy() 
+    bool getCustomerThenItemHierarchy()
       {return Customer_Then_Item_Hierarchy;}
 
     /** Updates the value of the Match_Using_Delivery_Operation module
       * parameter. */
-    static void setMatchUsingDeliveryOperation(bool b) 
+    static void setMatchUsingDeliveryOperation(bool b)
       {Match_Using_Delivery_Operation = b;}
 
-    /** Returns the value of the Match_Using_Delivery_Operation module 
+    /** Returns the value of the Match_Using_Delivery_Operation module
       * parameter. */
-    static bool getMatchUsingDeliveryOperation() 
+    static bool getMatchUsingDeliveryOperation()
       {return Match_Using_Delivery_Operation;}
 
     /** Updates the value of the Net_Early module parameter. */
@@ -338,7 +337,7 @@ class Forecast : public Demand
     /** Return a reference to a dictionary with all forecast objects. */
     static const MapOfForecasts& getForecasts() {return ForecastDictionary;}
 
-  private:    
+  private:
     /** Initializion of a forecast.<br>
       * It creates demands for each bucket of the calendar.
       */
@@ -353,33 +352,33 @@ class Forecast : public Demand
     /** A dictionary of all forecasts. */
     static MapOfForecasts ForecastDictionary;
 
-    /** Controls how we search the customer and item levels when looking for a 
-      * matching forecast for a demand. 
+    /** Controls how we search the customer and item levels when looking for a
+      * matching forecast for a demand.
       */
     static bool Customer_Then_Item_Hierarchy;
 
     /** Controls whether or not a matching delivery operation is required
-      * between a matching order and its forecast. 
+      * between a matching order and its forecast.
       */
     static bool Match_Using_Delivery_Operation;
 
     /** Store the maximum time difference between an order due date and a
       * forecast bucket to net from.<br>
-      * The default value is 0, meaning that only netting from the due 
+      * The default value is 0, meaning that only netting from the due
       * bucket is allowed.
       */
     static TimePeriod Net_Late;
 
     /** Store the maximum time difference between an order due date and a
       * forecast bucket to net from.<br>
-      * The default value is 0, meaning that only netting from the due 
+      * The default value is 0, meaning that only netting from the due
       * bucket is allowed.
       */
     static TimePeriod Net_Early;
 };
 
 
-/** @brief Implementation of a forecast netting algorithm. 
+/** @brief Implementation of a forecast netting algorithm.
   *
   * As customer orders are being received they need to be deducted from
   * the forecast to avoid double-counting demand.
@@ -396,9 +395,9 @@ class Forecast : public Demand
   *   the solver will look in earlier and later buckets. The parameters
   *   Net_Early and Net_Late control the limits for the search in the
   *   time dimension.
-  * 
+  *
   * The logging levels have the following meaning:
-  * - 0: Silent operation. Default logging level. 
+  * - 0: Silent operation. Default logging level.
   * - 1: Log demands being netted and the matching forecast.
   * - 2: Same as 1, plus details on forecast buckets being netted.
   */
@@ -427,7 +426,7 @@ class ForecastSolver : public Solver
     void writeElement(XMLOutput*, const XMLtag&, mode) const;
 
     /** Updates the flag controlling incremental behavior. */
-    void setAutomatic(bool); 
+    void setAutomatic(bool);
 
     /** Returns true when the solver is set up to run incrementally. */
     bool getAutomatic() const {return automatic;}
@@ -436,13 +435,13 @@ class ForecastSolver : public Solver
     bool callback(Demand* l, const Signal a);
 
   private:
-    /** Given a demand, this function will identify the forecast model it 
-      * links to.  
+    /** Given a demand, this function will identify the forecast model it
+      * links to.
       */
     Forecast* matchDemandToForecast(const Demand* l);
 
     /** Implements the netting of a customer order from a matching forecast
-      * (and its delivery plan).  
+      * (and its delivery plan).
       */
     void netDemandFromForecast(const Demand*, Forecast*);
 
@@ -452,7 +451,7 @@ class ForecastSolver : public Solver
     bool automatic;
 
     /** Used for sorting demands during netting. */
-    struct sorter 
+    struct sorter
     {
   	  bool operator()(const Demand* x, const Demand* y) const
 		    { return MRPSolver::demand_comparison(x,y); }

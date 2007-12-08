@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -41,18 +40,18 @@ DECLARE_EXPORT void MRPSolver::checkOperationCapacity
   // Loop through all loadplans, and solve for the resource.
   // This may move an operationplan early or late.
   do
-  {        
+  {
     orig = opplan->getDates();
     for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
       h!=opplan->endLoadPlans() && opplan->getDates()==orig; ++h)
-    { 
+    {
       data.q_operationplan = opplan;
       data.q_loadplan = &*h;
       data.q_qty = h->getQuantity();
       data.q_date = h->getDate();
-      // Call the resource resolver. 
+      // Call the resource resolver.
       h->getLoad()->solve(*this,&data);
-    }        
+    }
   }
   // Imagine there are multiple loads. As soon as one of them is moved, we
   // need to redo the capacity check for the ones we already checked
@@ -92,7 +91,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
   float q_qty_Flow;
   Date q_date_Flow;
   TimePeriod delay;
-  bool incomplete;  
+  bool incomplete;
   bool tmp_forceLate = data.forceLate;
   data.forceLate = false;
   bool isPlannedEarly;
@@ -135,24 +134,24 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
           incomplete = true;
 
           // Validate the answered date of the most limiting flowplan.
-          // Note that the delay variable only reflects the delay due to 
+          // Note that the delay variable only reflects the delay due to
           // material constraints. If the operationplan is moved early or late
           // for capacity constraints, this is not included.
           delay = data.a_date - q_date_Flow;
 
-          // Jump out of the loop if the answered quantity is 0. There is 
+          // Jump out of the loop if the answered quantity is 0. There is
           // absolutely no need to check other flowplans.
           if (a_qty <= ROUNDING_ERROR) break;
         }
-        else if (data.a_qty >+ q_qty_Flow + ROUNDING_ERROR) 
-          // Never answer more than asked. 
+        else if (data.a_qty >+ q_qty_Flow + ROUNDING_ERROR)
+          // Never answer more than asked.
           // The actual operationplan could be bigger because of lot sizing.
           a_qty = - q_qty_Flow / g->getFlow()->getQuantity();
       }
 
     isPlannedEarly = opplan->getDates().getEnd() < orig_dates.getEnd();
 
-    if (delay>0L && a_qty <= ROUNDING_ERROR 
+    if (delay>0L && a_qty <= ROUNDING_ERROR
       && a_date + delay <= data.q_date_max && a_date + delay > orig_q_date)
     {
       // The reply is 0, but the next-date is still less than the maximum
@@ -173,7 +172,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
         logger << "   Retrying new date." << endl;
       }
     }
-    else if (delay>0L && a_qty <= ROUNDING_ERROR 
+    else if (delay>0L && a_qty <= ROUNDING_ERROR
       && delay < orig_dates.getDuration())
     {
       // The reply is 0, but the next-date is not too far out.
@@ -181,7 +180,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
       // create a non-zero reply...
       // Resize the operationplan
       opplan->getOperation()->setOperationPlanParameters(opplan, orig_opplan_qty, orig_dates.getStart() + delay, orig_dates.getEnd());
-      if (opplan->getDates().getStart() >= orig_dates.getStart() + delay 
+      if (opplan->getDates().getStart() >= orig_dates.getStart() + delay
         && opplan->getDates().getEnd() <= orig_dates.getEnd()
         && opplan->getQuantity() > ROUNDING_ERROR)
       {
@@ -198,7 +197,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
         if (data.getVerbose())
         {
           for (int i=opplan->getOperation()->getLevel(); i>0; --i) logger << " ";
-          logger << "   Retrying with a smaller quantity: " 
+          logger << "   Retrying with a smaller quantity: "
             << opplan->getQuantity() << endl;
         }
       }
@@ -215,33 +214,33 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
   while (!okay);  // Repeat the loop if the operation was moved and the
                   // feasibility needs to be rechecked.
 
-  if (a_qty <= ROUNDING_ERROR && !data.forceLate 
-      && isPlannedEarly 
+  if (a_qty <= ROUNDING_ERROR && !data.forceLate
+      && isPlannedEarly
       && a_date != Date::infiniteFuture && isCapacityConstrained())
     {
       // The operationplan was moved early (because of a resource constraint)
       // and we can't properly trust the reply date in such cases...
       // We want to enforce rechecking the next date.
-      
+
       // Move the operationplan to the next date where the material is feasible
       opplan->getOperation()->setOperationPlanParameters
         (opplan, orig_opplan_qty, a_date + delay, Date::infinitePast);
 
       // Move the operationplan to a later date where it is feasible.
       data.forceLate = true;
-      checkOperationCapacity(opplan,data);      
-      
+      checkOperationCapacity(opplan,data);
+
       // Reply of this function
       a_qty = 0.0f;
       delay = 0L;
-      a_date = opplan->getDates().getEnd();   
+      a_date = opplan->getDates().getEnd();
     }
 
   // Compute the final reply
   data.a_date = incomplete ? (a_date + delay) : Date::infiniteFuture;
   data.a_qty = a_qty;
   data.forceLate = tmp_forceLate;
-  if (a_qty > ROUNDING_ERROR) 
+  if (a_qty > ROUNDING_ERROR)
     return true;
   else
   {
@@ -313,7 +312,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
     // This operation doesn't fit at all within the constrained window.
     data.a_qty = 0.0f;
     // Resize to the minimum quantity
-    if (opplan->getQuantity() < ROUNDING_ERROR) 
+    if (opplan->getQuantity() < ROUNDING_ERROR)
       opplan->setQuantity(1,false);
     // Move to the earliest start date
     opplan->setStart(Plan::instance().getCurrent() + delta);
@@ -592,7 +591,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
     (*altIter)->solve(*this,v);
 
     // Keep the lowest of all next-date answers
-    if (Solver->a_date < a_date && Solver->a_date > origQDate) 
+    if (Solver->a_date < a_date && Solver->a_date > origQDate)
       a_date = Solver->a_date;
 
     // Process the result

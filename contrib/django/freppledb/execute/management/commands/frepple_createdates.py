@@ -19,7 +19,6 @@
 #  file     : $URL$
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
-#  email    : jdetaeye@users.sourceforge.net
 
 import random
 from optparse import make_option
@@ -41,14 +40,12 @@ class Command(BaseCommand):
   '''
 
   option_list = BaseCommand.option_list + (
-      make_option('--start', dest='start',
-          type='string', default='2006-1-1',
+      make_option('--start', dest='start', type='string',
           help='Start date in YYYY-MM-DD format'),
-      make_option('--end', dest='end',
-          type='string', default='2010-1-1',
+      make_option('--end', dest='end', type='string',
           help='End date in YYYY-MM-DD format'),
-      make_option('--user', dest='user', default='',
-          type='string', help='User running the command'),
+      make_option('--user', dest='user', type='string',
+          help='User running the command'),
   )
 
   requires_model_validation = False
@@ -66,17 +63,22 @@ class Command(BaseCommand):
     tmp_debug = settings.DEBUG
     settings.DEBUG = False
 
-    # Pick up the date arguments
+    # Pick up the options
+    start = options('start','2006-1-1')
+    end = options('end','2010-1-1')
+    user = options('user','')
+
+    # Validate the date arguments
     try:
-      curdate = datetime.strptime(options['start'],'%Y-%m-%d')
-      end = datetime.strptime(options['end'],'%Y-%m-%d')
+      curdate = datetime.strptime(start,'%Y-%m-%d')
+      end = datetime.strptime(end,'%Y-%m-%d')
     except Exception, e:
       print "Error: date is not matching format YYYY-MM-DD"
       return
 
     try:
       # Logging the action
-      log( category = 'CREATE', user = options['user'],
+      log( category='CREATE', user=user,
         message = _('Initializing dates')).save()
 
       # Performance improvement for sqlite during the bulky creation transactions
@@ -118,12 +120,12 @@ class Command(BaseCommand):
         curdate = curdate + timedelta(1)
 
       # Log success
-      log(category='CREATE', user = options['user'],
+      log(category='CREATE', user=user,
         message=_('Finished initializing dates')).save()
 
     except Exception, e:
       # Log failure and rethrow exception
-      log(category='CREATE', user = options['user'],
+      log(category='CREATE', user=user,
         message=u'%s: %s' % (_('Failure initializing dates'),e)).save()
       raise e
 

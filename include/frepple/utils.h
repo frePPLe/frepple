@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -299,7 +298,7 @@ class Environment
       * E.g. 123${CNT}789 becomes 123456789 when the value of the environment
       * variable is 456.<br>
       *
-      * Substitution with environment values is implemented for the following 
+      * Substitution with environment values is implemented for the following
       * types of input data:
       *  - COMMAND_SETENV: field VAL
       *  - COMMAND_SYSTEM: field CMDLINE
@@ -311,7 +310,7 @@ class Environment
       *  - COMMAND_SAVEPLAN: field FILENAME
       *  - COMMAND_READXMLURL: field URL
       *
-      * This method works fine with utf-8 and single-byte encodings, but will 
+      * This method works fine with utf-8 and single-byte encodings, but will
       * NOT work with other multibyte encodings (such as utf-116 or utf-32).
       */
     static DECLARE_EXPORT void resolveEnvironment(string& s);
@@ -1412,15 +1411,15 @@ class Date
     /** Adding a time to a date returns a new date. */
     Date operator + (const TimePeriod& l) const
     {
-      Date d; 
+      Date d;
       d.checkFinite(static_cast<long long>(l) + lval);
       return d;
     }
 
     /** Subtracting a time to a date returns a new date. */
-    Date operator - (const TimePeriod& l) const 
+    Date operator - (const TimePeriod& l) const
     {
-      Date d; 
+      Date d;
       d.checkFinite(- static_cast<long>(l) + lval);
       return d;
     }
@@ -1737,7 +1736,7 @@ class XMLOutput
       * the proper escape codes. The reverse process of un-escaping the special
       * character sequences is taken care of by the xml library.
       *
-      * This method works fine with utf-8 and single-byte encodings, but will 
+      * This method works fine with utf-8 and single-byte encodings, but will
       * NOT work with other multibyte encodings (such as utf-116 or utf-32).
       *
       * @param  pstr character pointer to a the character string to be processed
@@ -2143,7 +2142,7 @@ class XMLElement
     hashtype getTagHash() const {return m_dwTagHash;}
 
     /** Add some characters to this data field of this element.<br>
-      * The second argument is the number of bytes, not the number of 
+      * The second argument is the number of bytes, not the number of
       * characters.
       */
     void addData(const char *pData, size_t len) {m_strData.append(pData,len);}
@@ -3710,7 +3709,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 
     /** Find the element with this given key or the element
       * immediately preceding it.<br>
-      * The optional second argument is a boolean that is set to true when 
+      * The optional second argument is a boolean that is set to true when
       * the element is found in the list.
       */
     static T* findLowerBound(const string& k, bool *f = NULL)
@@ -3725,7 +3724,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       Tree::TreeNode *i = st.find(k);
       if (i!=st.end()) return static_cast<T*>(i); // Exists already
       if (*(cls.category) != T::metadata)
-        throw LogicException("Invalid type " + cls.type + 
+        throw LogicException("Invalid type " + cls.type +
         " for creating an object of category " + T::metadata.type);
       T *t = dynamic_cast<T*>(cls.factoryMethodString(k));
       st.insert(t);

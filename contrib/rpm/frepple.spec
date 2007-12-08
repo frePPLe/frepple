@@ -19,7 +19,6 @@
 # file : $URL$
 # revision : $LastChangedRevision: 105 $  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
 
 Summary: FREE Production Planning Library
 Name: frepple

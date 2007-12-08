@@ -19,6 +19,13 @@ frepple.readXMLdata(
   </SOLVERS>
   </PLAN>''' % (os.path.join(os.environ['FREPPLE_HOME'],'frepple.log'),plantype), False, False)
 
+# Pick up an override for the database to use
+if 'FREPPLE_DATABASE_NAME' in os.environ:
+  settings.DATABASE_NAME = os.environ['FREPPLE_DATABASE_NAME']
+if 'FREPPLE_DATABASE_USER' in os.environ:
+  settings.DATABASE_USER = os.environ['FREPPLE_DATABASE_USER']
+
+# Welcome message
 if settings.DATABASE_ENGINE == 'sqlite3':
   print "Using sqlite3 database '%s'" % settings.DATABASE_NAME
 else:

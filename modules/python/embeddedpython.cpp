@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -61,9 +60,9 @@ void CommandPython::execute()
     // impossible to use a lib compiled in python version x when compiling
     // under version y.  Quite ugly... :-( :-( :-(
     c = filename;
-    for (string::size_type pos = c.find_first_of("'", 0);   
+    for (string::size_type pos = c.find_first_of("'", 0);
         pos < string::npos;
-        pos = c.find_first_of("'", pos))   
+        pos = c.find_first_of("'", pos))
     {
       c.replace(pos,1,"\\'",2); // Replacing ' with \'
       pos+=2;

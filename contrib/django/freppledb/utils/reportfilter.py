@@ -19,8 +19,6 @@
 # file : $URL$
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
-# email : jdetaeye@users.sourceforge.net
-
 
 from django.utils.translation import ugettext as _
 from django.utils.html import escape

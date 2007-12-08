@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -102,8 +101,8 @@ void ForecastSolver::solve(const Demand* l, void* v)
 
   // Message
   if (getLogLevel()>0)
-    logger << "  Netting of demand '" << l << "'  ('" << l->getCustomer() 
-      << "','" << l->getItem() << "', '" << l->getDeliveryOperation() 
+    logger << "  Netting of demand '" << l << "'  ('" << l->getCustomer()
+      << "','" << l->getItem() << "', '" << l->getDeliveryOperation()
       << "'): " << l->getDue() << ", " << l->getQuantity() << endl;
 
   // Find a matching forecast
@@ -115,7 +114,7 @@ void ForecastSolver::solve(const Demand* l, void* v)
     if (getLogLevel()>0)
       logger << "    No matching forecast available" << endl;
     return;
-  } 
+  }
   else if (getLogLevel()>0)
     logger << "    Matching forecast: " << fcst << endl;
 
@@ -134,10 +133,10 @@ void ForecastSolver::solve(void *v)
 
   // Sort the demands using the same sort function as used for planning.
   // Note: the memory consumption of the sorted list can be significant
-  sortedDemandList l;  
+  sortedDemandList l;
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
     // Only sort non-forecast demand.
-    if (!dynamic_cast<Forecast*>(&*i) 
+    if (!dynamic_cast<Forecast*>(&*i)
       && !dynamic_cast<Forecast::ForecastBucket*>(&*i))
         l.insert(&*i);
 
@@ -162,7 +161,7 @@ void ForecastSolver::solve(void *v)
 
 Forecast* ForecastSolver::matchDemandToForecast(const Demand* l)
 {
-  pair<const Item*, const Customer*> key 
+  pair<const Item*, const Customer*> key
     = make_pair(&*(l->getItem()), &*(l->getCustomer()));
 
   do  // Loop through second dimension
@@ -174,21 +173,21 @@ Forecast* ForecastSolver::matchDemandToForecast(const Demand* l)
       // Loop through all matching keys
       while (x != Forecast::ForecastDictionary.end() && x->first == key)
       {
-        if (!Forecast::getMatchUsingDeliveryOperation() 
-          || x->second->getDeliveryOperation() == l->getDeliveryOperation())              
+        if (!Forecast::getMatchUsingDeliveryOperation()
+          || x->second->getDeliveryOperation() == l->getDeliveryOperation())
           // Bingo! Found a matching key, if required plus matching delivery operation
           return x->second;
         else
           ++ x;
       }
       // Not found: try a higher level match in first dimension
-      if (Forecast::Customer_Then_Item_Hierarchy) 
+      if (Forecast::Customer_Then_Item_Hierarchy)
       {
         // First customer hierarchy
         if (key.second) key.second = key.second->getOwner();
         else break;
       }
-      else 
+      else
       {
         // First item hierarchy
         if (key.first) key.first = key.first->getOwner();
@@ -200,7 +199,7 @@ Forecast* ForecastSolver::matchDemandToForecast(const Demand* l)
     // Not found at any level in the first dimension
 
     // Try a new level in the second dimension
-    if (Forecast::Customer_Then_Item_Hierarchy) 
+    if (Forecast::Customer_Then_Item_Hierarchy)
     {
       // Second is item
       if (key.first) key.first = key.first->getOwner();
@@ -215,7 +214,7 @@ Forecast* ForecastSolver::matchDemandToForecast(const Demand* l)
       else return NULL;
       // Reset to lowest level in the first dimension again
       key.first = &*(l->getItem());
-    } 
+    }
   }
   while (true);
 }
@@ -230,15 +229,15 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
     zerobucket = dynamic_cast<Forecast::ForecastBucket*>(&*i);
     if (zerobucket && zerobucket->timebucket.within(dmd->getDue())) break;
   }
-  if (!zerobucket) 
-    throw LogicException("Can't find forecast bucket for " 
+  if (!zerobucket)
+    throw LogicException("Can't find forecast bucket for "
       + string(dmd->getDue()) + " in forecast '" + fcst->getName() + "'");
 
   // Netting - looking for time buckets with net forecast
   double remaining = dmd->getQuantity();
   Forecast::ForecastBucket* curbucket = zerobucket;
   bool backward = true;
-  while ( remaining > 0 && curbucket 
+  while ( remaining > 0 && curbucket
     && (dmd->getDue()-Forecast::getNetEarly() < curbucket->timebucket.getEnd())
     && (dmd->getDue()+Forecast::getNetLate() >= curbucket->timebucket.getStart())
     )
@@ -251,8 +250,8 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
       {
         // Partially consume a bucket
         if (getLogLevel()>=2)
-          logger << "    Consuming " << remaining << " from bucket " 
-            << curbucket->timebucket << " (" << available 
+          logger << "    Consuming " << remaining << " from bucket "
+            << curbucket->timebucket << " (" << available
             << " available)" << endl;
         curbucket->setQuantity(static_cast<float>(available - remaining));
         curbucket->consumed += static_cast<float>(remaining);
@@ -261,9 +260,9 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
       else
       {
         // Completely consume a bucket
-        if (getLogLevel()>=2) 
-          logger << "    Consuming " << available << " from bucket " 
-            << curbucket->timebucket << " (" << available 
+        if (getLogLevel()>=2)
+          logger << "    Consuming " << available << " from bucket "
+            << curbucket->timebucket << " (" << available
             << " available)" << endl;
         remaining -= available;
         curbucket->consumed += static_cast<float>(available);
@@ -271,7 +270,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
       }
     }
     else if (getLogLevel()>=2)
-      logger << "    Nothing available in bucket " 
+      logger << "    Nothing available in bucket "
         << curbucket->timebucket << endl;
 
     // Find the next forecast bucket

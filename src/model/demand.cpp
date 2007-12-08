@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -224,7 +223,7 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m
   o->writeElement(Tags::tag_item, it);
   o->writeElement(Tags::tag_due, dueDate);
   if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
-  if (getMaxLateness() != TimePeriod::MAX) 
+  if (getMaxLateness() != TimePeriod::MAX)
     o->writeElement(Tags::tag_maxlateness, getMaxLateness());
 
   // Write extra plan information

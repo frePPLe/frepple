@@ -2,7 +2,6 @@
 #  file     : $URL$
 #  revision : $LastChangedRevision$  $LastChangedBy$
 #  date     : $LastChangedDate$
-#  email    : jdetaeye@users.sourceforge.net
 
 # In this test a number of threads are created that are simultaneously firing messages to
 # a frepple server.

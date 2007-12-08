@@ -2,7 +2,6 @@
   file : $URL$
   version : $LastChangedRevision$  $LastChangedBy$
   date : $LastChangedDate$
-  email : jdetaeye@users.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -67,7 +66,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     else
       logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
   }
-    
+
   // Initialize the metadata.
   Forecast::metadata.registerClass(
     "DEMAND",
@@ -82,7 +81,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
 
   // Register the python functions if the python module is loaded
-  if (CommandLoadLibrary::isLoaded("python")) 
+  if (CommandLoadLibrary::isLoaded("python"))
     initializePython();
 
   // Return the name of the module

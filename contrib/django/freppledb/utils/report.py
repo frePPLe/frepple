@@ -34,6 +34,7 @@ from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
+from django.utils.text import capfirst
 
 from input.models import Plan
 from utils.db import python_date
@@ -222,13 +223,13 @@ def _generate_csv(rep, qs, format, bucketlist):
   writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC)
 
   # Write a header row
-  fields = [ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.rows ]
+  fields = [ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])) for s in rep.rows ]
   if issubclass(rep,TableReport):
     if format == 'csvlist':
-      fields.extend([ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.columns ])
-      fields.extend([ ('title' in s[1] and _(s[1]['title'])) or _(s[0]) for s in rep.crosses ])
+      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])) for s in rep.columns ])
+      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])) for s in rep.crosses ])
     else:
-      fields.extend( [_('data field')])
+      fields.extend( [capfirst(_('data field'))])
       fields.extend([ b['name'] for b in bucketlist])
   writer.writerow(fields)
   yield sf.getvalue()
@@ -274,7 +275,7 @@ def _generate_csv(rep, qs, format, bucketlist):
             # Clear the return string buffer
             sf.truncate(0)
             fields = [ row_of_buckets[0][s[0]] for s in rep.rows ]
-            fields.extend( [('title' in cross[1] and _(cross[1]['title'])) or _(cross[0])] )
+            fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))) or capfirst(_(cross[0]))] )
             fields.extend([ bucket[cross[0]] for bucket in row_of_buckets ])
             # Return string
             writer.writerow(fields)
@@ -286,7 +287,7 @@ def _generate_csv(rep, qs, format, bucketlist):
         # Clear the return string buffer
         sf.truncate(0)
         fields = [ row_of_buckets[0][s[0]] for s in rep.rows ]
-        fields.extend( [('title' in cross[1] and _(cross[1]['title'])) or _(cross[0])] )
+        fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))) or capfirst(_(cross[0]))] )
         fields.extend([ bucket[cross[0]] for bucket in row_of_buckets ])
         # Return string
         writer.writerow(fields)
@@ -541,7 +542,7 @@ def _create_crossheader(req, cls):
   '''
   res = []
   for crs in cls.crosses:
-    title = unicode((crs[1].has_key('title') and crs[1]['title']) or crs[0]).replace(' ','&nbsp;')
+    title = capfirst((crs[1].has_key('title') and crs[1]['title']) or crs[0]).replace(' ','&nbsp;')
     # Editable crosses need to be a bit higher...
     if crs[1].has_key('editable'):
       if (callable(crs[1]['editable']) and crs[1]['editable'](req)) \

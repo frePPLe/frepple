@@ -58,10 +58,10 @@ class BufferReport(TableReport):
       }),
     )
   crosses = (
-    ('startoh', {'title': _('Start Inventory'),}),
-    ('consumed', {'title': _('Consumed'),}),
-    ('produced', {'title': _('Produced'),}),
-    ('endoh', {'title': _('End Inventory'),}),
+    ('startoh', {'title': _('start inventory'),}),
+    ('consumed', {'title': _('consumed'),}),
+    ('produced', {'title': _('produced'),}),
+    ('endoh', {'title': _('end inventory'),}),
     )
   columns = (
     ('bucket', {'title': _('bucket')}),
@@ -134,11 +134,11 @@ class DemandReport(TableReport):
       }),
     )
   crosses = (
-    ('forecast',{'title': _('Forecast')}),
-    ('orders',{'title': _('Orders')}),
-    ('demand',{'title': _('Total demand')}),
-    ('supply',{'title': _('Total supply')}),
-    ('backlog',{'title': _('Backlog')}),
+    ('forecast',{'title': _('net forecast')}),
+    ('orders',{'title': _('orders')}),
+    ('demand',{'title': _('total demand')}),
+    ('supply',{'title': _('total supply')}),
+    ('backlog',{'title': _('backlog')}),
     )
   columns = (
     ('bucket',{'title': _('bucket')}),
@@ -188,10 +188,10 @@ class DemandReport(TableReport):
         group by x.name, x.bucket, x.startdate, x.enddate
         ) y
         -- Forecasted quantity
-        left join (select forecast.item_id as item_id, forecastdemand.startdate as startdate,
-		        forecastdemand.enddate as enddate, forecastdemand.quantity as quantity
-          from forecastdemand, forecast
-          where forecastdemand.forecast_id = forecast.name
+        left join (select forecast.item_id as item_id, out_forecast.startdate as startdate,
+		        out_forecast.enddate as enddate, out_forecast.net as quantity
+          from out_forecast, forecast
+          where out_forecast.forecast = forecast.name
           ) fcst
         on y.name = fcst.item_id
         and fcst.enddate >= y.startdate
@@ -248,10 +248,10 @@ class ForecastReport(TableReport):
       }),
     )
   crosses = (
-    ('demand',{'title': _('Total forecast'), 'editable': lambda req: req.user.has_perm('input.change_forecastdemand'),}),
-    ('orders',{'title': _('Orders')}),
-    ('net',{'title': _('Net forecast')}),
-    ('planned',{'title': _('Planned net forecast')}),
+    ('total',{'title': _('total forecast'), 'editable': lambda req: req.user.has_perm('input.change_forecastdemand'),}),
+    ('orders',{'title': _('orders')}),
+    ('net',{'title': _('net forecast')}),
+    ('planned',{'title': _('planned net forecast')}),
     )
   columns = (
     ('bucket',{'title': _('bucket')}),
@@ -263,18 +263,22 @@ class ForecastReport(TableReport):
     # Execute the query
     cursor = connection.cursor()
     query = '''
-        select x.name as row1, x.item_id as row2, x.customer_id as row3,
-               x.bucket as col1, x.startdate as col2, x.enddate as col3,
-               min(x.total),
-               min(x.consumed),
-               min(x.net),
+        select y.name as row1, y.item_id as row2, y.customer_id as row3,
+               y.bucket as col1, y.startdate as col2, y.enddate as col3,
+               min(y.total),
+               min(y.consumed),
+               min(y.net),
                coalesce(sum(out_demand.planquantity),0)
+        from (
+          select x.name as name, x.item_id as item_id, x.customer_id as customer_id,
+                 x.bucket as bucket, x.startdate as startdate, x.enddate as enddate,
+                 coalesce(sum(out_forecast.consumed * %s / %s),0) as consumed,
+                 coalesce(sum(out_forecast.net * %s / %s),0) as net,
+                 min(x.total) as total
         from (
           select fcst.name as name, fcst.item_id as item_id, fcst.customer_id as customer_id,
                  d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
-                 coalesce(sum(out_forecast.total * %s / %s),0) as total,
-                 coalesce(sum(out_forecast.consumed * %s / %s),0) as consumed,
-                 coalesce(sum(out_forecast.net * %s / %s),0) as net
+                 coalesce(sum(forecastdemand.quantity * %s / %s),0) as total
           from (%s) fcst
           -- Multiply with buckets
           cross join (
@@ -283,30 +287,39 @@ class ForecastReport(TableReport):
                where day_start >= '%s' and day_start < '%s'
                group by %s, %s_start, %s_end
                ) d
-          -- Total forecast demand quantity
-          left join out_forecast
-          on fcst.name = out_forecast.forecast
-          and out_forecast.enddate >= d.startdate
-          and out_forecast.startdate <= d.enddate
+          -- Forecasted quantity
+          left join forecastdemand
+          on fcst.name = forecastdemand.forecast_id
+          and forecastdemand.enddate >= d.startdate
+          and forecastdemand.startdate <= d.enddate
           -- Grouping
           group by fcst.name, fcst.item_id, fcst.customer_id,
                  d.bucket, d.startdate, d.enddate
           ) x
+        -- Net and consumed quantity
+        left join out_forecast
+        on x.name = out_forecast.forecast
+        and out_forecast.enddate >= x.startdate
+        and out_forecast.startdate <= x.enddate
+        -- Grouping
+        group by x.name, x.item_id, x.customer_id,
+               x.bucket, x.startdate, x.enddate
+        ) y
         -- Planned quantity
         left join out_demand
-        on x.name = out_demand.demand
-        and x.startdate <= out_demand.plandatetime
-        and x.enddate > out_demand.plandatetime
+        on y.name = out_demand.demand
+        and y.startdate <= out_demand.plandatetime
+        and y.enddate > out_demand.plandatetime
         -- Ordering and grouping
-        group by x.name, x.item_id, x.customer_id,
-           x.bucket, x.startdate, x.enddate
-        order by %s, x.startdate
-        ''' % (sql_overlap('out_forecast.startdate','out_forecast.enddate','d.startdate','d.enddate'),
+        group by y.name, y.item_id, y.customer_id,
+           y.bucket, y.startdate, y.enddate
+        order by %s, y.startdate
+        ''' % (sql_overlap('out_forecast.startdate','out_forecast.enddate','x.startdate','x.enddate'),
          sql_datediff('out_forecast.enddate','out_forecast.startdate'),
-         sql_overlap('out_forecast.startdate','out_forecast.enddate','d.startdate','d.enddate'),
+         sql_overlap('out_forecast.startdate','out_forecast.enddate','x.startdate','x.enddate'),
          sql_datediff('out_forecast.enddate','out_forecast.startdate'),
-         sql_overlap('out_forecast.startdate','out_forecast.enddate','d.startdate','d.enddate'),
-         sql_datediff('out_forecast.enddate','out_forecast.startdate'),
+         sql_overlap('forecastdemand.startdate','forecastdemand.enddate','d.startdate','d.enddate'),
+         sql_datediff('forecastdemand.enddate','forecastdemand.startdate'),
          basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
          connection.ops.quote_name(bucket),bucket,bucket,sortsql)
     cursor.execute(query, baseparams)
@@ -321,7 +334,7 @@ class ForecastReport(TableReport):
         'startdate': python_date(row[4]),
         'enddate': python_date(row[5]),
         'total': row[6],
-        'consumed': row[7],
+        'orders': row[7],
         'net': row[8],
         'planned': row[9],
         }
@@ -346,9 +359,9 @@ class ResourceReport(TableReport):
       }),
     )
   crosses = (
-    ('available',{'title': _('Available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),
-    ('load',{'title': _('Load')}),
-    ('utilization',{'title': _('Utilization %'),}),
+    ('available',{'title': _('available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),
+    ('load',{'title': _('load')}),
+    ('utilization',{'title': _('utilization %'),}),
     )
   columns = (
     ('bucket',{'title': _('bucket')}),
@@ -432,10 +445,10 @@ class OperationReport(TableReport):
       }),
     )
   crosses = (
-    ('locked_start', {'title': _('Locked Starts'),}),
-    ('total_start', {'title': _('Total Starts'),}),
-    ('locked_end', {'title': _('Locked Ends'),}),
-    ('total_end', {'title': _('Total Ends'),}),
+    ('locked_start', {'title': _('locked starts'),}),
+    ('total_start', {'title': _('total starts'),}),
+    ('locked_end', {'title': _('locked ends'),}),
+    ('total_end', {'title': _('total ends'),}),
     )
   columns = (
     ('bucket',{'title': _('bucket')}),
@@ -492,9 +505,9 @@ class OperationReport(TableReport):
         'bucket': row[1],
         'startdate': python_date(row[2]),
         'enddate': python_date(row[3]),
-        'frozen_start': row[4],
+        'locked_start': row[4],
         'total_start': row[5],
-        'frozen_end': row[6],
+        'locked_end': row[6],
         'total_end': row[7],
         }
 

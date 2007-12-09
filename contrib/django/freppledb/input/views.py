@@ -241,7 +241,7 @@ class pathreport:
   @staff_member_required
   def viewdownstream(request, type, entity):
     return render_to_response('input/path.html', RequestContext(request,{
-       'title': _('Where-used report for %(type)s %(entity)s') % {'type':type, 'entity':entity},
+       'title': _('Where-used report for %(type)s %(entity)s') % {'type':_(type), 'entity':entity},
        'supplypath': pathreport.getPath(type, entity, True),
        'type': type,
        'entity': entity,
@@ -253,7 +253,7 @@ class pathreport:
   @staff_member_required
   def viewupstream(request, type, entity):
     return render_to_response('input/path.html', RequestContext(request,{
-       'title': _('Supply path report for %(type)s %(entity)s') % {'type':type, 'entity':entity},
+       'title': _('Supply path report for %(type)s %(entity)s') % {'type':_(type), 'entity':entity},
        'supplypath': pathreport.getPath(type, entity, False),
        'type': type,
        'entity': entity,

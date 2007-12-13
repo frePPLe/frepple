@@ -4,41 +4,37 @@
 {% get_models from input as modelsIn %}
 <div class="menuBar">
 {% if modelsIn %}
-<a class="menuButton"
-    href=""
-    onclick="return buttonClick(event, 'inputMenu');"
-    onmouseover="buttonMouseover(event, 'inputMenu');"
+<a class="menuButton" href=""
+    onclick="return buttonClick(event,'inputMenu');"
+    onmouseover="buttonMouseover(event,'inputMenu');"
 >{% trans 'Input' %}</a>
 {% endif %}
-<a class="menuButton"
-    href=""
-    onclick="return buttonClick(event, 'outputMenu');"
-    onmouseover="buttonMouseover(event, 'outputMenu');"
+<a class="menuButton" href=""
+    onclick="return buttonClick(event,'outputMenu');"
+    onmouseover="buttonMouseover(event,'outputMenu');"
 >{% trans 'Reports' %}</a>
 {% if perms.execute %}
-<a class="menuButton"
-    href=""
-    onclick="return buttonClick(event, 'toolsMenu');"
-    onmouseover="buttonMouseover(event, 'toolsMenu');"
+<a class="menuButton" href=""
+    onclick="return buttonClick(event,'toolsMenu');"
+    onmouseover="buttonMouseover(event,'toolsMenu');"
 >{% trans 'Tools' %}</a>
 {% endif %}
-<a class="menuButton"
-    href=""
-    onclick="return buttonClick(event, 'userMenu');"
-    onmouseover="buttonMouseover(event, 'userMenu');"
+<a class="menuButton" href=""
+    onclick="return buttonClick(event,'userMenu');"
+    onmouseover="buttonMouseover(event,'userMenu');"
 >{% trans 'User' %}</a>
 </div>
 
 <!-- input menu -->
 {% if modelsIn %}
-<div id="inputMenu" class="menu" onmouseover="menuMouseover(event)">
+<div id="inputMenu" class="menu">
 {% for m in modelsIn %}
 <a class="menuItem" href="{{m.admin_url}}">{{ m.name }}</a>{% endfor %}
 </div>
 {% endif %}
 
 <!-- output menu -->
-<div id="outputMenu" class="menu" onmouseover="menuMouseover(event)">
+<div id="outputMenu" class="menu">
 <a class="menuItem" href="/problem/">{% trans "Problem Report" %}</a>
 <a class="menuItem" href="/buffer/">{% trans "Inventory Report" %}</a>
 <a class="menuItem" href="/resource/">{% trans "Resource Report" %}</a>
@@ -49,8 +45,7 @@
 
 <!-- execute menu -->
 {% if perms.execute %}
-<div id="toolsMenu" class="menu"
-     onmouseover="menuMouseover(event)">
+<div id="toolsMenu" class="menu">
 <a class="menuItem" href="/execute/">{% trans 'Execute' %}</a>
 <a class="menuItem" href="/execute/log/">{% trans 'Log' %}</a>
 </div>

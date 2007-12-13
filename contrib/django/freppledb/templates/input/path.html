@@ -1,15 +1,5 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
-{% block extrahead %}{{ block.super }}
-<script type="text/javascript">
-		ContextMenu.setup();
-		ContextMenu.attach('buffer', 'buffercontext');
-		ContextMenu.attach('resource', 'resourcecontext');
-		ContextMenu.attach('operation', 'operationcontext');
-		ContextMenu.attach('location', 'locationcontext');
-		ContextMenu.attach('item', 'itemcontext');
-</script>
-{% endblock %}
 {% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block content %}

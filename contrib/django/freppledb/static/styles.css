@@ -125,7 +125,7 @@ a {
 }
 
 #header div.menuBar a.menuButton:hover {
-  background-color: transparent;
+  background-color: #a0a0a0;
   text-decoration: none;
 }
 

@@ -3,12 +3,6 @@
 {% block extrahead %}{{ block.super }}
 {% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
 {% endfor %}
-<script type="text/javascript">
-		ContextMenu.setup();
-		ContextMenu.attach('buffer', 'buffercontext');
-		ContextMenu.attach('item', 'itemcontext');
-		ContextMenu.attach('location', 'locationcontext');
-</script>
 {% endblock %}
 {% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
 {% block coltype %}colM{% endblock %}

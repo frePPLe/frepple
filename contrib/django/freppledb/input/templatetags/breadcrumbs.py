@@ -161,8 +161,7 @@ def superlink(value,type):
     # Fail silently if we end up with an empty string
     if value == '': return ''
     # Final return value
-    return mark_safe('<a href="/admin/input/%s/%s/" class="%s">%s</a>' % \
-      (type, iri_to_uri(urlquote(value)), type, escape(value)))
+    return mark_safe('<a href="" class="%s">%s</a>' % (type, escape(value)))
 
 superlink.is_safe = True  # No HTML escaping required any more
 register.filter('superlink', superlink)

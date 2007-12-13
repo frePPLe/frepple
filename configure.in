@@ -389,10 +389,16 @@ case $host_os in
 esac
 AM_CONDITIONAL(CYGWIN, test x$host_os = xcygwin)
 
-
-AC_CONFIG_FILES([Makefile bin/Makefile doc/Makefile include/Makefile include/frepple/Makefile src/Makefile modules/Makefile modules/forecast/Makefile modules/lp_solver/Makefile modules/python/Makefile modules/webservice/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile test/Makefile test/cluster/Makefile test/csv/Makefile test/constraints_leadtime_1/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/datetime/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/sizeof/Makefile test/xml/Makefile test/xml_remote/Makefile test/forecast_1/Makefile test/forecast_2/Makefile test/forecast_3/Makefile test/forecast_4/Makefile test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/constraints_resource_4/Makefile test/problems/Makefile test/deletion/Makefile test/demand_policy/Makefile test/operation_effective/Makefile test/operation_pre_post/Makefile test/operation_routing/Makefile test/multithreading/Makefile test/name/Makefile test/python_1/Makefile test/python_2/Makefile test/command_1/Makefile test/command_2/Makefile test/command_3/Makefile test/sample_module/Makefile test/callback/Makefile test/pegging/Makefile test/safety_stock/Makefile test/procure_1/Makefile contrib/Makefile contrib/vc/Makefile contrib/django/Makefile contrib/installer/Makefile contrib/scripting/Makefile contrib/excel/Makefile contrib/rpm/Makefile])
+# Generating the output makefiles
+AC_CONFIG_FILES([ Makefile bin/Makefile doc/Makefile ])
+AC_CONFIG_FILES([ include/Makefile include/frepple/Makefile ])
+AC_CONFIG_FILES([ src/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile ])
+AC_CONFIG_FILES([ modules/Makefile modules/forecast/Makefile modules/lp_solver/Makefile modules/python/Makefile modules/webservice/Makefile ])
+AC_CONFIG_FILES([ contrib/Makefile contrib/vc/Makefile contrib/django/Makefile contrib/installer/Makefile contrib/scripting/Makefile contrib/excel/Makefile contrib/rpm/Makefile ])
+AC_CONFIG_FILES([ test/Makefile test/cluster/Makefile test/csv/Makefile test/constraints_leadtime_1/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/datetime/Makefile test/lpsolver_1/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/sizeof/Makefile test/xml/Makefile test/xml_remote/Makefile test/forecast_1/Makefile test/forecast_2/Makefile test/forecast_3/Makefile test/forecast_4/Makefile test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/constraints_resource_4/Makefile test/problems/Makefile test/deletion/Makefile test/demand_policy/Makefile test/operation_effective/Makefile test/operation_pre_post/Makefile test/operation_routing/Makefile test/multithreading/Makefile test/name/Makefile test/python_1/Makefile test/python_2/Makefile test/command_1/Makefile test/command_2/Makefile test/command_3/Makefile test/sample_module/Makefile test/callback/Makefile test/pegging/Makefile test/safety_stock/Makefile test/procure_1/Makefile ])
 AC_OUTPUT
 
+# Byebye message
 echo
 echo "--------------------------------------------------------"
 echo "Configuration is complete"
@@ -402,5 +408,3 @@ echo "  make "
 echo "  make install"
 echo
 echo "--------------------------------------------------------"
-
-

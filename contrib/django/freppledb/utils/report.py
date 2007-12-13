@@ -21,15 +21,17 @@
 # date : $LastChangedDate$
 
 from datetime import date, datetime
+from email.Utils import formatdate
+from calendar import timegm
 
 from django.core.paginator import ObjectPaginator, InvalidPage
 from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template import RequestContext, loader
 from django.db import connection
-from django.http import Http404, HttpResponse, HttpResponseForbidden
+from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseNotModified
 from django.conf import settings
-from django.template import Library, Node, resolve_variable
+from django.template import Library, Node, resolve_variable, loader
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
@@ -149,7 +151,13 @@ class Report(object):
 
 class ListReport(Report):
   '''
-  Row definitions
+  Row definitions.
+
+  Supported class methods:
+    - lastmodified():
+      Returns a datetime object representing the last time the report content
+      was updated.
+
   Possible attributes for a row field are:
     - filter:
       Specifies a widget for filtering the data.
@@ -173,7 +181,13 @@ class ListReport(Report):
 
 class TableReport(Report):
   '''
-  Row definitions
+  Row definitions.
+
+  Supported class methods:
+    - lastmodified():
+      Returns a datetime object representing the last time the report content
+      was updated.
+
   Possible attributes for a row field are:
     - filter:
       Specifies a widget for filtering the data.
@@ -316,6 +330,17 @@ def view_report(request, entity=None, **args):
   # Pick up the report class
   try: reportclass = args['report']
   except: raise Http404('Missing report parameter in url context')
+
+  # Verify if the page has changed since the previous request
+  lastmodifiedrequest = request.META.get('HTTP_IF_MODIFIED_SINCE', None)
+  try:
+    lastmodifiedresponse = reportclass.lastmodified()
+    lastmodifiedresponse = (formatdate(timegm(lastmodifiedresponse.utctimetuple()))[:26] + 'GMT')
+    if lastmodifiedrequest == lastmodifiedresponse:
+      # The report hasn't modified since the previous request
+      return HttpResponseNotModified()
+  except Exception, e:
+    lastmodifiedresponse = None
 
   # Verify the user is authorirzed to view the report
   for perm in reportclass.permissions:
@@ -523,9 +548,12 @@ def view_report(request, entity=None, **args):
      }
   if 'extra_context' in args: context.update(args['extra_context'])
 
-  # Render the view
-  return render_to_response(args['report'].template,
-    context, context_instance=RequestContext(request))
+  # Render the view, optionally setting the last-modified http header
+  response = HttpResponse(
+    loader.render_to_string(args['report'].template, context, context_instance=RequestContext(request)),
+    )
+  if lastmodifiedresponse: response['Last-Modified'] = lastmodifiedresponse
+  return response
 
 
 def _create_columnheader(req, cls, bucketlist):

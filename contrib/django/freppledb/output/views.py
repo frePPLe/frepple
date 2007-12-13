@@ -28,7 +28,7 @@ from django.db import connection
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 
-from input.models import Buffer, Operation, Resource, Item, Forecast
+from input.models import Buffer, Operation, Resource, Item, Forecast, Plan
 from output.models import DemandPegging, FlowPlan, Problem, OperationPlan, LoadPlan, Demand
 from utils.db import *
 from utils.reportfilter import FilterNumber, FilterText, FilterBool, FilterDate, FilterChoice
@@ -66,6 +66,10 @@ class BufferReport(TableReport):
   columns = (
     ('bucket', {'title': _('bucket')}),
     )
+
+  @staticmethod
+  def lastmodified():
+    return Plan.objects.all()[0].lastmodified
 
   @staticmethod
   def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
@@ -143,6 +147,10 @@ class DemandReport(TableReport):
   columns = (
     ('bucket',{'title': _('bucket')}),
     )
+
+  @staticmethod
+  def lastmodified():
+    return Plan.objects.all()[0].lastmodified
 
   @staticmethod
   def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
@@ -454,6 +462,9 @@ class OperationReport(TableReport):
     ('bucket',{'title': _('bucket')}),
     )
 
+  @staticmethod
+  def lastmodified():
+    return Plan.objects.all()[0].lastmodified
 
   @staticmethod
   def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
@@ -557,6 +568,10 @@ class PeggingReport(ListReport):
       }),
     )
 
+  @staticmethod
+  def lastmodified():
+    return Plan.objects.all()[0].lastmodified
+
 
 class FlowPlanReport(ListReport):
   '''
@@ -597,6 +612,10 @@ class FlowPlanReport(ListReport):
       }),
     )
 
+  @staticmethod
+  def lastmodified():
+    return Plan.objects.all()[0].lastmodified
+
 
 class ProblemReport(ListReport):
   '''
@@ -631,6 +650,10 @@ class ProblemReport(ListReport):
       'filter': FilterNumber(size=5, operator="lt"),
       }),
     )
+
+  @staticmethod
+  def lastmodified():
+    return Plan.objects.all()[0].lastmodified
 
 
 class OperationPlanReport(ListReport):
@@ -674,6 +697,10 @@ class OperationPlanReport(ListReport):
     ('owner', {'title': _('owner')}),
     )
 
+  @staticmethod
+  def lastmodified():
+    return Plan.objects.all()[0].lastmodified
+
 
 class DemandPlanReport(ListReport):
   '''
@@ -710,6 +737,10 @@ class DemandPlanReport(ListReport):
       }),
     ('operationplan', {'title': _('operationplan')}),
     )
+
+  @staticmethod
+  def lastmodified():
+    return Plan.objects.all()[0].lastmodified
 
 
 class LoadPlanReport(ListReport):
@@ -749,3 +780,7 @@ class LoadPlanReport(ListReport):
       'title': _('operationplan')
       }),
     )
+
+  @staticmethod
+  def lastmodified():
+    return Plan.objects.all()[0].lastmodified

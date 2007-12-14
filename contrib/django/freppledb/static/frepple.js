@@ -13,55 +13,76 @@ var ContextMenu = {
 		'location': 'locationcontext',
 		'item': 'itemcontext',
     'demand': 'demandcontext',
-    'operator': 'operator',
 		'forecast': 'forecastcontext',
-		'customer': 'customercontext'
+		'customer': 'customercontext',
+		'numfilteroper': 'datefilter',
+    'datefilteroper': 'datefilter',
+    'textfilteroper': 'textfilter'
 	},
 
 	// private method. Get which context menu to show
-	_getMenuElementId : function (e) {
+	_getMenuElementId : function (e)
+	{
+	  ContextMenu._attachedElement = Prototype.Browser.IE ?
+	    event.srcElement :
+	    e.target;
 
-    if (Prototype.Browser.IE)
-			ContextMenu._attachedElement = event.srcElement;
-		 else
-			ContextMenu._attachedElement = e.target;
-
-		while(ContextMenu._attachedElement != null) {
+		while(ContextMenu._attachedElement != null)
+		{
 			var className = ContextMenu._attachedElement.className;
 
-			if (typeof(className) != "undefined") {
+			if (typeof(className) != "undefined")
+			{
 				className = className.replace(/^\s+/g, "").replace(/\s+$/g, "")
 				var classArray = className.split(/[ ]+/g);
 
-				for (i = 0; i < classArray.length; i++) {
+				for (i = 0; i < classArray.length; i++)
 					if (ContextMenu._menus[classArray[i]])
 						return ContextMenu._menus[classArray[i]];
-				}
 			}
 
-      if (Prototype.Browser.IE)
-				ContextMenu._attachedElement = ContextMenu._attachedElement.parentElement;
-			else
-				ContextMenu._attachedElement = ContextMenu._attachedElement.parentNode;
+		  ContextMenu._attachedElement = Prototype.Browser.IE ?
+		    ContextMenu._attachedElement.parentElement :
+		    ContextMenu._attachedElement.parentNode;
 		}
 		return null;
 	},
 
 
 	// private method. User clicked somewhere in the screen
-	_onclick : function (e) {
+	_onclick : function (e)
+	{
 
-		// Hide the previous context menu, if any
+		// Hide the previous context menu, and update operator
 		if (ContextMenu._menuElement)
+	  {
+	    // Hide
 			ContextMenu._menuElement.style.display = 'none';
+
+			// If we are closing an operator menu, update the operator
+			if (ContextMenu._menuElement.hasClassName("OperatorMenu") && ContextMenu._attachedElement)
+			{
+			  // Operator selected, or clicked somewhere else?
+			  x = Prototype.Browser.IE ? event.srcElement : e.target;
+        if ($(x).up().hasClassName("OperatorMenu"))
+        {
+			    // Update the span displaying the choosen operator
+			    ContextMenu._attachedElement.innerHTML = x.innerHTML;
+
+			    // Update the name of the filter input field
+			    filterfield = ContextMenu._attachedElement.id.replace("operator","filter");
+          $(filterfield).name = $(filterfield).name.substr(0,$(filterfield).name.lastIndexOf("__")+2) + x.id;
+        }
+		  }
+		}
 
     // No further handling for rightclicks
     if (e!=undefined && !Event.isLeftClick(e)) return true;
 
     // Find the id of the menu to display
-
 		var menuElementId = ContextMenu._getMenuElementId(e);
-		if (menuElementId) {
+		if (menuElementId)
+		{
 			var m = ContextMenu._getMousePosition(e);
 			var s = ContextMenu._getScrollPosition(e);
 
@@ -76,9 +97,8 @@ var ContextMenu = {
 
 			// Build the urls for the menu
 			var l = ContextMenu._menuElement.getElementsByTagName("a");
-			for (x=0; x<l.length; x++) {
+			for (x=0; x<l.length; x++)
 			  l[x].href = l[x].id.replace(/%s/,item);
-			  }
 
       // Display the menu at the right location
 			ContextMenu._menuElement.style.left = m.x + s.x + 'px';
@@ -90,41 +110,36 @@ var ContextMenu = {
 		var returnValue = true;
 		var evt = Prototype.Browser.IE ? window.event : e;
 
-		if (evt.button != 1) {
+		if (evt.button != 1)
+		{
 			if (evt.target) var el = evt.target;
 			else if (evt.srcElement) var el = evt.srcElement;
 			var tname = el.tagName.toLowerCase();
-			if ((tname == "input" || tname == "textarea"))
-				return true;
-			}
+			if ((tname == "input" || tname == "textarea")) return true;
+		}
 	  else
 		  return  false;
 	},
 
 
 	// private method. Returns mouse position
-	_getMousePosition : function (e) {
+	_getMousePosition : function (e)
+	{
 		e = e ? e : window.event;
 		return {'x' : e.clientX, 'y' : e.clientY}
 	},
 
 
 	// private method. Get document scroll position
-	_getScrollPosition : function () {
-
-		var x = 0;
-		var y = 0;
-		if( typeof( window.pageYOffset ) == 'number' ) {
-			x = window.pageXOffset;
-			y = window.pageYOffset;
-		} else if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) ) {
-			x = document.documentElement.scrollLeft;
-			y = document.documentElement.scrollTop;
-		} else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) ) {
-			x = document.body.scrollLeft;
-			y = document.body.scrollTop;
-		}
-		return {'x' : x, 'y' : y}
+	_getScrollPosition : function ()
+	{
+		if( typeof( window.pageYOffset ) == 'number' )
+		  return {'x' : window.pageXOffset, 'y' : window.pageYOffset}
+		else if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) )
+		  return {'x' : document.documentElement.scrollLeft, 'y' : document.documentElement.scrollTop}
+		else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) )
+		  return {'x' : document.body.scrollLeft, 'y' : document.body.scrollTop}
+		return {'x' : 0, 'y' : 0}
 	}
 
 }
@@ -159,7 +174,8 @@ document.observe('mousedown',  function (event) {
 }, true);
 
 
-function buttonClick(event, menuId) {
+function buttonClick(event, menuId)
+{
 
   // Get the target button element.
   var button = $(Event.element(event));
@@ -175,7 +191,8 @@ function buttonClick(event, menuId) {
   if (activeButton != null) resetButton(activeButton);
 
   // Activate this button, unless it was the currently active one.
-  if (button != activeButton) {
+  if (button != activeButton)
+  {
     // Update the button's style class to make it look like it's depressed.
     button.addClassName("menuButtonActive");
 
@@ -195,31 +212,19 @@ function buttonClick(event, menuId) {
 }
 
 
-function buttonMouseover(event, menuId) {
+function buttonMouseover(event, menuId)
+{
   // If any other button menu is active, make this one active instead.
   if (activeButton != null && activeButton != $(Event.element(event)))
     buttonClick(event, menuId);
 }
 
 
-function resetButton(button) {
-
+function resetButton(button)
+{
   // Restore the button's style class.
   button.removeClassName("menuButtonActive");
 
   // Hide the button's menu
   if (button.menu != null) button.menu.style.visibility = "hidden";
-}
-
-
-//----------------------------------------------------------------------------
-// Code for handling the filter operator selection
-//----------------------------------------------------------------------------
-
-function chooseDateFilter(event,num)
-{
-  inputfield = document.getElementById("filter" + num);
-  filterspan = event.srcElement;
-  inputfield.name = "flowdate__lte";
-  filterspan.innerHTML = "PPP";
 }

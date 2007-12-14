@@ -12,6 +12,9 @@
 {% block content %}
 <div id="content-main">
 
+{% include "textfilter.html" %}
+{% include "datefilter.html" %}
+
 <div style="overflow-x: scroll; overflow-y: auto;">
 <table>
 <thead><tr>{{ rowheader }}</tr></thead>

@@ -116,6 +116,7 @@ class FilterText(object):
     global TextOperator
     rowfield = self.field or row[0]
     res = []
+    counter = number*10
     for i in args:
       try:
         field, sep, operator = i.rpartition('__')
@@ -123,19 +124,20 @@ class FilterText(object):
           field = operator
           operator = 'exact'
         if field == rowfield:
-          res.append('<span id="%d">%s</span><input type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-            % (number+1000, TextOperator[operator], self.size,
+          res.append('<span class="textfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            % (counter, TextOperator[operator], counter, self.size,
                escape(args.get(i)),
                rowfield, operator, number+1000,
                ))
       except:
         # Silently ignore invalid filters
         pass
+      counter = counter + 1
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
-      return '<span id="%d">%s</span><input type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-          % (number+1000, TextOperator[self.operator], self.size,
+      return '<span class="textfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (number*10, TextOperator[self.operator], number*10, self.size,
              escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
              )
@@ -151,6 +153,7 @@ class FilterNumber(object):
     global IntegerOperator
     res = []
     rowfield = self.field or row[0]
+    counter = number*10
     for i in args:
       try:
         # Skip empty filters
@@ -161,20 +164,20 @@ class FilterNumber(object):
           field = operator
           operator = 'exact'
         if field == rowfield:
-          res.append('<span id="%d" oncontextmenu="ole(event)">%s</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-            % (number+1000, IntegerOperator[operator],
-               self.size,
+          res.append('<span class="numfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            % (counter, IntegerOperator[operator], counter, self.size,
                escape(args.get(i)),
                rowfield, operator, number+1000,
                ))
       except:
         # Silently ignore invalid filters
         pass
+      counter = counter + 1
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
-      return '<span id="%d" oncontextmenu="ole(event)">%s</span><input id="olie" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-          % (number+1000, IntegerOperator[self.operator], self.size,
+      return '<span class="numfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (number*10, IntegerOperator[self.operator], number*10, self.size,
              escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
              )
@@ -201,8 +204,8 @@ class FilterDate(object):
           field = operator
           operator = 'exact'
         if field == rowfield:
-          res.append('<u><span class="operator">%s</span></u><input class="vDateField" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-            % (IntegerOperator[operator], counter, self.size,
+          res.append('<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            % (counter, IntegerOperator[operator], counter, self.size,
                escape(args.get(i)),
                rowfield, operator, number+1000,
                ))
@@ -213,9 +216,8 @@ class FilterDate(object):
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
-      #oncontextmenu="chooseDateFilter(event,%d)"
-      return '<u><span class="operator">%s</span></u><input class="vDateField" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-          % (IntegerOperator[self.operator], number, self.size,
+      return '<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (number*10, IntegerOperator[self.operator], number*10, self.size,
              escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
              )

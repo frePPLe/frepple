@@ -12,14 +12,8 @@
 {% block content %}
 <div id="content-main">
 
-<div id="operator" class="OperatorMenu">
-<a id="lt" onclick="chooseDateFilter(event,4)">&lt;&nbsp;</a>
-<a id="lte" onclick="chooseDateFilter(event,4)">&lt;=</a>
-<a id="exact" onclick="chooseDateFilter(event,4)">==</a>
-<a id="gt" onclick="chooseDateFilter(event,4)">&gt;&nbsp;</a>
-<a id="gte" onclick="chooseDateFilter(event,4)">&gt;=</a>
-</div>
-
+{% include "textfilter.html" %}
+{% include "datefilter.html" %}
 {% include "buffercontext.html" %}
 {% include "operationcontext.html" %}
 {% include "buffercontext.html" %}

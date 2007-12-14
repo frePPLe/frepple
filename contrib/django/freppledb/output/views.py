@@ -607,7 +607,7 @@ class FlowPlanReport(ListReport):
       'filter': FilterNumber(),
       }),
     ('operationplan', {
-      'filter': FilterText(),
+      'filter': FilterNumber(),
       'title': _('operationplan'),
       }),
     )
@@ -668,7 +668,7 @@ class OperationPlanReport(ListReport):
     )
   rows = (
     ('identifier', {
-      'filter': FilterText(),
+      'filter': FilterNumber(),
       'title': _('operationplan'),
       }),
     ('demand', {
@@ -776,7 +776,7 @@ class LoadPlanReport(ListReport):
       'filter': FilterNumber(),
       }),
     ('operationplan', {
-      'filter': FilterText(),
+      'filter': FilterNumber(),
       'title': _('operationplan')
       }),
     )

@@ -9,25 +9,22 @@
       Supply = 10 available as inventory
                + 10 arriving on 10 Jan
     The demand policy controls how the demand is allowed to be planned:
-       A) PLANLATE MULTIDELIVERY
-          Default policy is to allow demands to be planned late and to be
-          satisfied in mutiple parts.
+       A) The default policy is to allow demands to be planned without any limits
+          on the timing and quantity of the deliveries.
           -> Delivery of 10 units on 5 Jan and a second delivery on 10 Jan
-       B) PLANSHORT MULTIDELIVERY
-          No lateness is allowed, and the order is partially met.
+       B) No lateness is allowed.
           -> A delivery of 10 units on 5 Jan
-       C) PLANLATE SINGLEDELIVERY
-          Lateness is allowed, but the order is met in a single delivery
+       C) Lateness is allowed, but we only accept a delivery for the full
+          requested quantity.
           -> A delivery of 20 units on 10 Jan
-       D) PLANSHORT SINGLEDELIVERY
-          Not lateness is allowed, and a partial delivery is not accepted.
+       D) No lateness is allowed, and we also only accept a delivery for the full
+          requested quantity.
           -> No delivery planned
-       E) PLANLATE MULTIDELIVERY
-          The maximum allowed delivery date is jan 7, and a partial delivery
-          is accepted.
+       E) The maximum allowed delivery date is jan 7, without any restriction on
+          the delivered quantity.
           -> A delivery of 10 units on 5 Jan
-       F) PLANLATE MULTIDELIVERY
-          The minimum quantity shipped is 11, and a partial delivery is accepted.
+       F) The minimum quantity shipped is 11, without any restriction on the
+          delivery date.
           In this case the onhand on jan 5 is increased to 15.
           -> A delivery of 20 units on 10 Jan
   </DESCRIPTION>

@@ -199,7 +199,7 @@ class Forecast : public Demand
           setDue(d);
           setPriority(f->getPriority());
           setMaxLateness(f->getMaxLateness());
-          addPolicy(f->planSingleDelivery() ? "SINGLEDELIVERY" : "MULTIDELIVERY");
+          setMinShipment(f->getMinShipment());
           setOperation(&*(f->getOperation()));
         }
         float weight;
@@ -263,6 +263,9 @@ class Forecast : public Demand
     /* Update the maximum allowed lateness for planning. */
     void setMaxLateness(TimePeriod);
 
+    /* Update the minumum allowed shipment quantity for planning. */
+    void setMinShipment(float);
+
     /** Specify a bucket calendar for the forecast. Once forecasted
       * quantities have been entered for the forecast, the calendar
       * can't be updated any more. */
@@ -283,12 +286,6 @@ class Forecast : public Demand
     /** Updates the due date of the demand. */
     virtual void setDue(Date d)
     {throw DataException("Can't set due date of a forecast");}
-
-    /** Update the policy of the demand in all buckets. */
-    virtual void setPolicy(const string&);
-
-    /** Update the policy of the demand in all buckets. */
-    virtual void addPolicy(const string&);
 
     virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;

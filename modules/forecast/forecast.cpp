@@ -226,8 +226,6 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
   o->writeElement(Tags::tag_calendar, calptr);
   if (!getDiscrete()) o->writeElement(Tags::tag_discrete, getDiscrete());
   o->writeElement(Tags::tag_operation, &*getOperation());
-  if (planSingleDelivery())
-    o->writeElement(Tags::tag_policy, "SINGLEDELIVERY");
 
   // Write all entries
   o->BeginObject (Tags::tag_buckets);
@@ -392,9 +390,18 @@ void Forecast::setCustomer(const Customer* i)
 void Forecast::setMaxLateness(TimePeriod i)
 {
   Demand::setMaxLateness(i);
-  // Update the priority for all buckets/subdemands
+  // Update the maximum lateness for all buckets/subdemands
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
     m->setMaxLateness(i);
+}
+
+
+void Forecast::setMinShipment(float i)
+{
+  Demand::setMinShipment(i);
+  // Update the minimum shipment for all buckets/subdemands
+  for (memberIterator m = beginMember(); m!=endMember(); ++m)
+    m->setMinShipment(i);
 }
 
 
@@ -413,24 +420,6 @@ void Forecast::setOperation(const Operation *o)
   // Update the priority for all buckets/subdemands
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
     m->setOperation(o);
-}
-
-
-void Forecast::setPolicy(const string& i)
-{
-  Demand::setPolicy(i);
-  // Update the priority for all buckets/subdemands
-  for (memberIterator m = beginMember(); m!=endMember(); ++m)
-    m->setPolicy(i);
-}
-
-
-void Forecast::addPolicy(const string& i)
-{
-  Demand::addPolicy(i);
-  // Update the priority for all buckets/subdemands
-  for (memberIterator m = beginMember(); m!=endMember(); ++m)
-    m->addPolicy(i);
 }
 
 }       // end namespace

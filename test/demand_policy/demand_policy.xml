@@ -22,6 +22,14 @@
        D) PLANSHORT SINGLEDELIVERY
           Not lateness is allowed, and a partial delivery is not accepted.
           -> No delivery planned
+       E) PLANLATE MULTIDELIVERY
+          The maximum allowed delivery date is jan 7, and a partial delivery
+          is accepted.
+          -> A delivery of 10 units on 5 Jan
+       F) PLANLATE MULTIDELIVERY
+          The minimum quantity shipped is 11, and a partial delivery is accepted.
+          In this case the onhand on jan 5 is increased to 15.
+          -> A delivery of 20 units on 10 Jan
   </DESCRIPTION>
   <CURRENT>2007-01-01T00:00:00</CURRENT>
   <COMMANDS>
@@ -38,6 +46,8 @@
     <OPERATION NAME="supply item B" xsi:type="OPERATION_FIXED_TIME"/>
     <OPERATION NAME="supply item C" xsi:type="OPERATION_FIXED_TIME"/>
     <OPERATION NAME="supply item D" xsi:type="OPERATION_FIXED_TIME"/>
+    <OPERATION NAME="supply item E" xsi:type="OPERATION_FIXED_TIME"/>
+    <OPERATION NAME="supply item F" xsi:type="OPERATION_FIXED_TIME"/>
   </OPERATIONS>
   <ITEMS>
     <ITEM NAME="item A">
@@ -51,6 +61,12 @@
     </ITEM>
     <ITEM NAME="item D">
       <OPERATION NAME="delivery item D" xsi:type="OPERATION_FIXED_TIME"/>
+    </ITEM>
+    <ITEM NAME="item E">
+      <OPERATION NAME="delivery item E" xsi:type="OPERATION_FIXED_TIME"/>
+    </ITEM>
+    <ITEM NAME="item F">
+      <OPERATION NAME="delivery item F" xsi:type="OPERATION_FIXED_TIME"/>
     </ITEM>
   </ITEMS>
   <BUFFERS>
@@ -69,6 +85,14 @@
     <BUFFER NAME="buffer D">
       <ITEM NAME="item D" />
       <ONHAND>10</ONHAND>
+    </BUFFER>
+    <BUFFER NAME="buffer E">
+      <ITEM NAME="item E" />
+      <ONHAND>10</ONHAND>
+    </BUFFER>
+    <BUFFER NAME="buffer F">
+      <ITEM NAME="item F" />
+      <ONHAND>15</ONHAND>
     </BUFFER>
   </BUFFERS>
   <FLOWS>
@@ -112,6 +136,26 @@
       <BUFFER NAME="buffer D" />
       <QUANTITY>1</QUANTITY>
     </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery item E" />
+      <BUFFER NAME="buffer E" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="supply item E" />
+      <BUFFER NAME="buffer E" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_START">
+      <OPERATION NAME="delivery item F" />
+      <BUFFER NAME="buffer F" />
+      <QUANTITY>-1</QUANTITY>
+    </FLOW>
+    <FLOW xsi:type="FLOW_END">
+      <OPERATION NAME="supply item F" />
+      <BUFFER NAME="buffer F" />
+      <QUANTITY>1</QUANTITY>
+    </FLOW>
   </FLOWS>
 	<OPERATION_PLANS>
 	  <OPERATION_PLAN ID="1001" OPERATION="supply item A">
@@ -138,6 +182,18 @@
 	    <QUANTITY>10</QUANTITY>
 	    <LOCKED>true</LOCKED>
 	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="1005" OPERATION="supply item E">
+	    <START>2007-01-10T00:00:00</START>
+	    <END>2007-01-10T00:00:00</END>
+	    <QUANTITY>10</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
+	  <OPERATION_PLAN ID="1006" OPERATION="supply item F">
+	    <START>2007-01-10T00:00:00</START>
+	    <END>2007-01-10T00:00:00</END>
+	    <QUANTITY>10</QUANTITY>
+	    <LOCKED>true</LOCKED>
+	  </OPERATION_PLAN>
 	</OPERATION_PLANS>
   <DEMANDS>
     <DEMAND NAME="order A">
@@ -158,7 +214,7 @@
       <DUE>2007-01-05T00:00:00</DUE>
       <PRIORITY>1</PRIORITY>
       <ITEM NAME="item C" />
-      <POLICY>SINGLEDELIVERY</POLICY>
+      <MINSHIPMENT>20</MINSHIPMENT>
     </DEMAND>
     <DEMAND NAME="order D">
       <QUANTITY>20</QUANTITY>
@@ -166,7 +222,21 @@
       <PRIORITY>1</PRIORITY>
       <ITEM NAME="item D" />
       <MAXLATENESS>0</MAXLATENESS>
-      <POLICY>SINGLEDELIVERY</POLICY>
+      <MINSHIPMENT>20</MINSHIPMENT>
+    </DEMAND>
+    <DEMAND NAME="order E">
+      <QUANTITY>20</QUANTITY>
+      <DUE>2007-01-05T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="item E" />
+      <MAXLATENESS>172800</MAXLATENESS><!-- max 2 days late -->
+    </DEMAND>
+    <DEMAND NAME="order F">
+      <QUANTITY>20</QUANTITY>
+      <DUE>2007-01-05T00:00:00</DUE>
+      <PRIORITY>1</PRIORITY>
+      <ITEM NAME="item F" />
+      <MINSHIPMENT>11</MINSHIPMENT>
     </DEMAND>
   </DEMANDS>
 </PLAN>

@@ -137,7 +137,13 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
           // Note that the delay variable only reflects the delay due to
           // material constraints. If the operationplan is moved early or late
           // for capacity constraints, this is not included.
-          delay = data.a_date - q_date_Flow;
+          /*if (data.a_qty >= q_qty_Flow - ROUNDING_ERROR)
+          {
+            // Same quantity planned on a different flow: take max date (unless quantity is zero)
+            if (q_qty_Flow
+          }
+          else*/
+            delay = data.a_date - q_date_Flow;
 
           // Jump out of the loop if the answered quantity is 0. There is
           // absolutely no need to check other flowplans.

@@ -3547,7 +3547,7 @@ class Demand
     /** Constructor. */
     explicit Demand(const string& str) : HasHierarchy<Demand>(str),
       it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0),
-      maxLateness(TimePeriod::MAX) {}
+      maxLateness(TimePeriod::MAX), minShipment(0), hidden(false) {}
 
     /** Destructor. Deleting the demand will also delete all delivery operation
       * plans */
@@ -3650,66 +3650,37 @@ class Demand
       */
     virtual void setMaxLateness(TimePeriod m)
     {
-      if (m<0L)
+      if (m < 0L)
         throw DataException("The maximum demand lateness must be positive");
       maxLateness = m;
     }
 
-    /** Returns true if multiple delivery operationplans for this demand are
-      * allowed.
-      * @see planSingleDelivery
+    /** Return the minimum shipment quantity allowed in satisfying this 
+      * demand.<br>
+      * The default value is 0, which allows deliveries of any size.
       */
-    bool planMultiDelivery() const {return !policy.test(0);}
+    float getMinShipment() const {return minShipment;}
 
-    /** Returns true if only a single delivery operationplan is allowed for this
-      * demand.
-      * @see planMultiDelivery
+    /** Updates the maximum allowed lateness for this demand.<br>
+      * The default value is infinite.<br>
+      * The argument must be a positive time period.
       */
-    bool planSingleDelivery() const {return policy.test(0);}
-
-    /** Resets the demand policies to the default values, and then applies the
-      * policies specified in the argument string.
-      * @see addPolicy
-      */
-    virtual void setPolicy(const string& s)
+    virtual void setMinShipment(float m)
     {
-      policy.reset();
-      addPolicy(s);
+      if (m < 0.0f)
+        throw DataException("The minumum demand shipment quantity must be positive");
+      minShipment = m;
     }
-
-    /** The argument string is parsed in a valid policy number. The format
-      * of the instput string is:<br>
-      *   [[whitespace][policy]]*<br>
-      * where:
-      * <ul>
-      * <li> 'whitespace' is a series of seperators (spaces, tabs, punctuations)
-      * <li> 'policy' is one of the values:
-      *    <ul>
-      *    <li>SINGLEDELIVERY<br>
-      *      A demand with this policy can have only a single delivery
-      *      operationplan.<br>
-      *      Opposite of the MULTIDELIVERY policy.
-      *    <li>MULTIDELIVERY<br>
-      *      A demand with this policy can have multiple delivery
-      *      operationplans.<br>
-      *      Opposite of the SINGLEDELIVERY policy.<br>
-      *      This policy is applied by default.
-      *    </ul>
-      * </ul>
-      * The policy string is case INsensitive.<br>
-      * The default policy string is "MULTIDELIVERY"
-      */
-    virtual DECLARE_EXPORT void addPolicy(const string&);
 
     /** Recompute the problems. */
     virtual DECLARE_EXPORT void updateProblems();
 
     /** Specifies whether of not this demand is to be hidden from
       * serialization. The default value is false. */
-    void setHidden(bool b) {policy.set(1,b);}
+    void setHidden(bool b) {hidden = b;}
 
     /** Returns true if this demand is to be hidden from serialization. */
-    bool getHidden() const {return policy.test(1);}
+    bool getHidden() const {return hidden;}
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaCategory metadata;
@@ -3739,13 +3710,11 @@ class Demand
       */
     TimePeriod maxLateness;
 
-    /** Efficiently stores a number of different policy values for the demand.
-      * The default value for each policy bit is 0 / false.
-      * The bits have the following meaning:
-      *  - 0: Multi (false) or Single (true) delivery
-      *  - 1: Normal (false) or Hidden (true) demand
-      */
-    bitset<2> policy;
+    /** Minimum size for a delivery operation plan satisfying this demand. */
+    float minShipment;
+
+    /** Hide this demand or not. */
+    bool hidden;
 
     /** A list of operation plans to deliver this demand. */
     OperationPlan_list deli;

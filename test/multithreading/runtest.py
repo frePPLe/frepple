@@ -72,7 +72,7 @@ def funcAddDemand(id,cnt):
     '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
     '<DEMANDS>' +
     '<DEMAND NAME="order_%d_%d" QUANTITY="10" ' +
-    'DUE="2005-01-04T09:00:00" PRIORITY="1" POLICY="PLANLATE"> ' +
+    'DUE="2005-01-04T09:00:00" PRIORITY="1"> ' +
     '<ITEM NAME="end item"/></DEMAND>' +
     '</DEMANDS></PLAN>') % (id,cnt))
 
@@ -167,7 +167,7 @@ send2frepple(
   </FLOW>
   </FLOWS><DEMANDS>
   <DEMAND NAME="order 1" QUANTITY="10" DUE="2007-01-04T09:00:00"
-  PRIORITY="1" POLICY="PLANLATE> <ITEM NAME="end item"/></DEMAND>
+  PRIORITY="1"> <ITEM NAME="end item"/></DEMAND>
   </DEMANDS></PLAN>""")
 
 # Define the test threads and the duration of the test

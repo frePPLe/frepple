@@ -105,6 +105,7 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_minimum;
     static DECLARE_EXPORT const XMLtag tag_mininterval;
     static DECLARE_EXPORT const XMLtag tag_mininventory;
+    static DECLARE_EXPORT const XMLtag tag_minshipment;
     static DECLARE_EXPORT const XMLtag tag_mode;
     static DECLARE_EXPORT const XMLtag tag_name;
     static DECLARE_EXPORT const XMLtag tag_onhand;
@@ -116,7 +117,6 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_parameter;
     static DECLARE_EXPORT const XMLtag tag_pegging;
     static DECLARE_EXPORT const XMLtag tag_plan;
-    static DECLARE_EXPORT const XMLtag tag_policy;
     static DECLARE_EXPORT const XMLtag tag_posttime;
     static DECLARE_EXPORT const XMLtag tag_pretime;
     static DECLARE_EXPORT const XMLtag tag_priority;

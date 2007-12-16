@@ -133,10 +133,6 @@ DECLARE_EXPORT const Demand::OperationPlan_list& Demand::getDelivery() const
 
 DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
 {
-  // If the policy is SINGLEDELIVERY then we need to unregister the previous
-  // delivery operationplan
-  if (planSingleDelivery() && !deli.empty()) removeDelivery(*deli.begin());
-
   // Dummy call to this function
   if (!o) return;
 
@@ -209,14 +205,6 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m
   HasHierarchy<Demand>::writeElement(o, tag);
   o->writeElement(Tags::tag_operation, oper);
   o->writeElement(Tags::tag_customer, cust);
-  if (policy.any())
-  {
-    // We only need to save if the policy is different from the default.
-    // It is important to stick to the convention that the default is a zero!
-    string p;
-    if (planSingleDelivery()) p += "SINGLEDELIVERY ";
-    o->writeElement(Tags::tag_policy, p);
-  }
   Plannable::writeElement(o, tag);
 
   o->writeElement(Tags::tag_quantity, qty);
@@ -225,6 +213,8 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m
   if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
   if (getMaxLateness() != TimePeriod::MAX)
     o->writeElement(Tags::tag_maxlateness, getMaxLateness());
+  if (getMinShipment())
+    o->writeElement(Tags::tag_minshipment, getMinShipment());
 
   // Write extra plan information
   if ((o->getContentType() == XMLOutput::PLAN
@@ -274,8 +264,6 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
     if (c) setCustomer(c);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA (Tags::tag_policy))
-    addPolicy(pElement.getString());
   else if (pElement.isA (Tags::tag_item))
   {
     Item *i = dynamic_cast<Item*>(pIn.getPreviousObject());
@@ -284,6 +272,8 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else if (pElement.isA (Tags::tag_maxlateness))
     setMaxLateness(pElement.getTimeperiod());
+  else if (pElement.isA (Tags::tag_minshipment))
+    setMinShipment(pElement.getFloat());
   else if (pElement.isA(Tags::tag_operation_plan))
   {
     OperationPlan* opplan
@@ -296,55 +286,6 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
     Plannable::endElement(pIn, pElement);
     HasDescription::endElement(pIn, pElement);
     HasHierarchy<Demand>::endElement (pIn, pElement);
-  }
-}
-
-
-DECLARE_EXPORT void Demand::addPolicy(const string& s)
-{
-  // Find words till we are the end of the string
-  for (const char* ptr = s.c_str(); *ptr; ++ptr)
-  {
-    // Skip whitespace
-    while (isspace(*ptr) || ispunct(*ptr)) ++ptr;
-
-    // Jump to the right string comparison, depending on the first character
-    bool found = true;
-    switch (*ptr)
-    {
-      case 'S':
-        if (strncasecmp(ptr, "SINGLEDELIVERY", 14) == 0)
-        {
-          // singledelivery
-          ptr += 14;
-          if (planSingleDelivery() ) break;
-          setChanged();
-          policy.set(0);
-        }
-        else
-          found = false;
-        break;
-      case 'M':
-        if (strncasecmp(ptr, "MULTIDELIVERY", 13) == 0)
-        {
-          // multidelivery
-          ptr += 13;
-          if (planMultiDelivery()) break;
-          setChanged();
-          policy.reset(0);
-        }
-        else
-          found = false;
-        break;
-      default:
-        found = false;
-    }
-    if (!*ptr) return;
-
-    // Unrecognized policy name...
-    if (!found)
-      throw DataException("Unrecognized policy for demand '" + getName()
-          + "' in value: '" + ptr + "'");
   }
 }
 

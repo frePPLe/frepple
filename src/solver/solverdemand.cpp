@@ -58,6 +58,10 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
     return;
   }
 
+  // Temporary values to store the 'best-reply' so far
+  float best_q_qty, best_a_qty = 0.0f;
+  Date best_q_date;
+
   // Which operation to use?
   Operation::pointer deliveryoper = l->getDeliveryOperation();
   if (!deliveryoper)
@@ -86,98 +90,120 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
       logger << "Demand '" << l << "' gets answer: "
       << Solver->a_qty << " - " << Solver->a_date << endl;
 
-    // Update for the next planning loop
-    if (l->planMultiDelivery())
+    // Update the date to plan in the next loop
+    Date copy_plan_date = plan_date;
+
+    // Compare the planned quantity with the minimum allowed shipment quantity
+    // We don't accept the answer in case:
+    // 1) Nothing is planned
+    // 2) The planned quantity is less than the minimum shipment quantity
+    // 3) The remaining quantity after accepting this answer is less than
+    //    the minimum quantity. 
+    if (Solver->a_qty < ROUNDING_ERROR 
+      || Solver->a_qty + ROUNDING_ERROR < l->getMinShipment()
+      || (plan_qty - Solver->a_qty < l->getMinShipment()
+          && plan_qty - Solver->a_qty > ROUNDING_ERROR))
     {
-      // Update the date to plan in the next loop
-      Date copy_plan_date = plan_date;
-
-      if (Solver->a_qty > ROUNDING_ERROR)
+      if (plan_qty - Solver->a_qty < l->getMinShipment()
+        
+        && Solver->a_qty + ROUNDING_ERROR >= l->getMinShipment()
+        && Solver->a_qty > best_a_qty )
       {
-        if (Solver->a_qty + ROUNDING_ERROR < plan_qty)
-        {
-          // The demand was only partially planned. We need to do a new
-          // 'coordinated' planning run.
-
-          // Delete operationplans created in the 'testing round'
-          Solver->undo();
-
-          // Create the correct operationplans
-          double tmpqty = Solver->a_qty;
-          if (loglevel>=2) logger << "Demand '" << l << "' plans coordination." << endl;
-          Solver->getSolver()->setLogLevel(0);
-          float tmpresult = Solver->a_qty;
-          for(float remainder = Solver->a_qty;
-            remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
-          {
-            Solver->q_qty = remainder;
-            Solver->q_date = copy_plan_date;
-            Solver->curDemand = l;
-            Solver->curBuffer = NULL;
-            deliveryoper->solve(*this,v);
-            if (Solver->a_qty < ROUNDING_ERROR)
-            {
-              logger << "Warning: Demand '" << l << "': Failing coordination" << endl;
-              break;
-            }
-          }
-          Solver->getSolver()->setLogLevel(loglevel);
-          Solver->a_qty = tmpresult;
-        }
-
-        // Register the new operationplans. We need to make sure that the
-        // correct execute method is called!
-        Solver->CommandList::execute();
-
-        // Update the quantity to plan in the next loop
-        plan_qty -= Solver->a_qty;
+        // The remaining quantity after accepting this answer is less than
+        // the minimum quantity. Therefore, we delay accepting it now, but
+        // still keep track of this best offer.
+        best_a_qty = Solver->a_qty;
+        best_q_qty = plan_qty;
+        best_q_date = plan_date;
       }
-      else
+
+      // Delete operationplans - Undo all changes
+      Solver->undo();
+
+      // Set the ask date for the next pass through the loop
+      if (Solver->a_date <= copy_plan_date)
       {
-        // Nothing planned - Delete operationplans - Undo all changes
-        Solver->undo();
-        // If there is no proper new date for the next loop, we need to exit
-        if (Solver->a_date <= copy_plan_date)
-        {
-          if (copy_plan_date < l->getDue() + TimePeriod(60L*86400L)) // @todo hardcoded max!!!
-          {
-            // Try a day later
-            logger << "Warning: Demand '" << l << "': Lazy retry" << endl;
-            plan_date = copy_plan_date + TimePeriod(1*86400L); // @todo hardcoded increments of 1 day
-          }
-          // Don't try it any more
-          else plan_qty = 0.0f;
-        }
-        else plan_date = Solver->a_date;
+        // Oops, we didn't get a proper answer we can use for the next loop.
+        // Print a warning and simply try one day later.
+        logger << "Warning: Demand '" << l << "': Lazy retry" << endl;
+        plan_date = copy_plan_date + TimePeriod(1*86400L); // @todo hardcoded increments of 1 day
       }
-    }
-    else if (l->planSingleDelivery())
-    {
-      // Only a single delivery of the complete quantity is allowed.
-      if (Solver->a_qty + ROUNDING_ERROR > plan_qty)
-      {
-        // Yes, it is fully planned
-        // Commit all changes. We need to make sure that the correct execute
-        // method is called!
-        Solver->CommandList::execute();
-        // Update the quantity and date to plan in the next loop
-        plan_qty -= Solver->a_qty;
-      }
-      else
-      {
-        // Not fully planned. Try again at a new date
-        // Undo all changes
-        Solver->undo();
-        // If there is no proper new date for the next loop, we need to exit
-        if (Solver->a_date <= plan_date) plan_qty = 0.0f;
+      else 
+        // Use the next-date answer from the solver
         plan_date = Solver->a_date;
+    }    
+    else
+    {
+      // Accepting this answer
+      if (Solver->a_qty + ROUNDING_ERROR < plan_qty)
+      {
+        // The demand was only partially planned. We need to do a new
+        // 'coordinated' planning run.
+
+        // Delete operationplans created in the 'testing round'
+        Solver->undo();
+
+        // Create the correct operationplans
+        double tmpqty = Solver->a_qty;
+        if (loglevel>=2) logger << "Demand '" << l << "' plans coordination." << endl;
+        Solver->getSolver()->setLogLevel(0);
+        float tmpresult = Solver->a_qty;
+        for(float remainder = Solver->a_qty;
+          remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
+        {
+          Solver->q_qty = remainder;
+          Solver->q_date = copy_plan_date;
+          Solver->curDemand = l;
+          Solver->curBuffer = NULL;
+          deliveryoper->solve(*this,v);
+          if (Solver->a_qty < ROUNDING_ERROR)
+          {
+            logger << "Warning: Demand '" << l << "': Failing coordination" << endl;
+            break;
+          }
+        }
+        Solver->getSolver()->setLogLevel(loglevel);
+        Solver->a_qty = tmpresult;
       }
+
+      // Register the new operationplans. We need to make sure that the
+      // correct execute method is called!
+      Solver->CommandList::execute();
+
+      // Update the quantity to plan in the next loop
+      plan_qty -= Solver->a_qty;
+      best_a_qty = 0.0f;  // Reset 'best-answer' remember
     }
+
   }
   // Repeat while there is still a quantity left to plan and we aren't
   // exceeding the maximum delivery delay.
   while (plan_qty > ROUNDING_ERROR
       && plan_date < l->getDue() + l->getMaxLateness());
+
+  // Accept the best possible answer.
+  // We may have skipped it in the previous loop, awaiting a still better answer
+  if (best_a_qty > 0.0f)
+  {
+    if (loglevel>=2) logger << "Demand '" << l << "' accepts a best answer." << endl;
+    Solver->getSolver()->setLogLevel(0);
+    for(float remainder = best_q_qty;
+      remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
+    {
+      Solver->q_qty = remainder;
+      Solver->q_date = best_q_date;
+      Solver->curDemand = l;
+      Solver->curBuffer = NULL;
+      deliveryoper->solve(*this,v);
+      if (Solver->a_qty < ROUNDING_ERROR)
+      {
+        logger << "Warning: Demand '" << l << "': Failing accepting best answer" << endl;
+        break;
+      }
+    }
+    Solver->CommandList::execute();
+    Solver->getSolver()->setLogLevel(loglevel);
+  }
 }
 
 }

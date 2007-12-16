@@ -668,8 +668,8 @@ class Demand(models.Model):
       help_text=_('Operation used to satisfy this demand'))
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4)
     priority = models.PositiveIntegerField(_('priority'),default=2, choices=demandpriorities, radio_admin=True)
-    policy = models.CharField(_('policy'),max_length=25, null=True, blank=True, choices=demandpolicies,
-      help_text=_('Choose whether to plan the demand short or late, and with single or multiple deliveries allowed'))
+    minshipment = models.DecimalField(_('minimum shipment'), max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_('Minimum shipment quantity when planning this demand'))
     maxlateness = models.DecimalField(_('maximum lateness'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Maximum lateness allowed when planning this demand"))
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, raw_id_admin=True,
@@ -682,7 +682,7 @@ class Demand(models.Model):
     class Admin:
         fields = (
             (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'quantity', 'priority','owner')}),
-            (_('Planning parameters'), {'fields': ('operation', 'policy', 'maxlateness'), 'classes': 'collapse'}),
+            (_('Planning parameters'), {'fields': ('operation', 'minshipment', 'maxlateness'), 'classes': 'collapse'}),
         )
         list_display = ('name', 'item', 'customer', 'description', 'category',
           'subcategory', 'due', 'operation', 'quantity', 'priority','owner', 'lastmodified')
@@ -710,8 +710,8 @@ class Forecast(models.Model):
     operation = models.ForeignKey(Operation, verbose_name=_('delivery operation'), null=True, blank=True,
       related_name='used_forecast', raw_id_admin=True, help_text=_('Operation used to satisfy this demand'))
     priority = models.PositiveIntegerField(_('priority'),default=2, choices=Demand.demandpriorities, radio_admin=True)
-    policy = models.CharField(_('policy'),max_length=25, null=True, blank=True, choices=Demand.demandpolicies,
-      help_text=_('Choose whether to plan the demand short or late, and with single or multiple deliveries allowed'))
+    minshipment = models.DecimalField(_('minimum shipment'), max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_('Minimum shipment quantity when planning this demand'))
     maxlateness = models.DecimalField(_('maximum lateness'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Maximum lateness allowed when planning this demand"))
     discrete = models.BooleanField(_('discrete'),default=True, radio_admin=True, help_text=_('Round forecast numbers to integers'))
@@ -880,7 +880,7 @@ class Forecast(models.Model):
     class Admin:
         fields = (
             (None, {'fields': ('name', 'item', 'customer', 'calendar', 'description', 'category','subcategory', 'priority')}),
-            (_('Planning parameters'), {'fields': ('discrete', 'operation', 'policy', 'maxlateness'), 'classes': 'collapse'}),
+            (_('Planning parameters'), {'fields': ('discrete', 'operation', 'minshipment', 'maxlateness'), 'classes': 'collapse'}),
         )
         list_display = ('name', 'item', 'customer', 'calendar', 'description', 'category',
           'subcategory', 'operation', 'priority', 'lastmodified')

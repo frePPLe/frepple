@@ -8,4 +8,3 @@ CLEANFILES = *.gcda *.gcov *.gcno
 
 noinst_LTLIBRARIES = libutils.la
 libutils_la_SOURCES = date.cpp status.cpp actions.cpp library.cpp name.cpp datainput.cpp thread.cpp
-#libutils_la_LDFLAGS = -ldl   xxx @todo

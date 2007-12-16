@@ -326,7 +326,7 @@ def loadForecast(cursor):
   print 'Importing forecast...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, customer_id, item_id, priority, operation_id, policy, calendar_id, discrete, maxlateness FROM forecast")
+  cursor.execute("SELECT name, customer_id, item_id, priority, operation_id, minshipment, calendar_id, discrete, maxlateness FROM forecast")
   x = [ header, '<DEMANDS>' ]
   for i, j, k, l, m, n, o, p, q in cursor.fetchall():
     cnt += 1
@@ -334,7 +334,7 @@ def loadForecast(cursor):
     if j: x.append( '<CUSTOMER NAME=%s />' % quoteattr(j))
     if k: x.append( '<ITEM NAME=%s />' % quoteattr(k))
     if m: x.append( '<OPERATION NAME=%s />' % quoteattr(m))
-    if n: x.append( '<POLICY>%s</POLICY>' % n)
+    if n: x.append( '<MINSHIPMENT>%s</MINSHIPMENT>' % n)
     if o: x.append( '<CALENDAR NAME=%s />' % quoteattr(o))
     if not p: x.append( '<DISCRETE>false<DISCRETE>')
     if q != None: x.append( '<MAXLATENESS>%s</MAXLATENESS>' % timeformat(q))
@@ -366,7 +366,7 @@ def loadDemand(cursor):
   print 'Importing demands...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, due, quantity, priority, item_id, operation_id, customer_id, owner_id, policy, maxlateness FROM demand")
+  cursor.execute("SELECT name, due, quantity, priority, item_id, operation_id, customer_id, owner_id, minshipment, maxlateness FROM demand")
   x = [ header, '<DEMANDS>' ]
   for i, j, k, l, m, n, o, p, q, r in cursor.fetchall():
     cnt += 1
@@ -375,7 +375,7 @@ def loadDemand(cursor):
     if n: x.append( '<OPERATION NAME=%s />' % quoteattr(n))
     if o: x.append( '<CUSTOMER NAME=%s />' % quoteattr(o))
     if p: x.append( '<OWNER NAME=%s />' % quoteattr(p))
-    if q: x.append( '<POLICY>%s</POLICY>' % q)
+    if q: x.append( '<MINSHIPMENT>%s</MINSHIPMENT>' % q)
     if r != None: x.append( '<MAXLATENESS>%s</MAXLATENESS>' % timeformat(r))
     x.append('</DEMAND>')
   x.append('</DEMANDS></PLAN>')

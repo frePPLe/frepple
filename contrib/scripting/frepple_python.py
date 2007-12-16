@@ -67,7 +67,6 @@ try:
 					<DUE>2007-01-04T09:00:00</DUE> \
 					<PRIORITY>1</PRIORITY> \
 					<ITEM NAME="end item"/> \
-					<POLICY>PLANLATE</POLICY> \
 				</DEMAND> \
 			</DEMANDS> \
 		</PLAN> ', True, False)

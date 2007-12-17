@@ -413,11 +413,16 @@ extern "C"
     private:
       PyObject_HEAD
       Buffer::iterator iter;
+      PyObject* flowplaniterator;
     public:
       static PyTypeObject InfoType;
       static PyObject* next(PythonBuffer*);
       static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-      static void destroy(PythonBuffer* obj) {PyObject_Del(obj);}
+      static void destroy(PythonBuffer* obj) 
+      {
+        if (obj->flowplaniterator) Py_DECREF(obj->flowplaniterator);
+        PyObject_Del(obj);
+      }
       static void define_type() {}
   };
 
@@ -428,11 +433,16 @@ extern "C"
     private:
       PyObject_HEAD
       Resource::iterator iter;
+      PyObject* loadplaniterator;
     public:
       static PyTypeObject InfoType;
       static PyObject* next(PythonResource*);
       static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-      static void destroy(PythonResource* obj) {PyObject_Del(obj);}
+      static void destroy(PythonResource* obj) 
+      {
+        if (obj->loadplaniterator) Py_DECREF(obj->loadplaniterator);
+        PyObject_Del(obj);
+      }
       static void define_type() {}
   };
 

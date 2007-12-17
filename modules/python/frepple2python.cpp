@@ -402,6 +402,7 @@ extern "C" PyObject* PythonBuffer::create(PyTypeObject* type, PyObject *args, Py
 
   // Initialize the iterator
   obj->iter = Buffer::begin();
+  obj->flowplaniterator = NULL;
 
   return reinterpret_cast<PyObject*>(obj);
 }
@@ -409,12 +410,19 @@ extern "C" PyObject* PythonBuffer::create(PyTypeObject* type, PyObject *args, Py
 
 extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj)
 {
+  if (obj->flowplaniterator)
+  { 
+    Py_DECREF(obj->flowplaniterator);
+    obj->flowplaniterator = NULL;
+  }
+
   if (obj->iter != Buffer::end())
   {
     // Find a non-hidden buffer
     const Buffer *buf = &*(obj->iter);
     while (buf && buf->getHidden()) buf = buf->getOwner();
     // Build a python dictionary
+    obj->flowplaniterator = PythonFlowPlan::createFromBuffer(&*(obj->iter));
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:f,s:z,s:z,s:z,s:z,s:z,s:O}",
       "NAME", buf ? buf->getName().c_str() : "unspecified",
       "CATEGORY", obj->iter->getCategory().c_str(),
@@ -426,7 +434,7 @@ extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj)
       "MINIMUM", obj->iter->getMinimum() ? obj->iter->getMinimum()->getName().c_str() : NULL,
       "MAXIMUM", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
       "PRODUCING", obj->iter->getProducingOperation() ? obj->iter->getProducingOperation()->getName().c_str() : NULL,
-      "FLOWPLANS", PythonFlowPlan::createFromBuffer(&*(obj->iter))
+      "FLOWPLANS", obj->flowplaniterator
       );
     ++(obj->iter);
     return result;
@@ -448,6 +456,7 @@ extern "C" PyObject* PythonResource::create(PyTypeObject* type, PyObject *args, 
 
   // Initialize the iterator
   obj->iter = Resource::begin();
+  obj->loadplaniterator = NULL;
 
   return reinterpret_cast<PyObject*>(obj);
 }
@@ -455,12 +464,19 @@ extern "C" PyObject* PythonResource::create(PyTypeObject* type, PyObject *args, 
 
 extern "C" PyObject* PythonResource::next(PythonResource* obj)
 {
+  if (obj->loadplaniterator)
+  { 
+    Py_DECREF(obj->loadplaniterator);
+    obj->loadplaniterator = NULL;
+  }
+
   if (obj->iter != Resource::end())
   {
     // Find a non-hidden resource
     const Resource *res = &*(obj->iter);
     while (res && res->getHidden()) res = res->getOwner();
     // Build a python dictionary
+    obj->loadplaniterator = PythonLoadPlan::createFromResource(&*(obj->iter));
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:z,s:z,s:z,s:O}",
       "NAME", res ? res->getName().c_str() : "unspecified",
       "CATEGORY", obj->iter->getCategory().c_str(),
@@ -469,7 +485,7 @@ extern "C" PyObject* PythonResource::next(PythonResource* obj)
       "LOCATION", obj->iter->getLocation() ? obj->iter->getLocation()->getName().c_str() : NULL,
       "MAXIMUM", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
       "OWNER", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL,
-      "LOADPLANS", PythonLoadPlan::createFromResource(&*(obj->iter))
+      "LOADPLANS", obj->loadplaniterator
      );
     ++(obj->iter);
     return result;

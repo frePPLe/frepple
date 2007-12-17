@@ -372,11 +372,18 @@ extern "C"
     private:
       PyObject_HEAD
       Demand::iterator iter;
+      PyObject* peggingiterator;
+      PyObject* deliveryiterator;      
     public:
       static PyTypeObject InfoType;
       static PyObject* next(PythonDemand*);
       static PyObject* create(PyTypeObject*, PyObject *, PyObject *);
-      static void destroy(PythonDemand* obj) {PyObject_Del(obj);}
+      static void destroy(PythonDemand* obj) 
+      {
+        if (obj->peggingiterator) Py_DECREF(obj->peggingiterator);
+        if (obj->deliveryiterator) Py_DECREF(obj->deliveryiterator);
+        PyObject_Del(obj);
+      }
       static void define_type() {}
   };
 

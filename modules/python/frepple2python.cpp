@@ -273,6 +273,8 @@ extern "C" PyObject* PythonDemand::create(PyTypeObject* type, PyObject *args, Py
 
   // Initialize the iterator
   obj->iter = Demand::begin();
+  obj->peggingiterator = NULL;
+  obj->deliveryiterator = NULL;
 
   return reinterpret_cast<PyObject*>(obj);
 }
@@ -280,12 +282,24 @@ extern "C" PyObject* PythonDemand::create(PyTypeObject* type, PyObject *args, Py
 
 extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
 {
+  if (obj->peggingiterator) 
+  { 
+    Py_DECREF(obj->peggingiterator);
+    obj->peggingiterator = NULL;
+  }
+  if (obj->deliveryiterator) 
+  {
+    Py_DECREF(obj->deliveryiterator);
+    obj->deliveryiterator = NULL;
+  }
   if (obj->iter != Demand::end())
   {
     // Find a non-hidden demand owning this demand
     const Demand *dem = &*(obj->iter);
     while (dem && dem->getHidden()) dem = dem->getOwner();
     // Build a python dictionary
+    obj->peggingiterator = PythonDemandPegging::createFromDemand(&*(obj->iter));
+    obj->deliveryiterator = PythonDemandDelivery::createFromDemand(&*(obj->iter));
     PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z,s:z,s:O,s:O}",
       "NAME", dem ? dem->getName().c_str() : "unspecified",
       "QUANTITY", obj->iter->getQuantity(),
@@ -295,8 +309,8 @@ extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
       "OPERATION", obj->iter->getOperation() ? obj->iter->getOperation()->getName().c_str() : NULL,
       "OWNER", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL,
       "CUSTOMER", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL,
-      "PEGGING", PythonDemandPegging::createFromDemand(&*(obj->iter)),
-      "DELIVERY", PythonDemandDelivery::createFromDemand(&*(obj->iter))
+      "PEGGING", obj->peggingiterator,
+      "DELIVERY", obj->deliveryiterator
       );
     ++(obj->iter);
     return result;

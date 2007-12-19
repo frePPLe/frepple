@@ -1039,6 +1039,8 @@ class Location
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
     DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    size_t extrasize() const 
+    {return getName().size() + HasDescription::extrasize();}
     explicit Location(const string& n) : HasHierarchy<Location>(n) {}
     virtual DECLARE_EXPORT ~Location();
     virtual const MetaClass& getType() const {return metadata;}
@@ -1055,9 +1057,7 @@ class LocationDefault : public Location
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(LocationDefault)
-        + getName().size()
-        + HasDescription::memsize();}
+    {return sizeof(LocationDefault) + Location::extrasize();}
 };
 
 
@@ -1074,6 +1074,8 @@ class Customer
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
     DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    size_t extrasize() const 
+    {return getName().size() + HasDescription::extrasize();}
     Customer(const string& n) : HasHierarchy<Customer>(n) {}
     virtual DECLARE_EXPORT ~Customer();
     virtual const MetaClass& getType() const {return metadata;}
@@ -1090,7 +1092,7 @@ class CustomerDefault : public Customer
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(CustomerDefault) + getName().size() + HasDescription::memsize();}
+    {return sizeof(CustomerDefault) + Customer::extrasize();}
 };
 
 
@@ -1257,6 +1259,9 @@ class Operation : public HasName<Operation>,
     DECLARE_EXPORT void beginElement(XMLInput& , XMLElement& );
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
+
+    size_t extrasize() const 
+    {return getName().size() + HasDescription::extrasize();}
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -1884,7 +1889,7 @@ class OperationFixedTime : public Operation
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(OperationFixedTime) + getName().size() + HasDescription::memsize();}
+    {return sizeof(OperationFixedTime) + Operation::extrasize();}
 
     /** A operation of this type enforces the following rules on its
       * operationplans:
@@ -1956,7 +1961,7 @@ class OperationTimePer : public Operation
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(OperationTimePer) + getName().size() + HasDescription::memsize();}
+    {return sizeof(OperationTimePer) + Operation::extrasize();}
 
   private:
     /** Constant part of the operation time. */
@@ -2037,8 +2042,7 @@ class OperationRouting : public Operation
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
     {
-      return sizeof(OperationRouting) + getName().size()
-        + HasDescription::memsize()
+      return sizeof(OperationRouting) + Operation::extrasize()
         + steps.size() * 2 * sizeof(Operation*);
     }
 
@@ -2149,7 +2153,7 @@ class OperationAlternate : public Operation
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
     {
-      return sizeof(OperationAlternate) + getName().size() + HasDescription::memsize()
+      return sizeof(OperationAlternate) + Operation::extrasize()
           + alternates.size() * 2 * (sizeof(Operation*)+sizeof(float));
     }
 
@@ -2242,7 +2246,7 @@ class OperationEffective : public Operation
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(OperationEffective) + getName().size() + HasDescription::memsize();}
+    {return sizeof(OperationEffective) + Operation::extrasize();}
 
     /** This is the factory method which creates all operationplans of the
       * operation.
@@ -2372,7 +2376,10 @@ class ItemDefault : public Item
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(ItemDefault) + getName().size() + HasDescription::memsize();}
+    {
+      return sizeof(ItemDefault) + getName().size() 
+        + HasDescription::extrasize();
+    }
 };
 
 
@@ -2433,6 +2440,9 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     DECLARE_EXPORT virtual void beginElement(XMLInput&, XMLElement&);
     DECLARE_EXPORT virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT virtual void endElement(XMLInput&, XMLElement&);
+
+    size_t extrasize() const 
+    {return getName().size() + HasDescription::extrasize();}
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Buffer();
@@ -2535,7 +2545,7 @@ class BufferDefault : public Buffer
     explicit BufferDefault(const string& str) : Buffer(str) {}
     virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
-      {return sizeof(BufferDefault) + getName().size() + HasDescription::memsize();}
+    {return sizeof(BufferDefault) + Buffer::extrasize();}
     static DECLARE_EXPORT const MetaClass metadata;
 };
 
@@ -2554,7 +2564,7 @@ class BufferInfinite : public Buffer
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
-      {return sizeof(BufferInfinite) + getName().size() + HasDescription::memsize();}
+      {return sizeof(BufferInfinite) + Buffer::extrasize();}
     explicit BufferInfinite(const string& c) : Buffer(c)
       {setDetectProblems(false);}
     static DECLARE_EXPORT const MetaClass metadata;
@@ -2621,7 +2631,7 @@ class BufferProcure : public Buffer
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
-      {return sizeof(BufferProcure) + getName().size() + HasDescription::memsize();}
+      {return sizeof(BufferProcure) + Buffer::extrasize();}
     explicit BufferProcure(const string& c) : Buffer(c), min_inventory(0),
       max_inventory(0), size_minimum(0), size_maximum(FLT_MAX), size_multiple(0),
       oper(NULL) {}
@@ -3029,6 +3039,9 @@ class Resource : public HasHierarchy<Resource>,
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
     DECLARE_EXPORT void beginElement (XMLInput&, XMLElement&);
 
+    size_t extrasize() const 
+    {return getName().size() + HasDescription::extrasize();}
+
     /** Returns the location of this resource. */
     Location::pointer getLocation() const {return loc;}
 
@@ -3081,8 +3094,7 @@ class ResourceDefault : public Resource
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(ResourceDefault)
-        + getName().size() + HasDescription::memsize();}
+    {return sizeof(ResourceDefault) + Resource::extrasize();}
 };
 
 
@@ -3099,7 +3111,7 @@ class ResourceInfinite : public Resource
       {setDetectProblems(false);}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(ResourceInfinite) + getName().size() + HasDescription::memsize();}
+    {return sizeof(ResourceInfinite) + Resource::extrasize();}
 };
 
 
@@ -3637,6 +3649,12 @@ class Demand
     virtual DECLARE_EXPORT void endElement(XMLInput& , XMLElement&  );
     virtual DECLARE_EXPORT void beginElement (XMLInput& , XMLElement&  );
 
+    size_t extrasize() const 
+    {
+      return getName().size() + HasDescription::extrasize() 
+        + sizeof(void*) * 2 * deli.size();
+    }
+
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
     /** Return the maximum delay allowed in satisfying this demand.<br>
@@ -3731,7 +3749,7 @@ class DemandDefault : public Demand
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(DemandDefault) + getName().size() + HasDescription::memsize();}
+    {return sizeof(DemandDefault) + Demand::extrasize();}
 };
 
 

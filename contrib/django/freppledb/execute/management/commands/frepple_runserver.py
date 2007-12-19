@@ -57,8 +57,11 @@ class Command(BaseCommand):
   def handle(self, **options):
 
     # Pick up the arguments
-    port = int(options.get('port','8000'))
-    address = options.get('address', socket.getaddrinfo(socket.gethostname(), None)[0][4][0])
+    if 'port' in options: port = int(options['port'] or '8000')
+    else: port = 8000
+    if 'address' in options: address = options['address']
+    else: address = None
+    if addess == None: socket.getaddrinfo(socket.gethostname(), None)[0][4][0]
 
     # Validate the address and port number
     try:

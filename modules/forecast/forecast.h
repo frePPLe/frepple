@@ -208,7 +208,10 @@ class Forecast : public Demand
         DateRange timebucket;
         ForecastBucket* prev;
         ForecastBucket* next;
-        virtual size_t getSize() const {return sizeof(ForecastBucket);}
+        virtual size_t getSize() const 
+        {
+          return sizeof(ForecastBucket) + Demand::extrasize();
+        }
     };
 
   public:
@@ -290,7 +293,10 @@ class Forecast : public Demand
     virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const
-      {return sizeof(Forecast) + getName().size() + HasDescription::memsize();}
+    {
+      return sizeof(Forecast) + Demand::extrasize() 
+        + 6 * sizeof(void*); // Approx. size of an entry in forecast dictionary
+    }
 
     /** Updates the value of the Customer_Then_Item_Hierarchy module
       * parameter. */

@@ -101,19 +101,32 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     # Pick up the options
-    verbosity = int(options.get('verbosity','1') or '1')
-    user = options.get('user','') or ''
-    cluster = int(options.get('cluster','100') or '100')
-    demand = int(options.get('demand','30') or '30')
-    forecast_per_item = int(options.get('forecast_per_item','50') or '50')
-    level = int(options.get('level','5') or '5')
-    resource = int(options.get('resource','50') or '50')
-    resource_size = int(options.get('resource_size','4') or '4')
-    components = int(options.get('components','200') or '200')
-    components_per = int(options.get('components_per','5') or '5')
-    deliver_lt = int(options.get('deliver_lt','30') or '30')
-    procure_lt = int(options.get('procure_lt','40') or '40')
-    currentdate = options.get('currentdate','2007-01-01') or '2007-01-01'
+    if 'verbosity' in options: verbosity = int(options['verbosity'] or '1')
+    else: verbosity = 1
+    if 'user' in options: user = options['user']
+    else: user = ''
+    if 'cluster' in options: cluster = int(options['cluster'] or '100')
+    else: cluster = 100
+    if 'demand' in options: demand = int(options['demand'] or '30')
+    else: demand = 30
+    if 'forecast_per_item' in options: forecast_per_item = int(options['forecast_per_item'] or '50')
+    else: forecast_per_item = 50
+    if 'level' in options: level = int(options['level'] or '5')
+    else: level = 5
+    if 'resource' in options: resource = int(options['resource'] or '50')
+    else: resource = 50
+    if 'resource_size' in options: resource_size = int(options['resource_size'] or '4')
+    else: resource_size = 4
+    if 'components' in options: components = int(options['components'] or '200')
+    else: components = 200
+    if 'components_per' in options: components_per = int(options['components_per'] or '5')
+    else: components_per = 5
+    if 'deliver_lt' in options: deliver_lt = int(options['deliver_lt'] or '30')
+    else: deliver_lt = 30
+    if 'procure_lt' in options: procure_lt = int(options['procure_lt'] or '40')
+    else: procure_lt = 40
+    if 'currentdate' in options: currentdate = options['currentdate'] or '2007-01-01'
+    else: currentdate = '2007-01-01'
 
     random.seed(100) # Initialize random seed to get reproducible results
     cnt = 100000     # A counter for operationplan identifiers

@@ -48,8 +48,10 @@ class Command(BaseCommand):
   def handle(self, **options):
     try:
       # Pick up the options
-      user = options.get('user','')
-      type = int(options.get('type','7') or '7')
+      if 'user' in options: user = options['user'] or ''
+      else: user = ''
+      if 'type' in options: type = int(options['type'] or '7')
+      else: type = 7
 
       # Log message
       log(category='RUN', user=user,

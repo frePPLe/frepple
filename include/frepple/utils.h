@@ -3936,7 +3936,7 @@ class HasDescription
 
   protected:
     /** Returns the memory size in bytes. */
-    size_t memsize() const {return cat.size() + subcat.size() + descr.size();}
+    size_t extrasize() const {return cat.size() + subcat.size() + descr.size();}
 
   private:
     string cat;

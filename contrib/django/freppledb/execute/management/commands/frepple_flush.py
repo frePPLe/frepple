@@ -60,7 +60,8 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     # Pick up options
-    user = options.get('user','')
+    if 'user' in options: user = options['user'] or ''
+    else: user = ''
 
     try:
       log(category='ERASE', user=user,

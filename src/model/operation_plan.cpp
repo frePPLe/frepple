@@ -264,8 +264,12 @@ DECLARE_EXPORT void OperationPlan::initialize()
       OperationPlan* opplan = findId(id);
       if (opplan && opplan->getOperation()!=oper)
       {
-        delete this;   // @todo nasty side-effects!!!!???
-        throw RuntimeException("Duplicated operationplan identifier");
+        ostringstream ch;
+        ch << "Operationplan id " << id
+          << " defined multiple times with different operations: '"
+          << opplan->getOperation() << "' & '" << oper << "'";
+        delete this;   
+        throw DataException(ch.str());
       }
     }
     else

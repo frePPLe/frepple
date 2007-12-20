@@ -1704,7 +1704,7 @@ class OperationPlan
       * operation_plan</li>
       * </ol>
       * Every operation_plan subclass that has sub-operations will normally
-      * need to create an override of this function.
+      * need to create an override of this function.<br>
       * Calling this function can DELETE the current operationplan. The object
       * on which this function is called could not exist any more after the
       * call to this function!

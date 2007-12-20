@@ -137,7 +137,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
           // Note that the delay variable only reflects the delay due to
           // material constraints. If the operationplan is moved early or late
           // for capacity constraints, this is not included.
-          /*if (data.a_qty >= q_qty_Flow - ROUNDING_ERROR)
+          /*if (data.a_qty >= q_qty_Flow - ROUNDING_ERROR) xxx
           {
             // Same quantity planned on a different flow: take max date (unless quantity is zero)
             if (q_qty_Flow
@@ -197,7 +197,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
         data.a_date = Date::infiniteFuture;
         data.a_qty = data.q_qty;
         okay = false;
-        // Pop actions from the command "stack" in the command list
+        // Pop actions from the command stack in the command list
         data.undo(topcommand);
         // Echo a message
         if (data.getVerbose())

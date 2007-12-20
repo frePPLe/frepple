@@ -208,6 +208,42 @@ DECLARE_EXPORT void OperationPlan::initialize()
     return;
   }
 
+  // See if we can consolidate this operationplan with an existing one.
+  // Merging is possible only when all the following conditions are met:
+  //   - it is a fixedtime operation
+  //   - both operationplans aren't locked
+  //   - both operationplans have no owner
+  //   - start and end date of both operationplans are the same
+  //   - demand of both operationplans are the same
+  if (getOperation()->getType() == OperationFixedTime::metadata 
+    && !getLocked() && !getOwner())
+  {
+    // Loop through candidates
+    OperationPlan *x = oper->last_opplan;
+    OperationPlan *y = NULL;
+    while (x && !(*x < *this))
+    {
+      y = x;
+      x = x->prev;
+    }
+    if (y && y->getDates() == getDates() && !y->getOwner() 
+      && y->getDemand() == getDemand() && !y->getLocked())
+    {
+      // Merging with the 'next' operationplan
+      y->setQuantity(y->getQuantity() + getQuantity());
+      delete this;
+      return;
+    }
+    if (x && x->getDates() == getDates() && !x->getOwner() 
+      && x->getDemand() == getDemand() && !x->getLocked())
+    {
+      // Merging with the 'previous' operationplan
+      x->setQuantity(x->getQuantity() + getQuantity());
+      delete this;
+      return;
+    }
+  }
+
   // Create unique identifier
   // Having an identifier assigned is an important flag.
   // Only operation plans with an id :
@@ -229,7 +265,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
       if (opplan && opplan->getOperation()!=oper)
       {
         delete this;   // @todo nasty side-effects!!!!???
-        throw RuntimeException("Duplicated operplanid");
+        throw RuntimeException("Duplicated operationplan identifier");
       }
     }
     else
@@ -330,6 +366,7 @@ DECLARE_EXPORT void OperationPlan::updateSorting()
     if (oper->first_opplan == this)
       // New first operationplan
       oper->first_opplan = tmp;
+    if (tmp->next) tmp->next->prev = this;
     tmp->prev = prev;
     next = tmp->next;
     tmp->next = this;
@@ -344,6 +381,7 @@ DECLARE_EXPORT void OperationPlan::updateSorting()
     if (oper->last_opplan == this)
       // New last operationplan
       oper->last_opplan = tmp;
+    if (tmp->prev) tmp->prev->next = this;
     prev = tmp->prev;
     tmp->prev = this;
     tmp->next = next;

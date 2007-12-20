@@ -174,9 +174,7 @@ class MRPSolver : public Solver
     /** Behavior of this solver method:
       *  - Respects the following demand planning policies:<br>
       *     1) Maximum allowed lateness
-      *     2) SINGLEDELIVERY - plan complete or plan nothing at all<br>
-      *        or MULTIDELIVERY - allow the demand to be planned in multiple
-      *        deliveries at different times<br>
+      *     2) Minimum shipment quantity
       * This method is normally called from within the main solve method, but
       * it can also be called independently to plan a certain demand.
       * @see solve
@@ -193,7 +191,8 @@ class MRPSolver : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    MRPSolver(const string& n) : Solver(n), constrts(0), maxparallel(0) {}
+    MRPSolver(const string& n) : 
+      Solver(n), constrts(0), maxparallel(0), lazydelay(86400L) {}
 
     /** Destructor. */
     virtual ~MRPSolver() {}
@@ -292,6 +291,18 @@ class MRPSolver : public Solver
       else return getLogLevel()>0 ? 1 : Environment::getProcessors();
     }
 
+    /** Return the time increment between requests when the answered reply
+      * date isn't usable. */
+    TimePeriod getLazyDelay() const {return lazydelay;}
+
+    /** Update the time increment between requests when the answered reply
+      * date isn't usable. */
+    void setLazyDelay(TimePeriod l) 
+    {
+      if (l > 0L) lazydelay = l;
+      else throw DataException("Invalid lazy delay");      
+    }
+
   private:
     typedef map < int, deque<Demand*>, less<int> > classified_demand;
     typedef classified_demand::iterator cluster_iterator;
@@ -305,6 +316,16 @@ class MRPSolver : public Solver
       *    mangling the debugging output of different threads.
       */
     int maxparallel;
+
+    /** Time increments for a lazy replan.<br>
+      * The solver is expected to return always a next-feasible date when the 
+      * request can't be met. The solver can then retry the request with an 
+      * updated request date. In some corner cases and in case of a bug it is
+      * possible that no valid date is returned. The solver will then try the
+      * request with a request date incremented by this value.<br>
+      * The default value is 1 day.
+      */
+    TimePeriod lazydelay;      
 
   protected:
     /** @brief This class is a helper class of the MRPSolver class.

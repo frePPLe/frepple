@@ -137,13 +137,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
           // Note that the delay variable only reflects the delay due to
           // material constraints. If the operationplan is moved early or late
           // for capacity constraints, this is not included.
-          /*if (data.a_qty >= q_qty_Flow - ROUNDING_ERROR) xxx
-          {
-            // Same quantity planned on a different flow: take max date (unless quantity is zero)
-            if (q_qty_Flow
-          }
-          else*/
-            delay = data.a_date - q_date_Flow;
+          delay = data.a_date - q_date_Flow;
 
           // Jump out of the loop if the answered quantity is 0. There is
           // absolutely no need to check other flowplans.
@@ -318,7 +312,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
     // This operation doesn't fit at all within the constrained window.
     data.a_qty = 0.0f;
     // Resize to the minimum quantity
-    if (opplan->getQuantity() < ROUNDING_ERROR)
+    if (opplan->getQuantity() + ROUNDING_ERROR < opplan->getOperation()->getSizeMinimum())
       opplan->setQuantity(1,false);
     // Move to the earliest start date
     opplan->setStart(Plan::instance().getCurrent() + delta);

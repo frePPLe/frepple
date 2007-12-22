@@ -139,9 +139,9 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mod
     o->writeElement(Tags::tag_pretime, pre_time);
   if (fence)
     o->writeElement(Tags::tag_fence, fence);
-  if (size_minimum>0.0f)
+  if (size_minimum != 1.0f)
     o->writeElement(Tags::tag_size_minimum, size_minimum);
-  if (size_multiple>0.0f)
+  if (size_multiple > 0.0f)
     o->writeElement(Tags::tag_size_multiple, size_multiple);
 
   // Write extra plan information

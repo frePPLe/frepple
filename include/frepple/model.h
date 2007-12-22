@@ -1117,7 +1117,7 @@ class Operation : public HasName<Operation>,
   protected:
     /** Constructor. Don't use it directly. */
     explicit Operation(const string& str) : HasName<Operation>(str),
-        size_minimum(0.0f), size_multiple(0.0f), hidden(false),
+        size_minimum(1.0f), size_multiple(0.0f), hidden(false),
         first_opplan(NULL), last_opplan(NULL) {}
 
   public:
@@ -1234,10 +1234,13 @@ class Operation : public HasName<Operation>,
       */
     void deleteOperationPlans(bool deleteLockedOpplans = false);
 
-    /** Sets the minimum size of operationplans. */
+    /** Sets the minimum size of operationplans.<br>
+      * The default value is 1.0
+      */
     void setSizeMinimum(float f)
     {
-      if (f<0) return;
+      if (f<0) 
+        throw DataException("Operation can't have a negative minimum size");
       size_minimum = f;
       setChanged();
     }
@@ -1248,7 +1251,8 @@ class Operation : public HasName<Operation>,
     /** Sets the multiple size of operationplans. */
     void setSizeMultiple(float f)
     {
-      if (f<0) return;
+      if (f<0)
+        throw DataException("Operation can't have a negative multiple size");
       size_multiple = f;
       setChanged();
     }
@@ -1331,7 +1335,9 @@ class Operation : public HasName<Operation>,
     /** Singly linked list of all resources Loaded by this operation. */
     loadlist loaddata;
 
-    /** Minimum size for operationplans. */
+    /** Minimum size for operationplans.<br>
+      * The default value is 1.0
+      */
     float size_minimum;
 
     /** Multiple size for operationplans. */
@@ -1879,7 +1885,12 @@ class OperationFixedTime : public Operation
 
     /** Updates the duration of the operation. Existing operation plans of this
       * operation are not automatically refreshed to reflect the change. */
-    void setDuration(TimePeriod t) {if (t>=TimePeriod(0L)) duration = t;}
+    void setDuration(TimePeriod t) 
+    {
+      if (t<0L) 
+        throw DataException("FixedTime operation can't have a negative duration");
+      duration = t;
+    }
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
@@ -1927,14 +1938,22 @@ class OperationTimePer : public Operation
 
     /** Sets the constant part of the operation time. */
     void setDuration(TimePeriod t)
-    { if(t>=TimePeriod(0L)) duration = t; }
+    { 
+      if(t<0L) 
+        throw DataException("TimePer operation can't have a negative duration");
+      duration = t; 
+    }
 
     /** Returns the time per unit of the operation time. */
     TimePeriod getDurationPer() const {return duration_per;}
 
     /** Sets the time per unit of the operation time. */
     void setDurationPer(TimePeriod t)
-    { if(t>=TimePeriod(0L)) duration_per = t; }
+    { 
+      if(t<0L) 
+        throw DataException("TimePer operation can't have a negative duration-per");
+      duration_per = t;
+    }
 
     /** A operation of this type enforces the following rules on its
       * operationplans:
@@ -1988,7 +2007,7 @@ class OperationRouting : public Operation
     /** Adds a new steps to routing at the start of the routing. */
     void addStepFront(Operation *o)
     {
-      if (!o) return;
+      if (!o) throw DataException("Adding NULL operation to routing");
       steps.push_front(o);
       o->addSuperOperation(this);
     }
@@ -1996,7 +2015,7 @@ class OperationRouting : public Operation
     /** Adds a new steps to routing at the end of the routing. */
     void addStepBack(Operation *o)
     {
-      if (!o) return;
+      if (!o) throw DataException("Adding NULL operation to routing");
       steps.push_back(o);
       o->addSuperOperation(this);
     }
@@ -2641,13 +2660,18 @@ class BufferProcure : public Buffer
     TimePeriod getLeadtime() const {return leadtime;}
 
     /** Update the procurement leadtime. */
-    void setLeadtime(TimePeriod p) {if (p>=0L) leadtime = p;}
+    void setLeadtime(TimePeriod p) 
+    {
+      if (p<0L) 
+        throw DataException("Procurement buffer can't have a negative lead time");
+      leadtime = p;
+    }
 
     /** Return the release time fence. */
     TimePeriod getFence() const {return fence;}
 
     /** Update the release time fence. */
-    void setFence(TimePeriod p) {if (p>=0L) fence = p;}
+    void setFence(TimePeriod p) {fence = p;}
 
     /** Return the inventory level that will trigger creation of a
       * purchasing.
@@ -2657,7 +2681,8 @@ class BufferProcure : public Buffer
     /** Update the minimum inventory level to trigger replenishments. */
     void setMinimumInventory(float f)
     {
-      if (f<0) return;
+      if (f<0) 
+        throw DataException("Procurement buffer can't have a negative minimum inventory");
       min_inventory = f;
       // minimum is increased over the maximum: auto-increase the maximum
       if (max_inventory < min_inventory) max_inventory = min_inventory;
@@ -2669,7 +2694,8 @@ class BufferProcure : public Buffer
     /** Update the inventory level to replenish to. */
     void setMaximumInventory(float f)
     {
-      if (f<0) return;
+      if (f<0)
+        throw DataException("Procurement buffer can't have a negative maximum inventory");
       max_inventory = f;
       // maximum is lowered below the minimum: auto-decrease the minimum
       if (max_inventory < min_inventory) min_inventory = max_inventory;
@@ -2684,7 +2710,8 @@ class BufferProcure : public Buffer
     /** Update the minimum time between replenishments. */
     void setMinimumInterval(TimePeriod p)
     {
-      if (p<0L) return;
+      if (p<0L)
+        throw DataException("Procurement buffer can't have a negative minimum interval");
       min_interval = p;
       // minimum is increased over the maximum: auto-increase the maximum
       if (max_interval < min_interval) max_interval = min_interval;
@@ -2698,7 +2725,8 @@ class BufferProcure : public Buffer
     /** Update the minimum time between replenishments. */
     void setMaximumInterval(TimePeriod p)
     {
-      if (p<0L) return;
+      if (p<0L) 
+        throw DataException("Procurement buffer can't have a negative maximum interval");
       max_interval = p;
       // maximum is lowered below the minimum: auto-decrease the minimum
       if (max_interval < min_interval) min_interval = max_interval;
@@ -2710,7 +2738,8 @@ class BufferProcure : public Buffer
     /** Update the minimum replenishment quantity. */
     void setSizeMinimum(float f)
     {
-      if (f<0) return;
+      if (f<0) 
+        throw DataException("Procurement buffer can't have a negative minimum size");
       size_minimum = f;
       // minimum is increased over the maximum: auto-increase the maximum
       if (size_maximum < size_minimum) size_maximum = size_minimum;
@@ -2722,7 +2751,8 @@ class BufferProcure : public Buffer
     /** Update the maximum replenishment quantity. */
     void setSizeMaximum(float f)
     {
-      if (f<0) return;
+      if (f<0)
+        throw DataException("Procurement buffer can't have a negative maximum size");
       size_maximum = f;
       // maximum is lowered below the minimum: auto-decrease the minimum
       if (size_maximum < size_minimum) size_minimum = size_maximum;
@@ -2732,7 +2762,12 @@ class BufferProcure : public Buffer
     float getSizeMultiple() const {return size_multiple;}
 
     /** Update the multiple quantity. */
-    void setSizeMultiple(float f) {if (f>=0) size_multiple = f;}
+    void setSizeMultiple(float f) 
+    {
+      if (f<0) 
+        throw DataException("Procurement buffer can't have a negative multiple size");
+      size_multiple = f;
+    }
 
     /** Returns the operation that is automatically created to represent the
       * procurements.

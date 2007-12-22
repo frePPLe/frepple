@@ -334,9 +334,9 @@ def view_report(request, entity=None, **args):
   # Verify if the page has changed since the previous request
   lastmodifiedrequest = request.META.get('HTTP_IF_MODIFIED_SINCE', None)
   try:
-    lastmodifiedresponse = reportclass.lastmodified()
+    lastmodifiedresponse = reportclass.lastmodified().replace(microsecond=0)
     lastmodifiedresponse = (formatdate(timegm(lastmodifiedresponse.utctimetuple()))[:26] + 'GMT')
-    if lastmodifiedrequest == lastmodifiedresponse:
+    if lastmodifiedrequest.startswith(lastmodifiedresponse):
       # The report hasn't modified since the previous request
       return HttpResponseNotModified()
   except Exception, e:

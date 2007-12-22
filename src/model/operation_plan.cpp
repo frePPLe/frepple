@@ -371,6 +371,7 @@ DECLARE_EXPORT void OperationPlan::updateSorting()
       // New first operationplan
       oper->first_opplan = tmp;
     if (tmp->next) tmp->next->prev = this;
+    if (prev) prev->next = tmp;
     tmp->prev = prev;
     next = tmp->next;
     tmp->next = this;
@@ -386,6 +387,7 @@ DECLARE_EXPORT void OperationPlan::updateSorting()
       // New last operationplan
       oper->last_opplan = tmp;
     if (tmp->prev) tmp->prev->next = this;
+    if (next) next->prev = tmp;
     prev = tmp->prev;
     tmp->prev = this;
     tmp->next = next;

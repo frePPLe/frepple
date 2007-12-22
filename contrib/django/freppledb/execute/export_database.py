@@ -220,12 +220,15 @@ def exportForecast(cursor):
       (forecast,startdate,enddate,total,net,consumed) \
       values (%s,%s,%s,%s,%s,%s)",
       [(
-         i['NAME'], j['START_DATE'], j['END_DATE'], round(j['TOTALQTY'],ROUNDING_DECIMALS),
-        round(j['NETQTY'],ROUNDING_DECIMALS), round(j['CONSUMEDQTY'],ROUNDING_DECIMALS)
+         i['NAME'], str(j['START_DATE'].date()), str(j['END_DATE'].date()),
+         round(j['TOTALQTY'],ROUNDING_DECIMALS),
+         round(j['NETQTY'],ROUNDING_DECIMALS),
+         round(j['CONSUMEDQTY'],ROUNDING_DECIMALS)
        ) for j in i['BUCKETS'] if j['TOTALQTY'] > 0
       ])
     cnt += 1
     if cnt % 100 == 0: transaction.commit()
+
   transaction.commit()
   cursor.execute("select count(*) from out_forecast")
   print 'Exported %d forecasts in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)

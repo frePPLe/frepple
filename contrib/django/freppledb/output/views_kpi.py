@@ -72,7 +72,7 @@ class OverviewReport(ListReport):
       select 8, 'Operation', 'Quantity', round(sum(quantity),2)
       from out_operationplan
       union
-      select 9, 'Resource', 'Usage', round(sum(quantity),2)
+      select 9, 'Resource', 'Usage', round(sum(quantity * %s),2)
       from out_loadplan
       union
       select 10, 'Material', 'Produced', round(sum(quantity),2)
@@ -82,7 +82,10 @@ class OverviewReport(ListReport):
       select 11, 'Material', 'Consumed', round(sum(-quantity),2)
       from out_flowplan
       where quantity<0
-      ''' % sql_datediff('plandatetime','duedatetime')
+      ''' % (
+        sql_datediff('plandatetime','duedatetime'),
+        sql_datediff('enddatetime','startdatetime')
+        )
     cursor.execute(query)
 
     # Build the python result

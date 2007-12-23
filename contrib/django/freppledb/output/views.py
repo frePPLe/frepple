@@ -23,7 +23,6 @@
 from datetime import date, datetime
 
 from django.conf import settings
-from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connection
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _

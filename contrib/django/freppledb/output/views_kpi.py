@@ -20,58 +20,79 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.translation import ugettext_lazy as _
+from django.db import connection
 
+from utils.db import sql_datediff
 from utils.report import ListReport
-
-kpilist = []
-
-@staff_member_required
-def main(request):
-  '''
-  This view implements the overview screen with all kpis.
-  '''
-  return direct_to_template(request,  template='output/kpi.html',
-    extra_context={
-      'title': _('Key performance indicators'),
-      'reset_crumbs': True,
-      } )
+from utils.reportfilter import FilterText
+from input.models import Plan
 
 
-class KPILateDemand(ListReport):
-  '''
-  A list report to show the amount of lateness, grouped by demand category.
-  '''
-  template = 'output/kpilatedemand.html'
-  title = _("Late demand by category")
-  reset_crumbs = False
-  basequeryset = LoadPlan.objects.extra(
-    select={'operation':'out_operationplan.operation'},
-    where=['out_operationplan.identifier = out_loadplan.operationplan'],
-    tables=['out_operationplan'])
+class OverviewReport(ListReport):
+  template = 'output/kpi.html'
+  title = _("Plan performance indicators")
+  reset_crumbs = True
+  basequeryset = Plan.objects.all()
   rows = (
-    ('resource', {
-      'filter': FilterText(),
-      'title': _('resource')
-      }),
-    # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the operation field.
-    #('operation', {'filter': 'operation__icontains', 'title': _('operation')}),
-    ('operation', {'sort': False, 'title': _('operation')}),
-    ('startdatetime', {
-      'title': _('startdate'),
-      'filter': FilterDate(field='startdate'),
-      }),
-    ('enddatetime', {
-      'title': _('enddate'),
-      'filter': FilterDate(field='enddate'),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      'filter': FilterNumber(),
-      }),
-    ('operationplan', {
-      'filter': FilterText(),
-      'title': _('operationplan')
-      }),
+    ('category', {'sort': False, 'title': _('category')}),
+    ('name', {'sort': False, 'title': _('name')}),
+    ('value', {'sort': False, 'title': _('value')}),
     )
+
+  @staticmethod
+  def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
+    # Execute the query
+    cursor = connection.cursor()
+    query = '''
+      select 1, 'Problem', 'Count', count(*)
+      from out_problem
+      union
+      select 2, 'Problem', 'Weight', round(sum(weight),2)
+      from out_problem
+      union
+      select 3, 'Demand', 'Requested', round(sum(quantity),2)
+      from out_demand
+      union
+      select 4, 'Demand', 'Planned', round(sum(planquantity),2)
+      from out_demand
+      union
+      select 5, 'Demand', 'Planned late', coalesce(round(sum(planquantity),2),0)
+      from out_demand
+      where plandatetime > duedatetime and plandatetime is not null
+      union
+      select 6, 'Demand', 'Unplanned', coalesce(round(sum(quantity),2),0)
+      from out_demand
+      where planquantity is null
+      union
+      select 7, 'Demand', 'Total lateness', coalesce(round(sum(planquantity * %s),2),0)
+      from out_demand
+      where plandatetime > duedatetime and plandatetime is not null
+      union
+      select 8, 'Operation', 'Quantity', round(sum(quantity),2)
+      from out_operationplan
+      union
+      select 9, 'Resource', 'Usage', round(sum(quantity),2)
+      from out_loadplan
+      union
+      select 10, 'Material', 'Produced', round(sum(quantity),2)
+      from out_flowplan
+      where quantity>0
+      union
+      select 11, 'Material', 'Consumed', round(sum(-quantity),2)
+      from out_flowplan
+      where quantity<0
+      ''' % sql_datediff('plandatetime','duedatetime')
+    cursor.execute(query)
+
+    # Build the python result
+    for row in cursor.fetchall():
+      yield {
+        'category': row[1],
+        'name': row[2],
+        'value': row[3],
+        }
+
+  @staticmethod
+  def lastmodified():
+    return Plan.objects.all()[0].lastmodified

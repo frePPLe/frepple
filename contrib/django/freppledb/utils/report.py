@@ -183,7 +183,8 @@ def _generate_csv(rep, qs, format, bucketlist):
       # Clear the return string buffer
       sf.truncate(0)
       # Build the return value
-      fields = [ getattr(row,s[0]) for s in rep.rows ]
+      try: fields = [ getattr(row,s[0]) for s in rep.rows ]
+      except: fields = [ row[s[0]] for s in rep.rows ]
       # Return string
       writer.writerow(fields)
       yield sf.getvalue()

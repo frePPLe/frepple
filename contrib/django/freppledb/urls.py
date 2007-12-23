@@ -20,12 +20,15 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from django.conf.urls.defaults import *
 import os.path
+
+from django.conf.urls.defaults import *
+from django.conf import settings
+
 import input.views
 import output.views
+import output.views_kpi
 import user.views
-from django.conf import settings
 
 
 urlpatterns = patterns('',
@@ -73,6 +76,8 @@ urlpatterns = patterns('',
       {'report': output.views.LoadPlanReport,}),
     (r'^demandplan/$', 'utils.report.view_report',
       {'report': output.views.DemandPlanReport,}),
+    (r'^kpi/$', 'utils.report.view_report',
+      {'report': output.views_kpi.OverviewReport,}),
 
     # Input reports
     (r'^supplypath/([^/]+)/([^/]+)/$', input.views.pathreport.viewupstream),

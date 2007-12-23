@@ -53,6 +53,7 @@ def _create_rowheader(req, sort, cls):
   number = 0
   args = req.GET.copy()
   args2 = req.GET.copy()
+  sortable = False
 
   # When we update the filter, we always want to see page 1 again
   if 'p'in args2: del args2['p']
@@ -63,6 +64,7 @@ def _create_rowheader(req, sort, cls):
     title = capfirst(escape((row[1].has_key('title') and row[1]['title']) or row[0]))
     if not row[1].has_key('sort') or row[1]['sort']:
       # Sorting is allowed
+      sortable = True
       if int(sort[0]) == number:
         if sort[1] == 'a':
           # Currently sorting in ascending order on this column
@@ -79,14 +81,14 @@ def _create_rowheader(req, sort, cls):
       # Which widget to use
       if 'filter' in row[1]:
         # Filtering allowed
-        result.append( '<th %s><a href="%s?%s">%s</a><br/>%s</th>' \
+        result.append( u'<th %s><a href="%s?%s">%s</a><br/>%s</th>' \
           % (y, escape(req.path), escape(args.urlencode()),
              title, row[1]['filter'].output(row, number, args)
              ) )
         rowfield = row[1]['filter'].field or row[0]
       else:
         # No filtering allowed
-        result.append( '<th %s><a href="%s?%s">%s</a></th>' \
+        result.append( u'<th %s><a href="%s?%s">%s</a></th>' \
           % (y, escape(req.path), escape(args.urlencode()), title) )
         rowfield = row[0]
       for i in args:
@@ -95,15 +97,18 @@ def _create_rowheader(req, sort, cls):
     else:
       # No sorting is allowed on this field
       # If there is no sorting allowed, then there is also no filtering
-      result.append( '<th>%s</th>' % title )
+      result.append( u'<th>%s</th>' % title )
 
   # Extra hidden fields for query parameters that aren't rows
   for key in args2:
-    result.append('<input type="hidden" name="%s" value="%s"/>' % (key, args2[key]))
+    result.append(u'<input type="hidden" name="%s" value="%s"/>' % (key, args2[key]))
 
   # 'Go' button
-  result.append( '<th><input type="submit" value="Go" tabindex="1100"/></th></form>' )
-  return mark_safe('\n'.join(result))
+  if sortable:
+    result.append( u'<th><input type="submit" value="Go" tabindex="1100"/></th></form>' )
+  else:
+    result.append( u'</form>' )
+  return mark_safe(u'\n'.join(result))
 
 
 class FilterText(object):

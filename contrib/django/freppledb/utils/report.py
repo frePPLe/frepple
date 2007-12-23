@@ -49,78 +49,6 @@ ON_ENDS = 2            # Number of pages shown at the start and the end of the p
 # A variable to cache bucket information in memory
 datelist = {}
 
-def getBuckets(request, bucket=None, start=None, end=None):
-  '''
-  This function gets passed a name of a bucketization.
-  It returns a list of buckets.
-  The data are retrieved from the database table dates, and are
-  stored in a python variable for performance
-  '''
-  global datelist
-  # Pick up the arguments
-  if not bucket:
-    bucket = request.GET.get('bucket')
-    if not bucket:
-      try: bucket = request.user.get_profile().buckets
-      except: bucket = 'default'
-  if not start:
-    start = request.GET.get('start')
-    if start:
-      try:
-        (y,m,d) = start.split('-')
-        start = date(int(y),int(m),int(d))
-      except:
-        try: start = request.user.get_profile().startdate
-        except: pass
-        if not start: start = Plan.objects.all()[0].currentdate.date()
-    else:
-      try: start = request.user.get_profile().startdate
-      except: pass
-      if not start: start = Plan.objects.all()[0].currentdate.date()
-  if not end:
-    end = request.GET.get('end')
-    if end:
-      try:
-        (y,m,d) = end.split('-')
-        end = date(int(y),int(m),int(d))
-      except:
-        try: end = request.user.get_profile().enddate
-        except: pass
-        if not end: end = date(2030,1,1)
-    else:
-      try: end = request.user.get_profile().enddate
-      except: pass
-      if not end: end = date(2030,1,1)
-
-  # Check if the argument is valid
-  if bucket not in ('default','day','week','month','quarter','year'):
-    raise Http404, "bucket name %s not valid" % bucket
-
-  # Pick up the buckets
-  if not bucket in datelist:
-    # Read the buckets from the database if the data isn't available yet
-    cursor = connection.cursor()
-    field = (bucket=='day' and 'day_start') or bucket
-    cursor.execute('''
-      select %s, min(day_start), max(day_start)
-      from dates
-      group by %s
-      order by min(day_start)''' \
-      % (connection.ops.quote_name(field),connection.ops.quote_name(field)))
-    # Compute the data to store in memory
-    datelist[bucket] = [{'name': i, 'start': python_date(j), 'end': python_date(k)} for i,j,k in cursor.fetchall()]
-
-  # Filter based on the start and end date
-  if start and end:
-    res = filter(lambda b: b['start'] < end and b['end'] >= start, datelist[bucket])
-  elif end:
-    res = filter(lambda b: b['start'] < end, datelist[bucket])
-  elif start:
-    res = filter(lambda b: b['end'] >= start, datelist[bucket])
-  else:
-    res = datelist[bucket]
-  return (bucket,start,end,res)
-
 
 class Report(object):
   '''
@@ -594,3 +522,76 @@ def _get_javascript_imports(reportclass):
           "/media/js/admin/DateTimeShortcuts.js",
           ]
   return reportclass.javascript_imports
+
+
+def getBuckets(request, bucket=None, start=None, end=None):
+  '''
+  This function gets passed a name of a bucketization.
+  It returns a list of buckets.
+  The data are retrieved from the database table dates, and are
+  stored in a python variable for performance
+  '''
+  global datelist
+  # Pick up the arguments
+  if not bucket:
+    bucket = request.GET.get('bucket')
+    if not bucket:
+      try: bucket = request.user.get_profile().buckets
+      except: bucket = 'default'
+  if not start:
+    start = request.GET.get('start')
+    if start:
+      try:
+        (y,m,d) = start.split('-')
+        start = date(int(y),int(m),int(d))
+      except:
+        try: start = request.user.get_profile().startdate
+        except: pass
+        if not start: start = Plan.objects.all()[0].currentdate.date()
+    else:
+      try: start = request.user.get_profile().startdate
+      except: pass
+      if not start: start = Plan.objects.all()[0].currentdate.date()
+  if not end:
+    end = request.GET.get('end')
+    if end:
+      try:
+        (y,m,d) = end.split('-')
+        end = date(int(y),int(m),int(d))
+      except:
+        try: end = request.user.get_profile().enddate
+        except: pass
+        if not end: end = date(2030,1,1)
+    else:
+      try: end = request.user.get_profile().enddate
+      except: pass
+      if not end: end = date(2030,1,1)
+
+  # Check if the argument is valid
+  if bucket not in ('default','day','week','month','quarter','year'):
+    raise Http404, "bucket name %s not valid" % bucket
+
+  # Pick up the buckets
+  if not bucket in datelist:
+    # Read the buckets from the database if the data isn't available yet
+    cursor = connection.cursor()
+    field = (bucket=='day' and 'day_start') or bucket
+    cursor.execute('''
+      select %s, min(day_start), max(day_start)
+      from dates
+      group by %s
+      order by min(day_start)''' \
+      % (connection.ops.quote_name(field),connection.ops.quote_name(field)))
+    # Compute the data to store in memory
+    datelist[bucket] = [{'name': i, 'start': python_date(j), 'end': python_date(k)} for i,j,k in cursor.fetchall()]
+
+  # Filter based on the start and end date
+  if start and end:
+    res = filter(lambda b: b['start'] < end and b['end'] >= start, datelist[bucket])
+  elif end:
+    res = filter(lambda b: b['start'] < end, datelist[bucket])
+  elif start:
+    res = filter(lambda b: b['end'] >= start, datelist[bucket])
+  else:
+    res = datelist[bucket]
+  return (bucket,start,end,res)

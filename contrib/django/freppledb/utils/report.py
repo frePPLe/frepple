@@ -265,10 +265,10 @@ def view_report(request, entity=None, **args):
   try:
     lastmodifiedresponse = reportclass.lastmodified().replace(microsecond=0)
     lastmodifiedresponse = (formatdate(timegm(lastmodifiedresponse.utctimetuple()))[:26] + 'GMT')
-    if lastmodifiedrequest.startswith(lastmodifiedresponse):
+    if lastmodifiedrequest and lastmodifiedrequest.startswith(lastmodifiedresponse):
       # The report hasn't modified since the previous request
       return HttpResponseNotModified()
-  except Exception, e:
+  except:
     lastmodifiedresponse = None
 
   # Verify the user is authorirzed to view the report

@@ -29,7 +29,7 @@
 </div>
 
 {% block pagination %}<p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} log entries {% ifnotequal hits fullhits %} (total <a class="showall" href="/execute/log">{{fullhits}}</a>){% endifnotequal %}
+{{paginator_html}}&nbsp;&nbsp;{{hits}} log entries {% ifnotequal hits fullhits %} (total <a class="showall" href="/execute/log/">{{fullhits}}</a>){% endifnotequal %}
 {% endblock %}</p></div>
 
 {% endblock %}

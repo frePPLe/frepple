@@ -43,9 +43,9 @@ class Command(BaseCommand):
   '''
 
   option_list = BaseCommand.option_list + (
-    make_option("--port", dest="port", type="int"
+    make_option("--port", dest="port", type="int",
                   help="Port number of the server."),
-    make_option("--address", dest="address", type="string"
+    make_option("--address", dest="address", type="string",
                   help="IP address for the server to listen."),
     )
 
@@ -61,12 +61,13 @@ class Command(BaseCommand):
     else: port = 8000
     if 'address' in options: address = options['address']
     else: address = None
-    if addess == None: socket.getaddrinfo(socket.gethostname(), None)[0][4][0]
+    if address == None:
+      address = socket.getaddrinfo(socket.gethostname(), None)[0][4][0]
 
     # Validate the address and port number
     try:
       s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-      s.bind( (addres, port) )
+      s.bind( (address, port) )
       s.close()
     except socket.error, e:
       raise Exception('Invalid address and/or port: %s' % e)

@@ -25,68 +25,30 @@ import os.path
 from django.conf.urls.defaults import *
 from django.conf import settings
 
-import input.views
-import output.views
-import output.views_kpi
 import user.views
-
+import output.urls
+import input.urls
 
 urlpatterns = patterns('',
-
     # frePPLe execution application
     (r'^execute/', include('execute.urls')),
 
-    # Main index page
+    # Root url redirects to the admin index page
     (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/admin/'}),
 
     # Admin pages
     # This includes also the Javascript i18n library
     (r'^admin/', include('django.contrib.admin.urls')),
 
-    # Output reports
-    (r'^buffer/([^/]+)/$', 'utils.report.view_report',
-      {'report': output.views.BufferReport,}),
-    (r'^buffer/$', 'utils.report.view_report',
-      {'report': output.views.BufferReport,}),
-    (r'^demand/([^/]+)/$', 'utils.report.view_report',
-      {'report': output.views.DemandReport,}),
-    (r'^demand/$', 'utils.report.view_report',
-      {'report': output.views.DemandReport,}),
-    (r'^resource/([^/]+)/$', 'utils.report.view_report',
-      {'report': output.views.ResourceReport,}),
-    (r'^resource/$', 'utils.report.view_report',
-      {'report': output.views.ResourceReport,}),
-    (r'^operation/([^/]+)/$', 'utils.report.view_report',
-      {'report': output.views.OperationReport,}),
-    (r'^operation/$', 'utils.report.view_report',
-      {'report': output.views.OperationReport,}),
-    (r'^forecast/([^/]+)/$', 'utils.report.view_report',
-      {'report': output.views.ForecastReport,}),
-    (r'^forecast/$', 'utils.report.view_report',
-      {'report': output.views.ForecastReport,}),
-    (r'^pegging/$', 'utils.report.view_report',
-      {'report': output.views.PeggingReport,}),
-    (r'^flowplan/$', 'utils.report.view_report',
-      {'report': output.views.FlowPlanReport,}),
-    (r'^problem/$', 'utils.report.view_report',
-      {'report': output.views.ProblemReport,}),
-    (r'^operationplan/$', 'utils.report.view_report',
-      {'report': output.views.OperationPlanReport,}),
-    (r'^loadplan/$', 'utils.report.view_report',
-      {'report': output.views.LoadPlanReport,}),
-    (r'^demandplan/$', 'utils.report.view_report',
-      {'report': output.views.DemandPlanReport,}),
-    (r'^kpi/$', 'utils.report.view_report',
-      {'report': output.views_kpi.OverviewReport,}),
-
-    # Input reports
-    (r'^supplypath/([^/]+)/([^/]+)/$', input.views.pathreport.viewupstream),
-    (r'^whereused/([^/]+)/([^/]+)/$', input.views.pathreport.viewdownstream),
-    (r'^edit/$', input.views.uploadjson.post),
-
     # User preferences
     (r'^preferences/$', user.views.preferences),
 )
+
+# Adding urls for each installed application.
+# Since they urls don't have a common prefix (maybe they should...) we can't
+# use an "include" in the previous section
+urlpatterns += output.urls.urlpatterns
+urlpatterns += input.urls.urlpatterns
 
 # Allows the standalone development server (and the py2exe executable) to serve
 # the static pages.

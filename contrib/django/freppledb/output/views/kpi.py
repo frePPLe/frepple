@@ -24,12 +24,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import connection
 
 from utils.db import sql_datediff
-from utils.report import ListReport
-from utils.reportfilter import FilterText
+from utils.report import *
 from input.models import Plan
 
 
-class OverviewReport(ListReport):
+class Report(ListReport):
   template = 'output/kpi.html'
   title = _("Plan performance indicators")
   reset_crumbs = True

@@ -40,7 +40,7 @@ from django.utils.text import capfirst
 
 from input.models import Plan
 from utils.db import python_date
-from utils.reportfilter import _create_rowheader, FilterDate
+
 
 # Parameter settings
 ON_EACH_SIDE = 3       # Number of pages show left and right of the current page
@@ -48,6 +48,27 @@ ON_ENDS = 2            # Number of pages shown at the start and the end of the p
 
 # A variable to cache bucket information in memory
 datelist = {}
+
+# Operators used for the date and number filtering in the reports
+IntegerOperator = {
+  'lte': '&lt;=',
+  'gte': '&gt;=',
+  'lt': '&lt;&nbsp;',
+  'gt': '&gt;&nbsp;',
+  'exact': '==',
+  }
+
+# Operators used for the text filtering in the reports
+TextOperator = {
+  'icontains': 'i in',
+  'contains': 'in',
+  'istartswith': 'i starts',
+  'startswith': 'starts',
+  'iendswith': 'i ends',
+  'endswith': 'ends',
+  'iexact': 'i is',
+  'exact': 'is',
+  }
 
 
 class Report(object):
@@ -154,7 +175,7 @@ class TableReport(Report):
   permissions = []
 
 
-@staff_member_required
+#@staff_member_required
 def view_report(request, entity=None, **args):
   '''
   This is a generic view for two types of reports:
@@ -172,8 +193,7 @@ def view_report(request, entity=None, **args):
   global ON_ENDS
 
   # Pick up the report class
-  try: reportclass = args['report']
-  except: raise Http404('Missing report parameter in url context')
+  reportclass = args['report']
 
   # Verify if the page has changed since the previous request
   lastmodifiedrequest = request.META.get('HTTP_IF_MODIFIED_SINCE', None)
@@ -314,9 +334,10 @@ def view_report(request, entity=None, **args):
     # No SQL override provided
     results = counter
 
-  # If there are less than 10 pages, show them all
+  # Build the paginator html
   page_htmls = []
   if paginator.pages <= 10 and paginator.pages > 1:
+    # If there are less than 10 pages, show them all
     for n in range(0,paginator.pages):
       parameters.__setitem__('p', n)
       if n == page:
@@ -394,7 +415,7 @@ def view_report(request, entity=None, **args):
 
   # Render the view, optionally setting the last-modified http header
   response = HttpResponse(
-    loader.render_to_string(args['report'].template, context, context_instance=RequestContext(request)),
+    loader.render_to_string(reportclass.template, context, context_instance=RequestContext(request)),
     )
   if lastmodifiedresponse: response['Last-Modified'] = lastmodifiedresponse
   return response
@@ -596,3 +617,217 @@ def getBuckets(request, bucket=None, start=None, end=None):
   else:
     res = datelist[bucket]
   return (bucket,start,end,res)
+
+def _create_rowheader(req, sort, cls):
+  '''
+  Generate html header row for the columns of a table or list report.
+  '''
+  result = ['<form>']
+  number = 0
+  args = req.GET.copy()
+  args2 = req.GET.copy()
+  sortable = False
+
+  # When we update the filter, we always want to see page 1 again
+  if 'p'in args2: del args2['p']
+
+  # A header cell for each row
+  for row in cls.rows:
+    number = number + 1
+    title = capfirst(escape((row[1].has_key('title') and row[1]['title']) or row[0]))
+    if not row[1].has_key('sort') or row[1]['sort']:
+      # Sorting is allowed
+      sortable = True
+      if int(sort[0]) == number:
+        if sort[1] == 'a':
+          # Currently sorting in ascending order on this column
+          args['o'] = '%dd' % number
+          y = 'class="sorted ascending"'
+        else:
+          # Currently sorting in descending order on this column
+          args['o'] = '%da' % number
+          y = 'class="sorted descending"'
+      else:
+        # Sorted on another column
+        args['o'] = '%da' % number
+        y = ''
+      # Which widget to use
+      if 'filter' in row[1]:
+        # Filtering allowed
+        result.append( u'<th %s><a href="%s?%s">%s</a><br/>%s</th>' \
+          % (y, escape(req.path), escape(args.urlencode()),
+             title, row[1]['filter'].output(row, number, args)
+             ) )
+        rowfield = row[1]['filter'].field or row[0]
+      else:
+        # No filtering allowed
+        result.append( u'<th %s><a href="%s?%s">%s</a></th>' \
+          % (y, escape(req.path), escape(args.urlencode()), title) )
+        rowfield = row[0]
+      for i in args:
+        field, sep, operator = i.rpartition('__')
+        if (field or operator) == rowfield and i in args2: del args2[i]
+    else:
+      # No sorting is allowed on this field
+      # If there is no sorting allowed, then there is also no filtering
+      result.append( u'<th>%s</th>' % title )
+
+  # Extra hidden fields for query parameters that aren't rows
+  for key in args2:
+    result.append(u'<input type="hidden" name="%s" value="%s"/>' % (key, args2[key]))
+
+  # 'Go' button
+  if sortable:
+    result.append( u'<th><input type="submit" value="Go" tabindex="1100"/></th></form>' )
+  else:
+    result.append( u'</form>' )
+  return mark_safe(u'\n'.join(result))
+
+
+class FilterText(object):
+  def __init__(self, operator="icontains", field=None, size=10):
+    self.operator = operator
+    self.field = field
+    self.size = size
+
+  def output(self, row, number, args):
+    global TextOperator
+    rowfield = self.field or row[0]
+    res = []
+    counter = number*10
+    for i in args:
+      try:
+        field, sep, operator = i.rpartition('__')
+        if field == '':
+          field = operator
+          operator = 'exact'
+        if field == rowfield:
+          res.append('<span class="textfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            % (counter, TextOperator[operator], counter, self.size,
+               escape(args.get(i)),
+               rowfield, operator, number+1000,
+               ))
+      except:
+        # Silently ignore invalid filters
+        pass
+      counter = counter + 1
+    if len(res) > 0:
+      return '<br/>'.join(res)
+    else:
+      return '<span class="textfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (number*10, TextOperator[self.operator], number*10, self.size,
+             escape(args.get("%s__%s" % (rowfield,self.operator),'')),
+             rowfield, self.operator, number+1000,
+             )
+
+
+class FilterNumber(object):
+  def __init__(self, operator="lt", field=None, size=9):
+    self.operator = operator
+    self.field = field
+    self.size = size
+
+  def output(self, row, number, args):
+    global IntegerOperator
+    res = []
+    rowfield = self.field or row[0]
+    counter = number*10
+    for i in args:
+      try:
+        # Skip empty filters
+        if args.get(i) == '': continue
+        # Determine field and operator
+        field, sep, operator = i.rpartition('__')
+        if field == '':
+          field = operator
+          operator = 'exact'
+        if field == rowfield:
+          res.append('<span class="numfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            % (counter, IntegerOperator[operator], counter, self.size,
+               escape(args.get(i)),
+               rowfield, operator, number+1000,
+               ))
+      except:
+        # Silently ignore invalid filters
+        pass
+      counter = counter + 1
+    if len(res) > 0:
+      return '<br/>'.join(res)
+    else:
+      return '<span class="numfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (number*10, IntegerOperator[self.operator], number*10, self.size,
+             escape(args.get("%s__%s" % (rowfield,self.operator),'')),
+             rowfield, self.operator, number+1000,
+             )
+
+
+class FilterDate(object):
+  def __init__(self, operator="lt", field=None, size=9):
+    self.operator = operator
+    self.field = field
+    self.size = size
+
+  def output(self, row, number, args):
+    global IntegerOperator
+    res = []
+    rowfield = self.field or row[0]
+    counter = number*10
+    for i in args:
+      try:
+        # Skip empty filters
+        if args.get(i) == '': continue
+        # Determine field and operator
+        field, sep, operator = i.rpartition('__')
+        if field == '':
+          field = operator
+          operator = 'exact'
+        if field == rowfield:
+          res.append('<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            % (counter, IntegerOperator[operator], counter, self.size,
+               escape(args.get(i)),
+               rowfield, operator, number+1000,
+               ))
+      except:
+        # Silently ignore invalid filters
+        pass
+      counter = counter + 1
+    if len(res) > 0:
+      return '<br/>'.join(res)
+    else:
+      return '<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+          % (number*10, IntegerOperator[self.operator], number*10, self.size,
+             escape(args.get("%s__%s" % (rowfield,self.operator),'')),
+             rowfield, self.operator, number+1000,
+             )
+
+
+class FilterChoice(object):
+  def __init__(self, field=None, choices=None):
+    self.field = field
+    self.choices = choices
+
+  def output(self, row, number, args):
+    rowfield = self.field or row[0]
+    value = args.get(rowfield, None)
+    result = ['<select name="%s"> <option value="">%s</option>' \
+      % (rowfield, _('All')) ]
+    for code, label in self.choices:
+      if code != '':
+        if (code == value):
+          result.append('<option value="%s" selected="yes">%s</option>' % (code, unicode(label)))
+        else:
+          result.append('<option value="%s">%s</option>' % (code, unicode(label)))
+    result.append('</select>')
+    return ' '.join(result)
+
+
+class FilterBool(FilterChoice):
+  '''
+  A boolean filter is a special case of the choice filter: the choices
+  are limited to 0/false and 1/true.
+  '''
+  def __init__(self, field=None):
+    super(FilterBool, self).__init__(
+      field=field,
+      choices=( ('0',_('False')), ('1',_('True')), ),
+      )

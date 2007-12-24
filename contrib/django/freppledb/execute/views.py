@@ -36,8 +36,7 @@ from django.utils.translation import ugettext_lazy as _
 import os, os.path
 
 from execute.models import log
-from utils.report import ListReport
-from utils.reportfilter import FilterText, FilterDate
+from utils.report import *
 
 
 @staff_member_required

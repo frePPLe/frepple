@@ -199,6 +199,10 @@ def view_report(request, entity=None, **args):
   lastmodifiedrequest = request.META.get('HTTP_IF_MODIFIED_SINCE', None)
   try:
     lastmodifiedresponse = reportclass.lastmodified().replace(microsecond=0)
+    lastmodifieduser = request.user.get_profile().lastmodified.replace(microsecond=0)
+    if lastmodifieduser and lastmodifieduser > lastmodifiedresponse:
+      # A change of user or user preferences must trigger recomputation
+      lastmodifiedresponse = lastmodifieduser
     lastmodifiedresponse = (formatdate(timegm(lastmodifiedresponse.utctimetuple()))[:26] + 'GMT')
     if lastmodifiedrequest and lastmodifiedrequest.startswith(lastmodifiedresponse):
       # The report hasn't modified since the previous request

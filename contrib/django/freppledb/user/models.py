@@ -53,9 +53,7 @@ class Preferences(models.Model):
     enddate = models.DateField(_('enddate'), blank=True, null=True)
     csvformat = models.CharField(_('CSV output format'), max_length=5,
       blank=True, null=True, default='table', choices=csvOutputType)
-    # This dummy field is required since django expects at least 1 field
-    # with core set to True
-    dummy = models.SmallIntegerField(editable=False, core=True, default=1)
+    lastmodified = models.DateTimeField(_('last modified'), core=True, auto_now=True, editable=False, db_index=True)
 
 
 def CreatePreferenceModel(instance):

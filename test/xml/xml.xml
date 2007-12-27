@@ -60,11 +60,11 @@
                   </RESOURCE>
                 </LOAD>
               </LOADS>
-              <DURATION>168:00:00</DURATION>
+              <DURATION>P7D</DURATION>
             </OPERATION>
             <OPERATION NAME="operation 1 step2"
               xsi:type="OPERATION_FIXED_TIME">
-              <DURATION>168:00:00</DURATION>
+              <DURATION>P7D</DURATION>
             </OPERATION>
           </STEPS>
         </OPERATION>

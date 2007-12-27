@@ -60,31 +60,31 @@ int main (int argc, char *argv[])
   logger << "d1-t1: " << d1 << endl;
 
   TimePeriod t3;
-  t3.parse("24:00:00");
-  logger << "time \"24:00:00\" => " << t3 << "    "
+  t3.parse("P1D");
+  logger << "time \"P1D\" => " << t3 << "    "
   << static_cast<long>(t3) << endl;
-  t3.parse("9:00");
-  logger << "time \"9:00\" => " << t3 << "    "
+  t3.parse("PT9M");
+  logger << "time \"PT9M\" => " << t3 << "    "
   << static_cast<long>(t3) << endl;
   try
   {
-    t3.parse("00:0a:00");
+    t3.parse("Pwrong");
   }
   catch (DataException e)
   { logger << "Data exception caught: " << e.what() << endl; }
-  logger << "time \"00:0a:00\" => " << t3 << "    "
+  logger << "time \"Pwrong\" => " << t3 << "    "
   << static_cast<long>(t3) << endl;
-  t3.parse("79:00");
-  logger << "time \"79:00\" => " << t3 << "    "
+  t3.parse("PT79M");
+  logger << "time \"PT79M\" => " << t3 << "    "
   << static_cast<long>(t3) << endl;
-  t3.parse("3600");
-  logger << "time \"3600\" => " << t3 << "    "
+  t3.parse("P1W1DT1H");
+  logger << "time \"P1W1DT1H\" => " << t3 << "    "
   << static_cast<long>(t3) << endl;
-  t3.parse("00:00:00");
-  logger << "time \"00:00:00\" => " << t3 << "    "
+  t3.parse("PT0S");
+  logger << "time \"PT0S\" => " << t3 << "    "
   << static_cast<long>(t3) << endl;
-  t3.parse("-01:01");
-  logger << "time \"-01:01\" => " << t3 << "    "
+  t3.parse("-PT1M1S");
+  logger << "time \"-PT1M1S\" => " << t3 << "    "
   << static_cast<long>(t3) << endl;
 
   logger << "infinite past: " << Date::infinitePast << endl;

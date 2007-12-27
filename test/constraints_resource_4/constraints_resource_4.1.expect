@@ -73,4 +73,4 @@ OPERATION	make end item	2007-01-17T00:00:00	2007-01-18T00:00:00	1
 OPERATION	make end item	2007-01-18T00:00:00	2007-01-19T00:00:00	1
 PROBLEM	material excess	Buffer 'component' has material excess of 10	1971-01-01T00:00:00 / 2007-01-10T00:00:00
 PROBLEM	material excess	Buffer 'end item' has material excess of 10	2007-01-12T00:00:00 / 2007-01-18T00:00:00
-PROBLEM	late	Demand 'order 4' planned 24:00:00 after its due date	2007-01-18T00:00:00 / 2007-01-19T00:00:00
+PROBLEM	late	Demand 'order 4' planned P1D after its due date	2007-01-18T00:00:00 / 2007-01-19T00:00:00

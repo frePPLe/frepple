@@ -45,8 +45,8 @@
     <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_forecast.so">
       <PARAMETER NAME="Customer_Then_Item_Hierarchy" VALUE="true" />
       <PARAMETER NAME="Match_Using_Delivery_Operation" VALUE="false" />
-      <PARAMETER NAME="Net_Early" VALUE="672:00:00" /> <!-- = 4 weeks -->
-      <PARAMETER NAME="Net_Late" VALUE="672:00:00" /> <!-- = 4 weeks -->
+      <PARAMETER NAME="Net_Early" VALUE="P4W" />
+      <PARAMETER NAME="Net_Late" VALUE="P4W" />
     </COMMAND>
   </COMMANDS>
 </PLAN>

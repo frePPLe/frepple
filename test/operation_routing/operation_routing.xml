@@ -23,7 +23,7 @@
     <BUFFER NAME="component A" xsi:type="BUFFER_PROCURE">
       <ITEM NAME="component A" />
       <ONHAND>20</ONHAND>
-      <LEADTIME>3600:00:00</LEADTIME>
+      <LEADTIME>P150D</LEADTIME>
     </BUFFER>
     <BUFFER NAME="component B1" xsi:type="BUFFER_INFINITE">
       <ITEM NAME="component B1" />
@@ -56,7 +56,7 @@
           </FLOW>
         </FLOWS>
         <STEPS>
-          <OPERATION NAME="assemble product step A" xsi:type="OPERATION_FIXED_TIME" DURATION="24:00:00">
+          <OPERATION NAME="assemble product step A" xsi:type="OPERATION_FIXED_TIME" DURATION="P1D">
             <FLOWS>
               <FLOW xsi:type="FLOW_START">
                 <BUFFER NAME="component A" />
@@ -64,7 +64,7 @@
               </FLOW>
             </FLOWS>
           </OPERATION>
-          <OPERATION NAME="assemble product step B" xsi:type="OPERATION_TIME_PER" DURATION="24:00:00" DURATION_PER="24:00:00">
+          <OPERATION NAME="assemble product step B" xsi:type="OPERATION_TIME_PER" DURATION="P1D" DURATION_PER="P1D">
             <FLOWS>
               <FLOW xsi:type="FLOW_START">
                 <BUFFER NAME="component B1" />
@@ -76,7 +76,7 @@
               </FLOW>
             </FLOWS>
           </OPERATION>
-          <OPERATION NAME="assemble product step C" xsi:type="OPERATION_FIXED_TIME" DURATION="24:00:00">
+          <OPERATION NAME="assemble product step C" xsi:type="OPERATION_FIXED_TIME" DURATION="P1D">
             <FLOWS>
               <FLOW xsi:type="FLOW_START">
                 <BUFFER NAME="component C" />

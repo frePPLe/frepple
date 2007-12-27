@@ -1,17 +1,17 @@
 d1 "2007-02-01T01:02:03" => 2007-02-01T01:02:03
 d2 "2007-02-03T01:02:03" => 2007-02-03T01:02:03
 d3 "2007-06-01T00:00:00" => 2007-06-01T00:00:00
-t1: 10
-d1-d2: -48:00:00
-d2-d1: 48:00:00
+t1: PT10S
+d1-d2: -P2D
+d2-d1: P2D
 d1-t1: 2007-02-01T01:01:53
-time "24:00:00" => 24:00:00    86400
-time "9:00" => 9:00    540
-Data exception caught: Invalid time string '00:0a:00'
-time "00:0a:00" => 0    0
-time "79:00" => 1:19:00    4740
-time "3600" => 1:00:00    3600
-time "00:00:00" => 0    0
-time "-01:01" => -1:01    -61
+time "P1D" => P1D    86400
+time "PT9M" => PT9M    540
+Data exception caught: Invalid time string 'Pwrong'
+time "Pwrong" => PT9M    540
+time "PT79M" => PT1H19M    4740
+time "P1W1DT1H" => P8DT1H    694800
+time "PT0S" => P0D    0
+time "-PT1M1S" => -PT1M1S    -61
 infinite past: 1971-01-01T00:00:00
 infinite future: 2030-12-31T00:00:00

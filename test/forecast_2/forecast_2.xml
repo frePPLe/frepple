@@ -90,12 +90,12 @@
   <ITEMS>
     <ITEM NAME="Product 1">
       <OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
+        <DURATION>P1D</DURATION>
       </OPERATION>
     </ITEM>
     <ITEM NAME="Product 2">
       <OPERATION NAME="delivery 2" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
+        <DURATION>P1D</DURATION>
       </OPERATION>
     </ITEM>
   </ITEMS>

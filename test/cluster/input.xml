@@ -10,19 +10,19 @@
   <OPERATIONS>
     <OPERATION NAME="Dangling operation : 0 : 4"
       xsi:type="OPERATION_FIXED_TIME">
-      <DURATION>10</DURATION>
+      <DURATION>PT10S</DURATION>
     </OPERATION>
     <OPERATION NAME="Make 1 : 1 : 1" xsi:type="OPERATION_ALTERNATE">
       <ALTERNATES>
         <ALTERNATE>
           <OPERATION NAME="Make 1a : 1 : 1" xsi:type="OPERATION_FIXED_TIME">
-            <DURATION>10</DURATION>
+            <DURATION>PT10S</DURATION>
           </OPERATION>
           <PRIORITY>1</PRIORITY>
         </ALTERNATE>
         <ALTERNATE>
           <OPERATION NAME="Make 1b : 1 : 1" xsi:type="OPERATION_FIXED_TIME">
-            <DURATION>10</DURATION>
+            <DURATION>PT10S</DURATION>
           </OPERATION>
           <PRIORITY>2</PRIORITY>
         </ALTERNATE>
@@ -32,22 +32,22 @@
   <ITEMS>
     <ITEM NAME="Item 1">
       <OPERATION NAME="Delivery 1 : 0 : 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>10</DURATION>
+        <DURATION>PT10S</DURATION>
       </OPERATION>
     </ITEM>
     <ITEM NAME="Item 2">
       <OPERATION NAME="Delivery 2 : 0 : 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>10</DURATION>
+        <DURATION>PT10S</DURATION>
       </OPERATION>
     </ITEM>
     <ITEM NAME="Item 3">
       <OPERATION NAME="Delivery 3 : 0 : 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>10</DURATION>
+        <DURATION>PT10S</DURATION>
       </OPERATION>
     </ITEM>
     <ITEM NAME="Item 4">
       <OPERATION NAME="Delivery 4 : 0 : 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>10</DURATION>
+        <DURATION>PT10S</DURATION>
       </OPERATION>
     </ITEM>
     <ITEM NAME="Item 5">
@@ -55,18 +55,18 @@
         <STEPS>
           <OPERATION NAME="Delivery 5 step1 : 0 : 2"
             xsi:type="OPERATION_FIXED_TIME">
-            <DURATION>10</DURATION>
+            <DURATION>PT10S</DURATION>
           </OPERATION>
           <OPERATION NAME="Delivery 5 step2 : 0 : 2"
             xsi:type="OPERATION_FIXED_TIME">
-            <DURATION>10</DURATION>
+            <DURATION>PT10S</DURATION>
           </OPERATION>
         </STEPS>
       </OPERATION>
     </ITEM>
     <ITEM NAME="Item 6">
       <OPERATION NAME="Delivery 6 : 0 : 3" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>10</DURATION>
+        <DURATION>PT10S</DURATION>
       </OPERATION>
     </ITEM>
   </ITEMS>
@@ -78,31 +78,31 @@
     <BUFFER NAME="buffer item 2 : 1 : 1">
       <ITEM NAME="Item 2" />
       <PRODUCING NAME="Make 2 : 1 : 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>10</DURATION>
+        <DURATION>PT10S</DURATION>
       </PRODUCING>
     </BUFFER>
     <BUFFER NAME="buffer item 3 : 1 : 1">
       <ITEM NAME="Item 3" />
       <PRODUCING NAME="Make 3 : 1 : 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>10</DURATION>
+        <DURATION>PT10S</DURATION>
       </PRODUCING>
     </BUFFER>
     <BUFFER NAME="buffer item 5 : 1 : 2">
       <ITEM NAME="Item 5" />
       <PRODUCING NAME="Make 5 : 1 : 2" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>10</DURATION>
+        <DURATION>PT10S</DURATION>
       </PRODUCING>
     </BUFFER>
     <BUFFER NAME="buffer item 5 : 2 : 2">
       <ITEM NAME="Item 5" />
       <PRODUCING NAME="Make 5 : 2 : 2" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>10</DURATION>
+        <DURATION>PT10S</DURATION>
       </PRODUCING>
     </BUFFER>
     <BUFFER NAME="buffer item 5 : 3 : 2">
       <ITEM NAME="Item 5" />
       <PRODUCING NAME="Make 5 : 3 : 2" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>10</DURATION>
+        <DURATION>PT10S</DURATION>
       </PRODUCING>
     </BUFFER>
     <BUFFER NAME="buffer item 6 : 1 : 3">
@@ -115,13 +115,13 @@
     <BUFFER NAME="buffer item 1 : 2 : 1">
       <ITEM NAME="Item 1" />
       <PRODUCING NAME="Make 1 : 2 : 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>10</DURATION>
+        <DURATION>PT10S</DURATION>
       </PRODUCING>
     </BUFFER>
     <BUFFER NAME="buffer item 1 : 3 : 1">
       <ITEM NAME="Item 1" />
       <PRODUCING NAME="Make 1 : 3 : 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>10</DURATION>
+        <DURATION>PT10S</DURATION>
       </PRODUCING>
     </BUFFER>
     <BUFFER NAME="buffer item 1&amp;3 : 4 : 1">

@@ -229,7 +229,7 @@
   <ITEMS>
     <ITEM NAME="item 1">
       <OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
+        <DURATION>P1D</DURATION>
       </OPERATION>
     </ITEM>
   </ITEMS>
@@ -237,7 +237,7 @@
     <BUFFER NAME="buffer 1">
       <ITEM NAME="item 1" />
       <PRODUCING NAME="make item 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
+        <DURATION>P1D</DURATION>
       </PRODUCING>
       <LOCATION NAME="Location 1">
         <OWNER NAME="All places" />
@@ -254,12 +254,12 @@
         <ALTERNATES>
           <ALTERNATE>
             <OPERATION NAME="supply component A from supplier 1"
-              DURATION="24:00:00" xsi:type="OPERATION_FIXED_TIME" />
+              DURATION="P1D" xsi:type="OPERATION_FIXED_TIME" />
             <PRIORITY>1</PRIORITY>
           </ALTERNATE>
           <ALTERNATE>
             <OPERATION NAME="supply component A from supplier 2"
-              DURATION="48:00:00" xsi:type="OPERATION_FIXED_TIME" />
+              DURATION="P2D" xsi:type="OPERATION_FIXED_TIME" />
             <PRIORITY>2</PRIORITY>
           </ALTERNATE>
         </ALTERNATES>

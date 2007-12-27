@@ -31,7 +31,7 @@
     <BUFFER NAME="1. item">
       <ITEM NAME="1. item" />
       <PRODUCING NAME="1. make item" xsi:type="OPERATION_FIXED_TIME"
-        DURATION="168:00:00" POSTTIME="168:00:00">
+        DURATION="P7D" POSTTIME="P7D">
         <FLOWS>
           <FLOW xsi:type="FLOW_END">
             <BUFFER NAME="1. item" />
@@ -84,7 +84,7 @@
     <BUFFER NAME="2. item">
       <ITEM NAME="2. item" />
       <PRODUCING NAME="2. make item" xsi:type="OPERATION_TIME_PER"
-        DURATION="24:00:00" DURATION_PER="24:00:00" POSTTIME="168:00:00">
+        DURATION="P1D" DURATION_PER="P1D" POSTTIME="P7D">
         <FLOWS>
           <FLOW xsi:type="FLOW_END">
             <BUFFER NAME="2. item" />
@@ -137,7 +137,7 @@
     <BUFFER NAME="3. item">
       <ITEM NAME="3. item" />
       <PRODUCING NAME="3. make item" xsi:type="OPERATION_FIXED_TIME"
-        DURATION="168:00:00" POSTTIME="168:00:00">
+        DURATION="P7D" POSTTIME="P7D">
 			<!--
       <PRODUCING NAME="3. make item" xsi:type="OPERATION_TIME_PER"
         DURATION="24:00:00" DURATION_PER="24:00:00" POSTTIME="168:00:00">
@@ -216,7 +216,7 @@
     <BUFFER NAME="4. item level 1">
       <ITEM NAME="4. item" />
       <PRODUCING NAME="4. make item level 1" xsi:type="OPERATION_FIXED_TIME"
-        DURATION="168:00:00" POSTTIME="168:00:00">
+        DURATION="P7D" POSTTIME="P7D">
         <FLOWS>
           <FLOW xsi:type="FLOW_END">
             <BUFFER NAME="4. item level 1" />
@@ -232,7 +232,7 @@
     <BUFFER NAME="4. item level 2">
       <ITEM NAME="4. item" />
       <PRODUCING NAME="4. make item level 2" xsi:type="OPERATION_FIXED_TIME"
-        DURATION="168:00:00" POSTTIME="168:00:00">
+        DURATION="P7D" POSTTIME="P7D">
         <FLOWS>
           <FLOW xsi:type="FLOW_END">
             <BUFFER NAME="4. item level 2" />
@@ -248,7 +248,7 @@
     <BUFFER NAME="4. item level 3">
       <ITEM NAME="4. item" />
       <PRODUCING NAME="4. make item level 3" xsi:type="OPERATION_FIXED_TIME"
-        DURATION="168:00:00" POSTTIME="168:00:00">
+        DURATION="P7D" POSTTIME="P7D">
         <FLOWS>
           <FLOW xsi:type="FLOW_END">
             <BUFFER NAME="4. item level 3" />
@@ -264,7 +264,7 @@
     <BUFFER NAME="4. item level 4">
       <ITEM NAME="4. item" />
       <PRODUCING NAME="4. make item level 4" xsi:type="OPERATION_FIXED_TIME"
-        DURATION="168:00:00" POSTTIME="168:00:00">
+        DURATION="P7D" POSTTIME="P7D">
         <FLOWS>
           <FLOW xsi:type="FLOW_END">
             <BUFFER NAME="4. item level 4" />

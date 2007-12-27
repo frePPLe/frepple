@@ -6,8 +6,8 @@
     <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_forecast.so">
        <PARAMETER NAME="Customer_Then_Item_Hierarchy" VALUE="true" />
        <PARAMETER NAME="Match_Using_Delivery_Operation" VALUE="true" />
-       <PARAMETER NAME="Net_Early" VALUE="48:00:00" />
-       <PARAMETER NAME="Net_Late" VALUE="96:00:00" />
+       <PARAMETER NAME="Net_Early" VALUE="P2D" />
+       <PARAMETER NAME="Net_Late" VALUE="P4D" />
     </COMMAND>
   </COMMANDS>
 </PLAN>

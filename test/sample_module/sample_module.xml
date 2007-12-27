@@ -50,7 +50,7 @@
         <ALTERNATE>
           <OPERATION NAME="transport supply from factory 1"
           	xsi:type="OPERATION_TRANSPORT">
-            <DURATION>24:00:00</DURATION>
+            <DURATION>P1D</DURATION>
             <FROM NAME="product in factory 1"/>
             <TO NAME="product in distribution centre"/>
           </OPERATION>
@@ -59,7 +59,7 @@
         <ALTERNATE>
           <OPERATION NAME="transport supply from factory 2"
           	xsi:type="OPERATION_TRANSPORT">
-            <DURATION>24:00:00</DURATION>
+            <DURATION>P1D</DURATION>
             <FROM NAME="product in factory 2"/>
             <TO NAME="product in distribution centre"/>
           </OPERATION>
@@ -81,7 +81,7 @@
       <LOCATION NAME="factory 1" />
       <ITEM NAME="product" />
       <PRODUCING NAME="make product in factory 1"
-        xsi:type="OPERATION_FIXED_TIME" DURATION="24:00:00">
+        xsi:type="OPERATION_FIXED_TIME" DURATION="P1D">
 	      <LOADS>
           <LOAD>
             <RESOURCE NAME="capacity of factory 1">
@@ -101,7 +101,7 @@
       <LOCATION NAME="factory 2" />
       <ITEM NAME="product" />
       <PRODUCING NAME="make product in factory 2"
-        xsi:type="OPERATION_FIXED_TIME" DURATION="24:00:00">
+        xsi:type="OPERATION_FIXED_TIME" DURATION="P1D">
   	    <LOADS>
           <LOAD>
             <RESOURCE NAME="capacity of factory 2">

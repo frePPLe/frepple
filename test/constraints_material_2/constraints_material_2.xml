@@ -26,27 +26,27 @@
 	</COMMANDS>
 	<ITEMS>
 	  <ITEM NAME="item 1">
-	    <OPERATION NAME="delivery 1" DURATION="24:00:00"
+	    <OPERATION NAME="delivery 1" DURATION="P1D"
 	      xsi:type="OPERATION_FIXED_TIME" />
 	  </ITEM>
 	  <ITEM NAME="item 2">
-	    <OPERATION NAME="delivery 2" DURATION="24:00:00" SIZE_MULTIPLE="1"
+	    <OPERATION NAME="delivery 2" DURATION="P1D" SIZE_MULTIPLE="1"
 	      xsi:type="OPERATION_FIXED_TIME" />
 	  </ITEM>
 	  <ITEM NAME="item 3">
-	    <OPERATION NAME="delivery 3" DURATION="24:00:00"
+	    <OPERATION NAME="delivery 3" DURATION="P1D"
 	      xsi:type="OPERATION_FIXED_TIME" />
 	  </ITEM>
 	  <ITEM NAME="item 4">
-	    <OPERATION NAME="delivery 4" DURATION="24:00:00"
+	    <OPERATION NAME="delivery 4" DURATION="P1D"
 	      xsi:type="OPERATION_FIXED_TIME" />
 	  </ITEM>
 	  <ITEM NAME="item 5">
-	    <OPERATION NAME="delivery 5" DURATION="24:00:00"
+	    <OPERATION NAME="delivery 5" DURATION="P1D"
 	      xsi:type="OPERATION_FIXED_TIME" />
 	  </ITEM>
 	  <ITEM NAME="item 6">
-	    <OPERATION NAME="delivery 6" DURATION="24:00:00"
+	    <OPERATION NAME="delivery 6" DURATION="P1D"
 	      xsi:type="OPERATION_FIXED_TIME" />
 	  </ITEM>
 	</ITEMS>
@@ -87,11 +87,11 @@
 	    <PRODUCING NAME="make 6" xsi:type="OPERATION_ROUTING">
 	      <STEPS>
 	        <OPERATION NAME="make 6 step 1" xsi:type="OPERATION_FIXED_TIME"
-	          DURATION="24:00:00" />
+	          DURATION="P1D" />
 	        <OPERATION NAME="make 6 step 2" xsi:type="OPERATION_FIXED_TIME"
-	          DURATION="24:00:00" />
+	          DURATION="P1D" />
 	        <OPERATION NAME="make 6 step 3" xsi:type="OPERATION_FIXED_TIME"
-	          DURATION="24:00:00" />
+	          DURATION="P1D" />
 	      </STEPS>
 	    </PRODUCING>
 	  </BUFFER>

@@ -22,18 +22,18 @@
   </COMMANDS>
   <OPERATIONS>
     <OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME">
-      <DURATION>24:00:00</DURATION>
+      <DURATION>P1D</DURATION>
     </OPERATION>
   </OPERATIONS>
   <ITEMS>
     <ITEM NAME="end item 1">
       <OPERATION NAME="delivery end item 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>72:00:00</DURATION>
+        <DURATION>P3D</DURATION>
       </OPERATION>
     </ITEM>
     <ITEM NAME="end item 2">
       <OPERATION NAME="delivery end item 2" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>72:00:00</DURATION>
+        <DURATION>P3D</DURATION>
       </OPERATION>
     </ITEM>
   </ITEMS>
@@ -61,7 +61,7 @@
     </BUFFER>
     <BUFFER NAME="end item 2">
       <!-- Notice the post-operation time... -->
-      <PRODUCING NAME="make end item 2" POSTTIME="168:00:00"/>
+      <PRODUCING NAME="make end item 2" POSTTIME="P7D"/>
       <ITEM NAME="end item 2" />
     </BUFFER>
   </BUFFERS>

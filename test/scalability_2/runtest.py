@@ -71,7 +71,7 @@ def create (cluster, demand, level):
       size += 2
       print >>out, ("<OPERATION NAME=\"Oper C%dO%d\" " +
         "xsi:type=\"OPERATION_FIXED_TIME\" " +
-        "DURATION=\"%d:00:00\"> <FLOWS>" +
+        "DURATION=\"PT%dH\"> <FLOWS>" +
         "<FLOW xsi:type=\"FLOW_END\" QUANTITY=\"1\">" +
         "<BUFFER NAME=\"Buffer C%dL%d\">" +
         "<PRODUCING NAME=\"Oper C%dO%d\"/></BUFFER></FLOW>" +

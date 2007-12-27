@@ -48,16 +48,6 @@ import frepple
 header = '<?xml version="1.0" encoding="UTF-8" ?><PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
 
 
-def timeformat(i):
-  if i>=3600 or i<=-3600:
-      minsec = i % 3600
-      return '%d:%02d:%02d' % (i/3600, minsec/60, minsec%60)
-  elif i>=60 or i<=-60:
-    return '%d:%02d' % (i/60, i%60)
-  else:
-    return '%d' % i
-
-
 def loadPlan(cursor):
   # Plan (limited to the first one only)
   print 'Import plan...'
@@ -154,13 +144,13 @@ def loadOperations(cursor):
       x.append('<OPERATION NAME=%s xsi:type="%s">' % (quoteattr(i),p))
     else:
       x.append('<OPERATION NAME=%s>' % quoteattr(i))
-    if j: x.append('<FENCE>%s</FENCE>' % timeformat(j))
-    if k: x.append('<PRETIME>%s</PRETIME>' % timeformat(k))
-    if l: x.append('<POSTTIME>%s</POSTTIME>' % timeformat(l))
+    if j: x.append('<FENCE>PT%sS</FENCE>' % int(j))
+    if k: x.append('<PRETIME>PT%sS</PRETIME>' % int(k))
+    if l: x.append('<POSTTIME>PT%sS</POSTTIME>' % int(l))
     if m: x.append('<SIZE_MINIMUM>%d</SIZE_MINIMUM>' % m)
     if n: x.append('<SIZE_MULTIPLE>%d</SIZE_MULTIPLE>' % n)
-    if q: x.append('<DURATION>%s</DURATION>' % timeformat(q))
-    if r: x.append('<DURATION_PER>%s</DURATION_PER>' % timeformat(r))
+    if q: x.append('<DURATION>PT%sS</DURATION>' % int(q))
+    if r: x.append('<DURATION_PER>PT%sS</DURATION_PER>' % int(r))
     x.append('</OPERATION>')
   x.append('</OPERATIONS></PLAN>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
@@ -225,15 +215,15 @@ def loadBuffers(cursor):
     if q:
       x.append('<BUFFER NAME=%s xsi:type="%s">' % (quoteattr(i),q))
       if q == 'BUFFER_PROCURE':
-        if f1: x.append( '<LEADTIME>%s</LEADTIME>' % timeformat(f1))
+        if f1: x.append( '<LEADTIME>PT%sS</LEADTIME>' % int(f1))
         if f2: x.append( '<MININVENTORY>%s</MININVENTORY>' % f2)
         if f3: x.append( '<MAXINVENTORY>%s</MAXINVENTORY>' % f3)
-        if f4: x.append( '<MININTERVAL>%s</MININTERVAL>' % timeformat(f4))
-        if f5: x.append( '<MAXINTERVAL>%s</MAXINTERVAL>' % timeformat(f5))
+        if f4: x.append( '<MININTERVAL>PT%sS</MININTERVAL>' % int(f4))
+        if f5: x.append( '<MAXINTERVAL>PT%sS</MAXINTERVAL>' % int(f5))
         if f6: x.append( '<SIZE_MINIMUM>%s</SIZE_MINIMUM>' % f6)
         if f7: x.append( '<SIZE_MULTIPLE>%s</SIZE_MULTIPLE>' % f7)
         if f8: x.append( '<SIZE_MAXIMUM>%s</SIZE_MAXIMUM>' % f8)
-        if f9: x.append( '<FENCE>%s</FENCE>' % timeformat(f9))
+        if f9: x.append( '<FENCE>PT%sS</FENCE>' % int(f9))
     else:
       x.append('<BUFFER NAME=%s>' % quoteattr(i))
     if j: x.append( '<DESCRIPTION>%s</DESCRIPTION>' % escape(j))
@@ -273,7 +263,7 @@ def loadFlows(cursor):
   print 'Importing flows...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT operation_id, thebuffer_id, quantity, type FROM flow order by operation_id, thebuffer_id")
+  cursor.execute("SELECT operation_id, thebuffer_id, quantity, type FROM flow order by operation_id, thebuffer_id desc")
   x = [ header, '<FLOWS>' ]
   for i, j, k, l in cursor.fetchall():
     cnt += 1
@@ -337,7 +327,7 @@ def loadForecast(cursor):
     if n: x.append( '<MINSHIPMENT>%s</MINSHIPMENT>' % n)
     if o: x.append( '<CALENDAR NAME=%s />' % quoteattr(o))
     if not p: x.append( '<DISCRETE>false<DISCRETE>')
-    if q != None: x.append( '<MAXLATENESS>%s</MAXLATENESS>' % timeformat(q))
+    if q != None: x.append( '<MAXLATENESS>PT%sS</MAXLATENESS>' % int(q))
     x.append('</DEMAND>')
   x.append('</DEMANDS></PLAN>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
@@ -376,7 +366,7 @@ def loadDemand(cursor):
     if o: x.append( '<CUSTOMER NAME=%s />' % quoteattr(o))
     if p: x.append( '<OWNER NAME=%s />' % quoteattr(p))
     if q: x.append( '<MINSHIPMENT>%s</MINSHIPMENT>' % q)
-    if r != None: x.append( '<MAXLATENESS>%s</MAXLATENESS>' % timeformat(r))
+    if r != None: x.append( '<MAXLATENESS>PT%sS</MAXLATENESS>' % int(r))
     x.append('</DEMAND>')
   x.append('</DEMANDS></PLAN>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)

@@ -15,13 +15,13 @@
   </CALENDARS>
   <OPERATIONS>
     <OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME">
-      <DURATION>24:00:00</DURATION>
+      <DURATION>P1D</DURATION>
     </OPERATION>
   </OPERATIONS>
   <ITEMS>
     <ITEM NAME="end item">
       <OPERATION NAME="delivery end item" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>24:00:00</DURATION>
+        <DURATION>P1D</DURATION>
       </OPERATION>
     </ITEM>
   </ITEMS>

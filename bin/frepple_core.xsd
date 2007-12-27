@@ -68,18 +68,6 @@
 			<xsd:enumeration value="R" />
 		</xsd:restriction>
 	</xsd:simpleType>
-	<!--
-    <xsd:simpleType name="time">     @todo
-    <xsd:restriction base="xsd:duration">
-    </xsd:restriction>
-    </xsd:simpleType>
-  -->
-	<xsd:simpleType name="time">
-		<xsd:restriction base="xsd:normalizedString">
-			<xsd:pattern value="(\+\-)?(([0-9]*:)?([0-9]*:))?[0-9]*" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
 	<xsd:simpleType name="positiveFloat">
 		<xsd:restriction base="xsd:float">
 			<xsd:minInclusive value="0" />
@@ -177,9 +165,9 @@
 			<xsd:group ref="COMMON_FIELDS" />
 			<xsd:element name="OWNER" type="OPERATION" />
 			<xsd:element name="DETECTPROBLEMS" type="xsd:boolean" />
-			<xsd:element name="PRETIME" type="time" />
-			<xsd:element name="POSTTIME" type="time" />
-			<xsd:element name="FENCE" type="time" />
+			<xsd:element name="PRETIME" type="xsd:duration" />
+			<xsd:element name="POSTTIME" type="xsd:duration" />
+			<xsd:element name="FENCE" type="xsd:duration" />
 			<xsd:element name="SIZE_MINIMUM" type="positiveFloat" />
 			<xsd:element name="SIZE_MULTIPLE" type="positiveFloat" />
 			<xsd:element name="LOADS" type="LOADLIST" />
@@ -188,9 +176,9 @@
 		</xsd:choice>
 		<xsd:attributeGroup ref="COMMON_ATTRIBUTES" />
 		<xsd:attribute name="DETECTPROBLEMS" type="xsd:boolean" />
-		<xsd:attribute name="PRETIME" type="time" />
-		<xsd:attribute name="POSTTIME" type="time" />
-		<xsd:attribute name="FENCE" type="time" />
+		<xsd:attribute name="PRETIME" type="xsd:duration" />
+		<xsd:attribute name="POSTTIME" type="xsd:duration" />
+		<xsd:attribute name="FENCE" type="xsd:duration" />
 		<xsd:attribute name="SIZE_MINIMUM" type="positiveFloat" />
 		<xsd:attribute name="SIZE_MULTIPLE" type="positiveFloat" />
 	</xsd:complexType>
@@ -210,9 +198,9 @@
 		<xsd:complexContent>
 			<xsd:extension base="OPERATION">
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="DURATION" type="time" />
+					<xsd:element name="DURATION" type="xsd:duration" />
 				</xsd:choice>
-				<xsd:attribute name="DURATION" type="time" />
+				<xsd:attribute name="DURATION" type="xsd:duration" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -221,11 +209,11 @@
 		<xsd:complexContent>
 			<xsd:extension base="OPERATION">
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="DURATION_PER" type="time" />
-					<xsd:element name="DURATION" type="time" />
+					<xsd:element name="DURATION_PER" type="xsd:duration" />
+					<xsd:element name="DURATION" type="xsd:duration" />
 				</xsd:choice>
-				<xsd:attribute name="DURATION_PER" type="time" />
-				<xsd:attribute name="DURATION" type="time" />
+				<xsd:attribute name="DURATION_PER" type="xsd:duration" />
+				<xsd:attribute name="DURATION" type="xsd:duration" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -408,20 +396,20 @@
   				<xsd:element name="SIZE_MULTIPLE" type="positiveFloat" />
   				<xsd:element name="MININVENTORY" type="positiveFloat" />
   				<xsd:element name="MAXINVENTORY" type="positiveFloat" />
-  				<xsd:element name="MININTERVAL" type="time" />
-  				<xsd:element name="MAXINTERVAL" type="time" />
-  				<xsd:element name="LEADTIME" type="time" />
-  				<xsd:element name="FENCE" type="time" />
+  				<xsd:element name="MININTERVAL" type="xsd:duration" />
+  				<xsd:element name="MAXINTERVAL" type="xsd:duration" />
+  				<xsd:element name="LEADTIME" type="xsd:duration" />
+  				<xsd:element name="FENCE" type="xsd:duration" />
   			</xsd:choice>
   			<xsd:attribute name="SIZE_MAXIMUM" type="positiveFloat" />
   			<xsd:attribute name="SIZE_MINIIMUM" type="positiveFloat" />
   			<xsd:attribute name="SIZE_MULTIPLE" type="positiveFloat" />
   			<xsd:attribute name="MININVENTORY" type="positiveFloat" />
   			<xsd:attribute name="MAXINVENTORY" type="positiveFloat" />
-  			<xsd:attribute name="MININTERVAL" type="time" />
-  			<xsd:attribute name="MAXINTERVAL" type="time" />
-  			<xsd:attribute name="LEADTIME" type="time" />
-  			<xsd:attribute name="FENCE" type="time" />
+  			<xsd:attribute name="MININTERVAL" type="xsd:duration" />
+  			<xsd:attribute name="MAXINTERVAL" type="xsd:duration" />
+  			<xsd:attribute name="LEADTIME" type="xsd:duration" />
+  			<xsd:attribute name="FENCE" type="xsd:duration" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -536,7 +524,7 @@
 			<xsd:element name="OPERATION" type="OPERATION" />
 			<xsd:element name="CUSTOMER" type="CUSTOMER" />
 			<xsd:element name="MINSHIPMENT" type="positiveFloat" />
-			<xsd:element name="MAXLATENESS" type="time" />
+			<xsd:element name="MAXLATENESS" type="xsd:duration" />
 			<xsd:element name="DETECTPROBLEMS" type="xsd:boolean" />
 			<xsd:element name="OWNER" type="DEMAND" />
 			<xsd:element name="MEMBERS">
@@ -553,7 +541,7 @@
 		<xsd:attribute name="DUE" type="xsd:dateTime" />
 		<xsd:attribute name="PRIORITY" type="xsd:integer" />
 		<xsd:attribute name="DETECTPROBLEMS" type="xsd:boolean" />
-		<xsd:attribute name="MAXLATENESS" type="time" />
+		<xsd:attribute name="MAXLATENESS" type="xsd:duration" />
 		<xsd:attribute name="MINSHIPMENT" type="positiveFloat" />
 	</xsd:complexType>
 

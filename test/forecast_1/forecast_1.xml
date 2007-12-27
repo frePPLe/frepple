@@ -78,7 +78,7 @@
       <MEMBERS>
          <ITEM NAME="A item">
             <OPERATION NAME="A delivery" xsi:type="OPERATION_FIXED_TIME">
-              <DURATION>24:00:00</DURATION>
+              <DURATION>P1D</DURATION>
             </OPERATION>
          </ITEM>
       </MEMBERS>
@@ -88,7 +88,7 @@
       <MEMBERS>
          <ITEM NAME="B item">
             <OPERATION NAME="B delivery" xsi:type="OPERATION_FIXED_TIME">
-              <DURATION>24:00:00</DURATION>
+              <DURATION>P1D</DURATION>
             </OPERATION>
          </ITEM>
       </MEMBERS>
@@ -98,7 +98,7 @@
       <MEMBERS>
          <ITEM NAME="C item">
             <OPERATION NAME="C delivery" xsi:type="OPERATION_FIXED_TIME">
-              <DURATION>24:00:00</DURATION>
+              <DURATION>P1D</DURATION>
             </OPERATION>
          </ITEM>
       </MEMBERS>
@@ -108,7 +108,7 @@
       <MEMBERS>
          <ITEM NAME="D item">
             <OPERATION NAME="D delivery" xsi:type="OPERATION_FIXED_TIME">
-              <DURATION>24:00:00</DURATION>
+              <DURATION>P1D</DURATION>
             </OPERATION>
          </ITEM>
       </MEMBERS>
@@ -118,7 +118,7 @@
       <MEMBERS>
          <ITEM NAME="E item">
             <OPERATION NAME="E delivery" xsi:type="OPERATION_FIXED_TIME">
-              <DURATION>24:00:00</DURATION>
+              <DURATION>P1D</DURATION>
             </OPERATION>
          </ITEM>
       </MEMBERS>

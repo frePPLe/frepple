@@ -141,7 +141,7 @@
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
 			</OPERATION_PLANS>
-			<DURATION>24:00:00</DURATION>
+			<DURATION>P1D</DURATION>
 		</OPERATION>
 		<OPERATION NAME="delivery 2" xsi:type="OPERATION_FIXED_TIME">
 			<OPERATION_PLANS>
@@ -231,7 +231,7 @@
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
 			</OPERATION_PLANS>
-			<DURATION>24:00:00</DURATION>
+			<DURATION>P1D</DURATION>
 		</OPERATION>
 		<OPERATION NAME="delivery 3" xsi:type="OPERATION_FIXED_TIME">
 			<OPERATION_PLANS>
@@ -290,7 +290,7 @@
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
 			</OPERATION_PLANS>
-			<DURATION>24:00:00</DURATION>
+			<DURATION>P1D</DURATION>
 		</OPERATION>
 		<OPERATION NAME="delivery 4" xsi:type="OPERATION_FIXED_TIME">
 			<OPERATION_PLANS>
@@ -396,7 +396,7 @@
 					</FLOW_PLANS>
 				</OPERATION_PLAN>
 			</OPERATION_PLANS>
-			<DURATION>24:00:00</DURATION>
+			<DURATION>P1D</DURATION>
 		</OPERATION>
 		<OPERATION NAME="make 1" xsi:type="OPERATION_FIXED_TIME">
 			<OPERATION_PLANS>
@@ -3655,7 +3655,7 @@
 		</PROBLEM>
 		<PROBLEM>
 			<NAME>late</NAME>
-			<DESCRIPTION>Demand &apos;order for item 1&apos; planned 192:00:00 after its due date</DESCRIPTION>
+			<DESCRIPTION>Demand &apos;order for item 1&apos; planned P8D after its due date</DESCRIPTION>
 			<DATES>2007-01-10T00:00:00 / 2007-01-18T00:00:00</DATES>
 		</PROBLEM>
 		<PROBLEM>
@@ -3665,17 +3665,17 @@
 		</PROBLEM>
 		<PROBLEM>
 			<NAME>late</NAME>
-			<DESCRIPTION>Demand &apos;order for item 2&apos; planned 192:00:00 after its due date</DESCRIPTION>
+			<DESCRIPTION>Demand &apos;order for item 2&apos; planned P8D after its due date</DESCRIPTION>
 			<DATES>2007-01-10T00:00:00 / 2007-01-18T00:00:00</DATES>
 		</PROBLEM>
 		<PROBLEM>
 			<NAME>late</NAME>
-			<DESCRIPTION>Demand &apos;order for item 3&apos; planned 144:00:00 after its due date</DESCRIPTION>
+			<DESCRIPTION>Demand &apos;order for item 3&apos; planned P6D after its due date</DESCRIPTION>
 			<DATES>2007-01-10T00:00:00 / 2007-01-16T00:00:00</DATES>
 		</PROBLEM>
 		<PROBLEM>
 			<NAME>late</NAME>
-			<DESCRIPTION>Demand &apos;order for item 4&apos; planned 144:00:00 after its due date</DESCRIPTION>
+			<DESCRIPTION>Demand &apos;order for item 4&apos; planned P6D after its due date</DESCRIPTION>
 			<DATES>2007-01-10T00:00:00 / 2007-01-16T00:00:00</DATES>
 		</PROBLEM>
 	</PROBLEMS>

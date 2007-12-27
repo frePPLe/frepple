@@ -364,6 +364,11 @@ class MRPSolver : public Solver
         virtual const MetaClass& getType() const {return MRPSolver::metadata;}
         virtual size_t getSize() const {return sizeof(MRPSolverdata);}
 
+        bool getVerbose() const 
+        {
+          throw LogicException("Use the method MRPSolverdata::getLogLevel() instead of MRPSolverdata::getVerbose()");
+        }
+
       private:
         /** Points to the solver. */
         MRPSolver* sol;

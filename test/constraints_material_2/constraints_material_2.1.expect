@@ -130,8 +130,8 @@ PROBLEM	material excess	Buffer 'constraint buffer 6' has material excess of 50	2
 PROBLEM	short	Demand 'order prio 1 for item 1' planned 68.75 units short	2007-01-10T00:00:00 / 2007-01-10T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 2' planned 70 units short	2007-01-10T00:00:00 / 2007-01-10T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 3' planned 90 units short	2007-01-10T00:00:00 / 2007-01-10T00:00:00
-PROBLEM	late	Demand 'order prio 1 for item 3' planned 264:00:00 after its due date	2007-01-10T00:00:00 / 2007-01-21T00:00:00
+PROBLEM	late	Demand 'order prio 1 for item 3' planned P11D after its due date	2007-01-10T00:00:00 / 2007-01-21T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 4' planned 72.5 units short	2007-01-10T00:00:00 / 2007-01-10T00:00:00
-PROBLEM	late	Demand 'order prio 1 for item 4' planned 312:00:00 after its due date	2007-01-10T00:00:00 / 2007-01-23T00:00:00
+PROBLEM	late	Demand 'order prio 1 for item 4' planned P13D after its due date	2007-01-10T00:00:00 / 2007-01-23T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 5' planned 75 units short	2007-01-10T00:00:00 / 2007-01-10T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 6' planned 50 units short	2007-01-10T00:00:00 / 2007-01-10T00:00:00

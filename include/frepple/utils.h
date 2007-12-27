@@ -1208,6 +1208,11 @@ class TimePeriod
     /** Default constructor and constructor with timeperiod passed. */
     TimePeriod(const long l = 0) : lval(l) {}
 
+    /** Constructor from a character string.<br>
+      * See the parse() method for details on the format of the argument.
+      */
+    TimePeriod(const char* s) {parse(s);}
+
     /** Comparison between periods of time. */
     bool operator < (const long& b) const {return lval < b;}
 
@@ -1250,29 +1255,30 @@ class TimePeriod
     /** This conversion operator creates a long value from a timeperiod. */
     operator long() const {return lval;}
 
-    /** Converts the date to a string. The string is formatted -HHH:MM:SS.
-      * The sign is only shown for negative times.
-      * The HHH: part is left out when the period is less than an hour, and
-      * similarly the MM: part is left out if the period is less than a
-      * minute.
-      */
+    /** Converts the date to a string, formatted according to ISO 8601. */
     operator string() const
     {
-      char str[20];
+      char str[30]; // @todo NOT SECURE!!!
       toCharBuffer(str);
       return string(str);
     }
 
-    /** Function that parses a input string to a time value.
-      * The function expects the following input pattern:<br>
-      *    (\+\-)?(([0-9]*:)?([0-9]*:))?[0-9]*<br>
-      * Here some different input examples, all for a time period of 2 days:
-      *  - 48:00:00
-      *  - +48:0:0
-      *  - 47:60:00
-      *  - 46:120:00
-      *  - -2880:00
-      *  - 172800
+    /** Function that parses a input string to a time value.<br>
+      * The string format is following the ISO 8601 specification for  
+      * durations: [-]P[nY][nM][nW][nD][T[nH][nM][nS]]<br>
+      * Some examples to illustrate how the string is converted to a 
+      * timeperiod, expressed in seconds:<br>
+      *    P1Y = 1 year = 365 days = 31536000 seconds
+      *    P1M = 365/12 days = 2628000 seconds
+      *    P1W = 1 week = 7 days = 604800 seconds
+      *    -P1D = -1 day = -86400 seconds
+      *    PT1H = 1 hour = 3600 seconds
+      *    -PT1000000S = 1000000 seconds
+      *    P1M1WT1H = 1 month + 1 week + 1 hour = 3236400 seconds
+      * It pretty strictly checks the spec, with a few exceptions:
+      *  - A week field ('W') may coexist with other units.
+      *  - Decimal values are not supported.
+      *  - The alternate format as a date and time is not supported.
       */
     DECLARE_EXPORT void parse(const char*);
 
@@ -2178,8 +2184,7 @@ class XMLElement
 
     void operator >> (bool& v) const {v=getBool();}
 
-    TimePeriod getTimeperiod() const
-      {TimePeriod x; x.parse(getData()); return x;}
+    TimePeriod getTimeperiod() const {return TimePeriod(getData());}
 
     void operator >> (int& val) const {val = atoi(getData());}
 
@@ -2196,7 +2201,7 @@ class XMLElement
 
     void operator >> (Date& val) const {val.parse(getData());}
 
-    Date getDate() const {Date x; x.parse(getData()); return x;}
+    Date getDate() const {return Date(getData());}
 
     /** Fills in the string with the XML input. The xerces library takes care
       * of appropriately unescaping special character sequences. */

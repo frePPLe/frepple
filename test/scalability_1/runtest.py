@@ -61,7 +61,7 @@ for counter in [5000, 10000, 15000, 20000, 25000]:
       "<ITEMS>\n",
     "<ITEM NAME=\"ITEMNM_%d\" CATEGORY=\"cat1\" DESCRIPTION=\"DCRP_%d\" >" +
       "\n\t<OPERATION NAME=\"Delivery ITEMNM_%d\" " +
-      "xsi:type=\"OPERATION_FIXED_TIME\" DURATION=\"0\"/>" +
+      "xsi:type=\"OPERATION_FIXED_TIME\" DURATION=\"P0D\"/>" +
       "\n</ITEM>",
     "</ITEMS>\n",
     3
@@ -71,7 +71,7 @@ for counter in [5000, 10000, 15000, 20000, 25000]:
     counter,
     "<OPERATIONS>\n",
     "<OPERATION NAME=\"Make ITEMNM_%d\" xsi:type=\"OPERATION_FIXED_TIME\" "  +
-      "DURATION=\"24:00:00\"/>",
+      "DURATION=\"P1D\"/>",
     "</OPERATIONS>\n",
     1
     )

@@ -56,7 +56,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   {
     for (int i=res->getLevel(); i>0; --i) logger << " ";
     logger << "   Resource '" << res->getName() << "' is asked: "
-    << (-data->q_qty) << "  " << data->q_date << endl;
+    << (-data->q_qty) << "  " << data->q_operationplan->getDates() << endl;
   }
 
   // Initialize the default reply
@@ -245,7 +245,7 @@ DECLARE_EXPORT void MRPSolver::solve(const ResourceInfinite* r, void* v)
   {
     for (int i=r->getLevel(); i>0; --i) logger << " ";
     logger << "  Resource '" << r << "' is asked: "
-    << (-data->q_qty) << "  " << data->q_date << endl;
+    << (-data->q_qty) << "  " << data->q_operationplan->getDates() << endl;
   }
 
   // Reply whatever is requested, regardless of date and quantity.

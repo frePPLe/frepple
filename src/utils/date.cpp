@@ -60,20 +60,44 @@ DECLARE_EXPORT void Date::checkFinite(long long i)
 
 DECLARE_EXPORT void TimePeriod::toCharBuffer(char* t) const
 {
+  if (!lval)
+  {
+    sprintf(t,"P0D");
+    return;
+  }
   long tmp = (lval>0 ? lval : -lval);
   if (lval<0) *(t++) = '-';
-  if (tmp >= 3600)
+  *(t++) = 'P';
+  if (tmp >= 31536000L)
   {
-    // Format: "HH:MM:SS"
-    long minsec = tmp % 3600;
-    sprintf(t,"%li:%02li:%02li", tmp/3600, minsec/60, minsec%60);
+    long y = tmp / 31536000L;
+    t += sprintf(t,"%liY", y);
+    tmp %= 31536000L;
   }
-  else if (tmp >= 60)
-    // Format: "MM:SS"
-    sprintf(t,"%li:%02li", tmp/60, tmp%60);
-  else
-    // Format: "SS"
-    sprintf(t,"%li", tmp);
+  if (tmp >= 86400L)
+  {
+    long d = tmp / 86400L;
+    t += sprintf(t,"%liD", d);
+    tmp %= 86400L;
+  }
+  if (tmp > 0L)
+  {
+    *(t++) = 'T';
+    if (tmp >= 3600L)
+    {
+      long h = tmp / 3600L;
+      t += sprintf(t,"%liH", h);
+      tmp %= 3600L;
+    }
+    if (tmp >= 60L)
+    {
+      long h = tmp / 60L;
+      t += sprintf(t,"%liM", h);
+      tmp %= 60L;
+    }
+    if (tmp > 0L)
+      sprintf(t,"%liS", tmp);
+  }
 }
 
 
@@ -112,30 +136,88 @@ DECLARE_EXPORT void Date::toCharBuffer(char* str) const
 
 DECLARE_EXPORT void TimePeriod::parse (const char* s)
 {
-  lval = 0;
-  long t = 0;
-  int colons = 2;
-  bool minus = false;
-  for (const char *chr = s; *chr; ++chr)
+  long totalvalue = 0;
+  long value = 0;
+  bool negative = false;
+  const char *c = s;
+
+  // Optional minus sign
+  if (*c == '-')
   {
-    if (*chr>='0' && *chr<='9')
-      t = t * 10 + (*chr - '0');
-    else if (*chr == ':' && colons)
+    negative = true;
+    ++c;
+  }
+
+  // Compulsary 'P'
+  if (*c != 'P')
+    throw DataException("Invalid time string '" + string(s) + "'");
+  ++c;
+
+  // Parse the date part
+  for ( ; *c && *c != 'T'; ++c)
+  {
+    switch (*c)
     {
-      lval = (lval + t) * 60;
-      t = 0;
-      --colons;
-    }
-    else if (*chr == '-' && !minus)
-      minus = true;
-    else
-    {
-      lval = 0;
-      throw DataException("Invalid time string '" + string(s) + "'");
+      case '0': case '1': case '2': case '3': case '4': 
+      case '5': case '6': case '7': case '8': case '9':
+        value = value * 10 + (*c - '0'); 
+        break;
+      case 'Y':
+        totalvalue += value * 31536000L;
+        value = 0;
+        break;
+      case 'M':
+        // 1 Month = 1 Year / 12 = 365 days / 12 
+        totalvalue += value * 2628000L;
+        value = 0;
+        break;
+      case 'W':
+        totalvalue += value * 604800L;
+        value = 0;
+        break;
+      case 'D':
+        totalvalue += value * 86400L;
+        value = 0;
+        break;
+      default:
+        throw DataException("Invalid time string '" + string(s) + "'");
     }
   }
-  lval += t;
-  if (minus) lval = -lval;
+
+  // Parse the time part
+  if (*c == 'T')
+  {
+    for (++c ; *c; ++c)
+    {
+      switch (*c)
+      {
+        case '0': case '1': case '2': case '3': case '4':  
+        case '5': case '6': case '7': case '8': case '9':
+          value = value * 10 + (*c - '0'); 
+          break;
+        case 'H':
+          totalvalue += value * 3600L;
+          value = 0;
+          break;
+        case 'M':
+          totalvalue += value * 60L;
+          value = 0;
+          break;
+        case 'S':
+          totalvalue += value;
+          value = 0;
+          break;
+        default:
+          throw DataException("Invalid time string '" + string(s) + "'");
+      }
+    }
+  }
+
+  // Missing a time unit
+  if (value) throw DataException("Invalid time string '" + string(s) + "'");
+
+  // If no exceptions where thrown we can now store the value
+  lval = negative ? -totalvalue : totalvalue; 
 }
 
 

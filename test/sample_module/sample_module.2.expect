@@ -40,10 +40,10 @@
 		<OPERATION NAME="delivery product from distribution centre" xsi:type="OPERATION_FIXED_TIME">
 		</OPERATION>
 		<OPERATION NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME">
-			<DURATION>24:00:00</DURATION>
+			<DURATION>P1D</DURATION>
 		</OPERATION>
 		<OPERATION NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME">
-			<DURATION>24:00:00</DURATION>
+			<DURATION>P1D</DURATION>
 		</OPERATION>
 		<OPERATION NAME="supply distribution centre" xsi:type="OPERATION_ALTERNATE">
 			<ALTERNATES>

@@ -115,8 +115,8 @@ PROBLEM	material excess	Buffer '4. item level 2' has material excess of 6	2007-0
 PROBLEM	material excess	Buffer '4. item level 3' has material excess of 24	2007-01-15T00:00:00 / 2007-01-19T00:00:00
 PROBLEM	material excess	Buffer '4. item level 3' has material excess of 6	2007-01-25T00:00:00 / 2007-02-01T00:00:00
 PROBLEM	material excess	Buffer '4. item level 4' has material excess of 6	2007-01-11T00:00:00 / 2007-01-18T00:00:00
-PROBLEM	late	Demand '1. order 1' planned 72:00:00 after its due date	2007-01-05T00:00:00 / 2007-01-08T00:00:00
-PROBLEM	late	Demand '3. order 1' planned 72:00:00 after its due date	2007-01-05T00:00:00 / 2007-01-08T00:00:00
-PROBLEM	late	Demand '3. order 2' planned 192:00:00 after its due date	2007-01-10T00:00:00 / 2007-01-18T00:00:00
+PROBLEM	late	Demand '1. order 1' planned P3D after its due date	2007-01-05T00:00:00 / 2007-01-08T00:00:00
+PROBLEM	late	Demand '3. order 1' planned P3D after its due date	2007-01-05T00:00:00 / 2007-01-08T00:00:00
+PROBLEM	late	Demand '3. order 2' planned P8D after its due date	2007-01-10T00:00:00 / 2007-01-18T00:00:00
 PROBLEM	short	Demand '3. order 3' planned 3 units short	2007-01-31T00:00:00 / 2007-01-31T00:00:00
-PROBLEM	late	Demand '4. order 1' planned 576:00:00 after its due date	2007-01-05T00:00:00 / 2007-01-29T00:00:00
+PROBLEM	late	Demand '4. order 1' planned P24D after its due date	2007-01-05T00:00:00 / 2007-01-29T00:00:00

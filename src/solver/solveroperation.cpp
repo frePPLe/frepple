@@ -166,7 +166,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
       // Pop actions from the command "stack" in the command list
       data.undo(topcommand);
       // Echo a message
-      if (data.getVerbose())
+      if (data.getSolver()->getLogLevel()>1)
       {
         for (int i=opplan->getOperation()->getLevel(); i>0; --i) logger << " ";
         logger << "   Retrying new date." << endl;
@@ -194,7 +194,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
         // Pop actions from the command stack in the command list
         data.undo(topcommand);
         // Echo a message
-        if (data.getVerbose())
+        if (data.getSolver()->getLogLevel()>1)
         {
           for (int i=opplan->getOperation()->getLevel(); i>0; --i) logger << " ";
           logger << "   Retrying with a smaller quantity: "

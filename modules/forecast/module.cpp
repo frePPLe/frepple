@@ -35,8 +35,8 @@ const MetaClass ForecastSolver::metadata;
 Forecast::MapOfForecasts Forecast::ForecastDictionary;
 bool Forecast::Customer_Then_Item_Hierarchy = true;
 bool Forecast::Match_Using_Delivery_Operation = true;
-TimePeriod Forecast::Net_Late(0);
-TimePeriod Forecast::Net_Early(0);
+TimePeriod Forecast::Net_Late(0L);
+TimePeriod Forecast::Net_Early(0L);
 
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)

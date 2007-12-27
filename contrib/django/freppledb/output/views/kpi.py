@@ -47,38 +47,38 @@ class Report(ListReport):
       select 1, 'Problem', 'Count', count(*)
       from out_problem
       union
-      select 2, 'Problem', 'Weight', round(sum(weight),2)
+      select 2, 'Problem', 'Weight', round(sum(weight))
       from out_problem
       union
-      select 3, 'Demand', 'Requested', round(sum(quantity),2)
+      select 3, 'Demand', 'Requested', round(sum(quantity))
       from out_demand
       union
-      select 4, 'Demand', 'Planned', round(sum(planquantity),2)
+      select 4, 'Demand', 'Planned', round(sum(planquantity))
       from out_demand
       union
-      select 5, 'Demand', 'Planned late', coalesce(round(sum(planquantity),2),0)
+      select 5, 'Demand', 'Planned late', coalesce(round(sum(planquantity)),0)
       from out_demand
       where plandatetime > duedatetime and plandatetime is not null
       union
-      select 6, 'Demand', 'Unplanned', coalesce(round(sum(quantity),2),0)
+      select 6, 'Demand', 'Unplanned', coalesce(round(sum(quantity)),0)
       from out_demand
       where planquantity is null
       union
-      select 7, 'Demand', 'Total lateness', coalesce(round(sum(planquantity * %s),2),0)
+      select 7, 'Demand', 'Total lateness', coalesce(round(sum(planquantity * %s)),0)
       from out_demand
       where plandatetime > duedatetime and plandatetime is not null
       union
-      select 8, 'Operation', 'Quantity', round(sum(quantity),2)
+      select 8, 'Operation', 'Quantity', round(sum(quantity))
       from out_operationplan
       union
-      select 9, 'Resource', 'Usage', round(sum(quantity * %s),2)
+      select 9, 'Resource', 'Usage', round(sum(quantity * %s))
       from out_loadplan
       union
-      select 10, 'Material', 'Produced', round(sum(quantity),2)
+      select 10, 'Material', 'Produced', round(sum(quantity))
       from out_flowplan
       where quantity>0
       union
-      select 11, 'Material', 'Consumed', round(sum(-quantity),2)
+      select 11, 'Material', 'Consumed', round(sum(-quantity))
       from out_flowplan
       where quantity<0
       ''' % (

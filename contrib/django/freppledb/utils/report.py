@@ -175,7 +175,7 @@ class TableReport(Report):
   permissions = []
 
 
-#@staff_member_required
+@staff_member_required
 def view_report(request, entity=None, **args):
   '''
   This is a generic view for two types of reports:

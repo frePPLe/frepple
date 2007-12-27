@@ -55,7 +55,7 @@ MANAGERS = ADMINS
 # Django supports the following database engines: 'oracle', 'postgresql_psycopg2',
 # 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
 # FrePPLe supports 'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'
-DATABASE_ENGINE = 'mysql'
+DATABASE_ENGINE = 'sqlite'
 DATABASE_NAME = 'frepple'           # Database name
 DATABASE_USER = 'frepple'             # Not used with sqlite3.
 DATABASE_PASSWORD = 'frepple'         # Not used with sqlite3.

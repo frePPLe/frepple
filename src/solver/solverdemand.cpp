@@ -48,7 +48,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   WLock<Demand>(l)->deleteOperationPlans();
 
   // Determine the quantity to be planned and the date for the planning loop
-  float plan_qty = l->getQuantity() - l->getPlannedQuantity();
+  double plan_qty = l->getQuantity() - l->getPlannedQuantity();
   Date plan_date = l->getDue();
 
   // Nothing to be planned any more (e.g. all deliveries are locked...)
@@ -59,7 +59,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   }
 
   // Temporary values to store the 'best-reply' so far
-  float best_q_qty, best_a_qty = 0.0f;
+  double best_q_qty, best_a_qty = 0.0f;
   Date best_q_date;
 
   // Which operation to use?
@@ -147,8 +147,8 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
         double tmpqty = Solver->a_qty;
         if (loglevel>=2) logger << "Demand '" << l << "' plans coordination." << endl;
         Solver->getSolver()->setLogLevel(0);
-        float tmpresult = Solver->a_qty;
-        for(float remainder = Solver->a_qty;
+        double tmpresult = Solver->a_qty;
+        for(double remainder = Solver->a_qty;
           remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
         {
           Solver->q_qty = remainder;
@@ -187,7 +187,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   {
     if (loglevel>=2) logger << "Demand '" << l << "' accepts a best answer." << endl;
     Solver->getSolver()->setLogLevel(0);
-    for(float remainder = best_q_qty;
+    for(double remainder = best_q_qty;
       remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
     {
       Solver->q_qty = remainder;

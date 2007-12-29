@@ -12,43 +12,47 @@ def printModel():
 
   # Open the file
   out = open("output.1.xml", "wt", 1)
-  print "kiwi"
+
   # Print information
   try:
-    print "10"
+    print "Start exporting the problems"
     print >>out, "Problems:"
     for i in frepple.problem():
-      print "11a"
-      print >>out, i["ENTITY"], i["TYPE"], i["START"], i["END"], i["DESCRIPTION"]
-    print "11"
+      print >>out, i["ENTITY"], i["TYPE"], i["START"], i["END"], \
+        i["DESCRIPTION"]
+
+    print "Start exporting the operation plans"
     print >>out, "\nOperationplans:"
     for i in frepple.operationplan():
       print >>out, i["IDENTIFIER"], i["OPERATION"], i["QUANTITY"], \
         i["START"], i["END"], i["DEMAND"]
-    print "12"
+
+    print "Start exporting the buffer plans"
     print >>out, "\nBuffers:"
     for i in frepple.buffer():
-      print >>out, i["NAME"], i["CATEGORY"], i["SUBCATEGORY"], i["DESCRIPTION"], \
-        i["ONHAND"], i["LOCATION"], i["ITEM"], i["MAXIMUM"], i["PRODUCING"]
+      print >>out, i["NAME"], i["CATEGORY"], i["SUBCATEGORY"], \
+        i["DESCRIPTION"], i["ONHAND"], i["LOCATION"], i["ITEM"], \
+        i["MAXIMUM"], i["PRODUCING"]
       for j in i["FLOWPLANS"]:
-        print >>out, "     ", j["BUFFER"], j["OPERATION"], j["OPERATIONPLAN"], \
+        print >>out, "     ", j["BUFFER"], j["OPERATIONPLAN"], \
           j["QUANTITY"], j["DATE"], j["ONHAND"]
-    print "13"
 
+    print "Start exporting the resource plans"
     print >>out, "\nResources:"
     for i in frepple.resource():
-      print >>out, i["NAME"], i["CATEGORY"], i["SUBCATEGORY"], i["DESCRIPTION"], \
-        i["LOCATION"], i["MAXIMUM"], i["OWNER"]
+      print >>out, i["NAME"], i["CATEGORY"], i["SUBCATEGORY"], \
+        i["DESCRIPTION"], i["LOCATION"], i["MAXIMUM"], i["OWNER"]
       for j in i["LOADPLANS"]:
-        print >>out, "     ", j["RESOURCE"], j["OPERATION"], j["OPERATIONPLAN"], \
-          j["QUANTITY"], j["DATE"], j["ONHAND"], j["MAXIMUM"]
-    print "14"
+        print >>out, "     ", j["RESOURCE"], j["OPERATIONPLAN"], \
+          j["QUANTITY"], j["STARTDATE"], j["ENDDATE"]
 
+    print "Start exporting the demand plans"
     print >>out, "\nDemands:"
     for i in frepple.demand():
       print >>out, i["NAME"], i["QUANTITY"], i["DUE"], i["PRIORITY"], \
         i["ITEM"], i["OPERATION"], i["OWNER"], i["CUSTOMER"]
-    print "15"
+
+    print "Done"
 
   # Close the file
   finally:

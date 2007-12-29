@@ -391,7 +391,7 @@ class MRPSolver : public Solver
         bool forceLate;
 
         /** This is the quantity we are asking for. */
-        float q_qty;
+        double q_qty;
 
         /** This is the date we are asking for. */
         Date q_date;
@@ -403,7 +403,7 @@ class MRPSolver : public Solver
         Date q_date_max;
 
         /** This is the quantity we can get by the requested Date. */
-        float a_qty;
+        double a_qty;
 
         /** This is the Date when we can get extra availability. */
         Date a_date;

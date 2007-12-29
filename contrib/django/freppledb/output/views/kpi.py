@@ -44,41 +44,46 @@ class Report(ListReport):
     # Execute the query
     cursor = connection.cursor()
     query = '''
-      select 1, 'Problem', 'Count', count(*)
+      select 101, 'Problem count', name, count(*)
       from out_problem
+      group by name
       union
-      select 2, 'Problem', 'Weight', round(sum(weight))
+      select 102, 'Problem weight', name, round(sum(weight))
       from out_problem
+      group by name
       union
-      select 3, 'Demand', 'Requested', round(sum(quantity))
+      select 201, 'Demand', 'Requested', round(sum(quantity))
       from out_demand
       union
-      select 4, 'Demand', 'Planned', round(sum(planquantity))
+      select 202, 'Demand', 'Planned', round(sum(planquantity))
       from out_demand
       union
-      select 5, 'Demand', 'Planned late', coalesce(round(sum(planquantity)),0)
+      select 203, 'Demand', 'Planned late', coalesce(round(sum(planquantity)),0)
       from out_demand
       where plandatetime > duedatetime and plandatetime is not null
       union
-      select 6, 'Demand', 'Unplanned', coalesce(round(sum(quantity)),0)
+      select 204, 'Demand', 'Unplanned', coalesce(round(sum(quantity)),0)
       from out_demand
       where planquantity is null
       union
-      select 7, 'Demand', 'Total lateness', coalesce(round(sum(planquantity * %s)),0)
+      select 205, 'Demand', 'Total lateness', coalesce(round(sum(planquantity * %s)),0)
       from out_demand
       where plandatetime > duedatetime and plandatetime is not null
       union
-      select 8, 'Operation', 'Quantity', round(sum(quantity))
+      select 301, 'Operation', 'Count', count(*)
       from out_operationplan
       union
-      select 9, 'Resource', 'Usage', round(sum(quantity * %s))
+      select 301, 'Operation', 'Quantity', round(sum(quantity))
+      from out_operationplan
+      union
+      select 302, 'Resource', 'Usage', round(sum(quantity * %s))
       from out_loadplan
       union
-      select 10, 'Material', 'Produced', round(sum(quantity))
+      select 401, 'Material', 'Produced', round(sum(quantity))
       from out_flowplan
       where quantity>0
       union
-      select 11, 'Material', 'Consumed', round(sum(-quantity))
+      select 402, 'Material', 'Consumed', round(sum(-quantity))
       from out_flowplan
       where quantity<0
       ''' % (

@@ -42,7 +42,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
 {
   MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
   Date requested_date(Solver->q_date);
-  float requested_qty(Solver->q_qty);
+  double requested_qty(Solver->q_qty);
   bool tried_requested_date(false);
 
   // Message
@@ -78,7 +78,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
       ; ++cur)
   {
-    // Iterator has now changed to a new date or we have arrived at the end
+    // Iterator has now changed to a new date or we have arrived at the end.
     // If multiple flows are at the same moment in time, we are not interested
     // in the inventory changes. It gets interesting only when a certain
     // inventory level remains unchanged for a certain time.
@@ -99,12 +99,13 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
         // We don't consider this as a shortage for the current flowplan,
         // and we want our flowplan to try to repair the previous problems
         // if it can...
-        if (b->getProducingOperation() && theDate >= requested_date)
+        bool loop = true;
+        while (b->getProducingOperation() && theDate >= requested_date && loop)
         {
           // Create supply
           Solver->curBuffer = b;
-          Solver->q_qty = static_cast<float>(-theDelta);
-          Solver->q_date = prev->getDate();
+          Solver->q_qty = -theDelta;
+          Solver->q_date = prev->getDate();  
 
           // Check whether this date doesn't match with the requested date.
           // See a bit further why this is required.
@@ -119,6 +120,14 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
           // supply.
           if (Solver->a_date < extraSupplyDate)
             extraSupplyDate = Solver->a_date;
+
+          // If we got some extra supply, we retry to get some more supply.
+          // Only when no extra material is obtained, we give up.
+          if (Solver->a_qty > ROUNDING_ERROR 
+            && Solver->a_qty < -theDelta + ROUNDING_ERROR)
+            theDelta += Solver->a_qty;
+          else
+            loop = false;
         }
 
         // Not enough supply was received to repair the complete problem
@@ -181,13 +190,13 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   // feasible, we now check for supply at time y. It will create some extra
   // inventory, but at least the demand is met.
   // @todo The buffer solver could move backward in time from x till time y,
-  // and try multiple dates.
-  if (shortage > ROUNDING_ERROR
+  // and try multiple dates. This would minimize the excess inventory created.
+  while (shortage > ROUNDING_ERROR
       && b->getProducingOperation() && !tried_requested_date)
   {
     // Create supply at the requested date
     Solver->curBuffer = b;
-    Solver->q_qty = static_cast<float>(shortage);
+    Solver->q_qty = shortage;
     Solver->q_date = requested_date;
     // Note that the supply created with the next line changes the onhand value
     // at all later dates!
@@ -196,14 +205,17 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
     b->getProducingOperation()->solve(*this,v);
     // Evaluate the reply
     if (Solver->a_date < extraSupplyDate) extraSupplyDate = Solver->a_date;
-    shortage -= Solver->a_qty;
+    if (Solver->a_qty > ROUNDING_ERROR) 
+      shortage -= Solver->a_qty;
+    else
+      tried_requested_date = true;
   }
 
   // Final evaluation of the replenishment
   if (Solver->getSolver()->isConstrained())
   {
     // Use the constrained planning result
-    Solver->a_qty = static_cast<float>(requested_qty - shortage);
+    Solver->a_qty = requested_qty - shortage;
     if (Solver->a_qty < ROUNDING_ERROR)
     {
       Solver->undo(topcommand);
@@ -215,7 +227,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   }
   else
   {
-    // Enough inventory or supply available, or not material constrained
+    // Enough inventory or supply available, or not material constrained.
     // In case of a plan that is not material constrained, the buffer tries to
     // solve for shortages as good as possible. Only in the end we 'lie' about
     // the result to the calling function. Material shortages will then remain

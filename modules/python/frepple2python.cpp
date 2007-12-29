@@ -333,7 +333,7 @@ extern "C" PyObject* PythonDemandDelivery::createFromDemand(Demand* v)
   // Cast the demand pointer and initialize the iterator
   obj->dem = v;
   obj->iter = v->getDelivery().begin();
-  obj->cumPlanned = 0.0f;
+  obj->cumPlanned = 0.0;
   // Find a non-hidden demand owning this demand
   obj->dem_owner = v;
   while (obj->dem_owner && obj->dem_owner->getHidden())
@@ -354,8 +354,8 @@ extern "C" PyObject* PythonDemandDelivery::next(PythonDemandDelivery* obj)
     if (obj->cumPlanned > obj->dem->getQuantity())
     {
       // Planned more than requested
-      p -= (obj->cumPlanned - obj->dem->getQuantity());
-      if (p < 0.0f) p = 0.0f;
+      p -= static_cast<float>(obj->cumPlanned - obj->dem->getQuantity());
+      if (p < 0.0) p = 0.0;
     }
     // Build a python dictionary
     PyObject* result = Py_BuildValue("{s:z,s:N,s:f,s:N,s:f,s:l}",

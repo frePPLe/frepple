@@ -396,7 +396,7 @@ extern "C"
       Demand::OperationPlan_list::const_iterator iter;
       const Demand* dem;
       const Demand* dem_owner;
-      float cumPlanned;
+      double cumPlanned;
     public:
       static PyTypeObject InfoType;
       static PyObject* next(PythonDemandDelivery*);

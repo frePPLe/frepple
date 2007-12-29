@@ -641,17 +641,11 @@ class OperationPlan(models.Model):
 
 
 class Demand(models.Model):
-    # The priorities defined here are for convenience only. Frepple accepts any number as priority.
+    # The priorities defined here are for convenience only. FrePPLe accepts any number as priority.
     demandpriorities = (
       (1,_('1 - high')),
       (2,_('2 - normal')),
       (3,_('3 - low'))
-    )
-
-    # Delivery policies to plan the demand
-    demandpolicies = (
-      ('', _('Allow multiple deliveries')),
-      ('SINGLEDELIVERY', _('Allow only a single delivery')),
     )
 
     # Database fields

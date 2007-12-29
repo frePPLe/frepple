@@ -30,7 +30,7 @@ from input.models import Plan
 
 class Report(ListReport):
   template = 'output/kpi.html'
-  title = _("Plan performance indicators")
+  title = _("Performance Indicators")
   reset_crumbs = True
   basequeryset = Plan.objects.all()
   rows = (

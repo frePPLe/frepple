@@ -1,4 +1,5 @@
+{% load i18n %}
 <div id="demandcontext" class="ContextMenu">
-{% if perms.input.change_demand %}<a id="/admin/input/demand/%s/">Demand</a>{% endif %}
-<a id="/pegging/?demand=%s">Pegging</a>
+{% if perms.input.change_demand %}<a id="/admin/input/demand/%s/">{% trans 'Demand' %}</a>{% endif %}
+<a id="/pegging/?demand=%s">{% trans 'Pegging' %}</a>
 </div>

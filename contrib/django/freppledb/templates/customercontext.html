@@ -1,3 +1,4 @@
+{% load i18n %}
 <div id="customercontext" class="ContextMenu">
-{% if perms.input.change_customer %}<a id="/admin/input/customer/%s/">Customer</a>{% endif %}
+{% if perms.input.change_customer %}<a id="/admin/input/customer/%s/">{% trans 'Customer' %}</a>{% endif %}
 </div>

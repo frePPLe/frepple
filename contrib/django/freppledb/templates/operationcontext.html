@@ -1,6 +1,7 @@
+{% load i18n %}
 <div id="operationcontext" class="ContextMenu">
-{% if perms.input.change_operation %}<a id="/admin/input/operation/%s/">Operation</a>{% endif %}
-<a id="/supplypath/operation/%s/">Supply Path</a>
-<a id="/whereused/operation/%s/">Where Used</a>
-<a id="/operation/%s/">Plan</a>
+{% if perms.input.change_operation %}<a id="/admin/input/operation/%s/">{% trans 'Operation' %}</a>{% endif %}
+<a id="/supplypath/operation/%s/">{% trans 'Supply Path' %}</a>
+<a id="/whereused/operation/%s/">{% trans 'Where Used' %}</a>
+<a id="/operation/%s/">{% trans 'Plan' %}</a>
 </div>

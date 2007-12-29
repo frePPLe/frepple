@@ -1,6 +1,7 @@
+{% load i18n %}
 <div id="buffercontext" class="ContextMenu">
-{% if perms.input.change_buffer %}<a id="/admin/input/buffer/%s/">Buffer</a>{% endif %}
-<a id="/supplypath/buffer/%s/">Supply Path</a>
-<a id="/whereused/buffer/%s/">Where Used</a>
-<a id="/buffer/%s/">Plan</a>
+{% if perms.input.change_buffer %}<a id="/admin/input/buffer/%s/">{% trans 'Buffer' %}</a>{% endif %}
+<a id="/supplypath/buffer/%s/">{% trans 'Supply Path' %}</a>
+<a id="/whereused/buffer/%s/">{% trans 'Where Used' %}</a>
+<a id="/buffer/%s/">{% trans 'Plan' %}</a>
 </div>

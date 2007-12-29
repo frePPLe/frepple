@@ -59,7 +59,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   }
 
   // Temporary values to store the 'best-reply' so far
-  double best_q_qty, best_a_qty = 0.0f;
+  double best_q_qty, best_a_qty = 0.0;
   Date best_q_date;
 
   // Which operation to use?
@@ -172,7 +172,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
 
       // Update the quantity to plan in the next loop
       plan_qty -= Solver->a_qty;
-      best_a_qty = 0.0f;  // Reset 'best-answer' remember
+      best_a_qty = 0.0;  // Reset 'best-answer' remember
     }
 
   }
@@ -183,7 +183,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
 
   // Accept the best possible answer.
   // We may have skipped it in the previous loop, awaiting a still better answer
-  if (best_a_qty > 0.0f)
+  if (best_a_qty > 0.0)
   {
     if (loglevel>=2) logger << "Demand '" << l << "' accepts a best answer." << endl;
     Solver->getSolver()->setLogLevel(0);

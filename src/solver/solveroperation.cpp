@@ -57,7 +57,7 @@ DECLARE_EXPORT void MRPSolver::checkOperationCapacity
   // need to redo the capacity check for the ones we already checked
   // Repeat until no load has touched the opplan, or till proven infeasible
   // No need to reloop if there is only a single load (= 2 loadplans)
-  while (hasMultipleLoads && opplan->getDates()!=orig && data.a_qty!=0.0f);
+  while (hasMultipleLoads && opplan->getDates()!=orig && data.a_qty!=0.0);
 }
 
 
@@ -102,7 +102,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
       // Verify the capacity. This can move the operationplan early or late.
       checkOperationCapacity(opplan,data);
       // Return false if no capacity is available
-      if (data.a_qty==0.0f) return false;
+      if (data.a_qty==0.0) return false;
     }
 
     // Check material
@@ -236,7 +236,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
       checkOperationCapacity(opplan,data);
 
       // Reply of this function
-      a_qty = 0.0f;
+      a_qty = 0.0;
       delay = 0L;
       a_date = opplan->getDates().getEnd();
     }
@@ -315,7 +315,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
   else
   {
     // This operation doesn't fit at all within the constrained window.
-    data.a_qty = 0.0f;
+    data.a_qty = 0.0;
     // Resize to the minimum quantity
     if (opplan->getQuantity() + ROUNDING_ERROR < opplan->getOperation()->getSizeMinimum())
       opplan->setQuantity(1,false);
@@ -465,7 +465,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
   Date max_Date;
   for (Operation::Operationlist::const_reverse_iterator
       e = oper->getSubOperations().rbegin();
-      e != oper->getSubOperations().rend() && a_qty > 0.0f;
+      e != oper->getSubOperations().rend() && a_qty > 0.0;
       ++e)
   {
     // Plan the next step
@@ -636,7 +636,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
       // Are we at the end already?
       if (a_qty < ROUNDING_ERROR)
       {
-        a_qty = 0.0f;
+        a_qty = 0.0;
         break;
       }
     }

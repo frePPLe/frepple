@@ -126,7 +126,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
         // If the answered quantity is 0, the operationplan is moved into the
         // past.
         // In both these cases we need to search for capacity at later dates.
-        if (data->forceLate || cur==res->getLoadPlans().end() || data->a_qty==0.0f)
+        if (data->forceLate || cur==res->getLoadPlans().end() || data->a_qty==0.0)
         {
           // COMPUTE EARLIEST AVAILABLE CAPACITY
 
@@ -204,7 +204,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
             data->a_date = data->q_operationplan->getDates().getEnd();
 
           // Create a zero quantity reply
-          data->a_qty = 0.0f;
+          data->a_qty = 0.0;
           break;
         }
 
@@ -214,12 +214,12 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
       }   // end of if-statement
     }     // end of for-loop
   }       // end of while-loop
-  while (HasOverload && data->a_qty!=0.0f);
+  while (HasOverload && data->a_qty!=0.0);
 
   // In case of a zero reply, we resize the operationplan to 0 right away.
   // This is required to make sure that the buffer inventory profile also
   // respects this answer.
-  if (data->a_qty == 0.0f) data->q_operationplan->setQuantity(0);
+  if (data->a_qty == 0.0) data->q_operationplan->setQuantity(0);
 
   // Message
   if (data->getSolver()->getLogLevel()>1)

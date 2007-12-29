@@ -71,7 +71,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   // event date changes, we evaluate if a shortage exists.
   Date currentDate;
   const TimeLine<FlowPlan>::Event *prev = NULL;
-  double shortage(0.0f);
+  double shortage(0.0);
   Date extraSupplyDate(Date::infiniteFuture);
   Date extraInventoryDate(Date::infiniteFuture);
   float current_minimum(0.0f);

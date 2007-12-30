@@ -48,5 +48,12 @@
       <PARAMETER NAME="Net_Early" VALUE="P4W" />
       <PARAMETER NAME="Net_Late" VALUE="P4W" />
     </COMMAND>
+    <!-- Webservice module -->
+    <!--
+    <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_webservice.so">
+      <PARAMETER NAME="port" VALUE="6262" />
+      <PARAMETER NAME="threads" VALUE="5" />
+    </COMMAND>
+    -->
   </COMMANDS>
 </PLAN>

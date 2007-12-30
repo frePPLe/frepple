@@ -22,14 +22,14 @@
  * License along with this library; if not, write to the Free Software     *
  * Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA *
  *                                                                         *
- // frepple schema namespace: urn:frepple
-// frepple service method-action: add "tttt"
-***************************************************************************/
+ ***************************************************************************/
 
 /* The contents of this file is automatically processed into a WSDL
  * service definition file.
  * See the gsoap documentation for the right format and supported constructs.
  */
+
+#ifndef DOXYGEN
 
 namespace module_webservice
 {
@@ -64,3 +64,4 @@ int frepple__demand(xsd__string name, struct frepple__DemandInfoResponse &result
 
 }
 
+#endif

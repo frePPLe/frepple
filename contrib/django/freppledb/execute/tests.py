@@ -66,10 +66,10 @@ class execute_from_user_interface(TestCase):
     self.assertRedirects(response, '/execute/execute.html')
 
     # Count the output records
-    self.failUnlessEqual(output.models.Problem.objects.count(),11)
-    self.failUnlessEqual(output.models.FlowPlan.objects.count(),156)
-    self.failUnlessEqual(output.models.LoadPlan.objects.count(),36)
-    self.failUnlessEqual(output.models.OperationPlan.objects.count(),103)
+    self.failUnlessEqual(output.models.Problem.objects.count(),9)
+    self.failUnlessEqual(output.models.FlowPlan.objects.count(),287)
+    self.failUnlessEqual(output.models.LoadPlan.objects.count(),83)
+    self.failUnlessEqual(output.models.OperationPlan.objects.count(),135)
 
   def test_csv_upload(self):
     self.failUnlessEqual(

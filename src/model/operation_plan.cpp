@@ -43,7 +43,7 @@ void DECLARE_EXPORT OperationPlan::setChanged(bool b)
   else
   {
     oper->setChanged(b);
-    if (lt) WLock<Demand>(lt)->setChanged();
+    if (dmd) WLock<Demand>(dmd)->setChanged();
   }
 }
 
@@ -326,7 +326,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
 
   // Extra registration step if this is a delivery operation
   if (getDemand() && getDemand()->getDeliveryOperation() == oper)
-    WLock<Demand>(lt)->addDelivery(this);
+    WLock<Demand>(dmd)->addDelivery(this);
 
   // Mark the operation to detect its problems
   // Note that a single operationplan thus retriggers the problem computation
@@ -441,7 +441,7 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
   if (getIdentifier())
   {
     // Delete from the list of deliveries
-    if (lt) WLock<Demand>(lt)->removeDelivery(this);
+    if (dmd) WLock<Demand>(dmd)->removeDelivery(this);
 
     // Delete from the operationplan list
     if (prev) prev->next = next;
@@ -548,7 +548,7 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
   // some material downstream.
 
   // Notify the demand of the changed delivery
-  if (lt) WLock<Demand>(lt)->setChanged();
+  if (dmd) WLock<Demand>(dmd)->setChanged();
 
   // Update the sorting of the operationplan in the list
   updateSorting();
@@ -612,8 +612,8 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const XMLtag& tag,
   // The demand reference is only valid for delivery operation_plans,
   // and it should only be written if this tag is not being written
   // as part of a demand+delivery tag.
-  if (lt && !dynamic_cast<Demand*>(o->getPreviousObject()))
-    o->writeElement(Tags::tag_demand, lt);
+  if (dmd && !dynamic_cast<Demand*>(o->getPreviousObject()))
+    o->writeElement(Tags::tag_demand, dmd);
 
   o->writeElement(Tags::tag_start, dates.getStart());
   o->writeElement(Tags::tag_end, dates.getEnd());
@@ -684,13 +684,13 @@ DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, XMLElement& pEleme
 DECLARE_EXPORT void OperationPlan::setDemand(const Demand* l)
 {
   // No change
-  if (l==lt) return;
+  if (l==dmd) return;
 
   // Unregister from previous lot
-  if (lt) WLock<Demand>(lt)->removeDelivery(this);
+  if (dmd) WLock<Demand>(dmd)->removeDelivery(this);
 
   // Register the new lot and mark it changed
-  lt = l;
+  dmd = l;
   if (l) WLock<Demand>(l)->setChanged();
 }
 

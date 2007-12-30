@@ -42,6 +42,7 @@ namespace frepple
 DECLARE_EXPORT bool HasLevel::recomputeLevels = false;
 DECLARE_EXPORT bool HasLevel::computationBusy = false;
 DECLARE_EXPORT short unsigned HasLevel::numberOfClusters = 0;
+DECLARE_EXPORT short unsigned HasLevel::numberOfHangingClusters = 0;
 
 
 DECLARE_EXPORT void HasLevel::computeLevels()
@@ -89,15 +90,14 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     bool search_level;
     int cur_cluster;
     numberOfClusters = 0;
+    numberOfHangingClusters = 0;
     for (Operation::iterator g = Operation::begin();
         g != Operation::end(); ++g)
     {
 
 #ifdef CLUSTERDEBUG
-      logger << "Investigating operation '"
-      << *(static_cast<Operation*>(g->second))
-      << "' - current cluster "
-      << static_cast<Operation*>(g->second)->cluster << endl;
+      logger << "Investigating operation '" << &*g
+      << "' - current cluster " << g->cluster << endl;
 #endif
 
       // Select a new cluster number
@@ -108,6 +108,16 @@ DECLARE_EXPORT void HasLevel::computeLevels()
         cur_cluster = ++numberOfClusters;
         if (numberOfClusters >= USHRT_MAX)
           throw LogicException("Too many clusters");
+
+        // Detect hanging operations
+        if (g->getFlows().empty() && g->getLoads().empty() 
+          && g->getSuperOperations().empty()
+          && g->getSubOperations().empty()
+          )
+        {
+          ++numberOfHangingClusters;
+          continue;
+        }
       }
 
       // Do we need to activate the level search?
@@ -119,13 +129,13 @@ DECLARE_EXPORT void HasLevel::computeLevels()
       if (g->getSuperOperations().empty())
       {
         search_level = true;
-        // Does the Operation itself have producing flows?
+        // Does the operation itself have producing flows?
         for (Operation::flowlist::const_iterator fl = g->getFlows().begin();
             fl != g->getFlows().end() && search_level; ++fl)
           if (fl->isProducer()) search_level = false;
         if (search_level)
         {
-          // Do subOperations have a producing Flow
+          // Do suboperations have a producing flow?
           for (Operation::Operationlist::const_reverse_iterator
               i = g->getSubOperations().rbegin();
               i != g->getSubOperations().rend() && search_level;
@@ -284,9 +294,9 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     } // End of Operation loop
 
     // The above loop will visit ALL operations and recurse through the
-    // Buffers and Resources connected to them.
-    // Missing from the loop are Buffers and Resources that have no flows or
-    // Loads at all. We catch those poor lonely fellows now...
+    // buffers and resources connected to them.
+    // Missing from the loop are buffers and resources that have no flows or
+    // loads at all. We catch those poor lonely fellows now...
     for (Buffer::iterator gbuf2 = Buffer::begin();
         gbuf2 != Buffer::end(); ++gbuf2)
       if (gbuf2->getFlows().empty())
@@ -294,6 +304,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
         gbuf2->cluster = ++numberOfClusters;
         if (numberOfClusters >= USHRT_MAX)
           throw LogicException("Too many clusters");
+        ++numberOfHangingClusters;
       }
     for (Resource::iterator gres2 = Resource::begin();
         gres2 != Resource::end(); ++gres2)
@@ -302,6 +313,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
         gres2->cluster = ++numberOfClusters;
         if (numberOfClusters >= USHRT_MAX)
           throw LogicException("Too many clusters");
+        ++numberOfHangingClusters;
       }
 
   } // End of while recomputeLevels. The loop will be repeated as long as model

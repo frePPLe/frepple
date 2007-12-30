@@ -29,6 +29,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from execute.models import log
+from input.models import Plan
 
 
 class Command(BaseCommand):
@@ -64,12 +65,15 @@ class Command(BaseCommand):
     else: user = ''
 
     try:
+      # Logging message
       log(category='ERASE', user=user,
         message=_('Start erasing the database')).save()
       cursor = connection.cursor()
+
       # SQLite specials
       if settings.DATABASE_ENGINE == 'sqlite3':
         cursor.execute('PRAGMA synchronous = OFF')  # Performance improvement
+
       # Delete all records from the tables
       sql_list = connection.ops.sql_flush(no_style(), [
         'out_problem','out_flowplan','out_loadplan','out_demandpegging',
@@ -80,9 +84,16 @@ class Command(BaseCommand):
       for sql in sql_list:
         cursor.execute(sql)
         transaction.commit()
+
       # SQLite specials
       if settings.DATABASE_ENGINE == 'sqlite3':
         cursor.execute('vacuum')   # Shrink the database file
+
+      # Mark the last-modified field of the plan. This is used to force
+      # browser clients to refresh any cached reports.
+      Plan.objects.all()[0].save()
+
+      # Logging message
       log(category='ERASE', user=user,
         message=_('Finished erasing the database')).save()
     except Exception, e:

@@ -124,7 +124,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
           // If we got some extra supply, we retry to get some more supply.
           // Only when no extra material is obtained, we give up.
           if (Solver->a_qty > ROUNDING_ERROR 
-            && Solver->a_qty < -theDelta + ROUNDING_ERROR)
+            && Solver->a_qty < -theDelta - ROUNDING_ERROR)
             theDelta += Solver->a_qty;
           else
             loop = false;

@@ -947,6 +947,9 @@ class HasLevel
     /** Stores the total number of clusters in the model. */
     static DECLARE_EXPORT unsigned short numberOfClusters;
 
+    /** Stores the total number of hanging clusters in the model. */
+    static DECLARE_EXPORT unsigned short numberOfHangingClusters;
+   
     /** Stores the level of this entity. Higher numbers indicate more
       * upstream entities.
       * A value of -1 indicates an unused entity.
@@ -994,12 +997,24 @@ class HasLevel
     static DECLARE_EXPORT void computeLevels();
 
   public:
-    /** Returns the total number of clusters in the system. If not up to date
-      * the recomputation will be triggered. */
+    /** Returns the total number of clusters.<br>
+      * If not up to date the recomputation will be triggered. 
+      */
     static unsigned short getNumberOfClusters()
     {
       if (recomputeLevels || computationBusy) computeLevels();
       return numberOfClusters;
+    }
+
+    /** Returns the total number of hanging clusters. A hanging cluster
+      * is a cluster that consists of a single entity that isn't connected
+      * to any other entity.<br>
+      * If not up to date the recomputation will be triggered. 
+      */
+    static unsigned short getNumberOfHangingClusters()
+    {
+      if (recomputeLevels || computationBusy) computeLevels();
+      return numberOfHangingClusters;
     }
 
     /** Return the level (and recompute first if required). */
@@ -1575,7 +1590,7 @@ class OperationPlan
     /** Returns a pointer to the demand for which this operation is a delivery.
       * If the operationplan isn't a delivery operation, this is a NULL pointer.
       */
-    const Demand* getDemand() const {return lt;}
+    const Demand* getDemand() const {return dmd;}
 
     /** Updates the demand to which this operationplan is a solution. */
     DECLARE_EXPORT void setDemand(const Demand* l);
@@ -1809,7 +1824,7 @@ class OperationPlan
       * own override of the createOperationPlan method.
       * @see Operation::createOperationPlan
       */
-    OperationPlan() : owner(NULL), quantity(0.0), locked(false), lt(NULL),
+    OperationPlan() : owner(NULL), quantity(0.0), locked(false), dmd(NULL),
       id(0), oper(NULL), firstflowplan(NULL), firstloadplan(NULL),
       prev(NULL), next(NULL) {}
 
@@ -1834,7 +1849,7 @@ class OperationPlan
 
     /** Pointer to the demand. Only delivery operationplans have this field
       * set. The field is NULL for all other operationplans. */
-    const Demand *lt;
+    const Demand *dmd;
 
     /** Unique identifier. */
     unsigned long id;

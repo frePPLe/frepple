@@ -392,8 +392,9 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   CommandLoadLibrary::printModules();
 
   // Print the number of clusters
-  logger << "Clusters: "
-    << HasLevel::getNumberOfClusters() << endl << endl;
+  logger << "Clusters: " << HasLevel::getNumberOfClusters() 
+    << " (hanging: " << HasLevel::getNumberOfHangingClusters() << ")" 
+    << endl << endl;
 
   // Header for memory size
   logger << "Memory usage:" << endl;

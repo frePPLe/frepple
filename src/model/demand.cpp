@@ -54,7 +54,7 @@ DECLARE_EXPORT void Demand::deleteOperationPlans (bool deleteLockedOpplans)
       // Setting the demand pointer to NULL is required to prevent the
       // deletion of the operationplan calling the function removeDelivery.
       // We can't use the regular method setDemand() to do this!
-      (*i)->lt = NULL;
+      (*i)->dmd = NULL;
       delete *i;
       // Remove from the list - while trying to maintain a valid iterator to
       // the next element.
@@ -75,11 +75,11 @@ DECLARE_EXPORT void Demand::removeDelivery(OperationPlan * o)
   if (!o) return;
 
   // See if the demand field on the operationplan points to this demand
-  if (o->lt != this)
+  if (o->dmd != this)
     throw LogicException("Delivery operationplan incorrectly registered");
 
   // Remove the reference on the operationplan
-  o->lt = NULL;  // Required to avoid endless loop
+  o->dmd = NULL;  // Required to avoid endless loop
   o->setDemand(NULL);
 
   // Find in the list of deliveries

@@ -263,7 +263,13 @@ def loadFlows(cursor):
   print 'Importing flows...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT operation_id, thebuffer_id, quantity, type FROM flow order by operation_id, thebuffer_id desc")
+  # Note: The sorting of the flows is not really necessary, but helps to make
+  # the planning progress consistent across runs and database engines.
+  cursor.execute('''
+    SELECT operation_id, thebuffer_id, quantity, type
+    FROM flow
+    ORDER BY operation_id, thebuffer_id
+    ''')
   x = [ header, '<FLOWS>' ]
   for i, j, k, l in cursor.fetchall():
     cnt += 1
@@ -280,7 +286,13 @@ def loadLoads(cursor):
   print 'Importing loads...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT operation_id, resource_id, usagefactor FROM resourceload order by operation_id, resource_id")
+  # Note: The sorting of the loads is not really necessary, but helps to make
+  # the planning progress consistent across runs and database engines.
+  cursor.execute('''
+    SELECT operation_id, resource_id, usagefactor
+    FROM resourceload
+    ORDER BY operation_id, resource_id
+    ''')
   x = [ header , '<LOADS>' ]
   for i, j, k in cursor.fetchall():
     cnt += 1

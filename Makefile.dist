@@ -145,13 +145,13 @@ astyle:
 old1 = 0
 old2 = 4
 old3 = 0
-old4 = -beta
+old4 =
 new1 = 0
 new2 = 4
-new3 = 0
-new4 =
+new3 = 1
+new4 = -beta
 set_release:
-	for i in "configure.in" "doc/menu.html" "contrib/rpm/frepple.spec" "include/frepple/utils.h" "contrib/django/freppledb/settings.py"; do \
+	for i in "configure.in" "doc/menu.html" "contrib/rpm/frepple.spec" "include/frepple/utils.h" "contrib/django/freppledb/settings.py" "contrib/django/freppledb/locale/django.po"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)$(old4)/$(new1).$(new2).$(new3)$(new4)/g' $$i >out.tmp; \
 		mv out.tmp $$i; \
 	done

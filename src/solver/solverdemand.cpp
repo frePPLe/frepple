@@ -148,19 +148,27 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
         if (loglevel>=2) logger << "Demand '" << l << "' plans coordination." << endl;
         Solver->getSolver()->setLogLevel(0);
         double tmpresult = Solver->a_qty;
-        for(double remainder = Solver->a_qty;
-          remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
+        try
         {
-          Solver->q_qty = remainder;
-          Solver->q_date = copy_plan_date;
-          Solver->curDemand = l;
-          Solver->curBuffer = NULL;
-          deliveryoper->solve(*this,v);
-          if (Solver->a_qty < ROUNDING_ERROR)
+          for(double remainder = Solver->a_qty;
+            remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
           {
-            logger << "Warning: Demand '" << l << "': Failing coordination" << endl;
-            break;
+            Solver->q_qty = remainder;
+            Solver->q_date = copy_plan_date;
+            Solver->curDemand = l;
+            Solver->curBuffer = NULL;
+            deliveryoper->solve(*this,v);
+            if (Solver->a_qty < ROUNDING_ERROR)
+            {
+              logger << "Warning: Demand '" << l << "': Failing coordination" << endl;
+              break;
+            }
           }
+        }
+        catch (...)
+        {
+          Solver->getSolver()->setLogLevel(loglevel);
+          throw;
         }
         Solver->getSolver()->setLogLevel(loglevel);
         Solver->a_qty = tmpresult;
@@ -187,21 +195,29 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   {
     if (loglevel>=2) logger << "Demand '" << l << "' accepts a best answer." << endl;
     Solver->getSolver()->setLogLevel(0);
-    for(double remainder = best_q_qty;
-      remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
+    try
     {
-      Solver->q_qty = remainder;
-      Solver->q_date = best_q_date;
-      Solver->curDemand = l;
-      Solver->curBuffer = NULL;
-      deliveryoper->solve(*this,v);
-      if (Solver->a_qty < ROUNDING_ERROR)
+      for(double remainder = best_q_qty;
+        remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
       {
-        logger << "Warning: Demand '" << l << "': Failing accepting best answer" << endl;
-        break;
+        Solver->q_qty = remainder;
+        Solver->q_date = best_q_date;
+        Solver->curDemand = l;
+        Solver->curBuffer = NULL;
+        deliveryoper->solve(*this,v);
+        if (Solver->a_qty < ROUNDING_ERROR)
+        {
+          logger << "Warning: Demand '" << l << "': Failing accepting best answer" << endl;
+          break;
+        }
       }
+      Solver->CommandList::execute();
     }
-    Solver->CommandList::execute();
+    catch (...)
+    {
+      Solver->getSolver()->setLogLevel(loglevel);
+      throw;
+    }
     Solver->getSolver()->setLogLevel(loglevel);
   }
 }

@@ -7,7 +7,7 @@ Item	60
 Location	56
 Customer	56
 Buffer	112
-Demand	112
+Demand	116
 Resource	100
 Operation	112
 OperationFixedTime	116

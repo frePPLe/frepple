@@ -116,6 +116,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
           )
         {
           ++numberOfHangingClusters;
+          g->lvl = 0;
           continue;
         }
       }

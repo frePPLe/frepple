@@ -22,7 +22,8 @@
 
 import sys, os, os.path
 from stat import S_ISDIR, ST_MODE
-from django.core.management import execute_from_command_line, call_command
+
+from django.core.management import execute_manager, call_command
 
 # Environment settings (which are used in the Django settings file and need
 # to be updated BEFORE importing the settings)
@@ -35,7 +36,8 @@ os.environ['FREPPLE_APP'] = os.path.split(sys.path[0])[0]
 sys.path = [ os.path.join(sys.path[0],'freppledb'), sys.path[0] ]
 
 # Default command is to run the web server
-if len(sys.argv) <= 1: sys.argv.append('frepple_runserver')
+if len(sys.argv) <= 1:
+  sys.argv.append('frepple_runserver')
 
 # Import django settings
 from django.conf import settings
@@ -64,12 +66,12 @@ if settings.DATABASE_ENGINE == 'sqlite3':
   # Verify if the sqlite database file exists
   if not os.path.isfile(settings.DATABASE_NAME):
     noDatabaseSchema = True
-elif settings.DATABASE_ENGINE not in ['postgresql_psycopg2', 'mysql']:
+elif settings.DATABASE_ENGINE not in ['postgresql_psycopg2', 'mysql', 'oracle']:
     print 'Aborting: Unknown database engine %s' % settings.DATABASE_ENGINE
     raw_input("Hit any key to continue...")
     sys.exit(1)
 else:
-  # PostgreSQL or MySQL database:
+  # PostgreSQL, Oracle or MySQL database:
   # Try connecting and check for a table called 'plan'.
   from django.db import connection, transaction
   try: cursor = connection.cursor()
@@ -97,4 +99,5 @@ if noDatabaseSchema:
   call_command('syncdb', verbosity=1)
 
 # Execute the command
-execute_from_command_line()
+import freppledb.settings
+execute_manager(freppledb.settings, sys.argv)

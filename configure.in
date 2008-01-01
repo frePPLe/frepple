@@ -28,10 +28,10 @@
 # Initialization
 #
 AC_PREREQ(2.59)
-AC_INIT(frepple, 0.4.0)
+AC_INIT(frepple, 0.4.1-beta)
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
-AM_INIT_AUTOMAKE(frepple,0.4.0)
+AM_INIT_AUTOMAKE(frepple,0.4.1-beta)
 
 #
 # Initilize libtool

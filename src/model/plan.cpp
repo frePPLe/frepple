@@ -53,7 +53,7 @@ DECLARE_EXPORT void Plan::setCurrent (Date l)
   // Let all operationplans check for new ProblemBeforeCurrent and
   // ProblemBeforeFence problems.
   for (Operation::iterator i = Operation::begin(); i != Operation::end(); ++i)
-    WLock<Operation>(&*i)->setChanged();
+    Operation::writepointer(&*i)->setChanged();
 }
 
 

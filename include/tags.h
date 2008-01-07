@@ -69,6 +69,8 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_due;
     static DECLARE_EXPORT const XMLtag tag_duration;
     static DECLARE_EXPORT const XMLtag tag_duration_per;
+    static DECLARE_EXPORT const XMLtag tag_effective_start;
+    static DECLARE_EXPORT const XMLtag tag_effective_end;
     static DECLARE_EXPORT const XMLtag tag_else;
     static DECLARE_EXPORT const XMLtag tag_end;
     static DECLARE_EXPORT const XMLtag tag_epst;
@@ -138,7 +140,6 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_supply;
     static DECLARE_EXPORT const XMLtag tag_then;
     static DECLARE_EXPORT const XMLtag tag_type;
-    static DECLARE_EXPORT const XMLtag tag_unspecified;
     static DECLARE_EXPORT const XMLtag tag_url;
     static DECLARE_EXPORT const XMLtag tag_usage;
     static DECLARE_EXPORT const XMLtag tag_validate;

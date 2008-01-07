@@ -31,6 +31,21 @@ namespace frepple
 {
 
 
+void MRPSolver::solve(const Load* l, void* v) 
+{
+  MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
+  if (data->q_qty != 0.0f)
+    l->getResource()->solve(*this,v);
+  else
+  {
+    // It's a zero quantity loadplan. 
+    // E.g. because it is not effective.
+    data->a_date = data->q_date;
+    data->a_qty = 0.0f; 
+  }      
+}
+
+
 /** @todo Solving for capacity can break an operationplan in multiple parts:
   * qty_per operations do this....
   * This disturbs the clean & simple flow we have here...

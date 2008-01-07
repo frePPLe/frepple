@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <COMMANDS>
-    <VERBOSE>false</VERBOSE>
-    <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME=".libs/mod_sample.so" />
-  </COMMANDS>
-</PLAN>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <commands>
+    <verbose>false</verbose>
+    <command xsi:type="command_loadlib" filename=".libs/mod_sample.so" />
+  </commands>
+</plan>

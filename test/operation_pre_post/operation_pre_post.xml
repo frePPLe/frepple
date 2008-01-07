@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <NAME>Test model for effective operations</NAME>
-  <DESCRIPTION>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for effective operations</name>
+  <description>
     This test verifies the behavior of pre-operation and post-operation delays.
     These are as delay times before and after an operation, which the solver tries
     to respect but can violate if required.
@@ -11,317 +11,317 @@
       Case 3: Material constraint forcing the violation of the post-operation time
       Case 4: Leadtime constraints and post-operation times on multiple levels.
               The most upstream post-operation times are the first ones to be reduced.
-  </DESCRIPTION>
-  <CURRENT>2007-01-01T00:00:00</CURRENT>
-  <COMMANDS>
-    <VERBOSE>true</VERBOSE>
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <VERBOSE>false</VERBOSE>
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" LOGLEVEL="2" />
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN">
-      <FILENAME>output.1.xml</FILENAME>
-    </COMMAND>
-  </COMMANDS>
+  </description>
+  <current>2007-01-01T00:00:00</current>
+  <commands>
+    <verbose>true</verbose>
+    <command xsi:type="command_solve">
+      <verbose>false</verbose>
+      <solver name="MRP" xsi:type="solver_mrp" constraints="7" loglevel="2" />
+    </command>
+    <command xsi:type="command_saveplan">
+      <filename>output.1.xml</filename>
+    </command>
+  </commands>
 
   <!--
     Case 1: Leadtime constraints on a fixed-time operation.
   -->
-  <BUFFERS>
-    <BUFFER NAME="1. item">
-      <ITEM NAME="1. item" />
-      <PRODUCING NAME="1. make item" xsi:type="OPERATION_FIXED_TIME"
-        DURATION="P7D" POSTTIME="P7D">
-        <FLOWS>
-          <FLOW xsi:type="FLOW_END">
-            <BUFFER NAME="1. item" />
-            <QUANTITY>1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </PRODUCING>
-    </BUFFER>
-  </BUFFERS>
-  <ITEMS>
-    <ITEM NAME="1. item">
-      <OPERATION NAME="1. Deliver item">
-        <FLOWS>
-          <FLOW xsi:type="FLOW_START">
-            <BUFFER NAME="1. item" />
-            <QUANTITY>-1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </OPERATION>
-    </ITEM>
-  </ITEMS>
-  <DEMANDS>
-    <DEMAND NAME="1. order 1">
-      <DESCRIPTION>Delivery is late, and post-operation time is 0 to reduce lateness.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-01-05T00:00:00</DUE>
-      <PRIORITY>11</PRIORITY>
-      <ITEM NAME="1. item" />
-    </DEMAND>
-    <DEMAND NAME="1. order 2">
-      <DESCRIPTION>Delivery is on time, but post-operation time had to be shrunk.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-01-10T00:00:00</DUE>
-      <PRIORITY>12</PRIORITY>
-      <ITEM NAME="1. item" />
-    </DEMAND>
-    <DEMAND NAME="1. order 3">
-      <DESCRIPTION>Delivery is on time and fully respecting post-operation time.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-01-31T00:00:00</DUE>
-      <PRIORITY>13</PRIORITY>
-      <ITEM NAME="1. item" />
-    </DEMAND>
-  </DEMANDS>
+  <buffers>
+    <buffer name="1. item">
+      <item name="1. item" />
+      <producing name="1. make item" xsi:type="operation_fixed_time"
+        duration="P7D" posttime="P7D">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="1. item" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+  </buffers>
+  <items>
+    <item name="1. item">
+      <operation name="1. Deliver item">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="1. item" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </operation>
+    </item>
+  </items>
+  <demands>
+    <demand name="1. order 1">
+      <description>Delivery is late, and post-operation time is 0 to reduce lateness.</description>
+      <quantity>6</quantity>
+      <due>2007-01-05T00:00:00</due>
+      <priority>11</priority>
+      <item name="1. item" />
+    </demand>
+    <demand name="1. order 2">
+      <description>Delivery is on time, but post-operation time had to be shrunk.</description>
+      <quantity>6</quantity>
+      <due>2007-01-10T00:00:00</due>
+      <priority>12</priority>
+      <item name="1. item" />
+    </demand>
+    <demand name="1. order 3">
+      <description>Delivery is on time and fully respecting post-operation time.</description>
+      <quantity>6</quantity>
+      <due>2007-01-31T00:00:00</due>
+      <priority>13</priority>
+      <item name="1. item" />
+    </demand>
+  </demands>
 
   <!--
     Case 2: Leadtime constraints on a time-per operation.
   -->
-  <BUFFERS>
-    <BUFFER NAME="2. item">
-      <ITEM NAME="2. item" />
-      <PRODUCING NAME="2. make item" xsi:type="OPERATION_TIME_PER"
-        DURATION="P1D" DURATION_PER="P1D" POSTTIME="P7D">
-        <FLOWS>
-          <FLOW xsi:type="FLOW_END">
-            <BUFFER NAME="2. item" />
-            <QUANTITY>1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </PRODUCING>
-    </BUFFER>
-  </BUFFERS>
-  <ITEMS>
-    <ITEM NAME="2. item">
-      <OPERATION NAME="2. Deliver item">
-        <FLOWS>
-          <FLOW xsi:type="FLOW_START">
-            <BUFFER NAME="2. item" />
-            <QUANTITY>-1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </OPERATION>
-    </ITEM>
-  </ITEMS>
-  <DEMANDS>
-    <DEMAND NAME="2. order 1">
-      <DESCRIPTION>Delivery is on time, by creating 2 parallel operations.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-01-05T00:00:00</DUE>
-      <PRIORITY>11</PRIORITY>
-      <ITEM NAME="2. item" />
-    </DEMAND>
-    <DEMAND NAME="2. order 2">
-      <DESCRIPTION>Delivery is on time, but post-operation time had to be shrunk.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-01-10T00:00:00</DUE>
-      <PRIORITY>12</PRIORITY>
-      <ITEM NAME="2. item" />
-    </DEMAND>
-    <DEMAND NAME="2. order 3">
-      <DESCRIPTION>Delivery is on time.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-01-31T00:00:00</DUE>
-      <PRIORITY>13</PRIORITY>
-      <ITEM NAME="2. item" />
-    </DEMAND>
-  </DEMANDS>
+  <buffers>
+    <buffer name="2. item">
+      <item name="2. item" />
+      <producing name="2. make item" xsi:type="operation_time_per"
+        duration="P1D" duration_per="P1D" posttime="P7D">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="2. item" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+  </buffers>
+  <items>
+    <item name="2. item">
+      <operation name="2. Deliver item">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="2. item" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </operation>
+    </item>
+  </items>
+  <demands>
+    <demand name="2. order 1">
+      <description>Delivery is on time, by creating 2 parallel operations.</description>
+      <quantity>6</quantity>
+      <due>2007-01-05T00:00:00</due>
+      <priority>11</priority>
+      <item name="2. item" />
+    </demand>
+    <demand name="2. order 2">
+      <description>Delivery is on time, but post-operation time had to be shrunk.</description>
+      <quantity>6</quantity>
+      <due>2007-01-10T00:00:00</due>
+      <priority>12</priority>
+      <item name="2. item" />
+    </demand>
+    <demand name="2. order 3">
+      <description>Delivery is on time.</description>
+      <quantity>6</quantity>
+      <due>2007-01-31T00:00:00</due>
+      <priority>13</priority>
+      <item name="2. item" />
+    </demand>
+  </demands>
 
   <!--
     Case 3: Upstream material constraint.
   -->
-  <BUFFERS>
-    <BUFFER NAME="3. item">
-      <ITEM NAME="3. item" />
-      <PRODUCING NAME="3. make item" xsi:type="OPERATION_FIXED_TIME"
-        DURATION="P7D" POSTTIME="P7D">
+  <buffers>
+    <buffer name="3. item">
+      <item name="3. item" />
+      <producing name="3. make item" xsi:type="operation_fixed_time"
+        duration="P7D" posttime="P7D">
 			<!--
-      <PRODUCING NAME="3. make item" xsi:type="OPERATION_TIME_PER"
-        DURATION="24:00:00" DURATION_PER="24:00:00" POSTTIME="168:00:00">
+      <producing name="3. make item" xsi:type="operation_time_per"
+        duration="24:00:00" duration_per="24:00:00" posttime="168:00:00">
       -->
-        <FLOWS>
-          <FLOW xsi:type="FLOW_END">
-            <BUFFER NAME="3. item" />
-            <QUANTITY>1</QUANTITY>
-          </FLOW>
-          <FLOW xsi:type="FLOW_START">
-            <BUFFER NAME="3. raw material" ONHAND="10"/>
-            <QUANTITY>-1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </PRODUCING>
-    </BUFFER>
-  </BUFFERS>
-  <ITEMS>
-    <ITEM NAME="3. item">
-      <OPERATION NAME="3. Deliver item">
-        <FLOWS>
-          <FLOW xsi:type="FLOW_START">
-            <BUFFER NAME="3. item" />
-            <QUANTITY>-1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </OPERATION>
-    </ITEM>
-  </ITEMS>
-  <OPERATIONS>
-  	<OPERATION NAME="3. supply raw material">
-  		<FLOWS>
-        <FLOW xsi:type="FLOW_END">
-          <BUFFER NAME="3. raw material"/>
-          <QUANTITY>1</QUANTITY>
-        </FLOW>
-  		</FLOWS>
-  	</OPERATION>
-  </OPERATIONS>
-	<OPERATION_PLANS>
-	  <OPERATION_PLAN ID="1001" OPERATION="3. supply raw material">
-	    <END>2007-01-11T00:00:00</END>
-	    <QUANTITY>5</QUANTITY>
-	    <LOCKED>true</LOCKED>
-	  </OPERATION_PLAN>
-	</OPERATION_PLANS>
-  <DEMANDS>
-    <DEMAND NAME="3. order 1">
-      <DESCRIPTION>Delivery is late, and post-operation time is 0 to reduce lateness.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-01-05T00:00:00</DUE>
-      <PRIORITY>11</PRIORITY>
-      <ITEM NAME="3. item" />
-    </DEMAND>
-    <DEMAND NAME="3. order 2">
-      <DESCRIPTION>Delivery is on time, but post-operation time had to be shrunk.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-01-10T00:00:00</DUE>
-      <PRIORITY>12</PRIORITY>
-      <ITEM NAME="3. item" />
-    </DEMAND>
-    <DEMAND NAME="3. order 3">
-      <DESCRIPTION>Delivery is on time.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-01-31T00:00:00</DUE>
-      <PRIORITY>13</PRIORITY>
-      <ITEM NAME="3. item" />
-    </DEMAND>
-  </DEMANDS>
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="3. item" />
+            <quantity>1</quantity>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="3. raw material" onhand="10"/>
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+  </buffers>
+  <items>
+    <item name="3. item">
+      <operation name="3. Deliver item">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="3. item" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </operation>
+    </item>
+  </items>
+  <operations>
+  	<operation name="3. supply raw material">
+  		<flows>
+        <flow xsi:type="flow_end">
+          <buffer name="3. raw material"/>
+          <quantity>1</quantity>
+        </flow>
+  		</flows>
+  	</operation>
+  </operations>
+	<operation_plans>
+	  <operation_plan id="1001" operation="3. supply raw material">
+	    <end>2007-01-11T00:00:00</end>
+	    <quantity>5</quantity>
+	    <locked>true</locked>
+	  </operation_plan>
+	</operation_plans>
+  <demands>
+    <demand name="3. order 1">
+      <description>Delivery is late, and post-operation time is 0 to reduce lateness.</description>
+      <quantity>6</quantity>
+      <due>2007-01-05T00:00:00</due>
+      <priority>11</priority>
+      <item name="3. item" />
+    </demand>
+    <demand name="3. order 2">
+      <description>Delivery is on time, but post-operation time had to be shrunk.</description>
+      <quantity>6</quantity>
+      <due>2007-01-10T00:00:00</due>
+      <priority>12</priority>
+      <item name="3. item" />
+    </demand>
+    <demand name="3. order 3">
+      <description>Delivery is on time.</description>
+      <quantity>6</quantity>
+      <due>2007-01-31T00:00:00</due>
+      <priority>13</priority>
+      <item name="3. item" />
+    </demand>
+  </demands>
 
   <!--
     Case 4: Fixed time operations on multiple levels. Each level has post-operation time
     specified. Leadtime constraints delay the demand.
   -->
-  <BUFFERS>
-    <BUFFER NAME="4. item level 1">
-      <ITEM NAME="4. item" />
-      <PRODUCING NAME="4. make item level 1" xsi:type="OPERATION_FIXED_TIME"
-        DURATION="P7D" POSTTIME="P7D">
-        <FLOWS>
-          <FLOW xsi:type="FLOW_END">
-            <BUFFER NAME="4. item level 1" />
-            <QUANTITY>1</QUANTITY>
-          </FLOW>
-          <FLOW xsi:type="FLOW_START">
-            <BUFFER NAME="4. item level 2" />
-            <QUANTITY>-1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </PRODUCING>
-    </BUFFER>
-    <BUFFER NAME="4. item level 2">
-      <ITEM NAME="4. item" />
-      <PRODUCING NAME="4. make item level 2" xsi:type="OPERATION_FIXED_TIME"
-        DURATION="P7D" POSTTIME="P7D">
-        <FLOWS>
-          <FLOW xsi:type="FLOW_END">
-            <BUFFER NAME="4. item level 2" />
-            <QUANTITY>1</QUANTITY>
-          </FLOW>
-          <FLOW xsi:type="FLOW_START">
-            <BUFFER NAME="4. item level 3" />
-            <QUANTITY>-1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </PRODUCING>
-    </BUFFER>
-    <BUFFER NAME="4. item level 3">
-      <ITEM NAME="4. item" />
-      <PRODUCING NAME="4. make item level 3" xsi:type="OPERATION_FIXED_TIME"
-        DURATION="P7D" POSTTIME="P7D">
-        <FLOWS>
-          <FLOW xsi:type="FLOW_END">
-            <BUFFER NAME="4. item level 3" />
-            <QUANTITY>1</QUANTITY>
-          </FLOW>
-          <FLOW xsi:type="FLOW_START">
-            <BUFFER NAME="4. item level 4" />
-            <QUANTITY>-1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </PRODUCING>
-    </BUFFER>
-    <BUFFER NAME="4. item level 4">
-      <ITEM NAME="4. item" />
-      <PRODUCING NAME="4. make item level 4" xsi:type="OPERATION_FIXED_TIME"
-        DURATION="P7D" POSTTIME="P7D">
-        <FLOWS>
-          <FLOW xsi:type="FLOW_END">
-            <BUFFER NAME="4. item level 4" />
-            <QUANTITY>1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </PRODUCING>
-    </BUFFER>
-  </BUFFERS>
-  <ITEMS>
-    <ITEM NAME="4. item">
-      <OPERATION NAME="4. Deliver item">
-        <FLOWS>
-          <FLOW xsi:type="FLOW_START">
-            <BUFFER NAME="4. item level 1" />
-            <QUANTITY>-1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </OPERATION>
-    </ITEM>
-  </ITEMS>
-  <DEMANDS>
-    <DEMAND NAME="4. order 1">
-      <DESCRIPTION>Delivery is on time, by creating 2 parallel operations.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-01-05T00:00:00</DUE>
-      <PRIORITY>11</PRIORITY>
-      <ITEM NAME="4. item" />
-    </DEMAND>
-    <DEMAND NAME="4. order 2">
-      <DESCRIPTION>Delivery is on time, but post-operation time had to be shrunk.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-02-01T00:00:00</DUE>
-      <PRIORITY>12</PRIORITY>
-      <ITEM NAME="4. item" />
-    </DEMAND>
-    <DEMAND NAME="4. order 3">
-      <DESCRIPTION>Delivery is on time, but post-operation time had to be shrunk.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-02-08T00:00:00</DUE>
-      <PRIORITY>13</PRIORITY>
-      <ITEM NAME="4. item" />
-    </DEMAND>
-    <DEMAND NAME="4. order 4">
-      <DESCRIPTION>Delivery is on time, but post-operation time had to be shrunk.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-02-16T00:00:00</DUE>
-      <PRIORITY>14</PRIORITY>
-      <ITEM NAME="4. item" />
-    </DEMAND>
-    <DEMAND NAME="4. order 5">
-      <DESCRIPTION>Delivery is on time.</DESCRIPTION>
-      <QUANTITY>6</QUANTITY>
-      <DUE>2007-03-01T00:00:00</DUE>
-      <PRIORITY>15</PRIORITY>
-      <ITEM NAME="4. item" />
-    </DEMAND>
-  </DEMANDS>
+  <buffers>
+    <buffer name="4. item level 1">
+      <item name="4. item" />
+      <producing name="4. make item level 1" xsi:type="operation_fixed_time"
+        duration="P7D" posttime="P7D">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="4. item level 1" />
+            <quantity>1</quantity>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="4. item level 2" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+    <buffer name="4. item level 2">
+      <item name="4. item" />
+      <producing name="4. make item level 2" xsi:type="operation_fixed_time"
+        duration="P7D" posttime="P7D">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="4. item level 2" />
+            <quantity>1</quantity>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="4. item level 3" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+    <buffer name="4. item level 3">
+      <item name="4. item" />
+      <producing name="4. make item level 3" xsi:type="operation_fixed_time"
+        duration="P7D" posttime="P7D">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="4. item level 3" />
+            <quantity>1</quantity>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="4. item level 4" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+    <buffer name="4. item level 4">
+      <item name="4. item" />
+      <producing name="4. make item level 4" xsi:type="operation_fixed_time"
+        duration="P7D" posttime="P7D">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="4. item level 4" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+  </buffers>
+  <items>
+    <item name="4. item">
+      <operation name="4. Deliver item">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="4. item level 1" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </operation>
+    </item>
+  </items>
+  <demands>
+    <demand name="4. order 1">
+      <description>Delivery is on time, by creating 2 parallel operations.</description>
+      <quantity>6</quantity>
+      <due>2007-01-05T00:00:00</due>
+      <priority>11</priority>
+      <item name="4. item" />
+    </demand>
+    <demand name="4. order 2">
+      <description>Delivery is on time, but post-operation time had to be shrunk.</description>
+      <quantity>6</quantity>
+      <due>2007-02-01T00:00:00</due>
+      <priority>12</priority>
+      <item name="4. item" />
+    </demand>
+    <demand name="4. order 3">
+      <description>Delivery is on time, but post-operation time had to be shrunk.</description>
+      <quantity>6</quantity>
+      <due>2007-02-08T00:00:00</due>
+      <priority>13</priority>
+      <item name="4. item" />
+    </demand>
+    <demand name="4. order 4">
+      <description>Delivery is on time, but post-operation time had to be shrunk.</description>
+      <quantity>6</quantity>
+      <due>2007-02-16T00:00:00</due>
+      <priority>14</priority>
+      <item name="4. item" />
+    </demand>
+    <demand name="4. order 5">
+      <description>Delivery is on time.</description>
+      <quantity>6</quantity>
+      <due>2007-03-01T00:00:00</due>
+      <priority>15</priority>
+      <item name="4. item" />
+    </demand>
+  </demands>
 
-</PLAN>
+</plan>

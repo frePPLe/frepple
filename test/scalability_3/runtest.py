@@ -12,50 +12,50 @@ for counter in [500,1000,1500,2000]:
   out = open("input.xml","wt")
 
   # Print a header
-  print >>out, ('<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n' +
-    '<DESCRIPTION>Single buffer plan with $counter demands</DESCRIPTION>\n' +
-    '<CURRENT>2007-01-01T00:00:00</CURRENT>\n' +
-    '<COMMANDS>\n' +
-    '<COMMAND xsi:type="COMMAND_SOLVE" VERBOSE="false">' +
-    '  <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0"/>' +
-    '</COMMAND>\n' +
-    '<COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.xml"/>\n' +
-    '</COMMANDS>\n' +
-    '<ITEMS>\n' +
-      '\t<ITEM NAME="ITEM">' +
-      '<OPERATION NAME="Delivery ITEM" xsi:type="OPERATION_FIXED_TIME"/>' +
-      '</ITEM>\n' +
-    '</ITEMS>\n' +
-    '<OPERATIONS>\n' +
-      '\t<OPERATION NAME="Make ITEM" xsi:type="OPERATION_FIXED_TIME"/>\n' +
-    '</OPERATIONS>\n' +
-    '<BUFFERS>\n' +
-      '\t<BUFFER NAME="BUFFER"><ONHAND>10</ONHAND>' +
-      '<PRODUCING NAME="Make ITEM"/>' +
-      '</BUFFER>\n' +
-    '</BUFFERS>\n' +
-    '<FLOWS>\n' +
-      '\t<FLOW xsi:type="FLOW_START"><OPERATION NAME="Delivery ITEM"/>' +
-      '<BUFFER NAME="BUFFER"/>' +
-      '<QUANTITY>-1</QUANTITY></FLOW>\n' +
-      '\t<FLOW xsi:type="FLOW_END"><OPERATION NAME="Make ITEM"/>' +
-      '<BUFFER NAME="BUFFER"/>' +
-      '<QUANTITY>1</QUANTITY></FLOW>\n' +
-    '</FLOWS>\n' +
-    '<DEMANDS>')
+  print >>out, ('<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n' +
+    '<description>Single buffer plan with $counter demands</description>\n' +
+    '<current>2007-01-01T00:00:00</current>\n' +
+    '<commands>\n' +
+    '<command xsi:type="command_solve" verbose="false">' +
+    '  <solver name="MRP" xsi:type="solver_mrp" constraints="0"/>' +
+    '</command>\n' +
+    '<command xsi:type="command_save" filename="output.xml"/>\n' +
+    '</commands>\n' +
+    '<items>\n' +
+      '\t<item name="ITEM">' +
+      '<operation name="Delivery ITEM" xsi:type="operation_fixed_time"/>' +
+      '</item>\n' +
+    '</items>\n' +
+    '<operations>\n' +
+      '\t<operation name="Make ITEM" xsi:type="operation_fixed_time"/>\n' +
+    '</operations>\n' +
+    '<buffers>\n' +
+      '\t<buffer name="BUFFER"><onhand>10</onhand>' +
+      '<producing name="Make ITEM"/>' +
+      '</buffer>\n' +
+    '</buffers>\n' +
+    '<flows>\n' +
+      '\t<flow xsi:type="flow_start"><operation name="Delivery ITEM"/>' +
+      '<buffer name="BUFFER"/>' +
+      '<quantity>-1</quantity></flow>\n' +
+      '\t<flow xsi:type="flow_end"><operation name="Make ITEM"/>' +
+      '<buffer name="BUFFER"/>' +
+      '<quantity>1</quantity></flow>\n' +
+    '</flows>\n' +
+    '<demands>')
 
   # A loop to print all demand
   for cnt in range(counter):
     month = "%02d" % (int(random.uniform(0,12))+1)
     day = "%02d" % (int(random.uniform(0,28))+1)
-    print >>out, ("<DEMAND NAME=\"DEMAND $cnt\" QUANTITY=\"10\" " +
-      "DUE=\"2005-%s-%sT00:00:00\" " +
-      "PRIORITY=\"1\">" +
-      "<ITEM NAME=\"ITEM\"/>" +
-      "</DEMAND>") % (month,day)
+    print >>out, ("<demand name=\"DEMAND $cnt\" quantity=\"10\" " +
+      "due=\"2005-%s-%sT00:00:00\" " +
+      "priority=\"1\">" +
+      "<item name=\"ITEM\"/>" +
+      "</demand>") % (month,day)
 
   # Finalize the input
-  print >>out, "</DEMANDS></PLAN>"
+  print >>out, "</demands></plan>"
   out.close()
 
   # Run the executable

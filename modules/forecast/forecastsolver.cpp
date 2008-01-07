@@ -97,7 +97,7 @@ void ForecastSolver::solve(const Demand* l, void* v)
   // Forecast don't net themselves, and hidden demands either...
   if (!l || dynamic_cast<const Forecast*>(l) || l->getHidden()) return;
 
-  Object::WLock<Demand> x(!getAutomatic() ? l : NULL);
+  Demand::writepointer x(!getAutomatic() ? l : NULL);
 
   // Message
   if (getLogLevel()>0)

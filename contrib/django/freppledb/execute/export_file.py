@@ -32,7 +32,7 @@ def exportProblems():
   writer = csv.writer(open("problems.csv", "wb"), quoting=csv.QUOTE_ALL)
   for i in frepple.problem():
     writer.writerow(
-      (i['ENTITY'], i['TYPE'], i['DESCRIPTION'], i['START'], i['END'], i['WEIGHT'])
+      (i['entity'], i['type'], i['description'], i['start'], i['end'], i['weight'])
       )
   print 'Exported problems in %.2f seconds' % (time() - starttime)
 
@@ -43,8 +43,8 @@ def exportOperationplans():
   writer = csv.writer(open("operations.csv", "wb"), quoting=csv.QUOTE_ALL)
   for i in frepple.operationplan():
     writer.writerow(
-     ( i['IDENTIFIER'], i['OPERATION'], i['QUANTITY'], i['START'], i['END'],
-       (i['DEMAND'] and i['DEMAND']) or '', i['LOCKED'])
+     ( i['identifier'], i['operation'], i['quantity'], i['start'], i['end'],
+       (i['demand'] and i['demand']) or '', i['locked'])
      )
   print 'Exported operationplans in %.2f seconds' % (time() - starttime)
 
@@ -56,8 +56,8 @@ def exportFlowplans():
   for i in frepple.buffer():
     for j in i['FLOWPLANS']:
       writer.writerow(
-       (j['OPERATIONPLAN'], j['BUFFER'], j['QUANTITY'],
-        j['DATE'], j['ONHAND'])
+       (j['operationplan'], j['buffer'], j['quantity'],
+        j['date'], j['onhand'])
        )
   print 'Exported flowplans in %.2f seconds' % (time() - starttime)
 
@@ -67,10 +67,10 @@ def exportLoadplans():
   starttime = time()
   writer = csv.writer(open("resources.csv", "wb"), quoting=csv.QUOTE_ALL)
   for i in frepple.resource():
-    for j in i['LOADPLANS']:
+    for j in i['loadplans']:
       writer.writerow(
-       (j['OPERATIONPLAN'], j['RESOURCE'], j['QUANTITY'],
-        j['STARTDATE'], j['ENDDATE'])
+       (j['operationplan'], j['resource'], j['quantity'],
+        j['startdate'], j['enddate'])
        )
   print 'Exported loadplans in %.2f seconds' % (time() - starttime)
 
@@ -80,10 +80,10 @@ def exportDemand():
   starttime = time()
   writer = csv.writer(open("demands.csv", "wb"), quoting=csv.QUOTE_ALL)
   for i in frepple.demand():
-    for j in i['DELIVERY']:
+    for j in i['delivery']:
       writer.writerow(
-       (i['NAME'], i['ITEM'], i['DUE'], j['QUANTITY'], j['PLANDATE'] or '',
-        j['PLANQUANTITY'] or '', j['OPERATIONPLAN'] or '')
+       (i['name'], i['item'], i['due'], j['quantity'], j['plandate'] or '',
+        j['planquantity'] or '', j['operationplan'] or '')
        )
   print 'Exported demands in %.2f seconds' % (time() - starttime)
 
@@ -93,11 +93,11 @@ def exportPegging():
   starttime = time()
   writer = csv.writer(open("demand_pegging.csv", "wb"), quoting=csv.QUOTE_ALL)
   for i in frepple.demand():
-    for j in i['PEGGING']:
+    for j in i['pegging']:
       writer.writerow((
-        i['NAME'], j['LEVEL'], j['CONS_OPERATIONPLAN'] or '', j['CONS_DATE'],
-        j['PROD_OPERATIONPLAN'] or '', j['PROD_DATE'],
-        j['BUFFER'], j['QUANTITY_DEMAND'], j['QUANTITY_BUFFER'], j['PEGGED']
+        i['name'], j['level'], j['cons_operationplan'] or '', j['cons_date'],
+        j['prod_operationplan'] or '', j['prod_date'],
+        j['buffer'], j['quantity_demand'], j['quantity_buffer'], j['pegged']
        ))
   print 'Exported pegging in %.2f seconds' % (time() - starttime)
 
@@ -111,11 +111,11 @@ def exportForecast():
   starttime = time()
   writer = csv.writer(open("forecast.csv", "wb"), quoting=csv.QUOTE_ALL)
   for i in freppleforecast.forecast():
-    for j in i['BUCKETS']:
-      if j['TOTALQTY'] > 0:
+    for j in i['buckets']:
+      if j['totalqty'] > 0:
         writer.writerow((
-          i['NAME'], j['START_DATE'], j['END_DATE'], j['TOTALQTY'],
-          j['NETQTY'], j['CONSUMEDQTY']
+          i['name'], j['start_date'], j['end_date'], j['totalqty'],
+          j['netqty'], j['consumedqty']
          ))
   print 'Exported forecast in %.2f seconds' % (time() - starttime)
 

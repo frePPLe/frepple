@@ -257,7 +257,15 @@ DECLARE_EXPORT void MRPSolver::solve(const Flow* fl, void* v)
   MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
   data->q_qty = - data->q_flowplan->getQuantity();
   data->q_date = data->q_flowplan->getDate();
-  fl->getBuffer()->solve(*this,data);
+  if (data->q_qty != 0.0f)
+    fl->getBuffer()->solve(*this,data);
+  else
+  {
+    // It's a zero quantity flowplan. 
+    // E.g. because it is not effective.
+    data->a_date = data->q_date;
+    data->a_qty = 0.0f; 
+  }
 }
 
 

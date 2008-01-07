@@ -50,8 +50,8 @@ void LibrarySolver::initialize()
 
   // Register all classes.
   MRPSolver::metadata.registerClass(
-    "SOLVER",
-    "SOLVER_MRP",
+    "solver",
+    "solver_mrp",
     Object::createString<MRPSolver>,
     true);
 

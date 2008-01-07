@@ -39,11 +39,11 @@ OperationPlan::OperationPlanList OperationPlan::nosubOperationPlans;
 void DECLARE_EXPORT OperationPlan::setChanged(bool b)
 {
   if (owner)
-    WLock<OperationPlan>(owner)->setChanged(b);
+    OperationPlan::writepointer(owner)->setChanged(b);
   else
   {
     oper->setChanged(b);
-    if (dmd) WLock<Demand>(dmd)->setChanged();
+    if (dmd) Demand::writepointer(dmd)->setChanged();
   }
 }
 
@@ -196,7 +196,7 @@ DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
 }
 
 
-DECLARE_EXPORT void OperationPlan::initialize()
+DECLARE_EXPORT bool OperationPlan::initialize()
 {
   // At least a valid operation pointer must exist
   if (!oper) throw LogicException("Initializing an invalid operationplan");
@@ -205,7 +205,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
   if (getQuantity() <= 0.0 && !owner)
   {
     delete this;
-    return;
+    return false;
   }
 
   // See if we can consolidate this operationplan with an existing one.
@@ -232,7 +232,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
       // Merging with the 'next' operationplan
       y->setQuantity(y->getQuantity() + getQuantity());
       delete this;
-      return;
+      return false;
     }
     if (x && x->getDates() == getDates() && !x->getOwner() 
       && x->getDemand() == getDemand() && !x->getLocked())
@@ -240,7 +240,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
       // Merging with the 'previous' operationplan
       x->setQuantity(x->getQuantity() + getQuantity());
       delete this;
-      return;
+      return false;
     }
   }
 
@@ -326,7 +326,7 @@ DECLARE_EXPORT void OperationPlan::initialize()
 
   // Extra registration step if this is a delivery operation
   if (getDemand() && getDemand()->getDeliveryOperation() == oper)
-    WLock<Demand>(dmd)->addDelivery(this);
+    Demand::writepointer(dmd)->addDelivery(this);
 
   // Mark the operation to detect its problems
   // Note that a single operationplan thus retriggers the problem computation
@@ -338,6 +338,9 @@ DECLARE_EXPORT void OperationPlan::initialize()
 
   // Check the validity of what we have done
   assert(check());
+
+  // The operationplan is valid
+  return true;
 }
 
 
@@ -441,7 +444,7 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
   if (getIdentifier())
   {
     // Delete from the list of deliveries
-    if (dmd) WLock<Demand>(dmd)->removeDelivery(this);
+    if (dmd) Demand::writepointer(dmd)->removeDelivery(this);
 
     // Delete from the operationplan list
     if (prev) prev->next = next;
@@ -457,11 +460,11 @@ void DECLARE_EXPORT OperationPlan::setOwner(const OperationPlan* o)
   // Special case: the same owner is set twice
   if (owner == o) return;
   // Erase the previous owner if there is one
-  if (owner) WLock<OperationPlan>(owner)->eraseSubOperationPlan(this);
+  if (owner) OperationPlan::writepointer(owner)->eraseSubOperationPlan(this);
   // Set new owner
   owner = o;
   // Register with the new owner
-  if (owner) WLock<OperationPlan>(owner)->addSubOperationPlan(this);
+  if (owner) OperationPlan::writepointer(owner)->addSubOperationPlan(this);
 }
 
 
@@ -497,7 +500,7 @@ DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown, bool up
   // Setting a quantity is only allowed on a top operationplan
   if (owner)
   {
-    WLock<OperationPlan>(owner)->setQuantity(f,roundDown,upd);
+    OperationPlan::writepointer(owner)->setQuantity(f,roundDown,upd);
     return;
   }
 
@@ -548,7 +551,7 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
   // some material downstream.
 
   // Notify the demand of the changed delivery
-  if (dmd) WLock<Demand>(dmd)->setChanged();
+  if (dmd) Demand::writepointer(dmd)->setChanged();
 
   // Update the sorting of the operationplan in the list
   updateSorting();
@@ -561,7 +564,7 @@ DECLARE_EXPORT void OperationPlan::update()
   resizeFlowLoadPlans();
 
   // Notify the owner operation_plan
-  if (owner) WLock<OperationPlan>(owner)->update();
+  if (owner) OperationPlan::writepointer(owner)->update();
 
   // Mark as changed
   setChanged();
@@ -665,7 +668,12 @@ DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, XMLElement& pEleme
     if (o) setOwner(o);
   }
   else if (pIn.isObjectEnd())
-    initialize();
+  {
+    // Initialize the operationplan
+    if (!initialize())
+      // Initialization failed and the operationplan is deleted
+      pIn.invalidateCurrentObject();
+  }
   else if (pElement.isA (Tags::tag_demand))
   {
     Demand * d = dynamic_cast<Demand*>(pIn.getPreviousObject());
@@ -687,11 +695,11 @@ DECLARE_EXPORT void OperationPlan::setDemand(const Demand* l)
   if (l==dmd) return;
 
   // Unregister from previous lot
-  if (dmd) WLock<Demand>(dmd)->removeDelivery(this);
+  if (dmd) Demand::writepointer(dmd)->removeDelivery(this);
 
   // Register the new lot and mark it changed
   dmd = l;
-  if (l) WLock<Demand>(l)->setChanged();
+  if (l) Demand::writepointer(l)->setChanged();
 }
 
 
@@ -838,7 +846,7 @@ DECLARE_EXPORT void OperationPlanRouting::update()
 }
 
 
-DECLARE_EXPORT void OperationPlanRouting::initialize()
+DECLARE_EXPORT bool OperationPlanRouting::initialize()
 {
   // Create step suboperationplans if they don't exist yet.
   if (step_opplans.empty())
@@ -880,7 +888,7 @@ DECLARE_EXPORT void OperationPlanRouting::initialize()
     (*i)->initialize();
 
   // Initialize myself
-  OperationPlan::initialize();
+  return OperationPlan::initialize();
 }
 
 
@@ -944,7 +952,7 @@ DECLARE_EXPORT void OperationPlanAlternate::update()
 }
 
 
-DECLARE_EXPORT void OperationPlanAlternate::initialize()
+DECLARE_EXPORT bool OperationPlanAlternate::initialize()
 {
   // Create an alternate suboperationplan if one doesn't exist yet.
   // We use the first alternate by default.
@@ -957,7 +965,7 @@ DECLARE_EXPORT void OperationPlanAlternate::initialize()
 
   // Initialize this operationplan and its child
   if (altopplan) altopplan->initialize();
-  OperationPlan::initialize();
+  return OperationPlan::initialize();
 }
 
 
@@ -984,100 +992,5 @@ DECLARE_EXPORT void OperationPlanAlternate::eraseSubOperationPlan(OperationPlan*
     << *(o->getOperation()) << "' that is not registered with"
     << " its parent '" << *getOperation() << "'" << endl;
 }
-
-
-DECLARE_EXPORT void OperationPlanEffective::addSubOperationPlan(OperationPlan* o)
-{
-  // The sub opplan must point to this operationplan
-  assert(o->getOwner() == this);
-
-  // Add in the list
-  effopplan = o;
-
-  // Update the top operationplan
-  setStartAndEnd(
-    effopplan->getDates().getStart(),
-    effopplan->getDates().getEnd()
-  );
-
-  // Update the flow and loadplans
-  update();
-}
-
-
-DECLARE_EXPORT OperationPlanEffective::~OperationPlanEffective()
-{
-  if (!effopplan) return;
-  effopplan->owner = NULL;
-  delete effopplan;
-}
-
-
-DECLARE_EXPORT void OperationPlanEffective::setEnd(Date d)
-{
-  if (!effopplan) return;
-  effopplan->setEnd(d);
-  setStartAndEnd(
-    effopplan->getDates().getStart(),
-    effopplan->getDates().getEnd()
-  );
-}
-
-
-DECLARE_EXPORT void OperationPlanEffective::setStart(Date d)
-{
-  if (!effopplan) return;
-  effopplan->setStart(d);
-  setStartAndEnd(
-    effopplan->getDates().getStart(),
-    effopplan->getDates().getEnd()
-  );
-}
-
-
-DECLARE_EXPORT void OperationPlanEffective::update()
-{
-  if (effopplan)
-    setStartAndEnd(
-      effopplan->getDates().getStart(),
-      effopplan->getDates().getEnd()
-    );
-  OperationPlan::update();
-}
-
-
-DECLARE_EXPORT void OperationPlanEffective::initialize()
-{
-  if (effopplan) effopplan->initialize();
-  else throw LogicException("Can't initialize an effective operationplan " \
-        "without suboperationplan");
-  OperationPlan::initialize();
-}
-
-
-DECLARE_EXPORT void OperationPlanEffective::setQuantity(float f, bool roundDown, bool update)
-{
-  // First the normal resizing
-  OperationPlan::setQuantity(f,roundDown, update);
-
-  // Apply the same size also to the children operationplan
-  if (effopplan)
-  {
-    effopplan->quantity = quantity;
-    if (update) effopplan->resizeFlowLoadPlans();
-  }
-}
-
-
-DECLARE_EXPORT void OperationPlanEffective::eraseSubOperationPlan(OperationPlan* o)
-{
-  if (effopplan == o)
-    effopplan = NULL;
-  else if (o)
-    logger << "Warning: Trying to remove a sub operationplan '"
-    << *(o->getOperation()) << "' that is not registered with"
-    << " its parent '" << *getOperation() << "'" << endl;
-}
-
 
 }

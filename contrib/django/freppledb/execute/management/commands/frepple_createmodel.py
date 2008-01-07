@@ -244,7 +244,7 @@ class Command(BaseCommand):
              location = comploc,
              category = 'Procured',
              item = it,
-             type = 'BUFFER_PROCURE',
+             type = 'buffer_procure',
              min_inventory = 20,
              max_inventory = 100,
              size_multiple = 10,
@@ -313,7 +313,7 @@ class Command(BaseCommand):
           if k == 1 and res:
             # Create a resource load for operations on level 1
             oper = Operation(name='Oper %05d L%02d' % (i,k),
-              type='OPERATION_TIME_PER',
+              type='operation_time_per',
               duration_per=86400,
               sizemultiple=1,
               )
@@ -330,7 +330,7 @@ class Command(BaseCommand):
           # Some inventory in random buffers
           if random.uniform(0,1) > 0.8: buf.onhand=int(random.uniform(5,20))
           buf.save()
-          Flow(operation=oper, thebuffer=buf, quantity=1, type="FLOW_END").save()
+          Flow(operation=oper, thebuffer=buf, quantity=1, type="flow_end").save()
           if k != level-1:
             # Consume from the next level in the bill of material
             buf = Buffer(name='Buf %05d L%02d' % (i,k+1),

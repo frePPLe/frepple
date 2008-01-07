@@ -27,11 +27,11 @@
   version="1.0">
 
   <!-- Define the webservice command -->
-  <xsd:complexType name="COMMAND_WEBSERVICE">
+  <xsd:complexType name="command_webservice">
     <xsd:complexContent>
-      <xsd:extension base="COMMAND">
+      <xsd:extension base="command">
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="VERBOSE" type="xsd:boolean" />
+					<xsd:element name="verbose" type="xsd:boolean" />
         </xsd:choice>
       </xsd:extension>
     </xsd:complexContent>

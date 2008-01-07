@@ -67,8 +67,8 @@ def exportProblems(cursor):
     (entity,name,description,startdatetime,enddatetime,startdate,enddate,weight) \
     values(%s,%s,%s,%s,%s,%s,%s,%s)",
     [(
-       i['ENTITY'], i['TYPE'], i['DESCRIPTION'][0:79], str(i['START']), str(i['END']),
-       str(i['START'].date()), str(i['END'].date()), round(i['WEIGHT'],ROUNDING_DECIMALS)
+       i['entity'], i['type'], i['description'][0:79], str(i['start']), str(i['end']),
+       str(i['start'].date()), str(i['end'].date()), round(i['weight'],ROUNDING_DECIMALS)
      ) for i in frepple.problem()
     ])
   transaction.commit()
@@ -83,10 +83,11 @@ def exportOperationplans(cursor):
   objects = []
   cnt = 0
   for i in frepple.operationplan():
+    # todo use a generator function instead???
     objects.append( (\
-       i['IDENTIFIER'], i['OPERATION'].replace("'","''"),
-       round(i['QUANTITY'],ROUNDING_DECIMALS), str(i['START']), str(i['END']),
-       str(i['START'].date()), str(i['END'].date()), i['DEMAND'], str(i['LOCKED']), i['OWNER'] or None
+       i['identifier'], i['operation'].replace("'","''"),
+       round(i['quantity'],ROUNDING_DECIMALS), str(i['start']), str(i['end']),
+       str(i['start'].date()), str(i['end'].date()), i['demand'], str(i['locked']), i['owner'] or None
      ) )
     cnt += 1
     if cnt >= 20000:
@@ -118,10 +119,10 @@ def exportFlowplans(cursor):
       (operationplan, thebuffer, quantity, flowdate, flowdatetime, onhand) \
       values (%s,%s,%s,%s,%s,%s)",
       [(
-         j['OPERATIONPLAN'], j['BUFFER'],
-         round(j['QUANTITY'],ROUNDING_DECIMALS), str(j['DATE'].date()),
-         str(j['DATE']), round(j['ONHAND'],ROUNDING_DECIMALS)
-       ) for j in i['FLOWPLANS']
+         j['operationplan'], j['buffer'],
+         round(j['quantity'],ROUNDING_DECIMALS), str(j['date'].date()),
+         str(j['date']), round(j['onhand'],ROUNDING_DECIMALS)
+       ) for j in i['flowplans']
       ])
     cnt += 1
     if cnt % 300 == 0: transaction.commit()
@@ -143,11 +144,11 @@ def exportLoadplans(cursor):
     cursor.executemany(
       sql,
       [(
-         j['OPERATIONPLAN'], j['RESOURCE'],
-         round(j['QUANTITY'],ROUNDING_DECIMALS),
-         str(j['STARTDATE'].date()), str(j['STARTDATE']),
-         str(j['ENDDATE'].date()), str(j['ENDDATE']),
-       ) for j in i['LOADPLANS']
+         j['operationplan'], j['resource'],
+         round(j['quantity'],ROUNDING_DECIMALS),
+         str(j['startdate'].date()), str(j['startdate']),
+         str(j['enddate'].date()), str(j['enddate']),
+       ) for j in i['loadplans']
       ])
     cnt += 1
     if cnt % 100 == 0: transaction.commit()
@@ -167,11 +168,11 @@ def exportDemand(cursor):
       (demand,item,duedate,duedatetime,quantity,plandate,plandatetime,planquantity,operationplan) \
       values (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
-         i['NAME'], i['ITEM'], str(i['DUE'].date()), str(i['DUE']), round(j['QUANTITY'],ROUNDING_DECIMALS),
-         (j['PLANDATE'] and str(j['PLANDATE'].date())) or None, (j['PLANDATE'] and str(j['PLANDATE'])) or None,
-         (j['PLANQUANTITY'] and round(j['PLANQUANTITY'],ROUNDING_DECIMALS)) or None,
-         j['OPERATIONPLAN'] or None
-       ) for j in i['DELIVERY']
+         i['name'], i['item'], str(i['due'].date()), str(i['due']), round(j['quantity'],ROUNDING_DECIMALS),
+         (j['plandate'] and str(j['plandate'].date())) or None, (j['plandate'] and str(j['plandate'])) or None,
+         (j['planquantity'] and round(j['planquantity'],ROUNDING_DECIMALS)) or None,
+         j['operationplan'] or None
+       ) for j in i['delivery']
       ])
     cnt += 1
     if cnt % 500 == 0: transaction.commit()
@@ -191,12 +192,12 @@ def exportPegging(cursor):
       (demand,depth,cons_operationplan,cons_date,prod_operationplan,prod_date, \
        buffer,quantity_demand,quantity_buffer,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
-         i['NAME'], str(j['LEVEL']),
-         j['CONS_OPERATIONPLAN'] or None, str(j['CONS_DATE']),
-         j['PROD_OPERATIONPLAN'] or None, str(j['PROD_DATE']),
-         j['BUFFER'], round(j['QUANTITY_DEMAND'],ROUNDING_DECIMALS),
-         round(j['QUANTITY_BUFFER'],ROUNDING_DECIMALS), str(j['PEGGED'])
-       ) for j in i['PEGGING']
+         i['name'], str(j['level']),
+         j['cons_operationplan'] or None, str(j['cons_date']),
+         j['prod_operationplan'] or None, str(j['prod_date']),
+         j['buffer'], round(j['quantity_demand'],ROUNDING_DECIMALS),
+         round(j['quantity_buffer'],ROUNDING_DECIMALS), str(j['pegged'])
+       ) for j in i['pegging']
       ])
     cnt += 1
     if cnt % 500 == 0: transaction.commit()
@@ -220,11 +221,11 @@ def exportForecast(cursor):
       (forecast,startdate,enddate,total,net,consumed) \
       values (%s,%s,%s,%s,%s,%s)",
       [(
-         i['NAME'], str(j['START_DATE'].date()), str(j['END_DATE'].date()),
-         round(j['TOTALQTY'],ROUNDING_DECIMALS),
-         round(j['NETQTY'],ROUNDING_DECIMALS),
-         round(j['CONSUMEDQTY'],ROUNDING_DECIMALS)
-       ) for j in i['BUCKETS'] if j['TOTALQTY'] > 0
+         i['name'], str(j['start_date'].date()), str(j['end_date'].date()),
+         round(j['totalqty'],ROUNDING_DECIMALS),
+         round(j['netqty'],ROUNDING_DECIMALS),
+         round(j['consumedqty'],ROUNDING_DECIMALS)
+       ) for j in i['buckets'] if j['totalqty'] > 0
       ])
     cnt += 1
     if cnt % 100 == 0: transaction.commit()

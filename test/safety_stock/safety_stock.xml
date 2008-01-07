@@ -1,128 +1,128 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <NAME>actual plan</NAME>
-  <DESCRIPTION>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>actual plan</name>
+  <description>
     Demonstration of safety stock planning functionalities.
-    * Item 1 has a time-phased quantity-based target:
+    * item 1 has a time-phased quantity-based target:
        10 in january
        20 in february
        5 in march
-    * Item 2 has time-based target, set as a post-operation time of 1 week
+    * item 2 has time-based target, set as a post-operation time of 1 week
       on the make operation.
-  </DESCRIPTION>
-  <CURRENT>2007-01-01T00:00:00</CURRENT>
-  <COMMANDS>
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <VERBOSE>true</VERBOSE>
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" LOGLEVEL="2"/>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN">
-      <FILENAME>output.1.xml</FILENAME>
-    </COMMAND>
-  </COMMANDS>
-  <OPERATIONS>
-    <OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME">
-      <DURATION>P1D</DURATION>
-    </OPERATION>
-  </OPERATIONS>
-  <ITEMS>
-    <ITEM NAME="end item 1">
-      <OPERATION NAME="delivery end item 1" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>P3D</DURATION>
-      </OPERATION>
-    </ITEM>
-    <ITEM NAME="end item 2">
-      <OPERATION NAME="delivery end item 2" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>P3D</DURATION>
-      </OPERATION>
-    </ITEM>
-  </ITEMS>
-  <BUFFERS>
-    <BUFFER NAME="end item 1">
+  </description>
+  <current>2007-01-01T00:00:00</current>
+  <commands>
+    <command xsi:type="command_solve">
+      <verbose>true</verbose>
+      <solver name="MRP" xsi:type="solver_mrp" constraints="7" loglevel="2"/>
+    </command>
+    <command xsi:type="command_saveplan">
+      <filename>output.1.xml</filename>
+    </command>
+  </commands>
+  <operations>
+    <operation name="make end item" xsi:type="operation_fixed_time">
+      <duration>P1D</duration>
+    </operation>
+  </operations>
+  <items>
+    <item name="end item 1">
+      <operation name="delivery end item 1" xsi:type="operation_fixed_time">
+        <duration>P3D</duration>
+      </operation>
+    </item>
+    <item name="end item 2">
+      <operation name="delivery end item 2" xsi:type="operation_fixed_time">
+        <duration>P3D</duration>
+      </operation>
+    </item>
+  </items>
+  <buffers>
+    <buffer name="end item 1">
       <!-- Notice the calendar for the safety stock target... -->
-      <PRODUCING NAME="make end item 1" />
-      <ITEM NAME="end item 1" />
-      <MINIMUM NAME="safety stock target" xsi:type="CALENDAR_FLOAT">
-	      <BUCKETS>
-	        <BUCKET START="2007-01-01T00:00:00">
-	          <NAME>january</NAME>
-	          <VALUE>10</VALUE>
-	        </BUCKET>
-	        <BUCKET START="2007-02-01T00:00:00">
-	          <NAME>february</NAME>
-	          <VALUE>20</VALUE>
-	        </BUCKET>
-	        <BUCKET START="2007-03-01T00:00:00">
-	          <NAME>march and remainder</NAME>
-	          <VALUE>5</VALUE>
-	        </BUCKET>
-	      </BUCKETS>
-      </MINIMUM>
-    </BUFFER>
-    <BUFFER NAME="end item 2">
+      <producing name="make end item 1" />
+      <item name="end item 1" />
+      <minimum name="safety stock target" xsi:type="calendar_float">
+	      <buckets>
+	        <bucket start="2007-01-01T00:00:00">
+	          <name>january</name>
+	          <value>10</value>
+	        </bucket>
+	        <bucket start="2007-02-01T00:00:00">
+	          <name>february</name>
+	          <value>20</value>
+	        </bucket>
+	        <bucket start="2007-03-01T00:00:00">
+	          <name>march and remainder</name>
+	          <value>5</value>
+	        </bucket>
+	      </buckets>
+      </minimum>
+    </buffer>
+    <buffer name="end item 2">
       <!-- Notice the post-operation time... -->
-      <PRODUCING NAME="make end item 2" POSTTIME="P7D"/>
-      <ITEM NAME="end item 2" />
-    </BUFFER>
-  </BUFFERS>
-  <FLOWS>
-    <FLOW xsi:type="FLOW_START">
-      <OPERATION NAME="delivery end item 1" />
-      <BUFFER NAME="end item 1" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
-      <OPERATION NAME="make end item 1" />
-      <BUFFER NAME="end item 1" />
-      <QUANTITY>1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_START">
-      <OPERATION NAME="delivery end item 2" />
-      <BUFFER NAME="end item 2" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
-      <OPERATION NAME="make end item 2" />
-      <BUFFER NAME="end item 2" />
-      <QUANTITY>1</QUANTITY>
-    </FLOW>
-  </FLOWS>
-  <DEMANDS>
-    <DEMAND NAME="order 1 - item 1">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-01-02T00:00:00</DUE>
-      <PRIORITY>1</PRIORITY>
-      <ITEM NAME="end item 1" />
-    </DEMAND>
-    <DEMAND NAME="order 2 - item 1">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-02-15T00:00:00</DUE>
-      <PRIORITY>2</PRIORITY>
-      <ITEM NAME="end item 1" />
-    </DEMAND>
-    <DEMAND NAME="order 3 - item 1">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-03-15T00:00:00</DUE>
-      <PRIORITY>3</PRIORITY>
-      <ITEM NAME="end item 1" />
-    </DEMAND>
-    <DEMAND NAME="order 1 - item 2">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-01-02T00:00:00</DUE>
-      <PRIORITY>1</PRIORITY>
-      <ITEM NAME="end item 2" />
-    </DEMAND>
-    <DEMAND NAME="order 2 - item 2">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-02-15T00:00:00</DUE>
-      <PRIORITY>2</PRIORITY>
-      <ITEM NAME="end item 2" />
-    </DEMAND>
-    <DEMAND NAME="order 3 - item 2">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-03-15T00:00:00</DUE>
-      <PRIORITY>3</PRIORITY>
-      <ITEM NAME="end item 2" />
-    </DEMAND>
-  </DEMANDS>
-</PLAN>
+      <producing name="make end item 2" posttime="P7D"/>
+      <item name="end item 2" />
+    </buffer>
+  </buffers>
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="delivery end item 1" />
+      <buffer name="end item 1" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="make end item 1" />
+      <buffer name="end item 1" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="delivery end item 2" />
+      <buffer name="end item 2" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="make end item 2" />
+      <buffer name="end item 2" />
+      <quantity>1</quantity>
+    </flow>
+  </flows>
+  <demands>
+    <demand name="order 1 - item 1">
+      <quantity>10</quantity>
+      <due>2007-01-02T00:00:00</due>
+      <priority>1</priority>
+      <item name="end item 1" />
+    </demand>
+    <demand name="order 2 - item 1">
+      <quantity>10</quantity>
+      <due>2007-02-15T00:00:00</due>
+      <priority>2</priority>
+      <item name="end item 1" />
+    </demand>
+    <demand name="order 3 - item 1">
+      <quantity>10</quantity>
+      <due>2007-03-15T00:00:00</due>
+      <priority>3</priority>
+      <item name="end item 1" />
+    </demand>
+    <demand name="order 1 - item 2">
+      <quantity>10</quantity>
+      <due>2007-01-02T00:00:00</due>
+      <priority>1</priority>
+      <item name="end item 2" />
+    </demand>
+    <demand name="order 2 - item 2">
+      <quantity>10</quantity>
+      <due>2007-02-15T00:00:00</due>
+      <priority>2</priority>
+      <item name="end item 2" />
+    </demand>
+    <demand name="order 3 - item 2">
+      <quantity>10</quantity>
+      <due>2007-03-15T00:00:00</due>
+      <priority>3</priority>
+      <item name="end item 2" />
+    </demand>
+  </demands>
+</plan>

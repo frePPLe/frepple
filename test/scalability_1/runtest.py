@@ -56,57 +56,57 @@ for counter in [5000, 10000, 15000, 20000, 25000]:
   createdata(
     outfile,
     counter,
-    "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
-      "<CURRENT>2007-01-01T00:00:00</CURRENT>\n" +
-      "<ITEMS>\n",
-    "<ITEM NAME=\"ITEMNM_%d\" CATEGORY=\"cat1\" DESCRIPTION=\"DCRP_%d\" >" +
-      "\n\t<OPERATION NAME=\"Delivery ITEMNM_%d\" " +
-      "xsi:type=\"OPERATION_FIXED_TIME\" DURATION=\"P0D\"/>" +
-      "\n</ITEM>",
-    "</ITEMS>\n",
+    "<plan xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+      "<current>2007-01-01T00:00:00</current>\n" +
+      "<items>\n",
+    "<item name=\"ITEMNM_%d\" category=\"cat1\" description=\"DCRP_%d\" >" +
+      "\n\t<operation name=\"Delivery ITEMNM_%d\" " +
+      "xsi:type=\"operation_fixed_time\" duration=\"P0D\"/>" +
+      "\n</item>",
+    "</items>\n",
     3
     )
   createdata(
     outfile,
     counter,
-    "<OPERATIONS>\n",
-    "<OPERATION NAME=\"Make ITEMNM_%d\" xsi:type=\"OPERATION_FIXED_TIME\" "  +
-      "DURATION=\"P1D\"/>",
-    "</OPERATIONS>\n",
+    "<operations>\n",
+    "<operation name=\"Make ITEMNM_%d\" xsi:type=\"operation_fixed_time\" "  +
+      "duration=\"P1D\"/>",
+    "</operations>\n",
     1
     )
   createdata(
     outfile,
     counter,
-    "<RESOURCES>\n",
-    "<RESOURCE NAME=\"RESNM_%d\"><LOADS>" +
-      "<LOAD><OPERATION NAME=\"Make ITEMNM_%d\"/></LOAD></LOADS></RESOURCE>",
-    "</RESOURCES>\n",
+    "<resources>\n",
+    "<resource name=\"RESNM_%d\"><loads>" +
+      "<load><operation name=\"Make ITEMNM_%d\"/></load></loads></resource>",
+    "</resources>\n",
     2
     )
   createdata(
     outfile,
     counter,
-    "<FLOWS>\n",
-    "<FLOW xsi:type=\"FLOW_START\"><OPERATION NAME=\"Delivery ITEMNM_%d\"/>" +
-      "<BUFFER NAME=\"BUFNM_%d\" ONHAND=\"10\"/>" +
-      "<QUANTITY>-1</QUANTITY></FLOW>\n" +
-    "<FLOW xsi:type=\"FLOW_END\"><OPERATION NAME=\"Make ITEMNM_%d\"/>" +
-      "<BUFFER NAME=\"BUFNM_%d\"/><QUANTITY>1</QUANTITY></FLOW>",
-    "</FLOWS>\n",
+    "<flows>\n",
+    "<flow xsi:type=\"flow_start\"><operation name=\"Delivery ITEMNM_%d\"/>" +
+      "<buffer name=\"BUFNM_%d\" onhand=\"10\"/>" +
+      "<quantity>-1</quantity></flow>\n" +
+    "<flow xsi:type=\"flow_end\"><operation name=\"Make ITEMNM_%d\"/>" +
+      "<buffer name=\"BUFNM_%d\"/><quantity>1</quantity></flow>",
+    "</flows>\n",
     4
     )
   createdata(
     outfile,
     counter,
-    "<DEMANDS>\n",
-    "<DEMAND NAME=\"DEMANDNM1_%d\" QUANTITY=\"10\" DUE=\"2007-03-03T00:00:00\" " +
-     "PRIORITY=\"1\"> <ITEM NAME=\"ITEMNM_%d\"/></DEMAND>\n" +
-     "<DEMAND NAME=\"DEMANDNM2_%d\" QUANTITY=\"10\" DUE=\"2007-03-03T00:00:00\" " +
-     "PRIORITY=\"2\"> <ITEM NAME=\"ITEMNM_%d\"/></DEMAND>\n" +
-     "<DEMAND NAME=\"DEMANDNM3_%d\" QUANTITY=\"10\" DUE=\"2007-03-03T00:00:00\" " +
-     "PRIORITY=\"1\"> <ITEM NAME=\"ITEMNM_%d\"/></DEMAND>",
-    "</DEMANDS></PLAN>\n",
+    "<demands>\n",
+    "<demand name=\"DEMANDNM1_%d\" quantity=\"10\" due=\"2007-03-03T00:00:00\" " +
+     "priority=\"1\"> <item name=\"ITEMNM_%d\"/></demand>\n" +
+     "<demand name=\"DEMANDNM2_%d\" quantity=\"10\" due=\"2007-03-03T00:00:00\" " +
+     "priority=\"2\"> <item name=\"ITEMNM_%d\"/></demand>\n" +
+     "<demand name=\"DEMANDNM3_%d\" quantity=\"10\" due=\"2007-03-03T00:00:00\" " +
+     "priority=\"1\"> <item name=\"ITEMNM_%d\"/></demand>",
+    "</demands></plan>\n",
     6
     )
 

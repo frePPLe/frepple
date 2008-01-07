@@ -332,11 +332,11 @@ class Item(models.Model):
 class Operation(models.Model):
     # Types of operations
     operationtypes = (
-      ('',_('FIXED_TIME')),
-      ('OPERATION_FIXED_TIME',_('FIXED_TIME')),
-      ('OPERATION_TIME_PER',_('TIME_PER')),
-      ('OPERATION_ROUTING',_('ROUTING')),
-      ('OPERATION_ALTERNATE',_('ALTERNATE')),
+      ('',_('fixed_time')),
+      ('operation_fixed_time',_('fixed_time')),
+      ('operation_time_per',_('time_per')),
+      ('operation_routing',_('routing')),
+      ('operation_alternate',_('alternate')),
     )
 
     # Database fields
@@ -361,9 +361,9 @@ class Operation(models.Model):
     def __unicode__(self): return self.name
 
     def save(self):
-        if self.type is None or self.type == '' or self.type == 'OPERATION_FIXED_TIME':
+        if self.type is None or self.type == '' or self.type == 'operation_fixed_time':
           self.duration_per = None
-        elif self.type != 'OPERATION_TIME_PER':
+        elif self.type != 'operation_time_per':
           self.duration = None
           self.duration_per = None
         # Call the real save() method
@@ -423,8 +423,8 @@ class Buffer(models.Model):
     # Types of buffers
     buffertypes = (
       ('',_('Default')),
-      ('BUFFER_INFINITE',_('Infinite')),
-      ('BUFFER_PROCURE',_('Procure')),
+      ('buffer_infinite',_('Infinite')),
+      ('buffer_procure',_('Procure')),
     )
 
     # Fields common to all buffer types
@@ -468,10 +468,10 @@ class Buffer(models.Model):
     def __unicode__(self): return self.name
 
     def save(self):
-        if self.type == 'BUFFER_INFINITE' or self.type == 'BUFFER_PROCURE':
+        if self.type == 'buffer_infinite' or self.type == 'buffer_procure':
             # Handle irrelevant fields for infinite and procure buffers
             self.producing = None
-        if self.type != 'BUFFER_PROCURE':
+        if self.type != 'buffer_procure':
             # Handle irrelevant fields for non-procure buffers
             self.leadtime = None
             self.fence = None
@@ -513,7 +513,7 @@ class Resource(models.Model):
     # Types of resources
     resourcetypes = (
       ('',_('Default')),
-      ('RESOURCE_INFINITE',_('Infinite')),
+      ('resource_infinite',_('Infinite')),
     )
 
     # Database fields
@@ -533,7 +533,7 @@ class Resource(models.Model):
     def __unicode__(self): return self.name
 
     def save(self):
-        if self.type == 'RESOURCE_INFINITE':
+        if self.type == 'resource_infinite':
             # These fields are not relevant for infinite resources
             self.maximum = None
         # Call the real save() method
@@ -557,7 +557,7 @@ class Flow(models.Model):
     # Types of flow
     flowtypes = (
       ('',_('Start')),
-      ('FLOW_END',_('End')),
+      ('flow_end',_('End')),
     )
 
     # Database fields

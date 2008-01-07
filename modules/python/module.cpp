@@ -116,14 +116,14 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
   // Initialize the metadata.
   CommandPython::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_PYTHON",
+    "command",
+    "command_python",
     Object::createDefault<CommandPython>);
 
   // Register python also as a processing instruction.
   CommandPython::metadata2.registerClass(
-    "INSTRUCTION",
-    "PYTHON",
+    "instruction",
+    "python",
     Object::createDefault<CommandPython>);
 
   // Initialize the interpreter

@@ -79,8 +79,7 @@ DECLARE_EXPORT const MetaCategory Operation::metadata;
 DECLARE_EXPORT const MetaClass OperationFixedTime::metadata,
   OperationTimePer::metadata,
   OperationRouting::metadata,
-  OperationAlternate::metadata,
-  OperationEffective::metadata;
+  OperationAlternate::metadata;
 
 // OperationPlan metadata
 DECLARE_EXPORT const MetaCategory OperationPlan::metadata;
@@ -146,213 +145,209 @@ void LibraryModel::initialize()
 
   // Initialize the command metadata.
   CommandPlanSize::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_SIZE",
+    "command",
+    "command_size",
     Object::createDefault<CommandPlanSize>);
   CommandCreateOperationPlan::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_CREATE_OPPLAN"); // No factory method: cmd not created with xml
+    "command",
+    "command_create_opplan"); // No factory method: cmd not created with xml
   CommandDeleteOperationPlan::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_DELETE_OPPLAN"); // No factory method: cmd not created with xml
+    "command",
+    "command_delete_opplan"); // No factory method: cmd not created with xml
   CommandMoveOperationPlan::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_MOVE_OPPLAN"); // No factory method: cmd not created with xml
+    "command",
+    "command_move_opplan"); // No factory method: cmd not created with xml
   CommandSolve::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_SOLVE",
+    "command",
+    "command_solve",
     Object::createDefault<CommandSolve>);
   CommandReadXMLFile::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_READXML",
+    "command",
+    "command_readxml",
     Object::createDefault<CommandReadXMLFile>);
   CommandReadXMLString::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_READXMLSTRING",
+    "command",
+    "command_readxmlstring",
     Object::createDefault<CommandReadXMLString>);
   CommandSave::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_SAVE",
+    "command",
+    "command_save",
     Object::createDefault<CommandSave>);
   CommandSavePlan::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_SAVEPLAN",
+    "command",
+    "command_saveplan",
     Object::createDefault<CommandSavePlan>);
   CommandErase::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_ERASE",
+    "command",
+    "command_erase",
     Object::createDefault<CommandErase>);
 
   // Initialize the plan metadata.
-  Plan::metadata.registerCategory("PLAN");
+  Plan::metadata.registerCategory("plan");
 
   // Initialize the solver metadata.
   Solver::metadata.registerCategory
-    ("SOLVER", "SOLVERS", Solver::reader, Solver::writer);
+    ("solver", "solvers", Solver::reader, Solver::writer);
 
   // Initialize the location metadata.
   Location::metadata.registerCategory
-    ("LOCATION", "LOCATIONS", Location::reader, Location::writer);
-  LocationDefault::metadata.registerClass("LOCATION", "LOCATION",
+    ("location", "locations", Location::reader, Location::writer);
+  LocationDefault::metadata.registerClass("location", "location",
     Object::createString<LocationDefault>, true);
 
   // Initialize the customer metadata.
   Customer::metadata.registerCategory
-    ("CUSTOMER", "CUSTOMERS", Customer::reader, Customer::writer);
+    ("customer", "customers", Customer::reader, Customer::writer);
   CustomerDefault::metadata.registerClass(
-    "CUSTOMER",
-    "CUSTOMER",
+    "customer",
+    "customer",
     Object::createString<CustomerDefault>, true);
 
   // Initialize the calendar metadata.
-  Calendar::Bucket::metadata.registerCategory("BUCKET", "BUCKETS");
+  Calendar::Bucket::metadata.registerCategory("bucket", "buckets");
   Calendar::metadata.registerCategory
-    ("CALENDAR", "CALENDARS", Calendar::reader, Calendar::writer);
+    ("calendar", "calendars", Calendar::reader, Calendar::writer);
   CalendarVoid::metadata.registerClass(
-    "CALENDAR",
-    "CALENDAR_VOID",
+    "calendar",
+    "calendar_void",
     Object::createString<CalendarVoid>);
   CalendarFloat::metadata.registerClass(
-    "CALENDAR",
-    "CALENDAR_FLOAT",
+    "calendar",
+    "calendar_float",
     Object::createString<CalendarFloat>, true);
   CalendarInt::metadata.registerClass(
-    "CALENDAR",
-    "CALENDAR_INTEGER",
+    "calendar",
+    "calendar_integer",
     Object::createString<CalendarInt>);
   CalendarBool::metadata.registerClass(
-    "CALENDAR",
-    "CALENDAR_BOOLEAN",
+    "calendar",
+    "calendar_boolean",
     Object::createString<CalendarBool>);
   CalendarString::metadata.registerClass(
-    "CALENDAR",
-    "CALENDAR_STRING",
+    "calendar",
+    "calendar_string",
     Object::createString<CalendarString>);
   CalendarOperation::metadata.registerClass(
-    "CALENDAR",
-    "CALENDAR_OPERATION",
+    "calendar",
+    "calendar_operation",
     Object::createString<CalendarOperation>);
 
   // Initialize the operation metadata.
   Operation::metadata.registerCategory
-    ("OPERATION", "OPERATIONS", Operation::reader, Operation::writer);
+    ("operation", "operations", Operation::reader, Operation::writer);
   OperationFixedTime::metadata.registerClass(
-    "OPERATION",
-    "OPERATION_FIXED_TIME",
+    "operation",
+    "operation_fixed_time",
     Object::createString<OperationFixedTime>, true);
   OperationTimePer::metadata.registerClass(
-    "OPERATION",
-    "OPERATION_TIME_PER",
+    "operation",
+    "operation_time_per",
     Object::createString<OperationTimePer>);
   OperationRouting::metadata.registerClass(
-    "OPERATION",
-    "OPERATION_ROUTING",
+    "operation",
+    "operation_routing",
     Object::createString<OperationRouting>);
   OperationAlternate::metadata.registerClass(
-    "OPERATION",
-    "OPERATION_ALTERNATE",
+    "operation",
+    "operation_alternate",
     Object::createString<OperationAlternate>);
-  OperationEffective::metadata.registerClass(
-    "OPERATION",
-    "OPERATION_EFFECTIVE",
-    Object::createString<OperationEffective>);
 
   // Initialize the item metadata.
   Item::metadata.registerCategory
-    ("ITEM", "ITEMS", Item::reader, Item::writer);
-  ItemDefault::metadata.registerClass("ITEM", "ITEM",
+    ("item", "items", Item::reader, Item::writer);
+  ItemDefault::metadata.registerClass("item", "item",
     Object::createString<ItemDefault>, true);
 
   // Initialize the buffer metadata.
   Buffer::metadata.registerCategory
-    ("BUFFER", "BUFFERS", Buffer::reader, Buffer::writer);
+    ("buffer", "buffers", Buffer::reader, Buffer::writer);
   BufferDefault::metadata.registerClass(
-    "BUFFER",
-    "BUFFER",
+    "buffer",
+    "buffer",
     Object::createString<BufferDefault>, true);
   BufferInfinite::metadata.registerClass(
-    "BUFFER",
-    "BUFFER_INFINITE",
+    "buffer",
+    "buffer_infinite",
     Object::createString<BufferInfinite>);
   BufferProcure::metadata.registerClass(
-    "BUFFER",
-    "BUFFER_PROCURE",
+    "buffer",
+    "buffer_procure",
     Object::createString<BufferProcure>);
 
   // Initialize the demand metadata.
   Demand::metadata.registerCategory
-    ("DEMAND", "DEMANDS", Demand::reader, Demand::writer);
+    ("demand", "demands", Demand::reader, Demand::writer);
   DemandDefault::metadata.registerClass(
-    "DEMAND",
-    "DEMAND",
+    "demand",
+    "demand",
     Object::createString<DemandDefault>, true);
 
   // Initialize the resource metadata.
   Resource::metadata.registerCategory
-    ("RESOURCE", "RESOURCES", Resource::reader, Resource::writer);
+    ("resource", "resources", Resource::reader, Resource::writer);
   ResourceDefault::metadata.registerClass(
-    "RESOURCE",
-    "RESOURCE",
+    "resource",
+    "resource",
     Object::createString<ResourceDefault>,
     true);
   ResourceInfinite::metadata.registerClass(
-    "RESOURCE",
-    "RESOURCE_INFINITE",
+    "resource",
+    "resource_infinite",
     Object::createString<ResourceInfinite>);
 
   // Initialize the load metadata.
   Load::metadata.registerCategory
-    ("LOAD", "LOADS", MetaCategory::ControllerDefault, NULL);
+    ("load", "loads", MetaCategory::ControllerDefault, NULL);
   Load::metadata.registerClass
-    ("LOAD", "LOAD", Object::createDefault<Load>, true);
+    ("load", "load", Object::createDefault<Load>, true);
 
   // Initialize the flow metadata.
   Flow::metadata.registerCategory
-    ("FLOW", "FLOWS", MetaCategory::ControllerDefault);
+    ("flow", "flows", MetaCategory::ControllerDefault);
   FlowStart::metadata.registerClass(
-    "FLOW",
-    "FLOW_START",
+    "flow",
+    "flow_start",
     Object::createDefault<FlowStart>, true);
   FlowEnd::metadata.registerClass(
-    "FLOW",
-    "FLOW_END",
+    "flow",
+    "flow_end",
     Object::createDefault<FlowEnd>);
 
   // Initialize the operationplan metadata.
-  OperationPlan::metadata.registerCategory("OPERATION_PLAN", "OPERATION_PLANS",
+  OperationPlan::metadata.registerCategory("operation_plan", "operation_plans",
     OperationPlan::createOperationPlan, OperationPlan::writer);
 
   // Initialize the problem metadata.
   Problem::metadata.registerCategory
-    ("PROBLEM", "PROBLEMS", NULL, Problem::writer);
+    ("problem", "problems", NULL, Problem::writer);
   ProblemMaterialExcess::metadata.registerClass
-    ("PROBLEM","material excess");
+    ("problem","material excess");
   ProblemMaterialShortage::metadata.registerClass
-    ("PROBLEM","material shortage");
+    ("problem","material shortage");
   ProblemExcess::metadata.registerClass
-    ("PROBLEM","excess");
+    ("problem","excess");
   ProblemShort::metadata.registerClass
-    ("PROBLEM","short");
+    ("problem","short");
   ProblemEarly::metadata.registerClass
-    ("PROBLEM","early");
+    ("problem","early");
   ProblemLate::metadata.registerClass
-    ("PROBLEM","late");
+    ("problem","late");
   ProblemDemandNotPlanned::metadata.registerClass
-    ("PROBLEM","unplanned");
+    ("problem","unplanned");
   ProblemPlannedEarly::metadata.registerClass
-    ("PROBLEM","planned early");
+    ("problem","planned early");
   ProblemPlannedLate::metadata.registerClass
-    ("PROBLEM","planned late");
+    ("problem","planned late");
   ProblemPrecedence::metadata.registerClass
-    ("PROBLEM","precedence");
+    ("problem","precedence");
   ProblemBeforeFence::metadata.registerClass
-    ("PROBLEM","before fence");
+    ("problem","before fence");
   ProblemBeforeCurrent::metadata.registerClass
-    ("PROBLEM","before current");
+    ("problem","before current");
   ProblemCapacityUnderload::metadata.registerClass
-    ("PROBLEM","underload");
+    ("problem","underload");
   ProblemCapacityOverload::metadata.registerClass
-    ("PROBLEM","overload");
+    ("problem","overload");
 
   // Verify the existence of the schema file
   string env = Environment::getHomeDirectory();

@@ -59,7 +59,6 @@ class OperationFixedTime;
 class OperationTimePer;
 class OperationRouting;
 class OperationAlternate;
-class OperationEffective;
 class Buffer;
 class BufferInfinite;
 class BufferProcure;
@@ -744,8 +743,6 @@ class Solver : public Object, public HasName<Solver>
       {solve(reinterpret_cast<const Operation*>(o),v);}
     virtual void solve(const OperationAlternate* o, void* v = NULL)
       {solve(reinterpret_cast<const Operation*>(o),v);}
-    virtual void solve(const OperationEffective* o, void* v = NULL)
-      {solve(reinterpret_cast<const Operation*>(o),v);}
     virtual void solve(const Resource*,void* = NULL)
       {throw LogicException("Called undefined solve(Resource*) method");}
     virtual void solve(const ResourceInfinite* r, void* v = NULL)
@@ -1403,8 +1400,6 @@ class OperationPlan
     friend class Operation;
     friend class OperationPlanAlternate;
     friend class OperationPlanRouting;
-    friend class OperationPlanEffective;
-    friend class OperationEffective;
 
   public:
     class FlowPlanIterator;
@@ -1616,7 +1611,7 @@ class OperationPlan
       */
     void setLocked(bool b = true)
     {
-      if (owner) WLock<OperationPlan>(owner)->setLocked(b);
+      if (owner) OperationPlan::writepointer(owner)->setLocked(b);
       else if (locked!=b)
       {
         setChanged();
@@ -1726,11 +1721,12 @@ class OperationPlan
       * </ol>
       * Every operation_plan subclass that has sub-operations will normally
       * need to create an override of this function.<br>
-      * Calling this function can DELETE the current operationplan. The object
-      * on which this function is called could not exist any more after the
-      * call to this function!
+      * 
+      * The return value indicates whether the initialization was successfull.
+      * If the operationplan is invalid, it will be DELETED and the return value 
+      * is 'false'. 
       */
-    virtual DECLARE_EXPORT void initialize();
+    virtual DECLARE_EXPORT bool initialize();
 
     /** Add a sub_operation_plan to the list. For normal operation_plans this
       * is only a dummy function. For alternates and routing operation_plans
@@ -2119,7 +2115,8 @@ class OperationPlanRouting : public OperationPlan
       * step operationplans are created the start date of the routing will be
       * equal to the start of the first step.
       */
-    DECLARE_EXPORT void initialize();
+    DECLARE_EXPORT bool initialize();
+
     void updateProblems();
 
     virtual size_t getSize() const
@@ -2241,107 +2238,7 @@ class OperationPlanAlternate : public OperationPlan
     /** Initializes the operationplan. If no suboperationplan was created
       * yet this method will create one, using the highest priority alternate.
       */
-    DECLARE_EXPORT void initialize();
-};
-
-
-/** @brief Models an operation which has to use different operations depending
-  * on the dates. */
-class OperationEffective : public Operation
-{
-    TYPEDEF(OperationEffective);
-  public:
-    /** Constructor. */
-    explicit OperationEffective(const string& s)
-        : Operation(s), cal(NULL), useEndDate(true) {}
-
-    /** Returns the calendar that specifies which operation to use during
-      * which time period. */
-    CalendarOperation::pointer getCalendar() const {return cal;}
-
-    /** Updates the calendar. Existing operation plans are not automatically
-      * getting updated to fit the new calendar. */
-    void setCalendar(const CalendarOperation* t) {cal = t;}
-
-    /** Returns whether the end or the start date of operationplans is used
-    * to determine the effective operation. */
-    bool getUseEndDate() const {return useEndDate;}
-
-    /** Updates whether the end or the start date of operationplans is used
-    * to determine the effective operation. */
-    void setUseEndDate(const bool b) {useEndDate = b;}
-
-    void DECLARE_EXPORT beginElement (XMLInput&, XMLElement&);
-    void DECLARE_EXPORT writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void DECLARE_EXPORT endElement(XMLInput&, XMLElement&);
-
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
-
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const
-    {return sizeof(OperationEffective) + Operation::extrasize();}
-
-    /** This is the factory method which creates all operationplans of the
-      * operation.
-      * @see Operation::createOperationPlan
-      */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
-      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
-      bool makeflowsloads = true) const;
-
-    /** A operation of this type enforces the following rules on its
-      * operationplans:
-      *  - The calendar is used to determine the right operation. Either the
-      *    start or the end date is used to search in the calendar buckets.
-      *  - After determining the right operation, that sub operation determines
-      *    the rest.
-      *  - Calling this function when the calendar is still NULL has no
-      *    effect at all.
-      * @see Operation::setOperationPlanParameters
-      */
-    DECLARE_EXPORT void setOperationPlanParameters
-      (OperationPlan* opplan, float q, Date s, Date e, bool = true) const;
-
-  private:
-    /** Stores the calendar. This calendar stores for each date in the horizon
-    * which operation is to be used. */
-    const CalendarOperation* cal;
-
-    /** Specifies whether to use the start or the end date as the date to use.
-      * The default is to use the end date.
-      */
-    bool useEndDate;
-};
-
-
-/** @brief This class subclasses the OperationPlan class for operations of type
-  * OperationEffective.
-  *
-  * Such operationplans need an extra field to point to the suboperationplan.
-  * @see OperationPlan, OperationEffective
-  */
-class OperationPlanEffective : public OperationPlan
-{
-    TYPEDEF(OperationPlanEffective);
-    friend class OperationEffective;
-
-  private:
-    OperationPlan* effopplan;
-
-  public:
-    OperationPlanEffective() : effopplan(NULL) {};
-    DECLARE_EXPORT ~OperationPlanEffective();
-    DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
-    DECLARE_EXPORT void setQuantity(float f, bool roundDown = false, bool update = true);
-    DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
-    DECLARE_EXPORT void setEnd(Date d);
-    DECLARE_EXPORT void setStart(Date d);
-    DECLARE_EXPORT void update();
-    DECLARE_EXPORT void initialize();
-
-    /** Returns the sub-operationplan. */
-    virtual OperationPlan* getSubOperationPlan() const {return effopplan;}
+    DECLARE_EXPORT bool initialize();
 };
 
 
@@ -2999,7 +2896,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     /** Constructor. */
     explicit DECLARE_EXPORT FlowPlan(OperationPlan*, const Flow*);
 
-    /** Returns the Flow of which this is an planning instance. */
+    /** Returns the flow of which this is an plan instance. */
     Flow::pointer getFlow() const {return fl;}
 
     /** Returns the operationplan owning this flowplan. */
@@ -3008,7 +2905,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     /** Destructor. */
     virtual ~FlowPlan()
     {
-      Object::WLock<Buffer> b = getFlow()->getBuffer();
+      Buffer::writepointer b = getFlow()->getBuffer();
       b->setChanged();
       b->flowplans.erase(this);
     }
@@ -3020,13 +2917,21 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       */
     void DECLARE_EXPORT writeElement(XMLOutput*, const XMLtag&, mode =DEFAULT) const;
 
+    /** Return the quantity of the flowplan. */
+    float getQuantity() const 
+    {
+      return getFlow()->getEffective().within(getDate()) ?
+        TimeLine<FlowPlan>::EventChangeOnhand::getQuantity() :
+        0.0f;
+    }
+
     /** Updates the quantity of the flowplan by changing the quantity of the
       * operationplan owning this flowplan.<br>
       * The boolean parameter is used to control whether to round up or down
       * in case the operation quantity must be a multiple.
       */
     void setQuantity(float qty, bool b=false, bool u = true)
-    {Object::WLock<OperationPlan>(oper)->setQuantity(qty / getFlow()->getQuantity(), b, u);}
+    {OperationPlan::writepointer(oper)->setQuantity(qty / getFlow()->getQuantity(), b, u);}
 
     /** Returns the date of the flowplan. */
     const Date& getDate() const {return getFlow()->getFlowplanDate(oper);}
@@ -3828,10 +3733,23 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       if (start_or_end == START) return oper->getDates().getStart();
       else return oper->getDates().getEnd();
     }
+    
+    /** Return the quantity of the loadplan. */
+    float getQuantity() const 
+    {
+      return getLoad()->getEffective().within(getDate()) ?
+        TimeLine<LoadPlan>::EventChangeOnhand::getQuantity() :
+        0.0f;
+    }
 
+    /** Return the operationplan owning this loadplan. */
     OperationPlan* getOperationPlan() const {return oper;}
+
+    /** Return the load of which this is a plan instance. */
     Load* getLoad() const {return ld;}
+
     bool isStart() {return start_or_end == START;}
+
     virtual ~LoadPlan()
     {
       ld->getResource()->setChanged();

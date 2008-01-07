@@ -45,7 +45,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   // Unattach previous delivery operationplans.
   // Locked operationplans will NOT be deleted, and a part of the demand can
   // still remain planned.
-  WLock<Demand>(l)->deleteOperationPlans();
+  Demand::writepointer(l)->deleteOperationPlans();
 
   // Determine the quantity to be planned and the date for the planning loop
   double plan_qty = l->getQuantity() - l->getPlannedQuantity();

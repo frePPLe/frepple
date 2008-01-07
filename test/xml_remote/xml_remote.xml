@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <CURRENT>2007-01-01T00:00:00</CURRENT>
-  <COMMANDS>
-    <ABORTONERROR>false</ABORTONERROR>
-    <VERBOSE>true</VERBOSE>
-    <COMMAND xsi:type="COMMAND_PYTHON">
-      <CMDLINE>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <current>2007-01-01T00:00:00</current>
+  <commands>
+    <abortonerror>false</abortonerror>
+    <verbose>true</verbose>
+    <command xsi:type="command_python">
+      <cmdline>
 <![CDATA[
 import urllib2
 import frepple
 f = urllib2.urlopen("http://www.frepple.com/test/xml_remote.xml")
 frepple.readXMLdata(f.read(1000), False, False)
 ]]>
-      </CMDLINE>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
-  </COMMANDS>
-</PLAN>
+      </cmdline>
+    </command>
+    <command xsi:type="command_save" filename="output.1.xml" />
+  </commands>
+</plan>

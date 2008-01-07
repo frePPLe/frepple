@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<?PYTHON
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?python
 import os
 
 from freppledb.execute.export_database import exportfrepple as export_to_database
@@ -12,12 +12,12 @@ from django.conf import settings
 try: plantype = os.environ['PLAN_TYPE']
 except KeyError: plantype = 7  # Default is a fully constrained plan
 frepple.readXMLdata(
-  '''<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <LOGFILE>%s</LOGFILE>
-  <SOLVERS>
-    <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="%s"/>
-  </SOLVERS>
-  </PLAN>''' % (os.path.join(os.environ['FREPPLE_HOME'],'frepple.log'),plantype), False, False)
+  '''<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <logfile>%s</logfile>
+  <solvers>
+    <solver xsi:type="solver_mrp" name="MRP" constraints="%s"/>
+  </solvers>
+  </plan>''' % (os.path.join(os.environ['FREPPLE_HOME'],'frepple.log'),plantype), False, False)
 
 # Pick up an override for the database to use
 if 'FREPPLE_DATABASE_NAME' in os.environ:
@@ -34,25 +34,25 @@ else:
     settings.DATABASE_PORT)
 
 ?>
-  <COMMANDS>
-    <VERBOSE>true</VERBOSE>
-    <ABORTONERROR>true</ABORTONERROR>
-    <COMMAND xsi:type="COMMAND_SIZE" />
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="loadfrepple()" />
-    <COMMAND xsi:type="COMMAND_SIZE" />
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST" LOGLEVEL="0"/>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SOLVE">
-        <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" LOGLEVEL="0" MAXPARALLEL="2"/>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SIZE" />
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="export_to_database()" />
+  <commands>
+    <verbose>true</verbose>
+    <abortonerror>true</abortonerror>
+    <command xsi:type="command_size" />
+    <command xsi:type="command_python" cmdline="loadfrepple()" />
+    <command xsi:type="command_size" />
+    <command xsi:type="command_solve">
+      <solver name="Netting orders from forecast" xsi:type="solver_forecast" loglevel="0"/>
+    </command>
+    <command xsi:type="command_solve">
+        <solver xsi:type="solver_mrp" name="MRP" loglevel="0" maxparallel="2"/>
+    </command>
+    <command xsi:type="command_size" />
+    <command xsi:type="command_python" cmdline="export_to_database()" />
     <!--
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="export_to_file()" />
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
-    <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
-    <COMMAND xsi:type="COMMAND_SIZE" />
+    <command xsi:type="command_python" cmdline="export_to_file()" />
+    <command xsi:type="command_save" filename="output.1.xml" />
+    <command xsi:type="command_erase" mode="model" />
+    <command xsi:type="command_size" />
     -->
-  </COMMANDS>
-</PLAN>
+  </commands>
+</plan>

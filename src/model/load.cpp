@@ -166,6 +166,10 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, XMLElement& pElement)
       new Action(MetaClass::decodeAction(pElement.getString().c_str()))
     );
   }
+  else if (pElement.isA(Tags::tag_effective_end))
+    setEffectiveEnd(pElement.getDate());
+  else if (pElement.isA(Tags::tag_effective_start))
+    setEffectiveStart(pElement.getDate());
   else if (pIn.isObjectEnd())
   {
     // The load data is now all read in. See if it makes sense now...

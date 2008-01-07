@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<DESCRIPTION>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<description>
     This test case tests the embedded python interpreter.
-  </DESCRIPTION>
-	<CURRENT>2007-01-01T00:00:00</CURRENT>
-</PLAN>
+  </description>
+	<current>2007-01-01T00:00:00</current>
+</plan>

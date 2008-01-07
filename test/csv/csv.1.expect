@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<CURRENT>2007-01-01T00:00:00</CURRENT>
-	<ITEMS>
-		<ITEM NAME="item1">
-			<CATEGORY>category1</CATEGORY>
-			<DESCRIPTION>description of item1</DESCRIPTION>
-		</ITEM>
-		<ITEM NAME="item2">
-			<CATEGORY>category2</CATEGORY>
-			<DESCRIPTION>description of item2</DESCRIPTION>
-		</ITEM>
-		<ITEM NAME="item3">
-			<CATEGORY>category3</CATEGORY>
-			<DESCRIPTION>description of item3</DESCRIPTION>
-		</ITEM>
-		<ITEM NAME="item4">
-			<CATEGORY>category4</CATEGORY>
-			<DESCRIPTION>description of item4</DESCRIPTION>
-		</ITEM>
-		<ITEM NAME="item5">
-			<CATEGORY>category 5</CATEGORY>
-			<DESCRIPTION>description of item5</DESCRIPTION>
-		</ITEM>
-		<ITEM NAME="item6">
-			<CATEGORY>category 6</CATEGORY>
-		</ITEM>
-		<ITEM NAME="item7">
-			<CATEGORY>none</CATEGORY>
-			<DESCRIPTION>none</DESCRIPTION>
-		</ITEM>
-		<ITEM NAME="item8">
-			<CATEGORY>none</CATEGORY>
-			<DESCRIPTION>description of item8</DESCRIPTION>
-		</ITEM>
-	</ITEMS>
-</PLAN>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<current>2007-01-01T00:00:00</current>
+	<items>
+		<item name="item1">
+			<category>category1</category>
+			<description>description of item1</description>
+		</item>
+		<item name="item2">
+			<category>category2</category>
+			<description>description of item2</description>
+		</item>
+		<item name="item3">
+			<category>category3</category>
+			<description>description of item3</description>
+		</item>
+		<item name="item4">
+			<category>category4</category>
+			<description>description of item4</description>
+		</item>
+		<item name="item5">
+			<category>category 5</category>
+			<description>description of item5</description>
+		</item>
+		<item name="item6">
+			<category>category 6</category>
+		</item>
+		<item name="item7">
+			<category>none</category>
+			<description>none</description>
+		</item>
+		<item name="item8">
+			<category>none</category>
+			<description>description of item8</description>
+		</item>
+	</items>
+</plan>

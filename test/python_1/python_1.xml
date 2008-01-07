@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <DESCRIPTION>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <description>
     This test case tests the embedded python interpreter.
-  </DESCRIPTION>
-  <CURRENT>2007-01-01T00:00:00</CURRENT>
-<?PYTHON
+  </description>
+  <current>2007-01-01T00:00:00</current>
+<?python
 import sys, frepple
 print "1. Python as a processing instruction"
 myvariable = 4
 print '1. defining my variable:', myvariable
 print '1. frepple version:', frepple.version?>
-  <COMMANDS>
-  	<VERBOSE>true</VERBOSE>
-  	<ABORTONERROR>false</ABORTONERROR>
-    <COMMAND xsi:type="COMMAND_PYTHON" FILENAME="python.py"/>
-    <COMMAND xsi:type="COMMAND_PYTHON" FILENAME="nowheretobefound.py"/>
-    <COMMAND xsi:type="COMMAND_PYTHON">
-      <CMDLINE>
+  <commands>
+  	<verbose>true</verbose>
+  	<abortonerror>false</abortonerror>
+    <command xsi:type="command_python" filename="python.py"/>
+    <command xsi:type="command_python" filename="nowheretobefound.py"/>
+    <command xsi:type="command_python">
+      <cmdline>
 <![CDATA[
 print '3. retrieving a variable:', myvariable
 print '3. calling a function:', my_function(myvariable)
 ]]>
-      </CMDLINE>
-    </COMMAND>
+      </cmdline>
+    </command>
     <!--
     In the next steps we are comparing the speed of 3 types of APIs each
     achieving eaxactly the same final result:
@@ -44,85 +44,85 @@ print '3. calling a function:', my_function(myvariable)
     Obviously a different test configuration will give different results.
     E.g. running small messages rather than a huge data file...
     -->
-    <COMMAND xsi:type="COMMAND_PYTHON">
-      <CMDLINE>create_files(200000)</CMDLINE>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_READXML" FILENAME="items.xml" VALIDATE="false" />
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="afterXMLread.xml" />
-    <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="aftererase1.xml" />
-    <COMMAND xsi:type="COMMAND_PYTHON">
-      <CMDLINE>read_csv_file()</CMDLINE>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="afterCSVread.xml" />
-    <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="aftererase2.xml" />
-    <COMMAND xsi:type="COMMAND_PYTHON">
-      <CMDLINE>read_csv_file_direct()</CMDLINE>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="afterCSVDirectread.xml" />
-    <COMMAND xsi:type="COMMAND_ERASE" MODE="model" />
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="aftererase3.xml" />
-    <COMMAND xsi:type="COMMAND_PYTHON">
-      <CMDLINE>
+    <command xsi:type="command_python">
+      <cmdline>create_files(200000)</cmdline>
+    </command>
+    <command xsi:type="command_readxml" filename="items.xml" validate="false" />
+    <command xsi:type="command_save" filename="afterXMLread.xml" />
+    <command xsi:type="command_erase" mode="model" />
+    <command xsi:type="command_save" filename="aftererase1.xml" />
+    <command xsi:type="command_python">
+      <cmdline>read_csv_file()</cmdline>
+    </command>
+    <command xsi:type="command_save" filename="afterCSVread.xml" />
+    <command xsi:type="command_erase" mode="model" />
+    <command xsi:type="command_save" filename="aftererase2.xml" />
+    <command xsi:type="command_python">
+      <cmdline>read_csv_file_direct()</cmdline>
+    </command>
+    <command xsi:type="command_save" filename="afterCSVDirectread.xml" />
+    <command xsi:type="command_erase" mode="model" />
+    <command xsi:type="command_save" filename="aftererase3.xml" />
+    <command xsi:type="command_python">
+      <cmdline>
 <![CDATA[
 print '4. a syntax error:'
 wrong
 ]]>
-      </CMDLINE>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_PYTHON">
-      <CMDLINE>
+      </cmdline>
+    </command>
+    <command xsi:type="command_python">
+      <cmdline>
 <![CDATA[
 print '5. python catches exceptions thrown from the frepple C++ code'
 frepple.readXMLfile('nowheretobefound.xml')
 ]]>
-      </CMDLINE>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_LIST" MAXPARALLEL="4">
-      <COMMAND xsi:type="COMMAND_PYTHON">
-        <CMDLINE>
+      </cmdline>
+    </command>
+    <command xsi:type="command_list" maxparallel="4">
+      <command xsi:type="command_python">
+        <cmdline>
 <![CDATA[
 import time
 print '6a. start sleep'
 time.sleep(1)
 print '6a. end sleep'
 ]]>
-        </CMDLINE>
-      </COMMAND>
-      <COMMAND xsi:type="COMMAND_PYTHON">
-        <CMDLINE>
+        </cmdline>
+      </command>
+      <command xsi:type="command_python">
+        <cmdline>
 <![CDATA[
 import time
 print '6b. start sleep'
 time.sleep(1)
 print '6b. end sleep'
 ]]>
-        </CMDLINE>
-      </COMMAND>
-      <COMMAND xsi:type="COMMAND_SYSTEM">
-        <CMDLINE>echo 6c. start sleep &amp;&amp; sleep 1&amp;&amp; echo 6c. after sleep</CMDLINE>
-      </COMMAND>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVE">
-      <FILENAME>output.1.xml</FILENAME>
-    </COMMAND>
+        </cmdline>
+      </command>
+      <command xsi:type="command_system">
+        <cmdline>echo 6c. start sleep &amp;&amp; sleep 1&amp;&amp; echo 6c. after sleep</cmdline>
+      </command>
+    </command>
+    <command xsi:type="command_save">
+      <filename>output.1.xml</filename>
+    </command>
 
 <!-- A simple user interface. -->
 <!--
-    <COMMAND xsi:type="COMMAND_PYTHON">
-        <CMDLINE>
+    <command xsi:type="command_python">
+        <cmdline>
 <![CDATA[
 import Tkinter
 
 def post_xml():
-  t.insert(Tkinter.END,"<PLAN>\n</PLAN>")
+  t.insert(Tkinter.end,"<PLAN>\n</plan>")
 
 root = Tkinter.Tk("Frepple","Frepple")
 Tkinter.Label(text="Edit your xml message", anchor=Tkinter.W).pack()
 s = Tkinter.Scrollbar(root)
 t = Tkinter.Text(root)
-t.insert(Tkinter.END,"<PLAN>\n</PLAN>")
+t.insert(Tkinter.end,"<PLAN>\n</plan>")
 t.focus_set()
 Tkinter.Button(text="exit", command=sys.exit).pack(side=Tkinter.BOTTOM,fill=Tkinter.NONE)
 Tkinter.Button(text="submit", command=post_xml).pack(side=Tkinter.BOTTOM,fill=Tkinter.NONE)
@@ -134,14 +134,14 @@ t.config(yscrollcommand=s.set)
 #Tkinter.Entry(state=Tkinter.DISABLED).pack()
 Tkinter.mainloop()
 ]]>
-      </CMDLINE>
-    </COMMAND>
+      </cmdline>
+    </command>
 -->
 
 <!-- A simple web server. -->
 <!--
-    <COMMAND xsi:type="COMMAND_PYTHON">
-        <CMDLINE>
+    <command xsi:type="command_python">
+        <cmdline>
 <![CDATA[
 import SimpleHTTPServer,SocketServer, frepple
 PORT = 8000
@@ -162,14 +162,14 @@ class FreppleServer(SimpleHTTPServer.SimpleHTTPRequestHandler):
     except:
       self.send_error(500, "Exception when saving the model")
 
-print "Started HTTP server on port ", PORT
+print "started HTTP server on port ", PORT
 print "Point your browser to http://localhost:" + str(PORT) + " to see the pages."
 print "Use ctrl-c to exit..."
 SocketServer.TCPServer(("", PORT), FreppleServer).serve_forever()
 ]]>
-      </CMDLINE>
-    </COMMAND>
+      </cmdline>
+    </command>
 -->
-  </COMMANDS>
-  <?PYTHON print "2. Python processing instructions are executed before the commands" ?>
-</PLAN>
+  </commands>
+  <?python print "2. Python processing instructions are executed before the commands" ?>
+</plan>

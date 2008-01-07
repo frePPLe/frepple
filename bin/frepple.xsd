@@ -43,7 +43,7 @@
 	<!-- <xsd:include schemaLocation="mod_lpsolver.xsd" /> -->
 
   <!-- Define the root element and its contents. -->
-	<xsd:element name="PLAN">
+	<xsd:element name="plan">
 		<xsd:annotation>
 			<xsd:documentation>
         This is the root tag in the data schema.
@@ -64,27 +64,27 @@
       -->
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
 				<!-- FIELDS -->
-				<xsd:element name="NAME" type="xsd:normalizedString" />
-				<xsd:element name="DESCRIPTION" type="xsd:string" />
-				<xsd:element name="CURRENT" type="xsd:dateTime" />
-				<xsd:element name="LOGFILE" type="xsd:normalizedString" />
-				<xsd:element name="PLANNABLE" type="xsd:boolean" />
-				<xsd:element name="DETECTPROBLEMS" type="xsd:boolean" />
+				<xsd:element name="name" type="xsd:normalizedString" />
+				<xsd:element name="description" type="xsd:string" />
+				<xsd:element name="current" type="xsd:dateTime" />
+				<xsd:element name="logfile" type="xsd:normalizedString" />
+				<xsd:element name="plannable" type="xsd:boolean" />
+				<xsd:element name="detectproblems" type="xsd:boolean" />
 				<!-- OBJECT LISTS -->
-				<xsd:element name="SOLVERS" type="SOLVERLIST" />
-				<xsd:element name="COMMANDS" type="COMMAND_LIST" />
-				<xsd:element name="LOCATIONS" type="LOCATIONLIST" />
-				<xsd:element name="CUSTOMERS" type="CUSTOMERLIST" />
-				<xsd:element name="CALENDARS" type="CALENDARLIST" />
-				<xsd:element name="OPERATIONS" type="OPERATIONLIST" />
-				<xsd:element name="ITEMS" type="ITEMLIST" />
-				<xsd:element name="BUFFERS" type="BUFFERLIST" />
-				<xsd:element name="FLOWS" type="FLOWLIST" />
-				<xsd:element name="LOADS" type="LOADLIST" />
-				<xsd:element name="DEMANDS" type="DEMANDLIST" />
-				<xsd:element name="RESOURCES" type="RESOURCELIST" />
-				<xsd:element name="OPERATION_PLANS" type="OPERATIONPLANLIST" />
-				<xsd:element name="PROBLEMS" type="PROBLEMLIST" />
+				<xsd:element name="solvers" type="solverlist" />
+				<xsd:element name="commands" type="command_list" />
+				<xsd:element name="locations" type="locationlist" />
+				<xsd:element name="customers" type="customerlist" />
+				<xsd:element name="calendars" type="calendarlist" />
+				<xsd:element name="operations" type="operationlist" />
+				<xsd:element name="items" type="itemlist" />
+				<xsd:element name="buffers" type="bufferlist" />
+				<xsd:element name="flows" type="flowlist" />
+				<xsd:element name="loads" type="loadlist" />
+				<xsd:element name="demands" type="demandlist" />
+				<xsd:element name="resources" type="resourcelist" />
+				<xsd:element name="operation_plans" type="operationplanlist" />
+				<xsd:element name="problems" type="problemlist" />
 			</xsd:choice>
 		</xsd:complexType>
 	</xsd:element>

@@ -75,10 +75,6 @@ class MRPSolver : public Solver
     DECLARE_EXPORT void solve(const OperationRouting*, void* = NULL);
 
     /** Behavior of this solver method is:
-      *  - @todo implementation and doc missing. */
-    DECLARE_EXPORT void solve(const OperationEffective*, void* = NULL);
-
-    /** Behavior of this solver method is:
       *  - The solver loops through each alternate operation in order of
       *    priority. On each alternate operation, the solver will try to plan
       *    the quantity that hasn't been planned on higher priority alternates.
@@ -169,7 +165,7 @@ class MRPSolver : public Solver
       *    to make the solver as generic and future-proof as possible.
       * @see checkOperationCapacity
       */
-    void solve(const Load* l, void* d = NULL) {l->getResource()->solve(*this,d);}
+    DECLARE_EXPORT void solve(const Load*, void* = NULL);
 
     /** Behavior of this solver method:
       *  - Respects the following demand planning policies:<br>

@@ -1,139 +1,139 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <NAME>actual plan</NAME>
-  <DESCRIPTION>
-    Resource constraint test model. In this model, the capacity problems can
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>actual plan</name>
+  <description>
+    resource constraint test model. In this model, the capacity problems can
     easily be solved by moving operation plans earlier in time.
-  </DESCRIPTION>
-  <CURRENT>2007-01-01T00:00:00</CURRENT>
-  <COMMANDS>
-    <VERBOSE>true</VERBOSE>
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <VERBOSE>false</VERBOSE>
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" />
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN">
-      <FILENAME>output.1.xml</FILENAME>
-    </COMMAND>
-  </COMMANDS>
-  <CALENDARS>
-    <CALENDAR NAME="Weeks" xsi:type="CALENDAR_VOID">
-      <BUCKETS>
-        <BUCKET START="2007-01-01T00:00:00">
-          <NAME>Jan Week1</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-07T00:00:00">
-          <NAME>Jan Week2</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-14T00:00:00">
-          <NAME>Jan Week3</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-21T00:00:00">
-          <NAME>Jan Week4</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-28T00:00:00">
-          <NAME>Jan Week5</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-04T00:00:00">
-          <NAME>Feb Week1</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-11T00:00:00">
-          <NAME>Feb Week2</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-18T00:00:00">
-          <NAME>Feb Week3</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-25T00:00:00">
-          <NAME>Feb Week4</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-04T00:00:00">
-          <NAME>Mar Week1</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-11T00:00:00">
-          <NAME>Mar Week2</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-18T00:00:00">
-          <NAME>Mar Week3</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-25T00:00:00">
-          <NAME>Mar Week4</NAME>
-        </BUCKET>
-        <BUCKET START="2007-04-01T00:00:00">
-          <NAME>Remainder</NAME>
-        </BUCKET>
-      </BUCKETS>
-    </CALENDAR>
-  </CALENDARS>
-  <OPERATIONS>
-    <OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME">
-      <DURATION>P1D</DURATION>
-    </OPERATION>
-  </OPERATIONS>
-  <ITEMS>
-    <ITEM NAME="end item">
-      <OPERATION NAME="delivery end item" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>P1D</DURATION>
-      </OPERATION>
-    </ITEM>
-  </ITEMS>
-  <BUFFERS>
-    <BUFFER NAME="end item">
-      <PRODUCING NAME="make end item" />
-      <ITEM NAME="end item" />
-    </BUFFER>
-  </BUFFERS>
-  <RESOURCES>
-    <RESOURCE NAME="Resource">
-      <MAXIMUM NAME="Capacity" xsi:type="CALENDAR_FLOAT">
-        <BUCKETS>
-          <BUCKET START="2007-01-01T00:00:00">
-            <VALUE>1</VALUE>
-          </BUCKET>
-        </BUCKETS>
-      </MAXIMUM>
-      <LOADS>
-        <LOAD>
-          <OPERATION NAME="make end item" />
-        </LOAD>
-      </LOADS>
-    </RESOURCE>
-  </RESOURCES>
-  <FLOWS>
-    <FLOW xsi:type="FLOW_START">
-      <OPERATION NAME="delivery end item" />
-      <BUFFER NAME="end item" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
-      <OPERATION NAME="make end item" />
-      <BUFFER NAME="end item" />
-      <QUANTITY>1</QUANTITY>
-    </FLOW>
-  </FLOWS>
-  <DEMANDS>
-    <DEMAND NAME="order 1">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-01-20T00:00:00</DUE>
-      <PRIORITY>1</PRIORITY>
-      <ITEM NAME="end item" />
-    </DEMAND>
-    <DEMAND NAME="order 2">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-01-20T00:00:00</DUE>
-      <PRIORITY>2</PRIORITY>
-      <ITEM NAME="end item" />
-    </DEMAND>
-    <DEMAND NAME="order 3">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-01-17T12:00:00</DUE>
-      <PRIORITY>3</PRIORITY>
-      <ITEM NAME="end item" />
-    </DEMAND>
-    <DEMAND NAME="order 4">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-01-20T00:00:00</DUE>
-      <PRIORITY>4</PRIORITY>
-      <ITEM NAME="end item" />
-    </DEMAND>
-  </DEMANDS>
-</PLAN>
+  </description>
+  <current>2007-01-01T00:00:00</current>
+  <commands>
+    <verbose>true</verbose>
+    <command xsi:type="command_solve">
+      <verbose>false</verbose>
+      <solver name="MRP" xsi:type="solver_mrp" constraints="7" />
+    </command>
+    <command xsi:type="command_saveplan">
+      <filename>output.1.xml</filename>
+    </command>
+  </commands>
+  <calendars>
+    <calendar name="Weeks" xsi:type="calendar_void">
+      <buckets>
+        <bucket start="2007-01-01T00:00:00">
+          <name>Jan Week1</name>
+        </bucket>
+        <bucket start="2007-01-07T00:00:00">
+          <name>Jan Week2</name>
+        </bucket>
+        <bucket start="2007-01-14T00:00:00">
+          <name>Jan Week3</name>
+        </bucket>
+        <bucket start="2007-01-21T00:00:00">
+          <name>Jan Week4</name>
+        </bucket>
+        <bucket start="2007-01-28T00:00:00">
+          <name>Jan Week5</name>
+        </bucket>
+        <bucket start="2007-02-04T00:00:00">
+          <name>Feb Week1</name>
+        </bucket>
+        <bucket start="2007-02-11T00:00:00">
+          <name>Feb Week2</name>
+        </bucket>
+        <bucket start="2007-02-18T00:00:00">
+          <name>Feb Week3</name>
+        </bucket>
+        <bucket start="2007-02-25T00:00:00">
+          <name>Feb Week4</name>
+        </bucket>
+        <bucket start="2007-03-04T00:00:00">
+          <name>Mar Week1</name>
+        </bucket>
+        <bucket start="2007-03-11T00:00:00">
+          <name>Mar Week2</name>
+        </bucket>
+        <bucket start="2007-03-18T00:00:00">
+          <name>Mar Week3</name>
+        </bucket>
+        <bucket start="2007-03-25T00:00:00">
+          <name>Mar Week4</name>
+        </bucket>
+        <bucket start="2007-04-01T00:00:00">
+          <name>Remainder</name>
+        </bucket>
+      </buckets>
+    </calendar>
+  </calendars>
+  <operations>
+    <operation name="make end item" xsi:type="operation_fixed_time">
+      <duration>P1D</duration>
+    </operation>
+  </operations>
+  <items>
+    <item name="end item">
+      <operation name="delivery end item" xsi:type="operation_fixed_time">
+        <duration>P1D</duration>
+      </operation>
+    </item>
+  </items>
+  <buffers>
+    <buffer name="end item">
+      <producing name="make end item" />
+      <item name="end item" />
+    </buffer>
+  </buffers>
+  <resources>
+    <resource name="Resource">
+      <maximum name="Capacity" xsi:type="calendar_float">
+        <buckets>
+          <bucket start="2007-01-01T00:00:00">
+            <value>1</value>
+          </bucket>
+        </buckets>
+      </maximum>
+      <loads>
+        <load>
+          <operation name="make end item" />
+        </load>
+      </loads>
+    </resource>
+  </resources>
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="delivery end item" />
+      <buffer name="end item" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="make end item" />
+      <buffer name="end item" />
+      <quantity>1</quantity>
+    </flow>
+  </flows>
+  <demands>
+    <demand name="order 1">
+      <quantity>10</quantity>
+      <due>2007-01-20T00:00:00</due>
+      <priority>1</priority>
+      <item name="end item" />
+    </demand>
+    <demand name="order 2">
+      <quantity>10</quantity>
+      <due>2007-01-20T00:00:00</due>
+      <priority>2</priority>
+      <item name="end item" />
+    </demand>
+    <demand name="order 3">
+      <quantity>10</quantity>
+      <due>2007-01-17T12:00:00</due>
+      <priority>3</priority>
+      <item name="end item" />
+    </demand>
+    <demand name="order 4">
+      <quantity>10</quantity>
+      <due>2007-01-20T00:00:00</due>
+      <priority>4</priority>
+      <item name="end item" />
+    </demand>
+  </demands>
+</plan>

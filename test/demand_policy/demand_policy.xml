@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <NAME>actual plan</NAME>
-  <DESCRIPTION>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>actual plan</name>
+  <description>
     Verify the demand policies.
     The supply situation is such that half of the demand can be met in time, and
     half of it late.
-      Demand = 20 on due date 5 Jan
+      demand = 20 on due date 5 Jan
       Supply = 10 available as inventory
                + 10 arriving on 10 Jan
     The demand policy controls how the demand is allowed to be planned:
@@ -27,213 +27,213 @@
           delivery date.
           In this case the onhand on jan 5 is increased to 15.
           -> A delivery of 20 units on 10 Jan
-  </DESCRIPTION>
-  <CURRENT>2007-01-01T00:00:00</CURRENT>
-  <COMMANDS>
-    <VERBOSE>true</VERBOSE>
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" LOGLEVEL="2" />
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN">
-      <FILENAME>output.1.xml</FILENAME>
-    </COMMAND>
-  </COMMANDS>
-  <OPERATIONS>
-    <OPERATION NAME="supply item A" xsi:type="OPERATION_FIXED_TIME"/>
-    <OPERATION NAME="supply item B" xsi:type="OPERATION_FIXED_TIME"/>
-    <OPERATION NAME="supply item C" xsi:type="OPERATION_FIXED_TIME"/>
-    <OPERATION NAME="supply item D" xsi:type="OPERATION_FIXED_TIME"/>
-    <OPERATION NAME="supply item E" xsi:type="OPERATION_FIXED_TIME"/>
-    <OPERATION NAME="supply item F" xsi:type="OPERATION_FIXED_TIME"/>
-  </OPERATIONS>
-  <ITEMS>
-    <ITEM NAME="item A">
-      <OPERATION NAME="delivery item A" xsi:type="OPERATION_FIXED_TIME"/>
-    </ITEM>
-    <ITEM NAME="item B">
-      <OPERATION NAME="delivery item B" xsi:type="OPERATION_FIXED_TIME"/>
-    </ITEM>
-    <ITEM NAME="item C">
-      <OPERATION NAME="delivery item C" xsi:type="OPERATION_FIXED_TIME"/>
-    </ITEM>
-    <ITEM NAME="item D">
-      <OPERATION NAME="delivery item D" xsi:type="OPERATION_FIXED_TIME"/>
-    </ITEM>
-    <ITEM NAME="item E">
-      <OPERATION NAME="delivery item E" xsi:type="OPERATION_FIXED_TIME"/>
-    </ITEM>
-    <ITEM NAME="item F">
-      <OPERATION NAME="delivery item F" xsi:type="OPERATION_FIXED_TIME"/>
-    </ITEM>
-  </ITEMS>
-  <BUFFERS>
-    <BUFFER NAME="buffer A">
-      <ITEM NAME="item A" />
-      <ONHAND>10</ONHAND>
-    </BUFFER>
-    <BUFFER NAME="buffer B">
-      <ITEM NAME="item B" />
-      <ONHAND>10</ONHAND>
-    </BUFFER>
-    <BUFFER NAME="buffer C">
-      <ITEM NAME="item C" />
-      <ONHAND>10</ONHAND>
-    </BUFFER>
-    <BUFFER NAME="buffer D">
-      <ITEM NAME="item D" />
-      <ONHAND>10</ONHAND>
-    </BUFFER>
-    <BUFFER NAME="buffer E">
-      <ITEM NAME="item E" />
-      <ONHAND>10</ONHAND>
-    </BUFFER>
-    <BUFFER NAME="buffer F">
-      <ITEM NAME="item F" />
-      <ONHAND>15</ONHAND>
-    </BUFFER>
-  </BUFFERS>
-  <FLOWS>
-    <FLOW xsi:type="FLOW_START">
-      <OPERATION NAME="delivery item A" />
-      <BUFFER NAME="buffer A" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
-      <OPERATION NAME="supply item A" />
-      <BUFFER NAME="buffer A" />
-      <QUANTITY>1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_START">
-      <OPERATION NAME="delivery item B" />
-      <BUFFER NAME="buffer B" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
-      <OPERATION NAME="supply item B" />
-      <BUFFER NAME="buffer B" />
-      <QUANTITY>1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_START">
-      <OPERATION NAME="delivery item C" />
-      <BUFFER NAME="buffer C" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
-      <OPERATION NAME="supply item C" />
-      <BUFFER NAME="buffer C" />
-      <QUANTITY>1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_START">
-      <OPERATION NAME="delivery item D" />
-      <BUFFER NAME="buffer D" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
-      <OPERATION NAME="supply item D" />
-      <BUFFER NAME="buffer D" />
-      <QUANTITY>1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_START">
-      <OPERATION NAME="delivery item E" />
-      <BUFFER NAME="buffer E" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
-      <OPERATION NAME="supply item E" />
-      <BUFFER NAME="buffer E" />
-      <QUANTITY>1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_START">
-      <OPERATION NAME="delivery item F" />
-      <BUFFER NAME="buffer F" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW>
-    <FLOW xsi:type="FLOW_END">
-      <OPERATION NAME="supply item F" />
-      <BUFFER NAME="buffer F" />
-      <QUANTITY>1</QUANTITY>
-    </FLOW>
-  </FLOWS>
-	<OPERATION_PLANS>
-	  <OPERATION_PLAN ID="1001" OPERATION="supply item A">
-	    <START>2007-01-10T00:00:00</START>
-	    <END>2007-01-10T00:00:00</END>
-	    <QUANTITY>10</QUANTITY>
-	    <LOCKED>true</LOCKED>
-	  </OPERATION_PLAN>
-	  <OPERATION_PLAN ID="1002" OPERATION="supply item B">
-	    <START>2007-01-10T00:00:00</START>
-	    <END>2007-01-10T00:00:00</END>
-	    <QUANTITY>10</QUANTITY>
-	    <LOCKED>true</LOCKED>
-	  </OPERATION_PLAN>
-	  <OPERATION_PLAN ID="1003" OPERATION="supply item C">
-	    <START>2007-01-10T00:00:00</START>
-	    <END>2007-01-10T00:00:00</END>
-	    <QUANTITY>10</QUANTITY>
-	    <LOCKED>true</LOCKED>
-	  </OPERATION_PLAN>
-	  <OPERATION_PLAN ID="1004" OPERATION="supply item D">
-	    <START>2007-01-10T00:00:00</START>
-	    <END>2007-01-10T00:00:00</END>
-	    <QUANTITY>10</QUANTITY>
-	    <LOCKED>true</LOCKED>
-	  </OPERATION_PLAN>
-	  <OPERATION_PLAN ID="1005" OPERATION="supply item E">
-	    <START>2007-01-10T00:00:00</START>
-	    <END>2007-01-10T00:00:00</END>
-	    <QUANTITY>10</QUANTITY>
-	    <LOCKED>true</LOCKED>
-	  </OPERATION_PLAN>
-	  <OPERATION_PLAN ID="1006" OPERATION="supply item F">
-	    <START>2007-01-10T00:00:00</START>
-	    <END>2007-01-10T00:00:00</END>
-	    <QUANTITY>10</QUANTITY>
-	    <LOCKED>true</LOCKED>
-	  </OPERATION_PLAN>
-	</OPERATION_PLANS>
-  <DEMANDS>
-    <DEMAND NAME="order A">
-      <QUANTITY>20</QUANTITY>
-      <DUE>2007-01-05T00:00:00</DUE>
-      <PRIORITY>1</PRIORITY>
-      <ITEM NAME="item A" />
-    </DEMAND>
-    <DEMAND NAME="order B">
-      <QUANTITY>20</QUANTITY>
-      <DUE>2007-01-05T00:00:00</DUE>
-      <PRIORITY>1</PRIORITY>
-      <ITEM NAME="item B" />
-      <MAXLATENESS>P0D</MAXLATENESS>
-    </DEMAND>
-    <DEMAND NAME="order C">
-      <QUANTITY>20</QUANTITY>
-      <DUE>2007-01-05T00:00:00</DUE>
-      <PRIORITY>1</PRIORITY>
-      <ITEM NAME="item C" />
-      <MINSHIPMENT>20</MINSHIPMENT>
-    </DEMAND>
-    <DEMAND NAME="order D">
-      <QUANTITY>20</QUANTITY>
-      <DUE>2007-01-05T00:00:00</DUE>
-      <PRIORITY>1</PRIORITY>
-      <ITEM NAME="item D" />
-      <MAXLATENESS>P0D</MAXLATENESS>
-      <MINSHIPMENT>20</MINSHIPMENT>
-    </DEMAND>
-    <DEMAND NAME="order E">
-      <QUANTITY>20</QUANTITY>
-      <DUE>2007-01-05T00:00:00</DUE>
-      <PRIORITY>1</PRIORITY>
-      <ITEM NAME="item E" />
-      <MAXLATENESS>P2D</MAXLATENESS>
-    </DEMAND>
-    <DEMAND NAME="order F">
-      <QUANTITY>20</QUANTITY>
-      <DUE>2007-01-05T00:00:00</DUE>
-      <PRIORITY>1</PRIORITY>
-      <ITEM NAME="item F" />
-      <MINSHIPMENT>11</MINSHIPMENT>
-    </DEMAND>
-  </DEMANDS>
-</PLAN>
+  </description>
+  <current>2007-01-01T00:00:00</current>
+  <commands>
+    <verbose>true</verbose>
+    <command xsi:type="command_solve">
+      <solver name="MRP" xsi:type="solver_mrp" constraints="7" loglevel="2" />
+    </command>
+    <command xsi:type="command_saveplan">
+      <filename>output.1.xml</filename>
+    </command>
+  </commands>
+  <operations>
+    <operation name="supply item A" xsi:type="operation_fixed_time"/>
+    <operation name="supply item B" xsi:type="operation_fixed_time"/>
+    <operation name="supply item C" xsi:type="operation_fixed_time"/>
+    <operation name="supply item D" xsi:type="operation_fixed_time"/>
+    <operation name="supply item E" xsi:type="operation_fixed_time"/>
+    <operation name="supply item F" xsi:type="operation_fixed_time"/>
+  </operations>
+  <items>
+    <item name="item A">
+      <operation name="delivery item A" xsi:type="operation_fixed_time"/>
+    </item>
+    <item name="item B">
+      <operation name="delivery item B" xsi:type="operation_fixed_time"/>
+    </item>
+    <item name="item C">
+      <operation name="delivery item C" xsi:type="operation_fixed_time"/>
+    </item>
+    <item name="item D">
+      <operation name="delivery item D" xsi:type="operation_fixed_time"/>
+    </item>
+    <item name="item E">
+      <operation name="delivery item E" xsi:type="operation_fixed_time"/>
+    </item>
+    <item name="item F">
+      <operation name="delivery item F" xsi:type="operation_fixed_time"/>
+    </item>
+  </items>
+  <buffers>
+    <buffer name="buffer A">
+      <item name="item A" />
+      <onhand>10</onhand>
+    </buffer>
+    <buffer name="buffer B">
+      <item name="item B" />
+      <onhand>10</onhand>
+    </buffer>
+    <buffer name="buffer C">
+      <item name="item C" />
+      <onhand>10</onhand>
+    </buffer>
+    <buffer name="buffer D">
+      <item name="item D" />
+      <onhand>10</onhand>
+    </buffer>
+    <buffer name="buffer E">
+      <item name="item E" />
+      <onhand>10</onhand>
+    </buffer>
+    <buffer name="buffer F">
+      <item name="item F" />
+      <onhand>15</onhand>
+    </buffer>
+  </buffers>
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="delivery item A" />
+      <buffer name="buffer A" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="supply item A" />
+      <buffer name="buffer A" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="delivery item B" />
+      <buffer name="buffer B" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="supply item B" />
+      <buffer name="buffer B" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="delivery item C" />
+      <buffer name="buffer C" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="supply item C" />
+      <buffer name="buffer C" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="delivery item D" />
+      <buffer name="buffer D" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="supply item D" />
+      <buffer name="buffer D" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="delivery item E" />
+      <buffer name="buffer E" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="supply item E" />
+      <buffer name="buffer E" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="delivery item F" />
+      <buffer name="buffer F" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="supply item F" />
+      <buffer name="buffer F" />
+      <quantity>1</quantity>
+    </flow>
+  </flows>
+	<operation_plans>
+	  <operation_plan id="1001" operation="supply item A">
+	    <start>2007-01-10T00:00:00</start>
+	    <end>2007-01-10T00:00:00</end>
+	    <quantity>10</quantity>
+	    <locked>true</locked>
+	  </operation_plan>
+	  <operation_plan id="1002" operation="supply item B">
+	    <start>2007-01-10T00:00:00</start>
+	    <end>2007-01-10T00:00:00</end>
+	    <quantity>10</quantity>
+	    <locked>true</locked>
+	  </operation_plan>
+	  <operation_plan id="1003" operation="supply item C">
+	    <start>2007-01-10T00:00:00</start>
+	    <end>2007-01-10T00:00:00</end>
+	    <quantity>10</quantity>
+	    <locked>true</locked>
+	  </operation_plan>
+	  <operation_plan id="1004" operation="supply item D">
+	    <start>2007-01-10T00:00:00</start>
+	    <end>2007-01-10T00:00:00</end>
+	    <quantity>10</quantity>
+	    <locked>true</locked>
+	  </operation_plan>
+	  <operation_plan id="1005" operation="supply item E">
+	    <start>2007-01-10T00:00:00</start>
+	    <end>2007-01-10T00:00:00</end>
+	    <quantity>10</quantity>
+	    <locked>true</locked>
+	  </operation_plan>
+	  <operation_plan id="1006" operation="supply item F">
+	    <start>2007-01-10T00:00:00</start>
+	    <end>2007-01-10T00:00:00</end>
+	    <quantity>10</quantity>
+	    <locked>true</locked>
+	  </operation_plan>
+	</operation_plans>
+  <demands>
+    <demand name="order A">
+      <quantity>20</quantity>
+      <due>2007-01-05T00:00:00</due>
+      <priority>1</priority>
+      <item name="item A" />
+    </demand>
+    <demand name="order B">
+      <quantity>20</quantity>
+      <due>2007-01-05T00:00:00</due>
+      <priority>1</priority>
+      <item name="item B" />
+      <maxlateness>P0D</maxlateness>
+    </demand>
+    <demand name="order C">
+      <quantity>20</quantity>
+      <due>2007-01-05T00:00:00</due>
+      <priority>1</priority>
+      <item name="item C" />
+      <minshipment>20</minshipment>
+    </demand>
+    <demand name="order D">
+      <quantity>20</quantity>
+      <due>2007-01-05T00:00:00</due>
+      <priority>1</priority>
+      <item name="item D" />
+      <maxlateness>P0D</maxlateness>
+      <minshipment>20</minshipment>
+    </demand>
+    <demand name="order E">
+      <quantity>20</quantity>
+      <due>2007-01-05T00:00:00</due>
+      <priority>1</priority>
+      <item name="item E" />
+      <maxlateness>P2D</maxlateness>
+    </demand>
+    <demand name="order F">
+      <quantity>20</quantity>
+      <due>2007-01-05T00:00:00</due>
+      <priority>1</priority>
+      <item name="item F" />
+      <minshipment>11</minshipment>
+    </demand>
+  </demands>
+</plan>

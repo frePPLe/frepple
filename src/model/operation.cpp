@@ -45,16 +45,16 @@ DECLARE_EXPORT Operation::~Operation()
 
   // Remove the reference to this operation from all items
   for (Item::iterator k = Item::begin(); k != Item::end(); ++k)
-    if (k->getDelivery() == this) WLock<Item>(&*k)->setDelivery(NULL);
+    if (k->getDelivery() == this) Item::writepointer(&*k)->setDelivery(NULL);
 
   // Remove the reference to this operation from all demands
   for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)
-    if (l->getOperation() == this) WLock<Demand>(&*l)->setOperation(NULL);
+    if (l->getOperation() == this) Demand::writepointer(&*l)->setOperation(NULL);
 
   // Remove the reference to this operation from all buffers
   for (Buffer::iterator m = Buffer::begin(); m != Buffer::end(); ++m)
     if (m->getProducingOperation() == this)
-      WLock<Buffer>(&*m)->setProducingOperation(NULL);
+      Buffer::writepointer(&*m)->setProducingOperation(NULL);
 
   // Remove the operation from its super-operations and sub-operations
   // Note that we are not using a for-loop since our function is actually
@@ -169,7 +169,7 @@ DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, XMLElement& pElement
   else if (pElement.isA (Tags::tag_load)
       && pIn.getParentElement().isA(Tags::tag_loads))
   {
-    Object::WLock<Load> l = new Load();
+    Load::writepointer l = new Load();
     l->setOperation(this);
     pIn.readto(&*l);
   }
@@ -671,163 +671,5 @@ DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
     << "' isn't a suboperation of alternate operation '" << *this
     << "'" << endl;
 }
-
-
-DECLARE_EXPORT void OperationEffective::writeElement
-(XMLOutput *o, const XMLtag& tag, mode m) const
-{
-  // Writing a reference
-  if (m == REFERENCE)
-  {
-    o->writeElement
-      (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-    return;
-  }
-
-  // Write the complete object
-  if (m != NOHEADER) o->BeginObject
-    (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
-
-  // Write the fields
-  Operation::writeElement(o, tag, NOHEADER);
-  o->writeElement(Tags::tag_calendar, cal);
-  if (!useEndDate) o->writeElement(Tags::tag_startorend, useEndDate);
-  o->EndObject(tag);
-}
-
-
-DECLARE_EXPORT void OperationEffective::beginElement(XMLInput& pIn, XMLElement& pElement)
-{
-  if (pElement.isA(Tags::tag_calendar))
-    pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
-  else
-    Operation::beginElement(pIn, pElement);
-}
-
-
-DECLARE_EXPORT void OperationEffective::endElement(XMLInput& pIn, XMLElement& pElement)
-{
-  if (pElement.isA(Tags::tag_calendar))
-  {
-    CalendarOperation* c =
-      dynamic_cast<CalendarOperation*>(pIn.getPreviousObject());
-    if (c)
-      setCalendar(c);
-    else
-    {
-      Calendar *c = dynamic_cast<Calendar*>(pIn.getPreviousObject());
-      if (!c)
-        throw LogicException("Incorrect object type during read operation");
-      throw DataException("Calendar '" + c->getName() +
-          "' has invalid type for use as effective operation calendar");
-    }
-  }
-  else if (pElement.isA(Tags::tag_startorend))
-    setUseEndDate(pElement.getBool());
-  else
-    Operation::endElement (pIn, pElement);
-}
-
-
-DECLARE_EXPORT OperationPlan* OperationEffective::createOperationPlan
-(float q, Date s, Date e, const Demand* l, OperationPlan* ow,
- unsigned long i, bool makeflowsloads) const
-{
-  // Note that the operationplan created is of a different subclass.
-  OperationPlan *opplan = new OperationPlanEffective();
-  initOperationPlan(opplan,q,s,e,l,ow,i,makeflowsloads);
-  return opplan;
-}
-
-
-DECLARE_EXPORT void OperationEffective::setOperationPlanParameters
-(OperationPlan* opplan, float q, Date s, Date e, bool preferEnd) const
-{
-  // Argument passed must be a alternate operationplan
-  OperationPlanEffective *oa = dynamic_cast<OperationPlanEffective*>(opplan);
-
-  // Invalid calls to this function
-  if (!oa || q<0) return;
-
-  // Need a calendar
-  if (!cal)
-    throw DataException("Effective operation '" + getName()
-        + "' with unspecified calendar");
-
-  // Need at least 1 date
-  if (!e && !s)
-    throw LogicException ("Need at least 1 date when creating " \
-        "suboperationplans for operation '" + getName() + "'");
-
-  // Loop till we have an suboperationplan that is valid
-  do
-  {
-    if (oa->effopplan)
-    {
-      // Update existing suboperationplan to meet new quantity, start and end
-      oa->effopplan->getOperation()
-        ->setOperationPlanParameters(oa->effopplan,q,s,e,preferEnd);
-
-      // Look up the correct operation to use
-      Operation* oper = cal->getValue( useEndDate ?
-          oa->effopplan->getDates().getEnd() :
-          oa->effopplan->getDates().getStart() );
-
-      // Compare current suboperation with the expected one
-      if (oper == oa->effopplan->getOperation())
-        // Suboperationplan is still valid indeed. Mission accomplished.
-        return;
-
-      // Use dates of the existing operationplan for new creation
-      if (!s && !useEndDate) s = oa->effopplan->getDates().getStart();
-      if (!e && useEndDate) e = oa->effopplan->getDates().getEnd();
-
-      // We need to clear the owner pointer before deleting the
-      // suboperationplan. Otherwise oa will get deleted itself...
-      oa->effopplan->owner = NULL;
-      delete oa->effopplan;
-      oa->effopplan = NULL;
-    }
-
-    // Need to create a new suboperationplan
-    if (useEndDate)
-    {
-      Operation* oper = cal->getValue(e ? e : s);
-      if (oper)
-        oa->effopplan = oper->createOperationPlan(q, Date::infinitePast, e, NULL, oa);
-      else
-        throw LogicException
-        ("Invalid effective calendar for operation " + getName());
-    }
-    else
-    {
-      Operation* oper = cal->getValue(s ? s : e);
-      if (oper)
-        oa->effopplan = oper->createOperationPlan(q, s, Date::infinitePast, NULL, oa);
-      else
-        throw LogicException
-        ("Invalid effective calendar for operation " + getName());
-    }
-
-    // Verify the newly created operationplan
-    Operation* oper = cal->getValue(
-          useEndDate ?
-          oa->effopplan->getDates().getEnd() :
-          oa->effopplan->getDates().getStart() );
-
-    // Compare current suboperation with the expected one
-    if (oper == oa->effopplan->getOperation())
-      // Suboperationplan is still valid indeed. Mission accomplished.
-      return;
-
-    // If the created operationplan turns out to be invalid, we loop again.
-    // This could happen if e.g. the effective operation is based on the end
-    // start, while the call to this function was passed a start date instead.
-    // After the creation we need to double-check the result, and potentially
-    // even redo it.
-  }
-  while (true);
-}
-
 
 }

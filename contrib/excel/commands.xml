@@ -1,34 +1,34 @@
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <LOGFILE>frepple.log</LOGFILE>
-  <COMMANDS>
-    <VERBOSE>true</VERBOSE>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <logfile>frepple.log</logfile>
+  <commands>
+    <verbose>true</verbose>
     <!--
       Update this section when you define new input mappings.
       Every input mapping should have an appropriate command to read the file
       with the same name.
     -->
-    <COMMAND xsi:type="COMMAND_READXML"
-      FILENAME="frepple.xml"
-      VALIDATE="true" />
+    <command xsi:type="command_readxml"
+      filename="frepple.xml"
+      validate="true" />
     <!-- Run the solver. -->
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP"
-        CONSTRAINTS="7" VERBOSE="true"/>
-    </COMMAND>
+    <command xsi:type="command_solve">
+      <solver name="MRP" xsi:type="solver_mrp"
+        constraints="7" VERBOSE="true"/>
+    </command>
     <!--
       Update this section when you define new output mappings.
       Every output mapping should have an appropriate command to save the file
       with the same name.
     -->
-    <COMMAND xsi:type="COMMAND_SAVE"
-      FILENAME="output_with_pegging.xml"
-      CONTENT="PLANDETAIL" />
-    <COMMAND xsi:type="COMMAND_SAVE"
-      FILENAME="output.xml"
-      CONTENT="PLAN" />
+    <command xsi:type="command_save"
+      filename="output_with_pegging.xml"
+      content="PLANDETAIL" />
+    <command xsi:type="command_save"
+      filename="output.xml"
+      content="PLAN" />
     <!--
       Prints some information about the memory consumption into the logfile.
     -->
-    <COMMAND xsi:type="COMMAND_SIZE"/>
-  </COMMANDS>
-</PLAN>
+    <command xsi:type="command_size"/>
+  </commands>
+</plan>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <COMMANDS>
-    <VERBOSE>false</VERBOSE>
-    <ABORTONERROR>false</ABORTONERROR>
-    <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_forecast.so">
-       <PARAMETER NAME="Customer_Then_Item_Hierarchy" VALUE="true" />
-       <PARAMETER NAME="Match_Using_Delivery_Operation" VALUE="false" />
-    </COMMAND>
-  </COMMANDS>
-</PLAN>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <commands>
+    <verbose>false</verbose>
+    <abortonerror>false</abortonerror>
+    <command xsi:type="command_loadlib" filename="mod_forecast.so">
+       <parameter name="Customer_Then_Item_Hierarchy" value="true" />
+       <parameter name="Match_Using_Delivery_Operation" value="false" />
+    </command>
+  </commands>
+</plan>

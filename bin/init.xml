@@ -20,7 +20,7 @@
  License along with this library; if not, write to the Free Software
  Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 -->
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <!--
   This file is a frepple command file that is automatically read by frepple
   when the library is being initialized. It can be used to set create some
@@ -34,26 +34,26 @@
   aborted.
   -->
   <!--
-  <LOGFILE>/home/johan/workspace/frepple/contrib/apache/frepple.log</LOGFILE>
+  <logfile>/home/johan/workspace/frepple/contrib/apache/frepple.log</logfile>
   -->
-  <COMMANDS>
-    <VERBOSE>false</VERBOSE>
-    <ABORTONERROR>false</ABORTONERROR>
+  <commands>
+    <verbose>false</verbose>
+    <abortonerror>false</abortonerror>
     <!-- Python interpreter module -->
-    <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_python.so" />
+    <command xsi:type="command_loadlib" filename="mod_python.so" />
     <!-- Forecast module -->
-    <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_forecast.so">
-      <PARAMETER NAME="Customer_Then_Item_Hierarchy" VALUE="true" />
-      <PARAMETER NAME="Match_Using_Delivery_Operation" VALUE="false" />
-      <PARAMETER NAME="Net_Early" VALUE="P4W" />
-      <PARAMETER NAME="Net_Late" VALUE="P4W" />
-    </COMMAND>
+    <command xsi:type="command_loadlib" filename="mod_forecast.so">
+      <parameter name="Customer_Then_Item_Hierarchy" value="true" />
+      <parameter name="Match_Using_Delivery_Operation" value="false" />
+      <parameter name="Net_Early" value="P4W" />
+      <parameter name="Net_Late" value="P4W" />
+    </command>
     <!-- Webservice module -->
     <!--
-    <COMMAND xsi:type="COMMAND_LOADLIB" FILENAME="mod_webservice.so">
-      <PARAMETER NAME="port" VALUE="6262" />
-      <PARAMETER NAME="threads" VALUE="5" />
-    </COMMAND>
+    <command xsi:type="command_loadlib" filename="mod_webservice.so">
+      <parameter name="port" value="6262" />
+      <parameter name="threads" value="5" />
+    </command>
     -->
-  </COMMANDS>
-</PLAN>
+  </commands>
+</plan>

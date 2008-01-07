@@ -53,8 +53,8 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
   // Initialize the metadata.
   LPSolver::metadata.registerClass(
-    "SOLVER",
-    "SOLVER_LP",
+    "solver",
+    "solver_lp",
     Object::createString<LPSolver>);
 
   // Return the name of the module

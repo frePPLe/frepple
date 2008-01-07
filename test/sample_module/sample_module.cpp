@@ -39,8 +39,8 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   static const char* name = "sample";
   // Register the new class
   OperationTransport::metadata.registerClass(
-    "OPERATION",
-    "OPERATION_TRANSPORT",
+    "operation",
+    "operation_transport",
     Object::createString<OperationTransport>);
 
   // Register a callback

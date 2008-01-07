@@ -198,10 +198,10 @@ extern "C" PyObject* PythonForecast::next(PythonForecast* obj)
   {
     // Build a python dictionary
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:O}",
-      "NAME", obj->iter->second->getName().c_str(),
-      "CUSTOMER", obj->iter->first.second ? obj->iter->first.second->getName().c_str() : NULL,
-      "ITEM", obj->iter->first.first ? obj->iter->first.first->getName().c_str() : NULL,
-      "BUCKETS", PythonForecastBucket::createFromForecast(&*(obj->iter->second))
+      "name", obj->iter->second->getName().c_str(),
+      "customer", obj->iter->first.second ? obj->iter->first.second->getName().c_str() : NULL,
+      "item", obj->iter->first.first ? obj->iter->first.first->getName().c_str() : NULL,
+      "buckets", PythonForecastBucket::createFromForecast(&*(obj->iter->second))
       );
     ++(obj->iter);
     return result;
@@ -223,11 +223,11 @@ extern "C" PyObject* PythonForecastBucket::next(PythonForecastBucket* obj)
 {
   if (!obj->iter) return NULL;
   PyObject* result = Py_BuildValue("{s:N,s:N,s:f,s:f,s:f}",
-    "START_DATE", PythonDateTime(obj->iter->timebucket.getStart()),
-    "END_DATE", PythonDateTime(obj->iter->timebucket.getEnd()),
-    "TOTALQTY", obj->iter->total,
-    "CONSUMEDQTY", obj->iter->consumed,
-    "NETQTY", obj->iter->total - obj->iter->consumed
+    "start_date", PythonDateTime(obj->iter->timebucket.getStart()),
+    "end_date", PythonDateTime(obj->iter->timebucket.getEnd()),
+    "totalqty", obj->iter->total,
+    "consumedqty", obj->iter->consumed,
+    "netqty", obj->iter->total - obj->iter->consumed
     );
   obj->iter = obj->iter->next;
   return result;

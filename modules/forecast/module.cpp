@@ -69,12 +69,12 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
   // Initialize the metadata.
   Forecast::metadata.registerClass(
-    "DEMAND",
-    "DEMAND_FORECAST",
+    "demand",
+    "demand_forecast",
     Object::createString<Forecast>);
   ForecastSolver::metadata.registerClass(
-    "SOLVER",
-    "SOLVER_FORECAST",
+    "solver",
+    "solver_forecast",
     Object::createString<ForecastSolver>);
 
   // Get notified when a calendar is deleted

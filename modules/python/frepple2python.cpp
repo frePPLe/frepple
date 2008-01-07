@@ -64,12 +64,12 @@ extern "C" PyObject* PythonProblem::next(PythonProblem* obj)
   if (*(obj->iter) != Problem::end())
   {
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:N,s:N,s:f}",
-      "DESCRIPTION", (*(obj->iter))->getDescription().c_str(),
-      "ENTITY", (*(obj->iter))->getOwner()->getEntity()->getType().category->group.c_str(),
-      "TYPE", (*(obj->iter))->getType().type.c_str(),
-      "START", PythonDateTime((*(obj->iter))->getDateRange().getStart()),
-      "END", PythonDateTime((*(obj->iter))->getDateRange().getEnd()),
-      "WEIGHT", (*(obj->iter))->getWeight()
+      "description", (*(obj->iter))->getDescription().c_str(),
+      "entity", (*(obj->iter))->getOwner()->getEntity()->getType().category->group.c_str(),
+      "type", (*(obj->iter))->getType().type.c_str(),
+      "start", PythonDateTime((*(obj->iter))->getDateRange().getStart()),
+      "end", PythonDateTime((*(obj->iter))->getDateRange().getEnd()),
+      "weight", (*(obj->iter))->getWeight()
       );
      ++*(obj->iter);
     return result;
@@ -112,11 +112,11 @@ extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj)
       if (f && f->getHidden()) f = NULL;
     }
     PyObject* result = Py_BuildValue("{s:s,s:l,s:f,s:N,s:f}",
-      "BUFFER", f->getFlow()->getBuffer()->getName().c_str(),
-      "OPERATIONPLAN", f->getOperationPlan()->getIdentifier(),
-      "QUANTITY", obj->iter->getQuantity(),
-      "DATE", PythonDateTime(obj->iter->getDate()),
-      "ONHAND", obj->iter->getOnhand()
+      "buffer", f->getFlow()->getBuffer()->getName().c_str(),
+      "operationplan", f->getOperationPlan()->getIdentifier(),
+      "quantity", obj->iter->getQuantity(),
+      "date", PythonDateTime(obj->iter->getDate()),
+      "onhand", obj->iter->getOnhand()
       );
     ++(obj->iter);
     return result;
@@ -158,11 +158,11 @@ extern "C" PyObject* PythonLoadPlan::next(PythonLoadPlan* obj)
       if (f && (f->getHidden() || f->getQuantity()<0)) f = NULL;
     }
     PyObject* result = Py_BuildValue("{s:s,s:l,s:f,s:N,s:N}",
-      "RESOURCE", f->getLoad()->getResource()->getName().c_str(),
-      "OPERATIONPLAN", f->getOperationPlan()->getIdentifier(),
-      "QUANTITY", obj->iter->getQuantity(),
-      "STARTDATE", PythonDateTime(f->getDate()),
-      "ENDDATE", PythonDateTime(f->getOtherLoadPlan()->getDate())
+      "resource", f->getLoad()->getResource()->getName().c_str(),
+      "operationplan", f->getOperationPlan()->getIdentifier(),
+      "quantity", obj->iter->getQuantity(),
+      "startdate", PythonDateTime(f->getDate()),
+      "enddate", PythonDateTime(f->getOtherLoadPlan()->getDate())
       );
     ++(obj->iter);
     return result;
@@ -199,18 +199,18 @@ extern "C" PyObject* PythonDemandPegging::next(PythonDemandPegging* obj)
   OperationPlan::pointer p_opplan = obj->iter->getProducingOperationplan();
   OperationPlan::pointer c_opplan = obj->iter->getConsumingOperationplan();
   PyObject* result = Py_BuildValue("{s:i,s:l,s:N,s:l,s:N,s:z,s:f,s:f,s:i}",
-    "LEVEL", obj->iter->getLevel(),
-    "CONS_OPERATIONPLAN",
+    "level", obj->iter->getLevel(),
+    "cons_operationplan",
       (!c_opplan || c_opplan->getHidden()) ? 0 : c_opplan->getIdentifier(),
-    "CONS_DATE", PythonDateTime(obj->iter->getConsumingDate()),
-    "PROD_OPERATIONPLAN",
+    "cons_date", PythonDateTime(obj->iter->getConsumingDate()),
+    "prod_operationplan",
       (!p_opplan || p_opplan->getHidden()) ? 0 : p_opplan->getIdentifier(),
-    "PROD_DATE", PythonDateTime(obj->iter->getProducingDate()),
-    "BUFFER", obj->iter->getBuffer()->getHidden() ? NULL
+    "prod_date", PythonDateTime(obj->iter->getProducingDate()),
+    "buffer", obj->iter->getBuffer()->getHidden() ? NULL
       : obj->iter->getBuffer()->getName().c_str(),
-    "QUANTITY_DEMAND", obj->iter->getQuantityDemand(),
-    "QUANTITY_BUFFER", obj->iter->getQuantityBuffer(),
-    "PEGGED", obj->iter->getPegged() ? 1 : 0
+    "quantity_demand", obj->iter->getQuantityDemand(),
+    "quantity_buffer", obj->iter->getQuantityBuffer(),
+    "pegged", obj->iter->getPegged() ? 1 : 0
     );
 
   // Increment iterator
@@ -245,14 +245,14 @@ extern "C" PyObject* PythonOperationPlan::next(PythonOperationPlan* obj)
     while (dem && dem->getHidden()) dem = dem->getOwner();
     // Build a python dictionary
     PyObject* result = Py_BuildValue("{s:l,s:s,s:f,s:N,s:N,s:z,s:b,s:l}",
-      "IDENTIFIER", obj->iter->getIdentifier(),
-      "OPERATION", obj->iter->getOperation()->getName().c_str(),
-      "QUANTITY", obj->iter->getQuantity(),
-      "START", PythonDateTime(obj->iter->getDates().getStart()),
-      "END", PythonDateTime(obj->iter->getDates().getEnd()),
-      "DEMAND", dem ? dem->getName().c_str() : NULL,
-      "LOCKED", obj->iter->getLocked(),
-      "OWNER", obj->iter->getOwner() ? obj->iter->getOwner()->getIdentifier() : 0
+      "identifier", obj->iter->getIdentifier(),
+      "operation", obj->iter->getOperation()->getName().c_str(),
+      "quantity", obj->iter->getQuantity(),
+      "start", PythonDateTime(obj->iter->getDates().getStart()),
+      "end", PythonDateTime(obj->iter->getDates().getEnd()),
+      "demand", dem ? dem->getName().c_str() : NULL,
+      "locked", obj->iter->getLocked(),
+      "owner", obj->iter->getOwner() ? obj->iter->getOwner()->getIdentifier() : 0
       );
     ++(obj->iter);
     return result;
@@ -301,16 +301,16 @@ extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
     obj->peggingiterator = PythonDemandPegging::createFromDemand(&*(obj->iter));
     obj->deliveryiterator = PythonDemandDelivery::createFromDemand(&*(obj->iter));
     PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z,s:z,s:O,s:O}",
-      "NAME", dem ? dem->getName().c_str() : "unspecified",
-      "QUANTITY", obj->iter->getQuantity(),
-			"DUE", PythonDateTime(obj->iter->getDue()),
-      "PRIORITY", obj->iter->getPriority(),
-      "ITEM", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
-      "OPERATION", obj->iter->getOperation() ? obj->iter->getOperation()->getName().c_str() : NULL,
-      "OWNER", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL,
-      "CUSTOMER", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL,
-      "PEGGING", obj->peggingiterator,
-      "DELIVERY", obj->deliveryiterator
+      "name", dem ? dem->getName().c_str() : "unspecified",
+      "quantity", obj->iter->getQuantity(),
+			"due", PythonDateTime(obj->iter->getDue()),
+      "priority", obj->iter->getPriority(),
+      "item", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
+      "operation", obj->iter->getOperation() ? obj->iter->getOperation()->getName().c_str() : NULL,
+      "owner", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL,
+      "customer", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL,
+      "pegging", obj->peggingiterator,
+      "delivery", obj->deliveryiterator
       );
     ++(obj->iter);
     return result;
@@ -359,12 +359,12 @@ extern "C" PyObject* PythonDemandDelivery::next(PythonDemandDelivery* obj)
     }
     // Build a python dictionary
     PyObject* result = Py_BuildValue("{s:z,s:N,s:f,s:N,s:f,s:l}",
-      "DEMAND", obj->dem_owner ? obj->dem_owner->getName().c_str() : NULL,
-			"DUE", PythonDateTime(obj->dem->getDue()),
-      "QUANTITY", p,
-			"PLANDATE", PythonDateTime((*(obj->iter))->getDates().getEnd()),
-      "PLANQUANTITY", (*(obj->iter))->getQuantity(),
-      "OPERATIONPLAN", (*(obj->iter))->getIdentifier()
+      "demand", obj->dem_owner ? obj->dem_owner->getName().c_str() : NULL,
+			"due", PythonDateTime(obj->dem->getDue()),
+      "quantity", p,
+			"plandate", PythonDateTime((*(obj->iter))->getDates().getEnd()),
+      "planquantity", (*(obj->iter))->getQuantity(),
+      "operationplan", (*(obj->iter))->getIdentifier()
       );
     ++(obj->iter);
     return result;
@@ -374,12 +374,12 @@ extern "C" PyObject* PythonDemandDelivery::next(PythonDemandDelivery* obj)
   if (obj->cumPlanned < obj->dem->getQuantity())
   {
     PyObject* result = Py_BuildValue("{s:z,s:N,s:f,s:z,s:z,s:z}",
-      "DEMAND", obj->dem_owner ? obj->dem_owner->getName().c_str() : NULL,
-			"DUE", PythonDateTime(obj->dem->getDue()),
-      "QUANTITY", obj->dem->getQuantity() - obj->cumPlanned,
-			"PLANDATE", NULL,
-      "PLANQUANTITY", NULL,
-      "OPERATIONPLAN", NULL
+      "demand", obj->dem_owner ? obj->dem_owner->getName().c_str() : NULL,
+			"due", PythonDateTime(obj->dem->getDue()),
+      "quantity", obj->dem->getQuantity() - obj->cumPlanned,
+			"plandate", NULL,
+      "planquantity", NULL,
+      "operationplan", NULL
       );
     obj->dem = NULL; // To make sure this is the last iteration
     return result;
@@ -424,17 +424,17 @@ extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj)
     // Build a python dictionary
     obj->flowplaniterator = PythonFlowPlan::createFromBuffer(&*(obj->iter));
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:f,s:z,s:z,s:z,s:z,s:z,s:O}",
-      "NAME", buf ? buf->getName().c_str() : "unspecified",
-      "CATEGORY", obj->iter->getCategory().c_str(),
-      "SUBCATEGORY", obj->iter->getSubCategory().c_str(),
-      "DESCRIPTION", obj->iter->getDescription().c_str(),
-      "ONHAND", obj->iter->getOnHand(),
-      "LOCATION", obj->iter->getLocation() ? obj->iter->getLocation()->getName().c_str() : NULL,
-      "ITEM", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
-      "MINIMUM", obj->iter->getMinimum() ? obj->iter->getMinimum()->getName().c_str() : NULL,
-      "MAXIMUM", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
-      "PRODUCING", obj->iter->getProducingOperation() ? obj->iter->getProducingOperation()->getName().c_str() : NULL,
-      "FLOWPLANS", obj->flowplaniterator
+      "name", buf ? buf->getName().c_str() : "unspecified",
+      "category", obj->iter->getCategory().c_str(),
+      "subcategory", obj->iter->getSubCategory().c_str(),
+      "description", obj->iter->getDescription().c_str(),
+      "onhand", obj->iter->getOnHand(),
+      "location", obj->iter->getLocation() ? obj->iter->getLocation()->getName().c_str() : NULL,
+      "item", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
+      "minimum", obj->iter->getMinimum() ? obj->iter->getMinimum()->getName().c_str() : NULL,
+      "maximum", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
+      "producing", obj->iter->getProducingOperation() ? obj->iter->getProducingOperation()->getName().c_str() : NULL,
+      "flowplans", obj->flowplaniterator
       );
     ++(obj->iter);
     return result;
@@ -478,14 +478,14 @@ extern "C" PyObject* PythonResource::next(PythonResource* obj)
     // Build a python dictionary
     obj->loadplaniterator = PythonLoadPlan::createFromResource(&*(obj->iter));
     PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:z,s:z,s:z,s:O}",
-      "NAME", res ? res->getName().c_str() : "unspecified",
-      "CATEGORY", obj->iter->getCategory().c_str(),
-      "SUBCATEGORY", obj->iter->getSubCategory().c_str(),
-      "DESCRIPTION", obj->iter->getDescription().c_str(),
-      "LOCATION", obj->iter->getLocation() ? obj->iter->getLocation()->getName().c_str() : NULL,
-      "MAXIMUM", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
-      "OWNER", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL,
-      "LOADPLANS", obj->loadplaniterator
+      "name", res ? res->getName().c_str() : "unspecified",
+      "category", obj->iter->getCategory().c_str(),
+      "subcategory", obj->iter->getSubCategory().c_str(),
+      "description", obj->iter->getDescription().c_str(),
+      "location", obj->iter->getLocation() ? obj->iter->getLocation()->getName().c_str() : NULL,
+      "maximum", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
+      "owner", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL,
+      "loadplans", obj->loadplaniterator
      );
     ++(obj->iter);
     return result;

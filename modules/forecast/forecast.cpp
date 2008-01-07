@@ -30,9 +30,9 @@
 namespace module_forecast
 {
 
-const XMLtag tag_total("TOTAL");
-const XMLtag tag_net("NET");
-const XMLtag tag_consumed("CONSUMED");
+const XMLtag tag_total("total");
+const XMLtag tag_net("net");
+const XMLtag tag_consumed("consumed");
 
 
 bool Forecast::callback(Calendar* l, const Signal a)

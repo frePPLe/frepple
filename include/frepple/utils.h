@@ -300,15 +300,14 @@ class Environment
       *
       * Substitution with environment values is implemented for the following
       * types of input data:
-      *  - COMMAND_SETENV: field VAL
-      *  - COMMAND_SYSTEM: field CMDLINE
-      *  - COMMAND_PYTHON: fields CMDLINE and FILENAME
-      *  - COMMAND_READXMLFILE: field FILENAME
-      *  - COMMAND_IF: field CONDITION
-      *  - COMMAND_LOADLIB: field FILENAME
-      *  - COMMAND_SAVE: field FILENAME
-      *  - COMMAND_SAVEPLAN: field FILENAME
-      *  - COMMAND_READXMLURL: field URL
+      *  - command_setenv: field 'value'
+      *  - command_system: field 'cmdline'
+      *  - command_python: fields 'cmdline' and 'filename'
+      *  - command_readxmlfile: field 'filename'
+      *  - command_if: field 'condition'
+      *  - command_loadlib: field 'filename'
+      *  - command_save: field 'filename'
+      *  - command_saveplan: field 'filename'
       *
       * This method works fine with utf-8 and single-byte encodings, but will
       * NOT work with other multibyte encodings (such as utf-116 or utf-32).
@@ -1507,13 +1506,15 @@ class DateRange
 {
   public:
     /** Constructor with specified start and end dates.<br>
-      * If the start date is later than the end date parameter, the parameters
-      * will be swapped. */
+      * If the start date is later than the end date parameter, the 
+      * parameters will be swapped. */
     DateRange(const Date& st, const Date& nd) : start(st), end(nd)
     {if(st>nd) {start=nd; end=st;}}
 
-    /** Default constructor. Both the start and end time will be set to 0. */
-    DateRange() {}
+    /** Default constructor.<br>
+      * This will create a daterange covering the complete horizon. 
+      */
+    DateRange() : start(Date::infinitePast), end(Date::infiniteFuture) {}
 
     /** Copy constructor. */
     DateRange(const DateRange& n) : start(n.start), end(n.end) {}
@@ -3451,6 +3452,16 @@ class XMLInput : public NonCopyable,  private DefaultHandler
     Object* getCurrentObject() const
       {return m_EHStack.empty() ? NULL : m_EHStack.back().first;}
 
+    /** Invalidates the current object.<br>
+      * This method is useful when, for instance, the object being parsed
+      * is being deleted. 
+      */
+    void invalidateCurrentObject()
+    {
+      if (!m_EHStack.empty())
+        m_EHStack.back().first = NULL;
+    }
+
     /** Return a pointer to the previous object being read in.<br>
       * In a typical use the returned pointer will require a dynamic_cast
       * to a subclass type.<br>
@@ -4309,14 +4320,17 @@ template <class A, class B, class C> class Association
         B* ptrB;
         C* nextA;
         C* nextB;
+        DateRange effectivity;
       public:
         Node() : ptrA(NULL), ptrB(NULL), nextA(NULL), nextB(NULL) {};
+
         Node(A* a, B* b, const ListA& al, const ListB& bl)
             : ptrA(a), ptrB(b), nextA(al.first), nextB(bl.first)
         {
           ((ListA&)al).first = static_cast<C*>(this);
           ((ListB&)bl).first = static_cast<C*>(this);
         }
+
         void setPtrA(A* a, const ListA& al)
         {
           // Don't allow updating an already valid link
@@ -4325,6 +4339,7 @@ template <class A, class B, class C> class Association
           nextA = al.first;
           ((ListA&)al).first = static_cast<C*>(this);
         }
+
         void setPtrB(B* b, const ListB& bl)
         {
           // Don't allow updating an already valid link
@@ -4333,13 +4348,30 @@ template <class A, class B, class C> class Association
           nextB = bl.first;
           ((ListB&)bl).first = static_cast<C*>(this);
         }
+
         void setPtrAB(A* a, B* b, const ListA& al, const ListB& bl)
         {
           setPtrA(a, al);
           setPtrB(b, bl);
         }
+
         A* getPtrA() const {return ptrA;}
+
         B* getPtrB() const {return ptrB;}
+
+        /** Update the start date of the effectivity range. */
+        void setEffectiveStart(Date d) { effectivity.setStart(d); }
+
+        /** Update the end date of the effectivity range. */
+        void setEffectiveEnd(Date d) { effectivity.setEnd(d); }
+
+        /** Update the effectivity range. */
+        void setEffective(DateRange dr) { effectivity = dr; }
+
+        /** Return the effectivity daterange.<br>
+          * The default covers the complete time horizon.
+          */
+        DateRange getEffective() const { return effectivity; }
     };
 };
 

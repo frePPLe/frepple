@@ -1,150 +1,150 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <COMMANDS>
-    <VERBOSE>true</VERBOSE>
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="7" LOGLEVEL="0" MAXPARALLEL="1"/>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
-    <COMMAND xsi:type="COMMAND_READXMLSTRING">
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <commands>
+    <verbose>true</verbose>
+    <command xsi:type="command_solve">
+      <solver name="MRP" xsi:type="solver_mrp" constraints="7" loglevel="0" maxparallel="1"/>
+    </command>
+    <command xsi:type="command_save" filename="output.1.xml" />
+    <command xsi:type="command_readxmlstring">
       <!--
         Now we delete one of the buffers. If the callback function isn't
         right we'll end up with dangling pointers to the deleted buffer
         and the application will crash during the following save command.
       -->
-      <DATA>
+      <data>
         <![CDATA[
-				<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-					<BUFFERS>
-						<BUFFER NAME="product in distribution centre" ACTION="R"/>
-					</BUFFERS>
-				</PLAN>
+				<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+					<buffers>
+						<buffer name="product in distribution centre" action="R"/>
+					</buffers>
+				</plan>
 			]]>
-      </DATA>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.2.xml" />
-  </COMMANDS>
-  <NAME>Sample Module</NAME>
-  <CURRENT>2007-01-01T00:00:00</CURRENT>
-  <CALENDARS>
-    <CALENDAR NAME="capacity factory 1" xsi:type="CALENDAR_FLOAT">
-      <BUCKETS>
-        <BUCKET START="2007-01-01T00:00:00">
-          <NAME>all</NAME>
-          <VALUE>1</VALUE>
-        </BUCKET>
-      </BUCKETS>
-    </CALENDAR>
-    <CALENDAR NAME="capacity factory 2" xsi:type="CALENDAR_FLOAT">
-      <BUCKETS>
-        <BUCKET START="2007-01-01T00:00:00">
-          <NAME>all</NAME>
-          <VALUE>1</VALUE>
-        </BUCKET>
-      </BUCKETS>
-    </CALENDAR>
-  </CALENDARS>
-  <OPERATIONS>
-    <OPERATION NAME="supply distribution centre" xsi:type="OPERATION_ALTERNATE">
-      <ALTERNATES>
-        <ALTERNATE>
-          <OPERATION NAME="transport supply from factory 1"
-          	xsi:type="OPERATION_TRANSPORT">
-            <DURATION>P1D</DURATION>
-            <FROM NAME="product in factory 1"/>
-            <TO NAME="product in distribution centre"/>
-          </OPERATION>
-          <PRIORITY>1</PRIORITY>
-        </ALTERNATE>
-        <ALTERNATE>
-          <OPERATION NAME="transport supply from factory 2"
-          	xsi:type="OPERATION_TRANSPORT">
-            <DURATION>P1D</DURATION>
-            <FROM NAME="product in factory 2"/>
-            <TO NAME="product in distribution centre"/>
-          </OPERATION>
-          <PRIORITY>2</PRIORITY>
-        </ALTERNATE>
-      </ALTERNATES>
-    </OPERATION>
-  </OPERATIONS>
-  <LOCATIONS>
-    <LOCATION NAME="distribution centre"/>
-    <LOCATION NAME="factory 1"/>
-    <LOCATION NAME="factory 2"/>
-  </LOCATIONS>
-  <ITEMS>
-    <ITEM NAME="product"/>
-  </ITEMS>
-  <BUFFERS>
-    <BUFFER NAME="product in factory 1">
-      <LOCATION NAME="factory 1" />
-      <ITEM NAME="product" />
-      <PRODUCING NAME="make product in factory 1"
-        xsi:type="OPERATION_FIXED_TIME" DURATION="P1D">
-	      <LOADS>
-          <LOAD>
-            <RESOURCE NAME="capacity of factory 1">
-              <MAXIMUM NAME="capacity factory 1" />
-            </RESOURCE>
-          </LOAD>
-        </LOADS>
-        <FLOWS>
-          <FLOW xsi:type="FLOW_END">
-            <BUFFER NAME="product in factory 1" />
-            <QUANTITY>1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </PRODUCING>
-    </BUFFER>
-    <BUFFER NAME="product in factory 2">
-      <LOCATION NAME="factory 2" />
-      <ITEM NAME="product" />
-      <PRODUCING NAME="make product in factory 2"
-        xsi:type="OPERATION_FIXED_TIME" DURATION="P1D">
-  	    <LOADS>
-          <LOAD>
-            <RESOURCE NAME="capacity of factory 2">
-              <MAXIMUM NAME="capacity factory 2" />
-            </RESOURCE>
-          </LOAD>
-        </LOADS>
-        <FLOWS>
-          <FLOW xsi:type="FLOW_END">
-            <BUFFER NAME="product in factory 2" />
-            <QUANTITY>1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </PRODUCING>
-    </BUFFER>
-    <BUFFER NAME="product in distribution centre">
-      <PRODUCING NAME="supply distribution centre" />
-      <LOCATION NAME="distribution centre" />
-      <ITEM NAME="product" />
-      <ONHAND>5</ONHAND>
-    </BUFFER>
-  </BUFFERS>
-  <DEMANDS>
-    <DEMAND NAME="order 1">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-01-03T12:00:00</DUE>
-      <PRIORITY>1</PRIORITY>
-      <ITEM NAME="product" />
-      <OPERATION NAME="delivery product from distribution centre">
-        <FLOWS>
-          <FLOW xsi:type="FLOW_START">
-            <BUFFER NAME="product in distribution centre" />
-            <QUANTITY>-1</QUANTITY>
-          </FLOW>
-        </FLOWS>
-      </OPERATION>
-    </DEMAND>
-    <DEMAND NAME="order 2">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-01-03T12:00:00</DUE>
-      <PRIORITY>2</PRIORITY>
-      <ITEM NAME="product" />
-      <OPERATION NAME="delivery product from distribution centre"/>
-    </DEMAND>
-  </DEMANDS>
-</PLAN>
+      </data>
+    </command>
+    <command xsi:type="command_save" filename="output.2.xml" />
+  </commands>
+  <name>Sample Module</name>
+  <current>2007-01-01T00:00:00</current>
+  <calendars>
+    <calendar name="capacity factory 1" xsi:type="calendar_float">
+      <buckets>
+        <bucket start="2007-01-01T00:00:00">
+          <name>all</name>
+          <value>1</value>
+        </bucket>
+      </buckets>
+    </calendar>
+    <calendar name="capacity factory 2" xsi:type="calendar_float">
+      <buckets>
+        <bucket start="2007-01-01T00:00:00">
+          <name>all</name>
+          <value>1</value>
+        </bucket>
+      </buckets>
+    </calendar>
+  </calendars>
+  <operations>
+    <operation name="supply distribution centre" xsi:type="operation_alternate">
+      <alternates>
+        <alternate>
+          <operation name="transport supply from factory 1"
+          	xsi:type="operation_TRANSPORT">
+            <duration>P1D</duration>
+            <FROM name="product in factory 1"/>
+            <TO name="product in distribution centre"/>
+          </operation>
+          <priority>1</priority>
+        </alternate>
+        <alternate>
+          <operation name="transport supply from factory 2"
+          	xsi:type="operation_TRANSPORT">
+            <duration>P1D</duration>
+            <FROM name="product in factory 2"/>
+            <TO name="product in distribution centre"/>
+          </operation>
+          <priority>2</priority>
+        </alternate>
+      </alternates>
+    </operation>
+  </operations>
+  <locations>
+    <location name="distribution centre"/>
+    <location name="factory 1"/>
+    <location name="factory 2"/>
+  </locations>
+  <items>
+    <item name="product"/>
+  </items>
+  <buffers>
+    <buffer name="product in factory 1">
+      <location name="factory 1" />
+      <item name="product" />
+      <producing name="make product in factory 1"
+        xsi:type="operation_fixed_time" duration="P1D">
+	      <loads>
+          <load>
+            <resource name="capacity of factory 1">
+              <maximum name="capacity factory 1" />
+            </resource>
+          </load>
+        </loads>
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="product in factory 1" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+    <buffer name="product in factory 2">
+      <location name="factory 2" />
+      <item name="product" />
+      <producing name="make product in factory 2"
+        xsi:type="operation_fixed_time" duration="P1D">
+  	    <loads>
+          <load>
+            <resource name="capacity of factory 2">
+              <maximum name="capacity factory 2" />
+            </resource>
+          </load>
+        </loads>
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="product in factory 2" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+    <buffer name="product in distribution centre">
+      <producing name="supply distribution centre" />
+      <location name="distribution centre" />
+      <item name="product" />
+      <onhand>5</onhand>
+    </buffer>
+  </buffers>
+  <demands>
+    <demand name="order 1">
+      <quantity>10</quantity>
+      <due>2007-01-03T12:00:00</due>
+      <priority>1</priority>
+      <item name="product" />
+      <operation name="delivery product from distribution centre">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="product in distribution centre" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </operation>
+    </demand>
+    <demand name="order 2">
+      <quantity>10</quantity>
+      <due>2007-01-03T12:00:00</due>
+      <priority>2</priority>
+      <item name="product" />
+      <operation name="delivery product from distribution centre"/>
+    </demand>
+  </demands>
+</plan>

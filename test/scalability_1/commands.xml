@@ -1,13 +1,13 @@
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <COMMANDS>
-    <VERBOSE>true</VERBOSE>
-    <COMMAND xsi:type="COMMAND_READXML" FILENAME="input.xml" VALIDATE="false"/>
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0"/>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.xml"/>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <commands>
+    <verbose>true</verbose>
+    <command xsi:type="command_readxml" filename="input.xml" validate="false"/>
+    <command xsi:type="command_solve">
+      <solver name="MRP" xsi:type="solver_mrp" constraints="0"/>
+    </command>
+    <command xsi:type="command_save" filename="output.xml"/>
     <!--
-    <COMMAND xsi:type="COMMAND_SIZE"/>
+    <command xsi:type="command_size"/>
     -->
-  </COMMANDS>
-</PLAN>
+  </commands>
+</plan>

@@ -41,59 +41,59 @@ def create (cluster, demand, level):
   # Initialize
   size = 0
   out = open("input.xml","wt")
-  print >>out, "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+  print >>out, "<plan xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
 
   # Items
-  print >>out, "<ITEMS>"
+  print >>out, "<items>"
   for i in range(cluster):
     ++size
-    print >>out, ("<ITEM NAME=\"Item C%d\">" +
-      "<OPERATION NAME=\"Del C%d\"> <FLOWS>" +
-        "<FLOW xsi:type=\"FLOW_START\" QUANTITY=\"-1\">" +
-        "<BUFFER NAME=\"Buffer C%dL1\"/></FLOW>" +
-      "</FLOWS></OPERATION></ITEM>") % (i,i,i)
-  print >>out, "</ITEMS>"
+    print >>out, ("<item name=\"Item C%d\">" +
+      "<operation name=\"Del C%d\"> <flows>" +
+        "<flow xsi:type=\"flow_start\" quantity=\"-1\">" +
+        "<buffer name=\"Buffer C%dL1\"/></flow>" +
+      "</flows></operation></item>") % (i,i,i)
+  print >>out, "</items>"
 
   # Demands
-  print >>out, "<DEMANDS>"
+  print >>out, "<demands>"
   for i in range(cluster):
     for j in range(demand):
       size += 2 # since a demand will result in multiple operationplans
-      print >>out, ("<DEMAND NAME=\"Demand C%dD%d\" " +
-        "QUANTITY=\"1\" DUE=\"%s\">" +
-        "<ITEM NAME=\"Item C%d\"/></DEMAND>") % (i,j,getDate(),i)
-  print >>out, "</DEMANDS>"
+      print >>out, ("<demand name=\"Demand C%dD%d\" " +
+        "quantity=\"1\" due=\"%s\">" +
+        "<item name=\"Item C%d\"/></demand>") % (i,j,getDate(),i)
+  print >>out, "</demands>"
 
   # Operations
-  print >>out, "<OPERATIONS>"
+  print >>out, "<operations>"
   for i in range(cluster):
     for j in range(level):
       size += 2
-      print >>out, ("<OPERATION NAME=\"Oper C%dO%d\" " +
-        "xsi:type=\"OPERATION_FIXED_TIME\" " +
-        "DURATION=\"PT%dH\"> <FLOWS>" +
-        "<FLOW xsi:type=\"FLOW_END\" QUANTITY=\"1\">" +
-        "<BUFFER NAME=\"Buffer C%dL%d\">" +
-        "<PRODUCING NAME=\"Oper C%dO%d\"/></BUFFER></FLOW>" +
-        "<FLOW xsi:type=\"FLOW_START\" QUANTITY=\"-1\">" +
-        "<BUFFER NAME=\"Buffer C%dL%d\"/></FLOW>" +
-        "</FLOWS></OPERATION>") % (i, j, 24*int(random.uniform(0,10)+1), i, j, i, j, i, j+1)
+      print >>out, ("<operation name=\"Oper C%dO%d\" " +
+        "xsi:type=\"operation_fixed_time\" " +
+        "duration=\"PT%dH\"> <flows>" +
+        "<flow xsi:type=\"flow_end\" quantity=\"1\">" +
+        "<buffer name=\"Buffer C%dL%d\">" +
+        "<producing name=\"Oper C%dO%d\"/></buffer></flow>" +
+        "<flow xsi:type=\"flow_start\" quantity=\"-1\">" +
+        "<buffer name=\"Buffer C%dL%d\"/></flow>" +
+        "</flows></operation>") % (i, j, 24*int(random.uniform(0,10)+1), i, j, i, j, i, j+1)
 
   # Create material supply
   for i in range(cluster):
-    print >>out, ("<OPERATION NAME=\"Supply C%d\"> " +
-        "<FLOWS><FLOW xsi:type=\"FLOW_END\" QUANTITY=\"1\">" +
-        "<BUFFER NAME=\"Buffer C%dL%d\"/>" +
-        "</FLOW></FLOWS></OPERATION>") % (i, i, level+1)
-  print >>out, "</OPERATIONS>\n<OPERATION_PLANS>"
+    print >>out, ("<operation name=\"Supply C%d\"> " +
+        "<flows><flow xsi:type=\"flow_end\" quantity=\"1\">" +
+        "<buffer name=\"Buffer C%dL%d\"/>" +
+        "</flow></flows></operation>") % (i, i, level+1)
+  print >>out, "</operations>\n<operation_plans>"
   for i in range(cluster):
-    print >>out, ("<OPERATION_PLAN ID=\"%d\" OPERATION=\"Supply C%d\" " +
-        "START=\"2007-05-01T00:00:00\" QUANTITY=\"%d\" " +
-        "LOCKED=\"true\" />") % (i+1, i, demand)
-  print >>out, "</OPERATION_PLANS>"
+    print >>out, ("<operation_plan id=\"%d\" operation=\"Supply C%d\" " +
+        "start=\"2007-05-01T00:00:00\" quantity=\"%d\" " +
+        "locked=\"true\" />") % (i+1, i, demand)
+  print >>out, "</operation_plans>"
 
   # Tail of the output file
-  print >>out, "</PLAN>"
+  print >>out, "</plan>"
   out.close()
 
   # Return size indication

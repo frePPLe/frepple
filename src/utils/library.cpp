@@ -194,31 +194,31 @@ void LibraryUtils::initialize()
   LockManager::mgr = new LockManager();
 
   // Initialize the command metadata.
-  Command::metadata.registerCategory("COMMAND", "COMMANDS");
+  Command::metadata.registerCategory("command", "commands");
   CommandList::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_LIST",
+    "command",
+    "command_list",
     Object::createDefault<CommandList>);
   CommandSystem::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_SYSTEM",
+    "command",
+    "command_system",
     Object::createDefault<CommandSystem>);
   CommandLoadLibrary::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_LOADLIB",
+    "command",
+    "command_loadlib",
     Object::createDefault<CommandLoadLibrary>);
   CommandIf::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_IF",
+    "command",
+    "command_if",
     Object::createDefault<CommandIf>);
   CommandSetEnv::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_SETENV",
+    "command",
+    "command_setenv",
     Object::createDefault<CommandSetEnv>);
 
   // Initialize the processing instruction metadata.
   XMLinstruction::metadata.registerCategory
-    ("INSTRUCTION", NULL, MetaCategory::ControllerDefault);
+    ("instruction", NULL, MetaCategory::ControllerDefault);
 
   // Query the system for the number of available processors
   // The environment variable NUMBER_OF_PROCESSORS is defined automatically on

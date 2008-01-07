@@ -62,7 +62,7 @@ DECLARE_EXPORT void CommandSolve::execute()
   if (!sol) throw RuntimeException("Solve command with unspecified solver");
 
   // Lock the solver
-  Object::WLock<Solver> s(sol);
+  Solver::writepointer s(sol);
 
   // Start message
   if (getVerbose())
@@ -392,7 +392,7 @@ DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
     : opplan(o), prefer_end(pref_end)
 {
   if (!opplan) return;
-  WLock<OperationPlan> lopplan(opplan);
+  OperationPlan::writepointer lopplan(opplan);
   originalqty = lopplan->getQuantity();
   if (newQty == -1.0f) newQty = originalqty;
   originaldates = lopplan->getDates();
@@ -410,7 +410,7 @@ DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
 DECLARE_EXPORT void CommandMoveOperationPlan::undo()
 {
   if (!opplan) return;
-  WLock<OperationPlan> lopplan(opplan);
+  OperationPlan::writepointer lopplan(opplan);
   lopplan->getOperation()->setOperationPlanParameters(
     opplan, originalqty, originaldates.getStart(), originaldates.getEnd(), prefer_end
   );
@@ -421,7 +421,7 @@ DECLARE_EXPORT void CommandMoveOperationPlan::undo()
 DECLARE_EXPORT void CommandMoveOperationPlan::setDate(Date newdate)
 {
   if (!opplan) return;
-  WLock<OperationPlan> lopplan(opplan);
+  OperationPlan::writepointer lopplan(opplan);
   if (prefer_end)
     lopplan->getOperation()->setOperationPlanParameters(
       opplan, lopplan->getQuantity(), Date::infinitePast, newdate, prefer_end
@@ -436,7 +436,7 @@ DECLARE_EXPORT void CommandMoveOperationPlan::setDate(Date newdate)
 DECLARE_EXPORT void CommandMoveOperationPlan::setQuantity(float newqty)
 {
   if (!opplan) return;
-  WLock<OperationPlan> lopplan(opplan);
+  OperationPlan::writepointer lopplan(opplan);
   if (prefer_end)
     lopplan->getOperation()->setOperationPlanParameters(
       opplan, newqty, lopplan->getDates().getStart(), lopplan->getDates().getEnd(), prefer_end
@@ -568,7 +568,7 @@ DECLARE_EXPORT void CommandErase::execute()
     // Delete the operationplans only
     for (Operation::iterator gop = Operation::begin();
         gop != Operation::end(); ++gop)
-      WLock<Operation>(&*gop)->deleteOperationPlans();
+      Operation::writepointer(&*gop)->deleteOperationPlans();
 
   // Ending message
   if (getVerbose())

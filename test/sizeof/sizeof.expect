@@ -13,8 +13,8 @@ Operation	112
 OperationFixedTime	116
 OperationRouting	120
 OperationTimePer	120
-Load	32
-Flow	32
+Load	40
+Flow	40
 OperationPlan	72
 FlowPlan	44
 LoadPlan	48

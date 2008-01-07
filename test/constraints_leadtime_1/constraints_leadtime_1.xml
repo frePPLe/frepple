@@ -1,152 +1,152 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <NAME>actual plan</NAME>
-  <DESCRIPTION>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>actual plan</name>
+  <description>
     Lead time constraint test model for fixedtime and timeper operations.
-  </DESCRIPTION>
-  <CURRENT>2007-01-01T00:00:00</CURRENT>
-  <COMMANDS>
-    <VERBOSE>true</VERBOSE>
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER xsi:type="SOLVER_MRP" NAME="MRP" CONSTRAINTS="7" LOGLEVEL="2"/>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN">
-      <FILENAME>output.1.xml</FILENAME>
-    </COMMAND>
-  </COMMANDS>
-  <CALENDARS>
-    <CALENDAR_VOID NAME="Weeks">
-      <BUCKETS>
-        <BUCKET START="2007-01-01T00:00:00">
-          <NAME>Jan Week1</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-07T00:00:00">
-          <NAME>Jan Week2</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-14T00:00:00">
-          <NAME>Jan Week3</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-21T00:00:00">
-          <NAME>Jan Week4</NAME>
-        </BUCKET>
-        <BUCKET START="2007-01-28T00:00:00">
-          <NAME>Jan Week5</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-04T00:00:00">
-          <NAME>Feb Week1</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-11T00:00:00">
-          <NAME>Feb Week2</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-18T00:00:00">
-          <NAME>Feb Week3</NAME>
-        </BUCKET>
-        <BUCKET START="2007-02-25T00:00:00">
-          <NAME>Feb Week4</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-04T00:00:00">
-          <NAME>Mar Week1</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-11T00:00:00">
-          <NAME>Mar Week2</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-18T00:00:00">
-          <NAME>Mar Week3</NAME>
-        </BUCKET>
-        <BUCKET START="2007-03-25T00:00:00">
-          <NAME>Mar Week4</NAME>
-        </BUCKET>
-        <BUCKET START="2007-04-01T00:00:00">
-          <NAME>Remainder</NAME>
-        </BUCKET>
-      </BUCKETS>
-    </CALENDAR_VOID>
-  </CALENDARS>
-  <OPERATIONS>
-    <OPERATION_FIXED_TIME NAME="make end item">
-      <!--SIZE_MULTIPLE>3</SIZE_MULTIPLE-->
-      <DURATION>P7D</DURATION>
-    </OPERATION_FIXED_TIME>
-    <OPERATION_TIME_PER NAME="make subassembly">
-      <DURATION>P1D</DURATION>
-      <DURATION_PER>PT12H</DURATION_PER>
-    </OPERATION_TIME_PER>
-  </OPERATIONS>
-  <ITEMS>
-    <ITEM NAME="end item">
-      <OPERATION NAME="delivery end item" xsi:type="OPERATION_FIXED_TIME">
-        <DURATION>P1D</DURATION>
-      </OPERATION>
-    </ITEM>
-    <ITEM NAME="subassembly" />
-    <ITEM NAME="Raw material" />
-  </ITEMS>
-  <BUFFERS>
-    <BUFFER NAME="end item">
-      <PRODUCING NAME="make end item" />
-      <ITEM NAME="end item" />
-    </BUFFER>
-    <BUFFER NAME="subassembly">
-      <PRODUCING NAME="make subassembly" />
-      <ITEM NAME="subassembly" />
-      <ONHAND>15</ONHAND>
-    </BUFFER>
-    <BUFFER NAME="Raw material">
-      <ITEM NAME="Raw material" />
-      <ONHAND>20</ONHAND>
-    </BUFFER>
-  </BUFFERS>
-  <FLOWS>
-    <FLOW_START>
-      <OPERATION NAME="delivery end item" />
-      <BUFFER NAME="end item" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW_START>
-    <FLOW_START>
-      <OPERATION NAME="make subassembly" />
-      <BUFFER NAME="Raw material" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW_START>
-    <FLOW_START>
-      <OPERATION NAME="make end item" />
-      <BUFFER NAME="subassembly" />
-      <QUANTITY>-1</QUANTITY>
-    </FLOW_START>
-    <FLOW_END>
-      <OPERATION NAME="make end item" />
-      <BUFFER NAME="end item" />
-      <QUANTITY>1</QUANTITY>
-    </FLOW_END>
-    <FLOW_END>
-      <OPERATION NAME="make subassembly" />
-      <BUFFER NAME="subassembly" />
-      <QUANTITY>1</QUANTITY>
-    </FLOW_END>
-  </FLOWS>
-  <DEMANDS>
-    <DEMAND NAME="order 1">
-      <DESCRIPTION>
+  </description>
+  <current>2007-01-01T00:00:00</current>
+  <commands>
+    <verbose>true</verbose>
+    <command xsi:type="command_solve">
+      <solver xsi:type="solver_mrp" name="MRP" constraints="7" loglevel="2"/>
+    </command>
+    <command xsi:type="command_saveplan">
+      <filename>output.1.xml</filename>
+    </command>
+  </commands>
+  <calendars>
+    <calendar_void name="Weeks">
+      <buckets>
+        <bucket start="2007-01-01T00:00:00">
+          <name>Jan Week1</name>
+        </bucket>
+        <bucket start="2007-01-07T00:00:00">
+          <name>Jan Week2</name>
+        </bucket>
+        <bucket start="2007-01-14T00:00:00">
+          <name>Jan Week3</name>
+        </bucket>
+        <bucket start="2007-01-21T00:00:00">
+          <name>Jan Week4</name>
+        </bucket>
+        <bucket start="2007-01-28T00:00:00">
+          <name>Jan Week5</name>
+        </bucket>
+        <bucket start="2007-02-04T00:00:00">
+          <name>Feb Week1</name>
+        </bucket>
+        <bucket start="2007-02-11T00:00:00">
+          <name>Feb Week2</name>
+        </bucket>
+        <bucket start="2007-02-18T00:00:00">
+          <name>Feb Week3</name>
+        </bucket>
+        <bucket start="2007-02-25T00:00:00">
+          <name>Feb Week4</name>
+        </bucket>
+        <bucket start="2007-03-04T00:00:00">
+          <name>Mar Week1</name>
+        </bucket>
+        <bucket start="2007-03-11T00:00:00">
+          <name>Mar Week2</name>
+        </bucket>
+        <bucket start="2007-03-18T00:00:00">
+          <name>Mar Week3</name>
+        </bucket>
+        <bucket start="2007-03-25T00:00:00">
+          <name>Mar Week4</name>
+        </bucket>
+        <bucket start="2007-04-01T00:00:00">
+          <name>Remainder</name>
+        </bucket>
+      </buckets>
+    </calendar_void>
+  </calendars>
+  <operations>
+    <operation_fixed_time name="make end item">
+      <!--size_multiple>3</size_multiple-->
+      <duration>P7D</duration>
+    </operation_fixed_time>
+    <operation_time_per name="make subassembly">
+      <duration>P1D</duration>
+      <duration_per>PT12H</duration_per>
+    </operation_time_per>
+  </operations>
+  <items>
+    <item name="end item">
+      <operation name="delivery end item" xsi:type="operation_fixed_time">
+        <duration>P1D</duration>
+      </operation>
+    </item>
+    <item name="subassembly" />
+    <item name="Raw material" />
+  </items>
+  <buffers>
+    <buffer name="end item">
+      <producing name="make end item" />
+      <item name="end item" />
+    </buffer>
+    <buffer name="subassembly">
+      <producing name="make subassembly" />
+      <item name="subassembly" />
+      <onhand>15</onhand>
+    </buffer>
+    <buffer name="Raw material">
+      <item name="Raw material" />
+      <onhand>20</onhand>
+    </buffer>
+  </buffers>
+  <flows>
+    <flow_start>
+      <operation name="delivery end item" />
+      <buffer name="end item" />
+      <quantity>-1</quantity>
+    </flow_start>
+    <flow_start>
+      <operation name="make subassembly" />
+      <buffer name="Raw material" />
+      <quantity>-1</quantity>
+    </flow_start>
+    <flow_start>
+      <operation name="make end item" />
+      <buffer name="subassembly" />
+      <quantity>-1</quantity>
+    </flow_start>
+    <flow_end>
+      <operation name="make end item" />
+      <buffer name="end item" />
+      <quantity>1</quantity>
+    </flow_end>
+    <flow_end>
+      <operation name="make subassembly" />
+      <buffer name="subassembly" />
+      <quantity>1</quantity>
+    </flow_end>
+  </flows>
+  <demands>
+    <demand name="order 1">
+      <description>
         This order will be delayed because of the fixedtime operation "make end
         item". The new make operation is planned such that it starts at the
         current date.
-      </DESCRIPTION>
-      <QUANTITY>7</QUANTITY>
-      <DUE>2007-01-03T00:00:00</DUE>
-      <PRIORITY>1</PRIORITY>
-      <ITEM NAME="end item" />
-    </DEMAND>
-    <DEMAND NAME="order 2">
-      <DESCRIPTION>
+      </description>
+      <quantity>7</quantity>
+      <due>2007-01-03T00:00:00</due>
+      <priority>1</priority>
+      <item name="end item" />
+    </demand>
+    <demand name="order 2">
+      <description>
         This order is planned in 2 passes. In the first pass, the planned
         quantity is reduced because of the leadtime constraint on the operation
         "make subassembly".
         In each successive pass a quantity of 2 units can be planned.
         The total quantity can be satisfied on the requested date.
-      </DESCRIPTION>
-      <QUANTITY>14</QUANTITY>
-      <DUE>2007-01-11T00:00:00</DUE>
-      <PRIORITY>2</PRIORITY>
-      <ITEM NAME="end item" />
-    </DEMAND>
-  </DEMANDS>
-</PLAN>
+      </description>
+      <quantity>14</quantity>
+      <due>2007-01-11T00:00:00</due>
+      <priority>2</priority>
+      <item name="end item" />
+    </demand>
+  </demands>
+</plan>

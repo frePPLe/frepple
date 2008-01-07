@@ -1,213 +1,213 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<NAME>Deletion test model</NAME>
-	<DESCRIPTION>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Deletion test model</name>
+	<description>
     This model tests how static and dynamic entities can be deleted from the
     model. The tests loads a model, plans it, and then runs a number of delete
     commands. After each delete command, the model is replanned and saved. Since
     planning and saving a model requires going over all objects in memory, any
     dangling pointers likely to surface soon and crash the application. Ha...
-  </DESCRIPTION>
-	<CURRENT>2007-01-01T00:00:00</CURRENT>
-	<SOLVERS>
-		<SOLVER NAME="MRP" xsi:type="SOLVER_MRP">
-		</SOLVER>
-	</SOLVERS>
-	<LOCATIONS>
-		<LOCATION NAME="All places">
-			<MEMBERS>
-				<LOCATION NAME="Sublocation 1"/>
-				<LOCATION NAME="Sublocation 2"/>
-			</MEMBERS>
-		</LOCATION>
-		<LOCATION NAME="Sublocation 1">
-			<OWNER NAME="All places"/>
-		</LOCATION>
-		<LOCATION NAME="Sublocation 2">
-			<OWNER NAME="All places"/>
-		</LOCATION>
-	</LOCATIONS>
-	<CUSTOMERS>
-		<CUSTOMER NAME="Customer 1">
-		</CUSTOMER>
-		<CUSTOMER NAME="Customer 2">
-		</CUSTOMER>
-	</CUSTOMERS>
-	<CALENDARS>
-		<CALENDAR NAME="assembly capacity" xsi:type="CALENDAR_FLOAT">
-			<BUCKETS>
-				<BUCKET START="2007-01-01T00:00:00">
-					<NAME>all</NAME>
-					<END>2030-12-31T00:00:00</END>
-					<VALUE>2</VALUE>
-				</BUCKET>
-			</BUCKETS>
-		</CALENDAR>
-		<CALENDAR NAME="months" xsi:type="CALENDAR_VOID">
-			<BUCKETS>
-				<BUCKET START="2007-01-01T00:00:00">
-					<NAME>jan</NAME>
-					<END>2007-02-01T00:00:00</END>
-				</BUCKET>
-				<BUCKET START="2007-02-01T00:00:00">
-					<NAME>feb</NAME>
-					<END>2007-03-01T00:00:00</END>
-				</BUCKET>
-				<BUCKET START="2007-03-01T00:00:00">
-					<NAME>mar</NAME>
-					<END>2007-04-01T00:00:00</END>
-				</BUCKET>
-				<BUCKET START="2007-04-01T00:00:00">
-					<NAME>apr</NAME>
-					<END>2007-05-01T00:00:00</END>
-				</BUCKET>
-				<BUCKET START="2007-05-01T00:00:00">
-					<NAME>may</NAME>
-					<END>2007-06-01T00:00:00</END>
-				</BUCKET>
-				<BUCKET START="2007-06-01T00:00:00">
-					<NAME>jun</NAME>
-					<END>2007-07-01T00:00:00</END>
-				</BUCKET>
-				<BUCKET START="2007-07-01T00:00:00">
-					<NAME>jul</NAME>
-					<END>2007-08-01T00:00:00</END>
-				</BUCKET>
-				<BUCKET START="2007-08-01T00:00:00">
-					<NAME>aug</NAME>
-					<END>2030-12-31T00:00:00</END>
-				</BUCKET>
-			</BUCKETS>
-		</CALENDAR>
-	</CALENDARS>
-	<OPERATIONS>
-		<OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME">
-			<DURATION>P1D</DURATION>
-		</OPERATION>
-		<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME">
-			<DURATION>P1D</DURATION>
-		</OPERATION>
-		<OPERATION NAME="supply component A" xsi:type="OPERATION_ALTERNATE">
-			<ALTERNATES>
-				<ALTERNATE>
-					<OPERATION NAME="supply component A from supplier 1" xsi:type="OPERATION_FIXED_TIME"/>
-					<PRIORITY>1</PRIORITY>
-				</ALTERNATE>
-				<ALTERNATE>
-					<OPERATION NAME="supply component A from supplier 2" xsi:type="OPERATION_FIXED_TIME"/>
-					<PRIORITY>2</PRIORITY>
-				</ALTERNATE>
-			</ALTERNATES>
-		</OPERATION>
-		<OPERATION NAME="supply component A from supplier 1" xsi:type="OPERATION_FIXED_TIME">
-			<DURATION>P1D</DURATION>
-		</OPERATION>
-		<OPERATION NAME="supply component A from supplier 2" xsi:type="OPERATION_FIXED_TIME">
-			<DURATION>P2D</DURATION>
-		</OPERATION>
-	</OPERATIONS>
-	<ITEMS>
-		<ITEM NAME="component A">
-		</ITEM>
-		<ITEM NAME="component B">
-		</ITEM>
-		<ITEM NAME="item 1">
-			<OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME"/>
-		</ITEM>
-	</ITEMS>
-	<BUFFERS>
-		<BUFFER NAME="buffer 1">
-			<PRODUCING NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
-			<ITEM NAME="item 1"/>
-			<FLOWS>
-				<FLOW xsi:type="FLOW_END">
-					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>1</QUANTITY>
-				</FLOW>
-				<FLOW xsi:type="FLOW_START">
-					<OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>-1</QUANTITY>
-				</FLOW>
-			</FLOWS>
-		</BUFFER>
-		<BUFFER NAME="buffer A">
-			<PRODUCING NAME="supply component A" xsi:type="OPERATION_ALTERNATE"/>
-			<ITEM NAME="component A"/>
-			<FLOWS>
-				<FLOW xsi:type="FLOW_END">
-					<OPERATION NAME="supply component A from supplier 2" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>1</QUANTITY>
-				</FLOW>
-				<FLOW xsi:type="FLOW_END">
-					<OPERATION NAME="supply component A from supplier 1" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>1</QUANTITY>
-				</FLOW>
-				<FLOW xsi:type="FLOW_START">
-					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>-1</QUANTITY>
-				</FLOW>
-			</FLOWS>
-		</BUFFER>
-		<BUFFER NAME="buffer B">
-			<ITEM NAME="component B"/>
-			<FLOWS>
-				<FLOW xsi:type="FLOW_START">
-					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>-1</QUANTITY>
-				</FLOW>
-			</FLOWS>
-		</BUFFER>
-	</BUFFERS>
-	<DEMANDS>
-		<DEMAND NAME="order 1">
-			<CUSTOMER NAME="Customer 1"/>
-			<QUANTITY>1</QUANTITY>
-			<ITEM NAME="item 1"/>
-			<DUE>2007-03-01T00:00:00</DUE>
-			<PRIORITY>1</PRIORITY>
-		</DEMAND>
-		<DEMAND NAME="order 2">
-			<CUSTOMER NAME="Customer 1"/>
-			<QUANTITY>1</QUANTITY>
-			<ITEM NAME="item 1"/>
-			<DUE>2007-02-01T00:00:00</DUE>
-			<PRIORITY>1</PRIORITY>
-		</DEMAND>
-		<DEMAND NAME="order 3">
-			<CUSTOMER NAME="Customer 2"/>
-			<QUANTITY>1</QUANTITY>
-			<ITEM NAME="item 1"/>
-			<DUE>2007-04-01T00:00:00</DUE>
-			<PRIORITY>1</PRIORITY>
-		</DEMAND>
-	</DEMANDS>
-	<RESOURCES>
-		<RESOURCE NAME="assemble">
-			<MAXIMUM NAME="assembly capacity" xsi:type="CALENDAR_FLOAT"/>
-			<LOADS>
-				<LOAD>
-					<OPERATION NAME="make item 1" xsi:type="OPERATION_FIXED_TIME"/>
-				</LOAD>
-			</LOADS>
-		</RESOURCE>
-		<RESOURCE NAME="transport">
-		</RESOURCE>
-	</RESOURCES>
-	<PROBLEMS>
-		<PROBLEM>
-			<NAME>unplanned</NAME>
-			<DESCRIPTION>Demand &apos;order 1&apos; is not planned</DESCRIPTION>
-			<DATES>2007-03-01T00:00:00 / 2007-03-01T00:00:00</DATES>
-		</PROBLEM>
-		<PROBLEM>
-			<NAME>unplanned</NAME>
-			<DESCRIPTION>Demand &apos;order 2&apos; is not planned</DESCRIPTION>
-			<DATES>2007-02-01T00:00:00 / 2007-02-01T00:00:00</DATES>
-		</PROBLEM>
-		<PROBLEM>
-			<NAME>unplanned</NAME>
-			<DESCRIPTION>Demand &apos;order 3&apos; is not planned</DESCRIPTION>
-			<DATES>2007-04-01T00:00:00 / 2007-04-01T00:00:00</DATES>
-		</PROBLEM>
-	</PROBLEMS>
-</PLAN>
+  </description>
+	<current>2007-01-01T00:00:00</current>
+	<solvers>
+		<solver name="MRP" xsi:type="solver_mrp">
+		</solver>
+	</solvers>
+	<locations>
+		<location name="All places">
+			<members>
+				<location name="Sublocation 1"/>
+				<location name="Sublocation 2"/>
+			</members>
+		</location>
+		<location name="Sublocation 1">
+			<owner name="All places"/>
+		</location>
+		<location name="Sublocation 2">
+			<owner name="All places"/>
+		</location>
+	</locations>
+	<customers>
+		<customer name="Customer 1">
+		</customer>
+		<customer name="Customer 2">
+		</customer>
+	</customers>
+	<calendars>
+		<calendar name="assembly capacity" xsi:type="calendar_float">
+			<buckets>
+				<bucket start="2007-01-01T00:00:00">
+					<name>all</name>
+					<end>2030-12-31T00:00:00</end>
+					<value>2</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar name="months" xsi:type="calendar_void">
+			<buckets>
+				<bucket start="2007-01-01T00:00:00">
+					<name>jan</name>
+					<end>2007-02-01T00:00:00</end>
+				</bucket>
+				<bucket start="2007-02-01T00:00:00">
+					<name>feb</name>
+					<end>2007-03-01T00:00:00</end>
+				</bucket>
+				<bucket start="2007-03-01T00:00:00">
+					<name>mar</name>
+					<end>2007-04-01T00:00:00</end>
+				</bucket>
+				<bucket start="2007-04-01T00:00:00">
+					<name>apr</name>
+					<end>2007-05-01T00:00:00</end>
+				</bucket>
+				<bucket start="2007-05-01T00:00:00">
+					<name>may</name>
+					<end>2007-06-01T00:00:00</end>
+				</bucket>
+				<bucket start="2007-06-01T00:00:00">
+					<name>jun</name>
+					<end>2007-07-01T00:00:00</end>
+				</bucket>
+				<bucket start="2007-07-01T00:00:00">
+					<name>jul</name>
+					<end>2007-08-01T00:00:00</end>
+				</bucket>
+				<bucket start="2007-08-01T00:00:00">
+					<name>aug</name>
+					<end>2030-12-31T00:00:00</end>
+				</bucket>
+			</buckets>
+		</calendar>
+	</calendars>
+	<operations>
+		<operation name="delivery 1" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+		<operation name="make item 1" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+		<operation name="supply component A" xsi:type="operation_alternate">
+			<alternates>
+				<alternate>
+					<operation name="supply component A from supplier 1" xsi:type="operation_fixed_time"/>
+					<priority>1</priority>
+				</alternate>
+				<alternate>
+					<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time"/>
+					<priority>2</priority>
+				</alternate>
+			</alternates>
+		</operation>
+		<operation name="supply component A from supplier 1" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+		<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time">
+			<duration>P2D</duration>
+		</operation>
+	</operations>
+	<items>
+		<item name="component A">
+		</item>
+		<item name="component B">
+		</item>
+		<item name="item 1">
+			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
+		</item>
+	</items>
+	<buffers>
+		<buffer name="buffer 1">
+			<producing name="make item 1" xsi:type="operation_fixed_time"/>
+			<item name="item 1"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<operation name="make item 1" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="delivery 1" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</buffer>
+		<buffer name="buffer A">
+			<producing name="supply component A" xsi:type="operation_alternate"/>
+			<item name="component A"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<operation name="supply component A from supplier 1" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="make item 1" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</buffer>
+		<buffer name="buffer B">
+			<item name="component B"/>
+			<flows>
+				<flow xsi:type="flow_start">
+					<operation name="make item 1" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</buffer>
+	</buffers>
+	<demands>
+		<demand name="order 1">
+			<customer name="Customer 1"/>
+			<quantity>1</quantity>
+			<item name="item 1"/>
+			<due>2007-03-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand name="order 2">
+			<customer name="Customer 1"/>
+			<quantity>1</quantity>
+			<item name="item 1"/>
+			<due>2007-02-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand name="order 3">
+			<customer name="Customer 2"/>
+			<quantity>1</quantity>
+			<item name="item 1"/>
+			<due>2007-04-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+	</demands>
+	<resources>
+		<resource name="assemble">
+			<maximum name="assembly capacity" xsi:type="calendar_float"/>
+			<loads>
+				<load>
+					<operation name="make item 1" xsi:type="operation_fixed_time"/>
+				</load>
+			</loads>
+		</resource>
+		<resource name="transport">
+		</resource>
+	</resources>
+	<problems>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 1&apos; is not planned</description>
+			<dates>2007-03-01T00:00:00 / 2007-03-01T00:00:00</dates>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 2&apos; is not planned</description>
+			<dates>2007-02-01T00:00:00 / 2007-02-01T00:00:00</dates>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 3&apos; is not planned</description>
+			<dates>2007-04-01T00:00:00 / 2007-04-01T00:00:00</dates>
+		</problem>
+	</problems>
+</plan>

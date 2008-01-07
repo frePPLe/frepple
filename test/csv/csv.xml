@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <!-- Define a Python function -->
-<?PYTHON
+<?python
 import csv, frepple
 def readcsv():
-  x = [ '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n<ITEMS>' ]
+  x = [ '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n<items>' ]
   for row in csv.reader(open("input.1.csv", "rb")):
     # Skip empty lines
     if len(row) == 0: continue
@@ -14,19 +14,19 @@ def readcsv():
       # Skip comment lines
       if row[0].startswith('#'): continue
       # Add a line to the XML output list
-      x.append('<ITEM NAME="%s" DESCRIPTION="%s" CATEGORY="%s"/>' % (row[0],row[1],row[2]))
+      x.append('<item name="%s" description="%s" category="%s"/>' % (row[0],row[1],row[2]))
     except:
       print "error"
-  x.append('</ITEMS>\n</PLAN>')
+  x.append('</items>\n</plan>')
   # Post the XML to Frepple
   frepple.readXMLdata('\n'.join(x),False,False)
 ?>
 
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <CURRENT>2007-01-01T00:00:00</CURRENT>
-  <COMMANDS>
-    <VERBOSE>true</VERBOSE>
-    <COMMAND xsi:type="COMMAND_PYTHON" CMDLINE="readcsv()" />
-    <COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.1.xml" />
-  </COMMANDS>
-</PLAN>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <current>2007-01-01T00:00:00</current>
+  <commands>
+    <verbose>true</verbose>
+    <command xsi:type="command_python" cmdline="readcsv()" />
+    <command xsi:type="command_save" filename="output.1.xml" />
+  </commands>
+</plan>

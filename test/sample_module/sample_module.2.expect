@@ -1,149 +1,149 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<NAME>Sample Module</NAME>
-	<CURRENT>2007-01-01T00:00:00</CURRENT>
-	<SOLVERS>
-		<SOLVER NAME="MRP" xsi:type="SOLVER_MRP">
-			<CONSTRAINTS>7</CONSTRAINTS>
-			<MAXPARALLEL>1</MAXPARALLEL>
-		</SOLVER>
-	</SOLVERS>
-	<LOCATIONS>
-		<LOCATION NAME="distribution centre">
-		</LOCATION>
-		<LOCATION NAME="factory 1">
-		</LOCATION>
-		<LOCATION NAME="factory 2">
-		</LOCATION>
-	</LOCATIONS>
-	<CALENDARS>
-		<CALENDAR NAME="capacity factory 1" xsi:type="CALENDAR_FLOAT">
-			<BUCKETS>
-				<BUCKET START="2007-01-01T00:00:00">
-					<NAME>all</NAME>
-					<END>2030-12-31T00:00:00</END>
-					<VALUE>1</VALUE>
-				</BUCKET>
-			</BUCKETS>
-		</CALENDAR>
-		<CALENDAR NAME="capacity factory 2" xsi:type="CALENDAR_FLOAT">
-			<BUCKETS>
-				<BUCKET START="2007-01-01T00:00:00">
-					<NAME>all</NAME>
-					<END>2030-12-31T00:00:00</END>
-					<VALUE>1</VALUE>
-				</BUCKET>
-			</BUCKETS>
-		</CALENDAR>
-	</CALENDARS>
-	<OPERATIONS>
-		<OPERATION NAME="delivery product from distribution centre" xsi:type="OPERATION_FIXED_TIME">
-		</OPERATION>
-		<OPERATION NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME">
-			<DURATION>P1D</DURATION>
-		</OPERATION>
-		<OPERATION NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME">
-			<DURATION>P1D</DURATION>
-		</OPERATION>
-		<OPERATION NAME="supply distribution centre" xsi:type="OPERATION_ALTERNATE">
-			<ALTERNATES>
-			</ALTERNATES>
-		</OPERATION>
-	</OPERATIONS>
-	<ITEMS>
-		<ITEM NAME="product">
-		</ITEM>
-	</ITEMS>
-	<BUFFERS>
-		<BUFFER NAME="product in factory 1">
-			<PRODUCING NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME"/>
-			<ITEM NAME="product"/>
-			<LOCATION NAME="factory 1"/>
-			<FLOWS>
-				<FLOW xsi:type="FLOW_END">
-					<OPERATION NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>1</QUANTITY>
-				</FLOW>
-			</FLOWS>
-		</BUFFER>
-		<BUFFER NAME="product in factory 2">
-			<PRODUCING NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME"/>
-			<ITEM NAME="product"/>
-			<LOCATION NAME="factory 2"/>
-			<FLOWS>
-				<FLOW xsi:type="FLOW_END">
-					<OPERATION NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME"/>
-					<QUANTITY>1</QUANTITY>
-				</FLOW>
-			</FLOWS>
-		</BUFFER>
-	</BUFFERS>
-	<DEMANDS>
-		<DEMAND NAME="order 1">
-			<OPERATION NAME="delivery product from distribution centre" xsi:type="OPERATION_FIXED_TIME"/>
-			<QUANTITY>10</QUANTITY>
-			<ITEM NAME="product"/>
-			<DUE>2007-01-03T12:00:00</DUE>
-			<PRIORITY>1</PRIORITY>
-		</DEMAND>
-		<DEMAND NAME="order 2">
-			<OPERATION NAME="delivery product from distribution centre" xsi:type="OPERATION_FIXED_TIME"/>
-			<QUANTITY>10</QUANTITY>
-			<ITEM NAME="product"/>
-			<DUE>2007-01-03T12:00:00</DUE>
-			<PRIORITY>2</PRIORITY>
-		</DEMAND>
-	</DEMANDS>
-	<RESOURCES>
-		<RESOURCE NAME="capacity of factory 1">
-			<MAXIMUM NAME="capacity factory 1" xsi:type="CALENDAR_FLOAT"/>
-			<LOADS>
-				<LOAD>
-					<OPERATION NAME="make product in factory 1" xsi:type="OPERATION_FIXED_TIME"/>
-				</LOAD>
-			</LOADS>
-		</RESOURCE>
-		<RESOURCE NAME="capacity of factory 2">
-			<MAXIMUM NAME="capacity factory 2" xsi:type="CALENDAR_FLOAT"/>
-			<LOADS>
-				<LOAD>
-					<OPERATION NAME="make product in factory 2" xsi:type="OPERATION_FIXED_TIME"/>
-				</LOAD>
-			</LOADS>
-		</RESOURCE>
-	</RESOURCES>
-	<OPERATION_PLANS>
-		<OPERATION_PLAN ID="5" OPERATION="make product in factory 1">
-			<START>2007-01-01T12:00:00</START>
-			<END>2007-01-02T12:00:00</END>
-			<QUANTITY>5</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="10" OPERATION="make product in factory 2">
-			<START>2007-01-01T12:00:00</START>
-			<END>2007-01-02T12:00:00</END>
-			<QUANTITY>10</QUANTITY>
-		</OPERATION_PLAN>
-	</OPERATION_PLANS>
-	<PROBLEMS>
-		<PROBLEM>
-			<NAME>material excess</NAME>
-			<DESCRIPTION>Buffer &apos;product in factory 1&apos; has material excess of 5</DESCRIPTION>
-			<DATES>2007-01-02T12:00:00 / 2030-12-31T00:00:00</DATES>
-		</PROBLEM>
-		<PROBLEM>
-			<NAME>material excess</NAME>
-			<DESCRIPTION>Buffer &apos;product in factory 2&apos; has material excess of 10</DESCRIPTION>
-			<DATES>2007-01-02T12:00:00 / 2030-12-31T00:00:00</DATES>
-		</PROBLEM>
-		<PROBLEM>
-			<NAME>unplanned</NAME>
-			<DESCRIPTION>Demand &apos;order 1&apos; is not planned</DESCRIPTION>
-			<DATES>2007-01-03T12:00:00 / 2007-01-03T12:00:00</DATES>
-		</PROBLEM>
-		<PROBLEM>
-			<NAME>unplanned</NAME>
-			<DESCRIPTION>Demand &apos;order 2&apos; is not planned</DESCRIPTION>
-			<DATES>2007-01-03T12:00:00 / 2007-01-03T12:00:00</DATES>
-		</PROBLEM>
-	</PROBLEMS>
-</PLAN>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Sample Module</name>
+	<current>2007-01-01T00:00:00</current>
+	<solvers>
+		<solver name="MRP" xsi:type="solver_mrp">
+			<constraints>7</constraints>
+			<maxparallel>1</maxparallel>
+		</solver>
+	</solvers>
+	<locations>
+		<location name="distribution centre">
+		</location>
+		<location name="factory 1">
+		</location>
+		<location name="factory 2">
+		</location>
+	</locations>
+	<calendars>
+		<calendar name="capacity factory 1" xsi:type="calendar_float">
+			<buckets>
+				<bucket start="2007-01-01T00:00:00">
+					<name>all</name>
+					<end>2030-12-31T00:00:00</end>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar name="capacity factory 2" xsi:type="calendar_float">
+			<buckets>
+				<bucket start="2007-01-01T00:00:00">
+					<name>all</name>
+					<end>2030-12-31T00:00:00</end>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+	</calendars>
+	<operations>
+		<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time">
+		</operation>
+		<operation name="make product in factory 1" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+		<operation name="make product in factory 2" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+		<operation name="supply distribution centre" xsi:type="operation_alternate">
+			<alternates>
+			</alternates>
+		</operation>
+	</operations>
+	<items>
+		<item name="product">
+		</item>
+	</items>
+	<buffers>
+		<buffer name="product in factory 1">
+			<producing name="make product in factory 1" xsi:type="operation_fixed_time"/>
+			<item name="product"/>
+			<location name="factory 1"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+		</buffer>
+		<buffer name="product in factory 2">
+			<producing name="make product in factory 2" xsi:type="operation_fixed_time"/>
+			<item name="product"/>
+			<location name="factory 2"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+		</buffer>
+	</buffers>
+	<demands>
+		<demand name="order 1">
+			<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time"/>
+			<quantity>10</quantity>
+			<item name="product"/>
+			<due>2007-01-03T12:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand name="order 2">
+			<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time"/>
+			<quantity>10</quantity>
+			<item name="product"/>
+			<due>2007-01-03T12:00:00</due>
+			<priority>2</priority>
+		</demand>
+	</demands>
+	<resources>
+		<resource name="capacity of factory 1">
+			<maximum name="capacity factory 1" xsi:type="calendar_float"/>
+			<loads>
+				<load>
+					<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
+				</load>
+			</loads>
+		</resource>
+		<resource name="capacity of factory 2">
+			<maximum name="capacity factory 2" xsi:type="calendar_float"/>
+			<loads>
+				<load>
+					<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
+				</load>
+			</loads>
+		</resource>
+	</resources>
+	<operation_plans>
+		<operation_plan id="5" operation="make product in factory 1">
+			<start>2007-01-01T12:00:00</start>
+			<end>2007-01-02T12:00:00</end>
+			<quantity>5</quantity>
+		</operation_plan>
+		<operation_plan id="10" operation="make product in factory 2">
+			<start>2007-01-01T12:00:00</start>
+			<end>2007-01-02T12:00:00</end>
+			<quantity>10</quantity>
+		</operation_plan>
+	</operation_plans>
+	<problems>
+		<problem>
+			<name>material excess</name>
+			<description>Buffer &apos;product in factory 1&apos; has material excess of 5</description>
+			<dates>2007-01-02T12:00:00 / 2030-12-31T00:00:00</dates>
+		</problem>
+		<problem>
+			<name>material excess</name>
+			<description>Buffer &apos;product in factory 2&apos; has material excess of 10</description>
+			<dates>2007-01-02T12:00:00 / 2030-12-31T00:00:00</dates>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 1&apos; is not planned</description>
+			<dates>2007-01-03T12:00:00 / 2007-01-03T12:00:00</dates>
+		</problem>
+		<problem>
+			<name>unplanned</name>
+			<description>Demand &apos;order 2&apos; is not planned</description>
+			<dates>2007-01-03T12:00:00 / 2007-01-03T12:00:00</dates>
+		</problem>
+	</problems>
+</plan>

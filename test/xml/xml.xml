@@ -1,77 +1,77 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <NAME>plan</NAME>
-  <DESCRIPTION>XML structure test model</DESCRIPTION>
-  <CURRENT>2007-01-01T00:00:00</CURRENT>
-  <COMMANDS>
-    <VERBOSE>true</VERBOSE>
-    <COMMAND xsi:type="COMMAND_SOLVE">
-      <SOLVER NAME="MRP" xsi:type="SOLVER_MRP" CONSTRAINTS="0" LOGLEVEL="0"/>
-    </COMMAND>
-    <COMMAND xsi:type="COMMAND_SAVEPLAN">
-      <FILENAME>output.1.xml</FILENAME>
-    </COMMAND>
-  </COMMANDS>
-  <DEMANDS>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>plan</name>
+  <description>XML structure test model</description>
+  <current>2007-01-01T00:00:00</current>
+  <commands>
+    <verbose>true</verbose>
+    <command xsi:type="command_solve">
+      <solver name="MRP" xsi:type="solver_mrp" constraints="0" loglevel="0"/>
+    </command>
+    <command xsi:type="command_saveplan">
+      <filename>output.1.xml</filename>
+    </command>
+  </commands>
+  <demands>
     <!-- Level 1: Lot -->
-    <DEMAND NAME="order 1">
-      <QUANTITY>10</QUANTITY>
-      <DUE>2007-01-27T00:00:00</DUE>
-      <PRIORITY>1</PRIORITY>
-      <ITEM NAME="item 1">
-        <!-- Level 2: Item -->
-        <DESCRIPTION>description item 1</DESCRIPTION>
-        <CATEGORY>item category</CATEGORY>
-        <OPERATION NAME="operation 1" xsi:type="OPERATION_ROUTING">
-          <!-- Level 3: Operation -->
-          <SIZE_MULTIPLE>3</SIZE_MULTIPLE>
-          <STEPS>
-            <OPERATION NAME="operation 1 step1"
-              xsi:type="OPERATION_FIXED_TIME">
-              <!-- Level 4: Operation -->
-              <FLOWS>
-                <FLOW xsi:type="FLOW_START">
-                  <!-- Level 5: Flow -->
-                  <QUANTITY>-1</QUANTITY>
-                  <BUFFER NAME="STCK1">
-                    <!-- Level 6: Buffer -->
-                    <ITEM NAME="item 1" CATEGORY="end item" />
-                    <ONHAND>100</ONHAND>
-                    <!-- Level 7: Location -->
-                    <LOCATION NAME="location 1" CATEGORY="manufacturing" />
-                  </BUFFER>
-                </FLOW>
-              </FLOWS>
-              <LOADS>
-                <LOAD>
-                  <!-- Level 5: Load -->
-                  <RESOURCE NAME="resource 1">
-                    <!-- Level 6: Resource -->
-                    <MAXIMUM NAME="weeks" xsi:type="CALENDAR_FLOAT">
-                      <!-- Level 7: Calendar -->
-                      <BUCKETS>
-                        <!-- Level 8: Bucket -->
-                        <BUCKET START="2007-01-01T00:00:00">
-                          <NAME>Jan Week1</NAME>
-                          <VALUE>0</VALUE>
-                        </BUCKET>
-                      </BUCKETS>
-                    </MAXIMUM>
-                  </RESOURCE>
-                </LOAD>
-              </LOADS>
-              <DURATION>P7D</DURATION>
-            </OPERATION>
-            <OPERATION NAME="operation 1 step2"
-              xsi:type="OPERATION_FIXED_TIME">
-              <DURATION>P7D</DURATION>
-            </OPERATION>
-          </STEPS>
-        </OPERATION>
-      </ITEM>
-    </DEMAND>
-  </DEMANDS>
-  <PROBLEMS>
+    <demand name="order 1">
+      <quantity>10</quantity>
+      <due>2007-01-27T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 1">
+        <!-- Level 2: item -->
+        <description>description item 1</description>
+        <category>item category</category>
+        <operation name="operation 1" xsi:type="operation_routing">
+          <!-- Level 3: operation -->
+          <size_multiple>3</size_multiple>
+          <steps>
+            <operation name="operation 1 step1"
+              xsi:type="operation_fixed_time">
+              <!-- Level 4: operation -->
+              <flows>
+                <flow xsi:type="flow_start">
+                  <!-- Level 5: flow -->
+                  <quantity>-1</quantity>
+                  <buffer name="STCK1">
+                    <!-- Level 6: buffer -->
+                    <item name="item 1" category="end item" />
+                    <onhand>100</onhand>
+                    <!-- Level 7: location -->
+                    <location name="location 1" category="manufacturing" />
+                  </buffer>
+                </flow>
+              </flows>
+              <loads>
+                <load>
+                  <!-- Level 5: load -->
+                  <resource name="resource 1">
+                    <!-- Level 6: resource -->
+                    <maximum name="weeks" xsi:type="calendar_float">
+                      <!-- Level 7: calendar -->
+                      <buckets>
+                        <!-- Level 8: bucket -->
+                        <bucket start="2007-01-01T00:00:00">
+                          <name>Jan Week1</name>
+                          <value>0</value>
+                        </bucket>
+                      </buckets>
+                    </maximum>
+                  </resource>
+                </load>
+              </loads>
+              <duration>P7D</duration>
+            </operation>
+            <operation name="operation 1 step2"
+              xsi:type="operation_fixed_time">
+              <duration>P7D</duration>
+            </operation>
+          </steps>
+        </operation>
+      </item>
+    </demand>
+  </demands>
+  <problems>
     <!-- Input being ignored. It is still being validated. -->
-  </PROBLEMS>
-</PLAN>
+  </problems>
+</plan>

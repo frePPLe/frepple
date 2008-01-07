@@ -1,474 +1,474 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<NAME>Forecast test model</NAME>
-	<DESCRIPTION>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Forecast test model</name>
+	<description>
   This test verifies how actual orders consume from the forecast.
   It shows netting from earlier and later time buckets.
-  </DESCRIPTION>
-	<CURRENT>2007-01-01T00:00:00</CURRENT>
-	<SOLVERS>
-		<SOLVER NAME="MRP" xsi:type="SOLVER_MRP">
-		</SOLVER>
-		<SOLVER NAME="Netting orders from forecast" xsi:type="SOLVER_FORECAST">
-			<LOGLEVEL>2</LOGLEVEL>
-		</SOLVER>
-	</SOLVERS>
-	<CALENDARS>
-		<CALENDAR NAME="planningbuckets" xsi:type="CALENDAR_FLOAT">
-			<BUCKETS>
-				<BUCKET START="2007-01-01T00:00:00">
-					<NAME>Mon Jan 01</NAME>
-					<END>2007-01-02T00:00:00</END>
-					<VALUE>1.2</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-02T00:00:00">
-					<NAME>Tue Jan 02</NAME>
-					<END>2007-01-03T00:00:00</END>
-					<VALUE>1</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-03T00:00:00">
-					<NAME>Wed Jan 03</NAME>
-					<END>2007-01-04T00:00:00</END>
-					<VALUE>1</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-04T00:00:00">
-					<NAME>Thu Jan 04</NAME>
-					<END>2007-01-05T00:00:00</END>
-					<VALUE>1</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-05T00:00:00">
-					<NAME>Fri Jan 05</NAME>
-					<END>2007-01-06T00:00:00</END>
-					<VALUE>0.8</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-06T00:00:00">
-					<NAME>Sat Jan 06</NAME>
-					<END>2007-01-07T00:00:00</END>
-					<VALUE>0</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-07T00:00:00">
-					<NAME>Sun Jan 07</NAME>
-					<END>2007-01-08T00:00:00</END>
-					<VALUE>0</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-08T00:00:00">
-					<NAME>Mon Jan 08</NAME>
-					<END>2007-01-09T00:00:00</END>
-					<VALUE>1.2</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-09T00:00:00">
-					<NAME>Tue Jan 09</NAME>
-					<END>2007-01-10T00:00:00</END>
-					<VALUE>1</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-10T00:00:00">
-					<NAME>Wed Jan 10</NAME>
-					<END>2007-01-11T00:00:00</END>
-					<VALUE>1</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-11T00:00:00">
-					<NAME>Thu Jan 11</NAME>
-					<END>2007-01-12T00:00:00</END>
-					<VALUE>1</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-12T00:00:00">
-					<NAME>Fri Jan 12</NAME>
-					<END>2007-01-13T00:00:00</END>
-					<VALUE>0.8</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-13T00:00:00">
-					<NAME>Sat Jan 13</NAME>
-					<END>2007-01-14T00:00:00</END>
-					<VALUE>0</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-14T00:00:00">
-					<NAME>Sun Jan 14</NAME>
-					<END>2007-01-15T00:00:00</END>
-					<VALUE>0</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-15T00:00:00">
-					<NAME>Mon Jan 15</NAME>
-					<END>2007-01-16T00:00:00</END>
-					<VALUE>1.2</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-16T00:00:00">
-					<NAME>Tue Jan 16</NAME>
-					<END>2007-01-17T00:00:00</END>
-					<VALUE>1</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-17T00:00:00">
-					<NAME>Wed Jan 17</NAME>
-					<END>2007-01-18T00:00:00</END>
-					<VALUE>1</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-18T00:00:00">
-					<NAME>Thu Jan 18</NAME>
-					<END>2007-01-19T00:00:00</END>
-					<VALUE>1</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-19T00:00:00">
-					<NAME>Fri Jan 19</NAME>
-					<END>2007-01-20T00:00:00</END>
-					<VALUE>0.8</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-20T00:00:00">
-					<NAME>Sat Jan 20</NAME>
-					<END>2007-01-21T00:00:00</END>
-					<VALUE>0</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-21T00:00:00">
-					<NAME>Sun Jan 21</NAME>
-					<END>2007-01-22T00:00:00</END>
-					<VALUE>0</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-22T00:00:00">
-					<NAME>Week 04</NAME>
-					<END>2007-01-29T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-01-29T00:00:00">
-					<NAME>Week 05</NAME>
-					<END>2007-02-05T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-02-05T00:00:00">
-					<NAME>Week 06</NAME>
-					<END>2007-02-12T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-02-12T00:00:00">
-					<NAME>Week 07</NAME>
-					<END>2007-02-19T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-02-19T00:00:00">
-					<NAME>Week 08</NAME>
-					<END>2007-02-26T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-02-26T00:00:00">
-					<NAME>Week 09</NAME>
-					<END>2007-03-05T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-03-05T00:00:00">
-					<NAME>Week 10</NAME>
-					<END>2007-03-12T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-03-12T00:00:00">
-					<NAME>Week 11</NAME>
-					<END>2007-03-19T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-03-19T00:00:00">
-					<NAME>Week 12</NAME>
-					<END>2007-03-26T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-03-26T00:00:00">
-					<NAME>Week 13</NAME>
-					<END>2007-04-02T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-04-02T00:00:00">
-					<NAME>Week 14</NAME>
-					<END>2007-04-09T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-04-09T00:00:00">
-					<NAME>Week 15</NAME>
-					<END>2007-04-16T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-04-16T00:00:00">
-					<NAME>Week 16</NAME>
-					<END>2007-04-23T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-04-23T00:00:00">
-					<NAME>Week 17</NAME>
-					<END>2007-04-30T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-04-30T00:00:00">
-					<NAME>Week 18</NAME>
-					<END>2007-05-07T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-				<BUCKET START="2007-05-07T00:00:00">
-					<NAME>Week 18</NAME>
-					<END>2030-12-31T00:00:00</END>
-					<VALUE>0.714286</VALUE>
-				</BUCKET>
-			</BUCKETS>
-		</CALENDAR>
-	</CALENDARS>
-	<OPERATIONS>
-		<OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME">
-			<DURATION>P1D</DURATION>
-		</OPERATION>
-	</OPERATIONS>
-	<ITEMS>
-		<ITEM NAME="Product 1">
-			<OPERATION NAME="delivery 1" xsi:type="OPERATION_FIXED_TIME"/>
-		</ITEM>
-	</ITEMS>
-	<DEMANDS>
-		<DEMAND NAME="Forecast 1" xsi:type="DEMAND_FORECAST">
-			<ITEM NAME="Product 1"/>
-			<PRIORITY>1</PRIORITY>
-			<CALENDAR NAME="planningbuckets" xsi:type="CALENDAR_FLOAT"/>
-			<BUCKETS>
-				<BUCKET START="2007-01-01T00:00:00">
-					<TOTAL>24</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>24</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-02T00:00:00">
-					<TOTAL>20</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>20</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-03T00:00:00">
-					<TOTAL>20</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>20</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-04T00:00:00">
-					<TOTAL>20</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>20</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-05T00:00:00">
-					<TOTAL>16</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>16</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-08T00:00:00">
-					<TOTAL>24</TOTAL>
-					<NET>24</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-09T00:00:00">
-					<TOTAL>20</TOTAL>
-					<NET>20</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-10T00:00:00">
-					<TOTAL>20</TOTAL>
-					<NET>20</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-11T00:00:00">
-					<TOTAL>20</TOTAL>
-					<NET>20</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-12T00:00:00">
-					<TOTAL>16</TOTAL>
-					<NET>16</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-15T00:00:00">
-					<TOTAL>24</TOTAL>
-					<NET>24</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-16T00:00:00">
-					<TOTAL>20</TOTAL>
-					<NET>20</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-17T00:00:00">
-					<TOTAL>20</TOTAL>
-					<NET>20</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-18T00:00:00">
-					<TOTAL>20</TOTAL>
-					<NET>20</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-19T00:00:00">
-					<TOTAL>16</TOTAL>
-					<NET>16</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-22T00:00:00">
-					<TOTAL>100</TOTAL>
-					<NET>10</NET>
-					<CONSUMED>90</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-01-29T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-02-05T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-02-12T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-02-19T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-02-26T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-03-05T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-03-12T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-03-19T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-03-26T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-04-02T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-04-09T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-04-16T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-04-23T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-04-30T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-				<BUCKET START="2007-05-07T00:00:00">
-					<TOTAL>0</TOTAL>
-					<NET>0</NET>
-					<CONSUMED>0</CONSUMED>
-				</BUCKET>
-			</BUCKETS>
-		</DEMAND>
-		<DEMAND NAME="Order 1 for product 1">
-			<QUANTITY>90</QUANTITY>
-			<ITEM NAME="Product 1"/>
-			<DUE>2007-01-03T00:00:00</DUE>
-			<PRIORITY>1</PRIORITY>
-		</DEMAND>
-		<DEMAND NAME="Order 2 for product 1">
-			<QUANTITY>90</QUANTITY>
-			<ITEM NAME="Product 1"/>
-			<DUE>2007-01-03T00:00:00</DUE>
-			<PRIORITY>1</PRIORITY>
-		</DEMAND>
-		<DEMAND NAME="Order 3 for product 1">
-			<QUANTITY>90</QUANTITY>
-			<ITEM NAME="Product 1"/>
-			<DUE>2007-01-27T00:00:00</DUE>
-			<PRIORITY>2</PRIORITY>
-		</DEMAND>
-	</DEMANDS>
-	<OPERATION_PLANS>
-		<OPERATION_PLAN ID="2" OPERATION="delivery 1">
-			<DEMAND NAME="Order 2 for product 1"/>
-			<START>2007-01-02T00:00:00</START>
-			<END>2007-01-03T00:00:00</END>
-			<QUANTITY>90</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="1" OPERATION="delivery 1">
-			<DEMAND NAME="Order 1 for product 1"/>
-			<START>2007-01-02T00:00:00</START>
-			<END>2007-01-03T00:00:00</END>
-			<QUANTITY>90</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="3" OPERATION="delivery 1">
-			<START>2007-01-07T00:00:00</START>
-			<END>2007-01-08T00:00:00</END>
-			<QUANTITY>24</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="4" OPERATION="delivery 1">
-			<START>2007-01-08T00:00:00</START>
-			<END>2007-01-09T00:00:00</END>
-			<QUANTITY>20</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="5" OPERATION="delivery 1">
-			<START>2007-01-09T00:00:00</START>
-			<END>2007-01-10T00:00:00</END>
-			<QUANTITY>20</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="6" OPERATION="delivery 1">
-			<START>2007-01-10T00:00:00</START>
-			<END>2007-01-11T00:00:00</END>
-			<QUANTITY>20</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="7" OPERATION="delivery 1">
-			<START>2007-01-11T00:00:00</START>
-			<END>2007-01-12T00:00:00</END>
-			<QUANTITY>16</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="8" OPERATION="delivery 1">
-			<START>2007-01-14T00:00:00</START>
-			<END>2007-01-15T00:00:00</END>
-			<QUANTITY>24</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="9" OPERATION="delivery 1">
-			<START>2007-01-15T00:00:00</START>
-			<END>2007-01-16T00:00:00</END>
-			<QUANTITY>20</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="10" OPERATION="delivery 1">
-			<START>2007-01-16T00:00:00</START>
-			<END>2007-01-17T00:00:00</END>
-			<QUANTITY>20</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="11" OPERATION="delivery 1">
-			<START>2007-01-17T00:00:00</START>
-			<END>2007-01-18T00:00:00</END>
-			<QUANTITY>20</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="12" OPERATION="delivery 1">
-			<START>2007-01-18T00:00:00</START>
-			<END>2007-01-19T00:00:00</END>
-			<QUANTITY>16</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="13" OPERATION="delivery 1">
-			<START>2007-01-21T00:00:00</START>
-			<END>2007-01-22T00:00:00</END>
-			<QUANTITY>10</QUANTITY>
-		</OPERATION_PLAN>
-		<OPERATION_PLAN ID="14" OPERATION="delivery 1">
-			<DEMAND NAME="Order 3 for product 1"/>
-			<START>2007-01-26T00:00:00</START>
-			<END>2007-01-27T00:00:00</END>
-			<QUANTITY>90</QUANTITY>
-		</OPERATION_PLAN>
-	</OPERATION_PLANS>
-</PLAN>
+  </description>
+	<current>2007-01-01T00:00:00</current>
+	<solvers>
+		<solver name="MRP" xsi:type="solver_mrp">
+		</solver>
+		<solver name="Netting orders from forecast" xsi:type="solver_forecast">
+			<loglevel>2</loglevel>
+		</solver>
+	</solvers>
+	<calendars>
+		<calendar name="planningbuckets" xsi:type="calendar_float">
+			<buckets>
+				<bucket start="2007-01-01T00:00:00">
+					<name>Mon Jan 01</name>
+					<end>2007-01-02T00:00:00</end>
+					<value>1.2</value>
+				</bucket>
+				<bucket start="2007-01-02T00:00:00">
+					<name>Tue Jan 02</name>
+					<end>2007-01-03T00:00:00</end>
+					<value>1</value>
+				</bucket>
+				<bucket start="2007-01-03T00:00:00">
+					<name>Wed Jan 03</name>
+					<end>2007-01-04T00:00:00</end>
+					<value>1</value>
+				</bucket>
+				<bucket start="2007-01-04T00:00:00">
+					<name>Thu Jan 04</name>
+					<end>2007-01-05T00:00:00</end>
+					<value>1</value>
+				</bucket>
+				<bucket start="2007-01-05T00:00:00">
+					<name>Fri Jan 05</name>
+					<end>2007-01-06T00:00:00</end>
+					<value>0.8</value>
+				</bucket>
+				<bucket start="2007-01-06T00:00:00">
+					<name>Sat Jan 06</name>
+					<end>2007-01-07T00:00:00</end>
+					<value>0</value>
+				</bucket>
+				<bucket start="2007-01-07T00:00:00">
+					<name>Sun Jan 07</name>
+					<end>2007-01-08T00:00:00</end>
+					<value>0</value>
+				</bucket>
+				<bucket start="2007-01-08T00:00:00">
+					<name>Mon Jan 08</name>
+					<end>2007-01-09T00:00:00</end>
+					<value>1.2</value>
+				</bucket>
+				<bucket start="2007-01-09T00:00:00">
+					<name>Tue Jan 09</name>
+					<end>2007-01-10T00:00:00</end>
+					<value>1</value>
+				</bucket>
+				<bucket start="2007-01-10T00:00:00">
+					<name>Wed Jan 10</name>
+					<end>2007-01-11T00:00:00</end>
+					<value>1</value>
+				</bucket>
+				<bucket start="2007-01-11T00:00:00">
+					<name>Thu Jan 11</name>
+					<end>2007-01-12T00:00:00</end>
+					<value>1</value>
+				</bucket>
+				<bucket start="2007-01-12T00:00:00">
+					<name>Fri Jan 12</name>
+					<end>2007-01-13T00:00:00</end>
+					<value>0.8</value>
+				</bucket>
+				<bucket start="2007-01-13T00:00:00">
+					<name>Sat Jan 13</name>
+					<end>2007-01-14T00:00:00</end>
+					<value>0</value>
+				</bucket>
+				<bucket start="2007-01-14T00:00:00">
+					<name>Sun Jan 14</name>
+					<end>2007-01-15T00:00:00</end>
+					<value>0</value>
+				</bucket>
+				<bucket start="2007-01-15T00:00:00">
+					<name>Mon Jan 15</name>
+					<end>2007-01-16T00:00:00</end>
+					<value>1.2</value>
+				</bucket>
+				<bucket start="2007-01-16T00:00:00">
+					<name>Tue Jan 16</name>
+					<end>2007-01-17T00:00:00</end>
+					<value>1</value>
+				</bucket>
+				<bucket start="2007-01-17T00:00:00">
+					<name>Wed Jan 17</name>
+					<end>2007-01-18T00:00:00</end>
+					<value>1</value>
+				</bucket>
+				<bucket start="2007-01-18T00:00:00">
+					<name>Thu Jan 18</name>
+					<end>2007-01-19T00:00:00</end>
+					<value>1</value>
+				</bucket>
+				<bucket start="2007-01-19T00:00:00">
+					<name>Fri Jan 19</name>
+					<end>2007-01-20T00:00:00</end>
+					<value>0.8</value>
+				</bucket>
+				<bucket start="2007-01-20T00:00:00">
+					<name>Sat Jan 20</name>
+					<end>2007-01-21T00:00:00</end>
+					<value>0</value>
+				</bucket>
+				<bucket start="2007-01-21T00:00:00">
+					<name>Sun Jan 21</name>
+					<end>2007-01-22T00:00:00</end>
+					<value>0</value>
+				</bucket>
+				<bucket start="2007-01-22T00:00:00">
+					<name>Week 04</name>
+					<end>2007-01-29T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-01-29T00:00:00">
+					<name>Week 05</name>
+					<end>2007-02-05T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-02-05T00:00:00">
+					<name>Week 06</name>
+					<end>2007-02-12T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-02-12T00:00:00">
+					<name>Week 07</name>
+					<end>2007-02-19T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-02-19T00:00:00">
+					<name>Week 08</name>
+					<end>2007-02-26T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-02-26T00:00:00">
+					<name>Week 09</name>
+					<end>2007-03-05T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-03-05T00:00:00">
+					<name>Week 10</name>
+					<end>2007-03-12T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-03-12T00:00:00">
+					<name>Week 11</name>
+					<end>2007-03-19T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-03-19T00:00:00">
+					<name>Week 12</name>
+					<end>2007-03-26T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-03-26T00:00:00">
+					<name>Week 13</name>
+					<end>2007-04-02T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-04-02T00:00:00">
+					<name>Week 14</name>
+					<end>2007-04-09T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-04-09T00:00:00">
+					<name>Week 15</name>
+					<end>2007-04-16T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-04-16T00:00:00">
+					<name>Week 16</name>
+					<end>2007-04-23T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-04-23T00:00:00">
+					<name>Week 17</name>
+					<end>2007-04-30T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-04-30T00:00:00">
+					<name>Week 18</name>
+					<end>2007-05-07T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+				<bucket start="2007-05-07T00:00:00">
+					<name>Week 18</name>
+					<end>2030-12-31T00:00:00</end>
+					<value>0.714286</value>
+				</bucket>
+			</buckets>
+		</calendar>
+	</calendars>
+	<operations>
+		<operation name="delivery 1" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+	</operations>
+	<items>
+		<item name="Product 1">
+			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
+		</item>
+	</items>
+	<demands>
+		<demand name="Forecast 1" xsi:type="demand_forecast">
+			<item name="Product 1"/>
+			<priority>1</priority>
+			<calendar name="planningbuckets" xsi:type="calendar_float"/>
+			<buckets>
+				<bucket start="2007-01-01T00:00:00">
+					<total>24</total>
+					<net>0</net>
+					<consumed>24</consumed>
+				</bucket>
+				<bucket start="2007-01-02T00:00:00">
+					<total>20</total>
+					<net>0</net>
+					<consumed>20</consumed>
+				</bucket>
+				<bucket start="2007-01-03T00:00:00">
+					<total>20</total>
+					<net>0</net>
+					<consumed>20</consumed>
+				</bucket>
+				<bucket start="2007-01-04T00:00:00">
+					<total>20</total>
+					<net>0</net>
+					<consumed>20</consumed>
+				</bucket>
+				<bucket start="2007-01-05T00:00:00">
+					<total>16</total>
+					<net>0</net>
+					<consumed>16</consumed>
+				</bucket>
+				<bucket start="2007-01-08T00:00:00">
+					<total>24</total>
+					<net>24</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-01-09T00:00:00">
+					<total>20</total>
+					<net>20</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-01-10T00:00:00">
+					<total>20</total>
+					<net>20</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-01-11T00:00:00">
+					<total>20</total>
+					<net>20</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-01-12T00:00:00">
+					<total>16</total>
+					<net>16</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-01-15T00:00:00">
+					<total>24</total>
+					<net>24</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-01-16T00:00:00">
+					<total>20</total>
+					<net>20</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-01-17T00:00:00">
+					<total>20</total>
+					<net>20</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-01-18T00:00:00">
+					<total>20</total>
+					<net>20</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-01-19T00:00:00">
+					<total>16</total>
+					<net>16</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-01-22T00:00:00">
+					<total>100</total>
+					<net>10</net>
+					<consumed>90</consumed>
+				</bucket>
+				<bucket start="2007-01-29T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-02-05T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-02-12T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-02-19T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-02-26T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-03-05T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-03-12T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-03-19T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-03-26T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-04-02T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-04-09T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-04-16T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-04-23T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-04-30T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-05-07T00:00:00">
+					<total>0</total>
+					<net>0</net>
+					<consumed>0</consumed>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand name="Order 1 for product 1">
+			<quantity>90</quantity>
+			<item name="Product 1"/>
+			<due>2007-01-03T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand name="Order 2 for product 1">
+			<quantity>90</quantity>
+			<item name="Product 1"/>
+			<due>2007-01-03T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand name="Order 3 for product 1">
+			<quantity>90</quantity>
+			<item name="Product 1"/>
+			<due>2007-01-27T00:00:00</due>
+			<priority>2</priority>
+		</demand>
+	</demands>
+	<operation_plans>
+		<operation_plan id="2" operation="delivery 1">
+			<demand name="Order 2 for product 1"/>
+			<start>2007-01-02T00:00:00</start>
+			<end>2007-01-03T00:00:00</end>
+			<quantity>90</quantity>
+		</operation_plan>
+		<operation_plan id="1" operation="delivery 1">
+			<demand name="Order 1 for product 1"/>
+			<start>2007-01-02T00:00:00</start>
+			<end>2007-01-03T00:00:00</end>
+			<quantity>90</quantity>
+		</operation_plan>
+		<operation_plan id="3" operation="delivery 1">
+			<start>2007-01-07T00:00:00</start>
+			<end>2007-01-08T00:00:00</end>
+			<quantity>24</quantity>
+		</operation_plan>
+		<operation_plan id="4" operation="delivery 1">
+			<start>2007-01-08T00:00:00</start>
+			<end>2007-01-09T00:00:00</end>
+			<quantity>20</quantity>
+		</operation_plan>
+		<operation_plan id="5" operation="delivery 1">
+			<start>2007-01-09T00:00:00</start>
+			<end>2007-01-10T00:00:00</end>
+			<quantity>20</quantity>
+		</operation_plan>
+		<operation_plan id="6" operation="delivery 1">
+			<start>2007-01-10T00:00:00</start>
+			<end>2007-01-11T00:00:00</end>
+			<quantity>20</quantity>
+		</operation_plan>
+		<operation_plan id="7" operation="delivery 1">
+			<start>2007-01-11T00:00:00</start>
+			<end>2007-01-12T00:00:00</end>
+			<quantity>16</quantity>
+		</operation_plan>
+		<operation_plan id="8" operation="delivery 1">
+			<start>2007-01-14T00:00:00</start>
+			<end>2007-01-15T00:00:00</end>
+			<quantity>24</quantity>
+		</operation_plan>
+		<operation_plan id="9" operation="delivery 1">
+			<start>2007-01-15T00:00:00</start>
+			<end>2007-01-16T00:00:00</end>
+			<quantity>20</quantity>
+		</operation_plan>
+		<operation_plan id="10" operation="delivery 1">
+			<start>2007-01-16T00:00:00</start>
+			<end>2007-01-17T00:00:00</end>
+			<quantity>20</quantity>
+		</operation_plan>
+		<operation_plan id="11" operation="delivery 1">
+			<start>2007-01-17T00:00:00</start>
+			<end>2007-01-18T00:00:00</end>
+			<quantity>20</quantity>
+		</operation_plan>
+		<operation_plan id="12" operation="delivery 1">
+			<start>2007-01-18T00:00:00</start>
+			<end>2007-01-19T00:00:00</end>
+			<quantity>16</quantity>
+		</operation_plan>
+		<operation_plan id="13" operation="delivery 1">
+			<start>2007-01-21T00:00:00</start>
+			<end>2007-01-22T00:00:00</end>
+			<quantity>10</quantity>
+		</operation_plan>
+		<operation_plan id="14" operation="delivery 1">
+			<demand name="Order 3 for product 1"/>
+			<start>2007-01-26T00:00:00</start>
+			<end>2007-01-27T00:00:00</end>
+			<quantity>90</quantity>
+		</operation_plan>
+	</operation_plans>
+</plan>

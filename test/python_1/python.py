@@ -3,10 +3,10 @@ def read_csv_file():
   # This function reads a CSV-formatted file, creates an XML string and
   # then passes the string to Frepple for processing
   import csv
-  x = [ '<?xml version="1.0" encoding="UTF-8" ?><PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n<ITEMS>' ]
+  x = [ '<?xml version="1.0" encoding="UTF-8" ?><plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n<items>' ]
   for row in csv.reader(open("items.csv", "rb")):
-    x.append('<ITEM NAME="%s"><OPERATION NAME="%s"/></ITEM>' % (row[0],row[1]))
-  x.append('</ITEMS>\n</PLAN>')
+    x.append('<item name="%s"><operation name="%s"/></item>' % (row[0],row[1]))
+  x.append('</items>\n</plan>')
   frepple.readXMLdata('\n'.join(x),False,False)
   return
 
@@ -24,15 +24,17 @@ def create_files(cnt):
   csvout = open('items.csv','w')
   xmlout = open('items.xml','w')
   try:
-    xmlout.write('<?xml version="1.0" encoding="UTF-8" ?><PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n<ITEMS>\n')
+    xmlout.write('<?xml version="1.0" encoding="UTF-8" ?><plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n<items>\n')
     for i in range(cnt):
       csvout.write('item%i,oper%i\n' % (i,i%100))
-      xmlout.write('<ITEM NAME="item%i"><OPERATION NAME="oper%i"/></ITEM>\n' % (i,i%100))
-    xmlout.write('</ITEMS>\n</PLAN>')
+      xmlout.write('<item name="item%i"><operation name="oper%i"/></item>\n' % (i,i%100))
+    xmlout.write('</items>\n</plan>')
   finally:
     csvout.close()
     xmlout.close()
   return
 
+def my_function(a):
+  print 'in my function with argument %s' % a
 
 print '2. In my script file'

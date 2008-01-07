@@ -63,8 +63,8 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
   // Initialize the metadata.
   CommandWebservice::metadata.registerClass(
-    "COMMAND",
-    "COMMAND_WEBSERVICE",
+    "command",
+    "command_webservice",
     Object::createDefault<CommandWebservice>);
 
   // Return the name of the module

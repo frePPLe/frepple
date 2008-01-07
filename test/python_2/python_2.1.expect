@@ -1,6 +1,6 @@
 Problems:
-BUFFERS material excess 2007-01-02 09:00:00 2007-01-03 08:00:00 Buffer 'end item' has material excess of 10
-DEMANDS unplanned 2007-01-04 08:00:00 2007-01-04 08:00:00 Demand 'order 3' is not planned
+buffers material excess 2007-01-02 09:00:00 2007-01-03 08:00:00 Buffer 'end item' has material excess of 10
+demands unplanned 2007-01-04 08:00:00 2007-01-04 08:00:00 Demand 'order 3' is not planned
 
 Operationplans:
 3 delivery end item 10.0 2007-01-03 08:00:00 2007-01-04 08:00:00 order 2

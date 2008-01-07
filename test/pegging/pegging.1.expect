@@ -3571,112 +3571,156 @@
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;buffer 1&apos; has material excess of 10</description>
-			<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
+			<start>1971-01-01T00:00:00</start>
+			<end>2007-01-09T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;buffer 1&apos; has material excess of 94</description>
-			<dates>2007-01-17T00:00:00 / 2030-12-31T00:00:00</dates>
+			<start>2007-01-17T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer 1&apos; has material shortage of 4</description>
-			<dates>2007-01-09T00:00:00 / 2007-01-10T00:00:00</dates>
+			<start>2007-01-09T00:00:00</start>
+			<end>2007-01-10T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer 1&apos; has material shortage of 4</description>
-			<dates>2007-01-10T00:00:00 / 2007-01-17T00:00:00</dates>
+			<start>2007-01-10T00:00:00</start>
+			<end>2007-01-17T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;buffer 2&apos; has material excess of 10</description>
-			<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
+			<start>1971-01-01T00:00:00</start>
+			<end>2007-01-09T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer 2&apos; has material shortage of 4</description>
-			<dates>2007-01-09T00:00:00 / 2007-01-10T00:00:00</dates>
+			<start>2007-01-09T00:00:00</start>
+			<end>2007-01-10T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer 2&apos; has material shortage of 4</description>
-			<dates>2007-01-10T00:00:00 / 2007-01-17T00:00:00</dates>
+			<start>2007-01-10T00:00:00</start>
+			<end>2007-01-17T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer 2&apos; has material shortage of 4</description>
-			<dates>2007-01-17T00:00:00 / 2030-12-31T00:00:00</dates>
+			<start>2007-01-17T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;buffer 3&apos; has material excess of 10</description>
-			<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
+			<start>1971-01-01T00:00:00</start>
+			<end>2007-01-09T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;buffer 3&apos; has material excess of 92</description>
-			<dates>2007-01-15T00:00:00 / 2030-12-31T00:00:00</dates>
+			<start>2007-01-15T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer 3&apos; has material shortage of 4</description>
-			<dates>2007-01-09T00:00:00 / 2007-01-15T00:00:00</dates>
+			<start>2007-01-09T00:00:00</start>
+			<end>2007-01-15T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;buffer 4&apos; has material excess of 10</description>
-			<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
+			<start>1971-01-01T00:00:00</start>
+			<end>2007-01-09T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;buffer 4&apos; has material excess of 206</description>
-			<dates>2007-01-15T00:00:00 / 2030-12-31T00:00:00</dates>
+			<start>2007-01-15T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer 4&apos; has material shortage of 6</description>
-			<dates>2007-01-09T00:00:00 / 2007-01-15T00:00:00</dates>
+			<start>2007-01-09T00:00:00</start>
+			<end>2007-01-15T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;constraint buffer 1&apos; has material excess of 200</description>
-			<dates>2007-01-17T00:00:00 / 2030-12-31T00:00:00</dates>
+			<start>2007-01-17T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;constraint buffer 3&apos; has material excess of 1000</description>
-			<dates>2007-01-15T00:00:00 / 2030-12-31T00:00:00</dates>
+			<start>2007-01-15T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;constraint buffer 4&apos; has material excess of 1000</description>
-			<dates>2007-01-15T00:00:00 / 2030-12-31T00:00:00</dates>
+			<start>2007-01-15T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>late</name>
 			<description>Demand &apos;order for item 1&apos; planned P8D after its due date</description>
-			<dates>2007-01-10T00:00:00 / 2007-01-18T00:00:00</dates>
+			<start>2007-01-10T00:00:00</start>
+			<end>2007-01-18T00:00:00</end>
+			<weight>8</weight>
 		</problem>
 		<problem>
 			<name>short</name>
 			<description>Demand &apos;order for item 2&apos; planned 20 units short</description>
-			<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
+			<start>2007-01-10T00:00:00</start>
+			<end>2007-01-10T00:00:00</end>
+			<weight>20</weight>
 		</problem>
 		<problem>
 			<name>late</name>
 			<description>Demand &apos;order for item 2&apos; planned P8D after its due date</description>
-			<dates>2007-01-10T00:00:00 / 2007-01-18T00:00:00</dates>
+			<start>2007-01-10T00:00:00</start>
+			<end>2007-01-18T00:00:00</end>
+			<weight>8</weight>
 		</problem>
 		<problem>
 			<name>late</name>
 			<description>Demand &apos;order for item 3&apos; planned P6D after its due date</description>
-			<dates>2007-01-10T00:00:00 / 2007-01-16T00:00:00</dates>
+			<start>2007-01-10T00:00:00</start>
+			<end>2007-01-16T00:00:00</end>
+			<weight>6</weight>
 		</problem>
 		<problem>
 			<name>late</name>
 			<description>Demand &apos;order for item 4&apos; planned P6D after its due date</description>
-			<dates>2007-01-10T00:00:00 / 2007-01-16T00:00:00</dates>
+			<start>2007-01-10T00:00:00</start>
+			<end>2007-01-16T00:00:00</end>
+			<weight>6</weight>
 		</problem>
 	</problems>
 </plan>

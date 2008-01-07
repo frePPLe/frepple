@@ -230,7 +230,9 @@ DECLARE_EXPORT void Problem::writeElement(XMLOutput *o, const XMLtag& tag, mode 
   o->BeginObject(tag);
   o->writeElement(Tags::tag_name, getType().type);
   o->writeElement(Tags::tag_description, getDescription());
-  o->writeElement(Tags::tag_dates, getDateRange());
+  o->writeElement(Tags::tag_start, getDateRange().getStart());
+  o->writeElement(Tags::tag_end, getDateRange().getEnd());
+  o->writeElement(Tags::tag_weight, getWeight());
   o->EndObject(tag);
 }
 

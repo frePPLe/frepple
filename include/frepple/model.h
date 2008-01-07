@@ -575,13 +575,13 @@ class Problem : public NonCopyable
       * Returns false if a certain problem points at an infeasibility of the
       * plan.
       */
-    virtual bool isFeasible() = 0;
+    virtual bool isFeasible() const = 0;
 
     /** Returns a float number reflecting the magnitude of the problem. This
       * allows us to focus on the significant problems and filter out the
       * small ones.
       */
-    virtual float getWeight() = 0;
+    virtual float getWeight() const = 0;
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, XMLElement&  pElement) {}
@@ -3807,8 +3807,8 @@ class ProblemBeforeCurrent : public Problem
       << "' planned in the past";
       return ch.str();
     }
-    bool isFeasible() {return false;}
-    float getWeight()
+    bool isFeasible() const {return false;}
+    float getWeight() const
     {return dynamic_cast<OperationPlan*>(getOwner())->getQuantity();}
     explicit ProblemBeforeCurrent(OperationPlan* o) : Problem(o)
       {addProblem();}
@@ -3847,8 +3847,8 @@ class ProblemBeforeFence : public Problem
       << "' planned before fence";
       return ch.str();
     }
-    bool isFeasible() {return true;}
-    float getWeight()
+    bool isFeasible() const {return true;}
+    float getWeight() const
     {return static_cast<OperationPlan*>(getOwner())->getQuantity();}
     explicit ProblemBeforeFence(OperationPlan* o) : Problem(o)
       {addProblem();}
@@ -3885,8 +3885,8 @@ class ProblemPrecedence : public Problem
           + "' starts before Operation '"
           + opplan1->getOperation()->getName() +"' ends";
     }
-    bool isFeasible() {return false;}
-    float getWeight() {return 1.0f;}
+    bool isFeasible() const {return false;}
+    float getWeight() const {return 1.0f;}  // @todo not implemented
     explicit ProblemPrecedence
     (Operation* o, OperationPlan* op1, OperationPlan* op2)
         : Problem(o), opplan1(op1), opplan2(op2) {addProblem();}
@@ -3923,8 +3923,8 @@ class ProblemDemandNotPlanned : public Problem
   public:
     string getDescription() const
       {return string("Demand '") + getDemand()->getName() + "' is not planned";}
-    bool isFeasible() {return false;}
-    float getWeight() {return getDemand()->getQuantity();}
+    bool isFeasible() const {return false;}
+    float getWeight() const {return getDemand()->getQuantity();}
     explicit ProblemDemandNotPlanned(Demand* d) : Problem(d) {addProblem();}
     ~ProblemDemandNotPlanned() {removeProblem();}
     const DateRange getDateRange() const
@@ -3946,12 +3946,12 @@ class ProblemLate : public Problem
 {
   public:
     DECLARE_EXPORT string getDescription() const;
-    bool isFeasible() {return true;}
+    bool isFeasible() const {return true;}
 
     /** The weight is equal to the delay, expressed in days.<br>
       * The quantity being delayed is not included.
       */
-    float getWeight()
+    float getWeight() const
     {
       return static_cast<float>(DateRange(
         getDemand()->getDue(),
@@ -3983,8 +3983,14 @@ class ProblemEarly : public Problem
 {
   public:
     DECLARE_EXPORT string getDescription() const;
-    bool isFeasible() {return true;}
-    float getWeight() {return 1.0f;}
+    bool isFeasible() const {return true;}
+    float getWeight() const 
+    {
+      return static_cast<float>(DateRange(
+        getDemand()->getDue(),
+        (*(getDemand()->getDelivery().begin()))->getDates().getEnd()
+        ).getDuration()) / 86400;
+    }
     explicit ProblemEarly(Demand* d) : Problem(d) {addProblem();}
     ~ProblemEarly() {removeProblem();}
     const DateRange getDateRange() const
@@ -4016,8 +4022,8 @@ class ProblemShort : public Problem
       << " units short";
       return ch.str();
     }
-    bool isFeasible() {return true;}
-    float getWeight()
+    bool isFeasible() const {return true;}
+    float getWeight() const
       {return getDemand()->getQuantity() - getDemand()->getPlannedQuantity();}
     explicit ProblemShort(Demand* d) : Problem(d) {addProblem();}
     ~ProblemShort() {removeProblem();}
@@ -4047,8 +4053,8 @@ class ProblemExcess : public Problem
       << " units excess";
       return ch.str();
     }
-    bool isFeasible() {return true;}
-    float getWeight()
+    bool isFeasible() const {return true;}
+    float getWeight() const
       {return getDemand()->getPlannedQuantity() - getDemand()->getQuantity();}
     explicit ProblemExcess(Demand* d) : Problem(d) {addProblem();}
     ~ProblemExcess() {removeProblem();}
@@ -4072,8 +4078,8 @@ class ProblemPlannedLate : public Problem
   public:
     string getDescription() const
       {return "Operationplan planned after its lpst date";}
-    bool isFeasible() {return false;}
-    float getWeight() {return 1.0f;}
+    bool isFeasible() const {return false;}
+    float getWeight() const {return 1.0f;} // @todo not implemented
     explicit ProblemPlannedLate(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemPlannedLate() {removeProblem();}
@@ -4110,8 +4116,8 @@ class ProblemPlannedEarly : public Problem
   public:
     string getDescription() const
       {return "Operationplan planned before its epst date";}
-    bool isFeasible() {return false;}
-    float getWeight() {return 1.0f;}
+    bool isFeasible() const {return false;}
+    float getWeight() const {return 1.0f;} // @todo not implemented
     explicit ProblemPlannedEarly(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemPlannedEarly() {removeProblem();}
@@ -4147,8 +4153,8 @@ class ProblemCapacityOverload : public Problem
 {
   public:
     DECLARE_EXPORT string getDescription() const;
-    bool isFeasible() {return false;}
-    float getWeight() {return 1.0f;}
+    bool isFeasible() const {return false;}
+    float getWeight() const {return 1.0f;}  // @todo unimplemented
     ProblemCapacityOverload(Resource* r, DateRange d, float q)
         : Problem(r), qty(q), dr(d) {addProblem();}
     ~ProblemCapacityOverload() {removeProblem();}
@@ -4177,8 +4183,8 @@ class ProblemCapacityUnderload : public Problem
 {
   public:
     DECLARE_EXPORT string getDescription() const;
-    bool isFeasible() {return false;}
-    float getWeight() {return 1.0f;}
+    bool isFeasible() const {return true;}
+    float getWeight() const {return 1.0f;}  // @todo unimplemented
     ProblemCapacityUnderload(Resource* r, DateRange d, float q)
         : Problem(r), qty(q), dr(d) {addProblem();}
     ~ProblemCapacityUnderload() {removeProblem();}
@@ -4207,8 +4213,8 @@ class ProblemMaterialShortage : public Problem
 {
   public:
     DECLARE_EXPORT string getDescription() const;
-    bool isFeasible() {return false;}
-    float getWeight() {return 1.0f;}
+    bool isFeasible() const {return false;}
+    float getWeight() const {return 1.0f;}  // @todo not implemented
     ProblemMaterialShortage(Buffer* b, Date st, Date nd, float q)
         : Problem(b), qty(q), dr(st,nd) {addProblem();}
     ~ProblemMaterialShortage() {removeProblem();}
@@ -4237,8 +4243,8 @@ class ProblemMaterialExcess : public Problem
 {
   public:
     DECLARE_EXPORT string getDescription() const;
-    bool isFeasible() {return true;}
-    float getWeight() {return 1.0f;}
+    bool isFeasible() const {return true;}
+    float getWeight() const {return 1.0f;}  // @todo not implemented
     ProblemMaterialExcess(Buffer* b, Date st, Date nd, float q)
         : Problem(b), qty(q), dr(st,nd) {addProblem();}
     ~ProblemMaterialExcess() {removeProblem();}

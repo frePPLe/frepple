@@ -370,32 +370,44 @@
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;A order&apos; is not planned</description>
-			<dates>2007-01-02T00:00:00 / 2007-01-02T00:00:00</dates>
+			<start>2007-01-02T00:00:00</start>
+			<end>2007-01-02T00:00:00</end>
+			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;B order 1&apos; is not planned</description>
-			<dates>2007-01-02T00:00:00 / 2007-01-02T00:00:00</dates>
+			<start>2007-01-02T00:00:00</start>
+			<end>2007-01-02T00:00:00</end>
+			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;B order 2&apos; is not planned</description>
-			<dates>2007-01-02T00:00:00 / 2007-01-02T00:00:00</dates>
+			<start>2007-01-02T00:00:00</start>
+			<end>2007-01-02T00:00:00</end>
+			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;C order&apos; is not planned</description>
-			<dates>2007-01-02T00:00:00 / 2007-01-02T00:00:00</dates>
+			<start>2007-01-02T00:00:00</start>
+			<end>2007-01-02T00:00:00</end>
+			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;D order&apos; is not planned</description>
-			<dates>2007-01-02T00:00:00 / 2007-01-02T00:00:00</dates>
+			<start>2007-01-02T00:00:00</start>
+			<end>2007-01-02T00:00:00</end>
+			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;E order&apos; is not planned</description>
-			<dates>2007-01-02T00:00:00 / 2007-01-02T00:00:00</dates>
+			<start>2007-01-02T00:00:00</start>
+			<end>2007-01-02T00:00:00</end>
+			<weight>10</weight>
 		</problem>
 	</problems>
 </plan>

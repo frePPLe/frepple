@@ -175,12 +175,16 @@
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;end item&apos; has material excess of 10</description>
-			<dates>2007-01-02T09:00:00 / 2007-01-03T08:00:00</dates>
+			<start>2007-01-02T09:00:00</start>
+			<end>2007-01-03T08:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;order 3&apos; is not planned</description>
-			<dates>2007-01-04T08:00:00 / 2007-01-04T08:00:00</dates>
+			<start>2007-01-04T08:00:00</start>
+			<end>2007-01-04T08:00:00</end>
+			<weight>10</weight>
 		</problem>
 	</problems>
 </plan>

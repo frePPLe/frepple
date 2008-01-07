@@ -788,7 +788,9 @@
 		<xsd:sequence>
 			<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
 			<xsd:element name="description" type="xsd:normalizedString" minOccurs="0" />
-			<xsd:element name="dates" type="xsd:normalizedString" minOccurs="0" />
+			<xsd:element name="start" type="xsd:dateTime" minOccurs="0" />
+			<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
+			<xsd:element name="weight" type="xsd:float" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -851,10 +853,10 @@
 			<xsd:extension base="command">
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="verbose" type="xsd:boolean" />
-					<xsd:element name="variable" type="xsd:string" />
+					<xsd:element name="variable" type="xsd:normalizedString" />
 					<xsd:element name="value" type="xsd:string" />
 				</xsd:choice>
-				<xsd:attribute name="variable" type="xsd:string" />
+				<xsd:attribute name="variable" type="xsd:normalizedString" />
 				<xsd:attribute name="value" type="xsd:string" />
 			</xsd:extension>
 		</xsd:complexContent>

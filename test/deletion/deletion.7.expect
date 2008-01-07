@@ -250,22 +250,30 @@
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer A&apos; has material shortage of 1</description>
-			<dates>2007-01-30T00:00:00 / 2007-02-27T00:00:00</dates>
+			<start>2007-01-30T00:00:00</start>
+			<end>2007-02-27T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer A&apos; has material shortage of 1</description>
-			<dates>2007-02-27T00:00:00 / 2007-03-30T00:00:00</dates>
+			<start>2007-02-27T00:00:00</start>
+			<end>2007-03-30T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer A&apos; has material shortage of 1</description>
-			<dates>2007-03-30T00:00:00 / 2030-12-31T00:00:00</dates>
+			<start>2007-03-30T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material shortage</name>
 			<description>Buffer &apos;buffer B&apos; has material shortage of 3</description>
-			<dates>2007-01-30T00:00:00 / 2030-12-31T00:00:00</dates>
+			<start>2007-01-30T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 	</problems>
 </plan>

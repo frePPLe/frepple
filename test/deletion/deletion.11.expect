@@ -146,17 +146,23 @@
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;order 1&apos; is not planned</description>
-			<dates>2007-03-01T00:00:00 / 2007-03-01T00:00:00</dates>
+			<start>2007-03-01T00:00:00</start>
+			<end>2007-03-01T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;order 2&apos; is not planned</description>
-			<dates>2007-02-01T00:00:00 / 2007-02-01T00:00:00</dates>
+			<start>2007-02-01T00:00:00</start>
+			<end>2007-02-01T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;order 3&apos; is not planned</description>
-			<dates>2007-04-01T00:00:00 / 2007-04-01T00:00:00</dates>
+			<start>2007-04-01T00:00:00</start>
+			<end>2007-04-01T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 	</problems>
 </plan>

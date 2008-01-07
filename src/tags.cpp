@@ -143,5 +143,6 @@ DECLARE_EXPORT const XMLtag Tags::tag_validate("validate");
 DECLARE_EXPORT const XMLtag Tags::tag_value("value");
 DECLARE_EXPORT const XMLtag Tags::tag_variable("variable");
 DECLARE_EXPORT const XMLtag Tags::tag_verbose("verbose");
+DECLARE_EXPORT const XMLtag Tags::tag_weight("weight");
 
 }

@@ -2138,8 +2138,9 @@ class OperationAlternate : public Operation
     /** Destructor. */
     DECLARE_EXPORT ~OperationAlternate();
 
-    /** Add a new alternate operation. The higher the priority value, the more
-      * important this alternate operation is. */
+    /** Add a new alternate operation.<br>
+      * The lower the priority value, the more important this alternate 
+      * operation is. */
     DECLARE_EXPORT void addAlternate(Operation* o, float prio = 1.0f);
 
     /** Removes an alternate from the list. */
@@ -2192,11 +2193,11 @@ class OperationAlternate : public Operation
     typedef list<float> priolist;
 
     /** List of the priorities of the different alternate operations. The list
-      * is maintained such that it is sorted in descending order of priority. */
+      * is maintained such that it is sorted in ascending order of priority. */
     priolist priorities;
 
     /** List of all alternate operations. The list is sorted with the operation
-      * with the highest priority at the start of the list.
+      * with the highest priority at the start of the list.<br>
       * Note that the list of operations and the list of priorities go hand in
       * hand: they have an equal number of elements and the order of the
       * elements is matching in both lists.

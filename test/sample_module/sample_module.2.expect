@@ -128,22 +128,30 @@
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;product in factory 1&apos; has material excess of 5</description>
-			<dates>2007-01-02T12:00:00 / 2030-12-31T00:00:00</dates>
+			<start>2007-01-02T12:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;product in factory 2&apos; has material excess of 10</description>
-			<dates>2007-01-02T12:00:00 / 2030-12-31T00:00:00</dates>
+			<start>2007-01-02T12:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>1</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;order 1&apos; is not planned</description>
-			<dates>2007-01-03T12:00:00 / 2007-01-03T12:00:00</dates>
+			<start>2007-01-03T12:00:00</start>
+			<end>2007-01-03T12:00:00</end>
+			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;order 2&apos; is not planned</description>
-			<dates>2007-01-03T12:00:00 / 2007-01-03T12:00:00</dates>
+			<start>2007-01-03T12:00:00</start>
+			<end>2007-01-03T12:00:00</end>
+			<weight>10</weight>
 		</problem>
 	</problems>
 </plan>

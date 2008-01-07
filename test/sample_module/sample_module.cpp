@@ -30,8 +30,8 @@ namespace sample_module
 {
 
 const MetaClass OperationTransport::metadata;
-const XMLtag tag_from("FROM");
-const XMLtag tag_to("TO");
+const XMLtag tag_from("from");
+const XMLtag tag_to("to");
 
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)

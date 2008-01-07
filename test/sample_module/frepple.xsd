@@ -7,12 +7,12 @@
   <xsd:include schemaLocation="../../bin/frepple.xsd" />
 
   <!-- And now define the new type -->
-  <xsd:complexType name="OPERATION_TRANSPORT">
+  <xsd:complexType name="operation_transport">
     <xsd:complexContent>
-      <xsd:extension base="OPERATION_FIXED_TIME">
+      <xsd:extension base="operation_fixed_time">
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="FROM" type="BUFFER" />
-          <xsd:element name="TO" type="BUFFER" />
+          <xsd:element name="from" type="buffer" />
+          <xsd:element name="to" type="buffer" />
         </xsd:choice>
       </xsd:extension>
     </xsd:complexContent>

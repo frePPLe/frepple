@@ -48,23 +48,23 @@
 		<operation name="supply distribution centre" xsi:type="operation_alternate">
 			<alternates>
 				<alternate>
-					<operation name="transport supply from factory 1" xsi:type="operation_TRANSPORT"/>
+					<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
 					<priority>1</priority>
 				</alternate>
 				<alternate>
-					<operation name="transport supply from factory 2" xsi:type="operation_TRANSPORT"/>
+					<operation name="transport supply from factory 2" xsi:type="operation_transport"/>
 					<priority>2</priority>
 				</alternate>
 			</alternates>
 		</operation>
-		<operation name="transport supply from factory 1" xsi:type="operation_TRANSPORT">
-			<FROM name="product in factory 1"/>
-			<TO name="product in distribution centre"/>
+		<operation name="transport supply from factory 1" xsi:type="operation_transport">
+			<from name="product in factory 1"/>
+			<to name="product in distribution centre"/>
 			<duration>P1D</duration>
 		</operation>
-		<operation name="transport supply from factory 2" xsi:type="operation_TRANSPORT">
-			<FROM name="product in factory 2"/>
-			<TO name="product in distribution centre"/>
+		<operation name="transport supply from factory 2" xsi:type="operation_transport">
+			<from name="product in factory 2"/>
+			<to name="product in distribution centre"/>
 			<duration>P1D</duration>
 		</operation>
 	</operations>
@@ -83,11 +83,11 @@
 					<quantity>-1</quantity>
 				</flow>
 				<flow xsi:type="flow_end">
-					<operation name="transport supply from factory 2" xsi:type="operation_TRANSPORT"/>
+					<operation name="transport supply from factory 2" xsi:type="operation_transport"/>
 					<quantity>1</quantity>
 				</flow>
 				<flow xsi:type="flow_end">
-					<operation name="transport supply from factory 1" xsi:type="operation_TRANSPORT"/>
+					<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
 					<quantity>1</quantity>
 				</flow>
 			</flows>
@@ -103,7 +103,7 @@
 					<quantity>1</quantity>
 				</flow>
 				<flow xsi:type="flow">
-					<operation name="transport supply from factory 1" xsi:type="operation_TRANSPORT"/>
+					<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
 					<quantity>-1</quantity>
 				</flow>
 			</flows>
@@ -118,7 +118,7 @@
 					<quantity>1</quantity>
 				</flow>
 				<flow xsi:type="flow">
-					<operation name="transport supply from factory 2" xsi:type="operation_TRANSPORT"/>
+					<operation name="transport supply from factory 2" xsi:type="operation_transport"/>
 					<quantity>-1</quantity>
 				</flow>
 			</flows>
@@ -208,7 +208,9 @@
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;product in distribution centre&apos; has material excess of 20</description>
-			<dates>1971-01-01T00:00:00 / 2007-01-03T12:00:00</dates>
+			<start>1971-01-01T00:00:00</start>
+			<end>2007-01-03T12:00:00</end>
+			<weight>1</weight>
 		</problem>
 	</problems>
 </plan>

@@ -54,14 +54,14 @@ int main (int argc, char *argv[])
     // 2: Plan the model
     FreppleReadXMLData(
       "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" \
-      "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
-      "<COMMANDS>" \
-      "<COMMAND xsi:type=\"COMMAND_SOLVE\">" \
-      "<VERBOSE>false</VERBOSE>" \
-      "<SOLVER NAME=\"MRP\" xsi:type=\"SOLVER_MRP\" CONSTRAINTS=\"0\"/>"  \
-      "</COMMAND>" \
-      "</COMMANDS>" \
-      "</PLAN>", true, false
+      "<plan xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
+      "<commands>" \
+      "<command xsi:type=\"command_solve\">" \
+      "<verbose>false</verbose>" \
+      "<solver name=\"MRP\" xsi:type=\"solver_mrp\" constraints=\"0\"/>"  \
+      "</command>" \
+      "</commands>" \
+      "</plan>", true, false
     );
     reportProblems("planning");
 

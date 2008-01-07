@@ -49,19 +49,19 @@
       <alternates>
         <alternate>
           <operation name="transport supply from factory 1"
-          	xsi:type="operation_TRANSPORT">
+          	xsi:type="operation_transport">
             <duration>P1D</duration>
-            <FROM name="product in factory 1"/>
-            <TO name="product in distribution centre"/>
+            <from name="product in factory 1"/>
+            <to name="product in distribution centre"/>
           </operation>
           <priority>1</priority>
         </alternate>
         <alternate>
           <operation name="transport supply from factory 2"
-          	xsi:type="operation_TRANSPORT">
+          	xsi:type="operation_transport">
             <duration>P1D</duration>
-            <FROM name="product in factory 2"/>
-            <TO name="product in distribution centre"/>
+            <from name="product in factory 2"/>
+            <to name="product in distribution centre"/>
           </operation>
           <priority>2</priority>
         </alternate>

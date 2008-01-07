@@ -146,24 +146,24 @@ int main (int argc, char *argv[])
     logger << "Plan the model:" << endl;
     FreppleReadXMLData(
       "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" \
-      "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
-      "<COMMANDS>" \
-      "<COMMAND xsi:type=\"COMMAND_SOLVE\">" \
-      "<SOLVER NAME=\"MRP\" xsi:type=\"SOLVER_MRP\" CONSTRAINTS=\"0\"/>" \
-      "</COMMAND>" \
-      "</COMMANDS>" \
-      "</PLAN>", true, false
+      "<plan xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
+      "<commands>" \
+      "<command xsi:type=\"command_solve\">" \
+      "<solver name=\"MRP\" xsi:type=\"solver_mrp\" constraints=\"0\"/>" \
+      "</command>" \
+      "</commands>" \
+      "</plan>", true, false
     );
 
     // 4: Plan erase the model
     logger << "Erase the model:" << endl;
     FreppleReadXMLData(
       "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" \
-      "<PLAN xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
-      "<COMMANDS>" \
-      "<COMMAND xsi:type=\"COMMAND_ERASE\" MODE=\"model\" />" \
-      "</COMMANDS>" \
-      "</PLAN>", true, false
+      "<plan xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
+      "<commands>" \
+      "<command xsi:type=\"command_erase\" mode=\"model\" />" \
+      "</commands>" \
+      "</plan>", true, false
     );
 
     // 5: Remove the subscriptions

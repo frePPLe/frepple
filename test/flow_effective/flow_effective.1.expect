@@ -1,0 +1,18 @@
+BUFFER	1. end item - new version	2007-01-19T00:00:00	0	0
+BUFFER	1. end item - new version	2007-02-01T00:00:00	10	10
+BUFFER	1. end item - new version	2007-02-01T00:00:00	-10	0
+BUFFER	1. end item - new version	2007-02-19T00:00:00	10	10
+BUFFER	1. end item - new version	2007-02-19T00:00:00	-10	0
+BUFFER	1. end item - old version	2007-01-19T00:00:00	10	10
+BUFFER	1. end item - old version	2007-01-19T00:00:00	-10	0
+BUFFER	1. end item - old version	2007-02-01T00:00:00	0	0
+BUFFER	1. end item - old version	2007-02-19T00:00:00	0	0
+DEMAND	1. order 1	2007-01-20T00:00:00	10
+DEMAND	1. order 2	2007-02-02T00:00:00	10
+DEMAND	1. order 3	2007-02-20T00:00:00	10
+OPERATION	1. deliver end item	2007-01-19T00:00:00	2007-01-20T00:00:00	10
+OPERATION	1. deliver end item	2007-02-01T00:00:00	2007-02-02T00:00:00	10
+OPERATION	1. deliver end item	2007-02-19T00:00:00	2007-02-20T00:00:00	10
+OPERATION	1. make new end item	2007-01-31T00:00:00	2007-02-01T00:00:00	10
+OPERATION	1. make new end item	2007-02-18T00:00:00	2007-02-19T00:00:00	10
+OPERATION	1. make old end item	2007-01-18T00:00:00	2007-01-19T00:00:00	10

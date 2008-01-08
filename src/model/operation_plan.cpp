@@ -336,9 +336,6 @@ DECLARE_EXPORT bool OperationPlan::initialize()
   // is expected to be unusual and rare, justifying this design choice.
   oper->setChanged();
 
-  // Check the validity of what we have done
-  assert(check());
-
   // The operationplan is valid
   return true;
 }
@@ -700,22 +697,6 @@ DECLARE_EXPORT void OperationPlan::setDemand(const Demand* l)
   // Register the new lot and mark it changed
   dmd = l;
   if (l) Demand::writepointer(l)->setChanged();
-}
-
-
-DECLARE_EXPORT bool OperationPlan::check() const
-{
-  bool okay = true;
-
-  // Check all flowplans
-  for (FlowPlanIterator ee = beginFlowPlans(); ee != endFlowPlans(); ++ee)
-    okay &= ee->check();
-
-  // Check all loadplans
-  for (LoadPlanIterator e = beginLoadPlans(); e != endLoadPlans(); ++e)
-    okay &= e->check();
-
-  return okay;
 }
 
 

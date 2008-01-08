@@ -58,12 +58,12 @@
         <flows>
           <flow xsi:type="flow_start">
             <buffer name="1. end item - old version" />
-            <EFFECTIVE_end>2007-02-01T00:00:00</EFFECTIVE_end>
+            <effective_end>2007-02-01T00:00:00</effective_end>
             <quantity>-1</quantity>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="1. end item - new version" />
-            <EFFECTIVE_start>2007-02-04T00:00:00</EFFECTIVE_start>
+            <effective_start>2007-02-01T00:00:00</effective_start>
             <quantity>-1</quantity>
           </flow>
         </flows>

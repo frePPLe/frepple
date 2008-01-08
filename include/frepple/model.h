@@ -1748,9 +1748,6 @@ class OperationPlan
           + oper->getName() + " not supported");
     };
 
-    /** This method is used to check the validity of the operationplan. */
-    DECLARE_EXPORT bool check() const;
-
     /** This function is used to create the proper loadplan and flowplan
       * objects associated with the operation. */
     DECLARE_EXPORT void createFlowLoads();
@@ -2916,7 +2913,8 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       * class, but this is only superficial: FlowPlan isn't a subclass of
       * Object at all.
       */
-    void DECLARE_EXPORT writeElement(XMLOutput*, const XMLtag&, mode =DEFAULT) const;
+    void DECLARE_EXPORT writeElement
+      (XMLOutput*, const XMLtag&, mode=DEFAULT) const;
 
     /** Return the quantity of the flowplan. */
     float getQuantity() const 
@@ -2942,10 +2940,6 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     /** Returns whether the flowplan needs to be serialized. This is
       * determined by looking at whether the flow is hidden or not. */
     bool getHidden() const {return fl->getHidden();}
-
-    /** Verifies whether the flowplan is properly in-line with its owning
-      * operationplan. */
-    DECLARE_EXPORT bool check() const;
 };
 
 
@@ -3758,9 +3752,6 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     }
     DECLARE_EXPORT void update();
     bool getHidden() const {return ld->getHidden();}
-
-    /** Validates the consistency of the loadplan. */
-    DECLARE_EXPORT bool check() const;
 
     /** Each operationplan has 2 loadplans per load: one at the start,
       * when the capacity consumption starts, and one at the end, when the

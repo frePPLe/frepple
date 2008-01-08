@@ -258,7 +258,7 @@ class Command(BaseCommand):
       # Loop over all clusters
       durations = [ 86400, 86400*2, 86400*3, 86400*5, 86400*6 ]
       for i in range(cluster):
-        if verbosity>0: print "Creating cluster %d..." % i
+        if verbosity>0: print "Creating supply chain for end item %d..." % i
 
         # location
         loc = Location(name='Loc %05d' % i)

@@ -83,7 +83,6 @@ def exportOperationplans(cursor):
   objects = []
   cnt = 0
   for i in frepple.operationplan():
-    # todo use a generator function instead???
     objects.append( (\
        i['identifier'], i['operation'].replace("'","''"),
        round(i['quantity'],ROUNDING_DECIMALS), str(i['start']), str(i['end']),

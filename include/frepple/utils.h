@@ -183,7 +183,7 @@ class XMLtag;
 class XMLInput;
 
 // Include the list of predefined tags
-#include "tags.h"
+#include "frepple/tags.h"
 
 
 /** This type defines what operation we want to do with the entity. */

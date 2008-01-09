@@ -2796,9 +2796,12 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
         || (getOperation() && getOperation()->getHidden());
     }
 
-    /** Returns the date to be used for this flowplan. */
+    /** This method holds the logic the compute the date of a flowplan. */
     virtual const Date& getFlowplanDate(const OperationPlan* o) const
       {return o->getDates().getStart();}
+
+    /** This method holds the logic the compute the quantity of a flowplan. */
+    virtual float getFlowplanQuantity(FlowPlan* fl) const;
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
@@ -2916,14 +2919,6 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     void DECLARE_EXPORT writeElement
       (XMLOutput*, const XMLtag&, mode=DEFAULT) const;
 
-    /** Return the quantity of the flowplan. */
-    float getQuantity() const 
-    {
-      return getFlow()->getEffective().within(getDate()) ?
-        TimeLine<FlowPlan>::EventChangeOnhand::getQuantity() :
-        0.0f;
-    }
-
     /** Updates the quantity of the flowplan by changing the quantity of the
       * operationplan owning this flowplan.<br>
       * The boolean parameter is used to control whether to round up or down
@@ -2935,12 +2930,20 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     /** Returns the date of the flowplan. */
     const Date& getDate() const {return getFlow()->getFlowplanDate(oper);}
 
-    DECLARE_EXPORT void update();
+    DECLARE_EXPORT void update(bool = false);
 
     /** Returns whether the flowplan needs to be serialized. This is
       * determined by looking at whether the flow is hidden or not. */
     bool getHidden() const {return fl->getHidden();}
 };
+
+
+inline float Flow::getFlowplanQuantity(FlowPlan* fl) const
+{
+  return getEffective().within(fl->getDate()) ?
+    fl->getOperationPlan()->getQuantity() * getQuantity() : 
+    0.0f;
+}
 
 
 /** @brief This class represents a workcentre, a physical or logical

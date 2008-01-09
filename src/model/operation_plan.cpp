@@ -532,7 +532,6 @@ DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown, bool up
 // @todo Investigate the interactions Flpln & oppln setEnd(getDates().getEnd());
 DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 {
-
   // Update all flowplans
   for (FlowPlanIterator ee = beginFlowPlans(); ee != endFlowPlans(); ++ee)
     ee->update();
@@ -970,8 +969,8 @@ DECLARE_EXPORT void OperationPlanAlternate::eraseSubOperationPlan(OperationPlan*
     altopplan = NULL;
   else if (o)
     logger << "Warning: Trying to remove a sub operationplan '"
-    << *(o->getOperation()) << "' that is not registered with"
-    << " its parent '" << *getOperation() << "'" << endl;
+      << *(o->getOperation()) << "' that is not registered with"
+      << " its parent '" << *getOperation() << "'" << endl;
 }
 
 }

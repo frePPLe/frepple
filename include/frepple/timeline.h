@@ -125,7 +125,7 @@ template <class type> class TimeLine
       public:
         float getQuantity() const {return quantity;}
         void setQuantity(float q) {quantity = q;}
-        EventChangeOnhand(float qty) : quantity(qty) {}
+        EventChangeOnhand(float qty = 0.0f) : quantity(qty) {}
         virtual unsigned short getType() const {return 1;}
     };
 

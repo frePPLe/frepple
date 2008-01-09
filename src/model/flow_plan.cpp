@@ -32,31 +32,33 @@ namespace frepple
 
 
 DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
-    : TimeLine<FlowPlan>::EventChangeOnhand(
-      f->getQuantity() * opplan->getQuantity())
 {
   assert(opplan && f);
   fl = const_cast<Flow*>(f);
+  
+  // Link the flowplan to the operationplan
   oper = opplan;
   nextFlowPlan = opplan->firstflowplan;
   opplan->firstflowplan = this;
-  TimeLine<FlowPlan>::EventChangeOnhand::setQuantity(getQuantity());
-  f->getBuffer()->flowplans.insert(this);
 
-  // Mark the operation and buffer as having changed. This will trigger the
-  // recomputation of their problems
-  f->getBuffer()->setChanged();
-  f->getOperation()->setChanged();
+  // Update the flowplan and insert it in the timeline
+  update(true);
 }
 
 
-DECLARE_EXPORT void FlowPlan::update()
+DECLARE_EXPORT void FlowPlan::update(bool insert)
 {
+  // Compute the flowplan quantity 
+  float qty = getFlow()->getFlowplanQuantity(this);
+
   // Update the timeline data structure
-  fl->getBuffer()->flowplans.setQuantity(
-    this,
-    oper->getQuantity() * fl->getQuantity()
-  );
+  if (insert)
+  {
+    TimeLine<FlowPlan>::EventChangeOnhand::setQuantity(qty);
+    fl->getBuffer()->flowplans.insert(this);
+  }
+  else
+    fl->getBuffer()->flowplans.setQuantity(this,qty);
 
   // Mark the operation and buffer as having changed. This will trigger the
   // recomputation of their problems

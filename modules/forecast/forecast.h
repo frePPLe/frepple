@@ -287,7 +287,7 @@ class Forecast : public Demand
     virtual void setOperation(const Operation *);
 
     /** Updates the due date of the demand. */
-    virtual void setDue(Date d)
+    virtual void setDue(const Date& d)
     {throw DataException("Can't set due date of a forecast");}
 
     virtual const MetaClass& getType() const {return metadata;}

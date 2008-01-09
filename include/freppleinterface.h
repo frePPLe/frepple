@@ -152,17 +152,16 @@ DECLARE_EXPORT(void) FreppleExit();
   * is available to C with the function FreppleLog(const char*).
   */
 DECLARE_EXPORT(void) FreppleLog(const std::string);
-#endif
-/** Echo a message in the frePPLe log stream (which is either a file or
-  * the standard output stream).
-  */
-DECLARE_EXPORT(void) FreppleLog(const char*);
 
 /* The functions listed below can be called from C. */
-#ifdef __cplusplus
 extern "C"
 {
+
 #endif
+  /** Echo a message in the frePPLe log stream (which is either a file or
+    * the standard output stream).
+    */
+  DECLARE_EXPORT(void) FreppleLog(const char*);
 
   /** Same as FreppleInitialize, but catches all exceptions and returns a
     * status instead.

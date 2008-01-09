@@ -33,7 +33,6 @@ namespace frepple
 
 
 DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
-    : TimeLine<LoadPlan>::EventChangeOnhand(r->getUsageFactor())
 {
   assert(o);
   ld = const_cast<Load*>(r);
@@ -41,7 +40,13 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
   start_or_end = START;
   nextLoadPlan = o->firstloadplan;
   o->firstloadplan = this;
-  r->getResource()->loadplans.insert(this);
+  r->getResource()->loadplans.insert(
+    this, 
+    r->getUsageFactor(), 
+    start_or_end == START ? 
+      oper->getDates().getStart() : 
+      oper->getDates().getEnd()
+    );
   new LoadPlan(o, r, this);
 
   // Mark the operation and resource as being changed. This will trigger
@@ -52,14 +57,20 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
 
 
 DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r, LoadPlan *lp)
-    : TimeLine<LoadPlan>::EventChangeOnhand(- r->getUsageFactor())
 {
   ld = const_cast<Load*>(r);
   oper = o;
   start_or_end = END;
   nextLoadPlan = o->firstloadplan;
   o->firstloadplan = this;
-  r->getResource()->loadplans.insert(this);
+
+  r->getResource()->loadplans.insert(
+    this,
+    - r->getUsageFactor(),
+    start_or_end == START ? 
+      oper->getDates().getStart() : 
+      oper->getDates().getEnd()
+    );
 }
 
 
@@ -74,10 +85,18 @@ DECLARE_EXPORT LoadPlan* LoadPlan::getOtherLoadPlan() const
 DECLARE_EXPORT void LoadPlan::update()
 {
   // Update the timeline
-  ld->getResource()->getLoadPlans().setQuantity(
-    this,
-    start_or_end==START ? ld->getUsageFactor() : - ld->getUsageFactor()
-  );
+  if (start_or_end==START)
+    ld->getResource()->getLoadPlans().update(
+      this,
+      ld->getUsageFactor(),
+      oper->getDates().getStart()
+      );
+  else
+    ld->getResource()->getLoadPlans().update(
+      this,
+      -ld->getUsageFactor(),
+      oper->getDates().getEnd()
+      );
 
   // Mark the operation and resource as being changed. This will trigger
   // the recomputation of their problems

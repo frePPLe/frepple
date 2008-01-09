@@ -56,19 +56,20 @@ template <class type> class TimeLine
     /** @brief Base class for nodes in the timeline. */
     class Event : public NonCopyable
     {
-        friend class TimeLine<type>;
-        friend class const_iterator;
-        friend class iterator;
+      friend class TimeLine<type>;
+      friend class const_iterator;
+      friend class iterator;
       protected:
+        Date dt;
         double oh;
         double cum_prod;
         Event* next;
         Event* prev;
         Event() : oh(0), cum_prod(0), next(NULL), prev(NULL) {};
+
       public:
         virtual ~Event() {};
         virtual float getQuantity() const {return 0.0f;}
-        virtual void setQuantity(float q) {}
 
         /** Return the current onhand value. */
         double getOnhand() const {return oh;}
@@ -78,6 +79,9 @@ template <class type> class TimeLine
 
         /** Return the total consumed quantity till the current date. */
         double getCumulativeConsumed() const {return cum_prod - oh;}
+
+        /** Return the date of the event. */
+        const Date& getDate() const {return dt;}
 
         /** This functions returns the mimimum boundary valid at the time of
           * this event. */
@@ -95,7 +99,6 @@ template <class type> class TimeLine
           while (c && c->getType()!=4) c=c->prev;
           return c ? c->getMax() : 0.0f;
         }
-        virtual const Date & getDate() const = 0;
         virtual unsigned short getType() const = 0;
         /** First criterion is date: earlier Dates come first.
           * Second criterion is the size: big events come first.
@@ -120,11 +123,11 @@ template <class type> class TimeLine
     /** @brief A timeline event representing a change of the current value. */
     class EventChangeOnhand : public Event
     {
+      friend class TimeLine<type>;
       private:
         float quantity;
       public:
         float getQuantity() const {return quantity;}
-        void setQuantity(float q) {quantity = q;}
         EventChangeOnhand(float qty = 0.0f) : quantity(qty) {}
         virtual unsigned short getType() const {return 1;}
     };
@@ -133,13 +136,12 @@ template <class type> class TimeLine
     class EventMinQuantity : public Event
     {
       private:
-        Date dt;
         float newMin;
       public:
-        EventMinQuantity(Date d, float f=0.0f) : Event(), dt(d), newMin(f) {}
+        EventMinQuantity(Date d, float f=0.0f) : Event(), newMin(f) 
+          {dt = d;}
         void setMin(float f) {newMin = f;}
         virtual float getMin() const {return newMin;}
-        const Date & getDate() const {return dt;}
         virtual unsigned short getType() const {return 3;}
     };
 
@@ -147,13 +149,12 @@ template <class type> class TimeLine
     class EventMaxQuantity : public Event
     {
       private:
-        Date dt;
         float newMax;
       public:
-        EventMaxQuantity(Date d, float f=0.0f) : Event(), dt(d), newMax(f) {}
+        EventMaxQuantity(Date d, float f=0.0f) : Event(), newMax(f) 
+          {dt = d;}
         void setMax(float f) {newMax = f;}
         virtual float getMax() const {return newMax;}
-        const Date & getDate() const {return dt;}
         virtual unsigned short getType() const {return 4;}
     };
 
@@ -217,8 +218,14 @@ template <class type> class TimeLine
     const_iterator end() const {return const_iterator(NULL);}
     bool empty() const {return first==NULL;}
     void insert(Event*);
+    void insert(EventChangeOnhand* e, float qty, const Date& d)
+    {
+      e->quantity = qty;
+      e->dt = d;
+      insert(static_cast<Event*>(e));
+    };
     void erase(Event*);
-    void setQuantity(Event*, float);
+    void update(EventChangeOnhand*, float, const Date&);
 
     /** This function is used for debugging purposes. It prints a header line,
       * followed by the date, quantity and on_hand of all events in the
@@ -331,21 +338,16 @@ template <class type> void TimeLine<type>::erase (Event* e)
 }
 
 
-template <class type> void TimeLine<type>::setQuantity(Event* e, float newqty)
+template <class type> void TimeLine<type>::update(EventChangeOnhand* e, float newqty, const Date& d)
 {
-  // Changing the quantity moves the event only slightly up or down the
-  // timeline. The alogrithm below swaps the element with its predecessor or
-  // successor for every position to move.
-  // For 1-2 moves this is more efficient than removing it from the link and
-  // reinserting it. For a large change in the date of an event the algorithm
-  // is less efficient.
-
   // Compute the delta quantity
-  float delta = e->getQuantity() - newqty;
-  float oldqty = e->getQuantity();
+  float delta = e->quantity - newqty;
+  float oldqty = e->quantity;
 
-  // Update the quantity
-  e->setQuantity(newqty);
+  // Set the new date and quantity. The algorithm below swaps the element with
+  // its predecessor or successor till the timeline is properly sorted again.
+  e->dt = d;
+  e->quantity = newqty;
 
   // Update the position in the timeline.
   // Remember that the quantity is also used by the '<' operator! Changing the

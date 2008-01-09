@@ -41,24 +41,28 @@ DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
   nextFlowPlan = opplan->firstflowplan;
   opplan->firstflowplan = this;
 
-  // Update the flowplan and insert it in the timeline
-  update(true);
+  // Compute the flowplan quantity 
+  fl->getBuffer()->flowplans.insert(
+    this,
+    fl->getFlowplanQuantity(this),
+    fl->getFlowplanDate(this)
+    );
+
+  // Mark the operation and buffer as having changed. This will trigger the
+  // recomputation of their problems
+  fl->getBuffer()->setChanged();
+  fl->getOperation()->setChanged();
 }
 
 
-DECLARE_EXPORT void FlowPlan::update(bool insert)
+DECLARE_EXPORT void FlowPlan::update()
 {
-  // Compute the flowplan quantity 
-  float qty = getFlow()->getFlowplanQuantity(this);
-
   // Update the timeline data structure
-  if (insert)
-  {
-    TimeLine<FlowPlan>::EventChangeOnhand::setQuantity(qty);
-    fl->getBuffer()->flowplans.insert(this);
-  }
-  else
-    fl->getBuffer()->flowplans.setQuantity(this,qty);
+  fl->getBuffer()->flowplans.update(
+    this,
+    fl->getFlowplanQuantity(this),
+    fl->getFlowplanDate(this)
+    );
 
   // Mark the operation and buffer as having changed. This will trigger the
   // recomputation of their problems

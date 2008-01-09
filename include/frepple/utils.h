@@ -1373,11 +1373,13 @@ class Date
 
   public:
     /** Default constructor. */
-    // This is the only constructor that can skip the check for finite dates,
-    // and thus gives the best performance.
+    // This constructor can skip the check for finite dates, and 
+    // thus gives the best performance.
     Date() : lval(infinitePast.lval) {}
 
     /** Copy constructor. */
+    // This constructor can skip the check for finite dates, and 
+    // thus gives the best performance.
     Date(const Date& l) : lval(l.lval) {}
 
     /** Constructor initialized with a string. The string needs to be in

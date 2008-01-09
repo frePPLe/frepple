@@ -1923,7 +1923,8 @@ class OperationFixedTime : public Operation
       *  - Locked operationplans can't be updated.
       * @see Operation::setOperationPlanParameters
       */
-    DECLARE_EXPORT void setOperationPlanParameters(OperationPlan*, float, Date, Date, bool=true) const;
+    DECLARE_EXPORT void setOperationPlanParameters
+      (OperationPlan*, float, Date, Date, bool=true) const;
 
   private:
     /** Stores the lengh of the Operation. */
@@ -1978,7 +1979,7 @@ class OperationTimePer : public Operation
       * @see Operation::setOperationPlanParameters
       */
     DECLARE_EXPORT void setOperationPlanParameters
-    (OperationPlan*, float, Date, Date, bool=true) const;
+      (OperationPlan*, float, Date, Date, bool=true) const;
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
@@ -2046,7 +2047,8 @@ class OperationRouting : public Operation
       *    blindly.
       * @see Operation::setOperationPlanParameters
       */
-    DECLARE_EXPORT void setOperationPlanParameters(OperationPlan*, float, Date, Date, bool=true) const;
+    DECLARE_EXPORT void setOperationPlanParameters
+      (OperationPlan*, float, Date, Date, bool=true) const;
 
     DECLARE_EXPORT void beginElement(XMLInput& , XMLElement&  );
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2797,11 +2799,10 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     }
 
     /** This method holds the logic the compute the date of a flowplan. */
-    virtual const Date& getFlowplanDate(const OperationPlan* o) const
-      {return o->getDates().getStart();}
+    virtual const Date& getFlowplanDate(const FlowPlan*) const;
 
     /** This method holds the logic the compute the quantity of a flowplan. */
-    virtual float getFlowplanQuantity(FlowPlan* fl) const;
+    virtual float getFlowplanQuantity(const FlowPlan*) const;
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
@@ -2860,9 +2861,8 @@ class FlowEnd : public Flow
     /** This constructor is called from the plan begin_element function. */
     explicit FlowEnd() {}
 
-    /** Returns the date to be used for this flowplan. */
-    const Date& getFlowplanDate(const OperationPlan* o) const
-      {return o->getDates().getEnd();}
+    /** This method holds the logic the compute the date of a flowplan. */
+    virtual const Date& getFlowplanDate(const FlowPlan* fl) const;
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
 
@@ -2927,10 +2927,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     void setQuantity(float qty, bool b=false, bool u = true)
     {OperationPlan::writepointer(oper)->setQuantity(qty / getFlow()->getQuantity(), b, u);}
 
-    /** Returns the date of the flowplan. */
-    const Date& getDate() const {return getFlow()->getFlowplanDate(oper);}
-
-    DECLARE_EXPORT void update(bool = false);
+    DECLARE_EXPORT void update();
 
     /** Returns whether the flowplan needs to be serialized. This is
       * determined by looking at whether the flow is hidden or not. */
@@ -2938,11 +2935,23 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 };
 
 
-inline float Flow::getFlowplanQuantity(FlowPlan* fl) const
+inline float Flow::getFlowplanQuantity(const FlowPlan* fl) const
 {
   return getEffective().within(fl->getDate()) ?
     fl->getOperationPlan()->getQuantity() * getQuantity() : 
     0.0f;
+}
+
+
+inline const Date& Flow::getFlowplanDate(const FlowPlan* fl) const
+{
+  return fl->getOperationPlan()->getDates().getStart();
+}
+
+
+inline const Date& FlowEnd::getFlowplanDate(const FlowPlan* fl) const
+{
+  return fl->getOperationPlan()->getDates().getEnd();
 }
 
 
@@ -3584,10 +3593,10 @@ class Demand
     DECLARE_EXPORT void deleteOperationPlans(bool deleteLockedOpplans = false);
 
     /** Returns the due date of the demand. */
-    Date getDue() const {return dueDate;}
+    const Date& getDue() const {return dueDate;}
 
     /** Updates the due date of the demand. */
-    virtual void setDue(Date d) {dueDate = d; setChanged();}
+    virtual void setDue(const Date& d) {dueDate = d; setChanged();}
 
     /** Returns the customer. */
     Customer::pointer getCustomer() const { return cust; }
@@ -3724,13 +3733,6 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       * two loadplan objects.
       */
     explicit DECLARE_EXPORT LoadPlan(OperationPlan*, const Load*);
-
-    /** Return the date of the loadplan. */
-    const Date & getDate() const
-    {
-      if (start_or_end == START) return oper->getDates().getStart();
-      else return oper->getDates().getEnd();
-    }
     
     /** Return the quantity of the loadplan. */
     float getQuantity() const 

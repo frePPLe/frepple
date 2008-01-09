@@ -76,7 +76,7 @@ def exportLoadplans():
 
 
 def exportDemand():
-  print "Exporting demands..."
+  print "Exporting demand plans..."
   starttime = time()
   writer = csv.writer(open("demands.csv", "wb"), quoting=csv.QUOTE_ALL)
   for i in frepple.demand():
@@ -85,7 +85,7 @@ def exportDemand():
        (i['name'], i['item'], i['due'], j['quantity'], j['plandate'] or '',
         j['planquantity'] or '', j['operationplan'] or '')
        )
-  print 'Exported demands in %.2f seconds' % (time() - starttime)
+  print 'Exported demand plans in %.2f seconds' % (time() - starttime)
 
 
 def exportPegging():
@@ -107,7 +107,7 @@ def exportForecast():
   try: import freppleforecast
   except: return
 
-  print "Exporting forecast..."
+  print "Exporting forecast plans..."
   starttime = time()
   writer = csv.writer(open("forecast.csv", "wb"), quoting=csv.QUOTE_ALL)
   for i in freppleforecast.forecast():
@@ -117,7 +117,7 @@ def exportForecast():
           i['name'], j['start_date'], j['end_date'], j['totalqty'],
           j['netqty'], j['consumedqty']
          ))
-  print 'Exported forecast in %.2f seconds' % (time() - starttime)
+  print 'Exported forecast plans in %.2f seconds' % (time() - starttime)
 
 
 def exportfrepple():

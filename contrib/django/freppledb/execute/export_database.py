@@ -158,7 +158,7 @@ def exportLoadplans(cursor):
 
 def exportDemand(cursor):
   global ROUNDING_DECIMALS
-  print "Exporting demand..."
+  print "Exporting demand plans..."
   starttime = time()
   cnt = 0
   for i in frepple.demand():
@@ -177,7 +177,7 @@ def exportDemand(cursor):
     if cnt % 500 == 0: transaction.commit()
   transaction.commit()
   cursor.execute("select count(*) from out_demand")
-  print 'Exported %d demands in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+  print 'Exported %d demand plans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
 
 def exportPegging(cursor):
@@ -211,7 +211,7 @@ def exportForecast(cursor):
   except: return
 
   global ROUNDING_DECIMALS
-  print "Exporting forecast..."
+  print "Exporting forecast plans..."
   starttime = time()
   cnt = 0
   for i in freppleforecast.forecast():
@@ -231,7 +231,7 @@ def exportForecast(cursor):
 
   transaction.commit()
   cursor.execute("select count(*) from out_forecast")
-  print 'Exported %d forecasts in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
+  print 'Exported %d forecast plans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 
 
 class DatabaseTask(Thread):

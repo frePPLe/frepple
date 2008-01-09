@@ -154,13 +154,13 @@ DECLARE_EXPORT(void) FreppleExit()
 }
 
 
-DECLARE_EXPORT(void) FreppleLog(const char* msg)
+DECLARE_EXPORT(void) FreppleLog(const string msg)
 {
   logger << msg << endl;
 }
 
 
-DECLARE_EXPORT(void) FreppleLog(const string msg)
+extern "C" DECLARE_EXPORT(void) FreppleLog(const char* msg)
 {
   logger << msg << endl;
 }

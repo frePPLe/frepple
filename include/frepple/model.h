@@ -3734,14 +3734,6 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       */
     explicit DECLARE_EXPORT LoadPlan(OperationPlan*, const Load*);
     
-    /** Return the quantity of the loadplan. */
-    float getQuantity() const 
-    {
-      return getLoad()->getEffective().within(getDate()) ?
-        TimeLine<LoadPlan>::EventChangeOnhand::getQuantity() :
-        0.0f;
-    }
-
     /** Return the operationplan owning this loadplan. */
     OperationPlan* getOperationPlan() const {return oper;}
 

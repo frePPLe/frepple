@@ -139,7 +139,7 @@ template <class type> class TimeLine
         float newMin;
       public:
         EventMinQuantity(Date d, float f=0.0f) : Event(), newMin(f) 
-          {dt = d;}
+          {this->dt = d;}
         void setMin(float f) {newMin = f;}
         virtual float getMin() const {return newMin;}
         virtual unsigned short getType() const {return 3;}
@@ -152,7 +152,7 @@ template <class type> class TimeLine
         float newMax;
       public:
         EventMaxQuantity(Date d, float f=0.0f) : Event(), newMax(f) 
-          {dt = d;}
+          {this->dt = d;}
         void setMax(float f) {newMax = f;}
         virtual float getMax() const {return newMax;}
         virtual unsigned short getType() const {return 4;}
@@ -341,8 +341,8 @@ template <class type> void TimeLine<type>::erase (Event* e)
 template <class type> void TimeLine<type>::update(EventChangeOnhand* e, float newqty, const Date& d)
 {
   // Compute the delta quantity
-  float delta = e->quantity - newqty;
-  float oldqty = e->quantity;
+  double delta = e->quantity - newqty;
+  double oldqty = e->quantity;
 
   // Set the new date and quantity. The algorithm below swaps the element with
   // its predecessor or successor till the timeline is properly sorted again.

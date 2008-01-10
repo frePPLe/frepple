@@ -88,7 +88,22 @@ template <class type> class TimeLine
         virtual float getMin() const
         {
           Event const *c = this;
-          while (c && c->getType()!=3) c=c->prev;
+          /* @todo performance improvement: insert repeater events if the loop is too long.
+          short distance = 0;
+          while (c && c->getType() != 3)
+          {
+            c=c->prev;
+            ++distance;
+          }
+          if (distance > 40)
+          {
+            // Insert a 'repeater' event, to avoid a long loop next time
+            EventMinQuantity *r = 
+              new EventMinQuantity(this->dt,c ? c->getMax() : 0.0f);
+            // Ouch, now we need to insert the new event, but we don't know the owning timeline
+          }
+          */
+          while (c && c->getType() != 3) c=c->prev;
           return c ? c->getMin() : 0.0f;
         }
         /** This functions returns the maximum boundary valid at the time of
@@ -96,7 +111,7 @@ template <class type> class TimeLine
         virtual float getMax() const
         {
           Event const *c = this;
-          while (c && c->getType()!=4) c=c->prev;
+          while (c && c->getType() != 4) c=c->prev;
           return c ? c->getMax() : 0.0f;
         }
         virtual unsigned short getType() const = 0;
@@ -227,9 +242,9 @@ template <class type> class TimeLine
     void erase(Event*);
     void update(EventChangeOnhand*, float, const Date&);
 
-    /** This function is used for debugging purposes. It prints a header line,
-      * followed by the date, quantity and on_hand of all events in the
-      * timeline.
+    /** This function is used for debugging purposes.<br>
+      * It prints a header line, followed by the date, quantity and on_hand 
+      * of all events in the timeline.
       */
     void inspect(string name) const
     {
@@ -258,7 +273,7 @@ template <class type> void TimeLine <type>::insert (Event* e)
   // While searching from the end, update the onhand and cumulative produced
   // quantity of all nodes passed
   iterator i = rbegin();
-  float qty = e->getQuantity();
+  double qty = e->getQuantity();
   if (qty > 0)
     for (; i!=end() && *e<*i; --i)
     {
@@ -310,7 +325,7 @@ template <class type> void TimeLine <type>::insert (Event* e)
 template <class type> void TimeLine<type>::erase (Event* e)
 {
   // Update later entries
-  float qty = e->getQuantity();
+  double qty = e->getQuantity();
   if (qty>0)
     for (iterator i = begin(e); i!=end(); ++i)
     {

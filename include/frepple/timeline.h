@@ -394,7 +394,7 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, float ne
   // Update the onhand for all later events
   if (fabs(delta) > ROUNDING_ERROR)
   {
-    float cumdelta = (oldqty>0? oldqty : 0) - (newqty>0 ? newqty : 0);
+    double cumdelta = (oldqty>0? oldqty : 0) - (newqty>0 ? newqty : 0);
     if (fabs(cumdelta) > 0)
       for (iterator i=begin(e); i!=end(); ++i)
       {

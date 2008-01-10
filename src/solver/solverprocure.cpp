@@ -159,7 +159,12 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
       bool noConsumers = true;
       do
       {
-        current_flowplan = dynamic_cast<const FlowPlan*>(&*(cur++));
+        if (cur->getType() != 1) 
+        {
+          cur++;
+          continue;
+        }
+        current_flowplan = static_cast<const FlowPlan*>(&*(cur++));
         if (current_flowplan->getQuantity() < 0)
         {
           consumed -= current_flowplan->getQuantity();

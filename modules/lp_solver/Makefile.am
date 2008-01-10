@@ -22,10 +22,22 @@ mod_lpsolver_la_LDFLAGS += -no-undefined
 mod_lpsolver_la_LIBADD = ../../src/libfrepple.la
 endif
 
-all-local:
 # not really portable, but does the job on linux
+all-local:
+if DEBUG
+	-cp .libs/mod_lpsolver.so ../../bin
+else
+if COVERAGE
+	-cp .libs/mod_lpsolver.so ../../bin
+else
+if PROFILE
+	-cp .libs/mod_lpsolver.so ../../bin
+else
 	-cp .libs/mod_lpsolver.so ../../bin
 	-$(STRIP) ../../bin/mod_lpsolver.so
+endif
+endif
+endif
 	cp mod_lpsolver.xsd ../../bin
 
 clean-local:

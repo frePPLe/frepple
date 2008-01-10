@@ -31,10 +31,22 @@ mod_forecast_la_LDFLAGS += -no-undefined
 mod_forecast_la_LIBADD = ../../src/libfrepple.la
 endif
 
-all-local:
 # not really portable, but does the job on linux
+all-local:
+if DEBUG
+	-cp .libs/mod_forecast.so ../../bin
+else
+if COVERAGE
+	-cp .libs/mod_forecast.so ../../bin
+else
+if PROFILE
+	-cp .libs/mod_forecast.so ../../bin
+else
 	-cp .libs/mod_forecast.so ../../bin
 	-$(STRIP) ../../bin/mod_forecast.so
+endif
+endif
+endif
 	cp mod_forecast.xsd ../../bin
 
 install-exec-local:

@@ -26,10 +26,22 @@ mod_python_la_LDFLAGS += -no-undefined
 mod_python_la_LIBADD = ../../src/libfrepple.la
 endif
 
-all-local:
 # not really portable, but does the job on linux
+all-local:
+if DEBUG
+	-cp .libs/mod_python.so ../../bin
+else
+if COVERAGE
+	-cp .libs/mod_python.so ../../bin
+else
+if PROFILE
+	-cp .libs/mod_python.so ../../bin
+else
 	-cp .libs/mod_python.so ../../bin
 	-$(STRIP) ../../bin/mod_python.so
+endif
+endif
+endif
 	cp mod_python.xsd ../../bin
 
 install-exec-local:

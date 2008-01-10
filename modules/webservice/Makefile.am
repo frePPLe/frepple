@@ -44,10 +44,23 @@ faultC.cpp:
 client: client.cpp module_webserviceServerLib.cpp
 	g++ -o client client.cpp faultC.cpp module_webserviceClient.cpp module_webserviceC.cpp /home/frepple/workspace/gsoap-2.7/soapcpp2/stdsoap2.cpp
 
-all-local:
 # not really portable, but does the job on linux
-	-cp .libs/mod_webservice.so mod_webservice.xsd frepple.wsdl ../../bin
+all-local:
+if DEBUG
+	-cp .libs/mod_webservice.so ../../bin
+else
+if COVERAGE
+	-cp .libs/mod_webservice.so ../../bin
+else
+if PROFILE
+	-cp .libs/mod_webservice.so ../../bin
+else
+	-cp .libs/mod_webservice.so ../../bin
 	-$(STRIP) ../../bin/mod_webservice.so
+endif
+endif
+endif
+	cp mod_webservice.xsd ../../bin
 
 endif
 

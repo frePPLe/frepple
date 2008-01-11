@@ -258,7 +258,22 @@ DECLARE_EXPORT void MRPSolver::solve(const Flow* fl, void* v)
   data->q_qty = - data->q_flowplan->getQuantity();
   data->q_date = data->q_flowplan->getDate();
   if (data->q_qty != 0.0f)
+  {
     fl->getBuffer()->solve(*this,data);
+    if (data->a_date > fl->getEffective().getEnd())
+    {
+      // The reply date must be less than the effectivity end date: after 
+      // that date the flow in question won't consume any material any more.
+      if (data->getSolver()->getLogLevel()>1)
+      {
+        for (int i=fl->getBuffer()->getLevel(); i>0; --i) logger << " ";
+        logger << "  Buffer '" << fl->getBuffer()->getName() 
+          << "' answer date is adjusted to " << fl->getEffective().getEnd() 
+          << " because of a date effective flow" << endl;
+      }
+      data->a_date = fl->getEffective().getEnd();
+    }
+  }
   else
   {
     // It's a zero quantity flowplan. 

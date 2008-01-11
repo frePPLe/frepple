@@ -2,7 +2,9 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <name>Test model for effective operations</name>
   <description>
-    xxx
+  This model verifies the behavior of date effective flows:
+    - case 1: effectivity on consuming flows of a delivery operation
+    - case 2: date-effective material consumption with constrained supply
   </description>
   <current>2007-01-01T00:00:00</current>
   <commands>
@@ -94,4 +96,80 @@
       <item name="1. end item" />
     </demand>
   </demands>
+
+  <!--
+    Case 2: date-effective material consumption with constrained supply.
+    The supply of component A is constrained. Extra supply arrives only after
+    the end of the effectivity of the component.
+    The situation is solved correctly because the reply date is adjusted to
+    the end of the effective time.
+  -->
+  <buffers>
+    <buffer name="2. end item">
+      <item name="2. end item" />
+      <producing name="2. make end item" xsi:type="operation_fixed_time"
+        duration="P1D">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="2. end item" />
+            <quantity>1</quantity>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="2. component A" />
+            <quantity>-1</quantity>
+            <effective_end>2007-02-01T00:00:00</effective_end>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="2. component B" />
+            <quantity>-1</quantity>
+            <effective_start>2007-02-01T00:00:00</effective_start>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+    <buffer name="2. component A" onhand="10" />
+    <buffer name="2. component B" onhand="10" />
+  </buffers>
+  <operations>
+    <operation name="2. deliver end item" xsi:type="operation_fixed_time"
+      duration="P1D">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="2. end item" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+    </operation>
+    <operation name="2. supply component A" xsi:type="operation_fixed_time">
+      <flows>
+        <flow xsi:type="flow_end">
+          <buffer name="2. component A" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </operation>
+  </operations>
+  <operation_plans>
+    <!-- This supply of component A is later than the effective end date. -->
+    <operation_plan id="2001" operation="2. supply component A">
+      <start>2007-02-12T00:00:00</start>
+      <end>2007-02-12T00:00:00</end>
+      <quantity>25</quantity>
+      <locked>true</locked>
+    </operation_plan>
+  </operation_plans>
+  <items>
+    <item name="2. end item">
+      <operation name="2. deliver end item" />
+    </item>
+  </items>
+  <demands>
+    <demand name="2. order 1">
+      <quantity>30</quantity>
+      <due>2007-01-01T00:00:00</due>
+      <priority>11</priority>
+      <item name="2. end item" />
+    </demand>
+  </demands>
+
 </plan>

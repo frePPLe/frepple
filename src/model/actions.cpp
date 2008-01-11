@@ -298,7 +298,7 @@ DECLARE_EXPORT void CommandSavePlan::execute()
             oo=gbuf->getFlowPlans().begin();
             oo!=gbuf->getFlowPlans().end();
             ++oo)
-          if (oo->getType() == 1)
+          if (oo->getType() == 1 && oo->getQuantity() != 0.0f)
           {
             textoutput << "BUFFER\t" << *gbuf << '\t'
             << oo->getDate() << '\t'
@@ -332,7 +332,7 @@ DECLARE_EXPORT void CommandSavePlan::execute()
             qq=gres->getLoadPlans().begin();
             qq!=gres->getLoadPlans().end();
             ++qq)
-          if (qq->getType() == 1)
+          if (qq->getType() == 1 && qq->getQuantity() != 0.0f)
           {
             textoutput << "RESOURCE\t" << *gres << '\t'
             << qq->getDate() << '\t'

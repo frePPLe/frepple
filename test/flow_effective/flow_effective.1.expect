@@ -1,18 +1,36 @@
-BUFFER	1. end item - new version	2007-01-19T00:00:00	0	0
 BUFFER	1. end item - new version	2007-02-01T00:00:00	10	10
 BUFFER	1. end item - new version	2007-02-01T00:00:00	-10	0
 BUFFER	1. end item - new version	2007-02-19T00:00:00	10	10
 BUFFER	1. end item - new version	2007-02-19T00:00:00	-10	0
 BUFFER	1. end item - old version	2007-01-19T00:00:00	10	10
 BUFFER	1. end item - old version	2007-01-19T00:00:00	-10	0
-BUFFER	1. end item - old version	2007-02-01T00:00:00	0	0
-BUFFER	1. end item - old version	2007-02-19T00:00:00	0	0
+BUFFER	2. component A	1971-01-01T00:00:00	10	10
+BUFFER	2. component A	2007-01-01T00:00:00	-10	0
+BUFFER	2. component A	2007-02-12T00:00:00	25	25
+BUFFER	2. component B	1971-01-01T00:00:00	10	10
+BUFFER	2. component B	2007-02-01T00:00:00	-10	0
+BUFFER	2. end item	2007-01-02T00:00:00	10	10
+BUFFER	2. end item	2007-01-02T00:00:00	-10	0
+BUFFER	2. end item	2007-02-02T00:00:00	10	10
+BUFFER	2. end item	2007-02-02T00:00:00	-10	0
 DEMAND	1. order 1	2007-01-20T00:00:00	10
 DEMAND	1. order 2	2007-02-02T00:00:00	10
 DEMAND	1. order 3	2007-02-20T00:00:00	10
+DEMAND	2. order 1	2007-02-03T00:00:00	10
+DEMAND	2. order 1	2007-01-03T00:00:00	10
 OPERATION	1. deliver end item	2007-01-19T00:00:00	2007-01-20T00:00:00	10
 OPERATION	1. deliver end item	2007-02-01T00:00:00	2007-02-02T00:00:00	10
 OPERATION	1. deliver end item	2007-02-19T00:00:00	2007-02-20T00:00:00	10
 OPERATION	1. make new end item	2007-01-31T00:00:00	2007-02-01T00:00:00	10
 OPERATION	1. make new end item	2007-02-18T00:00:00	2007-02-19T00:00:00	10
 OPERATION	1. make old end item	2007-01-18T00:00:00	2007-01-19T00:00:00	10
+OPERATION	2. deliver end item	2007-01-02T00:00:00	2007-01-03T00:00:00	10
+OPERATION	2. deliver end item	2007-02-02T00:00:00	2007-02-03T00:00:00	10
+OPERATION	2. make end item	2007-01-01T00:00:00	2007-01-02T00:00:00	10
+OPERATION	2. make end item	2007-02-01T00:00:00	2007-02-02T00:00:00	10
+OPERATION	2. supply component A	2007-02-12T00:00:00	2007-02-12T00:00:00	25
+PROBLEM	material excess	Buffer '2. component A' has material excess of 10	1971-01-01T00:00:00 / 2007-01-01T00:00:00
+PROBLEM	material excess	Buffer '2. component A' has material excess of 25	2007-02-12T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer '2. component B' has material excess of 10	1971-01-01T00:00:00 / 2007-02-01T00:00:00
+PROBLEM	short	Demand '2. order 1' planned 10 units short	2007-01-01T00:00:00 / 2007-01-01T00:00:00
+PROBLEM	late	Demand '2. order 1' planned P33D after its due date	2007-01-01T00:00:00 / 2007-02-03T00:00:00

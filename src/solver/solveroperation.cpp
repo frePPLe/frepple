@@ -344,8 +344,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
   float flow_qty_per = 1.0f;
   if (Solver->curBuffer)
   {
-    Flow* f = oper->findFlow(Solver->curBuffer);
-    if (f && f->getQuantity() > 0.0f)
+    Flow* f = oper->findFlow(Solver->curBuffer, Solver->q_date);
+    if (f && f->getQuantity()>0.0f)
       flow_qty_per = f->getQuantity();
     else
       // The producing operation doesn't have a valid flow into the current
@@ -432,14 +432,14 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
   if (Solver->curBuffer)
   {
     flow_qty = 0.0f;
-    Flow *f = oper->findFlow(Solver->curBuffer);
+    Flow *f = oper->findFlow(Solver->curBuffer, Solver->q_date);
     if (f) flow_qty += f->getQuantity();
     for (Operation::Operationlist::const_iterator
         e = oper->getSubOperations().begin();
         e != oper->getSubOperations().end();
         ++e)
     {
-      f = (*e)->findFlow(Solver->curBuffer);
+      f = (*e)->findFlow(Solver->curBuffer, Solver->q_date);
       if (f) flow_qty += f->getQuantity();
     }
     if (flow_qty <= 0.0f)
@@ -547,7 +547,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
   bool top_flow_exists = false;
   if (buf)
   {
-    Flow* f = oper->findFlow(buf);
+    Flow* f = oper->findFlow(buf, Solver->q_date);
     if (f && f->getQuantity() > 0.0f)
     {
       top_flow_qty_per = f->getQuantity();
@@ -570,7 +570,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
     float sub_flow_qty_per = 0.0f;
     if (buf)
     {
-      Flow* f = (*altIter)->findFlow(buf);
+      Flow* f = (*altIter)->findFlow(buf, Solver->q_date);
       if (f && f->getQuantity() > 0.0f)
         sub_flow_qty_per = f->getQuantity();
       else if (!top_flow_exists)

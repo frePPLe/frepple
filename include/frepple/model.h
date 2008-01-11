@@ -1235,11 +1235,13 @@ class Operation : public HasName<Operation>,
 
     /** Return the flow that is associates a given buffer with this
       * operation. Returns NULL is no such flow exists. */
-    Flow* findFlow(const Buffer* b) const {return flowdata.find(b);}
+    Flow* findFlow(const Buffer* b, const Date& d) const 
+    {return flowdata.find(b,d);}
 
     /** Return the load that is associates a given resource with this
       * operation. Returns NULL is no such load exists. */
-    Load* findLoad(const Resource* r) const {return loaddata.find(r);}
+    Load* findLoad(const Resource* r, const Date& d) const 
+    {return loaddata.find(r,d);}
 
     /** Deletes all operationplans of this operation. The boolean parameter
       * controls whether we delete also locked operationplans or not.
@@ -2406,7 +2408,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Return the flow that is associates a given operation with this
       * buffer.<br>Returns NULL is no such flow exists. */
-    Flow* findFlow(const Operation* o) const {return flows.find(o);}
+    Flow* findFlow(const Operation* o, const Date& d) const 
+    {return flows.find(o,d);}
 
     /** Deletes all operationplans consuming from or producing from this
       * buffer. The boolean parameter controls whether we delete also locked
@@ -2995,7 +2998,8 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Return the load that is associates a given operation with this
       * resource. Returns NULL is no such load exists. */
-    Load* findLoad(const Operation* o) const {return loads.find(o);}
+    Load* findLoad(const Operation* o, const Date& d) const 
+    {return loads.find(o,d);}
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);

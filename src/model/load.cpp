@@ -50,10 +50,14 @@ DECLARE_EXPORT void Load::validate(Action action)
           + oper->getName() + "'");
   }
 
-  // Check if a load with identical load and operation already exists
+  // Check if a load with 1) identical resource, 2) identical operation and 
+  // 3) overlapping effectivity dates already exists
   Operation::loadlist::const_iterator i = oper->getLoads().begin();
   for (;i != oper->getLoads().end(); ++i)
-    if (i->getResource() == res && &*i != this) break;
+    if (i->getResource() == res 
+      && i->getEffective().overlap(getEffective()) 
+      && &*i != this) 
+        break;
 
   // Apply the appropriate action
   switch (action)

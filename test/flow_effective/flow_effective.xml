@@ -5,6 +5,7 @@
   This model verifies the behavior of date effective flows:
     - case 1: effectivity on consuming flows of a delivery operation
     - case 2: date-effective material consumption with constrained supply
+    - case 3: date-effective producing flow
   </description>
   <current>2007-01-01T00:00:00</current>
   <commands>
@@ -169,6 +170,78 @@
       <due>2007-01-01T00:00:00</due>
       <priority>11</priority>
       <item name="2. end item" />
+    </demand>
+  </demands>
+
+  <!--
+    Case 3: date-effective producing flow.
+    This scenario models a so-called learning curve: the production of a new
+    product becomes more efficient after a while.
+    The operation "3. make end item" produces a variable number of units of
+    the end item. In january it produces 0.6 units, in februari it produces
+    0.8 units and from then onwards it produces 1.0 units.
+  -->
+  <buffers>
+    <buffer name="3. end item">
+      <item name="3. end item" />
+      <producing name="3. make end item" xsi:type="operation_fixed_time"
+        duration="P1D">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="3. end item" />
+            <quantity>0.6</quantity>
+            <effective_start>2007-01-01T00:00:00</effective_start>
+            <effective_end>2007-02-01T00:00:00</effective_end>
+          </flow>
+          <flow xsi:type="flow_end">
+            <buffer name="3. end item" />
+            <quantity>0.8</quantity>
+            <effective_start>2007-02-01T00:00:00</effective_start>
+            <effective_end>2007-03-01T00:00:00</effective_end>
+          </flow>
+          <flow xsi:type="flow_end">
+            <buffer name="3. end item" />
+            <quantity>1.0</quantity>
+            <effective_start>2007-03-01T00:00:00</effective_start>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+  </buffers>
+  <operations>
+    <operation name="3. deliver end item" xsi:type="operation_fixed_time"
+      duration="P1D">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="3. end item" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+    </operation>
+  </operations>
+  <items>
+    <item name="3. end item">
+      <operation name="3. deliver end item" />
+    </item>
+  </items>
+  <demands>
+    <demand name="3. order 1">
+      <quantity>100</quantity>
+      <due>2007-01-20T00:00:00</due>
+      <priority>10</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 2">
+      <quantity>100</quantity>
+      <due>2007-02-20T00:00:00</due>
+      <priority>11</priority>
+      <item name="3. end item" />
+    </demand>
+    <demand name="3. order 3">
+      <quantity>100</quantity>
+      <due>2007-03-20T00:00:00</due>
+      <priority>12</priority>
+      <item name="3. end item" />
     </demand>
   </demands>
 

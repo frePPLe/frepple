@@ -50,10 +50,14 @@ DECLARE_EXPORT void Flow::validate(Action action)
           + oper->getName() + "'");
   }
 
-  // Check if a flow with identical buffer and operation already exists
+  // Check if a flow with 1) identical buffer, 2) identical operation and 
+  // 3) overlapping effectivity dates already exists
   Operation::flowlist::const_iterator i = oper->getFlows().begin();
   for (; i != oper->getFlows().end(); ++i)
-    if (i->getBuffer() == buf && &*i != this) break;
+    if (i->getBuffer() == buf 
+      && i->getEffective().overlap(getEffective()) 
+      && &*i != this) 
+        break;
 
   // Apply the appropriate action
   switch (action)

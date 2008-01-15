@@ -49,7 +49,7 @@ DECLARE_EXPORT void MRPSolver::checkOperationCapacity
       data.q_loadplan = &*h;
       data.q_qty = h->getQuantity();
       data.q_date = h->getDate();
-      // Call the resource resolver.
+      // Call the load solver - which will call the resource solver.
       h->getLoad()->solve(*this,&data);
     }
   }
@@ -57,7 +57,7 @@ DECLARE_EXPORT void MRPSolver::checkOperationCapacity
   // need to redo the capacity check for the ones we already checked
   // Repeat until no load has touched the opplan, or till proven infeasible
   // No need to reloop if there is only a single load (= 2 loadplans)
-  while (hasMultipleLoads && opplan->getDates()!=orig && data.a_qty!=0.0);
+  while (hasMultipleLoads && opplan->getDates()!=orig && data.a_qty!=0.0f);
 }
 
 

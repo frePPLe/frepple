@@ -1235,12 +1235,12 @@ class Operation : public HasName<Operation>,
 
     /** Return the flow that is associates a given buffer with this
       * operation. Returns NULL is no such flow exists. */
-    Flow* findFlow(const Buffer* b, const Date& d) const 
+    Flow* findFlow(const Buffer* b, Date d) const 
     {return flowdata.find(b,d);}
 
     /** Return the load that is associates a given resource with this
       * operation. Returns NULL is no such load exists. */
-    Load* findLoad(const Resource* r, const Date& d) const 
+    Load* findLoad(const Resource* r, Date d) const 
     {return loaddata.find(r,d);}
 
     /** Deletes all operationplans of this operation. The boolean parameter
@@ -2408,7 +2408,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Return the flow that is associates a given operation with this
       * buffer.<br>Returns NULL is no such flow exists. */
-    Flow* findFlow(const Operation* o, const Date& d) const 
+    Flow* findFlow(const Operation* o, Date d) const 
     {return flows.find(o,d);}
 
     /** Deletes all operationplans consuming from or producing from this
@@ -2802,7 +2802,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     }
 
     /** This method holds the logic the compute the date of a flowplan. */
-    virtual const Date& getFlowplanDate(const FlowPlan*) const;
+    virtual Date getFlowplanDate(const FlowPlan*) const;
 
     /** This method holds the logic the compute the quantity of a flowplan. */
     virtual float getFlowplanQuantity(const FlowPlan*) const;
@@ -2865,7 +2865,7 @@ class FlowEnd : public Flow
     explicit FlowEnd() {}
 
     /** This method holds the logic the compute the date of a flowplan. */
-    virtual const Date& getFlowplanDate(const FlowPlan* fl) const;
+    virtual Date getFlowplanDate(const FlowPlan* fl) const;
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
 
@@ -2928,12 +2928,24 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       * in case the operation quantity must be a multiple.
       */
     void setQuantity(float qty, bool b=false, bool u = true)
-    {OperationPlan::writepointer(oper)->setQuantity(qty / getFlow()->getQuantity(), b, u);}
+    {
+      if (getFlow()->getEffective().within(getDate()))
+        OperationPlan::writepointer(oper)->setQuantity(
+          qty / getFlow()->getQuantity(), b, u);
+    }
 
+    /** This function needs to be called whenever the flowplan date or 
+      * quantity are changed.
+      */
     DECLARE_EXPORT void update();
 
-    /** Returns whether the flowplan needs to be serialized. This is
-      * determined by looking at whether the flow is hidden or not. */
+    /** Return a pointer to the timeline data structure owning this flowplan. */
+    TimeLine<FlowPlan>* getTimeLine() const 
+    {return &(getFlow()->getBuffer()->flowplans);}
+
+    /** Returns true when the flowplan is hidden.<br>
+      * This is determined by looking at whether the flow is hidden or not. 
+      */
     bool getHidden() const {return fl->getHidden();}
 };
 
@@ -2946,13 +2958,13 @@ inline float Flow::getFlowplanQuantity(const FlowPlan* fl) const
 }
 
 
-inline const Date& Flow::getFlowplanDate(const FlowPlan* fl) const
+inline Date Flow::getFlowplanDate(const FlowPlan* fl) const
 {
   return fl->getOperationPlan()->getDates().getStart();
 }
 
 
-inline const Date& FlowEnd::getFlowplanDate(const FlowPlan* fl) const
+inline Date FlowEnd::getFlowplanDate(const FlowPlan* fl) const
 {
   return fl->getOperationPlan()->getDates().getEnd();
 }
@@ -2998,7 +3010,7 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Return the load that is associates a given operation with this
       * resource. Returns NULL is no such load exists. */
-    Load* findLoad(const Operation* o, const Date& d) const 
+    Load* findLoad(const Operation* o, Date d) const 
     {return loads.find(o,d);}
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -3130,6 +3142,12 @@ class Load
       usage = f;
     }
 
+    /** This method holds the logic the compute the date of a loadplan. */
+    virtual Date getLoadplanDate(const LoadPlan*) const;
+
+    /** This method holds the logic the compute the quantity of a loadplan. */
+    virtual float getLoadplanQuantity(const LoadPlan*) const;
+
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
@@ -3158,6 +3176,8 @@ class Load
       * operationplan. */
     float usage;
 };
+
+
 
 
 /** @brief This is the (logical) top class of the complete model.
@@ -3600,7 +3620,7 @@ class Demand
     const Date& getDue() const {return dueDate;}
 
     /** Updates the due date of the demand. */
-    virtual void setDue(const Date& d) {dueDate = d; setChanged();}
+    virtual void setDue(Date d) {dueDate = d; setChanged();}
 
     /** Returns the customer. */
     Customer::pointer getCustomer() const { return cust; }
@@ -3739,19 +3759,31 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     explicit DECLARE_EXPORT LoadPlan(OperationPlan*, const Load*);
     
     /** Return the operationplan owning this loadplan. */
-    OperationPlan* getOperationPlan() const {return oper;}
+    OperationPlan::pointer getOperationPlan() const {return oper;}
 
     /** Return the load of which this is a plan instance. */
-    Load* getLoad() const {return ld;}
+    Load::pointer getLoad() const {return ld;}
 
-    bool isStart() {return start_or_end == START;}
+    bool isStart() const {return start_or_end == START;}
 
     virtual ~LoadPlan()
     {
       ld->getResource()->setChanged();
       ld->getResource()->loadplans.erase(this);
     }
+
+    /** This function needs to be called whenever the loadplan date or 
+      * quantity are changed.
+      */
     DECLARE_EXPORT void update();
+    
+    /** Return a pointer to the timeline data structure owning this loadplan. */
+    TimeLine<LoadPlan>* getTimeLine() const 
+    {return &(ld->getResource()->loadplans);}
+  
+    /** Returns true when the loadplan is hidden.<br>
+      * This is determined by looking at whether the load is hidden or not. 
+      */
     bool getHidden() const {return ld->getHidden();}
 
     /** Each operationplan has 2 loadplans per load: one at the start,
@@ -3784,6 +3816,30 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Points to the next loadplan owned by the same operationplan. */
     LoadPlan *nextLoadPlan;
 };
+
+
+inline Date Load::getLoadplanDate(const LoadPlan* lp) const
+{
+  const DateRange & dr = lp->getOperationPlan()->getDates();
+  if (lp->isStart())
+    return dr.getStart() > getEffective().getStart() ?
+      dr.getStart() : 
+      getEffective().getStart();
+  else
+    return dr.getEnd() < getEffective().getEnd() ?
+      dr.getEnd() : 
+      getEffective().getEnd();
+}
+
+
+inline float Load::getLoadplanQuantity(const LoadPlan* lp) const
+{
+  if (!lp->getOperationPlan()->getDates().overlap(getEffective()))
+    // Load is not effective during this time
+    return 0.0f;
+  return lp->isStart() ? getUsageFactor() : -getUsageFactor();
+}
+
 
 
 /** @brief A problem of this class is created when an operationplan is being

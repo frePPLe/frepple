@@ -4215,7 +4215,7 @@ template <class A, class B, class C> class Association
           for (C* p = this->first; p; p=p->nextA) ++i;
           return i;
         }
-        C* find(const B* b, const Date& d = Date::infinitePast) const
+        C* find(const B* b, Date d = Date::infinitePast) const
         {
           for (C* p=this->first; p; p=p->nextA)
             if (p->ptrB == b && p->effectivity.within(d)) return p;
@@ -4304,7 +4304,7 @@ template <class A, class B, class C> class Association
           for (C* p=this->first; p; p=p->nextB) ++i;
           return i;
         }
-        C* find(const A* b, const Date& d = Date::infinitePast) const
+        C* find(const A* b, Date d = Date::infinitePast) const
         {
           for (C* p=this->first; p; p=p->nextB)
             if (p->ptrA == b && p->effectivity.within(d)) return p;

@@ -42,10 +42,8 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
   o->firstloadplan = this;
   r->getResource()->loadplans.insert(
     this, 
-    r->getUsageFactor(), 
-    start_or_end == START ? 
-      oper->getDates().getStart() : 
-      oper->getDates().getEnd()
+    ld->getLoadplanQuantity(this),
+    ld->getLoadplanDate(this)
     );
   new LoadPlan(o, r, this);
 
@@ -66,10 +64,8 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r, LoadPlan *lp
 
   r->getResource()->loadplans.insert(
     this,
-    - r->getUsageFactor(),
-    start_or_end == START ? 
-      oper->getDates().getStart() : 
-      oper->getDates().getEnd()
+    ld->getLoadplanQuantity(this),
+    ld->getLoadplanDate(this)
     );
 }
 
@@ -84,19 +80,12 @@ DECLARE_EXPORT LoadPlan* LoadPlan::getOtherLoadPlan() const
 
 DECLARE_EXPORT void LoadPlan::update()
 {
-  // Update the timeline
-  if (start_or_end==START)
-    ld->getResource()->getLoadPlans().update(
-      this,
-      ld->getUsageFactor(),
-      oper->getDates().getStart()
-      );
-  else
-    ld->getResource()->getLoadPlans().update(
-      this,
-      -ld->getUsageFactor(),
-      oper->getDates().getEnd()
-      );
+  // Update the timeline data structure
+  ld->getResource()->getLoadPlans().update(
+    this,
+    ld->getLoadplanQuantity(this),
+    ld->getLoadplanDate(this)
+    );
 
   // Mark the operation and resource as being changed. This will trigger
   // the recomputation of their problems

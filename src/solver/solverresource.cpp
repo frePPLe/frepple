@@ -34,15 +34,17 @@ namespace frepple
 void MRPSolver::solve(const Load* l, void* v) 
 {
   MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
-  if (data->q_qty != 0.0f)
-    l->getResource()->solve(*this,v);
-  else
+  if (data->q_qty >= 0.0)
   {
-    // It's a zero quantity loadplan. 
-    // E.g. because it is not effective.
+    // The loadplan is an increase in size, and the resource solver only needs
+    // the decreases.
+    // Or, it's a zero quantity loadplan. E.g. because it is not effective.
+    data->a_qty = data->q_qty;
     data->a_date = data->q_date;
-    data->a_qty = 0.0f; 
-  }      
+  } 
+  else    
+    // Delegate the answer to the resource
+    l->getResource()->solve(*this,v);
 }
 
 
@@ -57,15 +59,6 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
 
   MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
 
-  // The loadplan is an increase in size, and the algorithm needs to process
-  // the decreases.
-  if (data->q_qty >= 0)
-  {
-    data->a_qty = data->q_qty;
-    data->a_date = data->q_date;
-    return;
-  }
-
   // Message
   if (data->getSolver()->getLogLevel()>1)
   {
@@ -75,7 +68,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   }
 
   // Initialize the default reply
-  data->a_qty = data->q_qty;
+  double orig_q_qty = -data->q_qty;
   data->a_date = data->q_date;
   Date currentOpplanEnd = data->q_operationplan->getDates().getEnd();
   float currentQuantity = data->q_operationplan->getQuantity();
@@ -111,7 +104,6 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
           // Search backward in time to a period where there is no overload
           for (; cur!=res->getLoadPlans().end(); --cur)
           {
-
             if (cur->getType() == 4)
               curMax = cur->getMax();
             if (cur->getDate() != curdate)
@@ -231,17 +223,22 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   }       // end of while-loop
   while (HasOverload && data->a_qty!=0.0);
 
-  // In case of a zero reply, we resize the operationplan to 0 right away.
-  // This is required to make sure that the buffer inventory profile also
-  // respects this answer.
-  if (data->a_qty == 0.0) data->q_operationplan->setQuantity(0);
+  if (data->a_qty == 0.0) 
+    // In case of a zero reply, we resize the operationplan to 0 right away.
+    // This is required to make sure that the buffer inventory profile also
+    // respects this answer.
+    data->q_operationplan->setQuantity(0);
+  else 
+    // For a non-zero reply, the quantity doesn't really matter: it fits.
+    // Returning the ask-quantity is most logical.
+    data->a_qty = orig_q_qty;
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
   {
     for (int i=res->getLevel(); i>0; --i) logger << " ";
     logger << "   Resource '" << res->getName() << "' answers: "
-      << (-data->a_qty) << "  " << data->a_date;
+      << data->a_qty << "  " << data->a_date;
     if (currentOpplanEnd > data->q_operationplan->getDates().getEnd())
       logger << " using earlier capacity "
         << data->q_operationplan->getDates().getEnd();

@@ -2,7 +2,7 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <name>Test model for effective operations</name>
   <description>
-  This model verifies the behavior of date effective flows:
+  This test verifies the behavior of date effective flows:
     - case 1: effectivity on consuming flows of a delivery operation
     - case 2: date-effective material consumption with constrained supply
     - case 3: date-effective producing flow

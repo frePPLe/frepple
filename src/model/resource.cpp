@@ -117,7 +117,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode
         o->writeElement(Tags::tag_onhand, lp->getOnhand());
         o->writeElement(Tags::tag_minimum, lp->getMin());
         o->writeElement(Tags::tag_maximum, lp->getMax());
-        o->writeElement(Tags::tag_operation_plan, lp->getOperationPlan(), FULL);
+        o->writeElement(Tags::tag_operation_plan, &*(lp->getOperationPlan()), FULL);
         o->EndObject(Tags::tag_load_plan);
       }
     o->EndObject(Tags::tag_load_plans);

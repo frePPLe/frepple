@@ -1377,10 +1377,8 @@ class Date
     // thus gives the best performance.
     Date() : lval(infinitePast.lval) {}
 
-    /** Copy constructor. */
-    // This constructor can skip the check for finite dates, and 
-    // thus gives the best performance.
-    Date(const Date& l) : lval(l.lval) {}
+    /* Note: the automatic copy constructor works fine and is faster than
+       writing our own. */
 
     /** Constructor initialized with a string. The string needs to be in
       * the format specified by the "format". */

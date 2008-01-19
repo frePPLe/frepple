@@ -189,8 +189,6 @@ def view_report(request, entity=None, **args):
       An additional set of records added to the context for rendering the
       view.
   '''
-  global ON_EACH_SIDE
-  global ON_ENDS
 
   # Pick up the report class
   reportclass = args['report']
@@ -339,72 +337,7 @@ def view_report(request, entity=None, **args):
     results = counter
 
   # Build the paginator html
-  page_htmls = []
-  if paginator.pages <= 10 and paginator.pages > 1:
-    # If there are less than 10 pages, show them all
-    for n in range(0,paginator.pages):
-      if n == page:
-        page_htmls.append('<span class="this-page">%d</span>' % (page+1))
-      elif n == 0 and len(parameters) == 0:
-        page_htmls.append('<a href="%s">1</a>' % request.path)
-      else:
-        if n: parameters.__setitem__('p', n)
-        page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
-  elif paginator.pages > 1:
-      # Insert "smart" pagination links, so that there are always ON_ENDS
-      # links at either end of the list of pages, and there are always
-      # ON_EACH_SIDE links at either end of the "current page" link.
-      if page <= (ON_ENDS + ON_EACH_SIDE):
-          # 1 2 *3* 4 5 6 ... 99 100
-          for n in range(0, page + max(ON_EACH_SIDE, ON_ENDS)+1):
-            if n == page:
-              page_htmls.append('<span class="this-page">%d</span>' % (page+1))
-            elif n == 0 and len(parameters) == 0:
-              page_htmls.append('<a href="%s">1</a>' % request.path)
-            else:
-              if n: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
-          page_htmls.append('...')
-          for n in range(paginator.pages - ON_EACH_SIDE, paginator.pages):
-            parameters.__setitem__('p', n)
-            page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
-      elif page >= (paginator.pages - ON_EACH_SIDE - ON_ENDS - 2):
-          # 1 2 ... 95 96 97 *98* 99 100
-          for n in range(0, ON_ENDS):
-            if n == 0 and len(parameters) == 0:
-              page_htmls.append('<a href="%s">1</a>' % request.path)
-            else:
-              if n: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
-          page_htmls.append('...')
-          for n in range(page - max(ON_EACH_SIDE, ON_ENDS), paginator.pages):
-            if n == page:
-              page_htmls.append('<span class="this-page">%d</span>' % (page+1))
-            else:
-              if n: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n+1))
-      else:
-          # 1 2 ... 45 46 47 *48* 49 50 51 ... 99 100
-          for n in range(0, ON_ENDS):
-            if n == 0 and len(parameters) == 0:
-              page_htmls.append('<a href="%s">1</a>' % request.path)
-            else:
-              if n: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n+1))
-          page_htmls.append('...')
-          for n in range(page - ON_EACH_SIDE, page + ON_EACH_SIDE + 1):
-            if n == page:
-              page_htmls.append('<span class="this-page">%s</span>' % (page+1))
-            elif n == '.':
-              page_htmls.append('...')
-            else:
-              if n: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
-          page_htmls.append('...')
-          for n in range(paginator.pages - ON_ENDS - 1, paginator.pages):
-              if n: parameters.__setitem__('p', n)
-              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n+1))
-  page_htmls = mark_safe(' '.join(page_htmls))
+  page_htmls = _get_paginator_html(request, paginator, page, parameters)
 
   # Prepare template context
   context = {
@@ -457,6 +390,81 @@ def _create_crossheader(req, cls):
         title = '<span style="line-height:18pt;">' + title + '</span>'
     res.append(title)
   return mark_safe('<br/>'.join(res))
+
+
+def _get_paginator_html(request, paginator, page, parameters):
+  # Django has standard some very similar code in the tags 'paginator_number'
+  # and 'pagination' in the file django\contrib\admin\templatetags\admin_list.py.
+  # Functionally there is no real difference. The implementation below relies
+  # less on the template engine.
+  global ON_EACH_SIDE
+  global ON_ENDS
+  page_htmls = []
+  if paginator.pages <= 10 and paginator.pages > 1:
+    # If there are less than 10 pages, show them all
+    for n in range(0,paginator.pages):
+      if n == page:
+        page_htmls.append('<span class="this-page">%d</span>' % (page+1))
+      elif n == 0 and len(parameters) == 0:
+        page_htmls.append('<a href="%s">1</a>' % request.path)
+      else:
+        if n: parameters.__setitem__('p', n)
+        page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
+  elif paginator.pages > 1:
+      # Insert "smart" pagination links, so that there are always ON_ENDS
+      # links at either end of the list of pages, and there are always
+      # ON_EACH_SIDE links at either end of the "current page" link.
+      if page <= (ON_ENDS + ON_EACH_SIDE):
+          # 1 2 *3* 4 5 6 ... 99 100
+          for n in range(0, page + max(ON_EACH_SIDE, ON_ENDS)+1):
+            if n == page:
+              page_htmls.append('<span class="this-page">%d</span>' % (page+1))
+            elif n == 0 and len(parameters) == 0:
+              page_htmls.append('<a href="%s">1</a>' % request.path)
+            else:
+              if n: parameters.__setitem__('p', n)
+              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
+          page_htmls.append('...')
+          for n in range(paginator.pages - ON_ENDS, paginator.pages):
+            parameters.__setitem__('p', n)
+            page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
+      elif page >= (paginator.pages - ON_EACH_SIDE - ON_ENDS - 1):
+          # 1 2 ... 95 96 97 *98* 99 100
+          for n in range(0, ON_ENDS):
+            if n == 0 and len(parameters) == 0:
+              page_htmls.append('<a href="%s">1</a>' % request.path)
+            else:
+              if n: parameters.__setitem__('p', n)
+              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
+          page_htmls.append('...')
+          for n in range(page - max(ON_EACH_SIDE, ON_ENDS), paginator.pages):
+            if n == page:
+              page_htmls.append('<span class="this-page">%d</span>' % (page+1))
+            else:
+              if n: parameters.__setitem__('p', n)
+              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n+1))
+      else:
+          # 1 2 ... 45 46 47 *48* 49 50 51 ... 99 100
+          for n in range(0, ON_ENDS):
+            if n == 0 and len(parameters) == 0:
+              page_htmls.append('<a href="%s">1</a>' % request.path)
+            else:
+              if n: parameters.__setitem__('p', n)
+              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n+1))
+          page_htmls.append('...')
+          for n in range(page - ON_EACH_SIDE, page + ON_EACH_SIDE + 1):
+            if n == page:
+              page_htmls.append('<span class="this-page">%s</span>' % (page+1))
+            elif n == '.':
+              page_htmls.append('...')
+            else:
+              if n: parameters.__setitem__('p', n)
+              page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n+1))
+          page_htmls.append('...')
+          for n in range(paginator.pages - ON_ENDS, paginator.pages):
+              if n: parameters.__setitem__('p', n)
+              page_htmls.append('<a href="%s?%s">%d</a>' % (request.path, escape(parameters.urlencode()),n+1))
+  return mark_safe(' '.join(page_htmls))
 
 
 def _get_javascript_imports(reportclass):
@@ -631,6 +639,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
   else:
     res = datelist[bucket]
   return (bucket,start,end,res)
+
 
 def _create_rowheader(req, sort, cls):
   '''

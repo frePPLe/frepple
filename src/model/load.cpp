@@ -133,7 +133,15 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const XMLtag& tag, mode m) 
   if (!dynamic_cast<Resource*>(o->getPreviousObject()))
     o->writeElement(Tags::tag_resource, getResource());
 
+  // Write the usage factor
   if (usage != 1.0f) o->writeElement(Tags::tag_usage, usage);
+
+  // Write the effective daterange
+  if (getEffective().getStart() != Date::infinitePast)
+    o->writeElement(Tags::tag_effective_start, getEffective().getStart());
+  if (getEffective().getEnd() != Date::infiniteFuture)
+    o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
+
   o->EndObject(tag);
 }
 

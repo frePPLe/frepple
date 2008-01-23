@@ -34,9 +34,6 @@ from decimal import Decimal
 # The date format used by the frepple XML data.
 dateformat = '%Y-%m-%dT%H:%M:%S'
 
-# This variable defines the number of records to show in the admin lists.
-LIST_PER_PAGE = 100
-
 CALENDARID = None
 
 
@@ -54,8 +51,7 @@ class Plan(models.Model):
     def __unicode__(self): return self.name
 
     class Admin:
-        list_display = ('name', 'description', 'currentdate')
-        list_per_page = LIST_PER_PAGE
+        pass
 
     class Meta:
         db_table = 'plan'
@@ -69,7 +65,7 @@ class Dates(models.Model):
     day = models.DateField(_('day'), primary_key=True)
     day_start = models.DateField(_('day start'),db_index=True)
     day_end = models.DateField(_('day end'),db_index=True)
-    dayofweek = models.SmallIntegerField(_('Day of week'), help_text=_('0 = sunday, 1 = monday, ...'))
+    dayofweek = models.SmallIntegerField(_('day of week'), help_text=_('0 = sunday, 1 = monday, ...'))
     # Weekly buckets
     week = models.CharField(_('week'),max_length=10, db_index=True)
     week_start = models.DateField(_('week start'),db_index=True)
@@ -91,10 +87,9 @@ class Dates(models.Model):
     default_start = models.DateField(_('default start'),db_index=True, null=True)
     default_end = models.DateField(_('default end'),db_index=True, null=True)
 
+    def __unicode__(self): return str(self.day)
+
     class Admin:
-        list_display = ('day', 'dayofweek', 'week', 'month', 'quarter', 'year',
-          'default', 'week_start', 'month_start', 'quarter_start',
-          'year_start', 'default_start')
         fields = (
             (None, {'fields': (('day','day_start','day_end'),
                                'dayofweek',
@@ -105,7 +100,6 @@ class Dates(models.Model):
                                ('default','default_start','default_end'),
                                )}),
             )
-        list_per_page = LIST_PER_PAGE
 
     class Meta:
         verbose_name = _('dates')  # There will only be multiple dates...
@@ -183,10 +177,6 @@ class Calendar(models.Model):
     def __unicode__(self): return self.name
 
     class Admin:
-        list_display = ('name', 'description', 'category', 'subcategory', 'currentvalue', 'lastmodified')
-        search_fields = ['name','description']
-        list_filter = ['category', 'subcategory']
-        list_per_page = LIST_PER_PAGE
         save_as = True
 
     class Meta:
@@ -266,10 +256,6 @@ class Location(models.Model):
     def __unicode__(self): return self.name
 
     class Admin:
-        list_display = ('name', 'description', 'category', 'subcategory', 'owner', 'lastmodified')
-        search_fields = ['name', 'description']
-        list_filter = ['category', 'subcategory']
-        list_per_page = LIST_PER_PAGE
         save_as = True
 
     class Meta:
@@ -291,10 +277,6 @@ class Customer(models.Model):
     def __unicode__(self): return self.name
 
     class Admin:
-        list_display = ('name', 'description', 'category', 'subcategory', 'owner', 'lastmodified')
-        search_fields = ['name', 'description']
-        list_filter = ['category', 'subcategory']
-        list_per_page = LIST_PER_PAGE
         save_as = True
 
     class Meta:
@@ -317,10 +299,6 @@ class Item(models.Model):
     def __unicode__(self): return self.name
 
     class Admin:
-        list_display = ('name', 'description', 'category', 'subcategory', 'operation', 'owner', 'lastmodified')
-        search_fields = ['name', 'description']
-        list_filter = ['category', 'subcategory']
-        list_per_page = LIST_PER_PAGE
         save_as = True
 
     class Meta:
@@ -370,9 +348,6 @@ class Operation(models.Model):
         super(Operation, self).save()
 
     class Admin:
-        list_display = ('name', 'type', 'fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'lastmodified')
-        search_fields = ['name',]
-        list_per_page = LIST_PER_PAGE
         save_as = True
         fields = (
             (None, {'fields': ('name', 'type')}),
@@ -400,6 +375,8 @@ class SubOperation(models.Model):
     priority = models.DecimalField(_('priority'), max_digits=5, decimal_places=4, default=1)
     suboperation = models.ForeignKey(Operation, verbose_name=_('suboperation'),
       raw_id_admin=True, related_name='superoperations', core=True)
+    effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
+    effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True,
       editable=False, db_index=True)
 
@@ -409,8 +386,7 @@ class SubOperation(models.Model):
           + "   " + self.suboperation.name
 
     class Admin:
-        list_display = ('operation','priority','suboperation')
-        list_per_page = LIST_PER_PAGE
+        pass
 
     class Meta:
         db_table = 'suboperation'
@@ -496,11 +472,6 @@ class Buffer(models.Model):
               'fields': ('leadtime','fence','min_inventory','max_inventory','min_interval','max_interval','size_minimum','size_multiple','size_maximum'),
               'classes': 'collapse'},),
         )
-        list_display = ('name', 'description', 'category', 'subcategory', 'location', 'item',
-          'onhand', 'type', 'minimum', 'producing', 'lastmodified')
-        search_fields = ['name', 'description']
-        list_filter = ['category', 'subcategory']
-        list_per_page = LIST_PER_PAGE
         save_as = True
 
     class Meta:
@@ -540,11 +511,6 @@ class Resource(models.Model):
         super(Resource, self).save()
 
     class Admin:
-        list_display = ('name', 'description', 'category', 'subcategory', 'location',
-          'type', 'maximum', 'lastmodified')
-        search_fields = ['name', 'description']
-        list_filter = ['category', 'subcategory']
-        list_per_page = LIST_PER_PAGE
         save_as = True
 
     class Meta:
@@ -569,6 +535,8 @@ class Flow(models.Model):
       choices=flowtypes,
       help_text=_('Consume/produce material at the start or the end of the operationplan'),
       )
+    effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
+    effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
@@ -577,11 +545,6 @@ class Flow(models.Model):
 
     class Admin:
         save_as = True
-        search_fields = ['operation', 'thebuffer']
-        list_display = ('operation', 'thebuffer', 'type', 'quantity', 'lastmodified')
-        # @todo we don't have a hyperlink any more to edit a flow...
-        list_per_page = LIST_PER_PAGE
-        list_display_links = ('operation', 'thebuffer')
 
     class Meta:
         db_table = 'flow'
@@ -594,15 +557,14 @@ class Load(models.Model):
     operation = models.ForeignKey(Operation, verbose_name=_('operation'), db_index=True, raw_id_admin=True, related_name='loads')
     resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, raw_id_admin=True, related_name='loads')
     usagefactor = models.DecimalField(_('usagefactor'),max_digits=15, decimal_places=4, default='1.00')
+    effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
+    effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __unicode__(self):
         return '%s - %s' % (self.operation.name, self.resource.name)
 
     class Admin:
-        search_fields = ['operation', 'resource']
-        list_display = ('operation', 'resource', 'usagefactor', 'lastmodified')
-        list_per_page = LIST_PER_PAGE
         save_as = True
 
     class Meta:
@@ -629,10 +591,6 @@ class OperationPlan(models.Model):
 
     class Admin:
         save_as = True
-        search_fields = ['operation']
-        list_display = ('identifier', 'operation', 'startdate', 'enddate', 'quantity', 'locked', 'lastmodified')
-        list_per_page = LIST_PER_PAGE
-        date_hierarchy = 'startdate'
 
     class Meta:
         db_table = 'operationplan'
@@ -678,12 +636,6 @@ class Demand(models.Model):
             (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'quantity', 'priority','owner')}),
             (_('Planning parameters'), {'fields': ('operation', 'minshipment', 'maxlateness'), 'classes': 'collapse'}),
         )
-        list_display = ('name', 'item', 'customer', 'description', 'category',
-          'subcategory', 'due', 'operation', 'quantity', 'priority','owner', 'lastmodified')
-        search_fields = ['name','customer','item','operation']
-        date_hierarchy = 'due'
-        list_filter = ['due','priority','category','subcategory']
-        list_per_page = LIST_PER_PAGE
         save_as = True
 
     class Meta:
@@ -760,7 +712,7 @@ class Forecast(models.Model):
             # Part one: after our daterange, create a new entry
             p = i.enddate - enddate
             q = i.quantity * (p.days+86400*p.seconds) / duration
-            if self.discrete: q = round(q.round)
+            if self.discrete: q = round(q)
             self.entries.create( \
                startdate = enddate,
                enddate = i.enddate,
@@ -768,9 +720,9 @@ class Forecast(models.Model):
                ).save()
             # Part two: our date range, create a new entry
             self.entries.create( \
-               startdate=startdate,
-               enddate=enddate,
-               quantity= quantity,
+               startdate = startdate,
+               enddate = enddate,
+               quantity = quantity,
                ).save()
             # Part three: before our daterange, update the existing entry
             p = startdate - i.startdate
@@ -816,7 +768,7 @@ class Forecast(models.Model):
         # Case 1, step 2: Rescale the existing entries
         # Note that we retrieve an updated set of buckets from the database here...
         entries = self.entries.filter(enddate__gt=startdate).filter(startdate__lt=enddate)
-        factor = quantity / current  # todo: what if current is 0
+        factor = quantity / current
         if factor == 0:
           for i in entries: i.delete()
         elif self.discrete:
@@ -851,6 +803,9 @@ class Forecast(models.Model):
             weights +=  i.value * (p.days+86400*p.seconds) / (q.days+86400*q.seconds)
           # Case 2a, step 2: create a forecast entry for each calendar bucket
           remainder = Decimal(0)
+          if weights == 0:
+            # No non-zero weight buckets found: the update is infeasible
+            return
           for i in entries:
             p = min(i.enddate.date(),enddate) - max(i.startdate.date(),startdate)
             q = i.enddate.date() - i.startdate.date()
@@ -876,11 +831,6 @@ class Forecast(models.Model):
             (None, {'fields': ('name', 'item', 'customer', 'calendar', 'description', 'category','subcategory', 'priority')}),
             (_('Planning parameters'), {'fields': ('discrete', 'operation', 'minshipment', 'maxlateness'), 'classes': 'collapse'}),
         )
-        list_display = ('name', 'item', 'customer', 'calendar', 'description', 'category',
-          'subcategory', 'operation', 'priority', 'lastmodified')
-        search_fields = ['name','customer','item','operation']
-        list_filter = ['priority','category','subcategory']
-        list_per_page = LIST_PER_PAGE
         save_as = True
 
     class Meta:
@@ -899,13 +849,6 @@ class ForecastDemand(models.Model):
 
     # Convenience methods
     def __unicode__(self): return self.forecast.name + " " + str(self.startdate) + " - " + str(self.enddate)
-
-    class Admin:
-        fields = ( (None,{'fields': ('forecast', 'startdate', 'enddate', 'quantity')}), )
-        list_display = ('forecast', 'startdate', 'enddate', 'quantity', 'lastmodified')
-        search_fields = ['forecast']
-        list_per_page = LIST_PER_PAGE
-        save_as = True
 
     class Meta:
         db_table = 'forecastdemand'

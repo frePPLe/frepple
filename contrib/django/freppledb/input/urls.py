@@ -25,7 +25,43 @@ from django.conf.urls.defaults import *
 import input.views
 
 urlpatterns = patterns('',
-    (r'^supplypath/([^/]+)/([^/]+)/$', input.views.pathreport.viewupstream),
-    (r'^whereused/([^/]+)/([^/]+)/$', input.views.pathreport.viewdownstream),
-    (r'^edit/$', input.views.uploadjson.post),
+
+  # Plan report: no list, but redirect to edit page of plan
+  ('^admin/input/plan/$', 'django.views.generic.simple.redirect_to',
+    {'url': '/admin/input/plan/1/'}),
+
+  # Model list reports
+  (r'^admin/input/buffer/$', 'utils.report.view_report',
+    {'report': input.views.BufferList,}),
+  (r'^admin/input/resource/$', 'utils.report.view_report',
+    {'report': input.views.ResourceList,}),
+  (r'^admin/input/location/$', 'utils.report.view_report',
+    {'report': input.views.LocationList,}),
+  (r'^admin/input/customer/$', 'utils.report.view_report',
+    {'report': input.views.CustomerList,}),
+  (r'^admin/input/demand/$', 'utils.report.view_report',
+    {'report': input.views.DemandList,}),
+  (r'^admin/input/item/$', 'utils.report.view_report',
+    {'report': input.views.ItemList,}),
+  (r'^admin/input/load/$', 'utils.report.view_report',
+    {'report': input.views.LoadList,}),
+  (r'^admin/input/flow/$', 'utils.report.view_report',
+    {'report': input.views.FlowList,}),
+  (r'^admin/input/forecast/$', 'utils.report.view_report',
+    {'report': input.views.ForecastList,}),
+  (r'^admin/input/dates/$', 'utils.report.view_report',
+    {'report': input.views.DatesList,}),
+  (r'^admin/input/calendar/$', 'utils.report.view_report',
+    {'report': input.views.CalendarList,}),
+  (r'^admin/input/operation/$', 'utils.report.view_report',
+    {'report': input.views.OperationList,}),
+  (r'^admin/input/suboperation/$', 'utils.report.view_report',
+    {'report': input.views.SubOperationList,}),
+  (r'^admin/input/operationplan/$', 'utils.report.view_report',
+    {'report': input.views.OperationPlanList,}),
+
+  # Special reports
+  (r'^supplypath/([^/]+)/([^/]+)/$', input.views.pathreport.viewupstream),
+  (r'^whereused/([^/]+)/([^/]+)/$', input.views.pathreport.viewdownstream),
+  (r'^edit/$', input.views.uploadjson.post),
 )

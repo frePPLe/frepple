@@ -41,5 +41,5 @@ class log(models.Model):
           ("run_db","Can run database procedures"),
           ("upload_csv","Can upload csv data files"),
          )
-      verbose_name_plural = 'log entries'  # Multiple logs entries are still called "a log"
-      verbose_name = _('log')
+      verbose_name_plural = _('log entries')
+      verbose_name = _('log entry')

@@ -1,25 +1,7 @@
-{% extends "admin/base_site_nav.html" %}
-{% load i18n admin_list adminmedia %}
-{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
-{% block extrahead %}{{ block.super }}
-{% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
-{% endfor %}
-{% endblock %}
-{% block coltype %}colM{% endblock %}
-{% block tools %}<div class="tools">
-<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
-</div>{% endblock %}
-{% block content %}
-<div id="content-main">
+{% extends "admin/base_site_list.html" %}
 
-{% include "textfilter.html" %}
-{% include "datefilter.html" %}
-
-<div style="overflow-x: scroll; overflow-y: auto;">
-<table>
-<thead><tr>{{ rowheader }}</tr></thead>
-
-<tbody>{% for i in objectlist %}
+{% block tablebody %}
+{% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
 <td>{{i.entity}}</td>
 <td>{{i.name}}</td>
@@ -28,11 +10,4 @@
 <td>{{i.enddatetime}}</td>
 <td>{{i.weight}}</td>
 </tr>{% endfor %}
-</tbody></table>
-</div>
-
-{% block pagination %}<p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} problems {% ifnotequal hits fullhits %} (total <a class="showall" href="/problem/">{{fullhits}}</a>){% endifnotequal %}
-{% endblock %}</p></div>
-
 {% endblock %}

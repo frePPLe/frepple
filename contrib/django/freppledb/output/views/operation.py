@@ -36,6 +36,7 @@ class OverviewReport(TableReport):
   template = 'output/operation.html'
   title = _('Operation Report')
   basequeryset = Operation.objects.all()
+  model = Operation
   rows = (
     ('operation',{
       'filter': FilterText(field='name'),
@@ -124,6 +125,7 @@ class DetailReport(ListReport):
   basequeryset = OperationPlan.objects.extra(
     select={'fcst_or_actual':'demand in (select distinct name from forecast)'}
     )
+  model = OperationPlan
   rows = (
     ('identifier', {
       'filter': FilterNumber(),

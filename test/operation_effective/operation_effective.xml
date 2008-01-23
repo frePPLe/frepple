@@ -15,7 +15,7 @@
   <commands>
     <verbose>true</verbose>
     <command xsi:type="command_solve">
-      <solver name="MRP" xsi:type="solver_mrp" constraints="0" loglevel="2" />
+      <solver name="MRP" xsi:type="solver_mrp" constraints="7" loglevel="2" />
     </command>
     <command xsi:type="command_saveplan">
       <filename>output.1.xml</filename>
@@ -34,59 +34,87 @@
   <buffers>
     <buffer name="1. end item in location A">
       <item name="1. end item" />
-      <producing name="1. make end item in A" xsi:type="operation_fixed_time"
-        duration="24:00:00">
+      <producing name="1. make end item in A" xsi:type="operation_time_per"
+        duration_per="P1D" >
         <flows>
           <flow xsi:type="flow_end">
             <buffer name="1. end item in location A" />
             <quantity>1</quantity>
           </flow>
         </flows>
+        <loads>
+          <load>
+            <resource name="1. capacity in A">
+              <maximum name="Capacity" xsi:type="calendar_float">
+                <buckets>
+                  <bucket start="2007-01-01T00:00:00">
+                    <value>1</value>
+                  </bucket>
+                </buckets>
+              </maximum>
+            </resource>
+          </load>
+        </loads>
       </producing>
       <location name="location A" />
     </buffer>
     <buffer name="1. end item in location B">
       <item name="1. end item" />
       <location name="location B" />
-      <producing name="1. make end item in B" xsi:type="operation_fixed_time"
-        duration="24:00:00">
+      <producing name="1. make end item in B" xsi:type="operation_time_per"
+        duration_per="P1D">
         <flows>
           <flow xsi:type="flow_end">
             <buffer name="1. end item in location B" />
             <quantity>1</quantity>
           </flow>
         </flows>
+        <loads>
+          <load>
+            <resource name="1. capacity in B">
+              <maximum name="Capacity" xsi:type="calendar_float">
+                <buckets>
+                  <bucket start="2007-01-01T00:00:00">
+                    <value>1</value>
+                  </bucket>
+                </buckets>
+              </maximum>
+            </resource>
+          </load>
+        </loads>
       </producing>
     </buffer>
   </buffers>
   <operations>
-    <operation name="1. Source end item" xsi:type="operation_EFFECTIVE">
-      <calendar name="1. effective" xsi:type="calendar_operation">
-        <buckets>
-          <bucket start="2007-01-01T00:00:00">
-            <value name="1. sourcing from location A"
-              xsi:type="operation_fixed_time" duration="24:00:00">
+    <operation name="1. Source end item" xsi:type="operation_alternate">
+      <alternates>
+        <alternate>
+          <operation name="1. sourcing from location A"
+            xsi:type="operation_fixed_time" duration="P1D">
               <flows>
                 <flow xsi:type="flow_start">
                   <buffer name="1. end item in location A" />
                   <quantity>-1</quantity>
                 </flow>
               </flows>
-            </value>
-          </bucket>
-          <bucket start="2007-02-01T00:00:00">
-            <value name="1. sourcing from location B"
-              xsi:type="operation_fixed_time" duration="48:00:00">
+          </operation>
+          <priority>1</priority>
+          <effective_end>2007-02-01T00:00:00</effective_end>
+        </alternate>
+        <alternate>
+          <operation name="1. sourcing from location B"
+            xsi:type="operation_fixed_time" duration="P2D">
               <flows>
                 <flow xsi:type="flow_start">
                   <buffer name="1. end item in location B" />
                   <quantity>-1</quantity>
                 </flow>
               </flows>
-            </value>
-          </bucket>
-        </buckets>
-      </calendar>
+          </operation>
+          <priority>2</priority>
+          <effective_start>2007-02-01T00:00:00</effective_start>
+        </alternate>
+      </alternates>
     </operation>
   </operations>
   <items>
@@ -96,35 +124,34 @@
   </items>
   <demands>
     <demand name="1. order 1">
-      <quantity>10</quantity>
+      <quantity>1</quantity>
       <due>2007-01-04T00:00:00</due>
       <priority>11</priority>
       <item name="1. end item" />
     </demand>
     <demand name="1. order 2">
-      <quantity>10</quantity>
-      <due>2007-02-01T12:00:00</due>
+      <quantity>1</quantity>
+      <due>2007-02-03T12:00:00</due>
       <priority>12</priority>
       <item name="1. end item" />
     </demand>
     <demand name="1. order 3">
-      <quantity>10</quantity>
-      <due>2007-04-04T00:00:00</due>
+      <quantity>50</quantity>
+      <due>2007-01-04T00:00:00</due>
       <priority>13</priority>
       <item name="1. end item" />
     </demand>
   </demands>
 
-
   <!--
-    Case 2: same as case 1, but now the effectivity is based on the start
-    date of the operationplan.
+    Case 2: same as case 1, but now there is a period where both operations
+    are effecitive, and both sourcing from both locations is possible.
   -->
   <buffers>
     <buffer name="2. end item in location A">
       <item name="2. end item" />
       <producing name="2. make end item in A" xsi:type="operation_fixed_time"
-        duration="24:00:00">
+        duration="P1D">
         <flows>
           <flow xsi:type="flow_end">
             <buffer name="2. end item in location A" />
@@ -137,46 +164,47 @@
     <buffer name="2. end item in location B">
       <item name="2. end item" />
       <location name="location B" />
-      <producing name="2. make end item in B" xsi:type="operation_fixed_time"
-        duration="24:00:00">
+      <producing name="2. make end item in B" xsi:type="operation_fixed_time">
         <flows>
           <flow xsi:type="flow_end">
             <buffer name="2. end item in location B" />
             <quantity>1</quantity>
           </flow>
         </flows>
+        <duration>P1D</duration>
       </producing>
     </buffer>
   </buffers>
   <operations>
-    <operation name="2. Source end item" xsi:type="operation_EFFECTIVE">
-      <startORend>false</startORend>
-      <calendar name="2. effective" xsi:type="calendar_operation">
-        <buckets>
-          <bucket start="2007-01-01T00:00:00">
-            <value name="2. sourcing from location A"
-              xsi:type="operation_fixed_time" duration="24:00:00">
+    <operation name="2. Source end item" xsi:type="operation_alternate">
+      <alternates>
+        <alternate>
+          <operation name="2. sourcing from location A"
+            xsi:type="operation_fixed_time" duration="P1D">
               <flows>
                 <flow xsi:type="flow_start">
-                  <buffer name="2. end item in location A" />
+                  <buffer name="1. end item in location A" />
                   <quantity>-1</quantity>
                 </flow>
               </flows>
-            </value>
-          </bucket>
-          <bucket start="2007-02-01T00:00:00">
-            <value name="2. sourcing from location B"
-              xsi:type="operation_fixed_time" duration="48:00:00">
+          </operation>
+          <priority>1</priority>
+          <effective_end>2007-02-15T00:00:00</effective_end>
+        </alternate>
+        <alternate>
+          <operation name="2. sourcing from location B"
+            xsi:type="operation_fixed_time" duration="P2D">
               <flows>
                 <flow xsi:type="flow_start">
                   <buffer name="2. end item in location B" />
                   <quantity>-1</quantity>
                 </flow>
               </flows>
-            </value>
-          </bucket>
-        </buckets>
-      </calendar>
+          </operation>
+          <priority>2</priority>
+          <effective_start>2007-01-15T00:00:00</effective_start>
+        </alternate>
+      </alternates>
     </operation>
   </operations>
   <items>
@@ -188,128 +216,20 @@
     <demand name="2. order 1">
       <quantity>10</quantity>
       <due>2007-01-04T00:00:00</due>
-      <priority>21</priority>
+      <priority>31</priority>
       <item name="2. end item" />
     </demand>
     <demand name="2. order 2">
-      <!--
-        When planning this demand the first iteration will use the
-        incorrect operation. The code needs to make a loop to correct it.
-      -->
       <quantity>10</quantity>
       <due>2007-02-01T12:00:00</due>
-      <priority>22</priority>
+      <priority>32</priority>
       <item name="2. end item" />
     </demand>
     <demand name="2. order 3">
       <quantity>10</quantity>
       <due>2007-04-04T00:00:00</due>
-      <priority>23</priority>
-      <item name="2. end item" />
-    </demand>
-  </demands>
-
-  <!--
-    Case 3: same as case 1, but now an extra effectivity period is added where
-    both sourcing from both locations is possible.
-  -->
-  <buffers>
-    <buffer name="3. end item in location A">
-      <item name="3. end item" />
-      <producing name="3. make end item in A" xsi:type="operation_fixed_time"
-        duration="24:00:00">
-        <flows>
-          <flow xsi:type="flow_end">
-            <buffer name="3. end item in location A" />
-            <quantity>1</quantity>
-          </flow>
-        </flows>
-      </producing>
-      <location name="location A" />
-    </buffer>
-    <buffer name="3. end item in location B">
-      <item name="3. end item" />
-      <location name="location B" />
-      <producing name="3. make end item in B" xsi:type="operation_fixed_time">
-        <duration>24:00:00</duration>
-        <flows>
-          <flow xsi:type="flow_end">
-            <buffer name="3. end item in location B" />
-            <quantity>1</quantity>
-          </flow>
-        </flows>
-      </producing>
-    </buffer>
-  </buffers>
-  <operations>
-    <operation name="3. Source end item" xsi:type="operation_EFFECTIVE">
-      <startORend>true</startORend>
-      <calendar name="3. effective" xsi:type="calendar_operation">
-        <buckets>
-          <bucket start="2007-01-01T00:00:00">
-            <value name="3. sourcing from location A">
-              <duration>24:00:00</duration>
-              <flows>
-                <flow xsi:type="flow_start">
-                  <buffer name="3. end item in location A" />
-                  <quantity>-1</quantity>
-                </flow>
-              </flows>
-            </value>
-          </bucket>
-          <bucket start="2007-02-15T00:00:00">
-            <value name="3. sourcing from location B">
-              <duration>48:00:00</duration>
-              <flows>
-                <flow xsi:type="flow_start">
-                  <buffer name="3. end item in location B" />
-                  <quantity>-1</quantity>
-                </flow>
-              </flows>
-            </value>
-          </bucket>
-          <bucket start="2007-01-15T00:00:00">
-            <value name="3. source from locations A or B"
-              xsi:type="operation_alternate">
-              <alternates>
-                <alternate>
-                  <operation name="3. sourcing from location A" />
-                  <priority>1</priority>
-                </alternate>
-                <alternate>
-                  <operation name="3. sourcing from location B" />
-                  <priority>2</priority>
-                </alternate>
-              </alternates>
-            </value>
-          </bucket>
-        </buckets>
-      </calendar>
-    </operation>
-  </operations>
-  <items>
-    <item name="3. end item">
-      <operation name="3. Source end item" />
-    </item>
-  </items>
-  <demands>
-    <demand name="3. order 1">
-      <quantity>10</quantity>
-      <due>2007-01-04T00:00:00</due>
-      <priority>31</priority>
-      <item name="3. end item" />
-    </demand>
-    <demand name="3. order 2">
-      <quantity>10</quantity>
-      <due>2007-02-01T12:00:00</due>
-      <priority>32</priority>
-      <item name="3. end item" />
-    </demand>
-    <demand name="3. order 3">
-      <quantity>10</quantity>
-      <due>2007-04-04T00:00:00</due>
       <priority>33</priority>
-      <item name="3. end item" />
+      <item name="2. end item" />
     </demand>
   </demands>
 </plan>

@@ -73,7 +73,7 @@ class DataLoadTest(TestCase):
 
   def test_input_plan(self):
     response = self.client.get('/admin/input/plan/')
-    self.assertContains(response, '1 plan')
+    self.assertRedirects(response, '/admin/input/plan/1/', status_code=301)
 
   def test_input_resource(self):
     response = self.client.get('/admin/input/resource/')

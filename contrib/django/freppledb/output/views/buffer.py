@@ -36,6 +36,7 @@ class OverviewReport(TableReport):
   template = 'output/buffer.html'
   title = _('Inventory Report')
   basequeryset = Buffer.objects.all()
+  model = Buffer
   rows = (
     ('buffer', {
       'filter': FilterText(field='name'),
@@ -127,6 +128,7 @@ class DetailReport(ListReport):
     select={'operation':'out_operationplan.operation'},
     where=['out_operationplan.identifier = out_flowplan.operationplan'],
     tables=['out_operationplan'])
+  model = FlowPlan
   rows = (
     ('thebuffer', {
       'filter': FilterText(),

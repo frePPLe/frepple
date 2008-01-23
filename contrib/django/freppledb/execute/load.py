@@ -64,7 +64,6 @@ def loadPlan(cursor):
 
 
 def loadLocations(cursor):
-
   print 'Importing locations...'
   cnt = 0
   starttime = time()
@@ -163,20 +162,23 @@ def loadSuboperations(cursor):
   starttime = time()
   x = [ header, '<operations>' ]
   cursor.execute('''
-    SELECT operation_id, suboperation_id, priority
+    SELECT operation_id, suboperation_id, priority, effective_start, effective_end
     FROM suboperation, operation
     WHERE suboperation.operation_id = operation.name
     AND operation.type = 'operation_alternate'
     ORDER BY operation_id, priority
     ''')
   curoper = ''
-  for i, j, k in cursor.fetchall():
+  for i, j, k, l, m in cursor.fetchall():
     cnt += 1
     if i != curoper:
       if curoper != '': x.append('</operation>')
       x.append('<operation name=%s xsi:type="operation_alternate">' % quoteattr(i))
       curoper = i
-    x.append('<alternate priority="%s"><operation name=%s/></alternate>' % (k,quoteattr(j)))
+    x.append('<alternate priority="%s"><operation name=%s/>' % (k,quoteattr(j)))
+    if l: x.append('<effective_start>%s</effective_start>' % l.isoformat())
+    if m: x.append('<effective_end>%s</effective_end>' % m.isoformat())
+    x.append('</alternate>')
   if curoper != '': x.append('</operation>')
   x.append('</operations></plan>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
@@ -266,17 +268,20 @@ def loadFlows(cursor):
   # Note: The sorting of the flows is not really necessary, but helps to make
   # the planning progress consistent across runs and database engines.
   cursor.execute('''
-    SELECT operation_id, thebuffer_id, quantity, type
+    SELECT operation_id, thebuffer_id, quantity, type, effective_start, effective_end
     FROM flow
     ORDER BY operation_id, thebuffer_id
     ''')
   x = [ header, '<flows>' ]
-  for i, j, k, l in cursor.fetchall():
+  for i, j, k, l, m, n in cursor.fetchall():
     cnt += 1
     if l:
-      x.append('<flow xsi:type="%s"><operation name=%s/><buffer name=%s/><quantity>%s</quantity></flow>' % (l, quoteattr(i), quoteattr(j), k))
+      x.append('<flow xsi:type="%s"><operation name=%s/><buffer name=%s/><quantity>%s</quantity>' % (l, quoteattr(i), quoteattr(j), k))
     else:
-      x.append('<flow><operation name=%s/><buffer name=%s/><quantity>%s</quantity></flow>' % (quoteattr(i), quoteattr(j), k))
+      x.append('<flow><operation name=%s/><buffer name=%s/><quantity>%s</quantity>' % (quoteattr(i), quoteattr(j), k))
+    if m: x.append('<effective_start>%s</effective_start>' % m.isoformat())
+    if n: x.append('<effective_end>%s</effective_end>' % n.isoformat())
+    x.append('</flow>')
   x.append('</flows></plan>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d flows in %.2f seconds' % (cnt, time() - starttime)
@@ -289,14 +294,17 @@ def loadLoads(cursor):
   # Note: The sorting of the loads is not really necessary, but helps to make
   # the planning progress consistent across runs and database engines.
   cursor.execute('''
-    SELECT operation_id, resource_id, usagefactor
+    SELECT operation_id, resource_id, usagefactor, effective_start, effective_end
     FROM resourceload
     ORDER BY operation_id, resource_id
     ''')
   x = [ header , '<loads>' ]
-  for i, j, k in cursor.fetchall():
+  for i, j, k, l, m in cursor.fetchall():
     cnt += 1
-    x.append('<load><operation name=%s/><resource name=%s/><usage>%s</usage></load>' % (quoteattr(i), quoteattr(j), k))
+    x.append('<load><operation name=%s/><resource name=%s/><usage>%s</usage>' % (quoteattr(i), quoteattr(j), k))
+    if l: x.append('<effective_start>%s</effective_start>' % l.isoformat())
+    if m: x.append('<effective_end>%s</effective_end>' % m.isoformat())
+    x.append('</load>')
   x.append('</loads></plan>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d loads in %.2f seconds' % (cnt, time() - starttime)

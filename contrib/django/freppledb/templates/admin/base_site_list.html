@@ -12,16 +12,18 @@
 {% block content %}
 <div id="content-main">
 
-<table>
-<thead><tr>{{ rowheader }}</tr></thead>
+{% include "textfilter.html" %}
+{% include "datefilter.html" %}
+{% block contextmenus %}{% endblock %}
 
-<tbody>{% for i in objectlist %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% ifchanged %}<strong>{{i.category}}</strong>{% endifchanged %}</td>
-<td>{{i.name}}</td>
-<td>{{i.value}}</td>
-</tr>{% endfor %}
+<div style="overflow-x: scroll; overflow-y: auto;">
+<table><thead><tr>{{ rowheader }}</tr></thead>
+<tbody>{% block tablebody %}{% endblock %}
 </tbody></table>
 </div>
+
+{% block pagination %}<p class="paginator">
+{{paginator_html}}&nbsp;&nbsp;{{hits}} {% trans reportclass.model._meta.verbose_name_plural %} {% ifnotequal hits fullhits %} (total <a class="showall" href="{{request.path}}{% if is_popup %}?pop=1{% endif %}">{{fullhits}}</a>){% endifnotequal %}
+{% endblock %}</p></div>
 
 {% endblock %}

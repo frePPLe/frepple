@@ -1,26 +1,13 @@
-{% extends "admin/base_site_nav.html" %}
-{% load i18n admin_list adminmedia %}
-{% block extrahead %}{{ block.super }}
-{% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
-{% endfor %}
-{% endblock %}
-{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
-{% block coltype %}colM{% endblock %}
-{% block tools %}<div class="tools">
-<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
-</div>{% endblock %}
-{% block content %}
-<div id="content-main">
+{% extends "admin/base_site_table.html" %}
 
-{% include "textfilter.html" %}
+{% block contextmenus %}
 {% include "buffercontext.html" %}
 {% include "itemcontext.html" %}
 {% include "locationcontext.html" %}
+{% endblock %}
 
-<div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>
-
-<tbody>{% for j in objectlist %}{% ifchanged j.buffer %}{% if not forloop.first %}</tr>{% endif %}
+{% block tablebody %}
+{% for j in objectlist %}{% ifchanged j.buffer %}{% if not forloop.first %}</tr>{% endif %}
 <tr class="{% cycle row1,row2 %}"><td>{{j.buffer|superlink:"buffer"}}</td><td>{{j.item|superlink:"item"}}</td><td>{% if perms.input.change_location %}{{j.location|superlink:"location"}}{% else %}{{j.location}}{% endif %}</td>
 <td>{{ crossheader }}</td>{% endifchanged %}
 <td>{{j.startoh|floatformat:1}}<br/>
@@ -28,11 +15,4 @@
 {% if j.produced %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=4a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__gte=0">{{j.produced|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
 {% if j.consumed or j.produced %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=4a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}">{{j.endoh|floatformat:1}}</a>{% else %}{{j.endoh|floatformat:1}}{% endif %}</td>
 {% if forloop.last %}</tr>{% endif %}{% endfor %}
-</tbody></table>
-</div>
-
-{% block pagination %}<p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} buffers {% ifnotequal hits fullhits %} (total <a class="showall" href="/buffer/">{{fullhits}}</a>){% endifnotequal %}
-{% endblock %}</p></div>
-
 {% endblock %}

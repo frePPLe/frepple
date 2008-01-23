@@ -2133,6 +2133,8 @@ class OperationAlternate : public Operation
 {
     TYPEDEF(OperationAlternate);
   public:
+    typedef pair<float,DateRange> alternateProperty;
+
     /** Constructor. */
     explicit OperationAlternate(const string& c) : Operation(c) {};
 
@@ -2142,22 +2144,35 @@ class OperationAlternate : public Operation
     /** Add a new alternate operation.<br>
       * The lower the priority value, the more important this alternate 
       * operation is. */
-    DECLARE_EXPORT void addAlternate(Operation* o, float prio = 1.0f);
+    DECLARE_EXPORT void addAlternate
+      (Operation*, float = 1.0f, DateRange = DateRange());
 
     /** Removes an alternate from the list. */
     DECLARE_EXPORT void removeSubOperation(Operation *);
 
-    /** Returns the priority of a certain suboperation.
+    /** Returns the properties of a certain suboperation.
       * @exception LogicException Generated when the argument operation is
       *     null or when it is not a sub-operation of this alternate.
       */
-    DECLARE_EXPORT float getPriority(Operation* o) const;
+    DECLARE_EXPORT const alternateProperty& getProperties(Operation* o) const;
+
+    /** Updates the properties of a certain suboperation.
+      * @exception LogicException Generated when the argument operation is
+      *     not null and not a sub-operation of this alternate.
+      */
+    DECLARE_EXPORT void setProperties(Operation*, float, DateRange);
 
     /** Updates the priority of a certain suboperation.
       * @exception LogicException Generated when the argument operation is
       *     not null and not a sub-operation of this alternate.
       */
-    DECLARE_EXPORT void setPriority(Operation* o, float f);
+    DECLARE_EXPORT void setPriority(Operation*, float);
+
+    /** Updates the effective daterange of a certain suboperation.
+      * @exception LogicException Generated when the argument operation is
+      *     not null and not a sub-operation of this alternate.
+      */
+    DECLARE_EXPORT void setEffective(Operation*, DateRange);
 
     /** A operation of this type enforces the following rules on its
       * operationplans:
@@ -2187,15 +2202,15 @@ class OperationAlternate : public Operation
     virtual size_t getSize() const
     {
       return sizeof(OperationAlternate) + Operation::extrasize()
-          + alternates.size() * 2 * (sizeof(Operation*)+sizeof(float));
+          + alternates.size() * (5*sizeof(Operation*)+sizeof(alternateProperty));
     }
 
   private:
-    typedef list<float> priolist;
+    typedef list<alternateProperty> alternatePropertyList;
 
     /** List of the priorities of the different alternate operations. The list
       * is maintained such that it is sorted in ascending order of priority. */
-    priolist priorities;
+    alternatePropertyList alternateProperties;
 
     /** List of all alternate operations. The list is sorted with the operation
       * with the highest priority at the start of the list.<br>
@@ -3789,7 +3804,9 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Each operationplan has 2 loadplans per load: one at the start,
       * when the capacity consumption starts, and one at the end, when the
       * capacity consumption ends.<br>
-      * This method returns the "companion" loadplan.
+      * This method returns the "companion" loadplan. It is not very
+      * scalable: the performance is linear with the number of loadplans
+      * on the resource.
       */
     DECLARE_EXPORT LoadPlan* getOtherLoadPlan() const;
 

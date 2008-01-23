@@ -563,7 +563,10 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
       altIter != oper->getSubOperations().end(); ++altIter)
   {
     // Operations with 0 priority are considered unavailable
-    if (oper->getPriority(*altIter) == 0.0f) continue;
+    const OperationAlternate::alternateProperty& props 
+      = oper->getProperties(*altIter);
+    if (props.first == 0.0f || !props.second.within(Solver->q_date)) // @todo logic is to be owned by the operation?
+      continue;
 
     // Find the flow into the requesting buffer. It may or may not exist, since
     // the flow could already exist on the top operationplan

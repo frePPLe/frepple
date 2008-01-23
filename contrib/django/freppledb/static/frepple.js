@@ -15,6 +15,7 @@ var ContextMenu = {
     'demand': 'demandcontext',
 		'forecast': 'forecastcontext',
 		'customer': 'customercontext',
+		'calendar': 'calendarcontext',
 		'numfilteroper': 'datefilter',
     'datefilteroper': 'datefilter',
     'textfilteroper': 'textfilter'

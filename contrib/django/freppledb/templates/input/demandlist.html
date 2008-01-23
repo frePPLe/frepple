@@ -1,0 +1,26 @@
+{% extends "admin/base_site_list.html" %}
+
+{% block contextmenus %}
+{% include "demandcontext.html" %}
+{% include "itemcontext.html" %}
+{% include "customercontext.html" %}
+{% include "operationcontext.html" %}
+{% endblock %}
+
+{% block tablebody %}
+{% for i in objectlist %}
+<tr class="{% cycle row1,row2 %}">
+<td>{{i.name|superlink:"demand"}}</td>
+<td>{{i.item|superlink:"item"}}</td>
+<td>{{i.customer|superlink:"customer"}}</td>
+<td>{{i.description}}</td>
+<td>{{i.category}}</td>
+<td>{{i.subcategory}}</td>
+<td>{{i.due}}</td>
+<td>{{i.quantity}}</td>
+<td>{{i.operation|superlink:"operation"}}</td>
+<td>{{i.priority}}</td>
+<td>{{i.owner|superlink:"demand"}}</td>
+<td>{{i.lastmodified}}</td>
+</tr>{% endfor %}
+{% endblock %}

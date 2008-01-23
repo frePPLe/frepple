@@ -30,7 +30,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
-from input.models import Buffer, Flow, Operation, Plan, Resource, Item, Forecast
+from input.models import *
+from utils.report import *
 
 
 class uploadjson:
@@ -259,3 +260,635 @@ class pathreport:
        'entity': entity,
        'downstream': False,
        }))
+
+
+class BufferList(ListReport):
+  '''
+  A list report to show buffers.
+  '''
+  template = 'input/bufferlist.html'
+  title = _("Buffer List")
+  basequeryset = Buffer.objects.all()
+  model = Buffer
+  rows = (
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('description', {
+      'title': _('description'),
+      'filter': FilterText(),
+      }),
+    ('category', {
+      'title': _('category'),
+      'filter': FilterText(),
+      }),
+    ('subcategory', {
+      'title': _('subcategory'),
+      'filter': FilterText(),
+      }),
+    ('location', {
+      'title': _('location'),
+      'filter': FilterText(field='location__name'),
+      }),
+    ('item', {
+      'title': _('item'),
+      'filter': FilterText(field='item__name'),
+      }),
+    ('onhand', {
+      'title': _('onhand'),
+      'filter': FilterNumber(size=5, operator="lt"),
+      }),
+    ('type', {
+      'title': _('type'),
+      'filter': FilterText(),
+      }),
+    ('minimum', {
+      'title': _('minimum'),
+      'filter': FilterText(field='minimum__name'),
+      }),
+    ('producing', {
+      'title': _('producing'),
+      'filter': FilterText(field='producing__name'),
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class ResourceList(ListReport):
+  '''
+  A list report to show resources.
+  '''
+  template = 'input/resourcelist.html'
+  title = _("Resource List")
+  basequeryset = Resource.objects.all()
+  model = Resource
+  rows = (
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('description', {
+      'title': _('description'),
+      'filter': FilterText(),
+      }),
+    ('category', {
+      'title': _('category'),
+      'filter': FilterText(),
+      }),
+    ('subcategory', {
+      'title': _('subcategory'),
+      'filter': FilterText(),
+      }),
+    ('location', {
+      'title': _('location'),
+      'filter': FilterText(field='location__name'),
+      }),
+    ('type', {
+      'title': _('type'),
+      'filter': FilterText(),
+      }),
+    ('maximum', {
+      'title': _('maximum'),
+      'filter': FilterText(field='maximum__name'),
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class LocationList(ListReport):
+  '''
+  A list report to show locations.
+  '''
+  template = 'input/locationlist.html'
+  title = _("Location List")
+  basequeryset = Location.objects.all()
+  model = Location
+  rows = (
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('description', {
+      'title': _('description'),
+      'filter': FilterText(),
+      }),
+    ('category', {
+      'title': _('category'),
+      'filter': FilterText(),
+      }),
+    ('subcategory', {
+      'title': _('subcategory'),
+      'filter': FilterText(),
+      }),
+    ('owner', {
+      'title': _('owner'),
+      'filter': FilterText(field='owner__name'),
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class CustomerList(ListReport):
+  '''
+  A list report to show locations.
+  '''
+  template = 'input/customerlist.html'
+  title = _("Customer List")
+  basequeryset = Customer.objects.all()
+  model = Customer
+  rows = (
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('description', {
+      'title': _('description'),
+      'filter': FilterText(),
+      }),
+    ('category', {
+      'title': _('category'),
+      'filter': FilterText(),
+      }),
+    ('subcategory', {
+      'title': _('subcategory'),
+      'filter': FilterText(),
+      }),
+    ('owner', {
+      'title': _('owner'),
+      'filter': FilterText(field='owner__name'),
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class ItemList(ListReport):
+  '''
+  A list report to show items.
+  '''
+  template = 'input/itemlist.html'
+  title = _("Item List")
+  basequeryset = Item.objects.all()
+  model = Item
+  rows = (
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('description', {
+      'title': _('description'),
+      'filter': FilterText(),
+      }),
+    ('category', {
+      'title': _('category'),
+      'filter': FilterText(),
+      }),
+    ('subcategory', {
+      'title': _('subcategory'),
+      'filter': FilterText(),
+      }),
+    ('operation', {
+      'title': _('operation'),
+      'filter': FilterText(field='operation__name'),
+      }),
+    ('owner', {
+      'title': _('owner'),
+      'filter': FilterText(field='owner__name'),
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class LoadList(ListReport):
+  '''
+  A list report to show loads.
+  '''
+  template = 'input/loadlist.html'
+  title = _("Load List")
+  basequeryset = Load.objects.all()
+  model = Load
+  rows = (
+    ('id', {
+      'title': _('identifier'),
+      'filter': FilterNumber(),
+      }),
+    ('operation', {
+      'title': _('operation'),
+      'filter': FilterText(field='operation__name'),
+      }),
+    ('resource', {
+      'title': _('resource'),
+      'filter': FilterText(field='resource__name'),
+      }),
+    ('usagefactor', {
+      'title': _('usagefactor'),
+      'filter': FilterNumber(),
+      }),
+    ('effective_start', {
+      'title': _('effective start'),
+      'filter': FilterDate(),
+      }),
+    ('effective_end', {
+      'title': _('effective end'),
+      'filter': FilterDate(),
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class FlowList(ListReport):
+  '''
+  A list report to show flows.
+  '''
+  template = 'input/flowlist.html'
+  title = _("Flow List")
+  basequeryset = Flow.objects.all()
+  model = Flow
+  rows = (
+    ('id', {
+      'title': _('identifier'),
+      'filter': FilterNumber(),
+      }),
+    ('operation', {
+      'title': _('operation'),
+      'filter': FilterText(field='operation__name'),
+      }),
+    ('thebuffer', {
+      'title': _('buffer'),
+      'filter': FilterText(field='thebuffer__name'),
+      }),
+    ('type', {
+      'title': _('type'),
+      'filter': FilterText(),
+      }),
+    ('quantity', {
+      'title': _('quantity'),
+      'filter': FilterNumber(),
+      }),
+    ('effective_start', {
+      'title': _('effective start'),
+      'filter': FilterDate(),
+      }),
+    ('effective_end', {
+      'title': _('effective end'),
+      'filter': FilterDate(),
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class DemandList(ListReport):
+  '''
+  A list report to show demands.
+  '''
+  template = 'input/demandlist.html'
+  title = _("Demand List")
+  basequeryset = Demand.objects.all()
+  model = Demand
+  rows = (
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('item', {
+      'title': _('item'),
+      'filter': FilterText(field="item_name"),
+      }),
+    ('customer', {
+      'title': _('customer'),
+      'filter': FilterText(field="customer__name"),
+      }),
+    ('description', {
+      'title': _('description'),
+      'filter': FilterText(),
+      }),
+    ('category', {
+      'title': _('category'),
+      'filter': FilterText(),
+      }),
+    ('subcategory', {
+      'title': _('subcategory'),
+      'filter': FilterText(),
+      }),
+    ('due', {
+      'title': _('due'),
+      'filter': FilterDate(),
+      }),
+    ('quantity', {
+      'title': _('quantity'),
+      'filter': FilterNumber(),
+      }),
+    ('operation', {
+      'title': _('operation'),
+      'filter': FilterText(),
+      }),
+    ('priority', {
+      'title': _('priority'),
+      'filter': FilterNumber(),
+      }),
+    ('owner', {
+      'title': _('owner'),
+      'filter': FilterText(field='owner__name'),
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class ForecastList(ListReport):
+  '''
+  A list report to show forecasts.
+  '''
+  template = 'input/forecastlist.html'
+  title = _("Forecast List")
+  basequeryset = Forecast.objects.all()
+  model = Forecast
+  rows = (
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('item', {
+      'title': _('item'),
+      'filter': FilterText(field="item_name"),
+      }),
+    ('customer', {
+      'title': _('customer'),
+      'filter': FilterText(field="customer__name"),
+      }),
+    ('calendar', {
+      'title': _('calendar'),
+      'filter': FilterText(field="calendar__name"),
+      }),
+    ('description', {
+      'title': _('description'),
+      'filter': FilterText(),
+      }),
+    ('category', {
+      'title': _('category'),
+      'filter': FilterText(),
+      }),
+    ('subcategory', {
+      'title': _('subcategory'),
+      'filter': FilterText(),
+      }),
+    ('due', {
+      'title': _('due'),
+      'filter': FilterDate(),
+      }),
+    ('quantity', {
+      'title': _('quantity'),
+      'filter': FilterNumber(),
+      }),
+    ('operation', {
+      'title': _('operation'),
+      'filter': FilterText(),
+      }),
+    ('priority', {
+      'title': _('priority'),
+      'filter': FilterNumber(),
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class DatesList(ListReport):
+  '''
+  A list report to show dates.
+  '''
+  template = 'input/dateslist.html'
+  title = _("Date List")
+  basequeryset = Dates.objects.all()
+  model = Dates
+  rows = (
+    ('day', {
+      'title': _('day'),
+      'filter': FilterDate(),
+      }),
+    ('dayofweek', {
+      'title': _('day of week'),
+      'filter': FilterNumber(),
+      }),
+    ('week', {
+      'title': _('week'),
+      'filter': FilterText(),
+      }),
+    ('month', {
+      'title': _('month'),
+      'filter': FilterText(),
+      }),
+    ('quarter', {
+      'title': _('quarter'),
+      'filter': FilterText(),
+      }),
+    ('year', {
+      'title': _('year'),
+      'filter': FilterText(),
+      }),
+    ('default', {
+      'title': _('default'),
+      'filter': FilterText(),
+      }),
+    ('week_start', {
+      'title': _('week start'),
+      'filter': FilterDate(),
+      }),
+    ('month_start', {
+      'title': _('month start'),
+      'filter': FilterDate(),
+      }),
+    ('quarter_start', {
+      'title': _('month start'),
+      'filter': FilterDate(),
+      }),
+    ('year_start', {
+      'title': _('year start'),
+      'filter': FilterDate(),
+      }),
+    ('default_start', {
+      'title': _('default start'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class CalendarList(ListReport):
+  '''
+  A list report to show calendars.
+  '''
+  template = 'input/calendarlist.html'
+  title = _("Calendar List")
+  basequeryset = Calendar.objects.all()
+  model = Calendar
+  rows = (
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('description', {
+      'title': _('description'),
+      'filter': FilterText(),
+      }),
+    ('category', {
+      'title': _('category'),
+      'filter': FilterText(),
+      }),
+    ('subcategory', {
+      'title': _('subcategory'),
+      'filter': FilterText(),
+      }),
+    ('currentvalue', {
+      'title': _('currentvalue'),
+      'sort': False,
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class OperationList(ListReport):
+  '''
+  A list report to show operations.
+  '''
+  template = 'input/operationlist.html'
+  title = _("Operation List")
+  basequeryset = Operation.objects.all()
+  model = Operation
+  rows = (
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('type', {
+      'title': _('type'),
+      'filter': FilterText(),
+      }),
+    ('fence', {
+      'title': _('fence'),
+      'filter': FilterNumber(),
+      }),
+    ('pretime', {
+      'title': _('pretime'),
+      'filter': FilterNumber(),
+      }),
+    ('posttime', {
+      'title': _('posttime'),
+      'filter': FilterNumber(),
+      }),
+    ('sizeminimum', {
+      'title': _('size minimum'),
+      'filter': FilterNumber(),
+      }),
+    ('sizemultiple', {
+      'title': _('size multiple'),
+      'filter': FilterNumber(),
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class SubOperationList(ListReport):
+  '''
+  A list report to show suboperations.
+  '''
+  template = 'input/suboperationlist.html'
+  title = _("Suboperation List")
+  basequeryset = SubOperation.objects.all()
+  model = SubOperation
+  rows = (
+    ('operation', {
+      'title': _('operation'),
+      'filter': FilterText(field='operation__name'),
+      }),
+    ('suboperation', {
+      'title': _('suboperation'),
+      'filter': FilterText(field='suboperation__name'),
+      }),
+    ('priority', {
+      'title': _('priority'),
+      'filter': FilterNumber(),
+      }),
+    ('effective_start', {
+      'title': _('effective start'),
+      'filter': FilterDate(),
+      }),
+    ('effective_end', {
+      'title': _('effective end'),
+      'filter': FilterDate(),
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )
+
+
+class OperationPlanList(ListReport):
+  '''
+  A list report to show operationplans.
+  '''
+  template = 'input/operationplanlist.html'
+  title = _("Operationplan List")
+  basequeryset = OperationPlan.objects.all()
+  model = OperationPlan
+  rows = (
+    ('identifier', {
+      'title': _('identifier'),
+      'filter': FilterNumber(),
+      }),
+    ('operation', {
+      'title': _('operation'),
+      'filter': FilterText(field='operation__name'),
+      }),
+    ('startdate', {
+      'title': _('start date'),
+      'filter': FilterDate(),
+      }),
+    ('enddate', {
+      'title': _('end date'),
+      'filter': FilterDate(),
+      }),
+    ('quantity', {
+      'title': _('quantity'),
+      'filter': FilterNumber(),
+      }),
+    ('locked', {
+      'title': _('locked'),
+      'filter': FilterBool(),
+      }),
+    ('lastmodified', {
+      'title': _('lastmodified'),
+      'filter': FilterDate(),
+      }),
+    )

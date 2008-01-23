@@ -1,29 +1,13 @@
-{% extends "admin/base_site_nav.html" %}
-{% load i18n admin_list adminmedia %}
-{% block extrahead %}{{ block.super }}
-{% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
-{% endfor %}
-{% endblock %}
-{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
-{% block coltype %}colM{% endblock %}
-{% block tools %}<div class="tools">
-<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
-</div>{% endblock %}
-{% block content %}
-<div id="content-main">
+{% extends "admin/base_site_list.html" %}
 
-{% include "textfilter.html" %}
-{% include "datefilter.html" %}
+{% block contextmenus %}
 {% include "buffercontext.html" %}
 {% include "demandcontext.html" %}
+{% endblock %}
 
-<div style="overflow-x: scroll; overflow-y: auto;">
-<table>
-<thead><tr>{{ rowheader }}</tr></thead>
-
-<tbody>{% for i in objectlist %}
+{% block tablebody %}
+{% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
-
 <td>{{i.demand|superlink:"demand"}}</td>
 <td>{{i.buffer|superlink:"buffer"}}</td>
 <td>{{i.depth}}</td>
@@ -34,13 +18,5 @@
 <td>{{i.quantity_demand}}</td>
 <td>{{i.quantity_buffer}}</td>
 <td>{{i.pegged}}</td>
-
 </tr>{% endfor %}
-</tbody></table>
-</div>
-
-{% block pagination %}<p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} peggings {% ifnotequal hits fullhits %} (total <a class="showall" href="/pegging/">{{fullhits}}</a>){% endifnotequal %}
-{% endblock %}</p></div>
-
 {% endblock %}

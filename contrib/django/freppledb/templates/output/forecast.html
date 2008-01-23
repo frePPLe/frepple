@@ -1,8 +1,6 @@
-{% extends "admin/base_site_nav.html" %}
-{% load i18n admin_list adminmedia %}
+{% extends "admin/base_site_table.html" %}
+
 {% block extrahead %}{{ block.super }}
-{% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
-{% endfor %}
 <script type="text/javascript">
     function onChange(input)
     {
@@ -26,22 +24,15 @@
     }
 </script>
 {% endblock %}
-{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
-{% block coltype %}colM{% endblock %}
-{% block tools %}<div class="tools">
-<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
-</div>{% endblock %}{% block content %}
-<div id="content-main">
 
-{% include "textfilter.html" %}
+{% block contextmenus %}
 {% include "itemcontext.html" %}
 {% include "forecastcontext.html" %}
 {% include "customercontext.html" %}
+{% endblock %}
 
-<div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>
-
-<tbody>{% if perms.input.change_forecastdemand %}
+{% block tablebody %}
+{% if perms.input.change_forecastdemand %}
 {% for j in objectlist %}{% ifchanged j.forecast %}{% if not forloop.first %}</form></tr>{% endif %}
 <tr class="{% cycle row1,row2 %}" id="{{j.forecast|urlencode}}"><form name="{{j.forecast|escape}}"><td>{{j.forecast|superlink:"forecast"}}</td><td>{{j.item|superlink:"item"}}</td><td>{{j.customer|superlink:"customer"}}</td>
 <td>{{ crossheader }}</td>{% endifchanged %}
@@ -60,12 +51,4 @@
 {% if j.planned %}<a href="/demandplan/?demand={{j.forecast|urlencode}}&amp;o=5a&amp;plandate__gte={{j.startdate}}&amp;plandate__lt={{j.enddate}}">{{j.planned|floatformat:1}}</a>{% else %}0.0{% endif %}</td>
 {% if forloop.last %}</tr>{% endif %}{% endfor %}
 {% endif %}
-</tbody></table>
-</div>
-
-{% block pagination %} <p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} forecasts {% ifnotequal hits fullhits %} (total <a class="showall" href="/forecast/">{{fullhits}}</a>){% endifnotequal %}
-</p>{% endblock %}
-
-</div>
 {% endblock %}

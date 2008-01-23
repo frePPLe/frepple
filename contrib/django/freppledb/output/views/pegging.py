@@ -35,6 +35,7 @@ class Report(ListReport):
   title = _("Pegging Report")
   reset_crumbs = False
   basequeryset = DemandPegging.objects.all()
+  model = DemandPegging
   rows = (
     ('demand', {
       'filter': FilterText(size=15),

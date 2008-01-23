@@ -242,3 +242,21 @@ def addurlparameter(parser, token):
   return AddParameter(bits[1],bits[2])
 
 register.tag('addurlparameter', addurlparameter)
+
+
+#
+# Return a atrribute from a variable
+#
+
+@register.filter
+def getattr (obj, args):
+  """
+  Try to get an attribute from an object.
+  Example: {% your_dict_or_object|getattr:"field" %}
+  """
+  try:
+      return obj.__getattribute__(args)
+  except AttributeError:
+       return obj.get(args, '')
+  except:
+      return ''

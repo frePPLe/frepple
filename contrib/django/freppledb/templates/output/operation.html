@@ -1,22 +1,12 @@
-{% extends "admin/base_site_nav.html" %}
-{% load i18n admin_list adminmedia %}
-{% block extrahead %}{{ block.super }}
-{% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
-{% endfor %}
-{% endblock %}{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
-{% block coltype %}colM{% endblock %}
-{% block tools %}<div class="tools">
-<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
-</div>{% endblock %}{% block content %}
-<div id="content-main">
+{% extends "admin/base_site_table.html" %}
 
-{% include "textfilter.html" %}
+{% block contextmenus %}
 {% include "operationcontext.html" %}
+{% endblock %}
 
-<div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>
-
-<tbody>{% for j in objectlist %}{% ifchanged j.operation %}{% if not forloop.first %}</tr>{% endif %}
+{% block tablebody %}
+{% for j in objectlist %}
+{% ifchanged j.operation %}{% if not forloop.first %}</tr>{% endif %}
 <tr class="{% cycle row1,row2 %}" id="{{j.operation|urlencode}}"><td>{{j.operation|superlink:"operation"}}</td>
 <td>{{ crossheader }}</td>{% endifchanged %}
 <td>{% if j.locked_start %}<a href="/operationplan/?operation={{j.operation|urlencode}}&amp;o=2a&amp;startdate__gte={{j.startdate}}&amp;startdate__lt={{j.enddate}}&amp;locked=1">{{j.locked_start|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
@@ -24,14 +14,6 @@
 {% if j.locked_end %}<a href="/operationplan/?operation={{j.operation|urlencode}}&amp;o=2a&amp;enddate__gte={{j.startdate}}&amp;enddate__lt={{j.enddate}}&amp;locked=1">{{j.locked_end|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
 {% if j.total_end %}<a href="/operationplan/?operation={{j.operation|urlencode}}&amp;o=2a&amp;enddate__gte={{j.startdate}}&amp;enddate__lt={{j.enddate}}">{{j.total_end|floatformat:2}}</a>{% else %}0.00{% endif %}</td>
 {% if forloop.last %}</tr>{% endif %}{% endfor %}
-</tbody></table>
-</div>
-
-{% block pagination %} <p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} operations {% ifnotequal hits fullhits %} (total <a class="showall" href="/operation/">{{fullhits}}</a>){% endifnotequal %}
-</p>{% endblock %}
-
-</div>
 {% endblock %}
 
 

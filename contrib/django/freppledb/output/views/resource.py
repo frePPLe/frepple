@@ -37,6 +37,7 @@ class OverviewReport(TableReport):
   template = 'output/resource.html'
   title = _('Resource Report')
   basequeryset = Resource.objects.all()
+  model = Resource
   rows = (
     ('resource',{
       'filter': FilterText(field='name'),
@@ -131,6 +132,7 @@ class DetailReport(ListReport):
     select={'operation':'out_operationplan.operation'},
     where=['out_operationplan.identifier = out_loadplan.operationplan'],
     tables=['out_operationplan'])
+  model = LoadPlan
   rows = (
     ('resource', {
       'filter': FilterText(),

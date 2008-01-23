@@ -121,14 +121,13 @@ a {
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
-/* clashes with the django calendar styles...
 .calendar {
   margin-right: 17px;
   padding-right: 17px;
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
-*/
+
 
 /* Style for main navigation menu */
 

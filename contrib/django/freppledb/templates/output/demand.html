@@ -1,23 +1,11 @@
-{% extends "admin/base_site_nav.html" %}
-{% load i18n admin_list adminmedia %}
-{% block extrahead %}{{ block.super }}
-{% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
-{% endfor %}
-{% endblock %}
-{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
-{% block coltype %}colM{% endblock %}
-{% block tools %}<div class="tools">
-<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
-</div>{% endblock %}{% block content %}
-<div id="content-main">
+{% extends "admin/base_site_table.html" %}
 
-{% include "textfilter.html" %}
+{% block contextmenus %}
 {% include "itemcontext.html" %}
+{% endblock %}
 
-<div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr>{{ rowheader }}{{ columnheader }}</tr></thead>
-
-<tbody>{% for j in objectlist %}{% ifchanged j.item %}{% if not forloop.first %}</tr>{% endif %}
+{% block tablebody %}
+{% for j in objectlist %}{% ifchanged j.item %}{% if not forloop.first %}</tr>{% endif %}
 <tr class="{% cycle row1,row2 %}" id="{{j.item|urlencode}}"><td>{{j.item|superlink:"item"}}</td>
 <td>{{ crossheader }}</td>{% endifchanged %}
 <td>{% if j.forecast %}<a href="/forecast/?o=5a&amp;item={{j.item|urlencode}}">{{j.forecast|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
@@ -26,12 +14,4 @@
 {% if j.supply %}<a href="/demandplan/?o=5a&amp;item={{j.item|urlencode}}&amp;plandate__gte={{j.startdate}}&amp;plandate__lt={{j.enddate}}">{{j.supply|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
 {{j.backlog|floatformat:1}}</td>
 {% if forloop.last %}</tr>{% endif %}{% endfor %}
-</tbody></table>
-</div>
-
-{% block pagination %} <p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} items {% ifnotequal hits fullhits %} (total <a class="showall" href="/demand/">{{fullhits}}</a>){% endifnotequal %}
-</p>{% endblock %}
-
-</div>
 {% endblock %}

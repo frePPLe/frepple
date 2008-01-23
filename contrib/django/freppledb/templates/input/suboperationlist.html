@@ -1,18 +1,17 @@
 {% extends "admin/base_site_list.html" %}
 
 {% block contextmenus %}
-{% include "buffercontext.html" %}
 {% include "operationcontext.html" %}
 {% endblock %}
 
 {% block tablebody %}
 {% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
-<td>{{i.thebuffer|superlink:"buffer"}}</td>
 <td>{{i.operation|superlink:"operation"}}</td>
-<td>{{i.quantity}}</td>
-<td>{{i.flowdatetime}}</td>
-<td>{{i.onhand}}</td>
-<td>{{i.operationplan}}</td>
+<td>{{i.suboperation|superlink:"operation"}}</td>
+<td>{{i.priority}}</td>
+<td>{{i.effective_start}}</td>
+<td>{{i.effective_end}}</td>
+<td>{{i.lastmodified}}</td>
 </tr>{% endfor %}
 {% endblock %}

@@ -472,9 +472,9 @@ DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
 }
 
 
-DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan (float q, Date s, Date e,
-    const Demand* l, OperationPlan* ow, unsigned long i,
-    bool makeflowsloads) const
+DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan 
+  (float q, Date s, Date e, const Demand* l, OperationPlan* ow, 
+    unsigned long i, bool makeflowsloads) const
 {
   // Note that the created operationplan is of a specific subclass
   OperationPlan *opplan = new OperationPlanRouting();
@@ -483,36 +483,37 @@ DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan (float q, Da
 }
 
 
-DECLARE_EXPORT void OperationAlternate::addAlternate(Operation* o, float prio)
+DECLARE_EXPORT void OperationAlternate::addAlternate
+  (Operation* o, float prio, DateRange eff)
 {
   if (!o) return;
   Operationlist::iterator altIter = alternates.begin();
-  priolist::iterator prioIter = priorities.begin();
-  while (prioIter!=priorities.end() && prio >= *prioIter)
+  alternatePropertyList::iterator propIter = alternateProperties.begin();
+  while (altIter!=alternates.end() && prio >= propIter->first)
   {
-    ++prioIter;
+    ++propIter;
     ++altIter;
   }
-  priorities.insert(prioIter,prio);
+  alternateProperties.insert(propIter,alternateProperty(prio,eff));
   alternates.insert(altIter,o);
   o->addSuperOperation(this);
 }
 
 
-DECLARE_EXPORT float OperationAlternate::getPriority(Operation* o) const
+DECLARE_EXPORT const OperationAlternate::alternateProperty& 
+  OperationAlternate::getProperties(Operation* o) const
 {
   if (!o)
     throw LogicException("Null pointer passed when searching for a \
         suboperation of alternate operation '" + getName() + "'");
   Operationlist::const_iterator altIter = alternates.begin();
-  priolist::const_iterator prioIter = priorities.begin();
+  alternatePropertyList::const_iterator propIter = alternateProperties.begin();
   while (altIter!=alternates.end() && *altIter != o)
   {
-    ++prioIter;
+    ++propIter;
     ++altIter;
   }
-  if (*altIter == o)
-    return *prioIter;
+  if (*altIter == o) return *propIter;
   throw DataException("Operation '" + o->getName() +
       "' isn't a suboperation of alternate operation '" + getName() + "'");
 }
@@ -522,14 +523,32 @@ DECLARE_EXPORT void OperationAlternate::setPriority(Operation* o, float f)
 {
   if (!o) return;
   Operationlist::const_iterator altIter = alternates.begin();
-  priolist::iterator prioIter = priorities.begin();
+  alternatePropertyList::iterator propIter = alternateProperties.begin();
   while (altIter!=alternates.end() && *altIter != o)
   {
-    ++prioIter;
+    ++propIter;
     ++altIter;
   }
   if (*altIter == o)
-    *prioIter = f;
+    propIter->first = f;
+  else
+    throw DataException("Operation '" + o->getName() +
+        "' isn't a suboperation of alternate operation '" + getName() + "'");
+}
+
+
+DECLARE_EXPORT void OperationAlternate::setEffective(Operation* o, DateRange dr)
+{
+  if (!o) return;
+  Operationlist::const_iterator altIter = alternates.begin();
+  alternatePropertyList::iterator propIter = alternateProperties.begin();
+  while (altIter!=alternates.end() && *altIter != o)
+  {
+    ++propIter;
+    ++altIter;
+  }
+  if (*altIter == o)
+    propIter->second = dr;
   else
     throw DataException("Operation '" + o->getName() +
         "' isn't a suboperation of alternate operation '" + getName() + "'");
@@ -556,14 +575,19 @@ DECLARE_EXPORT void OperationAlternate::writeElement
 
   // Write the extra fields
   o->BeginObject(Tags::tag_alternates);
-  priolist::const_iterator prioIter = priorities.begin();
+  alternatePropertyList::const_iterator propIter = alternateProperties.begin();
   for (Operationlist::const_iterator i = alternates.begin();
       i != alternates.end(); ++i)
   {
     o->BeginObject(Tags::tag_alternate);
     o->writeElement(Tags::tag_operation, *i, REFERENCE);
-    o->writeElement(Tags::tag_priority, *(prioIter++));
+    o->writeElement(Tags::tag_priority, propIter->first);
+    if (propIter->second.getStart() != Date::infinitePast)
+      o->writeElement(Tags::tag_effective_start, propIter->second.getStart());
+    if (propIter->second.getEnd() != Date::infiniteFuture)
+      o->writeElement(Tags::tag_effective_end, propIter->second.getEnd());
     o->EndObject (Tags::tag_alternate);
+    ++propIter;
   }
   o->EndObject(Tags::tag_alternates);
 
@@ -583,28 +607,33 @@ DECLARE_EXPORT void OperationAlternate::beginElement (XMLInput& pIn, XMLElement&
 
 DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& pElement)
 {
-  // Saving me some typing...
-  typedef pair<float,Operation*> tempData;
+  // Saving some typing...
+  typedef pair<Operation*,alternateProperty> tempData;
 
-  /** Create a temporary object */
-  if (!pIn.getUserArea()) pIn.setUserArea(new tempData(1.0,NULL));
+  // Create a temporary object
+  if (!pIn.getUserArea()) 
+    pIn.setUserArea(new tempData(NULL,alternateProperty(1.0f,DateRange())));
+  tempData* tmp = static_cast<tempData*>(pIn.getUserArea());
 
   if (pElement.isA(Tags::tag_alternate))
   {
-    addAlternate(
-      static_cast<tempData*>(pIn.getUserArea())->second,
-      static_cast<tempData*>(pIn.getUserArea())->first);
+    addAlternate(tmp->first, tmp->second.first, tmp->second.second);
     // Reset the defaults
-    static_cast<tempData*>(pIn.getUserArea())->first = 1.0f;
-    static_cast<tempData*>(pIn.getUserArea())->second = NULL;
+    tmp->first = NULL;
+    tmp->second.first = 1.0f;
+    tmp->second.second = DateRange();
   }
   else if (pElement.isA(Tags::tag_priority))
-    static_cast<tempData*>(pIn.getUserArea())->first = pElement.getFloat();
+    tmp->second.first = pElement.getFloat();
+  else if (pElement.isA(Tags::tag_effective_start))
+    tmp->second.second.setStart(pElement.getDate());
+  else if (pElement.isA(Tags::tag_effective_end))
+    tmp->second.second.setEnd(pElement.getDate());
   else if (pElement.isA(Tags::tag_operation)
       && pIn.getParentElement().isA(Tags::tag_alternate))
   {
     Operation * b = dynamic_cast<Operation*>(pIn.getPreviousObject());
-    if (b) static_cast<tempData*>(pIn.getUserArea())->second = b;
+    if (b) tmp->first = b;
     else throw LogicException("Incorrect object type during read operation");
   }
   Operation::endElement (pIn, pElement);
@@ -653,16 +682,16 @@ DECLARE_EXPORT void OperationAlternate::setOperationPlanParameters
 DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
 {
   Operationlist::iterator altIter = alternates.begin();
-  priolist::iterator prioIter = priorities.begin();
+  alternatePropertyList::iterator propIter = alternateProperties.begin();
   while (altIter!=alternates.end() && *altIter != o)
   {
-    ++prioIter;
+    ++propIter;
     ++altIter;
   }
   if (*altIter == o)
   {
     alternates.erase(altIter);
-    priorities.erase(prioIter);
+    alternateProperties.erase(propIter);
     o->superoplist.remove(this);
     setChanged();
   }

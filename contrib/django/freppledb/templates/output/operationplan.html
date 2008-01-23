@@ -1,30 +1,14 @@
-{% extends "admin/base_site_nav.html" %}
-{% load i18n admin_list adminmedia %}
-{% block extrahead %}{{ block.super }}
-{% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
-{% endfor %}
-{% endblock %}
-{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
-{% block coltype %}colM{% endblock %}
-{% block tools %}<div class="tools">
-<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
-</div>{% endblock %}
-{% block content %}
-<div id="content-main">
+{% extends "admin/base_site_list.html" %}
 
-{% include "textfilter.html" %}
-{% include "datefilter.html" %}
+{% block contextmenus %}
 {% include "demandcontext.html" %}
 {% include "forecastcontext.html" %}
 {% include "operationcontext.html" %}
+{% endblock %}
 
-<div style="overflow-x: scroll; overflow-y: auto;">
-<table>
-<thead><tr>{{ rowheader }}</tr></thead>
-
-<tbody>{% for i in objectlist %}
+{% block tablebody %}
+{% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
-
 <td>{{i.identifier}}</td>
 <td>{% if i.fcst_or_actual %}{{i.demand|superlink:"forecast"}}{% else %}{{i.demand|superlink:"demand"}}{% endif %}</td>
 <td>{{i.operation|superlink:"operation"}}</td>
@@ -33,13 +17,5 @@
 <td>{{i.enddatetime}}</td>
 <td>{{i.locked}}</td>
 <td>{{i.owner}}</td>
-
 </tr>{% endfor %}
-</tbody></table>
-</div>
-
-{% block pagination %}<p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} operation plans {% ifnotequal hits fullhits %} (total <a class="showall" href="/operationplan/">{{fullhits}}</a>){% endifnotequal %}
-{% endblock %}</p></div>
-
 {% endblock %}

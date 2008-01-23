@@ -36,6 +36,7 @@ class OverviewReport(TableReport):
   template = 'output/demand.html'
   title = _('Demand Report')
   basequeryset = Item.objects.extra(where=('name in (select distinct item_id from demand union select distinct item_id from forecast)',))
+  model = Item
   rows = (
     ('item',{
       'filter': FilterText(field='name'),
@@ -148,6 +149,7 @@ class DetailReport(ListReport):
   title = _("Demand Plan Detail")
   reset_crumbs = False
   basequeryset = Demand.objects.all()
+  model = Demand
   rows = (
     ('demand', {
       'filter': FilterText(),

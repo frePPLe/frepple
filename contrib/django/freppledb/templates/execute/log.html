@@ -7,7 +7,7 @@
 {% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
-<a href="{% addurlparameter type csv %}" title="Export as CSV"><img src="/static/csv.png"/></a>
+<a href="{% addurlparameter type csv %}"><img src="/static/csv.png"/>{% trans 'Export' %}</a>
 </div>{% endblock %}
 {% block content %}
 <div id="content-main">
@@ -29,7 +29,7 @@
 </div>
 
 {% block pagination %}<p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} log entries {% ifnotequal hits fullhits %} (total <a class="showall" href="/execute/log/">{{fullhits}}</a>){% endifnotequal %}
+{{paginator_html}}&nbsp;&nbsp;{{hits}} {% trans 'log entries' %} {% ifnotequal hits fullhits %} (total <a class="showall" href="/execute/log/">{{fullhits}}</a>){% endifnotequal %}
 {% endblock %}</p></div>
 
 {% endblock %}

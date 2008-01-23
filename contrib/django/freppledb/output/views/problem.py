@@ -34,6 +34,7 @@ class Report(ListReport):
   template = 'output/problem.html'
   title = _("Problem Report")
   basequeryset = Problem.objects.all()
+  model = Problem
   rows = (
     ('entity', {
       'title': _('entity'),

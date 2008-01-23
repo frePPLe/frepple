@@ -133,6 +133,12 @@ DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const XMLtag& tag, mode m)
   // Write the quantity
   o->writeElement(Tags::tag_quantity, quantity);
 
+  // Write the effective daterange
+  if (getEffective().getStart() != Date::infinitePast)
+    o->writeElement(Tags::tag_effective_start, getEffective().getStart());
+  if (getEffective().getEnd() != Date::infiniteFuture)
+    o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
+
   // End of flow object
   o->EndObject(tag);
 }

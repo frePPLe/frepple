@@ -35,6 +35,7 @@ class OverviewReport(TableReport):
   template = 'output/forecast.html'
   title = _('Forecast Report')
   basequeryset = Forecast.objects.all()
+  model = Forecast
   rows = (
     ('forecast',{
       'filter': FilterText(field='name'),

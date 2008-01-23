@@ -245,6 +245,8 @@
 										<xsd:sequence>
 											<xsd:element name="operation" type="operation" />
 											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
+											<xsd:element name="effective_start" type="xsd:dateTime" minOccurs="0" />
+											<xsd:element name="effective_end" type="xsd:dateTime" minOccurs="0" />
 										</xsd:sequence>
 									</xsd:complexType>
 								</xsd:element>

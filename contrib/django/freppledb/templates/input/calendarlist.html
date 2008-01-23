@@ -1,0 +1,17 @@
+{% extends "admin/base_site_list.html" %}
+
+{% block contextmenus %}
+{% include "calendarcontext.html" %}
+{% endblock %}
+
+{% block tablebody %}
+{% for i in objectlist %}
+<tr class="{% cycle row1,row2 %}">
+<td>{{i.name|superlink:"calendar"}}</td>
+<td>{{i.description}}</td>
+<td>{{i.category}}</td>
+<td>{{i.subcategory}}</td>
+<td>{{i.currentvalue}}</td>
+<td>{{i.lastmodified}}</td>
+</tr>{% endfor %}
+{% endblock %}

@@ -36,10 +36,6 @@ urlpatterns = patterns('',
     # Root url redirects to the admin index page
     (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/admin/'}),
 
-    # Admin pages
-    # This includes also the Javascript i18n library
-    (r'^admin/', include('django.contrib.admin.urls')),
-
     # User preferences
     (r'^preferences/$', user.views.preferences),
 )
@@ -49,6 +45,13 @@ urlpatterns = patterns('',
 # use an "include" in the previous section
 urlpatterns += output.urls.urlpatterns
 urlpatterns += input.urls.urlpatterns
+
+# Admin pages, and the Javascript i18n library.
+# It needs to be added as the last item since the applications can
+# hide/override some admin urls.
+urlpatterns += patterns('',
+    (r'^admin/', include('django.contrib.admin.urls')),
+)
 
 # Allows the standalone development server (and the py2exe executable) to serve
 # the static pages.

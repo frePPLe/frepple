@@ -31,7 +31,6 @@ from django.template import RequestContext, loader
 from django.db import connection
 from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseNotModified
 from django.conf import settings
-from django.template import Library, Node, resolve_variable, loader
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
@@ -97,6 +96,9 @@ class Report(object):
   # Specifies which column is used for an initial filter
   default_sort = '1a'
 
+  # A model class from which we can inherit information.
+  model = None
+
 
 class ListReport(Report):
   '''
@@ -106,6 +108,9 @@ class ListReport(Report):
     - lastmodified():
       Returns a datetime object representing the last time the report content
       was updated.
+    - resultquery():
+      Returns an iterable that returns the data to be displayed.
+      If not specified, the basequeryset is used.
 
   Possible attributes for a row field are:
     - filter:
@@ -136,6 +141,9 @@ class TableReport(Report):
     - lastmodified():
       Returns a datetime object representing the last time the report content
       was updated.
+    - resultquery():
+      Returns an iterable that returns the data to be displayed.
+      If not specified, the basequeryset is used.
 
   Possible attributes for a row field are:
     - filter:
@@ -220,6 +228,9 @@ def view_report(request, entity=None, **args):
     bucket = start = end = bucketlist = None
   type = request.GET.get('type','html')  # HTML or CSV (table or list) output
 
+  # Is this a popup window?
+  is_popup = request.GET.has_key('pop')
+
   # Pick up the filter parameters from the url
   counter = reportclass.basequeryset
   fullhits = counter.count()
@@ -232,7 +243,7 @@ def view_report(request, entity=None, **args):
     # Convert url parameters into queryset filters.
     # This block of code is copied from the django admin code.
     qs_args = dict(request.GET.items())
-    for i in ('o', 'p', 'type'):
+    for i in ('o', 'p', 'type', 'pop'):
       # Remove arguments that aren't filters
       if i in qs_args: del qs_args[i]
     for key, value in qs_args.items():
@@ -248,8 +259,17 @@ def view_report(request, entity=None, **args):
   # Pick up the sort parameter from the url
   sortparam = request.GET.get('o', reportclass.default_sort)
   try:
-    if sortparam[0] == '1':
-      if sortparam[1] == 'd':
+    # Pick up the sorting arguments
+    sortfield = 0
+    for i in sortparam:
+      if i.isdigit():
+        sortfield = sortfield * 10 + int(i)
+      else:
+        break
+    sortdirection = sortparam[-1]
+    # Create sort parameters
+    if sortfield == '1':
+      if sortdirection == 'd':
         counter = counter.order_by('-%s' % (('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0]))
         sortsql = '1 desc'
       else:
@@ -257,30 +277,31 @@ def view_report(request, entity=None, **args):
         counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
         sortsql = '1 asc'
     else:
-      x = int(sortparam[0])
-      if x > len(reportclass.rows) or x < 0:
+      if sortfield > len(reportclass.rows) or sortfield < 0:
         sortparam = '1a'
         counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
         sortsql = '1 asc'
-      elif sortparam[1] == 'd':
-        sortparm = '%dd' % x
+      elif sortdirection == 'd':
+        sortparm = '%dd' % sortfield
         counter = counter.order_by(
-          '-%s' % (('order_by' in reportclass.rows[x-1][1] and reportclass.rows[x-1][1]['order_by']) or reportclass.rows[x-1][0]),
+          '-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]),
           ('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0]
           )
-        sortsql = '%d desc, 1 asc' % x
+        sortsql = '%d desc, 1 asc' % sortfield
       else:
-        sortparam = '%da' % x
+        sortparam = '%da' % sortfield
         counter = counter.order_by(
-          ('order_by' in reportclass.rows[x-1][1] and reportclass.rows[x-1][1]['order_by']) or reportclass.rows[x-1][0],
+          ('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0],
           ('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0]
           )
-        sortsql = '%d asc, 1 asc' % x
+        sortsql = '%d asc, 1 asc' % sortfield
   except:
     # A silent and safe exit in case of any exception
     sortparam = '1a'
     counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
     sortsql = '1 asc'
+    sortfield = 1
+    sortdirection = 'a'
 
   # Build paginator
   if type[:3] != 'csv':
@@ -341,6 +362,9 @@ def view_report(request, entity=None, **args):
 
   # Prepare template context
   context = {
+       'reportclass': reportclass,
+       'model': reportclass.model,
+       'request': request,
        'objectlist': results,
        'bucket': bucket,
        'startdate': start,
@@ -348,13 +372,14 @@ def view_report(request, entity=None, **args):
        'paginator': paginator,
        'hits' : paginator.hits,
        'fullhits': fullhits,
+       'is_popup': is_popup,
        'paginator_html': mark_safe(page_htmls),
        'javascript_imports': _get_javascript_imports(reportclass),
        # Never reset the breadcrumbs if an argument entity was passed.
        # Otherwise depend on the value in the report class.
        'reset_crumbs': reportclass.reset_crumbs and entity == None,
        'title': (entity and '%s %s %s' % (unicode(reportclass.title),_('for'),entity)) or reportclass.title,
-       'rowheader': _create_rowheader(request, sortparam, reportclass),
+       'rowheader': _create_rowheader(request, sortfield, sortdirection, reportclass),
        'crossheader': issubclass(reportclass, TableReport) and _create_crossheader(request, reportclass),
        'columnheader': issubclass(reportclass, TableReport) and _create_columnheader(request, reportclass, bucketlist),
      }
@@ -641,7 +666,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
   return (bucket,start,end,res)
 
 
-def _create_rowheader(req, sort, cls):
+def _create_rowheader(req, sortfield, sortdirection, cls):
   '''
   Generate html header row for the columns of a table or list report.
   '''
@@ -652,7 +677,7 @@ def _create_rowheader(req, sort, cls):
   sortable = False
 
   # When we update the filter, we always want to see page 1 again
-  if 'p'in args2: del args2['p']
+  if 'p' in args2: del args2['p']
 
   # A header cell for each row
   for row in cls.rows:
@@ -661,8 +686,8 @@ def _create_rowheader(req, sort, cls):
     if not row[1].has_key('sort') or row[1]['sort']:
       # Sorting is allowed
       sortable = True
-      if int(sort[0]) == number:
-        if sort[1] == 'a':
+      if sortfield == number:
+        if sortdirection == 'a':
           # Currently sorting in ascending order on this column
           args['o'] = '%dd' % number
           y = 'class="sorted ascending"'

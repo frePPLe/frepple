@@ -9,8 +9,8 @@
 {% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
 <td><a href="{{i.id}}">{{i.id}}</a></td>
-<td>{{i.operation|superlink:"operation"}}</td>
-<td>{{i.thebuffer|superlink:"buffer"}}</td>
+<td>{% superlink i.operation operation %}</td>
+<td>{% superlink i.thebuffer buffer %}</td>
 <td>{{i.type}}</td>
 <td>{{i.quantity}}</td>
 <td>{{i.effective_start}}</td>

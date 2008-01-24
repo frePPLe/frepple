@@ -11,16 +11,16 @@
 {% block tablebody %}
 {% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
-<td>{{i.name|superlink:"buffer"}}</td>
+<td>{% superlink i.name buffer %}</td>
 <td>{{i.description}}</td>
 <td>{{i.category}}</td>
 <td>{{i.subcategory}}</td>
-<td>{{i.location|superlink:"location"}}</td>
-<td>{{i.item|superlink:"item"}}</td>
+<td>{% superlink i.location location %}</td>
+<td>{% superlink i.item item %}</td>
 <td>{{i.onhand|floatformat:0}}</td>
 <td>{{i.type}}</td>
-<td>{{i.minimum|superlink:"calendar"}}</td>
-<td>{{i.producing|superlink:"operation"}}</td>
+<td>{% superlink i.minimum calendar %}</td>
+<td>{% superlink i.producing operation %}</td>
 <td>{{i.lastmodified}}</td>
 </tr>{% endfor %}
 {% endblock %}

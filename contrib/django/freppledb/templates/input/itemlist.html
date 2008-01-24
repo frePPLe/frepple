@@ -8,12 +8,12 @@
 {% block tablebody %}
 {% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
-<td>{{i.name|superlink:"item"}}</td>
+<td>{% superlink i.name item %}}</td>
 <td>{{i.description}}</td>
 <td>{{i.category}}</td>
 <td>{{i.subcategory}}</td>
-<td>{{i.operation|superlink:"operation"}}</td>
-<td>{{i.owner|superlink:"item"}}</td>
+<td>{% superlink i.operation operation %}</td>
+<td>{% superlink i.owner item %}</td>
 <td>{{i.lastmodified}}</td>
 </tr>{% endfor %}
 {% endblock %}

@@ -6,7 +6,7 @@
 
 {% block tablebody %}
 {% for j in objectlist %}{% ifchanged j.item %}{% if not forloop.first %}</tr>{% endif %}
-<tr class="{% cycle row1,row2 %}" id="{{j.item|urlencode}}"><td>{{j.item|superlink:"item"}}</td>
+<tr class="{% cycle row1,row2 %}" id="{{j.item|urlencode}}"><td>{% superlink j.item item %}</td>
 <td>{{ crossheader }}</td>{% endifchanged %}
 <td>{% if j.forecast %}<a href="/forecast/?o=5a&amp;item={{j.item|urlencode}}">{{j.forecast|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
 {% if j.orders %}<a href="/demandplan/?o=5a&amp;item={{j.item|urlencode}}&amp;duedate__gte={{j.startdate}}&amp;duedate__lt={{j.enddate}}">{{j.orders|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>

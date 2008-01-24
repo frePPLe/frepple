@@ -20,19 +20,21 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from django.template import Library, Node, resolve_variable, TemplateSyntaxError
+from django.template import Library, Node, Variable, TemplateSyntaxError
+from django.template.defaultfilters import stringfilter
 from django.conf import settings
 from django.contrib.admin.views.main import quote
 from django.utils.translation import ugettext as _
 from django.utils.http import urlquote
-from django.utils.encoding import iri_to_uri
+from django.utils.encoding import iri_to_uri, force_unicode
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
 HOMECRUMB = '<a href="/admin/">%s</a>'
 
 register = Library()
-
+variable_title = Variable("title")
+variable_request = Variable("request")
 
 #
 # A tag to find all models a user is allowed to see
@@ -108,6 +110,7 @@ class CrumbsNode(Node):
     '''
     def render(self, context):
         global HOMECRUMB
+        global variable_title
         try: req = context['request']
         except: return ''  # No request found in the context: no crumbs...
         # Pick up the current crumbs from the session cookie
@@ -120,7 +123,7 @@ class CrumbsNode(Node):
         except: pass
 
         # Pop from the stack if the same url is already in the crumbs
-        try: title = resolve_variable("title",context)
+        try: title = variable_title.resolve(context)
         except: title = req.get_full_path()
         # A special case to work around the hardcoded title of the main admin page
         if title == _('Site administration'): title = _('Home')
@@ -147,24 +150,30 @@ register.tag('crumbs', do_crumbs)
 
 
 #
-# A tag to create a superlink, which is a hyperlink plus a rightclick context menu
+# A tag to create a superlink, which is a hyperlink with a context menu
 #
 
-def superlink(value,type):
-    '''
-    This filter creates a link with a context menu for right-clicks.
-    '''
-    # Fail silently if we end up with an empty string
-    if value is None: return ''
-    # Convert the parameter into a string if it's not already
-    if not isinstance(value,basestring): value = unicode(value)
-    # Fail silently if we end up with an empty string
-    if value == '': return ''
-    # Final return value
-    return mark_safe('<a href="" class="%s">%s</a>' % (type, escape(value)))
+class SuperLink(Node):
+  def __init__(self, varname, type, first):
+    self.var = Variable(varname)
+    self.type = type
+    self.first = first
 
-superlink.is_safe = True  # No HTML escaping required any more
-register.filter('superlink', superlink)
+  def render(self, context):
+    value = self.var.resolve(context)
+    if value == '' or value == None:
+      return mark_safe('')
+    else:
+      return mark_safe('<a href="" class="%s">%s</a>' % (self.type, escape(value)))
+
+def superlinknode(parser, token):
+  from re import split
+  bits = split(r'\s+', token.contents, 3)
+  if len(bits) < 2:
+      raise TemplateSyntaxError, "'%s' tag requires 2 or 3 arguments" % bits[0]
+  return SuperLink(bits[1],bits[2],len(bits)>2)
+
+register.tag('superlink',superlinknode)
 
 
 #
@@ -177,7 +186,7 @@ class SetVariable(Node):
     self.value = value
 
   def render(self, context):
-    var = resolve_variable(self.value,context)
+    var = Variable(self.value).resolve(context)
     if var:
       context[self.varname] = var
     else:
@@ -223,7 +232,7 @@ class AddParameter(Node):
     self.value = value
 
   def render(self, context):
-    req = resolve_variable('request',context)
+    req = variable_request.resolve(context)
     params = req.GET.copy()
     params[self.varname] = self.value
     return escape('%s?%s' % (req.path, params.urlencode()))

@@ -26,11 +26,12 @@
 
 <tbody>{% for i in supplypath %}
 <tr class="level{{i.level}}">
-<td class="level{{i.level}}">{% ifchanged i.level i.operation %}{{i.operation|superlink:"operation"}}{% endifchanged %}</td>
-<td>{% ifchanged i.level i.operation %}{% if i.operation %}{% for j in i.operation.loads.all %}{{j.resource|superlink:"resource"}} {% endfor %}{% endif %}{% endifchanged %}</td>
-<td>{{i.buffer|superlink:"buffer"}}</td>
-<td>{{i.buffer.location|superlink:"location"}}</td>
-<td>{{i.buffer.item|superlink:"item"}}</td>
+<td class="level{{i.level}}">{% ifchanged i.level i.operation %}{% superlink i.operation operation %}{% endifchanged %}</td>
+<td>{% ifchanged i.level i.operation %}{% if i.operation %}{% for j in i.operation.loads.all %}{% superlink j.resource resource %} {% endfor %}{% endif %}{% endifchanged %}</td>
+{% if i.buffer %}<td>{% superlink i.buffer buffer %}</td>
+<td>{% superlink i.buffer.location location %}</td>
+<td>{% superlink i.buffer.item item %}</td>
+{% else %}<td/><td/><td/>{% endif %}
 <td>{% if i.consumingflow %}<center>{{i.consumingflow.quantity|floatformat:2}}</center>{% endif %}</td>
 <td><center>{{i.cumquantity|floatformat:2}}</center></td>
 </tr>{% endfor %}

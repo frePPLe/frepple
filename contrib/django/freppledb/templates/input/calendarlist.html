@@ -7,7 +7,7 @@
 {% block tablebody %}
 {% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
-<td>{{i.name|superlink:"calendar"}}</td>
+<td>{% superlink i.name calendar %}</td>
 <td>{{i.description}}</td>
 <td>{{i.category}}</td>
 <td>{{i.subcategory}}</td>

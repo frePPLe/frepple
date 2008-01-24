@@ -7,11 +7,11 @@
 {% block tablebody %}
 {% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
-<td>{{i.name|superlink:"location"}}</td>
+<td>{% superlink i.name location %}</td>
 <td>{{i.description}}</td>
 <td>{{i.category}}</td>
 <td>{{i.subcategory}}</td>
-<td>{{i.owner|superlink:"location"}}</td>
+<td>{% superlink i.owner location %}</td>
 <td>{{i.lastmodified}}</td>
 </tr>{% endfor %}
 {% endblock %}

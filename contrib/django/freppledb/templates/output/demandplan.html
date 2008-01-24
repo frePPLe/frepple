@@ -8,8 +8,8 @@
 {% block tablebody %}
 {% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
-<td>{{i.demand|superlink:"demand"}}</td>
-<td>{{i.item|superlink:"item"}}</td>
+<td>{% superlink i.demand demand %}</td>
+<td>{% superlink i.item item %}</td>
 <td>{{i.quantity}}</td>
 <td>{{i.planquantity}}</td>
 <td>{{i.duedatetime}}</td>

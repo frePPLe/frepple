@@ -7,8 +7,8 @@
 {% block tablebody %}
 {% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
-<td>{{i.operation|superlink:"operation"}}</td>
-<td>{{i.suboperation|superlink:"operation"}}</td>
+<td>{% superlink i.operation operation %}</td>
+<td>{% superlink i.suboperation operation %}</td>
 <td>{{i.priority}}</td>
 <td>{{i.effective_start}}</td>
 <td>{{i.effective_end}}</td>

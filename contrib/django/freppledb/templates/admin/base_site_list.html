@@ -7,7 +7,7 @@
 {% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
-{% if hasaddperm %}<a href="{{ model.admin_url }}add/"><img src="{% admin_media_prefix %}img/admin/icon_addlink.gif"/>{% trans 'Add' %}{% endif %}
+{% if hasaddperm %}<a href="{{ model.admin_url }}add/{% if is_popup %}?_popup=1{% endif %}"><img src="{% admin_media_prefix %}img/admin/icon_addlink.gif"/>{% trans 'Add' %}{% endif %}
 <a href="{% addurlparameter type csv %}"><img src="/static/csv.png"/>{% trans 'Export' %}</a>
 </div>{% endblock %}
 {% block content %}

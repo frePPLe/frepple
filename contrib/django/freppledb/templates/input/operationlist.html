@@ -7,7 +7,7 @@
 {% block tablebody %}
 {% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.name operation %}</td>
+<td>{% superlink i.name operation key %}</td>
 <td>{{i.type}}</td>
 <td>{{i.fence}}</td>
 <td>{{i.pretime}}</td>

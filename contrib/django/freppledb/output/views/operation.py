@@ -126,6 +126,7 @@ class DetailReport(ListReport):
     select={'fcst_or_actual':'demand in (select distinct name from forecast)'}
     )
   model = OperationPlan
+  editable = False
   rows = (
     ('identifier', {
       'filter': FilterNumber(),

@@ -133,6 +133,7 @@ class DetailReport(ListReport):
     where=['out_operationplan.identifier = out_loadplan.operationplan'],
     tables=['out_operationplan'])
   model = LoadPlan
+  editable = False
   rows = (
     ('resource', {
       'filter': FilterText(),

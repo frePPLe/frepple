@@ -35,6 +35,7 @@ HOMECRUMB = '<a href="/admin/">%s</a>'
 register = Library()
 variable_title = Variable("title")
 variable_request = Variable("request")
+variable_popup = Variable("is_popup")
 
 #
 # A tag to find all models a user is allowed to see
@@ -154,24 +155,41 @@ register.tag('crumbs', do_crumbs)
 #
 
 class SuperLink(Node):
-  def __init__(self, varname, type, first):
+  def __init__(self, varname, type, key):
     self.var = Variable(varname)
     self.type = type
-    self.first = first
+    self.key = key
 
   def render(self, context):
     value = self.var.resolve(context)
     if value == '' or value == None:
       return mark_safe('')
     else:
-      return mark_safe('<a href="" class="%s">%s</a>' % (self.type, escape(value)))
+      if variable_popup.resolve(context):
+        if self.key:
+          # Key field in a popup window: the link won't display a context menu.
+          # It will close the popup window instead.
+          return mark_safe('<a href="" onclick="opener.dismissRelatedLookupPopup(window, %s); return false;">%s</a>' % (repr(force_unicode(value))[1:], escape(value)))
+        else:
+          # Non-key field in a popup window
+          return mark_safe(escape(value))
+      else:
+        # Not a popup window
+        return mark_safe('<a href="" class="%s">%s</a>' % (self.type, escape(value)))
 
 def superlinknode(parser, token):
   from re import split
   bits = split(r'\s+', token.contents, 3)
-  if len(bits) < 2:
-      raise TemplateSyntaxError, "'%s' tag requires 2 or 3 arguments" % bits[0]
-  return SuperLink(bits[1],bits[2],len(bits)>2)
+  argumentcount = len(bits)
+  if argumentcount == 3:
+    return SuperLink(bits[1],bits[2],False)
+  elif argumentcount == 4:
+    if bits[3] == 'key':
+      return SuperLink(bits[1],bits[2],True)
+    else:
+      TemplateSyntaxError, "'%s' only accepts 'key' as third optional argument" % bits[0]
+  else:
+    raise TemplateSyntaxError, "'%s' tag requires 2 or 3 arguments" % bits[0]
 
 register.tag('superlink',superlinknode)
 

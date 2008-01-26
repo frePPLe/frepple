@@ -650,7 +650,7 @@ class Forecast(models.Model):
     description = models.CharField(_('description'), max_length=200, null=True, blank=True)
     category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
-    customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, db_index=True, raw_id_admin=True)
+    customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, blank=True, db_index=True, raw_id_admin=True)
     item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, raw_id_admin=True)
     calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), null=False, raw_id_admin=True)
     operation = models.ForeignKey(Operation, verbose_name=_('delivery operation'), null=True, blank=True,

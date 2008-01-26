@@ -129,6 +129,7 @@ class DetailReport(ListReport):
     where=['out_operationplan.identifier = out_flowplan.operationplan'],
     tables=['out_operationplan'])
   model = FlowPlan
+  editable = False
   rows = (
     ('thebuffer', {
       'filter': FilterText(),

@@ -99,6 +99,9 @@ class Report(object):
   # A model class from which we can inherit information.
   model = None
 
+  # Allow editing in this report or not
+  editable = True
+
 
 class ListReport(Report):
   '''
@@ -361,9 +364,12 @@ def view_report(request, entity=None, **args):
   page_htmls = _get_paginator_html(request, paginator, page, parameters)
 
   # Prepare template context
+  model = reportclass.model
   context = {
        'reportclass': reportclass,
-       'model': reportclass.model,
+       'model': model,
+       'hasaddperm': reportclass.editable and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())),
+       'haschangeperm': reportclass.editable and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_change_permission())),
        'request': request,
        'objectlist': results,
        'bucket': bucket,

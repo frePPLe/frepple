@@ -11,7 +11,7 @@
 {% block tablebody %}
 {% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.name forecast %}</td>
+<td>{% superlink i.name forecast key %}</td>
 <td>{% superlink i.item item %}</td>
 <td>{% superlink i.customer customer %}</td>
 <td>{% superlink i.calendar calendar %}</td>

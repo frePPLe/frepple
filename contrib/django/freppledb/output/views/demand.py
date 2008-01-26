@@ -150,6 +150,7 @@ class DetailReport(ListReport):
   reset_crumbs = False
   basequeryset = Demand.objects.all()
   model = Demand
+  editable = False
   rows = (
     ('demand', {
       'filter': FilterText(),

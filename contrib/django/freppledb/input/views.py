@@ -312,7 +312,7 @@ class BufferList(ListReport):
       'filter': FilterText(field='producing__name'),
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )
@@ -356,7 +356,7 @@ class ResourceList(ListReport):
       'filter': FilterText(field='maximum__name'),
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )
@@ -392,7 +392,7 @@ class LocationList(ListReport):
       'filter': FilterText(field='owner__name'),
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )
@@ -428,7 +428,7 @@ class CustomerList(ListReport):
       'filter': FilterText(field='owner__name'),
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )
@@ -468,7 +468,7 @@ class ItemList(ListReport):
       'filter': FilterText(field='owner__name'),
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )
@@ -508,7 +508,7 @@ class LoadList(ListReport):
       'filter': FilterDate(),
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )
@@ -552,7 +552,7 @@ class FlowList(ListReport):
       'filter': FilterDate(),
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )
@@ -612,7 +612,7 @@ class DemandList(ListReport):
       'filter': FilterText(field='owner__name'),
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )
@@ -672,7 +672,7 @@ class ForecastList(ListReport):
       'filter': FilterNumber(),
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )
@@ -764,11 +764,11 @@ class CalendarList(ListReport):
       'filter': FilterText(),
       }),
     ('currentvalue', {
-      'title': _('currentvalue'),
+      'title': _('current value'),
       'sort': False,
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )
@@ -796,11 +796,11 @@ class OperationList(ListReport):
       'filter': FilterNumber(),
       }),
     ('pretime', {
-      'title': _('pretime'),
+      'title': _('pre-op time'),
       'filter': FilterNumber(),
       }),
     ('posttime', {
-      'title': _('posttime'),
+      'title': _('post-op time'),
       'filter': FilterNumber(),
       }),
     ('sizeminimum', {
@@ -812,7 +812,7 @@ class OperationList(ListReport):
       'filter': FilterNumber(),
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )
@@ -848,7 +848,7 @@ class SubOperationList(ListReport):
       'filter': FilterDate(),
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )
@@ -888,7 +888,7 @@ class OperationPlanList(ListReport):
       'filter': FilterBool(),
       }),
     ('lastmodified', {
-      'title': _('lastmodified'),
+      'title': _('last modified'),
       'filter': FilterDate(),
       }),
     )

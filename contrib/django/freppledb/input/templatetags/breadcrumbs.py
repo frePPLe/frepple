@@ -165,7 +165,9 @@ class SuperLink(Node):
     if value == '' or value == None:
       return mark_safe('')
     else:
-      if variable_popup.resolve(context):
+      try: popup = variable_popup.resolve(context)
+      except: popup = False
+      if popup:
         if self.key:
           # Key field in a popup window: the link won't display a context menu.
           # It will close the popup window instead.

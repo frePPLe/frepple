@@ -12,8 +12,8 @@
       validate="true" />
     <!-- Run the solver. -->
     <command xsi:type="command_solve">
-      <solver name="MRP" xsi:type="solver_mrp"
-        constraints="7" VERBOSE="true"/>
+      <solver name="mrp" xsi:type="solver_mrp"
+        constraints="7" loglevel="2"/>
     </command>
     <!--
       Update this section when you define new output mappings.

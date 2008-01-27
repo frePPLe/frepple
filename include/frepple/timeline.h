@@ -83,36 +83,24 @@ template <class type> class TimeLine
         /** Return the date of the event. */
         const Date& getDate() const {return dt;}
 
+        /** Return a pointer to the owning timeline. */
+        virtual TimeLine<type>* getTimeLine() const {return NULL;}
+
         /** This functions returns the mimimum boundary valid at the time of
           * this event. */
         virtual float getMin() const
         {
-          Event const *c = this;
-          /* @todo performance improvement: insert repeater events if the loop is too long.
-          short distance = 0;
-          while (c && c->getType() != 3)
-          {
-            c=c->prev;
-            ++distance;
-          }
-          if (distance > 40)
-          {
-            // Insert a 'repeater' event, to avoid a long loop next time
-            EventMinQuantity *r = 
-              new EventMinQuantity(this->dt,c ? c->getMax() : 0.0f);
-            // Ouch, now we need to insert the new event, but we don't know the owning timeline
-          }
-          */
-          while (c && c->getType() != 3) c=c->prev;
-          return c ? c->getMin() : 0.0f;
+          EventMinQuantity *m = this->getTimeLine()->lastMin;
+          while(m && getDate() < m->getDate()) m = m->prevMin;
+          return m ? m->newMin : 0.0f;
         }
         /** This functions returns the maximum boundary valid at the time of
           * this event. */
         virtual float getMax() const
         {
-          Event const *c = this;
-          while (c && c->getType() != 4) c=c->prev;
-          return c ? c->getMax() : 0.0f;
+          EventMaxQuantity *m = this->getTimeLine()->lastMax;
+          while(m && getDate() < m->getDate()) m = m->prevMax;
+          return m ? m->newMax : 0.0f;
         }
         virtual unsigned short getType() const = 0;
         /** First criterion is date: earlier Dates come first.
@@ -150,11 +138,13 @@ template <class type> class TimeLine
     /** @brief A timeline event representing a change of the minimum target. */
     class EventMinQuantity : public Event
     {
+      friend class TimeLine<type>;
       private:
         float newMin;
+        EventMinQuantity *prevMin;
       public:
-        EventMinQuantity(Date d, float f=0.0f) : Event(), newMin(f) 
-          {this->dt = d;}
+        EventMinQuantity(Date d, float f=0.0f) : newMin(f), prevMin(NULL) 
+          { this->dt = d; }
         void setMin(float f) {newMin = f;}
         virtual float getMin() const {return newMin;}
         virtual unsigned short getType() const {return 3;}
@@ -163,10 +153,12 @@ template <class type> class TimeLine
     /** @brief A timeline event representing a change of the maximum target. */
     class EventMaxQuantity : public Event
     {
+      friend class TimeLine<type>;
       private:
         float newMax;
+        EventMaxQuantity *prevMax;
       public:
-        EventMaxQuantity(Date d, float f=0.0f) : Event(), newMax(f) 
+        EventMaxQuantity(Date d, float f=0.0f) : newMax(f), prevMax(NULL)
           {this->dt = d;}
         void setMax(float f) {newMax = f;}
         virtual float getMax() const {return newMax;}
@@ -216,7 +208,7 @@ template <class type> class TimeLine
         bool operator!=(const iterator& x) const {return this->cur != x.cur;}
     };
 
-    TimeLine() : first(NULL), last(NULL) {}
+    TimeLine() : first(NULL), last(NULL), lastMax(NULL), lastMin(NULL) {}
     int size() const
     {
       int cnt(0);
@@ -264,6 +256,12 @@ template <class type> class TimeLine
 
     /** A pointer to the last event in the timeline. */
     Event* last;
+
+    /** A pointer to the last maximum change. */
+    EventMaxQuantity *lastMax;
+
+    /** A pointer to the last minimum change. */
+    EventMinQuantity *lastMin;
 };
 
 
@@ -315,6 +313,45 @@ template <class type> void TimeLine <type>::insert (Event* e)
       e->cum_prod = i->cum_prod + qty;
     else
       e->cum_prod = i->cum_prod;
+  }
+
+  if (e->getType() == 3)
+  {
+    // Insert in the list of minima
+    EventMinQuantity *m = static_cast<EventMinQuantity*>(e);
+    if (!lastMin || m->getDate() >= lastMin->getDate())
+    {
+      // New last minimum
+      m->prevMin = lastMin;
+      lastMin = m;
+    }
+    else
+    {
+      EventMinQuantity * o = lastMin;
+      while (o->prevMin && m->getDate() >= o->prevMin->getDate())
+        o = o->prevMin;
+      m->prevMin = o->prevMin;
+      o->prevMin = m;
+    }
+  }
+  else if (e->getType() == 4)
+  {
+    // Insert in the list of maxima
+    EventMaxQuantity* m = static_cast<EventMaxQuantity*>(e);
+    if (!lastMax || m->getDate() >= lastMax->getDate())
+    {
+      // New last maximum
+      m->prevMax = lastMax;
+      lastMax = m;
+    }
+    else
+    {
+      EventMaxQuantity *o = lastMax;
+      while (o->prevMax && o->getDate() <= o->prevMax->getDate())
+        o = o->prevMax;
+      m->prevMax = o->prevMax;
+      o->prevMax = m;
+    }
   }
 
   // Final debugging check

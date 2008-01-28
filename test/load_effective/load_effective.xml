@@ -99,13 +99,13 @@
       <priority>14</priority>
       <item name="1. end item" />
     </demand>
-    <demand name="1. order 4">
+    <demand name="1. order 5">
       <quantity>10</quantity>
       <due>2007-01-15T00:00:00</due>
       <priority>15</priority>
       <item name="1. end item" />
     </demand>
-    <demand name="1. order 5">
+    <demand name="1. order 6">
       <quantity>1</quantity>
       <due>2007-01-09T00:00:00</due>
       <priority>16</priority>
@@ -186,7 +186,7 @@
       <item name="2. end item" />
     </demand>
     <demand name="2. order 4">
-      <quantity>10</quantity>
+      <quantity>13</quantity>
       <due>2007-01-15T00:00:00</due>
       <priority>15</priority>
       <item name="2. end item" />
@@ -253,8 +253,8 @@
       <item name="3. end item" />
     </demand>
     <demand name="3. order 2">
-      <quantity>3</quantity>
-      <due>2007-01-26T00:00:00</due>
+      <quantity>1</quantity>
+      <due>2007-01-18T00:00:00</due>
       <priority>13</priority>
       <item name="3. end item" />
     </demand>

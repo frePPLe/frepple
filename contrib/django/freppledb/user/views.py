@@ -45,11 +45,6 @@ class PreferencesForm(forms.Form):
     help_text=_("End date for filtering report data"),
     widget=forms.TextInput(attrs={'class':"vDateField"}),
     )
-  csvformat = forms.ChoiceField(label = _("CSV output format"),
-    initial = _('Table'),
-    choices=Preferences.csvOutputType,
-    help_text = _("Exporting CSV data as a table or a list"),
-    )
 
 @login_required
 def preferences(request):
@@ -62,7 +57,6 @@ def preferences(request):
         pref.buckets = newdata['buckets']
         pref.startdate = newdata['startdate']
         pref.enddate = newdata['enddate']
-        pref.csvformat = newdata['csvformat']
         pref.save()
         request.user.message_set.create(message='Successfully updated preferences')
       except:
@@ -72,8 +66,7 @@ def preferences(request):
     form = PreferencesForm({
       'buckets': pref.buckets,
       'startdate': pref.startdate,
-      'enddate': pref.enddate,
-      'csvformat': pref.csvformat
+      'enddate': pref.enddate
       })
   return render_to_response('user/preferences.html', {
      'title': _('Edit my preferences'),

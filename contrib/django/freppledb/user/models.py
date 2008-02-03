@@ -51,8 +51,6 @@ class Preferences(models.Model):
       default='default')
     startdate = models.DateField(_('startdate'), blank=True, null=True)
     enddate = models.DateField(_('enddate'), blank=True, null=True)
-    csvformat = models.CharField(_('CSV output format'), max_length=5,
-      blank=True, null=True, default='table', choices=csvOutputType)
     lastmodified = models.DateTimeField(_('last modified'), core=True, auto_now=True, editable=False, db_index=True)
 
 

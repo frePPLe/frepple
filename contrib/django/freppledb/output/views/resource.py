@@ -57,7 +57,6 @@ class OverviewReport(TableReport):
   columns = (
     ('bucket',{'title': _('bucket')}),
     )
-  javascript_imports = [ "/static/prototype.js", ]
 
   @staticmethod
   def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):

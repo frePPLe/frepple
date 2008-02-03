@@ -253,3 +253,20 @@ table thead th.descending span a { background: None; }
 /* Make the calendar link doesn't behave as a block element, as the
  * row header line does. */
 thead th span a:link, thead th span a:visited { display: inline; }
+
+/* Style for the popup window. */
+div #popup
+{
+  z-index: 1;
+  width: 170px;
+  border: 1px solid black;
+  background-color: white;
+  position: absolute;
+  padding: 10px;
+  display: none;
+}
+
+div #timebuckets
+{
+  display: none;
+}

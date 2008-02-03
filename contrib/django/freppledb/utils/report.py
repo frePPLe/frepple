@@ -246,7 +246,7 @@ def view_report(request, entity=None, **args):
     # Convert url parameters into queryset filters.
     # This block of code is copied from the django admin code.
     qs_args = dict(request.GET.items())
-    for i in ('o', 'p', 'type', 'pop'):
+    for i in ('o', 'p', 'type', 'pop', 'reportbucket', 'reportstart', 'reportend'):
       # Remove arguments that aren't filters
       if i in qs_args: del qs_args[i]
     for key, value in qs_args.items():
@@ -331,10 +331,6 @@ def view_report(request, entity=None, **args):
   # HTML output or CSV output?
   if type[:3] == 'csv':
     # CSV output
-    if type == 'csv':
-      # Only csv is specified: use the user's preferences to determine whether
-      # we want a list or table
-      type = type + request.user.get_profile().csvformat
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % reportclass.title.lower()
     if hasattr(reportclass,'resultquery'):
@@ -348,7 +344,8 @@ def view_report(request, entity=None, **args):
 
   # Create a copy of the request url parameters
   parameters = request.GET.copy()
-  if 'p' in parameters: parameters.__delitem__('p')
+  for x in ['p', 'reportbucket', 'reportstart','reportend','pop']:
+    if x in parameters: parameters.__delitem__(x)
 
   # Calculate the content of the page
   if hasattr(reportclass,'resultquery'):
@@ -372,9 +369,9 @@ def view_report(request, entity=None, **args):
        'haschangeperm': reportclass.editable and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_change_permission())),
        'request': request,
        'objectlist': results,
-       'bucket': bucket,
-       'startdate': start,
-       'enddate': end,
+       'reportbucket': bucket,
+       'reportstart': start,
+       'reportend': end,
        'paginator': paginator,
        'hits' : paginator.hits,
        'fullhits': fullhits,
@@ -503,15 +500,22 @@ def _get_javascript_imports(reportclass):
   Put in any necessary JavaScript imports.
   '''
   # Check for the presence of a date filter
-  for row in reportclass.rows:
-    if 'filter' in row[1] and isinstance(row[1]['filter'], FilterDate):
-      return reportclass.javascript_imports + [
-          "/admin/jsi18n/",
-          "/media/js/core.js",
-          "/media/js/calendar.js",
-          "/media/js/admin/DateTimeShortcuts.js",
-          ]
-  return reportclass.javascript_imports
+  if issubclass(reportclass, TableReport):
+    add = True
+  else:
+    add = False
+    for row in reportclass.rows:
+      if 'filter' in row[1] and isinstance(row[1]['filter'], FilterDate):
+        add = True
+  if add:
+    return reportclass.javascript_imports + [
+      "/admin/jsi18n/",
+      "/media/js/core.js",
+      "/media/js/calendar.js",
+      "/media/js/admin/DateTimeShortcuts.js",
+      ]
+  else:
+    return reportclass.javascript_imports
 
 
 def _generate_csv(rep, qs, format, bucketlist):
@@ -607,38 +611,53 @@ def getBuckets(request, bucket=None, start=None, end=None):
   stored in a python variable for performance
   '''
   global datelist
-  # Pick up the arguments
+  pref = request.user.get_profile()
+
+  # Select the bucket size (unless it is passed as argument)
   if not bucket:
-    bucket = request.GET.get('bucket')
+    bucket = request.GET.get('reportbucket')
     if not bucket:
-      try: bucket = request.user.get_profile().buckets
+      try: bucket = pref.buckets
       except: bucket = 'default'
+    elif pref.buckets != bucket:
+      pref.buckets = bucket
+      pref.save()
+
+  # Select the start date (unless it is passed as argument)
   if not start:
-    start = request.GET.get('start')
+    start = request.GET.get('reportstart')
     if start:
       try:
         (y,m,d) = start.split('-')
         start = date(int(y),int(m),int(d))
+        if pref.startdate != start:
+          pref.startdate = start
+          pref.save()
       except:
-        try: start = request.user.get_profile().startdate
+        try: start = pref.startdate
         except: pass
         if not start: start = Plan.objects.all()[0].currentdate.date()
     else:
-      try: start = request.user.get_profile().startdate
+      try: start = pref.startdate
       except: pass
       if not start: start = Plan.objects.all()[0].currentdate.date()
+
+  # Select the end date (unless it is passed as argument)
   if not end:
-    end = request.GET.get('end')
+    end = request.GET.get('reportend')
     if end:
       try:
         (y,m,d) = end.split('-')
         end = date(int(y),int(m),int(d))
+        if pref.enddate != end:
+          pref.enddate = end
+          pref.save()
       except:
-        try: end = request.user.get_profile().enddate
+        try: end = pref.enddate
         except: pass
         if not end: end = date(2030,1,1)
     else:
-      try: end = request.user.get_profile().enddate
+      try: end = pref.enddate
       except: pass
       if not end: end = date(2030,1,1)
 

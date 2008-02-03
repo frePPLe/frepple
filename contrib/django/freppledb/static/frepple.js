@@ -229,3 +229,110 @@ function resetButton(button)
   // Hide the button's menu
   if (button.menu != null) button.menu.style.visibility = "hidden";
 }
+
+
+function export_show()
+{
+  var element = $('popup');
+  element.innerHTML = '<h2>Export report data</h2><br/>'+
+    '<form method="get" action="javascript:export_close()"><table>'+
+    '<tr><th>CSV style:</th><td><select name="csvformat" id="csvformat">'+
+    '<option value="csv" selected="selected">Table</option>'+
+    '<option value="csvlist">List</option></select></td></tr>'+
+    '<tr><td><input type="submit" value="Export"/></td>'+
+    '<td><input type="button" value="Close" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
+    '</td></table></form>';
+  var position = $('csvexport').cumulativeOffset();
+  position[0] -= 132;
+  position[1] += 20;
+  element.style.left = position[0]+'px';
+  element.style.top  = position[1]+'px';
+  element.style.position = "absolute";
+  element.style.display  = "block";
+}
+
+
+function export_close()
+{
+  // Fetch the report data
+  var url = location.href;
+  if (location.search.length > 0)
+    // URL already has arguments
+    url += "&type=" + $('csvformat').value;
+  else
+    // This is the first argument for the URL
+    url += "?type=" + $('csvformat').value;
+  window.open(url,'_blank');
+  // Hide the popup window
+  $('popup').style.display = 'none';
+}
+
+
+function bucket_show()
+{
+  // Pick up the arguments
+  var buckets = $('timebuckets').innerHTML.split(',');
+  // Show popup
+  var element = $('popup');
+  element.innerHTML = '<h2>Time bucketization</h2><br/>'+
+    '<form method="get" action="javascript:bucket_close()"><table>'+
+    '<tr><th>Buckets:</th><td><select name="buckets" id="reportbucket">'+
+    '<option value="default"' + (buckets[0]=='default' ? 'selected="selected"' : '') + '>Default</option>'+
+    '<option value="day"' + (buckets[0]=='day' ? 'selected="selected"' : '') + '>Day</option>'+
+    '<option value="week"' + (buckets[0]=='week' ? 'selected="selected"' : '') + '>Week</option>'+
+    '<option value="month"' + (buckets[0]=='month' ? 'selected="selected"' : '') + '>Month</option>'+
+    '<option value="quarter"' + (buckets[0]=='quarter' ? 'selected="selected"' : '') + '>Quarter</option>'+
+    '<option value="year"' + (buckets[0]=='year' ? 'selected="selected"' : '') + '>Year</option>'+
+    '</select></td></tr>'+
+    '<tr><th>Report start date:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="' + buckets[1] + '" name="startdate"/></td></tr>'+
+    '<tr><th>Report end date:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="' + buckets[2] + '" name="enddate" /></td></tr>'+
+    '<tr><td><input type="submit" value="OK"/></td>'+
+    '<td><input type="button" value="Cancel" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
+    '</td></table></form>';
+  var position = $('csvexport').cumulativeOffset();
+  position[0] -= 132;
+  position[1] += 20;
+  element.style.left = position[0]+'px';
+  element.style.top  = position[1]+'px';
+  element.style.position = "absolute";
+  DateTimeShortcuts.addCalendar($('reportstart'));
+  DateTimeShortcuts.addCalendar($('reportend'));
+  element.style.display  = "block";
+}
+
+
+function bucket_close()
+{
+  // Determine the URL arguments
+  var currentvalues = $('timebuckets').innerHTML.split(',');
+  var args = new Hash(location.search.toQueryParams());
+  var changed = false;
+  if ($('reportbucket').value != currentvalues[0])
+  {
+    args.set('reportbucket', $('reportbucket').value);
+    changed = true;
+  }
+  else
+    args.unset('reportbucket');
+  if ($('reportstart').value != currentvalues[1])
+  {
+    args = args.merge({'reportstart': $('reportstart').value});
+    changed = true;
+  }
+  else
+    args.unset('reportstart');
+  if ($('reportend').value != currentvalues[2])
+  {
+    args = args.merge({'reportend':  $('reportend').value});
+    changed = true;
+  }
+  else
+    args.unset('reportend');
+
+  if (!changed)
+    // No changes to the settings. Just close the popup.
+    $('popup').style.display = 'none';
+  else
+    // Fetch the new report. This also hides the popup again.
+    location.href = location.pathname + "?" + args.toQueryString();
+}

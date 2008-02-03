@@ -8,7 +8,7 @@
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
 <a href="javascript:bucket_show();" id="bucketconfig"><img src="{% admin_media_prefix %}img/admin/icon_clock.gif"/>{% trans 'Time' %}</a><span id="timebuckets">{{ reportbucket }},{{ reportstart}},{{ reportend }}</span>
-<a href="javascript:export_show();" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a><div id="popup"></div>
+<a href="javascript:export_show(false);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a><div id="popup"></div>
 </div>{% endblock %}
 {% block content %}
 <div id="content-main">

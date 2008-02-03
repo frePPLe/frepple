@@ -231,14 +231,16 @@ function resetButton(button)
 }
 
 
-function export_show()
+function export_show(list_or_table)
 {
+  // The argument is true when we show a "list" report.
+  // It is false for "table" reports.
   var element = $('popup');
   element.innerHTML = '<h2>Export report data</h2><br/>'+
     '<form method="get" action="javascript:export_close()"><table>'+
-    '<tr><th>CSV style:</th><td><select name="csvformat" id="csvformat">'+
-    '<option value="csv" selected="selected">Table</option>'+
-    '<option value="csvlist">List</option></select></td></tr>'+
+    '<tr><th>CSV style:</th><td><select name="csvformat" id="csvformat"' + (list_or_table ? ' disabled="true"' : '')+ '>'+
+    '<option value="csv"' + (list_or_table ? '' : ' selected="selected"') + '>Table</option>'+
+    '<option value="csvlist"' + (list_or_table ?  ' selected="selected"' : '') + '>List</option></select></td></tr>'+
     '<tr><td><input type="submit" value="Export"/></td>'+
     '<td><input type="button" value="Close" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
     '</td></table></form>';

@@ -2,14 +2,15 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <name>Test model for effective operations</name>
   <description>
-    This test checks the code for creating and manipulating of operationplans of
-    type "EFFECTIVE". The test resolves about a product that can be sourced from
-    2 locations. In a first part of the horizon location A is the only allowed
-    source, while in the last part of the horizon only sourcing from location B
+    This test checks the code for alternate operations where date effectivity
+    is involved.
+    The test resolves about a product that can be sourced from 2 locations.
+    In a first part of the horizon location A is the only allowed source,
+    while in the last part of the horizon only sourcing from location B
     is possible. A transition period exists where sourcing from both location is
     possible.
     Case 1: Simplest situation, no constraints.
-    Case 2: Same as 1, but with effictivity based on the start date.
+    Case 2: Same as 1, but with effectivity based on the start date.
   </description>
   <current>2007-01-01T00:00:00</current>
   <commands>

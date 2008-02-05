@@ -1129,7 +1129,7 @@ class Operation : public HasName<Operation>,
   protected:
     /** Constructor. Don't use it directly. */
     explicit Operation(const string& str) : HasName<Operation>(str),
-        size_minimum(1.0f), size_multiple(0.0f), hidden(false),
+        loc(NULL), size_minimum(1.0f), size_multiple(0.0f), hidden(false),
         first_opplan(NULL), last_opplan(NULL) {}
 
   public:
@@ -1226,6 +1226,14 @@ class Operation : public HasName<Operation>,
       */
     virtual void setOperationPlanParameters
       (OperationPlan*, float, Date, Date, bool = true) const = 0;
+
+    /** Returns the location of the operation, which is used to model the 
+      * working hours and holidays. */
+    Location* getLocation() const {return loc;}
+
+    /** Updates the location of the operation, which is used to model the 
+      * working hours and holidays. */
+    void setLocation(Location* l) {loc = l;}
 
     /** Returns an reference to the list of flows. */
     const flowlist& getFlows() const {return flowdata;}
@@ -1330,6 +1338,11 @@ class Operation : public HasName<Operation>,
       * suboperations this list is used as the list of suboperations.
       */
     static DECLARE_EXPORT Operationlist nosubOperations;
+
+    /** Location of the operation.<br>
+      * The location is used to model the working hours and holidays.
+      */
+    Location* loc;
 
     /** Represents the time between this operation and a next one. */
     TimePeriod post_time;
@@ -3952,7 +3965,11 @@ class ProblemPrecedence : public Problem
           + opplan1->getOperation()->getName() +"' ends";
     }
     bool isFeasible() const {return false;}
-    float getWeight() const {return 1.0f;}  // @todo not implemented
+    /** The weight of the problem is equal to the duration in days. */
+    float getWeight() const 
+    {
+      return static_cast<float>(getDateRange().getDuration()) / 86400;
+    }
     explicit ProblemPrecedence
     (Operation* o, OperationPlan* op1, OperationPlan* op2)
         : Problem(o), opplan1(op1), opplan2(op2) {addProblem();}
@@ -4145,7 +4162,11 @@ class ProblemPlannedLate : public Problem
     string getDescription() const
       {return "Operationplan planned after its lpst date";}
     bool isFeasible() const {return false;}
-    float getWeight() const {return 1.0f;} // @todo not implemented
+    /** The weight of the problem is equal to the duration in days. */
+    float getWeight() const 
+    {
+      return static_cast<float>(getDateRange().getDuration()) / 86400;
+    }
     explicit ProblemPlannedLate(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemPlannedLate() {removeProblem();}
@@ -4183,7 +4204,11 @@ class ProblemPlannedEarly : public Problem
     string getDescription() const
       {return "Operationplan planned before its epst date";}
     bool isFeasible() const {return false;}
-    float getWeight() const {return 1.0f;} // @todo not implemented
+    /** The weight of the problem is equal to the duration in days. */
+    float getWeight() const 
+    {
+      return static_cast<float>(getDateRange().getDuration()) / 86400;
+    }
     explicit ProblemPlannedEarly(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemPlannedEarly() {removeProblem();}

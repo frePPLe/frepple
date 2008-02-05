@@ -320,6 +320,8 @@ class Operation(models.Model):
     # Database fields
     name = models.CharField(_('name'), max_length=60, primary_key=True)
     type = models.CharField(_('type'), _('type'), max_length=20, null=True, blank=True, choices=operationtypes)
+    location = models.ForeignKey(Location, verbose_name=_('location'), null=True,
+      blank=True, db_index=True, raw_id_admin=True)
     fence = models.DecimalField(_('release fence'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Operationplans within this time window from the current day are expected to be released to production ERP"))
     pretime = models.DecimalField(_('pre-op time'), max_digits=15, decimal_places=4, null=True, blank=True,
@@ -350,7 +352,7 @@ class Operation(models.Model):
     class Admin:
         save_as = True
         fields = (
-            (None, {'fields': ('name', 'type')}),
+            (None, {'fields': ('name', 'type', 'location')}),
             (_('Planning parameters'), {
                'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'duration', 'duration_per'),
                'classes': 'collapse'

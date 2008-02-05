@@ -791,6 +791,10 @@ class OperationList(ListReport):
       'title': _('type'),
       'filter': FilterText(),
       }),
+    ('location', {
+      'title': _('location'),
+      'filter': FilterText(field='location__name'),
+      }),
     ('fence', {
       'title': _('fence'),
       'filter': FilterNumber(),

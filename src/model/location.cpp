@@ -76,6 +76,11 @@ DECLARE_EXPORT Location::~Location()
   for (Resource::iterator res = Resource::begin();
       res != Resource::end(); ++res)
     if (res->getLocation() == this) Resource::writepointer(&*res)->setLocation(NULL);
+
+  // Remove all references from operations to this location
+  for (Operation::iterator oper = Operation::begin();
+      oper != Operation::end(); ++oper)
+    if (oper->getLocation() == this) Operation::writepointer(&*oper)->setLocation(NULL);
 }
 
 }

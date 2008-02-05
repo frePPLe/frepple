@@ -143,6 +143,8 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mod
     o->writeElement(Tags::tag_size_minimum, size_minimum);
   if (size_multiple > 0.0f)
     o->writeElement(Tags::tag_size_multiple, size_multiple);
+  if (loc)
+    o->writeElement(Tags::tag_location, loc);
 
   // Write extra plan information
   if ((o->getContentType() == XMLOutput::PLAN
@@ -175,6 +177,8 @@ DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, XMLElement& pElement
   }
   else if (pElement.isA (Tags::tag_operation_plan))
     pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn));
+  else if (pElement.isA (Tags::tag_location))
+    pIn.readto( Location::reader(Location::metadata,pIn) );
 }
 
 
@@ -190,6 +194,12 @@ DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, XMLElement& pElement)
     setPreTime(pElement.getTimeperiod());
   else if (pElement.isA (Tags::tag_posttime))
     setPostTime(pElement.getTimeperiod());
+  else if (pElement.isA (Tags::tag_location))
+  {
+    Location *l = dynamic_cast<Location*>(pIn.getPreviousObject());
+    if (l) setLocation(l);
+    else throw LogicException("Incorrect object type during read operation");
+  }
   else
   {
     Plannable::endElement(pIn, pElement);

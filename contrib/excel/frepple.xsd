@@ -157,6 +157,13 @@
         from buffers, load capacity on resources.
       </xsd:documentation>
     </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="location" minOccurs="0">
+      	<xsd:complexType>
+    			<xsd:attribute name="name" type="non-empty-string" use="required"/>
+      	</xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
     <xsd:attributeGroup ref="common_attributes"/>
     <xsd:attribute name="fence" type="time" />
     <xsd:attribute name="size_minimum" type="positiveFloat" />
@@ -173,7 +180,6 @@
 			<xsd:element name="operation_alternate" type="operation_alternate" minOccurs="0" maxOccurs="unbounded"/>
 			<!--
 			<xsd:element name="operation_routing" type="operation_routing" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="operation_effective" type="operation_effective" minOccurs="0" maxOccurs="unbounded"/>
 			-->
     </xsd:sequence>
   </xsd:complexType>

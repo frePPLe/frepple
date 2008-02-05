@@ -134,10 +134,12 @@ def loadOperations(cursor):
   starttime = time()
   x = [ header, '<operations>' ]
   cursor.execute('''
-    SELECT name, fence, pretime, posttime, sizeminimum, sizemultiple, type, duration, duration_per
+    SELECT
+      name, fence, pretime, posttime, sizeminimum, sizemultiple, type,
+      duration, duration_per, location
     FROM operation
     ''')
-  for i, j, k, l, m, n, p, q, r in cursor.fetchall():
+  for i, j, k, l, m, n, p, q, r, s in cursor.fetchall():
     cnt += 1
     if p:
       x.append('<operation name=%s xsi:type="%s">' % (quoteattr(i),p))
@@ -150,6 +152,7 @@ def loadOperations(cursor):
     if n: x.append('<size_multiple>%d</size_multiple>' % n)
     if q: x.append('<duration>PT%sS</duration>' % int(q))
     if r: x.append('<duration_per>PT%sS</duration_per>' % int(r))
+    if s: x.append('<location name="%s"/>' % quoteattr(s))
     x.append('</operation>')
   x.append('</operations></plan>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)

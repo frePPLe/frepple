@@ -258,7 +258,6 @@ thead th span a:link, thead th span a:visited { display: inline; }
 div #popup
 {
   z-index: 1;
-  width: 170px;
   border: 1px solid black;
   background-color: white;
   position: absolute;

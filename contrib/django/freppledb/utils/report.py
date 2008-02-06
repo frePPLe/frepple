@@ -23,13 +23,15 @@
 from datetime import date, datetime
 from email.Utils import formatdate
 from calendar import timegm
+import csv
 
 from django.core.paginator import ObjectPaginator, InvalidPage
 from django.shortcuts import render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template import RequestContext, loader
-from django.db import connection
-from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseNotModified
+from django.db import models, transaction, connection
+from django.db.models.fields.related import ForeignKey, AutoField
+from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotModified
 from django.conf import settings
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
@@ -69,6 +71,8 @@ TextOperator = {
   'exact': 'is',
   }
 
+# URL parameters that are not query arguments
+reservedParameters = ('o', 'p', 'reporttype', 'pop', 'reportbucket', 'reportstart', 'reportend')
 
 class Report(object):
   '''
@@ -202,7 +206,28 @@ def view_report(request, entity=None, **args):
   '''
 
   # Pick up the report class
+  global reservedParameters;
   reportclass = args['report']
+  model = reportclass.model
+
+  # Process uploaded data files
+  if request.method == 'POST':
+    if not reportclass.model or "csv_file" not in request.FILES:
+      request.user.message_set.create(message=_('Invalid upload request'))
+      return HttpResponseRedirect(request.get_full_path())
+    if not reportclass.editable or not request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())):
+      request.user.message_set.create(message=_('Not authorized'))
+      return HttpResponseRedirect(request.get_full_path())
+    (warnings,errors) = parseUpload(request, reportclass, request.FILES['csv_file']['content'])
+    if len(errors) > 0:
+      request.user.message_set.create(message=_('File upload aborted with errors'))
+      for i in errors: request.user.message_set.create(message=i)
+    elif len(warnings) > 0:
+      request.user.message_set.create(message=_('Uploaded file processed with warnings'))
+      for i in warnings: request.user.message_set.create(message=i)
+    else:
+      request.user.message_set.create(message=_('Uploaded data successfully'))
+    return HttpResponseRedirect(request.get_full_path())
 
   # Verify if the page has changed since the previous request
   lastmodifiedrequest = request.META.get('HTTP_IF_MODIFIED_SINCE', None)
@@ -229,7 +254,7 @@ def view_report(request, entity=None, **args):
     (bucket,start,end,bucketlist) = getBuckets(request)
   else:
     bucket = start = end = bucketlist = None
-  type = request.GET.get('type','html')  # HTML or CSV (table or list) output
+  type = request.GET.get('reporttype','html')  # HTML or CSV (table or list) output
 
   # Is this a popup window?
   is_popup = request.GET.has_key('pop')
@@ -246,7 +271,7 @@ def view_report(request, entity=None, **args):
     # Convert url parameters into queryset filters.
     # This block of code is copied from the django admin code.
     qs_args = dict(request.GET.items())
-    for i in ('o', 'p', 'type', 'pop', 'reportbucket', 'reportstart', 'reportend'):
+    for i in reservedParameters:
       # Remove arguments that aren't filters
       if i in qs_args: del qs_args[i]
     for key, value in qs_args.items():
@@ -344,7 +369,7 @@ def view_report(request, entity=None, **args):
 
   # Create a copy of the request url parameters
   parameters = request.GET.copy()
-  for x in ['p', 'reportbucket', 'reportstart','reportend','pop']:
+  for x in reservedParameters:
     if x in parameters: parameters.__delitem__(x)
 
   # Calculate the content of the page
@@ -361,7 +386,6 @@ def view_report(request, entity=None, **args):
   page_htmls = _get_paginator_html(request, paginator, page, parameters)
 
   # Prepare template context
-  model = reportclass.model
   context = {
        'reportclass': reportclass,
        'model': model,
@@ -904,3 +928,80 @@ class FilterBool(FilterChoice):
       field=field,
       choices=( ('0',_('False')), ('1',_('True')), ),
       )
+
+
+@transaction.commit_manually
+def parseUpload(request, reportclass, data):
+    '''
+    This method reads CSV data from a string (in memory) and creates or updates
+    the database records.
+    The data must follow the following format:
+      - the first row contains a header, listing all field names
+      - a first character # marks a comment line
+      - empty rows are skipped
+    '''
+    entityclass = reportclass.model
+    headers = []
+    rownumber = 0
+    warnings = []
+    errors = []
+
+    # Loop through the data records
+    has_pk_field = False
+    for row in csv.reader(data.splitlines()):
+      rownumber += 1
+      # The first line is read as a header line
+      if rownumber == 1:
+        for col in row:
+          col = col.strip().strip('#').lower()
+          ok = False
+          for i in entityclass._meta.fields:
+            if i.name == col:
+              headers.append(i)
+              ok = True
+              break
+          if not ok: errors.append(_('Incorrect field ') + col)
+          if col == entityclass._meta.pk.name: has_pk_field = True
+        if not has_pk_field and not isinstance(entityclass._meta.pk, AutoField):
+          # The primary key is not an auto-generated id and it is not mapped in the input...
+          errors.append(_('Missing primary key field ') + entityclass._meta.pk.name)
+        if len(errors) > 0:
+          return (warnings,errors)
+
+      # Skip empty rows and comments rows
+      elif len(row) == 0 or row[0].startswith('#'):
+        continue
+
+      # Process a data row
+      else:
+        cnt = 0
+        d = {}
+        try:
+          for col in row:
+            # More fields in data row than headers. Move on to the next row
+            if cnt >= len(headers): break
+            if isinstance(headers[cnt], ForeignKey):
+              try: d[headers[cnt].name] = headers[cnt].rel.to.objects.get(pk=col)
+              except Exception, e: warnings.append('%s %d: %s' % (_('Row'), rownumber, e))
+            else:
+              d[headers[cnt].name] = col
+            cnt += 1
+          if has_pk_field:
+            # A primary key is part of the input fields
+            try:
+              it = entityclass.objects.get(pk=d[entityclass._meta.pk.name])
+              del d[entityclass._meta.pk.name]
+              for x in d: it.__setattr__ (x,d[x])
+            except:
+              it = entityclass(**d)
+          else:
+            # The primary key is autogenerated
+            it = entityclass(**d)
+          it.save()
+          transaction.commit()    # @todo Too many commits && slow performance
+        except Exception, e:
+          warnings.append('%s %d: %s' % (_('Row'), rownumber, e))
+          transaction.rollback()
+
+    # Report all failed records
+    return (warnings,errors)

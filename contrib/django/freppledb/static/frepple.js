@@ -231,22 +231,45 @@ function resetButton(button)
 }
 
 
+function import_show(list_or_table)
+{
+  var element = $('popup');
+  element.innerHTML = '<h2>Import data</h2><br/>'+
+    '<form enctype="multipart/form-data" method="post" action="' + location.href + '"><table><tr>'+
+    '<td colspan="2">Load data from a CSV-formatted text file in the database.<br/>'+
+    'The first row should contain the field names.</td></tr>'+
+    '<tr><td>Data file:</td><td><input type="file" id="csv_file" name="csv_file"/></td></tr>'+
+    '<tr><td><input id="upload" type="submit" value="Upload"/></td>'+
+    '<td><input type="button" value="Close" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
+    '</table></form>';
+  var position = $('csvexport').cumulativeOffset();
+  position[0] -= 252;
+  position[1] += 20;
+  element.style.width = '290px';
+  element.style.left = position[0]+'px';
+  element.style.top  = position[1]+'px';
+  element.style.position = "absolute";
+  element.style.display  = "block";
+}
+
+
 function export_show(list_or_table)
 {
   // The argument is true when we show a "list" report.
   // It is false for "table" reports.
   var element = $('popup');
-  element.innerHTML = '<h2>Export report data</h2><br/>'+
+  element.innerHTML = '<h2>Export data</h2><br/>'+
     '<form method="get" action="javascript:export_close()"><table>'+
     '<tr><th>CSV style:</th><td><select name="csvformat" id="csvformat"' + (list_or_table ? ' disabled="true"' : '')+ '>'+
     '<option value="csv"' + (list_or_table ? '' : ' selected="selected"') + '>Table</option>'+
     '<option value="csvlist"' + (list_or_table ?  ' selected="selected"' : '') + '>List</option></select></td></tr>'+
     '<tr><td><input type="submit" value="Export"/></td>'+
     '<td><input type="button" value="Close" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
-    '</td></table></form>';
+    '</table></form>';
   var position = $('csvexport').cumulativeOffset();
   position[0] -= 132;
   position[1] += 20;
+  element.style.width = '170px';
   element.style.left = position[0]+'px';
   element.style.top  = position[1]+'px';
   element.style.position = "absolute";
@@ -260,10 +283,10 @@ function export_close()
   var url = location.href;
   if (location.search.length > 0)
     // URL already has arguments
-    url += "&type=" + $('csvformat').value;
+    url += "&reporttype=" + $('csvformat').value;
   else
     // This is the first argument for the URL
-    url += "?type=" + $('csvformat').value;
+    url += "?reporttype=" + $('csvformat').value;
   window.open(url,'_blank');
   // Hide the popup window
   $('popup').style.display = 'none';
@@ -290,10 +313,11 @@ function bucket_show()
     '<tr><th>Report end date:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="' + buckets[2] + '" name="enddate" /></td></tr>'+
     '<tr><td><input type="submit" value="OK"/></td>'+
     '<td><input type="button" value="Cancel" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
-    '</td></table></form>';
+    '</table></form>';
   var position = $('csvexport').cumulativeOffset();
   position[0] -= 132;
   position[1] += 20;
+  element.style.width = '170px';
   element.style.left = position[0]+'px';
   element.style.top  = position[1]+'px';
   element.style.position = "absolute";

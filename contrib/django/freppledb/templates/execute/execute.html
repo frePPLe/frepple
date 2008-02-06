@@ -79,43 +79,6 @@ Available datasets: <select name="datafile" id="entity">
 </div>
 {% endif %}
 
-{% if perms.execute.upload_csv %}
-<div class="module">
-<table summary="Extra commands.">
-<caption>{% trans "Upload data" %}</caption>
-
-<form enctype="multipart/form-data" method="post" action="/execute/upload/"><tr>
-{% blocktrans %}<th scope="row"><a>CSV</a></th>
-<td>Load data from a csv text file in the database.<br/>
-The first row of your file should contain the field names.<br/>
-Entity: <select name="entity" id="entity">
-<option value="-" selected="selected">-</option>
-<option value="Buffer">Buffer</option>
-<option value="Calendar">Calendar</option>
-<option value="Bucket">Calendar Bucket</option>
-<option value="Customer">Customer</option>
-<option value="Dates">Dates</option>
-<option value="Demand">Demand</option>
-<option value="Flow">Flow</option>
-<option value="Forecast">Forecast</option>
-<option value="ForecastDemand">Forecast Demand</option>
-<option value="Item">Item</option>
-<option value="Load">Load</option>
-<option value="Location">Location</option>
-<option value="Operation">Operation</option>
-<option value="OperationPlan">OperationPlan</option>
-<option value="Resource">Resource</option>
-</select><br/>
-Select your csv file: <input type="file" id="csv_file" size="23" name="csv_file"/><br/>
-</td>
-<td><input id="upload" type="submit" value="Upload"/></td>{% endblocktrans %}
-</tr></form>
-
-</table>
-</div>
-{% endif %}
-
-
 {% if perms.execute.run_db %}
 <div class="module">
 <table summary="Extra commands.">

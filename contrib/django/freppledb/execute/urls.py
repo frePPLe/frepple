@@ -33,7 +33,6 @@ urlpatterns = patterns('',
     (r'^runfrepple/$', 'execute.views.runfrepple'),
     (r'^erase/$', 'execute.views.erase'),
     (r'^create/$', 'execute.views.create'),
-    (r'^upload/$', 'execute.views.upload'),
     (r'^fixture/$', 'execute.views.fixture'),
     (r'^', 'execute.views.main'),
 )

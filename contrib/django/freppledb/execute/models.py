@@ -39,7 +39,6 @@ class log(models.Model):
       permissions = (
           ("run_frepple", "Can run frepple"),
           ("run_db","Can run database procedures"),
-          ("upload_csv","Can upload csv data files"),
          )
       verbose_name_plural = _('log entries')
       verbose_name = _('log entry')

@@ -94,6 +94,7 @@ template <class type> class TimeLine
           while(m && getDate() < m->getDate()) m = m->prevMin;
           return m ? m->newMin : 0.0f;
         }
+
         /** This functions returns the maximum boundary valid at the time of
           * this event. */
         virtual float getMax() const
@@ -102,7 +103,9 @@ template <class type> class TimeLine
           while(m && getDate() < m->getDate()) m = m->prevMax;
           return m ? m->newMax : 0.0f;
         }
+
         virtual unsigned short getType() const = 0;
+
         /** First criterion is date: earlier Dates come first.
           * Second criterion is the size: big events come first.
           * As a third tie-breaking criterion, we use a pointer comparison.
@@ -138,12 +141,14 @@ template <class type> class TimeLine
     /** @brief A timeline event representing a change of the minimum target. */
     class EventMinQuantity : public Event
     {
+      friend class TimeLine<type>::Event;
       friend class TimeLine<type>;
       private:
         float newMin;
+      protected:
         EventMinQuantity *prevMin;
       public:
-        EventMinQuantity(Date d, float f=0.0f) : newMin(f), prevMin(NULL) 
+        EventMinQuantity(Date d, float f=0.0f) : newMin(f), prevMin(NULL)
           { this->dt = d; }
         void setMin(float f) {newMin = f;}
         virtual float getMin() const {return newMin;}
@@ -153,9 +158,11 @@ template <class type> class TimeLine
     /** @brief A timeline event representing a change of the maximum target. */
     class EventMaxQuantity : public Event
     {
+      friend class TimeLine<type>::Event;
       friend class TimeLine<type>;
       private:
         float newMax;
+      protected:
         EventMaxQuantity *prevMax;
       public:
         EventMaxQuantity(Date d, float f=0.0f) : newMax(f), prevMax(NULL)
@@ -235,7 +242,7 @@ template <class type> class TimeLine
     void update(EventChangeOnhand*, float, const Date&);
 
     /** This function is used for debugging purposes.<br>
-      * It prints a header line, followed by the date, quantity and on_hand 
+      * It prints a header line, followed by the date, quantity and on_hand
       * of all events in the timeline.
       */
     void inspect(string name) const
@@ -265,7 +272,7 @@ template <class type> class TimeLine
 };
 
 
-template <class type> void TimeLine <type>::insert (Event* e)
+template <class type> void TimeLine<type>::insert (Event* e)
 {
   // Loop through all entities till we find the insertion point
   // While searching from the end, update the onhand and cumulative produced

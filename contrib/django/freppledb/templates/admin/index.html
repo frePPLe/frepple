@@ -30,6 +30,7 @@
             {% endif %}{% else %}
                 <td>&nbsp;</td>
             {% endifnotequal %}
+            <td><a href="{{ model.admin_url }}?reporttype=csv" class="changelink">csv</a></td>
             </tr>
         {% endfor %}
         </table>
@@ -60,37 +61,30 @@
 <caption>Reports</caption>
 <tr>
 <th scope="row"><a href="/problem/">{% trans "Problem Report" %}</a></th>
-<td><a href="/problem/" class="changelink">html</a></td>
-<td><a href="/problem/?type=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="/problem/?reporttype=csv" class="changelink">csv</a></td>
 </tr>
 <tr>
 <th scope="row"><a href="/buffer/">{% trans "Inventory Report" %}</a></th>
-<td><a href="/buffer/" class="changelink">html</a></td>
-<td><a href="/buffer/?type=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="/buffer/?reporttype=csv" class="changelink">csv</a></td>
 </tr>
 <tr>
 <th scope="row"><a href="/resource/">{% trans "Resource Report" %}</a></th>
-<td><a href="/resource/" class="changelink">html</a></td>
-<td><a href="/resource/?type=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="/resource/?reporttype=csv" class="changelink">csv</a></td>
 </tr>
 <tr>
 <th scope="row"><a href="/demand/">{% trans "Demand Report" %}</a></th>
-<td><a href="/demand/" class="changelink">html</a></td>
-<td><a href="/demand/?type=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="/demand/?reporttype=csv" class="changelink">csv</a></td>
 </tr>
 <tr>
 <th scope="row"><a href="/forecast/">{% trans "Forecast Report" %}</a></th>
-<td><a href="/forecast/" class="changelink">html</a></td>
-<td><a href="/forecast/?type=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="/forecast/?reporttype=csv" class="changelink">csv</a></td>
 </tr>
 <tr>
 <th scope="row"><a href="/operation/">{% trans "Operation Report" %}</a></th>
-<td><a href="/operation/" class="changelink">html</a></td>
-<td><a href="/operation/?type=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="/operation/?reporttype=csv" class="changelink">csv</a></td>
 </tr>
 <th scope="row"><a href="/kpi/">{% trans "Performance Indicators" %}</a></th>
-<td><a href="/kpi/" class="changelink">html</a></td>
-<td><a href="/kpi/?type=csv" class="changelink">csv</a></td>
+<td>&nbsp;</td><td><a href="/kpi/?reporttype=csv" class="changelink">csv</a></td>
 </tr>
 </table>
 </div>

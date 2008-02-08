@@ -39,6 +39,7 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_after;
     static DECLARE_EXPORT const XMLtag tag_alternate;
     static DECLARE_EXPORT const XMLtag tag_alternates;
+    static DECLARE_EXPORT const XMLtag tag_available;
     static DECLARE_EXPORT const XMLtag tag_before;
     static DECLARE_EXPORT const XMLtag tag_bucket;
     static DECLARE_EXPORT const XMLtag tag_buckets;

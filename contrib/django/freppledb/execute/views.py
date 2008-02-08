@@ -189,6 +189,8 @@ class LogReport(ListReport):
   reset_crumbs = True
   basequeryset = log.objects.all()
   default_sort = '1d'
+  model = log
+  editable = False
   rows = (
     ('lastmodified', {
       'title':_('last modified'),

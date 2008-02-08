@@ -108,6 +108,7 @@
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:group ref="common_fields" />
 			<xsd:element name="owner" type="location" />
+			<xsd:element name="available" type="calendar_boolean" />
 			<xsd:element name="members">
 				<xsd:complexType>
 					<xsd:sequence minOccurs="0" maxOccurs="unbounded">

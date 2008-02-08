@@ -2,6 +2,7 @@
 
 {% block contextmenus %}
 {% include "locationcontext.html" %}
+{% include "calendarcontext.html" %}
 {% endblock %}
 
 {% block tablebody %}
@@ -11,6 +12,7 @@
 <td>{{i.description}}</td>
 <td>{{i.category}}</td>
 <td>{{i.subcategory}}</td>
+<td>{% superlink i.available calendar %}</td>
 <td>{% superlink i.owner location %}</td>
 <td>{{i.lastmodified}}</td>
 </tr>{% endfor %}

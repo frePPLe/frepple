@@ -249,6 +249,9 @@ class Location(models.Model):
     description = models.CharField(_('description'), max_length=200, null=True, blank=True)
     category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
+    available = models.ForeignKey(Calendar, verbose_name=_('available'),
+      null=True, blank=True, raw_id_admin=True,
+      help_text=_('Calendar defining the working hours and holidays of this location'))
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
       raw_id_admin=True, help_text=_('Hierarchical parent'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)

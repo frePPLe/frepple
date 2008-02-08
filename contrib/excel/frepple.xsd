@@ -113,6 +113,11 @@
     			<xsd:attribute name="name" type="non-empty-string" use="required"/>
       	</xsd:complexType>
       </xsd:element>
+      <xsd:element name="available" minOccurs="0">
+      	<xsd:complexType>
+    			<xsd:attribute name="name" type="non-empty-string" use="required"/>
+      	</xsd:complexType>
+      </xsd:element>
     </xsd:sequence>
     <xsd:attributeGroup ref="common_attributes"/>
   </xsd:complexType>

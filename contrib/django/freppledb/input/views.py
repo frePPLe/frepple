@@ -387,6 +387,10 @@ class LocationList(ListReport):
       'title': _('subcategory'),
       'filter': FilterText(),
       }),
+    ('available', {
+      'title': _('available'),
+      'filter': FilterText(field='available__name'),
+      }),
     ('owner', {
       'title': _('owner'),
       'filter': FilterText(field='owner__name'),

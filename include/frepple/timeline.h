@@ -141,8 +141,8 @@ template <class type> class TimeLine
     /** @brief A timeline event representing a change of the minimum target. */
     class EventMinQuantity : public Event
     {
-      friend class TimeLine<type>::Event;
       friend class TimeLine<type>;
+      friend class Event;
       private:
         float newMin;
       protected:
@@ -158,7 +158,7 @@ template <class type> class TimeLine
     /** @brief A timeline event representing a change of the maximum target. */
     class EventMaxQuantity : public Event
     {
-      friend class TimeLine<type>::Event;
+      friend class Event;
       friend class TimeLine<type>;
       private:
         float newMax;

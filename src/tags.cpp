@@ -36,6 +36,7 @@ DECLARE_EXPORT const XMLtag Tags::tag_action("action");
 DECLARE_EXPORT const XMLtag Tags::tag_after("after");
 DECLARE_EXPORT const XMLtag Tags::tag_alternate("alternate");
 DECLARE_EXPORT const XMLtag Tags::tag_alternates("alternates");
+DECLARE_EXPORT const XMLtag Tags::tag_available("available");
 DECLARE_EXPORT const XMLtag Tags::tag_before("before");
 DECLARE_EXPORT const XMLtag Tags::tag_bucket("bucket");
 DECLARE_EXPORT const XMLtag Tags::tag_buckets("buckets");

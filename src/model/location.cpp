@@ -48,20 +48,41 @@ DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const XMLtag& tag, mode
   // Write the fields
   HasDescription::writeElement(o, tag);
   HasHierarchy<Location>::writeElement(o, tag);
+  o->writeElement(Tags::tag_available, available);
   o->EndObject(tag);
 }
 
 
 DECLARE_EXPORT void Location::beginElement(XMLInput& pIn, XMLElement& pElement)
 {
-  HasHierarchy<Location>::beginElement(pIn, pElement);
+  if (pElement.isA(Tags::tag_available) || pElement.isA(Tags::tag_maximum))
+    pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
+  else
+    HasHierarchy<Location>::beginElement(pIn, pElement);
 }
 
 
 DECLARE_EXPORT void Location::endElement(XMLInput& pIn, XMLElement& pElement)
 {
-  HasDescription::endElement(pIn, pElement);
-  HasHierarchy<Location>::endElement(pIn, pElement);
+  if (pElement.isA(Tags::tag_available))
+  {
+    CalendarBool *cal = dynamic_cast<CalendarBool*>(pIn.getPreviousObject());
+    if (cal)
+      setAvailable(cal);
+    else
+    {
+      Calendar *c = dynamic_cast<Calendar*>(pIn.getPreviousObject());
+      if (!c)
+        throw LogicException("Incorrect object type during read operation");
+      throw DataException("Calendar '" + c->getName() +
+          "' has invalid type for use as location calendar");
+    }
+  }
+  else
+  {
+    HasDescription::endElement(pIn, pElement);
+    HasHierarchy<Location>::endElement(pIn, pElement);
+  }
 }
 
 

@@ -187,7 +187,9 @@ class Calendar : public HasName<Calendar>, public Object
     Calendar(const string& n) : HasName<Calendar>(n), firstBucket(NULL)
       { createNewBucket(Date()); }
 
-    /** Destructor, which needs to clean up the buckets too. */
+    /** Destructor, which needs to clean up the buckets too. 
+      * @todo calendar deletion doesn't clear any references to the calendar!
+      */
     DECLARE_EXPORT ~Calendar();
 
     /** This is a factory method that creates a new bucket using the start
@@ -1048,15 +1050,34 @@ class Location
 {
     TYPEDEF(Location);
   public:
+    /** Constructor. */
+    explicit Location(const string& n) : HasHierarchy<Location>(n), available(NULL) {}
+
+    /** Destructor. */
+    virtual DECLARE_EXPORT ~Location();
+
+    /** Returns the availability calendar of the location.<br>
+      * The availability calendar models the working hours and holidays. It 
+      * applies to all operations, resources and buffers using this location.
+      */
+    CalendarBool *getAvailable() const { return available; }
+
+    /** Updates the availability calend of the location. */
+    void setAvailable(CalendarBool* b) { available = b; }
+
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
     DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
-    explicit Location(const string& n) : HasHierarchy<Location>(n) {}
-    virtual DECLARE_EXPORT ~Location();
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaCategory metadata;
+
+  private:
+    /** The availability calendar models the working hours and holidays. It 
+      * applies to all operations, resources and buffers using this location.
+      */
+    CalendarBool* available;
 };
 
 

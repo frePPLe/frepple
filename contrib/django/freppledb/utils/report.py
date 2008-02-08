@@ -389,8 +389,8 @@ def view_report(request, entity=None, **args):
   context = {
        'reportclass': reportclass,
        'model': model,
-       'hasaddperm': reportclass.editable and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())),
-       'haschangeperm': reportclass.editable and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_change_permission())),
+       'hasaddperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())),
+       'haschangeperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_change_permission())),
        'request': request,
        'objectlist': results,
        'reportbucket': bucket,

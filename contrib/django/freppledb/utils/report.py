@@ -268,21 +268,14 @@ def view_report(request, entity=None, **args):
     counter = counter.filter(pk__exact=entity)
   else:
     # The url doesn't specify a single entity, but may specify filters
-    # Convert url parameters into queryset filters.
-    # This block of code is copied from the django admin code.
-    qs_args = dict(request.GET.items())
-    for i in reservedParameters:
-      # Remove arguments that aren't filters
-      if i in qs_args: del qs_args[i]
-    for key, value in qs_args.items():
-      # Ignore empty filter values
-      if not value or len(value) == 0: del qs_args[key]
-      elif not isinstance(key, str):
-        # 'key' will be used as a keyword argument later, so Python
-        # requires it to be a string.
-        del qs_args[key]
-        qs_args[smart_str(key)] = value
-    counter = counter.filter(**qs_args)
+    # Convert URL parameters into queryset filters.
+    for key, valuelist in request.GET.lists():
+       # Ignore arguments that aren't filters
+       if key not in reservedParameters:
+         # Loop over all values, since the same filter key can be
+         # used multiple times!
+         for value in valuelist:
+           counter = counter.filter( **{smart_str(key): value} )
 
   # Pick up the sort parameter from the url
   sortparam = request.GET.get('o', reportclass.default_sort)
@@ -799,11 +792,12 @@ class FilterText(object):
           field = operator
           operator = 'exact'
         if field == rowfield:
-          res.append('<span class="textfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-            % (counter, TextOperator[operator], counter, self.size,
-               escape(args.get(i)),
-               rowfield, operator, number+1000,
-               ))
+          for value in args.getlist(i):
+            res.append('<span class="textfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+              % (counter, TextOperator[operator], counter, self.size,
+                 escape(value),
+                 rowfield, operator, number+1000,
+                 ))
       except:
         # Silently ignore invalid filters
         pass
@@ -839,11 +833,12 @@ class FilterNumber(object):
           field = operator
           operator = 'exact'
         if field == rowfield:
-          res.append('<span class="numfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-            % (counter, IntegerOperator[operator], counter, self.size,
-               escape(args.get(i)),
-               rowfield, operator, number+1000,
-               ))
+          for value in args.getlist(i):
+            res.append('<span class="numfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+              % (counter, IntegerOperator[operator], counter, self.size,
+                 escape(value),
+                 rowfield, operator, number+1000,
+                 ))
       except:
         # Silently ignore invalid filters
         pass
@@ -879,11 +874,12 @@ class FilterDate(object):
           field = operator
           operator = 'exact'
         if field == rowfield:
-          res.append('<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
-            % (counter, IntegerOperator[operator], counter, self.size,
-               escape(args.get(i)),
-               rowfield, operator, number+1000,
-               ))
+          for value in args.getlist(i):
+            res.append('<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+              % (counter, IntegerOperator[operator], counter, self.size,
+                 escape(value),
+                 rowfield, operator, number+1000,
+                 ))
       except:
         # Silently ignore invalid filters
         pass

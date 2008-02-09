@@ -238,7 +238,16 @@ function filterform()
   var data = $('filterform').getElements().inject({ }, function(result, element) {
     key = element.name;
     value = $(element).getValue();
-    if (value != '' && element.type != 'submit') result[key] = value;
+    if (value != '' && element.type != 'submit')
+    {
+      if (key in result)
+      {
+        // a key is already present; construct an array of values
+        if (!Object.isArray(result[key])) result[key] = [result[key]];
+        result[key].push(value);
+       }
+       else result[key] = value;
+    }
     return result;
     });
   // Go to the new url

@@ -45,6 +45,32 @@ DECLARE_EXPORT Calendar::~Calendar()
 }
 
 
+DECLARE_EXPORT CalendarFloat::~CalendarFloat()
+{
+  // Remove all references from buffers
+  for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
+  {
+    if (b->getMinimum()==this) Buffer::writepointer(&*b)->setMinimum(NULL);
+    if (b->getMaximum()==this) Buffer::writepointer(&*b)->setMaximum(NULL);
+  }
+
+  // Remove all references from resources to this location
+  for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
+    if (r->getMaximum()==this) Resource::writepointer(&*r)->setMaximum(NULL);
+}
+
+
+DECLARE_EXPORT CalendarBool::~CalendarBool()
+{
+  // Remove all references from locations
+  for (Location::iterator l = Location::begin(); l != Location::end(); ++l)
+  {
+    if (l->getAvailable() == this) 
+      Location::writepointer(&*l)->setAvailable(NULL);
+  }
+}
+
+
 DECLARE_EXPORT Calendar::Bucket* Calendar::addBucket (Date d)
 {
   // Create new bucket and insert in the list

@@ -187,8 +187,8 @@ class Calendar : public HasName<Calendar>, public Object
     Calendar(const string& n) : HasName<Calendar>(n), firstBucket(NULL)
       { createNewBucket(Date()); }
 
-    /** Destructor, which needs to clean up the buckets too. 
-      * @todo calendar deletion doesn't clear any references to the calendar!
+    /** Destructor, which cleans up the buckets too and all references to the 
+      * calendar from the core model. 
       */
     DECLARE_EXPORT ~Calendar();
 
@@ -469,6 +469,7 @@ class CalendarFloat : public CalendarValue<float>
     TYPEDEF(CalendarFloat);
   public:
     CalendarFloat(const string& n) : CalendarValue<float>(n) {}
+    DECLARE_EXPORT ~CalendarFloat();
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
 };
@@ -491,6 +492,7 @@ class CalendarBool : public CalendarValue<bool>
     TYPEDEF(CalendarBool);
   public:
     CalendarBool(const string& n) : CalendarValue<bool>(n) {}
+    DECLARE_EXPORT ~CalendarBool();
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
 };
@@ -1042,8 +1044,9 @@ class HasLevel
 /** @brief This abstract class is used to associate buffers and resources with
   * a physical location.
   *
-  * This is useful for reporting but has no direct impact on the planning
-  * behavior.
+  * Locations are useful for reporting.<br>
+  * The 'available' calendar is used to model the working hours and holidays 
+  * of resources, buffers and operations.
   */
 class Location
       : public HasHierarchy<Location>, public HasDescription, public Object

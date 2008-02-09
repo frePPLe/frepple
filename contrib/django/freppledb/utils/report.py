@@ -719,7 +719,7 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
   '''
   Generate html header row for the columns of a table or list report.
   '''
-  result = ['<form>']
+  result = ['<form id="filterform" action="javascript:filterform()">']
   number = 0
   args = req.GET.copy()
   args2 = req.GET.copy()

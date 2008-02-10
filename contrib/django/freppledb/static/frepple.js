@@ -235,7 +235,7 @@ function filterform()
 {
   // The filter header has a lot of fields. To keep the urls clean we use only
   // the non-empty fields in the form URL.
-  var data = $('filterform').getElements().inject({ }, function(result, element) {
+  var data = $$('.filter').inject({ }, function(result, element) {
     key = element.name;
     value = $(element).getValue();
     if (value != '' && element.type != 'submit')

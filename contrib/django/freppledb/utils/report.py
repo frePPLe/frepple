@@ -275,7 +275,8 @@ def view_report(request, entity=None, **args):
          # Loop over all values, since the same filter key can be
          # used multiple times!
          for value in valuelist:
-           counter = counter.filter( **{smart_str(key): value} )
+           if len(value)>0:
+             counter = counter.filter( **{smart_str(key): value} )
 
   # Pick up the sort parameter from the url
   sortparam = request.GET.get('o', reportclass.default_sort)
@@ -712,7 +713,11 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
   '''
   Generate html header row for the columns of a table or list report.
   '''
-  result = ['<form id="filterform" action="javascript:filterform()">']
+  # @todo This filter form is NOT valid HTML code! Forms are not allowed to
+  # be nested in a table.
+  # It somehow works anyway. Only drawback is that the DOM tree in standard
+  # complying browsers (eg firefox and opera) is broken.
+  result = ['<form action="javascript:filterform()">']
   number = 0
   args = req.GET.copy()
   args2 = req.GET.copy()
@@ -793,7 +798,7 @@ class FilterText(object):
           operator = 'exact'
         if field == rowfield:
           for value in args.getlist(i):
-            res.append('<span class="textfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            res.append('<span class="textfilteroper" id="operator%d">%s</span><input class="filter" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
               % (counter, TextOperator[operator], counter, self.size,
                  escape(value),
                  rowfield, operator, number+1000,
@@ -805,7 +810,7 @@ class FilterText(object):
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
-      return '<span class="textfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+      return '<span class="textfilteroper" id="operator%d">%s</span><input class="filter" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
           % (number*10, TextOperator[self.operator], number*10, self.size,
              escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
@@ -834,7 +839,7 @@ class FilterNumber(object):
           operator = 'exact'
         if field == rowfield:
           for value in args.getlist(i):
-            res.append('<span class="numfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            res.append('<span class="numfilteroper" id="operator%d">%s</span><input class="filter" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
               % (counter, IntegerOperator[operator], counter, self.size,
                  escape(value),
                  rowfield, operator, number+1000,
@@ -846,7 +851,7 @@ class FilterNumber(object):
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
-      return '<span class="numfilteroper" id="operator%d">%s</span><input id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+      return '<span class="numfilteroper" id="operator%d">%s</span><input class="filter" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
           % (number*10, IntegerOperator[self.operator], number*10, self.size,
              escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
@@ -875,7 +880,7 @@ class FilterDate(object):
           operator = 'exact'
         if field == rowfield:
           for value in args.getlist(i):
-            res.append('<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            res.append('<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField filter" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
               % (counter, IntegerOperator[operator], counter, self.size,
                  escape(value),
                  rowfield, operator, number+1000,
@@ -887,7 +892,7 @@ class FilterDate(object):
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
-      return '<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+      return '<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField filter" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
           % (number*10, IntegerOperator[self.operator], number*10, self.size,
              escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
@@ -902,7 +907,7 @@ class FilterChoice(object):
   def output(self, row, number, args):
     rowfield = self.field or row[0]
     value = args.get(rowfield, None)
-    result = ['<select name="%s"> <option value="">%s</option>' \
+    result = ['<select name="%s" class="filter"> <option value="">%s</option>' \
       % (rowfield, _('All')) ]
     for code, label in self.choices:
       if code != '':

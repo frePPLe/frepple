@@ -20,28 +20,33 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+r'''
+This module holds a number of functions that are useful to make SQL statements
+portable across different databases.
+
+Django also includes a set of wrapper functions around incompatible
+database functionality. A seperate one was required to add functions and 
+enhance others.
+  - sql_datediff:
+    Returns the time diffence between 2 datetime values, expressed in days.
+  - sql_overlap:
+    Returns the overlap between 2 date ranges, expressed in days.
+  - sql_min:
+    Returns the maximum of 2 numbers.
+  - sql_max:
+    Returns the minimum of 2 numbers.
+  - python_date:
+    A date database field is represented differently by the different
+    database connectors.
+    Oracle returns a python datetime object.
+    SQLite returns a string.
+    PostgreSQL and mySQL both return a date object.
+    This method does what one might intuitively expect: a date field in the
+    database is always returned as a python date object.
+'''
+
 from django.conf import settings
 from datetime import date, datetime
-
-# Note: Django also includes a set of wrapper functions around incompatible
-# database functionality. A seperate one was required to add functions and
-# enhance others.
-#  - sql_datediff:
-#    Returns the time diffence between 2 datetime values, expressed in days.
-#  - sql_overlap:
-#    Returns the overlap between 2 date ranges, expressed in days.
-#  - sql_min:
-#    Returns the maximum of 2 numbers.
-#  - sql_max:
-#    Returns the minimum of 2 numbers.
-#  - python_date:
-#    A date database field is represented differently by the different
-#    database connectors.
-#    Oracle returns a python datetime object.
-#    SQLite returns a string.
-#    PostgreSQL and mySQL both return a date object.
-#    This method does what one might intuitively expect: a date field in the
-#    database is always returned as a python date object.
 
 # Functions for SQLITE
 if settings.DATABASE_ENGINE == 'sqlite3':

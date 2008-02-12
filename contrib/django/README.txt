@@ -82,6 +82,12 @@ It doesn't serve as a complete reference but only as a brief guideline.
      - etc...
 Your mileage with the above may vary...
 
+Documentation of the code can be generated with the epydoc package:
+- Install epydoc (version >3.0 recommended)
+- Run the 'doc' make target:
+    make doc
+- Point your browser to the file doc/index.html
+
 Enjoy!
 
 

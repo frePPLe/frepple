@@ -20,6 +20,10 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+r'''
+Main Django configuration file.
+'''
+
 # frePPLe specific variables
 import os, os.path, sys
 try:

@@ -94,20 +94,21 @@ register.tag('get_models', get_models)
 #
 
 class CrumbsNode(Node):
-    '''
+    r'''
     A generic breadcrumbs framework.
+
     Usage in your templates:
-        {% crumbs %}
+    {% crumbs %}
 
     The admin app already defines a block for crumbs, so the typical usage of the
     crumbs tag is as follows:
-        {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
+    {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
 
     When the context variable 'reset_crumbs' is defined and set to True, the trail of
     breadcrumbs is truncated and restarted.
     The variable can be set either as an extra context variable in the view
     code, or with the 'set' template tag in the template:
-        {% set reset_crumbs "True" %}
+    {% set reset_crumbs "True" %}
     '''
     def render(self, context):
         global HOMECRUMB
@@ -215,11 +216,11 @@ class SetVariable(Node):
 
 
 def set_var(parser, token):
-  '''
+  r'''
   Example:
-    {% set category_list category.categories.all %}
-    {% set dir_url "../" %}
-    {% set type_list "table" %}
+  {% set category_list category.categories.all %}
+  {% set dir_url "../" %}
+  {% set type_list "table" %}
   '''
   from re import split
   bits = split(r'\s+', token.contents, 2)
@@ -259,8 +260,7 @@ class AddParameter(Node):
 
 def addurlparameter(parser, token):
   '''
-  Example:
-    {% addurlparameter type csv %}
+  Example: {% addurlparameter type csv %}
   If the current page url is "/mypage/?p=1" the tag will return the
   url "/mypage/?p=1&amp;type=csv"
   '''

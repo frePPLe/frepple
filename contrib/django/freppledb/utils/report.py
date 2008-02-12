@@ -20,6 +20,20 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+r'''
+This module implements a generic view to presents lists and tables.
+
+It provides the following functionality:
+ - Pagination of the results.
+ - Ability to filter on fields, using different operators.
+ - Ability to sort on a field.
+ - Export the results as a CSV file, ready for use in a spreadsheet.
+ - Import CSV formatted data files.
+ - Show time buckets to show data by time buckets.
+   The time buckets and time boundaries can easily be updated.
+ - Support for efficient caching by the client browser.
+'''
+
 from datetime import date, datetime
 from email.Utils import formatdate
 from calendar import timegm

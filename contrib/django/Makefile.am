@@ -7,6 +7,7 @@ EXTRA_DIST = freppledb README.txt httpd.conf
 clean-local:
 	-rm -rf `find . -name '*.pyc'`
 	-rm -rf `find . -name '*.pyo'`
+	-rm -rf doc
 
 # Avoid packaging python bytecode files from the subdirectories
 dist-hook:
@@ -24,3 +25,10 @@ runserver:
 
 international:
 	cd freppledb; make-messages.py -a && compile-messages.py 
+
+doc:
+	-rm -rf doc
+	export PYTHONPATH=freppledb:.; export DJANGO_SETTINGS_MODULE=freppledb.settings; epydoc --name frePPLe --output doc --html --url "http://www.frepple.com/" --no-imports --show-sourcecode freppledb
+
+.PHONY: create check runserver international doc
+

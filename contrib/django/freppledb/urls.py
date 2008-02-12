@@ -20,6 +20,11 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+
+r'''
+Django url mapping file.
+'''
+
 import os.path
 
 from django.conf.urls.defaults import *

@@ -22,6 +22,10 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+r'''
+This is the standard Django project management command.
+'''
+
 from django.core.management import execute_manager
 try:
     import settings # Assumed to be in the same directory.

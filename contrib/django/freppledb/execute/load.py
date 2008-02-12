@@ -20,12 +20,15 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+r'''
+Load information from a database in frePPLe memory.
 
-# The code in this file is executed NOT by Django, but by the embedded Python
-# interpreter from the frePPLe engine.
-# It extracts the information fields from the database, and then uses Python
-# to compose an XML string that is then processed by the C++ core engine.
+The code in this file is executed NOT by Django, but by the embedded Python
+interpreter from the frePPLe engine.
 
+It extracts the information fields from the database, and then uses Python
+to compose an XML string that is then processed by the C++ core engine.
+'''
 
 # A small experiment with an alternative design showed an interesting
 # performance improvement. By composing the XML documents in the database (and

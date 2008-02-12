@@ -20,6 +20,12 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+r'''
+An application that represents all frePPLe input.
+
+It defines the database storage used as input and the screens to maintain them.
+'''
+
 from django import template
 
 # Make our tags built-in, so we don't have to load them any more in our

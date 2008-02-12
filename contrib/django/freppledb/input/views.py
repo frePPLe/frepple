@@ -131,8 +131,10 @@ class pathreport:
     '''
     A generator function that recurses upstream or downstream in the supply
     chain.
-    @todo The current code only supports 1 level of super- or sub-operations.
-    @todo When the supply chain contains loops this function wont work fine.
+
+    todo: The current code only supports 1 level of super- or sub-operations.
+
+    todo: When the supply chain contains loops this function wont work fine.
     '''
     from decimal import Decimal
     from django.core.exceptions import ObjectDoesNotExist

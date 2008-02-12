@@ -20,12 +20,16 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+r'''
+Exports frePPLe information into a database.
 
-# The code in this file is executed NOT by Django, but by the embedded Python
-# interpreter from the frePPLe engine.
-# The code iterates over all objects in the C++ core engine, and creates
-# database records with the information. Django's database wrappers are used
-# to keep the code portable between different databases.
+The code in this file is executed NOT by Django, but by the embedded Python
+interpreter from the frePPLe engine.
+
+The code iterates over all objects in the C++ core engine, and creates
+database records with the information. Django's database wrappers are used
+to keep the code portable between different databases.
+'''
 
 
 from time import time

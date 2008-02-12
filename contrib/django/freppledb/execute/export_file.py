@@ -20,6 +20,17 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+r'''
+Exports frePPLe information to flat files.
+
+The code in this file is executed NOT by Django, but by the embedded Python
+interpreter from the frePPLe engine.
+
+The code iterates over all objects in the C++ core engine, and writes this 
+information to a set of text files.
+'''
+
+
 from time import time
 import csv
 

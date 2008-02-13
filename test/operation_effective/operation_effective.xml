@@ -49,7 +49,7 @@
               <maximum name="Capacity" xsi:type="calendar_float">
                 <buckets>
                   <bucket start="2007-01-01T00:00:00">
-                    <value>1</value>
+                    <value>2</value>
                   </bucket>
                 </buckets>
               </maximum>
@@ -76,7 +76,7 @@
               <maximum name="Capacity" xsi:type="calendar_float">
                 <buckets>
                   <bucket start="2007-01-01T00:00:00">
-                    <value>1</value>
+                    <value>2</value>
                   </bucket>
                 </buckets>
               </maximum>
@@ -146,7 +146,7 @@
 
   <!--
     Case 2: same as case 1, but now there is a period where both operations
-    are effecitive, and both sourcing from both locations is possible.
+    are effective, and both sourcing from both locations is possible.
   -->
   <buffers>
     <buffer name="2. end item in location A">
@@ -184,7 +184,7 @@
             xsi:type="operation_fixed_time" duration="P1D">
               <flows>
                 <flow xsi:type="flow_start">
-                  <buffer name="1. end item in location A" />
+                  <buffer name="2. end item in location A" />
                   <quantity>-1</quantity>
                 </flow>
               </flows>

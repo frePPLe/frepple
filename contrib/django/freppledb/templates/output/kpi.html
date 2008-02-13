@@ -1,27 +1,12 @@
-{% extends "admin/base_site_nav.html" %}
-{% load i18n admin_list adminmedia %}
-{% block stylesheet %}{% admin_media_prefix %}css/changelists.css{% endblock %}
-{% block extrahead %}{{ block.super }}
-{% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
-{% endfor %}
-{% endblock %}
-{% block coltype %}colM{% endblock %}
-{% block tools %}<div class="tools">
-<a href="{% addurlparameter type csv %}"><img src="/static/csv.png"/>{% trans 'Export' %}</a>
-</div>{% endblock %}
-{% block content %}
-<div id="content-main">
+{% extends "admin/base_site_list.html" %}
 
-<table>
-<thead><tr>{{ rowheader }}</tr></thead>
-
-<tbody>{% for i in objectlist %}
+{% block tablebody %}
+{% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
 <td>{% ifchanged %}<strong>{{i.category}}</strong>{% endifchanged %}</td>
 <td>{{i.name}}</td>
 <td>{{i.value}}</td>
 </tr>{% endfor %}
-</tbody></table>
-</div>
-
 {% endblock %}
+
+{% block pagination %}{% endblock %}

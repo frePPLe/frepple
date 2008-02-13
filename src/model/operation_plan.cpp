@@ -211,12 +211,13 @@ DECLARE_EXPORT bool OperationPlan::initialize()
   // See if we can consolidate this operationplan with an existing one.
   // Merging is possible only when all the following conditions are met:
   //   - it is a fixedtime operation
+  //   - it doesn't load any resources
   //   - both operationplans aren't locked
   //   - both operationplans have no owner
   //   - start and end date of both operationplans are the same
   //   - demand of both operationplans are the same
   if (getOperation()->getType() == OperationFixedTime::metadata 
-    && !getLocked() && !getOwner())
+    && !getLocked() && !getOwner() && getOperation()->getLoads().empty())
   {
     // Loop through candidates
     OperationPlan *x = oper->last_opplan;

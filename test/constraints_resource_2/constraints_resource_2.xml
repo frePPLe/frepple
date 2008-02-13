@@ -15,54 +15,6 @@
       <filename>output.1.xml</filename>
     </command>
   </commands>
-  <calendars>
-    <calendar name="Weeks" xsi:type="calendar_void">
-      <buckets>
-        <bucket start="2007-01-01T00:00:00">
-          <name>Jan Week1</name>
-        </bucket>
-        <bucket start="2007-01-07T00:00:00">
-          <name>Jan Week2</name>
-        </bucket>
-        <bucket start="2007-01-14T00:00:00">
-          <name>Jan Week3</name>
-        </bucket>
-        <bucket start="2007-01-21T00:00:00">
-          <name>Jan Week4</name>
-        </bucket>
-        <bucket start="2007-01-28T00:00:00">
-          <name>Jan Week5</name>
-        </bucket>
-        <bucket start="2007-02-04T00:00:00">
-          <name>Feb Week1</name>
-        </bucket>
-        <bucket start="2007-02-11T00:00:00">
-          <name>Feb Week2</name>
-        </bucket>
-        <bucket start="2007-02-18T00:00:00">
-          <name>Feb Week3</name>
-        </bucket>
-        <bucket start="2007-02-25T00:00:00">
-          <name>Feb Week4</name>
-        </bucket>
-        <bucket start="2007-03-04T00:00:00">
-          <name>Mar Week1</name>
-        </bucket>
-        <bucket start="2007-03-11T00:00:00">
-          <name>Mar Week2</name>
-        </bucket>
-        <bucket start="2007-03-18T00:00:00">
-          <name>Mar Week3</name>
-        </bucket>
-        <bucket start="2007-03-25T00:00:00">
-          <name>Mar Week4</name>
-        </bucket>
-        <bucket start="2007-04-01T00:00:00">
-          <name>Remainder</name>
-        </bucket>
-      </buckets>
-    </calendar>
-  </calendars>
   <operations>
     <operation name="make end item" xsi:type="operation_fixed_time">
       <duration>P1D</duration>

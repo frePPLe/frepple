@@ -37,12 +37,12 @@ class OutputTest(TestCase):
     self.assertContains(response, '8 buffers')
 
   def test_output_buffer_csvtable(self):
-    response = self.client.get('/buffer/', {'type':'csv'})
+    response = self.client.get('/buffer/', {'reporttype':'csv'})
     self.failUnlessEqual(response.status_code, 200)
     self.failUnlessEqual(response.__getitem__('Content-Type'), 'text/csv')
 
   def test_output_buffer_csvlist(self):
-    response = self.client.get('/buffer/', {'type':'csvlist'})
+    response = self.client.get('/buffer/', {'reporttype':'csvlist'})
     self.failUnlessEqual(response.status_code, 200)
     self.failUnlessEqual(response.__getitem__('Content-Type'), 'text/csv')
 
@@ -53,7 +53,7 @@ class OutputTest(TestCase):
     self.assertContains(response, '3 resources')
 
   def test_output_resource_csvtable(self):
-    response = self.client.get('/resource/', {'type':'csv'})
+    response = self.client.get('/resource/', {'reporttype':'csv'})
     self.failUnlessEqual(response.status_code, 200)
     self.failUnlessEqual(response.__getitem__('Content-Type'), 'text/csv')
 
@@ -64,7 +64,7 @@ class OutputTest(TestCase):
     self.assertContains(response, '1 items')
 
   def test_output_demand_csvlist(self):
-    response = self.client.get('/demand/', {'type':'csvlist'})
+    response = self.client.get('/demand/', {'reporttype':'csvlist'})
     self.failUnlessEqual(response.status_code, 200)
     self.failUnlessEqual(response.__getitem__('Content-Type'), 'text/csv')
 
@@ -75,7 +75,7 @@ class OutputTest(TestCase):
     self.assertContains(response, '2 forecasts')
 
   def test_output_forecast_csvlist(self):
-    response = self.client.get('/forecast/', {'type':'csvlist'})
+    response = self.client.get('/forecast/', {'reporttype':'csvlist'})
     self.failUnlessEqual(response.status_code, 200)
     self.failUnlessEqual(response.__getitem__('Content-Type'), 'text/csv')
 
@@ -86,7 +86,7 @@ class OutputTest(TestCase):
     self.assertContains(response, '14 operations')
 
   def test_output_operation_csvtable(self):
-    response = self.client.get('/operation/', {'type':'csv'})
+    response = self.client.get('/operation/', {'reporttype':'csv'})
     self.failUnlessEqual(response.status_code, 200)
     self.failUnlessEqual(response.__getitem__('Content-Type'), 'text/csv')
 
@@ -97,6 +97,6 @@ class OutputTest(TestCase):
     self.assertContains(response, '0 problems')
 
   def test_output_problem_csvlist(self):
-    response = self.client.get('/problem/', {'type':'csvlist'})
+    response = self.client.get('/problem/', {'reporttype':'csvlist'})
     self.failUnlessEqual(response.status_code, 200)
     self.failUnlessEqual(response.__getitem__('Content-Type'), 'text/csv')

@@ -130,14 +130,14 @@
 			<description>Buffer &apos;product in factory 1&apos; has material excess of 5</description>
 			<start>2007-01-02T12:00:00</start>
 			<end>2030-12-31T00:00:00</end>
-			<weight>1</weight>
+			<weight>5</weight>
 		</problem>
 		<problem>
 			<name>material excess</name>
 			<description>Buffer &apos;product in factory 2&apos; has material excess of 10</description>
 			<start>2007-01-02T12:00:00</start>
 			<end>2030-12-31T00:00:00</end>
-			<weight>1</weight>
+			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>

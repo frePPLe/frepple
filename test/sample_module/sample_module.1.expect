@@ -207,10 +207,10 @@
 	<problems>
 		<problem>
 			<name>material excess</name>
-			<description>Buffer &apos;product in distribution centre&apos; has material excess of 20</description>
+			<description>Buffer &apos;product in distribution centre&apos; has material excess of 5</description>
 			<start>1971-01-01T00:00:00</start>
 			<end>2007-01-03T12:00:00</end>
-			<weight>1</weight>
+			<weight>5</weight>
 		</problem>
 	</problems>
 </plan>

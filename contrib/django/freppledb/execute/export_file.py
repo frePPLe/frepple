@@ -65,7 +65,7 @@ def exportFlowplans():
   starttime = time()
   writer = csv.writer(open("buffers.csv", "wb"), quoting=csv.QUOTE_ALL)
   for i in frepple.buffer():
-    for j in i['FLOWPLANS']:
+    for j in i['flowplans']:
       writer.writerow(
        (j['operationplan'], j['buffer'], j['quantity'],
         j['date'], j['onhand'])

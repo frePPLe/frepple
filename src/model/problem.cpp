@@ -269,7 +269,6 @@ DECLARE_EXPORT HasProblems::EntityIterator::EntityIterator() : type(0)
 
 
 DECLARE_EXPORT HasProblems::EntityIterator& HasProblems::EntityIterator::operator++()
-//@todo Problem iterator is not super-efficient, shows up high in profiling
 {
   switch (type)
   {

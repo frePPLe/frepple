@@ -26,4 +26,4 @@ OPERATION	make end item	2007-01-14T12:00:00	2007-01-15T12:00:00	10
 OPERATION	make end item	2007-01-15T12:00:00	2007-01-16T12:00:00	10
 OPERATION	make end item	2007-01-17T00:00:00	2007-01-18T00:00:00	10
 OPERATION	make end item	2007-01-18T00:00:00	2007-01-19T00:00:00	10
-PROBLEM	material excess	Buffer 'end item' has material excess of 30	2007-01-15T12:00:00 / 2007-01-19T00:00:00
+PROBLEM	material excess	Buffer 'end item' has material excess of 20	2007-01-15T12:00:00 / 2007-01-19T00:00:00

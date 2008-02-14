@@ -37,11 +37,11 @@ OPERATION	supply item F	2007-01-10T00:00:00	2007-01-10T00:00:00	10
 PROBLEM	material excess	Buffer 'buffer A' has material excess of 10	1971-01-01T00:00:00 / 2007-01-05T00:00:00
 PROBLEM	material excess	Buffer 'buffer B' has material excess of 10	1971-01-01T00:00:00 / 2007-01-05T00:00:00
 PROBLEM	material excess	Buffer 'buffer B' has material excess of 10	2007-01-10T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'buffer C' has material excess of 20	1971-01-01T00:00:00 / 2007-01-10T00:00:00
+PROBLEM	material excess	Buffer 'buffer C' has material excess of 10	1971-01-01T00:00:00 / 2007-01-10T00:00:00
 PROBLEM	material excess	Buffer 'buffer D' has material excess of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'buffer E' has material excess of 10	1971-01-01T00:00:00 / 2007-01-05T00:00:00
 PROBLEM	material excess	Buffer 'buffer E' has material excess of 10	2007-01-10T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'buffer F' has material excess of 25	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'buffer F' has material excess of 15	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	late	Demand 'order A' planned P5D after its due date	2007-01-05T00:00:00 / 2007-01-10T00:00:00
 PROBLEM	short	Demand 'order B' planned 10 units short	2007-01-05T00:00:00 / 2007-01-05T00:00:00
 PROBLEM	late	Demand 'order C' planned P5D after its due date	2007-01-05T00:00:00 / 2007-01-10T00:00:00

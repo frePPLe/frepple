@@ -49,13 +49,18 @@ DECLARE_EXPORT void Resource::updateProblems()
   float shortageQty(0.0);
   float curMin(0.0);
   float excessQty(0.0);
-  for (loadplanlist::const_iterator f=loadplans.begin(); f!=loadplans.end();++f)
+  for (loadplanlist::const_iterator iter = loadplans.begin(); 
+    iter != loadplans.end(); )
   {
     // Process changes in the maximum or minimum targets
-    if (f->getType() == 4)
-      curMax = f->getMax();
-    else if (f->getType() == 3)
-      curMin = f->getMin();
+    if (iter->getType() == 4)
+      curMax = iter->getMax();
+    else if (iter->getType() == 3)
+      curMin = iter->getMin();
+
+    // Only consider the last one loadplans for a certain date
+    const TimeLine<LoadPlan>::Event *f = &*(iter++);
+    if (iter!=loadplans.end() && iter->getDate()==f->getDate()) continue;
 
     // Check against minimum target
     float delta = static_cast<float>(f->getOnhand() - curMin);
@@ -111,7 +116,7 @@ DECLARE_EXPORT void Resource::updateProblems()
       }
     }
 
-  }  // End of for-loop through the flowplans
+  }  // End of for-loop through the loadplans
 
   // The excess lasts till the end of the horizon...
   if (excessProblem)

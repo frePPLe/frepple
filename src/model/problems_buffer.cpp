@@ -49,16 +49,18 @@ DECLARE_EXPORT void Buffer::updateProblems()
   float shortageQty(0.0);
   float curMin(0.0);
   float excessQty(0.0);
-  for (flowplanlist::const_iterator
-      f=flowplans.begin();
-      f!=flowplans.end();
-      ++f)
+  for (flowplanlist::const_iterator iter = flowplans.begin();
+    iter != flowplans.end(); )
   {
     // Process changes in the maximum or minimum targets
-    if (f->getType() == 4)
-      curMax = f->getMax();
-    else if (f->getType() == 3)
-      curMin = f->getMin();
+    if (iter->getType() == 4)
+      curMax = iter->getMax();
+    else if (iter->getType() == 3)
+      curMin = iter->getMin();
+
+    // Only consider the last one flowplans for a certain date
+    const TimeLine<FlowPlan>::Event *f = &*(iter++);
+    if (iter!=flowplans.end() && iter->getDate()==f->getDate()) continue;
 
     // Check against minimum target
     float delta = static_cast<float>(f->getOnhand() - curMin);

@@ -1026,24 +1026,22 @@ OPERATION	delivery 9	2007-03-01T00:00:00	2007-03-01T00:00:00	15
 OPERATION	delivery 9	2007-04-01T00:00:00	2007-04-01T00:00:00	15
 OPERATION	delivery 9	2007-05-01T00:00:00	2007-05-01T00:00:00	15
 OPERATION	delivery 9	2007-06-01T00:00:00	2007-06-01T00:00:00	15
-PROBLEM	material excess	Buffer 'buffer 1' has material excess of 85	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'buffer 2' has material excess of 85	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'buffer 3' has material excess of 85	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'buffer 5' has material excess of 130	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'buffer 6' has material excess of 97	1971-01-01T00:00:00 / 2007-01-10T00:00:00
-PROBLEM	material excess	Buffer 'buffer 6' has material excess of 69	2007-01-11T00:00:00 / 2007-01-17T00:00:00
+PROBLEM	material excess	Buffer 'buffer 1' has material excess of 70	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'buffer 2' has material excess of 72	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'buffer 3' has material excess of 75	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'buffer 5' has material excess of 120	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'buffer 6' has material excess of 87	1971-01-01T00:00:00 / 2007-01-10T00:00:00
+PROBLEM	material excess	Buffer 'buffer 6' has material excess of 59	2007-01-11T00:00:00 / 2007-01-17T00:00:00
 PROBLEM	material excess	Buffer 'buffer 6' has material excess of 325	2007-01-21T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 6' has material shortage of 3	2007-01-10T00:00:00 / 2007-01-11T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 6' has material shortage of 16	2007-01-17T00:00:00 / 2007-01-21T00:00:00
-PROBLEM	material excess	Buffer 'buffer 7' has material excess of 100	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'buffer 8' has material excess of 115	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'buffer 9' has material excess of 65	1971-01-01T00:00:00 / 2007-01-07T00:00:00
-PROBLEM	material excess	Buffer 'buffer 9' has material excess of 35	2007-01-08T00:00:00 / 2007-01-11T00:00:00
+PROBLEM	material excess	Buffer 'buffer 7' has material excess of 90	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'buffer 8' has material excess of 105	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'buffer 9' has material excess of 55	1971-01-01T00:00:00 / 2007-01-07T00:00:00
+PROBLEM	material excess	Buffer 'buffer 9' has material excess of 25	2007-01-08T00:00:00 / 2007-01-11T00:00:00
 PROBLEM	material excess	Buffer 'buffer 9' has material excess of 630	2007-02-05T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 9' has material shortage of 5	2007-01-07T00:00:00 / 2007-01-08T00:00:00
-PROBLEM	material shortage	Buffer 'buffer 9' has material shortage of 35	2007-01-11T00:00:00 / 2007-01-15T00:00:00
-PROBLEM	material shortage	Buffer 'buffer 9' has material shortage of 45	2007-01-15T00:00:00 / 2007-01-29T00:00:00
-PROBLEM	material shortage	Buffer 'buffer 9' has material shortage of 30	2007-01-29T00:00:00 / 2007-02-05T00:00:00
+PROBLEM	material shortage	Buffer 'buffer 9' has material shortage of 45	2007-01-11T00:00:00 / 2007-02-05T00:00:00
 PROBLEM	before current	Job '10' planned in the past	2006-12-28T12:00:00 / 2007-01-01T00:00:00
 PROBLEM	before current	Job '52' planned in the past	2006-12-28T12:00:00 / 2007-01-01T00:00:00
 PROBLEM	before current	Job '94' planned in the past	2006-12-28T12:00:00 / 2007-01-01T00:00:00

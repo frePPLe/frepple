@@ -262,9 +262,9 @@ class freppleTest (unittest.TestCase):
                 if debug: print "Comparing expected and actual output", nr
                 if diff(self.subdirectory + "." + str(nr) + ".expect", \
                         "output."+str(nr)+".xml"):
-                    self.assertFalse("Difference in output " + str(nr))
+                    self.assertFalse("Difference in output " + str(nr), "Difference in output " + str(nr))
             else:
-                self.assertFalse('Missing planner output file ' + str(nr))
+                self.assertFalse('Missing planner output file ' + str(nr), 'Missing planner output file ' + str(nr))
             nr += 1;
 
 def diff(f1, f2):

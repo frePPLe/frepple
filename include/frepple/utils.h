@@ -1257,7 +1257,7 @@ class TimePeriod
     /** Converts the date to a string, formatted according to ISO 8601. */
     operator string() const
     {
-      char str[30]; // @todo NOT SECURE!!!
+      char str[20];
       toCharBuffer(str);
       return string(str);
     }
@@ -1293,9 +1293,9 @@ class TimePeriod
 
     /** This function fills a character buffer with a text representation of
       * the TimePeriod.<br>
-      * The character buffer passed is expected to have room for
-      * at least 20 characters. 20 characters should be sufficient for even
-      * the most longest possible time duration.<br>
+      * The character buffer passed MUST have room for at least 20 characters. 
+      * 20 characters is sufficient for even the most longest possible time 
+      * duration.<br>
       * The output format is described with the string() method.
       * @see string()
       */

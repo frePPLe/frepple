@@ -259,7 +259,7 @@
 			<description>Buffer &apos;buffer B&apos; has material shortage of 3</description>
 			<start>2007-01-30T00:00:00</start>
 			<end>2030-12-31T00:00:00</end>
-			<weight>1</weight>
+			<weight>3</weight>
 		</problem>
 	</problems>
 </plan>

@@ -4269,7 +4269,7 @@ class ProblemCapacityOverload : public Problem
   public:
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return false;}
-    float getWeight() const {return 1.0f;}  // @todo unimplemented
+    float getWeight() const {return qty;}
     ProblemCapacityOverload(Resource* r, DateRange d, float q)
         : Problem(r), qty(q), dr(d) {addProblem();}
     ~ProblemCapacityOverload() {removeProblem();}
@@ -4299,7 +4299,7 @@ class ProblemCapacityUnderload : public Problem
   public:
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return true;}
-    float getWeight() const {return 1.0f;}  // @todo unimplemented
+    float getWeight() const {return qty;}
     ProblemCapacityUnderload(Resource* r, DateRange d, float q)
         : Problem(r), qty(q), dr(d) {addProblem();}
     ~ProblemCapacityUnderload() {removeProblem();}
@@ -4329,7 +4329,7 @@ class ProblemMaterialShortage : public Problem
   public:
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return false;}
-    float getWeight() const {return 1.0f;}  // @todo not implemented
+    float getWeight() const {return qty;}
     ProblemMaterialShortage(Buffer* b, Date st, Date nd, float q)
         : Problem(b), qty(q), dr(st,nd) {addProblem();}
     ~ProblemMaterialShortage() {removeProblem();}
@@ -4359,7 +4359,7 @@ class ProblemMaterialExcess : public Problem
   public:
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return true;}
-    float getWeight() const {return 1.0f;}  // @todo not implemented
+    float getWeight() const {return qty;}
     ProblemMaterialExcess(Buffer* b, Date st, Date nd, float q)
         : Problem(b), qty(q), dr(st,nd) {addProblem();}
     ~ProblemMaterialExcess() {removeProblem();}

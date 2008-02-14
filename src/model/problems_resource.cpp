@@ -58,7 +58,7 @@ DECLARE_EXPORT void Resource::updateProblems()
     else if (iter->getType() == 3)
       curMin = iter->getMin();
 
-    // Only consider the last one loadplans for a certain date
+    // Only consider the last loadplan for a certain date
     const TimeLine<LoadPlan>::Event *f = &*(iter++);
     if (iter!=loadplans.end() && iter->getDate()==f->getDate()) continue;
 

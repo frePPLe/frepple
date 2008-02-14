@@ -177,7 +177,7 @@
 			<description>Buffer &apos;end item&apos; has material excess of 10</description>
 			<start>2007-01-02T09:00:00</start>
 			<end>2007-01-03T08:00:00</end>
-			<weight>1</weight>
+			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>

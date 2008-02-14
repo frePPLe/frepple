@@ -58,7 +58,7 @@ DECLARE_EXPORT void Buffer::updateProblems()
     else if (iter->getType() == 3)
       curMin = iter->getMin();
 
-    // Only consider the last one flowplans for a certain date
+    // Only consider the last flowplan for a certain date
     const TimeLine<FlowPlan>::Event *f = &*(iter++);
     if (iter!=flowplans.end() && iter->getDate()==f->getDate()) continue;
 

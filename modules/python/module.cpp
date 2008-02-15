@@ -230,26 +230,9 @@ void CommandPython::initialize()
     throw frepple::RuntimeException("Can't initialize Python interpreter");
 }
 
-
-PyObject* PythonDateTime(const Date& d)
-{
-  // The standard library function localtime() is not re-entrant: the same
-  // static structure is used for all calls. In a multi-threaded environment
-  // the function is not to be used.
-  // The POSIX standard defines a re-entrant version of the function:
-  // localtime_r.
-  // Visual C++ 6.0 and Borland 5.5 are missing it, but provide a thread-safe
-  // variant without changing the function semantics.
-  time_t ticks = d.getTicks();
-#ifdef HAVE_LOCALTIME_R
-  struct tm t;
-  localtime_r(&ticks, &t);
-#else
-  struct tm t = *localtime(&ticks);
+// Include the code of commonly used python utility functions
+#ifndef DOXYGEN
+#include "pythonutils.cpp"
 #endif
-  return PyDateTime_FromDateAndTime(t.tm_year+1900, t.tm_mon+1, t.tm_mday,
-      t.tm_hour, t.tm_min, t.tm_sec, 0);
-}
-
 
 } // End namespace

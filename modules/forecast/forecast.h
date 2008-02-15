@@ -62,54 +62,54 @@
   * The XML schema extension enabled by this module is (see mod_forecast.xsd):
   * <PRE>
   * <!-- Define the forecast type -->
-  * <xsd:complexType name="DEMAND_FORECAST">
+  * <xsd:complexType name="demand_forecast">
   *   <xsd:complexContent>
-  *     <xsd:extension base="DEMAND">
+  *     <xsd:extension base="demand">
   *       <xsd:choice minOccurs="0" maxOccurs="unbounded">
-  *         <xsd:element name="CALENDAR" type="CALENDAR" />
-  *         <xsd:element name="DISCRETE" type="xsd:boolean" />
-  *         <xsd:element name="BUCKETS">
+  *         <xsd:element name="calendar" type="calendar" />
+  *         <xsd:element name="discrete" type="xsd:boolean" />
+  *         <xsd:element name="buckets">
   *           <xsd:complexType>
   *             <xsd:choice minOccurs="0" maxOccurs="unbounded">
-  *               <xsd:element name="BUCKET">
+  *               <xsd:element name="bucket">
   *                 <xsd:complexType>
   *                   <xsd:all>
-  *                     <xsd:element name="TOTAL" type="positiveFloat"
+  *                     <xsd:element name="total" type="positiveFloat"
   *                       minOccurs="0" />
-  *                     <xsd:element name="NET" type="positiveFloat"
+  *                     <xsd:element name="net" type="positiveFloat"
   *                       minOccurs="0" />
-  *                     <xsd:element name="CONSUMED" type="positiveFloat"
+  *                     <xsd:element name="consumed" type="positiveFloat"
   *                       minOccurs="0" />
-  *                     <xsd:element name="START" type="xsd:dateTime"
+  *                     <xsd:element name="start" type="xsd:dateTime"
   *                       minOccurs="0"/>
-  *                     <xsd:element name="END" type="xsd:dateTime"
+  *                     <xsd:element name="end" type="xsd:dateTime"
   *                       minOccurs="0"/>
   *                   </xsd:all>
-  *                   <xsd:attribute name="TOTAL" type="positiveFloat" />
-  *                   <xsd:attribute name="NET" type="positiveFloat" />
-  *                   <xsd:attribute name="CONSUMED" type="positiveFloat" />
-  *                   <xsd:attribute name="START" type="xsd:dateTime" />
-  *                   <xsd:attribute name="END" type="xsd:dateTime" />
+  *                   <xsd:attribute name="total" type="positiveFloat" />
+  *                   <xsd:attribute name="net" type="positiveFloat" />
+  *                   <xsd:attribute name="consumed" type="positiveFloat" />
+  *                   <xsd:attribute name="start" type="xsd:dateTime" />
+  *                   <xsd:attribute name="end" type="xsd:dateTime" />
   *                 </xsd:complexType>
   *               </xsd:element>
   *             </xsd:choice>
   *           </xsd:complexType>
   *         </xsd:element>
   *       </xsd:choice>
-  *       <xsd:attribute name="DISCRETE" type="xsd:boolean" />
+  *       <xsd:attribute name="discrete" type="xsd:boolean" />
   *     </xsd:extension>
   *   </xsd:complexContent>
   * </xsd:complexType>
   *
   * <!-- Define the netting solver. -->
-	* <xsd:complexType name="SOLVER_FORECAST">
+	* <xsd:complexType name="solver_forecast">
 	*	<xsd:complexContent>
-	*		<xsd:extension base="SOLVER">
+	*		<xsd:extension base="solver">
 	*			<xsd:choice minOccurs="0" maxOccurs="unbounded">
-	*				<xsd:element name="LOGLEVEL" type="loglevel" />
-	*				<xsd:element name="AUTOMATIC" type="xsd:boolean" />
+	*				<xsd:element name="loglevel" type="loglevel" />
+	*				<xsd:element name="automatic" type="xsd:boolean" />
 	*			</xsd:choice>
-	*			<xsd:attribute name="AUTOMATIC" type="xsd:boolean" />
+	*			<xsd:attribute name="automatic" type="xsd:boolean" />
 	*		</xsd:extension>
 	*	</xsd:complexContent>
 	* </xsd:complexType>

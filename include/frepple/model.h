@@ -43,7 +43,6 @@
 namespace frepple
 {
 
-
 class Flow;
 class FlowEnd;
 class FlowPlan;

@@ -111,6 +111,10 @@ using namespace frepple;
 namespace module_python
 {
 
+// Include definitions of commonly used python utility functions
+#ifndef DOXYGEN
+#include "pythonutils.h"
+#endif
 
 /** Initialization routine for the library. */
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);
@@ -273,10 +277,6 @@ class CommandPython : public Command, public XMLinstruction
     /** Python exception class matching with frepple::RuntimeException. */
     static PyObject* PythonRuntimeException;
 };
-
-
-/** Conversion between the frePPLe date class and the Python datetime class. */
-PyObject* PythonDateTime(const Date& d);
 
 
 extern "C"

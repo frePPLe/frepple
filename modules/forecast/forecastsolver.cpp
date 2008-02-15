@@ -30,7 +30,7 @@
 namespace module_forecast
 {
 
-const XMLtag tag_automatic("AUTOMATIC");
+const XMLtag tag_automatic("automatic");
 
 
 void ForecastSolver::endElement(XMLInput& pIn, XMLElement& pElement)

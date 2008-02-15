@@ -33,6 +33,12 @@
 namespace module_forecast
 {
 
+// Include commonly used utility functions, provided by the python module
+#ifndef DOXYGEN
+#include "../python/pythonutils.h"
+#include "../python/pythonutils.cpp"
+#endif
+
 PyTypeObject PythonForecast::InfoType =
 {
   PyObject_HEAD_INIT(NULL)
@@ -160,27 +166,6 @@ void initializePython()
     throw;  // Rethrow the exception
   }
   PyEval_ReleaseLock();
-}
-
-
-PyObject* PythonDateTime(const Date& d)   // @todo avoid redefining this function - already in python module
-{
-  // The standard library function localtime() is not re-entrant: the same
-  // static structure is used for all calls. In a multi-threaded environment
-  // the function is not to be used.
-  // The POSIX standard defines a re-entrant version of the function:
-  // localtime_r.
-  // Visual C++ 6.0 and Borland 5.5 are missing it, but provide a thread-safe
-  // variant without changing the function semantics.
-  time_t ticks = d.getTicks();
-#ifdef HAVE_LOCALTIME_R
-  struct tm t;
-  localtime_r(&ticks, &t);
-#else
-  struct tm t = *localtime(&ticks);
-#endif
-  return PyDateTime_FromDateAndTime(t.tm_year+1900, t.tm_mon+1, t.tm_mday,
-      t.tm_hour, t.tm_min, t.tm_sec, 0);
 }
 
 

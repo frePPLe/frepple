@@ -151,7 +151,7 @@ new2 = 5
 new3 = 0
 new4 =
 set_release:
-	for i in "configure.in" "doc/menu.html" "contrib/rpm/frepple.spec" "include/frepple/utils.h" "contrib/django/freppledb/settings.py" "contrib/django/freppledb/locale/django.po"; do \
+	for i in "configure.in" "doc/menu.html" "contrib/rpm/frepple.spec" "include/frepple/utils.h" "contrib/django/freppledb/settings.py" "contrib/django/freppledb/locale/django.po" "bin/frepple.xsd" "bin/frepple_core.xsd"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)$(old4)/$(new1).$(new2).$(new3)$(new4)/g' $$i >out.tmp; \
 		mv out.tmp $$i; \
 	done

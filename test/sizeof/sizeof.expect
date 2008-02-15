@@ -1,8 +1,8 @@
 Plan	36
 Calendar	36
-Calendar::Bucket	28
-CalendarFloat	36
-CalendarFloat::Bucket	32
+Calendar::Bucket	32
+CalendarFloat	40
+CalendarFloat::Bucket	36
 Item	60
 Location	60
 Customer	56

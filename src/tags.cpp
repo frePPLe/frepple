@@ -59,6 +59,7 @@ DECLARE_EXPORT const XMLtag Tags::tag_customers("customers");
 DECLARE_EXPORT const XMLtag Tags::tag_data("data");
 DECLARE_EXPORT const XMLtag Tags::tag_date("date");
 DECLARE_EXPORT const XMLtag Tags::tag_dates("dates");
+DECLARE_EXPORT const XMLtag Tags::tag_default("default");
 DECLARE_EXPORT const XMLtag Tags::tag_demand("demand");
 DECLARE_EXPORT const XMLtag Tags::tag_demands("demands");
 DECLARE_EXPORT const XMLtag Tags::tag_description("description");

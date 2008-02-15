@@ -17,6 +17,7 @@
 	</solvers>
 	<calendars>
 		<calendar name="planningbuckets" xsi:type="calendar_float">
+			<default>0</default>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
 					<name>Mon Jan 01</name>

@@ -128,9 +128,15 @@ class Calendar : public HasName<Calendar>, public Object
         /** A pointer to the previous bucket. */
         Bucket* prevBucket;
 
+        /** Priority of this bucket, compared to other buckets effective 
+          * at a certain time. 
+          */
+        float priority;
+
       protected:
         /** Constructor. */
-        Bucket(Date n) : startdate(n), nextBucket(NULL), prevBucket(NULL) {}
+        Bucket(Date n) : startdate(n), nextBucket(NULL), prevBucket(NULL), 
+          priority(0.0) {}
 
       public:
         /** This method is here only to keep the API of all calendar classes
@@ -166,6 +172,20 @@ class Calendar : public HasName<Calendar>, public Object
 
         /** Returns the start date of the bucket. */
         Date getStart() const {return startdate;}
+
+        /** Returns the priority of this bucket, compared to other buckets 
+          * effective at a certain time.<br>
+          * Lower numbers indicate a higher priority level.<br>
+          * The default value is 0.
+          */
+        float getPriority() const {return priority;}
+
+        /** Updates the priority of this bucket, compared to other buckets 
+          * effective at a certain time.<br>
+          * Lower numbers indicate a higher priority level.<br>
+          * The default value is 0.
+          */
+        void setPriority(float f) {priority = f;}
 
         virtual DECLARE_EXPORT void writeElement
           (XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -302,8 +322,10 @@ template <typename T> class CalendarValue : public Calendar
       private:
         /** This is the value stored in this bucket. */
         T val;
+
         /** Constructor. */
         BucketValue(Date& n) : Bucket(n) {};
+
       public:
         /** Returns the value of this bucket. */
         const T& getValue() const {return val;}
@@ -318,6 +340,7 @@ template <typename T> class CalendarValue : public Calendar
           o->BeginObject(Tags::tag_bucket, Tags::tag_start, getStart());
           if (!useDefaultName()) o->writeElement(Tags::tag_name, getName());
           o->writeElement(Tags::tag_end, getEnd());
+          if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
           o->writeElement(Tags::tag_value, val);
           o->EndObject(tag);
         }
@@ -332,6 +355,7 @@ template <typename T> class CalendarValue : public Calendar
 
         virtual const MetaClass& getType() const
           {return Calendar::Bucket::metadata;}
+
         virtual size_t getSize() const
           {return sizeof(typename CalendarValue<T>::BucketValue) + getName().size();}
     };
@@ -351,12 +375,56 @@ template <typename T> class CalendarValue : public Calendar
 
     const T& getValue(Calendar::BucketIterator& i) const
       {return reinterpret_cast<BucketValue&>(*i).getValue();}
+  
+    /** Returns the default calendar value when no entry is matching. */
+    virtual T getDefault() const {return defaultValue;}
+  
+    /** Update the default calendar value when no entry is matching. */
+    virtual void setDefault(const T v) {defaultValue = v;}
 
+    void writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+    {
+      // Writing a reference
+      if (m == REFERENCE)
+      {
+        o->writeElement
+          (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+        return;
+      }
+
+      // Write the complete object
+      if (m != NOHEADER) o->BeginObject
+        (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+
+      // Write my own fields
+      o->writeElement(Tags::tag_default, getDefault());
+
+      // Write all buckets
+      o->BeginObject (Tags::tag_buckets);
+      for (BucketIterator i = beginBuckets(); i != endBuckets(); ++i)
+        // We use the FULL mode, to force the buckets being written regardless
+        // of the depth in the XML tree.
+        o->writeElement(Tags::tag_bucket, *i, FULL);
+      o->EndObject(Tags::tag_buckets);
+
+      o->EndObject(tag);
+    }
+
+    void endElement(XMLInput& pIn, XMLElement& pElement)
+    {
+      if (pElement.isA(Tags::tag_default))
+        pElement >> defaultValue;
+      else
+        Calendar::endElement(pIn, pElement);
+    }
   private:
     /** Factory method to add new buckets to the calendar.
       * @see Calendar::addBucket()
       */
     Bucket* createNewBucket(Date n) {return new BucketValue(n);}
+
+    /** Value when no bucket is matching a certain date. */
+    T defaultValue;
 };
 
 
@@ -382,8 +450,10 @@ template <typename T> class CalendarPointer : public Calendar
       private:
         /** The object stored in this bucket. */
         T* val;
+
         /** Constructor. */
         BucketPointer(Date& n) : Bucket(n), val(NULL) {};
+
       public:
         /** Returns the value stored in this bucket. */
         T* getValue() const {return val;}
@@ -398,16 +468,19 @@ template <typename T> class CalendarPointer : public Calendar
           o->BeginObject(Tags::tag_bucket, Tags::tag_start, getStart());
           if (!useDefaultName()) o->writeElement(Tags::tag_name, getName());
           o->writeElement(Tags::tag_end, getEnd());
+          if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
           if (val) o->writeElement(Tags::tag_value, val);
           o->EndObject(tag);
         }
 
-        void beginElement (XMLInput& pIn, XMLElement& pElement)
+        void beginElement(XMLInput& pIn, XMLElement& pElement)
         {
           if (pElement.isA(Tags::tag_value))
             pIn.readto(
               MetaCategory::ControllerDefault(T::metadata,pIn)
             );
+          else
+            Bucket::beginElement(pIn, pElement);
         }
 
         void endElement (XMLInput& pIn, XMLElement& pElement)
@@ -426,12 +499,13 @@ template <typename T> class CalendarPointer : public Calendar
 
         virtual const MetaClass& getType() const
           {return Calendar::Bucket::metadata;}
+
         virtual size_t getSize() const
           {return sizeof(typename CalendarPointer<T>::BucketPointer) + getName().size();}
     };
 
     /** Default constructor. */
-    CalendarPointer(const string& n) : Calendar(n) {}
+    CalendarPointer(const string& n) : Calendar(n), defaultValue(NULL) {}
 
     /** Returns the value on the specified date. */
     T* getValue(const Date d) const
@@ -441,13 +515,72 @@ template <typename T> class CalendarPointer : public Calendar
     void setValue(const Date d, T* v)
       {static_cast<BucketPointer*>(findBucket(d))->setValue(v);}
 
+    /** Returns the default calendar value when no entry is matching. */
+    virtual T* getDefault() const {return defaultValue;}
+  
+    /** Update the default calendar value when no entry is matching. */
+    virtual void setDefault(T* v) {defaultValue = v;}
+
     virtual const MetaClass& getType() const = 0;
+
+    void writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+    {
+      // Writing a reference
+      if (m == REFERENCE)
+      {
+        o->writeElement
+          (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+        return;
+      }
+
+      // Write the complete object
+      if (m != NOHEADER) o->BeginObject
+        (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
+
+      // Write my own fields
+      if (defaultValue) o->writeElement(Tags::tag_default, defaultValue);
+
+      // Write all buckets
+      o->BeginObject (Tags::tag_buckets);
+      for (BucketIterator i = beginBuckets(); i != endBuckets(); ++i)
+        // We use the FULL mode, to force the buckets being written regardless
+        // of the depth in the XML tree.
+        o->writeElement(Tags::tag_bucket, *i, FULL);
+      o->EndObject(Tags::tag_buckets);
+
+      o->EndObject(tag);
+    }
+
+    void beginElement (XMLInput& pIn, XMLElement& pElement)
+    {
+      if (pElement.isA (Tags::tag_default))
+        pIn.readto(T::reader(T::metadata,pIn));
+      else
+        Calendar::beginElement(pIn, pElement);
+    }
+
+    void endElement(XMLInput& pIn, XMLElement& pElement)
+    {
+      if (pElement.isA(Tags::tag_default))
+      {
+        T *o = dynamic_cast<T*>(pIn.getPreviousObject());
+        if (!o)
+          throw LogicException
+            ("Incorrect object type during read operation");
+        defaultValue = o;
+      }
+      else
+        Calendar::endElement(pIn, pElement); 
+    }
 
   private:
     /** Factory method to add new buckets to the calendar.
       * @see Calendar::addBucket()
       */
     Bucket* createNewBucket(Date n) {return new BucketPointer(n);}
+
+    /** Value when no bucket is matching a certain date. */
+    T* defaultValue;
 };
 
 
@@ -468,7 +601,8 @@ class CalendarFloat : public CalendarValue<float>
 {
     TYPEDEF(CalendarFloat);
   public:
-    CalendarFloat(const string& n) : CalendarValue<float>(n) {}
+    CalendarFloat(const string& n) : CalendarValue<float>(n) 
+      { setDefault(0.0); }
     DECLARE_EXPORT ~CalendarFloat();
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
@@ -480,7 +614,8 @@ class CalendarInt : public CalendarValue<int>
 {
     TYPEDEF(CalendarInt);
   public:
-    CalendarInt(const string& n) : CalendarValue<int>(n) {}
+    CalendarInt(const string& n) : CalendarValue<int>(n)
+      { setDefault(0); }
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
 };
@@ -491,7 +626,8 @@ class CalendarBool : public CalendarValue<bool>
 {
     TYPEDEF(CalendarBool);
   public:
-    CalendarBool(const string& n) : CalendarValue<bool>(n) {}
+    CalendarBool(const string& n) : CalendarValue<bool>(n) 
+      { setDefault(false); }
     DECLARE_EXPORT ~CalendarBool();
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;

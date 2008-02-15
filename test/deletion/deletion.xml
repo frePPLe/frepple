@@ -13,7 +13,7 @@
     <abortonerror>true</abortonerror>
 
     <!--
-      starting position...
+      Starting position...
     -->
     <command xsi:type="command_save" filename="output.1.xml" />
     <command xsi:type="command_solve">
@@ -306,6 +306,7 @@
     <resource name="assemble">
       <location name="Location 1" />
       <maximum name="assembly capacity" xsi:type="calendar_float">
+        <default>1</default>
         <buckets>
           <bucket start="2007-01-01T00:00:00">
             <name>all</name>

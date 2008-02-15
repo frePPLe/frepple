@@ -282,6 +282,7 @@ DECLARE_EXPORT void Calendar::Bucket::writeElement
   o->BeginObject(Tags::tag_bucket, Tags::tag_start, startdate);
   o->writeElement(Tags::tag_name, nm);
   o->writeElement(Tags::tag_end, enddate);
+  if (priority) o->writeElement(Tags::tag_priority, priority);
   o->EndObject(tag);
 }
 
@@ -290,6 +291,8 @@ DECLARE_EXPORT void Calendar::Bucket::endElement (XMLInput& pIn, XMLElement& pEl
 {
   if (pElement.isA(Tags::tag_name))
     pElement >> nm;
+  else if (pElement.isA(Tags::tag_priority))
+    pElement >> priority;
 }
 
 } // end namespace

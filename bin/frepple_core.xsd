@@ -21,7 +21,7 @@
  Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 -->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="0.5.0-beta">
 	<!--
     This schema has no target namespace defined. It will adopt the namespace
     of the schema that is using it with an "include" statement.
@@ -573,35 +573,6 @@
 		</xsd:choice>
 	</xsd:complexType>
 
-	<xsd:complexType name="calendar_float">
-		<xsd:complexContent>
-			<xsd:extension base="calendar">
-				<xsd:sequence>
-					<xsd:element name="buckets" minOccurs="0">
-						<xsd:complexType>
-							<xsd:choice minOccurs="0" maxOccurs="unbounded">
-								<xsd:element name="bucket" minOccurs="0">
-									<xsd:complexType>
-										<xsd:all>
-											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
-											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
-											<xsd:element name="value" type="xsd:float" minOccurs="0" />
-										</xsd:all>
-										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
-										<xsd:attribute name="name" type="xsd:normalizedString" />
-										<xsd:attribute name="end" type="xsd:dateTime" />
-										<xsd:attribute name="value" type="xsd:float" />
-										<xsd:attribute name="action" type="action" />
-									</xsd:complexType>
-								</xsd:element>
-							</xsd:choice>
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:sequence>
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
 	<xsd:complexType name="calendar_void">
 		<xsd:complexContent>
 			<xsd:extension base="calendar">
@@ -614,10 +585,12 @@
 										<xsd:all>
 											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
 											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
+											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
 										<xsd:attribute name="name" type="xsd:normalizedString" />
 										<xsd:attribute name="end" type="xsd:dateTime" />
+										<xsd:attribute name="priority" type="xsd:float" />
 										<xsd:attribute name="action" type="action" />
 									</xsd:complexType>
 								</xsd:element>
@@ -629,11 +602,45 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
+	<xsd:complexType name="calendar_float">
+		<xsd:complexContent>
+			<xsd:extension base="calendar">
+				<xsd:sequence>
+				  <xsd:element name="default" type="xsd:float" minOccurs="0"/>
+					<xsd:element name="buckets" minOccurs="0">
+						<xsd:complexType>
+							<xsd:choice minOccurs="0" maxOccurs="unbounded">
+								<xsd:element name="bucket" minOccurs="0">
+									<xsd:complexType>
+										<xsd:all>
+											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
+											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
+											<xsd:element name="value" type="xsd:float" minOccurs="0" />
+											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
+										</xsd:all>
+										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
+										<xsd:attribute name="name" type="xsd:normalizedString" />
+										<xsd:attribute name="end" type="xsd:dateTime" />
+										<xsd:attribute name="value" type="xsd:float" />
+										<xsd:attribute name="priority" type="xsd:float" />
+										<xsd:attribute name="action" type="action" />
+									</xsd:complexType>
+								</xsd:element>
+							</xsd:choice>
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:sequence>
+				<xsd:attribute name="default" type="xsd:float" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
 	<xsd:complexType name="calendar_integer">
 		<xsd:complexContent>
 			<xsd:extension base="calendar">
-				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="buckets">
+				<xsd:sequence>
+				  <xsd:element name="default" type="xsd:integer" minOccurs="0"/>
+					<xsd:element name="buckets" minOccurs="0">
 						<xsd:complexType>
 							<xsd:choice minOccurs="0" maxOccurs="unbounded">
 								<xsd:element name="bucket">
@@ -642,18 +649,21 @@
 											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
 											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="value" type="xsd:integer" minOccurs="0" />
+											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="value" type="xsd:integer" />
 										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
 										<xsd:attribute name="name" type="xsd:normalizedString" />
 										<xsd:attribute name="end" type="xsd:dateTime" />
+										<xsd:attribute name="priority" type="xsd:float" />
 										<xsd:attribute name="action" type="action" />
 									</xsd:complexType>
 								</xsd:element>
 							</xsd:choice>
 						</xsd:complexType>
 					</xsd:element>
-				</xsd:choice>
+				</xsd:sequence>
+				<xsd:attribute name="default" type="xsd:integer" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -662,6 +672,7 @@
 		<xsd:complexContent>
 			<xsd:extension base="calendar">
 				<xsd:sequence>
+				  <xsd:element name="default" type="xsd:boolean" minOccurs="0"/>
 					<xsd:element name="Buckets" minOccurs="0">
 						<xsd:complexType>
 							<xsd:sequence>
@@ -671,11 +682,13 @@
 											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
 											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="value" type="xsd:boolean" minOccurs="0" />
+											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="value" type="xsd:boolean" />
 										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
 										<xsd:attribute name="name" type="xsd:normalizedString" />
 										<xsd:attribute name="end" type="xsd:dateTime" />
+										<xsd:attribute name="priority" type="xsd:float" />
 										<xsd:attribute name="action" type="action" />
 									</xsd:complexType>
 								</xsd:element>
@@ -683,6 +696,7 @@
 						</xsd:complexType>
 					</xsd:element>
 				</xsd:sequence>
+				<xsd:attribute name="default" type="xsd:boolean" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -691,6 +705,7 @@
 		<xsd:complexContent>
 			<xsd:extension base="calendar">
 				<xsd:sequence>
+				  <xsd:element name="default" type="xsd:string" minOccurs="0"/>
 					<xsd:element name="buckets" minOccurs="0">
 						<xsd:complexType>
 							<xsd:sequence>
@@ -698,13 +713,15 @@
 									<xsd:complexType>
 										<xsd:all>
 											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
-											<xsd:element name="End" type="xsd:dateTime" minOccurs="0" />
+											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="value" type="xsd:string" minOccurs="0" />
+											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="value" type="xsd:normalizedString" />
 										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
 										<xsd:attribute name="name" type="xsd:normalizedString" />
 										<xsd:attribute name="end" type="xsd:dateTime" />
+										<xsd:attribute name="priority" type="xsd:float" />
 										<xsd:attribute name="action" type="action" />
 									</xsd:complexType>
 								</xsd:element>
@@ -712,6 +729,7 @@
 						</xsd:complexType>
 					</xsd:element>
 				</xsd:sequence>
+				<xsd:attribute name="default" type="xsd:string" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -720,6 +738,7 @@
 		<xsd:complexContent>
 			<xsd:extension base="calendar">
 				<xsd:sequence>
+  				<xsd:element name="default" type="operation" minOccurs="0"/>
 					<xsd:element name="buckets" minOccurs="0">
 						<xsd:complexType>
 							<xsd:sequence>
@@ -729,10 +748,12 @@
 											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
 											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="value" type="operation" minOccurs="0" />
+											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
 										<xsd:attribute name="name" type="xsd:normalizedString" />
 										<xsd:attribute name="end" type="xsd:dateTime" />
+										<xsd:attribute name="priority" type="xsd:float" />
 										<xsd:attribute name="action" type="action" />
 									</xsd:complexType>
 								</xsd:element>

@@ -41,6 +41,7 @@
 	</customers>
 	<calendars>
 		<calendar name="assembly capacity" xsi:type="calendar_float">
+			<default>1</default>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
 					<name>all</name>

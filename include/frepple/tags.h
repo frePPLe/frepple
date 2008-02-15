@@ -62,6 +62,7 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_data;
     static DECLARE_EXPORT const XMLtag tag_date;
     static DECLARE_EXPORT const XMLtag tag_dates;
+    static DECLARE_EXPORT const XMLtag tag_default;
     static DECLARE_EXPORT const XMLtag tag_demand;
     static DECLARE_EXPORT const XMLtag tag_demands;
     static DECLARE_EXPORT const XMLtag tag_description;

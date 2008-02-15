@@ -81,16 +81,14 @@ class LibraryModel
 };
 
 
-/** @brief This is the class used to 1) represent varisables that are
-  * varying over time, and 2) to divide a time horizon into
-  * multiple buckets.
+/** @brief This is the class used to represent variables that are
+  * varying over time.
   *
   * Some example usages for calendars:
   *  - A calendar defining the available capacity of a resource
   *    week by week.
   *  - The minimum inventory desired in a buffer week by week.
-  *  - Defining weekly, monthly and quarterly buckets for
-  *    reporting purposes.
+  *  - The working hours and holidays at a certain location.
   */
 class Calendar : public HasName<Calendar>, public Object
 {

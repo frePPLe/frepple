@@ -769,6 +769,10 @@ class CalendarList(ListReport):
       'title': _('subcategory'),
       'filter': FilterText(),
       }),
+    ('defaultvalue', {
+      'title': _('default value'),
+      'sort': FilterNumber(),
+      }),
     ('currentvalue', {
       'title': _('current value'),
       'sort': False,

@@ -113,6 +113,7 @@ class Calendar(models.Model):
     description = models.CharField(_('description'), max_length=200, null=True, blank=True)
     category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
+    defaultvalue = models.DecimalField(_('default'), max_digits=15, decimal_places=4, default=0.00)
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def currentvalue(self):
@@ -191,6 +192,7 @@ class Bucket(models.Model):
     startdate = models.DateTimeField('start date', core=True)
     enddate = models.DateTimeField('end date', editable=False, null=True, default=datetime(2030,12,31))
     value = models.DecimalField(_('value'), max_digits=15, decimal_places=4, default=0.00)
+    priority = models.DecimalField(_('priority'), max_digits=15, decimal_places=4, default=0.00)
     name = models.CharField(_('name'), max_length=60, null=True, blank=True)
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 

@@ -87,12 +87,14 @@ def loadCalendars(cursor):
   print 'Importing calendars...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, description FROM calendar")
+  cursor.execute("SELECT name, description, defaultvalue FROM calendar")
   x = [ header ]
   x.append('<calendars>')
-  for i, j in cursor.fetchall():
+  for i, j, k in cursor.fetchall():
     cnt += 1
-    if j: x.append('<calendar name=%s description=%s/>' % (quoteattr(i), quoteattr(j)))
+    if j and k: x.append('<calendar name=%s description=%s default="%s"/>' % (quoteattr(i), quoteattr(j), k))
+    elif j: x.append('<calendar name=%s description=%s/>' % (quoteattr(i), quoteattr(j)))
+    elif k: x.append('<calendar name=%s default="%s"/>' % (quoteattr(i), k))
     else: x.append('<calendar name=%s/>' % quoteattr(i))
   x.append('</calendars></plan>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
@@ -102,13 +104,15 @@ def loadCalendars(cursor):
   print 'Importing buckets...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT calendar_id, startdate, name, value FROM bucket")
+  cursor.execute("SELECT calendar_id, startdate, name, priority, value FROM bucket")
   x = [ header ]
   x.append('<calendars>')
-  for i, j, k, l in cursor.fetchall():
+  for i, j, k, l, m in cursor.fetchall():
     cnt += 1
-    if k: x.append('<calendar name=%s><buckets><bucket start="%s" name=%s value="%s"/></buckets></calendar>' % (quoteattr(i), j.isoformat(), quoteattr(k), l))
-    else: x.append('<calendar name=%s><buckets><bucket start="%s" value="%s"/></buckets></calendar>' % (quoteattr(i), j.isoformat(), l))
+    if k and l: x.append('<calendar name=%s><buckets><bucket start="%s" name=%s priority="%s" value="%s"/></buckets></calendar>' % (quoteattr(i), j.isoformat(), quoteattr(k), l, m))
+    elif k: x.append('<calendar name=%s><buckets><bucket start="%s" name=%s value="%s"/></buckets></calendar>' % (quoteattr(i), j.isoformat(), quoteattr(k), m))
+    elif l: x.append('<calendar name=%s><buckets><bucket start="%s" name=%s priority="%s"/></buckets></calendar>' % (quoteattr(i), j.isoformat(), quoteattr(k), l))
+    else: x.append('<calendar name=%s><buckets><bucket start="%s" value="%s"/></buckets></calendar>' % (quoteattr(i), j.isoformat(), m))
   x.append('</calendars></plan>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime)

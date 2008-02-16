@@ -75,6 +75,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   Date curdate;
   float curMax;
   bool HasOverload;
+  bool NeedsRecheck;
   
   // Initialize the default reply
   data->a_date = data->q_date;
@@ -86,6 +87,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
     {
       // Check if this operation overloads the resource at its current time
       HasOverload = false;
+      NeedsRecheck = false;
       Date earliestdate = data->q_operationplan->getDates().getStart();
       curdate = data->q_loadplan->getDate();
       curMax = data->q_loadplan->getMax();
@@ -98,13 +100,46 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
 
         // Not interested if date doesn't change
         if (cur->getDate() == curdate) continue;
-        curdate = cur->getDate();
-
+        
         if (cur->getOnhand() > curMax)
         {
           // Overload: New date reached, and we are exceeding the limit!
           HasOverload = true;
           break;
+        }
+        curdate = cur->getDate();
+      }
+
+      // Try solving the overload by resizing the operationplan.
+      // The capacity isn't overloaded in the time between "curdate" and 
+      // "current end of the operationplan". We can try to resize the 
+      // operationplan to fit in this time period...
+      if (HasOverload && curdate < data->q_loadplan->getDate())
+      {
+        Date currentEnd = data->q_operationplan->getDates().getEnd();
+        data->q_operationplan->getOperation()->setOperationPlanParameters(
+          data->q_operationplan,
+          currentQuantity,
+          curdate,
+          currentEnd
+          );
+        if (data->q_operationplan->getQuantity() > 0
+          && data->q_operationplan->getDates().getEnd() <= currentEnd
+          && data->q_operationplan->getDates().getStart() >= curdate)
+        {
+          // The squeezing did work!
+          HasOverload = false;
+          NeedsRecheck = true;
+        }
+        else
+        {
+          // It didn't work. Restore the original operationplan.
+          data->q_operationplan->getOperation()->setOperationPlanParameters(
+            data->q_operationplan,
+            currentQuantity,
+            Date::infinitePast,
+            currentEnd
+            );          
         }
       }
 
@@ -143,7 +178,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
           data->a_qty = 0.0;
       }  // End of if-statement, solve by moving earlier
     }
-    while (HasOverload && data->a_qty!=0.0);
+    while (HasOverload && data->a_qty!=0.0 && !NeedsRecheck);
 
   // Loop for a valid location by using LATER capacity
   // If the answered quantity is 0, the operationplan is moved into the
@@ -234,6 +269,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
     if (currentOpplanEnd > data->q_operationplan->getDates().getEnd())
       logger << " using earlier capacity "
         << data->q_operationplan->getDates().getEnd();
+    if (data->a_qty>0.0 && data->q_operationplan->getQuantity() < currentQuantity)
+      logger << " with reduced quantity " << data->q_operationplan->getQuantity();
     logger << endl;
   }
 

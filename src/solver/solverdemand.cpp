@@ -9,7 +9,7 @@
  * Copyright (C) 2007 by Johan De Taeye                                    *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
- * under the terms of the GNU Lesser General Public License as published   *
+ * under the terms of the GNUt Lesser General Public License as published   *
  * by the Free Software Foundation; either version 2.1 of the License, or  *
  * (at your option) any later version.                                     *
  *                                                                         *
@@ -59,7 +59,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   }
 
   // Temporary values to store the 'best-reply' so far
-  double best_q_qty, best_a_qty = 0.0;
+  double best_q_qty = 0.0, best_a_qty = 0.0;
   Date best_q_date;
 
   // Which operation to use?
@@ -144,7 +144,6 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
         Solver->undo();
 
         // Create the correct operationplans
-        double tmpqty = Solver->a_qty;
         if (loglevel>=2) logger << "Demand '" << l << "' plans coordination." << endl;
         Solver->getSolver()->setLogLevel(0);
         double tmpresult = Solver->a_qty;

@@ -530,7 +530,6 @@ DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown, bool up
 }
 
 
-// @todo Investigate the interactions Flpln & oppln setEnd(getDates().getEnd());
 DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 {
   // Update all flowplans

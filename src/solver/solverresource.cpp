@@ -75,7 +75,6 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   Date curdate;
   float curMax;
   bool HasOverload;
-  bool NeedsRecheck;
   
   // Initialize the default reply
   data->a_date = data->q_date;
@@ -87,7 +86,6 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
     {
       // Check if this operation overloads the resource at its current time
       HasOverload = false;
-      NeedsRecheck = false;
       Date earliestdate = data->q_operationplan->getDates().getStart();
       curdate = data->q_loadplan->getDate();
       curMax = data->q_loadplan->getMax();
@@ -129,11 +127,14 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
         {
           // The squeezing did work!
           HasOverload = false;
-          NeedsRecheck = true;
         }
         else
         {
           // It didn't work. Restore the original operationplan.
+          // @todo this undoing is a performance bottleneck: trying to resize 
+          // and restoring the original are causing lots of updates in the
+          // buffer and resource timelines...
+          // We need an api that only checks the resizing.
           data->q_operationplan->getOperation()->setOperationPlanParameters(
             data->q_operationplan,
             currentQuantity,
@@ -178,7 +179,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
           data->a_qty = 0.0;
       }  // End of if-statement, solve by moving earlier
     }
-    while (HasOverload && data->a_qty!=0.0 && !NeedsRecheck);
+    while (HasOverload && data->a_qty!=0.0);
 
   // Loop for a valid location by using LATER capacity
   // If the answered quantity is 0, the operationplan is moved into the
@@ -200,7 +201,6 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
 
     // Loop to find a later date where the operationplan will fit
     Date newDate;
-    bool ok = false;
     do
     {
       // Search for a date where we go below the maximum load.

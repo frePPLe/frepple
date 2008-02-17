@@ -45,7 +45,7 @@
 <td>{% if perms.input.change_location %}{% superlink j.location location %}{% else %}{{j.location}}{% endif %}</td>
 <td>{{ crossheader }}</td>{% endifchanged %}
 <td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.available|floatformat:1}}" size="6" onchange="onChange(this)"/><br/>
-{% if j.load %}<a href="/loadplan/?resource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
+{% if j.load %}<a href="/loadplan/?resource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}" tabindex="-1">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
 <label>{{j.utilization|floatformat:0}}</label></td>
 {% if forloop.last %}</form></tr>{% endif %}{% endfor %}
 {% else %}

@@ -200,8 +200,7 @@ DECLARE_EXPORT void CommandList::execute()
       // wait for all of them to finish.
       pthread_t threads[numthreads];     // holds thread info
       int errcode;                       // holds pthread error code
-      int status;                        // holds return value
-
+ 
       // Create the threads
       for (; worker<numthreads; ++worker)
       {
@@ -225,8 +224,10 @@ DECLARE_EXPORT void CommandList::execute()
 
       // Wait for the threads as they exit
       for (--worker; worker>=0; --worker)
-        // Wait for thread to terminate
-        if ((errcode=pthread_join(threads[worker],(void**) &status)))
+        // Wait for thread to terminate. 
+        // The second arg is NULL, since we don't care about the return status
+        // of the finished threads.
+        if ((errcode=pthread_join(threads[worker],NULL)))
         {
           ostringstream ch;
           ch << "Can't join with thread " << worker << ", error " << errcode;

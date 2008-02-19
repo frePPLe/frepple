@@ -86,11 +86,8 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
-  {
-    for (int i=b->getLevel(); i>0; --i) logger << " ";
-    logger << "  Procurement buffer '" << b->getName() << "' is asked: "
-    << Solver->q_qty << "  " << Solver->q_date << endl;
-  }
+    logger << indent(b->getLevel()) << "  Procurement buffer '" << b->getName() 
+    << "' is asked: " << Solver->q_qty << "  " << Solver->q_date << endl;
 
   // Standard reply date
   Solver->a_date = Date::infiniteFuture;
@@ -334,11 +331,8 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
-  {
-    for (int i=b->getLevel(); i>0; --i) logger << " ";
-    logger << "  Procurement buffer '" << b->getName() << "' answers: "
-    << Solver->a_qty << "  " << Solver->a_date << endl;
-  }
+    logger << indent(b->getLevel()) << "  Procurement buffer '" << b->getName() 
+    << "' answers: " << Solver->a_qty << "  " << Solver->a_date << endl;
 }
 
 

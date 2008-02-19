@@ -47,11 +47,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
-  {
-    for (int i=b->getLevel(); i>0; --i) logger << " ";
-    logger << "  Buffer '" << b->getName() << "' is asked: "
-    << Solver->q_qty << "  " << Solver->q_date << endl;
-  }
+    logger << indent(b->getLevel()) << "  Buffer '" << b->getName() 
+      << "' is asked: " << Solver->q_qty << "  " << Solver->q_date << endl;
 
   // Store the last command in the list, in order to undo the following
   // commands if required.
@@ -244,11 +241,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
-  {
-    for (int i=b->getLevel(); i>0; --i) logger << " ";
-    logger << "  Buffer '" << b->getName() << "' answers: "
-    << Solver->a_qty << "  " << Solver->a_date << endl;
-  }
+    logger << indent(b->getLevel()) << "  Buffer '" << b->getName() 
+    << "' answers: " << Solver->a_qty << "  " << Solver->a_date << endl;
 }
 
 
@@ -265,12 +259,10 @@ DECLARE_EXPORT void MRPSolver::solve(const Flow* fl, void* v)
       // The reply date must be less than the effectivity end date: after 
       // that date the flow in question won't consume any material any more.
       if (data->getSolver()->getLogLevel()>1)
-      {
-        for (int i=fl->getBuffer()->getLevel(); i>0; --i) logger << " ";
-        logger << "  Buffer '" << fl->getBuffer()->getName() 
-          << "' answer date is adjusted to " << fl->getEffective().getEnd() 
+        logger << indent(fl->getBuffer()->getLevel()) << "  Buffer '" 
+          << fl->getBuffer()->getName() << "' answer date is adjusted to " 
+          << fl->getEffective().getEnd() 
           << " because of a date effective flow" << endl;
-      }
       data->a_date = fl->getEffective().getEnd();
     }
   }
@@ -290,11 +282,8 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferInfinite* b, void* v)
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
-  {
-    for (int i=b->getLevel(); i>0; --i) logger << " ";
-    logger << "  Buffer '" << b << "' is asked: "
+    logger << indent(b->getLevel()) << "  Buffer '" << b << "' is asked: "
     << Solver->q_qty << "  " << Solver->q_date << endl;
-  }
 
   // Reply whatever is requested, regardless of date, quantity or supply.
   // The demand is not propagated upstream either.
@@ -303,11 +292,8 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferInfinite* b, void* v)
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
-  {
-    for (int i=b->getLevel(); i>0; --i) logger << " ";
-    logger << "  Buffer '" << b << "' answers: "
+    logger << indent(b->getLevel()) << "  Buffer '" << b << "' answers: "
     << Solver->a_qty << "  " << Solver->a_date << endl;
-  }
 }
 
 

@@ -169,10 +169,8 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
       data.undo(topcommand);
       // Echo a message
       if (data.getSolver()->getLogLevel()>1)
-      {
-        for (int i=opplan->getOperation()->getLevel(); i>0; --i) logger << " ";
-        logger << "   Retrying new date." << endl;
-      }
+        logger << indent(opplan->getOperation()->getLevel()) 
+          << "   Retrying new date." << endl;
     }
     else if (delay>0L && a_qty <= ROUNDING_ERROR
       && delay < orig_dates.getDuration())
@@ -200,11 +198,9 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
         data.undo(topcommand);
         // Echo a message
         if (data.getSolver()->getLogLevel()>1)
-        {
-          for (int i=opplan->getOperation()->getLevel(); i>0; --i) logger << " ";
-          logger << "   Retrying with a smaller quantity: "
+          logger << indent(opplan->getOperation()->getLevel()) 
+            << "   Retrying with a smaller quantity: "
             << opplan->getQuantity() << endl;
-        }
       }
       else
       {
@@ -356,11 +352,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
-  {
-    for (int i=oper->getLevel(); i>0; --i) logger << " ";
-    logger << "   Operation '" << oper->getName() << "' is asked: "
-    << Solver->q_qty << "  " << Solver->q_date << endl;
-  }
+    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName() 
+      << "' is asked: " << Solver->q_qty << "  " << Solver->q_date << endl;
 
   // Subtract the post-operation time
   Date prev_q_date_max = Solver->q_date_max;
@@ -405,11 +398,8 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
-  {
-    for (int i=oper->getLevel(); i>0; --i) logger << " ";
-    logger << "   Operation '" << oper->getName() << "' answers: "
-    << Solver->a_qty << "  " << Solver->a_date << endl;
-  }
+    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName() 
+      << "' answers: " << Solver->a_qty << "  " << Solver->a_date << endl;
 }
 
 
@@ -420,11 +410,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
-  {
-    for (int i=oper->getLevel(); i>0; --i) logger << " ";
-    logger << "   Operation '" << oper->getName() << "' is asked: "
-    << Solver->q_qty << "  " << Solver->q_date << endl;
-  }
+    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName() 
+      << "' is asked: " << Solver->q_qty << "  " << Solver->q_date << endl;
 
   // Find the total quantity to flow into the buffer.
   // Multiple suboperations can all produce into the buffer.
@@ -514,11 +501,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
-  {
-    for (int i=oper->getLevel(); i>0; --i) logger << " ";
-    logger << "   Operation '" << oper->getName() << "' answers: "
-    << Solver->a_qty << "  " << Solver->a_date << endl;
-  }
+    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName() 
+      << "' answers: " << Solver->a_qty << "  " << Solver->a_date << endl;
 }
 
 
@@ -532,11 +516,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
-  {
-    for (int i=oper->getLevel(); i>0; --i) logger << " ";
-    logger << "   Operation '" << oper->getName() << "' is asked: "
-    << Solver->q_qty << "  " << Solver->q_date << endl;
-  }
+    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName() 
+      << "' is asked: " << Solver->q_qty << "  " << Solver->q_date << endl;
 
   // Make sure sub-operationplans know their owner & store the previous value
   OperationPlan *prev_owner_opplan = Solver->curOwnerOpplan;
@@ -659,11 +640,8 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
-  {
-    for (int i=oper->getLevel(); i>0; --i) logger << " ";
-    logger << "   Operation '" << oper->getName() << "' answers: "
-    << Solver->a_qty << "  " << Solver->a_date << endl;
-  }
+    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName() 
+      << "' answers: " << Solver->a_qty << "  " << Solver->a_date << endl;
 }
 
 

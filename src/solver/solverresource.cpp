@@ -48,24 +48,16 @@ void MRPSolver::solve(const Load* l, void* v)
 }
 
 
-/** @todo Solving for capacity can break an operationplan in multiple parts:
-  * qty_per operations do this....
-  * This disturbs the clean & simple flow we have here...
-  * We can also not check one load after the other, because they need
-  * simultaneous capacity.
-  */
+/** @todo resource solver should be using a move command rather than direct move */
 DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
 {
-
   MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-  {
-    for (int i=res->getLevel(); i>0; --i) logger << " ";
-    logger << "   Resource '" << res->getName() << "' is asked: "
-    << (-data->q_qty) << "  " << data->q_operationplan->getDates() << endl;
-  }
+    logger << indent(res->getLevel()) << "   Resource '" << res->getName() 
+      << "' is asked: " << (-data->q_qty) << "  " 
+      << data->q_operationplan->getDates() << endl;
 
   // Initialize some variables
   double orig_q_qty = -data->q_qty;
@@ -126,6 +118,9 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
           && data->q_operationplan->getDates().getStart() >= curdate)
         {
           // The squeezing did work!
+          // The operationplan quantity is now reduced. The buffer solver will
+          // ask again for the remaining short quantity, so we don't need to
+          // bother about that here.
           HasOverload = false;
         }
         else
@@ -165,8 +160,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
         if (cur != res->getLoadPlans().end())
         {
           // Move the operationplan
-          // @todo no attempt to resize the operationplan to fit in an available capacity hole... This can involve splitting the operationplan in two parts, to fit 2 available 'holes'
-          data->q_operationplan->setEnd(curdate); // @todo resource solver should be using a move command rather than direct move
+          data->q_operationplan->setEnd(curdate); 
 
           // Check the leadtime constraints after the move
           if (isLeadtimeConstrained() || isFenceConstrained())
@@ -191,7 +185,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
     // Put the operationplan back at its original end date
     if (!data->forceLate)
     {
-      data->q_operationplan->setQuantity(currentQuantity); // @todo resource solver should be using a move command rather than direct move
+      data->q_operationplan->setQuantity(currentQuantity); 
       data->q_operationplan->setEnd(currentOpplanEnd);
     }
 
@@ -207,37 +201,52 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
       // and verify whether there are still some overloads
       HasOverload = false;
       newDate = Date::infinitePast;
-      curdate = data->q_loadplan->getDate();
       curMax = data->q_loadplan->getMax();
-      double prevOnhand = data->q_loadplan->getOnhand();
+      double curOnhand = data->q_loadplan->getOnhand();
       for (cur=res->getLoadPlans().begin(data->q_loadplan);
-          !(HasOverload && newDate); ++cur)
+          !(HasOverload && newDate) && cur != res->getLoadPlans().end(); )
       {
-        if (cur!=res->getLoadPlans().end() && cur->getType() == 4)
+        // New maximum
+        if (cur->getType() == 4)
           curMax = cur->getMax();
-        if (cur==res->getLoadPlans().end() || cur->getDate() != curdate)
+
+        // Only consider the last loadplan for a certain date
+        const TimeLine<LoadPlan>::Event *loadpl = &*(cur++);
+        if (cur!=res->getLoadPlans().end() && cur->getDate()==loadpl->getDate()) 
+          continue;
+        curOnhand = loadpl->getOnhand();
+
+        // Check if overloaded
+        //xxxif ((loadpl->getDate() <= data->q_operationplan->getDates().getEnd() && loadpl->getOnhand() > curMax)
+        //  || (loadpl->getDate() > data->q_operationplan->getDates().getEnd() && loadpl->getOnhand() + data->q_loadplan->getQuantity() > curMax))
+        if (loadpl->getOnhand() > curMax)
+          // There is still a capacity problem
+          HasOverload = true;   
+        //else if (!HasOverload && loadpl->getDate() > data->q_operationplan->getDates().getEnd())
+          // Break out of loop if no overload and date is after operationplan end date
+         // break;
+        else if (!newDate && loadpl->getDate()!=data->q_loadplan->getDate())
         {
-          if (prevOnhand > curMax) // curMax - prevOnhand < data->q_loadplan->getQuantity())
-            // There is still a capacity problem
-            HasOverload = true;
-          else if (!newDate && curdate!=data->q_loadplan->getDate())
-            // New date reached and we are below the max limit for the
-            // first time now.
-            // This means that the previous date may be a proper start.
-            newDate = curdate;
-          if (cur == res->getLoadPlans().end()) break;
-          curdate = cur->getDate();
+          // We are below the max limit for the first time now.
+          // This means that the previous date may be a proper start.
+          newDate = loadpl->getDate();
+          //break;
         }
-        prevOnhand = cur->getOnhand();
       }
 
       // Found a date with available capacity
-      if (HasOverload && newDate && newDate!=data->q_loadplan->getDate())
+      if (HasOverload && newDate)
       {
+        // Multiple operations could be executed in parallel
+        int parallelOps = (int)((curMax - curOnhand) / data->q_loadplan->getQuantity());
+        if (parallelOps <= 0) parallelOps = 1;
         // Move the operationplan to the new date
-        data->q_operationplan->setStart(newDate);  // @todo resource solver should be using a move command rather than direct move
-
-        // Force checking for overloads again
+        data->q_operationplan->getOperation()->setOperationPlanParameters(
+            data->q_operationplan,
+            currentQuantity / parallelOps,
+            newDate,
+            Date::infinitePast
+            );  
         HasOverload = true;
       }
     }
@@ -254,17 +263,16 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
     data->a_qty = 0.0;
   }
 
-  if (data->a_qty == 0.0)
+  if (data->a_qty == 0.0 && data->q_operationplan->getQuantity() != 0.0)
     // In case of a zero reply, we resize the operationplan to 0 right away.
     // This is required to make sure that the buffer inventory profile also
     // respects this answer.
-    data->q_operationplan->setQuantity(0);
+    data->q_operationplan->setQuantity(0.0);
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
   {
-    for (int i=res->getLevel(); i>0; --i) logger << " ";
-    logger << "   Resource '" << res->getName() << "' answers: "
+    logger << indent(res->getLevel()) << "   Resource '" << res->getName() << "' answers: "
       << data->a_qty << "  " << data->a_date;
     if (currentOpplanEnd > data->q_operationplan->getDates().getEnd())
       logger << " using earlier capacity "
@@ -283,11 +291,8 @@ DECLARE_EXPORT void MRPSolver::solve(const ResourceInfinite* r, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->q_qty < 0)
-  {
-    for (int i=r->getLevel(); i>0; --i) logger << " ";
-    logger << "  Resource '" << r << "' is asked: "
+    logger << indent(r->getLevel()) << "  Resource '" << r << "' is asked: "
     << (-data->q_qty) << "  " << data->q_operationplan->getDates() << endl;
-  }
 
   // Reply whatever is requested, regardless of date and quantity.
   data->a_qty = data->q_qty;
@@ -295,11 +300,8 @@ DECLARE_EXPORT void MRPSolver::solve(const ResourceInfinite* r, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->q_qty < 0)
-  {
-    for (int i=r->getLevel(); i>0; --i) logger << " ";
-    logger << "  Resource '" << r << "' answers: "
+    logger << indent(r->getLevel()) << "  Resource '" << r << "' answers: "
     << (-data->a_qty) << "  " << data->a_date << endl;
-  }
 }
 
 

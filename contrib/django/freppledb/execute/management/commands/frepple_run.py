@@ -37,7 +37,7 @@ class Command(BaseCommand):
     make_option('--user', dest='user', type='string',
       help='User running the command'),
     make_option('--type', dest='type', type='choice',
-      choices=['0','1','2','3','4','5','6','7'],
+      choices=['0','1','2','3','4','5','6','7'], default='7',
       help='Plan type: 0=unconstrained, 7=fully constrained'),
   )
   help = "Runs frePPLe to generate a plan"
@@ -50,7 +50,10 @@ class Command(BaseCommand):
       # Pick up the options
       if 'user' in options: user = options['user'] or ''
       else: user = ''
-      if 'type' in options: type = int(options['type'] or '7')
+      if 'type' in options:
+        type = int(options['type'])
+        if type < 0 or type > 7:
+          raise ValueError("Invalid plan type: %s" % options['type'])
       else: type = 7
 
       # Log message

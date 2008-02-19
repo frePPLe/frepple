@@ -255,6 +255,22 @@ typedef unsigned int hashtype;
 /** This stream is the general output for all logging and debugging messages. */
 extern DECLARE_EXPORT ostream logger;
 
+/** Auxilary structure for easy indenting in the log stream. */
+struct indent 
+{
+  unsigned short level;
+  indent(unsigned short l) : level(l) {}
+  indent operator() (unsigned short l) {return indent(l);}
+};
+  
+/** Print a number of spaces to the output stream. */
+inline ostream& operator <<(ostream &os, const indent& i)
+{
+  for (unsigned int c = i.level; c; --c) os << ' ';
+  return os;
+}
+
+
 /** @brief This class groups some functions used to interact with the operating
   * system environment.
   *

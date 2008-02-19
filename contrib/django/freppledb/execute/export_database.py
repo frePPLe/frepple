@@ -196,8 +196,8 @@ def exportPegging(cursor):
        buffer,quantity_demand,quantity_buffer,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
          i['name'], str(j['level']),
-         j['cons_operationplan'] or None, str(j['cons_date']),
-         j['prod_operationplan'] or None, str(j['prod_date']),
+         j['cons_operationplan'] or 0, str(j['cons_date']),
+         j['prod_operationplan'] or 0, str(j['prod_date']),
          j['buffer'], round(j['quantity_demand'],ROUNDING_DECIMALS),
          round(j['quantity_buffer'],ROUNDING_DECIMALS), str(j['pegged'])
        ) for j in i['pegging']

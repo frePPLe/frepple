@@ -230,6 +230,7 @@ class Command(BaseCommand):
         res.append(r)
         r.save()
       transaction.commit()
+      random.shuffle(res)
 
       # Create the components
       if verbosity>0: print "Creating raw materials..."
@@ -318,7 +319,12 @@ class Command(BaseCommand):
               sizemultiple=1,
               )
             oper.save()
-            Load(resource=random.choice(res), operation=oper).save()
+            if resource < cluster and i < resource:
+              # When there are more cluster than resources, we try to assure
+              # that each resource is loaded by at least 1 operation.
+              Load(resource=res[i], operation=oper).save()
+            else:
+              Load(resource=random.choice(res), operation=oper).save()
           else:
             oper = Operation(name='Oper %05d L%02d' % (i,k),
               duration=random.choice(durations),

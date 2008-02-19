@@ -48,99 +48,99 @@ def main(request):
 @staff_member_required
 @never_cache
 def erase(request):
-    '''
-    Erase the contents of the database.
-    '''
-    # Allow only post
-    if request.method != 'POST':
-      request.user.message_set.create(message='Only POST method allowed')
-      return HttpResponseRedirect('/execute/execute.html')
-
-    # Erase the database contents
-    try:
-      management.call_command('frepple_flush', user=request.user.username)
-      request.user.message_set.create(message='Erased the database')
-    except Exception, e:
-      request.user.message_set.create(message='Failure during database erasing:%s' % e)
-
-    # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+  '''
+  Erase the contents of the database.
+  '''
+  # Allow only post
+  if request.method != 'POST':
+    request.user.message_set.create(message='Only POST method allowed')
     return HttpResponseRedirect('/execute/execute.html')
+
+  # Erase the database contents
+  try:
+    management.call_command('frepple_flush', user=request.user.username)
+    request.user.message_set.create(message='Erased the database')
+  except Exception, e:
+    request.user.message_set.create(message='Failure during database erasing:%s' % e)
+
+  # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+  return HttpResponseRedirect('/execute/execute.html')
 
 
 @staff_member_required
 @never_cache
 def create(request):
-    '''
-    Create a sample model in the database.
-    '''
-    # Allow only post
-    if request.method != 'POST':
-      request.user.message_set.create(message='Only POST method allowed')
-      return HttpResponseRedirect('/execute/execute.html')
+  '''
+  Create a sample model in the database.
+  '''
+  # Allow only post
+  if request.method != 'POST':
+    request.user.message_set.create(message='Only POST method allowed')
+    return HttpResponseRedirect('/execute/execute.html')
 
-    # Validate the input form data
+  # Validate the input form data
+  try:
+    clusters = int(request.POST['clusters'])
+    demands = int(request.POST['demands'])
+    fcstqty = int(request.POST['fcst'])
+    levels = int(request.POST['levels'])
+    resources = int(request.POST['rsrc_number'])
+    resource_size = int(request.POST['rsrc_size'])
+    procure_lt = int(request.POST['procure_lt'])
+    components_per = int(request.POST['components_per'])
+    components = int(request.POST['components'])
+    deliver_lt = int(request.POST['deliver_lt'])
+    if clusters>100000 or clusters<=0 \
+      or fcstqty<0 or demands>=10000 or demands<0 \
+      or levels<0 or levels>=50 \
+      or resources>=1000 or resources<0 \
+      or resource_size>100 or resource_size<0 \
+      or deliver_lt<=0 or procure_lt<=0 \
+      or components<0 or components>=100000 \
+      or components_per<0:
+        raise ValueError("Invalid parameters")
+  except KeyError:
+    raise Http404
+  except ValueError, e:
+    request.user.message_set.create(message='Invalid input field')
+  else:
+    # Execute
     try:
-      clusters = int(request.POST['clusters'])
-      demands = int(request.POST['demands'])
-      fcstqty = int(request.POST['fcst'])
-      levels = int(request.POST['levels'])
-      resources = int(request.POST['rsrc_number'])
-      resource_size = int(request.POST['rsrc_size'])
-      procure_lt = int(request.POST['procure_lt'])
-      components_per = int(request.POST['components_per'])
-      components = int(request.POST['components'])
-      deliver_lt = int(request.POST['deliver_lt'])
-      if clusters>100000 or clusters<=0 \
-        or fcstqty<0 or demands>=10000 or demands<0 \
-        or levels<0 or levels>=50 \
-        or resources>=1000 or resources<0 \
-        or resource_size>100 or resource_size<0 \
-        or deliver_lt<=0 or procure_lt<=0 \
-        or components<0 or components>=100000 \
-        or components_per<0:
-          raise ValueError("Invalid parameters")
-    except KeyError:
-      raise Http404
-    except ValueError, e:
-      request.user.message_set.create(message='Invalid input field')
-    else:
-      # Execute
-      try:
-        management.call_command('frepple_flush', user=request.user.username)
-        management.call_command('frepple_createmodel',
-          verbosity=0, cluster=clusters, demand=demands,
-          forecast_per_item=fcstqty, level=levels, resource=resources,
-          resource_size=resource_size, components=components,
-          components_per=components_per, deliver_lt=deliver_lt,
-          procure_lt=procure_lt, user=request.user.username
-          )
-        request.user.message_set.create(message='Created sample model in the database')
-      except Exception, e:
-        request.user.message_set.create(message='Failure during sample model creation: %s' % e)
+      management.call_command('frepple_flush', user=request.user.username)
+      management.call_command('frepple_createmodel',
+        verbosity=0, cluster=clusters, demand=demands,
+        forecast_per_item=fcstqty, level=levels, resource=resources,
+        resource_size=resource_size, components=components,
+        components_per=components_per, deliver_lt=deliver_lt,
+        procure_lt=procure_lt, user=request.user.username
+        )
+      request.user.message_set.create(message='Created sample model in the database')
+    except Exception, e:
+      request.user.message_set.create(message='Failure during sample model creation: %s' % e)
 
-    # Show the main screen again
-    # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-    return HttpResponseRedirect('/execute/')
+  # Show the main screen again
+  # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+  return HttpResponseRedirect('/execute/')
 
 
 @staff_member_required
 @never_cache
 def runfrepple(request):
-    '''
-    FrePPLe execution button.
-    '''
-    # Decode form input
-    try: type = int(request.POST['type'])
-    except: type = 7   # Default plan is fully constrained
+  '''
+  FrePPLe execution button.
+  '''
+  # Decode form input
+  try: type = request.POST['type']
+  except: type = '7'   # Default plan is fully constrained
 
-    # Run frepple
-    try:
-      management.call_command('frepple_run', user=request.user.username, type=type)
-      request.user.message_set.create(message='Successfully ran frepple')
-    except Exception, e:
-      request.user.message_set.create(message='Failure when running frepple: %s' % e)
-    # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
-    return HttpResponseRedirect('/execute/execute.html')
+  # Run frepple
+  try:
+    management.call_command('frepple_run', user=request.user.username, type=type)
+    request.user.message_set.create(message='Successfully ran frepple')
+  except Exception, e:
+    request.user.message_set.create(message='Failure when running frepple: %s' % e)
+  # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
+  return HttpResponseRedirect('/execute/execute.html')
 
 
 @staff_member_required
@@ -209,4 +209,3 @@ class LogReport(ListReport):
       'title':_('message'),
       }),
     )
-

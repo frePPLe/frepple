@@ -22,6 +22,7 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import connection
+from django.conf import settings
 
 from utils.db import sql_datediff
 from utils.report import *
@@ -44,11 +45,11 @@ class Report(ListReport):
     # Execute the query
     cursor = connection.cursor()
     query = '''
-      select 101, 'Problem count', name, count(*)
+      select 101, 'Problem count', %s, count(*)
       from out_problem
       group by name
       union
-      select 102, 'Problem weight', name, round(sum(weight))
+      select 102, 'Problem weight', %s, round(sum(weight))
       from out_problem
       group by name
       union
@@ -87,6 +88,10 @@ class Report(ListReport):
       from out_flowplan
       where quantity<0
       ''' % (
+        # Oracle needs conversion from the field out_problem.name
+        # (in 'national character set') to the database 'character set'.
+        settings.DATABASE_ENGINE == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
+        settings.DATABASE_ENGINE == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
         sql_datediff('plandatetime','duedatetime'),
         sql_datediff('enddatetime','startdatetime')
         )

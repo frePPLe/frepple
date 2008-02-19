@@ -106,7 +106,7 @@ class OverviewReport(TableReport):
 
     # Build the python result
     for row in cursor.fetchall():
-      if row[5] != 0: util = row[6] / row[5] * 100
+      if row[5] != 0: util = row[6] * 100 / row[5]
       else: util = 0
       yield {
         'resource': row[0],

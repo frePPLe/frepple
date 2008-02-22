@@ -91,7 +91,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
         // Not interested if date doesn't change
         if (cur->getDate() == curdate) continue;
         
-        if (cur->getOnhand() > curMax)
+        if (cur->getOnhand() > curMax + ROUNDING_ERROR)
         {
           // Overload: New date reached, and we are exceeding the limit!
           HasOverload = true;
@@ -217,14 +217,13 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
         curOnhand = loadpl->getOnhand();
 
         // Check if overloaded
-        //xxxif ((loadpl->getDate() <= data->q_operationplan->getDates().getEnd() && loadpl->getOnhand() > curMax)
-        //  || (loadpl->getDate() > data->q_operationplan->getDates().getEnd() && loadpl->getOnhand() + data->q_loadplan->getQuantity() > curMax))
-        if (loadpl->getOnhand() > curMax)
+        if (loadpl->getOnhand() > curMax + ROUNDING_ERROR)
           // There is still a capacity problem
           HasOverload = true;   
-        //else if (!HasOverload && loadpl->getDate() > data->q_operationplan->getDates().getEnd())
-          // Break out of loop if no overload and date is after operationplan end date
-         // break;
+        else if (!HasOverload && loadpl->getDate() > data->q_operationplan->getDates().getEnd())
+          // Break out of loop if no overload and we're beyond the 
+          // operationplan end date.
+          break;
         else if (!newDate && loadpl->getDate()!=data->q_loadplan->getDate())
         {
           // We are below the max limit for the first time now.

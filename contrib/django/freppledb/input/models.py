@@ -418,8 +418,8 @@ class Buffer(models.Model):
     type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=buffertypes, default='')
     location = models.ForeignKey(Location, verbose_name=_('location'), null=True,
       blank=True, db_index=True, raw_id_admin=True)
-    item = models.ForeignKey(Item, db_index=True, null=True, raw_id_admin=True)
-    onhand = models.DecimalField(_('onhand'),max_digits=15, decimal_places=4, default=0.00, help_text=_('current inventory'))
+    item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, null=True, raw_id_admin=True)
+    onhand = models.DecimalField(_('onhand'),max_digits=15, decimal_places=4, default=0.00, null=True, blank=True, help_text=_('current inventory'))
     minimum = models.ForeignKey(Calendar, verbose_name=_('minimum'),
       null=True, blank=True, raw_id_admin=True,
       help_text=_('Calendar storing the safety stock profile'))

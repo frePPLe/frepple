@@ -133,8 +133,6 @@ class pathreport:
     chain.
 
     todo: The current code only supports 1 level of super- or sub-operations.
-
-    todo: When the supply chain contains loops this function wont work fine.
     '''
     from decimal import Decimal
     from django.core.exceptions import ObjectDoesNotExist
@@ -160,6 +158,7 @@ class pathreport:
       raise Http404, "invalid entity type %s" % type
 
     # Note that the root to start with can be either buffer or operation.
+    visited = []
     while len(root) > 0:
       level, curbuffer, curprodflow, curoperation, curconsflow, curqty = root.pop()
       yield {
@@ -170,6 +169,10 @@ class pathreport:
         'consumingflow': curconsflow,
         'cumquantity': curqty,
         }
+
+      # Avoid infinite loops when the supply chain contains cycles
+      if curbuffer in visited: continue
+      else: visited.append(curbuffer)
 
       if downstream:
         # Find all operations consuming from this buffer...
@@ -606,7 +609,7 @@ class DemandList(ListReport):
       'filter': FilterNumber(),
       }),
     ('operation', {
-      'title': _('operation'),
+      'title': _('delivery operation'),
       'filter': FilterText(),
       }),
     ('priority', {

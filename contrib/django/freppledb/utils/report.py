@@ -38,22 +38,25 @@ from datetime import date, datetime
 from email.Utils import formatdate
 from calendar import timegm
 import csv
+import new
 
+from django.conf import settings
 from django.core.paginator import ObjectPaginator, InvalidPage
-from django.shortcuts import render_to_response
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.admin.views.decorators import staff_member_required
-from django.template import RequestContext, loader
 from django.db import models, transaction, connection
 from django.db.models.fields.related import ForeignKey, AutoField
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotModified
-from django.conf import settings
+from django.newforms.models import ModelForm
+from django.shortcuts import render_to_response
+from django.template import RequestContext, loader
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 
-from input.models import Plan
+from input.models import Plan, Buffer
 from utils.db import python_date
 
 
@@ -954,6 +957,12 @@ def parseUpload(request, reportclass, data):
       - the first row contains a header, listing all field names
       - a first character # marks a comment line
       - empty rows are skipped
+
+    Limitation: SQLite doesnt validate the input data appropriately.
+    E.g. It is possible to store character strings in a number field. An error
+    is generated only when reading the record and trying to convert it to a
+    Python number.
+    E.g. It is possible to store invalid strings in a Date field.
     '''
     entityclass = reportclass.model
     headers = []
@@ -965,66 +974,84 @@ def parseUpload(request, reportclass, data):
     has_pk_field = False
     for row in csv.reader(data.splitlines()):
       rownumber += 1
-      # The first line is read as a header line
+
+      ### Case 1: The first line is read as a header line
       if rownumber == 1:
         for col in row:
           col = col.strip().strip('#').lower()
           ok = False
           for i in entityclass._meta.fields:
-            if i.name == col:
+            if col == i.name.lower() or col == i.verbose_name.lower():
               headers.append(i)
               ok = True
               break
-          if not ok: errors.append(_('Incorrect field ') + col)
-          if col == entityclass._meta.pk.name: has_pk_field = True
+          if not ok: errors.append(_('Incorrect field %(column)s') % {'column': col})
+          if col == entityclass._meta.pk.name.lower() \
+            or col == entityclass._meta.pk.verbose_name.lower():
+              has_pk_field = True
         if not has_pk_field and not isinstance(entityclass._meta.pk, AutoField):
           # The primary key is not an auto-generated id and it is not mapped in the input...
-          errors.append(_('Missing primary key field ') + entityclass._meta.pk.name)
-        if len(errors) > 0:
-          return (warnings,errors)
+          errors.append(_('Missing primary key field %(key)s') % {'key': entityclass._meta.pk.name})
+        # Abort when there are errors
+        if len(errors) > 0: return (warnings,errors)
+        # Create a form class that will be used to validate the data
+        UploadMeta = new.classobj("UploadMeta", (), {
+          'model': entityclass,
+          'fields': tuple([i.name for i in headers])
+          })
+        UploadForm = new.classobj("UploadForm", (ModelForm,), {
+          "Meta": UploadMeta
+          })
 
-      # Skip empty rows and comments rows
+      ### Case 2: Skip empty rows and comments rows
       elif len(row) == 0 or row[0].startswith('#'):
         continue
 
-      # Process a data row
+      ### Case 3: Process a data row
       else:
-        cnt = 0
-        d = {}
         try:
-          # Build a dictionary with all data fields
-          it = None
+          # Step 1: Build a dictionary with all data fields
+          d = {}
+          colnum = 0
           for col in row:
-            # More fields in data row than headers. Move on to the next row
-            if cnt >= len(headers): break
-            if isinstance(headers[cnt], ForeignKey):
-              # Look up the related objects of a foreign key relation
-              try: d[headers[cnt].name] = headers[cnt].rel.to.objects.get(pk=col)
-              except Exception, e: warnings.append('%s %d: %s' % (_('Row'), rownumber, e))
-            else:
-              d[headers[cnt].name] = col
-            cnt += 1
-          # Store in the database
+            # More fields in data row than headers. Move on to the next row.
+            if colnum >= len(headers): break
+            d[headers[colnum].name] = col
+            colnum += 1
+
+          # Step 2: Fill the form with data, either updating an existing
+          # instance or creating a new one.
           if has_pk_field:
             # A primary key is part of the input fields
             try:
               # Try to find an existing record with the same primary key
               it = entityclass.objects.get(pk=d[entityclass._meta.pk.name])
-              # Update existing record
-              del d[entityclass._meta.pk.name]
-              for x in d: it.__setattr__ (x,d[x])
-            except:
-              # The record doesn't exist yet, and we create it now
-              it = entityclass(**d)
+              form = UploadForm(d,instance=it)
+            except entityclass.DoesNotExist:
+              form = UploadForm(d)
           else:
-            # The primary key is autogenerated
-            it = entityclass(**d)
-          # Commit the change to the database
-          it.save()
-          transaction.commit()
+            # No primary key required for this model
+            form = UploadForm(d)
+
+          # Step 3: Validate the data and save to the database
+          try:
+            form.save()
+          except:
+            # Validation fails
+            for field in form:
+              for err in field.errors:
+                warnings.append(
+                  _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
+                    'rownum': rownumber, 'data': d[field.name],
+                    'field': field.name, 'message': err
+                  })
+
+          # Step 4: Commit the database changes from time to time
+          if rownumber % 500 == 0: transaction.commit()
         except Exception, e:
-          warnings.append('%s %d: %s' % (_('Row'), rownumber, e))
-          transaction.rollback()
+          errors.append(_("Exception during upload: %(message)s") % {'message': e,})
+    # Commit final changes
+    transaction.commit()
 
     # Report all failed records
     return (warnings,errors)

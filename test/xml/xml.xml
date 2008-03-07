@@ -51,10 +51,7 @@
                       <!-- Level 7: calendar -->
                       <buckets>
                         <!-- Level 8: bucket -->
-                        <bucket start="2007-01-01T00:00:00">
-                          <name>Jan Week1</name>
-                          <value>0</value>
-                        </bucket>
+                        <bucket start="2007-01-01T00:00:00" name="Jan Week1" value="0"/>
                       </buckets>
                     </maximum>
                   </resource>

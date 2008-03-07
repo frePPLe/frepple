@@ -92,13 +92,10 @@
 		<calendar name="Weeks" xsi:type="calendar_void">
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
-					<end>2007-02-01T00:00:00</end>
 				</bucket>
 				<bucket start="2007-02-01T00:00:00">
-					<end>2007-03-01T00:00:00</end>
 				</bucket>
 				<bucket start="2007-03-01T00:00:00">
-					<end>2030-12-31T00:00:00</end>
 				</bucket>
 			</buckets>
 		</calendar>

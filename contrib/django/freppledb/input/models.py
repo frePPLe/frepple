@@ -20,6 +20,9 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+from datetime import datetime, date
+from decimal import Decimal
+
 from django.db import models
 from django.db.models import signals
 from django.http import HttpRequest
@@ -28,8 +31,6 @@ from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 
-from datetime import date, datetime
-from decimal import Decimal
 
 # The date format used by the frepple XML data.
 dateformat = '%Y-%m-%dT%H:%M:%S'
@@ -117,15 +118,33 @@ class Calendar(models.Model):
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def currentvalue(self):
-        ''' Returns the value of the calendar on the current day.'''
-        v = 0.0
-        curdate = date.today()
-        curdatetime = datetime(curdate.year,curdate.month,curdate.day)
-        for b in self.buckets.all():
-            if curdatetime < b.startdate: return v
-            v = b.value
-        return v
-    currentvalue.short_description = 'Current value'
+      ''' Returns the value of the calendar on this moment.'''
+      return self.getvalue(datetime.now())
+    currentvalue.short_description = 'current value'
+
+    def getvalue(self, when):
+      '''Return the value of the calendar on a certain day.'''
+      curValue = self.defaultvalue
+      curPriority = None
+      # Loop through the entries to find the effective one
+      for b in self.buckets.all():
+        if not curPriority or curPriority > b.priority:
+          thisValue = b.getvalue(when)
+          if thisValue:
+            # The entry is valid value on this day, and has
+            # a higher priority than other entries.
+            curValue = thisValue
+            curPriority = b.priority
+      return curValue
+
+    def flattenbuckets(self):
+      '''
+      @todo need a function to convert an arbitrary calendar pattern into
+      a non-overlapping sequence of entries.
+      Overlapping entries are too hard to handly with SQL.
+      Non-continuous entries also need to be exploded into continuous ones
+      '''
+      return
 
     def setvalue(self, start, end, value, user=None):
       '''Update calendar buckets such that the calendar value is changed
@@ -157,8 +176,10 @@ class Calendar(models.Model):
           b.delete()
         elif b.startdate < start and b.enddate > end:
           # New value is completely within this bucket
-          Bucket(calendar=self, startdate=start, value=value).save()
-          Bucket(calendar=self, startdate=end, value=b.value).save()
+          Bucket(calendar=self, startdate=start, enddate=end, value=value).save()
+          Bucket(calendar=self, startdate=end, enddate=b.enddate, value=b.value).save()
+          b.enddate = start
+          b.save()
         elif b.startdate < start:
           # An existing bucket is partially before the new daterange
           b.enddate = start
@@ -171,9 +192,8 @@ class Calendar(models.Model):
           b.save()
       if self.buckets.count() == 0:
         # There wasn't any bucket yet...
-        Bucket(calendar=self, startdate=start, value=value).save()
-        Bucket(calendar=self, startdate=end, value=0).save()
-      return
+        Bucket(calendar=self, startdate=start, enddate=end, value=value).save()
+        Bucket(calendar=self, startdate=end, value=self.defaultvalue).save()
 
     def __unicode__(self): return self.name
 
@@ -187,62 +207,39 @@ class Calendar(models.Model):
 
 
 class Bucket(models.Model):
+    buckettypes = (
+      ('',_('continuous')),
+      ('bucket_continuous',_('continuous')),
+      ('bucket_weekdays',_('weekdays')),
+    )
+
     # Database fields
+    # @todo start and endtime need to be filled in the inline edit form. We would like to have either one filled in...
     calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
-    startdate = models.DateTimeField('start date', core=True)
-    enddate = models.DateTimeField('end date', editable=False, null=True, default=datetime(2030,12,31))
-    value = models.DecimalField(_('value'), max_digits=15, decimal_places=4, default=0.00)
-    priority = models.DecimalField(_('priority'), max_digits=15, decimal_places=4, default=0.00)
+    type = models.CharField(_('type'), _('type'), max_length=20, null=True, blank=True, choices=buckettypes)
+    startdate = models.DateTimeField('start date', core=True, null=True, blank=True, default=datetime(1971,1,1))
+    enddate = models.DateTimeField('end date', core=True, null=True, blank=True, default=datetime(2030,12,31))
+    value = models.DecimalField(_('value'), max_digits=15, decimal_places=4, default=0.00, blank=True)
+    priority = models.DecimalField(_('priority'), max_digits=15, decimal_places=4, default=0.00, blank=True)
     name = models.CharField(_('name'), max_length=60, null=True, blank=True)
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
+    def getvalue(self, when):
+      if (self.startdate and when < self.startdate) or (self.enddate and when >= self.enddate):
+        # Outside of validity range
+        return None
+      # @todo handle different entry types
+      return self.value
+
     def __unicode__(self):
-        if self.name: return self.name
-        return str(self.startdate)
+      if self.name: return self.name
+      return u"%s - %s" % (self.startdate, self.enddate)
 
     class Meta:
-        ordering = ['startdate','name']
-        db_table = 'bucket'
-        verbose_name = _('calendar bucket')
-        verbose_name_plural = _('calendar buckets')
-
-    @staticmethod
-    def updateEndDate(instance):
-        '''
-        The user edits the start date of the calendar buckets.
-        This method will automatically update the end date of a bucket to be
-        equal to the start date of the next bucket.
-        '''
-        # Loop through all buckets
-        prev = None
-        for i in instance.calendar.buckets.all():
-          if prev and i.startdate != prev.enddate:
-            # Update the end date of the previous bucket to the start date of this one
-            prev.enddate = i.startdate
-            if prev.enddate == prev.startdate:
-              prev.delete()
-            else:
-              prev.save()
-          prev = i
-        if prev and prev.enddate != datetime(2030,12,31):
-          # Update the last entry
-          prev.enddate = datetime(2030,12,31)
-          prev.save()
-
-    @staticmethod
-    def insertBucket(instance):
-      # If the end date is specified, we take it for granted.
-      # Ideally we would check all inserts, but that is very time consuming
-      # when creating or restoring big datasets.
-      if instance.enddate == datetime(2030,12,31):
-        Bucket.updateEndDate(instance)
-
-# This dispatcher function is called after a bucket is saved. There seems no cleaner way to do this, since
-# the method calendar.buckets.all() is only up to date after the save...
-# The method is not very efficient: called for every single bucket, and recursively triggers
-# another save and dispatcher event
-dispatcher.connect(Bucket.insertBucket, signal=signals.post_save, sender=Bucket)
-dispatcher.connect(Bucket.updateEndDate, signal=signals.post_delete, sender=Bucket)
+      ordering = ['startdate','enddate','name']
+      db_table = 'bucket'
+      verbose_name = _('calendar bucket')
+      verbose_name_plural = _('calendar buckets')
 
 
 class Location(models.Model):

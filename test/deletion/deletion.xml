@@ -193,8 +193,8 @@
 						 <calendar name="assembly capacity" action="R"/>
 						 <calendar name="months" xsi:type="calendar_void">
 							<buckets>
-								<bucket start="2007-01-01T00:00:00" action="R"/>
-								<bucket start="2007-05-01T00:00:00" action="R"/>
+								<bucket name="jan" action="R"/>
+								<bucket name="may" action="R"/>
 							</buckets>
 						</calendar>
 					</calendars>
@@ -308,8 +308,7 @@
       <maximum name="assembly capacity" xsi:type="calendar_float">
         <default>1</default>
         <buckets>
-          <bucket start="2007-01-01T00:00:00">
-            <name>all</name>
+          <bucket start="2007-01-01T00:00:00" name="all">
             <value>2</value>
           </bucket>
         </buckets>

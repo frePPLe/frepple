@@ -1776,20 +1776,35 @@ class XMLOutput
     }
 
     /** Start writing a new object. This method will open a new XML-tag.
-      * Output: \<TAG_T TAG_U="date"\> */
-    void BeginObject(const XMLtag& t, const XMLtag& attr1, const Date val1)
-    {
-      *m_fp << indentstring << t.stringStartElement()
-      << attr1.stringAttribute() << string(val1) << "\">\n";
-      incIndent();
-    }
-
-    /** Start writing a new object. This method will open a new XML-tag.
-      * Output: \<TAG_T TAG_U="string"\> */
+      * Output: \<TAG_T TAG_U="val1"\> */
     void BeginObject(const XMLtag& t, const XMLtag& attr1, const string& val1)
     {
       *m_fp << indentstring << t.stringStartElement()
       << attr1.stringAttribute() << XMLEscape(val1.c_str()) << "\">\n";
+      incIndent();
+    }
+
+    /** Start writing a new object. This method will open a new XML-tag.
+      * Output: \<TAG_T TAG_T1="val1" TAG_T2="val2"\> */
+    void BeginObject(const XMLtag& t, const XMLtag& attr1, const string& val1,
+                     const XMLtag& attr2, const string& val2)
+    {
+      *m_fp << indentstring << t.stringStartElement()
+      << attr1.stringAttribute() << XMLEscape(val1.c_str()) << "\""
+      << attr2.stringAttribute() << XMLEscape(val2.c_str()) << "\">\n";
+      incIndent();
+    }
+
+    /** Start writing a new object. This method will open a new XML-tag.
+      * Output: \<TAG_T TAG_U="val1" TAG_V="val2" TAG_W="val3"\> */
+    void BeginObject(const XMLtag& t, const XMLtag& attr1, const string& val1,
+      const XMLtag& attr2, const string& val2, 
+      const XMLtag& attr3, const string& val3)
+    {
+      *m_fp << indentstring << t.stringStartElement()
+      << attr1.stringAttribute() << XMLEscape(val1.c_str()) << "\""
+      << attr2.stringAttribute() << XMLEscape(val2.c_str()) << "\""
+      << attr3.stringAttribute() << XMLEscape(val3.c_str()) << "\">\n";
       incIndent();
     }
 
@@ -1806,17 +1821,6 @@ class XMLOutput
     {
       *m_fp << indentstring << t.stringStartElement()
       << attr1.stringAttribute() << val1 << "\">\n";
-      incIndent();
-    }
-
-    /** Start writing a new object. This method will open a new XML-tag.
-      * Output: \<TAG_T TAG_T1="val1" TAG_T2="val2"\> */
-    void BeginObject(const XMLtag& t, const XMLtag& attr1, const string& val1,
-                     const XMLtag& attr2, const string& val2)
-    {
-      *m_fp << indentstring << t.stringStartElement()
-      << attr1.stringAttribute() << XMLEscape(val1.c_str()) << "\""
-      << attr2.stringAttribute() << XMLEscape(val2.c_str()) << "\">\n";
       incIndent();
     }
 

@@ -81,7 +81,7 @@ void LPSolver::solve(void *v)
 
   // Count the number of buckets
   unsigned int buckets = 0;
-  for (Calendar::BucketIterator c=cal->beginBuckets(); c!=cal->endBuckets(); ++c)
+  for (CalendarBool::EventIterator i(cal); i.getDate()<Date::infiniteFuture; ++i)
     ++buckets;
 
   // Determine Problem SIZE!
@@ -188,7 +188,7 @@ void LPSolver::solve(const Demand* l, void* v)
   ndx[2] = Sol->demandprio2row[l->getPriority()];
   val[2] = 1.0;
   ndx[3] = Sol->Buffer2row[Buffer::find("RM3")]
-      + Sol->cal->findBucketIndex(l->getDue());
+      ;// @todo this method was removed...  + Sol->cal->findBucketIndex(l->getDue());
   val[3] = 1.0;
   lpx_set_mat_col(Sol->lp, Sol->columns, 3, ndx, val);
 
@@ -204,7 +204,7 @@ void LPSolver::solve(const Buffer* buf, void* v)
   Sol->Buffer2row[buf] = Sol->rows;
 
   Buffer::flowplanlist::const_iterator f = buf->getFlowPlans().begin();
-  for (Calendar::BucketIterator b = Sol->cal->beginBuckets();
+  for (Calendar::BucketIterator b = Sol->cal->beginBuckets();    // @todo use calendar event iterator instead
       b != Sol->cal->endBuckets(); ++b)
   {
 

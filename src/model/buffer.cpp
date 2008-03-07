@@ -315,7 +315,7 @@ DECLARE_EXPORT void Buffer::setMinimum(const CalendarFloat *cal)
   // Mark as changed
   setChanged();
 
-  // Calendar is already set.
+  // Calendar is already set: delete previous events.
   if (min_cal)
   {
     for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
@@ -330,17 +330,16 @@ DECLARE_EXPORT void Buffer::setMinimum(const CalendarFloat *cal)
   // Null pointer passed
   if (!cal) return;
 
-  // Create timeline structures for every bucket. A new entry is created only
+  // Create timeline structures for every event. A new entry is created only
   // when the value changes.
   min_cal = const_cast< CalendarFloat* >(cal);
   float curMin = 0.0f;
-  for (Calendar::BucketIterator x = min_cal->beginBuckets();
-      x != min_cal->endBuckets(); ++x)
-    if (curMin != min_cal->getValue(x))
+  for (CalendarFloat::EventIterator x(min_cal); x.getDate()<Date::infiniteFuture; ++x)
+    if (curMin != x.getValue())
     {
-      curMin = min_cal->getValue(x);
+      curMin = x.getValue();
       flowplanlist::EventMinQuantity *newBucket =
-        new flowplanlist::EventMinQuantity(x->getStart(), curMin);
+        new flowplanlist::EventMinQuantity(x.getDate(), curMin);
       flowplans.insert(newBucket);
     }
 }
@@ -354,7 +353,7 @@ DECLARE_EXPORT void Buffer::setMaximum(const CalendarFloat *cal)
   // Mark as changed
   setChanged();
 
-  // Calendar is already set.
+  // Calendar is already set: delete previous events.
   if (max_cal)
   {
     for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
@@ -373,13 +372,12 @@ DECLARE_EXPORT void Buffer::setMaximum(const CalendarFloat *cal)
   // when the value changes.
   max_cal = const_cast<CalendarFloat*>(cal);
   float curMax = 0.0f;
-  for (Calendar::BucketIterator x = max_cal->beginBuckets();
-      x != max_cal->endBuckets(); ++x)
-    if (curMax != max_cal->getValue(x))
+  for (CalendarFloat::EventIterator x(min_cal); x.getDate()<Date::infiniteFuture; ++x)
+    if (curMax != x.getValue())
     {
-      curMax = max_cal->getValue(x);
+      curMax = x.getValue();
       flowplanlist::EventMaxQuantity *newBucket =
-        new flowplanlist::EventMaxQuantity(x->getStart(), curMax);
+        new flowplanlist::EventMaxQuantity(x.getDate(), curMax);
       flowplans.insert(newBucket);
     }
 }

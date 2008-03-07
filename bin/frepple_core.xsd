@@ -583,11 +583,9 @@
 								<xsd:element name="bucket" minOccurs="0" maxOccurs="unbounded">
 									<xsd:complexType>
 										<xsd:all>
-											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
-											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
 										</xsd:all>
-										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
+										<xsd:attribute name="start" type="xsd:dateTime" />
 										<xsd:attribute name="name" type="xsd:normalizedString" />
 										<xsd:attribute name="end" type="xsd:dateTime" />
 										<xsd:attribute name="priority" type="xsd:float" />
@@ -613,12 +611,10 @@
 								<xsd:element name="bucket" minOccurs="0">
 									<xsd:complexType>
 										<xsd:all>
-											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
-											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="value" type="xsd:float" minOccurs="0" />
 											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
 										</xsd:all>
-										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
+										<xsd:attribute name="start" type="xsd:dateTime" />
 										<xsd:attribute name="name" type="xsd:normalizedString" />
 										<xsd:attribute name="end" type="xsd:dateTime" />
 										<xsd:attribute name="value" type="xsd:float" />
@@ -646,13 +642,11 @@
 								<xsd:element name="bucket">
 									<xsd:complexType>
 										<xsd:all>
-											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
-											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="value" type="xsd:integer" minOccurs="0" />
 											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="value" type="xsd:integer" />
-										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
+										<xsd:attribute name="start" type="xsd:dateTime" />
 										<xsd:attribute name="name" type="xsd:normalizedString" />
 										<xsd:attribute name="end" type="xsd:dateTime" />
 										<xsd:attribute name="priority" type="xsd:float" />
@@ -679,13 +673,11 @@
 								<xsd:element name="bucket" minOccurs="0" maxOccurs="unbounded">
 									<xsd:complexType>
 										<xsd:all>
-											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
-											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="value" type="xsd:boolean" minOccurs="0" />
 											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="value" type="xsd:boolean" />
-										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
+										<xsd:attribute name="start" type="xsd:dateTime" />
 										<xsd:attribute name="name" type="xsd:normalizedString" />
 										<xsd:attribute name="end" type="xsd:dateTime" />
 										<xsd:attribute name="priority" type="xsd:float" />
@@ -712,13 +704,11 @@
 								<xsd:element name="bucket" minOccurs="0" maxOccurs="unbounded">
 									<xsd:complexType>
 										<xsd:all>
-											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
-											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="value" type="xsd:string" minOccurs="0" />
 											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
 										</xsd:all>
 										<xsd:attribute name="value" type="xsd:normalizedString" />
-										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
+										<xsd:attribute name="start" type="xsd:dateTime" />
 										<xsd:attribute name="name" type="xsd:normalizedString" />
 										<xsd:attribute name="end" type="xsd:dateTime" />
 										<xsd:attribute name="priority" type="xsd:float" />
@@ -745,12 +735,10 @@
 								<xsd:element name="bucket" minOccurs="0" maxOccurs="unbounded">
 									<xsd:complexType>
 										<xsd:all>
-											<xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
-											<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
 											<xsd:element name="value" type="operation" minOccurs="0" />
 											<xsd:element name="priority" type="xsd:float" minOccurs="0" />
 										</xsd:all>
-										<xsd:attribute name="start" type="xsd:dateTime" use="required" />
+										<xsd:attribute name="start" type="xsd:dateTime" />
 										<xsd:attribute name="name" type="xsd:normalizedString" />
 										<xsd:attribute name="end" type="xsd:dateTime" />
 										<xsd:attribute name="priority" type="xsd:float" />

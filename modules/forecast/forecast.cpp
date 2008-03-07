@@ -75,50 +75,71 @@ void Forecast::initialize()
   // calendar type: float, integer, bool or other
   const CalendarFloat* c = dynamic_cast<const CalendarFloat*>(calptr);
   ForecastBucket* prev = NULL;
+  Date prevDate;
+  float prevValue(0.0);
   if (c)
     // Float calendar
-    for (CalendarFloat::BucketIterator i = c->beginBuckets();
-      i != c->endBuckets(); ++i)
+    for (CalendarFloat::EventIterator i(c); i.getDate()<=Date::infiniteFuture; ++i)
     {
-      if (c->getValue(i) > 0.0f)
+      if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValue > 0.0f)
+      {
         prev = new ForecastBucket
-          (this, i->getStart(), i->getEnd(), c->getValue(i), prev);
-      Demand::add(prev);
+          (this, prevDate, i.getDate(), prevValue, prev);
+        Demand::add(prev);
+      }
+      if (i.getDate() == Date::infiniteFuture) break;
+      prevDate = i.getDate();
+      prevValue = i.getValue();
     }
   else
   {
     const CalendarInt* c = dynamic_cast<const CalendarInt*>(calptr);
     if (c)
       // Integer calendar
-      for (CalendarInt::BucketIterator i = c->beginBuckets();
-        i != c->endBuckets(); ++i)
+      for (CalendarInt::EventIterator i(c); i.getDate()<=Date::infiniteFuture; ++i)
       {
-        if (c->getValue(i) > 0)
+        if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValue > 0)
+        {
           prev = new ForecastBucket
-            (this, i->getStart(), i->getEnd(), static_cast<float>(c->getValue(i)), prev);
-        Demand::add(prev);
+            (this, prevDate, i.getDate(), prevValue, prev);
+          Demand::add(prev);
+        }
+        if (i.getDate() == Date::infiniteFuture) break;
+        prevDate = i.getDate();
+        prevValue = static_cast<float>(i.getValue());
       }
     else
     {
       const CalendarBool* c = dynamic_cast<const CalendarBool*>(calptr);
+      bool prevValueBool = false;
       if (c)
         // Boolean calendar
-        for (CalendarBool::BucketIterator i = c->beginBuckets();
-          i != c->endBuckets(); ++i)
+        for (CalendarBool::EventIterator i(c); i.getDate()<=Date::infiniteFuture; ++i)
         {
-          if (c->getValue(i))
+          if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValueBool)
+          {
             prev = new ForecastBucket
-              (this, i->getStart(), i->getEnd(), 1.0f, prev);
-          Demand::add(prev);
+                (this, prevDate, i.getDate(), 1.0f, prev);
+            Demand::add(prev);         
+            }
+          if (i.getDate() == Date::infiniteFuture) break;
+          prevDate = i.getDate();
+          prevValueBool = i.getValue();
         }
       else
+      {
         // Other calendar
-        for (Calendar::BucketIterator i = calptr->beginBuckets();
-          i != calptr->endBuckets(); ++i)
+        for (Calendar::EventIterator i(calptr); i.getDate()<=Date::infiniteFuture; ++i)
         {
-          prev = new ForecastBucket(this, i->getStart(), i->getEnd(), 1, prev);
-          Demand::add(prev);
+          if (prevDate || i.getDate() == Date::infiniteFuture)
+          {
+            prev = new ForecastBucket(this, prevDate, i.getDate(), 1.0f, prev);
+            Demand::add(prev);
+            if (i.getDate() == Date::infiniteFuture) break;
+          }
+          prevDate = i.getDate();
         }
+      }
     }
   }
 }
@@ -232,7 +253,7 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
   for (memberIterator i = beginMember(); i != endMember(); ++i)
   {
     ForecastBucket* f = dynamic_cast<ForecastBucket*>(&*i);
-    o->BeginObject(Tags::tag_bucket, Tags::tag_start, f->getDue());
+    o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(f->getDue()));
     o->writeElement(tag_total, f->total);
     o->writeElement(tag_net, f->getQuantity());
     o->writeElement(tag_consumed, f->consumed);

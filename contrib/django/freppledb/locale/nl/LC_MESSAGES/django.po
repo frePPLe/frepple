@@ -24,7 +24,7 @@ msgstr ""
 "Project-Id-Version: 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-02-17 09:28+0100\n"
-"PO-Revision-Date: 2008-02-17 09:29+0100\n"
+"PO-Revision-Date: 2008-02-26 12:12+0100\n"
 "Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
 "Language-Team: info@frepple.com\n"
 "MIME-Version: 1.0\n"
@@ -1016,7 +1016,7 @@ msgstr "Flow Lijst"
 
 #: input/views.py:572
 msgid "Demand List"
-msgstr "Vraag Lijst"
+msgstr "Order Lijst"
 
 #: input/views.py:632
 msgid "Forecast List"
@@ -1683,7 +1683,7 @@ msgid ""
 "<b>Capacity:</b></br>\n"
 "&nbsp;&nbsp;Number of resources: <input id=\"4\" name=\"rsrc_number\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"50\" onchange=\"calcUtil()\"/><br/>\n"
 "&nbsp;&nbsp;Size of each resource: <input id=\"5\" name=\"rsrc_size\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"4\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Expected average resource utilization: <span id=\"util\">82.2</span>%%<br/>\n"
+"&nbsp;&nbsp;Expected average resource utilization: <span id=\"util\">82.2</span>&#37;<br/>\n"
 "</td>\n"
 "<td><input id=\"create\" type=\"submit\" value=\"Create\"/></td>"
 msgstr ""
@@ -1703,7 +1703,7 @@ msgstr ""
 "<b>Capaciteit:</b></br>\n"
 "&nbsp;&nbsp;Aantal machines: <input id=\"4\" name=\"rsrc_number\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"50\" onchange=\"calcUtil()\"/><br/>\n"
 "&nbsp;&nbsp;Capaciteit van elke machine: <input id=\"5\" name=\"rsrc_size\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"4\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Verwachte gemiddelde bezettingsgraad: <span id=\"util\">82.2</span>%%<br/>\n"
+"&nbsp;&nbsp;Verwachte gemiddelde bezettingsgraad: <span id=\"util\">82.2</span>&#37;<br/>\n"
 "</td>\n"
 "<td><input id=\"create\" type=\"submit\" value=\"Genereer\"/></td>"
 
@@ -1889,8 +1889,8 @@ msgstr "Primary key ontbreekt"
 
 #: utils/report.py:1003
 #: utils/report.py:1026
-msgid "Row"
-msgstr "Rij"
+msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
+msgstr "Rij %(rownum)s veld %(field)s: %(data)s: %(message)s"
 
 #~ msgid "Upload data"
 #~ msgstr "Laad gegevens"

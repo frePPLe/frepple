@@ -44,16 +44,13 @@
       <item name="end item 1" />
       <minimum name="safety stock target" xsi:type="calendar_float">
 	      <buckets>
-	        <bucket start="2007-01-01T00:00:00">
-	          <name>january</name>
+	        <bucket start="2007-01-01T00:00:00" name="january">
 	          <value>10</value>
 	        </bucket>
-	        <bucket start="2007-02-01T00:00:00">
-	          <name>february</name>
+	        <bucket start="2007-02-01T00:00:00" name="february">
 	          <value>20</value>
 	        </bucket>
-	        <bucket start="2007-03-01T00:00:00">
-	          <name>march and remainder</name>
+	        <bucket start="2007-03-01T00:00:00" name="march and remainder">
 	          <value>5</value>
 	        </bucket>
 	      </buckets>

@@ -60,13 +60,12 @@ DECLARE_EXPORT void Resource::setMaximum(CalendarFloat* c)
   // Create timeline structures for every bucket.
   max_cal = c;
   float curMax = 0.0f;
-  for (Calendar::BucketIterator x = max_cal->beginBuckets();
-      x != max_cal->endBuckets(); ++x)
-    if (curMax != max_cal->getValue(x))
+  for (CalendarFloat::EventIterator x(max_cal); x.getDate()<Date::infiniteFuture; ++x)
+    if (curMax != x.getValue())
     {
-      curMax = max_cal->getValue(x);
+      curMax = x.getValue();
       loadplanlist::EventMaxQuantity *newBucket =
-        new loadplanlist::EventMaxQuantity(x->getStart(), curMax);
+        new loadplanlist::EventMaxQuantity(x.getDate(), curMax);
       loadplans.insert(newBucket);
     }
 }

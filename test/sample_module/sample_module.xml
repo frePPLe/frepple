@@ -30,7 +30,6 @@
     <calendar name="capacity factory 1" xsi:type="calendar_float">
       <buckets>
         <bucket start="2007-01-01T00:00:00">
-          <name>all</name>
           <value>1</value>
         </bucket>
       </buckets>
@@ -38,7 +37,6 @@
     <calendar name="capacity factory 2" xsi:type="calendar_float">
       <buckets>
         <bucket start="2007-01-01T00:00:00">
-          <name>all</name>
           <value>1</value>
         </bucket>
       </buckets>

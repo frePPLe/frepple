@@ -54,7 +54,7 @@ DECLARE_EXPORT CalendarFloat::~CalendarFloat()
     if (b->getMaximum()==this) Buffer::writepointer(&*b)->setMaximum(NULL);
   }
 
-  // Remove all references from resources to this location
+  // Remove all references from resources
   for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
     if (r->getMaximum()==this) Resource::writepointer(&*r)->setMaximum(NULL);
 }
@@ -71,46 +71,35 @@ DECLARE_EXPORT CalendarBool::~CalendarBool()
 }
 
 
-DECLARE_EXPORT Calendar::Bucket* Calendar::addBucket (Date d)
+DECLARE_EXPORT Calendar::Bucket* Calendar::addBucket 
+  (Date start, Date end, string name)
 {
+  // Assure the start is before the end.
+  if (start > end)
+  {
+    // Switch arguments
+    Date tmp = end;
+    end = start;
+    start = end;
+  }
+
   // Create new bucket and insert in the list
   Bucket *next = firstBucket, *prev = NULL;
-  while (next && next->startdate < d)
+  while (next && next->startdate < start)
   {
     prev = next;
     next = next->nextBucket;
   }
-  if (next && next->startdate == d)
-  {
-    ostringstream msg;
-    msg << "Trying to create two buckets with start date " << d
-    << " in calendar '" << getName() << "'";
-    throw DataException(msg.str());
-  }
 
   // Create the new bucket
-  Bucket *c = createNewBucket(d);
+  Bucket *c = createNewBucket(start,end,name);
   c->nextBucket = next;
   c->prevBucket = prev;
 
-  if (prev)
-  {
-    // Set end date of previous bucket to the start of this one...
-    prev->enddate = d;
-    prev->nextBucket = c;
-  }
-  else
-    // This bucket is the first in the list
-    firstBucket = c;
-
-  // Set end date of this bucket equal to the start of the next one...
-  if (next)
-  {
-    next->prevBucket = c;
-    c->enddate = next->startdate;
-  }
-  else
-    c->enddate = Date::infiniteFuture;
+  // Maintain linked list
+  if (prev) prev->nextBucket = c;
+  else firstBucket = c;
+  if (next) next->prevBucket = c;
 
   // Return the new bucket
   return c;
@@ -128,18 +117,15 @@ DECLARE_EXPORT void Calendar::removeBucket(Calendar::Bucket* bkt)
     throw DataException("Trying to remove unavailable bucket from calendar '"
         + getName() + "'");
 
+  // Update the list
   if (bkt->prevBucket)
-  {
-    // Previous bucket (if there is one) gets a new end date
-    bkt->prevBucket->enddate = bkt->enddate;
+    // Previous bucket links to a new next bucket
     bkt->prevBucket->nextBucket = bkt->nextBucket;
-  }
   else
-    // Removing the first bucket, and give new head to the bucket list
+    // New head for the bucket list
     firstBucket = bkt->nextBucket;
-
-  // Update the reference prevBucket of the next bucket
   if (bkt->nextBucket)
+    // Update the reference prevBucket of the next bucket
     bkt->nextBucket->prevBucket = bkt->prevBucket;
 
   // Delete the bucket
@@ -149,21 +135,24 @@ DECLARE_EXPORT void Calendar::removeBucket(Calendar::Bucket* bkt)
 
 DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d) const
 {
-  for (Bucket *b = firstBucket; b; b = b->nextBucket)
-    if (d <= b->enddate) return b;
-  throw LogicException("Unreachable code reached");
-}
-
-
-DECLARE_EXPORT int Calendar::findBucketIndex(Date d) const
-{
-  int i = 1;
+  Calendar::Bucket *curBucket = NULL;
+  float curPriority;
   for (Bucket *b = firstBucket; b; b = b->nextBucket)
   {
-    if (d <= b->enddate) return i;
-    ++i;
+    if (b->getStart() > d) 
+      // Buckets are sorted by the start date. Other entries definately 
+      // won't be effective
+      break;
+    else if ((!curBucket || curPriority > b->getPriority()) 
+      && d >= b->getStart() && d < b->getEnd()
+      && b->checkValid(d) )
+    {
+      // Bucket is effective and has lower priority than other effective ones.
+      curPriority = b->getPriority();
+      curBucket = &*b;
+    }
   }
-  throw LogicException("Unreachable code reached");
+  return curBucket;
 }
 
 
@@ -203,49 +192,54 @@ DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const XMLtag& tag, mode
 
 DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
 {
-  // Pick up the start attribute
-  char* start =
-    XMLString::transcode(atts->getValue(Tags::tag_start.getXMLCharacters()));
-  if (!start)
-  {
-    XMLString::release(&start);
-    throw DataException("Missing the attribute START for creating a bucket");
-  }
-  Date d;
-  d = Date(start);
-  XMLString::release(&start);
+  // Pick up the start, end and name attributes
+  char* s;
+  s = XMLString::transcode(atts->getValue(Tags::tag_start.getXMLCharacters()));
+  Date startdate(s);
+  XMLString::release(&s);
+  s = XMLString::transcode(atts->getValue(Tags::tag_end.getXMLCharacters()));
+  Date enddate = Date::infiniteFuture;
+  if (s) enddate = Date(s);
+  XMLString::release(&s);
+  s = XMLString::transcode(atts->getValue(Tags::tag_name.getXMLCharacters()));
+  string name;
+  if (s) name = s;
+  XMLString::release(&s);
 
-  // Check for existence of the bucket
-  BucketIterator x = beginBuckets();
-  while (x!=endBuckets() && x->startdate!=d) ++x;
+  // Check for existence of the bucket: same name, start date and end date
+  Calendar::Bucket* result = NULL;
+  for (BucketIterator x = beginBuckets(); x!=endBuckets(); ++x)
+  {
+    if ((!name.empty() && x->nm==name)
+      || (name.empty() && x->startdate==startdate && x->enddate==enddate))
+    {
+      // Found!
+      result = &*x;
+      break;
+    }
+  }  
 
   // Pick up the action attribute and update the bucket accordingly
-  Calendar::Bucket* result = &*x;
   switch (MetaClass::decodeAction(atts))
   {
     case ADD:
       // Only additions are allowed
-      if (x==beginBuckets())
-        // The first bucket (starting at minus infinite) is automatically
-        // created in a calendar. In this special case, we can allow an add
-        // action on a bucket that already exists.
-        return result;
-      if (x!=endBuckets())
-        throw("Bucket " + string(d)
-            + " already exists in calenar '" + getName() + "'");
-      result = addBucket(d);
+      if (result)
+        throw("Bucket " + string(startdate) + " " + string(enddate) + " " + name
+            + " already exists in calendar '" + getName() + "'");
+      result = addBucket(startdate, enddate, name);
       return result;
     case CHANGE:
       // Only changes are allowed
-      if (x==endBuckets())
-        throw DataException("Bucket " + string(d)
-            + " doesn't exist in calendar '" + getName() + "'");
+      if (!result)
+        throw DataException("Bucket " + string(startdate) + " " + string(enddate) 
+            + " " + name + " doesn't exist in calendar '" + getName() + "'");
       return result;
     case REMOVE:
       // Delete the entity
-      if (x==endBuckets())
-        throw DataException("Bucket " + string(d)
-            + " doesn't exist in calendar '" + getName() + "'");
+      if (!result)
+        throw DataException("Bucket " + string(startdate) + " " + string(enddate) 
+            + " " + name + " doesn't exist in calendar '" + getName() + "'");
       else
       {
         // Delete it
@@ -253,11 +247,9 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
         return NULL;
       }
     case ADD_CHANGE:
-      if (x!=endBuckets())
-        // Returning existing bucket
-        return result;
-      // Adding a new bucket
-      result = addBucket(d);
+      if (!result)
+        // Adding a new bucket
+        result = addBucket(startdate, enddate, name);
       return result;
   }
 
@@ -275,13 +267,51 @@ DECLARE_EXPORT void Calendar::beginElement (XMLInput& pIn, XMLElement& pElement)
 }
 
 
+DECLARE_EXPORT void Calendar::Bucket::writeHeader(XMLOutput *o) const
+{
+  // The header line has a variable number of attributes: start, end and/or name
+  if (startdate != Date::infinitePast)
+  {
+    if (enddate != Date::infiniteFuture)
+    {
+      if (!nm.empty())
+        o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(startdate), Tags::tag_end, string(enddate), Tags::tag_name, nm);
+      else
+        o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(startdate), Tags::tag_end, string(enddate));
+    }
+    else
+    {
+      if (!nm.empty())
+        o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(startdate), Tags::tag_name, nm);
+      else
+        o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(startdate));
+    }
+  }
+  else
+  {
+    if (enddate != Date::infiniteFuture)
+    {
+      if (!nm.empty())
+        o->BeginObject(Tags::tag_bucket, Tags::tag_end, string(enddate), Tags::tag_name, nm);
+      else
+        o->BeginObject(Tags::tag_bucket, Tags::tag_end, string(enddate));
+    }
+    else
+    {
+      if (!nm.empty())
+        o->BeginObject(Tags::tag_bucket, Tags::tag_name, nm);
+      else
+        o->BeginObject(Tags::tag_bucket);
+    }
+  }  
+}
+
+
 DECLARE_EXPORT void Calendar::Bucket::writeElement
 (XMLOutput *o, const XMLtag& tag, mode m) const
 {
   assert(m == DEFAULT || m == FULL);
-  o->BeginObject(Tags::tag_bucket, Tags::tag_start, startdate);
-  o->writeElement(Tags::tag_name, nm);
-  o->writeElement(Tags::tag_end, enddate);
+  writeHeader(o);
   if (priority) o->writeElement(Tags::tag_priority, priority);
   o->EndObject(tag);
 }
@@ -289,10 +319,85 @@ DECLARE_EXPORT void Calendar::Bucket::writeElement
 
 DECLARE_EXPORT void Calendar::Bucket::endElement (XMLInput& pIn, XMLElement& pElement)
 {
-  if (pElement.isA(Tags::tag_name))
-    pElement >> nm;
-  else if (pElement.isA(Tags::tag_priority))
+  if (pElement.isA(Tags::tag_priority))
     pElement >> priority;
 }
+
+
+DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
+{
+  // Go over all entries and ask them to update the iterator
+  Date d = curDate;
+  curDate = Date::infiniteFuture;  // Cause end date is not included
+  for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
+    b->nextEvent(this, d);
+  // If no entry updated the iterator, we are at the end
+  if (curDate == Date::infiniteFuture)
+    curBucket = theCalendar->findBucket(curDate - TimePeriod(1));
+  return *this;
+}
+
+
+DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator--()
+{
+  // Go over all entries and ask them to update the iterator
+  Date d = curDate;
+  curDate = Date::infinitePast;
+  for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
+    b->prevEvent(this, d);
+  // If no entry updated the iterator, we are at the end
+  if (curDate == Date::infinitePast) 
+    curBucket = theCalendar->findBucket(curDate);
+  return *this;
+}
+
+
+DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDate) const
+{
+  if (iter->curBucket && iter->curBucket->getPriority() < priority)
+    // Priority isn't low enough to overrule current date
+    return;
+
+  if (refDate < startdate && startdate <= iter->curDate)
+  {
+    // Next event is the start date of the bucket
+    iter->curDate = startdate;   
+    iter->curBucket = this;
+    return;
+  }
+
+  if (refDate < enddate && enddate < iter->curDate)
+  {
+    // Next event is the end date of the bucket
+    iter->curDate = enddate;
+    iter->curBucket = iter->theCalendar->findBucket(enddate);
+    return;
+  }
+}
+
+
+DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDate) const
+{
+  if (iter->curBucket && iter->curBucket->getPriority() < priority)
+    // Priority isn't low enough to overrule current date
+    return;
+
+  if (refDate > enddate && enddate > iter->curDate)
+  {
+    // Previous event is the end date of the bucket
+    iter->curDate = enddate;
+    iter->curBucket = iter->theCalendar->findBucket(enddate);
+    return;
+  }
+
+  if (refDate > startdate && startdate >= iter->curDate)
+  {
+    // Previous event is the start date of the bucket
+    iter->curDate = startdate;   
+    iter->curBucket = this;
+    return;
+  }
+}
+
 
 } // end namespace

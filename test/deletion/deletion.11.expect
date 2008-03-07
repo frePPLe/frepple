@@ -35,46 +35,28 @@
 		<calendar name="assembly capacity" xsi:type="calendar_float">
 			<default>1</default>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
-					<name>all</name>
-					<end>2030-12-31T00:00:00</end>
+				<bucket start="2007-01-01T00:00:00" name="all">
 					<value>2</value>
 				</bucket>
 			</buckets>
 		</calendar>
 		<calendar name="months" xsi:type="calendar_void">
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
-					<name>jan</name>
-					<end>2007-02-01T00:00:00</end>
+				<bucket start="2007-01-01T00:00:00" name="jan">
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
-					<name>feb</name>
-					<end>2007-03-01T00:00:00</end>
+				<bucket start="2007-02-01T00:00:00" name="feb">
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
-					<name>mar</name>
-					<end>2007-04-01T00:00:00</end>
+				<bucket start="2007-03-01T00:00:00" name="mar">
 				</bucket>
-				<bucket start="2007-04-01T00:00:00">
-					<name>apr</name>
-					<end>2007-05-01T00:00:00</end>
+				<bucket start="2007-04-01T00:00:00" name="apr">
 				</bucket>
-				<bucket start="2007-05-01T00:00:00">
-					<name>may</name>
-					<end>2007-06-01T00:00:00</end>
+				<bucket start="2007-05-01T00:00:00" name="may">
 				</bucket>
-				<bucket start="2007-06-01T00:00:00">
-					<name>jun</name>
-					<end>2007-07-01T00:00:00</end>
+				<bucket start="2007-06-01T00:00:00" name="jun">
 				</bucket>
-				<bucket start="2007-07-01T00:00:00">
-					<name>jul</name>
-					<end>2007-08-01T00:00:00</end>
+				<bucket start="2007-07-01T00:00:00" name="jul">
 				</bucket>
-				<bucket start="2007-08-01T00:00:00">
-					<name>aug</name>
-					<end>2030-12-31T00:00:00</end>
+				<bucket start="2007-08-01T00:00:00" name="aug">
 				</bucket>
 			</buckets>
 		</calendar>

@@ -11,6 +11,9 @@
     possible.
     Case 1: Simplest situation, no constraints.
     Case 2: Same as 1, but with effectivity based on the start date.
+
+    The capacity constraint in this case are also pretty complicated to solve.
+    It makes it a proper test for the resource solver too.
   </description>
   <current>2007-01-01T00:00:00</current>
   <commands>
@@ -37,6 +40,7 @@
       <item name="1. end item" />
       <producing name="1. make end item in A" xsi:type="operation_time_per"
         duration_per="P1D" >
+        <size_multiple>1</size_multiple>
         <flows>
           <flow xsi:type="flow_end">
             <buffer name="1. end item in location A" />
@@ -46,11 +50,10 @@
         <loads>
           <load>
             <resource name="1. capacity in A">
-              <maximum name="Capacity" xsi:type="calendar_float">
+              <maximum name="1. capacity A" xsi:type="calendar_float">
                 <buckets>
-                  <bucket start="2007-01-01T00:00:00">
-                    <value>2</value>
-                  </bucket>
+                  <bucket start="2007-01-01T00:00:00" value="2"/>
+                  <bucket start="2007-01-15T00:00:00" value="3"/>
                 </buckets>
               </maximum>
             </resource>
@@ -73,10 +76,10 @@
         <loads>
           <load>
             <resource name="1. capacity in B">
-              <maximum name="Capacity" xsi:type="calendar_float">
+              <maximum name="1. capacity B" xsi:type="calendar_float">
                 <buckets>
                   <bucket start="2007-01-01T00:00:00">
-                    <value>2</value>
+                    <value>1</value>
                   </bucket>
                 </buckets>
               </maximum>
@@ -137,7 +140,7 @@
       <item name="1. end item" />
     </demand>
     <demand name="1. order 3">
-      <quantity>50</quantity>
+      <quantity>80</quantity>
       <due>2007-01-04T00:00:00</due>
       <priority>13</priority>
       <item name="1. end item" />

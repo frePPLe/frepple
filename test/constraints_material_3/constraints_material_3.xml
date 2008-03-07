@@ -46,14 +46,7 @@
 	  <buffer name="buffer 1">
 	    <item name="item 1" />
 	    <producing name="make 1" />
-	    <minimum name="min inv for buffer 1" xsi:type="calendar_float">
-	      <buckets>
-	        <bucket start="2007-01-01T00:00:00">
-	          <name>all</name>
-	          <value>4</value>
-	        </bucket>
-	      </buckets>
-	    </minimum>
+	    <minimum name="min inv for buffer 1" xsi:type="calendar_float" default="4"/>
 	    <onhand>10</onhand>
 	  </buffer>
 	  <buffer name="constraint buffer 1">
@@ -62,14 +55,7 @@
 	  <buffer name="buffer 2">
 	    <item name="item 2" />
 	    <producing name="make 2" />
-	    <minimum name="min inv for buffer 2" xsi:type="calendar_float">
-	      <buckets>
-	        <bucket start="2007-01-01T00:00:00">
-	          <name>all</name>
-	          <value>4</value>
-	        </bucket>
-	      </buckets>
-	    </minimum>
+	    <minimum name="min inv for buffer 2" xsi:type="calendar_float" default="4"/>
 	    <onhand>10</onhand>
 	  </buffer>
 	  <buffer name="constraint buffer 2">
@@ -80,12 +66,8 @@
 	    <producing name="make 3" />
 	    <minimum name="min inv for buffer 3" xsi:type="calendar_float">
 	      <buckets>
-	        <bucket start="2007-01-01T00:00:00">
-	          <value>4</value>
-	        </bucket>
-	        <bucket start="2007-01-12T00:00:00">
-	          <value>2</value>
-	        </bucket>
+	        <bucket start="2007-01-01T00:00:00" value="4" priority="2"/>
+	        <bucket start="2007-01-12T00:00:00" value="2" priority="1"/>
 	      </buckets>
 	    </minimum>
 	    <onhand>10</onhand>
@@ -98,12 +80,8 @@
 	    <producing name="make 4" />
 	    <minimum name="min inv for buffer 4" xsi:type="calendar_float">
 	      <buckets>
-	        <bucket start="2007-01-01T00:00:00">
-	          <value>4</value>
-	        </bucket>
-	        <bucket start="2007-01-12T00:00:00">
-	          <value>6</value>
-	        </bucket>
+	        <bucket start="2007-01-01T00:00:00" value="4" priority="2"/>
+	        <bucket start="2007-01-12T00:00:00" value="6" priority="1"/>
 	      </buckets>
 	    </minimum>
 	    <onhand>10</onhand>

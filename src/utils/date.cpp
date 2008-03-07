@@ -223,6 +223,12 @@ DECLARE_EXPORT void TimePeriod::parse (const char* s)
 
 DECLARE_EXPORT void Date::parse (const char* s, const string& fmt)
 {
+  if (!s) 
+  {
+    // Null string passed - default value is infinite past
+    lval = infinitePast.lval;
+    return;
+  }
   struct tm p;
   strptime(s, fmt.c_str(), &p);
   // No clue whether daylight saving time is in effect...

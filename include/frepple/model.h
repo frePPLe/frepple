@@ -95,6 +95,7 @@ class Calendar : public HasName<Calendar>, public Object
     TYPEDEF(Calendar);
   public:
     class BucketIterator; // Forward declaration
+    class EventIterator; // Forward declaration
 
     /** @brief This class represents a time bucket as a part of a calendar.
       *
@@ -106,6 +107,7 @@ class Calendar : public HasName<Calendar>, public Object
     {
         friend class Calendar;
         friend class BucketIterator;
+        friend class EventIterator;
       private:
         /** Name of the bucket. */
         string nm;
@@ -129,11 +131,26 @@ class Calendar : public HasName<Calendar>, public Object
           * at a certain time. 
           */
         float priority;
+        
+        /** Increments an iterator to the next change event.<br>
+          * A bucket will evaluate the current state of the iterator, and
+          * update it if a valid next event can be generated. 
+          */
+        DECLARE_EXPORT void nextEvent(EventIterator*, Date) const;
+
+        /** Increments an iterator to the previous change event.<br>
+          * A bucket will evaluate the current state of the iterator, and
+          * update it if a valid previous event can be generated. 
+          */
+        DECLARE_EXPORT void prevEvent(EventIterator*, Date) const;
 
       protected:
         /** Constructor. */
-        Bucket(Date n) : startdate(n), nextBucket(NULL), prevBucket(NULL), 
-          priority(0.0) {}
+        Bucket(Date start, Date end, string name) : nm(name), startdate(start),
+          enddate(end), nextBucket(NULL), prevBucket(NULL), priority(0.0) {}
+        
+        /** Auxilary function to write out the start of the XML. */
+        DECLARE_EXPORT void writeHeader(XMLOutput *) const;
 
       public:
         /** This method is here only to keep the API of all calendar classes
@@ -184,6 +201,12 @@ class Calendar : public HasName<Calendar>, public Object
           */
         void setPriority(float f) {priority = f;}
 
+        /** Verifies whether this entry is effective on a given date. */
+        bool checkValid(Date d) const
+        {
+          return true;
+        }
+
         virtual DECLARE_EXPORT void writeElement
           (XMLOutput*, const XMLtag&, mode=DEFAULT) const;
 
@@ -201,8 +224,7 @@ class Calendar : public HasName<Calendar>, public Object
     };
 
     /** Default constructor. */
-    Calendar(const string& n) : HasName<Calendar>(n), firstBucket(NULL)
-      { createNewBucket(Date()); }
+    Calendar(const string& n) : HasName<Calendar>(n), firstBucket(NULL) {}
 
     /** Destructor, which cleans up the buckets too and all references to the 
       * calendar from the core model. 
@@ -218,7 +240,7 @@ class Calendar : public HasName<Calendar>, public Object
     DECLARE_EXPORT Bucket* createBucket(const Attributes* atts);
 
     /** Adds a new bucket to the list. */
-    DECLARE_EXPORT Bucket* addBucket(Date);
+    DECLARE_EXPORT Bucket* addBucket(Date, Date, string);
 
     /** Removes a bucket from the list. */
     DECLARE_EXPORT void removeBucket(Bucket* bkt);
@@ -231,17 +253,38 @@ class Calendar : public HasName<Calendar>, public Object
       */
     DECLARE_EXPORT Bucket* findBucket(Date d) const;
 
-    /** Returns the index of the bucket where a certain date belongs to.
-      * A bucket (and bucket index) will always be found.
-      * @see findBucket()
-      */
-    DECLARE_EXPORT int findBucketIndex(Date d) const;
-
     /** Returns the bucket with a certain name.
       * A NULL pointer is returned in case no bucket can be found with the
       * given name.
       */
     DECLARE_EXPORT Bucket* findBucket(const string&) const;
+
+    /** @brief An iterator class to go through all dates where the calendar
+      * value changes.*/
+    class EventIterator
+    {
+      friend class Calendar::Bucket;
+      protected:
+        const Calendar* theCalendar;
+        const Bucket* curBucket;
+        Date curDate;
+      public:
+        const Date& getDate() const {return curDate;}
+        const Bucket* getBucket() const {return curBucket;}
+        EventIterator(const Calendar* c, Date d = Date::infinitePast) 
+          : theCalendar(c), curDate(d) 
+        {
+          if (!c) 
+            throw LogicException("Creating iterator for NULL calendar.");
+          curBucket = c->findBucket(d);
+        };
+        DECLARE_EXPORT EventIterator& operator++();
+        DECLARE_EXPORT EventIterator& operator--();
+        EventIterator operator++(int)
+          {EventIterator tmp = *this; ++*this; return tmp;}
+        EventIterator operator--(int)
+          {EventIterator tmp = *this; --*this; return tmp;}        
+    };
 
     /** @brief An iterator class to go through all buckets of the calendar. */
     class BucketIterator
@@ -294,7 +337,8 @@ class Calendar : public HasName<Calendar>, public Object
 
     /** This is the factory method used to generate new buckets. Each subclass
       * should provide an override for this function. */
-    virtual Bucket* createNewBucket(Date n) {return new Bucket(n);}
+    virtual Bucket* createNewBucket(Date start, Date end, string name) 
+      {return new Bucket(start,end,name);}
 };
 
 
@@ -321,7 +365,8 @@ template <typename T> class CalendarValue : public Calendar
         T val;
 
         /** Constructor. */
-        BucketValue(Date& n) : Bucket(n) {};
+        BucketValue(Date start, Date end, string name) 
+          : Bucket(start,end,name) {};
 
       public:
         /** Returns the value of this bucket. */
@@ -334,9 +379,7 @@ template <typename T> class CalendarValue : public Calendar
         (XMLOutput *o, const XMLtag& tag, mode m = DEFAULT) const
         {
           assert(m == DEFAULT || m == FULL);
-          o->BeginObject(Tags::tag_bucket, Tags::tag_start, getStart());
-          if (!useDefaultName()) o->writeElement(Tags::tag_name, getName());
-          o->writeElement(Tags::tag_end, getEnd());
+          writeHeader(o);
           if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
           o->writeElement(Tags::tag_value, val);
           o->EndObject(tag);
@@ -357,16 +400,41 @@ template <typename T> class CalendarValue : public Calendar
           {return sizeof(typename CalendarValue<T>::BucketValue) + getName().size();}
     };
 
+    /** @brief A special event iterator, providing also access to the 
+      * current value. */
+    class EventIterator : public Calendar::EventIterator
+    {
+      public:
+        /** Constructor. */
+        EventIterator(const Calendar* c, Date d = Date::infinitePast) 
+          : Calendar::EventIterator(c,d) {}
+
+        /** Return the current value of the iterator at this date. */
+        T getValue() 
+        {
+          typedef CalendarValue<T> calendarvaluetype;
+          typedef typename CalendarValue<T>::BucketValue bucketvaluetype;
+          return curBucket ? 
+            static_cast<const bucketvaluetype*>(curBucket)->getValue() : 
+            static_cast<const calendarvaluetype*>(theCalendar)->getDefault();
+        }
+    };
+
     /** Default constructor. */
     CalendarValue(const string& n) : Calendar(n) {}
 
     /** Returns the value on the specified date. */
     const T& getValue(const Date d) const
-      {return static_cast<BucketValue*>(findBucket(d))->getValue();}
+    {
+      BucketValue* x = static_cast<BucketValue*>(findBucket(d));
+      return x ? x->getValue() : defaultValue;
+    }
 
     /** Updates the value in a certain time bucket. */
-    void setValue(const Date d, const T& v)
-      {static_cast<BucketValue*>(findBucket(d))->setValue(v);}
+    void setValue(Date start, Date end, const T& v)
+    {
+      // @todo logic for setValue(start,end,value) not implemented - see python implementation
+    }
 
     virtual const MetaClass& getType() const = 0;
 
@@ -414,11 +482,13 @@ template <typename T> class CalendarValue : public Calendar
       else
         Calendar::endElement(pIn, pElement);
     }
+
   private:
     /** Factory method to add new buckets to the calendar.
       * @see Calendar::addBucket()
       */
-    Bucket* createNewBucket(Date n) {return new BucketValue(n);}
+    Bucket* createNewBucket(Date start, Date end, string name) 
+      {return new BucketValue(start,end,name);}
 
     /** Value when no bucket is matching a certain date. */
     T defaultValue;
@@ -449,7 +519,8 @@ template <typename T> class CalendarPointer : public Calendar
         T* val;
 
         /** Constructor. */
-        BucketPointer(Date& n) : Bucket(n), val(NULL) {};
+        BucketPointer(Date start, Date end, string name) 
+          : Bucket(start,end,name), val(NULL) {};
 
       public:
         /** Returns the value stored in this bucket. */
@@ -462,9 +533,7 @@ template <typename T> class CalendarPointer : public Calendar
         (XMLOutput *o, const XMLtag& tag, mode m = DEFAULT) const
         {
           assert(m == DEFAULT || m == FULL);
-          o->BeginObject(Tags::tag_bucket, Tags::tag_start, getStart());
-          if (!useDefaultName()) o->writeElement(Tags::tag_name, getName());
-          o->writeElement(Tags::tag_end, getEnd());
+          writeHeader(o);
           if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
           if (val) o->writeElement(Tags::tag_value, val);
           o->EndObject(tag);
@@ -501,16 +570,42 @@ template <typename T> class CalendarPointer : public Calendar
           {return sizeof(typename CalendarPointer<T>::BucketPointer) + getName().size();}
     };
 
+    /** @brief A special event iterator, providing also access to the 
+      * current value. */
+    class EventIterator : public Calendar::EventIterator
+    {
+      public:
+        /** Constructor. */
+        EventIterator(const Calendar* c, Date d = Date::infinitePast) 
+          : Calendar::EventIterator(c,d) {}
+
+        /** Return the current value of the iterator at this date. */
+        const T* getValue() 
+        {
+          typedef CalendarPointer<T> calendarpointertype;
+          typedef typename CalendarPointer<T>::BucketPointer bucketpointertype;
+          return curBucket ? 
+            static_cast<const bucketpointertype*>(curBucket)->getValue() : 
+            static_cast<const calendarpointertype*>(theCalendar)->getDefault();
+        }
+    };
     /** Default constructor. */
     CalendarPointer(const string& n) : Calendar(n), defaultValue(NULL) {}
 
     /** Returns the value on the specified date. */
     T* getValue(const Date d) const
-      {return static_cast<BucketPointer*>(findBucket(d))->getValue();}
+    {
+      BucketPointer* x = static_cast<BucketPointer*>(findBucket(d));
+      return x ? x->getValue() : defaultValue;
+    }
 
     /** Updates the value in a certain time bucket. */
     void setValue(const Date d, T* v)
-      {static_cast<BucketPointer*>(findBucket(d))->setValue(v);}
+    {
+      BucketPointer* x = static_cast<BucketPointer*>(findBucket(d));
+      if (x) x->setValue(v);
+      else defaultValue = x;
+    }
 
     /** Returns the default calendar value when no entry is matching. */
     virtual T* getDefault() const {return defaultValue;}
@@ -574,7 +669,8 @@ template <typename T> class CalendarPointer : public Calendar
     /** Factory method to add new buckets to the calendar.
       * @see Calendar::addBucket()
       */
-    Bucket* createNewBucket(Date n) {return new BucketPointer(n);}
+    Bucket* createNewBucket(Date start, Date end, string name) 
+      {return new BucketPointer(start,end,name);}
 
     /** Value when no bucket is matching a certain date. */
     T* defaultValue;

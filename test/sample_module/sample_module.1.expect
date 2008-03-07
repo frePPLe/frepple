@@ -21,8 +21,6 @@
 			<default>0</default>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
-					<name>all</name>
-					<end>2030-12-31T00:00:00</end>
 					<value>1</value>
 				</bucket>
 			</buckets>
@@ -31,8 +29,6 @@
 			<default>0</default>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
-					<name>all</name>
-					<end>2030-12-31T00:00:00</end>
 					<value>1</value>
 				</bucket>
 			</buckets>

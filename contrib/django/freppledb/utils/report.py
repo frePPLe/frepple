@@ -38,7 +38,6 @@ from datetime import date, datetime
 from email.Utils import formatdate
 from calendar import timegm
 import csv
-import new
 
 from django.conf import settings
 from django.core.paginator import ObjectPaginator, InvalidPage
@@ -995,11 +994,11 @@ def parseUpload(request, reportclass, data):
         # Abort when there are errors
         if len(errors) > 0: return (warnings,errors)
         # Create a form class that will be used to validate the data
-        UploadMeta = new.classobj("UploadMeta", (), {
+        UploadMeta = type("UploadMeta", (), {
           'model': entityclass,
           'fields': tuple([i.name for i in headers])
           })
-        UploadForm = new.classobj("UploadForm", (ModelForm,), {
+        UploadForm = type("UploadForm", (ModelForm,), {
           "Meta": UploadMeta
           })
 

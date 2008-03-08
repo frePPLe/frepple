@@ -329,11 +329,10 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
   // Go over all entries and ask them to update the iterator
   Date d = curDate;
   curDate = Date::infiniteFuture;  // Cause end date is not included
+  curBucket = NULL;
+  curPriority = FLT_MAX;
   for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
     b->nextEvent(this, d);
-  // If no entry updated the iterator, we are at the end
-  if (curDate == Date::infiniteFuture)
-    curBucket = theCalendar->findBucket(curDate - TimePeriod(1));
   return *this;
 }
 
@@ -343,26 +342,26 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator--()
   // Go over all entries and ask them to update the iterator
   Date d = curDate;
   curDate = Date::infinitePast;
+  curBucket = NULL;
+  curPriority = FLT_MAX;
   for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
     b->prevEvent(this, d);
-  // If no entry updated the iterator, we are at the end
-  if (curDate == Date::infinitePast) 
-    curBucket = theCalendar->findBucket(curDate);
   return *this;
 }
 
 
 DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDate) const
 {
-  if (iter->curBucket && iter->curBucket->getPriority() < priority)
+  if (iter->curPriority < priority)
     // Priority isn't low enough to overrule current date
     return;
 
   if (refDate < startdate && startdate <= iter->curDate)
   {
     // Next event is the start date of the bucket
-    iter->curDate = startdate;   
+    iter->curDate = startdate; 
     iter->curBucket = this;
+    iter->curPriority = priority;
     return;
   }
 
@@ -371,6 +370,7 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
     // Next event is the end date of the bucket
     iter->curDate = enddate;
     iter->curBucket = iter->theCalendar->findBucket(enddate);
+    iter->curPriority = priority;
     return;
   }
 }
@@ -378,23 +378,25 @@ DECLARE_EXPORT void Calendar::Bucket::nextEvent(EventIterator* iter, Date refDat
 
 DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDate) const
 {
-  if (iter->curBucket && iter->curBucket->getPriority() < priority)
+  if (iter->curPriority < priority)
     // Priority isn't low enough to overrule current date
     return;
 
-  if (refDate > enddate && enddate > iter->curDate)
+  if (refDate >= enddate && enddate > iter->curDate)
   {
     // Previous event is the end date of the bucket
     iter->curDate = enddate;
     iter->curBucket = iter->theCalendar->findBucket(enddate);
+    iter->curPriority = priority;
     return;
   }
 
-  if (refDate > startdate && startdate >= iter->curDate)
+  if (refDate >= startdate && startdate >= iter->curDate)
   {
     // Previous event is the start date of the bucket
     iter->curDate = startdate;   
     iter->curBucket = this;
+    iter->curPriority = priority;
     return;
   }
 }

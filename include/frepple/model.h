@@ -268,6 +268,7 @@ class Calendar : public HasName<Calendar>, public Object
         const Calendar* theCalendar;
         const Bucket* curBucket;
         Date curDate;
+        float curPriority;
       public:
         const Date& getDate() const {return curDate;}
         const Bucket* getBucket() const {return curBucket;}

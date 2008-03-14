@@ -33,11 +33,11 @@ namespace frepple
 template<class Demand> DECLARE_EXPORT Tree HasName<Demand>::st;
 
 
-DECLARE_EXPORT void Demand::setQuantity(float f)
+DECLARE_EXPORT void Demand::setQuantity(double f)
 {
   // Reject negative quantities, and no-change updates
-  float delta(f - qty);
-  if (f < 0.0f || fabs(delta)<ROUNDING_ERROR) return;
+  double delta(f - qty);
+  if (f < 0.0 || fabs(delta)<ROUNDING_ERROR) return;
 
   // Update the quantity
   qty = f;
@@ -179,9 +179,9 @@ DECLARE_EXPORT Operation::pointer Demand::getDeliveryOperation() const
 }
 
 
-DECLARE_EXPORT float Demand::getPlannedQuantity() const
+DECLARE_EXPORT double Demand::getPlannedQuantity() const
 {
-  float delivered(0.0f);
+  double delivered(0.0);
   for (OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
     delivered += (*i)->getQuantity();
   return delivered;
@@ -247,7 +247,7 @@ DECLARE_EXPORT void Demand::beginElement(XMLInput& pIn, XMLElement& pElement)
 DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA (Tags::tag_quantity))
-    setQuantity (pElement.getFloat());
+    setQuantity (pElement.getDouble());
   else if (pElement.isA (Tags::tag_priority))
     setPriority (pElement.getInt());
   else if (pElement.isA (Tags::tag_due))
@@ -273,7 +273,7 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
   else if (pElement.isA (Tags::tag_maxlateness))
     setMaxLateness(pElement.getTimeperiod());
   else if (pElement.isA (Tags::tag_minshipment))
-    setMinShipment(pElement.getFloat());
+    setMinShipment(pElement.getDouble());
   else if (pElement.isA(Tags::tag_operation_plan))
   {
     OperationPlan* opplan

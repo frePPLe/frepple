@@ -72,16 +72,16 @@ void Forecast::initialize()
   if (!calptr) throw DataException("Missing forecast calendar");
 
   // Create a demand for every bucket. The weight value depends on the
-  // calendar type: float, integer, bool or other
-  const CalendarFloat* c = dynamic_cast<const CalendarFloat*>(calptr);
+  // calendar type: double, integer, bool or other
+  const CalendarDouble* c = dynamic_cast<const CalendarDouble*>(calptr);
   ForecastBucket* prev = NULL;
   Date prevDate;
-  float prevValue(0.0);
+  double prevValue(0.0);
   if (c)
     // Float calendar
-    for (CalendarFloat::EventIterator i(c); i.getDate()<=Date::infiniteFuture; ++i)
+    for (CalendarDouble::EventIterator i(c); i.getDate()<=Date::infiniteFuture; ++i)
     {
-      if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValue > 0.0f)
+      if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValue > 0.0)
       {
         prev = new ForecastBucket
           (this, prevDate, i.getDate(), prevValue, prev);
@@ -106,7 +106,7 @@ void Forecast::initialize()
         }
         if (i.getDate() == Date::infiniteFuture) break;
         prevDate = i.getDate();
-        prevValue = static_cast<float>(i.getValue());
+        prevValue = i.getValue();
       }
     else
     {
@@ -119,7 +119,7 @@ void Forecast::initialize()
           if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValueBool)
           {
             prev = new ForecastBucket
-                (this, prevDate, i.getDate(), 1.0f, prev);
+                (this, prevDate, i.getDate(), 1.0, prev);
             Demand::add(prev);         
             }
           if (i.getDate() == Date::infiniteFuture) break;
@@ -133,7 +133,7 @@ void Forecast::initialize()
         {
           if (prevDate || i.getDate() == Date::infiniteFuture)
           {
-            prev = new ForecastBucket(this, prevDate, i.getDate(), 1.0f, prev);
+            prev = new ForecastBucket(this, prevDate, i.getDate(), 1.0, prev);
             Demand::add(prev);
             if (i.getDate() == Date::infiniteFuture) break;
           }
@@ -175,8 +175,8 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
       if (!d.getDuration())
       {
         // Single date provided. Update that one bucket.
-        x->setQuantity(f>x->consumed ? static_cast<float>(f - x->consumed) : 0);
-        x->total = static_cast<float>(f);
+        x->setQuantity(f>x->consumed ? (f - x->consumed) : 0);
+        x->total = f;
         return;
       }
       weights += x->weight * static_cast<long>(x->timebucket.overlap(d));
@@ -189,7 +189,7 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
       + string(d) + " of forecast '" + getName() +"'");
 
   // Update the forecast quantity, respecting the weights
-  f /= static_cast<float>(weights);
+  f /= weights;
   double carryover = 0.0;
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
   {
@@ -203,24 +203,24 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
       {
         // Rounding to discrete numbers
         carryover += f * percent;
-        int intdelta = static_cast<int>(ceil(carryover - 0.5));
+        double intdelta = ceil(carryover - 0.5);
         carryover -= intdelta;
         if (o < x->timebucket.getDuration())
           // The bucket is only partially updated
-          x->total += static_cast<float>(intdelta);
+          x->total += intdelta;
         else
           // The bucket is completely updated
-          x->total = static_cast<float>(intdelta);
+          x->total = intdelta;
       }
       else
       {
         // No rounding
         if (o < x->timebucket.getDuration())
           // The bucket is only partially updated
-          x->total += static_cast<float>(f * percent);
+          x->total += f * percent;
         else
           // The bucket is completely updated
-          x->total = static_cast<float>(f * percent);
+          x->total = f * percent;
       }
       x->setQuantity(x->total > x->consumed ? (x->total - x->consumed) : 0);
     }
@@ -298,7 +298,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
       static_cast< pair<DateRange,double>* >(pIn.getUserArea());
     if (pElement.isA(tag_total))
     {
-      if (d) d->second = pElement.getFloat();
+      if (d) d->second = pElement.getDouble();
       else pIn.setUserArea(
         new pair<DateRange,double>(DateRange(),pElement.getDouble())
         );
@@ -417,7 +417,7 @@ void Forecast::setMaxLateness(TimePeriod i)
 }
 
 
-void Forecast::setMinShipment(float i)
+void Forecast::setMinShipment(double i)
 {
   Demand::setMinShipment(i);
   // Update the minimum shipment for all buckets/subdemands

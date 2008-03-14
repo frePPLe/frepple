@@ -60,7 +60,7 @@
   </operations>
   <resources>
     <resource name="1. Resource">
-      <maximum name="1. Capacity" xsi:type="calendar_float">
+      <maximum name="1. Capacity" xsi:type="calendar_double">
         <buckets>
           <bucket start="2007-01-01T00:00:00">
             <value>100</value>
@@ -152,7 +152,7 @@
   </operations>
   <resources>
     <resource name="2. Resource">
-      <maximum name="2. Capacity" xsi:type="calendar_float">
+      <maximum name="2. Capacity" xsi:type="calendar_double">
         <buckets>
           <bucket start="2007-01-01T00:00:00">
             <value>4</value>
@@ -231,7 +231,7 @@
   </operations>
   <resources>
     <resource name="3. Resource">
-      <maximum name="3. Capacity" xsi:type="calendar_float">
+      <maximum name="3. Capacity" xsi:type="calendar_double">
         <buckets>
           <bucket start="2007-01-01T00:00:00">
             <value>4</value>

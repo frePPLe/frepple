@@ -298,7 +298,7 @@ DECLARE_EXPORT void CommandSavePlan::execute()
             oo=gbuf->getFlowPlans().begin();
             oo!=gbuf->getFlowPlans().end();
             ++oo)
-          if (oo->getType() == 1 && oo->getQuantity() != 0.0f)
+          if (oo->getType() == 1 && oo->getQuantity() != 0.0)
           {
             textoutput << "BUFFER\t" << *gbuf << '\t'
             << oo->getDate() << '\t'
@@ -332,7 +332,7 @@ DECLARE_EXPORT void CommandSavePlan::execute()
             qq=gres->getLoadPlans().begin();
             qq!=gres->getLoadPlans().end();
             ++qq)
-          if (qq->getType() == 1 && qq->getQuantity() != 0.0f)
+          if (qq->getType() == 1 && qq->getQuantity() != 0.0)
           {
             textoutput << "RESOURCE\t" << *gres << '\t'
             << qq->getDate() << '\t'
@@ -388,13 +388,13 @@ DECLARE_EXPORT void CommandSavePlan::execute()
 //
 
 DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
-(OperationPlan* o, Date newdate, bool pref_end, float newQty)
+(OperationPlan* o, Date newdate, bool pref_end, double newQty)
     : opplan(o), prefer_end(pref_end)
 {
   if (!opplan) return;
   OperationPlan::writepointer lopplan(opplan);
   originalqty = lopplan->getQuantity();
-  if (newQty == -1.0f) newQty = originalqty;
+  if (newQty == -1.0) newQty = originalqty;
   originaldates = lopplan->getDates();
   if (prefer_end)
     lopplan->getOperation()->setOperationPlanParameters(
@@ -433,7 +433,7 @@ DECLARE_EXPORT void CommandMoveOperationPlan::setDate(Date newdate)
 }
 
 
-DECLARE_EXPORT void CommandMoveOperationPlan::setQuantity(float newqty)
+DECLARE_EXPORT void CommandMoveOperationPlan::setQuantity(double newqty)
 {
   if (!opplan) return;
   OperationPlan::writepointer lopplan(opplan);

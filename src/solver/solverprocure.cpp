@@ -31,13 +31,13 @@ namespace frepple
 {
 
 
-float suggestQuantity(const BufferProcure* b, float f)
+double suggestQuantity(const BufferProcure* b, double f)
 {
   // Standard answer
-  float order_qty = f;
+  double order_qty = f;
 
   // Round to a multiple
-  if (b->getSizeMultiple()>0.0f)
+  if (b->getSizeMultiple()>0.0)
   {
     int mult = (int) (order_qty / b->getSizeMultiple() + 0.99999f);
     order_qty = mult * b->getSizeMultiple();
@@ -48,7 +48,7 @@ float suggestQuantity(const BufferProcure* b, float f)
   {
     order_qty = b->getSizeMinimum();
     // round up to multiple
-    if (b->getSizeMultiple()>0.0f)
+    if (b->getSizeMultiple()>0.0)
     {
       int mult = (int) (order_qty / b->getSizeMultiple() + 0.99999f);
       order_qty = mult * b->getSizeMultiple();
@@ -64,7 +64,7 @@ float suggestQuantity(const BufferProcure* b, float f)
   {
     order_qty = b->getSizeMaximum();
     // round down
-    if (b->getSizeMultiple()>0.0f)
+    if (b->getSizeMultiple()>0.0)
     {
       int mult = (int) (order_qty / b->getSizeMultiple());
       order_qty = mult * b->getSizeMultiple();
@@ -208,10 +208,10 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
       && last_operationplan
       && current_inventory < b->getMinimumInventory())
     {
-      float origqty = last_operationplan->getQuantity();
+      double origqty = last_operationplan->getQuantity();
       last_operationplan->setQuantity(suggestQuantity(b,
-        static_cast<float>( last_operationplan->getQuantity()
-          + b->getMinimumInventory() - current_inventory)));
+        last_operationplan->getQuantity()
+          + b->getMinimumInventory() - current_inventory));
       produced += last_operationplan->getQuantity() - origqty;
       current_inventory = produced - consumed;
       if (current_inventory < -ROUNDING_ERROR
@@ -224,8 +224,8 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
 
     // At this point, we know we need to reorder...
     earliest_next = Date::infinitePast;
-    float order_qty = suggestQuantity(b,
-      static_cast<float>(b->getMaximumInventory() - current_inventory));
+    double order_qty = suggestQuantity(b, 
+      b->getMaximumInventory() - current_inventory);
     if (order_qty > 0)
     {
       // Create a procurement or update an existing one
@@ -295,14 +295,14 @@ DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
     || Solver->getSolver()->isMaterialConstrained())
   {
     // Check if the inventory drops below zero somewhere
-    float shortage = 0;
+    double shortage = 0;
     for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
       cur != b->getFlowPlans().end(); ++cur)
       if (cur->getDate() >= Solver->q_date
         && cur->getOnhand() < -ROUNDING_ERROR
         && cur->getOnhand() < shortage)
       {
-        shortage = static_cast<float>(cur->getOnhand());
+        shortage = cur->getOnhand();
         if (-shortage >= Solver->q_qty) break;
       }
     if (shortage < 0)

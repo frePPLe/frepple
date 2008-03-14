@@ -134,7 +134,7 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const XMLtag& tag, mode m) 
     o->writeElement(Tags::tag_resource, getResource());
 
   // Write the usage factor
-  if (usage != 1.0f) o->writeElement(Tags::tag_usage, usage);
+  if (usage != 1.0) o->writeElement(Tags::tag_usage, usage);
 
   // Write the effective daterange
   if (getEffective().getStart() != Date::infinitePast)
@@ -170,7 +170,7 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, XMLElement& pElement)
     else throw LogicException("Incorrect object type during read operation");
   }
   else if (pElement.isA(Tags::tag_usage))
-    setUsageFactor(pElement.getFloat());
+    setUsageFactor(pElement.getDouble());
   else if (pElement.isA(Tags::tag_action))
   {
     delete static_cast<Action*>(pIn.getUserArea());

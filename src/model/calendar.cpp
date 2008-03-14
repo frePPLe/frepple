@@ -45,7 +45,7 @@ DECLARE_EXPORT Calendar::~Calendar()
 }
 
 
-DECLARE_EXPORT CalendarFloat::~CalendarFloat()
+DECLARE_EXPORT CalendarDouble::~CalendarDouble()
 {
   // Remove all references from buffers
   for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
@@ -136,7 +136,7 @@ DECLARE_EXPORT void Calendar::removeBucket(Calendar::Bucket* bkt)
 DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d) const
 {
   Calendar::Bucket *curBucket = NULL;
-  float curPriority;
+  double curPriority;
   for (Bucket *b = firstBucket; b; b = b->nextBucket)
   {
     if (b->getStart() > d) 

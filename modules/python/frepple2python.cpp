@@ -103,13 +103,13 @@ extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj)
   if (obj->iter != obj->buf->getFlowPlans().end())
   {
     const FlowPlan* f = dynamic_cast<const FlowPlan*>(&*(obj->iter));
-    if (f && (f->getHidden() || f->getQuantity()==0.0f)) f = NULL;
+    if (f && (f->getHidden() || f->getQuantity()==0.0)) f = NULL;
     while (!f)
     {
       ++(obj->iter);
       if (obj->iter == obj->buf->getFlowPlans().end()) return NULL;
       f = dynamic_cast<const FlowPlan*>(&*(obj->iter));
-      if (f && (f->getHidden() || f->getQuantity()==0.0f)) f = NULL;
+      if (f && (f->getHidden() || f->getQuantity()==0.0)) f = NULL;
     }
     PyObject* result = Py_BuildValue("{s:s,s:l,s:f,s:N,s:f}",
       "buffer", f->getFlow()->getBuffer()->getName().c_str(),
@@ -149,13 +149,13 @@ extern "C" PyObject* PythonLoadPlan::next(PythonLoadPlan* obj)
   if (obj->iter != obj->res->getLoadPlans().end())
   {
     const LoadPlan* f = dynamic_cast<const LoadPlan*>(&*(obj->iter));
-    if (f && (f->getHidden() || f->getQuantity()<=0.0f)) f = NULL;
+    if (f && (f->getHidden() || f->getQuantity()<=0.0)) f = NULL;
     while (!f)
     {
       ++(obj->iter);
       if (obj->iter == obj->res->getLoadPlans().end()) return NULL;
       f = dynamic_cast<const LoadPlan*>(&*(obj->iter));
-      if (f && (f->getHidden() || f->getQuantity()<=0.0f)) f = NULL;
+      if (f && (f->getHidden() || f->getQuantity()<=0.0)) f = NULL;
     }
     PyObject* result = Py_BuildValue("{s:s,s:l,s:f,s:N,s:N}",
       "resource", f->getLoad()->getResource()->getName().c_str(),
@@ -349,12 +349,12 @@ extern "C" PyObject* PythonDemandDelivery::next(PythonDemandDelivery* obj)
 
   if (obj->iter != obj->dem->getDelivery().end())
   {
-    float p = (*(obj->iter))->getQuantity();
+    double p = (*(obj->iter))->getQuantity();
     obj->cumPlanned += (*(obj->iter))->getQuantity();
     if (obj->cumPlanned > obj->dem->getQuantity())
     {
       // Planned more than requested
-      p -= static_cast<float>(obj->cumPlanned - obj->dem->getQuantity());
+      p -= obj->cumPlanned - obj->dem->getQuantity();
       if (p < 0.0) p = 0.0;
     }
     // Build a python dictionary

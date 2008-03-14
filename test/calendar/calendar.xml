@@ -20,7 +20,7 @@
   </commands>
 
   <calendars>
-    <calendar name="Capacity" xsi:type="calendar_float">
+    <calendar name="Capacity" xsi:type="calendar_double">
       <default>1</default>
       <buckets>
         <!-- From the infinite past till 2007-01-02 no entry is in effect.

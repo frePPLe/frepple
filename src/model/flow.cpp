@@ -168,7 +168,7 @@ DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, XMLElement& pElement)
     else throw LogicException("Incorrect object type during read operation");
   }
   else if (pElement.isA(Tags::tag_quantity))
-    setQuantity(pElement.getFloat());
+    setQuantity(pElement.getDouble());
   else if (pElement.isA(Tags::tag_action))
   {
     delete static_cast<Action*>(pIn.getUserArea());

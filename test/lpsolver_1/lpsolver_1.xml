@@ -229,7 +229,7 @@
     <resource name="RES1">
       <CATEGORY>assembly</CATEGORY>
       <description>assembly resource 1</description>
-      <maximum name="Capacity" xsi:type="calendar_float">
+      <maximum name="Capacity" xsi:type="calendar_double">
         <buckets>
           <bucket start="2007-01-01T00:00:00">
             <value>10</value>

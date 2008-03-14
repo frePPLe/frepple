@@ -15,7 +15,7 @@
 		</customer>
 	</customers>
 	<calendars>
-		<calendar name="Capacity" xsi:type="calendar_float">
+		<calendar name="Capacity" xsi:type="calendar_double">
 			<default>0</default>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
@@ -111,7 +111,7 @@
 	</demands>
 	<resources>
 		<resource name="Resource">
-			<maximum name="Capacity" xsi:type="calendar_float"/>
+			<maximum name="Capacity" xsi:type="calendar_double"/>
 			<loads>
 				<load>
 					<operation name="make end item" xsi:type="operation_fixed_time"/>

@@ -85,7 +85,7 @@ DECLARE_EXPORT OperationAlternate::~OperationAlternate()
 }
 
 
-DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (float q, Date s, Date e,
+DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (double q, Date s, Date e,
     const Demand* l, OperationPlan* ow, unsigned long i,
     bool makeflowsloads) const
 {
@@ -95,7 +95,7 @@ DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (float q, Date s, D
 }
 
 
-void Operation::initOperationPlan (OperationPlan* opplan, float q,
+void Operation::initOperationPlan (OperationPlan* opplan, double q,
     const Date& s, const Date& e, const Demand* l, OperationPlan* ow,
     unsigned long i, bool makeflowsloads) const
 {
@@ -139,9 +139,9 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mod
     o->writeElement(Tags::tag_pretime, pre_time);
   if (fence)
     o->writeElement(Tags::tag_fence, fence);
-  if (size_minimum != 1.0f)
+  if (size_minimum != 1.0)
     o->writeElement(Tags::tag_size_minimum, size_minimum);
-  if (size_multiple > 0.0f)
+  if (size_multiple > 0.0)
     o->writeElement(Tags::tag_size_multiple, size_multiple);
   if (loc)
     o->writeElement(Tags::tag_location, loc);
@@ -187,9 +187,9 @@ DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, XMLElement& pElement)
   if (pElement.isA (Tags::tag_fence))
     setFence(pElement.getTimeperiod());
   else if (pElement.isA (Tags::tag_size_minimum))
-    setSizeMinimum(pElement.getFloat());
+    setSizeMinimum(pElement.getDouble());
   else if (pElement.isA (Tags::tag_size_multiple))
-    setSizeMultiple(pElement.getFloat());
+    setSizeMultiple(pElement.getDouble());
   else if (pElement.isA (Tags::tag_pretime))
     setPreTime(pElement.getTimeperiod());
   else if (pElement.isA (Tags::tag_posttime))
@@ -209,7 +209,7 @@ DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, XMLElement& pElement)
 
 
 DECLARE_EXPORT void OperationFixedTime::setOperationPlanParameters
-(OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
+(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd) const
 {
   // Invalid call to the function, or locked operationplan.
   if (!oplan || q<0 || oplan->getLocked()) return;
@@ -261,7 +261,7 @@ DECLARE_EXPORT void OperationFixedTime::endElement (XMLInput& pIn, XMLElement& p
 
 
 DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
-(OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
+(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd) const
 {
   // Invalid call to the function.
   if (!oplan || q<0) return;
@@ -291,8 +291,8 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
     {
       // Divide the variable duration by the duration_per time, to compute the
       // maximum number of pieces that can be produced in the timeframe
-      float max_q = duration_per ?
-        static_cast<float>(e - s - duration) / duration_per :
+      double max_q = duration_per ?
+        static_cast<double>(e - s - duration) / duration_per :
         q;
 
       // Set the quantity to either the maximum or the requested quantity,
@@ -420,7 +420,7 @@ DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, XMLElement& pEl
 
 
 DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
-(OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
+(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd) const
 {
   OperationPlanRouting *op = dynamic_cast<OperationPlanRouting*>(oplan);
 
@@ -483,7 +483,7 @@ DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
 
 
 DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan 
-  (float q, Date s, Date e, const Demand* l, OperationPlan* ow, 
+  (double q, Date s, Date e, const Demand* l, OperationPlan* ow, 
     unsigned long i, bool makeflowsloads) const
 {
   // Note that the created operationplan is of a specific subclass
@@ -494,7 +494,7 @@ DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan
 
 
 DECLARE_EXPORT void OperationAlternate::addAlternate
-  (Operation* o, float prio, DateRange eff)
+  (Operation* o, double prio, DateRange eff)
 {
   if (!o) return;
   Operationlist::iterator altIter = alternates.begin();
@@ -529,7 +529,7 @@ DECLARE_EXPORT const OperationAlternate::alternateProperty&
 }
 
 
-DECLARE_EXPORT void OperationAlternate::setPriority(Operation* o, float f)
+DECLARE_EXPORT void OperationAlternate::setPriority(Operation* o, double f)
 {
   if (!o) return;
   Operationlist::const_iterator altIter = alternates.begin();
@@ -622,7 +622,7 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
 
   // Create a temporary object
   if (!pIn.getUserArea()) 
-    pIn.setUserArea(new tempData(NULL,alternateProperty(1.0f,DateRange())));
+    pIn.setUserArea(new tempData(NULL,alternateProperty(1.0,DateRange())));
   tempData* tmp = static_cast<tempData*>(pIn.getUserArea());
 
   if (pElement.isA(Tags::tag_alternate))
@@ -630,11 +630,11 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
     addAlternate(tmp->first, tmp->second.first, tmp->second.second);
     // Reset the defaults
     tmp->first = NULL;
-    tmp->second.first = 1.0f;
+    tmp->second.first = 1.0;
     tmp->second.second = DateRange();
   }
   else if (pElement.isA(Tags::tag_priority))
-    tmp->second.first = pElement.getFloat();
+    tmp->second.first = pElement.getDouble();
   else if (pElement.isA(Tags::tag_effective_start))
     tmp->second.second.setStart(pElement.getDate());
   else if (pElement.isA(Tags::tag_effective_end))
@@ -653,7 +653,7 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
 }
 
 
-DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (float q,
+DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (double q,
     Date s, Date e, const Demand* l, OperationPlan* ow,
     unsigned long i, bool makeflowsloads) const
 {
@@ -667,7 +667,7 @@ DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (float q,
 
 
 DECLARE_EXPORT void OperationAlternate::setOperationPlanParameters
-(OperationPlan* oplan, float q, Date s, Date e, bool preferEnd) const
+(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd) const
 {
   // Argument passed must be a alternate operationplan
   OperationPlanAlternate *oa = dynamic_cast<OperationPlanAlternate*>(oplan);

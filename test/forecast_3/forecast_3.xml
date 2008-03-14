@@ -61,7 +61,7 @@
   This calendar defines how forecast values are disaggregated from the
   -->
   <calendars>
-    <calendar name="planningbuckets" xsi:type="calendar_float">
+    <calendar name="planningbuckets" xsi:type="calendar_double">
       <buckets>
         <!--
           The value for saturday and sunday is set to zero.

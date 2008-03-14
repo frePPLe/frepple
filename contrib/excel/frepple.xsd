@@ -80,7 +80,7 @@
   </xsd:simpleType>
 
   <xsd:simpleType name="positiveFloat">
-    <xsd:restriction base="xsd:float">
+    <xsd:restriction base="xsd:double">
       <xsd:minInclusive value="0" />
     </xsd:restriction>
   </xsd:simpleType>
@@ -221,7 +221,7 @@
                     			<xsd:attribute name="name" type="non-empty-string" use="required"/>
                         </xsd:complexType>
                       </xsd:element>
-                      <xsd:element name="priority" type="xsd:float" minOccurs="1" maxOccurs="1"/>
+                      <xsd:element name="priority" type="xsd:double" minOccurs="1" maxOccurs="1"/>
                     </xsd:sequence>
                   </xsd:complexType>
                 </xsd:element>
@@ -333,7 +333,7 @@
       </xsd:element>
     </xsd:sequence>
     <xsd:attributeGroup ref="common_attributes"/>
-    <xsd:attribute name="onhand" type="xsd:float" />
+    <xsd:attribute name="onhand" type="xsd:double" />
   </xsd:complexType>
 
 	<xsd:complexType name="buffer_infinite">
@@ -370,7 +370,7 @@
       	</xsd:complexType>
       </xsd:element>
     </xsd:sequence>
-    <xsd:attribute name="quantity" type="xsd:float" />
+    <xsd:attribute name="quantity" type="xsd:double" />
   </xsd:complexType>
 
 	<xsd:complexType name="flow_end">
@@ -411,9 +411,9 @@
     			<xsd:attribute name="name" type="non-empty-string" use="required"/>
       	</xsd:complexType>
       </xsd:element>
-      <xsd:element name="usage" type="xsd:float" minOccurs="0" />
+      <xsd:element name="usage" type="xsd:double" minOccurs="0" />
     </xsd:all>
-    <xsd:attribute name="usage" type="xsd:float" />
+    <xsd:attribute name="usage" type="xsd:double" />
   </xsd:complexType>
 
   <xsd:complexType name="loadlist">
@@ -470,7 +470,7 @@
               <xsd:complexType>
                 <xsd:attribute name="start" type="xsd:dateTime" use="required" />
                 <xsd:attribute name="name" type="xsd:string" />
-                <xsd:attribute name="value" type="xsd:float" />
+                <xsd:attribute name="value" type="xsd:double" />
               </xsd:complexType>
             </xsd:element>
           </xsd:sequence>

@@ -50,7 +50,7 @@
         <loads>
           <load>
             <resource name="1. capacity in A">
-              <maximum name="1. capacity A" xsi:type="calendar_float">
+              <maximum name="1. capacity A" xsi:type="calendar_double">
                 <buckets>
                   <bucket start="2007-01-01T00:00:00" value="2"/>
                   <bucket start="2007-01-15T00:00:00" value="3"/>
@@ -76,7 +76,7 @@
         <loads>
           <load>
             <resource name="1. capacity in B">
-              <maximum name="1. capacity B" xsi:type="calendar_float">
+              <maximum name="1. capacity B" xsi:type="calendar_double">
                 <buckets>
                   <bucket start="2007-01-01T00:00:00">
                     <value>1</value>

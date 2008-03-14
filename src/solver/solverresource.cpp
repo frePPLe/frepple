@@ -62,10 +62,10 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   // Initialize some variables
   double orig_q_qty = -data->q_qty;
   Date currentOpplanEnd = data->q_operationplan->getDates().getEnd();
-  float currentQuantity = data->q_operationplan->getQuantity();
+  double currentQuantity = data->q_operationplan->getQuantity();
   Resource::loadplanlist::const_iterator cur = res->getLoadPlans().end();
   Date curdate;
-  float curMax;
+  double curMax;
   bool HasOverload;
   
   // Initialize the default reply

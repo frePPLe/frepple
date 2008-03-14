@@ -34,7 +34,7 @@ namespace frepple
 template<class Resource> DECLARE_EXPORT Tree HasName<Resource>::st;
 
 
-DECLARE_EXPORT void Resource::setMaximum(CalendarFloat* c)
+DECLARE_EXPORT void Resource::setMaximum(CalendarDouble* c)
 {
   // Resetting the same calendar
   if (max_cal == c) return;
@@ -59,8 +59,8 @@ DECLARE_EXPORT void Resource::setMaximum(CalendarFloat* c)
 
   // Create timeline structures for every bucket.
   max_cal = c;
-  float curMax = 0.0f;
-  for (CalendarFloat::EventIterator x(max_cal); x.getDate()<Date::infiniteFuture; ++x)
+  double curMax = 0.0;
+  for (CalendarDouble::EventIterator x(max_cal); x.getDate()<Date::infiniteFuture; ++x)
     if (curMax != x.getValue())
     {
       curMax = x.getValue();
@@ -152,7 +152,7 @@ DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, XMLElement& pElement)
      suggest this would be the case... */
   if (pElement.isA (Tags::tag_maximum))
   {
-    CalendarFloat * c = dynamic_cast<CalendarFloat*>(pIn.getPreviousObject());
+    CalendarDouble * c = dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
     if (c)
       setMaximum(c);
     else

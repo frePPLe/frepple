@@ -130,7 +130,7 @@ class Calendar : public HasName<Calendar>, public Object
         /** Priority of this bucket, compared to other buckets effective 
           * at a certain time. 
           */
-        float priority;
+        double priority;
         
         /** Increments an iterator to the next change event.<br>
           * A bucket will evaluate the current state of the iterator, and
@@ -192,14 +192,14 @@ class Calendar : public HasName<Calendar>, public Object
           * Lower numbers indicate a higher priority level.<br>
           * The default value is 0.
           */
-        float getPriority() const {return priority;}
+        double getPriority() const {return priority;}
 
         /** Updates the priority of this bucket, compared to other buckets 
           * effective at a certain time.<br>
           * Lower numbers indicate a higher priority level.<br>
           * The default value is 0.
           */
-        void setPriority(float f) {priority = f;}
+        void setPriority(double f) {priority = f;}
 
         /** Verifies whether this entry is effective on a given date. */
         bool checkValid(Date d) const
@@ -268,7 +268,7 @@ class Calendar : public HasName<Calendar>, public Object
         const Calendar* theCalendar;
         const Bucket* curBucket;
         Date curDate;
-        float curPriority;
+        double curPriority;
       public:
         const Date& getDate() const {return curDate;}
         const Bucket* getBucket() const {return curBucket;}
@@ -690,14 +690,14 @@ class CalendarVoid : public Calendar
 };
 
 
-/** @brief A calendar storing float values in its buckets. */
-class CalendarFloat : public CalendarValue<float>
+/** @brief A calendar storing double values in its buckets. */
+class CalendarDouble : public CalendarValue<double>
 {
-    TYPEDEF(CalendarFloat);
+    TYPEDEF(CalendarDouble);
   public:
-    CalendarFloat(const string& n) : CalendarValue<float>(n) 
+    CalendarDouble(const string& n) : CalendarValue<double>(n) 
       { setDefault(0.0); }
-    DECLARE_EXPORT ~CalendarFloat();
+    DECLARE_EXPORT ~CalendarDouble();
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
 };
@@ -811,11 +811,11 @@ class Problem : public NonCopyable
       */
     virtual bool isFeasible() const = 0;
 
-    /** Returns a float number reflecting the magnitude of the problem. This
+    /** Returns a double number reflecting the magnitude of the problem. This
       * allows us to focus on the significant problems and filter out the
       * small ones.
       */
-    virtual float getWeight() const = 0;
+    virtual double getWeight() const = 0;
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, XMLElement&  pElement) {}
@@ -1383,7 +1383,7 @@ class Operation : public HasName<Operation>,
   protected:
     /** Constructor. Don't use it directly. */
     explicit Operation(const string& str) : HasName<Operation>(str),
-        loc(NULL), size_minimum(1.0f), size_multiple(0.0f), hidden(false),
+        loc(NULL), size_minimum(1.0), size_multiple(0.0), hidden(false),
         first_opplan(NULL), last_opplan(NULL) {}
 
   public:
@@ -1436,7 +1436,7 @@ class Operation : public HasName<Operation>,
 
     /** This is the factory method which creates all operationplans of the
       * operation. */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (double, Date,
       Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
@@ -1479,7 +1479,7 @@ class Operation : public HasName<Operation>,
       * logic.
       */
     virtual void setOperationPlanParameters
-      (OperationPlan*, float, Date, Date, bool = true) const = 0;
+      (OperationPlan*, double, Date, Date, bool = true) const = 0;
 
     /** Returns the location of the operation, which is used to model the 
       * working hours and holidays. */
@@ -1513,7 +1513,7 @@ class Operation : public HasName<Operation>,
     /** Sets the minimum size of operationplans.<br>
       * The default value is 1.0
       */
-    void setSizeMinimum(float f)
+    void setSizeMinimum(double f)
     {
       if (f<0) 
         throw DataException("Operation can't have a negative minimum size");
@@ -1522,10 +1522,10 @@ class Operation : public HasName<Operation>,
     }
 
     /** Returns the minimum size for operationplans. */
-    float getSizeMinimum() const {return size_minimum;}
+    double getSizeMinimum() const {return size_minimum;}
 
     /** Sets the multiple size of operationplans. */
-    void setSizeMultiple(float f)
+    void setSizeMultiple(double f)
     {
       if (f<0)
         throw DataException("Operation can't have a negative multiple size");
@@ -1534,7 +1534,7 @@ class Operation : public HasName<Operation>,
     }
 
     /** Returns the minimum size for operationplans. */
-    float getSizeMultiple() const {return size_multiple;}
+    double getSizeMultiple() const {return size_multiple;}
 
     DECLARE_EXPORT void beginElement(XMLInput& , XMLElement& );
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -1581,7 +1581,7 @@ class Operation : public HasName<Operation>,
     static DECLARE_EXPORT const MetaCategory metadata;
 
   protected:
-    void initOperationPlan (OperationPlan*, float, const Date&, const Date&,
+    void initOperationPlan (OperationPlan*, double, const Date&, const Date&,
         const Demand*, OperationPlan*, unsigned long, bool = true) const;
 
   private:
@@ -1619,10 +1619,10 @@ class Operation : public HasName<Operation>,
     /** Minimum size for operationplans.<br>
       * The default value is 1.0
       */
-    float size_minimum;
+    double size_minimum;
 
     /** Multiple size for operationplans. */
-    float size_multiple;
+    double size_multiple;
 
     /** Does the operation require serialization or not. */
     bool hidden;
@@ -1833,7 +1833,7 @@ class OperationPlan
     virtual DECLARE_EXPORT void setChanged(bool b = true);
 
     /** Returns the quantity. */
-    float getQuantity() const {return quantity;}
+    double getQuantity() const {return quantity;}
 
     /** Updates the quantity.<br>
       * The operationplan quantity is subject to the following rules:
@@ -1849,7 +1849,7 @@ class OperationPlan
       * plans should pass on a call to the parent operationplan.
       */
     virtual DECLARE_EXPORT void setQuantity
-      (float f, bool roundDown = false, bool update = true);
+      (double f, bool roundDown = false, bool update = true);
 
     /** Returns a pointer to the demand for which this operation is a delivery.
       * If the operationplan isn't a delivery operation, this is a NULL pointer.
@@ -2076,7 +2076,7 @@ class OperationPlan
     const OperationPlan *owner;
 
     /** Quantity. */
-    float quantity;
+    double quantity;
 
     /** Default constructor.
       * This way of creating operationplan objects is not intended for use by
@@ -2193,7 +2193,7 @@ class OperationFixedTime : public Operation
       * @see Operation::setOperationPlanParameters
       */
     DECLARE_EXPORT void setOperationPlanParameters
-      (OperationPlan*, float, Date, Date, bool=true) const;
+      (OperationPlan*, double, Date, Date, bool=true) const;
 
   private:
     /** Stores the lengh of the Operation. */
@@ -2248,7 +2248,7 @@ class OperationTimePer : public Operation
       * @see Operation::setOperationPlanParameters
       */
     DECLARE_EXPORT void setOperationPlanParameters
-      (OperationPlan*, float, Date, Date, bool=true) const;
+      (OperationPlan*, double, Date, Date, bool=true) const;
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
@@ -2317,7 +2317,7 @@ class OperationRouting : public Operation
       * @see Operation::setOperationPlanParameters
       */
     DECLARE_EXPORT void setOperationPlanParameters
-      (OperationPlan*, float, Date, Date, bool=true) const;
+      (OperationPlan*, double, Date, Date, bool=true) const;
 
     DECLARE_EXPORT void beginElement(XMLInput& , XMLElement&  );
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2332,7 +2332,7 @@ class OperationRouting : public Operation
       * operation.
       * @see Operation::createOperationPlan
       */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (double, Date,
       Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
@@ -2372,7 +2372,7 @@ class OperationPlanRouting : public OperationPlan
     virtual DECLARE_EXPORT void update();
     DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
     DECLARE_EXPORT ~OperationPlanRouting();
-    DECLARE_EXPORT void setQuantity(float f, bool roundDown = false, bool update = true);
+    DECLARE_EXPORT void setQuantity(double f, bool roundDown = false, bool update = true);
     DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
     virtual const OperationPlan::OperationPlanList& getSubOperationPlans() const {return step_opplans;}
 
@@ -2400,7 +2400,7 @@ class OperationAlternate : public Operation
 {
     TYPEDEF(OperationAlternate);
   public:
-    typedef pair<float,DateRange> alternateProperty;
+    typedef pair<double,DateRange> alternateProperty;
 
     /** Constructor. */
     explicit OperationAlternate(const string& c) : Operation(c) {};
@@ -2412,7 +2412,7 @@ class OperationAlternate : public Operation
       * The lower the priority value, the more important this alternate 
       * operation is. */
     DECLARE_EXPORT void addAlternate
-      (Operation*, float = 1.0f, DateRange = DateRange());
+      (Operation*, double = 1.0, DateRange = DateRange());
 
     /** Removes an alternate from the list. */
     DECLARE_EXPORT void removeSubOperation(Operation *);
@@ -2427,13 +2427,13 @@ class OperationAlternate : public Operation
       * @exception LogicException Generated when the argument operation is
       *     not null and not a sub-operation of this alternate.
       */
-    DECLARE_EXPORT void setProperties(Operation*, float, DateRange);
+    DECLARE_EXPORT void setProperties(Operation*, double, DateRange);
 
     /** Updates the priority of a certain suboperation.
       * @exception LogicException Generated when the argument operation is
       *     not null and not a sub-operation of this alternate.
       */
-    DECLARE_EXPORT void setPriority(Operation*, float);
+    DECLARE_EXPORT void setPriority(Operation*, double);
 
     /** Updates the effective daterange of a certain suboperation.
       * @exception LogicException Generated when the argument operation is
@@ -2448,7 +2448,7 @@ class OperationAlternate : public Operation
       * @see Operation::setOperationPlanParameters
       */
     DECLARE_EXPORT void setOperationPlanParameters
-      (OperationPlan*, float, Date, Date, bool=true) const;
+      (OperationPlan*, double, Date, Date, bool=true) const;
 
     DECLARE_EXPORT void beginElement (XMLInput&, XMLElement&);
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2460,7 +2460,7 @@ class OperationAlternate : public Operation
       * operation.
       * @see Operation::createOperationPlan
       */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (float, Date,
+    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (double, Date,
       Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
@@ -2510,7 +2510,7 @@ class OperationPlanAlternate : public OperationPlan
     /** Destructor. */
     DECLARE_EXPORT ~OperationPlanAlternate();
     DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
-    DECLARE_EXPORT void setQuantity(float f, bool roundDown = false, bool update = true);
+    DECLARE_EXPORT void setQuantity(double f, bool roundDown = false, bool update = true);
     DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
     DECLARE_EXPORT void setEnd(Date d);
     DECLARE_EXPORT void setStart(Date d);
@@ -2640,17 +2640,17 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Returns a pointer to a calendar for storing the minimum inventory
       * level. */
-    CalendarFloat::pointer getMinimum() const {return min_cal;}
+    CalendarDouble::pointer getMinimum() const {return min_cal;}
 
     /** Returns a pointer to a calendar for storing the maximum inventory
       * level. */
-    CalendarFloat::pointer getMaximum() const {return max_cal;}
+    CalendarDouble::pointer getMaximum() const {return max_cal;}
 
     /** Updates the minimum inventory target for the buffer. */
-    DECLARE_EXPORT void setMinimum(const CalendarFloat *cal);
+    DECLARE_EXPORT void setMinimum(const CalendarDouble *cal);
 
     /** Updates the minimum inventory target for the buffer. */
-    DECLARE_EXPORT void setMaximum(const CalendarFloat *cal);
+    DECLARE_EXPORT void setMaximum(const CalendarDouble *cal);
 
     DECLARE_EXPORT virtual void beginElement(XMLInput&, XMLElement&);
     DECLARE_EXPORT virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2668,7 +2668,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     DECLARE_EXPORT double getOnHand(Date d = Date::infinitePast) const;
 
     /** Update the on-hand inventory at the start of the planning horizon. */
-    DECLARE_EXPORT void setOnHand(float f);
+    DECLARE_EXPORT void setOnHand(double f);
 
     /** Returns minimum or maximum available material on hand in the given
       * daterange. The third parameter specifies whether we return the
@@ -2742,13 +2742,13 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * The default value is NULL, resulting in a constant minimum level
       * of 0.
       */
-    const CalendarFloat *min_cal;
+    const CalendarDouble *min_cal;
 
     /** Points to a calendar to store the maximum inventory level.<br>
       * The default value is NULL, resulting in a buffer without excess
       * inventory problems.
       */
-    const CalendarFloat *max_cal;
+    const CalendarDouble *max_cal;
 };
 
 
@@ -2873,10 +2873,10 @@ class BufferProcure : public Buffer
     /** Return the inventory level that will trigger creation of a
       * purchasing.
       */
-    float getMinimumInventory() const {return min_inventory;}
+    double getMinimumInventory() const {return min_inventory;}
 
     /** Update the minimum inventory level to trigger replenishments. */
-    void setMinimumInventory(float f)
+    void setMinimumInventory(double f)
     {
       if (f<0) 
         throw DataException("Procurement buffer can't have a negative minimum inventory");
@@ -2886,10 +2886,10 @@ class BufferProcure : public Buffer
     }
 
     /** Return the maximum inventory level to which we wish to replenish. */
-    float getMaximumInventory() const {return max_inventory;}
+    double getMaximumInventory() const {return max_inventory;}
 
     /** Update the inventory level to replenish to. */
-    void setMaximumInventory(float f)
+    void setMaximumInventory(double f)
     {
       if (f<0)
         throw DataException("Procurement buffer can't have a negative maximum inventory");
@@ -2930,10 +2930,10 @@ class BufferProcure : public Buffer
     }
 
     /** Return the minimum quantity of a purchasing operation. */
-    float getSizeMinimum() const {return size_minimum;}
+    double getSizeMinimum() const {return size_minimum;}
 
     /** Update the minimum replenishment quantity. */
-    void setSizeMinimum(float f)
+    void setSizeMinimum(double f)
     {
       if (f<0) 
         throw DataException("Procurement buffer can't have a negative minimum size");
@@ -2943,10 +2943,10 @@ class BufferProcure : public Buffer
    }
 
     /** Return the maximum quantity of a purchasing operation. */
-    float getSizeMaximum() const {return size_maximum;}
+    double getSizeMaximum() const {return size_maximum;}
 
     /** Update the maximum replenishment quantity. */
-    void setSizeMaximum(float f)
+    void setSizeMaximum(double f)
     {
       if (f<0)
         throw DataException("Procurement buffer can't have a negative maximum size");
@@ -2956,10 +2956,10 @@ class BufferProcure : public Buffer
     }
 
     /** Return the multiple quantity of a purchasing operation. */
-    float getSizeMultiple() const {return size_multiple;}
+    double getSizeMultiple() const {return size_multiple;}
 
     /** Update the multiple quantity. */
-    void setSizeMultiple(float f) 
+    void setSizeMultiple(double f) 
     {
       if (f<0) 
         throw DataException("Procurement buffer can't have a negative multiple size");
@@ -2987,13 +2987,13 @@ class BufferProcure : public Buffer
       * below this value. It is up to the user to set an appropriate minimum
       * value.
       */
-    float min_inventory;
+    double min_inventory;
 
     /** The maximum inventory level to which we plan to replenish.<br>
       * This is not a hard limit - other parameters can make that the actual
       * inventory either never reaches this value or always exceeds it.
       */
-    float max_inventory;
+    double max_inventory;
 
     /** Minimum time interval between purchasing operations. */
     TimePeriod min_interval;
@@ -3004,17 +3004,17 @@ class BufferProcure : public Buffer
     /** Minimum purchasing quantity.<br>
       * The default value is 0, meaning no minimum.
       */
-    float size_minimum;
+    double size_minimum;
 
     /** Maximum purchasing quantity.<br>
       * The default value is 0, meaning no maximum limit.
       */
-    float size_maximum;
+    double size_maximum;
 
     /** Purchases are always rounded up to a multiple of this quantity.<br>
       * The default value is 0, meaning no multiple needs to be applied.
       */
-    float size_multiple;
+    double size_multiple;
 
     /** A pointer to the procurement operation. */
     Operation* oper;
@@ -3034,7 +3034,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     virtual DECLARE_EXPORT ~Flow();
 
     /** Constructor. */
-    explicit Flow(Operation* o, Buffer* b, float q) : quantity(q)
+    explicit Flow(Operation* o, Buffer* b, double q) : quantity(q)
     {
       setOperation(o);
       setBuffer(b);
@@ -3057,14 +3057,14 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     bool isProducer() const {return quantity >= 0;}
 
     /** Returns the material flow PER UNIT of the operationplan. */
-    float getQuantity() const {return quantity;}
+    double getQuantity() const {return quantity;}
 
     /** Updates the material flow PER UNIT of the operationplan. Existing
       * flowplans are NOT updated to take the new quantity in effect. Only new
       * operationplans and updates to existing ones will use the new quantity
       * value.
       */
-    void setQuantity(float f) {quantity = f;}
+    void setQuantity(double f) {quantity = f;}
 
     /** Returns the buffer. */
     Buffer* getBuffer() const {return getPtrB();}
@@ -3087,7 +3087,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     virtual Date getFlowplanDate(const FlowPlan*) const;
 
     /** This method holds the logic the compute the quantity of a flowplan. */
-    virtual float getFlowplanQuantity(const FlowPlan*) const;
+    virtual double getFlowplanQuantity(const FlowPlan*) const;
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
@@ -3101,14 +3101,14 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
   protected:
     /** Default constructor. */
-    explicit Flow() : quantity(0.0f) {}
+    explicit Flow() : quantity(0.0) {}
 
   private:
     /** Verifies whether a flow meets all requirements to be valid. */
     DECLARE_EXPORT void validate(Action action);
 
     /** Quantity of the flow. */
-    float quantity;
+    double quantity;
 };
 
 
@@ -3121,7 +3121,7 @@ class FlowStart : public Flow
     TYPEDEF(FlowStart);
   public:
     /** Constructor. */
-    explicit FlowStart(Operation* o, Buffer* b, float q) : Flow(o,b,q) {}
+    explicit FlowStart(Operation* o, Buffer* b, double q) : Flow(o,b,q) {}
 
     /** This constructor is called from the plan begin_element function. */
     explicit FlowStart() {}
@@ -3141,7 +3141,7 @@ class FlowEnd : public Flow
     TYPEDEF(FlowEnd);
   public:
     /** Constructor. */
-    explicit FlowEnd(Operation* o, Buffer* b, float q) : Flow(o,b,q) {}
+    explicit FlowEnd(Operation* o, Buffer* b, double q) : Flow(o,b,q) {}
 
     /** This constructor is called from the plan begin_element function. */
     explicit FlowEnd() {}
@@ -3209,7 +3209,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       * The boolean parameter is used to control whether to round up or down
       * in case the operation quantity must be a multiple.
       */
-    void setQuantity(float qty, bool b=false, bool u = true)
+    void setQuantity(double qty, bool b=false, bool u = true)
     {
       if (getFlow()->getEffective().within(getDate()))
         OperationPlan::writepointer(oper)->setQuantity(
@@ -3232,11 +3232,11 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 };
 
 
-inline float Flow::getFlowplanQuantity(const FlowPlan* fl) const
+inline double Flow::getFlowplanQuantity(const FlowPlan* fl) const
 {
   return getEffective().within(fl->getDate()) ?
     fl->getOperationPlan()->getQuantity() * getQuantity() : 
-    0.0f;
+    0.0;
 }
 
 
@@ -3271,10 +3271,10 @@ class Resource : public HasHierarchy<Resource>,
     virtual DECLARE_EXPORT ~Resource();
 
     /** Updates the size of a resource. */
-    DECLARE_EXPORT void setMaximum(CalendarFloat* c);
+    DECLARE_EXPORT void setMaximum(CalendarDouble* c);
 
     /** Return a pointer to the maximum capacity profile. */
-    CalendarFloat::pointer getMaximum() const {return max_cal;}
+    CalendarDouble::pointer getMaximum() const {return max_cal;}
 
     typedef Association<Operation,Resource,Load>::ListB loadlist;
     typedef TimeLine<LoadPlan> loadplanlist;
@@ -3326,7 +3326,7 @@ class Resource : public HasHierarchy<Resource>,
 
   private:
     /** This calendar is used to updates to the resource size. */
-    const CalendarFloat* max_cal;
+    const CalendarDouble* max_cal;
 
     /** Stores the collection of all loadplans of this resource. */
     loadplanlist loadplans;
@@ -3386,7 +3386,7 @@ class Load
 
   public:
     /** Constructor. */
-    explicit Load(Operation* o, Resource* r, float u)
+    explicit Load(Operation* o, Resource* r, double u)
     {
       setOperation(o);
       setResource(r);
@@ -3413,12 +3413,12 @@ class Load
 
     /** Returns how much capacity is consumed during the duration of the
       * operationplan. */
-    float getUsageFactor() const {return usage;}
+    double getUsageFactor() const {return usage;}
 
     /** Updates the usage factor of the load.
       * @exception DataException When a negative number is passed.
       */
-    void setUsageFactor(float f)
+    void setUsageFactor(double f)
     {
       if (usage < 0) throw DataException("Load usage can't be negative");
       usage = f;
@@ -3428,7 +3428,7 @@ class Load
     virtual Date getLoadplanDate(const LoadPlan*) const;
 
     /** This method holds the logic the compute the quantity of a loadplan. */
-    virtual float getLoadplanQuantity(const LoadPlan*) const;
+    virtual double getLoadplanQuantity(const LoadPlan*) const;
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
@@ -3445,7 +3445,7 @@ class Load
     virtual size_t getSize() const {return sizeof(Load);}
 
     /** Default constructor. */
-    Load() : usage(1.0f) {}
+    Load() : usage(1.0) {}
 
   private:
     /** This method is called to check the validity of the object. It will
@@ -3456,7 +3456,7 @@ class Load
 
     /** Stores how much capacity is consumed during the duration of an
       * operationplan. */
-    float usage;
+    double usage;
 };
 
 
@@ -3834,11 +3834,11 @@ class Demand
     virtual ~Demand() {deleteOperationPlans(true);}
 
     /** Returns the quantity of the demand. */
-    float getQuantity() const {return qty;}
+    double getQuantity() const {return qty;}
 
     /** Updates the quantity of the demand. The quantity must be be greater
       * than or equal to 0. */
-    virtual DECLARE_EXPORT void setQuantity(float);
+    virtual DECLARE_EXPORT void setQuantity(double);
 
     /** Returns the priority of the demand.<br>
       * Lower numbers indicate a higher priority level.
@@ -3911,7 +3911,7 @@ class Demand
     virtual void setCustomer(const Customer* c) { cust = c; setChanged(); }
 
     /** Returns the total amount that has been planned. */
-    DECLARE_EXPORT float getPlannedQuantity() const;
+    DECLARE_EXPORT double getPlannedQuantity() const;
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     virtual DECLARE_EXPORT void endElement(XMLInput& , XMLElement&  );
@@ -3945,15 +3945,15 @@ class Demand
       * demand.<br>
       * The default value is 0, which allows deliveries of any size.
       */
-    float getMinShipment() const {return minShipment;}
+    double getMinShipment() const {return minShipment;}
 
     /** Updates the maximum allowed lateness for this demand.<br>
       * The default value is infinite.<br>
       * The argument must be a positive time period.
       */
-    virtual void setMinShipment(float m)
+    virtual void setMinShipment(double m)
     {
-      if (m < 0.0f)
+      if (m < 0.0)
         throw DataException("The minumum demand shipment quantity must be positive");
       minShipment = m;
     }
@@ -3983,7 +3983,7 @@ class Demand
     const Customer *cust;
 
     /** Requested quantity. Only positive numbers are allowed. */
-    float qty;
+    double qty;
 
     /** Priority. Lower numbers indicate a higher priority level.*/
     int prio;
@@ -3997,7 +3997,7 @@ class Demand
     TimePeriod maxLateness;
 
     /** Minimum size for a delivery operation plan satisfying this demand. */
-    float minShipment;
+    double minShipment;
 
     /** Hide this demand or not. */
     bool hidden;
@@ -4116,11 +4116,11 @@ inline Date Load::getLoadplanDate(const LoadPlan* lp) const
 }
 
 
-inline float Load::getLoadplanQuantity(const LoadPlan* lp) const
+inline double Load::getLoadplanQuantity(const LoadPlan* lp) const
 {
   if (!lp->getOperationPlan()->getDates().overlap(getEffective()))
     // Load is not effective during this time
-    return 0.0f;
+    return 0.0;
   return lp->isStart() ? getUsageFactor() : -getUsageFactor();
 }
 
@@ -4141,7 +4141,7 @@ class ProblemBeforeCurrent : public Problem
       return ch.str();
     }
     bool isFeasible() const {return false;}
-    float getWeight() const
+    double getWeight() const
     {return dynamic_cast<OperationPlan*>(getOwner())->getQuantity();}
     explicit ProblemBeforeCurrent(OperationPlan* o) : Problem(o)
       {addProblem();}
@@ -4181,7 +4181,7 @@ class ProblemBeforeFence : public Problem
       return ch.str();
     }
     bool isFeasible() const {return true;}
-    float getWeight() const
+    double getWeight() const
     {return static_cast<OperationPlan*>(getOwner())->getQuantity();}
     explicit ProblemBeforeFence(OperationPlan* o) : Problem(o)
       {addProblem();}
@@ -4220,9 +4220,9 @@ class ProblemPrecedence : public Problem
     }
     bool isFeasible() const {return false;}
     /** The weight of the problem is equal to the duration in days. */
-    float getWeight() const 
+    double getWeight() const 
     {
-      return static_cast<float>(getDateRange().getDuration()) / 86400;
+      return static_cast<double>(getDateRange().getDuration()) / 86400;
     }
     explicit ProblemPrecedence
     (Operation* o, OperationPlan* op1, OperationPlan* op2)
@@ -4261,7 +4261,7 @@ class ProblemDemandNotPlanned : public Problem
     string getDescription() const
       {return string("Demand '") + getDemand()->getName() + "' is not planned";}
     bool isFeasible() const {return false;}
-    float getWeight() const {return getDemand()->getQuantity();}
+    double getWeight() const {return getDemand()->getQuantity();}
     explicit ProblemDemandNotPlanned(Demand* d) : Problem(d) {addProblem();}
     ~ProblemDemandNotPlanned() {removeProblem();}
     const DateRange getDateRange() const
@@ -4288,9 +4288,9 @@ class ProblemLate : public Problem
     /** The weight is equal to the delay, expressed in days.<br>
       * The quantity being delayed is not included.
       */
-    float getWeight() const
+    double getWeight() const
     {
-      return static_cast<float>(DateRange(
+      return static_cast<double>(DateRange(
         getDemand()->getDue(),
         (*(getDemand()->getDelivery().begin()))->getDates().getEnd()
         ).getDuration()) / 86400;
@@ -4321,9 +4321,9 @@ class ProblemEarly : public Problem
   public:
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return true;}
-    float getWeight() const 
+    double getWeight() const 
     {
-      return static_cast<float>(DateRange(
+      return static_cast<double>(DateRange(
         getDemand()->getDue(),
         (*(getDemand()->getDelivery().begin()))->getDates().getEnd()
         ).getDuration()) / 86400;
@@ -4360,7 +4360,7 @@ class ProblemShort : public Problem
       return ch.str();
     }
     bool isFeasible() const {return true;}
-    float getWeight() const
+    double getWeight() const
       {return getDemand()->getQuantity() - getDemand()->getPlannedQuantity();}
     explicit ProblemShort(Demand* d) : Problem(d) {addProblem();}
     ~ProblemShort() {removeProblem();}
@@ -4391,7 +4391,7 @@ class ProblemExcess : public Problem
       return ch.str();
     }
     bool isFeasible() const {return true;}
-    float getWeight() const
+    double getWeight() const
       {return getDemand()->getPlannedQuantity() - getDemand()->getQuantity();}
     explicit ProblemExcess(Demand* d) : Problem(d) {addProblem();}
     ~ProblemExcess() {removeProblem();}
@@ -4417,9 +4417,9 @@ class ProblemPlannedLate : public Problem
       {return "Operationplan planned after its lpst date";}
     bool isFeasible() const {return false;}
     /** The weight of the problem is equal to the duration in days. */
-    float getWeight() const 
+    double getWeight() const 
     {
-      return static_cast<float>(getDateRange().getDuration()) / 86400;
+      return static_cast<double>(getDateRange().getDuration()) / 86400;
     }
     explicit ProblemPlannedLate(OperationPlan* o) : Problem(o)
       {addProblem();}
@@ -4459,9 +4459,9 @@ class ProblemPlannedEarly : public Problem
       {return "Operationplan planned before its epst date";}
     bool isFeasible() const {return false;}
     /** The weight of the problem is equal to the duration in days. */
-    float getWeight() const 
+    double getWeight() const 
     {
-      return static_cast<float>(getDateRange().getDuration()) / 86400;
+      return static_cast<double>(getDateRange().getDuration()) / 86400;
     }
     explicit ProblemPlannedEarly(OperationPlan* o) : Problem(o)
       {addProblem();}
@@ -4499,8 +4499,8 @@ class ProblemCapacityOverload : public Problem
   public:
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return false;}
-    float getWeight() const {return qty;}
-    ProblemCapacityOverload(Resource* r, DateRange d, float q)
+    double getWeight() const {return qty;}
+    ProblemCapacityOverload(Resource* r, DateRange d, double q)
         : Problem(r), qty(q), dr(d) {addProblem();}
     ~ProblemCapacityOverload() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
@@ -4514,7 +4514,7 @@ class ProblemCapacityOverload : public Problem
 
   private:
     /** Overload quantity. */
-    float qty;
+    double qty;
 
     /** The daterange of the problem. */
     DateRange dr;
@@ -4529,8 +4529,8 @@ class ProblemCapacityUnderload : public Problem
   public:
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return true;}
-    float getWeight() const {return qty;}
-    ProblemCapacityUnderload(Resource* r, DateRange d, float q)
+    double getWeight() const {return qty;}
+    ProblemCapacityUnderload(Resource* r, DateRange d, double q)
         : Problem(r), qty(q), dr(d) {addProblem();}
     ~ProblemCapacityUnderload() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
@@ -4544,7 +4544,7 @@ class ProblemCapacityUnderload : public Problem
 
   private:
     /** Underload quantity. */
-    float qty;
+    double qty;
 
     /** The daterange of the problem. */
     DateRange dr;
@@ -4559,8 +4559,8 @@ class ProblemMaterialShortage : public Problem
   public:
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return false;}
-    float getWeight() const {return qty;}
-    ProblemMaterialShortage(Buffer* b, Date st, Date nd, float q)
+    double getWeight() const {return qty;}
+    ProblemMaterialShortage(Buffer* b, Date st, Date nd, double q)
         : Problem(b), qty(q), dr(st,nd) {addProblem();}
     ~ProblemMaterialShortage() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
@@ -4574,7 +4574,7 @@ class ProblemMaterialShortage : public Problem
 
   private:
     /** Shortage quantity. */
-    float qty;
+    double qty;
 
     /** The daterange of the problem. */
     DateRange dr;
@@ -4589,8 +4589,8 @@ class ProblemMaterialExcess : public Problem
   public:
     DECLARE_EXPORT string getDescription() const;
     bool isFeasible() const {return true;}
-    float getWeight() const {return qty;}
-    ProblemMaterialExcess(Buffer* b, Date st, Date nd, float q)
+    double getWeight() const {return qty;}
+    ProblemMaterialExcess(Buffer* b, Date st, Date nd, double q)
         : Problem(b), qty(q), dr(st,nd) {addProblem();}
     ~ProblemMaterialExcess() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
@@ -4604,7 +4604,7 @@ class ProblemMaterialExcess : public Problem
 
   private:
     /** Excess quantity. */
-    float qty;
+    double qty;
 
     /** The daterange of the problem. */
     DateRange dr;
@@ -4622,7 +4622,7 @@ class CommandCreateOperationPlan : public Command
   public:
     /** Constructor. */
     CommandCreateOperationPlan
-      (const Operation* o, float q, Date d1, Date d2, const Demand* l,
+      (const Operation* o, double q, Date d1, Date d2, const Demand* l,
       OperationPlan* ow=NULL, bool makeflowsloads=true)
     {
       opplan = o ?
@@ -4685,7 +4685,7 @@ class CommandDeleteOperationPlan : public Command
     DateRange dates;
 
     /** Quantity of the original operationplan. */
-    float qty;
+    double qty;
 
     /** Identifier of the original operationplan. */
     long unsigned id;
@@ -4717,7 +4717,7 @@ class CommandMoveOperationPlan : public Command
       * which indicates to leave the quantity unchanged.
       */
     DECLARE_EXPORT CommandMoveOperationPlan (OperationPlan* opplanptr,
-      Date newDate, bool startOrEnd=true, float newQty = -1.0);
+      Date newDate, bool startOrEnd=true, double newQty = -1.0);
     void execute() { opplan=NULL; }
     DECLARE_EXPORT void undo();
     bool undoable() const {return true;}
@@ -4736,7 +4736,7 @@ class CommandMoveOperationPlan : public Command
     /** Set another quantity for the operationplan.
       * @param newqty New quantity.
       */
-    DECLARE_EXPORT void setQuantity(float newqty);
+    DECLARE_EXPORT void setQuantity(double newqty);
 
   private:
     /** This is a pointer to the operation_plan being moved. */
@@ -4750,7 +4750,7 @@ class CommandMoveOperationPlan : public Command
     DateRange originaldates;
 
     /** This is the quantity of the operation_plan before the command. */
-    float originalqty;
+    double originalqty;
 };
 
 

@@ -41,7 +41,7 @@ namespace frepple
 template<class Buffer> DECLARE_EXPORT Tree HasName<Buffer>::st;
 
 
-DECLARE_EXPORT void Buffer::setOnHand(float f)
+DECLARE_EXPORT void Buffer::setOnHand(double f)
 {
   // The dummy operation to model the inventory may need to be created
   Operation *o = Operation::find(INVENTORY_OPERATION);
@@ -66,7 +66,7 @@ DECLARE_EXPORT void Buffer::setOnHand(float f)
         + getName() + "'");
 
   // Make sure the sign of the flow is correct: +1 or -1.
-  fl->setQuantity(f>=0.0f ? 1.0f : -1.0f);
+  fl->setQuantity(f>=0.0 ? 1.0 : -1.0);
 
   // Create a dummy operationplan on the inventory operation
   OperationPlan::iterator i(o);
@@ -74,7 +74,7 @@ DECLARE_EXPORT void Buffer::setOnHand(float f)
   {
     // No operationplan exists yet
     OperationPlan *opplan = o->createOperationPlan(
-      static_cast<float>(fabs(f)), Date::infinitePast, Date::infinitePast);
+      fabs(f), Date::infinitePast, Date::infinitePast);
     opplan->setLocked(true);
     opplan->initialize();
   }
@@ -82,7 +82,7 @@ DECLARE_EXPORT void Buffer::setOnHand(float f)
   {
     // Update the existing operationplan
     i->setLocked(false);
-    i->setQuantity(static_cast<float>(fabs(f)));
+    i->setQuantity(fabs(f));
     i->setLocked(true);
   }
   setChanged();
@@ -259,13 +259,13 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else if (pElement.isA(Tags::tag_onhand))
   {
-    float f = pElement.getFloat();
+    double f = pElement.getDouble();
     setOnHand(f);
   }
   else if (pElement.isA(Tags::tag_minimum))
   {
-    CalendarFloat *mincal =
-      dynamic_cast<CalendarFloat*>(pIn.getPreviousObject());
+    CalendarDouble *mincal =
+      dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
     if (mincal)
       setMinimum(mincal);
     else
@@ -279,8 +279,8 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else if (pElement.isA(Tags::tag_maximum))
   {
-    CalendarFloat *maxcal =
-      dynamic_cast<CalendarFloat*>(pIn.getPreviousObject());
+    CalendarDouble *maxcal =
+      dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
     if (maxcal)
       setMaximum(maxcal);
     else
@@ -307,7 +307,7 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-DECLARE_EXPORT void Buffer::setMinimum(const CalendarFloat *cal)
+DECLARE_EXPORT void Buffer::setMinimum(const CalendarDouble *cal)
 {
   // Resetting the same calendar
   if (min_cal == cal) return;
@@ -332,9 +332,9 @@ DECLARE_EXPORT void Buffer::setMinimum(const CalendarFloat *cal)
 
   // Create timeline structures for every event. A new entry is created only
   // when the value changes.
-  min_cal = const_cast< CalendarFloat* >(cal);
-  float curMin = 0.0f;
-  for (CalendarFloat::EventIterator x(min_cal); x.getDate()<Date::infiniteFuture; ++x)
+  min_cal = const_cast< CalendarDouble* >(cal);
+  double curMin = 0.0;
+  for (CalendarDouble::EventIterator x(min_cal); x.getDate()<Date::infiniteFuture; ++x)
     if (curMin != x.getValue())
     {
       curMin = x.getValue();
@@ -345,7 +345,7 @@ DECLARE_EXPORT void Buffer::setMinimum(const CalendarFloat *cal)
 }
 
 
-DECLARE_EXPORT void Buffer::setMaximum(const CalendarFloat *cal)
+DECLARE_EXPORT void Buffer::setMaximum(const CalendarDouble *cal)
 {
   // Resetting the same calendar
   if (max_cal == cal) return;
@@ -370,9 +370,9 @@ DECLARE_EXPORT void Buffer::setMaximum(const CalendarFloat *cal)
 
   // Create timeline structures for every bucket. A new entry is created only
   // when the value changes.
-  max_cal = const_cast<CalendarFloat*>(cal);
-  float curMax = 0.0f;
-  for (CalendarFloat::EventIterator x(min_cal); x.getDate()<Date::infiniteFuture; ++x)
+  max_cal = const_cast<CalendarDouble*>(cal);
+  double curMax = 0.0;
+  for (CalendarDouble::EventIterator x(min_cal); x.getDate()<Date::infiniteFuture; ++x)
     if (curMax != x.getValue())
     {
       curMax = x.getValue();
@@ -591,19 +591,19 @@ DECLARE_EXPORT void BufferProcure::endElement(XMLInput& pIn, XMLElement& pElemen
   else if (pElement.isA(Tags::tag_fence))
     setFence(pElement.getTimeperiod());
   else if (pElement.isA(Tags::tag_size_maximum))
-    setSizeMaximum(pElement.getFloat());
+    setSizeMaximum(pElement.getDouble());
   else if (pElement.isA(Tags::tag_size_minimum))
-    setSizeMinimum(pElement.getFloat());
+    setSizeMinimum(pElement.getDouble());
   else if (pElement.isA(Tags::tag_size_multiple))
-    setSizeMultiple(pElement.getFloat());
+    setSizeMultiple(pElement.getDouble());
   else if (pElement.isA(Tags::tag_mininterval))
     setMinimumInterval(pElement.getTimeperiod());
   else if (pElement.isA(Tags::tag_maxinterval))
     setMaximumInterval(pElement.getTimeperiod());
   else if (pElement.isA(Tags::tag_mininventory))
-    setMinimumInventory(pElement.getFloat());
+    setMinimumInventory(pElement.getDouble());
   else if (pElement.isA(Tags::tag_maxinventory))
-    setMaximumInventory(pElement.getFloat());
+    setMaximumInventory(pElement.getDouble());
   else
     Buffer::endElement(pIn, pElement);
 }

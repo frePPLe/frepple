@@ -45,10 +45,10 @@ DECLARE_EXPORT void Buffer::updateProblems()
   Date shortageProblemStart;
   bool shortageProblem = false;
   bool excessProblem = false;
-  float curMax(0.0);
-  float shortageQty(0.0);
-  float curMin(0.0);
-  float excessQty(0.0);
+  double curMax(0.0);
+  double shortageQty(0.0);
+  double curMin(0.0);
+  double excessQty(0.0);
   for (flowplanlist::const_iterator iter = flowplans.begin();
     iter != flowplans.end(); )
   {
@@ -63,7 +63,7 @@ DECLARE_EXPORT void Buffer::updateProblems()
     if (iter!=flowplans.end() && iter->getDate()==f->getDate()) continue;
 
     // Check against minimum target
-    float delta = static_cast<float>(f->getOnhand() - curMin);
+    double delta = f->getOnhand() - curMin;
     if (delta < -ROUNDING_ERROR)
     {
       if (!shortageProblem)
@@ -93,7 +93,7 @@ DECLARE_EXPORT void Buffer::updateProblems()
     // the same moment in time.
 
     // Check against maximum target
-    delta = static_cast<float>(f->getOnhand() - curMax);
+    delta = f->getOnhand() - curMax;
     if (delta > ROUNDING_ERROR)
     {
       if (!excessProblem)

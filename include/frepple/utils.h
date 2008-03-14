@@ -2211,11 +2211,6 @@ class XMLElement
 
     int getInt() const {return atoi(getData());}
 
-    void operator >> (float& val) const
-      {val = static_cast<float>(atof(getData()));}
-
-    float getFloat() const {return static_cast<float>(atof(getData()));}
-
     void operator >> (double& val) const {val = atof(getData());}
 
     double getDouble() const {return atof(getData());}

@@ -253,8 +253,8 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
           logger << "    Consuming " << remaining << " from bucket "
             << curbucket->timebucket << " (" << available
             << " available)" << endl;
-        curbucket->setQuantity(static_cast<float>(available - remaining));
-        curbucket->consumed += static_cast<float>(remaining);
+        curbucket->setQuantity(available - remaining);
+        curbucket->consumed += remaining;
         remaining = 0;
       }
       else
@@ -265,7 +265,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
             << curbucket->timebucket << " (" << available
             << " available)" << endl;
         remaining -= available;
-        curbucket->consumed += static_cast<float>(available);
+        curbucket->consumed += available;
         curbucket->setQuantity(0);
       }
     }

@@ -57,7 +57,7 @@ DECLARE_EXPORT void MRPSolver::checkOperationCapacity
   // need to redo the capacity check for the ones we already checked
   // Repeat until no load has touched the opplan, or till proven infeasible
   // No need to reloop if there is only a single load (= 2 loadplans)
-  while (hasMultipleLoads && opplan->getDates()!=orig && data.a_qty!=0.0f);
+  while (hasMultipleLoads && opplan->getDates()!=orig && data.a_qty!=0.0);
 }
 
 
@@ -87,8 +87,8 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
   Date prev_a_date;
   double a_qty;
   Date orig_q_date = data.q_date;
-  float orig_opplan_qty = static_cast<float>(data.q_qty);
-  float q_qty_Flow;
+  double orig_opplan_qty = data.q_qty;
+  double q_qty_Flow;
   Date q_date_Flow;
   TimePeriod delay;
   bool incomplete;
@@ -129,7 +129,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
         {
           // Update the opplan, which is required to (1) update the flowplans
           // and to (2) take care of lot sizing constraints of this operation.
-          g->setQuantity(static_cast<float>(-data.a_qty), true);
+          g->setQuantity(-data.a_qty, true);
           a_qty = opplan->getQuantity();
           incomplete = true;
 
@@ -320,7 +320,7 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
     // Pick up the earliest date we can reply back
     data.a_date = opplan->getDates().getEnd();
     // Set the quantity to 0 (to make sure the buffer doesn't see the supply).
-    opplan->setQuantity(0.0f);
+    opplan->setQuantity(0.0);
     // Deny creation of the operationplan
     return false;
   }
@@ -337,11 +337,11 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
 
   // Find the flow for the quantity-per. This can throw an exception if no
   // valid flow can be found.
-  float flow_qty_per = 1.0f;
+  double flow_qty_per = 1.0;
   if (Solver->curBuffer)
   {
     Flow* f = oper->findFlow(Solver->curBuffer, Solver->q_date);
-    if (f && f->getQuantity()>0.0f)
+    if (f && f->getQuantity()>0.0)
       flow_qty_per = f->getQuantity();
     else
       // The producing operation doesn't have a valid flow into the current
@@ -366,7 +366,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
     // There is already an owner and thus also an owner command
     assert(!Solver->curDemand);
     z = oper->createOperationPlan(
-          static_cast<float>(Solver->q_qty / flow_qty_per), 
+          Solver->q_qty / flow_qty_per, 
           Date::infinitePast, Solver->q_date, Solver->curDemand, 
           Solver->curOwnerOpplan, 0
           );
@@ -376,7 +376,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
     // There is no owner operationplan yet. We need a new command.
     CommandCreateOperationPlan *a =
       new CommandCreateOperationPlan(
-        oper, static_cast<float>(Solver->q_qty / flow_qty_per),
+        oper, Solver->q_qty / flow_qty_per,
         Date::infinitePast, Solver->q_date, Solver->curDemand, 
         Solver->curOwnerOpplan
         );
@@ -415,10 +415,10 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
 
   // Find the total quantity to flow into the buffer.
   // Multiple suboperations can all produce into the buffer.
-  float flow_qty = 1.0f;
+  double flow_qty = 1.0;
   if (Solver->curBuffer)
   {
-    flow_qty = 0.0f;
+    flow_qty = 0.0;
     Flow *f = oper->findFlow(Solver->curBuffer, Solver->q_date);
     if (f) flow_qty += f->getQuantity();
     for (Operation::Operationlist::const_iterator
@@ -429,7 +429,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
       f = (*e)->findFlow(Solver->curBuffer, Solver->q_date);
       if (f) flow_qty += f->getQuantity();
     }
-    if (flow_qty <= 0.0f)
+    if (flow_qty <= 0.0)
       throw DataException("Invalid producing operation '" + oper->getName()
           + "' for buffer '" + Solver->curBuffer->getName() + "'");
   }
@@ -439,7 +439,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
 
   // Create the top operationplan
   CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
-    oper, static_cast<float>(a_qty), Date::infinitePast, 
+    oper, a_qty, Date::infinitePast, 
     Solver->q_date, Solver->curDemand, Solver->curOwnerOpplan, false
     );
   Solver->curDemand = NULL;
@@ -461,7 +461,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
     (*e)->solve(*this,v);
     a_qty = Solver->a_qty;
     // Update the top operationplan
-    Solver->curOwnerOpplan->setQuantity(static_cast<float>(a_qty),true);
+    Solver->curOwnerOpplan->setQuantity(a_qty,true);
     // Maximum for the next date
     if (Solver->a_date > max_Date && Solver->a_date != Date::infiniteFuture)
       max_Date = Solver->a_date;
@@ -524,12 +524,12 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
   const Demand *d = Solver->curDemand;
 
   // Find the flow into the requesting buffer for the quantity-per
-  float top_flow_qty_per = 0.0f;
+  double top_flow_qty_per = 0.0;
   bool top_flow_exists = false;
   if (buf)
   {
     Flow* f = oper->findFlow(buf, Solver->q_date);
-    if (f && f->getQuantity() > 0.0f)
+    if (f && f->getQuantity() > 0.0)
     {
       top_flow_qty_per = f->getQuantity();
       top_flow_exists = true;
@@ -546,16 +546,16 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
     // Operations with 0 priority are considered unavailable
     const OperationAlternate::alternateProperty& props 
       = oper->getProperties(*altIter);
-    if (props.first == 0.0f || !props.second.within(Solver->q_date)) // @todo logic is to be owned by the operation?
+    if (props.first == 0.0 || !props.second.within(Solver->q_date)) // @todo logic is to be owned by the operation?
       continue;
 
     // Find the flow into the requesting buffer. It may or may not exist, since
     // the flow could already exist on the top operationplan
-    float sub_flow_qty_per = 0.0f;
+    double sub_flow_qty_per = 0.0;
     if (buf)
     {
       Flow* f = (*altIter)->findFlow(buf, Solver->q_date);
-      if (f && f->getQuantity() > 0.0f)
+      if (f && f->getQuantity() > 0.0)
         sub_flow_qty_per = f->getQuantity();
       else if (!top_flow_exists)
         // Neither the top nor the sub operation have a flow in the buffer,
@@ -565,7 +565,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
     }
     else
       // Default value is 1.0, if no matching flow is required
-      sub_flow_qty_per = 1.0f;
+      sub_flow_qty_per = 1.0;
 
     // Create the top operationplan.
     // Note that both the top- and the sub-operation can have a flow in the
@@ -574,7 +574,7 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
     Solver->q_date = origQDate;
     Solver->curDemand = d;
     CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
-        oper, static_cast<float>(a_qty),
+        oper, a_qty,
         Date::infinitePast, origQDate, d, prev_owner_opplan, false
         );
     Solver->add(a);

@@ -51,7 +51,7 @@ DECLARE_EXPORT void Demand::updateProblems()
     if (deli.empty())
     {
       // Check if a new ProblemDemandNotPlanned needs to be created
-      if (getQuantity()>0.0f) needsNotPlanned = true;
+      if (getQuantity()>0.0) needsNotPlanned = true;
     }
     else
     {
@@ -66,7 +66,7 @@ DECLARE_EXPORT void Demand::updateProblems()
       }
 
       // Check for ProblemShort problem
-      float plannedqty = getPlannedQuantity();
+      double plannedqty = getPlannedQuantity();
       if (plannedqty + ROUNDING_ERROR < qty) needsShort = true;
 
       // Check for ProblemExcess Problem

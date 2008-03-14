@@ -71,7 +71,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
   double shortage(0.0);
   Date extraSupplyDate(Date::infiniteFuture);
   Date extraInventoryDate(Date::infiniteFuture);
-  float current_minimum(0.0f);
+  double current_minimum(0.0);
   for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
       ; ++cur)
   {
@@ -251,7 +251,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Flow* fl, void* v)
   MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
   data->q_qty = - data->q_flowplan->getQuantity();
   data->q_date = data->q_flowplan->getDate();
-  if (data->q_qty != 0.0f)
+  if (data->q_qty != 0.0)
   {
     fl->getBuffer()->solve(*this,data);
     if (data->a_date > fl->getEffective().getEnd())
@@ -271,7 +271,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Flow* fl, void* v)
     // It's a zero quantity flowplan. 
     // E.g. because it is not effective.
     data->a_date = data->q_date;
-    data->a_qty = 0.0f; 
+    data->a_qty = 0.0; 
   }
 }
 

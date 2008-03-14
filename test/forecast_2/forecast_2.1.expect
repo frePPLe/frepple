@@ -16,7 +16,7 @@
 		</solver>
 	</solvers>
 	<calendars>
-		<calendar name="planningbuckets" xsi:type="calendar_float">
+		<calendar name="planningbuckets" xsi:type="calendar_double">
 			<default>0</default>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00" name="Mon Jan 01">
@@ -153,7 +153,7 @@
 		<demand name="Forecast 1" xsi:type="demand_forecast">
 			<item name="Product 1"/>
 			<priority>1</priority>
-			<calendar name="planningbuckets" xsi:type="calendar_float"/>
+			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
 					<total>24</total>
@@ -315,7 +315,7 @@
 		<demand name="Forecast 2" xsi:type="demand_forecast">
 			<item name="Product 2"/>
 			<priority>1</priority>
-			<calendar name="planningbuckets" xsi:type="calendar_float"/>
+			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
 					<total>0</total>

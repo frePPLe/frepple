@@ -211,7 +211,7 @@ void LPSolver::solve(const Buffer* buf, void* v)
     // Find the supply in this Bucket
     double supply(0.0);
     for (; f!=buf->getFlowPlans().end() && f->getDate()<b->getEnd(); ++f)
-      if (f->getQuantity() > 0.0f) supply += f->getQuantity();
+      if (f->getQuantity() > 0.0) supply += f->getQuantity();
 
     // Set the name of the column equal to the Buffer & Bucket
     string x = replaceSpaces(string(buf->getName()) + "_" + b->getName());

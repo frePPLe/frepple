@@ -47,7 +47,7 @@
                   <!-- Level 5: load -->
                   <resource name="resource 1">
                     <!-- Level 6: resource -->
-                    <maximum name="weeks" xsi:type="calendar_float">
+                    <maximum name="weeks" xsi:type="calendar_double">
                       <!-- Level 7: calendar -->
                       <buckets>
                         <!-- Level 8: bucket -->

@@ -486,7 +486,7 @@ void DECLARE_EXPORT OperationPlan::setEnd (Date d)
 }
 
 
-DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown, bool upd)
+DECLARE_EXPORT void OperationPlan::setQuantity (double f, bool roundDown, bool upd)
 {
   // No impact on locked operationplans
   if (getLocked()) return;
@@ -503,23 +503,23 @@ DECLARE_EXPORT void OperationPlan::setQuantity (float f, bool roundDown, bool up
   }
 
   // Compute the correct size for the operationplan
-  if (f!=0.0f && getOperation()->getSizeMinimum()>0.0f
+  if (f!=0.0 && getOperation()->getSizeMinimum()>0.0
       && f < getOperation()->getSizeMinimum())
   {
     if (roundDown)
     {
       // Smaller than the minimum quantity, rounding down means... nothing
-      quantity = 0.0f;
+      quantity = 0.0;
       // Update the flow and loadplans, and mark for problem detection
       if (upd) update();
       return;
     }
     f = getOperation()->getSizeMinimum();
   }
-  if (f!=0.0f && getOperation()->getSizeMultiple()>0.0f)
+  if (f!=0.0 && getOperation()->getSizeMultiple()>0.0)
   {
     int mult = (int) (f / getOperation()->getSizeMultiple()
-        + (roundDown ? 0.0f : 0.999999f));
+        + (roundDown ? 0.0 : 0.999999f));
     quantity = mult * getOperation()->getSizeMultiple();
   }
   else
@@ -733,7 +733,7 @@ DECLARE_EXPORT OperationPlanRouting::~OperationPlanRouting()
 }
 
 
-DECLARE_EXPORT void OperationPlanRouting::setQuantity (float f, bool roundDown, bool update)
+DECLARE_EXPORT void OperationPlanRouting::setQuantity (double f, bool roundDown, bool update)
 {
   // First the normal resizing
   OperationPlan::setQuantity(f,roundDown,update);
@@ -949,7 +949,7 @@ DECLARE_EXPORT bool OperationPlanAlternate::initialize()
 }
 
 
-DECLARE_EXPORT void OperationPlanAlternate::setQuantity(float f, bool roundDown, bool update)
+DECLARE_EXPORT void OperationPlanAlternate::setQuantity(double f, bool roundDown, bool update)
 {
   // First the normal resizing
   OperationPlan::setQuantity(f,roundDown,update);

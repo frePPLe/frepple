@@ -69,7 +69,7 @@ template <class type> class TimeLine
 
       public:
         virtual ~Event() {};
-        virtual float getQuantity() const {return 0.0f;}
+        virtual double getQuantity() const {return 0.0;}
 
         /** Return the current onhand value. */
         double getOnhand() const {return oh;}
@@ -88,20 +88,20 @@ template <class type> class TimeLine
 
         /** This functions returns the mimimum boundary valid at the time of
           * this event. */
-        virtual float getMin() const
+        virtual double getMin() const
         {
           EventMinQuantity *m = this->getTimeLine()->lastMin;
           while(m && getDate() < m->getDate()) m = m->prevMin;
-          return m ? m->newMin : 0.0f;
+          return m ? m->newMin : 0.0;
         }
 
         /** This functions returns the maximum boundary valid at the time of
           * this event. */
-        virtual float getMax() const
+        virtual double getMax() const
         {
           EventMaxQuantity *m = this->getTimeLine()->lastMax;
           while(m && getDate() < m->getDate()) m = m->prevMax;
-          return m ? m->newMax : 0.0f;
+          return m ? m->newMax : 0.0;
         }
 
         virtual unsigned short getType() const = 0;
@@ -131,10 +131,10 @@ template <class type> class TimeLine
     {
       friend class TimeLine<type>;
       private:
-        float quantity;
+        double quantity;
       public:
-        float getQuantity() const {return quantity;}
-        EventChangeOnhand(float qty = 0.0f) : quantity(qty) {}
+        double getQuantity() const {return quantity;}
+        EventChangeOnhand(double qty = 0.0) : quantity(qty) {}
         virtual unsigned short getType() const {return 1;}
     };
 
@@ -144,14 +144,14 @@ template <class type> class TimeLine
       friend class TimeLine<type>;
       friend class Event;
       private:
-        float newMin;
+        double newMin;
       protected:
         EventMinQuantity *prevMin;
       public:
-        EventMinQuantity(Date d, float f=0.0f) : newMin(f), prevMin(NULL)
+        EventMinQuantity(Date d, double f=0.0) : newMin(f), prevMin(NULL)
           { this->dt = d; }
-        void setMin(float f) {newMin = f;}
-        virtual float getMin() const {return newMin;}
+        void setMin(double f) {newMin = f;}
+        virtual double getMin() const {return newMin;}
         virtual unsigned short getType() const {return 3;}
     };
 
@@ -161,14 +161,14 @@ template <class type> class TimeLine
       friend class Event;
       friend class TimeLine<type>;
       private:
-        float newMax;
+        double newMax;
       protected:
         EventMaxQuantity *prevMax;
       public:
-        EventMaxQuantity(Date d, float f=0.0f) : newMax(f), prevMax(NULL)
+        EventMaxQuantity(Date d, double f=0.0) : newMax(f), prevMax(NULL)
           {this->dt = d;}
-        void setMax(float f) {newMax = f;}
-        virtual float getMax() const {return newMax;}
+        void setMax(double f) {newMax = f;}
+        virtual double getMax() const {return newMax;}
         virtual unsigned short getType() const {return 4;}
     };
 
@@ -232,14 +232,14 @@ template <class type> class TimeLine
     const_iterator end() const {return const_iterator(NULL);}
     bool empty() const {return first==NULL;}
     void insert(Event*);
-    void insert(EventChangeOnhand* e, float qty, const Date& d)
+    void insert(EventChangeOnhand* e, double qty, const Date& d)
     {
       e->quantity = qty;
       e->dt = d;
       insert(static_cast<Event*>(e));
     };
     void erase(Event*);
-    void update(EventChangeOnhand*, float, const Date&);
+    void update(EventChangeOnhand*, double, const Date&);
 
     /** This function is used for debugging purposes.<br>
       * It prints a header line, followed by the date, quantity and on_hand
@@ -397,7 +397,7 @@ template <class type> void TimeLine<type>::erase (Event* e)
 }
 
 
-template <class type> void TimeLine<type>::update(EventChangeOnhand* e, float newqty, const Date& d)
+template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double newqty, const Date& d)
 {
   // Compute the delta quantity
   double delta = e->quantity - newqty;
@@ -474,8 +474,8 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, float ne
 
 template <class type> bool TimeLine<type>::check() const
 {
-  double expectedOH = 0.0f;
-  double expectedCumProd = 0.0f;
+  double expectedOH = 0.0;
+  double expectedCumProd = 0.0;
   const Event *prev = NULL;
   for (const_iterator i = begin(); i!=end(); ++i)
   {

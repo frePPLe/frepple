@@ -35,8 +35,8 @@ int main (int argc, char *argv[])
   cout << "Plan\t" << sizeof(Plan) << endl
   << "Calendar\t" << sizeof(CalendarVoid) << endl
   << "Calendar::Bucket\t" << sizeof(Calendar::Bucket) << endl
-  << "CalendarFloat\t" << sizeof(CalendarFloat) << endl
-  << "CalendarFloat::Bucket\t" << sizeof(CalendarFloat::BucketValue) << endl
+  << "CalendarDouble\t" << sizeof(CalendarDouble) << endl
+  << "CalendarDouble::Bucket\t" << sizeof(CalendarDouble::BucketValue) << endl
   << "Item\t" << sizeof(ItemDefault) << endl
   << "Location\t" << sizeof(LocationDefault) << endl
   << "Customer\t" << sizeof(CustomerDefault) << endl

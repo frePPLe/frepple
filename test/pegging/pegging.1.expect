@@ -9,7 +9,7 @@
 		</solver>
 	</solvers>
 	<calendars>
-		<calendar name="min inv for buffer 1" xsi:type="calendar_float">
+		<calendar name="min inv for buffer 1" xsi:type="calendar_double">
 			<default>0</default>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
@@ -18,7 +18,7 @@
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="min inv for buffer 2" xsi:type="calendar_float">
+		<calendar name="min inv for buffer 2" xsi:type="calendar_double">
 			<default>0</default>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
@@ -26,7 +26,7 @@
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="min inv for buffer 3" xsi:type="calendar_float">
+		<calendar name="min inv for buffer 3" xsi:type="calendar_double">
 			<default>0</default>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
@@ -37,7 +37,7 @@
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="min inv for buffer 4" xsi:type="calendar_float">
+		<calendar name="min inv for buffer 4" xsi:type="calendar_double">
 			<default>0</default>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
@@ -1150,7 +1150,7 @@
 				</flow>
 			</flows>
 			<onhand>10</onhand>
-			<minimum name="min inv for buffer 1" xsi:type="calendar_float"/>
+			<minimum name="min inv for buffer 1" xsi:type="calendar_double"/>
 			<flow_plans>
 				<flow_plan>
 					<date>1971-01-01T00:00:00</date>
@@ -1303,7 +1303,7 @@
 				</flow>
 			</flows>
 			<onhand>10</onhand>
-			<minimum name="min inv for buffer 2" xsi:type="calendar_float"/>
+			<minimum name="min inv for buffer 2" xsi:type="calendar_double"/>
 			<flow_plans>
 				<flow_plan>
 					<date>1971-01-01T00:00:00</date>
@@ -1448,7 +1448,7 @@
 				</flow>
 			</flows>
 			<onhand>10</onhand>
-			<minimum name="min inv for buffer 3" xsi:type="calendar_float"/>
+			<minimum name="min inv for buffer 3" xsi:type="calendar_double"/>
 			<flow_plans>
 				<flow_plan>
 					<date>1971-01-01T00:00:00</date>
@@ -1553,7 +1553,7 @@
 				</flow>
 			</flows>
 			<onhand>10</onhand>
-			<minimum name="min inv for buffer 4" xsi:type="calendar_float"/>
+			<minimum name="min inv for buffer 4" xsi:type="calendar_double"/>
 			<flow_plans>
 				<flow_plan>
 					<date>1971-01-01T00:00:00</date>

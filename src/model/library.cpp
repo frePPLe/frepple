@@ -63,7 +63,7 @@ DECLARE_EXPORT const MetaClass BufferDefault::metadata,
 DECLARE_EXPORT const MetaCategory Calendar::metadata;
 DECLARE_EXPORT const MetaCategory Calendar::Bucket::metadata;
 DECLARE_EXPORT const MetaClass CalendarVoid::metadata,
-  CalendarFloat::metadata,
+  CalendarDouble::metadata,
   CalendarInt::metadata,
   CalendarBool::metadata,
   CalendarString::metadata,
@@ -211,10 +211,10 @@ void LibraryModel::initialize()
     "calendar",
     "calendar_void",
     Object::createString<CalendarVoid>);
-  CalendarFloat::metadata.registerClass(
+  CalendarDouble::metadata.registerClass(
     "calendar",
-    "calendar_float",
-    Object::createString<CalendarFloat>, true);
+    "calendar_double",
+    Object::createString<CalendarDouble>, true);
   CalendarInt::metadata.registerClass(
     "calendar",
     "calendar_integer",

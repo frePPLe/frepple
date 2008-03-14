@@ -167,7 +167,7 @@ struct PythonForecastBucket;
 /** @brief This class represents a bucketized demand signal.
   *
   * The forecast object defines the item and priority of the demands.<br>
-  * A calendar (of type void, float, integer or boolean) divides the time horizon
+  * A calendar (of type void, double, integer or boolean) divides the time horizon
   * in individual time buckets. The calendar value is used to assign priorities
   * to the time buckets.<br>
   * The class basically works as an interface for a hierarchy of demands, where the
@@ -188,7 +188,7 @@ class Forecast : public Demand
     {
 
       public:
-        ForecastBucket(Forecast* f, Date d, Date e, float w, ForecastBucket* p)
+        ForecastBucket(Forecast* f, Date d, Date e, double w, ForecastBucket* p)
           : Demand(f->getName() + " - " + string(d)), weight(w), consumed(0),
             total(0), timebucket(d,e), prev(p), next(NULL)
         {
@@ -202,9 +202,9 @@ class Forecast : public Demand
           setMinShipment(f->getMinShipment());
           setOperation(&*(f->getOperation()));
         }
-        float weight;
-        float consumed;
-        float total;
+        double weight;
+        double consumed;
+        double total;
         DateRange timebucket;
         ForecastBucket* prev;
         ForecastBucket* next;
@@ -223,7 +223,7 @@ class Forecast : public Demand
     ~Forecast();
 
     /** Updates the quantity of the forecast. This method is empty. */
-    virtual void setQuantity(float f)
+    virtual void setQuantity(double f)
       {throw DataException("Can't set quantity of a forecast");}
 
     /** Update the forecast quantity.<br>
@@ -267,7 +267,7 @@ class Forecast : public Demand
     void setMaxLateness(TimePeriod);
 
     /* Update the minumum allowed shipment quantity for planning. */
-    void setMinShipment(float);
+    void setMinShipment(double);
 
     /** Specify a bucket calendar for the forecast. Once forecasted
       * quantities have been entered for the forecast, the calendar

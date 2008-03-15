@@ -74,20 +74,20 @@
   *               <xsd:element name="bucket">
   *                 <xsd:complexType>
   *                   <xsd:all>
-  *                     <xsd:element name="total" type="positiveFloat"
+  *                     <xsd:element name="total" type="positiveDouble"
   *                       minOccurs="0" />
-  *                     <xsd:element name="net" type="positiveFloat"
+  *                     <xsd:element name="net" type="positiveDouble"
   *                       minOccurs="0" />
-  *                     <xsd:element name="consumed" type="positiveFloat"
+  *                     <xsd:element name="consumed" type="positiveDouble"
   *                       minOccurs="0" />
   *                     <xsd:element name="start" type="xsd:dateTime"
   *                       minOccurs="0"/>
   *                     <xsd:element name="end" type="xsd:dateTime"
   *                       minOccurs="0"/>
   *                   </xsd:all>
-  *                   <xsd:attribute name="total" type="positiveFloat" />
-  *                   <xsd:attribute name="net" type="positiveFloat" />
-  *                   <xsd:attribute name="consumed" type="positiveFloat" />
+  *                   <xsd:attribute name="total" type="positiveDouble" />
+  *                   <xsd:attribute name="net" type="positiveDouble" />
+  *                   <xsd:attribute name="consumed" type="positiveDouble" />
   *                   <xsd:attribute name="start" type="xsd:dateTime" />
   *                   <xsd:attribute name="end" type="xsd:dateTime" />
   *                 </xsd:complexType>
@@ -189,8 +189,8 @@ class Forecast : public Demand
 
       public:
         ForecastBucket(Forecast* f, Date d, Date e, double w, ForecastBucket* p)
-          : Demand(f->getName() + " - " + string(d)), weight(w), consumed(0),
-            total(0), timebucket(d,e), prev(p), next(NULL)
+          : Demand(f->getName() + " - " + string(d)), weight(w), consumed(0.0),
+            total(0.0), timebucket(d,e), prev(p), next(NULL)
         {
           if (p) p->next = this;
           setOwner(f);
@@ -505,4 +505,5 @@ extern "C"
 }   // End namespace
 
 #endif
+
 

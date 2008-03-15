@@ -68,7 +68,7 @@
 			<xsd:enumeration value="R" />
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="positiveFloat">
+	<xsd:simpleType name="positiveDouble">
 		<xsd:restriction base="xsd:double">
 			<xsd:minInclusive value="0" />
 		</xsd:restriction>
@@ -169,8 +169,8 @@
 			<xsd:element name="pretime" type="xsd:duration" />
 			<xsd:element name="posttime" type="xsd:duration" />
 			<xsd:element name="fence" type="xsd:duration" />
-			<xsd:element name="size_minimum" type="positiveFloat" />
-			<xsd:element name="size_multiple" type="positiveFloat" />
+			<xsd:element name="size_minimum" type="positiveDouble" />
+			<xsd:element name="size_multiple" type="positiveDouble" />
 			<xsd:element name="loads" type="loadlist" />
 			<xsd:element name="flows" type="flowlist" />
 			<xsd:element name="operation_plans" type="operationplanlist" />
@@ -181,8 +181,8 @@
 		<xsd:attribute name="pretime" type="xsd:duration" />
 		<xsd:attribute name="posttime" type="xsd:duration" />
 		<xsd:attribute name="fence" type="xsd:duration" />
-		<xsd:attribute name="size_minimum" type="positiveFloat" />
-		<xsd:attribute name="size_multiple" type="positiveFloat" />
+		<xsd:attribute name="size_minimum" type="positiveDouble" />
+		<xsd:attribute name="size_multiple" type="positiveDouble" />
 	</xsd:complexType>
 
 	<xsd:complexType name="operationlist">
@@ -382,21 +382,21 @@
 		<xsd:complexContent>
 			<xsd:extension base="buffer">
   			<xsd:choice minOccurs="0" maxOccurs="unbounded">
-  				<xsd:element name="size_maximum" type="positiveFloat" />
-  				<xsd:element name="size_minimum" type="positiveFloat" />
-  				<xsd:element name="size_multiple" type="positiveFloat" />
-  				<xsd:element name="mininventory" type="positiveFloat" />
-  				<xsd:element name="maxinventory" type="positiveFloat" />
+  				<xsd:element name="size_maximum" type="positiveDouble" />
+  				<xsd:element name="size_minimum" type="positiveDouble" />
+  				<xsd:element name="size_multiple" type="positiveDouble" />
+  				<xsd:element name="mininventory" type="positiveDouble" />
+  				<xsd:element name="maxinventory" type="positiveDouble" />
   				<xsd:element name="mininterval" type="xsd:duration" />
   				<xsd:element name="maxinterval" type="xsd:duration" />
   				<xsd:element name="leadtime" type="xsd:duration" />
   				<xsd:element name="fence" type="xsd:duration" />
   			</xsd:choice>
-  			<xsd:attribute name="size_maximum" type="positiveFloat" />
-  			<xsd:attribute name="size_miniimum" type="positiveFloat" />
-  			<xsd:attribute name="size_multiple" type="positiveFloat" />
-  			<xsd:attribute name="mininventory" type="positiveFloat" />
-  			<xsd:attribute name="maxinventory" type="positiveFloat" />
+  			<xsd:attribute name="size_maximum" type="positiveDouble" />
+  			<xsd:attribute name="size_miniimum" type="positiveDouble" />
+  			<xsd:attribute name="size_multiple" type="positiveDouble" />
+  			<xsd:attribute name="mininventory" type="positiveDouble" />
+  			<xsd:attribute name="maxinventory" type="positiveDouble" />
   			<xsd:attribute name="mininterval" type="xsd:duration" />
   			<xsd:attribute name="maxinterval" type="xsd:duration" />
   			<xsd:attribute name="leadtime" type="xsd:duration" />
@@ -516,13 +516,13 @@
 		</xsd:annotation>
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:group ref="common_fields" />
-			<xsd:element name="quantity" type="positiveFloat" />
+			<xsd:element name="quantity" type="positiveDouble" />
 			<xsd:element name="item" type="item" />
 			<xsd:element name="due" type="xsd:dateTime" />
 			<xsd:element name="priority" type="xsd:integer" />
 			<xsd:element name="operation" type="operation" />
 			<xsd:element name="customer" type="customer" />
-			<xsd:element name="minshipment" type="positiveFloat" />
+			<xsd:element name="minshipment" type="positiveDouble" />
 			<xsd:element name="maxlateness" type="xsd:duration" />
 			<xsd:element name="detectproblems" type="xsd:boolean" />
 			<xsd:element name="owner" type="demand" />
@@ -536,12 +536,12 @@
 			<xsd:element name="operation_plans" type="operationplanlist" />
 		</xsd:choice>
 		<xsd:attributeGroup ref="common_attributes" />
-		<xsd:attribute name="quantity" type="positiveFloat" />
+		<xsd:attribute name="quantity" type="positiveDouble" />
 		<xsd:attribute name="due" type="xsd:dateTime" />
 		<xsd:attribute name="priority" type="xsd:integer" />
 		<xsd:attribute name="detectproblems" type="xsd:boolean" />
 		<xsd:attribute name="maxlateness" type="xsd:duration" />
-		<xsd:attribute name="minshipment" type="positiveFloat" />
+		<xsd:attribute name="minshipment" type="positiveDouble" />
 	</xsd:complexType>
 
 	<xsd:complexType name="demandlist">
@@ -767,7 +767,7 @@
 			<xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
 			<xsd:element name="epst" type="xsd:dateTime" minOccurs="0" />
 			<xsd:element name="lpst" type="xsd:dateTime" minOccurs="0" />
-			<xsd:element name="quantity" type="positiveFloat" minOccurs="0" />
+			<xsd:element name="quantity" type="positiveDouble" minOccurs="0" />
 			<xsd:element name="locked" type="xsd:boolean" minOccurs="0" />
 			<xsd:element name="owner" type="operation_plan" minOccurs="0" />
 		</xsd:sequence>
@@ -777,7 +777,7 @@
 		<xsd:attribute name="end" type="xsd:dateTime" />
 		<xsd:attribute name="epst" type="xsd:dateTime" />
 		<xsd:attribute name="lpst" type="xsd:dateTime" />
-		<xsd:attribute name="quantity" type="positiveFloat" />
+		<xsd:attribute name="quantity" type="positiveDouble" />
 		<xsd:attribute name="locked" type="xsd:boolean" />
 		<xsd:attribute name="action" type="action" />
 	</xsd:complexType>

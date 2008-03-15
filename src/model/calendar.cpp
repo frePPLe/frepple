@@ -136,14 +136,14 @@ DECLARE_EXPORT void Calendar::removeBucket(Calendar::Bucket* bkt)
 DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d) const
 {
   Calendar::Bucket *curBucket = NULL;
-  double curPriority;
+  double curPriority = DBL_MAX;
   for (Bucket *b = firstBucket; b; b = b->nextBucket)
   {
     if (b->getStart() > d) 
       // Buckets are sorted by the start date. Other entries definately 
       // won't be effective
       break;
-    else if ((!curBucket || curPriority > b->getPriority()) 
+    else if (curPriority > b->getPriority()
       && d >= b->getStart() && d < b->getEnd()
       && b->checkValid(d) )
     {
@@ -330,7 +330,7 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
   Date d = curDate;
   curDate = Date::infiniteFuture;  // Cause end date is not included
   curBucket = NULL;
-  curPriority = FLT_MAX;
+  curPriority = DBL_MAX;
   for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
     b->nextEvent(this, d);
   return *this;
@@ -343,7 +343,7 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator--()
   Date d = curDate;
   curDate = Date::infinitePast;
   curBucket = NULL;
-  curPriority = FLT_MAX;
+  curPriority = DBL_MAX;
   for (const Calendar::Bucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
     b->prevEvent(this, d);
   return *this;

@@ -78,7 +78,7 @@ void Forecast::initialize()
   Date prevDate;
   double prevValue(0.0);
   if (c)
-    // Float calendar
+    // Double calendar
     for (CalendarDouble::EventIterator i(c); i.getDate()<=Date::infiniteFuture; ++i)
     {
       if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValue > 0.0)
@@ -106,7 +106,7 @@ void Forecast::initialize()
         }
         if (i.getDate() == Date::infiniteFuture) break;
         prevDate = i.getDate();
-        prevValue = i.getValue();
+        prevValue = static_cast<double>(i.getValue());
       }
     else
     {
@@ -163,7 +163,7 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
   if (!isGroup()) initialize();
 
   // Find all forecast demands, and sum their weights
-  double weights = 0;
+  double weights = 0.0;
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
   {
     ForecastBucket* x = dynamic_cast<ForecastBucket*>(&*m);
@@ -203,14 +203,14 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
       {
         // Rounding to discrete numbers
         carryover += f * percent;
-        double intdelta = ceil(carryover - 0.5);
+        int intdelta = static_cast<int>(ceil(carryover - 0.5));
         carryover -= intdelta;
         if (o < x->timebucket.getDuration())
           // The bucket is only partially updated
-          x->total += intdelta;
+          x->total += static_cast<double>(intdelta);
         else
           // The bucket is completely updated
-          x->total = intdelta;
+          x->total = static_cast<double>(intdelta);
       }
       else
       {

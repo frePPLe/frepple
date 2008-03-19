@@ -45,7 +45,6 @@ DECLARE_EXPORT const MetaCategory Command::metadata;
 DECLARE_EXPORT const MetaClass CommandList::metadata,
   CommandSystem::metadata,
   CommandLoadLibrary::metadata,
-  CommandIf::metadata,
   CommandSetEnv::metadata;
 
 // Processing instruction metadata
@@ -207,10 +206,6 @@ void LibraryUtils::initialize()
     "command",
     "command_loadlib",
     Object::createDefault<CommandLoadLibrary>);
-  CommandIf::metadata.registerClass(
-    "command",
-    "command_if",
-    Object::createDefault<CommandIf>);
   CommandSetEnv::metadata.registerClass(
     "command",
     "command_setenv",

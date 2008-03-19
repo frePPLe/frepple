@@ -113,7 +113,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode
         o->BeginObject(Tags::tag_load_plan);
         o->writeElement(Tags::tag_date, lp->getDate());
         o->writeElement(Tags::tag_quantity, lp->getQuantity());
-        o->writeElement(Tags::tag_onhand, lp->getOnhand());
+        o->writeElement(Tags::tag_onhand, static_cast<float>(lp->getOnhand()));
         o->writeElement(Tags::tag_minimum, lp->getMin());
         o->writeElement(Tags::tag_maximum, lp->getMax());
         o->writeElement(Tags::tag_operation_plan, &*(lp->getOperationPlan()), FULL);

@@ -79,7 +79,7 @@ DECLARE_EXPORT void Item::endElement(XMLInput& pIn, XMLElement& pElement)
   if (pElement.isA (Tags::tag_operation))
   {
     Operation *o = dynamic_cast<Operation*>(pIn.getPreviousObject());
-    if (o) setDelivery(o);
+    if (o) setOperation(o);
     else throw LogicException("Incorrect object type during read operation");
   }
   else

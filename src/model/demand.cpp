@@ -173,7 +173,7 @@ DECLARE_EXPORT Operation::pointer Demand::getDeliveryOperation() const
   // Operation can be specified on the demand itself,
   if (oper) return oper;
   // ... or on the item,
-  if (it) return it->getDelivery();
+  if (it) return it->getOperation();
   // ... or it doesn't exist at all
   return NULL;
 }

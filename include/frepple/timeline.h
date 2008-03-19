@@ -88,19 +88,25 @@ template <class type> class TimeLine
 
         /** This functions returns the mimimum boundary valid at the time of
           * this event. */
-        virtual double getMin() const
+        virtual double getMin(bool inclusive = true) const
         {
           EventMinQuantity *m = this->getTimeLine()->lastMin;
-          while(m && getDate() < m->getDate()) m = m->prevMin;
+          if (inclusive)
+            while(m && getDate() < m->getDate()) m = m->prevMin;
+          else
+            while(m && getDate() <= m->getDate()) m = m->prevMin;
           return m ? m->newMin : 0.0;
         }
 
         /** This functions returns the maximum boundary valid at the time of
           * this event. */
-        virtual double getMax() const
+        virtual double getMax(bool inclusive = true) const
         {
           EventMaxQuantity *m = this->getTimeLine()->lastMax;
-          while(m && getDate() < m->getDate()) m = m->prevMax;
+          if (inclusive)
+            while(m && getDate() < m->getDate()) m = m->prevMax;
+          else
+            while(m && getDate() <= m->getDate()) m = m->prevMax;
           return m ? m->newMax : 0.0;
         }
 
@@ -151,7 +157,7 @@ template <class type> class TimeLine
         EventMinQuantity(Date d, double f=0.0) : newMin(f), prevMin(NULL)
           { this->dt = d; }
         void setMin(double f) {newMin = f;}
-        virtual double getMin() const {return newMin;}
+        virtual double getMin(bool inclusive = true) const {return newMin;}
         virtual unsigned short getType() const {return 3;}
     };
 
@@ -168,7 +174,7 @@ template <class type> class TimeLine
         EventMaxQuantity(Date d, double f=0.0) : newMax(f), prevMax(NULL)
           {this->dt = d;}
         void setMax(double f) {newMax = f;}
-        virtual double getMax() const {return newMax;}
+        virtual double getMax(bool inclusive = true) const {return newMax;}
         virtual unsigned short getType() const {return 4;}
     };
 

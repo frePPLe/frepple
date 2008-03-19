@@ -366,8 +366,8 @@ template <typename T> class CalendarValue : public Calendar
         T val;
 
         /** Constructor. */
-        BucketValue(Date start, Date end, string name) 
-          : Bucket(start,end,name) {};
+        BucketValue(Date start, Date end, string name, T& v) 
+          : Bucket(start,end,name) {val = v;};
 
       public:
         /** Returns the value of this bucket. */
@@ -489,7 +489,7 @@ template <typename T> class CalendarValue : public Calendar
       * @see Calendar::addBucket()
       */
     Bucket* createNewBucket(Date start, Date end, string name) 
-      {return new BucketValue(start,end,name);}
+      {return new BucketValue(start,end,name,defaultValue);}
 
     /** Value when no bucket is matching a certain date. */
     T defaultValue;
@@ -520,8 +520,8 @@ template <typename T> class CalendarPointer : public Calendar
         T* val;
 
         /** Constructor. */
-        BucketPointer(Date start, Date end, string name) 
-          : Bucket(start,end,name), val(NULL) {};
+        BucketPointer(Date start, Date end, string name, T* v) 
+          : Bucket(start,end,name), val(v) {};
 
       public:
         /** Returns the value stored in this bucket. */
@@ -671,7 +671,7 @@ template <typename T> class CalendarPointer : public Calendar
       * @see Calendar::addBucket()
       */
     Bucket* createNewBucket(Date start, Date end, string name) 
-      {return new BucketPointer(start,end,name);}
+      {return new BucketPointer(start,end,name,defaultValue);}
 
     /** Value when no bucket is matching a certain date. */
     T* defaultValue;
@@ -2544,7 +2544,7 @@ class Item
       * This field is inherited from a parent item, if it hasn't been
       * specified.
       */
-    Operation::pointer getDelivery() const
+    Operation::pointer getOperation() const
     {
       // Current item has a non-empty deliveryOperation field
       if (deliveryOperation) return deliveryOperation;
@@ -2561,7 +2561,7 @@ class Item
       * If some demands have already been planned using the old delivery
       * operation they are left untouched and won't be replanned.
       */
-    void setDelivery(const Operation* o) {deliveryOperation = o;}
+    void setOperation(const Operation* o) {deliveryOperation = o;}
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);

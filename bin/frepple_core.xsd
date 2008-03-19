@@ -847,20 +847,6 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
-	<xsd:complexType name="command_if">
-		<xsd:complexContent>
-			<xsd:extension base="command">
-				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element name="verbose" type="xsd:boolean" />
-					<xsd:element name="condition" type="xsd:string" />
-					<xsd:element name="then" type="command" />
-					<xsd:element name="else" type="command" />
-				</xsd:choice>
-				<xsd:attribute name="condition" type="xsd:string" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
 	<xsd:complexType name="command_setenv">
 		<xsd:complexContent>
 			<xsd:extension base="command">

@@ -45,7 +45,7 @@ DECLARE_EXPORT Operation::~Operation()
 
   // Remove the reference to this operation from all items
   for (Item::iterator k = Item::begin(); k != Item::end(); ++k)
-    if (k->getDelivery() == this) Item::writepointer(&*k)->setDelivery(NULL);
+    if (k->getOperation() == this) Item::writepointer(&*k)->setOperation(NULL);
 
   // Remove the reference to this operation from all demands
   for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)

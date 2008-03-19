@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for effective operations</name>
+  <description>
+  In this test the resource capacity varies heavily over time.
+  The test case verifies the resource solver is capable of using every
+  single bit of capacity available on the resource.
+  The capacity search is done for two situations: once with a search
+  backward in time, and another one forward in time.
+
+  This test also verifies the logic used by calendars to select the bucket
+  that is in effect on a certain day.
+  </description>
+  <current>2007-01-01T00:00:00</current>
+  <commands>
+    <verbose>true</verbose>
+    <command xsi:type="command_solve">
+      <verbose>false</verbose>
+      <solver name="MRP" xsi:type="solver_mrp" constraints="7" loglevel="2" />
+    </command>
+    <command xsi:type="command_saveplan">
+      <filename>output.1.xml</filename>
+    </command>
+  </commands>
+
+  <calendars>
+    <calendar name="Capacity" xsi:type="calendar_float">
+      <default>1</default>
+      <buckets>
+        <!-- From the infinite past till 2007-01-02 no entry is in effect.
+             The default value is used -->
+        <bucket start="2007-01-02T00:00:00" end="2007-01-06T00:00:00" value="2"/>
+        <!-- This entry overrules the previous one: same priority, but later start date -->
+        <bucket start="2007-01-03T00:00:00" end="2007-01-07T00:00:00" value="3"/>
+        <!-- The next 2 entries overrule the previous one because of the priority.
+             The second one has the lowest priority number. -->
+        <bucket start="2007-01-04T00:00:00" end="2007-02-01T00:00:00" value="4" priority="-1"/>
+        <bucket start="2007-01-04T00:00:00" end="2007-02-01T00:00:00" value="5" priority="-2"/>
+        <!-- Between 2007-02-01 and 2007-03-03 no entry is in effect.
+             The default value is used. -->
+        <!-- From 2007-03-03 till the infinite future this entry rules. -->
+        <bucket start="2007-03-03T00:00:00" value="6"/>
+      </buckets>
+    </calendar>
+  </calendars>
+
+  <!-- Model 1 -->
+  <items>
+    <item name="1. end item">
+      <operation name="1. delivery end item" xsi:type="operation_fixed_time">
+        <duration>P0D</duration>
+      </operation>
+    </item>
+  </items>
+  <buffers>
+    <buffer name="1. end item">
+      <producing name="1. make end item" xsi:type="operation_time_per">
+        <size_multiple>1</size_multiple>
+        <duration_per>P1D</duration_per>
+      </producing>
+      <item name="1. end item" />
+    </buffer>
+  </buffers>
+  <resources>
+    <resource name="1. Resource">
+      <maximum name="Capacity"/>
+      <loads>
+        <load>
+          <operation name="1. make end item" />
+        </load>
+      </loads>
+    </resource>
+  </resources>
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="1. delivery end item" />
+      <buffer name="1. end item" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="1. make end item" />
+      <buffer name="1. end item" />
+      <quantity>1</quantity>
+    </flow>
+  </flows>
+
+  <!-- Model 2 -->
+  <items>
+    <item name="2. end item">
+      <operation name="2. delivery end item" xsi:type="operation_fixed_time">
+        <duration>P0D</duration>
+      </operation>
+    </item>
+  </items>
+  <buffers>
+    <buffer name="2. end item">
+      <producing name="2. make end item" xsi:type="operation_time_per">
+        <size_multiple>1</size_multiple>
+        <duration_per>P1D</duration_per>
+      </producing>
+      <item name="2. end item" />
+    </buffer>
+  </buffers>
+  <resources>
+    <resource name="2. Resource">
+      <maximum name="Capacity"/>
+      <loads>
+        <load>
+          <operation name="2. make end item" />
+        </load>
+      </loads>
+    </resource>
+  </resources>
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="2. delivery end item" />
+      <buffer name="2. end item" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="2. make end item" />
+      <buffer name="2. end item" />
+      <quantity>1</quantity>
+    </flow>
+  </flows>
+
+
+  <demands>
+    <!-- Demand model 1 -->
+    <demand name="1. order">
+      <quantity>200</quantity>
+      <due>2007-03-06T00:00:00</due>
+      <priority>1</priority>
+      <item name="1. end item" />
+    </demand>
+    <!-- Demand model 2 -->
+    <demand name="2. order">
+      <quantity>200</quantity>
+      <due>2007-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="2. end item" />
+    </demand>
+  </demands>
+</plan>

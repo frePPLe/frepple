@@ -116,7 +116,7 @@ using namespace std;
   * This constant defines the magnitude of what can still be considered
   * as a rounding error.
   */
-#define ROUNDING_ERROR   0.0001f
+#define ROUNDING_ERROR   0.000001
 
 // Header files for the Xerces-c XML parser.
 #ifndef DOXYGEN
@@ -2144,6 +2144,9 @@ class XMLElement
     XMLElement(string n, string v)
       : m_strData(v), m_dwTagHash(XMLtag::hash(n.c_str())) {}
 
+    /** Constructor. */
+    XMLElement(const char* c) : m_dwTagHash(XMLtag::hash(c)) {}
+
     /** Re-initializes an existing element. Using this method we can avoid
       * destroying and recreating XMLelement objects too frequently. Instead
       * we can manage them in a array.
@@ -2444,7 +2447,7 @@ class Object
 
 
 //
-// RED-BLACK TREE CLASSES
+// RED-BLACK TREE CLASS
 //
 
 /** @brief This class implements a binary tree data structure. It is used as a
@@ -2593,6 +2596,20 @@ class Tree : public NonCopyable
       LockManager::getManager().releaseReadLock(l);
       return result;
     }
+
+    /** Renames an existing node, and adjusts its position in the tree. */
+    void rename(TreeNode* obj, string newname)
+    {
+      bool found;
+      TreeNode* i = findLowerBound(newname, &found);
+      if (found)
+        throw DataException("Can't rename '" + obj->nm + "' to '" 
+          + newname + "': name already in use");
+      erase(obj);
+      // @todo: there is a small risk for multithreading trouble when the tree is unlocked between the delete and re-insert
+      obj->nm = newname;
+      insert(obj, i);
+    };
 
     /** This method returns the number of nodes inserted in this tree.
       * Its complexity is O(1).
@@ -2747,7 +2764,6 @@ class Tree : public NonCopyable
 class Command : public Object
 {
   friend class CommandList;
-  friend class CommandIf;
   public:
     /** This structure defines a boolean value that can be set to TRUE,
       * FALSE or INHERITed from a higher level.
@@ -2825,70 +2841,6 @@ class Command : public Object
     /** Points to the previous command in the owner command list.<br>
       * The commands are chained in a double linked list data structure. */
     Command *prev;
-};
-
-
-/** @brief This class allows conditional execution of commands.
-  *
-  * The condition is an expression that is evaluated on the operating system.
-  */
-class CommandIf : public Command
-{
-  private:
-    /** Command to be executed if the condition returns true. */
-    Command *thenCommand;
-
-    /** Command to be executed if the condition returns false. */
-    Command *elseCommand;
-
-    /** Condition expression. */
-    string condition;
-
-  public:
-    /** Returns true if both the if- and else-command are undoable if they
-      * are specified. */
-    bool undoable()
-    {
-      return (thenCommand ? thenCommand->undoable() : true)
-        && (elseCommand ? elseCommand->undoable() : true);
-    }
-
-    /** Undoes either the if- or the else-clause, depending on the
-      * condition.<br>
-      * Note that calling execute() before undo() isn't enforced.
-      */
-    DECLARE_EXPORT void undo();
-
-    /** Executes either the if- or the else-clause, depending on the
-      * condition. */
-    DECLARE_EXPORT void execute();
-
-    /** Returns a descriptive string. */
-    string getDescription() const {return "Command if";}
-
-    /** Default constructor. */
-    explicit CommandIf() : thenCommand(NULL), elseCommand(NULL) {}
-
-    /** Destructor. */
-    virtual ~CommandIf()
-    {
-      delete thenCommand;
-      delete elseCommand;
-    }
-
-    /** Returns the condition statement. */
-    string getCondition() {return condition;}
-
-    /** Updates the condition. */
-    void setCondition(const string s) {condition = s;}
-
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const
-      {return sizeof(CommandIf) + condition.size();}
-
-    DECLARE_EXPORT void beginElement(XMLInput&, XMLElement& pElement);
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
 };
 
 
@@ -3726,6 +3678,9 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 
     /** One and only constructor. */
     explicit HasName(const string& n) : Tree::TreeNode(n) {}
+
+    /** Rename the entity. */
+    void setName(const string& newname) {st.rename(this, newname);}
 
     /** Destructor. */
     ~HasName() {st.erase(this);}

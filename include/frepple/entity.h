@@ -58,7 +58,7 @@ template <class T> void HasHierarchy<T>::setOwner (T* fam)
   // as its owner, and B points to A.
   for (T *t = fam; t; t = t->parent)
     if (t == this)
-      throw LogicException("Invalid hierarchy relation between \""
+      throw DataException("Invalid hierarchy relation between \""
           + this->getName() + "\" and \"" + fam->getName() + "\"");
 
   // Clean up previous owner, if any

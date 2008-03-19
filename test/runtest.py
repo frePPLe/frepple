@@ -276,9 +276,9 @@ def diff(f1, f2):
   fp1 = open(f1, 'rt')
   fp2 = open(f2, 'rt')
   while True:
-    b1 = fp1.readline().strip()
-    b2 = fp2.readline().strip()
-    if b1 != b2: return True
+    b1 = fp1.readline()
+    b2 = fp2.readline()
+    if b1.strip() != b2.strip(): return True
     if not b1: return False
 
 # If the file is processed as a script, run the test suite.

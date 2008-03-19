@@ -34,7 +34,7 @@ namespace frepple
 template<class Resource> DECLARE_EXPORT Tree HasName<Resource>::st;
 
 
-DECLARE_EXPORT void Resource::setMaximum(CalendarDouble* c)
+DECLARE_EXPORT void Resource::setMaximum(const CalendarDouble* c)
 {
   // Resetting the same calendar
   if (max_cal == c) return;

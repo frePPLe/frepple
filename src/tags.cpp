@@ -72,6 +72,7 @@ DECLARE_EXPORT const XMLtag Tags::tag_effective_start("effective_start");
 DECLARE_EXPORT const XMLtag Tags::tag_effective_end("effective_end");
 DECLARE_EXPORT const XMLtag Tags::tag_else("else");
 DECLARE_EXPORT const XMLtag Tags::tag_end("end");
+DECLARE_EXPORT const XMLtag Tags::tag_entity("entity");
 DECLARE_EXPORT const XMLtag Tags::tag_epst("epst");
 DECLARE_EXPORT const XMLtag Tags::tag_fence("fence");
 DECLARE_EXPORT const XMLtag Tags::tag_factor("factor");

@@ -75,6 +75,7 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_effective_end;
     static DECLARE_EXPORT const XMLtag tag_else;
     static DECLARE_EXPORT const XMLtag tag_end;
+    static DECLARE_EXPORT const XMLtag tag_entity;
     static DECLARE_EXPORT const XMLtag tag_epst;
     static DECLARE_EXPORT const XMLtag tag_fence;
     static DECLARE_EXPORT const XMLtag tag_factor;

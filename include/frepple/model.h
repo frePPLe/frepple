@@ -781,6 +781,7 @@ class CalendarOperation : public CalendarPointer<Operation>
   */
 class Problem : public NonCopyable
 {
+  TYPEDEF(Problem);
   public:
     class const_iterator;
     friend class const_iterator;
@@ -3271,7 +3272,7 @@ class Resource : public HasHierarchy<Resource>,
     virtual DECLARE_EXPORT ~Resource();
 
     /** Updates the size of a resource. */
-    DECLARE_EXPORT void setMaximum(CalendarDouble* c);
+    DECLARE_EXPORT void setMaximum(const CalendarDouble* c);
 
     /** Return a pointer to the maximum capacity profile. */
     CalendarDouble::pointer getMaximum() const {return max_cal;}

@@ -211,7 +211,7 @@ PyObject* CommandPython::python_createItem(PyObject *self, PyObject *args)
   // Create the items
   Item* it = Item::add(itemname, ItemDefault::metadata);
   Operation* op = Operation::add(operationname, OperationFixedTime::metadata);
-  if (it && op) it->setDelivery(op);
+  if (it && op) it->setOperation(op);
 
   // Return code for Python
   return Py_BuildValue("i", it && op);

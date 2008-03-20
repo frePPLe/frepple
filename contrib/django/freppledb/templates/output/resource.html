@@ -5,7 +5,7 @@
     function onChange(input)
     {
     // Update the utilization percentage immediately
-    var ld = $(input).next().next();
+    var ld = $(input).next();
     var utl = ld.next().next();
     var u = parseFloat(ld.innerHTML) /parseFloat(input.value);
     if (isNaN(u) == true) u = 0.0;
@@ -46,7 +46,7 @@
 <td>{{ crossheader }}</td>{% endifchanged %}
 <td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.available|floatformat:1}}" size="6" onchange="onChange(this)"/><br/>
 {% if j.load %}<a href="/loadplan/?resource={{j.resource|urlencode}}&amp;o=2a&amp;startdate__lt={{j.enddate}}&amp;enddate__gte={{j.startdate}}" tabindex="-1">{{j.load|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
-<label>{{j.utilization|floatformat:0}}</label></td>
+<span>{{j.utilization|floatformat:0}}</span></td>
 {% if forloop.last %}</form></tr>{% endif %}{% endfor %}
 {% else %}
 {% for j in objectlist %}{% ifchanged j.resource %}{% if not forloop.first %}</tr>{% endif %}

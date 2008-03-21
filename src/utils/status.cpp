@@ -49,16 +49,15 @@ void 	XMLInput::processingInstruction
   try
   {
     // Lookup the class
-    MetaCategory::ClassMap::const_iterator j =
-      XMLinstruction::metadata.classes.find(XMLtag::hash(type));
-    if (j == XMLinstruction::metadata.classes.end())
+    const MetaClass* j = XMLinstruction::metadata.findClass(type);
+    if (!j)
     {
       string msg = string("Unknown processing instruction ") + type;
       XMLString::release(&type);
       XMLString::release(&value);
       throw LogicException(msg);
     }
-    x = dynamic_cast<XMLinstruction*>(j->second->factoryMethodDefault());
+    x = dynamic_cast<XMLinstruction*>(j->factoryMethodDefault());
     try {x->processInstruction(*this, value);}
     catch (DataException e)
     {

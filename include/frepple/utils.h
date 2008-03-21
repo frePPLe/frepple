@@ -909,7 +909,7 @@ class MetaClass : public NonCopyable
     const MetaCategory* category;
 
     /** Default constructor. */
-    MetaClass() : type("UNSPECIFIED"), typetag(&XMLtag::find("UNSPECIFIED")),
+    MetaClass() : type("unspecified"), typetag(&XMLtag::find("unspecified")),
       factoryMethodDefault(NULL), category(NULL) {}
 
     /** Destructor. */
@@ -966,7 +966,6 @@ class XMLOutput;
 class MetaCategory : public MetaClass
 {
   friend class MetaClass;
-  friend class XMLInput;
   template<class T> friend class HasName;
   public:
     /** The name used to name a collection of objects of this category. */
@@ -991,8 +990,8 @@ class MetaCategory : public MetaClass
       * category object.
       * @see registerCategory
       */
-    MetaCategory() : group("UNSPECIFIED"),
-      grouptag(&XMLtag::find("UNSPECIFIED")), nextCategory(NULL),
+    MetaCategory() : group("unspecified"),
+      grouptag(&XMLtag::find("unspecified")), nextCategory(NULL),
       writeFunction(NULL) {};
 
     /** Destructor. */
@@ -1020,9 +1019,19 @@ class MetaCategory : public MetaClass
       * located the return value is NULL. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByGroupTag(const char*);
 
-    /** Looks up a category name in the registry. If the catgory can't be
+    /** Looks up a category name in the registry. If the category can't be
       * located the return value is NULL. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByGroupTag(const hashtype);
+
+    /** Find a class in this category with a specified name.<br>
+      * If the catrgory can't be found the return value is NULL. 
+      */
+    DECLARE_EXPORT const MetaClass* findClass(const char*) const;
+
+    /** Find a class in this category with a specified name.<br>
+      * If the catrgory can't be found the return value is NULL. 
+      */
+    DECLARE_EXPORT const MetaClass* findClass(const hashtype) const;
 
     /** This method takes care of the persistence of all categories. It loops
       * through all registered categories (in the order of their registration)
@@ -1040,7 +1049,7 @@ class MetaCategory : public MetaClass
     /** A map of all classes registered for this category. */
     ClassMap classes;
 
-    /** Compute the hash for "DEFAULT" once and store it in this variable for
+    /** Compute the hash for "default" once and store it in this variable for
       * efficiency. */
     static DECLARE_EXPORT const hashtype defaultHash;
 
@@ -3737,7 +3746,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       *   The default value is "unspecified".
       * - TYPE:<br>
       *   Determines the subclass to be created.
-      *   The default value is "DEFAULT".
+      *   The default value is "default".
     	* - ACTION:<br>
       *   Determines the action to be performed on the object.
       *   This can be A (for 'add'), C (for 'change'), AC (for 'add_change')
@@ -3840,21 +3849,21 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       string type2;
       if (!type && in.getParentElement().isA(cat.grouptag))
       {
-        if (in.getCurrentElement().isA(cat.typetag)) type2 = "DEFAULT";
+        if (in.getCurrentElement().isA(cat.typetag)) type2 = "default";
         else type2 = in.getCurrentElement().getName();
       }
-      MetaCategory::ClassMap::const_iterator j =
-        cat.classes.find(type ? XMLtag::hash(type) : (type2.empty() ? MetaCategory::defaultHash : XMLtag::hash(type2.c_str())));
-      if (j == cat.classes.end())
+      const MetaClass* j =
+        cat.findClass(type ? XMLtag::hash(type) : (type2.empty() ? MetaCategory::defaultHash : XMLtag::hash(type2.c_str())));
+      if (!j)
       {
-        string t(type ? type : (type2.empty() ? "DEFAULT" : type2.c_str()));
+        string t(type ? type : (type2.empty() ? "default" : type2.c_str()));
         XMLString::release(&name);
         XMLString::release(&type);
-        throw LogicException("No type " + t + " registered for category " + cat.type);
+        throw DataException("No type " + t + " registered for category " + cat.type);
       }
 
       // Create a new instance
-      T* x = dynamic_cast<T*>(j->second->factoryMethodString(name));
+      T* x = dynamic_cast<T*>(j->factoryMethodString(name));
       XMLString::release(&type);
 
       // Run creation callbacks

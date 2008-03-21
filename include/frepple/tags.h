@@ -52,7 +52,6 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_cmdline;
     static DECLARE_EXPORT const XMLtag tag_command;
     static DECLARE_EXPORT const XMLtag tag_commands;
-    static DECLARE_EXPORT const XMLtag tag_condition;
     static DECLARE_EXPORT const XMLtag tag_constraints;
     static DECLARE_EXPORT const XMLtag tag_consuming;
     static DECLARE_EXPORT const XMLtag tag_content;
@@ -73,7 +72,6 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_duration_per;
     static DECLARE_EXPORT const XMLtag tag_effective_start;
     static DECLARE_EXPORT const XMLtag tag_effective_end;
-    static DECLARE_EXPORT const XMLtag tag_else;
     static DECLARE_EXPORT const XMLtag tag_end;
     static DECLARE_EXPORT const XMLtag tag_entity;
     static DECLARE_EXPORT const XMLtag tag_epst;
@@ -141,7 +139,6 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_steps;
     static DECLARE_EXPORT const XMLtag tag_subcategory;
     static DECLARE_EXPORT const XMLtag tag_supply;
-    static DECLARE_EXPORT const XMLtag tag_then;
     static DECLARE_EXPORT const XMLtag tag_type;
     static DECLARE_EXPORT const XMLtag tag_url;
     static DECLARE_EXPORT const XMLtag tag_usage;

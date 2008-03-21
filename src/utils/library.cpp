@@ -68,7 +68,7 @@ DECLARE_EXPORT ofstream Environment::logfile;
 DECLARE_EXPORT string Environment::logfilename;
 
 // Hash value computed only once
-DECLARE_EXPORT const hashtype MetaCategory::defaultHash(XMLtag::hash("DEFAULT"));
+DECLARE_EXPORT const hashtype MetaCategory::defaultHash(XMLtag::hash("default"));
 
 
 DECLARE_EXPORT void Environment::setHomeDirectory(const string dirname)
@@ -265,7 +265,7 @@ DECLARE_EXPORT void MetaClass::registerClass (const char* a, const char* b, bool
   cat->classes[XMLtag::hash(b)] = this;
 
   // Register this tag also as the default one, if requested
-  if (def) cat->classes[XMLtag::hash("DEFAULT")] = this;
+  if (def) cat->classes[XMLtag::hash("default")] = this;
 }
 
 
@@ -273,7 +273,7 @@ DECLARE_EXPORT void MetaCategory::registerCategory (const char* a, const char* g
     readController f, writeController w) const
 {
   // Initialize only once
-  if (type != "UNSPECIFIED")
+  if (type != "unspecified")
     throw LogicException("Reinitializing category " + type + " isn't allowed");
 
   // Update registry
@@ -341,6 +341,22 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const ha
 }
 
 
+DECLARE_EXPORT const MetaClass* MetaCategory::findClass(const char* c) const
+{
+  // Look up in the registered classes
+  MetaCategory::ClassMap::const_iterator j = classes.find(XMLtag::hash(c));
+  return (j == classes.end()) ? NULL : j->second;
+}
+
+
+DECLARE_EXPORT const MetaClass* MetaCategory::findClass(const hashtype h) const
+{
+  // Look up in the registered classes
+  MetaCategory::ClassMap::const_iterator j = classes.find(h);
+  return (j == classes.end()) ? NULL : j->second;
+}
+
+
 DECLARE_EXPORT void MetaCategory::persist(XMLOutput *o)
 {
   for (const MetaCategory *i = firstCategory; i; i = i->nextCategory)
@@ -377,8 +393,8 @@ DECLARE_EXPORT void MetaClass::printClasses()
         j = i->second->classes.begin();
         j != i->second->classes.end();
         ++j)
-      if (j->first == XMLtag::hash("DEFAULT"))
-        logger << "    DEFAULT ( = " << j->second->type << " )" << j->second << endl;
+      if (j->first == XMLtag::hash("default"))
+        logger << "    default ( = " << j->second->type << " )" << j->second << endl;
       else
         logger << "    " << j->second->type << j->second << endl;
   }
@@ -450,14 +466,14 @@ Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput
       string type2;
       if (!type && in.getParentElement().isA(cat.grouptag))
       {
-        if (in.getCurrentElement().isA(cat.typetag)) type2 = "DEFAULT";
+        if (in.getCurrentElement().isA(cat.typetag)) type2 = "default";
         else type2 = in.getCurrentElement().getName();
       }
       ClassMap::const_iterator j
         = cat.classes.find(type ? XMLtag::hash(type) : (type2.empty() ? MetaCategory::defaultHash : XMLtag::hash(type2.c_str())));
       if (j == cat.classes.end())
       {
-        string t(type ? string(type) : (!type2.empty() ? type2 : "DEFAULT"));
+        string t(type ? string(type) : (!type2.empty() ? type2 : "default"));
         XMLString::release(&type);
         throw LogicException("No type " + t + " registered for category " + cat.type);
       }

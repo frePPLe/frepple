@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-	<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	  <name>actual plan</name>
-	  <description>
-	    A simple model used for verifying the problem detection code.
-	  </description>
-	  <current>2007-01-01T00:00:01</current>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>actual plan</name>
+  <description>
+    A simple model used for verifying the problem detection code.
+  </description>
+  <current>2007-01-01T00:00:01</current>
   <operations>
     <operation name="make end item" xsi:type="operation_fixed_time">
       <duration>P1D</duration>
@@ -24,7 +24,7 @@
     </buffer>
   </buffers>
   <resources>
-    <resource name="resource">
+    <resource name="Resource">
       <maximum name="Capacity" xsi:type="calendar_double">
         <buckets>
           <bucket start="2007-01-01T00:00:01">

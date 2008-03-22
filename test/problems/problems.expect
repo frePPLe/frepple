@@ -8,19 +8,19 @@ Problems after increasing delivery quantity:
    2007-01-04T09:00:00 / 2007-01-04T09:00:00 - Demand 'order 1' planned 90 units excess
 
 Problems after decreasing delivery quantity:
-   2007-01-03T09:00:00 / 2030-12-31T00:00:00 - Buffer 'end item' has material excess of 10
+   2007-01-03T09:00:00 / 2030-12-31T00:00:00 - Buffer 'end item' has material excess of 9
    2007-01-04T09:00:00 / 2007-01-04T09:00:00 - Demand 'order 1' planned 9 units short
 
 Problems after moving delivery early:
    2007-01-03T09:00:00 / 2030-12-31T00:00:00 - Buffer 'end item' has material excess of 9
    2007-01-02T09:00:00 / 2007-01-03T09:00:00 - Buffer 'end item' has material shortage of 1
    2007-01-04T09:00:00 / 2007-01-04T09:00:00 - Demand 'order 1' planned 9 units short
-   2007-01-03T09:00:00 / 2007-01-04T09:00:00 - Demand 'order 1' planned 24:00:00 before its due date
+   2007-01-03T09:00:00 / 2007-01-04T09:00:00 - Demand 'order 1' planned P1D before its due date
 
 Problems after moving delivery late:
    2007-01-03T09:00:00 / 2030-12-31T00:00:00 - Buffer 'end item' has material excess of 10
    2007-01-04T09:00:00 / 2007-01-04T09:00:00 - Demand 'order 1' planned 9 units short
-   2007-01-04T09:00:00 / 2007-01-05T09:00:00 - Demand 'order 1' planned 24:00:00 after its due date
+   2007-01-04T09:00:00 / 2007-01-05T09:00:00 - Demand 'order 1' planned P1D after its due date
 
 Problems after restoring original delivery plan:
 
@@ -37,3 +37,4 @@ Problems after moving build early:
 Problems after restoring original build plan:
    2007-01-03T09:00:00 / 2030-12-31T00:00:00 - Buffer 'end item' has material excess of 10
    2007-01-04T09:00:00 / 2007-01-04T09:00:00 - Demand 'order 1' is not planned
+

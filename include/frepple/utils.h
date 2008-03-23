@@ -1409,6 +1409,13 @@ class Date
       * the format specified by the "format". */
     Date(const char* s) {parse(s); checkFinite(lval);}
 
+    /** Constructor with year, month and day as arguments. Hours, minutes
+      * and seconds can optionally be passed too.
+      */
+    DECLARE_EXPORT Date(int year, int month, int day, 
+      int hr=0, int min=0, int sec=0
+      );
+
     /** Comparison between dates. */
     bool operator < (const Date& b) const {return lval < b.lval;}
 

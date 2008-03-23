@@ -237,6 +237,22 @@ DECLARE_EXPORT void Date::parse (const char* s, const string& fmt)
 }
 
 
+DECLARE_EXPORT Date::Date
+  (int year, int month, int day, int hr, int min, int sec)
+{
+  struct tm p;
+  p.tm_isdst = -1;
+  p.tm_year = year - 1900;
+  p.tm_mon = month - 1;
+  p.tm_mday = day;
+  p.tm_hour = hr;
+  p.tm_min = min;
+  p.tm_sec = sec;
+  lval = mktime(&p);
+  checkFinite(lval);
+}
+
+
 // The next method is only compiled if the function strptime
 // isn't available in your standard library.
 #ifndef HAVE_STRPTIME

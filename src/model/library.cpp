@@ -192,7 +192,7 @@ void LibraryModel::initialize()
   // Initialize the location metadata.
   Location::metadata.registerCategory
     ("location", "locations", Location::reader, Location::writer);
-  LocationDefault::metadata.registerClass("location", "location",
+  LocationDefault::metadata.registerClass("location", "location_default",
     Object::createString<LocationDefault>, true);
 
   // Initialize the customer metadata.
@@ -200,7 +200,7 @@ void LibraryModel::initialize()
     ("customer", "customers", Customer::reader, Customer::writer);
   CustomerDefault::metadata.registerClass(
     "customer",
-    "customer",
+    "customer_default",
     Object::createString<CustomerDefault>, true);
 
   // Initialize the calendar metadata.
@@ -255,7 +255,7 @@ void LibraryModel::initialize()
   // Initialize the item metadata.
   Item::metadata.registerCategory
     ("item", "items", Item::reader, Item::writer);
-  ItemDefault::metadata.registerClass("item", "item",
+  ItemDefault::metadata.registerClass("item", "item_default",
     Object::createString<ItemDefault>, true);
 
   // Initialize the buffer metadata.
@@ -263,7 +263,7 @@ void LibraryModel::initialize()
     ("buffer", "buffers", Buffer::reader, Buffer::writer);
   BufferDefault::metadata.registerClass(
     "buffer",
-    "buffer",
+    "buffer_default",
     Object::createString<BufferDefault>, true);
   BufferInfinite::metadata.registerClass(
     "buffer",
@@ -279,7 +279,7 @@ void LibraryModel::initialize()
     ("demand", "demands", Demand::reader, Demand::writer);
   DemandDefault::metadata.registerClass(
     "demand",
-    "demand",
+    "demand_default",
     Object::createString<DemandDefault>, true);
 
   // Initialize the resource metadata.
@@ -287,7 +287,7 @@ void LibraryModel::initialize()
     ("resource", "resources", Resource::reader, Resource::writer);
   ResourceDefault::metadata.registerClass(
     "resource",
-    "resource",
+    "resource_default",
     Object::createString<ResourceDefault>,
     true);
   ResourceInfinite::metadata.registerClass(

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <commands>
+  	<verbose>true</verbose>
+    <command xsi:type="command_python" filename="python.py"/>
+  </commands>
+</plan>

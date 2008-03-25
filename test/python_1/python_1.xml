@@ -170,6 +170,19 @@ SocketServer.TCPServer(("", PORT), FreppleServer).serve_forever()
       </cmdline>
     </command>
 -->
+
+<!-- An interactive debugging prompt. -->
+<!--
+    <command xsi:type="command_python">
+      <cmdline>
+<![CDATA[
+import code
+code.interact("Interactive debugging prompt (use CTRL-Z to exit)")
+]]>
+      </cmdline>
+    </command>
+-->
+
   </commands>
   <?python print "2. Python processing instructions are executed before the commands" ?>
 </plan>

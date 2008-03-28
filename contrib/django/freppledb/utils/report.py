@@ -40,7 +40,7 @@ from calendar import timegm
 import csv
 
 from django.conf import settings
-from django.core.paginator import Paginator, InvalidPage
+from django.core.paginator import QuerySetPaginator, InvalidPage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import models, transaction, connection
@@ -344,7 +344,7 @@ def view_report(request, entity=None, **args):
   # Build paginator
   if type[:3] != 'csv':
     page = int(request.GET.get('p', '1'))
-    paginator = Paginator(counter, reportclass.paginate_by)
+    paginator = QuerySetPaginator(counter, reportclass.paginate_by)
     counter = counter[paginator.page(page).start_index()-1:paginator.page(page).end_index()]
 
   # Construct SQL statement, if the report has an SQL override method

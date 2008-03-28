@@ -114,7 +114,7 @@ class Calendar(models.Model):
     description = models.CharField(_('description'), max_length=200, null=True, blank=True)
     category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
-    defaultvalue = models.DecimalField(_('default'), max_digits=15, decimal_places=4, default=0.00)
+    defaultvalue = models.DecimalField(_('default value'), max_digits=15, decimal_places=4, default=0.00)
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def currentvalue(self):

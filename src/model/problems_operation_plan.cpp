@@ -87,33 +87,33 @@ void OperationPlan::updateProblems()
   {
     // Need to increment now and define a pointer to the problem, since the
     // problem can be deleted soon (which invalidates the iterator).
-    Problem* curprob = *j;
+    Problem& curprob = *j;
     ++j;
     // The if-statement keeps the problem detection code concise and
     // concentrated. However, a drawback of this design is that a new problem
     // subclass will also require a new demand subclass. I think such a link
     // is acceptable.
-    if (typeid(*curprob) == typeid(ProblemBeforeCurrent))
+    if (typeid(curprob) == typeid(ProblemBeforeCurrent))
     {
       // if: problem needed and it exists already
       if (needsBeforeCurrent) needsBeforeCurrent = false;
       // else: problem not needed but it exists already
-      else delete curprob;
+      else delete &curprob;
     }
-    else if (typeid(*curprob) == typeid(ProblemBeforeFence))
+    else if (typeid(curprob) == typeid(ProblemBeforeFence))
     {
       if (needsBeforeFence) needsBeforeFence = false;
-      else delete curprob;
+      else delete &curprob;
     }
-    else if (typeid(*curprob) == typeid(ProblemPlannedEarly))
+    else if (typeid(curprob) == typeid(ProblemPlannedEarly))
     {
       if (needsEarly) needsEarly = false;
-      else delete curprob;
+      else delete &curprob;
     }
-    else if (typeid(*curprob) == typeid(ProblemPlannedLate))
+    else if (typeid(curprob) == typeid(ProblemPlannedLate))
     {
       if (needsLate) needsLate = false;
-      else delete curprob;
+      else delete &curprob;
     }
   }
 
@@ -169,8 +169,8 @@ void OperationPlanRouting::updateProblems()  // @todo test! may well be broken
   list<ProblemPrecedence*> currentproblems;
   for (Problem::const_iterator j = Problem::begin(this, false);
       j!=Problem::end(); ++j)
-    if (typeid(**j) == typeid(ProblemPrecedence))
-      currentproblems.push_front(static_cast<ProblemPrecedence*>(*j));
+    if (typeid(*j) == typeid(ProblemPrecedence))
+      currentproblems.push_front(static_cast<ProblemPrecedence*>(&*j));
 
   // Problem detection: Check for new precedence_before problem
   OperationPlan* prev = NULL;

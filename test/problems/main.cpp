@@ -34,8 +34,8 @@ void reportProblems(string when)
 {
   logger << "Problems after " << when << ":" << endl;
   for (Problem::const_iterator i = Problem::begin(); i != Problem::end(); ++i)
-    logger << "   " << (*i)->getDateRange()
-    << " - " << (*i)->getDescription() << endl;
+    logger << "   " << i->getDateRange()
+    << " - " << i->getDescription() << endl;
   logger << endl;
 }
 

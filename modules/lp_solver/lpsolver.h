@@ -86,7 +86,6 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   */
 class LPSolver : public Solver
 {
-    TYPEDEF(LPSolver);
   public:
     /** This method creates a new column in the model for every demand. It's
       * value represents the planned quantity of that demand.
@@ -96,7 +95,7 @@ class LPSolver : public Solver
     void solve(const Demand*, void* = NULL);
     void solve(const Buffer*, void* = NULL);
 
-    Calendar::pointer getCalendar() const {return cal;}
+    Calendar* getCalendar() const {return cal;}
     void setCalendar(Calendar* c) {cal = c;}
 
     void beginElement(XMLInput& pIn, XMLElement& pElement);
@@ -125,7 +124,7 @@ class LPSolver : public Solver
     LPX* lp;
 
     /** Which buckets to use for the linearization of the Problem. */
-    const Calendar *cal;
+    Calendar *cal;
 
     /** A counter for the number of rows in our LP matrix. */
     int rows;

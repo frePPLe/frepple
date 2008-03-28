@@ -218,7 +218,7 @@ DECLARE_EXPORT void Problem::writer(const MetaCategory& c, XMLOutput* o)
       // Note: not the regular write, but a fast write to speed things up.
       // This is possible since problems aren't nested and are never
       // referenced.
-      (*piter)->writeElement(o, *c.typetag);
+      piter->writeElement(o, *c.typetag);
     o->EndObject(*c.grouptag);
   }
 }

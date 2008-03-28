@@ -39,11 +39,11 @@ OperationPlan::OperationPlanList OperationPlan::nosubOperationPlans;
 void DECLARE_EXPORT OperationPlan::setChanged(bool b)
 {
   if (owner)
-    OperationPlan::writepointer(owner)->setChanged(b);
+    owner->setChanged(b);
   else
   {
     oper->setChanged(b);
-    if (dmd) Demand::writepointer(dmd)->setChanged();
+    if (dmd) dmd->setChanged();
   }
 }
 
@@ -327,7 +327,7 @@ DECLARE_EXPORT bool OperationPlan::initialize()
 
   // Extra registration step if this is a delivery operation
   if (getDemand() && getDemand()->getDeliveryOperation() == oper)
-    Demand::writepointer(dmd)->addDelivery(this);
+    dmd->addDelivery(this);
 
   // Mark the operation to detect its problems
   // Note that a single operationplan thus retriggers the problem computation
@@ -442,7 +442,7 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
   if (getIdentifier())
   {
     // Delete from the list of deliveries
-    if (dmd) Demand::writepointer(dmd)->removeDelivery(this);
+    if (dmd) dmd->removeDelivery(this);
 
     // Delete from the operationplan list
     if (prev) prev->next = next;
@@ -453,16 +453,16 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
 }
 
 
-void DECLARE_EXPORT OperationPlan::setOwner(const OperationPlan* o)
+void DECLARE_EXPORT OperationPlan::setOwner(OperationPlan* o)
 {
   // Special case: the same owner is set twice
   if (owner == o) return;
   // Erase the previous owner if there is one
-  if (owner) OperationPlan::writepointer(owner)->eraseSubOperationPlan(this);
+  if (owner) owner->eraseSubOperationPlan(this);
   // Set new owner
   owner = o;
   // Register with the new owner
-  if (owner) OperationPlan::writepointer(owner)->addSubOperationPlan(this);
+  if (owner) owner->addSubOperationPlan(this);
 }
 
 
@@ -498,7 +498,7 @@ DECLARE_EXPORT void OperationPlan::setQuantity (double f, bool roundDown, bool u
   // Setting a quantity is only allowed on a top operationplan
   if (owner)
   {
-    OperationPlan::writepointer(owner)->setQuantity(f,roundDown,upd);
+    owner->setQuantity(f,roundDown,upd);
     return;
   }
 
@@ -547,7 +547,7 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
   // some material downstream.
 
   // Notify the demand of the changed delivery
-  if (dmd) Demand::writepointer(dmd)->setChanged();
+  if (dmd) dmd->setChanged();
 
   // Update the sorting of the operationplan in the list
   updateSorting();
@@ -560,7 +560,7 @@ DECLARE_EXPORT void OperationPlan::update()
   resizeFlowLoadPlans();
 
   // Notify the owner operation_plan
-  if (owner) OperationPlan::writepointer(owner)->update();
+  if (owner) owner->update();
 
   // Mark as changed
   setChanged();
@@ -685,17 +685,17 @@ DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, XMLElement& pEleme
 }
 
 
-DECLARE_EXPORT void OperationPlan::setDemand(const Demand* l)
+DECLARE_EXPORT void OperationPlan::setDemand(Demand* l)
 {
   // No change
   if (l==dmd) return;
 
   // Unregister from previous lot
-  if (dmd) Demand::writepointer(dmd)->removeDelivery(this);
+  if (dmd) dmd->removeDelivery(this);
 
-  // Register the new lot and mark it changed
+  // Register the new demand and mark it changed
   dmd = l;
-  if (l) Demand::writepointer(l)->setChanged();
+  if (l) l->setChanged();
 }
 
 

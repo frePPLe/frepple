@@ -81,6 +81,7 @@ DECLARE_EXPORT const XMLtag Tags::tag_flow_plans("flow_plans");
 DECLARE_EXPORT const XMLtag Tags::tag_flows("flows");
 DECLARE_EXPORT const XMLtag Tags::tag_headeratts("headeratts");
 DECLARE_EXPORT const XMLtag Tags::tag_headerstart("headerstart");
+DECLARE_EXPORT const XMLtag Tags::tag_hidden("hidden");
 DECLARE_EXPORT const XMLtag Tags::tag_id("id");
 DECLARE_EXPORT const XMLtag Tags::tag_item("item");
 DECLARE_EXPORT const XMLtag Tags::tag_items("items");

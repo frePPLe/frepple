@@ -307,7 +307,7 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-DECLARE_EXPORT void Buffer::setMinimum(const CalendarDouble *cal)
+DECLARE_EXPORT void Buffer::setMinimum(CalendarDouble *cal)
 {
   // Resetting the same calendar
   if (min_cal == cal) return;
@@ -345,7 +345,7 @@ DECLARE_EXPORT void Buffer::setMinimum(const CalendarDouble *cal)
 }
 
 
-DECLARE_EXPORT void Buffer::setMaximum(const CalendarDouble *cal)
+DECLARE_EXPORT void Buffer::setMaximum(CalendarDouble *cal)
 {
   // Resetting the same calendar
   if (max_cal == cal) return;
@@ -626,7 +626,7 @@ DECLARE_EXPORT void BufferProcure::writeElement(XMLOutput *o, const XMLtag &tag,
   // Write the extra fields
   if (leadtime) o->writeElement(Tags::tag_leadtime, leadtime);
   if (fence) o->writeElement(Tags::tag_fence, fence);
-  if (size_maximum) o->writeElement(Tags::tag_size_maximum, size_maximum);
+  if (size_maximum != DBL_MAX) o->writeElement(Tags::tag_size_maximum, size_maximum);
   if (size_minimum) o->writeElement(Tags::tag_size_minimum, size_minimum);
   if (size_multiple) o->writeElement(Tags::tag_size_multiple, size_multiple);
   if (min_interval) o->writeElement(Tags::tag_mininterval, min_interval);

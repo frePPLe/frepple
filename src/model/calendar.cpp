@@ -50,13 +50,13 @@ DECLARE_EXPORT CalendarDouble::~CalendarDouble()
   // Remove all references from buffers
   for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
   {
-    if (b->getMinimum()==this) Buffer::writepointer(&*b)->setMinimum(NULL);
-    if (b->getMaximum()==this) Buffer::writepointer(&*b)->setMaximum(NULL);
+    if (b->getMinimum()==this) b->setMinimum(NULL);
+    if (b->getMaximum()==this) b->setMaximum(NULL);
   }
 
   // Remove all references from resources
   for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
-    if (r->getMaximum()==this) Resource::writepointer(&*r)->setMaximum(NULL);
+    if (r->getMaximum()==this) r->setMaximum(NULL);
 }
 
 
@@ -66,7 +66,7 @@ DECLARE_EXPORT CalendarBool::~CalendarBool()
   for (Location::iterator l = Location::begin(); l != Location::end(); ++l)
   {
     if (l->getAvailable() == this) 
-      Location::writepointer(&*l)->setAvailable(NULL);
+      l->setAvailable(NULL);
   }
 }
 

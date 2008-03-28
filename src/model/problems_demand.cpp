@@ -80,38 +80,38 @@ DECLARE_EXPORT void Demand::updateProblems()
   {
     // Need to increment now and define a pointer to the problem, since the
     // problem can be deleted soon (which invalidates the iterator).
-    Problem* curprob = *j;
+    Problem& curprob = *j;
     ++j;
     // The if-statement keeps the problem detection code concise and
     // concentrated. However, a drawback of this design is that a new Problem
     // subclass will also require a new Demand subclass. I think such a link
     // is acceptable.
-    if (typeid(*curprob) == typeid(ProblemEarly))
+    if (typeid(curprob) == typeid(ProblemEarly))
     {
       // if: problem needed and it exists already
       if (needsEarly) needsEarly = false;
       // else: problem not needed but it exists already
-      else delete curprob;
+      else delete &curprob;
     }
-    else if (typeid(*curprob) == typeid(ProblemDemandNotPlanned))
+    else if (typeid(curprob) == typeid(ProblemDemandNotPlanned))
     {
       if (needsNotPlanned) needsNotPlanned = false;
-      else delete curprob;
+      else delete &curprob;
     }
-    else if (typeid(*curprob) == typeid(ProblemLate))
+    else if (typeid(curprob) == typeid(ProblemLate))
     {
       if (needsLate) needsLate = false;
-      else delete curprob;
+      else delete &curprob;
     }
-    else if (typeid(*curprob) == typeid(ProblemShort))
+    else if (typeid(curprob) == typeid(ProblemShort))
     {
       if (needsShort) needsShort = false;
-      else delete curprob;
+      else delete &curprob;
     }
-    else if (typeid(*curprob) == typeid(ProblemExcess))
+    else if (typeid(curprob) == typeid(ProblemExcess))
     {
       if (needsExcess) needsExcess = false;
-      else delete curprob;
+      else delete &curprob;
     }
     // Note that there may be other demand exceptions that are not caught in
     // this loop. These are problems defined and managed by subclasses.

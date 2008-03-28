@@ -51,7 +51,6 @@ namespace frepple
   */
 class MRPSolver : public Solver
 {
-    TYPEDEF(MRPSolver);
   protected:
     /** This variable stores the constraint which the solver should respect.
       * By default no constraints are enabled. */
@@ -370,14 +369,14 @@ class MRPSolver : public Solver
         MRPSolver* sol;
 
         /** Points to the demand being planned. */
-        const Demand* curDemand;
+        Demand* curDemand;
 
         /** Points to the current owner operationplan. This is used when
           * operations are nested. */
         OperationPlan* curOwnerOpplan;
 
         /** Points to the current buffer. */
-        const Buffer* curBuffer;
+        Buffer* curBuffer;
 
         /** A flag to force the resource solver to move the operationplan to
           * a later date where it is feasible.<br>

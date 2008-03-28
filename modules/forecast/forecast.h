@@ -175,7 +175,6 @@ struct PythonForecastBucket;
   */
 class Forecast : public Demand
 {
-    TYPEDEF(Forecast);
     friend class ForecastSolver;
     friend struct PythonForecastBucket;
   private:
@@ -258,10 +257,10 @@ class Forecast : public Demand
     void setDiscrete(const bool b);
 
     /** Update the item to be planned. */
-    virtual void setItem(const Item*);
+    virtual void setItem(Item*);
 
     /** Update the customer. */
-    virtual void setCustomer(const Customer*);
+    virtual void setCustomer(Customer*);
 
     /* Update the maximum allowed lateness for planning. */
     void setMaxLateness(TimePeriod);
@@ -272,10 +271,10 @@ class Forecast : public Demand
     /** Specify a bucket calendar for the forecast. Once forecasted
       * quantities have been entered for the forecast, the calendar
       * can't be updated any more. */
-    virtual void setCalendar(const Calendar* c);
+    virtual void setCalendar(Calendar* c);
 
     /** Returns a reference to the calendar used for this forecast. */
-    Calendar::pointer getCalendar() const {return calptr;}
+    Calendar* getCalendar() const {return calptr;}
 
     /** Updates the due date of the demand. Lower numbers indicate a
       * higher priority level. The method also updates the priority
@@ -284,7 +283,7 @@ class Forecast : public Demand
     virtual void setPriority(int);
 
     /** Updates the operation being used to plan the demands. */
-    virtual void setOperation(const Operation *);
+    virtual void setOperation(Operation *);
 
     /** Updates the due date of the demand. */
     virtual void setDue(const Date& d)
@@ -347,7 +346,7 @@ class Forecast : public Demand
     void initialize();
 
     /** A void calendar to define the time buckets. */
-    const Calendar* calptr;
+    Calendar* calptr;
 
     /** Flags whether fractional forecasts are allowed. */
     bool discrete;
@@ -406,7 +405,6 @@ class Forecast : public Demand
   */
 class ForecastSolver : public Solver
 {
-    TYPEDEF(ForecastSolver);
     friend class Forecast;
   public:
     /** Constructor. */

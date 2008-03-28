@@ -100,7 +100,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
         while (b->getProducingOperation() && theDate >= requested_date && loop)
         {
           // Create supply
-          Solver->curBuffer = b;
+          Solver->curBuffer = const_cast<Buffer*>(b);
           Solver->q_qty = -theDelta;
           Solver->q_date = prev->getDate();  
 
@@ -192,7 +192,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
       && b->getProducingOperation() && !tried_requested_date)
   {
     // Create supply at the requested date
-    Solver->curBuffer = b;
+    Solver->curBuffer = const_cast<Buffer*>(b);
     Solver->q_qty = shortage;
     Solver->q_date = requested_date;
     // Note that the supply created with the next line changes the onhand value

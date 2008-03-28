@@ -92,7 +92,6 @@ class LibraryModel
   */
 class Calendar : public HasName<Calendar>, public Object
 {
-    TYPEDEF(Calendar);
   public:
     class BucketIterator; // Forward declaration
     class EventIterator; // Forward declaration
@@ -682,7 +681,6 @@ template <typename T> class CalendarPointer : public Calendar
   * fields. */
 class CalendarVoid : public Calendar
 {
-    TYPEDEF(CalendarVoid);
   public:
     CalendarVoid(const string& n) : Calendar(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -693,7 +691,6 @@ class CalendarVoid : public Calendar
 /** @brief A calendar storing double values in its buckets. */
 class CalendarDouble : public CalendarValue<double>
 {
-    TYPEDEF(CalendarDouble);
   public:
     CalendarDouble(const string& n) : CalendarValue<double>(n) 
       { setDefault(0.0); }
@@ -706,7 +703,6 @@ class CalendarDouble : public CalendarValue<double>
 /** @brief A calendar storing integer values in its buckets. */
 class CalendarInt : public CalendarValue<int>
 {
-    TYPEDEF(CalendarInt);
   public:
     CalendarInt(const string& n) : CalendarValue<int>(n)
       { setDefault(0); }
@@ -718,7 +714,6 @@ class CalendarInt : public CalendarValue<int>
 /** @brief A calendar storing boolean values in its buckets. */
 class CalendarBool : public CalendarValue<bool>
 {
-    TYPEDEF(CalendarBool);
   public:
     CalendarBool(const string& n) : CalendarValue<bool>(n) 
       { setDefault(false); }
@@ -731,7 +726,6 @@ class CalendarBool : public CalendarValue<bool>
 /** @brief A calendar storing strings in its buckets. */
 class CalendarString : public CalendarValue<string>
 {
-    TYPEDEF(CalendarString);
   public:
     CalendarString(const string& n) : CalendarValue<string>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -750,7 +744,6 @@ class CalendarString : public CalendarValue<string>
 /** @brief A calendar storing pointers to operations in its buckets. */
 class CalendarOperation : public CalendarPointer<Operation>
 {
-    TYPEDEF(CalendarOperation);
   public:
     CalendarOperation(const string& n) : CalendarPointer<Operation>(n) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -781,7 +774,6 @@ class CalendarOperation : public CalendarPointer<Operation>
   */
 class Problem : public NonCopyable
 {
-  TYPEDEF(Problem);
   public:
     class const_iterator;
     friend class const_iterator;
@@ -957,7 +949,6 @@ class HasProblems
   */
 class Solver : public Object, public HasName<Solver>
 {
-    TYPEDEF(Solver);
   public:
     explicit Solver(const string& n) : HasName<Solver>(n), loglevel(0) {}
     virtual ~Solver() {}
@@ -1047,7 +1038,7 @@ class CommandSolve : public Command
 {
   private:
     /** Pointer to the solver being used. */
-    const Solver *sol;
+    Solver *sol;
 
   public:
     /** Constructor. */
@@ -1069,7 +1060,7 @@ class CommandSolve : public Command
     string getDescription() const {return "running a solver";}
 
     /** Returns the solver being run. */
-    Solver::pointer getSolver() const {return sol;}
+    Solver* getSolver() const {return sol;}
 
     /** Updates the solver being used. */
     void setSolver(Solver* s) {sol = s;}
@@ -1282,7 +1273,6 @@ class HasLevel
 class Location
       : public HasHierarchy<Location>, public HasDescription, public Object
 {
-    TYPEDEF(Location);
   public:
     /** Constructor. */
     explicit Location(const string& n) : HasHierarchy<Location>(n), available(NULL) {}
@@ -1318,7 +1308,6 @@ class Location
 /** @brief This class implements the abstract Location class. */
 class LocationDefault : public Location
 {
-    TYPEDEF(LocationDefault);
   public:
     explicit LocationDefault(const string& str) : Location(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -1336,7 +1325,6 @@ class LocationDefault : public Location
 class Customer
       : public HasHierarchy<Customer>, public HasDescription, public Object
 {
-    TYPEDEF(Customer);
   public:
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
@@ -1353,7 +1341,6 @@ class Customer
 /** @brief This class implements the abstract Customer class. */
 class CustomerDefault : public Customer
 {
-    TYPEDEF(CustomerDefault);
   public:
     explicit CustomerDefault(const string& str) : Customer(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -1374,7 +1361,6 @@ class CustomerDefault : public Customer
 class Operation : public HasName<Operation>,
       public HasLevel, public Plannable, public HasDescription
 {
-    TYPEDEF(Operation);
     friend class Flow;
     friend class Load;
     friend class OperationPlan;
@@ -1438,7 +1424,7 @@ class Operation : public HasName<Operation>,
     /** This is the factory method which creates all operationplans of the
       * operation. */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (double, Date,
-      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
+      Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
     /** This method stores ALL logic the operation needs to compute the
@@ -1583,7 +1569,7 @@ class Operation : public HasName<Operation>,
 
   protected:
     void initOperationPlan (OperationPlan*, double, const Date&, const Date&,
-        const Demand*, OperationPlan*, unsigned long, bool = true) const;
+        Demand*, OperationPlan*, unsigned long, bool = true) const;
 
   private:
     /** List of operations using this operation as a sub-operation */
@@ -1663,7 +1649,6 @@ class Operation : public HasName<Operation>,
 class OperationPlan
       : public Object, public HasProblems, public NonCopyable
 {
-    TYPEDEF(OperationPlan);
     friend class FlowPlan;
     friend class LoadPlan;
     friend class Demand;
@@ -1855,10 +1840,10 @@ class OperationPlan
     /** Returns a pointer to the demand for which this operation is a delivery.
       * If the operationplan isn't a delivery operation, this is a NULL pointer.
       */
-    const Demand* getDemand() const {return dmd;}
+    Demand* getDemand() const {return dmd;}
 
     /** Updates the demand to which this operationplan is a solution. */
-    DECLARE_EXPORT void setDemand(const Demand* l);
+    DECLARE_EXPORT void setDemand(Demand* l);
 
     /** Returns whether the operationplan is locked. A locked operationplan
       * is never changed. Only top-operationplans can be locked.
@@ -1881,7 +1866,7 @@ class OperationPlan
       */
     void setLocked(bool b = true)
     {
-      if (owner) OperationPlan::writepointer(owner)->setLocked(b);
+      if (owner) owner->setLocked(b);
       else if (locked!=b)
       {
         setChanged();
@@ -1920,7 +1905,7 @@ class OperationPlan
     /** Updates the operationplan owning this operationplan. In case of
       * a OperationRouting steps this will be the operationplan representing the
       * complete routing. */
-    void DECLARE_EXPORT setOwner(const OperationPlan* o);
+    void DECLARE_EXPORT setOwner(OperationPlan* o);
 
     /** Returns a pointer to the operationplan for which this operationplan
       * a sub-operationplan.<br>
@@ -1930,19 +1915,19 @@ class OperationPlan
       * E.g. An alternate sub-operationplan refers to its parent.
       * @see getTopOwner
       */
-    OperationPlan::pointer getOwner() const {return owner;}
+    OperationPlan* getOwner() const {return owner;}
 
     /** Returns a pointer to the operationplan owning a set of
       * sub-operationplans. There can be multiple levels of suboperations.<br>
       * If no owner exists the method returns the current operationplan.
       * @see getOwner
       */
-    OperationPlan::pointer getTopOwner() const
+    const OperationPlan* getTopOwner() const
     {
       if (owner)
       {
         // There is an owner indeed
-        OperationPlan::pointer o(owner);
+        OperationPlan* o(owner);
         while (o->owner) o = o->owner;
         return o;
       }
@@ -2074,7 +2059,7 @@ class OperationPlan
     DECLARE_EXPORT void resizeFlowLoadPlans();
 
     /** Pointer to a higher level OperationPlan. */
-    const OperationPlan *owner;
+    OperationPlan *owner;
 
     /** Quantity. */
     double quantity;
@@ -2112,7 +2097,7 @@ class OperationPlan
 
     /** Pointer to the demand. Only delivery operationplans have this field
       * set. The field is NULL for all other operationplans. */
-    const Demand *dmd;
+    Demand *dmd;
 
     /** Unique identifier. */
     unsigned long id;
@@ -2153,7 +2138,6 @@ class OperationPlan
   * of the quantity. */
 class OperationFixedTime : public Operation
 {
-    TYPEDEF(OperationFixedTime);
   public:
     /** Constructor. */
     explicit OperationFixedTime(const string& s) : Operation(s) {}
@@ -2207,7 +2191,6 @@ class OperationFixedTime : public Operation
   */
 class OperationTimePer : public Operation
 {
-    TYPEDEF(OperationTimePer);
   public:
     /** Constructor. */
     explicit OperationTimePer(const string& s) : Operation(s) {}
@@ -2275,7 +2258,6 @@ class OperationTimePer : public Operation
   */
 class OperationRouting : public Operation
 {
-    TYPEDEF(OperationRouting);
   public:
     /** Constructor. */
     explicit OperationRouting(const string& c) : Operation(c) {};
@@ -2334,7 +2316,7 @@ class OperationRouting : public Operation
       * @see Operation::createOperationPlan
       */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (double, Date,
-      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
+      Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
     virtual const MetaClass& getType() const {return metadata;}
@@ -2354,7 +2336,6 @@ class OperationRouting : public Operation
   * the instances. */
 class OperationPlanRouting : public OperationPlan
 {
-    TYPEDEF(OperationPlanRouting);
     friend class OperationRouting;
   private:
     OperationPlan::OperationPlanList step_opplans;
@@ -2399,7 +2380,6 @@ class OperationPlanRouting : public OperationPlan
   */
 class OperationAlternate : public Operation
 {
-    TYPEDEF(OperationAlternate);
   public:
     typedef pair<double,DateRange> alternateProperty;
 
@@ -2462,7 +2442,7 @@ class OperationAlternate : public Operation
       * @see Operation::createOperationPlan
       */
     virtual DECLARE_EXPORT OperationPlan* createOperationPlan (double, Date,
-      Date, const Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
+      Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
     virtual const MetaClass& getType() const {return metadata;}
@@ -2498,7 +2478,6 @@ class OperationAlternate : public Operation
   */
 class OperationPlanAlternate : public OperationPlan
 {
-    TYPEDEF(OperationPlanAlternate);
     friend class OperationAlternate;
 
   private:
@@ -2535,7 +2514,6 @@ class OperationPlanAlternate : public OperationPlan
 class Item
       : public HasHierarchy<Item>, public HasDescription, public Object
 {
-    TYPEDEF(Item);
   public:
     /** Constructor. Don't use this directly! */
     explicit Item(const string& str)
@@ -2545,13 +2523,13 @@ class Item
       * This field is inherited from a parent item, if it hasn't been
       * specified.
       */
-    Operation::pointer getOperation() const
+    Operation* getOperation() const
     {
       // Current item has a non-empty deliveryOperation field
       if (deliveryOperation) return deliveryOperation;
 
       // Look for a non-empty deliveryOperation field on owners
-      for (Item::pointer i = getOwner(); i; i=i->getOwner())
+      for (Item* i = getOwner(); i; i=i->getOwner())
         if (i->deliveryOperation) return i->deliveryOperation;
 
       // The field is not specified on the item or any of its parents.
@@ -2562,7 +2540,7 @@ class Item
       * If some demands have already been planned using the old delivery
       * operation they are left untouched and won't be replanned.
       */
-    void setOperation(const Operation* o) {deliveryOperation = o;}
+    void setOperation(Operation* o) {deliveryOperation = o;}
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
@@ -2578,7 +2556,7 @@ class Item
     /** This is the operation used to satisfy a demand for this item.
       * @see Demand
       */
-    const Operation* deliveryOperation;
+    Operation* deliveryOperation;
 };
 
 
@@ -2586,7 +2564,6 @@ class Item
   * class. */
 class ItemDefault : public Item
 {
-    TYPEDEF(ItemDefault);
   public:
     explicit ItemDefault(const string& str) : Item(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -2605,7 +2582,6 @@ class ItemDefault : public Item
 class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       public Plannable, public HasDescription
 {
-    TYPEDEF(Buffer);
     friend class Flow;
     friend class FlowPlan;
 
@@ -2620,38 +2596,38 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Returns the operation that is used to supply extra supply into this
       * buffer. */
-    Operation::pointer getProducingOperation() const {return producing_operation;}
+    Operation* getProducingOperation() const {return producing_operation;}
 
     /** Updates the operation that is used to supply extra supply into this
       * buffer. */
-    void setProducingOperation(const Operation* o)
+    void setProducingOperation(Operation* o)
       {producing_operation = o; setChanged();}
 
     /** Returns the item stored in this buffer. */
-    Item::pointer getItem() const {return it;}
+    Item* getItem() const {return it;}
 
     /** Updates the Item stored in this buffer. */
-    void setItem(const Item* i) {it = i; setChanged();}
+    void setItem(Item* i) {it = i; setChanged();}
 
     /** Returns the Location of this buffer. */
-    Location::pointer getLocation() const {return loc;}
+    Location* getLocation() const {return loc;}
 
     /** Updates the location of this buffer. */
-    void setLocation(const Location* i) {loc = i;}
+    void setLocation(Location* i) {loc = i;}
 
     /** Returns a pointer to a calendar for storing the minimum inventory
       * level. */
-    CalendarDouble::pointer getMinimum() const {return min_cal;}
+    CalendarDouble* getMinimum() const {return min_cal;}
 
     /** Returns a pointer to a calendar for storing the maximum inventory
       * level. */
-    CalendarDouble::pointer getMaximum() const {return max_cal;}
+    CalendarDouble* getMaximum() const {return max_cal;}
 
     /** Updates the minimum inventory target for the buffer. */
-    DECLARE_EXPORT void setMinimum(const CalendarDouble *cal);
+    DECLARE_EXPORT void setMinimum(CalendarDouble *cal);
 
     /** Updates the minimum inventory target for the buffer. */
-    DECLARE_EXPORT void setMaximum(const CalendarDouble *cal);
+    DECLARE_EXPORT void setMaximum(CalendarDouble *cal);
 
     DECLARE_EXPORT virtual void beginElement(XMLInput&, XMLElement&);
     DECLARE_EXPORT virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2726,30 +2702,30 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     bool hidden;
 
     /** This is the operation used to create extra material in this buffer. */
-    const Operation *producing_operation;
+    Operation *producing_operation;
 
     /** Location of this buffer.<br>
       * This field is only used as information.<br>
       * The default is NULL.
       */
-    const Location* loc;
+    Location* loc;
 
     /** Item being stored in this buffer.<br>
       * The default value is NULL.
       */
-    const Item* it;
+    Item* it;
 
     /** Points to a calendar to store the minimum inventory level.<br>
       * The default value is NULL, resulting in a constant minimum level
       * of 0.
       */
-    const CalendarDouble *min_cal;
+    CalendarDouble *min_cal;
 
     /** Points to a calendar to store the maximum inventory level.<br>
       * The default value is NULL, resulting in a buffer without excess
       * inventory problems.
       */
-    const CalendarDouble *max_cal;
+    CalendarDouble *max_cal;
 };
 
 
@@ -2757,7 +2733,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 /** @brief This class is the default implementation of the abstract Buffer class. */
 class BufferDefault : public Buffer
 {
-    TYPEDEF(BufferDefault);
   public:
     explicit BufferDefault(const string& str) : Buffer(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -2775,7 +2750,6 @@ class BufferDefault : public Buffer
   */
 class BufferInfinite : public Buffer
 {
-    TYPEDEF(BufferInfinite);
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -2841,7 +2815,6 @@ class BufferInfinite : public Buffer
   */
 class BufferProcure : public Buffer
 {
-    TYPEDEF(BufferProcure);
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
@@ -2850,7 +2823,7 @@ class BufferProcure : public Buffer
     virtual size_t getSize() const
       {return sizeof(BufferProcure) + Buffer::extrasize();}
     explicit BufferProcure(const string& c) : Buffer(c), min_inventory(0),
-      max_inventory(0), size_minimum(0), size_maximum(FLT_MAX), size_multiple(0),
+      max_inventory(0), size_minimum(0), size_maximum(DBL_MAX), size_multiple(0),
       oper(NULL) {}
     static DECLARE_EXPORT const MetaClass metadata;
 
@@ -3029,7 +3002,6 @@ class BufferProcure : public Buffer
 class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       public Solvable
 {
-    TYPEDEF(Flow);
   public:
     /** Destructor. */
     virtual DECLARE_EXPORT ~Flow();
@@ -3119,7 +3091,6 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
   */
 class FlowStart : public Flow
 {
-    TYPEDEF(FlowStart);
   public:
     /** Constructor. */
     explicit FlowStart(Operation* o, Buffer* b, double q) : Flow(o,b,q) {}
@@ -3139,7 +3110,6 @@ class FlowStart : public Flow
   */
 class FlowEnd : public Flow
 {
-    TYPEDEF(FlowEnd);
   public:
     /** Constructor. */
     explicit FlowEnd(Operation* o, Buffer* b, double q) : Flow(o,b,q) {}
@@ -3167,14 +3137,13 @@ class FlowEnd : public Flow
   */
 class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 {
-    TYPEDEF(FlowPlan);
     friend class OperationPlan::FlowPlanIterator;
   private:
     /** Points to the flow instantiated by this flowplan. */
-    const Flow *fl;
+    Flow *fl;
 
     /** Points to the operationplan owning this flowplan. */
-    const OperationPlan *oper;
+    OperationPlan *oper;
 
     /** Points to the next flowplan owned by the same operationplan. */
     FlowPlan *nextFlowPlan;
@@ -3184,15 +3153,15 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     explicit DECLARE_EXPORT FlowPlan(OperationPlan*, const Flow*);
 
     /** Returns the flow of which this is an plan instance. */
-    Flow::pointer getFlow() const {return fl;}
+    Flow* getFlow() const {return fl;}
 
     /** Returns the operationplan owning this flowplan. */
-    OperationPlan::pointer getOperationPlan() const {return oper;}
+    OperationPlan* getOperationPlan() const {return oper;}
 
     /** Destructor. */
     virtual ~FlowPlan()
     {
-      Buffer::writepointer b = getFlow()->getBuffer();
+      Buffer* b = getFlow()->getBuffer();
       b->setChanged();
       b->flowplans.erase(this);
     }
@@ -3213,8 +3182,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     void setQuantity(double qty, bool b=false, bool u = true)
     {
       if (getFlow()->getEffective().within(getDate()))
-        OperationPlan::writepointer(oper)->setQuantity(
-          qty / getFlow()->getQuantity(), b, u);
+        oper->setQuantity(qty / getFlow()->getQuantity(), b, u);
     }
 
     /** This function needs to be called whenever the flowplan date or 
@@ -3259,7 +3227,6 @@ inline Date FlowEnd::getFlowplanDate(const FlowPlan* fl) const
 class Resource : public HasHierarchy<Resource>,
       public HasLevel, public Plannable, public HasDescription
 {
-    TYPEDEF(Resource);
     friend class Load;
     friend class LoadPlan;
 
@@ -3272,10 +3239,10 @@ class Resource : public HasHierarchy<Resource>,
     virtual DECLARE_EXPORT ~Resource();
 
     /** Updates the size of a resource. */
-    DECLARE_EXPORT void setMaximum(const CalendarDouble* c);
+    DECLARE_EXPORT void setMaximum(CalendarDouble* c);
 
     /** Return a pointer to the maximum capacity profile. */
-    CalendarDouble::pointer getMaximum() const {return max_cal;}
+    CalendarDouble* getMaximum() const {return max_cal;}
 
     typedef Association<Operation,Resource,Load>::ListB loadlist;
     typedef TimeLine<LoadPlan> loadplanlist;
@@ -3304,10 +3271,10 @@ class Resource : public HasHierarchy<Resource>,
     {return getName().size() + HasDescription::extrasize();}
 
     /** Returns the location of this resource. */
-    Location::pointer getLocation() const {return loc;}
+    Location* getLocation() const {return loc;}
 
     /** Updates the location of this resource. */
-    void setLocation(const Location* i) {loc = i;}
+    void setLocation(Location* i) {loc = i;}
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -3327,7 +3294,7 @@ class Resource : public HasHierarchy<Resource>,
 
   private:
     /** This calendar is used to updates to the resource size. */
-    const CalendarDouble* max_cal;
+    CalendarDouble* max_cal;
 
     /** Stores the collection of all loadplans of this resource. */
     loadplanlist loadplans;
@@ -3337,7 +3304,7 @@ class Resource : public HasHierarchy<Resource>,
     loadlist loads;
 
     /** A pointer to the location of the resource. */
-    const Location* loc;
+    Location* loc;
 
     /** Specifies whether this resource is hidden for serialization. */
     bool hidden;
@@ -3349,7 +3316,6 @@ class Resource : public HasHierarchy<Resource>,
   */
 class ResourceDefault : public Resource
 {
-    TYPEDEF(ResourceDefault);
   public:
     explicit ResourceDefault(const string& str) : Resource(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -3363,7 +3329,6 @@ class ResourceDefault : public Resource
   * capacity shortage. */
 class ResourceInfinite : public Resource
 {
-    TYPEDEF(ResourceInfinite);
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
@@ -3381,7 +3346,6 @@ class Load
       : public Object, public Association<Operation,Resource,Load>::Node,
       public Solvable
 {
-    TYPEDEF(Load);
     friend class Resource;
     friend class Operation;
 
@@ -3474,7 +3438,6 @@ class Load
   */
 class Plan : public Plannable
 {
-    TYPEDEF(Plan);
     friend void LibraryModel::initialize();
   private:
     /** Current Date of this plan. */
@@ -3821,7 +3784,6 @@ class CommandErase : public Command
 class Demand
       : public HasHierarchy<Demand>, public Plannable, public HasDescription
 {
-    TYPEDEF(Demand);
   public:
     typedef slist<OperationPlan*> OperationPlan_list;
 
@@ -3852,17 +3814,17 @@ class Demand
     virtual void setPriority(int i) {prio=i; setChanged();}
 
     /** Returns the item/product being requested. */
-    Item::pointer getItem() const {return it;}
+    Item* getItem() const {return it;}
 
     /** Updates the item/product being requested. */
-    virtual void setItem(const Item *i) {it=i; setChanged();}
+    virtual void setItem(Item *i) {it=i; setChanged();}
 
     /** This fields points to an operation that is to be used to plan the
       * demand. By default, the field is left to NULL and the demand will then
       * be planned using the delivery operation of its item.
       * @see Item::getDelivery()
       */
-    Operation::pointer getOperation() const {return oper;}
+    Operation* getOperation() const {return oper;}
 
     /** This function returns the operation that is to be used to satisfy this
       * demand. In sequence of priority this goes as follows:
@@ -3870,17 +3832,17 @@ class Demand
       *   2) Otherwise, use the "delivery" field of the requested item.
       *   3) Else, return NULL. This demand can't be satisfied!
       */
-    DECLARE_EXPORT Operation::pointer getDeliveryOperation() const;
+    DECLARE_EXPORT Operation* getDeliveryOperation() const;
 
     /** Returns the cluster which this demand belongs to. */
     int getCluster() const
     {
-      Operation::pointer o = getDeliveryOperation();
+      Operation* o = getDeliveryOperation();
       return o ? o->getCluster() : 0;
     }
 
     /** Updates the operation being used to plan the demand. */
-    virtual void setOperation(const Operation* o) {oper=o; setChanged();}
+    virtual void setOperation(Operation* o) {oper=o; setChanged();}
 
     /** Returns the delivery operationplan list. */
     DECLARE_EXPORT const OperationPlan_list& getDelivery() const;
@@ -3906,10 +3868,10 @@ class Demand
     virtual void setDue(Date d) {dueDate = d; setChanged();}
 
     /** Returns the customer. */
-    Customer::pointer getCustomer() const { return cust; }
+    Customer* getCustomer() const { return cust; }
 
     /** Updates the customer. */
-    virtual void setCustomer(const Customer* c) { cust = c; setChanged(); }
+    virtual void setCustomer(Customer* c) { cust = c; setChanged(); }
 
     /** Returns the total amount that has been planned. */
     DECLARE_EXPORT double getPlannedQuantity() const;
@@ -3974,14 +3936,14 @@ class Demand
 
   private:
     /** Requested item. */
-    const Item *it;
+    Item *it;
 
     /** Delivery Operation. Can be left NULL, in which case the delivery
       * operation can be specified on the requested item. */
-    const Operation *oper;
+    Operation *oper;
 
     /** Customer creating this demand. */
-    const Customer *cust;
+    Customer *cust;
 
     /** Requested quantity. Only positive numbers are allowed. */
     double qty;
@@ -4012,7 +3974,6 @@ class Demand
   * Demand class. */
 class DemandDefault : public Demand
 {
-    TYPEDEF(DemandDefault);
   public:
     explicit DemandDefault(const string& str) : Demand(str) {}
     virtual const MetaClass& getType() const {return metadata;}
@@ -4030,7 +3991,6 @@ class DemandDefault : public Demand
   */
 class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
 {
-    TYPEDEF(LoadPlan);
     friend class OperationPlan::LoadPlanIterator;
   public:
     /** Public constructor.<br>
@@ -4042,10 +4002,10 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     explicit DECLARE_EXPORT LoadPlan(OperationPlan*, const Load*);
     
     /** Return the operationplan owning this loadplan. */
-    OperationPlan::pointer getOperationPlan() const {return oper;}
+    OperationPlan* getOperationPlan() const {return oper;}
 
     /** Return the load of which this is a plan instance. */
-    Load::pointer getLoad() const {return ld;}
+    Load* getLoad() const {return ld;}
 
     bool isStart() const {return start_or_end == START;}
 
@@ -4623,7 +4583,7 @@ class CommandCreateOperationPlan : public Command
   public:
     /** Constructor. */
     CommandCreateOperationPlan
-      (const Operation* o, double q, Date d1, Date d2, const Demand* l,
+      (const Operation* o, double q, Date d1, Date d2, Demand* l,
       OperationPlan* ow=NULL, bool makeflowsloads=true)
     {
       opplan = o ?
@@ -4692,10 +4652,10 @@ class CommandDeleteOperationPlan : public Command
     long unsigned id;
 
     /** Demand pointer of the original operationplan. */
-    const Demand *dmd;
+    Demand *dmd;
 
     /** Owner of the original operationplan. */
-    const OperationPlan *ow;
+    OperationPlan *ow;
 };
 
 
@@ -4867,7 +4827,7 @@ class Problem::const_iterator
     DECLARE_EXPORT const_iterator& operator++();
     bool operator != (const const_iterator& t) const {return iter!=t.iter;}
     bool operator == (const const_iterator& t) const {return iter==t.iter;}
-    Problem* operator*() const {return iter;}
+    Problem& operator*() const {return *iter;}
     Problem* operator->() const {return iter;}
 };
 
@@ -4898,12 +4858,10 @@ class PeggingIterator
     }
 
     /** Return the operationplan consuming the material. */
-    OperationPlan::pointer getConsumingOperationplan() const
+    OperationPlan* getConsumingOperationplan() const
     {
       const FlowPlan* x = stack.top().cons_flowplan;
-      return x ?
-        x->getOperationPlan() :
-        OperationPlan::pointer(NULL);
+      return x ? x->getOperationPlan() : NULL;
     }
 
     /** Return the material buffer through which we are pegging. */
@@ -4915,12 +4873,10 @@ class PeggingIterator
     }
 
     /** Return the operationplan producing the material. */
-    OperationPlan::pointer getProducingOperationplan() const
+    OperationPlan* getProducingOperationplan() const
     {
       const FlowPlan* x = stack.top().prod_flowplan;
-      return x ?
-        x->getOperationPlan() :
-        OperationPlan::pointer(NULL);
+      return x ? x->getOperationPlan() : NULL;
     }
 
     /** Return the date when the material is consumed. */
@@ -5063,7 +5019,7 @@ class PeggingIterator
     statestack stack;
 
     /* Auxilary function to make recursive code possible. */
-    DECLARE_EXPORT void followPegging(OperationPlan::pointer, short, double, double);
+    DECLARE_EXPORT void followPegging(const OperationPlan*, short, double, double);
 
     /** Convenience variable during stack updates.
       * Depending on the value of this field, either the top element in the

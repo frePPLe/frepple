@@ -128,7 +128,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 
 
 DECLARE_EXPORT void PeggingIterator::followPegging
-  (OperationPlan::pointer op, short nextlevel, double qty, double factor)
+  (const OperationPlan* op, short nextlevel, double qty, double factor)
 {
   // For each flowplan (producing or consuming depending on whether we go
   // upstream or downstream) ask the buffer to give us the pegged flowplans.

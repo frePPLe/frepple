@@ -45,16 +45,16 @@ DECLARE_EXPORT Operation::~Operation()
 
   // Remove the reference to this operation from all items
   for (Item::iterator k = Item::begin(); k != Item::end(); ++k)
-    if (k->getOperation() == this) Item::writepointer(&*k)->setOperation(NULL);
+    if (k->getOperation() == this) k->setOperation(NULL);
 
   // Remove the reference to this operation from all demands
   for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)
-    if (l->getOperation() == this) Demand::writepointer(&*l)->setOperation(NULL);
+    if (l->getOperation() == this) l->setOperation(NULL);
 
   // Remove the reference to this operation from all buffers
   for (Buffer::iterator m = Buffer::begin(); m != Buffer::end(); ++m)
     if (m->getProducingOperation() == this)
-      Buffer::writepointer(&*m)->setProducingOperation(NULL);
+      m->setProducingOperation(NULL);
 
   // Remove the operation from its super-operations and sub-operations
   // Note that we are not using a for-loop since our function is actually
@@ -86,7 +86,7 @@ DECLARE_EXPORT OperationAlternate::~OperationAlternate()
 
 
 DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (double q, Date s, Date e,
-    const Demand* l, OperationPlan* ow, unsigned long i,
+    Demand* l, OperationPlan* ow, unsigned long i,
     bool makeflowsloads) const
 {
   OperationPlan *opplan = new OperationPlan();
@@ -96,7 +96,7 @@ DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (double q, Date s, 
 
 
 void Operation::initOperationPlan (OperationPlan* opplan, double q,
-    const Date& s, const Date& e, const Demand* l, OperationPlan* ow,
+    const Date& s, const Date& e, Demand* l, OperationPlan* ow,
     unsigned long i, bool makeflowsloads) const
 {
   opplan->oper = const_cast<Operation*>(this);
@@ -171,7 +171,7 @@ DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, XMLElement& pElement
   else if (pElement.isA (Tags::tag_load)
       && pIn.getParentElement().isA(Tags::tag_loads))
   {
-    Load::writepointer l = new Load();
+    Load* l = new Load();
     l->setOperation(this);
     pIn.readto(&*l);
   }
@@ -483,7 +483,7 @@ DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
 
 
 DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan 
-  (double q, Date s, Date e, const Demand* l, OperationPlan* ow, 
+  (double q, Date s, Date e, Demand* l, OperationPlan* ow, 
     unsigned long i, bool makeflowsloads) const
 {
   // Note that the created operationplan is of a specific subclass
@@ -654,7 +654,7 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
 
 
 DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (double q,
-    Date s, Date e, const Demand* l, OperationPlan* ow,
+    Date s, Date e, Demand* l, OperationPlan* ow,
     unsigned long i, bool makeflowsloads) const
 {
   // Note that the operationplan created is of a different subclass.

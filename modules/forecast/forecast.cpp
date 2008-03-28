@@ -345,7 +345,7 @@ void Forecast::beginElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Forecast::setCalendar(const Calendar* c)
+void Forecast::setCalendar(Calendar* c)
 {
   if (isGroup())
     throw DataException(
@@ -354,7 +354,7 @@ void Forecast::setCalendar(const Calendar* c)
 }
 
 
-void Forecast::setItem(const Item* i)
+void Forecast::setItem(Item* i)
 {
   // No change
   if (getItem() == i) return;
@@ -381,7 +381,7 @@ void Forecast::setItem(const Item* i)
 }
 
 
-void Forecast::setCustomer(const Customer* i)
+void Forecast::setCustomer(Customer* i)
 {
   // No change
   if (getCustomer() == i) return;
@@ -389,7 +389,7 @@ void Forecast::setCustomer(const Customer* i)
   // Update the dictionary
   for (MapOfForecasts::iterator x =
     ForecastDictionary.lower_bound(make_pair(
-      &*getItem(), &*getCustomer()
+      getItem(), getCustomer()
       ));
     x != ForecastDictionary.end(); ++x)
     if (x->second == this)
@@ -435,7 +435,7 @@ void Forecast::setPriority(int i)
 }
 
 
-void Forecast::setOperation(const Operation *o)
+void Forecast::setOperation(Operation *o)
 {
   Demand::setOperation(o);
   // Update the priority for all buckets/subdemands

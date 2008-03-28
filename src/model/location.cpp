@@ -91,17 +91,17 @@ DECLARE_EXPORT Location::~Location()
   // Remove all references from buffers to this location
   for (Buffer::iterator buf = Buffer::begin();
       buf != Buffer::end(); ++buf)
-    if (buf->getLocation() == this) Buffer::writepointer(&*buf)->setLocation(NULL);
+    if (buf->getLocation() == this) buf->setLocation(NULL);
 
   // Remove all references from resources to this location
   for (Resource::iterator res = Resource::begin();
       res != Resource::end(); ++res)
-    if (res->getLocation() == this) Resource::writepointer(&*res)->setLocation(NULL);
+    if (res->getLocation() == this) res->setLocation(NULL);
 
   // Remove all references from operations to this location
   for (Operation::iterator oper = Operation::begin();
       oper != Operation::end(); ++oper)
-    if (oper->getLocation() == this) Operation::writepointer(&*oper)->setLocation(NULL);
+    if (oper->getLocation() == this) oper->setLocation(NULL);
 }
 
 }

@@ -34,7 +34,7 @@ namespace frepple
 template<class Resource> DECLARE_EXPORT Tree HasName<Resource>::st;
 
 
-DECLARE_EXPORT void Resource::setMaximum(const CalendarDouble* c)
+DECLARE_EXPORT void Resource::setMaximum(CalendarDouble* c)
 {
   // Resetting the same calendar
   if (max_cal == c) return;
@@ -132,7 +132,7 @@ DECLARE_EXPORT void Resource::beginElement (XMLInput& pIn, XMLElement& pElement)
   if (pElement.isA (Tags::tag_load)
       && pIn.getParentElement().isA(Tags::tag_loads))
   {
-    Load::writepointer l = new Load();
+    Load* l = new Load();
     l->setResource(this);
     pIn.readto(&*l);
   }

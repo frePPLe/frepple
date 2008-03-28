@@ -61,21 +61,18 @@ DECLARE_EXPORT void CommandSolve::execute()
   // Make sure the solver field is specified
   if (!sol) throw RuntimeException("Solve command with unspecified solver");
 
-  // Lock the solver
-  Solver::writepointer s(sol);
-
   // Start message
   if (getVerbose())
-    logger << "Started running the solver '" << s->getName()
+    logger << "Started running the solver '" << sol->getName()
     << "' at " << Date::now() << endl;
   Timer t;
 
   // Running the solver now
-  s->solve();
+  sol->solve();
 
   // Ending message
   if (getVerbose())
-    logger << "Finished running the solver '" << s->getName()
+    logger << "Finished running the solver '" << sol->getName()
     << "' at " << Date::now()  << " : " << t << endl;
 }
 
@@ -356,9 +353,9 @@ DECLARE_EXPORT void CommandSavePlan::execute()
     for (Problem::const_iterator gprob = Problem::begin();
         gprob != Problem::end(); ++gprob)
     {
-      textoutput << "PROBLEM\t" << (*gprob)->getType().type << '\t'
-      << (*gprob)->getDescription() << '\t'
-      << (*gprob)->getDateRange() << endl;
+      textoutput << "PROBLEM\t" << gprob->getType().type << '\t'
+      << gprob->getDescription() << '\t'
+      << gprob->getDateRange() << endl;
     }
 
     // Close the output file
@@ -392,16 +389,15 @@ DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
     : opplan(o), prefer_end(pref_end)
 {
   if (!opplan) return;
-  OperationPlan::writepointer lopplan(opplan);
-  originalqty = lopplan->getQuantity();
+  originalqty = opplan->getQuantity();
   if (newQty == -1.0) newQty = originalqty;
-  originaldates = lopplan->getDates();
+  originaldates = opplan->getDates();
   if (prefer_end)
-    lopplan->getOperation()->setOperationPlanParameters(
+    opplan->getOperation()->setOperationPlanParameters(
       opplan, newQty, Date::infinitePast, newdate, prefer_end
     );
   else
-    lopplan->getOperation()->setOperationPlanParameters(
+    opplan->getOperation()->setOperationPlanParameters(
       opplan, newQty, newdate, Date::infiniteFuture, prefer_end
     );
 }
@@ -410,8 +406,7 @@ DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
 DECLARE_EXPORT void CommandMoveOperationPlan::undo()
 {
   if (!opplan) return;
-  OperationPlan::writepointer lopplan(opplan);
-  lopplan->getOperation()->setOperationPlanParameters(
+  opplan->getOperation()->setOperationPlanParameters(
     opplan, originalqty, originaldates.getStart(), originaldates.getEnd(), prefer_end
   );
   opplan = NULL;
@@ -421,14 +416,13 @@ DECLARE_EXPORT void CommandMoveOperationPlan::undo()
 DECLARE_EXPORT void CommandMoveOperationPlan::setDate(Date newdate)
 {
   if (!opplan) return;
-  OperationPlan::writepointer lopplan(opplan);
   if (prefer_end)
-    lopplan->getOperation()->setOperationPlanParameters(
-      opplan, lopplan->getQuantity(), Date::infinitePast, newdate, prefer_end
+    opplan->getOperation()->setOperationPlanParameters(
+      opplan, opplan->getQuantity(), Date::infinitePast, newdate, prefer_end
     );
   else
-    lopplan->getOperation()->setOperationPlanParameters(
-      opplan, lopplan->getQuantity(), newdate, Date::infiniteFuture, prefer_end
+    opplan->getOperation()->setOperationPlanParameters(
+      opplan, opplan->getQuantity(), newdate, Date::infiniteFuture, prefer_end
     );
 }
 
@@ -436,14 +430,13 @@ DECLARE_EXPORT void CommandMoveOperationPlan::setDate(Date newdate)
 DECLARE_EXPORT void CommandMoveOperationPlan::setQuantity(double newqty)
 {
   if (!opplan) return;
-  OperationPlan::writepointer lopplan(opplan);
   if (prefer_end)
-    lopplan->getOperation()->setOperationPlanParameters(
-      opplan, newqty, lopplan->getDates().getStart(), lopplan->getDates().getEnd(), prefer_end
+    opplan->getOperation()->setOperationPlanParameters(
+      opplan, newqty, opplan->getDates().getStart(), opplan->getDates().getEnd(), prefer_end
     );
   else
-    lopplan->getOperation()->setOperationPlanParameters(
-      opplan, newqty, lopplan->getDates().getStart(), lopplan->getDates().getEnd(), prefer_end
+    opplan->getOperation()->setOperationPlanParameters(
+      opplan, newqty, opplan->getDates().getStart(), opplan->getDates().getEnd(), prefer_end
     );
 }
 
@@ -568,7 +561,7 @@ DECLARE_EXPORT void CommandErase::execute()
     // Delete the operationplans only
     for (Operation::iterator gop = Operation::begin();
         gop != Operation::end(); ++gop)
-      Operation::writepointer(&*gop)->deleteOperationPlans();
+      gop->deleteOperationPlans();
 
   // Ending message
   if (getVerbose())

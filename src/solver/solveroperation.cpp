@@ -572,10 +572,10 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
     // requested buffer
     Solver->q_qty = a_qty / (sub_flow_qty_per + top_flow_qty_per);
     Solver->q_date = origQDate;
-    Solver->curDemand = d;
+    Solver->curDemand = const_cast<Demand*>(d);
     CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
-        oper, a_qty,
-        Date::infinitePast, origQDate, d, prev_owner_opplan, false
+        oper, a_qty, Date::infinitePast, origQDate,
+        Solver->curDemand, prev_owner_opplan, false
         );
     Solver->add(a);
     Solver->curDemand = NULL;

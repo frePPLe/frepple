@@ -161,21 +161,8 @@ using namespace xercesc;
 #endif
 
 
-/** @def TYPEDEF(tp)
-  * This macro is used to define a number of convenience type definitions.
-  */
-#define TYPEDEF(tp) \
-  public: \
-    typedef Object::RLock<tp>   pointer; \
-    typedef tp&                 reference; \
-    typedef const tp&           const_reference; \
-    typedef Object::RLock<tp>   readpointer; \
-    typedef Object::WLock<tp>   writepointer;
-
-
 namespace frepple
 {
-
 
 // Forward declarations
 class Object;
@@ -804,13 +791,60 @@ class MetaClass : public NonCopyable
   friend class MetaCategory;
   template <class T, class U> friend class FunctorStatic;
   template <class T, class U> friend class FunctorInstance;
+
   public:
+     /** Type definition for a factory method calling the default
+      * constructor.. */
+    typedef Object* (*creatorDefault)();
+
+    /** Type definition for a factory method calling the constructor that
+      * takes a string as argument. */
+    typedef Object* (*creatorString)(string);
+
     /** A string specifying the object type, i.e. the subclass within the
       * category. */
     string type;
 
     /** A reference to an XMLtag of the base string. */
     const XMLtag* typetag;
+
+    /** The category of this class. */
+    const MetaCategory* category;
+
+    /** A factory method for the registered class. */
+    union
+    {
+      creatorDefault factoryMethodDefault;
+      creatorString factoryMethodString;
+    };
+
+    /** Default constructor. */
+    MetaClass() : type("unspecified"), typetag(&XMLtag::find("unspecified")),
+      category(NULL), factoryMethodDefault(NULL) {}
+
+    /** Destructor. */
+    virtual ~MetaClass() {}
+
+    /** This constructor registers the metadata of a class. */
+    DECLARE_EXPORT void registerClass(const char*, const char*, bool = false) const;
+
+    /** This constructor registers the metadata of a class, with a factory
+      * method that uses the default constructor of the class. */
+    void registerClass (const char* cat, const char* cls, creatorDefault f,
+      bool def = false) const
+    {
+      const_cast<MetaClass*>(this)->factoryMethodDefault = f;
+      registerClass(cat,cls,def);
+    }
+
+    /** This constructor registers the metadata of a class, with a factory
+      * method that uses a constructor with a string argument. */
+    void registerClass (const char* cat, const char* cls, creatorString f,
+      bool def = false) const
+    {
+      const_cast<MetaClass*>(this)->factoryMethodString = f;
+      registerClass(cat,cls,def);
+    }
 
     /** This function will analyze the string being passed, and return the
       * appropriate action.
@@ -878,6 +912,14 @@ class MetaClass : public NonCopyable
     void disconnect(Functor *c, Signal a) const
       {const_cast<MetaClass*>(this)->subscribers[a].remove(c);}
 
+    /** Print all registered factory methods to the standard output for
+      * debugging purposes. */
+    static DECLARE_EXPORT void printClasses();
+
+    /** Find a particular class by its name. If it can't be located the return
+      * value is NULL. */
+    static DECLARE_EXPORT const MetaClass* findClass(const char*);
+
   private:
     /** This is a list of objects that will receive a callback when the call
       * method is being used.<br>
@@ -888,61 +930,6 @@ class MetaClass : public NonCopyable
       * educated user.
       */
     list<Functor*> subscribers[4];
-
-  public:
-    /** Type definition for a factory method calling the default
-      * constructor.. */
-    typedef Object* (*creatorDefault)();
-
-    /** Type definition for a factory method calling the constructor that
-      * takes a string as argument. */
-    typedef Object* (*creatorString)(string);
-
-    /** A factory method for the registered class. */
-    union
-    {
-      creatorDefault factoryMethodDefault;
-      creatorString factoryMethodString;
-    };
-
-    /** The category of this class. */
-    const MetaCategory* category;
-
-    /** Default constructor. */
-    MetaClass() : type("unspecified"), typetag(&XMLtag::find("unspecified")),
-      factoryMethodDefault(NULL), category(NULL) {}
-
-    /** Destructor. */
-    virtual ~MetaClass() {}
-
-    /** This constructor registers the metadata of a class. */
-    DECLARE_EXPORT void registerClass(const char*, const char*, bool = false) const;
-
-    /** This constructor registers the metadata of a class, with a factory
-      * method that uses the default constructor of the class. */
-    void registerClass (const char* cat, const char* cls, creatorDefault f,
-      bool def = false) const
-    {
-      const_cast<MetaClass*>(this)->factoryMethodDefault = f;
-      registerClass(cat,cls,def);
-    }
-
-    /** This constructor registers the metadata of a class, with a factory
-      * method that uses a constructor with a string argument. */
-    void registerClass (const char* cat, const char* cls, creatorString f,
-      bool def = false) const
-    {
-      const_cast<MetaClass*>(this)->factoryMethodString = f;
-      registerClass(cat,cls,def);
-    }
-
-    /** Print all registered factory methods to the standard output for
-      * debugging purposes. */
-    static DECLARE_EXPORT void printClasses();
-
-    /** Find a particular class by its name. If it can't be located the return
-      * value is NULL. */
-    static DECLARE_EXPORT const MetaClass* findClass(const char*);
 };
 
 
@@ -2617,14 +2604,14 @@ class Tree : public NonCopyable
     void rename(TreeNode* obj, string newname)
     {
       bool found;
-      TreeNode* i = findLowerBound(newname, &found);
+      findLowerBound(newname, &found);
       if (found)
         throw DataException("Can't rename '" + obj->nm + "' to '" 
           + newname + "': name already in use");
       erase(obj);
       // @todo: there is a small risk for multithreading trouble when the tree is unlocked between the delete and re-insert
       obj->nm = newname;
-      insert(obj, i);
+      insert(obj);
     };
 
     /** This method returns the number of nodes inserted in this tree.
@@ -3635,7 +3622,6 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 
         /** Return the content of the current node. */
         T* operator->() const {return static_cast<T*>(node);}
-        //typename T::pointer operator->() const {return static_cast<T*>(node);}
 
         /** Pre-increment operator which moves the pointer to the next
           * element. */

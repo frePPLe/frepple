@@ -84,6 +84,7 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_flows;
     static DECLARE_EXPORT const XMLtag tag_headeratts;
     static DECLARE_EXPORT const XMLtag tag_headerstart;
+    static DECLARE_EXPORT const XMLtag tag_hidden;
     static DECLARE_EXPORT const XMLtag tag_id;
     static DECLARE_EXPORT const XMLtag tag_item;
     static DECLARE_EXPORT const XMLtag tag_items;

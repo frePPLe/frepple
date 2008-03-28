@@ -45,7 +45,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   // Unattach previous delivery operationplans.
   // Locked operationplans will NOT be deleted, and a part of the demand can
   // still remain planned.
-  Demand::writepointer(l)->deleteOperationPlans();
+  const_cast<Demand*>(l)->deleteOperationPlans();
 
   // Determine the quantity to be planned and the date for the planning loop
   double plan_qty = l->getQuantity() - l->getPlannedQuantity();
@@ -63,7 +63,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
   Date best_q_date;
 
   // Which operation to use?
-  Operation::pointer deliveryoper = l->getDeliveryOperation();
+  Operation* deliveryoper = l->getDeliveryOperation();
   if (!deliveryoper)
     throw DataException("Demand '" + l->getName() + "' can't be planned");
 
@@ -82,7 +82,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
     Solver->curBuffer = NULL;
     Solver->q_qty = plan_qty;
     Solver->q_date = plan_date;
-    Solver->curDemand = l;
+    Solver->curDemand = const_cast<Demand*>(l);
     deliveryoper->solve(*this,v);
 
     // Message
@@ -154,7 +154,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
           {
             Solver->q_qty = remainder;
             Solver->q_date = copy_plan_date;
-            Solver->curDemand = l;
+            Solver->curDemand = const_cast<Demand*>(l);
             Solver->curBuffer = NULL;
             deliveryoper->solve(*this,v);
             if (Solver->a_qty < ROUNDING_ERROR)
@@ -201,7 +201,7 @@ DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
       {
         Solver->q_qty = remainder;
         Solver->q_date = best_q_date;
-        Solver->curDemand = l;
+        Solver->curDemand = const_cast<Demand*>(l);
         Solver->curBuffer = NULL;
         deliveryoper->solve(*this,v);
         if (Solver->a_qty < ROUNDING_ERROR)

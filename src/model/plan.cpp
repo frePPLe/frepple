@@ -97,11 +97,8 @@ DECLARE_EXPORT void Plan::endElement (XMLInput& pIn, XMLElement& pElement)
 DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_commands))
-  {
     // Handling of commands, a category which doesn't have a category reader
-    LockManager::getManager().obtainWriteLock(&(pIn.getCommands()));
     pIn.readto(&(pIn.getCommands()));
-  }
   else
   {
     const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pIn.getParentElement().getTagHash());

@@ -45,17 +45,11 @@ void ForecastSolver::endElement(XMLInput& pIn, XMLElement& pElement)
 void ForecastSolver::setAutomatic(bool b)
 {
   if (automatic && !b)
-  {
     // Disable the incremental solving (which is currently enabled)
-    FunctorInstance<Demand,ForecastSolver>::disconnect(this, SIG_AFTER_CHANGE);
     FunctorInstance<Demand,ForecastSolver>::disconnect(this, SIG_REMOVE);
-  }
   else if (!automatic && b)
-  {
     // Enable the incremental solving (which is currently disabled)
-    FunctorInstance<Demand,ForecastSolver>::connect(this, SIG_AFTER_CHANGE);
     FunctorInstance<Demand,ForecastSolver>::connect(this, SIG_REMOVE);
-  }
   automatic = b;
 }
 

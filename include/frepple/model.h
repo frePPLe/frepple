@@ -772,11 +772,13 @@ class CalendarOperation : public CalendarPointer<Operation>
   *  - Given the above, Problems are lightweight objects that consume
   *    limited memory.
   */
-class Problem : public NonCopyable
+class Problem : public NonCopyable, public Object
 {
   public:
     class const_iterator;
     friend class const_iterator;
+    
+    size_t getSize() const {return 12;} // @todo not implemented yet
 
     /** Constructor.
       * Note that this method can't manipulate the problem container, since

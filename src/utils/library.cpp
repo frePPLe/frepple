@@ -189,9 +189,6 @@ void LibraryUtils::initialize()
   // Initialize Xerces parser
   XMLPlatformUtils::Initialize();
 
-  // Create a lock manager
-  LockManager::mgr = new LockManager();
-
   // Initialize the command metadata.
   Command::metadata.registerCategory("command", "commands");
   CommandList::metadata.registerClass(
@@ -489,9 +486,6 @@ Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput
         delete result;
         throw DataException("Can't create object");
       }
-
-      // Lock the object
-      LockManager::getManager().obtainWriteLock(result);
 
       // Creation accepted
       return result;

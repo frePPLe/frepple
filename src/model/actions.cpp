@@ -138,22 +138,14 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
       // When no root object is passed, only the input validation happens
       XMLInput().parse(in, NULL, true);
     else
-    {
-      // Locking the plan assures a single read command is running at any time.
-      // LockManager::getManager().obtainWriteLock(&Plan::instance());
       XMLInput().parse(in, &Plan::instance(), validate);
-    }
   }
   else if (validate_only)
     // Read and validate a file
     XMLInputFile(filename).parse(NULL, true);
   else
-  {
     // Read, execute and optionally validate a file
-    // Locking the plan assures a single read command is running at any time.
-    // LockManager::getManager().obtainWriteLock(&Plan::instance());
     XMLInputFile(filename).parse(&Plan::instance(),validate);
-  }
 
   // Message
   if (getVerbose())
@@ -187,11 +179,8 @@ DECLARE_EXPORT void CommandReadXMLString::execute()
   if (validate_only)
     XMLInputString(data).parse(NULL, true);
   else
-  {
     // Locking the plan assures a single read command is running at any time.
-    // LockManager::getManager().obtainWriteLock(&Plan::instance());
     XMLInputString(data).parse(&Plan::instance(), validate);
-  }
 
   // Message
   if (getVerbose())

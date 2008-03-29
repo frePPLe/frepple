@@ -98,7 +98,6 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
       if (opplan)
       {
         // Send out the notification to subscribers
-        LockManager::getManager().obtainWriteLock(opplan);
         if (opplan->getType().raiseEvent(opplan, SIG_REMOVE))
           // Delete it
           delete opplan;
@@ -150,7 +149,6 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   if (opplan)
   {
     XMLString::release(&opname);
-    LockManager::getManager().obtainWriteLock(opplan);
     return opplan;
   }
 
@@ -168,10 +166,8 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
     // Create an operationplan
     XMLString::release(&opname);
     opplan = oper->createOperationPlan(0.0,Date::infinitePast,Date::infinitePast,NULL,NULL,id,false);
-    LockManager::getManager().obtainWriteLock(opplan);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD))
     {
-      LockManager::getManager().releaseWriteLock(opplan);
       delete opplan;
       throw DataException("Can't create operationplan");
     }

@@ -341,10 +341,6 @@
 				RelativePath="..\..\src\utils\status.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\utils\thread.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

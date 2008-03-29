@@ -250,7 +250,6 @@ void XMLInput::endElement(const XMLCh* const uri,
 #endif
         // Pop from the handler object stack
         prev = getCurrentObject();
-        LockManager::getManager().releaseWriteLock(prev);
         m_EHStack.pop_back();
         endingHashes.pop();
 
@@ -363,7 +362,6 @@ void XMLInput::shutdown()
       if (abortOnDataException) throw;
       else logger << "Continuing after data error: " << e.what() << endl;
     }
-    LockManager::getManager().releaseWriteLock(getCurrentObject());
     m_EHStack.pop_back();
   }
 }
@@ -394,7 +392,6 @@ void XMLInput::reset()
         if (abortOnDataException) throw;
         else logger << "Continuing after data error: " << e.what() << endl;
       }
-      LockManager::getManager().releaseWriteLock(getCurrentObject());
       m_EHStack.pop_back();
     }
   }

@@ -213,12 +213,8 @@ enum Signal
 {
   /** Adding a new entity. */
   SIG_ADD = 0,
-  /** Before changing an entity. */
-  SIG_BEFORE_CHANGE = 1,
-  /** After changing an entity. */
-  SIG_AFTER_CHANGE = 2,
   /** Deleting an entity. */
-  SIG_REMOVE = 3
+  SIG_REMOVE = 1
 };
 
 
@@ -228,8 +224,6 @@ inline ostream & operator << (ostream & os, const Signal & d)
   switch (d)
   {
     case SIG_ADD: os << "ADD"; return os;
-    case SIG_BEFORE_CHANGE: os << "BEFORE_CHANGE"; return os;
-    case SIG_AFTER_CHANGE: os << "AFTER_CHANGE"; return os;
     case SIG_REMOVE: os << "REMOVE"; return os;
     default: assert(false); return os;
   }
@@ -559,82 +553,10 @@ class Mutex: public NonCopyable
 class ScopeMutexLock: public NonCopyable
 {
   protected:
-    Mutex* mtx;
+    Mutex& mtx;
   public:
-    ScopeMutexLock(Mutex& imtx): mtx(&imtx) { mtx->lock (); }
-    ~ScopeMutexLock() { mtx->unlock(); }
-};
-
-
-class MetaClass;
-
-/** This enum defines the different priority values for threads. */
-enum priority
-{
-  /** Tasks with this priority are only executed when the system is idle. */
-  IDLE = 0,
-  /** Priority is lower than normal. */
-  LOW = 1,
-  /** The default priority level. */
-  NORMAL = 2,
-  /** Priority is higher than normal. */
-  HIGH = 3
-};
-
-
-/** @brief A lock represents a data structure to maintain a
-  * multiple-reader / single-writer multithreading lock.<br>
-  * The current implementation is incomplete...
-  */
-class Lock
-{
-  private:
-    unsigned int readers;
-    //Thread* writer;  @todo need to add a mutex or condition
-    //Object* object;
-  public:
-    Lock() : readers(0) {}
-    //~Lock() {object->lock = NULL;}
-};
-
-
-/** @brief A manager class to maintain, create and destroy mult-threading
-  * locks.<br>The current implementation is incomplete...
-  *
-  * Different managers can be built to implement different ways of locking
-  * objects. Some implem
-  *
-  * A single lock manager is active in frepple at any point in time, but the
-  * active manager can be switched on the fly.
-  */
-class LockManager : public NonCopyable
-{
-  friend class LibraryUtils;
-  private:
-    static DECLARE_EXPORT LockManager* mgr;
-  public:
-    static LockManager& getManager() {return *mgr;}
-    DECLARE_EXPORT void obtainReadLock(const Object*, priority = NORMAL);
-    DECLARE_EXPORT void obtainWriteLock(Object*, priority = NORMAL);
-    DECLARE_EXPORT void releaseReadLock(const Object*);
-    DECLARE_EXPORT void releaseWriteLock(Object*);
-    DECLARE_EXPORT void obtainReadLock(const Lock&, priority = NORMAL);
-    DECLARE_EXPORT void obtainWriteLock(Lock&, priority = NORMAL);
-    DECLARE_EXPORT void releaseReadLock(const Lock&);
-    DECLARE_EXPORT void releaseWriteLock(Lock&);
-  private:
-    /** Return a lock handle for this object. The locks are managed in a pool
-      * to avoid constant freeing and allocating of memory.
-      * @todo needs to be atomic...
-      */
-    //Lock* getLock() const
-    //  { if (!l) const_cast<Object*>(this)->l = pool_locks.Alloc(); return l;}
-
-    //typedef map <Lockable*, pair<unsigned int, unsigned int> > table;
-    //static table locked;
-
-    /** A pool of lock objects. */
-    //static Pool<Lock> pool_locks;
+    ScopeMutexLock(Mutex& imtx): mtx(imtx) { mtx.lock (); }
+    ~ScopeMutexLock() { mtx.unlock(); }
 };
 
 
@@ -801,6 +723,12 @@ class MetaClass : public NonCopyable
       * takes a string as argument. */
     typedef Object* (*creatorString)(string);
 
+    /** Type definition for a factory method that constructs Python 
+      * objects.<br> 
+      * The return value is actually a PyObject pointer.
+      */
+    typedef void* (*creatorPythonProxy)(Object*);
+
     /** A string specifying the object type, i.e. the subclass within the
       * category. */
     string type;
@@ -818,9 +746,14 @@ class MetaClass : public NonCopyable
       creatorString factoryMethodString;
     };
 
+    /** A factory method for a Python object that can act as a proxy for
+      * the C++ object.
+      */
+    creatorPythonProxy factoryPythonProxy;
+
     /** Default constructor. */
     MetaClass() : type("unspecified"), typetag(&XMLtag::find("unspecified")),
-      category(NULL), factoryMethodDefault(NULL) {}
+      category(NULL), factoryMethodDefault(NULL), factoryPythonProxy(NULL) {}
 
     /** Destructor. */
     virtual ~MetaClass() {}
@@ -2264,10 +2197,9 @@ class XMLElement
   */
 class Object
 {
-  friend class LockManager;
   public:
     /** Constructor. */
-    explicit Object() : lock(NULL) {}
+    explicit Object() {}
 
     /** Destructor. */
     virtual ~Object() {}
@@ -2314,123 +2246,6 @@ class Object
     /** Return the memory size of the object in bytes. */
     virtual size_t getSize() const = 0;
 
-    /** @brief The RLock class provides an exception safe way of getting a
-      * read lock on an Object.
-      *
-      * The constructor acquires the read lock and the destructor will release
-      * it again.<br>
-      * RLocks should be used as temporary objects on the stack, and should
-      * be accessed by a single thread only.
-      */
-    template <class T> class RLock
-    {
-      public:
-	      /** Constructs a read-lock. This method blocks till the object
-          * lock can be obtained.
-          */
-        RLock(const T* l) : obj(l)
-          {LockManager::getManager().obtainReadLock(obj);}
-
-        /** Copy constructor.
-          * You should only copy a lock within the same thread!
-          */
-        RLock(const RLock<T>& p) : obj(p.obj) {}
-
-        /** Destructor. The lock is released upon deletion of this object. */
-        ~RLock() {LockManager::getManager().releaseReadLock(obj);}
-
-        /** Returns a pointer to the locked object. */
-        const T* getObject() const {return obj;}
-
-        /** Dereference operator. */
-        const T& operator*() const {return *obj;}
-
-        /** Dereference operator. */
-        const T* operator->() const {return obj;}
-
-        /** Comparison operator. */
-        bool operator==(const RLock<T>& a) const {return obj == a.obj;}
-
-        /** Comparison operator. */
-        bool operator==(const T* a) const {return obj == a;}
-
-        /** Inequality operator. */
-        bool operator!=(const RLock<T>& a) const {return obj != a.obj;}
-
-        /** Inequality operator. */
-        bool operator!=(const T* a) const {return obj != a;}
-
-        /** Boolean operator. */
-        operator bool() const {return obj != NULL;}
-
-      private:
-        /** A pointer to the object being locked. */
-        const T* obj;
-    };
-
-
-    /** @brief The WLock class provides an exception safe way of getting
-      * a write lock on an Object.
-      *
-      * The constructor acquires the write lock and the destructor will release
-      * it again.<br>
-      * WLocks should be used as temporary objects on the stack, and should
-      * be accessed by a single thread only.
-      */
-    template <class T> class WLock
-    {
-      public:
-	      /** Constructs a write-lock. This method blocks till the object
-          * lock can be obtained.
-          */
-        WLock(T* l) : obj(l)
-          {LockManager::getManager().obtainWriteLock(obj);}
-
-        /** Copy constructor.<br>
-          * You should only copy a lock within the same thread!
-          */
-        WLock(const WLock<T>& p) : obj(p.obj) {}
-
-        /** Constructor, promoting a read-lock to a writelock.<br>
-          * You should only copy a lock within the same thread!
-          */
-        WLock(const RLock<T>& p) : obj(const_cast<T*>(p.getObject()))
-          {LockManager::getManager().obtainWriteLock(obj);}
-
-        /** Destructor.<br>
-          * The write lock is released when the WLock object is deleted.
-          */
-        ~WLock() {LockManager::getManager().releaseWriteLock(obj);}
-
-        /** Returns a pointer to the locked object. */
-        T* getObject() const {return obj;}
-
-        /** Dereference operator. */
-        T& operator*() const {return *obj;}
-
-        /** Dereference operator. */
-        T* operator->() const {return obj;}
-
-        /** Comparison operator. */
-        bool operator==(const WLock<T>& a) const {return obj == a.obj;}
-
-        /** Comparison operator. */
-        bool operator==(const T* a) const {return obj == a;}
-
-        /** Inequality operator. */
-        bool operator!=(const WLock<T>& a) const {return obj != a.obj;}
-
-        /** Inequality operator. */
-        bool operator!=(const T* a) const {return obj != a;}
-
-        /** Boolean operator. */
-        operator bool() const {return obj != NULL;}
-
-      private:
-        /** A reference to the object being locked. */
-        T* obj;
-    };
-
     /** This template function can generate a factory method for objects that
       * can be constructed with their default constructor.  */
     template <class T> static Object* createDefault()
@@ -2440,12 +2255,6 @@ class Object
       * need a string argument in their constructor. */
     template <class T> static Object* createString(string n)
       {return new T(n);}
-
-  private:
-    /** This is a pointer to a object maintaining the locking status.<br>
-      * The Lock object is assigned from a pool when required.
-      */
-    Lock *lock;
 };
 
 
@@ -2594,9 +2403,8 @@ class Tree : public NonCopyable
       * Its complexity is O(1). */
     bool empty() const
     {
-      LockManager::getManager().obtainReadLock(l);
+      ScopeMutexLock l(const_cast<Mutex&>(treeaccess));      
       bool result = (header.parent == NULL);
-      LockManager::getManager().releaseReadLock(l);
       return result;
     }
 
@@ -2614,20 +2422,14 @@ class Tree : public NonCopyable
       insert(obj);
     };
 
-    /** This method returns the number of nodes inserted in this tree.
-      * Its complexity is O(1).
-      * In other words:
-      *   - avoid calling it too often for large lists.
-      *   - Cache the results if possible.
-      *   - Use the method empty() if you only want to check whether the
-      *     list is empty or not.
+    /** This method returns the number of nodes inserted in this tree.<br>
+      * Its complexity is O(1), so it can be called on large trees without any 
+      * performance impact.
       */
     size_t size() const
     {
-      LockManager::getManager().obtainReadLock(l);
-      size_t result = count;
-      LockManager::getManager().releaseReadLock(l);
-      return result;
+      ScopeMutexLock l(const_cast<Mutex&>(treeaccess));
+      return count;
     }
 
     /** Verifies the integrity of the tree and returns true if all is okay. */
@@ -2645,7 +2447,7 @@ class Tree : public NonCopyable
       */
     TreeNode* find(const string& k) const
     {
-      LockManager::getManager().obtainReadLock(l);
+      ScopeMutexLock l(const_cast<Mutex&>(treeaccess));
       int comp;
 	    for (TreeNode* x = header.parent; x; x = comp<0 ? x->left : x->right)
       {
@@ -2653,7 +2455,6 @@ class Tree : public NonCopyable
 		    if (!comp) return x;
 	    }
       TreeNode* result = end();
-      LockManager::getManager().releaseReadLock(l);
       return result;
     }
 
@@ -2664,7 +2465,7 @@ class Tree : public NonCopyable
       */
     TreeNode* findLowerBound(const string& k, bool* f) const
     {
-      LockManager::getManager().obtainReadLock(l);
+      ScopeMutexLock l(const_cast<Mutex&>(treeaccess));
       TreeNode* lower = end();
       for (TreeNode* x = header.parent; x;)
       {
@@ -2672,14 +2473,12 @@ class Tree : public NonCopyable
         if (!comp)
         {
           // Found
-          LockManager::getManager().releaseReadLock(l);
           if (f) *f = true;
           return x;
         }
         if (comp<0) x = x->left;
         else lower = x, x = x->right;
       }
-      LockManager::getManager().releaseReadLock(l);
       if (f) *f = false;
       return lower;
     }
@@ -2738,8 +2537,11 @@ class Tree : public NonCopyable
     /** Stores the number of elements in the tree. */
     size_t count;
 
-    /** Controls concurrencny during use of the tree. */
-    Lock l;
+    /** Controls concurrent access to the tree from different trheads.<br>
+      * Every function reading or updating the tree should keep this mutex 
+      * locked during the operation.
+      */
+    Mutex treeaccess;
 
     /** Controls whether the destructor needs to be clear all objects in the
       * tree in its destructor.<br>
@@ -3787,9 +3589,6 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
             throw DataException(msg);
           }
           XMLString::release(&name);
-
-          // Lock the object, which includes also the callback
-          LockManager::getManager().obtainWriteLock(i);
           return i;
 
         case REMOVE:
@@ -3797,7 +3596,6 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
           if (found)
           {
             // Send out the notification to subscribers
-            LockManager::getManager().obtainWriteLock(i);   // @todo this lock shouldn't trigger callbacks?
             if (i->getType().raiseEvent(i,SIG_REMOVE))
             {
               XMLString::release(&name);
@@ -3808,7 +3606,6 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
             else
             {
               // The callbacks disallowed the deletion!
-              LockManager::getManager().releaseWriteLock(i);
               string msg = string("Can't remove object '") + name + "'";
               XMLString::release(&name);
               throw DataException(msg);
@@ -3829,9 +3626,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       // Return the existing instance
       if (found)
       {
-        // Lock the object, which includes the callbacks
         XMLString::release(&name);
-        LockManager::getManager().obtainWriteLock(i);
         return i;
       }
 
@@ -3873,9 +3668,6 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         throw DataException(msg);
       }
       XMLString::release(&name);
-
-      // Lock the object, which includes the before-change callback
-      LockManager::getManager().obtainWriteLock(x);
 
       // Insert in the tree
       T::add(x, i);

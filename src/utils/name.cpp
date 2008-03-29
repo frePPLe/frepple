@@ -37,7 +37,7 @@ DECLARE_EXPORT void Tree::clear()
   if (empty()) return;
 
   // Lock the tree
-  LockManager::getManager().obtainWriteLock(l);
+  ScopeMutexLock l(treeaccess);
 
   // Erase all elements
   for (TreeNode* x = begin(); x != end(); x = begin())
@@ -48,9 +48,6 @@ DECLARE_EXPORT void Tree::clear()
     else
       throw DataException("Can't delete object");
   }
-
-  // Unlock the tree
-  LockManager::getManager().releaseWriteLock(l);
 }
 
 
@@ -59,7 +56,7 @@ Tree::TreeNode* Tree::insert(TreeNode* z, TreeNode *hint)
   if (!z) throw LogicException("Inserting null pointer in tree");
 
   // Lock the tree
-  LockManager::getManager().obtainWriteLock(l);
+  ScopeMutexLock l(treeaccess);
 
   // Use the hint to create the proper starting point in the tree
   int comp;
@@ -94,11 +91,7 @@ Tree::TreeNode* Tree::insert(TreeNode* z, TreeNode *hint)
     y = hint;
     // Exit the function if the key is already found
     comp = z->nm.compare(hint->nm);
-    if (!comp)
-    {
-      LockManager::getManager().releaseWriteLock(l);
-      return hint;
-    }
+    if (!comp) return hint;
   }
 
   if (y == &header || z->nm < y->nm)
@@ -132,7 +125,6 @@ Tree::TreeNode* Tree::insert(TreeNode* z, TreeNode *hint)
 
   // Rebalance the tree
   rebalance(z);
-  LockManager::getManager().releaseWriteLock(l);
   return z;
 }
 
@@ -199,7 +191,7 @@ void Tree::erase(TreeNode* z)
   if (!z || z->color == none) return;
 
   // Lock the tree
-  LockManager::getManager().obtainWriteLock(l);
+  ScopeMutexLock l(treeaccess);
 
   TreeNode* y = z;
   TreeNode* x = NULL;
@@ -332,9 +324,6 @@ void Tree::erase(TreeNode* z)
         }
         if (x) x->color = black;
     }
-
-  // Unlock the tree
-  LockManager::getManager().releaseWriteLock(l);
 }
 
 
@@ -383,7 +372,7 @@ void Tree::rotateRight(TreeNode* x)
 DECLARE_EXPORT void Tree::verify() const
 {
   // Lock the tree
-  LockManager::getManager().obtainReadLock(l);
+  ScopeMutexLock l(const_cast<Mutex&>(treeaccess));
 
   // Checks for an empty tree
   if (empty() || begin() == end())
@@ -392,11 +381,7 @@ DECLARE_EXPORT void Tree::verify() const
         begin() == end() &&
         header.left == &header &&
         header.right == &header);
-    if (!ok)
-    {
-      LockManager::getManager().releaseReadLock(l);
-      throw LogicException("Invalid empty tree");
-    }
+    if (!ok) throw LogicException("Invalid empty tree");
     return;
   }
 
@@ -409,66 +394,41 @@ DECLARE_EXPORT void Tree::verify() const
     ++counter;
 
     if (x->color == none)
-    {
       // Nodes must have a color
-      LockManager::getManager().releaseReadLock(l);
       throw LogicException("Colorless node included in a tree");
-    }
 
     if (x->color == red)
       if ((L && L->color == red) || (R && R->color == red))
-      {
         // A red node can have only NULL and black children
-        LockManager::getManager().releaseReadLock(l);
         throw LogicException("Wrong color on node");
-      }
 
     if (L && x->nm<L->nm)
-    {
       // Left child isn't smaller
-      LockManager::getManager().releaseReadLock(l);
       throw LogicException("Wrong sorting on left node");
-    }
 
     if (R && R->nm<x->nm)
-    {
       // Right child isn't bigger
-      LockManager::getManager().releaseReadLock(l);
       throw LogicException("Wrong sorting on right node");
-    }
 
     if (!L && !R && countBlackNodes(x) != len)
-    {
       // All leaf nodes have the same number of black nodes on their path
       // to the root
-      LockManager::getManager().releaseReadLock(l);
       throw LogicException("Unbalanced count of black nodes");
-    }
   }
 
   // Check whether the header has a good pointer to the leftmost element
   if (header.left != minimum(header.parent))
-  {
-    LockManager::getManager().releaseReadLock(l);
     throw LogicException("Incorrect tree minimum");
-  }
 
   // Check whether the header has a good pointer to the rightmost element
   if (header.right != maximum(header.parent))
-  {
-    LockManager::getManager().releaseReadLock(l);
     throw LogicException("Incorrect tree maximum");
-  }
 
   // Check whether the measured node count match the expectation?
   if (counter != size())
-  {
-    LockManager::getManager().releaseReadLock(l);
     throw LogicException("Incorrect tree size");
-  }
 
   // If we reach this point, then this tree is healthy
-  LockManager::getManager().releaseReadLock(l);
 }
 
 }

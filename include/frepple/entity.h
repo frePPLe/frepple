@@ -25,18 +25,6 @@
  ***************************************************************************/
 
 
-template <class T> inline ostream& operator << (ostream &o, const Object::RLock<T> &n)
-{
-  return o << &*n;
-}
-
-
-template <class T> inline ostream& operator << (ostream &o, const Object::WLock<T> &n)
-{
-  return o << &*n;
-}
-
-
 template <class T> inline ostream& operator << (ostream &o, const HasName<T> &n)
 {
   return o << n.getName();

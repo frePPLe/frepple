@@ -778,8 +778,6 @@ class Problem : public NonCopyable, public Object
     class const_iterator;
     friend class const_iterator;
     
-    size_t getSize() const {return 12;} // @todo not implemented yet
-
     /** Constructor.
       * Note that this method can't manipulate the problem container, since
       * the problem objects aren't fully constructed yet.
@@ -2031,8 +2029,10 @@ class OperationPlan
     /** Return the metadata. We return the metadata of the operation class,
       * not the one of the operationplan class!
       */
-    const MetaClass& getType() const {return getOperation()->getType();}
+    const MetaClass& getType() const {return metadata;}
+
     static DECLARE_EXPORT const MetaCategory metadata;
+
     virtual size_t getSize() const
       {return sizeof(OperationPlan);}
 
@@ -4119,6 +4119,7 @@ class ProblemBeforeCurrent : public Problem
         return DateRange(o->getDates().getStart(),
             o->getDates().getEnd());
     }
+    size_t getSize() const {return sizeof(ProblemBeforeCurrent);} 
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}
@@ -4160,6 +4161,7 @@ class ProblemBeforeFence : public Problem
         return DateRange(o->getDates().getStart(),
             o->getDates().getEnd());
     }
+    size_t getSize() const {return sizeof(ProblemBeforeFence);} 
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}
@@ -4204,6 +4206,7 @@ class ProblemPrecedence : public Problem
 
     /** Storing metadata on this class. */
     static DECLARE_EXPORT const MetaClass metadata;
+    size_t getSize() const {return sizeof(ProblemPrecedence);} 
 
   private:
     /** Pointers to the operationplans which violate the sequence.
@@ -4230,6 +4233,7 @@ class ProblemDemandNotPlanned : public Problem
     const DateRange getDateRange() const
       {return DateRange(getDemand()->getDue(),getDemand()->getDue());}
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
+    size_t getSize() const {return sizeof(ProblemDemandNotPlanned);} 
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}
@@ -4267,6 +4271,7 @@ class ProblemLate : public Problem
           (*(getDemand()->getDelivery().begin()))->getDates().getEnd());
     }
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
+    size_t getSize() const {return sizeof(ProblemLate);} 
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}
@@ -4299,6 +4304,7 @@ class ProblemEarly : public Problem
           (*(getDemand()->getDelivery().begin()))->getDates().getEnd());
     }
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
+    size_t getSize() const {return sizeof(ProblemEarly);} 
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}
@@ -4330,6 +4336,7 @@ class ProblemShort : public Problem
     const DateRange getDateRange() const
       {return DateRange(getDemand()->getDue(), getDemand()->getDue());}
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
+    size_t getSize() const {return sizeof(ProblemShort);} 
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}
@@ -4361,6 +4368,7 @@ class ProblemExcess : public Problem
     const DateRange getDateRange() const
       {return DateRange(getDemand()->getDue(), getDemand()->getDue());}
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
+    size_t getSize() const {return sizeof(ProblemExcess);} 
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}
@@ -4397,6 +4405,8 @@ class ProblemPlannedLate : public Problem
       * all operation_plans and existing problems, which can be expensive in a
       * big plan. */
     static void setAllowedLate(TimePeriod p);
+
+    size_t getSize() const {return sizeof(ProblemPlannedLate);} 
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}
@@ -4440,6 +4450,8 @@ class ProblemPlannedEarly : public Problem
       * big plan. */
     static void setAllowedEarly(TimePeriod p);
 
+    size_t getSize() const {return sizeof(ProblemPlannedEarly);} 
+
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}
 
@@ -4468,6 +4480,7 @@ class ProblemCapacityOverload : public Problem
     ~ProblemCapacityOverload() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Resource* getResource() const {return dynamic_cast<Resource*>(getOwner());}
+    size_t getSize() const {return sizeof(ProblemCapacityOverload);} 
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}
@@ -4498,6 +4511,7 @@ class ProblemCapacityUnderload : public Problem
     ~ProblemCapacityUnderload() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Resource* getResource() const {return dynamic_cast<Resource*>(getOwner());}
+    size_t getSize() const {return sizeof(ProblemCapacityUnderload);} 
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}
@@ -4528,6 +4542,7 @@ class ProblemMaterialShortage : public Problem
     ~ProblemMaterialShortage() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}
+    size_t getSize() const {return sizeof(ProblemMaterialShortage);} 
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}
@@ -4558,6 +4573,7 @@ class ProblemMaterialExcess : public Problem
     ~ProblemMaterialExcess() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}
+    size_t getSize() const {return sizeof(ProblemMaterialExcess);} 
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return metadata;}

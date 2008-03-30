@@ -291,6 +291,7 @@ class Command(BaseCommand):
           location=loc,
           category='00'
           )
+        buf.save()
         fl = Flow(operation=oper, thebuffer=buf, quantity=-1)
         fl.save()
 

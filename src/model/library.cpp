@@ -502,7 +502,7 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   for (Problem::const_iterator pr = Problem::begin(); pr!=Problem::end(); ++pr)
   {
     ++count;
-    memsize += sizeof(*pr);
+    memsize += pr->getSize();
   }
   total += memsize;
   logger << "Problem      \t" << count << "\t" << memsize << endl;

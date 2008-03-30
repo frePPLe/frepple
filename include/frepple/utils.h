@@ -2187,7 +2187,7 @@ class XMLElement
   *   environments. The implementation of the locking algorithm is delegated
   *   to the LockManager class, and the base class provides only a pointer
   *   to a lock object and convenience guard classes.
-  * - <b>Callbacks:</b> When objects are created, changing or deleted,
+  * - <b>Callbacks:</b> When objects are created or deleted,
   *   interested classes or objects can get a callback notification.
   * - <b>Serialization:</b> Objects need to be persisted and later restored.
   *   Subclasses that don't need to be persisted can skip the implementation

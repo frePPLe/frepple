@@ -62,38 +62,26 @@
   * </PRE>
   *
   * The following frePPLe functions are available from within Python.<br>
-  * All of these are in the module called frePPLe.
+  * All of these are in the module called frePPLe.   @todo List NOT up to date
+  *   - <b>All classes</b> and their attributes are accessible for reading
+  *     and writing.
   *   - <b>version</b>:<br>
   *     A string variable with the version number.
   *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br>
   *     Processes an XML string passed as argument.
   *   - <b>log(string)</b>:<br>
   *     Prints a string to the frePPLe log file.<br>
-  *     This is used for redirecting the stdout and stderr of Python.
+  *     This is used for redirecting the stdout and stderr of Python. 
   *   - <b>readXMLfile(string [,bool] [,bool])</b>:<br>
   *     Read an XML-file.
   *   - <b>saveXMLfile(string)</b>:<br>
   *     Save the model to an XML-file.
   *   - <b>saveXMLstring()</b>:<br>
   *     Returns the complete model as an XML-formatted string.
-  *   - <b>createItem(string, string)</b>:<br>
-  *     Uses the C++ API to create an item and its delivery operation.<br>
-  *     For experimental purposes...
-  *   - class <b>frepple.problem</b>:<br>
-  *     Implements an iterator for problems.
-  *   - class <b>frepple.operationplan</b>:<br>
-  *     Implements an iterator for operationplans.
-  *   - class <b>frepple.demand</b>:<br>
-  *     Implements an iterator for demand, its delivery operationplans
-  *     and its pegging.
-  *   - class <b>frepple.buffer</b>:<br>
-  *     Implements an iterator for buffer and its flowplans.
-  *   - class <b>frepple.resource</b>:<br>
-  *     Implements an iterator for resource and its loadplans.
   *
-  * Note that the interface between frePPLe and Python is an iterator,
-  * and we stay away from the 'twin-object' approach. This is because
-  * we want frePPLe to remain the owner of all data.
+  * Note that the interface between frePPLe and Python follows a 'proxy' 
+  * pattern. The Python objects are a temporary poxy only to the C++
+  * objects. We stay away from a 'twin-object' approach.
   */
 
 #ifndef PYTHON_H
@@ -112,12 +100,20 @@ namespace module_python
 {
 
 // Include definitions of commonly used python utility functions
-#ifndef DOXYGEN
 #include "pythonutils.h"
-#endif
 
 /** Initialization routine for the library. */
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);
+
+
+/** @brief Python exception class matching with frepple::LogicException. */
+extern PyObject* PythonLogicException;
+
+/** @brief Python exception class matching with frepple::DataException. */
+extern PyObject* PythonDataException;
+
+/** @brief Python exception class matching with frepple::RuntimeException. */
+extern PyObject* PythonRuntimeException;
 
 
 /** @brief This command executes Python code in the embedded interpreter.
@@ -148,44 +144,7 @@ class CommandPython : public Command, public XMLinstruction
       * within Python. */
     static PyMethodDef PythonAPI[];
 
-    /** This static variable is a template for defining our Python
-      * objects.<br>
-      * It is copied for each interface object we define.
-      */
-    static const PyTypeObject TemplateInfoType;
-
   public:
-    /** This template function initializes a structure as a Python class.<br>
-      * The class passed as template argument must have a verify specific
-      * structure: see the examples.
-      */
-    template<class X> static void define_type(PyObject* m, const string& a, const string& b)
-    {
-      // Copy the default type information, and overwrite some fields
-      memcpy(&X::InfoType, &TemplateInfoType, sizeof(PyTypeObject));
-      X::InfoType.tp_basicsize =	sizeof(X);
-      X::InfoType.tp_iternext = reinterpret_cast<iternextfunc>(X::next);
-      X::InfoType.tp_new = X::create;
-      X::InfoType.tp_dealloc = reinterpret_cast<destructor>(X::destroy);
-      // Note: We need to 'leak' the strings allocated on the next two lines!
-      string *aa = new string(string("frepple.") + a);
-      string *bb = new string(b);
-      X::InfoType.tp_name = const_cast<char*>(aa->c_str());
-      X::InfoType.tp_doc = const_cast<char*>(bb->c_str());
-
-      // Allow for type-specific registration code;
-      X::define_type();
-
-      // Register the new type in the module
-      if (PyType_Ready(&X::InfoType) < 0)
-      {
-        PyEval_ReleaseLock();
-        throw frepple::RuntimeException("Can't register python type " + a);
-      }
-      Py_INCREF(&X::InfoType);
-      PyModule_AddObject(m, const_cast<char*>(a.c_str()), reinterpret_cast<PyObject*>(&X::InfoType));
-    }
-
     /** Executes the python command or source file. */
     void execute();
 
@@ -202,10 +161,10 @@ class CommandPython : public Command, public XMLinstruction
     void setCommandLine(string s) {cmd = s; filename.clear();}
 
     /** Return the command line. */
-    string getCommandLine() {return cmd;}
+    string getCommandLine() const {return cmd;}
 
     /** Return the filename. */
-    string getFileName() {return filename;}
+    string getFileName() const {return filename;}
 
     /** Update the filename field and clear the filename field. */
     void setFileName(string s) {filename = s; cmd.clear();}
@@ -231,7 +190,6 @@ class CommandPython : public Command, public XMLinstruction
     static void initialize();
 
   private:
-
     /** Python API: Used for redirecting the Python output to the same file
       * as the applciation. <br>
       * Arguments: data (string)
@@ -242,15 +200,6 @@ class CommandPython : public Command, public XMLinstruction
       * Arguments: data (string), validate (bool), checkOnly (bool)
       */
     static PyObject *python_readXMLdata(PyObject*, PyObject*);
-
-    /** Python API: Create an item and a delivery operation. This function
-      * directly interacts with the frePPLe C++ API, without passing through
-      * XML.<br>
-      * This function is intended for experimental and demonstration purposes
-      * only.<br>
-      * Arguments: item name (string), operation name (string)
-      */
-    static PyObject *python_createItem(PyObject*, PyObject*);
 
     /** Python API: read an xml file.<br>
       * Arguments: data (string), validate (bool), checkOnly (bool)
@@ -267,188 +216,1140 @@ class CommandPython : public Command, public XMLinstruction
       * Return: string
       */
     static PyObject *python_saveXMLstring(PyObject*, PyObject*);
-
-    /** Python exception class matching with frepple::LogicException. */
-    static PyObject* PythonLogicException;
-
-    /** Python exception class matching with frepple::DataException. */
-    static PyObject* PythonDataException;
-
-    /** Python exception class matching with frepple::RuntimeException. */
-    static PyObject* PythonRuntimeException;
 };
 
 
+// The following handler functions redirect the call from Python onto a
+// matching virtual function in a PythonExtensionBase subclass.
+// @todo Need a cleaner way of dealing with exceptions in the handlers (and at other places)
 extern "C"
 {
+  /** Handler function called from Python. Internal use only. */
+  PyObject* getattro_handler (PyObject*, PyObject*);
+  /** Handler function called from Python. Internal use only. */
+  int setattro_handler (PyObject*, PyObject*, PyObject*);
+  /** Handler function called from Python. Internal use only. */
+  int compare_handler (PyObject*, PyObject*);
+  /** Handler function called from Python. Internal use only. */
+  PyObject* iternext_handler (PyObject*);
+  /** Handler function called from Python. Internal use only. */
+  PyObject* call_handler(PyObject*, PyObject*, PyObject*);
+  /** Handler function called from Python. Internal use only. */
+  PyObject* str_handler(PyObject*);
+}
 
 
-  /** @brief This class exports Problem information to Python. */
-  struct PythonProblem
-  {
-    private:
-      PyObject_HEAD
-      Problem::const_iterator *iter;
-    public:
-      static PyTypeObject InfoType;
-      static PyObject* next(PythonProblem*);
-      static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-      static void destroy(PythonProblem* obj)
-      {delete obj->iter; PyObject_Del(obj);}
-      static void define_type() {}
-  };
+/** @brief This class is a wrapper around the type information in Python.
+  *
+  * In the Python C API this is represented by the PyTypeObject structure. 
+  * This class defines a number of convenience functions to update and maintain
+  * the type information.
+  */
+class PythonType : public NonCopyable
+{
+  private:
+    /** This static variable is a template for cloning type definitions.<br>
+      * It is copied for each type object we create.
+      */
+    static const PyTypeObject PyTypeObjectTemplate;
+
+  public:
+    /** Constructor, sets the tp_base_size member. */
+    PythonType (size_t base_size); 
+
+    /** Return a pointer to the actual Python PyTypeObject. */
+    PyTypeObject* type_object() const {return const_cast<PyTypeObject*>(&table);}
+
+    /** Updates tp_name. */
+    void setName (const string n)
+    {
+      name = "frepple." + n;
+      table.tp_name = const_cast<char*>(name.c_str());
+    }
+
+    /** Updates tp_doc. */
+    void setDoc (const string n)
+    {
+      doc = n;
+      table.tp_doc = const_cast<char*>(doc.c_str());
+    }
+
+    /** Updates tp_base. */
+    void setBase(PythonType& b)
+    {
+      table.tp_base = &b.table;
+    }
+
+    /** Updates the deallocator. */
+    void dealloc(void (*f)(PyObject*))
+    {
+      table.tp_dealloc = f;
+    }
+
+    /** Updates tp_getattro.<br>
+      * The extension class will need to define a member function with this
+      * prototype:<br>
+      *   PythonObject getattro(const XMLElement& name)
+      */
+    void supportgetattro() {table.tp_getattro = getattro_handler;}
+
+    /** Updates tp_setattro.<br>
+      * The extension class will need to define a member function with this
+      * prototype:<br>
+      *   int setattro(const XMLElement& name, const PythonObject& value)
+      */
+    void supportsetattro() {table.tp_setattro = setattro_handler;}
+
+    /** Updates tp_compare.<br>
+      * The extension class will need to define a member function with this
+      * prototype:<br>
+      *   int compare(const PythonObject& other)
+      */
+    void supportcompare() {table.tp_compare = compare_handler;}
+
+    /** Updates tp_iter and tp_iternext.<br>
+      * The extension class will need to define a member function with this
+      * prototype:<br>
+      *   PyObject* iternext()
+      */
+    void supportiter() 
+    {
+      table.tp_iter = PyObject_SelfIter;
+      table.tp_iternext = iternext_handler;
+    }
+
+    /** Updates tp_call.<br>
+      * The extension class will need to define a member function with this
+      * prototype:<br>
+      *   PyObject* call(const PythonObject& args, const PythonObject& kwds)
+      */
+    void supportcall() {table.tp_call = call_handler;}
+
+    /** Updates tp_str.<br>
+      * The extension class will need to define a member function with this
+      * prototype:<br>
+      *   PyObject* str()
+      */
+    void supportstr() {table.tp_str = str_handler;}
+
+    /** Type definition for create functions. */
+    typedef PyObject* (*createfunc)(PyTypeObject*, PyObject*, PyObject*);
+
+    /** Updates tp_new with the function passed as argument. */
+    void supportcreate(createfunc c) {table.tp_new = c;}
+
+    /** This method needs to be called after the type information has all
+      * been updated. It adds the type to the module that is passed as
+      * argument. */
+    int typeReady(PyObject* m);
+
+  private: 
+    /** The type object, as it is used by Python. */
+    PyTypeObject table;
+
+    /** Class name. */
+    string name;
+
+    /** Documentation string. */
+    string doc;
+}; 
 
 
-  /** @brief This class exports FlowPlan information to Python. */
-  struct PythonFlowPlan
-  {
-    private:
-      PyObject_HEAD
-      Buffer::flowplanlist::const_iterator iter;
-      Buffer* buf;
-    public:
-      static PyTypeObject InfoType;
-      static PyObject* next(PythonFlowPlan*);
-      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
-      static void destroy(PythonFlowPlan* obj) {PyObject_Del(obj);}
-      static void define_type() { InfoType.tp_new = 0; }
-      static PyObject* createFromBuffer(Buffer*);
-  };
+/** @brief This class handles two-way translation between the data types 
+  * in C++ and Python.
+  *
+  * This class is basically a wrapper around a PyObject pointer.
+  *
+  *@todo endelement function should be shared with setattro function.
+  *Unifies the python and xml worlds: shared code base to update objects!
+  *(Code for extracting info is still python specific, and writeElement
+  *is also xml-specific)
+  *  xml->prevObject = python->cast value to a different type
+  */
+class PythonObject : public NonCopyable
+{
+  private:
+    // xxx handle refcount: if object is owned (isnt it always owned???), we need to decref in the destructor...
+    PyObject* obj;
+        
+  public:
+    /** Default constructor. The default value is equal to Py_None. */
+    explicit PythonObject() : obj(Py_None) {Py_INCREF(obj);}
 
+    /** Constructor from an existing Python object.<br>
+      * The reference count isn't increased. 
+      */
+    PythonObject(PyObject* o) : obj(o) {}
+    
+    /** This conversion operator casts the object back to a PyObject pointer. */
+    operator PyObject*() const {return obj;}
 
-  /** @brief This class exports LoadPlan information to Python. */
-  struct PythonLoadPlan
-  {
-    private:
-      PyObject_HEAD
-      Resource::loadplanlist::const_iterator iter;
-      Resource* res;
-    public:
-      static PyTypeObject InfoType;
-      static PyObject* next(PythonLoadPlan*);
-      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
-      static void destroy(PythonLoadPlan* obj) {PyObject_Del(obj);}
-      static void define_type() { InfoType.tp_new = 0; }
-      static PyObject* createFromResource(Resource*);
-  };
+    /** Check for null value. */
+    operator bool() const {return obj != NULL;}
 
+    /** Check whether the Python object is of a certain type. */
+    bool check(const PythonType& c) const
+    {
+      return obj ? 
+        PyObject_TypeCheck(obj, c.type_object()) : 
+        false;
+    }
 
-  /** @brief This class exports demand pegging information to Python. */
-  struct PythonDemandPegging
-  {
-    private:
-      PyObject_HEAD
-      PeggingIterator* iter;
-      Demand* dem;
-    public:
-      static PyTypeObject InfoType;
-      static PyObject* next(PythonDemandPegging*);
-      static PyObject* create(PyTypeObject* , PyObject *args, PyObject *kwargs) {return NULL;}
-      static void destroy(PythonDemandPegging* obj)
-      {delete obj->iter; PyObject_Del(obj);}
-      static void define_type() { InfoType.tp_new = 0; }
-      static PyObject* createFromDemand(Demand*);
-  };
-
-
-  /** @brief This class exports OperationPlan information to Python. */
-  struct PythonOperationPlan
-  {
-    private:
-      PyObject_HEAD
-      OperationPlan::iterator iter;
-    public:
-      static PyTypeObject InfoType;
-      static PyObject* next(PythonOperationPlan*);
-      static PyObject* create(PyTypeObject* , PyObject *, PyObject *);
-      static void destroy(PythonOperationPlan* obj) {PyObject_Del(obj);}
-      static void define_type() {}
-  };
-
-
-  /** @brief This class exports Demand information to Python. */
-  struct PythonDemand
-  {
-    private:
-      PyObject_HEAD
-      Demand::iterator iter;
-      PyObject* peggingiterator;
-      PyObject* deliveryiterator;      
-    public:
-      static PyTypeObject InfoType;
-      static PyObject* next(PythonDemand*);
-      static PyObject* create(PyTypeObject*, PyObject *, PyObject *);
-      static void destroy(PythonDemand* obj) 
+    /** Convert a Python string into a C++ string. */
+    inline string getString() const
+    {
+      if (obj == Py_None) return string();
+      if (PyUnicode_Check(obj))
       {
-        if (obj->peggingiterator) Py_DECREF(obj->peggingiterator);
-        if (obj->deliveryiterator) Py_DECREF(obj->deliveryiterator);
-        PyObject_Del(obj);
+        // Replace the unicode object with a string encoded in the correct locale
+        const_cast<PyObject*&>(obj) = 
+          PyUnicode_AsEncodedString(obj, NULL, "ignore");   // xxx test@todo need generic encoding of unicode objects to the locale understood by frepple
       }
-      static void define_type() {}
-  };
+      return PyString_AsString(PyObject_Str(obj));
+    }
+
+    /** Convert a Python datetime.date or datetime.datetime object into a
+      * frePPLe date. */
+    Date getDate() const;
+    
+    /** Convert a Python number into a C++ double. */
+    inline double getDouble() const  
+    {
+      if (obj == Py_None) return 0;
+      return PyFloat_AsDouble(obj);  
+    }
+    
+    /** Convert a Python number into a C++ integer. */
+    inline int getInt() const 
+    {
+      int result = PyInt_AsLong(obj);
+	  if (result == -1 && PyErr_Occurred())
+		  throw DataException("Invalid number");
+	  return result;
+    }
+
+    /** Convert a Python number into a C++ long. */
+    inline long getLong() const 
+    {
+      int result = PyInt_AsLong(obj);
+	  if (result == -1 && PyErr_Occurred())
+		  throw DataException("Invalid number");
+	  return result;
+	}
+    
+    /** Convert a Python number into a C++ bool. */
+    inline bool getBool() const  
+    {
+      return PyObject_IsTrue(obj) ? true : false;
+    }
+    
+    /** Convert a Python number as a number of seconds into a frePPLe 
+      * TimePeriod.<br>
+	  * A TimePeriod is represented as a number of seconds in Python.
+	  */
+    TimePeriod getTimePeriod() const
+    {
+      int result = PyInt_AsLong(obj);
+	  if (result == -1 && PyErr_Occurred())
+		  throw DataException("Invalid number");
+	  return result;
+	}
+
+    /** Convert a C++ string into a (raw) Python string. */
+    inline PythonObject(const string& val)
+    {
+      if (val.empty()) 
+      { 
+        obj = Py_None;
+        Py_INCREF(obj);
+      }
+      else
+        obj = PyString_FromString(val.c_str());
+    }
+
+    /** Convert a C++ double into a Python number. */
+    inline PythonObject(const double val)
+    {
+      obj = PyFloat_FromDouble(val);
+    }
+
+    /** Convert a C++ integer into a Python integer. */
+    inline PythonObject(const int val)
+    {
+      obj = PyInt_FromLong(val);
+    }
+
+    /** Convert a C++ long into a Python long. */
+    inline PythonObject(const long val)
+    {
+      obj = PyLong_FromLong(val);
+    }
+
+    /** Convert a C++ unsigned long into a Python long. */
+    inline PythonObject(const unsigned long val)
+    {
+      obj = PyLong_FromUnsignedLong(val);
+    }
+
+    /** Convert a C++ boolean into a Python boolean. */
+    inline PythonObject(const bool val)
+    {
+      obj = val ? Py_True : Py_False;
+      Py_INCREF(obj);
+    }
+
+    /** Convert a frePPLe TimePeriod into a Python number representing
+      * the number of seconds. */
+    inline PythonObject(const TimePeriod val)
+    {
+      // A TimePeriod is represented as a number of seconds in Python
+      obj = PyLong_FromLong(val);
+    }
+
+    /** xxx*/
+    PythonObject(Object* p);
+
+    /** Convert a frePPLe date into a Python datetime.datetime object. */
+    PythonObject(const Date& val);
+};
+    
+
+/** @brief This is a base class for all Python extension types.
+  *
+  * When creating you own extensions, inherit from the PythonExtension or 
+  * PythonProxy template classes instead of this one.
+  *
+  * It inherits from the PyObject C struct, defined in the Python C API.<br>
+  * These functions aren't called directly from Python. Python first calls a 
+  * handler C-function and the handler function will use a virtual call to 
+  * run the correct C++-method.
+  *
+  * Our extensions don't use the usual Python heap allocator. They are
+  * created and initialized with the regular C++ new and delete. A special
+  * deallocator is required to delete objects when their reference count
+  * reaches zero.
+  */
+class PythonExtensionBase : public PyObject
+{
+  public:
+    /** Constructor */
+    PythonExtensionBase() {}
+
+    /** Destructor. */
+    virtual ~PythonExtensionBase() {}
+
+    /** Default getattro method. <br>
+      * Subclasses are expected to implement an override if the type supports
+      * gettattro.
+      */
+    virtual PyObject* getattro(const XMLElement& name)
+    {
+      PyErr_SetString(PythonLogicException, "Missing method 'getattro'"); 
+      return NULL;
+    }
+
+    /** Default setattro method. <br>
+      * Subclasses are expected to implement an override if the type supports
+      * settattro.
+      */
+    virtual int setattro(const XMLElement& name, const PythonObject& value)
+    {
+      PyErr_SetString(PythonLogicException, "Missing method 'setattro'"); 
+      return -1;
+    }
+
+    /** Default compare method. <br>
+      * Subclasses are expected to implement an override if the type supports
+      * compare.
+      */
+    virtual int compare(const PythonObject& other)
+    {
+      PyErr_SetString(PythonLogicException, "Missing method 'compare'"); 
+      return -1;
+    }
+
+    /** Default iternext method. <br>
+      * Subclasses are expected to implement an override if the type supports
+      * iteration.
+      */
+   virtual PyObject* iternext()
+    {
+      PyErr_SetString(PythonLogicException, "Missing method 'iternext'"); 
+      return NULL;
+    }
+
+    /** Default call method. <br>
+      * Subclasses are expected to implement an override if the type supports
+      * calls.
+      */
+    virtual PyObject* call(const PythonObject& args, const PythonObject& kwds)
+    {
+      PyErr_SetString(PythonLogicException, "Missing method 'call'"); 
+      return NULL;
+    }
+
+    /** Default str method. <br>
+      * Subclasses are expected to implement an override if the type supports
+      * conversion to a string.
+      */
+    virtual PyObject* str()
+    {
+      PyErr_SetString(PythonLogicException, "Missing method 'str'"); 
+      return NULL;
+    }
+};
 
 
-  /** @brief This class exports a delivery operationplan iterator to Python. */
-  struct PythonDemandDelivery
-  {
-    private:
-      PyObject_HEAD
-      Demand::OperationPlan_list::const_iterator iter;
-      const Demand* dem;
-      const Demand* dem_owner;
-      double cumPlanned;
-    public:
-      static PyTypeObject InfoType;
-      static PyObject* next(PythonDemandDelivery*);
-      static PyObject* create(PyTypeObject* type, PyObject *args, PyObject *kwargs) {return NULL;}
-      static void destroy(PythonDemandDelivery* obj) {PyObject_Del(obj);}
-      static void define_type() {}
-      static PyObject* createFromDemand(Demand*);
-  };
+/** @brief Template class to define Python extensions.
+  *
+  * The template argument should be your extension class, inheriting from
+  * this template class:
+  *   class MyClass : PythonExtension<MyClass>
+  */
+template<class T>
+class PythonExtension: public PythonExtensionBase, public NonCopyable
+{
+  public:
+    /** Constructor. */
+    explicit PythonExtension() 
+    {
+      PyObject_INIT(this, getType().type_object());
+    }        
 
+    /** Destructor. */
+    virtual ~PythonExtension() {}   
 
-  /** @brief This class exports Buffer information to Python. */
-  struct PythonBuffer
-  {
-    private:
-      PyObject_HEAD
-      Buffer::iterator iter;
-      PyObject* flowplaniterator;
-    public:
-      static PyTypeObject InfoType;
-      static PyObject* next(PythonBuffer*);
-      static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-      static void destroy(PythonBuffer* obj) 
+    /** This method keeps the type information object for your extension. */
+    static PythonType& getType()
+    {
+      static PythonType* table = NULL;
+      if (!table)
       {
-        if (obj->flowplaniterator) Py_DECREF(obj->flowplaniterator);
-        PyObject_Del(obj);
+        table = new PythonType(sizeof(T));
+        table->dealloc( deallocator );
       }
-      static void define_type() {}
-  };
+      return *table;
+    }
+
+    static void deallocator(PyObject* o) {delete static_cast<T*>(o);}
+};
 
 
-  /** @brief This class exports Resource information to Python. */
-  struct PythonResource
-  {
-    private:
-      PyObject_HEAD
-      Resource::iterator iter;
-      PyObject* loadplaniterator;
-    public:
-      static PyTypeObject InfoType;
-      static PyObject* next(PythonResource*);
-      static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-      static void destroy(PythonResource* obj) 
+/** @brief A template class to expose category classes which use a string
+  * as the key to Python . */
+template <class ME, class PROXY> 
+class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
+{
+  public:
+    /** Initialization method. */
+    static int initialize(PyObject* m)
+    {
+      // Initialize the type
+      PythonType& x = PythonExtension< FreppleCategory<ME,PROXY> >::getType();
+      x.setName(PROXY::metadata.type);
+      x.setDoc("frePPLe " + PROXY::metadata.type);
+      x.supportgetattro();
+      x.supportsetattro();
+      x.supportstr();
+      x.supportcreate(create);
+      const_cast<MetaCategory&>(PROXY::metadata).factoryPythonProxy = proxy;
+      return x.typeReady(m);
+    }
+
+    static void* proxy(Object* p) {return static_cast<PyObject*>(new ME(static_cast<PROXY*>(p)));}
+
+    /** Constructor. */
+    FreppleCategory(PROXY* x = NULL) : obj(x) {}
+
+  public: // @todo should not be public
+    PROXY* obj;
+
+  private:  
+    virtual PyObject* getattro(const XMLElement&) = 0;
+
+    virtual int setattro(const XMLElement&, const PythonObject&) = 0;
+
+    /** Return the name as the string representation in Python. */
+    PyObject* str()
+    {
+      return PythonObject(obj ? obj->getName() : "None");
+    }
+
+    static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)   
+    {  
+      // Check presence of keyword arguments
+      if (!kwds)                                                                  
+      {                                                                           
+        PyErr_SetString(PythonDataException, "Missing keyword arguments");       
+        return NULL;                                                              
+      }                                
+
+      // Pick up the name attribute.       
+      PyObject* name = PyDict_GetItemString(kwds,"name");                         
+      if (!name)                                                                  
+      {                                                                           
+        PyErr_SetString(PythonDataException, "No name argument specified");       
+        return NULL;                                                              
+      }                                
+
+      // Pick up the type attribute. 
+      string type = "default";
+      PyObject* typekwd = PyDict_GetItemString(kwds,"type");                         
+      if (typekwd)                                                                                                                                            
+        type = string(PyString_AsString(PyObject_Str(typekwd)));       
+
+      // Create the C++ object
+      const MetaClass* j = PROXY::metadata.findClass(type.c_str());
+      if (!j)
       {
-        if (obj->loadplaniterator) Py_DECREF(obj->loadplaniterator);
-        PyObject_Del(obj);
+        string msg = "No type " + type + " registered for category " + PROXY::metadata.type;
+        PyErr_SetString(PythonDataException, msg.c_str());       
+        return NULL;                                                              
       }
-      static void define_type() {}
-  };
+      PROXY* x = PROXY::add(string(PyString_AsString(PyObject_Str(name))), *j);
+      
+      // Create a python proxy
+      PythonExtensionBase* pr = static_cast<PythonExtensionBase*>(static_cast<PyObject*>(*(new PythonObject(x))));
+
+      // Iterate over extra keywords, and set attributes.
+      if (pr)
+      {
+        PyObject *key, *value;                                                      
+        Py_ssize_t pos = 0;                                                         
+        while (PyDict_Next(kwds, &pos, &key, &value))                               
+        {                                                                           
+          XMLElement field(PyString_AsString(key));   
+          if (!field.isA(Tags::tag_name) && !field.isA(Tags::tag_type))
+          {
+            int result = pr->setattro(field, value);  // @todo Also need to capture exceptions!
+            if (result)               
+              PyErr_Warn(PyExc_Warning, (string("attribute '") + PyString_AsString(key) 
+                + "' on '" + pr->ob_type->tp_name + "' can't be updated").c_str());
+          }
+        };                                     
+      }
+      return pr;
+    }
+};
 
 
-}  // End extern "C"
+/** @brief A template class to expose classes to Python. */
+template <class ME, class BASE, class PROXY> 
+class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
+{
+  public:
+    static int initialize(PyObject* m)
+    {
+      // Initialize the type
+      PythonType& x = PythonExtension< FreppleClass<ME,BASE,PROXY> >::getType();
+      x.setName(PROXY::metadata.type);
+      x.setDoc("frePPLe " + PROXY::metadata.type);
+      x.supportgetattro();
+      x.supportsetattro();
+      x.supportstr();
+      x.supportcreate(create);
+      x.setBase(BASE::getType());
+      const_cast<MetaClass&>(PROXY::metadata).factoryPythonProxy = proxy;
+      return x.typeReady(m);
+    }
 
+    static void* proxy(Object* p) {return static_cast<PyObject*>(new ME(static_cast<PROXY*>(p)));}
+
+    FreppleClass(PROXY* p= NULL) : obj(p) {}
+
+  public: // @todo should not be public
+    PROXY* obj;
+
+  private:
+    virtual PyObject* getattro(const XMLElement&) = 0;
+
+    virtual int setattro(const XMLElement&, const PythonObject&) = 0;
+
+    /** Return the name as the string representation in Python. */
+    PyObject* str()
+    {
+      return PythonObject(obj ? obj->getName() : "None");
+    }
+
+    static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)   
+    {       
+      // Check presence of keyword arguments
+      if (!kwds)                                                                  
+      {                                                                           
+        PyErr_SetString(PythonDataException, "Missing keyword arguments");       
+        return NULL;                                                              
+      }                                
+
+      // Pick up the name attribute.                                       
+      PyObject* name = PyDict_GetItemString(kwds,"name");                         
+      if (!name)                                                                  
+      {                                                                           
+        PyErr_SetString(PythonDataException, "No name argument specified");       
+        return NULL;                                                              
+      }                                
+
+      // Create the C++ object
+      PROXY* x = reinterpret_cast<PROXY*>(PROXY::add(string(PyString_AsString(PyObject_Str(name))), PROXY::metadata));
+
+      // Create a python proxy
+      ME* pr = new ME(x);
+
+      // Iterate over extra keywords, and set attributes.                 
+      PyObject *key, *value;                                                      
+      Py_ssize_t pos = 0;         
+      bool  nok =false;
+      while (PyDict_Next(kwds, &pos, &key, &value))                               
+      {                                                                           
+        XMLElement field(PyString_AsString(key));                                 
+        if (!field.isA(Tags::tag_name))
+        {
+          int result = pr->setattro(field, value);// @todo Also need to capture exceptions! 
+          if (result)               
+            PyErr_Warn(PyExc_Warning, (string("attribute '") + PyString_AsString(key) 
+              + "' on '" + pr->ob_type->tp_name + "' can't be updated").c_str());
+        }
+      };                                                                          
+
+      return static_cast<PyObject*>(pr);
+    }
+};
+
+
+template <class ME, class ITERCLASS, class DATACLASS, class PROXYCLASS> 
+class FreppleIterator : public PythonExtension<ME>
+{
+  public:
+    static int initialize(PyObject* m)
+    {
+      // Initialize the type
+      PythonType& x = PythonExtension<ME>::getType();
+      x.setName(DATACLASS::metadata.type + "Iterator");
+      x.setDoc("frePPLe iterator for " + DATACLASS::metadata.type);
+      x.supportiter();
+      return x.typeReady(m);
+    }
+
+    FreppleIterator() : i(DATACLASS::begin()) {}
+
+    static PyObject* create(PyObject* self, PyObject* args) 
+      {return new ME();}
+
+  private:
+    ITERCLASS i;
+    virtual PyObject* iternext()
+    {
+      if (i == DATACLASS::end()) return NULL;
+      PyObject* result = PythonObject(&*i);
+      ++i;
+      return result;
+    }
+    virtual PyObject *iter()
+    {
+	    Py_INCREF(this);
+	    return this;
+    }
+};
+
+
+//
+// SETTINGS
+//
+
+
+/** @brief This class exposes global plan information to Python. */
+class PythonPlan : public PythonExtension<PythonPlan>
+{
+  public:
+    static int initialize(PyObject* m);
+  private:  
+    PyObject* getattro(const XMLElement&);
+    int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+//
+// PROBLEMS
+// 
+
+
+class PythonProblem : public PythonExtension<PythonProblem>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonProblem(Problem* p) : prob(p) {}
+    static void* proxy(Object* p) 
+      {return static_cast<PyObject*>(new PythonProblem(static_cast<Problem*>(p)));}
+  private:  
+    PyObject* getattro(const XMLElement&);
+    Problem* prob;
+};
+
+
+class PythonProblemIterator 
+  : public FreppleIterator<PythonProblemIterator,Problem::const_iterator,Problem,PythonProblem>
+{
+};
+
+
+//
+// BUFFERS
+//
+
+
+class PythonBuffer : public FreppleCategory<PythonBuffer,Buffer> 
+{
+  public:
+    PythonBuffer(Buffer* p) : FreppleCategory<PythonBuffer,Buffer>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonBufferIterator 
+  : public FreppleIterator<PythonBufferIterator,Buffer::iterator,Buffer,PythonBuffer>
+{
+};
+
+
+class PythonBufferDefault : public FreppleClass<PythonBufferDefault,PythonBuffer,BufferDefault>  
+{
+  public:
+    PythonBufferDefault(BufferDefault* p) 
+      : FreppleClass<PythonBufferDefault,PythonBuffer,BufferDefault>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonBufferInfinite : public FreppleClass<PythonBufferInfinite,PythonBuffer,BufferInfinite> 
+{
+  public:
+    PythonBufferInfinite(BufferInfinite* p) 
+      : FreppleClass<PythonBufferInfinite,PythonBuffer,BufferInfinite>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonBufferProcure : public FreppleClass<PythonBufferProcure,PythonBuffer,BufferProcure> 
+{
+  public:
+    PythonBufferProcure(BufferProcure* p) 
+      : FreppleClass<PythonBufferProcure,PythonBuffer,BufferProcure>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+//
+// LOCATIONS
+//
+
+
+class PythonLocation : public FreppleCategory<PythonLocation,Location> 
+{
+  public:
+    PythonLocation(Location* p) : FreppleCategory<PythonLocation,Location>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonLocationIterator 
+  : public FreppleIterator<PythonLocationIterator,Location::iterator,Location,PythonLocation>
+{
+};
+
+
+class PythonLocationDefault : public FreppleClass<PythonLocationDefault,PythonLocation,LocationDefault>  
+{
+  public:
+    PythonLocationDefault(LocationDefault* p) 
+      : FreppleClass<PythonLocationDefault,PythonLocation,LocationDefault>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+//
+// CUSTOMERS
+//
+
+
+class PythonCustomer : public FreppleCategory<PythonCustomer,Customer> 
+{
+  public:
+    PythonCustomer(Customer* p) : FreppleCategory<PythonCustomer,Customer>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonCustomerIterator 
+  : public FreppleIterator<PythonCustomerIterator,Customer::iterator,Customer,PythonCustomer>
+{
+};
+
+
+class PythonCustomerDefault : public FreppleClass<PythonCustomerDefault,PythonCustomer,CustomerDefault>  
+{
+  public:
+    PythonCustomerDefault(CustomerDefault* p) 
+      : FreppleClass<PythonCustomerDefault,PythonCustomer,CustomerDefault>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+//
+// ITEMS
+//
+
+
+class PythonItem : public FreppleCategory<PythonItem,Item> 
+{
+  public:
+    PythonItem(Item* p) : FreppleCategory<PythonItem,Item>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonItemIterator 
+  : public FreppleIterator<PythonItemIterator,Item::iterator,Item,PythonItem>
+{
+};
+
+
+class PythonItemDefault : public FreppleClass<PythonItemDefault,PythonItem,ItemDefault>  
+{
+  public:
+    PythonItemDefault(ItemDefault* p) 
+      : FreppleClass<PythonItemDefault,PythonItem,ItemDefault>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+//
+// CALENDARS
+//
+
+
+class PythonCalendar : public FreppleCategory<PythonCalendar,Calendar> 
+{
+  public:
+    PythonCalendar(Calendar* p) : FreppleCategory<PythonCalendar,Calendar>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonCalendarIterator 
+  : public FreppleIterator<PythonCalendarIterator,Calendar::iterator,Calendar,PythonCalendar>
+{
+};
+
+
+class PythonCalendarVoid : public FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>  
+{
+  public:
+    PythonCalendarVoid(CalendarVoid* p) 
+      : FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonCalendarBool : public FreppleClass<PythonCalendarBool,PythonCalendar,CalendarBool>  
+{
+  public:
+    PythonCalendarBool(CalendarBool* p) 
+      : FreppleClass<PythonCalendarBool,PythonCalendar,CalendarBool>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonCalendarDouble : public FreppleClass<PythonCalendarDouble,PythonCalendar,CalendarDouble>  
+{
+  public:
+    PythonCalendarDouble(CalendarDouble* p) 
+      : FreppleClass<PythonCalendarDouble,PythonCalendar,CalendarDouble>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+//
+// DEMANDS
+//
+
+class PythonDemand : public FreppleCategory<PythonDemand,Demand> 
+{
+  public:
+    PythonDemand(Demand* p) : FreppleCategory<PythonDemand,Demand>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonDemandIterator 
+  : public FreppleIterator<PythonDemandIterator,Demand::iterator,Demand,PythonDemand>
+{
+};
+
+
+class PythonDemandDefault : public FreppleClass<PythonDemandDefault,PythonDemand,DemandDefault>  
+{
+  public:
+    PythonDemandDefault(DemandDefault* p) 
+      : FreppleClass<PythonDemandDefault,PythonDemand,DemandDefault>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+//
+// RESOURCES
+//
+
+
+class PythonResource : public FreppleCategory<PythonResource,Resource> 
+{
+  public:
+    PythonResource(Resource* p) : FreppleCategory<PythonResource,Resource>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonResourceIterator 
+  : public FreppleIterator<PythonResourceIterator,Resource::iterator,Resource,PythonResource>
+{
+};
+
+
+class PythonResourceDefault : public FreppleClass<PythonResourceDefault,PythonResource,ResourceDefault>  
+{
+  public:
+    PythonResourceDefault(ResourceDefault* p) 
+      : FreppleClass<PythonResourceDefault,PythonResource,ResourceDefault>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonResourceInfinite : public FreppleClass<PythonResourceInfinite,PythonResource,ResourceInfinite> 
+{
+  public:
+    PythonResourceInfinite(ResourceInfinite* p) 
+      : FreppleClass<PythonResourceInfinite,PythonResource,ResourceInfinite>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+//
+// OPERATIONS
+//
+
+
+class PythonOperation : public FreppleCategory<PythonOperation,Operation> 
+{
+  public:
+    PythonOperation(Operation* p) : FreppleCategory<PythonOperation,Operation>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonOperationIterator 
+  : public FreppleIterator<PythonOperationIterator,Operation::iterator,Operation,PythonOperation>
+{
+};
+
+
+class PythonOperationAlternate : public FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>  
+{
+  public:
+    PythonOperationAlternate(OperationAlternate* p) 
+      : FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonOperationFixedTime : public FreppleClass<PythonOperationFixedTime,PythonOperation,OperationFixedTime>  
+{
+  public:
+    PythonOperationFixedTime(OperationFixedTime* p) 
+      : FreppleClass<PythonOperationFixedTime,PythonOperation,OperationFixedTime>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonOperationTimePer : public FreppleClass<PythonOperationTimePer,PythonOperation,OperationTimePer>  
+{
+  public:
+    PythonOperationTimePer(OperationTimePer* p) 
+      : FreppleClass<PythonOperationTimePer,PythonOperation,OperationTimePer>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonOperationRouting : public FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>  
+{
+  public:
+    PythonOperationRouting(OperationRouting* p) 
+      : FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+//
+// OPERATIONPLANS
+//
+
+
+class PythonOperationPlan : public PythonExtension<PythonOperationPlan> 
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonOperationPlan(OperationPlan* p) : obj(p) {}
+    static void* proxy(Object* p) 
+      {return static_cast<PyObject*>(new PythonOperationPlan(static_cast<OperationPlan*>(p)));}
+  private:
+    OperationPlan* obj;
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonOperationPlanIterator 
+  : public FreppleIterator<PythonOperationPlanIterator,OperationPlan::iterator,OperationPlan,PythonOperationPlan>
+{
+};
+
+
+//
+// FLOWPLANS
+// 
+
+
+class PythonFlowPlan : public PythonExtension<PythonFlowPlan>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonFlowPlan(FlowPlan* p) : fl(p) {}
+  private:  
+    PyObject* getattro(const XMLElement&);
+    FlowPlan* fl;
+};
+
+
+class PythonFlowPlanIterator : public PythonExtension<PythonFlowPlanIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+
+    PythonFlowPlanIterator(Buffer* b) : buf(b) 
+    { 
+      if (!b) 
+        throw LogicException("Creating flowplan iterator for NULL buffer");
+      i = b->getFlowPlans().begin();
+    }
+
+  private:
+    Buffer* buf;
+    Buffer::flowplanlist::const_iterator i;
+    PyObject *iternext();
+};
+
+
+//
+// LOADPLANS
+// 
+
+
+class PythonLoadPlan : public PythonExtension<PythonLoadPlan>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonLoadPlan(LoadPlan* p) : fl(p) {}
+  private:  
+    PyObject* getattro(const XMLElement&);
+    LoadPlan* fl;
+};
+
+
+class PythonLoadPlanIterator : public PythonExtension<PythonLoadPlanIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonLoadPlanIterator(Resource* r) : res(r) 
+    { 
+      if (!r) 
+        throw LogicException("Creating loadplan iterator for NULL resource");
+      i = r->getLoadPlans().begin();
+    }
+
+  private:
+    Resource* res;
+    Resource::loadplanlist::const_iterator i;
+    PyObject *iternext();
+};
+
+
+//
+// DEMAND DELIVERY OPERATIONPLANS
+// 
+
+class PythonDemandPlanIterator : public PythonExtension<PythonDemandPlanIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonDemandPlanIterator(Demand* r) : dem(r)
+    { 
+      if (!r) 
+        throw LogicException("Creating demandplan iterator for NULL demand");
+      i = r->getDelivery().begin();
+    }
+
+  private:
+    Demand* dem;
+    Demand::OperationPlan_list::const_iterator i;
+    PyObject *iternext();
+};
+
+
+//
+// DEMAND PEGGING
+// 
+
+
+class PythonPeggingIterator : public PythonExtension<PythonPeggingIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonPeggingIterator(Demand* r) : dem(r), i(r)
+    { 
+      if (!r) 
+        throw LogicException("Creating pegging iterator for NULL demand");
+    }
+
+  private:
+    Demand* dem;
+    PeggingIterator i;
+    PyObject *iternext();
+};
 
 }
 

@@ -29,7 +29,6 @@
 namespace module_python
 {
 
-
 void CommandPython::execute()
 {
   // Log
@@ -197,24 +196,6 @@ PyObject* CommandPython::python_readXMLdata(PyObject *self, PyObject *args)
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");  // Safer than using Py_None, which is not
                              // portable across compilers
-}
-
-
-PyObject* CommandPython::python_createItem(PyObject *self, PyObject *args)
-{
-  // Pick up the arguments
-  char *itemname;
-  char *operationname;
-  int ok = PyArg_ParseTuple(args, "ss", &itemname, &operationname);
-  if (!ok) return NULL;  // Wrong arguments
-
-  // Create the items
-  Item* it = Item::add(itemname, ItemDefault::metadata);
-  Operation* op = Operation::add(operationname, OperationFixedTime::metadata);
-  if (it && op) it->setOperation(op);
-
-  // Return code for Python
-  return Py_BuildValue("i", it && op);
 }
 
 

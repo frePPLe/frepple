@@ -27,14 +27,13 @@
 /** @file pythonutils.h
   * @brief Reusable functions for python functionality.
   *
-  * Include this file in modules which require these functions. 
-  * 
+  * Include this file in modules which require these functions.
+  *
   * Alternatively, we could import the functions from the mod_python module.
-  * But this creates a hard dependency between the modules, which we try to 
+  * But this creates a hard dependency between the modules, which we try to
   * avoid.
   */
 
-/** This function converts a frePPLe Date value into a Python DateTime 
+/** This function converts a frePPLe Date value into a Python DateTime
   * object. */
 PyObject* PythonDateTime(const Date& d);
-

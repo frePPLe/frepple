@@ -32,73 +32,47 @@ namespace module_python
 const MetaClass CommandPython::metadata;
 const MetaClass CommandPython::metadata2;
 PyThreadState *CommandPython::mainThreadState = NULL;
-PyObject* CommandPython::PythonLogicException = NULL;
-PyObject* CommandPython::PythonDataException = NULL;
-PyObject* CommandPython::PythonRuntimeException = NULL;
+
+PyObject* PythonLogicException = NULL;
+PyObject* PythonDataException = NULL;
+PyObject* PythonRuntimeException = NULL;
 
 
 // Define the methods to be exposed into Python
 PyMethodDef CommandPython::PythonAPI[] =
   {
     {"log", CommandPython::python_log, METH_VARARGS,
-     "Prints a string to the frepple log file."
+     "Prints a string to the frePPLe log file."
     },
     {"readXMLdata", CommandPython::python_readXMLdata, METH_VARARGS,
      "Processes an XML string passed as argument."},
-    {"createItem", CommandPython::python_createItem, METH_VARARGS,
-     "Uses the C++ API to create an item."},
     {"readXMLfile", CommandPython::python_readXMLfile, METH_VARARGS,
      "Read an XML-file."},
     {"saveXMLfile", CommandPython::python_saveXMLfile, METH_VARARGS,
      "Save the model to an XML-file."},
     {"saveXMLstring", CommandPython::python_saveXMLstring, METH_NOARGS,
      "Returns the model as an XML-formatted string."},
+    {"buffers", PythonBufferIterator::create, METH_NOARGS,
+     "Returns an iterator over the buffers."},
+    {"locations", PythonLocationIterator::create, METH_NOARGS,
+     "Returns an iterator over the locations."},
+    {"customers", PythonCustomerIterator::create, METH_NOARGS,
+     "Returns an iterator over the customer."},
+    {"items", PythonItemIterator::create, METH_NOARGS,
+     "Returns an iterator over the items."},
+    {"calendars", PythonCalendarIterator::create, METH_NOARGS,
+     "Returns an iterator over the calendars."},
+    {"demands", PythonDemandIterator::create, METH_NOARGS,
+     "Returns an iterator over the demands."},
+    {"resources", PythonResourceIterator::create, METH_NOARGS,
+     "Returns an iterator over the resources."},
+    {"operations", PythonOperationIterator::create, METH_NOARGS,
+     "Returns an iterator over the operations."},
+    {"operationplans", PythonOperationPlanIterator::create, METH_NOARGS,
+     "Returns an iterator over the operationplans."},
+    {"problems", PythonProblemIterator::create, METH_NOARGS,
+     "Returns an iterator over the problems."},
     {NULL, NULL, 0, NULL}
-  };
-
-
-const PyTypeObject CommandPython::TemplateInfoType =
-  {
-    PyObject_HEAD_INIT(NULL)
-    0,					/* ob_size */
-    "frepple.generic",	/* WILL BE UPDATED tp_name */
-    0,	/* WILL BE UPDATED tp_basicsize */
-    0,					/* tp_itemsize */
-    0,  /* WILL BE UPDATED tp_dealloc */
-    0,					/* tp_print */
-    0,					/* tp_getattr */
-    0,					/* tp_setattr */
-    0,					/* tp_compare */
-    0,	        /* tp_repr */
-    0,					/* tp_as_number */
-    0,					/* tp_as_sequence */
-    0,					/* tp_as_mapping */
-    0,					/* tp_hash */
-    0,          /* tp_call */
-    0,					/* tp_str */
-    0,		      /* tp_getattro */
-    0,					/* tp_setattro */
-    0,					/* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,	/* tp_flags */
-    "std doc", /* WILL BE UPDATED  tp_doc */
-    0,					/* tp_traverse */
-    0,					/* tp_clear */
-    0,					/* tp_richcompare */
-    0,					/* tp_weaklistoffset */
-    PyObject_SelfIter,  /* tp_iter */
-    0,	/* WILL BE UPDATED tp_iternext */
-    0,				  /* tp_methods */
-    0,					/* tp_members */
-    0,					/* tp_getset */
-    0,					/* tp_base */
-    0,					/* tp_dict */
-    0,					/* tp_descr_get */
-    0,					/* tp_descr_set */
-    0,					/* tp_dictoffset */
-    0,          /* tp_init */
-    0,          /* tp_alloc */
-    0,	/* WILL BE UPDATED tp_new */
-    0,					/* tp_free */
   };
 
 
@@ -141,7 +115,7 @@ void CommandPython::initialize()
                        // implement its own signal handler
   PyEval_InitThreads();  // Initializes threads and captures global lock
   PyObject* m = Py_InitModule3
-      ("frepple", CommandPython::PythonAPI, "Acces to the frePPLe library");
+      ("frepple", CommandPython::PythonAPI, "Access to the frePPLe library");
   if (!m)
   {
     PyEval_ReleaseLock();
@@ -170,15 +144,52 @@ void CommandPython::initialize()
   mainThreadState = PyThreadState_Get();
 
   // Register our new types
-  define_type<PythonProblem>(m, "problem", "frePPLe problem");
-  define_type<PythonFlowPlan>(m, "flowplan", "frePPLe flowplan");
-  define_type<PythonLoadPlan>(m, "loadplan", "frePPLe loadplan");
-  define_type<PythonOperationPlan>(m, "operationplan", "frePPLe operationplan");
-  define_type<PythonDemand>(m, "demand", "frePPLe demand");
-  define_type<PythonDemandPegging>(m, "pegging", "frePPLe demand pegging");
-  define_type<PythonDemandDelivery>(m, "delivery", "frePPLe demand delivery");
-  define_type<PythonBuffer>(m, "buffer", "frePPLe buffer");
-  define_type<PythonResource>(m, "resource", "frePPLe resource");
+  nok += PythonPlan::initialize(m);
+  nok += PythonBuffer::initialize(m);
+  nok += PythonBufferDefault::initialize(m);
+  nok += PythonBufferInfinite::initialize(m);
+  nok += PythonBufferProcure::initialize(m);
+  nok += PythonBufferIterator::initialize(m);
+  nok += PythonLocation::initialize(m);
+  nok += PythonLocationDefault::initialize(m);
+  nok += PythonLocationIterator::initialize(m);
+  nok += PythonItem::initialize(m);
+  nok += PythonItemDefault::initialize(m);
+  nok += PythonItemIterator::initialize(m);
+  nok += PythonCustomer::initialize(m);
+  nok += PythonCustomerDefault::initialize(m);
+  nok += PythonCustomerIterator::initialize(m);
+  nok += PythonCalendar::initialize(m);
+  nok += PythonCalendarIterator::initialize(m);
+  nok += PythonCalendarBool::initialize(m);
+  nok += PythonCalendarVoid::initialize(m);
+  nok += PythonCalendarDouble::initialize(m);
+  nok += PythonDemand::initialize(m);
+  nok += PythonDemandIterator::initialize(m);
+  nok += PythonDemandDefault::initialize(m);
+  nok += PythonResource::initialize(m);
+  nok += PythonResourceDefault::initialize(m);
+  nok += PythonResourceInfinite::initialize(m);
+  nok += PythonResourceIterator::initialize(m);
+  nok += PythonOperation::initialize(m);
+  nok += PythonOperationAlternate::initialize(m);
+  nok += PythonOperationFixedTime::initialize(m);
+  nok += PythonOperationTimePer::initialize(m);
+  nok += PythonOperationRouting::initialize(m);
+  nok += PythonOperationIterator::initialize(m);
+  nok += PythonProblem::initialize(m);
+  nok += PythonProblemIterator::initialize(m);
+  nok += PythonOperationPlan::initialize(m);
+  nok += PythonOperationPlanIterator::initialize(m);
+  nok += PythonFlowPlan::initialize(m);
+  nok += PythonFlowPlanIterator::initialize(m);
+  nok += PythonLoadPlan::initialize(m);
+  nok += PythonLoadPlanIterator::initialize(m);
+  nok += PythonDemandPlanIterator::initialize(m);
+  nok += PythonPeggingIterator::initialize(m);
+/* xxx
+  Flow Load Bucket
+*/
 
   // Redirect the stderr and stdout streams of Python
   PyRun_SimpleString(
@@ -187,7 +198,7 @@ void CommandPython::initialize()
     "\tdef write(self,str):\n"
     "\t\tfrepple.log(str)\n"
     "sys.stdout = redirect()\n"
-    "sys.stderr = redirect()\n"
+    "sys.stderr = redirect()"
   );
 
   // Search and execute the initialization file '$FREPPLE_HOME/init.py'
@@ -230,9 +241,5 @@ void CommandPython::initialize()
     throw frepple::RuntimeException("Can't initialize Python interpreter");
 }
 
-// Include the code of commonly used python utility functions
-#ifndef DOXYGEN
-#include "pythonutils.cpp"
-#endif
 
 } // End namespace

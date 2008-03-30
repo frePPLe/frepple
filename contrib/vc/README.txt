@@ -1,16 +1,16 @@
 
                BUILD INSTRUCTIONS ON WINDOWS
                -----------------------------
-              USING MICROSOFT VISUAL C++ 2005
+              USING MICROSOFT VISUAL C++ 2008
               -------------------------------
 
-The Frepple source distribution comes with Microsoft Visual C++ projects and
-workspaces to build Frepple. This document contains instructions on how to
+The frePPLe source distribution comes with Microsoft Visual C++ projects and
+workspaces to build the package. This document contains instructions on how to
 use these workspaces and some notes specific to the use of this compiler.
 
-The project configuration files are generated with version 8 of Visual C++.
+The project configuration files are generated with version 9 of Visual C++.
 Unfortunately these are not compatible with earlier releases :-(  :-( :-(
-A free version, called "Visual C++ 2005 Express Edition", can be downloaded from
+A free version, called "Visual C++ 2008 Express Edition", can be downloaded from
 the Microsoft website.
 
 

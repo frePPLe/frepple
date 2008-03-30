@@ -35,7 +35,7 @@
   * avoid.
   */
 
-PyObject* PythonDateTime(const Date& d)
+PyObject* PythonDateTime(const Date& d)  // @todo to be removed... We have a better class for this
 {
   // The standard library function localtime() is not re-entrant: the same
   // static structure is used for all calls. In a multi-threaded environment

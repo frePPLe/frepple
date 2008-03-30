@@ -29,364 +29,53 @@
 namespace module_python
 {
 
-// Type information of our Python extensions
-PyTypeObject PythonProblem::InfoType;
-PyTypeObject PythonFlowPlan::InfoType;
-PyTypeObject PythonLoadPlan::InfoType;
-PyTypeObject PythonOperationPlan::InfoType;
-PyTypeObject PythonDemand::InfoType;
-PyTypeObject PythonDemandPegging::InfoType;
-PyTypeObject PythonDemandDelivery::InfoType;
-PyTypeObject PythonBuffer::InfoType;
-PyTypeObject PythonResource::InfoType;
-
-
 //
-// INTERFACE FOR PROBLEM
+// INTERFACE FOR PLAN
 //
 
 
-extern "C" PyObject* PythonProblem::create(PyTypeObject* type, PyObject *args, PyObject *kwargs)
+int PythonPlan::initialize(PyObject* m)
 {
-  // Allocate memory
-  PythonProblem* obj = PyObject_New(PythonProblem, &PythonProblem::InfoType);
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("parameters");
+  x.setDoc("frePPLe global settings");
+  x.supportgetattro();
+  x.supportsetattro();
+  int tmp =x.typeReady(m);
 
-  // Initialize the problem iterator
-  Problem::begin();  // Required to trigger problem detection
-  obj->iter = new Problem::const_iterator();
-
-  return reinterpret_cast<PyObject*>(obj);
+  // Add access to the information with a global attribute
+  return PyModule_AddObject(m, "settings", new PythonPlan) + tmp;
 }
 
 
-extern "C" PyObject* PythonProblem::next(PythonProblem* obj)
+PyObject* PythonPlan::getattro(const XMLElement& field)
 {
-  if (*(obj->iter) != Problem::end())
-  {
-    PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:N,s:N,s:f}",
-      "description", (*(obj->iter))->getDescription().c_str(),
-      "entity", (*(obj->iter))->getOwner()->getEntity()->getType().category->group.c_str(),
-      "type", (*(obj->iter))->getType().type.c_str(),
-      "start", PythonDateTime((*(obj->iter))->getDateRange().getStart()),
-      "end", PythonDateTime((*(obj->iter))->getDateRange().getEnd()),
-      "weight", (*(obj->iter))->getWeight()
-      );
-     ++*(obj->iter);
-    return result;
-  }
+  if (field.isA(Tags::tag_name))
+    return PythonObject(Plan::instance().getName());
+  if (field.isA(Tags::tag_description))
+    return PythonObject(Plan::instance().getDescription());
+  if (field.isA(Tags::tag_current))
+    return PythonObject(Plan::instance().getCurrent());
+  if (field.isA(Tags::tag_logfile))
+    return PythonObject(Environment::getLogFile());
+  return NULL;
+}
+
+
+int PythonPlan::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_name))
+    Plan::instance().setName(value.getString());  
+  else if (field.isA(Tags::tag_description))
+    Plan::instance().setDescription(value.getString());
+  else if (field.isA(Tags::tag_current))
+    Plan::instance().setCurrent(value.getDate()); 
+  else if (field.isA(Tags::tag_logfile))
+    Environment::setLogFile(value.getString());
   else
-    // Reached the end of the iteration
-    return NULL;
-}
-
-
-//
-// INTERFACE FOR FLOWPLAN
-//
-
-
-extern "C" PyObject* PythonFlowPlan::createFromBuffer(Buffer* v)
-{
-  // Allocate memory
-  PythonFlowPlan* obj = PyObject_New(PythonFlowPlan, &PythonFlowPlan::InfoType);
-
-  // Cast the buffer pointer and initialize the iterator
-  obj->buf = v;
-  obj->iter = obj->buf->getFlowPlans().begin();
-
-  return reinterpret_cast<PyObject*>(obj);
-}
-
-
-extern "C" PyObject* PythonFlowPlan::next(PythonFlowPlan* obj)
-{
-  if (obj->iter != obj->buf->getFlowPlans().end())
-  {
-    const FlowPlan* f = dynamic_cast<const FlowPlan*>(&*(obj->iter));
-    if (f && (f->getHidden() || f->getQuantity()==0.0)) f = NULL;
-    while (!f)
-    {
-      ++(obj->iter);
-      if (obj->iter == obj->buf->getFlowPlans().end()) return NULL;
-      f = dynamic_cast<const FlowPlan*>(&*(obj->iter));
-      if (f && (f->getHidden() || f->getQuantity()==0.0)) f = NULL;
-    }
-    PyObject* result = Py_BuildValue("{s:s,s:l,s:f,s:N,s:f}",
-      "buffer", f->getFlow()->getBuffer()->getName().c_str(),
-      "operationplan", f->getOperationPlan()->getIdentifier(),
-      "quantity", obj->iter->getQuantity(),
-      "date", PythonDateTime(obj->iter->getDate()),
-      "onhand", obj->iter->getOnhand()
-      );
-    ++(obj->iter);
-    return result;
-  }
-  // Reached the end of the iteration
-  return NULL;
-}
-
-
-//
-// INTERFACE FOR LOADPLAN
-//
-
-
-extern "C" PyObject* PythonLoadPlan::createFromResource(Resource* v)
-{
-  // Allocate memory
-  PythonLoadPlan* obj = PyObject_New(PythonLoadPlan, &PythonLoadPlan::InfoType);
-
-  // Cast the resource pointer and initialize the iterator
-  obj->res = v;
-  obj->iter = obj->res->getLoadPlans().begin();
-
-  return reinterpret_cast<PyObject*>(obj);
-}
-
-
-extern "C" PyObject* PythonLoadPlan::next(PythonLoadPlan* obj)
-{
-  if (obj->iter != obj->res->getLoadPlans().end())
-  {
-    const LoadPlan* f = dynamic_cast<const LoadPlan*>(&*(obj->iter));
-    if (f && (f->getHidden() || f->getQuantity()<=0.0)) f = NULL;
-    while (!f)
-    {
-      ++(obj->iter);
-      if (obj->iter == obj->res->getLoadPlans().end()) return NULL;
-      f = dynamic_cast<const LoadPlan*>(&*(obj->iter));
-      if (f && (f->getHidden() || f->getQuantity()<=0.0)) f = NULL;
-    }
-    PyObject* result = Py_BuildValue("{s:s,s:l,s:f,s:N,s:N}",
-      "resource", f->getLoad()->getResource()->getName().c_str(),
-      "operationplan", f->getOperationPlan()->getIdentifier(),
-      "quantity", obj->iter->getQuantity(),
-      "startdate", PythonDateTime(f->getDate()),
-      "enddate", PythonDateTime(f->getOtherLoadPlan()->getDate())
-      );
-    ++(obj->iter);
-    return result;
-  }
-  // Reached the end of the iteration
-  return NULL;
-}
-
-
-//
-// INTERFACE FOR DEMAND PEGGING
-//
-
-
-extern "C" PyObject* PythonDemandPegging::createFromDemand(Demand* v)
-{
-  // Allocate memory
-  PythonDemandPegging* obj = PyObject_New(PythonDemandPegging, &PythonDemandPegging::InfoType);
-
-  // Cast the demand pointer and initialize the iterator
-  obj->dem = v;
-  obj->iter = new PeggingIterator(v);
-
-  return reinterpret_cast<PyObject*>(obj);
-}
-
-
-extern "C" PyObject* PythonDemandPegging::next(PythonDemandPegging* obj)
-{
-  // Reached the end of the iteration
-  if (!obj->iter || !*(obj->iter)) return NULL;
-
-  // Pass the result to Python
-  OperationPlan::pointer p_opplan = obj->iter->getProducingOperationplan();
-  OperationPlan::pointer c_opplan = obj->iter->getConsumingOperationplan();
-  PyObject* result = Py_BuildValue("{s:i,s:l,s:N,s:l,s:N,s:z,s:f,s:f,s:i}",
-    "level", obj->iter->getLevel(),
-    "cons_operationplan",
-      (!c_opplan || c_opplan->getHidden()) ? 0 : c_opplan->getIdentifier(),
-    "cons_date", PythonDateTime(obj->iter->getConsumingDate()),
-    "prod_operationplan",
-      (!p_opplan || p_opplan->getHidden()) ? 0 : p_opplan->getIdentifier(),
-    "prod_date", PythonDateTime(obj->iter->getProducingDate()),
-    "buffer", obj->iter->getBuffer()->getHidden() ? NULL
-      : obj->iter->getBuffer()->getName().c_str(),
-    "quantity_demand", obj->iter->getQuantityDemand(),
-    "quantity_buffer", obj->iter->getQuantityBuffer(),
-    "pegged", obj->iter->getPegged() ? 1 : 0
-    );
-
-  // Increment iterator
-  --*(obj->iter);
-  return result;
-}
-
-
-//
-// INTERFACE FOR OPERATIONPLAN
-//
-
-
-extern "C" PyObject* PythonOperationPlan::create(PyTypeObject* type, PyObject *args, PyObject *kwargs)
-{
-  // Allocate memory
-  PythonOperationPlan* obj = PyObject_New(PythonOperationPlan, &PythonOperationPlan::InfoType);
-
-  // Initialize the iterator
-  obj->iter = OperationPlan::begin();
-
-  return reinterpret_cast<PyObject*>(obj);
-}
-
-
-extern "C" PyObject* PythonOperationPlan::next(PythonOperationPlan* obj)
-{
-  if (obj->iter != OperationPlan::end())
-  {
-    // Find a non-hidden demand linked to this operation plan
-    const Demand *dem = obj->iter->getDemand();
-    while (dem && dem->getHidden()) dem = dem->getOwner();
-    // Build a python dictionary
-    PyObject* result = Py_BuildValue("{s:l,s:s,s:f,s:N,s:N,s:z,s:b,s:l}",
-      "identifier", obj->iter->getIdentifier(),
-      "operation", obj->iter->getOperation()->getName().c_str(),
-      "quantity", obj->iter->getQuantity(),
-      "start", PythonDateTime(obj->iter->getDates().getStart()),
-      "end", PythonDateTime(obj->iter->getDates().getEnd()),
-      "demand", dem ? dem->getName().c_str() : NULL,
-      "locked", obj->iter->getLocked(),
-      "owner", obj->iter->getOwner() ? obj->iter->getOwner()->getIdentifier() : 0
-      );
-    ++(obj->iter);
-    return result;
-  }
-  // Reached the end of the iteration
-  return NULL;
-}
-
-
-//
-// INTERFACE FOR DEMAND
-//
-
-extern "C" PyObject* PythonDemand::create(PyTypeObject* type, PyObject *args, PyObject *kwargs)
-{
-  // Allocate memory
-  PythonDemand* obj = PyObject_New(PythonDemand, &PythonDemand::InfoType);
-
-  // Initialize the iterator
-  obj->iter = Demand::begin();
-  obj->peggingiterator = NULL;
-  obj->deliveryiterator = NULL;
-
-  return reinterpret_cast<PyObject*>(obj);
-}
-
-
-extern "C" PyObject* PythonDemand::next(PythonDemand* obj)
-{
-  if (obj->peggingiterator) 
-  { 
-    Py_DECREF(obj->peggingiterator);
-    obj->peggingiterator = NULL;
-  }
-  if (obj->deliveryiterator) 
-  {
-    Py_DECREF(obj->deliveryiterator);
-    obj->deliveryiterator = NULL;
-  }
-  if (obj->iter != Demand::end())
-  {
-    // Find a non-hidden demand owning this demand
-    const Demand *dem = &*(obj->iter);
-    while (dem && dem->getHidden()) dem = dem->getOwner();
-    // Build a python dictionary
-    obj->peggingiterator = PythonDemandPegging::createFromDemand(&*(obj->iter));
-    obj->deliveryiterator = PythonDemandDelivery::createFromDemand(&*(obj->iter));
-    PyObject* result = Py_BuildValue("{s:s,s:f,s:N,s:i,s:z,s:z,s:z,s:z,s:O,s:O}",
-      "name", dem ? dem->getName().c_str() : "unspecified",
-      "quantity", obj->iter->getQuantity(),
-			"due", PythonDateTime(obj->iter->getDue()),
-      "priority", obj->iter->getPriority(),
-      "item", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
-      "operation", obj->iter->getOperation() ? obj->iter->getOperation()->getName().c_str() : NULL,
-      "owner", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL,
-      "customer", obj->iter->getCustomer() ? obj->iter->getCustomer()->getName().c_str() : NULL,
-      "pegging", obj->peggingiterator,
-      "delivery", obj->deliveryiterator
-      );
-    ++(obj->iter);
-    return result;
-  }
-  // Reached the end of the iteration
-  return NULL;
-}
-
-
-//
-// INTERFACE FOR DEMAND DELIVERIES
-//
-
-
-extern "C" PyObject* PythonDemandDelivery::createFromDemand(Demand* v)
-{
-  // Allocate memory
-  PythonDemandDelivery* obj = PyObject_New(PythonDemandDelivery, &PythonDemandDelivery::InfoType);
-
-  // Cast the demand pointer and initialize the iterator
-  obj->dem = v;
-  obj->iter = v->getDelivery().begin();
-  obj->cumPlanned = 0.0;
-  // Find a non-hidden demand owning this demand
-  obj->dem_owner = v;
-  while (obj->dem_owner && obj->dem_owner->getHidden())
-    obj->dem_owner = obj->dem_owner->getOwner();
-
-  return reinterpret_cast<PyObject*>(obj);
-}
-
-
-extern "C" PyObject* PythonDemandDelivery::next(PythonDemandDelivery* obj)
-{
-  if (!obj->dem) return NULL;
-
-  if (obj->iter != obj->dem->getDelivery().end())
-  {
-    double p = (*(obj->iter))->getQuantity();
-    obj->cumPlanned += (*(obj->iter))->getQuantity();
-    if (obj->cumPlanned > obj->dem->getQuantity())
-    {
-      // Planned more than requested
-      p -= obj->cumPlanned - obj->dem->getQuantity();
-      if (p < 0.0) p = 0.0;
-    }
-    // Build a python dictionary
-    PyObject* result = Py_BuildValue("{s:z,s:N,s:f,s:N,s:f,s:l}",
-      "demand", obj->dem_owner ? obj->dem_owner->getName().c_str() : NULL,
-			"due", PythonDateTime(obj->dem->getDue()),
-      "quantity", p,
-			"plandate", PythonDateTime((*(obj->iter))->getDates().getEnd()),
-      "planquantity", (*(obj->iter))->getQuantity(),
-      "operationplan", (*(obj->iter))->getIdentifier()
-      );
-    ++(obj->iter);
-    return result;
-  }
-
-  // A last record for cases where the demand is planned short
-  if (obj->cumPlanned < obj->dem->getQuantity())
-  {
-    PyObject* result = Py_BuildValue("{s:z,s:N,s:f,s:z,s:z,s:z}",
-      "demand", obj->dem_owner ? obj->dem_owner->getName().c_str() : NULL,
-			"due", PythonDateTime(obj->dem->getDue()),
-      "quantity", obj->dem->getQuantity() - obj->cumPlanned,
-			"plandate", NULL,
-      "planquantity", NULL,
-      "operationplan", NULL
-      );
-    obj->dem = NULL; // To make sure this is the last iteration
-    return result;
-  }
-
-  // Reached the end of the iteration
-  return NULL;
+    return -1; // Error
+  return 0;  // OK
 }
 
 
@@ -395,52 +84,611 @@ extern "C" PyObject* PythonDemandDelivery::next(PythonDemandDelivery* obj)
 //
 
 
-extern "C" PyObject* PythonBuffer::create(PyTypeObject* type, PyObject *args, PyObject *kwargs)
+PyObject* PythonBuffer::getattro(const XMLElement& field)
 {
-  // Allocate memory
-  PythonBuffer* obj = PyObject_New(PythonBuffer, &PythonBuffer::InfoType);
-
-  // Initialize the iterator
-  obj->iter = Buffer::begin();
-  obj->flowplaniterator = NULL;
-
-  return reinterpret_cast<PyObject*>(obj);
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (field.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (field.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (field.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (field.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (field.isA(Tags::tag_location))
+    return PythonObject(obj->getLocation());
+  if (field.isA(Tags::tag_producing))
+    return PythonObject(obj->getProducingOperation());
+  if (field.isA(Tags::tag_item))
+    return PythonObject(obj->getItem());
+  if (field.isA(Tags::tag_onhand))
+    return PythonObject(obj->getOnHand());
+  if (field.isA(Tags::tag_flow_plans))
+    return new PythonFlowPlanIterator(obj);
+  if (field.isA(Tags::tag_maximum))
+    return PythonObject(obj->getMaximum());
+  if (field.isA(Tags::tag_minimum))
+    return PythonObject(obj->getMinimum());
+  if (field.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+	return NULL;
 }
 
 
-extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj)
+int PythonBuffer::setattro(const XMLElement& field, const PythonObject& value)
 {
-  if (obj->flowplaniterator)
-  { 
-    Py_DECREF(obj->flowplaniterator);
-    obj->flowplaniterator = NULL;
-  }
-
-  if (obj->iter != Buffer::end())
+  if (field.isA(Tags::tag_name))
+    obj->setName(value.getString());
+  else if (field.isA(Tags::tag_description))
+    obj->setDescription(value.getString());
+  else if (field.isA(Tags::tag_category))
+    obj->setCategory(value.getString());
+  else if (field.isA(Tags::tag_subcategory))
+    obj->setSubCategory(value.getString());
+  else if (field.isA(Tags::tag_owner))
   {
-    // Find a non-hidden buffer
-    const Buffer *buf = &*(obj->iter);
-    while (buf && buf->getHidden()) buf = buf->getOwner();
-    // Build a python dictionary
-    obj->flowplaniterator = PythonFlowPlan::createFromBuffer(&*(obj->iter));
-    PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:f,s:z,s:z,s:z,s:z,s:z,s:O}",
-      "name", buf ? buf->getName().c_str() : "unspecified",
-      "category", obj->iter->getCategory().c_str(),
-      "subcategory", obj->iter->getSubCategory().c_str(),
-      "description", obj->iter->getDescription().c_str(),
-      "onhand", obj->iter->getOnHand(),
-      "location", obj->iter->getLocation() ? obj->iter->getLocation()->getName().c_str() : NULL,
-      "item", obj->iter->getItem() ? obj->iter->getItem()->getName().c_str() : NULL,
-      "minimum", obj->iter->getMinimum() ? obj->iter->getMinimum()->getName().c_str() : NULL,
-      "maximum", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
-      "producing", obj->iter->getProducingOperation() ? obj->iter->getProducingOperation()->getName().c_str() : NULL,
-      "flowplans", obj->flowplaniterator
-      );
-    ++(obj->iter);
-    return result;
+    if (!value.check(PythonBuffer::getType()))
+    {
+      PyErr_SetString(PythonDataException, "buffer owner must be of type buffer");
+      return -1;
+    }
+    Buffer* y = static_cast<PythonBuffer*>(static_cast<PyObject*>(value))->obj;
+    obj->setOwner(y);
   }
-  // Reached the end of the iteration
+  else if (field.isA(Tags::tag_location))
+  {
+    if (!value.check(PythonLocation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer location must be of type location");
+      return -1;
+    }
+    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(value))->obj;
+    obj->setLocation(y);
+  }
+  else if (field.isA(Tags::tag_item))
+  {
+    if (!value.check(PythonItem::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer item must be of type item");
+      return -1;
+    }
+    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(value))->obj;
+    obj->setItem(y);
+  }
+  else if (field.isA(Tags::tag_maximum))
+  {
+    if (!value.check(PythonCalendarDouble::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer maximum must be of type calendar_double");
+      return -1;
+    }
+    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(value))->obj;
+    obj->setMaximum(y);
+  }
+  else if (field.isA(Tags::tag_minimum))
+  {
+    if (!value.check(PythonCalendarDouble::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer minimum must be of type calendar_double");
+      return -1;
+    }
+    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(value))->obj;
+    obj->setMinimum(y);
+  }
+  else if (field.isA(Tags::tag_onhand))
+    obj->setOnHand(value.getDouble());
+  else if (field.isA(Tags::tag_producing))
+  {
+    if (!value.check(PythonOperation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer producing must be of type operation");
+      return -1;
+    }
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(value))->obj;
+    obj->setProducingOperation(y);
+  }
+  else if (field.isA(Tags::tag_hidden))
+    obj->setHidden(value.getBool());
+  else
+    return -1;  // Error
+  return 0;  // OK
+}
+
+
+PyObject* PythonBufferDefault::getattro(const XMLElement& field)
+{
+  return PythonBuffer(obj).getattro(field); 
+}
+
+
+int PythonBufferDefault::setattro(const XMLElement& field, const PythonObject& value)
+{
+  return PythonBuffer(obj).setattro(field,value);
+}
+
+
+PyObject* PythonBufferInfinite::getattro(const XMLElement& field)
+{
+  return PythonBuffer(obj).getattro(field);
+}
+
+
+int PythonBufferInfinite::setattro(const XMLElement& field, const PythonObject& value)
+{
+  return PythonBuffer(obj).setattro(field,value);
+}
+
+
+PyObject* PythonBufferProcure::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_leadtime))
+    return PythonObject(obj->getLeadtime());
+  if (field.isA(Tags::tag_mininventory))
+    return PythonObject(obj->getMinimumInventory());
+  if (field.isA(Tags::tag_maxinventory))
+    return PythonObject(obj->getMaximumInventory());
+  if (field.isA(Tags::tag_mininterval))
+    return PythonObject(obj->getMinimumInterval());
+  if (field.isA(Tags::tag_maxinterval))
+    return PythonObject(obj->getMaximumInterval());
+  if (field.isA(Tags::tag_fence))
+    return PythonObject(obj->getFence());
+  if (field.isA(Tags::tag_size_minimum))
+    return PythonObject(obj->getSizeMinimum());
+  if (field.isA(Tags::tag_size_multiple))
+    return PythonObject(obj->getSizeMultiple());
+  if (field.isA(Tags::tag_size_maximum))
+    return PythonObject(obj->getSizeMaximum());
+  return PythonBuffer(obj).getattro(field);
+}
+
+
+int PythonBufferProcure::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_leadtime))
+    obj->setLeadtime(value.getTimePeriod());
+  else if (field.isA(Tags::tag_mininventory))
+    obj->setMinimumInventory(value.getDouble());
+  else if (field.isA(Tags::tag_maxinventory))
+    obj->setMaximumInventory(value.getDouble());
+  else if (field.isA(Tags::tag_mininterval))
+    obj->setMinimumInterval(value.getTimePeriod());
+  else if (field.isA(Tags::tag_maxinterval))
+    obj->setMaximumInterval(value.getTimePeriod());
+  else if (field.isA(Tags::tag_size_minimum))
+    obj->setSizeMinimum(value.getDouble());
+  else if (field.isA(Tags::tag_size_multiple))
+    obj->setSizeMultiple(value.getDouble());
+  else if (field.isA(Tags::tag_size_maximum))
+    obj->setSizeMaximum(value.getDouble());
+  else if (field.isA(Tags::tag_fence))
+    obj->setFence(value.getTimePeriod());
+  else
+    return PythonBuffer(obj).setattro(field,value);
+  return 0;
+}
+
+
+//
+// INTERFACE FOR LOCATION
+//
+
+
+PyObject* PythonLocation::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (field.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (field.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (field.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (field.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (field.isA(Tags::tag_available))
+    return PythonObject(obj->getAvailable());
+  if (field.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+	return NULL;
+}
+
+
+int PythonLocation::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_name))
+    obj->setName(value.getString());
+  else if (field.isA(Tags::tag_description))
+    obj->setDescription(value.getString());
+  else if (field.isA(Tags::tag_category))
+    obj->setCategory(value.getString());
+  else if (field.isA(Tags::tag_subcategory))
+    obj->setSubCategory(value.getString());
+  else if (field.isA(Tags::tag_owner))
+  {
+    if (!value.check(PythonLocation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "location owner must be of type location");
+      return -1;
+    }
+    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(value))->obj;
+    obj->setOwner(y);
+  }
+  else if (field.isA(Tags::tag_available))
+  {
+    if (!value.check(PythonCalendarBool::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "location calendar must be of type calendar_bool");
+      return -1;
+    }
+    CalendarBool* y = static_cast<PythonCalendarBool*>(static_cast<PyObject*>(value))->obj;
+    obj->setAvailable(y);
+  }
+  else if (field.isA(Tags::tag_hidden))
+    obj->setHidden(value.getBool());
+  else
+    return -1;
+  return 0;
+}
+
+
+PyObject* PythonLocationDefault::getattro(const XMLElement& field)
+{
+  return PythonLocation(obj).getattro(field);
+}
+
+
+int PythonLocationDefault::setattro(const XMLElement& field, const PythonObject& value)
+{
+ return PythonLocation(obj).setattro(field,value);
+}
+
+
+
+
+//
+// INTERFACE FOR CUSTOMER
+//
+
+
+PyObject* PythonCustomer::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (field.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (field.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (field.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (field.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (field.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+	return NULL;
+}
+
+
+int PythonCustomer::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_name))
+    obj->setName(value.getString());
+  else if (field.isA(Tags::tag_description))
+    obj->setDescription(value.getString());
+  else if (field.isA(Tags::tag_category))
+    obj->setCategory(value.getString());
+  else if (field.isA(Tags::tag_subcategory))
+    obj->setSubCategory(value.getString());
+  else if (field.isA(Tags::tag_owner))
+  {
+    if (!value.check(PythonCustomer::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "customer owner must be of type customer");
+      return -1;
+    }
+    Customer* y = static_cast<PythonCustomer*>(static_cast<PyObject*>(value))->obj;
+    obj->setOwner(y);
+  }
+  else if (field.isA(Tags::tag_hidden))
+    obj->setHidden(value.getBool());
+  else
+    return -1;
+  return 0;
+}
+
+
+PyObject* PythonCustomerDefault::getattro(const XMLElement& field)
+{
+  return PythonCustomer(obj).getattro(field);
+}
+
+
+int PythonCustomerDefault::setattro(const XMLElement& field, const PythonObject& value)
+{
+ return PythonCustomer(obj).setattro(field,value);
+}
+
+
+//
+// INTERFACE FOR ITEM
+//
+
+
+PyObject* PythonItem::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (field.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (field.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (field.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (field.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (field.isA(Tags::tag_operation))
+    return PythonObject(obj->getOperation());
+  if (field.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+  // @todo members
+	return NULL;
+}
+
+
+int PythonItem::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_name))
+    obj->setName(value.getString());
+  else if (field.isA(Tags::tag_description))
+    obj->setDescription(value.getString());
+  else if (field.isA(Tags::tag_category))
+    obj->setCategory(value.getString());
+  else if (field.isA(Tags::tag_subcategory))
+    obj->setSubCategory(value.getString());
+  else if (field.isA(Tags::tag_owner))
+  {
+    if (!value.check(PythonItem::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "item owner must be of type item");
+      return -1;
+    }
+    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(value))->obj;
+    obj->setOwner(y);
+  }
+  else if (field.isA(Tags::tag_operation))
+  {
+    if (!value.check(PythonOperation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "item operation must be of type operation");
+      return -1;
+    }
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(value))->obj;
+    obj->setOperation(y);
+  }
+  else if (field.isA(Tags::tag_hidden))
+    obj->setHidden(value.getBool());
+  // @todo members
+  else
+    return -1;
+  return 0;
+}
+
+
+PyObject* PythonItemDefault::getattro(const XMLElement& field)
+{
+  return PythonItem(obj).getattro(field);
+}
+
+
+int PythonItemDefault::setattro(const XMLElement& field, const PythonObject& value)
+{
+ return PythonItem(obj).setattro(field,value);
+}
+
+
+//
+// INTERFACE FOR CALENDAR
+//
+
+
+PyObject* PythonCalendar::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  //if (field.isA(Tags::tag_buckets))  @todo
+  // return 
+	return NULL;
+}
+
+
+int PythonCalendar::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_name))
+    obj->setName(value.getString());
+  else
+    return -1;  // Error
+  return 0;  // OK
+}
+
+
+PyObject* PythonCalendarVoid::getattro(const XMLElement& field)
+{
+  return PythonCalendar(obj).getattro(field); 
+}
+
+
+int PythonCalendarVoid::setattro(const XMLElement& field, const PythonObject& value)
+{
+   return PythonCalendar(obj).setattro(field,value);
+}
+
+
+PyObject* PythonCalendarBool::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_default))
+    return PythonObject(obj->getDefault());
+  return PythonCalendar(obj).getattro(field); 
+}
+
+
+int PythonCalendarBool::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_default))
+    obj->setDefault(value.getBool());
+  else
+    return PythonCalendar(obj).setattro(field,value);
+  return 0;
+}
+
+
+PyObject* PythonCalendarDouble::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_default))
+    return PythonObject(obj->getDefault());
+  return PythonCalendar(obj).getattro(field); 
+}
+
+
+int PythonCalendarDouble::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_default))
+    obj->setDefault(value.getDouble());
+  else
+    return PythonCalendar(obj).setattro(field,value);
+  return 0;
+}
+
+
+//
+// INTERFACE FOR DEMAND
+//
+
+
+PyObject* PythonDemand::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (field.isA(Tags::tag_quantity))
+    return PythonObject(obj->getQuantity());
+  if (field.isA(Tags::tag_due))
+    return PythonObject(obj->getDue());
+  if (field.isA(Tags::tag_priority))
+    return PythonObject(obj->getPriority());
+  if (field.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (field.isA(Tags::tag_item))
+    return PythonObject(obj->getItem());
+  if (field.isA(Tags::tag_customer))
+    return PythonObject(obj->getCustomer());
+  if (field.isA(Tags::tag_operation))
+    return PythonObject(obj->getOperation());
+  if (field.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (field.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (field.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (field.isA(Tags::tag_minshipment))
+    return PythonObject(obj->getMinShipment());
+  if (field.isA(Tags::tag_maxlateness))
+    return PythonObject(obj->getMaxLateness());
+  if (field.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+  if (field.isA(Tags::tag_operation_plans))
+    return new PythonDemandPlanIterator(obj);
+  if (field.isA(Tags::tag_pegging))
+    return new PythonPeggingIterator(obj);
   return NULL;
+}
+
+
+int PythonDemand::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_name))
+    obj->setName(value.getString());
+  else if (field.isA(Tags::tag_priority))
+    obj->setPriority(value.getInt());
+  else if (field.isA(Tags::tag_quantity))
+    obj->setQuantity(value.getDouble());
+  else if (field.isA(Tags::tag_due))
+    obj->setDue(value.getDate());
+  else if (field.isA(Tags::tag_item))
+  {
+    if (!value.check(PythonItem::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "demand item must be of type item");
+      return -1;
+    }
+    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(value))->obj;
+    obj->setItem(y);
+  }
+  else if (field.isA(Tags::tag_customer))
+  {
+    if (!value.check(PythonCustomer::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "demand customer must be of type customer");
+      return -1;
+    }
+    Customer* y = static_cast<PythonCustomer*>(static_cast<PyObject*>(value))->obj;
+    obj->setCustomer(y);
+  }
+  else if (field.isA(Tags::tag_description))
+    obj->setDescription(value.getString());
+  else if (field.isA(Tags::tag_category))
+    obj->setCategory(value.getString());
+  else if (field.isA(Tags::tag_subcategory))
+    obj->setSubCategory(value.getString());
+  else if (field.isA(Tags::tag_minshipment))
+    obj->setMinShipment(value.getDouble());
+  else if (field.isA(Tags::tag_maxlateness))
+    obj->setMaxLateness(value.getTimePeriod());
+  else if (field.isA(Tags::tag_owner))
+  {
+    if (!value.check(PythonDemand::getType()))
+    {
+      PyErr_SetString(PythonDataException, "demand owner must be of type demand");
+      return -1;
+    }
+    Demand* y = static_cast<PythonDemand*>(static_cast<PyObject*>(value))->obj;
+    obj->setOwner(y);
+  }
+  else if (field.isA(Tags::tag_operation))
+  {
+    if (!value.check(PythonOperation::getType()))
+    {
+      PyErr_SetString(PythonDataException, "demand operation must be of type operation");
+      return -1;
+    }
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(value))->obj;
+    obj->setOperation(y);
+  }
+  else if (field.isA(Tags::tag_hidden))
+    obj->setHidden(value.getBool());
+  else
+    return -1;  // Error
+  return 0;  // OK
+}
+
+
+PyObject* PythonDemandDefault::getattro(const XMLElement& field)
+{
+  return PythonDemand(obj).getattro(field); 
+}
+
+
+int PythonDemandDefault::setattro(const XMLElement& field, const PythonObject& value)
+{
+  return PythonDemand(obj).setattro(field,value);
 }
 
 
@@ -449,49 +697,517 @@ extern "C" PyObject* PythonBuffer::next(PythonBuffer* obj)
 //
 
 
-extern "C" PyObject* PythonResource::create(PyTypeObject* type, PyObject *args, PyObject *kwargs)
+PyObject* PythonResource::getattro(const XMLElement& field)
 {
-  // Allocate memory
-  PythonResource* obj = PyObject_New(PythonResource, &PythonResource::InfoType);
-
-  // Initialize the iterator
-  obj->iter = Resource::begin();
-  obj->loadplaniterator = NULL;
-
-  return reinterpret_cast<PyObject*>(obj);
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (field.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (field.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (field.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (field.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (field.isA(Tags::tag_location))
+    return PythonObject(obj->getLocation());
+  if (field.isA(Tags::tag_maximum))
+    return PythonObject(obj->getMaximum());
+  if (field.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+  if (field.isA(Tags::tag_load_plans))
+    return new PythonLoadPlanIterator(obj);
+	return NULL;
 }
 
 
-extern "C" PyObject* PythonResource::next(PythonResource* obj)
+int PythonResource::setattro(const XMLElement& field, const PythonObject& value)
 {
-  if (obj->loadplaniterator)
-  { 
-    Py_DECREF(obj->loadplaniterator);
-    obj->loadplaniterator = NULL;
-  }
-
-  if (obj->iter != Resource::end())
+  if (field.isA(Tags::tag_name))
+    obj->setName(value.getString());
+  else if (field.isA(Tags::tag_description))
+    obj->setDescription(value.getString());
+  else if (field.isA(Tags::tag_category))
+    obj->setCategory(value.getString());
+  else if (field.isA(Tags::tag_subcategory))
+    obj->setSubCategory(value.getString());
+  else if (field.isA(Tags::tag_owner))
   {
-    // Find a non-hidden resource
-    const Resource *res = &*(obj->iter);
-    while (res && res->getHidden()) res = res->getOwner();
-    // Build a python dictionary
-    obj->loadplaniterator = PythonLoadPlan::createFromResource(&*(obj->iter));
-    PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:s,s:z,s:z,s:z,s:O}",
-      "name", res ? res->getName().c_str() : "unspecified",
-      "category", obj->iter->getCategory().c_str(),
-      "subcategory", obj->iter->getSubCategory().c_str(),
-      "description", obj->iter->getDescription().c_str(),
-      "location", obj->iter->getLocation() ? obj->iter->getLocation()->getName().c_str() : NULL,
-      "maximum", obj->iter->getMaximum() ? obj->iter->getMaximum()->getName().c_str() : NULL,
-      "owner", obj->iter->getOwner() ? obj->iter->getOwner()->getName().c_str() : NULL,
-      "loadplans", obj->loadplaniterator
-     );
-    ++(obj->iter);
-    return result;
+    if (!value.check(PythonResource::getType()))
+    {
+      PyErr_SetString(PythonDataException, "resource owner must be of type resource");
+      return -1;
+    }
+    Resource* y = static_cast<PythonResource*>(static_cast<PyObject*>(value))->obj;
+    obj->setOwner(y);
   }
-  // Reached the end of the iteration
+  else if (field.isA(Tags::tag_location))
+  {
+    if (!value.check(PythonLocation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer location must be of type location");
+      return -1;
+    }
+    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(value))->obj;
+    obj->setLocation(y);
+  }
+  else if (field.isA(Tags::tag_maximum))
+  {
+    if (!value.check(PythonCalendarDouble::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "resource maximum must be of type calendar_double");
+      return -1;
+    }
+    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(value))->obj;
+    obj->setMaximum(y);
+  }
+  else if (field.isA(Tags::tag_hidden))
+    obj->setHidden(value.getBool());
+  else
+    return -1;  // Error
+  return 0;  // OK
+}
+
+
+PyObject* PythonResourceDefault::getattro(const XMLElement& field)
+{
+  return PythonResource(obj).getattro(field); 
+}
+
+
+int PythonResourceDefault::setattro(const XMLElement& field, const PythonObject& value)
+{
+  return PythonResource(obj).setattro(field,value);
+}
+
+
+PyObject* PythonResourceInfinite::getattro(const XMLElement& field)
+{
+  return PythonResource(obj).getattro(field);
+}
+
+
+int PythonResourceInfinite::setattro(const XMLElement& field, const PythonObject& value)
+{
+  return PythonResource(obj).setattro(field,value);
+}
+
+
+//
+// INTERFACE FOR OPERATION
+//
+
+
+PyObject* PythonOperation::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (field.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (field.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (field.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (field.isA(Tags::tag_location))
+    return PythonObject(obj->getLocation());
+  if (field.isA(Tags::tag_fence))
+    return PythonObject(obj->getFence());
+  if (field.isA(Tags::tag_size_minimum))
+    return PythonObject(obj->getSizeMinimum());
+  if (field.isA(Tags::tag_size_multiple))
+    return PythonObject(obj->getSizeMultiple());
+  if (field.isA(Tags::tag_pretime))
+    return PythonObject(obj->getPreTime());
+  if (field.isA(Tags::tag_posttime))
+    return PythonObject(obj->getPostTime());
+  if (field.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+  /* @todo flows loads; */
+	return NULL;
+}
+
+
+int PythonOperation::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_name))
+    obj->setName(value.getString());
+  else if (field.isA(Tags::tag_description))
+    obj->setDescription(value.getString());
+  else if (field.isA(Tags::tag_category))
+    obj->setCategory(value.getString());
+  else if (field.isA(Tags::tag_subcategory))
+    obj->setSubCategory(value.getString());
+  else if (field.isA(Tags::tag_location))
+  {
+    if (!value.check(PythonLocation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer location must be of type location");
+      return -1;
+    }
+    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(value))->obj;
+    obj->setLocation(y);
+  }
+  else if (field.isA(Tags::tag_fence))
+    obj->setFence(value.getTimePeriod());
+  else if (field.isA(Tags::tag_size_minimum))
+    obj->setSizeMinimum(value.getDouble());
+  else if (field.isA(Tags::tag_size_multiple))
+    obj->setSizeMultiple(value.getDouble());
+  else if (field.isA(Tags::tag_pretime))
+    obj->setPreTime(value.getTimePeriod());
+  else if (field.isA(Tags::tag_posttime))
+    obj->setPostTime(value.getTimePeriod());
+  else if (field.isA(Tags::tag_hidden))
+    obj->setHidden(value.getBool());
+  else
+    return -1;  // Error
+  return 0;  // OK
+}
+
+
+PyObject* PythonOperationFixedTime::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_duration))
+    return PythonObject(obj->getDuration());
+  return PythonOperation(obj).getattro(field); 
+}
+
+
+int PythonOperationFixedTime::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_duration))
+    obj->setDuration(value.getTimePeriod());
+  else
+    return PythonOperation(obj).setattro(field,value);
+  return 0;
+}
+
+
+PyObject* PythonOperationTimePer::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_duration))
+    return PythonObject(obj->getDuration());
+  if (field.isA(Tags::tag_duration))
+    return PythonObject(obj->getDurationPer());
+  return PythonOperation(obj).getattro(field); 
+}
+
+
+int PythonOperationTimePer::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_duration))
+    obj->setDuration(value.getTimePeriod());
+  else if (field.isA(Tags::tag_duration_per))
+    obj->setDurationPer(value.getTimePeriod());
+  else
+    return PythonOperation(obj).setattro(field,value);
+  return 0;
+}
+
+
+PyObject* PythonOperationAlternate::getattro(const XMLElement& field)
+{
+  // @todo alternates
+  return PythonOperation(obj).getattro(field); 
+}
+
+
+int PythonOperationAlternate::setattro(const XMLElement& field, const PythonObject& value)
+{
+  // @todo alternates
+  return PythonOperation(obj).setattro(field,value);
+}
+
+
+PyObject* PythonOperationRouting::getattro(const XMLElement& field)
+{
+  // @todo steps
+  return PythonOperation(obj).getattro(field); 
+}
+
+
+int PythonOperationRouting::setattro(const XMLElement& field, const PythonObject& value)
+{
+  // @todo steps
+  return PythonOperation(obj).setattro(field,value);
+}
+
+
+//
+// INTERFACE FOR PROBLEM
+//
+
+
+int PythonProblem::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("problem");
+  x.setDoc("frePPLe problem");
+  x.supportgetattro();
+  const_cast<MetaCategory&>(Problem::metadata).factoryPythonProxy = proxy;
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonProblem::getattro(const XMLElement& field)
+{
+  if (!prob) return Py_None;
+  if (field.isA(Tags::tag_name))
+    return PythonObject(prob->getType().type);
+  if (field.isA(Tags::tag_description))
+    return PythonObject(prob->getDescription());
+  if (field.isA(Tags::tag_entity))
+    return PythonObject(prob->getOwner()->getEntity()->getType().category->group);
+  if (field.isA(Tags::tag_start))
+    return PythonObject(prob->getDateRange().getStart());
+  if (field.isA(Tags::tag_end))
+    return PythonObject(prob->getDateRange().getEnd());
+  if (field.isA(Tags::tag_weight))
+    return PythonObject(prob->getWeight());
   return NULL;
+}
+
+
+// 
+// INTERFACE FOR OPERATIONPLAN
+//
+
+
+int PythonOperationPlan::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("operationplan");
+  x.setDoc("frePPLe operationplan");
+  x.supportgetattro();
+  x.supportsetattro();
+  const_cast<MetaCategory&>(OperationPlan::metadata).factoryPythonProxy = proxy;
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonOperationPlan::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_id))
+    return PythonObject(obj->getIdentifier());
+  if (field.isA(Tags::tag_operation))
+    return PythonObject(obj->getOperation());
+  if (field.isA(Tags::tag_quantity))
+    return PythonObject(obj->getQuantity());
+  if (field.isA(Tags::tag_start))
+    return PythonObject(obj->getDates().getStart());
+  if (field.isA(Tags::tag_end))
+    return PythonObject(obj->getDates().getEnd());
+  if (field.isA(Tags::tag_demand))
+    return PythonObject(obj->getDemand());
+  if (field.isA(Tags::tag_locked))
+    return PythonObject(obj->getLocked());
+  if (field.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (field.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+  return NULL;
+}
+
+
+int PythonOperationPlan::setattro(const XMLElement& field, const PythonObject& value)
+{
+  // @todo 
+  /*
+      "id", obj->iter->getIdentifier(),
+    "operation", obj->iter->getOperation()->getName().c_str(),
+    "quantity", obj->iter->getQuantity(),
+    "start", PythonDateTime(obj->iter->getDates().getStart()),
+    "end", PythonDateTime(obj->iter->getDates().getEnd()),
+    "demand", dem ? dem->getName().c_str() : NULL,
+    "locked", obj->iter->getLocked(),
+    "owner", obj->iter->getOwner() ? obj->iter->getOwner()->getIdentifier() : 0
+
+    */
+  return -1;
+}
+
+
+//
+// INTERFACE FOR FLOWPLAN
+//
+
+
+int PythonFlowPlan::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("flowplan");
+  x.setDoc("frePPLe flowplan");
+  x.supportgetattro();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonFlowPlan::getattro(const XMLElement& field)
+{
+  if (!fl) return Py_None;
+  if (field.isA(Tags::tag_operation_plan))
+    return PythonObject(fl->getOperationPlan());
+  if (field.isA(Tags::tag_quantity))
+    return PythonObject(fl->getQuantity());
+  if (field.isA(Tags::tag_date))
+    return PythonObject(fl->getDate());
+  if (field.isA(Tags::tag_onhand))
+    return PythonObject(fl->getOnhand());
+  if (field.isA(Tags::tag_buffer))
+    return PythonObject(fl->getFlow()->getBuffer());
+  return NULL;
+}
+
+
+int PythonFlowPlanIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonFlowPlanIterator>::getType();
+  x.setName("flowplanIterator");
+  x.setDoc("frePPLe iterator for flowplan");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonFlowPlanIterator::iternext()
+{
+  // Skip uninteresting entries
+  while (i != buf->getFlowPlans().end() && i->getQuantity()==0.0) 
+    ++i;
+  if (i == buf->getFlowPlans().end()) return NULL;
+
+  // Return result
+  return new PythonFlowPlan(const_cast<FlowPlan*>(dynamic_cast<const FlowPlan*>(&*(i++))));
+}
+
+
+//
+// INTERFACE FOR LOADPLAN
+//
+
+
+int PythonLoadPlan::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("loadplan");
+  x.setDoc("frePPLe loadplan");
+  x.supportgetattro();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonLoadPlan::getattro(const XMLElement& field)
+{
+  if (!fl) return Py_None;
+  if (field.isA(Tags::tag_operation_plan))
+    return PythonObject(fl->getOperationPlan());
+  if (field.isA(Tags::tag_quantity))
+    return PythonObject(fl->getQuantity());
+  if (field.isA(Tags::tag_startdate))
+    return PythonObject(fl->getDate());
+  if (field.isA(Tags::tag_enddate))
+    return PythonObject(fl->getOtherLoadPlan()->getDate());
+  if (field.isA(Tags::tag_resource))
+    return PythonObject(fl->getLoad()->getResource());
+  return NULL;
+}
+
+
+int PythonLoadPlanIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonLoadPlanIterator>::getType();
+  x.setName("loadplanIterator");
+  x.setDoc("frePPLe iterator for loadplan");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonLoadPlanIterator::iternext()
+{  
+  // Skip zero quantity loadplans and load ends
+  while (i != res->getLoadPlans().end() && i->getQuantity()<=0.0) 
+    ++i;
+  if (i == res->getLoadPlans().end()) return NULL;
+
+  // Return result
+  return new PythonLoadPlan(const_cast<LoadPlan*>(dynamic_cast<const LoadPlan*>(&*(i++))));
+}
+
+
+//
+// INTERFACE FOR DEMAND DELIVERY OPERATIONPLANS
+//
+
+
+int PythonDemandPlanIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonDemandPlanIterator>::getType();
+  x.setName("demandplanIterator");
+  x.setDoc("frePPLe iterator for demand delivery operationplans");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonDemandPlanIterator::iternext()
+{  
+  if (i == dem->getDelivery().end()) return NULL;
+  return new PythonOperationPlan(const_cast<OperationPlan*>(&**(i++)));
+}
+
+
+//
+// INTERFACE FOR DEMAND PEGGING
+//
+
+
+int PythonPeggingIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonPeggingIterator>::getType();
+  x.setName("peggingIterator");
+  x.setDoc("frePPLe iterator for demand pegging");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonPeggingIterator::iternext()
+{  
+  if (!i) return NULL;
+
+  // Pass the result to Python.
+  // This is different than the other iterators! We need to capture the 
+  // current state of the iterator before decrementing it. For other iterators
+  // we can create a proxy object meeting this requirement, but not for the
+  // pegging iterator.
+  PyObject* result = Py_BuildValue("{s:i,s:N,s:N,s:N,s:N,s:N,s:f,s:f,s:i}",
+    "level", i.getLevel(),
+    "consuming", static_cast<PyObject*>(PythonObject(i.getConsumingOperationplan())),
+    "cons_date", static_cast<PyObject*>(PythonObject(i.getConsumingDate())),
+    "producing", static_cast<PyObject*>(PythonObject(i.getProducingOperationplan())),
+    "prod_date", static_cast<PyObject*>(PythonObject(i.getProducingDate())),
+    "buffer", static_cast<PyObject*>(PythonObject(i.getBuffer())),
+    "quantity_demand", i.getQuantityDemand(),
+    "quantity_buffer", i.getQuantityBuffer(),
+    "pegged", i.getPegged() ? 1 : 0
+    );
+
+  --i;  
+  return result;
 }
 
 

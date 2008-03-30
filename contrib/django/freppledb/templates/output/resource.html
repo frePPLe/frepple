@@ -5,7 +5,7 @@
     function onChange(input)
     {
     // Update the utilization percentage immediately
-    var ld = $(input).next();
+    var ld = $(input).next().next();
     var utl = ld.next().next();
     var u = parseFloat(ld.innerHTML) /parseFloat(input.value);
     if (isNaN(u) == true) u = 0.0;

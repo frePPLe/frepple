@@ -237,7 +237,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
       if (HasOverload && newDate)
       {
         // Multiple operations could be executed in parallel
-        int parallelOps = (int)((curMax - curOnhand) / data->q_loadplan->getQuantity());
+        int parallelOps = static_cast<int>((curMax - curOnhand) / data->q_loadplan->getQuantity());
         if (parallelOps <= 0) parallelOps = 1;
         // Move the operationplan to the new date
         data->q_operationplan->getOperation()->setOperationPlanParameters(

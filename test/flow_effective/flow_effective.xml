@@ -178,7 +178,7 @@
     This scenario models a so-called learning curve: the production of a new
     product becomes more efficient after a while.
     The operation "3. make end item" produces a variable number of units of
-    the end item. In january it produces 0.6 units, in februari it produces
+    the end item. In january it produces 0.7 units, in februari it produces
     0.8 units and from then onwards it produces 1.0 units.
   -->
   <buffers>
@@ -189,7 +189,7 @@
         <flows>
           <flow xsi:type="flow_end">
             <buffer name="3. end item" />
-            <quantity>0.6</quantity>
+            <quantity>0.7</quantity>
             <effective_start>2007-01-01T00:00:00</effective_start>
             <effective_end>2007-02-01T00:00:00</effective_end>
           </flow>

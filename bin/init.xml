@@ -22,9 +22,9 @@
 -->
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <!--
-  This file is a frepple command file that is automatically read by frepple
-  when the library is being initialized. It can be used to set create some
-  initial models or define some startup commands.
+  This file is a frePPLe command file that is automatically read when
+  the library is being initialized. It can be used to set run some
+  initialization logic and/or load extension modules.
 
   If no file "$FREPPLE_HOME/init.xml" is found, no startup commands are
   executed. If the file exists but is unreadable, a warning message will be
@@ -34,7 +34,7 @@
   aborted.
   -->
   <!--
-  <logfile>/home/johan/workspace/frepple/contrib/apache/frepple.log</logfile>
+  <logfile>frepple.log</logfile>
   -->
   <commands>
     <verbose>false</verbose>

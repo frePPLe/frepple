@@ -39,7 +39,7 @@ double suggestQuantity(const BufferProcure* b, double f)
   // Round to a multiple
   if (b->getSizeMultiple()>0.0)
   {
-    int mult = (int) (order_qty / b->getSizeMultiple() + 0.99999f);
+    int mult = static_cast<int>(order_qty / b->getSizeMultiple() + 0.99999999);
     order_qty = mult * b->getSizeMultiple();
   }
 
@@ -50,7 +50,7 @@ double suggestQuantity(const BufferProcure* b, double f)
     // round up to multiple
     if (b->getSizeMultiple()>0.0)
     {
-      int mult = (int) (order_qty / b->getSizeMultiple() + 0.99999f);
+      int mult = static_cast<int>(order_qty / b->getSizeMultiple() + 0.99999999);
       order_qty = mult * b->getSizeMultiple();
     }
     // if now bigger than max -> infeasible
@@ -66,7 +66,7 @@ double suggestQuantity(const BufferProcure* b, double f)
     // round down
     if (b->getSizeMultiple()>0.0)
     {
-      int mult = (int) (order_qty / b->getSizeMultiple());
+      int mult = static_cast<int>(order_qty / b->getSizeMultiple());
       order_qty = mult * b->getSizeMultiple();
     }
     // if now smaller than min -> infeasible

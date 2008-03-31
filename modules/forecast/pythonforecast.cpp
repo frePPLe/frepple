@@ -139,7 +139,9 @@ void initializePython()
   {
 
     // Create a new module
-    PyObject* m = Py_InitModule("freppleforecast", NULL);  // @todo frepple.forecast would be a cleaner name...
+    // Putting the extension in a Python submodule would be cleaner.
+    // Unfortunately the Python API's don't allow this.
+    PyObject* m = Py_InitModule("freppleforecast", NULL);  
     if (!m)
       throw frepple::RuntimeException("Can't initialize Python extensions");
 

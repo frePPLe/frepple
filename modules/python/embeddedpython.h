@@ -359,6 +359,12 @@ class PythonType : public NonCopyable
   * in C++ and Python.
   *
   * This class is basically a wrapper around a PyObject pointer.
+  * 
+  * When creating a PythonObject from a C++ object, make sure to increment
+  * the reference count of the object.<br>
+  * When constructing a PythonObject from an existing Python object, the
+  * code that provided us the PyObject pointer should have incremented the
+  * reference count already.
   *
   *@todo endelement function should be shared with setattro function.
   *Unifies the python and xml worlds: shared code base to update objects!
@@ -369,7 +375,6 @@ class PythonType : public NonCopyable
 class PythonObject : public NonCopyable
 {
   private:
-    // xxx handle refcount: if object is owned (isnt it always owned???), we need to decref in the destructor...
     PyObject* obj;
         
   public:
@@ -387,7 +392,9 @@ class PythonObject : public NonCopyable
     /** Check for null value. */
     operator bool() const {return obj != NULL;}
 
-    /** Check whether the Python object is of a certain type. */
+    /** Check whether the Python object is of a certain type.<br>
+      * Subclasses of the argument type will also give a true return value.
+      */
     bool check(const PythonType& c) const
     {
       return obj ? 
@@ -453,7 +460,13 @@ class PythonObject : public NonCopyable
 	  if (result == -1 && PyErr_Occurred())
 		  throw DataException("Invalid number");
 	  return result;
-	}
+  	}
+
+    /** Constructor from a pointer to an Object.<br>
+      * The metadata of the Object instances allow us to create a Python
+      * object that works as a proxy for the C++ object.
+      */
+    PythonObject(Object* p);
 
     /** Convert a C++ string into a (raw) Python string. */
     inline PythonObject(const string& val)
@@ -506,9 +519,6 @@ class PythonObject : public NonCopyable
       obj = PyLong_FromLong(val);
     }
 
-    /** xxx*/
-    PythonObject(Object* p);
-
     /** Convert a frePPLe date into a Python datetime.datetime object. */
     PythonObject(const Date& val);
 };
@@ -516,8 +526,8 @@ class PythonObject : public NonCopyable
 
 /** @brief This is a base class for all Python extension types.
   *
-  * When creating you own extensions, inherit from the PythonExtension or 
-  * PythonProxy template classes instead of this one.
+  * When creating you own extensions, inherit from the PythonExtension 
+  * template class instead of this one.
   *
   * It inherits from the PyObject C struct, defined in the Python C API.<br>
   * These functions aren't called directly from Python. Python first calls a 
@@ -572,7 +582,7 @@ class PythonExtensionBase : public PyObject
       * Subclasses are expected to implement an override if the type supports
       * iteration.
       */
-   virtual PyObject* iternext()
+    virtual PyObject* iternext()
     {
       PyErr_SetString(PythonLogicException, "Missing method 'iternext'"); 
       return NULL;
@@ -631,6 +641,10 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
       return *table;
     }
 
+    /** Free the memory.<br>
+      * See the note on the memory management in the class documentation 
+      * for PythonExtensionBase.
+      */
     static void deallocator(PyObject* o) {delete static_cast<T*>(o);}
 };
 
@@ -815,6 +829,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
 };
 
 
+/** @brief A template class to expose iterators to Python. */
 template <class ME, class ITERCLASS, class DATACLASS, class PROXYCLASS> 
 class FreppleIterator : public PythonExtension<ME>
 {

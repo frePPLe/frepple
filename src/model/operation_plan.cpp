@@ -514,8 +514,8 @@ DECLARE_EXPORT void OperationPlan::setQuantity (double f, bool roundDown, bool u
   }
   if (f!=0.0 && getOperation()->getSizeMultiple()>0.0)
   {
-    int mult = (int) (f / getOperation()->getSizeMultiple()
-        + (roundDown ? 0.0 : 0.999999f));
+    int mult = static_cast<int> (f / getOperation()->getSizeMultiple()
+        + (roundDown ? 0.0 : 0.99999999));
     quantity = mult * getOperation()->getSizeMultiple();
   }
   else

@@ -3657,6 +3657,8 @@ class CommandReadXMLString : public Command
   * Both the static model (i.e. items, locations, buffers, resources,
   * calendars, etc...) and the dynamic data (i.e. the actual plan including
   * the operation_plans, demand, problems, etc...).<br>
+  * The format is such that the output file can be re-read to restore the
+  * very same model.<br>
   * The data is written by the execute() function.
   * @see CommandSavePlan
   */

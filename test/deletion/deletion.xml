@@ -74,7 +74,6 @@
 			]]>
       </data>
     </command>
-    <!--  @todo flow and load deletion not working yet...
     <command xsi:type="command_readxmlstring">
       <data>
         <![CDATA[
@@ -95,7 +94,7 @@
 			]]>
       </data>
     </command>
-    -->
+
     <command xsi:type="command_save" filename="output.6.xml" />
 
     <!--

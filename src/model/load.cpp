@@ -85,7 +85,6 @@ DECLARE_EXPORT void Load::validate(Action action)
         // Nothing to delete
         throw DataException("Can't remove nonexistent load of '"
             + oper->getName() + "' and '" + res->getName() + "'");
-      throw DataException("Can't delete a load"); // @todo crashes when the parser releases the writelock
       delete &*i;
       // Set a flag to make sure the level computation is triggered again
       HasLevel::triggerLazyRecomputation();
@@ -107,6 +106,17 @@ DECLARE_EXPORT Load::~Load()
 {
   // Set a flag to make sure the level computation is triggered again
   HasLevel::triggerLazyRecomputation();
+
+  // Delete existing loadplans
+  if (getOperation() && getResource())
+  {
+    // Loop over operationplans
+	  for(OperationPlan::iterator i(getOperation()); i != OperationPlan::end(); ++i)
+      // Loop over loadplans
+      for(OperationPlan::LoadPlanIterator j = i->beginLoadPlans(); j != i->endLoadPlans(); )
+        if (j->getLoad() == this) j.deleteLoadPlan();
+        else ++j;
+  }
 
   // Delete the load from the operation and resource
   if (getOperation()) getOperation()->loaddata.erase(this);

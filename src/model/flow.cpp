@@ -86,9 +86,8 @@ DECLARE_EXPORT void Flow::validate(Action action)
         throw DataException("Can't remove nonexistent flow of '"
             + oper->getName() + "' and '" + buf->getName() + "'");
       // Delete
-      throw DataException("Can't delete a flow"); // @todo crashes when the parser releases the writelock
       delete &*i;
-  }
+ }
 
   // Attach to buffers higher up in the hierarchy
   // Note that the owner can create more loads if it has an owner too.
@@ -104,7 +103,18 @@ DECLARE_EXPORT Flow::~Flow()
   // Set a flag to make sure the level computation is triggered again
   HasLevel::triggerLazyRecomputation();
 
-  // Delete the flow from the operation and buffer
+  // Delete existing flowplans
+  if (getOperation() && getBuffer())
+  {
+    // Loop over operationplans
+	  for(OperationPlan::iterator i(getOperation()); i != OperationPlan::end(); ++i)
+      // Loop over flowplans
+      for(OperationPlan::FlowPlanIterator j = i->beginFlowPlans(); j != i->endFlowPlans(); )
+        if (j->getFlow() == this) j.deleteFlowPlan();
+        else ++j;
+  }
+
+  // Delete the flow from the operation and the buffer
   if (getOperation()) getOperation()->flowdata.erase(this);
   if (getBuffer()) getBuffer()->flows.erase(this);
 }

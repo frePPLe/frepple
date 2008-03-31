@@ -5059,15 +5059,21 @@ class OperationPlan::FlowPlanIterator
     friend class OperationPlan;
   private:
     FlowPlan* curflowplan;
-    FlowPlanIterator(FlowPlan* b) : curflowplan(b) {}
+    FlowPlan* prevflowplan;
+    FlowPlanIterator(FlowPlan* b) : curflowplan(b), prevflowplan(NULL) {}
   public:
-    FlowPlanIterator(const FlowPlanIterator& b) {curflowplan = b.curflowplan;}
+    FlowPlanIterator(const FlowPlanIterator& b) 
+    {
+      curflowplan = b.curflowplan;
+      prevflowplan = b.prevflowplan;
+    }
     bool operator != (const FlowPlanIterator &b) const
-    {return b.curflowplan != curflowplan;}
+      {return b.curflowplan != curflowplan;}
     bool operator == (const FlowPlanIterator &b) const
       {return b.curflowplan == curflowplan;}
     FlowPlanIterator& operator++()
     {
+      prevflowplan = curflowplan;
       if (curflowplan) curflowplan = curflowplan->nextFlowPlan;
       return *this;
     }
@@ -5075,6 +5081,16 @@ class OperationPlan::FlowPlanIterator
       {FlowPlanIterator tmp = *this; ++*this; return tmp;}
     FlowPlan* operator ->() const {return curflowplan;}
     FlowPlan& operator *() const {return *curflowplan;}
+    void deleteFlowPlan()
+    {
+      if (!curflowplan) return;
+      if (prevflowplan) prevflowplan->nextFlowPlan = curflowplan->nextFlowPlan;
+      else curflowplan->oper->firstflowplan = curflowplan->nextFlowPlan;
+      FlowPlan* tmp = curflowplan;
+      // Move the iterator to the next element
+      curflowplan = curflowplan->nextFlowPlan;
+      delete tmp;
+    }
 };
 
 inline OperationPlan::FlowPlanIterator OperationPlan::beginFlowPlans() const
@@ -5100,15 +5116,21 @@ class OperationPlan::LoadPlanIterator
     friend class OperationPlan;
   private:
     LoadPlan* curloadplan;
-    LoadPlanIterator(LoadPlan* b) : curloadplan(b) {}
+    LoadPlan* prevloadplan;
+    LoadPlanIterator(LoadPlan* b) : curloadplan(b), prevloadplan(NULL) {}
   public:
-    LoadPlanIterator(const LoadPlanIterator& b) {curloadplan = b.curloadplan;}
+    LoadPlanIterator(const LoadPlanIterator& b) 
+    {
+      curloadplan = b.curloadplan;
+      prevloadplan = b.prevloadplan;
+    }
     bool operator != (const LoadPlanIterator &b) const
       {return b.curloadplan != curloadplan;}
     bool operator == (const LoadPlanIterator &b) const
       {return b.curloadplan == curloadplan;}
     LoadPlanIterator& operator++()
     {
+      prevloadplan = curloadplan;
       if (curloadplan) curloadplan = curloadplan->nextLoadPlan;
       return *this;
     }
@@ -5116,6 +5138,16 @@ class OperationPlan::LoadPlanIterator
       {LoadPlanIterator tmp = *this; ++*this; return tmp;}
     LoadPlan* operator ->() const {return curloadplan;}
     LoadPlan& operator *() const {return *curloadplan;}
+    void deleteLoadPlan()
+    {
+      if (!curloadplan) return;
+      if (prevloadplan) prevloadplan->nextLoadPlan = curloadplan->nextLoadPlan;
+      else curloadplan->oper->firstloadplan = curloadplan->nextLoadPlan;
+      LoadPlan* tmp = curloadplan;
+      // Move the iterator to the next element
+      curloadplan = curloadplan->nextLoadPlan; 
+      delete tmp;
+    }
 };
 
 inline OperationPlan::LoadPlanIterator OperationPlan::beginLoadPlans() const

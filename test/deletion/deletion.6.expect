@@ -131,12 +131,6 @@
 		</buffer>
 		<buffer name="buffer B">
 			<item name="component B"/>
-			<flows>
-				<flow xsi:type="flow_start">
-					<operation name="make item 1" xsi:type="operation_fixed_time"/>
-					<quantity>-1</quantity>
-				</flow>
-			</flows>
 		</buffer>
 	</buffers>
 	<demands>
@@ -163,11 +157,6 @@
 	<resources>
 		<resource name="assemble">
 			<maximum name="assembly capacity" xsi:type="calendar_double"/>
-			<loads>
-				<load>
-					<operation name="make item 1" xsi:type="operation_fixed_time"/>
-				</load>
-			</loads>
 		</resource>
 		<resource name="transport">
 		</resource>
@@ -240,13 +229,4 @@
 			<owner id="36" operation="supply component A"/>
 		</operation_plan>
 	</operation_plans>
-	<problems>
-		<problem>
-			<name>material shortage</name>
-			<description>Buffer &apos;buffer B&apos; has material shortage of 3</description>
-			<start>2007-01-30T00:00:00</start>
-			<end>2030-12-31T00:00:00</end>
-			<weight>3</weight>
-		</problem>
-	</problems>
 </plan>

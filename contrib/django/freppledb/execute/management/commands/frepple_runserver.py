@@ -70,7 +70,7 @@ class Command(BaseCommand):
       s.bind( (address, port) )
       s.close()
     except socket.error, e:
-      raise Exception('Invalid address and/or port: %s' % e)
+      raise Exception("Invalid address '%s' and/or port '%s': %s" % (address, port, e))
 
     # Print a header message
     print 'Running Frepple %s with database %s\n' % (settings.FREPPLE_VERSION,settings.DATABASE_NAME)

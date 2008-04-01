@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <description>
-    This test case tests the embedded python interpreter.
+  This test shows how we can access frePPLe objects from Python.
   </description>
   <current>2007-01-01T00:00:00</current>
 <?python
@@ -15,42 +15,49 @@ def printmodel():
 
   # Print information
   try:
+
     print "start exporting the problems"
     print >>out, "Problems:"
-    for i in frepple.problem():
-      print >>out, i["entity"], i["type"], i["start"], i["end"], \
-        i["description"]
+    for i in frepple.problems():
+      print >>out, i.entity, i.name, i.start, i.end, i.description, i.weight
 
     print "start exporting the operation plans"
     print >>out, "\nOperationplans:"
-    for i in frepple.operationplan():
-      print >>out, i["identifier"], i["operation"], i["quantity"], \
-        i["start"], i["end"], i["demand"]
+    for i in frepple.operationplans():
+      print >>out, i.id, i.operation.name, i.quantity, \
+        i.start, i.end, i.demand and i.demand.name or None
 
     print "start exporting the buffer plans"
     print >>out, "\nBuffers:"
-    for i in frepple.buffer():
-      print >>out, i["name"], i["category"], i["subcategory"], \
-        i["description"], i["onhand"], i["location"], i["item"], \
-        i["maximum"], i["producing"]
-      for j in i["flowplans"]:
-        print >>out, "     ", j["buffer"], j["operationplan"], \
-          j["quantity"], j["date"], j["onhand"]
+    for i in frepple.buffers():
+      print >>out, i.name, i.category, i.subcategory, \
+        i.description, i.onhand, i.location and i.location.name or None, \
+        i.item and i.item.name or None, \
+        i.maximum and i.maximum.name or None, \
+        i.minimum and i.minimum.name or None, \
+        i.producing and i.producing.name or None
+      for j in i.flow_plans:
+        print >>out, "     ", j.operation_plan.id, \
+          j.quantity, j.date, j.onhand
 
     print "start exporting the resource plans"
     print >>out, "\nResources:"
-    for i in frepple.resource():
-      print >>out, i["name"], i["category"], i["subcategory"], \
-        i["description"], i["location"], i["maximum"], i["owner"]
-      for j in i["loadplans"]:
-        print >>out, "     ", j["resource"], j["operationplan"], \
-          j["quantity"], j["startdate"], j["enddate"]
+    for i in frepple.resources():
+      print >>out, i.name, i.category, i.subcategory, i.description, \
+        i.location and i.location.name or None, \
+        i.maximum and i.maximum.name or None, \
+        i.owner and i.owner.name or None
+      for j in i.load_plans:
+        print >>out, "     ", j.operation_plan.id, \
+          j.quantity, j.startdate, j.enddate
 
     print "start exporting the demand plans"
     print >>out, "\nDemands:"
-    for i in frepple.demand():
-      print >>out, i["name"], i["quantity"], i["due"], i["priority"], \
-        i["item"], i["operation"], i["owner"], i["customer"]
+    for i in frepple.demands():
+      print >>out, i.name, i.quantity, i.due, i.priority, \
+        i.item.name, i.operation or None, \
+        i.owner and i.owner.name or None, \
+        i.customer and i.customer.name or None
 
     print "Done"
 
@@ -63,6 +70,10 @@ def printmodel():
   	<abortonerror>false</abortonerror>
 
   	<!-- Read an XML file. -->
+  	<!--
+  	This could be done easier of course with a command_readxmlfile
+  	instead, but we want to test the Python functions here...
+  	-->
     <command xsi:type="command_python">
       <cmdline>frepple.readXMLfile(&quot;data.xml&quot;)</cmdline>
     </command>
@@ -90,6 +101,10 @@ frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
     <command xsi:type="command_size"/>
 
   	<!-- Save the model to an XML file. -->
+  	<!--
+  	This could be done easier of course with a command_save
+  	instead, but we want to test the Python functions here...
+  	-->
     <command xsi:type="command_python" cmdline="frepple.saveXMLfile(&quot;output.2.xml&quot;)" />
     <command xsi:type="command_size"/>
 

@@ -1,8 +1,9 @@
 
+import csv
+
 def read_csv_file():
   # This function reads a CSV-formatted file, creates an XML string and
   # then passes the string to Frepple for processing
-  import csv
   x = [ '<?xml version="1.0" encoding="UTF-8" ?><plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n<items>' ]
   for row in csv.reader(open("items.csv", "rb")):
     x.append('<item name="%s"><operation name="%s"/></item>' % (row[0],row[1]))
@@ -13,9 +14,8 @@ def read_csv_file():
 def read_csv_file_direct():
   # This function reads a CSV file and calls a function that accesses the
   # Frepple C++ API directly, without an intermediate XML format.
-  import csv
   for row in csv.reader(open("items.csv", "rb")):
-    frepple.createItem(row[0],row[1])
+    frepple.item(name=row[0], operation=frepple.operation(name=row[1]))
   return
 
 def create_files(cnt):

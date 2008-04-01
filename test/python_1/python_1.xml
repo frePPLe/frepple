@@ -2,6 +2,12 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <description>
     This test case tests the embedded python interpreter.
+    It verifies:
+      - Executing Python code as XML processing instruction.
+      - Executing Python code in a seperate source file.
+      - Performance comparison of data loading in different ways.
+      - Catching of exceptions thrown in frePPLe C++ code.
+      - Executing Python code in different threads
   </description>
   <current>2007-01-01T00:00:00</current>
 <?python
@@ -25,24 +31,24 @@ print '3. calling a function:', my_function(myvariable)
     </command>
     <!--
     In the next steps we are comparing the speed of 3 types of APIs each
-    achieving eaxactly the same final result:
-     1) Frepple C++ to read a XML-datafile
-     2) Python to read a CSV-datafile, which is reformatted into XML and
-        passed to Frepple as a string
-     3) Python to read a CSV-datafile, which then calls a special C++ function
-        that creates the Frepple objects in the most direct way (i.e. no XML)
+    achieving exactly the same final result:
+     1) Frepple C++ to read a XML-datafile.
+     2) Python to read a CSV-datafile, which is reformatted in memory
+        into XML and passed to frePPLe as a string.
+     3) Python to read a CSV-datafile, which then the calls the C++ API
+        directly.
     The relative performance is pretty interesting:
-     1) 3.19 sec
-     2) 4.28 sec
-     3) 1.69 sec
+     1) 3.06 sec
+     2) 3.86 sec
+     3) 2.43 sec
     These numbers are based on a file with 200000 items and 100 operations
     to create. The test is running on a 3.2GHz Intel Pentium (R) dual core
     Linux machine.
-    Conclusion: Overhead caused by the XML-processing is of the same order of
-    magnitude as the overhead by the interpreted nature of Python. Both are
-    considerable, but still acceptable for many applications.
+    Conclusion: The overhead of parsing of the verbose XML data format
+    is considerable, even when coded in C++. Interpreted Python code can
+    easily achieve better performance.
     Obviously a different test configuration will give different results.
-    E.g. running small messages rather than a huge data file...
+    E.g. when running small XML messages rather than a huge data file...
     -->
     <command xsi:type="command_python">
       <cmdline>create_files(200000)</cmdline>

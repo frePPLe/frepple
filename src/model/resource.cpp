@@ -105,21 +105,21 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode
   loadplanlist::const_iterator i = loadplans.begin();
   if (o->getContentType() == XMLOutput::PLAN  && i!=loadplans.end())
   {
-    o->BeginObject(Tags::tag_load_plans);
+    o->BeginObject(Tags::tag_loadplans);
     for (; i!=loadplans.end(); ++i)
       if (i->getType()==1)
       {
         const LoadPlan *lp = dynamic_cast<const LoadPlan*>(&*i);
-        o->BeginObject(Tags::tag_load_plan);
+        o->BeginObject(Tags::tag_loadplan);
         o->writeElement(Tags::tag_date, lp->getDate());
         o->writeElement(Tags::tag_quantity, lp->getQuantity());
         o->writeElement(Tags::tag_onhand, lp->getOnhand());
         o->writeElement(Tags::tag_minimum, lp->getMin());
         o->writeElement(Tags::tag_maximum, lp->getMax());
-        o->writeElement(Tags::tag_operation_plan, &*(lp->getOperationPlan()), FULL);
-        o->EndObject(Tags::tag_load_plan);
+        o->writeElement(Tags::tag_operationplan, &*(lp->getOperationPlan()), FULL);
+        o->EndObject(Tags::tag_loadplan);
       }
-    o->EndObject(Tags::tag_load_plans);
+    o->EndObject(Tags::tag_loadplans);
   }
 
   // That was it
@@ -138,7 +138,7 @@ DECLARE_EXPORT void Resource::beginElement (XMLInput& pIn, XMLElement& pElement)
   }
   else if (pElement.isA (Tags::tag_maximum))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
-  else if (pElement.isA(Tags::tag_load_plans))
+  else if (pElement.isA(Tags::tag_loadplans))
     pIn.IgnoreElement();
   else
     HasHierarchy<Resource>::beginElement(pIn, pElement);

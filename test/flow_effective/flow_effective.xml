@@ -150,15 +150,15 @@
       </flows>
     </operation>
   </operations>
-  <operation_plans>
+  <operationplans>
     <!-- This supply of component A is later than the effective end date. -->
-    <operation_plan id="2001" operation="2. supply component A">
+    <operationplan id="2001" operation="2. supply component A">
       <start>2007-02-12T00:00:00</start>
       <end>2007-02-12T00:00:00</end>
       <quantity>25</quantity>
       <locked>true</locked>
-    </operation_plan>
-  </operation_plans>
+    </operationplan>
+  </operationplans>
   <items>
     <item name="2. end item">
       <operation name="2. deliver end item" />

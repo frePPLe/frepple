@@ -67,9 +67,9 @@ def exportFlowplans():
   starttime = time()
   writer = csv.writer(open("buffers.csv", "wb"), quoting=csv.QUOTE_ALL)
   for i in frepple.buffers():
-    for j in i.flow_plans:
+    for j in i.flowplans:
       writer.writerow(
-       (j.operation_plan.id, j.buffer.name, j.quantity,
+       (j.operationplan.id, j.buffer.name, j.quantity,
         j.date, j.onhand)
        )
   print 'Exported flowplans in %.2f seconds' % (time() - starttime)
@@ -80,9 +80,9 @@ def exportLoadplans():
   starttime = time()
   writer = csv.writer(open("resources.csv", "wb"), quoting=csv.QUOTE_ALL)
   for i in frepple.resources():
-    for j in i.load_plans:
+    for j in i.loadplans:
       writer.writerow(
-       (j.operation_plan.id, j.resource.name, j.quantity,
+       (j.operationplan.id, j.resource.name, j.quantity,
         j.startdate, j.enddate)
        )
   print 'Exported loadplans in %.2f seconds' % (time() - starttime)
@@ -96,7 +96,7 @@ def exportDemand():
     while n.hidden and n.owner: n = n.owner
     n = n and n.name or 'unspecified'
     # Loop over all delivery operationplans
-    for i in d.operation_plans:
+    for i in d.operationplans:
       cumplanned += i.quantity
       cur = i.quantity
       if cumplanned > d.quantity:

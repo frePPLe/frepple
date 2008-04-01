@@ -220,10 +220,10 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m
   if ((o->getContentType() == XMLOutput::PLAN
       || o->getContentType() == XMLOutput::PLANDETAIL) && !deli.empty())
   {
-    o->BeginObject(Tags::tag_operation_plans);
+    o->BeginObject(Tags::tag_operationplans);
     for (OperationPlan_list::const_iterator i=deli.begin(); i!=deli.end(); ++i)
-      o->writeElement(Tags::tag_operation_plan, *i, FULL);
-    o->EndObject(Tags::tag_operation_plans);
+      o->writeElement(Tags::tag_operationplan, *i, FULL);
+    o->EndObject(Tags::tag_operationplans);
   }
   o->EndObject(tag);
 }
@@ -237,7 +237,7 @@ DECLARE_EXPORT void Demand::beginElement(XMLInput& pIn, XMLElement& pElement)
     pIn.readto( Operation::reader(Operation::metadata,pIn) );
   else if (pElement.isA (Tags::tag_customer))
     pIn.readto( Customer::reader(Customer::metadata,pIn) );
-  else if (pElement.isA(Tags::tag_operation_plan))
+  else if (pElement.isA(Tags::tag_operationplan))
     pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata,pIn));
   else
     HasHierarchy<Demand>::beginElement(pIn, pElement);
@@ -274,7 +274,7 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
     setMaxLateness(pElement.getTimeperiod());
   else if (pElement.isA (Tags::tag_minshipment))
     setMinShipment(pElement.getDouble());
-  else if (pElement.isA(Tags::tag_operation_plan))
+  else if (pElement.isA(Tags::tag_operationplan))
   {
     OperationPlan* opplan
       = dynamic_cast<OperationPlan*>(pIn.getPreviousObject());

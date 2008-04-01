@@ -180,20 +180,20 @@
 	    <item name="item 1" />
 	  </demand>
 	</demands>
-	<operation_plans>
-	  <operation_plan id="1001" operation="supply 1">
+	<operationplans>
+	  <operationplan id="1001" operation="supply 1">
 	    <start>2007-01-10T00:00:00</start>
 	    <end>2007-01-10T00:00:00</end>
 	    <quantity>100</quantity>
 	    <locked>true</locked>
-	  </operation_plan>
-	  <operation_plan id="1002" operation="supply 1">
+	  </operationplan>
+	  <operationplan id="1002" operation="supply 1">
 	    <start>2007-01-17T00:00:00</start>
 	    <end>2007-01-17T00:00:00</end>
 	    <quantity>200</quantity>
 	    <locked>true</locked>
-	  </operation_plan>
-	</operation_plans>
+	  </operationplan>
+	</operationplans>
 	<!-- DYNAMIC data CASE 2 -->
 	<demands>
 	  <demand name="order for item 2">
@@ -202,20 +202,20 @@
 	    <item name="item 2" />
 	  </demand>
 	</demands>
-	<operation_plans>
-	  <operation_plan id="2001" operation="supply 2">
+	<operationplans>
+	  <operationplan id="2001" operation="supply 2">
 	    <start>2007-01-10T00:00:00</start>
 	    <end>2007-01-10T00:00:00</end>
 	    <quantity>100</quantity>
 	    <locked>true</locked>
-	  </operation_plan>
-	  <operation_plan id="2002" operation="supply 2">
+	  </operationplan>
+	  <operationplan id="2002" operation="supply 2">
 	    <start>2007-01-17T00:00:00</start>
 	    <end>2007-01-17T00:00:00</end>
 	    <quantity>50</quantity>
 	    <locked>true</locked>
-	  </operation_plan>
-	</operation_plans>
+	  </operationplan>
+	</operationplans>
 	<!-- DYNAMIC data CASE 3 -->
 	<demands>
 	  <demand name="order for item 3">
@@ -224,14 +224,14 @@
 	    <item name="item 3" />
 	  </demand>
 	</demands>
-	<operation_plans>
-	  <operation_plan id="3001" operation="supply 3">
+	<operationplans>
+	  <operationplan id="3001" operation="supply 3">
 	    <start>2007-01-15T00:00:00</start>
 	    <end>2007-01-15T00:00:00</end>
 	    <quantity>1000</quantity>
 	    <locked>true</locked>
-	  </operation_plan>
-	</operation_plans>
+	  </operationplan>
+	</operationplans>
 	<!-- DYNAMIC data CASE 4 -->
 	<demands>
 	  <demand name="order for item 4">
@@ -240,12 +240,12 @@
 	    <item name="item 4" />
 	  </demand>
 	</demands>
-	<operation_plans>
-	  <operation_plan id="4001" operation="supply 4">
+	<operationplans>
+	  <operationplan id="4001" operation="supply 4">
 	    <start>2007-01-15T00:00:00</start>
 	    <end>2007-01-15T00:00:00</end>
 	    <quantity>1000</quantity>
 	    <locked>true</locked>
-	  </operation_plan>
-	</operation_plans>
+	  </operationplan>
+	</operationplans>
 </plan>

@@ -314,7 +314,7 @@ void LibraryModel::initialize()
     Object::createDefault<FlowEnd>);
 
   // Initialize the operationplan metadata.
-  OperationPlan::metadata.registerCategory("operation_plan", "operation_plans",
+  OperationPlan::metadata.registerCategory("operationplan", "operationplans",
     OperationPlan::createOperationPlan, OperationPlan::writer);
 
   // Initialize the problem metadata.
@@ -473,7 +473,7 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   logger << "Demand       \t" << Demand::size() << "\t" << memsize  << endl;
   total += memsize;
 
-  // Operation_plans
+  // Operationplans
   size_t countloadplans(0), countflowplans(0);
   memsize = count = 0;
   for (OperationPlan::iterator j = OperationPlan::begin();

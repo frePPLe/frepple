@@ -150,10 +150,10 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mod
   if ((o->getContentType() == XMLOutput::PLAN
       || o->getContentType() == XMLOutput::PLANDETAIL) && first_opplan)
   {
-    o->BeginObject(Tags::tag_operation_plans);
+    o->BeginObject(Tags::tag_operationplans);
     for (OperationPlan::iterator i(this); i!=OperationPlan::end(); ++i)
-      o->writeElement(Tags::tag_operation_plan, *i, FULL);
-    o->EndObject(Tags::tag_operation_plans);
+      o->writeElement(Tags::tag_operationplan, *i, FULL);
+    o->EndObject(Tags::tag_operationplans);
   }
 }
 
@@ -175,7 +175,7 @@ DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, XMLElement& pElement
     l->setOperation(this);
     pIn.readto(&*l);
   }
-  else if (pElement.isA (Tags::tag_operation_plan))
+  else if (pElement.isA (Tags::tag_operationplan))
     pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn));
   else if (pElement.isA (Tags::tag_location))
     pIn.readto( Location::reader(Location::metadata,pIn) );

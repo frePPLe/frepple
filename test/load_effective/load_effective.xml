@@ -39,7 +39,7 @@
         <loads>
           <load>
             <resource name="1. Resource"/>
-            <usage>2</usage>
+            <quantity>2</quantity>
             <effective_start>2007-01-10T00:00:00</effective_start>
             <effective_end>2007-01-20T00:00:00</effective_end>
           </load>
@@ -131,7 +131,7 @@
         <loads>
           <load>
             <resource name="2. Resource"/>
-            <usage>2</usage>
+            <quantity>2</quantity>
             <effective_start>2007-01-10T00:00:00</effective_start>
             <effective_end>2007-01-20T00:00:00</effective_end>
           </load>
@@ -210,7 +210,7 @@
         <loads>
           <load>
             <resource name="3. Resource"/>
-            <usage>2</usage>
+            <quantity>2</quantity>
             <effective_start>2007-01-10T00:00:00</effective_start>
             <effective_end>2007-01-20T00:00:00</effective_end>
           </load>

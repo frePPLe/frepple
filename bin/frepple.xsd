@@ -83,7 +83,7 @@
 				<xsd:element name="loads" type="loadlist" />
 				<xsd:element name="demands" type="demandlist" />
 				<xsd:element name="resources" type="resourcelist" />
-				<xsd:element name="operation_plans" type="operationplanlist" />
+				<xsd:element name="operationplans" type="operationplanlist" />
 				<xsd:element name="problems" type="problemlist" />
 			</xsd:choice>
 		</xsd:complexType>

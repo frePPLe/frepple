@@ -80,8 +80,8 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_factor;
     static DECLARE_EXPORT const XMLtag tag_filename;
     static DECLARE_EXPORT const XMLtag tag_flow;
-    static DECLARE_EXPORT const XMLtag tag_flow_plan;
-    static DECLARE_EXPORT const XMLtag tag_flow_plans;
+    static DECLARE_EXPORT const XMLtag tag_flowplan;
+    static DECLARE_EXPORT const XMLtag tag_flowplans;
     static DECLARE_EXPORT const XMLtag tag_flows;
     static DECLARE_EXPORT const XMLtag tag_headeratts;
     static DECLARE_EXPORT const XMLtag tag_headerstart;
@@ -92,8 +92,8 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_leadtime;
     static DECLARE_EXPORT const XMLtag tag_level;
     static DECLARE_EXPORT const XMLtag tag_load;
-    static DECLARE_EXPORT const XMLtag tag_load_plan;
-    static DECLARE_EXPORT const XMLtag tag_load_plans;
+    static DECLARE_EXPORT const XMLtag tag_loadplan;
+    static DECLARE_EXPORT const XMLtag tag_loadplans;
     static DECLARE_EXPORT const XMLtag tag_loads;
     static DECLARE_EXPORT const XMLtag tag_location;
     static DECLARE_EXPORT const XMLtag tag_locations;
@@ -115,8 +115,8 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_name;
     static DECLARE_EXPORT const XMLtag tag_onhand;
     static DECLARE_EXPORT const XMLtag tag_operation;
-    static DECLARE_EXPORT const XMLtag tag_operation_plan;
-    static DECLARE_EXPORT const XMLtag tag_operation_plans;
+    static DECLARE_EXPORT const XMLtag tag_operationplan;
+    static DECLARE_EXPORT const XMLtag tag_operationplans;
     static DECLARE_EXPORT const XMLtag tag_operations;
     static DECLARE_EXPORT const XMLtag tag_owner;
     static DECLARE_EXPORT const XMLtag tag_parameter;
@@ -144,7 +144,6 @@ class Tags
     static DECLARE_EXPORT const XMLtag tag_supply;
     static DECLARE_EXPORT const XMLtag tag_type;
     static DECLARE_EXPORT const XMLtag tag_url;
-    static DECLARE_EXPORT const XMLtag tag_usage;
     static DECLARE_EXPORT const XMLtag tag_validate;
     static DECLARE_EXPORT const XMLtag tag_value;
     static DECLARE_EXPORT const XMLtag tag_variable;

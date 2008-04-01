@@ -105,7 +105,7 @@ PyObject* PythonBuffer::getattro(const XMLElement& field)
     return PythonObject(obj->getItem());
   if (field.isA(Tags::tag_onhand))
     return PythonObject(obj->getOnHand());
-  if (field.isA(Tags::tag_flow_plans))
+  if (field.isA(Tags::tag_flowplans))
     return new PythonFlowPlanIterator(obj);
   if (field.isA(Tags::tag_maximum))
     return PythonObject(obj->getMaximum());
@@ -205,7 +205,7 @@ PyObject* PythonBufferDefault::getattro(const XMLElement& field)
 
 int PythonBufferDefault::setattro(const XMLElement& field, const PythonObject& value)
 {
-  return PythonBuffer(obj).setattro(field,value);
+  return PythonBuffer(obj).setattro(field,value);  //@todo avoid constructing a PythonBuffer object to call the base class
 }
 
 
@@ -604,7 +604,7 @@ PyObject* PythonDemand::getattro(const XMLElement& field)
     return PythonObject(obj->getMaxLateness());
   if (field.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
-  if (field.isA(Tags::tag_operation_plans))
+  if (field.isA(Tags::tag_operationplans))
     return new PythonDemandPlanIterator(obj);
   if (field.isA(Tags::tag_pegging))
     return new PythonPeggingIterator(obj);
@@ -716,7 +716,7 @@ PyObject* PythonResource::getattro(const XMLElement& field)
     return PythonObject(obj->getMaximum());
   if (field.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
-  if (field.isA(Tags::tag_load_plans))
+  if (field.isA(Tags::tag_loadplans))
     return new PythonLoadPlanIterator(obj);
 	return NULL;
 }
@@ -1053,7 +1053,7 @@ int PythonFlowPlan::initialize(PyObject* m)
 PyObject* PythonFlowPlan::getattro(const XMLElement& field)
 {
   if (!fl) return Py_None;
-  if (field.isA(Tags::tag_operation_plan))
+  if (field.isA(Tags::tag_operationplan))
     return PythonObject(fl->getOperationPlan());
   if (field.isA(Tags::tag_quantity))
     return PythonObject(fl->getQuantity());
@@ -1109,7 +1109,7 @@ int PythonLoadPlan::initialize(PyObject* m)
 PyObject* PythonLoadPlan::getattro(const XMLElement& field)
 {
   if (!fl) return Py_None;
-  if (field.isA(Tags::tag_operation_plan))
+  if (field.isA(Tags::tag_operationplan))
     return PythonObject(fl->getOperationPlan());
   if (field.isA(Tags::tag_quantity))
     return PythonObject(fl->getQuantity());
@@ -1210,5 +1210,140 @@ PyObject* PythonPeggingIterator::iternext()
   return result;
 }
 
+
+//
+// INTERFACE FOR LOAD
+//
+
+
+int PythonLoad::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("load");
+  x.setDoc("frePPLe load");
+  x.supportgetattro();
+  x.supportsetattro();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonLoad::getattro(const XMLElement& field)
+{
+  if (!ld) return Py_None;
+  if (field.isA(Tags::tag_resource))
+    return PythonObject(ld->getResource());
+  if (field.isA(Tags::tag_operation))
+    return PythonObject(ld->getOperation());
+  if (field.isA(Tags::tag_quantity))
+    return PythonObject(ld->getQuantity());
+  if (field.isA(Tags::tag_effective_end))
+    return PythonObject(ld->getEffective().getEnd());
+  if (field.isA(Tags::tag_effective_start))
+    return PythonObject(ld->getEffective().getStart());
+  return NULL;
+}
+
+
+int PythonLoad::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_resource))
+  {
+    if (!value.check(PythonResource::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "load resource must be of type resource");
+      return -1;
+    }
+    Resource* y = static_cast<PythonResource*>(static_cast<PyObject*>(value))->obj;
+    ld->setResource(y);
+  }
+  else if (field.isA(Tags::tag_operation))
+  {
+    if (!value.check(PythonOperation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "load operation must be of type operation");
+      return -1;
+    }
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(value))->obj;
+    ld->setOperation(y);
+  }
+  else if (field.isA(Tags::tag_quantity))
+    ld->setQuantity(value.getDouble());
+  else if (field.isA(Tags::tag_effective_end))
+    ld->setEffectiveEnd(value.getDate());
+  else if (field.isA(Tags::tag_effective_start))
+    ld->setEffectiveStart(value.getDate());
+  else
+    return -1;
+  return 0;
+}
+
+
+//
+// INTERFACE FOR FLOW
+//
+
+
+int PythonFlow::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("flow");
+  x.setDoc("frePPLe flow");
+  x.supportgetattro();
+  x.supportsetattro();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonFlow::getattro(const XMLElement& field)
+{
+  if (!fl) return Py_None;
+  if (field.isA(Tags::tag_buffer))
+    return PythonObject(fl->getBuffer());
+  if (field.isA(Tags::tag_operation))
+    return PythonObject(fl->getOperation());
+  if (field.isA(Tags::tag_quantity))
+    return PythonObject(fl->getQuantity());
+  if (field.isA(Tags::tag_effective_end))
+    return PythonObject(fl->getEffective().getEnd());
+  if (field.isA(Tags::tag_effective_start))
+    return PythonObject(fl->getEffective().getStart());
+  return NULL;
+}
+
+
+int PythonFlow::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_buffer))
+  {
+    if (!value.check(PythonBuffer::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "flow buffer must be of type buffer");
+      return -1;
+    }
+    Buffer* y = static_cast<PythonBuffer*>(static_cast<PyObject*>(value))->obj;
+    fl->setBuffer(y);
+  }
+  else if (field.isA(Tags::tag_operation))
+  {
+    if (!value.check(PythonOperation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "flow operation must be of type operation");
+      return -1;
+    }
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(value))->obj;
+    fl->setOperation(y);
+  }
+  else if (field.isA(Tags::tag_quantity))
+    fl->setQuantity(value.getDouble());
+  else if (field.isA(Tags::tag_effective_end))
+    fl->setEffectiveEnd(value.getDate());
+  else if (field.isA(Tags::tag_effective_start))
+    fl->setEffectiveStart(value.getDate());
+  else
+    return -1;
+  return 0;
+}
 
 } // End namespace

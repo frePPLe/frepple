@@ -555,7 +555,7 @@ DECLARE_EXPORT void OperationPlan::update()
   // Update the flow and loadplans
   resizeFlowLoadPlans();
 
-  // Notify the owner operation_plan
+  // Notify the owner operationplan
   if (owner) owner->update();
 
   // Mark as changed
@@ -604,7 +604,7 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const XMLtag& tag,
   if (m != NOHEADER)
     o->BeginObject(tag, Tags::tag_id, id, Tags::tag_operation,oper->getName());
 
-  // The demand reference is only valid for delivery operation_plans,
+  // The demand reference is only valid for delivery operationplans,
   // and it should only be written if this tag is not being written
   // as part of a demand+delivery tag.
   if (dmd && !dynamic_cast<Demand*>(o->getPreviousObject()))
@@ -621,10 +621,10 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const XMLtag& tag,
   // Write out the flowplans and their pegging
   if (o->getContentType() == XMLOutput::PLANDETAIL)
   {
-    o->BeginObject(Tags::tag_flow_plans);
+    o->BeginObject(Tags::tag_flowplans);
     for (FlowPlanIterator qq = beginFlowPlans(); qq != endFlowPlans(); ++qq)
-      qq->writeElement(o, Tags::tag_flow_plan);
-    o->EndObject(Tags::tag_flow_plans);
+      qq->writeElement(o, Tags::tag_flowplan);
+    o->EndObject(Tags::tag_flowplans);
   }
 
   o->EndObject(tag);
@@ -637,7 +637,7 @@ DECLARE_EXPORT void OperationPlan::beginElement (XMLInput& pIn, XMLElement& pEle
     pIn.readto( Demand::reader(Demand::metadata,pIn) );
   else if (pElement.isA(Tags::tag_owner))
     pIn.readto(createOperationPlan(metadata,pIn));
-  else if (pElement.isA(Tags::tag_flow_plans))
+  else if (pElement.isA(Tags::tag_flowplans))
     pIn.IgnoreElement();
 }
 

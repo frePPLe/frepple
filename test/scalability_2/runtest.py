@@ -85,12 +85,12 @@ def create (cluster, demand, level):
         "<flows><flow xsi:type=\"flow_end\" quantity=\"1\">" +
         "<buffer name=\"Buffer C%dL%d\"/>" +
         "</flow></flows></operation>") % (i, i, level+1)
-  print >>out, "</operations>\n<operation_plans>"
+  print >>out, "</operations>\n<operationplans>"
   for i in range(cluster):
-    print >>out, ("<operation_plan id=\"%d\" operation=\"Supply C%d\" " +
+    print >>out, ("<operationplan id=\"%d\" operation=\"Supply C%d\" " +
         "start=\"2007-05-01T00:00:00\" quantity=\"%d\" " +
         "locked=\"true\" />") % (i+1, i, demand)
-  print >>out, "</operation_plans>"
+  print >>out, "</operationplans>"
 
   # Tail of the output file
   print >>out, "</plan>"

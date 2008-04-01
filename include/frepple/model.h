@@ -1936,7 +1936,7 @@ class OperationPlan
         return this;
     }
 
-    /** Returns the start and end date of this operation_plan. */
+    /** Returns the start and end date of this operationplan. */
     const DateRange & getDates() const {return dates;}
 
     /** Returns a unique identifier of the operationplan.<br>
@@ -1949,12 +1949,12 @@ class OperationPlan
       */
     unsigned long getIdentifier() const {return id;}
 
-    /** Updates the end date of the operation_plan. The start date is computed.
-      * Locked operation_plans are not updated by this function.
+    /** Updates the end date of the operationplan. The start date is computed.
+      * Locked operationplans are not updated by this function.
       */
     virtual DECLARE_EXPORT void setEnd(Date);
 
-    /** Updates the start date of the operation_plan. The end date is computed.
+    /** Updates the start date of the operationplan. The end date is computed.
       * Locked operation_plans are not updated by this function.
       */
     virtual DECLARE_EXPORT void setStart(Date);
@@ -1963,18 +1963,18 @@ class OperationPlan
     DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
     DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
 
-    /** Initialize the operation_plan. The initialization function should be
-      * called when the operation_plan is ready to be 'officially' added. The
+    /** Initialize the operationplan. The initialization function should be
+      * called when the operationplan is ready to be 'officially' added. The
       * initialization performs the following actions:
       * <ol>
       * <li> assign an identifier</li>
       * <li> create the flow and loadplans if these hadn't been created
       * before</li>
-      * <li> add the operation_plan to the global list of operation_plans</li>
+      * <li> add the operationplan to the global list of operationplans</li>
       * <li> create a link with a demand object if this is a delivery
-      * operation_plan</li>
+      * operationplan</li>
       * </ol>
-      * Every operation_plan subclass that has sub-operations will normally
+      * Every operationplan subclass that has sub-operations will normally
       * need to create an override of this function.<br>
       * 
       * The return value indicates whether the initialization was successfull.
@@ -1983,8 +1983,8 @@ class OperationPlan
       */
     virtual DECLARE_EXPORT bool initialize();
 
-    /** Add a sub_operation_plan to the list. For normal operation_plans this
-      * is only a dummy function. For alternates and routing operation_plans
+    /** Add a sub-operationplan to the list. For normal operationplans this
+      * is only a dummy function. For alternates and routing operationplans
       * it does have a meaning.
       */
     virtual void addSubOperationPlan(OperationPlan* o)
@@ -1993,9 +1993,9 @@ class OperationPlan
           + oper->getName() + " not supported");
     };
 
-    /** Remove a sub_operation_plan from the list. For normal operation_plans
+    /** Remove a sub-operation_plan from the list. For normal operation_plans
       * this is only a dummy function. For alternates and routing
-      * operation_plans it does have a meaning.
+      * operationplans it does have a meaning.
       */
     virtual void eraseSubOperationPlan(OperationPlan* o)
     {
@@ -2310,7 +2310,7 @@ class OperationRouting : public Operation
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
-    /** Return a list of all sub-operation_plans. */
+    /** Return a list of all sub-operationplans. */
     virtual const Operationlist& getSubOperations() const {return steps;}
 
     /** This is the factory method which creates all operationplans of the
@@ -3357,7 +3357,7 @@ class Load
     {
       setOperation(o);
       setResource(r);
-      setUsageFactor(u);
+      setQuantity(u);
       validate(ADD);
     }
 
@@ -3380,15 +3380,15 @@ class Load
 
     /** Returns how much capacity is consumed during the duration of the
       * operationplan. */
-    double getUsageFactor() const {return usage;}
+    double getQuantity() const {return qty;}
 
-    /** Updates the usage factor of the load.
+    /** Updates the quantity of the load.
       * @exception DataException When a negative number is passed.
       */
-    void setUsageFactor(double f)
+    void setQuantity(double f)
     {
-      if (usage < 0) throw DataException("Load usage can't be negative");
-      usage = f;
+      if (f < 0) throw DataException("Load quantity can't be negative");
+      qty = f;
     }
 
     /** This method holds the logic the compute the date of a loadplan. */
@@ -3412,7 +3412,7 @@ class Load
     virtual size_t getSize() const {return sizeof(Load);}
 
     /** Default constructor. */
-    Load() : usage(1.0) {}
+    Load() : qty(1.0) {}
 
   private:
     /** This method is called to check the validity of the object. It will
@@ -3423,7 +3423,7 @@ class Load
 
     /** Stores how much capacity is consumed during the duration of an
       * operationplan. */
-    double usage;
+    double qty;
 };
 
 
@@ -3656,7 +3656,7 @@ class CommandReadXMLString : public Command
   *
   * Both the static model (i.e. items, locations, buffers, resources,
   * calendars, etc...) and the dynamic data (i.e. the actual plan including
-  * the operation_plans, demand, problems, etc...).<br>
+  * the operationplans, demand, problems, etc...).<br>
   * The format is such that the output file can be re-read to restore the
   * very same model.<br>
   * The data is written by the execute() function.
@@ -3693,7 +3693,7 @@ class CommandSave : public Command
 
 /** @brief This command writes the dynamic part of the plan to an  text file.
   *
-  * This saved information covers the buffer flowplans, operation_plans,
+  * This saved information covers the buffer flowplans, operationplans,
   * resource loading, demand, problems, etc...<br>
   * The main use of this function is in the test suite: a simple text file
   * comparison allows us to identify changes quickly. The output format is
@@ -3987,9 +3987,9 @@ class DemandDefault : public Demand
 };
 
 
-/** @brief This class represents the resource capacity of an operation_plan.
+/** @brief This class represents the resource capacity of an operationplan.
   *
-  * For both the start and the end date of the operation_plan, a load_plan
+  * For both the start and the end date of the operationplan, a loadplan
   * object is created. These are then inserted in the timeline structure
   * associated with a resource.
   */
@@ -4059,7 +4059,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** A pointer to the load model. */
     Load *ld;
 
-    /** A pointer to the operation_plan owning this load_plan. */
+    /** A pointer to the operationplan owning this loadplan. */
     OperationPlan *oper;
 
     /** Points to the next loadplan owned by the same operationplan. */
@@ -4086,7 +4086,7 @@ inline double Load::getLoadplanQuantity(const LoadPlan* lp) const
   if (!lp->getOperationPlan()->getDates().overlap(getEffective()))
     // Load is not effective during this time
     return 0.0;
-  return lp->isStart() ? getUsageFactor() : -getUsageFactor();
+  return lp->isStart() ? getQuantity() : -getQuantity();
 }
 
 
@@ -4404,7 +4404,7 @@ class ProblemPlannedLate : public Problem
     static TimePeriod getAllowedLate() {return allowedLate;}
 
     /** Update the tolerance limit. Note that this will trigger re-evaluation of
-      * all operation_plans and existing problems, which can be expensive in a
+      * all operationplans and existing problems, which can be expensive in a
       * big plan. */
     static void setAllowedLate(TimePeriod p);
 
@@ -4448,7 +4448,7 @@ class ProblemPlannedEarly : public Problem
     static TimePeriod getAllowedEarly() {return allowedEarly;}
 
     /** Update the tolerance limit. Note that this will trigger re-evaluation of
-      * all operation_plans and existing problems, which can be expensive in a
+      * all operationplans and existing problems, which can be expensive in a
       * big plan. */
     static void setAllowedEarly(TimePeriod p);
 
@@ -4633,7 +4633,7 @@ class CommandCreateOperationPlan : public Command
     }
 
   private:
-    /** Pointer to the newly created operation_plan. */
+    /** Pointer to the newly created operationplan. */
     OperationPlan *opplan;
 };
 
@@ -4720,17 +4720,17 @@ class CommandMoveOperationPlan : public Command
     DECLARE_EXPORT void setQuantity(double newqty);
 
   private:
-    /** This is a pointer to the operation_plan being moved. */
+    /** This is a pointer to the operationplan being moved. */
     OperationPlan *opplan;
 
     /** This flag specifies whether we keep the new date is a new start or a
-      * new end date for the operation_plan. */
+      * new end date for the operationplan. */
     bool prefer_end;
 
-    /** These are the original dates of the operation_plan before its move. */
+    /** These are the original dates of the operationplan before its move. */
     DateRange originaldates;
 
-    /** This is the quantity of the operation_plan before the command. */
+    /** This is the quantity of the operationplan before the command. */
     double originalqty;
 };
 

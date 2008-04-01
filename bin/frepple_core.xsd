@@ -173,7 +173,7 @@
 			<xsd:element name="size_multiple" type="positiveDouble" />
 			<xsd:element name="loads" type="loadlist" />
 			<xsd:element name="flows" type="flowlist" />
-			<xsd:element name="operation_plans" type="operationplanlist" />
+			<xsd:element name="operationplans" type="operationplanlist" />
 			<xsd:element name="location" type="location" />
 		</xsd:choice>
 		<xsd:attributeGroup ref="common_attributes" />
@@ -311,7 +311,7 @@
 			</xsd:element>
 			<xsd:element name="detectproblems" type="xsd:boolean" />
 			<xsd:element name="loads" type="loadlist" />
-			<xsd:element name="load_plans" type="loadplanlist"/>
+			<xsd:element name="loadplans" type="loadplanlist"/>
 		</xsd:choice>
 		<xsd:attributeGroup ref="common_attributes" />
 		<xsd:attribute name="detectproblems" type="xsd:boolean" />
@@ -357,7 +357,7 @@
 			<xsd:element name="producing" type="operation" />
 			<xsd:element name="detectproblems" type="xsd:boolean" />
 			<xsd:element name="flows" type="flowlist" />
-			<xsd:element name="flow_plans" type="flowplanlist"/>
+			<xsd:element name="flowplans" type="flowplanlist"/>
 		</xsd:choice>
 		<xsd:attributeGroup ref="common_attributes" />
 		<xsd:attribute name="onhand" type="xsd:double" />
@@ -446,20 +446,20 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
-	<xsd:complexType name="flow_plan">
+	<xsd:complexType name="flowplan">
 		<xsd:sequence>
 			<xsd:element name="date" type="xsd:dateTime" />
 			<xsd:element name="quantity" type="xsd:double" />
 			<xsd:element name="onhand" type="xsd:double" />
 			<xsd:element name="minimum" type="xsd:double" />
 			<xsd:element name="maximum" type="xsd:double" />
-			<xsd:element name="operation_plan" type="operation_plan" />
+			<xsd:element name="operationplan" type="operationplan" />
 		</xsd:sequence>
 	</xsd:complexType>
 
 	<xsd:complexType name="flowplanlist">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
-			<xsd:element name="flow_plan" type="flow_plan" />
+			<xsd:element name="flowplan" type="flowplan" />
 		</xsd:choice>
 	</xsd:complexType>
 
@@ -473,11 +473,11 @@
 		<xsd:all>
 			<xsd:element name="operation" type="operation" minOccurs="0" />
 			<xsd:element name="resource" type="resource" minOccurs="0" />
-			<xsd:element name="usage" type="xsd:double" minOccurs="0" />
+			<xsd:element name="quantity" type="xsd:double" minOccurs="0" />
 			<xsd:element name="effective_start" type="xsd:dateTime" minOccurs="0" />
 			<xsd:element name="effective_end" type="xsd:dateTime" minOccurs="0" />
 		</xsd:all>
-		<xsd:attribute name="usage" type="xsd:double" />
+		<xsd:attribute name="quantity" type="xsd:double" />
 		<xsd:attribute name="effective_start" type="xsd:dateTime" />
 		<xsd:attribute name="effective_end" type="xsd:dateTime" />
 		<xsd:attribute name="action" type="action" />
@@ -489,20 +489,20 @@
 		</xsd:choice>
 	</xsd:complexType>
 
-	<xsd:complexType name="load_plan">
+	<xsd:complexType name="loadplan">
 		<xsd:sequence>
 			<xsd:element name="date" type="xsd:dateTime" />
 			<xsd:element name="quantity" type="xsd:double" />
 			<xsd:element name="onhand" type="xsd:double" />
 			<xsd:element name="minimum" type="xsd:double" />
 			<xsd:element name="maximum" type="xsd:double" />
-			<xsd:element name="operation_plan" type="operation_plan" />
+			<xsd:element name="operationplan" type="operationplan" />
 		</xsd:sequence>
 	</xsd:complexType>
 
 	<xsd:complexType name="loadplanlist">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
-			<xsd:element name="load_plan" type="load_plan" />
+			<xsd:element name="loadplan" type="loadplan" />
 		</xsd:choice>
 	</xsd:complexType>
 
@@ -533,7 +533,7 @@
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
-			<xsd:element name="operation_plans" type="operationplanlist" />
+			<xsd:element name="operationplans" type="operationplanlist" />
 		</xsd:choice>
 		<xsd:attributeGroup ref="common_attributes" />
 		<xsd:attribute name="quantity" type="positiveDouble" />
@@ -753,8 +753,8 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
-	<!-- OPERATION_PLAN -->
-	<xsd:complexType name="operation_plan">
+	<!-- OPERATIONPLAN -->
+	<xsd:complexType name="operationplan">
 		<xsd:annotation>
 			<xsd:documentation>
         This entity represent the key for representing the plan. It models an
@@ -769,7 +769,7 @@
 			<xsd:element name="lpst" type="xsd:dateTime" minOccurs="0" />
 			<xsd:element name="quantity" type="positiveDouble" minOccurs="0" />
 			<xsd:element name="locked" type="xsd:boolean" minOccurs="0" />
-			<xsd:element name="owner" type="operation_plan" minOccurs="0" />
+			<xsd:element name="owner" type="operationplan" minOccurs="0" />
 		</xsd:sequence>
 		<xsd:attribute name="id" type="xsd:unsignedLong" />
 		<xsd:attribute name="operation" type="non-empty-string" />
@@ -784,7 +784,7 @@
 
 	<xsd:complexType name="operationplanlist">
 		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
-			<xsd:element name="operation_plan" type="operation_plan" />
+			<xsd:element name="operationplan" type="operationplan" />
 		</xsd:sequence>
 	</xsd:complexType>
 

@@ -187,7 +187,9 @@ void CommandPython::initialize()
   nok += PythonLoadPlanIterator::initialize(m);
   nok += PythonDemandPlanIterator::initialize(m);
   nok += PythonPeggingIterator::initialize(m);
-  // @todo Missing Python proxies: Flow Load Bucket Solver
+  nok += PythonLoad::initialize(m);
+  nok += PythonFlow::initialize(m);
+  // @todo Missing Python proxies: Solver
 
   // Redirect the stderr and stdout streams of Python
   PyRun_SimpleString(

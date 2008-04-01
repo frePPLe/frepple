@@ -95,7 +95,7 @@ DECLARE_EXPORT void Load::validate(Action action)
 
   // If the resource has an owner, also load the owner
   // Note that the owner load can create more loads if it has an owner too.
-  if (res->hasOwner() && action!=REMOVE) new Load(oper, res->getOwner(), usage);
+  if (res->hasOwner() && action!=REMOVE) new Load(oper, res->getOwner(), qty);
 
   // Set a flag to make sure the level computation is triggered again
   HasLevel::triggerLazyRecomputation();
@@ -143,8 +143,8 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const XMLtag& tag, mode m) 
   if (!dynamic_cast<Resource*>(o->getPreviousObject()))
     o->writeElement(Tags::tag_resource, getResource());
 
-  // Write the usage factor
-  if (usage != 1.0) o->writeElement(Tags::tag_usage, usage);
+  // Write the quantity
+  if (qty != 1.0) o->writeElement(Tags::tag_quantity, qty);
 
   // Write the effective daterange
   if (getEffective().getStart() != Date::infinitePast)
@@ -179,8 +179,8 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, XMLElement& pElement)
     if (o) setOperation(o);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA(Tags::tag_usage))
-    setUsageFactor(pElement.getDouble());
+  else if (pElement.isA(Tags::tag_quantity))
+    setQuantity(pElement.getDouble());
   else if (pElement.isA(Tags::tag_action))
   {
     delete static_cast<Action*>(pIn.getUserArea());

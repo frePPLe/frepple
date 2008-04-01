@@ -309,14 +309,14 @@ def loadLoads(cursor):
   # Note: The sorting of the loads is not really necessary, but helps to make
   # the planning progress consistent across runs and database engines.
   cursor.execute('''
-    SELECT operation_id, resource_id, usagefactor, effective_start, effective_end
+    SELECT operation_id, resource_id, quantity, effective_start, effective_end
     FROM resourceload
     ORDER BY operation_id, resource_id
     ''')
   x = [ header , '<loads>' ]
   for i, j, k, l, m in cursor.fetchall():
     cnt += 1
-    x.append('<load><operation name=%s/><resource name=%s/><usage>%s</usage>' % (quoteattr(i), quoteattr(j), k))
+    x.append('<load><operation name=%s/><resource name=%s/><quantity>%s</quantity>' % (quoteattr(i), quoteattr(j), k))
     if l: x.append('<effective_start>%s</effective_start>' % l.isoformat())
     if m: x.append('<effective_end>%s</effective_end>' % m.isoformat())
     x.append('</load>')
@@ -330,15 +330,15 @@ def loadOperationPlans(cursor):
   cnt = 0
   starttime = time()
   cursor.execute("SELECT identifier, operation_id, quantity, startdate, enddate, locked FROM operationplan order by identifier asc")
-  x = [ header , '<operation_plans>' ]
+  x = [ header , '<operationplans>' ]
   for i, j, k, l, m, n in cursor.fetchall():
     cnt += 1
-    x.append('<operation_plan id="%d" operation=%s quantity="%s">' % (i, quoteattr(j), k))
+    x.append('<operationplan id="%d" operation=%s quantity="%s">' % (i, quoteattr(j), k))
     if l: x.append( '<start>%s</start>' % l.isoformat())
     if m: x.append( '<end>%s</end>' % m.isoformat())
     if n: x.append( '<locked>true</locked>')
-    x.append('</operation_plan>')
-  x.append('</operation_plans></plan>')
+    x.append('</operationplan>')
+  x.append('</operationplans></plan>')
   frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
   print 'Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime)
 

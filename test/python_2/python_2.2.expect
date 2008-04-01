@@ -119,30 +119,30 @@
 			</loads>
 		</resource>
 	</resources>
-	<operation_plans>
-		<operation_plan id="3" operation="delivery end item">
+	<operationplans>
+		<operationplan id="3" operation="delivery end item">
 			<demand name="order 2"/>
 			<start>2007-01-03T08:00:00</start>
 			<end>2007-01-04T08:00:00</end>
 			<quantity>10</quantity>
-		</operation_plan>
-		<operation_plan id="1" operation="delivery end item">
+		</operationplan>
+		<operationplan id="1" operation="delivery end item">
 			<demand name="order 1"/>
 			<start>2007-01-03T09:00:00</start>
 			<end>2007-01-04T09:00:00</end>
 			<quantity>10</quantity>
-		</operation_plan>
-		<operation_plan id="4" operation="make end item">
+		</operationplan>
+		<operationplan id="4" operation="make end item">
 			<start>2007-01-01T09:00:00</start>
 			<end>2007-01-02T09:00:00</end>
 			<quantity>10</quantity>
-		</operation_plan>
-		<operation_plan id="2" operation="make end item">
+		</operationplan>
+		<operationplan id="2" operation="make end item">
 			<start>2007-01-02T09:00:00</start>
 			<end>2007-01-03T09:00:00</end>
 			<quantity>10</quantity>
-		</operation_plan>
-	</operation_plans>
+		</operationplan>
+	</operationplans>
 	<problems>
 		<problem>
 			<name>material excess</name>

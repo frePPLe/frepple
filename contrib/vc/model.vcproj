@@ -347,7 +347,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\model\flow_plan.cpp"
+				RelativePath="..\..\src\model\flowplan.cpp"
 				>
 			</File>
 			<File
@@ -367,7 +367,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\model\load_plan.cpp"
+				RelativePath="..\..\src\model\loadplan.cpp"
 				>
 			</File>
 			<File
@@ -379,7 +379,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\model\operation_plan.cpp"
+				RelativePath="..\..\src\model\operationplan.cpp"
 				>
 			</File>
 			<File
@@ -403,7 +403,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\model\problems_operation_plan.cpp"
+				RelativePath="..\..\src\model\problems_operationplan.cpp"
 				>
 			</File>
 			<File

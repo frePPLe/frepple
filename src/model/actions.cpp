@@ -272,7 +272,7 @@ DECLARE_EXPORT void CommandSavePlan::execute()
   // Open the file, write to it and close it. Catch exceptions all along...
   try
   {
-    // Open the log file
+    // Open the output file
     textoutput.open(getFileName().c_str(), ios::out);
 
     // Write the buffer summary

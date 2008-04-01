@@ -1239,6 +1239,7 @@ class PythonOperationPlan : public PythonExtension<PythonOperationPlan>
       {return static_cast<PyObject*>(new PythonOperationPlan(static_cast<OperationPlan*>(p)));}
   private:
     OperationPlan* obj;
+    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);   
     virtual PyObject* getattro(const XMLElement&);
     virtual int setattro(const XMLElement&, const PythonObject&);
 };
@@ -1366,6 +1367,65 @@ class PythonPeggingIterator : public PythonExtension<PythonPeggingIterator>
     PyObject *iternext();
 };
 
+
+//
+// LOADS
+// 
+
+
+class PythonLoad : public PythonExtension<PythonLoad>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonLoad(Load* p) : ld(p) {}
+  private:  
+    PyObject* getattro(const XMLElement&);
+    int setattro(const XMLElement&, const PythonObject&);    
+    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)   
+    Load* ld;
+};
+
+
+/*
+@todo class PythonLoadIterator : public PythonExtension<PythonLoadIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonLoadIterator(Resource* r) : res(r) 
+    { 
+      if (!r) 
+        throw LogicException("Creating loadplan iterator for NULL resource");
+      i = r->getLoadPlans().begin();
+    }
+
+  private:
+    Resource* res;
+    Resource::loadplanlist::const_iterator i;
+    Operation* oper;
+    Operation::loadplanlist::const_iterator i;
+    PyObject *iternext();
+};
+*/
+
+
+
+//
+// FLOW
+//
+
+
+class PythonFlow : public PythonExtension<PythonFlow>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonFlow(Flow* p) : fl(p) {}
+  private:  
+    PyObject* getattro(const XMLElement&);
+    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)   
+    int setattro(const XMLElement&, const PythonObject&);    
+    Flow* fl;
+};
 }
 
 #endif

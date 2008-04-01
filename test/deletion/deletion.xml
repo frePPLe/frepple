@@ -108,9 +108,9 @@
       <data>
         <![CDATA[
         <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <operation_plans>
-            <operation_plan id="27" action="R"/>
-          </operation_plans>
+          <operationplans>
+            <operationplan id="27" action="R"/>
+          </operationplans>
         </plan>
 			  ]]>
       </data>

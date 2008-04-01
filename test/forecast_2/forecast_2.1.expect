@@ -475,113 +475,113 @@
 			</buckets>
 		</demand>
 	</demands>
-	<operation_plans>
-		<operation_plan id="1" operation="delivery 1">
+	<operationplans>
+		<operationplan id="1" operation="delivery 1">
 			<start>2006-12-31T00:00:00</start>
 			<end>2007-01-01T00:00:00</end>
 			<quantity>24</quantity>
-		</operation_plan>
-		<operation_plan id="2" operation="delivery 1">
+		</operationplan>
+		<operationplan id="2" operation="delivery 1">
 			<start>2007-01-01T00:00:00</start>
 			<end>2007-01-02T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="3" operation="delivery 1">
+		</operationplan>
+		<operationplan id="3" operation="delivery 1">
 			<start>2007-01-02T00:00:00</start>
 			<end>2007-01-03T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="4" operation="delivery 1">
+		</operationplan>
+		<operationplan id="4" operation="delivery 1">
 			<start>2007-01-03T00:00:00</start>
 			<end>2007-01-04T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="5" operation="delivery 1">
+		</operationplan>
+		<operationplan id="5" operation="delivery 1">
 			<start>2007-01-04T00:00:00</start>
 			<end>2007-01-05T00:00:00</end>
 			<quantity>16</quantity>
-		</operation_plan>
-		<operation_plan id="6" operation="delivery 1">
+		</operationplan>
+		<operationplan id="6" operation="delivery 1">
 			<start>2007-01-07T00:00:00</start>
 			<end>2007-01-08T00:00:00</end>
 			<quantity>24</quantity>
-		</operation_plan>
-		<operation_plan id="7" operation="delivery 1">
+		</operationplan>
+		<operationplan id="7" operation="delivery 1">
 			<start>2007-01-08T00:00:00</start>
 			<end>2007-01-09T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="8" operation="delivery 1">
+		</operationplan>
+		<operationplan id="8" operation="delivery 1">
 			<start>2007-01-09T00:00:00</start>
 			<end>2007-01-10T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="9" operation="delivery 1">
+		</operationplan>
+		<operationplan id="9" operation="delivery 1">
 			<start>2007-01-10T00:00:00</start>
 			<end>2007-01-11T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="10" operation="delivery 1">
+		</operationplan>
+		<operationplan id="10" operation="delivery 1">
 			<start>2007-01-11T00:00:00</start>
 			<end>2007-01-12T00:00:00</end>
 			<quantity>16</quantity>
-		</operation_plan>
-		<operation_plan id="11" operation="delivery 1">
+		</operationplan>
+		<operationplan id="11" operation="delivery 1">
 			<start>2007-01-14T00:00:00</start>
 			<end>2007-01-15T00:00:00</end>
 			<quantity>24</quantity>
-		</operation_plan>
-		<operation_plan id="12" operation="delivery 1">
+		</operationplan>
+		<operationplan id="12" operation="delivery 1">
 			<start>2007-01-15T00:00:00</start>
 			<end>2007-01-16T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="13" operation="delivery 1">
+		</operationplan>
+		<operationplan id="13" operation="delivery 1">
 			<start>2007-01-16T00:00:00</start>
 			<end>2007-01-17T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="14" operation="delivery 1">
+		</operationplan>
+		<operationplan id="14" operation="delivery 1">
 			<start>2007-01-17T00:00:00</start>
 			<end>2007-01-18T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="15" operation="delivery 1">
+		</operationplan>
+		<operationplan id="15" operation="delivery 1">
 			<start>2007-01-18T00:00:00</start>
 			<end>2007-01-19T00:00:00</end>
 			<quantity>16</quantity>
-		</operation_plan>
-		<operation_plan id="16" operation="delivery 1">
+		</operationplan>
+		<operationplan id="16" operation="delivery 1">
 			<start>2007-01-21T00:00:00</start>
 			<end>2007-01-22T00:00:00</end>
 			<quantity>100</quantity>
-		</operation_plan>
-		<operation_plan id="17" operation="delivery 2">
+		</operationplan>
+		<operationplan id="17" operation="delivery 2">
 			<start>2007-02-25T00:00:00</start>
 			<end>2007-02-26T00:00:00</end>
 			<quantity>40</quantity>
-		</operation_plan>
-		<operation_plan id="18" operation="delivery 2">
+		</operationplan>
+		<operationplan id="18" operation="delivery 2">
 			<start>2007-03-04T00:00:00</start>
 			<end>2007-03-05T00:00:00</end>
 			<quantity>70</quantity>
-		</operation_plan>
-		<operation_plan id="19" operation="delivery 2">
+		</operationplan>
+		<operationplan id="19" operation="delivery 2">
 			<start>2007-03-11T00:00:00</start>
 			<end>2007-03-12T00:00:00</end>
 			<quantity>70</quantity>
-		</operation_plan>
-		<operation_plan id="20" operation="delivery 2">
+		</operationplan>
+		<operationplan id="20" operation="delivery 2">
 			<start>2007-03-18T00:00:00</start>
 			<end>2007-03-19T00:00:00</end>
 			<quantity>70</quantity>
-		</operation_plan>
-		<operation_plan id="21" operation="delivery 2">
+		</operationplan>
+		<operationplan id="21" operation="delivery 2">
 			<start>2007-03-25T00:00:00</start>
 			<end>2007-03-26T00:00:00</end>
 			<quantity>60</quantity>
-		</operation_plan>
-	</operation_plans>
+		</operationplan>
+	</operationplans>
 	<problems>
 		<problem>
 			<name>before current</name>

@@ -36,8 +36,8 @@ def printmodel():
         i.maximum and i.maximum.name or None, \
         i.minimum and i.minimum.name or None, \
         i.producing and i.producing.name or None
-      for j in i.flow_plans:
-        print >>out, "     ", j.operation_plan.id, \
+      for j in i.flowplans:
+        print >>out, "     ", j.operationplan.id, \
           j.quantity, j.date, j.onhand
 
     print "start exporting the resource plans"
@@ -47,8 +47,8 @@ def printmodel():
         i.location and i.location.name or None, \
         i.maximum and i.maximum.name or None, \
         i.owner and i.owner.name or None
-      for j in i.load_plans:
-        print >>out, "     ", j.operation_plan.id, \
+      for j in i.loadplans:
+        print >>out, "     ", j.operationplan.id, \
           j.quantity, j.startdate, j.enddate
 
     print "start exporting the demand plans"

@@ -66,7 +66,7 @@ class OverviewReport(TableReport):
        select x.name as row1, x.location_id as row2,
              x.bucket as col1, x.startdate as col2, x.enddate as col3,
              min(x.available),
-             coalesce(sum(loaddata.usagefactor * %s), 0) as loading
+             coalesce(sum(loaddata.quantity * %s), 0) as loading
        from (
          select res.name as name, res.location_id as location_id,
                d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
@@ -89,7 +89,7 @@ class OverviewReport(TableReport):
        ) x
        -- Load data
        left join (
-         select %s as resource_id, startdatetime, enddatetime, quantity as usagefactor
+         select %s as resource_id, startdatetime, enddatetime, quantity
          from out_loadplan
          ) loaddata
        on x.name = loaddata.resource_id

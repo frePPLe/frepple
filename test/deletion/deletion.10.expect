@@ -132,26 +132,26 @@
 		<resource name="transport">
 		</resource>
 	</resources>
-	<operation_plans>
-		<operation_plan id="67" operation="delivery 1">
+	<operationplans>
+		<operationplan id="67" operation="delivery 1">
 			<demand name="order 2"/>
 			<start>2007-01-31T00:00:00</start>
 			<end>2007-02-01T00:00:00</end>
 			<quantity>1</quantity>
-		</operation_plan>
-		<operation_plan id="68" operation="delivery 1">
+		</operationplan>
+		<operationplan id="68" operation="delivery 1">
 			<demand name="order 1"/>
 			<start>2007-02-28T00:00:00</start>
 			<end>2007-03-01T00:00:00</end>
 			<quantity>1</quantity>
-		</operation_plan>
-		<operation_plan id="69" operation="delivery 1">
+		</operationplan>
+		<operationplan id="69" operation="delivery 1">
 			<demand name="order 3"/>
 			<start>2007-03-31T00:00:00</start>
 			<end>2007-04-01T00:00:00</end>
 			<quantity>1</quantity>
-		</operation_plan>
-	</operation_plans>
+		</operationplan>
+	</operationplans>
 	<problems>
 		<problem>
 			<name>material shortage</name>

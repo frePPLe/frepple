@@ -177,13 +177,13 @@
   		</flows>
   	</operation>
   </operations>
-	<operation_plans>
-	  <operation_plan id="1001" operation="3. supply raw material">
+	<operationplans>
+	  <operationplan id="1001" operation="3. supply raw material">
 	    <end>2007-01-11T00:00:00</end>
 	    <quantity>5</quantity>
 	    <locked>true</locked>
-	  </operation_plan>
-	</operation_plans>
+	  </operationplan>
+	</operationplans>
   <demands>
     <demand name="3. order 1">
       <description>Delivery is late, and post-operation time is 0 to reduce lateness.</description>

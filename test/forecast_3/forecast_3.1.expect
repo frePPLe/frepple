@@ -323,79 +323,79 @@
 			<priority>2</priority>
 		</demand>
 	</demands>
-	<operation_plans>
-		<operation_plan id="2" operation="delivery 1">
+	<operationplans>
+		<operationplan id="2" operation="delivery 1">
 			<demand name="Order 2 for product 1"/>
 			<start>2007-01-02T00:00:00</start>
 			<end>2007-01-03T00:00:00</end>
 			<quantity>90</quantity>
-		</operation_plan>
-		<operation_plan id="1" operation="delivery 1">
+		</operationplan>
+		<operationplan id="1" operation="delivery 1">
 			<demand name="Order 1 for product 1"/>
 			<start>2007-01-02T00:00:00</start>
 			<end>2007-01-03T00:00:00</end>
 			<quantity>90</quantity>
-		</operation_plan>
-		<operation_plan id="3" operation="delivery 1">
+		</operationplan>
+		<operationplan id="3" operation="delivery 1">
 			<start>2007-01-07T00:00:00</start>
 			<end>2007-01-08T00:00:00</end>
 			<quantity>24</quantity>
-		</operation_plan>
-		<operation_plan id="4" operation="delivery 1">
+		</operationplan>
+		<operationplan id="4" operation="delivery 1">
 			<start>2007-01-08T00:00:00</start>
 			<end>2007-01-09T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="5" operation="delivery 1">
+		</operationplan>
+		<operationplan id="5" operation="delivery 1">
 			<start>2007-01-09T00:00:00</start>
 			<end>2007-01-10T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="6" operation="delivery 1">
+		</operationplan>
+		<operationplan id="6" operation="delivery 1">
 			<start>2007-01-10T00:00:00</start>
 			<end>2007-01-11T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="7" operation="delivery 1">
+		</operationplan>
+		<operationplan id="7" operation="delivery 1">
 			<start>2007-01-11T00:00:00</start>
 			<end>2007-01-12T00:00:00</end>
 			<quantity>16</quantity>
-		</operation_plan>
-		<operation_plan id="8" operation="delivery 1">
+		</operationplan>
+		<operationplan id="8" operation="delivery 1">
 			<start>2007-01-14T00:00:00</start>
 			<end>2007-01-15T00:00:00</end>
 			<quantity>24</quantity>
-		</operation_plan>
-		<operation_plan id="9" operation="delivery 1">
+		</operationplan>
+		<operationplan id="9" operation="delivery 1">
 			<start>2007-01-15T00:00:00</start>
 			<end>2007-01-16T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="10" operation="delivery 1">
+		</operationplan>
+		<operationplan id="10" operation="delivery 1">
 			<start>2007-01-16T00:00:00</start>
 			<end>2007-01-17T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="11" operation="delivery 1">
+		</operationplan>
+		<operationplan id="11" operation="delivery 1">
 			<start>2007-01-17T00:00:00</start>
 			<end>2007-01-18T00:00:00</end>
 			<quantity>20</quantity>
-		</operation_plan>
-		<operation_plan id="12" operation="delivery 1">
+		</operationplan>
+		<operationplan id="12" operation="delivery 1">
 			<start>2007-01-18T00:00:00</start>
 			<end>2007-01-19T00:00:00</end>
 			<quantity>16</quantity>
-		</operation_plan>
-		<operation_plan id="13" operation="delivery 1">
+		</operationplan>
+		<operationplan id="13" operation="delivery 1">
 			<start>2007-01-21T00:00:00</start>
 			<end>2007-01-22T00:00:00</end>
 			<quantity>10</quantity>
-		</operation_plan>
-		<operation_plan id="14" operation="delivery 1">
+		</operationplan>
+		<operationplan id="14" operation="delivery 1">
 			<demand name="Order 3 for product 1"/>
 			<start>2007-01-26T00:00:00</start>
 			<end>2007-01-27T00:00:00</end>
 			<quantity>90</quantity>
-		</operation_plan>
-	</operation_plans>
+		</operationplan>
+	</operationplans>
 </plan>

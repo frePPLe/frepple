@@ -82,7 +82,7 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode
   o->writeElement(Tags::tag_minimum, getMin());
   o->writeElement(Tags::tag_maximum, getMax());
   if (!dynamic_cast<OperationPlan*>(o->getCurrentObject()))
-    o->writeElement(Tags::tag_operation_plan, &*getOperationPlan());
+    o->writeElement(Tags::tag_operationplan, &*getOperationPlan());
 
   // Write pegging info
   if (o->getContentType() == XMLOutput::PLANDETAIL)

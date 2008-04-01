@@ -51,14 +51,14 @@
 	</calendars>
 	<operations>
 		<operation name="delivery 1" xsi:type="operation_fixed_time">
-			<operation_plans>
-				<operation_plan id="4002" operation="delivery 1">
+			<operationplans>
+				<operationplan id="4002" operation="delivery 1">
 					<demand name="order for item 1"/>
 					<start>2007-01-09T00:00:00</start>
 					<end>2007-01-10T00:00:00</end>
 					<quantity>5</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-09T00:00:00</date>
 							<quantity>-10</quantity>
 							<onhand>0</onhand>
@@ -72,16 +72,16 @@
 								<producing id="1" operation="Inventory of buffer &apos;buffer 1&apos;"/>
 								<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4003" operation="delivery 1">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4003" operation="delivery 1">
 					<demand name="order for item 1"/>
 					<start>2007-01-10T00:00:00</start>
 					<end>2007-01-11T00:00:00</end>
 					<quantity>50</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-10T00:00:00</date>
 							<quantity>-100</quantity>
 							<onhand>0</onhand>
@@ -103,16 +103,16 @@
 								<producing id="1001" operation="supply 1"/>
 								<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4005" operation="delivery 1">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4005" operation="delivery 1">
 					<demand name="order for item 1"/>
 					<start>2007-01-17T00:00:00</start>
 					<end>2007-01-18T00:00:00</end>
 					<quantity>45</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-17T00:00:00</date>
 							<quantity>-90</quantity>
 							<onhand>4</onhand>
@@ -134,21 +134,21 @@
 								<producing id="1002" operation="supply 1"/>
 								<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 			<duration>P1D</duration>
 		</operation>
 		<operation name="delivery 2" xsi:type="operation_fixed_time">
-			<operation_plans>
-				<operation_plan id="4007" operation="delivery 2">
+			<operationplans>
+				<operationplan id="4007" operation="delivery 2">
 					<demand name="order for item 2"/>
 					<start>2007-01-09T00:00:00</start>
 					<end>2007-01-10T00:00:00</end>
 					<quantity>5</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-09T00:00:00</date>
 							<quantity>-10</quantity>
 							<onhand>0</onhand>
@@ -162,16 +162,16 @@
 								<producing id="2" operation="Inventory of buffer &apos;buffer 2&apos;"/>
 								<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4008" operation="delivery 2">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4008" operation="delivery 2">
 					<demand name="order for item 2"/>
 					<start>2007-01-10T00:00:00</start>
 					<end>2007-01-11T00:00:00</end>
 					<quantity>50</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-10T00:00:00</date>
 							<quantity>-100</quantity>
 							<onhand>0</onhand>
@@ -193,16 +193,16 @@
 								<producing id="2001" operation="supply 2"/>
 								<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4010" operation="delivery 2">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4010" operation="delivery 2">
 					<demand name="order for item 2"/>
 					<start>2007-01-17T00:00:00</start>
 					<end>2007-01-18T00:00:00</end>
 					<quantity>25</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-17T00:00:00</date>
 							<quantity>-50</quantity>
 							<onhand>0</onhand>
@@ -224,21 +224,21 @@
 								<producing id="2002" operation="supply 2"/>
 								<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 			<duration>P1D</duration>
 		</operation>
 		<operation name="delivery 3" xsi:type="operation_fixed_time">
-			<operation_plans>
-				<operation_plan id="4012" operation="delivery 3">
+			<operationplans>
+				<operationplan id="4012" operation="delivery 3">
 					<demand name="order for item 3"/>
 					<start>2007-01-09T00:00:00</start>
 					<end>2007-01-10T00:00:00</end>
 					<quantity>10</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-09T00:00:00</date>
 							<quantity>-10</quantity>
 							<onhand>0</onhand>
@@ -252,16 +252,16 @@
 								<producing id="3" operation="Inventory of buffer &apos;buffer 3&apos;"/>
 								<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4013" operation="delivery 3">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4013" operation="delivery 3">
 					<demand name="order for item 3"/>
 					<start>2007-01-15T00:00:00</start>
 					<end>2007-01-16T00:00:00</end>
 					<quantity>90</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-15T00:00:00</date>
 							<quantity>-90</quantity>
 							<onhand>2</onhand>
@@ -283,21 +283,21 @@
 								<producing id="3001" operation="supply 3"/>
 								<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 			<duration>P1D</duration>
 		</operation>
 		<operation name="delivery 4" xsi:type="operation_fixed_time">
-			<operation_plans>
-				<operation_plan id="4015" operation="delivery 4">
+			<operationplans>
+				<operationplan id="4015" operation="delivery 4">
 					<demand name="order for item 4"/>
 					<start>2007-01-09T00:00:00</start>
 					<end>2007-01-10T00:00:00</end>
 					<quantity>5</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-09T00:00:00</date>
 							<quantity>-10</quantity>
 							<onhand>0</onhand>
@@ -311,16 +311,16 @@
 								<producing id="4" operation="Inventory of buffer &apos;buffer 4&apos;"/>
 								<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4016" operation="delivery 4">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4016" operation="delivery 4">
 					<demand name="order for item 4"/>
 					<start>2007-01-15T00:00:00</start>
 					<end>2007-01-16T00:00:00</end>
 					<quantity>95</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-15T00:00:00</date>
 							<quantity>-190</quantity>
 							<onhand>6</onhand>
@@ -342,16 +342,16 @@
 								<producing id="4001" operation="supply 4"/>
 								<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4018" operation="delivery 4">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4018" operation="delivery 4">
 					<demand name="order 2 for item 4"/>
 					<start>2007-06-18T00:00:00</start>
 					<end>2007-06-19T00:00:00</end>
 					<quantity>100</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-06-18T00:00:00</date>
 							<quantity>-200</quantity>
 							<onhand>6</onhand>
@@ -389,20 +389,20 @@
 								<producing id="4001" operation="supply 4"/>
 								<dates>2007-01-15T00:00:00 / 2007-06-18T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 			<duration>P1D</duration>
 		</operation>
 		<operation name="make 1" xsi:type="operation_fixed_time">
-			<operation_plans>
-				<operation_plan id="4004" operation="make 1">
+			<operationplans>
+				<operationplan id="4004" operation="make 1">
 					<start>2007-01-10T00:00:00</start>
 					<end>2007-01-10T00:00:00</end>
 					<quantity>50</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-10T00:00:00</date>
 							<quantity>100</quantity>
 							<onhand>100</onhand>
@@ -424,8 +424,8 @@
 								<producing id="4004" operation="make 1"/>
 								<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-						<flow_plan>
+						</flowplan>
+						<flowplan>
 							<date>2007-01-10T00:00:00</date>
 							<quantity>-100</quantity>
 							<onhand>0</onhand>
@@ -447,15 +447,15 @@
 								<producing id="4004" operation="make 1"/>
 								<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4006" operation="make 1">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4006" operation="make 1">
 					<start>2007-01-17T00:00:00</start>
 					<end>2007-01-17T00:00:00</end>
 					<quantity>47</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-17T00:00:00</date>
 							<quantity>94</quantity>
 							<onhand>94</onhand>
@@ -485,8 +485,8 @@
 								<producing id="4006" operation="make 1"/>
 								<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-						<flow_plan>
+						</flowplan>
+						<flowplan>
 							<date>2007-01-17T00:00:00</date>
 							<quantity>-94</quantity>
 							<onhand>106</onhand>
@@ -516,19 +516,19 @@
 								<producing id="4006" operation="make 1"/>
 								<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</operation>
 		<operation name="make 2" xsi:type="operation_fixed_time">
-			<operation_plans>
-				<operation_plan id="4009" operation="make 2">
+			<operationplans>
+				<operationplan id="4009" operation="make 2">
 					<start>2007-01-10T00:00:00</start>
 					<end>2007-01-10T00:00:00</end>
 					<quantity>50</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-10T00:00:00</date>
 							<quantity>100</quantity>
 							<onhand>100</onhand>
@@ -550,8 +550,8 @@
 								<producing id="4009" operation="make 2"/>
 								<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-						<flow_plan>
+						</flowplan>
+						<flowplan>
 							<date>2007-01-10T00:00:00</date>
 							<quantity>-100</quantity>
 							<onhand>0</onhand>
@@ -573,15 +573,15 @@
 								<producing id="4009" operation="make 2"/>
 								<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4011" operation="make 2">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4011" operation="make 2">
 					<start>2007-01-17T00:00:00</start>
 					<end>2007-01-17T00:00:00</end>
 					<quantity>25</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-17T00:00:00</date>
 							<quantity>50</quantity>
 							<onhand>50</onhand>
@@ -603,8 +603,8 @@
 								<producing id="4011" operation="make 2"/>
 								<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-						<flow_plan>
+						</flowplan>
+						<flowplan>
 							<date>2007-01-17T00:00:00</date>
 							<quantity>-50</quantity>
 							<onhand>0</onhand>
@@ -626,19 +626,19 @@
 								<producing id="4011" operation="make 2"/>
 								<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</operation>
 		<operation name="make 3" xsi:type="operation_fixed_time">
-			<operation_plans>
-				<operation_plan id="4014" operation="make 3">
+			<operationplans>
+				<operationplan id="4014" operation="make 3">
 					<start>2007-01-15T00:00:00</start>
 					<end>2007-01-15T00:00:00</end>
 					<quantity>92</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-15T00:00:00</date>
 							<quantity>92</quantity>
 							<onhand>92</onhand>
@@ -668,8 +668,8 @@
 								<producing id="4014" operation="make 3"/>
 								<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-						<flow_plan>
+						</flowplan>
+						<flowplan>
 							<date>2007-01-15T00:00:00</date>
 							<quantity>-184</quantity>
 							<onhand>816</onhand>
@@ -699,19 +699,19 @@
 								<producing id="4014" operation="make 3"/>
 								<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</operation>
 		<operation name="make 4" xsi:type="operation_fixed_time">
-			<operation_plans>
-				<operation_plan id="4017" operation="make 4">
+			<operationplans>
+				<operationplan id="4017" operation="make 4">
 					<start>2007-01-15T00:00:00</start>
 					<end>2007-01-15T00:00:00</end>
 					<quantity>98</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-15T00:00:00</date>
 							<quantity>196</quantity>
 							<onhand>196</onhand>
@@ -741,8 +741,8 @@
 								<producing id="4017" operation="make 4"/>
 								<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-						<flow_plan>
+						</flowplan>
+						<flowplan>
 							<date>2007-01-15T00:00:00</date>
 							<quantity>-196</quantity>
 							<onhand>804</onhand>
@@ -772,15 +772,15 @@
 								<producing id="4017" operation="make 4"/>
 								<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4019" operation="make 4">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4019" operation="make 4">
 					<start>2007-06-18T00:00:00</start>
 					<end>2007-06-18T00:00:00</end>
 					<quantity>100</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-06-18T00:00:00</date>
 							<quantity>200</quantity>
 							<onhand>206</onhand>
@@ -810,8 +810,8 @@
 								<producing id="4019" operation="make 4"/>
 								<dates>2007-06-18T00:00:00 / 2007-06-18T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-						<flow_plan>
+						</flowplan>
+						<flowplan>
 							<date>2007-06-18T00:00:00</date>
 							<quantity>-200</quantity>
 							<onhand>604</onhand>
@@ -841,20 +841,20 @@
 								<producing id="4019" operation="make 4"/>
 								<dates>2007-06-18T00:00:00 / 2007-06-18T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</operation>
 		<operation name="supply 1" xsi:type="operation_fixed_time">
-			<operation_plans>
-				<operation_plan id="1001" operation="supply 1">
+			<operationplans>
+				<operationplan id="1001" operation="supply 1">
 					<start>2007-01-10T00:00:00</start>
 					<end>2007-01-10T00:00:00</end>
 					<quantity>100</quantity>
 					<locked>true</locked>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-10T00:00:00</date>
 							<quantity>100</quantity>
 							<onhand>100</onhand>
@@ -876,16 +876,16 @@
 								<producing id="4004" operation="make 1"/>
 								<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="1002" operation="supply 1">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="1002" operation="supply 1">
 					<start>2007-01-17T00:00:00</start>
 					<end>2007-01-17T00:00:00</end>
 					<quantity>200</quantity>
 					<locked>true</locked>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-17T00:00:00</date>
 							<quantity>200</quantity>
 							<onhand>200</onhand>
@@ -923,20 +923,20 @@
 								<producing id="4006" operation="make 1"/>
 								<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</operation>
 		<operation name="supply 2" xsi:type="operation_fixed_time">
-			<operation_plans>
-				<operation_plan id="2001" operation="supply 2">
+			<operationplans>
+				<operationplan id="2001" operation="supply 2">
 					<start>2007-01-10T00:00:00</start>
 					<end>2007-01-10T00:00:00</end>
 					<quantity>100</quantity>
 					<locked>true</locked>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-10T00:00:00</date>
 							<quantity>100</quantity>
 							<onhand>100</onhand>
@@ -958,16 +958,16 @@
 								<producing id="4009" operation="make 2"/>
 								<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="2002" operation="supply 2">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="2002" operation="supply 2">
 					<start>2007-01-17T00:00:00</start>
 					<end>2007-01-17T00:00:00</end>
 					<quantity>50</quantity>
 					<locked>true</locked>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-17T00:00:00</date>
 							<quantity>50</quantity>
 							<onhand>50</onhand>
@@ -989,20 +989,20 @@
 								<producing id="4011" operation="make 2"/>
 								<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</operation>
 		<operation name="supply 3" xsi:type="operation_fixed_time">
-			<operation_plans>
-				<operation_plan id="3001" operation="supply 3">
+			<operationplans>
+				<operationplan id="3001" operation="supply 3">
 					<start>2007-01-15T00:00:00</start>
 					<end>2007-01-15T00:00:00</end>
 					<quantity>1000</quantity>
 					<locked>true</locked>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-15T00:00:00</date>
 							<quantity>1000</quantity>
 							<onhand>1000</onhand>
@@ -1040,20 +1040,20 @@
 								<producing id="4014" operation="make 3"/>
 								<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</operation>
 		<operation name="supply 4" xsi:type="operation_fixed_time">
-			<operation_plans>
-				<operation_plan id="4001" operation="supply 4">
+			<operationplans>
+				<operationplan id="4001" operation="supply 4">
 					<start>2007-01-15T00:00:00</start>
 					<end>2007-01-15T00:00:00</end>
 					<quantity>1000</quantity>
 					<locked>true</locked>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-15T00:00:00</date>
 							<quantity>1000</quantity>
 							<onhand>1000</onhand>
@@ -1115,10 +1115,10 @@
 								<producing id="4017" operation="make 4"/>
 								<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</operation>
 	</operations>
 	<items>
@@ -1151,8 +1151,8 @@
 			</flows>
 			<onhand>10</onhand>
 			<minimum name="min inv for buffer 1" xsi:type="calendar_double"/>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>1971-01-01T00:00:00</date>
 					<quantity>10</quantity>
 					<onhand>10</onhand>
@@ -1166,14 +1166,14 @@
 						<producing id="1" operation="Inventory of buffer &apos;buffer 1&apos;"/>
 						<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-09T00:00:00</date>
 					<quantity>-10</quantity>
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4002" operation="delivery 1"/>
+					<operationplan id="4002" operation="delivery 1"/>
 					<pegging level="1">
 						<quantity>10</quantity>
 						<factor>1</factor>
@@ -1182,14 +1182,14 @@
 						<producing id="1" operation="Inventory of buffer &apos;buffer 1&apos;"/>
 						<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>100</quantity>
 					<onhand>100</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4004" operation="make 1"/>
+					<operationplan id="4004" operation="make 1"/>
 					<pegging level="1">
 						<quantity>100</quantity>
 						<factor>1</factor>
@@ -1206,14 +1206,14 @@
 						<producing id="4004" operation="make 1"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>-100</quantity>
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4003" operation="delivery 1"/>
+					<operationplan id="4003" operation="delivery 1"/>
 					<pegging level="1">
 						<quantity>100</quantity>
 						<factor>1</factor>
@@ -1230,14 +1230,14 @@
 						<producing id="1001" operation="supply 1"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>94</quantity>
 					<onhand>94</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4006" operation="make 1"/>
+					<operationplan id="4006" operation="make 1"/>
 					<pegging level="1">
 						<quantity>94</quantity>
 						<factor>0.47</factor>
@@ -1262,14 +1262,14 @@
 						<producing id="4006" operation="make 1"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>-90</quantity>
 					<onhand>4</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4005" operation="delivery 1"/>
+					<operationplan id="4005" operation="delivery 1"/>
 					<pegging level="1">
 						<quantity>90</quantity>
 						<factor>0.957447</factor>
@@ -1286,8 +1286,8 @@
 						<producing id="1002" operation="supply 1"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
+				</flowplan>
+			</flowplans>
 		</buffer>
 		<buffer name="buffer 2">
 			<producing name="make 2" xsi:type="operation_fixed_time"/>
@@ -1304,8 +1304,8 @@
 			</flows>
 			<onhand>10</onhand>
 			<minimum name="min inv for buffer 2" xsi:type="calendar_double"/>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>1971-01-01T00:00:00</date>
 					<quantity>10</quantity>
 					<onhand>10</onhand>
@@ -1319,14 +1319,14 @@
 						<producing id="2" operation="Inventory of buffer &apos;buffer 2&apos;"/>
 						<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-09T00:00:00</date>
 					<quantity>-10</quantity>
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4007" operation="delivery 2"/>
+					<operationplan id="4007" operation="delivery 2"/>
 					<pegging level="1">
 						<quantity>10</quantity>
 						<factor>1</factor>
@@ -1335,14 +1335,14 @@
 						<producing id="2" operation="Inventory of buffer &apos;buffer 2&apos;"/>
 						<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>100</quantity>
 					<onhand>100</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4009" operation="make 2"/>
+					<operationplan id="4009" operation="make 2"/>
 					<pegging level="1">
 						<quantity>100</quantity>
 						<factor>1</factor>
@@ -1359,14 +1359,14 @@
 						<producing id="4009" operation="make 2"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>-100</quantity>
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4008" operation="delivery 2"/>
+					<operationplan id="4008" operation="delivery 2"/>
 					<pegging level="1">
 						<quantity>100</quantity>
 						<factor>1</factor>
@@ -1383,14 +1383,14 @@
 						<producing id="2001" operation="supply 2"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>50</quantity>
 					<onhand>50</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4011" operation="make 2"/>
+					<operationplan id="4011" operation="make 2"/>
 					<pegging level="1">
 						<quantity>50</quantity>
 						<factor>1</factor>
@@ -1407,14 +1407,14 @@
 						<producing id="4011" operation="make 2"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>-50</quantity>
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4010" operation="delivery 2"/>
+					<operationplan id="4010" operation="delivery 2"/>
 					<pegging level="1">
 						<quantity>50</quantity>
 						<factor>1</factor>
@@ -1431,8 +1431,8 @@
 						<producing id="2002" operation="supply 2"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
+				</flowplan>
+			</flowplans>
 		</buffer>
 		<buffer name="buffer 3">
 			<producing name="make 3" xsi:type="operation_fixed_time"/>
@@ -1449,8 +1449,8 @@
 			</flows>
 			<onhand>10</onhand>
 			<minimum name="min inv for buffer 3" xsi:type="calendar_double"/>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>1971-01-01T00:00:00</date>
 					<quantity>10</quantity>
 					<onhand>10</onhand>
@@ -1464,14 +1464,14 @@
 						<producing id="3" operation="Inventory of buffer &apos;buffer 3&apos;"/>
 						<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-09T00:00:00</date>
 					<quantity>-10</quantity>
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4012" operation="delivery 3"/>
+					<operationplan id="4012" operation="delivery 3"/>
 					<pegging level="1">
 						<quantity>10</quantity>
 						<factor>1</factor>
@@ -1480,14 +1480,14 @@
 						<producing id="3" operation="Inventory of buffer &apos;buffer 3&apos;"/>
 						<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>92</quantity>
 					<onhand>92</onhand>
 					<minimum>2</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4014" operation="make 3"/>
+					<operationplan id="4014" operation="make 3"/>
 					<pegging level="1">
 						<quantity>92</quantity>
 						<factor>0.184</factor>
@@ -1512,14 +1512,14 @@
 						<producing id="4014" operation="make 3"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>-90</quantity>
 					<onhand>2</onhand>
 					<minimum>2</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4013" operation="delivery 3"/>
+					<operationplan id="4013" operation="delivery 3"/>
 					<pegging level="1">
 						<quantity>90</quantity>
 						<factor>0.978261</factor>
@@ -1536,8 +1536,8 @@
 						<producing id="3001" operation="supply 3"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
+				</flowplan>
+			</flowplans>
 		</buffer>
 		<buffer name="buffer 4">
 			<producing name="make 4" xsi:type="operation_fixed_time"/>
@@ -1554,8 +1554,8 @@
 			</flows>
 			<onhand>10</onhand>
 			<minimum name="min inv for buffer 4" xsi:type="calendar_double"/>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>1971-01-01T00:00:00</date>
 					<quantity>10</quantity>
 					<onhand>10</onhand>
@@ -1569,14 +1569,14 @@
 						<producing id="4" operation="Inventory of buffer &apos;buffer 4&apos;"/>
 						<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-09T00:00:00</date>
 					<quantity>-10</quantity>
 					<onhand>0</onhand>
 					<minimum>4</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4015" operation="delivery 4"/>
+					<operationplan id="4015" operation="delivery 4"/>
 					<pegging level="1">
 						<quantity>10</quantity>
 						<factor>1</factor>
@@ -1585,14 +1585,14 @@
 						<producing id="4" operation="Inventory of buffer &apos;buffer 4&apos;"/>
 						<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>196</quantity>
 					<onhand>196</onhand>
 					<minimum>6</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4017" operation="make 4"/>
+					<operationplan id="4017" operation="make 4"/>
 					<pegging level="1">
 						<quantity>196</quantity>
 						<factor>0.196</factor>
@@ -1617,14 +1617,14 @@
 						<producing id="4017" operation="make 4"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>-190</quantity>
 					<onhand>6</onhand>
 					<minimum>6</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4016" operation="delivery 4"/>
+					<operationplan id="4016" operation="delivery 4"/>
 					<pegging level="1">
 						<quantity>190</quantity>
 						<factor>0.969388</factor>
@@ -1641,14 +1641,14 @@
 						<producing id="4001" operation="supply 4"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-06-18T00:00:00</date>
 					<quantity>200</quantity>
 					<onhand>206</onhand>
 					<minimum>6</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4019" operation="make 4"/>
+					<operationplan id="4019" operation="make 4"/>
 					<pegging level="1">
 						<quantity>200</quantity>
 						<factor>0.2</factor>
@@ -1673,14 +1673,14 @@
 						<producing id="4019" operation="make 4"/>
 						<dates>2007-06-18T00:00:00 / 2007-06-18T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-06-18T00:00:00</date>
 					<quantity>-200</quantity>
 					<onhand>6</onhand>
 					<minimum>6</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4018" operation="delivery 4"/>
+					<operationplan id="4018" operation="delivery 4"/>
 					<pegging level="1">
 						<quantity>6</quantity>
 						<factor>0.0306122</factor>
@@ -1713,8 +1713,8 @@
 						<producing id="4001" operation="supply 4"/>
 						<dates>2007-01-15T00:00:00 / 2007-06-18T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
+				</flowplan>
+			</flowplans>
 		</buffer>
 		<buffer name="constraint buffer 1">
 			<item name="item 1"/>
@@ -1728,14 +1728,14 @@
 					<quantity>1</quantity>
 				</flow>
 			</flows>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>100</quantity>
 					<onhand>100</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="1001" operation="supply 1"/>
+					<operationplan id="1001" operation="supply 1"/>
 					<pegging level="-1">
 						<quantity>100</quantity>
 						<factor>1</factor>
@@ -1752,14 +1752,14 @@
 						<producing id="4004" operation="make 1"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>-100</quantity>
 					<onhand>0</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4004" operation="make 1"/>
+					<operationplan id="4004" operation="make 1"/>
 					<pegging level="1">
 						<quantity>100</quantity>
 						<factor>1</factor>
@@ -1776,14 +1776,14 @@
 						<producing id="4004" operation="make 1"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>200</quantity>
 					<onhand>200</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="1002" operation="supply 1"/>
+					<operationplan id="1002" operation="supply 1"/>
 					<pegging level="-1">
 						<quantity>106</quantity>
 						<factor>1</factor>
@@ -1816,14 +1816,14 @@
 						<producing id="4006" operation="make 1"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>-94</quantity>
 					<onhand>106</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4006" operation="make 1"/>
+					<operationplan id="4006" operation="make 1"/>
 					<pegging level="1">
 						<quantity>94</quantity>
 						<factor>0.47</factor>
@@ -1848,8 +1848,8 @@
 						<producing id="4006" operation="make 1"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
+				</flowplan>
+			</flowplans>
 		</buffer>
 		<buffer name="constraint buffer 2">
 			<item name="item 2"/>
@@ -1863,14 +1863,14 @@
 					<quantity>1</quantity>
 				</flow>
 			</flows>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>100</quantity>
 					<onhand>100</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="2001" operation="supply 2"/>
+					<operationplan id="2001" operation="supply 2"/>
 					<pegging level="-1">
 						<quantity>100</quantity>
 						<factor>1</factor>
@@ -1887,14 +1887,14 @@
 						<producing id="4009" operation="make 2"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>-100</quantity>
 					<onhand>0</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4009" operation="make 2"/>
+					<operationplan id="4009" operation="make 2"/>
 					<pegging level="1">
 						<quantity>100</quantity>
 						<factor>1</factor>
@@ -1911,14 +1911,14 @@
 						<producing id="4009" operation="make 2"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>50</quantity>
 					<onhand>50</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="2002" operation="supply 2"/>
+					<operationplan id="2002" operation="supply 2"/>
 					<pegging level="-1">
 						<quantity>50</quantity>
 						<factor>1</factor>
@@ -1935,14 +1935,14 @@
 						<producing id="4011" operation="make 2"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>-50</quantity>
 					<onhand>0</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4011" operation="make 2"/>
+					<operationplan id="4011" operation="make 2"/>
 					<pegging level="1">
 						<quantity>50</quantity>
 						<factor>1</factor>
@@ -1959,8 +1959,8 @@
 						<producing id="4011" operation="make 2"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
+				</flowplan>
+			</flowplans>
 		</buffer>
 		<buffer name="constraint buffer 3">
 			<item name="item 3"/>
@@ -1974,14 +1974,14 @@
 					<quantity>1</quantity>
 				</flow>
 			</flows>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>1000</quantity>
 					<onhand>1000</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="3001" operation="supply 3"/>
+					<operationplan id="3001" operation="supply 3"/>
 					<pegging level="-1">
 						<quantity>816</quantity>
 						<factor>1</factor>
@@ -2014,14 +2014,14 @@
 						<producing id="4014" operation="make 3"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>-184</quantity>
 					<onhand>816</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4014" operation="make 3"/>
+					<operationplan id="4014" operation="make 3"/>
 					<pegging level="1">
 						<quantity>184</quantity>
 						<factor>0.184</factor>
@@ -2046,8 +2046,8 @@
 						<producing id="4014" operation="make 3"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
+				</flowplan>
+			</flowplans>
 		</buffer>
 		<buffer name="constraint buffer 4">
 			<item name="item 4"/>
@@ -2061,14 +2061,14 @@
 					<quantity>1</quantity>
 				</flow>
 			</flows>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>1000</quantity>
 					<onhand>1000</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4001" operation="supply 4"/>
+					<operationplan id="4001" operation="supply 4"/>
 					<pegging level="-1">
 						<quantity>604</quantity>
 						<factor>1</factor>
@@ -2125,14 +2125,14 @@
 						<producing id="4017" operation="make 4"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>-196</quantity>
 					<onhand>804</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4017" operation="make 4"/>
+					<operationplan id="4017" operation="make 4"/>
 					<pegging level="1">
 						<quantity>196</quantity>
 						<factor>0.196</factor>
@@ -2157,14 +2157,14 @@
 						<producing id="4017" operation="make 4"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-06-18T00:00:00</date>
 					<quantity>-200</quantity>
 					<onhand>604</onhand>
 					<minimum>0</minimum>
 					<maximum>0</maximum>
-					<operation_plan id="4019" operation="make 4"/>
+					<operationplan id="4019" operation="make 4"/>
 					<pegging level="1">
 						<quantity>200</quantity>
 						<factor>0.2</factor>
@@ -2189,8 +2189,8 @@
 						<producing id="4019" operation="make 4"/>
 						<dates>2007-06-18T00:00:00 / 2007-06-18T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
+				</flowplan>
+			</flowplans>
 		</buffer>
 	</buffers>
 	<demands>
@@ -2198,13 +2198,13 @@
 			<quantity>100</quantity>
 			<item name="item 4"/>
 			<due>2007-06-19T00:00:00</due>
-			<operation_plans>
-				<operation_plan id="4018" operation="delivery 4">
+			<operationplans>
+				<operationplan id="4018" operation="delivery 4">
 					<start>2007-06-18T00:00:00</start>
 					<end>2007-06-19T00:00:00</end>
 					<quantity>100</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-06-18T00:00:00</date>
 							<quantity>-200</quantity>
 							<onhand>6</onhand>
@@ -2242,22 +2242,22 @@
 								<producing id="4001" operation="supply 4"/>
 								<dates>2007-01-15T00:00:00 / 2007-06-18T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</demand>
 		<demand name="order for item 1">
 			<quantity>100</quantity>
 			<item name="item 1"/>
 			<due>2007-01-10T00:00:00</due>
-			<operation_plans>
-				<operation_plan id="4005" operation="delivery 1">
+			<operationplans>
+				<operationplan id="4005" operation="delivery 1">
 					<start>2007-01-17T00:00:00</start>
 					<end>2007-01-18T00:00:00</end>
 					<quantity>45</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-17T00:00:00</date>
 							<quantity>-90</quantity>
 							<onhand>4</onhand>
@@ -2279,15 +2279,15 @@
 								<producing id="1002" operation="supply 1"/>
 								<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4003" operation="delivery 1">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4003" operation="delivery 1">
 					<start>2007-01-10T00:00:00</start>
 					<end>2007-01-11T00:00:00</end>
 					<quantity>50</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-10T00:00:00</date>
 							<quantity>-100</quantity>
 							<onhand>0</onhand>
@@ -2309,15 +2309,15 @@
 								<producing id="1001" operation="supply 1"/>
 								<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4002" operation="delivery 1">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4002" operation="delivery 1">
 					<start>2007-01-09T00:00:00</start>
 					<end>2007-01-10T00:00:00</end>
 					<quantity>5</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-09T00:00:00</date>
 							<quantity>-10</quantity>
 							<onhand>0</onhand>
@@ -2331,22 +2331,22 @@
 								<producing id="1" operation="Inventory of buffer &apos;buffer 1&apos;"/>
 								<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</demand>
 		<demand name="order for item 2">
 			<quantity>100</quantity>
 			<item name="item 2"/>
 			<due>2007-01-10T00:00:00</due>
-			<operation_plans>
-				<operation_plan id="4010" operation="delivery 2">
+			<operationplans>
+				<operationplan id="4010" operation="delivery 2">
 					<start>2007-01-17T00:00:00</start>
 					<end>2007-01-18T00:00:00</end>
 					<quantity>25</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-17T00:00:00</date>
 							<quantity>-50</quantity>
 							<onhand>0</onhand>
@@ -2368,15 +2368,15 @@
 								<producing id="2002" operation="supply 2"/>
 								<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4008" operation="delivery 2">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4008" operation="delivery 2">
 					<start>2007-01-10T00:00:00</start>
 					<end>2007-01-11T00:00:00</end>
 					<quantity>50</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-10T00:00:00</date>
 							<quantity>-100</quantity>
 							<onhand>0</onhand>
@@ -2398,15 +2398,15 @@
 								<producing id="2001" operation="supply 2"/>
 								<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4007" operation="delivery 2">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4007" operation="delivery 2">
 					<start>2007-01-09T00:00:00</start>
 					<end>2007-01-10T00:00:00</end>
 					<quantity>5</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-09T00:00:00</date>
 							<quantity>-10</quantity>
 							<onhand>0</onhand>
@@ -2420,22 +2420,22 @@
 								<producing id="2" operation="Inventory of buffer &apos;buffer 2&apos;"/>
 								<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</demand>
 		<demand name="order for item 3">
 			<quantity>100</quantity>
 			<item name="item 3"/>
 			<due>2007-01-10T00:00:00</due>
-			<operation_plans>
-				<operation_plan id="4013" operation="delivery 3">
+			<operationplans>
+				<operationplan id="4013" operation="delivery 3">
 					<start>2007-01-15T00:00:00</start>
 					<end>2007-01-16T00:00:00</end>
 					<quantity>90</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-15T00:00:00</date>
 							<quantity>-90</quantity>
 							<onhand>2</onhand>
@@ -2457,15 +2457,15 @@
 								<producing id="3001" operation="supply 3"/>
 								<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4012" operation="delivery 3">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4012" operation="delivery 3">
 					<start>2007-01-09T00:00:00</start>
 					<end>2007-01-10T00:00:00</end>
 					<quantity>10</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-09T00:00:00</date>
 							<quantity>-10</quantity>
 							<onhand>0</onhand>
@@ -2479,22 +2479,22 @@
 								<producing id="3" operation="Inventory of buffer &apos;buffer 3&apos;"/>
 								<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</demand>
 		<demand name="order for item 4">
 			<quantity>100</quantity>
 			<item name="item 4"/>
 			<due>2007-01-10T00:00:00</due>
-			<operation_plans>
-				<operation_plan id="4016" operation="delivery 4">
+			<operationplans>
+				<operationplan id="4016" operation="delivery 4">
 					<start>2007-01-15T00:00:00</start>
 					<end>2007-01-16T00:00:00</end>
 					<quantity>95</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-15T00:00:00</date>
 							<quantity>-190</quantity>
 							<onhand>6</onhand>
@@ -2516,15 +2516,15 @@
 								<producing id="4001" operation="supply 4"/>
 								<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-				<operation_plan id="4015" operation="delivery 4">
+						</flowplan>
+					</flowplans>
+				</operationplan>
+				<operationplan id="4015" operation="delivery 4">
 					<start>2007-01-09T00:00:00</start>
 					<end>2007-01-10T00:00:00</end>
 					<quantity>5</quantity>
-					<flow_plans>
-						<flow_plan>
+					<flowplans>
+						<flowplan>
 							<date>2007-01-09T00:00:00</date>
 							<quantity>-10</quantity>
 							<onhand>0</onhand>
@@ -2538,20 +2538,20 @@
 								<producing id="4" operation="Inventory of buffer &apos;buffer 4&apos;"/>
 								<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 							</pegging>
-						</flow_plan>
-					</flow_plans>
-				</operation_plan>
-			</operation_plans>
+						</flowplan>
+					</flowplans>
+				</operationplan>
+			</operationplans>
 		</demand>
 	</demands>
-	<operation_plans>
-		<operation_plan id="4002" operation="delivery 1">
+	<operationplans>
+		<operationplan id="4002" operation="delivery 1">
 			<demand name="order for item 1"/>
 			<start>2007-01-09T00:00:00</start>
 			<end>2007-01-10T00:00:00</end>
 			<quantity>5</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-09T00:00:00</date>
 					<quantity>-10</quantity>
 					<onhand>0</onhand>
@@ -2565,16 +2565,16 @@
 						<producing id="1" operation="Inventory of buffer &apos;buffer 1&apos;"/>
 						<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4003" operation="delivery 1">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4003" operation="delivery 1">
 			<demand name="order for item 1"/>
 			<start>2007-01-10T00:00:00</start>
 			<end>2007-01-11T00:00:00</end>
 			<quantity>50</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>-100</quantity>
 					<onhand>0</onhand>
@@ -2596,16 +2596,16 @@
 						<producing id="1001" operation="supply 1"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4005" operation="delivery 1">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4005" operation="delivery 1">
 			<demand name="order for item 1"/>
 			<start>2007-01-17T00:00:00</start>
 			<end>2007-01-18T00:00:00</end>
 			<quantity>45</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>-90</quantity>
 					<onhand>4</onhand>
@@ -2627,16 +2627,16 @@
 						<producing id="1002" operation="supply 1"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4007" operation="delivery 2">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4007" operation="delivery 2">
 			<demand name="order for item 2"/>
 			<start>2007-01-09T00:00:00</start>
 			<end>2007-01-10T00:00:00</end>
 			<quantity>5</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-09T00:00:00</date>
 					<quantity>-10</quantity>
 					<onhand>0</onhand>
@@ -2650,16 +2650,16 @@
 						<producing id="2" operation="Inventory of buffer &apos;buffer 2&apos;"/>
 						<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4008" operation="delivery 2">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4008" operation="delivery 2">
 			<demand name="order for item 2"/>
 			<start>2007-01-10T00:00:00</start>
 			<end>2007-01-11T00:00:00</end>
 			<quantity>50</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>-100</quantity>
 					<onhand>0</onhand>
@@ -2681,16 +2681,16 @@
 						<producing id="2001" operation="supply 2"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4010" operation="delivery 2">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4010" operation="delivery 2">
 			<demand name="order for item 2"/>
 			<start>2007-01-17T00:00:00</start>
 			<end>2007-01-18T00:00:00</end>
 			<quantity>25</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>-50</quantity>
 					<onhand>0</onhand>
@@ -2712,16 +2712,16 @@
 						<producing id="2002" operation="supply 2"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4012" operation="delivery 3">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4012" operation="delivery 3">
 			<demand name="order for item 3"/>
 			<start>2007-01-09T00:00:00</start>
 			<end>2007-01-10T00:00:00</end>
 			<quantity>10</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-09T00:00:00</date>
 					<quantity>-10</quantity>
 					<onhand>0</onhand>
@@ -2735,16 +2735,16 @@
 						<producing id="3" operation="Inventory of buffer &apos;buffer 3&apos;"/>
 						<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4013" operation="delivery 3">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4013" operation="delivery 3">
 			<demand name="order for item 3"/>
 			<start>2007-01-15T00:00:00</start>
 			<end>2007-01-16T00:00:00</end>
 			<quantity>90</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>-90</quantity>
 					<onhand>2</onhand>
@@ -2766,16 +2766,16 @@
 						<producing id="3001" operation="supply 3"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4015" operation="delivery 4">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4015" operation="delivery 4">
 			<demand name="order for item 4"/>
 			<start>2007-01-09T00:00:00</start>
 			<end>2007-01-10T00:00:00</end>
 			<quantity>5</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-09T00:00:00</date>
 					<quantity>-10</quantity>
 					<onhand>0</onhand>
@@ -2789,16 +2789,16 @@
 						<producing id="4" operation="Inventory of buffer &apos;buffer 4&apos;"/>
 						<dates>1971-01-01T00:00:00 / 2007-01-09T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4016" operation="delivery 4">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4016" operation="delivery 4">
 			<demand name="order for item 4"/>
 			<start>2007-01-15T00:00:00</start>
 			<end>2007-01-16T00:00:00</end>
 			<quantity>95</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>-190</quantity>
 					<onhand>6</onhand>
@@ -2820,16 +2820,16 @@
 						<producing id="4001" operation="supply 4"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4018" operation="delivery 4">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4018" operation="delivery 4">
 			<demand name="order 2 for item 4"/>
 			<start>2007-06-18T00:00:00</start>
 			<end>2007-06-19T00:00:00</end>
 			<quantity>100</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-06-18T00:00:00</date>
 					<quantity>-200</quantity>
 					<onhand>6</onhand>
@@ -2867,15 +2867,15 @@
 						<producing id="4001" operation="supply 4"/>
 						<dates>2007-01-15T00:00:00 / 2007-06-18T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4004" operation="make 1">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4004" operation="make 1">
 			<start>2007-01-10T00:00:00</start>
 			<end>2007-01-10T00:00:00</end>
 			<quantity>50</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>100</quantity>
 					<onhand>100</onhand>
@@ -2897,8 +2897,8 @@
 						<producing id="4004" operation="make 1"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>-100</quantity>
 					<onhand>0</onhand>
@@ -2920,15 +2920,15 @@
 						<producing id="4004" operation="make 1"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4006" operation="make 1">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4006" operation="make 1">
 			<start>2007-01-17T00:00:00</start>
 			<end>2007-01-17T00:00:00</end>
 			<quantity>47</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>94</quantity>
 					<onhand>94</onhand>
@@ -2958,8 +2958,8 @@
 						<producing id="4006" operation="make 1"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>-94</quantity>
 					<onhand>106</onhand>
@@ -2989,15 +2989,15 @@
 						<producing id="4006" operation="make 1"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4009" operation="make 2">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4009" operation="make 2">
 			<start>2007-01-10T00:00:00</start>
 			<end>2007-01-10T00:00:00</end>
 			<quantity>50</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>100</quantity>
 					<onhand>100</onhand>
@@ -3019,8 +3019,8 @@
 						<producing id="4009" operation="make 2"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>-100</quantity>
 					<onhand>0</onhand>
@@ -3042,15 +3042,15 @@
 						<producing id="4009" operation="make 2"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4011" operation="make 2">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4011" operation="make 2">
 			<start>2007-01-17T00:00:00</start>
 			<end>2007-01-17T00:00:00</end>
 			<quantity>25</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>50</quantity>
 					<onhand>50</onhand>
@@ -3072,8 +3072,8 @@
 						<producing id="4011" operation="make 2"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>-50</quantity>
 					<onhand>0</onhand>
@@ -3095,15 +3095,15 @@
 						<producing id="4011" operation="make 2"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4014" operation="make 3">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4014" operation="make 3">
 			<start>2007-01-15T00:00:00</start>
 			<end>2007-01-15T00:00:00</end>
 			<quantity>92</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>92</quantity>
 					<onhand>92</onhand>
@@ -3133,8 +3133,8 @@
 						<producing id="4014" operation="make 3"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>-184</quantity>
 					<onhand>816</onhand>
@@ -3164,15 +3164,15 @@
 						<producing id="4014" operation="make 3"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4017" operation="make 4">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4017" operation="make 4">
 			<start>2007-01-15T00:00:00</start>
 			<end>2007-01-15T00:00:00</end>
 			<quantity>98</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>196</quantity>
 					<onhand>196</onhand>
@@ -3202,8 +3202,8 @@
 						<producing id="4017" operation="make 4"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>-196</quantity>
 					<onhand>804</onhand>
@@ -3233,15 +3233,15 @@
 						<producing id="4017" operation="make 4"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4019" operation="make 4">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4019" operation="make 4">
 			<start>2007-06-18T00:00:00</start>
 			<end>2007-06-18T00:00:00</end>
 			<quantity>100</quantity>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-06-18T00:00:00</date>
 					<quantity>200</quantity>
 					<onhand>206</onhand>
@@ -3271,8 +3271,8 @@
 						<producing id="4019" operation="make 4"/>
 						<dates>2007-06-18T00:00:00 / 2007-06-18T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-				<flow_plan>
+				</flowplan>
+				<flowplan>
 					<date>2007-06-18T00:00:00</date>
 					<quantity>-200</quantity>
 					<onhand>604</onhand>
@@ -3302,16 +3302,16 @@
 						<producing id="4019" operation="make 4"/>
 						<dates>2007-06-18T00:00:00 / 2007-06-18T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="1001" operation="supply 1">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="1001" operation="supply 1">
 			<start>2007-01-10T00:00:00</start>
 			<end>2007-01-10T00:00:00</end>
 			<quantity>100</quantity>
 			<locked>true</locked>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>100</quantity>
 					<onhand>100</onhand>
@@ -3333,16 +3333,16 @@
 						<producing id="4004" operation="make 1"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="1002" operation="supply 1">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="1002" operation="supply 1">
 			<start>2007-01-17T00:00:00</start>
 			<end>2007-01-17T00:00:00</end>
 			<quantity>200</quantity>
 			<locked>true</locked>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>200</quantity>
 					<onhand>200</onhand>
@@ -3380,16 +3380,16 @@
 						<producing id="4006" operation="make 1"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="2001" operation="supply 2">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="2001" operation="supply 2">
 			<start>2007-01-10T00:00:00</start>
 			<end>2007-01-10T00:00:00</end>
 			<quantity>100</quantity>
 			<locked>true</locked>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-10T00:00:00</date>
 					<quantity>100</quantity>
 					<onhand>100</onhand>
@@ -3411,16 +3411,16 @@
 						<producing id="4009" operation="make 2"/>
 						<dates>2007-01-10T00:00:00 / 2007-01-10T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="2002" operation="supply 2">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="2002" operation="supply 2">
 			<start>2007-01-17T00:00:00</start>
 			<end>2007-01-17T00:00:00</end>
 			<quantity>50</quantity>
 			<locked>true</locked>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-17T00:00:00</date>
 					<quantity>50</quantity>
 					<onhand>50</onhand>
@@ -3442,16 +3442,16 @@
 						<producing id="4011" operation="make 2"/>
 						<dates>2007-01-17T00:00:00 / 2007-01-17T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="3001" operation="supply 3">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="3001" operation="supply 3">
 			<start>2007-01-15T00:00:00</start>
 			<end>2007-01-15T00:00:00</end>
 			<quantity>1000</quantity>
 			<locked>true</locked>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>1000</quantity>
 					<onhand>1000</onhand>
@@ -3489,16 +3489,16 @@
 						<producing id="4014" operation="make 3"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-		<operation_plan id="4001" operation="supply 4">
+				</flowplan>
+			</flowplans>
+		</operationplan>
+		<operationplan id="4001" operation="supply 4">
 			<start>2007-01-15T00:00:00</start>
 			<end>2007-01-15T00:00:00</end>
 			<quantity>1000</quantity>
 			<locked>true</locked>
-			<flow_plans>
-				<flow_plan>
+			<flowplans>
+				<flowplan>
 					<date>2007-01-15T00:00:00</date>
 					<quantity>1000</quantity>
 					<onhand>1000</onhand>
@@ -3560,10 +3560,10 @@
 						<producing id="4017" operation="make 4"/>
 						<dates>2007-01-15T00:00:00 / 2007-01-15T00:00:00</dates>
 					</pegging>
-				</flow_plan>
-			</flow_plans>
-		</operation_plan>
-	</operation_plans>
+				</flowplan>
+			</flowplans>
+		</operationplan>
+	</operationplans>
 	<problems>
 		<problem>
 			<name>material excess</name>

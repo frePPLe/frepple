@@ -124,10 +124,10 @@ def exportFlowplans(cursor):
       (operationplan, thebuffer, quantity, flowdate, flowdatetime, onhand) \
       values (%s,%s,%s,%s,%s,%s)",
       [(
-         j.operation_plan.id, j.buffer.name,
+         j.operationplan.id, j.buffer.name,
          round(j.quantity,ROUNDING_DECIMALS), str(j.date.date()),
          str(j.date), round(j.onhand,ROUNDING_DECIMALS)
-       ) for j in i.flow_plans
+       ) for j in i.flowplans
       ])
     cnt += 1
     if cnt % 300 == 0: transaction.commit()
@@ -149,11 +149,11 @@ def exportLoadplans(cursor):
     cursor.executemany(
       sql,
       [(
-         j.operation_plan.id, j.resource.name,
+         j.operationplan.id, j.resource.name,
          round(j.quantity,ROUNDING_DECIMALS),
          str(j.startdate.date()), str(j.startdate),
          str(j.enddate.date()), str(j.enddate),
-       ) for j in i.load_plans
+       ) for j in i.loadplans
       ])
     cnt += 1
     if cnt % 100 == 0: transaction.commit()
@@ -170,7 +170,7 @@ def exportDemand(cursor):
     while n.hidden and n.owner: n = n.owner
     n = n and n.name or 'unspecified'
     # Loop over all delivery operationplans
-    for i in d.operation_plans:
+    for i in d.operationplans:
       cumplanned += i.quantity
       cur = i.quantity
       if cumplanned > d.quantity:

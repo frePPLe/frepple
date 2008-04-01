@@ -206,11 +206,11 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m
   if ((o->getContentType() == XMLOutput::PLAN
       || o->getContentType() == XMLOutput::PLANDETAIL) && i!=flowplans.end())
   {
-    o->BeginObject(Tags::tag_flow_plans);
+    o->BeginObject(Tags::tag_flowplans);
     for (; i!=flowplans.end(); ++i)
       if (i->getType()==1)
-        dynamic_cast<const FlowPlan*>(&*i)->writeElement(o, Tags::tag_flow_plan);
-    o->EndObject(Tags::tag_flow_plans);
+        dynamic_cast<const FlowPlan*>(&*i)->writeElement(o, Tags::tag_flowplan);
+    o->EndObject(Tags::tag_flowplans);
   }
 
   // Ending tag
@@ -236,7 +236,7 @@ DECLARE_EXPORT void Buffer::beginElement (XMLInput& pIn, XMLElement& pElement)
     pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
   else if (pElement.isA(Tags::tag_location))
     pIn.readto( Location::reader(Location::metadata,pIn) );
-  else if (pElement.isA(Tags::tag_flow_plans))
+  else if (pElement.isA(Tags::tag_flowplans))
     pIn.IgnoreElement();
   else
     HasHierarchy<Buffer>::beginElement(pIn, pElement);

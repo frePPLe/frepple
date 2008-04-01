@@ -4098,7 +4098,7 @@ template <class A, class B, class C> class Association
         void setPtrA(A* a, const ListA& al)
         {
           // Don't allow updating an already valid link
-          if (ptrA) return;
+          if (ptrA) throw DataException("Can't update existing entity");
           ptrA = a;
           nextA = al.first;
           ((ListA&)al).first = static_cast<C*>(this);
@@ -4107,7 +4107,7 @@ template <class A, class B, class C> class Association
         void setPtrB(B* b, const ListB& bl)
         {
           // Don't allow updating an already valid link
-          if (ptrB) return;
+          if (ptrB) throw DataException("Can't update existing entity");
           ptrB = b;
           nextB = bl.first;
           ((ListB&)bl).first = static_cast<C*>(this);

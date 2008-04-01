@@ -411,9 +411,9 @@
     			<xsd:attribute name="name" type="non-empty-string" use="required"/>
       	</xsd:complexType>
       </xsd:element>
-      <xsd:element name="usage" type="xsd:double" minOccurs="0" />
+      <xsd:element name="quantity" type="xsd:double" minOccurs="0" />
     </xsd:all>
-    <xsd:attribute name="usage" type="xsd:double" />
+    <xsd:attribute name="quantity" type="xsd:double" />
   </xsd:complexType>
 
   <xsd:complexType name="loadlist">

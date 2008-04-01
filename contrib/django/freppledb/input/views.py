@@ -504,8 +504,8 @@ class LoadList(ListReport):
       'title': _('resource'),
       'filter': FilterText(field='resource__name'),
       }),
-    ('usagefactor', {
-      'title': _('usagefactor'),
+    ('quantity', {
+      'title': _('quantity'),
       'filter': FilterNumber(),
       }),
     ('effective_start', {

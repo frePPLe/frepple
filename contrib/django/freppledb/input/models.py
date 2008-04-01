@@ -560,7 +560,7 @@ class Flow(models.Model):
 class Load(models.Model):
     operation = models.ForeignKey(Operation, verbose_name=_('operation'), db_index=True, raw_id_admin=True, related_name='loads')
     resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, raw_id_admin=True, related_name='loads')
-    usagefactor = models.DecimalField(_('usagefactor'),max_digits=15, decimal_places=4, default='1.00')
+    quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
     effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
     effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)

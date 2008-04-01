@@ -161,63 +161,63 @@
 		<resource name="transport">
 		</resource>
 	</resources>
-	<operation_plans>
-		<operation_plan id="25" operation="delivery 1">
+	<operationplans>
+		<operationplan id="25" operation="delivery 1">
 			<demand name="order 2"/>
 			<start>2007-01-31T00:00:00</start>
 			<end>2007-02-01T00:00:00</end>
 			<quantity>1</quantity>
-		</operation_plan>
-		<operation_plan id="29" operation="delivery 1">
+		</operationplan>
+		<operationplan id="29" operation="delivery 1">
 			<demand name="order 1"/>
 			<start>2007-02-28T00:00:00</start>
 			<end>2007-03-01T00:00:00</end>
 			<quantity>1</quantity>
-		</operation_plan>
-		<operation_plan id="33" operation="delivery 1">
+		</operationplan>
+		<operationplan id="33" operation="delivery 1">
 			<demand name="order 3"/>
 			<start>2007-03-31T00:00:00</start>
 			<end>2007-04-01T00:00:00</end>
 			<quantity>1</quantity>
-		</operation_plan>
-		<operation_plan id="26" operation="make item 1">
+		</operationplan>
+		<operationplan id="26" operation="make item 1">
 			<start>2007-01-30T00:00:00</start>
 			<end>2007-01-31T00:00:00</end>
 			<quantity>1</quantity>
-		</operation_plan>
-		<operation_plan id="30" operation="make item 1">
+		</operationplan>
+		<operationplan id="30" operation="make item 1">
 			<start>2007-02-27T00:00:00</start>
 			<end>2007-02-28T00:00:00</end>
 			<quantity>1</quantity>
-		</operation_plan>
-		<operation_plan id="34" operation="make item 1">
+		</operationplan>
+		<operationplan id="34" operation="make item 1">
 			<start>2007-03-30T00:00:00</start>
 			<end>2007-03-31T00:00:00</end>
 			<quantity>1</quantity>
-		</operation_plan>
-		<operation_plan id="32" operation="supply component A">
+		</operationplan>
+		<operationplan id="32" operation="supply component A">
 			<start>2007-02-26T00:00:00</start>
 			<end>2007-02-27T00:00:00</end>
 			<quantity>1</quantity>
-		</operation_plan>
-		<operation_plan id="36" operation="supply component A">
+		</operationplan>
+		<operationplan id="36" operation="supply component A">
 			<start>2007-03-29T00:00:00</start>
 			<end>2007-03-30T00:00:00</end>
 			<quantity>1</quantity>
-		</operation_plan>
-		<operation_plan id="31" operation="supply component A from supplier 1">
+		</operationplan>
+		<operationplan id="31" operation="supply component A from supplier 1">
 			<start>2007-02-26T00:00:00</start>
 			<end>2007-02-27T00:00:00</end>
 			<quantity>1</quantity>
 			<owner id="32" operation="supply component A"/>
-		</operation_plan>
-		<operation_plan id="35" operation="supply component A from supplier 1">
+		</operationplan>
+		<operationplan id="35" operation="supply component A from supplier 1">
 			<start>2007-03-29T00:00:00</start>
 			<end>2007-03-30T00:00:00</end>
 			<quantity>1</quantity>
 			<owner id="36" operation="supply component A"/>
-		</operation_plan>
-	</operation_plans>
+		</operationplan>
+	</operationplans>
 	<problems>
 		<problem>
 			<name>material shortage</name>

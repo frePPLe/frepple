@@ -327,10 +327,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\utils\datainput.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\utils\date.cpp"
 				>
 			</File>
@@ -343,7 +339,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\utils\status.cpp"
+				RelativePath="..\..\src\utils\xmlparser.cpp"
 				>
 			</File>
 		</Filter>

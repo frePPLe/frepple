@@ -26,14 +26,39 @@
 
 #define FREPPLE_CORE
 #include "frepple/utils.h"
+#include <sys/stat.h>
 
 /* Uncomment the next line to create a lot of debugging messages during
  * the parsing of XML-data. */
 //#define PARSE_DEBUG
 
+// With VC++ we use the Win32 functions to browse a directory
+#ifdef _MSC_VER
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#else
+// With Unix-like systems we use a check suggested by the autoconf tools
+#if HAVE_DIRENT_H
+# include <dirent.h>
+# define NAMLEN(dirent) strlen((dirent)->d_name)
+#else
+# define dirent direct
+# define NAMLEN(dirent) (dirent)->d_namlen
+# if HAVE_SYS_NDIR_H
+#  include <sys/ndir.h>
+# endif
+# if HAVE_SYS_DIR_H
+#  include <sys/dir.h>
+# endif
+# if HAVE_NDIR_H
+#  include <ndir.h>
+# endif
+#endif
+#endif
+
+
 namespace frepple
 {
-
 
 const XMLOutput::content_type XMLOutput::STANDARD = 1;
 const XMLOutput::content_type XMLOutput::PLAN = 2;
@@ -719,5 +744,64 @@ DECLARE_EXPORT void XMLInput::executeCommands()
     throw;
   }
 }
+
+
+void XMLInputFile::parse(Object *pRoot, bool validate)
+{
+  // Check if string has been set
+  if (filename.empty())
+    throw DataException("Missing input file or directory");
+
+  // Check if the parameter is the name of a directory
+  struct stat stat_p;
+  if (stat(filename.c_str(), &stat_p))
+    // Can't verify the status
+    throw RuntimeException("Couldn't open input file '" + filename + "'");
+  else if (stat_p.st_mode & S_IFDIR)
+  {
+    // Data is a directory: loop through all *.xml files now. No recursion in
+    // subdirectories is done.
+    // The code is unfortunately different for Windows & Linux. Sigh...
+#ifdef _MSC_VER
+    string f = filename + "\\*.xml";
+    WIN32_FIND_DATA dir_entry_p;
+    HANDLE h = FindFirstFile(f.c_str(), &dir_entry_p);
+    if (h == INVALID_HANDLE_VALUE)
+      throw RuntimeException("Couldn't open input file '" + f + "'");
+    do
+    {
+      f = filename + '/' + dir_entry_p.cFileName;
+      XMLInputFile(f.c_str()).parse(pRoot);
+    }
+    while (FindNextFile(h, &dir_entry_p));
+    FindClose(h);
+#elif HAVE_DIRENT_H
+    struct dirent *dir_entry_p;
+    DIR *dir_p = opendir(filename.c_str());
+    while (NULL != (dir_entry_p = readdir(dir_p)))
+    {
+      int n = NAMLEN(dir_entry_p);
+      if (n > 4 && !strcmp(".xml", dir_entry_p->d_name + n - 4))
+      {
+        string f = filename + '/' + dir_entry_p->d_name;
+        XMLInputFile(f.c_str()).parse(pRoot, validate);
+      }
+    }
+    closedir(dir_p);
+#else
+    throw RuntimeException("Can't process a directory on your platform");
+#endif
+  }
+  else
+  {
+    // Normal file
+    // Parse the file
+    XMLCh *f = XMLString::transcode(filename.c_str());
+    LocalFileInputSource in(f);
+    XMLString::release(&f);
+    XMLInput::parse(in, pRoot, validate);
+  }
+}
+
 
 }

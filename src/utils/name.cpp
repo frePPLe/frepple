@@ -36,8 +36,9 @@ DECLARE_EXPORT void Tree::clear()
   // Tree is already empty
   if (empty()) return;
 
-  // Lock the tree
-  ScopeMutexLock l(treeaccess);
+  // Locking the tree is not required: the delete method locks
+  // the tree during the deletion.
+  //ScopeMutexLock l(treeaccess);
 
   // Erase all elements
   for (TreeNode* x = begin(); x != end(); x = begin())
@@ -371,9 +372,6 @@ void Tree::rotateRight(TreeNode* x)
 
 DECLARE_EXPORT void Tree::verify() const
 {
-  // Lock the tree
-  ScopeMutexLock l(const_cast<Mutex&>(treeaccess));
-
   // Checks for an empty tree
   if (empty() || begin() == end())
   {

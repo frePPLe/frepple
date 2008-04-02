@@ -2432,7 +2432,10 @@ class Tree : public NonCopyable
       return count;
     }
 
-    /** Verifies the integrity of the tree and returns true if all is okay. */
+    /** Verifies the integrity of the tree and returns true if everything
+      * is correct.<br>
+      * The tree should be locked before calling this function.
+      */
     DECLARE_EXPORT void verify() const;
 
     /** Remove all elements from the tree. */

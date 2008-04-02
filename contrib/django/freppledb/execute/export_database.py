@@ -198,7 +198,8 @@ def exportDemand(cursor):
     cursor.executemany(
       "insert into out_demand \
       (demand,item,duedate,duedatetime,quantity,plandate,plandatetime,planquantity,operationplan) \
-      values (%s,%s,%s,%s,%s,%s,%s,%s,%s)", deliveries(i) )
+      values (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+      [ j for j in deliveries(i) ] )
     cnt += 1
     if cnt % 500 == 0: transaction.commit()
   transaction.commit()

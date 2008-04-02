@@ -157,7 +157,11 @@ template <class type> class TimeLine
         EventMinQuantity(Date d, double f=0.0) : newMin(f), prevMin(NULL)
           { this->dt = d; }
         void setMin(double f) {newMin = f;}
-        virtual double getMin(bool inclusive = true) const {return newMin;}
+        virtual double getMin(bool inclusive = true) const 
+        {
+          if (inclusive) return newMin;
+          else return prevMin ? prevMin->newMin : 0.0;
+        }
         virtual unsigned short getType() const {return 3;}
     };
 
@@ -174,7 +178,11 @@ template <class type> class TimeLine
         EventMaxQuantity(Date d, double f=0.0) : newMax(f), prevMax(NULL)
           {this->dt = d;}
         void setMax(double f) {newMax = f;}
-        virtual double getMax(bool inclusive = true) const {return newMax;}
+        virtual double getMax(bool inclusive = true) const
+        {
+          if (inclusive) return newMax;
+          else return prevMax ? prevMax->newMax : 0.0;
+        }      
         virtual unsigned short getType() const {return 4;}
     };
 

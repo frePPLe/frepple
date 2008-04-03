@@ -237,13 +237,13 @@ typedef unsigned int hashtype;
 extern DECLARE_EXPORT ostream logger;
 
 /** Auxilary structure for easy indenting in the log stream. */
-struct indent 
+struct indent
 {
   unsigned short level;
   indent(unsigned short l) : level(l) {}
   indent operator() (unsigned short l) {return indent(l);}
 };
-  
+
 /** Print a number of spaces to the output stream. */
 inline ostream& operator <<(ostream &os, const indent& i)
 {
@@ -723,8 +723,8 @@ class MetaClass : public NonCopyable
       * takes a string as argument. */
     typedef Object* (*creatorString)(string);
 
-    /** Type definition for a factory method that constructs Python 
-      * objects.<br> 
+    /** Type definition for a factory method that constructs Python
+      * objects.<br>
       * The return value is actually a PyObject pointer.
       */
     typedef void* (*creatorPythonProxy)(Object*);
@@ -944,12 +944,12 @@ class MetaCategory : public MetaClass
     static DECLARE_EXPORT const MetaCategory* findCategoryByGroupTag(const hashtype);
 
     /** Find a class in this category with a specified name.<br>
-      * If the catrgory can't be found the return value is NULL. 
+      * If the catrgory can't be found the return value is NULL.
       */
     DECLARE_EXPORT const MetaClass* findClass(const char*) const;
 
     /** Find a class in this category with a specified name.<br>
-      * If the catrgory can't be found the return value is NULL. 
+      * If the catrgory can't be found the return value is NULL.
       */
     DECLARE_EXPORT const MetaClass* findClass(const hashtype) const;
 
@@ -1208,9 +1208,9 @@ class TimePeriod
     }
 
     /** Function that parses a input string to a time value.<br>
-      * The string format is following the ISO 8601 specification for  
+      * The string format is following the ISO 8601 specification for
       * durations: [-]P[nY][nM][nW][nD][T[nH][nM][nS]]<br>
-      * Some examples to illustrate how the string is converted to a 
+      * Some examples to illustrate how the string is converted to a
       * timeperiod, expressed in seconds:<br>
       *    P1Y = 1 year = 365 days = 31536000 seconds
       *    P1M = 365/12 days = 2628000 seconds
@@ -1238,8 +1238,8 @@ class TimePeriod
 
     /** This function fills a character buffer with a text representation of
       * the TimePeriod.<br>
-      * The character buffer passed MUST have room for at least 20 characters. 
-      * 20 characters is sufficient for even the most longest possible time 
+      * The character buffer passed MUST have room for at least 20 characters.
+      * 20 characters is sufficient for even the most longest possible time
       * duration.<br>
       * The output format is described with the string() method.
       * @see string()
@@ -1318,7 +1318,7 @@ class Date
 
   public:
     /** Default constructor. */
-    // This constructor can skip the check for finite dates, and 
+    // This constructor can skip the check for finite dates, and
     // thus gives the best performance.
     Date() : lval(infinitePast.lval) {}
 
@@ -1332,7 +1332,7 @@ class Date
     /** Constructor with year, month and day as arguments. Hours, minutes
       * and seconds can optionally be passed too.
       */
-    DECLARE_EXPORT Date(int year, int month, int day, 
+    DECLARE_EXPORT Date(int year, int month, int day,
       int hr=0, int min=0, int sec=0
       );
 
@@ -1458,13 +1458,13 @@ class DateRange
 {
   public:
     /** Constructor with specified start and end dates.<br>
-      * If the start date is later than the end date parameter, the 
+      * If the start date is later than the end date parameter, the
       * parameters will be swapped. */
     DateRange(const Date& st, const Date& nd) : start(st), end(nd)
     {if(st>nd) {start=nd; end=st;}}
 
     /** Default constructor.<br>
-      * This will create a daterange covering the complete horizon. 
+      * This will create a daterange covering the complete horizon.
       */
     DateRange() : start(Date::infinitePast), end(Date::infiniteFuture) {}
 
@@ -1734,7 +1734,7 @@ class XMLOutput
     /** Start writing a new object. This method will open a new XML-tag.
       * Output: \<TAG_T TAG_U="val1" TAG_V="val2" TAG_W="val3"\> */
     void BeginObject(const XMLtag& t, const XMLtag& attr1, const string& val1,
-      const XMLtag& attr2, const string& val2, 
+      const XMLtag& attr2, const string& val2,
       const XMLtag& attr3, const string& val3)
     {
       *m_fp << indentstring << t.stringStartElement()
@@ -2403,9 +2403,8 @@ class Tree : public NonCopyable
       * Its complexity is O(1). */
     bool empty() const
     {
-      ScopeMutexLock l(const_cast<Mutex&>(treeaccess));      
-      bool result = (header.parent == NULL);
-      return result;
+      ScopeMutexLock l(const_cast<Mutex&>(treeaccess));
+      return header.parent == NULL;
     }
 
     /** Renames an existing node, and adjusts its position in the tree. */
@@ -2414,7 +2413,7 @@ class Tree : public NonCopyable
       bool found;
       findLowerBound(newname, &found);
       if (found)
-        throw DataException("Can't rename '" + obj->nm + "' to '" 
+        throw DataException("Can't rename '" + obj->nm + "' to '"
           + newname + "': name already in use");
       erase(obj);
       // @todo: there is a small risk for multithreading trouble when the tree is unlocked between the delete and re-insert
@@ -2423,7 +2422,7 @@ class Tree : public NonCopyable
     };
 
     /** This method returns the number of nodes inserted in this tree.<br>
-      * Its complexity is O(1), so it can be called on large trees without any 
+      * Its complexity is O(1), so it can be called on large trees without any
       * performance impact.
       */
     size_t size() const
@@ -2541,7 +2540,7 @@ class Tree : public NonCopyable
     size_t count;
 
     /** Controls concurrent access to the tree from different trheads.<br>
-      * Every function reading or updating the tree should keep this mutex 
+      * Every function reading or updating the tree should keep this mutex
       * locked during the operation.
       */
     Mutex treeaccess;
@@ -3229,7 +3228,7 @@ class XMLInput : public NonCopyable,  private DefaultHandler
 
     /** Invalidates the current object.<br>
       * This method is useful when, for instance, the object being parsed
-      * is being deleted. 
+      * is being deleted.
       */
     void invalidateCurrentObject()
     {

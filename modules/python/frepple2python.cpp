@@ -502,8 +502,8 @@ PyObject* PythonCalendar::getattro(const XMLElement& field)
   if (!obj) return Py_None;
   if (field.isA(Tags::tag_name))
     return PythonObject(obj->getName());
-  //if (field.isA(Tags::tag_buckets))  @todo
-  // return 
+  if (field.isA(Tags::tag_buckets))
+    return new PythonCalendarBucketIterator(obj);
 	return NULL;
 }
 
@@ -564,6 +564,93 @@ int PythonCalendarDouble::setattro(const XMLElement& field, const PythonObject& 
     obj->setDefault(value.getDouble());
   else
     return PythonCalendar(obj).setattro(field,value);
+  return 0;
+}
+
+
+int PythonCalendarBucketIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonCalendarBucketIterator>::getType();
+  x.setName("calendarBucketIterator");
+  x.setDoc("frePPLe iterator for calendar buckets");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonCalendarBucketIterator::iternext()
+{  
+  if (i == cal->endBuckets()) return NULL;
+  return new PythonCalendarBucket(cal, &*(i++));
+}
+
+
+int PythonCalendarBucket::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonCalendarBucket>::getType();
+  x.setName("calendarBucket");
+  x.setDoc("frePPLe calendar bucket");
+  x.supportgetattro();
+  x.supportsetattro();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonCalendarBucket::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_start))
+    return PythonObject(obj->getStart());
+  if (field.isA(Tags::tag_end))
+    return PythonObject(obj->getEnd());
+  if (field.isA(Tags::tag_value))
+  {
+    if (cal->getType() == CalendarDouble::metadata)
+      return PythonObject(dynamic_cast< CalendarValue<double>::BucketValue* >(obj)->getValue());
+    if (cal->getType() == CalendarBool::metadata)
+      return PythonObject(dynamic_cast< CalendarValue<bool>::BucketValue* >(obj)->getValue());
+    if (cal->getType() == CalendarInt::metadata)
+      return PythonObject(dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->getValue());
+    if (cal->getType() == CalendarString::metadata)
+      return PythonObject(dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->getValue());
+    PyErr_SetString(PythonLogicException, "calendar type not recognized");
+    return NULL;
+  }
+  if (field.isA(Tags::tag_priority))
+    return PythonObject(obj->getPriority());
+  if (field.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  return NULL; 
+}
+
+
+int PythonCalendarBucket::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_name))
+    obj->setName(value.getString());
+  else if (field.isA(Tags::tag_start))
+    obj->setStart(value.getDate());
+  else if (field.isA(Tags::tag_end))
+    obj->setEnd(value.getDate());
+  else if (field.isA(Tags::tag_priority))
+    obj->setPriority(value.getInt());
+  else if (field.isA(Tags::tag_priority))
+  {
+    if (cal->getType() == CalendarDouble::metadata)
+      dynamic_cast< CalendarValue<double>::BucketValue* >(obj)->setValue(value.getDouble());
+    else if (cal->getType() == CalendarBool::metadata)
+      dynamic_cast< CalendarValue<bool>::BucketValue* >(obj)->setValue(value.getBool());
+    else if (cal->getType() == CalendarInt::metadata)
+      dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->setValue(value.getInt());
+    else if (cal->getType() == CalendarString::metadata)
+      dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->setValue(value.getString());
+    PyErr_SetString(PythonLogicException, "calendar type not recognized");
+    return -1;
+  }
+  else
+    return -1;
   return 0;
 }
 

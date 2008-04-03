@@ -161,6 +161,8 @@ void CommandPython::initialize()
   nok += PythonCustomerIterator::initialize(m);
   nok += PythonCalendar::initialize(m);
   nok += PythonCalendarIterator::initialize(m);
+  nok += PythonCalendarBucket::initialize(m);
+  nok += PythonCalendarBucketIterator::initialize(m);
   nok += PythonCalendarBool::initialize(m);
   nok += PythonCalendarVoid::initialize(m);
   nok += PythonCalendarDouble::initialize(m);

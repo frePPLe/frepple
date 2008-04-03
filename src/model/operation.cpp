@@ -494,7 +494,7 @@ DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan
 
 
 DECLARE_EXPORT void OperationAlternate::addAlternate
-  (Operation* o, double prio, DateRange eff)
+  (Operation* o, int prio, DateRange eff)
 {
   if (!o) return;
   Operationlist::iterator altIter = alternates.begin();
@@ -529,7 +529,7 @@ DECLARE_EXPORT const OperationAlternate::alternateProperty&
 }
 
 
-DECLARE_EXPORT void OperationAlternate::setPriority(Operation* o, double f)
+DECLARE_EXPORT void OperationAlternate::setPriority(Operation* o, int f)
 {
   if (!o) return;
   Operationlist::const_iterator altIter = alternates.begin();
@@ -622,7 +622,7 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
 
   // Create a temporary object
   if (!pIn.getUserArea()) 
-    pIn.setUserArea(new tempData(NULL,alternateProperty(1.0,DateRange())));
+    pIn.setUserArea(new tempData(NULL,alternateProperty(1,DateRange())));
   tempData* tmp = static_cast<tempData*>(pIn.getUserArea());
 
   if (pElement.isA(Tags::tag_alternate))
@@ -630,11 +630,11 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
     addAlternate(tmp->first, tmp->second.first, tmp->second.second);
     // Reset the defaults
     tmp->first = NULL;
-    tmp->second.first = 1.0;
+    tmp->second.first = 1;
     tmp->second.second = DateRange();
   }
   else if (pElement.isA(Tags::tag_priority))
-    tmp->second.first = pElement.getDouble();
+    tmp->second.first = pElement.getInt();
   else if (pElement.isA(Tags::tag_effective_start))
     tmp->second.second.setStart(pElement.getDate());
   else if (pElement.isA(Tags::tag_effective_end))

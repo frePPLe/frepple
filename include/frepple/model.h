@@ -114,10 +114,7 @@ class Calendar : public HasName<Calendar>, public Object
         /** Start date of the bucket. */
         Date startdate;
 
-        /** End Date of the bucket.
-          * This field is never read in from the input files, but always
-          * computed based on the start dates of the adjacent buckets.
-          */
+        /** End Date of the bucket. */
         Date enddate;
 
         /** A pointer to the next bucket. */
@@ -129,7 +126,7 @@ class Calendar : public HasName<Calendar>, public Object
         /** Priority of this bucket, compared to other buckets effective 
           * at a certain time. 
           */
-        double priority;
+        int priority;
         
         /** Increments an iterator to the next change event.<br>
           * A bucket will evaluate the current state of the iterator, and
@@ -146,7 +143,7 @@ class Calendar : public HasName<Calendar>, public Object
       protected:
         /** Constructor. */
         Bucket(Date start, Date end, string name) : nm(name), startdate(start),
-          enddate(end), nextBucket(NULL), prevBucket(NULL), priority(0.0) {}
+          enddate(end), nextBucket(NULL), prevBucket(NULL), priority(0) {}
         
         /** Auxilary function to write out the start of the XML. */
         DECLARE_EXPORT void writeHeader(XMLOutput *) const;
@@ -183,22 +180,28 @@ class Calendar : public HasName<Calendar>, public Object
         /** Returns the end date of the bucket. */
         Date getEnd() const {return enddate;}
 
+        /** Updates the end date of the bucket. */
+        void setEnd(const Date& d) {enddate = d;}
+
         /** Returns the start date of the bucket. */
         Date getStart() const {return startdate;}
+
+        /** Updates the end date of the bucket. */
+        void setStart(const Date& d) {startdate = d;}
 
         /** Returns the priority of this bucket, compared to other buckets 
           * effective at a certain time.<br>
           * Lower numbers indicate a higher priority level.<br>
           * The default value is 0.
           */
-        double getPriority() const {return priority;}
+        int getPriority() const {return priority;}
 
         /** Updates the priority of this bucket, compared to other buckets 
           * effective at a certain time.<br>
           * Lower numbers indicate a higher priority level.<br>
           * The default value is 0.
           */
-        void setPriority(double f) {priority = f;}
+        void setPriority(int f) {priority = f;}
 
         /** Verifies whether this entry is effective on a given date. */
         bool checkValid(Date d) const
@@ -292,7 +295,7 @@ class Calendar : public HasName<Calendar>, public Object
       private:
         Bucket* curBucket;
       public:
-        BucketIterator(Bucket* b) : curBucket(b) {}
+        BucketIterator(Bucket* b = NULL) : curBucket(b) {}
         bool operator != (const BucketIterator &b) const
           {return b.curBucket != curBucket;}
         bool operator == (const BucketIterator &b) const
@@ -2383,7 +2386,7 @@ class OperationPlanRouting : public OperationPlan
 class OperationAlternate : public Operation
 {
   public:
-    typedef pair<double,DateRange> alternateProperty;
+    typedef pair<int,DateRange> alternateProperty;
 
     /** Constructor. */
     explicit OperationAlternate(const string& c) : Operation(c) {};
@@ -2395,7 +2398,7 @@ class OperationAlternate : public Operation
       * The lower the priority value, the more important this alternate 
       * operation is. */
     DECLARE_EXPORT void addAlternate
-      (Operation*, double = 1.0, DateRange = DateRange());
+      (Operation*, int = 1, DateRange = DateRange());
 
     /** Removes an alternate from the list. */
     DECLARE_EXPORT void removeSubOperation(Operation *);
@@ -2410,13 +2413,13 @@ class OperationAlternate : public Operation
       * @exception LogicException Generated when the argument operation is
       *     not null and not a sub-operation of this alternate.
       */
-    DECLARE_EXPORT void setProperties(Operation*, double, DateRange);
+    DECLARE_EXPORT void setProperties(Operation*, int, DateRange);
 
     /** Updates the priority of a certain suboperation.
       * @exception LogicException Generated when the argument operation is
       *     not null and not a sub-operation of this alternate.
       */
-    DECLARE_EXPORT void setPriority(Operation*, double);
+    DECLARE_EXPORT void setPriority(Operation*, int);
 
     /** Updates the effective daterange of a certain suboperation.
       * @exception LogicException Generated when the argument operation is

@@ -1063,6 +1063,41 @@ class PythonCalendar : public FreppleCategory<PythonCalendar,Calendar>
 class PythonCalendarIterator 
   : public FreppleIterator<PythonCalendarIterator,Calendar::iterator,Calendar,PythonCalendar>
 {
+
+};
+
+
+class PythonCalendarBucketIterator 
+  : public PythonExtension<PythonCalendarBucketIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonCalendarBucketIterator(Calendar* c) : cal(c)
+    { 
+      if (!c) 
+        throw LogicException("Creating bucket iterator for NULL calendar");
+      i = c->beginBuckets();
+    }
+
+  private:
+    Calendar* cal;
+    Calendar::BucketIterator i;
+    PyObject *iternext();
+};
+
+
+class PythonCalendarBucket 
+  : public PythonExtension<PythonCalendarBucket>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonCalendarBucket(Calendar* c, Calendar::Bucket* b) : cal(c), obj(b) {}
+  private:
+    Calendar::Bucket* obj;
+    Calendar* cal;
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
 };
 
 

@@ -220,7 +220,7 @@ class Bucket(models.Model):
     startdate = models.DateTimeField('start date', core=True, null=True, blank=True, default=datetime(1971,1,1))
     enddate = models.DateTimeField('end date', core=True, null=True, blank=True, default=datetime(2030,12,31))
     value = models.DecimalField(_('value'), max_digits=15, decimal_places=4, default=0.00, blank=True)
-    priority = models.DecimalField(_('priority'), max_digits=15, decimal_places=4, default=0.00, blank=True)
+    priority = models.IntegerField(_('priority'), default=0, blank=True)
     name = models.CharField(_('name'), max_length=60, null=True, blank=True)
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
@@ -376,7 +376,7 @@ class SubOperation(models.Model):
     #  min_num_in_admin=3, num_extra_on_change=1, related_name='alfa')
     operation = models.ForeignKey(Operation, verbose_name=_('operation'),
       raw_id_admin=True, related_name='suboperations')
-    priority = models.DecimalField(_('priority'), max_digits=5, decimal_places=4, default=1)
+    priority = models.IntegerField(_('priority'), default=1)
     suboperation = models.ForeignKey(Operation, verbose_name=_('suboperation'),
       raw_id_admin=True, related_name='superoperations', core=True)
     effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)

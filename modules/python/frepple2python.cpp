@@ -113,6 +113,8 @@ PyObject* PythonBuffer::getattro(const XMLElement& field)
     return PythonObject(obj->getMinimum());
   if (field.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
+  if (field.isA(Tags::tag_flows))
+    return new PythonFlowIterator(obj);
 	return NULL;
 }
 
@@ -615,6 +617,7 @@ PyObject* PythonCalendarBucket::getattro(const XMLElement& field)
       return PythonObject(dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->getValue());
     if (cal->getType() == CalendarString::metadata)
       return PythonObject(dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->getValue());
+    if (cal->getType() == CalendarVoid::metadata) return Py_None;
     PyErr_SetString(PythonLogicException, "calendar type not recognized");
     return NULL;
   }
@@ -636,7 +639,7 @@ int PythonCalendarBucket::setattro(const XMLElement& field, const PythonObject& 
     obj->setEnd(value.getDate());
   else if (field.isA(Tags::tag_priority))
     obj->setPriority(value.getInt());
-  else if (field.isA(Tags::tag_priority))
+  else if (field.isA(Tags::tag_value))
   {
     if (cal->getType() == CalendarDouble::metadata)
       dynamic_cast< CalendarValue<double>::BucketValue* >(obj)->setValue(value.getDouble());
@@ -646,8 +649,13 @@ int PythonCalendarBucket::setattro(const XMLElement& field, const PythonObject& 
       dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->setValue(value.getInt());
     else if (cal->getType() == CalendarString::metadata)
       dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->setValue(value.getString());
-    PyErr_SetString(PythonLogicException, "calendar type not recognized");
-    return -1;
+    else if (cal->getType() == CalendarVoid::metadata) 
+      return -1;
+    else
+    {
+      PyErr_SetString(PythonLogicException, "calendar type not recognized");
+      return -1;
+    }
   }
   else
     return -1;
@@ -805,6 +813,8 @@ PyObject* PythonResource::getattro(const XMLElement& field)
     return PythonObject(obj->getHidden());
   if (field.isA(Tags::tag_loadplans))
     return new PythonLoadPlanIterator(obj);
+  if (field.isA(Tags::tag_loads))
+    return new PythonLoadIterator(obj);
 	return NULL;
 }
 
@@ -911,6 +921,10 @@ PyObject* PythonOperation::getattro(const XMLElement& field)
     return PythonObject(obj->getPostTime());
   if (field.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
+  if (field.isA(Tags::tag_loads))
+    return new PythonLoadIterator(obj);
+  if (field.isA(Tags::tag_flows))
+    return new PythonFlowIterator(obj);
   /* @todo flows loads; */
 	return NULL;
 }
@@ -1311,6 +1325,7 @@ int PythonLoad::initialize(PyObject* m)
   x.setDoc("frePPLe load");
   x.supportgetattro();
   x.supportsetattro();
+  const_cast<MetaCategory&>(Load::metadata).factoryPythonProxy = proxy;
   return x.typeReady(m);
 }
 
@@ -1366,6 +1381,34 @@ int PythonLoad::setattro(const XMLElement& field, const PythonObject& value)
 }
 
 
+int PythonLoadIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonLoadIterator>::getType();
+  x.setName("loadIterator");
+  x.setDoc("frePPLe iterator for loads");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonLoadIterator::iternext()
+{  
+  if (res) 
+  {
+    // Iterate over loads on a resource 
+    if (ir == res->getLoads().end()) return NULL;
+    return PythonObject(const_cast<Load*>(&*(ir++)));
+  }
+  else
+  {
+    // Iterate over loads on an operation 
+    if (io == oper->getLoads().end()) return NULL;
+    return PythonObject(const_cast<Load*>(&*(io++)));
+  }
+}
+
+
 //
 // INTERFACE FOR FLOW
 //
@@ -1379,6 +1422,7 @@ int PythonFlow::initialize(PyObject* m)
   x.setDoc("frePPLe flow");
   x.supportgetattro();
   x.supportsetattro();
+  const_cast<MetaCategory&>(Flow::metadata).factoryPythonProxy = proxy;
   return x.typeReady(m);
 }
 
@@ -1432,5 +1476,34 @@ int PythonFlow::setattro(const XMLElement& field, const PythonObject& value)
     return -1;
   return 0;
 }
+
+
+int PythonFlowIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonFlowIterator>::getType();
+  x.setName("flowIterator");
+  x.setDoc("frePPLe iterator for flows");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonFlowIterator::iternext()
+{  
+  if (buf) 
+  {
+    // Iterate over flows on a buffer 
+    if (ib == buf->getFlows().end()) return NULL;
+    return PythonObject(const_cast<Flow*>(&*(ib++)));
+  }
+  else
+  {
+    // Iterate over flows on an operation 
+    if (io == oper->getFlows().end()) return NULL;
+    return PythonObject(const_cast<Flow*>(&*(io++)));
+  }
+}
+
 
 } // End namespace

@@ -190,7 +190,9 @@ void CommandPython::initialize()
   nok += PythonDemandPlanIterator::initialize(m);
   nok += PythonPeggingIterator::initialize(m);
   nok += PythonLoad::initialize(m);
+  nok += PythonLoadIterator::initialize(m);
   nok += PythonFlow::initialize(m);
+  nok += PythonFlowIterator::initialize(m);
   // @todo Missing Python proxies: Solver
 
   // Redirect the stderr and stdout streams of Python

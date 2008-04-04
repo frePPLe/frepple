@@ -371,6 +371,10 @@ class PythonType : public NonCopyable
   *(Code for extracting info is still python specific, and writeElement
   *is also xml-specific)
   *  xml->prevObject = python->cast value to a different type
+  *
+  * @todo improper use of the python proxy objects can crash the application.
+  * It is possible to keep the Python proxy around longer than the C++
+  * object. Re-accessing the proxy will crash frePPLe.
   */
 class PythonObject : public NonCopyable
 {
@@ -1063,7 +1067,6 @@ class PythonCalendar : public FreppleCategory<PythonCalendar,Calendar>
 class PythonCalendarIterator 
   : public FreppleIterator<PythonCalendarIterator,Calendar::iterator,Calendar,PythonCalendar>
 {
-
 };
 
 
@@ -1098,6 +1101,7 @@ class PythonCalendarBucket
     Calendar* cal;
     virtual PyObject* getattro(const XMLElement&);
     virtual int setattro(const XMLElement&, const PythonObject&);
+    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)   
 };
 
 
@@ -1134,6 +1138,7 @@ class PythonCalendarDouble : public FreppleClass<PythonCalendarDouble,PythonCale
 //
 // DEMANDS
 //
+
 
 class PythonDemand : public FreppleCategory<PythonDemand,Demand> 
 {
@@ -1361,6 +1366,7 @@ class PythonLoadPlanIterator : public PythonExtension<PythonLoadPlanIterator>
 // DEMAND DELIVERY OPERATIONPLANS
 // 
 
+
 class PythonDemandPlanIterator : public PythonExtension<PythonDemandPlanIterator>
 {
   public:
@@ -1417,32 +1423,37 @@ class PythonLoad : public PythonExtension<PythonLoad>
     PyObject* getattro(const XMLElement&);
     int setattro(const XMLElement&, const PythonObject&);    
     // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)   
+    static void* proxy(Object* p) {return static_cast<PyObject*>(new PythonLoad(static_cast<Load*>(p)));}
     Load* ld;
 };
 
 
-/*
-@todo class PythonLoadIterator : public PythonExtension<PythonLoadIterator>
+class PythonLoadIterator : public PythonExtension<PythonLoadIterator>
 {
   public:
     static int initialize(PyObject* m);
 
-    PythonLoadIterator(Resource* r) : res(r) 
+    PythonLoadIterator(Resource* r) 
+      : res(r), ir(r ? r->getLoads().begin() : NULL), oper(NULL), io(NULL)
     { 
       if (!r) 
         throw LogicException("Creating loadplan iterator for NULL resource");
-      i = r->getLoadPlans().begin();
+    }
+
+    PythonLoadIterator(Operation* o) 
+      : res(NULL), ir(NULL), oper(o), io(o ? o->getLoads().begin() : NULL)
+    { 
+      if (!o) 
+        throw LogicException("Creating loadplan iterator for NULL operation");
     }
 
   private:
     Resource* res;
-    Resource::loadplanlist::const_iterator i;
+    Resource::loadlist::const_iterator ir;
     Operation* oper;
-    Operation::loadplanlist::const_iterator i;
+    Operation::loadlist::const_iterator io;
     PyObject *iternext();
 };
-*/
-
 
 
 //
@@ -1459,8 +1470,38 @@ class PythonFlow : public PythonExtension<PythonFlow>
     PyObject* getattro(const XMLElement&);
     // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)   
     int setattro(const XMLElement&, const PythonObject&);    
+    static void* proxy(Object* p) {return static_cast<PyObject*>(new PythonFlow(static_cast<Flow*>(p)));}
     Flow* fl;
 };
+
+
+class PythonFlowIterator : public PythonExtension<PythonFlowIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonFlowIterator(Buffer* b) 
+      : buf(b), ib(b ? b->getFlows().begin() : NULL), oper(NULL), io(NULL)
+    { 
+      if (!b) 
+        throw LogicException("Creating flowplan iterator for NULL buffer");
+    }
+
+    PythonFlowIterator(Operation* o) 
+      : buf(NULL), ib(NULL), oper(o), io(o ? o->getFlows().begin() : NULL)
+    { 
+      if (!o) 
+        throw LogicException("Creating flowplan iterator for NULL operation");
+    }
+
+  private:
+    Buffer* buf;
+    Buffer::flowlist::const_iterator ib;
+    Operation* oper;
+    Operation::flowlist::const_iterator io;
+    PyObject *iternext();
+};
+
 }
 
 #endif

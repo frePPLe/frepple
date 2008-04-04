@@ -22,7 +22,7 @@
 			IntermediateDirectory="Debug"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
-			CharacterSet="2"
+			CharacterSet="0"
 			ManagedExtensions="4"
 			BuildLogFile=""
 			>
@@ -98,7 +98,7 @@
 			IntermediateDirectory="swig"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
-			CharacterSet="2"
+			CharacterSet="0"
 			ManagedExtensions="0"
 			BuildLogFile=""
 			>
@@ -179,6 +179,7 @@
 			IntermediateDirectory="Swig"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
+			CharacterSet="0"
 			BuildLogFile=""
 			>
 			<Tool
@@ -242,7 +243,7 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
-			CharacterSet="2"
+			CharacterSet="0"
 			ManagedExtensions="0"
 			BuildLogFile=""
 			>

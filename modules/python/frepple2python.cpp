@@ -115,6 +115,10 @@ PyObject* PythonBuffer::getattro(const XMLElement& field)
     return PythonObject(obj->getHidden());
   if (field.isA(Tags::tag_flows))
     return new PythonFlowIterator(obj);
+  if (field.isA(Tags::tag_level))
+    return PythonObject(obj->getLevel());
+  if (field.isA(Tags::tag_cluster))
+    return PythonObject(obj->getCluster());
 	return NULL;
 }
 
@@ -815,6 +819,10 @@ PyObject* PythonResource::getattro(const XMLElement& field)
     return new PythonLoadPlanIterator(obj);
   if (field.isA(Tags::tag_loads))
     return new PythonLoadIterator(obj);
+  if (field.isA(Tags::tag_level))
+    return PythonObject(obj->getLevel());
+  if (field.isA(Tags::tag_cluster))
+    return PythonObject(obj->getCluster());
 	return NULL;
 }
 
@@ -925,6 +933,10 @@ PyObject* PythonOperation::getattro(const XMLElement& field)
     return new PythonLoadIterator(obj);
   if (field.isA(Tags::tag_flows))
     return new PythonFlowIterator(obj);
+  if (field.isA(Tags::tag_level))
+    return PythonObject(obj->getLevel());
+  if (field.isA(Tags::tag_cluster))
+    return PythonObject(obj->getCluster());
 	return NULL;
 }
 

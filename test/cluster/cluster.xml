@@ -1,11 +1,64 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<?python
+
+#
+actual_to_expected = {}
+expected_to_actual = {}
+output = open("output.1.xml","wt")
+
+def verifyOne(i):
+  global actual_to_expected, expected_to_actual, output
+  ok = True
+
+  # The entity name also encodes the expected level and cluster
+  name, expectedlevel, expectedcluster = i.name.split(":")
+  name = i.__class__.__name__ + " " + name.strip()
+  expectedlevel = int(expectedlevel.strip())
+  expectedcluster = int(expectedcluster.strip())
+
+  # Check the level
+  if expectedlevel != i.level:
+    print >>output, "%s: incorrect level. Expected %d, got %d" % (name, expectedlevel, i.level)
+    ok = False
+
+  # Check the cluster.
+  # We can't garantuee that a cluster number is always the same.
+  # We can only check to see that all entities that everything
+  # which is supposed to belong to a single cluster is doing so...
+  if i.cluster in actual_to_expected:
+    if expectedcluster != actual_to_expected[i.cluster]:
+      # Exists and is different!
+      print >>output, "%s: incorrect cluster. Expected %d, got %d" % (name, expected_to_actual[expectedcluster], i.cluster)
+      ok = False
+  else:
+    if expectedcluster in expected_to_actual:
+      # This entity has a new cluster number, but another cluster number
+      # from the actual output maps to the same input cluster.
+      actual_to_expected[i.cluster] = expected_to_actual[expectedcluster]
+    else:
+      # New entry
+      actual_to_expected[i.cluster] = expectedcluster
+      expected_to_actual[expectedcluster] = i.cluster
+
+  # Result
+  print >>output, "%s: %s" % (name, ok and "OK" or "NOK")
+
+
+def verifyAll():
+  for i in frepple.operations(): verifyOne(i)
+  for i in frepple.resources(): verifyOne(i)
+  for i in frepple.buffers(): verifyOne(i)
+?>
+
   <description>Test model for cluster and level computation</description>
   <current>2007-01-01T00:00:00</current>
-  <commands>
+  <commands verbose="true">
     <command xsi:type="command_solve">
       <solver name="MRP" xsi:type="solver_mrp" constraints="0" />
     </command>
+    <command xsi:type="command_python" cmdline="verifyAll()"/>
   </commands>
   <operations>
     <operation name="Dangling operation : 0 : 4"

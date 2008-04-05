@@ -29,12 +29,12 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaClass MRPSolver::metadata;
+DECLARE_EXPORT const MetaClass SolverMRP::metadata;
 
-const short MRPSolver::LEADTIME = 1;
-const short MRPSolver::MATERIAL = 2;
-const short MRPSolver::CAPACITY = 4;
-const short MRPSolver::FENCE = 8;
+const short SolverMRP::LEADTIME = 1;
+const short SolverMRP::MATERIAL = 2;
+const short SolverMRP::CAPACITY = 4;
+const short SolverMRP::FENCE = 8;
 
 
 void LibrarySolver::initialize()
@@ -49,10 +49,10 @@ void LibrarySolver::initialize()
   }
 
   // Register all classes.
-  MRPSolver::metadata.registerClass(
+  SolverMRP::metadata.registerClass(
     "solver",
     "solver_mrp",
-    Object::createString<MRPSolver>,
+    Object::createString<SolverMRP>,
     true);
 
   // Close the library at the end
@@ -63,7 +63,7 @@ void LibrarySolver::initialize()
 }
 
 
-DECLARE_EXPORT bool MRPSolver::demand_comparison(const Demand* l1, const Demand* l2)
+DECLARE_EXPORT bool SolverMRP::demand_comparison(const Demand* l1, const Demand* l2)
 {
   if (l1->getPriority() != l2->getPriority())
     return l1->getPriority() < l2->getPriority();
@@ -74,10 +74,10 @@ DECLARE_EXPORT bool MRPSolver::demand_comparison(const Demand* l1, const Demand*
 }
 
 
-DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
+DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
 {
   // Message
-  MRPSolver* Solver = getSolver();
+  SolverMRP* Solver = getSolver();
   if (Solver->getLogLevel()>0)
     logger << "Start solving cluster " << cluster << " at " << Date::now() << endl;
 
@@ -138,7 +138,7 @@ DECLARE_EXPORT void MRPSolver::MRPSolverdata::execute()
 }
 
 
-DECLARE_EXPORT void MRPSolver::solve(void *v)
+DECLARE_EXPORT void SolverMRP::solve(void *v)
 {
   // Categorize all demands in their cluster
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
@@ -173,14 +173,14 @@ DECLARE_EXPORT void MRPSolver::solve(void *v)
   threads.setAbortOnError(false);
   for (classified_demand::iterator j = demands_per_cluster.begin();
       j != demands_per_cluster.end(); ++j)
-    threads.add(new MRPSolverdata(this, j->first, j->second));
+    threads.add(new SolverMRPdata(this, j->first, j->second));
 
   // Run the planning command threads and wait for them to exit
   threads.execute();
 }
 
 
-DECLARE_EXPORT void MRPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -203,7 +203,7 @@ DECLARE_EXPORT void MRPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mod
 }
 
 
-DECLARE_EXPORT void MRPSolver::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, XMLElement& pElement)
 {
   if (pElement.isA(Tags::tag_constraints))
     setConstraints(pElement.getInt());

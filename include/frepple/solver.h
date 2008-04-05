@@ -49,7 +49,7 @@ namespace frepple
   * - 2: Show the complete ask&reply communication of the solver.
   * - 3: Trace the status of all entities.
   */
-class MRPSolver : public Solver
+class SolverMRP : public Solver
 {
   protected:
     /** This variable stores the constraint which the solver should respect.
@@ -186,18 +186,18 @@ class MRPSolver : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    MRPSolver(const string& n) : 
+    SolverMRP(const string& n) : 
       Solver(n), constrts(0), maxparallel(0), lazydelay(86400L) {}
 
     /** Destructor. */
-    virtual ~MRPSolver() {}
+    virtual ~SolverMRP() {}
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(MRPSolver);}
+    virtual size_t getSize() const {return sizeof(SolverMRP);}
 
     /** Static constant for the LEADTIME constraint type.<br>
       * The numeric value is 1.
@@ -323,17 +323,17 @@ class MRPSolver : public Solver
     TimePeriod lazydelay;      
 
   protected:
-    /** @brief This class is a helper class of the MRPSolver class.
+    /** @brief This class is a helper class of the SolverMRP class.
       *
       * It stores the solver state maintained by each solver thread.
-      * @see MRPSolver
+      * @see SolverMRP
       */
-    class MRPSolverdata : public CommandList
+    class SolverMRPdata : public CommandList
     {
-        friend class MRPSolver;
+        friend class SolverMRP;
       public:
-        MRPSolver* getSolver() const {return sol;}
-        MRPSolverdata(MRPSolver* s, int c, deque<Demand*>& d)
+        SolverMRP* getSolver() const {return sol;}
+        SolverMRPdata(SolverMRP* s, int c, deque<Demand*>& d)
             : sol(s), curOwnerOpplan(NULL), q_loadplan(NULL), q_flowplan(NULL),
             q_operationplan(NULL), cluster(c), demands(d) {}
 
@@ -356,17 +356,17 @@ class MRPSolver : public Solver
           */
         virtual DECLARE_EXPORT void execute();
 
-        virtual const MetaClass& getType() const {return MRPSolver::metadata;}
-        virtual size_t getSize() const {return sizeof(MRPSolverdata);}
+        virtual const MetaClass& getType() const {return SolverMRP::metadata;}
+        virtual size_t getSize() const {return sizeof(SolverMRPdata);}
 
         bool getVerbose() const 
         {
-          throw LogicException("Use the method MRPSolverdata::getLogLevel() instead of MRPSolverdata::getVerbose()");
+          throw LogicException("Use the method SolverMRPdata::getLogLevel() instead of SolverMRPdata::getVerbose()");
         }
 
       private:
         /** Points to the solver. */
-        MRPSolver* sol;
+        SolverMRP* sol;
 
         /** Points to the demand being planned. */
         Demand* curDemand;
@@ -429,17 +429,17 @@ class MRPSolver : public Solver
       * The return value is a flag whether the operationplan is
       * acceptable (sometimes in reduced quantity) or not.
       */
-    DECLARE_EXPORT bool checkOperation(OperationPlan*, MRPSolverdata& data);
+    DECLARE_EXPORT bool checkOperation(OperationPlan*, SolverMRPdata& data);
 
     /** Verifies whether this operationplan violates the leadtime
       * constraints. */
-    DECLARE_EXPORT bool checkOperationLeadtime(OperationPlan*, MRPSolverdata&, bool);
+    DECLARE_EXPORT bool checkOperationLeadtime(OperationPlan*, SolverMRPdata&, bool);
 
     /** Verifies whether this operationplan violates the capacity constraint.
       * In case it does the operationplan is moved to an earlier or later
       * feasible date.
       */
-    DECLARE_EXPORT void checkOperationCapacity(OperationPlan*, MRPSolverdata&);
+    DECLARE_EXPORT void checkOperationCapacity(OperationPlan*, SolverMRPdata&);
 };
 
 

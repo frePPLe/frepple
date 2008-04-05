@@ -32,9 +32,9 @@ namespace frepple
 {
 
 
-DECLARE_EXPORT void MRPSolver::solve (const Demand* l, void* v)
+DECLARE_EXPORT void SolverMRP::solve (const Demand* l, void* v)
 {
-  MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
+  SolverMRPdata* Solver = static_cast<SolverMRPdata*>(v);
   unsigned int loglevel = Solver->getSolver()->getLogLevel();
 
   // Message

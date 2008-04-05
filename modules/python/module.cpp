@@ -72,6 +72,8 @@ PyMethodDef CommandPython::PythonAPI[] =
      "Returns an iterator over the operationplans."},
     {"problems", PythonProblemIterator::create, METH_NOARGS,
      "Returns an iterator over the problems."},
+    {"solvers", PythonSolverIterator::create, METH_NOARGS,
+     "Returns an iterator over the solvers."},
     {NULL, NULL, 0, NULL}
   };
 
@@ -150,15 +152,6 @@ void CommandPython::initialize()
   nok += PythonBufferInfinite::initialize(m);
   nok += PythonBufferProcure::initialize(m);
   nok += PythonBufferIterator::initialize(m);
-  nok += PythonLocation::initialize(m);
-  nok += PythonLocationDefault::initialize(m);
-  nok += PythonLocationIterator::initialize(m);
-  nok += PythonItem::initialize(m);
-  nok += PythonItemDefault::initialize(m);
-  nok += PythonItemIterator::initialize(m);
-  nok += PythonCustomer::initialize(m);
-  nok += PythonCustomerDefault::initialize(m);
-  nok += PythonCustomerIterator::initialize(m);
   nok += PythonCalendar::initialize(m);
   nok += PythonCalendarIterator::initialize(m);
   nok += PythonCalendarBucket::initialize(m);
@@ -166,34 +159,45 @@ void CommandPython::initialize()
   nok += PythonCalendarBool::initialize(m);
   nok += PythonCalendarVoid::initialize(m);
   nok += PythonCalendarDouble::initialize(m);
+  nok += PythonCustomer::initialize(m);
+  nok += PythonCustomerDefault::initialize(m);
+  nok += PythonCustomerIterator::initialize(m);
   nok += PythonDemand::initialize(m);
   nok += PythonDemandIterator::initialize(m);
   nok += PythonDemandDefault::initialize(m);
-  nok += PythonResource::initialize(m);
-  nok += PythonResourceDefault::initialize(m);
-  nok += PythonResourceInfinite::initialize(m);
-  nok += PythonResourceIterator::initialize(m);
+  nok += PythonDemandPlanIterator::initialize(m);
+  nok += PythonPeggingIterator::initialize(m);
+  nok += PythonFlow::initialize(m);
+  nok += PythonFlowIterator::initialize(m);
+  nok += PythonFlowPlan::initialize(m);
+  nok += PythonFlowPlanIterator::initialize(m);
+  nok += PythonItem::initialize(m);
+  nok += PythonItemDefault::initialize(m);
+  nok += PythonItemIterator::initialize(m);
+  nok += PythonLoad::initialize(m);
+  nok += PythonLoadIterator::initialize(m);
+  nok += PythonLoadPlan::initialize(m);
+  nok += PythonLoadPlanIterator::initialize(m);
+  nok += PythonLocation::initialize(m);
+  nok += PythonLocationDefault::initialize(m);
+  nok += PythonLocationIterator::initialize(m);
   nok += PythonOperation::initialize(m);
   nok += PythonOperationAlternate::initialize(m);
   nok += PythonOperationFixedTime::initialize(m);
   nok += PythonOperationTimePer::initialize(m);
   nok += PythonOperationRouting::initialize(m);
   nok += PythonOperationIterator::initialize(m);
-  nok += PythonProblem::initialize(m);
-  nok += PythonProblemIterator::initialize(m);
   nok += PythonOperationPlan::initialize(m);
   nok += PythonOperationPlanIterator::initialize(m);
-  nok += PythonFlowPlan::initialize(m);
-  nok += PythonFlowPlanIterator::initialize(m);
-  nok += PythonLoadPlan::initialize(m);
-  nok += PythonLoadPlanIterator::initialize(m);
-  nok += PythonDemandPlanIterator::initialize(m);
-  nok += PythonPeggingIterator::initialize(m);
-  nok += PythonLoad::initialize(m);
-  nok += PythonLoadIterator::initialize(m);
-  nok += PythonFlow::initialize(m);
-  nok += PythonFlowIterator::initialize(m);
-  // @todo Missing Python proxies: Solver
+  nok += PythonProblem::initialize(m);
+  nok += PythonProblemIterator::initialize(m);
+  nok += PythonResource::initialize(m);
+  nok += PythonResourceDefault::initialize(m);
+  nok += PythonResourceInfinite::initialize(m);
+  nok += PythonResourceIterator::initialize(m);
+  nok += PythonSolver::initialize(m);
+  nok += PythonSolverIterator::initialize(m);
+  nok += PythonSolverMRP::initialize(m);
 
   // Redirect the stderr and stdout streams of Python
   PyRun_SimpleString(

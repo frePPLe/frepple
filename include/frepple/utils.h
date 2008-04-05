@@ -2400,7 +2400,7 @@ class Tree : public NonCopyable
 
     /** Returns an iterator to the start of the list.<br>
       * The user will need to take care of properly acquiring a read lock on
-      * on the tree object. @todo the iterator needs proper locking
+      * on the tree object.
       */
     TreeNode* begin() const {return const_cast<TreeNode*>(header.left);}
 
@@ -3421,7 +3421,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       * iterate over the named entities in a simple and safe way.
       *
       * Objects of this class are created by the begin() and end() functions.
-      * @todo not thread-safe: needs to lock objects during iteration
+      * @todo not thread-safe: needs to lock the tree during iteration
       */
     class iterator
     {

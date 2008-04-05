@@ -455,7 +455,7 @@ class ForecastSolver : public Solver
     struct sorter
     {
   	  bool operator()(const Demand* x, const Demand* y) const
-		    { return MRPSolver::demand_comparison(x,y); }
+		    { return SolverMRP::demand_comparison(x,y); }
 	  };
 
     /** Used for sorting demands during netting. */

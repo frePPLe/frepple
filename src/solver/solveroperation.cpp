@@ -31,8 +31,8 @@ namespace frepple
 {
 
 
-DECLARE_EXPORT void MRPSolver::checkOperationCapacity
-  (OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
+DECLARE_EXPORT void SolverMRP::checkOperationCapacity
+  (OperationPlan* opplan, SolverMRP::SolverMRPdata& data)
 {
   bool hasMultipleLoads(opplan->sizeLoadPlans() > 2);
   DateRange orig;
@@ -61,8 +61,8 @@ DECLARE_EXPORT void MRPSolver::checkOperationCapacity
 }
 
 
-DECLARE_EXPORT bool MRPSolver::checkOperation
-(OperationPlan* opplan, MRPSolver::MRPSolverdata& data)
+DECLARE_EXPORT bool SolverMRP::checkOperation
+(OperationPlan* opplan, SolverMRP::SolverMRPdata& data)
 {
   // The default answer...
   data.a_date = Date::infiniteFuture;
@@ -252,8 +252,8 @@ DECLARE_EXPORT bool MRPSolver::checkOperation
 }
 
 
-DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
-(OperationPlan* opplan, MRPSolver::MRPSolverdata& data, bool extra)
+DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
+(OperationPlan* opplan, SolverMRP::SolverMRPdata& data, bool extra)
 {
   // No lead time constraints
   if (!isFenceConstrained() && !isLeadtimeConstrained()) return true;
@@ -327,12 +327,12 @@ DECLARE_EXPORT bool MRPSolver::checkOperationLeadtime
 }
 
 
-DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
+DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
 {
   // Make sure we have a valid operation
   assert(oper);
 
-  MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
+  SolverMRPdata* Solver = static_cast<SolverMRPdata*>(v);
   OperationPlan *z;
 
   // Find the flow for the quantity-per. This can throw an exception if no
@@ -404,9 +404,9 @@ DECLARE_EXPORT void MRPSolver::solve(const Operation* oper, void* v)
 
 
 // No need to take post- and pre-operation times into account
-DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
+DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
 {
-  MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
+  SolverMRPdata* Solver = static_cast<SolverMRPdata*>(v);
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)
@@ -507,9 +507,9 @@ DECLARE_EXPORT void MRPSolver::solve(const OperationRouting* oper, void* v)
 
 
 // No need to take post- and pre-operation times into account
-DECLARE_EXPORT void MRPSolver::solve(const OperationAlternate* oper, void* v)
+DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 {
-  MRPSolverdata *Solver = static_cast<MRPSolverdata*>(v);
+  SolverMRPdata *Solver = static_cast<SolverMRPdata*>(v);
   Date origQDate = Solver->q_date;
   double origQqty = Solver->q_qty;
   const Buffer *buf = Solver->curBuffer;

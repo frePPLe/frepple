@@ -99,6 +99,8 @@
   *       - resource
   *       - resource_default
   *       - resource_infinite
+  *       - solver
+  *       - solver_mrp
   *   - The following functions or attributes return <b>iterators</b> over the
   *     frePPLe objects:<br>
   *       - buffers()
@@ -120,6 +122,7 @@
   *       - resources()
   *       - resource.loads
   *       - resource.loadplans
+  *       - solvers()
   *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br>
   *     Processes an XML string passed as argument.
   *   - <b>log(string)</b>:<br>
@@ -1556,6 +1559,36 @@ class PythonFlowIterator : public PythonExtension<PythonFlowIterator>
     Operation* oper;
     Operation::flowlist::const_iterator io;
     PyObject *iternext();
+};
+
+
+//
+// SOLVERS
+//
+
+
+class PythonSolver : public FreppleCategory<PythonSolver,Solver>
+{
+  public:
+    PythonSolver(Solver* p) : FreppleCategory<PythonSolver,Solver>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
+};
+
+
+class PythonSolverIterator
+  : public FreppleIterator<PythonSolverIterator,Solver::iterator,Solver,PythonSolver>
+{
+};
+
+
+class PythonSolverMRP : public FreppleClass<PythonSolverMRP,PythonSolver,SolverMRP>
+{
+  public:
+    PythonSolverMRP(SolverMRP* p)
+      : FreppleClass<PythonSolverMRP,PythonSolver,SolverMRP>(p) {}
+    virtual PyObject* getattro(const XMLElement&);
+    virtual int setattro(const XMLElement&, const PythonObject&);
 };
 
 }

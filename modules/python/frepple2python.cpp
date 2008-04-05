@@ -925,7 +925,6 @@ PyObject* PythonOperation::getattro(const XMLElement& field)
     return new PythonLoadIterator(obj);
   if (field.isA(Tags::tag_flows))
     return new PythonFlowIterator(obj);
-  /* @todo flows loads; */
 	return NULL;
 }
 
@@ -1505,5 +1504,55 @@ PyObject* PythonFlowIterator::iternext()
   }
 }
 
+
+//
+// INTERFACE FOR SOLVER
+//
+
+
+PyObject* PythonSolver::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (field.isA(Tags::tag_loglevel))
+    return PythonObject(obj->getLogLevel());
+	return NULL;
+}
+
+
+int PythonSolver::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_name))
+    obj->setName(value.getString());
+  else if (field.isA(Tags::tag_loglevel))
+    obj->setLogLevel(value.getInt());
+  else
+    return -1;  // Error
+  return 0;  // OK
+}
+
+
+PyObject* PythonSolverMRP::getattro(const XMLElement& field)
+{
+  if (!obj) return Py_None;
+  if (field.isA(Tags::tag_constraints))
+    return PythonObject(obj->getConstraints());
+  if (field.isA(Tags::tag_maxparallel))
+    return PythonObject(obj->getMaxParallel());
+  return PythonSolver(obj).getattro(field); 
+}
+
+
+int PythonSolverMRP::setattro(const XMLElement& field, const PythonObject& value)
+{
+  if (field.isA(Tags::tag_constraints))
+    obj->setConstraints(value.getInt());
+  else if (field.isA(Tags::tag_maxparallel))
+    obj->setMaxParallel(value.getInt());
+  else
+    return PythonSolver(obj).setattro(field,value);
+  return 0;
+}
 
 } // End namespace

@@ -38,9 +38,9 @@ namespace frepple
   * Are there some situations where the operation solver doesn't know enough
   * on the buffer behavior???
   */
-DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
+DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
 {
-  MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
+  SolverMRPdata* Solver = static_cast<SolverMRPdata*>(v);
   Date requested_date(Solver->q_date);
   double requested_qty(Solver->q_qty);
   bool tried_requested_date(false);
@@ -246,9 +246,9 @@ DECLARE_EXPORT void MRPSolver::solve(const Buffer* b, void* v)
 }
 
 
-DECLARE_EXPORT void MRPSolver::solve(const Flow* fl, void* v)
+DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
 {
-  MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   data->q_qty = - data->q_flowplan->getQuantity();
   data->q_date = data->q_flowplan->getDate();
   if (data->q_qty != 0.0)
@@ -276,9 +276,9 @@ DECLARE_EXPORT void MRPSolver::solve(const Flow* fl, void* v)
 }
 
 
-DECLARE_EXPORT void MRPSolver::solve(const BufferInfinite* b, void* v)
+DECLARE_EXPORT void SolverMRP::solve(const BufferInfinite* b, void* v)
 {
-  MRPSolverdata* Solver = (MRPSolverdata*)v;
+  SolverMRPdata* Solver = (SolverMRPdata*)v;
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)

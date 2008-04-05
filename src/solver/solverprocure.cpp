@@ -80,9 +80,9 @@ double suggestQuantity(const BufferProcure* b, double f)
 }
 
 
-DECLARE_EXPORT void MRPSolver::solve(const BufferProcure* b, void* v)
+DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 {
-  MRPSolverdata* Solver = static_cast<MRPSolverdata*>(v);
+  SolverMRPdata* Solver = static_cast<SolverMRPdata*>(v);
 
   // Message
   if (Solver->getSolver()->getLogLevel()>1)

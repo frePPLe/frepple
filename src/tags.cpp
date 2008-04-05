@@ -139,7 +139,10 @@ DECLARE_EXPORT const XMLtag Tags::tag_startdate("startdate");
 DECLARE_EXPORT const XMLtag Tags::tag_steps("steps");
 DECLARE_EXPORT const XMLtag Tags::tag_subcategory("subcategory");
 DECLARE_EXPORT const XMLtag Tags::tag_supply("supply");
-DECLARE_EXPORT const XMLtag Tags::tag_type("xsi:type");  // @todo this assumes the definition of XSI namespace is present
+// The next line requires the namespace "xsi" to be defined. 
+// It must refer to "http://www.w3.org/2001/XMLSchema-instance"
+// This is required to support subclassing in the XML schema.
+DECLARE_EXPORT const XMLtag Tags::tag_type("type","xsi"); 
 DECLARE_EXPORT const XMLtag Tags::tag_url("url");
 DECLARE_EXPORT const XMLtag Tags::tag_validate("validate");
 DECLARE_EXPORT const XMLtag Tags::tag_value("value");

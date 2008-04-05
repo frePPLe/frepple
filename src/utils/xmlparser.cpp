@@ -180,7 +180,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
         for (unsigned int i=0, cnt=atts.getLength(); i<cnt; i++)
         {
           char* val = XMLString::transcode(atts.getValue(i));
-          m_EStack[numElements+1].initialize(atts.getQName(i));
+          m_EStack[numElements+1].initialize(atts.getLocalName(i));
           m_EStack[numElements+1].setData(val);
           #ifdef PARSE_DEBUG
           char* attname = XMLString::transcode(atts.getQName(i));
@@ -382,7 +382,7 @@ void XMLInput::shutdown()
   while (!m_EHStack.empty())
   {
     try { getCurrentObject()->endElement(*this, m_EStack[numElements]); }
-    catch (DataException e)    // @todo this exception handler can leak locked objects
+    catch (DataException e)
     {
       if (abortOnDataException) throw;
       else logger << "Continuing after data error: " << e.what() << endl;
@@ -412,7 +412,7 @@ void XMLInput::reset()
     while (!m_EHStack.empty())
     {
       try { getCurrentObject()->endElement(*this, m_EStack[numElements]); }
-      catch (DataException e)  //@todo leaks locks...
+      catch (DataException e)
       {
         if (abortOnDataException) throw;
         else logger << "Continuing after data error: " << e.what() << endl;
@@ -681,18 +681,48 @@ DECLARE_EXPORT XMLtag::XMLtag(string name) : strName(name)
 
   // Create a properly encoded Xerces string
   XMLPlatformUtils::Initialize();
-  xmlname =XMLString::transcode(name.c_str());
+  xmlname = XMLString::transcode(name.c_str());
 
   // Verify that the hash is "perfect".
+  check();
+}
+
+
+DECLARE_EXPORT XMLtag::XMLtag(string name, string nspace) : strName(name)
+{
+  // Error condition: name is empty
+  if (name.empty()) throw LogicException("Creating XMLtag without name");
+  if (nspace.empty()) throw LogicException("Creating XMLtag with empty namespace");
+
+  // Create a number of variations of the tag name
+  strStartElement = string("<") + nspace + ":" + name;
+  strEndElement = string("</") + nspace + ":" + name + ">\n";
+  strElement = string("<") + nspace + ":" + name + ">";
+  strAttribute = string(" ") + nspace + ":" + name + "=\"";
+
+  // Compute the hash value
+  dw = hash(name.c_str());
+
+  // Create a properly encoded Xerces string
+  XMLPlatformUtils::Initialize();
+  xmlname = XMLString::transcode(string(nspace + ":" + name).c_str());
+
+  // Verify that the hash is "perfect".
+  check();
+}
+
+
+void XMLtag::check()
+{
   // To be thread-safe we make sure only a single thread at a time
   // can execute this check.
   static Mutex dd;
   {
     ScopeMutexLock l(dd);
     tagtable::const_iterator i = getTags().find(dw);
-    if (i!=getTags().end() && i->second->getName()!=name)
+    if (i!=getTags().end() && i->second->getName()!=strName)
       throw LogicException("Tag XML-tag hash function clashes for "
-          + i->second->getName() + " and " + name);
+          + i->second->getName() + " and " + strName);
     getTags().insert(make_pair(dw,this));
   }
 }

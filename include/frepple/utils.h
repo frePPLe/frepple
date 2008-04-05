@@ -584,12 +584,23 @@ class XMLtag : public NonCopyable
     /** Name of the string transcoded to its Xerces-internal representation. */
     XMLCh* xmlname;
 
+    /** A function to verify the uniquess of our hashes. */
+    void check();
+
   public:
     /** Container for maintaining a list of all tags. */
     typedef map<hashtype,XMLtag*> tagtable;
 
-    /** This is the only constructor. */
-    DECLARE_EXPORT XMLtag(string n);
+    /** This is the constructor.<br>
+      * The tag doesn't belong to an XML namespace. */
+    DECLARE_EXPORT XMLtag(string);
+
+    /** This is the constructor. The tag belongs to the XML namespace passed
+      * as second argument.<br>
+      * Note that we still require the first argument to be unique, since it
+      * is used as a keyword for the Python extensions.
+      */
+    DECLARE_EXPORT XMLtag(string, string);
 
     /** Destructor. */
     DECLARE_EXPORT ~XMLtag();

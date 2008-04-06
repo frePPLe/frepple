@@ -119,6 +119,9 @@ PyObject* PythonBuffer::getattro(const XMLElement& field)
     return PythonObject(obj->getLevel());
   if (field.isA(Tags::tag_cluster))
     return PythonObject(obj->getCluster());
+  // @todo support member iteration for buffer, res, dem, item, ...
+  // PythonBufferIterator becomes an abstract class: defines the pytype and an abstract iternext.
+  // 2 subclasses then implement it: an iterator over all buffers, and another one over all members.
 	return NULL;
 }
 
@@ -211,7 +214,12 @@ PyObject* PythonBufferDefault::getattro(const XMLElement& field)
 
 int PythonBufferDefault::setattro(const XMLElement& field, const PythonObject& value)
 {
-  return PythonBuffer(obj).setattro(field,value);  //@todo avoid constructing a PythonBuffer object to call the base class
+  // @todo avoid constructing a PythonBuffer object to call the base class
+  // This is currently not really feasible (no casting between the classes is possible)
+  // When the XML and Python framework will be unified, this will be solved: we'll basically
+  // have a single call to the getAttribute() method of the default buffer, which can call
+  // the getAttribute function of the parent class.
+  return PythonBuffer(obj).setattro(field,value);  
 }
 
 
@@ -442,7 +450,6 @@ PyObject* PythonItem::getattro(const XMLElement& field)
     return PythonObject(obj->getOperation());
   if (field.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
-  // @todo members
 	return NULL;
 }
 
@@ -479,7 +486,6 @@ int PythonItem::setattro(const XMLElement& field, const PythonObject& value)
   }
   else if (field.isA(Tags::tag_hidden))
     obj->setHidden(value.getBool());
-  // @todo members
   else
     return -1;
   return 0;
@@ -1566,5 +1572,24 @@ int PythonSolverMRP::setattro(const XMLElement& field, const PythonObject& value
     return PythonSolver(obj).setattro(field,value);
   return 0;
 }
+
+
+PyObject *PythonSolver::solve(PyObject *self, PyObject *args)
+{
+  try
+  {
+    Solver *sol = static_cast<PythonSolver*>(self)->obj;
+    if (!sol) throw LogicException("Can't run NULL solver");
+    sol->solve();    
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+  catch(exception &)
+  {
+    // @todo need better excpetion handling
+    return NULL;
+  }
+}
+
 
 } // End namespace

@@ -4847,9 +4847,15 @@ class Problem::const_iterator
       iter = (eiter!=HasProblems::endEntity()) ? eiter->firstProblem : NULL;
     }
 
+    /** Pre-increment operator. */
     DECLARE_EXPORT const_iterator& operator++();
+
+    /** Inequality operator. */
     bool operator != (const const_iterator& t) const {return iter!=t.iter;}
+
+    /** Equality operator. */
     bool operator == (const const_iterator& t) const {return iter==t.iter;}
+
     Problem& operator*() const {return *iter;}
     Problem* operator->() const {return iter;}
 };

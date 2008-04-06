@@ -311,12 +311,21 @@ class PythonType : public NonCopyable
       */
     static const PyTypeObject PyTypeObjectTemplate;
 
+    /** Accumulator of method definitions. */
+    vector<PyMethodDef> methodvector;    
+
+    /** Real method table created after initialization. */
+    PyMethodDef *methods;        
+
   public:
     /** Constructor, sets the tp_base_size member. */
     PythonType (size_t base_size);
 
     /** Return a pointer to the actual Python PyTypeObject. */
     PyTypeObject* type_object() const {return const_cast<PyTypeObject*>(&table);}
+
+    /** Add a new method. */
+    void addMethod(const char*, PyCFunction, int, const char*);
 
     /** Updates tp_name. */
     void setName (const string n)
@@ -921,11 +930,6 @@ class FreppleIterator : public PythonExtension<ME>
       PyObject* result = PythonObject(&*i);
       ++i;
       return result;
-    }
-    virtual PyObject *iter()
-    {
-	    Py_INCREF(this);
-	    return this;
     }
 };
 
@@ -1570,9 +1574,15 @@ class PythonFlowIterator : public PythonExtension<PythonFlowIterator>
 class PythonSolver : public FreppleCategory<PythonSolver,Solver>
 {
   public:
+    static int initialize(PyObject* m)
+    {
+      getType().addMethod("solve", solve, METH_NOARGS, "run the solver");
+      return FreppleCategory<PythonSolver,Solver>::initialize(m);
+    }
     PythonSolver(Solver* p) : FreppleCategory<PythonSolver,Solver>(p) {}
     virtual PyObject* getattro(const XMLElement&);
     virtual int setattro(const XMLElement&, const PythonObject&);
+    static PyObject* solve(PyObject*, PyObject*);
 };
 
 

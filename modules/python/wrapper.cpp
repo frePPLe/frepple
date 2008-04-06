@@ -152,7 +152,7 @@ PythonObject::PythonObject(Object* p)
 }
 
 
-PythonType::PythonType(size_t base_size)
+PythonType::PythonType(size_t base_size) : methods(NULL)
 {
   // Copy a standard info type to start with
   memcpy(&table, &PyTypeObjectTemplate, sizeof(PyTypeObject));
@@ -160,8 +160,34 @@ PythonType::PythonType(size_t base_size)
 }
 
 
+void PythonType::addMethod(const char* method_name, PyCFunction f, int flags, const char* doc ) 
+{
+  // The type is already registered
+  if (methods) throw LogicException("Too late to add a method");
+
+  // Populate a method definition struct
+  PyMethodDef m;
+  m.ml_name = method_name;
+  m.ml_meth = f;
+  m.ml_flags = flags;
+  m.ml_doc = doc;
+  methodvector.push_back(m);
+}
+
+
 int PythonType::typeReady(PyObject* m)
 {
+  // Fill the method table
+  if (!methodvector.empty())
+  {
+    addMethod(NULL, NULL, 0, NULL);  // Terminator
+    methods = new PyMethodDef[methodvector.size()];
+    int j = 0;
+    for(vector<PyMethodDef>::iterator i = methodvector.begin(); i != methodvector.end(); i++ )
+      methods[j++] = *i;
+    table.tp_methods = methods;
+  }
+
   // Register the new type in the module  
   if (PyType_Ready(&table) < 0)
     throw frepple::RuntimeException("Can't register python type " + name);

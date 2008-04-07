@@ -31,9 +31,9 @@ namespace frepple
 {
 
 
-void MRPSolver::solve(const Load* l, void* v)
+void SolverMRP::solve(const Load* l, void* v)
 {
-  MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   if (data->q_qty >= 0.0)
   {
     // The loadplan is an increase in size, and the resource solver only needs
@@ -49,9 +49,9 @@ void MRPSolver::solve(const Load* l, void* v)
 
 
 /** @todo resource solver should be using a move command rather than direct move */
-DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
+DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 {
-  MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
@@ -65,7 +65,7 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
   double currentQuantity = data->q_operationplan->getQuantity();
   Resource::loadplanlist::const_iterator cur = res->getLoadPlans().end();
   Date curdate;
-  double curMax;
+  double curMax, prevMax;
   bool HasOverload;
   
   // Initialize the default reply
@@ -79,21 +79,27 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
       // Check if this operation overloads the resource at its current time
       HasOverload = false;
       Date earliestdate = data->q_operationplan->getDates().getStart();
-      curdate = data->q_loadplan->getDate();
-      curMax = data->q_loadplan->getMax();
+      curdate = Date::infiniteFuture;
+      curMax = data->q_loadplan->getMax(false);
+      prevMax = curMax;
       for (cur = res->getLoadPlans().begin(data->q_loadplan);
         cur!=res->getLoadPlans().end() && cur->getDate()>=earliestdate; 
         --cur)
       {
-        // A change in the maximum capacity
-        if (cur->getType() == 4) curMax = cur->getMax();
+        // A change in the maximum capacity        
+        prevMax = curMax;
+        if (cur->getType() == 4) 
+          curMax = cur->getMax(false);
 
         // Not interested if date doesn't change
         if (cur->getDate() == curdate) continue;
-        
-        if (cur->getOnhand() > curMax + ROUNDING_ERROR)
+        if (cur->getOnhand() > prevMax + ROUNDING_ERROR)
         {
-          // Overload: New date reached, and we are exceeding the limit!
+          // Overload: We are exceeding the limit!
+          // At this point:
+          //  - cur points to a loadplan where we exceed the capacity
+          //  - curdate points to the latest date without overload
+          //  - curdate != cur->getDate()
           HasOverload = true;
           break;
         }
@@ -143,24 +149,32 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
       if (HasOverload)
       {
         // Search backward in time for a period where there is no overload
+        curMax = cur->getMax(false);
+        prevMax = curMax;
+        curdate = cur->getDate();
         for (; cur!=res->getLoadPlans().end(); --cur)
         {
-          // A change in the maximum capacity
-          if (cur->getType() == 4) curMax = cur->getMax();
+          // A change in the maximum capacity          
+          prevMax = curMax;          
+          if (cur->getType() == 4) 
+            curMax = cur->getMax(false);
 
           // Not interested if date doesn't change
           if (cur->getDate() == curdate) continue;
 
           // Stop if a new date reached and we are below the max limit now
-          if (cur->getOnhand() <= curMax) break;
+          if (cur->getOnhand() < prevMax + ROUNDING_ERROR) break;
           curdate = cur->getDate();
         }
 
         // We found a date where the load goes below the maximum
+        // At this point:
+        //  - curdate is a latest date where we drop below the maximum
+        //  - cur is the first loadplan where we are below the max
         if (cur != res->getLoadPlans().end())
         {
           // Move the operationplan
-          data->q_operationplan->setEnd(curdate); 
+          data->q_operationplan->setEnd(curdate);
 
           // Check the leadtime constraints after the move
           if (isLeadtimeConstrained() || isFenceConstrained())
@@ -284,9 +298,9 @@ DECLARE_EXPORT void MRPSolver::solve(const Resource* res, void* v)
 }
 
 
-DECLARE_EXPORT void MRPSolver::solve(const ResourceInfinite* r, void* v)
+DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* r, void* v)
 {
-  MRPSolverdata* data = static_cast<MRPSolverdata*>(v);
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->q_qty < 0)

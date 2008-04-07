@@ -24,7 +24,7 @@
   </commands>
 
   <calendars>
-    <calendar name="Capacity" xsi:type="calendar_float">
+    <calendar name="Capacity" xsi:type="calendar_double">
       <default>1</default>
       <buckets>
         <!-- From the infinite past till 2007-01-02 no entry is in effect.
@@ -124,19 +124,18 @@
     </flow>
   </flows>
 
-
   <demands>
-    <!-- Demand model 1 -->
+    <!-- Demand model 1: search for capacity backwards in time -->
     <demand name="1. order">
-      <quantity>200</quantity>
+      <quantity>201</quantity>
       <due>2007-03-06T00:00:00</due>
       <priority>1</priority>
       <item name="1. end item" />
     </demand>
-    <!-- Demand model 2 -->
+    <!-- Demand model 2: search for capacity forward in time -->
     <demand name="2. order">
-      <quantity>200</quantity>
-      <due>2007-01-01T00:00:00</due>
+      <quantity>201</quantity>
+      <due>2007-01-10T00:00:00</due>
       <priority>1</priority>
       <item name="2. end item" />
     </demand>

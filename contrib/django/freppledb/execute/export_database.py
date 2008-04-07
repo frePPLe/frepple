@@ -316,7 +316,7 @@ def exportfrepple():
   # Erase previous output
   truncate(cursor)
 
-  if True: #settings.DATABASE_ENGINE == 'sqlite3':
+  if settings.DATABASE_ENGINE == 'sqlite3':
     # OPTION 1: Sequential export of each entity
     # For sqlite this is required since a writer blocks the database file.
     # For other databases the parallel export normally gives a better

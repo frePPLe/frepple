@@ -1136,19 +1136,37 @@ PyObject* PythonOperationPlan::getattro(const XMLElement& field)
 
 int PythonOperationPlan::setattro(const XMLElement& field, const PythonObject& value)
 {
-  // @todo 
-  /*
-      "id", obj->iter->getIdentifier(),
-    "operation", obj->iter->getOperation()->getName().c_str(),
-    "quantity", obj->iter->getQuantity(),
-    "start", PythonDateTime(obj->iter->getDates().getStart()),
-    "end", PythonDateTime(obj->iter->getDates().getEnd()),
-    "demand", dem ? dem->getName().c_str() : NULL,
-    "locked", obj->iter->getLocked(),
-    "owner", obj->iter->getOwner() ? obj->iter->getOwner()->getIdentifier() : 0
-
-    */
-  return -1;
+  if (field.isA(Tags::tag_quantity))
+    obj->setQuantity(value.getDouble());
+  else if (field.isA(Tags::tag_start))
+    obj->setStart(value.getDate());
+  else if (field.isA(Tags::tag_end))
+    obj->setEnd(value.getDate());
+  else if (field.isA(Tags::tag_locked))
+    obj->setLocked(value.getBool());
+  else if (field.isA(Tags::tag_demand))
+  {
+    if (!value.check(PythonDemand::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
+      return -1;
+    }
+    Demand* y = static_cast<PythonDemand*>(static_cast<PyObject*>(value))->obj;
+    obj->setDemand(y);
+  }
+  else if (field.isA(Tags::tag_owner))
+  {
+    if (!value.check(PythonOperationPlan::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
+      return -1;
+    }
+    OperationPlan* y = static_cast<PythonOperationPlan*>(static_cast<PyObject*>(value))->obj;
+    obj->setOwner(y);
+  }
+  else
+    return -1;
+  return 0;  
 }
 
 

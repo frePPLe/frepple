@@ -1343,7 +1343,7 @@ class PythonOperationPlan : public PythonExtension<PythonOperationPlan>
       {return static_cast<PyObject*>(new PythonOperationPlan(static_cast<OperationPlan*>(p)));}
   private:
     OperationPlan* obj;
-    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
+    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);    "id"+"operation" keywords used
     virtual PyObject* getattro(const XMLElement&);
     virtual int setattro(const XMLElement&, const PythonObject&);
 };

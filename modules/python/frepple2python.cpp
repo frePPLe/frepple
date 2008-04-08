@@ -1594,19 +1594,22 @@ int PythonSolverMRP::setattro(const XMLElement& field, const PythonObject& value
 
 PyObject *PythonSolver::solve(PyObject *self, PyObject *args)
 {
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
   {
     Solver *sol = static_cast<PythonSolver*>(self)->obj;
     if (!sol) throw LogicException("Can't run NULL solver");
     sol->solve();    
-    Py_INCREF(Py_None);
-    return Py_None;
   }
-  catch(exception &)
+  catch(...)
   {
-    // @todo need better excpetion handling
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
     return NULL;
   }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  Py_INCREF(Py_None);
+  return Py_None;
 }
 
 

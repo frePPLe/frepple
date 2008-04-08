@@ -8,16 +8,13 @@ from freppledb.execute.export_file import exportfrepple as export_to_file
 from freppledb.execute.load import loadfrepple
 from django.conf import settings
 
+# Send the output to a logfile
+frepple.settings.logfile = os.path.join(os.environ['FREPPLE_HOME'],'frepple.log')
+
 # Create a solver where the plan type are defined by an environment variable
-try: plantype = os.environ['PLAN_TYPE']
-except KeyError: plantype = 7  # Default is a fully constrained plan
-frepple.readXMLdata(
-  '''<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <logfile>%s</logfile>
-  <solvers>
-    <solver xsi:type="solver_mrp" name="MRP" constraints="%s"/>
-  </solvers>
-  </plan>''' % (os.path.join(os.environ['FREPPLE_HOME'],'frepple.log'),plantype), False, False)
+try: plantype = int(os.environ['PLAN_TYPE'])
+except: plantype = 7  # Default is a fully constrained plan
+frepple.solver_mrp(name="MRP", constraints=plantype)
 
 # Pick up an override for the database to use
 if 'FREPPLE_DATABASE_NAME' in os.environ:

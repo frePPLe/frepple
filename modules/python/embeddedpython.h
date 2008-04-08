@@ -449,7 +449,8 @@ class PythonType : public NonCopyable
   * It is possible to keep the Python proxy around longer than the C++
   * object. Re-accessing the proxy will crash frePPLe.
   * We need a handler to subscribe to the C++ delete, which can then invalidate the
-  * Python object.
+  * Python object. Alternative solution is to move to a twin object approach:
+  * a C++ object and a python object always coexist as a twin pair.
   */
 class PythonObject : public NonCopyable
 {
@@ -772,7 +773,7 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
     /** Comparison operator. */
     int compare(const PythonObject& other)
     {
-      if (!other.check(ME::getType()))
+      if (!obj || !other.check(ME::getType()))
       {
         // Different type
         PyErr_SetString(PythonDataException, "Wrong type in comparison");
@@ -885,7 +886,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
     /** Comparison operator. */
     int compare(const PythonObject& other)
     {
-      if (!other.check(BASE::getType()))
+      if (!obj || !other.check(BASE::getType()))
       {
         // Different type
         PyErr_SetString(PythonDataException, "Wrong type in comparison");

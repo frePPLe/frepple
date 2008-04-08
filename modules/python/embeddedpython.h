@@ -279,7 +279,6 @@ class CommandPython : public Command, public XMLinstruction
 
 // The following handler functions redirect the call from Python onto a
 // matching virtual function in a PythonExtensionBase subclass.
-// @todo Need a cleaner way of dealing with exceptions in the handlers (and at other places)
 extern "C"
 {
   /** Handler function called from Python. Internal use only. */
@@ -318,6 +317,13 @@ class PythonType : public NonCopyable
     PyMethodDef *methods;        
 
   public:
+    /** A static functin that evaluates an exception and sets the Python 
+      * error string properly.<br>
+      * This function should only be called from within a catch-block, since 
+      * it rethrows the exception!
+      */
+    static void evalException();
+
     /** Constructor, sets the tp_base_size member. */
     PythonType (size_t base_size);
 
@@ -801,19 +807,29 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
       // Iterate over extra keywords, and set attributes.
       if (pr)
       {
-        PyObject *key, *value;
-        Py_ssize_t pos = 0;
-        while (PyDict_Next(kwds, &pos, &key, &value))
+        try
         {
-          XMLElement field(PyString_AsString(key));
-          if (!field.isA(Tags::tag_name) && !field.isA(Tags::tag_type))
+          PyObject *key, *value;
+          Py_ssize_t pos = 0;
+          while (PyDict_Next(kwds, &pos, &key, &value))
           {
-            int result = pr->setattro(field, value);  // @todo Also need to capture exceptions!
-            if (result)
-              PyErr_Warn(PyExc_Warning, (string("attribute '") + PyString_AsString(key)
-                + "' on '" + pr->ob_type->tp_name + "' can't be updated").c_str());
-          }
-        };
+            XMLElement field(PyString_AsString(key));
+            if (!field.isA(Tags::tag_name) && !field.isA(Tags::tag_type))
+            {
+              int result = pr->setattro(field, value);
+              if (result)
+                PyErr_Format(PyExc_AttributeError,
+                  "attribute '%s' on '%s' can't be updated",
+                  PyString_AsString(key), pr->ob_type->tp_name);
+            }
+          };
+        }
+        catch (...)
+        {
+          PythonType::evalException();
+          delete pr;
+          return NULL;
+        }
       }
       return pr;
     }
@@ -882,20 +898,33 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
       ME* pr = new ME(x);
 
       // Iterate over extra keywords, and set attributes.
-      PyObject *key, *value;
-      Py_ssize_t pos = 0;
-      bool  nok =false;
-      while (PyDict_Next(kwds, &pos, &key, &value))
+      if (pr)
       {
-        XMLElement field(PyString_AsString(key));
-        if (!field.isA(Tags::tag_name))
+        try
         {
-          int result = pr->setattro(field, value);// @todo Also need to capture exceptions!
-          if (result)
-            PyErr_Warn(PyExc_Warning, (string("attribute '") + PyString_AsString(key)
-              + "' on '" + pr->ob_type->tp_name + "' can't be updated").c_str());
+          PyObject *key, *value;
+          Py_ssize_t pos = 0;
+          bool  nok =false;
+          while (PyDict_Next(kwds, &pos, &key, &value))
+          {
+            XMLElement field(PyString_AsString(key));
+            if (!field.isA(Tags::tag_name))
+            {
+              int result = pr->setattro(field, value);
+              if (result)
+                PyErr_Format(PyExc_AttributeError,
+                  "attribute '%s' on '%s' can't be updated",
+                  PyString_AsString(key), pr->ob_type->tp_name);
+            }
+          };
         }
-      };
+        catch (...)
+        {
+          PythonType::evalException();
+          delete pr;
+          return NULL;
+        }
+      }
 
       return static_cast<PyObject*>(pr);
     }

@@ -27,8 +27,8 @@
 /** @file wrapper.cpp
   * @brief Generic C++ wrapper classes to facilitate working with Python.
   *
-  * The structure of the C++ wrappers around the C Python API is heavily 
-  * based on the design of PyCXX.<br> 
+  * The structure of the C++ wrappers around the C Python API is heavily
+  * based on the design of PyCXX.<br>
   * More information can be found on http://cxx.sourceforge.net
   */
 
@@ -111,25 +111,25 @@ PythonObject::PythonObject(const Date& d)
 }
 
 
-Date PythonObject::getDate() const 
+Date PythonObject::getDate() const
 {
   PyDateTime_IMPORT;
   if (PyDateTime_Check(obj))
     return Date(
-      PyDateTime_GET_YEAR(obj), 
-      PyDateTime_GET_MONTH(obj), 
-      PyDateTime_GET_DAY(obj), 
-      PyDateTime_DATE_GET_HOUR(obj), 
-      PyDateTime_DATE_GET_MINUTE(obj), 
+      PyDateTime_GET_YEAR(obj),
+      PyDateTime_GET_MONTH(obj),
+      PyDateTime_GET_DAY(obj),
+      PyDateTime_DATE_GET_HOUR(obj),
+      PyDateTime_DATE_GET_MINUTE(obj),
       PyDateTime_DATE_GET_SECOND(obj)
       );
   else if (PyDate_Check(obj))
     return Date(
-      PyDateTime_GET_YEAR(obj), 
-      PyDateTime_GET_MONTH(obj), 
-      PyDateTime_GET_DAY(obj) 
+      PyDateTime_GET_YEAR(obj),
+      PyDateTime_GET_MONTH(obj),
+      PyDateTime_GET_DAY(obj)
       );
-  else 
+  else
    throw DataException(
     "Invalid data type. Expecting datetime.date or datetime.datetime"
     );
@@ -144,9 +144,9 @@ PythonObject::PythonObject(Object* p)
     Py_INCREF(obj);
   }
   else if (p->getType().factoryPythonProxy)
-    obj = reinterpret_cast<PyObject*>(p->getType().factoryPythonProxy(p)); 
+    obj = reinterpret_cast<PyObject*>(p->getType().factoryPythonProxy(p));
   else if (p->getType().category->factoryPythonProxy)
-    obj = reinterpret_cast<PyObject*>(p->getType().category->factoryPythonProxy(p));  
+    obj = reinterpret_cast<PyObject*>(p->getType().category->factoryPythonProxy(p));
   else
     throw LogicException("Can't create a Python proxy for " + p->getType().type);
 }
@@ -156,11 +156,11 @@ PythonType::PythonType(size_t base_size) : methods(NULL)
 {
   // Copy a standard info type to start with
   memcpy(&table, &PyTypeObjectTemplate, sizeof(PyTypeObject));
-  table.tp_basicsize =	base_size; 
+  table.tp_basicsize =	base_size;
 }
 
 
-void PythonType::addMethod(const char* method_name, PyCFunction f, int flags, const char* doc ) 
+void PythonType::addMethod(const char* method_name, PyCFunction f, int flags, const char* doc )
 {
   // The type is already registered
   if (methods) throw LogicException("Too late to add a method");
@@ -188,12 +188,29 @@ int PythonType::typeReady(PyObject* m)
     table.tp_methods = methods;
   }
 
-  // Register the new type in the module  
+  // Register the new type in the module
   if (PyType_Ready(&table) < 0)
     throw frepple::RuntimeException("Can't register python type " + name);
   Py_INCREF(&table);
   // Note: +8 is to skip the "frepple." characters in the name
   return PyModule_AddObject(m, name.c_str() + 8, reinterpret_cast<PyObject*>(&table));
+}
+
+
+void PythonType::evalException()
+{
+  // Rethrowing the exception to catch its type better
+  try {throw;}
+  catch (DataException e)
+    { PyErr_SetString(PythonDataException, e.what()); }
+  catch (LogicException e)
+    { PyErr_SetString(PythonLogicException, e.what()); }
+  catch (frepple::RuntimeException e)
+    { PyErr_SetString(PythonRuntimeException, e.what()); }
+  catch (exception e)
+    { PyErr_SetString(PyExc_Exception, e.what()); }
+  catch (...)
+    { PyErr_SetString(PyExc_Exception, "Unidentified exception"); }
 }
 
 
@@ -203,50 +220,30 @@ extern "C" PyObject* getattro_handler(PyObject *self, PyObject *name)
   {
     if (!PyString_Check(name))
 		{
-      PyErr_Format(PyExc_TypeError, 
-        "attribute name must be string, not '%s'", 
+      PyErr_Format(PyExc_TypeError,
+        "attribute name must be string, not '%s'",
         name->ob_type->tp_name);
 			return NULL;
 		}
-    XMLElement field(PyString_AsString(name)); 
-    PyObject* result = static_cast<PythonExtensionBase*>(self)->getattro(field);  
+    XMLElement field(PyString_AsString(name));
+    PyObject* result = static_cast<PythonExtensionBase*>(self)->getattro(field);
     // Exit 1: Normal
     if (result) return result;
     // Exit 2: Exception occurred
     if (PyErr_Occurred()) return NULL;
-    // Exit 3: No error occurred but the attribute was not found. 
-    // Use the standard generic function to pick up  standard attributes 
+    // Exit 3: No error occurred but the attribute was not found.
+    // Use the standard generic function to pick up  standard attributes
     // (such as __class__, __doc__, ...)
     // Note that this function also picks up attributes from base classes, but
     // we can't rely on that: any C++ exceptions are lost along the way...
-    return PyObject_GenericGetAttr(self,name);                  
+    return PyObject_GenericGetAttr(self,name);
   }
-  catch (DataException e)                                                     
-  {                                                                           
-    PyErr_SetString(PythonDataException, e.what());                           
-    return NULL;                                                                
-  }                                                                           
-  catch (LogicException e)                                                    
-  {                                                                           
-    PyErr_SetString(PythonLogicException, e.what());                          
-    return NULL;                                                                
-  }                                                                           
-  catch (frepple::RuntimeException e)                                         
-  {                                                                           
-    PyErr_SetString(PythonRuntimeException, e.what());                        
-    return NULL;                                                                
-  }                                                                           
-  catch (exception e)                                                         
-  {                                                                           
-    PyErr_SetString(PyExc_AttributeError, e.what());                          
-    return NULL;                                                                
-  }                                                                           
-  catch (...)                                                                 
-  {                                                                           
-    PyErr_SetString(PyExc_AttributeError, "Unidentified exception");          
-    return NULL;                                                                
-  }                                                                           
-}                                                                             
+  catch (...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
+}
 
 
 extern "C" int setattro_handler(PyObject *self, PyObject *name, PyObject *value)
@@ -256,50 +253,30 @@ extern "C" int setattro_handler(PyObject *self, PyObject *name, PyObject *value)
     // Pick up the field name
     if (!PyString_Check(name))
 		{
-      PyErr_Format(PyExc_TypeError, 
-        "attribute name must be string, not '%s'", 
+      PyErr_Format(PyExc_TypeError,
+        "attribute name must be string, not '%s'",
         name->ob_type->tp_name);
 			return -1;
 		}
-    XMLElement field(PyString_AsString(name)); 
+    XMLElement field(PyString_AsString(name));
 
     // Call the object to update the attribute
     int result = static_cast<PythonExtensionBase*>(self)->setattro(field, value);
 
     // Process result
     if (!result) return 0;
-    PyErr_Format(PyExc_AttributeError, 
-      "attribute '%s' on '%s' can't be updated", 
+    PyErr_Format(PyExc_AttributeError,
+      "attribute '%s' on '%s' can't be updated",
       PyString_AsString(name), self->ob_type->tp_name);
 		return -1;
   }
-  catch (DataException e)                                                     
-  {                                                                           
-    PyErr_SetString(PythonDataException, e.what()); 
-    return -1;                                                                
-  }                                                                           
-  catch (LogicException e)                                                    
-  {                                                                           
-    PyErr_SetString(PythonLogicException, e.what());                          
-    return -1;                                                                
-  }                                                                           
-  catch (frepple::RuntimeException e)                                         
-  {                                                                           
-    PyErr_SetString(PythonRuntimeException, e.what());                        
-    return -1;                                                                
-  }                                                                           
-  catch (exception e)                                                         
-  {                                                                           
-    PyErr_SetString(PyExc_AttributeError, e.what());                          
-    return -1;                                                                
-  }                                                                           
-  catch (...)                                                                 
-  {                                                                           
-    PyErr_SetString(PyExc_AttributeError, "Unidentified exception");          
-    return -1;                                                                
-  }                                                                           
-}                                                                             
-                                                                                  
+  catch (...)
+  {
+    PythonType::evalException();
+    return -1;
+  }
+}
+
 
 extern "C" int compare_handler(PyObject *self, PyObject *other)
 {
@@ -307,31 +284,11 @@ extern "C" int compare_handler(PyObject *self, PyObject *other)
   {
     return static_cast<PythonExtensionBase*>(self)->compare(other);
   }
-  catch (DataException e)                                                     
-  {                                                                           
-    PyErr_SetString(PythonDataException, e.what());                           
-    return -1;                                                                
-  }                                                                           
-  catch (LogicException e)                                                    
-  {                                                                           
-    PyErr_SetString(PythonLogicException, e.what());                          
-    return -1;                                                                
-  }                                                                           
-  catch (frepple::RuntimeException e)                                         
-  {                                                                           
-    PyErr_SetString(PythonRuntimeException, e.what());                        
-    return -1;                                                                
-  }                                                                           
-  catch (exception e)                                                         
-  {                                                                           
-    PyErr_SetString(PyExc_AttributeError, e.what());                          
-    return -1;                                                                
-  }                                                                           
-  catch (...)                                                                 
-  {                                                                           
-    PyErr_SetString(PyExc_AttributeError, "Unidentified exception");          
-    return -1;                                                                
-  } 
+  catch (...)
+  {
+    PythonType::evalException();
+    return -1;
+  }
 }
 
 
@@ -341,65 +298,25 @@ extern "C" PyObject* iternext_handler(PyObject *self)
   {
     return static_cast<PythonExtensionBase*>(self)->iternext();
   }
-  catch (DataException e)                                                     
-  {                                                                           
-    PyErr_SetString(PythonDataException, e.what());                           
-    return NULL;                                                                
-  }                                                                           
-  catch (LogicException e)                                                    
-  {                                                                           
-    PyErr_SetString(PythonLogicException, e.what());                          
-    return NULL;                                                                
-  }                                                                           
-  catch (frepple::RuntimeException e)                                         
-  {                                                                           
-    PyErr_SetString(PythonRuntimeException, e.what());                        
-    return NULL;                                                                
-  }                                                                           
-  catch (exception e)                                                         
-  {                                                                           
-    PyErr_SetString(PyExc_AttributeError, e.what());                          
-    return NULL;                                                                
-  }                                                                           
-  catch (...)                                                                 
-  {                                                                           
-    PyErr_SetString(PyExc_AttributeError, "Unidentified exception");          
-    return NULL;                                                                
-  }         
+  catch (...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
 }
 
 
 extern "C" PyObject* call_handler(PyObject* self, PyObject* args, PyObject* kwds)
 {
-  try
-  {
-    return static_cast<PythonExtensionBase*>(self)->call(args, kwds);
+  try 
+  { 
+    return static_cast<PythonExtensionBase*>(self)->call(args, kwds); 
   }
-  catch (DataException e)                                                     
-  {                                                                           
-    PyErr_SetString(PythonDataException, e.what());                           
-    return NULL;                                                                
-  }                                                                           
-  catch (LogicException e)                                                    
-  {                                                                           
-    PyErr_SetString(PythonLogicException, e.what());                          
-    return NULL;                                                                
-  }                                                                           
-  catch (frepple::RuntimeException e)                                         
-  {                                                                           
-    PyErr_SetString(PythonRuntimeException, e.what());                        
-    return NULL;                                                                
-  }                                                                           
-  catch (exception e)                                                         
-  {                                                                           
-    PyErr_SetString(PyExc_AttributeError, e.what());                          
-    return NULL;                                                                
-  }                                                                           
-  catch (...)                                                                 
-  {                                                                           
-    PyErr_SetString(PyExc_AttributeError, "Unidentified exception");          
-    return NULL;                                                                
-  }         
+  catch (...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
 }
 
 
@@ -409,31 +326,11 @@ extern "C" PyObject* str_handler(PyObject* self)
   {
     return static_cast<PythonExtensionBase*>(self)->str();
   }
-  catch (DataException e)                                                     
-  {                                                                           
-    PyErr_SetString(PythonDataException, e.what());                           
-    return NULL;                                                                
-  }                                                                           
-  catch (LogicException e)                                                    
-  {                                                                           
-    PyErr_SetString(PythonLogicException, e.what());                          
-    return NULL;                                                                
-  }                                                                           
-  catch (frepple::RuntimeException e)                                         
-  {                                                                           
-    PyErr_SetString(PythonRuntimeException, e.what());                        
-    return NULL;                                                                
-  }                                                                           
-  catch (exception e)                                                         
-  {                                                                           
-    PyErr_SetString(PyExc_AttributeError, e.what());                          
-    return NULL;                                                                
-  }                                                                           
-  catch (...)                                                                 
-  {                                                                           
-    PyErr_SetString(PyExc_AttributeError, "Unidentified exception");          
-    return NULL;                                                                
-  }         
+  catch (...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
 }
 
 

@@ -182,6 +182,18 @@ item = frepple.item(name="end item", operation=shipoper)
 itemlist = [ frepple.item(name="item %d" % i) for i in range(10) ]
 
 ###
+print "\nTesting the comparison operator"
+print "makoper < shipoper", makeoper < shipoper
+print "shipoper < makeoper", shipoper < makeoper
+print "shipoper != makeoper", shipoper != makeoper
+print "shipoper == makeoper", shipoper == makeoper
+print "shipoper == shipoper", shipoper == shipoper
+try:
+  print "makeoper == item", makeoper == item
+except Exception, e:
+  print "Catching exception %s: %s" % (e.__class__.__name__, e)
+
+###
 print "\nCreating a resource"
 frepple.resource(name="machine", maximum=frepple.calendar(name="doublecal"))
 

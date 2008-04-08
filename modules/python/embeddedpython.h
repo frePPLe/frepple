@@ -744,6 +744,7 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
       x.supportgetattro();
       x.supportsetattro();
       x.supportstr();
+      x.supportcompare();
       x.supportcreate(create);
       const_cast<MetaCategory&>(PROXY::metadata).factoryPythonProxy = proxy;
       return x.typeReady(m);
@@ -766,6 +767,19 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
     PyObject* str()
     {
       return PythonObject(obj ? obj->getName() : "None");
+    }
+
+    /** Comparison operator. */
+    int compare(const PythonObject& other)
+    {
+      if (!other.check(ME::getType()))
+      {
+        // Different type
+        PyErr_SetString(PythonDataException, "Wrong type in comparison");
+        return -1;
+      }
+      PROXY* y = static_cast<ME*>(static_cast<PyObject*>(other))->obj;
+      return obj->getName().compare(y->getName());     
     }
 
     static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
@@ -795,8 +809,9 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
       const MetaClass* j = PROXY::metadata.findClass(type.c_str());
       if (!j)
       {
-        string msg = "No type " + type + " registered for category " + PROXY::metadata.type;
-        PyErr_SetString(PythonDataException, msg.c_str());
+        PyErr_Format(PythonDataException, 
+          "No type %s registered for category %s",
+          type, PROXY::metadata.type.c_str());
         return NULL;
       }
       PROXY* x = PROXY::add(string(PyString_AsString(PyObject_Str(name))), *j);
@@ -850,6 +865,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
       x.supportgetattro();
       x.supportsetattro();
       x.supportstr();
+      x.supportcompare();
       x.supportcreate(create);
       x.setBase(BASE::getType());
       const_cast<MetaClass&>(PROXY::metadata).factoryPythonProxy = proxy;
@@ -865,6 +881,19 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
 
   private:
     virtual PyObject* getattro(const XMLElement&) = 0;
+
+    /** Comparison operator. */
+    int compare(const PythonObject& other)
+    {
+      if (!other.check(BASE::getType()))
+      {
+        // Different type
+        PyErr_SetString(PythonDataException, "Wrong type in comparison");
+        return -1;
+      }
+      BASE* y = static_cast<BASE*>(static_cast<PyObject*>(other));
+      return obj->getName().compare(y->obj->getName());
+    }
 
     virtual int setattro(const XMLElement&, const PythonObject&) = 0;
 

@@ -2,6 +2,10 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <commands>
   	<verbose>true</verbose>
+  	<!--
+  	This test case doesn't read any xml data files. Everything is done from
+  	the Python code.
+  	-->
     <command xsi:type="command_python" filename="python.py"/>
   </commands>
 </plan>

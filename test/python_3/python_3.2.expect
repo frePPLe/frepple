@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>demo model</name>
+	<description>demo description in unicode object</description>
+	<current>2007-01-01T00:00:00</current>
+	<solvers>
+		<solver name="MRP" xsi:type="solver_mrp">
+			<constraints>7</constraints>
+		</solver>
+	</solvers>
+	<locations>
+		<location name="locA">
+		</location>
+		<location name="locB">
+		</location>
+	</locations>
+	<customers>
+		<customer name="client">
+		</customer>
+	</customers>
+	<calendars>
+		<calendar name="Capacity" xsi:type="calendar_double">
+			<default>0</default>
+			<buckets>
+				<bucket start="2007-01-01T00:00:00">
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar name="boolcal" xsi:type="calendar_boolean">
+			<default>false</default>
+			<buckets>
+			</buckets>
+		</calendar>
+		<calendar name="doublecal" xsi:type="calendar_double">
+			<default>1.23</default>
+			<buckets>
+			</buckets>
+		</calendar>
+		<calendar name="voidcal" xsi:type="calendar_void">
+			<buckets>
+			</buckets>
+		</calendar>
+	</calendars>
+	<operations>
+		<operation name="delivery end item" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+		<operation name="make end item" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+	</operations>
+	<items>
+		<item name="end item">
+			<operation name="delivery end item" xsi:type="operation_fixed_time"/>
+		</item>
+		<item name="item 0">
+		</item>
+		<item name="item 1">
+		</item>
+		<item name="item 2">
+		</item>
+		<item name="item 3">
+		</item>
+		<item name="item 4">
+		</item>
+		<item name="item 5">
+		</item>
+		<item name="item 6">
+		</item>
+		<item name="item 7">
+		</item>
+		<item name="item 8">
+		</item>
+		<item name="item 9">
+		</item>
+	</items>
+	<buffers>
+		<buffer name="buffer1" xsi:type="buffer_procure">
+			<category>tttt</category>
+			<description>pol</description>
+			<members>
+				<buffer name="buffer2"/>
+			</members>
+			<item name="item 1"/>
+			<location name="locA"/>
+		</buffer>
+		<buffer name="buffer2">
+			<owner name="buffer1" xsi:type="buffer_procure"/>
+		</buffer>
+		<buffer name="end item">
+			<producing name="make end item" xsi:type="operation_fixed_time"/>
+			<item name="end item"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<operation name="make end item" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="delivery end item" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</buffer>
+	</buffers>
+	<demands>
+		<demand name="order 1">
+			<customer name="client"/>
+			<quantity>10</quantity>
+			<item name="end item"/>
+			<due>2007-03-02T09:00:00</due>
+			<priority>1</priority>
+			<maxlateness>P0D</maxlateness>
+		</demand>
+		<demand name="order 2">
+			<customer name="client"/>
+			<quantity>10</quantity>
+			<item name="end item"/>
+			<due>2007-03-02T08:30:00</due>
+			<priority>2</priority>
+			<maxlateness>P0D</maxlateness>
+		</demand>
+		<demand name="order 3">
+			<customer name="client"/>
+			<quantity>10</quantity>
+			<item name="end item"/>
+			<due>2007-03-02T20:00:00</due>
+			<priority>3</priority>
+			<maxlateness>P0D</maxlateness>
+		</demand>
+	</demands>
+	<resources>
+		<resource name="Resource">
+			<maximum name="Capacity" xsi:type="calendar_double"/>
+			<loads>
+				<load>
+					<operation name="make end item" xsi:type="operation_fixed_time"/>
+				</load>
+			</loads>
+		</resource>
+		<resource name="machine">
+			<maximum name="doublecal" xsi:type="calendar_double"/>
+		</resource>
+	</resources>
+	<operationplans>
+		<operationplan id="3" operation="delivery end item">
+			<demand name="order 2"/>
+			<start>2007-03-01T08:30:00</start>
+			<end>2007-03-02T08:30:00</end>
+			<quantity>10</quantity>
+		</operationplan>
+		<operationplan id="1" operation="delivery end item">
+			<demand name="order 1"/>
+			<start>2007-03-01T09:00:00</start>
+			<end>2007-03-02T09:00:00</end>
+			<quantity>10</quantity>
+		</operationplan>
+		<operationplan id="5" operation="delivery end item">
+			<demand name="order 3"/>
+			<start>2007-03-01T20:00:00</start>
+			<end>2007-03-02T20:00:00</end>
+			<quantity>10</quantity>
+		</operationplan>
+		<operationplan id="6" operation="make end item">
+			<start>2007-02-26T09:00:00</start>
+			<end>2007-02-27T09:00:00</end>
+			<quantity>10</quantity>
+		</operationplan>
+		<operationplan id="4" operation="make end item">
+			<start>2007-02-27T09:00:00</start>
+			<end>2007-02-28T09:00:00</end>
+			<quantity>10</quantity>
+		</operationplan>
+		<operationplan id="2" operation="make end item">
+			<start>2007-02-28T09:00:00</start>
+			<end>2007-03-01T09:00:00</end>
+			<quantity>10</quantity>
+		</operationplan>
+	</operationplans>
+	<problems>
+		<problem>
+			<name>material excess</name>
+			<description>Buffer &apos;end item&apos; has material excess of 20</description>
+			<start>2007-02-27T09:00:00</start>
+			<end>2007-03-01T20:00:00</end>
+			<weight>20</weight>
+		</problem>
+	</problems>
+</plan>

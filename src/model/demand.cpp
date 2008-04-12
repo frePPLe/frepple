@@ -244,7 +244,7 @@ DECLARE_EXPORT void Demand::beginElement(XMLInput& pIn, const Attribute& pAttr)
 }
 
 
-DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_quantity))
     setQuantity (pElement.getDouble());

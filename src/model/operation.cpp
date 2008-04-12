@@ -182,7 +182,7 @@ DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, const Attribute& pAt
 }
 
 
-DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_fence))
     setFence(pElement.getTimeperiod());
@@ -251,7 +251,7 @@ DECLARE_EXPORT void OperationFixedTime::writeElement
 }
 
 
-DECLARE_EXPORT void OperationFixedTime::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void OperationFixedTime::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_duration))
     setDuration (pElement.getTimeperiod());
@@ -358,7 +358,7 @@ DECLARE_EXPORT void OperationTimePer::writeElement
 }
 
 
-DECLARE_EXPORT void OperationTimePer::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void OperationTimePer::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_duration))
     setDuration (pElement.getTimeperiod());
@@ -406,7 +406,7 @@ DECLARE_EXPORT void OperationRouting::beginElement (XMLInput& pIn, const Attribu
 }
 
 
-DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_operation)
       && pIn.getParentElement().first.isA(Tags::tag_steps))
@@ -615,7 +615,7 @@ DECLARE_EXPORT void OperationAlternate::beginElement (XMLInput& pIn, const Attri
 }
 
 
-DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   // Saving some typing...
   typedef pair<Operation*,alternateProperty> tempData;

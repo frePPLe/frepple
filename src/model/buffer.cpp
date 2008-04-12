@@ -243,7 +243,7 @@ DECLARE_EXPORT void Buffer::beginElement (XMLInput& pIn, const Attribute& pAttr)
 }
 
 
-DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_producing))
   {
@@ -581,7 +581,7 @@ DECLARE_EXPORT void BufferInfinite::writeElement
 }
 
 
-DECLARE_EXPORT void BufferProcure::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void BufferProcure::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_leadtime))
     setLeadtime(pElement.getTimeperiod());

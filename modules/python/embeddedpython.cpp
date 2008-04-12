@@ -137,7 +137,7 @@ void CommandPython::executePython(const char* cmd)
 }
 
 
-void CommandPython::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+void CommandPython::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_cmdline))
   {

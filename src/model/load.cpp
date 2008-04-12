@@ -165,7 +165,7 @@ DECLARE_EXPORT void Load::beginElement (XMLInput& pIn, const Attribute& pAttr)
 }
 
 
-DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_resource))
   {

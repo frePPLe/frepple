@@ -203,7 +203,7 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
 }
 
 
-DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_constraints))
     setConstraints(pElement.getInt());

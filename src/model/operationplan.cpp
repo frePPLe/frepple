@@ -642,7 +642,7 @@ DECLARE_EXPORT void OperationPlan::beginElement (XMLInput& pIn, const Attribute&
 }
 
 
-DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   // Note that the fields have been ordered more or less in the order
   // of their expected frequency.

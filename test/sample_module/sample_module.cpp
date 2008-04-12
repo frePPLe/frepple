@@ -85,7 +85,7 @@ void OperationTransport::writeElement
 }
 
 
-void OperationTransport::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+void OperationTransport::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(tag_from))
   {

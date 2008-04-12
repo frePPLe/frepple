@@ -265,7 +265,7 @@ void Forecast::writeElement(XMLOutput *o, const Keyword &tag, mode m) const
 }
 
 
-void Forecast::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+void Forecast::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   // While reading forecast buckets, we use the userarea field on the input
   // to cache the data. The temporary object is deleted when the bucket

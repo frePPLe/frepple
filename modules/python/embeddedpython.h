@@ -235,7 +235,7 @@ class CommandPython : public Command, public XMLinstruction
     virtual size_t getSize() const
       {return sizeof(CommandPython) + cmd.size() + filename.size();}
 
-    void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
+    void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
 
     /** This method is called when a processing instruction is read. */
     void processInstruction(XMLInput &i, const char *d) {executePython(d);}

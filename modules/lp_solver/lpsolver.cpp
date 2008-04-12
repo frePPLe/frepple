@@ -279,7 +279,7 @@ void LPSolver::beginElement(XMLInput& pIn, const Attribute& pAttr)
 }
 
 
-void LPSolver::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+void LPSolver::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_calendar))
   {

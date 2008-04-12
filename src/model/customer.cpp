@@ -58,7 +58,7 @@ DECLARE_EXPORT void Customer::beginElement(XMLInput& pIn, const Attribute& pAttr
 }
 
 
-DECLARE_EXPORT void Customer::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void Customer::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   HasDescription::endElement(pIn, pAttr, pElement);
   HasHierarchy<Customer>::endElement(pIn, pAttr, pElement);

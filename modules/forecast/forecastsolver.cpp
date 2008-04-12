@@ -33,7 +33,7 @@ namespace module_forecast
 const Keyword tag_automatic("automatic");
 
 
-void ForecastSolver::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+void ForecastSolver::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(tag_automatic))
     setAutomatic(pElement.getBool());

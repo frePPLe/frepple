@@ -145,7 +145,7 @@ DECLARE_EXPORT void Resource::beginElement (XMLInput& pIn, const Attribute& pAtt
 }
 
 
-DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   /* Note that while restoring the size, the parent's size is NOT
      automatically updated. The getDescription of the 'set_size' function may

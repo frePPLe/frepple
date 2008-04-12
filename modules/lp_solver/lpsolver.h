@@ -100,7 +100,7 @@ class LPSolver : public Solver
 
     void beginElement(XMLInput& pIn, const Attribute& pAttr);
     virtual void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
-    void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
+    void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
 
     LPSolver(const string n) : Solver(n), cal(NULL), rows(0), columns(0) {};
     ~LPSolver() {};

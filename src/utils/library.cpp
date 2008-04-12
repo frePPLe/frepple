@@ -506,7 +506,7 @@ void HasDescription::writeElement(XMLOutput *o, const Keyword &t, mode m) const
 }
 
 
-void HasDescription::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+void HasDescription::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_category))
     setCategory(pElement.getString());

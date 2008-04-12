@@ -52,7 +52,7 @@ DECLARE_EXPORT bool Command::getVerbose() const
 }
 
 
-DECLARE_EXPORT void Command::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void Command::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_verbose)) setVerbose(pElement.getBool());
 }
@@ -377,7 +377,7 @@ DECLARE_EXPORT CommandList::~CommandList()
 }
 
 
-DECLARE_EXPORT void CommandList::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void CommandList::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_command) && !pIn.isObjectEnd())
   {
@@ -435,7 +435,7 @@ DECLARE_EXPORT void CommandSystem::execute()
 }
 
 
-DECLARE_EXPORT void CommandSystem::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void CommandSystem::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_cmdline))
     // No need to replace environment variables here. It's done at execution
@@ -544,7 +544,7 @@ DECLARE_EXPORT void CommandLoadLibrary::printModules()
 }
 
 
-DECLARE_EXPORT void CommandLoadLibrary::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void CommandLoadLibrary::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_filename))
     pElement >> lib;
@@ -617,7 +617,7 @@ DECLARE_EXPORT void CommandSetEnv::execute()
 }
 
 
-DECLARE_EXPORT void CommandSetEnv::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void CommandSetEnv::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_variable))
     pElement >> variable;

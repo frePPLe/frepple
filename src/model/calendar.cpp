@@ -317,7 +317,7 @@ DECLARE_EXPORT void Calendar::Bucket::writeElement
 }
 
 
-DECLARE_EXPORT void Calendar::Bucket::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void Calendar::Bucket::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_priority))
     pElement >> priority;

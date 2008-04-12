@@ -62,7 +62,7 @@ DECLARE_EXPORT void Location::beginElement(XMLInput& pIn, const Attribute& pAttr
 }
 
 
-DECLARE_EXPORT void Location::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void Location::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_available))
   {

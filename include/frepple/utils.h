@@ -545,14 +545,14 @@ class Keyword : public NonCopyable
 
     /** This is the hash function. See the note on the perfectness of
       * this function at the start. This function should be as simple
-      * as possible while still garantueeing the perfectness.
+      * as possible while still garantueeing the perfectness.<br>
       * Currently we use the hash functions provided by Xerces. We use
-      * 954991 as the hash modulus (954991 being the first prime number higher
+      * 954991 as the hash modulus (954991 being the first prime number lower
       * than 1000000)
       */
     static hashtype hash(const char* c) {return xercesc::XMLString::hash(c,954991);}
 
-    /** This is the hash function taken an XML character string as input.
+    /** This is the hash function taken an XML character string as input.<br>
       * The function is expected to return exactly the same result as when a
       * character pointer is passed as argument.
       * @see hash(const char*)
@@ -2032,7 +2032,9 @@ class Attribute
     void reset(const XMLCh *const c) 
     {
       hash = Keyword::hash(c); 
-      ch = NULL;  // @todo possible to cast?
+      // An XMLCh is normally a wchar, and would need to be transcoded
+      // to a char. We won't bother...
+      ch = NULL;  
     }
 
     /** Return the element name. Since this method involves a lookup in a
@@ -2054,7 +2056,7 @@ class Attribute
     bool operator < (const Attribute& o) const {return hash < o.hash;}
 
     /** String comparison. */
-    bool operator == (const string o) const {logger <<"COMPARE" << o << "--" << ch << endl; return o == ch;}
+    bool operator == (const string o) const {return o == ch;}
 };
 
 
@@ -2210,7 +2212,7 @@ class Object
       * process its own element tag attributes, and its own endElement
       * so it can process its own character data.
       */
-    virtual void endElement(XMLInput&, const Attribute&, DataElement&) = 0;
+    virtual void endElement(XMLInput&, const Attribute&, const DataElement&) = 0;
 
     /** Mark the object as hidden or not. Hidden objects are not exported
       * and are used only as dummy constructs. */
@@ -2245,7 +2247,7 @@ class Object
 /** @brief This class implements a binary tree data structure. It is used as a
   * container for entities keyed by their name.
   *
-  * Technically, the data structure can be described as an red-black tree
+  * Technically, the data structure can be described as a red-black tree
   * with intrusive tree nodes.
   * @see HasName
   */
@@ -2363,8 +2365,11 @@ class Tree : public NonCopyable
       header.right = &header;
     }
 
-    // Destructor.
-    // The destructor is called
+    /** Destructor.<br>
+      * By default, the objects in the tree are not deleted when the tree
+      * is deleted. This is done for performance reasons: the program can shut
+      * down faster.
+      */
     ~Tree() { if(clearOnDestruct) clear(); }
 
     /** Returns an iterator to the start of the list.<br>
@@ -2595,7 +2600,7 @@ class Command : public Object
     /** Returns true if the execution of this command can be undone. */
     virtual bool undoable() const {return false;}
 
-    virtual DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
+    virtual DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     virtual string getDescription() const {return "No description available";}
     virtual ~Command() {};
 
@@ -2672,7 +2677,7 @@ class CommandSetEnv : public Command
     virtual size_t getSize() const
       {return sizeof(CommandSetEnv) + variable.size() + value.size();}
 
-    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
 };
 
 
@@ -2844,7 +2849,7 @@ class CommandList : public Command
     virtual size_t getSize() const {return sizeof(CommandList);}
 
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
 };
 
 
@@ -2894,7 +2899,7 @@ class CommandSystem : public Command
       */
     DECLARE_EXPORT void execute();
 
-    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     string getDescription() const
       {return "Run operating system command '" + cmdLine + "'";}
 
@@ -2947,7 +2952,7 @@ class CommandLoadLibrary : public Command
       */
     DECLARE_EXPORT void execute();
 
-    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     string getDescription() const {return "Loading shared library " + lib;}
 
     virtual const MetaClass& getType() const {return metadata;}
@@ -3515,7 +3520,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       */
     static T* add(T* t, T* hint) {return static_cast<T*>(st.insert(t,hint));}
 
-    void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement) {};
+    void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement) {};
 
     /** This method is available as a object creation factory for
       * classes that are using a string as a key identifier, in particular
@@ -3697,7 +3702,7 @@ class HasDescription
     void setDescription(const string& f) {descr = f;}
 
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
-    void endElement(XMLInput&, const Attribute&, DataElement&);
+    void endElement(XMLInput&, const Attribute&, const DataElement&);
 
   protected:
     /** Returns the memory size in bytes. */
@@ -3823,7 +3828,7 @@ template <class T> class HasHierarchy : public HasName<T>
 
     void beginElement(XMLInput&, const Attribute&);
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
-    void endElement(XMLInput&, const Attribute&, DataElement&);
+    void endElement(XMLInput&, const Attribute&, const DataElement&);
 
   private:
     /** A pointer to the parent object. */

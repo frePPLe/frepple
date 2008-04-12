@@ -43,7 +43,7 @@ DECLARE_EXPORT void CommandSolve::beginElement(XMLInput& pIn, const Attribute& p
 }
 
 
-DECLARE_EXPORT void CommandSolve::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void CommandSolve::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_solver))
   {
@@ -91,7 +91,7 @@ DECLARE_EXPORT void Solver::writeElement
 }
 
 
-DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_loglevel))
   {
@@ -107,7 +107,7 @@ DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, const Attribute& pAttr, Da
 // READ XML INPUT FILE
 //
 
-DECLARE_EXPORT void CommandReadXMLFile::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void CommandReadXMLFile::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_filename))
     pElement >> filename;
@@ -157,7 +157,7 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
 // READ XML INPUT STRING
 //
 
-DECLARE_EXPORT void CommandReadXMLString::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void CommandReadXMLString::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_data))
     pElement >> data;
@@ -192,7 +192,7 @@ DECLARE_EXPORT void CommandReadXMLString::execute()
 // SAVE MODEL TO XML
 //
 
-DECLARE_EXPORT void CommandSave::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void CommandSave::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_filename))
     pElement >> filename;
@@ -244,7 +244,7 @@ DECLARE_EXPORT void CommandSave::execute()
 //
 
 
-DECLARE_EXPORT void CommandSavePlan::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void CommandSavePlan::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_filename))
     pElement >> filename;
@@ -506,7 +506,7 @@ DECLARE_EXPORT string CommandDeleteOperationPlan::getDescription() const
 // DELETE MODEL
 //
 
-DECLARE_EXPORT void CommandErase::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void CommandErase::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_mode))
   {

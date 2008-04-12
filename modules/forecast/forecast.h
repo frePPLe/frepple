@@ -245,7 +245,7 @@ class Forecast : public Demand
     virtual void setTotalQuantity(const DateRange& , double);
 
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
-    void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
+    void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     void beginElement(XMLInput& pIn, const Attribute& pAttr);
 
     /** Returns whether fractional forecasts are allowed or not.<br>
@@ -423,7 +423,7 @@ class ForecastSolver : public Solver
     virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(ForecastSolver);}
-    void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
+    void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     void writeElement(XMLOutput*, const Keyword&, mode) const;
 
     /** Updates the flag controlling incremental behavior. */

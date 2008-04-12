@@ -163,7 +163,7 @@ DECLARE_EXPORT void Flow::beginElement (XMLInput& pIn, const Attribute& pAttr)
 }
 
 
-DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
+DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA (Tags::tag_buffer))
   {

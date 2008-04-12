@@ -96,7 +96,7 @@ class OperationTransport : public OperationFixedTime
     void beginElement(XMLInput&, const Attribute&);
 
     /** End handler for processing SAX events during XML parsing. */
-    void endElement(XMLInput&, const Attribute&, DataElement&);
+    void endElement(XMLInput&, const Attribute&, const DataElement&);
 
     /** Handler for writing out the objects in XML format. */
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;

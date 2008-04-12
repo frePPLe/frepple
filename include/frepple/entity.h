@@ -117,7 +117,7 @@ template <class T> void HasHierarchy<T>::beginElement
 
 
 template <class T> void HasHierarchy<T>::endElement (XMLInput& pIn,
-   const Attribute& pAttr, DataElement& pElement)
+   const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_owner) && !pIn.isObjectEnd())
   {

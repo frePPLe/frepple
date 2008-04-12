@@ -193,7 +193,7 @@ class SolverMRP : public Solver
     virtual ~SolverMRP() {}
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;

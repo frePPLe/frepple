@@ -137,21 +137,21 @@ void CommandPython::executePython(const char* cmd)
 }
 
 
-void CommandPython::endElement(XMLInput& pIn, XMLElement& pElement)
+void CommandPython::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_cmdline))
+  if (pAttr.isA(Tags::tag_cmdline))
   {
     // No replacement of environment variables here
     filename.clear();
     pElement >> cmd;
   }
-  else if (pElement.isA(Tags::tag_filename))
+  else if (pAttr.isA(Tags::tag_filename))
   {
     cmd.clear();
     pElement >> filename;
   }
   else
-    Command::endElement(pIn, pElement);
+    Command::endElement(pIn, pAttr, pElement);
 }
 
 

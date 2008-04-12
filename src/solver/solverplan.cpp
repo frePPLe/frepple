@@ -180,7 +180,7 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
 }
 
 
-DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -203,14 +203,14 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const XMLtag& tag, mod
 }
 
 
-DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_constraints))
+  if (pAttr.isA(Tags::tag_constraints))
     setConstraints(pElement.getInt());
-  else if (pElement.isA(Tags::tag_maxparallel))
+  else if (pAttr.isA(Tags::tag_maxparallel))
     setMaxParallel(pElement.getInt());
   else
-    Solver::endElement(pIn, pElement);
+    Solver::endElement(pIn, pAttr, pElement);
 }
 
 

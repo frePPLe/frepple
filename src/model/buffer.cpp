@@ -152,7 +152,7 @@ DECLARE_EXPORT double Buffer::getOnHand(Date d1, Date d2, bool min) const
 }
 
 
-DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
+DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -218,51 +218,48 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const XMLtag &tag, mode m
 }
 
 
-DECLARE_EXPORT void Buffer::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Buffer::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA(Tags::tag_flow)
-      && pIn.getParentElement().isA(Tags::tag_flows))
+  if (pAttr.isA(Tags::tag_flow)
+      && pIn.getParentElement().first.isA(Tags::tag_flows))
   {
     Flow *f =
       dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn));
     if (f) f->setBuffer(this);
     pIn.readto (f);
   }
-  else if (pElement.isA(Tags::tag_producing))
+  else if (pAttr.isA(Tags::tag_producing))
     pIn.readto( Operation::reader(Operation::metadata,pIn) );
-  else if (pElement.isA(Tags::tag_item))
+  else if (pAttr.isA(Tags::tag_item))
     pIn.readto( Item::reader(Item::metadata,pIn) );
-  else if (pElement.isA(Tags::tag_minimum) || pElement.isA(Tags::tag_maximum))
+  else if (pAttr.isA(Tags::tag_minimum) || pAttr.isA(Tags::tag_maximum))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
-  else if (pElement.isA(Tags::tag_location))
+  else if (pAttr.isA(Tags::tag_location))
     pIn.readto( Location::reader(Location::metadata,pIn) );
-  else if (pElement.isA(Tags::tag_flowplans))
+  else if (pAttr.isA(Tags::tag_flowplans))
     pIn.IgnoreElement();
   else
-    HasHierarchy<Buffer>::beginElement(pIn, pElement);
+    HasHierarchy<Buffer>::beginElement(pIn, pAttr);
 }
 
 
-DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_producing))
+  if (pAttr.isA(Tags::tag_producing))
   {
     Operation *b = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (b) setProducingOperation(b);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA(Tags::tag_item))
+  else if (pAttr.isA(Tags::tag_item))
   {
     Item *a = dynamic_cast<Item*>(pIn.getPreviousObject());
     if (a) setItem(a);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA(Tags::tag_onhand))
-  {
-    double f = pElement.getDouble();
-    setOnHand(f);
-  }
-  else if (pElement.isA(Tags::tag_minimum))
+  else if (pAttr.isA(Tags::tag_onhand))
+    setOnHand(pElement.getDouble());
+  else if (pAttr.isA(Tags::tag_minimum))
   {
     CalendarDouble *mincal =
       dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
@@ -277,7 +274,7 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
           "' has invalid type for use as buffer min calendar");
     }
   }
-  else if (pElement.isA(Tags::tag_maximum))
+  else if (pAttr.isA(Tags::tag_maximum))
   {
     CalendarDouble *maxcal =
       dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
@@ -292,7 +289,7 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
           "' has invalid type for use as buffer max calendar");
     }
   }
-  else if (pElement.isA(Tags::tag_location))
+  else if (pAttr.isA(Tags::tag_location))
   {
     Location * d = dynamic_cast<Location*>(pIn.getPreviousObject());
     if (d) setLocation(d);
@@ -300,9 +297,9 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else
   {
-    Plannable::endElement(pIn, pElement);
-    HasDescription::endElement(pIn, pElement);
-    HasHierarchy<Buffer>::endElement(pIn, pElement);
+    Plannable::endElement(pIn, pAttr, pElement);
+    HasDescription::endElement(pIn, pAttr, pElement);
+    HasHierarchy<Buffer>::endElement(pIn, pAttr, pElement);
   }
 }
 
@@ -565,7 +562,7 @@ DECLARE_EXPORT void Buffer::followPegging
 
 
 DECLARE_EXPORT void BufferInfinite::writeElement
-(XMLOutput *o, const XMLtag &tag, mode m) const
+(XMLOutput *o, const Keyword &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -584,32 +581,32 @@ DECLARE_EXPORT void BufferInfinite::writeElement
 }
 
 
-DECLARE_EXPORT void BufferProcure::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void BufferProcure::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_leadtime))
+  if (pAttr.isA(Tags::tag_leadtime))
     setLeadtime(pElement.getTimeperiod());
-  else if (pElement.isA(Tags::tag_fence))
+  else if (pAttr.isA(Tags::tag_fence))
     setFence(pElement.getTimeperiod());
-  else if (pElement.isA(Tags::tag_size_maximum))
+  else if (pAttr.isA(Tags::tag_size_maximum))
     setSizeMaximum(pElement.getDouble());
-  else if (pElement.isA(Tags::tag_size_minimum))
+  else if (pAttr.isA(Tags::tag_size_minimum))
     setSizeMinimum(pElement.getDouble());
-  else if (pElement.isA(Tags::tag_size_multiple))
+  else if (pAttr.isA(Tags::tag_size_multiple))
     setSizeMultiple(pElement.getDouble());
-  else if (pElement.isA(Tags::tag_mininterval))
+  else if (pAttr.isA(Tags::tag_mininterval))
     setMinimumInterval(pElement.getTimeperiod());
-  else if (pElement.isA(Tags::tag_maxinterval))
+  else if (pAttr.isA(Tags::tag_maxinterval))
     setMaximumInterval(pElement.getTimeperiod());
-  else if (pElement.isA(Tags::tag_mininventory))
+  else if (pAttr.isA(Tags::tag_mininventory))
     setMinimumInventory(pElement.getDouble());
-  else if (pElement.isA(Tags::tag_maxinventory))
+  else if (pAttr.isA(Tags::tag_maxinventory))
     setMaximumInventory(pElement.getDouble());
   else
-    Buffer::endElement(pIn, pElement);
+    Buffer::endElement(pIn, pAttr, pElement);
 }
 
 
-DECLARE_EXPORT void BufferProcure::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
+DECLARE_EXPORT void BufferProcure::writeElement(XMLOutput *o, const Keyword &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)

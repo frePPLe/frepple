@@ -45,7 +45,7 @@ DECLARE_EXPORT Item::~Item()
 }
 
 
-DECLARE_EXPORT void Item::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Item::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -65,18 +65,18 @@ DECLARE_EXPORT void Item::writeElement(XMLOutput *o, const XMLtag& tag, mode m) 
 }
 
 
-DECLARE_EXPORT void Item::beginElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Item::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA (Tags::tag_operation))
+  if (pAttr.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn) );
   else
-    HasHierarchy<Item>::beginElement(pIn, pElement);
+    HasHierarchy<Item>::beginElement(pIn, pAttr);
 }
 
 
-DECLARE_EXPORT void Item::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Item::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA (Tags::tag_operation))
+  if (pAttr.isA (Tags::tag_operation))
   {
     Operation *o = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (o) setOperation(o);
@@ -84,8 +84,8 @@ DECLARE_EXPORT void Item::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else
   {
-    HasDescription::endElement(pIn, pElement);
-    HasHierarchy<Item>::endElement(pIn, pElement);
+    HasDescription::endElement(pIn, pAttr, pElement);
+    HasHierarchy<Item>::endElement(pIn, pAttr, pElement);
   }
 }
 

@@ -192,8 +192,8 @@ class SolverMRP : public Solver
     /** Destructor. */
     virtual ~SolverMRP() {}
 
-    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;

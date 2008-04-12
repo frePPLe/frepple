@@ -210,13 +210,13 @@ class Calendar : public HasName<Calendar>, public Object
         }
 
         virtual DECLARE_EXPORT void writeElement
-          (XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+          (XMLOutput*, const Keyword&, mode=DEFAULT) const;
 
         /** Reads the bucket information from the input. Only the fields NAME
           * and START are read in. Other fields as also written out but these
           * are information-only fields.
           */
-        DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement&  pElement);
+        DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
 
         virtual const MetaClass& getType() const
           {return metadata;}
@@ -239,7 +239,7 @@ class Calendar : public HasName<Calendar>, public Object
       * This method is intended to be used to create objects when reading
       * XML input data.
       */
-    DECLARE_EXPORT Bucket* createBucket(const Attributes* atts);
+    DECLARE_EXPORT Bucket* createBucket(const xercesc::Attributes* atts);
 
     /** Adds a new bucket to the list. */
     DECLARE_EXPORT Bucket* addBucket(Date, Date, string);
@@ -318,9 +318,9 @@ class Calendar : public HasName<Calendar>, public Object
     /** Returns an iterator to go through the list of buffers. */
     BucketIterator endBuckets() const {return BucketIterator(NULL);}
 
-    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput& pIn, XMLElement&  pElement) {}
-    DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement&  pElement);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement) {}
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaCategory metadata;
@@ -348,7 +348,7 @@ class Calendar : public HasName<Calendar>, public Object
 /** @brief This calendar type is used to store values in its buckets.
   *
   * The template type must statisfy the following requirements:
-  *   - XML import supported by the operator >> of the class XMLElement.
+  *   - XML import supported by the operator >> of the class DataElement.
   *   - XML export supported by the method writeElement of the class XMLOutput.
   * Subclasses will need to implement the getType() method.
   * @see CalendarPointer
@@ -379,7 +379,7 @@ template <typename T> class CalendarValue : public Calendar
         void setValue(const T& v) {val = v;}
 
         void writeElement
-        (XMLOutput *o, const XMLtag& tag, mode m = DEFAULT) const
+        (XMLOutput *o, const Keyword& tag, mode m = DEFAULT) const
         {
           assert(m == DEFAULT || m == FULL);
           writeHeader(o);
@@ -388,12 +388,12 @@ template <typename T> class CalendarValue : public Calendar
           o->EndObject(tag);
         }
 
-        void endElement (XMLInput& pIn, XMLElement& pElement)
+        void endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
         {
-          if (pElement.isA(Tags::tag_value))
+          if (pAttr.isA(Tags::tag_value))
             pElement >> val;
           else
-            Bucket::endElement(pIn,pElement);
+            Bucket::endElement(pIn, pAttr, pElement);
         }
 
         virtual const MetaClass& getType() const
@@ -450,7 +450,7 @@ template <typename T> class CalendarValue : public Calendar
     /** Update the default calendar value when no entry is matching. */
     virtual void setDefault(const T v) {defaultValue = v;}
 
-    void writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+    void writeElement(XMLOutput *o, const Keyword& tag, mode m) const
     {
       // Writing a reference
       if (m == REFERENCE)
@@ -478,12 +478,12 @@ template <typename T> class CalendarValue : public Calendar
       o->EndObject(tag);
     }
 
-    void endElement(XMLInput& pIn, XMLElement& pElement)
+    void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
     {
-      if (pElement.isA(Tags::tag_default))
+      if (pAttr.isA(Tags::tag_default))
         pElement >> defaultValue;
       else
-        Calendar::endElement(pIn, pElement);
+        Calendar::endElement(pIn, pAttr, pElement);
     }
 
   private:
@@ -533,7 +533,7 @@ template <typename T> class CalendarPointer : public Calendar
         void setValue(T* v) {val = v;}
 
         void writeElement
-        (XMLOutput *o, const XMLtag& tag, mode m = DEFAULT) const
+        (XMLOutput *o, const Keyword& tag, mode m = DEFAULT) const
         {
           assert(m == DEFAULT || m == FULL);
           writeHeader(o);
@@ -542,19 +542,19 @@ template <typename T> class CalendarPointer : public Calendar
           o->EndObject(tag);
         }
 
-        void beginElement(XMLInput& pIn, XMLElement& pElement)
+        void beginElement(XMLInput& pIn, const Attribute& pAttr)
         {
-          if (pElement.isA(Tags::tag_value))
+          if (pAttr.isA(Tags::tag_value))
             pIn.readto(
               MetaCategory::ControllerDefault(T::metadata,pIn)
             );
           else
-            Bucket::beginElement(pIn, pElement);
+            Bucket::beginElement(pIn, pAttr);
         }
 
-        void endElement (XMLInput& pIn, XMLElement& pElement)
+        void endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
         {
-          if (pElement.isA(Tags::tag_value))
+          if (pAttr.isA(Tags::tag_value))
           {
             T *o = dynamic_cast<T*>(pIn.getPreviousObject());
             if (!o)
@@ -563,7 +563,7 @@ template <typename T> class CalendarPointer : public Calendar
             val = o;
           }
           else
-            Bucket::endElement(pIn,pElement);
+            Bucket::endElement(pIn, pAttr, pElement);
         }
 
         virtual const MetaClass& getType() const
@@ -618,7 +618,7 @@ template <typename T> class CalendarPointer : public Calendar
 
     virtual const MetaClass& getType() const = 0;
 
-    void writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+    void writeElement(XMLOutput *o, const Keyword& tag, mode m) const
     {
       // Writing a reference
       if (m == REFERENCE)
@@ -646,17 +646,17 @@ template <typename T> class CalendarPointer : public Calendar
       o->EndObject(tag);
     }
 
-    void beginElement (XMLInput& pIn, XMLElement& pElement)
+    void beginElement (XMLInput& pIn, const Attribute& pAttr)
     {
-      if (pElement.isA (Tags::tag_default))
+      if (pAttr.isA (Tags::tag_default))
         pIn.readto(T::reader(T::metadata,pIn));
       else
-        Calendar::beginElement(pIn, pElement);
+        Calendar::beginElement(pIn, pAttr);
     }
 
-    void endElement(XMLInput& pIn, XMLElement& pElement)
+    void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
     {
-      if (pElement.isA(Tags::tag_default))
+      if (pAttr.isA(Tags::tag_default))
       {
         T *o = dynamic_cast<T*>(pIn.getPreviousObject());
         if (!o)
@@ -665,7 +665,7 @@ template <typename T> class CalendarPointer : public Calendar
         defaultValue = o;
       }
       else
-        Calendar::endElement(pIn, pElement); 
+        Calendar::endElement(pIn, pAttr, pElement); 
     }
 
   private:
@@ -813,8 +813,8 @@ class Problem : public NonCopyable, public Object
       */
     virtual double getWeight() const = 0;
 
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput& pIn, XMLElement&  pElement) {}
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    void endElement(XMLInput&, const Attribute&, DataElement&) {}
     static DECLARE_EXPORT void writer(const MetaCategory&, XMLOutput*);
 
     /** Returns an iterator to the very first problem. The iterator can be
@@ -956,8 +956,8 @@ class Solver : public Object, public HasName<Solver>
     explicit Solver(const string& n) : HasName<Solver>(n), loglevel(0) {}
     virtual ~Solver() {}
 
-    virtual DECLARE_EXPORT void writeElement (XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    virtual DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    virtual DECLARE_EXPORT void writeElement (XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
 
     virtual void solve(void* = NULL) = 0;
     virtual void solve(const Demand*,void* = NULL)
@@ -1057,8 +1057,8 @@ class CommandSolve : public Command
     /** Running a solver can't be undone. */
     bool undoable() const {return false;}
 
-    DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
 
     string getDescription() const {return "running a solver";}
 
@@ -1110,8 +1110,8 @@ class Plannable : public Object, public HasProblems, public Solvable
     /** Implement the pure virtual function from the HasProblem class. */
     Plannable* getEntity() const {return const_cast<Plannable*>(this);}
 
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    virtual DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
 
   private:
     /** Stores whether this entity should be skip problem detection, or not. */
@@ -1292,9 +1292,9 @@ class Location
     /** Updates the availability calend of the location. */
     void setAvailable(CalendarBool* b) { available = b; }
 
-    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
     virtual const MetaClass& getType() const {return metadata;}
@@ -1329,9 +1329,9 @@ class Customer
       : public HasHierarchy<Customer>, public HasDescription, public Object
 {
   public:
-    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement& pElement);
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
     Customer(const string& n) : HasHierarchy<Customer>(n) {}
@@ -1526,9 +1526,9 @@ class Operation : public HasName<Operation>,
     /** Returns the minimum size for operationplans. */
     double getSizeMultiple() const {return size_multiple;}
 
-    DECLARE_EXPORT void beginElement(XMLInput& , XMLElement& );
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
 
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
@@ -1962,9 +1962,9 @@ class OperationPlan
       */
     virtual DECLARE_EXPORT void setStart(Date);
 
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
-    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
 
     /** Initialize the operationplan. The initialization function should be
       * called when the operationplan is ready to be 'officially' added. The
@@ -2159,8 +2159,8 @@ class OperationFixedTime : public Operation
       duration = t;
     }
 
-    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -2239,8 +2239,8 @@ class OperationTimePer : public Operation
     DECLARE_EXPORT void setOperationPlanParameters
       (OperationPlan*, double, Date, Date, bool=true) const;
 
-    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -2307,9 +2307,9 @@ class OperationRouting : public Operation
     DECLARE_EXPORT void setOperationPlanParameters
       (OperationPlan*, double, Date, Date, bool=true) const;
 
-    DECLARE_EXPORT void beginElement(XMLInput& , XMLElement&  );
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -2436,9 +2436,9 @@ class OperationAlternate : public Operation
     DECLARE_EXPORT void setOperationPlanParameters
       (OperationPlan*, double, Date, Date, bool=true) const;
 
-    DECLARE_EXPORT void beginElement (XMLInput&, XMLElement&);
-    DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
+    DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual const Operationlist& getSubOperations() const {return alternates;}
 
@@ -2547,9 +2547,9 @@ class Item
       */
     void setOperation(Operation* o) {deliveryOperation = o;}
 
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
-    DECLARE_EXPORT void beginElement (XMLInput&, XMLElement&);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
+    DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Item();
@@ -2634,9 +2634,9 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** Updates the minimum inventory target for the buffer. */
     DECLARE_EXPORT void setMaximum(CalendarDouble *cal);
 
-    DECLARE_EXPORT virtual void beginElement(XMLInput&, XMLElement&);
-    DECLARE_EXPORT virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT virtual void endElement(XMLInput&, XMLElement&);
+    DECLARE_EXPORT virtual void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT virtual void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT virtual void endElement(XMLInput&, const Attribute&, DataElement&);
 
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
@@ -2757,7 +2757,7 @@ class BufferInfinite : public Buffer
 {
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
       {return sizeof(BufferInfinite) + Buffer::extrasize();}
@@ -2822,8 +2822,8 @@ class BufferProcure : public Buffer
 {
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
-    virtual DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return metadata;}
     virtual size_t getSize() const
       {return sizeof(BufferProcure) + Buffer::extrasize();}
@@ -3067,9 +3067,9 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     /** This method holds the logic the compute the quantity of a flowplan. */
     virtual double getFlowplanQuantity(const FlowPlan*) const;
 
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
-    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -3125,7 +3125,7 @@ class FlowEnd : public Flow
     /** This method holds the logic the compute the date of a flowplan. */
     virtual Date getFlowplanDate(const FlowPlan* fl) const;
 
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -3177,7 +3177,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       * Object at all.
       */
     void DECLARE_EXPORT writeElement
-      (XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+      (XMLOutput*, const Keyword&, mode=DEFAULT) const;
 
     /** Updates the quantity of the flowplan by changing the quantity of the
       * operationplan owning this flowplan.<br>
@@ -3268,9 +3268,9 @@ class Resource : public HasHierarchy<Resource>,
     Load* findLoad(const Operation* o, Date d) const 
     {return loads.find(o,d);}
 
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
-    DECLARE_EXPORT void beginElement (XMLInput&, XMLElement&);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
+    DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
 
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
@@ -3336,7 +3336,7 @@ class ResourceInfinite : public Resource
 {
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return metadata;}
     explicit ResourceInfinite(const string& c) : Resource(c)
       {setDetectProblems(false);}
@@ -3400,9 +3400,9 @@ class Load
     /** This method holds the logic the compute the quantity of a loadplan. */
     virtual double getLoadplanQuantity(const LoadPlan*) const;
 
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void beginElement(XMLInput&, XMLElement&);
-    DECLARE_EXPORT void endElement(XMLInput&, XMLElement&);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
     bool getHidden() const
      {
       return (getResource() && getResource()->getHidden())
@@ -3503,9 +3503,9 @@ class Plan : public Plannable
       * dynamic plan information.
       * @see CommandSave, CommandSavePlan
       */
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement&  pElement);
-    DECLARE_EXPORT void beginElement(XMLInput& pIn, XMLElement&  pElement);
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
 
     virtual void updateProblems() {};
 
@@ -3561,7 +3561,7 @@ class CommandReadXMLFile : public Command
       * read. Otherwise, the standard input is read. */
     DECLARE_EXPORT void execute();
 
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
 
     string getDescription() const
     {
@@ -3630,7 +3630,7 @@ class CommandReadXMLString : public Command
 
     /** The commit action reads the input. */
     DECLARE_EXPORT void execute();
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
     string getDescription() const {return "parsing xml input string";}
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;
@@ -3674,7 +3674,7 @@ class CommandSave : public Command
     string getFileName() const {return filename;}
     void setFileName(const string& v) {filename = v;}
     DECLARE_EXPORT void execute();
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
     string getDescription() const
       {return "saving the complete model into file '" + filename + "'";}
     virtual const MetaClass& getType() const {return metadata;}
@@ -3712,7 +3712,7 @@ class CommandSavePlan : public Command
     string getFileName() const {return filename;}
     void setFileName(const string& v) {filename = v;}
     DECLARE_EXPORT void execute();
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
     string getDescription() const
       {return "saving the plan into text file '" + filename + "'";}
     virtual const MetaClass& getType() const {return metadata;}
@@ -3766,7 +3766,7 @@ class CommandErase : public Command
   public:
     CommandErase() : deleteStaticModel(false) {};
     DECLARE_EXPORT void execute();
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
     string getDescription() const
     {
       return deleteStaticModel ? "Erasing the model" : "Erasing the plan";
@@ -3883,9 +3883,9 @@ class Demand
     /** Returns the total amount that has been planned. */
     DECLARE_EXPORT double getPlannedQuantity() const;
 
-    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    virtual DECLARE_EXPORT void endElement(XMLInput& , XMLElement&  );
-    virtual DECLARE_EXPORT void beginElement (XMLInput& , XMLElement&  );
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
+    virtual DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
 
     size_t extrasize() const 
     {

@@ -93,13 +93,13 @@ class OperationTransport : public OperationFixedTime
     void setToBuffer(Buffer *l);
 
     /** Start handler for processing SAX events during XML parsing. */
-    void beginElement(XMLInput& , XMLElement&  );
+    void beginElement(XMLInput&, const Attribute&);
 
     /** End handler for processing SAX events during XML parsing. */
-    void endElement(XMLInput&, XMLElement&);
+    void endElement(XMLInput&, const Attribute&, DataElement&);
 
     /** Handler for writing out the objects in XML format. */
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
+    void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
 
     /** Returns a reference to this class' metadata. */
     virtual const MetaClass& getType() const {return metadata;}

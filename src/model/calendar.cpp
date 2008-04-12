@@ -164,7 +164,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(const string& d) const
 }
 
 
-DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -190,21 +190,21 @@ DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const XMLtag& tag, mode
 }
 
 
-DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
+DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const xercesc::Attributes* atts)
 {
   // Pick up the start, end and name attributes
   char* s;
-  s = XMLString::transcode(atts->getValue(Tags::tag_start.getXMLCharacters()));
+  s = xercesc::XMLString::transcode(atts->getValue(Tags::tag_start.getXMLCharacters()));
   Date startdate(s);
-  XMLString::release(&s);
-  s = XMLString::transcode(atts->getValue(Tags::tag_end.getXMLCharacters()));
+  xercesc::XMLString::release(&s);
+  s = xercesc::XMLString::transcode(atts->getValue(Tags::tag_end.getXMLCharacters()));
   Date enddate = Date::infiniteFuture;
   if (s) enddate = Date(s);
-  XMLString::release(&s);
-  s = XMLString::transcode(atts->getValue(Tags::tag_name.getXMLCharacters()));
+  xercesc::XMLString::release(&s);
+  s = xercesc::XMLString::transcode(atts->getValue(Tags::tag_name.getXMLCharacters()));
   string name;
   if (s) name = s;
-  XMLString::release(&s);
+  xercesc::XMLString::release(&s);
 
   // Check for existence of the bucket: same name, start date and end date
   Calendar::Bucket* result = NULL;
@@ -258,10 +258,10 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const Attributes* atts)
 }
 
 
-DECLARE_EXPORT void Calendar::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Calendar::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA (Tags::tag_bucket)
-      && pIn.getParentElement().isA(Tags::tag_buckets))
+  if (pAttr.isA (Tags::tag_bucket)
+      && pIn.getParentElement().first.isA(Tags::tag_buckets))
     // A new bucket
     pIn.readto(createBucket(pIn.getAttributes()));
 }
@@ -308,7 +308,7 @@ DECLARE_EXPORT void Calendar::Bucket::writeHeader(XMLOutput *o) const
 
 
 DECLARE_EXPORT void Calendar::Bucket::writeElement
-(XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const Keyword& tag, mode m) const
 {
   assert(m == DEFAULT || m == FULL);
   writeHeader(o);
@@ -317,9 +317,9 @@ DECLARE_EXPORT void Calendar::Bucket::writeElement
 }
 
 
-DECLARE_EXPORT void Calendar::Bucket::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Calendar::Bucket::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_priority))
+  if (pAttr.isA(Tags::tag_priority))
     pElement >> priority;
 }
 

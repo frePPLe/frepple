@@ -71,7 +71,7 @@ DECLARE_EXPORT void Resource::setMaximum(CalendarDouble* c)
 }
 
 
-DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Write a reference
   if (m == REFERENCE)
@@ -127,30 +127,30 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const XMLtag& tag, mode
 }
 
 
-DECLARE_EXPORT void Resource::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Resource::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA (Tags::tag_load)
-      && pIn.getParentElement().isA(Tags::tag_loads))
+  if (pAttr.isA (Tags::tag_load)
+      && pIn.getParentElement().first.isA(Tags::tag_loads))
   {
     Load* l = new Load();
     l->setResource(this);
     pIn.readto(&*l);
   }
-  else if (pElement.isA (Tags::tag_maximum))
+  else if (pAttr.isA (Tags::tag_maximum))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
-  else if (pElement.isA(Tags::tag_loadplans))
+  else if (pAttr.isA(Tags::tag_loadplans))
     pIn.IgnoreElement();
   else
-    HasHierarchy<Resource>::beginElement(pIn, pElement);
+    HasHierarchy<Resource>::beginElement(pIn, pAttr);
 }
 
 
-DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
   /* Note that while restoring the size, the parent's size is NOT
      automatically updated. The getDescription of the 'set_size' function may
      suggest this would be the case... */
-  if (pElement.isA (Tags::tag_maximum))
+  if (pAttr.isA (Tags::tag_maximum))
   {
     CalendarDouble * c = dynamic_cast<CalendarDouble*>(pIn.getPreviousObject());
     if (c)
@@ -166,9 +166,9 @@ DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, XMLElement& pElement)
   }
   else
   {
-    Plannable::endElement(pIn, pElement);
-    HasDescription::endElement(pIn, pElement);
-    HasHierarchy<Resource>::endElement (pIn, pElement);
+    Plannable::endElement(pIn, pAttr, pElement);
+    HasDescription::endElement(pIn, pAttr, pElement);
+    HasHierarchy<Resource>::endElement (pIn, pAttr, pElement);
   }
 }
 
@@ -198,7 +198,7 @@ DECLARE_EXPORT Resource::~Resource()
 
 
 DECLARE_EXPORT void ResourceInfinite::writeElement
-(XMLOutput *o, const XMLtag &tag, mode m) const
+(XMLOutput *o, const Keyword &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)

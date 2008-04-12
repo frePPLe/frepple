@@ -73,7 +73,7 @@ DECLARE_EXPORT void FlowPlan::update()
 
 // Remember that this method only superficially looks like a normal
 // writeElement() method.
-DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   o->BeginObject(tag);
   o->writeElement(Tags::tag_date, getDate());

@@ -68,8 +68,8 @@ const XMLOutput::content_type XMLOutput::PLANDETAIL = 4;
 void 	XMLInput::processingInstruction
 (const XMLCh *const target, const XMLCh *const data)
 {
-  char* type = XMLString::transcode(target);
-  char* value = XMLString::transcode(data);
+  char* type = xercesc::XMLString::transcode(target);
+  char* value = xercesc::XMLString::transcode(data);
   XMLinstruction *x = NULL;
   try
   {
@@ -78,8 +78,8 @@ void 	XMLInput::processingInstruction
     if (!j)
     {
       string msg = string("Unknown processing instruction ") + type;
-      XMLString::release(&type);
-      XMLString::release(&value);
+      xercesc::XMLString::release(&type);
+      xercesc::XMLString::release(&value);
       throw LogicException(msg);
     }
     x = dynamic_cast<XMLinstruction*>(j->factoryMethodDefault());
@@ -88,28 +88,28 @@ void 	XMLInput::processingInstruction
     {
       if (abortOnDataException)
       {
-        XMLString::release(&type);
-        XMLString::release(&value);
+        xercesc::XMLString::release(&type);
+        xercesc::XMLString::release(&value);
         throw;
       }
       else logger << "Continuing after data error: " << e.what() << endl;
     }
     delete x;
-    XMLString::release(&type);
-    XMLString::release(&value);
+    xercesc::XMLString::release(&type);
+    xercesc::XMLString::release(&value);
   }
   catch (...)
   {
     delete x;
-    XMLString::release(&type);
-    XMLString::release(&value);
+    xercesc::XMLString::release(&type);
+    xercesc::XMLString::release(&value);
     throw;
   }
 }
 
 
 void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
-    const XMLCh* const qname, const Attributes& atts)
+    const XMLCh* const qname, const xercesc::Attributes& atts)
 {
   // Validate the state
   assert(!states.empty());
@@ -119,8 +119,9 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
     throw DataException("XML-document with elements nested excessively deep");
 
   // Push the element on the stack
-  XMLElement *pElement = &m_EStack[numElements+1];
-  pElement->initialize(n);
+  datapair *pElement = &m_EStack[numElements+1];
+  pElement->first.reset(n);
+  pElement->second.reset();
 
   // Store a pointer to the attributes
   attributes = &atts;
@@ -134,7 +135,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
 
     case IGNOREINPUT:
       // STATE: Parser is ignoring a part of the input
-      if (pElement->getTagHash() == endingHashes.top())
+      if (pElement->first.getHash() == endingHashes.top())
         // Increase the count of occurences before the ignore section ends
         ++ignore;
       ++numElements;
@@ -152,7 +153,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
         logger << "Initialize root tag for reading object NULL" << endl;
 #endif
       states.top() = READOBJECT;
-      endingHashes.push(pElement->getTagHash());
+      endingHashes.push(pElement->first.getHash());
       // Note that there is no break or return here. We also execute the
       // statements of the following switch-case.
 
@@ -166,7 +167,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
 
       // Call the handler of the object
       assert(!m_EHStack.empty());
-      try { getCurrentObject()->beginElement(*this, *pElement); }
+      try { getCurrentObject()->beginElement(*this, pElement->first); }
       catch (DataException e)
       {
         if (abortOnDataException) throw;
@@ -179,22 +180,22 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
       if (states.top() != IGNOREINPUT)
         for (unsigned int i=0, cnt=atts.getLength(); i<cnt; i++)
         {
-          char* val = XMLString::transcode(atts.getValue(i));
-          m_EStack[numElements+1].initialize(atts.getLocalName(i));
-          m_EStack[numElements+1].setData(val);
+          char* val = xercesc::XMLString::transcode(atts.getValue(i));
+          m_EStack[numElements+1].first.reset(atts.getLocalName(i));
+          m_EStack[numElements+1].second.setData(val);
           #ifdef PARSE_DEBUG
-          char* attname = XMLString::transcode(atts.getQName(i));
+          char* attname = xercesc::XMLString::transcode(atts.getQName(i));
           logger << "   Processing attribute " << attname
           << " - object " << getCurrentObject() << endl;
-          XMLString::release(&attname);
+          xercesc::XMLString::release(&attname);
           #endif
-          try { getCurrentObject()->endElement(*this, m_EStack[numElements+1]); }
+          try { getCurrentObject()->endElement(*this, m_EStack[numElements+1].first, m_EStack[numElements+1].second); }
           catch (DataException e)
           {
             if (abortOnDataException) throw;
             else logger << "Continuing after data error: " << e.what() << endl;
           }
-          XMLString::release(&val);
+          xercesc::XMLString::release(&val);
           // Stop processing attributes if we are now in the ignore mode
           if (states.top() == IGNOREINPUT) break;
         }
@@ -215,7 +216,7 @@ void XMLInput::endElement(const XMLCh* const uri,
   assert(numElements < maxdepth);
 
   // Remove an element from the stack
-  XMLElement *pElement = &(m_EStack[numElements--]);
+  datapair *pElement = &(m_EStack[numElements--]);
 
   switch (states.top())
   {
@@ -235,7 +236,7 @@ void XMLInput::endElement(const XMLCh* const uri,
       << " - IGNOREINPUT state" << endl;
 #endif
       // Continue if we aren't dealing with the tag being ignored
-      if (pElement->getTagHash() != endingHashes.top()) return;
+      if (pElement->first.getHash() != endingHashes.top()) return;
       if (ignore == 0)
       {
         // Finished ignoring now
@@ -258,12 +259,12 @@ void XMLInput::endElement(const XMLCh* const uri,
 
       // Check if we finished with the current handler
       assert(!m_EHStack.empty());
-      if (pElement->getTagHash() == endingHashes.top())
+      if (pElement->first.getHash() == endingHashes.top())
       {
         // Call the ending handler of the Object, with a special
         // flag to specify that this object is now ended
         objectEnded = true;
-        try { getCurrentObject()->endElement(*this, *pElement); }
+        try { getCurrentObject()->endElement(*this, pElement->first, pElement->second); }
         catch (DataException e)
         {
           if (abortOnDataException) throw;
@@ -285,7 +286,7 @@ void XMLInput::endElement(const XMLCh* const uri,
         else
         {
           // Call also the endElement function on the owning object
-          try { getCurrentObject()->endElement(*this, *pElement); }
+          try { getCurrentObject()->endElement(*this, pElement->first, pElement->second); }
           catch (DataException e)
           {
             if (abortOnDataException) throw;
@@ -300,7 +301,7 @@ void XMLInput::endElement(const XMLCh* const uri,
       else
         // This tag is not the ending tag of an object
         // Call the function of the Object
-        try { getCurrentObject()->endElement(*this, *pElement); }
+        try { getCurrentObject()->endElement(*this, pElement->first, pElement->second); }
         catch (DataException e)
         {
           if (abortOnDataException) throw;
@@ -316,18 +317,18 @@ void XMLInput::characters(const XMLCh *const c, const unsigned int n)
   if (states.top()==IGNOREINPUT) return;
 
   // Process the data
-  char* name = XMLString::transcode(c);
-  m_EStack[numElements].addData(name, strlen(name));
-  XMLString::release(&name);
+  char* name = xercesc::XMLString::transcode(c);
+  m_EStack[numElements].second.addData(name, strlen(name));
+  xercesc::XMLString::release(&name);
 }
 
 
-void XMLInput::warning(const SAXParseException& exception)
+void XMLInput::warning(const xercesc::SAXParseException& exception)
 {
-  char* message = XMLString::transcode(exception.getMessage());
+  char* message = xercesc::XMLString::transcode(exception.getMessage());
   logger << "Warning: " << message
   << " at line: " << exception.getLineNumber() << endl;
-  XMLString::release(&message);
+  xercesc::XMLString::release(&message);
 }
 
 
@@ -335,7 +336,7 @@ DECLARE_EXPORT void XMLInput::readto(Object * pPI)
 {
   // Keep track of the tag where this object will end
   assert(numElements >= -1);
-  endingHashes.push(m_EStack[numElements+1].getTagHash());
+  endingHashes.push(m_EStack[numElements+1].first.getHash());
   if (pPI)
   {
     // Push a new object on the handler stack
@@ -378,10 +379,11 @@ void XMLInput::shutdown()
   // This allows them to finish off in a valid state, and delete any temporary
   // objects they may have allocated.
   objectEnded = true;
-  m_EStack[numElements].initialize("Not a real tag");
+  m_EStack[numElements].first.reset("Not a real tag");
+  m_EStack[numElements].second.reset();
   while (!m_EHStack.empty())
   {
-    try { getCurrentObject()->endElement(*this, m_EStack[numElements]); }
+    try { getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second); }
     catch (DataException e)
     {
       if (abortOnDataException) throw;
@@ -408,10 +410,11 @@ void XMLInput::reset()
     // of the exception handling we call the reset method.
     if (objectEnded) m_EHStack.pop_back();
     objectEnded = true;
-    m_EStack[++numElements].initialize("Not a real tag");
+    m_EStack[++numElements].first.reset("Not a real tag");
+    m_EStack[++numElements].second.reset();
     while (!m_EHStack.empty())
     {
-      try { getCurrentObject()->endElement(*this, m_EStack[numElements]); }
+      try { getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second); }
       catch (DataException e)
       {
         if (abortOnDataException) throw;
@@ -433,37 +436,37 @@ void XMLInput::reset()
 }
 
 
-void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
+void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
 {
   try
   {
     // Create a Xerces parser
-    parser = XMLReaderFactory::createXMLReader();
+    parser = xercesc::XMLReaderFactory::createXMLReader();
 
     // Set the features of the parser. A bunch of the options are dependent
     // on whether we want to validate the input or not.
-    parser->setProperty(XMLUni::fgXercesScannerName, const_cast<XMLCh*>
-        (validate ? XMLUni::fgSGXMLScanner : XMLUni::fgWFXMLScanner));
-    parser->setFeature(XMLUni::fgSAX2CoreNameSpaces, validate);
-    parser->setFeature(XMLUni::fgSAX2CoreValidation, validate);
-    parser->setFeature(XMLUni::fgSAX2CoreNameSpacePrefixes, false);
-    parser->setFeature(XMLUni::fgXercesIdentityConstraintChecking, false);
-    parser->setFeature(XMLUni::fgXercesDynamic, false);
-    parser->setFeature(XMLUni::fgXercesSchema, validate);
-    parser->setFeature(XMLUni::fgXercesSchemaFullChecking, false);
-    parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal,true);
-    parser->setFeature(XMLUni::fgXercesIgnoreAnnotations,true);
+    parser->setProperty(xercesc::XMLUni::fgXercesScannerName, const_cast<XMLCh*>
+        (validate ? xercesc::XMLUni::fgSGXMLScanner : xercesc::XMLUni::fgWFXMLScanner));
+    parser->setFeature(xercesc::XMLUni::fgSAX2CoreNameSpaces, validate);
+    parser->setFeature(xercesc::XMLUni::fgSAX2CoreValidation, validate);
+    parser->setFeature(xercesc::XMLUni::fgSAX2CoreNameSpacePrefixes, false);
+    parser->setFeature(xercesc::XMLUni::fgXercesIdentityConstraintChecking, false);
+    parser->setFeature(xercesc::XMLUni::fgXercesDynamic, false);
+    parser->setFeature(xercesc::XMLUni::fgXercesSchema, validate);
+    parser->setFeature(xercesc::XMLUni::fgXercesSchemaFullChecking, false);
+    parser->setFeature(xercesc::XMLUni::fgXercesValidationErrorAsFatal,true);
+    parser->setFeature(xercesc::XMLUni::fgXercesIgnoreAnnotations,true);
 
     if (validate)
     {
       // Specify the no-namespace schema file
       string schema = Environment::getHomeDirectory();
       schema += "frepple.xsd";
-      XMLCh *c = XMLString::transcode(schema.c_str());
+      XMLCh *c = xercesc::XMLString::transcode(schema.c_str());
       parser->setProperty(
-        XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, c
+        xercesc::XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, c
       );
-      XMLString::release(&c);
+      xercesc::XMLString::release(&c);
     }
 
     // If we are reading into a NULL object, there is no need to use a
@@ -488,23 +491,23 @@ void XMLInput::parse(InputSource &in, Object *pRoot, bool validate)
   // Note: the reset() method needs to be called in all circumstances. The
   // reset method allows all objects to finish in a valid state and clean up
   // any memory they may have allocated.
-  catch (const XMLException& toCatch)
+  catch (const xercesc::XMLException& toCatch)
   {
-    char* message = XMLString::transcode(toCatch.getMessage());
+    char* message = xercesc::XMLString::transcode(toCatch.getMessage());
     string msg(message);
-    XMLString::release(&message);
+    xercesc::XMLString::release(&message);
     reset();
     throw RuntimeException("Parsing error: " + msg);
   }
-  catch (const SAXParseException& toCatch)
+  catch (const xercesc::SAXParseException& toCatch)
   {
-    char* message = XMLString::transcode(toCatch.getMessage());
+    char* message = xercesc::XMLString::transcode(toCatch.getMessage());
     ostringstream msg;
     if (toCatch.getLineNumber() > 0)
       msg << "Parsing error: " << message << " at line " << toCatch.getLineNumber();
     else
       msg << "Parsing error: " << message;
-    XMLString::release(&message);
+    xercesc::XMLString::release(&message);
     reset();
     throw RuntimeException(msg.str());
   }
@@ -565,7 +568,7 @@ DECLARE_EXPORT void XMLOutput::decIndent()
 
 
 DECLARE_EXPORT void XMLOutput::writeElement
-(const XMLtag& tag, const Object* object, mode m)
+(const Keyword& tag, const Object* object, mode m)
 {
   // Avoid NULL pointers and skip hidden objects
   if (!object || object->getHidden()) return;
@@ -592,7 +595,7 @@ DECLARE_EXPORT void XMLOutput::writeElement
 }
 
 
-DECLARE_EXPORT void XMLOutput::writeElementWithHeader(const XMLtag& tag, const Object* object)
+DECLARE_EXPORT void XMLOutput::writeElementWithHeader(const Keyword& tag, const Object* object)
 {
   // Root object can't be null...
   if (!object)
@@ -622,7 +625,7 @@ DECLARE_EXPORT void XMLOutput::writeElementWithHeader(const XMLtag& tag, const O
 }
 
 
-DECLARE_EXPORT void XMLOutput::writeHeader(const XMLtag& tag)
+DECLARE_EXPORT void XMLOutput::writeHeader(const Keyword& tag)
 {
   // There should not be any saved objects yet
   if (numObjects > 0)
@@ -656,19 +659,21 @@ DECLARE_EXPORT bool XMLElement::getBool() const
 }
 
 
-DECLARE_EXPORT string XMLElement::getName() const
+DECLARE_EXPORT const char* Attribute::getName() const
 {
-  XMLtag::tagtable::const_iterator i = XMLtag::getTags().find(m_dwTagHash);
-  if (i == XMLtag::getTags().end())
-    throw LogicException("Undefined element tag");
-  return i->second->getName();
+  logger << "getname " << (ch?ch:"NUKLL")<< endl;
+  if (ch) return ch;
+  Keyword::tagtable::const_iterator i = Keyword::getTags().find(hash);
+  if (i == Keyword::getTags().end())
+    throw LogicException("Undefined element keyword");
+  return i->second->getName().c_str();
 }
 
 
-DECLARE_EXPORT XMLtag::XMLtag(string name) : strName(name)
+DECLARE_EXPORT Keyword::Keyword(string name) : strName(name)
 {
   // Error condition: name is empty
-  if (name.empty()) throw LogicException("Creating XMLtag without name");
+  if (name.empty()) throw LogicException("Creating keyword without name");
 
   // Create a number of variations of the tag name
   strStartElement = string("<") + name;
@@ -680,19 +685,19 @@ DECLARE_EXPORT XMLtag::XMLtag(string name) : strName(name)
   dw = hash(name.c_str());
 
   // Create a properly encoded Xerces string
-  XMLPlatformUtils::Initialize();
-  xmlname = XMLString::transcode(name.c_str());
+  xercesc::XMLPlatformUtils::Initialize();
+  xmlname = xercesc::XMLString::transcode(name.c_str());
 
   // Verify that the hash is "perfect".
   check();
 }
 
 
-DECLARE_EXPORT XMLtag::XMLtag(string name, string nspace) : strName(name)
+DECLARE_EXPORT Keyword::Keyword(string name, string nspace) : strName(name)
 {
   // Error condition: name is empty
-  if (name.empty()) throw LogicException("Creating XMLtag without name");
-  if (nspace.empty()) throw LogicException("Creating XMLtag with empty namespace");
+  if (name.empty()) throw LogicException("Creating keyword without name");
+  if (nspace.empty()) throw LogicException("Creating keyword with empty namespace");
 
   // Create a number of variations of the tag name
   strStartElement = string("<") + nspace + ":" + name;
@@ -704,15 +709,15 @@ DECLARE_EXPORT XMLtag::XMLtag(string name, string nspace) : strName(name)
   dw = hash(name.c_str());
 
   // Create a properly encoded Xerces string
-  XMLPlatformUtils::Initialize();
-  xmlname = XMLString::transcode(string(nspace + ":" + name).c_str());
+  xercesc::XMLPlatformUtils::Initialize();
+  xmlname = xercesc::XMLString::transcode(string(nspace + ":" + name).c_str());
 
   // Verify that the hash is "perfect".
   check();
 }
 
 
-void XMLtag::check()
+void Keyword::check()
 {
   // To be thread-safe we make sure only a single thread at a time
   // can execute this check.
@@ -728,33 +733,33 @@ void XMLtag::check()
 }
 
 
-DECLARE_EXPORT XMLtag::~XMLtag()
+DECLARE_EXPORT Keyword::~Keyword()
 {
   // Remove from the tag list
   tagtable::iterator i = getTags().find(dw);
   if (i!=getTags().end()) getTags().erase(i);
 
   // Destroy the xerces string
-  XMLString::release(&xmlname);
-  XMLPlatformUtils::Terminate();
+  xercesc::XMLString::release(&xmlname);
+  xercesc::XMLPlatformUtils::Terminate();
 }
 
 
-DECLARE_EXPORT const XMLtag& XMLtag::find(char const* name)
+DECLARE_EXPORT const Keyword& Keyword::find(char const* name)
 {
   tagtable::const_iterator i = getTags().find(hash(name));
-  return *(i!=getTags().end() ? i->second : new XMLtag(name));
+  return *(i!=getTags().end() ? i->second : new Keyword(name));
 }
 
 
-DECLARE_EXPORT XMLtag::tagtable& XMLtag::getTags()
+DECLARE_EXPORT Keyword::tagtable& Keyword::getTags()
 {
   static tagtable alltags;
   return alltags;
 }
 
 
-DECLARE_EXPORT void XMLtag::printTags()
+DECLARE_EXPORT void Keyword::printTags()
 {
   for (tagtable::iterator i = getTags().begin(); i != getTags().end(); ++i)
     logger << i->second->getName() << "   " << i->second->dw << endl;
@@ -826,9 +831,9 @@ void XMLInputFile::parse(Object *pRoot, bool validate)
   {
     // Normal file
     // Parse the file
-    XMLCh *f = XMLString::transcode(filename.c_str());
-    LocalFileInputSource in(f);
-    XMLString::release(&f);
+    XMLCh *f = xercesc::XMLString::transcode(filename.c_str());
+    xercesc::LocalFileInputSource in(f);
+    xercesc::XMLString::release(&f);
     XMLInput::parse(in, pRoot, validate);
   }
 }

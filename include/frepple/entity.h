@@ -86,7 +86,7 @@ template <class T> void HasHierarchy<T>::setOwner (T* fam)
 
 
 template <class T> void HasHierarchy<T>::writeElement
-(XMLOutput* o, const XMLtag &t, mode m) const
+(XMLOutput* o, const Keyword &t, mode m) const
 {
   /** Note that this function is never called on its own. It is always called
     * from the writeElement() method of a subclass. Therefore we don't need
@@ -106,27 +106,27 @@ template <class T> void HasHierarchy<T>::writeElement
 
 
 template <class T> void HasHierarchy<T>::beginElement
-(XMLInput& pIn, XMLElement& pElement)
+(XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA(Tags::tag_owner) ||
-      (pIn.getParentElement().isA(Tags::tag_members)
-       && pElement.isA(T::metadata.typetag)))
+  if (pAttr.isA(Tags::tag_owner) ||
+      (pIn.getParentElement().first.isA(Tags::tag_members)
+       && pAttr.isA(T::metadata.typetag)))
     // Start reading a member of the parent
     pIn.readto( T::reader(T::metadata,pIn) );
 }
 
 
 template <class T> void HasHierarchy<T>::endElement (XMLInput& pIn,
-    XMLElement& pElement)
+   const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_owner) && !pIn.isObjectEnd())
+  if (pAttr.isA(Tags::tag_owner) && !pIn.isObjectEnd())
   {
     // we just ended an owner element: ...<OWNER>abc</OWNER>
     T* o = dynamic_cast<T*>(pIn.getPreviousObject());
     if (o) setOwner(o);
   }
-  else if (pElement.isA(T::metadata.typetag)
-     && pIn.getParentElement().isA(Tags::tag_members)
+  else if (pAttr.isA(T::metadata.typetag)
+     && pIn.getParentElement().first.isA(Tags::tag_members)
      && pIn.isObjectEnd() )
   {
     // we just have ended a member element <MEMBERS><TAG>abc<TAG>...</MEMBERS>

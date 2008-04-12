@@ -120,7 +120,7 @@ DECLARE_EXPORT Flow::~Flow()
 }
 
 
-DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const Keyword& tag, mode m) const
 {
   // If the flow has already been saved, no need to repeat it again
   // A 'reference' to a flow is not useful to be saved.
@@ -154,45 +154,45 @@ DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const XMLtag& tag, mode m)
 }
 
 
-DECLARE_EXPORT void Flow::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Flow::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA (Tags::tag_buffer))
+  if (pAttr.isA (Tags::tag_buffer))
     pIn.readto( Buffer::reader(Buffer::metadata,pIn) );
-  else if (pElement.isA (Tags::tag_operation))
+  else if (pAttr.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn) );
 }
 
 
-DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA (Tags::tag_buffer))
+  if (pAttr.isA (Tags::tag_buffer))
   {
     Buffer * b = dynamic_cast<Buffer*>(pIn.getPreviousObject());
     if (b) setBuffer(b);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA (Tags::tag_operation))
+  else if (pAttr.isA (Tags::tag_operation))
   {
     Operation * o = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (o) setOperation(o);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA(Tags::tag_quantity))
+  else if (pAttr.isA(Tags::tag_quantity))
     setQuantity(pElement.getDouble());
-  else if (pElement.isA(Tags::tag_action))
+  else if (pAttr.isA(Tags::tag_action))
   {
     delete static_cast<Action*>(pIn.getUserArea());
     pIn.setUserArea(
       new Action(MetaClass::decodeAction(pElement.getString().c_str()))
     );
   }
-  else if (pElement.isA(Tags::tag_effective_end))
+  else if (pAttr.isA(Tags::tag_effective_end))
     setEffectiveEnd(pElement.getDate());
-  else if (pElement.isA(Tags::tag_effective_start))
+  else if (pAttr.isA(Tags::tag_effective_start))
     setEffectiveStart(pElement.getDate());
   else if (pIn.isObjectEnd())
   {
-    // The Flow data is now all read in. See if it makes sense now...
+    // The flow data are now all read in. See if it makes sense now...
     Action a = pIn.getUserArea() ?
       *static_cast<Action*>(pIn.getUserArea()) :
       ADD_CHANGE;
@@ -203,7 +203,7 @@ DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, XMLElement& pElement)
 
 
 DECLARE_EXPORT void FlowEnd::writeElement
-(XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // If the flow has already been saved, no need to repeat it again
   // A 'reference' to a flow is not useful to be saved.

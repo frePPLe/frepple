@@ -217,7 +217,7 @@ int main (int argc, char *argv[])
 {
   try
   {
-    XMLPlatformUtils::Initialize();
+    xercesc::XMLPlatformUtils::Initialize();
     logger << endl << "FUNCTIONAL TEST:" << endl << endl;
     functionality_test();
     // The scalability test shows that the tree operations scale

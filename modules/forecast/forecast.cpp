@@ -30,9 +30,9 @@
 namespace module_forecast
 {
 
-const XMLtag tag_total("total");
-const XMLtag tag_net("net");
-const XMLtag tag_consumed("consumed");
+const Keyword tag_total("total");
+const Keyword tag_net("net");
+const Keyword tag_consumed("consumed");
 
 
 bool Forecast::callback(Calendar* l, const Signal a)
@@ -228,7 +228,7 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
 }
 
 
-void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
+void Forecast::writeElement(XMLOutput *o, const Keyword &tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -265,20 +265,20 @@ void Forecast::writeElement(XMLOutput *o, const XMLtag &tag, mode m) const
 }
 
 
-void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
+void Forecast::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
   // While reading forecast buckets, we use the userarea field on the input
   // to cache the data. The temporary object is deleted when the bucket
   // tag is closed.
-  if (pElement.isA(Tags::tag_calendar))
+  if (pAttr.isA(Tags::tag_calendar))
   {
     Calendar *b = dynamic_cast<Calendar*>(pIn.getPreviousObject());
     if (b) setCalendar(b);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA(Tags::tag_discrete))
+  else if (pAttr.isA(Tags::tag_discrete))
     setDiscrete(pElement.getBool());
-  else if (pElement.isA(Tags::tag_bucket))
+  else if (pAttr.isA(Tags::tag_bucket))
   {
     pair<DateRange,double> *d =
       static_cast< pair<DateRange,double>* >(pIn.getUserArea());
@@ -292,18 +292,18 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
       d->second = 0;
     }
   }
-  else if (pIn.getParentElement().isA(Tags::tag_bucket))
+  else if (pIn.getParentElement().first.isA(Tags::tag_bucket))
   {
     pair<DateRange,double> *d =
       static_cast< pair<DateRange,double>* >(pIn.getUserArea());
-    if (pElement.isA(tag_total))
+    if (pAttr.isA(tag_total))
     {
       if (d) d->second = pElement.getDouble();
       else pIn.setUserArea(
         new pair<DateRange,double>(DateRange(),pElement.getDouble())
         );
     }
-    else if (pElement.isA(Tags::tag_start))
+    else if (pAttr.isA(Tags::tag_start))
     {
       Date x = pElement.getDate();
       if (d)
@@ -313,7 +313,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
       }
       else pIn.setUserArea(new pair<DateRange,double>(DateRange(x,x),0));
     }
-    else if (pElement.isA(Tags::tag_end))
+    else if (pAttr.isA(Tags::tag_end))
     {
       Date x = pElement.getDate();
       if (d)
@@ -325,7 +325,7 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
     }
   }
   else
-    Demand::endElement(pIn, pElement);
+    Demand::endElement(pIn, pAttr, pElement);
 
   if (pIn.isObjectEnd())
   {
@@ -336,12 +336,12 @@ void Forecast::endElement(XMLInput& pIn, XMLElement& pElement)
 }
 
 
-void Forecast::beginElement(XMLInput& pIn, XMLElement& pElement)
+void Forecast::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA(Tags::tag_calendar))
+  if (pAttr.isA(Tags::tag_calendar))
     pIn.readto( Calendar::reader(Calendar::metadata, pIn) );
   else
-    Demand::beginElement(pIn,pElement);
+    Demand::beginElement(pIn, pAttr);
 }
 
 

@@ -33,7 +33,7 @@ namespace frepple
 template<class Customer> DECLARE_EXPORT Tree HasName<Customer>::st;
 
 
-DECLARE_EXPORT void Customer::writeElement(XMLOutput* o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Customer::writeElement(XMLOutput* o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -52,16 +52,16 @@ DECLARE_EXPORT void Customer::writeElement(XMLOutput* o, const XMLtag& tag, mode
 }
 
 
-DECLARE_EXPORT void Customer::beginElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Customer::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
-  HasHierarchy<Customer>::beginElement(pIn, pElement);
+  HasHierarchy<Customer>::beginElement(pIn, pAttr);
 }
 
 
-DECLARE_EXPORT void Customer::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Customer::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  HasDescription::endElement(pIn, pElement);
-  HasHierarchy<Customer>::endElement(pIn, pElement);
+  HasDescription::endElement(pIn, pAttr, pElement);
+  HasHierarchy<Customer>::endElement(pIn, pAttr, pElement);
 }
 
 

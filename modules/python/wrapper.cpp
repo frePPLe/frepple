@@ -225,8 +225,7 @@ extern "C" PyObject* getattro_handler(PyObject *self, PyObject *name)
         name->ob_type->tp_name);
 			return NULL;
 		}
-    XMLElement field(PyString_AsString(name));
-    PyObject* result = static_cast<PythonExtensionBase*>(self)->getattro(field);
+    PyObject* result = static_cast<PythonExtensionBase*>(self)->getattro(Attribute(PyString_AsString(name)));
     // Exit 1: Normal
     if (result) return result;
     // Exit 2: Exception occurred
@@ -258,10 +257,10 @@ extern "C" int setattro_handler(PyObject *self, PyObject *name, PyObject *value)
         name->ob_type->tp_name);
 			return -1;
 		}
-    XMLElement field(PyString_AsString(name));
+    PythonObject field(value);
 
     // Call the object to update the attribute
-    int result = static_cast<PythonExtensionBase*>(self)->setattro(field, value);
+    int result = static_cast<PythonExtensionBase*>(self)->setattro(Attribute(PyString_AsString(name)), field);
 
     // Process result
     if (!result) return 0;

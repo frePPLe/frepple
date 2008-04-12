@@ -36,23 +36,23 @@ template<class Solver> DECLARE_EXPORT Tree HasName<Solver>::st;
 // SOLVE
 //
 
-DECLARE_EXPORT void CommandSolve::beginElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandSolve::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA(Tags::tag_solver))
+  if (pAttr.isA(Tags::tag_solver))
     pIn.readto( Solver::reader(Solver::metadata,pIn) );
 }
 
 
-DECLARE_EXPORT void CommandSolve::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandSolve::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_solver))
+  if (pAttr.isA(Tags::tag_solver))
   {
     Solver *s = dynamic_cast<Solver*>(pIn.getPreviousObject());
     if (s) setSolver(s);
     else throw LogicException("Incorrect object type during read operation");
   }
   else
-    Command::endElement(pIn, pElement);
+    Command::endElement(pIn, pAttr, pElement);
 }
 
 
@@ -78,7 +78,7 @@ DECLARE_EXPORT void CommandSolve::execute()
 
 
 DECLARE_EXPORT void Solver::writeElement
-(XMLOutput *o, const XMLtag &tag, mode m) const
+(XMLOutput *o, const Keyword &tag, mode m) const
 {
   // The subclass should have written its own header
   assert(m == NOHEADER);
@@ -91,9 +91,9 @@ DECLARE_EXPORT void Solver::writeElement
 }
 
 
-DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_loglevel))
+  if (pAttr.isA(Tags::tag_loglevel))
   {
     int i = pElement.getInt();
     if (i<0 || i>USHRT_MAX)
@@ -107,14 +107,14 @@ DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, XMLElement& pElement)
 // READ XML INPUT FILE
 //
 
-DECLARE_EXPORT void CommandReadXMLFile::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandReadXMLFile::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_filename))
+  if (pAttr.isA(Tags::tag_filename))
     pElement >> filename;
-  else if (pElement.isA(Tags::tag_validate))
+  else if (pAttr.isA(Tags::tag_validate))
     pElement >> validate;
   else
-    Command::endElement(pIn, pElement);
+    Command::endElement(pIn, pAttr, pElement);
 }
 
 
@@ -133,7 +133,7 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
   if (filename.empty())
   {
     // Read from standard input
-    StdInInputSource in;
+    xercesc::StdInInputSource in;
     if (validate_only)
       // When no root object is passed, only the input validation happens
       XMLInput().parse(in, NULL, true);
@@ -157,14 +157,14 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
 // READ XML INPUT STRING
 //
 
-DECLARE_EXPORT void CommandReadXMLString::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandReadXMLString::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_data))
+  if (pAttr.isA(Tags::tag_data))
     pElement >> data;
-  else if (pElement.isA(Tags::tag_validate))
+  else if (pAttr.isA(Tags::tag_validate))
     pElement >> validate;
   else
-    Command::endElement(pIn, pElement);
+    Command::endElement(pIn, pAttr, pElement);
 }
 
 
@@ -192,15 +192,15 @@ DECLARE_EXPORT void CommandReadXMLString::execute()
 // SAVE MODEL TO XML
 //
 
-DECLARE_EXPORT void CommandSave::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandSave::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_filename))
+  if (pAttr.isA(Tags::tag_filename))
     pElement >> filename;
-  else if (pElement.isA(Tags::tag_headerstart))
+  else if (pAttr.isA(Tags::tag_headerstart))
     pElement >> headerstart;
-  else if (pElement.isA(Tags::tag_headeratts))
+  else if (pAttr.isA(Tags::tag_headeratts))
     pElement >> headeratts;
-  else if (pElement.isA(Tags::tag_content))
+  else if (pAttr.isA(Tags::tag_content))
   {
     string tmp;
     pElement >> tmp;
@@ -210,7 +210,7 @@ DECLARE_EXPORT void CommandSave::endElement(XMLInput& pIn, XMLElement& pElement)
     else throw DataException("Invalid content type '" + tmp + "'");
   }
   else
-    Command::endElement(pIn, pElement);
+    Command::endElement(pIn, pAttr, pElement);
 }
 
 
@@ -244,12 +244,12 @@ DECLARE_EXPORT void CommandSave::execute()
 //
 
 
-DECLARE_EXPORT void CommandSavePlan::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandSavePlan::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_filename))
+  if (pAttr.isA(Tags::tag_filename))
     pElement >> filename;
   else
-    Command::endElement(pIn, pElement);
+    Command::endElement(pIn, pAttr, pElement);
 }
 
 
@@ -506,9 +506,9 @@ DECLARE_EXPORT string CommandDeleteOperationPlan::getDescription() const
 // DELETE MODEL
 //
 
-DECLARE_EXPORT void CommandErase::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandErase::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA (Tags::tag_mode))
+  if (pAttr.isA (Tags::tag_mode))
   {
     string m = pElement.getString();
     if (m == "plan") deleteStaticModel = false;
@@ -516,7 +516,7 @@ DECLARE_EXPORT void CommandErase::endElement(XMLInput& pIn, XMLElement& pElement
     else throw DataException("Unknown mode '" + m + "' for erase command");
   }
   else
-    Command::endElement(pIn, pElement);
+    Command::endElement(pIn, pAttr, pElement);
 }
 
 

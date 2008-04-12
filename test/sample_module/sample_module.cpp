@@ -30,8 +30,8 @@ namespace sample_module
 {
 
 const MetaClass OperationTransport::metadata;
-const XMLtag tag_from("from");
-const XMLtag tag_to("to");
+const Keyword tag_from("from");
+const Keyword tag_to("to");
 
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
@@ -51,17 +51,17 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 }
 
 
-void OperationTransport::beginElement(XMLInput& pIn, XMLElement& pElement)
+void OperationTransport::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA(tag_from) || pElement.isA(tag_to))
+  if (pAttr.isA(tag_from) || pAttr.isA(tag_to))
     pIn.readto( Buffer::reader(Buffer::metadata,pIn) );
   else
-    OperationFixedTime::beginElement (pIn, pElement);
+    OperationFixedTime::beginElement(pIn, pAttr);
 }
 
 
 void OperationTransport::writeElement
-(XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -85,22 +85,22 @@ void OperationTransport::writeElement
 }
 
 
-void OperationTransport::endElement(XMLInput& pIn, XMLElement& pElement)
+void OperationTransport::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(tag_from))
+  if (pAttr.isA(tag_from))
   {
     Buffer *l = dynamic_cast<Buffer*>(pIn.getPreviousObject());
     if (l) setFromBuffer(l);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA(tag_to))
+  else if (pAttr.isA(tag_to))
   {
     Buffer *l = dynamic_cast<Buffer*>(pIn.getPreviousObject());
     if (l) setToBuffer(l);
     else throw LogicException("Incorrect object type during read operation");
   }
   else
-    OperationFixedTime::endElement (pIn, pElement);
+    OperationFixedTime::endElement(pIn, pAttr, pElement);
 }
 
 

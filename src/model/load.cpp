@@ -124,7 +124,7 @@ DECLARE_EXPORT Load::~Load()
 }
 
 
-DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // If the load has already been saved, no need to repeat it again
   // A 'reference' to a load is not useful to be saved.
@@ -156,41 +156,41 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const XMLtag& tag, mode m) 
 }
 
 
-DECLARE_EXPORT void Load::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Load::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA (Tags::tag_resource))
+  if (pAttr.isA (Tags::tag_resource))
     pIn.readto( Resource::reader(Resource::metadata,pIn) );
-  else if (pElement.isA (Tags::tag_operation))
+  else if (pAttr.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn) );
 }
 
 
-DECLARE_EXPORT void Load::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA (Tags::tag_resource))
+  if (pAttr.isA (Tags::tag_resource))
   {
     Resource * r = dynamic_cast<Resource*>(pIn.getPreviousObject());
     if (r) setResource(r);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA (Tags::tag_operation))
+  else if (pAttr.isA (Tags::tag_operation))
   {
     Operation * o = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (o) setOperation(o);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA(Tags::tag_quantity))
+  else if (pAttr.isA(Tags::tag_quantity))
     setQuantity(pElement.getDouble());
-  else if (pElement.isA(Tags::tag_action))
+  else if (pAttr.isA(Tags::tag_action))
   {
     delete static_cast<Action*>(pIn.getUserArea());
     pIn.setUserArea(
       new Action(MetaClass::decodeAction(pElement.getString().c_str()))
     );
   }
-  else if (pElement.isA(Tags::tag_effective_end))
+  else if (pAttr.isA(Tags::tag_effective_end))
     setEffectiveEnd(pElement.getDate());
-  else if (pElement.isA(Tags::tag_effective_start))
+  else if (pAttr.isA(Tags::tag_effective_start))
     setEffectiveStart(pElement.getDate());
   else if (pIn.isObjectEnd())
   {

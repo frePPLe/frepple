@@ -253,7 +253,7 @@ string LPSolver::replaceSpaces(string input)
 }
 
 
-void LPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+void LPSolver::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -272,16 +272,16 @@ void LPSolver::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
 }
 
 
-void LPSolver::beginElement(XMLInput& pIn, XMLElement& pElement)
+void LPSolver::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA (Tags::tag_calendar))
+  if (pAttr.isA (Tags::tag_calendar))
     pIn.readto(Calendar::reader(Calendar::metadata,pIn));
 }
 
 
-void LPSolver::endElement(XMLInput& pIn, XMLElement& pElement)
+void LPSolver::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_calendar))
+  if (pAttr.isA(Tags::tag_calendar))
   {
     Calendar * c = dynamic_cast<Calendar*>(pIn.getPreviousObject());
     if (c) setCalendar(c);
@@ -289,7 +289,7 @@ void LPSolver::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else
     // The standard fields of a solver...
-    Solver::endElement(pIn, pElement);
+    Solver::endElement(pIn, pAttr, pElement);
 }
 
 }  // End namespace

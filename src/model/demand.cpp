@@ -188,7 +188,7 @@ DECLARE_EXPORT double Demand::getPlannedQuantity() const
 }
 
 
-DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -229,52 +229,52 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const XMLtag& tag, mode m
 }
 
 
-DECLARE_EXPORT void Demand::beginElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Demand::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA (Tags::tag_item))
+  if (pAttr.isA (Tags::tag_item))
     pIn.readto( Item::reader(Item::metadata,pIn) );
-  else if (pElement.isA (Tags::tag_operation))
+  else if (pAttr.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn) );
-  else if (pElement.isA (Tags::tag_customer))
+  else if (pAttr.isA (Tags::tag_customer))
     pIn.readto( Customer::reader(Customer::metadata,pIn) );
-  else if (pElement.isA(Tags::tag_operationplan))
+  else if (pAttr.isA(Tags::tag_operationplan))
     pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata,pIn));
   else
-    HasHierarchy<Demand>::beginElement(pIn, pElement);
+    HasHierarchy<Demand>::beginElement(pIn, pAttr);
 }
 
 
-DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA (Tags::tag_quantity))
+  if (pAttr.isA (Tags::tag_quantity))
     setQuantity (pElement.getDouble());
-  else if (pElement.isA (Tags::tag_priority))
+  else if (pAttr.isA (Tags::tag_priority))
     setPriority (pElement.getInt());
-  else if (pElement.isA (Tags::tag_due))
+  else if (pAttr.isA (Tags::tag_due))
     setDue(pElement.getDate());
-  else if (pElement.isA (Tags::tag_operation))
+  else if (pAttr.isA (Tags::tag_operation))
   {
     Operation *o = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (o) setOperation(o);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA (Tags::tag_customer))
+  else if (pAttr.isA (Tags::tag_customer))
   {
     Customer *c = dynamic_cast<Customer*>(pIn.getPreviousObject());
     if (c) setCustomer(c);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA (Tags::tag_item))
+  else if (pAttr.isA (Tags::tag_item))
   {
     Item *i = dynamic_cast<Item*>(pIn.getPreviousObject());
     if (i) setItem(i);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA (Tags::tag_maxlateness))
+  else if (pAttr.isA (Tags::tag_maxlateness))
     setMaxLateness(pElement.getTimeperiod());
-  else if (pElement.isA (Tags::tag_minshipment))
+  else if (pAttr.isA (Tags::tag_minshipment))
     setMinShipment(pElement.getDouble());
-  else if (pElement.isA(Tags::tag_operationplan))
+  else if (pAttr.isA(Tags::tag_operationplan))
   {
     OperationPlan* opplan
       = dynamic_cast<OperationPlan*>(pIn.getPreviousObject());
@@ -283,9 +283,9 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else
   {
-    Plannable::endElement(pIn, pElement);
-    HasDescription::endElement(pIn, pElement);
-    HasHierarchy<Demand>::endElement (pIn, pElement);
+    Plannable::endElement(pIn, pAttr, pElement);
+    HasDescription::endElement(pIn, pAttr, pElement);
+    HasHierarchy<Demand>::endElement (pIn, pAttr, pElement);
   }
 }
 

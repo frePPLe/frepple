@@ -52,22 +52,22 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
 (const MetaCategory& cat, const XMLInput& in)
 {
   // Pick up the action attribute
-  const Attributes* atts = in.getAttributes();
+  const xercesc::Attributes* atts = in.getAttributes();
   Action action = MetaClass::decodeAction(atts);
 
   // Decode the attributes
   char* opname =
-    XMLString::transcode(atts->getValue(Tags::tag_operation.getXMLCharacters()));
+    xercesc::XMLString::transcode(atts->getValue(Tags::tag_operation.getXMLCharacters()));
   if (!opname && action!=REMOVE)
   {
-    XMLString::release(&opname);
-    throw DataException("Missing OPERATION attribute");
+    xercesc::XMLString::release(&opname);
+    throw DataException("Missing operation attribute");
   }
 
   // Decode the operationplan identifier
   unsigned long id = 0;
   char* idfier =
-    XMLString::transcode(atts->getValue(Tags::tag_id.getXMLCharacters()));
+    xercesc::XMLString::transcode(atts->getValue(Tags::tag_id.getXMLCharacters()));
   if (idfier) id = atol(idfier);
 
   // If an ID is specified, we look up this operation plan
@@ -83,18 +83,18 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
       ch << "Operationplan id " << id
       << " defined multiple times with different operations: '"
       << opplan->getOperation() << "' & '" << opname << "'";
-      XMLString::release(&opname);
-      XMLString::release(&idfier);
+      xercesc::XMLString::release(&opname);
+      xercesc::XMLString::release(&idfier);
       throw DataException(ch.str());
     }
   }
-  XMLString::release(&idfier);
+  xercesc::XMLString::release(&idfier);
 
   // Execute the proper action
   switch (action)
   {
     case REMOVE:
-      XMLString::release(&opname);
+      xercesc::XMLString::release(&opname);
       if (opplan)
       {
         // Send out the notification to subscribers
@@ -123,12 +123,12 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
         ostringstream ch;
         ch << "Operationplan with identifier " << id
         << " already exists and can't be added again";
-        XMLString::release(&opname);
+        xercesc::XMLString::release(&opname);
         throw DataException(ch.str());
       }
       if (!opname)
       {
-        XMLString::release(&opname);
+        xercesc::XMLString::release(&opname);
         throw DataException
         ("Operation name missing for creating an operationplan");
       }
@@ -138,7 +138,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
       {
         ostringstream ch;
         ch << "Operationplan with identifier " << id << " doesn't exist";
-        XMLString::release(&opname);
+        xercesc::XMLString::release(&opname);
         throw DataException(ch.str());
       }
       break;
@@ -148,7 +148,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   // Return the existing operationplan
   if (opplan)
   {
-    XMLString::release(&opname);
+    xercesc::XMLString::release(&opname);
     return opplan;
   }
 
@@ -158,13 +158,13 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   {
     // Can't create operationplan because the operation doesn't exist
     string s(opname);
-    XMLString::release(&opname);
+    xercesc::XMLString::release(&opname);
     throw DataException("Operation '" + s + "' doesn't exist");
   }
   else
   {
     // Create an operationplan
-    XMLString::release(&opname);
+    xercesc::XMLString::release(&opname);
     opplan = oper->createOperationPlan(0.0,Date::infinitePast,Date::infinitePast,NULL,NULL,id,false);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD))
     {
@@ -588,7 +588,7 @@ DECLARE_EXPORT void OperationPlan::writer(const MetaCategory& c, XMLOutput* o)
 }
 
 
-DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Don't export operationplans of hidden operations
   if (oper->getHidden()) return;
@@ -631,30 +631,30 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const XMLtag& tag,
 }
 
 
-DECLARE_EXPORT void OperationPlan::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationPlan::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA (Tags::tag_demand))
+  if (pAttr.isA (Tags::tag_demand))
     pIn.readto( Demand::reader(Demand::metadata,pIn) );
-  else if (pElement.isA(Tags::tag_owner))
+  else if (pAttr.isA(Tags::tag_owner))
     pIn.readto(createOperationPlan(metadata,pIn));
-  else if (pElement.isA(Tags::tag_flowplans))
+  else if (pAttr.isA(Tags::tag_flowplans))
     pIn.IgnoreElement();
 }
 
 
-DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
   // Note that the fields have been ordered more or less in the order
   // of their expected frequency.
   // Note that id and operation are handled already during the
   // operationplan creation. They don't need to be handled here...
-  if (pElement.isA(Tags::tag_quantity))
+  if (pAttr.isA(Tags::tag_quantity))
     pElement >> quantity;
-  else if (pElement.isA(Tags::tag_start))
+  else if (pAttr.isA(Tags::tag_start))
     dates.setStart(pElement.getDate());
-  else if (pElement.isA(Tags::tag_end))
+  else if (pAttr.isA(Tags::tag_end))
     dates.setEnd(pElement.getDate());
-  else if (pElement.isA(Tags::tag_owner) && !pIn.isObjectEnd())
+  else if (pAttr.isA(Tags::tag_owner) && !pIn.isObjectEnd())
   {
     OperationPlan* o = dynamic_cast<OperationPlan*>(pIn.getPreviousObject());
     if (o) setOwner(o);
@@ -666,17 +666,17 @@ DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, XMLElement& pEleme
       // Initialization failed and the operationplan is deleted
       pIn.invalidateCurrentObject();
   }
-  else if (pElement.isA (Tags::tag_demand))
+  else if (pAttr.isA (Tags::tag_demand))
   {
     Demand * d = dynamic_cast<Demand*>(pIn.getPreviousObject());
     if (d) d->addDelivery(this);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA(Tags::tag_locked))
+  else if (pAttr.isA(Tags::tag_locked))
     setLocked(pElement.getBool());
-  else if (pElement.isA(Tags::tag_epst))
+  else if (pAttr.isA(Tags::tag_epst))
     pElement >> epst;
-  else if (pElement.isA(Tags::tag_lpst))
+  else if (pAttr.isA(Tags::tag_lpst))
     pElement >> lpst;
 }
 

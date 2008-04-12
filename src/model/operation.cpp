@@ -124,7 +124,7 @@ void Operation::deleteOperationPlans(bool deleteLockedOpplans)
 }
 
 
-DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Note that this class is abstract and never instantiated directly. There is
   // therefore no reason to ever write a header.
@@ -158,43 +158,43 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const XMLtag& tag, mod
 }
 
 
-DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA(Tags::tag_flow)
-      && pIn.getParentElement().isA(Tags::tag_flows))
+  if (pAttr.isA(Tags::tag_flow)
+      && pIn.getParentElement().first.isA(Tags::tag_flows))
   {
     Flow *f =
       dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn));
     if (f) f->setOperation(this);
     pIn.readto(f);
   }
-  else if (pElement.isA (Tags::tag_load)
-      && pIn.getParentElement().isA(Tags::tag_loads))
+  else if (pAttr.isA (Tags::tag_load)
+      && pIn.getParentElement().first.isA(Tags::tag_loads))
   {
     Load* l = new Load();
     l->setOperation(this);
     pIn.readto(&*l);
   }
-  else if (pElement.isA (Tags::tag_operationplan))
+  else if (pAttr.isA (Tags::tag_operationplan))
     pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn));
-  else if (pElement.isA (Tags::tag_location))
+  else if (pAttr.isA (Tags::tag_location))
     pIn.readto( Location::reader(Location::metadata,pIn) );
 }
 
 
-DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA (Tags::tag_fence))
+  if (pAttr.isA (Tags::tag_fence))
     setFence(pElement.getTimeperiod());
-  else if (pElement.isA (Tags::tag_size_minimum))
+  else if (pAttr.isA (Tags::tag_size_minimum))
     setSizeMinimum(pElement.getDouble());
-  else if (pElement.isA (Tags::tag_size_multiple))
+  else if (pAttr.isA (Tags::tag_size_multiple))
     setSizeMultiple(pElement.getDouble());
-  else if (pElement.isA (Tags::tag_pretime))
+  else if (pAttr.isA (Tags::tag_pretime))
     setPreTime(pElement.getTimeperiod());
-  else if (pElement.isA (Tags::tag_posttime))
+  else if (pAttr.isA (Tags::tag_posttime))
     setPostTime(pElement.getTimeperiod());
-  else if (pElement.isA (Tags::tag_location))
+  else if (pAttr.isA (Tags::tag_location))
   {
     Location *l = dynamic_cast<Location*>(pIn.getPreviousObject());
     if (l) setLocation(l);
@@ -202,8 +202,8 @@ DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, XMLElement& pElement)
   }
   else
   {
-    Plannable::endElement(pIn, pElement);
-    HasDescription::endElement(pIn, pElement);
+    Plannable::endElement(pIn, pAttr, pElement);
+    HasDescription::endElement(pIn, pAttr, pElement);
   }
 }
 
@@ -230,7 +230,7 @@ DECLARE_EXPORT void OperationFixedTime::setOperationPlanParameters
 
 
 DECLARE_EXPORT void OperationFixedTime::writeElement
-(XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -251,12 +251,12 @@ DECLARE_EXPORT void OperationFixedTime::writeElement
 }
 
 
-DECLARE_EXPORT void OperationFixedTime::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationFixedTime::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA (Tags::tag_duration))
+  if (pAttr.isA (Tags::tag_duration))
     setDuration (pElement.getTimeperiod());
   else
-    Operation::endElement (pIn, pElement);
+    Operation::endElement (pIn, pAttr, pElement);
 }
 
 
@@ -336,7 +336,7 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
 
 
 DECLARE_EXPORT void OperationTimePer::writeElement
-(XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -358,19 +358,19 @@ DECLARE_EXPORT void OperationTimePer::writeElement
 }
 
 
-DECLARE_EXPORT void OperationTimePer::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationTimePer::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA (Tags::tag_duration))
+  if (pAttr.isA (Tags::tag_duration))
     setDuration (pElement.getTimeperiod());
-  else if (pElement.isA (Tags::tag_duration_per))
+  else if (pAttr.isA (Tags::tag_duration_per))
     setDurationPer (pElement.getTimeperiod());
   else
-    Operation::endElement (pIn, pElement);
+    Operation::endElement (pIn, pAttr, pElement);
 }
 
 
 DECLARE_EXPORT void OperationRouting::writeElement
-(XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -397,25 +397,25 @@ DECLARE_EXPORT void OperationRouting::writeElement
 }
 
 
-DECLARE_EXPORT void OperationRouting::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationRouting::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA (Tags::tag_operation))
+  if (pAttr.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn) );
   else
-    Operation::beginElement(pIn, pElement);
+    Operation::beginElement(pIn, pAttr);
 }
 
 
-DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA (Tags::tag_operation)
-      && pIn.getParentElement().isA(Tags::tag_steps))
+  if (pAttr.isA (Tags::tag_operation)
+      && pIn.getParentElement().first.isA(Tags::tag_steps))
   {
     Operation *oper = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (oper) addStepBack (oper);
     else throw LogicException("Incorrect object type during read operation");
   }
-  Operation::endElement (pIn, pElement);
+  Operation::endElement (pIn, pAttr, pElement);
 }
 
 
@@ -566,7 +566,7 @@ DECLARE_EXPORT void OperationAlternate::setEffective(Operation* o, DateRange dr)
 
 
 DECLARE_EXPORT void OperationAlternate::writeElement
-(XMLOutput *o, const XMLtag& tag, mode m) const
+(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -606,16 +606,16 @@ DECLARE_EXPORT void OperationAlternate::writeElement
 }
 
 
-DECLARE_EXPORT void OperationAlternate::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationAlternate::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA(Tags::tag_operation))
+  if (pAttr.isA(Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn) );
   else
-    Operation::beginElement(pIn, pElement);
+    Operation::beginElement(pIn, pAttr);
 }
 
 
-DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
   // Saving some typing...
   typedef pair<Operation*,alternateProperty> tempData;
@@ -625,7 +625,7 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
     pIn.setUserArea(new tempData(NULL,alternateProperty(1,DateRange())));
   tempData* tmp = static_cast<tempData*>(pIn.getUserArea());
 
-  if (pElement.isA(Tags::tag_alternate))
+  if (pAttr.isA(Tags::tag_alternate))
   {
     addAlternate(tmp->first, tmp->second.first, tmp->second.second);
     // Reset the defaults
@@ -633,20 +633,20 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, XMLElement& p
     tmp->second.first = 1;
     tmp->second.second = DateRange();
   }
-  else if (pElement.isA(Tags::tag_priority))
+  else if (pAttr.isA(Tags::tag_priority))
     tmp->second.first = pElement.getInt();
-  else if (pElement.isA(Tags::tag_effective_start))
+  else if (pAttr.isA(Tags::tag_effective_start))
     tmp->second.second.setStart(pElement.getDate());
-  else if (pElement.isA(Tags::tag_effective_end))
+  else if (pAttr.isA(Tags::tag_effective_end))
     tmp->second.second.setEnd(pElement.getDate());
-  else if (pElement.isA(Tags::tag_operation)
-      && pIn.getParentElement().isA(Tags::tag_alternate))
+  else if (pAttr.isA(Tags::tag_operation)
+      && pIn.getParentElement().first.isA(Tags::tag_alternate))
   {
     Operation * b = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (b) tmp->first = b;
     else throw LogicException("Incorrect object type during read operation");
   }
-  Operation::endElement (pIn, pElement);
+  Operation::endElement (pIn, pAttr, pElement);
 
   // Delete the temporary object
   if (pIn.isObjectEnd()) delete static_cast<tempData*>(pIn.getUserArea());

@@ -98,9 +98,9 @@ class LPSolver : public Solver
     Calendar* getCalendar() const {return cal;}
     void setCalendar(Calendar* c) {cal = c;}
 
-    void beginElement(XMLInput& pIn, XMLElement& pElement);
-    virtual void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    void beginElement(XMLInput& pIn, const Attribute& pAttr);
+    virtual void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
 
     LPSolver(const string n) : Solver(n), cal(NULL), rows(0), columns(0) {};
     ~LPSolver() {};

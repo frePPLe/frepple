@@ -52,9 +52,9 @@ DECLARE_EXPORT bool Command::getVerbose() const
 }
 
 
-DECLARE_EXPORT void Command::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Command::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_verbose)) setVerbose(pElement.getBool());
+  if (pAttr.isA(Tags::tag_verbose)) setVerbose(pElement.getBool());
 }
 
 
@@ -377,9 +377,9 @@ DECLARE_EXPORT CommandList::~CommandList()
 }
 
 
-DECLARE_EXPORT void CommandList::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandList::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_command) && !pIn.isObjectEnd())
+  if (pAttr.isA(Tags::tag_command) && !pIn.isObjectEnd())
   {
     // We're unlucky with our tag names here. Subcommands end with
     // </COMMAND>, but the command list itself also ends with that tag.
@@ -388,18 +388,18 @@ DECLARE_EXPORT void CommandList::endElement(XMLInput& pIn, XMLElement& pElement)
     if (b) add(b);
     else throw LogicException("Incorrect object type during read operation");
   }
-  else if (pElement.isA(Tags::tag_abortonerror))
+  else if (pAttr.isA(Tags::tag_abortonerror))
     setAbortOnError(pElement.getBool());
-  else if (pElement.isA(Tags::tag_maxparallel))
+  else if (pAttr.isA(Tags::tag_maxparallel))
     setMaxParallel(pElement.getInt());
   else
-    Command::endElement(pIn, pElement);
+    Command::endElement(pIn, pAttr, pElement);
 }
 
 
-DECLARE_EXPORT void CommandList::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandList::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA (Tags::tag_command))
+  if (pAttr.isA (Tags::tag_command))
     pIn.readto( MetaCategory::ControllerDefault(Command::metadata,pIn) );
 }
 
@@ -435,14 +435,14 @@ DECLARE_EXPORT void CommandSystem::execute()
 }
 
 
-DECLARE_EXPORT void CommandSystem::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandSystem::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_cmdline))
+  if (pAttr.isA(Tags::tag_cmdline))
     // No need to replace environment variables here. It's done at execution
     // time by the command shell.
     pElement >> cmdLine;
   else
-    Command::endElement(pIn, pElement);
+    Command::endElement(pIn, pAttr, pElement);
 }
 
 
@@ -544,20 +544,20 @@ DECLARE_EXPORT void CommandLoadLibrary::printModules()
 }
 
 
-DECLARE_EXPORT void CommandLoadLibrary::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandLoadLibrary::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_filename))
+  if (pAttr.isA(Tags::tag_filename))
     pElement >> lib;
-  else if (pElement.isA(Tags::tag_name))
+  else if (pAttr.isA(Tags::tag_name))
     pElement >> tempName;
-  else if (pElement.isA(Tags::tag_value))
+  else if (pAttr.isA(Tags::tag_value))
     pElement >> tempValue;
-  else if (pElement.isA(Tags::tag_parameter))
+  else if (pAttr.isA(Tags::tag_parameter))
   {
     if (!tempValue.empty() && !tempName.empty())
     {
       // New parameter name+value pair ready
-      parameters[tempName] = XMLElement(tempName,tempValue);
+      parameters[tempName] = tempValue;
       tempValue.clear();
       tempName.clear();
     }
@@ -571,7 +571,7 @@ DECLARE_EXPORT void CommandLoadLibrary::endElement(XMLInput& pIn, XMLElement& pE
     tempName.clear();
   }
   else
-    Command::endElement(pIn, pElement);
+    Command::endElement(pIn, pAttr, pElement);
 }
 
 
@@ -617,14 +617,14 @@ DECLARE_EXPORT void CommandSetEnv::execute()
 }
 
 
-DECLARE_EXPORT void CommandSetEnv::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void CommandSetEnv::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_variable))
+  if (pAttr.isA(Tags::tag_variable))
     pElement >> variable;
-  if (pElement.isA(Tags::tag_value))
+  if (pAttr.isA(Tags::tag_value))
     pElement >> value;
   else
-    Command::endElement(pIn, pElement);
+    Command::endElement(pIn, pAttr, pElement);
 }
 
 

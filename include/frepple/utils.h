@@ -64,7 +64,7 @@ using namespace gnu_cxx;
 #include <stack>
 #include <vector>
 #include <algorithm>
-#include <bitset>
+//#include <bitset>
 using namespace std;
 
 // Configuration file created by autoconf
@@ -133,7 +133,6 @@ using namespace std;
 #include <xercesc/framework/StdInInputSource.hpp>
 #include <xercesc/framework/URLInputSource.hpp>
 #include <xercesc/util/XMLException.hpp>
-using namespace xercesc;
 #endif
 
 /** @def DECLARE_EXPORT
@@ -166,7 +165,7 @@ namespace frepple
 
 // Forward declarations
 class Object;
-class XMLtag;
+class Keyword;
 class XMLInput;
 
 // Include the list of predefined tags
@@ -407,109 +406,21 @@ class NonCopyable
 {
   protected:
     NonCopyable() {}
-    ~NonCopyable(){}
+    ~NonCopyable() {}
+
   private:
     /** This copy constructor isn't implemented.<br>
       * It's here just so we can declare them as private so that this, and
       * any derived class, do not have copy constructors.
       */
     NonCopyable(const NonCopyable&);
+
     /** This assignment operator isn't implemented.<br>
       * It's here just so we can declare them as private so that this, and
       * any derived class, do not have copy constructors.
       */
     NonCopyable& operator=(const NonCopyable&);
 };
-
-
-//
-// UTILITY CLASS "POOL"
-//
-
-/** @brief This is an object pool which holds objects of a given type.
-  *
-  * The parameter type should have a default constructor.<br>
-  * The size of the pool is extended automatically as additional objects are
-  * requested. There is no maximum to the number of objects allocated in the
-  * pool.<br>
-  * Allocations from the pool objects is O(1), while de-allocations
-  * are O(log(N)).<br>
-  * The class is NOT thread-safe. The user is reponsible to allow only a
-  * single thread using a pool at the same time.
-  */
-template <class T> class Pool
-{
-  private:
-    /** List of allocated objects. */
-    set<T*> alloced;
-
-    /** List of previously allocated, but now unused objects. */
-    stack<T*> freed;
-
-  public:
-    /** Allocate a new object in the pool. */
-    T* Alloc();
-
-    /** Free an object and put it back in the pool.
-      * Note that it is only legal to free objects which were
-      * allocated from the pool.
-      */
-    void Free(T*);
-
-    /** Constructor.<br>
-      * The argument specifies the initial size of the pool. There is
-      * no maximum to the number of objects in the pool.
-      */
-    Pool (int i = 0)
-    {
-      for ( ; i>0; --i) freed.push(new T());
-    }
-
-    /** Destructor. */
-    ~Pool()
-    {
-      // Delete the allocated objects in use. The elements are not deleted
-      // from the set. The set destructor will clear the set.
-      for (typename set<T*>::iterator i=alloced.begin(); i!=alloced.end(); ++i)
-          delete *i;
-      // Delete the objects on the free stack
-      while (!freed.empty())
-      {
-        delete freed.top();
-        freed.pop();
-      }
-    }
-};
-
-
-template <class T> T* Pool<T>::Alloc ()
-{
-  T* obj;
-  if (freed.empty())
-    // Create a new object
-    obj = new T();
-  else
-  {
-    // Re-use exisiting object
-    obj = freed.top();
-    freed.pop();
-  }
-  alloced.insert(obj);
-  return obj;
-}
-
-
-template <class T> void Pool<T>::Free (T* it)
-{
-  // Erase the element from the stack
-  if (alloced.erase(it))
-  {
-    // Found! Push the object on the stack of free objects.
-    freed.push(it);
-    return;
-  };
-  throw LogicException("Pool frees object it didn't allocate");
-}
 
 
 //
@@ -564,14 +475,19 @@ class ScopeMutexLock: public NonCopyable
 // METADATA AND OBJECT FACTORY
 //
 
-/** @brief This class defines an XML-tag.
+/** @brief This class defines a keyword for the frePPLe data model.
+  *
+  * The keywords are used to define the attribute names for the objects.<br>
+  * They are used as:
+  *  - Element and attribute names in XML documents
+  *  - Attribute names in the Python extension.
   *
   * Special for this class is the requirement to have a "perfect" hash
   * function, i.e. a function that returns a distinct number for each
   * defined tag. The class prints a warning message when the hash
   * function doesn't satisfy this criterion.
   */
-class XMLtag : public NonCopyable
+class Keyword : public NonCopyable
 {
   private:
     /** Stores the hash value of this tag. */
@@ -589,21 +505,21 @@ class XMLtag : public NonCopyable
 
   public:
     /** Container for maintaining a list of all tags. */
-    typedef map<hashtype,XMLtag*> tagtable;
+    typedef map<hashtype,Keyword*> tagtable;
 
     /** This is the constructor.<br>
       * The tag doesn't belong to an XML namespace. */
-    DECLARE_EXPORT XMLtag(string);
+    DECLARE_EXPORT Keyword(string);
 
     /** This is the constructor. The tag belongs to the XML namespace passed
       * as second argument.<br>
       * Note that we still require the first argument to be unique, since it
       * is used as a keyword for the Python extensions.
       */
-    DECLARE_EXPORT XMLtag(string, string);
+    DECLARE_EXPORT Keyword(string, string);
 
     /** Destructor. */
-    DECLARE_EXPORT ~XMLtag();
+    DECLARE_EXPORT ~Keyword();
 
     /** Returns the hash value of the tag. */
     hashtype getHash() const {return dw;}
@@ -634,18 +550,18 @@ class XMLtag : public NonCopyable
       * 954991 as the hash modulus (954991 being the first prime number higher
       * than 1000000)
       */
-    static hashtype hash(const char* c) {return XMLString::hash(c,954991);}
+    static hashtype hash(const char* c) {return xercesc::XMLString::hash(c,954991);}
 
     /** This is the hash function taken an XML character string as input.
       * The function is expected to return exactly the same result as when a
       * character pointer is passed as argument.
       * @see hash(const char*)
       */
-    static hashtype hash(const XMLCh* c) {return XMLString::hash(c,954991);}
+    static hashtype hash(const XMLCh* c) {return xercesc::XMLString::hash(c,954991);}
 
     /** Finds a tag when passed a certain string. If no tag exists yet, it
       * will be created. */
-    static DECLARE_EXPORT const XMLtag& find(char const*);
+    static DECLARE_EXPORT const Keyword& find(char const*);
 
 	  /** Return a reference to a table with all defined tags. */
 	  static DECLARE_EXPORT tagtable& getTags();
@@ -744,8 +660,8 @@ class MetaClass : public NonCopyable
       * category. */
     string type;
 
-    /** A reference to an XMLtag of the base string. */
-    const XMLtag* typetag;
+    /** A reference to an Keyword of the base string. */
+    const Keyword* typetag;
 
     /** The category of this class. */
     const MetaCategory* category;
@@ -763,7 +679,7 @@ class MetaClass : public NonCopyable
     creatorPythonProxy factoryPythonProxy;
 
     /** Default constructor. */
-    MetaClass() : type("unspecified"), typetag(&XMLtag::find("unspecified")),
+    MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")),
       category(NULL), factoryMethodDefault(NULL), factoryPythonProxy(NULL) {}
 
     /** Destructor. */
@@ -805,7 +721,7 @@ class MetaClass : public NonCopyable
       * calls the method decodeAction(const XML_Char*) to analyze it.
       * @see decodeAction(const XML_Char*)
       */
-    static DECLARE_EXPORT Action decodeAction(const Attributes*);
+    static DECLARE_EXPORT Action decodeAction(const xercesc::Attributes*);
 
     /** Sort two metaclass objects. This is used to sort entities on their
       * type information in a stable and platform independent way.
@@ -903,7 +819,7 @@ class MetaCategory : public MetaClass
     string group;
 
     /** A XML tag grouping objects of the category. */
-    const XMLtag* grouptag;
+    const Keyword* grouptag;
 
     /** Type definition for the read control function. */
     typedef Object* (*readController)(const MetaCategory&, const XMLInput& in);
@@ -922,7 +838,7 @@ class MetaCategory : public MetaClass
       * @see registerCategory
       */
     MetaCategory() : group("unspecified"),
-      grouptag(&XMLtag::find("unspecified")), nextCategory(NULL),
+      grouptag(&Keyword::find("unspecified")), nextCategory(NULL),
       writeFunction(NULL) {};
 
     /** Destructor. */
@@ -1716,7 +1632,7 @@ class XMLOutput
 
     /** Start writing a new object. This method will open a new XML-tag.
       * Output: \<TAG_T\> */
-    void BeginObject(const XMLtag& t)
+    void BeginObject(const Keyword& t)
     {
       *m_fp << indentstring << t.stringElement() << "\n";
       incIndent();
@@ -1724,7 +1640,7 @@ class XMLOutput
 
     /** Start writing a new object. This method will open a new XML-tag.
       * Output: \<TAG_T TAG_U="val1"\> */
-    void BeginObject(const XMLtag& t, const XMLtag& attr1, const string& val1)
+    void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1)
     {
       *m_fp << indentstring << t.stringStartElement()
       << attr1.stringAttribute() << XMLEscape(val1.c_str()) << "\">\n";
@@ -1733,8 +1649,8 @@ class XMLOutput
 
     /** Start writing a new object. This method will open a new XML-tag.
       * Output: \<TAG_T TAG_T1="val1" TAG_T2="val2"\> */
-    void BeginObject(const XMLtag& t, const XMLtag& attr1, const string& val1,
-                     const XMLtag& attr2, const string& val2)
+    void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1,
+                     const Keyword& attr2, const string& val2)
     {
       *m_fp << indentstring << t.stringStartElement()
       << attr1.stringAttribute() << XMLEscape(val1.c_str()) << "\""
@@ -1744,9 +1660,9 @@ class XMLOutput
 
     /** Start writing a new object. This method will open a new XML-tag.
       * Output: \<TAG_T TAG_U="val1" TAG_V="val2" TAG_W="val3"\> */
-    void BeginObject(const XMLtag& t, const XMLtag& attr1, const string& val1,
-      const XMLtag& attr2, const string& val2,
-      const XMLtag& attr3, const string& val3)
+    void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1,
+      const Keyword& attr2, const string& val2,
+      const Keyword& attr3, const string& val3)
     {
       *m_fp << indentstring << t.stringStartElement()
       << attr1.stringAttribute() << XMLEscape(val1.c_str()) << "\""
@@ -1756,7 +1672,7 @@ class XMLOutput
     }
 
     /** Start writing a new object. This method will open a new XML-tag. */
-    void BeginObject(const XMLtag& t, const string& atts)
+    void BeginObject(const Keyword& t, const string& atts)
     {
       *m_fp << indentstring << t.stringStartElement() << " " << atts << ">\n";
       incIndent();
@@ -1764,7 +1680,7 @@ class XMLOutput
 
     /** Start writing a new object. This method will open a new XML-tag.
       * Output: \<TAG_T TAG_U="long"\> */
-    void BeginObject(const XMLtag& t, const XMLtag& attr1, const long val1)
+    void BeginObject(const Keyword& t, const Keyword& attr1, const long val1)
     {
       *m_fp << indentstring << t.stringStartElement()
       << attr1.stringAttribute() << val1 << "\">\n";
@@ -1773,8 +1689,8 @@ class XMLOutput
 
     /** Start writing a new object. This method will open a new XML-tag.
       * Output: \<TAG_T TAG_T1="val1" TAG_T2="val2"\> */
-    void BeginObject(const XMLtag& t, const XMLtag& attr1, unsigned long val1,
-                     const XMLtag& attr2, const string& val2)
+    void BeginObject(const Keyword& t, const Keyword& attr1, unsigned long val1,
+                     const Keyword& attr2, const string& val2)
     {
       *m_fp << indentstring << t.stringStartElement()
       << attr1.stringAttribute() << val1 << "\""
@@ -1786,7 +1702,7 @@ class XMLOutput
       * level.
       * Output: \</TAG_T\>
       */
-    void EndObject(const XMLtag& t)
+    void EndObject(const Keyword& t)
     {
       decIndent();
       *m_fp << indentstring << t.stringEndElement();
@@ -1801,21 +1717,21 @@ class XMLOutput
 
     /** Write an unsigned long value enclosed opening and closing tags.
       * Output: \<TAG_T\>uint\</TAG_T\> */
-    void writeElement(const XMLtag& t, const long unsigned int val)
+    void writeElement(const Keyword& t, const long unsigned int val)
     {
       *m_fp << indentstring << t.stringElement() << val << t.stringEndElement();
     }
 
     /** Write an integer value enclosed opening and closing tags.
       * Output: \<TAG_T\>integer\</TAG_T\> */
-    void writeElement(const XMLtag& t, const int val)
+    void writeElement(const Keyword& t, const int val)
     {
       *m_fp << indentstring << t.stringElement() << val << t.stringEndElement();
     }
 
     /** Write a double value enclosed opening and closing tags.
       * Output: \<TAG_T\>double\</TAG_T\> */
-    void writeElement(const XMLtag& t, const double val)
+    void writeElement(const Keyword& t, const double val)
     {
       *m_fp << indentstring << t.stringElement() << val << t.stringEndElement();
     }
@@ -1824,7 +1740,7 @@ class XMLOutput
       * is written out as the string 'true' or 'false'.
       * Output: \<TAG_T\>true\</TAG_T\>
       */
-    void writeElement(const XMLtag& t, const bool val)
+    void writeElement(const Keyword& t, const bool val)
     {
       *m_fp << indentstring << t.stringElement()
       << (val ? "true" : "false") << t.stringEndElement();
@@ -1833,7 +1749,7 @@ class XMLOutput
     /** Write a string value enclosed opening and closing tags. Special
       * characters (i.e. & < > " ' ) are appropriately escaped.
       * Output: \<TAG_T\>val\</TAG_T\> */
-    void writeElement(const XMLtag& t, const string& val)
+    void writeElement(const Keyword& t, const string& val)
     {
       if (!val.empty())
         *m_fp << indentstring << t.stringElement()
@@ -1842,7 +1758,7 @@ class XMLOutput
 
     /** Writes an element with a string attribute.
       * Output: \<TAG_U TAG_T="string"/\> */
-    void writeElement(const XMLtag& u, const XMLtag& t, const string& val)
+    void writeElement(const Keyword& u, const Keyword& t, const string& val)
     {
       if (val.empty())
         *m_fp << indentstring << u.stringStartElement() << "/>\n";
@@ -1854,7 +1770,7 @@ class XMLOutput
 
     /** Writes an element with a long attribute.
       * Output: \<TAG_U TAG_T="val"/\> */
-    void writeElement(const XMLtag& u, const XMLtag& t, const long val)
+    void writeElement(const Keyword& u, const Keyword& t, const long val)
     {
       *m_fp << indentstring << u.stringStartElement()
       << t.stringAttribute() << val << "\"/>\n";
@@ -1862,7 +1778,7 @@ class XMLOutput
 
     /** Writes an element with a date attribute.
       * Output: \<TAG_U TAG_T="val"/\> */
-    void writeElement(const XMLtag& u, const XMLtag& t, const Date& val)
+    void writeElement(const Keyword& u, const Keyword& t, const Date& val)
     {
       *m_fp << indentstring << u.stringStartElement()
       << t.stringAttribute() << string(val) << "\"/>\n";
@@ -1870,8 +1786,8 @@ class XMLOutput
 
     /** Writes an element with 2 string attributes.
       * Output: \<TAG_U TAG_T1="val1" TAG_T2="val2"/\> */
-    void writeElement(const XMLtag& u, const XMLtag& t1, const string& val1,
-      const XMLtag& t2, const string& val2)
+    void writeElement(const Keyword& u, const Keyword& t1, const string& val1,
+      const Keyword& t2, const string& val2)
     {
       if(val1.empty())
         *m_fp << indentstring << u.stringStartElement() << "/>\n";
@@ -1884,8 +1800,8 @@ class XMLOutput
 
     /** Writes an element with a string and a long attribute.
       * Output: \<TAG_U TAG_T1="val1" TAG_T2="val2"/\> */
-    void writeElement(const XMLtag& u, const XMLtag& t1, unsigned long val1,
-      const XMLtag& t2, const string& val2)
+    void writeElement(const Keyword& u, const Keyword& t1, unsigned long val1,
+      const Keyword& t2, const string& val2)
     {
       *m_fp << indentstring << u.stringStartElement()
       << t1.stringAttribute() << val1 << "\""
@@ -1895,7 +1811,7 @@ class XMLOutput
 
     /** Writes a C-type character string.
       * Output: \<TAG_T\>val\</TAG_T\> */
-    void writeElement(const XMLtag& t, const char* val)
+    void writeElement(const Keyword& t, const char* val)
     {
       if (val)
         *m_fp << indentstring << t.stringElement()
@@ -1904,21 +1820,21 @@ class XMLOutput
 
     /** Writes an timeperiod element.
       * Output: \<TAG_T\>d\</TAG_T\> /> */
-    void writeElement(const XMLtag& t, const TimePeriod d)
+    void writeElement(const Keyword& t, const TimePeriod d)
     {
       *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
     }
 
     /** Writes an date element.
       * Output: \<TAG_T\>d\</TAG_T\> /> */
-    void writeElement(const XMLtag& t, const Date d)
+    void writeElement(const Keyword& t, const Date d)
     {
       *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
     }
 
     /** Writes an daterange element.
       * Output: \<TAG_T\>d\</TAG_T\> */
-    void writeElement(const XMLtag& t, const DateRange& d)
+    void writeElement(const Keyword& t, const DateRange& d)
     {
       *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
     }
@@ -1929,24 +1845,24 @@ class XMLOutput
       * object to write only a reference, rather than the complete object.
       * You should call this method for all objects in your xml document,
       * except for the root object.
-      * @see writeElementWithHeader(const XMLtag&, Object*)
+      * @see writeElementWithHeader(const Keyword&, Object*)
       */
-    DECLARE_EXPORT void writeElement(const XMLtag&, const Object*, mode = DEFAULT);
+    DECLARE_EXPORT void writeElement(const Keyword&, const Object*, mode = DEFAULT);
 
-    /** @see writeElement(const XMLtag&, const Object*, mode) */
-    void writeElement(const XMLtag& t, const Object& o, mode m = DEFAULT)
+    /** @see writeElement(const Keyword&, const Object*, mode) */
+    void writeElement(const Keyword& t, const Object& o, mode m = DEFAULT)
       {writeElement(t,&o,m);}
 
     /** This method writes a serializable object with a complete XML compliant
       * header.
       * You should call this method for the root object of your xml document,
       * and writeElement for all objects nested in it.
-      * @see writeElement(const XMLtag&, Object*)
+      * @see writeElement(const Keyword&, Object*)
       * @see writeHeader
       * @exception RuntimeException Generated when multiple root elements
       *    are available for the output document.
       */
-    DECLARE_EXPORT void writeElementWithHeader(const XMLtag& tag, const Object* object);
+    DECLARE_EXPORT void writeElementWithHeader(const Keyword& tag, const Object* object);
 
     /** This method writes the opening tag for an XML output.
       * You should call this method or writeElementWithHeader() when writing
@@ -1955,7 +1871,7 @@ class XMLOutput
       * @exception RuntimeException Generated when multiple root elements
       *    are available for the output document.
       */
-    DECLARE_EXPORT void writeHeader(const XMLtag& tag);
+    DECLARE_EXPORT void writeHeader(const Keyword& tag);
 
     /** Returns a pointer to the object that is currently being saved. */
     Object* getCurrentObject() const
@@ -2072,51 +1988,139 @@ class XMLOutputString : public XMLOutput
 };
 
 
+/** @brief A class to model keyword instances.
+  *
+  * The class uses hashes to do a fast comparison with the set of keywords.
+  */
+class Attribute
+{
+  private:
+    /** This string stores the hash value of the element. */
+    hashtype hash;
+    
+    /** A pointer to the string representation of the keyword.<br>
+      * The string buffer is to be managed by the code creating this
+      * instance. 
+      */
+    const char* ch;
+
+  public:
+    /** Default constructor. */
+    explicit Attribute() : hash(0), ch(NULL) {}
+
+    /** Constructor. */
+    explicit Attribute(string n)
+      : hash(Keyword::hash(n.c_str())), ch(n.c_str()) {}
+
+    /** Constructor. */
+    explicit Attribute(const char* c) : hash(Keyword::hash(c)), ch(c) {}
+
+    /** Copy constructor. */
+    Attribute(const Attribute& o) : hash(o.hash), ch(o.ch) {}
+
+    /** Returns the hash value of this tag. */
+    hashtype getHash() const {return hash;}
+
+    /** Returns this tag. */
+    void reset(const char *const c) 
+    {
+      hash = Keyword::hash(c); 
+      ch = c;
+    }
+
+    /** Returns this tag. */
+    void reset(const XMLCh *const c) 
+    {
+      hash = Keyword::hash(c); 
+      ch = NULL;  // @todo possible to cast?
+    }
+
+    /** Return the element name. Since this method involves a lookup in a
+      * table with Keywords, it has some performance impact and should be
+      * avoided where possible. Only the hash of an element can efficiently
+      * be retrieved.
+      */
+    DECLARE_EXPORT const char* getName() const;
+
+    /** Returns true when this element is an instance of this tag. This method
+      * doesn't involve a string comparison and is extremely efficient. */
+    bool isA(const Keyword& t) const {return t.getHash() == hash;}
+
+    /** Returns true when this element is an instance of this tag. This method
+      * doesn't involve a string comparison and is extremely efficient. */
+    bool isA(const Keyword* t) const {return t->getHash() == hash;}
+
+    /** Comparison operator. */
+    bool operator < (const Attribute& o) const {return hash < o.hash;}
+
+    /** String comparison. */
+    bool operator == (const string o) const {logger <<"COMPARE" << o << "--" << ch << endl; return o == ch;}
+};
+
+
+/** @brief This abstract class represents a attribute and value pair for 
+  * updating objects in frePPLe.
+  * 
+  * It is instantiated in the XMLElement and PythonObject classes.
+  * @todo only takes care of transformation from external format to C++. Not the C++ to external format yet.
+  */
+class DataElement
+{
+  public:
+    void operator >> (unsigned long int& val) const {val = getUnsignedLong();}
+
+    void operator >> (long& val) const {val = getLong();}
+
+    void operator >> (TimePeriod& val) const {val = getTimeperiod();}
+
+    void operator >> (bool& v) const {v=getBool();}
+
+    void operator >> (int& val) const {val = getInt();}
+
+    void operator >> (double& val) const {val = getDouble();}
+
+    void operator >> (Date& val) const {val = getDate();}
+
+    void operator >> (string& val) const {val = getString();}
+
+    virtual long getLong() const = 0;
+
+    virtual unsigned long getUnsignedLong() const = 0;
+
+    virtual TimePeriod getTimeperiod() const = 0;
+
+    virtual int getInt() const = 0;
+
+    virtual double getDouble() const = 0;
+
+    virtual Date getDate() const = 0;
+
+    virtual string getString() const = 0;
+
+    virtual bool getBool() const = 0;
+};
+
+
 /** @brief This class represents an XML element being read in from the
   * input file. */
-class XMLElement
+class XMLElement : public DataElement
 {
   private:
     /** This string stores the XML input data. */
     string m_strData;
-
-    /** This string stores the hash value of the element. */
-    hashtype m_dwTagHash;
 
   public:
     /** Default constructor. */
     XMLElement() {}
 
     /** Constructor. */
-    XMLElement(string n, string v)
-      : m_strData(v), m_dwTagHash(XMLtag::hash(n.c_str())) {}
-
-    /** Constructor. */
-    XMLElement(const char* c) : m_dwTagHash(XMLtag::hash(c)) {}
+    XMLElement(string v) : m_strData(v) {}
 
     /** Re-initializes an existing element. Using this method we can avoid
       * destroying and recreating XMLelement objects too frequently. Instead
       * we can manage them in a array.
-      * Since we consistently use this method, the auto-generated default
-      * constructor and copy constructor are okay and safe.
       */
-    void initialize(const char *c)
-    {
-      m_dwTagHash = XMLtag::hash(c);
-      m_strData.clear();
-    }
-
-    /** Re-initializes an existing element.
-      * @see initialize(const char*)
-      */
-    void initialize(const XMLCh *c)
-    {
-      m_dwTagHash = XMLtag::hash(c);
-      m_strData.clear();
-    }
-
-    /** Returns the hash value of this tag. */
-    hashtype getTagHash() const {return m_dwTagHash;}
+    void reset() {m_strData.clear();}
 
     /** Add some characters to this data field of this element.<br>
       * The second argument is the number of bytes, not the number of
@@ -2130,52 +2134,21 @@ class XMLElement
     /** Return the data field. */
     const char *getData() const {return m_strData.c_str();}
 
-    /** Return the element name. Since this method involves a lookup in a
-      * table with XMLtags, it has some performance impact and should be
-      * avoided where possible. Only the hash of an element can efficiently
-      * be retrieved.
-      */
-    DECLARE_EXPORT string getName() const;
+    virtual long getLong() const {return atol(getData());}
 
-    /** Returns true when this element is an instance of this tag. This method
-      * doesn't involve a string comparison and is extremely efficient. */
-    bool isA(const XMLtag& t) const {return t.getHash() == m_dwTagHash;}
+    virtual unsigned long getUnsignedLong() const {return atol(getData());}
 
-    /** Returns true when this element is an instance of this tag. This method
-      * doesn't involve a string comparison and is extremely efficient. */
-    bool isA(const XMLtag* t) const {return t->getHash() == m_dwTagHash;}
+    virtual TimePeriod getTimeperiod() const {return TimePeriod(getData());}
 
-    void operator >> (unsigned long int& val) const {val = atol(getData());}
+    virtual int getInt() const {return atoi(getData());}
 
-    void operator >> (long& val) const {val = atol(getData());}
+    virtual double getDouble() const {return atof(getData());}
 
-    long getLong() const {return atol(getData());}
-
-    void operator >> (TimePeriod& val) const {val.parse(getData());}
-
-    void operator >> (bool& v) const {v=getBool();}
-
-    TimePeriod getTimeperiod() const {return TimePeriod(getData());}
-
-    void operator >> (int& val) const {val = atoi(getData());}
-
-    int getInt() const {return atoi(getData());}
-
-    void operator >> (double& val) const {val = atof(getData());}
-
-    double getDouble() const {return atof(getData());}
-
-    void operator >> (Date& val) const {val.parse(getData());}
-
-    Date getDate() const {return Date(getData());}
-
-    /** Fills in the string with the XML input. The xerces library takes care
-      * of appropriately unescaping special character sequences. */
-    void operator >> (string& val) const {val = getData();}
+    virtual Date getDate() const {return Date(getData());}
 
     /** Returns the string value of the XML data. The xerces library takes care
       * of appropriately unescaping special character sequences. */
-    const string& getString() const {return m_strData;}
+    virtual string getString() const {return m_strData;}
 
     /** Interprets the element as a boolean value.<br>
       * <p>Our implementation is a bit more generous and forgiving than the
@@ -2194,10 +2167,6 @@ class XMLElement
   *
   * It handles to following capabilities:
   * - <b>Metadata:</b> All subclasses publish metadata about their structure.
-  * - <b>Concurrency:</b> Locking of objects is required in multithreaded
-  *   environments. The implementation of the locking algorithm is delegated
-  *   to the LockManager class, and the base class provides only a pointer
-  *   to a lock object and convenience guard classes.
   * - <b>Callbacks:</b> When objects are created or deleted,
   *   interested classes or objects can get a callback notification.
   * - <b>Serialization:</b> Objects need to be persisted and later restored.
@@ -2223,7 +2192,7 @@ class Object
       * of such a class can be created but can't be persisted.
       * E.g. Command
       */
-    virtual void writeElement(XMLOutput *, const XMLtag &, mode=DEFAULT) const
+    virtual void writeElement(XMLOutput *, const Keyword &, mode=DEFAULT) const
       {throw LogicException("Class can't be persisted");}
 
     /** Called while restoring the model from an XML-file.
@@ -2231,7 +2200,7 @@ class Object
       * for which the "this" element is immediate parent.
       * It is called when the open element tag is encountered.
       */
-    virtual void beginElement(XMLInput&, XMLElement&) {}
+    virtual void beginElement(XMLInput&, const Attribute&) {}
 
     /** Called while restoring the model from an XML-file.
       * This is called when the corresponding close element
@@ -2241,7 +2210,7 @@ class Object
       * process its own element tag attributes, and its own endElement
       * so it can process its own character data.
       */
-    virtual void endElement(XMLInput&, XMLElement&) = 0;
+    virtual void endElement(XMLInput&, const Attribute&, DataElement&) = 0;
 
     /** Mark the object as hidden or not. Hidden objects are not exported
       * and are used only as dummy constructs. */
@@ -2626,7 +2595,7 @@ class Command : public Object
     /** Returns true if the execution of this command can be undone. */
     virtual bool undoable() const {return false;}
 
-    virtual DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    virtual DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
     virtual string getDescription() const {return "No description available";}
     virtual ~Command() {};
 
@@ -2703,7 +2672,7 @@ class CommandSetEnv : public Command
     virtual size_t getSize() const
       {return sizeof(CommandSetEnv) + variable.size() + value.size();}
 
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
 };
 
 
@@ -2874,8 +2843,8 @@ class CommandList : public Command
     static DECLARE_EXPORT const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(CommandList);}
 
-    DECLARE_EXPORT void beginElement(XMLInput&, XMLElement& pElement);
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, DataElement&);
 };
 
 
@@ -2925,7 +2894,7 @@ class CommandSystem : public Command
       */
     DECLARE_EXPORT void execute();
 
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
     string getDescription() const
       {return "Run operating system command '" + cmdLine + "'";}
 
@@ -2978,7 +2947,7 @@ class CommandLoadLibrary : public Command
       */
     DECLARE_EXPORT void execute();
 
-    DECLARE_EXPORT void endElement(XMLInput& pIn, XMLElement& pElement);
+    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
     string getDescription() const {return "Loading shared library " + lib;}
 
     virtual const MetaClass& getType() const {return metadata;}
@@ -3046,7 +3015,7 @@ class XMLinstruction : public NonCopyable
   *
   * This class is implemented based on the Xerces SAX XML parser.
   * For debugging purposes a flag is defined at the start of the file
-  * "status.cpp". Uncomment the line and recompile to use it.
+  * "xmlparser.cpp". Uncomment the line and recompile to use it.
   *
   * FrePPLe creates a new parser and loads the XML schema every time
   * XML data need to be parsed. When this happens only a few times during a
@@ -3055,11 +3024,14 @@ class XMLinstruction : public NonCopyable
   * will create a significant overhead. The code would need to be enhanced
   * to maintain a pool of parsers and cache their grammars.
   */
-class XMLInput : public NonCopyable,  private DefaultHandler
+class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
 {
+  public:
+    typedef pair<Attribute,XMLElement> datapair;
+
   private:
     /** A pointer to an XML parser for processing the input. */
-    SAX2XMLReader* parser;
+    xercesc::SAX2XMLReader* parser;
 
     /** This type defines the different states the parser can have. */
     enum state
@@ -3105,7 +3077,7 @@ class XMLInput : public NonCopyable,  private DefaultHandler
       * The expression m_EStack[numElements] returns the parent element.
       * @see numElements
       */
-    vector<XMLElement> m_EStack;
+    vector<datapair> m_EStack;
 
     /** A variable to keep track of the size of the element stack. It is used
       * together with the variable m_EStack.
@@ -3146,13 +3118,13 @@ class XMLInput : public NonCopyable,  private DefaultHandler
       * See the xerces API documentation for further information on the usage
       * of the attribute list.
       */
-    const Attributes* attributes;
+    const xercesc::Attributes* attributes;
 
     /** Handler called when a new element tag is encountered.
       * It pushes a new element on the stack and calls the current handler.
       */
     void startElement (const XMLCh* const, const XMLCh* const,
-      const XMLCh* const, const Attributes&);
+      const XMLCh* const, const xercesc::Attributes&);
 
     /** Handler called when closing element tag is encountered.
       * If this is the closing tag for the current event handler, pop it
@@ -3162,7 +3134,7 @@ class XMLInput : public NonCopyable,  private DefaultHandler
       * stack.
       */
     void endElement
-      (const XMLCh* const, const XMLCh* const s, const XMLCh* const qname);
+      (const XMLCh* const, const XMLCh* const, const XMLCh* const);
 
     /** Handler called when character data are read in.
       * The data string is add it to the current element data.
@@ -3171,7 +3143,7 @@ class XMLInput : public NonCopyable,  private DefaultHandler
 
     /** Handler called by Xerces in fatal error conditions. It throws an
       * exception to abort the parsing procedure. */
-    void fatalError (const SAXParseException& e) {throw e;}
+    void fatalError (const xercesc::SAXParseException& e) {throw e;}
 
     /** Handler called by Xercess when reading a processing instruction. The
       * handler looks up the target in the repository and will call the
@@ -3182,10 +3154,10 @@ class XMLInput : public NonCopyable,  private DefaultHandler
 
     /** Handler called by Xerces in error conditions. It throws an exception
       * to abort the parsing procedure. */
-    void error (const SAXParseException& e) {throw e;}
+    void error (const xercesc::SAXParseException& e) {throw e;}
 
     /** Handler called by Xerces for warnings. */
-    void warning (const SAXParseException&);
+    void warning (const xercesc::SAXParseException&);
 
     /** This method cleans up the parser state to get it ready for processing
       * a new document. */
@@ -3208,7 +3180,7 @@ class XMLInput : public NonCopyable,  private DefaultHandler
       * to the attributes. See the xerces documentation if this description
       * doesn't satisfy you...
       */
-    const Attributes* getAttributes() const {return attributes;}
+    const xercesc::Attributes* getAttributes() const {return attributes;}
 
     /** Redirect event stream into a new Object.<br>
       * It is also possible to pass a NULL pointer to the function. In
@@ -3267,11 +3239,11 @@ class XMLInput : public NonCopyable,  private DefaultHandler
     }
 
     /** Returns a reference to the parent element. */
-    const XMLElement& getParentElement() const
+    const datapair& getParentElement() const
       {return m_EStack[numElements>0 ? numElements : 0];}
 
     /** Returns a reference to the current element. */
-    const XMLElement& getCurrentElement() const
+    const datapair& getCurrentElement() const
       {return m_EStack[numElements>-1 ? numElements+1 : 0];}
 
     /** This is the core parsing function, which triggers the XML parser to
@@ -3279,7 +3251,7 @@ class XMLInput : public NonCopyable,  private DefaultHandler
       * parse(Object*) once a proper stream has been created.
       * @see parse(Object*)
       */
-    void parse(InputSource&, Object*, bool=false);
+    void parse(xercesc::InputSource&, Object*, bool=false);
 
     /** Updates the user definable pointer. This pointer is used to store
       * status information between handler calls. */
@@ -3338,7 +3310,7 @@ class XMLInputString : public XMLInput
        * will not apply any more for character sets with multi-byte
        * characters.
        */
-      MemBufInputSource a(
+      xercesc::MemBufInputSource a(
         reinterpret_cast<const XMLByte*>(data.c_str()),
         static_cast<const unsigned int>(data.size()),
         "memory data",
@@ -3543,7 +3515,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       */
     static T* add(T* t, T* hint) {return static_cast<T*>(st.insert(t,hint));}
 
-    void endElement(XMLInput& pIn, XMLElement& pElement) {};
+    void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement) {};
 
     /** This method is available as a object creation factory for
       * classes that are using a string as a key identifier, in particular
@@ -3565,12 +3537,12 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
     static Object* reader (const MetaCategory& cat, const XMLInput& in)
     {
       // Pick up the name attribute. An error is reported if it's missing.
-      char* name = XMLString::transcode(
+      char* name = xercesc::XMLString::transcode(
         in.getAttributes()->getValue(Tags::tag_name.getXMLCharacters())
         );
       if (!name)
       {
-        XMLString::release(&name);
+        xercesc::XMLString::release(&name);
         throw DataException("Missing NAME attribute");
       }
 
@@ -3588,7 +3560,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
           // Only additions are allowed
           if (found)
           {
-            XMLString::release(&name);
+            xercesc::XMLString::release(&name);
             throw DataException("Object '" + string(name) + "' already exists.");
           }
           break;
@@ -3598,10 +3570,10 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
           if (!found)
           {
             string msg = string("Object '") + name + "' doesn't exist.";
-            XMLString::release(&name);
+            xercesc::XMLString::release(&name);
             throw DataException(msg);
           }
-          XMLString::release(&name);
+          xercesc::XMLString::release(&name);
           return i;
 
         case REMOVE:
@@ -3611,7 +3583,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
             // Send out the notification to subscribers
             if (i->getType().raiseEvent(i,SIG_REMOVE))
             {
-              XMLString::release(&name);
+              xercesc::XMLString::release(&name);
               // Delete the object
               delete i;
               return NULL;
@@ -3620,7 +3592,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
             {
               // The callbacks disallowed the deletion!
               string msg = string("Can't remove object '") + name + "'";
-              XMLString::release(&name);
+              xercesc::XMLString::release(&name);
               throw DataException(msg);
             }
           }
@@ -3628,7 +3600,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
           {
             // Not found
             string msg = string("Can't find object '") + name + "' for removal";
-            XMLString::release(&name);
+            xercesc::XMLString::release(&name);
             throw DataException(msg);
           }
         default:
@@ -3639,33 +3611,33 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       // Return the existing instance
       if (found)
       {
-        XMLString::release(&name);
+        xercesc::XMLString::release(&name);
         return i;
       }
 
       // Lookup the type in the map
-      char* type = XMLString::transcode(
+      char* type = xercesc::XMLString::transcode(
           in.getAttributes()->getValue(Tags::tag_type.getXMLCharacters())
           );
       string type2;
-      if (!type && in.getParentElement().isA(cat.grouptag))
+      if (!type && in.getParentElement().first.isA(cat.grouptag))
       {
-        if (in.getCurrentElement().isA(cat.typetag)) type2 = "default";
-        else type2 = in.getCurrentElement().getName();
+        if (in.getCurrentElement().first.isA(cat.typetag)) type2 = "default";
+        else type2 = in.getCurrentElement().first.getName();
       }
       const MetaClass* j =
-        cat.findClass(type ? XMLtag::hash(type) : (type2.empty() ? MetaCategory::defaultHash : XMLtag::hash(type2.c_str())));
+        cat.findClass(type ? Keyword::hash(type) : (type2.empty() ? MetaCategory::defaultHash : Keyword::hash(type2.c_str())));
       if (!j)
       {
         string t(type ? type : (type2.empty() ? "default" : type2.c_str()));
-        XMLString::release(&name);
-        XMLString::release(&type);
+        xercesc::XMLString::release(&name);
+        xercesc::XMLString::release(&type);
         throw DataException("No type " + t + " registered for category " + cat.type);
       }
 
       // Create a new instance
       T* x = dynamic_cast<T*>(j->factoryMethodString(name));
-      XMLString::release(&type);
+      xercesc::XMLString::release(&type);
 
       // Run creation callbacks
       // During the callback there is no write lock set yet, since we can
@@ -3677,10 +3649,10 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         // Creation isn't allowed
         string msg = string("Can't create object ") + name;
         delete x;
-        XMLString::release(&name);
+        xercesc::XMLString::release(&name);
         throw DataException(msg);
       }
-      XMLString::release(&name);
+      xercesc::XMLString::release(&name);
 
       // Insert in the tree
       T::add(x, i);
@@ -3724,8 +3696,8 @@ class HasDescription
     /** Sets the description field. */
     void setDescription(const string& f) {descr = f;}
 
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput&, XMLElement&);
+    void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    void endElement(XMLInput&, const Attribute&, DataElement&);
 
   protected:
     /** Returns the memory size in bytes. */
@@ -3849,9 +3821,9 @@ template <class T> class HasHierarchy : public HasName<T>
       */
     unsigned short getHierarchyLevel() const;
 
-    void beginElement(XMLInput&, XMLElement& pElement);
-    void writeElement(XMLOutput*, const XMLtag&, mode=DEFAULT) const;
-    void endElement(XMLInput&, XMLElement&);
+    void beginElement(XMLInput&, const Attribute&);
+    void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    void endElement(XMLInput&, const Attribute&, DataElement&);
 
   private:
     /** A pointer to the parent object. */

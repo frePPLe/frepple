@@ -30,15 +30,15 @@
 namespace module_forecast
 {
 
-const XMLtag tag_automatic("automatic");
+const Keyword tag_automatic("automatic");
 
 
-void ForecastSolver::endElement(XMLInput& pIn, XMLElement& pElement)
+void ForecastSolver::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(tag_automatic))
+  if (pAttr.isA(tag_automatic))
     setAutomatic(pElement.getBool());
   else
-    Solver::endElement(pIn, pElement);
+    Solver::endElement(pIn, pAttr, pElement);
 }
 
 
@@ -64,7 +64,7 @@ bool ForecastSolver::callback(Demand* l, const Signal a)
 }
 
 
-void ForecastSolver::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+void ForecastSolver::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)

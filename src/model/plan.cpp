@@ -57,7 +57,7 @@ DECLARE_EXPORT void Plan::setCurrent (Date l)
 }
 
 
-DECLARE_EXPORT void Plan::writeElement (XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Plan::writeElement (XMLOutput *o, const Keyword& tag, mode m) const
 {
   // No references
   assert(m != REFERENCE);
@@ -79,29 +79,29 @@ DECLARE_EXPORT void Plan::writeElement (XMLOutput *o, const XMLtag& tag, mode m)
 }
 
 
-DECLARE_EXPORT void Plan::endElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Plan::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_current))
+  if (pAttr.isA(Tags::tag_current))
     setCurrent(pElement.getDate());
-  else if (pElement.isA(Tags::tag_description))
+  else if (pAttr.isA(Tags::tag_description))
     pElement >> descr;
-  else if (pElement.isA(Tags::tag_name))
+  else if (pAttr.isA(Tags::tag_name))
     pElement >> name;
-  else if (pElement.isA(Tags::tag_logfile))
+  else if (pAttr.isA(Tags::tag_logfile))
     Environment::setLogFile(pElement.getString());
   else
-    Plannable::endElement(pIn, pElement);
+    Plannable::endElement(pIn, pAttr, pElement);
 }
 
 
-DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA(Tags::tag_commands))
+  if (pAttr.isA(Tags::tag_commands))
     // Handling of commands, a category which doesn't have a category reader
     pIn.readto(&(pIn.getCommands()));
   else
   {
-    const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pIn.getParentElement().getTagHash());
+    const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pIn.getParentElement().first.getHash());
     if (cat)
     {
       if (cat->readFunction)

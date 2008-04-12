@@ -235,7 +235,7 @@ class CommandPython : public Command, public XMLinstruction
     virtual size_t getSize() const
       {return sizeof(CommandPython) + cmd.size() + filename.size();}
 
-    void endElement(XMLInput& pIn, XMLElement& pElement);
+    void endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement);
 
     /** This method is called when a processing instruction is read. */
     void processInstruction(XMLInput &i, const char *d) {executePython(d);}
@@ -369,7 +369,7 @@ class PythonType : public NonCopyable
     /** Updates tp_setattro.<br>
       * The extension class will need to define a member function with this
       * prototype:<br>
-      *   int setattro(const XMLElement& name, const PythonObject& value)
+      *   int setattro(const Attribute& attr, const PythonObject& field)
       */
     void supportsetattro() {table.tp_setattro = setattro_handler;}
 
@@ -439,12 +439,17 @@ class PythonType : public NonCopyable
   * code that provided us the PyObject pointer should have incremented the
   * reference count already.
   *
-  *@todo endelement function should be shared with setattro function.
-  *Unifies the python and xml worlds: shared code base to update objects!
-  *(Code for extracting info is still python specific, and writeElement
-  *is also xml-specific)
-  *  xml->prevObject = python->cast value to a different type
+  * @todo endelement function should be shared with setattro function.
+  * Unifies the python and xml worlds: shared code base to update objects!
+  * (Code for extracting info is still python specific, and writeElement
+  * is also xml-specific)
+  * xml->prevObject = python->cast value to a different type
   *
+  * @todo object creator should be common with the XML reader, which uses
+  * the registered factory method. 
+  * Also supports add/add_change/remove.
+  * Tricky: flow/load which use an additional validate() method
+  * 
   * @todo improper use of the python proxy objects can crash the application.
   * It is possible to keep the Python proxy around longer than the C++
   * object. Re-accessing the proxy will crash frePPLe.
@@ -452,7 +457,7 @@ class PythonType : public NonCopyable
   * Python object. Alternative solution is to move to a twin object approach:
   * a C++ object and a python object always coexist as a twin pair.
   */
-class PythonObject : public NonCopyable
+class PythonObject : public NonCopyable, public DataElement
 {
   private:
     PyObject* obj;
@@ -495,6 +500,11 @@ class PythonObject : public NonCopyable
       return PyString_AsString(PyObject_Str(obj));
     }
 
+    unsigned long getUnsignedLong() const
+    {
+      return PyLong_AsUnsignedLong(obj);
+    }
+
     /** Convert a Python datetime.date or datetime.datetime object into a
       * frePPLe date. */
     Date getDate() const;
@@ -510,19 +520,19 @@ class PythonObject : public NonCopyable
     inline int getInt() const
     {
       int result = PyInt_AsLong(obj);
-	  if (result == -1 && PyErr_Occurred())
-		  throw DataException("Invalid number");
-	  return result;
+	    if (result == -1 && PyErr_Occurred())
+		    throw DataException("Invalid number");
+	    return result;
     }
 
     /** Convert a Python number into a C++ long. */
     inline long getLong() const
     {
       int result = PyInt_AsLong(obj);
-	  if (result == -1 && PyErr_Occurred())
-		  throw DataException("Invalid number");
-	  return result;
-	}
+	    if (result == -1 && PyErr_Occurred())
+		    throw DataException("Invalid number");
+	    return result;
+	  }
 
     /** Convert a Python number into a C++ bool. */
     inline bool getBool() const
@@ -534,7 +544,7 @@ class PythonObject : public NonCopyable
       * TimePeriod.<br>
 	  * A TimePeriod is represented as a number of seconds in Python.
 	  */
-    TimePeriod getTimePeriod() const
+    TimePeriod getTimeperiod() const
     {
       int result = PyInt_AsLong(obj);
 	  if (result == -1 && PyErr_Occurred())
@@ -632,7 +642,7 @@ class PythonExtensionBase : public PyObject
       * Subclasses are expected to implement an override if the type supports
       * gettattro.
       */
-    virtual PyObject* getattro(const XMLElement& name)
+    virtual PyObject* getattro(const Attribute& attr)
     {
       PyErr_SetString(PythonLogicException, "Missing method 'getattro'");
       return NULL;
@@ -642,7 +652,7 @@ class PythonExtensionBase : public PyObject
       * Subclasses are expected to implement an override if the type supports
       * settattro.
       */
-    virtual int setattro(const XMLElement& name, const PythonObject& value)
+    virtual int setattro(const Attribute& attr, const PythonObject& field)
     {
       PyErr_SetString(PythonLogicException, "Missing method 'setattro'");
       return -1;
@@ -760,9 +770,9 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
     PROXY* obj;
 
   private:
-    virtual PyObject* getattro(const XMLElement&) = 0;
+    virtual PyObject* getattro(const Attribute&) = 0;
 
-    virtual int setattro(const XMLElement&, const PythonObject&) = 0;
+    virtual int setattro(const Attribute&, const PythonObject&) = 0;
 
     /** Return the name as the string representation in Python. */
     PyObject* str()
@@ -812,7 +822,7 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
       {
         PyErr_Format(PythonDataException, 
           "No type %s registered for category %s",
-          type, PROXY::metadata.type.c_str());
+          type.c_str(), PROXY::metadata.type.c_str());
         return NULL;
       }
       PROXY* x = PROXY::add(string(PyString_AsString(PyObject_Str(name))), *j);
@@ -829,10 +839,11 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
           Py_ssize_t pos = 0;
           while (PyDict_Next(kwds, &pos, &key, &value))
           {
-            XMLElement field(PyString_AsString(key));
-            if (!field.isA(Tags::tag_name) && !field.isA(Tags::tag_type))
+            PythonObject field(value);
+            Attribute attr(PyString_AsString(key));
+            if (!attr.isA(Tags::tag_name) && !attr.isA(Tags::tag_type))
             {
-              int result = pr->setattro(field, value);
+              int result = pr->setattro(attr, field);
               if (result)
                 PyErr_Format(PyExc_AttributeError,
                   "attribute '%s' on '%s' can't be updated",
@@ -881,7 +892,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
     PROXY* obj;
 
   private:
-    virtual PyObject* getattro(const XMLElement&) = 0;
+    virtual PyObject* getattro(const Attribute&) = 0;
 
     /** Comparison operator. */
     int compare(const PythonObject& other)
@@ -896,7 +907,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
       return obj->getName().compare(y->obj->getName());
     }
 
-    virtual int setattro(const XMLElement&, const PythonObject&) = 0;
+    virtual int setattro(const Attribute&, const PythonObject&) = 0;
 
     /** Return the name as the string representation in Python. */
     PyObject* str()
@@ -937,10 +948,11 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
           bool  nok =false;
           while (PyDict_Next(kwds, &pos, &key, &value))
           {
-            XMLElement field(PyString_AsString(key));
-            if (!field.isA(Tags::tag_name))
+            PythonObject field(value);
+            Attribute attr(PyString_AsString(key));
+            if (!attr.isA(Tags::tag_name))
             {
-              int result = pr->setattro(field, value);
+              int result = pr->setattro(attr, field);
               if (result)
                 PyErr_Format(PyExc_AttributeError,
                   "attribute '%s' on '%s' can't be updated",
@@ -1004,8 +1016,8 @@ class PythonPlan : public PythonExtension<PythonPlan>
   public:
     static int initialize(PyObject* m);
   private:
-    PyObject* getattro(const XMLElement&);
-    int setattro(const XMLElement&, const PythonObject&);
+    PyObject* getattro(const Attribute&);
+    int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1022,7 +1034,7 @@ class PythonProblem : public PythonExtension<PythonProblem>
     static void* proxy(Object* p)
       {return static_cast<PyObject*>(new PythonProblem(static_cast<Problem*>(p)));}
   private:
-    PyObject* getattro(const XMLElement&);
+    PyObject* getattro(const Attribute&);
     Problem* prob;
 };
 
@@ -1042,8 +1054,8 @@ class PythonBuffer : public FreppleCategory<PythonBuffer,Buffer>
 {
   public:
     PythonBuffer(Buffer* p) : FreppleCategory<PythonBuffer,Buffer>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1058,8 +1070,8 @@ class PythonBufferDefault : public FreppleClass<PythonBufferDefault,PythonBuffer
   public:
     PythonBufferDefault(BufferDefault* p)
       : FreppleClass<PythonBufferDefault,PythonBuffer,BufferDefault>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1068,8 +1080,8 @@ class PythonBufferInfinite : public FreppleClass<PythonBufferInfinite,PythonBuff
   public:
     PythonBufferInfinite(BufferInfinite* p)
       : FreppleClass<PythonBufferInfinite,PythonBuffer,BufferInfinite>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1078,8 +1090,8 @@ class PythonBufferProcure : public FreppleClass<PythonBufferProcure,PythonBuffer
   public:
     PythonBufferProcure(BufferProcure* p)
       : FreppleClass<PythonBufferProcure,PythonBuffer,BufferProcure>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1092,8 +1104,8 @@ class PythonLocation : public FreppleCategory<PythonLocation,Location>
 {
   public:
     PythonLocation(Location* p) : FreppleCategory<PythonLocation,Location>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1108,8 +1120,8 @@ class PythonLocationDefault : public FreppleClass<PythonLocationDefault,PythonLo
   public:
     PythonLocationDefault(LocationDefault* p)
       : FreppleClass<PythonLocationDefault,PythonLocation,LocationDefault>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1122,8 +1134,8 @@ class PythonCustomer : public FreppleCategory<PythonCustomer,Customer>
 {
   public:
     PythonCustomer(Customer* p) : FreppleCategory<PythonCustomer,Customer>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1138,8 +1150,8 @@ class PythonCustomerDefault : public FreppleClass<PythonCustomerDefault,PythonCu
   public:
     PythonCustomerDefault(CustomerDefault* p)
       : FreppleClass<PythonCustomerDefault,PythonCustomer,CustomerDefault>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1152,8 +1164,8 @@ class PythonItem : public FreppleCategory<PythonItem,Item>
 {
   public:
     PythonItem(Item* p) : FreppleCategory<PythonItem,Item>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1168,8 +1180,8 @@ class PythonItemDefault : public FreppleClass<PythonItemDefault,PythonItem,ItemD
   public:
     PythonItemDefault(ItemDefault* p)
       : FreppleClass<PythonItemDefault,PythonItem,ItemDefault>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1182,8 +1194,8 @@ class PythonCalendar : public FreppleCategory<PythonCalendar,Calendar>
 {
   public:
     PythonCalendar(Calendar* p) : FreppleCategory<PythonCalendar,Calendar>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1222,8 +1234,8 @@ class PythonCalendarBucket
   private:
     Calendar::Bucket* obj;
     Calendar* cal;
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
     // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 };
 
@@ -1233,8 +1245,8 @@ class PythonCalendarVoid : public FreppleClass<PythonCalendarVoid,PythonCalendar
   public:
     PythonCalendarVoid(CalendarVoid* p)
       : FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1243,8 +1255,8 @@ class PythonCalendarBool : public FreppleClass<PythonCalendarBool,PythonCalendar
   public:
     PythonCalendarBool(CalendarBool* p)
       : FreppleClass<PythonCalendarBool,PythonCalendar,CalendarBool>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1253,8 +1265,8 @@ class PythonCalendarDouble : public FreppleClass<PythonCalendarDouble,PythonCale
   public:
     PythonCalendarDouble(CalendarDouble* p)
       : FreppleClass<PythonCalendarDouble,PythonCalendar,CalendarDouble>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1267,8 +1279,8 @@ class PythonDemand : public FreppleCategory<PythonDemand,Demand>
 {
   public:
     PythonDemand(Demand* p) : FreppleCategory<PythonDemand,Demand>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1283,8 +1295,8 @@ class PythonDemandDefault : public FreppleClass<PythonDemandDefault,PythonDemand
   public:
     PythonDemandDefault(DemandDefault* p)
       : FreppleClass<PythonDemandDefault,PythonDemand,DemandDefault>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1297,8 +1309,8 @@ class PythonResource : public FreppleCategory<PythonResource,Resource>
 {
   public:
     PythonResource(Resource* p) : FreppleCategory<PythonResource,Resource>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1313,8 +1325,8 @@ class PythonResourceDefault : public FreppleClass<PythonResourceDefault,PythonRe
   public:
     PythonResourceDefault(ResourceDefault* p)
       : FreppleClass<PythonResourceDefault,PythonResource,ResourceDefault>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1323,8 +1335,8 @@ class PythonResourceInfinite : public FreppleClass<PythonResourceInfinite,Python
   public:
     PythonResourceInfinite(ResourceInfinite* p)
       : FreppleClass<PythonResourceInfinite,PythonResource,ResourceInfinite>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1337,8 +1349,8 @@ class PythonOperation : public FreppleCategory<PythonOperation,Operation>
 {
   public:
     PythonOperation(Operation* p) : FreppleCategory<PythonOperation,Operation>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1353,8 +1365,8 @@ class PythonOperationAlternate : public FreppleClass<PythonOperationAlternate,Py
   public:
     PythonOperationAlternate(OperationAlternate* p)
       : FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1363,8 +1375,8 @@ class PythonOperationFixedTime : public FreppleClass<PythonOperationFixedTime,Py
   public:
     PythonOperationFixedTime(OperationFixedTime* p)
       : FreppleClass<PythonOperationFixedTime,PythonOperation,OperationFixedTime>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1373,8 +1385,8 @@ class PythonOperationTimePer : public FreppleClass<PythonOperationTimePer,Python
   public:
     PythonOperationTimePer(OperationTimePer* p)
       : FreppleClass<PythonOperationTimePer,PythonOperation,OperationTimePer>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1383,8 +1395,8 @@ class PythonOperationRouting : public FreppleClass<PythonOperationRouting,Python
   public:
     PythonOperationRouting(OperationRouting* p)
       : FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1403,8 +1415,8 @@ class PythonOperationPlan : public PythonExtension<PythonOperationPlan>
   private:
     OperationPlan* obj;
     // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);    "id"+"operation" keywords used
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -1425,7 +1437,7 @@ class PythonFlowPlan : public PythonExtension<PythonFlowPlan>
     static int initialize(PyObject* m);
     PythonFlowPlan(FlowPlan* p) : fl(p) {}
   private:
-    PyObject* getattro(const XMLElement&);
+    PyObject* getattro(const Attribute&);
     FlowPlan* fl;
 };
 
@@ -1460,7 +1472,7 @@ class PythonLoadPlan : public PythonExtension<PythonLoadPlan>
     static int initialize(PyObject* m);
     PythonLoadPlan(LoadPlan* p) : fl(p) {}
   private:
-    PyObject* getattro(const XMLElement&);
+    PyObject* getattro(const Attribute&);
     LoadPlan* fl;
 };
 
@@ -1542,8 +1554,8 @@ class PythonLoad : public PythonExtension<PythonLoad>
     static int initialize(PyObject* m);
     PythonLoad(Load* p) : ld(p) {}
   private:
-    PyObject* getattro(const XMLElement&);
-    int setattro(const XMLElement&, const PythonObject&);
+    PyObject* getattro(const Attribute&);
+    int setattro(const Attribute&, const PythonObject&);
     // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     static void* proxy(Object* p) {return static_cast<PyObject*>(new PythonLoad(static_cast<Load*>(p)));}
     Load* ld;
@@ -1589,9 +1601,9 @@ class PythonFlow : public PythonExtension<PythonFlow>
     static int initialize(PyObject* m);
     PythonFlow(Flow* p) : fl(p) {}
   private:
-    PyObject* getattro(const XMLElement&);
+    PyObject* getattro(const Attribute&);
     // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
-    int setattro(const XMLElement&, const PythonObject&);
+    int setattro(const Attribute&, const PythonObject&);
     static void* proxy(Object* p) {return static_cast<PyObject*>(new PythonFlow(static_cast<Flow*>(p)));}
     Flow* fl;
 };
@@ -1639,8 +1651,8 @@ class PythonSolver : public FreppleCategory<PythonSolver,Solver>
       return FreppleCategory<PythonSolver,Solver>::initialize(m);
     }
     PythonSolver(Solver* p) : FreppleCategory<PythonSolver,Solver>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
     static PyObject* solve(PyObject*, PyObject*);
 };
 
@@ -1656,8 +1668,8 @@ class PythonSolverMRP : public FreppleClass<PythonSolverMRP,PythonSolver,SolverM
   public:
     PythonSolverMRP(SolverMRP* p)
       : FreppleClass<PythonSolverMRP,PythonSolver,SolverMRP>(p) {}
-    virtual PyObject* getattro(const XMLElement&);
-    virtual int setattro(const XMLElement&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 }

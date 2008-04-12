@@ -68,7 +68,7 @@ DECLARE_EXPORT ofstream Environment::logfile;
 DECLARE_EXPORT string Environment::logfilename;
 
 // Hash value computed only once
-DECLARE_EXPORT const hashtype MetaCategory::defaultHash(XMLtag::hash("default"));
+DECLARE_EXPORT const hashtype MetaCategory::defaultHash(Keyword::hash("default"));
 
 
 DECLARE_EXPORT void Environment::setHomeDirectory(const string dirname)
@@ -187,7 +187,7 @@ void LibraryUtils::initialize()
   setlocale(LC_ALL, "" );
 
   // Initialize Xerces parser
-  XMLPlatformUtils::Initialize();
+  xercesc::XMLPlatformUtils::Initialize();
 
   // Initialize the command metadata.
   Command::metadata.registerCategory("command", "commands");
@@ -233,7 +233,7 @@ void LibraryUtils::initialize()
 void LibraryUtils::finalize()
 {
   // Shut down the Xerces parser
-  XMLPlatformUtils::Terminate();
+  xercesc::XMLPlatformUtils::Terminate();
 }
 
 
@@ -255,14 +255,14 @@ DECLARE_EXPORT void MetaClass::registerClass (const char* a, const char* b, bool
   // Update fields
   MetaClass& me = const_cast<MetaClass&>(*this);
   me.type = b;
-  me.typetag = &XMLtag::find(b);
+  me.typetag = &Keyword::find(b);
   me.category = cat;
 
   // Update the metadata table
-  cat->classes[XMLtag::hash(b)] = this;
+  cat->classes[Keyword::hash(b)] = this;
 
   // Register this tag also as the default one, if requested
-  if (def) cat->classes[XMLtag::hash("default")] = this;
+  if (def) cat->classes[Keyword::hash("default")] = this;
 }
 
 
@@ -274,8 +274,8 @@ DECLARE_EXPORT void MetaCategory::registerCategory (const char* a, const char* g
     throw LogicException("Reinitializing category " + type + " isn't allowed");
 
   // Update registry
-  if (a) categoriesByTag[XMLtag::hash(a)] = this;
-  if (gr) categoriesByGroupTag[XMLtag::hash(gr)] = this;
+  if (a) categoriesByTag[Keyword::hash(a)] = this;
+  if (gr) categoriesByGroupTag[Keyword::hash(gr)] = this;
 
   // Update fields
   MetaCategory& me = const_cast<MetaCategory&>(*this);
@@ -285,13 +285,13 @@ DECLARE_EXPORT void MetaCategory::registerCategory (const char* a, const char* g
   {
     // Type tag
     me.type = a;
-    me.typetag = &XMLtag::find(a);
+    me.typetag = &Keyword::find(a);
   }
   if (gr)
   {
     // Group tag
     me.group = gr;
-    me.grouptag = &XMLtag::find(gr);
+    me.grouptag = &Keyword::find(gr);
   }
 
   // Maintain a linked list of all registered categories
@@ -309,7 +309,7 @@ DECLARE_EXPORT void MetaCategory::registerCategory (const char* a, const char* g
 DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const char* c)
 {
   // Loop through all categories
-  CategoryMap::const_iterator i = categoriesByTag.find(XMLtag::hash(c));
+  CategoryMap::const_iterator i = categoriesByTag.find(Keyword::hash(c));
   return (i!=categoriesByTag.end()) ? i->second : NULL;
 }
 
@@ -325,7 +325,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const hashtyp
 DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const char* c)
 {
   // Loop through all categories
-  CategoryMap::const_iterator i = categoriesByGroupTag.find(XMLtag::hash(c));
+  CategoryMap::const_iterator i = categoriesByGroupTag.find(Keyword::hash(c));
   return (i!=categoriesByGroupTag.end()) ? i->second : NULL;
 }
 
@@ -341,7 +341,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const ha
 DECLARE_EXPORT const MetaClass* MetaCategory::findClass(const char* c) const
 {
   // Look up in the registered classes
-  MetaCategory::ClassMap::const_iterator j = classes.find(XMLtag::hash(c));
+  MetaCategory::ClassMap::const_iterator j = classes.find(Keyword::hash(c));
   return (j == classes.end()) ? NULL : j->second;
 }
 
@@ -369,7 +369,7 @@ DECLARE_EXPORT const MetaClass* MetaClass::findClass(const char* c)
   {
     // Look up in the registered classes
     MetaCategory::ClassMap::const_iterator j
-      = i->second->classes.find(XMLtag::hash(c));
+      = i->second->classes.find(Keyword::hash(c));
     if (j != i->second->classes.end()) return j->second;
   }
   // Not found...
@@ -390,7 +390,7 @@ DECLARE_EXPORT void MetaClass::printClasses()
         j = i->second->classes.begin();
         j != i->second->classes.end();
         ++j)
-      if (j->first == XMLtag::hash("default"))
+      if (j->first == Keyword::hash("default"))
         logger << "    default ( = " << j->second->type << " )" << j->second << endl;
       else
         logger << "    " << j->second->type << j->second << endl;
@@ -410,7 +410,7 @@ DECLARE_EXPORT Action MetaClass::decodeAction(const char *x)
 }
 
 
-DECLARE_EXPORT Action MetaClass::decodeAction(const Attributes* atts)
+DECLARE_EXPORT Action MetaClass::decodeAction(const xercesc::Attributes* atts)
 {
   const XMLCh * c = atts ?
       atts->getValue(Tags::tag_action.getXMLCharacters()) :
@@ -420,9 +420,9 @@ DECLARE_EXPORT Action MetaClass::decodeAction(const Attributes* atts)
   if (!c) return ADD_CHANGE;
 
   // Decode the attribute
-  char* ac = XMLString::transcode(c);
+  char* ac = xercesc::XMLString::transcode(c);
   Action a = decodeAction(ac);
-  XMLString::release(&ac);
+  xercesc::XMLString::release(&ac);
   return a;
 }
 
@@ -446,7 +446,7 @@ DECLARE_EXPORT bool MetaClass::raiseEvent(Object* v, Signal a) const
 
 Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput& in)
 {
-  const Attributes* atts = in.getAttributes();
+  const xercesc::Attributes* atts = in.getAttributes();
   Action act = ADD;
   switch (act)
   {
@@ -459,22 +459,22 @@ Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput
     default:
       /* Lookup for the class in the map of registered classes. */
       char* type =
-        XMLString::transcode(atts->getValue(Tags::tag_type.getXMLCharacters()));
+        xercesc::XMLString::transcode(atts->getValue(Tags::tag_type.getXMLCharacters()));
       string type2;
-      if (!type && in.getParentElement().isA(cat.grouptag))
+      if (!type && in.getParentElement().first.isA(cat.grouptag))
       {
-        if (in.getCurrentElement().isA(cat.typetag)) type2 = "default";
-        else type2 = in.getCurrentElement().getName();
+        if (in.getCurrentElement().first.isA(cat.typetag)) type2 = "default";
+        else type2 = in.getCurrentElement().first.getName();
       }
       ClassMap::const_iterator j
-        = cat.classes.find(type ? XMLtag::hash(type) : (type2.empty() ? MetaCategory::defaultHash : XMLtag::hash(type2.c_str())));
+        = cat.classes.find(type ? Keyword::hash(type) : (type2.empty() ? MetaCategory::defaultHash : Keyword::hash(type2.c_str())));
       if (j == cat.classes.end())
       {
         string t(type ? string(type) : (!type2.empty() ? type2 : "default"));
-        XMLString::release(&type);
+        xercesc::XMLString::release(&type);
         throw LogicException("No type " + t + " registered for category " + cat.type);
       }
-      XMLString::release(&type);
+      xercesc::XMLString::release(&type);
 
       // Call the factory method
       Object* result = j->second->factoryMethodDefault();
@@ -495,7 +495,7 @@ Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput
 }
 
 
-void HasDescription::writeElement(XMLOutput *o, const XMLtag &t, mode m) const
+void HasDescription::writeElement(XMLOutput *o, const Keyword &t, mode m) const
 {
   // Note that this function is never called on its own. It is always called
   // from the writeElement() method of a subclass.
@@ -506,14 +506,14 @@ void HasDescription::writeElement(XMLOutput *o, const XMLtag &t, mode m) const
 }
 
 
-void HasDescription::endElement (XMLInput& pIn, XMLElement& pElement)
+void HasDescription::endElement (XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_category))
-    setCategory(pElement.getData());
-  else if (pElement.isA(Tags::tag_subcategory))
-    setSubCategory(pElement.getData());
-  else if (pElement.isA(Tags::tag_description))
-    setDescription(pElement.getData());
+  if (pAttr.isA(Tags::tag_category))
+    setCategory(pElement.getString());
+  else if (pAttr.isA(Tags::tag_subcategory))
+    setSubCategory(pElement.getString());
+  else if (pAttr.isA(Tags::tag_description))
+    setDescription(pElement.getString());
 }
 
 }

@@ -49,30 +49,30 @@ int PythonPlan::initialize(PyObject* m)
 }
 
 
-PyObject* PythonPlan::getattro(const XMLElement& field)
+PyObject* PythonPlan::getattro(const Attribute& attr)
 {
-  if (field.isA(Tags::tag_name))
+  if (attr.isA(Tags::tag_name))
     return PythonObject(Plan::instance().getName());
-  if (field.isA(Tags::tag_description))
+  if (attr.isA(Tags::tag_description))
     return PythonObject(Plan::instance().getDescription());
-  if (field.isA(Tags::tag_current))
+  if (attr.isA(Tags::tag_current))
     return PythonObject(Plan::instance().getCurrent());
-  if (field.isA(Tags::tag_logfile))
+  if (attr.isA(Tags::tag_logfile))
     return PythonObject(Environment::getLogFile());
   return NULL;
 }
 
 
-int PythonPlan::setattro(const XMLElement& field, const PythonObject& value)
+int PythonPlan::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_name))
-    Plan::instance().setName(value.getString());  
-  else if (field.isA(Tags::tag_description))
-    Plan::instance().setDescription(value.getString());
-  else if (field.isA(Tags::tag_current))
-    Plan::instance().setCurrent(value.getDate()); 
-  else if (field.isA(Tags::tag_logfile))
-    Environment::setLogFile(value.getString());
+  if (attr.isA(Tags::tag_name))
+    Plan::instance().setName(field.getString());  
+  else if (attr.isA(Tags::tag_description))
+    Plan::instance().setDescription(field.getString());
+  else if (attr.isA(Tags::tag_current))
+    Plan::instance().setCurrent(field.getDate()); 
+  else if (attr.isA(Tags::tag_logfile))
+    Environment::setLogFile(field.getString());
   else
     return -1; // Error
   return 0;  // OK
@@ -84,40 +84,40 @@ int PythonPlan::setattro(const XMLElement& field, const PythonObject& value)
 //
 
 
-PyObject* PythonBuffer::getattro(const XMLElement& field)
+PyObject* PythonBuffer::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_name))
+  if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
-  if (field.isA(Tags::tag_description))
+  if (attr.isA(Tags::tag_description))
     return PythonObject(obj->getDescription());
-  if (field.isA(Tags::tag_category))
+  if (attr.isA(Tags::tag_category))
     return PythonObject(obj->getCategory());
-  if (field.isA(Tags::tag_subcategory))
+  if (attr.isA(Tags::tag_subcategory))
     return PythonObject(obj->getSubCategory());
-  if (field.isA(Tags::tag_owner))
+  if (attr.isA(Tags::tag_owner))
     return PythonObject(obj->getOwner());
-  if (field.isA(Tags::tag_location))
+  if (attr.isA(Tags::tag_location))
     return PythonObject(obj->getLocation());
-  if (field.isA(Tags::tag_producing))
+  if (attr.isA(Tags::tag_producing))
     return PythonObject(obj->getProducingOperation());
-  if (field.isA(Tags::tag_item))
+  if (attr.isA(Tags::tag_item))
     return PythonObject(obj->getItem());
-  if (field.isA(Tags::tag_onhand))
+  if (attr.isA(Tags::tag_onhand))
     return PythonObject(obj->getOnHand());
-  if (field.isA(Tags::tag_flowplans))
+  if (attr.isA(Tags::tag_flowplans))
     return new PythonFlowPlanIterator(obj);
-  if (field.isA(Tags::tag_maximum))
+  if (attr.isA(Tags::tag_maximum))
     return PythonObject(obj->getMaximum());
-  if (field.isA(Tags::tag_minimum))
+  if (attr.isA(Tags::tag_minimum))
     return PythonObject(obj->getMinimum());
-  if (field.isA(Tags::tag_hidden))
+  if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
-  if (field.isA(Tags::tag_flows))
+  if (attr.isA(Tags::tag_flows))
     return new PythonFlowIterator(obj);
-  if (field.isA(Tags::tag_level))
+  if (attr.isA(Tags::tag_level))
     return PythonObject(obj->getLevel());
-  if (field.isA(Tags::tag_cluster))
+  if (attr.isA(Tags::tag_cluster))
     return PythonObject(obj->getCluster());
   // @todo support member iteration for buffer, res, dem, item, ...
   // PythonBufferIterator becomes an abstract class: defines the pytype and an abstract iternext.
@@ -126,162 +126,162 @@ PyObject* PythonBuffer::getattro(const XMLElement& field)
 }
 
 
-int PythonBuffer::setattro(const XMLElement& field, const PythonObject& value)
+int PythonBuffer::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_name))
-    obj->setName(value.getString());
-  else if (field.isA(Tags::tag_description))
-    obj->setDescription(value.getString());
-  else if (field.isA(Tags::tag_category))
-    obj->setCategory(value.getString());
-  else if (field.isA(Tags::tag_subcategory))
-    obj->setSubCategory(value.getString());
-  else if (field.isA(Tags::tag_owner))
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_owner))
   {
-    if (!value.check(PythonBuffer::getType()))
+    if (!field.check(PythonBuffer::getType()))
     {
       PyErr_SetString(PythonDataException, "buffer owner must be of type buffer");
       return -1;
     }
-    Buffer* y = static_cast<PythonBuffer*>(static_cast<PyObject*>(value))->obj;
+    Buffer* y = static_cast<PythonBuffer*>(static_cast<PyObject*>(field))->obj;
     obj->setOwner(y);
   }
-  else if (field.isA(Tags::tag_location))
+  else if (attr.isA(Tags::tag_location))
   {
-    if (!value.check(PythonLocation::getType())) 
+    if (!field.check(PythonLocation::getType())) 
     {
       PyErr_SetString(PythonDataException, "buffer location must be of type location");
       return -1;
     }
-    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(value))->obj;
+    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(field))->obj;
     obj->setLocation(y);
   }
-  else if (field.isA(Tags::tag_item))
+  else if (attr.isA(Tags::tag_item))
   {
-    if (!value.check(PythonItem::getType())) 
+    if (!field.check(PythonItem::getType())) 
     {
       PyErr_SetString(PythonDataException, "buffer item must be of type item");
       return -1;
     }
-    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(value))->obj;
+    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(field))->obj;
     obj->setItem(y);
   }
-  else if (field.isA(Tags::tag_maximum))
+  else if (attr.isA(Tags::tag_maximum))
   {
-    if (!value.check(PythonCalendarDouble::getType())) 
+    if (!field.check(PythonCalendarDouble::getType())) 
     {
       PyErr_SetString(PythonDataException, "buffer maximum must be of type calendar_double");
       return -1;
     }
-    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(value))->obj;
+    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(field))->obj;
     obj->setMaximum(y);
   }
-  else if (field.isA(Tags::tag_minimum))
+  else if (attr.isA(Tags::tag_minimum))
   {
-    if (!value.check(PythonCalendarDouble::getType())) 
+    if (!field.check(PythonCalendarDouble::getType())) 
     {
       PyErr_SetString(PythonDataException, "buffer minimum must be of type calendar_double");
       return -1;
     }
-    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(value))->obj;
+    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(field))->obj;
     obj->setMinimum(y);
   }
-  else if (field.isA(Tags::tag_onhand))
-    obj->setOnHand(value.getDouble());
-  else if (field.isA(Tags::tag_producing))
+  else if (attr.isA(Tags::tag_onhand))
+    obj->setOnHand(field.getDouble());
+  else if (attr.isA(Tags::tag_producing))
   {
-    if (!value.check(PythonOperation::getType())) 
+    if (!field.check(PythonOperation::getType())) 
     {
       PyErr_SetString(PythonDataException, "buffer producing must be of type operation");
       return -1;
     }
-    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(value))->obj;
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
     obj->setProducingOperation(y);
   }
-  else if (field.isA(Tags::tag_hidden))
-    obj->setHidden(value.getBool());
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
   else
     return -1;  // Error
   return 0;  // OK
 }
 
 
-PyObject* PythonBufferDefault::getattro(const XMLElement& field)
+PyObject* PythonBufferDefault::getattro(const Attribute& attr)
 {
-  return PythonBuffer(obj).getattro(field); 
+  return PythonBuffer(obj).getattro(attr); 
 }
 
 
-int PythonBufferDefault::setattro(const XMLElement& field, const PythonObject& value)
+int PythonBufferDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
   // @todo avoid constructing a PythonBuffer object to call the base class
   // This is currently not really feasible (no casting between the classes is possible)
   // When the XML and Python framework will be unified, this will be solved: we'll basically
   // have a single call to the getAttribute() method of the default buffer, which can call
   // the getAttribute function of the parent class.
-  return PythonBuffer(obj).setattro(field,value);  
+  return PythonBuffer(obj).setattro(attr, field);  
 }
 
 
-PyObject* PythonBufferInfinite::getattro(const XMLElement& field)
+PyObject* PythonBufferInfinite::getattro(const Attribute& attr)
 {
-  return PythonBuffer(obj).getattro(field);
+  return PythonBuffer(obj).getattro(attr);
 }
 
 
-int PythonBufferInfinite::setattro(const XMLElement& field, const PythonObject& value)
+int PythonBufferInfinite::setattro(const Attribute& attr, const PythonObject& field)
 {
-  return PythonBuffer(obj).setattro(field,value);
+  return PythonBuffer(obj).setattro(attr, field);
 }
 
 
-PyObject* PythonBufferProcure::getattro(const XMLElement& field)
+PyObject* PythonBufferProcure::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_leadtime))
+  if (attr.isA(Tags::tag_leadtime))
     return PythonObject(obj->getLeadtime());
-  if (field.isA(Tags::tag_mininventory))
+  if (attr.isA(Tags::tag_mininventory))
     return PythonObject(obj->getMinimumInventory());
-  if (field.isA(Tags::tag_maxinventory))
+  if (attr.isA(Tags::tag_maxinventory))
     return PythonObject(obj->getMaximumInventory());
-  if (field.isA(Tags::tag_mininterval))
+  if (attr.isA(Tags::tag_mininterval))
     return PythonObject(obj->getMinimumInterval());
-  if (field.isA(Tags::tag_maxinterval))
+  if (attr.isA(Tags::tag_maxinterval))
     return PythonObject(obj->getMaximumInterval());
-  if (field.isA(Tags::tag_fence))
+  if (attr.isA(Tags::tag_fence))
     return PythonObject(obj->getFence());
-  if (field.isA(Tags::tag_size_minimum))
+  if (attr.isA(Tags::tag_size_minimum))
     return PythonObject(obj->getSizeMinimum());
-  if (field.isA(Tags::tag_size_multiple))
+  if (attr.isA(Tags::tag_size_multiple))
     return PythonObject(obj->getSizeMultiple());
-  if (field.isA(Tags::tag_size_maximum))
+  if (attr.isA(Tags::tag_size_maximum))
     return PythonObject(obj->getSizeMaximum());
-  return PythonBuffer(obj).getattro(field);
+  return PythonBuffer(obj).getattro(attr);
 }
 
 
-int PythonBufferProcure::setattro(const XMLElement& field, const PythonObject& value)
+int PythonBufferProcure::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_leadtime))
-    obj->setLeadtime(value.getTimePeriod());
-  else if (field.isA(Tags::tag_mininventory))
-    obj->setMinimumInventory(value.getDouble());
-  else if (field.isA(Tags::tag_maxinventory))
-    obj->setMaximumInventory(value.getDouble());
-  else if (field.isA(Tags::tag_mininterval))
-    obj->setMinimumInterval(value.getTimePeriod());
-  else if (field.isA(Tags::tag_maxinterval))
-    obj->setMaximumInterval(value.getTimePeriod());
-  else if (field.isA(Tags::tag_size_minimum))
-    obj->setSizeMinimum(value.getDouble());
-  else if (field.isA(Tags::tag_size_multiple))
-    obj->setSizeMultiple(value.getDouble());
-  else if (field.isA(Tags::tag_size_maximum))
-    obj->setSizeMaximum(value.getDouble());
-  else if (field.isA(Tags::tag_fence))
-    obj->setFence(value.getTimePeriod());
+  if (attr.isA(Tags::tag_leadtime))
+    obj->setLeadtime(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_mininventory))
+    obj->setMinimumInventory(field.getDouble());
+  else if (attr.isA(Tags::tag_maxinventory))
+    obj->setMaximumInventory(field.getDouble());
+  else if (attr.isA(Tags::tag_mininterval))
+    obj->setMinimumInterval(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_maxinterval))
+    obj->setMaximumInterval(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_size_minimum))
+    obj->setSizeMinimum(field.getDouble());
+  else if (attr.isA(Tags::tag_size_multiple))
+    obj->setSizeMultiple(field.getDouble());
+  else if (attr.isA(Tags::tag_size_maximum))
+    obj->setSizeMaximum(field.getDouble());
+  else if (attr.isA(Tags::tag_fence))
+    obj->setFence(field.getTimeperiod());
   else
-    return PythonBuffer(obj).setattro(field,value);
+    return PythonBuffer(obj).setattro(attr, field);
   return 0;
 }
 
@@ -291,74 +291,74 @@ int PythonBufferProcure::setattro(const XMLElement& field, const PythonObject& v
 //
 
 
-PyObject* PythonLocation::getattro(const XMLElement& field)
+PyObject* PythonLocation::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_name))
+  if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
-  if (field.isA(Tags::tag_description))
+  if (attr.isA(Tags::tag_description))
     return PythonObject(obj->getDescription());
-  if (field.isA(Tags::tag_category))
+  if (attr.isA(Tags::tag_category))
     return PythonObject(obj->getCategory());
-  if (field.isA(Tags::tag_subcategory))
+  if (attr.isA(Tags::tag_subcategory))
     return PythonObject(obj->getSubCategory());
-  if (field.isA(Tags::tag_owner))
+  if (attr.isA(Tags::tag_owner))
     return PythonObject(obj->getOwner());
-  if (field.isA(Tags::tag_available))
+  if (attr.isA(Tags::tag_available))
     return PythonObject(obj->getAvailable());
-  if (field.isA(Tags::tag_hidden))
+  if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
 	return NULL;
 }
 
 
-int PythonLocation::setattro(const XMLElement& field, const PythonObject& value)
+int PythonLocation::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_name))
-    obj->setName(value.getString());
-  else if (field.isA(Tags::tag_description))
-    obj->setDescription(value.getString());
-  else if (field.isA(Tags::tag_category))
-    obj->setCategory(value.getString());
-  else if (field.isA(Tags::tag_subcategory))
-    obj->setSubCategory(value.getString());
-  else if (field.isA(Tags::tag_owner))
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_owner))
   {
-    if (!value.check(PythonLocation::getType())) 
+    if (!field.check(PythonLocation::getType())) 
     {
       PyErr_SetString(PythonDataException, "location owner must be of type location");
       return -1;
     }
-    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(value))->obj;
+    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(field))->obj;
     obj->setOwner(y);
   }
-  else if (field.isA(Tags::tag_available))
+  else if (attr.isA(Tags::tag_available))
   {
-    if (!value.check(PythonCalendarBool::getType())) 
+    if (!field.check(PythonCalendarBool::getType())) 
     {
       PyErr_SetString(PythonDataException, "location calendar must be of type calendar_bool");
       return -1;
     }
-    CalendarBool* y = static_cast<PythonCalendarBool*>(static_cast<PyObject*>(value))->obj;
+    CalendarBool* y = static_cast<PythonCalendarBool*>(static_cast<PyObject*>(field))->obj;
     obj->setAvailable(y);
   }
-  else if (field.isA(Tags::tag_hidden))
-    obj->setHidden(value.getBool());
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
   else
     return -1;
   return 0;
 }
 
 
-PyObject* PythonLocationDefault::getattro(const XMLElement& field)
+PyObject* PythonLocationDefault::getattro(const Attribute& attr)
 {
-  return PythonLocation(obj).getattro(field);
+  return PythonLocation(obj).getattro(attr);
 }
 
 
-int PythonLocationDefault::setattro(const XMLElement& field, const PythonObject& value)
+int PythonLocationDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
- return PythonLocation(obj).setattro(field,value);
+ return PythonLocation(obj).setattro(attr, field);
 }
 
 
@@ -369,62 +369,62 @@ int PythonLocationDefault::setattro(const XMLElement& field, const PythonObject&
 //
 
 
-PyObject* PythonCustomer::getattro(const XMLElement& field)
+PyObject* PythonCustomer::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_name))
+  if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
-  if (field.isA(Tags::tag_description))
+  if (attr.isA(Tags::tag_description))
     return PythonObject(obj->getDescription());
-  if (field.isA(Tags::tag_category))
+  if (attr.isA(Tags::tag_category))
     return PythonObject(obj->getCategory());
-  if (field.isA(Tags::tag_subcategory))
+  if (attr.isA(Tags::tag_subcategory))
     return PythonObject(obj->getSubCategory());
-  if (field.isA(Tags::tag_owner))
+  if (attr.isA(Tags::tag_owner))
     return PythonObject(obj->getOwner());
-  if (field.isA(Tags::tag_hidden))
+  if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
 	return NULL;
 }
 
 
-int PythonCustomer::setattro(const XMLElement& field, const PythonObject& value)
+int PythonCustomer::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_name))
-    obj->setName(value.getString());
-  else if (field.isA(Tags::tag_description))
-    obj->setDescription(value.getString());
-  else if (field.isA(Tags::tag_category))
-    obj->setCategory(value.getString());
-  else if (field.isA(Tags::tag_subcategory))
-    obj->setSubCategory(value.getString());
-  else if (field.isA(Tags::tag_owner))
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_owner))
   {
-    if (!value.check(PythonCustomer::getType())) 
+    if (!field.check(PythonCustomer::getType())) 
     {
       PyErr_SetString(PythonDataException, "customer owner must be of type customer");
       return -1;
     }
-    Customer* y = static_cast<PythonCustomer*>(static_cast<PyObject*>(value))->obj;
+    Customer* y = static_cast<PythonCustomer*>(static_cast<PyObject*>(field))->obj;
     obj->setOwner(y);
   }
-  else if (field.isA(Tags::tag_hidden))
-    obj->setHidden(value.getBool());
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
   else
     return -1;
   return 0;
 }
 
 
-PyObject* PythonCustomerDefault::getattro(const XMLElement& field)
+PyObject* PythonCustomerDefault::getattro(const Attribute& attr)
 {
-  return PythonCustomer(obj).getattro(field);
+  return PythonCustomer(obj).getattro(attr);
 }
 
 
-int PythonCustomerDefault::setattro(const XMLElement& field, const PythonObject& value)
+int PythonCustomerDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
- return PythonCustomer(obj).setattro(field,value);
+ return PythonCustomer(obj).setattro(attr, field);
 }
 
 
@@ -433,74 +433,74 @@ int PythonCustomerDefault::setattro(const XMLElement& field, const PythonObject&
 //
 
 
-PyObject* PythonItem::getattro(const XMLElement& field)
+PyObject* PythonItem::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_name))
+  if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
-  if (field.isA(Tags::tag_description))
+  if (attr.isA(Tags::tag_description))
     return PythonObject(obj->getDescription());
-  if (field.isA(Tags::tag_category))
+  if (attr.isA(Tags::tag_category))
     return PythonObject(obj->getCategory());
-  if (field.isA(Tags::tag_subcategory))
+  if (attr.isA(Tags::tag_subcategory))
     return PythonObject(obj->getSubCategory());
-  if (field.isA(Tags::tag_owner))
+  if (attr.isA(Tags::tag_owner))
     return PythonObject(obj->getOwner());
-  if (field.isA(Tags::tag_operation))
+  if (attr.isA(Tags::tag_operation))
     return PythonObject(obj->getOperation());
-  if (field.isA(Tags::tag_hidden))
+  if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
 	return NULL;
 }
 
 
-int PythonItem::setattro(const XMLElement& field, const PythonObject& value)
+int PythonItem::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_name))
-    obj->setName(value.getString());
-  else if (field.isA(Tags::tag_description))
-    obj->setDescription(value.getString());
-  else if (field.isA(Tags::tag_category))
-    obj->setCategory(value.getString());
-  else if (field.isA(Tags::tag_subcategory))
-    obj->setSubCategory(value.getString());
-  else if (field.isA(Tags::tag_owner))
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_owner))
   {
-    if (!value.check(PythonItem::getType())) 
+    if (!field.check(PythonItem::getType())) 
     {
       PyErr_SetString(PythonDataException, "item owner must be of type item");
       return -1;
     }
-    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(value))->obj;
+    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(field))->obj;
     obj->setOwner(y);
   }
-  else if (field.isA(Tags::tag_operation))
+  else if (attr.isA(Tags::tag_operation))
   {
-    if (!value.check(PythonOperation::getType())) 
+    if (!field.check(PythonOperation::getType())) 
     {
       PyErr_SetString(PythonDataException, "item operation must be of type operation");
       return -1;
     }
-    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(value))->obj;
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
     obj->setOperation(y);
   }
-  else if (field.isA(Tags::tag_hidden))
-    obj->setHidden(value.getBool());
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
   else
     return -1;
   return 0;
 }
 
 
-PyObject* PythonItemDefault::getattro(const XMLElement& field)
+PyObject* PythonItemDefault::getattro(const Attribute& attr)
 {
-  return PythonItem(obj).getattro(field);
+  return PythonItem(obj).getattro(attr);
 }
 
 
-int PythonItemDefault::setattro(const XMLElement& field, const PythonObject& value)
+int PythonItemDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
- return PythonItem(obj).setattro(field,value);
+ return PythonItem(obj).setattro(attr, field);
 }
 
 
@@ -509,73 +509,73 @@ int PythonItemDefault::setattro(const XMLElement& field, const PythonObject& val
 //
 
 
-PyObject* PythonCalendar::getattro(const XMLElement& field)
+PyObject* PythonCalendar::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_name))
+  if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
-  if (field.isA(Tags::tag_buckets))
+  if (attr.isA(Tags::tag_buckets))
     return new PythonCalendarBucketIterator(obj);
 	return NULL;
 }
 
 
-int PythonCalendar::setattro(const XMLElement& field, const PythonObject& value)
+int PythonCalendar::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_name))
-    obj->setName(value.getString());
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
   else
     return -1;  // Error
   return 0;  // OK
 }
 
 
-PyObject* PythonCalendarVoid::getattro(const XMLElement& field)
+PyObject* PythonCalendarVoid::getattro(const Attribute& attr)
 {
-  return PythonCalendar(obj).getattro(field); 
+  return PythonCalendar(obj).getattro(attr); 
 }
 
 
-int PythonCalendarVoid::setattro(const XMLElement& field, const PythonObject& value)
+int PythonCalendarVoid::setattro(const Attribute& attr, const PythonObject& field)
 {
-   return PythonCalendar(obj).setattro(field,value);
+   return PythonCalendar(obj).setattro(attr, field);
 }
 
 
-PyObject* PythonCalendarBool::getattro(const XMLElement& field)
+PyObject* PythonCalendarBool::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_default))
+  if (attr.isA(Tags::tag_default))
     return PythonObject(obj->getDefault());
-  return PythonCalendar(obj).getattro(field); 
+  return PythonCalendar(obj).getattro(attr); 
 }
 
 
-int PythonCalendarBool::setattro(const XMLElement& field, const PythonObject& value)
+int PythonCalendarBool::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_default))
-    obj->setDefault(value.getBool());
+  if (attr.isA(Tags::tag_default))
+    obj->setDefault(field.getBool());
   else
-    return PythonCalendar(obj).setattro(field,value);
+    return PythonCalendar(obj).setattro(attr, field);
   return 0;
 }
 
 
-PyObject* PythonCalendarDouble::getattro(const XMLElement& field)
+PyObject* PythonCalendarDouble::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_default))
+  if (attr.isA(Tags::tag_default))
     return PythonObject(obj->getDefault());
-  return PythonCalendar(obj).getattro(field); 
+  return PythonCalendar(obj).getattro(attr); 
 }
 
 
-int PythonCalendarDouble::setattro(const XMLElement& field, const PythonObject& value)
+int PythonCalendarDouble::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_default))
-    obj->setDefault(value.getDouble());
+  if (attr.isA(Tags::tag_default))
+    obj->setDefault(field.getDouble());
   else
-    return PythonCalendar(obj).setattro(field,value);
+    return PythonCalendar(obj).setattro(attr, field);
   return 0;
 }
 
@@ -610,14 +610,14 @@ int PythonCalendarBucket::initialize(PyObject* m)
 }
 
 
-PyObject* PythonCalendarBucket::getattro(const XMLElement& field)
+PyObject* PythonCalendarBucket::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_start))
+  if (attr.isA(Tags::tag_start))
     return PythonObject(obj->getStart());
-  if (field.isA(Tags::tag_end))
+  if (attr.isA(Tags::tag_end))
     return PythonObject(obj->getEnd());
-  if (field.isA(Tags::tag_value))
+  if (attr.isA(Tags::tag_value))
   {
     if (cal->getType() == CalendarDouble::metadata)
       return PythonObject(dynamic_cast< CalendarValue<double>::BucketValue* >(obj)->getValue());
@@ -631,34 +631,34 @@ PyObject* PythonCalendarBucket::getattro(const XMLElement& field)
     PyErr_SetString(PythonLogicException, "calendar type not recognized");
     return NULL;
   }
-  if (field.isA(Tags::tag_priority))
+  if (attr.isA(Tags::tag_priority))
     return PythonObject(obj->getPriority());
-  if (field.isA(Tags::tag_name))
+  if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   return NULL; 
 }
 
 
-int PythonCalendarBucket::setattro(const XMLElement& field, const PythonObject& value)
+int PythonCalendarBucket::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_name))
-    obj->setName(value.getString());
-  else if (field.isA(Tags::tag_start))
-    obj->setStart(value.getDate());
-  else if (field.isA(Tags::tag_end))
-    obj->setEnd(value.getDate());
-  else if (field.isA(Tags::tag_priority))
-    obj->setPriority(value.getInt());
-  else if (field.isA(Tags::tag_value))
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_start))
+    obj->setStart(field.getDate());
+  else if (attr.isA(Tags::tag_end))
+    obj->setEnd(field.getDate());
+  else if (attr.isA(Tags::tag_priority))
+    obj->setPriority(field.getInt());
+  else if (attr.isA(Tags::tag_value))
   {
     if (cal->getType() == CalendarDouble::metadata)
-      dynamic_cast< CalendarValue<double>::BucketValue* >(obj)->setValue(value.getDouble());
+      dynamic_cast< CalendarValue<double>::BucketValue* >(obj)->setValue(field.getDouble());
     else if (cal->getType() == CalendarBool::metadata)
-      dynamic_cast< CalendarValue<bool>::BucketValue* >(obj)->setValue(value.getBool());
+      dynamic_cast< CalendarValue<bool>::BucketValue* >(obj)->setValue(field.getBool());
     else if (cal->getType() == CalendarInt::metadata)
-      dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->setValue(value.getInt());
+      dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->setValue(field.getInt());
     else if (cal->getType() == CalendarString::metadata)
-      dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->setValue(value.getString());
+      dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->setValue(field.getString());
     else if (cal->getType() == CalendarVoid::metadata) 
       return -1;
     else
@@ -678,122 +678,122 @@ int PythonCalendarBucket::setattro(const XMLElement& field, const PythonObject& 
 //
 
 
-PyObject* PythonDemand::getattro(const XMLElement& field)
+PyObject* PythonDemand::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_name))
+  if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
-  if (field.isA(Tags::tag_quantity))
+  if (attr.isA(Tags::tag_quantity))
     return PythonObject(obj->getQuantity());
-  if (field.isA(Tags::tag_due))
+  if (attr.isA(Tags::tag_due))
     return PythonObject(obj->getDue());
-  if (field.isA(Tags::tag_priority))
+  if (attr.isA(Tags::tag_priority))
     return PythonObject(obj->getPriority());
-  if (field.isA(Tags::tag_owner))
+  if (attr.isA(Tags::tag_owner))
     return PythonObject(obj->getOwner());
-  if (field.isA(Tags::tag_item))
+  if (attr.isA(Tags::tag_item))
     return PythonObject(obj->getItem());
-  if (field.isA(Tags::tag_customer))
+  if (attr.isA(Tags::tag_customer))
     return PythonObject(obj->getCustomer());
-  if (field.isA(Tags::tag_operation))
+  if (attr.isA(Tags::tag_operation))
     return PythonObject(obj->getOperation());
-  if (field.isA(Tags::tag_description))
+  if (attr.isA(Tags::tag_description))
     return PythonObject(obj->getDescription());
-  if (field.isA(Tags::tag_category))
+  if (attr.isA(Tags::tag_category))
     return PythonObject(obj->getCategory());
-  if (field.isA(Tags::tag_subcategory))
+  if (attr.isA(Tags::tag_subcategory))
     return PythonObject(obj->getSubCategory());
-  if (field.isA(Tags::tag_minshipment))
+  if (attr.isA(Tags::tag_minshipment))
     return PythonObject(obj->getMinShipment());
-  if (field.isA(Tags::tag_maxlateness))
+  if (attr.isA(Tags::tag_maxlateness))
     return PythonObject(obj->getMaxLateness());
-  if (field.isA(Tags::tag_hidden))
+  if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
-  if (field.isA(Tags::tag_operationplans))
+  if (attr.isA(Tags::tag_operationplans))
     return new PythonDemandPlanIterator(obj);
-  if (field.isA(Tags::tag_pegging))
+  if (attr.isA(Tags::tag_pegging))
     return new PythonPeggingIterator(obj);
   return NULL;
 }
 
 
-int PythonDemand::setattro(const XMLElement& field, const PythonObject& value)
+int PythonDemand::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_name))
-    obj->setName(value.getString());
-  else if (field.isA(Tags::tag_priority))
-    obj->setPriority(value.getInt());
-  else if (field.isA(Tags::tag_quantity))
-    obj->setQuantity(value.getDouble());
-  else if (field.isA(Tags::tag_due))
-    obj->setDue(value.getDate());
-  else if (field.isA(Tags::tag_item))
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_priority))
+    obj->setPriority(field.getInt());
+  else if (attr.isA(Tags::tag_quantity))
+    obj->setQuantity(field.getDouble());
+  else if (attr.isA(Tags::tag_due))
+    obj->setDue(field.getDate());
+  else if (attr.isA(Tags::tag_item))
   {
-    if (!value.check(PythonItem::getType())) 
+    if (!field.check(PythonItem::getType())) 
     {
       PyErr_SetString(PythonDataException, "demand item must be of type item");
       return -1;
     }
-    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(value))->obj;
+    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(field))->obj;
     obj->setItem(y);
   }
-  else if (field.isA(Tags::tag_customer))
+  else if (attr.isA(Tags::tag_customer))
   {
-    if (!value.check(PythonCustomer::getType())) 
+    if (!field.check(PythonCustomer::getType())) 
     {
       PyErr_SetString(PythonDataException, "demand customer must be of type customer");
       return -1;
     }
-    Customer* y = static_cast<PythonCustomer*>(static_cast<PyObject*>(value))->obj;
+    Customer* y = static_cast<PythonCustomer*>(static_cast<PyObject*>(field))->obj;
     obj->setCustomer(y);
   }
-  else if (field.isA(Tags::tag_description))
-    obj->setDescription(value.getString());
-  else if (field.isA(Tags::tag_category))
-    obj->setCategory(value.getString());
-  else if (field.isA(Tags::tag_subcategory))
-    obj->setSubCategory(value.getString());
-  else if (field.isA(Tags::tag_minshipment))
-    obj->setMinShipment(value.getDouble());
-  else if (field.isA(Tags::tag_maxlateness))
-    obj->setMaxLateness(value.getTimePeriod());
-  else if (field.isA(Tags::tag_owner))
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_minshipment))
+    obj->setMinShipment(field.getDouble());
+  else if (attr.isA(Tags::tag_maxlateness))
+    obj->setMaxLateness(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_owner))
   {
-    if (!value.check(PythonDemand::getType()))
+    if (!field.check(PythonDemand::getType()))
     {
       PyErr_SetString(PythonDataException, "demand owner must be of type demand");
       return -1;
     }
-    Demand* y = static_cast<PythonDemand*>(static_cast<PyObject*>(value))->obj;
+    Demand* y = static_cast<PythonDemand*>(static_cast<PyObject*>(field))->obj;
     obj->setOwner(y);
   }
-  else if (field.isA(Tags::tag_operation))
+  else if (attr.isA(Tags::tag_operation))
   {
-    if (!value.check(PythonOperation::getType()))
+    if (!field.check(PythonOperation::getType()))
     {
       PyErr_SetString(PythonDataException, "demand operation must be of type operation");
       return -1;
     }
-    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(value))->obj;
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
     obj->setOperation(y);
   }
-  else if (field.isA(Tags::tag_hidden))
-    obj->setHidden(value.getBool());
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
   else
     return -1;  // Error
   return 0;  // OK
 }
 
 
-PyObject* PythonDemandDefault::getattro(const XMLElement& field)
+PyObject* PythonDemandDefault::getattro(const Attribute& attr)
 {
-  return PythonDemand(obj).getattro(field); 
+  return PythonDemand(obj).getattro(attr); 
 }
 
 
-int PythonDemandDefault::setattro(const XMLElement& field, const PythonObject& value)
+int PythonDemandDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
-  return PythonDemand(obj).setattro(field,value);
+  return PythonDemand(obj).setattro(attr, field);
 }
 
 
@@ -802,106 +802,106 @@ int PythonDemandDefault::setattro(const XMLElement& field, const PythonObject& v
 //
 
 
-PyObject* PythonResource::getattro(const XMLElement& field)
+PyObject* PythonResource::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_name))
+  if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
-  if (field.isA(Tags::tag_description))
+  if (attr.isA(Tags::tag_description))
     return PythonObject(obj->getDescription());
-  if (field.isA(Tags::tag_category))
+  if (attr.isA(Tags::tag_category))
     return PythonObject(obj->getCategory());
-  if (field.isA(Tags::tag_subcategory))
+  if (attr.isA(Tags::tag_subcategory))
     return PythonObject(obj->getSubCategory());
-  if (field.isA(Tags::tag_owner))
+  if (attr.isA(Tags::tag_owner))
     return PythonObject(obj->getOwner());
-  if (field.isA(Tags::tag_location))
+  if (attr.isA(Tags::tag_location))
     return PythonObject(obj->getLocation());
-  if (field.isA(Tags::tag_maximum))
+  if (attr.isA(Tags::tag_maximum))
     return PythonObject(obj->getMaximum());
-  if (field.isA(Tags::tag_hidden))
+  if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
-  if (field.isA(Tags::tag_loadplans))
+  if (attr.isA(Tags::tag_loadplans))
     return new PythonLoadPlanIterator(obj);
-  if (field.isA(Tags::tag_loads))
+  if (attr.isA(Tags::tag_loads))
     return new PythonLoadIterator(obj);
-  if (field.isA(Tags::tag_level))
+  if (attr.isA(Tags::tag_level))
     return PythonObject(obj->getLevel());
-  if (field.isA(Tags::tag_cluster))
+  if (attr.isA(Tags::tag_cluster))
     return PythonObject(obj->getCluster());
 	return NULL;
 }
 
 
-int PythonResource::setattro(const XMLElement& field, const PythonObject& value)
+int PythonResource::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_name))
-    obj->setName(value.getString());
-  else if (field.isA(Tags::tag_description))
-    obj->setDescription(value.getString());
-  else if (field.isA(Tags::tag_category))
-    obj->setCategory(value.getString());
-  else if (field.isA(Tags::tag_subcategory))
-    obj->setSubCategory(value.getString());
-  else if (field.isA(Tags::tag_owner))
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_owner))
   {
-    if (!value.check(PythonResource::getType()))
+    if (!field.check(PythonResource::getType()))
     {
       PyErr_SetString(PythonDataException, "resource owner must be of type resource");
       return -1;
     }
-    Resource* y = static_cast<PythonResource*>(static_cast<PyObject*>(value))->obj;
+    Resource* y = static_cast<PythonResource*>(static_cast<PyObject*>(field))->obj;
     obj->setOwner(y);
   }
-  else if (field.isA(Tags::tag_location))
+  else if (attr.isA(Tags::tag_location))
   {
-    if (!value.check(PythonLocation::getType())) 
+    if (!field.check(PythonLocation::getType())) 
     {
       PyErr_SetString(PythonDataException, "buffer location must be of type location");
       return -1;
     }
-    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(value))->obj;
+    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(field))->obj;
     obj->setLocation(y);
   }
-  else if (field.isA(Tags::tag_maximum))
+  else if (attr.isA(Tags::tag_maximum))
   {
-    if (!value.check(PythonCalendarDouble::getType())) 
+    if (!field.check(PythonCalendarDouble::getType())) 
     {
       PyErr_SetString(PythonDataException, "resource maximum must be of type calendar_double");
       return -1;
     }
-    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(value))->obj;
+    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(field))->obj;
     obj->setMaximum(y);
   }
-  else if (field.isA(Tags::tag_hidden))
-    obj->setHidden(value.getBool());
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
   else
     return -1;  // Error
   return 0;  // OK
 }
 
 
-PyObject* PythonResourceDefault::getattro(const XMLElement& field)
+PyObject* PythonResourceDefault::getattro(const Attribute& attr)
 {
-  return PythonResource(obj).getattro(field); 
+  return PythonResource(obj).getattro(attr); 
 }
 
 
-int PythonResourceDefault::setattro(const XMLElement& field, const PythonObject& value)
+int PythonResourceDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
-  return PythonResource(obj).setattro(field,value);
+  return PythonResource(obj).setattro(attr, field);
 }
 
 
-PyObject* PythonResourceInfinite::getattro(const XMLElement& field)
+PyObject* PythonResourceInfinite::getattro(const Attribute& attr)
 {
-  return PythonResource(obj).getattro(field);
+  return PythonResource(obj).getattro(attr);
 }
 
 
-int PythonResourceInfinite::setattro(const XMLElement& field, const PythonObject& value)
+int PythonResourceInfinite::setattro(const Attribute& attr, const PythonObject& field)
 {
-  return PythonResource(obj).setattro(field,value);
+  return PythonResource(obj).setattro(attr, field);
 }
 
 
@@ -910,148 +910,148 @@ int PythonResourceInfinite::setattro(const XMLElement& field, const PythonObject
 //
 
 
-PyObject* PythonOperation::getattro(const XMLElement& field)
+PyObject* PythonOperation::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_name))
+  if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
-  if (field.isA(Tags::tag_description))
+  if (attr.isA(Tags::tag_description))
     return PythonObject(obj->getDescription());
-  if (field.isA(Tags::tag_category))
+  if (attr.isA(Tags::tag_category))
     return PythonObject(obj->getCategory());
-  if (field.isA(Tags::tag_subcategory))
+  if (attr.isA(Tags::tag_subcategory))
     return PythonObject(obj->getSubCategory());
-  if (field.isA(Tags::tag_location))
+  if (attr.isA(Tags::tag_location))
     return PythonObject(obj->getLocation());
-  if (field.isA(Tags::tag_fence))
+  if (attr.isA(Tags::tag_fence))
     return PythonObject(obj->getFence());
-  if (field.isA(Tags::tag_size_minimum))
+  if (attr.isA(Tags::tag_size_minimum))
     return PythonObject(obj->getSizeMinimum());
-  if (field.isA(Tags::tag_size_multiple))
+  if (attr.isA(Tags::tag_size_multiple))
     return PythonObject(obj->getSizeMultiple());
-  if (field.isA(Tags::tag_pretime))
+  if (attr.isA(Tags::tag_pretime))
     return PythonObject(obj->getPreTime());
-  if (field.isA(Tags::tag_posttime))
+  if (attr.isA(Tags::tag_posttime))
     return PythonObject(obj->getPostTime());
-  if (field.isA(Tags::tag_hidden))
+  if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
-  if (field.isA(Tags::tag_loads))
+  if (attr.isA(Tags::tag_loads))
     return new PythonLoadIterator(obj);
-  if (field.isA(Tags::tag_flows))
+  if (attr.isA(Tags::tag_flows))
     return new PythonFlowIterator(obj);
-  if (field.isA(Tags::tag_level))
+  if (attr.isA(Tags::tag_level))
     return PythonObject(obj->getLevel());
-  if (field.isA(Tags::tag_cluster))
+  if (attr.isA(Tags::tag_cluster))
     return PythonObject(obj->getCluster());
 	return NULL;
 }
 
 
-int PythonOperation::setattro(const XMLElement& field, const PythonObject& value)
+int PythonOperation::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_name))
-    obj->setName(value.getString());
-  else if (field.isA(Tags::tag_description))
-    obj->setDescription(value.getString());
-  else if (field.isA(Tags::tag_category))
-    obj->setCategory(value.getString());
-  else if (field.isA(Tags::tag_subcategory))
-    obj->setSubCategory(value.getString());
-  else if (field.isA(Tags::tag_location))
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_location))
   {
-    if (!value.check(PythonLocation::getType())) 
+    if (!field.check(PythonLocation::getType())) 
     {
       PyErr_SetString(PythonDataException, "buffer location must be of type location");
       return -1;
     }
-    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(value))->obj;
+    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(field))->obj;
     obj->setLocation(y);
   }
-  else if (field.isA(Tags::tag_fence))
-    obj->setFence(value.getTimePeriod());
-  else if (field.isA(Tags::tag_size_minimum))
-    obj->setSizeMinimum(value.getDouble());
-  else if (field.isA(Tags::tag_size_multiple))
-    obj->setSizeMultiple(value.getDouble());
-  else if (field.isA(Tags::tag_pretime))
-    obj->setPreTime(value.getTimePeriod());
-  else if (field.isA(Tags::tag_posttime))
-    obj->setPostTime(value.getTimePeriod());
-  else if (field.isA(Tags::tag_hidden))
-    obj->setHidden(value.getBool());
+  else if (attr.isA(Tags::tag_fence))
+    obj->setFence(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_size_minimum))
+    obj->setSizeMinimum(field.getDouble());
+  else if (attr.isA(Tags::tag_size_multiple))
+    obj->setSizeMultiple(field.getDouble());
+  else if (attr.isA(Tags::tag_pretime))
+    obj->setPreTime(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_posttime))
+    obj->setPostTime(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
   else
     return -1;  // Error
   return 0;  // OK
 }
 
 
-PyObject* PythonOperationFixedTime::getattro(const XMLElement& field)
+PyObject* PythonOperationFixedTime::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_duration))
+  if (attr.isA(Tags::tag_duration))
     return PythonObject(obj->getDuration());
-  return PythonOperation(obj).getattro(field); 
+  return PythonOperation(obj).getattro(attr); 
 }
 
 
-int PythonOperationFixedTime::setattro(const XMLElement& field, const PythonObject& value)
+int PythonOperationFixedTime::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_duration))
-    obj->setDuration(value.getTimePeriod());
+  if (attr.isA(Tags::tag_duration))
+    obj->setDuration(field.getTimeperiod());
   else
-    return PythonOperation(obj).setattro(field,value);
+    return PythonOperation(obj).setattro(attr, field);
   return 0;
 }
 
 
-PyObject* PythonOperationTimePer::getattro(const XMLElement& field)
+PyObject* PythonOperationTimePer::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_duration))
+  if (attr.isA(Tags::tag_duration))
     return PythonObject(obj->getDuration());
-  if (field.isA(Tags::tag_duration))
+  if (attr.isA(Tags::tag_duration))
     return PythonObject(obj->getDurationPer());
-  return PythonOperation(obj).getattro(field); 
+  return PythonOperation(obj).getattro(attr); 
 }
 
 
-int PythonOperationTimePer::setattro(const XMLElement& field, const PythonObject& value)
+int PythonOperationTimePer::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_duration))
-    obj->setDuration(value.getTimePeriod());
-  else if (field.isA(Tags::tag_duration_per))
-    obj->setDurationPer(value.getTimePeriod());
+  if (attr.isA(Tags::tag_duration))
+    obj->setDuration(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_duration_per))
+    obj->setDurationPer(field.getTimeperiod());
   else
-    return PythonOperation(obj).setattro(field,value);
+    return PythonOperation(obj).setattro(attr, field);
   return 0;
 }
 
 
-PyObject* PythonOperationAlternate::getattro(const XMLElement& field)
+PyObject* PythonOperationAlternate::getattro(const Attribute& attr)
 {
   // @todo alternates
-  return PythonOperation(obj).getattro(field); 
+  return PythonOperation(obj).getattro(attr); 
 }
 
 
-int PythonOperationAlternate::setattro(const XMLElement& field, const PythonObject& value)
+int PythonOperationAlternate::setattro(const Attribute& attr, const PythonObject& field)
 {
   // @todo alternates
-  return PythonOperation(obj).setattro(field,value);
+  return PythonOperation(obj).setattro(attr, field);
 }
 
 
-PyObject* PythonOperationRouting::getattro(const XMLElement& field)
+PyObject* PythonOperationRouting::getattro(const Attribute& attr)
 {
   // @todo steps
-  return PythonOperation(obj).getattro(field); 
+  return PythonOperation(obj).getattro(attr); 
 }
 
 
-int PythonOperationRouting::setattro(const XMLElement& field, const PythonObject& value)
+int PythonOperationRouting::setattro(const Attribute& attr, const PythonObject& field)
 {
   // @todo steps
-  return PythonOperation(obj).setattro(field,value);
+  return PythonOperation(obj).setattro(attr, field);
 }
 
 
@@ -1072,20 +1072,20 @@ int PythonProblem::initialize(PyObject* m)
 }
 
 
-PyObject* PythonProblem::getattro(const XMLElement& field)
+PyObject* PythonProblem::getattro(const Attribute& attr)
 {
   if (!prob) return Py_None;
-  if (field.isA(Tags::tag_name))
+  if (attr.isA(Tags::tag_name))
     return PythonObject(prob->getType().type);
-  if (field.isA(Tags::tag_description))
+  if (attr.isA(Tags::tag_description))
     return PythonObject(prob->getDescription());
-  if (field.isA(Tags::tag_entity))
+  if (attr.isA(Tags::tag_entity))
     return PythonObject(prob->getOwner()->getEntity()->getType().category->group);
-  if (field.isA(Tags::tag_start))
+  if (attr.isA(Tags::tag_start))
     return PythonObject(prob->getDateRange().getStart());
-  if (field.isA(Tags::tag_end))
+  if (attr.isA(Tags::tag_end))
     return PythonObject(prob->getDateRange().getEnd());
-  if (field.isA(Tags::tag_weight))
+  if (attr.isA(Tags::tag_weight))
     return PythonObject(prob->getWeight());
   return NULL;
 }
@@ -1109,59 +1109,59 @@ int PythonOperationPlan::initialize(PyObject* m)
 }
 
 
-PyObject* PythonOperationPlan::getattro(const XMLElement& field)
+PyObject* PythonOperationPlan::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_id))
+  if (attr.isA(Tags::tag_id))
     return PythonObject(obj->getIdentifier());
-  if (field.isA(Tags::tag_operation))
+  if (attr.isA(Tags::tag_operation))
     return PythonObject(obj->getOperation());
-  if (field.isA(Tags::tag_quantity))
+  if (attr.isA(Tags::tag_quantity))
     return PythonObject(obj->getQuantity());
-  if (field.isA(Tags::tag_start))
+  if (attr.isA(Tags::tag_start))
     return PythonObject(obj->getDates().getStart());
-  if (field.isA(Tags::tag_end))
+  if (attr.isA(Tags::tag_end))
     return PythonObject(obj->getDates().getEnd());
-  if (field.isA(Tags::tag_demand))
+  if (attr.isA(Tags::tag_demand))
     return PythonObject(obj->getDemand());
-  if (field.isA(Tags::tag_locked))
+  if (attr.isA(Tags::tag_locked))
     return PythonObject(obj->getLocked());
-  if (field.isA(Tags::tag_owner))
+  if (attr.isA(Tags::tag_owner))
     return PythonObject(obj->getOwner());
-  if (field.isA(Tags::tag_hidden))
+  if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
   return NULL;
 }
 
 
-int PythonOperationPlan::setattro(const XMLElement& field, const PythonObject& value)
+int PythonOperationPlan::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_quantity))
-    obj->setQuantity(value.getDouble());
-  else if (field.isA(Tags::tag_start))
-    obj->setStart(value.getDate());
-  else if (field.isA(Tags::tag_end))
-    obj->setEnd(value.getDate());
-  else if (field.isA(Tags::tag_locked))
-    obj->setLocked(value.getBool());
-  else if (field.isA(Tags::tag_demand))
+  if (attr.isA(Tags::tag_quantity))
+    obj->setQuantity(field.getDouble());
+  else if (attr.isA(Tags::tag_start))
+    obj->setStart(field.getDate());
+  else if (attr.isA(Tags::tag_end))
+    obj->setEnd(field.getDate());
+  else if (attr.isA(Tags::tag_locked))
+    obj->setLocked(field.getBool());
+  else if (attr.isA(Tags::tag_demand))
   {
-    if (!value.check(PythonDemand::getType())) 
+    if (!field.check(PythonDemand::getType())) 
     {
       PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
       return -1;
     }
-    Demand* y = static_cast<PythonDemand*>(static_cast<PyObject*>(value))->obj;
+    Demand* y = static_cast<PythonDemand*>(static_cast<PyObject*>(field))->obj;
     obj->setDemand(y);
   }
-  else if (field.isA(Tags::tag_owner))
+  else if (attr.isA(Tags::tag_owner))
   {
-    if (!value.check(PythonOperationPlan::getType())) 
+    if (!field.check(PythonOperationPlan::getType())) 
     {
       PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
       return -1;
     }
-    OperationPlan* y = static_cast<PythonOperationPlan*>(static_cast<PyObject*>(value))->obj;
+    OperationPlan* y = static_cast<PythonOperationPlan*>(static_cast<PyObject*>(field))->obj;
     obj->setOwner(y);
   }
   else
@@ -1186,18 +1186,18 @@ int PythonFlowPlan::initialize(PyObject* m)
 }
 
 
-PyObject* PythonFlowPlan::getattro(const XMLElement& field)
+PyObject* PythonFlowPlan::getattro(const Attribute& attr)
 {
   if (!fl) return Py_None;
-  if (field.isA(Tags::tag_operationplan))
+  if (attr.isA(Tags::tag_operationplan))
     return PythonObject(fl->getOperationPlan());
-  if (field.isA(Tags::tag_quantity))
+  if (attr.isA(Tags::tag_quantity))
     return PythonObject(fl->getQuantity());
-  if (field.isA(Tags::tag_date))
+  if (attr.isA(Tags::tag_date))
     return PythonObject(fl->getDate());
-  if (field.isA(Tags::tag_onhand))
+  if (attr.isA(Tags::tag_onhand))
     return PythonObject(fl->getOnhand());
-  if (field.isA(Tags::tag_buffer))
+  if (attr.isA(Tags::tag_buffer))
     return PythonObject(fl->getFlow()->getBuffer());
   return NULL;
 }
@@ -1242,18 +1242,18 @@ int PythonLoadPlan::initialize(PyObject* m)
 }
 
 
-PyObject* PythonLoadPlan::getattro(const XMLElement& field)
+PyObject* PythonLoadPlan::getattro(const Attribute& attr)
 {
   if (!fl) return Py_None;
-  if (field.isA(Tags::tag_operationplan))
+  if (attr.isA(Tags::tag_operationplan))
     return PythonObject(fl->getOperationPlan());
-  if (field.isA(Tags::tag_quantity))
+  if (attr.isA(Tags::tag_quantity))
     return PythonObject(fl->getQuantity());
-  if (field.isA(Tags::tag_startdate))
+  if (attr.isA(Tags::tag_startdate))
     return PythonObject(fl->getDate());
-  if (field.isA(Tags::tag_enddate))
+  if (attr.isA(Tags::tag_enddate))
     return PythonObject(fl->getOtherLoadPlan()->getDate());
-  if (field.isA(Tags::tag_resource))
+  if (attr.isA(Tags::tag_resource))
     return PythonObject(fl->getLoad()->getResource());
   return NULL;
 }
@@ -1365,51 +1365,51 @@ int PythonLoad::initialize(PyObject* m)
 }
 
 
-PyObject* PythonLoad::getattro(const XMLElement& field)
+PyObject* PythonLoad::getattro(const Attribute& attr)
 {
   if (!ld) return Py_None;
-  if (field.isA(Tags::tag_resource))
+  if (attr.isA(Tags::tag_resource))
     return PythonObject(ld->getResource());
-  if (field.isA(Tags::tag_operation))
+  if (attr.isA(Tags::tag_operation))
     return PythonObject(ld->getOperation());
-  if (field.isA(Tags::tag_quantity))
+  if (attr.isA(Tags::tag_quantity))
     return PythonObject(ld->getQuantity());
-  if (field.isA(Tags::tag_effective_end))
+  if (attr.isA(Tags::tag_effective_end))
     return PythonObject(ld->getEffective().getEnd());
-  if (field.isA(Tags::tag_effective_start))
+  if (attr.isA(Tags::tag_effective_start))
     return PythonObject(ld->getEffective().getStart());
   return NULL;
 }
 
 
-int PythonLoad::setattro(const XMLElement& field, const PythonObject& value)
+int PythonLoad::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_resource))
+  if (attr.isA(Tags::tag_resource))
   {
-    if (!value.check(PythonResource::getType())) 
+    if (!field.check(PythonResource::getType())) 
     {
       PyErr_SetString(PythonDataException, "load resource must be of type resource");
       return -1;
     }
-    Resource* y = static_cast<PythonResource*>(static_cast<PyObject*>(value))->obj;
+    Resource* y = static_cast<PythonResource*>(static_cast<PyObject*>(field))->obj;
     ld->setResource(y);
   }
-  else if (field.isA(Tags::tag_operation))
+  else if (attr.isA(Tags::tag_operation))
   {
-    if (!value.check(PythonOperation::getType())) 
+    if (!field.check(PythonOperation::getType())) 
     {
       PyErr_SetString(PythonDataException, "load operation must be of type operation");
       return -1;
     }
-    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(value))->obj;
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
     ld->setOperation(y);
   }
-  else if (field.isA(Tags::tag_quantity))
-    ld->setQuantity(value.getDouble());
-  else if (field.isA(Tags::tag_effective_end))
-    ld->setEffectiveEnd(value.getDate());
-  else if (field.isA(Tags::tag_effective_start))
-    ld->setEffectiveStart(value.getDate());
+  else if (attr.isA(Tags::tag_quantity))
+    ld->setQuantity(field.getDouble());
+  else if (attr.isA(Tags::tag_effective_end))
+    ld->setEffectiveEnd(field.getDate());
+  else if (attr.isA(Tags::tag_effective_start))
+    ld->setEffectiveStart(field.getDate());
   else
     return -1;
   return 0;
@@ -1462,51 +1462,51 @@ int PythonFlow::initialize(PyObject* m)
 }
 
 
-PyObject* PythonFlow::getattro(const XMLElement& field)
+PyObject* PythonFlow::getattro(const Attribute& attr)
 {
   if (!fl) return Py_None;
-  if (field.isA(Tags::tag_buffer))
+  if (attr.isA(Tags::tag_buffer))
     return PythonObject(fl->getBuffer());
-  if (field.isA(Tags::tag_operation))
+  if (attr.isA(Tags::tag_operation))
     return PythonObject(fl->getOperation());
-  if (field.isA(Tags::tag_quantity))
+  if (attr.isA(Tags::tag_quantity))
     return PythonObject(fl->getQuantity());
-  if (field.isA(Tags::tag_effective_end))
+  if (attr.isA(Tags::tag_effective_end))
     return PythonObject(fl->getEffective().getEnd());
-  if (field.isA(Tags::tag_effective_start))
+  if (attr.isA(Tags::tag_effective_start))
     return PythonObject(fl->getEffective().getStart());
   return NULL;
 }
 
 
-int PythonFlow::setattro(const XMLElement& field, const PythonObject& value)
+int PythonFlow::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_buffer))
+  if (attr.isA(Tags::tag_buffer))
   {
-    if (!value.check(PythonBuffer::getType())) 
+    if (!field.check(PythonBuffer::getType())) 
     {
       PyErr_SetString(PythonDataException, "flow buffer must be of type buffer");
       return -1;
     }
-    Buffer* y = static_cast<PythonBuffer*>(static_cast<PyObject*>(value))->obj;
+    Buffer* y = static_cast<PythonBuffer*>(static_cast<PyObject*>(field))->obj;
     fl->setBuffer(y);
   }
-  else if (field.isA(Tags::tag_operation))
+  else if (attr.isA(Tags::tag_operation))
   {
-    if (!value.check(PythonOperation::getType())) 
+    if (!field.check(PythonOperation::getType())) 
     {
       PyErr_SetString(PythonDataException, "flow operation must be of type operation");
       return -1;
     }
-    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(value))->obj;
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
     fl->setOperation(y);
   }
-  else if (field.isA(Tags::tag_quantity))
-    fl->setQuantity(value.getDouble());
-  else if (field.isA(Tags::tag_effective_end))
-    fl->setEffectiveEnd(value.getDate());
-  else if (field.isA(Tags::tag_effective_start))
-    fl->setEffectiveStart(value.getDate());
+  else if (attr.isA(Tags::tag_quantity))
+    fl->setQuantity(field.getDouble());
+  else if (attr.isA(Tags::tag_effective_end))
+    fl->setEffectiveEnd(field.getDate());
+  else if (attr.isA(Tags::tag_effective_start))
+    fl->setEffectiveStart(field.getDate());
   else
     return -1;
   return 0;
@@ -1546,48 +1546,48 @@ PyObject* PythonFlowIterator::iternext()
 //
 
 
-PyObject* PythonSolver::getattro(const XMLElement& field)
+PyObject* PythonSolver::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_name))
+  if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
-  if (field.isA(Tags::tag_loglevel))
+  if (attr.isA(Tags::tag_loglevel))
     return PythonObject(obj->getLogLevel());
 	return NULL;
 }
 
 
-int PythonSolver::setattro(const XMLElement& field, const PythonObject& value)
+int PythonSolver::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_name))
-    obj->setName(value.getString());
-  else if (field.isA(Tags::tag_loglevel))
-    obj->setLogLevel(value.getInt());
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_loglevel))
+    obj->setLogLevel(field.getInt());
   else
     return -1;  // Error
   return 0;  // OK
 }
 
 
-PyObject* PythonSolverMRP::getattro(const XMLElement& field)
+PyObject* PythonSolverMRP::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
-  if (field.isA(Tags::tag_constraints))
+  if (attr.isA(Tags::tag_constraints))
     return PythonObject(obj->getConstraints());
-  if (field.isA(Tags::tag_maxparallel))
+  if (attr.isA(Tags::tag_maxparallel))
     return PythonObject(obj->getMaxParallel());
-  return PythonSolver(obj).getattro(field); 
+  return PythonSolver(obj).getattro(attr); 
 }
 
 
-int PythonSolverMRP::setattro(const XMLElement& field, const PythonObject& value)
+int PythonSolverMRP::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (field.isA(Tags::tag_constraints))
-    obj->setConstraints(value.getInt());
-  else if (field.isA(Tags::tag_maxparallel))
-    obj->setMaxParallel(value.getInt());
+  if (attr.isA(Tags::tag_constraints))
+    obj->setConstraints(field.getInt());
+  else if (attr.isA(Tags::tag_maxparallel))
+    obj->setMaxParallel(field.getInt());
   else
-    return PythonSolver(obj).setattro(field,value);
+    return PythonSolver(obj).setattro(attr, field);
   return 0;
 }
 

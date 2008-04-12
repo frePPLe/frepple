@@ -156,7 +156,7 @@ DECLARE_EXPORT void Plannable::computeProblems()
 }
 
 
-DECLARE_EXPORT void Plannable::writeElement (XMLOutput* o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Plannable::writeElement (XMLOutput* o, const Keyword& tag, mode m) const
 {
   // We don't bother about the mode, since this method is only called from
   // within the writeElement() method of other classes.
@@ -166,9 +166,9 @@ DECLARE_EXPORT void Plannable::writeElement (XMLOutput* o, const XMLtag& tag, mo
 }
 
 
-DECLARE_EXPORT void Plannable::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Plannable::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA (Tags::tag_detectproblems))
+  if (pAttr.isA (Tags::tag_detectproblems))
   {
     bool b = pElement.getBool();
     setDetectProblems(b);
@@ -224,7 +224,7 @@ DECLARE_EXPORT void Problem::writer(const MetaCategory& c, XMLOutput* o)
 }
 
 
-DECLARE_EXPORT void Problem::writeElement(XMLOutput *o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Problem::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // We ignore the mode, and always write the complete model
   o->BeginObject(tag);

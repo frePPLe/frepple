@@ -33,7 +33,7 @@ namespace frepple
 template<class Location> DECLARE_EXPORT Tree HasName<Location>::st;
 
 
-DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const XMLtag& tag, mode m) const
+DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const Keyword& tag, mode m) const
 {
   // Writing a reference
   if (m == REFERENCE)
@@ -53,18 +53,18 @@ DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const XMLtag& tag, mode
 }
 
 
-DECLARE_EXPORT void Location::beginElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Location::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pElement.isA(Tags::tag_available) || pElement.isA(Tags::tag_maximum))
+  if (pAttr.isA(Tags::tag_available) || pAttr.isA(Tags::tag_maximum))
     pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
   else
-    HasHierarchy<Location>::beginElement(pIn, pElement);
+    HasHierarchy<Location>::beginElement(pIn, pAttr);
 }
 
 
-DECLARE_EXPORT void Location::endElement(XMLInput& pIn, XMLElement& pElement)
+DECLARE_EXPORT void Location::endElement(XMLInput& pIn, const Attribute& pAttr, DataElement& pElement)
 {
-  if (pElement.isA(Tags::tag_available))
+  if (pAttr.isA(Tags::tag_available))
   {
     CalendarBool *cal = dynamic_cast<CalendarBool*>(pIn.getPreviousObject());
     if (cal)
@@ -80,8 +80,8 @@ DECLARE_EXPORT void Location::endElement(XMLInput& pIn, XMLElement& pElement)
   }
   else
   {
-    HasDescription::endElement(pIn, pElement);
-    HasHierarchy<Location>::endElement(pIn, pElement);
+    HasDescription::endElement(pIn, pAttr, pElement);
+    HasHierarchy<Location>::endElement(pIn, pAttr, pElement);
   }
 }
 

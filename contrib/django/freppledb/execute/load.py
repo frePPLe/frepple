@@ -157,7 +157,7 @@ def loadOperations(cursor):
       elif p == "operation_routing":
         x = frepple.operation_routing(name=i)
       else:
-        x = frepple.operation(name=i)
+        raise ValueError("Operation type '%s' not recognized" % p)
       if j: x.fence = j
       if k: x.pretime = k
       if l: x.posttime = l
@@ -241,11 +241,13 @@ def loadBuffers(cursor):
         name=i, description=j, location=frepple.location(name=k),
         item=frepple.item(name=l), onhand=m
         )
-    else:
+    elif not q:
       b = frepple.buffer(
         name=i, description=j, location=frepple.location(name=k),
         item=frepple.item(name=l), onhand=m
         )
+    else:
+      raise ValueError("Buffer type '%s' not recognized" % q)
     if n: b.minimum = frepple.calendar(name=n)
     if o: b.producing = frepple.operation(name=o)
   print 'Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime)
@@ -265,13 +267,15 @@ def loadResources(cursor):
           description=j,
           location=frepple.location(name=l),
           )
-      else:
+      elif not m:
         frepple.resource(
           name=i,
           description=j,
           maximum=frepple.calendar(name=k),
           location=frepple.location(name=l),
           )
+      else:
+        raise ValueError("Resource type '%s' not recognized" % m)
     except Exception, e: print "Error:", e
   print 'Loaded %d resources in %.2f seconds' % (cnt, time() - starttime)
 
@@ -400,7 +404,7 @@ def loadDemand(cursor):
       if o: x.customer = frepple.customer(name=o)
       if p: x.owner = frepple.demand(name=p)
       if q: x.minshipment = q
-      if r: x.maxlateness = r
+      if r != None: x.maxlateness = r
     except Exception, e: print "Error:", e
   print 'Loaded %d demands in %.2f seconds' % (cnt, time() - starttime)
 

@@ -377,11 +377,6 @@ def view_report(request, entity=None, **args):
     response._is_string = False
     return response
 
-  # Create a copy of the request url parameters
-  parameters = request.GET.copy()
-  for x in reservedParameters:
-    if x in parameters: parameters.__delitem__(x)
-
   # Calculate the content of the page
   if hasattr(reportclass,'resultquery'):
     # SQL override provided
@@ -393,7 +388,7 @@ def view_report(request, entity=None, **args):
     results = counter
 
   # Build the paginator html
-  page_htmls = _get_paginator_html(request, paginator, page, parameters)
+  page_htmls = _get_paginator_html(request, paginator, page)
 
   # Prepare template context
   context = {
@@ -454,7 +449,7 @@ def _create_crossheader(req, cls):
   return mark_safe('<br/>'.join(res))
 
 
-def _get_paginator_html(request, paginator, page, parameters):
+def _get_paginator_html(request, paginator, page):
   # Django has standard some very similar code in the tags 'paginator_number'
   # and 'pagination' in the file django\contrib\admin\templatetags\admin_list.py.
   # Functionally there is no real difference. The implementation below relies
@@ -462,6 +457,9 @@ def _get_paginator_html(request, paginator, page, parameters):
   global ON_EACH_SIDE
   global ON_ENDS
   page_htmls = []
+  parameters = request.GET.copy()
+  if 'p' in parameters: parameters.__delitem__('p')
+
   if paginator.num_pages <= 10 and paginator.num_pages > 1:
     # If there are less than 10 pages, show them all
     for n in paginator.page_range:
@@ -470,7 +468,7 @@ def _get_paginator_html(request, paginator, page, parameters):
       elif n == 1 and len(parameters) == 0:
         page_htmls.append('<a href="%s">1</a>' % request.path)
       else:
-        if n: parameters.__setitem__('p', n)
+        if n>1: parameters.__setitem__('p', n)
         page_htmls.append('<a href="%s?%s">%s</a>' % (request.path, escape(parameters.urlencode()),n))
   elif paginator.num_pages > 1:
       # Insert "smart" pagination links, so that there are always ON_ENDS

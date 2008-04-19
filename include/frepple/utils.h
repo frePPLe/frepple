@@ -2187,7 +2187,7 @@ class XMLElement : public DataElement
   * This abstract class can be instantiated as XML attributes, or as a 
   * Python keyword dictionary.
   *  - XML:<br>
-  *    <pre><buffer name="a" onhand="10" category="A" /></pre>;
+  *    &lt;buffer name="a" onhand="10" category="A" /&gt;
   *  - Python:<br>
   *    buffer(name="a", onhand="10", category="A")
   */ 

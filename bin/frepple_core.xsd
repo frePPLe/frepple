@@ -188,10 +188,6 @@
 	<xsd:complexType name="operationlist">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="operation" type="operation" />
-			<xsd:element name="operation_fixed_time" type="operation_fixed_time" />
-			<xsd:element name="operation_time_per" type="operation_time_per" />
-			<xsd:element name="operation_routing" type="operation_routing" />
-			<xsd:element name="operation_alternate" type="operation_alternate" />
 		</xsd:choice>
 	</xsd:complexType>
 
@@ -320,7 +316,6 @@
 	<xsd:complexType name="resourcelist">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="resource" type="resource" />
-			<xsd:element name="resource_infinite" type="resource_infinite" />
 		</xsd:choice>
 	</xsd:complexType>
 
@@ -367,8 +362,6 @@
 	<xsd:complexType name="bufferlist">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="buffer" type="buffer" />
-			<xsd:element name="buffer_infinite" type="buffer_infinite" />
-			<xsd:element name="buffer_procure" type="buffer_procure" />
 		</xsd:choice>
 	</xsd:complexType>
 
@@ -429,8 +422,6 @@
 	<xsd:complexType name="flowlist">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="flow" type="flow" />
-			<xsd:element name="flow_end" type="flow_end" />
-			<xsd:element name="flow_start" type="flow_start" />
 		</xsd:choice>
 	</xsd:complexType>
 
@@ -564,12 +555,6 @@
 	<xsd:complexType name="calendarlist">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="calendar" type="calendar" />
-			<xsd:element name="calendar_double" type="calendar_double" />
-			<xsd:element name="calendar_void" type="calendar_void" />
-			<xsd:element name="calendar_integer" type="calendar_integer" />
-			<xsd:element name="calendar_boolean" type="calendar_boolean" />
-			<xsd:element name="calendar_string" type="calendar_string" />
-			<xsd:element name="calendar_operation" type="calendar_operation" />
 		</xsd:choice>
 	</xsd:complexType>
 
@@ -1031,7 +1016,6 @@
 	<xsd:complexType name="solverlist">
 		<xsd:choice minOccurs="0" maxOccurs="unbounded">
 			<xsd:element name="solver" type="solver" />
-			<xsd:element name="solver_mrp" type="solver_mrp" />
 		</xsd:choice>
 	</xsd:complexType>
 

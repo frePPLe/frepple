@@ -212,7 +212,7 @@
   </commands>
   <current>2007-01-01T00:00:00</current>
   <calendars>
-    <calendar_void name="months">
+    <calendar name="months" xsi:type="calendar_void">
       <buckets>
         <bucket start="2007-01-01T00:00:00" name="jan" />
         <bucket start="2007-02-01T00:00:00" name="feb" />
@@ -223,7 +223,7 @@
         <bucket start="2007-07-01T00:00:00" name="jul" />
         <bucket start="2007-08-01T00:00:00" name="aug" />
       </buckets>
-    </calendar_void>
+    </calendar>
   </calendars>
   <items>
     <item name="item 1">
@@ -270,36 +270,36 @@
     </buffer>
   </buffers>
   <flows>
-    <flow_start>
+    <flow xsi:type="flow_start">
       <operation name="delivery 1" />
       <buffer name="buffer 1" />
       <quantity>-1</quantity>
-    </flow_start>
-    <flow_end>
+    </flow>
+    <flow xsi:type="flow_end">
       <operation name="make item 1" />
       <buffer name="buffer 1" />
       <quantity>1</quantity>
-    </flow_end>
-    <flow_start>
+    </flow>
+    <flow xsi:type="flow_start">
       <operation name="make item 1" />
       <buffer name="buffer A" />
       <quantity>-1</quantity>
-    </flow_start>
-    <flow_start>
+    </flow>
+    <flow xsi:type="flow_start">
       <operation name="make item 1" />
       <buffer name="buffer B" />
       <quantity>-1</quantity>
-    </flow_start>
-    <flow_end>
+    </flow>
+    <flow xsi:type="flow_end">
       <operation name="supply component A from supplier 1" />
       <buffer name="buffer A" />
       <quantity>1</quantity>
-    </flow_end>
-    <flow_end>
+    </flow>
+    <flow xsi:type="flow_end">
       <operation name="supply component A from supplier 2" />
       <buffer name="buffer A" />
       <quantity>1</quantity>
-    </flow_end>
+    </flow>
   </flows>
   <resources>
     <resource name="assemble">

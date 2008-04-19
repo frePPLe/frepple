@@ -167,6 +167,7 @@ namespace frepple
 class Object;
 class Keyword;
 class XMLInput;
+class AttributeList;
 
 // Include the list of predefined tags
 #include "frepple/tags.h"
@@ -552,6 +553,9 @@ class Keyword : public NonCopyable
       */
     static hashtype hash(const char* c) {return xercesc::XMLString::hash(c,954991);}
 
+    /** This is the hash function. */
+    static hashtype hash(string c) {return xercesc::XMLString::hash(c.c_str(),954991);}
+
     /** This is the hash function taken an XML character string as input.<br>
       * The function is expected to return exactly the same result as when a
       * character pointer is passed as argument.
@@ -721,7 +725,7 @@ class MetaClass : public NonCopyable
       * calls the method decodeAction(const XML_Char*) to analyze it.
       * @see decodeAction(const XML_Char*)
       */
-    static DECLARE_EXPORT Action decodeAction(const xercesc::Attributes*);
+    static DECLARE_EXPORT Action decodeAction(const AttributeList&);
 
     /** Sort two metaclass objects. This is used to sort entities on their
       * type information in a stable and platform independent way.
@@ -822,7 +826,7 @@ class MetaCategory : public MetaClass
     const Keyword* grouptag;
 
     /** Type definition for the read control function. */
-    typedef Object* (*readController)(const MetaCategory&, const XMLInput& in);
+    typedef Object* (*readController)(const MetaClass&, const AttributeList&);
 
     /** Type definition for the write control function. */
     typedef void (*writeController)(const MetaCategory&, XMLOutput *o);
@@ -830,7 +834,7 @@ class MetaCategory : public MetaClass
     /** This template method is available as a object creation factory for
       * classes without key fields and which rely on a default constructor.
       */
-    static Object* ControllerDefault (const MetaCategory&, const XMLInput& in);
+    static Object* ControllerDefault (const MetaClass&, const AttributeList&);
 
     /** Default constructor. <br>
       * Calling the registerCategory method is required after creating a
@@ -2010,7 +2014,7 @@ class Attribute
 
     /** Constructor. */
     explicit Attribute(string n)
-      : hash(Keyword::hash(n.c_str())), ch(n.c_str()) {}
+      : hash(Keyword::hash(n)), ch(n.c_str()) {}
 
     /** Constructor. */
     explicit Attribute(const char* c) : hash(Keyword::hash(c)), ch(c) {}
@@ -2069,6 +2073,9 @@ class Attribute
 class DataElement
 {
   public:
+    virtual operator bool() const 
+      {throw LogicException("DataElement is an abstract class");}
+
     void operator >> (unsigned long int& val) const {val = getUnsignedLong();}
 
     void operator >> (long& val) const {val = getLong();}
@@ -2085,21 +2092,29 @@ class DataElement
 
     void operator >> (string& val) const {val = getString();}
 
-    virtual long getLong() const = 0;
+    virtual long getLong() const 
+      {throw LogicException("DataElement is an abstract class");}
 
-    virtual unsigned long getUnsignedLong() const = 0;
+    virtual unsigned long getUnsignedLong() const
+      {throw LogicException("DataElement is an abstract class");}
 
-    virtual TimePeriod getTimeperiod() const = 0;
+    virtual TimePeriod getTimeperiod() const
+      {throw LogicException("DataElement is an abstract class");}
 
-    virtual int getInt() const = 0;
+    virtual int getInt() const
+      {throw LogicException("DataElement is an abstract class");}
 
-    virtual double getDouble() const = 0;
+    virtual double getDouble() const
+      {throw LogicException("DataElement is an abstract class");}
 
-    virtual Date getDate() const = 0;
+    virtual Date getDate() const
+      {throw LogicException("DataElement is an abstract class");}
 
-    virtual string getString() const = 0;
+    virtual string getString() const
+      {throw LogicException("DataElement is an abstract class");}
 
-    virtual bool getBool() const = 0;
+    virtual bool getBool() const
+      {throw LogicException("DataElement is an abstract class");}
 };
 
 
@@ -2112,6 +2127,8 @@ class XMLElement : public DataElement
     string m_strData;
 
   public:
+    virtual operator bool() const {return !m_strData.empty();}
+
     /** Default constructor. */
     XMLElement() {}
 
@@ -2162,6 +2179,42 @@ class XMLElement : public DataElement
       *   {t.*, T.*, f.*, F.*, 1.*, 0.*}</p>
       */
     DECLARE_EXPORT bool getBool() const;
+};
+
+
+/** @brief This class represents a dictionary of keyword + value pairs. 
+  *
+  * This abstract class can be instantiated as XML attributes, or as a 
+  * Python keyword dictionary.
+  *  - XML:<br>
+  *    <pre><buffer name="a" onhand="10" category="A" /></pre>;
+  *  - Python:<br>
+  *    buffer(name="a", onhand="10", category="A")
+  */ 
+class AttributeList
+{
+  public:
+    virtual const DataElement* get(const Keyword&) const = 0;
+    // @todo Iterator???
+};
+
+
+/** @brief This class represents a list of XML attributes. */ 
+class XMLAttributeList : public AttributeList
+{
+  private:
+    const xercesc::Attributes* atts;
+    XMLElement result;   // @todo we don't want such an element as member...
+  public:
+    XMLAttributeList(const xercesc::Attributes* a) : atts(a) {}
+
+    const XMLElement* get(const Keyword& key) const
+    {
+      char* s = xercesc::XMLString::transcode(atts->getValue(key.getXMLCharacters()));
+      const_cast<XMLAttributeList*>(this)->result.setData(s ? s : ""); 
+      xercesc::XMLString::release(&s);
+      return &result;
+    }
 };
 
 
@@ -3123,7 +3176,7 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * See the xerces API documentation for further information on the usage
       * of the attribute list.
       */
-    const xercesc::Attributes* attributes;
+    XMLAttributeList attributes;
 
     /** Handler called when a new element tag is encountered.
       * It pushes a new element on the stack and calls the current handler.
@@ -3185,7 +3238,7 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * to the attributes. See the xerces documentation if this description
       * doesn't satisfy you...
       */
-    const xercesc::Attributes* getAttributes() const {return attributes;}
+    const AttributeList& getAttributes() const {return attributes;}
 
     /** Redirect event stream into a new Object.<br>
       * It is also possible to pass a NULL pointer to the function. In
@@ -3539,20 +3592,15 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       *   'add_change' is the default value.
       * @see HasName
       */
-    static Object* reader (const MetaCategory& cat, const XMLInput& in)
+    static Object* reader (const MetaClass& cat, const AttributeList& in)
     {
-      // Pick up the name attribute. An error is reported if it's missing.
-      char* name = xercesc::XMLString::transcode(
-        in.getAttributes()->getValue(Tags::tag_name.getXMLCharacters())
-        );
-      if (!name)
-      {
-        xercesc::XMLString::release(&name);
-        throw DataException("Missing NAME attribute");
-      }
-
       // Pick up the action attribute
-      Action act = MetaClass::decodeAction(in.getAttributes());
+      Action act = MetaClass::decodeAction(in);
+
+      // Pick up the name attribute. An error is reported if it's missing.
+      const DataElement* nameElement = in.get(Tags::tag_name);
+      if (!*nameElement) throw DataException("Missing NAME attribute");
+      string name = nameElement->getString();
 
       // Check if it exists already
       bool found;
@@ -3564,21 +3612,13 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         case ADD:
           // Only additions are allowed
           if (found)
-          {
-            xercesc::XMLString::release(&name);
-            throw DataException("Object '" + string(name) + "' already exists.");
-          }
+            throw DataException("Object '" + name + "' already exists.");
           break;
 
         case CHANGE:
           // Only changes are allowed
           if (!found)
-          {
-            string msg = string("Object '") + name + "' doesn't exist.";
-            xercesc::XMLString::release(&name);
-            throw DataException(msg);
-          }
-          xercesc::XMLString::release(&name);
+            throw DataException("Object '" + name + "' doesn't exist.");
           return i;
 
         case REMOVE:
@@ -3588,61 +3628,44 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
             // Send out the notification to subscribers
             if (i->getType().raiseEvent(i,SIG_REMOVE))
             {
-              xercesc::XMLString::release(&name);
               // Delete the object
               delete i;
               return NULL;
             }
             else
-            {
               // The callbacks disallowed the deletion!
-              string msg = string("Can't remove object '") + name + "'";
-              xercesc::XMLString::release(&name);
-              throw DataException(msg);
-            }
+              throw DataException("Can't remove object '" + name + "'");
           }
           else
-          {
             // Not found
-            string msg = string("Can't find object '") + name + "' for removal";
-            xercesc::XMLString::release(&name);
-            throw DataException(msg);
-          }
+            throw DataException("Can't find object '" + name + "' for removal");
         default:
           // case ADD_CHANGE doesn't have special cases.
           ;
       }
 
       // Return the existing instance
-      if (found)
-      {
-        xercesc::XMLString::release(&name);
-        return i;
-      }
+      if (found) return i;
 
       // Lookup the type in the map
-      char* type = xercesc::XMLString::transcode(
-          in.getAttributes()->getValue(Tags::tag_type.getXMLCharacters())
-          );
-      string type2;
-      if (!type && in.getParentElement().first.isA(cat.grouptag))
+      const MetaClass* j;
+      if (cat.category)
+        // Class metadata passed: we already know what type to create
+        j = &cat;
+      else
       {
-        if (in.getCurrentElement().first.isA(cat.typetag)) type2 = "default";
-        else type2 = in.getCurrentElement().first.getName();
-      }
-      const MetaClass* j =
-        cat.findClass(type ? Keyword::hash(type) : (type2.empty() ? MetaCategory::defaultHash : Keyword::hash(type2.c_str())));
-      if (!j)
-      {
-        string t(type ? type : (type2.empty() ? "default" : type2.c_str()));
-        xercesc::XMLString::release(&name);
-        xercesc::XMLString::release(&type);
-        throw DataException("No type " + t + " registered for category " + cat.type);
+        // Category metadata passed: we need to look up the type
+        const DataElement* type = in.get(Tags::tag_type);
+        j = static_cast<const MetaCategory&>(cat).findClass(*type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash);
+        if (!j)
+        {
+          string t(*type ? type->getString() : "default");
+          throw DataException("No type " + t + " registered for category " + cat.type);
+        }
       }
 
       // Create a new instance
       T* x = dynamic_cast<T*>(j->factoryMethodString(name));
-      xercesc::XMLString::release(&type);
 
       // Run creation callbacks
       // During the callback there is no write lock set yet, since we can
@@ -3652,12 +3675,9 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       if (!x->getType().raiseEvent(x,SIG_ADD))
       {
         // Creation isn't allowed
-        string msg = string("Can't create object ") + name;
         delete x;
-        xercesc::XMLString::release(&name);
-        throw DataException(msg);
+        throw DataException("Can't create object " + name);
       }
-      xercesc::XMLString::release(&name);
 
       // Insert in the tree
       T::add(x, i);

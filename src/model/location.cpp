@@ -56,7 +56,7 @@ DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const Keyword& tag, mod
 DECLARE_EXPORT void Location::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_available) || pAttr.isA(Tags::tag_maximum))
-    pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
+    pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else
     HasHierarchy<Location>::beginElement(pIn, pAttr);
 }

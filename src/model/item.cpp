@@ -68,7 +68,7 @@ DECLARE_EXPORT void Item::writeElement(XMLOutput *o, const Keyword& tag, mode m)
 DECLARE_EXPORT void Item::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else
     HasHierarchy<Item>::beginElement(pIn, pAttr);
 }

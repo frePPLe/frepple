@@ -161,7 +161,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
       // STATE: Parser is reading data elements of an object
       // Debug
 #ifdef PARSE_DEBUG
-      logger << "   Start element " << pElement->getName()
+      logger << "   Start element " << pElement->first.getName()
       << " - object " << getCurrentObject() << endl;
 #endif
 
@@ -232,7 +232,7 @@ void XMLInput::endElement(const XMLCh* const uri,
     case IGNOREINPUT:
       // STATE: Parser is ignoring a part of the input
 #ifdef PARSE_DEBUG
-      logger << "   End element " << pElement->getName()
+      logger << "   End element " << pElement->first.getName()
       << " - IGNOREINPUT state" << endl;
 #endif
       // Continue if we aren't dealing with the tag being ignored
@@ -253,7 +253,7 @@ void XMLInput::endElement(const XMLCh* const uri,
     case READOBJECT:
       // STATE: Parser is reading data elements of an object
 #ifdef PARSE_DEBUG
-      logger << "   End element " << pElement->getName()
+      logger << "   End element " << pElement->first.getName()
       << " - object " << getCurrentObject() << endl;
 #endif
 
@@ -293,7 +293,7 @@ void XMLInput::endElement(const XMLCh* const uri,
             else logger << "Continuing after data error: " << e.what() << endl;
           }
 #ifdef PARSE_DEBUG
-          logger << "   End element " << pElement->getName()
+          logger << "   End element " << pElement->first.getName()
           << " - object " << getCurrentObject() << endl;
 #endif
         }
@@ -661,7 +661,6 @@ DECLARE_EXPORT bool XMLElement::getBool() const
 
 DECLARE_EXPORT const char* Attribute::getName() const
 {
-  logger << "getname " << (ch?ch:"NUKLL")<< endl;
   if (ch) return ch;
   Keyword::tagtable::const_iterator i = Keyword::getTags().find(hash);
   if (i == Keyword::getTags().end())
@@ -706,7 +705,7 @@ DECLARE_EXPORT Keyword::Keyword(string name, string nspace) : strName(name)
   strAttribute = string(" ") + nspace + ":" + name + "=\"";
 
   // Compute the hash value
-  dw = hash(name.c_str());
+  dw = hash(name);
 
   // Create a properly encoded Xerces string
   xercesc::XMLPlatformUtils::Initialize();

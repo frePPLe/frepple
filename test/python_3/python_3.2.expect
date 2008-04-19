@@ -27,11 +27,6 @@
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="boolcal" xsi:type="calendar_boolean">
-			<default>false</default>
-			<buckets>
-			</buckets>
-		</calendar>
 		<calendar name="doublecal" xsi:type="calendar_double">
 			<default>1.23</default>
 			<buckets>
@@ -143,38 +138,44 @@
 		</resource>
 	</resources>
 	<operationplans>
-		<operationplan id="3" operation="delivery end item">
+		<operationplan id="4" operation="delivery end item">
 			<demand name="order 2"/>
 			<start>2007-03-01T08:30:00</start>
 			<end>2007-03-02T08:30:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="1" operation="delivery end item">
+		<operationplan id="2" operation="delivery end item">
 			<demand name="order 1"/>
 			<start>2007-03-01T09:00:00</start>
 			<end>2007-03-02T09:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="5" operation="delivery end item">
+		<operationplan id="6" operation="delivery end item">
 			<demand name="order 3"/>
 			<start>2007-03-01T20:00:00</start>
 			<end>2007-03-02T20:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="6" operation="make end item">
+		<operationplan id="7" operation="make end item">
 			<start>2007-02-26T09:00:00</start>
 			<end>2007-02-27T09:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="4" operation="make end item">
+		<operationplan id="5" operation="make end item">
 			<start>2007-02-27T09:00:00</start>
 			<end>2007-02-28T09:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="2" operation="make end item">
+		<operationplan id="3" operation="make end item">
 			<start>2007-02-28T09:00:00</start>
 			<end>2007-03-01T09:00:00</end>
 			<quantity>10</quantity>
+		</operationplan>
+		<operationplan id="1" operation="make end item">
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-02T00:00:00</end>
+			<quantity>9</quantity>
+			<locked>true</locked>
 		</operationplan>
 	</operationplans>
 	<problems>
@@ -184,6 +185,13 @@
 			<start>2007-02-27T09:00:00</start>
 			<end>2007-03-01T20:00:00</end>
 			<weight>20</weight>
+		</problem>
+		<problem>
+			<name>material excess</name>
+			<description>Buffer &apos;end item&apos; has material excess of 9</description>
+			<start>2009-01-02T00:00:00</start>
+			<end>2030-12-31T00:00:00</end>
+			<weight>9</weight>
 		</problem>
 	</problems>
 </plan>

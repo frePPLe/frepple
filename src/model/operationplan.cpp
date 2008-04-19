@@ -49,54 +49,46 @@ void DECLARE_EXPORT OperationPlan::setChanged(bool b)
 
 
 DECLARE_EXPORT Object* OperationPlan::createOperationPlan
-(const MetaCategory& cat, const XMLInput& in)
+(const MetaClass& cat, const AttributeList& in)
 {
   // Pick up the action attribute
-  const xercesc::Attributes* atts = in.getAttributes();
-  Action action = MetaClass::decodeAction(atts);
+  Action action = MetaClass::decodeAction(in);
 
   // Decode the attributes
-  char* opname =
-    xercesc::XMLString::transcode(atts->getValue(Tags::tag_operation.getXMLCharacters()));
-  if (!opname && action!=REMOVE)
-  {
-    xercesc::XMLString::release(&opname);
+  const DataElement* opnameElement = in.get(Tags::tag_operation);
+  if (!*opnameElement && action!=REMOVE) 
     throw DataException("Missing operation attribute");
-  }
+  string opname = *opnameElement ? opnameElement->getString() : "";
 
   // Decode the operationplan identifier
   unsigned long id = 0;
-  char* idfier =
-    xercesc::XMLString::transcode(atts->getValue(Tags::tag_id.getXMLCharacters()));
-  if (idfier) id = atol(idfier);
+  const DataElement* idfier = in.get(Tags::tag_id);
+  if (*idfier) id = idfier->getUnsignedLong();
 
   // If an ID is specified, we look up this operation plan
   OperationPlan* opplan = NULL;
   if (idfier)
   {
     opplan = OperationPlan::findId(id);
-    if (opplan && opname
-        && strcmp(opplan->getOperation()->getName().c_str(),opname))
+    if (opplan && !opname.empty()
+        && opplan->getOperation()->getName()==opname)
     {
       // Previous and current operations don't match.
       ostringstream ch;
       ch << "Operationplan id " << id
       << " defined multiple times with different operations: '"
       << opplan->getOperation() << "' & '" << opname << "'";
-      xercesc::XMLString::release(&opname);
-      xercesc::XMLString::release(&idfier);
       throw DataException(ch.str());
     }
   }
-  xercesc::XMLString::release(&idfier);
 
   // Execute the proper action
   switch (action)
   {
     case REMOVE:
-      xercesc::XMLString::release(&opname);
       if (opplan)
       {
+      logger << "START DELET" << endl;
         // Send out the notification to subscribers
         if (opplan->getType().raiseEvent(opplan, SIG_REMOVE))
           // Delete it
@@ -116,6 +108,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
         << id << " for removal";
         throw DataException(ch.str());
       }
+      logger << "END DELET" << endl;
       return NULL;
     case ADD:
       if (opplan)
@@ -123,22 +116,17 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
         ostringstream ch;
         ch << "Operationplan with identifier " << id
         << " already exists and can't be added again";
-        xercesc::XMLString::release(&opname);
         throw DataException(ch.str());
       }
-      if (!opname)
-      {
-        xercesc::XMLString::release(&opname);
+      if (opname.empty())
         throw DataException
-        ("Operation name missing for creating an operationplan");
-      }
+          ("Operation name missing for creating an operationplan");
       break;
     case CHANGE:
       if (!opplan)
       {
         ostringstream ch;
         ch << "Operationplan with identifier " << id << " doesn't exist";
-        xercesc::XMLString::release(&opname);
         throw DataException(ch.str());
       }
       break;
@@ -146,25 +134,18 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   }
 
   // Return the existing operationplan
-  if (opplan)
-  {
-    xercesc::XMLString::release(&opname);
-    return opplan;
-  }
+  if (opplan) return opplan;
 
   // Create a new operation plan
   Operation* oper = Operation::find(opname);
   if (!oper)
   {
     // Can't create operationplan because the operation doesn't exist
-    string s(opname);
-    xercesc::XMLString::release(&opname);
-    throw DataException("Operation '" + s + "' doesn't exist");
+    throw DataException("Operation '" + opname + "' doesn't exist");
   }
   else
   {
     // Create an operationplan
-    xercesc::XMLString::release(&opname);
     opplan = oper->createOperationPlan(0.0,Date::infinitePast,Date::infinitePast,NULL,NULL,id,false);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD))
     {
@@ -206,13 +187,14 @@ DECLARE_EXPORT bool OperationPlan::initialize()
 
   // See if we can consolidate this operationplan with an existing one.
   // Merging is possible only when all the following conditions are met:
+  //   - id is not set
   //   - it is a fixedtime operation
   //   - it doesn't load any resources
   //   - both operationplans aren't locked
   //   - both operationplans have no owner
   //   - start and end date of both operationplans are the same
   //   - demand of both operationplans are the same
-  if (getOperation()->getType() == OperationFixedTime::metadata 
+  if (!id && getOperation()->getType() == OperationFixedTime::metadata 
     && !getLocked() && !getOwner() && getOperation()->getLoads().empty())
   {
     // Loop through candidates
@@ -634,9 +616,9 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag
 DECLARE_EXPORT void OperationPlan::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_demand))
-    pIn.readto( Demand::reader(Demand::metadata,pIn) );
+    pIn.readto( Demand::reader(Demand::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_owner))
-    pIn.readto(createOperationPlan(metadata,pIn));
+    pIn.readto(createOperationPlan(metadata,pIn.getAttributes()));
   else if (pAttr.isA(Tags::tag_flowplans))
     pIn.IgnoreElement();
 }

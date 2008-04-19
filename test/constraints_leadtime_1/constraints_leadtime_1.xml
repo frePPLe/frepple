@@ -15,14 +15,14 @@
     </command>
   </commands>
   <operations>
-    <operation_fixed_time name="make end item">
+    <operation name="make end item" xsi:type="operation_fixed_time">
       <!--size_multiple>3</size_multiple-->
       <duration>P7D</duration>
-    </operation_fixed_time>
-    <operation_time_per name="make subassembly">
+    </operation>
+    <operation name="make subassembly" xsi:type="operation_time_per">
       <duration>P1D</duration>
       <duration_per>PT12H</duration_per>
-    </operation_time_per>
+    </operation>
   </operations>
   <items>
     <item name="end item">
@@ -49,31 +49,31 @@
     </buffer>
   </buffers>
   <flows>
-    <flow_start>
+    <flow xsi:type="flow_start">
       <operation name="delivery end item" />
       <buffer name="end item" />
       <quantity>-1</quantity>
-    </flow_start>
-    <flow_start>
+    </flow>
+    <flow xsi:type="flow_start">
       <operation name="make subassembly" />
       <buffer name="Raw material" />
       <quantity>-1</quantity>
-    </flow_start>
-    <flow_start>
+    </flow>
+    <flow xsi:type="flow_start">
       <operation name="make end item" />
       <buffer name="subassembly" />
       <quantity>-1</quantity>
-    </flow_start>
-    <flow_end>
+    </flow>
+    <flow xsi:type="flow_end">
       <operation name="make end item" />
       <buffer name="end item" />
       <quantity>1</quantity>
-    </flow_end>
-    <flow_end>
+    </flow>
+    <flow xsi:type="flow_end">
       <operation name="make subassembly" />
       <buffer name="subassembly" />
       <quantity>1</quantity>
-    </flow_end>
+    </flow>
   </flows>
   <demands>
     <demand name="order 1">

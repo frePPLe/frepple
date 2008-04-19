@@ -224,18 +224,18 @@ DECLARE_EXPORT void Buffer::beginElement (XMLInput& pIn, const Attribute& pAttr)
       && pIn.getParentElement().first.isA(Tags::tag_flows))
   {
     Flow *f =
-      dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn));
+      dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn.getAttributes()));
     if (f) f->setBuffer(this);
     pIn.readto (f);
   }
   else if (pAttr.isA(Tags::tag_producing))
-    pIn.readto( Operation::reader(Operation::metadata,pIn) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_item))
-    pIn.readto( Item::reader(Item::metadata,pIn) );
+    pIn.readto( Item::reader(Item::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_minimum) || pAttr.isA(Tags::tag_maximum))
-    pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
+    pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_location))
-    pIn.readto( Location::reader(Location::metadata,pIn) );
+    pIn.readto( Location::reader(Location::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_flowplans))
     pIn.IgnoreElement();
   else

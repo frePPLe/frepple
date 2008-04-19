@@ -339,7 +339,7 @@ void Forecast::endElement(XMLInput& pIn, const Attribute& pAttr, const DataEleme
 void Forecast::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_calendar))
-    pIn.readto( Calendar::reader(Calendar::metadata, pIn) );
+    pIn.readto( Calendar::reader(Calendar::metadata, pIn.getAttributes()) );
   else
     Demand::beginElement(pIn, pAttr);
 }

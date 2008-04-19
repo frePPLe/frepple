@@ -9,7 +9,6 @@ Echoing solvers:
 Echoing calendars:
   Calendar: Capacity 0.0
     Bucket: 1.0 2007-01-01 00:00:00 2030-12-31 00:00:00 0
-  Calendar: boolcal False
   Calendar: doublecal 1.23
   Calendar: voidcal None
 
@@ -36,9 +35,10 @@ Echoing items:
 Echoing resources:
   Resource: Resource None None None None
     Load: make end item 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
-    Loadplan: 6 make end item 1.0 2007-02-26 09:00:00 2007-02-27 09:00:00
-    Loadplan: 4 make end item 1.0 2007-02-27 09:00:00 2007-02-28 09:00:00
-    Loadplan: 2 make end item 1.0 2007-02-28 09:00:00 2007-03-01 09:00:00
+    Loadplan: 7 make end item 1.0 2007-02-26 09:00:00 2007-02-27 09:00:00
+    Loadplan: 5 make end item 1.0 2007-02-27 09:00:00 2007-02-28 09:00:00
+    Loadplan: 3 make end item 1.0 2007-02-28 09:00:00 2007-03-01 09:00:00
+    Loadplan: 1 make end item 1.0 2009-01-01 00:00:00 2009-01-02 00:00:00
   Resource: machine None None None None
 
 Echoing buffers:
@@ -46,12 +46,13 @@ Echoing buffers:
   Buffer: buffer2 None None None buffer1
   Buffer: end item None None None None
     Flow: make end item 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
-    Flowplan: 6 make end item 10.0 2007-02-27 09:00:00
-    Flowplan: 4 make end item 10.0 2007-02-28 09:00:00
-    Flowplan: 3 delivery end item -10.0 2007-03-01 08:30:00
-    Flowplan: 2 make end item 10.0 2007-03-01 09:00:00
-    Flowplan: 1 delivery end item -10.0 2007-03-01 09:00:00
-    Flowplan: 5 delivery end item -10.0 2007-03-01 20:00:00
+    Flowplan: 7 make end item 10.0 2007-02-27 09:00:00
+    Flowplan: 5 make end item 10.0 2007-02-28 09:00:00
+    Flowplan: 4 delivery end item -10.0 2007-03-01 08:30:00
+    Flowplan: 3 make end item 10.0 2007-03-01 09:00:00
+    Flowplan: 2 delivery end item -10.0 2007-03-01 09:00:00
+    Flowplan: 6 delivery end item -10.0 2007-03-01 20:00:00
+    Flowplan: 1 make end item 9.0 2009-01-02 00:00:00
 
 Echoing operations:
   Operation: delivery end item None None None
@@ -62,11 +63,11 @@ Echoing operations:
 
 Echoing demands:
   Demand: order 1 2007-03-02 09:00:00 end item 10.0
-    Operationplan: 1 delivery end item 10.0 2007-03-02 09:00:00
+    Operationplan: 2 delivery end item 10.0 2007-03-02 09:00:00
   Demand: order 2 2007-03-02 08:30:00 end item 10.0
-    Operationplan: 3 delivery end item 10.0 2007-03-02 08:30:00
+    Operationplan: 4 delivery end item 10.0 2007-03-02 08:30:00
   Demand: order 3 2007-03-02 20:00:00 end item 10.0
-    Operationplan: 5 delivery end item 10.0 2007-03-02 20:00:00
+    Operationplan: 6 delivery end item 10.0 2007-03-02 20:00:00
 
 Echoing operationplans:
   Operationplan: delivery end item 10.0 2007-03-01 08:30:00 2007-03-02 08:30:00
@@ -75,6 +76,8 @@ Echoing operationplans:
   Operationplan: make end item 10.0 2007-02-26 09:00:00 2007-02-27 09:00:00
   Operationplan: make end item 10.0 2007-02-27 09:00:00 2007-02-28 09:00:00
   Operationplan: make end item 10.0 2007-02-28 09:00:00 2007-03-01 09:00:00
+  Operationplan: make end item 9.0 2009-01-01 00:00:00 2009-01-02 00:00:00
 
 Printing problems
   Problem: buffers material excess Buffer 'end item' has material excess of 20 2007-02-27 09:00:00 2007-03-01 20:00:00 20.0
+  Problem: buffers material excess Buffer 'end item' has material excess of 9 2009-01-02 00:00:00 2030-12-31 00:00:00 9.0

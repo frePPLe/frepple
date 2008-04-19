@@ -190,21 +190,13 @@ DECLARE_EXPORT void Calendar::writeElement(XMLOutput *o, const Keyword& tag, mod
 }
 
 
-DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const xercesc::Attributes* atts)
+DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const AttributeList& atts)
 {
   // Pick up the start, end and name attributes
-  char* s;
-  s = xercesc::XMLString::transcode(atts->getValue(Tags::tag_start.getXMLCharacters()));
-  Date startdate(s);
-  xercesc::XMLString::release(&s);
-  s = xercesc::XMLString::transcode(atts->getValue(Tags::tag_end.getXMLCharacters()));
-  Date enddate = Date::infiniteFuture;
-  if (s) enddate = Date(s);
-  xercesc::XMLString::release(&s);
-  s = xercesc::XMLString::transcode(atts->getValue(Tags::tag_name.getXMLCharacters()));
-  string name;
-  if (s) name = s;
-  xercesc::XMLString::release(&s);
+  Date startdate = atts.get(Tags::tag_start)->getDate();
+  const DataElement* d = atts.get(Tags::tag_end);
+  Date enddate = *d ? d->getDate() : Date::infiniteFuture;
+  string name = atts.get(Tags::tag_name)->getString();
 
   // Check for existence of the bucket: same name, start date and end date
   Calendar::Bucket* result = NULL;

@@ -159,9 +159,9 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m)
 DECLARE_EXPORT void Load::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_resource))
-    pIn.readto( Resource::reader(Resource::metadata,pIn) );
+    pIn.readto( Resource::reader(Resource::metadata,pIn.getAttributes()) );
   else if (pAttr.isA (Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
 }
 
 

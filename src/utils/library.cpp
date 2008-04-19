@@ -180,10 +180,10 @@ void LibraryUtils::initialize()
   // ascii data in the input.
   // For Posix platforms the environment variable LC_ALL controls the locale.
   // Most Linux distributions these days have a default locale that supports
-  // utf-8 encoding, meaning that every possible unicode character can be
+  // utf-8 encoding, meaning that every unicode character can be 
   // represented.
   // On windows, the default is the system-default ANSI code page. The number
-  // of characters that frePPLe supports on windows is limited by this...
+  // of characters that frePPLe supports on windows is constrained by this...
   setlocale(LC_ALL, "" );
 
   // Initialize Xerces parser
@@ -410,20 +410,11 @@ DECLARE_EXPORT Action MetaClass::decodeAction(const char *x)
 }
 
 
-DECLARE_EXPORT Action MetaClass::decodeAction(const xercesc::Attributes* atts)
-{
-  const XMLCh * c = atts ?
-      atts->getValue(Tags::tag_action.getXMLCharacters()) :
-      NULL;
-
-  // Return the default in the absence of the attribute
-  if (!c) return ADD_CHANGE;
-
-  // Decode the attribute
-  char* ac = xercesc::XMLString::transcode(c);
-  Action a = decodeAction(ac);
-  xercesc::XMLString::release(&ac);
-  return a;
+DECLARE_EXPORT Action MetaClass::decodeAction(const AttributeList& atts)
+{  
+  // Decode the string and return the default in the absence of the attribute
+  const DataElement* c = atts.get(Tags::tag_action);      
+  return *c ? decodeAction(c->getString().c_str()) : ADD_CHANGE;
 }
 
 
@@ -444,9 +435,8 @@ DECLARE_EXPORT bool MetaClass::raiseEvent(Object* v, Signal a) const
 }
 
 
-Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput& in)
+Object* MetaCategory::ControllerDefault (const MetaClass& cat, const AttributeList& in)
 {
-  const xercesc::Attributes* atts = in.getAttributes();
   Action act = ADD;
   switch (act)
   {
@@ -458,26 +448,24 @@ Object* MetaCategory::ControllerDefault (const MetaCategory& cat, const XMLInput
       ("Entity " + cat.type + " doesn't support CHANGE action.");
     default:
       /* Lookup for the class in the map of registered classes. */
-      char* type =
-        xercesc::XMLString::transcode(atts->getValue(Tags::tag_type.getXMLCharacters()));
-      string type2;
-      if (!type && in.getParentElement().first.isA(cat.grouptag))
+      const MetaClass* j;
+      if (cat.category)
+        // Class metadata passed: we already know what type to create
+        j = &cat;
+      else
       {
-        if (in.getCurrentElement().first.isA(cat.typetag)) type2 = "default";
-        else type2 = in.getCurrentElement().first.getName();
+        // Category metadata passed: we need to look up the type
+        const DataElement* type = in.get(Tags::tag_type);
+        j = static_cast<const MetaCategory&>(cat).findClass(*type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash);
+        if (!j)
+        {
+          string t(*type ? type->getString() : "default");
+          throw LogicException("No type " + t + " registered for category " + cat.type);
+        }
       }
-      ClassMap::const_iterator j
-        = cat.classes.find(type ? Keyword::hash(type) : (type2.empty() ? MetaCategory::defaultHash : Keyword::hash(type2.c_str())));
-      if (j == cat.classes.end())
-      {
-        string t(type ? string(type) : (!type2.empty() ? type2 : "default"));
-        xercesc::XMLString::release(&type);
-        throw LogicException("No type " + t + " registered for category " + cat.type);
-      }
-      xercesc::XMLString::release(&type);
 
       // Call the factory method
-      Object* result = j->second->factoryMethodDefault();
+      Object* result = j->factoryMethodDefault();
 
       // Run the callback methods
       if (!result->getType().raiseEvent(result, SIG_ADD))

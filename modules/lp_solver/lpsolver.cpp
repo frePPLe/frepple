@@ -275,7 +275,7 @@ void LPSolver::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 void LPSolver::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_calendar))
-    pIn.readto(Calendar::reader(Calendar::metadata,pIn));
+    pIn.readto(Calendar::reader(Calendar::metadata,pIn.getAttributes()));
 }
 
 

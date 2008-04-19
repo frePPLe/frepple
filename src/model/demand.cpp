@@ -232,13 +232,13 @@ DECLARE_EXPORT void Demand::writeElement(XMLOutput *o, const Keyword& tag, mode 
 DECLARE_EXPORT void Demand::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_item))
-    pIn.readto( Item::reader(Item::metadata,pIn) );
+    pIn.readto( Item::reader(Item::metadata,pIn.getAttributes()) );
   else if (pAttr.isA (Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else if (pAttr.isA (Tags::tag_customer))
-    pIn.readto( Customer::reader(Customer::metadata,pIn) );
+    pIn.readto( Customer::reader(Customer::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_operationplan))
-    pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata,pIn));
+    pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata,pIn.getAttributes()));
   else
     HasHierarchy<Demand>::beginElement(pIn, pAttr);
 }

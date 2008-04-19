@@ -239,7 +239,7 @@ class Calendar : public HasName<Calendar>, public Object
       * This method is intended to be used to create objects when reading
       * XML input data.
       */
-    DECLARE_EXPORT Bucket* createBucket(const xercesc::Attributes* atts);
+    DECLARE_EXPORT Bucket* createBucket(const AttributeList&);
 
     /** Adds a new bucket to the list. */
     DECLARE_EXPORT Bucket* addBucket(Date, Date, string);
@@ -546,7 +546,7 @@ template <typename T> class CalendarPointer : public Calendar
         {
           if (pAttr.isA(Tags::tag_value))
             pIn.readto(
-              MetaCategory::ControllerDefault(T::metadata,pIn)
+              MetaCategory::ControllerDefault(T::metadata,pIn.getAttributes())
             );
           else
             Bucket::beginElement(pIn, pAttr);
@@ -649,7 +649,7 @@ template <typename T> class CalendarPointer : public Calendar
     void beginElement (XMLInput& pIn, const Attribute& pAttr)
     {
       if (pAttr.isA (Tags::tag_default))
-        pIn.readto(T::reader(T::metadata,pIn));
+        pIn.readto(T::reader(T::metadata,pIn.getAttributes()));
       else
         Calendar::beginElement(pIn, pAttr);
     }
@@ -1814,7 +1814,7 @@ class OperationPlan
       * This method is intended to be used to create objects when reading
       * XML input data.
       */
-    static DECLARE_EXPORT Object* createOperationPlan (const MetaCategory&, const XMLInput&);
+    static DECLARE_EXPORT Object* createOperationPlan (const MetaClass&, const AttributeList&);
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~OperationPlan();

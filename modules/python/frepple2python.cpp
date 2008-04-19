@@ -835,6 +835,7 @@ PyObject* PythonResource::getattro(const Attribute& attr)
 
 int PythonResource::setattro(const Attribute& attr, const PythonObject& field)
 {
+  if (!obj) return -1;
   if (attr.isA(Tags::tag_name))
     obj->setName(field.getString());
   else if (attr.isA(Tags::tag_description))
@@ -996,6 +997,7 @@ PyObject* PythonOperationFixedTime::getattro(const Attribute& attr)
 
 int PythonOperationFixedTime::setattro(const Attribute& attr, const PythonObject& field)
 {
+  if (!obj) return -1;
   if (attr.isA(Tags::tag_duration))
     obj->setDuration(field.getTimeperiod());
   else
@@ -1017,6 +1019,7 @@ PyObject* PythonOperationTimePer::getattro(const Attribute& attr)
 
 int PythonOperationTimePer::setattro(const Attribute& attr, const PythonObject& field)
 {
+  if (!obj) return -1;
   if (attr.isA(Tags::tag_duration))
     obj->setDuration(field.getTimeperiod());
   else if (attr.isA(Tags::tag_duration_per))
@@ -1104,8 +1107,52 @@ int PythonOperationPlan::initialize(PyObject* m)
   x.setDoc("frePPLe operationplan");
   x.supportgetattro();
   x.supportsetattro();
+  x.supportcreate(create);
   const_cast<MetaCategory&>(OperationPlan::metadata).factoryPythonProxy = proxy;
   return x.typeReady(m);
+}
+
+
+PyObject* PythonOperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+{
+  try
+  {
+    // Find or create the C++ object
+    PythonAttributeList atts(kwds);
+    Object* x = OperationPlan::createOperationPlan(OperationPlan::metadata,atts);
+
+    // Create a python proxy
+    PythonExtensionBase* pr = static_cast<PythonExtensionBase*>(static_cast<PyObject*>(*(new PythonObject(x))));
+
+    // Iterate over extra keywords, and set attributes.   @todo move this responsability to the readers...
+    if (x) 
+    {
+      PyObject *key, *value;
+      Py_ssize_t pos = 0;
+      while (PyDict_Next(kwds, &pos, &key, &value))
+      {
+        PythonObject field(value);
+        Attribute attr(PyString_AsString(key));
+        if (!attr.isA(Tags::tag_operation) && !attr.isA(Tags::tag_id) && !attr.isA(Tags::tag_action))
+        {
+          int result = pr->setattro(attr, field);
+          if (result)
+            PyErr_Format(PyExc_AttributeError,
+              "attribute '%s' on '%s' can't be updated",
+              PyString_AsString(key), pr->ob_type->tp_name);
+        }
+      };
+    }
+
+    if (x && !static_cast<OperationPlan*>(x)->initialize()) 
+      static_cast<PythonOperationPlan*>(pr)->obj = NULL;
+    return pr;
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
 }
 
 
@@ -1136,6 +1183,7 @@ PyObject* PythonOperationPlan::getattro(const Attribute& attr)
 
 int PythonOperationPlan::setattro(const Attribute& attr, const PythonObject& field)
 {
+  if (!obj) return -1;
   if (attr.isA(Tags::tag_quantity))
     obj->setQuantity(field.getDouble());
   else if (attr.isA(Tags::tag_start))

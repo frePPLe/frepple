@@ -106,7 +106,7 @@ DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, const Attribute& pAttr)
     {
       if (cat->readFunction)
         // Hand over control to a registered read controller
-        pIn.readto(cat->readFunction(*cat,pIn));
+        pIn.readto(cat->readFunction(*cat,pIn.getAttributes()));
       else
         // There is no controller available.
         // This piece of code will be used to skip pieces of the XML file that

@@ -137,7 +137,7 @@ DECLARE_EXPORT void Resource::beginElement (XMLInput& pIn, const Attribute& pAtt
     pIn.readto(&*l);
   }
   else if (pAttr.isA (Tags::tag_maximum))
-    pIn.readto( Calendar::reader(Calendar::metadata,pIn) );
+    pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_loadplans))
     pIn.IgnoreElement();
   else

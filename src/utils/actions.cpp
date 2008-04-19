@@ -400,7 +400,7 @@ DECLARE_EXPORT void CommandList::endElement(XMLInput& pIn, const Attribute& pAtt
 DECLARE_EXPORT void CommandList::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_command))
-    pIn.readto( MetaCategory::ControllerDefault(Command::metadata,pIn) );
+    pIn.readto( MetaCategory::ControllerDefault(Command::metadata,pIn.getAttributes()) );
 }
 
 

@@ -172,9 +172,18 @@ frepple.calendar(name="doublecal", default=1.23)
 frepple.calendar_void(name="voidcal")
 
 ###
+print "\nDeleting a calendar"
+frepple.calendar(name="boolcal", action="R")
+
+###
 print "\nCreating operations"
 makeoper = frepple.operation_fixed_time(name="make end item", duration=86400)
 shipoper = frepple.operation_fixed_time(name="delivery end item", duration=86400)
+
+###
+print "\nCreating operationplans"
+opplan = frepple.operationplan(operation="make end item", quantity=9, start=datetime.datetime(2009,1,1))
+opplan.locked = True
 
 ###
 print "\nCreating items"

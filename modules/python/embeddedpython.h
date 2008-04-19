@@ -457,7 +457,7 @@ class PythonType : public NonCopyable
   * Python object. Alternative solution is to move to a twin object approach:
   * a C++ object and a python object always coexist as a twin pair.
   */
-class PythonObject : public NonCopyable, public DataElement
+class PythonObject : public DataElement
 {
   private:
     PyObject* obj;
@@ -476,6 +476,9 @@ class PythonObject : public NonCopyable, public DataElement
 
     /** Check for null value. */
     operator bool() const {return obj != NULL;}
+
+    /** Assignment operator. */
+    PythonObject& operator = (const PythonObject& o) { obj = o.obj; return *this; }
 
     /** Check whether the Python object is of a certain type.<br>
       * Subclasses of the argument type will also give a true return value.
@@ -547,9 +550,9 @@ class PythonObject : public NonCopyable, public DataElement
     TimePeriod getTimeperiod() const
     {
       int result = PyInt_AsLong(obj);
-	  if (result == -1 && PyErr_Occurred())
-		  throw DataException("Invalid number");
-	  return result;
+	    if (result == -1 && PyErr_Occurred())
+		    throw DataException("Invalid number");
+	    return result;
   	}
 
     /** Constructor from a pointer to an Object.<br>
@@ -611,6 +614,30 @@ class PythonObject : public NonCopyable, public DataElement
 
     /** Convert a frePPLe date into a Python datetime.datetime object. */
     PythonObject(const Date& val);
+};
+
+
+/** @brief This class is a wrapper around a Python dictionary. */
+class PythonAttributeList : public AttributeList
+{
+  private:
+    PyObject* kwds;
+    PythonObject result;   // @todo we don't want such an element as member...
+
+  public:
+    PythonAttributeList(PyObject* a) : kwds(a) {}
+
+    virtual const DataElement* get(const Keyword& k) const
+    {
+      if (!kwds) 
+      {
+        const_cast<PythonAttributeList*>(this)->result = PythonObject();
+        return &result;
+      }
+      PyObject* val = PyDict_GetItemString(kwds,k.getName().c_str());
+      const_cast<PythonAttributeList*>(this)->result = PythonObject(val);
+      return &result;
+    }
 };
 
 
@@ -795,70 +822,39 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
 
     static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     {
-      // Check presence of keyword arguments
-      if (!kwds)
+      try
       {
-        PyErr_SetString(PythonDataException, "Missing keyword arguments");
-        return NULL;
-      }
+        // Find or create the C++ object
+        PythonAttributeList atts(kwds);
+        Object* x = PROXY::reader(PROXY::metadata,atts);
 
-      // Pick up the name attribute.
-      PyObject* name = PyDict_GetItemString(kwds,"name");
-      if (!name)
-      {
-        PyErr_SetString(PythonDataException, "No name argument specified");
-        return NULL;
-      }
-
-      // Pick up the type attribute.
-      string type = "default";
-      PyObject* typekwd = PyDict_GetItemString(kwds,"type");
-      if (typekwd)
-        type = string(PyString_AsString(PyObject_Str(typekwd)));
-
-      // Create the C++ object
-      const MetaClass* j = PROXY::metadata.findClass(type.c_str());
-      if (!j)
-      {
-        PyErr_Format(PythonDataException, 
-          "No type %s registered for category %s",
-          type.c_str(), PROXY::metadata.type.c_str());
-        return NULL;
-      }
-      PROXY* x = PROXY::add(string(PyString_AsString(PyObject_Str(name))), *j);
-
-      // Create a python proxy
-      PythonExtensionBase* pr = static_cast<PythonExtensionBase*>(static_cast<PyObject*>(*(new PythonObject(x))));
-
-      // Iterate over extra keywords, and set attributes.
-      if (pr)
-      {
-        try
+        // Create a python proxy
+        PythonExtensionBase* pr = static_cast<PythonExtensionBase*>(static_cast<PyObject*>(*(new PythonObject(x))));
+  
+        // Iterate over extra keywords, and set attributes. @todo move this responsability to the readers...
+        PyObject *key, *value;
+        Py_ssize_t pos = 0;
+        while (PyDict_Next(kwds, &pos, &key, &value))
         {
-          PyObject *key, *value;
-          Py_ssize_t pos = 0;
-          while (PyDict_Next(kwds, &pos, &key, &value))
+          PythonObject field(value);
+          Attribute attr(PyString_AsString(key));
+          if (!attr.isA(Tags::tag_name) && !attr.isA(Tags::tag_type) && !attr.isA(Tags::tag_action))
           {
-            PythonObject field(value);
-            Attribute attr(PyString_AsString(key));
-            if (!attr.isA(Tags::tag_name) && !attr.isA(Tags::tag_type))
-            {
-              int result = pr->setattro(attr, field);
-              if (result)
-                PyErr_Format(PyExc_AttributeError,
-                  "attribute '%s' on '%s' can't be updated",
-                  PyString_AsString(key), pr->ob_type->tp_name);
-            }
-          };
-        }
-        catch (...)
-        {
-          PythonType::evalException();
-          delete pr;
-          return NULL;
-        }
+            int result = pr->setattro(attr, field);
+            if (result)
+              PyErr_Format(PyExc_AttributeError,
+                "attribute '%s' on '%s' can't be updated",
+                PyString_AsString(key), pr->ob_type->tp_name);
+          }
+        };
+        return pr;
+
       }
-      return pr;
+      catch (...)
+      {
+        PythonType::evalException();
+        return NULL;
+      }
     }
 };
 
@@ -917,58 +913,39 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
 
     static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     {
-      // Check presence of keyword arguments
-      if (!kwds)
+      try
       {
-        PyErr_SetString(PythonDataException, "Missing keyword arguments");
-        return NULL;
-      }
+        // Find or create the C++ object
+        PythonAttributeList atts(kwds);
+        Object* x = PROXY::reader(PROXY::metadata,atts);
 
-      // Pick up the name attribute.
-      PyObject* name = PyDict_GetItemString(kwds,"name");
-      if (!name)
-      {
-        PyErr_SetString(PythonDataException, "No name argument specified");
-        return NULL;
-      }
-
-      // Create the C++ object
-      PROXY* x = reinterpret_cast<PROXY*>(PROXY::add(string(PyString_AsString(PyObject_Str(name))), PROXY::metadata));
-
-      // Create a python proxy
-      ME* pr = new ME(x);
-
-      // Iterate over extra keywords, and set attributes.
-      if (pr)
-      {
-        try
+        // Create a python proxy
+        PythonExtensionBase* pr = static_cast<PythonExtensionBase*>(static_cast<PyObject*>(*(new PythonObject(x))));
+  
+        // Iterate over extra keywords, and set attributes.   @todo move this responsability to the readers...
+        PyObject *key, *value;
+        Py_ssize_t pos = 0;
+        while (PyDict_Next(kwds, &pos, &key, &value))
         {
-          PyObject *key, *value;
-          Py_ssize_t pos = 0;
-          bool  nok =false;
-          while (PyDict_Next(kwds, &pos, &key, &value))
+          PythonObject field(value);
+          Attribute attr(PyString_AsString(key));
+          if (!attr.isA(Tags::tag_name) && !attr.isA(Tags::tag_type) && !attr.isA(Tags::tag_action))
           {
-            PythonObject field(value);
-            Attribute attr(PyString_AsString(key));
-            if (!attr.isA(Tags::tag_name))
-            {
-              int result = pr->setattro(attr, field);
-              if (result)
-                PyErr_Format(PyExc_AttributeError,
-                  "attribute '%s' on '%s' can't be updated",
-                  PyString_AsString(key), pr->ob_type->tp_name);
-            }
-          };
-        }
-        catch (...)
-        {
-          PythonType::evalException();
-          delete pr;
-          return NULL;
-        }
-      }
+            int result = pr->setattro(attr, field);
+            if (result)
+              PyErr_Format(PyExc_AttributeError,
+                "attribute '%s' on '%s' can't be updated",
+                PyString_AsString(key), pr->ob_type->tp_name);
+          }
+        };
+        return pr;
 
-      return static_cast<PyObject*>(pr);
+      }
+      catch (...)
+      {
+        PythonType::evalException();
+        return NULL;
+      }
     }
 };
 
@@ -1414,7 +1391,7 @@ class PythonOperationPlan : public PythonExtension<PythonOperationPlan>
       {return static_cast<PyObject*>(new PythonOperationPlan(static_cast<OperationPlan*>(p)));}
   private:
     OperationPlan* obj;
-    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);    "id"+"operation" keywords used
+    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
     virtual PyObject* getattro(const Attribute&);
     virtual int setattro(const Attribute&, const PythonObject&);
 };

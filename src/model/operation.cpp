@@ -164,7 +164,7 @@ DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, const Attribute& pAt
       && pIn.getParentElement().first.isA(Tags::tag_flows))
   {
     Flow *f =
-      dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn));
+      dynamic_cast<Flow*>(MetaCategory::ControllerDefault(Flow::metadata,pIn.getAttributes()));
     if (f) f->setOperation(this);
     pIn.readto(f);
   }
@@ -176,9 +176,9 @@ DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, const Attribute& pAt
     pIn.readto(&*l);
   }
   else if (pAttr.isA (Tags::tag_operationplan))
-    pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn));
+    pIn.readto(OperationPlan::createOperationPlan(OperationPlan::metadata, pIn.getAttributes()));
   else if (pAttr.isA (Tags::tag_location))
-    pIn.readto( Location::reader(Location::metadata,pIn) );
+    pIn.readto( Location::reader(Location::metadata,pIn.getAttributes()) );
 }
 
 
@@ -400,7 +400,7 @@ DECLARE_EXPORT void OperationRouting::writeElement
 DECLARE_EXPORT void OperationRouting::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else
     Operation::beginElement(pIn, pAttr);
 }
@@ -609,7 +609,7 @@ DECLARE_EXPORT void OperationAlternate::writeElement
 DECLARE_EXPORT void OperationAlternate::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_operation))
-    pIn.readto( Operation::reader(Operation::metadata,pIn) );
+    pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
   else
     Operation::beginElement(pIn, pAttr);
 }

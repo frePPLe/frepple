@@ -23,8 +23,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-15 08:41+0100\n"
-"PO-Revision-Date: 2008-03-15 09:16+0100\n"
+"POT-Creation-Date: 2008-04-19 15:02+0200\n"
+"PO-Revision-Date: 2008-04-19 15:03+0100\n"
 "Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
 "Language-Team: info@frepple.com\n"
 "MIME-Version: 1.0\n"
@@ -145,11 +145,11 @@ msgstr "Probleem tijdens initialisatie datums"
 msgid "Start creating sample model with parameters"
 msgstr "Start creatie voorbeeldmodel met parameters"
 
-#: execute/management/commands/frepple_createmodel.py:367
+#: execute/management/commands/frepple_createmodel.py:368
 msgid "Finished creating sample model"
 msgstr "Einde creatie voorbeeldmodel"
 
-#: execute/management/commands/frepple_createmodel.py:372
+#: execute/management/commands/frepple_createmodel.py:373
 msgid "Failure creating sample model"
 msgstr "Probleem tijdens creatie voorbeeldmodel"
 
@@ -313,7 +313,6 @@ msgid "year end"
 msgstr "einde jaar"
 
 #: input/models.py:87
-#: input/models.py:117
 #: input/views.py:724
 msgid "default"
 msgstr "standaard"
@@ -350,6 +349,11 @@ msgstr "data"
 #: input/views.py:772
 msgid "subcategory"
 msgstr "subcategorie"
+
+#: input/models.py:117
+#: input/views.py:776
+msgid "default value"
+msgstr "standaard waarde"
 
 #: input/models.py:205
 #: input/models.py:218
@@ -802,9 +806,11 @@ msgid "Consume/produce material at the start or the end of the operationplan"
 msgstr "Gebruik/produceer materiaal aan de start van een operatie of op het eind"
 
 #: input/models.py:544
+#: input/models.py:563
 #: input/models.py:586
 #: input/models.py:625
 #: input/models.py:851
+#: input/views.py:508
 #: input/views.py:552
 #: input/views.py:608
 #: input/views.py:672
@@ -826,11 +832,6 @@ msgstr "flow"
 #: input/models.py:557
 msgid "flows"
 msgstr "flows"
-
-#: input/models.py:563
-#: input/views.py:508
-msgid "usagefactor"
-msgstr "gebruiksfactor"
 
 #: input/models.py:577
 #: output/views/resource.py:54
@@ -1040,10 +1041,6 @@ msgstr "Datum Lijst"
 #: input/views.py:755
 msgid "Calendar List"
 msgstr "Kalendar Lijst"
-
-#: input/views.py:776
-msgid "default value"
-msgstr "standaard waarde"
 
 #: input/views.py:780
 msgid "current value"
@@ -1615,6 +1612,7 @@ msgid ""
 "<td>Load frePPLe from the database...  <br/>\n"
 "and create a <select name=\"type\" id=\"type\">\n"
 "<option value=\"7\">constrained</option>\n"
+"<option value=\"1\">leadtime constrained</option>\n"
 "<option value=\"3\">material constrained</option>\n"
 "<option value=\"4\">capacity constrained</option>\n"
 "<option value=\"0\">unconstrained</option>\n"
@@ -1627,6 +1625,7 @@ msgstr ""
 "<td>Laad frePPLe uit de databank...  <br/>\n"
 "en creeer een <select name=\"type\" id=\"type\">\n"
 "<option value=\"7\">constrained</option>\n"
+"<option value=\"1\">leatime constrained</option>\n"
 "<option value=\"3\">materiaal constrained</option>\n"
 "<option value=\"4\">capaciteit constrained</option>\n"
 "<option value=\"0\">unconstrained</option>\n"
@@ -1635,11 +1634,11 @@ msgstr ""
 "<a href=\"/execute/logfrepple/\">Bekijk het laatste logbestand</a></td>\n"
 "<td><input id=\"run\" type=\"submit\" value=\"Uitvoeren\" /></td>"
 
-#: templates/execute/execute.html:57
+#: templates/execute/execute.html:58
 msgid "Database"
 msgstr "Databank"
 
-#: templates/execute/execute.html:60
+#: templates/execute/execute.html:61
 msgid ""
 "<th scope=\"row\"><a>Erase</a></th>\n"
 "<td>Erase all data from the database.</td>\n"
@@ -1649,7 +1648,7 @@ msgstr ""
 "<td>Verwijder alle gegevens uit de databank.</td>\n"
 "<td><input id=\"erase\" type=\"submit\" value=\"Verwijder\" /></td>"
 
-#: templates/execute/execute.html:66
+#: templates/execute/execute.html:67
 msgid ""
 "<th scope=\"row\"><a>Load a dataset</a></th>\n"
 "<td>Load a dataset from a file in the database.<br/>\n"
@@ -1673,11 +1672,11 @@ msgstr ""
 "</td>\n"
 "<td><input id=\"load\" type=\"submit\" value=\"Laad\"/></td>"
 
-#: templates/execute/execute.html:85
+#: templates/execute/execute.html:86
 msgid "Model generator"
 msgstr "Model generator"
 
-#: templates/execute/execute.html:88
+#: templates/execute/execute.html:89
 msgid ""
 "<th scope=\"row\"><a>Create a model</a></th>\n"
 "<td>Create a sample model in the database.<br/>\n"
@@ -1719,7 +1718,7 @@ msgstr ""
 "</td>\n"
 "<td><input id=\"create\" type=\"submit\" value=\"Genereer\"/></td>"
 
-#: templates/execute/execute.html:114
+#: templates/execute/execute.html:115
 msgid "Sorry, You don't have any execute permissions..."
 msgstr "Sorry, U heeft geen gebruikersrechten om opdrachten uit te voeren..."
 
@@ -1855,56 +1854,58 @@ msgstr "File correct opgeladen"
 msgid "Permission denied"
 msgstr "Toegang geweigerd"
 
-#: utils/report.py:418
+#: utils/report.py:413
 msgid "for"
 msgstr "voor"
 
 # Translation included with django
-#: utils/report.py:566
-#: utils/report.py:569
-#: utils/report.py:570
-#: utils/report.py:619
-#: utils/report.py:631
+#: utils/report.py:564
+#: utils/report.py:567
+#: utils/report.py:568
+#: utils/report.py:617
+#: utils/report.py:629
 msgid "title"
 msgstr ""
 
-#: utils/report.py:572
+#: utils/report.py:570
 msgid "data field"
 msgstr "dataveld"
 
 # Translation included with django
-#: utils/report.py:927
+#: utils/report.py:925
 msgid "All"
 msgstr ""
 
-#: utils/report.py:946
+#: utils/report.py:944
 msgid "False"
 msgstr "Onwaar"
 
-#: utils/report.py:946
+#: utils/report.py:944
 msgid "True"
 msgstr "Waar"
 
-#: utils/report.py:987
+#: utils/report.py:985
 #, python-format
 msgid "Incorrect field %(column)s"
 msgstr "Foute veldnaam %(column)s"
 
-#: utils/report.py:993
+#: utils/report.py:991
 #, python-format
 msgid "Missing primary key field %(key)s"
 msgstr "Primary key %(key)s ontbreekt"
 
-#: utils/report.py:1043
+#: utils/report.py:1041
 #, python-format
 msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
 msgstr "Rij %(rownum)s veld %(field)s: %(data)s: %(message)s"
 
-#: utils/report.py:1051
+#: utils/report.py:1049
 #, python-format
 msgid "Exception during upload: %(message)s"
 msgstr "Fout tijdens laden: %(message)s"
 
+#~ msgid "usagefactor"
+#~ msgstr "gebruiksfactor"
 #~ msgid "Upload data"
 #~ msgstr "Laad gegevens"
 #~ msgid ""

@@ -42,12 +42,12 @@
   *
   * The XML schema extension enabled by this module is (see mod_lpsolver.xsd):
   * <PRE>
-  * <xsd:complexType name="SOLVER_LP">
+  * <xsd:complexType name="solver_lp">
   *   <xsd:complexContent>
-  *     <xsd:extension base="SOLVER">
+  *     <xsd:extension base="solver">
   *       <xsd:choice minOccurs="0" maxOccurs="unbounded">
-  *         <xsd:element name="VERBOSE" type="xsd:boolean" />
-  *         <xsd:element name="CALENDAR" type="CALENDAR" />
+  *         <xsd:element name="verbose" xsi:type="xsd:boolean" />
+  *         <xsd:element name="calendar" xsi:type="calendar" />
   *       </xsd:choice>
   *     </xsd:extension>
   *   </xsd:complexContent>

@@ -16,7 +16,6 @@
     <command xsi:type="command_solve">
       <solver name="Netting orders from forecast" xsi:type="solver_forecast">
         <loglevel>2</loglevel>
-        <automatic>false</automatic>
       </solver>
     </command>
     <command xsi:type="command_save">

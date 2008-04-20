@@ -49,9 +49,7 @@
 			<xsd:extension base="solver">
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="loglevel" type="loglevel" />
-					<xsd:element name="automatic" type="xsd:boolean" />
 				</xsd:choice>
-				<xsd:attribute name="automatic" type="xsd:boolean" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

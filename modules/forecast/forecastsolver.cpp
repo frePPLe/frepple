@@ -30,29 +30,6 @@
 namespace module_forecast
 {
 
-const Keyword tag_automatic("automatic");
-
-
-void ForecastSolver::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(tag_automatic))
-    setAutomatic(pElement.getBool());
-  else
-    Solver::endElement(pIn, pAttr, pElement);
-}
-
-
-void ForecastSolver::setAutomatic(bool b)
-{
-  if (automatic && !b)
-    // Disable the incremental solving (which is currently enabled)
-    FunctorInstance<Demand,ForecastSolver>::disconnect(this, SIG_REMOVE);
-  else if (!automatic && b)
-    // Enable the incremental solving (which is currently disabled)
-    FunctorInstance<Demand,ForecastSolver>::connect(this, SIG_REMOVE);
-  automatic = b;
-}
-
 
 bool ForecastSolver::callback(Demand* l, const Signal a)
 {
@@ -78,9 +55,6 @@ void ForecastSolver::writeElement(XMLOutput *o, const Keyword& tag, mode m) cons
   if (m != NOHEADER) o->BeginObject
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
-  // Write the fields
-  if (automatic) o->writeElement(tag_automatic, automatic);
-
   // Write the parent class
   Solver::writeElement(o, tag, NOHEADER);
 }
@@ -91,7 +65,7 @@ void ForecastSolver::solve(const Demand* l, void* v)
   // Forecast don't net themselves, and hidden demands either...
   if (!l || dynamic_cast<const Forecast*>(l) || l->getHidden()) return;
 
-  const Demand* x(!getAutomatic() ? l : NULL);
+  const Demand* x(l);
 
   // Message
   if (getLogLevel()>0)
@@ -119,12 +93,6 @@ void ForecastSolver::solve(const Demand* l, void* v)
 
 void ForecastSolver::solve(void *v)
 {
-  // Definitions to sort the demand
-
-  // Disable automated netting during this solver loop
-  bool autorun = getAutomatic();
-  setAutomatic(false);
-
   // Sort the demands using the same sort function as used for planning.
   // Note: the memory consumption of the sorted list can be significant
   sortedDemandList l;
@@ -147,9 +115,6 @@ void ForecastSolver::solve(void *v)
       catch (exception& e) {logger << "  " << e.what() << endl;}
       catch (...) {logger << "  Unknown type" << endl;}
     }
-
-  // Re-enable the automated netting if it was enabled
-  if (autorun) setAutomatic(true);
 }
 
 

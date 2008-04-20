@@ -107,9 +107,7 @@
 	*		<xsd:extension base="solver">
 	*			<xsd:choice minOccurs="0" maxOccurs="unbounded">
 	*				<xsd:element name="loglevel" type="loglevel" />
-	*				<xsd:element name="automatic" type="xsd:boolean" />
 	*			</xsd:choice>
-	*			<xsd:attribute name="automatic" type="xsd:boolean" />
 	*		</xsd:extension>
 	*	</xsd:complexContent>
 	* </xsd:complexType>
@@ -408,7 +406,7 @@ class ForecastSolver : public Solver
     friend class Forecast;
   public:
     /** Constructor. */
-    ForecastSolver(const string& n) : Solver(n), automatic(false) {}
+    ForecastSolver(const string& n) : Solver(n) {}
 
     /** This method handles the search for a matching forecast, followed
       * by decreasing the net forecast.
@@ -423,14 +421,7 @@ class ForecastSolver : public Solver
     virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
     virtual size_t getSize() const {return sizeof(ForecastSolver);}
-    void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     void writeElement(XMLOutput*, const Keyword&, mode) const;
-
-    /** Updates the flag controlling incremental behavior. */
-    void setAutomatic(bool);
-
-    /** Returns true when the solver is set up to run incrementally. */
-    bool getAutomatic() const {return automatic;}
 
     /** Callback function, used for netting orders against the forecast. */
     bool callback(Demand* l, const Signal a);
@@ -445,11 +436,6 @@ class ForecastSolver : public Solver
       * (and its delivery plan).
       */
     void netDemandFromForecast(const Demand*, Forecast*);
-
-    /** When set to true, this solver will automatically adjust the
-      * netted forecast with every change in demand.
-      */
-    bool automatic;
 
     /** Used for sorting demands during netting. */
     struct sorter

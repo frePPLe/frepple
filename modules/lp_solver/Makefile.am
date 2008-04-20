@@ -9,7 +9,7 @@ sources = lpsolver.cpp lpsolver.h
 # single directory.
 libdir = @bindir@
 
-EXTRA_DIST = $(sources) mod_lpsolver.xsd
+EXTRA_DIST = $(sources) mod_lpsolver.xsd lpsolver.mod exportlp.py
 
 if LP
 

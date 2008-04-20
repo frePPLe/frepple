@@ -30,20 +30,12 @@
   * @namespace module_lp_solver
   * @brief A solver module based on a linear programming algorithm.
   *
-  * This module uses a linear programming representation to solve simple
-  * material allocation problems: Given a limited supply of components
-  * it establishes the most profitable mix of end items that can be
-  * assembled from the components.
+  * The module is currently in beta-mode: it is usable as a proof of concept, 
+  * but isn't finished yet as an out-of-the-box integrated solver. 
   *
-  * The representation doesn't account for a lot of the details. In its
-  * current form the solver accounts only for the simplest of cases.
-  * Additional development work can enhance the solver.
-  * A short list of the restrictions:
-  *  - no intermediate materials and their WIP or inventory
-  *  - no leadtimes taken into account
-  *  - no support for alternate and routing operations
-  *  - no capacity constraints
-  *  - demand can only be planned short, not late
+  * The linear programming problem definition is very flexible.<br>
+  * As a prototyping example, a capacity allocation problem is used. 
+  * Different business problems will obviously require a different formulation. 
   *
   * The module uses the "Gnu Linear Programming Kit" library (aka GLPK) to
   * solve the LP model.
@@ -92,8 +84,14 @@ class LPSolver : public Solver
       * @exception DataException Generated when no calendar has been specified.
       */
     void solve(void* = NULL);
-    void solve(const Demand*, void* = NULL);
-    void solve(const Buffer*, void* = NULL);
+
+    /** A hook to intercept the terminal output of the solver library. */
+    static int redirectsolveroutput(void* info, const char* msg)
+    {
+      logger << msg;
+      logger.flush();
+      return 1;
+    }
 
     Calendar* getCalendar() const {return cal;}
     void setCalendar(Calendar* c) {cal = c;}
@@ -102,7 +100,7 @@ class LPSolver : public Solver
     virtual void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
 
-    LPSolver(const string n) : Solver(n), cal(NULL), rows(0), columns(0) {};
+    LPSolver(const string n) : Solver(n), cal(NULL) {};
     ~LPSolver() {};
 
     virtual const MetaClass& getType() const {return metadata;}
@@ -120,32 +118,10 @@ class LPSolver : public Solver
     static string replaceSpaces(string);
 
     /** This object is the interface with the GLPK structures. */
-
     LPX* lp;
 
     /** Which buckets to use for the linearization of the Problem. */
     Calendar *cal;
-
-    /** A counter for the number of rows in our LP matrix. */
-    int rows;
-
-    /** A counter for the number of columns in our LP matrix. */
-    int columns;
-
-    typedef map< int, int, less<int> > priolist;
-    /** Here we store a conversion table between a certain value of the demand
-      * priority and a row in the LP matrix. The row represents the satisfied
-      * demand of this demand priority.
-      */
-    priolist demandprio2row;
-
-    typedef map<const Buffer*, int, less<const Buffer*> > Bufferlist;
-    /** Here we store a conversion table between a Buffer pointer and a row
-      * index in the LP constraint matrix. Each Buffer has N rows in the matrix,
-      * where N is the number of buckets in the Calendar.
-      * The index stored in this table is the lowest row number -1.
-      */
-    Bufferlist Buffer2row;
 };
 
 }  // End namespace

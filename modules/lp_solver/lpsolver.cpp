@@ -44,13 +44,6 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   }
   init = true;
 
-  // Print the parameters
-  /*
-  for (CommandLoadLibrary::ParameterList::const_iterator
-    j = z.begin(); j!= z.end(); ++j)
-    logger << "Parameter " << j->first << " = " << j->second << endl;
-  */
-
   // Initialize the metadata.
   LPSolver::metadata.registerClass(
     "solver",
@@ -71,77 +64,122 @@ void LPSolver::solve(void *v)
   if (getLogLevel()>0)
     logger << "Start Solver initialisation at " << Date::now() << endl;
 
-  // We really need a calendar the lp buckets!
-  if (!cal) throw DataException("No calendar specified for LP Solver");
+  // Capture all terminal output of the solver
+  glp_term_hook(redirectsolveroutput,NULL);
 
-  // Initialisation
-  lp = lpx_create_prob();
-  string x = replaceSpaces(Plan::instance().getName());
-  lpx_set_prob_name(lp, (char*) x.c_str());
+  // Read the problem from a file in the GNU MathProg language.
+  // The first argument is a model file.
+  // The second argument is a data file: it is exported earlier, typically using 
+  // frePPLe's python API.
+  lp = lpx_read_model("lpsolver.mod", "lpsolver.dat", NULL);
+  if (lp == NULL)
+    throw RuntimeException("Cannot read mps file `%s'\n");
 
-  // Count the number of buckets
-  unsigned int buckets = 0;
-  for (CalendarBool::EventIterator i(cal); i.getDate()<Date::infiniteFuture; ++i)
-    ++buckets;
+  // order rows and columns of the constraint matrix
+  //lpx_order_matrix(lp);
 
-  // Determine Problem SIZE!
-  lpx_add_cols(lp, Demand::size()         // Col 1 ... Demands
-      + buckets                  // Col Demands+1 ... Demands+Buckets
-              );
-  lpx_add_rows(lp, 1 +                    // Row 1: total inventory
-      1 +                        // Row 2: total planned qty
-      2 +                        // For each demand prio
-      buckets
-              );
+  // Scale the problem data
+  lpx_scale_prob(lp);
 
-  // Build predefined rows
-  lpx_set_row_name(lp, ++rows, "Inventory");
-  lpx_set_row_name(lp, ++rows, "Planned_Qty");
+  // Enable pre-solving (for the first simplex run)
+  lpx_set_int_parm(lp, LPX_K_PRESOL, true);
 
-  // Build problem for the Buffers
-  Buffer::find("RM3")->solve(*this,this);
-
-  // Build problem for the demands
-  for (Demand::iterator j = Demand::begin(); j != Demand::end(); ++j)
-    j->solve(*this,this);
+  // Create an index for quick searching on names
+  glp_create_index(lp);
 
   if (getLogLevel()>0)
-    logger << "Finished Solver initialisation at " << Date::now() << endl;
+    logger << "Finished solver initialisation at " << Date::now() << endl;
 
   //
   // PART II: solving...
+  // We solve with a number of hierarchical goals: First the highest priority 
+  // goal is solved for. After finding its optimal value, we set the value 
+  // as a constraint and start for the next priority goal.
   //
 
   // Initial message
   if (getLogLevel()>0) logger << "Start solving at " << Date::now() << endl;
 
-  // Objective: maximize the planned demand of each priority
-  for (priolist::iterator i = demandprio2row.begin();
-      i != demandprio2row.end(); ++i)
-  {
-    if (getLogLevel()>0)
-      logger << "Start maximizing supply for demand priority " << i->first
-      << " at " << Date::now() << endl;
-    // Set the right row as the objective
-    lpx_set_obj_coef(lp, i->second, 1.0);
-    lpx_set_obj_dir(lp, LPX_MAX);
-    // Solve
-    lpx_simplex(lp);
-    // Results...
-    if (getLogLevel()>0)
-      logger << " Satisfied " << lpx_get_obj_val(lp) << " units" << endl;
-    // Fix the optimal solution for the next objective layers
-    lpx_set_row_bnds(lp, i->second, LPX_LO, lpx_get_obj_val(lp), 0.0);
-    // Remove from the objective
-    lpx_set_obj_coef(lp, i->second, 0.0);
-  }
-
-  // Additional objective: minimize the inventory
-  lpx_set_obj_coef(lp, 1, 1.0);
-  lpx_set_obj_dir(lp, LPX_MIN);
+  // Objective: minimize the shortness of priority 1
   lpx_simplex(lp);
-  lpx_write_mps(lp,"lp_solver.mps");
-  lpx_print_sol(lp,"lp_solver.sol");
+  logger << " Shortage  " << lpx_get_obj_val(lp) << " units on priority 1" << endl;
+  int col = glp_find_col(lp,"goalshortage[1]");
+  int row = glp_find_row(lp,"shortage[1]");
+  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
+  lpx_set_obj_coef(lp, col, 0.0);
+  lpx_set_int_parm(lp, LPX_K_PRESOL, false); // No more presolving
+
+  // Objective: minimize the shortness of priority 2
+  col = glp_find_col(lp,"goalshortage[2]");
+  lpx_set_obj_coef(lp, col, 1.0);
+  lpx_simplex(lp);
+  logger << " Shortage  " << lpx_get_obj_val(lp) << " units on priority 2" << endl;
+  lpx_set_obj_coef(lp, col, 0.0);
+  row = glp_find_row(lp,"shortage[2]");
+  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
+
+  // Objective: minimize the shortness of priority 3
+  col = glp_find_col(lp,"goalshortage[3]");
+  lpx_set_obj_coef(lp, col, 1.0);
+  lpx_simplex(lp);
+  logger << " Shortage  " << lpx_get_obj_val(lp) << " units on priority 3" << endl;
+  lpx_set_obj_coef(lp, col, 0.0);
+  row = glp_find_row(lp,"shortage[3]");
+  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
+
+  // Objective: minimize the lateness of priority 1
+  col = glp_find_col(lp,"goallate[1]");
+  lpx_set_obj_coef(lp, col, 1.0);
+  lpx_simplex(lp);
+  logger << " Lateness  " << lpx_get_obj_val(lp) << " unit*days on priority 1" << endl;
+  lpx_set_obj_coef(lp, col, 0.0);
+  row = glp_find_row(lp,"late[1]");
+  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
+
+  // Objective: minimize the lateness of priority 2
+  col = glp_find_col(lp,"goallate[2]");
+  lpx_set_obj_coef(lp, col, 1.0);
+  lpx_simplex(lp);
+  logger << " Lateness  " << lpx_get_obj_val(lp) << " unit*days on priority 2" << endl;
+  lpx_set_obj_coef(lp, col, 0.0);
+  row = glp_find_row(lp,"late[2]");
+  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
+
+  // Objective: minimize the lateness of priority 3
+  col = glp_find_col(lp,"goallate[3]");
+  lpx_set_obj_coef(lp, col, 1.0);
+  lpx_simplex(lp);
+  logger << " Lateness  " << lpx_get_obj_val(lp) << " unit*days on priority 3" << endl;
+  lpx_set_obj_coef(lp, col, 0.0);
+  row = glp_find_row(lp,"late[3]");
+  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
+
+  // Objective: minimize the earliness of priority 1
+  col = glp_find_col(lp,"goalearly[1]");
+  lpx_set_obj_coef(lp, col, 1.0);
+  lpx_simplex(lp);
+  logger << " Earliness  " << lpx_get_obj_val(lp) << " unit*days on priority 1" << endl;
+  lpx_set_obj_coef(lp, col, 0.0);
+  row = glp_find_row(lp,"early[1]");
+  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
+
+  // Objective: minimize the earliness of priority 2
+  col = glp_find_col(lp,"goalearly[2]");
+  lpx_set_obj_coef(lp, col, 1.0);
+  lpx_simplex(lp);
+  logger << " Earliness  " << lpx_get_obj_val(lp) << " unit*days on priority 2" << endl;
+  lpx_set_obj_coef(lp, col, 0.0);
+  row = glp_find_row(lp,"early[2]");
+  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
+
+  // Objective: minimize the earliness of priority 3
+  col = glp_find_col(lp,"goalearly[1]");
+  lpx_set_obj_coef(lp, col, 1.0);
+  lpx_simplex(lp);
+  logger << " Earliness  " << lpx_get_obj_val(lp) << " unit*days on priority 3" << endl;
+  lpx_set_obj_coef(lp, col, 0.0);
+  row = glp_find_row(lp,"early[3]");
+  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
 
   // Final message
   if (getLogLevel()>0) logger << "Finished solving at " << Date::now() << endl;
@@ -149,98 +187,14 @@ void LPSolver::solve(void *v)
   //
   // PART III: cleanup the solver
   //
-
   if (getLogLevel()>0)
     logger << "Start solver finalisation at " << Date::now() << endl;
+  lpx_write_mps(lp,"lpsolver.mps");
+  lpx_print_sol(lp,"lpsolver.sol");
   lpx_delete_prob(lp);
+  glp_term_hook(NULL,NULL);
   if (getLogLevel()>0)
     logger << "Finished solver finalisation at " << Date::now() << endl;
-
-}
-
-
-void LPSolver::solve(const Demand* l, void* v)
-{
-  LPSolver* Sol = (LPSolver*)v;
-
-  // Set the name of the column equal to the demand name
-  string x = replaceSpaces(l->getName());
-  lpx_set_col_name(Sol->lp, ++(Sol->columns), const_cast<char*>(x.c_str()));
-
-  // The planned quantity lies between 0 and the demand's requested quantity
-  lpx_set_col_bnds(Sol->lp, Sol->columns, LPX_DB, 0.0, l->getQuantity());
-
-  // Create a row for each priority level of demands
-  if ( Sol->demandprio2row.find(l->getPriority())
-      == Sol->demandprio2row.end())
-  {
-    ostringstream x;
-    x << "Planned_Qty_" << l->getPriority();
-    Sol->demandprio2row[l->getPriority()] = ++(Sol->rows);
-    lpx_set_row_name(Sol->lp, Sol->rows, const_cast<char*>(x.str().c_str()));
-  }
-
-  // Insert in the constraint column
-  int ndx[4];
-  double val[4];
-  ndx[1] = 2;
-  val[1] = 1.0;
-  ndx[2] = Sol->demandprio2row[l->getPriority()];
-  val[2] = 1.0;
-  ndx[3] = Sol->Buffer2row[Buffer::find("RM3")]
-      ;// @todo this method was removed...  + Sol->cal->findBucketIndex(l->getDue());
-  val[3] = 1.0;
-  lpx_set_mat_col(Sol->lp, Sol->columns, 3, ndx, val);
-
-}
-
-
-void LPSolver::solve(const Buffer* buf, void* v)
-{
-  LPSolver* Sol = (LPSolver*)v;
-  bool first = true;
-
-  // Insert the Buffer in a list for references
-  Sol->Buffer2row[buf] = Sol->rows;
-
-  Buffer::flowplanlist::const_iterator f = buf->getFlowPlans().begin();
-  for (Calendar::BucketIterator b = Sol->cal->beginBuckets();    // @todo use calendar event iterator instead
-      b != Sol->cal->endBuckets(); ++b)
-  {
-
-    // Find the supply in this Bucket
-    double supply(0.0);
-    for (; f!=buf->getFlowPlans().end() && f->getDate()<b->getEnd(); ++f)
-      if (f->getQuantity() > 0.0) supply += f->getQuantity();
-
-    // Set the name of the column equal to the Buffer & Bucket
-    string x = replaceSpaces(string(buf->getName()) + "_" + b->getName());
-    lpx_set_col_name(Sol->lp, ++(Sol->columns), const_cast<char*>(x.c_str()));
-    lpx_set_row_name(Sol->lp, ++(Sol->rows), const_cast<char*>(x.c_str()));
-
-    // Set the lower bound for the inventory level column
-    lpx_set_col_bnds(Sol->lp, Sol->columns, LPX_LO, 0.0, 0.0);
-
-    // Fix the supply row
-    lpx_set_row_bnds(Sol->lp, Sol->rows, LPX_FX, supply, supply);
-
-    // Insert in the constraint row
-    int ndx[3];
-    double val[3];
-    if (!first)
-    {
-      ndx[1] = Sol->columns -1;
-      val[1] = -1.0;
-      lpx_set_mat_row(Sol->lp, Sol->rows, 1, ndx, val);
-    }
-    ndx[1] = Sol->rows;
-    val[1] = 1.0;
-    ndx[2] = 1;
-    val[2] = 1.0;
-    lpx_set_mat_col(Sol->lp, Sol->columns, 2, ndx, val);
-    first = false;
-
-  }
 }
 
 

@@ -39,6 +39,7 @@ def exportfrepple():
   print >>output, "param : demands : reqqty  prio  due :="
   for b in frepple.demands():
     if b.quantity > 0:
+      # @todo Export of due date works for monthly buckets and a maximum horizon of 1 year only
       print >>output, b.name.replace(' ','').replace(':',''), b.quantity, b.priority, b.due.month
   print >>output, ";\n"
 
@@ -54,15 +55,28 @@ def exportfrepple():
   print >>output, ": 1 2 3 4 5 6 7 8 9 10 11 12 := "
   res = []
   for b in frepple.resources():
+    # @todo need a more correct way to extract the capacity per bucket.
     res.append(b.name.replace(' ','').replace(':',''))
     print >>output, b.name.replace(' ','').replace(':',''), "120 120 120 120 120 120 120 120 120 120 120 120"
   print >>output, ";\n"
 
   print >>output, "param : loads : loadfactor :="
-  import random
   for b in frepple.demands():
     if b.quantity > 0:
-      # @todo the next line arbitrarily associates a demand with a resource. We need code to search the supply path instead...
-      print >>output, b.name.replace(' ','').replace(':',''), random.choice(res), 1
+      oper = b.operation or b.item.operation
+      if oper:            
+        for fl in oper.flows:
+          if fl.quantity < 0: findResources(output, b, fl)
   print >>output, ";\n"
   print >>output, "end;\n"
+
+
+def findResources(output, dem, flow):
+  try:
+    for load in flow.buffer.producing.loads:
+      # @todo The load factor is not always 1...
+      print >>output, dem.name.replace(' ','').replace(':',''), load.resource.name, 1
+    for newflow in flow.buffer.producing.flows:
+      if newflow.quantity < 0:
+        findResources(output, dem, newflow)
+  except: pass

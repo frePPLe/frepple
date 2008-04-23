@@ -74,7 +74,7 @@ param reqqty{demands};
 param prio{demands};
 
 # -2: two buckets early, -1: 1 bucket early, 0: in due bucket, ...
-set delta, default {-1..1};
+set delta, default {-2..2};
 
 # Quantity satisfied per demand
 var bucketplannedqty{d in demands, dl in delta}, >= 0, <= reqqty[d];
@@ -107,18 +107,12 @@ subject to late{p in priority}:
 
 # Summary row for the total load of a resource
 var goalresload{r in resources};
+#subject to resload{r in resources}:
+#  sum{(d,r2) in loads} if r = r2 then (timerate ** (due[d]-1) * plannedqty[d] * loadfactor[d,r2]), = goalresload[r];
 subject to resload{r in resources}:
-  sum{(d,r2) in loads} if r = r2 then (timerate ** (due[d]-1) * plannedqty[d] * loadfactor[d,r2]), = goalresload[r];
+  sum{(d,r2) in loads} if r = r2 then (plannedqty[d] * loadfactor[d,r2]), = goalresload[r];
 
-# A hierarhical sequence of solver goals is implemented in the solver module
-minimize goal:
-   goalshortage[1];
-  #+ goalshortage[2]
-  #+ goalshortage[3]
-  #+ sum{p in priority} (goallate[p] + 0.5 * goalearly[p]);
-
-
-#display capacityconsumption;
+# A hierarhical sequence of goals is controlled in the C++ code of the module
 
 data;
 

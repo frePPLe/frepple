@@ -55,6 +55,37 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 }
 
 
+void LPSolver::solveObjective(const char* colname)
+{
+  // Set the objective coefficient
+  int col = glp_find_col(lp, colname);
+  if (!col) throw LogicException("Solving for unknown column '" + string(colname) + "'");
+  lpx_set_obj_coef(lp, col, 1.0);
+
+  // Solve
+  int result = glp_simplex(lp, &parameters);
+
+  // Echo the result
+  double val = lpx_get_obj_val(lp);
+  if (getLogLevel()>0) 
+  {
+    logger << " Objective " << colname << ": " << val;
+    if (result)
+      logger << "     Error " << result << endl;
+    else
+      logger << "     OK" << endl;
+  }
+
+  // Freeze the column bounds
+  lpx_set_col_bnds(lp, col, LPX_DB, 
+    val>=ROUNDING_ERROR ? val-ROUNDING_ERROR : 0.0, 
+    val>=-ROUNDING_ERROR ? val+ROUNDING_ERROR : 0.0);
+
+  // Remove from the objective 
+  lpx_set_obj_coef(lp, col, 0.0);
+}
+
+
 void LPSolver::solve(void *v)
 {
 
@@ -62,10 +93,21 @@ void LPSolver::solve(void *v)
   // PART I: Problem initialisation
   //
   if (getLogLevel()>0)
-    logger << "Start Solver initialisation at " << Date::now() << endl;
+    logger << "Start solver initialisation at " << Date::now() << endl;
 
   // Capture all terminal output of the solver
-  glp_term_hook(redirectsolveroutput,NULL);
+  glp_term_hook(solveroutputredirect,NULL);
+
+  // Configure verbosity of the output
+  glp_init_smcp(&parameters);
+  if (getLogLevel() == 0)
+    parameters.msg_lev = GLP_MSG_OFF;
+  else if (getLogLevel() == 1)
+    parameters.msg_lev = GLP_MSG_ERR;
+  else if (getLogLevel() == 2)
+    parameters.msg_lev = GLP_MSG_ON;
+  else
+    parameters.msg_lev = GLP_MSG_ALL;
 
   // Read the problem from a file in the GNU MathProg language.
   // The first argument is a model file.
@@ -75,14 +117,14 @@ void LPSolver::solve(void *v)
   if (lp == NULL)
     throw RuntimeException("Cannot read mps file `%s'\n");
 
-  // order rows and columns of the constraint matrix
-  //lpx_order_matrix(lp);
-
   // Scale the problem data
   lpx_scale_prob(lp);
 
   // Enable pre-solving (for the first simplex run)
-  lpx_set_int_parm(lp, LPX_K_PRESOL, true);
+  parameters.presolve = 1;
+
+  // Minimize the goal
+  glp_set_obj_dir(lp, GLP_MIN);
 
   // Create an index for quick searching on names
   glp_create_index(lp);
@@ -92,94 +134,25 @@ void LPSolver::solve(void *v)
 
   //
   // PART II: solving...
-  // We solve with a number of hierarchical goals: First the highest priority 
-  // goal is solved for. After finding its optimal value, we set the value 
-  // as a constraint and start for the next priority goal.
+  // We solve with a sequence of hierarchical goals: First the highest 
+  // priority goal is solved for. After finding its optimal value, we set the 
+  // value as a constraint and start for the next priority goal.
   //
 
   // Initial message
   if (getLogLevel()>0) logger << "Start solving at " << Date::now() << endl;
 
-  // Objective: minimize the shortness of priority 1
-  lpx_simplex(lp);
-  logger << " Shortage  " << lpx_get_obj_val(lp) << " units on priority 1" << endl;
-  int col = glp_find_col(lp,"goalshortage[1]");
-  int row = glp_find_row(lp,"shortage[1]");
-  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
-  lpx_set_obj_coef(lp, col, 0.0);
-  lpx_set_int_parm(lp, LPX_K_PRESOL, false); // No more presolving
-
-  // Objective: minimize the shortness of priority 2
-  col = glp_find_col(lp,"goalshortage[2]");
-  lpx_set_obj_coef(lp, col, 1.0);
-  lpx_simplex(lp);
-  logger << " Shortage  " << lpx_get_obj_val(lp) << " units on priority 2" << endl;
-  lpx_set_obj_coef(lp, col, 0.0);
-  row = glp_find_row(lp,"shortage[2]");
-  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
-
-  // Objective: minimize the shortness of priority 3
-  col = glp_find_col(lp,"goalshortage[3]");
-  lpx_set_obj_coef(lp, col, 1.0);
-  lpx_simplex(lp);
-  logger << " Shortage  " << lpx_get_obj_val(lp) << " units on priority 3" << endl;
-  lpx_set_obj_coef(lp, col, 0.0);
-  row = glp_find_row(lp,"shortage[3]");
-  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
-
-  // Objective: minimize the lateness of priority 1
-  col = glp_find_col(lp,"goallate[1]");
-  lpx_set_obj_coef(lp, col, 1.0);
-  lpx_simplex(lp);
-  logger << " Lateness  " << lpx_get_obj_val(lp) << " unit*days on priority 1" << endl;
-  lpx_set_obj_coef(lp, col, 0.0);
-  row = glp_find_row(lp,"late[1]");
-  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
-
-  // Objective: minimize the lateness of priority 2
-  col = glp_find_col(lp,"goallate[2]");
-  lpx_set_obj_coef(lp, col, 1.0);
-  lpx_simplex(lp);
-  logger << " Lateness  " << lpx_get_obj_val(lp) << " unit*days on priority 2" << endl;
-  lpx_set_obj_coef(lp, col, 0.0);
-  row = glp_find_row(lp,"late[2]");
-  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
-
-  // Objective: minimize the lateness of priority 3
-  col = glp_find_col(lp,"goallate[3]");
-  lpx_set_obj_coef(lp, col, 1.0);
-  lpx_simplex(lp);
-  logger << " Lateness  " << lpx_get_obj_val(lp) << " unit*days on priority 3" << endl;
-  lpx_set_obj_coef(lp, col, 0.0);
-  row = glp_find_row(lp,"late[3]");
-  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
-
-  // Objective: minimize the earliness of priority 1
-  col = glp_find_col(lp,"goalearly[1]");
-  lpx_set_obj_coef(lp, col, 1.0);
-  lpx_simplex(lp);
-  logger << " Earliness  " << lpx_get_obj_val(lp) << " unit*days on priority 1" << endl;
-  lpx_set_obj_coef(lp, col, 0.0);
-  row = glp_find_row(lp,"early[1]");
-  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
-
-  // Objective: minimize the earliness of priority 2
-  col = glp_find_col(lp,"goalearly[2]");
-  lpx_set_obj_coef(lp, col, 1.0);
-  lpx_simplex(lp);
-  logger << " Earliness  " << lpx_get_obj_val(lp) << " unit*days on priority 2" << endl;
-  lpx_set_obj_coef(lp, col, 0.0);
-  row = glp_find_row(lp,"early[2]");
-  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
-
-  // Objective: minimize the earliness of priority 3
-  col = glp_find_col(lp,"goalearly[1]");
-  lpx_set_obj_coef(lp, col, 1.0);
-  lpx_simplex(lp);
-  logger << " Earliness  " << lpx_get_obj_val(lp) << " unit*days on priority 3" << endl;
-  lpx_set_obj_coef(lp, col, 0.0);
-  row = glp_find_row(lp,"early[3]");
-  lpx_set_col_bnds(lp, col, LPX_FX, lpx_get_obj_val(lp)>0 ? lpx_get_obj_val(lp) : 0.0, 0.0);
+  // Solve for a number of objectives
+  solveObjective("goalshortage[1]");
+  parameters.presolve = 0; // No more presolving required after 1 objective
+  solveObjective("goallate[1]");
+  solveObjective("goalshortage[2]");
+  solveObjective("goallate[2]");
+  solveObjective("goalshortage[3]");
+  solveObjective("goallate[3]");
+  solveObjective("goalearly[1]");
+  solveObjective("goalearly[2]");
+  solveObjective("goalearly[3]");
 
   // Final message
   if (getLogLevel()>0) logger << "Finished solving at " << Date::now() << endl;

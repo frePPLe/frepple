@@ -85,14 +85,6 @@ class LPSolver : public Solver
       */
     void solve(void* = NULL);
 
-    /** A hook to intercept the terminal output of the solver library. */
-    static int redirectsolveroutput(void* info, const char* msg)
-    {
-      logger << msg;
-      logger.flush();
-      return 1;
-    }
-
     Calendar* getCalendar() const {return cal;}
     void setCalendar(Calendar* c) {cal = c;}
 
@@ -120,8 +112,25 @@ class LPSolver : public Solver
     /** This object is the interface with the GLPK structures. */
     LPX* lp;
 
-    /** Which buckets to use for the linearization of the Problem. */
+    /** Storing simplex configuration paramters. */
+    glp_smcp parameters;
+
+    /** Which buckets to use for the linearization of the problem. */
     Calendar *cal;
+
+    /** A hook to intercept the terminal output of the solver library, and
+      * redirect it into the frePPLe log file. 
+      */
+    static int solveroutputredirect(void* info, const char* msg)
+    {
+      logger << msg;
+      logger.flush();
+      return 1;
+    }
+
+    /** Solve for a goal in a hierarchical sequence. */
+    void solveObjective(const char*);
+
 };
 
 }  // End namespace

@@ -15,6 +15,7 @@ frepple.settings.logfile = os.path.join(os.environ['FREPPLE_HOME'],'frepple.log'
 try: plantype = int(os.environ['PLAN_TYPE'])
 except: plantype = 7  # Default is a fully constrained plan
 frepple.solver_mrp(name="MRP", constraints=plantype)
+print "Plan type: ", plantype
 
 # Pick up an override for the database to use
 if 'FREPPLE_DATABASE_NAME' in os.environ:

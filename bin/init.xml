@@ -55,5 +55,9 @@
       <parameter name="threads" value="5" />
     </command>
     -->
+    <!-- Linear Programming solver module -->
+    <!--
+    <command xsi:type="command_loadlib" filename="mod_lp_solver.so" />
+    -->
   </commands>
 </plan>

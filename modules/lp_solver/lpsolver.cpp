@@ -88,7 +88,6 @@ void LPSolver::solveObjective(const char* colname)
 
 void LPSolver::solve(void *v)
 {
-
   //
   // PART I: Problem initialisation
   //

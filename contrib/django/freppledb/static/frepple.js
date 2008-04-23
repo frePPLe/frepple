@@ -250,6 +250,12 @@ function filterform()
     }
     return result;
     });
+    
+  // Examine the current url, and extract optional sort and popup arguments
+  var args = location.href.toQueryParams();
+  if ('o' in args) data['o'] = args['o'];
+  if ('pop' in args) data['pop'] = args['pop'];
+  
   // Go to the new url
   location.href = "?" + Object.toQueryString(data);
 }

@@ -70,7 +70,7 @@ class OverviewReport(TableReport):
   def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute a query  to get the onhand value at the start of our horizon
     startohdict = {}
-    cursor = connection.cursor()    
+    cursor = connection.cursor()
     query = '''
       select out_flowplan.thebuffer, out_flowplan.onhand
       from out_flowplan,
@@ -81,12 +81,11 @@ class OverviewReport(TableReport):
          group by thebuffer
         ) maxid
       where maxid.thebuffer = out_flowplan.thebuffer
-      and maxid.id = out_flowplan.id     
+      and maxid.id = out_flowplan.id
       ''' % (basesql, startdate)
     cursor.execute(query, baseparams)
     for row in cursor.fetchall(): startohdict[row[0]] = float(row[1])
-    print startohdict
-    
+
     # Execute the actual query
     query = '''
       select buf.name as row1, buf.item_id as row2, buf.location_id as row3, buf.onhand as row4,

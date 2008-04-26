@@ -84,31 +84,21 @@ def exportOperationplans(cursor):
   global ROUNDING_DECIMALS
   print "Exporting operationplans..."
   starttime = time()
-  objects = []
   cnt = 0
-  for i in frepple.operationplans():  #@todo loop first over operations, then over operationplans??? or use a generator function???
-    objects.append( (\
-       i.id, i.operation.name.replace("'","''"),
-       round(i.quantity,ROUNDING_DECIMALS), str(i.start), str(i.end),
-       str(i.start.date()), str(i.end.date()),
-       i.demand and i.demand.name or None, i.locked and 1 or 0,
-       i.owner and i.owner.id or None
-     ) )
-    cnt += 1
-    if cnt >= 20000:
-      cursor.executemany(
-        "insert into out_operationplan \
-        (identifier,operation,quantity,startdatetime,enddatetime,startdate, \
-         enddate,demand,locked,owner) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
-      transaction.commit()
-      objects = []
-      cnt = 0
-  if cnt > 0:
+  for i in frepple.operations():
     cursor.executemany(
       "insert into out_operationplan \
-      (identifier,operation,quantity,startdatetime,enddatetime,startdate, \
-      enddate,demand,locked,owner) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", objects)
-    transaction.commit()
+       (identifier,operation,quantity,startdatetime,enddatetime,startdate, \
+       enddate,demand,locked,owner) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+      [(
+        j.id, i.name.replace("'","''"),
+        round(j.quantity,ROUNDING_DECIMALS), str(j.start), str(j.end),
+        str(j.start.date()), str(j.end.date()),
+        j.demand and j.demand.name or None, j.locked and 1 or 0,
+        j.owner and j.owner.id or None
+       ) for j in i.operationplans ])
+    cnt += 1
+    if cnt % 300 == 0: transaction.commit()
   cursor.execute("select count(*) from out_operationplan")
   print 'Exported %d operationplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 

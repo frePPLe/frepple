@@ -54,8 +54,8 @@ class OverviewReport(TableReport):
     )
   crosses = (
     ('startoh', {'title': _('start inventory'),}),
-    ('consumed', {'title': _('consumed'),}),
     ('produced', {'title': _('produced'),}),
+    ('consumed', {'title': _('consumed'),}),
     ('endoh', {'title': _('end inventory'),}),
     )
   columns = (
@@ -68,8 +68,26 @@ class OverviewReport(TableReport):
 
   @staticmethod
   def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
-    # Execute the query
-    cursor = connection.cursor()
+    # Execute a query  to get the onhand value at the start of our horizon
+    startohdict = {}
+    cursor = connection.cursor()    
+    query = '''
+      select out_flowplan.thebuffer, out_flowplan.onhand
+      from out_flowplan,
+        (select thebuffer, max(id) as id
+         from out_flowplan
+         where thebuffer in (select buf.name from (%s) buf)
+         and flowdate < '%s'
+         group by thebuffer
+        ) maxid
+      where maxid.thebuffer = out_flowplan.thebuffer
+      and maxid.id = out_flowplan.id     
+      ''' % (basesql, startdate)
+    cursor.execute(query, baseparams)
+    for row in cursor.fetchall(): startohdict[row[0]] = float(row[1])
+    print startohdict
+    
+    # Execute the actual query
     query = '''
       select buf.name as row1, buf.item_id as row2, buf.location_id as row3, buf.onhand as row4,
              d.bucket as col1, d.startdate as col2, d.enddate as col3,
@@ -101,9 +119,12 @@ class OverviewReport(TableReport):
     for row in cursor.fetchall():
       if row[0] != prevbuf:
         prevbuf = row[0]
-        endoh = float(row[3])
-      startoh = endoh   # @todo the starting onhand isn't right for the first bucket...
-      endoh += float(row[7] - row[8])
+        try: startoh = startohdict[prevbuf]
+        except: startoh = 0
+        endoh = startoh + float(row[7] - row[8])
+      else:
+        startoh = endoh
+        endoh += float(row[7] - row[8])
       yield {
         'buffer': row[0],
         'item': row[1],

@@ -967,11 +967,14 @@ class FreppleIterator : public PythonExtension<ME>
 
     FreppleIterator() : i(DATACLASS::begin()) {}
 
+    template <class OTHER> FreppleIterator(const OTHER *o) : i(o) {}
+
     static PyObject* create(PyObject* self, PyObject* args)
       {return new ME();}
 
   private:
     ITERCLASS i;
+
     virtual PyObject* iternext()
     {
       if (i == DATACLASS::end()) return NULL;
@@ -1400,6 +1403,14 @@ class PythonOperationPlan : public PythonExtension<PythonOperationPlan>
 class PythonOperationPlanIterator
   : public FreppleIterator<PythonOperationPlanIterator,OperationPlan::iterator,OperationPlan,PythonOperationPlan>
 {
+  public:
+    /** Constructor to iterate over all operationplans. */
+    PythonOperationPlanIterator() {}
+
+    /** Constructor to iterate over the operationplans of a single operation. */
+    PythonOperationPlanIterator(Operation* o) 
+      : FreppleIterator<PythonOperationPlanIterator,OperationPlan::iterator,OperationPlan,PythonOperationPlan>(o)
+    {}
 };
 
 

@@ -940,6 +940,8 @@ PyObject* PythonOperation::getattro(const Attribute& attr)
     return new PythonLoadIterator(obj);
   if (attr.isA(Tags::tag_flows))
     return new PythonFlowIterator(obj);
+  if (attr.isA(Tags::tag_operationplans))
+    return new PythonOperationPlanIterator(obj);
   if (attr.isA(Tags::tag_level))
     return PythonObject(obj->getLevel());
   if (attr.isA(Tags::tag_cluster))

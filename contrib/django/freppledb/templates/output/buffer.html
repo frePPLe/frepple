@@ -12,8 +12,8 @@
 <td>{% if perms.input.change_location %}{% superlink j.location location %}{% else %}{{j.location}}{% endif %}</td>
 <td>{{ crossheader }}</td>{% endifchanged %}
 <td>{{j.startoh|floatformat:1}}<br/>
-{% if j.consumed %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=4a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__lt=0">{{j.consumed|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
 {% if j.produced %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=4a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__gte=0">{{j.produced|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
+{% if j.consumed %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=4a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__lt=0">{{j.consumed|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
 {% if j.consumed or j.produced %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=4a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}">{{j.endoh|floatformat:1}}</a>{% else %}{{j.endoh|floatformat:1}}{% endif %}</td>
 {% if forloop.last %}</tr>{% endif %}{% endfor %}
 {% endblock %}

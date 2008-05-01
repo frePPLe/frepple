@@ -183,8 +183,7 @@ class Command(BaseCommand):
 
       # Working days calendar
       if verbosity>0: print "Creating working days..."
-      workingdays = Calendar(name="Working Days")
-      workingdays.save()
+      workingdays = Calendar.objects.create(name="Working Days")
       cur = None
       for i in Dates.objects.all():
         curdate = datetime(i.day.year, i.day.month, i.day.day)
@@ -211,9 +210,8 @@ class Command(BaseCommand):
       if verbosity>0: print "Creating customers..."
       cust = []
       for i in range(100):
-        c = Customer(name = 'Cust %03d' % i)
+        c = Customer.objects.create(name = 'Cust %03d' % i)
         cust.append(c)
-        c.save()
       transaction.commit()
 
       # Create resources and their calendars
@@ -226,22 +224,19 @@ class Command(BaseCommand):
         bkt = Bucket(startdate=startdate, value=resource_size, calendar=cal)
         cal.save()
         bkt.save()
-        r = Resource(name = 'Res %03d' % i, maximum=cal, location=loc)
+        r = Resource.objects.create(name = 'Res %03d' % i, maximum=cal, location=loc)
         res.append(r)
-        r.save()
       transaction.commit()
       random.shuffle(res)
 
       # Create the components
       if verbosity>0: print "Creating raw materials..."
       comps = []
-      comploc = Location(name='Procured materials')
-      comploc.save()
+      comploc = Location.objects.create(name='Procured materials')
       for i in range(components):
-        it = Item(name = 'Component %04d' % i, category='Procured')
-        it.save()
+        it = Item.objects.create(name = 'Component %04d' % i, category='Procured')
         ld = abs(round(random.normalvariate(procure_lt,procure_lt/3)))
-        c = Buffer(name = 'Component %04d' % i,
+        c = Buffer.objects.create(name = 'Component %04d' % i,
              location = comploc,
              category = 'Procured',
              item = it,
@@ -253,7 +248,6 @@ class Command(BaseCommand):
              onhand = round(forecast_per_item * random.uniform(1,3) * ld / 30),
              )
         comps.append(c)
-        c.save()
       transaction.commit()
 
       # Loop over all clusters
@@ -262,42 +256,36 @@ class Command(BaseCommand):
         if verbosity>0: print "Creating supply chain for end item %d..." % i
 
         # location
-        loc = Location(name='Loc %05d' % i)
-        loc.save()
+        loc = Location.objects.create(name='Loc %05d' % i)
 
         # Item and delivery operation
-        oper = Operation(name='Del %05d' % i, sizemultiple=1)
-        oper.save()
-        it = Item(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
-        it.save()
+        oper = Operation.objects.create(name='Del %05d' % i, sizemultiple=1)
+        it = Item.objects.create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
 
         # Forecast
-        fcst = Forecast( \
+        fcst = Forecast.objects.create( \
           name='Forecast item %05d' % i,
           calendar=workingdays,
           item=it,
           maxlateness=60*86400, # Forecast can only be planned 2 months late
           priority=3, # Low priority: prefer planning orders over forecast
           )
-        fcst.save()
 
         # This method will take care of distributing a forecast quantity over the entire
         # horizon, respecting the bucket weights.
         fcst.setTotal(startdate, startdate + timedelta(365), forecast_per_item * 12)
 
         # Level 0 buffer
-        buf = Buffer(name='Buf %05d L00' % i,
+        buf = Buffer.objects.create(name='Buf %05d L00' % i,
           item=it,
           location=loc,
           category='00'
           )
-        buf.save()
-        fl = Flow(operation=oper, thebuffer=buf, quantity=-1)
-        fl.save()
+        fl = Flow.objects.create(operation=oper, thebuffer=buf, quantity=-1)
 
         # Demand
         for j in range(demand):
-          dm = Demand(name='Dmd %05d %05d' % (i,j),
+          dm = Demand.objects.create(name='Dmd %05d %05d' % (i,j),
             item=it,
             quantity=int(random.uniform(1,6)),
             # Exponential distribution of due dates, with an average of deliver_lt days.
@@ -307,31 +295,29 @@ class Command(BaseCommand):
             customer=random.choice(cust),
             category=random.choice(categories)
             )
-          dm.save()
 
         # Create upstream operations and buffers
         ops = []
         for k in range(level):
           if k == 1 and res:
             # Create a resource load for operations on level 1
-            oper = Operation(name='Oper %05d L%02d' % (i,k),
+            oper = Operation.objects.create(name='Oper %05d L%02d' % (i,k),
               type='operation_time_per',
               duration_per=86400,
               sizemultiple=1,
               )
-            oper.save()
             if resource < cluster and i < resource:
               # When there are more cluster than resources, we try to assure
               # that each resource is loaded by at least 1 operation.
-              Load(resource=res[i], operation=oper).save()
+              Load.objects.create(resource=res[i], operation=oper)
             else:
-              Load(resource=random.choice(res), operation=oper).save()
+              Load.objects.create(resource=random.choice(res), operation=oper)
           else:
-            oper = Operation(name='Oper %05d L%02d' % (i,k),
+            oper = Operation.objects.create(
+              name='Oper %05d L%02d' % (i,k),
               duration=random.choice(durations),
               sizemultiple=1,
               )
-            oper.save()
           ops.append(oper)
           buf.producing = oper
           # Some inventory in random buffers
@@ -340,13 +326,13 @@ class Command(BaseCommand):
           Flow(operation=oper, thebuffer=buf, quantity=1, type="flow_end").save()
           if k != level-1:
             # Consume from the next level in the bill of material
-            buf = Buffer(name='Buf %05d L%02d' % (i,k+1),
+            buf = Buffer.objects.create(
+              name='Buf %05d L%02d' % (i,k+1),
               item=it,
               location=loc,
               category='%02d' % (k+1)
               )
-            buf.save()
-            Flow(operation=oper, thebuffer=buf, quantity=-1).save()
+            Flow.objects.create(operation=oper, thebuffer=buf, quantity=-1)
 
         # Consume raw materials / components
         c = []
@@ -358,7 +344,9 @@ class Command(BaseCommand):
             o = operation = random.choice(ops)
             b = random.choice(comps)
           c.append( (o,b) )
-          fl = Flow(operation = o, thebuffer = b, quantity = random.choice([-1,-1,-1,-2,-3])).save()
+          fl = Flow.objects.create(
+            operation = o, thebuffer = b, 
+            quantity = random.choice([-1,-1,-1,-2,-3]))
 
         # Commit the current cluster
         transaction.commit()
@@ -407,6 +395,7 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40):
   limit = (current_date + timedelta(min_day_horizon)).date()
   mode = 'day'
   try:
+    m = []
     for i in Dates.objects.all():
       if i.day < current_date.date():
         # A single bucket for all dates in the past
@@ -432,7 +421,11 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40):
         i.default = i.month
         i.default_start = i.month_start
         i.default_end = i.month_end
-      i.save()
-  finally:
+      m.append(i)
+    # Needed to create a temporary list of the objects to save, since the 
+    # database table is locked during the iteration  
+    for i in m: i.save()
     transaction.commit()
+  finally:
+    transaction.rollback()
     settings.DEBUG = tmp_debug

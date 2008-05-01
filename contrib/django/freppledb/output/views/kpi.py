@@ -39,13 +39,14 @@ class Report(ListReport):
     ('name', {'sort': False, 'title': _('name')}),
     ('value', {'sort': False, 'title': _('value')}),
     )
-
+  default_sort = '2a'
+  
   @staticmethod
-  def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connection.cursor()
     query = '''
-      select 101, 'Problem count', %s, count(*)
+      select 101 as id, 'Problem count' as category, %s as name, count(*) as value
       from out_problem
       group by name
       union

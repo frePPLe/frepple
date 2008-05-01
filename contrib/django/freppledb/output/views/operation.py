@@ -43,6 +43,10 @@ class OverviewReport(TableReport):
       'order_by': 'name',
       'title': _('operation'),
       }),
+    ('location',{
+      'filter': FilterText(field='location__name'),
+      'title': _('location'),
+      }),
     )
   crosses = (
     ('locked_start', {'title': _('locked starts'),}),
@@ -59,16 +63,17 @@ class OverviewReport(TableReport):
     return Plan.objects.all()[0].lastmodified
 
   @staticmethod
-  def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
     # Run the query
     cursor = connection.cursor()
     query = '''
-        select x.row1, x.col1, x.col2, x.col3,
+        select x.row1, x.row2, x.col1, x.col2, x.col3,
           min(x.frozen_start), min(x.total_start),
           coalesce(sum(case o2.locked when %s then o2.quantity else 0 end),0),
           coalesce(sum(o2.quantity),0)
         from (
-          select oper.name as row1,
+          select oper.name as row1,  oper.location_id as row2,
                d.bucket as col1, d.startdate as col2, d.enddate as col3,
                coalesce(sum(case o1.locked when %s then o1.quantity else 0 end),0) as frozen_start,
                coalesce(sum(o1.quantity),0) as total_start
@@ -105,13 +110,14 @@ class OverviewReport(TableReport):
     for row in cursor.fetchall():
       yield {
         'operation': row[0],
-        'bucket': row[1],
-        'startdate': python_date(row[2]),
-        'enddate': python_date(row[3]),
-        'locked_start': row[4],
-        'total_start': row[5],
-        'locked_end': row[6],
-        'total_end': row[7],
+        'location': row[1],
+        'bucket': row[2],
+        'startdate': python_date(row[3]),
+        'enddate': python_date(row[4]),
+        'locked_start': row[5],
+        'total_start': row[6],
+        'locked_end': row[7],
+        'total_end': row[8],
         }
 
 

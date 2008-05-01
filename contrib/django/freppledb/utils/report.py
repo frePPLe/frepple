@@ -305,64 +305,69 @@ def view_report(request, entity=None, **args):
       else:
         break
     sortdirection = sortparam[-1]
+    if not hasattr(reportclass,'default_sortfield'):
+      # Create an attribute to store the index of the default sort
+      reportclass.default_sortfield = 0
+      for i in reportclass.default_sort:
+        if i.isdigit():
+          reportclass.default_sortfield = reportclass.default_sortfield * 10 + int(i)
+        else:
+          break  
+      reportclass.default_sortdirection = reportclass.default_sort[-1]
+    if sortfield<=0 or sortfield > len(reportclass.rows) \
+      or (reportclass.rows[sortfield-1][1].has_key('sort') and reportclass.rows[sortfield-1][1]['sort']):
+        # Invalid sort
+        raise
     # Create sort parameters
-    if sortfield == '1':
+    if sortfield == reportclass.default_sortfield:
       if sortdirection == 'd':
-        counter = counter.order_by('-%s' % (('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0]))
-        sortsql = '1 desc'
-      else:
-        sortparam = '1a'
-        counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
-        sortsql = '1 asc'
-    else:
-      if sortfield > len(reportclass.rows) or sortfield < 0:
-        sortparam = '1a'
-        counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
-        sortsql = '1 asc'
-      elif sortdirection == 'd':
-        sortparm = '%dd' % sortfield
-        counter = counter.order_by(
-          '-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]),
-          ('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0]
-          )
-        sortsql = '%d desc, 1 asc' % sortfield
+        sortparam = '%dd' % sortfield
+        counter = counter.order_by('-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]))
+        sortsql = '%d desc' % sortfield
       else:
         sortparam = '%da' % sortfield
-        counter = counter.order_by(
-          ('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0],
-          ('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0]
-          )
-        sortsql = '%d asc, 1 asc' % sortfield
+        counter = counter.order_by(('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0])
+        sortsql = '%d asc' % sortfield
+    else:
+      if sortdirection == 'd':
+        sortparm = '%dd' % sortfield
+        if reportclass.default_sortdirection == 'a':
+          counter = counter.order_by(
+            '-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]),
+            ('order_by' in reportclass.rows[reportclass.default_sortfield-1][1] and reportclass.rows[reportclass.default_sortfield-1][1]['order_by']) or reportclass.rows[reportclass.default_sortfield-1][0]
+            )
+          sortsql = '%d desc, %d asc' % (sortfield, reportclass.default_sortfield) 
+        else:
+          counter = counter.order_by(
+            '-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]),
+            '-%s' % (('order_by' in reportclass.rows[reportclass.default_sortfield-1][1] and reportclass.rows[reportclass.default_sortfield-1][1]['order_by']) or reportclass.rows[reportclass.default_sortfield-1][0])
+            )
+          sortsql = '%d desc, %d desc' % (sortfield, reportclass.default_sortfield)
+      else:
+        sortparam = '%da' % sortfield
+        if reportclass.default_sortdirection == 'a':
+          counter = counter.order_by(
+            ('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0],
+            ('order_by' in reportclass.rows[reportclass.default_sortfield-1][1] and reportclass.rows[reportclass.default_sortfield-1][1]['order_by']) or reportclass.rows[reportclass.default_sortfield-1][0]
+            )
+          sortsql = '%d asc, %d asc' % (sortfield, reportclass.default_sortfield)
+        else:
+          counter = counter.order_by(
+            ('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0],
+            '-%s' % (('order_by' in reportclass.rows[reportclass.default_sortfield-1][1] and reportclass.rows[reportclass.default_sortfield-1][1]['order_by']) or reportclass.rows[reportclass.default_sortfield-1][0])
+            )
+          sortsql = '%d asc, %d desc' % (sortfield, reportclass.default_sortfield)
   except:
     # A silent and safe exit in case of any exception
-    sortparam = '1a'
-    counter = counter.order_by(('order_by' in reportclass.rows[0][1] and reportclass.rows[0][1]['order_by']) or reportclass.rows[0][0])
-    sortsql = '1 asc'
-    sortfield = 1
-    sortdirection = 'a'
-
-  # Build paginator
-  if type[:3] != 'csv':
-    page = int(request.GET.get('p', '1'))
-    paginator = QuerySetPaginator(counter, reportclass.paginate_by)
-    counter = counter[paginator.page(page).start_index()-1:paginator.page(page).end_index()]
-
-  # Construct SQL statement, if the report has an SQL override method
-  if hasattr(reportclass,'resultquery'):
-    if settings.DATABASE_ENGINE == 'oracle':
-      # Oracle
-      basesql = counter._get_sql_clause(get_full_query=True)
-      sql = basesql[3] or 'select %s %s' % (",".join(basesql[0]), basesql[1])
-    elif settings.DATABASE_ENGINE == 'sqlite3':
-      # SQLite
-      basesql = counter._get_sql_clause()
-      sql = 'select * %s' % basesql[1]
+    sortparam = reportclass.default_sort
+    sortfield = reportclass.default_sortfield
+    sortdirection = reportclass.default_sortdirection
+    sortsql = '%d asc' % sortfield
+    if sortdirection == 'a':
+      counter = counter.order_by(('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0])
     else:
-      # PostgreSQL and mySQL
-      basesql = counter._get_sql_clause()
-      sql = 'select %s %s' % (",".join(basesql[0]), basesql[1])
-    sqlargs = basesql[2]
-
+      counter = counter.order_by('-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]))
+  
   # HTML output or CSV output?
   if type[:3] == 'csv':
     # CSV output
@@ -370,18 +375,23 @@ def view_report(request, entity=None, **args):
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % reportclass.title.lower()
     if hasattr(reportclass,'resultquery'):
       # SQL override provided
-      response._container = _generate_csv(reportclass, reportclass.resultquery(sql, sqlargs, bucket, start, end, sortsql=sortsql), type, bucketlist)
+      response._container = _generate_csv(reportclass, reportclass.resultquery(counter, bucket, start, end, sortsql=sortsql), type, bucketlist)
     else:
       # No SQL override provided
       response._container = _generate_csv(reportclass, counter, type, bucketlist)
     response._is_string = False
     return response
 
+  # Build paginator
+  page = int(request.GET.get('p', '1'))
+  paginator = QuerySetPaginator(counter, reportclass.paginate_by)
+  counter = counter[paginator.page(page).start_index()-1:paginator.page(page).end_index()]
+
   # Calculate the content of the page
   if hasattr(reportclass,'resultquery'):
     # SQL override provided
     try:
-      results = reportclass.resultquery(sql, sqlargs, bucket, start, end, sortsql=sortsql)
+      results = reportclass.resultquery(counter, bucket, start, end, sortsql=sortsql)
     except InvalidPage: raise Http404
   else:
     # No SQL override provided

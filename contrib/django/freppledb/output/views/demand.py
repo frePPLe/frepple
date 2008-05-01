@@ -60,7 +60,8 @@ class OverviewReport(TableReport):
     return Plan.objects.all()[0].lastmodified
 
   @staticmethod
-  def resultquery(basesql, baseparams, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
     # Execute the query
     cursor = connection.cursor()
     query = '''

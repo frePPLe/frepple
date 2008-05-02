@@ -94,7 +94,7 @@ def exportOperationplans(cursor):
         j.id, i.name.replace("'","''"),
         round(j.quantity,ROUNDING_DECIMALS), str(j.start), str(j.end),
         str(j.start.date()), str(j.end.date()),
-        j.demand and j.demand.name or None, j.locked and 1 or 0,
+        j.demand and j.demand.name or None, j.locked,
         j.owner and j.owner.id or None
        ) for j in i.operationplans ])
     cnt += 1

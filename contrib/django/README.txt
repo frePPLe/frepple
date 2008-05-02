@@ -1,6 +1,6 @@
 
-This directory contains a sample web application for Frepple.
-It is built using the incredible 'Django' web application framework.
+This directory contains a sample web application for frePPLe.
+It is built using the incredible Django web application framework.
 
 The basic steps to set up a development environment:
 
@@ -8,10 +8,10 @@ The basic steps to set up a development environment:
   Lower versions may work, but are not tested...
 
 - Install django
-  FREPPLE NEEDS THE DEVELOPMENT VERSION OF DJANGO. AT THE TIME FREPPLE 0.4.0 IS
-  RELEASED DJANGO WAS AT REVISION 6980.
+  FREPPLE NEEDS THE DEVELOPMENT VERSION OF DJANGO. AT THE TIME FREPPLE 0.5.0 IS
+  RELEASED DJANGO WAS AT REVISION 7512.
   To get this version of django use the following command:
-    svn co --revision 6980 http://code.djangoproject.com/svn/django/trunk/ django_src
+    svn co --revision 7512 http://code.djangoproject.com/svn/django/trunk/ django_src
   Later versions of django may or may not work with frePPLe...
 
 - Some patches are required to django.
@@ -19,7 +19,7 @@ The basic steps to set up a development environment:
   apply, or merge the updates manually.
 
 - Install your database: postgresql / mysql / oracle
-  Alternatively, you can use the sqlite3 database included with python.
+  Alternatively, you can use the sqlite3 database bundled with Python.
 
 - Install the python database access library for the database (see the django
   documentation for details)
@@ -43,7 +43,7 @@ The basic steps to set up a development environment:
   A login page should come up.
 
 - The "execute" screen in the user interface allows you to erase the data,
-  to load a dataset, to generate a random test model and run frepple.
+  to load a dataset, to generate a random test model and run frePPLe.
 
 For more detailed information please look at the django documentation
 on http://www.djangoproject.com
@@ -339,5 +339,51 @@ Index: django/views/i18n.py
 +    response = http.HttpResponse(''.join(src), 'text/javascript')
 +    response['Cache-Control'] = 'max-age=86400'
 +    return response
+Index: django/db/models/sql/query.py
+===================================================================
+--- query.py	(revision 7512)
++++ query.py	(working copy)
+@@ -405,8 +405,11 @@
+             for col in self.select:
+                 if isinstance(col, (list, tuple)):
+                     r = '%s.%s' % (qn(col[0]), qn(col[1]))
+-                    if with_aliases and col[1] in col_aliases:
+-                        c_alias = 'Col%d' % len(col_aliases)
++                    if with_aliases:
++                        if col[1] in col_aliases:
++                            c_alias = 'Col%d' % len(col_aliases)
++                        else:
++                            c_alias = col[1]
+                         result.append('%s AS %s' % (r, c_alias))
+                         aliases.add(c_alias)
+                         col_aliases.add(c_alias)
+@@ -426,8 +429,11 @@
+             aliases.update(new_aliases)
+         for table, col in self.related_select_cols:
+             r = '%s.%s' % (qn(table), qn(col))
+-            if with_aliases and col in col_aliases:
+-                c_alias = 'Col%d' % len(col_aliases)
++            if with_aliases:
++                if col in col_aliases:
++                    c_alias = 'Col%d' % len(col_aliases)
++                else:
++                    c_alias = col
+                 result.append('%s AS %s' % (r, c_alias))
+                 aliases.add(c_alias)
+                 col_aliases.add(c_alias)
+@@ -461,8 +467,11 @@
+                 alias = self.join((table_alias, model._meta.db_table,
+                         root_pk, model._meta.pk.column))
+                 seen[model] = alias
+-            if with_aliases and field.column in col_aliases:
+-                c_alias = 'Col%d' % len(col_aliases)
++            if with_aliases:
++                if field.column in col_aliases:
++                    c_alias = 'Col%d' % len(col_aliases)
++                else:
++                    c_alias = field.column
+                 result.append('%s.%s AS %s' % (qn(alias),
+                     qn2(field.column), c_alias))
+                 col_aliases.add(c_alias)
 
 <<< END DJANGO PATCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

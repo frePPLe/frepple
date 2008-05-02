@@ -91,7 +91,7 @@ class OverviewReport(TableReport):
           and d.startdate <= o1.startdate
           and d.enddate > o1.startdate
           -- Grouping
-          group by oper.name, d.bucket, d.startdate, d.enddate
+          group by oper.name, oper.location_id, d.bucket, d.startdate, d.enddate
         ) x
         -- Planned and frozen quantity, based on end date
         left join out_operationplan o2
@@ -99,7 +99,7 @@ class OverviewReport(TableReport):
         and x.col2 <= o2.enddate
         and x.col3 > o2.enddate
         -- Grouping and ordering
-        group by x.row1, x.col1, x.col2, x.col3
+        group by x.row1, x.row2, x.col1, x.col2, x.col3
         order by %s, x.col2
       ''' % (sql_true(),sql_true(),basesql,
       connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,

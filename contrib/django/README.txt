@@ -9,9 +9,9 @@ The basic steps to set up a development environment:
 
 - Install django
   FREPPLE NEEDS THE DEVELOPMENT VERSION OF DJANGO. AT THE TIME FREPPLE 0.5.0 IS
-  RELEASED DJANGO WAS AT REVISION 7512.
+  RELEASED DJANGO WAS AT REVISION 7513.
   To get this version of django use the following command:
-    svn co --revision 7512 http://code.djangoproject.com/svn/django/trunk/ django_src
+    svn co --revision 7513 http://code.djangoproject.com/svn/django/trunk/ django_src
   Later versions of django may or may not work with frePPLe...
 
 - Some patches are required to django.

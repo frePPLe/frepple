@@ -35,7 +35,7 @@
 
 ; Main definitions
 !define PRODUCT_NAME "frePPLe"
-!define PRODUCT_VERSION "0.5.0-beta"
+!define PRODUCT_VERSION "0.5.0"
 !define PRODUCT_PUBLISHER "frePPLe"
 !define PRODUCT_WEB_SITE "http://www.frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"

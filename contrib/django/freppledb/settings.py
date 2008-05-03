@@ -35,7 +35,7 @@ if 'FREPPLE_APP' in os.environ:
   FREPPLE_APP = os.environ['FREPPLE_APP']
 else:
   FREPPLE_APP = os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','django','freppledb'))
-FREPPLE_VERSION = '0.5.0-beta'
+FREPPLE_VERSION = '0.5.0'
 
 # Determing whether Django runs as a standalone application or is deployed
 # on a web server
@@ -56,15 +56,14 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-# Django supports the following database engines: 'oracle', 'postgresql_psycopg2',
-# 'postgresql', 'mysql', 'sqlite3'.
-# FrePPLe supports 'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'
+# FrePPLe is tested with the following database engines:
+# 'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'.
 DATABASE_ENGINE = 'sqlite3'
-DATABASE_NAME = 'frepple'           # Database name
-DATABASE_USER = 'frepple'             # Not used with sqlite3.
-DATABASE_PASSWORD = 'frepple'         # Not used with sqlite3.
-DATABASE_HOST = ''                    # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''                    # Set to empty string for default. Not used with sqlite3.
+DATABASE_NAME = 'frepple'
+DATABASE_USER = 'frepple'      # Not used with sqlite3.
+DATABASE_PASSWORD = 'frepple'  # Not used with sqlite3.
+DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
 # Local time zone for this installation. All choices can be found here:
 # http://www.postgresql.org/docs/current/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE

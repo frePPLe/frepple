@@ -62,12 +62,12 @@ class execute_from_user_interface(TestCase):
     except: pass
     try: os.environ['FREPPLE_DATABASE_USER'] = settings.TEST_DATABASE_USER
     except: pass
-    response = self.client.post('/execute/runfrepple/', {'action':'run', 'type':'7'})
+    response = self.client.post('/execute/runfrepple/', {'action':'run', 'constraint':'7'})
     self.assertRedirects(response, '/execute/execute.html')
 
     # Count the output records
     self.failUnlessEqual(output.models.Problem.objects.count(),9)
-    self.failUnlessEqual(output.models.FlowPlan.objects.count(),287)
+    self.failUnlessEqual(output.models.FlowPlan.objects.count(),291)
     self.failUnlessEqual(output.models.LoadPlan.objects.count(),83)
     self.failUnlessEqual(output.models.OperationPlan.objects.count(),135)
 

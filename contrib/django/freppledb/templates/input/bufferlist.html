@@ -1,4 +1,59 @@
 {% extends "admin/base_site_list.html" %}
+{% load i18n admin_list adminmedia %}
+
+{% block extrahead %}{{ block.super }}
+<script language="javascript" type="text/javascript">
+<!--
+
+  function repositionscrollbar(event)
+  {
+    var element = $(Event.element(event));
+    $('BottomLeft1').scrollTop = element.scrollTop;
+		$('TopRight1').scrollLeft = element.scrollLeft;
+  }
+
+  function init()
+  {
+    Event.observe('BottomRight1', 'scroll', repositionscrollbar);
+
+    var leftrows = $('BottomLeft1').down('tr');
+    for (var rows = $('BottomRight1').down('tr'); rows != 'undefined'; rows = rows.next('tr'))
+    {
+      var datasize = rows.getHeight();
+      if (leftrows != 'undefined')
+      {
+        var headersize = leftrows.getHeight();
+        alert(headersize + "  " + datasize);
+        if (datasize > headersize)
+          leftrows.setStyle({'height': datasize});
+        else
+          rows.setStyle({'height': headersize});
+        leftrows = leftrows.next('tr');
+      }
+    }
+
+
+    //var headercols = $('TopRight1').down('th');
+    //for (var rows = $('BottomRight1').down('tr'); rows != 'undefined'; rows = rows.next('tr'))
+    //{
+    //  if (headercols != 'undefined')
+    //  {
+    //    alert (headercols.inspect() + "  " + rows.getWidth());
+    //    var colsize = headercols.getHeight();
+    //    if (cellsize.width > colsize)
+    //      headercols.setStyle({'width': cellsize.width});
+    //    else
+    //      rows.setStyle({'width': colsize});
+    //    headercols = headercols.next('th');
+    //  }
+   // }
+
+  }
+window.onload=init;
+
+//-->
+</script>
+{% endblock %}
 
 {% block contextmenus %}
 {% include "buffercontext.html" %}
@@ -8,10 +63,21 @@
 {% include "calendarcontext.html" %}
 {% endblock %}
 
-{% block tablebody %}
+
+{% block content %}
+<div id="content-main">
+
+{% include "textfilter.html" %}
+{% include "datefilter.html" %}
+
+<div id="ScrollTable1" style="position: relative; display: block; height: 350px; width:400px;">
+<div id="TopLeft1" style="overflow: hidden; position: absolute; height: 50px; width:100px;"><table ><thead></thead></table></div>
+<div id="TopRight1" style="overflow: hidden; position: absolute; height: 50px; width:300px; left: 100px;"><table ><thead><tr>{{ rowheader }}</tr></table></div>
+<div id="BottomLeft1" style="overflow: hidden; position: absolute; height: 287px; width:100px; top:50px;"><table ><thead>{% for i in objectlist %}<tr class="{% cycle row1,row2 %}"><td>{% superlink i.name buffer key %}</td></tr>{% endfor %}</thead></table></div>
+<div id="BottomRight1" style="overflow: auto; position: absolute; height: 300px; width:300px; left:100px; top:50px;"><table style="height: 300px; width:300px;" >
+<tbody>
 {% for i in objectlist %}
 <tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.name buffer key %}</td>
 <td>{{i.description}}</td>
 <td>{{i.category}}</td>
 <td>{{i.subcategory}}</td>
@@ -23,4 +89,11 @@
 <td>{% superlink i.producing operation %}</td>
 <td>{{i.lastmodified}}</td>
 </tr>{% endfor %}
+</tbody></table>
+</div>
+</div>
+
+<div style="position: relative; display: block;"><p class="paginator">
+{{paginator_html}}&nbsp;&nbsp;{{hits}} {% if reportclass.model %}{% trans reportclass.model._meta.verbose_name_plural %} {% endif %}{% ifnotequal hits fullhits %} (total <a class="showall" href="{{request.path}}{% if is_popup %}?pop=1{% endif %}">{{fullhits}}</a>){% endifnotequal %}</p></div>
+
 {% endblock %}

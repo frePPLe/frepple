@@ -137,19 +137,14 @@ class Calendar(models.Model):
             curPriority = b.priority
       return curValue
 
-    def flattenbuckets(self):
-      '''
-      @todo need a function to convert an arbitrary calendar pattern into
-      a non-overlapping sequence of entries.
-      Overlapping entries are too hard to handly with SQL.
-      Non-continuous entries also need to be exploded into continuous ones
-      '''
-      return
-
     def setvalue(self, start, end, value, user=None):
       '''Update calendar buckets such that the calendar value is changed
       in the specified date range.
       The admin log is updated if a user is passed as argument.
+
+      @todo The calendar editing isnt as flexible as the frePPLe core: the
+      user interface only support non-overlapping calendar entries to keep SQL
+      statements easy.
       '''
       # Create a change log entry, if a user is specified
       if user:
@@ -176,10 +171,8 @@ class Calendar(models.Model):
           b.delete()
         elif b.startdate < start and b.enddate > end:
           # New value is completely within this bucket
-          Bucket(calendar=self, startdate=start, enddate=end, value=value).save()
-          Bucket(calendar=self, startdate=end, enddate=b.enddate, value=b.value).save()
-          b.enddate = start
-          b.save()
+          Bucket(calendar=self, startdate=start, value=value).save()
+          Bucket(calendar=self, startdate=end, value=b.value).save()
         elif b.startdate < start:
           # An existing bucket is partially before the new daterange
           b.enddate = start
@@ -192,8 +185,8 @@ class Calendar(models.Model):
           b.save()
       if self.buckets.count() == 0:
         # There wasn't any bucket yet...
-        Bucket(calendar=self, startdate=start, enddate=end, value=value).save()
-        Bucket(calendar=self, startdate=end, value=self.defaultvalue).save()
+        Bucket(calendar=self, startdate=start, value=value).save()
+        Bucket(calendar=self, startdate=end, value=0).save()
 
     def __unicode__(self): return self.name
 
@@ -207,18 +200,16 @@ class Calendar(models.Model):
 
 
 class Bucket(models.Model):
-    buckettypes = (
-      ('',_('continuous')),
-      ('bucket_continuous',_('continuous')),
-      ('bucket_weekdays',_('weekdays')),
-    )
-
+    '''
+    @todo The calendar editing isnt as flexible as the frePPLe core: the
+    user interface only support non-overlapping calendar entries to keep SQL
+    statements easy.
+    The core engine allows the end date to be edited independently.
+    '''
     # Database fields
-    # @todo start and endtime need to be filled in the inline edit form. We would like to have either one filled in...
     calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
-    type = models.CharField(_('type'), _('type'), max_length=20, null=True, blank=True, choices=buckettypes)
-    startdate = models.DateTimeField('start date', core=True, null=True, blank=True, default=datetime(1971,1,1))
-    enddate = models.DateTimeField('end date', core=True, null=True, blank=True, default=datetime(2030,12,31))
+    startdate = models.DateTimeField('start date', core=True, null=True, blank=True)
+    enddate = models.DateTimeField('end date', editable=False, null=True, blank=True, default=datetime(2030,12,31))
     value = models.DecimalField(_('value'), max_digits=15, decimal_places=4, default=0.00, blank=True)
     priority = models.IntegerField(_('priority'), default=0, blank=True)
     name = models.CharField(_('name'), max_length=60, null=True, blank=True)
@@ -228,7 +219,6 @@ class Bucket(models.Model):
       if (self.startdate and when < self.startdate) or (self.enddate and when >= self.enddate):
         # Outside of validity range
         return None
-      # @todo handle different entry types
       return self.value
 
     def __unicode__(self):
@@ -236,10 +226,52 @@ class Bucket(models.Model):
       return u"%s - %s" % (self.startdate, self.enddate)
 
     class Meta:
-      ordering = ['startdate','enddate','name']
-      db_table = 'bucket'
-      verbose_name = _('calendar bucket')
-      verbose_name_plural = _('calendar buckets')
+        ordering = ['startdate','name']
+        db_table = 'bucket'
+        verbose_name = _('calendar bucket')
+        verbose_name_plural = _('calendar buckets')
+
+    @staticmethod
+    def updateEndDate(instance):
+        '''
+        The user edits the start date of the calendar buckets.
+        This method will automatically update the end date of a bucket to be
+        equal to the start date of the next bucket.
+
+        @todo The calendar editing isnt as flexible as the frePPLe core: the
+        user interface only support non-overlapping calendar entries to keep SQL
+        statements easy.
+        '''
+        # Loop through all buckets
+        prev = None
+        for i in instance.calendar.buckets.all():
+          if prev and i.startdate != prev.enddate:
+            # Update the end date of the previous bucket to the start date of this one
+            prev.enddate = i.startdate
+            if prev.enddate == prev.startdate:
+              prev.delete()
+            else:
+              prev.save()
+          prev = i
+        if prev and prev.enddate != datetime(2030,12,31):
+          # Update the last entry
+          prev.enddate = datetime(2030,12,31)
+          prev.save()
+
+    @staticmethod
+    def insertBucket(instance):
+      # If the end date is specified, we take it for granted.
+      # Ideally we would check all inserts, but that is very time consuming
+      # when creating or restoring big datasets.
+      if instance.enddate == datetime(2030,12,31):
+        Bucket.updateEndDate(instance)
+
+# This dispatcher function is called after a bucket is saved. There seems no cleaner way to do this, since
+# the method calendar.buckets.all() is only up to date after the save...
+# The method is not very efficient: called for every single bucket, and recursively triggers
+# another save and dispatcher event
+dispatcher.connect(Bucket.insertBucket, signal=signals.post_save, sender=Bucket)
+dispatcher.connect(Bucket.updateEndDate, signal=signals.post_delete, sender=Bucket)
 
 
 class Location(models.Model):

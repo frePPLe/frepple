@@ -9,7 +9,7 @@ sources = frepple2python.cpp embeddedpython.cpp embeddedpython.h module.cpp wrap
 # single directory.
 libdir = @bindir@
 
-EXTRA_DIST = $(sources) mod_python.xsd
+EXTRA_DIST = $(sources) pythonutils.h pythonutils.cpp mod_python.xsd
 
 AM_CPPFLAGS=-I@top_builddir@/include -I/usr/include/python$(PYTHON_VERSION)
 

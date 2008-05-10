@@ -1,105 +1,63 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <logfile />
-  <name>plan</name>
-  <description>BTS test model</description>
+  <name>Linear Programming Demo Model</name>
+  <description>Demonstrates capacity allocation using LP</description>
   <current>2007-01-01T00:00:00</current>
   <commands>
     <verbose>true</verbose>
+    <command xsi:type="command_python" filename="lp_capacity.py"/>
+
+    <!-- Export data from frePPLe memory to a data file. -->
+    <command xsi:type="command_python" cmdline="exportData('output.dat')"/>
+
+    <!-- Run the solver.
+    The data is read from the flat file just created.
+    The solution is written to a solution flat file.
+    -->
     <command xsi:type="command_solve">
-      <solver name="LP" xsi:type="solver_LP">
-        <constraints>7</constraints>
-        <verbose>true</verbose>
-        <calendar name="WEEKS" xsi:type="calendar_void" />
+      <solver name="LP" xsi:type="solver_lp">
+        <modelfile>lp_capacity.mod</modelfile>
+        <datafile>output.dat</datafile>
+        <solutionfile>output.sol</solutionfile>
+        <loglevel>3</loglevel>
+        <minimum>true</minimum>
+        <objective>goalshortage[1]</objective>
+        <objective>goallate[1]</objective>
+        <objective>goalshortage[2]</objective>
+        <objective>goallate[2]</objective>
+        <objective>goalshortage[3]</objective>
+        <objective>goallate[3]</objective>
+        <objective>goalearly[1]</objective>
+        <objective>goalearly[2]</objective>
+        <objective>goalearly[3]</objective>
       </solver>
     </command>
+
+    <!-- Load the LP solution in frePPLe. -->
+    <command xsi:type="command_python" cmdline="importSolution('output.sol')"/>
+
     <command xsi:type="command_saveplan">
       <filename>output.1.xml</filename>
     </command>
   </commands>
-  <calendars>
-    <calendar name="Weeks" xsi:type="calendar_void">
-      <buckets>
-        <bucket start="2007-01-01T00:00:00">
-          <name>Jan Week1</name>
-        </bucket>
-        <bucket start="2007-01-07T00:00:00">
-          <name>Jan Week2</name>
-        </bucket>
-        <bucket start="2007-01-14T00:00:00">
-          <name>Jan Week3</name>
-        </bucket>
-        <bucket start="2007-01-21T00:00:00">
-          <name>Jan Week4</name>
-        </bucket>
-        <bucket start="2007-01-28T00:00:00">
-          <name>Jan Week5</name>
-        </bucket>
-        <bucket start="2007-02-04T00:00:00">
-          <name>Feb Week1</name>
-        </bucket>
-        <bucket start="2007-02-11T00:00:00">
-          <name>Feb Week2</name>
-        </bucket>
-        <bucket start="2007-02-18T00:00:00">
-          <name>Feb Week3</name>
-        </bucket>
-        <bucket start="2007-02-25T00:00:00">
-          <name>Feb Week4</name>
-        </bucket>
-        <bucket start="2007-03-04T00:00:00">
-          <name>Mar Week1</name>
-        </bucket>
-        <bucket start="2007-03-11T00:00:00">
-          <name>Mar Week2</name>
-        </bucket>
-        <bucket start="2007-03-18T00:00:00">
-          <name>Mar Week3</name>
-        </bucket>
-        <bucket start="2007-03-25T00:00:00">
-          <name>Mar Week4</name>
-        </bucket>
-        <bucket start="2007-04-01T00:00:00">
-          <name>Remainder</name>
-        </bucket>
-      </buckets>
-    </calendar>
-    <calendar name="Months" xsi:type="calendar_void">
-      <buckets>
-        <bucket start="2007-01-01T00:00:00">
-          <name>Jan</name>
-        </bucket>
-        <bucket start="2007-02-04T00:00:00">
-          <name>Feb</name>
-        </bucket>
-        <bucket start="2007-03-04T00:00:00">
-          <name>Mar</name>
-        </bucket>
-        <bucket start="2007-04-01T00:00:00">
-          <name>Remainder</name>
-        </bucket>
-      </buckets>
-    </calendar>
-  </calendars>
   <operations>
     <operation name="make STCK1" xsi:type="operation_fixed_time">
-      <duration>168:00:00</duration>
-      <size_multiple>3</size_multiple>
+      <duration>P7D</duration>
     </operation>
     <operation name="make SUBAS1" xsi:type="operation_time_per">
-      <duration>24:00:00</duration>
-      <duration_per>1:00</duration_per>
+      <duration>P1D</duration>
+      <duration_per>PT1H</duration_per>
     </operation>
     <operation name="make STCK2" xsi:type="operation_routing">
       <steps>
-        <operation name="make STCK2 step1">
-          <duration>168:00:00</duration>
+        <operation name="make STCK2 step1" xsi:type="operation_fixed_time">
+          <duration>P7D</duration>
         </operation>
-        <operation name="make STCK2 step2">
-          <duration>168:00:00</duration>
+        <operation name="make STCK2 step2" xsi:type="operation_fixed_time">
+          <duration>P7D</duration>
         </operation>
-        <operation name="make STCK2 step3">
-          <duration>168:00:00</duration>
+        <operation name="make STCK2 step3" xsi:type="operation_fixed_time">
+          <duration>P7D</duration>
         </operation>
       </steps>
     </operation>
@@ -110,33 +68,33 @@
   </locations>
   <items>
     <item name="RM1">
-      <CATEGORY>Raw Material</CATEGORY>
+      <category>Raw Material</category>
       <description>raw material 1</description>
     </item>
     <item name="RM2">
-      <CATEGORY>Raw Material</CATEGORY>
+      <category>Raw Material</category>
       <description>raw material 2</description>
     </item>
     <item name="RM3">
-      <CATEGORY>Raw Material</CATEGORY>
+      <category>Raw Material</category>
       <description>raw material 3</description>
     </item>
     <item name="STCK1">
-      <CATEGORY>End item</CATEGORY>
+      <category>End item</category>
       <description>end item 1</description>
-      <operation name="delivery STCK1">
-        <duration>24:00:00</duration>
+      <operation name="delivery STCK1" xsi:type="operation_fixed_time">
+        <duration>P1D</duration>
       </operation>
     </item>
     <item name="STCK2">
-      <CATEGORY>End item</CATEGORY>
+      <category>End item</category>
       <description>end item 2</description>
-      <operation name="delivery STCK2">
-        <duration>24:00:00</duration>
+      <operation name="delivery STCK2" xsi:type="operation_fixed_time">
+        <duration>P1D</duration>
       </operation>
     </item>
     <item name="SUBAS1">
-      <CATEGORY>Subassembly</CATEGORY>
+      <category>Subassembly</category>
       <description>assembly1</description>
     </item>
   </items>
@@ -227,7 +185,7 @@
   </flows>
   <resources>
     <resource name="RES1">
-      <CATEGORY>assembly</CATEGORY>
+      <category>assembly</category>
       <description>assembly resource 1</description>
       <maximum name="Capacity" xsi:type="calendar_double">
         <buckets>

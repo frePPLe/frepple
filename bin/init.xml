@@ -48,16 +48,14 @@
       <parameter name="Net_Early" value="P4W" />
       <parameter name="Net_Late" value="P4W" />
     </command>
+    <!-- Linear Programming solver module -->
+    <command xsi:type="command_loadlib" filename="mod_lp_solver.so" />
     <!-- Webservice module -->
     <!--
     <command xsi:type="command_loadlib" filename="mod_webservice.so">
       <parameter name="port" value="6262" />
       <parameter name="threads" value="5" />
     </command>
-    -->
-    <!-- Linear Programming solver module -->
-    <!--
-    <command xsi:type="command_loadlib" filename="mod_lp_solver.so" />
     -->
   </commands>
 </plan>

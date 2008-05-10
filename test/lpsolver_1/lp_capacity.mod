@@ -91,22 +91,22 @@ subject to capacityconsumption{r in resources,b in buckets}:
   <= availablecapacity[r,b];
 
 # Summary row for the total planned quantity of a priority layer
-var goalshortage{p in priority};
+var goalshortage{p in priority}, >= 0;
 subject to shortage{p in priority}:
   sum{f in demands} if prio[f] = p then (timerate ** (due[f]-1) * (reqqty[f] - plannedqty[f])), = goalshortage[p];
 
 # Summary row for the total earliness of a priority layer
-var goalearly{p in priority};
+var goalearly{p in priority}, >= 0;
 subject to early{p in priority}:
   sum{d in demands, dl in delta} if prio[d] = p and dl < 0 then - dl * timerate ** (due[d]-1) * bucketplannedqty[d,dl], = goalearly[p];
 
 # Summary row for the total planned quantity of a priority layer
-var goallate{p in priority};
+var goallate{p in priority}, >= 0;
 subject to late{p in priority}:
   sum{d in demands, dl in delta} if prio[d] = p and dl > 0 then dl * timerate ** (due[d]-1) * bucketplannedqty[d,dl], = goallate[p];
 
 # Summary row for the total load of a resource
-var goalresload{r in resources};
+var goalresload{r in resources}, >= 0;
 #subject to resload{r in resources}:
 #  sum{(d,r2) in loads} if r = r2 then (timerate ** (due[d]-1) * plannedqty[d] * loadfactor[d,r2]), = goalresload[r];
 subject to resload{r in resources}:

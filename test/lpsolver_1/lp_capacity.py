@@ -30,9 +30,10 @@ Python code this will remain a clean and simple piece of code.
 '''
 
 import frepple
-def exportfrepple():
 
-  output = open('lpsolver.dat',"wt")
+def exportData(filename):
+
+  output = open(filename,"wt")
 
   print >>output, "param timerate := 0.97;\n"
 
@@ -64,7 +65,7 @@ def exportfrepple():
   for b in frepple.demands():
     if b.quantity > 0:
       oper = b.operation or b.item.operation
-      if oper:            
+      if oper:
         for fl in oper.flows:
           if fl.quantity < 0: findResources(output, b, fl)
   print >>output, ";\n"
@@ -75,8 +76,12 @@ def findResources(output, dem, flow):
   try:
     for load in flow.buffer.producing.loads:
       # @todo The load factor is not always 1...
-      print >>output, dem.name.replace(' ','').replace(':',''), load.resource.name, 1
+      print >>output, dem.name.replace(' ','').replace(':',''), load.resource.name.replace(' ','').replace(':',''), 1
     for newflow in flow.buffer.producing.flows:
       if newflow.quantity < 0:
         findResources(output, dem, newflow)
   except: pass
+
+
+def importSolution(filename):
+  print "importing file", filename

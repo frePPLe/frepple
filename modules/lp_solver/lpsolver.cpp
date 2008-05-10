@@ -31,6 +31,11 @@ namespace module_lp_solver
 
 const MetaClass LPSolver::metadata;
 
+const Keyword tag_datafile("datafile");
+const Keyword tag_modelfile("modelfile");
+const Keyword tag_solutionfile("solutionfile");
+const Keyword tag_objective("objective");
+
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 {
@@ -55,12 +60,18 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 }
 
 
-void LPSolver::solveObjective(const char* colname)
+void LPSolver::solveObjective(string colname)
 {
   // Set the objective coefficient
-  int col = glp_find_col(lp, colname);
-  if (!col) throw LogicException("Solving for unknown column '" + string(colname) + "'");
+  if (colname.empty()) throw DataException("Empty objective name");
+  int col = glp_find_col(lp, colname.c_str());
+  if (!col) 
+    throw DataException("Unknown objective name '" + string(colname) + "'");
   lpx_set_obj_coef(lp, col, 1.0);
+
+  // Message
+  if (getLogLevel()>0) 
+    logger << "Solving for " << colname << "..." << endl;
 
   // Solve
   int result = glp_simplex(lp, &parameters);
@@ -69,11 +80,10 @@ void LPSolver::solveObjective(const char* colname)
   double val = lpx_get_obj_val(lp);
   if (getLogLevel()>0) 
   {
-    logger << " Objective " << colname << ": " << val;
     if (result)
-      logger << "     Error " << result << endl;
+      logger << "  Error " << result << endl;
     else
-      logger << "     OK" << endl;
+      logger << "  Optimum " << val <<  " found at " << Date::now() << endl;
   }
 
   // Freeze the column bounds
@@ -83,16 +93,16 @@ void LPSolver::solveObjective(const char* colname)
 
   // Remove from the objective 
   lpx_set_obj_coef(lp, col, 0.0);
+
+  // No more presolving required after 1 objective
+  if (parameters.presolve) parameters.presolve = 0; 
 }
 
 
 void LPSolver::solve(void *v)
 {
-  //
-  // PART I: Problem initialisation
-  //
   if (getLogLevel()>0)
-    logger << "Start solver initialisation at " << Date::now() << endl;
+    logger << "Start running the solver at " << Date::now() << endl;
 
   // Capture all terminal output of the solver
   glp_term_hook(solveroutputredirect,NULL);
@@ -109,21 +119,32 @@ void LPSolver::solve(void *v)
     parameters.msg_lev = GLP_MSG_ALL;
 
   // Read the problem from a file in the GNU MathProg language.
-  // The first argument is a model file.
-  // The second argument is a data file: it is exported earlier, typically using 
-  // frePPLe's python API.
-  lp = lpx_read_model("lpsolver.mod", "lpsolver.dat", NULL);
-  if (lp == NULL)
-    throw RuntimeException("Cannot read mps file `%s'\n");
+  if (modelfilename.empty())
+    throw DataException("No model file specified");
+  if (datafilename.empty())
+    lp = lpx_read_model(modelfilename.c_str(), NULL, NULL);
+  else
+    lp = lpx_read_model(modelfilename.c_str(), datafilename.c_str(), NULL);
+  if (lp == NULL) 
+    throw RuntimeException("Cannot read model file '" + modelfilename + "'");
+
+  // Optinally, write the model in MPS format. This format can be read 
+  // directly by other Linear Programming packages.
+  if (getLogLevel()>2)
+  { 
+    string c = modelfilename + ".mps";
+    lpx_write_mps(lp,c.c_str());
+  }
 
   // Scale the problem data
   lpx_scale_prob(lp);
 
-  // Enable pre-solving (for the first simplex run)
+  // Enable pre-solving
+  // After the first objective, the presolving is switched off.
   parameters.presolve = 1;
 
   // Minimize the goal
-  glp_set_obj_dir(lp, GLP_MIN);
+  glp_set_obj_dir(lp, minimum ? GLP_MIN : GLP_MAX);
 
   // Create an index for quick searching on names
   glp_create_index(lp);
@@ -131,42 +152,23 @@ void LPSolver::solve(void *v)
   if (getLogLevel()>0)
     logger << "Finished solver initialisation at " << Date::now() << endl;
 
-  //
-  // PART II: solving...
-  // We solve with a sequence of hierarchical goals: First the highest 
-  // priority goal is solved for. After finding its optimal value, we set the 
-  // value as a constraint and start for the next priority goal.
-  //
+  // Solving...
+  if (objectives.empty())
+    throw DataException("No solver objectives are specified");
+  for (list<string>::const_iterator i = objectives.begin(); 
+    i != objectives.end(); ++i)
+      solveObjective(*i);
 
-  // Initial message
-  if (getLogLevel()>0) logger << "Start solving at " << Date::now() << endl;
-
-  // Solve for a number of objectives
-  solveObjective("goalshortage[1]");
-  parameters.presolve = 0; // No more presolving required after 1 objective
-  solveObjective("goallate[1]");
-  solveObjective("goalshortage[2]");
-  solveObjective("goallate[2]");
-  solveObjective("goalshortage[3]");
-  solveObjective("goallate[3]");
-  solveObjective("goalearly[1]");
-  solveObjective("goalearly[2]");
-  solveObjective("goalearly[3]");
-
-  // Final message
-  if (getLogLevel()>0) logger << "Finished solving at " << Date::now() << endl;
-
-  //
-  // PART III: cleanup the solver
-  //
-  if (getLogLevel()>0)
-    logger << "Start solver finalisation at " << Date::now() << endl;
-  lpx_write_mps(lp,"lpsolver.mps");
-  lpx_print_sol(lp,"lpsolver.sol");
+  // Write solution 
+  if (!solutionfilename.empty())
+    lpx_print_sol(lp,solutionfilename.c_str());
+  
+  // Cleanup
   lpx_delete_prob(lp);
   glp_term_hook(NULL,NULL);
+
   if (getLogLevel()>0)
-    logger << "Finished solver finalisation at " << Date::now() << endl;
+    logger << "Finished running the solver at " << Date::now() << endl;
 }
 
 
@@ -193,26 +195,34 @@ void LPSolver::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   // Fields
-  o->writeElement(Tags::tag_calendar, cal);
+  if (getMinimum())
+    o->writeElement(Tags::tag_minimum, true);
+  else
+    o->writeElement(Tags::tag_maximum, true);
+  o->writeElement(tag_modelfile, getModelFile());
+  o->writeElement(tag_datafile, getDataFile());
+  o->writeElement(tag_solutionfile, getSolutionFile());
+  for (list<string>::const_iterator i = objectives.begin(); 
+    i != objectives.end(); ++i)
+      o->writeElement(tag_objective, *i);
   Solver::writeElement(o, tag, NOHEADER);
-}
-
-
-void LPSolver::beginElement(XMLInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA (Tags::tag_calendar))
-    pIn.readto(Calendar::reader(Calendar::metadata,pIn.getAttributes()));
 }
 
 
 void LPSolver::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
-  if (pAttr.isA(Tags::tag_calendar))
-  {
-    Calendar * c = dynamic_cast<Calendar*>(pIn.getPreviousObject());
-    if (c) setCalendar(c);
-    else throw LogicException("Incorrect object type during read operation");
-  }
+  if (pAttr.isA(Tags::tag_minimum))
+    setMinimum(pElement.getBool());
+  else if (pAttr.isA(Tags::tag_maximum))
+    setMinimum(!pElement.getBool());
+  else if (pAttr.isA(tag_datafile))
+    setDataFile(pElement.getString());
+  else if (pAttr.isA(tag_modelfile))
+    setModelFile(pElement.getString());
+  else if (pAttr.isA(tag_solutionfile))
+    setSolutionFile(pElement.getString());
+  else if (pAttr.isA(tag_objective))
+    addObjective(pElement.getString());
   else
     // The standard fields of a solver...
     Solver::endElement(pIn, pAttr, pElement);

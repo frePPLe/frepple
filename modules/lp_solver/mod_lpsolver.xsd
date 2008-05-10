@@ -31,9 +31,20 @@
     <xsd:complexContent>
       <xsd:extension base="solver">
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="verbose" type="xsd:boolean" />
-          <xsd:element name="calendar" type="calendar" />
+          <xsd:element name="loglevel" type="loglevel" />
+          <xsd:element name="minimum" type="xsd:boolean" />
+          <xsd:element name="maximum" type="xsd:boolean" />
+          <xsd:element name="modelfile" type="xsd:normalizedString" />
+          <xsd:element name="datafile" type="xsd:normalizedString" />
+          <xsd:element name="solutionfile" type="xsd:normalizedString" />
+          <xsd:element name="objective" type="xsd:normalizedString" />
         </xsd:choice>
+        <xsd:attribute name="minimum" type="xsd:boolean" />
+        <xsd:attribute name="maximum" type="xsd:boolean" />
+        <xsd:attribute name="modelfile" type="xsd:normalizedString" />
+        <xsd:attribute name="datafile" type="xsd:normalizedString" />
+        <xsd:attribute name="solutionfile" type="xsd:normalizedString" />
+        <xsd:attribute name="objective" type="xsd:normalizedString" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

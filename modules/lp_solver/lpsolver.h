@@ -30,15 +30,28 @@
   * @namespace module_lp_solver
   * @brief A solver module based on a linear programming algorithm.
   *
-  * The module is currently in beta-mode: it is usable as a proof of concept, 
-  * but isn't finished yet as an out-of-the-box integrated solver. 
-  *
-  * The linear programming problem definition is very flexible.<br>
-  * As a prototyping example, a capacity allocation problem is used. 
-  * Different business problems will obviously require a different formulation. 
+  * The solver is intended primarly for prototyping purposes. Cleaner and
+  * more performant alternatives are recommended for real production use.
   *
   * The module uses the "Gnu Linear Programming Kit" library (aka GLPK) to
-  * solve the LP model.
+  * solve the LP model.<br>
+  * The solver works as follows:
+  * - The solver expects a <b>model file</b> and a <b>data file</b> as input.<br>
+  *   The model file represents the mathematical representation of the 
+  *   problem to solve.<br>
+  *   The data file holds the data to be loaded into the problem. If no
+  *   data file is specified, the data section in the model file is used 
+  *   instead.<br>
+  *   The user is responsible for creating these files. See the unit test
+  *   lp_solver1 for an example.
+  * - The solver solves for a number of objectives in sequence.<br>
+  *   After solving an objective's optimal value, the solver freezes the 
+  *   value as a constraint and start for the next objective. Subsequent 
+  *   objectives can thus never yield a solution that is suboptimal for the
+  *   previous objectives.
+  * - After solving for all objectives the solution is written to a solution
+  *   file.<br>
+  *   The user is responsible for all processing of this solution file.
   *
   * The XML schema extension enabled by this module is (see mod_lpsolver.xsd):
   * <PRE>
@@ -46,9 +59,19 @@
   *   <xsd:complexContent>
   *     <xsd:extension base="solver">
   *       <xsd:choice minOccurs="0" maxOccurs="unbounded">
-  *         <xsd:element name="verbose" xsi:type="xsd:boolean" />
-  *         <xsd:element name="calendar" xsi:type="calendar" />
+  *         <xsd:element name="loglevel" type="loglevel" />
+  *         <xsd:element name="minimum" type="xsd:boolean" />
+  *         <xsd:element name="modelfile" type="xsd:normalizedString" />
+  *         <xsd:element name="datafile" type="xsd:normalizedString" />
+  *         <xsd:element name="solutionfile" type="xsd:normalizedString" />
+  *         <xsd:element name="objective" type="xsd:normalizedString" />
   *       </xsd:choice>
+  *       <xsd:attribute name="loglevel" type="loglevel" />
+  *       <xsd:attribute name="minimum" type="xsd:boolean" />
+  *       <xsd:attribute name="modelfile" type="xsd:normalizedString" />
+  *       <xsd:attribute name="datafile" type="xsd:normalizedString" />
+  *       <xsd:attribute name="solutionfile" type="xsd:normalizedString" />
+  *       <xsd:attribute name="objective" type="xsd:normalizedString" />
   *     </xsd:extension>
   *   </xsd:complexContent>
   * </xsd:complexType>
@@ -72,9 +95,10 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 /** @brief This class is a prototype of an Linear Programming (LP) Solver for
   * the planning problem or a subset of it.
   *
-  * The class provides only a concept / prototype, and it is definately not
-  * ready for full use in a production environment. It misses too much
-  * functionality for this purpose.
+  * The solver is intended primarly for prototyping purposes. Cleaner and
+  * more performant alternatives are recommended for real production use.
+  *
+  * The solver doesn't read or write 
   */
 class LPSolver : public Solver
 {
@@ -85,14 +109,41 @@ class LPSolver : public Solver
       */
     void solve(void* = NULL);
 
-    Calendar* getCalendar() const {return cal;}
-    void setCalendar(Calendar* c) {cal = c;}
+    /** Return the name of the GNU MathProg model file. */
+    string getModelFile() const {return modelfilename;}
 
-    void beginElement(XMLInput& pIn, const Attribute& pAttr);
+    /** Update the name of the GNU MathProg model file. */
+    void setModelFile(string c) {modelfilename = c;}
+
+    /** Return the name of the GNU MathProg data file. */
+    string getDataFile() const {return datafilename;}
+
+    /** Update the name of the GNU MathProg data file. */
+    void setDataFile(string c) {datafilename = c;}
+
+    /** Return the name of the solution file. */
+    string getSolutionFile() const {return solutionfilename;}
+
+    /** Update the name of the solution file. <br>
+      * After running the solver the solution is written to this flat file.
+      */
+    void setSolutionFile(string c) {solutionfilename = c;}
+
+    /** Returns true when the solver needs to minimize the objective(s).<br>
+      * Returns false when the solver needs to maximize the objective(s).
+      */
+    bool getMinimum() const {return minimum;}
+
+    /** Update the solver direction: minimization or maximization. */
+    void setMinimum(bool m) {minimum = m;}
+
+    /** Append a new objective to the list. */
+    void addObjective(string c) { objectives.push_back(c); }
+
     virtual void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
 
-    LPSolver(const string n) : Solver(n), cal(NULL) {};
+    LPSolver(const string n) : Solver(n), minimum(true) {};
     ~LPSolver() {};
 
     virtual const MetaClass& getType() const {return metadata;}
@@ -115,8 +166,26 @@ class LPSolver : public Solver
     /** Storing simplex configuration paramters. */
     glp_smcp parameters;
 
-    /** Which buckets to use for the linearization of the problem. */
-    Calendar *cal;
+    /** A list of model columns to use as objectives. */
+    list<string> objectives;
+
+    /** Direction of the solver: minimization or maximization. */
+    bool minimum;
+
+    /** Name of the model file.<br>
+      * This field is required.*/
+    string modelfilename;
+
+    /** Name of the data file.<br>
+      * If the field is left empty, the data section in the model file is
+      * used instead.
+      */
+    string datafilename;
+
+    /** Name of the solution file.<br>
+      * If the field is left empty, the solution is not exported.
+      */
+    string solutionfilename;
 
     /** A hook to intercept the terminal output of the solver library, and
       * redirect it into the frePPLe log file. 
@@ -129,7 +198,7 @@ class LPSolver : public Solver
     }
 
     /** Solve for a goal in a hierarchical sequence. */
-    void solveObjective(const char*);
+    void solveObjective(string);
 
 };
 

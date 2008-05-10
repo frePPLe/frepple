@@ -39,9 +39,9 @@
 	-->
 	<xsd:include schemaLocation="mod_python.xsd" />
 	<xsd:include schemaLocation="mod_forecast.xsd" />
-        <!-- <xsd:include schemaLocation="mod_webservice.xsd" /> -->
-	<!-- <xsd:include schemaLocation="mod_lpsolver.xsd" /> -->
-
+  <xsd:include schemaLocation="mod_lpsolver.xsd" />
+  <!-- <xsd:include schemaLocation="mod_webservice.xsd" /> -->
+	
   <!-- Define the root element and its contents. -->
 	<xsd:element name="plan">
 		<xsd:annotation>
@@ -50,18 +50,6 @@
       </xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<!--
-        Note: Frepple can read XML data where multiple elements of the same name
-        are present (e.g. 2 ITEMS elements), but the Microsoft Office XML tools
-        can't deal with this.
-        To make the schema more compatible with Bill's world, replace the
-        construct below with:
-            <xsd:all>
-               <xsd:element ... minOccurs="0">
-               ...
-            </xsd:all>
-        Each element can then be present 0 or 1 time.
-      -->
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
 				<!-- FIELDS -->
 				<xsd:element name="name" type="xsd:normalizedString" />

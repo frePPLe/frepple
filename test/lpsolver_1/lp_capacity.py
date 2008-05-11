@@ -30,6 +30,8 @@ Python code this will remain a clean and simple piece of code.
 '''
 
 import frepple
+import csv
+
 
 def exportData(filename):
 
@@ -84,4 +86,24 @@ def findResources(output, dem, flow):
 
 
 def importSolution(filename):
-  print "importing file", filename
+
+  # Open the solution file
+  reader = csv.reader(
+    open(filename, "rt"),
+    delimiter=' ',
+    skipinitialspace=True,
+    quoting=csv.QUOTE_NONE)
+
+  # Scan the solution file for lines like this:
+  #    45 plannedqty[order1]
+  #         NU            5             0            10         < eps
+  # This indicates that "order1" has 5 units planned
+  #    @todo need to also recognize lated demand
+  print "Planned quantity per demand:"
+  demandname = None
+  for line in reader:
+    if demandname:
+      print "    ", demandname, line[1]
+      demandname = None
+    elif len(line)==2 and line[1].startswith("plannedqty["):
+      demandname = line[1][11:-1]

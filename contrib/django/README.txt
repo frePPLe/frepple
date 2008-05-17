@@ -8,10 +8,10 @@ The basic steps to set up a development environment:
   Lower versions may work, but are not tested...
 
 - Install django
-  FREPPLE NEEDS THE DEVELOPMENT VERSION OF DJANGO. AT THE TIME FREPPLE 0.5.0 IS
-  RELEASED DJANGO WAS AT REVISION 7513.
+  FREPPLE NEEDS THE DEVELOPMENT VERSION OF DJANGO. AT THE TIME FREPPLE 0.5.1 IS
+  RELEASED DJANGO WAS AT REVISION 7538.
   To get this version of django use the following command:
-    svn co --revision 7513 http://code.djangoproject.com/svn/django/trunk/ django_src
+    svn co --revision 7538 http://code.djangoproject.com/svn/django/trunk/ django_src
   Later versions of django may or may not work with frePPLe...
 
 - Some patches are required to django.
@@ -181,8 +181,8 @@ Index: django/contrib/admin/views/decorators.py
          post_data = _encode_post_data({})
      return render_to_response('admin/login.html', {
          'title': _('Log in'),
--        'app_path': mark_safe(request.path),
-+        'app_path': mark_safe(request.get_full_path()),
+-        'app_path': request.path,
++        'app_path': request.get_full_path(),
          'post_data': post_data,
          'error_message': error_message
      }, context_instance=template.RequestContext(request))

@@ -126,11 +126,14 @@ AM_CONDITIONAL(MT, test x$multithread = xtrue)
 #
 # Define an extra configure argument to enable the lp solver
 #
-AC_ARG_WITH(glpk,
-  AC_HELP_STRING([--with-glpk],
-    [Compile with the GLPK linear programming solver (default: false)]),
-  [lp=true],
-  [lp=false])
+AC_ARG_ENABLE(glpk,
+AC_HELP_STRING([--enable-lp_solver],
+[Build the linear programming solver module (default: true if the GLPK package is installed)]),
+[case "${enableval}" in
+  yes) lp=true ;;
+  no)  lp=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-python]) ;;
+esac], [AC_CHECK_PROG(lp, [glpsol], true, false)])
 AM_CONDITIONAL(LP, test x$lp = xtrue)
 
 #
@@ -138,12 +141,12 @@ AM_CONDITIONAL(LP, test x$lp = xtrue)
 #
 AC_ARG_ENABLE(python,
 AC_HELP_STRING([--enable-python],
-[Build the python module (default: true)]),
+[Build the python module (default: true if Python is installed)]),
 [case "${enableval}" in
   yes) python=true ;;
   no)  python=false ;;
   *) AC_MSG_ERROR([bad value ${enableval} for --enable-python]) ;;
-esac], [python=true])
+esac], [AC_CHECK_PROG(python, [python], true, false)])
 AM_CONDITIONAL(PYTHON, test x$python = xtrue)
 
 #
@@ -225,17 +228,17 @@ AC_COMPILE_IFELSE([
 #
 if test x$lp = xtrue
 then
-AC_CHECK_LIB(glpk, glp_lpx_create_prob, [],
+AC_CHECK_LIB(glpk, glp_simplex, [],
 [AC_MSG_ERROR([
   Can't link with the glpk library.
   This package requires the GLPK linear programming solver.
-  Install or configure it, or reconfigure without the option '--with-glpk'
+  Install its development library, or reconfigure with the option '--disable-lp_solver'
 ])])
 AC_CHECK_HEADER(glpk.h, [],
 [AC_MSG_ERROR([
   The glpk libray has been installed, but its header file could not be found
   This package requires the GLPK linear programming solver.
-  Install or configure it, or reconfigure without the option '--with-glpk'
+  Install its development library, or reconfigure with the option '--disable-lp_solver'
 ])])
 fi
 

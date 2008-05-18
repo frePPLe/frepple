@@ -49,7 +49,9 @@
       <parameter name="Net_Late" value="P4W" />
     </command>
     <!-- Linear Programming solver module -->
+    <!--
     <command xsi:type="command_loadlib" filename="mod_lp_solver.so" />
+    -->
     <!-- Webservice module -->
     <!--
     <command xsi:type="command_loadlib" filename="mod_webservice.so">

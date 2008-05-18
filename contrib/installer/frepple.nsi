@@ -319,10 +319,6 @@ SectionEnd
 Section /O "Add-ons" SecContrib
   SetOutPath "$INSTDIR"
   File /r "contrib"
-
-  ; A link to the excel sheet
-  CreateDirectory "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\Frepple ${PRODUCT_VERSION}\frePPLe on Excel.lnk" "$INSTDIR\contrib\excel\frepple.xls"
 SectionEnd
 
 SubSectionEnd
@@ -384,7 +380,6 @@ Section Uninstall
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Documentation.lnk"
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk"
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\frePPLe web site.lnk"
-  Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\frePPLe on Excel.lnk"
 
   ; Remove the folder in start menu
   RMDir "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"

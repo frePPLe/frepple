@@ -212,8 +212,8 @@ class Calendar : public HasName<Calendar>, public Object
         virtual DECLARE_EXPORT void writeElement
           (XMLOutput*, const Keyword&, mode=DEFAULT) const;
 
-        /** Reads the bucket information from the input. Only the fields NAME
-          * and START are read in. Other fields as also written out but these
+        /** Reads the bucket information from the input. Only the fields "name"
+          * and "start" are read in. Other fields as also written out but these
           * are information-only fields.
           */
         DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
@@ -251,7 +251,6 @@ class Calendar : public HasName<Calendar>, public Object
       * A bucket will always be returned, i.e. the data structure is such
       * that we all dates between infinitePast and infiniteFuture match
       * with one (and only one) bucket.
-      * @see findBucketIndex()
       */
     DECLARE_EXPORT Bucket* findBucket(Date d) const;
 

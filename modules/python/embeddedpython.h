@@ -45,16 +45,16 @@
   *
   * The XML schema extension enabled by this module is (see mod_python.xsd):
   * <PRE>
-  *   <xsd:complexType name="COMMAND_PYTHON">
+  *   <xsd:complexType name="command_python">
   *     <xsd:complexContent>
-  *       <xsd:extension base="COMMAND">
+  *       <xsd:extension base="command">
   *         <xsd:choice minOccurs="0" maxOccurs="unbounded">
-  *           <xsd:element name="VERBOSE" type="xsd:boolean" />
-  *           <xsd:element name="CMDLINE" type="xsd:string" />
-  *           <xsd:element name="FILENAME" type="xsd:string" />
+  *           <xsd:element name="verbose" type="xsd:boolean" />
+  *           <xsd:element name="cmdline" type="xsd:string" />
+  *           <xsd:element name="filename" type="xsd:string" />
   *         </xsd:choice>
-  *         <xsd:attribute name="CMDLINE" type="xsd:string" />
-  *         <xsd:attribute name="FILENAME" type="xsd:string" />
+  *         <xsd:attribute name="cmdline" type="xsd:string" />
+  *         <xsd:attribute name="filename" type="xsd:string" />
   *       </xsd:extension>
   *     </xsd:complexContent>
   *   </xsd:complexType>

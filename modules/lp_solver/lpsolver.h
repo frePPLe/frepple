@@ -100,7 +100,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   *
   * The solver doesn't read or write 
   */
-class LPSolver : public Solver
+class LPSolver : public Solver    // @todo add more generic: objectives definition <minimize>Lateness</minimize>, model filename
 {
   public:
     /** This method creates a new column in the model for every demand. It's

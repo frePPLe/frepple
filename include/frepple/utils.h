@@ -3579,16 +3579,16 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       * classes that are using a string as a key identifier, in particular
       * classes derived from the HasName base class.
       * The following attributes are recognized:
-      * - NAME:<br>
-      *   Name of the entity to be created/changed/removed.
+      * - name:<br>
+      *   Name of the entity to be created/changed/removed.<br>
       *   The default value is "unspecified".
-      * - TYPE:<br>
-      *   Determines the subclass to be created.
+      * - type:<br>
+      *   Determines the subclass to be created.<br>
       *   The default value is "default".
-    	* - ACTION:<br>
-      *   Determines the action to be performed on the object.
+    	* - action:<br>
+      *   Determines the action to be performed on the object.<br>
       *   This can be A (for 'add'), C (for 'change'), AC (for 'add_change')
-      *   or R (for 'remove').
+      *   or R (for 'remove').<br>
       *   'add_change' is the default value.
       * @see HasName
       */
@@ -3599,7 +3599,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 
       // Pick up the name attribute. An error is reported if it's missing.
       const DataElement* nameElement = in.get(Tags::tag_name);
-      if (!*nameElement) throw DataException("Missing NAME attribute");
+      if (!*nameElement) throw DataException("Missing name attribute");
       string name = nameElement->getString();
 
       // Check if it exists already

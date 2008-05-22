@@ -160,6 +160,13 @@ namespace module_python
 // Include definitions of commonly used python utility functions
 #include "pythonutils.h"
 
+// For compatibility with earlier Python releases
+#if PY_VERSION_HEX < 0x02050000 && !defined(PY_SSIZE_T_MIN)
+typedef int Py_ssize_t;
+#define PY_SSIZE_T_MAX INT_MAX
+#define PY_SSIZE_T_MIN INT_MIN
+#endif
+
 /** Initialization routine for the library. */
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z);
 
@@ -331,7 +338,7 @@ class PythonType : public NonCopyable
     PyTypeObject* type_object() const {return const_cast<PyTypeObject*>(&table);}
 
     /** Add a new method. */
-    void addMethod(const char*, PyCFunction, int, const char*);
+    void addMethod(char*, PyCFunction, int, char*);
 
     /** Updates tp_name. */
     void setName (const string n)

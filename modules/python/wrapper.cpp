@@ -160,7 +160,7 @@ PythonType::PythonType(size_t base_size) : methods(NULL)
 }
 
 
-void PythonType::addMethod(const char* method_name, PyCFunction f, int flags, const char* doc )
+void PythonType::addMethod(char* method_name, PyCFunction f, int flags, char* doc )
 {
   // The type is already registered
   if (methods) throw LogicException("Too late to add a method");
@@ -193,7 +193,7 @@ int PythonType::typeReady(PyObject* m)
     throw frepple::RuntimeException("Can't register python type " + name);
   Py_INCREF(&table);
   // Note: +8 is to skip the "frepple." characters in the name
-  return PyModule_AddObject(m, name.c_str() + 8, reinterpret_cast<PyObject*>(&table));
+  return PyModule_AddObject(m, const_cast<char*>(name.c_str()) + 8, reinterpret_cast<PyObject*>(&table));
 }
 
 

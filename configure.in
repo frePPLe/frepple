@@ -251,13 +251,21 @@ AC_CHECK_PROGS(PYTHON,python,nopython)
 if test x$PYTHON = xnopython
 then
 AC_MSG_ERROR([
-  This package requires the Python language...
-  Install Python, or reconfigure with the option '--disable-python'
+  This package requires Python 2.4 or higher. 
+  Install it, or reconfigure with the option '--disable-python'
 ])
 else
 changequote(<<, >>)
 PYTHON_VERSION=`$PYTHON -c 'import sys; print sys.version[:3]'`
+VERSIONNUMBER=`$PYTHON -c 'import sys; print int(float(sys.version[:3]) * 10)'`
 changequote([, ])
+if test $VERSIONNUMBER -le 23
+then
+AC_MSG_ERROR([
+  This package requires Python 2.4 or higher. 
+  Install it, or reconfigure with the option '--disable-python'
+])
+fi
 AC_CHECK_LIB(python$PYTHON_VERSION, PyModule_GetDict, [],
 [AC_MSG_ERROR([
   Can't link with the python library.

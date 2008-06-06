@@ -2076,6 +2076,9 @@ class DataElement
     virtual operator bool() const 
       {throw LogicException("DataElement is an abstract class");}
 
+   /** Destructor. */
+   virtual ~DataElement() {}
+
     void operator >> (unsigned long int& val) const {val = getUnsignedLong();}
 
     void operator >> (long& val) const {val = getLong();}
@@ -2134,6 +2137,9 @@ class XMLElement : public DataElement
 
     /** Constructor. */
     XMLElement(string v) : m_strData(v) {}
+
+   /** Destructor. */
+   virtual ~XMLElement() {}
 
     /** Re-initializes an existing element. Using this method we can avoid
       * destroying and recreating XMLelement objects too frequently. Instead
@@ -2196,6 +2202,9 @@ class AttributeList
   public:
     virtual const DataElement* get(const Keyword&) const = 0;
     // @todo Iterator???
+
+   /** Destructor. */
+   virtual ~AttributeList() {}
 };
 
 

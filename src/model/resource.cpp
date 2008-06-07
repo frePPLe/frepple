@@ -87,6 +87,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
   HasDescription::writeElement(o, tag);
   HasHierarchy<Resource>::writeElement(o, tag);
   o->writeElement(Tags::tag_maximum, max_cal);
+  if (getCost() != 1.0) o->writeElement(Tags::tag_cost, getCost());
   o->writeElement(Tags::tag_location, loc);
   Plannable::writeElement(o, tag);
 
@@ -164,6 +165,8 @@ DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, const Attribute& pAttr,
           "' has invalid type for use as resource max calendar");
     }
   }
+  else if (pAttr.isA (Tags::tag_cost))
+    setCost(pElement.getDouble());
   else
   {
     Plannable::endElement(pIn, pAttr, pElement);

@@ -325,7 +325,10 @@ class Item(models.Model):
     description = models.CharField(_('description'), max_length=200, null=True, blank=True)
     category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
-    operation = models.ForeignKey('Operation', verbose_name=_('delivery operation'), null=True, blank=True, raw_id_admin=True)
+    operation = models.ForeignKey('Operation', verbose_name=_('delivery operation'), null=True, blank=True,
+      raw_id_admin=True, help_text=_("Default operation used to ship a demand for this item"))
+    price = models.DecimalField(_('price'), max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_("Selling price of the item"))
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
       raw_id_admin=True, help_text=_('Hierarchical parent'))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
@@ -366,6 +369,8 @@ class Operation(models.Model):
       help_text=_("A minimum lotsize quantity for operationplans"))
     sizemultiple = models.DecimalField(_('size multiple'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("A multiple quantity for operationplans"))
+    cost = models.DecimalField(_('cost'), max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_("Cost per operationplan unit"))
     duration = models.DecimalField(_('duration'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("A fixed duration for the operation"))
     duration_per = models.DecimalField(_('duration per unit'), max_digits=15, decimal_places=4, null=True, blank=True,
@@ -388,7 +393,7 @@ class Operation(models.Model):
         fields = (
             (None, {'fields': ('name', 'type', 'location')}),
             (_('Planning parameters'), {
-               'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'duration', 'duration_per'),
+               'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'cost', 'duration', 'duration_per'),
                'classes': 'collapse'
                }),
         )
@@ -455,6 +460,8 @@ class Buffer(models.Model):
     producing = models.ForeignKey(Operation, verbose_name=_('producing'),
       null=True, blank=True, related_name='used_producing', raw_id_admin=True,
       help_text=_('Operation to replenish the buffer'))
+    carrying_cost = models.DecimalField(_('carrying cost'), max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_("Cost of holding inventory in this buffer, expressed as an annual percentage of the item price."))
     # Extra fields for procurement buffers
     leadtime = models.DecimalField(_('leadtime'),max_digits=15, decimal_places=0, null=True, blank=True,
       help_text=_('Leadtime for supplier of a procure buffer'))
@@ -503,7 +510,7 @@ class Buffer(models.Model):
             (_('Inventory'), {
               'fields': ('onhand',)}),
             (_('Planning parameters'), {
-              'fields': ('type','minimum','producing',)},),
+              'fields': ('type','minimum','producing','carrying_cost')},),
             (_('Planning parameters for procurement buffers'), {
               'fields': ('leadtime','fence','min_inventory','max_inventory','min_interval','max_interval','size_minimum','size_multiple','size_maximum'),
               'classes': 'collapse'},),
@@ -533,6 +540,8 @@ class Resource(models.Model):
       raw_id_admin=True, help_text=_('Calendar defining the available capacity'))
     location = models.ForeignKey(Location, verbose_name=_('location'),
       null=True, blank=True, db_index=True, raw_id_admin=True)
+    cost = models.DecimalField(_('cost'), max_digits=15, decimal_places=4, null=True, blank=True,
+      help_text=_("Cost for using 1 unit of the resource for 1 hour"))
     lastmodified = models.DateTimeField(_('last modified'), auto_now=True,
       editable=False, db_index=True)
 

@@ -61,6 +61,7 @@ DECLARE_EXPORT void Item::writeElement(XMLOutput *o, const Keyword& tag, mode m)
   HasDescription::writeElement(o, tag);
   HasHierarchy<Item>::writeElement(o, tag);
   o->writeElement(Tags::tag_operation, deliveryOperation);
+  if (getPrice() != 1.0) o->writeElement(Tags::tag_price, getPrice());
   o->EndObject(tag);
 }
 
@@ -76,12 +77,14 @@ DECLARE_EXPORT void Item::beginElement(XMLInput& pIn, const Attribute& pAttr)
 
 DECLARE_EXPORT void Item::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
-  if (pAttr.isA (Tags::tag_operation))
+  if (pAttr.isA(Tags::tag_operation))
   {
     Operation *o = dynamic_cast<Operation*>(pIn.getPreviousObject());
     if (o) setOperation(o);
     else throw LogicException("Incorrect object type during read operation");
   }
+  else if (pAttr.isA(Tags::tag_price))
+    setPrice(pElement.getDouble());
   else
   {
     HasDescription::endElement(pIn, pAttr, pElement);

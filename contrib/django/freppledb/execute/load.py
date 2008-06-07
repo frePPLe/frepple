@@ -139,10 +139,10 @@ def loadOperations(cursor):
   cursor.execute('''
     SELECT
       name, fence, pretime, posttime, sizeminimum, sizemultiple, type,
-      duration, duration_per, location_id
+      duration, duration_per, location_id, cost
     FROM operation
     ''')
-  for i, j, k, l, m, n, p, q, r, s in cursor.fetchall():
+  for i, j, k, l, m, n, p, q, r, s, t in cursor.fetchall():
     cnt += 1
     try:
       if not p or p == "operation_fixed_time":
@@ -164,6 +164,7 @@ def loadOperations(cursor):
       if m: x.size_minimum = m
       if n: x.size_multiple = n
       if s: x.location = frepple.location(name=s)
+      if t: x.cost = t
     except Exception, e: print "Error:", e
   print 'Loaded %d operations in %.2f seconds' % (cnt, time() - starttime)
 
@@ -201,13 +202,14 @@ def loadItems(cursor):
   print 'Importing items...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, description, operation_id, owner_id FROM item")
-  for i, j, k, l in cursor.fetchall():
+  cursor.execute("SELECT name, description, operation_id, owner_id, price FROM item")
+  for i, j, k, l, m in cursor.fetchall():
     cnt += 1
     try:
       x = frepple.item(name=i, description=j)
       if k: x.operation = frepple.operation(name=k)
       if l: x.owner = frepple.item(name=l)
+      if m: x.price = m
     except Exception, e: print "Error:", e
   print 'Loaded %d items in %.2f seconds' % (cnt, time() - starttime)
 
@@ -219,8 +221,8 @@ def loadBuffers(cursor):
   cursor.execute('''SELECT name, description, location_id, item_id, onhand,
      minimum_id, producing_id, type, leadtime, min_inventory,
      max_inventory, min_interval, max_interval, size_minimum,
-     size_multiple, size_maximum, fence FROM buffer''')
-  for i, j, k, l, m, n, o, q, f1, f2, f3, f4, f5, f6, f7, f8, f9 in cursor.fetchall():
+     size_multiple, size_maximum, fence, carrying_cost FROM buffer''')
+  for i, j, k, l, m, n, o, q, f1, f2, f3, f4, f5, f6, f7, f8, f9, p in cursor.fetchall():
     cnt += 1
     if q == "buffer_procure":
       b = frepple.buffer_procure(
@@ -250,6 +252,7 @@ def loadBuffers(cursor):
       raise ValueError("Buffer type '%s' not recognized" % q)
     if n: b.minimum = frepple.calendar(name=n)
     if o: b.producing = frepple.operation(name=o)
+    if p: b.carrying_cost = p
   print 'Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -257,18 +260,18 @@ def loadResources(cursor):
   print 'Importing resources...'
   cnt = 0
   starttime = time()
-  cursor.execute('SELECT name, description, maximum_id, location_id, type FROM %s' % connection.ops.quote_name('resource'))
-  for i, j, k, l, m in cursor.fetchall():
+  cursor.execute('SELECT name, description, maximum_id, location_id, type, cost FROM %s' % connection.ops.quote_name('resource'))
+  for i, j, k, l, m, n in cursor.fetchall():
     cnt += 1
     try:
       if m == "resource_infinite":
-        frepple.resource_infinite(
+        x = frepple.resource_infinite(
           name=i,
           description=j,
           location=frepple.location(name=l),
           )
       elif not m:
-        frepple.resource(
+        x = frepple.resource(
           name=i,
           description=j,
           maximum=frepple.calendar(name=k),
@@ -276,6 +279,7 @@ def loadResources(cursor):
           )
       else:
         raise ValueError("Resource type '%s' not recognized" % m)
+      if n: x.cost = n
     except Exception, e: print "Error:", e
   print 'Loaded %d resources in %.2f seconds' % (cnt, time() - starttime)
 

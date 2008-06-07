@@ -316,6 +316,10 @@ class BufferList(ListReport):
       'title': _('producing'),
       'filter': FilterText(field='producing__name'),
       }),
+    ('carrying_cost', {
+      'title': _('carrying cost'),
+      'filter': FilterNumber(size=5, operator="lt"),
+      }),
     ('lastmodified', {
       'title': _('last modified'),
       'filter': FilterDate(),
@@ -359,6 +363,10 @@ class ResourceList(ListReport):
     ('maximum', {
       'title': _('maximum'),
       'filter': FilterText(field='maximum__name'),
+      }),
+    ('cost', {
+      'title': _('cost'),
+      'filter': FilterNumber(size=5, operator="lt"),
       }),
     ('lastmodified', {
       'title': _('last modified'),
@@ -475,6 +483,10 @@ class ItemList(ListReport):
     ('owner', {
       'title': _('owner'),
       'filter': FilterText(field='owner__name'),
+      }),
+    ('price', {
+      'title': _('price'),
+      'filter': FilterNumber(size=5, operator="lt"),
       }),
     ('lastmodified', {
       'title': _('last modified'),
@@ -827,6 +839,10 @@ class OperationList(ListReport):
     ('sizemultiple', {
       'title': _('size multiple'),
       'filter': FilterNumber(),
+      }),
+    ('cost', {
+      'title': _('cost'),
+      'filter': FilterNumber(size=5, operator="lt"),
       }),
     ('lastmodified', {
       'title': _('last modified'),

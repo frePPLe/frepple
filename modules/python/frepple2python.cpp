@@ -105,6 +105,8 @@ PyObject* PythonBuffer::getattro(const Attribute& attr)
     return PythonObject(obj->getItem());
   if (attr.isA(Tags::tag_onhand))
     return PythonObject(obj->getOnHand());
+  if (attr.isA(Tags::tag_carrying_cost))
+    return PythonObject(obj->getCarryingCost());
   if (attr.isA(Tags::tag_flowplans))
     return new PythonFlowPlanIterator(obj);
   if (attr.isA(Tags::tag_maximum))
@@ -188,6 +190,8 @@ int PythonBuffer::setattro(const Attribute& attr, const PythonObject& field)
   }
   else if (attr.isA(Tags::tag_onhand))
     obj->setOnHand(field.getDouble());
+  else if (attr.isA(Tags::tag_carrying_cost))
+    obj->setCarryingCost(field.getDouble());
   else if (attr.isA(Tags::tag_producing))
   {
     if (!field.check(PythonOperation::getType())) 
@@ -448,6 +452,8 @@ PyObject* PythonItem::getattro(const Attribute& attr)
     return PythonObject(obj->getOwner());
   if (attr.isA(Tags::tag_operation))
     return PythonObject(obj->getOperation());
+  if (attr.isA(Tags::tag_price))
+    return PythonObject(obj->getPrice());
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
 	return NULL;
@@ -484,6 +490,8 @@ int PythonItem::setattro(const Attribute& attr, const PythonObject& field)
     Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
     obj->setOperation(y);
   }
+  else if (attr.isA(Tags::tag_price))
+    obj->setPrice(field.getDouble());
   else if (attr.isA(Tags::tag_hidden))
     obj->setHidden(field.getBool());
   else
@@ -819,6 +827,8 @@ PyObject* PythonResource::getattro(const Attribute& attr)
     return PythonObject(obj->getLocation());
   if (attr.isA(Tags::tag_maximum))
     return PythonObject(obj->getMaximum());
+  if (attr.isA(Tags::tag_cost))
+    return PythonObject(obj->getCost());
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
   if (attr.isA(Tags::tag_loadplans))
@@ -874,6 +884,8 @@ int PythonResource::setattro(const Attribute& attr, const PythonObject& field)
     CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(field))->obj;
     obj->setMaximum(y);
   }
+  else if (attr.isA(Tags::tag_cost))
+    obj->setCost(field.getDouble());
   else if (attr.isA(Tags::tag_hidden))
     obj->setHidden(field.getBool());
   else
@@ -928,6 +940,8 @@ PyObject* PythonOperation::getattro(const Attribute& attr)
     return PythonObject(obj->getFence());
   if (attr.isA(Tags::tag_size_minimum))
     return PythonObject(obj->getSizeMinimum());
+  if (attr.isA(Tags::tag_cost))
+    return PythonObject(obj->getCost());
   if (attr.isA(Tags::tag_size_multiple))
     return PythonObject(obj->getSizeMultiple());
   if (attr.isA(Tags::tag_pretime))
@@ -974,6 +988,8 @@ int PythonOperation::setattro(const Attribute& attr, const PythonObject& field)
     obj->setFence(field.getTimeperiod());
   else if (attr.isA(Tags::tag_size_minimum))
     obj->setSizeMinimum(field.getDouble());
+  else if (attr.isA(Tags::tag_cost))
+    obj->setCost(field.getDouble());
   else if (attr.isA(Tags::tag_size_multiple))
     obj->setSizeMultiple(field.getDouble());
   else if (attr.isA(Tags::tag_pretime))

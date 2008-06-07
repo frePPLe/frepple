@@ -1372,8 +1372,8 @@ class Operation : public HasName<Operation>,
   protected:
     /** Constructor. Don't use it directly. */
     explicit Operation(const string& str) : HasName<Operation>(str),
-        loc(NULL), size_minimum(1.0), size_multiple(0.0), hidden(false),
-        first_opplan(NULL), last_opplan(NULL) {}
+        loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(1.0), 
+        hidden(false), first_opplan(NULL), last_opplan(NULL) {}
 
   public:
     /** Destructor. */
@@ -1419,6 +1419,18 @@ class Operation : public HasName<Operation>,
       post_time=t;
       setChanged();
     }
+
+    /** Return the operation cost.<br>
+      * The cost of executing this operation, per unit of the 
+      * operation_plan.<br>
+      * The default value is 1.0.
+      */
+    double getCost() const {return cost;}
+
+    /** Update the operation cost.<br>
+      * The cost of executing this operation, per unit of the operation_plan.
+      */
+    void setCost(const double c) {cost = c;}
 
     typedef Association<Operation,Buffer,Flow>::ListA flowlist;
     typedef Association<Operation,Resource,Load>::ListA  loadlist;
@@ -1612,6 +1624,11 @@ class Operation : public HasName<Operation>,
 
     /** Multiple size for operationplans. */
     double size_multiple;
+
+    /** Cost of the operation.<br>
+      * The default value is 1.0.
+      */
+    double cost;
 
     /** Does the operation require serialization or not. */
     bool hidden;
@@ -2520,8 +2537,8 @@ class Item
 {
   public:
     /** Constructor. Don't use this directly! */
-    explicit Item(const string& str)
-        : HasHierarchy<Item> (str), deliveryOperation(NULL) {}
+    explicit Item(const string& str) : HasHierarchy<Item> (str), 
+      deliveryOperation(NULL), price(1.0) {}
 
     /** Returns the delivery operation.<br>
       * This field is inherited from a parent item, if it hasn't been
@@ -2546,6 +2563,14 @@ class Item
       */
     void setOperation(Operation* o) {deliveryOperation = o;}
 
+    /** Return the selling price of the item.<br>
+      * The default value is 1.0.
+      */
+    double getPrice() const {return price;}
+
+    /** Update the selling price of the item. */
+    void setPrice(const double c) {price = c;}
+
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
@@ -2561,6 +2586,9 @@ class Item
       * @see Demand
       */
     Operation* deliveryOperation;
+
+    /** Selling price of the item. */
+    double price;
 };
 
 
@@ -2596,7 +2624,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** Constructor. Implicit creation of instances is disallowed. */
     explicit Buffer(const string& str) : HasHierarchy<Buffer>(str),
         hidden(false), producing_operation(NULL), loc(NULL), it(NULL),
-        min_cal(NULL), max_cal(NULL) {}
+        min_cal(NULL), max_cal(NULL), carrying_cost(1.0) {}
 
     /** Returns the operation that is used to supply extra supply into this
       * buffer. */
@@ -2632,6 +2660,19 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Updates the minimum inventory target for the buffer. */
     DECLARE_EXPORT void setMaximum(CalendarDouble *);
+
+    /** Return the carrying cost.<br>
+      * The cost of carrying inventory in this buffer. The value is a 
+      * percentage of the item sales price, per year and per unit.
+      */
+    double getCarryingCost() const {return carrying_cost;}
+
+    /** Return the carrying cost.<br>
+      * The cost of carrying inventory in this buffer. The value is a 
+      * percentage of the item sales price, per year and per unit.<br>
+      * The default value is 1.0.
+      */
+    void setCarryingCost(const double c) {carrying_cost = c;}
 
     DECLARE_EXPORT virtual void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT virtual void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
@@ -2730,6 +2771,12 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * inventory problems.
       */
     CalendarDouble *max_cal;
+
+    /** Carrying cost.<br>
+      * The cost of carrying inventory in this buffer. The value is a 
+      * percentage of the item sales price, per year and per unit.
+      */
+    double carrying_cost;
 };
 
 
@@ -3237,7 +3284,7 @@ class Resource : public HasHierarchy<Resource>,
   public:
     /** Constructor. */
     explicit Resource(const string& str) : HasHierarchy<Resource>(str),
-        max_cal(NULL), loc(NULL), hidden(false) {};
+        max_cal(NULL), loc(NULL), cost(1.0), hidden(false) {};
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Resource();
@@ -3247,6 +3294,14 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Return a pointer to the maximum capacity profile. */
     CalendarDouble* getMaximum() const {return max_cal;}
+
+    /** Returns the cost of using 1 unit of this resource for 1 hour.<br>
+      * The default value is 1.0.
+      */
+    double getCost() const {return cost;}
+
+    /** Update the cost of using 1 unit of this resource for 1 hour. */
+    void setCost(const double c) {cost = c;}
 
     typedef Association<Operation,Resource,Load>::ListB loadlist;
     typedef TimeLine<LoadPlan> loadplanlist;
@@ -3309,6 +3364,9 @@ class Resource : public HasHierarchy<Resource>,
 
     /** A pointer to the location of the resource. */
     Location* loc;
+
+    /** The cost of using 1 unit of this resource for 1 hour. */
+    double cost;
 
     /** Specifies whether this resource is hidden for serialization. */
     bool hidden;

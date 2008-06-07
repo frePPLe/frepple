@@ -47,6 +47,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_buffers;
     static DECLARE_EXPORT const Keyword tag_calendar;
     static DECLARE_EXPORT const Keyword tag_calendars;
+    static DECLARE_EXPORT const Keyword tag_carrying_cost;
     static DECLARE_EXPORT const Keyword tag_category;
     static DECLARE_EXPORT const Keyword tag_cluster;
     static DECLARE_EXPORT const Keyword tag_cmdline;
@@ -55,6 +56,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_constraints;
     static DECLARE_EXPORT const Keyword tag_consuming;
     static DECLARE_EXPORT const Keyword tag_content;
+    static DECLARE_EXPORT const Keyword tag_cost;
     static DECLARE_EXPORT const Keyword tag_current;
     static DECLARE_EXPORT const Keyword tag_customer;
     static DECLARE_EXPORT const Keyword tag_customers;
@@ -124,6 +126,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_plan;
     static DECLARE_EXPORT const Keyword tag_posttime;
     static DECLARE_EXPORT const Keyword tag_pretime;
+    static DECLARE_EXPORT const Keyword tag_price;
     static DECLARE_EXPORT const Keyword tag_priority;
     static DECLARE_EXPORT const Keyword tag_problem;
     static DECLARE_EXPORT const Keyword tag_problems;
@@ -143,7 +146,6 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_subcategory;
     static DECLARE_EXPORT const Keyword tag_supply;
     static DECLARE_EXPORT const Keyword tag_type;
-    static DECLARE_EXPORT const Keyword tag_url;
     static DECLARE_EXPORT const Keyword tag_validate;
     static DECLARE_EXPORT const Keyword tag_value;
     static DECLARE_EXPORT const Keyword tag_variable;

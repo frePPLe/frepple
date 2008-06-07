@@ -137,6 +137,8 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const Keyword& tag, mo
     o->writeElement(Tags::tag_posttime, post_time);
   if (pre_time)
     o->writeElement(Tags::tag_pretime, pre_time);
+  if (getCost() != 1.0)
+    o->writeElement(Tags::tag_cost, getCost());
   if (fence)
     o->writeElement(Tags::tag_fence, fence);
   if (size_minimum != 1.0)
@@ -188,6 +190,8 @@ DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, const Attribute& pAttr
     setFence(pElement.getTimeperiod());
   else if (pAttr.isA (Tags::tag_size_minimum))
     setSizeMinimum(pElement.getDouble());
+  else if (pAttr.isA (Tags::tag_cost))
+    setCost(pElement.getDouble());
   else if (pAttr.isA (Tags::tag_size_multiple))
     setSizeMultiple(pElement.getDouble());
   else if (pAttr.isA (Tags::tag_pretime))

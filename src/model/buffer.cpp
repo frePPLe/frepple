@@ -197,10 +197,12 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
       o->writeElement(Tags::tag_onhand, fp->getQuantity());
   }
 
-  // Minimum and maximum inventory targets
+  // Minimum and maximum inventory targets, carrying cost
   o->writeElement(Tags::tag_minimum, min_cal);
   o->writeElement(Tags::tag_maximum, max_cal);
-
+  if (getCarryingCost()!= 1.0) 
+    o->writeElement(Tags::tag_carrying_cost, getCarryingCost());
+  
   // Write extra plan information
   i = flowplans.begin();
   if ((o->getContentType() == XMLOutput::PLAN
@@ -295,6 +297,8 @@ DECLARE_EXPORT void Buffer::endElement(XMLInput& pIn, const Attribute& pAttr, co
     if (d) setLocation(d);
     else throw LogicException("Incorrect object type during read operation");
   }
+  else if (pAttr.isA(Tags::tag_carrying_cost))
+    setCarryingCost(pElement.getDouble());
   else
   {
     Plannable::endElement(pIn, pAttr, pElement);

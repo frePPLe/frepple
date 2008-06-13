@@ -45,6 +45,8 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
     ld->getLoadplanQuantity(this),
     ld->getLoadplanDate(this)
     );
+
+  // Create a loadplan to mark the end of the operationplan.
   new LoadPlan(o, r, this);
 
   // Mark the operation and resource as being changed. This will trigger
@@ -73,7 +75,7 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r, LoadPlan *lp
 DECLARE_EXPORT LoadPlan* LoadPlan::getOtherLoadPlan() const
 {
   for (LoadPlan *i = oper->firstloadplan; i; i = i->nextLoadPlan)
-    if (i->oper == oper && i != this) return i;
+    if (i->ld == ld && i != this) return i;
   throw LogicException("No matching loadplan found");
 }
 

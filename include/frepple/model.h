@@ -4071,8 +4071,10 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Return the load of which this is a plan instance. */
     Load* getLoad() const {return ld;}
 
+    /** Return true when this loadplan marks the start of an operationplan. */
     bool isStart() const {return start_or_end == START;}
 
+    /** Destructor. */
     virtual ~LoadPlan()
     {
       ld->getResource()->setChanged();

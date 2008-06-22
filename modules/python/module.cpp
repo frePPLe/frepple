@@ -37,6 +37,7 @@ PyObject* PythonLogicException = NULL;
 PyObject* PythonDataException = NULL;
 PyObject* PythonRuntimeException = NULL;
 
+string pythonEncoding;
 
 // Define the methods to be exposed into Python
 PyMethodDef CommandPython::PythonAPI[] =
@@ -208,6 +209,25 @@ void CommandPython::initialize()
     "sys.stdout = redirect()\n"
     "sys.stderr = redirect()"
   );
+
+  // Get the preferred Python locale
+  PyObject* module = PyImport_ImportModule("locale");
+  if (!module)
+    throw frepple::RuntimeException("Can't import 'locale' Python module");
+  else
+  {
+    PyObject* moduledict = PyModule_GetDict(module);
+    PyObject* func = PyDict_GetItemString(moduledict, "getpreferredencoding");
+    if (!func)
+      throw frepple::RuntimeException("Can't find 'getpreferredencoding' Python function");
+    PyObject* retval = PyEval_CallObject(func, NULL);
+    if (retval)
+    {
+      pythonEncoding =  PyString_AsString(retval);
+      Py_XDECREF(retval);
+    }
+    Py_XDECREF(module);
+  }
 
   // Search and execute the initialization file '$FREPPLE_HOME/init.py'
   string init = Environment::getHomeDirectory() + "init.py";

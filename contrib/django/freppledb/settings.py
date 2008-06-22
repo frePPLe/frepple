@@ -176,6 +176,12 @@ AUTH_PROFILE_MODULE = 'user.Preferences'
 # machine additional debugging statements can be shown.
 INTERNAL_IPS = ( '127.0.0.1', )
 
+# Default charset to use for all ``HttpResponse`` objects, if a MIME type isn't
+# manually specified.
+# For frePPLe this is important when downloading csv-files. FrePPLe encodes the
+# output in this encoding.
+DEFAULT_CHARSET = 'utf-8'
+
 # Allow overriding the settings
 # This is useful for the py2exe distribution: this settings file will be
 # compiled and included in library.zip, and we need to give users a way

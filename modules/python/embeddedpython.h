@@ -181,6 +181,14 @@ extern PyObject* PythonDataException;
 extern PyObject* PythonRuntimeException;
 
 
+/** @brief The preferred encoding of Python.
+  *
+  * Python unicode strings are encoded to this locale when bringing them into
+  * frePPLe.<br>
+  */
+extern string pythonEncoding;
+
+
 /** @brief This command executes Python code in the embedded interpreter.
   *
   * The interpreter can execute generic scripts, and it also has access
@@ -318,15 +326,15 @@ class PythonType : public NonCopyable
     static const PyTypeObject PyTypeObjectTemplate;
 
     /** Accumulator of method definitions. */
-    vector<PyMethodDef> methodvector;    
+    vector<PyMethodDef> methodvector;
 
     /** Real method table created after initialization. */
-    PyMethodDef *methods;        
+    PyMethodDef *methods;
 
   public:
-    /** A static functin that evaluates an exception and sets the Python 
+    /** A static functin that evaluates an exception and sets the Python
       * error string properly.<br>
-      * This function should only be called from within a catch-block, since 
+      * This function should only be called from within a catch-block, since
       * it rethrows the exception!
       */
     static void evalException();
@@ -453,10 +461,10 @@ class PythonType : public NonCopyable
   * xml->prevObject = python->cast value to a different type
   *
   * @todo object creator should be common with the XML reader, which uses
-  * the registered factory method. 
+  * the registered factory method.
   * Also supports add/add_change/remove.
   * Tricky: flow/load which use an additional validate() method
-  * 
+  *
   * @todo improper use of the python proxy objects can crash the application.
   * It is possible to keep the Python proxy around longer than the C++
   * object. Re-accessing the proxy will crash frePPLe.
@@ -505,11 +513,12 @@ class PythonObject : public DataElement
       {
         // Replace the unicode object with a string encoded in the correct locale
         const_cast<PyObject*&>(obj) =
-          PyUnicode_AsEncodedString(obj, NULL, "ignore");   // xxx test@todo need generic encoding of unicode objects to the locale understood by frepple
+          PyUnicode_AsEncodedString(obj, pythonEncoding.c_str(), "ignore");
       }
       return PyString_AsString(PyObject_Str(obj));
     }
 
+    /** Extract an unsigned long from the Python object. */
     unsigned long getUnsignedLong() const
     {
       return PyLong_AsUnsignedLong(obj);
@@ -636,7 +645,7 @@ class PythonAttributeList : public AttributeList
 
     virtual const DataElement* get(const Keyword& k) const
     {
-      if (!kwds) 
+      if (!kwds)
       {
         const_cast<PythonAttributeList*>(this)->result = PythonObject();
         return &result;
@@ -824,7 +833,7 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
         return -1;
       }
       PROXY* y = static_cast<ME*>(static_cast<PyObject*>(other))->obj;
-      return obj->getName().compare(y->getName());     
+      return obj->getName().compare(y->getName());
     }
 
     static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
@@ -837,7 +846,7 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
 
         // Create a python proxy
         PythonExtensionBase* pr = static_cast<PythonExtensionBase*>(static_cast<PyObject*>(*(new PythonObject(x))));
-  
+
         // Iterate over extra keywords, and set attributes. @todo move this responsability to the readers...
         PyObject *key, *value;
         Py_ssize_t pos = 0;
@@ -928,7 +937,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
 
         // Create a python proxy
         PythonExtensionBase* pr = static_cast<PythonExtensionBase*>(static_cast<PyObject*>(*(new PythonObject(x))));
-  
+
         // Iterate over extra keywords, and set attributes.   @todo move this responsability to the readers...
         PyObject *key, *value;
         Py_ssize_t pos = 0;
@@ -1415,7 +1424,7 @@ class PythonOperationPlanIterator
     PythonOperationPlanIterator() {}
 
     /** Constructor to iterate over the operationplans of a single operation. */
-    PythonOperationPlanIterator(Operation* o) 
+    PythonOperationPlanIterator(Operation* o)
       : FreppleIterator<PythonOperationPlanIterator,OperationPlan::iterator,OperationPlan,PythonOperationPlan>(o)
     {}
 };
@@ -1597,7 +1606,7 @@ class PythonFlow : public PythonExtension<PythonFlow>
     PythonFlow(Flow* p) : fl(p) {}
   private:
     PyObject* getattro(const Attribute&);
-    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)  issue: construction & validation of floaws is a bit different....   
     int setattro(const Attribute&, const PythonObject&);
     static void* proxy(Object* p) {return static_cast<PyObject*>(new PythonFlow(static_cast<Flow*>(p)));}
     Flow* fl;

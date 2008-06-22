@@ -570,29 +570,33 @@ def _generate_csv(rep, qs, format, bucketlist):
   sf = StringIO.StringIO()
   writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC)
 
+  # @todo the result should be encoded to an encoding supported by the client. How can we query this from the request header?
+  encoding = settings.DEFAULT_CHARSET
+  
   # Write a header row
-  fields = [ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])) for s in rep.rows ]
+  fields = [ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])).encode(encoding,"ignore") for s in rep.rows ]
   if issubclass(rep,TableReport):
     if format == 'csvlist':
-      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])) for s in rep.columns ])
-      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])) for s in rep.crosses ])
+      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])).encode(encoding,"ignore") for s in rep.columns ])
+      fields.extend([ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])).encode(encoding,"ignore") for s in rep.crosses ])
     else:
-      fields.extend( [capfirst(_('data field'))])
-      fields.extend([ b['name'] for b in bucketlist])
+      fields.extend( [capfirst(_('data field')).encode(encoding,"ignore")])
+      fields.extend([ unicode(b['name']).encode(encoding,"ignore") for b in bucketlist])
   writer.writerow(fields)
   yield sf.getvalue()
 
+  # Write the report content
   if issubclass(rep,ListReport):
     # Type 1: A "list report"
     # Iterate over all rows
     for row in qs:
       # Clear the return string buffer
       sf.truncate(0)
-      # Build the return value
-      try: fields = [ getattr(row,s[0]) for s in rep.rows ]
-      except: fields = [ row[s[0]] for s in rep.rows ]
+      # Build the return value, encoding all output
+      try: fields = [ unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.rows ]
+      except: fields = [ unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
       # Return string
-      writer.writerow(fields)
+      writer.writerow(fields) 
       yield sf.getvalue()
   elif issubclass(rep,TableReport):
     if format == 'csvlist':
@@ -602,17 +606,19 @@ def _generate_csv(rep, qs, format, bucketlist):
         # Clear the return string buffer
         sf.truncate(0)
         # Build the return value
-        fields = [ row[s[0]] for s in rep.rows ]
-        fields.extend([ row[s[0]] for s in rep.columns ])
-        fields.extend([ row[s[0]] for s in rep.crosses ])
+        fields = [ unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
+        fields.extend([ unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.columns ])
+        fields.extend([ unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.crosses ])
         # Return string
         writer.writerow(fields)
         yield sf.getvalue()
     else:
-      # Type 3: A "table report in table formtat"
+      # Type 3: A "table report in table format"
       # Iterate over all rows, crosses and columns
       prev_row = None
       for row in qs:
+        # We use the first field in the output to recognize new rows.
+        # This isn't really generic.
         if not prev_row:
           prev_row = row[rep.rows[0][0]]
           row_of_buckets = [row]
@@ -623,21 +629,21 @@ def _generate_csv(rep, qs, format, bucketlist):
           for cross in rep.crosses:
             # Clear the return string buffer
             sf.truncate(0)
-            fields = [ row_of_buckets[0][s[0]] for s in rep.rows ]
+            fields = [ unicode(row_of_buckets[0][s[0]]).encode(encoding,"ignore") for s in rep.rows ]
             fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))) or capfirst(_(cross[0]))] )
-            fields.extend([ bucket[cross[0]] for bucket in row_of_buckets ])
+            fields.extend([ unicode(bucket[cross[0]]).encode(encoding,"ignore") for bucket in row_of_buckets ])
             # Return string
             writer.writerow(fields)
             yield sf.getvalue()
-          prev_row = row[rep.rows[0][0]]
+          prev_row = row[rep.rows[0][0]]  
           row_of_buckets = [row]
       # Write the last entity
       for cross in rep.crosses:
         # Clear the return string buffer
         sf.truncate(0)
-        fields = [ row_of_buckets[0][s[0]] for s in rep.rows ]
+        fields = [ unicode(row_of_buckets[0][s[0]]).encode(encoding,"ignore") for s in rep.rows ]
         fields.extend( [('title' in cross[1] and capfirst(_(cross[1]['title']))) or capfirst(_(cross[0]))] )
-        fields.extend([ bucket[cross[0]] for bucket in row_of_buckets ])
+        fields.extend([ unicode(bucket[cross[0]]).encode(encoding,"ignore") for bucket in row_of_buckets ])
         # Return string
         writer.writerow(fields)
         yield sf.getvalue()

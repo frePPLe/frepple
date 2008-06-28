@@ -275,6 +275,15 @@ class BufferList(ListReport):
   title = _("Buffer List")
   basequeryset = Buffer.objects.all()
   model = Buffer
+  frozenColumns = 1
+
+  @staticmethod
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'name','description','category','subcategory','location','item',
+      'onhand','type','minimum','producing','carrying_cost','lastmodified'
+      )
+
   rows = (
     ('name', {
       'title': _('name'),
@@ -335,6 +344,15 @@ class ResourceList(ListReport):
   title = _("Resource List")
   basequeryset = Resource.objects.all()
   model = Resource
+  frozenColumns = 1
+
+  @staticmethod
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'name','description','category','subcategory','location','type',
+      'maximum','cost','lastmodified'
+      )
+
   rows = (
     ('name', {
       'title': _('name'),
@@ -383,6 +401,15 @@ class LocationList(ListReport):
   title = _("Location List")
   basequeryset = Location.objects.all()
   model = Location
+  frozenColumns = 1
+
+  @staticmethod
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'name','description','category','subcategory','available','owner',
+      'lastmodified'
+      )
+
   rows = (
     ('name', {
       'title': _('name'),
@@ -423,6 +450,14 @@ class CustomerList(ListReport):
   title = _("Customer List")
   basequeryset = Customer.objects.all()
   model = Customer
+  frozenColumns = 1
+
+  @staticmethod
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'name','description','category','subcategory','owner','lastmodified'
+      )
+
   rows = (
     ('name', {
       'title': _('name'),
@@ -459,6 +494,15 @@ class ItemList(ListReport):
   title = _("Item List")
   basequeryset = Item.objects.all()
   model = Item
+  frozenColumns = 1
+
+  @staticmethod
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'name','description','category','subcategory','operation','owner',
+      'price','lastmodified'
+      )
+
   rows = (
     ('name', {
       'title': _('name'),
@@ -503,6 +547,15 @@ class LoadList(ListReport):
   title = _("Load List")
   basequeryset = Load.objects.all()
   model = Load
+  frozenColumns = 1
+
+  @staticmethod
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'id','operation','resource','quantity','effective_start','effective_end',
+      'lastmodified'
+      )
+
   rows = (
     ('id', {
       'title': _('identifier'),
@@ -543,6 +596,15 @@ class FlowList(ListReport):
   title = _("Flow List")
   basequeryset = Flow.objects.all()
   model = Flow
+  frozenColumns = 1
+
+  @staticmethod
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'id','operation','thebuffer','type','quantity','effective_start',
+      'effective_end','lastmodified'
+      )
+
   rows = (
     ('id', {
       'title': _('identifier'),
@@ -587,6 +649,15 @@ class DemandList(ListReport):
   title = _("Demand List")
   basequeryset = Demand.objects.all()
   model = Demand
+  frozenColumns = 1
+
+  @staticmethod
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'name','item','customer','description','category','subcategory',
+      'due','quantity','operation','priority','owner','lastmodified'
+      )
+
   rows = (
     ('name', {
       'title': _('name'),
@@ -647,6 +718,16 @@ class ForecastList(ListReport):
   title = _("Forecast List")
   basequeryset = Forecast.objects.all()
   model = Forecast
+  frozenColumns = 1
+
+  @staticmethod
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'name','item','customer','calendar','description','category',
+      'subcategory','operation','priority','minshipment','maxlateness',
+      'discrete','lastmodified'
+      )
+
   rows = (
     ('name', {
       'title': _('name'),
@@ -654,7 +735,7 @@ class ForecastList(ListReport):
       }),
     ('item', {
       'title': _('item'),
-      'filter': FilterText(field="item_name"),
+      'filter': FilterText(field="item__name"),
       }),
     ('customer', {
       'title': _('customer'),
@@ -676,14 +757,6 @@ class ForecastList(ListReport):
       'title': _('subcategory'),
       'filter': FilterText(),
       }),
-    ('due', {
-      'title': _('due'),
-      'filter': FilterDate(),
-      }),
-    ('quantity', {
-      'title': _('quantity'),
-      'filter': FilterNumber(),
-      }),
     ('operation', {
       'title': _('operation'),
       'filter': FilterText(),
@@ -691,6 +764,18 @@ class ForecastList(ListReport):
     ('priority', {
       'title': _('priority'),
       'filter': FilterNumber(),
+      }),
+    ('minshipment', {
+      'title': _('minshipment'),
+      'filter': FilterNumber(),
+      }),
+    ('maxlateness', {
+      'title': _('maxlateness'),
+      'filter': FilterNumber(),
+      }),
+    ('discrete', {
+      'title': _('discrete'),
+      'filter': FilterBool(),
       }),
     ('lastmodified', {
       'title': _('last modified'),
@@ -707,6 +792,7 @@ class DatesList(ListReport):
   title = _("Date List")
   basequeryset = Dates.objects.all()
   model = Dates
+  frozenColumns = 1
   rows = (
     ('day', {
       'title': _('day'),
@@ -767,6 +853,7 @@ class CalendarList(ListReport):
   title = _("Calendar List")
   basequeryset = Calendar.objects.all()
   model = Calendar
+  frozenColumns = 1
   rows = (
     ('name', {
       'title': _('name'),
@@ -807,6 +894,15 @@ class OperationList(ListReport):
   title = _("Operation List")
   basequeryset = Operation.objects.all()
   model = Operation
+  frozenColumns = 1
+
+  @staticmethod
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'name','type','location','fence','pretime','posttime','sizeminimum',
+      'sizemultiple','cost','lastmodified'
+      )
+
   rows = (
     ('name', {
       'title': _('name'),
@@ -859,6 +955,15 @@ class SubOperationList(ListReport):
   title = _("Suboperation List")
   basequeryset = SubOperation.objects.all()
   model = SubOperation
+  frozenColumns = 1
+
+  @staticmethod
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'operation','suboperation','priority','effective_start','effective_end',
+      'lastmodified'
+      )
+
   rows = (
     ('operation', {
       'title': _('operation'),
@@ -895,6 +1000,15 @@ class OperationPlanList(ListReport):
   title = _("Operationplan List")
   basequeryset = OperationPlan.objects.all()
   model = OperationPlan
+  frozenColumns = 1
+
+  @staticmethod
+  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values(
+      'identifier','operation','startdate','enddate','quantity','locked',
+      'lastmodified'
+      )
+
   rows = (
     ('identifier', {
       'title': _('identifier'),

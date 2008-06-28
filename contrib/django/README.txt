@@ -8,10 +8,10 @@ The basic steps to set up a development environment:
   Lower versions may work, but are not tested...
 
 - Install django
-  FREPPLE NEEDS THE DEVELOPMENT VERSION OF DJANGO. AT THE TIME FREPPLE 0.5.1 IS
-  RELEASED DJANGO WAS AT REVISION 7538.
+  FREPPLE NEEDS THE DEVELOPMENT VERSION OF DJANGO. AT THE TIME FREPPLE 0.5.2 IS
+  RELEASED DJANGO WAS AT REVISION 7763.
   To get this version of django use the following command:
-    svn co --revision 7538 http://code.djangoproject.com/svn/django/trunk/ django_src
+    svn co --revision 7763 http://code.djangoproject.com/svn/django/trunk/ django_src
   Later versions of django may or may not work with frePPLe...
 
 - Some patches are required to django.
@@ -94,13 +94,13 @@ Enjoy!
 <<< START DJANGO PATCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 ===================================================================
---- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 6980)
+--- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 7763)
 +++ django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(working copy)
 @@ -92,7 +92,7 @@
      openClock: function(num) {
          var clock_box = document.getElementById(DateTimeShortcuts.clockDivName+num)
          var clock_link = document.getElementById(DateTimeShortcuts.clockLinkName+num)
--
+-    
 +
          // Recalculate the clockbox position
          // is it left-to-right or right-to-left layout ?
@@ -109,7 +109,7 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
              clock_box.style.left = findPosX(clock_link) - 110 + 'px';
          }
          clock_box.style.top = findPosY(clock_link) - 30 + 'px';
--
+-    
 +
          // Show the clock box
          clock_box.style.display = 'block';
@@ -137,13 +137,13 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 +        //shortcuts_span.appendChild(today_link);
 +        //shortcuts_span.appendChild(document.createTextNode('\240|\240'));
          shortcuts_span.appendChild(cal_link);
-
+ 
          // Create calendarbox div.
 @@ -208,7 +211,7 @@
  	    }
  	}
-
--
+ 
+-    
 +
          // Recalculate the clockbox position
          // is it left-to-right or right-to-left layout ?
@@ -152,14 +152,14 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
              cal_box.style.left = findPosX(cal_link) - 180 + 'px';
          }
          cal_box.style.top = findPosY(cal_link) - 75 + 'px';
--
+-    
 +
          cal_box.style.display = 'block';
          addEvent(window, 'click', function() { DateTimeShortcuts.dismissCalendar(num); return true; });
      },
 Index: django/contrib/admin/templates/widget/foreign.html
 ===================================================================
---- django/contrib/admin/templates/widget/foreign.html	(revision 6980)
+--- django/contrib/admin/templates/widget/foreign.html	(revision 7763)
 +++ django/contrib/admin/templates/widget/foreign.html	(working copy)
 @@ -2,9 +2,9 @@
  {% output_all bound_field.form_fields %}
@@ -175,9 +175,9 @@ Index: django/contrib/admin/templates/widget/foreign.html
  {% if bound_field.needs_add_label %}
 Index: django/contrib/admin/views/decorators.py
 ===================================================================
---- django/contrib/admin/views/decorators.py	(revision 6980)
+--- django/contrib/admin/views/decorators.py	(revision 7763)
 +++ django/contrib/admin/views/decorators.py	(working copy)
-@@ -23,7 +23,7 @@
+@@ -29,7 +29,7 @@
          post_data = _encode_post_data({})
      return render_to_response('admin/login.html', {
          'title': _('Log in'),
@@ -186,7 +186,16 @@ Index: django/contrib/admin/views/decorators.py
          'post_data': post_data,
          'error_message': error_message
      }, context_instance=template.RequestContext(request))
-@@ -100,7 +100,7 @@
+@@ -88,7 +88,7 @@
+                 if len(users) == 1:
+                     message = _("Your e-mail address is not your username. Try '%s' instead.") % users[0].username
+                 else:
+-                    # Either we cannot find the user, or if more than 1 
++                    # Either we cannot find the user, or if more than 1
+                     # we cannot guess which user is the correct one.
+                     message = _("Usernames cannot contain the '@' character.")
+             return _display_login_form(request, message)
+@@ -107,7 +107,7 @@
                          return view_func(request, *args, **kwargs)
                      else:
                          request.session.delete_test_cookie()
@@ -194,22 +203,22 @@ Index: django/contrib/admin/views/decorators.py
 +                        return http.HttpResponseRedirect(request.get_full_path())
              else:
                  return _display_login_form(request, ERROR_MESSAGE)
-
+ 
 Index: django/core/management/__init__.py
 ===================================================================
---- django/core/management/__init__.py	(revision 6980)
+--- django/core/management/__init__.py	(revision 7763)
 +++ django/core/management/__init__.py	(working copy)
 @@ -13,36 +13,63 @@
  # doesn't have to reload every time it's called.
  _commands = None
-
+ 
 -def find_commands(management_dir):
 -    """
 -    Given a path to a management directory, returns a list of all the command
 -    names that are available.
 +try:
 +    from pkgutil import iter_modules
-
+ 
 -    Returns an empty list if no commands are defined.
 -    """
 -    command_dir = os.path.join(management_dir, 'commands')
@@ -219,13 +228,13 @@ Index: django/core/management/__init__.py
 -    except OSError:
 -        return []
 +except:
-
+ 
 -def find_management_module(app_name):
 -    """
 -    Determines the path to the management module for the given app_name,
 -    without actually importing the application or the management module.
 +    # Python versions earlier than 2.5 don't have the iter_modules function
-
+ 
 -    Raises ImportError if the management module cannot be found for any reason.
 -    """
 -    parts = app_name.split('.')
@@ -239,7 +248,7 @@ Index: django/core/management/__init__.py
 +    def find_commands(app_name):
 +        """
 +        Given an application name, returns a list of all the commands found.
-
+ 
 +        Raises ImportError if no commands are defined.
 +        """
 +        management_dir = find_management_module(app_name)
@@ -295,7 +304,7 @@ Index: django/core/management/__init__.py
      if _commands is None:
 -        _commands = dict([(name, 'django.core') for name in find_commands(__path__[0])])
 +        _commands = dict([(name, 'django.core') for name in find_commands('django.core')])
-
+ 
          if load_user_commands:
              # Get commands from all installed apps.
              from django.conf import settings
@@ -306,12 +315,12 @@ Index: django/core/management/__init__.py
 +                    _commands.update(dict([(name, app_name) for name in find_commands(app_name)]))
                  except ImportError:
                      pass # No management module -- ignore this app.
-
+ 
 Index: django/db/backends/sqlite3/base.py
 ===================================================================
---- django/db/backends/sqlite3/base.py	(revision 6980)
+--- django/db/backends/sqlite3/base.py	(revision 7763)
 +++ django/db/backends/sqlite3/base.py	(working copy)
-@@ -67,7 +67,11 @@
+@@ -70,7 +70,11 @@
          # NB: The generated SQL below is specific to SQLite
          # Note: The DELETE FROM... SQL generated below works for SQLite databases
          # because constraints don't exist
@@ -324,25 +333,10 @@ Index: django/db/backends/sqlite3/base.py
                  (style.SQL_KEYWORD('DELETE'),
                   style.SQL_KEYWORD('FROM'),
                   style.SQL_FIELD(self.quote_name(table))
-Index: django/views/i18n.py
-===================================================================
---- django/views/i18n.py	(revision 6980)
-+++ django/views/i18n.py	(working copy)
-@@ -178,5 +178,8 @@
-     src.extend(csrc)
-     src.append(LibFoot)
-     src.append(InterPolate)
--    src = ''.join(src)
--    return http.HttpResponse(src, 'text/javascript')
-+
-+    # Create response, and set the HTTP header to allow caching for 1 day by the client browser
-+    response = http.HttpResponse(''.join(src), 'text/javascript')
-+    response['Cache-Control'] = 'max-age=86400'
-+    return response
 Index: django/db/models/sql/query.py
 ===================================================================
---- query.py	(revision 7512)
-+++ query.py	(working copy)
+--- django/db/models/sql/query.py	(revision 7763)
++++ django/db/models/sql/query.py	(working copy)
 @@ -405,8 +405,11 @@
              for col in self.select:
                  if isinstance(col, (list, tuple)):
@@ -385,5 +379,24 @@ Index: django/db/models/sql/query.py
                  result.append('%s.%s AS %s' % (qn(alias),
                      qn2(field.column), c_alias))
                  col_aliases.add(c_alias)
-
+@@ -1562,3 +1571,4 @@
+ 
+ dispatcher.connect(setup_join_cache, signal=signals.class_prepared)
+ 
++
+Index: django/views/i18n.py
+===================================================================
+--- django/views/i18n.py	(revision 7763)
++++ django/views/i18n.py	(working copy)
+@@ -189,5 +189,8 @@
+     src.extend(csrc)
+     src.append(LibFoot)
+     src.append(InterPolate)
+-    src = ''.join(src)
+-    return http.HttpResponse(src, 'text/javascript')
++
++    # Create response, and set the HTTP header to allow caching for 1 day by the client browser
++    response = http.HttpResponse(''.join(src), 'text/javascript')
++    response['Cache-Control'] = 'max-age=86400'
++    return response
 <<< END DJANGO PATCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

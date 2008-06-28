@@ -30,7 +30,6 @@ else:
   print "Using %s database '%s' as '%s' on '%s:%s'" % (settings.DATABASE_ENGINE, \
     settings.DATABASE_NAME, settings.DATABASE_USER, settings.DATABASE_HOST, \
     settings.DATABASE_PORT)
-
 ?>
   <commands>
     <verbose>true</verbose>

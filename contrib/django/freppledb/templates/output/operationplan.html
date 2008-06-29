@@ -6,8 +6,8 @@
 {% include "operationcontext.html" %}
 {% endblock %}
 
-{% block tablebody %}
-{% for i in objectlist %}
+{% block data %}
+{% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{{i.identifier}}</td>
 <td>{% if i.fcst_or_actual %}{% superlink i.demand forecast %}{% else %}{% superlink i.demand demand %}{% endif %}</td>

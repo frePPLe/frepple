@@ -1,7 +1,7 @@
 {% extends "admin/base_site_list.html" %}
 
-{% block tablebody %}
-{% for i in objectlist %}
+{% block data %}
+{% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{% ifchanged %}<strong>{{i.category}}</strong>{% endifchanged %}</td>
 <td>{{i.name}}</td>

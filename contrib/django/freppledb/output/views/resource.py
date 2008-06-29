@@ -59,7 +59,12 @@ class OverviewReport(TableReport):
     )
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
+    return basequery.values('name','location')
+
+  @staticmethod
+  def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
     # Execute the query
     cursor = connection.cursor()
@@ -133,6 +138,7 @@ class DetailReport(ListReport):
     where=['out_operationplan.identifier = out_loadplan.operationplan'],
     tables=['out_operationplan'])
   model = LoadPlan
+  frozenColumns = 0
   editable = False
   rows = (
     ('resource', {

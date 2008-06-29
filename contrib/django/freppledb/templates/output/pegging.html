@@ -5,10 +5,14 @@
 {% include "demandcontext.html" %}
 {% endblock %}
 
-{% block tablebody %}
-{% for i in objectlist %}
+{% block frozendata %}
+{% for i in objectlist1 %}
+<tr class="{% cycle row1,row2 %}"><td>{% superlink i.demand demand %}</td></tr>{% endfor %}
+{% endblock %}
+
+{% block data %}
+{% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.demand demand %}</td>
 <td>{% superlink i.buffer buffer %}</td>
 <td>{{i.depth}}</td>
 <td>{{i.cons_date}}</td>

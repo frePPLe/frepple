@@ -4,10 +4,16 @@
 {% include "calendarcontext.html" %}
 {% endblock %}
 
-{% block tablebody %}
-{% for i in objectlist %}
+{% block frozendata %}
+{% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{% superlink i.name calendar key %}</td>
+</tr>{% endfor %}
+{% endblock %}
+
+{% block data %}
+{% for i in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
 <td>{{i.description}}</td>
 <td>{{i.category}}</td>
 <td>{{i.subcategory}}</td>

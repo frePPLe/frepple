@@ -63,7 +63,12 @@ class OverviewReport(TableReport):
     return Plan.objects.all()[0].lastmodified
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
+    return basequery.values('name','location')
+
+  @staticmethod
+  def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
     # Run the query
     cursor = connection.cursor()
@@ -132,6 +137,7 @@ class DetailReport(ListReport):
     select={'fcst_or_actual':'demand in (select distinct name from forecast)'}
     )
   model = OperationPlan
+  frozenColumns = 0
   editable = False
   rows = (
     ('identifier', {

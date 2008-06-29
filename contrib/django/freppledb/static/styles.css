@@ -12,6 +12,7 @@ div.ContextMenu {
   display: none;
   position: absolute;
   list-style-type: none;
+  z-index: 100;
 }
 
 /* Style for links in the context menu. */
@@ -37,6 +38,7 @@ div.OperatorMenu {
   display: none;
   position: absolute;
   list-style-type: none;
+  z-index: 100;
 }
 
 /* Style for links in the context menu. */
@@ -57,16 +59,23 @@ div.OperatorMenu a:hover {
   background: #417690;
 }
 
-.numfilteroper {
-  text-decoration: underline;
+/* Note: filter operator styles need fixed width fonts to keep the
+   column width constant for every selected operator. */
+span.numfilteroper {
+  font-family:  Courier New, Courier, monospace;
+  font-size: x-small;
 }
 
-.datefilteroper {
-  text-decoration: underline;
+span.datefilteroper {
+  /*text-decoration: underline;*/
+  font-family:  Courier New, Courier, monospace;
+  font-size: x-small;
 }
 
-.textfilteroper {
-  text-decoration: underline;
+span.textfilteroper {
+  /*text-decoration: underline;*/
+  font-family:  Courier New, Courier, monospace;
+  font-size: x-small;
 }
 
 a {
@@ -172,7 +181,7 @@ a {
 
 #header {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   overflow: visible;
   padding-top: 3px;
   padding-bottom: 3px;
@@ -186,6 +195,7 @@ a {
   position: absolute;
   top: 0px;
   visibility: hidden;
+  z-index: 10000;
 }
 
 #header div.menu a.menuItem {
@@ -210,6 +220,7 @@ a {
   border-top: 1px solid #909090;
   border-bottom: 1px solid #f0f0f0;
   margin: 4px 2px;
+  z-index: 10000;
 }
 
 table thead th {
@@ -257,7 +268,7 @@ thead th span a:link, thead th span a:visited { display: inline; }
 /* Style for the popup window. */
 div #popup
 {
-  z-index: 1;
+  z-index: 9;
   border: 1px solid black;
   background-color: white;
   position: absolute;
@@ -268,4 +279,33 @@ div #popup
 div #timebuckets
 {
   display: none;
+}
+
+div.gridupleft
+{
+  float: left;
+  z-index:4;
+}
+
+div.gridupright
+{
+  /* width: is set dynamically from javascript */
+  overflow: hidden;
+  z-index: 3;
+}
+
+div.griddownleft
+{
+  float: left;
+  overflow: hidden;
+  /* height: is set dynamically from javascript */
+  z-index:4;
+}
+
+div.griddownright
+{
+  overflow: auto;
+  /* height: is set dynamically from javascript */
+  /* width: is set dynamically from javascript */
+  z-index: 3;
 }

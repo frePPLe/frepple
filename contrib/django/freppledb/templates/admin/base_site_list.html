@@ -4,6 +4,9 @@
 {% block extrahead %}{{ block.super }}
 {% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
 {% endfor %}
+<script type="text/javascript">
+    Event.observe(window, 'load', syncInitialize);
+</script>
 {% endblock %}
 {% block coltype %}colM{% endblock %}
 {% block tools %}<div class="tools">
@@ -18,14 +21,26 @@
 {% include "datefilter.html" %}
 {% block contextmenus %}{% endblock %}
 
-<div style="overflow-x: scroll; overflow-y: auto;">
-<table><thead><tr>{{ rowheader }}</tr></thead>
-<tbody>{% block tablebody %}{% endblock %}
-</tbody></table>
-</div>
+{% if reportclass.frozenColumns %}<div id="ul" class="gridupleft"><table id="ult">
+<thead><tr>{{ rowheaderfrozen }}</tr></thead>
+</table></div>{% endif %}
+
+<div id="ur" class="gridupright"><table id="urt" style="position: relative;">
+<thead><tr>{{ rowheader }}</tr></thead>
+</table></div>
+
+{% if reportclass.frozenColumns %}<div id="dl" class="griddownleft">
+<table id="dlt" style="float: left; position: relative;"><tbody>
+{% block frozendata %}{% endblock %}
+</tbody></table></div>{% endif %}
+
+<div id="dr" class="griddownright" onscroll="syncScroll();">
+<table id="drt"><tbody>
+{% block data %}{% endblock %}
+</tbody></table></div>
 
 {% block pagination %}<p class="paginator">
 {{paginator_html}}&nbsp;&nbsp;{{hits}} {% if reportclass.model %}{% trans reportclass.model._meta.verbose_name_plural %} {% endif %}{% ifnotequal hits fullhits %} (total <a class="showall" href="{{request.path}}{% if is_popup %}?pop=1{% endif %}">{{fullhits}}</a>){% endifnotequal %}
-{% endblock %}</p></div>
+{% endblock %}
 
 {% endblock %}

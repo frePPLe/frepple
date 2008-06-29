@@ -5,8 +5,8 @@
 {% include "operationcontext.html" %}
 {% endblock %}
 
-{% block tablebody %}
-{% for i in objectlist %}
+{% block data %}
+{% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{% superlink i.thebuffer buffer %}</td>
 <td>{% superlink i.operation operation %}</td>

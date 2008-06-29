@@ -1,9 +1,15 @@
 {% extends "admin/base_site_list.html" %}
 
-{% block tablebody %}
-{% for i in objectlist %}
+{% block frozendata %}
+{% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
-<td>{{i.day}}</td>
+<td>{{ i.day }}</td>
+</tr>{% endfor %}
+{% endblock %}
+
+{% block data %}
+{% for i in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
 <td>{{i.dayofweek}}</td>
 <td>{{i.week}}</td>
 <td>{{i.month}}</td>

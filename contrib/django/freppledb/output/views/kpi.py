@@ -33,6 +33,7 @@ class Report(ListReport):
   template = 'output/kpi.html'
   title = _("Performance Indicators")
   reset_crumbs = True
+  frozenColumns = 0
   basequeryset = Plan.objects.all()
   rows = (
     ('category', {'sort': False, 'title': _('category')}),
@@ -42,7 +43,7 @@ class Report(ListReport):
   default_sort = '2a'
   
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query
     cursor = connection.cursor()
     query = '''

@@ -250,12 +250,12 @@ function filterform()
     }
     return result;
     });
-    
+
   // Examine the current url, and extract optional sort and popup arguments
   var args = location.href.toQueryParams();
   if ('o' in args) data['o'] = args['o'];
   if ('pop' in args) data['pop'] = args['pop'];
-  
+
   // Go to the new url
   location.href = "?" + Object.toQueryString(data);
 }
@@ -356,7 +356,6 @@ function bucket_show()
   element.style.display  = "block";
 }
 
-
 function bucket_close()
 {
   // Determine the URL arguments
@@ -391,4 +390,137 @@ function bucket_close()
   else
     // Fetch the new report. This also hides the popup again.
     location.href = location.pathname + "?" + args.toQueryString();
+}
+
+
+var fixedHeight;
+var fixedWidth;
+
+/* The scrolling table is built from 4 divs, each with a nested table in it:
+     div ul             div ur
+       |-> table ult      |-> table urt
+     div dl             div dr
+       |-> table dlt      |-> table drt
+   Javascript is used to:
+   - resize the height of the rows such that they match
+   - resize the height of the columns such that they match
+   - apply the scrolling in drt also to urt and dlt
+   - resize the scrollable table such that the available screen space is used optimally
+*/
+
+function syncInitialize()
+{
+  var hasFrozenColumns = $('dlt') ? true : false;
+  var hasData = $('drt').down('tr') ? true : false;
+
+  if (hasData)
+  {
+    // Sync the width of the scrollable columns, up and down
+    var columnheaders = $('urt').getElementsBySelector('th');
+    var columndata = $('drt').down('tr').getElementsBySelector('td');
+    var i = 0;
+    var totalWidth = 0;
+    columndata.each(function(s) {
+      left = s.getWidth();
+      right = columnheaders[i].getWidth();
+      if (left < right) left = right;
+      columnheaders[i].style.width = left + 'px';
+      s.style.width = left + 'px';
+      totalWidth += left;
+      i = i + 1;
+      });
+    $('drt').style.width = totalWidth + 'px';
+    $('urt').style.width = totalWidth + 'px';
+  }
+
+  if (hasFrozenColumns && hasData)
+  {
+    // Sync the height of the header row, frozen and scrolling sides
+    var left = $('ult').getHeight();
+    var right = $('urt').getHeight();
+    if (left < right) left = right;
+    $('urt').style.height = left + 'px';
+    $('ult').style.height = left + 'px';
+
+    // Sync the width of the frozen columns, up and down
+    var columnheaders = $('ult').getElementsBySelector('th');
+    var columndata = $('dlt').down('tr').getElementsBySelector('td');
+    var i = 0;
+    var totalWidth = 0;
+    columndata.each(function(s) {
+      left = s.getWidth();
+      right = columnheaders[i].getWidth();
+      if (left < right) left = right;
+      columnheaders[i].style.width = left + 'px';
+      s.style.width = left + 'px';
+      totalWidth += left;
+      i = i + 1;
+      });
+    $('dlt').style.width = totalWidth + 'px';
+    $('ult').style.width = totalWidth + 'px';
+
+    // Sync the height of the data rows, frozen and scrolling sides
+    var rowheaders = $('dlt').getElementsBySelector('tr');
+    var rowdata = $('drt').getElementsBySelector('tr');
+    var i = 0;
+    rowheaders.each(function(s) {
+      left = s.getHeight();
+      right = rowdata[i].getHeight();
+      if (left > right)
+        rowdata[i].style.height = left + 'px';
+      else if (left < right)
+        s.style.height = right + 'px';
+      i = i + 1;
+      });
+  }
+
+  // Measure the size of the fixed, non-resizable, area of the layout
+  var totalavailable = $(document.documentElement).getDimensions();
+  var floatingsize = $('dr').getDimensions();
+  fixedHeight = totalavailable.height - floatingsize.height + 2;
+  fixedWidth = totalavailable.width - floatingsize.width + 2;
+
+  // Resize the available size for the table.
+  syncResize();
+
+  // Watch all changes in window size
+  Event.observe(window, 'resize', syncResize);
+}
+
+
+function syncResize()
+{
+  var hasFrozenColumns = $('ult') ? true : false;
+
+  // Resize the available size for the table. This needs to be done at the
+  // end, when rows and columns have taken on their correct size.
+  // Assumption: The table is the only container that can be resized for
+  // this purpose.
+  var totalavailable = document.viewport.getDimensions();
+
+  // Height
+  // Respect also a minimum size for the table. If the height decreases further
+  // we use a scrollbar on the window rather than resizing the container.
+  var height = totalavailable.height - fixedHeight;
+  if (height < 150) height = 150;
+  var dl = $('dl');
+  if (dl) dl.style.height = height + "px";
+  $('dr').style.height = height + "px";
+
+  // Width
+  var width = totalavailable.width - fixedWidth;
+  if (width < 150) width = 150;
+  $('ur').style.width = width + "px";
+  $('dr').style.width = width + "px";
+}
+
+
+function syncScroll()
+{
+  // Synchronize the scrolling in the header row and frozen column
+  // with the scrolling in the data pane.
+  var i = $('dr');
+  var dlt = $('dlt');
+  if (dlt) dlt.style.bottom = i.scrollTop + 'px';
+  $('urt').style.right = i.scrollLeft + 'px';
 }

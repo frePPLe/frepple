@@ -77,14 +77,14 @@ IntegerOperator = {
 
 # Operators used for the text filtering in the reports
 TextOperator = {
-  'icontains': 'i in',
-  'contains': 'in',
+  'icontains': '&nbsp;&nbsp;i in&nbsp;&nbsp;',
+  'contains': '&nbsp;&nbsp;&nbsp;in&nbsp;&nbsp;&nbsp;',
   'istartswith': 'i starts',
-  'startswith': 'starts',
-  'iendswith': 'i ends',
-  'endswith': 'ends',
-  'iexact': 'i is',
-  'exact': 'is',
+  'startswith': '&nbsp;starts&nbsp;',
+  'iendswith': '&nbsp;i ends&nbsp;',
+  'endswith': '&nbsp;&nbsp;ends&nbsp;&nbsp;',
+  'iexact': '&nbsp;&nbsp;i is&nbsp;&nbsp;',
+  'exact': '&nbsp;&nbsp;&nbsp;is&nbsp;&nbsp;&nbsp;',
   }
 
 # URL parameters that are not query arguments
@@ -122,6 +122,8 @@ class Report(object):
   # Allow editing in this report or not
   editable = True
 
+  # Number of columns frozen in the report
+  frozenColumns = 0
 
 class ListReport(Report):
   '''
@@ -131,8 +133,11 @@ class ListReport(Report):
     - lastmodified():
       Returns a datetime object representing the last time the report content
       was updated.
-    - resultquery():
-      Returns an iterable that returns the data to be displayed.
+    - resultlist1():
+      Returns an iterable that returns the FROZEN data to be displayed.
+      If not specified, the basequeryset is used.
+    - resultlist2():
+      Returns an iterable that returns the SCROLLABLE data to be displayed.
       If not specified, the basequeryset is used.
 
   Possible attributes for a row field are:
@@ -164,7 +169,7 @@ class TableReport(Report):
     - lastmodified():
       Returns a datetime object representing the last time the report content
       was updated.
-    - resultquery():
+    - resultlist1():
       Returns an iterable that returns the data to be displayed.
       If not specified, the basequeryset is used.
 
@@ -186,7 +191,7 @@ class TableReport(Report):
   rows = ()
 
   # Cross definitions.
-  # Possible attributes for a row field are:
+  # Possible attributes for a cross field are:
   #   - title:
   #     Name of the cross that is displayed to the user.
   #     It defaults to the name of the field.
@@ -204,6 +209,8 @@ class TableReport(Report):
 
   # A list with required user permissions to view the report
   permissions = []
+
+  frozenColumns = 1000
 
 
 @staff_member_required
@@ -312,7 +319,7 @@ def view_report(request, entity=None, **args):
         if i.isdigit():
           reportclass.default_sortfield = reportclass.default_sortfield * 10 + int(i)
         else:
-          break  
+          break
       reportclass.default_sortdirection = reportclass.default_sort[-1]
     if sortfield<=0 or sortfield > len(reportclass.rows) \
       or (reportclass.rows[sortfield-1][1].has_key('sort') and reportclass.rows[sortfield-1][1]['sort']):
@@ -336,7 +343,7 @@ def view_report(request, entity=None, **args):
             '-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]),
             ('order_by' in reportclass.rows[reportclass.default_sortfield-1][1] and reportclass.rows[reportclass.default_sortfield-1][1]['order_by']) or reportclass.rows[reportclass.default_sortfield-1][0]
             )
-          sortsql = '%d desc, %d asc' % (sortfield, reportclass.default_sortfield) 
+          sortsql = '%d desc, %d asc' % (sortfield, reportclass.default_sortfield)
         else:
           counter = counter.order_by(
             '-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]),
@@ -367,15 +374,15 @@ def view_report(request, entity=None, **args):
       counter = counter.order_by(('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0])
     else:
       counter = counter.order_by('-%s' % (('order_by' in reportclass.rows[sortfield-1][1] and reportclass.rows[sortfield-1][1]['order_by']) or reportclass.rows[sortfield-1][0]))
-  
+
   # HTML output or CSV output?
   if type[:3] == 'csv':
     # CSV output
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % reportclass.title.lower()
-    if hasattr(reportclass,'resultquery'):
+    if hasattr(reportclass,'resultlist1'):
       # SQL override provided
-      response._container = _generate_csv(reportclass, reportclass.resultquery(counter, bucket, start, end, sortsql=sortsql), type, bucketlist)
+      response._container = _generate_csv(reportclass, reportclass.resultlist2(counter, bucket, start, end, sortsql=sortsql), type, bucketlist)
     else:
       # No SQL override provided
       response._container = _generate_csv(reportclass, counter, type, bucketlist)
@@ -388,14 +395,22 @@ def view_report(request, entity=None, **args):
   counter = counter[paginator.page(page).start_index()-1:paginator.page(page).end_index()]
 
   # Calculate the content of the page
-  if hasattr(reportclass,'resultquery'):
+  if hasattr(reportclass,'resultlist1'):
     # SQL override provided
     try:
-      results = reportclass.resultquery(counter, bucket, start, end, sortsql=sortsql)
+      objectlist1 = reportclass.resultlist1(counter, bucket, start, end, sortsql=sortsql)
     except InvalidPage: raise Http404
   else:
     # No SQL override provided
-    results = counter
+    objectlist1 = counter
+  if hasattr(reportclass,'resultlist2'):
+    # SQL override provided
+    try:
+      objectlist2 = reportclass.resultlist2(counter, bucket, start, end, sortsql=sortsql)
+    except InvalidPage: raise Http404
+  else:
+    # No SQL override provided
+    objectlist2 = objectlist1
 
   # Build the paginator html
   page_htmls = _get_paginator_html(request, paginator, page)
@@ -407,7 +422,8 @@ def view_report(request, entity=None, **args):
        'hasaddperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())),
        'haschangeperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_change_permission())),
        'request': request,
-       'objectlist': results,
+       'objectlist1': objectlist1,
+       'objectlist2': objectlist2,
        'reportbucket': bucket,
        'reportstart': start,
        'reportend': end,
@@ -421,7 +437,8 @@ def view_report(request, entity=None, **args):
        # Otherwise depend on the value in the report class.
        'reset_crumbs': reportclass.reset_crumbs and entity == None,
        'title': (entity and '%s %s %s' % (unicode(reportclass.title),_('for'),entity)) or reportclass.title,
-       'rowheader': _create_rowheader(request, sortfield, sortdirection, reportclass),
+       'rowheader': _create_rowheader(request, sortfield, sortdirection, reportclass, False),
+       'rowheaderfrozen': _create_rowheader(request, sortfield, sortdirection, reportclass, True),
        'crossheader': issubclass(reportclass, TableReport) and _create_crossheader(request, reportclass),
        'columnheader': issubclass(reportclass, TableReport) and _create_columnheader(request, reportclass, bucketlist),
      }
@@ -450,7 +467,7 @@ def _create_crossheader(req, cls):
   res = []
   for crs in cls.crosses:
     title = capfirst((crs[1].has_key('title') and crs[1]['title']) or crs[0]).replace(' ','&nbsp;')
-    # Editable crosses need to be a bit higher...
+    # Editable crosses need to be a bit higher @todo Not very clean...
     if crs[1].has_key('editable'):
       if (callable(crs[1]['editable']) and crs[1]['editable'](req)) \
       or (not callable(crs[1]['editable']) and crs[1]['editable']):
@@ -572,7 +589,7 @@ def _generate_csv(rep, qs, format, bucketlist):
 
   # @todo the result should be encoded to an encoding supported by the client. How can we query this from the request header?
   encoding = settings.DEFAULT_CHARSET
-  
+
   # Write a header row
   fields = [ ('title' in s[1] and capfirst(_(s[1]['title']))) or capfirst(_(s[0])).encode(encoding,"ignore") for s in rep.rows ]
   if issubclass(rep,TableReport):
@@ -596,7 +613,7 @@ def _generate_csv(rep, qs, format, bucketlist):
       try: fields = [ unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.rows ]
       except: fields = [ unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
       # Return string
-      writer.writerow(fields) 
+      writer.writerow(fields)
       yield sf.getvalue()
   elif issubclass(rep,TableReport):
     if format == 'csvlist':
@@ -635,7 +652,7 @@ def _generate_csv(rep, qs, format, bucketlist):
             # Return string
             writer.writerow(fields)
             yield sf.getvalue()
-          prev_row = row[rep.rows[0][0]]  
+          prev_row = row[rep.rows[0][0]]
           row_of_buckets = [row]
       # Write the last entity
       for cross in rep.crosses:
@@ -739,7 +756,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
   return (bucket,start,end,res)
 
 
-def _create_rowheader(req, sortfield, sortdirection, cls):
+def _create_rowheader(req, sortfield, sortdirection, cls, frozen = True):
   '''
   Generate html header row for the columns of a table or list report.
   '''
@@ -759,6 +776,9 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
   # A header cell for each row
   for row in cls.rows:
     number = number + 1
+    if issubclass(cls,ListReport):
+      if frozen and number > cls.frozenColumns: break
+      if not frozen and number <= cls.frozenColumns: continue
     title = capfirst(escape((row[1].has_key('title') and row[1]['title']) or row[0]))
     if not row[1].has_key('sort') or row[1]['sort']:
       # Sorting is allowed
@@ -797,15 +817,15 @@ def _create_rowheader(req, sortfield, sortdirection, cls):
       # If there is no sorting allowed, then there is also no filtering
       result.append( u'<th>%s</th>' % title )
 
+  if issubclass(cls,TableReport):
+    result.append('<th>&nbsp;</th>')
+
   # Extra hidden fields for query parameters that aren't rows
   for key in args2:
     result.append(u'<input type="hidden" name="%s" value="%s"/>' % (key, args2[key]))
 
-  # 'Go' button
-  if sortable:
-    result.append( u'<th><input type="submit" value="Go" tabindex="1100"/></th></form>' )
-  else:
-    result.append( u'</form>' )
+  # Final result
+  result.append( u'</form>' )
   return mark_safe(u'\n'.join(result))
 
 
@@ -828,7 +848,7 @@ class FilterText(object):
           operator = 'exact'
         if field == rowfield:
           for value in args.getlist(i):
-            res.append('<span class="textfilteroper" id="operator%d">%s</span><input class="filter" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            res.append('<span class="textfilteroper" id="operator%d">%s</span><input class="filter" onChange="filterform()" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
               % (counter, TextOperator[operator], counter, self.size,
                  escape(value),
                  rowfield, operator, number+1000,
@@ -840,7 +860,7 @@ class FilterText(object):
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
-      return '<span class="textfilteroper" id="operator%d">%s</span><input class="filter" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+      return '<span class="textfilteroper" id="operator%d">%s</span><input class="filter" onChange="filterform()" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
           % (number*10, TextOperator[self.operator], number*10, self.size,
              escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
@@ -869,7 +889,7 @@ class FilterNumber(object):
           operator = 'exact'
         if field == rowfield:
           for value in args.getlist(i):
-            res.append('<span class="numfilteroper" id="operator%d">%s</span><input class="filter" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            res.append('<span class="numfilteroper" id="operator%d">%s</span><input class="filter" onChange="filterform()" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
               % (counter, IntegerOperator[operator], counter, self.size,
                  escape(value),
                  rowfield, operator, number+1000,
@@ -881,7 +901,7 @@ class FilterNumber(object):
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
-      return '<span class="numfilteroper" id="operator%d">%s</span><input class="filter" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+      return '<span class="numfilteroper" id="operator%d">%s</span><input class="filter" onChange="filterform()" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
           % (number*10, IntegerOperator[self.operator], number*10, self.size,
              escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
@@ -910,7 +930,7 @@ class FilterDate(object):
           operator = 'exact'
         if field == rowfield:
           for value in args.getlist(i):
-            res.append('<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField filter" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+            res.append('<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField filter" onChange="filterform()" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
               % (counter, IntegerOperator[operator], counter, self.size,
                  escape(value),
                  rowfield, operator, number+1000,
@@ -922,7 +942,7 @@ class FilterDate(object):
     if len(res) > 0:
       return '<br/>'.join(res)
     else:
-      return '<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField filter" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
+      return '<span class="datefilteroper" id="operator%d">%s</span><input class="vDateField filter" onChange="filterform()" id="filter%d" type="text" size="%d" value="%s" name="%s__%s" tabindex="%d"/>' \
           % (number*10, IntegerOperator[self.operator], number*10, self.size,
              escape(args.get("%s__%s" % (rowfield,self.operator),'')),
              rowfield, self.operator, number+1000,
@@ -937,7 +957,7 @@ class FilterChoice(object):
   def output(self, row, number, args):
     rowfield = self.field or row[0]
     value = args.get(rowfield, None)
-    result = ['<select name="%s" class="filter"> <option value="">%s</option>' \
+    result = ['<select name="%s" class="filter" onChange="filterform()"> <option value="">%s</option>' \
       % (rowfield, _('All')) ]
     for code, label in self.choices:
       if code != '':

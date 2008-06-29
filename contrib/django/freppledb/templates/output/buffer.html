@@ -6,11 +6,19 @@
 {% include "locationcontext.html" %}
 {% endblock %}
 
-{% block tablebody %}
-{% for j in objectlist %}{% ifchanged j.buffer %}{% if not forloop.first %}</tr>{% endif %}
-<tr class="{% cycle row1,row2 %}"><td>{% superlink j.buffer buffer%}</td><td>{% superlink j.item item %}</td>
+{% block frozendata %}
+{% for j in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
+<td>{% superlink j.name buffer %}</td>
+<td>{% superlink j.item item %}</td>
 <td>{% if perms.input.change_location %}{% superlink j.location location %}{% else %}{{j.location}}{% endif %}</td>
-<td>{{ crossheader }}</td>{% endifchanged %}
+<td>{{ crossheader }}</td>
+{% endfor %}
+{% endblock %}
+
+{% block data %}
+{% for j in objectlist2 %}
+{% ifchanged j.buffer %}{% if not forloop.first %}</tr>{% endif %}<tr class="{% cycle row1,row2 %}">{% endifchanged %}
 <td>{{j.startoh|floatformat:1}}<br/>
 {% if j.produced %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=4a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__gte=0">{{j.produced|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
 {% if j.consumed %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=4a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}&amp;quantity__lt=0">{{j.consumed|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>

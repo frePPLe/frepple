@@ -5,13 +5,18 @@
 {% include "locationcontext.html" %}
 {% endblock %}
 
-{% block tablebody %}
-{% for j in objectlist %}
+{% block frozendata %}{% for j in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
+<td>{% superlink j.name operation %}</td>
+<td>{% superlink j.location location %}</td>
+<td>{{ crossheader }}</td>
+{% endfor %}{% endblock %}
+
+{% block data %}
+{% for j in objectlist2 %}
 {% ifchanged j.operation %}{% if not forloop.first %}</tr>{% endif %}
 <tr class="{% cycle row1,row2 %}" id="{{j.operation|urlencode}}">
-<td>{% superlink j.operation operation %}</td>
-<td>{% superlink j.location location %}</td>
-<td>{{ crossheader }}</td>{% endifchanged %}
+{% endifchanged %}
 <td>{% if j.locked_start %}<a href="/operationplan/?operation={{j.operation|urlencode}}&amp;o=2a&amp;startdate__gte={{j.startdate}}&amp;startdate__lt={{j.enddate}}&amp;locked=1">{{j.locked_start|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
 {% if j.total_start %}<a href="/operationplan/?operation={{j.operation|urlencode}}&amp;o=2a&amp;startdate__gte={{j.startdate}}&amp;startdate__lt={{j.enddate}}">{{j.total_start|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>
 {% if j.locked_end %}<a href="/operationplan/?operation={{j.operation|urlencode}}&amp;o=2a&amp;enddate__gte={{j.startdate}}&amp;enddate__lt={{j.enddate}}&amp;locked=1">{{j.locked_end|floatformat:2}}</a>{% else %}0.00{% endif %}<br/>

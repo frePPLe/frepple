@@ -5,10 +5,16 @@
 {% include "locationcontext.html" %}
 {% endblock %}
 
-{% block tablebody %}
-{% for i in objectlist %}
+{% block frozendata %}
+{% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{% superlink i.name operation key %}</td>
+</tr>{% endfor %}
+{% endblock %}
+
+{% block data %}
+{% for i in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
 <td>{{i.type}}</td>
 <td>{% superlink i.location location %}</td>
 <td>{{i.fence}}</td>

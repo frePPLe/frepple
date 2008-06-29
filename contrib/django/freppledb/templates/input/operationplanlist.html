@@ -4,10 +4,16 @@
 {% include "operationcontext.html" %}
 {% endblock %}
 
-{% block tablebody %}
-{% for i in objectlist %}
+{% block frozendata %}
+{% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
-<td>{{i.identifier}}</td>
+<td><a href="{{i.identifier}}">{{i.identifier}}</a></td>
+</tr>{% endfor %}
+{% endblock %}
+
+{% block data %}
+{% for i in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
 <td>{% superlink i.operation operation %}</td>
 <td>{{i.startdate}}</td>
 <td>{{i.enddate}}</td>

@@ -31,20 +31,28 @@
 {% include "customercontext.html" %}
 {% endblock %}
 
-{% block tablebody %}
+{% block frozendata %}{% for j in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
+<td>{% superlink j.name forecast %}</td>
+<td>{% superlink j.item item %}</td>
+<td>{% superlink j.customer customer %}</td>
+<td>{{ crossheader }}</td>
+{% endfor %}{% endblock %}
+
+{% block data %}
 {% if perms.input.change_forecastdemand %}
-{% for j in objectlist %}{% ifchanged j.forecast %}{% if not forloop.first %}</form></tr>{% endif %}
-<tr class="{% cycle row1,row2 %}" id="{{j.forecast|urlencode}}"><form name="{{j.forecast|escape}}"><td>{% superlink j.forecast forecast %}</td><td>{% superlink j.item item %}</td><td>{% superlink j.customer customer %}</td>
-<td>{{ crossheader }}</td>{% endifchanged %}
+{% for j in objectlist2 %}{% ifchanged j.forecast %}{% if not forloop.first %}</form></tr>{% endif %}
+<tr class="{% cycle row1,row2 %}" id="{{j.forecast|urlencode}}"><form name="{{j.forecast|escape}}">
+{% endifchanged %}
 <td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.total|floatformat:0}}" size="5" onchange="onChange(this)"/><br/>
 {{j.orders|floatformat:1}}<br/>
 {{j.net|floatformat:1}}<br/>
 {% if j.planned %}<a href="/demandplan/?demand={{j.forecast|urlencode}}&amp;o=5a&amp;plandate__gte={{j.startdate}}&amp;plandate__lt={{j.enddate}}" tabindex="-1">{{j.planned|floatformat:1}}</a>{% else %}0.0{% endif %}</td>
 {% if forloop.last %}</form></tr>{% endif %}{% endfor %}
 {% else %}
-{% for j in objectlist %}{% ifchanged j.forecast %}{% if not forloop.first %}</form></tr>{% endif %}
-<tr class="{% cycle row1,row2 %}" id="{{j.forecast|urlencode}}"><td>{% superlink j.forecast forecast %}</td><td>{% superlink j.item item %}</td><td>{% superlink j.customer customer %}</td>
-<td>{{ crossheader }}</td>{% endifchanged %}
+{% for j in objectlist2 %}{% ifchanged j.forecast %}{% if not forloop.first %}</form></tr>{% endif %}
+<tr class="{% cycle row1,row2 %}" id="{{j.forecast|urlencode}}">
+{% endifchanged %}
 <td>{{j.total|floatformat:0}}<br/>
 {{j.orders|floatformat:1}}<br/>
 {{j.net|floatformat:1}}<br/>

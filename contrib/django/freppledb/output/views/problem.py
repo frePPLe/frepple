@@ -35,6 +35,7 @@ class Report(ListReport):
   title = _("Problem Report")
   basequeryset = Problem.objects.all()
   model = Problem
+  frozenColumns = 0
   editable = False
   rows = (
     ('entity', {

@@ -5,10 +5,16 @@
 {% include "operationcontext.html" %}
 {% endblock %}
 
-{% block tablebody %}
-{% for i in objectlist %}
+{% block frozendata %}
+{% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td><a href="{{i.id}}">{{i.id}}</a></td>
+</tr>{% endfor %}
+{% endblock %}
+
+{% block data %}
+{% for i in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
 <td>{% superlink i.operation operation %}</td>
 <td>{% superlink i.resource resource %}</td>
 <td>{{i.quantity}}</td>

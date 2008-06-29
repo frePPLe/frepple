@@ -67,7 +67,12 @@ class OverviewReport(TableReport):
     return Plan.objects.all()[0].lastmodified
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
+    return basequery.values('name','item','location')
+
+  @staticmethod
+  def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
     # Execute a query  to get the onhand value at the start of our horizon
     startohdict = {}
@@ -89,7 +94,7 @@ class OverviewReport(TableReport):
 
     # Execute the actual query
     query = '''
-      select buf.name as row1, buf.item_id as row2, buf.location_id as row3, buf.onhand as row4,
+      select buf.name as row1, buf.item_id as row2, buf.location_id as row3,
              d.bucket as col1, d.startdate as col2, d.enddate as col3,
              coalesce(sum(%s),0.0) as consumed,
              coalesce(-sum(%s),0.0) as produced
@@ -121,20 +126,20 @@ class OverviewReport(TableReport):
         prevbuf = row[0]
         try: startoh = startohdict[prevbuf]
         except: startoh = 0
-        endoh = startoh + float(row[7] - row[8])
+        endoh = startoh + float(row[6] - row[7])
       else:
         startoh = endoh
-        endoh += float(row[7] - row[8])
+        endoh += float(row[6] - row[7])
       yield {
         'buffer': row[0],
         'item': row[1],
         'location': row[2],
-        'bucket': row[4],
-        'startdate': python_date(row[5]),
-        'enddate': python_date(row[6]),
+        'bucket': row[3],
+        'startdate': python_date(row[4]),
+        'enddate': python_date(row[5]),
         'startoh': startoh,
-        'produced': row[7],
-        'consumed': row[8],
+        'produced': row[6],
+        'consumed': row[7],
         'endoh': endoh,
         }
 
@@ -150,6 +155,7 @@ class DetailReport(ListReport):
     where=['out_operationplan.identifier = out_flowplan.operationplan'],
     tables=['out_operationplan'])
   model = FlowPlan
+  frozenColumns = 0
   editable = False
   rows = (
     ('thebuffer', {

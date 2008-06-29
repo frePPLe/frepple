@@ -278,7 +278,7 @@ class BufferList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','location','item',
       'onhand','type','minimum','producing','carrying_cost','lastmodified'
@@ -347,7 +347,7 @@ class ResourceList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','location','type',
       'maximum','cost','lastmodified'
@@ -404,7 +404,7 @@ class LocationList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','available','owner',
       'lastmodified'
@@ -453,7 +453,7 @@ class CustomerList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','owner','lastmodified'
       )
@@ -497,7 +497,7 @@ class ItemList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','operation','owner',
       'price','lastmodified'
@@ -550,7 +550,7 @@ class LoadList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'id','operation','resource','quantity','effective_start','effective_end',
       'lastmodified'
@@ -599,7 +599,7 @@ class FlowList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'id','operation','thebuffer','type','quantity','effective_start',
       'effective_end','lastmodified'
@@ -652,7 +652,7 @@ class DemandList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','item','customer','description','category','subcategory',
       'due','quantity','operation','priority','owner','lastmodified'
@@ -721,7 +721,7 @@ class ForecastList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','item','customer','calendar','description','category',
       'subcategory','operation','priority','minshipment','maxlateness',
@@ -897,7 +897,7 @@ class OperationList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','type','location','fence','pretime','posttime','sizeminimum',
       'sizemultiple','cost','lastmodified'
@@ -958,7 +958,7 @@ class SubOperationList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'operation','suboperation','priority','effective_start','effective_end',
       'lastmodified'
@@ -1003,7 +1003,7 @@ class OperationPlanList(ListReport):
   frozenColumns = 1
 
   @staticmethod
-  def resultquery(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'identifier','operation','startdate','enddate','quantity','locked',
       'lastmodified'

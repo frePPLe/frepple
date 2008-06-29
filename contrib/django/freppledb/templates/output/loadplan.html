@@ -5,8 +5,8 @@
 {% include "resourcecontext.html" %}
 {% endblock %}
 
-{% block tablebody %}
-{% for i in objectlist %}
+{% block data %}
+{% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{% superlink i.resource resource %}</td>
 <td>{% superlink i.operation operation %}</td>
@@ -16,5 +16,6 @@
 <td>{{i.operationplan}}</td>
 </tr>{% endfor %}
 {% endblock %}
+
 
 

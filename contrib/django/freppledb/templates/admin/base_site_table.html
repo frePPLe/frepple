@@ -20,23 +20,23 @@
 {% include "datefilter.html" %}
 {% block contextmenus %}{% endblock %}
 
-{% if rowheaderfrozen %}<div id="ul" class="gridupleft"><table id="ult">
+<table><tr>{% if rowheaderfrozen %}<td style="padding:0px"><div id="ul" class="gridupleft"><table id="ult">
 <thead><tr>{{ rowheader }}</tr></thead>
-</table></div>{% endif %}
+</table></div></td>{% endif %}
 
-<div id="ur" class="gridupright"><table id="urt" style="position: relative;">
+<td style="padding:0px"><div id="ur" class="gridupright"><table id="urt" style="position: relative;">
 <thead><tr>{{ columnheader }}</tr></thead>
-</table></div>
+</table></div></td></tr>
 
-{% if rowheaderfrozen %}<div id="dl" class="griddownleft">
+<tr>{% if rowheaderfrozen %}<td style="padding:0px"><div id="dl" class="griddownleft">
 <table id="dlt" style="float: left; position: relative;"><tbody>
 {% block frozendata %}{% endblock %}
-</tbody></table></div>{% endif %}
+</tbody></table></div></td>{% endif %}
 
-<div id="dr" class="griddownright" onscroll="syncScroll();">
+<td style="padding:0px"><div id="dr" class="griddownright" onscroll="syncScroll();">
 <table id="drt" ><tbody>
 {% block data %}{% endblock %}
-</tbody></table></div>
+</tbody></table></div></td></tr></table>
 
 {% block pagination %}<p class="paginator">
 {{paginator_html}}&nbsp;&nbsp;{{hits}} {% if reportclass.model %}{% trans reportclass.model._meta.verbose_name_plural %} {% endif %} {% ifnotequal hits fullhits %} (total <a class="showall" href="{{request.path}}{% if is_popup %}?pop=1{% endif %}">{{fullhits}}</a>){% endifnotequal %}

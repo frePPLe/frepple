@@ -475,10 +475,9 @@ function syncInitialize()
   }
 
   // Measure the size of the fixed, non-resizable, area of the layout
-  var totalavailable = $(document.documentElement).getDimensions();
   var floatingsize = $('dr').getDimensions();
-  fixedHeight = totalavailable.height - floatingsize.height + 2;
-  fixedWidth = totalavailable.width - floatingsize.width + 2;
+  fixedHeight = $(document.documentElement).scrollHeight - floatingsize.height;
+  fixedWidth = $(document.documentElement).scrollWidth - floatingsize.width;
 
   // Resize the available size for the table.
   syncResize();

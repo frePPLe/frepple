@@ -38,7 +38,22 @@ dateformat = '%Y-%m-%dT%H:%M:%S'
 CALENDARID = None
 
 
-class Plan(models.Model):
+class AuditModel(models.Model):
+    # Database fields
+    lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=datetime.now())
+
+    def save(self):
+      # Update the field with every change
+      self.lastmodified = datetime.now()
+      
+      # Call the real save() method
+      super(AuditModel, self).save()
+            
+    class Meta:
+      abstract = True
+      
+
+class Plan(AuditModel):
     # Database fields
     # The lastmodified field of this model is important. It is always updated to
     # the last date a frePPLe plan was successfully generated. The field allows
@@ -47,14 +62,13 @@ class Plan(models.Model):
     name = models.CharField(_('name'), max_length=60, null=True, blank=True)
     description = models.CharField(_('description'), max_length=60, null=True, blank=True)
     currentdate = models.DateTimeField(_('current date'))
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __unicode__(self): return self.name
 
     class Admin:
         pass
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'plan'
         verbose_name = _('plan')
         verbose_name_plural = _('plan') # There will only be 1 plan...
@@ -108,14 +122,13 @@ class Dates(models.Model):
         db_table = 'dates'
 
 
-class Calendar(models.Model):
+class Calendar(AuditModel):
     # Database fields
     name = models.CharField(_('name'), max_length=60, primary_key=True)
     description = models.CharField(_('description'), max_length=200, null=True, blank=True)
     category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     defaultvalue = models.DecimalField(_('default value'), max_digits=15, decimal_places=4, default=0.00)
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def currentvalue(self):
       ''' Returns the value of the calendar on this moment.'''
@@ -193,13 +206,13 @@ class Calendar(models.Model):
     class Admin:
         save_as = True
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'calendar'
         verbose_name = _('calendar')
         verbose_name_plural = _('calendars')
 
 
-class Bucket(models.Model):
+class Bucket(AuditModel):
     '''
     @todo The calendar editing isnt as flexible as the frePPLe core: the
     user interface only support non-overlapping calendar entries to keep SQL
@@ -213,7 +226,6 @@ class Bucket(models.Model):
     value = models.DecimalField(_('value'), max_digits=15, decimal_places=4, default=0.00, blank=True)
     priority = models.IntegerField(_('priority'), default=0, blank=True)
     name = models.CharField(_('name'), max_length=60, null=True, blank=True)
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def getvalue(self, when):
       if (self.startdate and when < self.startdate) or (self.enddate and when >= self.enddate):
@@ -225,7 +237,7 @@ class Bucket(models.Model):
       if self.name: return self.name
       return u"%s - %s" % (self.startdate, self.enddate)
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         ordering = ['startdate','name']
         db_table = 'bucket'
         verbose_name = _('calendar bucket')
@@ -274,7 +286,7 @@ dispatcher.connect(Bucket.insertBucket, signal=signals.post_save, sender=Bucket)
 dispatcher.connect(Bucket.updateEndDate, signal=signals.post_delete, sender=Bucket)
 
 
-class Location(models.Model):
+class Location(AuditModel):
     # Database fields
     name = models.CharField(_('name'), max_length=60, primary_key=True)
     description = models.CharField(_('description'), max_length=200, null=True, blank=True)
@@ -285,20 +297,19 @@ class Location(models.Model):
       help_text=_('Calendar defining the working hours and holidays of this location'))
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
       raw_id_admin=True, help_text=_('Hierarchical parent'))
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __unicode__(self): return self.name
 
     class Admin:
         save_as = True
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'location'
         verbose_name = _('location')
         verbose_name_plural = _('locations')
 
 
-class Customer(models.Model):
+class Customer(AuditModel):
     # Database fields
     name = models.CharField(_('name'), max_length=60, primary_key=True)
     description = models.CharField(_('description'), max_length=200, null=True, blank=True)
@@ -306,20 +317,19 @@ class Customer(models.Model):
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
       raw_id_admin=True, help_text=_('Hierarchical parent'))
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __unicode__(self): return self.name
 
     class Admin:
         save_as = True
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'customer'
         verbose_name = _('customer')
         verbose_name_plural = _('customers')
 
 
-class Item(models.Model):
+class Item(AuditModel):
     # Database fields
     name = models.CharField(_('name'), max_length=60, primary_key=True)
     description = models.CharField(_('description'), max_length=200, null=True, blank=True)
@@ -331,20 +341,19 @@ class Item(models.Model):
       help_text=_("Selling price of the item"))
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
       raw_id_admin=True, help_text=_('Hierarchical parent'))
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __unicode__(self): return self.name
 
     class Admin:
         save_as = True
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'item'
         verbose_name = _('item')
         verbose_name_plural = _('items')
 
 
-class Operation(models.Model):
+class Operation(AuditModel):
     # Types of operations
     operationtypes = (
       ('',_('fixed_time')),
@@ -375,7 +384,6 @@ class Operation(models.Model):
       help_text=_("A fixed duration for the operation"))
     duration_per = models.DecimalField(_('duration per unit'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("A variable duration for the operation"))
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __unicode__(self): return self.name
 
@@ -398,13 +406,13 @@ class Operation(models.Model):
                }),
         )
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'operation'
         verbose_name = _('operation')
         verbose_name_plural = _('operations')
 
 
-class SubOperation(models.Model):
+class SubOperation(AuditModel):
     ## Django bug: @todo
     ## We want to edit the sub-operations inline as part of the operation editor.
     ## But django doesn't like it...
@@ -418,8 +426,6 @@ class SubOperation(models.Model):
       raw_id_admin=True, related_name='superoperations', core=True)
     effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
     effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True,
-      editable=False, db_index=True)
 
     def __unicode__(self):
         return self.operation.name \
@@ -429,14 +435,14 @@ class SubOperation(models.Model):
     class Admin:
         pass
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'suboperation'
         ordering = ['operation','priority','suboperation']
         verbose_name = _('suboperation')
         verbose_name_plural = _('suboperations')
 
 
-class Buffer(models.Model):
+class Buffer(AuditModel):
     # Types of buffers
     buffertypes = (
       ('',_('Default')),
@@ -481,8 +487,6 @@ class Buffer(models.Model):
       help_text=_('Replenishments of a procure buffer are a multiple of this quantity'))
     size_maximum =  models.DecimalField(_('size_maximum'),max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_('Maximum size of replenishments of a procure buffer'))
-    # Maintenance fields
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __unicode__(self): return self.name
 
@@ -517,13 +521,13 @@ class Buffer(models.Model):
         )
         save_as = True
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'buffer'
         verbose_name = _('buffer')
         verbose_name_plural = _('buffers')
 
 
-class Resource(models.Model):
+class Resource(AuditModel):
     # Types of resources
     resourcetypes = (
       ('',_('Default')),
@@ -542,8 +546,6 @@ class Resource(models.Model):
       null=True, blank=True, db_index=True, raw_id_admin=True)
     cost = models.DecimalField(_('cost'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Cost for using 1 unit of the resource for 1 hour"))
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True,
-      editable=False, db_index=True)
 
     # Methods
     def __unicode__(self): return self.name
@@ -558,13 +560,13 @@ class Resource(models.Model):
     class Admin:
         save_as = True
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'resource'
         verbose_name = _('resource')
         verbose_name_plural = _('resources')
 
 
-class Flow(models.Model):
+class Flow(AuditModel):
     # Types of flow
     flowtypes = (
       ('',_('Start')),
@@ -583,7 +585,6 @@ class Flow(models.Model):
     effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
     effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __unicode__(self):
         return '%s - %s' % (self.operation.name, self.thebuffer.name)
@@ -591,20 +592,19 @@ class Flow(models.Model):
     class Admin:
         save_as = True
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'flow'
         unique_together = (('operation','thebuffer'),)
         verbose_name = _('flow')
         verbose_name_plural = _('flows')
 
 
-class Load(models.Model):
+class Load(AuditModel):
     operation = models.ForeignKey(Operation, verbose_name=_('operation'), db_index=True, raw_id_admin=True, related_name='loads')
     resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, raw_id_admin=True, related_name='loads')
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
     effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
     effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __unicode__(self):
         return '%s - %s' % (self.operation.name, self.resource.name)
@@ -612,14 +612,14 @@ class Load(models.Model):
     class Admin:
         save_as = True
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'resourceload'
         unique_together = (('operation','resource'),)
         verbose_name = _('load')
         verbose_name_plural = _('loads')
 
 
-class OperationPlan(models.Model):
+class OperationPlan(AuditModel):
     identifier = models.IntegerField(_('identifier'),primary_key=True,
       help_text=_('Unique identifier of an operationplan'))
     operation = models.ForeignKey(Operation, verbose_name=_('operation'),
@@ -630,20 +630,19 @@ class OperationPlan(models.Model):
     enddate = models.DateTimeField(_('end date'),help_text=_('end date'))
     locked = models.BooleanField(_('locked'),default=True, radio_admin=True,
       help_text=_('Prevent or allow changes'))
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     def __unicode__(self): return str(self.identifier)
 
     class Admin:
         save_as = True
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'operationplan'
         verbose_name = _('operationplan')
         verbose_name_plural = _('operationplans')
 
 
-class Demand(models.Model):
+class Demand(AuditModel):
     # The priorities defined here are for convenience only. FrePPLe accepts any number as priority.
     demandpriorities = (
       (1,_('1 - high')),
@@ -671,7 +670,6 @@ class Demand(models.Model):
       help_text=_("Maximum lateness allowed when planning this demand"))
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, raw_id_admin=True,
       help_text=_('Hierarchical parent'))
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     # Convenience methods
     def __unicode__(self): return self.name
@@ -683,13 +681,13 @@ class Demand(models.Model):
         )
         save_as = True
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'demand'
         verbose_name = _('demand')
         verbose_name_plural = _('demands')
 
 
-class Forecast(models.Model):
+class Forecast(AuditModel):
     # Database fields
     name = models.CharField(_('name'), max_length=60, primary_key=True)
     description = models.CharField(_('description'), max_length=200, null=True, blank=True)
@@ -706,7 +704,6 @@ class Forecast(models.Model):
     maxlateness = models.DecimalField(_('maximum lateness'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Maximum lateness allowed when planning this demand"))
     discrete = models.BooleanField(_('discrete'),default=True, radio_admin=True, help_text=_('Round forecast numbers to integers'))
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     # Convenience methods
     def __unicode__(self): return self.name
@@ -878,24 +875,23 @@ class Forecast(models.Model):
         )
         save_as = True
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'forecast'
         verbose_name = _('forecast')
         verbose_name_plural = _('forecasts')
 
 
-class ForecastDemand(models.Model):
+class ForecastDemand(AuditModel):
     # Database fields
     forecast = models.ForeignKey(Forecast, verbose_name=_('forecast'), null=False, db_index=True, raw_id_admin=True, related_name='entries')
     startdate = models.DateField(_('start date'), null=False)
     enddate = models.DateField(_('end date'), null=False)
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default=0)
-    lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
     # Convenience methods
     def __unicode__(self): return self.forecast.name + " " + str(self.startdate) + " - " + str(self.enddate)
 
-    class Meta:
+    class Meta(AuditModel.Meta):
         db_table = 'forecastdemand'
         verbose_name = _('forecast demand')
         verbose_name_plural = _('forecast demands')

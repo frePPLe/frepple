@@ -283,29 +283,33 @@ div #timebuckets
 
 div.gridupleft
 {
+  position: relative;
   float: left;
-  z-index:4;
+  z-index: 4;
+  /* height and width are set dynamically from javascript */
 }
 
 div.gridupright
 {
-  /* width: is set dynamically from javascript */
+  position: relative;
   overflow: hidden;
   z-index: 3;
+  /* height and width are set dynamically from javascript */
 }
 
 div.griddownleft
 {
+  position: relative;
   float: left;
   overflow: hidden;
-  /* height: is set dynamically from javascript */
   z-index:4;
+  /* height and width are set dynamically from javascript */
 }
 
 div.griddownright
 {
+  position: relative;
   overflow: auto;
-  /* height: is set dynamically from javascript */
-  /* width: is set dynamically from javascript */
   z-index: 3;
+  /* height and width are set dynamically from javascript */
 }

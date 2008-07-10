@@ -141,8 +141,14 @@ var ContextMenu = {
 		else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) )
 		  return {'x' : document.body.scrollLeft, 'y' : document.body.scrollTop}
 		return {'x' : 0, 'y' : 0}
-	}
+	},
 
+  // Hide the menu
+  hide : function ()
+  {
+		if (ContextMenu._menuElement)
+			ContextMenu._menuElement.style.display = 'none';
+  }
 }
 
 // Install a handler for all clicks on the page
@@ -177,7 +183,6 @@ document.observe('mousedown',  function (event) {
 
 function buttonClick(event, menuId)
 {
-
   // Get the target button element.
   var button = $(Event.element(event));
 
@@ -522,4 +527,5 @@ function syncScroll()
   var dlt = $('dlt');
   if (dlt) dlt.style.bottom = i.scrollTop + 'px';
   $('urt').style.right = i.scrollLeft + 'px';
+  ContextMenu.hide();
 }

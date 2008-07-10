@@ -21,20 +21,20 @@
 {% include "datefilter.html" %}
 {% block contextmenus %}{% endblock %}
 
-<table style="overflow: auto;"><tr>{% if reportclass.frozenColumns %}<td style="padding:0px"><div id="ul" class="gridupleft"><table id="ult">
+<table><tr>{% if reportclass.frozenColumns %}<td style="padding:0px;"><div id="ul" class="gridupleft"><table id="ult">
 <thead><tr>{{ rowheaderfrozen }}</tr></thead>
 </table></div></td>{% endif %}
 
-<td style="padding:0px"><div id="ur" class="gridupright"><table id="urt" style="position: relative;">
+<td style="padding:0px;"><div id="ur" class="gridupright"><table id="urt" style="position: relative;">
 <thead><tr>{{ rowheader }}</tr></thead>
 </table></div></td></tr>
 
-<tr>{% if reportclass.frozenColumns %}<td style="padding:0px"><div id="dl" class="griddownleft" onscroll="syncScroll();">
+<tr>{% if reportclass.frozenColumns %}<td style="padding:0px;"><div id="dl" class="griddownleft">
 <table id="dlt" style="float: left; position: relative;"><tbody>
 {% block frozendata %}{% endblock %}
 </tbody></table></div></td>{% endif %}
 
-<td style="padding:0px"><div id="dr" class="griddownright" onscroll="syncScroll();">
+<td style="padding:0px;"><div id="dr" class="griddownright" onscroll="syncScroll();">
 <table id="drt"><tbody>
 {% block data %}{% endblock %}
 </tbody></table></div></td></tr></table>

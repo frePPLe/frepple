@@ -5,7 +5,7 @@
 {% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
 {% endfor %}
 <script type="text/javascript">
-    Event.observe(window, 'load', syncInitialize);
+    installLoadHandler();
 </script>
 {% endblock %}
 {% block coltype %}colM{% endblock %}

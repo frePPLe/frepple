@@ -4,7 +4,7 @@
 {% block extrahead %}{{ block.super }}
 {% for js in javascript_imports %}<script type="text/javascript" src="{{js}}"></script>
 <script type="text/javascript">
-    Event.observe(window, 'load', syncInitialize);
+    installLoadHandler();
 </script>
 {% endfor %}
 {% endblock %}

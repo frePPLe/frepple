@@ -413,10 +413,25 @@ var fixedWidth;
    - resize the scrollable table such that the available screen space is used optimally
 */
 
+function installLoadHandler()
+{
+  // Disable the django-supplied javascript function to initialize calendar menus.
+  removeEvent(window,'load',DateTimeShortcuts.init);
+  
+  // Install our own handler, which will explicitly call the django function.
+  // This is the only cross-browser method to garantuee that the django handler is 
+  // called before out own one.
+  Event.observe(window, 'load', syncInitialize);
+}
+
+
 function syncInitialize()
 {
   var hasFrozenColumns = $('dlt') ? true : false;
   var hasData = $('drt').down('tr') ? true : false;
+  
+  // Call the django-supplied javascript function to initialize calendar menus.
+  DateTimeShortcuts.init();
 
   if (hasData)
   {

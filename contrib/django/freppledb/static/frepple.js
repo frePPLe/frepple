@@ -400,6 +400,9 @@ function bucket_close()
 
 var fixedHeight;
 var fixedWidth;
+var TotalWidth = 0;
+var TotalHeight = 0;
+
 
 /* The scrolling table is built from 4 divs, each with a nested table in it:
      div ul             div ur
@@ -416,10 +419,10 @@ var fixedWidth;
 function installLoadHandler()
 {
   // Disable the django-supplied javascript function to initialize calendar menus.
-  removeEvent(window,'load',DateTimeShortcuts.init);
-  
+  try {removeEvent(window,'load',DateTimeShortcuts.init);} catch (error) {;};
+
   // Install our own handler, which will explicitly call the django function.
-  // This is the only cross-browser method to garantuee that the django handler is 
+  // This is the only cross-browser method to garantuee that the django handler is
   // called before out own one.
   Event.observe(window, 'load', syncInitialize);
 }
@@ -429,72 +432,106 @@ function syncInitialize()
 {
   var hasFrozenColumns = $('dlt') ? true : false;
   var hasData = $('drt').down('tr') ? true : false;
-  
+
   // Call the django-supplied javascript function to initialize calendar menus.
-  DateTimeShortcuts.init();
+  try {DateTimeShortcuts.init();} catch (error) {;};
+
+  // Variables for the cell dimensions
+  var CellFrozenWidth = new Array();
+  var CellWidth = new Array();
+  var CellHeight = new Array();
+  var TotalFrozenWidth = 0;
+  var i;
 
   if (hasData)
   {
-    // Sync the width of the scrollable columns, up and down
+    // First step: Measure the dimensions of the rows and columns
+
+    // Measure cell width
     var columnheaders = $('urt').getElementsBySelector('th');
     var columndata = $('drt').down('tr').getElementsBySelector('td');
-    var i = 0;
+    i = 0;
     var totalWidth = 0;
     columndata.each(function(s) {
       left = s.getWidth();
       right = columnheaders[i].getWidth();
-      if (left < right) left = right;
-      columnheaders[i].style.width = left + 'px';
-      s.style.width = left + 'px';
-      totalWidth += left;
-      i = i + 1;
+      CellWidth[i] = right > left ? right : left;
+      TotalWidth += CellWidth[i++];
       });
-    $('drt').style.width = totalWidth + 'px';
-    $('urt').style.width = totalWidth + 'px';
-  }
 
-  if (hasFrozenColumns && hasData)
-  {
-    // Sync the height of the header row, frozen and scrolling sides
-    var left = $('ult').getHeight();
-    var right = $('urt').getHeight();
-    if (left < right) left = right;
-    $('urt').style.height = left + 'px';
-    $('ult').style.height = left + 'px';
+    if (hasFrozenColumns)
+    {
+      // Measure frozen cell width
+      var columnheaders = $('ult').getElementsBySelector('th');
+      var columndata = $('dlt').down('tr').getElementsBySelector('td');
+      i = 0;
+      columndata.each(function(s) {
+        left = s.getWidth();
+        right = columnheaders[i].getWidth();
+        CellFrozenWidth[i] = right > left ? right : left;
+        TotalFrozenWidth += CellFrozenWidth[i++];
+        });
 
-    // Sync the width of the frozen columns, up and down
-    var columnheaders = $('ult').getElementsBySelector('th');
-    var columndata = $('dlt').down('tr').getElementsBySelector('td');
-    var i = 0;
-    var totalWidth = 0;
+      // Sync cell height
+      var rowheaders = $('dlt').getElementsBySelector('tr');
+      var rowdata = $('drt').getElementsBySelector('tr');
+      i = 0;
+      rowheaders.each(function(s) {
+        left = s.getHeight();
+        right = rowdata[i].getHeight();
+        CellHeight[i] = right > left ? right : left;
+        TotalHeight += CellHeight[i++];
+        });
+    }
+
+    // Second step: Updates the dimensions of the rows and columns
+    // We only start resizing after all cells are measured, because the
+    // updating also could influence the measuring...
+
+    // Resize the width of the scrollable columns, up and down
+    var columnheaders = $('urt').getElementsBySelector('th');
+    var columndata = $('drt').down('tr').getElementsBySelector('td');
+    i = 0;
     columndata.each(function(s) {
-      left = s.getWidth();
-      right = columnheaders[i].getWidth();
-      if (left < right) left = right;
-      columnheaders[i].style.width = left + 'px';
-      s.style.width = left + 'px';
-      totalWidth += left;
-      i = i + 1;
+      columnheaders[i].style.width = CellWidth[i] + 'px';
+      s.style.width = CellWidth[i++] + 'px';
       });
-    $('dlt').style.width = totalWidth + 'px';
-    $('ult').style.width = totalWidth + 'px';
+    $('drt').style.width = TotalWidth + 'px';
+    $('urt').style.width = TotalWidth + 'px';
 
-    // Sync the height of the data rows, frozen and scrolling sides
-    var rowheaders = $('dlt').getElementsBySelector('tr');
-    var rowdata = $('drt').getElementsBySelector('tr');
-    var i = 0;
-    rowheaders.each(function(s) {
-      left = s.getHeight();
-      right = rowdata[i].getHeight();
-      if (left > right)
-        rowdata[i].style.height = left + 'px';
-      else if (left < right)
-        s.style.height = right + 'px';
-      i = i + 1;
-      });
+    if (hasFrozenColumns)
+    {
+      // Resize the height of the header row, frozen and scrolling sides
+      var left = $('ult').getHeight();
+      var right = $('urt').getHeight();
+      if (left < right) left = right;
+      $('urt').style.height = left + 'px';
+      $('ult').style.height = left + 'px';
+
+      // Resize the width of the frozen columns, up and down
+      var columnheaders = $('ult').getElementsBySelector('th');
+      var columndata = $('dlt').down('tr').getElementsBySelector('td');
+      i = 0;
+      columndata.each(function(s) {
+        columnheaders[i].style.width = CellFrozenWidth[i] + 'px';
+        s.style.width = CellFrozenWidth[i++] + 'px';
+        });
+      $('dlt').style.width = TotalFrozenWidth + 'px';
+      $('ult').style.width = TotalFrozenWidth + 'px';
+
+      // Resize the height of the data rows, frozen and scrolling sides
+      var rowheaders = $('dlt').getElementsBySelector('tr');
+      var rowdata = $('drt').getElementsBySelector('tr');
+      i = 0;
+      rowheaders.each(function(s) {
+        rowdata[i].style.height = CellHeight[i] + 'px';
+        s.style.height = CellHeight[i++] + 'px';
+        });
+    }
   }
 
   // Measure the size of the fixed, non-resizable, area of the layout
+  // @todo this calc is only correct if the container is squized. If the container size is unconstrained, the calcs of the fixedsize are wrong
   var floatingsize = $('dr').getDimensions();
   fixedHeight = $(document.documentElement).scrollHeight - floatingsize.height;
   fixedWidth = $(document.documentElement).scrollWidth - floatingsize.width;
@@ -509,6 +546,7 @@ function syncInitialize()
 
 function syncResize()
 {
+
   var hasFrozenColumns = $('ult') ? true : false;
 
   // Resize the available size for the table. This needs to be done at the
@@ -522,15 +560,18 @@ function syncResize()
   // we use a scrollbar on the window rather than resizing the container.
   var height = totalavailable.height - fixedHeight;
   if (height < 150) height = 150;
-  var dl = $('dl');
-  if (dl) dl.style.height = height + "px";
+  try { $('dl').style.height = height + "px"; } catch (error) {};
   $('dr').style.height = height + "px";
 
   // Width
   var width = totalavailable.width - fixedWidth;
   if (width < 150) width = 150;
   $('ur').style.width = width + "px";
-  $('dr').style.width = width + "px";
+  if (height > TotalHeight)
+    // Account for the size of the scrollbar
+    $('dr').style.width = (width+20) + "px";
+  else
+    $('dr').style.width = width + "px";
 }
 
 

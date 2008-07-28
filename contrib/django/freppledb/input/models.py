@@ -33,6 +33,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 # The date format used by the frepple XML data.
+# todo is this dateformat variable still used???
 dateformat = '%Y-%m-%dT%H:%M:%S'
 
 CALENDARID = None
@@ -45,13 +46,13 @@ class AuditModel(models.Model):
     def save(self):
       # Update the field with every change
       self.lastmodified = datetime.now()
-      
+
       # Call the real save() method
       super(AuditModel, self).save()
-            
+
     class Meta:
       abstract = True
-      
+
 
 class Plan(AuditModel):
     # Database fields
@@ -64,9 +65,6 @@ class Plan(AuditModel):
     currentdate = models.DateTimeField(_('current date'))
 
     def __unicode__(self): return self.name
-
-    class Admin:
-        pass
 
     class Meta(AuditModel.Meta):
         db_table = 'plan'
@@ -103,18 +101,6 @@ class Dates(models.Model):
     default_end = models.DateField(_('default end'),db_index=True, null=True)
 
     def __unicode__(self): return str(self.day)
-
-    class Admin:
-        fields = (
-            (None, {'fields': (('day','day_start','day_end'),
-                               'dayofweek',
-                               ('week','week_start','week_end'),
-                               ('month','month_start','month_end'),
-                               ('quarter','quarter_start','quarter_end'),
-                               ('year','year_start','year_end'),
-                               ('default','default_start','default_end'),
-                               )}),
-            )
 
     class Meta:
         verbose_name = _('dates')  # There will only be multiple dates...
@@ -203,9 +189,6 @@ class Calendar(AuditModel):
 
     def __unicode__(self): return self.name
 
-    class Admin:
-        save_as = True
-
     class Meta(AuditModel.Meta):
         db_table = 'calendar'
         verbose_name = _('calendar')
@@ -293,15 +276,12 @@ class Location(AuditModel):
     category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     available = models.ForeignKey(Calendar, verbose_name=_('available'),
-      null=True, blank=True, raw_id_admin=True,
+      null=True, blank=True,
       help_text=_('Calendar defining the working hours and holidays of this location'))
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
-      raw_id_admin=True, help_text=_('Hierarchical parent'))
+      help_text=_('Hierarchical parent'))
 
     def __unicode__(self): return self.name
-
-    class Admin:
-        save_as = True
 
     class Meta(AuditModel.Meta):
         db_table = 'location'
@@ -316,12 +296,9 @@ class Customer(AuditModel):
     category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
-      raw_id_admin=True, help_text=_('Hierarchical parent'))
+      help_text=_('Hierarchical parent'))
 
     def __unicode__(self): return self.name
-
-    class Admin:
-        save_as = True
 
     class Meta(AuditModel.Meta):
         db_table = 'customer'
@@ -336,16 +313,13 @@ class Item(AuditModel):
     category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     operation = models.ForeignKey('Operation', verbose_name=_('delivery operation'), null=True, blank=True,
-      raw_id_admin=True, help_text=_("Default operation used to ship a demand for this item"))
+      help_text=_("Default operation used to ship a demand for this item"))
     price = models.DecimalField(_('price'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Selling price of the item"))
     owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, related_name='children',
-      raw_id_admin=True, help_text=_('Hierarchical parent'))
+      help_text=_('Hierarchical parent'))
 
     def __unicode__(self): return self.name
-
-    class Admin:
-        save_as = True
 
     class Meta(AuditModel.Meta):
         db_table = 'item'
@@ -367,7 +341,7 @@ class Operation(AuditModel):
     name = models.CharField(_('name'), max_length=60, primary_key=True)
     type = models.CharField(_('type'), _('type'), max_length=20, null=True, blank=True, choices=operationtypes)
     location = models.ForeignKey(Location, verbose_name=_('location'), null=True,
-      blank=True, db_index=True, raw_id_admin=True)
+      blank=True, db_index=True)
     fence = models.DecimalField(_('release fence'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Operationplans within this time window from the current day are expected to be released to production ERP"))
     pretime = models.DecimalField(_('pre-op time'), max_digits=15, decimal_places=4, null=True, blank=True,
@@ -396,16 +370,6 @@ class Operation(AuditModel):
         # Call the real save() method
         super(Operation, self).save()
 
-    class Admin:
-        save_as = True
-        fields = (
-            (None, {'fields': ('name', 'type', 'location')}),
-            (_('Planning parameters'), {
-               'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'cost', 'duration', 'duration_per'),
-               'classes': 'collapse'
-               }),
-        )
-
     class Meta(AuditModel.Meta):
         db_table = 'operation'
         verbose_name = _('operation')
@@ -413,17 +377,11 @@ class Operation(AuditModel):
 
 
 class SubOperation(AuditModel):
-    ## Django bug: @todo
-    ## We want to edit the sub-operations inline as part of the operation editor.
-    ## But django doesn't like it...
-    ## See Django ticket: http://code.djangoproject.com/ticket/1939
-    #operation = models.ForeignKey(Operation, edit_inline=models.TABULAR,
-    #  min_num_in_admin=3, num_extra_on_change=1, related_name='alfa')
     operation = models.ForeignKey(Operation, verbose_name=_('operation'),
-      raw_id_admin=True, related_name='suboperations')
+      related_name='suboperations')
     priority = models.IntegerField(_('priority'), default=1)
     suboperation = models.ForeignKey(Operation, verbose_name=_('suboperation'),
-      raw_id_admin=True, related_name='superoperations', core=True)
+      related_name='superoperations', core=True)
     effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
     effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
 
@@ -431,9 +389,6 @@ class SubOperation(AuditModel):
         return self.operation.name \
           + "   " + str(self.priority) \
           + "   " + self.suboperation.name
-
-    class Admin:
-        pass
 
     class Meta(AuditModel.Meta):
         db_table = 'suboperation'
@@ -457,14 +412,14 @@ class Buffer(AuditModel):
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=buffertypes, default='')
     location = models.ForeignKey(Location, verbose_name=_('location'), null=True,
-      blank=True, db_index=True, raw_id_admin=True)
-    item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, null=True, raw_id_admin=True)
+      blank=True, db_index=True)
+    item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, null=True)
     onhand = models.DecimalField(_('onhand'),max_digits=15, decimal_places=4, default=0.00, null=True, blank=True, help_text=_('current inventory'))
     minimum = models.ForeignKey(Calendar, verbose_name=_('minimum'),
-      null=True, blank=True, raw_id_admin=True,
+      null=True, blank=True,
       help_text=_('Calendar storing the safety stock profile'))
     producing = models.ForeignKey(Operation, verbose_name=_('producing'),
-      null=True, blank=True, related_name='used_producing', raw_id_admin=True,
+      null=True, blank=True, related_name='used_producing',
       help_text=_('Operation to replenish the buffer'))
     carrying_cost = models.DecimalField(_('carrying cost'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Cost of holding inventory in this buffer, expressed as an annual percentage of the item price."))
@@ -507,20 +462,6 @@ class Buffer(AuditModel):
             self.size_maximum = None
         super(Buffer, self).save()
 
-    class Admin:
-        fields = (
-            (None,{
-              'fields': (('name'), ('item', 'location'), 'description', ('category', 'subcategory'))}),
-            (_('Inventory'), {
-              'fields': ('onhand',)}),
-            (_('Planning parameters'), {
-              'fields': ('type','minimum','producing','carrying_cost')},),
-            (_('Planning parameters for procurement buffers'), {
-              'fields': ('leadtime','fence','min_inventory','max_inventory','min_interval','max_interval','size_minimum','size_multiple','size_maximum'),
-              'classes': 'collapse'},),
-        )
-        save_as = True
-
     class Meta(AuditModel.Meta):
         db_table = 'buffer'
         verbose_name = _('buffer')
@@ -541,9 +482,9 @@ class Resource(AuditModel):
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
     type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=resourcetypes, default='')
     maximum = models.ForeignKey(Calendar, verbose_name=_('maximum'), null=True, blank=True,
-      raw_id_admin=True, help_text=_('Calendar defining the available capacity'))
+      help_text=_('Calendar defining the available capacity'))
     location = models.ForeignKey(Location, verbose_name=_('location'),
-      null=True, blank=True, db_index=True, raw_id_admin=True)
+      null=True, blank=True, db_index=True)
     cost = models.DecimalField(_('cost'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Cost for using 1 unit of the resource for 1 hour"))
 
@@ -556,9 +497,6 @@ class Resource(AuditModel):
             self.maximum = None
         # Call the real save() method
         super(Resource, self).save()
-
-    class Admin:
-        save_as = True
 
     class Meta(AuditModel.Meta):
         db_table = 'resource'
@@ -575,9 +513,9 @@ class Flow(AuditModel):
 
     # Database fields
     operation = models.ForeignKey(Operation, verbose_name=_('operation'),
-      db_index=True, raw_id_admin=True, related_name='flows')
+      db_index=True, related_name='flows')
     thebuffer = models.ForeignKey(Buffer, verbose_name=_('buffer'),
-      db_index=True, raw_id_admin=True, related_name='flows')
+      db_index=True, related_name='flows')
     type = models.CharField(_('type'), max_length=20, null=True, blank=True,
       choices=flowtypes,
       help_text=_('Consume/produce material at the start or the end of the operationplan'),
@@ -589,9 +527,6 @@ class Flow(AuditModel):
     def __unicode__(self):
         return '%s - %s' % (self.operation.name, self.thebuffer.name)
 
-    class Admin:
-        save_as = True
-
     class Meta(AuditModel.Meta):
         db_table = 'flow'
         unique_together = (('operation','thebuffer'),)
@@ -600,17 +535,14 @@ class Flow(AuditModel):
 
 
 class Load(AuditModel):
-    operation = models.ForeignKey(Operation, verbose_name=_('operation'), db_index=True, raw_id_admin=True, related_name='loads')
-    resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, raw_id_admin=True, related_name='loads')
+    operation = models.ForeignKey(Operation, verbose_name=_('operation'), db_index=True, related_name='loads')
+    resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, related_name='loads')
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
     effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
     effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
 
     def __unicode__(self):
         return '%s - %s' % (self.operation.name, self.resource.name)
-
-    class Admin:
-        save_as = True
 
     class Meta(AuditModel.Meta):
         db_table = 'resourceload'
@@ -623,18 +555,15 @@ class OperationPlan(AuditModel):
     identifier = models.IntegerField(_('identifier'),primary_key=True,
       help_text=_('Unique identifier of an operationplan'))
     operation = models.ForeignKey(Operation, verbose_name=_('operation'),
-      db_index=True, raw_id_admin=True)
+      db_index=True)
     quantity = models.DecimalField(_('quantity'),max_digits=15,
       decimal_places=4, default='1.00')
     startdate = models.DateTimeField(_('start date'),help_text=_('start date'))
     enddate = models.DateTimeField(_('end date'),help_text=_('end date'))
-    locked = models.BooleanField(_('locked'),default=True, radio_admin=True,
+    locked = models.BooleanField(_('locked'),default=True,
       help_text=_('Prevent or allow changes'))
 
     def __unicode__(self): return str(self.identifier)
-
-    class Admin:
-        save_as = True
 
     class Meta(AuditModel.Meta):
         db_table = 'operationplan'
@@ -655,31 +584,24 @@ class Demand(AuditModel):
     description = models.CharField(_('description'), max_length=200, null=True, blank=True)
     category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
-    customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, db_index=True, raw_id_admin=True)
-    item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, raw_id_admin=True)
+    customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, db_index=True)
+    item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True)
     due = models.DateTimeField(_('due'))
     operation = models.ForeignKey(Operation,
       verbose_name=_('delivery operation'), null=True, blank=True,
-      related_name='used_demand', raw_id_admin=True,
+      related_name='used_demand',
       help_text=_('Operation used to satisfy this demand'))
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4)
-    priority = models.PositiveIntegerField(_('priority'),default=2, choices=demandpriorities, radio_admin=True)
+    priority = models.PositiveIntegerField(_('priority'),default=2, choices=demandpriorities)
     minshipment = models.DecimalField(_('minimum shipment'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_('Minimum shipment quantity when planning this demand'))
     maxlateness = models.DecimalField(_('maximum lateness'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Maximum lateness allowed when planning this demand"))
-    owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True, raw_id_admin=True,
+    owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True,
       help_text=_('Hierarchical parent'))
 
     # Convenience methods
     def __unicode__(self): return self.name
-
-    class Admin:
-        fields = (
-            (None, {'fields': ('name', 'item', 'customer', 'description', 'category','subcategory', 'due', 'quantity', 'priority','owner')}),
-            (_('Planning parameters'), {'fields': ('operation', 'minshipment', 'maxlateness'), 'classes': 'collapse'}),
-        )
-        save_as = True
 
     class Meta(AuditModel.Meta):
         db_table = 'demand'
@@ -693,17 +615,17 @@ class Forecast(AuditModel):
     description = models.CharField(_('description'), max_length=200, null=True, blank=True)
     category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
     subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
-    customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, blank=True, db_index=True, raw_id_admin=True)
-    item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, raw_id_admin=True)
-    calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), null=False, raw_id_admin=True)
+    customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, blank=True, db_index=True)
+    item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True)
+    calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), null=False)
     operation = models.ForeignKey(Operation, verbose_name=_('delivery operation'), null=True, blank=True,
-      related_name='used_forecast', raw_id_admin=True, help_text=_('Operation used to satisfy this demand'))
-    priority = models.PositiveIntegerField(_('priority'),default=2, choices=Demand.demandpriorities, radio_admin=True)
+      related_name='used_forecast', help_text=_('Operation used to satisfy this demand'))
+    priority = models.PositiveIntegerField(_('priority'),default=2, choices=Demand.demandpriorities)
     minshipment = models.DecimalField(_('minimum shipment'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_('Minimum shipment quantity when planning this demand'))
     maxlateness = models.DecimalField(_('maximum lateness'), max_digits=15, decimal_places=4, null=True, blank=True,
       help_text=_("Maximum lateness allowed when planning this demand"))
-    discrete = models.BooleanField(_('discrete'),default=True, radio_admin=True, help_text=_('Round forecast numbers to integers'))
+    discrete = models.BooleanField(_('discrete'),default=True, help_text=_('Round forecast numbers to integers'))
 
     # Convenience methods
     def __unicode__(self): return self.name
@@ -868,13 +790,6 @@ class Forecast(AuditModel):
           # Create a new entry for the daterange
           self.entries.create(startdate=startdate,enddate=enddate,quantity=quantity).save()
 
-    class Admin:
-        fields = (
-            (None, {'fields': ('name', 'item', 'customer', 'calendar', 'description', 'category','subcategory', 'priority')}),
-            (_('Planning parameters'), {'fields': ('discrete', 'operation', 'minshipment', 'maxlateness'), 'classes': 'collapse'}),
-        )
-        save_as = True
-
     class Meta(AuditModel.Meta):
         db_table = 'forecast'
         verbose_name = _('forecast')
@@ -883,7 +798,7 @@ class Forecast(AuditModel):
 
 class ForecastDemand(AuditModel):
     # Database fields
-    forecast = models.ForeignKey(Forecast, verbose_name=_('forecast'), null=False, db_index=True, raw_id_admin=True, related_name='entries')
+    forecast = models.ForeignKey(Forecast, verbose_name=_('forecast'), null=False, db_index=True, related_name='entries')
     startdate = models.DateField(_('start date'), null=False)
     enddate = models.DateField(_('end date'), null=False)
     quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default=0)

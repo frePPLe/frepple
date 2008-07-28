@@ -34,7 +34,7 @@ class OperationPlan(models.Model):
     enddatetime = models.DateTimeField(_('end datetime'), )
     startdate = models.DateField(_('start date'), db_index=True)
     enddate = models.DateField(_('end date'), db_index=True)
-    locked = models.BooleanField(_('locked'), default=True, radio_admin=True)
+    locked = models.BooleanField(_('locked'), default=True)
     owner = models.IntegerField(_('owner'), null=True, blank=True, db_index=True)
 
     def __unicode__(self): return str(self.identifier)
@@ -141,7 +141,7 @@ class DemandPegging(models.Model):
     buffer = models.CharField(_('buffer'), max_length=60, db_index=True, null=True)
     quantity_demand = models.DecimalField(_('quantity demand'), max_digits=15, decimal_places=4, default='0.00')
     quantity_buffer = models.DecimalField(_('quantity buffer'), max_digits=15, decimal_places=4, default='0.00')
-    pegged = models.BooleanField(_('pegged'), default=True, radio_admin=True)
+    pegged = models.BooleanField(_('pegged'), default=True)
 
     def __unicode__(self):
         return self.demand.name \

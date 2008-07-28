@@ -30,7 +30,7 @@ urlpatterns = patterns('',
   ('^admin/input/plan/$', 'django.views.generic.simple.redirect_to',
     {'url': '/admin/input/plan/1/'}),
 
-  # Model list reports
+  # Model list reports, which override standard admin screens
   (r'^admin/input/buffer/$', 'utils.report.view_report',
     {'report': input.views.BufferList,}),
   (r'^admin/input/resource/$', 'utils.report.view_report',

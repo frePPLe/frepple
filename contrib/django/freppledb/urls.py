@@ -33,6 +33,7 @@ from django.conf import settings
 import user.views
 import output.urls
 import input.urls
+import input.admin
 
 urlpatterns = patterns('',
     # frePPLe execution application
@@ -46,7 +47,7 @@ urlpatterns = patterns('',
 )
 
 # Adding urls for each installed application.
-# Since they urls don't have a common prefix (maybe they should...) we can't
+# Since the URLs don't have a common prefix (maybe they should...) we can't
 # use an "include" in the previous section
 urlpatterns += output.urls.urlpatterns
 urlpatterns += input.urls.urlpatterns
@@ -55,7 +56,7 @@ urlpatterns += input.urls.urlpatterns
 # It needs to be added as the last item since the applications can
 # hide/override some admin urls.
 urlpatterns += patterns('',
-    (r'^admin/', include('django.contrib.admin.urls')),
+    (r'^admin/(.*)', input.admin.site.root),
 )
 
 # Allows the standalone development server (and the py2exe executable) to serve

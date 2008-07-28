@@ -39,6 +39,7 @@ variable_popup = Variable("is_popup")
 
 #
 # A tag to find all models a user is allowed to see
+# @todo use the standard functionality of the AdminSite.index method
 #
 
 class ModelsNode(Node):
@@ -49,13 +50,15 @@ class ModelsNode(Node):
     def render(self, context):
         from django.db import models
         from django.utils.text import capfirst
+        # @todo hardcoded reference to the input application
+        from freppledb.input.admin import site
         user = context['user']
         model_list = []
         if user.has_module_perms(self.appname):
           for m in models.get_models(models.get_app(self.appname)):
              # Verify if the model is allowed to be displayed in the admin ui and
              # check the user has appropriate permissions to access it
-             if m._meta.admin and user.has_perm("%s.%s" % (self.appname, m._meta.get_change_permission())):
+             if m in site._registry and user.has_perm("%s.%s" % (self.appname, m._meta.get_change_permission())):
                  model_list.append({
                    'name': capfirst(m._meta.verbose_name_plural),
                    'admin_url': '/admin/%s/%s/' % (self.appname, m.__name__.lower()),

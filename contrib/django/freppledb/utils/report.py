@@ -46,7 +46,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db import models, transaction, connection
 from django.db.models.fields.related import ForeignKey, AutoField
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotModified
-from django.newforms.models import ModelForm
+from django.forms.models import ModelForm
 from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from django.utils.encoding import smart_str
@@ -380,9 +380,12 @@ def view_report(request, entity=None, **args):
     # CSV output
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % reportclass.title.lower()
-    if hasattr(reportclass,'resultlist1'):
-      # SQL override provided
+    if hasattr(reportclass,'resultlist2'):
+      # SQL override provided of type 2
       response._container = _generate_csv(reportclass, reportclass.resultlist2(counter, bucket, start, end, sortsql=sortsql), type, bucketlist)
+    elif hasattr(reportclass,'resultlist1'):
+      # SQL override provided of type 1
+      response._container = _generate_csv(reportclass, reportclass.resultlist1(counter, bucket, start, end, sortsql=sortsql), type, bucketlist)
     else:
       # No SQL override provided
       response._container = _generate_csv(reportclass, counter, type, bucketlist)
@@ -610,8 +613,7 @@ def _generate_csv(rep, qs, format, bucketlist):
       # Clear the return string buffer
       sf.truncate(0)
       # Build the return value, encoding all output
-      try: fields = [ unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.rows ]
-      except: fields = [ unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
+      fields = [ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
       # Return string
       writer.writerow(fields)
       yield sf.getvalue()
@@ -623,9 +625,9 @@ def _generate_csv(rep, qs, format, bucketlist):
         # Clear the return string buffer
         sf.truncate(0)
         # Build the return value
-        fields = [ unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
-        fields.extend([ unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.columns ])
-        fields.extend([ unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.crosses ])
+        fields = [ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
+        fields.extend([ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.columns ])
+        fields.extend([ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.crosses ])
         # Return string
         writer.writerow(fields)
         yield sf.getvalue()
@@ -1049,7 +1051,7 @@ def parseUpload(request, reportclass, data):
           for col in row:
             # More fields in data row than headers. Move on to the next row.
             if colnum >= len(headers): break
-            d[headers[colnum].name] = col
+            d[headers[colnum].name] = col.strip()
             colnum += 1
 
           # Step 2: Fill the form with data, either updating an existing

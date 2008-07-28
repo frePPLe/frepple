@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = freppledb README.txt httpd.conf
+EXTRA_DIST = freppledb django.patch README.txt httpd.conf
 
 clean-local:
 	-rm -rf `find . -name '*.pyc'`
@@ -24,7 +24,7 @@ runserver:
 	cd freppledb; ./manage.py runserver
 
 international:
-	cd freppledb; make-messages.py -a && compile-messages.py 
+	cd freppledb; make-messages.py -a && compile-messages.py
 
 doc:
 	-rm -rf doc

@@ -29,6 +29,7 @@ from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_unicode
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
+from django.contrib.admin import sites
 
 HOMECRUMB = '<a href="/admin/">%s</a>'
 
@@ -39,26 +40,28 @@ variable_popup = Variable("is_popup")
 
 #
 # A tag to find all models a user is allowed to see
-# @todo use the standard functionality of the AdminSite.index method
 #
 
 class ModelsNode(Node):
-    def __init__(self, appname, varname):
+    def __init__(self, appname, adminsite, varname):
         self.varname = varname
         self.appname = appname
+        try:
+          dot = adminsite.rindex('.')
+          self.adminsite = getattr(__import__(adminsite[:dot], {}, {}, ['']), adminsite[dot+1:])
+        except:
+          self.adminsite = sites.site
 
     def render(self, context):
         from django.db import models
         from django.utils.text import capfirst
-        # @todo hardcoded reference to the input application
-        from freppledb.input.admin import site
         user = context['user']
         model_list = []
         if user.has_module_perms(self.appname):
           for m in models.get_models(models.get_app(self.appname)):
              # Verify if the model is allowed to be displayed in the admin ui and
              # check the user has appropriate permissions to access it
-             if m in site._registry and user.has_perm("%s.%s" % (self.appname, m._meta.get_change_permission())):
+             if m in self.adminsite._registry and user.has_perm("%s.%s" % (self.appname, m._meta.get_change_permission())):
                  model_list.append({
                    'name': capfirst(m._meta.verbose_name_plural),
                    'admin_url': '/admin/%s/%s/' % (self.appname, m.__name__.lower()),
@@ -74,20 +77,22 @@ def get_models(parser, token):
 
     Syntax::
 
-        {% get_models from [application_name] as [context_var_containing_app_list] %}
+        {% get_models from [application_name] [admin_site] as [context_var_containing_app_list] %}
+        {% get_models from [application_name] default as [context_var_containing_app_list] %}
 
     Example usage::
 
-        {% get_models from output as modelsOut %}
+        {% get_models from output output.admin.site as modelsOut %}
+        {% get_models from output default as modelsOut %}
     """
     tokens = token.contents.split()
-    if len(tokens) < 5:
-        raise TemplateSyntaxError, "'%s' tag requires two arguments" % tokens[0]
+    if len(tokens) < 6:
+        raise TemplateSyntaxError, "'%s' tag requires 6 arguments" % tokens[0]
     if tokens[1] != 'from':
         raise TemplateSyntaxError, "First argument to '%s' tag must be 'from'" % tokens[0]
-    if tokens[3] != 'as':
+    if tokens[4] != 'as':
         raise TemplateSyntaxError, "Third argument to '%s' tag must be 'as'" % tokens[0]
-    return ModelsNode(tokens[2],tokens[4])
+    return ModelsNode(tokens[2],tokens[3],tokens[5])
 
 register.tag('get_models', get_models)
 

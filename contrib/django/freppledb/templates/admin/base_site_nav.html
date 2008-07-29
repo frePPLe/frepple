@@ -1,7 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
 {% block nav-global %}
-{% get_models from input as modelsIn %}
+{% get_models from input input.admin.site as modelsIn %}
 <div class="menuBar">
 {% if modelsIn %}
 <a class="menuButton" href=""

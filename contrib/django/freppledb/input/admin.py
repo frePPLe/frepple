@@ -28,6 +28,7 @@ from freppledb.input.models import *
 
 site = admin.sites.AdminSite()
 
+
 class Plan_admin(admin.ModelAdmin):
   model = Plan
 site.register(Plan,Plan_admin)
@@ -101,6 +102,7 @@ class Operation_admin(admin.ModelAdmin):
              }),
       )
 site.register(Operation,Operation_admin)
+
 
 class SubOperation_admin(admin.ModelAdmin):
   model = SubOperation
@@ -182,4 +184,3 @@ class Forecast_admin(admin.ModelAdmin):
   inlines = [ ForecastDemand_inline, ]
   save_as = True
 site.register(Forecast,Forecast_admin)
-

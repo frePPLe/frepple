@@ -1,4 +1,44 @@
 
+// A class to store changes in memory till the save button is hit.
+var upload = {
+  _data : [],
+
+  add : function (e)
+  {
+    upload._data.push(e);
+    $('save').style.display = 'inline';
+    $('undo').style.display = 'inline';
+  },
+
+  undo : function ()
+  {
+    // Refresh the page
+    window.location.href=window.location.href;
+  },
+
+  save : function (e)
+  {
+    // Send the update to the server, synchronously
+    var payload =
+      '--7d79\r\nContent-Disposition: form-data; name="data";'
+      + 'filename="data"\r\nContent-Type: application/json\r\n\r\n'
+      + Object.toJSON(upload._data)
+      + '\r\n\r\n--7d79--\r\n'
+    new Ajax.Request("/edit/", {
+        method: 'post',
+        asynchroneous: false,
+        contentType: 'multipart/form-data; boundary=7d79',
+        postBody: payload,
+        onSuccess: function(transport) {},
+        onFailure: function(transport) {}
+        });
+
+    // Refresh the page
+    window.location.href=window.location.href;
+  }
+}
+
+
 var ContextMenu = {
 
 	// private attributes

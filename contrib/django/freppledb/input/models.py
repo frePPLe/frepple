@@ -163,29 +163,29 @@ class Calendar(AuditModel):
           return
         elif b.startdate == start and b.enddate <= end:
           # Overwrite entire bucket
-          b.value = value
+          b.value = str(value)
           b.save()
         elif b.startdate >= start and b.enddate <= end:
           # Bucket became redundant
           b.delete()
         elif b.startdate < start and b.enddate > end:
           # New value is completely within this bucket
-          Bucket(calendar=self, startdate=start, value=value).save()
-          Bucket(calendar=self, startdate=end, value=b.value).save()
+          Bucket(calendar=self, startdate=start, value=str(value)).save()
+          Bucket(calendar=self, startdate=end, value=str(b.value)).save()
         elif b.startdate < start:
           # An existing bucket is partially before the new daterange
           b.enddate = start
           b.save()
-          Bucket(calendar=self, startdate=start, enddate=end, value=value).save()
+          Bucket(calendar=self, startdate=start, enddate=end, value=str(value)).save()
         elif b.enddate > end:
           # An existing bucket is partially after the new daterange
-          Bucket(calendar=self, startdate=b.startdate, enddate=end, value=value).save()
+          Bucket(calendar=self, startdate=b.startdate, enddate=end, value=str(value)).save()
           b.startdate = end
           b.save()
       if self.buckets.count() == 0:
         # There wasn't any bucket yet...
-        Bucket(calendar=self, startdate=start, value=value).save()
-        Bucket(calendar=self, startdate=end, value=0).save()
+        Bucket(calendar=self, startdate=start, value=str(value)).save()
+        Bucket(calendar=self, startdate=end, value=str(0)).save()
 
     def __unicode__(self): return self.name
 

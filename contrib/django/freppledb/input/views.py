@@ -50,11 +50,13 @@ class uploadjson:
         raise Exception('Only POST method allowed')
 
       # Validate uploaded file is present
-      if len(request.FILES)!=1 or 'data' not in request.FILES or request.FILES['data']['content-type'] != 'application/json':
-        raise Exception('Invalid uploaded data')
+      if len(request.FILES)!=1 or 'data' not in request.FILES \
+        or request.FILES['data'].content_type != 'application/json' \
+        or request.FILES['data'].size > 1000000:
+          raise Exception('Invalid uploaded data')
 
-      # Parse the uploaded file
-      for i in JSONDecoder().decode(request.FILES['data']['content']):
+      # Parse the uploaded data and go over each record
+      for i in JSONDecoder().decode(request.FILES['data'].read()):
         try:
           entity = i['entity']
 

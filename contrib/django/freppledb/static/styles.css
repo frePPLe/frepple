@@ -67,7 +67,6 @@ span.numfilteroper {
 }
 
 span.datefilteroper {
-  /*text-decoration: underline;*/
   font-family:  Courier New, Courier, monospace;
   font-size: x-small;
 }
@@ -233,6 +232,7 @@ table thead th.sorted {
   background: #ddd;
 }
 
+/* @todo remove this hardcoded width */
 .dashboard #content { width: 550px; }
 
 tr.level0 {font-weight: bold;}

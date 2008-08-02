@@ -4,23 +4,11 @@
 <script type="text/javascript">
     function onChange(input)
     {
-    var x = [{entity: 'forecast.total',
+    upload.add({entity: 'forecast.total',
       name: input.form.name,
       startdate: input.name,
       enddate: input.id,
-      value: input.value}];
-    var payload =
-      '--7d79\r\nContent-Disposition: form-data; name="data";'
-      + 'filename="data"\r\nContent-Type: application/json\r\n\r\n'
-      + Object.toJSON(x)
-      + '\r\n\r\n--7d79--\r\n'
-    new Ajax.Request("/edit/", {
-        method: 'post',
-        contentType: 'multipart/form-data; boundary=7d79',
-        postBody: payload,
-        onSuccess: function(transport) {},
-        onFailure: function(transport) {}
-        });
+      value: input.value});
     }
 </script>
 {% endblock %}

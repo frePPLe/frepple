@@ -395,7 +395,8 @@ def view_report(request, entity=None, **args):
   # Build paginator
   page = int(request.GET.get('p', '1'))
   paginator = QuerySetPaginator(counter, reportclass.paginate_by)
-  counter = counter[paginator.page(page).start_index()-1:paginator.page(page).end_index()]
+  if paginator.page(page).start_index():
+    counter = counter[paginator.page(page).start_index()-1:paginator.page(page).end_index()]
 
   # Calculate the content of the page
   if hasattr(reportclass,'resultlist1'):

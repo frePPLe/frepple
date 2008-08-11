@@ -74,9 +74,10 @@ class OverviewReport(TableReport):
   @staticmethod
   def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
+    cursor = connection.cursor()
+
     # Execute a query  to get the onhand value at the start of our horizon
     startohdict = {}
-    cursor = connection.cursor()
     query = '''
       select out_flowplan.thebuffer, out_flowplan.onhand
       from out_flowplan,

@@ -124,6 +124,7 @@ class Report(object):
 
   # Number of columns frozen in the report
   frozenColumns = 0
+  
 
 class ListReport(Report):
   '''

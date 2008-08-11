@@ -458,12 +458,12 @@ var TotalHeight = 0;
 
 function installLoadHandler()
 {
-  // Disable the django-supplied javascript function to initialize calendar menus.
+  // Disable the django-supplied event handler to initialize calendar menus.
   try {removeEvent(window,'load',DateTimeShortcuts.init);} catch (error) {;};
 
   // Install our own handler, which will explicitly call the django function.
   // This is the only cross-browser method to garantuee that the django handler is
-  // called before out own one.
+  // called before our own one.
   Event.observe(window, 'load', syncInitialize);
 }
 

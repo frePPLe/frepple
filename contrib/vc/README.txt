@@ -47,12 +47,3 @@ The following describes the steps you need to build Frepple.
    directory and the module libraries are included in the path.
    The easiest approach is to have these files in the same directory as the
    application.
-
-7. If you also want to build the interface to other languages, you'll also need
-   to install 'swig'.
-   The properties of the project 'swig' need to be updated to add the include
-   and library directories of the language you're compiling for.
-   The swig executable should be added to your path too.
-   Select the configuration 'Release_and_Swig' when compiling the library, since
-   the other configurations simply skip the swig build.
-

@@ -34,7 +34,7 @@ Buildroot: /tmp/frepple
 Prefix: /usr
 
 %description
-Frepple stands for "FREE Production Planning Library". It aims at building a
+FrePPLe stands for "FREE Production Planning Library". It aims at building a
 toolkit for modeling and solving production planning problems, targetted at
 discrete manufacturing industries.
 
@@ -53,7 +53,7 @@ rm -rf %{buildroot}
 
 %post
 /sbin/ldconfig
-echo Finished installation of frepple
+echo Finished installation of frePPLe
 
 %postun
 /sbin/ldconfig
@@ -61,12 +61,12 @@ echo Finished installation of frepple
 %files
 %defattr(-,root,root)
 %{prefix}/bin/frepple
-%{prefix}/bin/frepple_static
-%{prefix}/lib/libfrepple*
-%{prefix}/lib/libforecast*
+%{prefix}/bin/mod_forecast.so
+%{prefix}/bin/mod_python.so
+%{prefix}/bin/mod_lp_solver.so
+%{prefix}/bin/mod_webservice.so
 %dir %{prefix}/include/frepple
 %{prefix}/include/frepple/*
-%{prefix}/include/tags.h
 %{prefix}/include/frepple.h
 %{prefix}/include/freppleinterface.h
 %doc doc/* COPYING

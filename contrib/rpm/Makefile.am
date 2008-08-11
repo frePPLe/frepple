@@ -19,4 +19,3 @@ install-rpm:
 
 uninstall-rpm:
 	sudo rpm --erase frepple
-	

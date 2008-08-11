@@ -41,13 +41,6 @@ def createdata(outfile,duplicates,header,body,footer,subst):
   outfile.write(footer)
 
 
-# Initialize if not done already @todo need to do this more generic
-if not 'EXECUTABLE' in os.environ:
-  os.environ['EXECUTABLE'] = "../../libtool --mode=execute ../../src/frepple"
-  testdir = os.path.dirname(os.path.abspath(sys.argv[0]))
-  os.environ['FREPPLE_HOME'] = os.path.normpath(os.path.join(testdir, '..', '..', 'bin'))
-  os.environ['LD_LIBRARY_PATH'] = os.environ['FREPPLE_HOME']
-
 # Main loop
 for counter in [5000, 10000, 15000, 20000, 25000]:
   print "\ncounter", counter

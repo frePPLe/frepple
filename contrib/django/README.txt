@@ -10,9 +10,11 @@ The basic steps to set up a development environment:
 - Install django
   FREPPLE NEEDS THE DEVELOPMENT VERSION OF DJANGO. AT THE TIME FREPPLE 0.5.2 IS
   RELEASED DJANGO WAS AT REVISION 8129.
+  Later versions of django may or may not work with frePPLe...
   To get this version of django use the following command:
     svn co --revision 8129 http://code.djangoproject.com/svn/django/trunk/ django_src
-  Later versions of django may or may not work with frePPLe...
+  After checking out the Dajngo trunk, copy the django subdirectory to the 
+  site-packages subdirectory of your Python installation.
 
 - Some patches are required to django. To apply the patches, use the commands below
   or merge the updates manually.
@@ -20,10 +22,13 @@ The basic steps to set up a development environment:
     patch -p0 < [path to the patch file]/django.patch
 
 - Install your database: postgresql / mysql / oracle.
-  For a quick test run, you can use the sqlite3 database bundled with Python.
+  For a quick test run, you can also use the sqlite3 database bundled with Python.
 
 - If you're using a database different from sqlite, install the python database
   access library for the database (see the django documentation for details).
+    - cx_oracle for Oracle
+    - psycopg2 for PostgreSQL
+    - MySQL-python for MySQL
 
 - Create a database schema for frePPle.
   For the django tests, the user should have sufficient privileges to create a
@@ -35,8 +40,9 @@ The basic steps to set up a development environment:
       manage.py syncdb
   When the command prompts you to create a django superuser you can choose
   'no', since the inital dataset that is installed will include the users
-  "admin", "frepple" and "guest".
+  "admin", "frepple" and "guest". 
   The password for these users is equal to the user name.
+  Of course, you can always choose 'yes' and create your own superuser account.
   When the command finishes, verify the database tables are created correctly.
 
 - Test your installation by starting the development server:

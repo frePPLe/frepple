@@ -77,8 +77,8 @@ def exportData(filename):
 def findResources(output, dem, flow):
   try:
     for load in flow.buffer.producing.loads:
-      # @todo The load factor is not always 1...
-      print >>output, dem.name.replace(' ','').replace(':',''), load.resource.name.replace(' ','').replace(':',''), 1
+      # @todo The load factor doesn't accumulate correctly across different steps: quantity_per of the flows...
+      print >>output, dem.name.replace(' ','').replace(':',''), load.resource.name.replace(' ','').replace(':',''), load.quantity
     for newflow in flow.buffer.producing.flows:
       if newflow.quantity < 0:
         findResources(output, dem, newflow)

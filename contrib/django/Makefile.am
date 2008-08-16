@@ -24,7 +24,7 @@ runserver:
 	cd freppledb; ./manage.py runserver
 
 international:
-	cd freppledb; make-messages.py -a && compile-messages.py
+	cd freppledb; django-admin.py makemessages -a && django-admin.py compilemessages
 
 doc:
 	-rm -rf doc

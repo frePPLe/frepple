@@ -39,7 +39,7 @@ double Forecast::generateFutureValues(const double history[], unsigned int count
   double error = SingleExponential().generateForecast(history, count, debug);  // @todo need to allow passing alfa as argument
   //double error2 = DoubleExponential().generateForecast(history, count, debug);
 
-  return (error<error2) ? error : error2;
+  return error;
 }
 
 

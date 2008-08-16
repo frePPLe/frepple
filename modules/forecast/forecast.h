@@ -395,7 +395,11 @@ class Forecast : public Demand
     /** Returns a reference to the calendar used for this forecast. */
     Calendar* getCalendar() const {return calptr;}
 
-    /** Generate a forecast value based on historical demand data. */
+    /** Generate a forecast value based on historical demand data.<br>
+      * This method will call the different forecasting methods, select the 
+      * method with the lowest mad-error. It then asks the selected forecast
+      * method to generate future values.
+      */
     static double generateFutureValues(const double[], unsigned int, bool = false);
 
     /** Updates the due date of the demand. Lower numbers indicate a

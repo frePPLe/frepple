@@ -56,8 +56,16 @@
   *    The netting solver will for each order search for a matching forecast
   *    and reduce the remaining net quantity of the forecast.
   *
-  *  - Techniques to predict/forecast the future demand based on the demand
-  *    history are NOT available in this module (yet).
+  *  - A forecasting algorithm to <b>extrapolate historical demand data 
+  *    to the future</b>.<br>
+  *    The classical single exponential and double exponential smoothing 
+  *    forecasting methods are both implemented. The forecast method giving
+  *    the smallest mean absolute deviation (aka "mad"-error) will be 
+  *    automatically picked to produce the forecast.<br>
+  *    The parameters for the forecasting method (i.e. alfa for the single
+  *    exponential smoothing, or alfa and gamma for the double exponential
+  *    smoothing) are specified by the user. Optionally, the algorithm
+  *    can automatically tune this parameters to their optimal value.
   *
   * The XML schema extension enabled by this module is (see mod_forecast.xsd):
   * <PRE>
@@ -141,6 +149,13 @@
   *     to search for a forecast bucket to net from.<br>
   *     The default value is 0, meaning that we can net only from the bucket
   *     where the demand is due.
+  *
+  *   - <b>Forecast_Iterations</b><br>
+  *     Specifies the maximum number of iterations allowed for a forecast
+  *     method to tune its parameters.<br>
+  *     Only positive values are allowed and the default value is 10.<br>
+  *     Set the parameter to 1 to disable the tuning and generate a forecast 
+  *     based on the user-supplied parameters.
   */
 
 #ifndef FORECAST_H
@@ -176,6 +191,112 @@ class Forecast : public Demand
     friend class ForecastSolver;
     friend struct PythonForecastBucket;
   private:
+
+    /** @brief A class to perform single exponential smoothing on a time series. */
+    class SingleExponential
+    {
+      private:
+        /** Smoothing constant. */
+        double alfa;
+
+        /** Smoothed result.<br>
+          * Used to carry results between the evaluation and applying of the forecast.
+          */
+        double f_i;
+
+        /** Default initial alfa value.<br>
+          * The default value is 0.2.
+          */
+        static double initial_alfa;
+
+        /** Lower limit on the alfa parameter.<br>
+          * The default value is 0.
+          **/
+        static double min_alfa;
+
+        /** Upper limit on the alfa parameter.<br>
+          * The default value is 1.
+          **/
+        static double max_alfa;
+
+        /** Number of warmup periods.<br>
+          * These periods are used for the initialization of the algorithm
+          * and don't count towards measuring the forecast error.<br>
+          * The default value is 7.
+          **/
+        static unsigned int skip;
+
+      public:
+        /** Constructor. */
+        SingleExponential(double a = initial_alfa) : alfa(a) {}
+
+        /** Forecast evaluation. */
+        double generateForecast(const double history[], 
+          unsigned int count, bool debug);
+
+        /** @todo need also a applyForecast() method. it is called when this forecast
+          * method has won and now needs to update the forecast values.
+          */
+    };
+
+    /** @brief A class to perform single exponential smoothing on a time series. */
+    class DoubleExponential
+    {
+      private:
+        /** Smoothing constant. */
+        double alfa;
+
+        /** Default initial alfa value.<br>
+          * The default value is 0.2.
+          */
+        static double initial_alfa;
+
+        /** Lower limit on the alfa parameter.<br>
+          * The default value is 0.
+          **/
+        static double min_alfa;
+
+        /** Upper limit on the alfa parameter.<br>
+          * The default value is 1.
+          **/
+        static double max_alfa;
+
+        /** Trend smoothing constant. */
+        double gamma;
+
+        /** Default initial gamma value.<br>
+          * The default value is 0.0.
+          */
+        static double initial_gamma;
+
+        /** Lower limit on the gamma parameter.<br>
+          * The default value is 0.
+          **/
+        static double min_gamma;
+
+        /** Upper limit on the gamma parameter.<br>
+          * The default value is 1.
+          **/
+        static double max_gamma;
+
+        /** Number of warmup periods.<br>
+          * These periods are used for the initialization of the algorithm
+          * and don't count towards measuring the forecast error.<br>
+          * The default value is 7.
+          **/
+        static unsigned int skip;
+
+      public:
+        /** Constructor. */
+        DoubleExponential(double a = initial_alfa, double g = initial_gamma) 
+          : alfa(a), gamma(g) {}
+
+        /** Forecast evaluation. */
+        double generateForecast(const double history[], 
+          unsigned int count, bool debug);
+    };
+
+
     /** @brief This class represents a forecast value in a time bucket.
       *
       * A forecast bucket is never manipulated or created directly. Instead,
@@ -269,10 +390,13 @@ class Forecast : public Demand
     /** Specify a bucket calendar for the forecast. Once forecasted
       * quantities have been entered for the forecast, the calendar
       * can't be updated any more. */
-    virtual void setCalendar(Calendar* c);
+    virtual void setCalendar(Calendar*);
 
     /** Returns a reference to the calendar used for this forecast. */
     Calendar* getCalendar() const {return calptr;}
+
+    /** Generate a forecast value based on historical demand data. */
+    static double generateFutureValues(const double[], unsigned int, bool = false);
 
     /** Updates the due date of the demand. Lower numbers indicate a
       * higher priority level. The method also updates the priority
@@ -302,7 +426,7 @@ class Forecast : public Demand
 
     /** Returns the value of the Customer_Then_Item_Hierarchy module
       * parameter. */
-    bool getCustomerThenItemHierarchy()
+    static bool getCustomerThenItemHierarchy()
       {return Customer_Then_Item_Hierarchy;}
 
     /** Updates the value of the Match_Using_Delivery_Operation module
@@ -326,6 +450,18 @@ class Forecast : public Demand
 
     /** Returns the value of the Net_Late module parameter. */
     static TimePeriod getNetLate() {return Net_Late;}
+
+    /** Updates the value of the Forecast_Iterations module parameter. */
+    static void setForecastIterations(unsigned long t) 
+    {
+      if (t<=0) throw DataException(
+        "Parameter Forecast_Iterations must be bigger than 0."
+        );
+      Forecast_Iterations = t;
+    }
+
+    /** Returns the value of the Forecast_Iterations module parameter. */
+    static unsigned long getForecastIterations() {return Forecast_Iterations;}
 
     /** A data type to maintain a dictionary of all forecasts. */
     typedef multimap < pair<const Item*, const Customer*>, Forecast* > MapOfForecasts;
@@ -375,6 +511,14 @@ class Forecast : public Demand
       * bucket is allowed.
       */
     static TimePeriod Net_Early;
+
+    /** Specifies the maximum number of iterations allowed for a forecast
+      * method to tune its parameters.<br>
+      * Only positive values are allowed and the default value is 10.<br>
+      * Set the parameter to 1 to disable the tuning and generate a 
+      * forecast based on the user-supplied parameters.
+      */
+    static unsigned long Forecast_Iterations;
 };
 
 
@@ -460,11 +604,13 @@ extern "C"
     private:
       PyObject_HEAD
       Forecast::MapOfForecasts::const_iterator iter;
+      static PyMethodDef methods[];
     public:
       static PyTypeObject InfoType;
       static PyObject* next(PythonForecast*);
       static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
       static void destroy(PythonForecast* obj) {PyObject_Del(obj);}
+      static PyObject* timeseries(PyObject *, PyObject *);
   };
 
 

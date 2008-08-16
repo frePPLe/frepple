@@ -37,6 +37,7 @@ bool Forecast::Customer_Then_Item_Hierarchy = true;
 bool Forecast::Match_Using_Delivery_Operation = true;
 TimePeriod Forecast::Net_Late(0L);
 TimePeriod Forecast::Net_Early(0L);
+unsigned long Forecast::Forecast_Iterations(10L);
 
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
@@ -63,6 +64,8 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
       Forecast::setNetEarly(x->second.getTimeperiod());
     else if (x->first == "Net_Late")
       Forecast::setNetLate(x->second.getTimeperiod());
+    else if (x->first == "Forecast_Iterations")
+      Forecast::setForecastIterations(x->second.getUnsignedLong());
     else
       logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
   }

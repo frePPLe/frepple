@@ -39,6 +39,15 @@ namespace module_forecast
 #include "../python/pythonutils.cpp"
 #endif
 
+PyMethodDef PythonForecast::methods[] = {
+    {"timeseries", (PyCFunction)PythonForecast::timeseries, METH_O,
+     "Set the future based on the timeseries of historical data"
+    },
+    {NULL}  /* Sentinel */
+};
+
+
+/** @todo Use the new python api utilities */
 PyTypeObject PythonForecast::InfoType =
 {
   PyObject_HEAD_INIT(NULL)
@@ -69,7 +78,7 @@ PyTypeObject PythonForecast::InfoType =
   0,					/* tp_weaklistoffset */
   PyObject_SelfIter,  /* tp_iter */
   reinterpret_cast<iternextfunc>(PythonForecast::next),	/* tp_iternext */
-  0,				  /* tp_methods */
+  PythonForecast::methods,	/* tp_methods */
   0,					/* tp_members */
   0,					/* tp_getset */
   0,					/* tp_base */
@@ -218,6 +227,29 @@ extern "C" PyObject* PythonForecastBucket::next(PythonForecastBucket* obj)
     );
   obj->iter = obj->iter->next;
   return result;
+}
+
+
+extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
+{
+  // Verify we can iterate over the argument
+  PyObject *iterator = PyObject_GetIter(args);
+  if (!iterator) return NULL;
+  
+  double data[300];
+  unsigned int cnt = 0;
+
+  // Loop over the content
+  PyObject *item;
+  while (item = PyIter_Next(iterator)) 
+  {
+    data[cnt++] = PyFloat_AsDouble(item);
+    Py_DECREF(item);
+    if (cnt>=300) break;
+  }
+  Py_DECREF(iterator);
+
+  return PyFloat_FromDouble(Forecast::generateFutureValues(data, cnt, true));
 }
 
 } // end namespace

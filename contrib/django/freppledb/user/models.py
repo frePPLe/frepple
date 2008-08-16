@@ -32,38 +32,38 @@ from input.models import Plan
 
 
 class Preferences(models.Model):
-    buckettype = (
-      ('default',_('Default')),
-      ('day',_('Day')),
-      ('week',_('Week')),
-      ('month',_('Month')),
-      ('quarter',_('Quarter')),
-      ('year',_('Year')),
-    )
-    csvOutputType = (
-      ('table',_('Table')),
-      ('list',_('List')),
-    )
-    user = models.ForeignKey(User, verbose_name=_('user'), unique=True,
-      edit_inline=models.TABULAR, num_in_admin=1, min_num_in_admin=1,
-      max_num_in_admin=1, num_extra_on_change=0)
-    buckets = models.CharField(_('buckets'), max_length=10, choices=buckettype,
-      default='default')
-    startdate = models.DateField(_('startdate'), blank=True, null=True)
-    enddate = models.DateField(_('enddate'), blank=True, null=True)
-    lastmodified = models.DateTimeField(_('last modified'), core=True, auto_now=True, editable=False, db_index=True)
+  buckettype = (
+    ('default',_('Default')),
+    ('day',_('Day')),
+    ('week',_('Week')),
+    ('month',_('Month')),
+    ('quarter',_('Quarter')),
+    ('year',_('Year')),
+  )
+  csvOutputType = (
+    ('table',_('Table')),
+    ('list',_('List')),
+  )
+  user = models.ForeignKey(User, verbose_name=_('user'), unique=True,
+    edit_inline=models.TABULAR, num_in_admin=1, min_num_in_admin=1,
+    max_num_in_admin=1, num_extra_on_change=0)
+  buckets = models.CharField(_('buckets'), max_length=10, choices=buckettype,
+    default='default')
+  startdate = models.DateField(_('startdate'), blank=True, null=True)
+  enddate = models.DateField(_('enddate'), blank=True, null=True)
+  lastmodified = models.DateTimeField(_('last modified'), core=True, auto_now=True, editable=False, db_index=True)
 
 
-def CreatePreferenceModel(instance):
-    '''Create a preference model for a new user.'''
-    pref, created = Preferences.objects.get_or_create(user=instance)
-    if created:
-      try:
-        pref.startdate = Plan.objects.all()[0].currentdate.date()
-        pref.enddate = pref.startdate + timedelta(365)
-      except: pass  # No real problem when this fails
-      pref.save()
+def CreatePreferenceModel(instance, **kwargs):
+  '''Create a preference model for a new user.'''
+  pref, created = Preferences.objects.get_or_create(user=instance)
+  if created:
+    try:
+      pref.startdate = Plan.objects.all()[0].currentdate.date()
+      pref.enddate = pref.startdate + timedelta(365)
+    except: pass  # No real problem when this fails
+    pref.save()
 
 # This signal will make sure a preference model is created when a user is added.
 # The preference model is automatically deleted again when the user is deleted.
-dispatcher.connect(CreatePreferenceModel, signal=signals.post_save, sender=User)
+signals.post_save.connect(CreatePreferenceModel, sender=User)

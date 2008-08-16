@@ -416,6 +416,10 @@
 				RelativePath="..\..\modules\forecast\pythonforecast.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\modules\forecast\timeseries.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-sources = forecast.cpp forecast.h forecastsolver.cpp module.cpp
+sources = forecast.cpp forecast.h forecastsolver.cpp module.cpp timeseries.cpp
 
 # Install the library in the bin directory.
 # Ain't standard practice, but in this way all binaries are consolidated in a

@@ -332,10 +332,10 @@ class PythonType : public NonCopyable
     PyMethodDef *methods;
 
   public:
-    /** A static functin that evaluates an exception and sets the Python
+    /** A static function that evaluates an exception and sets the Python
       * error string properly.<br>
       * This function should only be called from within a catch-block, since
-      * it rethrows the exception!
+      * internally it rethrows the exception!
       */
     static void evalException();
 

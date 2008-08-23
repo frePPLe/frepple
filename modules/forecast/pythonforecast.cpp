@@ -150,7 +150,7 @@ void initializePython()
     // Create a new module
     // Putting the extension in a Python submodule would be cleaner.
     // Unfortunately the Python API's don't allow this.
-    PyObject* m = Py_InitModule("freppleforecast", NULL);  
+    PyObject* m = Py_InitModule("freppleforecast", NULL);
     if (!m)
       throw frepple::RuntimeException("Can't initialize Python extensions");
 
@@ -235,13 +235,14 @@ extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
   // Verify we can iterate over the argument
   PyObject *iterator = PyObject_GetIter(args);
   if (!iterator) return NULL;
-  
+
   double data[300];
+  double returnvalue;
   unsigned int cnt = 0;
 
-  // Loop over the content
+  // Copy the time series data into a C++ data structure
   PyObject *item;
-  while (item = PyIter_Next(iterator)) 
+  while (item = PyIter_Next(iterator))
   {
     data[cnt++] = PyFloat_AsDouble(item);
     Py_DECREF(item);
@@ -249,7 +250,20 @@ extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
   }
   Py_DECREF(iterator);
 
-  return PyFloat_FromDouble(Forecast::generateFutureValues(data, cnt, true));
+  Py_BEGIN_ALLOW_THREADS  // Free the Python interpreter for other threads
+  try {
+    // Generate the forecast
+    returnvalue = Forecast::generateFutureValues(data, cnt, true);
+  }
+  catch (...)
+  {
+    Py_BLOCK_THREADS;
+    // @todo PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim the Python interpreter
+
+  return PyFloat_FromDouble(returnvalue);
 }
 
 } // end namespace

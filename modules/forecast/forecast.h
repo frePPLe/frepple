@@ -261,7 +261,9 @@ class Forecast : public Demand
         static void setSkip(int x) { skip = x; }
     };
 
-    /** @brief A class to perform single exponential smoothing on a time series. */
+    /** @brief A class to perform double exponential smoothing on a time 
+      * series. 
+      */
     class DoubleExponential : public ForecastMethod
     {
       private:

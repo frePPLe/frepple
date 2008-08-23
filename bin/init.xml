@@ -43,10 +43,10 @@
     <command xsi:type="command_loadlib" filename="mod_python.so" />
     <!-- Forecast module -->
     <command xsi:type="command_loadlib" filename="mod_forecast.so">
-      <parameter name="Customer_Then_Item_Hierarchy" value="true" />
-      <parameter name="Match_Using_Delivery_Operation" value="false" />
-      <parameter name="Net_Early" value="P4W" />
-      <parameter name="Net_Late" value="P4W" />
+      <parameter name="Net.CustomerThenItemHierarchy" value="true" />
+      <parameter name="Net.MatchUsingDeliveryOperation" value="false" />
+      <parameter name="Net.NetEarly" value="P4W" />
+      <parameter name="Net.NetLate" value="P4W" />
     </command>
     <!-- Linear Programming solver module -->
     <!--

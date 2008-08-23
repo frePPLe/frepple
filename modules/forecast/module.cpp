@@ -56,16 +56,43 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   for (CommandLoadLibrary::ParameterList::const_iterator x = z.begin();
     x != z.end(); ++x)
   {
-    if (x->first == "Customer_Then_Item_Hierarchy")
+    // Netting 
+    if (x->first == "Net.CustomerThenItemHierarchy")
       Forecast::setCustomerThenItemHierarchy(x->second.getBool());
-    else if (x->first == "Match_Using_Delivery_Operation")
+    else if (x->first == "Net.MatchUsingDeliveryOperation")
       Forecast::setMatchUsingDeliveryOperation(x->second.getBool());
-    else if (x->first == "Net_Early")
+    else if (x->first == "Net.NetEarly")
       Forecast::setNetEarly(x->second.getTimeperiod());
-    else if (x->first == "Net_Late")
+    else if (x->first == "Net.NetLate")
       Forecast::setNetLate(x->second.getTimeperiod());
-    else if (x->first == "Forecast_Iterations")
+    // Forecasting
+    else if (x->first == "Forecast.Iterations")
       Forecast::setForecastIterations(x->second.getUnsignedLong());
+    // Single exponential forecast method
+    else if (x->first == "Forecast.SingleExponential.initialAlfa")
+      Forecast::SingleExponential::setInitialAlfa(x->second.getDouble());
+    else if (x->first == "Forecast.SingleExponential.minAlfa")
+      Forecast::SingleExponential::setMinAlfa(x->second.getDouble());
+    else if (x->first == "Forecast.SingleExponential.maxAlfa")
+      Forecast::SingleExponential::setMaxAlfa(x->second.getDouble());
+    else if (x->first == "Forecast.SingleExponential.skip")
+      Forecast::SingleExponential::setSkip(x->second.getInt());
+    // Double exponential forecast method
+    else if (x->first == "Forecast.DoubleExponential.initialAlfa")
+      Forecast::DoubleExponential::setInitialAlfa(x->second.getDouble());
+    else if (x->first == "Forecast.DoubleExponential.minAlfa")
+      Forecast::DoubleExponential::setMinAlfa(x->second.getDouble());
+    else if (x->first == "Forecast.DoubleExponential.maxAlfa")
+      Forecast::DoubleExponential::setMaxAlfa(x->second.getDouble());
+    else if (x->first == "Forecast.DoubleExponential.initialGamma")
+      Forecast::DoubleExponential::setInitialGamma(x->second.getDouble());
+    else if (x->first == "Forecast.DoubleExponential.minGamma")
+      Forecast::DoubleExponential::setMinGamma(x->second.getDouble());
+    else if (x->first == "Forecast.DoubleExponential.maxGamma")
+      Forecast::DoubleExponential::setMaxGamma(x->second.getDouble());
+    else if (x->first == "Forecast.DoubleExponential.skip")
+      Forecast::DoubleExponential::setSkip(x->second.getInt());
+    // Bullshit
     else
       logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
   }

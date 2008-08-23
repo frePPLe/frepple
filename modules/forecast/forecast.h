@@ -190,10 +190,23 @@ class Forecast : public Demand
 {
     friend class ForecastSolver;
     friend struct PythonForecastBucket;
-  private:
+  public:
+
+    /** @brief Abstract base class for all forecasting methods. */
+    class ForecastMethod
+    {
+      public:
+        /** Forecast evaluation. */
+        virtual double generateForecast(const double history[], 
+          unsigned int count, bool debug) = 0;
+
+        /** @todo need also a applyForecast() method. it is called when this forecast
+          * method has won and now needs to update the forecast values.
+          */
+    };
 
     /** @brief A class to perform single exponential smoothing on a time series. */
-    class SingleExponential
+    class SingleExponential : public ForecastMethod
     {
       private:
         /** Smoothing constant. */
@@ -234,13 +247,22 @@ class Forecast : public Demand
         double generateForecast(const double history[], 
           unsigned int count, bool debug);
 
-        /** @todo need also a applyForecast() method. it is called when this forecast
-          * method has won and now needs to update the forecast values.
-          */
+        /** Update the initial value for the alfa parameter. */
+        static void setInitialAlfa(double x) { initial_alfa = x; }
+
+        /** Update the minimum value for the alfa parameter. */
+        static void setMinAlfa(double x) { min_alfa = x; }
+
+        /** Update the maximum value for the alfa parameter. */
+        static void setMaxAlfa(double x) { max_alfa = x; }
+
+        /** Update the number of timeseries values used to initialize the 
+          * algorithm. */
+        static void setSkip(int x) { skip = x; }
     };
 
     /** @brief A class to perform single exponential smoothing on a time series. */
-    class DoubleExponential
+    class DoubleExponential : public ForecastMethod
     {
       private:
         /** Smoothing constant. */
@@ -294,9 +316,32 @@ class Forecast : public Demand
         /** Forecast evaluation. */
         double generateForecast(const double history[], 
           unsigned int count, bool debug);
+
+        /** Update the initial value for the alfa parameter. */
+        static void setInitialAlfa(double x) { initial_alfa = x; }
+
+        /** Update the minimum value for the alfa parameter. */
+        static void setMinAlfa(double x) { min_alfa = x; }
+
+        /** Update the maximum value for the alfa parameter. */
+        static void setMaxAlfa(double x) { max_alfa = x; }
+
+        /** Update the initial value for the alfa parameter. */
+        static void setInitialGamma(double x) { initial_gamma = x; }
+
+        /** Update the minimum value for the alfa parameter. */
+        static void setMinGamma(double x) { min_gamma = x; }
+
+        /** Update the maximum value for the alfa parameter. */
+        static void setMaxGamma(double x) { max_gamma = x; }
+
+        /** Update the number of timeseries values used to initialize the 
+          * algorithm. */
+        static void setSkip(int x) { skip = x; }
+
     };
 
-
+  private:
     /** @brief This class represents a forecast value in a time bucket.
       *
       * A forecast bucket is never manipulated or created directly. Instead,

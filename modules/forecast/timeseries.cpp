@@ -66,7 +66,7 @@ double Forecast::generateFutureValues(const double history[], unsigned int count
 
 
 double Forecast::SingleExponential::initial_alfa = 0.2;
-double Forecast::SingleExponential::min_alfa = 0.0;
+double Forecast::SingleExponential::min_alfa = 0.03;
 double Forecast::SingleExponential::max_alfa = 1.0;
 unsigned int Forecast::SingleExponential::skip = 7;
 
@@ -140,7 +140,7 @@ double Forecast::SingleExponential::generateForecast
 
 
 double Forecast::DoubleExponential::initial_alfa = 0.2;
-double Forecast::DoubleExponential::min_alfa = 0.0;
+double Forecast::DoubleExponential::min_alfa = 0.03;
 double Forecast::DoubleExponential::max_alfa = 1.0;
 double Forecast::DoubleExponential::initial_gamma = 0.05;
 double Forecast::DoubleExponential::min_gamma = 0.0;

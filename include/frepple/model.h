@@ -39,6 +39,7 @@
 #include "frepple/utils.h"
 #include "frepple/timeline.h"
 #include <float.h>
+#include <typeinfo>
 
 namespace frepple
 {
@@ -4940,44 +4941,44 @@ class PeggingIterator
     {
       if (!e) return;
       if (downstream)
-        stack.push(state(0,abs(e->getQuantity()),1.0,e,NULL));
+        states.push(state(0,abs(e->getQuantity()),1.0,e,NULL));
       else
-        stack.push(state(0,abs(e->getQuantity()),1.0,NULL,e));
+        states.push(state(0,abs(e->getQuantity()),1.0,NULL,e));
     }
 
     /** Return the operationplan consuming the material. */
     OperationPlan* getConsumingOperationplan() const
     {
-      const FlowPlan* x = stack.top().cons_flowplan;
+      const FlowPlan* x = states.top().cons_flowplan;
       return x ? x->getOperationPlan() : NULL;
     }
 
     /** Return the material buffer through which we are pegging. */
     Buffer *getBuffer() const
     {
-      const FlowPlan* x = stack.top().prod_flowplan;
-      if (!x) x = stack.top().cons_flowplan;
+      const FlowPlan* x = states.top().prod_flowplan;
+      if (!x) x = states.top().cons_flowplan;
       return x ? x->getFlow()->getBuffer() : NULL;
     }
 
     /** Return the operationplan producing the material. */
     OperationPlan* getProducingOperationplan() const
     {
-      const FlowPlan* x = stack.top().prod_flowplan;
+      const FlowPlan* x = states.top().prod_flowplan;
       return x ? x->getOperationPlan() : NULL;
     }
 
     /** Return the date when the material is consumed. */
     Date getConsumingDate() const
     {
-      const FlowPlan* x = stack.top().cons_flowplan;
+      const FlowPlan* x = states.top().cons_flowplan;
       return x ? x->getDate() : Date::infinitePast;
     }
 
     /** Return the date when the material is produced. */
     Date getProducingDate() const
     {
-      const FlowPlan* x = stack.top().prod_flowplan;
+      const FlowPlan* x = states.top().prod_flowplan;
       return x ? x->getDate() : Date::infinitePast;
     }
 
@@ -4985,19 +4986,19 @@ class PeggingIterator
       * is at level 0, and each level (either upstream or downstream)
       * increments the value by 1.
       */
-    short getLevel() const {return stack.top().level;}
+    short getLevel() const {return states.top().level;}
 
     /** Returns the quantity of the demand that is linked to this pegging
       * record.
       */
-    double getQuantityDemand() const {return stack.top().qty;}
+    double getQuantityDemand() const {return states.top().qty;}
 
     /** Returns the quantity of the buffer flowplans that is linked to this
       * pegging record.
       */
     double getQuantityBuffer() const
     {
-      const state& t = stack.top();
+      const state& t = states.top();
       return t.prod_flowplan
         ? t.factor * t.prod_flowplan->getOperationPlan()->getQuantity()
         : 0;
@@ -5005,12 +5006,12 @@ class PeggingIterator
 
     /** Returns which portion of the current flowplan is fed/supplied by the
       * original flowplan. */
-    double getFactor() const {return stack.top().factor;}
+    double getFactor() const {return states.top().factor;}
 
     /** Returns false if the flowplan remained unpegged, i.e. it wasn't
       * -either completely or paritally- unconsumed at the next level.
       */
-    bool getPegged() const {return stack.top().pegged;}
+    bool getPegged() const {return states.top().pegged;}
 
     /** Move the iterator foward to the next downstream flowplan. */
     DECLARE_EXPORT PeggingIterator& operator++();
@@ -5033,16 +5034,16 @@ class PeggingIterator
       {PeggingIterator tmp = *this; --*this; return tmp;}
 
     /** Comparison operator. */
-    bool operator==(const PeggingIterator& x) const {return stack == x.stack;}
+    bool operator==(const PeggingIterator& x) const {return states == x.states;}
 
     /** Inequality operator. */
-    bool operator!=(const PeggingIterator& x) const {return stack != x.stack;}
+    bool operator!=(const PeggingIterator& x) const {return states != x.states;}
 
     /** Conversion operator to a boolean value.
       * The return value is true when the iterator still has next elements to
       * explore. Returns false when the iteration is finished.
       */
-    operator bool () const { return !stack.empty(); }
+    operator bool () const { return !states.empty(); }
 
     /** Update the stack. */
     DECLARE_EXPORT void updateStack(short, double, double, const FlowPlan*, const FlowPlan*, bool = true);
@@ -5104,7 +5105,7 @@ class PeggingIterator
     typedef stack < state > statestack;
 
     /** A stack is used to store the iterator state. */
-    statestack stack;
+    statestack states;
 
     /* Auxilary function to make recursive code possible. */
     DECLARE_EXPORT void followPegging(const OperationPlan*, short, double, double);

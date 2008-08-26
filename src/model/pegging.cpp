@@ -50,7 +50,7 @@ DECLARE_EXPORT void PeggingIterator::updateStack
   if (first)
   {
     // We can update the current top element of the stack
-    state& t = stack.top();
+    state& t = states.top();
     t.cons_flowplan = fc;
     t.prod_flowplan = fp;
     t.qty = q;
@@ -61,23 +61,23 @@ DECLARE_EXPORT void PeggingIterator::updateStack
   }
   else
     // We need to create a new element on the stack
-    stack.push(state(l, q, f, fc, fp, p));
+    states.push(state(l, q, f, fc, fp, p));
 }
 
 
 DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
 {
   // Validate
-  if (stack.empty())
+  if (states.empty())
     throw LogicException("Incrementing the iterator beyond it's end");
   if (!downstream)
     throw LogicException("Incrementing a downstream iterator");
-  state& st = stack.top();
+  state& st = states.top();
 
   // Handle unconsumed material entries on the stack
   if (!st.pegged)
   {
-    stack.pop();
+    states.pop();
     return *this;
   }
 
@@ -90,7 +90,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
       st.level-1, st.qty, st.factor);
 
   // Pop invalid entries from the stack
-  if (first) stack.pop();
+  if (first) states.pop();
 
   return *this;
 }
@@ -99,16 +99,16 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
 DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 {
   // Validate
-  if (stack.empty())
+  if (states.empty())
     throw LogicException("Incrementing the iterator beyond it's end");
   if (downstream)
     throw LogicException("Decrementing an upstream iterator");
-  state& st = stack.top();
+  state& st = states.top();
 
   // Handle unconsumed material entries on the stack
   if (!st.pegged)
   {
-    stack.pop();
+    states.pop();
     return *this;
   }
 
@@ -121,7 +121,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
       st.level+1, st.qty, st.factor);
 
   // Pop invalid entries from the stack
-  if (first) stack.pop();
+  if (first) states.pop();
 
   return *this;
 }

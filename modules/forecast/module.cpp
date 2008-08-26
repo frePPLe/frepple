@@ -55,6 +55,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   // Process the module parameters
   for (CommandLoadLibrary::ParameterList::const_iterator x = z.begin();
     x != z.end(); ++x)
+  try 
   {
     // Netting 
     if (x->first == "Net.CustomerThenItemHierarchy")
@@ -95,6 +96,11 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     // Bullshit
     else
       logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
+  }
+  catch (exception &e) 
+  {
+    // Avoid throwing errors during the initialization!   @todo verify if really required
+    logger << "Error: " << e.what() << endl;
   }
 
   // Initialize the metadata.

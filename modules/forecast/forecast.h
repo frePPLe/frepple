@@ -248,13 +248,28 @@ class Forecast : public Demand
           unsigned int count, bool debug);
 
         /** Update the initial value for the alfa parameter. */
-        static void setInitialAlfa(double x) { initial_alfa = x; }
+        static void setInitialAlfa(double x) 
+        { 
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter SingleExponential.initialAlfa must be between 0 and 1.");
+         initial_alfa = x; 
+        }
 
         /** Update the minimum value for the alfa parameter. */
-        static void setMinAlfa(double x) { min_alfa = x; }
+        static void setMinAlfa(double x)
+        { 
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter SingleExponential.minAlfa must be between 0 and 1.");
+          min_alfa = x; 
+        }
 
         /** Update the maximum value for the alfa parameter. */
-        static void setMaxAlfa(double x) { max_alfa = x; }
+        static void setMaxAlfa(double x)        
+        { 
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter SingleExponential.maxAlfa must be between 0 and 1.");
+          max_alfa = x; 
+        }
 
         /** Update the number of timeseries values used to initialize the 
           * algorithm. */
@@ -320,22 +335,52 @@ class Forecast : public Demand
           unsigned int count, bool debug);
 
         /** Update the initial value for the alfa parameter. */
-        static void setInitialAlfa(double x) { initial_alfa = x; }
+        static void setInitialAlfa(double x)        
+        { 
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter DoubleExponential.initialAlfa must be between 0 and 1.");
+          initial_alfa = x; 
+        }
 
         /** Update the minimum value for the alfa parameter. */
-        static void setMinAlfa(double x) { min_alfa = x; }
+        static void setMinAlfa(double x)
+        { 
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter DoubleExponential.minAlfa must be between 0 and 1.");
+          min_alfa = x; 
+        }
 
         /** Update the maximum value for the alfa parameter. */
-        static void setMaxAlfa(double x) { max_alfa = x; }
+        static void setMaxAlfa(double x)
+        { 
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter DoubleExponential.maxAlfa must be between 0 and 1.");
+          max_alfa = x; 
+        }
 
         /** Update the initial value for the alfa parameter. */
-        static void setInitialGamma(double x) { initial_gamma = x; }
+        static void setInitialGamma(double x)
+        { 
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter DoubleExponential.initialGamma must be between 0 and 1.");
+          initial_gamma = x; 
+        }
 
         /** Update the minimum value for the alfa parameter. */
-        static void setMinGamma(double x) { min_gamma = x; }
+        static void setMinGamma(double x)
+        { 
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter DoubleExponential.minGamma must be between 0 and 1.");
+          min_gamma = x; 
+        }
 
         /** Update the maximum value for the alfa parameter. */
-        static void setMaxGamma(double x) { max_gamma = x; }
+        static void setMaxGamma(double x)
+        { 
+          if (x<0 || x>1.0) throw DataException(
+            "Parameter DoubleExponential.maxGamma must be between 0 and 1.");
+          max_gamma = x; 
+        }
 
         /** Update the number of timeseries values used to initialize the 
           * algorithm. */

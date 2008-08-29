@@ -44,14 +44,12 @@ class Preferences(models.Model):
     ('table',_('Table')),
     ('list',_('List')),
   )
-  user = models.ForeignKey(User, verbose_name=_('user'), unique=True,
-    edit_inline=models.TABULAR, num_in_admin=1, min_num_in_admin=1,
-    max_num_in_admin=1, num_extra_on_change=0)
+  user = models.ForeignKey(User, verbose_name=_('user'), unique=True)
   buckets = models.CharField(_('buckets'), max_length=10, choices=buckettype,
     default='default')
   startdate = models.DateField(_('startdate'), blank=True, null=True)
   enddate = models.DateField(_('enddate'), blank=True, null=True)
-  lastmodified = models.DateTimeField(_('last modified'), core=True, auto_now=True, editable=False, db_index=True)
+  lastmodified = models.DateTimeField(_('last modified'), auto_now=True, editable=False, db_index=True)
 
 
 def CreatePreferenceModel(instance, **kwargs):

@@ -114,7 +114,7 @@ class Calendar(AuditModel):
   description = models.CharField(_('description'), max_length=200, null=True, blank=True)
   category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
-  defaultvalue = models.DecimalField(_('default value'), max_digits=15, decimal_places=4, default=0.00)
+  defaultvalue = models.DecimalField(_('default value'), max_digits=15, decimal_places=4, default='0.00')
 
   def currentvalue(self):
     ''' Returns the value of the calendar on this moment.'''
@@ -203,10 +203,10 @@ class Bucket(AuditModel):
   The core engine allows the end date to be edited independently.
   '''
   # Database fields
-  calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), edit_inline=models.TABULAR, min_num_in_admin=5, num_extra_on_change=3, related_name='buckets')
-  startdate = models.DateTimeField('start date', core=True, null=True, blank=True)
+  calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), related_name='buckets')
+  startdate = models.DateTimeField('start date', null=True, blank=True)
   enddate = models.DateTimeField('end date', editable=False, null=True, blank=True, default=datetime(2030,12,31))
-  value = models.DecimalField(_('value'), max_digits=15, decimal_places=4, default=0.00, blank=True)
+  value = models.DecimalField(_('value'), max_digits=15, decimal_places=4, default='0.00', blank=True)
   priority = models.IntegerField(_('priority'), default=0, blank=True)
   name = models.CharField(_('name'), max_length=60, null=True, blank=True)
 
@@ -382,7 +382,7 @@ class SubOperation(AuditModel):
     related_name='suboperations')
   priority = models.IntegerField(_('priority'), default=1)
   suboperation = models.ForeignKey(Operation, verbose_name=_('suboperation'),
-    related_name='superoperations', core=True)
+    related_name='superoperations')
   effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
   effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
 
@@ -415,7 +415,7 @@ class Buffer(AuditModel):
   location = models.ForeignKey(Location, verbose_name=_('location'), null=True,
     blank=True, db_index=True)
   item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, null=True)
-  onhand = models.DecimalField(_('onhand'),max_digits=15, decimal_places=4, default=0.00, null=True, blank=True, help_text=_('current inventory'))
+  onhand = models.DecimalField(_('onhand'),max_digits=15, decimal_places=4, default="0.00", null=True, blank=True, help_text=_('current inventory'))
   minimum = models.ForeignKey(Calendar, verbose_name=_('minimum'),
     null=True, blank=True,
     help_text=_('Calendar storing the safety stock profile'))

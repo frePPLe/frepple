@@ -615,7 +615,10 @@ def _generate_csv(rep, qs, format, bucketlist):
       # Clear the return string buffer
       sf.truncate(0)
       # Build the return value, encoding all output
-      fields = [ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
+      if hasattr(row, "__getitem__"):
+        fields = [ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
+      else:
+        fields = [ getattr(row,s[0])==None and ' ' or unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.rows ]
       # Return string
       writer.writerow(fields)
       yield sf.getvalue()
@@ -627,9 +630,14 @@ def _generate_csv(rep, qs, format, bucketlist):
         # Clear the return string buffer
         sf.truncate(0)
         # Build the return value
-        fields = [ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
-        fields.extend([ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.columns ])
-        fields.extend([ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.crosses ])
+        if hasattr(row, "__getitem__"):
+          fields = [ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.rows ]
+          fields.extend([ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.columns ])
+          fields.extend([ row[s[0]]==None and ' ' or unicode(row[s[0]]).encode(encoding,"ignore") for s in rep.crosses ])
+        else:
+          fields = [ getattr(row,s[0])==None and ' ' or unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.rows ]
+          fields.extend([ getattr(row,s[0])==None and ' ' or unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.columns ])
+          fields.extend([ getattr(row,s[0])==None and ' ' or unicode(getattr(row,s[0])).encode(encoding,"ignore") for s in rep.crosses ])
         # Return string
         writer.writerow(fields)
         yield sf.getvalue()

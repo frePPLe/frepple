@@ -89,12 +89,6 @@ class UserList(ListReport):
   model = User
   frozenColumns = 1
 
-  @staticmethod
-  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    return basequery.values(
-      'id', 'username', 'email', 'first_name', 'last_name', 'is_staff'
-      )
-
   rows = (
     ('username', {
       'title': _('username'),

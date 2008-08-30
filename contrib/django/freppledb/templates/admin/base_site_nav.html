@@ -4,12 +4,6 @@
 {% get_models from auth freppledb.admin.site as modelsAuth %}
 {% get_models from input freppledb.admin.site as modelsIn %}
 <div class="menuBar">
-{% if modelsAuth %}
-<a class="menuButton" href=""
-    onclick="return buttonClick(event,'authMenu');"
-    onmouseover="buttonMouseover(event,'authMenu');"
->{% trans 'Admin' %}</a>
-{% endif %}
 {% if modelsIn %}
 <a class="menuButton" href=""
     onclick="return buttonClick(event,'inputMenu');"
@@ -25,6 +19,12 @@
     onclick="return buttonClick(event,'toolsMenu');"
     onmouseover="buttonMouseover(event,'toolsMenu');"
 >{% trans 'Tools' %}</a>
+{% endif %}
+{% if modelsAuth %}
+<a class="menuButton" href=""
+    onclick="return buttonClick(event,'authMenu');"
+    onmouseover="buttonMouseover(event,'authMenu');"
+>{% trans 'Admin' %}</a>
 {% endif %}
 <a class="menuButton" href=""
     onclick="return buttonClick(event,'userMenu');"

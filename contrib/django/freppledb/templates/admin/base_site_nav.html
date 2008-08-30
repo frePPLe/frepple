@@ -1,8 +1,15 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
 {% block nav-global %}
-{% get_models from input input.admin.site as modelsIn %}
+{% get_models from auth freppledb.admin.site as modelsAuth %}
+{% get_models from input freppledb.admin.site as modelsIn %}
 <div class="menuBar">
+{% if modelsAuth %}
+<a class="menuButton" href=""
+    onclick="return buttonClick(event,'authMenu');"
+    onmouseover="buttonMouseover(event,'authMenu');"
+>{% trans 'Admin' %}</a>
+{% endif %}
 {% if modelsIn %}
 <a class="menuButton" href=""
     onclick="return buttonClick(event,'inputMenu');"
@@ -24,6 +31,14 @@
     onmouseover="buttonMouseover(event,'userMenu');"
 >{% trans 'User' %}</a>
 </div>
+
+<!-- input menu -->
+{% if modelsAuth %}
+<div id="authMenu" class="menu">
+{% for m in modelsAuth %}
+<a class="menuItem" href="{{m.admin_url}}">{{ m.name }}</a>{% endfor %}
+</div>
+{% endif %}
 
 <!-- input menu -->
 {% if modelsIn %}

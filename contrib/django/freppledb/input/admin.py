@@ -24,9 +24,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import *
-
-
-site = admin.sites.AdminSite()
+from freppledb.admin import site
 
 
 class Plan_admin(admin.ModelAdmin):

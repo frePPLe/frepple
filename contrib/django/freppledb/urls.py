@@ -33,6 +33,7 @@ from django.conf import settings
 import user.views
 import output.urls
 import input.urls
+import user.urls
 import input.admin
 
 urlpatterns = patterns('',
@@ -51,6 +52,7 @@ urlpatterns = patterns('',
 # use an "include" in the previous section
 urlpatterns += output.urls.urlpatterns
 urlpatterns += input.urls.urlpatterns
+urlpatterns += user.urls.urlpatterns
 
 # Admin pages, and the Javascript i18n library.
 # It needs to be added as the last item since the applications can

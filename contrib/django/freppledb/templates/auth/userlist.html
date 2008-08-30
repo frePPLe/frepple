@@ -1,0 +1,18 @@
+{% extends "admin/base_site_list.html" %}
+
+{% block frozendata %}
+{% for i in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
+<td><a href="{{i.id}}">{{i.username}}</a></td>
+</tr>{% endfor %}
+{% endblock %}
+
+{% block data %}
+{% for i in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
+<td>{{i.email}}</td>
+<td>{{i.first_name}}</td>
+<td>{{i.last_name}}</td>
+<td>{{i.is_staff}}</td>
+</tr>{% endfor %}
+{% endblock %}

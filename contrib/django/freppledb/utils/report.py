@@ -124,7 +124,7 @@ class Report(object):
 
   # Number of columns frozen in the report
   frozenColumns = 0
-  
+
 
 class ListReport(Report):
   '''
@@ -242,7 +242,7 @@ def view_report(request, entity=None, **args):
     if not reportclass.editable or not request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())):
       request.user.message_set.create(message=_('Not authorized'))
       return HttpResponseRedirect(request.get_full_path())
-    (warnings,errors) = parseUpload(request, reportclass, request.FILES['csv_file']['content'])
+    (warnings,errors) = parseUpload(request, reportclass, request.FILES['csv_file'].read())
     if len(errors) > 0:
       request.user.message_set.create(message=_('File upload aborted with errors'))
       for i in errors: request.user.message_set.create(message=i)

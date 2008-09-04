@@ -54,7 +54,7 @@ void usage()
     "               directory. The application will use the files init.xml,\n"
     "               frepple.xsd and module libraries from this directory.\n"
     "\nReturn codes: 0 when succesfull, non-zero in case of errors\n"
-    "\nMore information on this program: http://frepple.sourceforge.net\n\n"
+    "\nMore information on this program: http://www.frepple.com\n\n"
     << endl;
 }
 

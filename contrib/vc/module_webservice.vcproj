@@ -58,6 +58,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="../../bin/mod_webservice.so"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -83,6 +84,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy the XML schema definition file"
+				CommandLine="copy $(TargetDir)\..\modules\webservice\mod_webservice.xsd  $(TargetDir)"
 			/>
 		</Configuration>
 		<Configuration
@@ -138,6 +141,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="wsock32.lib"
+				OutputFile="../../bin/mod_webservice.so"
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -165,6 +169,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy the XML schema definition file"
+				CommandLine="copy $(TargetDir)\..\modules\webservice\mod_webservice.xsd  $(TargetDir)"
 			/>
 		</Configuration>
 	</Configurations>

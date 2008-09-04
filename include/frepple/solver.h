@@ -381,7 +381,6 @@ class SolverMRP : public Solver
         /** A flag to force the resource solver to move the operationplan to
           * a later date where it is feasible.<br>
           * Admittedly this is an ugly hack...
-          * @todo avoid the need for the forceLate variable
           */
         bool forceLate;
 

@@ -36,7 +36,7 @@ double Forecast::generateFutureValues(const double history[], unsigned int count
   // Validate presence of history
   if (!history) throw RuntimeException("Null argument to forecast function");
 
-  // Create a list of forecasting methods.    @todo list should be dynamic, based on availability of hsitory
+  // Create a list of forecasting methods.
   // We create the forecasting objects in stack memory for best performance.
   SingleExponential single_exp;
   DoubleExponential double_exp;

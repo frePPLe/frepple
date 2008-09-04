@@ -32,8 +32,8 @@ using namespace frepple;
 
 
 #if defined(WIN32)
-// This function is only applicable for the windows operating systems
-// and when it hasn't been explicitly disabled by setting the STATIC variable.
+// This function is only applicable for the windows operating systems, 
+// including CygWin.
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 

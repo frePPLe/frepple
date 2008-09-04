@@ -145,8 +145,18 @@
 #ifndef PYTHON_H
 #define PYTHON_H
 
-/* Python.h has to be included first. */
+/* Python.h has to be included first. 
+   For a debugging build on windows we avoid using the debug version of Python
+   since that also requires Python and all its modules to be compiled in debug
+   mode.
+*/
+#if defined(_DEBUG) && defined(_MSC_VER)
+#undef _DEBUG
 #include "Python.h"
+#define _DEBUG
+#else
+#include "Python.h"
+#endif
 #include "datetime.h"
 
 #include "frepple.h"

@@ -88,7 +88,7 @@ TextOperator = {
   }
 
 # URL parameters that are not query arguments
-reservedParameters = ('o', 'p', 'reporttype', 'pop', 'reportbucket', 'reportstart', 'reportend')
+reservedParameters = ('o', 'p', 't', 'reporttype', 'pop', 'reportbucket', 'reportstart', 'reportend')
 
 class Report(object):
   '''

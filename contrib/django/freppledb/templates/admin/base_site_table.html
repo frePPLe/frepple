@@ -13,8 +13,8 @@
 <form><input style="display:none;" type="button" id="save" value="save" onclick="upload.save();"/>
 <input style="display:none;" type="button" id="undo" value="undo" onclick="upload.undo();"/>
 <a href="javascript:bucket_show();" id="bucketconfig"><img src="{% admin_media_prefix %}img/admin/icon_clock.gif"/>{% trans 'Time' %}</a><span id="timebuckets">{{ reportbucket }},{{ reportstart}},{{ reportend }}</span>
-<a href="javascript:export_show(false);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a><div id="popup"></div>
-</form></div>{% endblock %}
+<a href="javascript:export_show(false);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a>
+</form><div id="popup"></div></div>{% endblock %}
 {% block content %}
 <div id="content-main">
 

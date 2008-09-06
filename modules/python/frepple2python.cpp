@@ -86,7 +86,7 @@ int PythonPlan::setattro(const Attribute& attr, const PythonObject& field)
 
 PyObject* PythonBuffer::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_description))
@@ -241,7 +241,7 @@ int PythonBufferInfinite::setattro(const Attribute& attr, const PythonObject& fi
 
 PyObject* PythonBufferProcure::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_leadtime))
     return PythonObject(obj->getLeadtime());
   if (attr.isA(Tags::tag_mininventory))
@@ -297,7 +297,7 @@ int PythonBufferProcure::setattro(const Attribute& attr, const PythonObject& fie
 
 PyObject* PythonLocation::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_description))
@@ -375,7 +375,7 @@ int PythonLocationDefault::setattro(const Attribute& attr, const PythonObject& f
 
 PyObject* PythonCustomer::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_description))
@@ -439,7 +439,7 @@ int PythonCustomerDefault::setattro(const Attribute& attr, const PythonObject& f
 
 PyObject* PythonItem::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_description))
@@ -519,7 +519,7 @@ int PythonItemDefault::setattro(const Attribute& attr, const PythonObject& field
 
 PyObject* PythonCalendar::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_buckets))
@@ -552,7 +552,7 @@ int PythonCalendarVoid::setattro(const Attribute& attr, const PythonObject& fiel
 
 PyObject* PythonCalendarBool::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_default))
     return PythonObject(obj->getDefault());
   return PythonCalendar(obj).getattro(attr); 
@@ -571,7 +571,7 @@ int PythonCalendarBool::setattro(const Attribute& attr, const PythonObject& fiel
 
 PyObject* PythonCalendarDouble::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_default))
     return PythonObject(obj->getDefault());
   return PythonCalendar(obj).getattro(attr); 
@@ -620,7 +620,7 @@ int PythonCalendarBucket::initialize(PyObject* m)
 
 PyObject* PythonCalendarBucket::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_start))
     return PythonObject(obj->getStart());
   if (attr.isA(Tags::tag_end))
@@ -635,7 +635,8 @@ PyObject* PythonCalendarBucket::getattro(const Attribute& attr)
       return PythonObject(dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->getValue());
     if (cal->getType() == CalendarString::metadata)
       return PythonObject(dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->getValue());
-    if (cal->getType() == CalendarVoid::metadata) return Py_None;
+    if (cal->getType() == CalendarVoid::metadata) 
+      return Py_BuildValue("");
     PyErr_SetString(PythonLogicException, "calendar type not recognized");
     return NULL;
   }
@@ -688,7 +689,7 @@ int PythonCalendarBucket::setattro(const Attribute& attr, const PythonObject& fi
 
 PyObject* PythonDemand::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_quantity))
@@ -812,7 +813,7 @@ int PythonDemandDefault::setattro(const Attribute& attr, const PythonObject& fie
 
 PyObject* PythonResource::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_description))
@@ -925,7 +926,7 @@ int PythonResourceInfinite::setattro(const Attribute& attr, const PythonObject& 
 
 PyObject* PythonOperation::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_description))
@@ -1006,7 +1007,7 @@ int PythonOperation::setattro(const Attribute& attr, const PythonObject& field)
 
 PyObject* PythonOperationFixedTime::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_duration))
     return PythonObject(obj->getDuration());
   return PythonOperation(obj).getattro(attr); 
@@ -1026,7 +1027,7 @@ int PythonOperationFixedTime::setattro(const Attribute& attr, const PythonObject
 
 PyObject* PythonOperationTimePer::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_duration))
     return PythonObject(obj->getDuration());
   if (attr.isA(Tags::tag_duration))
@@ -1095,7 +1096,7 @@ int PythonProblem::initialize(PyObject* m)
 
 PyObject* PythonProblem::getattro(const Attribute& attr)
 {
-  if (!prob) return Py_None;
+  if (!prob) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(prob->getType().type);
   if (attr.isA(Tags::tag_description))
@@ -1176,7 +1177,7 @@ PyObject* PythonOperationPlan::create(PyTypeObject* pytype, PyObject* args, PyOb
 
 PyObject* PythonOperationPlan::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_id))
     return PythonObject(obj->getIdentifier());
   if (attr.isA(Tags::tag_operation))
@@ -1254,7 +1255,7 @@ int PythonFlowPlan::initialize(PyObject* m)
 
 PyObject* PythonFlowPlan::getattro(const Attribute& attr)
 {
-  if (!fl) return Py_None;
+  if (!fl) return Py_BuildValue("");
   if (attr.isA(Tags::tag_operationplan))
     return PythonObject(fl->getOperationPlan());
   if (attr.isA(Tags::tag_quantity))
@@ -1310,7 +1311,7 @@ int PythonLoadPlan::initialize(PyObject* m)
 
 PyObject* PythonLoadPlan::getattro(const Attribute& attr)
 {
-  if (!fl) return Py_None;
+  if (!fl) return Py_BuildValue("");
   if (attr.isA(Tags::tag_operationplan))
     return PythonObject(fl->getOperationPlan());
   if (attr.isA(Tags::tag_quantity))
@@ -1433,7 +1434,7 @@ int PythonLoad::initialize(PyObject* m)
 
 PyObject* PythonLoad::getattro(const Attribute& attr)
 {
-  if (!ld) return Py_None;
+  if (!ld) return Py_BuildValue("");
   if (attr.isA(Tags::tag_resource))
     return PythonObject(ld->getResource());
   if (attr.isA(Tags::tag_operation))
@@ -1530,7 +1531,7 @@ int PythonFlow::initialize(PyObject* m)
 
 PyObject* PythonFlow::getattro(const Attribute& attr)
 {
-  if (!fl) return Py_None;
+  if (!fl) return Py_BuildValue("");
   if (attr.isA(Tags::tag_buffer))
     return PythonObject(fl->getBuffer());
   if (attr.isA(Tags::tag_operation))
@@ -1614,7 +1615,7 @@ PyObject* PythonFlowIterator::iternext()
 
 PyObject* PythonSolver::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_loglevel))
@@ -1637,7 +1638,7 @@ int PythonSolver::setattro(const Attribute& attr, const PythonObject& field)
 
 PyObject* PythonSolverMRP::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_constraints))
     return PythonObject(obj->getConstraints());
   if (attr.isA(Tags::tag_maxparallel))
@@ -1675,7 +1676,7 @@ PyObject *PythonSolver::solve(PyObject *self, PyObject *args)
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   Py_INCREF(Py_None);
-  return Py_None;
+  return Py_BuildValue("");
 }
 
 

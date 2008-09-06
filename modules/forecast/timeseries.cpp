@@ -30,11 +30,16 @@
 namespace module_forecast
 {
 
-
-double Forecast::generateFutureValues(const double history[], unsigned int count, bool debug)
+void Forecast::generateFutureValues(
+  const double history[], unsigned int historycount, 
+  const Date buckets[], unsigned int bucketcount, 
+  bool debug)
 {
-  // Validate presence of history
-  if (!history) throw RuntimeException("Null argument to forecast function");
+  // Validate the input
+  if (!history || !buckets) 
+    throw RuntimeException("Null argument to forecast function");
+  if (bucketcount < 2) 
+    throw DataException("Need at least 2 forecast dates");
 
   // Create a list of forecasting methods.
   // We create the forecasting objects in stack memory for best performance.
@@ -47,11 +52,11 @@ double Forecast::generateFutureValues(const double history[], unsigned int count
 
   // Evaluate each forecast method
   double best_error = DBL_MAX;
-  int best_method = 0;
+  int best_method = -1;
   double error;
   for (int i=0; i<numberOfMethods; ++i)
   {    
-    error = methods[i]->generateForecast(history, count, debug);  
+    error = methods[i]->generateForecast(history, historycount, debug);  
     if (error<best_error) 
     {
       best_error = error;
@@ -60,9 +65,14 @@ double Forecast::generateFutureValues(const double history[], unsigned int count
   }
   
   // Apply the most appropriate forecasting method
-
-  return best_error;
+  if (best_method >= 0)
+    methods[best_method]->applyForecast(this, buckets, bucketcount, debug);
 }
+
+
+//
+// SINGLE EXPONENTIAL FORECAST
+//
 
 
 double Forecast::SingleExponential::initial_alfa = 0.2;
@@ -139,6 +149,25 @@ double Forecast::SingleExponential::generateForecast
 }
 
 
+void Forecast::SingleExponential::applyForecast 
+  (Forecast* forecast, const Date buckets[], unsigned int bucketcount, bool debug)
+{
+  // Loop over all buckets and set the forecast to a constant value
+  if (f_i < 0) return;
+  for (unsigned int i = 1; i < bucketcount; ++i)
+    forecast->setTotalQuantity(
+      DateRange(buckets[i-1], buckets[i]), 
+      f_i
+      );
+}
+
+
+
+//
+// DOUBLE EXPONENTIAL FORECAST
+//
+
+
 double Forecast::DoubleExponential::initial_alfa = 0.2;
 double Forecast::DoubleExponential::min_alfa = 0.03;
 double Forecast::DoubleExponential::max_alfa = 1.0;
@@ -157,7 +186,7 @@ double Forecast::DoubleExponential::generateForecast  /* @todo optimization not 
     return DBL_MAX;
 
   unsigned int iteration = 1;
-  double error_mad, trend_i, constant_i, constant_i_minus_1;
+  double error_mad, constant_i_minus_1;
   //xxxfor (; iteration <= Forecast::getForecastIterations(); ++iteration)
   for (; iteration <= 1; ++iteration)
   {
@@ -190,5 +219,19 @@ double Forecast::DoubleExponential::generateForecast  /* @todo optimization not 
       << ", forecast " << (trend_i + constant_i) << endl;
   return error_mad;
 }
+
+
+void Forecast::DoubleExponential::applyForecast
+  (Forecast* forecast, const Date buckets[], unsigned int bucketcount, bool debug)
+{
+  // Loop over all buckets and set the forecast to a linearly changing value
+  for (unsigned int i = 1; i < bucketcount; ++i)
+    if (constant_i + i * trend_i > 0)
+      forecast->setTotalQuantity(
+        DateRange(buckets[i-1], buckets[i]), 
+        constant_i + i * trend_i
+        );
+}
+
 
 }       // end namespace

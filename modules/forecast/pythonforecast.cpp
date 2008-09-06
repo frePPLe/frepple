@@ -24,7 +24,7 @@
  *                                                                         *
  ***************************************************************************/
 
-/* Python.h has to be included first. 
+/* Python.h has to be included first.
    For a debugging build on windows we avoid using the debug version of Python
    since that also requires Python and all its modules to be compiled in debug
    mode.
@@ -50,7 +50,7 @@ namespace module_forecast
 #endif
 
 PyMethodDef PythonForecast::methods[] = {
-    {"timeseries", (PyCFunction)PythonForecast::timeseries, METH_O,
+    {"timeseries", (PyCFunction)PythonForecast::timeseries, METH_VARARGS,
      "Set the future based on the timeseries of historical data"
     },
     {NULL}  /* Sentinel */
@@ -240,30 +240,79 @@ extern "C" PyObject* PythonForecastBucket::next(PythonForecastBucket* obj)
 }
 
 
+Date getDate(PyObject* obj)   // @todo remove this method
+{
+  PyDateTime_IMPORT;
+  if (PyDateTime_Check(obj))
+    return Date(
+      PyDateTime_GET_YEAR(obj),
+      PyDateTime_GET_MONTH(obj),
+      PyDateTime_GET_DAY(obj),
+      PyDateTime_DATE_GET_HOUR(obj),
+      PyDateTime_DATE_GET_MINUTE(obj),
+      PyDateTime_DATE_GET_SECOND(obj)
+      );
+  else if (PyDate_Check(obj))
+    return Date(
+      PyDateTime_GET_YEAR(obj),
+      PyDateTime_GET_MONTH(obj),
+      PyDateTime_GET_DAY(obj)
+      );
+  else
+   throw DataException(
+    "Invalid data type. Expecting datetime.date or datetime.datetime"
+    );
+}
+
+
 extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
 {
-  // Verify we can iterate over the argument
-  PyObject *iterator = PyObject_GetIter(args);
-  if (!iterator) return NULL;
+  // Get the forecast model
+  Forecast* forecast = reinterpret_cast<PythonForecast*>(self)->iter->second;
 
-  double data[300];
-  double returnvalue;
-  unsigned int cnt = 0;
+  // Parse the Python arguments
+  PyObject* history;
+  PyObject* buckets;
+  int ok = PyArg_ParseTuple(args, "OO", &history, &buckets);
+  if (!ok) return NULL;
 
-  // Copy the time series data into a C++ data structure
-  PyObject *item;
-  while (item = PyIter_Next(iterator))
+  // Verify we can iterate over the arguments
+  PyObject *historyiterator = PyObject_GetIter(history);
+  PyObject *bucketiterator = PyObject_GetIter(buckets);
+  if (!historyiterator || !bucketiterator)
   {
-    data[cnt++] = PyFloat_AsDouble(item);
-    Py_DECREF(item);
-    if (cnt>=300) break;
+    PyErr_Format(PyExc_AttributeError,"Invalid argument type");
+    return NULL;
   }
-  Py_DECREF(iterator);
+
+  // Copy the history data into a C++ data structure
+  double data[300];
+  unsigned int historycount = 0;
+  PyObject *item;
+  while (item = PyIter_Next(historyiterator))
+  {
+    data[historycount++] = PyFloat_AsDouble(item);
+    Py_DECREF(item);
+    if (historycount>=300) break;
+  }
+  Py_DECREF(historyiterator);
+
+  // Copy the bucket data into a C++ data structure
+  Date bucketdata[300];
+  unsigned int bucketcount = 0;
+  while (item = PyIter_Next(bucketiterator))
+  {
+    bucketdata[bucketcount++] = getDate(item);
+    Py_DECREF(item);
+    if (bucketcount>=300) break;
+  }
+  Py_DECREF(bucketiterator);
 
   Py_BEGIN_ALLOW_THREADS  // Free the Python interpreter for other threads
   try {
     // Generate the forecast
-    returnvalue = Forecast::generateFutureValues(data, cnt, true);
+    forecast->generateFutureValues
+      (data, historycount, bucketdata, bucketcount, true);
   }
   catch (...)
   {
@@ -272,8 +321,7 @@ extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
     return NULL;
   }
   Py_END_ALLOW_THREADS   // Reclaim the Python interpreter
-
-  return PyFloat_FromDouble(returnvalue);
+  return Py_BuildValue("");
 }
 
 } // end namespace

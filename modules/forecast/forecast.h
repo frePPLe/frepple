@@ -197,12 +197,14 @@ class Forecast : public Demand
     {
       public:
         /** Forecast evaluation. */
-        virtual double generateForecast(const double history[], 
-          unsigned int count, bool debug) = 0;
+        virtual double generateForecast
+          (const double[], unsigned int, bool) = 0;
 
-        /** @todo need also a applyForecast() method. it is called when this forecast
-          * method has won and now needs to update the forecast values.
+        /** This method is called when this forecast method has generated the 
+          * lowest forecast error and now needs to set the forecast values.
           */
+        virtual void applyForecast
+          (Forecast*, const Date[], unsigned int, bool) = 0;
     };
 
     /** @brief A class to perform single exponential smoothing on a time series. */
@@ -211,11 +213,6 @@ class Forecast : public Demand
       private:
         /** Smoothing constant. */
         double alfa;
-
-        /** Smoothed result.<br>
-          * Used to carry results between the evaluation and applying of the forecast.
-          */
-        double f_i;
 
         /** Default initial alfa value.<br>
           * The default value is 0.2.
@@ -239,13 +236,21 @@ class Forecast : public Demand
           **/
         static unsigned int skip;
 
+        /** Smoothed result.<br>
+          * Used to carry results between the evaluation and applying of the forecast.
+          */
+        double f_i;
+
       public:
         /** Constructor. */
-        SingleExponential(double a = initial_alfa) : alfa(a) {}
+        SingleExponential(double a = initial_alfa) : alfa(a), f_i(0) {}
 
         /** Forecast evaluation. */
         double generateForecast(const double history[], 
           unsigned int count, bool debug);
+
+        /** Forecast value updating. */
+        void applyForecast(Forecast*, const Date[], unsigned int, bool);
 
         /** Update the initial value for the alfa parameter. */
         static void setInitialAlfa(double x) 
@@ -325,14 +330,27 @@ class Forecast : public Demand
           **/
         static unsigned int skip;
 
+        /** Smoothed result.<br>
+          * Used to carry results between the evaluation and applying of the forecast.
+          */
+        double trend_i;
+        
+        /** Smoothed result.<br>
+          * Used to carry results between the evaluation and applying of the forecast.
+          */
+        double constant_i;
+
       public:
         /** Constructor. */
         DoubleExponential(double a = initial_alfa, double g = initial_gamma) 
-          : alfa(a), gamma(g) {}
+          : alfa(a), gamma(g), trend_i(0), constant_i(0) {}
 
         /** Forecast evaluation. */
         double generateForecast(const double history[], 
           unsigned int count, bool debug);
+
+        /** Forecast value updating. */
+        void applyForecast(Forecast*, const Date[], unsigned int, bool);
 
         /** Update the initial value for the alfa parameter. */
         static void setInitialAlfa(double x)        
@@ -385,7 +403,6 @@ class Forecast : public Demand
         /** Update the number of timeseries values used to initialize the 
           * algorithm. */
         static void setSkip(int x) { skip = x; }
-
     };
 
   private:
@@ -488,11 +505,13 @@ class Forecast : public Demand
     Calendar* getCalendar() const {return calptr;}
 
     /** Generate a forecast value based on historical demand data.<br>
-      * This method will call the different forecasting methods, select the 
-      * method with the lowest mad-error. It then asks the selected forecast
-      * method to generate future values.
+      * This method will call the different forecasting methods and select the 
+      * method with the lowest mad-error.<br>
+      * It then asks the selected forecast method to generate a value for 
+      * each of the time buckets passed.
       */
-    static double generateFutureValues(const double[], unsigned int, bool = false);
+    void generateFutureValues
+      (const double[], unsigned int, const Date[], unsigned int, bool=false);
 
     /** Updates the due date of the demand. Lower numbers indicate a
       * higher priority level. The method also updates the priority

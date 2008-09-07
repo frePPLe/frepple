@@ -28,10 +28,10 @@
 # Initialization
 #
 AC_PREREQ(2.59)
-AC_INIT(frepple, 0.5.2-beta)
+AC_INIT(frepple, 0.6.0.beta)
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
-AM_INIT_AUTOMAKE(frepple,0.5.2-beta)
+AM_INIT_AUTOMAKE(frepple,0.6.0.beta)
 
 #
 # Initilize libtool
@@ -133,9 +133,10 @@ AC_HELP_STRING([--enable-lp_solver],
   yes) lp=true ;;
   no)  lp=false ;;
   *) AC_MSG_ERROR([bad value ${enableval} for --enable-python]) ;;
-esac], [AC_CHECK_PROG(lp, [glpsol], true, false)])
+esac], [AC_CHECK_PROG(lp, [glpsol], aatrue, aafalse)])
 AM_CONDITIONAL(LP, test x$lp = xtrue)
 
+echo "ee $lp ee"
 #
 # Define a configure argument to enable/disable the python module
 #

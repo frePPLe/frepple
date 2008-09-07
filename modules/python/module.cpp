@@ -229,10 +229,9 @@ void CommandPython::initialize()
     Py_XDECREF(module);
   }
 
-  // Search and execute the initialization file '$FREPPLE_HOME/init.py'
-  string init = Environment::getHomeDirectory() + "init.py";
-  struct stat stat_p;
-  if (!nok && !stat(init.c_str(), &stat_p))
+  // Search and execute the initialization file 'init.py'
+  string init = Environment::searchFile("init.py");
+  if (!init.empty())
   {
     // Initialization file exists
     PyObject *m = PyImport_AddModule("__main__");

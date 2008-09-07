@@ -22,7 +22,11 @@
 
 #
 # This makefile is built as a convenience for developers.
-# It provides easy to use wrappers around common administration, build and maintenance tasks:
+# It provides easy to use wrappers around common administration, configuration, build 
+# and maintenance tasks:
+#  CONFIGURING
+#     - prep:        Standard autotools configuration.
+#     - prep_force:  Reinitializes the autotools tools.
 #  BUILDING AND COMPILING
 #     - default:     Configures and recreates an optimized build from scratch.
 #     - debug:       Configures and recreates a debug build from scratch.
@@ -31,7 +35,7 @@
 #     - build:       Compiles a configured project.
 #     - clean:       Cleans up all intermediate files.
 #     - check:       Runs the test suite.
-#  DISTRIBTION TASKS
+#  DISTRIBUTION TASKS
 #     - dist:        Creates a source code tarball.
 #  CODE ANALYSIS
 #     - stats:       Runs a simple lines-of-code metric on the source code.
@@ -55,15 +59,10 @@ prep:
 	@echo "PHASE: Configuring GNU build tools..."
 	aclocal
 	autoheader
-#
-# Use this if you want to release the stuff.
-# Don't use it for your own development builds
-#	automake --include-deps
-#
-# Use these option when automake versions are changing
 	automake
 	autoconf
 
+# Use these option when automake versions are changing
 prep_force:
 	@echo
 	@echo "PHASE: Configuring GNU build tools..."
@@ -139,19 +138,21 @@ astyle:
 	astyle --mode=c $(astyleoptions) `find . -name '*.h'`
 
 # The release number is (unfortunately) stored in a number of independent places:
-# This make target is used to update all those places in a single go.
-# The following references will still have to be updated manually:
-#   - In the excel spreadsheet hit alt-F11 and edit the "about" tab in the "config" form.
+# This make target is used to consistently update all those places.
+#  * All arguments, except the 4th, need to be integers.
+#  * Only the fourth argument can be empty.
+#  * When the argument 4 is used, it should start with a '.' and avoid 
+#    using '-' (which causes problems for the RPMs)
 old1 = 0
-old2 = 5
-old3 = 2
-old4 = -beta
+old2 = 6
+old3 = 0
+old4 = .beta
 new1 = 0
-new2 = 5
-new3 = 2
-new4 =
+new2 = 6
+new3 = 0
+new4 = 
 set_release:
-	for i in "configure.in" "doc/menu.html" "contrib/rpm/frepple.spec" "include/frepple/utils.h" "contrib/django/freppledb/settings.py" "contrib/django/freppledb/locale/django.po" "bin/frepple.xsd" "bin/frepple_core.xsd"; do \
+	for i in "configure.in" "doc/menu.html" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "contrib/django/freppledb/settings.py" "contrib/django/freppledb/locale/django.po" "bin/frepple.xsd" "bin/frepple_core.xsd"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)$(old4)/$(new1).$(new2).$(new3)$(new4)/g' $$i >out.tmp; \
 		mv out.tmp $$i; \
 	done

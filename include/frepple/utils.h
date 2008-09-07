@@ -80,7 +80,7 @@ using namespace std;
 #include <config.h>
 #else
 // Define the version for (windows) compilers that don't use autoconf
-#define PACKAGE_VERSION "0.5.2-beta"
+#define PACKAGE_VERSION "0.6.0.beta"
 #endif
 
 // Header for multithreading
@@ -264,9 +264,6 @@ inline ostream& operator <<(ostream &os, const indent& i)
 class Environment
 {
   private:
-    /** Stores the frepple home directory. */
-    static DECLARE_EXPORT string home;
-
     /** Stores the number of processors on your machine.<br>
       * On windows it is automatically initialized to the value of the
       * environment variable NUMBER_OF_PROCESSORS.
@@ -280,14 +277,17 @@ class Environment
     static DECLARE_EXPORT string logfilename;
 
   public:
-    /** Return the home directory. */
-    static const string getHomeDirectory() {return home;}
-
-    /** Updates the home directory.<br>
-      * A runtime exception is thrown when the string points to a nonexistent or
-      * invalid directory.
+    /** Search for a file with a given name.<br>
+      * The following directories are searched in sequence to find a match:
+      *   - The current directory.
+      *   - The directory reffered to by the variable FREPPLE_HOME, if it 
+      *     is defined.
+      *   - The data directory as configured during the compilation.
+      *     This applies only to linux / unix.
+      *   - The library directory as configured during the compilation.
+      *     This applies only to linux / unix.
       */
-    static DECLARE_EXPORT void setHomeDirectory(const string);
+    static DECLARE_EXPORT string searchFile(const string);
 
     /** Environment variables in the argument string are expanded with
       * their value.<br>

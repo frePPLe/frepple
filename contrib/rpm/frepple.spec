@@ -20,33 +20,53 @@
 # revision : $LastChangedRevision: 105 $  $LastChangedBy$
 # date : $LastChangedDate$
 
-Summary: FREE Production Planning Library
+Summary: Free Production Planning Library
 Name: frepple
-Version: 0.5.2-beta
+Version: 0.6.0.beta
 Release: 1
 License: GLPL
 Group: Office/Productivity
 Source: frepple-%{version}.tar.gz
 URL: http://frepple.sourceforge.net
-Vendor: jdetaeye@users.sourceforge.net
-Packager: Johan De Taeye <jdetaeye@users.sourceforge.net>
-Buildroot: /tmp/frepple
+Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
+Requires: python
+# @todo add django dependency
+BuildRequires: doxygen python-devel xerces-c-devel
 Prefix: /usr
 
 %description
-FrePPLe stands for "FREE Production Planning Library". It aims at building a
+FrePPLe stands for "Free Production Planning Library". It aims at building a
 toolkit for modeling and solving production planning problems, targetted at
 discrete manufacturing industries.
+
+%package devel
+Summary: Development headers for the Free Production Planning Library
+Group: Office/Productivity
+Requires: frepple
+
+%description devel
+These are the develop headers for frePPLe.
 
 %prep
 %setup -q
 
 %build
-./configure --enable-doc --prefix=%{buildroot}%{prefix} --docdir=%{buildroot}%{prefix}/share/doc/frepple
+./configure \
+  --disable-rpath \
+  --disable-dependency-tracking \
+  --enable-doc \
+  --enable-python \
+  --enable-forecast \
+  --disable-lp_solver \
+  --disable-webservice \
+  --prefix=%{prefix} \
+  --docdir=%{buildroot}%{_prefix}/share/doc/frepple-%{version} \
+  --datadir=%{prefix}/share/frepple
 make all
 
 %install
-make install
+rm -rf %{buildroot}
+make DESTDIR=%{buildroot} install
 
 %clean
 rm -rf %{buildroot}
@@ -55,18 +75,40 @@ rm -rf %{buildroot}
 /sbin/ldconfig
 echo Finished installation of frePPLe
 
+# @todo configure django in web server
+
 %postun
 /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
 %{prefix}/bin/frepple
-%{prefix}/bin/mod_forecast.so
-%{prefix}/bin/mod_python.so
-%{prefix}/bin/mod_lp_solver.so
-%{prefix}/bin/mod_webservice.so
+%{prefix}/lib/frepple/mod_forecast.so
+%{prefix}/lib/frepple/mod_python.so
+#%{prefix}/lib/frepple/mod_lp_solver.so
+#%{prefix}/lib/frepple/mod_webservice.so
+#%{prefix}/lib/libfrepple.la
+%{prefix}/lib/libfrepple.so
+%{prefix}/lib/libfrepple.so.0
+%{prefix}/lib/libfrepple.so.0.0.0
+#%{prefix}/lib/mod_forecast.la
+#%{prefix}/lib/mod_python.la
+%{prefix}/share/frepple/mod_forecast.xsd
+%{prefix}/share/frepple/mod_python.xsd
+#%{prefix}/share/frepple/mod_lpsolver.xsd
+#%{prefix}/share/frepple/mod_webservice.xsd
+%{prefix}/share/frepple/frepple.xsd
+%{prefix}/share/frepple/frepple_core.xsd
+%{prefix}/share/frepple/init.xml
+%doc COPYING doc/reference doc/*.pdf doc/favicon.ico doc/*.html doc/*.css doc/*.gif doc/*.bmp
+
+%files devel
 %dir %{prefix}/include/frepple
 %{prefix}/include/frepple/*
 %{prefix}/include/frepple.h
 %{prefix}/include/freppleinterface.h
-%doc doc/* COPYING
+%{prefix}/*/*.la
+%{prefix}/*/*/*.la
+
+
+

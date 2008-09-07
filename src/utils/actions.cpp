@@ -470,6 +470,7 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
 
 #ifdef WIN32
   // Load the library - The windows way
+
   // Change the error mode: we handle errors now, not the operating system
   UINT em = SetErrorMode(SEM_FAILCRITICALERRORS);
   HINSTANCE handle = LoadLibraryEx(lib.c_str(),NULL,LOAD_WITH_ALTERED_SEARCH_PATH);
@@ -510,10 +511,20 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
 
 #else
   // Load the library - The unix way
+
+  // Search the frePPLe directories for the library
+  string fullpath = Environment::searchFile(lib);
   dlerror(); // Clear the previous error
-  void *handle = dlopen(lib.c_str(), RTLD_NOW | RTLD_GLOBAL);
+  void *handle = dlopen(fullpath.c_str(), RTLD_NOW | RTLD_GLOBAL);
   const char *err = dlerror();  // Pick up the error string
-  if (err) throw RuntimeException(err);
+  if (err) 
+  {
+     // Search the normal path for the library   
+     dlerror(); // Clear the previous error
+     handle = dlopen(lib.c_str(), RTLD_NOW | RTLD_GLOBAL);
+     err = dlerror();  // Pick up the error string
+     if (err) throw RuntimeException(err);
+  }
 
   // Find the initialization routine
   func inithandle = (func)(dlsym(handle, "initialize"));

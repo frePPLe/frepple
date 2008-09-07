@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-nobasedir = $(bindir)
+nobasedir = $(datadir)
 nobase_DATA = frepple.xsd frepple_core.xsd init.xml
 
 EXTRA_DIST = $(nobase_DATA)

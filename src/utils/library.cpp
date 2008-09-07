@@ -50,9 +50,6 @@ DECLARE_EXPORT const MetaClass CommandList::metadata,
 // Processing instruction metadata
 DECLARE_EXPORT const MetaCategory XMLinstruction::metadata;
 
-// Home directory
-DECLARE_EXPORT string Environment::home("[unspecified]");
-
 // Number of processors.
 // The value initialized here is overwritten in the library initialization.
 DECLARE_EXPORT int Environment::processors = 1;
@@ -71,22 +68,48 @@ DECLARE_EXPORT string Environment::logfilename;
 DECLARE_EXPORT const hashtype MetaCategory::defaultHash(Keyword::hash("default"));
 
 
-DECLARE_EXPORT void Environment::setHomeDirectory(const string dirname)
+DECLARE_EXPORT string Environment::searchFile(const string filename)
 {
-  // Check if the parameter is the name of a directory
+  // First: check the current directory
   struct stat stat_p;
-  if (stat(dirname.c_str(), &stat_p))
-    // Can't verify the status, directory doesn't exist
-    throw RuntimeException("Home directory '" + dirname + "' doesn't exist");
-  else if (stat_p.st_mode & S_IFDIR)
-    // Ok, valid directory
-    home = dirname;
-  else
-    // Exists but it's not a directory
-    throw RuntimeException("Invalid home directory '" + dirname + "'");
+  int result = stat(filename.c_str(), &stat_p);
+  if (!result && stat_p.st_mode & S_IREAD)
+    return filename;
 
-  // Make sure the directory ends with a slash
-  if (!home.empty() && *home.rbegin() != '/') home += '/';
+  // Second: check the FREPPLE_HOME directory, if it is defined
+  string fullname = getenv("FREPPLE_HOME");
+  if (!fullname.empty())
+  {
+    if (*fullname.rbegin() != '/') fullname += '/';
+    fullname += filename; 
+    result = stat(fullname.c_str(), &stat_p);
+    if (!result && stat_p.st_mode & S_IREAD)
+      return fullname;
+  }
+
+#ifdef DATADIR
+  // Third: check the data directory
+  fullname = DATADIR;
+  if (*fullname.rbegin() != '/') fullname += '/';
+  fullname.append(filename); 
+  result = stat(fullname.c_str(), &stat_p);
+  if (!result && stat_p.st_mode & S_IREAD)
+    return fullname;
+#endif
+
+#ifdef LIBDIR
+  // Fourth: check the lib directory
+  fullname = LIBDIR;
+  if (*fullname.rbegin() != '/') fullname += '/';
+  fullname += "frepple/";
+  fullname += filename; 
+  result = stat(fullname.c_str(), &stat_p);
+  if (!result && stat_p.st_mode & S_IREAD)
+    return fullname;
+#endif
+
+  // Not found
+  return "";
 }
 
 

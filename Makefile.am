@@ -19,8 +19,3 @@ clean-local:
 dist-hook:
 	-rm -rf `find $(top_distdir) -name '.svn' -type d`
 
-# Create an rpm distribution
-rpm:  dist
-	sudo cp frepple-$(VERSION).tar.gz /usr/src/redhat/SOURCES
-	sudo cp frepple.spec /usr/src/redhat/SPECS/frepple-$(VERSION).spec
-	sudo rpmbuild -ba /usr/src/redhat/SPECS/frepple-$(VERSION).spec

@@ -31,8 +31,10 @@
 
 #ifndef DOXYGEN
 
+#ifndef SOAP_OK
 namespace module_webservice
 {
+#endif
 
 /* Typedefs to help gsoap map the types to XML data types. */
 typedef double xsd__double;
@@ -62,6 +64,6 @@ struct frepple__DemandInfoResponse {frepple__DemandInfo _return;};
 //gsoap frepple service method-action: demand ""
 int frepple__demand(xsd__string name, struct frepple__DemandInfoResponse &result);
 
-}
+//}
 
 #endif

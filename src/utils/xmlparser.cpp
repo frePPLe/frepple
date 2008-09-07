@@ -460,8 +460,9 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
     if (validate)
     {
       // Specify the no-namespace schema file
-      string schema = Environment::getHomeDirectory();
-      schema += "frepple.xsd";
+      string schema = Environment::searchFile("frepple.xsd");
+      if (schema.empty())
+        throw RuntimeException("Can't find XML schema file 'frepple.xsd'");
       XMLCh *c = xercesc::XMLString::transcode(schema.c_str());
       parser->setProperty(
         xercesc::XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, c

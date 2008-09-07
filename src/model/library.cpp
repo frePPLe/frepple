@@ -349,17 +349,6 @@ void LibraryModel::initialize()
   ProblemCapacityOverload::metadata.registerClass
     ("problem","overload");
 
-  // Verify the existence of the schema file
-  string env = Environment::getHomeDirectory();
-  env += "frepple.xsd";
-  struct stat stat_p;
-  if (stat(env.c_str(), &stat_p))
-    // Can't locate
-    throw RuntimeException("Can't find schema file 'frepple.xsd'");
-  else if (!(stat_p.st_mode & S_IREAD))
-    // Can't read
-    throw RuntimeException("Can't read schema file 'frepple.xsd'");
-
   // Make sure the exit function is called
 #ifdef HAVE_ATEXIT
   atexit(finalize);

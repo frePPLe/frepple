@@ -41,5 +41,10 @@ faultC.cpp:
 client: client.cpp module_webserviceServerLib.cpp
 	g++ -o client client.cpp faultC.cpp module_webserviceClient.cpp module_webserviceC.cpp /home/frepple/workspace/gsoap-2.7/soapcpp2/stdsoap2.cpp
 
+# A convenience copy to quickly collect the results
+all-local:
+	-cp .libs/mod_webservice.so ../../bin
+	cp mod_webservice.xsd ../../bin
+
 endif
 

@@ -2,6 +2,6 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = *.expect forecast_3.xml frepple.xsd init.xml
+EXTRA_DIST = *.expect forecast_3.xml init.xml
 
 CLEANFILES = output.*

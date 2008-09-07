@@ -31,8 +31,6 @@
 #      1) the exit code of the program is 0
 #      2) the generated output files of the program match the content of the
 #         files {testdir}.{nr}.expect
-#    If a file init.xml is found in the test directory, the test directory
-#    is used as the frepple home directory.
 #
 #  - If the test subdirectory doesn't match the criteria of any of the above
 #    types, the directory is considered not to contain a test.
@@ -244,16 +242,8 @@ class freppleTest (unittest.TestCase):
         self.output.extend(glob.glob("output.*.tmp"))
         for i in self.output: os.remove(i)
 
-        # Update FREPPLE_HOME if required
-        oldhome = os.environ['FREPPLE_HOME']
-        if os.path.isfile('init.xml'):
-            os.environ['FREPPLE_HOME'] = os.path.join(os.environ['FREPPLE_HOME'], '..', 'test', self.subdirectory)
-
         # Run the executable
-        try:
-          self.runProcess(os.environ['EXECUTABLE'] + " -validate " + self.subdirectory + ".xml")
-        finally:
-          os.environ['FREPPLE_HOME'] = oldhome
+        self.runProcess(os.environ['EXECUTABLE'] + " -validate " + self.subdirectory + ".xml")
 
         # Now check the output file, if there is an expected output given
         nr = 1;

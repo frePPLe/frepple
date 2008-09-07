@@ -30,5 +30,10 @@ mod_forecast_la_LDFLAGS += -no-undefined
 mod_forecast_la_LIBADD = ../../src/libfrepple.la
 endif
 
+# A convenience copy to quickly collect the results
+all-local:
+	-cp .libs/mod_forecast.so ../../bin
+	cp mod_forecast.xsd ../../bin
+
 endif
 

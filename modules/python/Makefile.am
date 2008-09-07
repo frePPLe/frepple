@@ -24,5 +24,10 @@ mod_python_la_LDFLAGS += -no-undefined
 mod_python_la_LIBADD = ../../src/libfrepple.la
 endif
 
+# A convenience copy to quickly collect the results
+all-local:
+	-cp .libs/mod_python.so ../../bin
+	cp mod_python.xsd ../../bin
+
 endif
 

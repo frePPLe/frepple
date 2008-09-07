@@ -21,6 +21,11 @@ mod_lpsolver_la_LDFLAGS += -no-undefined
 mod_lpsolver_la_LIBADD = ../../src/libfrepple.la
 endif
 
+# A convenience copy to quickly collect the results
+all-local:
+	-cp .libs/mod_lpsolver.so ../../bin
+	cp mod_lpsolver.xsd ../../bin
+
 endif
 
 AM_CPPFLAGS=-I@top_builddir@/include

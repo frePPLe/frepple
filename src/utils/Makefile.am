@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-AM_CPPFLAGS=-I@top_builddir@/include -DDATADIR='"@datadir@"' -DLIBDIR='"@libdir@"'
+AM_CPPFLAGS=-I@top_builddir@/include -DDATADIRECTORY='"@datadir@"' -DLIBDIRECTORY='"@libdir@"'
 
 CLEANFILES = *.gcda *.gcov *.gcno
 

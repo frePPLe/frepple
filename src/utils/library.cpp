@@ -81,28 +81,28 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
   if (!fullname.empty())
   {
     if (*fullname.rbegin() != '/') fullname += '/';
-    fullname += filename; 
+    fullname += filename;
     result = stat(fullname.c_str(), &stat_p);
     if (!result && stat_p.st_mode & S_IREAD)
       return fullname;
   }
 
-#ifdef DATADIR
+#ifdef DATADIRECTORY
   // Third: check the data directory
-  fullname = DATADIR;
+  fullname = DATADIRECTORY;
   if (*fullname.rbegin() != '/') fullname += '/';
-  fullname.append(filename); 
+  fullname.append(filename);
   result = stat(fullname.c_str(), &stat_p);
   if (!result && stat_p.st_mode & S_IREAD)
     return fullname;
 #endif
 
-#ifdef LIBDIR
+#ifdef LIBDIRECTORY
   // Fourth: check the lib directory
-  fullname = LIBDIR;
+  fullname = LIBDIRECTORY;
   if (*fullname.rbegin() != '/') fullname += '/';
   fullname += "frepple/";
-  fullname += filename; 
+  fullname += filename;
   result = stat(fullname.c_str(), &stat_p);
   if (!result && stat_p.st_mode & S_IREAD)
     return fullname;
@@ -203,7 +203,7 @@ void LibraryUtils::initialize()
   // ascii data in the input.
   // For Posix platforms the environment variable LC_ALL controls the locale.
   // Most Linux distributions these days have a default locale that supports
-  // utf-8 encoding, meaning that every unicode character can be 
+  // utf-8 encoding, meaning that every unicode character can be
   // represented.
   // On windows, the default is the system-default ANSI code page. The number
   // of characters that frePPLe supports on windows is constrained by this...
@@ -434,9 +434,9 @@ DECLARE_EXPORT Action MetaClass::decodeAction(const char *x)
 
 
 DECLARE_EXPORT Action MetaClass::decodeAction(const AttributeList& atts)
-{  
+{
   // Decode the string and return the default in the absence of the attribute
-  const DataElement* c = atts.get(Tags::tag_action);      
+  const DataElement* c = atts.get(Tags::tag_action);
   return *c ? decodeAction(c->getString().c_str()) : ADD_CHANGE;
 }
 

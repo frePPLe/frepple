@@ -67,8 +67,22 @@ class OverviewReport(TableReport):
   @staticmethod
   def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
-    # Execute the query
     cursor = connection.cursor()
+    
+    # Execute a query to get the backlog at the start of the horizon
+    startbacklogdict = {}
+    query = '''
+      select item, sum(quantity)
+      from out_demand
+      where item in (select items.name from (%s) items)
+        and (plandate is null or plandate >= '%s')
+        and duedate < '%s'
+      ''' % (basesql, startdate, startdate)
+    cursor.execute(query, baseparams)
+    for row in cursor.fetchall(): 
+      if row[0]: startbacklogdict[row[0]] = float(row[1])
+
+    # Execute the query
     query = '''
         select y.name as row1,
                y.bucket as col1, y.startdate as col2, y.enddate as col3,
@@ -130,10 +144,10 @@ class OverviewReport(TableReport):
     previtem = None
     for row in cursor.fetchall():
       if row[0] != previtem:
-        backlog = float(row[4]) + float(row[5]) - float(row[6])  # @todo Setting the backlog to 0 is not correct: it may be non-zero from the plan before the start date
+        try: backlog =  startbacklogdict[row[0]]
+        except: backlog = 0
         previtem = row[0]
-      else:
-        backlog += float(row[4]) + float(row[5]) - float(row[6])
+      backlog += float(row[4]) + float(row[5]) - float(row[6])
       yield {
         'item': row[0],
         'bucket': row[1],

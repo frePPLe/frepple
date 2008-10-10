@@ -560,7 +560,7 @@ class LoadList(ListReport):
 
   rows = (
     ('id', {
-      'title': _('identifier'),
+      'title': _('id'),
       'filter': FilterNumber(),
       }),
     ('operation', {
@@ -609,7 +609,7 @@ class FlowList(ListReport):
 
   rows = (
     ('id', {
-      'title': _('identifier'),
+      'title': _('id'),
       'filter': FilterNumber(),
       }),
     ('operation', {

@@ -513,6 +513,7 @@ class Flow(AuditModel):
   )
 
   # Database fields
+  id = models.AutoField(_('identifier'), primary_key=True)
   operation = models.ForeignKey(Operation, verbose_name=_('operation'),
     db_index=True, related_name='flows')
   thebuffer = models.ForeignKey(Buffer, verbose_name=_('buffer'),
@@ -536,6 +537,8 @@ class Flow(AuditModel):
 
 
 class Load(AuditModel):
+  # Database fields
+  id = models.AutoField(_('identifier'), primary_key=True)
   operation = models.ForeignKey(Operation, verbose_name=_('operation'), db_index=True, related_name='loads')
   resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, related_name='loads')
   quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
@@ -554,7 +557,7 @@ class Load(AuditModel):
 
 class OperationPlan(AuditModel):
   # Database fields
-  identifier = models.IntegerField(_('identifier'),primary_key=True,
+  id = models.IntegerField(_('identifier'),primary_key=True,
     help_text=_('Unique identifier of an operationplan'))
   operation = models.ForeignKey(Operation, verbose_name=_('operation'),
     db_index=True)

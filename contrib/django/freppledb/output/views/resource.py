@@ -135,7 +135,7 @@ class DetailReport(ListReport):
   reset_crumbs = False
   basequeryset = LoadPlan.objects.extra(
     select={'operation':'out_operationplan.operation'},
-    where=['out_operationplan.identifier = out_loadplan.operationplan'],
+    where=['out_operationplan.id = out_loadplan.operationplan'],
     tables=['out_operationplan'])
   model = LoadPlan
   frozenColumns = 0
@@ -145,7 +145,7 @@ class DetailReport(ListReport):
       'filter': FilterText(),
       'title': _('resource')
       }),
-    # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the operation field.
+    # @todo filter on the operation field...
     ('operation', {
       'title': _('operation'),
       }),

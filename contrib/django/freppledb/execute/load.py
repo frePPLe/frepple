@@ -328,7 +328,7 @@ def loadOperationPlans(cursor):
   print 'Importing operationplans...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT identifier, operation_id, quantity, startdate, enddate, locked FROM operationplan order by identifier asc")
+  cursor.execute("SELECT id, operation_id, quantity, startdate, enddate, locked FROM operationplan order by id asc")
   x = [ header , '<operationplans>' ]
   for i, j, k, l, m, n in cursor.fetchall():
     cnt += 1

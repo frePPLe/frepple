@@ -140,7 +140,7 @@ class DetailReport(ListReport):
   frozenColumns = 0
   editable = False
   rows = (
-    ('identifier', {
+    ('id', {
       'filter': FilterNumber(),
       'title': _('operationplan'),
       }),

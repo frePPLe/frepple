@@ -560,7 +560,7 @@ class LoadList(ListReport):
 
   rows = (
     ('id', {
-      'title': _('id'),
+      'title': _('identifier'),
       'filter': FilterNumber(),
       }),
     ('operation', {
@@ -609,7 +609,7 @@ class FlowList(ListReport):
 
   rows = (
     ('id', {
-      'title': _('id'),
+      'title': _('identifier'),
       'filter': FilterNumber(),
       }),
     ('operation', {
@@ -1007,12 +1007,12 @@ class OperationPlanList(ListReport):
   @staticmethod
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
-      'identifier','operation','startdate','enddate','quantity','locked',
+      'id','operation','startdate','enddate','quantity','locked',
       'lastmodified'
       )
 
   rows = (
-    ('identifier', {
+    ('id', {
       'title': _('identifier'),
       'filter': FilterNumber(),
       }),

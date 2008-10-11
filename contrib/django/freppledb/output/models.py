@@ -26,7 +26,7 @@ from django.db import models
 
 class OperationPlan(models.Model):
   # Database fields
-  identifier = models.IntegerField(_('identifier'), primary_key=True)
+  id = models.IntegerField(_('identifier'), primary_key=True)
   demand = models.CharField(_('demand'), max_length=60, null=True, db_index=True)
   operation = models.CharField(_('operation'), max_length=60, db_index=True, null=True)
   quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4, default='1.00')
@@ -37,7 +37,7 @@ class OperationPlan(models.Model):
   locked = models.BooleanField(_('locked'), default=True)
   owner = models.IntegerField(_('owner'), null=True, blank=True, db_index=True)
 
-  def __unicode__(self): return str(self.identifier)
+  def __unicode__(self): return str(self.id)
 
   class Meta:
     db_table = 'out_operationplan'

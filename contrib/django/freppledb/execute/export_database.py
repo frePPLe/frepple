@@ -88,7 +88,7 @@ def exportOperationplans(cursor):
   for i in frepple.operations():
     cursor.executemany(
       "insert into out_operationplan \
-       (identifier,operation,quantity,startdatetime,enddatetime,startdate, \
+       (id,operation,quantity,startdatetime,enddatetime,startdate, \
        enddate,demand,locked,owner) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
         j.id, i.name.replace("'","''"),

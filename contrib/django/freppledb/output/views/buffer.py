@@ -153,7 +153,7 @@ class DetailReport(ListReport):
   reset_crumbs = False
   basequeryset = FlowPlan.objects.extra(
     select={'operation':'out_operationplan.operation'},
-    where=['out_operationplan.identifier = out_flowplan.operationplan'],
+    where=['out_operationplan.id = out_flowplan.operationplan'],
     tables=['out_operationplan'])
   model = FlowPlan
   frozenColumns = 0
@@ -163,7 +163,7 @@ class DetailReport(ListReport):
       'filter': FilterText(),
       'title': _('buffer')
       }),
-    # @todo Eagerly awaiting the Django queryset refactoring to be able to filter on the operation field.
+    # @todo filter on the operation field...
     # ('operation', {'filter': 'operation__icontains', 'title': _('operation')}),
     ('operation', {
       'title': _('operation'),

@@ -43,12 +43,12 @@ class AuditModel(models.Model):
   # Database fields
   lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=datetime.now())
 
-  def save(self):
+  def save(self, *args, **kwargs):
     # Update the field with every change
     self.lastmodified = datetime.now()
 
     # Call the real save() method
-    super(AuditModel, self).save()
+    super(AuditModel, self).save(*args, **kwargs)
 
   class Meta:
     abstract = True
@@ -361,14 +361,14 @@ class Operation(AuditModel):
 
   def __unicode__(self): return self.name
 
-  def save(self):
+  def save(self, *args, **kwargs):
     if self.type is None or self.type == '' or self.type == 'operation_fixed_time':
       self.duration_per = None
     elif self.type != 'operation_time_per':
       self.duration = None
       self.duration_per = None
     # Call the real save() method
-    super(Operation, self).save()
+    super(Operation, self).save(*args, **kwargs)
 
   class Meta(AuditModel.Meta):
     db_table = 'operation'
@@ -446,7 +446,7 @@ class Buffer(AuditModel):
 
   def __unicode__(self): return self.name
 
-  def save(self):
+  def save(self, *args, **kwargs):
     if self.type == 'buffer_infinite' or self.type == 'buffer_procure':
       # Handle irrelevant fields for infinite and procure buffers
       self.producing = None
@@ -461,7 +461,7 @@ class Buffer(AuditModel):
       self.size_minimum = None
       self.size_multiple = None
       self.size_maximum = None
-    super(Buffer, self).save()
+    super(Buffer, self).save(*args, **kwargs)
 
   class Meta(AuditModel.Meta):
     db_table = 'buffer'
@@ -492,12 +492,12 @@ class Resource(AuditModel):
   # Methods
   def __unicode__(self): return self.name
 
-  def save(self):
+  def save(self, *args, **kwargs):
     if self.type == 'resource_infinite':
         # These fields are not relevant for infinite resources
         self.maximum = None
     # Call the real save() method
-    super(Resource, self).save()
+    super(Resource, self).save(*args, **kwargs)
 
   class Meta(AuditModel.Meta):
     db_table = 'resource'

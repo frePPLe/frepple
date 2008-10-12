@@ -244,8 +244,8 @@ class Command(BaseCommand):
              min_inventory = 20,
              max_inventory = 100,
              size_multiple = 10,
-             leadtime = ld * 86400,
-             onhand = round(forecast_per_item * random.uniform(1,3) * ld / 30),
+             leadtime = str(ld * 86400),
+             onhand = str(round(forecast_per_item * random.uniform(1,3) * ld / 30)),
              )
         comps.append(c)
       transaction.commit()
@@ -256,7 +256,7 @@ class Command(BaseCommand):
         if verbosity>0: print "Creating supply chain for end item %d..." % i
 
         # location
-        loc = Location.objects.create(name='Loc %05d' % i)
+        loc, created = Location.objects.get_or_create(name='Loc %05d' % i)
 
         # Item and delivery operation
         oper = Operation.objects.create(name='Del %05d' % i, sizemultiple=1)
@@ -345,7 +345,7 @@ class Command(BaseCommand):
             b = random.choice(comps)
           c.append( (o,b) )
           fl = Flow.objects.create(
-            operation = o, thebuffer = b, 
+            operation = o, thebuffer = b,
             quantity = random.choice([-1,-1,-1,-2,-3]))
 
         # Commit the current cluster
@@ -422,8 +422,8 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40):
         i.default_start = i.month_start
         i.default_end = i.month_end
       m.append(i)
-    # Needed to create a temporary list of the objects to save, since the 
-    # database table is locked during the iteration  
+    # Needed to create a temporary list of the objects to save, since the
+    # database table is locked during the iteration
     for i in m: i.save()
     transaction.commit()
   finally:

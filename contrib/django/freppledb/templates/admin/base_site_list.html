@@ -29,12 +29,12 @@
 <thead><tr>{{ rowheader }}</tr></thead>
 </table></div></td></tr>
 
-<tr>{% if reportclass.frozenColumns %}<td style="padding:0px;"><div id="dl" class="griddownleft">
+<tr>{% if reportclass.frozenColumns %}<td style="padding:0px;"><div id="dl" class="griddownleft" onscroll="syncScroll(0);">
 <table id="dlt" style="float: left; position: relative;"><tbody>
 {% block frozendata %}{% endblock %}
 </tbody></table></div></td>{% endif %}
 
-<td style="padding:0px;"><div id="dr" class="griddownright" onscroll="syncScroll();">
+<td style="padding:0px;"><div id="dr" class="griddownright" onscroll="syncScroll(1);">
 <table id="drt"><tbody>
 {% block data %}{% endblock %}
 </tbody></table></div></td></tr></table>

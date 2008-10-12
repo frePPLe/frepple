@@ -586,7 +586,6 @@ function syncInitialize()
 
 function syncResize()
 {
-
   var hasFrozenColumns = $('ult') ? true : false;
 
   // Resize the available size for the table. This needs to be done at the
@@ -607,21 +606,30 @@ function syncResize()
   var width = totalavailable.width - fixedWidth;
   if (width < 150) width = 150;
   $('ur').style.width = width + "px";
-  if (height > TotalHeight)
-    // Account for the size of the scrollbar
-    $('dr').style.width = (width+20) + "px";
-  else
-    $('dr').style.width = width + "px";
+  $('dr').style.width = width + "px";
 }
 
 
-function syncScroll()
+function syncScroll(left_or_right)
 {
   // Synchronize the scrolling in the header row and frozen column
   // with the scrolling in the data pane.
-  var i = $('dr');
-  var dlt = $('dlt');
-  if (dlt) dlt.style.bottom = i.scrollTop + 'px';
-  $('urt').style.right = i.scrollLeft + 'px';
+  if (left_or_right == 1)
+  {
+    // Scrolling the main data panel down right
+    var i = $('dr');
+    var dlt = $('dlt');
+    if (dlt) dlt.style.bottom = i.scrollTop + 'px';
+    $('urt').style.right = i.scrollLeft + 'px';
+  }
+  else
+  {
+    // Scrolling the panel with the pinned data column.
+    // How does one scroll it when there is no scrollbar? Well, you can scroll
+    // down using the search function of your browser
+    alert ('ppp ' + $('dlt').scrollTop +  '  ' + $('dl').scrollTop);
+    $('dr').style.bottom = $('dl').scrollTop + 'px';
+  }
   ContextMenu.hide();
+
 }

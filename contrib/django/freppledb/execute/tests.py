@@ -71,19 +71,6 @@ class execute_from_user_interface(TestCase):
     self.failUnlessEqual(output.models.LoadPlan.objects.count(),83)
     self.failUnlessEqual(output.models.OperationPlan.objects.count(),135)
 
-  def test_csv_upload(self):
-    self.failUnlessEqual(
-      [(i.name, i.category) for i in input.models.Location.objects.all()],
-      [(u'factory 1',None), (u'factory 2',None)]
-      )
-    data = open('c:\\temp\\location.csv')  # @todo doesn't exist yet!
-    response = self.client.post('/execute/upload/', {'entity': 'location', 'csv_file': data})
-    self.assertRedirects(response, '/execute/execute.html')
-    data.close()
-    self.failUnlessEqual(
-      [(i.name, i.category) for i in input.models.Location.objects.all()],
-      [(u'factory 1',None), (u'factory 2',None), (u'Test Location 1',u'cat1'), (u'Test Location 2',None)]
-      )
 
 class execute_with_commands(TestCase):
 

@@ -20,6 +20,8 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+import tempfile
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 
@@ -82,6 +84,26 @@ class DataLoadTest(TestCase):
   def test_input_suboperation(self):
     response = self.client.get('/admin/input/suboperation/')
     self.assertContains(response, '4 suboperations')
+
+  def test_csv_upload(self):
+    self.failUnlessEqual(
+      [(i.name, i.category) for i in Location.objects.all()],
+      [(u'factory 1',None), (u'factory 2',None)]
+      )
+    try:
+      data = tempfile.TemporaryFile(mode='w+b')
+      print >>data, 'name, category'
+      print >>data, 'Test Location 1, cat1'
+      print >>data, 'Test Location 2,'
+      data.seek(0)
+      response = self.client.post('/admin/input/location/', {'csv_file': data})
+      self.assertRedirects(response, '/admin/input/location/')
+    finally:
+      data.close()
+    self.failUnlessEqual(
+      [(i.name, i.category) for i in Location.objects.all()],
+      [(u'factory 1',None), (u'factory 2',None), (u'Test Location 1',u'cat1'), (u'Test Location 2',u'')]
+      )
 
   def test_buckets(self):
     # Find the calendar

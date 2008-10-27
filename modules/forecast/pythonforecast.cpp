@@ -24,30 +24,12 @@
  *                                                                         *
  ***************************************************************************/
 
-/* Python.h has to be included first.
-   For a debugging build on windows we avoid using the debug version of Python
-   since that also requires Python and all its modules to be compiled in debug
-   mode.
-*/
-#if defined(_DEBUG) && defined(_MSC_VER)
-#undef _DEBUG
-#include "Python.h"
-#define _DEBUG
-#else
-#include "Python.h"
-#endif
-#include "datetime.h"
-
+/* PythonUtils.h has to be included first.*/
+#include "../python/pythonutils.h"
 #include "forecast.h"
 
 namespace module_forecast
 {
-
-// Include commonly used utility functions, provided by the python module
-#ifndef DOXYGEN
-#include "../python/pythonutils.h"
-#include "../python/pythonutils.cpp"
-#endif
 
 PyMethodDef PythonForecast::methods[] = {
     {"timeseries", (PyCFunction)PythonForecast::timeseries, METH_VARARGS,
@@ -240,31 +222,6 @@ extern "C" PyObject* PythonForecastBucket::next(PythonForecastBucket* obj)
 }
 
 
-Date getDate(PyObject* obj)   // @todo remove this method
-{
-  PyDateTime_IMPORT;
-  if (PyDateTime_Check(obj))
-    return Date(
-      PyDateTime_GET_YEAR(obj),
-      PyDateTime_GET_MONTH(obj),
-      PyDateTime_GET_DAY(obj),
-      PyDateTime_DATE_GET_HOUR(obj),
-      PyDateTime_DATE_GET_MINUTE(obj),
-      PyDateTime_DATE_GET_SECOND(obj)
-      );
-  else if (PyDate_Check(obj))
-    return Date(
-      PyDateTime_GET_YEAR(obj),
-      PyDateTime_GET_MONTH(obj),
-      PyDateTime_GET_DAY(obj)
-      );
-  else
-   throw DataException(
-    "Invalid data type. Expecting datetime.date or datetime.datetime"
-    );
-}
-
-
 extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
 {
   // Get the forecast model
@@ -272,17 +229,26 @@ extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
 
   // Parse the Python arguments
   PyObject* history;
-  PyObject* buckets;
-  int ok = PyArg_ParseTuple(args, "OO", &history, &buckets);
+  PyObject* buckets = NULL;
+  int ok = PyArg_ParseTuple(args, "O|O", &history, &buckets);
   if (!ok) return NULL;
 
   // Verify we can iterate over the arguments
   PyObject *historyiterator = PyObject_GetIter(history);
-  PyObject *bucketiterator = PyObject_GetIter(buckets);
-  if (!historyiterator || !bucketiterator)
+  PyObject *bucketiterator = NULL;
+  if (!historyiterator)
   {
-    PyErr_Format(PyExc_AttributeError,"Invalid argument type");
+    PyErr_Format(PyExc_AttributeError,"Invalid type for time series");
     return NULL;
+  }
+  if (buckets)
+  {
+    bucketiterator = PyObject_GetIter(buckets);
+    if (!bucketiterator)
+    {
+      PyErr_Format(PyExc_AttributeError,"Invalid type for time series");
+      return NULL;
+    }
   }
 
   // Copy the history data into a C++ data structure
@@ -297,12 +263,12 @@ extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
   }
   Py_DECREF(historyiterator);
 
-  // Copy the bucket data into a C++ data structure
+  // Copy the bucket data into a C++ data structure     @todo bucketiterator can be null
   Date bucketdata[300];
   unsigned int bucketcount = 0;
   while (item = PyIter_Next(bucketiterator))
   {
-    bucketdata[bucketcount++] = getDate(item);
+    bucketdata[bucketcount++] = PythonObject(item).getDate();
     Py_DECREF(item);
     if (bucketcount>=300) break;
   }
@@ -317,7 +283,7 @@ extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
   catch (...)
   {
     Py_BLOCK_THREADS;
-    // @todo PythonType::evalException();
+    PythonType::evalException();
     return NULL;
   }
   Py_END_ALLOW_THREADS   // Reclaim the Python interpreter

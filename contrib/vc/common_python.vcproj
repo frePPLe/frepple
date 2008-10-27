@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="module_python"
-	ProjectGUID="{7DB2DB15-8CF4-4EAF-B666-657E03EFD67D}"
-	RootNamespace="module_python"
+	Name="common_python"
+	ProjectGUID="{4F0E7807-EC7E-4827-AB4F-CB164B2D311D}"
+	RootNamespace="common_python"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\module_python\Debug"
-			IntermediateDirectory=".\module_python\Debug"
+			OutputDirectory=".\common_python\Debug"
+			IntermediateDirectory=".\common_python\Debug"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
 			UseOfMFC="0"
@@ -44,7 +44,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\module_python\Debug/module_python.tlb"
+				TypeLibraryName=".\common_python\Debug/common_python.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -55,10 +55,10 @@
 				RuntimeLibrary="1"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\module_python\Debug/module_python.pch"
-				AssemblerListingLocation=".\module_python\Debug/"
-				ObjectFile=".\module_python\Debug/"
-				ProgramDataBaseFileName=".\module_python\Debug/"
+				PrecompiledHeaderFile=".\common_python\Debug/common_python.pch"
+				AssemblerListingLocation=".\common_python\Debug/"
+				ObjectFile=".\common_python\Debug/"
+				ProgramDataBaseFileName=".\common_python\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="false"
@@ -86,13 +86,13 @@
 				AdditionalLibraryDirectories="../../src"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\module_python\Debug/module_python.pdb"
+				ProgramDatabaseFile=".\common_python\Debug/common_python.pdb"
 				OptimizeReferences="1"
 				OptimizeForWindows98="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				SupportUnloadOfDelayLoadedDLL="true"
-				ImportLibrary="../../bin/module_python_debug.lib"
+				ImportLibrary="../../bin/common_python_debug.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -114,15 +114,15 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copy the XML schema definition file"
-				CommandLine="copy $(TargetDir)\..\modules\python\mod_python.xsd  $(TargetDir)"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\module_python\Release"
-			IntermediateDirectory=".\module_python\Release"
-			ConfigurationType="2"
+			OutputDirectory=".\common_python\Release"
+			IntermediateDirectory=".\common_python\Release"
+			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -147,7 +147,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\module_python\Release/module_python.tlb"
+				TypeLibraryName=".\common_python\Release/common_python.tlb"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -165,10 +165,10 @@
 				ForceConformanceInForLoopScope="true"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\module_python\Release/module_python.pch"
-				AssemblerListingLocation=".\module_python\Release/"
-				ObjectFile=".\module_python\Release/"
-				ProgramDataBaseFileName=".\module_python\Release/"
+				PrecompiledHeaderFile=".\common_python\Release/common_python.pch"
+				AssemblerListingLocation=".\common_python\Release/"
+				ObjectFile=".\common_python\Release/"
+				ProgramDataBaseFileName=".\common_python\Release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="false"
@@ -187,31 +187,10 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="xerces-c_2.lib python25.lib"
-				OutputFile="../../bin/mod_python.so"
-				Version="1.0"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="../../src"
-				IgnoreAllDefaultLibraries="false"
-				ModuleDefinitionFile=""
-				DelayLoadDLLs=""
-				ProgramDatabaseFile=".\module_python\Release/module_python.pdb"
-				OptimizeReferences="2"
-				OptimizeForWindows98="0"
-				EntryPointSymbol=""
-				ResourceOnlyDLL="false"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				SupportUnloadOfDelayLoadedDLL="false"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -223,12 +202,9 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copy the XML schema definition file"
-				CommandLine="copy $(TargetDir)\..\modules\python\mod_python.xsd  $(TargetDir)"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
@@ -240,15 +216,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\modules\python\embeddedpython.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\modules\python\frepple2python.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\modules\python\module.cpp"
+				RelativePath="..\..\modules\python\pythonutils.cpp"
 				>
 			</File>
 		</Filter>
@@ -257,25 +225,13 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\..\modules\python\embeddedpython.h"
+				RelativePath="..\..\modules\python\pythonutils.h"
 				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			>
-			<File
-				RelativePath="..\..\src\dll.rc"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCResourceCompilerTool"
-						ResourceOutputFileName="$(IntDir)/$(InputName).res"
-					/>
-				</FileConfiguration>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

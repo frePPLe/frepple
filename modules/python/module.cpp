@@ -33,12 +33,6 @@ const MetaClass CommandPython::metadata;
 const MetaClass CommandPython::metadata2;
 PyThreadState *CommandPython::mainThreadState = NULL;
 
-PyObject* PythonLogicException = NULL;
-PyObject* PythonDataException = NULL;
-PyObject* PythonRuntimeException = NULL;
-
-string pythonEncoding;
-
 // Define the methods to be exposed into Python
 PyMethodDef CommandPython::PythonAPI[] =
   {

@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-sources = frepple2python.cpp embeddedpython.cpp embeddedpython.h module.cpp wrapper.cpp
+sources = frepple2python.cpp embeddedpython.cpp embeddedpython.h module.cpp
 
 EXTRA_DIST = $(sources) pythonutils.h pythonutils.cpp mod_python.xsd
 

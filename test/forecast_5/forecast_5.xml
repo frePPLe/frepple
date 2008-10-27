@@ -38,10 +38,7 @@
   </calendars>
   <demands>
     <demand name="test" xsi:type="demand_forecast" discrete="false">
-      <customer name="eee"/>
-           <!--   
-           <calendar name="planningbuckets" />
-           -->
+      <calendar name="planningbuckets" />
     </demand>
   </demands>
 
@@ -49,33 +46,31 @@
 
 import frepple
 import freppleforecast
-import datetime
 
 def generateForecast():
   theitem = frepple.item(name="item")
-  thecustomer = frepple.customer(name="item")
-  thebuckets = ["2007-01-01", "2007-02-01", "2007-03-01", "2007-04-01", "2007-05-01", "2007-06-01"]
-  thebuckets = [ datetime.datetime.strptime(i,"%Y-%m-%d") for i in thebuckets ]
+  thecustomer = frepple.customer(name="customer")
+  thecalendar = frepple.calendar(name="planningbuckets")
+  thebuckets = [ i.start for i in thecalendar.buckets ]
   
   # A simple flat forecast
   print "A"
-  fcst = freppleforecast.forecast(name="flat demand", item=theitem, customer=thecustomer)
-  fcst = freppleforecast.forecast()
+  fcst = freppleforecast.forecast(name="flat demand", item=theitem, customer=thecustomer) #, calendar=thecalendar)
   fcst.timeseries([100,100,100,100,100,100,100,100,100,100,100,100,100], thebuckets)
   
   # A simple trended forecast
   print "B"
-  fcst = freppleforecast.forecast(name="trended demand", item=theitem, customer=thecustomer)
+  fcst = freppleforecast.forecast(name="trended demand", item=theitem, customer=thecustomer, calendar=thecalendar)
   fcst.timeseries([10,20,30,40,50,60,70,80,90,100,110,120,130,140,150], thebuckets)
   
   # A seasonal demand
   print "C"
-  fcst = freppleforecast.forecast(name="seasonal demand", item=theitem, customer=thecustomer)
+  fcst = freppleforecast.forecast(name="seasonal demand", item=theitem, customer=thecustomer, calendar=thecalendar)
   fcst.timeseries([10,10,20,30,20,10,10,10,10,20,30,20,10,10,10,10,20,30,20,10,10], thebuckets)
   
   # Very little history
   print "D"
-  fcst = freppleforecast.forecast(name="little history", item=theitem, customer=thecustomer)
+  fcst = freppleforecast.forecast(name="little history", item=theitem, customer=thecustomer, calendar=thecalendar)
   fcst.timeseries([10,10], thebuckets)
   print "E"
   

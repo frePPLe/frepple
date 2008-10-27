@@ -45,7 +45,7 @@ void Forecast::generateFutureValues(
   // We create the forecasting objects in stack memory for best performance.
   SingleExponential single_exp;
   DoubleExponential double_exp;
-  int numberOfMethods = 2;
+  int numberOfMethods = 1;
   ForecastMethod* methods[2];
   methods[0] = &single_exp;
   methods[1] = &double_exp;
@@ -78,15 +78,15 @@ void Forecast::generateFutureValues(
 double Forecast::SingleExponential::initial_alfa = 0.2;
 double Forecast::SingleExponential::min_alfa = 0.03;
 double Forecast::SingleExponential::max_alfa = 1.0;
-unsigned int Forecast::SingleExponential::skip = 7;
+unsigned int Forecast::SingleExponential::skip = 0;
 
 
 double Forecast::SingleExponential::generateForecast
   (const double history[], unsigned int count, bool debug)
 {
   // Verify whether this is a valid forecast method.
-  //   - We need at least 10 buckets after the warmup period.
-  if (count < skip + 10)
+  //   - We need at least 5 buckets after the warmup period.
+  if (count < skip + 5)
     return DBL_MAX;
 
   unsigned int iteration = 1;
@@ -97,20 +97,20 @@ double Forecast::SingleExponential::generateForecast
   {
     // Initialize the iteration
     f_i = history[0];
-    df_dalfa_i = 0; 
-    sum_11 = 0;
-    sum_12 = 0;
-    error_mad = 0;
+    df_dalfa_i = 0.0; 
+    sum_11 = 0.0;
+    sum_12 = 0.0;
+    error_mad = 0.0;
 
     // Calculate the forecast and forecast error.
     // We also compute the sums required for the Marquardt optimization.
-    for (unsigned long i = 0; i < count; ++i)
+    for (unsigned long i = 1; i < count; ++i)
     {
       df_dalfa_i = history[i-1] - f_i + (1 - alfa) * df_dalfa_i;
       f_i = history[i-1] * alfa + (1 - alfa) * f_i;
       sum_12 += df_dalfa_i * (history[i] - f_i);
       sum_11 += df_dalfa_i * df_dalfa_i;
-      if (i > skip) // Don't measure during the warmup period
+      if (i >= skip) // Don't measure during the warmup period
         error_mad += fabs(f_i - history[i]);
     }
 
@@ -174,15 +174,15 @@ double Forecast::DoubleExponential::max_alfa = 1.0;
 double Forecast::DoubleExponential::initial_gamma = 0.05;
 double Forecast::DoubleExponential::min_gamma = 0.0;
 double Forecast::DoubleExponential::max_gamma = 1.0;
-unsigned int Forecast::DoubleExponential::skip = 7;
+unsigned int Forecast::DoubleExponential::skip = 0;
 
 
 double Forecast::DoubleExponential::generateForecast  /* @todo optimization not implemented yet*/
   (const double history[], unsigned int count, bool debug)
 {
   // Verify whether this is a valid forecast method.
-  //   - We need at least 10 buckets after the warmup period.
-  if (count < skip + 10)
+  //   - We need at least 5 buckets after the warmup period.
+  if (count < skip + 5)
     return DBL_MAX;
 
   unsigned int iteration = 1;
@@ -197,12 +197,12 @@ double Forecast::DoubleExponential::generateForecast  /* @todo optimization not 
 
     // Calculate the forecast and forecast error.
     // We also compute the sums required for the Marquardt optimization.
-    for (unsigned long i = 0; i < count; ++i)
+    for (unsigned long i = 1; i < count; ++i)
     {
       constant_i_minus_1 = constant_i;
       constant_i = history[i-1] * alfa + (1 - alfa) * (constant_i + trend_i);
       trend_i = gamma * (constant_i - constant_i_minus_1) + (1 - gamma) * trend_i;
-      if (i > skip) // Don't measure during the warmup period
+      if (i >= skip) // Don't measure during the warmup period
         error_mad += fabs(constant_i + trend_i - history[i]);
     }
   }

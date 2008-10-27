@@ -243,7 +243,11 @@ class Forecast : public Demand
 
       public:
         /** Constructor. */
-        SingleExponential(double a = initial_alfa) : alfa(a), f_i(0) {}
+        SingleExponential(double a = initial_alfa) : alfa(a), f_i(0) 
+        {
+          if (alfa < min_alfa) alfa = min_alfa;
+          if (alfa > max_alfa) alfa = max_alfa;          
+        }
 
         /** Forecast evaluation. */
         double generateForecast(const double history[], 

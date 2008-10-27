@@ -312,7 +312,7 @@ PyObject* PythonLocation::getattro(const Attribute& attr)
     return PythonObject(obj->getAvailable());
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
-	return NULL;
+  return NULL;
 }
 
 
@@ -388,7 +388,7 @@ PyObject* PythonCustomer::getattro(const Attribute& attr)
     return PythonObject(obj->getOwner());
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
-	return NULL;
+  return NULL;
 }
 
 
@@ -456,7 +456,7 @@ PyObject* PythonItem::getattro(const Attribute& attr)
     return PythonObject(obj->getPrice());
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
-	return NULL;
+  return NULL;
 }
 
 
@@ -840,7 +840,7 @@ PyObject* PythonResource::getattro(const Attribute& attr)
     return PythonObject(obj->getLevel());
   if (attr.isA(Tags::tag_cluster))
     return PythonObject(obj->getCluster());
-	return NULL;
+  return NULL;
 }
 
 
@@ -961,7 +961,7 @@ PyObject* PythonOperation::getattro(const Attribute& attr)
     return PythonObject(obj->getLevel());
   if (attr.isA(Tags::tag_cluster))
     return PythonObject(obj->getCluster());
-	return NULL;
+  return NULL;
 }
 
 

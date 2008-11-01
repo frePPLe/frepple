@@ -162,4 +162,42 @@ DECLARE_EXPORT void PeggingIterator::followPegging
     followPegging(*j, nextlevel, qty, factor);
 }
 
+
+int PythonPeggingIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonPeggingIterator>::getType();
+  x.setName("peggingIterator");
+  x.setDoc("frePPLe iterator for demand pegging");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonPeggingIterator::iternext()
+{
+  if (!i) return NULL;
+
+  // Pass the result to Python.
+  // This is different than the other iterators! We need to capture the
+  // current state of the iterator before decrementing it. For other iterators
+  // we can create a proxy object meeting this requirement, but not for the
+  // pegging iterator.
+  PyObject* result = Py_BuildValue("{s:i,s:N,s:N,s:N,s:N,s:N,s:f,s:f,s:i}",
+    "level", i.getLevel(),
+    "consuming", static_cast<PyObject*>(PythonObject(i.getConsumingOperationplan())),
+    "cons_date", static_cast<PyObject*>(PythonObject(i.getConsumingDate())),
+    "producing", static_cast<PyObject*>(PythonObject(i.getProducingOperationplan())),
+    "prod_date", static_cast<PyObject*>(PythonObject(i.getProducingDate())),
+    "buffer", static_cast<PyObject*>(PythonObject(i.getBuffer())),
+    "quantity_demand", i.getQuantityDemand(),
+    "quantity_buffer", i.getQuantityBuffer(),
+    "pegged", i.getPegged() ? 1 : 0
+    );
+
+  --i;
+  return result;
+}
+
+
 } // End namespace

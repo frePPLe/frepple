@@ -26,10 +26,13 @@
 
 #define FREPPLE_CORE
 #include "frepple/utils.h"
+#include "frepple/pythonutils.h"
 #include <sys/stat.h>
 
 
 namespace frepple
+{
+namespace utils
 {
 
 // Repository of all categories and commands
@@ -235,6 +238,9 @@ void LibraryUtils::initialize()
   XMLinstruction::metadata.registerCategory
     ("instruction", NULL, MetaCategory::ControllerDefault);
 
+  // Initialize the Python interpreter
+  python::initialize();
+
   // Query the system for the number of available processors
   // The environment variable NUMBER_OF_PROCESSORS is defined automatically on
   // windows platforms. On other platforms it'll have to be explicitly set
@@ -246,17 +252,6 @@ void LibraryUtils::initialize()
     int p = atoi(c);
     Environment::setProcessors(p);
   }
-
-#ifdef HAVE_ATEXIT
-  atexit(finalize);
-#endif
-}
-
-
-void LibraryUtils::finalize()
-{
-  // Shut down the Xerces parser
-  xercesc::XMLPlatformUtils::Terminate();
 }
 
 
@@ -527,4 +522,6 @@ void HasDescription::endElement (XMLInput& pIn, const Attribute& pAttr, const Da
     setDescription(pElement.getString());
 }
 
-}
+} // end namespace
+} // end namespace
+

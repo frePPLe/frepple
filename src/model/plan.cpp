@@ -117,4 +117,48 @@ DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, const Attribute& pAttr)
 }
 
 
+int PythonPlan::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("parameters");
+  x.setDoc("frePPLe global settings");
+  x.supportgetattro();
+  x.supportsetattro();
+  int tmp =x.typeReady(m);
+
+  // Add access to the information with a global attribute
+  return PyModule_AddObject(m, "settings", new PythonPlan) + tmp;
+}
+
+
+PyObject* PythonPlan::getattro(const Attribute& attr)
+{
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(Plan::instance().getName());
+  if (attr.isA(Tags::tag_description))
+    return PythonObject(Plan::instance().getDescription());
+  if (attr.isA(Tags::tag_current))
+    return PythonObject(Plan::instance().getCurrent());
+  if (attr.isA(Tags::tag_logfile))
+    return PythonObject(Environment::getLogFile());
+  return NULL;
+}
+
+
+int PythonPlan::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_name))
+    Plan::instance().setName(field.getString());  
+  else if (attr.isA(Tags::tag_description))
+    Plan::instance().setDescription(field.getString());
+  else if (attr.isA(Tags::tag_current))
+    Plan::instance().setCurrent(field.getDate()); 
+  else if (attr.isA(Tags::tag_logfile))
+    Environment::setLogFile(field.getString());
+  else
+    return -1; // Error
+  return 0;  // OK
+}
+
 }

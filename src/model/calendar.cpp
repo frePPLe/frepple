@@ -30,7 +30,7 @@
 namespace frepple
 {
 
-template<class Calendar> DECLARE_EXPORT Tree HasName<Calendar>::st;
+template<class Calendar> DECLARE_EXPORT Tree utils::HasName<Calendar>::st;
 
 
 DECLARE_EXPORT Calendar::~Calendar()
@@ -391,6 +391,170 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
     iter->curPriority = priority;
     return;
   }
+}
+
+
+PyObject* PythonCalendar::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (attr.isA(Tags::tag_buckets))
+    return new PythonCalendarBucketIterator(obj);
+	return NULL;
+}
+
+
+int PythonCalendar::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else
+    return -1;  // Error
+  return 0;  // OK
+}
+
+
+PyObject* PythonCalendarVoid::getattro(const Attribute& attr)
+{
+  return PythonCalendar(obj).getattro(attr); 
+}
+
+
+int PythonCalendarVoid::setattro(const Attribute& attr, const PythonObject& field)
+{
+   return PythonCalendar(obj).setattro(attr, field);
+}
+
+
+PyObject* PythonCalendarBool::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_default))
+    return PythonObject(obj->getDefault());
+  return PythonCalendar(obj).getattro(attr); 
+}
+
+
+int PythonCalendarBool::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_default))
+    obj->setDefault(field.getBool());
+  else
+    return PythonCalendar(obj).setattro(attr, field);
+  return 0;
+}
+
+
+PyObject* PythonCalendarDouble::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_default))
+    return PythonObject(obj->getDefault());
+  return PythonCalendar(obj).getattro(attr); 
+}
+
+
+int PythonCalendarDouble::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_default))
+    obj->setDefault(field.getDouble());
+  else
+    return PythonCalendar(obj).setattro(attr, field);
+  return 0;
+}
+
+
+int PythonCalendarBucketIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonCalendarBucketIterator>::getType();
+  x.setName("calendarBucketIterator");
+  x.setDoc("frePPLe iterator for calendar buckets");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonCalendarBucketIterator::iternext()
+{  
+  if (i == cal->endBuckets()) return NULL;
+  return new PythonCalendarBucket(cal, &*(i++));
+}
+
+
+int PythonCalendarBucket::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonCalendarBucket>::getType();
+  x.setName("calendarBucket");
+  x.setDoc("frePPLe calendar bucket");
+  x.supportgetattro();
+  x.supportsetattro();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonCalendarBucket::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_start))
+    return PythonObject(obj->getStart());
+  if (attr.isA(Tags::tag_end))
+    return PythonObject(obj->getEnd());
+  if (attr.isA(Tags::tag_value))
+  {
+    if (cal->getType() == CalendarDouble::metadata)
+      return PythonObject(dynamic_cast< CalendarValue<double>::BucketValue* >(obj)->getValue());
+    if (cal->getType() == CalendarBool::metadata)
+      return PythonObject(dynamic_cast< CalendarValue<bool>::BucketValue* >(obj)->getValue());
+    if (cal->getType() == CalendarInt::metadata)
+      return PythonObject(dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->getValue());
+    if (cal->getType() == CalendarString::metadata)
+      return PythonObject(dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->getValue());
+    if (cal->getType() == CalendarVoid::metadata) return Py_None;
+    PyErr_SetString(PythonLogicException, "calendar type not recognized");
+    return NULL;
+  }
+  if (attr.isA(Tags::tag_priority))
+    return PythonObject(obj->getPriority());
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  return NULL; 
+}
+
+
+int PythonCalendarBucket::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_start))
+    obj->setStart(field.getDate());
+  else if (attr.isA(Tags::tag_end))
+    obj->setEnd(field.getDate());
+  else if (attr.isA(Tags::tag_priority))
+    obj->setPriority(field.getInt());
+  else if (attr.isA(Tags::tag_value))
+  {
+    if (cal->getType() == CalendarDouble::metadata)
+      dynamic_cast< CalendarValue<double>::BucketValue* >(obj)->setValue(field.getDouble());
+    else if (cal->getType() == CalendarBool::metadata)
+      dynamic_cast< CalendarValue<bool>::BucketValue* >(obj)->setValue(field.getBool());
+    else if (cal->getType() == CalendarInt::metadata)
+      dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->setValue(field.getInt());
+    else if (cal->getType() == CalendarString::metadata)
+      dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->setValue(field.getString());
+    else if (cal->getType() == CalendarVoid::metadata) 
+      return -1;
+    else
+    {
+      PyErr_SetString(PythonLogicException, "calendar type not recognized");
+      return -1;
+    }
+  }
+  else
+    return -1;
+  return 0;
 }
 
 

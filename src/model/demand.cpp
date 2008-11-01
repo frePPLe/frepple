@@ -30,7 +30,7 @@
 namespace frepple
 {
 
-template<class Demand> DECLARE_EXPORT Tree HasName<Demand>::st;
+template<class Demand> DECLARE_EXPORT Tree utils::HasName<Demand>::st;
 
 
 DECLARE_EXPORT void Demand::setQuantity(double f)
@@ -289,4 +289,141 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, const Attribute& pAttr, co
   }
 }
 
+
+PyObject* PythonDemand::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (attr.isA(Tags::tag_quantity))
+    return PythonObject(obj->getQuantity());
+  if (attr.isA(Tags::tag_due))
+    return PythonObject(obj->getDue());
+  if (attr.isA(Tags::tag_priority))
+    return PythonObject(obj->getPriority());
+  if (attr.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (attr.isA(Tags::tag_item))
+    return PythonObject(obj->getItem());
+  if (attr.isA(Tags::tag_customer))
+    return PythonObject(obj->getCustomer());
+  if (attr.isA(Tags::tag_operation))
+    return PythonObject(obj->getOperation());
+  if (attr.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (attr.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (attr.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (attr.isA(Tags::tag_minshipment))
+    return PythonObject(obj->getMinShipment());
+  if (attr.isA(Tags::tag_maxlateness))
+    return PythonObject(obj->getMaxLateness());
+  if (attr.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+  if (attr.isA(Tags::tag_operationplans))
+    return new PythonDemandPlanIterator(obj);
+  if (attr.isA(Tags::tag_pegging))
+    return new PythonPeggingIterator(obj);
+  return NULL;
 }
+
+
+int PythonDemand::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_priority))
+    obj->setPriority(field.getInt());
+  else if (attr.isA(Tags::tag_quantity))
+    obj->setQuantity(field.getDouble());
+  else if (attr.isA(Tags::tag_due))
+    obj->setDue(field.getDate());
+  else if (attr.isA(Tags::tag_item))
+  {
+    if (!field.check(PythonItem::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "demand item must be of type item");
+      return -1;
+    }
+    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(field))->obj;
+    obj->setItem(y);
+  }
+  else if (attr.isA(Tags::tag_customer))
+  {
+    if (!field.check(PythonCustomer::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "demand customer must be of type customer");
+      return -1;
+    }
+    Customer* y = static_cast<PythonCustomer*>(static_cast<PyObject*>(field))->obj;
+    obj->setCustomer(y);
+  }
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_minshipment))
+    obj->setMinShipment(field.getDouble());
+  else if (attr.isA(Tags::tag_maxlateness))
+    obj->setMaxLateness(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_owner))
+  {
+    if (!field.check(PythonDemand::getType()))
+    {
+      PyErr_SetString(PythonDataException, "demand owner must be of type demand");
+      return -1;
+    }
+    Demand* y = static_cast<PythonDemand*>(static_cast<PyObject*>(field))->obj;
+    obj->setOwner(y);
+  }
+  else if (attr.isA(Tags::tag_operation))
+  {
+    if (!field.check(PythonOperation::getType()))
+    {
+      PyErr_SetString(PythonDataException, "demand operation must be of type operation");
+      return -1;
+    }
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
+    obj->setOperation(y);
+  }
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
+  else
+    return -1;  // Error
+  return 0;  // OK
+}
+
+
+PyObject* PythonDemandDefault::getattro(const Attribute& attr)
+{
+  return PythonDemand(obj).getattro(attr); 
+}
+
+
+int PythonDemandDefault::setattro(const Attribute& attr, const PythonObject& field)
+{
+  return PythonDemand(obj).setattro(attr, field);
+}
+
+
+int PythonDemandPlanIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonDemandPlanIterator>::getType();
+  x.setName("demandplanIterator");
+  x.setDoc("frePPLe iterator for demand delivery operationplans");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonDemandPlanIterator::iternext()
+{  
+  if (i == dem->getDelivery().end()) return NULL;
+  return new PythonOperationPlan(const_cast<OperationPlan*>(&**(i++)));
+}
+
+} // end namespace

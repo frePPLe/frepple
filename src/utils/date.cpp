@@ -32,6 +32,8 @@
 
 namespace frepple
 {
+namespace utils
+{
 
 DECLARE_EXPORT string Date::format("%Y-%m-%dT%H:%M:%S");
 DECLARE_EXPORT string DateRange::separator = " / ";
@@ -522,4 +524,6 @@ DECLARE_EXPORT char* Date::strptime(const char *buf, const char *fmt, struct tm 
 
 #endif
 
-}
+} // end namespace
+} // end namespace
+

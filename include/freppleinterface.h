@@ -119,22 +119,6 @@ DECLARE_EXPORT(void) FreppleReadXMLFile(const char*, bool, bool);
   */
 DECLARE_EXPORT(void) FreppleSaveFile(char*);
 
-#ifdef __cplusplus
-/** Calling this function returns a text buffer with the frepple data
-  * model.
-  *
-  * This method can consume a lot of memory for big models!<br>
-  * This method is synchroneous, i.e. it returns only when the complete
-  * processing is finished. The method can throw exceptions, and the client
-  * is responsible for defining the correct handlers for these.
-  *
-  * This function is only available when using C++. The same functionality
-  * is available to C with the function FreppleWrapperSaveString.
-  * @see FreppleWrapperSaveString
-  */
-DECLARE_EXPORT(std::string) FreppleSaveString();
-#endif
-
 /** This function causes the frepple executable to shut down in an orderly
   * way.
   *
@@ -194,15 +178,6 @@ extern "C"
     * @see FreppleSaveFile
     */
   DECLARE_EXPORT(int) FreppleWrapperSaveFile(char*);
-
-  /** Same as FreppleSaveString, but catches all exceptions, returns a status
-    * code and also leaves the memory buffer management to the user.<br>
-    * This function can consume a lot of memory for big models!
-    *
-    * Use this function when calling the library from C or VB applications.
-    * @see FreppleSaveString
-    */
-  DECLARE_EXPORT(int) FreppleWrapperSaveString(char*, unsigned long);
 
   /** Same as FreppleExit, but catches all exceptions and returns a
     * status instead.

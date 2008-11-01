@@ -349,10 +349,108 @@ void LibraryModel::initialize()
   ProblemCapacityOverload::metadata.registerClass
     ("problem","overload");
 
-  // Make sure the exit function is called
-#ifdef HAVE_ATEXIT
-  atexit(finalize);
-#endif
+  // Register new types in Python
+  unsigned int nok = 0;
+  nok += PythonPlan::initialize(PythonInterpreter::getModule());
+  nok += PythonBuffer::initialize(PythonInterpreter::getModule());
+  nok += PythonBufferDefault::initialize(PythonInterpreter::getModule());
+  nok += PythonBufferInfinite::initialize(PythonInterpreter::getModule());
+  nok += PythonBufferProcure::initialize(PythonInterpreter::getModule());
+  nok += PythonBufferIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonCalendar::initialize(PythonInterpreter::getModule());
+  nok += PythonCalendarIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonCalendarBucket::initialize(PythonInterpreter::getModule());
+  nok += PythonCalendarBucketIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonCalendarBool::initialize(PythonInterpreter::getModule());
+  nok += PythonCalendarVoid::initialize(PythonInterpreter::getModule());
+  nok += PythonCalendarDouble::initialize(PythonInterpreter::getModule());
+  nok += PythonCustomer::initialize(PythonInterpreter::getModule());
+  nok += PythonCustomerDefault::initialize(PythonInterpreter::getModule());
+  nok += PythonCustomerIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonDemand::initialize(PythonInterpreter::getModule());
+  nok += PythonDemandIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonDemandDefault::initialize(PythonInterpreter::getModule());
+  nok += PythonDemandPlanIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonPeggingIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonFlow::initialize(PythonInterpreter::getModule());
+  nok += PythonFlowIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonFlowPlan::initialize(PythonInterpreter::getModule());
+  nok += PythonFlowPlanIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonItem::initialize(PythonInterpreter::getModule());
+  nok += PythonItemDefault::initialize(PythonInterpreter::getModule());
+  nok += PythonItemIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonLoad::initialize(PythonInterpreter::getModule());
+  nok += PythonLoadIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonLoadPlan::initialize(PythonInterpreter::getModule());
+  nok += PythonLoadPlanIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonLocation::initialize(PythonInterpreter::getModule());
+  nok += PythonLocationDefault::initialize(PythonInterpreter::getModule());
+  nok += PythonLocationIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonOperation::initialize(PythonInterpreter::getModule());
+  nok += PythonOperationAlternate::initialize(PythonInterpreter::getModule());
+  nok += PythonOperationFixedTime::initialize(PythonInterpreter::getModule());
+  nok += PythonOperationTimePer::initialize(PythonInterpreter::getModule());
+  nok += PythonOperationRouting::initialize(PythonInterpreter::getModule());
+  nok += PythonOperationIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonOperationPlan::initialize(PythonInterpreter::getModule());
+  nok += PythonOperationPlanIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonProblem::initialize(PythonInterpreter::getModule());
+  nok += PythonProblemIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonResource::initialize(PythonInterpreter::getModule());
+  nok += PythonResourceDefault::initialize(PythonInterpreter::getModule());
+  nok += PythonResourceInfinite::initialize(PythonInterpreter::getModule());
+  nok += PythonResourceIterator::initialize(PythonInterpreter::getModule());
+  nok += PythonSolver::initialize(PythonInterpreter::getModule());
+  nok += PythonSolverIterator::initialize(PythonInterpreter::getModule());
+  if (nok)
+    throw RuntimeException("Error registering new Python types");
+
+  // Register new methods in Python
+  PythonInterpreter::registerGlobalMethod(
+    "erase", CommandErase::executePython, METH_VARARGS,
+    "Removes the plan data from memory, and optionally the static info too.");
+  PythonInterpreter::registerGlobalMethod(
+    "readXMLdata", CommandReadXMLString::executePython, METH_VARARGS,
+    "Processes an XML string passed as argument.");
+  PythonInterpreter::registerGlobalMethod(
+    "readXMLfile", CommandReadXMLFile::executePython, METH_VARARGS,
+    "Read an XML-file.");
+  PythonInterpreter::registerGlobalMethod(
+    "saveXMLfile", CommandSave::executePython, METH_VARARGS,
+    "Save the model to an XML-file.");
+  PythonInterpreter::registerGlobalMethod(
+    "buffers", PythonBufferIterator::create, METH_NOARGS,
+    "Returns an iterator over the buffers.");
+  PythonInterpreter::registerGlobalMethod(
+    "locations", PythonLocationIterator::create, METH_NOARGS,
+    "Returns an iterator over the locations.");
+  PythonInterpreter::registerGlobalMethod(
+    "customers", PythonCustomerIterator::create, METH_NOARGS,
+    "Returns an iterator over the customer.");
+  PythonInterpreter::registerGlobalMethod(
+    "items", PythonItemIterator::create, METH_NOARGS,
+    "Returns an iterator over the items.");
+  PythonInterpreter::registerGlobalMethod(
+    "calendars", PythonCalendarIterator::create, METH_NOARGS,
+    "Returns an iterator over the calendars.");
+  PythonInterpreter::registerGlobalMethod(
+    "demands", PythonDemandIterator::create, METH_NOARGS,
+    "Returns an iterator over the demands.");
+  PythonInterpreter::registerGlobalMethod(
+    "resources", PythonResourceIterator::create, METH_NOARGS,
+    "Returns an iterator over the resources.");
+  PythonInterpreter::registerGlobalMethod(
+    "operations", PythonOperationIterator::create, METH_NOARGS,
+    "Returns an iterator over the operations.");
+  PythonInterpreter::registerGlobalMethod(
+    "operationplans", PythonOperationPlanIterator::create, METH_NOARGS,
+    "Returns an iterator over the operationplans.");
+  PythonInterpreter::registerGlobalMethod(
+    "problems", PythonProblemIterator::create, METH_NOARGS,
+    "Returns an iterator over the problems.");
+  PythonInterpreter::registerGlobalMethod(
+    "solvers", PythonSolverIterator::create, METH_NOARGS,
+    "Returns an iterator over the solvers.");
 }
 
 

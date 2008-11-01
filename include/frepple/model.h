@@ -36,10 +36,13 @@
   * @brief Core namespace
   */
 
+#include "frepple/pythonutils.h"
 #include "frepple/utils.h"
 #include "frepple/timeline.h"
 #include <float.h>
 #include <typeinfo>
+using namespace frepple::utils;
+using namespace frepple::python;
 
 namespace frepple
 {
@@ -78,7 +81,6 @@ class LibraryModel
 {
   public:
     static void initialize();
-    static void finalize() {}
 };
 
 
@@ -3621,6 +3623,9 @@ class CommandReadXMLFile : public Command
 
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
 
+    /** Python interface for this command. */
+    static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
+
     string getDescription() const
     {
       if (filename.empty())
@@ -3688,6 +3693,10 @@ class CommandReadXMLString : public Command
 
     /** The commit action reads the input. */
     DECLARE_EXPORT void execute();
+
+    /** Python interface for this command. */
+    static DECLARE_EXPORT PyObject* executePython(PyObject *, PyObject *);
+
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     string getDescription() const {return "parsing xml input string";}
     virtual const MetaClass& getType() const {return metadata;}
@@ -3732,6 +3741,10 @@ class CommandSave : public Command
     string getFileName() const {return filename;}
     void setFileName(const string& v) {filename = v;}
     DECLARE_EXPORT void execute();
+
+    /** Python interface to this command. */
+    static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
+
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     string getDescription() const
       {return "saving the complete model into file '" + filename + "'";}
@@ -3822,8 +3835,13 @@ class CommandPlanSize : public Command
 class CommandErase : public Command
 {
   public:
-    CommandErase() : deleteStaticModel(false) {};
+    CommandErase(bool staticAlso = false) : deleteStaticModel(staticAlso) {};
+
     DECLARE_EXPORT void execute();
+
+    /** Python interface to this command. */
+    static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
+
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     string getDescription() const
     {
@@ -5233,6 +5251,673 @@ inline int OperationPlan::sizeLoadPlans() const
   for (LoadPlanIterator i = beginLoadPlans(); i != endLoadPlans(); ++i) ++c;
   return c;
 }
+
+
+//
+// SETTINGS
+//
+
+
+/** @brief This class exposes global plan information to Python. */
+class PythonPlan : public PythonExtension<PythonPlan>
+{
+  public:
+    static int initialize(PyObject* m);
+  private:
+    PyObject* getattro(const Attribute&);
+    int setattro(const Attribute&, const PythonObject&);
+};
+
+
+//
+// PROBLEMS
+//
+
+
+class PythonProblem : public PythonExtension<PythonProblem>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonProblem(Problem* p) : prob(p) {}
+    static void* proxy(Object* p)
+      {return static_cast<PyObject*>(new PythonProblem(static_cast<Problem*>(p)));}
+  private:
+    PyObject* getattro(const Attribute&);
+    Problem* prob;
+};
+
+
+class PythonProblemIterator
+  : public FreppleIterator<PythonProblemIterator,Problem::const_iterator,Problem,PythonProblem>
+{
+};
+
+
+//
+// BUFFERS
+//
+
+
+class PythonBuffer : public FreppleCategory<PythonBuffer,Buffer>
+{
+  public:
+    PythonBuffer(Buffer* p) : FreppleCategory<PythonBuffer,Buffer>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonBufferIterator
+  : public FreppleIterator<PythonBufferIterator,Buffer::iterator,Buffer,PythonBuffer>
+{
+};
+
+
+class PythonBufferDefault : public FreppleClass<PythonBufferDefault,PythonBuffer,BufferDefault>
+{
+  public:
+    PythonBufferDefault(BufferDefault* p)
+      : FreppleClass<PythonBufferDefault,PythonBuffer,BufferDefault>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonBufferInfinite : public FreppleClass<PythonBufferInfinite,PythonBuffer,BufferInfinite>
+{
+  public:
+    PythonBufferInfinite(BufferInfinite* p)
+      : FreppleClass<PythonBufferInfinite,PythonBuffer,BufferInfinite>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonBufferProcure : public FreppleClass<PythonBufferProcure,PythonBuffer,BufferProcure>
+{
+  public:
+    PythonBufferProcure(BufferProcure* p)
+      : FreppleClass<PythonBufferProcure,PythonBuffer,BufferProcure>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+//
+// LOCATIONS
+//
+
+
+class PythonLocation : public FreppleCategory<PythonLocation,Location>
+{
+  public:
+    PythonLocation(Location* p) : FreppleCategory<PythonLocation,Location>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonLocationIterator
+  : public FreppleIterator<PythonLocationIterator,Location::iterator,Location,PythonLocation>
+{
+};
+
+
+class PythonLocationDefault : public FreppleClass<PythonLocationDefault,PythonLocation,LocationDefault>
+{
+  public:
+    PythonLocationDefault(LocationDefault* p)
+      : FreppleClass<PythonLocationDefault,PythonLocation,LocationDefault>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+//
+// CUSTOMERS
+//
+
+
+class PythonCustomer : public FreppleCategory<PythonCustomer,Customer>
+{
+  public:
+    PythonCustomer(Customer* p) : FreppleCategory<PythonCustomer,Customer>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonCustomerIterator
+  : public FreppleIterator<PythonCustomerIterator,Customer::iterator,Customer,PythonCustomer>
+{
+};
+
+
+class PythonCustomerDefault : public FreppleClass<PythonCustomerDefault,PythonCustomer,CustomerDefault>
+{
+  public:
+    PythonCustomerDefault(CustomerDefault* p)
+      : FreppleClass<PythonCustomerDefault,PythonCustomer,CustomerDefault>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+//
+// ITEMS
+//
+
+
+class PythonItem : public FreppleCategory<PythonItem,Item>
+{
+  public:
+    PythonItem(Item* p) : FreppleCategory<PythonItem,Item>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonItemIterator
+  : public FreppleIterator<PythonItemIterator,Item::iterator,Item,PythonItem>
+{
+};
+
+
+class PythonItemDefault : public FreppleClass<PythonItemDefault,PythonItem,ItemDefault>
+{
+  public:
+    PythonItemDefault(ItemDefault* p)
+      : FreppleClass<PythonItemDefault,PythonItem,ItemDefault>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+//
+// CALENDARS
+//
+
+
+class PythonCalendar : public FreppleCategory<PythonCalendar,Calendar>
+{
+  public:
+    PythonCalendar(Calendar* p) : FreppleCategory<PythonCalendar,Calendar>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonCalendarIterator
+  : public FreppleIterator<PythonCalendarIterator,Calendar::iterator,Calendar,PythonCalendar>
+{
+};
+
+
+class PythonCalendarBucketIterator
+  : public PythonExtension<PythonCalendarBucketIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonCalendarBucketIterator(Calendar* c) : cal(c)
+    {
+      if (!c)
+        throw LogicException("Creating bucket iterator for NULL calendar");
+      i = c->beginBuckets();
+    }
+
+  private:
+    Calendar* cal;
+    Calendar::BucketIterator i;
+    PyObject *iternext();
+};
+
+
+class PythonCalendarBucket
+  : public PythonExtension<PythonCalendarBucket>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonCalendarBucket(Calendar* c, Calendar::Bucket* b) : cal(c), obj(b) {}
+  private:
+    Calendar::Bucket* obj;
+    Calendar* cal;
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+};
+
+
+class PythonCalendarVoid : public FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>
+{
+  public:
+    PythonCalendarVoid(CalendarVoid* p)
+      : FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonCalendarBool : public FreppleClass<PythonCalendarBool,PythonCalendar,CalendarBool>
+{
+  public:
+    PythonCalendarBool(CalendarBool* p)
+      : FreppleClass<PythonCalendarBool,PythonCalendar,CalendarBool>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonCalendarDouble : public FreppleClass<PythonCalendarDouble,PythonCalendar,CalendarDouble>
+{
+  public:
+    PythonCalendarDouble(CalendarDouble* p)
+      : FreppleClass<PythonCalendarDouble,PythonCalendar,CalendarDouble>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+//
+// DEMANDS
+//
+
+
+class PythonDemand : public FreppleCategory<PythonDemand,Demand>
+{
+  public:
+    PythonDemand(Demand* p) : FreppleCategory<PythonDemand,Demand>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonDemandIterator
+  : public FreppleIterator<PythonDemandIterator,Demand::iterator,Demand,PythonDemand>
+{
+};
+
+
+class PythonDemandDefault : public FreppleClass<PythonDemandDefault,PythonDemand,DemandDefault>
+{
+  public:
+    PythonDemandDefault(DemandDefault* p)
+      : FreppleClass<PythonDemandDefault,PythonDemand,DemandDefault>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+//
+// RESOURCES
+//
+
+
+class PythonResource : public FreppleCategory<PythonResource,Resource>
+{
+  public:
+    PythonResource(Resource* p) : FreppleCategory<PythonResource,Resource>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonResourceIterator
+  : public FreppleIterator<PythonResourceIterator,Resource::iterator,Resource,PythonResource>
+{
+};
+
+
+class PythonResourceDefault : public FreppleClass<PythonResourceDefault,PythonResource,ResourceDefault>
+{
+  public:
+    PythonResourceDefault(ResourceDefault* p)
+      : FreppleClass<PythonResourceDefault,PythonResource,ResourceDefault>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonResourceInfinite : public FreppleClass<PythonResourceInfinite,PythonResource,ResourceInfinite>
+{
+  public:
+    PythonResourceInfinite(ResourceInfinite* p)
+      : FreppleClass<PythonResourceInfinite,PythonResource,ResourceInfinite>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+//
+// OPERATIONS
+//
+
+
+class PythonOperation : public FreppleCategory<PythonOperation,Operation>
+{
+  public:
+    PythonOperation(Operation* p) : FreppleCategory<PythonOperation,Operation>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonOperationIterator
+  : public FreppleIterator<PythonOperationIterator,Operation::iterator,Operation,PythonOperation>
+{
+};
+
+
+class PythonOperationAlternate : public FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>
+{
+  public:
+    PythonOperationAlternate(OperationAlternate* p)
+      : FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonOperationFixedTime : public FreppleClass<PythonOperationFixedTime,PythonOperation,OperationFixedTime>
+{
+  public:
+    PythonOperationFixedTime(OperationFixedTime* p)
+      : FreppleClass<PythonOperationFixedTime,PythonOperation,OperationFixedTime>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonOperationTimePer : public FreppleClass<PythonOperationTimePer,PythonOperation,OperationTimePer>
+{
+  public:
+    PythonOperationTimePer(OperationTimePer* p)
+      : FreppleClass<PythonOperationTimePer,PythonOperation,OperationTimePer>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonOperationRouting : public FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>
+{
+  public:
+    PythonOperationRouting(OperationRouting* p)
+      : FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+//
+// OPERATIONPLANS
+//
+
+
+class PythonOperationPlan : public PythonExtension<PythonOperationPlan>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonOperationPlan(OperationPlan* p) : obj(p) {}
+    static void* proxy(Object* p)
+      {return static_cast<PyObject*>(new PythonOperationPlan(static_cast<OperationPlan*>(p)));}
+  private:
+    OperationPlan* obj;
+    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
+class PythonOperationPlanIterator
+  : public FreppleIterator<PythonOperationPlanIterator,OperationPlan::iterator,OperationPlan,PythonOperationPlan>
+{
+  public:
+    /** Constructor to iterate over all operationplans. */
+    PythonOperationPlanIterator() {}
+
+    /** Constructor to iterate over the operationplans of a single operation. */
+    PythonOperationPlanIterator(Operation* o)
+      : FreppleIterator<PythonOperationPlanIterator,OperationPlan::iterator,OperationPlan,PythonOperationPlan>(o)
+    {}
+};
+
+
+//
+// FLOWPLANS
+//
+
+
+class PythonFlowPlan : public PythonExtension<PythonFlowPlan>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonFlowPlan(FlowPlan* p) : fl(p) {}
+  private:
+    PyObject* getattro(const Attribute&);
+    FlowPlan* fl;
+};
+
+
+class PythonFlowPlanIterator : public PythonExtension<PythonFlowPlanIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonFlowPlanIterator(Buffer* b) : buf(b)
+    {
+      if (!b)
+        throw LogicException("Creating flowplan iterator for NULL buffer");
+      i = b->getFlowPlans().begin();
+    }
+
+  private:
+    Buffer* buf;
+    Buffer::flowplanlist::const_iterator i;
+    PyObject *iternext();
+};
+
+
+//
+// LOADPLANS
+//
+
+
+class PythonLoadPlan : public PythonExtension<PythonLoadPlan>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonLoadPlan(LoadPlan* p) : fl(p) {}
+  private:
+    PyObject* getattro(const Attribute&);
+    LoadPlan* fl;
+};
+
+
+class PythonLoadPlanIterator : public PythonExtension<PythonLoadPlanIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonLoadPlanIterator(Resource* r) : res(r)
+    {
+      if (!r)
+        throw LogicException("Creating loadplan iterator for NULL resource");
+      i = r->getLoadPlans().begin();
+    }
+
+  private:
+    Resource* res;
+    Resource::loadplanlist::const_iterator i;
+    PyObject *iternext();
+};
+
+
+//
+// DEMAND DELIVERY OPERATIONPLANS
+//
+
+
+class PythonDemandPlanIterator : public PythonExtension<PythonDemandPlanIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonDemandPlanIterator(Demand* r) : dem(r)
+    {
+      if (!r)
+        throw LogicException("Creating demandplan iterator for NULL demand");
+      i = r->getDelivery().begin();
+    }
+
+  private:
+    Demand* dem;
+    Demand::OperationPlan_list::const_iterator i;
+    PyObject *iternext();
+};
+
+
+//
+// DEMAND PEGGING
+//
+
+
+class PythonPeggingIterator : public PythonExtension<PythonPeggingIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonPeggingIterator(Demand* r) : dem(r), i(r)
+    {
+      if (!r)
+        throw LogicException("Creating pegging iterator for NULL demand");
+    }
+
+  private:
+    Demand* dem;
+    PeggingIterator i;
+    PyObject *iternext();
+};
+
+
+//
+// LOADS
+//
+
+
+class PythonLoad : public PythonExtension<PythonLoad>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonLoad(Load* p) : ld(p) {}
+  private:
+    PyObject* getattro(const Attribute&);
+    int setattro(const Attribute&, const PythonObject&);
+    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+    static void* proxy(Object* p) {return static_cast<PyObject*>(new PythonLoad(static_cast<Load*>(p)));}
+    Load* ld;
+};
+
+
+class PythonLoadIterator : public PythonExtension<PythonLoadIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonLoadIterator(Resource* r)
+      : res(r), ir(r ? r->getLoads().begin() : NULL), oper(NULL), io(NULL)
+    {
+      if (!r)
+        throw LogicException("Creating loadplan iterator for NULL resource");
+    }
+
+    PythonLoadIterator(Operation* o)
+      : res(NULL), ir(NULL), oper(o), io(o ? o->getLoads().begin() : NULL)
+    {
+      if (!o)
+        throw LogicException("Creating loadplan iterator for NULL operation");
+    }
+
+  private:
+    Resource* res;
+    Resource::loadlist::const_iterator ir;
+    Operation* oper;
+    Operation::loadlist::const_iterator io;
+    PyObject *iternext();
+};
+
+
+//
+// FLOW
+//
+
+
+class PythonFlow : public PythonExtension<PythonFlow>
+{
+  public:
+    static int initialize(PyObject* m);
+    PythonFlow(Flow* p) : fl(p) {}
+  private:
+    PyObject* getattro(const Attribute&);
+    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)  issue: construction & validation of floaws is a bit different....   
+    int setattro(const Attribute&, const PythonObject&);
+    static void* proxy(Object* p) {return static_cast<PyObject*>(new PythonFlow(static_cast<Flow*>(p)));}
+    Flow* fl;
+};
+
+
+class PythonFlowIterator : public PythonExtension<PythonFlowIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonFlowIterator(Buffer* b)
+      : buf(b), ib(b ? b->getFlows().begin() : NULL), oper(NULL), io(NULL)
+    {
+      if (!b)
+        throw LogicException("Creating flowplan iterator for NULL buffer");
+    }
+
+    PythonFlowIterator(Operation* o)
+      : buf(NULL), ib(NULL), oper(o), io(o ? o->getFlows().begin() : NULL)
+    {
+      if (!o)
+        throw LogicException("Creating flowplan iterator for NULL operation");
+    }
+
+  private:
+    Buffer* buf;
+    Buffer::flowlist::const_iterator ib;
+    Operation* oper;
+    Operation::flowlist::const_iterator io;
+    PyObject *iternext();
+};
+
+
+//
+// SOLVERS
+//
+
+
+class PythonSolver : public FreppleCategory<PythonSolver,Solver>
+{
+  public:
+    static int initialize(PyObject* m)
+    {
+      getType().addMethod("solve", solve, METH_NOARGS, "run the solver");
+      return FreppleCategory<PythonSolver,Solver>::initialize(m);
+    }
+    PythonSolver(Solver* p) : FreppleCategory<PythonSolver,Solver>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+    static PyObject* solve(PyObject*, PyObject*);
+};
+
+
+class PythonSolverIterator
+  : public FreppleIterator<PythonSolverIterator,Solver::iterator,Solver,PythonSolver>
+{
+};
+
 
 }   // End namespace
 

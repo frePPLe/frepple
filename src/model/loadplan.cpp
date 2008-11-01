@@ -41,7 +41,7 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
   nextLoadPlan = o->firstloadplan;
   o->firstloadplan = this;
   r->getResource()->loadplans.insert(
-    this, 
+    this,
     ld->getLoadplanQuantity(this),
     ld->getLoadplanDate(this)
     );
@@ -95,4 +95,55 @@ DECLARE_EXPORT void LoadPlan::update()
   ld->getOperation()->setChanged();
 }
 
+
+int PythonLoadPlan::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("loadplan");
+  x.setDoc("frePPLe loadplan");
+  x.supportgetattro();
+  return x.typeReady(m);
 }
+
+
+PyObject* PythonLoadPlan::getattro(const Attribute& attr)
+{
+  if (!fl) return Py_None;
+  if (attr.isA(Tags::tag_operationplan))
+    return PythonObject(fl->getOperationPlan());
+  if (attr.isA(Tags::tag_quantity))
+    return PythonObject(fl->getQuantity());
+  if (attr.isA(Tags::tag_startdate))
+    return PythonObject(fl->getDate());
+  if (attr.isA(Tags::tag_enddate))
+    return PythonObject(fl->getOtherLoadPlan()->getDate());
+  if (attr.isA(Tags::tag_resource))
+    return PythonObject(fl->getLoad()->getResource());
+  return NULL;
+}
+
+
+int PythonLoadPlanIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonLoadPlanIterator>::getType();
+  x.setName("loadplanIterator");
+  x.setDoc("frePPLe iterator for loadplan");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonLoadPlanIterator::iternext()
+{
+  // Skip zero quantity loadplans and load ends
+  while (i != res->getLoadPlans().end() && i->getQuantity()<=0.0)
+    ++i;
+  if (i == res->getLoadPlans().end()) return NULL;
+
+  // Return result
+  return new PythonLoadPlan(const_cast<LoadPlan*>(dynamic_cast<const LoadPlan*>(&*(i++))));
+}
+
+} // end namespace

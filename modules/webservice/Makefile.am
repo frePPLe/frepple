@@ -4,7 +4,7 @@
 
 sources = module.cpp server.cpp webservice.cpp
 
-AM_CPPFLAGS=-I@top_builddir@/include
+AM_CPPFLAGS=-I@top_builddir@/include -I/usr/include/python$(PYTHON_VERSION)
 
 EXTRA_DIST = $(sources) mod_webservice.xsd module.h webservice.h client.cpp
 

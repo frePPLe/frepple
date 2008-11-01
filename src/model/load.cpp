@@ -203,4 +203,95 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, con
   }
 }
 
+int PythonLoad::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("load");
+  x.setDoc("frePPLe load");
+  x.supportgetattro();
+  x.supportsetattro();
+  const_cast<MetaCategory&>(Load::metadata).factoryPythonProxy = proxy;
+  return x.typeReady(m);
 }
+
+
+PyObject* PythonLoad::getattro(const Attribute& attr)
+{
+  if (!ld) return Py_None;
+  if (attr.isA(Tags::tag_resource))
+    return PythonObject(ld->getResource());
+  if (attr.isA(Tags::tag_operation))
+    return PythonObject(ld->getOperation());
+  if (attr.isA(Tags::tag_quantity))
+    return PythonObject(ld->getQuantity());
+  if (attr.isA(Tags::tag_effective_end))
+    return PythonObject(ld->getEffective().getEnd());
+  if (attr.isA(Tags::tag_effective_start))
+    return PythonObject(ld->getEffective().getStart());
+  return NULL;
+}
+
+
+int PythonLoad::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_resource))
+  {
+    if (!field.check(PythonResource::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "load resource must be of type resource");
+      return -1;
+    }
+    Resource* y = static_cast<PythonResource*>(static_cast<PyObject*>(field))->obj;
+    ld->setResource(y);
+  }
+  else if (attr.isA(Tags::tag_operation))
+  {
+    if (!field.check(PythonOperation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "load operation must be of type operation");
+      return -1;
+    }
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
+    ld->setOperation(y);
+  }
+  else if (attr.isA(Tags::tag_quantity))
+    ld->setQuantity(field.getDouble());
+  else if (attr.isA(Tags::tag_effective_end))
+    ld->setEffectiveEnd(field.getDate());
+  else if (attr.isA(Tags::tag_effective_start))
+    ld->setEffectiveStart(field.getDate());
+  else
+    return -1;
+  return 0;
+}
+
+
+int PythonLoadIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonLoadIterator>::getType();
+  x.setName("loadIterator");
+  x.setDoc("frePPLe iterator for loads");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonLoadIterator::iternext()
+{  
+  if (res) 
+  {
+    // Iterate over loads on a resource 
+    if (ir == res->getLoads().end()) return NULL;
+    return PythonObject(const_cast<Load*>(&*(ir++)));
+  }
+  else
+  {
+    // Iterate over loads on an operation 
+    if (io == oper->getLoads().end()) return NULL;
+    return PythonObject(const_cast<Load*>(&*(io++)));
+  }
+}
+
+} // end namespace

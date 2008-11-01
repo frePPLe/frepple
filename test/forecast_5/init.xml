@@ -3,7 +3,6 @@
   <commands>
     <verbose>false</verbose>
     <abortonerror>false</abortonerror>
-    <command xsi:type="command_loadlib" filename="mod_python.so" />
     <command xsi:type="command_loadlib" filename="mod_forecast.so">
        <parameter name="Net.CustomerThenItemHierarchy" value="true" />
     </command>

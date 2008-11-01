@@ -25,8 +25,9 @@
  ***************************************************************************/
 
 /* PythonUtils.h has to be included first.*/
-#include "../python/pythonutils.h"
+#include "frepple/pythonutils.h"
 #include "forecast.h"
+using namespace frepple::python;
 
 namespace module_forecast
 {
@@ -134,7 +135,7 @@ void initializePython()
 {
   // Check the status of the interpreter, and lock it
   if (!Py_IsInitialized())
-    throw frepple::RuntimeException("Python module is not initialized correctly");
+    throw RuntimeException("Python module is not initialized correctly");
   PyEval_AcquireLock();
   try
   {
@@ -144,17 +145,17 @@ void initializePython()
     // Unfortunately the Python API's don't allow this.
     PyObject* m = Py_InitModule("freppleforecast", NULL);
     if (!m)
-      throw frepple::RuntimeException("Can't initialize Python extensions");
+      throw RuntimeException("Can't initialize Python extensions");
 
     // Register new forecast type
     if (PyType_Ready(&PythonForecast::InfoType) < 0)
-      throw frepple::RuntimeException("Can't register python type Forecast");
+      throw RuntimeException("Can't register python type Forecast");
     Py_INCREF(&PythonForecast::InfoType);
     PyModule_AddObject(m, "forecast", reinterpret_cast<PyObject*>(&PythonForecast::InfoType));
 
     // Register new forecast bucket type
     if (PyType_Ready(&PythonForecastBucket::InfoType) < 0)
-      throw frepple::RuntimeException("Can't register python type ForecastBucket");
+      throw RuntimeException("Can't register python type ForecastBucket");
     Py_INCREF(&PythonForecastBucket::InfoType);
     PyModule_AddObject(m, "bucket", reinterpret_cast<PyObject*>(&PythonForecastBucket::InfoType));
 
@@ -211,8 +212,8 @@ extern "C" PyObject* PythonForecastBucket::next(PythonForecastBucket* obj)
 {
   if (!obj->iter) return NULL;
   PyObject* result = Py_BuildValue("{s:N,s:N,s:f,s:f,s:f}",
-    "start_date", PythonDateTime(obj->iter->timebucket.getStart()),
-    "end_date", PythonDateTime(obj->iter->timebucket.getEnd()),
+    "start_date", PythonObject(obj->iter->timebucket.getStart()),
+    "end_date", PythonObject(obj->iter->timebucket.getEnd()),
     "totalqty", obj->iter->total,
     "consumedqty", obj->iter->consumed,
     "netqty", obj->iter->total - obj->iter->consumed

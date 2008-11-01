@@ -28,6 +28,6 @@ all-local:
 
 endif
 
-AM_CPPFLAGS=-I@top_builddir@/include
+AM_CPPFLAGS=-I@top_builddir@/include -I/usr/include/python$(PYTHON_VERSION)
 
 CLEANFILES = *.gcda *.gcov *.gcno

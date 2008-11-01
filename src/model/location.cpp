@@ -30,7 +30,7 @@
 namespace frepple
 {
 
-template<class Location> DECLARE_EXPORT Tree HasName<Location>::st;
+template<class Location> DECLARE_EXPORT Tree utils::HasName<Location>::st;
 
 
 DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const Keyword& tag, mode m) const
@@ -104,4 +104,75 @@ DECLARE_EXPORT Location::~Location()
     if (oper->getLocation() == this) oper->setLocation(NULL);
 }
 
+
+PyObject* PythonLocation::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (attr.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (attr.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (attr.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (attr.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (attr.isA(Tags::tag_available))
+    return PythonObject(obj->getAvailable());
+  if (attr.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+	return NULL;
 }
+
+
+int PythonLocation::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_owner))
+  {
+    if (!field.check(PythonLocation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "location owner must be of type location");
+      return -1;
+    }
+    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(field))->obj;
+    obj->setOwner(y);
+  }
+  else if (attr.isA(Tags::tag_available))
+  {
+    if (!field.check(PythonCalendarBool::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "location calendar must be of type calendar_bool");
+      return -1;
+    }
+    CalendarBool* y = static_cast<PythonCalendarBool*>(static_cast<PyObject*>(field))->obj;
+    obj->setAvailable(y);
+  }
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
+  else
+    return -1;
+  return 0;
+}
+
+
+PyObject* PythonLocationDefault::getattro(const Attribute& attr)
+{
+  return PythonLocation(obj).getattro(attr);
+}
+
+
+int PythonLocationDefault::setattro(const Attribute& attr, const PythonObject& field)
+{
+ return PythonLocation(obj).setattro(attr, field);
+}
+
+} // end namespace

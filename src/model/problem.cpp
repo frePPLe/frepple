@@ -474,4 +474,34 @@ DECLARE_EXPORT const Problem::const_iterator Problem::end()
 }
 
 
+int PythonProblem::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("problem");
+  x.setDoc("frePPLe problem");
+  x.supportgetattro();
+  const_cast<MetaCategory&>(Problem::metadata).factoryPythonProxy = proxy;
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonProblem::getattro(const Attribute& attr)
+{
+  if (!prob) return Py_None;
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(prob->getType().type);
+  if (attr.isA(Tags::tag_description))
+    return PythonObject(prob->getDescription());
+  if (attr.isA(Tags::tag_entity))
+    return PythonObject(prob->getOwner()->getEntity()->getType().category->group);
+  if (attr.isA(Tags::tag_start))
+    return PythonObject(prob->getDateRange().getStart());
+  if (attr.isA(Tags::tag_end))
+    return PythonObject(prob->getDateRange().getEnd());
+  if (attr.isA(Tags::tag_weight))
+    return PythonObject(prob->getWeight());
+  return NULL;
+}
+
 } // End namespace

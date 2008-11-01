@@ -2,27 +2,22 @@
 # Process this file with automake to produce Makefile.in
 #
 
-sources = forecast.cpp forecast.h forecastsolver.cpp module.cpp timeseries.cpp
+sources = forecast.cpp forecast.h forecastsolver.cpp module.cpp timeseries.cpp pythonforecast.cpp
 
-EXTRA_DIST = mod_forecast.xsd $(sources) pythonforecast.cpp
+EXTRA_DIST = mod_forecast.xsd $(sources)
 
 CLEANFILES = *.gcda *.gcov *.gcno
 
 if FORECAST
+
+AM_CPPFLAGS=-I@top_builddir@/include -I/usr/include/python$(PYTHON_VERSION)
 
 usrlibdir = $(libdir)/frepple
 usrlib_LTLIBRARIES = mod_forecast.la
 mod_forecastdir = $(datadir)
 mod_forecast_DATA = mod_forecast.xsd
 mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
-
-if PYTHON
-AM_CPPFLAGS=-I@top_builddir@/include -I/usr/include/python$(PYTHON_VERSION)
-mod_forecast_la_SOURCES = $(sources) pythonforecast.cpp
-else
-AM_CPPFLAGS=-I@top_builddir@/include
 mod_forecast_la_SOURCES = $(sources)
-endif
 
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll

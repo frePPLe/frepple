@@ -32,6 +32,8 @@
 
 namespace frepple
 {
+namespace utils
+{
 
 /** @brief This class implements a "sorted list" data structure, sorting
   * "events" based on a date.
@@ -521,7 +523,7 @@ template <class type> bool TimeLine<type>::check() const
   return true;
 }
 
-}
-
+} // end namespace
+} // end namespace
 #endif
 

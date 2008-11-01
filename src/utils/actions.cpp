@@ -38,6 +38,8 @@
 
 namespace frepple
 {
+namespace utils
+{
 
 
 DECLARE_EXPORT bool Command::getVerbose() const
@@ -639,4 +641,5 @@ DECLARE_EXPORT void CommandSetEnv::endElement(XMLInput& pIn, const Attribute& pA
 }
 
 
-}
+} // end namespace
+} // end namespace

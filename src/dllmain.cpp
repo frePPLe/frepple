@@ -116,14 +116,6 @@ DECLARE_EXPORT(void) FreppleSaveFile(char* x)
 }
 
 
-DECLARE_EXPORT(string) FreppleSaveString()
-{
-  XMLOutputString x;
-  x.writeElementWithHeader(Tags::tag_plan, &Plan::instance());
-  return x.getData();
-}
-
-
 DECLARE_EXPORT(void) FreppleExit()
 {
   // Shut down the application that loaded frePPLe as a dynamic library
@@ -171,21 +163,6 @@ extern "C" DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char* f, bool v, 
 extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveFile(char* f)
 {
   try {FreppleSaveFile(f);}
-  catch (...) {return EXIT_FAILURE;}
-  return EXIT_SUCCESS;
-}
-
-
-extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveString(char* buf, unsigned long sz)
-{
-  try
-  {
-    // Get the result
-    string result = FreppleSaveString();
-    // Copy into the reply buffer
-    unsigned long l = result.size();
-    memcpy(buf, result.data(), l>sz ? sz : l);
-  }
   catch (...) {return EXIT_FAILURE;}
   return EXIT_SUCCESS;
 }

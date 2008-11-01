@@ -27,13 +27,12 @@
 /** @file pythonutils.h
   * @brief Reusable functions for python functionality.
   *
-  * Include this file in modules which require these functions.
-  *
-  * Alternatively, we could import the functions from the mod_python module.
-  * But this creates a hard dependency between the modules, which we try to
-  * avoid.
+  * @namespace frepple::python
+  * @brief Utility classes for interfacing to and from the Python language.
   */
 
+#ifndef PYTHONUTILS_H
+#define PYTHONUTILS_H
 
 /* Python.h has to be included first. 
    For a debugging build on windows we avoid using the debug version of Python
@@ -49,12 +48,216 @@
 #endif
 #include "datetime.h"
 
-#include "frepple.h"
-using namespace frepple;
+#include "frepple/utils.h"
+using namespace frepple::utils;
 
-/** This function converts a frePPLe Date value into a Python DateTime
-  * object. */
-PyObject* PythonDateTime(const Date& d);
+namespace frepple
+{
+namespace python
+{
+
+
+// For compatibility with earlier Python releases
+#if PY_VERSION_HEX < 0x02050000 && !defined(PY_SSIZE_T_MIN)
+typedef int Py_ssize_t;
+#define PY_SSIZE_T_MAX INT_MAX
+#define PY_SSIZE_T_MIN INT_MIN
+#endif
+
+
+/** An initialization routine for the library. */
+void initialize();
+
+
+/** @brief This class is used to maintain the Python interpreter.
+  *
+  * A single interpreter is used throughout the lifetime of the
+  * application.<br>
+  * The implementation is implemented in a thread-safe way (within the
+  * limitations of the Python threading model, of course).
+  *
+  * After loading, the module will check whether a file
+  * '$FREPPLE_HOME/init.py' exists and, if it does, will execute the
+  * statements in the file. In this way a library of globally available
+  * functions can easily be initialized.
+  *
+  * The stderr and stdout streams of Python are redirected by default to
+  * the frePPLe log stream.
+  *
+  * The following frePPLe functions are available from within Python.<br>
+  * All of these are in the module called frePPLe.
+  *   - The following <b>classes</b> and their attributes are accessible for reading
+  *     and writing.
+  *       - buffer
+  *       - buffer_default
+  *       - buffer_infinite
+  *       - buffer_procure
+  *       - calendar
+  *       - calendarBucket
+  *       - calendar_boolean
+  *       - calendar_double
+  *       - calendar_void
+  *       - customer
+  *       - customer_default
+  *       - demand
+  *       - demand_default
+  *       - flow
+  *       - flowplan
+  *       - item
+  *       - item_default
+  *       - load
+  *       - loadplan
+  *       - location
+  *       - location_default
+  *       - operation
+  *       - operation_alternate
+  *       - operation_fixed_time
+  *       - operation_routing
+  *       - operation_time_per
+  *       - operationplan
+  *       - parameters
+  *       - problem  (read-only)
+  *       - resource
+  *       - resource_default
+  *       - resource_infinite
+  *       - solver
+  *       - solver_mrp
+  *   - The following functions or attributes return <b>iterators</b> over the
+  *     frePPLe objects:<br>
+  *       - buffers()
+  *       - buffer.flows
+  *       - buffer.flowplans
+  *       - calendar.buckets
+  *       - calendars()
+  *       - customers()
+  *       - demands()
+  *       - demand.operationplans
+  *       - demand.pegging
+  *       - operation.flows
+  *       - operation.loads
+  *       - items()
+  *       - locations()
+  *       - operations()
+  *       - operation.operationplans
+  *       - problems()
+  *       - resources()
+  *       - resource.loads
+  *       - resource.loadplans
+  *       - solvers()
+  *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br>
+  *     Processes an XML string passed as argument.
+  *   - <b>log(string)</b>:<br>
+  *     Prints a string to the frePPLe log file.<br>
+  *     This is used for redirecting the stdout and stderr of Python.
+  *   - <b>readXMLfile(string [,bool] [,bool])</b>:<br>
+  *     Read an XML-file.
+  *   - <b>saveXMLfile(string)</b>:<br>
+  *     Save the model to an XML-file.
+  *   - <b>erase(boolean)</b>:<br>
+  *     Erase the model (arg true) or only the plan (arg false, default).
+  *   - <b>version</b>:<br>
+  *     A string variable with the version number.
+  */
+class PythonInterpreter
+{
+  public:
+    /** Initializes the interpreter. */
+    static void initialize();
+
+    /** Execute some python code. */
+    static DECLARE_EXPORT void execute(const char*);
+
+    /** Register a new method to Python.<br>
+      * Arguments:
+      * - The name of the built-in function/method
+      * - The function that implements it.
+      * - Combination of METH_* flags, which mostly describe the args 
+      *   expected by the C func.
+      * - The __doc__ attribute, or NULL.
+      */
+    static DECLARE_EXPORT void registerGlobalMethod(
+      const char*, PyCFunction, int, const char*, bool = true	
+     );
+
+    /** Return a pointer to the main extension module. */
+    static PyObject* getModule() { return module; }
+
+  private:
+    /** A pointer to the frePPLe extension module. */  
+    static PyObject *module;
+
+    /** This is the thread state of the main execution thread. */
+    static PyThreadState *mainThreadState;
+
+    /** Python API: Used for redirecting the Python output to the same file
+      * as the applciation. <br>
+      * Arguments: data (string)
+      */
+    static DECLARE_EXPORT PyObject *python_log(PyObject*, PyObject*);
+};
+
+
+/** @brief This command executes Python code in the embedded interpreter.
+  *
+  * The interpreter can execute generic scripts, and it also has access
+  * to the frePPLe objects.<br>
+  * The interpreter is multi-threaded. Multiple python scripts can run in
+  * parallel. Internally Python allows only one thread at a time to
+  * execute and the interpreter switches between the active threads, i.e.
+  * a quite primitive threading model.<br>
+  * FrePPLe uses a single global interpreter. A global Python variable or
+  * function is thus visible across multiple invocations of the Python
+  * interpreter.
+  */
+class CommandPython : public Command, public XMLinstruction
+{
+  friend void initialize();
+  private:
+    /** Python commands to be executed. */
+    string cmd;
+
+    /** Python source file to be executed. */
+    string filename;
+
+  public:
+    /** Executes the python command or source file. */
+    void execute();
+
+    /** Returns a descriptive string. */
+    string getDescription() const {return "Python interpreter";}
+
+    /** Default constructor. */
+    explicit CommandPython() {}
+
+    /** Destructor. */
+    virtual ~CommandPython() {}
+
+    /** Update the commandline field and clears the filename field. */
+    void setCommandLine(string s) {cmd = s; filename.clear();}
+
+    /** Return the command line. */
+    string getCommandLine() const {return cmd;}
+
+    /** Return the filename. */
+    string getFileName() const {return filename;}
+
+    /** Update the filename field and clear the filename field. */
+    void setFileName(string s) {filename = s; cmd.clear();}
+
+    virtual const MetaClass& getType() const {return metadata;}
+    /** Metadata for registration as a command. */
+    static const MetaClass metadata;
+    /** Metadata for registration as an XML instruction. */
+    static const MetaClass metadata2;
+    virtual size_t getSize() const
+      {return sizeof(CommandPython) + cmd.size() + filename.size();}
+
+    void DECLARE_EXPORT endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
+
+    /** This method is called when a processing instruction is read. */
+    void processInstruction(XMLInput &i, const char *d) 
+      {PythonInterpreter::execute(d);}
+};
 
 
 /** @brief The preferred encoding of Python.
@@ -62,17 +265,17 @@ PyObject* PythonDateTime(const Date& d);
   * Python unicode strings are encoded to this locale when bringing them into
   * frePPLe.<br>
   */
-extern string pythonEncoding;
+extern DECLARE_EXPORT string pythonEncoding;
 
 
 /** @brief Python exception class matching with frepple::LogicException. */
-extern PyObject* PythonLogicException;
+extern DECLARE_EXPORT PyObject* PythonLogicException;
 
 /** @brief Python exception class matching with frepple::DataException. */
-extern PyObject* PythonDataException;
+extern DECLARE_EXPORT PyObject* PythonDataException;
 
 /** @brief Python exception class matching with frepple::RuntimeException. */
-extern PyObject* PythonRuntimeException;
+extern DECLARE_EXPORT PyObject* PythonRuntimeException;
 
 
 // The following handler functions redirect the call from Python onto a
@@ -115,21 +318,21 @@ class PythonType : public NonCopyable
     PyMethodDef *methods;
 
   public:
-    /** A static function that evaluates an exception and sets the Python
+   /** A static function that evaluates an exception and sets the Python
       * error string properly.<br>
       * This function should only be called from within a catch-block, since
       * internally it rethrows the exception!
       */
-    static void evalException();
+    static DECLARE_EXPORT void evalException();
 
     /** Constructor, sets the tp_base_size member. */
-    PythonType (size_t base_size);
+    DECLARE_EXPORT PythonType(size_t base_size);
 
     /** Return a pointer to the actual Python PyTypeObject. */
     PyTypeObject* type_object() const {return const_cast<PyTypeObject*>(&table);}
 
     /** Add a new method. */
-    void addMethod(char*, PyCFunction, int, char*);
+    DECLARE_EXPORT void addMethod(char*, PyCFunction, int, char*);
 
     /** Updates tp_name. */
     void setName (const string n)
@@ -212,7 +415,7 @@ class PythonType : public NonCopyable
     /** This method needs to be called after the type information has all
       * been updated. It adds the type to the module that is passed as
       * argument. */
-    int typeReady(PyObject* m);
+    DECLARE_EXPORT int typeReady(PyObject* m);
 
   private:
     /** The type object, as it is used by Python. */
@@ -309,7 +512,7 @@ class PythonObject : public DataElement
 
     /** Convert a Python datetime.date or datetime.datetime object into a
       * frePPLe date. */
-    Date getDate() const;
+    DECLARE_EXPORT Date getDate() const;
 
     /** Convert a Python number into a C++ double. */
     inline double getDouble() const
@@ -358,7 +561,7 @@ class PythonObject : public DataElement
       * The metadata of the Object instances allow us to create a Python
       * object that works as a proxy for the C++ object.
       */
-    PythonObject(Object* p);
+    DECLARE_EXPORT PythonObject(Object* p);
 
     /** Convert a C++ string into a (raw) Python string. */
     inline PythonObject(const string& val)
@@ -412,7 +615,7 @@ class PythonObject : public DataElement
     }
 
     /** Convert a frePPLe date into a Python datetime.datetime object. */
-    PythonObject(const Date& val);
+    DECLARE_EXPORT PythonObject(const Date& val);
 };
 
 
@@ -783,3 +986,6 @@ class FreppleIterator : public PythonExtension<ME>
     }
 };
 
+} // end namespace
+} // end namespace
+#endif  // End of PYTHONUTILS_H

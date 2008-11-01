@@ -30,7 +30,7 @@
 namespace frepple
 {
 
-template<class Item> DECLARE_EXPORT Tree HasName<Item>::st;
+template<class Item> DECLARE_EXPORT Tree utils::HasName<Item>::st;
 
 
 DECLARE_EXPORT Item::~Item()
@@ -93,4 +93,74 @@ DECLARE_EXPORT void Item::endElement(XMLInput& pIn, const Attribute& pAttr, cons
 }
 
 
+PyObject* PythonItem::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (attr.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (attr.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (attr.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (attr.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (attr.isA(Tags::tag_operation))
+    return PythonObject(obj->getOperation());
+  if (attr.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+	return NULL;
 }
+
+
+int PythonItem::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_owner))
+  {
+    if (!field.check(PythonItem::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "item owner must be of type item");
+      return -1;
+    }
+    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(field))->obj;
+    obj->setOwner(y);
+  }
+  else if (attr.isA(Tags::tag_operation))
+  {
+    if (!field.check(PythonOperation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "item operation must be of type operation");
+      return -1;
+    }
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
+    obj->setOperation(y);
+  }
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
+  else
+    return -1;
+  return 0;
+}
+
+
+PyObject* PythonItemDefault::getattro(const Attribute& attr)
+{
+  return PythonItem(obj).getattro(attr);
+}
+
+
+int PythonItemDefault::setattro(const Attribute& attr, const PythonObject& field)
+{
+ return PythonItem(obj).setattro(attr, field);
+}
+
+} // end namespace

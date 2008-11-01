@@ -199,6 +199,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\utils\pythonutils.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\utils\xmlparser.cpp"
 				>
 			</File>
@@ -207,6 +211,10 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
+			<File
+				RelativePath="..\..\include\frepple\pythonutils.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\include\frepple\utils.h"
 				>

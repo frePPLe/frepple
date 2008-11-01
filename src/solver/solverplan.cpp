@@ -47,6 +47,7 @@ void LibrarySolver::initialize()
     << "than once." << endl;
     return;
   }
+  init = true;
 
   // Register all classes.
   SolverMRP::metadata.registerClass(
@@ -55,11 +56,8 @@ void LibrarySolver::initialize()
     Object::createString<SolverMRP>,
     true);
 
-  // Close the library at the end
-#ifdef HAVE_ATEXIT
-  atexit(finalize);
-#endif
-  init = true;
+  if (PythonSolverMRP::initialize(PythonInterpreter::getModule()))
+    throw RuntimeException("Error registering solver_mrp Python type");
 }
 
 
@@ -213,5 +211,27 @@ DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr,
     Solver::endElement(pIn, pAttr, pElement);
 }
 
+
+PyObject* PythonSolverMRP::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_constraints))
+    return PythonObject(obj->getConstraints());
+  if (attr.isA(Tags::tag_maxparallel))
+    return PythonObject(obj->getMaxParallel());
+  return PythonSolver(obj).getattro(attr); 
+}
+
+
+int PythonSolverMRP::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_constraints))
+    obj->setConstraints(field.getInt());
+  else if (attr.isA(Tags::tag_maxparallel))
+    obj->setMaxParallel(field.getInt());
+  else
+    return PythonSolver(obj).setattro(attr, field);
+  return 0;
+}
 
 } // end namespace

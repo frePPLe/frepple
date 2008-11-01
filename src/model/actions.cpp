@@ -30,7 +30,7 @@
 namespace frepple
 {
 
-template<class Solver> DECLARE_EXPORT Tree HasName<Solver>::st;
+template<class Solver> DECLARE_EXPORT Tree utils::HasName<Solver>::st;
 
 //
 // SOLVE
@@ -103,6 +103,50 @@ DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, const Attribute& pAttr, co
 }
 
 
+PyObject* PythonSolver::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (attr.isA(Tags::tag_loglevel))
+    return PythonObject(obj->getLogLevel());
+	return NULL;
+}
+
+
+int PythonSolver::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_loglevel))
+    obj->setLogLevel(field.getInt());
+  else
+    return -1;  // Error
+  return 0;  // OK
+}
+
+
+PyObject *PythonSolver::solve(PyObject *self, PyObject *args)
+{
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try
+  {
+    Solver *sol = static_cast<PythonSolver*>(self)->obj;
+    if (!sol) throw LogicException("Can't run NULL solver");
+    sol->solve();    
+  }
+  catch(...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  Py_INCREF(Py_None);
+  return Py_None;
+}
+
+
 //
 // READ XML INPUT FILE
 //
@@ -153,6 +197,30 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
 }
 
 
+DECLARE_EXPORT PyObject* CommandReadXMLFile::executePython(PyObject* self, PyObject* args)
+{
+  // Pick up arguments
+  char *data;
+  int i1(1), i2(0);
+  int ok = PyArg_ParseTuple(args, "s|ii", &data, &i1, &i2);
+  if (!ok) return NULL;
+
+  // Execute and catch exceptions
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try { 
+    CommandReadXMLFile(data, i1!=0, i2!=0).execute(); 
+  }
+  catch (...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");
+}
+
+
 //
 // READ XML INPUT STRING
 //
@@ -185,6 +253,31 @@ DECLARE_EXPORT void CommandReadXMLString::execute()
   // Message
   if (getVerbose())
     logger << "Finished reading model at " << Date::now()  << " : " << t << endl;
+}
+
+
+PyObject* CommandReadXMLString::executePython(PyObject *self, PyObject *args)
+{
+  // Pick up arguments
+  char *data;
+  int i1(1), i2(0);
+  int ok = PyArg_ParseTuple(args, "s|ii", &data, &i1, &i2);
+  if (!ok) return NULL;
+
+  // Execute and catch exceptions
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try { 
+    if (data) CommandReadXMLString(string(data), i1!=0, i2!=0).execute();
+  }
+  catch (...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");  // Safer than using Py_None, which is not
+                             // portable across compilers
 }
 
 
@@ -236,6 +329,29 @@ DECLARE_EXPORT void CommandSave::execute()
   if (getVerbose())
     logger << "Finished saving " << o.countObjects()
     << " objects at " << Date::now() << " : " << t << endl;
+}
+
+
+PyObject* CommandSave::executePython(PyObject* self, PyObject* args)
+{
+  // Pick up arguments
+  char *data;
+  int ok = PyArg_ParseTuple(args, "s", &data);
+  if (!ok) return NULL;
+
+  // Execute and catch exceptions
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try { 
+    CommandSave(data).execute();
+  }
+  catch (...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");
 }
 
 
@@ -558,4 +674,31 @@ DECLARE_EXPORT void CommandErase::execute()
     << " : " << t << endl;
 }
 
+
+PyObject* CommandErase::executePython(PyObject* self, PyObject* args)
+{
+  // Pick up arguments
+  PyObject *obj = NULL;
+  int ok = PyArg_ParseTuple(args, "|O", &obj);
+  if (!ok) return NULL;
+
+  // Validate the argument
+  bool staticalso = false;
+  if (obj) staticalso = PythonObject(obj).getBool();
+
+  // Execute and catch exceptions
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try { 
+    CommandErase(staticalso).execute();
+  }
+  catch (...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");
 }
+
+} // end namespace

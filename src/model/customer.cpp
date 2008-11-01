@@ -30,7 +30,7 @@
 namespace frepple
 {
 
-template<class Customer> DECLARE_EXPORT Tree HasName<Customer>::st;
+template<class Customer> DECLARE_EXPORT Tree utils::HasName<Customer>::st;
 
 
 DECLARE_EXPORT void Customer::writeElement(XMLOutput* o, const Keyword& tag, mode m) const
@@ -73,4 +73,63 @@ DECLARE_EXPORT Customer::~Customer()
 }
 
 
+PyObject* PythonCustomer::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (attr.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (attr.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (attr.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (attr.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (attr.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+	return NULL;
 }
+
+
+int PythonCustomer::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_owner))
+  {
+    if (!field.check(PythonCustomer::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "customer owner must be of type customer");
+      return -1;
+    }
+    Customer* y = static_cast<PythonCustomer*>(static_cast<PyObject*>(field))->obj;
+    obj->setOwner(y);
+  }
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
+  else
+    return -1;
+  return 0;
+}
+
+
+PyObject* PythonCustomerDefault::getattro(const Attribute& attr)
+{
+  return PythonCustomer(obj).getattro(attr);
+}
+
+
+int PythonCustomerDefault::setattro(const Attribute& attr, const PythonObject& field)
+{
+ return PythonCustomer(obj).setattro(attr, field);
+}
+
+
+} // end namespace

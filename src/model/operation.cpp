@@ -31,7 +31,7 @@
 namespace frepple
 {
 
-template<class Operation> DECLARE_EXPORT Tree HasName<Operation>::st;
+template<class Operation> DECLARE_EXPORT Tree utils::HasName<Operation>::st;
 DECLARE_EXPORT Operation::Operationlist Operation::nosubOperations;
 
 
@@ -715,4 +715,153 @@ DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
     << "'" << endl;
 }
 
+
+PyObject* PythonOperation::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (attr.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (attr.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (attr.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (attr.isA(Tags::tag_location))
+    return PythonObject(obj->getLocation());
+  if (attr.isA(Tags::tag_fence))
+    return PythonObject(obj->getFence());
+  if (attr.isA(Tags::tag_size_minimum))
+    return PythonObject(obj->getSizeMinimum());
+  if (attr.isA(Tags::tag_size_multiple))
+    return PythonObject(obj->getSizeMultiple());
+  if (attr.isA(Tags::tag_pretime))
+    return PythonObject(obj->getPreTime());
+  if (attr.isA(Tags::tag_posttime))
+    return PythonObject(obj->getPostTime());
+  if (attr.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+  if (attr.isA(Tags::tag_loads))
+    return new PythonLoadIterator(obj);
+  if (attr.isA(Tags::tag_flows))
+    return new PythonFlowIterator(obj);
+  if (attr.isA(Tags::tag_operationplans))
+    return new PythonOperationPlanIterator(obj);
+  if (attr.isA(Tags::tag_level))
+    return PythonObject(obj->getLevel());
+  if (attr.isA(Tags::tag_cluster))
+    return PythonObject(obj->getCluster());
+	return NULL;
 }
+
+
+int PythonOperation::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_location))
+  {
+    if (!field.check(PythonLocation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer location must be of type location");
+      return -1;
+    }
+    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(field))->obj;
+    obj->setLocation(y);
+  }
+  else if (attr.isA(Tags::tag_fence))
+    obj->setFence(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_size_minimum))
+    obj->setSizeMinimum(field.getDouble());
+  else if (attr.isA(Tags::tag_size_multiple))
+    obj->setSizeMultiple(field.getDouble());
+  else if (attr.isA(Tags::tag_pretime))
+    obj->setPreTime(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_posttime))
+    obj->setPostTime(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
+  else
+    return -1;  // Error
+  return 0;  // OK
+}
+
+
+PyObject* PythonOperationFixedTime::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_duration))
+    return PythonObject(obj->getDuration());
+  return PythonOperation(obj).getattro(attr); 
+}
+
+
+int PythonOperationFixedTime::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (!obj) return -1;
+  if (attr.isA(Tags::tag_duration))
+    obj->setDuration(field.getTimeperiod());
+  else
+    return PythonOperation(obj).setattro(attr, field);
+  return 0;
+}
+
+
+PyObject* PythonOperationTimePer::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_duration))
+    return PythonObject(obj->getDuration());
+  if (attr.isA(Tags::tag_duration))
+    return PythonObject(obj->getDurationPer());
+  return PythonOperation(obj).getattro(attr); 
+}
+
+
+int PythonOperationTimePer::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (!obj) return -1;
+  if (attr.isA(Tags::tag_duration))
+    obj->setDuration(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_duration_per))
+    obj->setDurationPer(field.getTimeperiod());
+  else
+    return PythonOperation(obj).setattro(attr, field);
+  return 0;
+}
+
+
+PyObject* PythonOperationAlternate::getattro(const Attribute& attr)
+{
+  // @todo alternates
+  return PythonOperation(obj).getattro(attr); 
+}
+
+
+int PythonOperationAlternate::setattro(const Attribute& attr, const PythonObject& field)
+{
+  // @todo alternates
+  return PythonOperation(obj).setattro(attr, field);
+}
+
+
+PyObject* PythonOperationRouting::getattro(const Attribute& attr)
+{
+  // @todo steps
+  return PythonOperation(obj).getattro(attr); 
+}
+
+
+int PythonOperationRouting::setattro(const Attribute& attr, const PythonObject& field)
+{
+  // @todo steps
+  return PythonOperation(obj).setattro(attr, field);
+} 
+
+} // end namespace

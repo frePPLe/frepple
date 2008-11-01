@@ -1001,6 +1001,20 @@
     </xsd:complexContent>
   </xsd:complexType>
 
+  <xsd:complexType name="command_python">
+    <xsd:complexContent>
+      <xsd:extension base="command">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="verbose" type="xsd:boolean" />
+          <xsd:element name="cmdline" type="xsd:string" />
+          <xsd:element name="filename" type="xsd:normalizedString" />
+        </xsd:choice>
+  			<xsd:attribute name="cmdline" type="xsd:string" />
+  			<xsd:attribute name="filename" type="xsd:normalizedString" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
   <!-- SOLVER -->
   <xsd:simpleType name="loglevel" id="loglevel">
     <xsd:restriction base="xsd:int">

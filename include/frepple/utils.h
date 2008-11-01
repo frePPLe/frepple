@@ -26,6 +26,9 @@
 
 /** @file utils.h
   * @brief Header file for auxilary classes.
+  *
+  * @namespace frepple::utils
+  * @brief Core namespace
   */
 
 #ifndef UTILS_H
@@ -161,6 +164,8 @@ using namespace std;
 
 
 namespace frepple
+{
+namespace utils
 {
 
 // Forward declarations
@@ -4177,10 +4182,10 @@ class LibraryUtils
 {
   public:
     static void initialize();
-    static void finalize();
   private:
     static bool init;
 };
 
-}
+} // end namespace
+} // end namespace
 #endif  // End of UTILS_H

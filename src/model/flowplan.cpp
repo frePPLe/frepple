@@ -135,4 +135,55 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const Keyword& tag, mod
   o->EndObject(tag);
 }
 
+
+int PythonFlowPlan::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("flowplan");
+  x.setDoc("frePPLe flowplan");
+  x.supportgetattro();
+  return x.typeReady(m);
 }
+
+
+PyObject* PythonFlowPlan::getattro(const Attribute& attr)
+{
+  if (!fl) return Py_None;
+  if (attr.isA(Tags::tag_operationplan))
+    return PythonObject(fl->getOperationPlan());
+  if (attr.isA(Tags::tag_quantity))
+    return PythonObject(fl->getQuantity());
+  if (attr.isA(Tags::tag_date))
+    return PythonObject(fl->getDate());
+  if (attr.isA(Tags::tag_onhand))
+    return PythonObject(fl->getOnhand());
+  if (attr.isA(Tags::tag_buffer))
+    return PythonObject(fl->getFlow()->getBuffer());
+  return NULL;
+}
+
+
+int PythonFlowPlanIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonFlowPlanIterator>::getType();
+  x.setName("flowplanIterator");
+  x.setDoc("frePPLe iterator for flowplan");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonFlowPlanIterator::iternext()
+{
+  // Skip uninteresting entries
+  while (i != buf->getFlowPlans().end() && i->getQuantity()==0.0) 
+    ++i;
+  if (i == buf->getFlowPlans().end()) return NULL;
+
+  // Return result
+  return new PythonFlowPlan(const_cast<FlowPlan*>(dynamic_cast<const FlowPlan*>(&*(i++))));
+}
+
+} // end namespace

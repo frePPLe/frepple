@@ -230,5 +230,95 @@ DECLARE_EXPORT void FlowEnd::writeElement
   o->EndObject(tag);
 }
 
-
+int PythonFlow::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("flow");
+  x.setDoc("frePPLe flow");
+  x.supportgetattro();
+  x.supportsetattro();
+  const_cast<MetaCategory&>(Flow::metadata).factoryPythonProxy = proxy;
+  return x.typeReady(m);
 }
+
+
+PyObject* PythonFlow::getattro(const Attribute& attr)
+{
+  if (!fl) return Py_None;
+  if (attr.isA(Tags::tag_buffer))
+    return PythonObject(fl->getBuffer());
+  if (attr.isA(Tags::tag_operation))
+    return PythonObject(fl->getOperation());
+  if (attr.isA(Tags::tag_quantity))
+    return PythonObject(fl->getQuantity());
+  if (attr.isA(Tags::tag_effective_end))
+    return PythonObject(fl->getEffective().getEnd());
+  if (attr.isA(Tags::tag_effective_start))
+    return PythonObject(fl->getEffective().getStart());
+  return NULL;
+}
+
+
+int PythonFlow::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_buffer))
+  {
+    if (!field.check(PythonBuffer::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "flow buffer must be of type buffer");
+      return -1;
+    }
+    Buffer* y = static_cast<PythonBuffer*>(static_cast<PyObject*>(field))->obj;
+    fl->setBuffer(y);
+  }
+  else if (attr.isA(Tags::tag_operation))
+  {
+    if (!field.check(PythonOperation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "flow operation must be of type operation");
+      return -1;
+    }
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
+    fl->setOperation(y);
+  }
+  else if (attr.isA(Tags::tag_quantity))
+    fl->setQuantity(field.getDouble());
+  else if (attr.isA(Tags::tag_effective_end))
+    fl->setEffectiveEnd(field.getDate());
+  else if (attr.isA(Tags::tag_effective_start))
+    fl->setEffectiveStart(field.getDate());
+  else
+    return -1;
+  return 0;
+}
+
+
+int PythonFlowIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonFlowIterator>::getType();
+  x.setName("flowIterator");
+  x.setDoc("frePPLe iterator for flows");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonFlowIterator::iternext()
+{  
+  if (buf) 
+  {
+    // Iterate over flows on a buffer 
+    if (ib == buf->getFlows().end()) return NULL;
+    return PythonObject(const_cast<Flow*>(&*(ib++)));
+  }
+  else
+  {
+    // Iterate over flows on an operation 
+    if (io == oper->getFlows().end()) return NULL;
+    return PythonObject(const_cast<Flow*>(&*(io++)));
+  }
+}
+
+} // end namespace

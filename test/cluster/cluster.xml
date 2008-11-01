@@ -50,6 +50,7 @@ def verifyAll():
   for i in frepple.operations(): verifyOne(i)
   for i in frepple.resources(): verifyOne(i)
   for i in frepple.buffers(): verifyOne(i)
+  output.flush()
 ?>
 
   <description>Test model for cluster and level computation</description>

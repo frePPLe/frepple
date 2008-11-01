@@ -31,7 +31,7 @@
 namespace frepple
 {
 
-template<class Resource> DECLARE_EXPORT Tree HasName<Resource>::st;
+template<class Resource> DECLARE_EXPORT Tree utils::HasName<Resource>::st;
 
 
 DECLARE_EXPORT void Resource::setMaximum(CalendarDouble* c)
@@ -219,5 +219,108 @@ DECLARE_EXPORT void ResourceInfinite::writeElement
   Resource::writeElement(o, tag, NOHEADER);
 }
 
+
+PyObject* PythonResource::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (attr.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (attr.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (attr.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (attr.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (attr.isA(Tags::tag_location))
+    return PythonObject(obj->getLocation());
+  if (attr.isA(Tags::tag_maximum))
+    return PythonObject(obj->getMaximum());
+  if (attr.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+  if (attr.isA(Tags::tag_loadplans))
+    return new PythonLoadPlanIterator(obj);
+  if (attr.isA(Tags::tag_loads))
+    return new PythonLoadIterator(obj);
+  if (attr.isA(Tags::tag_level))
+    return PythonObject(obj->getLevel());
+  if (attr.isA(Tags::tag_cluster))
+    return PythonObject(obj->getCluster());
+	return NULL;
+}
+
+
+int PythonResource::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (!obj) return -1;
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_owner))
+  {
+    if (!field.check(PythonResource::getType()))
+    {
+      PyErr_SetString(PythonDataException, "resource owner must be of type resource");
+      return -1;
+    }
+    Resource* y = static_cast<PythonResource*>(static_cast<PyObject*>(field))->obj;
+    obj->setOwner(y);
+  }
+  else if (attr.isA(Tags::tag_location))
+  {
+    if (!field.check(PythonLocation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer location must be of type location");
+      return -1;
+    }
+    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(field))->obj;
+    obj->setLocation(y);
+  }
+  else if (attr.isA(Tags::tag_maximum))
+  {
+    if (!field.check(PythonCalendarDouble::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "resource maximum must be of type calendar_double");
+      return -1;
+    }
+    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(field))->obj;
+    obj->setMaximum(y);
+  }
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
+  else
+    return -1;  // Error
+  return 0;  // OK
+}
+
+
+PyObject* PythonResourceDefault::getattro(const Attribute& attr)
+{
+  return PythonResource(obj).getattro(attr); 
+}
+
+
+int PythonResourceDefault::setattro(const Attribute& attr, const PythonObject& field)
+{
+  return PythonResource(obj).setattro(attr, field);
+}
+
+
+PyObject* PythonResourceInfinite::getattro(const Attribute& attr)
+{
+  return PythonResource(obj).getattro(attr);
+}
+
+
+int PythonResourceInfinite::setattro(const Attribute& attr, const PythonObject& field)
+{
+  return PythonResource(obj).setattro(attr, field);
+}
 
 }

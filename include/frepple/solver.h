@@ -442,6 +442,16 @@ class SolverMRP : public Solver
 };
 
 
+class PythonSolverMRP : public FreppleClass<PythonSolverMRP,PythonSolver,SolverMRP>
+{
+  public:
+    PythonSolverMRP(SolverMRP* p)
+      : FreppleClass<PythonSolverMRP,PythonSolver,SolverMRP>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
 /** @brief This class holds functions that used for maintenance of the solver
   * code.
   */
@@ -449,7 +459,6 @@ class LibrarySolver
 {
   public:
     static void initialize();
-    static void finalize() {}
 };
 
 

@@ -29,7 +29,8 @@
 
 namespace frepple
 {
-
+namespace utils
+{
 
 DECLARE_EXPORT void Tree::clear()
 {
@@ -429,4 +430,5 @@ DECLARE_EXPORT void Tree::verify() const
   // If we reach this point, then this tree is healthy
 }
 
-}
+} // end namespace
+} // end namespace

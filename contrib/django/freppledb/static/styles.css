@@ -281,6 +281,11 @@ div #timebuckets
   display: none;
 }
 
+div.calendarbox
+{
+  z-index: 10;
+}
+
 div.gridupleft
 {
   position: relative;

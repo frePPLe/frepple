@@ -30,6 +30,8 @@ using namespace frepple;
 
 namespace frepple
 {
+namespace utils
+{
 
 DECLARE_EXPORT const Keyword Tags::tag_abortonerror("abortonerror");
 DECLARE_EXPORT const Keyword Tags::tag_action("action");
@@ -152,4 +154,5 @@ DECLARE_EXPORT const Keyword Tags::tag_variable("variable");
 DECLARE_EXPORT const Keyword Tags::tag_verbose("verbose");
 DECLARE_EXPORT const Keyword Tags::tag_weight("weight");
 
-}
+} // end namespace
+} // end namespace

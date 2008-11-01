@@ -59,6 +59,8 @@
 
 namespace frepple
 {
+namespace utils
+{
 
 const XMLOutput::content_type XMLOutput::STANDARD = 1;
 const XMLOutput::content_type XMLOutput::PLAN = 2;
@@ -838,5 +840,5 @@ void XMLInputFile::parse(Object *pRoot, bool validate)
   }
 }
 
-
-}
+} // end namespace
+} // end namespace

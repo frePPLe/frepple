@@ -951,4 +951,123 @@ DECLARE_EXPORT void OperationPlanAlternate::eraseSubOperationPlan(OperationPlan*
       << " its parent '" << *getOperation() << "'" << endl;
 }
 
+
+int PythonOperationPlan::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = getType();
+  x.setName("operationplan");
+  x.setDoc("frePPLe operationplan");
+  x.supportgetattro();
+  x.supportsetattro();
+  x.supportcreate(create);
+  const_cast<MetaCategory&>(OperationPlan::metadata).factoryPythonProxy = proxy;
+  return x.typeReady(m);
 }
+
+
+PyObject* PythonOperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+{
+  try
+  {
+    // Find or create the C++ object
+    PythonAttributeList atts(kwds);
+    Object* x = OperationPlan::createOperationPlan(OperationPlan::metadata,atts);
+
+    // Create a python proxy
+    PythonExtensionBase* pr = static_cast<PythonExtensionBase*>(static_cast<PyObject*>(*(new PythonObject(x))));
+
+    // Iterate over extra keywords, and set attributes.   @todo move this responsability to the readers...
+    if (x) 
+    {
+      PyObject *key, *value;
+      Py_ssize_t pos = 0;
+      while (PyDict_Next(kwds, &pos, &key, &value))
+      {
+        PythonObject field(value);
+        Attribute attr(PyString_AsString(key));
+        if (!attr.isA(Tags::tag_operation) && !attr.isA(Tags::tag_id) && !attr.isA(Tags::tag_action))
+        {
+          int result = pr->setattro(attr, field);
+          if (result)
+            PyErr_Format(PyExc_AttributeError,
+              "attribute '%s' on '%s' can't be updated",
+              PyString_AsString(key), pr->ob_type->tp_name);
+        }
+      };
+    }
+
+    if (x && !static_cast<OperationPlan*>(x)->initialize()) 
+      static_cast<PythonOperationPlan*>(pr)->obj = NULL;
+    return pr;
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
+}
+
+
+PyObject* PythonOperationPlan::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_id))
+    return PythonObject(obj->getIdentifier());
+  if (attr.isA(Tags::tag_operation))
+    return PythonObject(obj->getOperation());
+  if (attr.isA(Tags::tag_quantity))
+    return PythonObject(obj->getQuantity());
+  if (attr.isA(Tags::tag_start))
+    return PythonObject(obj->getDates().getStart());
+  if (attr.isA(Tags::tag_end))
+    return PythonObject(obj->getDates().getEnd());
+  if (attr.isA(Tags::tag_demand))
+    return PythonObject(obj->getDemand());
+  if (attr.isA(Tags::tag_locked))
+    return PythonObject(obj->getLocked());
+  if (attr.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (attr.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+  return NULL;
+}
+
+
+int PythonOperationPlan::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (!obj) return -1;
+  if (attr.isA(Tags::tag_quantity))
+    obj->setQuantity(field.getDouble());
+  else if (attr.isA(Tags::tag_start))
+    obj->setStart(field.getDate());
+  else if (attr.isA(Tags::tag_end))
+    obj->setEnd(field.getDate());
+  else if (attr.isA(Tags::tag_locked))
+    obj->setLocked(field.getBool());
+  else if (attr.isA(Tags::tag_demand))
+  {
+    if (!field.check(PythonDemand::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
+      return -1;
+    }
+    Demand* y = static_cast<PythonDemand*>(static_cast<PyObject*>(field))->obj;
+    obj->setDemand(y);
+  }
+  else if (attr.isA(Tags::tag_owner))
+  {
+    if (!field.check(PythonOperationPlan::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
+      return -1;
+    }
+    OperationPlan* y = static_cast<PythonOperationPlan*>(static_cast<PyObject*>(field))->obj;
+    obj->setOwner(y);
+  }
+  else
+    return -1;
+  return 0;  
+}
+
+} // end namespace

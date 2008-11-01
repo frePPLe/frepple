@@ -38,7 +38,7 @@
 namespace frepple
 {
 
-template<class Buffer> DECLARE_EXPORT Tree HasName<Buffer>::st;
+template<class Buffer> DECLARE_EXPORT Tree utils::HasName<Buffer>::st;
 
 
 DECLARE_EXPORT void Buffer::setOnHand(double f)
@@ -662,4 +662,206 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
   return oper;
 }
 
+
+PyObject* PythonBuffer::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(obj->getName());
+  if (attr.isA(Tags::tag_description))
+    return PythonObject(obj->getDescription());
+  if (attr.isA(Tags::tag_category))
+    return PythonObject(obj->getCategory());
+  if (attr.isA(Tags::tag_subcategory))
+    return PythonObject(obj->getSubCategory());
+  if (attr.isA(Tags::tag_owner))
+    return PythonObject(obj->getOwner());
+  if (attr.isA(Tags::tag_location))
+    return PythonObject(obj->getLocation());
+  if (attr.isA(Tags::tag_producing))
+    return PythonObject(obj->getProducingOperation());
+  if (attr.isA(Tags::tag_item))
+    return PythonObject(obj->getItem());
+  if (attr.isA(Tags::tag_onhand))
+    return PythonObject(obj->getOnHand());
+  if (attr.isA(Tags::tag_flowplans))
+    return new PythonFlowPlanIterator(obj);
+  if (attr.isA(Tags::tag_maximum))
+    return PythonObject(obj->getMaximum());
+  if (attr.isA(Tags::tag_minimum))
+    return PythonObject(obj->getMinimum());
+  if (attr.isA(Tags::tag_hidden))
+    return PythonObject(obj->getHidden());
+  if (attr.isA(Tags::tag_flows))
+    return new PythonFlowIterator(obj);
+  if (attr.isA(Tags::tag_level))
+    return PythonObject(obj->getLevel());
+  if (attr.isA(Tags::tag_cluster))
+    return PythonObject(obj->getCluster());
+  // @todo support member iteration for buffer, res, dem, item, ...
+  // PythonBufferIterator becomes an abstract class: defines the pytype and an abstract iternext.
+  // 2 subclasses then implement it: an iterator over all buffers, and another one over all members.
+	return NULL;
 }
+
+
+int PythonBuffer::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_name))
+    obj->setName(field.getString());
+  else if (attr.isA(Tags::tag_description))
+    obj->setDescription(field.getString());
+  else if (attr.isA(Tags::tag_category))
+    obj->setCategory(field.getString());
+  else if (attr.isA(Tags::tag_subcategory))
+    obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_owner))
+  {
+    if (!field.check(PythonBuffer::getType()))
+    {
+      PyErr_SetString(PythonDataException, "buffer owner must be of type buffer");
+      return -1;
+    }
+    Buffer* y = static_cast<PythonBuffer*>(static_cast<PyObject*>(field))->obj;
+    obj->setOwner(y);
+  }
+  else if (attr.isA(Tags::tag_location))
+  {
+    if (!field.check(PythonLocation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer location must be of type location");
+      return -1;
+    }
+    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(field))->obj;
+    obj->setLocation(y);
+  }
+  else if (attr.isA(Tags::tag_item))
+  {
+    if (!field.check(PythonItem::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer item must be of type item");
+      return -1;
+    }
+    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(field))->obj;
+    obj->setItem(y);
+  }
+  else if (attr.isA(Tags::tag_maximum))
+  {
+    if (!field.check(PythonCalendarDouble::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer maximum must be of type calendar_double");
+      return -1;
+    }
+    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(field))->obj;
+    obj->setMaximum(y);
+  }
+  else if (attr.isA(Tags::tag_minimum))
+  {
+    if (!field.check(PythonCalendarDouble::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer minimum must be of type calendar_double");
+      return -1;
+    }
+    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(field))->obj;
+    obj->setMinimum(y);
+  }
+  else if (attr.isA(Tags::tag_onhand))
+    obj->setOnHand(field.getDouble());
+  else if (attr.isA(Tags::tag_producing))
+  {
+    if (!field.check(PythonOperation::getType())) 
+    {
+      PyErr_SetString(PythonDataException, "buffer producing must be of type operation");
+      return -1;
+    }
+    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
+    obj->setProducingOperation(y);
+  }
+  else if (attr.isA(Tags::tag_hidden))
+    obj->setHidden(field.getBool());
+  else
+    return -1;  // Error
+  return 0;  // OK
+}
+
+
+PyObject* PythonBufferDefault::getattro(const Attribute& attr)
+{
+  return PythonBuffer(obj).getattro(attr); 
+}
+
+
+int PythonBufferDefault::setattro(const Attribute& attr, const PythonObject& field)
+{
+  // @todo avoid constructing a PythonBuffer object to call the base class
+  // This is currently not really feasible (no casting between the classes is possible)
+  // When the XML and Python framework will be unified, this will be solved: we'll basically
+  // have a single call to the getAttribute() method of the default buffer, which can call
+  // the getAttribute function of the parent class.
+  return PythonBuffer(obj).setattro(attr, field);  
+}
+
+
+PyObject* PythonBufferInfinite::getattro(const Attribute& attr)
+{
+  return PythonBuffer(obj).getattro(attr);
+}
+
+
+int PythonBufferInfinite::setattro(const Attribute& attr, const PythonObject& field)
+{
+  return PythonBuffer(obj).setattro(attr, field);
+}
+
+
+PyObject* PythonBufferProcure::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_leadtime))
+    return PythonObject(obj->getLeadtime());
+  if (attr.isA(Tags::tag_mininventory))
+    return PythonObject(obj->getMinimumInventory());
+  if (attr.isA(Tags::tag_maxinventory))
+    return PythonObject(obj->getMaximumInventory());
+  if (attr.isA(Tags::tag_mininterval))
+    return PythonObject(obj->getMinimumInterval());
+  if (attr.isA(Tags::tag_maxinterval))
+    return PythonObject(obj->getMaximumInterval());
+  if (attr.isA(Tags::tag_fence))
+    return PythonObject(obj->getFence());
+  if (attr.isA(Tags::tag_size_minimum))
+    return PythonObject(obj->getSizeMinimum());
+  if (attr.isA(Tags::tag_size_multiple))
+    return PythonObject(obj->getSizeMultiple());
+  if (attr.isA(Tags::tag_size_maximum))
+    return PythonObject(obj->getSizeMaximum());
+  return PythonBuffer(obj).getattro(attr);
+}
+
+
+int PythonBufferProcure::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_leadtime))
+    obj->setLeadtime(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_mininventory))
+    obj->setMinimumInventory(field.getDouble());
+  else if (attr.isA(Tags::tag_maxinventory))
+    obj->setMaximumInventory(field.getDouble());
+  else if (attr.isA(Tags::tag_mininterval))
+    obj->setMinimumInterval(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_maxinterval))
+    obj->setMaximumInterval(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_size_minimum))
+    obj->setSizeMinimum(field.getDouble());
+  else if (attr.isA(Tags::tag_size_multiple))
+    obj->setSizeMultiple(field.getDouble());
+  else if (attr.isA(Tags::tag_size_maximum))
+    obj->setSizeMaximum(field.getDouble());
+  else if (attr.isA(Tags::tag_fence))
+    obj->setFence(field.getTimeperiod());
+  else
+    return PythonBuffer(obj).setattro(attr, field);
+  return 0;
+}
+
+} // end namespace

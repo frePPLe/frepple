@@ -45,13 +45,12 @@ DECLARE_EXPORT PyObject* PythonLogicException = NULL;
 DECLARE_EXPORT PyObject* PythonDataException = NULL;
 DECLARE_EXPORT PyObject* PythonRuntimeException = NULL;
 
-DECLARE_EXPORT string pythonEncoding;
-
 const MetaClass CommandPython::metadata;
 const MetaClass CommandPython::metadata2;
 
 PyThreadState *PythonInterpreter::mainThreadState = NULL;
 PyObject *PythonInterpreter::module = NULL;
+DECLARE_EXPORT string PythonInterpreter::encoding;
 
 
 void initialize()
@@ -199,7 +198,7 @@ void PythonInterpreter::initialize()
     PyObject* retval = PyEval_CallObject(func, NULL);
     if (retval)
     {
-      pythonEncoding =  PyString_AsString(retval);
+      encoding =  PyString_AsString(retval);
       Py_XDECREF(retval);
     }
     Py_XDECREF(localemodule);

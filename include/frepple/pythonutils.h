@@ -76,10 +76,10 @@ void initialize();
   * The implementation is implemented in a thread-safe way (within the
   * limitations of the Python threading model, of course).
   *
-  * After loading, the module will check whether a file
-  * '$FREPPLE_HOME/init.py' exists and, if it does, will execute the
-  * statements in the file. In this way a library of globally available
-  * functions can easily be initialized.
+  * During the initialization the code checks for a file 'init.py' in its 
+  * search path and, if it does exist, the statements in the file will be
+  * executed. In this way a library of globally available functions
+  * can easily be initialized.
   *
   * The stderr and stdout streams of Python are redirected by default to
   * the frePPLe log stream.
@@ -182,6 +182,9 @@ class PythonInterpreter
     /** Return a pointer to the main extension module. */
     static PyObject* getModule() { return module; }
 
+    /** Return the preferred encoding of the Python interpreter. */
+    static const char* getPythonEncoding() { return encoding.c_str(); }
+
   private:
     /** A pointer to the frePPLe extension module. */  
     static PyObject *module;
@@ -194,6 +197,11 @@ class PythonInterpreter
       * Arguments: data (string)
       */
     static DECLARE_EXPORT PyObject *python_log(PyObject*, PyObject*);
+
+    /** Python unicode strings are encoded to this locale when bringing them into
+      * frePPLe.<br>
+      */
+    static DECLARE_EXPORT string encoding;
 };
 
 
@@ -211,7 +219,6 @@ class PythonInterpreter
   */
 class CommandPython : public Command, public XMLinstruction
 {
-  friend void initialize();
   private:
     /** Python commands to be executed. */
     string cmd;
@@ -258,14 +265,6 @@ class CommandPython : public Command, public XMLinstruction
     void processInstruction(XMLInput &i, const char *d) 
       {PythonInterpreter::execute(d);}
 };
-
-
-/** @brief The preferred encoding of Python.
-  *
-  * Python unicode strings are encoded to this locale when bringing them into
-  * frePPLe.<br>
-  */
-extern DECLARE_EXPORT string pythonEncoding;
 
 
 /** @brief Python exception class matching with frepple::LogicException. */
@@ -499,7 +498,7 @@ class PythonObject : public DataElement
       {
         // Replace the unicode object with a string encoded in the correct locale
         const_cast<PyObject*&>(obj) =
-          PyUnicode_AsEncodedString(obj, pythonEncoding.c_str(), "ignore");
+          PyUnicode_AsEncodedString(obj, PythonInterpreter::getPythonEncoding(), "ignore");
       }
       return PyString_AsString(PyObject_Str(obj));
     }

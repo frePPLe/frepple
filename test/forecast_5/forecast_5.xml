@@ -2,14 +2,14 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <name>Forecast test model</name>
   <description>
-  This test demonstrates the capability to analyze a time series of 
+  This test demonstrates the capability to analyze a time series of
   historical demand, and use it to create future forecasted demand quantities.
-  
-  In this test case, we don't use any profiling or netting but these  
+
+  In this test case, we don't use any profiling or netting but these
   obviously can all be combined:
     - Create future, gross forecast quantities based on a time series.
     - Profile the forecast over more granular time buckets.
-    - Net actual orders from the gross forecast to obtain a net 
+    - Net actual orders from the gross forecast to obtain a net
       forecast to be planned.
   </description>
   <current>2007-01-01T00:00:00</current>
@@ -45,34 +45,33 @@
 <?python
 
 import frepple
-import freppleforecast
 
 def generateForecast():
   theitem = frepple.item(name="item")
   thecustomer = frepple.customer(name="customer")
   thecalendar = frepple.calendar(name="planningbuckets")
   thebuckets = [ i.start for i in thecalendar.buckets ]
-  
-  # A simple flat forecast
+
+  # A simple constant forecast
   print "A"
-  fcst = freppleforecast.forecast(name="flat demand", item=theitem, customer=thecustomer) #, calendar=thecalendar)
+  fcst = frepple.demand_forecast(name="flat demand", item=theitem, customer=thecustomer, calendar=thecalendar)
   fcst.timeseries([100,100,100,100,100,100,100,100,100,100,100,100,100], thebuckets)
-  
+
   # A simple trended forecast
   print "B"
-  fcst = freppleforecast.forecast(name="trended demand", item=theitem, customer=thecustomer, calendar=thecalendar)
+  fcst = frepple.demand_forecast(name="trended demand", item=theitem, customer=thecustomer, calendar=thecalendar)
   fcst.timeseries([10,20,30,40,50,60,70,80,90,100,110,120,130,140,150], thebuckets)
-  
+
   # A seasonal demand
   print "C"
-  fcst = freppleforecast.forecast(name="seasonal demand", item=theitem, customer=thecustomer, calendar=thecalendar)
+  fcst = frepple.demand_forecast(name="seasonal demand", item=theitem, customer=thecustomer, calendar=thecalendar)
   fcst.timeseries([10,10,20,30,20,10,10,10,10,20,30,20,10,10,10,10,20,30,20,10,10], thebuckets)
-  
+
   # Very little history
   print "D"
-  fcst = freppleforecast.forecast(name="little history", item=theitem, customer=thecustomer, calendar=thecalendar)
+  fcst = frepple.demand_forecast(name="little history", item=theitem, customer=thecustomer, calendar=thecalendar)
   fcst.timeseries([10,10], thebuckets)
   print "E"
-  
+
 ?>
 </plan>

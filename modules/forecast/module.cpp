@@ -31,7 +31,9 @@ namespace module_forecast
 {
 
 const MetaClass Forecast::metadata;
+const MetaClass ForecastBucket::metadata;
 const MetaClass ForecastSolver::metadata;
+
 Forecast::MapOfForecasts Forecast::ForecastDictionary;
 bool Forecast::Customer_Then_Item_Hierarchy = true;
 bool Forecast::Match_Using_Delivery_Operation = true;
@@ -108,6 +110,9 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     "demand",
     "demand_forecast",
     Object::createString<Forecast>);
+  ForecastBucket::metadata.registerClass(  // No factory method for this class
+    "demand",
+    "demand_forecastbucket");
   ForecastSolver::metadata.registerClass(
     "solver",
     "solver_forecast",
@@ -116,9 +121,8 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   // Get notified when a calendar is deleted
   FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
 
-  // Register the python functions if the python module is loaded
-  if (CommandLoadLibrary::isLoaded("python"))
-    initializePython();
+  // Register the python functions
+  initializePython();
 
   // Return the name of the module
   return name;

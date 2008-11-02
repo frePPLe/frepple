@@ -99,7 +99,7 @@ void ForecastSolver::solve(void *v)
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
     // Only sort non-forecast demand.
     if (!dynamic_cast<Forecast*>(&*i)
-      && !dynamic_cast<Forecast::ForecastBucket*>(&*i))
+      && !dynamic_cast<ForecastBucket*>(&*i))
         l.insert(&*i);
 
   // Netting loop
@@ -182,10 +182,10 @@ Forecast* ForecastSolver::matchDemandToForecast(const Demand* l)
 void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
 {
   // Find the bucket with the due date
-  Forecast::ForecastBucket* zerobucket = NULL;
+  ForecastBucket* zerobucket = NULL;
   for (Forecast::memberIterator i = fcst->beginMember(); i != fcst->endMember(); ++i)
   {
-    zerobucket = dynamic_cast<Forecast::ForecastBucket*>(&*i);
+    zerobucket = dynamic_cast<ForecastBucket*>(&*i);
     if (zerobucket && zerobucket->timebucket.within(dmd->getDue())) break;
   }
   if (!zerobucket)
@@ -194,7 +194,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
 
   // Netting - looking for time buckets with net forecast
   double remaining = dmd->getQuantity();
-  Forecast::ForecastBucket* curbucket = zerobucket;
+  ForecastBucket* curbucket = zerobucket;
   bool backward = true;
   while ( remaining > 0 && curbucket
     && (dmd->getDue()-Forecast::getNetEarly() < curbucket->timebucket.getEnd())

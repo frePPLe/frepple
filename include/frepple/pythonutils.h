@@ -180,7 +180,7 @@ class PythonInterpreter
      );
 
     /** Return a pointer to the main extension module. */
-    static PyObject* getModule() { return module; }
+    static DECLARE_EXPORT PyObject* getModule() { return module; }
 
     /** Return the preferred encoding of the Python interpreter. */
     static const char* getPythonEncoding() { return encoding.c_str(); }

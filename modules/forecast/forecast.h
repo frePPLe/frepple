@@ -173,9 +173,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList&);
 
 
 /** Initializes python extensions enabled by the module. */
-void initializePython();
-
-struct PythonForecastBucket;
+void initializePython(); // xxx remove
 
 /** @brief This class represents a bucketized demand signal.
   *
@@ -189,7 +187,6 @@ struct PythonForecastBucket;
 class Forecast : public Demand
 {
     friend class ForecastSolver;
-    friend struct PythonForecastBucket;
   public:
 
     /** @brief Abstract base class for all forecasting methods. */
@@ -409,42 +406,6 @@ class Forecast : public Demand
         static void setSkip(int x) { skip = x; }
     };
 
-  private:
-    /** @brief This class represents a forecast value in a time bucket.
-      *
-      * A forecast bucket is never manipulated or created directly. Instead,
-      * the owning forecast manages the buckets.
-      */
-    class ForecastBucket : public Demand
-    {
-
-      public:
-        ForecastBucket(Forecast* f, Date d, Date e, double w, ForecastBucket* p)
-          : Demand(f->getName() + " - " + string(d)), weight(w), consumed(0.0),
-            total(0.0), timebucket(d,e), prev(p), next(NULL)
-        {
-          if (p) p->next = this;
-          setOwner(f);
-          setHidden(true);  // Avoid the subdemands show up in the output
-          setItem(&*(f->getItem()));
-          setDue(d);
-          setPriority(f->getPriority());
-          setMaxLateness(f->getMaxLateness());
-          setMinShipment(f->getMinShipment());
-          setOperation(&*(f->getOperation()));
-        }
-        double weight;
-        double consumed;
-        double total;
-        DateRange timebucket;
-        ForecastBucket* prev;
-        ForecastBucket* next;
-        virtual size_t getSize() const 
-        {
-          return sizeof(ForecastBucket) + Demand::extrasize();
-        }
-    };
-
   public:
     /** Constructor. */
     explicit Forecast(const string& nm)
@@ -640,6 +601,42 @@ class Forecast : public Demand
     static unsigned long Forecast_Iterations;
 };
 
+/** @brief This class represents a forecast value in a time bucket.
+  *
+  * A forecast bucket is never manipulated or created directly. Instead,
+  * the owning forecast manages the buckets.
+  */
+class ForecastBucket : public Demand
+{
+  public:
+    ForecastBucket(Forecast* f, Date d, Date e, double w, ForecastBucket* p)
+      : Demand(f->getName() + " - " + string(d)), weight(w), consumed(0.0),
+        total(0.0), timebucket(d,e), prev(p), next(NULL)
+    {
+      if (p) p->next = this;
+      setOwner(f);
+      setHidden(true);  // Avoid the subdemands show up in the output
+      setItem(&*(f->getItem()));
+      setDue(d);
+      setPriority(f->getPriority());
+      setMaxLateness(f->getMaxLateness());
+      setMinShipment(f->getMinShipment());
+      setOperation(&*(f->getOperation()));
+    }
+    virtual const MetaClass& getType() const {return metadata;}
+    static const MetaClass metadata;
+    double weight; // @todo need proper api wrapper!
+    double consumed;// @todo need proper api wrapper!
+    double total;// @todo need proper api wrapper!
+    DateRange timebucket;
+    ForecastBucket* prev;
+    ForecastBucket* next;
+    virtual size_t getSize() const 
+    {
+      return sizeof(ForecastBucket) + Demand::extrasize();
+    }
+};
+
 
 /** @brief Implementation of a forecast netting algorithm.
   *
@@ -712,44 +709,29 @@ class ForecastSolver : public Solver
 };
 
 
-#if defined(Py_PYTHON_H) || defined(DOXYGEN)
-
-extern "C"
+class PythonForecast : public FreppleClass<PythonForecast,PythonDemand,Forecast>
 {
-
-  /** @brief This struct exports forecast information to Python. */
-  struct PythonForecast
-  {
-    private:
-      PyObject_HEAD
-      Forecast::MapOfForecasts::const_iterator iter;
-      static PyMethodDef methods[];
-    public:
-      static PyTypeObject InfoType;
-      static PyObject* next(PythonForecast*);
-      static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-      static void destroy(PythonForecast* obj) {PyObject_Del(obj);}
-      static PyObject* timeseries(PyObject *, PyObject *);
-  };
+  public:
+    PythonForecast(Forecast* p)
+      : FreppleClass<PythonForecast,PythonDemand,Forecast>(p) {}
+    static int initialize(PyObject*);
+  private:
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+    static PyObject* timeseries(PyObject *, PyObject *);
+};
 
 
-  /** @brief This struct exports forecast bucket information to Python. */
-  struct PythonForecastBucket
-  {
-    private:
-      PyObject_HEAD
-      Forecast::ForecastBucket *iter;
-    public:
-      static PyTypeObject InfoType;
-      static PyObject* next(PythonForecastBucket*);
-      static PyObject* create(PyTypeObject*, PyObject*, PyObject*) {return NULL;}
-      static void destroy(PythonForecastBucket* obj) {PyObject_Del(obj);}
-      static PyObject* createFromForecast(Forecast*);
-  };
-
-}
-
-#endif
+class PythonForecastBucket : public FreppleClass<PythonForecastBucket,PythonDemand,ForecastBucket>
+{
+  public:
+    PythonForecastBucket(ForecastBucket* p)
+      : FreppleClass<PythonForecastBucket,PythonDemand,ForecastBucket>(p) {}
+    static int initialize(PyObject*);
+  private:
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
 
 }   // End namespace
 

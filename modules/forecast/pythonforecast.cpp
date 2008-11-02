@@ -32,136 +32,33 @@ using namespace frepple::python;
 namespace module_forecast
 {
 
-PyMethodDef PythonForecast::methods[] = {
-    {"timeseries", (PyCFunction)PythonForecast::timeseries, METH_VARARGS,
-     "Set the future based on the timeseries of historical data"
-    },
-    {NULL}  /* Sentinel */
-};
-
-
-/** @todo Use the new python api utilities */
-PyTypeObject PythonForecast::InfoType =
+int PythonForecast::initialize(PyObject* m)
 {
-  PyObject_HEAD_INIT(NULL)
-  0,					/* ob_size */
-  "freppleforecast.forecast",	/* tp_name */
-  sizeof(PythonForecast),	/* tp_basicsize */
-  0,					/* tp_itemsize */
-  reinterpret_cast<destructor>(PythonForecast::destroy),  /* tp_dealloc */
-  0,					/* tp_print */
-  0,					/* tp_getattr */
-  0,					/* tp_setattr */
-  0,					/* tp_compare */
-  0,	        /* tp_repr */
-  0,					/* tp_as_number */
-  0,					/* tp_as_sequence */
-  0,					/* tp_as_mapping */
-  0,					/* tp_hash */
-  0,          /* tp_call */
-  0,					/* tp_str */
-  0,		      /* tp_getattro */
-  0,					/* tp_setattro */
-  0,					/* tp_as_buffer */
-  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,	/* tp_flags */
-  "frePPLe forecast", /* tp_doc */
-  0,					/* tp_traverse */
-  0,					/* tp_clear */
-  0,					/* tp_richcompare */
-  0,					/* tp_weaklistoffset */
-  PyObject_SelfIter,  /* tp_iter */
-  reinterpret_cast<iternextfunc>(PythonForecast::next),	/* tp_iternext */
-  PythonForecast::methods,	/* tp_methods */
-  0,					/* tp_members */
-  0,					/* tp_getset */
-  0,					/* tp_base */
-  0,					/* tp_dict */
-  0,					/* tp_descr_get */
-  0,					/* tp_descr_set */
-  0,					/* tp_dictoffset */
-  0,          /* tp_init */
-  0,          /* tp_alloc */
-  PythonForecast::create,	/* tp_new */
-  0,					/* tp_free */
-};
+  // Add a method for forecast generation
+  getType().addMethod("timeseries", (PyCFunction)timeseries, METH_VARARGS,
+     "Set the future based on the timeseries of historical data");
 
-
-PyTypeObject PythonForecastBucket::InfoType =
-{
-  PyObject_HEAD_INIT(NULL)
-  0,					/* ob_size */
-  "freppleforecast.bucket",	/* tp_name */
-  sizeof(PythonForecastBucket),	/* tp_basicsize */
-  0,					/* tp_itemsize */
-  reinterpret_cast<destructor>(PythonForecastBucket::destroy),  /* tp_dealloc */
-  0,					/* tp_print */
-  0,					/* tp_getattr */
-  0,					/* tp_setattr */
-  0,					/* tp_compare */
-  0,	        /* tp_repr */
-  0,					/* tp_as_number */
-  0,					/* tp_as_sequence */
-  0,					/* tp_as_mapping */
-  0,					/* tp_hash */
-  0,          /* tp_call */
-  0,					/* tp_str */
-  0,		      /* tp_getattro */
-  0,					/* tp_setattro */
-  0,					/* tp_as_buffer */
-  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,	/* tp_flags */
-  "frePPLe forecast bucket", /* tp_doc */
-  0,					/* tp_traverse */
-  0,					/* tp_clear */
-  0,					/* tp_richcompare */
-  0,					/* tp_weaklistoffset */
-  PyObject_SelfIter,  /* tp_iter */
-  reinterpret_cast<iternextfunc>(PythonForecastBucket::next),	/* tp_iternext */
-  0,				  /* tp_methods */
-  0,					/* tp_members */
-  0,					/* tp_getset */
-  0,					/* tp_base */
-  0,					/* tp_dict */
-  0,					/* tp_descr_get */
-  0,					/* tp_descr_set */
-  0,					/* tp_dictoffset */
-  0,          /* tp_init */
-  0,          /* tp_alloc */
-  PythonForecastBucket::create,	/* tp_new */
-  0,					/* tp_free */
-};
+  // Normal initialization for the rest
+  return FreppleClass<PythonForecast,PythonDemand,Forecast>::initialize(m);
+}
 
 
 void initializePython()
 {
   // Check the status of the interpreter, and lock it
   if (!Py_IsInitialized())
-    throw RuntimeException("Python module is not initialized correctly");
+    throw RuntimeException("Python isn't initialized correctly");
   PyEval_AcquireLock();
   try
   {
-
-    // Create a new module
-    // Putting the extension in a Python submodule would be cleaner.
-    // Unfortunately the Python API's don't allow this.
-    PyObject* m = Py_InitModule("freppleforecast", NULL);
-    if (!m)
-      throw RuntimeException("Can't initialize Python extensions");
-
-    // Register new forecast type
-    if (PyType_Ready(&PythonForecast::InfoType) < 0)
-      throw RuntimeException("Can't register python type Forecast");
-    Py_INCREF(&PythonForecast::InfoType);
-    PyModule_AddObject(m, "forecast", reinterpret_cast<PyObject*>(&PythonForecast::InfoType));
-
-    // Register new forecast bucket type
-    if (PyType_Ready(&PythonForecastBucket::InfoType) < 0)
-      throw RuntimeException("Can't register python type ForecastBucket");
-    Py_INCREF(&PythonForecastBucket::InfoType);
-    PyModule_AddObject(m, "bucket", reinterpret_cast<PyObject*>(&PythonForecastBucket::InfoType));
+    // Register new Python data types
+    if (PythonForecast::initialize(PythonInterpreter::getModule()))
+      throw RuntimeException("Error registering Python forecast extension");
+    if (PythonForecastBucket::initialize(PythonInterpreter::getModule()))
+      throw RuntimeException("Error registering Python forecastbucket extension");
 
     // Make the datetime types available
     PyDateTime_IMPORT;
-
   }
   // Release the global lock when leaving the function
   catch (...)
@@ -173,60 +70,43 @@ void initializePython()
 }
 
 
-extern "C" PyObject* PythonForecast::create(PyTypeObject* type, PyObject *args, PyObject *kwargs)
+PyObject* PythonForecast::getattro(const Attribute& attr)
 {
-  PythonForecast* obj = PyObject_New(PythonForecast, &PythonForecast::InfoType);
-  obj->iter = Forecast::getForecasts().begin();
-  return reinterpret_cast<PyObject*>(obj);
+  if (!obj) return Py_None;
+  if (attr.isA(Tags::tag_calendar))
+    return PythonObject(obj->getCalendar());
+  return PythonDemand(obj).getattro(attr); 
 }
 
 
-extern "C" PyObject* PythonForecast::next(PythonForecast* obj)
+int PythonForecast::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (obj->iter != Forecast::getForecasts().end())
+  logger << "   PP " << attr.getName() << "  " << attr.isA(Tags::tag_calendar) << endl;
+  if (attr.isA(Tags::tag_calendar))
   {
-    // Build a python dictionary
-    PyObject* result = Py_BuildValue("{s:s,s:s,s:s,s:O}",
-      "name", obj->iter->second->getName().c_str(),
-      "customer", obj->iter->first.second ? obj->iter->first.second->getName().c_str() : NULL,
-      "item", obj->iter->first.first ? obj->iter->first.first->getName().c_str() : NULL,
-      "buckets", PythonForecastBucket::createFromForecast(&*(obj->iter->second))
-      );
-    ++(obj->iter);
-    return result;
-  }
-  // Reached the end of the iteration
-  return NULL;
-}
-
-
-extern "C" PyObject* PythonForecastBucket::createFromForecast(Forecast* fcst)
-{
-  PythonForecastBucket* obj = PyObject_New(PythonForecastBucket, &PythonForecastBucket::InfoType);
-  obj->iter = fcst ? dynamic_cast<Forecast::ForecastBucket*>(&*(fcst->beginMember())) : NULL;
-  return reinterpret_cast<PyObject*>(obj);
-}
-
-
-extern "C" PyObject* PythonForecastBucket::next(PythonForecastBucket* obj)
-{
-  if (!obj->iter) return NULL;
-  PyObject* result = Py_BuildValue("{s:N,s:N,s:f,s:f,s:f}",
-    "start_date", PythonObject(obj->iter->timebucket.getStart()),
-    "end_date", PythonObject(obj->iter->timebucket.getEnd()),
-    "totalqty", obj->iter->total,
-    "consumedqty", obj->iter->consumed,
-    "netqty", obj->iter->total - obj->iter->consumed
-    );
-  obj->iter = obj->iter->next;
-  return result;
+    logger << "OOOcOO" << endl;
+    if (!field.check(PythonCalendar::getType())) 
+    {
+    logger << "OOODOO" << endl;
+      PyErr_SetString(PythonDataException, "forecast calendar must be of type calendar");
+      return -1;
+    }
+    logger << "OOOaOO" << endl;
+    Calendar* y = static_cast<PythonCalendar*>(static_cast<PyObject*>(field))->obj;
+    obj->setCalendar(y);
+    logger << "OOObOO" << endl;
+  }  
+  else
+    return PythonDemand(obj).setattro(attr, field);  
+  return 0; // OK
 }
 
 
 extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
 {
   // Get the forecast model
-  Forecast* forecast = reinterpret_cast<PythonForecast*>(self)->iter->second;
+  Forecast* forecast = reinterpret_cast<PythonForecast*>(self)->obj;
+  logger << "willy " << forecast->getName() << endl;
 
   // Parse the Python arguments
   PyObject* history;
@@ -287,8 +167,43 @@ extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
     PythonType::evalException();
     return NULL;
   }
-  Py_END_ALLOW_THREADS   // Reclaim the Python interpreter
+  Py_END_ALLOW_THREADS   // Release the Python interpreter
   return Py_BuildValue("");
+}
+
+
+int PythonForecastBucket::initialize(PyObject* m)
+{
+  // Initialize the type
+  // Note: No support for creation
+  PythonType& x = getType();
+  x.setName("demand_forecastbucket");
+  x.setDoc("frePPLe forecastbucket");
+  x.supportgetattro();
+  x.supportsetattro();
+  const_cast<MetaCategory&>(Demand::metadata).factoryPythonProxy = proxy;
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonForecastBucket::getattro(const Attribute& attr)
+{
+/* xxx
+  PyObject* result = Py_BuildValue("{s:N,s:N,s:f,s:f,s:f}",
+    "start_date", PythonObject(obj->iter->timebucket.getStart()),
+    "end_date", PythonObject(obj->iter->timebucket.getEnd()),
+    "totalqty", obj->iter->total,
+    "consumedqty", obj->iter->consumed,
+    "netqty", obj->iter->total - obj->iter->consumed
+    );
+*/
+  return PythonDemand(obj).getattro(attr); 
+}
+
+
+int PythonForecastBucket::setattro(const Attribute& attr, const PythonObject& field)
+{
+  return PythonDemand(obj).setattro(attr, field);  
 }
 
 } // end namespace

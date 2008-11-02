@@ -105,7 +105,7 @@ DECLARE_EXPORT Location::~Location()
 }
 
 
-PyObject* PythonLocation::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonLocation::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_name))
@@ -126,7 +126,7 @@ PyObject* PythonLocation::getattro(const Attribute& attr)
 }
 
 
-int PythonLocation::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonLocation::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
     obj->setName(field.getString());
@@ -164,13 +164,13 @@ int PythonLocation::setattro(const Attribute& attr, const PythonObject& field)
 }
 
 
-PyObject* PythonLocationDefault::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonLocationDefault::getattro(const Attribute& attr)
 {
   return PythonLocation(obj).getattro(attr);
 }
 
 
-int PythonLocationDefault::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonLocationDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
  return PythonLocation(obj).setattro(attr, field);
 }

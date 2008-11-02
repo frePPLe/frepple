@@ -447,8 +447,8 @@ class PythonSolverMRP : public FreppleClass<PythonSolverMRP,PythonSolver,SolverM
   public:
     PythonSolverMRP(SolverMRP* p)
       : FreppleClass<PythonSolverMRP,PythonSolver,SolverMRP>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 

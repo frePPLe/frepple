@@ -73,7 +73,7 @@ DECLARE_EXPORT Customer::~Customer()
 }
 
 
-PyObject* PythonCustomer::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonCustomer::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_name))
@@ -92,7 +92,7 @@ PyObject* PythonCustomer::getattro(const Attribute& attr)
 }
 
 
-int PythonCustomer::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonCustomer::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
     obj->setName(field.getString());
@@ -120,13 +120,13 @@ int PythonCustomer::setattro(const Attribute& attr, const PythonObject& field)
 }
 
 
-PyObject* PythonCustomerDefault::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonCustomerDefault::getattro(const Attribute& attr)
 {
   return PythonCustomer(obj).getattro(attr);
 }
 
 
-int PythonCustomerDefault::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonCustomerDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
  return PythonCustomer(obj).setattro(attr, field);
 }

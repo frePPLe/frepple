@@ -243,7 +243,7 @@ int PythonFlow::initialize(PyObject* m)
 }
 
 
-PyObject* PythonFlow::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonFlow::getattro(const Attribute& attr)
 {
   if (!fl) return Py_None;
   if (attr.isA(Tags::tag_buffer))
@@ -260,7 +260,7 @@ PyObject* PythonFlow::getattro(const Attribute& attr)
 }
 
 
-int PythonFlow::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonFlow::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_buffer))
   {

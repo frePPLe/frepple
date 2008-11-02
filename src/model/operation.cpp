@@ -716,7 +716,7 @@ DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
 }
 
 
-PyObject* PythonOperation::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonOperation::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_name))
@@ -755,7 +755,7 @@ PyObject* PythonOperation::getattro(const Attribute& attr)
 }
 
 
-int PythonOperation::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonOperation::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
     obj->setName(field.getString());
@@ -793,7 +793,7 @@ int PythonOperation::setattro(const Attribute& attr, const PythonObject& field)
 }
 
 
-PyObject* PythonOperationFixedTime::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonOperationFixedTime::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_duration))
@@ -802,7 +802,7 @@ PyObject* PythonOperationFixedTime::getattro(const Attribute& attr)
 }
 
 
-int PythonOperationFixedTime::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonOperationFixedTime::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (!obj) return -1;
   if (attr.isA(Tags::tag_duration))
@@ -813,7 +813,7 @@ int PythonOperationFixedTime::setattro(const Attribute& attr, const PythonObject
 }
 
 
-PyObject* PythonOperationTimePer::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonOperationTimePer::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_duration))
@@ -824,7 +824,7 @@ PyObject* PythonOperationTimePer::getattro(const Attribute& attr)
 }
 
 
-int PythonOperationTimePer::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonOperationTimePer::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (!obj) return -1;
   if (attr.isA(Tags::tag_duration))
@@ -837,28 +837,28 @@ int PythonOperationTimePer::setattro(const Attribute& attr, const PythonObject& 
 }
 
 
-PyObject* PythonOperationAlternate::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonOperationAlternate::getattro(const Attribute& attr)
 {
   // @todo alternates
   return PythonOperation(obj).getattro(attr); 
 }
 
 
-int PythonOperationAlternate::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonOperationAlternate::setattro(const Attribute& attr, const PythonObject& field)
 {
   // @todo alternates
   return PythonOperation(obj).setattro(attr, field);
 }
 
 
-PyObject* PythonOperationRouting::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonOperationRouting::getattro(const Attribute& attr)
 {
   // @todo steps
   return PythonOperation(obj).getattro(attr); 
 }
 
 
-int PythonOperationRouting::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonOperationRouting::setattro(const Attribute& attr, const PythonObject& field)
 {
   // @todo steps
   return PythonOperation(obj).setattro(attr, field);

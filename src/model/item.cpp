@@ -93,7 +93,7 @@ DECLARE_EXPORT void Item::endElement(XMLInput& pIn, const Attribute& pAttr, cons
 }
 
 
-PyObject* PythonItem::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonItem::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_name))
@@ -114,7 +114,7 @@ PyObject* PythonItem::getattro(const Attribute& attr)
 }
 
 
-int PythonItem::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonItem::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
     obj->setName(field.getString());
@@ -152,13 +152,13 @@ int PythonItem::setattro(const Attribute& attr, const PythonObject& field)
 }
 
 
-PyObject* PythonItemDefault::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonItemDefault::getattro(const Attribute& attr)
 {
   return PythonItem(obj).getattro(attr);
 }
 
 
-int PythonItemDefault::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonItemDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
  return PythonItem(obj).setattro(attr, field);
 }

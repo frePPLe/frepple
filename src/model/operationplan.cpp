@@ -1009,7 +1009,7 @@ PyObject* PythonOperationPlan::create(PyTypeObject* pytype, PyObject* args, PyOb
 }
 
 
-PyObject* PythonOperationPlan::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonOperationPlan::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_id))
@@ -1034,7 +1034,7 @@ PyObject* PythonOperationPlan::getattro(const Attribute& attr)
 }
 
 
-int PythonOperationPlan::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonOperationPlan::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (!obj) return -1;
   if (attr.isA(Tags::tag_quantity))

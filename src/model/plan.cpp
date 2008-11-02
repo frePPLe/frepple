@@ -132,7 +132,7 @@ int PythonPlan::initialize(PyObject* m)
 }
 
 
-PyObject* PythonPlan::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonPlan::getattro(const Attribute& attr)
 {
   if (attr.isA(Tags::tag_name))
     return PythonObject(Plan::instance().getName());
@@ -146,7 +146,7 @@ PyObject* PythonPlan::getattro(const Attribute& attr)
 }
 
 
-int PythonPlan::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonPlan::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
     Plan::instance().setName(field.getString());  

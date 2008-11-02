@@ -216,7 +216,7 @@ int PythonLoad::initialize(PyObject* m)
 }
 
 
-PyObject* PythonLoad::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonLoad::getattro(const Attribute& attr)
 {
   if (!ld) return Py_None;
   if (attr.isA(Tags::tag_resource))
@@ -233,7 +233,7 @@ PyObject* PythonLoad::getattro(const Attribute& attr)
 }
 
 
-int PythonLoad::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonLoad::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_resource))
   {

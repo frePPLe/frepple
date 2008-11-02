@@ -394,7 +394,7 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
 }
 
 
-PyObject* PythonCalendar::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonCalendar::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_name))
@@ -405,7 +405,7 @@ PyObject* PythonCalendar::getattro(const Attribute& attr)
 }
 
 
-int PythonCalendar::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonCalendar::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
     obj->setName(field.getString());
@@ -415,19 +415,19 @@ int PythonCalendar::setattro(const Attribute& attr, const PythonObject& field)
 }
 
 
-PyObject* PythonCalendarVoid::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonCalendarVoid::getattro(const Attribute& attr)
 {
   return PythonCalendar(obj).getattro(attr); 
 }
 
 
-int PythonCalendarVoid::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonCalendarVoid::setattro(const Attribute& attr, const PythonObject& field)
 {
    return PythonCalendar(obj).setattro(attr, field);
 }
 
 
-PyObject* PythonCalendarBool::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonCalendarBool::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_default))
@@ -436,7 +436,7 @@ PyObject* PythonCalendarBool::getattro(const Attribute& attr)
 }
 
 
-int PythonCalendarBool::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonCalendarBool::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_default))
     obj->setDefault(field.getBool());
@@ -446,7 +446,7 @@ int PythonCalendarBool::setattro(const Attribute& attr, const PythonObject& fiel
 }
 
 
-PyObject* PythonCalendarDouble::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonCalendarDouble::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_default))
@@ -455,7 +455,7 @@ PyObject* PythonCalendarDouble::getattro(const Attribute& attr)
 }
 
 
-int PythonCalendarDouble::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonCalendarDouble::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_default))
     obj->setDefault(field.getDouble());
@@ -495,7 +495,7 @@ int PythonCalendarBucket::initialize(PyObject* m)
 }
 
 
-PyObject* PythonCalendarBucket::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonCalendarBucket::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_start))
@@ -524,7 +524,7 @@ PyObject* PythonCalendarBucket::getattro(const Attribute& attr)
 }
 
 
-int PythonCalendarBucket::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonCalendarBucket::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
     obj->setName(field.getString());

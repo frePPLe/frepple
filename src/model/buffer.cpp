@@ -663,7 +663,7 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
 }
 
 
-PyObject* PythonBuffer::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonBuffer::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_name))
@@ -705,7 +705,7 @@ PyObject* PythonBuffer::getattro(const Attribute& attr)
 }
 
 
-int PythonBuffer::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonBuffer::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
     obj->setName(field.getString());
@@ -785,13 +785,13 @@ int PythonBuffer::setattro(const Attribute& attr, const PythonObject& field)
 }
 
 
-PyObject* PythonBufferDefault::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonBufferDefault::getattro(const Attribute& attr)
 {
   return PythonBuffer(obj).getattro(attr); 
 }
 
 
-int PythonBufferDefault::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonBufferDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
   // @todo avoid constructing a PythonBuffer object to call the base class
   // This is currently not really feasible (no casting between the classes is possible)
@@ -802,19 +802,19 @@ int PythonBufferDefault::setattro(const Attribute& attr, const PythonObject& fie
 }
 
 
-PyObject* PythonBufferInfinite::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonBufferInfinite::getattro(const Attribute& attr)
 {
   return PythonBuffer(obj).getattro(attr);
 }
 
 
-int PythonBufferInfinite::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonBufferInfinite::setattro(const Attribute& attr, const PythonObject& field)
 {
   return PythonBuffer(obj).setattro(attr, field);
 }
 
 
-PyObject* PythonBufferProcure::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonBufferProcure::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_leadtime))
@@ -839,7 +839,7 @@ PyObject* PythonBufferProcure::getattro(const Attribute& attr)
 }
 
 
-int PythonBufferProcure::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonBufferProcure::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_leadtime))
     obj->setLeadtime(field.getTimeperiod());

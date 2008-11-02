@@ -220,7 +220,7 @@ DECLARE_EXPORT void ResourceInfinite::writeElement
 }
 
 
-PyObject* PythonResource::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonResource::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_name))
@@ -251,7 +251,7 @@ PyObject* PythonResource::getattro(const Attribute& attr)
 }
 
 
-int PythonResource::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonResource::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (!obj) return -1;
   if (attr.isA(Tags::tag_name))
@@ -300,25 +300,25 @@ int PythonResource::setattro(const Attribute& attr, const PythonObject& field)
 }
 
 
-PyObject* PythonResourceDefault::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonResourceDefault::getattro(const Attribute& attr)
 {
   return PythonResource(obj).getattro(attr); 
 }
 
 
-int PythonResourceDefault::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonResourceDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
   return PythonResource(obj).setattro(attr, field);
 }
 
 
-PyObject* PythonResourceInfinite::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonResourceInfinite::getattro(const Attribute& attr)
 {
   return PythonResource(obj).getattro(attr);
 }
 
 
-int PythonResourceInfinite::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonResourceInfinite::setattro(const Attribute& attr, const PythonObject& field)
 {
   return PythonResource(obj).setattro(attr, field);
 }

@@ -364,28 +364,31 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   PythonObject getattro(const XMLElement& name)
       */
-    void supportgetattro() {table.tp_getattro = getattro_handler;}
+    DECLARE_EXPORT void supportgetattro() 
+      {table.tp_getattro = getattro_handler;}
 
     /** Updates tp_setattro.<br>
       * The extension class will need to define a member function with this
       * prototype:<br>
       *   int setattro(const Attribute& attr, const PythonObject& field)
       */
-    void supportsetattro() {table.tp_setattro = setattro_handler;}
+    DECLARE_EXPORT void supportsetattro() 
+      {table.tp_setattro = setattro_handler;}
 
     /** Updates tp_compare.<br>
       * The extension class will need to define a member function with this
       * prototype:<br>
       *   int compare(const PythonObject& other)
       */
-    void supportcompare() {table.tp_compare = compare_handler;}
+    DECLARE_EXPORT void supportcompare() 
+      {table.tp_compare = compare_handler;}
 
     /** Updates tp_iter and tp_iternext.<br>
       * The extension class will need to define a member function with this
       * prototype:<br>
       *   PyObject* iternext()
       */
-    void supportiter()
+    DECLARE_EXPORT void supportiter()
     {
       table.tp_iter = PyObject_SelfIter;
       table.tp_iternext = iternext_handler;
@@ -396,14 +399,16 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   PyObject* call(const PythonObject& args, const PythonObject& kwds)
       */
-    void supportcall() {table.tp_call = call_handler;}
+    DECLARE_EXPORT void supportcall() 
+      {table.tp_call = call_handler;}
 
     /** Updates tp_str.<br>
       * The extension class will need to define a member function with this
       * prototype:<br>
       *   PyObject* str()
       */
-    void supportstr() {table.tp_str = str_handler;}
+    DECLARE_EXPORT void supportstr() 
+      {table.tp_str = str_handler;}
 
     /** Type definition for create functions. */
     typedef PyObject* (*createfunc)(PyTypeObject*, PyObject*, PyObject*);
@@ -885,12 +890,6 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
 
     FreppleClass(PROXY* p= NULL) : obj(p) {}
 
-  public: // @todo should not be public
-    PROXY* obj;
-
-  private:
-    virtual PyObject* getattro(const Attribute&) = 0;
-
     /** Comparison operator. */
     int compare(const PythonObject& other)
     {
@@ -903,8 +902,6 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
       BASE* y = static_cast<BASE*>(static_cast<PyObject*>(other));
       return obj->getName().compare(y->obj->getName());
     }
-
-    virtual int setattro(const Attribute&, const PythonObject&) = 0;
 
     /** Return the name as the string representation in Python. */
     PyObject* str()
@@ -948,6 +945,15 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
         return NULL;
       }
     }
+
+  public: // @todo should not be public
+    PROXY* obj;
+
+  private:
+    virtual PyObject* getattro(const Attribute&) = 0;
+
+    virtual int setattro(const Attribute&, const PythonObject&) = 0;
+
 };
 
 

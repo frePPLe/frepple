@@ -103,7 +103,7 @@ DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, const Attribute& pAttr, co
 }
 
 
-PyObject* PythonSolver::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonSolver::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_name))
@@ -114,7 +114,7 @@ PyObject* PythonSolver::getattro(const Attribute& attr)
 }
 
 
-int PythonSolver::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonSolver::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
     obj->setName(field.getString());

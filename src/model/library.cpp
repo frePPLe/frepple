@@ -350,7 +350,7 @@ void LibraryModel::initialize()
     ("problem","overload");
 
   // Register new types in Python
-  unsigned int nok = 0;
+  int nok = 0;
   nok += PythonPlan::initialize(PythonInterpreter::getModule());
   nok += PythonBuffer::initialize(PythonInterpreter::getModule());
   nok += PythonBufferDefault::initialize(PythonInterpreter::getModule());

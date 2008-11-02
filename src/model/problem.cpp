@@ -481,6 +481,7 @@ int PythonProblem::initialize(PyObject* m)
   x.setName("problem");
   x.setDoc("frePPLe problem");
   x.supportgetattro();
+  x.supportstr();
   const_cast<MetaCategory&>(Problem::metadata).factoryPythonProxy = proxy;
   return x.typeReady(m);
 }

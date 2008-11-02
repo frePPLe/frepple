@@ -290,7 +290,7 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, const Attribute& pAttr, co
 }
 
 
-PyObject* PythonDemand::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonDemand::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_name))
@@ -329,7 +329,7 @@ PyObject* PythonDemand::getattro(const Attribute& attr)
 }
 
 
-int PythonDemand::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonDemand::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
     obj->setName(field.getString());
@@ -397,13 +397,13 @@ int PythonDemand::setattro(const Attribute& attr, const PythonObject& field)
 }
 
 
-PyObject* PythonDemandDefault::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonDemandDefault::getattro(const Attribute& attr)
 {
   return PythonDemand(obj).getattro(attr); 
 }
 
 
-int PythonDemandDefault::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonDemandDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
   return PythonDemand(obj).setattro(attr, field);
 }

@@ -212,7 +212,7 @@ DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr,
 }
 
 
-PyObject* PythonSolverMRP::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* PythonSolverMRP::getattro(const Attribute& attr)
 {
   if (!obj) return Py_None;
   if (attr.isA(Tags::tag_constraints))
@@ -223,7 +223,7 @@ PyObject* PythonSolverMRP::getattro(const Attribute& attr)
 }
 
 
-int PythonSolverMRP::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int PythonSolverMRP::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_constraints))
     obj->setConstraints(field.getInt());

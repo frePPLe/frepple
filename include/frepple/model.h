@@ -5264,8 +5264,8 @@ class PythonPlan : public PythonExtension<PythonPlan>
   public:
     static int initialize(PyObject* m);
   private:
-    PyObject* getattro(const Attribute&);
-    int setattro(const Attribute&, const PythonObject&);
+    DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5281,6 +5281,10 @@ class PythonProblem : public PythonExtension<PythonProblem>
     PythonProblem(Problem* p) : prob(p) {}
     static void* proxy(Object* p)
       {return static_cast<PyObject*>(new PythonProblem(static_cast<Problem*>(p)));}
+    PyObject* str()
+    {
+      return PythonObject(prob ? prob->getDescription() : "None");
+    }
   private:
     PyObject* getattro(const Attribute&);
     Problem* prob;
@@ -5302,8 +5306,8 @@ class PythonBuffer : public FreppleCategory<PythonBuffer,Buffer>
 {
   public:
     PythonBuffer(Buffer* p) : FreppleCategory<PythonBuffer,Buffer>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5318,8 +5322,8 @@ class PythonBufferDefault : public FreppleClass<PythonBufferDefault,PythonBuffer
   public:
     PythonBufferDefault(BufferDefault* p)
       : FreppleClass<PythonBufferDefault,PythonBuffer,BufferDefault>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5328,8 +5332,8 @@ class PythonBufferInfinite : public FreppleClass<PythonBufferInfinite,PythonBuff
   public:
     PythonBufferInfinite(BufferInfinite* p)
       : FreppleClass<PythonBufferInfinite,PythonBuffer,BufferInfinite>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5338,8 +5342,8 @@ class PythonBufferProcure : public FreppleClass<PythonBufferProcure,PythonBuffer
   public:
     PythonBufferProcure(BufferProcure* p)
       : FreppleClass<PythonBufferProcure,PythonBuffer,BufferProcure>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5352,8 +5356,8 @@ class PythonLocation : public FreppleCategory<PythonLocation,Location>
 {
   public:
     PythonLocation(Location* p) : FreppleCategory<PythonLocation,Location>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5368,8 +5372,8 @@ class PythonLocationDefault : public FreppleClass<PythonLocationDefault,PythonLo
   public:
     PythonLocationDefault(LocationDefault* p)
       : FreppleClass<PythonLocationDefault,PythonLocation,LocationDefault>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5382,8 +5386,8 @@ class PythonCustomer : public FreppleCategory<PythonCustomer,Customer>
 {
   public:
     PythonCustomer(Customer* p) : FreppleCategory<PythonCustomer,Customer>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5398,8 +5402,8 @@ class PythonCustomerDefault : public FreppleClass<PythonCustomerDefault,PythonCu
   public:
     PythonCustomerDefault(CustomerDefault* p)
       : FreppleClass<PythonCustomerDefault,PythonCustomer,CustomerDefault>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5412,8 +5416,8 @@ class PythonItem : public FreppleCategory<PythonItem,Item>
 {
   public:
     PythonItem(Item* p) : FreppleCategory<PythonItem,Item>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5428,8 +5432,8 @@ class PythonItemDefault : public FreppleClass<PythonItemDefault,PythonItem,ItemD
   public:
     PythonItemDefault(ItemDefault* p)
       : FreppleClass<PythonItemDefault,PythonItem,ItemDefault>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5442,8 +5446,8 @@ class PythonCalendar : public FreppleCategory<PythonCalendar,Calendar>
 {
   public:
     PythonCalendar(Calendar* p) : FreppleCategory<PythonCalendar,Calendar>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5482,8 +5486,8 @@ class PythonCalendarBucket
   private:
     Calendar::Bucket* obj;
     Calendar* cal;
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 };
 
@@ -5493,8 +5497,8 @@ class PythonCalendarVoid : public FreppleClass<PythonCalendarVoid,PythonCalendar
   public:
     PythonCalendarVoid(CalendarVoid* p)
       : FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5503,8 +5507,8 @@ class PythonCalendarBool : public FreppleClass<PythonCalendarBool,PythonCalendar
   public:
     PythonCalendarBool(CalendarBool* p)
       : FreppleClass<PythonCalendarBool,PythonCalendar,CalendarBool>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5513,8 +5517,8 @@ class PythonCalendarDouble : public FreppleClass<PythonCalendarDouble,PythonCale
   public:
     PythonCalendarDouble(CalendarDouble* p)
       : FreppleClass<PythonCalendarDouble,PythonCalendar,CalendarDouble>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5527,8 +5531,8 @@ class PythonDemand : public FreppleCategory<PythonDemand,Demand>
 {
   public:
     PythonDemand(Demand* p) : FreppleCategory<PythonDemand,Demand>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5543,8 +5547,8 @@ class PythonDemandDefault : public FreppleClass<PythonDemandDefault,PythonDemand
   public:
     PythonDemandDefault(DemandDefault* p)
       : FreppleClass<PythonDemandDefault,PythonDemand,DemandDefault>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5557,8 +5561,8 @@ class PythonResource : public FreppleCategory<PythonResource,Resource>
 {
   public:
     PythonResource(Resource* p) : FreppleCategory<PythonResource,Resource>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5573,8 +5577,8 @@ class PythonResourceDefault : public FreppleClass<PythonResourceDefault,PythonRe
   public:
     PythonResourceDefault(ResourceDefault* p)
       : FreppleClass<PythonResourceDefault,PythonResource,ResourceDefault>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5583,8 +5587,8 @@ class PythonResourceInfinite : public FreppleClass<PythonResourceInfinite,Python
   public:
     PythonResourceInfinite(ResourceInfinite* p)
       : FreppleClass<PythonResourceInfinite,PythonResource,ResourceInfinite>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5597,8 +5601,8 @@ class PythonOperation : public FreppleCategory<PythonOperation,Operation>
 {
   public:
     PythonOperation(Operation* p) : FreppleCategory<PythonOperation,Operation>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5613,8 +5617,8 @@ class PythonOperationAlternate : public FreppleClass<PythonOperationAlternate,Py
   public:
     PythonOperationAlternate(OperationAlternate* p)
       : FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5623,8 +5627,8 @@ class PythonOperationFixedTime : public FreppleClass<PythonOperationFixedTime,Py
   public:
     PythonOperationFixedTime(OperationFixedTime* p)
       : FreppleClass<PythonOperationFixedTime,PythonOperation,OperationFixedTime>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5633,8 +5637,8 @@ class PythonOperationTimePer : public FreppleClass<PythonOperationTimePer,Python
   public:
     PythonOperationTimePer(OperationTimePer* p)
       : FreppleClass<PythonOperationTimePer,PythonOperation,OperationTimePer>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5643,8 +5647,8 @@ class PythonOperationRouting : public FreppleClass<PythonOperationRouting,Python
   public:
     PythonOperationRouting(OperationRouting* p)
       : FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5663,8 +5667,8 @@ class PythonOperationPlan : public PythonExtension<PythonOperationPlan>
   private:
     OperationPlan* obj;
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5810,8 +5814,8 @@ class PythonLoad : public PythonExtension<PythonLoad>
     static int initialize(PyObject* m);
     PythonLoad(Load* p) : ld(p) {}
   private:
-    PyObject* getattro(const Attribute&);
-    int setattro(const Attribute&, const PythonObject&);
+    DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     static void* proxy(Object* p) {return static_cast<PyObject*>(new PythonLoad(static_cast<Load*>(p)));}
     Load* ld;
@@ -5857,9 +5861,9 @@ class PythonFlow : public PythonExtension<PythonFlow>
     static int initialize(PyObject* m);
     PythonFlow(Flow* p) : fl(p) {}
   private:
-    PyObject* getattro(const Attribute&);
+    DECLARE_EXPORT PyObject* getattro(const Attribute&);
     // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)  issue: construction & validation of floaws is a bit different....   
-    int setattro(const Attribute&, const PythonObject&);
+    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static void* proxy(Object* p) {return static_cast<PyObject*>(new PythonFlow(static_cast<Flow*>(p)));}
     Flow* fl;
 };
@@ -5907,8 +5911,8 @@ class PythonSolver : public FreppleCategory<PythonSolver,Solver>
       return FreppleCategory<PythonSolver,Solver>::initialize(m);
     }
     PythonSolver(Solver* p) : FreppleCategory<PythonSolver,Solver>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static PyObject* solve(PyObject*, PyObject*);
 };
 

@@ -24,10 +24,7 @@
  *                                                                         *
  ***************************************************************************/
 
-/* PythonUtils.h has to be included first.*/
-#include "frepple/pythonutils.h"
 #include "forecast.h"
-using namespace frepple::python;
 
 namespace module_forecast
 {
@@ -81,10 +78,10 @@ PyObject* PythonForecast::getattro(const Attribute& attr)
 
 int PythonForecast::setattro(const Attribute& attr, const PythonObject& field)
 {
-  logger << "   PP " << attr.getName() << "  " << attr.isA(Tags::tag_calendar) << endl;
+  logger << "   PP " << attr.getName() << "  " << attr.isA(Tags::tag_calendar) << "   " << field.check(PythonItem::getType()) << "   " << PythonItem::getType().type_object() << endl;
   if (attr.isA(Tags::tag_calendar))
   {
-    logger << "OOOcOO" << endl;
+    logger << "OOOcOO " << endl;
     if (!field.check(PythonCalendar::getType())) 
     {
     logger << "OOODOO" << endl;

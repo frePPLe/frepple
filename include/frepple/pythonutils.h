@@ -180,14 +180,14 @@ class PythonInterpreter
      );
 
     /** Return a pointer to the main extension module. */
-    static DECLARE_EXPORT PyObject* getModule() { return module; }
+    static PyObject* getModule() { return module; }
 
     /** Return the preferred encoding of the Python interpreter. */
     static const char* getPythonEncoding() { return encoding.c_str(); }
 
   private:
     /** A pointer to the frePPLe extension module. */  
-    static PyObject *module;
+    static DECLARE_EXPORT PyObject *module;
 
     /** This is the thread state of the main execution thread. */
     static PyThreadState *mainThreadState;
@@ -282,17 +282,17 @@ extern DECLARE_EXPORT PyObject* PythonRuntimeException;
 extern "C"
 {
   /** Handler function called from Python. Internal use only. */
-  PyObject* getattro_handler (PyObject*, PyObject*);
+  DECLARE_EXPORT PyObject* getattro_handler (PyObject*, PyObject*);
   /** Handler function called from Python. Internal use only. */
-  int setattro_handler (PyObject*, PyObject*, PyObject*);
+  DECLARE_EXPORT int setattro_handler (PyObject*, PyObject*, PyObject*);
   /** Handler function called from Python. Internal use only. */
-  int compare_handler (PyObject*, PyObject*);
+  DECLARE_EXPORT int compare_handler (PyObject*, PyObject*);
   /** Handler function called from Python. Internal use only. */
-  PyObject* iternext_handler (PyObject*);
+  DECLARE_EXPORT PyObject* iternext_handler (PyObject*);
   /** Handler function called from Python. Internal use only. */
-  PyObject* call_handler(PyObject*, PyObject*, PyObject*);
+  DECLARE_EXPORT PyObject* call_handler(PyObject*, PyObject*, PyObject*);
   /** Handler function called from Python. Internal use only. */
-  PyObject* str_handler(PyObject*);
+  DECLARE_EXPORT PyObject* str_handler(PyObject*);
 }
 
 
@@ -364,7 +364,7 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   PythonObject getattro(const XMLElement& name)
       */
-    DECLARE_EXPORT void supportgetattro() 
+    void supportgetattro() 
       {table.tp_getattro = getattro_handler;}
 
     /** Updates tp_setattro.<br>
@@ -372,7 +372,7 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   int setattro(const Attribute& attr, const PythonObject& field)
       */
-    DECLARE_EXPORT void supportsetattro() 
+    void supportsetattro() 
       {table.tp_setattro = setattro_handler;}
 
     /** Updates tp_compare.<br>
@@ -380,7 +380,7 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   int compare(const PythonObject& other)
       */
-    DECLARE_EXPORT void supportcompare() 
+    void supportcompare() 
       {table.tp_compare = compare_handler;}
 
     /** Updates tp_iter and tp_iternext.<br>
@@ -388,7 +388,7 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   PyObject* iternext()
       */
-    DECLARE_EXPORT void supportiter()
+    void supportiter()
     {
       table.tp_iter = PyObject_SelfIter;
       table.tp_iternext = iternext_handler;
@@ -399,7 +399,7 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   PyObject* call(const PythonObject& args, const PythonObject& kwds)
       */
-    DECLARE_EXPORT void supportcall() 
+    void supportcall() 
       {table.tp_call = call_handler;}
 
     /** Updates tp_str.<br>
@@ -407,7 +407,7 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   PyObject* str()
       */
-    DECLARE_EXPORT void supportstr() 
+    void supportstr() 
       {table.tp_str = str_handler;}
 
     /** Type definition for create functions. */

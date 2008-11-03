@@ -49,7 +49,7 @@ const MetaClass CommandPython::metadata;
 const MetaClass CommandPython::metadata2;
 
 PyThreadState *PythonInterpreter::mainThreadState = NULL;
-PyObject *PythonInterpreter::module = NULL;
+DECLARE_EXPORT PyObject *PythonInterpreter::module = NULL;
 DECLARE_EXPORT string PythonInterpreter::encoding;
 
 
@@ -543,7 +543,7 @@ DECLARE_EXPORT void PythonType::evalException()
 }
 
 
-extern "C" PyObject* getattro_handler(PyObject *self, PyObject *name)
+extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *name)
 {
   try
   {
@@ -574,7 +574,7 @@ extern "C" PyObject* getattro_handler(PyObject *self, PyObject *name)
 }
 
 
-extern "C" int setattro_handler(PyObject *self, PyObject *name, PyObject *value)
+extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, PyObject *value)
 {
   try
   {
@@ -606,7 +606,7 @@ extern "C" int setattro_handler(PyObject *self, PyObject *name, PyObject *value)
 }
 
 
-extern "C" int compare_handler(PyObject *self, PyObject *other)
+extern "C" DECLARE_EXPORT int compare_handler(PyObject *self, PyObject *other)
 {
   try
   {
@@ -620,7 +620,7 @@ extern "C" int compare_handler(PyObject *self, PyObject *other)
 }
 
 
-extern "C" PyObject* iternext_handler(PyObject *self)
+extern "C" DECLARE_EXPORT PyObject* iternext_handler(PyObject *self)
 {
   try
   {
@@ -634,7 +634,7 @@ extern "C" PyObject* iternext_handler(PyObject *self)
 }
 
 
-extern "C" PyObject* call_handler(PyObject* self, PyObject* args, PyObject* kwds)
+extern "C" DECLARE_EXPORT PyObject* call_handler(PyObject* self, PyObject* args, PyObject* kwds)
 {
   try 
   { 
@@ -648,7 +648,7 @@ extern "C" PyObject* call_handler(PyObject* self, PyObject* args, PyObject* kwds
 }
 
 
-extern "C" PyObject* str_handler(PyObject* self)
+extern "C" DECLARE_EXPORT PyObject* str_handler(PyObject* self)
 {
   try
   {

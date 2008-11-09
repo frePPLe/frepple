@@ -199,9 +199,9 @@ PyObject* PythonForecastBucket::getattro(const Attribute& attr)
 int PythonForecastBucket::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Forecast::tag_total))
-    obj->total = field.getDouble();  // TODO use proper api to set 
+    obj->setTotal(field.getDouble());
   else if (attr.isA(Forecast::tag_consumed))
-    obj->consumed = field.getDouble();  // TODO use proper api to set 
+    obj->setConsumed(field.getDouble());
   else
     return PythonDemand(obj).setattro(attr, field);  
   return 0;  // OK

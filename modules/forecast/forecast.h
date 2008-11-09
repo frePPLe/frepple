@@ -640,6 +640,25 @@ class ForecastBucket : public Demand
     {
       return sizeof(ForecastBucket) + Demand::extrasize();
     }
+
+    /** Update the total, gross forecast. */
+    void setTotal(double n)
+    {
+      if (total == n) return;
+      total = n;
+      setQuantity(total>consumed ? total - consumed : 0);
+    }
+
+    /** Update the consumed forecast.<br>
+      * This field is normally updated through the forecast netting solver, but
+      * you can use this method to update it directly.
+      */
+    void setConsumed(double n)
+    {
+      if (consumed == n) return;
+      consumed = n;
+      setQuantity(total>consumed ? total - consumed : 0);
+    }
 };
 
 

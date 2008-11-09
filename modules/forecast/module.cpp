@@ -73,6 +73,9 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     // Forecasting
     else if (x->first == "Forecast.Iterations")
       Forecast::setForecastIterations(x->second.getUnsignedLong());
+    // Moving average forecast method
+    else if (x->first == "MovingAverage.buckets")
+      Forecast::MovingAverage::setDefaultBuckets(x->second.getUnsignedLong());    
     // Single exponential forecast method
     else if (x->first == "Forecast.SingleExponential.initialAlfa")
       Forecast::SingleExponential::setInitialAlfa(x->second.getDouble());

@@ -208,6 +208,57 @@ class Forecast : public Demand
           (Forecast*, const Date[], unsigned int, bool) = 0;
     };
 
+
+    /** @brief A class to calculate a forecast based on a moving average. */
+    class MovingAverage : public ForecastMethod
+    {
+      private:
+        /** Number of smoothed buckets. */
+        static unsigned int defaultbuckets;
+
+        /** Calculated average.<br>
+          * Used to carry results between the evaluation and applying of the forecast.
+          */
+        double avg;
+
+        /** Number of buckets to average. */
+        unsigned int buckets;
+
+        /** Number of warmup periods.<br>
+          * These periods are used for the initialization of the algorithm
+          * and don't count towards measuring the forecast error.<br>
+          * The default value is 7.
+          **/
+        static unsigned int skip;
+
+      public:
+        /** Constructor. */
+        MovingAverage(int i = defaultbuckets) : buckets(i), avg(0)
+        {
+          if (i < 1)
+            throw DataException("Moving average needs to smooth over at least 1 bucket");
+        }
+
+        /** Forecast evaluation. */
+        double generateForecast(Forecast* fcst, const double history[],
+          unsigned int count, bool debug);
+
+        /** Forecast value updating. */
+        void applyForecast(Forecast*, const Date[], unsigned int, bool);
+
+        /** Update the initial value for the alfa parameter. */
+        static void setDefaultBuckets(int x)
+        {
+          if (x < 1)
+            throw DataException("Parameter MovingAverage.buckets needs to smooth over at least 1 bucket");
+         defaultbuckets = x;
+        }
+ 
+        /** Update the number of timeseries values used to initialize the
+          * algorithm. */
+        static void setSkip(int x) { skip = x; }
+   };
+
     /** @brief A class to perform single exponential smoothing on a time series. */
     class SingleExponential : public ForecastMethod
     {

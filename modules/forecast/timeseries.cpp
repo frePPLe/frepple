@@ -43,12 +43,14 @@ void Forecast::generateFutureValues(
 
   // Create a list of forecasting methods.
   // We create the forecasting objects in stack memory for best performance.
+  MovingAverage moving_avg;
   SingleExponential single_exp;
   DoubleExponential double_exp;
-  int numberOfMethods = 2;
-  ForecastMethod* methods[2];
-  methods[0] = &single_exp;
-  methods[1] = &double_exp;
+  int numberOfMethods = 3;
+  ForecastMethod* methods[3];
+  methods[0] = &moving_avg;
+  methods[1] = &single_exp;
+  methods[2] = &double_exp;
 
   // Evaluate each forecast method
   double best_error = DBL_MAX;
@@ -67,6 +69,58 @@ void Forecast::generateFutureValues(
   // Apply the most appropriate forecasting method
   if (best_method >= 0)
     methods[best_method]->applyForecast(this, buckets, bucketcount, debug);
+}
+
+
+//
+// MOVING AVERAGE FORECAST
+//
+
+
+unsigned int Forecast::MovingAverage::defaultbuckets = 5;
+unsigned int Forecast::MovingAverage::skip = 0;
+
+
+double Forecast::MovingAverage::generateForecast
+  (Forecast* fcst, const double history[], unsigned int count, bool debug)
+{
+  double error_mad = 0.0;
+  double sum = 0.0;
+
+  // Calculate the forecast and forecast error.
+  for (unsigned int i = 1; i <= count; ++i)
+  {
+    sum += history[i-1];
+    if (i>buckets) 
+    {
+      sum -= history[i-1-buckets];
+      avg = sum / buckets;
+    }
+    else
+      avg = sum / i;
+    if (i >= skip) // Don't measure during the warmup period
+      error_mad += fabs(avg - history[i]);
+  }
+
+  // Echo the result
+  if (debug)
+    logger << (fcst ? fcst->getName() : "") << ": moving average : " 
+      << "mad " << error_mad 
+      << ", forecast " << avg << endl;
+  return error_mad;
+}
+
+
+void Forecast::MovingAverage::applyForecast 
+  (Forecast* forecast, const Date buckets[], unsigned int bucketcount, bool debug)
+{
+  // Loop over all buckets and set the forecast to a constant value
+  if (avg < 0) return;
+  for (unsigned int i = 1; i < bucketcount; ++i)
+    forecast->setTotalQuantity(
+      DateRange(buckets[i-1], buckets[i]), 
+      avg
+      );
 }
 
 
@@ -139,8 +193,8 @@ double Forecast::SingleExponential::generateForecast
 
   // Echo the result
   if (debug)
-    logger << "single exponential " << (fcst ? fcst->getName() : "")
-      << ": alfa " << alfa 
+    logger << (fcst ? fcst->getName() : "") << ": single exponential : " 
+      << "alfa " << alfa 
       << ", mad " << error_mad 
       << ", " << iteration << " iterations"
       << ", delta alfa " << delta 
@@ -160,7 +214,6 @@ void Forecast::SingleExponential::applyForecast
       f_i
       );
 }
-
 
 
 //
@@ -209,8 +262,8 @@ double Forecast::DoubleExponential::generateForecast  /* @todo optimization not 
 
   // Echo the result
   if (debug)
-    logger << "double exponential " << (fcst ? fcst->getName() : "")
-      << ": alfa " << alfa 
+    logger << (fcst ? fcst->getName() : "") << ": double exponential : " 
+      << "alfa " << alfa 
       << ", gamma " << gamma 
       << ", mad " << error_mad 
       << ", " << iteration << " iterations"

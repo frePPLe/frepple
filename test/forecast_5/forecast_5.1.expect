@@ -87,6 +87,36 @@
 			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
+				<bucket start="2007-01-01T00:00:00">
+					<total>15</total>
+					<quantity>15</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-02-01T00:00:00">
+					<total>15</total>
+					<quantity>15</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-03-01T00:00:00">
+					<total>15</total>
+					<quantity>15</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-04-01T00:00:00">
+					<total>15</total>
+					<quantity>15</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-05-01T00:00:00">
+					<total>15</total>
+					<quantity>15</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-06-01T00:00:00">
+					<total>0</total>
+					<quantity>0</quantity>
+					<consumed>0</consumed>
+				</bucket>
 			</buckets>
 		</demand>
 		<demand name="seasonal demand" xsi:type="demand_forecast">

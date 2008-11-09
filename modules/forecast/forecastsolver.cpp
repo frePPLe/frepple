@@ -186,7 +186,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
   for (Forecast::memberIterator i = fcst->beginMember(); i != fcst->endMember(); ++i)
   {
     zerobucket = dynamic_cast<ForecastBucket*>(&*i);
-    if (zerobucket && zerobucket->timebucket.within(dmd->getDue())) break;
+    if (zerobucket && zerobucket->getDueRange().within(dmd->getDue())) break;
   }
   if (!zerobucket)
     throw LogicException("Can't find forecast bucket for "
@@ -197,8 +197,8 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
   ForecastBucket* curbucket = zerobucket;
   bool backward = true;
   while ( remaining > 0 && curbucket
-    && (dmd->getDue()-Forecast::getNetEarly() < curbucket->timebucket.getEnd())
-    && (dmd->getDue()+Forecast::getNetLate() >= curbucket->timebucket.getStart())
+    && (dmd->getDue()-Forecast::getNetEarly() < curbucket->getDueRange().getEnd())
+    && (dmd->getDue()+Forecast::getNetLate() >= curbucket->getDueRange().getStart())
     )
   {
     // Net from the current bucket
@@ -210,10 +210,9 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
         // Partially consume a bucket
         if (getLogLevel()>=2)
           logger << "    Consuming " << remaining << " from bucket "
-            << curbucket->timebucket << " (" << available
+            << curbucket->getDueRange() << " (" << available
             << " available)" << endl;
-        curbucket->setQuantity(available - remaining);
-        curbucket->consumed += remaining;
+        curbucket->incConsumed(remaining);
         remaining = 0;
       }
       else
@@ -221,31 +220,30 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst)
         // Completely consume a bucket
         if (getLogLevel()>=2)
           logger << "    Consuming " << available << " from bucket "
-            << curbucket->timebucket << " (" << available
+            << curbucket->getDueRange() << " (" << available
             << " available)" << endl;
         remaining -= available;
-        curbucket->consumed += available;
-        curbucket->setQuantity(0);
+        curbucket->incConsumed(available);
       }
     }
     else if (getLogLevel()>=2)
       logger << "    Nothing available in bucket "
-        << curbucket->timebucket << endl;
+        << curbucket->getDueRange() << endl;
 
     // Find the next forecast bucket
     if (backward)
     {
       // Moving to earlier buckets
-      curbucket = curbucket->prev;
+      curbucket = curbucket->getPreviousBucket();
       if (!curbucket)
       {
         backward = false;
-        curbucket = zerobucket->next;
+        curbucket = zerobucket->getNextBucket();
       }
     }
     else
       // Moving to later buckets
-      curbucket = curbucket->next;
+      curbucket = curbucket->getNextBucket();
   }
 
   // Quantity for which no bucket is found

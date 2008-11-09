@@ -630,23 +630,54 @@ class ForecastBucket : public Demand
     }
     virtual const MetaClass& getType() const {return metadata;}
     static const MetaClass metadata;
-    double weight; // @todo need proper api wrapper!
-    double consumed;// @todo need proper api wrapper!
-    double total;// @todo need proper api wrapper!
-    DateRange timebucket;
-    ForecastBucket* prev;
-    ForecastBucket* next;
     virtual size_t getSize() const
     {
       return sizeof(ForecastBucket) + Demand::extrasize();
     }
 
+    /** Returns the relative weight of this forecast bucket when distributing 
+      * forecast over different buckets.
+      */
+    double getWeight() const { return weight; }
+
+    /** Returns the total, gross forecast. */
+    double getTotal() const { return total; }
+
+    /** Returns the consumed forecast. */
+    double getConsumed() const { return consumed; }
+
+    /** Update the weight of this forecasting bucket. */
+    void setWeight(double n)
+    {
+      if (n<0) 
+        throw DataException("Forecast bucket weight must be greater or equal to 0");
+      weight = n;
+    }
+
+    /** Increment the total, gross forecast. */
+    void incTotal(double n)
+    {
+      total += n;
+      if (total<0) total = 0.0;
+      setQuantity(total>consumed ? total - consumed : 0.0);
+    }
+
     /** Update the total, gross forecast. */
     void setTotal(double n)
     {
+      if (n<0) 
+        throw DataException("Gross forecast must be greater or equal to 0");
       if (total == n) return;
       total = n;
-      setQuantity(total>consumed ? total - consumed : 0);
+      setQuantity(total>consumed ? total - consumed : 0.0);
+    }
+
+    /** Increment the consumed forecast. */
+    void incConsumed(double n)
+    {
+      consumed += n;
+      if (consumed<0) consumed = 0.0;
+      setQuantity(total>consumed ? total - consumed : 0.0);
     }
 
     /** Update the consumed forecast.<br>
@@ -655,10 +686,29 @@ class ForecastBucket : public Demand
       */
     void setConsumed(double n)
     {
+      if (n<0) 
+        throw DataException("Consumed forecast must be greater or equal to 0");
       if (consumed == n) return;
       consumed = n;
-      setQuantity(total>consumed ? total - consumed : 0);
+      setQuantity(total>consumed ? total - consumed : 0.0);
     }
+
+    /** Return the date range for this bucket. */
+    DateRange getDueRange() const { return timebucket; }
+
+    /** Return a pointer to the next forecast bucket. */
+    ForecastBucket* getNextBucket() const { return next; }
+
+    /** Return a pointer to the previous forecast bucket. */
+    ForecastBucket* getPreviousBucket() const { return prev; }
+
+private:
+    double weight;
+    double consumed;
+    double total;
+    DateRange timebucket;
+    ForecastBucket* prev;
+    ForecastBucket* next;
 };
 
 

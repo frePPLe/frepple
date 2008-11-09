@@ -117,14 +117,11 @@ extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
     PyErr_Format(PyExc_AttributeError,"Invalid type for time series");
     return NULL;
   }
-  if (buckets)
+  if (buckets) bucketiterator = PyObject_GetIter(buckets);
+  if (!bucketiterator)
   {
-    bucketiterator = PyObject_GetIter(buckets);
-    if (!bucketiterator)
-    {
-      PyErr_Format(PyExc_AttributeError,"Invalid type for time series");
-      return NULL;
-    }
+    PyErr_Format(PyExc_AttributeError,"Invalid type for time series");
+    return NULL;
   }
 
   // Copy the history data into a C++ data structure
@@ -139,7 +136,7 @@ extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
   }
   Py_DECREF(historyiterator);
 
-  // Copy the bucket data into a C++ data structure     @todo bucketiterator can be null
+  // Copy the bucket data into a C++ data structure
   Date bucketdata[300];
   unsigned int bucketcount = 0;
   while (item = PyIter_Next(bucketiterator))
@@ -185,13 +182,15 @@ PyObject* PythonForecastBucket::getattro(const Attribute& attr)
 {
   if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_startdate))
-    return PythonObject(obj->timebucket.getStart());
+    return PythonObject(obj->getDueRange().getStart());
   if (attr.isA(Tags::tag_enddate))
-    return PythonObject(obj->timebucket.getEnd());
+    return PythonObject(obj->getDueRange().getEnd());
   if (attr.isA(Forecast::tag_total))
-    return PythonObject(obj->total);
+    return PythonObject(obj->getTotal());
   if (attr.isA(Forecast::tag_consumed))
-    return PythonObject(obj->consumed);
+    return PythonObject(obj->getConsumed());
+  if (attr.isA(Tags::tag_weight))
+    return PythonObject(obj->getWeight());
   return PythonDemand(obj).getattro(attr); 
 }
 
@@ -202,6 +201,8 @@ int PythonForecastBucket::setattro(const Attribute& attr, const PythonObject& fi
     obj->setTotal(field.getDouble());
   else if (attr.isA(Forecast::tag_consumed))
     obj->setConsumed(field.getDouble());
+  else if (attr.isA(Tags::tag_weight))
+    obj->setWeight(field.getDouble());
   else
     return PythonDemand(obj).setattro(attr, field);  
   return 0;  // OK

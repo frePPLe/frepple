@@ -169,17 +169,16 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
     ForecastBucket* x = dynamic_cast<ForecastBucket*>(&*m);
     if (!x)
       throw DataException("Invalid subdemand of forecast '" + getName() +"'");
-    if (d.intersect(x->timebucket))
+    if (d.intersect(x->getDueRange()))
     {
       // Bucket intersects with daterange
       if (!d.getDuration())
       {
         // Single date provided. Update that one bucket.
-        x->setQuantity(f>x->consumed ? (f - x->consumed) : 0);
-        x->total = f;
+        x->setTotal(f);
         return;
       }
-      weights += x->weight * static_cast<long>(x->timebucket.overlap(d));
+      weights += x->getWeight() * static_cast<long>(x->getDueRange().overlap(d));
     }
   }
 
@@ -194,35 +193,34 @@ void Forecast::setTotalQuantity(const DateRange& d, double f)
   for (memberIterator m = beginMember(); m!=endMember(); ++m)
   {
     ForecastBucket* x = dynamic_cast<ForecastBucket*>(&*m);
-    if (d.intersect(x->timebucket))
+    if (d.intersect(x->getDueRange()))
     {
       // Bucket intersects with daterange
-      TimePeriod o = x->timebucket.overlap(d);
-      double percent = x->weight * static_cast<long>(o);
+      TimePeriod o = x->getDueRange().overlap(d);
+      double percent = x->getWeight() * static_cast<long>(o);
       if (getDiscrete())
       {
         // Rounding to discrete numbers
         carryover += f * percent;
         int intdelta = static_cast<int>(ceil(carryover - 0.5));
         carryover -= intdelta;
-        if (o < x->timebucket.getDuration())
+        if (o < x->getDueRange().getDuration())
           // The bucket is only partially updated
-          x->total += static_cast<double>(intdelta);
+          x->incTotal(static_cast<double>(intdelta));
         else
           // The bucket is completely updated
-          x->total = static_cast<double>(intdelta);
+          x->setTotal(static_cast<double>(intdelta));
       }
       else
       {
         // No rounding
-        if (o < x->timebucket.getDuration())
+        if (o < x->getDueRange().getDuration())
           // The bucket is only partially updated
-          x->total += f * percent;
+          x->incTotal(f * percent);
         else
           // The bucket is completely updated
-          x->total = f * percent;
+          x->setTotal(f * percent);
       }
-      x->setQuantity(x->total > x->consumed ? (x->total - x->consumed) : 0);
     }
   }
 }
@@ -254,9 +252,9 @@ void Forecast::writeElement(XMLOutput *o, const Keyword &tag, mode m) const
   {
     ForecastBucket* f = dynamic_cast<ForecastBucket*>(&*i);
     o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(f->getDue()));
-    o->writeElement(tag_total, f->total);
+    o->writeElement(tag_total, f->getTotal());
     o->writeElement(Tags::tag_quantity, f->getQuantity());
-    o->writeElement(tag_consumed, f->consumed);
+    o->writeElement(tag_consumed, f->getConsumed());
     o->EndObject(Tags::tag_bucket);
   }
   o->EndObject(Tags::tag_buckets);

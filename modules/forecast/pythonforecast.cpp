@@ -32,7 +32,7 @@ namespace module_forecast
 int PythonForecast::initialize(PyObject* m)
 {
   // Add a method for forecast generation
-  getType().addMethod("timeseries", (PyCFunction)timeseries, METH_VARARGS,
+  getType().addMethod("timeseries", timeseries, METH_VARARGS,
      "Set the future based on the timeseries of historical data");
 
   // Normal initialization for the rest
@@ -69,30 +69,29 @@ void initializePython()
 
 PyObject* PythonForecast::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_calendar))
     return PythonObject(obj->getCalendar());
+  else if (attr.isA(Tags::tag_discrete))
+    return PythonObject(obj->getDiscrete());
   return PythonDemand(obj).getattro(attr); 
 }
 
 
 int PythonForecast::setattro(const Attribute& attr, const PythonObject& field)
 {
-  logger << "   PP " << attr.getName() << "  " << attr.isA(Tags::tag_calendar) << "   " << field.check(PythonItem::getType()) << "   " << PythonItem::getType().type_object() << endl;
   if (attr.isA(Tags::tag_calendar))
   {
-    logger << "OOOcOO " << endl;
     if (!field.check(PythonCalendar::getType())) 
     {
-    logger << "OOODOO" << endl;
       PyErr_SetString(PythonDataException, "forecast calendar must be of type calendar");
       return -1;
     }
-    logger << "OOOaOO" << endl;
     Calendar* y = static_cast<PythonCalendar*>(static_cast<PyObject*>(field))->obj;
     obj->setCalendar(y);
-    logger << "OOObOO" << endl;
   }  
+  else if (attr.isA(Tags::tag_discrete))
+    obj->setDiscrete(field.getBool());
   else
     return PythonDemand(obj).setattro(attr, field);  
   return 0; // OK
@@ -102,8 +101,7 @@ int PythonForecast::setattro(const Attribute& attr, const PythonObject& field)
 extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
 {
   // Get the forecast model
-  Forecast* forecast = reinterpret_cast<PythonForecast*>(self)->obj;
-  logger << "willy " << forecast->getName() << endl;
+  Forecast* forecast = static_cast<PythonForecast*>(self)->obj;
 
   // Parse the Python arguments
   PyObject* history;
@@ -185,22 +183,28 @@ int PythonForecastBucket::initialize(PyObject* m)
 
 PyObject* PythonForecastBucket::getattro(const Attribute& attr)
 {
-/* xxx
-  PyObject* result = Py_BuildValue("{s:N,s:N,s:f,s:f,s:f}",
-    "start_date", PythonObject(obj->iter->timebucket.getStart()),
-    "end_date", PythonObject(obj->iter->timebucket.getEnd()),
-    "totalqty", obj->iter->total,
-    "consumedqty", obj->iter->consumed,
-    "netqty", obj->iter->total - obj->iter->consumed
-    );
-*/
+  if (!obj) return Py_BuildValue("");
+  if (attr.isA(Tags::tag_startdate))
+    return PythonObject(obj->timebucket.getStart());
+  if (attr.isA(Tags::tag_enddate))
+    return PythonObject(obj->timebucket.getEnd());
+  if (attr.isA(Forecast::tag_total))
+    return PythonObject(obj->total);
+  if (attr.isA(Forecast::tag_consumed))
+    return PythonObject(obj->consumed);
   return PythonDemand(obj).getattro(attr); 
 }
 
 
 int PythonForecastBucket::setattro(const Attribute& attr, const PythonObject& field)
 {
-  return PythonDemand(obj).setattro(attr, field);  
+  if (attr.isA(Forecast::tag_total))
+    obj->total = field.getDouble();  // TODO use proper api to set 
+  else if (attr.isA(Forecast::tag_consumed))
+    obj->consumed = field.getDouble();  // TODO use proper api to set 
+  else
+    return PythonDemand(obj).setattro(attr, field);  
+  return 0;  // OK
 }
 
 } // end namespace

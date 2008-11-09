@@ -34,6 +34,7 @@ to keep the code portable between different databases.
 
 from time import time
 from threading import Thread
+import inspect
 
 from django.db import connection
 from django.db import transaction
@@ -230,24 +231,25 @@ def exportPegging(cursor):
 
 def exportForecast(cursor):
   # Detect whether the forecast module is available
-  try: import freppleforecast
-  except: return
+  if not 'demand_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
+    return
 
   global ROUNDING_DECIMALS
   print "Exporting forecast plans..."
   starttime = time()
   cnt = 0
-  for i in freppleforecast.forecast():
+  for i in frepple.demands():
+    if not isinstance(i, frepple.demand_forecast): continue
     cursor.executemany(
       "insert into out_forecast \
       (forecast,startdate,enddate,total,net,consumed) \
       values (%s,%s,%s,%s,%s,%s)",
       [(
-         i['name'], str(j['start_date'].date()), str(j['end_date'].date()),
-         round(j['totalqty'],ROUNDING_DECIMALS),
-         round(j['netqty'],ROUNDING_DECIMALS),
-         round(j['consumedqty'],ROUNDING_DECIMALS)
-       ) for j in i['buckets'] if j['totalqty'] > 0
+         i.name, str(j.startdate.date()), str(j.enddate.date()),
+         round(j.total,ROUNDING_DECIMALS),
+         round(j.quantity,ROUNDING_DECIMALS),
+         round(j.consumed,ROUNDING_DECIMALS)
+       ) for j in i.buckets if j.total > 0
       ])
     cnt += 1
     if cnt % 100 == 0: transaction.commit()

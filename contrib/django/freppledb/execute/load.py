@@ -33,6 +33,7 @@ API of frePPLe to bring the data into the frePPLe C++ core engine.
 from time import time
 from xml.sax.saxutils import quoteattr
 from threading import Thread
+import inspect
 
 from django.db import connection
 from django.conf import settings
@@ -329,7 +330,7 @@ def loadOperationPlans(cursor):
   cnt = 0
   starttime = time()
   cursor.execute("SELECT id, operation_id, quantity, startdate, enddate, locked FROM operationplan order by id asc")
-  x = [ header , '<operationplans>' ]
+  x = [ header , '<operationplans>' ]   # todo use python api to create operationplan
   for i, j, k, l, m, n in cursor.fetchall():
     cnt += 1
     x.append('<operationplan id="%d" operation=%s quantity="%s">' % (i, quoteattr(j), k))
@@ -344,40 +345,36 @@ def loadOperationPlans(cursor):
 
 def loadForecast(cursor):
   # Detect whether the forecast module is available
-  try: import freppleforecast
-  except: return
+  if not 'demand_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
+    return
 
   print 'Importing forecast...'
   cnt = 0
   starttime = time()
   cursor.execute("SELECT name, customer_id, item_id, priority, operation_id, minshipment, calendar_id, discrete, maxlateness FROM forecast")
-  x = [ header, '<demands>' ]
   for i, j, k, l, m, n, o, p, q in cursor.fetchall():
     cnt += 1
-    x.append('<demand name=%s xsi:type="demand_forecast" priority="%d">' % (quoteattr(i), l))
-    if j: x.append( '<customer name=%s />' % quoteattr(j))
-    if k: x.append( '<item name=%s />' % quoteattr(k))
-    if m: x.append( '<operation name=%s />' % quoteattr(m))
-    if n: x.append( '<minshipment>%s</minshipment>' % n)
-    if o: x.append( '<calendar name=%s />' % quoteattr(o))
-    if not p: x.append( '<discrete>false<discrete>')
-    if q != None: x.append( '<maxlateness>PT%sS</maxlateness>' % int(q))
-    x.append('</demand>')
-  x.append('</demands></plan>')
-  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
+    fcst = frepple.demand_forecast(name=i, priority=l)
+    if j: fcst.customer = frepple.customer(name=j)
+    if k: fcst.item = frepple.item(name=k)
+    if m: fcst.operation = frepple.operation(name=m)
+    if n: fcst.minshipment = n
+    if o: fcst.calendar = frepple.calendar(name=o)
+    if not p: fcst.discrete = False
+    if q != None: fcst.maxlateness = q
   print 'Loaded %d forecasts in %.2f seconds' % (cnt, time() - starttime)
 
 
 def loadForecastdemand(cursor):
   # Detect whether the forecast module is available
-  try: import freppleforecast
-  except: return
+  if not 'demand_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
+    return
 
   print 'Importing forecast demand...'
   cnt = 0
   starttime = time()
   cursor.execute("SELECT forecast_id, startdate, enddate, quantity FROM forecastdemand")
-  x = [ header, '<demands>' ]
+  x = [ header, '<demands>' ]    # todo use python api to read forecast buckets
   for i, j, k, l in cursor.fetchall():
     cnt += 1
     x.append('<demand name=%s><buckets><bucket start="%sT00:00:00" end="%sT00:00:00" total="%s"/></buckets></demand>' % (quoteattr(i), j.isoformat(), k.isoformat(), l))

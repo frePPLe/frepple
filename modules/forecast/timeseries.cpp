@@ -45,7 +45,7 @@ void Forecast::generateFutureValues(
   // We create the forecasting objects in stack memory for best performance.
   SingleExponential single_exp;
   DoubleExponential double_exp;
-  int numberOfMethods = 1;
+  int numberOfMethods = 2;
   ForecastMethod* methods[2];
   methods[0] = &single_exp;
   methods[1] = &double_exp;
@@ -56,7 +56,7 @@ void Forecast::generateFutureValues(
   double error;
   for (int i=0; i<numberOfMethods; ++i)
   {    
-    error = methods[i]->generateForecast(history, historycount, debug);  
+    error = methods[i]->generateForecast(this, history, historycount, debug);  
     if (error<best_error) 
     {
       best_error = error;
@@ -82,7 +82,7 @@ unsigned int Forecast::SingleExponential::skip = 0;
 
 
 double Forecast::SingleExponential::generateForecast
-  (const double history[], unsigned int count, bool debug)
+  (Forecast* fcst, const double history[], unsigned int count, bool debug)
 {
   // Verify whether this is a valid forecast method.
   //   - We need at least 5 buckets after the warmup period.
@@ -104,7 +104,7 @@ double Forecast::SingleExponential::generateForecast
 
     // Calculate the forecast and forecast error.
     // We also compute the sums required for the Marquardt optimization.
-    for (unsigned long i = 1; i < count; ++i)
+    for (unsigned long i = 1; i <= count; ++i)
     {
       df_dalfa_i = history[i-1] - f_i + (1 - alfa) * df_dalfa_i;
       f_i = history[i-1] * alfa + (1 - alfa) * f_i;
@@ -139,7 +139,7 @@ double Forecast::SingleExponential::generateForecast
 
   // Echo the result
   if (debug)
-    logger << "single exponential" //"Forecast "  << fcst.getName() xxx
+    logger << "single exponential " << (fcst ? fcst->getName() : "")
       << ": alfa " << alfa 
       << ", mad " << error_mad 
       << ", " << iteration << " iterations"
@@ -178,7 +178,7 @@ unsigned int Forecast::DoubleExponential::skip = 0;
 
 
 double Forecast::DoubleExponential::generateForecast  /* @todo optimization not implemented yet*/
-  (const double history[], unsigned int count, bool debug)
+  (Forecast* fcst, const double history[], unsigned int count, bool debug)
 {
   // Verify whether this is a valid forecast method.
   //   - We need at least 5 buckets after the warmup period.
@@ -197,7 +197,7 @@ double Forecast::DoubleExponential::generateForecast  /* @todo optimization not 
 
     // Calculate the forecast and forecast error.
     // We also compute the sums required for the Marquardt optimization.
-    for (unsigned long i = 1; i < count; ++i)
+    for (unsigned long i = 1; i <= count; ++i)
     {
       constant_i_minus_1 = constant_i;
       constant_i = history[i-1] * alfa + (1 - alfa) * (constant_i + trend_i);
@@ -209,7 +209,7 @@ double Forecast::DoubleExponential::generateForecast  /* @todo optimization not 
 
   // Echo the result
   if (debug)
-    logger << "double exponential" //"Forecast "  << fcst.getName() xxx
+    logger << "double exponential " << (fcst ? fcst->getName() : "")
       << ": alfa " << alfa 
       << ", gamma " << gamma 
       << ", mad " << error_mad 

@@ -218,7 +218,7 @@ int PythonLoad::initialize(PyObject* m)
 
 DECLARE_EXPORT PyObject* PythonLoad::getattro(const Attribute& attr)
 {
-  if (!ld) return Py_None;
+  if (!ld) return Py_BuildValue("");
   if (attr.isA(Tags::tag_resource))
     return PythonObject(ld->getResource());
   if (attr.isA(Tags::tag_operation))

@@ -1011,7 +1011,7 @@ PyObject* PythonOperationPlan::create(PyTypeObject* pytype, PyObject* args, PyOb
 
 DECLARE_EXPORT PyObject* PythonOperationPlan::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_id))
     return PythonObject(obj->getIdentifier());
   if (attr.isA(Tags::tag_operation))

@@ -36,13 +36,11 @@
   * @brief Core namespace
   */
 
-#include "frepple/pythonutils.h"
 #include "frepple/utils.h"
 #include "frepple/timeline.h"
 #include <float.h>
 #include <typeinfo>
 using namespace frepple::utils;
-using namespace frepple::python;
 
 namespace frepple
 {
@@ -76,7 +74,7 @@ class Solvable;
 class PeggingIterator;
 
 
-/** @brief This class is used for initialization and finalization. */
+/** @brief This class is used for initialization. */
 class LibraryModel
 {
   public:
@@ -5279,7 +5277,7 @@ class PythonProblem : public PythonExtension<PythonProblem>
   public:
     static int initialize(PyObject* m);
     PythonProblem(Problem* p) : prob(p) {}
-    static void* proxy(Object* p)
+    static PyObject* proxy(Object* p)
       {return static_cast<PyObject*>(new PythonProblem(static_cast<Problem*>(p)));}
     PyObject* str()
     {
@@ -5662,7 +5660,7 @@ class PythonOperationPlan : public PythonExtension<PythonOperationPlan>
   public:
     static int initialize(PyObject* m);
     PythonOperationPlan(OperationPlan* p) : obj(p) {}
-    static void* proxy(Object* p)
+    static PyObject* proxy(Object* p)
       {return static_cast<PyObject*>(new PythonOperationPlan(static_cast<OperationPlan*>(p)));}
   private:
     OperationPlan* obj;
@@ -5702,7 +5700,7 @@ class PythonFlowPlan : public PythonExtension<PythonFlowPlan>
 };
 
 
-class PythonFlowPlanIterator : public PythonExtension<PythonFlowPlanIterator>
+class PythonFlowPlanIterator : public PythonExtension<PythonFlowPlanIterator> 
 {
   public:
     static int initialize(PyObject* m);
@@ -5761,7 +5759,7 @@ class PythonLoadPlanIterator : public PythonExtension<PythonLoadPlanIterator>
 //
 
 
-class PythonDemandPlanIterator : public PythonExtension<PythonDemandPlanIterator>
+class PythonDemandPlanIterator : public PythonExtension<PythonDemandPlanIterator> 
 {
   public:
     static int initialize(PyObject* m);
@@ -5817,7 +5815,7 @@ class PythonLoad : public PythonExtension<PythonLoad>
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
-    static void* proxy(Object* p) {return static_cast<PyObject*>(new PythonLoad(static_cast<Load*>(p)));}
+    static PyObject* proxy(Object* p) {return static_cast<PyObject*>(new PythonLoad(static_cast<Load*>(p)));}
     Load* ld;
 };
 
@@ -5864,7 +5862,7 @@ class PythonFlow : public PythonExtension<PythonFlow>
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)  issue: construction & validation of floaws is a bit different....   
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static void* proxy(Object* p) {return static_cast<PyObject*>(new PythonFlow(static_cast<Flow*>(p)));}
+    static PyObject* proxy(Object* p) {return static_cast<PyObject*>(new PythonFlow(static_cast<Flow*>(p)));}
     Flow* fl;
 };
 

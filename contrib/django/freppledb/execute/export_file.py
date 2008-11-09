@@ -34,6 +34,7 @@ information to a set of text files.
 from time import time
 import csv
 from threading import Thread
+import inspect
 
 
 import frepple
@@ -140,18 +141,18 @@ def exportPegging():
 
 def exportForecast():
   # Detect whether the forecast module is available
-  try: import freppleforecast
-  except: return
+  if not 'demand_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
+    return
 
   print "Exporting forecast plans..."
   starttime = time()
   writer = csv.writer(open("forecast.csv", "wb"), quoting=csv.QUOTE_ALL)
-  for i in freppleforecast.forecast():
-    for j in i['buckets']:
-      if j['totalqty'] > 0:
+  for i in frepple.demands():
+    if not isinstance(i, frepple.demand_forecast): continue
+    for j in i.buckets:
+      if j.total > 0:
         writer.writerow((
-          i['name'], j['start_date'], j['end_date'], j['totalqty'],
-          j['netqty'], j['consumedqty']
+          i.name, j.startdate, j.enddate, j.total, j.quantity, j.consumedqty
          ))
   print 'Exported forecast plans in %.2f seconds' % (time() - starttime)
 

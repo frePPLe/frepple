@@ -105,7 +105,7 @@ DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, const Attribute& pAttr, co
 
 DECLARE_EXPORT PyObject* PythonSolver::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_loglevel))
@@ -142,8 +142,7 @@ PyObject *PythonSolver::solve(PyObject *self, PyObject *args)
     return NULL;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
-  Py_INCREF(Py_None);
-  return Py_None;
+  return Py_BuildValue("");
 }
 
 

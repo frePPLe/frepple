@@ -149,7 +149,7 @@ int PythonFlowPlan::initialize(PyObject* m)
 
 PyObject* PythonFlowPlan::getattro(const Attribute& attr)
 {
-  if (!fl) return Py_None;
+  if (!fl) return Py_BuildValue("");
   if (attr.isA(Tags::tag_operationplan))
     return PythonObject(fl->getOperationPlan());
   if (attr.isA(Tags::tag_quantity))

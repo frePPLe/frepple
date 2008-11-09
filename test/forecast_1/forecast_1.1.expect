@@ -201,17 +201,17 @@
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
 					<total>100</total>
-					<net>90</net>
+					<quantity>90</quantity>
 					<consumed>10</consumed>
 				</bucket>
 				<bucket start="2007-02-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-03-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 			</buckets>
@@ -234,17 +234,17 @@
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
 					<total>100</total>
-					<net>80</net>
+					<quantity>80</quantity>
 					<consumed>20</consumed>
 				</bucket>
 				<bucket start="2007-02-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-03-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 			</buckets>
@@ -266,17 +266,17 @@
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
 					<total>100</total>
-					<net>90</net>
+					<quantity>90</quantity>
 					<consumed>10</consumed>
 				</bucket>
 				<bucket start="2007-02-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-03-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 			</buckets>
@@ -287,17 +287,17 @@
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
 					<total>100</total>
-					<net>100</net>
+					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-02-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-03-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 			</buckets>
@@ -314,17 +314,17 @@
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
 					<total>100</total>
-					<net>90</net>
+					<quantity>90</quantity>
 					<consumed>10</consumed>
 				</bucket>
 				<bucket start="2007-02-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-03-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 			</buckets>
@@ -341,17 +341,17 @@
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
 					<total>100</total>
-					<net>90</net>
+					<quantity>90</quantity>
 					<consumed>10</consumed>
 				</bucket>
 				<bucket start="2007-02-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-03-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 			</buckets>

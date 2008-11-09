@@ -27,12 +27,14 @@
 
 #include "forecast.h"
 
+
 namespace module_forecast
 {
 
 const MetaClass Forecast::metadata;
 const MetaClass ForecastBucket::metadata;
 const MetaClass ForecastSolver::metadata;
+
 
 Forecast::MapOfForecasts Forecast::ForecastDictionary;
 bool Forecast::Customer_Then_Item_Hierarchy = true;

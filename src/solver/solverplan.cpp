@@ -214,7 +214,7 @@ DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr,
 
 DECLARE_EXPORT PyObject* PythonSolverMRP::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_constraints))
     return PythonObject(obj->getConstraints());
   if (attr.isA(Tags::tag_maxparallel))

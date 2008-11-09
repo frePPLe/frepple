@@ -396,7 +396,7 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
 
 DECLARE_EXPORT PyObject* PythonCalendar::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_buckets))
@@ -429,7 +429,7 @@ DECLARE_EXPORT int PythonCalendarVoid::setattro(const Attribute& attr, const Pyt
 
 DECLARE_EXPORT PyObject* PythonCalendarBool::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_default))
     return PythonObject(obj->getDefault());
   return PythonCalendar(obj).getattro(attr); 
@@ -448,7 +448,7 @@ DECLARE_EXPORT int PythonCalendarBool::setattro(const Attribute& attr, const Pyt
 
 DECLARE_EXPORT PyObject* PythonCalendarDouble::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_default))
     return PythonObject(obj->getDefault());
   return PythonCalendar(obj).getattro(attr); 
@@ -497,7 +497,7 @@ int PythonCalendarBucket::initialize(PyObject* m)
 
 DECLARE_EXPORT PyObject* PythonCalendarBucket::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_start))
     return PythonObject(obj->getStart());
   if (attr.isA(Tags::tag_end))
@@ -512,7 +512,8 @@ DECLARE_EXPORT PyObject* PythonCalendarBucket::getattro(const Attribute& attr)
       return PythonObject(dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->getValue());
     if (cal->getType() == CalendarString::metadata)
       return PythonObject(dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->getValue());
-    if (cal->getType() == CalendarVoid::metadata) return Py_None;
+    if (cal->getType() == CalendarVoid::metadata) 
+      return Py_BuildValue("");
     PyErr_SetString(PythonLogicException, "calendar type not recognized");
     return NULL;
   }

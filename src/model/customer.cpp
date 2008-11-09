@@ -75,7 +75,7 @@ DECLARE_EXPORT Customer::~Customer()
 
 DECLARE_EXPORT PyObject* PythonCustomer::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_description))

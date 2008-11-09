@@ -53,25 +53,20 @@ def generateForecast():
   thebuckets = [ i.start for i in thecalendar.buckets ]
 
   # A simple constant forecast
-  print "A"
   fcst = frepple.demand_forecast(name="flat demand", item=theitem, customer=thecustomer, calendar=thecalendar)
   fcst.timeseries([100,100,100,100,100,100,100,100,100,100,100,100,100], thebuckets)
 
   # A simple trended forecast
-  print "B"
   fcst = frepple.demand_forecast(name="trended demand", item=theitem, customer=thecustomer, calendar=thecalendar)
   fcst.timeseries([10,20,30,40,50,60,70,80,90,100,110,120,130,140,150], thebuckets)
 
   # A seasonal demand
-  print "C"
   fcst = frepple.demand_forecast(name="seasonal demand", item=theitem, customer=thecustomer, calendar=thecalendar)
   fcst.timeseries([10,10,20,30,20,10,10,10,10,20,30,20,10,10,10,10,20,30,20,10,10], thebuckets)
 
   # Very little history
-  print "D"
   fcst = frepple.demand_forecast(name="little history", item=theitem, customer=thecustomer, calendar=thecalendar)
   fcst.timeseries([10,10], thebuckets)
-  print "E"
 
 ?>
 </plan>

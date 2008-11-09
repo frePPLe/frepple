@@ -292,7 +292,7 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, const Attribute& pAttr, co
 
 DECLARE_EXPORT PyObject* PythonDemand::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_quantity))

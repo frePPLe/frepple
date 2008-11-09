@@ -56,11 +56,11 @@
   *    The netting solver will for each order search for a matching forecast
   *    and reduce the remaining net quantity of the forecast.
   *
-  *  - A forecasting algorithm to <b>extrapolate historical demand data 
+  *  - A forecasting algorithm to <b>extrapolate historical demand data
   *    to the future</b>.<br>
-  *    The classical single exponential and double exponential smoothing 
+  *    The classical single exponential and double exponential smoothing
   *    forecasting methods are both implemented. The forecast method giving
-  *    the smallest mean absolute deviation (aka "mad"-error) will be 
+  *    the smallest mean absolute deviation (aka "mad"-error) will be
   *    automatically picked to produce the forecast.<br>
   *    The parameters for the forecasting method (i.e. alfa for the single
   *    exponential smoothing, or alfa and gamma for the double exponential
@@ -154,7 +154,7 @@
   *     Specifies the maximum number of iterations allowed for a forecast
   *     method to tune its parameters.<br>
   *     Only positive values are allowed and the default value is 10.<br>
-  *     Set the parameter to 1 to disable the tuning and generate a forecast 
+  *     Set the parameter to 1 to disable the tuning and generate a forecast
   *     based on the user-supplied parameters.
   */
 
@@ -189,15 +189,19 @@ class Forecast : public Demand
     friend class ForecastSolver;
   public:
 
+    static const Keyword tag_total;
+    static const Keyword tag_net;
+    static const Keyword tag_consumed;
+
     /** @brief Abstract base class for all forecasting methods. */
     class ForecastMethod
     {
       public:
         /** Forecast evaluation. */
         virtual double generateForecast
-          (const double[], unsigned int, bool) = 0;
+          (Forecast*, const double[], unsigned int, bool) = 0;
 
-        /** This method is called when this forecast method has generated the 
+        /** This method is called when this forecast method has generated the
           * lowest forecast error and now needs to set the forecast values.
           */
         virtual void applyForecast
@@ -240,50 +244,50 @@ class Forecast : public Demand
 
       public:
         /** Constructor. */
-        SingleExponential(double a = initial_alfa) : alfa(a), f_i(0) 
+        SingleExponential(double a = initial_alfa) : alfa(a), f_i(0)
         {
           if (alfa < min_alfa) alfa = min_alfa;
-          if (alfa > max_alfa) alfa = max_alfa;          
+          if (alfa > max_alfa) alfa = max_alfa;
         }
 
         /** Forecast evaluation. */
-        double generateForecast(const double history[], 
+        double generateForecast(Forecast* fcst, const double history[],
           unsigned int count, bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
 
         /** Update the initial value for the alfa parameter. */
-        static void setInitialAlfa(double x) 
-        { 
+        static void setInitialAlfa(double x)
+        {
           if (x<0 || x>1.0) throw DataException(
             "Parameter SingleExponential.initialAlfa must be between 0 and 1.");
-         initial_alfa = x; 
+         initial_alfa = x;
         }
 
         /** Update the minimum value for the alfa parameter. */
         static void setMinAlfa(double x)
-        { 
+        {
           if (x<0 || x>1.0) throw DataException(
             "Parameter SingleExponential.minAlfa must be between 0 and 1.");
-          min_alfa = x; 
+          min_alfa = x;
         }
 
         /** Update the maximum value for the alfa parameter. */
-        static void setMaxAlfa(double x)        
-        { 
+        static void setMaxAlfa(double x)
+        {
           if (x<0 || x>1.0) throw DataException(
             "Parameter SingleExponential.maxAlfa must be between 0 and 1.");
-          max_alfa = x; 
+          max_alfa = x;
         }
 
-        /** Update the number of timeseries values used to initialize the 
+        /** Update the number of timeseries values used to initialize the
           * algorithm. */
         static void setSkip(int x) { skip = x; }
     };
 
-    /** @brief A class to perform double exponential smoothing on a time 
-      * series. 
+    /** @brief A class to perform double exponential smoothing on a time
+      * series.
       */
     class DoubleExponential : public ForecastMethod
     {
@@ -335,7 +339,7 @@ class Forecast : public Demand
           * Used to carry results between the evaluation and applying of the forecast.
           */
         double trend_i;
-        
+
         /** Smoothed result.<br>
           * Used to carry results between the evaluation and applying of the forecast.
           */
@@ -343,65 +347,65 @@ class Forecast : public Demand
 
       public:
         /** Constructor. */
-        DoubleExponential(double a = initial_alfa, double g = initial_gamma) 
+        DoubleExponential(double a = initial_alfa, double g = initial_gamma)
           : alfa(a), gamma(g), trend_i(0), constant_i(0) {}
 
         /** Forecast evaluation. */
-        double generateForecast(const double history[], 
+        double generateForecast(Forecast* fcst, const double history[],
           unsigned int count, bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
 
         /** Update the initial value for the alfa parameter. */
-        static void setInitialAlfa(double x)        
-        { 
+        static void setInitialAlfa(double x)
+        {
           if (x<0 || x>1.0) throw DataException(
             "Parameter DoubleExponential.initialAlfa must be between 0 and 1.");
-          initial_alfa = x; 
+          initial_alfa = x;
         }
 
         /** Update the minimum value for the alfa parameter. */
         static void setMinAlfa(double x)
-        { 
+        {
           if (x<0 || x>1.0) throw DataException(
             "Parameter DoubleExponential.minAlfa must be between 0 and 1.");
-          min_alfa = x; 
+          min_alfa = x;
         }
 
         /** Update the maximum value for the alfa parameter. */
         static void setMaxAlfa(double x)
-        { 
+        {
           if (x<0 || x>1.0) throw DataException(
             "Parameter DoubleExponential.maxAlfa must be between 0 and 1.");
-          max_alfa = x; 
+          max_alfa = x;
         }
 
         /** Update the initial value for the alfa parameter. */
         static void setInitialGamma(double x)
-        { 
+        {
           if (x<0 || x>1.0) throw DataException(
             "Parameter DoubleExponential.initialGamma must be between 0 and 1.");
-          initial_gamma = x; 
+          initial_gamma = x;
         }
 
         /** Update the minimum value for the alfa parameter. */
         static void setMinGamma(double x)
-        { 
+        {
           if (x<0 || x>1.0) throw DataException(
             "Parameter DoubleExponential.minGamma must be between 0 and 1.");
-          min_gamma = x; 
+          min_gamma = x;
         }
 
         /** Update the maximum value for the alfa parameter. */
         static void setMaxGamma(double x)
-        { 
+        {
           if (x<0 || x>1.0) throw DataException(
             "Parameter DoubleExponential.maxGamma must be between 0 and 1.");
-          max_gamma = x; 
+          max_gamma = x;
         }
 
-        /** Update the number of timeseries values used to initialize the 
+        /** Update the number of timeseries values used to initialize the
           * algorithm. */
         static void setSkip(int x) { skip = x; }
     };
@@ -470,9 +474,9 @@ class Forecast : public Demand
     Calendar* getCalendar() const {return calptr;}
 
     /** Generate a forecast value based on historical demand data.<br>
-      * This method will call the different forecasting methods and select the 
+      * This method will call the different forecasting methods and select the
       * method with the lowest mad-error.<br>
-      * It then asks the selected forecast method to generate a value for 
+      * It then asks the selected forecast method to generate a value for
       * each of the time buckets passed.
       */
     void generateFutureValues
@@ -495,7 +499,7 @@ class Forecast : public Demand
     static const MetaClass metadata;
     virtual size_t getSize() const
     {
-      return sizeof(Forecast) + Demand::extrasize() 
+      return sizeof(Forecast) + Demand::extrasize()
         + 6 * sizeof(void*); // Approx. size of an entry in forecast dictionary
     }
 
@@ -532,7 +536,7 @@ class Forecast : public Demand
     static TimePeriod getNetLate() {return Net_Late;}
 
     /** Updates the value of the Forecast_Iterations module parameter. */
-    static void setForecastIterations(unsigned long t) 
+    static void setForecastIterations(unsigned long t)
     {
       if (t<=0) throw DataException(
         "Parameter Forecast_Iterations must be bigger than 0."
@@ -595,11 +599,12 @@ class Forecast : public Demand
     /** Specifies the maximum number of iterations allowed for a forecast
       * method to tune its parameters.<br>
       * Only positive values are allowed and the default value is 10.<br>
-      * Set the parameter to 1 to disable the tuning and generate a 
+      * Set the parameter to 1 to disable the tuning and generate a
       * forecast based on the user-supplied parameters.
       */
     static unsigned long Forecast_Iterations;
 };
+
 
 /** @brief This class represents a forecast value in a time bucket.
   *
@@ -631,7 +636,7 @@ class ForecastBucket : public Demand
     DateRange timebucket;
     ForecastBucket* prev;
     ForecastBucket* next;
-    virtual size_t getSize() const 
+    virtual size_t getSize() const
     {
       return sizeof(ForecastBucket) + Demand::extrasize();
     }

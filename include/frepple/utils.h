@@ -31,8 +31,29 @@
   * @brief Core namespace
   */
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef FREPPLE_UTILS_H
+#define FREPPLE_UTILS_H
+
+/* Python.h has to be included first. 
+   For a debugging build on windows we avoid using the debug version of Python
+   since that also requires Python and all its modules to be compiled in debug
+   mode.
+*/
+#if defined(_DEBUG) && defined(_MSC_VER)
+#undef _DEBUG
+#include "Python.h"
+#define _DEBUG
+#else
+#include "Python.h"
+#endif
+#include "datetime.h"
+
+// For compatibility with earlier Python releases
+#if PY_VERSION_HEX < 0x02050000 && !defined(PY_SSIZE_T_MIN)
+typedef int Py_ssize_t;
+#define PY_SSIZE_T_MAX INT_MAX
+#define PY_SSIZE_T_MIN INT_MIN
+#endif
 
 #include <iostream>
 #include <fstream>
@@ -606,6 +627,177 @@ class Functor : public NonCopyable
 };
 
 
+// The following handler functions redirect the call from Python onto a
+// matching virtual function in a PythonExtensionBase subclass.
+extern "C"
+{
+  /** Handler function called from Python. Internal use only. */
+  DECLARE_EXPORT PyObject* getattro_handler (PyObject*, PyObject*);
+  /** Handler function called from Python. Internal use only. */
+  DECLARE_EXPORT int setattro_handler (PyObject*, PyObject*, PyObject*);
+  /** Handler function called from Python. Internal use only. */
+  DECLARE_EXPORT int compare_handler (PyObject*, PyObject*);
+  /** Handler function called from Python. Internal use only. */
+  DECLARE_EXPORT PyObject* iternext_handler (PyObject*);
+  /** Handler function called from Python. Internal use only. */
+  DECLARE_EXPORT PyObject* call_handler(PyObject*, PyObject*, PyObject*);
+  /** Handler function called from Python. Internal use only. */
+  DECLARE_EXPORT PyObject* str_handler(PyObject*);
+}
+
+
+/** @brief This class is a wrapper around the type information in Python.
+  *
+  * In the Python C API this is represented by the PyTypeObject structure.
+  * This class defines a number of convenience functions to update and maintain
+  * the type information.
+  */
+class PythonType : public NonCopyable
+{
+  private:
+    /** This static variable is a template for cloning type definitions.<br>
+      * It is copied for each type object we create.
+      */
+    static const PyTypeObject PyTypeObjectTemplate;
+
+    /** Accumulator of method definitions. */
+    vector<PyMethodDef> methodvector;
+
+    /** Real method table created after initialization. */
+    PyMethodDef *methods;
+
+  public:
+   /** A static function that evaluates an exception and sets the Python
+      * error string properly.<br>
+      * This function should only be called from within a catch-block, since
+      * internally it rethrows the exception!
+      */
+    static DECLARE_EXPORT void evalException();
+
+    /** Constructor, sets the tp_base_size member. */
+    DECLARE_EXPORT PythonType(size_t base_size, const type_info*);
+
+    /** Return a pointer to the actual Python PyTypeObject. */
+    PyTypeObject* type_object() const {return const_cast<PyTypeObject*>(&table);}
+
+    /** Add a new method. */
+    DECLARE_EXPORT void addMethod(char*, PyCFunction, int, char*);
+
+    /** Updates tp_name. */
+    void setName (const string n)
+    {
+      name = "frepple." + n;
+      table.tp_name = const_cast<char*>(name.c_str());
+    }
+
+    /** Updates tp_doc. */
+    void setDoc (const string n)
+    {
+      doc = n;
+      table.tp_doc = const_cast<char*>(doc.c_str());
+    }
+
+    /** Updates tp_base. */
+    void setBase(PythonType& b)
+    {
+      table.tp_base = &b.table;
+    }
+
+    /** Updates the deallocator. */
+    void dealloc(void (*f)(PyObject*))
+    {
+      table.tp_dealloc = f;
+    }
+
+    /** Updates tp_getattro.<br>
+      * The extension class will need to define a member function with this
+      * prototype:<br>
+      *   PythonObject getattro(const XMLElement& name)
+      */
+    void supportgetattro() 
+      {table.tp_getattro = getattro_handler;}
+
+    /** Updates tp_setattro.<br>
+      * The extension class will need to define a member function with this
+      * prototype:<br>
+      *   int setattro(const Attribute& attr, const PythonObject& field)
+      */
+    void supportsetattro() 
+      {table.tp_setattro = setattro_handler;}
+
+    /** Updates tp_compare.<br>
+      * The extension class will need to define a member function with this
+      * prototype:<br>
+      *   int compare(const PythonObject& other)
+      */
+    void supportcompare() 
+      {table.tp_compare = compare_handler;}
+
+    /** Updates tp_iter and tp_iternext.<br>
+      * The extension class will need to define a member function with this
+      * prototype:<br>
+      *   PyObject* iternext()
+      */
+    void supportiter()
+    {
+      table.tp_iter = PyObject_SelfIter;
+      table.tp_iternext = iternext_handler;
+    }
+
+    /** Updates tp_call.<br>
+      * The extension class will need to define a member function with this
+      * prototype:<br>
+      *   PyObject* call(const PythonObject& args, const PythonObject& kwds)
+      */
+    void supportcall() 
+      {table.tp_call = call_handler;}
+
+    /** Updates tp_str.<br>
+      * The extension class will need to define a member function with this
+      * prototype:<br>
+      *   PyObject* str()
+      */
+    void supportstr() 
+      {table.tp_str = str_handler;}
+
+    /** Type definition for create functions. */
+    typedef PyObject* (*createfunc)(PyTypeObject*, PyObject*, PyObject*);
+
+    /** Updates tp_new with the function passed as argument. */
+    void supportcreate(createfunc c) {table.tp_new = c;}
+
+    /** This method needs to be called after the type information has all
+      * been updated. It adds the type to the module that is passed as
+      * argument. */
+    DECLARE_EXPORT int typeReady(PyObject* m);
+
+    /** Comparison operator. */
+    bool operator == (const PythonType& i) const
+    { 
+      return *cppClass == *(i.cppClass);
+    }
+
+    /** Comparison operator. */
+    bool operator == (const type_info& i) const
+    { 
+      return *cppClass == i;
+    }
+
+  private:
+    /** The type object, as it is used by Python. */
+    PyTypeObject table;
+
+    /** Class name. */
+    string name;
+
+    /** Documentation string. */
+    string doc;
+
+    /** Type info of the registering class. */
+    const type_info* cppClass;
+};
+
+
 class MetaCategory;
 /** @brief This class stores metadata about the classes in the library.
   * The stored information goes well beyond the standard 'type_info'.
@@ -663,7 +855,7 @@ class MetaClass : public NonCopyable
       * objects.<br>
       * The return value is actually a PyObject pointer.
       */
-    typedef void* (*creatorPythonProxy)(Object*);
+    typedef PyObject* (*creatorPythonProxy)(Object*);
 
     /** A string specifying the object type, i.e. the subclass within the
       * category. */
@@ -4182,10 +4374,12 @@ class LibraryUtils
 {
   public:
     static void initialize();
-  private:
-    static bool init;
 };
+
 
 } // end namespace
 } // end namespace
-#endif  // End of UTILS_H
+
+#include "pythonutils.h"
+
+#endif  // End of FREPPLE_UTILS_H

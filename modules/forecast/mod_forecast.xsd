@@ -18,7 +18,7 @@
                     <xsd:all>
                       <xsd:element name="total" type="positiveDouble"
                         minOccurs="0" />
-                      <xsd:element name="net" type="positiveDouble"
+                      <xsd:element name="quantity" type="positiveDouble"
                         minOccurs="0" />
                       <xsd:element name="consumed" type="positiveDouble"
                         minOccurs="0" />
@@ -28,7 +28,7 @@
                         minOccurs="0"/>
                     </xsd:all>
                     <xsd:attribute name="total" type="positiveDouble" />
-                    <xsd:attribute name="net" type="positiveDouble" />
+                    <xsd:attribute name="quantity" type="positiveDouble" />
                     <xsd:attribute name="consumed" type="positiveDouble" />
                     <xsd:attribute name="start" type="xsd:dateTime" />
                     <xsd:attribute name="end" type="xsd:dateTime" />

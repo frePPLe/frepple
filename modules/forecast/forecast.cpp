@@ -30,9 +30,9 @@
 namespace module_forecast
 {
 
-const Keyword tag_total("total");
-const Keyword tag_net("net");
-const Keyword tag_consumed("consumed");
+const Keyword Forecast::tag_total("total");
+const Keyword Forecast::tag_net("net");
+const Keyword Forecast::tag_consumed("consumed");
 
 
 bool Forecast::callback(Calendar* l, const Signal a)
@@ -255,7 +255,7 @@ void Forecast::writeElement(XMLOutput *o, const Keyword &tag, mode m) const
     ForecastBucket* f = dynamic_cast<ForecastBucket*>(&*i);
     o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(f->getDue()));
     o->writeElement(tag_total, f->total);
-    o->writeElement(tag_net, f->getQuantity());
+    o->writeElement(Tags::tag_quantity, f->getQuantity());
     o->writeElement(tag_consumed, f->consumed);
     o->EndObject(Tags::tag_bucket);
   }

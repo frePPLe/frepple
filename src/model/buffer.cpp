@@ -665,7 +665,7 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
 
 DECLARE_EXPORT PyObject* PythonBuffer::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_description))
@@ -816,7 +816,7 @@ DECLARE_EXPORT int PythonBufferInfinite::setattro(const Attribute& attr, const P
 
 DECLARE_EXPORT PyObject* PythonBufferProcure::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_leadtime))
     return PythonObject(obj->getLeadtime());
   if (attr.isA(Tags::tag_mininventory))

@@ -489,7 +489,7 @@ int PythonProblem::initialize(PyObject* m)
 
 PyObject* PythonProblem::getattro(const Attribute& attr)
 {
-  if (!prob) return Py_None;
+  if (!prob) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(prob->getType().type);
   if (attr.isA(Tags::tag_description))

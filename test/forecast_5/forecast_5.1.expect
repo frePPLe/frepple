@@ -2,1245 +2,167 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<name>Forecast test model</name>
 	<description>
-  This test verifies how forecast can be rounded during the forecast
-  distribution.
+  This test demonstrates the capability to analyze a time series of
+  historical demand, and use it to create future forecasted demand quantities.
+
+  In this test case, we don&apos;t use any profiling or netting but these
+  obviously can all be combined:
+    - Create future, gross forecast quantities based on a time series.
+    - Profile the forecast over more granular time buckets.
+    - Net actual orders from the gross forecast to obtain a net
+      forecast to be planned.
   </description>
 	<current>2007-01-01T00:00:00</current>
+	<customers>
+		<customer name="customer">
+		</customer>
+	</customers>
 	<calendars>
 		<calendar name="planningbuckets" xsi:type="calendar_double">
 			<default>0</default>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00" name="Mon Jan 01">
+				<bucket start="2007-01-01T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-02T00:00:00" name="Tue Jan 02">
+				<bucket start="2007-02-01T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-03T00:00:00" name="Wed Jan 03">
+				<bucket start="2007-03-01T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-04T00:00:00" name="Thu Jan 04">
+				<bucket start="2007-04-01T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-05T00:00:00" name="Fri Jan 05">
+				<bucket start="2007-05-01T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-06T00:00:00" name="Sat Jan 06">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-07T00:00:00" name="Sun Jan 07">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-08T00:00:00" name="Mon Jan 08">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-09T00:00:00" name="Tue Jan 09">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-10T00:00:00" name="Wed Jan 10">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-11T00:00:00" name="Thu Jan 11">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-12T00:00:00" name="Fri Jan 12">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-13T00:00:00" name="Sat Jan 13">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-14T00:00:00" name="Sun Jan 14">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-15T00:00:00" name="Mon Jan 15">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-16T00:00:00" name="Tue Jan 16">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-17T00:00:00" name="Wed Jan 17">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-18T00:00:00" name="Thu Jan 18">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-19T00:00:00" name="Fri Jan 19">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-20T00:00:00" name="Sat Jan 20">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-21T00:00:00" name="Sun Jan 21">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-22T00:00:00" name="Mon Jan 22">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-23T00:00:00" name="Tue Jan 23">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-24T00:00:00" name="Wed Jan 24">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-25T00:00:00" name="Thu Jan 25">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-26T00:00:00" name="Fri Jan 26">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-27T00:00:00" name="Sat Jan 27">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-28T00:00:00" name="Sun Jan 28">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-29T00:00:00" name="Mon Jan 29">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-30T00:00:00" name="Tue Jan 30">
-					<value>1</value>
-				</bucket>
-				<bucket start="2007-01-31T00:00:00" name="Wed Jan 31">
+				<bucket start="2007-06-01T00:00:00">
 					<value>1</value>
 				</bucket>
 			</buckets>
 		</calendar>
 	</calendars>
 	<items>
-		<item name="Product 1">
+		<item name="item">
 		</item>
 	</items>
 	<demands>
-		<demand name="Forecast 1" xsi:type="demand_forecast">
-			<item name="Product 1"/>
-			<priority>1</priority>
+		<demand name="flat demand" xsi:type="demand_forecast">
+			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
-					<total>0</total>
-					<net>0</net>
+					<total>100</total>
+					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-02T00:00:00">
-					<total>0</total>
-					<net>0</net>
+				<bucket start="2007-02-01T00:00:00">
+					<total>100</total>
+					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-03T00:00:00">
-					<total>0</total>
-					<net>0</net>
+				<bucket start="2007-03-01T00:00:00">
+					<total>100</total>
+					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-04T00:00:00">
-					<total>0</total>
-					<net>0</net>
+				<bucket start="2007-04-01T00:00:00">
+					<total>100</total>
+					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-05T00:00:00">
-					<total>0</total>
-					<net>0</net>
+				<bucket start="2007-05-01T00:00:00">
+					<total>100</total>
+					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-06T00:00:00">
+				<bucket start="2007-06-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-07T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-08T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-09T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-10T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-11T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-12T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-13T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-14T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-15T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-16T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-17T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-18T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-19T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-20T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-21T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-22T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-23T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-24T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-25T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-26T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-27T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-28T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-29T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-30T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-31T00:00:00">
-					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 			</buckets>
 		</demand>
-		<demand name="Forecast 2" xsi:type="demand_forecast">
-			<item name="Product 1"/>
-			<priority>1</priority>
+		<demand name="little history" xsi:type="demand_forecast">
+			<item name="item"/>
+			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<buckets>
+			</buckets>
+		</demand>
+		<demand name="seasonal demand" xsi:type="demand_forecast">
+			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
+					<total>15</total>
+					<quantity>15</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-02-01T00:00:00">
+					<total>15</total>
+					<quantity>15</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-03-01T00:00:00">
+					<total>15</total>
+					<quantity>15</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-04-01T00:00:00">
+					<total>15</total>
+					<quantity>15</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-05-01T00:00:00">
+					<total>15</total>
+					<quantity>15</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-06-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-02T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-03T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-04T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-05T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-06T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-07T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-08T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-09T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-10T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-11T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-12T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-13T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-14T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-15T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-16T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-17T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-18T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-19T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-20T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-21T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-22T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-23T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-24T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-25T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-26T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-27T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-28T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-29T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-30T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-31T00:00:00">
-					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 			</buckets>
 		</demand>
-		<demand name="Forecast 26" xsi:type="demand_forecast">
-			<item name="Product 1"/>
-			<priority>1</priority>
+		<demand name="test" xsi:type="demand_forecast">
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<discrete>false</discrete>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-02T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-03T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-04T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-05T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-06T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-07T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-08T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-09T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-10T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-11T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-12T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-13T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-14T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-15T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-16T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-17T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-18T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-19T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-20T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-21T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-22T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-23T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-24T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-25T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-26T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-27T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-28T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-29T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-30T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-31T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
 			</buckets>
 		</demand>
-		<demand name="Forecast 27" xsi:type="demand_forecast">
-			<item name="Product 1"/>
-			<priority>1</priority>
+		<demand name="trended demand" xsi:type="demand_forecast">
+			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
-					<total>1</total>
-					<net>1</net>
+					<total>159</total>
+					<quantity>159</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-02T00:00:00">
-					<total>1</total>
-					<net>1</net>
+				<bucket start="2007-02-01T00:00:00">
+					<total>168</total>
+					<quantity>168</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-03T00:00:00">
-					<total>1</total>
-					<net>1</net>
+				<bucket start="2007-03-01T00:00:00">
+					<total>178</total>
+					<quantity>178</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-04T00:00:00">
-					<total>1</total>
-					<net>1</net>
+				<bucket start="2007-04-01T00:00:00">
+					<total>188</total>
+					<quantity>188</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-05T00:00:00">
-					<total>1</total>
-					<net>1</net>
+				<bucket start="2007-05-01T00:00:00">
+					<total>197</total>
+					<quantity>197</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-06T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-07T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-08T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-09T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-10T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-11T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-12T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-13T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-14T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-15T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-16T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-17T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-18T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-19T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-20T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-21T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-22T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-23T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-24T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-25T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-26T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-27T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-28T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-29T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-30T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-31T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-			</buckets>
-		</demand>
-		<demand name="Forecast 3" xsi:type="demand_forecast">
-			<item name="Product 1"/>
-			<priority>1</priority>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
-			<buckets>
-				<bucket start="2007-01-01T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-02T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-03T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-04T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-05T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-06T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-07T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-08T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-09T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-10T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-11T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-12T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-13T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-14T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-15T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-16T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-17T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-18T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-19T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-20T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-21T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-22T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-23T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-24T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-25T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-26T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-27T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-28T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-29T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-30T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-31T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-			</buckets>
-		</demand>
-		<demand name="Forecast 4" xsi:type="demand_forecast">
-			<item name="Product 1"/>
-			<priority>1</priority>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
-			<buckets>
-				<bucket start="2007-01-01T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-02T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-03T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-04T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-05T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-06T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-07T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-08T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-09T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-10T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-11T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-12T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-13T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-14T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-15T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-16T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-17T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-18T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-19T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-20T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-21T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-22T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-23T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-24T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-25T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-26T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-27T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-28T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-29T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-30T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-31T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-			</buckets>
-		</demand>
-		<demand name="Forecast 5" xsi:type="demand_forecast">
-			<item name="Product 1"/>
-			<priority>1</priority>
-			<calendar name="planningbuckets" xsi:type="calendar_double"/>
-			<buckets>
-				<bucket start="2007-01-01T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-02T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-03T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-04T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-05T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-06T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-07T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-08T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-09T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-10T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-11T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-12T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-13T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-14T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-15T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-16T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-17T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-18T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-19T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-20T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-21T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-22T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-23T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-24T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-25T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-26T00:00:00">
-					<total>1</total>
-					<net>1</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-27T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-28T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-29T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-30T00:00:00">
-					<total>0</total>
-					<net>0</net>
-					<consumed>0</consumed>
-				</bucket>
-				<bucket start="2007-01-31T00:00:00">
+				<bucket start="2007-06-01T00:00:00">
 					<total>0</total>
-					<net>0</net>
+					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
 			</buckets>

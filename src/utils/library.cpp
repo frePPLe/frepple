@@ -26,7 +26,6 @@
 
 #define FREPPLE_CORE
 #include "frepple/utils.h"
-#include "frepple/pythonutils.h"
 #include <sys/stat.h>
 
 
@@ -69,6 +68,8 @@ DECLARE_EXPORT string Environment::logfilename;
 
 // Hash value computed only once
 DECLARE_EXPORT const hashtype MetaCategory::defaultHash(Keyword::hash("default"));
+
+DECLARE_EXPORT vector<PythonType*> PythonExtensionBase::table;
 
 
 DECLARE_EXPORT string Environment::searchFile(const string filename)
@@ -233,13 +234,23 @@ void LibraryUtils::initialize()
     "command",
     "command_setenv",
     Object::createDefault<CommandSetEnv>);
+  CommandPython::metadata.registerClass(
+    "command",
+    "command_python",
+    Object::createDefault<CommandPython>);
 
   // Initialize the processing instruction metadata.
   XMLinstruction::metadata.registerCategory
     ("instruction", NULL, MetaCategory::ControllerDefault);
 
+  // Register python also as a processing instruction.
+  CommandPython::metadata2.registerClass(
+    "instruction",
+    "python",
+    Object::createDefault<CommandPython>);
+
   // Initialize the Python interpreter
-  python::initialize();
+  PythonInterpreter::initialize();
 
   // Query the system for the number of available processors
   // The environment variable NUMBER_OF_PROCESSORS is defined automatically on

@@ -34,11 +34,11 @@
   */
 
 #define FREPPLE_CORE
-#include "frepple/pythonutils.h"
+#include "frepple/utils.h"
 
 namespace frepple
 {
-namespace python
+namespace utils
 {
 
 DECLARE_EXPORT PyObject* PythonLogicException = NULL;
@@ -51,24 +51,6 @@ const MetaClass CommandPython::metadata2;
 PyThreadState *PythonInterpreter::mainThreadState = NULL;
 DECLARE_EXPORT PyObject *PythonInterpreter::module = NULL;
 DECLARE_EXPORT string PythonInterpreter::encoding;
-
-
-void initialize()
-{
-  // Initialize the metadata.
-  CommandPython::metadata.registerClass(
-    "command",
-    "command_python",
-    Object::createDefault<CommandPython>);
-
-  // Register python also as a processing instruction.
-  CommandPython::metadata2.registerClass(
-    "instruction",
-    "python",
-    Object::createDefault<CommandPython>);
-
-  PythonInterpreter::initialize();
-}
 
 
 void CommandPython::execute()
@@ -481,11 +463,12 @@ DECLARE_EXPORT PythonObject::PythonObject(Object* p)
 }
 
 
-DECLARE_EXPORT PythonType::PythonType(size_t base_size) : methods(NULL)
+DECLARE_EXPORT PythonType::PythonType(size_t base_size, const type_info* tp) 
+  : methods(NULL), cppClass(tp)
 {
   // Copy a standard info type to start with
   memcpy(&table, &PyTypeObjectTemplate, sizeof(PyTypeObject));
-  table.tp_basicsize =	base_size;
+  table.tp_basicsize = base_size;
 }
 
 

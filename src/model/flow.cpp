@@ -230,6 +230,7 @@ DECLARE_EXPORT void FlowEnd::writeElement
   o->EndObject(tag);
 }
 
+
 int PythonFlow::initialize(PyObject* m)
 {
   // Initialize the type
@@ -245,7 +246,7 @@ int PythonFlow::initialize(PyObject* m)
 
 DECLARE_EXPORT PyObject* PythonFlow::getattro(const Attribute& attr)
 {
-  if (!fl) return Py_None;
+  if (!fl) return Py_BuildValue("");
   if (attr.isA(Tags::tag_buffer))
     return PythonObject(fl->getBuffer());
   if (attr.isA(Tags::tag_operation))

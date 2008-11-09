@@ -718,7 +718,7 @@ DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
 
 DECLARE_EXPORT PyObject* PythonOperation::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
     return PythonObject(obj->getName());
   if (attr.isA(Tags::tag_description))
@@ -795,7 +795,7 @@ DECLARE_EXPORT int PythonOperation::setattro(const Attribute& attr, const Python
 
 DECLARE_EXPORT PyObject* PythonOperationFixedTime::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_duration))
     return PythonObject(obj->getDuration());
   return PythonOperation(obj).getattro(attr); 
@@ -815,7 +815,7 @@ DECLARE_EXPORT int PythonOperationFixedTime::setattro(const Attribute& attr, con
 
 DECLARE_EXPORT PyObject* PythonOperationTimePer::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_None;
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_duration))
     return PythonObject(obj->getDuration());
   if (attr.isA(Tags::tag_duration))

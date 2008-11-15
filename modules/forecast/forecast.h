@@ -199,13 +199,16 @@ class Forecast : public Demand
       public:
         /** Forecast evaluation. */
         virtual double generateForecast
-          (Forecast*, const double[], unsigned int, bool) = 0;
+          (Forecast*, const double[], unsigned int, const double[], bool) = 0;
 
         /** This method is called when this forecast method has generated the
           * lowest forecast error and now needs to set the forecast values.
           */
         virtual void applyForecast
           (Forecast*, const Date[], unsigned int, bool) = 0;
+
+        /** The name of the method. */
+        virtual string getName() = 0;
     };
 
 
@@ -241,7 +244,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, bool debug);
+          unsigned int count, const double madWeight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -257,6 +260,8 @@ class Forecast : public Demand
         /** Update the number of timeseries values used to initialize the
           * algorithm. */
         static void setSkip(int x) { skip = x; }
+
+        string getName() {return "moving average";}
    };
 
     /** @brief A class to perform single exponential smoothing on a time series. */
@@ -303,7 +308,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, bool debug);
+          unsigned int count, const double madWeight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -335,6 +340,8 @@ class Forecast : public Demand
         /** Update the number of timeseries values used to initialize the
           * algorithm. */
         static void setSkip(int x) { skip = x; }
+
+        string getName() {return "single exponential";}
     };
 
     /** @brief A class to perform double exponential smoothing on a time
@@ -403,7 +410,7 @@ class Forecast : public Demand
 
         /** Forecast evaluation. */
         double generateForecast(Forecast* fcst, const double history[],
-          unsigned int count, bool debug);
+          unsigned int count, const double madWeight[], bool debug);
 
         /** Forecast value updating. */
         void applyForecast(Forecast*, const Date[], unsigned int, bool);
@@ -459,6 +466,8 @@ class Forecast : public Demand
         /** Update the number of timeseries values used to initialize the
           * algorithm. */
         static void setSkip(int x) { skip = x; }
+
+        string getName() {return "double exponential";}
     };
 
   public:
@@ -586,11 +595,23 @@ class Forecast : public Demand
     /** Returns the value of the Net_Late module parameter. */
     static TimePeriod getNetLate() {return Net_Late;}
 
+    /** Updates the value of the Forecast.madAlfa module parameter. */
+    static void setForecastMadAlfa(double t)
+    {
+      if (t<=0.5 || t>1.0) throw DataException(
+        "Parameter Forecast.madAlfa must be between 0.5 and 1.0."
+        );
+      Forecast_MadAlfa = t;
+    }
+
+    /** Returns the value of the Forecast_Iterations module parameter. */
+    static double getForecastMadAlfa() {return Forecast_MadAlfa;}
+
     /** Updates the value of the Forecast_Iterations module parameter. */
     static void setForecastIterations(unsigned long t)
     {
       if (t<=0) throw DataException(
-        "Parameter Forecast_Iterations must be bigger than 0."
+        "Parameter Forecast.Iterations must be bigger than 0."
         );
       Forecast_Iterations = t;
     }
@@ -654,6 +675,14 @@ class Forecast : public Demand
       * forecast based on the user-supplied parameters.
       */
     static unsigned long Forecast_Iterations;
+
+    /** Specifies how the MAD forecast error is weighted for different time 
+      * buckets. The MAD value in the most recent bucket is 1.0, and the
+      * weight decreases exponentially for earlier buckets.<br>
+      * Acceptable values are in the interval 0.5 and 1.0, and the default 
+      * is 0.95.
+      */
+    static double Forecast_MadAlfa;
 };
 
 

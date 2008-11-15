@@ -41,7 +41,8 @@ bool Forecast::Customer_Then_Item_Hierarchy = true;
 bool Forecast::Match_Using_Delivery_Operation = true;
 TimePeriod Forecast::Net_Late(0L);
 TimePeriod Forecast::Net_Early(0L);
-unsigned long Forecast::Forecast_Iterations(10L);
+unsigned long Forecast::Forecast_Iterations(15L);
+double Forecast::Forecast_MadAlfa(0.95);
 
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
@@ -73,6 +74,8 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     // Forecasting
     else if (x->first == "Forecast.Iterations")
       Forecast::setForecastIterations(x->second.getUnsignedLong());
+    else if (x->first == "Forecast.madAlfa")
+      Forecast::setForecastMadAlfa(x->second.getDouble());
     // Moving average forecast method
     else if (x->first == "MovingAverage.buckets")
       Forecast::MovingAverage::setDefaultBuckets(x->second.getUnsignedLong());    

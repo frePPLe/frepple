@@ -48,27 +48,46 @@ void Forecast::generateFutureValues(
   DoubleExponential double_exp;
   int numberOfMethods = 3;
   ForecastMethod* methods[3];
-  methods[0] = &moving_avg;
-  methods[1] = &single_exp;
-  methods[2] = &double_exp;
+  methods[0] = &single_exp;
+  methods[1] = &double_exp;
+  methods[2] = &moving_avg;
+
+  // Initialize a vector with the mad weights
+  double *madWeight = new double[historycount];
+  madWeight[historycount-1] = 1.0;
+  for (int i=historycount-2; i>=0; --i)
+    madWeight[i] = madWeight[i+1] * Forecast::getForecastMadAlfa();
 
   // Evaluate each forecast method
   double best_error = DBL_MAX;
   int best_method = -1;
   double error;
-  for (int i=0; i<numberOfMethods; ++i)
-  {    
-    error = methods[i]->generateForecast(this, history, historycount, debug);  
-    if (error<best_error) 
-    {
-      best_error = error;
-      best_method = i;
+  try 
+  {
+    for (int i=0; i<numberOfMethods; ++i)
+    {    
+      error = methods[i]->generateForecast(this, history, historycount, madWeight, debug);  
+      if (error<best_error) 
+      {
+        best_error = error;
+        best_method = i;
+      }
     }
   }
+  catch (...)
+  {
+    delete madWeight;
+    throw;
+  }
+  delete madWeight;
   
   // Apply the most appropriate forecasting method
   if (best_method >= 0)
+  {
+    if (debug)
+      logger << getName() << ": chosen method : " << methods[best_method]->getName() << endl;
     methods[best_method]->applyForecast(this, buckets, bucketcount, debug);
+  }
 }
 
 
@@ -82,7 +101,7 @@ unsigned int Forecast::MovingAverage::skip = 0;
 
 
 double Forecast::MovingAverage::generateForecast
-  (Forecast* fcst, const double history[], unsigned int count, bool debug)
+  (Forecast* fcst, const double history[], unsigned int count, const double madWeight[], bool debug)
 {
   double error_mad = 0.0;
   double sum = 0.0;
@@ -99,7 +118,7 @@ double Forecast::MovingAverage::generateForecast
     else
       avg = sum / i;
     if (i >= skip) // Don't measure during the warmup period
-      error_mad += fabs(avg - history[i]);
+      error_mad += fabs(avg - history[i]) * madWeight[i];
   }
 
   // Echo the result
@@ -136,7 +155,7 @@ unsigned int Forecast::SingleExponential::skip = 0;
 
 
 double Forecast::SingleExponential::generateForecast
-  (Forecast* fcst, const double history[], unsigned int count, bool debug)
+  (Forecast* fcst, const double history[], unsigned int count, const double madWeight[], bool debug)
 {
   // Verify whether this is a valid forecast method.
   //   - We need at least 5 buckets after the warmup period.
@@ -151,10 +170,7 @@ double Forecast::SingleExponential::generateForecast
   {
     // Initialize the iteration
     f_i = history[0];
-    df_dalfa_i = 0.0; 
-    sum_11 = 0.0;
-    sum_12 = 0.0;
-    error_mad = 0.0;
+    df_dalfa_i = sum_11 = sum_12 = error_mad = 0.0;
 
     // Calculate the forecast and forecast error.
     // We also compute the sums required for the Marquardt optimization.
@@ -162,11 +178,14 @@ double Forecast::SingleExponential::generateForecast
     {
       df_dalfa_i = history[i-1] - f_i + (1 - alfa) * df_dalfa_i;
       f_i = history[i-1] * alfa + (1 - alfa) * f_i;
-      sum_12 += df_dalfa_i * (history[i] - f_i);
-      sum_11 += df_dalfa_i * df_dalfa_i;
+      sum_12 += df_dalfa_i * (history[i] - f_i) * madWeight[i];
+      sum_11 += df_dalfa_i * df_dalfa_i * madWeight[i];
       if (i >= skip) // Don't measure during the warmup period
-        error_mad += fabs(f_i - history[i]);
+        error_mad += fabs(f_i - history[i]) * madWeight[i];
     }
+
+    // Add Levenberg - Marquardt damping factor
+    sum_11 += error_mad;
 
     // Calculate a delta for the alfa parameter
     delta = sum_11 ? sum_12 / sum_11 : sum_12;
@@ -227,37 +246,97 @@ double Forecast::DoubleExponential::max_alfa = 1.0;
 double Forecast::DoubleExponential::initial_gamma = 0.05;
 double Forecast::DoubleExponential::min_gamma = 0.0;
 double Forecast::DoubleExponential::max_gamma = 1.0;
-unsigned int Forecast::DoubleExponential::skip = 0;
+unsigned int Forecast::DoubleExponential::skip = 2;
 
 
 double Forecast::DoubleExponential::generateForecast  /* @todo optimization not implemented yet*/
-  (Forecast* fcst, const double history[], unsigned int count, bool debug)
+  (Forecast* fcst, const double history[], unsigned int count, const double madWeight[], bool debug)
 {
   // Verify whether this is a valid forecast method.
   //   - We need at least 5 buckets after the warmup period.
   if (count < skip + 5)
     return DBL_MAX;
 
+  // Define variables
+  double error_mad, delta_alfa, delta_gamma, determinant;
+  double constant_i_prev, trend_i_prev, d_constant_d_gamma_prev,
+    d_constant_d_alfa_prev, d_constant_d_alfa,	d_constant_d_gamma,	
+    d_trend_d_alfa,	d_trend_d_gamma, d_forecast_d_alfa, d_forecast_d_gamma,
+    sum11,	sum12, sum22, sum13, sum23;
+
+  // Iterations
   unsigned int iteration = 1;
-  double error_mad, constant_i_minus_1;
-  //xxxfor (; iteration <= Forecast::getForecastIterations(); ++iteration)
-  for (; iteration <= 1; ++iteration)
+  bool upperboundarytested_alfa = false;
+  bool upperboundarytested_gamma = false;
+  bool lowerboundarytested_alfa = false;
+  bool lowerboundarytested_gamma = false;
+  for (; iteration <= Forecast::getForecastIterations(); ++iteration)
   {
     // Initialize the iteration
     constant_i = history[0];
     trend_i = history[1] - history[0]; 
-    error_mad = 0;
+    error_mad = sum11 = sum12 = sum22 = sum13 = sum23 = 0.0;
+    d_constant_d_alfa =	d_constant_d_gamma = d_trend_d_alfa = d_trend_d_gamma = 0.0;
+    d_forecast_d_alfa = d_forecast_d_gamma = 0.0;
 
     // Calculate the forecast and forecast error.
     // We also compute the sums required for the Marquardt optimization.
     for (unsigned long i = 1; i <= count; ++i)
     {
-      constant_i_minus_1 = constant_i;
+      constant_i_prev = constant_i;
+      trend_i_prev = trend_i;
+      d_constant_d_gamma_prev = d_constant_d_gamma;
+      d_constant_d_alfa_prev = d_constant_d_alfa;
       constant_i = history[i-1] * alfa + (1 - alfa) * (constant_i + trend_i);
-      trend_i = gamma * (constant_i - constant_i_minus_1) + (1 - gamma) * trend_i;
+      d_constant_d_alfa = history[i-1] - constant_i_prev - trend_i_prev 
+        + (1 - alfa) * d_forecast_d_alfa;
+      d_constant_d_gamma = (1 - alfa) * d_forecast_d_gamma;
+      d_trend_d_alfa = gamma * (d_constant_d_alfa - d_constant_d_alfa_prev)
+        + (1 - gamma) * d_trend_d_alfa;
+      d_trend_d_gamma = constant_i - constant_i_prev - trend_i_prev 
+        + gamma * (d_constant_d_gamma - d_constant_d_gamma_prev)
+        + (1 - gamma) * d_trend_d_gamma;
+      d_forecast_d_alfa = d_constant_d_alfa + d_trend_d_alfa;
+      d_forecast_d_gamma = d_constant_d_gamma + d_trend_d_gamma;
+      trend_i = gamma * (constant_i - constant_i_prev) + (1 - gamma) * trend_i;
+      sum11 += madWeight[i] * d_forecast_d_alfa * d_forecast_d_alfa;
+      sum12 += madWeight[i] * d_forecast_d_alfa * d_forecast_d_gamma;
+      sum22 += madWeight[i] * d_forecast_d_gamma * d_forecast_d_gamma;
+      sum13 += madWeight[i] * d_forecast_d_alfa * (history[i] - constant_i - trend_i);
+      sum23 += madWeight[i] * d_forecast_d_gamma * (history[i] - constant_i - trend_i);
       if (i >= skip) // Don't measure during the warmup period
-        error_mad += fabs(constant_i + trend_i - history[i]);
+        error_mad += fabs(constant_i + trend_i - history[i]) * madWeight[i];
     }
+
+    // Add Levenberg - Marquardt damping factor
+    sum11 += error_mad;
+    sum22 += error_mad;
+
+    // Calculate a delta for the alfa and gamma parameters
+    determinant = sum11 * sum22 - sum12 * sum12;
+    if (determinant > ROUNDING_ERROR)
+    {
+      delta_alfa = (sum13 * sum22 - sum23 * sum12) / determinant;
+      delta_gamma = (sum23 * sum11 - sum13 * sum12) / determinant;
+      alfa += delta_alfa;
+      gamma += delta_gamma;
+    }
+    else 
+      delta_alfa = delta_gamma = 0.0;
+
+    // Stop when we repeatedly bounce against the limits.
+    // Testing a limits once is allowed.
+    if (alfa > max_alfa) 
+      alfa = max_alfa; 
+    else if (alfa < min_alfa)
+      alfa = min_alfa; 
+    if (gamma > max_gamma) 
+      gamma = max_gamma; 
+    else if (alfa < min_alfa)
+      gamma = min_gamma; 
+    
+    // Stop when we are close enough
+    if (fabs(delta_alfa) + fabs(delta_alfa) < 0.02) break;
   }
 
   // Echo the result

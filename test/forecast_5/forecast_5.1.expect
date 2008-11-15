@@ -47,6 +47,42 @@
 		</item>
 	</items>
 	<demands>
+		<demand name="constant plus trend" xsi:type="demand_forecast">
+			<item name="item"/>
+			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<buckets>
+				<bucket start="2007-01-01T00:00:00">
+					<total>60</total>
+					<quantity>60</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-02-01T00:00:00">
+					<total>70</total>
+					<quantity>70</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-03-01T00:00:00">
+					<total>80</total>
+					<quantity>80</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-04-01T00:00:00">
+					<total>90</total>
+					<quantity>90</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-05-01T00:00:00">
+					<total>100</total>
+					<quantity>100</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-06-01T00:00:00">
+					<total>0</total>
+					<quantity>0</quantity>
+					<consumed>0</consumed>
+				</bucket>
+			</buckets>
+		</demand>
 		<demand name="flat demand" xsi:type="demand_forecast">
 			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
@@ -124,28 +160,28 @@
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
-					<total>15</total>
-					<quantity>15</quantity>
+					<total>13</total>
+					<quantity>13</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-02-01T00:00:00">
-					<total>15</total>
-					<quantity>15</quantity>
+					<total>13</total>
+					<quantity>13</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-03-01T00:00:00">
-					<total>15</total>
-					<quantity>15</quantity>
+					<total>12</total>
+					<quantity>12</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-04-01T00:00:00">
-					<total>15</total>
-					<quantity>15</quantity>
+					<total>12</total>
+					<quantity>12</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-05-01T00:00:00">
-					<total>15</total>
-					<quantity>15</quantity>
+					<total>12</total>
+					<quantity>12</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-06-01T00:00:00">
@@ -161,33 +197,69 @@
 			<buckets>
 			</buckets>
 		</demand>
+		<demand name="trend plus constant" xsi:type="demand_forecast">
+			<item name="item"/>
+			<calendar name="planningbuckets" xsi:type="calendar_double"/>
+			<buckets>
+				<bucket start="2007-01-01T00:00:00">
+					<total>70</total>
+					<quantity>70</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-02-01T00:00:00">
+					<total>70</total>
+					<quantity>70</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-03-01T00:00:00">
+					<total>70</total>
+					<quantity>70</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-04-01T00:00:00">
+					<total>70</total>
+					<quantity>70</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-05-01T00:00:00">
+					<total>70</total>
+					<quantity>70</quantity>
+					<consumed>0</consumed>
+				</bucket>
+				<bucket start="2007-06-01T00:00:00">
+					<total>0</total>
+					<quantity>0</quantity>
+					<consumed>0</consumed>
+				</bucket>
+			</buckets>
+		</demand>
 		<demand name="trended demand" xsi:type="demand_forecast">
 			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
 				<bucket start="2007-01-01T00:00:00">
-					<total>159</total>
-					<quantity>159</quantity>
+					<total>160</total>
+					<quantity>160</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-02-01T00:00:00">
-					<total>168</total>
-					<quantity>168</quantity>
+					<total>170</total>
+					<quantity>170</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-03-01T00:00:00">
-					<total>178</total>
-					<quantity>178</quantity>
+					<total>180</total>
+					<quantity>180</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-04-01T00:00:00">
-					<total>188</total>
-					<quantity>188</quantity>
+					<total>190</total>
+					<quantity>190</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-05-01T00:00:00">
-					<total>197</total>
-					<quantity>197</quantity>
+					<total>200</total>
+					<quantity>200</quantity>
 					<consumed>0</consumed>
 				</bucket>
 				<bucket start="2007-06-01T00:00:00">

@@ -46,27 +46,34 @@
 
 import frepple
 
+theitem = frepple.item(name="item")
+thecustomer = frepple.customer(name="customer")
+thecalendar = frepple.calendar(name="planningbuckets")
+thebuckets = [ i.start for i in thecalendar.buckets ]
+
+def testcase(fcstname, series):
+  print series
+  fcst = frepple.demand_forecast(name=fcstname, item=theitem, customer=thecustomer, calendar=thecalendar)
+  fcst.timeseries(series, thebuckets)
+
 def generateForecast():
-  theitem = frepple.item(name="item")
-  thecustomer = frepple.customer(name="customer")
-  thecalendar = frepple.calendar(name="planningbuckets")
-  thebuckets = [ i.start for i in thecalendar.buckets ]
+  print "\nCase 1: A simple constant demand"
+  testcase("flat demand",[100,100,100,100,100,100,100,100,100,100,100,100,100])
 
-  # A simple constant forecast
-  fcst = frepple.demand_forecast(name="flat demand", item=theitem, customer=thecustomer, calendar=thecalendar)
-  fcst.timeseries([100,100,100,100,100,100,100,100,100,100,100,100,100], thebuckets)
+  print "\nCase 2: A simple trended forecast"
+  testcase("trended demand", [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150])
 
-  # A simple trended forecast
-  fcst = frepple.demand_forecast(name="trended demand", item=theitem, customer=thecustomer, calendar=thecalendar)
-  fcst.timeseries([10,20,30,40,50,60,70,80,90,100,110,120,130,140,150], thebuckets)
+  print "\nCase 4: Demand is first trended and then constant"
+  testcase("trend plus constant", [0,10,20,30,40,50,60,70,70,70,70,70,70])
 
-  # A seasonal demand
-  fcst = frepple.demand_forecast(name="seasonal demand", item=theitem, customer=thecustomer, calendar=thecalendar)
-  fcst.timeseries([10,10,20,30,20,10,10,10,10,20,30,20,10,10,10,10,20,30,20,10,10], thebuckets)
+  print "\nCase 5: Demand is first constant and then a trend starts"
+  testcase("constant plus trend", [10,10,10,10,10,10,10,10,10,10,20,30,40,50])
 
-  # Very little history
-  fcst = frepple.demand_forecast(name="little history", item=theitem, customer=thecustomer, calendar=thecalendar)
-  fcst.timeseries([10,20], thebuckets)
+  print "\nCase 6: A seasonal demand"
+  testcase("seasonal demand", [10,10,20,30,20,10,10,10,10,20,30,20,10,10,10,10,20,30,20,10,10])
+
+  print "\nCase 7: Very little history"
+  testcase("little history", [10,20])
 
 ?>
 </plan>

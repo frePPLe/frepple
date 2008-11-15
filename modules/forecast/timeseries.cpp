@@ -216,7 +216,6 @@ double Forecast::SingleExponential::generateForecast
       << "alfa " << alfa 
       << ", mad " << error_mad 
       << ", " << iteration << " iterations"
-      << ", delta alfa " << delta 
       << ", forecast " << f_i << endl;
   return error_mad;
 }

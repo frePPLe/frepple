@@ -227,13 +227,6 @@ class Forecast : public Demand
         /** Number of buckets to average. */
         unsigned int buckets;
 
-        /** Number of warmup periods.<br>
-          * These periods are used for the initialization of the algorithm
-          * and don't count towards measuring the forecast error.<br>
-          * The default value is 7.
-          **/
-        static unsigned int skip;
-
       public:
         /** Constructor. */
         MovingAverage(int i = defaultbuckets) : buckets(i), avg(0)
@@ -256,10 +249,6 @@ class Forecast : public Demand
             throw DataException("Parameter MovingAverage.buckets needs to smooth over at least 1 bucket");
          defaultbuckets = x;
         }
- 
-        /** Update the number of timeseries values used to initialize the
-          * algorithm. */
-        static void setSkip(int x) { skip = x; }
 
         string getName() {return "moving average";}
    };
@@ -285,13 +274,6 @@ class Forecast : public Demand
           * The default value is 1.
           **/
         static double max_alfa;
-
-        /** Number of warmup periods.<br>
-          * These periods are used for the initialization of the algorithm
-          * and don't count towards measuring the forecast error.<br>
-          * The default value is 7.
-          **/
-        static unsigned int skip;
 
         /** Smoothed result.<br>
           * Used to carry results between the evaluation and applying of the forecast.
@@ -337,10 +319,6 @@ class Forecast : public Demand
           max_alfa = x;
         }
 
-        /** Update the number of timeseries values used to initialize the
-          * algorithm. */
-        static void setSkip(int x) { skip = x; }
-
         string getName() {return "single exponential";}
     };
 
@@ -385,13 +363,6 @@ class Forecast : public Demand
           * The default value is 1.
           **/
         static double max_gamma;
-
-        /** Number of warmup periods.<br>
-          * These periods are used for the initialization of the algorithm
-          * and don't count towards measuring the forecast error.<br>
-          * The default value is 7.
-          **/
-        static unsigned int skip;
 
         /** Smoothed result.<br>
           * Used to carry results between the evaluation and applying of the forecast.
@@ -462,10 +433,6 @@ class Forecast : public Demand
             "Parameter DoubleExponential.maxGamma must be between 0 and 1.");
           max_gamma = x;
         }
-
-        /** Update the number of timeseries values used to initialize the
-          * algorithm. */
-        static void setSkip(int x) { skip = x; }
 
         string getName() {return "double exponential";}
     };
@@ -619,6 +586,20 @@ class Forecast : public Demand
     /** Returns the value of the Forecast_Iterations module parameter. */
     static unsigned long getForecastIterations() {return Forecast_Iterations;}
 
+    /** Updates the value of the Forecast_Skip module parameter. */
+    static void setForecastSkip(unsigned int t)
+    {
+      if (t<0) throw DataException(
+        "Parameter Forecast.Skip must be bigger than or equal to 0."
+        );
+      Forecast_Skip = t;
+    }
+
+    /** Return the number of timeseries values used to initialize the 
+      * algorithm. The forecast error is not counted for these buckets.
+      */
+    static unsigned int getForecastSkip() { return Forecast_Skip; }
+
     /** A data type to maintain a dictionary of all forecasts. */
     typedef multimap < pair<const Item*, const Customer*>, Forecast* > MapOfForecasts;
 
@@ -683,6 +664,13 @@ class Forecast : public Demand
       * is 0.95.
       */
     static double Forecast_MadAlfa;
+
+    /** Number of warmup periods.<br>
+      * These periods are used for the initialization of the algorithm
+      * and don't count towards measuring the forecast error.<br>
+      * The default value is 5.
+      **/
+    static unsigned long Forecast_Skip;
 };
 
 

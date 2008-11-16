@@ -43,6 +43,7 @@ TimePeriod Forecast::Net_Late(0L);
 TimePeriod Forecast::Net_Early(0L);
 unsigned long Forecast::Forecast_Iterations(15L);
 double Forecast::Forecast_MadAlfa(0.95);
+unsigned long Forecast::Forecast_Skip(5);
 
 
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
@@ -76,6 +77,8 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
       Forecast::setForecastIterations(x->second.getUnsignedLong());
     else if (x->first == "Forecast.madAlfa")
       Forecast::setForecastMadAlfa(x->second.getDouble());
+    else if (x->first == "Forecast.Skip")
+      Forecast::setForecastSkip(x->second.getUnsignedLong());
     // Moving average forecast method
     else if (x->first == "MovingAverage.buckets")
       Forecast::MovingAverage::setDefaultBuckets(x->second.getUnsignedLong());    
@@ -86,8 +89,6 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
       Forecast::SingleExponential::setMinAlfa(x->second.getDouble());
     else if (x->first == "Forecast.SingleExponential.maxAlfa")
       Forecast::SingleExponential::setMaxAlfa(x->second.getDouble());
-    else if (x->first == "Forecast.SingleExponential.skip")
-      Forecast::SingleExponential::setSkip(x->second.getInt());
     // Double exponential forecast method
     else if (x->first == "Forecast.DoubleExponential.initialAlfa")
       Forecast::DoubleExponential::setInitialAlfa(x->second.getDouble());
@@ -101,8 +102,6 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
       Forecast::DoubleExponential::setMinGamma(x->second.getDouble());
     else if (x->first == "Forecast.DoubleExponential.maxGamma")
       Forecast::DoubleExponential::setMaxGamma(x->second.getDouble());
-    else if (x->first == "Forecast.DoubleExponential.skip")
-      Forecast::DoubleExponential::setSkip(x->second.getInt());
     // Bullshit
     else
       logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;

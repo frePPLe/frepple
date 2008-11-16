@@ -176,13 +176,11 @@ double Forecast::SingleExponential::generateForecast
     {
       df_dalfa_i = history[i-1] - f_i + (1 - alfa) * df_dalfa_i;
       f_i = history[i-1] * alfa + (1 - alfa) * f_i;
-      if (i != count)
-      {
-        sum_12 += df_dalfa_i * (history[i] - f_i) * madWeight[i];
-        sum_11 += df_dalfa_i * df_dalfa_i * madWeight[i];
-        if (i >= fcst->getForecastSkip()) 
-          error_mad += fabs(f_i - history[i]) * madWeight[i];
-      }
+      if (i == count) break;
+      sum_12 += df_dalfa_i * (history[i] - f_i) * madWeight[i];
+      sum_11 += df_dalfa_i * df_dalfa_i * madWeight[i];
+      if (i >= fcst->getForecastSkip()) 
+        error_mad += fabs(f_i - history[i]) * madWeight[i];
     }
 
     // Add Levenberg - Marquardt damping factor
@@ -287,28 +285,26 @@ double Forecast::DoubleExponential::generateForecast  /* @todo optimization not 
       trend_i_prev = trend_i;
       constant_i = history[i-1] * alfa + (1 - alfa) * (constant_i_prev + trend_i_prev);
       trend_i = gamma * (constant_i - constant_i_prev) + (1 - gamma) * trend_i_prev;
-      if (i != count)
-      {
-        d_constant_d_gamma_prev = d_constant_d_gamma;
-        d_constant_d_alfa_prev = d_constant_d_alfa;
-        d_constant_d_alfa = history[i-1] - constant_i_prev - trend_i_prev 
-          + (1 - alfa) * d_forecast_d_alfa;
-        d_constant_d_gamma = (1 - alfa) * d_forecast_d_gamma;
-        d_trend_d_alfa = gamma * (d_constant_d_alfa - d_constant_d_alfa_prev)
-          + (1 - gamma) * d_trend_d_alfa;
-        d_trend_d_gamma = constant_i - constant_i_prev - trend_i_prev 
-          + gamma * (d_constant_d_gamma - d_constant_d_gamma_prev)
-          + (1 - gamma) * d_trend_d_gamma;
-        d_forecast_d_alfa = d_constant_d_alfa + d_trend_d_alfa;
-        d_forecast_d_gamma = d_constant_d_gamma + d_trend_d_gamma;
-        sum11 += madWeight[i] * d_forecast_d_alfa * d_forecast_d_alfa;
-        sum12 += madWeight[i] * d_forecast_d_alfa * d_forecast_d_gamma;
-        sum22 += madWeight[i] * d_forecast_d_gamma * d_forecast_d_gamma;
-        sum13 += madWeight[i] * d_forecast_d_alfa * (history[i] - constant_i - trend_i);
-        sum23 += madWeight[i] * d_forecast_d_gamma * (history[i] - constant_i - trend_i);
-        if (i >= fcst->getForecastSkip()) // Don't measure during the warmup period
-          error_mad += fabs(constant_i + trend_i - history[i]) * madWeight[i];
-      }
+      if (i == count) break;
+      d_constant_d_gamma_prev = d_constant_d_gamma;
+      d_constant_d_alfa_prev = d_constant_d_alfa;
+      d_constant_d_alfa = history[i-1] - constant_i_prev - trend_i_prev 
+        + (1 - alfa) * d_forecast_d_alfa;
+      d_constant_d_gamma = (1 - alfa) * d_forecast_d_gamma;
+      d_trend_d_alfa = gamma * (d_constant_d_alfa - d_constant_d_alfa_prev)
+        + (1 - gamma) * d_trend_d_alfa;
+      d_trend_d_gamma = constant_i - constant_i_prev - trend_i_prev 
+        + gamma * (d_constant_d_gamma - d_constant_d_gamma_prev)
+        + (1 - gamma) * d_trend_d_gamma;
+      d_forecast_d_alfa = d_constant_d_alfa + d_trend_d_alfa;
+      d_forecast_d_gamma = d_constant_d_gamma + d_trend_d_gamma;
+      sum11 += madWeight[i] * d_forecast_d_alfa * d_forecast_d_alfa;
+      sum12 += madWeight[i] * d_forecast_d_alfa * d_forecast_d_gamma;
+      sum22 += madWeight[i] * d_forecast_d_gamma * d_forecast_d_gamma;
+      sum13 += madWeight[i] * d_forecast_d_alfa * (history[i] - constant_i - trend_i);
+      sum23 += madWeight[i] * d_forecast_d_gamma * (history[i] - constant_i - trend_i);
+      if (i >= fcst->getForecastSkip()) // Don't measure during the warmup period
+        error_mad += fabs(constant_i + trend_i - history[i]) * madWeight[i];
     }
 
     // Add Levenberg - Marquardt damping factor

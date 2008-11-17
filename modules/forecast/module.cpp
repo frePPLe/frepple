@@ -108,28 +108,36 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   }
   catch (exception &e) 
   {
-    // Avoid throwing errors during the initialization!   @todo verify if really required
+    // Avoid throwing errors during the initialization!
     logger << "Error: " << e.what() << endl;
   }
 
-  // Initialize the metadata.
-  Forecast::metadata.registerClass(
-    "demand",
-    "demand_forecast",
-    Object::createString<Forecast>);
-  ForecastBucket::metadata.registerClass(  // No factory method for this class
-    "demand",
-    "demand_forecastbucket");
-  ForecastSolver::metadata.registerClass(
-    "solver",
-    "solver_forecast",
-    Object::createString<ForecastSolver>);
+  try
+  {
+    // Initialize the metadata.
+    Forecast::metadata.registerClass(
+      "demand",
+      "demand_forecast",
+      Object::createString<Forecast>);
+    ForecastBucket::metadata.registerClass(  // No factory method for this class
+      "demand",
+      "demand_forecastbucket");
+    ForecastSolver::metadata.registerClass(
+      "solver",
+      "solver_forecast",
+      Object::createString<ForecastSolver>);
 
-  // Get notified when a calendar is deleted
-  FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
+    // Get notified when a calendar is deleted
+    FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
 
-  // Register the python functions
-  initializePython();
+    // Register the python functions
+    initializePython();
+  }
+  catch (exception &e) 
+  {
+    // Avoid throwing errors during the initialization!
+    logger << "Error: " << e.what() << endl;
+  }
 
   // Return the name of the module
   return name;

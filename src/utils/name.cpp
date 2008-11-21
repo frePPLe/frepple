@@ -242,17 +242,21 @@ void Tree::erase(TreeNode* z)
       else if (z->parent->left == z) z->parent->left = x;
       else z->parent->right = x;
       if (header.left == z)
+      {
         if (z->right == NULL)    // z->left must be null also
           header.left = z->parent;
           // makes leftmost == header if z == root
         else
           header.left = minimum(x);
+      }
       if (header.right == z)
+      {
         if (z->left == NULL)     // z->right must be null also
           header.right = z->parent;
           // makes rightmost == header if z == root
         else                      // x == z->left
           header.right = maximum(x);
+      }
     }
     if (y->color != red)
     {

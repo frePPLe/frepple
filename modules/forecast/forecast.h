@@ -219,13 +219,13 @@ class Forecast : public Demand
         /** Number of smoothed buckets. */
         static unsigned int defaultbuckets;
 
+        /** Number of buckets to average. */
+        unsigned int buckets;
+
         /** Calculated average.<br>
           * Used to carry results between the evaluation and applying of the forecast.
           */
         double avg;
-
-        /** Number of buckets to average. */
-        unsigned int buckets;
 
       public:
         /** Constructor. */

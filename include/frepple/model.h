@@ -39,7 +39,6 @@
 #include "frepple/utils.h"
 #include "frepple/timeline.h"
 #include <float.h>
-#include <typeinfo>
 using namespace frepple::utils;
 
 namespace frepple
@@ -5480,7 +5479,7 @@ class PythonCalendarBucket
 {
   public:
     static int initialize(PyObject* m);
-    PythonCalendarBucket(Calendar* c, Calendar::Bucket* b) : cal(c), obj(b) {}
+    PythonCalendarBucket(Calendar* c, Calendar::Bucket* b) : obj(b), cal(c) {}
   private:
     Calendar::Bucket* obj;
     Calendar* cal;

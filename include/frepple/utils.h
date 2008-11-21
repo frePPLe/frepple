@@ -61,6 +61,7 @@ typedef int Py_ssize_t;
 #include <stdexcept>
 #include <ctime>
 #include <assert.h>
+#include <typeinfo>
 
 // We want to use singly linked lists, but these are not part of the C++
 // standard though. Sigh...
@@ -88,7 +89,6 @@ using namespace gnu_cxx;
 #include <stack>
 #include <vector>
 #include <algorithm>
-//#include <bitset>
 using namespace std;
 
 // Configuration file created by autoconf
@@ -681,7 +681,7 @@ class PythonType : public NonCopyable
     PyTypeObject* type_object() const {return const_cast<PyTypeObject*>(&table);}
 
     /** Add a new method. */
-    DECLARE_EXPORT void addMethod(char*, PyCFunction, int, char*);
+    DECLARE_EXPORT void addMethod(const char*, PyCFunction, int, const char*);
 
     /** Updates tp_name. */
     void setName (const string n)
@@ -3729,8 +3729,11 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
     /** Deletes all elements from the list. */
     static void clear() {st.clear();}
 
-    /** One and only constructor. */
+    /** Constructor. */
     explicit HasName(const string& n) : Tree::TreeNode(n) {}
+
+    /** Constructor. */
+    explicit HasName(const char* n) : Tree::TreeNode(n) {}
 
     /** Rename the entity. */
     void setName(const string& newname) {st.rename(this, newname);}

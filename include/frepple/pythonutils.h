@@ -565,7 +565,7 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
     /** Constructor. */
     explicit PythonExtension()
     {
-      PyObject_INIT(this, getType().type_object());
+      PyObject_Init(this, getType().type_object());
     }
 
     /** Destructor. */

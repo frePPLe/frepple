@@ -98,7 +98,7 @@ DECLARE_EXPORT(void) FreppleInitialize(const char* h)
 }
 
 
-DECLARE_EXPORT(void) FreppleReadXMLData (char* x, bool validate, bool validateonly)
+DECLARE_EXPORT(void) FreppleReadXMLData (const char* x, bool validate, bool validateonly)
 {
   if (x) CommandReadXMLString(string(x), validate, validateonly).execute();
 }
@@ -110,7 +110,7 @@ DECLARE_EXPORT(void) FreppleReadXMLFile (const char* x, bool validate, bool vali
 }
 
 
-DECLARE_EXPORT(void) FreppleSaveFile(char* x)
+DECLARE_EXPORT(void) FreppleSaveFile(const char* x)
 {
   CommandSave(x).execute();
 }

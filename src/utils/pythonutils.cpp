@@ -472,7 +472,8 @@ DECLARE_EXPORT PythonType::PythonType(size_t base_size, const type_info* tp)
 }
 
 
-DECLARE_EXPORT void PythonType::addMethod(char* method_name, PyCFunction f, int flags, char* doc )
+DECLARE_EXPORT void PythonType::addMethod
+  (const char* method_name, PyCFunction f, int flags, const char* doc )
 {
   // The type is already registered
   if (methods) throw LogicException("Too late to add a method");

@@ -163,7 +163,7 @@ double Forecast::SingleExponential::generateForecast
   unsigned int iteration = 1;
   bool upperboundarytested = false;
   bool lowerboundarytested = false;
-  double error_mad, delta, df_dalfa_i, sum_11, sum_12;
+  double error_mad = 0.0, delta, df_dalfa_i, sum_11, sum_12;
   for (; iteration <= Forecast::getForecastIterations(); ++iteration)
   {
     // Initialize the iteration
@@ -259,11 +259,11 @@ double Forecast::DoubleExponential::generateForecast  /* @todo optimization not 
     return DBL_MAX;
 
   // Define variables
-  double error_mad, delta_alfa, delta_gamma, determinant;
+  double error_mad = 0.0, delta_alfa, delta_gamma, determinant;
   double constant_i_prev, trend_i_prev, d_constant_d_gamma_prev,
-    d_constant_d_alfa_prev, d_constant_d_alfa,	d_constant_d_gamma,	
-    d_trend_d_alfa,	d_trend_d_gamma, d_forecast_d_alfa, d_forecast_d_gamma,
-    sum11,	sum12, sum22, sum13, sum23;
+    d_constant_d_alfa_prev, d_constant_d_alfa, d_constant_d_gamma,	
+    d_trend_d_alfa, d_trend_d_gamma, d_forecast_d_alfa, d_forecast_d_gamma,
+    sum11, sum12, sum22, sum13, sum23;
 
   // Iterations
   unsigned int iteration = 1;

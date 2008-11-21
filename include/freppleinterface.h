@@ -94,7 +94,7 @@ DECLARE_EXPORT(void) FreppleInitialize(const char*);
   * processing is finished. The method can throw exceptions, and the client
   * is responsible for defining the correct handlers for these.
   */
-DECLARE_EXPORT(void) FreppleReadXMLData(char*, bool, bool);
+DECLARE_EXPORT(void) FreppleReadXMLData(const char*, bool, bool);
 
 /** The first parameter is the name of a file that contains data in XML
   * format for Frepple processing. If a NULL pointer is passed, frepple
@@ -117,7 +117,7 @@ DECLARE_EXPORT(void) FreppleReadXMLFile(const char*, bool, bool);
   * processing is finished. The method can throw exceptions, and the client
   * is responsible for defining the correct handlers for these.
   */
-DECLARE_EXPORT(void) FreppleSaveFile(char*);
+DECLARE_EXPORT(void) FreppleSaveFile(const char*);
 
 /** This function causes the frepple executable to shut down in an orderly
   * way.

@@ -65,8 +65,6 @@ void ForecastSolver::solve(const Demand* l, void* v)
   // Forecast don't net themselves, and hidden demands either...
   if (!l || dynamic_cast<const Forecast*>(l) || l->getHidden()) return;
 
-  const Demand* x(l);
-
   // Message
   if (getLogLevel()>0)
     logger << "  Netting of demand '" << l << "'  ('" << l->getCustomer()

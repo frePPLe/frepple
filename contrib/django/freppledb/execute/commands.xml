@@ -45,8 +45,8 @@ else:
     </command>
     <command xsi:type="command_size" />
     <command xsi:type="command_python" cmdline="export_to_database()" />
-    <command xsi:type="command_save" filename="output.1.xml" />
     <!--
+    <command xsi:type="command_save" filename="output.1.xml" />
     <command xsi:type="command_python" cmdline="export_to_file()" />
     <command xsi:type="command_erase" mode="model" />
     <command xsi:type="command_size" />

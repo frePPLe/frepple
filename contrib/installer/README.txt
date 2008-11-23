@@ -2,7 +2,7 @@
 This is a script for creating a windows installer for frePPLe.
 To run the installer, the following steps are required:
 
-1) Install NSIS v2.7 or higher (Nullsoft Scriptable Install System)
+1) Install NSIS v2.41 or higher (Nullsoft Scriptable Install System)
    This is a free package to create installers.
    Further details on http://nsis.sourceforge.net/
 

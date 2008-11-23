@@ -8,13 +8,8 @@ The basic steps to set up a development environment:
   Lower versions may work, but are not tested...
 
 - Install django
-  FREPPLE NEEDS THE DEVELOPMENT VERSION OF DJANGO. AT THE TIME FREPPLE 0.5.2 IS
-  RELEASED DJANGO WAS AT REVISION 8129.
+  FREPPLE NEEDS THE VERSION 1.0.2 OF DJANGO.
   Later versions of django may or may not work with frePPLe...
-  To get this version of django use the following command:
-    svn co --revision 8129 http://code.djangoproject.com/svn/django/trunk/ django_src
-  After checking out the Dajngo trunk, copy the django subdirectory to the 
-  site-packages subdirectory of your Python installation.
 
 - Some patches are required to django. To apply the patches, use the commands below
   or merge the updates manually.
@@ -40,7 +35,7 @@ The basic steps to set up a development environment:
       manage.py syncdb
   When the command prompts you to create a django superuser you can choose
   'no', since the inital dataset that is installed will include the users
-  "admin", "frepple" and "guest". 
+  "admin", "frepple" and "guest".
   The password for these users is equal to the user name.
   Of course, you can always choose 'yes' and create your own superuser account.
   When the command finishes, verify the database tables are created correctly.

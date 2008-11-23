@@ -528,13 +528,15 @@ function syncInitialize()
     // We only start resizing after all cells are measured, because the
     // updating also could influence the measuring...
 
-    // Resize the width of the scrollable columns, up and down
+    var cellPadding = 10; // Hardcoded... I know it is 10.
+
+    // Resize the width of the scrollable columns, up and down.
     var columnheaders = $('urt').getElementsBySelector('th');
     var columndata = $('drt').down('tr').getElementsBySelector('td');
     i = 0;
     columndata.each(function(s) {
-      columnheaders[i].style.width = CellWidth[i] + 'px';
-      s.style.width = CellWidth[i++] + 'px';
+      columnheaders[i].style.width = (CellWidth[i]-cellPadding) + 'px';
+      s.style.width = (CellWidth[i++]-cellPadding) + 'px';
       });
     $('drt').style.width = TotalWidth + 'px';
     $('urt').style.width = TotalWidth + 'px';
@@ -548,13 +550,14 @@ function syncInitialize()
       $('urt').style.height = left + 'px';
       $('ult').style.height = left + 'px';
 
-      // Resize the width of the frozen columns, up and down
+      // Resize the width of the frozen columns, up and down.
+      // The constant 10 is taking into account the padding... Ugly hardcode.
       var columnheaders = $('ult').getElementsBySelector('th');
       var columndata = $('dlt').down('tr').getElementsBySelector('td');
       i = 0;
       columndata.each(function(s) {
-        columnheaders[i].style.width = CellFrozenWidth[i] + 'px';
-        s.style.width = CellFrozenWidth[i++] + 'px';
+        columnheaders[i].style.width = (CellFrozenWidth[i]-cellPadding) + 'px';
+        s.style.width = (CellFrozenWidth[i++]-cellPadding) + 'px';
         });
       $('dlt').style.width = TotalFrozenWidth + 'px';
       $('ult').style.width = TotalFrozenWidth + 'px';

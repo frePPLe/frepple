@@ -68,7 +68,7 @@ class OverviewReport(TableReport):
   def resultlist2(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
     cursor = connection.cursor()
-    
+
     # Execute a query to get the backlog at the start of the horizon
     startbacklogdict = {}
     query = '''
@@ -77,9 +77,10 @@ class OverviewReport(TableReport):
       where item in (select items.name from (%s) items)
         and (plandate is null or plandate >= '%s')
         and duedate < '%s'
+      group by item
       ''' % (basesql, startdate, startdate)
     cursor.execute(query, baseparams)
-    for row in cursor.fetchall(): 
+    for row in cursor.fetchall():
       if row[0]: startbacklogdict[row[0]] = float(row[1])
 
     # Execute the query

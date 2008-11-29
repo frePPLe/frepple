@@ -100,6 +100,7 @@ def exportOperationplans(cursor):
        ) for j in i.operationplans ])
     cnt += 1
     if cnt % 300 == 0: transaction.commit()
+  transaction.commit()
   cursor.execute("select count(*) from out_operationplan")
   print 'Exported %d operationplans in %.2f seconds' % (cursor.fetchone()[0], time() - starttime)
 

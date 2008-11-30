@@ -2,6 +2,9 @@
 /* Import the django admin widget styles. */
 @import url('/media/css/widgets.css');
 
+/* An override of an unwanted Django style setting. */
+#container { min-width:0px; }
+
 /* Style for the actions items at the top of a report */
 div.tools {
   float: right;

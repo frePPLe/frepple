@@ -438,10 +438,8 @@ function bucket_close()
 }
 
 
-var fixedHeight;
-var fixedWidth;
-var TotalWidth = 0;
-var TotalHeight = 0;
+var dr,dl,ur,ul,dlt,drt,ult,urt;
+var scrollbarSize = 16;
 
 
 /* The scrolling table is built from 4 divs, each with a nested table in it:
@@ -470,10 +468,22 @@ function installLoadHandler()
 
 function syncInitialize()
 {
-  var hasFrozenColumns = $('dlt') ? true : false;
-  var hasData = $('drt').down('tr') ? true : false;
+  // Variables for the data grid
+  dr = $('dr');
+  dl = $('dl');
+  ur = $('ur');
+  ul = $('ul');
+  dlt = $('dlt');
+  drt = $('drt');
+  ult = $('ult');
+  urt = $('urt');
+
+  var hasFrozenColumns = dlt ? true : false;
+  var hasData = drt.down('tr') ? true : false;
 
   // Call the django-supplied javascript function to initialize calendar menus.
+  // This needs to be done upfront to make sure that the elements get their
+  // correct size right away.
   try {DateTimeShortcuts.init();} catch (error) {;};
 
   // Variables for the cell dimensions
@@ -485,13 +495,16 @@ function syncInitialize()
 
   if (hasData)
   {
+
     // First step: Measure the dimensions of the rows and columns
 
     // Measure cell width
-    var columnheaders = $('urt').getElementsBySelector('th');
-    var columndata = $('drt').down('tr').getElementsBySelector('td');
+    var columnheaders = urt.getElementsBySelector('th');
+    var columndata = drt.down('tr').getElementsBySelector('td');
+    var left;
+    var right;
     i = 0;
-    var totalWidth = 0;
+    var TotalWidth = 0;
     columndata.each(function(s) {
       left = s.getWidth();
       right = columnheaders[i].getWidth();
@@ -502,8 +515,8 @@ function syncInitialize()
     if (hasFrozenColumns)
     {
       // Measure frozen cell width
-      var columnheaders = $('ult').getElementsBySelector('th');
-      var columndata = $('dlt').down('tr').getElementsBySelector('td');
+      var columnheaders = ult.getElementsBySelector('th');
+      var columndata = dlt.down('tr').getElementsBySelector('td');
       i = 0;
       columndata.each(function(s) {
         left = s.getWidth();
@@ -513,14 +526,13 @@ function syncInitialize()
         });
 
       // Sync cell height
-      var rowheaders = $('dlt').getElementsBySelector('tr');
-      var rowdata = $('drt').getElementsBySelector('tr');
+      var rowheaders = dlt.getElementsBySelector('tr');
+      var rowdata = drt.getElementsBySelector('tr');
       i = 0;
       rowheaders.each(function(s) {
         left = s.getHeight();
         right = rowdata[i].getHeight();
-        CellHeight[i] = right > left ? right : left;
-        TotalHeight += CellHeight[i++];
+        CellHeight[i++] = right > left ? right : left;
         });
     }
 
@@ -531,40 +543,38 @@ function syncInitialize()
     var cellPadding = 10; // Hardcoded... I know it is 10.
 
     // Resize the width of the scrollable columns, up and down.
-    var columnheaders = $('urt').getElementsBySelector('th');
-    var columndata = $('drt').down('tr').getElementsBySelector('td');
+    var columnheaders = urt.getElementsBySelector('th');
+    var columndata = drt.down('tr').getElementsBySelector('td');
     i = 0;
     columndata.each(function(s) {
       columnheaders[i].style.width = (CellWidth[i]-cellPadding) + 'px';
       s.style.width = (CellWidth[i++]-cellPadding) + 'px';
       });
-    $('drt').style.width = TotalWidth + 'px';
-    $('urt').style.width = TotalWidth + 'px';
+    drt.style.width = TotalWidth + 'px';
+    urt.style.width = TotalWidth + 'px';
 
     if (hasFrozenColumns)
     {
       // Resize the height of the header row, frozen and scrolling sides
-      var left = $('ult').getHeight();
-      var right = $('urt').getHeight();
+      var left = ult.getHeight();
+      var right = urt.getHeight();
       if (left < right) left = right;
-      $('urt').style.height = left + 'px';
-      $('ult').style.height = left + 'px';
+      urt.style.height = ult.style.height = left + 'px';
 
       // Resize the width of the frozen columns, up and down.
       // The constant 10 is taking into account the padding... Ugly hardcode.
-      var columnheaders = $('ult').getElementsBySelector('th');
-      var columndata = $('dlt').down('tr').getElementsBySelector('td');
+      var columnheaders = ult.getElementsBySelector('th');
+      var columndata = dlt.down('tr').getElementsBySelector('td');
       i = 0;
       columndata.each(function(s) {
         columnheaders[i].style.width = (CellFrozenWidth[i]-cellPadding) + 'px';
         s.style.width = (CellFrozenWidth[i++]-cellPadding) + 'px';
         });
-      $('dlt').style.width = TotalFrozenWidth + 'px';
-      $('ult').style.width = TotalFrozenWidth + 'px';
+      dlt.style.width = ult.style.width = TotalFrozenWidth + 'px';
 
       // Resize the height of the data rows, frozen and scrolling sides
-      var rowheaders = $('dlt').getElementsBySelector('tr');
-      var rowdata = $('drt').getElementsBySelector('tr');
+      var rowheaders = dlt.getElementsBySelector('tr');
+      var rowdata = drt.getElementsBySelector('tr');
       i = 0;
       rowheaders.each(function(s) {
         rowdata[i].style.height = CellHeight[i] + 'px';
@@ -572,12 +582,6 @@ function syncInitialize()
         });
     }
   }
-
-  // Measure the size of the fixed, non-resizable, area of the layout
-  // @todo this calc is only correct if the container is squized. If the container size is unconstrained, the calcs of the fixedsize are wrong
-  var floatingsize = $('dr').getDimensions();
-  fixedHeight = $(document.documentElement).scrollHeight - floatingsize.height;
-  fixedWidth = $(document.documentElement).scrollWidth - floatingsize.width;
 
   // Resize the available size for the table.
   syncResize();
@@ -589,27 +593,38 @@ function syncInitialize()
 
 function syncResize()
 {
-  var hasFrozenColumns = $('ult') ? true : false;
-
   // Resize the available size for the table. This needs to be done at the
   // end, when rows and columns have taken on their correct size.
-  // Assumption: The table is the only container that can be resized for
-  // this purpose.
-  var totalavailable = document.viewport.getDimensions();
-
-  // Height
   // Respect also a minimum size for the table. If the height decreases further
   // we use a scrollbar on the window rather than resizing the container.
-  var height = totalavailable.height - fixedHeight;
-  if (height < 150) height = 150;
-  try { $('dl').style.height = height + "px"; } catch (error) {};
-  $('dr').style.height = height + "px";
+  // Assumption: The table in the down right corner of the grid is the only
+  // container that can be resized for this purpose.
 
-  // Width
-  var width = totalavailable.width - fixedWidth;
+  // Measure the total screen size and the resizable part of the grid
+  var currentResizable = dr.getDimensions();
+  var totalAvailable = document.viewport.getDimensions();
+  var totalResizableX = $(document.documentElement).scrollWidth;
+  var totalResizableY = $(document.documentElement).scrollHeight;
+
+  // Calculate width
+  var delta = totalAvailable.width - totalResizableX;
+  var width = currentResizable.width + delta;
+  //size += 16;
   if (width < 150) width = 150;
-  $('ur').style.width = width + "px";
-  $('dr').style.width = width + "px";
+  if (width > dr.scrollWidth) width = dr.scrollWidth;
+
+  // Calculate height
+  delta = totalAvailable.height - totalResizableY;
+  var height = currentResizable.height + delta;
+  //height += 16;
+  if (height < 150) height = 150;
+  if (height > dr.scrollHeight) height = dr.scrollHeight;
+
+  // Update the size of the grid
+  ur.style.width = dr.style.width = width + "px";
+  if (dl) dl.style.height = dr.style.height = height + "px";
+
+  ///alert (" xxx  " + totalAvailable.width +  "   " +  totalResizable + "  " + currentResizable.width + "  " + delta);
 }
 
 
@@ -620,18 +635,16 @@ function syncScroll(left_or_right)
   if (left_or_right == 1)
   {
     // Scrolling the main data panel down right
-    var i = $('dr');
-    var dlt = $('dlt');
-    if (dlt) dlt.style.bottom = i.scrollTop + 'px';
-    $('urt').style.right = i.scrollLeft + 'px';
+    if (dlt) dlt.style.bottom = dr.scrollTop + 'px';
+    urt.style.right = dr.scrollLeft + 'px';
   }
   else
   {
     // Scrolling the panel with the pinned data column.
     // How does one scroll it when there is no scrollbar? Well, you can scroll
     // down using the search function of your browser
-    alert ('ppp ' + $('dlt').scrollTop +  '  ' + $('dl').scrollTop);
-    $('dr').style.bottom = $('dl').scrollTop + 'px';
+    alert ('xxx ' + dlt.scrollTop +  '  ' + dl.scrollTop);
+    dr.style.bottom = dl.scrollTop + 'px';
   }
   ContextMenu.hide();
 

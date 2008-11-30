@@ -667,7 +667,7 @@ class DemandList(ListReport):
       }),
     ('item', {
       'title': _('item'),
-      'filter': FilterText(field="item_name"),
+      'filter': FilterText(field="item__name"),
       }),
     ('customer', {
       'title': _('customer'),

@@ -232,7 +232,7 @@ def exportPegging(cursor):
 
 def exportForecast(cursor):
   # Detect whether the forecast module is available
-  if not 'demand_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
+  if not 'demand_forecastbucket' in [ a for a, b in inspect.getmembers(frepple) ]:
     return
 
   global ROUNDING_DECIMALS
@@ -240,20 +240,21 @@ def exportForecast(cursor):
   starttime = time()
   cnt = 0
   for i in frepple.demands():
-    if not isinstance(i, frepple.demand_forecast): continue
+    if not isinstance(i, frepple.demand_forecastbucket) or i.total <= 0.0:
+      continue
     cursor.executemany(
       "insert into out_forecast \
       (forecast,startdate,enddate,total,net,consumed) \
       values (%s,%s,%s,%s,%s,%s)",
       [(
-         i.name, str(j.startdate.date()), str(j.enddate.date()),
-         round(j.total,ROUNDING_DECIMALS),
-         round(j.quantity,ROUNDING_DECIMALS),
-         round(j.consumed,ROUNDING_DECIMALS)
-       ) for j in i.buckets if j.total > 0
+         i.owner.name, str(i.startdate.date()), str(i.enddate.date()),
+         round(i.total,ROUNDING_DECIMALS),
+         round(i.quantity,ROUNDING_DECIMALS),
+         round(i.consumed,ROUNDING_DECIMALS)
+       )
       ])
     cnt += 1
-    if cnt % 100 == 0: transaction.commit()
+    if cnt % 1000 == 0: transaction.commit()
 
   transaction.commit()
   cursor.execute("select count(*) from out_forecast")

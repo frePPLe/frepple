@@ -141,19 +141,18 @@ def exportPegging():
 
 def exportForecast():
   # Detect whether the forecast module is available
-  if not 'demand_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
+  if not 'demand_forecastbucket' in [ a for a, b in inspect.getmembers(frepple) ]:
     return
 
   print "Exporting forecast plans..."
   starttime = time()
   writer = csv.writer(open("forecast.csv", "wb"), quoting=csv.QUOTE_ALL)
   for i in frepple.demands():
-    if not isinstance(i, frepple.demand_forecast): continue
-    for j in i.buckets:
-      if j.total > 0:
-        writer.writerow((
-          i.name, j.startdate, j.enddate, j.total, j.quantity, j.consumedqty
-         ))
+    if not isinstance(i, frepple.demand_forecastbucket) or i.total <= 0.0:
+      continue
+    writer.writerow((
+      i.name, i.startdate, i.enddate, i.total, i.quantity, i.consumed
+      ))
   print 'Exported forecast plans in %.2f seconds' % (time() - starttime)
 
 

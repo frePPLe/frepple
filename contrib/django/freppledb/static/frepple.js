@@ -377,7 +377,7 @@ function bucket_show()
   element.innerHTML = '<h2>Time bucketization</h2><br/>'+
     '<form method="get" action="javascript:bucket_close()"><table>'+
     '<tr><th>Buckets:</th><td><select name="buckets" id="reportbucket">'+
-    '<option value="default"' + (buckets[0]=='default' ? 'selected="selected"' : '') + '>Default</option>'+
+    '<option value="standard"' + (buckets[0]=='standard' ? 'selected="selected"' : '') + '>Standard</option>'+
     '<option value="day"' + (buckets[0]=='day' ? 'selected="selected"' : '') + '>Day</option>'+
     '<option value="week"' + (buckets[0]=='week' ? 'selected="selected"' : '') + '>Week</option>'+
     '<option value="month"' + (buckets[0]=='month' ? 'selected="selected"' : '') + '>Month</option>'+

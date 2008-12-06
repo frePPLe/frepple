@@ -9,7 +9,7 @@
 {% block data %}
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
-<td>{{i.identifier}}</td>
+<td>{{i.id}}</td>
 <td>{% if i.fcst_or_actual %}{% superlink i.demand forecast %}{% else %}{% superlink i.demand demand %}{% endif %}</td>
 <td>{% superlink i.operation operation %}</td>
 <td>{{i.quantity}}</td>

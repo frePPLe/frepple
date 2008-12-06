@@ -820,8 +820,8 @@ class DatesList(ListReport):
       'title': _('year'),
       'filter': FilterText(),
       }),
-    ('default', {
-      'title': _('default'),
+    ('standard', {
+      'title': _('standard'),
       'filter': FilterText(),
       }),
     ('week_start', {
@@ -840,8 +840,8 @@ class DatesList(ListReport):
       'title': _('year start'),
       'filter': FilterDate(),
       }),
-    ('default_start', {
-      'title': _('default start'),
+    ('standard_start', {
+      'title': _('standard start'),
       'filter': FilterDate(),
       }),
     )

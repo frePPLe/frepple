@@ -133,9 +133,7 @@ class DetailReport(ListReport):
   template = 'output/operationplan.html'
   title = _("Operationplan Detail Report")
   reset_crumbs = False
-  basequeryset = OperationPlan.objects.extra(
-    select={'fcst_or_actual':'demand in (select distinct name from forecast)'}
-    )
+  basequeryset = OperationPlan.objects.all()
   model = OperationPlan
   frozenColumns = 0
   editable = False

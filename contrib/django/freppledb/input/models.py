@@ -96,9 +96,9 @@ class Dates(models.Model):
   year_start = models.DateField(_('year start'),db_index=True)
   year_end = models.DateField(_('year end'),db_index=True)
   # Default buckets: days + weeks + months
-  default = models.CharField(_('default'),max_length=10, db_index=True, null=True)
-  default_start = models.DateField(_('default start'),db_index=True, null=True)
-  default_end = models.DateField(_('default end'),db_index=True, null=True)
+  standard = models.CharField(_('standard'),max_length=10, db_index=True, null=True)
+  standard_start = models.DateField(_('standard start'),db_index=True, null=True)
+  standard_end = models.DateField(_('standard end'),db_index=True, null=True)
 
   def __unicode__(self): return str(self.day)
 

@@ -739,7 +739,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
       if not end: end = date(2030,1,1)
 
   # Check if the argument is valid
-  if bucket not in ('default','day','week','month','quarter','year'):
+  if bucket not in ('standard','day','week','month','quarter','year'):
     raise Http404, "bucket name %s not valid" % bucket
 
   # Pick up the buckets

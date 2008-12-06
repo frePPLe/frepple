@@ -41,7 +41,7 @@ class Dates_admin(admin.ModelAdmin):
                          ('month','month_start','month_end'),
                          ('quarter','quarter_start','quarter_end'),
                          ('year','year_start','year_end'),
-                         ('default','default_start','default_end'),
+                         ('standard','standard_start','standard_end'),
                          )}),
       )
 site.register(Dates,Dates_admin)

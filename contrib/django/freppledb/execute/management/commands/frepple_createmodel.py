@@ -399,28 +399,28 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40):
     for i in Dates.objects.all():
       if i.day < current_date.date():
         # A single bucket for all dates in the past
-        i.default = 'past'
-        i.default_start = first_date
-        i.default_end = current_date.date()
+        i.standard = 'past'
+        i.standard_start = first_date
+        i.standard_end = current_date.date()
       elif mode == 'day':
         # Daily buckets
-        i.default = str(i.day)[2:]  # Leave away the leading century, ie "20"
-        i.default_start = i.day_start
-        i.default_end = i.day_end
+        i.standard = str(i.day)[2:]  # Leave away the leading century, ie "20"
+        i.standard_start = i.day_start
+        i.standard_end = i.day_end
         if i.day >= limit and i.dayofweek == 0:
           mode = 'week'
           limit = (current_date + timedelta(min_week_horizon)).date()
           limit =  date(limit.year+limit.month/12, limit.month+1-12*(limit.month/12), 1)
       elif i.day < limit:
         # Weekly buckets
-        i.default = i.week
-        i.default_start = i.week_start
-        i.default_end = (i.week_end > limit and limit) or i.week_end
+        i.standard = i.week
+        i.standard_start = i.week_start
+        i.standard_end = (i.week_end > limit and limit) or i.week_end
       else:
         # Monthly buckets
-        i.default = i.month
-        i.default_start = i.month_start
-        i.default_end = i.month_end
+        i.standard = i.month
+        i.standard_start = i.month_start
+        i.standard_end = i.month_end
       m.append(i)
     # Needed to create a temporary list of the objects to save, since the
     # database table is locked during the iteration

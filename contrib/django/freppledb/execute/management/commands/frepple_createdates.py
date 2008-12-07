@@ -80,7 +80,7 @@ class Command(BaseCommand):
 
     try:
       # Logging the action
-      log( category='CREATE', user=user,
+      log( category='CREATE', theuser=user,
         message = _('Start initializing dates')).save()
 
       # Performance improvement for sqlite during the bulky creation transactions
@@ -122,12 +122,12 @@ class Command(BaseCommand):
         curdate = curdate + timedelta(1)
 
       # Log success
-      log(category='CREATE', user=user,
+      log(category='CREATE', theuser=user,
         message=_('Finished initializing dates')).save()
 
     except Exception, e:
       # Log failure and rethrow exception
-      try: log(category='CREATE', user=user,
+      try: log(category='CREATE', theuser=user,
         message=u'%s: %s' % (_('Failure initializing dates'),e)).save()
       except: pass
       raise CommandError(e)

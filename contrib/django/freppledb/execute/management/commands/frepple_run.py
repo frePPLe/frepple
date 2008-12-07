@@ -57,7 +57,7 @@ class Command(BaseCommand):
       else: type = 7
 
       # Log message
-      log(category='RUN', user=user,
+      log(category='RUN', theuser=user,
         message=_('Start creating frePPLe plan of type ') + str(type)).save()
 
       # Execute
@@ -81,10 +81,10 @@ class Command(BaseCommand):
       Plan.objects.all()[0].save()
 
       # Log message
-      log(category='RUN', user=user,
+      log(category='RUN', theuser=user,
         message=_('Finished creating frePPLe plan')).save()
     except Exception, e:
-      try: log(category='RUN', user=user,
+      try: log(category='RUN', theuser=user,
         message=u'%s: %s' % (_('Failure when creating frePPLe plan'),e)).save()
       except: pass
       raise CommandError(e)

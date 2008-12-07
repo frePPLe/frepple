@@ -66,7 +66,7 @@ class Command(BaseCommand):
 
     try:
       # Logging message
-      log(category='ERASE', user=user,
+      log(category='ERASE', theuser=user,
         message=_('Start erasing the database')).save()
       cursor = connection.cursor()
 
@@ -94,10 +94,10 @@ class Command(BaseCommand):
       Plan.objects.all()[0].save()
 
       # Logging message
-      log(category='ERASE', user=user,
+      log(category='ERASE', theuser=user,
         message=_('Finished erasing the database')).save()
     except Exception, e:
-      try: log(category='RUN', user=user,
+      try: log(category='RUN', theuser=user,
         message=u'%s: %s' % (_('Failed erasing the database'),e)).save()
       except: pass
       raise CommandError(e)

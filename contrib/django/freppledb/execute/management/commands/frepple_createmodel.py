@@ -144,7 +144,7 @@ class Command(BaseCommand):
     try:
       # Logging the action
       log(
-        category='CREATE', user=user,
+        category='CREATE', theuser=user,
         message = u'%s : %d %d %d %d %d %d %d %d %d %d'
           % (_('Start creating sample model with parameters'),
              cluster, demand, forecast_per_item, level, resource,
@@ -352,12 +352,12 @@ class Command(BaseCommand):
         transaction.commit()
 
       # Log success
-      log(category='CREATE', user=user,
+      log(category='CREATE', theuser=user,
         message=_('Finished creating sample model')).save()
 
     except Exception, e:
       # Log failure and rethrow exception
-      try: log(category='CREATE', user=user,
+      try: log(category='CREATE', theuser=user,
         message=u'%s: %s' % (_('Failure creating sample model'),e)).save()
       except: pass
       raise CommandError(e)

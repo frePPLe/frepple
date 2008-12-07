@@ -169,15 +169,15 @@ def fixture(request):
   # The fixture loading code is unfornately such that no exceptions are
   # or any error status returned when it fails...
   try:
-    log(category='LOAD', user=request.user.username,
+    log(category='LOAD', theuser=request.user.username,
       message='Start loading dataset "%s"' % fixture).save()
     management.call_command('loaddata', fixture, verbosity=0)
     request.user.message_set.create(message='Loaded dataset')
-    log(category='LOAD', user=request.user.username,
+    log(category='LOAD', theuser=request.user.username,
       message='Finished loading dataset "%s"' % fixture).save()
   except Exception, e:
     request.user.message_set.create(message='Error while loading dataset: %s' % e)
-    log(category='LOAD', user=request.user.username,
+    log(category='LOAD', theuser=request.user.username,
       message='Failed loading dataset "%s": %s' % (fixture,e)).save()
   return HttpResponseRedirect('/execute/execute.html')
 
@@ -192,6 +192,7 @@ class LogReport(ListReport):
   basequeryset = log.objects.all()
   default_sort = '1d'
   model = log
+  frozenColumns = 0
   editable = False
   rows = (
     ('lastmodified', {
@@ -202,7 +203,7 @@ class LogReport(ListReport):
       'filter': FilterText(),
       'title': _('category'),
       }),
-    ('user', {
+    ('theuser', {
       'filter': FilterText(),
       'title': _('user'),
       }),

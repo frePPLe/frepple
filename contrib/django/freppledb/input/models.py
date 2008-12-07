@@ -672,7 +672,7 @@ class Forecast(AuditModel):
         duration = duration.days+86400*duration.seconds
         if i.startdate == startdate and i.enddate == enddate:
           # This entry has exactly the same daterange: update the quantity and exit
-          i.quantity = quantity
+          i.quantity = str(quantity)
           i.save()
           return
         elif i.startdate < startdate and i.enddate > enddate:
@@ -685,24 +685,26 @@ class Forecast(AuditModel):
           self.entries.create( \
              startdate = enddate,
              enddate = i.enddate,
-             quantity = q,
+             quantity = str(q),
              ).save()
           # Part two: our date range, create a new entry
           self.entries.create( \
              startdate = startdate,
              enddate = enddate,
-             quantity = quantity,
+             quantity = str(quantity),
              ).save()
           # Part three: before our daterange, update the existing entry
           p = startdate - i.startdate
           i.enddate = startdate
           i.quantity = i.quantity * (p.days+86400*p.seconds) / duration
           if self.discrete: i.quantity = round(i.quantity)
+          i.quantity = str(i.quantity)
           i.save()
           # Done with this case...
           return
         elif i.startdate >= startdate and i.enddate <= enddate:
           # Entry falls completely in the range
+          # TODO Incomplete???
           current += i.quantity
         elif i.startdate < enddate and i.enddate >= enddate:
           # This entry starts in the range and ends later.
@@ -713,11 +715,11 @@ class Forecast(AuditModel):
           self.entries.create( \
              startdate = i.startdate,
              enddate = enddate,
-             quantity = i.quantity - fraction,
+             quantity = str(i.quantity - fraction),
              ).save()
           i.startdate = enddate
-          if self.discrete: i.quantity = round(fraction)
-          else: i.quantity = fraction
+          if self.discrete: i.quantity = str(round(fraction))
+          else: i.quantity = str(fraction)
           i.save()
         elif i.enddate > startdate and i.startdate <= startdate:
           # This entry ends in the range and starts earlier.
@@ -728,11 +730,11 @@ class Forecast(AuditModel):
           self.entries.create( \
              startdate = startdate,
              enddate = i.enddate,
-             quantity = i.quantity - fraction,
+             quantity = str(i.quantity - fraction),
              ).save()
           i.enddate = startdate
-          if self.discrete: i.quantity = round(fraction)
-          else: i.quantity = fraction
+          if self.discrete: i.quantity = str(round(fraction))
+          else: i.quantity = str(fraction)
           i.save()
       # Case 1, step 2: Rescale the existing entries
       # Note that we retrieve an updated set of buckets from the database here...
@@ -747,11 +749,13 @@ class Forecast(AuditModel):
           q = Decimal(i.quantity * factor + remainder)
           i.quantity = q.to_integral()
           remainder = q - i.quantity
+          i.quantity = str(i.quantity)
           i.save()
       else:
         # No rounding required
         for i in entries:
           i.quantity *= factor
+          i.quantity = str(i.quantity)
           i.save()
     else:
       # Case 2: No intersecting forecast entries exist yet. We use the
@@ -788,12 +792,12 @@ class Forecast(AuditModel):
             self.entries.create( \
               startdate=max(i.startdate.date(),startdate),
               enddate=min(i.enddate.date(),enddate),
-              quantity=q,
+              quantity=str(q),
               ).save()
       else:
         # Case 2b: No calendar buckets found at all
         # Create a new entry for the daterange
-        self.entries.create(startdate=startdate,enddate=enddate,quantity=quantity).save()
+        self.entries.create(startdate=startdate,enddate=enddate,quantity=str(quantity)).save()
 
   class Meta(AuditModel.Meta):
     db_table = 'forecast'

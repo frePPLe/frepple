@@ -84,55 +84,55 @@ a {
   white-space: nowrap;
 }
 
-.buffer {
+a.buffer {
   margin-right: 17px;
   padding-right: 17px;
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
-.item {
+a.item {
   margin-right: 17px;
   padding-right: 17px;
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
-.demand {
+a.demand {
   margin-right: 17px;
   padding-right: 17px;
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
-.resource {
+a.resource {
   margin-right: 17px;
   padding-right: 17px;
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
-.location {
+a.location {
   margin-right: 17px;
   padding-right: 17px;
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
-.operation {
+a.operation {
   margin-right: 17px;
   padding-right: 17px;
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
-.forecast {
+a.forecast {
   margin-right: 17px;
   padding-right: 17px;
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
-.customer {
+a.customer {
   margin-right: 17px;
   padding-right: 17px;
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
-.calendar {
+a.calendar {
   margin-right: 17px;
   padding-right: 17px;
   background: url(/static/context.gif) 100% 100% no-repeat;

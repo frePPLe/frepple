@@ -69,7 +69,7 @@ class Problem(models.Model):
 
 class LoadPlan(models.Model):
   # Database fields
-  resource = models.CharField(_('resource'), max_length=60, db_index=True)
+  theresource = models.CharField(_('resource'), max_length=60, db_index=True)
   quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4)
   startdatetime = models.DateTimeField(_('start datetime'))
   startdate = models.DateField(_('start date'), db_index=True)
@@ -83,7 +83,7 @@ class LoadPlan(models.Model):
   class Meta:
     db_table = 'out_loadplan'
     permissions = (("view_loadplans", "Can view load plans"),)
-    ordering = ['resource','startdatetime']
+    ordering = ['theresource','startdatetime']
     verbose_name = _('loadplan')
     verbose_name_plural = _('loadplans')
 

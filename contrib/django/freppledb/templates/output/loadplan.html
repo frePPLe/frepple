@@ -8,7 +8,7 @@
 {% block data %}
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.resource resource %}</td>
+<td>{% superlink i.theresource resource %}</td>
 <td>{% superlink i.operation operation %}</td>
 <td>{{i.startdatetime}}</td>
 <td>{{i.enddatetime}}</td>

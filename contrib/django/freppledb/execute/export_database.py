@@ -133,13 +133,12 @@ def exportLoadplans(cursor):
   print "Exporting loadplans..."
   starttime = time()
   cnt = 0
-  sql = 'insert into out_loadplan \
-      (operationplan, %s, quantity, startdate, \
-      startdatetime, enddate, enddatetime) values \
-      (%%s,%%s,%%s,%%s,%%s,%%s,%%s)' % connection.ops.quote_name('resource')
   for i in frepple.resources():
     cursor.executemany(
-      sql,
+      "insert into out_loadplan \
+      (operationplan, theresource, quantity, startdate, \
+      startdatetime, enddate, enddatetime) values \
+      (%s,%s,%s,%s,%s,%s,%s)",
       [(
          j.operationplan.id, j.resource.name,
          round(j.quantity,ROUNDING_DECIMALS),

@@ -128,6 +128,7 @@ var ContextMenu = {
 			var s = ContextMenu._getScrollPosition(e);
 
 			ContextMenu._menuElement = $(menuElementId);
+      if (ContextMenu._menuElement == null) return false;
 
       // Get the entity name
 			var item = ContextMenu._attachedElement.innerHTML;
@@ -342,9 +343,9 @@ function export_show(list_or_table)
     '<td><input type="button" value="Close" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
     '</table></form>';
   var position = $('csvexport').cumulativeOffset();
-  position[0] -= 132;
+  position[0] -= 202;
   position[1] += 20;
-  element.style.width = '170px';
+  element.style.width = '200px';
   element.style.left = position[0]+'px';
   element.style.top  = position[1]+'px';
   element.style.position = "absolute";
@@ -374,7 +375,7 @@ function bucket_show()
   var buckets = $('timebuckets').innerHTML.split(',');
   // Show popup
   var element = $('popup');
-  element.innerHTML = '<h2>Time bucketization</h2><br/>'+
+  element.innerHTML = '<h2>Time buckets</h2><br/>'+
     '<form method="get" action="javascript:bucket_close()"><table>'+
     '<tr><th>Buckets:</th><td><select name="buckets" id="reportbucket">'+
     '<option value="standard"' + (buckets[0]=='standard' ? 'selected="selected"' : '') + '>Standard</option>'+
@@ -384,15 +385,15 @@ function bucket_show()
     '<option value="quarter"' + (buckets[0]=='quarter' ? 'selected="selected"' : '') + '>Quarter</option>'+
     '<option value="year"' + (buckets[0]=='year' ? 'selected="selected"' : '') + '>Year</option>'+
     '</select></td></tr>'+
-    '<tr><th>Report start date:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="' + buckets[1] + '" name="startdate"/></td></tr>'+
-    '<tr><th>Report end date:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="' + buckets[2] + '" name="enddate" /></td></tr>'+
+    '<tr><th>Start&nbsp;date:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="' + buckets[1] + '" name="startdate"/></td></tr>'+
+    '<tr><th>End&nbsp;date:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="' + buckets[2] + '" name="enddate" /></td></tr>'+
     '<tr><td><input type="submit" value="OK"/></td>'+
     '<td><input type="button" value="Cancel" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
     '</table></form>';
   var position = $('csvexport').cumulativeOffset();
-  position[0] -= 132;
+  position[0] -= 202;
   position[1] += 20;
-  element.style.width = '170px';
+  element.style.width = '200px';
   element.style.left = position[0]+'px';
   element.style.top  = position[1]+'px';
   element.style.position = "absolute";
@@ -609,22 +610,25 @@ function syncResize()
   // Calculate width
   var delta = totalAvailable.width - totalResizableX;
   var width = currentResizable.width + delta;
-  //size += 16;
   if (width < 150) width = 150;
   if (width > dr.scrollWidth) width = dr.scrollWidth;
 
   // Calculate height
   delta = totalAvailable.height - totalResizableY;
   var height = currentResizable.height + delta;
-  //height += 16;
-  if (height < 150) height = 150;
+  if (height < 150)
+  {
+    height = 150;
+    $(document.documentElement).style.overflowY = 'scroll';
+  }
+  else
+    $(document.documentElement).style.overflowY = 'auto';
   if (height > dr.scrollHeight) height = dr.scrollHeight;
 
   // Update the size of the grid
   ur.style.width = dr.style.width = width + "px";
   if (dl) dl.style.height = dr.style.height = height + "px";
-
-  ///alert (" xxx  " + totalAvailable.width +  "   " +  totalResizable + "  " + currentResizable.width + "  " + delta);
+  else dr.style.height = height + "px";
 }
 
 
@@ -643,7 +647,7 @@ function syncScroll(left_or_right)
     // Scrolling the panel with the pinned data column.
     // How does one scroll it when there is no scrollbar? Well, you can scroll
     // down using the search function of your browser
-    alert ('xxx ' + dlt.scrollTop +  '  ' + dl.scrollTop);
+    //alert ('xxx ' + dlt.scrollTop +  '  ' + dl.scrollTop);
     dr.style.bottom = dl.scrollTop + 'px';
   }
   ContextMenu.hide();

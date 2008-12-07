@@ -95,7 +95,7 @@ class OverviewReport(TableReport):
        ) x
        -- Load data
        left join (
-         select %s as resource_id, startdatetime, enddatetime, quantity
+         select theresource as resource_id, startdatetime, enddatetime, quantity
          from out_loadplan
          ) loaddata
        on x.name = loaddata.resource_id
@@ -107,7 +107,7 @@ class OverviewReport(TableReport):
        ''' % ( sql_overlap('loaddata.startdatetime','loaddata.enddatetime','x.startdate','x.enddate'),
          sql_overlap('bucket.startdate','bucket.enddate','d.startdate','d.enddate'),
          basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
-         connection.ops.quote_name(bucket),bucket,bucket,connection.ops.quote_name('resource'),sortsql)
+         connection.ops.quote_name(bucket),bucket,bucket,sortsql)
     cursor.execute(query, baseparams)
 
     # Build the python result
@@ -141,7 +141,7 @@ class DetailReport(ListReport):
   frozenColumns = 0
   editable = False
   rows = (
-    ('resource', {
+    ('theresource', {
       'filter': FilterText(),
       'title': _('resource')
       }),

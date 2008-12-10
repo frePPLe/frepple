@@ -95,7 +95,7 @@ class UserList(ListReport):
       'filter': FilterText(),
       }),
     ('email', {
-      'title': _('email'),
+      'title': _('E-mail'),
       'filter': FilterText(),
       }),
     ('first_name', {
@@ -107,7 +107,7 @@ class UserList(ListReport):
       'filter': FilterText(),
       }),
     ('is_staff', {
-      'title': _('is_staff'),
+      'title': _('staff status'),
       'filter': FilterBool(),
       }),
     )

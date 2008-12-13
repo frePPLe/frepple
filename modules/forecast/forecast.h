@@ -350,12 +350,12 @@ class Forecast : public Demand
         double gamma;
 
         /** Default initial gamma value.<br>
-          * The default value is 0.0.
+          * The default value is 0.05.
           */
         static double initial_gamma;
 
         /** Lower limit on the gamma parameter.<br>
-          * The default value is 0.
+          * The default value is 0.05.
           **/
         static double min_gamma;
 
@@ -410,7 +410,13 @@ class Forecast : public Demand
           max_alfa = x;
         }
 
-        /** Update the initial value for the alfa parameter. */
+        /** Update the initial value for the alfa parameter.<br>
+          * The default value is 0.05. <br>
+          * Setting this parameter to too low a value can create false 
+          * positives: the double exponential method is selected for a time 
+          * series without a real trend. A single exponential is better for 
+          * such cases.
+          */
         static void setInitialGamma(double x)
         {
           if (x<0 || x>1.0) throw DataException(

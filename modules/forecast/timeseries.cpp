@@ -30,6 +30,8 @@
 namespace module_forecast
 {
 
+#define ACCURACY 0.01
+
 void Forecast::generateFutureValues(
   const double history[], unsigned int historycount, 
   const Date buckets[], unsigned int bucketcount, 
@@ -116,7 +118,7 @@ double Forecast::MovingAverage::generateForecast
     }
     else
       avg = sum / i;
-    if (i >= fcst->getForecastSkip() && i != count)
+    if (i >= fcst->getForecastSkip())
       error_mad += fabs(avg - history[i]) * madWeight[i];
   }
 
@@ -164,6 +166,7 @@ double Forecast::SingleExponential::generateForecast
   bool upperboundarytested = false;
   bool lowerboundarytested = false;
   double error_mad = 0.0, delta, df_dalfa_i, sum_11, sum_12;
+  double best_error_mad = DBL_MAX, best_alfa, best_f_i;
   for (; iteration <= Forecast::getForecastIterations(); ++iteration)
   {
     // Initialize the iteration
@@ -183,6 +186,14 @@ double Forecast::SingleExponential::generateForecast
         error_mad += fabs(f_i - history[i]) * madWeight[i];
     }
 
+    // Better than earlier iterations?
+    if (error_mad < best_error_mad)
+    {
+      best_error_mad = error_mad;
+      best_alfa = alfa;
+      best_f_i = f_i;
+    }
+
     // Add Levenberg - Marquardt damping factor
     if (fabs(sum_11 + error_mad / iteration) > ROUNDING_ERROR)
       sum_11 += error_mad / iteration;
@@ -191,8 +202,8 @@ double Forecast::SingleExponential::generateForecast
     if (fabs(sum_11) < ROUNDING_ERROR) break;
     delta = sum_12 / sum_11;
 
-    // Stop when we are close enough
-    if (fabs(delta) < 0.01) break;
+    // Stop when we are close enough and have tried hard enough
+    if (fabs(delta) < ACCURACY && iteration > 3) break;
 
     // New alfa
     alfa += delta;
@@ -213,14 +224,17 @@ double Forecast::SingleExponential::generateForecast
     }    
   }
 
+  // Keep the best result
+  f_i = best_f_i;
+
   // Echo the result
   if (debug)
     logger << (fcst ? fcst->getName() : "") << ": single exponential : " 
-      << "alfa " << alfa 
-      << ", mad " << error_mad 
+      << "alfa " << best_alfa 
+      << ", mad " << best_error_mad 
       << ", " << iteration << " iterations"
       << ", forecast " << f_i << endl;
-  return error_mad;
+  return best_error_mad;
 }
 
 
@@ -246,7 +260,7 @@ double Forecast::DoubleExponential::initial_alfa = 0.2;
 double Forecast::DoubleExponential::min_alfa = 0.02;
 double Forecast::DoubleExponential::max_alfa = 1.0;
 double Forecast::DoubleExponential::initial_gamma = 0.2;
-double Forecast::DoubleExponential::min_gamma = 0.00;
+double Forecast::DoubleExponential::min_gamma = 0.05;
 double Forecast::DoubleExponential::max_gamma = 1.0;
 
 
@@ -264,10 +278,10 @@ double Forecast::DoubleExponential::generateForecast  /* @todo optimization not 
     d_constant_d_alfa_prev, d_constant_d_alfa, d_constant_d_gamma,	
     d_trend_d_alfa, d_trend_d_gamma, d_forecast_d_alfa, d_forecast_d_gamma,
     sum11, sum12, sum22, sum13, sum23;
+  double best_error_mad = DBL_MAX, best_alfa, best_gamma, best_constant_i, best_trend_i;
 
   // Iterations
-  unsigned int iteration = 1;
-  bool boundarytested = false;
+  unsigned int iteration = 1, boundarytested = 0;
   for (; iteration <= Forecast::getForecastIterations(); ++iteration)
   {
     // Initialize the iteration
@@ -307,6 +321,16 @@ double Forecast::DoubleExponential::generateForecast  /* @todo optimization not 
         error_mad += fabs(constant_i + trend_i - history[i]) * madWeight[i];
     }
 
+    // Better than earlier iterations?
+    if (error_mad < best_error_mad)
+    {
+      best_error_mad = error_mad;
+      best_alfa = alfa;
+      best_gamma = gamma;
+      best_constant_i = constant_i;
+      best_trend_i = trend_i;
+    }
+
     // Add Levenberg - Marquardt damping factor
     sum11 += error_mad / iteration;
     sum22 += error_mad / iteration;
@@ -324,8 +348,9 @@ double Forecast::DoubleExponential::generateForecast  /* @todo optimization not 
     delta_alfa = (sum13 * sum22 - sum23 * sum12) / determinant;
     delta_gamma = (sum23 * sum11 - sum13 * sum12) / determinant;
 
-    // Stop when we are close enough
-    if (fabs(delta_alfa) + fabs(delta_gamma) < 0.02) break;
+    // Stop when we are close enough and have tried hard enough
+    if (fabs(delta_alfa) + fabs(delta_gamma) < ACCURACY && iteration > 3) 
+      break;
 
     // New values for the next iteration
     alfa += delta_alfa;
@@ -345,22 +370,25 @@ double Forecast::DoubleExponential::generateForecast  /* @todo optimization not 
     if ((gamma == min_gamma || gamma == max_gamma) 
       && (alfa == min_alfa || alfa == max_alfa))
     {
-      if (boundarytested) break;
-      boundarytested = true;
+      if (boundarytested++ > 2) break;
     }
   }
+
+  // Keep the best result
+  constant_i = best_constant_i;
+  trend_i = best_trend_i;
 
   // Echo the result
   if (debug)
     logger << (fcst ? fcst->getName() : "") << ": double exponential : " 
-      << "alfa " << alfa 
-      << ", gamma " << gamma 
-      << ", mad " << error_mad 
+      << "alfa " << best_alfa 
+      << ", gamma " << best_gamma 
+      << ", mad " << best_error_mad 
       << ", " << iteration << " iterations"
       << ", constant " << constant_i
       << ", trend " << trend_i
       << ", forecast " << (trend_i + constant_i) << endl;
-  return error_mad;
+  return best_error_mad;
 }
 
 

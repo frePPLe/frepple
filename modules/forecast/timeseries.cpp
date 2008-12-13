@@ -264,7 +264,7 @@ double Forecast::DoubleExponential::min_gamma = 0.05;
 double Forecast::DoubleExponential::max_gamma = 1.0;
 
 
-double Forecast::DoubleExponential::generateForecast  /* @todo optimization not implemented yet*/
+double Forecast::DoubleExponential::generateForecast
   (Forecast* fcst, const double history[], unsigned int count, const double madWeight[], bool debug)
 {
   // Verify whether this is a valid forecast method.

@@ -33,7 +33,7 @@
 <td>{% superlink j.name resource %}</td>
 <td>{% if perms.input.change_location %}{% superlink j.location location %}{% else %}{{j.location}}{% endif %}</td>
 <td>{{ crossheader }}</td>
-{% endfor %}
+</tr>{% endfor %}
 {% endblock %}
 
 {% block data %}

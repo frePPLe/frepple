@@ -40,7 +40,7 @@
 </tbody></table></div></td></tr></table>
 
 {% block pagination %}<p class="paginator">
-{{paginator_html}}&nbsp;&nbsp;{{hits}} {% if reportclass.model %}{% trans reportclass.model._meta.verbose_name_plural %} {% endif %}{% ifnotequal hits fullhits %} (total <a class="showall" href="{{request.path}}{% if is_popup %}?pop=1{% endif %}">{{fullhits}}</a>){% endifnotequal %}
+{{paginator_html}}&nbsp;&nbsp;{{hits}} {% if reportclass.model %}{% trans reportclass.model._meta.verbose_name_plural %} {% endif %}{% ifnotequal hits fullhits %} (total <a class="showall" href="{{base_request_path}}{% if is_popup %}?pop=1{% endif %}">{{fullhits}}</a>){% endifnotequal %}
 {% endblock %}
 
 {% endblock %}

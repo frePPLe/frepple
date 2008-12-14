@@ -420,6 +420,14 @@ def view_report(request, entity=None, **args):
   # Build the paginator html
   page_htmls = _get_paginator_html(request, paginator, page)
 
+  # Build the path for the complete list.
+  # We need to treat URLs for a specific entity a bit differently
+  if entity:
+    base_request_path = "%s/" % request.path.rstrip("/").rpartition("/")[0]
+  else:
+    base_request_path = request.path
+  print base_request_path
+
   # Prepare template context
   context = {
        'reportclass': reportclass,
@@ -436,6 +444,7 @@ def view_report(request, entity=None, **args):
        'hits' : paginator.count,
        'fullhits': fullhits,
        'is_popup': is_popup,
+       'base_request_path': base_request_path,
        'paginator_html': mark_safe(page_htmls),
        'javascript_imports': _get_javascript_imports(reportclass),
        # Never reset the breadcrumbs if an argument entity was passed.

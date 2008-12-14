@@ -5,28 +5,28 @@
 {% get_models from input freppledb.admin.site as modelsIn %}
 <div class="menuBar">
 {% if modelsIn %}
-<a class="menuButton" href=""
+<a class="menuButton" href="#"
     onclick="return buttonClick(event,'inputMenu');"
     onmouseover="buttonMouseover(event,'inputMenu');"
 >{% trans 'Input' %}</a>
 {% endif %}
-<a class="menuButton" href=""
+<a class="menuButton" href="#"
     onclick="return buttonClick(event,'outputMenu');"
     onmouseover="buttonMouseover(event,'outputMenu');"
 >{% trans 'Reports' %}</a>
 {% if perms.execute %}
-<a class="menuButton" href=""
+<a class="menuButton" href="#"
     onclick="return buttonClick(event,'toolsMenu');"
     onmouseover="buttonMouseover(event,'toolsMenu');"
 >{% trans 'Tools' %}</a>
 {% endif %}
 {% if modelsAuth %}
-<a class="menuButton" href=""
+<a class="menuButton" href="#"
     onclick="return buttonClick(event,'authMenu');"
     onmouseover="buttonMouseover(event,'authMenu');"
 >{% trans 'Admin' %}</a>
 {% endif %}
-<a class="menuButton" href=""
+<a class="menuButton" href="#"
     onclick="return buttonClick(event,'userMenu');"
     onmouseover="buttonMouseover(event,'userMenu');"
 >{% trans 'User' %}</a>

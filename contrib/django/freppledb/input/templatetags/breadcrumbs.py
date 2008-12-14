@@ -186,7 +186,7 @@ class SuperLink(Node):
           return mark_safe(escape(value))
       else:
         # Not a popup window
-        return mark_safe('<a href="" class="%s">%s</a>' % (self.type, escape(value)))
+        return mark_safe('<a href="#" class="%s">%s</a>' % (self.type, escape(value)))
 
 def superlinknode(parser, token):
   from re import split

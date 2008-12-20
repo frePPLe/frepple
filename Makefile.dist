@@ -22,7 +22,7 @@
 
 #
 # This makefile is built as a convenience for developers.
-# It provides easy to use wrappers around common administration, configuration, build 
+# It provides easy to use wrappers around common administration, configuration, build
 # and maintenance tasks:
 #  CONFIGURING
 #     - prep:        Standard autotools configuration.
@@ -141,18 +141,18 @@ astyle:
 # This make target is used to consistently update all those places.
 #  * All arguments, except the 4th, need to be integers.
 #  * Only the fourth argument can be empty.
-#  * When the argument 4 is used, it should start with a '.' and avoid 
+#  * When the argument 4 is used, it should start with a '.' and avoid
 #    using '-' (which causes problems for the RPMs)
 old1 = 0
 old2 = 6
 old3 = 0
-old4 = .beta
+old4 = 
 new1 = 0
 new2 = 6
-new3 = 0
-new4 = 
+new3 = 1
+new4 = .beta
 set_release:
-	for i in "configure.in" "doc/menu.html" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "contrib/django/freppledb/settings.py" "contrib/django/freppledb/locale/django.po" "bin/frepple.xsd" "bin/frepple_core.xsd"; do \
+	for i in "configure.in" "doc/menu.html" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "contrib/django/freppledb/settings.py" "contrib/django/freppledb/locale/nl/LC_MESSAGES/django.po" "bin/frepple.xsd" "bin/frepple_core.xsd"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)$(old4)/$(new1).$(new2).$(new3)$(new4)/g' $$i >out.tmp; \
 		mv out.tmp $$i; \
 	done

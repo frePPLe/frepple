@@ -10,7 +10,7 @@
       - D: match at 'customer' + 'parent item' level
       - E: match at 'parent customer' + 'parent item' level
   </description>
-  <current>2007-01-01T00:00:00</current>
+  <current>2009-01-01T00:00:00</current>
   <commands>
     <verbose>true</verbose>
     <command xsi:type="command_solve">
@@ -25,9 +25,9 @@
   <calendars>
     <calendar name="Weeks" xsi:type="calendar_void">
       <buckets>
-        <bucket start="2007-01-01T00:00:00"/>
-        <bucket start="2007-02-01T00:00:00"/>
-        <bucket start="2007-03-01T00:00:00"/>
+        <bucket start="2009-01-01T00:00:00"/>
+        <bucket start="2009-02-01T00:00:00"/>
+        <bucket start="2009-03-01T00:00:00"/>
       </buckets>
     </calendar>
   </calendars>
@@ -133,8 +133,8 @@
       <calendar name="Weeks" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-02-01T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-02-01T00:00:00</end>
           <total>100</total>
         </bucket>
       </buckets>
@@ -151,7 +151,7 @@
       <item name="A item"/>
       <customer name="A customer"/>
       <quantity>10</quantity>
-      <due>2007-01-02T00:00:00</due>
+      <due>2009-01-02T00:00:00</due>
     </demand>
   </demands>
 
@@ -163,8 +163,8 @@
       <calendar name="Weeks" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-02-01T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-02-01T00:00:00</end>
           <total>100</total>
         </bucket>
       </buckets>
@@ -174,12 +174,12 @@
       <item name="B item"/>
       <customer name="B customer"/>
       <quantity>10</quantity>
-      <due>2007-01-02T00:00:00</due>
+      <due>2009-01-02T00:00:00</due>
     </demand>
     <demand name="B order 2">
       <item name="B item"/>
       <quantity>10</quantity>
-      <due>2007-01-02T00:00:00</due>
+      <due>2009-01-02T00:00:00</due>
     </demand>
   </demands>
 
@@ -192,8 +192,8 @@
       <calendar name="Weeks" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-02-01T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-02-01T00:00:00</end>
           <total>100</total>
         </bucket>
       </buckets>
@@ -208,8 +208,8 @@
       <calendar name="Weeks" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-02-01T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-02-01T00:00:00</end>
           <total>100</total>
         </bucket>
       </buckets>
@@ -219,7 +219,7 @@
       <item name="C item"/>
       <customer name="C customer"/>
       <quantity>10</quantity>
-      <due>2007-01-02T00:00:00</due>
+      <due>2009-01-02T00:00:00</due>
     </demand>
   </demands>
 
@@ -232,8 +232,8 @@
       <calendar name="Weeks" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-02-01T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-02-01T00:00:00</end>
           <total>100</total>
         </bucket>
       </buckets>
@@ -243,7 +243,7 @@
       <item name="D item"/>
       <customer name="D customer"/>
       <quantity>10</quantity>
-      <due>2007-01-02T00:00:00</due>
+      <due>2009-01-02T00:00:00</due>
     </demand>
   </demands>
 
@@ -256,8 +256,8 @@
       <calendar name="Weeks" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-02-01T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-02-01T00:00:00</end>
           <total>100</total>
         </bucket>
       </buckets>
@@ -267,7 +267,7 @@
       <item name="E item"/>
       <customer name="E customer"/>
       <quantity>10</quantity>
-      <due>2007-01-02T00:00:00</due>
+      <due>2009-01-02T00:00:00</due>
     </demand>
   </demands>
 </plan>

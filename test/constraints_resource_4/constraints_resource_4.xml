@@ -7,7 +7,7 @@
     and capacity constraints. A few passes of the solver are required to fill
     the available capacity slots.
   </description>
-  <current>2007-01-01T00:00:00</current>
+  <current>2009-01-01T00:00:00</current>
   <commands>
     <verbose>true</verbose>
     <command xsi:type="command_solve">
@@ -85,21 +85,21 @@
     <!-- No mat or cap problem -->
     <demand name="order 1">
       <quantity>10</quantity>
-      <due>2007-01-20T00:00:00</due>
+      <due>2009-01-20T00:00:00</due>
       <priority>1</priority>
       <item name="end item" />
     </demand>
     <!-- No mat or cap problem -->
     <demand name="order 2">
       <quantity>5</quantity>
-      <due>2007-01-17T00:00:00</due>
+      <due>2009-01-17T00:00:00</due>
       <priority>2</priority>
       <item name="end item" />
     </demand>
     <!-- No mat or cap problem -->
     <demand name="order 3">
       <quantity>2</quantity>
-      <due>2007-01-16T00:00:00</due>
+      <due>2009-01-16T00:00:00</due>
       <priority>3</priority>
       <item name="end item" />
     </demand>
@@ -108,7 +108,7 @@
     -->
     <demand name="order 4">
       <quantity>8</quantity>
-      <due>2007-01-18T00:00:00</due>
+      <due>2009-01-18T00:00:00</due>
       <priority>4</priority>
       <item name="end item" />
     </demand>

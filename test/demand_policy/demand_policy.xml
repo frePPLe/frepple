@@ -28,7 +28,7 @@
           In this case the onhand on jan 5 is increased to 15.
           -> A delivery of 20 units on 10 Jan
   </description>
-  <current>2007-01-01T00:00:00</current>
+  <current>2009-01-01T00:00:00</current>
   <commands>
     <verbose>true</verbose>
     <command xsi:type="command_solve">
@@ -156,38 +156,38 @@
   </flows>
 	<operationplans>
 	  <operationplan id="1001" operation="supply item A">
-	    <start>2007-01-10T00:00:00</start>
-	    <end>2007-01-10T00:00:00</end>
+	    <start>2009-01-10T00:00:00</start>
+	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
 	    <locked>true</locked>
 	  </operationplan>
 	  <operationplan id="1002" operation="supply item B">
-	    <start>2007-01-10T00:00:00</start>
-	    <end>2007-01-10T00:00:00</end>
+	    <start>2009-01-10T00:00:00</start>
+	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
 	    <locked>true</locked>
 	  </operationplan>
 	  <operationplan id="1003" operation="supply item C">
-	    <start>2007-01-10T00:00:00</start>
-	    <end>2007-01-10T00:00:00</end>
+	    <start>2009-01-10T00:00:00</start>
+	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
 	    <locked>true</locked>
 	  </operationplan>
 	  <operationplan id="1004" operation="supply item D">
-	    <start>2007-01-10T00:00:00</start>
-	    <end>2007-01-10T00:00:00</end>
+	    <start>2009-01-10T00:00:00</start>
+	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
 	    <locked>true</locked>
 	  </operationplan>
 	  <operationplan id="1005" operation="supply item E">
-	    <start>2007-01-10T00:00:00</start>
-	    <end>2007-01-10T00:00:00</end>
+	    <start>2009-01-10T00:00:00</start>
+	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
 	    <locked>true</locked>
 	  </operationplan>
 	  <operationplan id="1006" operation="supply item F">
-	    <start>2007-01-10T00:00:00</start>
-	    <end>2007-01-10T00:00:00</end>
+	    <start>2009-01-10T00:00:00</start>
+	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
 	    <locked>true</locked>
 	  </operationplan>
@@ -195,27 +195,27 @@
   <demands>
     <demand name="order A">
       <quantity>20</quantity>
-      <due>2007-01-05T00:00:00</due>
+      <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item A" />
     </demand>
     <demand name="order B">
       <quantity>20</quantity>
-      <due>2007-01-05T00:00:00</due>
+      <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item B" />
       <maxlateness>P0D</maxlateness>
     </demand>
     <demand name="order C">
       <quantity>20</quantity>
-      <due>2007-01-05T00:00:00</due>
+      <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item C" />
       <minshipment>20</minshipment>
     </demand>
     <demand name="order D">
       <quantity>20</quantity>
-      <due>2007-01-05T00:00:00</due>
+      <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item D" />
       <maxlateness>P0D</maxlateness>
@@ -223,14 +223,14 @@
     </demand>
     <demand name="order E">
       <quantity>20</quantity>
-      <due>2007-01-05T00:00:00</due>
+      <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item E" />
       <maxlateness>P2D</maxlateness>
     </demand>
     <demand name="order F">
       <quantity>20</quantity>
-      <due>2007-01-05T00:00:00</due>
+      <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item F" />
       <minshipment>11</minshipment>

@@ -12,7 +12,7 @@
     - Net actual orders from the gross forecast to obtain a net
       forecast to be planned.
   </description>
-	<current>2007-01-01T00:00:00</current>
+	<current>2009-01-01T00:00:00</current>
 	<customers>
 		<customer name="customer">
 		</customer>
@@ -21,22 +21,22 @@
 		<calendar name="planningbuckets" xsi:type="calendar_double">
 			<default>0</default>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-04-01T00:00:00">
+				<bucket start="2009-04-01T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-05-01T00:00:00">
+				<bucket start="2009-05-01T00:00:00">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-06-01T00:00:00">
+				<bucket start="2009-06-01T00:00:00">
 					<value>1</value>
 				</bucket>
 			</buckets>
@@ -51,32 +51,32 @@
 			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>60</total>
 					<quantity>60</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>70</total>
 					<quantity>70</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>80</total>
 					<quantity>80</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-04-01T00:00:00">
+				<bucket start="2009-04-01T00:00:00">
 					<total>90</total>
 					<quantity>90</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-05-01T00:00:00">
+				<bucket start="2009-05-01T00:00:00">
 					<total>100</total>
 					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-06-01T00:00:00">
+				<bucket start="2009-06-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -87,32 +87,32 @@
 			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
 					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>100</total>
 					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>100</total>
 					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-04-01T00:00:00">
+				<bucket start="2009-04-01T00:00:00">
 					<total>100</total>
 					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-05-01T00:00:00">
+				<bucket start="2009-05-01T00:00:00">
 					<total>100</total>
 					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-06-01T00:00:00">
+				<bucket start="2009-06-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -123,32 +123,32 @@
 			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>47</total>
 					<quantity>47</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>47</total>
 					<quantity>47</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>47</total>
 					<quantity>47</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-04-01T00:00:00">
+				<bucket start="2009-04-01T00:00:00">
 					<total>47</total>
 					<quantity>47</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-05-01T00:00:00">
+				<bucket start="2009-05-01T00:00:00">
 					<total>47</total>
 					<quantity>47</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-06-01T00:00:00">
+				<bucket start="2009-06-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -159,32 +159,32 @@
 			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>15</total>
 					<quantity>15</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>15</total>
 					<quantity>15</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>15</total>
 					<quantity>15</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-04-01T00:00:00">
+				<bucket start="2009-04-01T00:00:00">
 					<total>15</total>
 					<quantity>15</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-05-01T00:00:00">
+				<bucket start="2009-05-01T00:00:00">
 					<total>15</total>
 					<quantity>15</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-06-01T00:00:00">
+				<bucket start="2009-06-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -195,32 +195,32 @@
 			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>16</total>
 					<quantity>16</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>16</total>
 					<quantity>16</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>16</total>
 					<quantity>16</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-04-01T00:00:00">
+				<bucket start="2009-04-01T00:00:00">
 					<total>16</total>
 					<quantity>16</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-05-01T00:00:00">
+				<bucket start="2009-05-01T00:00:00">
 					<total>17</total>
 					<quantity>17</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-06-01T00:00:00">
+				<bucket start="2009-06-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -237,32 +237,32 @@
 			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>70</total>
 					<quantity>70</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>70</total>
 					<quantity>70</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>70</total>
 					<quantity>70</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-04-01T00:00:00">
+				<bucket start="2009-04-01T00:00:00">
 					<total>70</total>
 					<quantity>70</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-05-01T00:00:00">
+				<bucket start="2009-05-01T00:00:00">
 					<total>70</total>
 					<quantity>70</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-06-01T00:00:00">
+				<bucket start="2009-06-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -273,32 +273,32 @@
 			<item name="item"/>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>160</total>
 					<quantity>160</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>170</total>
 					<quantity>170</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>179</total>
 					<quantity>179</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-04-01T00:00:00">
+				<bucket start="2009-04-01T00:00:00">
 					<total>189</total>
 					<quantity>189</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-05-01T00:00:00">
+				<bucket start="2009-05-01T00:00:00">
 					<total>199</total>
 					<quantity>199</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-06-01T00:00:00">
+				<bucket start="2009-06-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>

@@ -10,7 +10,7 @@
       - D: match at &apos;customer&apos; + &apos;parent item&apos; level
       - E: match at &apos;parent customer&apos; + &apos;parent item&apos; level
   </description>
-	<current>2007-01-01T00:00:00</current>
+	<current>2009-01-01T00:00:00</current>
 	<solvers>
 		<solver name="Netting orders from forecast" xsi:type="solver_forecast">
 			<loglevel>2</loglevel>
@@ -91,11 +91,11 @@
 	<calendars>
 		<calendar name="Weeks" xsi:type="calendar_void">
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 				</bucket>
 			</buckets>
 		</calendar>
@@ -199,17 +199,17 @@
 			<item name="A item"/>
 			<calendar name="Weeks" xsi:type="calendar_void"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
 					<quantity>90</quantity>
 					<consumed>10</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -226,23 +226,23 @@
 			<customer name="A customer"/>
 			<quantity>10</quantity>
 			<item name="A item"/>
-			<due>2007-01-02T00:00:00</due>
+			<due>2009-01-02T00:00:00</due>
 		</demand>
 		<demand name="B forecast" xsi:type="demand_forecast">
 			<item name="B item"/>
 			<calendar name="Weeks" xsi:type="calendar_void"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
 					<quantity>80</quantity>
 					<consumed>20</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -253,28 +253,28 @@
 			<customer name="B customer"/>
 			<quantity>10</quantity>
 			<item name="B item"/>
-			<due>2007-01-02T00:00:00</due>
+			<due>2009-01-02T00:00:00</due>
 		</demand>
 		<demand name="B order 2">
 			<quantity>10</quantity>
 			<item name="B item"/>
-			<due>2007-01-02T00:00:00</due>
+			<due>2009-01-02T00:00:00</due>
 		</demand>
 		<demand name="C forecast" xsi:type="demand_forecast">
 			<item name="C item"/>
 			<calendar name="Weeks" xsi:type="calendar_void"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
 					<quantity>90</quantity>
 					<consumed>10</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -285,17 +285,17 @@
 			<item name="C parent item"/>
 			<calendar name="Weeks" xsi:type="calendar_void"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
 					<quantity>100</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -306,23 +306,23 @@
 			<customer name="C customer"/>
 			<quantity>10</quantity>
 			<item name="C item"/>
-			<due>2007-01-02T00:00:00</due>
+			<due>2009-01-02T00:00:00</due>
 		</demand>
 		<demand name="D forecast" xsi:type="demand_forecast">
 			<item name="D parent item"/>
 			<calendar name="Weeks" xsi:type="calendar_void"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
 					<quantity>90</quantity>
 					<consumed>10</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -333,23 +333,23 @@
 			<customer name="D customer"/>
 			<quantity>10</quantity>
 			<item name="D item"/>
-			<due>2007-01-02T00:00:00</due>
+			<due>2009-01-02T00:00:00</due>
 		</demand>
 		<demand name="E forecast" xsi:type="demand_forecast">
 			<item name="E parent item"/>
 			<calendar name="Weeks" xsi:type="calendar_void"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>100</total>
 					<quantity>90</quantity>
 					<consumed>10</consumed>
 				</bucket>
-				<bucket start="2007-02-01T00:00:00">
+				<bucket start="2009-02-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-01T00:00:00">
+				<bucket start="2009-03-01T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -360,50 +360,50 @@
 			<customer name="E customer"/>
 			<quantity>10</quantity>
 			<item name="E item"/>
-			<due>2007-01-02T00:00:00</due>
+			<due>2009-01-02T00:00:00</due>
 		</demand>
 	</demands>
 	<problems>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;A order&apos; is not planned</description>
-			<start>2007-01-02T00:00:00</start>
-			<end>2007-01-02T00:00:00</end>
+			<start>2009-01-02T00:00:00</start>
+			<end>2009-01-02T00:00:00</end>
 			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;B order 1&apos; is not planned</description>
-			<start>2007-01-02T00:00:00</start>
-			<end>2007-01-02T00:00:00</end>
+			<start>2009-01-02T00:00:00</start>
+			<end>2009-01-02T00:00:00</end>
 			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;B order 2&apos; is not planned</description>
-			<start>2007-01-02T00:00:00</start>
-			<end>2007-01-02T00:00:00</end>
+			<start>2009-01-02T00:00:00</start>
+			<end>2009-01-02T00:00:00</end>
 			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;C order&apos; is not planned</description>
-			<start>2007-01-02T00:00:00</start>
-			<end>2007-01-02T00:00:00</end>
+			<start>2009-01-02T00:00:00</start>
+			<end>2009-01-02T00:00:00</end>
 			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;D order&apos; is not planned</description>
-			<start>2007-01-02T00:00:00</start>
-			<end>2007-01-02T00:00:00</end>
+			<start>2009-01-02T00:00:00</start>
+			<end>2009-01-02T00:00:00</end>
 			<weight>10</weight>
 		</problem>
 		<problem>
 			<name>unplanned</name>
 			<description>Demand &apos;E order&apos; is not planned</description>
-			<start>2007-01-02T00:00:00</start>
-			<end>2007-01-02T00:00:00</end>
+			<start>2009-01-02T00:00:00</start>
+			<end>2009-01-02T00:00:00</end>
 			<weight>10</weight>
 		</problem>
 	</problems>

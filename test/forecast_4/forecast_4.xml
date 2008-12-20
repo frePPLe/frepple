@@ -5,7 +5,7 @@
   This test verifies how forecast can be rounded during the forecast
   distribution.
   </description>
-  <current>2007-01-01T00:00:00</current>
+  <current>2009-01-01T00:00:00</current>
   <commands>
     <verbose>true</verbose>
     <command xsi:type="command_save">
@@ -19,37 +19,37 @@
   <calendars>
     <calendar name="planningbuckets" xsi:type="calendar_double">
       <buckets>
-        <bucket start="2007-01-01T00:00:00" name="Mon Jan 01" value="1"/>
-        <bucket start="2007-01-02T00:00:00" name="Tue Jan 02" value="1"/>
-        <bucket start="2007-01-03T00:00:00" name="Wed Jan 03" value="1"/>
-        <bucket start="2007-01-04T00:00:00" name="Thu Jan 04" value="1"/>
-        <bucket start="2007-01-05T00:00:00" name="Fri Jan 05" value="1"/>
-        <bucket start="2007-01-06T00:00:00" name="Sat Jan 06" value="1"/>
-        <bucket start="2007-01-07T00:00:00" name="Sun Jan 07" value="1"/>
-        <bucket start="2007-01-08T00:00:00" name="Mon Jan 08" value="1"/>
-        <bucket start="2007-01-09T00:00:00" name="Tue Jan 09" value="1"/>
-        <bucket start="2007-01-10T00:00:00" name="Wed Jan 10" value="1"/>
-        <bucket start="2007-01-11T00:00:00" name="Thu Jan 11" value="1"/>
-        <bucket start="2007-01-12T00:00:00" name="Fri Jan 12" value="1"/>
-        <bucket start="2007-01-13T00:00:00" name="Sat Jan 13" value="1"/>
-        <bucket start="2007-01-14T00:00:00" name="Sun Jan 14" value="1"/>
-        <bucket start="2007-01-15T00:00:00" name="Mon Jan 15" value="1"/>
-        <bucket start="2007-01-16T00:00:00" name="Tue Jan 16" value="1"/>
-        <bucket start="2007-01-17T00:00:00" name="Wed Jan 17" value="1"/>
-        <bucket start="2007-01-18T00:00:00" name="Thu Jan 18" value="1"/>
-        <bucket start="2007-01-19T00:00:00" name="Fri Jan 19" value="1"/>
-        <bucket start="2007-01-20T00:00:00" name="Sat Jan 20" value="1"/>
-        <bucket start="2007-01-21T00:00:00" name="Sun Jan 21" value="1"/>
-        <bucket start="2007-01-22T00:00:00" name="Mon Jan 22" value="1"/>
-        <bucket start="2007-01-23T00:00:00" name="Tue Jan 23" value="1"/>
-        <bucket start="2007-01-24T00:00:00" name="Wed Jan 24" value="1"/>
-        <bucket start="2007-01-25T00:00:00" name="Thu Jan 25" value="1"/>
-        <bucket start="2007-01-26T00:00:00" name="Fri Jan 26" value="1"/>
-        <bucket start="2007-01-27T00:00:00" name="Sat Jan 27" value="1"/>
-        <bucket start="2007-01-28T00:00:00" name="Sun Jan 28" value="1"/>
-        <bucket start="2007-01-29T00:00:00" name="Mon Jan 29" value="1"/>
-        <bucket start="2007-01-30T00:00:00" name="Tue Jan 30" value="1"/>
-        <bucket start="2007-01-31T00:00:00" name="Wed Jan 31" value="1"/>
+        <bucket start="2009-01-01T00:00:00" name="Mon Jan 01" value="1"/>
+        <bucket start="2009-01-02T00:00:00" name="Tue Jan 02" value="1"/>
+        <bucket start="2009-01-03T00:00:00" name="Wed Jan 03" value="1"/>
+        <bucket start="2009-01-04T00:00:00" name="Thu Jan 04" value="1"/>
+        <bucket start="2009-01-05T00:00:00" name="Fri Jan 05" value="1"/>
+        <bucket start="2009-01-06T00:00:00" name="Sat Jan 06" value="1"/>
+        <bucket start="2009-01-07T00:00:00" name="Sun Jan 07" value="1"/>
+        <bucket start="2009-01-08T00:00:00" name="Mon Jan 08" value="1"/>
+        <bucket start="2009-01-09T00:00:00" name="Tue Jan 09" value="1"/>
+        <bucket start="2009-01-10T00:00:00" name="Wed Jan 10" value="1"/>
+        <bucket start="2009-01-11T00:00:00" name="Thu Jan 11" value="1"/>
+        <bucket start="2009-01-12T00:00:00" name="Fri Jan 12" value="1"/>
+        <bucket start="2009-01-13T00:00:00" name="Sat Jan 13" value="1"/>
+        <bucket start="2009-01-14T00:00:00" name="Sun Jan 14" value="1"/>
+        <bucket start="2009-01-15T00:00:00" name="Mon Jan 15" value="1"/>
+        <bucket start="2009-01-16T00:00:00" name="Tue Jan 16" value="1"/>
+        <bucket start="2009-01-17T00:00:00" name="Wed Jan 17" value="1"/>
+        <bucket start="2009-01-18T00:00:00" name="Thu Jan 18" value="1"/>
+        <bucket start="2009-01-19T00:00:00" name="Fri Jan 19" value="1"/>
+        <bucket start="2009-01-20T00:00:00" name="Sat Jan 20" value="1"/>
+        <bucket start="2009-01-21T00:00:00" name="Sun Jan 21" value="1"/>
+        <bucket start="2009-01-22T00:00:00" name="Mon Jan 22" value="1"/>
+        <bucket start="2009-01-23T00:00:00" name="Tue Jan 23" value="1"/>
+        <bucket start="2009-01-24T00:00:00" name="Wed Jan 24" value="1"/>
+        <bucket start="2009-01-25T00:00:00" name="Thu Jan 25" value="1"/>
+        <bucket start="2009-01-26T00:00:00" name="Fri Jan 26" value="1"/>
+        <bucket start="2009-01-27T00:00:00" name="Sat Jan 27" value="1"/>
+        <bucket start="2009-01-28T00:00:00" name="Sun Jan 28" value="1"/>
+        <bucket start="2009-01-29T00:00:00" name="Mon Jan 29" value="1"/>
+        <bucket start="2009-01-30T00:00:00" name="Tue Jan 30" value="1"/>
+        <bucket start="2009-01-31T00:00:00" name="Wed Jan 31" value="1"/>
       </buckets>
     </calendar>
   </calendars>
@@ -61,8 +61,8 @@
       <calendar name="planningbuckets" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-01-29T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-01-29T00:00:00</end>
           <total>1</total>
         </bucket>
       </buckets>
@@ -73,8 +73,8 @@
       <calendar name="planningbuckets" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-01-29T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-01-29T00:00:00</end>
           <total>2</total>
         </bucket>
       </buckets>
@@ -85,8 +85,8 @@
       <calendar name="planningbuckets" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-01-29T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-01-29T00:00:00</end>
           <total>3</total>
         </bucket>
       </buckets>
@@ -97,8 +97,8 @@
       <calendar name="planningbuckets" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-01-29T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-01-29T00:00:00</end>
           <total>4</total>
         </bucket>
       </buckets>
@@ -109,8 +109,8 @@
       <calendar name="planningbuckets" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-01-29T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-01-29T00:00:00</end>
           <total>5</total>
         </bucket>
       </buckets>
@@ -121,8 +121,8 @@
       <calendar name="planningbuckets" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-01-29T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-01-29T00:00:00</end>
           <total>27</total>
         </bucket>
       </buckets>
@@ -133,8 +133,8 @@
       <calendar name="planningbuckets" />
       <buckets>
         <bucket>
-          <start>2007-01-01T00:00:00</start>
-          <end>2007-01-29T00:00:00</end>
+          <start>2009-01-01T00:00:00</start>
+          <end>2009-01-29T00:00:00</end>
           <total>26</total>
         </bucket>
       </buckets>

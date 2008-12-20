@@ -7,7 +7,7 @@
     late.
     The model also includes a resource with infinite capacity.
   </description>
-  <current>2007-01-01T00:00:00</current>
+  <current>2009-01-01T00:00:00</current>
   <commands>
     <verbose>true</verbose>
     <command xsi:type="command_solve">
@@ -39,7 +39,7 @@
     <resource name="Resource">
       <maximum name="Capacity" xsi:type="calendar_double">
         <buckets>
-          <bucket start="2007-01-01T00:00:00">
+          <bucket start="2009-01-01T00:00:00">
             <value>1</value>
           </bucket>
         </buckets>
@@ -76,19 +76,19 @@
   <demands>
     <demand name="order 1">
       <quantity>10</quantity>
-      <due>2007-01-04T09:00:00</due>
+      <due>2009-01-04T09:00:00</due>
       <priority>1</priority>
       <item name="end item" />
     </demand>
     <demand name="order 2">
       <quantity>10</quantity>
-      <due>2007-01-04T08:00:00</due>
+      <due>2009-01-04T08:00:00</due>
       <priority>2</priority>
       <item name="end item" />
     </demand>
     <demand name="order 3">
       <quantity>10</quantity>
-      <due>2007-01-04T08:00:00</due>
+      <due>2009-01-04T08:00:00</due>
       <priority>3</priority>
       <item name="end item" />
     </demand>

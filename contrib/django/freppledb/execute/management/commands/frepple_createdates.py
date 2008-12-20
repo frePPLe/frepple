@@ -64,10 +64,10 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     # Pick up the options
-    if 'start' in options: start = options['start'] or '2006-1-1'
-    else: start = '2006-1-1'
-    if 'end' in options: end = options['end'] or '2010-1-1'
-    else: end = '2010-1-1'
+    if 'start' in options: start = options['start'] or '2008-1-1'
+    else: start = '2008-1-1'
+    if 'end' in options: end = options['end'] or '2012-1-1'
+    else: end = '2012-1-1'
     if 'user' in options: user = options['user'] or ''
     else: user = ''
 

@@ -125,8 +125,8 @@ class Command(BaseCommand):
     else: deliver_lt = 30
     if 'procure_lt' in options: procure_lt = int(options['procure_lt'] or '40')
     else: procure_lt = 40
-    if 'currentdate' in options: currentdate = options['currentdate'] or '2007-01-01'
-    else: currentdate = '2007-01-01'
+    if 'currentdate' in options: currentdate = options['currentdate'] or '2009-01-01'
+    else: currentdate = '2009-01-01'
 
     random.seed(100) # Initialize random seed to get reproducible results
     cnt = 100000     # A counter for operationplan identifiers

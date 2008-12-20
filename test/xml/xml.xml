@@ -2,7 +2,7 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <name>plan</name>
   <description>XML structure test model</description>
-  <current>2007-01-01T00:00:00</current>
+  <current>2009-01-01T00:00:00</current>
   <commands>
     <verbose>true</verbose>
     <command xsi:type="command_solve">
@@ -16,7 +16,7 @@
     <!-- Level 1: Lot -->
     <demand name="order 1">
       <quantity>10</quantity>
-      <due>2007-01-27T00:00:00</due>
+      <due>2009-01-27T00:00:00</due>
       <priority>1</priority>
       <item name="item 1">
         <!-- Level 2: item -->
@@ -51,7 +51,7 @@
                       <!-- Level 7: calendar -->
                       <buckets>
                         <!-- Level 8: bucket -->
-                        <bucket start="2007-01-01T00:00:00" name="Jan Week1" value="0"/>
+                        <bucket start="2009-01-01T00:00:00" name="Jan Week1" value="0"/>
                       </buckets>
                     </maximum>
                   </resource>

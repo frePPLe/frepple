@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<name>Verify the pegging</name>
-	<current>2007-01-01T00:00:00</current>
+	<current>2009-01-01T00:00:00</current>
 	<commands>
 	  <verbose>true</verbose>
 	  <command xsi:type="command_solve">
@@ -45,7 +45,7 @@
 	    <producing name="make 1" />
 	    <minimum name="min inv for buffer 1" xsi:type="calendar_double">
 	      <buckets>
-	        <bucket start="2007-01-01T00:00:00">
+	        <bucket start="2009-01-01T00:00:00">
 	          <value>4</value>
 	          <priority>1</priority>
 	        </bucket>
@@ -61,7 +61,7 @@
 	    <producing name="make 2" />
 	    <minimum name="min inv for buffer 2" xsi:type="calendar_double">
 	      <buckets>
-	        <bucket start="2007-01-01T00:00:00">
+	        <bucket start="2009-01-01T00:00:00">
 	          <value>4</value>
 	        </bucket>
 	      </buckets>
@@ -76,10 +76,10 @@
 	    <producing name="make 3" />
 	    <minimum name="min inv for buffer 3" xsi:type="calendar_double">
 	      <buckets>
-	        <bucket start="2007-01-01T00:00:00">
+	        <bucket start="2009-01-01T00:00:00">
 	          <value>4</value>
 	        </bucket>
-	        <bucket start="2007-01-12T00:00:00">
+	        <bucket start="2009-01-12T00:00:00">
 	          <value>2</value>
 	        </bucket>
 	      </buckets>
@@ -94,10 +94,10 @@
 	    <producing name="make 4" />
 	    <minimum name="min inv for buffer 4" xsi:type="calendar_double">
 	      <buckets>
-	        <bucket start="2007-01-01T00:00:00">
+	        <bucket start="2009-01-01T00:00:00">
 	          <value>4</value>
 	        </bucket>
-	        <bucket start="2007-01-12T00:00:00">
+	        <bucket start="2009-01-12T00:00:00">
 	          <value>6</value>
 	        </bucket>
 	      </buckets>
@@ -194,20 +194,20 @@
 	<demands>
 	  <demand name="order for item 1">
 	    <quantity>100</quantity>
-	    <due>2007-01-10T00:00:00</due>
+	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 1" />
 	  </demand>
 	</demands>
 	<operationplans>
 	  <operationplan id="1001" operation="supply 1">
-	    <start>2007-01-10T00:00:00</start>
-	    <end>2007-01-10T00:00:00</end>
+	    <start>2009-01-10T00:00:00</start>
+	    <end>2009-01-10T00:00:00</end>
 	    <quantity>100</quantity>
 	    <locked>true</locked>
 	  </operationplan>
 	  <operationplan id="1002" operation="supply 1">
-	    <start>2007-01-17T00:00:00</start>
-	    <end>2007-01-17T00:00:00</end>
+	    <start>2009-01-17T00:00:00</start>
+	    <end>2009-01-17T00:00:00</end>
 	    <quantity>200</quantity>
 	    <locked>true</locked>
 	  </operationplan>
@@ -216,20 +216,20 @@
 	<demands>
 	  <demand name="order for item 2">
 	    <quantity>100</quantity>
-	    <due>2007-01-10T00:00:00</due>
+	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 2" />
 	  </demand>
 	</demands>
 	<operationplans>
 	  <operationplan id="2001" operation="supply 2">
-	    <start>2007-01-10T00:00:00</start>
-	    <end>2007-01-10T00:00:00</end>
+	    <start>2009-01-10T00:00:00</start>
+	    <end>2009-01-10T00:00:00</end>
 	    <quantity>100</quantity>
 	    <locked>true</locked>
 	  </operationplan>
 	  <operationplan id="2002" operation="supply 2">
-	    <start>2007-01-17T00:00:00</start>
-	    <end>2007-01-17T00:00:00</end>
+	    <start>2009-01-17T00:00:00</start>
+	    <end>2009-01-17T00:00:00</end>
 	    <quantity>50</quantity>
 	    <locked>true</locked>
 	  </operationplan>
@@ -238,14 +238,14 @@
 	<demands>
 	  <demand name="order for item 3">
 	    <quantity>100</quantity>
-	    <due>2007-01-10T00:00:00</due>
+	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 3" />
 	  </demand>
 	</demands>
 	<operationplans>
 	  <operationplan id="3001" operation="supply 3">
-	    <start>2007-01-15T00:00:00</start>
-	    <end>2007-01-15T00:00:00</end>
+	    <start>2009-01-15T00:00:00</start>
+	    <end>2009-01-15T00:00:00</end>
 	    <quantity>1000</quantity>
 	    <locked>true</locked>
 	  </operationplan>
@@ -254,19 +254,19 @@
 	<demands>
 	  <demand name="order for item 4">
 	    <quantity>100</quantity>
-	    <due>2007-01-10T00:00:00</due>
+	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 4" />
 	  </demand>
 	  <demand name="order 2 for item 4">
 	    <quantity>100</quantity>
-	    <due>2007-06-19T00:00:00</due>
+	    <due>2009-06-19T00:00:00</due>
 	    <item name="item 4" />
 	  </demand>
 	</demands>
 	<operationplans>
 	  <operationplan id="4001" operation="supply 4">
-	    <start>2007-01-15T00:00:00</start>
-	    <end>2007-01-15T00:00:00</end>
+	    <start>2009-01-15T00:00:00</start>
+	    <end>2009-01-15T00:00:00</end>
 	    <quantity>1000</quantity>
 	    <locked>true</locked>
 	  </operationplan>

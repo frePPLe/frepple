@@ -4,7 +4,7 @@
   <description>
     Lead time constraint test model for fixedtime and timeper operations.
   </description>
-  <current>2007-01-01T00:00:00</current>
+  <current>2009-01-01T00:00:00</current>
   <commands>
     <verbose>true</verbose>
     <command xsi:type="command_solve">
@@ -83,7 +83,7 @@
         current date.
       </description>
       <quantity>7</quantity>
-      <due>2007-01-03T00:00:00</due>
+      <due>2009-01-03T00:00:00</due>
       <priority>1</priority>
       <item name="end item" />
     </demand>
@@ -96,7 +96,7 @@
         The total quantity can be satisfied on the requested date.
       </description>
       <quantity>14</quantity>
-      <due>2007-01-11T00:00:00</due>
+      <due>2009-01-11T00:00:00</due>
       <priority>2</priority>
       <item name="end item" />
     </demand>

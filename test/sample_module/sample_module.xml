@@ -25,18 +25,18 @@
     <command xsi:type="command_save" filename="output.2.xml" />
   </commands>
   <name>Sample Module</name>
-  <current>2007-01-01T00:00:00</current>
+  <current>2009-01-01T00:00:00</current>
   <calendars>
     <calendar name="capacity factory 1" xsi:type="calendar_double">
       <buckets>
-        <bucket start="2007-01-01T00:00:00">
+        <bucket start="2009-01-01T00:00:00">
           <value>1</value>
         </bucket>
       </buckets>
     </calendar>
     <calendar name="capacity factory 2" xsi:type="calendar_double">
       <buckets>
-        <bucket start="2007-01-01T00:00:00">
+        <bucket start="2009-01-01T00:00:00">
           <value>1</value>
         </bucket>
       </buckets>
@@ -125,7 +125,7 @@
   <demands>
     <demand name="order 1">
       <quantity>10</quantity>
-      <due>2007-01-03T12:00:00</due>
+      <due>2009-01-03T12:00:00</due>
       <priority>1</priority>
       <item name="product" />
       <operation name="delivery product from distribution centre">
@@ -139,7 +139,7 @@
     </demand>
     <demand name="order 2">
       <quantity>10</quantity>
-      <due>2007-01-03T12:00:00</due>
+      <due>2009-01-03T12:00:00</due>
       <priority>2</priority>
       <item name="product" />
       <operation name="delivery product from distribution centre"/>

@@ -210,18 +210,18 @@
     <command xsi:type="command_save" filename="output.13.xml" />
 
   </commands>
-  <current>2007-01-01T00:00:00</current>
+  <current>2009-01-01T00:00:00</current>
   <calendars>
     <calendar name="months" xsi:type="calendar_void">
       <buckets>
-        <bucket start="2007-01-01T00:00:00" name="jan" />
-        <bucket start="2007-02-01T00:00:00" name="feb" />
-        <bucket start="2007-03-01T00:00:00" name="mar" />
-        <bucket start="2007-04-01T00:00:00" name="apr" />
-        <bucket start="2007-05-01T00:00:00" name="may" />
-        <bucket start="2007-06-01T00:00:00" name="jun" />
-        <bucket start="2007-07-01T00:00:00" name="jul" />
-        <bucket start="2007-08-01T00:00:00" name="aug" />
+        <bucket start="2009-01-01T00:00:00" name="jan" />
+        <bucket start="2009-02-01T00:00:00" name="feb" />
+        <bucket start="2009-03-01T00:00:00" name="mar" />
+        <bucket start="2009-04-01T00:00:00" name="apr" />
+        <bucket start="2009-05-01T00:00:00" name="may" />
+        <bucket start="2009-06-01T00:00:00" name="jun" />
+        <bucket start="2009-07-01T00:00:00" name="jul" />
+        <bucket start="2009-08-01T00:00:00" name="aug" />
       </buckets>
     </calendar>
   </calendars>
@@ -307,7 +307,7 @@
       <maximum name="assembly capacity" xsi:type="calendar_double">
         <default>1</default>
         <buckets>
-          <bucket start="2007-01-01T00:00:00" name="all">
+          <bucket start="2009-01-01T00:00:00" name="all">
             <value>2</value>
           </bucket>
         </buckets>
@@ -326,21 +326,21 @@
     <demand name="order 1">
       <item name="item 1" />
       <priority>1</priority>
-      <due>2007-03-01T00:00:00</due>
+      <due>2009-03-01T00:00:00</due>
       <quantity>1</quantity>
       <customer name="Customer 1" />
     </demand>
     <demand name="order 2">
       <item name="item 1" />
       <priority>1</priority>
-      <due>2007-02-01T00:00:00</due>
+      <due>2009-02-01T00:00:00</due>
       <quantity>1</quantity>
       <customer name="Customer 1" />
     </demand>
     <demand name="order 3">
       <item name="item 1" />
       <priority>1</priority>
-      <due>2007-04-01T00:00:00</due>
+      <due>2009-04-01T00:00:00</due>
       <quantity>1</quantity>
       <customer name="Customer 2" />
     </demand>

@@ -5,11 +5,11 @@
     A simple model used for verifying the event publishing and subscription
     mechanism.
   </description>
-  <current>2007-01-01T00:00:01</current>
+  <current>2009-01-01T00:00:01</current>
   <calendars>
     <calendar name="test" xsi:type="calendar_void">
       <buckets>
-        <bucket start="2007-01-01T00:00:01"/>
+        <bucket start="2009-01-01T00:00:01"/>
       </buckets>
     </calendar>
   </calendars>
@@ -35,7 +35,7 @@
     <resource name="resource">
       <maximum name="Capacity" xsi:type="calendar_double">
         <buckets>
-          <bucket start="2007-01-01T00:00:01">
+          <bucket start="2009-01-01T00:00:01">
             <value>1</value>
           </bucket>
         </buckets>
@@ -62,7 +62,7 @@
   <demands>
     <demand name="order 1">
       <quantity>10</quantity>
-      <due>2007-01-04T09:00:00</due>
+      <due>2009-01-04T09:00:00</due>
       <priority>1</priority>
       <item name="end item" />
     </demand>

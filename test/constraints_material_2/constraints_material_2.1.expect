@@ -1,137 +1,137 @@
-BUFFER	buffer 1	2007-01-09T00:00:00	62.5	62.5
-BUFFER	buffer 1	2007-01-09T00:00:00	-62.5	0
-BUFFER	buffer 2	2007-01-09T00:00:00	60	60
-BUFFER	buffer 2	2007-01-09T00:00:00	-60	0
-BUFFER	buffer 3	2007-01-09T00:00:00	10	10
-BUFFER	buffer 3	2007-01-09T00:00:00	-10	0
-BUFFER	buffer 3	2007-01-20T00:00:00	10	10
-BUFFER	buffer 3	2007-01-20T00:00:00	-10	0
-BUFFER	buffer 4	2007-01-09T00:00:00	10	10
-BUFFER	buffer 4	2007-01-09T00:00:00	-10	0
-BUFFER	buffer 4	2007-01-20T00:00:00	10	10
-BUFFER	buffer 4	2007-01-20T00:00:00	-10	0
-BUFFER	buffer 4	2007-01-21T00:00:00	30	30
-BUFFER	buffer 4	2007-01-21T00:00:00	-30	0
-BUFFER	buffer 4	2007-01-22T00:00:00	5	5
-BUFFER	buffer 4	2007-01-22T00:00:00	-5	0
-BUFFER	buffer 5	2007-01-09T00:00:00	25	25
-BUFFER	buffer 5	2007-01-09T00:00:00	20	45
-BUFFER	buffer 5	2007-01-09T00:00:00	5	50
-BUFFER	buffer 5	2007-01-09T00:00:00	-50	0
-BUFFER	buffer 6	2007-01-07T00:00:00	25	25
-BUFFER	buffer 6	2007-01-08T00:00:00	25	50
-BUFFER	buffer 6	2007-01-09T00:00:00	25	75
-BUFFER	buffer 6	2007-01-09T00:00:00	25	100
-BUFFER	buffer 6	2007-01-09T00:00:00	-100	0
-BUFFER	constraint buffer 1	2007-01-01T00:00:00	25	25
-BUFFER	constraint buffer 1	2007-01-09T00:00:00	-25	0
-BUFFER	constraint buffer 2	2007-01-01T00:00:00	25	25
-BUFFER	constraint buffer 2	2007-01-09T00:00:00	-24	1
-BUFFER	constraint buffer 3a	2007-01-01T00:00:00	25	25
-BUFFER	constraint buffer 3a	2007-01-09T00:00:00	-4	21
-BUFFER	constraint buffer 3a	2007-01-20T00:00:00	-4	17
-BUFFER	constraint buffer 3b	2007-01-01T00:00:00	2	2
-BUFFER	constraint buffer 3b	2007-01-09T00:00:00	-2	0
-BUFFER	constraint buffer 3b	2007-01-20T00:00:00	2	2
-BUFFER	constraint buffer 3b	2007-01-20T00:00:00	-2	0
-BUFFER	constraint buffer 3c	2007-01-01T00:00:00	30	30
-BUFFER	constraint buffer 3c	2007-01-09T00:00:00	-6	24
-BUFFER	constraint buffer 3c	2007-01-20T00:00:00	-6	18
-BUFFER	constraint buffer 4a	2007-01-01T00:00:00	50	50
-BUFFER	constraint buffer 4a	2007-01-09T00:00:00	-4	46
-BUFFER	constraint buffer 4a	2007-01-20T00:00:00	-4	42
-BUFFER	constraint buffer 4a	2007-01-21T00:00:00	-12	30
-BUFFER	constraint buffer 4a	2007-01-22T00:00:00	-2	28
-BUFFER	constraint buffer 4b	2007-01-01T00:00:00	2	2
-BUFFER	constraint buffer 4b	2007-01-09T00:00:00	-2	0
-BUFFER	constraint buffer 4b	2007-01-20T00:00:00	8	8
-BUFFER	constraint buffer 4b	2007-01-20T00:00:00	-2	6
-BUFFER	constraint buffer 4b	2007-01-21T00:00:00	-6	0
-BUFFER	constraint buffer 4b	2007-01-22T00:00:00	2	2
-BUFFER	constraint buffer 4b	2007-01-22T00:00:00	-1	1
-BUFFER	constraint buffer 4c	2007-01-01T00:00:00	12	12
-BUFFER	constraint buffer 4c	2007-01-09T00:00:00	-6	6
-BUFFER	constraint buffer 4c	2007-01-20T00:00:00	-6	0
-BUFFER	constraint buffer 4c	2007-01-21T00:00:00	21	21
-BUFFER	constraint buffer 4c	2007-01-21T00:00:00	-18	3
-BUFFER	constraint buffer 4c	2007-01-22T00:00:00	-3	0
-BUFFER	constraint buffer 5a	2007-01-01T00:00:00	10	10
-BUFFER	constraint buffer 5a	2007-01-09T00:00:00	-10	0
-BUFFER	constraint buffer 5b	2007-01-01T00:00:00	20	20
-BUFFER	constraint buffer 5b	2007-01-09T00:00:00	-20	0
-BUFFER	constraint buffer 6	2007-01-01T00:00:00	50	50
-BUFFER	constraint buffer 6	2007-01-06T00:00:00	-50	0
-DEMAND	order prio 1 for item 1	2007-01-10T00:00:00	31.25
-DEMAND	order prio 1 for item 2	2007-01-10T00:00:00	30
-DEMAND	order prio 1 for item 3	2007-01-21T00:00:00	5
-DEMAND	order prio 1 for item 3	2007-01-10T00:00:00	5
-DEMAND	order prio 1 for item 4	2007-01-23T00:00:00	2.5
-DEMAND	order prio 1 for item 4	2007-01-22T00:00:00	15
-DEMAND	order prio 1 for item 4	2007-01-21T00:00:00	5
-DEMAND	order prio 1 for item 4	2007-01-10T00:00:00	5
-DEMAND	order prio 1 for item 5	2007-01-10T00:00:00	25
-DEMAND	order prio 1 for item 6	2007-01-10T00:00:00	50
-OPERATION	delivery 1	2007-01-09T00:00:00	2007-01-10T00:00:00	31.25
-OPERATION	delivery 2	2007-01-09T00:00:00	2007-01-10T00:00:00	30
-OPERATION	delivery 3	2007-01-09T00:00:00	2007-01-10T00:00:00	5
-OPERATION	delivery 3	2007-01-20T00:00:00	2007-01-21T00:00:00	5
-OPERATION	delivery 4	2007-01-09T00:00:00	2007-01-10T00:00:00	5
-OPERATION	delivery 4	2007-01-20T00:00:00	2007-01-21T00:00:00	5
-OPERATION	delivery 4	2007-01-21T00:00:00	2007-01-22T00:00:00	15
-OPERATION	delivery 4	2007-01-22T00:00:00	2007-01-23T00:00:00	2.5
-OPERATION	delivery 5	2007-01-09T00:00:00	2007-01-10T00:00:00	25
-OPERATION	delivery 6	2007-01-09T00:00:00	2007-01-10T00:00:00	50
-OPERATION	make 1	2007-01-09T00:00:00	2007-01-09T00:00:00	12.5
-OPERATION	make 2	2007-01-09T00:00:00	2007-01-09T00:00:00	12
-OPERATION	make 3	2007-01-09T00:00:00	2007-01-09T00:00:00	2
-OPERATION	make 3	2007-01-20T00:00:00	2007-01-20T00:00:00	2
-OPERATION	make 4	2007-01-09T00:00:00	2007-01-09T00:00:00	2
-OPERATION	make 4	2007-01-20T00:00:00	2007-01-20T00:00:00	2
-OPERATION	make 4	2007-01-21T00:00:00	2007-01-21T00:00:00	6
-OPERATION	make 4	2007-01-22T00:00:00	2007-01-22T00:00:00	1
-OPERATION	make 5	2007-01-09T00:00:00	2007-01-09T00:00:00	5
-OPERATION	make 5	2007-01-09T00:00:00	2007-01-09T00:00:00	4
-OPERATION	make 5 from 5a	2007-01-09T00:00:00	2007-01-09T00:00:00	5
-OPERATION	make 5 from 5b	2007-01-09T00:00:00	2007-01-09T00:00:00	4
-OPERATION	make 6	2007-01-06T00:00:00	2007-01-09T00:00:00	25
-OPERATION	make 6 step 1	2007-01-06T00:00:00	2007-01-07T00:00:00	25
-OPERATION	make 6 step 2	2007-01-07T00:00:00	2007-01-08T00:00:00	25
-OPERATION	make 6 step 3	2007-01-08T00:00:00	2007-01-09T00:00:00	25
-OPERATION	supply 1	2007-01-01T00:00:00	2007-01-01T00:00:00	25
-OPERATION	supply 2	2007-01-01T00:00:00	2007-01-01T00:00:00	25
-OPERATION	supply 3a	2007-01-01T00:00:00	2007-01-01T00:00:00	25
-OPERATION	supply 3b	2007-01-01T00:00:00	2007-01-01T00:00:00	2
-OPERATION	supply 3b	2007-01-20T00:00:00	2007-01-20T00:00:00	2
-OPERATION	supply 3c	2007-01-01T00:00:00	2007-01-01T00:00:00	30
-OPERATION	supply 4a	2007-01-01T00:00:00	2007-01-01T00:00:00	50
-OPERATION	supply 4b	2007-01-01T00:00:00	2007-01-01T00:00:00	2
-OPERATION	supply 4b	2007-01-20T00:00:00	2007-01-20T00:00:00	8
-OPERATION	supply 4b	2007-01-22T00:00:00	2007-01-22T00:00:00	2
-OPERATION	supply 4c	2007-01-01T00:00:00	2007-01-01T00:00:00	12
-OPERATION	supply 4c	2007-01-21T00:00:00	2007-01-21T00:00:00	21
-OPERATION	supply 5a	2007-01-01T00:00:00	2007-01-01T00:00:00	10
-OPERATION	supply 5b	2007-01-01T00:00:00	2007-01-01T00:00:00	20
-OPERATION	supply 6	2007-01-01T00:00:00	2007-01-01T00:00:00	50
-PROBLEM	material excess	Buffer 'buffer 6' has material excess of 50	2007-01-07T00:00:00 / 2007-01-09T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 1' has material excess of 25	2007-01-01T00:00:00 / 2007-01-09T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 2' has material excess of 25	2007-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 3a' has material excess of 25	2007-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 3b' has material excess of 2	2007-01-01T00:00:00 / 2007-01-09T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 3c' has material excess of 30	2007-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 4a' has material excess of 50	2007-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 4b' has material excess of 2	2007-01-01T00:00:00 / 2007-01-09T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 4b' has material excess of 6	2007-01-20T00:00:00 / 2007-01-21T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 4b' has material excess of 1	2007-01-22T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 4c' has material excess of 12	2007-01-01T00:00:00 / 2007-01-20T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 4c' has material excess of 3	2007-01-21T00:00:00 / 2007-01-22T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 5a' has material excess of 10	2007-01-01T00:00:00 / 2007-01-09T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 5b' has material excess of 20	2007-01-01T00:00:00 / 2007-01-09T00:00:00
-PROBLEM	material excess	Buffer 'constraint buffer 6' has material excess of 50	2007-01-01T00:00:00 / 2007-01-06T00:00:00
-PROBLEM	short	Demand 'order prio 1 for item 1' planned 68.75 units short	2007-01-10T00:00:00 / 2007-01-10T00:00:00
-PROBLEM	short	Demand 'order prio 1 for item 2' planned 70 units short	2007-01-10T00:00:00 / 2007-01-10T00:00:00
-PROBLEM	short	Demand 'order prio 1 for item 3' planned 90 units short	2007-01-10T00:00:00 / 2007-01-10T00:00:00
-PROBLEM	late	Demand 'order prio 1 for item 3' planned P11D after its due date	2007-01-10T00:00:00 / 2007-01-21T00:00:00
-PROBLEM	short	Demand 'order prio 1 for item 4' planned 72.5 units short	2007-01-10T00:00:00 / 2007-01-10T00:00:00
-PROBLEM	late	Demand 'order prio 1 for item 4' planned P13D after its due date	2007-01-10T00:00:00 / 2007-01-23T00:00:00
-PROBLEM	short	Demand 'order prio 1 for item 5' planned 75 units short	2007-01-10T00:00:00 / 2007-01-10T00:00:00
-PROBLEM	short	Demand 'order prio 1 for item 6' planned 50 units short	2007-01-10T00:00:00 / 2007-01-10T00:00:00
+BUFFER	buffer 1	2009-01-09T00:00:00	62.5	62.5
+BUFFER	buffer 1	2009-01-09T00:00:00	-62.5	0
+BUFFER	buffer 2	2009-01-09T00:00:00	60	60
+BUFFER	buffer 2	2009-01-09T00:00:00	-60	0
+BUFFER	buffer 3	2009-01-09T00:00:00	10	10
+BUFFER	buffer 3	2009-01-09T00:00:00	-10	0
+BUFFER	buffer 3	2009-01-20T00:00:00	10	10
+BUFFER	buffer 3	2009-01-20T00:00:00	-10	0
+BUFFER	buffer 4	2009-01-09T00:00:00	10	10
+BUFFER	buffer 4	2009-01-09T00:00:00	-10	0
+BUFFER	buffer 4	2009-01-20T00:00:00	10	10
+BUFFER	buffer 4	2009-01-20T00:00:00	-10	0
+BUFFER	buffer 4	2009-01-21T00:00:00	30	30
+BUFFER	buffer 4	2009-01-21T00:00:00	-30	0
+BUFFER	buffer 4	2009-01-22T00:00:00	5	5
+BUFFER	buffer 4	2009-01-22T00:00:00	-5	0
+BUFFER	buffer 5	2009-01-09T00:00:00	25	25
+BUFFER	buffer 5	2009-01-09T00:00:00	20	45
+BUFFER	buffer 5	2009-01-09T00:00:00	5	50
+BUFFER	buffer 5	2009-01-09T00:00:00	-50	0
+BUFFER	buffer 6	2009-01-07T00:00:00	25	25
+BUFFER	buffer 6	2009-01-08T00:00:00	25	50
+BUFFER	buffer 6	2009-01-09T00:00:00	25	75
+BUFFER	buffer 6	2009-01-09T00:00:00	25	100
+BUFFER	buffer 6	2009-01-09T00:00:00	-100	0
+BUFFER	constraint buffer 1	2009-01-01T00:00:00	25	25
+BUFFER	constraint buffer 1	2009-01-09T00:00:00	-25	0
+BUFFER	constraint buffer 2	2009-01-01T00:00:00	25	25
+BUFFER	constraint buffer 2	2009-01-09T00:00:00	-24	1
+BUFFER	constraint buffer 3a	2009-01-01T00:00:00	25	25
+BUFFER	constraint buffer 3a	2009-01-09T00:00:00	-4	21
+BUFFER	constraint buffer 3a	2009-01-20T00:00:00	-4	17
+BUFFER	constraint buffer 3b	2009-01-01T00:00:00	2	2
+BUFFER	constraint buffer 3b	2009-01-09T00:00:00	-2	0
+BUFFER	constraint buffer 3b	2009-01-20T00:00:00	2	2
+BUFFER	constraint buffer 3b	2009-01-20T00:00:00	-2	0
+BUFFER	constraint buffer 3c	2009-01-01T00:00:00	30	30
+BUFFER	constraint buffer 3c	2009-01-09T00:00:00	-6	24
+BUFFER	constraint buffer 3c	2009-01-20T00:00:00	-6	18
+BUFFER	constraint buffer 4a	2009-01-01T00:00:00	50	50
+BUFFER	constraint buffer 4a	2009-01-09T00:00:00	-4	46
+BUFFER	constraint buffer 4a	2009-01-20T00:00:00	-4	42
+BUFFER	constraint buffer 4a	2009-01-21T00:00:00	-12	30
+BUFFER	constraint buffer 4a	2009-01-22T00:00:00	-2	28
+BUFFER	constraint buffer 4b	2009-01-01T00:00:00	2	2
+BUFFER	constraint buffer 4b	2009-01-09T00:00:00	-2	0
+BUFFER	constraint buffer 4b	2009-01-20T00:00:00	8	8
+BUFFER	constraint buffer 4b	2009-01-20T00:00:00	-2	6
+BUFFER	constraint buffer 4b	2009-01-21T00:00:00	-6	0
+BUFFER	constraint buffer 4b	2009-01-22T00:00:00	2	2
+BUFFER	constraint buffer 4b	2009-01-22T00:00:00	-1	1
+BUFFER	constraint buffer 4c	2009-01-01T00:00:00	12	12
+BUFFER	constraint buffer 4c	2009-01-09T00:00:00	-6	6
+BUFFER	constraint buffer 4c	2009-01-20T00:00:00	-6	0
+BUFFER	constraint buffer 4c	2009-01-21T00:00:00	21	21
+BUFFER	constraint buffer 4c	2009-01-21T00:00:00	-18	3
+BUFFER	constraint buffer 4c	2009-01-22T00:00:00	-3	0
+BUFFER	constraint buffer 5a	2009-01-01T00:00:00	10	10
+BUFFER	constraint buffer 5a	2009-01-09T00:00:00	-10	0
+BUFFER	constraint buffer 5b	2009-01-01T00:00:00	20	20
+BUFFER	constraint buffer 5b	2009-01-09T00:00:00	-20	0
+BUFFER	constraint buffer 6	2009-01-01T00:00:00	50	50
+BUFFER	constraint buffer 6	2009-01-06T00:00:00	-50	0
+DEMAND	order prio 1 for item 1	2009-01-10T00:00:00	31.25
+DEMAND	order prio 1 for item 2	2009-01-10T00:00:00	30
+DEMAND	order prio 1 for item 3	2009-01-21T00:00:00	5
+DEMAND	order prio 1 for item 3	2009-01-10T00:00:00	5
+DEMAND	order prio 1 for item 4	2009-01-23T00:00:00	2.5
+DEMAND	order prio 1 for item 4	2009-01-22T00:00:00	15
+DEMAND	order prio 1 for item 4	2009-01-21T00:00:00	5
+DEMAND	order prio 1 for item 4	2009-01-10T00:00:00	5
+DEMAND	order prio 1 for item 5	2009-01-10T00:00:00	25
+DEMAND	order prio 1 for item 6	2009-01-10T00:00:00	50
+OPERATION	delivery 1	2009-01-09T00:00:00	2009-01-10T00:00:00	31.25
+OPERATION	delivery 2	2009-01-09T00:00:00	2009-01-10T00:00:00	30
+OPERATION	delivery 3	2009-01-09T00:00:00	2009-01-10T00:00:00	5
+OPERATION	delivery 3	2009-01-20T00:00:00	2009-01-21T00:00:00	5
+OPERATION	delivery 4	2009-01-09T00:00:00	2009-01-10T00:00:00	5
+OPERATION	delivery 4	2009-01-20T00:00:00	2009-01-21T00:00:00	5
+OPERATION	delivery 4	2009-01-21T00:00:00	2009-01-22T00:00:00	15
+OPERATION	delivery 4	2009-01-22T00:00:00	2009-01-23T00:00:00	2.5
+OPERATION	delivery 5	2009-01-09T00:00:00	2009-01-10T00:00:00	25
+OPERATION	delivery 6	2009-01-09T00:00:00	2009-01-10T00:00:00	50
+OPERATION	make 1	2009-01-09T00:00:00	2009-01-09T00:00:00	12.5
+OPERATION	make 2	2009-01-09T00:00:00	2009-01-09T00:00:00	12
+OPERATION	make 3	2009-01-09T00:00:00	2009-01-09T00:00:00	2
+OPERATION	make 3	2009-01-20T00:00:00	2009-01-20T00:00:00	2
+OPERATION	make 4	2009-01-09T00:00:00	2009-01-09T00:00:00	2
+OPERATION	make 4	2009-01-20T00:00:00	2009-01-20T00:00:00	2
+OPERATION	make 4	2009-01-21T00:00:00	2009-01-21T00:00:00	6
+OPERATION	make 4	2009-01-22T00:00:00	2009-01-22T00:00:00	1
+OPERATION	make 5	2009-01-09T00:00:00	2009-01-09T00:00:00	5
+OPERATION	make 5	2009-01-09T00:00:00	2009-01-09T00:00:00	4
+OPERATION	make 5 from 5a	2009-01-09T00:00:00	2009-01-09T00:00:00	5
+OPERATION	make 5 from 5b	2009-01-09T00:00:00	2009-01-09T00:00:00	4
+OPERATION	make 6	2009-01-06T00:00:00	2009-01-09T00:00:00	25
+OPERATION	make 6 step 1	2009-01-06T00:00:00	2009-01-07T00:00:00	25
+OPERATION	make 6 step 2	2009-01-07T00:00:00	2009-01-08T00:00:00	25
+OPERATION	make 6 step 3	2009-01-08T00:00:00	2009-01-09T00:00:00	25
+OPERATION	supply 1	2009-01-01T00:00:00	2009-01-01T00:00:00	25
+OPERATION	supply 2	2009-01-01T00:00:00	2009-01-01T00:00:00	25
+OPERATION	supply 3a	2009-01-01T00:00:00	2009-01-01T00:00:00	25
+OPERATION	supply 3b	2009-01-01T00:00:00	2009-01-01T00:00:00	2
+OPERATION	supply 3b	2009-01-20T00:00:00	2009-01-20T00:00:00	2
+OPERATION	supply 3c	2009-01-01T00:00:00	2009-01-01T00:00:00	30
+OPERATION	supply 4a	2009-01-01T00:00:00	2009-01-01T00:00:00	50
+OPERATION	supply 4b	2009-01-01T00:00:00	2009-01-01T00:00:00	2
+OPERATION	supply 4b	2009-01-20T00:00:00	2009-01-20T00:00:00	8
+OPERATION	supply 4b	2009-01-22T00:00:00	2009-01-22T00:00:00	2
+OPERATION	supply 4c	2009-01-01T00:00:00	2009-01-01T00:00:00	12
+OPERATION	supply 4c	2009-01-21T00:00:00	2009-01-21T00:00:00	21
+OPERATION	supply 5a	2009-01-01T00:00:00	2009-01-01T00:00:00	10
+OPERATION	supply 5b	2009-01-01T00:00:00	2009-01-01T00:00:00	20
+OPERATION	supply 6	2009-01-01T00:00:00	2009-01-01T00:00:00	50
+PROBLEM	material excess	Buffer 'buffer 6' has material excess of 50	2009-01-07T00:00:00 / 2009-01-09T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 1' has material excess of 25	2009-01-01T00:00:00 / 2009-01-09T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 2' has material excess of 25	2009-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 3a' has material excess of 25	2009-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 3b' has material excess of 2	2009-01-01T00:00:00 / 2009-01-09T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 3c' has material excess of 30	2009-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 4a' has material excess of 50	2009-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 4b' has material excess of 2	2009-01-01T00:00:00 / 2009-01-09T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 4b' has material excess of 6	2009-01-20T00:00:00 / 2009-01-21T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 4b' has material excess of 1	2009-01-22T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 4c' has material excess of 12	2009-01-01T00:00:00 / 2009-01-20T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 4c' has material excess of 3	2009-01-21T00:00:00 / 2009-01-22T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 5a' has material excess of 10	2009-01-01T00:00:00 / 2009-01-09T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 5b' has material excess of 20	2009-01-01T00:00:00 / 2009-01-09T00:00:00
+PROBLEM	material excess	Buffer 'constraint buffer 6' has material excess of 50	2009-01-01T00:00:00 / 2009-01-06T00:00:00
+PROBLEM	short	Demand 'order prio 1 for item 1' planned 68.75 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	short	Demand 'order prio 1 for item 2' planned 70 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	short	Demand 'order prio 1 for item 3' planned 90 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	late	Demand 'order prio 1 for item 3' planned P11D after its due date	2009-01-10T00:00:00 / 2009-01-21T00:00:00
+PROBLEM	short	Demand 'order prio 1 for item 4' planned 72.5 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	late	Demand 'order prio 1 for item 4' planned P13D after its due date	2009-01-10T00:00:00 / 2009-01-23T00:00:00
+PROBLEM	short	Demand 'order prio 1 for item 5' planned 75 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	short	Demand 'order prio 1 for item 6' planned 50 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00

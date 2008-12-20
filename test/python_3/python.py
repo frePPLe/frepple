@@ -132,7 +132,7 @@ frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
     <resource name="Resource">
       <maximum name="Capacity" xsi:type="calendar_double">
         <buckets>
-          <bucket start="2007-01-01T00:00:00">
+          <bucket start="2009-01-01T00:00:00">
             <value>1</value>
           </bucket>
         </buckets>
@@ -163,7 +163,7 @@ frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
 print "\nUpdating global settings"
 frepple.settings.name = "demo model"
 frepple.settings.description = unicode("demo description in unicode object")
-frepple.settings.current = datetime.datetime(2007,1,1)
+frepple.settings.current = datetime.datetime(2009,1,1)
 
 ###
 print "\nCreating calendars"
@@ -182,7 +182,7 @@ shipoper = frepple.operation_fixed_time(name="delivery end item", duration=86400
 
 ###
 print "\nCreating operationplans"
-opplan = frepple.operationplan(operation="make end item", quantity=9, start=datetime.datetime(2009,1,1))
+opplan = frepple.operationplan(operation="make end item", quantity=9, start=datetime.datetime(2011,1,1))
 opplan.locked = True
 
 ###
@@ -251,11 +251,11 @@ except Exception, e:
 ###
 print "\nCreating demands"
 order1 = frepple.demand(name="order 1", item=item, quantity=10, priority=1, \
-  due=datetime.datetime(2007,3,2,9), customer=mycustomer, maxlateness=0)
+  due=datetime.datetime(2009,3,2,9), customer=mycustomer, maxlateness=0)
 order2 = frepple.demand(name="order 2", item=item, quantity=10, priority=2, \
-  due=datetime.datetime(2007,3,2,8,30,0), customer=mycustomer, maxlateness=0)
+  due=datetime.datetime(2009,3,2,8,30,0), customer=mycustomer, maxlateness=0)
 order3 = frepple.demand(name="order 3", item=item, quantity=10, priority=3, \
-  due=datetime.datetime(2007,3,2,20,0,0), customer=mycustomer, maxlateness=0)
+  due=datetime.datetime(2009,3,2,20,0,0), customer=mycustomer, maxlateness=0)
 
 ###
 print "\nCreating a solver and running it"

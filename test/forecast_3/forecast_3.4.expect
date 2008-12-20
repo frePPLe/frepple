@@ -5,7 +5,7 @@
   This test verifies how actual orders consume from the forecast.
   It shows netting from earlier and later time buckets.
   </description>
-	<current>2007-01-01T00:00:00</current>
+	<current>2009-01-01T00:00:00</current>
 	<solvers>
 		<solver name="MRP" xsi:type="solver_mrp">
 		</solver>
@@ -17,115 +17,115 @@
 		<calendar name="planningbuckets" xsi:type="calendar_double">
 			<default>0</default>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00" name="Mon Jan 01">
+				<bucket start="2009-01-01T00:00:00" name="Mon Jan 01">
 					<value>1.2</value>
 				</bucket>
-				<bucket start="2007-01-02T00:00:00" name="Tue Jan 02">
+				<bucket start="2009-01-02T00:00:00" name="Tue Jan 02">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-03T00:00:00" name="Wed Jan 03">
+				<bucket start="2009-01-03T00:00:00" name="Wed Jan 03">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-04T00:00:00" name="Thu Jan 04">
+				<bucket start="2009-01-04T00:00:00" name="Thu Jan 04">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-05T00:00:00" name="Fri Jan 05">
+				<bucket start="2009-01-05T00:00:00" name="Fri Jan 05">
 					<value>0.8</value>
 				</bucket>
-				<bucket start="2007-01-06T00:00:00" name="Sat Jan 06">
+				<bucket start="2009-01-06T00:00:00" name="Sat Jan 06">
 					<value>0</value>
 				</bucket>
-				<bucket start="2007-01-07T00:00:00" name="Sun Jan 07">
+				<bucket start="2009-01-07T00:00:00" name="Sun Jan 07">
 					<value>0</value>
 				</bucket>
-				<bucket start="2007-01-08T00:00:00" name="Mon Jan 08">
+				<bucket start="2009-01-08T00:00:00" name="Mon Jan 08">
 					<value>1.2</value>
 				</bucket>
-				<bucket start="2007-01-09T00:00:00" name="Tue Jan 09">
+				<bucket start="2009-01-09T00:00:00" name="Tue Jan 09">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-10T00:00:00" name="Wed Jan 10">
+				<bucket start="2009-01-10T00:00:00" name="Wed Jan 10">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-11T00:00:00" name="Thu Jan 11">
+				<bucket start="2009-01-11T00:00:00" name="Thu Jan 11">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-12T00:00:00" name="Fri Jan 12">
+				<bucket start="2009-01-12T00:00:00" name="Fri Jan 12">
 					<value>0.8</value>
 				</bucket>
-				<bucket start="2007-01-13T00:00:00" name="Sat Jan 13">
+				<bucket start="2009-01-13T00:00:00" name="Sat Jan 13">
 					<value>0</value>
 				</bucket>
-				<bucket start="2007-01-14T00:00:00" name="Sun Jan 14">
+				<bucket start="2009-01-14T00:00:00" name="Sun Jan 14">
 					<value>0</value>
 				</bucket>
-				<bucket start="2007-01-15T00:00:00" name="Mon Jan 15">
+				<bucket start="2009-01-15T00:00:00" name="Mon Jan 15">
 					<value>1.2</value>
 				</bucket>
-				<bucket start="2007-01-16T00:00:00" name="Tue Jan 16">
+				<bucket start="2009-01-16T00:00:00" name="Tue Jan 16">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-17T00:00:00" name="Wed Jan 17">
+				<bucket start="2009-01-17T00:00:00" name="Wed Jan 17">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-18T00:00:00" name="Thu Jan 18">
+				<bucket start="2009-01-18T00:00:00" name="Thu Jan 18">
 					<value>1</value>
 				</bucket>
-				<bucket start="2007-01-19T00:00:00" name="Fri Jan 19">
+				<bucket start="2009-01-19T00:00:00" name="Fri Jan 19">
 					<value>0.8</value>
 				</bucket>
-				<bucket start="2007-01-20T00:00:00" name="Sat Jan 20">
+				<bucket start="2009-01-20T00:00:00" name="Sat Jan 20">
 					<value>0</value>
 				</bucket>
-				<bucket start="2007-01-21T00:00:00" name="Sun Jan 21">
+				<bucket start="2009-01-21T00:00:00" name="Sun Jan 21">
 					<value>0</value>
 				</bucket>
-				<bucket start="2007-01-22T00:00:00" name="Week 04">
+				<bucket start="2009-01-22T00:00:00" name="Week 04">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-01-29T00:00:00" name="Week 05">
+				<bucket start="2009-01-29T00:00:00" name="Week 05">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-02-05T00:00:00" name="Week 06">
+				<bucket start="2009-02-05T00:00:00" name="Week 06">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-02-12T00:00:00" name="Week 07">
+				<bucket start="2009-02-12T00:00:00" name="Week 07">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-02-19T00:00:00" name="Week 08">
+				<bucket start="2009-02-19T00:00:00" name="Week 08">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-02-26T00:00:00" name="Week 09">
+				<bucket start="2009-02-26T00:00:00" name="Week 09">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-03-05T00:00:00" name="Week 10">
+				<bucket start="2009-03-05T00:00:00" name="Week 10">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-03-12T00:00:00" name="Week 11">
+				<bucket start="2009-03-12T00:00:00" name="Week 11">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-03-19T00:00:00" name="Week 12">
+				<bucket start="2009-03-19T00:00:00" name="Week 12">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-03-26T00:00:00" name="Week 13">
+				<bucket start="2009-03-26T00:00:00" name="Week 13">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-04-02T00:00:00" name="Week 14">
+				<bucket start="2009-04-02T00:00:00" name="Week 14">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-04-09T00:00:00" name="Week 15">
+				<bucket start="2009-04-09T00:00:00" name="Week 15">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-04-16T00:00:00" name="Week 16">
+				<bucket start="2009-04-16T00:00:00" name="Week 16">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-04-23T00:00:00" name="Week 17">
+				<bucket start="2009-04-23T00:00:00" name="Week 17">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-04-30T00:00:00" name="Week 18">
+				<bucket start="2009-04-30T00:00:00" name="Week 18">
 					<value>0.714286</value>
 				</bucket>
-				<bucket start="2007-05-07T00:00:00" name="Week 19">
+				<bucket start="2009-05-07T00:00:00" name="Week 19">
 					<value>0.714286</value>
 				</bucket>
 			</buckets>
@@ -147,157 +147,157 @@
 			<priority>1</priority>
 			<calendar name="planningbuckets" xsi:type="calendar_double"/>
 			<buckets>
-				<bucket start="2007-01-01T00:00:00">
+				<bucket start="2009-01-01T00:00:00">
 					<total>24</total>
 					<quantity>0</quantity>
 					<consumed>24</consumed>
 				</bucket>
-				<bucket start="2007-01-02T00:00:00">
+				<bucket start="2009-01-02T00:00:00">
 					<total>20</total>
 					<quantity>0</quantity>
 					<consumed>20</consumed>
 				</bucket>
-				<bucket start="2007-01-03T00:00:00">
+				<bucket start="2009-01-03T00:00:00">
 					<total>20</total>
 					<quantity>0</quantity>
 					<consumed>20</consumed>
 				</bucket>
-				<bucket start="2007-01-04T00:00:00">
+				<bucket start="2009-01-04T00:00:00">
 					<total>20</total>
 					<quantity>0</quantity>
 					<consumed>20</consumed>
 				</bucket>
-				<bucket start="2007-01-05T00:00:00">
+				<bucket start="2009-01-05T00:00:00">
 					<total>16</total>
 					<quantity>0</quantity>
 					<consumed>16</consumed>
 				</bucket>
-				<bucket start="2007-01-08T00:00:00">
+				<bucket start="2009-01-08T00:00:00">
 					<total>24</total>
 					<quantity>24</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-09T00:00:00">
+				<bucket start="2009-01-09T00:00:00">
 					<total>20</total>
 					<quantity>20</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-10T00:00:00">
+				<bucket start="2009-01-10T00:00:00">
 					<total>20</total>
 					<quantity>20</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-11T00:00:00">
+				<bucket start="2009-01-11T00:00:00">
 					<total>20</total>
 					<quantity>20</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-12T00:00:00">
+				<bucket start="2009-01-12T00:00:00">
 					<total>16</total>
 					<quantity>16</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-15T00:00:00">
+				<bucket start="2009-01-15T00:00:00">
 					<total>24</total>
 					<quantity>24</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-16T00:00:00">
+				<bucket start="2009-01-16T00:00:00">
 					<total>20</total>
 					<quantity>20</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-17T00:00:00">
+				<bucket start="2009-01-17T00:00:00">
 					<total>20</total>
 					<quantity>20</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-18T00:00:00">
+				<bucket start="2009-01-18T00:00:00">
 					<total>20</total>
 					<quantity>20</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-19T00:00:00">
+				<bucket start="2009-01-19T00:00:00">
 					<total>16</total>
 					<quantity>16</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-01-22T00:00:00">
+				<bucket start="2009-01-22T00:00:00">
 					<total>100</total>
 					<quantity>10</quantity>
 					<consumed>90</consumed>
 				</bucket>
-				<bucket start="2007-01-29T00:00:00">
+				<bucket start="2009-01-29T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-02-05T00:00:00">
+				<bucket start="2009-02-05T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-02-12T00:00:00">
+				<bucket start="2009-02-12T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-02-19T00:00:00">
+				<bucket start="2009-02-19T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-02-26T00:00:00">
+				<bucket start="2009-02-26T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-05T00:00:00">
+				<bucket start="2009-03-05T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-12T00:00:00">
+				<bucket start="2009-03-12T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-19T00:00:00">
+				<bucket start="2009-03-19T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-03-26T00:00:00">
+				<bucket start="2009-03-26T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-04-02T00:00:00">
+				<bucket start="2009-04-02T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-04-09T00:00:00">
+				<bucket start="2009-04-09T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-04-16T00:00:00">
+				<bucket start="2009-04-16T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-04-23T00:00:00">
+				<bucket start="2009-04-23T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-04-30T00:00:00">
+				<bucket start="2009-04-30T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
 				</bucket>
-				<bucket start="2007-05-07T00:00:00">
+				<bucket start="2009-05-07T00:00:00">
 					<total>0</total>
 					<quantity>0</quantity>
 					<consumed>0</consumed>
@@ -307,94 +307,94 @@
 		<demand name="Order 1 for product 1">
 			<quantity>90</quantity>
 			<item name="Product 1"/>
-			<due>2007-01-03T00:00:00</due>
+			<due>2009-01-03T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 		<demand name="Order 2 for product 1">
 			<quantity>90</quantity>
 			<item name="Product 1"/>
-			<due>2007-01-03T00:00:00</due>
+			<due>2009-01-03T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 		<demand name="Order 3 for product 1">
 			<quantity>90</quantity>
 			<item name="Product 1"/>
-			<due>2007-01-27T00:00:00</due>
+			<due>2009-01-27T00:00:00</due>
 			<priority>2</priority>
 		</demand>
 	</demands>
 	<operationplans>
 		<operationplan id="1" operation="delivery 1">
 			<demand name="Order 1 for product 1"/>
-			<start>2007-01-02T00:00:00</start>
-			<end>2007-01-03T00:00:00</end>
+			<start>2009-01-02T00:00:00</start>
+			<end>2009-01-03T00:00:00</end>
 			<quantity>90</quantity>
 		</operationplan>
 		<operationplan id="2" operation="delivery 1">
 			<demand name="Order 2 for product 1"/>
-			<start>2007-01-02T00:00:00</start>
-			<end>2007-01-03T00:00:00</end>
+			<start>2009-01-02T00:00:00</start>
+			<end>2009-01-03T00:00:00</end>
 			<quantity>90</quantity>
 		</operationplan>
 		<operationplan id="3" operation="delivery 1">
-			<start>2007-01-07T00:00:00</start>
-			<end>2007-01-08T00:00:00</end>
+			<start>2009-01-07T00:00:00</start>
+			<end>2009-01-08T00:00:00</end>
 			<quantity>24</quantity>
 		</operationplan>
 		<operationplan id="4" operation="delivery 1">
-			<start>2007-01-08T00:00:00</start>
-			<end>2007-01-09T00:00:00</end>
+			<start>2009-01-08T00:00:00</start>
+			<end>2009-01-09T00:00:00</end>
 			<quantity>20</quantity>
 		</operationplan>
 		<operationplan id="5" operation="delivery 1">
-			<start>2007-01-09T00:00:00</start>
-			<end>2007-01-10T00:00:00</end>
+			<start>2009-01-09T00:00:00</start>
+			<end>2009-01-10T00:00:00</end>
 			<quantity>20</quantity>
 		</operationplan>
 		<operationplan id="6" operation="delivery 1">
-			<start>2007-01-10T00:00:00</start>
-			<end>2007-01-11T00:00:00</end>
+			<start>2009-01-10T00:00:00</start>
+			<end>2009-01-11T00:00:00</end>
 			<quantity>20</quantity>
 		</operationplan>
 		<operationplan id="7" operation="delivery 1">
-			<start>2007-01-11T00:00:00</start>
-			<end>2007-01-12T00:00:00</end>
+			<start>2009-01-11T00:00:00</start>
+			<end>2009-01-12T00:00:00</end>
 			<quantity>16</quantity>
 		</operationplan>
 		<operationplan id="8" operation="delivery 1">
-			<start>2007-01-14T00:00:00</start>
-			<end>2007-01-15T00:00:00</end>
+			<start>2009-01-14T00:00:00</start>
+			<end>2009-01-15T00:00:00</end>
 			<quantity>24</quantity>
 		</operationplan>
 		<operationplan id="9" operation="delivery 1">
-			<start>2007-01-15T00:00:00</start>
-			<end>2007-01-16T00:00:00</end>
+			<start>2009-01-15T00:00:00</start>
+			<end>2009-01-16T00:00:00</end>
 			<quantity>20</quantity>
 		</operationplan>
 		<operationplan id="10" operation="delivery 1">
-			<start>2007-01-16T00:00:00</start>
-			<end>2007-01-17T00:00:00</end>
+			<start>2009-01-16T00:00:00</start>
+			<end>2009-01-17T00:00:00</end>
 			<quantity>20</quantity>
 		</operationplan>
 		<operationplan id="11" operation="delivery 1">
-			<start>2007-01-17T00:00:00</start>
-			<end>2007-01-18T00:00:00</end>
+			<start>2009-01-17T00:00:00</start>
+			<end>2009-01-18T00:00:00</end>
 			<quantity>20</quantity>
 		</operationplan>
 		<operationplan id="12" operation="delivery 1">
-			<start>2007-01-18T00:00:00</start>
-			<end>2007-01-19T00:00:00</end>
+			<start>2009-01-18T00:00:00</start>
+			<end>2009-01-19T00:00:00</end>
 			<quantity>16</quantity>
 		</operationplan>
 		<operationplan id="13" operation="delivery 1">
-			<start>2007-01-21T00:00:00</start>
-			<end>2007-01-22T00:00:00</end>
+			<start>2009-01-21T00:00:00</start>
+			<end>2009-01-22T00:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan id="14" operation="delivery 1">
 			<demand name="Order 3 for product 1"/>
-			<start>2007-01-26T00:00:00</start>
-			<end>2007-01-27T00:00:00</end>
+			<start>2009-01-26T00:00:00</start>
+			<end>2009-01-27T00:00:00</end>
 			<quantity>90</quantity>
 		</operationplan>
 	</operationplans>

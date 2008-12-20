@@ -10,7 +10,7 @@
     * item 2 has time-based target, set as a post-operation time of 1 week
       on the make operation.
   </description>
-  <current>2007-01-01T00:00:00</current>
+  <current>2009-01-01T00:00:00</current>
   <commands>
     <command xsi:type="command_solve">
       <verbose>true</verbose>
@@ -44,13 +44,13 @@
       <item name="end item 1" />
       <minimum name="safety stock target" xsi:type="calendar_double">
 	      <buckets>
-	        <bucket start="2007-01-01T00:00:00" name="january">
+	        <bucket start="2009-01-01T00:00:00" name="january">
 	          <value>10</value>
 	        </bucket>
-	        <bucket start="2007-02-01T00:00:00" name="february">
+	        <bucket start="2009-02-01T00:00:00" name="february">
 	          <value>20</value>
 	        </bucket>
-	        <bucket start="2007-03-01T00:00:00" name="march and remainder">
+	        <bucket start="2009-03-01T00:00:00" name="march and remainder">
 	          <value>5</value>
 	        </bucket>
 	      </buckets>
@@ -87,37 +87,37 @@
   <demands>
     <demand name="order 1 - item 1">
       <quantity>10</quantity>
-      <due>2007-01-02T00:00:00</due>
+      <due>2009-01-02T00:00:00</due>
       <priority>1</priority>
       <item name="end item 1" />
     </demand>
     <demand name="order 2 - item 1">
       <quantity>10</quantity>
-      <due>2007-02-15T00:00:00</due>
+      <due>2009-02-15T00:00:00</due>
       <priority>2</priority>
       <item name="end item 1" />
     </demand>
     <demand name="order 3 - item 1">
       <quantity>10</quantity>
-      <due>2007-03-15T00:00:00</due>
+      <due>2009-03-15T00:00:00</due>
       <priority>3</priority>
       <item name="end item 1" />
     </demand>
     <demand name="order 1 - item 2">
       <quantity>10</quantity>
-      <due>2007-01-02T00:00:00</due>
+      <due>2009-01-02T00:00:00</due>
       <priority>1</priority>
       <item name="end item 2" />
     </demand>
     <demand name="order 2 - item 2">
       <quantity>10</quantity>
-      <due>2007-02-15T00:00:00</due>
+      <due>2009-02-15T00:00:00</due>
       <priority>2</priority>
       <item name="end item 2" />
     </demand>
     <demand name="order 3 - item 2">
       <quantity>10</quantity>
-      <due>2007-03-15T00:00:00</due>
+      <due>2009-03-15T00:00:00</due>
       <priority>3</priority>
       <item name="end item 2" />
     </demand>

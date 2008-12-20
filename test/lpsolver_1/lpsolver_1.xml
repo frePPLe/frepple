@@ -2,7 +2,7 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <name>Linear Programming Demo Model</name>
   <description>Demonstrates capacity allocation using LP</description>
-  <current>2007-01-01T00:00:00</current>
+  <current>2009-01-01T00:00:00</current>
   <commands>
     <verbose>true</verbose>
     <command xsi:type="command_python" filename="lp_capacity.py"/>
@@ -189,7 +189,7 @@
       <description>assembly resource 1</description>
       <maximum name="Capacity" xsi:type="calendar_double">
         <buckets>
-          <bucket start="2007-01-01T00:00:00">
+          <bucket start="2009-01-01T00:00:00">
             <value>10</value>
           </bucket>
         </buckets>
@@ -207,49 +207,49 @@
   <demands>
     <demand name="order 1 for STCK 1">
       <quantity>10</quantity>
-      <due>2007-01-10T00:00:00</due>
+      <due>2009-01-10T00:00:00</due>
       <priority>1</priority>
       <item name="STCK1" />
     </demand>
     <demand name="order 2 for STCK 1">
       <quantity>10</quantity>
-      <due>2007-01-21T00:00:00</due>
+      <due>2009-01-21T00:00:00</due>
       <priority>1</priority>
       <item name="STCK1" />
     </demand>
     <demand name="order 3 for STCK 1">
       <quantity>10</quantity>
-      <due>2007-02-20T00:00:00</due>
+      <due>2009-02-20T00:00:00</due>
       <priority>2</priority>
       <item name="STCK1" />
     </demand>
     <demand name="order 4 for STCK 1">
       <quantity>10</quantity>
-      <due>2007-02-20T00:00:00</due>
+      <due>2009-02-20T00:00:00</due>
       <priority>2</priority>
       <item name="STCK1" />
     </demand>
     <demand name="order 1 for STCK 2">
       <quantity>10</quantity>
-      <due>2007-02-10T00:00:00</due>
+      <due>2009-02-10T00:00:00</due>
       <priority>1</priority>
       <item name="STCK2" />
     </demand>
     <demand name="order 2 for STCK 2">
       <quantity>10</quantity>
-      <due>2007-02-15T00:00:00</due>
+      <due>2009-02-15T00:00:00</due>
       <priority>1</priority>
       <item name="STCK2" />
     </demand>
     <demand name="order 3 for STCK 2">
       <quantity>10</quantity>
-      <due>2007-02-16T00:00:00</due>
+      <due>2009-02-16T00:00:00</due>
       <priority>2</priority>
       <item name="STCK2" />
     </demand>
     <demand name="order 4 for STCK 2">
       <quantity>10</quantity>
-      <due>2007-02-26T00:00:00</due>
+      <due>2009-02-26T00:00:00</due>
       <priority>2</priority>
       <item name="STCK2" />
     </demand>

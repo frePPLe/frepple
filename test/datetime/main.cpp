@@ -33,21 +33,21 @@ int main (int argc, char *argv[])
 {
 
   Date d1;
-  d1.parse("2007-02-01T01:02:03", "%Y-%m-%dT%H:%M:%S");
+  d1.parse("2009-02-01T01:02:03", "%Y-%m-%dT%H:%M:%S");
 
   Date d2;
-  d2.parse("2007-02-03T01:02:03", "%Y-%m-%dT%H:%M:%S");
+  d2.parse("2009-02-03T01:02:03", "%Y-%m-%dT%H:%M:%S");
 
   Date d3;
   // The date d3 is chosen such that daylight saving time
   // is in effect at that date.
-  d3.parse("2007-06-01T00:00:00", "%Y-%m-%dT%H:%M:%S");
+  d3.parse("2009-06-01T00:00:00", "%Y-%m-%dT%H:%M:%S");
 
   TimePeriod t1 = 10;
 
-  logger << "d1 \"2007-02-01T01:02:03\" => " << d1 << endl;
-  logger << "d2 \"2007-02-03T01:02:03\" => " << d2 << endl;
-  logger << "d3 \"2007-06-01T00:00:00\" => " << d3 << endl;
+  logger << "d1 \"2009-02-01T01:02:03\" => " << d1 << endl;
+  logger << "d2 \"2009-02-03T01:02:03\" => " << d2 << endl;
+  logger << "d3 \"2009-06-01T00:00:00\" => " << d3 << endl;
   logger << "t1: " << t1 << endl;
 
   TimePeriod t2 = d1 - d2;

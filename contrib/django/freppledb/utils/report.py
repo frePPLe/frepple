@@ -426,7 +426,6 @@ def view_report(request, entity=None, **args):
     base_request_path = "%s/" % request.path.rstrip("/").rpartition("/")[0]
   else:
     base_request_path = request.path
-  print base_request_path
 
   # Prepare template context
   context = {

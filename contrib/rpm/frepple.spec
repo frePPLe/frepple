@@ -84,7 +84,6 @@ echo Finished installation of frePPLe
 %defattr(-,root,root)
 %{prefix}/bin/frepple
 %{prefix}/lib/frepple/mod_forecast.so
-%{prefix}/lib/frepple/mod_python.so
 #%{prefix}/lib/frepple/mod_lp_solver.so
 #%{prefix}/lib/frepple/mod_webservice.so
 #%{prefix}/lib/libfrepple.la
@@ -92,9 +91,7 @@ echo Finished installation of frePPLe
 %{prefix}/lib/libfrepple.so.0
 %{prefix}/lib/libfrepple.so.0.0.0
 #%{prefix}/lib/mod_forecast.la
-#%{prefix}/lib/mod_python.la
 %{prefix}/share/frepple/mod_forecast.xsd
-%{prefix}/share/frepple/mod_python.xsd
 #%{prefix}/share/frepple/mod_lpsolver.xsd
 #%{prefix}/share/frepple/mod_webservice.xsd
 %{prefix}/share/frepple/frepple.xsd

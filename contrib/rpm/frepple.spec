@@ -55,7 +55,6 @@ These are the develop headers for frePPLe.
   --disable-rpath \
   --disable-dependency-tracking \
   --enable-doc \
-  --enable-python \
   --enable-forecast \
   --disable-lp_solver \
   --disable-webservice \

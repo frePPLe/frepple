@@ -29,18 +29,18 @@ Group: Office/Productivity
 Source: frepple-%{version}.tar.gz
 URL: http://frepple.sourceforge.net
 Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
-Requires: python
+Requires: python xerces-c
 # @todo add django dependency
 BuildRequires: doxygen python-devel xerces-c-devel
 Prefix: /usr
 
 %description
 FrePPLe stands for "Free Production Planning Library". It aims at building a
-toolkit for modeling and solving production planning problems, targetted at
-discrete manufacturing industries.
+toolkit for modeling and solving production planning problems, targetted 
+primarily at discrete manufacturing industries.
 
 %package devel
-Summary: Development headers for the Free Production Planning Library
+Summary: Development headers for frePPLe - the Free Production Planning Library
 Group: Office/Productivity
 Requires: frepple
 

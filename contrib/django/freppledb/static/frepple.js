@@ -135,7 +135,7 @@ var ContextMenu = {
 
 			// Unescape all escaped characters and urlencode the result for usage as a url
 			item = encodeURIComponent(item.replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-			  .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"'));
+			  .replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\//g,"_2F"));
 
 			// Build the urls for the menu
 			var l = ContextMenu._menuElement.getElementsByTagName("a");

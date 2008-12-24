@@ -440,7 +440,7 @@ function bucket_close()
 
 
 var dr,dl,ur,ul,dlt,drt,ult,urt;
-var scrollbarSize = 16;
+var scrollbarSize = Prototype.Browser.IE ? 11 : 16 ;
 
 
 /* The scrolling table is built from 4 divs, each with a nested table in it:
@@ -603,19 +603,24 @@ function syncResize()
 
   // Measure the total screen size and the resizable part of the grid
   var currentResizable = dr.getDimensions();
+  var currentPosition = dr.viewportOffset();
   var totalAvailable = document.viewport.getDimensions();
-  var totalResizableX = $(document.documentElement).scrollWidth;
   var totalResizableY = $(document.documentElement).scrollHeight;
 
   // Calculate width
-  var delta = totalAvailable.width - totalResizableX;
-  var width = currentResizable.width + delta;
-  if (width < 150) width = 150;
-  if (width > dr.scrollWidth) width = dr.scrollWidth;
+  var width = totalAvailable.width - currentPosition.left - scrollbarSize;
+  if (width < 150)
+  {
+    width = 150;
+    $(document.documentElement).style.overflowX = 'scroll';
+  }
+  else
+    $(document.documentElement).style.overflowX = 'auto';
+  if (width > dr.scrollWidth + scrollbarSize)
+    width = dr.scrollWidth + scrollbarSize;
 
   // Calculate height
-  delta = totalAvailable.height - totalResizableY;
-  var height = currentResizable.height + delta;
+  var height = currentResizable.height + totalAvailable.height - totalResizableY;
   if (height < 150)
   {
     height = 150;

@@ -145,7 +145,11 @@ class CrumbsNode(Node):
            cnt += 1
 
         # Push current url on the stack
-        cur.append( (unicode(title),'<a href="%s">%s</a>' % (iri_to_uri(urlquote(req.get_full_path())), unicode(escape(title)))) )
+        cur.append( (unicode(title),'<a href="%s%s">%s</a>' % (
+          urlquote(req.path),
+          req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
+          unicode(escape(title))
+          )))
 
         # Update the current session
         req.session['crumbs'] = cur

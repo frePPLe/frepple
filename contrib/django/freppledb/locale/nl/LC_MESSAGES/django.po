@@ -23,8 +23,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-10 09:40+0100\n"
-"PO-Revision-Date: 2008-12-10 10:03+0100\n"
+"POT-Creation-Date: 2008-12-24 15:50+0100\n"
+"PO-Revision-Date: 2008-12-24 15:59+0100\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@lists.kde.org>\n"
 "MIME-Version: 1.0\n"
@@ -1317,6 +1317,16 @@ msgstr ""
 msgid "Log in"
 msgstr ""
 
+# Translation included with django
+#: templates/admin/base_site_table.html:13 templates/user/preferences.html:18
+msgid "Save"
+msgstr ""
+
+# Translation included with django
+#: templates/admin/base_site_table.html:14
+msgid "Undo"
+msgstr ""
+
 #: templates/admin/base_site_table.html:15
 msgid "Time"
 msgstr "Tijd"
@@ -1377,11 +1387,11 @@ msgid ""
 "and create a plan in frePPLe...<br/>\n"
 "and export results into the database<br/>\n"
 "Constraints:<input type=\"checkbox\" name=\"constraint\" checked=\"true\" "
-"value=\"1\">Leadtime</input>\n"
-"<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"2"
-"\">Material</input>\n"
-"<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"4"
-"\">Capacity</input><br/>\n"
+"value=\"1\"/>Leadtime\n"
+"<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"2\"/"
+">Material\n"
+"<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"4\"/"
+">Capacity\n"
 "<a href=\"/execute/logfrepple/\">View latest log file</a></td>\n"
 "<td><input id=\"run\" type=\"submit\" value=\"Run\" /></td>"
 msgstr ""
@@ -1394,7 +1404,7 @@ msgstr ""
 "<input type=\"checkbox\" name=\"constraint\" checked=\"true\" value=\"4"
 "\">Capaciteit</input><br/>\n"
 "<a href=\"/execute/logfrepple/\">Bekijk het laatste logbestand</a></td>\n"
-"<td><input id=\"run\" type=\"submit\" value=\"Uitvoeren\" /></td>"
+"<td><input id=\"run\" type=\"submit\" value=\"Uitvoeren\" /></td> "
 
 #: templates/execute/execute.html:55
 msgid "Database"
@@ -1443,38 +1453,38 @@ msgid ""
 "<th scope=\"row\"><a>Create a model</a></th>\n"
 "<td>Create a sample model in the database.<br/>\n"
 "The parameters control the size and complexity.<br/>\n"
-"Number of end items: <input id=\"0\" name=\"clusters\" type=\"text\" "
+"Number of end items: <input id=\"create0\" name=\"clusters\" type=\"text\" "
 "maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br/>\n"
-"<b>Demand:</b></br>\n"
-"&nbsp;&nbsp;Monthly forecast per end item: <input id=\"1\" name=\"fcst\" "
-"type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange=\"calcUtil()"
-"\"/><br/>\n"
-"&nbsp;&nbsp;Demands per end item: <input id=\"2\" name=\"demands\" type="
-"\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/"
-"><br/>\n"
-"&nbsp;&nbsp;Average delivery lead time: <input id=\"2\" name=\"deliver_lt\" "
+"<b>Demand:</b><br/>\n"
+"&nbsp;&nbsp;Monthly forecast per end item: <input id=\"create1\" name=\"fcst"
+"\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange=\"calcUtil"
+"()\"/><br/>\n"
+"&nbsp;&nbsp;Demands per end item: <input id=\"create2\" name=\"demands\" "
 "type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()"
-"\"/> days<br/>\n"
-"<b>Raw Materials:</b></br>\n"
-"&nbsp;&nbsp;Depth of bill-of-material: <input id=\"3\" name=\"levels\" type="
-"\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange=\"calcUtil()\"/><br/"
-">\n"
-"&nbsp;&nbsp;Total number of components: <input id=\"0\" name=\"components\" "
-"type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" onchange=\"calcUtil()"
 "\"/><br/>\n"
-"&nbsp;&nbsp;Number of components per end item: <input id=\"0\" name="
+"&nbsp;&nbsp;Average delivery lead time: <input id=\"create3\" name="
+"\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" "
+"onchange=\"calcUtil()\"/> days<br/>\n"
+"<b>Raw Materials:</b><br/>\n"
+"&nbsp;&nbsp;Depth of bill-of-material: <input id=\"create4\" name=\"levels\" "
+"type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange=\"calcUtil()\"/"
+"><br/>\n"
+"&nbsp;&nbsp;Total number of components: <input id=\"create5\" name="
+"\"components\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" "
+"onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Number of components per end item: <input id=\"create6\" name="
 "\"components_per\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"4\" "
 "onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Average procurement lead time: <input id=\"2\" name=\"procure_lt"
-"\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" onchange=\"calcUtil"
-"()\"/> days<br/>\n"
-"<b>Capacity:</b></br>\n"
-"&nbsp;&nbsp;Number of resources: <input id=\"4\" name=\"rsrc_number\" type="
-"\"text\" maxlength=\"3\" size=\"3\" value=\"50\" onchange=\"calcUtil()\"/"
+"&nbsp;&nbsp;Average procurement lead time: <input id=\"create7\" name="
+"\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" "
+"onchange=\"calcUtil()\"/> days<br/>\n"
+"<b>Capacity:</b><br/>\n"
+"&nbsp;&nbsp;Number of resources: <input id=\"create8\" name=\"rsrc_number\" "
+"type=\"text\" maxlength=\"3\" size=\"3\" value=\"50\" onchange=\"calcUtil()"
+"\"/><br/>\n"
+"&nbsp;&nbsp;Size of each resource: <input id=\"create9\" name=\"rsrc_size\" "
+"type=\"text\" maxlength=\"3\" size=\"3\" value=\"4\" onchange=\"calcUtil()\"/"
 "><br/>\n"
-"&nbsp;&nbsp;Size of each resource: <input id=\"5\" name=\"rsrc_size\" type="
-"\"text\" maxlength=\"3\" size=\"3\" value=\"4\" onchange=\"calcUtil()\"/><br/"
-">\n"
 "&nbsp;&nbsp;Expected average resource utilization: <span id=\"util\">82.2</"
 "span>&#37;<br/>\n"
 "</td>\n"
@@ -1483,41 +1493,42 @@ msgstr ""
 "<th scope=\"row\"><a>Creeer een model</a></th>\n"
 "<td>Genereer een voorbeeld model in de databank.<br/>\n"
 "De volgende parameters controleren de grootte en complexiteit.<br/>\n"
-"Aand eindproducten: <input id=\"0\" name=\"clusters\" type=\"text\" "
+"Aantal eindproducten: <input id=\"create0\" name=\"clusters\" type=\"text\" "
 "maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br/>\n"
-"<b>Vraag:</b></br>\n"
-"&nbsp;&nbsp;Maandelijkse forecast per eindproduct: <input id=\"1\" name="
-"\"fcst\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange="
-"\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Orders per eindproduct: <input id=\"2\" name=\"demands\" type="
-"\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/"
-"><br/>\n"
-"&nbsp;&nbsp;Gemiddelde levertijd: <input id=\"2\" name=\"deliver_lt\" type="
-"\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/> "
-"days<br/>\n"
-"<b>Grondstoffen:</b></br>\n"
-"&nbsp;&nbsp;Diepte van de bill-of-material: <input id=\"3\" name=\"levels\" "
+"<b>Vraag:</b><br/>\n"
+"&nbsp;&nbsp;Maandelijkse forecast per eindproduct: <input id=\"create1\" name=\"fcst"
+"\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange=\"calcUtil"
+"()\"/><br/>\n"
+"&nbsp;&nbsp;Orders per eindproduct: <input id=\"create2\" name=\"demands\" "
+"type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()"
+"\"/><br/>\n"
+"&nbsp;&nbsp;Gemiddelde levertijd: <input id=\"create3\" name="
+"\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" "
+"onchange=\"calcUtil()\"/> dagen<br/>\n"
+"<b>Grondstoffen:</b><br/>\n"
+"&nbsp;&nbsp;Diepte van de bill-of-material: <input id=\"create4\" name=\"levels\" "
 "type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange=\"calcUtil()\"/"
 "><br/>\n"
-"&nbsp;&nbsp;Aantal componenten: <input id=\"0\" name=\"components\" type="
-"\"text\" maxlength=\"5\" size=\"5\" value=\"200\" onchange=\"calcUtil()\"/"
-"><br/>\n"
-"&nbsp;&nbsp;Aantal componenten per eindproduct: <input id=\"0\" name="
+"&nbsp;&nbsp;Totaal aantal componenten: <input id=\"create5\" name="
+"\"components\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" "
+"onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;Aantal componenten per eindproduct: <input id=\"create6\" name="
 "\"components_per\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"4\" "
 "onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Gemiddelde levertijd van leveranciers: <input id=\"2\" name="
+"&nbsp;&nbsp;Gemiddelde levertijd van leveranciers: <input id=\"create7\" name="
 "\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" "
-"onchange=\"calcUtil()\"/> days<br/>\n"
-"<b>Capaciteit:</b></br>\n"
-"&nbsp;&nbsp;Aantal machines: <input id=\"4\" name=\"rsrc_number\" type=\"text"
-"\" maxlength=\"3\" size=\"3\" value=\"50\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;Capaciteit van elke machine: <input id=\"5\" name=\"rsrc_size\" "
+"onchange=\"calcUtil()\"/> dagen<br/>\n"
+"<b>Capaciteit:</b><br/>\n"
+"&nbsp;&nbsp;Aantal machines: <input id=\"create8\" name=\"rsrc_number\" "
+"type=\"text\" maxlength=\"3\" size=\"3\" value=\"50\" onchange=\"calcUtil()"
+"\"/><br/>\n"
+"&nbsp;&nbsp;Capaciteit van elke machine: <input id=\"create9\" name=\"rsrc_size\" "
 "type=\"text\" maxlength=\"3\" size=\"3\" value=\"4\" onchange=\"calcUtil()\"/"
 "><br/>\n"
 "&nbsp;&nbsp;Verwachte gemiddelde bezettingsgraad: <span id=\"util\">82.2</"
 "span>&#37;<br/>\n"
 "</td>\n"
-"<td><input id=\"create\" type=\"submit\" value=\"Genereer\"/></td>"
+"<td><input id=\"create\" type=\"submit\" value=\"Genereer\"/></td> "
 
 #: templates/execute/execute.html:112
 msgid "Sorry, You don't have any execute permissions..."
@@ -1568,10 +1579,6 @@ msgstr ""
 #: templates/registration/password_change_form.html:29
 msgid "Change my password"
 msgstr ""
-
-#: templates/user/preferences.html:18
-msgid "Save"
-msgstr "Opslaan"
 
 #: user/models.py:37
 msgid "Day"
@@ -1687,153 +1694,51 @@ msgstr "File correct opgeladen"
 msgid "Permission denied"
 msgstr "Toegang geweigerd"
 
-#: utils/report.py:444
+#: utils/report.py:452
 msgid "for"
 msgstr "voor"
 
 # Translation included with django
-#: utils/report.py:599 utils/report.py:602 utils/report.py:603
-#: utils/report.py:662 utils/report.py:674
+#: utils/report.py:607 utils/report.py:610 utils/report.py:611
+#: utils/report.py:670 utils/report.py:682
 msgid "title"
 msgstr ""
 
-#: utils/report.py:605
+#: utils/report.py:613
 msgid "data field"
 msgstr "dataveld"
 
 # Translation included with django
-#: utils/report.py:973
+#: utils/report.py:981
 msgid "All"
 msgstr ""
 
-#: utils/report.py:992
+#: utils/report.py:1000
 msgid "False"
 msgstr "Onwaar"
 
-#: utils/report.py:992
+#: utils/report.py:1000
 msgid "True"
 msgstr "Waar"
 
-#: utils/report.py:1033
+#: utils/report.py:1041
 #, python-format
 msgid "Incorrect field %(column)s"
 msgstr "Foute veldnaam %(column)s"
 
-#: utils/report.py:1039
+#: utils/report.py:1047
 #, python-format
 msgid "Missing primary key field %(key)s"
 msgstr "Primary key %(key)s ontbreekt"
 
-#: utils/report.py:1089
+#: utils/report.py:1097
 #, python-format
 msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
 msgstr "Rij %(rownum)s veld %(field)s: %(data)s: %(message)s"
 
-#: utils/report.py:1097
+#: utils/report.py:1105
 #, python-format
 msgid "Exception during upload: %(message)s"
 msgstr "Fout tijdens laden: %(message)s"
 
-#~ msgid "default"
-#~ msgstr "standaard"
-
-#~ msgid "default start"
-#~ msgstr "begin standaard"
-
-#~ msgid "default end"
-#~ msgstr "einde standaard"
-
-#~ msgid "continuous"
-#~ msgstr "continu"
-
-#~ msgid "weekdays"
-#~ msgstr "weekdagen"
-
-#~ msgid "usagefactor"
-#~ msgstr "gebruiksfactor"
-
-#~ msgid "Upload data"
-#~ msgstr "Laad gegevens"
-
-#~ msgid ""
-#~ "<th scope=\"row\"><a>CSV</a></th>\n"
-#~ "<td>Load data from a csv text file in the database.<br/>\n"
-#~ "The first row of your file should contain the field names.<br/>\n"
-#~ "Entity: <select name=\"entity\" id=\"entity\">\n"
-#~ "<option value=\"-\" selected=\"selected\">-</option>\n"
-#~ "<option value=\"Buffer\">Buffer</option>\n"
-#~ "<option value=\"Calendar\">Calendar</option>\n"
-#~ "<option value=\"Bucket\">Calendar Bucket</option>\n"
-#~ "<option value=\"Customer\">Customer</option>\n"
-#~ "<option value=\"Dates\">Dates</option>\n"
-#~ "<option value=\"Demand\">Demand</option>\n"
-#~ "<option value=\"Flow\">Flow</option>\n"
-#~ "<option value=\"Forecast\">Forecast</option>\n"
-#~ "<option value=\"ForecastDemand\">Forecast Demand</option>\n"
-#~ "<option value=\"Item\">Item</option>\n"
-#~ "<option value=\"Load\">Load</option>\n"
-#~ "<option value=\"Location\">Location</option>\n"
-#~ "<option value=\"Operation\">Operation</option>\n"
-#~ "<option value=\"OperationPlan\">OperationPlan</option>\n"
-#~ "<option value=\"Resource\">Resource</option>\n"
-#~ "</select><br/>\n"
-#~ "Select your csv file: <input type=\"file\" id=\"csv_file\" size=\"23\" "
-#~ "name=\"csv_file\"/><br/>\n"
-#~ "</td>\n"
-#~ "<td><input id=\"upload\" type=\"submit\" value=\"Upload\"/></td>"
-#~ msgstr ""
-#~ "<th scope=\"row\"><a>CSV</a></th>\n"
-#~ "<td>Laad gegevens uit een csv bestand in de databank.<br/>\n"
-#~ "De eerste rij in het bestand moet de veldnamen specifieren.<br/>\n"
-#~ "Type object: <select name=\"entity\" id=\"entity\">\n"
-#~ "<option value=\"-\" selected=\"selected\">-</option>\n"
-#~ "<option value=\"Buffer\">Buffer</option>\n"
-#~ "<option value=\"Calendar\">Kalendar</option>\n"
-#~ "<option value=\"Bucket\">Kalendar Bucket</option>\n"
-#~ "<option value=\"Customer\">Klant</option>\n"
-#~ "<option value=\"Dates\">Data</option>\n"
-#~ "<option value=\"Demand\">Vraag</option>\n"
-#~ "<option value=\"Flow\">Flow</option>\n"
-#~ "<option value=\"Forecast\">Forecast</option>\n"
-#~ "<option value=\"ForecastDemand\">Forecast Demand</option>\n"
-#~ "<option value=\"Item\">Product</option>\n"
-#~ "<option value=\"Load\">Load</option>\n"
-#~ "<option value=\"Location\">Locatie</option>\n"
-#~ "<option value=\"Operation\">Operatie</option>\n"
-#~ "<option value=\"OperationPlan\">Ingeplande operatie</option>\n"
-#~ "<option value=\"Resource\">Resource</option>\n"
-#~ "</select><br/>\n"
-#~ "Select your csv file: <input type=\"file\" id=\"csv_file\" size=\"23\" "
-#~ "name=\"csv_file\"/><br/>\n"
-#~ "</td>\n"
-#~ "<td><input id=\"upload\" type=\"submit\" value=\"Laad\"/></td>"
-
-#~ msgid "CSV output format"
-#~ msgstr "CSV uitvoer formaat"
-
-#~ msgid "Exporting CSV data as a table or a list"
-#~ msgstr "Uitvoeren van CSV data in een lijst of een tabel"
-
-#, fuzzy
-#~ msgid "lastmodified"
-#~ msgstr "laatste wijziging"
-
-#, fuzzy
-#~ msgid "posttime"
-#~ msgstr "post-operatie tijd"
-
-#~ msgid "log"
-#~ msgstr "historiek"
-
-#~ msgid "FIXED_TIME"
-#~ msgstr "FIXED_TIME"
-
-#~ msgid "TIME_PER"
-#~ msgstr "TIME_PER"
-
-#~ msgid "ROUTING"
-#~ msgstr "ROUTING"
-
-#~ msgid "ALTERNATE"
-#~ msgstr "ALTERNATE"
 

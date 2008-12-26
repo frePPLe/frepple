@@ -485,8 +485,7 @@ class Mutex: public NonCopyable
 
 
 /** @brief This is a convenience class that makes it easy (and
-  * exception-safe) to
-  * lock a mutex in a scope.
+  * exception-safe) to lock a mutex in a scope.
   */
 class ScopeMutexLock: public NonCopyable
 {
@@ -704,7 +703,7 @@ class PythonType : public NonCopyable
     }
 
     /** Updates the deallocator. */
-    void dealloc(void (*f)(PyObject*))
+    void supportdealloc(void (*f)(PyObject*))
     {
       table.tp_dealloc = f;
     }

@@ -31,7 +31,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,0,0,0
- PRODUCTVERSION 0,6,0,0
+ PRODUCTVERSION 0,6,1,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -55,7 +55,7 @@ BEGIN
             "Licenced under the GNU Lesser General Public License"
       VALUE "OriginalFilename", "frepple.dll"
       VALUE "ProductName", " frePPLe Dynamic Link Library"
-      VALUE "ProductVersion", "0, 6, 0, 0"
+      VALUE "ProductVersion", "0, 6, 1, 0"
     END
   END
   BLOCK "VarFileInfo"

@@ -81,9 +81,11 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
     return filename;
 
   // Second: check the FREPPLE_HOME directory, if it is defined
-  string fullname = getenv("FREPPLE_HOME");
-  if (!fullname.empty())
+  string fullname;
+  char * envvar = getenv("FREPPLE_HOME");
+  if (envvar)
   {
+    fullname = envvar;
     if (*fullname.rbegin() != '/') fullname += '/';
     fullname += filename;
     result = stat(fullname.c_str(), &stat_p);

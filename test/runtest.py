@@ -100,7 +100,9 @@ def runTestSuite():
         sys.exit(1)
 
     # Executable to run
-    if platform == 'VCC':
+    if not 'FREPPLE_HOME' in os.environ:
+      os.environ['EXECUTABLE'] = "frepple"
+    elif platform == 'VCC':
       os.environ['EXECUTABLE'] = os.path.join("..","..","bin","frepple.exe");
     else:
       # Executable to be used for the tests. Exported as an environment variable.
@@ -108,12 +110,13 @@ def runTestSuite():
       os.environ['EXECUTABLE'] = "%s  --mode=execute %s" % (os.path.join("..","..","libtool"), os.path.join("..","..","src","frepple"))
 
     # Argh... Special cases for that special platform again...
-    if sys.platform == 'cygwin' and platform == 'VCC':
+    if 'FREPPLE_HOME' in os.environ:
+      if sys.platform == 'cygwin' and platform == 'VCC':
         # Test running with cygwin python but testing the vcc executable
         os.environ['FREPPLE_HOME'] = Popen(
           "cygpath  --windows " + os.environ['FREPPLE_HOME'],
           stdout=PIPE, shell=True).communicate()[0].strip()
-    if sys.platform == 'win32' and platform == 'GCC':
+      if sys.platform == 'win32' and platform == 'GCC':
         # Test running with windows python but testing the cygwin executable
         os.environ['FREPPLE_HOME'] = Popen(
           "cygpath  --unix " + os.environ['FREPPLE_HOME'],
@@ -126,11 +129,12 @@ def runTestSuite():
     #  SHLIB_PATH for HPUX
     #  PATH for windows, cygwin
     # We set all variables anyway.
-    for var in ('LD_LIBRARY_PATH','LIBPATH','SHLIB_PATH','PATH'):
-      if var in os.environ:
-        os.environ[var] += os.pathsep + os.environ['FREPPLE_HOME']
-      else:
-        os.environ[var] = os.environ['FREPPLE_HOME']
+    if 'FREPPLE_HOME' in os.environ:
+      for var in ('LD_LIBRARY_PATH','LIBPATH','SHLIB_PATH','PATH'):
+        if var in os.environ:
+          os.environ[var] += os.pathsep + os.environ['FREPPLE_HOME']
+        else:
+          os.environ[var] = os.environ['FREPPLE_HOME']
 
     # Define a list with tests to run
     if len(tests) == 0:
@@ -172,9 +176,13 @@ def runTestSuite():
             print "Warning: Unrecognized test in directory " + i
 
     # Finally, run the test suite now
-    print "Running", AllTests.countTestCases(), \
+    if 'FREPPLE_HOME' in os.environ:
+      print "Running", AllTests.countTestCases(), \
          "tests from directory", testdir, \
          "with FREPPLE_HOME", os.environ['FREPPLE_HOME']
+    else:
+      print "Running", AllTests.countTestCases(), \
+         "tests from directory", testdir
     unittest.TextTestRunner(verbosity=2).run(AllTests)
 
 

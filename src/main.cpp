@@ -50,9 +50,9 @@ void usage()
     "  -validate -v  Validate the xml input for correctness.\n"
     "  -check -c     Only validate the input, without executing the content.\n"
     "  -? -h -help   Show these instructions.\n"
-    "\nEnvironment: The variable FREPPLE_HOME is required to point to a\n"
-    "               directory. The application will use the files init.xml,\n"
-    "               frepple.xsd and module libraries from this directory.\n"
+    "\nEnvironment: The variable FREPPLE_HOME optionally points to a\n"
+    "               directory where the initialization files init.xml,\n"
+    "               frepple.xsd and module libraries will be searched.\n"
     "\nReturn codes: 0 when succesfull, non-zero in case of errors\n"
     "\nMore information on this program: http://www.frepple.com\n\n"
     << endl;

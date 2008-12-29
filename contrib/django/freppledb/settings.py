@@ -135,6 +135,7 @@ INSTALLED_APPS = (
     'output',
     'execute',
     'user',
+    'common',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

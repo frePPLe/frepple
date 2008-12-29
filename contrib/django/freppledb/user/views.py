@@ -27,7 +27,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from user.models import Preferences
-from utils.report import *
+from common.report import *
 
 from django.contrib.auth.models import User, Group
 

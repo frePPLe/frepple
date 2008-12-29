@@ -32,7 +32,7 @@ from django.views.generic.simple import direct_to_template
 from django.utils.translation import ugettext_lazy as _
 
 from execute.models import log
-from utils.report import *
+from common.report import *
 
 
 @staff_member_required

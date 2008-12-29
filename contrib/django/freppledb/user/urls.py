@@ -27,9 +27,9 @@ import user.views
 urlpatterns = patterns('',
 
   # Model list reports, which override standard admin screens
-  (r'^admin/auth/user/$', 'utils.report.view_report',
+  (r'^admin/auth/user/$', 'common.report.view_report',
     {'report': user.views.UserList,}),
-  (r'^admin/auth/group/$', 'utils.report.view_report',
+  (r'^admin/auth/group/$', 'common.report.view_report',
     {'report': user.views.GroupList,}),
 
 )

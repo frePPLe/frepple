@@ -31,7 +31,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
 from input.models import *
-from utils.report import *
+from common.report import *
 
 
 class uploadjson:

@@ -56,7 +56,7 @@ from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 
 from input.models import Plan, Buffer
-from utils.db import python_date
+from common.db import python_date
 
 
 # Parameter settings

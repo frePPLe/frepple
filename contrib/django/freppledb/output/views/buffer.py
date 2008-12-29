@@ -25,8 +25,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from input.models import Buffer, Plan
 from output.models import FlowPlan
-from utils.db import *
-from utils.report import *
+from common.db import *
+from common.report import *
 
 
 class OverviewReport(TableReport):

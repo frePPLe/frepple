@@ -26,8 +26,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from input.models import Resource, Plan
 from output.models import LoadPlan
-from utils.db import *
-from utils.report import *
+from common.db import *
+from common.report import *
 
 
 class OverviewReport(TableReport):

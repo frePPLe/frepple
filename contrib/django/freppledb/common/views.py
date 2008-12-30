@@ -26,7 +26,7 @@ from django.template import RequestContext
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from user.models import Preferences
+from common.models import Preferences
 from common.report import *
 
 from django.contrib.auth.models import User, Group
@@ -71,7 +71,7 @@ def preferences(request):
       'startdate': pref.startdate,
       'enddate': pref.enddate
       })
-  return render_to_response('user/preferences.html', {
+  return render_to_response('common/preferences.html', {
      'title': _('Edit my preferences'),
      'form': form,
      'reset_crumbs': True,

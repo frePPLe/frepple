@@ -22,7 +22,7 @@
 
 
 r'''
-Django url mapping file.
+Django URL mapping file.
 '''
 
 import os.path
@@ -30,11 +30,11 @@ import os.path
 from django.conf.urls.defaults import *
 from django.conf import settings
 
-import user.views
+import common.views
 import output.urls
 import input.urls
-import user.urls
-import input.admin
+import common.urls
+import admin
 
 urlpatterns = patterns('',
     # frePPLe execution application
@@ -44,7 +44,7 @@ urlpatterns = patterns('',
     (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/admin/'}),
 
     # User preferences
-    (r'^preferences/$', user.views.preferences),
+    (r'^preferences/$', common.views.preferences),
 )
 
 # Adding urls for each installed application.
@@ -52,13 +52,13 @@ urlpatterns = patterns('',
 # use an "include" in the previous section
 urlpatterns += output.urls.urlpatterns
 urlpatterns += input.urls.urlpatterns
-urlpatterns += user.urls.urlpatterns
+urlpatterns += common.urls.urlpatterns
 
 # Admin pages, and the Javascript i18n library.
 # It needs to be added as the last item since the applications can
 # hide/override some admin urls.
 urlpatterns += patterns('',
-    (r'^admin/(.*)', input.admin.site.root),
+    (r'^admin/(.*)', admin.site.root),
 )
 
 # Allows the standalone development server (and the py2exe executable) to serve

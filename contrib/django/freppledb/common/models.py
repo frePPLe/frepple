@@ -33,7 +33,7 @@ from input.models import Plan
 
 class Preferences(models.Model):
   buckettype = (
-    ('default',_('Default')),
+    ('standard',_('Standard')),
     ('day',_('Day')),
     ('week',_('Week')),
     ('month',_('Month')),

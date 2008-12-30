@@ -21,9 +21,13 @@
 # date : $LastChangedDate$
 
 r'''
-An application that represents all frePPLe input.
+An reusable application that contains common functionality of different
+frePPLe data models.
 
-It defines the database storage used as input and the screens to maintain them.
+The common functionality handles:
+  - breadcrumbs
+  - user preferences: reporting buckets, report start and end dates, report output type
+  - login using the e-mail address
 '''
 
 from django import template

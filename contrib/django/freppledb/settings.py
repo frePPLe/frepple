@@ -134,7 +134,6 @@ INSTALLED_APPS = (
     'input',
     'output',
     'execute',
-    'user',
     'common',
 )
 
@@ -167,11 +166,11 @@ ALLOWED_INCLUDE_ROOTS = (FREPPLE_HOME)
 
 # To use a customized authentication backend.
 AUTHENTICATION_BACKENDS = (
-    "user.auth.EmailBackend",
+    "common.auth.EmailBackend",
 )
 
 # To add the user preferences to the standard admin
-AUTH_PROFILE_MODULE = 'user.Preferences'
+AUTH_PROFILE_MODULE = 'common.Preferences'
 
 # IP address of the machine you are browsing from. When logging in from this
 # machine additional debugging statements can be shown.

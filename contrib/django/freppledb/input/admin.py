@@ -182,12 +182,3 @@ class Forecast_admin(admin.ModelAdmin):
   inlines = [ ForecastDemand_inline, ]
   save_as = True
 site.register(Forecast,Forecast_admin)
-
-
-# Register also the models from the Auth application.
-# The admin users can then create, change and delete users and user groups.
-from django.contrib.auth.models import User, Group
-from django.contrib.auth.admin import UserAdmin, GroupAdmin
-
-site.register(Group, GroupAdmin)
-site.register(User, UserAdmin)

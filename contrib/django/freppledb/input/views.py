@@ -786,67 +786,6 @@ class ForecastList(ListReport):
     )
 
 
-class DatesList(ListReport):
-  '''
-  A list report to show dates.
-  '''
-  template = 'input/dateslist.html'
-  title = _("Date List")
-  basequeryset = Dates.objects.all()
-  model = Dates
-  frozenColumns = 1
-  rows = (
-    ('day', {
-      'title': _('day'),
-      'filter': FilterDate(),
-      }),
-    ('dayofweek', {
-      'title': _('day of week'),
-      'filter': FilterNumber(),
-      }),
-    ('week', {
-      'title': _('week'),
-      'filter': FilterText(),
-      }),
-    ('month', {
-      'title': _('month'),
-      'filter': FilterText(),
-      }),
-    ('quarter', {
-      'title': _('quarter'),
-      'filter': FilterText(),
-      }),
-    ('year', {
-      'title': _('year'),
-      'filter': FilterText(),
-      }),
-    ('standard', {
-      'title': _('standard'),
-      'filter': FilterText(),
-      }),
-    ('week_start', {
-      'title': _('week start'),
-      'filter': FilterDate(),
-      }),
-    ('month_start', {
-      'title': _('month start'),
-      'filter': FilterDate(),
-      }),
-    ('quarter_start', {
-      'title': _('month start'),
-      'filter': FilterDate(),
-      }),
-    ('year_start', {
-      'title': _('year start'),
-      'filter': FilterDate(),
-      }),
-    ('standard_start', {
-      'title': _('standard start'),
-      'filter': FilterDate(),
-      }),
-    )
-
-
 class CalendarList(ListReport):
   '''
   A list report to show calendars.

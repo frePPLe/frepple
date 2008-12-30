@@ -22,7 +22,9 @@
 
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
+from django.contrib import admin
 
+from freppledb.common.models import *
 from freppledb.admin import site
 
 
@@ -30,3 +32,18 @@ from freppledb.admin import site
 # The admin users can then create, change and delete users and user groups.
 site.register(Group, GroupAdmin)
 site.register(User, UserAdmin)
+
+
+class Dates_admin(admin.ModelAdmin):
+  model = Dates
+  fieldsets = (
+      (None, {'fields': (('day','day_start','day_end'),
+                         'dayofweek',
+                         ('week','week_start','week_end'),
+                         ('month','month_start','month_end'),
+                         ('quarter','quarter_start','quarter_end'),
+                         ('year','year_start','year_end'),
+                         ('standard','standard_start','standard_end'),
+                         )}),
+      )
+site.register(Dates,Dates_admin)

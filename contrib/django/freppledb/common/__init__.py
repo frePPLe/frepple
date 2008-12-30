@@ -28,10 +28,11 @@ The common functionality handles:
   - breadcrumbs
   - user preferences: reporting buckets, report start and end dates, report output type
   - login using the e-mail address
+  - date and time bucket definition
 '''
 
 from django import template
 
 # Make our tags built-in, so we don't have to load them any more in our
 # templates with a 'load' tag.
-template.add_to_builtins('input.templatetags.breadcrumbs')
+template.add_to_builtins('common.templatetags.breadcrumbs')

@@ -32,21 +32,6 @@ class Plan_admin(admin.ModelAdmin):
 site.register(Plan,Plan_admin)
 
 
-class Dates_admin(admin.ModelAdmin):
-  model = Dates
-  fieldsets = (
-      (None, {'fields': (('day','day_start','day_end'),
-                         'dayofweek',
-                         ('week','week_start','week_end'),
-                         ('month','month_start','month_end'),
-                         ('quarter','quarter_start','quarter_end'),
-                         ('year','year_start','year_end'),
-                         ('standard','standard_start','standard_end'),
-                         )}),
-      )
-site.register(Dates,Dates_admin)
-
-
 class Bucket_inline(admin.TabularInline):
   model = Bucket
   extra = 3

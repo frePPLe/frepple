@@ -31,5 +31,7 @@ urlpatterns = patterns('',
     {'report': common.views.UserList,}),
   (r'^admin/auth/group/$', 'common.report.view_report',
     {'report': common.views.GroupList,}),
+  (r'^admin/common/dates/$', 'common.report.view_report',
+    {'report': common.views.DatesList,}),
 
 )

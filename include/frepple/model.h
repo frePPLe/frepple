@@ -5642,10 +5642,17 @@ class PythonOperationTimePer : public FreppleClass<PythonOperationTimePer,Python
 class PythonOperationRouting : public FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>
 {
   public:
+    static int initialize(PyObject* m)
+    {
+      getType().addMethod("addStep", addStep, METH_VARARGS , "add steps to the routing");
+      return FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>::initialize(m);
+    }
     PythonOperationRouting(OperationRouting* p)
       : FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>(p) {}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    /** Add one or more steps to a routing. */
+    static DECLARE_EXPORT PyObject* addStep(PyObject*, PyObject*);
 };
 
 
@@ -5910,7 +5917,7 @@ class PythonSolver : public FreppleCategory<PythonSolver,Solver>
     PythonSolver(Solver* p) : FreppleCategory<PythonSolver,Solver>(p) {}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static PyObject* solve(PyObject*, PyObject*);
+    static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
 };
 
 

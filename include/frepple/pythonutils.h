@@ -85,6 +85,7 @@ namespace utils
   *       - operation_alternate
   *       - operation_fixed_time
   *       - operation_routing
+  *           - addStep(operation, ...)
   *       - operation_time_per
   *       - operationplan
   *       - parameters
@@ -93,6 +94,7 @@ namespace utils
   *       - resource_default
   *       - resource_infinite
   *       - solver
+  *           - solve()
   *       - solver_mrp
   *   - The following functions or attributes return <b>iterators</b> over the
   *     frePPLe objects:<br>

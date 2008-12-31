@@ -126,7 +126,7 @@ DECLARE_EXPORT int PythonSolver::setattro(const Attribute& attr, const PythonObj
 }
 
 
-PyObject *PythonSolver::solve(PyObject *self, PyObject *args)
+DECLARE_EXPORT PyObject *PythonSolver::solve(PyObject *self, PyObject *args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try

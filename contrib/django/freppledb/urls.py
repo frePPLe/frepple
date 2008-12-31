@@ -42,9 +42,6 @@ urlpatterns = patterns('',
 
     # Root url redirects to the admin index page
     (r'^$', 'django.views.generic.simple.redirect_to', {'url': '/admin/'}),
-
-    # User preferences
-    (r'^preferences/$', common.views.preferences),
 )
 
 # Adding urls for each installed application.

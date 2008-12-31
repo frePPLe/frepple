@@ -864,4 +864,29 @@ DECLARE_EXPORT int PythonOperationRouting::setattro(const Attribute& attr, const
   return PythonOperation(obj).setattro(attr, field);
 } 
 
+
+PyObject *PythonOperationRouting::addStep(PyObject *self, PyObject *args)
+{
+  try
+  {
+    OperationRouting *oper = static_cast<PythonOperationRouting*>(self)->obj;
+    if (!oper) throw LogicException("Can't add steps to NULL routing");
+    PyObject *steps[4];
+    for (unsigned int i=0; i<4; ++i) steps[i] = NULL;
+    if (PyArg_UnpackTuple(args, "addStep", 1, 4, &steps[0], &steps[1], &steps[2], &steps[3]))
+      for (unsigned int i=0; i<4 && steps[i]; ++i) 
+      {
+        if (!PyObject_TypeCheck(steps[i], PythonOperation::getType().type_object())) 
+          throw DataException("routing steps must be of type operation");
+        oper->addStepBack(static_cast<PythonOperation*>(steps[i])->obj);
+      }
+  }
+  catch(...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
+  return Py_BuildValue("");
+}
+
 } // end namespace

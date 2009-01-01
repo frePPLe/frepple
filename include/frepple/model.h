@@ -1865,14 +1865,9 @@ class OperationPlan
     DECLARE_EXPORT void setDemand(Demand* l);
 
     /** Returns whether the operationplan is locked. A locked operationplan
-      * is never changed. Only top-operationplans can be locked.
-      * Sub-operationplans pass on a call to this function to their owner.
+      * is never changed. 
       */
-    bool getLocked() const
-    {
-      if (owner) return owner->getLocked();
-      else return locked;
-    }
+    bool getLocked() const {return locked;}
 
     /** Deletes all operationplans of a certain operation. A boolean flag
       * allows to specify whether locked operationplans are to be deleted too.
@@ -1880,17 +1875,12 @@ class OperationPlan
     static DECLARE_EXPORT void deleteOperationPlans(Operation* o, bool deleteLocked=false);
 
     /** Locks/unlocks an operationplan. A locked operationplan is never
-      * changed. Only top-operationplans can be locked. Sub-operationplans
-      * pass on a call to this function to their owner.
+      * changed.
       */
-    void setLocked(bool b = true)
+    virtual DECLARE_EXPORT void setLocked(bool b = true)
     {
-      if (owner) owner->setLocked(b);
-      else if (locked!=b)
-      {
-        setChanged();
-        locked = b;
-      }
+      locked = b;
+      update();
     }
 
     /** Returns a pointer to the operation being instantiated. */
@@ -2076,6 +2066,8 @@ class OperationPlan
     DECLARE_EXPORT void updateSorting();
 
   protected:
+    /** Updates the operationplan based on the latest information of quantity, 
+      * date and locked flag. */
     virtual DECLARE_EXPORT void update();
     DECLARE_EXPORT void resizeFlowLoadPlans();
 
@@ -2379,6 +2371,11 @@ class OperationPlanRouting : public OperationPlan
     DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
     virtual const OperationPlan::OperationPlanList& getSubOperationPlans() const {return step_opplans;}
 
+    /** Locks/unlocks an operationplan. A locked operationplan is never
+      * changed.
+      */
+    virtual DECLARE_EXPORT void setLocked(bool b = true);
+
     /** Initializes the operationplan and all steps in it.
       * If no step operationplans had been created yet this method will create
       * them. During this type of creation the end date of the routing
@@ -2519,6 +2516,11 @@ class OperationPlanAlternate : public OperationPlan
 
     /** Returns the sub-operationplan. */
     virtual OperationPlan* getSubOperationPlan() const {return altopplan;}
+
+    /** Locks/unlocks an operationplan. A locked operationplan is never
+      * changed.
+      */
+    virtual DECLARE_EXPORT void setLocked(bool b = true);
 
     /** Initializes the operationplan. If no suboperationplan was created
       * yet this method will create one, using the highest priority alternate.

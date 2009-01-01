@@ -732,6 +732,15 @@ DECLARE_EXPORT void OperationPlanRouting::eraseSubOperationPlan(OperationPlan* o
 }
 
 
+DECLARE_EXPORT void OperationPlanRouting::setLocked(bool b)
+{
+  for (list<OperationPlan*>::iterator i = step_opplans.begin();
+      i != step_opplans.end(); ++i)
+      (*i)->setLocked(b);
+  update();
+}
+
+
 DECLARE_EXPORT void OperationPlanRouting::setEnd(Date d)
 {
   if (step_opplans.empty())
@@ -795,11 +804,23 @@ DECLARE_EXPORT void OperationPlanRouting::setStart(Date d)
 DECLARE_EXPORT void OperationPlanRouting::update()
 {
   if (!step_opplans.empty())
+  {
     // Set the dates on the top operationplan
     setStartAndEnd(
       step_opplans.front()->getDates().getStart(),
       step_opplans.back()->getDates().getEnd()
     );
+    // If at least 1 sub-operationplan is locked, the whole routing is
+    // considered locked.
+    locked = false;
+    for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
+        i != step_opplans.end(); ++i)
+        if ((*i)->locked) 
+        {
+          locked = true;
+          break;
+        }
+  }
   OperationPlan::update();
 }
 
@@ -899,13 +920,26 @@ DECLARE_EXPORT void OperationPlanAlternate::setStart(Date d)
 }
 
 
+DECLARE_EXPORT void OperationPlanAlternate::setLocked(bool b)
+{
+  if (altopplan) altopplan->setLocked(b);
+  else locked = b;
+  OperationPlan::update();
+}
+
+
 DECLARE_EXPORT void OperationPlanAlternate::update()
 {
   if (altopplan)
+  {
+    // Inherit the start and end date of the child operationplan
     setStartAndEnd(
       altopplan->getDates().getStart(),
       altopplan->getDates().getEnd()
     );
+    // Inherit the locked status of my child
+    locked = altopplan->locked;
+  }
   OperationPlan::update();
 }
 

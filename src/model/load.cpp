@@ -203,6 +203,7 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, con
   }
 }
 
+
 int PythonLoad::initialize(PyObject* m)
 {
   // Initialize the type

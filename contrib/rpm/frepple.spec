@@ -96,7 +96,7 @@ echo Finished installation of frePPLe
 %{prefix}/share/frepple/frepple.xsd
 %{prefix}/share/frepple/frepple_core.xsd
 %{prefix}/share/frepple/init.xml
-%{prefix}/man/man?/*
+%{prefix}/share/man/man1/frepple.1.gz
 %doc COPYING doc/reference doc/*.pdf doc/favicon.ico doc/*.html doc/*.css doc/*.gif doc/*.bmp
 
 %files devel

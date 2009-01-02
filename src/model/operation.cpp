@@ -863,10 +863,10 @@ DECLARE_EXPORT PyObject* PythonOperationAlternate::addAlternate(PyObject* self, 
     int prio = 1;
     PyObject *eff_start = NULL;
     PyObject *eff_end = NULL;
-    static char *kwlist[] = {"operation", "priority", "effective_start", "effective_end", NULL};
+    static const char *kwlist[] = {"operation", "priority", "effective_start", "effective_end", NULL};
 	  if (!PyArg_ParseTupleAndKeywords(args, kwdict, 
       "O|iOO:addAlternate", 
-      kwlist, &oper, &prio, &eff_start, &eff_end))
+      const_cast<char**>(kwlist), &oper, &prio, &eff_start, &eff_end))
         return NULL;
     if (!PyObject_TypeCheck(oper, PythonOperation::getType().type_object())) 
       throw DataException("alternate operation must be of type operation");

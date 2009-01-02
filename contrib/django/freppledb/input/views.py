@@ -901,11 +901,15 @@ class SubOperationList(ListReport):
   @staticmethod
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
-      'operation','suboperation','priority','effective_start','effective_end',
+      'id','operation','suboperation','priority','effective_start','effective_end',
       'lastmodified'
       )
 
   rows = (
+    ('id', {
+      'title': _('identifier'),
+      'filter': FilterNumber(),
+      }),
     ('operation', {
       'title': _('operation'),
       'filter': FilterText(field='operation__name'),

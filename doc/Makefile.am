@@ -1,5 +1,5 @@
 
-EXTRA_DIST = frepple.doxyfile favicon.ico *.html *.css *.pdf *.gif *.bmp
+EXTRA_DIST = frepple.doxyfile favicon.ico *.html *.css *.pdf *.gif *.bmp frepple.1
 
 if DOC
 EXTRA_DIST += reference
@@ -17,6 +17,9 @@ clean-local:
 all-local: reference
 
 if DOC
+
+man_MANS = frepple.1
+
 install-data-local:
 	echo "installing documentation in $(docdir)"; \
 	$(mkinstalldirs) $(docdir)/reference; \
@@ -27,6 +30,7 @@ install-data-local:
 	  else $(INSTALL_DATA) $$p $(docdir)/$$p; \
 	  fi; \
 	done
+
 endif
 
 uninstall-local:

@@ -36,7 +36,7 @@ Prefix: /usr
 
 %description
 FrePPLe stands for "Free Production Planning Library". It aims at building a
-toolkit for modeling and solving production planning problems, targetted 
+toolkit for modeling and solving production planning problems, targetted
 primarily at discrete manufacturing industries.
 
 %package devel
@@ -96,6 +96,7 @@ echo Finished installation of frePPLe
 %{prefix}/share/frepple/frepple.xsd
 %{prefix}/share/frepple/frepple_core.xsd
 %{prefix}/share/frepple/init.xml
+%{prefix}/man/man?/*
 %doc COPYING doc/reference doc/*.pdf doc/favicon.ico doc/*.html doc/*.css doc/*.gif doc/*.bmp
 
 %files devel

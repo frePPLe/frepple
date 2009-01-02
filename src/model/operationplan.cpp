@@ -663,6 +663,13 @@ DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, const Attribute& p
 }
 
 
+DECLARE_EXPORT void OperationPlan::setLocked(bool b)
+{
+  locked = b;
+  update();
+}
+
+
 DECLARE_EXPORT void OperationPlan::setDemand(Demand* l)
 {
   // No change

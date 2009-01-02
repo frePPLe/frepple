@@ -1877,11 +1877,7 @@ class OperationPlan
     /** Locks/unlocks an operationplan. A locked operationplan is never
       * changed.
       */
-    virtual DECLARE_EXPORT void setLocked(bool b = true)
-    {
-      locked = b;
-      update();
-    }
+    virtual DECLARE_EXPORT void setLocked(bool b = true);
 
     /** Returns a pointer to the operation being instantiated. */
     Operation* getOperation() const {return oper;}

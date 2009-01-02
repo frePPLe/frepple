@@ -83,9 +83,10 @@ namespace utils
   *       - location_default
   *       - operation
   *       - operation_alternate
+  *           - addAlternate(operation=x, priority=y, effective_start=z1, effective_end=z2)
   *       - operation_fixed_time
   *       - operation_routing
-  *           - addStep(operation, ...)
+  *           - addStep(tuple of operations)
   *       - operation_time_per
   *       - operationplan
   *       - parameters

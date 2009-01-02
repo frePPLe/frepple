@@ -165,7 +165,6 @@ def loadSuboperations(cursor):
   print 'Importing suboperations...'
   cnt = 0
   starttime = time()
-  x = [ header, '<operations>' ]
   cursor.execute('''
     SELECT operation_id, suboperation_id, priority, effective_start, effective_end
     FROM suboperation, operation
@@ -173,20 +172,23 @@ def loadSuboperations(cursor):
     AND operation.type = 'operation_alternate'
     ORDER BY operation_id, priority
     ''')
-  curoper = ''
+  curopername = None
   for i, j, k, l, m in cursor.fetchall():
     cnt += 1
-    if i != curoper:
-      if curoper != '': x.append('</operation>')
-      x.append('<operation name=%s xsi:type="operation_alternate">' % quoteattr(i))
-      curoper = i
-    x.append('<alternate priority="%s"><operation name=%s/>' % (k,quoteattr(j)))
-    if l: x.append('<effective_start>%s</effective_start>' % l.isoformat())
-    if m: x.append('<effective_end>%s</effective_end>' % m.isoformat())
-    x.append('</alternate>')
-  if curoper != '': x.append('</operation>')
-  x.append('</operations></plan>')
-  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
+    try:
+      if i != curopername:
+        curopername = i
+        curoper = frepple.operation_alternate(name=curopername)
+      if l:
+        if m:
+          curoper.addAlternate(operation=frepple.operation(name=j),priority=k,effective_start=l,effective_end=m)
+        else:
+          curoper.addAlternate(operation=frepple.operation(name=j),priority=k,effective_start=l)
+      elif m:
+          curoper.addAlternate(priority=k,effective_end=m)
+      else:
+        curoper.addAlternate(operation=frepple.operation(name=j),priority=k)
+    except Exception, e: print "Error:", e
   print 'Loaded %d suboperations in %.2f seconds' % (cnt, time() - starttime)
 
 

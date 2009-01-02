@@ -682,6 +682,12 @@ class PythonType : public NonCopyable
     /** Add a new method. */
     DECLARE_EXPORT void addMethod(const char*, PyCFunction, int, const char*);
 
+    /** Add a new method. */
+    DECLARE_EXPORT void addMethod(const char* c, PyCFunctionWithKeywords f, int i, const char* d)
+    {
+      addMethod(c, reinterpret_cast<PyCFunction>(f), i | METH_KEYWORDS, d);
+    }
+
     /** Updates tp_name. */
     void setName (const string n)
     {

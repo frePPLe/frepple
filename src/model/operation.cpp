@@ -846,8 +846,51 @@ DECLARE_EXPORT PyObject* PythonOperationAlternate::getattro(const Attribute& att
 
 DECLARE_EXPORT int PythonOperationAlternate::setattro(const Attribute& attr, const PythonObject& field)
 {
-  // @todo alternates
   return PythonOperation(obj).setattro(attr, field);
+}
+
+
+DECLARE_EXPORT PyObject* PythonOperationAlternate::addAlternate(PyObject* self, PyObject* args, PyObject* kwdict)
+{
+  try
+  {
+    // Pick up the alternate operation
+    OperationAlternate *altoper = static_cast<PythonOperationAlternate*>(self)->obj;
+    if (!altoper) throw LogicException("Can't add alternates to NULL alternate");
+  
+    // Parse the arguments
+    PyObject *oper = NULL;
+    int prio = 1;
+    PyObject *eff_start = NULL;
+    PyObject *eff_end = NULL;
+    static char *kwlist[] = {"operation", "priority", "effective_start", "effective_end", NULL};
+	  if (!PyArg_ParseTupleAndKeywords(args, kwdict, 
+      "O|iOO:addAlternate", 
+      kwlist, &oper, &prio, &eff_start, &eff_end))
+        return NULL;
+    if (!PyObject_TypeCheck(oper, PythonOperation::getType().type_object())) 
+      throw DataException("alternate operation must be of type operation");
+    DateRange eff;
+    if (eff_start)
+    {
+      PythonObject d(eff_start);
+      eff.setStart(d.getDate());
+    }
+    if (eff_end)
+    {
+      PythonObject d(eff_end);
+      eff.setEnd(d.getDate());
+    }
+
+    // Add the alternate
+    altoper->addAlternate(static_cast<PythonOperation*>(self)->obj, prio, eff);
+ }
+  catch(...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
+  return Py_BuildValue("");
 }
 
 
@@ -860,7 +903,6 @@ DECLARE_EXPORT PyObject* PythonOperationRouting::getattro(const Attribute& attr)
 
 DECLARE_EXPORT int PythonOperationRouting::setattro(const Attribute& attr, const PythonObject& field)
 {
-  // @todo steps
   return PythonOperation(obj).setattro(attr, field);
 } 
 
@@ -869,8 +911,11 @@ PyObject *PythonOperationRouting::addStep(PyObject *self, PyObject *args)
 {
   try
   {
+    // Pick up the routing operation
     OperationRouting *oper = static_cast<PythonOperationRouting*>(self)->obj;
     if (!oper) throw LogicException("Can't add steps to NULL routing");
+
+    // Parse the arguments
     PyObject *steps[4];
     for (unsigned int i=0; i<4; ++i) steps[i] = NULL;
     if (PyArg_UnpackTuple(args, "addStep", 1, 4, &steps[0], &steps[1], &steps[2], &steps[3]))

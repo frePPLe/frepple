@@ -493,7 +493,7 @@ DECLARE_EXPORT int PythonType::typeReady(PyObject* m)
   // Fill the method table
   if (!methodvector.empty())
   {
-    addMethod(NULL, NULL, 0, NULL);  // Terminator
+    addMethod(NULL, static_cast<PyCFunction>(NULL), 0, NULL);  // Terminator
     methods = new PyMethodDef[methodvector.size()];
     int j = 0;
     for(vector<PyMethodDef>::iterator i = methodvector.begin(); i != methodvector.end(); i++ )

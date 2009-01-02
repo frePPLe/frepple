@@ -5614,6 +5614,17 @@ class PythonOperationAlternate : public FreppleClass<PythonOperationAlternate,Py
       : FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>(p) {}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m)
+    {
+      getType().addMethod("addAlternate", addAlternate, METH_KEYWORDS, "add and alternate");
+      return FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>::initialize(m);
+    }
+  private:
+    /** Add an alternate to the operation.<br>
+      * The keyword arguments are "operation", "priority", "effective_start" 
+      * and "effective_end"
+      */
+    static DECLARE_EXPORT PyObject* addAlternate(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -5649,6 +5660,7 @@ class PythonOperationRouting : public FreppleClass<PythonOperationRouting,Python
       : FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>(p) {}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+  private:
     /** Add one or more steps to a routing. */
     static DECLARE_EXPORT PyObject* addStep(PyObject*, PyObject*);
 };

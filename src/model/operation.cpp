@@ -883,7 +883,7 @@ DECLARE_EXPORT PyObject* PythonOperationAlternate::addAlternate(PyObject* self, 
     }
 
     // Add the alternate
-    altoper->addAlternate(static_cast<PythonOperation*>(self)->obj, prio, eff);
+    altoper->addAlternate(static_cast<PythonOperation*>(oper)->obj, prio, eff);
  }
   catch(...)
   {

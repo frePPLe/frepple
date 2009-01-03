@@ -50,13 +50,13 @@ DECLARE_EXPORT void Load::validate(Action action)
           + oper->getName() + "'");
   }
 
-  // Check if a load with 1) identical resource, 2) identical operation and 
+  // Check if a load with 1) identical resource, 2) identical operation and
   // 3) overlapping effectivity dates already exists
   Operation::loadlist::const_iterator i = oper->getLoads().begin();
   for (;i != oper->getLoads().end(); ++i)
-    if (i->getResource() == res 
-      && i->getEffective().overlap(getEffective()) 
-      && &*i != this) 
+    if (i->getResource() == res
+      && i->getEffective().overlap(getEffective())
+      && &*i != this)
         break;
 
   // Apply the appropriate action
@@ -239,7 +239,7 @@ DECLARE_EXPORT int PythonLoad::setattro(const Attribute& attr, const PythonObjec
 {
   if (attr.isA(Tags::tag_resource))
   {
-    if (!field.check(PythonResource::getType())) 
+    if (!field.check(PythonResource::getType()))
     {
       PyErr_SetString(PythonDataException, "load resource must be of type resource");
       return -1;
@@ -249,7 +249,7 @@ DECLARE_EXPORT int PythonLoad::setattro(const Attribute& attr, const PythonObjec
   }
   else if (attr.isA(Tags::tag_operation))
   {
-    if (!field.check(PythonOperation::getType())) 
+    if (!field.check(PythonOperation::getType()))
     {
       PyErr_SetString(PythonDataException, "load operation must be of type operation");
       return -1;
@@ -276,21 +276,21 @@ PyObject* PythonLoad::create(PyTypeObject* pytype, PyObject* args, PyObject* kwd
   {
     // Pick up the operation
     PyObject* oper = PyDict_GetItemString(kwds,"operation");
-    if (!PyObject_TypeCheck(oper, PythonOperation::getType().type_object())) 
+    if (!PyObject_TypeCheck(oper, PythonOperation::getType().type_object()))
       throw DataException("load operation must be of type operation");
 
     // Pick up the resource
     PyObject* res = PyDict_GetItemString(kwds,"resource");
-    if (!PyObject_TypeCheck(res, PythonResource::getType().type_object())) 
+    if (!PyObject_TypeCheck(res, PythonResource::getType().type_object()))
       throw DataException("load resource must be of type resource");
-   
+
     // Pick up the quantity
     PyObject* q1 = PyDict_GetItemString(kwds,"quantity");
     double q2 = q1 ? PythonObject(q1).getDouble() : 1.0;
 
     // Create the load
     Load *l = new Load(
-      static_cast<PythonOperation*>(oper)->obj, 
+      static_cast<PythonOperation*>(oper)->obj,
       static_cast<PythonResource*>(res)->obj,
       q2
       );
@@ -334,16 +334,16 @@ int PythonLoadIterator::initialize(PyObject* m)
 
 
 PyObject* PythonLoadIterator::iternext()
-{  
-  if (res) 
+{
+  if (res)
   {
-    // Iterate over loads on a resource 
+    // Iterate over loads on a resource
     if (ir == res->getLoads().end()) return NULL;
     return PythonObject(const_cast<Load*>(&*(ir++)));
   }
   else
   {
-    // Iterate over loads on an operation 
+    // Iterate over loads on an operation
     if (io == oper->getLoads().end()) return NULL;
     return PythonObject(const_cast<Load*>(&*(io++)));
   }

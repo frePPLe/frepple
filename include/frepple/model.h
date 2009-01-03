@@ -5830,7 +5830,7 @@ class PythonLoad : public PythonExtension<PythonLoad>
   private:
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+    static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
     static PyObject* proxy(Object* p) {return static_cast<PyObject*>(new PythonLoad(static_cast<Load*>(p)));}
     Load* ld;
 };
@@ -5876,7 +5876,7 @@ class PythonFlow : public PythonExtension<PythonFlow>
     PythonFlow(Flow* p) : fl(p) {}
   private:
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)  issue: construction & validation of floaws is a bit different....   
+    static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static PyObject* proxy(Object* p) {return static_cast<PyObject*>(new PythonFlow(static_cast<Flow*>(p)));}
     Flow* fl;

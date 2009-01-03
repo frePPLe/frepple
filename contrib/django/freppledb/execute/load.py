@@ -287,20 +287,19 @@ def loadFlows(cursor):
   cursor.execute('''
     SELECT operation_id, thebuffer_id, quantity, type, effective_start, effective_end
     FROM flow
-    ORDER BY operation_id, thebuffer_id
+    ORDER BY thebuffer_id, operation_id
     ''')
-  x = [ header, '<flows>' ]
+  curbufname = None
   for i, j, k, l, m, n in cursor.fetchall():
     cnt += 1
-    if l:
-      x.append('<flow xsi:type="%s"><operation name=%s/><buffer name=%s/><quantity>%s</quantity>' % (l, quoteattr(i), quoteattr(j), k))
-    else:
-      x.append('<flow><operation name=%s/><buffer name=%s/><quantity>%s</quantity>' % (quoteattr(i), quoteattr(j), k))
-    if m: x.append('<effective_start>%s</effective_start>' % m.isoformat())
-    if n: x.append('<effective_end>%s</effective_end>' % n.isoformat())
-    x.append('</flow>')
-  x.append('</flows></plan>')
-  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
+    try:
+      if j != curbufname:
+        curbufname = j
+        curbuf = frepple.buffer(name=curbufname)
+      curflow = frepple.flow(operation=frepple.operation(name=i), type=l, buffer=curbuf, quantity=k)
+      if m: curflow.effective_start = m
+      if n: curflow.effective_end = n
+    except Exception, e: print "Error:", e
   print 'Loaded %d flows in %.2f seconds' % (cnt, time() - starttime)
 
 
@@ -313,17 +312,21 @@ def loadLoads(cursor):
   cursor.execute('''
     SELECT operation_id, resource_id, quantity, effective_start, effective_end
     FROM resourceload
-    ORDER BY operation_id, resource_id
+    ORDER BY resource_id, operation_id
     ''')
-  x = [ header , '<loads>' ]
+  curresname = None
   for i, j, k, l, m in cursor.fetchall():
     cnt += 1
-    x.append('<load><operation name=%s/><resource name=%s/><quantity>%s</quantity>' % (quoteattr(i), quoteattr(j), k))
-    if l: x.append('<effective_start>%s</effective_start>' % l.isoformat())
-    if m: x.append('<effective_end>%s</effective_end>' % m.isoformat())
-    x.append('</load>')
-  x.append('</loads></plan>')
-  frepple.readXMLdata('\n'.join(x).encode('utf-8','ignore'),False,False)
+    try:
+      if j != curresname:
+        curresname = j
+        curres = frepple.resource(name=curresname)
+      curload = frepple.load(operation=frepple.operation(name=i), resource=curres, quantity=k)
+      if l: curload.effective_start = l
+      if m: curload.effective_end = m
+      # todo: duplicate load crashes the application
+      #curload2 = frepple.load(operation=frepple.operation(name=i), resource=curres, quantity=k)
+    except Exception, e: print "Error:", e
   print 'Loaded %d loads in %.2f seconds' % (cnt, time() - starttime)
 
 

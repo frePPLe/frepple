@@ -212,6 +212,7 @@ int PythonLoad::initialize(PyObject* m)
   x.setDoc("frePPLe load");
   x.supportgetattro();
   x.supportsetattro();
+  x.supportcreate(create);
   const_cast<MetaCategory&>(Load::metadata).factoryPythonProxy = proxy;
   return x.typeReady(m);
 }
@@ -265,6 +266,59 @@ DECLARE_EXPORT int PythonLoad::setattro(const Attribute& attr, const PythonObjec
   else
     return -1;
   return 0;
+}
+
+
+/** @todo this method implementation is not generic enough and not extendible by subclasses. */
+PyObject* PythonLoad::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+{
+  try
+  {
+    // Pick up the operation
+    PyObject* oper = PyDict_GetItemString(kwds,"operation");
+    if (!PyObject_TypeCheck(oper, PythonOperation::getType().type_object())) 
+      throw DataException("load operation must be of type operation");
+
+    // Pick up the resource
+    PyObject* res = PyDict_GetItemString(kwds,"resource");
+    if (!PyObject_TypeCheck(res, PythonResource::getType().type_object())) 
+      throw DataException("load resource must be of type resource");
+   
+    // Pick up the quantity
+    PyObject* q1 = PyDict_GetItemString(kwds,"quantity");
+    double q2 = q1 ? PythonObject(q1).getDouble() : 1.0;
+
+    // Create the load
+    Load *l = new Load(
+      static_cast<PythonOperation*>(oper)->obj, 
+      static_cast<PythonResource*>(res)->obj,
+      q2
+      );
+
+    // Pick up the effective start date
+    PyObject* eff_start = PyDict_GetItemString(kwds,"effective_start");
+    if (eff_start)
+    {
+      PythonObject d(eff_start);
+      l->setEffectiveStart(d.getDate());
+    }
+
+    // Pick up the effective end date
+    PyObject* eff_end = PyDict_GetItemString(kwds,"effective_end");
+    if (eff_end)
+    {
+      PythonObject d(eff_end);
+      l->setEffectiveEnd(d.getDate());
+    }
+
+    // Return a proxy
+    return static_cast<PyObject*>(*(new PythonObject(l)));
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
 }
 
 

@@ -239,6 +239,7 @@ int PythonFlow::initialize(PyObject* m)
   x.setDoc("frePPLe flow");
   x.supportgetattro();
   x.supportsetattro();
+  x.supportcreate(create);
   const_cast<MetaCategory&>(Flow::metadata).factoryPythonProxy = proxy;
   return x.typeReady(m);
 }
@@ -292,6 +293,78 @@ DECLARE_EXPORT int PythonFlow::setattro(const Attribute& attr, const PythonObjec
   else
     return -1;
   return 0;
+}
+
+
+/** @todo method implementation not generic and doesn't support clean subclassing. */
+PyObject* PythonFlow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+{
+  try
+  {
+    // Pick up the operation
+    PyObject* oper = PyDict_GetItemString(kwds,"operation");
+    if (!PyObject_TypeCheck(oper, PythonOperation::getType().type_object())) 
+      throw DataException("flow operation must be of type operation");
+
+    // Pick up the resource
+    PyObject* buf = PyDict_GetItemString(kwds,"buffer");
+    if (!PyObject_TypeCheck(buf, PythonBuffer::getType().type_object())) 
+      throw DataException("flow buffer must be of type buffer");
+   
+    // Pick up the quantity
+    PyObject* q1 = PyDict_GetItemString(kwds,"quantity");
+    double q2 = q1 ? PythonObject(q1).getDouble() : 1.0;
+
+    // Pick up the type and create the flow
+    Flow *l;
+    PyObject* t = PyDict_GetItemString(kwds,"type");
+    if (t)
+    {
+      PythonObject d(t);
+      if (d.getString() == "flow_end")
+        l = new FlowEnd(
+          static_cast<PythonOperation*>(oper)->obj, 
+          static_cast<PythonBuffer*>(buf)->obj,
+          q2
+          );
+      else
+        l = new FlowStart(
+          static_cast<PythonOperation*>(oper)->obj, 
+          static_cast<PythonBuffer*>(buf)->obj,
+          q2
+          );
+    }
+    else
+      l = new FlowStart(
+        static_cast<PythonOperation*>(oper)->obj, 
+        static_cast<PythonBuffer*>(buf)->obj,
+        q2
+        );
+
+    // Pick up the effective start date
+    PyObject* eff_start = PyDict_GetItemString(kwds,"effective_start");
+    if (eff_start)
+    {
+      PythonObject d(eff_start);
+      l->setEffectiveStart(d.getDate());
+    }
+
+    // Pick up the effective end date
+    PyObject* eff_end = PyDict_GetItemString(kwds,"effective_end");
+    if (eff_end)
+    {
+      PythonObject d(eff_end);
+      l->setEffectiveEnd(d.getDate());
+    }
+
+    // Return a proxy
+    return static_cast<PyObject*>(*(new PythonObject(l)));
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
 }
 
 

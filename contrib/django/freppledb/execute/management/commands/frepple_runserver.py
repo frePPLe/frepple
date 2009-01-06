@@ -61,8 +61,7 @@ class Command(BaseCommand):
     else: port = 8000
     if 'address' in options: address = options['address']
     else: address = None
-    if address == None:
-      address = socket.getaddrinfo(socket.gethostname(), None)[0][4][0]
+    if address == None: address = '127.0.0.1'
 
     # Validate the address and port number
     try:

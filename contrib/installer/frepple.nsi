@@ -31,11 +31,11 @@
 ; Configuration section.
 ; UPDATE THIS SECTION ACCORDING TO YOUR SETUP!!!
 !define XERCESPATH "c:\bin"
-!define XERCESDLL "xerces-c_2_7.dll"
+!define XERCESDLL "xerces-c_2_8.dll"
 
 ; Main definitions
 !define PRODUCT_NAME "frePPLe"
-!define PRODUCT_VERSION "0.6.0"
+!define PRODUCT_VERSION "0.6.1"
 !define PRODUCT_PUBLISHER "frePPLe"
 !define PRODUCT_WEB_SITE "http://www.frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
@@ -86,8 +86,8 @@ Page custom database database_leave
 !insertmacro MUI_LANGUAGE "English"
 
 ;Version Information
-VIProductVersion "0.6.0.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "0.6.0.0"
+VIProductVersion "0.6.1.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "0.6.1.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe Installer - free Production Planning Library"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"

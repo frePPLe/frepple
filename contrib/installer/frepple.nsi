@@ -31,7 +31,13 @@
 ; Configuration section.
 ; UPDATE THIS SECTION ACCORDING TO YOUR SETUP!!!
 !define XERCESPATH "c:\bin"
-!define XERCESDLL "xerces-c_2_7.dll"
+!define XERCESDLL "xerces-c_2_8.dll"
+
+; Make sure that this variable points to the windows version of python, not
+; the one that is part of cygwin.
+!ifndef PYTHON
+!define PYTHON "python.exe"
+!endif
 
 ; Main definitions
 !define PRODUCT_NAME "frePPLe"
@@ -116,7 +122,7 @@ FunctionEnd
 
 Section -Start
   ; Create the python distribution and django server
-  !system "python setup.py"
+  !system "${PYTHON} setup.py"
 
   ; Create a distribution if none exists yet
   !cd "../.."

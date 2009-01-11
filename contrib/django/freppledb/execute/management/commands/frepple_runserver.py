@@ -56,13 +56,19 @@ class Command(BaseCommand):
 
   def handle(self, **options):
 
-    # Pick up the arguments
+    # Determine the port number
     if 'port' in options: port = int(options['port'] or '8000')
     else: port = 8000
+
+    # Determine the IP-address to listen on
+    # - either as command line argument
+    # - either automatically detected
+    # - use 127.0.0.1 as a safe fallback
     if 'address' in options: address = options['address']
     else: address = None
     if address == None:
-      address = socket.getaddrinfo(socket.gethostname(), None)[0][4][0]
+      try: address = socket.getaddrinfo(socket.gethostname(), None)[0][4][0]
+      except: address = '127.0.0.1'
 
     # Validate the address and port number
     try:

@@ -70,22 +70,19 @@
 DECLARE_EXPORT(const char*) FreppleVersion();
 
 /** This function should be called once when the client application starts,
-  * and before calling any other function in the API.<br>
-  * The parameter is a string with the name of the Frepple home directory.
-  * If the parameter is NULL, the setting of the environment variable
-  * FREPPLE_HOME is used instead.
+  * and before calling any other function in the API.
   *
   * This method is synchroneous, i.e. it returns only when the complete
   * processing is finished. The method can throw exceptions, and the client
   * is responsible for defining the correct handlers for these.
   */
-DECLARE_EXPORT(void) FreppleInitialize(const char*);
+DECLARE_EXPORT(void) FreppleInitialize();
 
 /** The character buffer pointed to by the first parameter contains data in
-  * XML format that is passed on to Frepple for processing.<br>
-  * The second argument specifies whether frepple should validate the data
+  * XML format that is passed on to frePPLe for processing.<br>
+  * The second argument specifies whether frePPLe should validate the data
   * against the XSD schema.<br>
-  * The last argument specifies whether Frepple needs to perform only the
+  * The last argument specifies whether frePPLe needs to perform only the
   * validation and skip the actual processing.
   *
   * The client is responsible for the memory management in the data buffer.
@@ -97,11 +94,11 @@ DECLARE_EXPORT(void) FreppleInitialize(const char*);
 DECLARE_EXPORT(void) FreppleReadXMLData(const char*, bool, bool);
 
 /** The first parameter is the name of a file that contains data in XML
-  * format for Frepple processing. If a NULL pointer is passed, frepple
+  * format for frePPLe processing. If a NULL pointer is passed, frepple
   * will read from the standard input.<br>
-  * The second argument specifies whether frepple should validate the data
+  * The second argument specifies whether frePPLe should validate the data
   * against the XSD schema.<br>
-  * The last argument specifies whether Frepple needs to perform only the
+  * The last argument specifies whether frePPLe needs to perform only the
   * validation and skip the actual processing.
   *
   * This method is synchroneous, i.e. it returns only when the complete
@@ -110,7 +107,7 @@ DECLARE_EXPORT(void) FreppleReadXMLData(const char*, bool, bool);
   */
 DECLARE_EXPORT(void) FreppleReadXMLFile(const char*, bool, bool);
 
-/** Calling this function will save the Frepple data in the file that
+/** Calling this function will save the frePPLe data in the file that
   * is passed as the argument.
   *
   * This method is synchroneous, i.e. it returns only when the complete
@@ -153,7 +150,7 @@ extern "C"
     * Use this function when calling the library from C or VB applications.
     * @see FreppleInitialize
     */
-  DECLARE_EXPORT(int) FreppleWrapperInitialize(const char*);
+  DECLARE_EXPORT(int) FreppleWrapperInitialize();
 
   /** Same as FreppleReadXMLData, but catches all exceptions and returns a
     * status instead.

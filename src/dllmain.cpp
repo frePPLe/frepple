@@ -43,7 +43,7 @@ BOOL APIENTRY DllMain(HANDLE hInst, DWORD ul_reason_for_call, LPVOID lpReserved)
   {
     case DLL_PROCESS_ATTACH:
       // Loading the library
-      try { FreppleInitialize(NULL); }
+      try { FreppleInitialize(); }
       catch (exception& e)
       {
         logger << "Error: " << e.what() << endl;
@@ -72,7 +72,7 @@ DECLARE_EXPORT(const char*) FreppleVersion()
 }
 
 
-DECLARE_EXPORT(void) FreppleInitialize(const char* h)
+DECLARE_EXPORT(void) FreppleInitialize()
 {
   // Initialize only once
   static bool initialized = false;
@@ -136,9 +136,9 @@ extern "C" DECLARE_EXPORT(void) FreppleLog(const char* msg)
 }
 
 
-extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize(const char* h)
+extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize()
 {
-  try {FreppleInitialize(h);}
+  try {FreppleInitialize();}
   catch (...) {return EXIT_FAILURE;}
   return EXIT_SUCCESS;
 }

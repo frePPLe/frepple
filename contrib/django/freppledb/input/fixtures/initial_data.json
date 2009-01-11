@@ -1,7 +1,7 @@
 [
 {"pk": "1", "model": "input.plan", "fields": {"currentdate": "2009-01-01 00:00:00", "name": "frePPLe"}},
-{"pk": "factory 1", "model": "input.location", "fields": { "description": "A factory that manufactures, stores and packages products"}},
-{"pk": "factory 2", "model": "input.location", "fields": { "description": "A factory that stores and packages products"}},
+{"pk": "factory 1", "model": "input.location", "fields": { "description": "A factory that manufactures, stores and packages products", "category": ""}},
+{"pk": "factory 2", "model": "input.location", "fields": { "description": "A factory that stores and packages products", "category": ""}},
 {"pk": "pack capacity factory 1", "model": "input.calendar", "fields": {}},
 {"pk": "pack capacity factory 2", "model": "input.calendar", "fields": {}},
 {"pk": "Working Days", "model": "input.calendar", "fields": {}},

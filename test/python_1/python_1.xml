@@ -101,13 +101,10 @@ print '6a. end sleep'
 <![CDATA[
 import time
 print '6b. start sleep'
-time.sleep(1)
+time.sleep(2)
 print '6b. end sleep'
 ]]>
         </cmdline>
-      </command>
-      <command xsi:type="command_system">
-        <cmdline>echo 6c. start sleep &amp;&amp; sleep 1&amp;&amp; echo 6c. after sleep</cmdline>
       </command>
     </command>
     <command xsi:type="command_save">

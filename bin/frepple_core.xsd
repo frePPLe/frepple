@@ -828,32 +828,6 @@
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="command_system">
-    <xsd:complexContent>
-      <xsd:extension base="command">
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="verbose" type="xsd:boolean" />
-          <xsd:element name="cmdline" type="xsd:string" />
-        </xsd:choice>
-        <xsd:attribute name="cmdline" type="xsd:string" />
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="command_setenv">
-    <xsd:complexContent>
-      <xsd:extension base="command">
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="verbose" type="xsd:boolean" />
-          <xsd:element name="variable" type="xsd:normalizedString" />
-          <xsd:element name="value" type="xsd:string" />
-        </xsd:choice>
-        <xsd:attribute name="variable" type="xsd:normalizedString" />
-        <xsd:attribute name="value" type="xsd:string" />
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
   <xsd:complexType name="parameter">
     <xsd:all>
       <xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />

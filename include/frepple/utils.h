@@ -93,7 +93,7 @@ using namespace std;
 
 // Configuration file created by autoconf
 /** @def PACKAGE_VERSION
-  * Defines the version of Frepple.
+  * Defines the version of frePPLe.
   */
 #ifdef HAVE_CONFIG_H
 #undef PACKAGE_BUGREPORT
@@ -282,10 +282,9 @@ inline ostream& operator <<(ostream &os, const indent& i)
   * system environment.
   *
   * It handles:
-  *   - The frePPLe home directory, which is typically set from the environment
-  *     variable FREPPLE_HOME.
-  *   - The expansion of environment variables.
-  *   - The maximum number of processors / threads to be used by Frepple.
+  *   - The location of the configuration files.
+  *   - The maximum number of processors / threads to be used by frePPLe.
+  *   - An output stream for logging all output.
   */
 class Environment
 {
@@ -308,34 +307,12 @@ class Environment
       *   - The current directory.
       *   - The directory reffered to by the variable FREPPLE_HOME, if it 
       *     is defined.
-      *   - The data directory as configured during the compilation.
+      *   - The data directory as configured during the compilation.  @TODO On windows we need to have something equivalent
       *     This applies only to linux / unix.
-      *   - The library directory as configured during the compilation.
+      *   - The library directory as configured during the compilation.   @TODO On windows we need to have something equivalent
       *     This applies only to linux / unix.
       */
     static DECLARE_EXPORT string searchFile(const string);
-
-    /** Environment variables in the argument string are expanded with
-      * their value.<br>
-      * The variable to be expanded needs to be enclosed by ${ }<br>
-      * E.g. 123${CNT}789 becomes 123456789 when the value of the environment
-      * variable is 456.<br>
-      *
-      * Substitution with environment values is implemented for the following
-      * types of input data:
-      *  - command_setenv: field 'value'
-      *  - command_system: field 'cmdline'
-      *  - command_python: fields 'cmdline' and 'filename'
-      *  - command_readxmlfile: field 'filename'
-      *  - command_if: field 'condition'
-      *  - command_loadlib: field 'filename'
-      *  - command_save: field 'filename'
-      *  - command_saveplan: field 'filename'
-      *
-      * This method works fine with utf-8 and single-byte encodings, but will
-      * NOT work with other multibyte encodings (such as utf-116 or utf-32).
-      */
-    static DECLARE_EXPORT void resolveEnvironment(string& s);
 
     /** Returns the number of processors on your machine. */
     static int getProcessors() {return processors;}
@@ -683,10 +660,7 @@ class PythonType : public NonCopyable
     DECLARE_EXPORT void addMethod(const char*, PyCFunction, int, const char*);
 
     /** Add a new method. */
-    DECLARE_EXPORT void addMethod(const char* c, PyCFunctionWithKeywords f, int i, const char* d)
-    {
-      addMethod(c, reinterpret_cast<PyCFunction>(f), i | METH_KEYWORDS, d);
-    }
+    DECLARE_EXPORT void addMethod(const char*, PyCFunctionWithKeywords, int, const char*);
 
     /** Updates tp_name. */
     void setName (const string n)
@@ -2900,51 +2874,6 @@ class Command : public Object
 };
 
 
-/** @brief Command to update an environment variable. */
-class CommandSetEnv : public Command
-{
-  private:
-    /** Condition expression. */
-    string variable;
-
-    /** Value of the variable. */
-    string value;
-
-  public:
-    /** Not undoable. */
-    bool undoable() { return false; }
-
-    /** Executes either the if- or the else-clause, depending on the
-      * condition. */
-    DECLARE_EXPORT void execute();
-
-    /** Returns a descriptive string. */
-    string getDescription() const {return "Command set environment variable";}
-
-    /** Default constructor. */
-    explicit CommandSetEnv() {}
-
-    /** Returns the variable to be updated. */
-    string getVariable() {return variable;}
-
-    /** Updates the variable to be updated. */
-    void setVariable(const string s) {variable = s;}
-
-    /** Returns the new value. */
-    string getValue() {return variable;}
-
-    /** Updates the new value. */
-    void setValue(const string s) {variable = s;}
-
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const
-      {return sizeof(CommandSetEnv) + variable.size() + value.size();}
-
-    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
-};
-
-
 /** @brief A container command to group a series of commands together.
   *
   * This class implements the "composite" design pattern in order to get an
@@ -3117,63 +3046,6 @@ class CommandList : public Command
 };
 
 
-/** @brief This command executes a command line on your operating
-  * system.
-  *
-  * The command will spawn a child process to execute the command, and
-  * will wait for that process to finish before continue.<br>
-  * Environment variables enclosed in ${ } are expanded with their value
-  * before execution of the command.<br>
-  * The class is using the standard C function system() to spawn the command.
-  * The behavior of this function will depend on your platform and the
-  * compiler used: the command shell spawned will vary (e.g. cmd, /bin/sh, ...)
-  * and the exit codes returned are also not standardized.<br>
-  * Note that access to this command poses a <B> security threat</B>! It
-  * allows anybody with access to the planner application to run operating
-  * system commands with the same user rights as the planner application.
-  */
-class CommandSystem : public Command
-{
-  private:
-    /** System command to be executed. */
-    string cmdLine;
-
-  public:
-    /** Constructor.
-      * @param cmd Command line to execute on your operating system.
-      */
-    explicit CommandSystem(const string& cmd) : cmdLine(cmd) {};
-
-    /** Default constructor. */
-    explicit CommandSystem() {};
-
-    /** Updates the command line to be executed.<br>
-      * This string can contain environment variable names enclosed in ${}
-      * which are expanded to their value before execution of the command.
-      * @param cmd Command line to execute on your operating system.
-      */
-    void setCmdLine(const string& cmd) {cmdLine = cmd;}
-
-    /** Returns the command line that will be run. */
-    string getCmdLine() {return cmdLine;}
-
-    /** Executes the command line.
-      * @exception RuntimeException Generated when the command can't be
-      *    launched, or when it's exit code is non-zero.
-      */
-    DECLARE_EXPORT void execute();
-
-    DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
-    string getDescription() const
-      {return "Run operating system command '" + cmdLine + "'";}
-
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const
-      {return sizeof(CommandSystem) + cmdLine.size();}
-};
-
-
 /** @brief Command to dynamically load a shared library in frePPLe.
   *
   * After loading the library, the function "initialize" of the module
@@ -3260,7 +3132,7 @@ class CommandLoadLibrary : public Command
   * processInstruction on it. The call will include a pointer to the parser
   * and the data string.<br>
   * Note that these instructions are never validated by the parser against
-  * an XML schema. They are only processed inside frepple, and extreme care
+  * an XML schema. They are only processed inside frePPLe, and extreme care
   * should be taken to develop robust and secure processing instructions.
   * @see XMLInput
   * @see XMLInput::processingInstruction

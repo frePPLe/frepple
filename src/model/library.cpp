@@ -464,7 +464,7 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   Timer t;
 
   // Intro
-  logger << endl << "Size information of Frepple " << PACKAGE_VERSION
+  logger << endl << "Size information of frePPLe " << PACKAGE_VERSION
   << " (" << __DATE__ << ")" << endl << endl;
 
   // Print current locale

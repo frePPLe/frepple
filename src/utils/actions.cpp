@@ -407,48 +407,6 @@ DECLARE_EXPORT void CommandList::beginElement (XMLInput& pIn, const Attribute& p
 
 
 //
-// SYSTEM COMMAND
-//
-
-
-DECLARE_EXPORT void CommandSystem::execute()
-{
-  // Log
-  if (getVerbose())
-    logger << "Start executing system command '" << cmdLine
-    << "' at " << Date::now() << endl;
-  Timer t;
-
-  // Check
-  if (cmdLine.empty())
-    throw DataException("Error: Trying to execute empty system command");
-
-  // Expand environment variables on the command line with their value
-  Environment::resolveEnvironment(cmdLine);
-
-  // Execute the command
-  if (system(cmdLine.c_str()))  // Execution through system() call
-    throw RuntimeException("Error while executing system command: " + cmdLine);
-
-  // Log
-  if (getVerbose())
-    logger << "Finished executing system command '" << cmdLine
-    << "' at " << Date::now() << " : " << t << endl;
-}
-
-
-DECLARE_EXPORT void CommandSystem::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_cmdline))
-    // No need to replace environment variables here. It's done at execution
-    // time by the command shell.
-    pElement >> cmdLine;
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
-
-
-//
 // LOADLIBRARY COMMAND
 //
 
@@ -466,9 +424,6 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
   // Validate
   if (lib.empty())
     throw DataException("Error: No library name specified for loading");
-
-  // Expand environment variables in the library name with their value
-  Environment::resolveEnvironment(lib);
 
 #ifdef WIN32
   // Load the library - The windows way
@@ -583,59 +538,6 @@ DECLARE_EXPORT void CommandLoadLibrary::endElement(XMLInput& pIn, const Attribut
     tempValue.clear();
     tempName.clear();
   }
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
-
-
-//
-// SETENV COMMAND
-//
-
-
-DECLARE_EXPORT void CommandSetEnv::execute()
-{
-  // Message
-  if (getVerbose())
-    logger << "Start updating variable '" << variable << "' to '"
-    << value << "' at " << Date::now() << endl;
-  Timer t;
-
-  // Data exception
-  if (variable.empty())
-    throw DataException("Missing environment variable name");
-
-  // Expand variable names
-  Environment::resolveEnvironment(value);
-
-  // Update the variable
-  // Note: we have to 'leak' this string. Putenv takes it as part of
-  // the environment.
-  string *tmp = new string(variable + "=" + value);
-  #if defined(HAVE_PUTENV)
-  putenv(const_cast<char*>(tmp->c_str()));
-  #elif defined(HAVE__PUTENV) || defined(_MSC_VER)
-  _putenv(tmp->c_str());
-  #else
-  #error("missing function to set an environment variable")
-  #endif
-
-  // Log
-  if (getVerbose())
-  {
-    const char* res = getenv(variable.c_str());
-    logger << "Finished updating variable '" << variable << "' to '"
-    << (res ? res : "NULL") << "' at " << Date::now() << endl;
-  }
-}
-
-
-DECLARE_EXPORT void CommandSetEnv::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_variable))
-    pElement >> variable;
-  if (pAttr.isA(Tags::tag_value))
-    pElement >> value;
   else
     Command::endElement(pIn, pAttr, pElement);
 }

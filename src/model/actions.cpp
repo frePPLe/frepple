@@ -169,9 +169,6 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
     << "' at " << Date::now() << endl;
   Timer t;
 
-  // Replace environment variables in the filename.
-  Environment::resolveEnvironment(filename);
-
   // Note: Reading the data files can throw exceptions...
   if (filename.empty())
   {
@@ -314,9 +311,6 @@ DECLARE_EXPORT void CommandSave::execute()
     << "' at " << Date::now() << endl;
   Timer t;
 
-  // Replace environment variables in the filename.
-  Environment::resolveEnvironment(filename);
-
   // Save the plan
   XMLOutputFile o(filename);
   if (!headerstart.empty()) o.setHeaderStart(headerstart);
@@ -375,9 +369,6 @@ DECLARE_EXPORT void CommandSavePlan::execute()
     logger << "Start saving plan to file '" << getFileName()
     << "' at " << Date::now() << endl;
   Timer t;
-
-  // Replace environment variables in the filename.
-  Environment::resolveEnvironment(filename);
 
   // Output steam
   if (getFileName().empty())

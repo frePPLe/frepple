@@ -56,16 +56,23 @@
   *    The netting solver will for each order search for a matching forecast
   *    and reduce the remaining net quantity of the forecast.
   *
-  *  - A forecasting algorithm to <b>extrapolate historical demand data
-  *    to the future</b>.<br>
-  *    The classical single exponential and double exponential smoothing
-  *    forecasting methods are both implemented. The forecast method giving
-  *    the smallest mean absolute deviation (aka "mad"-error) will be
-  *    automatically picked to produce the forecast.<br>
-  *    The parameters for the forecasting method (i.e. alfa for the single
-  *    exponential smoothing, or alfa and gamma for the double exponential
-  *    smoothing) are specified by the user. Optionally, the algorithm
-  *    can automatically tune this parameters to their optimal value.
+  *  - A forecasting algorithm to <b>extrapolate historical demand data to 
+  *    the future</b>.<br>
+  *    The following classical forecasting methods are implemented: 
+  *       - single exponential smoothing, which is applicable for 
+  *         constant demands .
+  *       - double exponential smoothing, which is applicable for trended 
+  *         demands.
+  *       - moving average, which is applicable when there is little demand 
+  *         history to rely on.
+  *    The forecast method giving the smallest mean absolute deviation (aka 
+  *    "mad"-error) will be automatically picked to produce the forecast.<br>
+  *    The algorithm will automatically tune the parameters for the 
+  *    forecasting methods (i.e. alfa for the single exponential smoothing, 
+  *    or alfa and gamma for the double exponential smoothing) to their 
+  *    optimal value. The user can specify minimum and maximum boundaries
+  *    for the parameters and the maximum allowed number of iterations 
+  *    for the algorithm.
   *
   * The XML schema extension enabled by this module is (see mod_forecast.xsd):
   * <PRE>
@@ -123,39 +130,77 @@
   *
   * The module support the following configuration parameters:
   *
-  *   - <b>Customer_Then_Item_Hierarchy</b>:<br>
+  *   - Net.CustomerThenItemHierarchy:<br>
   *     As part of the forecast netting a demand is assiociated with a certain
   *     forecast. When no matching forecast is found for the customer and item
-  *     of the demand, frePPLe looks for forecast at higher level customers
+  *     of the demand, frePPLe looks for forecast at higher level customers 
   *     and items.<br>
-  *     This flag allows us to control whether we first search the customer
+  *     This flag allows us to control whether we first search the customer 
   *     hierarchy and then the item hierarchy, or the other way around.<br>
-  *     The default value is true, ie search higher customer levels before
-  *     searching higher levels of the item.
+  *     The default value is true, ie search higher customer levels before 
+  *     searching higher levels of the item. 
   *
-  *   - <b>Match_Using_Delivery_Operation</b>:<br>
-  *     Specifies whether or not a demand and a forecast require to have the
+  *   - Net.MatchUsingDeliveryOperation:<br>
+  *     Specifies whether or not a demand and a forecast require to have the 
   *     same delivery operation to be a match.<br>
   *     The default value is true.
   *
-  *   - <b>Net_Early</b>:<br>
+  *   - Net.NetEarly:<br>
   *     Defines how much time before the due date of an order we are allowed
   *     to search for a forecast bucket to net from.<br>
-  *     The default value is 0, meaning that we can net only from the bucket
-  *     where the demand is due.
+  *     The default value is 0, meaning that we can net only from the bucket 
+  *     where the demand is due. 
   *
-  *   - <b>Net_Late</b>:<br>
-  *     Defines how much time after the due date of an order we are allowed
+  *   - Net.NetLate:<br>
+  *     Defines how much time after the due date of an order we are allowed 
   *     to search for a forecast bucket to net from.<br>
-  *     The default value is 0, meaning that we can net only from the bucket
-  *     where the demand is due.
+  *     The default value is 0, meaning that we can net only from the bucket 
+  *     where the demand is due. 
   *
-  *   - <b>Forecast_Iterations</b><br>
-  *     Specifies the maximum number of iterations allowed for a forecast
+  *   - Forecast.Iterations:<br>
+  *     Specifies the maximum number of iterations allowed for a forecast 
   *     method to tune its parameters.<br>
   *     Only positive values are allowed and the default value is 10.<br>
-  *     Set the parameter to 1 to disable the tuning and generate a forecast
-  *     based on the user-supplied parameters.
+  *     Set the parameter to 1 to disable the tuning and generate a forecast 
+  *     based on the user-supplied parameters. 
+  *
+  *   - Forecast.madAlfa:<br>
+  *     Specifies how the MAD forecast error is weighted for different time 
+  *     buckets. The MAD value in the most recent bucket is 1.0, and the 
+  *     weight decreases exponentially for earlier buckets.<br>
+  *     Acceptable values are in the interval 0.5 and 1.0, and the default 
+  *     is 0.95. 
+  *
+  *   - Forecast.Skip:<br>
+  *     Specifies the number of time series values used to initialize the 
+  *     forecasting method. The forecast error in these bucket isn't counted. 
+  *
+  *   - Forecast.MovingAverage.buckets<br>
+  *     This parameter controls the number of buckets to be averaged by the 
+  *     moving average forecast method. 
+  *
+  *   - Forecast.SingleExponential.initialAlfa,<br> 
+  *     Forecast.SingleExponential.minAlfa,<br> 
+  *     Forecast.SingleExponential.maxAlfa:<br>
+  *     Specifies the initial value and the allowed range of the smoothing 
+  *     parameter in the single exponential forecasting method.<br>
+  *     The allowed range is between 0 and 1. Values lower than about 0.05 
+  *     are not advisible. 
+  *
+  *   - Forecast.DoubleExponential.initialAlfa,<br> 
+  *     Forecast.DoubleExponential.minAlfa,<br> 
+  *     Forecast.DoubleExponential.maxAlfa:<br>
+  *     Specifies the initial value and the allowed range of the smoothing 
+  *     parameter in the double exponential forecasting method.<br>
+  *     The allowed range is between 0 and 1. Values lower than about 0.05
+  *     are not advisible. 
+  *
+  *   - Forecast.DoubleExponential.initialGamma,<br> 
+  *     Forecast.DoubleExponential.minGamma,<br> 
+  *     Forecast.DoubleExponential.maxGamma:<br>
+  *     Specifies the initial value and the allowed range of the trend
+  *     smoothing parameter in the double exponential forecasting method.<br>
+  *     The allowed range is between 0 and 1.
   */
 
 #ifndef FORECAST_H

@@ -65,10 +65,6 @@ void CommandPython::execute()
   }
   Timer t;
 
-  // Replace environment variables in the filename and command line.
-  Environment::resolveEnvironment(filename);
-  Environment::resolveEnvironment(cmd);
-
   // Evaluate data fields
   string c;
   if (!cmd.empty())
@@ -485,6 +481,13 @@ DECLARE_EXPORT void PythonType::addMethod
   m.ml_flags = flags;
   m.ml_doc = doc;
   methodvector.push_back(m);
+}
+
+
+DECLARE_EXPORT void PythonType::addMethod
+  (const char* c, PyCFunctionWithKeywords f, int i, const char* d)
+{
+  addMethod(c, reinterpret_cast<PyCFunction>(f), i | METH_KEYWORDS, d);
 }
 
 

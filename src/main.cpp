@@ -96,7 +96,7 @@ int main (int argc, char *argv[])
         if (!input)
         {
           // Initialize the library if this wasn't done before
-          FreppleInitialize(NULL);
+          FreppleInitialize();
           input = true;
         }
         FreppleReadXMLFile(argv[i], validate, validate_only);
@@ -106,7 +106,7 @@ int main (int argc, char *argv[])
     // When no filenames are specified, we read the standard input
     if (!input)
     {
-      FreppleInitialize(NULL);
+      FreppleInitialize();
       FreppleReadXMLFile(NULL, validate, validate_only);
     }
   }

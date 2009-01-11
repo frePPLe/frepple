@@ -45,9 +45,7 @@ DECLARE_EXPORT set<string> CommandLoadLibrary::registry;
 // Command metadata
 DECLARE_EXPORT const MetaCategory Command::metadata;
 DECLARE_EXPORT const MetaClass CommandList::metadata,
-  CommandSystem::metadata,
-  CommandLoadLibrary::metadata,
-  CommandSetEnv::metadata;
+  CommandLoadLibrary::metadata;
 
 // Processing instruction metadata
 DECLARE_EXPORT const MetaCategory XMLinstruction::metadata;
@@ -116,37 +114,6 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
 
   // Not found
   return "";
-}
-
-
-DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
-{
-  for (string::size_type startpos = s.find("${", 0);
-      startpos < string::npos;
-      startpos = s.find_first_of("${", startpos))
-  {
-    // Find closing "}"
-    string::size_type endpos = s.find_first_of("}", startpos);
-    if (endpos >= string::npos)
-      throw DataException("Invalid variable expansion in '" + s + "'");
-
-    // Search variable name
-    string var(s, startpos+2, endpos - startpos - 2);
-    if (var.empty())
-      throw DataException("Invalid variable expansion in '" + s + "'");
-
-    // Pick up the environment variable
-    char *c = getenv(var.c_str());
-
-    // Replace in the string
-    if (c) s.replace(startpos, endpos - startpos + 1, c);
-    else s.replace(startpos, endpos - startpos + 1, "");
-
-    // Advance to the end of the replaced characters. If the replaced
-    // characters would include another ${XX} construct we could get in
-    // an infinite loop!
-    if (c) startpos += strlen(c);
-  }
 }
 
 
@@ -224,18 +191,10 @@ void LibraryUtils::initialize()
     "command",
     "command_list",
     Object::createDefault<CommandList>);
-  CommandSystem::metadata.registerClass(
-    "command",
-    "command_system",
-    Object::createDefault<CommandSystem>);
   CommandLoadLibrary::metadata.registerClass(
     "command",
     "command_loadlib",
     Object::createDefault<CommandLoadLibrary>);
-  CommandSetEnv::metadata.registerClass(
-    "command",
-    "command_setenv",
-    Object::createDefault<CommandSetEnv>);
   CommandPython::metadata.registerClass(
     "command",
     "command_python",

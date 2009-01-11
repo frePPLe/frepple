@@ -45,7 +45,7 @@ int main (int argc, char *argv[])
   try
   {
     // 0: Initialize
-    FreppleInitialize(NULL);
+    FreppleInitialize();
 
     // 1: Read the model
     FreppleReadXMLFile("problems.xml",true,false);

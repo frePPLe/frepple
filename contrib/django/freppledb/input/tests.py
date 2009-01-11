@@ -88,7 +88,7 @@ class DataLoadTest(TestCase):
   def test_csv_upload(self):
     self.failUnlessEqual(
       [(i.name, i.category) for i in Location.objects.all()],
-      [(u'factory 1',None), (u'factory 2',None)]
+      [(u'factory 1',u''), (u'factory 2',u'')]
       )
     try:
       data = tempfile.TemporaryFile(mode='w+b')
@@ -102,7 +102,7 @@ class DataLoadTest(TestCase):
       data.close()
     self.failUnlessEqual(
       [(i.name, i.category) for i in Location.objects.all()],
-      [(u'factory 1',None), (u'factory 2',None), (u'Test Location 1',u'cat1'), (u'Test Location 2',u'')]
+      [(u'factory 1',u''), (u'factory 2',u''), (u'Test Location 1',u'cat1'), (u'Test Location 2',u'')]
       )
 
   def test_buckets(self):

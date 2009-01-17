@@ -88,7 +88,6 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
     case REMOVE:
       if (opplan)
       {
-      logger << "START DELET" << endl;
         // Send out the notification to subscribers
         if (opplan->getType().raiseEvent(opplan, SIG_REMOVE))
           // Delete it
@@ -108,7 +107,6 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
         << id << " for removal";
         throw DataException(ch.str());
       }
-      logger << "END DELET" << endl;
       return NULL;
     case ADD:
       if (opplan)

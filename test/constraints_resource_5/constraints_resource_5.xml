@@ -12,17 +12,7 @@
   that is in effect on a certain day.
   </description>
   <current>2009-01-01T00:00:00</current>
-  <commands>
-    <verbose>true</verbose>
-    <command xsi:type="command_solve">
-      <verbose>false</verbose>
-      <solver name="MRP" xsi:type="solver_mrp" constraints="7" loglevel="2" />
-    </command>
-    <command xsi:type="command_saveplan">
-      <filename>output.1.xml</filename>
-    </command>
-  </commands>
-
+  
   <calendars>
     <calendar name="Capacity" xsi:type="calendar_double">
       <default>1</default>
@@ -140,4 +130,11 @@
       <item name="2. end item" />
     </demand>
   </demands>
+
+<?python
+import frepple
+frepple.solver_mrp(name="MRP", constraints=7, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+?>
+
 </plan>

@@ -3,15 +3,6 @@
   <name>plan</name>
   <description>XML structure test model</description>
   <current>2009-01-01T00:00:00</current>
-  <commands>
-    <verbose>true</verbose>
-    <command xsi:type="command_solve">
-      <solver name="MRP" xsi:type="solver_mrp" constraints="0" loglevel="0"/>
-    </command>
-    <command xsi:type="command_saveplan">
-      <filename>output.1.xml</filename>
-    </command>
-  </commands>
   <demands>
     <!-- Level 1: Lot -->
     <demand name="order 1">
@@ -71,4 +62,10 @@
   <problems>
     <!-- Input being ignored. It is still being validated. -->
   </problems>
+  
+<?python
+frepple.solver_mrp(name="MRP", constraints=0, loglevel=0).solve()
+frepple.saveplan("output.1.xml")
+?>
+
 </plan>

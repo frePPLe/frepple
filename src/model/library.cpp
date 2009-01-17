@@ -406,6 +406,10 @@ void LibraryModel::initialize()
     throw RuntimeException("Error registering new Python types");
 
   // Register new methods in Python
+  PyCFunction x;
+  PythonInterpreter::registerGlobalMethod(
+    "loadmodule", CommandLoadLibrary::executePython, METH_VARARGS,
+    "Dynamically load a module in memory.");
   PythonInterpreter::registerGlobalMethod(
     "erase", CommandErase::executePython, METH_VARARGS,
     "Removes the plan data from memory, and optionally the static info too.");
@@ -418,6 +422,9 @@ void LibraryModel::initialize()
   PythonInterpreter::registerGlobalMethod(
     "saveXMLfile", CommandSave::executePython, METH_VARARGS,
     "Save the model to an XML-file.");
+  PythonInterpreter::registerGlobalMethod(
+    "saveplan", CommandSavePlan::executePython, METH_VARARGS,
+    "Save the main plan information to a file.");
   PythonInterpreter::registerGlobalMethod(
     "buffers", PythonBufferIterator::create, METH_NOARGS,
     "Returns an iterator over the buffers.");

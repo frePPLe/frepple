@@ -119,6 +119,8 @@ namespace utils
   *       - resource.loads
   *       - resource.loadplans
   *       - solvers()
+  *   - <b>loadmodule(string [,parameter=value, ...])</b>:<br>
+  *     Dynamically load a module in memory.
   *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br>
   *     Processes an XML string passed as argument.
   *   - <b>log(string)</b>:<br>
@@ -128,6 +130,8 @@ namespace utils
   *     Read an XML-file.
   *   - <b>saveXMLfile(string)</b>:<br>
   *     Save the model to an XML-file.
+  *   - <b>saveplan(string)</b>:<br>
+  *     Save the main plan information to a file.
   *   - <b>erase(boolean)</b>:<br>
   *     Erase the model (arg true) or only the plan (arg false, default).
   *   - <b>version</b>:<br>
@@ -153,6 +157,10 @@ class PythonInterpreter
     static DECLARE_EXPORT void registerGlobalMethod(
       const char*, PyCFunction, int, const char*, bool = true	
      );
+
+    /** Register a new method to Python. */
+    static DECLARE_EXPORT void registerGlobalMethod
+      (const char*, PyCFunctionWithKeywords, int, const char*);
 
     /** Return a pointer to the main extension module. */
     static PyObject* getModule() { return module; }

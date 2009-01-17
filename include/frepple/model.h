@@ -3778,6 +3778,10 @@ class CommandSavePlan : public Command
     string getFileName() const {return filename;}
     void setFileName(const string& v) {filename = v;}
     DECLARE_EXPORT void execute();
+
+    /** Python interface to this command. */
+    static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
+
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     string getDescription() const
       {return "saving the plan into text file '" + filename + "'";}

@@ -10,16 +10,6 @@
     - case 3: similar to 1 but with a capacity constraint and late demand.
   </description>
   <current>2009-01-01T00:00:00</current>
-  <commands>
-    <verbose>true</verbose>
-    <command xsi:type="command_solve">
-      <verbose>false</verbose>
-      <solver name="MRP" xsi:type="solver_mrp" constraints="7" loglevel="2" />
-    </command>
-    <command xsi:type="command_saveplan">
-      <filename>output.1.xml</filename>
-    </command>
-  </commands>
 
   <!--
     Case 1: unconstrained situation where operationplans intersect in
@@ -271,5 +261,11 @@
       <item name="3. end item" />
     </demand>
   </demands>
+
+<?python
+import frepple
+frepple.solver_mrp(name="MRP", constraints=7, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+?>
 
 </plan>

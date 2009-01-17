@@ -53,10 +53,7 @@ void initializePython()
       throw RuntimeException("Error registering Python forecast extension");
     if (PythonForecastBucket::initialize(PythonInterpreter::getModule()))
       throw RuntimeException("Error registering Python forecastbucket extension");
-
-    // Make the datetime types available
-    PyDateTime_IMPORT;
-  }
+ }
   // Release the global lock when leaving the function
   catch (...)
   {

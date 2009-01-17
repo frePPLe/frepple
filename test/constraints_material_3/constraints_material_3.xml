@@ -11,15 +11,6 @@
 		- 4: Same as 3, but with minimum target varying INcreasing over time.
 	</description>
 	<current>2009-01-01T00:00:00</current>
-	<commands>
-	  <verbose>true</verbose>
-	  <command xsi:type="command_solve">
-	    <solver name="MRP" xsi:type="solver_mrp" constraints="7" loglevel="2"/>
-	  </command>
-	  <command xsi:type="command_saveplan">
-	    <filename>output.1.xml</filename>
-	  </command>
-	</commands>
 	<items>
 	  <item name="item 1">
 	    <operation name="delivery 1" xsi:type="operation_fixed_time">
@@ -248,4 +239,11 @@
 	    <locked>true</locked>
 	  </operationplan>
 	</operationplans>
+
+<?python
+import frepple
+frepple.solver_mrp(name="MRP", constraints=7, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+?>
+
 </plan>

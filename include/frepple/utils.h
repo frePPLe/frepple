@@ -3088,8 +3088,14 @@ class CommandLoadLibrary : public Command
       */
     DECLARE_EXPORT void execute();
 
+    /** Python equivalent of this command. */
+    static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*, PyObject*);
+
     DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     string getDescription() const {return "Loading shared library " + lib;}
+
+    /** Add a parameter for the module. */
+    void addParameter(string name, string value) {parameters[name] = value;}
 
     virtual const MetaClass& getType() const {return metadata;}
     static DECLARE_EXPORT const MetaClass metadata;

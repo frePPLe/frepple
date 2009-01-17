@@ -475,6 +475,29 @@ DECLARE_EXPORT void CommandSavePlan::execute()
 }
 
 
+PyObject* CommandSavePlan::executePython(PyObject* self, PyObject* args)
+{
+  // Pick up arguments
+  char *data;
+  int ok = PyArg_ParseTuple(args, "s", &data);
+  if (!ok) return NULL;
+
+  // Execute and catch exceptions
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try { 
+    CommandSavePlan(data).execute();
+  }
+  catch (...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");
+}
+
+
 //
 // MOVE OPERATIONPLAN
 //

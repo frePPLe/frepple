@@ -8,208 +8,6 @@
     planning and saving a model requires going over all objects in memory, any
     dangling pointers likely to surface soon and crash the application. Ha...
   </description>
-  <commands>
-    <verbose>true</verbose>
-    <abortonerror>true</abortonerror>
-
-    <!--
-      Starting position...
-    -->
-    <command xsi:type="command_save" filename="output.1.xml" />
-    <command xsi:type="command_solve">
-      <solver name="MRP" xsi:type="solver_mrp" constraints="0" />
-    </command>
-    <command xsi:type="command_saveplan" filename="output.2.xml" />
-
-    <!--
-      Now we delete the plan and then recreate it. The plan summary
-      and static plan should be identical.
-    -->
-    <command xsi:type="command_erase" mode="plan" />
-    <command xsi:type="command_save" filename="output.3.xml" />
-    <command xsi:type="command_solve">
-      <solver name="MRP" />
-    </command>
-    <command xsi:type="command_saveplan" filename="output.4.xml" />
-    <command xsi:type="command_erase" mode="plan" />
-
-    <!--
-      Now we delete a location. Its sublocations will get a new parent.
-      References to the location are being removed from buffers and
-      resources.
-      Note the use of a <![CDATA[ ... ]]> section to pass the enclosed
-      data literally to the XML parser. Otherwise we'ld have to escape the
-      special XML characters < > "    See below for examples without a
-      CDATA section
-    -->
-    <command xsi:type="command_readxmlstring">
-      <data>
-        <![CDATA[
-				<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-					<locations>
-						<location name="Location 1" action="R"/>
-					</locations>
-				</plan>
-			]]>
-      </data>
-    </command>
-    <command xsi:type="command_save" filename="output.5.xml" />
-
-    <!--
-      Now we delete a customer. References to it will be removed from demands.
-      Also delete a flow and a load. References to them from operations and removes any
-      existing flowplans and loadplans.
-    -->
-    <command xsi:type="command_solve">
-      <solver name="MRP" />
-    </command>
-    <command xsi:type="command_readxmlstring">
-      <data>
-        <![CDATA[
-				<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-					<customers>
-						<customer name="Customer 1" action="R"/>
-					</customers>
-				</plan>
-			]]>
-      </data>
-    </command>
-    <command xsi:type="command_readxmlstring">
-      <data>
-        <![CDATA[
-				<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-   		  <flows>
-				  <flow action="R">
-        		<buffer name="buffer B"/>
-					  <operation name="make item 1"/>
-				  </flow>
-				</flows>
-   		  <loads>
-				  <load action="R">
-        		<resource name="assemble"/>
-					  <operation name="make item 1"/>
-				  </load>
-				</loads>
-				</plan>
-			]]>
-      </data>
-    </command>
-
-    <command xsi:type="command_save" filename="output.6.xml" />
-
-    <!--
-      Now we delete an operationplan.
-      IMPORTANT: Because we rely on the operationplan id to find the
-      operationplan to delete, a change in the solver algorithm might
-      require this test to be updated. The id of the operationplan to
-      delete is different...
-    -->
-    <command xsi:type="command_readxmlstring">
-      <data>
-        <![CDATA[
-        <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <operationplans>
-            <operationplan id="27" action="R"/>
-          </operationplans>
-        </plan>
-			  ]]>
-      </data>
-    </command>
-    <command xsi:type="command_save" filename="output.7.xml" />
-
-    <!--
-      Now we delete a resource. operationsplans are being deleted of
-      operations that are loading the resource. The loads are also deleted.
-    -->
-    <command xsi:type="command_solve">
-      <solver name="MRP" />
-    </command>
-    <command xsi:type="command_readxmlstring">
-      <data>
-        &lt;plan&gt; &lt;resources&gt; &lt;resource name=&quot;assemble&quot;
-        action=&quot;R&quot;/&gt; &lt;/resources&gt; &lt;/plan&gt;
-      </data>
-    </command>
-    <command xsi:type="command_solve">
-      <solver name="MRP" />
-    </command>
-    <command xsi:type="command_saveplan" filename="output.8.xml" />
-
-    <!--
-      Now we delete a buffer. operationsplans are being deleted of
-      operations that are consuming or producing material from it. The flows
-      are also deleted.
-    -->
-    <command xsi:type="command_readxmlstring">
-      <data>
-        &lt;plan&gt; &lt;buffers&gt; &lt;buffer name=&quot;buffer A&quot;
-        action=&quot;R&quot;/&gt; &lt;/buffers&gt; &lt;/plan&gt;
-      </data>
-    </command>
-    <command xsi:type="command_solve">
-      <solver name="MRP" />
-    </command>
-    <command xsi:type="command_saveplan" filename="output.9.xml" />
-
-    <!--
-      Now we delete an operation.
-    -->
-    <command xsi:type="command_readxmlstring">
-      <data>
-        &lt;plan&gt; &lt;operations&gt; &lt;operation name=
-        &quot;make item 1&quot; action=&quot;R&quot;/&gt; &lt;/operations&gt;
-        &lt;/plan&gt;
-      </data>
-    </command>
-    <command xsi:type="command_solve">
-      <solver name="MRP" />
-    </command>
-    <command xsi:type="command_save" filename="output.10.xml" />
-
-
-    <!--
-      Now we delete an item.
-    -->
-    <command xsi:type="command_readxmlstring">
-      <data>
-        &lt;plan&gt; &lt;items&gt; &lt;item name=&quot;item 1&quot;
-        action=&quot;R&quot;/&gt; &lt;/items&gt; &lt;/plan&gt;
-      </data>
-    </command>
-    <command xsi:type="command_solve">
-      <solver name="MRP" />
-    </command>
-    <command xsi:type="command_save" filename="output.11.xml" />
-
-    <!--
-      Now we delete a calendar and a calendar bucket.
-    -->
-    <command xsi:type="command_readxmlstring">
-      <data>
-        <![CDATA[
-				<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-					<calendars>
-						 <calendar name="assembly capacity" action="R"/>
-						 <calendar name="months" xsi:type="calendar_void">
-							<buckets>
-								<bucket name="jan" action="R"/>
-								<bucket name="may" action="R"/>
-							</buckets>
-						</calendar>
-					</calendars>
-				</plan>
-			]]>
-      </data>
-    </command>
-    <command xsi:type="command_save" filename="output.12.xml" />
-
-    <!--
-      To finish we delete the complete model.
-    -->
-    <command xsi:type="command_erase" mode="model" />
-    <command xsi:type="command_save" filename="output.13.xml" />
-
-  </commands>
   <current>2009-01-01T00:00:00</current>
   <calendars>
     <calendar name="months" xsi:type="calendar_void">
@@ -345,4 +143,108 @@
       <customer name="Customer 2" />
     </demand>
   </demands>
+  
+<?python
+import frepple
+
+# Starting position...
+solver = frepple.solver_mrp(name="MRP", constraints=0)
+frepple.saveXMLfile("output.1.xml")
+solver.solve()
+frepple.saveplan("output.2.xml")
+
+# Now we delete the plan and then recreate it. The plan summary
+# and static plan should be identical.
+frepple.erase(False)
+frepple.saveXMLfile("output.3.xml")
+solver.solve()
+frepple.saveplan("output.4.xml")
+frepple.erase(False)
+
+# Now we delete a location. Its sublocations will get a new parent.
+# References to the location are being removed from buffers and
+# resources.
+frepple.location(name="Location 1", action="R")
+frepple.saveXMLfile("output.5.xml")
+
+# Now we delete a customer. References to it will be removed from demands.
+# Also delete a flow and a load. References to them from operations and removes any
+# existing flowplans and loadplans.
+solver.solve()
+frepple.customer(name="Customer 1", action="R")
+frepple.readXMLdata(r'''
+	<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	  <flows>
+		  <flow action="R">
+    		<buffer name="buffer B"/>
+			  <operation name="make item 1"/>
+		  </flow>
+		</flows>
+	  <loads>
+		  <load action="R">
+    		<resource name="assemble"/>
+			  <operation name="make item 1"/>
+		  </load>
+		</loads>
+	</plan>''')
+frepple.saveXMLfile("output.6.xml")
+
+# Now we delete an operationplan.
+# IMPORTANT: Because we rely on the operationplan id to find the
+# operationplan to delete, a change in the solver algorithm might
+# require this test to be updated. The id of the operationplan to
+# delete is different...   @todo use the python api
+frepple.readXMLdata(r'''
+      <plan>
+        <operationplans>
+          <operationplan id="27" action="R"/>
+        </operationplans>
+      </plan>''')
+frepple.saveXMLfile("output.7.xml")
+
+# Now we delete a resource. operationsplans are being deleted of
+# operations that are loading the resource. The loads are also deleted.
+solver.solve()
+frepple.resource(name="assemble", action="R")
+solver.solve()
+frepple.saveplan("output.8.xml")
+
+# Now we delete a buffer. operationsplans are being deleted of
+# operations that are consuming or producing material from it. The flows
+# are also deleted.
+frepple.buffer(name="buffer A", action="R")
+solver.solve()
+frepple.saveplan("output.9.xml")
+
+# Now we delete an operation.
+frepple.operation(name="make item 1", action="R")
+solver.solve()
+frepple.saveXMLfile("output.10.xml")
+
+# Now we delete an item.
+frepple.item(name="item 1", action="R")
+solver.solve()
+frepple.saveXMLfile("output.11.xml")
+
+# Now we delete a calendar and a calendar bucket.
+frepple.readXMLdata(r'''
+	<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+		<calendars>
+			 <calendar name="assembly capacity" action="R"/>
+			 <calendar name="months" xsi:type="calendar_void">
+				<buckets>
+					<bucket name="jan" action="R"/>
+					<bucket name="may" action="R"/>
+				</buckets>
+			</calendar>
+		</calendars>
+	</plan>
+	''')
+frepple.saveXMLfile("output.12.xml")
+
+# To finish we delete the complete model.
+frepple.erase(True)
+frepple.saveXMLfile("output.13.xml")
+?>  
+
 </plan>

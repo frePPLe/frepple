@@ -334,6 +334,13 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
 }
 
 
+DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod
+  (const char* c, PyCFunctionWithKeywords f, int i, const char* d)
+{
+  registerGlobalMethod(c, reinterpret_cast<PyCFunction>(f), i | METH_KEYWORDS, d);
+}
+
+
 PyObject* PythonInterpreter::python_log(PyObject *self, PyObject *args)
 {
   // Pick up arguments

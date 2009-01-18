@@ -65,8 +65,10 @@ SetCompressor /SOLID lzma
 !define MUI_HEADERIMAGE_BITMAP "..\..\doc\frepple.bmp"
 !define MUI_ICON "frepple.ico"
 !define MUI_UNICON "frepple.ico"
+!define MUI_UNFINISHPAGE_NOAUTOCLOSE
 
 ; Definition of the finish page
+!define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_FINISHPAGE_RUN_TEXT "Start the server right now"
 !define MUI_FINISHPAGE_RUN "$INSTDIR\bin\manage.exe"
 !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED

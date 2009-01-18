@@ -868,7 +868,7 @@ class MetaClass : public NonCopyable
       category(NULL), factoryMethodDefault(NULL), factoryPythonProxy(NULL) {}
 
     /** Destructor. */
-    virtual ~MetaClass() {logger << "destroying " << type << endl;}
+    virtual ~MetaClass() {}
 
     /** This constructor registers the metadata of a class. */
     DECLARE_EXPORT void registerClass(const char*, const char*, bool = false) const;

@@ -53,6 +53,8 @@ void initializePython()
       throw RuntimeException("Error registering Python forecast extension");
     if (PythonForecastBucket::initialize(PythonInterpreter::getModule()))
       throw RuntimeException("Error registering Python forecastbucket extension");
+    if (PythonForecastSolver::initialize(PythonInterpreter::getModule()))
+      throw RuntimeException("Error registering Python forecastsolver extension");
  }
   // Release the global lock when leaving the function
   catch (...)
@@ -204,5 +206,19 @@ int PythonForecastBucket::setattro(const Attribute& attr, const PythonObject& fi
     return PythonDemand(obj).setattro(attr, field);  
   return 0;  // OK
 }
+
+
+PyObject* PythonForecastSolver::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_BuildValue("");
+  return PythonSolver(obj).getattro(attr); 
+}
+
+
+int PythonForecastSolver::setattro(const Attribute& attr, const PythonObject& field)
+{
+  return PythonSolver(obj).setattro(attr, field);
+}
+
 
 } // end namespace

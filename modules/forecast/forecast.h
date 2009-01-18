@@ -926,6 +926,17 @@ class PythonForecastBucket : public FreppleClass<PythonForecastBucket,PythonDema
     virtual int setattro(const Attribute&, const PythonObject&);
 };
 
+
+class PythonForecastSolver : public FreppleClass<PythonForecastSolver,PythonSolver,ForecastSolver>
+{
+  public:
+    PythonForecastSolver(ForecastSolver* p)
+      : FreppleClass<PythonForecastSolver,PythonSolver,ForecastSolver>(p) {}
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+};
+
+
 }   // End namespace
 
 #endif

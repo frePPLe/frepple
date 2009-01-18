@@ -44,8 +44,6 @@
 
 <?python
 
-import frepple
-
 theitem = frepple.item(name="item")
 thecustomer = frepple.customer(name="customer")
 thecalendar = frepple.calendar(name="planningbuckets")

@@ -85,7 +85,7 @@
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
 				ProgramDatabaseFile=".\main\Release/frepple.pdb"
-				SubSystem="1"
+				SubSystem="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 			/>
@@ -142,6 +142,7 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\include;&quot;C:\develop\packages\xerces-c-src_2_6_0\src&quot;"
 				PreprocessorDefinitions="WIN32,_DEBUG,_CONSOLE,MT,_CRT_SECURE_NO_DEPRECATE"
+				StringPooling="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				RuntimeTypeInfo="true"
@@ -177,7 +178,7 @@
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\main\Debug/frepple_debug.pdb"
-				SubSystem="1"
+				SubSystem="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 			/>

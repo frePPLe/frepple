@@ -143,9 +143,8 @@
       <customer name="Customer 2" />
     </demand>
   </demands>
-  
+
 <?python
-import frepple
 
 # Starting position...
 solver = frepple.solver_mrp(name="MRP", constraints=0)
@@ -245,6 +244,6 @@ frepple.saveXMLfile("output.12.xml")
 # To finish we delete the complete model.
 frepple.erase(True)
 frepple.saveXMLfile("output.13.xml")
-?>  
+?>
 
 </plan>

@@ -830,6 +830,10 @@ class MetaClass : public NonCopyable
       * takes a string as argument. */
     typedef Object* (*creatorString)(string);
 
+    /** Type definition for a method called to process an XML processing
+      * instruction. */
+    typedef void (*processorXMLInstruction)(const char *d);
+
     /** Type definition for a factory method that constructs Python
       * objects.<br>
       * The return value is actually a PyObject pointer.
@@ -851,6 +855,7 @@ class MetaClass : public NonCopyable
     {
       creatorDefault factoryMethodDefault;
       creatorString factoryMethodString;
+      processorXMLInstruction processingInstruction; 
     };
 
     /** A factory method for a Python object that can act as a proxy for
@@ -863,7 +868,7 @@ class MetaClass : public NonCopyable
       category(NULL), factoryMethodDefault(NULL), factoryPythonProxy(NULL) {}
 
     /** Destructor. */
-    virtual ~MetaClass() {}
+    virtual ~MetaClass() {logger << "destroying " << type << endl;}
 
     /** This constructor registers the metadata of a class. */
     DECLARE_EXPORT void registerClass(const char*, const char*, bool = false) const;
@@ -883,6 +888,15 @@ class MetaClass : public NonCopyable
       bool def = false) const
     {
       const_cast<MetaClass*>(this)->factoryMethodString = f;
+      registerClass(cat,cls,def);
+    }
+
+    /** This constructor registers the metadata of a class as an XML processing
+      * instruction. */
+    void registerClass (const char* cat, const char* cls, 
+      processorXMLInstruction f, bool def = false) const
+    {
+      const_cast<MetaClass*>(this)->processingInstruction = f;
       registerClass(cat,cls,def);
     }
 
@@ -2791,7 +2805,7 @@ class Tree : public NonCopyable
   * appropriately.<br>
   * Command objects can't be persisted.
   */
-class Command : public Object
+class Command 
 {
   friend class CommandList;
   public:
@@ -2838,7 +2852,6 @@ class Command : public Object
     /** Returns true if the execution of this command can be undone. */
     virtual bool undoable() const {return false;}
 
-    virtual DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     virtual string getDescription() const {return "No description available";}
     virtual ~Command() {};
 
@@ -2849,7 +2862,8 @@ class Command : public Object
     /** Controls whether verbose output will be generated during execution. */
     void setVerbose(bool b) {verbose = (b ? YES : NO);}
 
-    static DECLARE_EXPORT const MetaCategory metadata;
+    /** A second metadata object for registering XML processing instructions. */
+    static DECLARE_EXPORT const MetaCategory metadataInstruction;
 
   private:
     /** Specifies whether the execution of the command should remain silent
@@ -3036,13 +3050,6 @@ class CommandList : public Command
       * warning will be printed.
       */
     virtual DECLARE_EXPORT ~CommandList();
-
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandList);}
-
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
 };
 
 
@@ -3097,10 +3104,6 @@ class CommandLoadLibrary : public Command
     /** Add a parameter for the module. */
     void addParameter(string name, string value) {parameters[name] = value;}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandLoadLibrary);}
-
     /** Returns true if a module with this name has been loaded. */
     static bool isLoaded(string s) {return registry.find(s) != registry.end();}
 
@@ -3125,36 +3128,6 @@ class CommandLoadLibrary : public Command
 //
 // INPUT PROCESSING CLASSES
 //
-
-/** @brief This abstract class is the used for defining classes that are used to
-  * implement processing functionality linked to XML processing
-  * instructions.
-  *
-  * Such a processing instruction looks as follows:<br>
-  *   \<?TARGET data ?\>  <br>
-  * Upon reading this from the XML input, the parser will look for the class
-  * registered with base "INSTRUCTION" and type "TARGET". The parser will
-  * instantiate an object of that class and call the method
-  * processInstruction on it. The call will include a pointer to the parser
-  * and the data string.<br>
-  * Note that these instructions are never validated by the parser against
-  * an XML schema. They are only processed inside frePPLe, and extreme care
-  * should be taken to develop robust and secure processing instructions.
-  * @see XMLInput
-  * @see XMLInput::processingInstruction
-  */
-class XMLinstruction : public NonCopyable
-{
-  public:
-    /** Handler function called by the XML parser. */
-    virtual void processInstruction(XMLInput &i, const char *d) = 0;
-
-    /** Destructor. */
-    virtual ~XMLinstruction() {}
-
-    /** Metadata, registering the base tag "INSTRUCTION". */
-    static DECLARE_EXPORT const MetaCategory metadata;
-};
 
 
 /** @brief This class will read in an XML-file and call the appropriate

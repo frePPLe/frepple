@@ -5,7 +5,6 @@
   </description>
   <current>2009-01-01T00:00:00</current>
 <?python
-import frepple
 
 def printmodel():
   '''This function prints out information about the model to the output file'''
@@ -64,49 +63,13 @@ def printmodel():
   # Close the file
   finally:
     out.close()
+
+# Read a file, run the solver and export the results
+frepple.readXMLfile('data.xml')
+frepple.solver_mrp(name="MRP",constraints=7).solve()
+printmodel()
+frepple.printsize()
+frepple.saveXMLfile('output.2.xml')
+
 ?>
-  <commands>
-  	<verbose>true</verbose>
-  	<abortonerror>false</abortonerror>
-
-  	<!-- Read an XML file. -->
-  	<!--
-  	This could be done easier of course with a command_readxmlfile
-  	instead, but we want to test the Python functions here...
-  	-->
-    <command xsi:type="command_python">
-      <cmdline>frepple.readXMLfile(&quot;data.xml&quot;)</cmdline>
-    </command>
-    <command xsi:type="command_python" cmdline="printmodel()" />
-    <command xsi:type="command_size"/>
-    <!-- Process XML string. -->
-    <!-- The XML string executes a command to run the solver. -->
-    <command xsi:type="command_python">
-      <cmdline>
-<![CDATA[
-frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
-<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><commands>
-  <command xsi:type="command_solve" verbose="false">
-    <solver name="MRP" xsi:type="solver_mrp" constraints="7" />
-  </command>
-</commands></plan>
-''')
-]]>
-      </cmdline>
-    </command>
-    <command xsi:type="command_size"/>
-
-  	<!-- Print information to the output file. -->
-    <command xsi:type="command_python" cmdline="printmodel()" />
-    <command xsi:type="command_size"/>
-
-  	<!-- Save the model to an XML file. -->
-  	<!--
-  	This could be done easier of course with a command_save
-  	instead, but we want to test the Python functions here...
-  	-->
-    <command xsi:type="command_python" cmdline="frepple.saveXMLfile(&quot;output.2.xml&quot;)" />
-    <command xsi:type="command_size"/>
-
-  </commands>
 </plan>

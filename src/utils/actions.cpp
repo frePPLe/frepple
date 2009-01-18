@@ -54,12 +54,6 @@ DECLARE_EXPORT bool Command::getVerbose() const
 }
 
 
-DECLARE_EXPORT void Command::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_verbose)) setVerbose(pElement.getBool());
-}
-
-
 //
 // COMMAND LIST
 //
@@ -379,33 +373,6 @@ DECLARE_EXPORT CommandList::~CommandList()
 }
 
 
-DECLARE_EXPORT void CommandList::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_command) && !pIn.isObjectEnd())
-  {
-    // We're unlucky with our tag names here. Subcommands end with
-    // </COMMAND>, but the command list itself also ends with that tag.
-    // We use the isObjectEnd() method to differentiate between both.
-    Command * b = dynamic_cast<Command*>(pIn.getPreviousObject());
-    if (b) add(b);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA(Tags::tag_abortonerror))
-    setAbortOnError(pElement.getBool());
-  else if (pAttr.isA(Tags::tag_maxparallel))
-    setMaxParallel(pElement.getInt());
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
-
-
-DECLARE_EXPORT void CommandList::beginElement (XMLInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA (Tags::tag_command))
-    pIn.readto( MetaCategory::ControllerDefault(Command::metadata,pIn.getAttributes()) );
-}
-
-
 //
 // LOADLIBRARY COMMAND
 //
@@ -521,14 +488,17 @@ DECLARE_EXPORT PyObject* CommandLoadLibrary::executePython
     {
       string keystr(PyString_AsString(key));
       string valuestr(PyString_AsString(value));
+      logger << keystr << "  " << valuestr << endl; //xxxx
       cmd.addParameter(keystr, valuestr);
     }
   }
 
-  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  // Free Python interpreter for other threads.
+  // This is important since the module may also need access to Python
+  // during its initialization...
+  Py_BEGIN_ALLOW_THREADS   
   try { 
     // Load the library
-    cmd.setVerbose(true);
     cmd.execute();
   }
   catch(...)
@@ -551,35 +521,6 @@ DECLARE_EXPORT void CommandLoadLibrary::printModules()
 }
 
 
-DECLARE_EXPORT void CommandLoadLibrary::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_filename))
-    pElement >> lib;
-  else if (pAttr.isA(Tags::tag_name))
-    pElement >> tempName;
-  else if (pAttr.isA(Tags::tag_value))
-    pElement >> tempValue;
-  else if (pAttr.isA(Tags::tag_parameter))
-  {
-    if (!tempValue.empty() && !tempName.empty())
-    {
-      // New parameter name+value pair ready
-      parameters[tempName] = tempValue;
-      tempValue.clear();
-      tempName.clear();
-    }
-    else
-      // Incomplete data
-      throw DataException("Invalid parameter specification");
-  }
-  else if (pIn.isObjectEnd())
-  {
-    tempValue.clear();
-    tempName.clear();
-  }
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
 
 
 } // end namespace

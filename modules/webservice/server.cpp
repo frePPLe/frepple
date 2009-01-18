@@ -24,7 +24,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 /* The code in this file is copied from the gsoap manual, with only relatively
  * small changes.
  */

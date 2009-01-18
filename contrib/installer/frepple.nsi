@@ -68,7 +68,7 @@ SetCompressor /SOLID lzma
 
 ; Definition of the finish page
 !define MUI_FINISHPAGE_RUN_TEXT "Start the server right now"
-!define MUI_FINISHPAGE_RUN "$INSTDIR\server\manage.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\bin\manage.exe"
 !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
 !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\index.html"
 !define MUI_FINISHPAGE_SHOWREADME_TEXT "View documentation"
@@ -164,13 +164,13 @@ Section "Application" SecAppl
   ; Copy sqlite database if there is one
   File /nonfatal "..\bin\frepple.sqlite"
 
-  ; Create the django server directory
-  SetOutPath "$INSTDIR\server"
+  ; Copy the django and python redistributables created by py2exe
+  SetOutPath "$INSTDIR\bin"
   File /r "..\contrib\installer\dist\*.*"
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\server\manage.exe"
+  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\bin\manage.exe"
 
   ; Set an environment variable (and propagate immediately to other processes)
   System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("FREPPLE_HOME", "$INSTDIR\bin").r0'
@@ -209,7 +209,7 @@ Section "Application" SecAppl
   ReadINIStr $5 "$PLUGINSDIR\parameters.ini" "Field 14" "State"  # DB port
 
   ; Create a settings file for the server
-  StrCpy $9 "$INSTDIR\server\settings.py"
+  StrCpy $9 "$INSTDIR\bin\settings.py"
   FileOpen $9 $9 w
   FileWrite $9 "# Django supports the following database engines: 'oracle', 'postgresql_psycopg2',$\r$\n"
   FileWrite $9 "# 'postgresql', 'mysql', 'sqlite3' 'oracle' or 'ado_mssql'.$\r$\n"

@@ -152,4 +152,9 @@ setup(
        "script": "manage.py",
        "icon_resources": [(1, "frepple.ico")]
        }, ],
+    # Name of the zip file with the bytecode of the Python library.
+    # This zip file with the name mentioned below is automatically included
+    # in the Python search path (while the default output file "library.zip"
+    # isn't)
+    zipfile = "python25.zip"
     )

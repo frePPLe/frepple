@@ -30,19 +30,6 @@
 
 namespace frepple
 {
-
-// Command metadata
-DECLARE_EXPORT const MetaClass CommandPlanSize::metadata,
-  CommandCreateOperationPlan::metadata,
-  CommandDeleteOperationPlan::metadata,
-  CommandMoveOperationPlan::metadata,
-  CommandSolve::metadata,
-  CommandReadXMLFile::metadata,
-  CommandReadXMLString::metadata,
-  CommandSave::metadata,
-  CommandSavePlan::metadata,
-  CommandErase::metadata;
-
 // Solver metadata
 DECLARE_EXPORT const MetaCategory Solver::metadata;
 
@@ -142,45 +129,6 @@ void LibraryModel::initialize()
   // in a multi-threaded configuration, we don't need a more advanced mechanism
   // to protect the singleton plan.
   Plan::thePlan = new Plan();
-
-  // Initialize the command metadata.
-  CommandPlanSize::metadata.registerClass(
-    "command",
-    "command_size",
-    Object::createDefault<CommandPlanSize>);
-  CommandCreateOperationPlan::metadata.registerClass(
-    "command",
-    "command_create_opplan"); // No factory method: cmd not created with xml
-  CommandDeleteOperationPlan::metadata.registerClass(
-    "command",
-    "command_delete_opplan"); // No factory method: cmd not created with xml
-  CommandMoveOperationPlan::metadata.registerClass(
-    "command",
-    "command_move_opplan"); // No factory method: cmd not created with xml
-  CommandSolve::metadata.registerClass(
-    "command",
-    "command_solve",
-    Object::createDefault<CommandSolve>);
-  CommandReadXMLFile::metadata.registerClass(
-    "command",
-    "command_readxml",
-    Object::createDefault<CommandReadXMLFile>);
-  CommandReadXMLString::metadata.registerClass(
-    "command",
-    "command_readxmlstring",
-    Object::createDefault<CommandReadXMLString>);
-  CommandSave::metadata.registerClass(
-    "command",
-    "command_save",
-    Object::createDefault<CommandSave>);
-  CommandSavePlan::metadata.registerClass(
-    "command",
-    "command_saveplan",
-    Object::createDefault<CommandSavePlan>);
-  CommandErase::metadata.registerClass(
-    "command",
-    "command_erase",
-    Object::createDefault<CommandErase>);
 
   // Initialize the plan metadata.
   Plan::metadata.registerCategory("plan");
@@ -406,10 +354,12 @@ void LibraryModel::initialize()
     throw RuntimeException("Error registering new Python types");
 
   // Register new methods in Python
-  PyCFunction x;
   PythonInterpreter::registerGlobalMethod(
     "loadmodule", CommandLoadLibrary::executePython, METH_VARARGS,
     "Dynamically load a module in memory.");
+  PythonInterpreter::registerGlobalMethod(
+    "printsize", CommandPlanSize::executePython, METH_NOARGS,
+    "Print information about the memory consumption.");
   PythonInterpreter::registerGlobalMethod(
     "erase", CommandErase::executePython, METH_VARARGS,
     "Removes the plan data from memory, and optionally the static info too.");

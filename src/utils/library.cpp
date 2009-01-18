@@ -42,13 +42,8 @@ DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 // Repository of loaded modules
 DECLARE_EXPORT set<string> CommandLoadLibrary::registry;
 
-// Command metadata
-DECLARE_EXPORT const MetaCategory Command::metadata;
-DECLARE_EXPORT const MetaClass CommandList::metadata,
-  CommandLoadLibrary::metadata;
-
 // Processing instruction metadata
-DECLARE_EXPORT const MetaCategory XMLinstruction::metadata;
+DECLARE_EXPORT const MetaCategory Command::metadataInstruction;
 
 // Number of processors.
 // The value initialized here is overwritten in the library initialization.
@@ -178,44 +173,27 @@ void LibraryUtils::initialize()
   // Most Linux distributions these days have a default locale that supports
   // utf-8 encoding, meaning that every unicode character can be
   // represented.
-  // On windows, the default is the system-default ANSI code page. The number
-  // of characters that frePPLe supports on windows is constrained by this...
+  // On Windows, the default is the system-default ANSI code page. The number
+  // of characters that frePPLe supports on Windows is constrained by this...
   setlocale(LC_ALL, "" );
 
   // Initialize Xerces parser
   xercesc::XMLPlatformUtils::Initialize();
 
-  // Initialize the command metadata.
-  Command::metadata.registerCategory("command", "commands");
-  CommandList::metadata.registerClass(
-    "command",
-    "command_list",
-    Object::createDefault<CommandList>);
-  CommandLoadLibrary::metadata.registerClass(
-    "command",
-    "command_loadlib",
-    Object::createDefault<CommandLoadLibrary>);
-  CommandPython::metadata.registerClass(
-    "command",
-    "command_python",
-    Object::createDefault<CommandPython>);
-
   // Initialize the processing instruction metadata.
-  XMLinstruction::metadata.registerCategory
-    ("instruction", NULL, MetaCategory::ControllerDefault);
+  Command::metadataInstruction.registerCategory
+    ("instruction", NULL);
 
-  // Register python also as a processing instruction.
+  // Register Python as a processing instruction.
   CommandPython::metadata2.registerClass(
-    "instruction",
-    "python",
-    Object::createDefault<CommandPython>);
+    "instruction", "python", CommandPython::processorXMLInstruction);
 
   // Initialize the Python interpreter
   PythonInterpreter::initialize();
 
-  // Query the system for the number of available processors
+  // Query the system for the number of available processors.
   // The environment variable NUMBER_OF_PROCESSORS is defined automatically on
-  // windows platforms. On other platforms it'll have to be explicitly set
+  // Windows platforms. On other platforms it'll have to be explicitly set
   // since there isn't an easy and portable way of querying this system
   // information.
   const char *c = getenv("NUMBER_OF_PROCESSORS");

@@ -12,7 +12,7 @@
   that is in effect on a certain day.
   </description>
   <current>2009-01-01T00:00:00</current>
-  
+
   <calendars>
     <calendar name="Capacity" xsi:type="calendar_double">
       <default>1</default>
@@ -132,7 +132,6 @@
   </demands>
 
 <?python
-import frepple
 frepple.solver_mrp(name="MRP", constraints=7, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
 ?>

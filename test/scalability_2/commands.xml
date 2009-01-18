@@ -1,14 +1,9 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <current>2009-01-01T00:00:00</current>
-  <commands>
-    <verbose>false</verbose>
-    <command xsi:type="command_readxml" filename="input.xml"/>
-    <command xsi:type="command_solve">
-      <solver name="MRP" xsi:type="solver_mrp" constraints="7"/>
-    </command>
-    <command xsi:type="command_save" filename="output.xml"/>
-    <!--
-    <command xsi:type="command_size"/>
-    -->
-  </commands>
+<?python
+frepple.readXMLfile("input.xml",False)
+frepple.solver_mrp(name="MRP",constraints=7).solve()
+frepple.saveXMLfile("output.xml")
+#frepple.printsize()
+?>
 </plan>

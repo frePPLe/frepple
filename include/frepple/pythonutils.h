@@ -119,6 +119,8 @@ namespace utils
   *       - resource.loads
   *       - resource.loadplans
   *       - solvers()
+  *   - <b>printsize()</b>:<br>
+  *     Prints information about the memory consumption.
   *   - <b>loadmodule(string [,parameter=value, ...])</b>:<br>
   *     Dynamically load a module in memory.
   *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br>
@@ -200,7 +202,7 @@ class PythonInterpreter
   * function is thus visible across multiple invocations of the Python
   * interpreter.
   */
-class CommandPython : public Command, public XMLinstruction
+class CommandPython : public Command
 {
   private:
     /** Python commands to be executed. */
@@ -234,18 +236,11 @@ class CommandPython : public Command, public XMLinstruction
     /** Update the filename field and clear the filename field. */
     void setFileName(string s) {filename = s; cmd.clear();}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    /** Metadata for registration as a command. */
-    static const MetaClass metadata;
     /** Metadata for registration as an XML instruction. */
     static const MetaClass metadata2;
-    virtual size_t getSize() const
-      {return sizeof(CommandPython) + cmd.size() + filename.size();}
-
-    void DECLARE_EXPORT endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
 
     /** This method is called when a processing instruction is read. */
-    void processInstruction(XMLInput &i, const char *d) 
+    static void processorXMLInstruction(const char *d)
       {PythonInterpreter::execute(d);}
 };
 

@@ -94,7 +94,6 @@
   </demands>
 
 <?python
-import frepple
 frepple.solver_mrp(name="MRP", constraints=7, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
 ?>

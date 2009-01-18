@@ -72,20 +72,22 @@ void 	XMLInput::processingInstruction
 {
   char* type = xercesc::XMLString::transcode(target);
   char* value = xercesc::XMLString::transcode(data);
-  XMLinstruction *x = NULL;
   try
   {
-    // Lookup the class
-    const MetaClass* j = XMLinstruction::metadata.findClass(type);
-    if (!j)
+    // Look up the class
+    const MetaClass* j = Command::metadataInstruction.findClass(type);
+    if (!j || !j->factoryMethodDefault)
     {
       string msg = string("Unknown processing instruction ") + type;
       xercesc::XMLString::release(&type);
       xercesc::XMLString::release(&value);
       throw LogicException(msg);
     }
-    x = dynamic_cast<XMLinstruction*>(j->factoryMethodDefault());
-    try {x->processInstruction(*this, value);}
+    try 
+    {
+      // Execute the processing instruction
+      j->processingInstruction(value);
+    }
     catch (DataException e)
     {
       if (abortOnDataException)
@@ -96,13 +98,11 @@ void 	XMLInput::processingInstruction
       }
       else logger << "Continuing after data error: " << e.what() << endl;
     }
-    delete x;
     xercesc::XMLString::release(&type);
     xercesc::XMLString::release(&value);
   }
   catch (...)
   {
-    delete x;
     xercesc::XMLString::release(&type);
     xercesc::XMLString::release(&value);
     throw;

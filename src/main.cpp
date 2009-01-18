@@ -24,7 +24,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 #include "freppleinterface.h"
 #include <iostream>
 #include <sstream>

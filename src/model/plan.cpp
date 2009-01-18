@@ -24,7 +24,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
@@ -96,23 +95,17 @@ DECLARE_EXPORT void Plan::endElement (XMLInput& pIn, const Attribute& pAttr, con
 
 DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, const Attribute& pAttr)
 {
-  if (pAttr.isA(Tags::tag_commands))
-    // Handling of commands, a category which doesn't have a category reader
-    pIn.readto(&(pIn.getCommands()));
-  else
+  const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pIn.getParentElement().first.getHash());
+  if (cat)
   {
-    const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pIn.getParentElement().first.getHash());
-    if (cat)
-    {
-      if (cat->readFunction)
-        // Hand over control to a registered read controller
-        pIn.readto(cat->readFunction(*cat,pIn.getAttributes()));
-      else
-        // There is no controller available.
-        // This piece of code will be used to skip pieces of the XML file that
-        // Frepple doesn't need to be understand
-        pIn.IgnoreElement();
-    }
+    if (cat->readFunction)
+      // Hand over control to a registered read controller
+      pIn.readto(cat->readFunction(*cat,pIn.getAttributes()));
+    else
+      // There is no controller available.
+      // This piece of code will be used to skip pieces of the XML file that
+      // Frepple doesn't need to be understand
+      pIn.IgnoreElement();
   }
 }
 

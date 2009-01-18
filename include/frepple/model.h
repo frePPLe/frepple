@@ -1056,9 +1056,6 @@ class CommandSolve : public Command
     /** Running a solver can't be undone. */
     bool undoable() const {return false;}
 
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-
     string getDescription() const {return "running a solver";}
 
     /** Returns the solver being run. */
@@ -1066,10 +1063,6 @@ class CommandSolve : public Command
 
     /** Updates the solver being used. */
     void setSolver(Solver* s) {sol = s;}
-
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandSolve);}
 };
 
 
@@ -3616,8 +3609,6 @@ class CommandReadXMLFile : public Command
       * read. Otherwise, the standard input is read. */
     DECLARE_EXPORT void execute();
 
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-
     /** Python interface for this command. */
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
 
@@ -3628,10 +3619,6 @@ class CommandReadXMLFile : public Command
       else
         return "parsing xml input from file '" + filename + "'";
     }
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const
-      {return sizeof(CommandReadXMLFile) + filename.size();}
 
   private:
     /** Name of the input to be read. An empty string means that we want to
@@ -3694,10 +3681,6 @@ class CommandReadXMLString : public Command
 
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     string getDescription() const {return "parsing xml input string";}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const
-      {return sizeof(CommandReadXMLString) + data.size();}
 
   private:
     /** Name of the input to be read. An empty string means that we want to
@@ -3740,16 +3723,8 @@ class CommandSave : public Command
     /** Python interface to this command. */
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
 
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     string getDescription() const
       {return "saving the complete model into file '" + filename + "'";}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const
-    {
-      return sizeof(CommandSave)
-          + filename.size() + headerstart.size() + headeratts.size();
-    }
     XMLOutput::content_type getContent() const {return content;}
     void setContent(XMLOutput::content_type t) {content = t;}
   private:
@@ -3785,10 +3760,6 @@ class CommandSavePlan : public Command
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     string getDescription() const
       {return "saving the plan into text file '" + filename + "'";}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const
-      {return sizeof(CommandSavePlan) + filename.size();}
   private:
     string filename;
 };
@@ -3807,12 +3778,11 @@ class CommandPlanSize : public Command
   public:
     CommandPlanSize() {};
     DECLARE_EXPORT void execute();
+    static PyObject* executePython(PyObject* self, PyObject* args)
+      {CommandPlanSize x;x.execute(); return Py_BuildValue("");}
     void undo() {}
     bool undoable() const {return true;}
     string getDescription() const {return "printing the model size";}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandPlanSize);}
 };
 
 
@@ -3841,16 +3811,12 @@ class CommandErase : public Command
     /** Python interface to this command. */
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
 
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     string getDescription() const
     {
       return deleteStaticModel ? "Erasing the model" : "Erasing the plan";
     }
     bool getDeleteStaticModel() const {return deleteStaticModel;}
     void setDeleteStaticModel(bool b) {deleteStaticModel = b;}
-    virtual const MetaClass& getType() const {return metadata;}
-    virtual size_t getSize() const {return sizeof(CommandErase);}
-    static DECLARE_EXPORT const MetaClass metadata;
   private:
     /** Flags whether to delete the complete static model or only the
       * dynamic plan information. */
@@ -4702,9 +4668,6 @@ class CommandCreateOperationPlan : public Command
     bool undoable() const {return true;}
     ~CommandCreateOperationPlan() {if (opplan) delete opplan;}
     OperationPlan *getOperationPlan() const {return opplan;}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandCreateOperationPlan);}
     string getDescription() const
     {
       return "creating a new operationplan for operation '"
@@ -4733,9 +4696,6 @@ class CommandDeleteOperationPlan : public Command
     DECLARE_EXPORT void undo();
     bool undoable() const {return true;}
     ~CommandDeleteOperationPlan() {if (oper) undo();}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandDeleteOperationPlan);}
     DECLARE_EXPORT string getDescription() const;
 
   private:
@@ -4784,9 +4744,6 @@ class CommandMoveOperationPlan : public Command
     bool undoable() const {return true;}
     ~CommandMoveOperationPlan() { if (opplan) undo();}
     OperationPlan* getOperationPlan() const {return opplan;}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandMoveOperationPlan);}
     DECLARE_EXPORT string getDescription() const;
 
     /** Set another date for the operationplan.

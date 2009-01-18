@@ -24,7 +24,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 /** @file pythonutils.cpp
   * @brief Reusable functions for python functionality.
   *
@@ -45,7 +44,6 @@ DECLARE_EXPORT PyObject* PythonLogicException = NULL;
 DECLARE_EXPORT PyObject* PythonDataException = NULL;
 DECLARE_EXPORT PyObject* PythonRuntimeException = NULL;
 
-const MetaClass CommandPython::metadata;
 const MetaClass CommandPython::metadata2;
 
 PyThreadState *PythonInterpreter::mainThreadState = NULL;
@@ -96,24 +94,6 @@ void CommandPython::execute()
   // Log
   if (getVerbose()) logger << "Finished executing python at "
     << Date::now() << " : " << t << endl;
-}
-
-
-void CommandPython::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_cmdline))
-  {
-    // No replacement of environment variables here
-    filename.clear();
-    pElement >> cmd;
-  }
-  else if (pAttr.isA(Tags::tag_filename))
-  {
-    cmd.clear();
-    pElement >> filename;
-  }
-  else
-    Command::endElement(pIn, pAttr, pElement);
 }
 
 

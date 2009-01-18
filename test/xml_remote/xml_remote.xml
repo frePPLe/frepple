@@ -4,10 +4,9 @@
 
 <?python
 import urllib2
-import frepple
 f = urllib2.urlopen("http://www.frepple.com/test/xml_remote.xml")
 frepple.readXMLdata(f.read(1000), False, False)
-frepple.save("output.1.xml")
+frepple.saveXMLfile("output.1.xml")
 ?>
 
 </plan>

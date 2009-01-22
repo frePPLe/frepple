@@ -53,14 +53,11 @@ int main (int argc, char *argv[])
 
     // 2: Plan the model
     FreppleReadXMLData(
-      "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" \
-      "<plan xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" \
-      "<commands>" \
-      "<command xsi:type=\"command_solve\">" \
-      "<verbose>false</verbose>" \
-      "<solver name=\"MRP\" xsi:type=\"solver_mrp\" constraints=\"0\"/>"  \
-      "</command>" \
-      "</commands>" \
+      "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" \
+      "<plan xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" \
+      "<?python\n" \
+      "frepple.solver_mrp(name=\"MRP\", constraints=0).solve()\n"  \
+      "?>\n" \
       "</plan>", true, false
     );
     reportProblems("planning");

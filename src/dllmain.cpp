@@ -83,15 +83,33 @@ DECLARE_EXPORT(void) FreppleInitialize()
   LibraryModel::initialize(); // also initializes the utils library
   LibrarySolver::initialize();
 
-  // Search for the initialization file
+  // Search for the initialization XML file
   string init = Environment::searchFile("init.xml");
   if (!init.empty())
   {
     // Execute the commands in the file
-    try{ CommandReadXMLFile(init).execute(); }
+    try { CommandReadXMLFile(init).execute(); }
     catch (...)
     {
       logger << "Exception caught during execution of 'init.xml'" << endl;
+      throw;
+    }
+  }
+
+  // Search for the initialization PY file
+  init = Environment::searchFile("init.py");
+  if (!init.empty())
+  {
+    // Execute the commands in the file
+    try 
+    { 
+      CommandPython cmd;
+      cmd.setFileName("init.py");
+      cmd.execute(); 
+    }
+    catch (...)
+    {
+      logger << "Exception caught during execution of 'init.py'" << endl;
       throw;
     }
   }

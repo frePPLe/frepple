@@ -1,29 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <commands>
-    <verbose>true</verbose>
-    <command xsi:type="command_solve">
-      <solver name="MRP" xsi:type="solver_mrp" constraints="7" loglevel="0" maxparallel="1"/>
-    </command>
-    <command xsi:type="command_save" filename="output.1.xml" />
-    <command xsi:type="command_readxmlstring">
-      <!--
-        Now we delete one of the buffers. If the callback function isn't
-        right we'll end up with dangling pointers to the deleted buffer
-        and the application will crash during the following save command.
-      -->
-      <data>
-        <![CDATA[
-				<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-					<buffers>
-						<buffer name="product in distribution centre" action="R"/>
-					</buffers>
-				</plan>
-			]]>
-      </data>
-    </command>
-    <command xsi:type="command_save" filename="output.2.xml" />
-  </commands>
+
+<?python
+# Loading modules is typically done in the init.py or init.xml file
+# that are automatically executed upon startup.
+# But it can happen at any time before the module is actually used.
+frepple.loadmodule(".libs/mod_sample.so")
+?>
+
   <name>Sample Module</name>
   <current>2009-01-01T00:00:00</current>
   <calendars>
@@ -145,4 +129,12 @@
       <operation name="delivery product from distribution centre"/>
     </demand>
   </demands>
+  
+<?python
+frepple.solver_mrp(name="MRP", constraints=7, loglevel=0, maxparallel=1).solve()
+frepple.saveXMLfile("output.1.xml")
+frepple.buffer(name="product in distribution centre", action="R")
+frepple.saveXMLfile("output.2.xml")
+?>
+
 </plan>

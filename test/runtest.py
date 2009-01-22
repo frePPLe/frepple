@@ -41,7 +41,7 @@
 #    Execute the tests listed on the command line.
 #  - ./runtest.py
 #    Execute all tests.
-#  - ./runtest.py -vcc
+#  - ./runtest.py --vcc
 #    Execute all tests using the executables compiled with Microsofts'
 #    Visual Studio C++ compiler.
 #    Tests of type 1 are skipped in this case.

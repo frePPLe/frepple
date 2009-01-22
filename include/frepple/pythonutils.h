@@ -27,11 +27,7 @@
 /** @file pythonutils.h
   * @brief Reusable functions for python functionality.
   *
-  * XXX find better place for this documentation
-  * Utility classes for interfacing to and from the Python language.
-  * The structure of the C++ wrappers around the C Python API is heavily
-  * inspired on the design of PyCXX.<br>
-  * More information can be found on http://cxx.sourceforge.net
+  * Utility classes for interfacing with the Python language.
   */
 
 #include "frepple/utils.h"
@@ -563,6 +559,10 @@ class PythonExtensionBase : public PyObject
   * The template argument should be your extension class, inheriting from
   * this template class:
   *   class MyClass : PythonExtension<MyClass>
+  *
+  * The structure of the C++ wrappers around the C Python API is heavily
+  * inspired on the design of PyCXX.<br>
+  * More information can be found on http://cxx.sourceforge.net
   */
 template<class T>
 class PythonExtension: public PythonExtensionBase, public NonCopyable

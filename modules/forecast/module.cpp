@@ -128,8 +128,28 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     // Get notified when a calendar is deleted
     FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
 
-    // Register the python functions
-    initializePython();
+    // Register the Python extensions
+    // Lock it the Python interpreter
+    if (!Py_IsInitialized())
+      throw RuntimeException("Python isn't initialized correctly");
+    PyEval_AcquireLock();
+    try
+    {
+      // Register new Python data types
+      if (PythonForecast::initialize(PythonInterpreter::getModule()))
+        throw RuntimeException("Error registering Python forecast extension");
+      if (PythonForecastBucket::initialize(PythonInterpreter::getModule()))
+        throw RuntimeException("Error registering Python forecastbucket extension");
+      if (PythonForecastSolver::initialize(PythonInterpreter::getModule()))
+        throw RuntimeException("Error registering Python forecastsolver extension");
+    }
+    // Release the global lock when leaving the function
+    catch (...)
+    {
+      PyEval_ReleaseLock();
+      throw;  // Rethrow the exception
+    }
+    PyEval_ReleaseLock();
   }
   catch (exception &e) 
   {

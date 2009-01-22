@@ -40,32 +40,6 @@ int PythonForecast::initialize(PyObject* m)
 }
 
 
-void initializePython()
-{
-  // Check the status of the interpreter, and lock it
-  if (!Py_IsInitialized())
-    throw RuntimeException("Python isn't initialized correctly");
-  PyEval_AcquireLock();
-  try
-  {
-    // Register new Python data types
-    if (PythonForecast::initialize(PythonInterpreter::getModule()))
-      throw RuntimeException("Error registering Python forecast extension");
-    if (PythonForecastBucket::initialize(PythonInterpreter::getModule()))
-      throw RuntimeException("Error registering Python forecastbucket extension");
-    if (PythonForecastSolver::initialize(PythonInterpreter::getModule()))
-      throw RuntimeException("Error registering Python forecastsolver extension");
- }
-  // Release the global lock when leaving the function
-  catch (...)
-  {
-    PyEval_ReleaseLock();
-    throw;  // Rethrow the exception
-  }
-  PyEval_ReleaseLock();
-}
-
-
 PyObject* PythonForecast::getattro(const Attribute& attr)
 {
   if (!obj) return Py_BuildValue("");

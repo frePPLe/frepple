@@ -216,10 +216,6 @@ namespace module_forecast
 /** Initialization routine for the library. */
 MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList&);
 
-
-/** Initializes python extensions enabled by the module. */
-void initializePython(); // xxx remove
-
 /** @brief This class represents a bucketized demand signal.
   *
   * The forecast object defines the item and priority of the demands.<br>

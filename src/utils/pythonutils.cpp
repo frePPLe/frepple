@@ -162,37 +162,6 @@ void PythonInterpreter::initialize()
     Py_XDECREF(localemodule);
   }
 
-  // Search and execute the initialization file 'init.py'
-  string init = Environment::searchFile("init.py");
-  if (!init.empty())
-  {
-    // Initialization file exists
-    PyObject *m = PyImport_AddModule("__main__");
-    if (!m)
-    {
-      PyEval_ReleaseLock();
-      throw RuntimeException("Can't execute Python script 'init.py'");
-    }
-    PyObject *d = PyModule_GetDict(m);
-    if (!d)
-    {
-      PyEval_ReleaseLock();
-      throw RuntimeException("Can't execute Python script 'init.py'");
-    }
-    init = "execfile('" + init + "')\n";
-    PyObject *v = PyRun_String(init.c_str(), Py_file_input, d, d);
-    if (!v)
-    {
-      // Print the error message
-      PyErr_Print();
-      // Release the lock
-      PyEval_ReleaseLock();
-      throw RuntimeException("Error executing Python script 'init.py'");
-    }
-    Py_DECREF(v);
-    if (Py_FlushLine()) PyErr_Clear();
-  }
-
   // Release the lock
   PyEval_ReleaseLock();
 

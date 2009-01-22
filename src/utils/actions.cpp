@@ -488,7 +488,6 @@ DECLARE_EXPORT PyObject* CommandLoadLibrary::executePython
     {
       string keystr(PyString_AsString(key));
       string valuestr(PyString_AsString(value));
-      logger << keystr << "  " << valuestr << endl; //xxxx
       cmd.addParameter(keystr, valuestr);
     }
   }

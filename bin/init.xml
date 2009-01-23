@@ -26,10 +26,6 @@
   the library is being initialized. It can be used to set run some
   initialization logic and/or load extension modules.
 
-  If no file "$FREPPLE_HOME/init.xml" is found, no startup commands are
-  executed. If the file exists but is unreadable, a warning message will be
-  printed.
-
   If the contents of this file has validation errors, the execution is
   aborted.
   -->
@@ -37,22 +33,17 @@
   <logfile>frepple.log</logfile>
   -->
 <?python
-frepple.loadmodule("mod_forecast.so")
-#, 
-#  "Net.CustomerThenItemHierarchy"="true",
-#  "Net.MatchUsingDeliveryOperation"=False,
-#  "Net.NetEarly"=86400*7*4,
-#  "Net.NetLate"=86400*7*4)
+# Forecasting module
+frepple.loadmodule("mod_forecast.so",
+  Net_CustomerThenItemHierarchy=True,
+  Net_MatchUsingDeliveryOperation=False,
+  Net_NetEarly="P4W",
+  Net_NetLate="P4W")
+  
+## Linear Programming solver module  
+#frepple.loadmodule("mod_lp_solver.so")
+
+## Webservice module -->
+#frepple.loadmodule("mod_webservice.so", port=6262, threads=5)
 ?>
-    <!-- Linear Programming solver module -->
-    <!--
-    <command xsi:type="command_loadlib" filename="mod_lp_solver.so" />
-    -->
-    <!-- Webservice module -->
-    <!--
-    <command xsi:type="command_loadlib" filename="mod_webservice.so">
-      <parameter name="port" value="6262" />
-      <parameter name="threads" value="5" />
-    </command>
-    -->
 </plan>

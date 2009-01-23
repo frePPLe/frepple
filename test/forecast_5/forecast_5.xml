@@ -13,13 +13,6 @@
       forecast to be planned.
   </description>
   <current>2009-01-01T00:00:00</current>
-  <commands>
-    <verbose>true</verbose>
-    <command xsi:type="command_python" cmdline="generateForecast()" />
-    <command xsi:type="command_save">
-      <filename>output.1.xml</filename>
-    </command>
-  </commands>
 
   <!--
   This calendar defines the forecasting buckets.
@@ -54,27 +47,28 @@ def testcase(fcstname, series):
   fcst = frepple.demand_forecast(name=fcstname, item=theitem, customer=thecustomer, calendar=thecalendar)
   fcst.timeseries(series, thebuckets)
 
-def generateForecast():
-  print "\nCase 1: A simple constant demand"
-  testcase("flat demand",[100,100,100,100,100,100,100,100,100,100,100,100,100])
+print "\nCase 1: A simple constant demand"
+testcase("flat demand",[100,100,100,100,100,100,100,100,100,100,100,100,100])
 
-  print "\nCase 2: A simple trended forecast"
-  testcase("trended demand", [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150])
+print "\nCase 2: A simple trended forecast"
+testcase("trended demand", [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150])
 
-  print "\nCase 3: A very irregular demand pattern"
-  testcase("irregular demand", [10,50,40,5,90,20,30,70,10,100,20,30,100,50])
+print "\nCase 3: A very irregular demand pattern"
+testcase("irregular demand", [10,50,40,5,90,20,30,70,10,100,20,30,100,50])
 
-  print "\nCase 4: Demand is first trended and then constant"
-  testcase("trend plus constant", [0,10,20,30,40,50,60,70,70,70,70,70,70])
+print "\nCase 4: Demand is first trended and then constant"
+testcase("trend plus constant", [0,10,20,30,40,50,60,70,70,70,70,70,70])
 
-  print "\nCase 5: Demand is first constant and then a trend starts"
-  testcase("constant plus trend", [10,10,10,10,10,10,10,10,10,10,20,30,40,50])
+print "\nCase 5: Demand is first constant and then a trend starts"
+testcase("constant plus trend", [10,10,10,10,10,10,10,10,10,10,20,30,40,50])
 
-  print "\nCase 6: A seasonal demand"
-  testcase("seasonal demand", [10,10,20,30,20,10,10,10,10,20,30,20,10,10,10,10,20,30,20,10,10])
+print "\nCase 6: A seasonal demand"
+testcase("seasonal demand", [10,10,20,30,20,10,10,10,10,20,30,20,10,10,10,10,20,30,20,10,10])
 
-  print "\nCase 7: Very little history"
-  testcase("little history", [10,20])
+print "\nCase 7: Very little history"
+testcase("little history", [10,20])
+
+frepple.saveXMLfile("output.1.xml")
 
 ?>
 </plan>

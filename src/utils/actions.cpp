@@ -485,11 +485,10 @@ DECLARE_EXPORT PyObject* CommandLoadLibrary::executePython
     PyObject *key, *value;
     Py_ssize_t pos = 0;
     while (PyDict_Next(kwds, &pos, &key, &value))
-    {
-      string keystr(PyString_AsString(key));
-      string valuestr(PyString_AsString(value));
-      cmd.addParameter(keystr, valuestr);
-    }
+      cmd.addParameter(
+        PythonObject(key).getString(), 
+        PythonObject(value).getString()
+        );
   }
 
   // Free Python interpreter for other threads.

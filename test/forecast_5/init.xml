@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <commands>
-    <verbose>false</verbose>
-    <abortonerror>false</abortonerror>
-    <command xsi:type="command_loadlib" filename="mod_forecast.so">
-       <parameter name="Net.CustomerThenItemHierarchy" value="true" />
-    </command>
-  </commands>
+<?python
+# Forecasting module
+frepple.loadmodule("mod_forecast.so",
+  Net_CustomerThenItemHierarchy=True)
+?>
 </plan>

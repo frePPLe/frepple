@@ -62,43 +62,43 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   try 
   {
     // Netting 
-    if (x->first == "Net.CustomerThenItemHierarchy")
+    if (x->first == "Net_CustomerThenItemHierarchy")
       Forecast::setCustomerThenItemHierarchy(x->second.getBool());
-    else if (x->first == "Net.MatchUsingDeliveryOperation")
+    else if (x->first == "Net_MatchUsingDeliveryOperation")
       Forecast::setMatchUsingDeliveryOperation(x->second.getBool());
-    else if (x->first == "Net.NetEarly")
+    else if (x->first == "Net_NetEarly")
       Forecast::setNetEarly(x->second.getTimeperiod());
-    else if (x->first == "Net.NetLate")
+    else if (x->first == "Net_NetLate")
       Forecast::setNetLate(x->second.getTimeperiod());
     // Forecasting
-    else if (x->first == "Forecast.Iterations")
+    else if (x->first == "Forecast_Iterations")
       Forecast::setForecastIterations(x->second.getUnsignedLong());
-    else if (x->first == "Forecast.madAlfa")
+    else if (x->first == "Forecast_madAlfa")
       Forecast::setForecastMadAlfa(x->second.getDouble());
-    else if (x->first == "Forecast.Skip")
+    else if (x->first == "Forecast_Skip")
       Forecast::setForecastSkip(x->second.getUnsignedLong());
     // Moving average forecast method
-    else if (x->first == "MovingAverage.buckets")
+    else if (x->first == "MovingAverage_buckets")
       Forecast::MovingAverage::setDefaultBuckets(x->second.getUnsignedLong());    
     // Single exponential forecast method
-    else if (x->first == "Forecast.SingleExponential.initialAlfa")
+    else if (x->first == "Forecast_SingleExponential_initialAlfa")
       Forecast::SingleExponential::setInitialAlfa(x->second.getDouble());
-    else if (x->first == "Forecast.SingleExponential.minAlfa")
+    else if (x->first == "Forecast_SingleExponential_minAlfa")
       Forecast::SingleExponential::setMinAlfa(x->second.getDouble());
-    else if (x->first == "Forecast.SingleExponential.maxAlfa")
+    else if (x->first == "Forecast_SingleExponential_maxAlfa")
       Forecast::SingleExponential::setMaxAlfa(x->second.getDouble());
     // Double exponential forecast method
-    else if (x->first == "Forecast.DoubleExponential.initialAlfa")
+    else if (x->first == "Forecast_DoubleExponential_initialAlfa")
       Forecast::DoubleExponential::setInitialAlfa(x->second.getDouble());
-    else if (x->first == "Forecast.DoubleExponential.minAlfa")
+    else if (x->first == "Forecast_DoubleExponential_minAlfa")
       Forecast::DoubleExponential::setMinAlfa(x->second.getDouble());
-    else if (x->first == "Forecast.DoubleExponential.maxAlfa")
+    else if (x->first == "Forecast_DoubleExponential_maxAlfa")
       Forecast::DoubleExponential::setMaxAlfa(x->second.getDouble());
-    else if (x->first == "Forecast.DoubleExponential.initialGamma")
+    else if (x->first == "Forecast_DoubleExponential_initialGamma")
       Forecast::DoubleExponential::setInitialGamma(x->second.getDouble());
-    else if (x->first == "Forecast.DoubleExponential.minGamma")
+    else if (x->first == "Forecast_DoubleExponential_minGamma")
       Forecast::DoubleExponential::setMinGamma(x->second.getDouble());
-    else if (x->first == "Forecast.DoubleExponential.maxGamma")
+    else if (x->first == "Forecast_DoubleExponential_maxGamma")
       Forecast::DoubleExponential::setMaxGamma(x->second.getDouble());
     // Bullshit
     else

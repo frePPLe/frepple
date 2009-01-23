@@ -130,7 +130,7 @@
   *
   * The module support the following configuration parameters:
   *
-  *   - Net.CustomerThenItemHierarchy:<br>
+  *   - Net_CustomerThenItemHierarchy:<br>
   *     As part of the forecast netting a demand is assiociated with a certain
   *     forecast. When no matching forecast is found for the customer and item
   *     of the demand, frePPLe looks for forecast at higher level customers 
@@ -140,64 +140,64 @@
   *     The default value is true, ie search higher customer levels before 
   *     searching higher levels of the item. 
   *
-  *   - Net.MatchUsingDeliveryOperation:<br>
+  *   - Net_MatchUsingDeliveryOperation:<br>
   *     Specifies whether or not a demand and a forecast require to have the 
   *     same delivery operation to be a match.<br>
   *     The default value is true.
   *
-  *   - Net.NetEarly:<br>
+  *   - Net_NetEarly:<br>
   *     Defines how much time before the due date of an order we are allowed
   *     to search for a forecast bucket to net from.<br>
   *     The default value is 0, meaning that we can net only from the bucket 
   *     where the demand is due. 
   *
-  *   - Net.NetLate:<br>
+  *   - Net_NetLate:<br>
   *     Defines how much time after the due date of an order we are allowed 
   *     to search for a forecast bucket to net from.<br>
   *     The default value is 0, meaning that we can net only from the bucket 
   *     where the demand is due. 
   *
-  *   - Forecast.Iterations:<br>
+  *   - Forecast_Iterations:<br>
   *     Specifies the maximum number of iterations allowed for a forecast 
   *     method to tune its parameters.<br>
   *     Only positive values are allowed and the default value is 10.<br>
   *     Set the parameter to 1 to disable the tuning and generate a forecast 
   *     based on the user-supplied parameters. 
   *
-  *   - Forecast.madAlfa:<br>
+  *   - Forecast_madAlfa:<br>
   *     Specifies how the MAD forecast error is weighted for different time 
   *     buckets. The MAD value in the most recent bucket is 1.0, and the 
   *     weight decreases exponentially for earlier buckets.<br>
   *     Acceptable values are in the interval 0.5 and 1.0, and the default 
   *     is 0.95. 
   *
-  *   - Forecast.Skip:<br>
+  *   - Forecast_Skip:<br>
   *     Specifies the number of time series values used to initialize the 
   *     forecasting method. The forecast error in these bucket isn't counted. 
   *
-  *   - Forecast.MovingAverage.buckets<br>
+  *   - Forecast_MovingAverage.buckets<br>
   *     This parameter controls the number of buckets to be averaged by the 
   *     moving average forecast method. 
   *
-  *   - Forecast.SingleExponential.initialAlfa,<br> 
-  *     Forecast.SingleExponential.minAlfa,<br> 
-  *     Forecast.SingleExponential.maxAlfa:<br>
+  *   - Forecast_SingleExponential.initialAlfa,<br> 
+  *     Forecast_SingleExponential.minAlfa,<br> 
+  *     Forecast_SingleExponential.maxAlfa:<br>
   *     Specifies the initial value and the allowed range of the smoothing 
   *     parameter in the single exponential forecasting method.<br>
   *     The allowed range is between 0 and 1. Values lower than about 0.05 
   *     are not advisible. 
   *
-  *   - Forecast.DoubleExponential.initialAlfa,<br> 
-  *     Forecast.DoubleExponential.minAlfa,<br> 
-  *     Forecast.DoubleExponential.maxAlfa:<br>
+  *   - Forecast_DoubleExponential.initialAlfa,<br> 
+  *     Forecast_DoubleExponential.minAlfa,<br> 
+  *     Forecast_DoubleExponential.maxAlfa:<br>
   *     Specifies the initial value and the allowed range of the smoothing 
   *     parameter in the double exponential forecasting method.<br>
   *     The allowed range is between 0 and 1. Values lower than about 0.05
   *     are not advisible. 
   *
-  *   - Forecast.DoubleExponential.initialGamma,<br> 
-  *     Forecast.DoubleExponential.minGamma,<br> 
-  *     Forecast.DoubleExponential.maxGamma:<br>
+  *   - Forecast_DoubleExponential.initialGamma,<br> 
+  *     Forecast_DoubleExponential.minGamma,<br> 
+  *     Forecast_DoubleExponential.maxGamma:<br>
   *     Specifies the initial value and the allowed range of the trend
   *     smoothing parameter in the double exponential forecasting method.<br>
   *     The allowed range is between 0 and 1.

@@ -6,12 +6,6 @@
   distribution.
   </description>
   <current>2009-01-01T00:00:00</current>
-  <commands>
-    <verbose>true</verbose>
-    <command xsi:type="command_save">
-      <filename>output.1.xml</filename>
-    </command>
-  </commands>
 
   <!--
   This calendar defines how forecast values are disaggregated.
@@ -140,4 +134,9 @@
       </buckets>
     </demand>
   </demands>
+
+<?python
+frepple.saveXMLfile("output.1.xml")
+?>
+
 </plan>

@@ -100,9 +100,8 @@ def runTestSuite():
         sys.exit(1)
 
     # Executable to run
-    if not 'FREPPLE_HOME' in os.environ:
-      os.environ['EXECUTABLE'] = "frepple"
-    elif platform == 'VCC':
+    os.environ['FREPPLE_HOME'] = os.path.abspath(os.path.join("..","bin"))
+    if platform == 'VCC':
       os.environ['EXECUTABLE'] = os.path.join("..","..","bin","frepple.exe");
     else:
       # Executable to be used for the tests. Exported as an environment variable.

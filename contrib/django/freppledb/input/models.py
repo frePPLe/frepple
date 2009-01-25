@@ -157,6 +157,7 @@ class Calendar(AuditModel):
     db_table = 'calendar'
     verbose_name = _('calendar')
     verbose_name_plural = _('calendars')
+    ordering = ['name']
 
 
 class Bucket(AuditModel):
@@ -251,6 +252,7 @@ class Location(AuditModel):
     db_table = 'location'
     verbose_name = _('location')
     verbose_name_plural = _('locations')
+    ordering = ['name']
 
 
 class Customer(AuditModel):
@@ -268,6 +270,7 @@ class Customer(AuditModel):
     db_table = 'customer'
     verbose_name = _('customer')
     verbose_name_plural = _('customers')
+    ordering = ['name']
 
 
 class Item(AuditModel):
@@ -289,6 +292,7 @@ class Item(AuditModel):
     db_table = 'item'
     verbose_name = _('item')
     verbose_name_plural = _('items')
+    ordering = ['name']
 
 
 class Operation(AuditModel):
@@ -338,6 +342,7 @@ class Operation(AuditModel):
     db_table = 'operation'
     verbose_name = _('operation')
     verbose_name_plural = _('operations')
+    ordering = ['name']
 
 
 class SubOperation(AuditModel):
@@ -431,6 +436,7 @@ class Buffer(AuditModel):
     db_table = 'buffer'
     verbose_name = _('buffer')
     verbose_name_plural = _('buffers')
+    ordering = ['name']
 
 
 class Resource(AuditModel):
@@ -467,6 +473,7 @@ class Resource(AuditModel):
     db_table = 'resource'
     verbose_name = _('resource')
     verbose_name_plural = _('resources')
+    ordering = ['name']
 
 
 class Flow(AuditModel):
@@ -538,6 +545,7 @@ class OperationPlan(AuditModel):
     db_table = 'operationplan'
     verbose_name = _('operationplan')
     verbose_name_plural = _('operationplans')
+    ordering = ['id']
 
 
 class Demand(AuditModel):
@@ -576,6 +584,7 @@ class Demand(AuditModel):
     db_table = 'demand'
     verbose_name = _('demand')
     verbose_name_plural = _('demands')
+    ordering = ['name']
 
 
 class Forecast(AuditModel):
@@ -767,6 +776,7 @@ class Forecast(AuditModel):
     db_table = 'forecast'
     verbose_name = _('forecast')
     verbose_name_plural = _('forecasts')
+    ordering = ['name']
 
 
 class ForecastDemand(AuditModel):

@@ -67,6 +67,12 @@ DECLARE_EXPORT vector<PythonType*> PythonExtensionBase::table;
 
 DECLARE_EXPORT string Environment::searchFile(const string filename)
 {
+#ifdef _MSC_VER
+  static char pathseperator = '\\';
+#else
+  static char pathseperator = '/';
+#endif
+
   // First: check the current directory
   struct stat stat_p;
   int result = stat(filename.c_str(), &stat_p);
@@ -79,7 +85,8 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
   if (envvar)
   {
     fullname = envvar;
-    if (*fullname.rbegin() != '/') fullname += '/';
+    if (*fullname.rbegin() != pathseperator) 
+      fullname += pathseperator;
     fullname += filename;
     result = stat(fullname.c_str(), &stat_p);
     if (!result && stat_p.st_mode & S_IREAD)
@@ -89,7 +96,8 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
 #ifdef DATADIRECTORY
   // Third: check the data directory
   fullname = DATADIRECTORY;
-  if (*fullname.rbegin() != '/') fullname += '/';
+  if (*fullname.rbegin() != pathseperator) 
+    fullname += pathseperator;
   fullname.append(filename);
   result = stat(fullname.c_str(), &stat_p);
   if (!result && stat_p.st_mode & S_IREAD)
@@ -99,7 +107,8 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
 #ifdef LIBDIRECTORY
   // Fourth: check the lib directory
   fullname = LIBDIRECTORY;
-  if (*fullname.rbegin() != '/') fullname += '/';
+  if (*fullname.rbegin() != pathseperator) 
+    fullname += pathseperator;
   fullname += "frepple/";
   fullname += filename;
   result = stat(fullname.c_str(), &stat_p);

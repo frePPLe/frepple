@@ -32,21 +32,8 @@
   *
   * The gSOAP toolkit is used to create a SOAP service for frePPLe.
   *
-  * A new command is registered when the module is loaded. The COMMAND_WEBSERVICE
-  * runs a multi-threaded SOAP webservice server.
-  *
-  * The XML schema extension enabled by this module is (see mod_webservice.xsd):
-  * <PRE>
-  *   <xsd:complexType name="COMMAND_WEBSERVICE">
-  *     <xsd:complexContent>
-  *       <xsd:extension base="COMMAND">
-  *         <xsd:choice minOccurs="0" maxOccurs="unbounded">
-  *           <xsd:element name="VERBOSE" type="xsd:boolean" />
-  *         </xsd:choice>
-  *       </xsd:extension>
-  *     </xsd:complexContent>
-  *   </xsd:complexType>
-  * </PRE>
+  * A new Python extension is added to run a multi-threaded SOAP webservice 
+  * server.
   */
 
 #include "frepple.h"
@@ -107,7 +94,9 @@ class CommandWebservice : public Command
     pthread_cond_t queue_cv;
 
   public:
-    /** Runs the webservice server. */
+    /** Runs the webservice server. 
+      * @todo need python executor instead.
+      */
     void execute();
 
     /** Returns a descriptive string. */

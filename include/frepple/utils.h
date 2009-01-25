@@ -307,9 +307,9 @@ class Environment
       *   - The current directory.
       *   - The directory reffered to by the variable FREPPLE_HOME, if it 
       *     is defined.
-      *   - The data directory as configured during the compilation.  @TODO On windows we need to have something equivalent
+      *   - The data directory as configured during the compilation.
       *     This applies only to linux / unix.
-      *   - The library directory as configured during the compilation.   @TODO On windows we need to have something equivalent
+      *   - The library directory as configured during the compilation.
       *     This applies only to linux / unix.
       */
     static DECLARE_EXPORT string searchFile(const string);

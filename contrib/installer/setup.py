@@ -156,5 +156,5 @@ setup(
     # This zip file with the name mentioned below is automatically included
     # in the Python search path (while the default output file "library.zip"
     # isn't)
-    zipfile = "python25.zip"
+    zipfile = "python26.zip"
     )

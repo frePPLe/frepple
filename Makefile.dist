@@ -25,8 +25,7 @@
 # It provides easy to use wrappers around common administration, configuration, build
 # and maintenance tasks:
 #  CONFIGURING
-#     - prep:        Standard autotools configuration.
-#     - prep_force:  Reinitializes the autotools tools.
+#     - prep:        Initializes the AutoMake tools.
 #  BUILDING AND COMPILING
 #     - default:     Configures and recreates an optimized build from scratch.
 #     - debug:       Configures and recreates a debug build from scratch.
@@ -55,15 +54,6 @@ coverage: prep configcoverage clean build check
 profile: prep configprofile clean build
 
 prep:
-	@echo
-	@echo "PHASE: Configuring GNU build tools..."
-	aclocal
-	autoheader
-	automake
-	autoconf
-
-# Use these option when automake versions are changing
-prep_force:
 	@echo
 	@echo "PHASE: Configuring GNU build tools..."
 	aclocal

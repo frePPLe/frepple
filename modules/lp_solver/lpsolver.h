@@ -97,8 +97,6 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   *
   * The solver is intended primarly for prototyping purposes. Cleaner and
   * more performant alternatives are recommended for real production use.
-  *
-  * The solver doesn't read or write 
   */
 class LPSolver : public Solver
 {

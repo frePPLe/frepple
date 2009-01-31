@@ -36,14 +36,28 @@ AM_INIT_AUTOMAKE([1.9 tar-pax])
 #
 # Checks for programs and initialize libtool
 #
+AC_ENABLE_SHARED
+AC_DISABLE_STATIC
 AC_GNU_SOURCE
-LT_INIT([disable-static], [win32-dll], [dlopen])
+AC_LIBTOOL_WIN32_DLL
+AC_LIBTOOL_DLOPEN
+AC_PROG_LIBTOOL
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_LANG(C++)
 AC_LANG_COMPILER_REQUIRE
-AC_PROG_LIBTOOL
+#
+# New version of the commands above - requires libtool 2.x
+#
+#AC_GNU_SOURCE
+#LT_INIT([disable-static], [win32-dll], [dlopen])
+#AC_PROG_CXX
+#AC_PROG_INSTALL
+#AC_PROG_MAKE_SET
+#AC_LANG(C++)
+#AC_LANG_COMPILER_REQUIRE
+#AC_PROG_LIBTOOL
 
 # Note: the library version number and the package version number are
 # INDEPENDENT. The library version is the concatenation of LIBCURRENT,

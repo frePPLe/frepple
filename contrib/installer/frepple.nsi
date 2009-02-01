@@ -65,15 +65,6 @@ SetCompressor /SOLID lzma
 !define MUI_HEADERIMAGE_BITMAP "..\..\doc\frepple.bmp"
 !define MUI_ICON "frepple.ico"
 !define MUI_UNICON "frepple.ico"
-!define MUI_UNFINISHPAGE_NOAUTOCLOSE
-
-; Definition of the finish page
-!define MUI_FINISHPAGE_NOAUTOCLOSE
-!define MUI_FINISHPAGE_RUN_TEXT "Start the server right now"
-!define MUI_FINISHPAGE_RUN "$INSTDIR\bin\manage.exe"
-!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
-!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\index.html"
-!define MUI_FINISHPAGE_SHOWREADME_TEXT "View documentation"
 
 ; Installer pages
 !insertmacro MUI_PAGE_WELCOME
@@ -81,6 +72,13 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 Page custom database database_leave
+  ; Definition of the finish page
+  !define MUI_FINISHPAGE_NOAUTOCLOSE
+  !define MUI_FINISHPAGE_RUN_TEXT "Start the server right now"
+  !define MUI_FINISHPAGE_RUN "$INSTDIR\bin\manage.exe"
+  !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\index.html"
+  !define MUI_FINISHPAGE_SHOWREADME_TEXT "View documentation"
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
@@ -407,5 +405,6 @@ Section Uninstall
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 
-  SetAutoClose true
+  ; Do not automatically close the window
+  SetAutoClose false
 SectionEnd

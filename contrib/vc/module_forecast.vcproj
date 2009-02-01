@@ -78,7 +78,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="xerces-c_2.lib python26.lib"
+				AdditionalDependencies="xerces-c_2.lib"
 				OutputFile="../../bin/mod_forecast.so"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -188,7 +188,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="xerces-c_2.lib python26.lib"
+				AdditionalDependencies="xerces-c_2.lib"
 				OutputFile="../../bin/mod_forecast.so"
 				Version="1.0"
 				LinkIncremental="1"

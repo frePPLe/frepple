@@ -35,6 +35,8 @@ def create_files(cnt):
   return
 
 def my_function(a):
-  print 'in my function with argument %s' % a
+  print 'in my function with argument %s' % a,
+  return 'OK'
+   
+print '0. Initialization frePPLe version:', frepple.version
 
-print '2. In my script file'

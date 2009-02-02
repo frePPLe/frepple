@@ -70,6 +70,7 @@ print "7. Read CSV file: user time %f, system time %f, elapsed time %f" % (end[0
 frepple.saveXMLfile("afterCSVDirectread.xml")
 frepple.erase(True)
 frepple.saveXMLfile("aftererase3.xml")
+frepple.saveXMLfile("output.1.xml")
 ?>
 
 <?python

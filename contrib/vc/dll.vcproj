@@ -78,7 +78,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="xerces-c_2.lib"
 				OutputFile="../../bin/frepple_debug.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -188,7 +187,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="xerces-c_2.lib"
 				OutputFile="../../bin/frepple.dll"
 				Version="1.0"
 				LinkIncremental="1"

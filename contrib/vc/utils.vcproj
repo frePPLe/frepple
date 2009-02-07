@@ -72,6 +72,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="xerces-c_static_2.lib"
 				OutputFile=".\utils\Debug\utils.lib"
 				SuppressStartupBanner="true"
 			/>
@@ -155,6 +156,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="xerces-c_static_2.lib"
 				OutputFile=".\utils\Release\utils.lib"
 				SuppressStartupBanner="true"
 			/>

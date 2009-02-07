@@ -145,6 +145,7 @@ using namespace std;
 // Header files for the Xerces-c XML parser.
 #ifndef DOXYGEN
 #define XERCES_NEW_IOSTREAMS
+#define XML_LIBRARY
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/sax2/Attributes.hpp>

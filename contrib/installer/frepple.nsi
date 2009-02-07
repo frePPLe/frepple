@@ -28,12 +28,7 @@
 ; To run this script successfully, you'll therefore need to have the cygwin
 ; system up and running on your machine.
 
-; Configuration section.
-; UPDATE THIS SECTION ACCORDING TO YOUR SETUP!!!
-!define XERCESPATH "c:\bin"
-!define XERCESDLL "xerces-c_2_8.dll"
-
-; Make sure that this variable points to the windows version of python, not
+; Make sure that this variable points to the windows version of Python, not
 ; the one that is part of cygwin.
 !ifndef PYTHON
 !define PYTHON "python.exe"
@@ -157,9 +152,6 @@ Section "Application" SecAppl
   ; Copy configuration files
   File "..\bin\*.xsd"
   File "..\bin\init.xml"
-
-  ; Add Xerces library
-  !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "${XERCESPATH}\${XERCESDLL}" "$INSTDIR\bin\${XERCESDLL}" "$SYSDIR"
 
   ; Copy sqlite database if there is one
   File /nonfatal "..\bin\frepple.sqlite"

@@ -60,15 +60,12 @@ class Command(BaseCommand):
     if 'port' in options: port = int(options['port'] or '8000')
     else: port = 8000
 
-    # Determine the IP-address to listen on
+    # Determine the IP-address to listen on:
     # - either as command line argument
-    # - either automatically detected
     # - use 127.0.0.1 as a safe fallback
+    address = None
     if 'address' in options: address = options['address']
-    else: address = None
-    if address == None:
-      try: address = socket.getaddrinfo(socket.gethostname(), None)[0][4][0]
-      except: address = '127.0.0.1'
+    if address == None: address = '127.0.0.1'
 
     # Validate the address and port number
     try:

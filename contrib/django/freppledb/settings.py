@@ -184,8 +184,8 @@ DEFAULT_CHARSET = 'utf-8'
 
 # Allow overriding the settings
 # This is useful for the py2exe distribution: this settings file will be
-# compiled and included in library.zip, and we need to give users a way
-# to pass parameters and settings to Django.
+# compiled and included in a compressed zip-file, and we need to give users a
+# way to pass parameters and settings to Django.
 if os.path.normcase(os.path.abspath(os.path.dirname(__file__))) != os.path.normcase(FREPPLE_APP):
   try: execfile(os.path.join(FREPPLE_APP,'settings.py'))
   except IOError:

@@ -102,7 +102,7 @@ class DataLoadTest(TestCase):
       data.close()
     self.failUnlessEqual(
       [(i.name, i.category) for i in Location.objects.all()],
-      [(u'Test Location 1',u'cat1'), (u'Test Location 2',u''), (u'factory 1',u''), (u'factory 2',u'')]
+      [(u'factory 1',u''), (u'factory 2',u''), (u'Test Location 1',u'cat1'), (u'Test Location 2',u'')]
       )
 
   def test_buckets(self):

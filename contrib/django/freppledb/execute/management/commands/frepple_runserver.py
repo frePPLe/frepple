@@ -62,10 +62,13 @@ class Command(BaseCommand):
 
     # Determine the IP-address to listen on:
     # - either as command line argument
+    # - automatically detected IP-address
     # - use 127.0.0.1 as a safe fallback
     address = None
     if 'address' in options: address = options['address']
-    if address == None: address = '127.0.0.1'
+    if address == None:
+      try: address = socket.gethostbyname(socket.gethostname())
+      except: address = '127.0.0.1'
 
     # Validate the address and port number
     try:

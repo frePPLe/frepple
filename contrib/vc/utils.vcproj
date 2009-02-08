@@ -19,7 +19,6 @@
 			OutputDirectory=".\utils\Debug"
 			IntermediateDirectory=".\utils\Debug"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC70.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="0"
@@ -45,6 +44,7 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="WIN32,_DEBUG,_LIB,MT,_CRT_SECURE_NO_DEPRECATE"
+				StringPooling="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				RuntimeTypeInfo="true"
@@ -72,6 +72,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="xerces-c_static_2.lib"
 				OutputFile=".\utils\Debug\utils.lib"
 				SuppressStartupBanner="true"
 			/>
@@ -155,6 +156,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="xerces-c_static_2.lib"
 				OutputFile=".\utils\Release\utils.lib"
 				SuppressStartupBanner="true"
 			/>

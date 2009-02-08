@@ -40,33 +40,6 @@ int PythonForecast::initialize(PyObject* m)
 }
 
 
-void initializePython()
-{
-  // Check the status of the interpreter, and lock it
-  if (!Py_IsInitialized())
-    throw RuntimeException("Python isn't initialized correctly");
-  PyEval_AcquireLock();
-  try
-  {
-    // Register new Python data types
-    if (PythonForecast::initialize(PythonInterpreter::getModule()))
-      throw RuntimeException("Error registering Python forecast extension");
-    if (PythonForecastBucket::initialize(PythonInterpreter::getModule()))
-      throw RuntimeException("Error registering Python forecastbucket extension");
-
-    // Make the datetime types available
-    PyDateTime_IMPORT;
-  }
-  // Release the global lock when leaving the function
-  catch (...)
-  {
-    PyEval_ReleaseLock();
-    throw;  // Rethrow the exception
-  }
-  PyEval_ReleaseLock();
-}
-
-
 PyObject* PythonForecast::getattro(const Attribute& attr)
 {
   if (!obj) return Py_BuildValue("");
@@ -207,5 +180,19 @@ int PythonForecastBucket::setattro(const Attribute& attr, const PythonObject& fi
     return PythonDemand(obj).setattro(attr, field);  
   return 0;  // OK
 }
+
+
+PyObject* PythonForecastSolver::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_BuildValue("");
+  return PythonSolver(obj).getattro(attr); 
+}
+
+
+int PythonForecastSolver::setattro(const Attribute& attr, const PythonObject& field)
+{
+  return PythonSolver(obj).setattro(attr, field);
+}
+
 
 } // end namespace

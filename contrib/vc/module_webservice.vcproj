@@ -40,6 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -58,8 +59,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="xerces-c_static_2.lib"
 				OutputFile="../../bin/mod_webservice.so"
 				GenerateDebugInformation="true"
+				SubSystem="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
@@ -123,6 +126,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../../include"
+				StringPooling="true"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
 				WarningLevel="3"
@@ -140,9 +144,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib"
+				AdditionalDependencies="xerces-c_static_2.lib"
 				OutputFile="../../bin/mod_webservice.so"
 				GenerateDebugInformation="true"
+				SubSystem="0"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"

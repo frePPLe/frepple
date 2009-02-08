@@ -24,7 +24,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 #define FREPPLE_CORE
 #include "frepple/model.h"
 namespace frepple
@@ -50,13 +49,13 @@ DECLARE_EXPORT void Load::validate(Action action)
           + oper->getName() + "'");
   }
 
-  // Check if a load with 1) identical resource, 2) identical operation and 
+  // Check if a load with 1) identical resource, 2) identical operation and
   // 3) overlapping effectivity dates already exists
   Operation::loadlist::const_iterator i = oper->getLoads().begin();
   for (;i != oper->getLoads().end(); ++i)
-    if (i->getResource() == res 
-      && i->getEffective().overlap(getEffective()) 
-      && &*i != this) 
+    if (i->getResource() == res
+      && i->getEffective().overlap(getEffective())
+      && &*i != this)
         break;
 
   // Apply the appropriate action
@@ -203,6 +202,7 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, con
   }
 }
 
+
 int PythonLoad::initialize(PyObject* m)
 {
   // Initialize the type
@@ -211,6 +211,7 @@ int PythonLoad::initialize(PyObject* m)
   x.setDoc("frePPLe load");
   x.supportgetattro();
   x.supportsetattro();
+  x.supportcreate(create);
   const_cast<MetaCategory&>(Load::metadata).factoryPythonProxy = proxy;
   return x.typeReady(m);
 }
@@ -237,7 +238,7 @@ DECLARE_EXPORT int PythonLoad::setattro(const Attribute& attr, const PythonObjec
 {
   if (attr.isA(Tags::tag_resource))
   {
-    if (!field.check(PythonResource::getType())) 
+    if (!field.check(PythonResource::getType()))
     {
       PyErr_SetString(PythonDataException, "load resource must be of type resource");
       return -1;
@@ -247,7 +248,7 @@ DECLARE_EXPORT int PythonLoad::setattro(const Attribute& attr, const PythonObjec
   }
   else if (attr.isA(Tags::tag_operation))
   {
-    if (!field.check(PythonOperation::getType())) 
+    if (!field.check(PythonOperation::getType()))
     {
       PyErr_SetString(PythonDataException, "load operation must be of type operation");
       return -1;
@@ -267,6 +268,59 @@ DECLARE_EXPORT int PythonLoad::setattro(const Attribute& attr, const PythonObjec
 }
 
 
+/** @todo this method implementation is not generic enough and not extendible by subclasses. */
+PyObject* PythonLoad::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+{
+  try
+  {
+    // Pick up the operation
+    PyObject* oper = PyDict_GetItemString(kwds,"operation");
+    if (!PyObject_TypeCheck(oper, PythonOperation::getType().type_object()))
+      throw DataException("load operation must be of type operation");
+
+    // Pick up the resource
+    PyObject* res = PyDict_GetItemString(kwds,"resource");
+    if (!PyObject_TypeCheck(res, PythonResource::getType().type_object()))
+      throw DataException("load resource must be of type resource");
+
+    // Pick up the quantity
+    PyObject* q1 = PyDict_GetItemString(kwds,"quantity");
+    double q2 = q1 ? PythonObject(q1).getDouble() : 1.0;
+
+    // Create the load
+    Load *l = new Load(
+      static_cast<PythonOperation*>(oper)->obj,
+      static_cast<PythonResource*>(res)->obj,
+      q2
+      );
+
+    // Pick up the effective start date
+    PyObject* eff_start = PyDict_GetItemString(kwds,"effective_start");
+    if (eff_start)
+    {
+      PythonObject d(eff_start);
+      l->setEffectiveStart(d.getDate());
+    }
+
+    // Pick up the effective end date
+    PyObject* eff_end = PyDict_GetItemString(kwds,"effective_end");
+    if (eff_end)
+    {
+      PythonObject d(eff_end);
+      l->setEffectiveEnd(d.getDate());
+    }
+
+    // Return a proxy
+    return static_cast<PyObject*>(*(new PythonObject(l)));
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
+}
+
+
 int PythonLoadIterator::initialize(PyObject* m)
 {
   // Initialize the type
@@ -279,16 +333,16 @@ int PythonLoadIterator::initialize(PyObject* m)
 
 
 PyObject* PythonLoadIterator::iternext()
-{  
-  if (res) 
+{
+  if (res)
   {
-    // Iterate over loads on a resource 
+    // Iterate over loads on a resource
     if (ir == res->getLoads().end()) return NULL;
     return PythonObject(const_cast<Load*>(&*(ir++)));
   }
   else
   {
-    // Iterate over loads on an operation 
+    // Iterate over loads on an operation
     if (io == oper->getLoads().end()) return NULL;
     return PythonObject(const_cast<Load*>(&*(io++)));
   }

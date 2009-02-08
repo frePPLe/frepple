@@ -30,26 +30,29 @@ else:
   print "Using %s database '%s' as '%s' on '%s:%s'" % (settings.DATABASE_ENGINE, \
     settings.DATABASE_NAME, settings.DATABASE_USER, settings.DATABASE_HOST, \
     settings.DATABASE_PORT)
+
+print "\nStart loading data from the database"
+frepple.printsize()
+loadfrepple()
+frepple.printsize()
+
+print "\nStart plan generation"
+frepple.solver_forecast(name="Netting orders from forecast",loglevel=0).solve()
+frepple.solver_mrp(name="MRP",loglevel=0).solve()
+frepple.printsize()
+
+print "\nStart exporting plan to the database"
+export_to_database()
+
+#print "\nStart saving the plan to flat files"
+#export_to_file()
+
+#print "\nStart saving the plan to an XML file"
+#frepple.saveXMLfile("output.1.xml")
+
+#print "Start deleting model data"
+#frepple.erase(True)
+#frepple.printsize()
 ?>
-  <commands>
-    <verbose>true</verbose>
-    <abortonerror>true</abortonerror>
-    <command xsi:type="command_size" />
-    <command xsi:type="command_python" cmdline="loadfrepple()" />
-    <command xsi:type="command_size" />
-    <command xsi:type="command_solve">
-      <solver name="Netting orders from forecast" xsi:type="solver_forecast" loglevel="0"/>
-    </command>
-    <command xsi:type="command_solve">
-        <solver xsi:type="solver_mrp" name="MRP" loglevel="0" maxparallel="2"/>
-    </command>
-    <command xsi:type="command_size" />
-    <command xsi:type="command_python" cmdline="export_to_database()" />
-    <!--
-    <command xsi:type="command_save" filename="output.1.xml" />
-    <command xsi:type="command_python" cmdline="export_to_file()" />
-    <command xsi:type="command_erase" mode="model" />
-    <command xsi:type="command_size" />
-    -->
-  </commands>
+
 </plan>

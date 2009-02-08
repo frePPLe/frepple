@@ -24,7 +24,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 /** @file pythonutils.cpp
   * @brief Reusable functions for python functionality.
   *
@@ -45,7 +44,6 @@ DECLARE_EXPORT PyObject* PythonLogicException = NULL;
 DECLARE_EXPORT PyObject* PythonDataException = NULL;
 DECLARE_EXPORT PyObject* PythonRuntimeException = NULL;
 
-const MetaClass CommandPython::metadata;
 const MetaClass CommandPython::metadata2;
 
 PyThreadState *PythonInterpreter::mainThreadState = NULL;
@@ -64,10 +62,6 @@ void CommandPython::execute()
     logger << " at " << Date::now() << endl;
   }
   Timer t;
-
-  // Replace environment variables in the filename and command line.
-  Environment::resolveEnvironment(filename);
-  Environment::resolveEnvironment(cmd);
 
   // Evaluate data fields
   string c;
@@ -100,24 +94,6 @@ void CommandPython::execute()
   // Log
   if (getVerbose()) logger << "Finished executing python at "
     << Date::now() << " : " << t << endl;
-}
-
-
-void CommandPython::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_cmdline))
-  {
-    // No replacement of environment variables here
-    filename.clear();
-    pElement >> cmd;
-  }
-  else if (pAttr.isA(Tags::tag_filename))
-  {
-    cmd.clear();
-    pElement >> filename;
-  }
-  else
-    Command::endElement(pIn, pAttr, pElement);
 }
 
 
@@ -184,37 +160,6 @@ void PythonInterpreter::initialize()
       Py_XDECREF(retval);
     }
     Py_XDECREF(localemodule);
-  }
-
-  // Search and execute the initialization file 'init.py'
-  string init = Environment::searchFile("init.py");
-  if (!init.empty())
-  {
-    // Initialization file exists
-    PyObject *m = PyImport_AddModule("__main__");
-    if (!m)
-    {
-      PyEval_ReleaseLock();
-      throw RuntimeException("Can't execute Python script 'init.py'");
-    }
-    PyObject *d = PyModule_GetDict(m);
-    if (!d)
-    {
-      PyEval_ReleaseLock();
-      throw RuntimeException("Can't execute Python script 'init.py'");
-    }
-    init = "execfile('" + init + "')\n";
-    PyObject *v = PyRun_String(init.c_str(), Py_file_input, d, d);
-    if (!v)
-    {
-      // Print the error message
-      PyErr_Print();
-      // Release the lock
-      PyEval_ReleaseLock();
-      throw RuntimeException("Error executing Python script 'init.py'");
-    }
-    Py_DECREF(v);
-    if (Py_FlushLine()) PyErr_Clear();
   }
 
   // Release the lock
@@ -335,6 +280,13 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
 
   // Release the interpeter
   if (lock) PyEval_ReleaseLock();
+}
+
+
+DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod
+  (const char* c, PyCFunctionWithKeywords f, int i, const char* d)
+{
+  registerGlobalMethod(c, reinterpret_cast<PyCFunction>(f), i | METH_KEYWORDS, d);
 }
 
 
@@ -488,12 +440,19 @@ DECLARE_EXPORT void PythonType::addMethod
 }
 
 
+DECLARE_EXPORT void PythonType::addMethod
+  (const char* c, PyCFunctionWithKeywords f, int i, const char* d)
+{
+  addMethod(c, reinterpret_cast<PyCFunction>(f), i | METH_KEYWORDS, d);
+}
+
+
 DECLARE_EXPORT int PythonType::typeReady(PyObject* m)
 {
   // Fill the method table
   if (!methodvector.empty())
   {
-    addMethod(NULL, NULL, 0, NULL);  // Terminator
+    addMethod(NULL, static_cast<PyCFunction>(NULL), 0, NULL);  // Terminator
     methods = new PyMethodDef[methodvector.size()];
     int j = 0;
     for(vector<PyMethodDef>::iterator i = methodvector.begin(); i != methodvector.end(); i++ )

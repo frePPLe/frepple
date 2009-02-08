@@ -24,7 +24,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 #include "freppleinterface.h"
 #include <iostream>
 #include <sstream>
@@ -35,7 +34,7 @@ using namespace std;
 
 void usage()
 {
-  cout << "\nfrePPLe v" << FreppleVersion() << "command line application\n"
+  cout << "\nfrePPLe v" << FreppleVersion() << " command line application\n"
     "\nUsage:\n"
     "  frepple [options] [files | directories]\n"
     "\nThis program reads xml input data, and executes the modeling and\n"
@@ -96,7 +95,7 @@ int main (int argc, char *argv[])
         if (!input)
         {
           // Initialize the library if this wasn't done before
-          FreppleInitialize(NULL);
+          FreppleInitialize();
           input = true;
         }
         FreppleReadXMLFile(argv[i], validate, validate_only);
@@ -106,7 +105,7 @@ int main (int argc, char *argv[])
     // When no filenames are specified, we read the standard input
     if (!input)
     {
-      FreppleInitialize(NULL);
+      FreppleInitialize();
       FreppleReadXMLFile(NULL, validate, validate_only);
     }
   }

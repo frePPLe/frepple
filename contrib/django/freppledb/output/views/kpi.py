@@ -24,8 +24,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import connection
 from django.conf import settings
 
-from utils.db import sql_datediff
-from utils.report import *
+from common.db import sql_datediff
+from common.report import *
 from input.models import Plan
 
 
@@ -41,7 +41,7 @@ class Report(ListReport):
     ('value', {'sort': False, 'title': _('value')}),
     )
   default_sort = '2a'
-  
+
   @staticmethod
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     # Execute the query

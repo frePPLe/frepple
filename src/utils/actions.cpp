@@ -54,12 +54,6 @@ DECLARE_EXPORT bool Command::getVerbose() const
 }
 
 
-DECLARE_EXPORT void Command::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_verbose)) setVerbose(pElement.getBool());
-}
-
-
 //
 // COMMAND LIST
 //
@@ -379,75 +373,6 @@ DECLARE_EXPORT CommandList::~CommandList()
 }
 
 
-DECLARE_EXPORT void CommandList::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_command) && !pIn.isObjectEnd())
-  {
-    // We're unlucky with our tag names here. Subcommands end with
-    // </COMMAND>, but the command list itself also ends with that tag.
-    // We use the isObjectEnd() method to differentiate between both.
-    Command * b = dynamic_cast<Command*>(pIn.getPreviousObject());
-    if (b) add(b);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else if (pAttr.isA(Tags::tag_abortonerror))
-    setAbortOnError(pElement.getBool());
-  else if (pAttr.isA(Tags::tag_maxparallel))
-    setMaxParallel(pElement.getInt());
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
-
-
-DECLARE_EXPORT void CommandList::beginElement (XMLInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA (Tags::tag_command))
-    pIn.readto( MetaCategory::ControllerDefault(Command::metadata,pIn.getAttributes()) );
-}
-
-
-//
-// SYSTEM COMMAND
-//
-
-
-DECLARE_EXPORT void CommandSystem::execute()
-{
-  // Log
-  if (getVerbose())
-    logger << "Start executing system command '" << cmdLine
-    << "' at " << Date::now() << endl;
-  Timer t;
-
-  // Check
-  if (cmdLine.empty())
-    throw DataException("Error: Trying to execute empty system command");
-
-  // Expand environment variables on the command line with their value
-  Environment::resolveEnvironment(cmdLine);
-
-  // Execute the command
-  if (system(cmdLine.c_str()))  // Execution through system() call
-    throw RuntimeException("Error while executing system command: " + cmdLine);
-
-  // Log
-  if (getVerbose())
-    logger << "Finished executing system command '" << cmdLine
-    << "' at " << Date::now() << " : " << t << endl;
-}
-
-
-DECLARE_EXPORT void CommandSystem::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_cmdline))
-    // No need to replace environment variables here. It's done at execution
-    // time by the command shell.
-    pElement >> cmdLine;
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
-
-
 //
 // LOADLIBRARY COMMAND
 //
@@ -466,9 +391,6 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
   // Validate
   if (lib.empty())
     throw DataException("Error: No library name specified for loading");
-
-  // Expand environment variables in the library name with their value
-  Environment::resolveEnvironment(lib);
 
 #ifdef WIN32
   // Load the library - The windows way
@@ -548,6 +470,46 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
 }
 
 
+DECLARE_EXPORT PyObject* CommandLoadLibrary::executePython
+  (PyObject* self, PyObject* args, PyObject* kwds)
+{
+
+  // Create the command
+  char *data = NULL;
+  int ok = PyArg_ParseTuple(args, "s", &data);
+  CommandLoadLibrary cmd(data);
+
+  // Load parameters for the module
+  if (kwds)
+  {
+    PyObject *key, *value;
+    Py_ssize_t pos = 0;
+    while (PyDict_Next(kwds, &pos, &key, &value))
+      cmd.addParameter(
+        PythonObject(key).getString(), 
+        PythonObject(value).getString()
+        );
+  }
+
+  // Free Python interpreter for other threads.
+  // This is important since the module may also need access to Python
+  // during its initialization...
+  Py_BEGIN_ALLOW_THREADS   
+  try { 
+    // Load the library
+    cmd.execute();
+  }
+  catch(...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");
+}
+
+
 DECLARE_EXPORT void CommandLoadLibrary::printModules()
 {
   logger << "Loaded modules:" << endl;
@@ -557,88 +519,6 @@ DECLARE_EXPORT void CommandLoadLibrary::printModules()
 }
 
 
-DECLARE_EXPORT void CommandLoadLibrary::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_filename))
-    pElement >> lib;
-  else if (pAttr.isA(Tags::tag_name))
-    pElement >> tempName;
-  else if (pAttr.isA(Tags::tag_value))
-    pElement >> tempValue;
-  else if (pAttr.isA(Tags::tag_parameter))
-  {
-    if (!tempValue.empty() && !tempName.empty())
-    {
-      // New parameter name+value pair ready
-      parameters[tempName] = tempValue;
-      tempValue.clear();
-      tempName.clear();
-    }
-    else
-      // Incomplete data
-      throw DataException("Invalid parameter specification");
-  }
-  else if (pIn.isObjectEnd())
-  {
-    tempValue.clear();
-    tempName.clear();
-  }
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
-
-
-//
-// SETENV COMMAND
-//
-
-
-DECLARE_EXPORT void CommandSetEnv::execute()
-{
-  // Message
-  if (getVerbose())
-    logger << "Start updating variable '" << variable << "' to '"
-    << value << "' at " << Date::now() << endl;
-  Timer t;
-
-  // Data exception
-  if (variable.empty())
-    throw DataException("Missing environment variable name");
-
-  // Expand variable names
-  Environment::resolveEnvironment(value);
-
-  // Update the variable
-  // Note: we have to 'leak' this string. Putenv takes it as part of
-  // the environment.
-  string *tmp = new string(variable + "=" + value);
-  #if defined(HAVE_PUTENV)
-  putenv(const_cast<char*>(tmp->c_str()));
-  #elif defined(HAVE__PUTENV) || defined(_MSC_VER)
-  _putenv(tmp->c_str());
-  #else
-  #error("missing function to set an environment variable")
-  #endif
-
-  // Log
-  if (getVerbose())
-  {
-    const char* res = getenv(variable.c_str());
-    logger << "Finished updating variable '" << variable << "' to '"
-    << (res ? res : "NULL") << "' at " << Date::now() << endl;
-  }
-}
-
-
-DECLARE_EXPORT void CommandSetEnv::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_variable))
-    pElement >> variable;
-  if (pAttr.isA(Tags::tag_value))
-    pElement >> value;
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
 
 
 } // end namespace

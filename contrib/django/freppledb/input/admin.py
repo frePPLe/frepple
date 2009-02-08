@@ -32,21 +32,6 @@ class Plan_admin(admin.ModelAdmin):
 site.register(Plan,Plan_admin)
 
 
-class Dates_admin(admin.ModelAdmin):
-  model = Dates
-  fieldsets = (
-      (None, {'fields': (('day','day_start','day_end'),
-                         'dayofweek',
-                         ('week','week_start','week_end'),
-                         ('month','month_start','month_end'),
-                         ('quarter','quarter_start','quarter_end'),
-                         ('year','year_start','year_end'),
-                         ('standard','standard_start','standard_end'),
-                         )}),
-      )
-site.register(Dates,Dates_admin)
-
-
 class Bucket_inline(admin.TabularInline):
   model = Bucket
   extra = 3
@@ -182,12 +167,3 @@ class Forecast_admin(admin.ModelAdmin):
   inlines = [ ForecastDemand_inline, ]
   save_as = True
 site.register(Forecast,Forecast_admin)
-
-
-# Register also the models from the Auth application.
-# The admin users can then create, change and delete users and user groups.
-from django.contrib.auth.models import User, Group
-from django.contrib.auth.admin import UserAdmin, GroupAdmin
-
-site.register(Group, GroupAdmin)
-site.register(User, UserAdmin)

@@ -5,17 +5,6 @@
     This test verifies the behavior of routing operations.
   </description>
   <current>2009-01-01T00:00:00</current>
-  <commands>
-    <verbose>true</verbose>
-    <command xsi:type="command_solve">
-      <verbose>false</verbose>
-      <solver name="MRP" xsi:type="solver_mrp" constraints="7" loglevel="2" />
-    </command>
-    <command xsi:type="command_saveplan">
-      <filename>output.1.xml</filename>
-    </command>
-  </commands>
-
   <buffers>
     <buffer name="subassembly" xsi:type="buffer_infinite">
       <item name="subassembly" />
@@ -243,4 +232,10 @@
     </demand>
 
   </demands>
+
+<?python
+frepple.solver_mrp(name="MRP", constraints=7, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+?>
+
 </plan>

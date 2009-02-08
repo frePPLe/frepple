@@ -20,16 +20,19 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from django.conf.urls.defaults import *
+r'''
+An reusable application that contains common functionality of different
+frePPLe data models.
 
-import user.views
+The common functionality handles:
+  - breadcrumbs
+  - user preferences: reporting buckets, report start and end dates, report output type
+  - login using the e-mail address
+  - date and time bucket definition
+'''
 
-urlpatterns = patterns('',
+from django import template
 
-  # Model list reports, which override standard admin screens
-  (r'^admin/auth/user/$', 'utils.report.view_report',
-    {'report': user.views.UserList,}),
-  (r'^admin/auth/group/$', 'utils.report.view_report',
-    {'report': user.views.GroupList,}),
-
-)
+# Make our tags built-in, so we don't have to load them any more in our
+# templates with a 'load' tag.
+template.add_to_builtins('common.templatetags.breadcrumbs')

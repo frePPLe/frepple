@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<description>
-    This test case tests the embedded python interpreter.
+    This test case tests the embedded Python interpreter.
     It verifies:
+      - Executing Python code during the initialization.
       - Executing Python code as XML processing instruction.
-      - Executing Python code in a seperate source file.
-      - Performance comparison of data loading in different ways.
       - Catching of exceptions thrown in frePPLe C++ code.
-      - Executing Python code in different threads
+      - Performance comparison of data loading in different ways.
   </description>
 	<current>2009-01-01T00:00:00</current>
 </plan>

@@ -26,8 +26,8 @@ from django.template import RequestContext
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from user.models import Preferences
-from utils.report import *
+from common.models import *
+from common.report import *
 
 from django.contrib.auth.models import User, Group
 
@@ -71,7 +71,7 @@ def preferences(request):
       'startdate': pref.startdate,
       'enddate': pref.enddate
       })
-  return render_to_response('user/preferences.html', {
+  return render_to_response('common/preferences.html', {
      'title': _('Edit my preferences'),
      'form': form,
      'reset_crumbs': True,
@@ -127,5 +127,66 @@ class GroupList(ListReport):
     ('name', {
       'title': _('name'),
       'filter': FilterText(),
+      }),
+    )
+
+
+class DatesList(ListReport):
+  '''
+  A list report to show dates.
+  '''
+  template = 'common/dateslist.html'
+  title = _("Date List")
+  basequeryset = Dates.objects.all()
+  model = Dates
+  frozenColumns = 1
+  rows = (
+    ('day', {
+      'title': _('day'),
+      'filter': FilterDate(),
+      }),
+    ('dayofweek', {
+      'title': _('day of week'),
+      'filter': FilterNumber(),
+      }),
+    ('week', {
+      'title': _('week'),
+      'filter': FilterText(),
+      }),
+    ('month', {
+      'title': _('month'),
+      'filter': FilterText(),
+      }),
+    ('quarter', {
+      'title': _('quarter'),
+      'filter': FilterText(),
+      }),
+    ('year', {
+      'title': _('year'),
+      'filter': FilterText(),
+      }),
+    ('standard', {
+      'title': _('standard'),
+      'filter': FilterText(),
+      }),
+    ('week_start', {
+      'title': _('week start'),
+      'filter': FilterDate(),
+      }),
+    ('month_start', {
+      'title': _('month start'),
+      'filter': FilterDate(),
+      }),
+    ('quarter_start', {
+      'title': _('month start'),
+      'filter': FilterDate(),
+      }),
+    ('year_start', {
+      'title': _('year start'),
+      'filter': FilterDate(),
+      }),
+    ('standard_start', {
+      'title': _('standard start'),
+      'filter': FilterDate(),
       }),
     )

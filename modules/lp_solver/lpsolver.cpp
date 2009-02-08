@@ -209,6 +209,7 @@ void LPSolver::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 }
 
 
+/** @todo Need a Python api for the class too. Objectives may be a bit tricky for the implementation. */
 void LPSolver::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_minimum))

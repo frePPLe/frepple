@@ -27,11 +27,7 @@
 /** @file pythonutils.h
   * @brief Reusable functions for python functionality.
   *
-  * XXX find better place for this documentation
-  * Utility classes for interfacing to and from the Python language.
-  * The structure of the C++ wrappers around the C Python API is heavily
-  * inspired on the design of PyCXX.<br>
-  * More information can be found on http://cxx.sourceforge.net
+  * Utility classes for interfacing with the Python language.
   */
 
 #include "frepple/utils.h"
@@ -83,8 +79,10 @@ namespace utils
   *       - location_default
   *       - operation
   *       - operation_alternate
+  *           - addAlternate(operation=x, priority=y, effective_start=z1, effective_end=z2)
   *       - operation_fixed_time
   *       - operation_routing
+  *           - addStep(tuple of operations)
   *       - operation_time_per
   *       - operationplan
   *       - parameters
@@ -93,6 +91,7 @@ namespace utils
   *       - resource_default
   *       - resource_infinite
   *       - solver
+  *           - solve()
   *       - solver_mrp
   *   - The following functions or attributes return <b>iterators</b> over the
   *     frePPLe objects:<br>
@@ -116,6 +115,10 @@ namespace utils
   *       - resource.loads
   *       - resource.loadplans
   *       - solvers()
+  *   - <b>printsize()</b>:<br>
+  *     Prints information about the memory consumption.
+  *   - <b>loadmodule(string [,parameter=value, ...])</b>:<br>
+  *     Dynamically load a module in memory.
   *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br>
   *     Processes an XML string passed as argument.
   *   - <b>log(string)</b>:<br>
@@ -125,6 +128,8 @@ namespace utils
   *     Read an XML-file.
   *   - <b>saveXMLfile(string)</b>:<br>
   *     Save the model to an XML-file.
+  *   - <b>saveplan(string)</b>:<br>
+  *     Save the main plan information to a file.
   *   - <b>erase(boolean)</b>:<br>
   *     Erase the model (arg true) or only the plan (arg false, default).
   *   - <b>version</b>:<br>
@@ -150,6 +155,10 @@ class PythonInterpreter
     static DECLARE_EXPORT void registerGlobalMethod(
       const char*, PyCFunction, int, const char*, bool = true	
      );
+
+    /** Register a new method to Python. */
+    static DECLARE_EXPORT void registerGlobalMethod
+      (const char*, PyCFunctionWithKeywords, int, const char*);
 
     /** Return a pointer to the main extension module. */
     static PyObject* getModule() { return module; }
@@ -189,7 +198,7 @@ class PythonInterpreter
   * function is thus visible across multiple invocations of the Python
   * interpreter.
   */
-class CommandPython : public Command, public XMLinstruction
+class CommandPython : public Command
 {
   private:
     /** Python commands to be executed. */
@@ -223,18 +232,11 @@ class CommandPython : public Command, public XMLinstruction
     /** Update the filename field and clear the filename field. */
     void setFileName(string s) {filename = s; cmd.clear();}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    /** Metadata for registration as a command. */
-    static const MetaClass metadata;
     /** Metadata for registration as an XML instruction. */
     static const MetaClass metadata2;
-    virtual size_t getSize() const
-      {return sizeof(CommandPython) + cmd.size() + filename.size();}
-
-    void DECLARE_EXPORT endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
 
     /** This method is called when a processing instruction is read. */
-    void processInstruction(XMLInput &i, const char *d) 
+    static void processorXMLInstruction(const char *d)
       {PythonInterpreter::execute(d);}
 };
 
@@ -557,6 +559,10 @@ class PythonExtensionBase : public PyObject
   * The template argument should be your extension class, inheriting from
   * this template class:
   *   class MyClass : PythonExtension<MyClass>
+  *
+  * The structure of the C++ wrappers around the C Python API is heavily
+  * inspired on the design of PyCXX.<br>
+  * More information can be found on http://cxx.sourceforge.net
   */
 template<class T>
 class PythonExtension: public PythonExtensionBase, public NonCopyable

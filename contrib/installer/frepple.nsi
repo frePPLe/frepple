@@ -28,10 +28,11 @@
 ; To run this script successfully, you'll therefore need to have the cygwin
 ; system up and running on your machine.
 
-; Configuration section.
-; UPDATE THIS SECTION ACCORDING TO YOUR SETUP!!!
-!define XERCESPATH "c:\bin"
-!define XERCESDLL "xerces-c_2_8.dll"
+; Make sure that this variable points to the windows version of Python, not
+; the one that is part of cygwin.
+!ifndef PYTHON
+!define PYTHON "python.exe"
+!endif
 
 ; Main definitions
 !define PRODUCT_NAME "frePPLe"
@@ -60,19 +61,19 @@ SetCompressor /SOLID lzma
 !define MUI_ICON "frepple.ico"
 !define MUI_UNICON "frepple.ico"
 
-; Definition of the finish page
-!define MUI_FINISHPAGE_RUN_TEXT "Start the server right now"
-!define MUI_FINISHPAGE_RUN "$INSTDIR\server\manage.exe"
-!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
-!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\index.html"
-!define MUI_FINISHPAGE_SHOWREADME_TEXT "View documentation"
-
 ; Installer pages
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "../../COPYING"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 Page custom database database_leave
+  ; Definition of the finish page
+  !define MUI_FINISHPAGE_NOAUTOCLOSE
+  !define MUI_FINISHPAGE_RUN_TEXT "Start the server right now"
+  !define MUI_FINISHPAGE_RUN "$INSTDIR\bin\manage.exe"
+  !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\index.html"
+  !define MUI_FINISHPAGE_SHOWREADME_TEXT "View documentation"
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
@@ -116,7 +117,7 @@ FunctionEnd
 
 Section -Start
   ; Create the python distribution and django server
-  !system "python setup.py"
+  !system "${PYTHON} setup.py"
 
   ; Create a distribution if none exists yet
   !cd "../.."
@@ -152,19 +153,16 @@ Section "Application" SecAppl
   File "..\bin\*.xsd"
   File "..\bin\init.xml"
 
-  ; Add Xerces library
-  !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "${XERCESPATH}\${XERCESDLL}" "$INSTDIR\bin\${XERCESDLL}" "$SYSDIR"
-
   ; Copy sqlite database if there is one
   File /nonfatal "..\bin\frepple.sqlite"
 
-  ; Create the django server directory
-  SetOutPath "$INSTDIR\server"
+  ; Copy the django and python redistributables created by py2exe
+  SetOutPath "$INSTDIR\bin"
   File /r "..\contrib\installer\dist\*.*"
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\server\manage.exe"
+  CreateShortCut "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk" "$INSTDIR\bin\manage.exe"
 
   ; Set an environment variable (and propagate immediately to other processes)
   System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("FREPPLE_HOME", "$INSTDIR\bin").r0'
@@ -203,7 +201,7 @@ Section "Application" SecAppl
   ReadINIStr $5 "$PLUGINSDIR\parameters.ini" "Field 14" "State"  # DB port
 
   ; Create a settings file for the server
-  StrCpy $9 "$INSTDIR\server\settings.py"
+  StrCpy $9 "$INSTDIR\bin\settings.py"
   FileOpen $9 $9 w
   FileWrite $9 "# Django supports the following database engines: 'oracle', 'postgresql_psycopg2',$\r$\n"
   FileWrite $9 "# 'postgresql', 'mysql', 'sqlite3' 'oracle' or 'ado_mssql'.$\r$\n"
@@ -399,5 +397,6 @@ Section Uninstall
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
 
-  SetAutoClose true
+  ; Do not automatically close the window
+  SetAutoClose false
 SectionEnd

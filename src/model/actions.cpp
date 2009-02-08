@@ -36,25 +36,6 @@ template<class Solver> DECLARE_EXPORT Tree utils::HasName<Solver>::st;
 // SOLVE
 //
 
-DECLARE_EXPORT void CommandSolve::beginElement(XMLInput& pIn, const Attribute& pAttr)
-{
-  if (pAttr.isA(Tags::tag_solver))
-    pIn.readto( Solver::reader(Solver::metadata,pIn.getAttributes()) );
-}
-
-
-DECLARE_EXPORT void CommandSolve::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_solver))
-  {
-    Solver *s = dynamic_cast<Solver*>(pIn.getPreviousObject());
-    if (s) setSolver(s);
-    else throw LogicException("Incorrect object type during read operation");
-  }
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
-
 
 DECLARE_EXPORT void CommandSolve::execute()
 {
@@ -126,7 +107,7 @@ DECLARE_EXPORT int PythonSolver::setattro(const Attribute& attr, const PythonObj
 }
 
 
-PyObject *PythonSolver::solve(PyObject *self, PyObject *args)
+DECLARE_EXPORT PyObject *PythonSolver::solve(PyObject *self, PyObject *args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
@@ -150,17 +131,6 @@ PyObject *PythonSolver::solve(PyObject *self, PyObject *args)
 // READ XML INPUT FILE
 //
 
-DECLARE_EXPORT void CommandReadXMLFile::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_filename))
-    pElement >> filename;
-  else if (pAttr.isA(Tags::tag_validate))
-    pElement >> validate;
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
-
-
 DECLARE_EXPORT void CommandReadXMLFile::execute()
 {
   // Message
@@ -168,9 +138,6 @@ DECLARE_EXPORT void CommandReadXMLFile::execute()
     logger << "Started reading model from file '" << filename
     << "' at " << Date::now() << endl;
   Timer t;
-
-  // Replace environment variables in the filename.
-  Environment::resolveEnvironment(filename);
 
   // Note: Reading the data files can throw exceptions...
   if (filename.empty())
@@ -224,17 +191,6 @@ DECLARE_EXPORT PyObject* CommandReadXMLFile::executePython(PyObject* self, PyObj
 // READ XML INPUT STRING
 //
 
-DECLARE_EXPORT void CommandReadXMLString::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_data))
-    pElement >> data;
-  else if (pAttr.isA(Tags::tag_validate))
-    pElement >> validate;
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
-
-
 DECLARE_EXPORT void CommandReadXMLString::execute()
 {
   // Message
@@ -284,28 +240,6 @@ PyObject* CommandReadXMLString::executePython(PyObject *self, PyObject *args)
 // SAVE MODEL TO XML
 //
 
-DECLARE_EXPORT void CommandSave::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_filename))
-    pElement >> filename;
-  else if (pAttr.isA(Tags::tag_headerstart))
-    pElement >> headerstart;
-  else if (pAttr.isA(Tags::tag_headeratts))
-    pElement >> headeratts;
-  else if (pAttr.isA(Tags::tag_content))
-  {
-    string tmp;
-    pElement >> tmp;
-    if (tmp == "STANDARD") content = XMLOutput::STANDARD;
-    else if (tmp == "PLAN") content = XMLOutput::PLAN;
-    else if (tmp == "PLANDETAIL") content = XMLOutput::PLANDETAIL;
-    else throw DataException("Invalid content type '" + tmp + "'");
-  }
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
-
-
 DECLARE_EXPORT void CommandSave::execute()
 {
   // Message
@@ -313,9 +247,6 @@ DECLARE_EXPORT void CommandSave::execute()
     logger << "Start saving model to file '" << filename
     << "' at " << Date::now() << endl;
   Timer t;
-
-  // Replace environment variables in the filename.
-  Environment::resolveEnvironment(filename);
 
   // Save the plan
   XMLOutputFile o(filename);
@@ -335,13 +266,26 @@ PyObject* CommandSave::executePython(PyObject* self, PyObject* args)
 {
   // Pick up arguments
   char *data;
-  int ok = PyArg_ParseTuple(args, "s", &data);
+  char *content = NULL;
+  int ok = PyArg_ParseTuple(args, "s|s", &data, &content);
   if (!ok) return NULL;
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try { 
-    CommandSave(data).execute();
+    CommandSave cmd(data);
+    if (content)
+    {
+      if (!strcmp(content,"STANDARD"))
+        cmd.setContent(XMLOutput::STANDARD);
+      else if (!strcmp(content,"PLAN"))
+        cmd.setContent(XMLOutput::PLAN);
+      else if (!strcmp(content,"PLANDETAIL")) 
+        cmd.setContent(XMLOutput::PLANDETAIL);
+      else 
+        throw DataException("Invalid content type '" + string(content) + "'");
+    }
+    cmd.execute();
   }
   catch (...)
   {
@@ -358,16 +302,6 @@ PyObject* CommandSave::executePython(PyObject* self, PyObject* args)
 // SAVE PLAN SUMMARY TO TEXT FILE
 //
 
-
-DECLARE_EXPORT void CommandSavePlan::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA(Tags::tag_filename))
-    pElement >> filename;
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
-
-
 DECLARE_EXPORT void CommandSavePlan::execute()
 {
   // Message
@@ -375,9 +309,6 @@ DECLARE_EXPORT void CommandSavePlan::execute()
     logger << "Start saving plan to file '" << getFileName()
     << "' at " << Date::now() << endl;
   Timer t;
-
-  // Replace environment variables in the filename.
-  Environment::resolveEnvironment(filename);
 
   // Output steam
   if (getFileName().empty())
@@ -481,6 +412,29 @@ DECLARE_EXPORT void CommandSavePlan::execute()
   // Message
   if (getVerbose())
     logger << "Finished saving plan at " << Date::now() << " : " << t << endl;
+}
+
+
+PyObject* CommandSavePlan::executePython(PyObject* self, PyObject* args)
+{
+  // Pick up arguments
+  char *data;
+  int ok = PyArg_ParseTuple(args, "s", &data);
+  if (!ok) return NULL;
+
+  // Execute and catch exceptions
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try { 
+    CommandSavePlan(data).execute();
+  }
+  catch (...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");
 }
 
 
@@ -620,19 +574,6 @@ DECLARE_EXPORT string CommandDeleteOperationPlan::getDescription() const
 //
 // DELETE MODEL
 //
-
-DECLARE_EXPORT void CommandErase::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
-{
-  if (pAttr.isA (Tags::tag_mode))
-  {
-    string m = pElement.getString();
-    if (m == "plan") deleteStaticModel = false;
-    else if (m == "model") deleteStaticModel = true;
-    else throw DataException("Unknown mode '" + m + "' for erase command");
-  }
-  else
-    Command::endElement(pIn, pAttr, pElement);
-}
 
 
 DECLARE_EXPORT void CommandErase::execute()

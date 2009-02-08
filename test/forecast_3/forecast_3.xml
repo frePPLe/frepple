@@ -6,54 +6,6 @@
   It shows netting from earlier and later time buckets.
   </description>
   <current>2009-01-01T00:00:00</current>
-  <commands>
-    <verbose>true</verbose>
-    <command xsi:type="command_solve">
-      <solver name="Netting orders from forecast" xsi:type="solver_forecast">
-        <loglevel>2</loglevel>
-      </solver>
-    </command>
-    <command xsi:type="command_solve">
-      <solver name="MRP" xsi:type="solver_mrp" constraints="0" />
-    </command>
-    <command xsi:type="command_save">
-      <filename>output.1.xml</filename>
-    </command>
-    <command xsi:type="command_saveplan">
-      <filename>output.2.xml</filename>
-    </command>
-    <command xsi:type="command_erase" mode="model" />
-    <command xsi:type="command_save">
-      <filename>output.3.xml</filename>
-    </command>
-    <command xsi:type="command_readxml">
-      <filename>output.1.xml</filename>
-    </command>
-    <command xsi:type="command_readxmlstring">
-      <!--
-      We need to wrap the second forecast netting round in a xml string.
-      That's because the solver created during the initial read is
-      deleted with the above erase-command...
-      -->
-      <data>
-        <![CDATA[
-				<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-				<commands>
-          <command xsi:type="command_solve">
-            <solver name="Netting orders from forecast" xsi:type="solver_forecast">
-              <loglevel>2</loglevel>
-            </solver>
-          </command>
-				</commands>
-				</plan>
-			]]>
-      </data>
-    </command>
-    <command xsi:type="command_save">
-      <filename>output.4.xml</filename>
-    </command>
-
-  </commands>
 
   <!--
   This calendar defines how forecast values are disaggregated from the
@@ -160,4 +112,17 @@
        <priority>2</priority>
     </demand>
   </demands>
+
+<?python
+frepple.solver_forecast(name="Netting orders from forecast", loglevel=2).solve()
+frepple.solver_mrp(name="MRP", constraints=0).solve()
+frepple.saveXMLfile("output.1.xml")
+frepple.saveplan("output.2.xml")
+frepple.erase(True)
+frepple.saveXMLfile("output.3.xml")
+frepple.readXMLfile("output.1.xml")
+frepple.solver_forecast(name="Netting orders from forecast", loglevel=2).solve()
+frepple.saveXMLfile("output.4.xml")
+?>
+
 </plan>

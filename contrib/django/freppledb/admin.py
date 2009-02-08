@@ -24,3 +24,7 @@ from django.contrib import admin
 
 # Create an admin site where all our apps will register their models
 site = admin.sites.AdminSite()
+
+# Call the admin modules of our applications
+import input.admin
+import common.admin

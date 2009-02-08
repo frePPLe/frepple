@@ -1,45 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <name>Linear Programming Demo Model</name>
+  <name>Linear programming demo model</name>
   <description>Demonstrates capacity allocation using LP</description>
   <current>2009-01-01T00:00:00</current>
-  <commands>
-    <verbose>true</verbose>
-    <command xsi:type="command_python" filename="lp_capacity.py"/>
-
-    <!-- Export data from frePPLe memory to a data file. -->
-    <command xsi:type="command_python" cmdline="exportData('output.dat')"/>
-
-    <!-- Run the solver.
-    The data is read from the flat file just created.
-    The solution is written to a solution flat file.
-    -->
-    <command xsi:type="command_solve">
-      <solver name="LP" xsi:type="solver_lp">
-        <modelfile>lp_capacity.mod</modelfile>
-        <datafile>output.dat</datafile>
-        <solutionfile>output.sol</solutionfile>
-        <loglevel>3</loglevel>
-        <minimum>true</minimum>
-        <objective>goalshortage[1]</objective>
-        <objective>goallate[1]</objective>
-        <objective>goalshortage[2]</objective>
-        <objective>goallate[2]</objective>
-        <objective>goalshortage[3]</objective>
-        <objective>goallate[3]</objective>
-        <objective>goalearly[1]</objective>
-        <objective>goalearly[2]</objective>
-        <objective>goalearly[3]</objective>
-      </solver>
-    </command>
-
-    <!-- Load the LP solution in frePPLe. -->
-    <command xsi:type="command_python" cmdline="importSolution('output.sol')"/>
-
-    <command xsi:type="command_saveplan">
-      <filename>output.1.xml</filename>
-    </command>
-  </commands>
   <operations>
     <operation name="make STCK1" xsi:type="operation_fixed_time">
       <duration>P7D</duration>
@@ -254,4 +217,41 @@
       <item name="STCK2" />
     </demand>
   </demands>
+
+<?python
+
+# Load the module
+frepple.loadmodule("mod_lp_solver.so")
+
+# Export the model data
+exportData('output.dat')
+
+# Run the solver.
+# The data is read from the flat file just created.
+# The solution is written to a solution flat file.
+lp = frepple.solver_lp(name="LP",
+  modelfile="lp_capacity.mod",
+  datafile="output.dat",
+  solutionfile="output.sol",
+  loglevel=3,
+  minimum=True,
+  objective="goalshortage[1]",
+  objective="goallate[1]",
+  objective="goalshortage[2]",
+  objective="goallate[2]",
+  objective="goalshortage[3]",
+  objective="goallate[3]",
+  objective="goalearly[1]",
+  objective="goalearly[2]",
+  objective="goalearly[3]")
+lp.solve()
+
+# Load the LP solution
+importSolution('output.sol')
+
+# Save the resulting plan
+frepple.saveXMLfile("output.1.xml")
+
+?>
+
 </plan>

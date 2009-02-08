@@ -14,13 +14,7 @@ for counter in [500,1000,1500,2000]:
   # Print a header
   print >>out, ('<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n' +
     '<description>Single buffer plan with $counter demands</description>\n' +
-    '<current>2007-01-01T00:00:00</current>\n' +
-    '<commands>\n' +
-    '<command xsi:type="command_solve" verbose="false">' +
-    '  <solver name="MRP" xsi:type="solver_mrp" constraints="0"/>' +
-    '</command>\n' +
-    '<command xsi:type="command_save" filename="output.xml"/>\n' +
-    '</commands>\n' +
+    '<current>2009-01-01T00:00:00</current>\n' +
     '<items>\n' +
       '\t<item name="ITEM">' +
       '<operation name="Delivery ITEM" xsi:type="operation_fixed_time"/>' +
@@ -48,14 +42,20 @@ for counter in [500,1000,1500,2000]:
   for cnt in range(counter):
     month = "%02d" % (int(random.uniform(0,12))+1)
     day = "%02d" % (int(random.uniform(0,28))+1)
-    print >>out, ("<demand name=\"DEMAND $cnt\" quantity=\"10\" " +
-      "due=\"2005-%s-%sT00:00:00\" " +
+    print >>out, ("<demand name=\"DEMAND %d\" quantity=\"10\" " +
+      "due=\"2009-%s-%sT00:00:00\" " +
       "priority=\"1\">" +
       "<item name=\"ITEM\"/>" +
-      "</demand>") % (month,day)
+      "</demand>") % (cnt,month,day)
 
   # Finalize the input
-  print >>out, "</demands></plan>"
+  print >>out, ('</demands>\n' +
+    '<?python\n' +
+    'import frepple\n' +
+    'frepple.solver_mrp(name="MRP",constraints=0).solve()\n' +
+    'frepple.saveXMLfile("output.xml")\n' +
+    '?>\n' +
+    '</plan>')
   out.close()
 
   # Run the executable

@@ -134,7 +134,7 @@ INSTALLED_APPS = (
     'input',
     'output',
     'execute',
-    'user',
+    'common',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -166,11 +166,11 @@ ALLOWED_INCLUDE_ROOTS = (FREPPLE_HOME)
 
 # To use a customized authentication backend.
 AUTHENTICATION_BACKENDS = (
-    "user.auth.EmailBackend",
+    "common.auth.EmailBackend",
 )
 
 # To add the user preferences to the standard admin
-AUTH_PROFILE_MODULE = 'user.Preferences'
+AUTH_PROFILE_MODULE = 'common.Preferences'
 
 # IP address of the machine you are browsing from. When logging in from this
 # machine additional debugging statements can be shown.
@@ -184,8 +184,8 @@ DEFAULT_CHARSET = 'utf-8'
 
 # Allow overriding the settings
 # This is useful for the py2exe distribution: this settings file will be
-# compiled and included in library.zip, and we need to give users a way
-# to pass parameters and settings to Django.
+# compiled and included in a compressed zip-file, and we need to give users a
+# way to pass parameters and settings to Django.
 if os.path.normcase(os.path.abspath(os.path.dirname(__file__))) != os.path.normcase(FREPPLE_APP):
   try: execfile(os.path.join(FREPPLE_APP,'settings.py'))
   except IOError:

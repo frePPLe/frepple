@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <current>2009-01-01T00:00:00</current>
-  <commands>
-    <abortonerror>false</abortonerror>
-    <verbose>true</verbose>
-    <command xsi:type="command_python">
-      <cmdline>
-<![CDATA[
+
+<?python
 import urllib2
-import frepple
 f = urllib2.urlopen("http://www.frepple.com/test/xml_remote.xml")
 frepple.readXMLdata(f.read(1000), False, False)
-]]>
-      </cmdline>
-    </command>
-    <command xsi:type="command_save" filename="output.1.xml" />
-  </commands>
+frepple.saveXMLfile("output.1.xml")
+?>
+
 </plan>

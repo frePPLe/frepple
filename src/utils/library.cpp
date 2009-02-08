@@ -42,15 +42,8 @@ DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 // Repository of loaded modules
 DECLARE_EXPORT set<string> CommandLoadLibrary::registry;
 
-// Command metadata
-DECLARE_EXPORT const MetaCategory Command::metadata;
-DECLARE_EXPORT const MetaClass CommandList::metadata,
-  CommandSystem::metadata,
-  CommandLoadLibrary::metadata,
-  CommandSetEnv::metadata;
-
 // Processing instruction metadata
-DECLARE_EXPORT const MetaCategory XMLinstruction::metadata;
+DECLARE_EXPORT const MetaCategory Command::metadataInstruction;
 
 // Number of processors.
 // The value initialized here is overwritten in the library initialization.
@@ -74,6 +67,12 @@ DECLARE_EXPORT vector<PythonType*> PythonExtensionBase::table;
 
 DECLARE_EXPORT string Environment::searchFile(const string filename)
 {
+#ifdef _MSC_VER
+  static char pathseperator = '\\';
+#else
+  static char pathseperator = '/';
+#endif
+
   // First: check the current directory
   struct stat stat_p;
   int result = stat(filename.c_str(), &stat_p);
@@ -86,7 +85,8 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
   if (envvar)
   {
     fullname = envvar;
-    if (*fullname.rbegin() != '/') fullname += '/';
+    if (*fullname.rbegin() != pathseperator) 
+      fullname += pathseperator;
     fullname += filename;
     result = stat(fullname.c_str(), &stat_p);
     if (!result && stat_p.st_mode & S_IREAD)
@@ -96,7 +96,8 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
 #ifdef DATADIRECTORY
   // Third: check the data directory
   fullname = DATADIRECTORY;
-  if (*fullname.rbegin() != '/') fullname += '/';
+  if (*fullname.rbegin() != pathseperator) 
+    fullname += pathseperator;
   fullname.append(filename);
   result = stat(fullname.c_str(), &stat_p);
   if (!result && stat_p.st_mode & S_IREAD)
@@ -106,7 +107,8 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
 #ifdef LIBDIRECTORY
   // Fourth: check the lib directory
   fullname = LIBDIRECTORY;
-  if (*fullname.rbegin() != '/') fullname += '/';
+  if (*fullname.rbegin() != pathseperator) 
+    fullname += pathseperator;
   fullname += "frepple/";
   fullname += filename;
   result = stat(fullname.c_str(), &stat_p);
@@ -116,37 +118,6 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
 
   // Not found
   return "";
-}
-
-
-DECLARE_EXPORT void Environment::resolveEnvironment(string& s)
-{
-  for (string::size_type startpos = s.find("${", 0);
-      startpos < string::npos;
-      startpos = s.find_first_of("${", startpos))
-  {
-    // Find closing "}"
-    string::size_type endpos = s.find_first_of("}", startpos);
-    if (endpos >= string::npos)
-      throw DataException("Invalid variable expansion in '" + s + "'");
-
-    // Search variable name
-    string var(s, startpos+2, endpos - startpos - 2);
-    if (var.empty())
-      throw DataException("Invalid variable expansion in '" + s + "'");
-
-    // Pick up the environment variable
-    char *c = getenv(var.c_str());
-
-    // Replace in the string
-    if (c) s.replace(startpos, endpos - startpos + 1, c);
-    else s.replace(startpos, endpos - startpos + 1, "");
-
-    // Advance to the end of the replaced characters. If the replaced
-    // characters would include another ${XX} construct we could get in
-    // an infinite loop!
-    if (c) startpos += strlen(c);
-  }
 }
 
 
@@ -211,52 +182,27 @@ void LibraryUtils::initialize()
   // Most Linux distributions these days have a default locale that supports
   // utf-8 encoding, meaning that every unicode character can be
   // represented.
-  // On windows, the default is the system-default ANSI code page. The number
-  // of characters that frePPLe supports on windows is constrained by this...
+  // On Windows, the default is the system-default ANSI code page. The number
+  // of characters that frePPLe supports on Windows is constrained by this...
   setlocale(LC_ALL, "" );
 
   // Initialize Xerces parser
   xercesc::XMLPlatformUtils::Initialize();
 
-  // Initialize the command metadata.
-  Command::metadata.registerCategory("command", "commands");
-  CommandList::metadata.registerClass(
-    "command",
-    "command_list",
-    Object::createDefault<CommandList>);
-  CommandSystem::metadata.registerClass(
-    "command",
-    "command_system",
-    Object::createDefault<CommandSystem>);
-  CommandLoadLibrary::metadata.registerClass(
-    "command",
-    "command_loadlib",
-    Object::createDefault<CommandLoadLibrary>);
-  CommandSetEnv::metadata.registerClass(
-    "command",
-    "command_setenv",
-    Object::createDefault<CommandSetEnv>);
-  CommandPython::metadata.registerClass(
-    "command",
-    "command_python",
-    Object::createDefault<CommandPython>);
-
   // Initialize the processing instruction metadata.
-  XMLinstruction::metadata.registerCategory
-    ("instruction", NULL, MetaCategory::ControllerDefault);
+  Command::metadataInstruction.registerCategory
+    ("instruction", NULL);
 
-  // Register python also as a processing instruction.
+  // Register Python as a processing instruction.
   CommandPython::metadata2.registerClass(
-    "instruction",
-    "python",
-    Object::createDefault<CommandPython>);
+    "instruction", "python", CommandPython::processorXMLInstruction);
 
   // Initialize the Python interpreter
   PythonInterpreter::initialize();
 
-  // Query the system for the number of available processors
+  // Query the system for the number of available processors.
   // The environment variable NUMBER_OF_PROCESSORS is defined automatically on
-  // windows platforms. On other platforms it'll have to be explicitly set
+  // Windows platforms. On other platforms it'll have to be explicitly set
   // since there isn't an easy and portable way of querying this system
   // information.
   const char *c = getenv("NUMBER_OF_PROCESSORS");

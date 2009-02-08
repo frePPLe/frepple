@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <commands>
-    <verbose>false</verbose>
-    <abortonerror>false</abortonerror>
-    <command xsi:type="command_loadlib" filename="mod_forecast.so">
-       <parameter name="Net.CustomerThenItemHierarchy" value="true" />
-       <parameter name="Net.MatchUsingDeliveryOperation" value="true" />
-       <parameter name="Net.NetEarly" value="P2D" />
-       <parameter name="Net.NetLate" value="P4D" />
-    </command>
-  </commands>
+<?python
+# Forecasting module
+frepple.loadmodule("mod_forecast.so",
+  Net_CustomerThenItemHierarchy=True,
+  Net_MatchUsingDeliveryOperation=True,
+  Net_NetEarly="P2D",
+  Net_NetLate="P4D")
+?>
 </plan>

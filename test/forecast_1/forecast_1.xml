@@ -10,18 +10,7 @@
       - D: match at 'customer' + 'parent item' level
       - E: match at 'parent customer' + 'parent item' level
   </description>
-  <current>2009-01-01T00:00:00</current>
-  <commands>
-    <verbose>true</verbose>
-    <command xsi:type="command_solve">
-      <solver name="Netting orders from forecast" xsi:type="solver_forecast">
-        <loglevel>2</loglevel>
-      </solver>
-    </command>
-    <command xsi:type="command_save">
-      <filename>output.1.xml</filename>
-    </command>
-  </commands>
+  <current>2009-01-01T00:00:00</current>  
   <calendars>
     <calendar name="Weeks" xsi:type="calendar_void">
       <buckets>
@@ -270,4 +259,10 @@
       <due>2009-01-02T00:00:00</due>
     </demand>
   </demands>
+
+<?python
+frepple.solver_forecast(name="Netting orders from forecast",loglevel=2).solve()
+frepple.saveXMLfile("output.1.xml")
+?>
+
 </plan>

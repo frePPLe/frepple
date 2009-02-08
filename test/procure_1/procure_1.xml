@@ -17,21 +17,6 @@
 		- 9: Procurement in fixed quantity with fixed interval
 	</description>
 	<current>2009-01-01T00:00:00</current>
-	<commands>
-	  <verbose>true</verbose>
-	  <command xsi:type="command_solve">
-	    <solver name="MRP_unconstrained" xsi:type="solver_mrp" constraints="0" loglevel="2" />
-	  </command>
-	  <command xsi:type="command_saveplan">
-	    <filename>output.1.xml</filename>
-	  </command>
-	  <command xsi:type="command_solve">
-	    <solver name="MRP_constrained" xsi:type="solver_mrp" constraints="7" loglevel="2" />
-	  </command>
-	  <command xsi:type="command_saveplan">
-	    <filename>output.2.xml</filename>
-	  </command>
-	</commands>
 	<buffers>
 	  <buffer name="buffer 1" xsi:type="buffer_procure">
 	    <description>1: Base scenario</description>
@@ -1680,5 +1665,13 @@
 	    <due>2009-06-01T00:00:00</due>
 	    <item name="item 9" />
 	  </demand>
-		</demands>
+	</demands>
+
+<?python
+frepple.solver_mrp(name="MRP", constraints=0, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+frepple.solver_mrp(name="MRP", constraints=7, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+?>
+
 </plan>

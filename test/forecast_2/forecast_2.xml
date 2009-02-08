@@ -11,18 +11,6 @@
   2: A forecast split across bucket boundaries
   </description>
   <current>2009-01-01T00:00:00</current>
-  <commands>
-    <verbose>true</verbose>
-    <command xsi:type="command_solve">
-      <solver name="MRP" xsi:type="solver_mrp" constraints="0" />
-    </command>
-    <command xsi:type="command_save">
-      <filename>output.1.xml</filename>
-    </command>
-    <command xsi:type="command_saveplan">
-      <filename>output.2.xml</filename>
-    </command>
-  </commands>
 
   <!--
   This calendar defines how forecast values are disaggregated from the
@@ -147,4 +135,11 @@
       </buckets>
     </demand>
   </demands>
+
+<?python
+frepple.solver_mrp(name="MRP", constraints=0).solve()
+frepple.saveXMLfile("output.1.xml")
+frepple.saveplan("output.2.xml")
+?>
+
 </plan>

@@ -50,7 +50,7 @@ for counter in [5000, 10000, 15000, 20000, 25000]:
     outfile,
     counter,
     "<plan xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
-      "<current>2007-01-01T00:00:00</current>\n" +
+      "<current>2009-01-01T00:00:00</current>\n" +
       "<items>\n",
     "<item name=\"ITEMNM_%d\" category=\"cat1\" description=\"DCRP_%d\" >" +
       "\n\t<operation name=\"Delivery ITEMNM_%d\" " +
@@ -93,11 +93,11 @@ for counter in [5000, 10000, 15000, 20000, 25000]:
     outfile,
     counter,
     "<demands>\n",
-    "<demand name=\"DEMANDNM1_%d\" quantity=\"10\" due=\"2007-03-03T00:00:00\" " +
+    "<demand name=\"DEMANDNM1_%d\" quantity=\"10\" due=\"2009-03-03T00:00:00\" " +
      "priority=\"1\"> <item name=\"ITEMNM_%d\"/></demand>\n" +
-     "<demand name=\"DEMANDNM2_%d\" quantity=\"10\" due=\"2007-03-03T00:00:00\" " +
+     "<demand name=\"DEMANDNM2_%d\" quantity=\"10\" due=\"2009-03-03T00:00:00\" " +
      "priority=\"2\"> <item name=\"ITEMNM_%d\"/></demand>\n" +
-     "<demand name=\"DEMANDNM3_%d\" quantity=\"10\" due=\"2007-03-03T00:00:00\" " +
+     "<demand name=\"DEMANDNM3_%d\" quantity=\"10\" due=\"2009-03-03T00:00:00\" " +
      "priority=\"1\"> <item name=\"ITEMNM_%d\"/></demand>",
     "</demands></plan>\n",
     6

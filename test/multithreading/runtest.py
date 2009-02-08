@@ -57,10 +57,10 @@ def funcSave(id,cnt):
   '''
   send2frepple(
     ('<?xml version="1.0" encoding="UTF-8" ?>' +
-    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+    '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
     '<COMMANDS>' +
     '<COMMAND xsi:type="COMMAND_SAVE" FILENAME="output.%d.xml"/>' +
-    '</COMMANDS></PLAN>') % id)
+    '</COMMANDS></plan>') % id)
 
 
 def funcAddDemand(id,cnt):
@@ -69,12 +69,12 @@ def funcAddDemand(id,cnt):
   '''
   send2frepple(
     ('<?xml version="1.0" encoding="UTF-8" ?>' +
-    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-    '<DEMANDS>' +
-    '<DEMAND NAME="order_%d_%d" QUANTITY="10" ' +
-    'DUE="2005-01-04T09:00:00" PRIORITY="1"> ' +
-    '<ITEM NAME="end item"/></DEMAND>' +
-    '</DEMANDS></PLAN>') % (id,cnt))
+    '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+    '<demands>' +
+    '<demand name="order_%d_%d" quantity="10" ' +
+    'due="2005-01-04T09:00:00" priority="1"> ' +
+    '<item name="end item"/></demand>' +
+    '</demands></plan>') % (id,cnt))
 
 
 def funcDeleteDemand(id,cnt):
@@ -85,10 +85,10 @@ def funcDeleteDemand(id,cnt):
   '''
   send2frepple(
     ('<?xml version="1.0" encoding="UTF-8" ?>' +
-    '<PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-    '<DEMANDS>' +
-    '<DEMAND NAME="DEMAND%d %cnt" ACTION="REMOVE"/>' +
-    '</DEMANDS></PLAN>') % (id-1,cnt))
+    '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+    '<demands>' +
+    '<demand name="DEMAND%d %cnt" action="REMOVE"/>' +
+    '</demands></plan>') % (id-1,cnt))
 
 
 class Worker (threading.Thread):
@@ -137,38 +137,37 @@ class Worker (threading.Thread):
 # Creating the initial model
 send2frepple(
   """<?xml version="1.0" encoding="UTF-8" ?>
-  <PLAN xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <NAME>actual plan</NAME>
-  <CURRENT>2007-01-01T00:00:01</CURRENT>
-  <DEFAULT_CALENDAR NAME="Weeks"/>
-  <OPERATIONS>
-  <OPERATION NAME="make end item" xsi:type="OPERATION_FIXED_TIME" DURATION="24:00:00"/>
-  </OPERATIONS><ITEMS>
-  <ITEM NAME="end item">
-  <OPERATION NAME="delivery end item" DURATION="24:00:00"/>
-  </ITEM>
-  </ITEMS> <BUFFERS>
-  <BUFFER NAME="end item">
-  <PRODUCING NAME="make end item"/> <ITEM NAME="end item"/>
-  </BUFFER>
-  </BUFFERS><RESOURCES>
-  <RESOURCE NAME="Resource">
-  <MAXIMUM NAME="Capacity" xsi:type="CALENDAR_FLOAT"><BUCKETS>
-  <BUCKET START="2007-01-01T00:00:01"> <VALUE>1</VALUE> </BUCKET>
-  </BUCKETS></MAXIMUM>
-  <LOADS><LOAD><OPERATION NAME="make end item"/></LOAD></LOADS>
-  </RESOURCE>
-  </RESOURCES><FLOWS>
-  <FLOW xsi:type="FLOW_START"> <OPERATION NAME="delivery end item"/>
-  <BUFFER NAME="end item"/> <QUANTITY>-1</QUANTITY>
-  </FLOW>
-  <FLOW xsi:type="FLOW_END"> <OPERATION NAME="make end item"/>
-  <BUFFER NAME="end item"/> <QUANTITY>1</QUANTITY>
-  </FLOW>
-  </FLOWS><DEMANDS>
-  <DEMAND NAME="order 1" QUANTITY="10" DUE="2007-01-04T09:00:00"
-  PRIORITY="1"> <ITEM NAME="end item"/></DEMAND>
-  </DEMANDS></PLAN>""")
+  <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>actual plan</name>
+  <current>2007-01-01T00:00:01</current>
+  <operations>
+  <operation name="make end item" xsi:type="operation_fixed_time" duration="24:00:00"/>
+  </operations><items>
+  <item name="end item">
+  <operation name="delivery end item" duration="24:00:00"/>
+  </item>
+  </items> <buffers>
+  <buffer name="end item">
+  <producing name="make end item"/> <item name="end item"/>
+  </buffer>
+  </buffers><resources>
+  <resource name="Resource">
+  <maximum name="Capacity" xsi:type="calendar_float"><buckets>
+  <bucket start="2007-01-01T00:00:01"> <value>1</value> </bucket>
+  </buckets></maximum>
+  <loads><load><operation name="make end item"/></load></loads>
+  </resource>
+  </resources><flows>
+  <flow xsi:type="flow_start"> <operation name="delivery end item"/>
+  <buffer name="end item"/> <quantity>-1</quantity>
+  </flow>
+  <flow xsi:type="flow_end"> <operation name="make end item"/>
+  <buffer name="end item"/> <quantity>1</quantity>
+  </flow>
+  </flows><demands>
+  <demand name="order 1" quantity="10" due="2007-01-04T09:00:00"
+  priority="1"> <item name="end item"/></demand>
+  </demands></plan>""")
 
 # Define the test threads and the duration of the test
 threads = [

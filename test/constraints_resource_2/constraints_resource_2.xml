@@ -6,15 +6,6 @@
     planned because it would be planned in the past.
   </description>
   <current>2009-01-01T00:00:00</current>
-  <commands>
-    <command xsi:type="command_solve">
-      <verbose>true</verbose>
-      <solver name="MRP" xsi:type="solver_mrp" constraints="7" loglevel="2"/>
-    </command>
-    <command xsi:type="command_saveplan">
-      <filename>output.1.xml</filename>
-    </command>
-  </commands>
   <operations>
     <operation name="make end item" xsi:type="operation_fixed_time">
       <duration>P1D</duration>
@@ -84,4 +75,10 @@
       <maxlateness>P0D</maxlateness>
     </demand>
   </demands>
+
+<?python
+frepple.solver_mrp(name="MRP", constraints=7, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+?>
+
 </plan>

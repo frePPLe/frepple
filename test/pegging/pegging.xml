@@ -2,21 +2,6 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<name>Verify the pegging</name>
 	<current>2009-01-01T00:00:00</current>
-	<commands>
-	  <verbose>true</verbose>
-	  <command xsi:type="command_solve">
-	    <solver name="MRP" xsi:type="solver_mrp" constraints="7" maxparallel="1" />
-	  </command>
-	  <!--
-	     Note that it is NOT common to save the complete plan with all pegging detail.
-	     The output file gets very big and full of redundant data.
-	     Pegging info is normally extracted for a small subset of data.
-	  -->
-	  <command xsi:type="command_save">
-	    <filename>output.1.xml</filename>
-	    <content>PLANDETAIL</content>
-	  </command>
-	</commands>
 	<items>
 	  <item name="item 1">
 	    <operation name="delivery 1" xsi:type="operation_fixed_time">
@@ -271,4 +256,13 @@
 	    <locked>true</locked>
 	  </operationplan>
 	</operationplans>
+
+<?python
+frepple.solver_mrp(name="MRP",constraints=7, maxparallel=1).solve()
+# Note that it is NOT common to save the complete plan with all pegging detail.
+# The output file gets very big and full of redundant data.
+# Pegging info is normally extracted for a small subset of data.
+frepple.saveXMLfile("output.1.xml","PLANDETAIL")
+?>
+
 </plan>

@@ -20,13 +20,21 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from django.contrib.auth.models import User, Group
-from django.contrib.auth.admin import UserAdmin, GroupAdmin
+from django.conf.urls.defaults import *
 
-from freppledb.admin import site
+import common.views
 
+urlpatterns = patterns('',
 
-# Register the models from the Auth application.
-# The admin users can then create, change and delete users and user groups.
-site.register(Group, GroupAdmin)
-site.register(User, UserAdmin)
+  # User preferences
+  (r'^preferences/$', common.views.preferences),
+
+  # Model list reports, which override standard admin screens
+  (r'^admin/auth/user/$', 'common.report.view_report',
+    {'report': common.views.UserList,}),
+  (r'^admin/auth/group/$', 'common.report.view_report',
+    {'report': common.views.GroupList,}),
+  (r'^admin/common/dates/$', 'common.report.view_report',
+    {'report': common.views.DatesList,}),
+
+)

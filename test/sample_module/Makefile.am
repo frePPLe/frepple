@@ -4,7 +4,7 @@
 
 AM_CPPFLAGS=-I@top_builddir@/include -I/usr/include/python$(PYTHON_VERSION)
 
-EXTRA_DIST = sample_module.cpp sample_module.1.expect sample_module.2.expect sample_module.h sample_module.xml init.xml frepple.xsd
+EXTRA_DIST = sample_module.cpp sample_module.1.expect sample_module.2.expect sample_module.h sample_module.xml frepple.xsd
 
 CLEANFILES = output.* *.stackdump core *.gcda *.gcov *.gcno *.out
 

@@ -1056,9 +1056,6 @@ class CommandSolve : public Command
     /** Running a solver can't be undone. */
     bool undoable() const {return false;}
 
-    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-
     string getDescription() const {return "running a solver";}
 
     /** Returns the solver being run. */
@@ -1066,10 +1063,6 @@ class CommandSolve : public Command
 
     /** Updates the solver being used. */
     void setSolver(Solver* s) {sol = s;}
-
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandSolve);}
 };
 
 
@@ -1865,14 +1858,9 @@ class OperationPlan
     DECLARE_EXPORT void setDemand(Demand* l);
 
     /** Returns whether the operationplan is locked. A locked operationplan
-      * is never changed. Only top-operationplans can be locked.
-      * Sub-operationplans pass on a call to this function to their owner.
+      * is never changed. 
       */
-    bool getLocked() const
-    {
-      if (owner) return owner->getLocked();
-      else return locked;
-    }
+    bool getLocked() const {return locked;}
 
     /** Deletes all operationplans of a certain operation. A boolean flag
       * allows to specify whether locked operationplans are to be deleted too.
@@ -1880,18 +1868,9 @@ class OperationPlan
     static DECLARE_EXPORT void deleteOperationPlans(Operation* o, bool deleteLocked=false);
 
     /** Locks/unlocks an operationplan. A locked operationplan is never
-      * changed. Only top-operationplans can be locked. Sub-operationplans
-      * pass on a call to this function to their owner.
+      * changed.
       */
-    void setLocked(bool b = true)
-    {
-      if (owner) owner->setLocked(b);
-      else if (locked!=b)
-      {
-        setChanged();
-        locked = b;
-      }
-    }
+    virtual DECLARE_EXPORT void setLocked(bool b = true);
 
     /** Returns a pointer to the operation being instantiated. */
     Operation* getOperation() const {return oper;}
@@ -2076,6 +2055,8 @@ class OperationPlan
     DECLARE_EXPORT void updateSorting();
 
   protected:
+    /** Updates the operationplan based on the latest information of quantity, 
+      * date and locked flag. */
     virtual DECLARE_EXPORT void update();
     DECLARE_EXPORT void resizeFlowLoadPlans();
 
@@ -2379,6 +2360,11 @@ class OperationPlanRouting : public OperationPlan
     DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
     virtual const OperationPlan::OperationPlanList& getSubOperationPlans() const {return step_opplans;}
 
+    /** Locks/unlocks an operationplan. A locked operationplan is never
+      * changed.
+      */
+    virtual DECLARE_EXPORT void setLocked(bool b = true);
+
     /** Initializes the operationplan and all steps in it.
       * If no step operationplans had been created yet this method will create
       * them. During this type of creation the end date of the routing
@@ -2519,6 +2505,11 @@ class OperationPlanAlternate : public OperationPlan
 
     /** Returns the sub-operationplan. */
     virtual OperationPlan* getSubOperationPlan() const {return altopplan;}
+
+    /** Locks/unlocks an operationplan. A locked operationplan is never
+      * changed.
+      */
+    virtual DECLARE_EXPORT void setLocked(bool b = true);
 
     /** Initializes the operationplan. If no suboperationplan was created
       * yet this method will create one, using the highest priority alternate.
@@ -3618,8 +3609,6 @@ class CommandReadXMLFile : public Command
       * read. Otherwise, the standard input is read. */
     DECLARE_EXPORT void execute();
 
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-
     /** Python interface for this command. */
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
 
@@ -3630,10 +3619,6 @@ class CommandReadXMLFile : public Command
       else
         return "parsing xml input from file '" + filename + "'";
     }
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const
-      {return sizeof(CommandReadXMLFile) + filename.size();}
 
   private:
     /** Name of the input to be read. An empty string means that we want to
@@ -3696,10 +3681,6 @@ class CommandReadXMLString : public Command
 
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     string getDescription() const {return "parsing xml input string";}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const
-      {return sizeof(CommandReadXMLString) + data.size();}
 
   private:
     /** Name of the input to be read. An empty string means that we want to
@@ -3742,16 +3723,8 @@ class CommandSave : public Command
     /** Python interface to this command. */
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
 
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     string getDescription() const
       {return "saving the complete model into file '" + filename + "'";}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const
-    {
-      return sizeof(CommandSave)
-          + filename.size() + headerstart.size() + headeratts.size();
-    }
     XMLOutput::content_type getContent() const {return content;}
     void setContent(XMLOutput::content_type t) {content = t;}
   private:
@@ -3780,13 +3753,13 @@ class CommandSavePlan : public Command
     string getFileName() const {return filename;}
     void setFileName(const string& v) {filename = v;}
     DECLARE_EXPORT void execute();
+
+    /** Python interface to this command. */
+    static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
+
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     string getDescription() const
       {return "saving the plan into text file '" + filename + "'";}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const
-      {return sizeof(CommandSavePlan) + filename.size();}
   private:
     string filename;
 };
@@ -3805,12 +3778,11 @@ class CommandPlanSize : public Command
   public:
     CommandPlanSize() {};
     DECLARE_EXPORT void execute();
+    static PyObject* executePython(PyObject* self, PyObject* args)
+      {CommandPlanSize x;x.execute(); return Py_BuildValue("");}
     void undo() {}
     bool undoable() const {return true;}
     string getDescription() const {return "printing the model size";}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandPlanSize);}
 };
 
 
@@ -3839,16 +3811,12 @@ class CommandErase : public Command
     /** Python interface to this command. */
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
 
-    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     string getDescription() const
     {
       return deleteStaticModel ? "Erasing the model" : "Erasing the plan";
     }
     bool getDeleteStaticModel() const {return deleteStaticModel;}
     void setDeleteStaticModel(bool b) {deleteStaticModel = b;}
-    virtual const MetaClass& getType() const {return metadata;}
-    virtual size_t getSize() const {return sizeof(CommandErase);}
-    static DECLARE_EXPORT const MetaClass metadata;
   private:
     /** Flags whether to delete the complete static model or only the
       * dynamic plan information. */
@@ -4700,9 +4668,6 @@ class CommandCreateOperationPlan : public Command
     bool undoable() const {return true;}
     ~CommandCreateOperationPlan() {if (opplan) delete opplan;}
     OperationPlan *getOperationPlan() const {return opplan;}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandCreateOperationPlan);}
     string getDescription() const
     {
       return "creating a new operationplan for operation '"
@@ -4731,9 +4696,6 @@ class CommandDeleteOperationPlan : public Command
     DECLARE_EXPORT void undo();
     bool undoable() const {return true;}
     ~CommandDeleteOperationPlan() {if (oper) undo();}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandDeleteOperationPlan);}
     DECLARE_EXPORT string getDescription() const;
 
   private:
@@ -4782,9 +4744,6 @@ class CommandMoveOperationPlan : public Command
     bool undoable() const {return true;}
     ~CommandMoveOperationPlan() { if (opplan) undo();}
     OperationPlan* getOperationPlan() const {return opplan;}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandMoveOperationPlan);}
     DECLARE_EXPORT string getDescription() const;
 
     /** Set another date for the operationplan.
@@ -5616,6 +5575,17 @@ class PythonOperationAlternate : public FreppleClass<PythonOperationAlternate,Py
       : FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>(p) {}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m)
+    {
+      getType().addMethod("addAlternate", addAlternate, METH_KEYWORDS, "add and alternate");
+      return FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>::initialize(m);
+    }
+  private:
+    /** Add an alternate to the operation.<br>
+      * The keyword arguments are "operation", "priority", "effective_start" 
+      * and "effective_end"
+      */
+    static DECLARE_EXPORT PyObject* addAlternate(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -5642,10 +5612,18 @@ class PythonOperationTimePer : public FreppleClass<PythonOperationTimePer,Python
 class PythonOperationRouting : public FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>
 {
   public:
+    static int initialize(PyObject* m)
+    {
+      getType().addMethod("addStep", addStep, METH_VARARGS , "add steps to the routing");
+      return FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>::initialize(m);
+    }
     PythonOperationRouting(OperationRouting* p)
       : FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>(p) {}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+  private:
+    /** Add one or more steps to a routing. */
+    static DECLARE_EXPORT PyObject* addStep(PyObject*, PyObject*);
 };
 
 
@@ -5813,7 +5791,7 @@ class PythonLoad : public PythonExtension<PythonLoad>
   private:
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+    static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
     static PyObject* proxy(Object* p) {return static_cast<PyObject*>(new PythonLoad(static_cast<Load*>(p)));}
     Load* ld;
 };
@@ -5859,7 +5837,7 @@ class PythonFlow : public PythonExtension<PythonFlow>
     PythonFlow(Flow* p) : fl(p) {}
   private:
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)  issue: construction & validation of floaws is a bit different....   
+    static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static PyObject* proxy(Object* p) {return static_cast<PyObject*>(new PythonFlow(static_cast<Flow*>(p)));}
     Flow* fl;
@@ -5910,7 +5888,7 @@ class PythonSolver : public FreppleCategory<PythonSolver,Solver>
     PythonSolver(Solver* p) : FreppleCategory<PythonSolver,Solver>(p) {}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static PyObject* solve(PyObject*, PyObject*);
+    static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
 };
 
 

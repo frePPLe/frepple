@@ -24,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from input.models import Plan
 from output.models import Problem
-from utils.report import *
+from common.report import *
 
 
 class Report(ListReport):

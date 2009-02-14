@@ -35,8 +35,7 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
 {
   bool hasMultipleLoads(opplan->sizeLoadPlans() > 2);
   DateRange orig;
-  double orig_opplan_qty = opplan->getQuantity();
-  
+
   // Loop through all loadplans, and solve for the resource.
   // This may move an operationplan early or late.
   do
@@ -58,18 +57,6 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
   // Repeat until no load has touched the opplan, or till proven infeasible.
   // No need to reloop if there is only a single load (= 2 loadplans)
   while (hasMultipleLoads && opplan->getDates()!=orig && (data.a_qty!=0.0 || data.forceLate));
-
-  if (data.a_qty == 0.0 && data.a_date!=Date::infiniteFuture && !data.forceLate)
-  {
-    // When the returned quantity is 0, the operationplan has been moved to a 
-    // new date. We want to assure the -late- reply date is at least capacity 
-    // feasible.
-    logger << "rechecking " << orig << "   " << opplan->getDates() << endl;
-    opplan->getOperation()->setOperationPlanParameters
-      (opplan, orig_opplan_qty, Date::infinitePast, opplan->getDates().getEnd());
-    data.forceLate = true;
-    checkOperationCapacity(opplan,data);
-  }
 }
 
 

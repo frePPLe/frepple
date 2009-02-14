@@ -152,9 +152,29 @@ def webserver():
 def debug():
   import code
   code.interact("Interactive debugging prompt (use CTRL-Z to exit)")
-
+  print "end debugging"
+  
 # Uncomment this line to show...
 #debug()
+?>
+
+<?python 
+#
+# The user interface, HTTP server and the debugger are now running
+# together in different threads.
+# 
+from threading import Thread
+class task(Thread):
+  def __init__(self, f):
+    super(task, self).__init__()
+    self.function = f
+  def run(self):
+    self.function()
+
+# Uncomment the folowing lines to show...
+#tasklist = ( task(debug), task(webserver), task(UI) )
+#for i in tasklist: i.start()
+#for i in tasklist: i.join()
 ?>
 
 </plan>

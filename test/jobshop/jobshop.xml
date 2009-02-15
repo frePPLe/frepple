@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<current>2009-01-01T00:00:00</current>
+  <description>
+  This test models the classic Fisher and Thompson 10x10 scheduling problem, also
+  known as the "mt10" scheduling problem.
+  Ten demands each have a routing over ten different machines. The machine
+  sequence and the processing time is different for each demand.
+  The optimal solution for this highly constrained and combinatorial problem is
+  930 hours.
+  </description>
+
+	<!-- Define the machines. -->
+	<resources>
+		<resource name="M00">
+			<maximum name="M00_size" xsi:type="calendar_double" default="1"/>
+		</resource>
+		<resource name="M01">
+			<maximum name="M01_size" xsi:type="calendar_double" default="1"/>
+		</resource>
+		<resource name="M02">
+			<maximum name="M02_size" xsi:type="calendar_double" default="1"/>
+		</resource>
+		<resource name="M03">
+			<maximum name="M03_size" xsi:type="calendar_double" default="1"/>
+		</resource>
+		<resource name="M04">
+			<maximum name="M04_size" xsi:type="calendar_double" default="1"/>
+		</resource>
+		<resource name="M05">
+			<maximum name="M05_size" xsi:type="calendar_double" default="1"/>
+		</resource>
+		<resource name="M06">
+			<maximum name="M06_size" xsi:type="calendar_double" default="1"/>
+		</resource>
+		<resource name="M07">
+			<maximum name="M07_size" xsi:type="calendar_double" default="1"/>
+		</resource>
+		<resource name="M08">
+			<maximum name="M08_size" xsi:type="calendar_double" default="1"/>
+		</resource>
+		<resource name="M09">
+			<maximum name="M09_size" xsi:type="calendar_double" default="1"/>
+		</resource>
+	</resources>
+
+	<demands>
+
+	  <!-- Job 1 -->
+	  <demand name="job 01">
+	    <item name="job 01"/>
+	    <due>2009-02-08T18:00:00</due>
+	    <quantity>1</quantity>
+	    <category>395</category>
+	    <operation name="job 1 routing" xsi:type="operation_routing">
+	    <steps>
+        <operation name="J01T01" xsi:type="operation_fixed_time" duration="PT29H">
+          <loads><load><resource name="M00"/></load></loads>
+        </operation>
+        <operation name="J01T02" xsi:type="operation_fixed_time" duration="PT78H">
+          <loads><load><resource name="M01"/></load></loads>
+        </operation>
+        <operation name="J01T03" xsi:type="operation_fixed_time" duration="PT9H">
+          <loads><load><resource name="M02"/></load></loads>
+        </operation>
+        <operation name="J01T04" xsi:type="operation_fixed_time" duration="PT36H">
+          <loads><load><resource name="M03"/></load></loads>
+        </operation>
+        <operation name="J01T05" xsi:type="operation_fixed_time" duration="PT49H">
+          <loads><load><resource name="M04"/></load></loads>
+        </operation>
+        <operation name="J01T06" xsi:type="operation_fixed_time" duration="PT11H">
+          <loads><load><resource name="M05"/></load></loads>
+        </operation>
+        <operation name="J01T07" xsi:type="operation_fixed_time" duration="PT62H">
+          <loads><load><resource name="M06"/></load></loads>
+        </operation>
+        <operation name="J01T08" xsi:type="operation_fixed_time" duration="PT56H">
+          <loads><load><resource name="M08"/></load></loads>
+        </operation>
+        <operation name="J01T09" xsi:type="operation_fixed_time" duration="PT44H">
+          <loads><load><resource name="M08"/></load></loads>
+        </operation>
+        <operation name="J01T10" xsi:type="operation_fixed_time" duration="PT21H">
+          <loads><load><resource name="M09"/></load></loads>
+        </operation>
+	    </steps>
+	    </operation>
+	  </demand>
+
+	  <!-- Job 2 -->
+	  <demand name="job 02">
+	    <item name="job 02"/>
+	    <due>2009-02-08T18:00:00</due>
+	    <quantity>1</quantity>
+	    <category>510</category>
+	    <operation name="job 2 routing" xsi:type="operation_routing">
+	    <steps>
+        <operation name="J02T01" xsi:type="operation_fixed_time" duration="PT43H">
+        <loads><load><resource name="M00"/></load></loads>
+        </operation>
+        <operation name="J02T02" xsi:type="operation_fixed_time" duration="PT90H">
+        <loads><load><resource name="M02"/></load></loads>
+        </operation>
+        <operation name="J02T03" xsi:type="operation_fixed_time" duration="PT75H">
+        <loads><load><resource name="M04"/></load></loads>
+        </operation>
+        <operation name="J02T04" xsi:type="operation_fixed_time" duration="PT11H">
+        <loads><load><resource name="M09"/></load></loads>
+        </operation>
+        <operation name="J02T05" xsi:type="operation_fixed_time" duration="PT69H">
+        <loads><load><resource name="M03"/></load></loads>
+        </operation>
+        <operation name="J02T06" xsi:type="operation_fixed_time" duration="PT28H">
+        <loads><load><resource name="M01"/></load></loads>
+        </operation>
+        <operation name="J02T07" xsi:type="operation_fixed_time" duration="PT46H">
+        <loads><load><resource name="M06"/></load></loads>
+        </operation>
+        <operation name="J02T08" xsi:type="operation_fixed_time" duration="PT46H">
+        <loads><load><resource name="M05"/></load></loads>
+        </operation>
+        <operation name="J02T09" xsi:type="operation_fixed_time" duration="PT72H">
+        <loads><load><resource name="M07"/></load></loads>
+        </operation>
+        <operation name="J02T10" xsi:type="operation_fixed_time" duration="PT30H">
+        <loads><load><resource name="M08"/></load></loads>
+        </operation>
+	    </steps>
+	    </operation>
+	  </demand>
+
+	  <!-- Job 3 -->
+	  <demand name="job 03">
+	    <item name="job 03"/>
+	    <due>2009-02-08T18:00:00</due>
+	    <quantity>1</quantity>
+	    <category>568</category>
+	    <operation name="job 3 routing" xsi:type="operation_routing">
+	    <steps>
+        <operation name="J03T01" xsi:type="operation_fixed_time" duration="PT91H">
+        <loads><load><resource name="M01"/></load></loads>
+        </operation>
+        <operation name="J03T02" xsi:type="operation_fixed_time" duration="PT85H">
+        <loads><load><resource name="M00"/></load></loads>
+        </operation>
+        <operation name="J03T03" xsi:type="operation_fixed_time" duration="PT39H">
+        <loads><load><resource name="M03"/></load></loads>
+        </operation>
+        <operation name="J03T04" xsi:type="operation_fixed_time" duration="PT74H">
+        <loads><load><resource name="M02"/></load></loads>
+        </operation>
+        <operation name="J03T05" xsi:type="operation_fixed_time" duration="PT90H">
+        <loads><load><resource name="M08"/></load></loads>
+        </operation>
+        <operation name="J03T06" xsi:type="operation_fixed_time" duration="PT10H">
+        <loads><load><resource name="M05"/></load></loads>
+        </operation>
+        <operation name="J03T07" xsi:type="operation_fixed_time" duration="PT12H">
+        <loads><load><resource name="M07"/></load></loads>
+        </operation>
+        <operation name="J03T08" xsi:type="operation_fixed_time" duration="PT89H">
+        <loads><load><resource name="M06"/></load></loads>
+        </operation>
+        <operation name="J03T09" xsi:type="operation_fixed_time" duration="PT45H">
+        <loads><load><resource name="M09"/></load></loads>
+        </operation>
+        <operation name="J03T10" xsi:type="operation_fixed_time" duration="PT33H">
+        <loads><load><resource name="M04"/></load></loads>
+        </operation>
+	    </steps>
+	    </operation>
+	  </demand>
+
+	  <!-- Job 4 -->
+	  <demand name="job 04">
+	    <item name="job 04"/>
+	    <due>2009-02-08T18:00:00</due>
+	    <quantity>1</quantity>
+	    <category>655</category>
+	    <operation name="job 4 routing" xsi:type="operation_routing">
+	    <steps>
+        <operation name="J04T01" xsi:type="operation_fixed_time" duration="PT81H">
+        <loads><load><resource name="M01"/></load></loads>
+        </operation>
+        <operation name="J04T02" xsi:type="operation_fixed_time" duration="PT95H">
+        <loads><load><resource name="M02"/></load></loads>
+        </operation>
+        <operation name="J04T03" xsi:type="operation_fixed_time" duration="PT71H">
+        <loads><load><resource name="M00"/></load></loads>
+        </operation>
+        <operation name="J04T04" xsi:type="operation_fixed_time" duration="PT99H">
+        <loads><load><resource name="M04"/></load></loads>
+        </operation>
+        <operation name="J04T05" xsi:type="operation_fixed_time" duration="PT09H">
+        <loads><load><resource name="M06"/></load></loads>
+        </operation>
+        <operation name="J04T06" xsi:type="operation_fixed_time" duration="PT52H">
+        <loads><load><resource name="M08"/></load></loads>
+        </operation>
+        <operation name="J04T07" xsi:type="operation_fixed_time" duration="PT85H">
+        <loads><load><resource name="M07"/></load></loads>
+        </operation>
+        <operation name="J04T08" xsi:type="operation_fixed_time" duration="PT98H">
+        <loads><load><resource name="M03"/></load></loads>
+        </operation>
+        <operation name="J04T09" xsi:type="operation_fixed_time" duration="PT22H">
+        <loads><load><resource name="M09"/></load></loads>
+        </operation>
+        <operation name="J04T10" xsi:type="operation_fixed_time" duration="PT43H">
+        <loads><load><resource name="M05"/></load></loads>
+        </operation>
+	    </steps>
+	    </operation>
+	  </demand>
+
+	  <!-- Job 5 -->
+	  <demand name="job 05">
+	    <item name="job 05"/>
+	    <due>2009-02-08T18:00:00</due>
+	    <quantity>1</quantity>
+	    <category>393</category>
+	    <operation name="job 5 routing" xsi:type="operation_routing">
+	    <steps>
+        <operation name="J05T01" xsi:type="operation_fixed_time" duration="PT14H">
+        <loads><load><resource name="M02"/></load></loads>
+        </operation>
+        <operation name="J05T02" xsi:type="operation_fixed_time" duration="PT06H">
+        <loads><load><resource name="M00"/></load></loads>
+        </operation>
+        <operation name="J05T03" xsi:type="operation_fixed_time" duration="PT22H">
+        <loads><load><resource name="M01"/></load></loads>
+        </operation>
+        <operation name="J05T04" xsi:type="operation_fixed_time" duration="PT61H">
+        <loads><load><resource name="M05"/></load></loads>
+        </operation>
+        <operation name="J05T05" xsi:type="operation_fixed_time" duration="PT26H">
+        <loads><load><resource name="M03"/></load></loads>
+        </operation>
+        <operation name="J05T06" xsi:type="operation_fixed_time" duration="PT69H">
+        <loads><load><resource name="M04"/></load></loads>
+        </operation>
+        <operation name="J05T07" xsi:type="operation_fixed_time" duration="PT21H">
+        <loads><load><resource name="M08"/></load></loads>
+        </operation>
+        <operation name="J05T08" xsi:type="operation_fixed_time" duration="PT49H">
+        <loads><load><resource name="M07"/></load></loads>
+        </operation>
+        <operation name="J05T09" xsi:type="operation_fixed_time" duration="PT72H">
+        <loads><load><resource name="M09"/></load></loads>
+        </operation>
+        <operation name="J05T10" xsi:type="operation_fixed_time" duration="PT53H">
+        <loads><load><resource name="M06"/></load></loads>
+        </operation>
+	    </steps>
+	    </operation>
+	  </demand>
+
+	  <!-- Job 6 -->
+	  <demand name="job 06">
+	    <item name="job 06"/>
+	    <due>2009-02-08T18:00:00</due>
+	    <quantity>1</quantity>
+	    <category>496</category>
+	    <operation name="job 6 routing" xsi:type="operation_routing">
+	    <steps>
+        <operation name="J06T01" xsi:type="operation_fixed_time" duration="PT84H">
+        <loads><load><resource name="M02"/></load></loads>
+        </operation>
+        <operation name="J06T02" xsi:type="operation_fixed_time" duration="PT02H">
+        <loads><load><resource name="M01"/></load></loads>
+        </operation>
+        <operation name="J06T03" xsi:type="operation_fixed_time" duration="PT52H">
+        <loads><load><resource name="M05"/></load></loads>
+        </operation>
+        <operation name="J06T04" xsi:type="operation_fixed_time" duration="PT95H">
+        <loads><load><resource name="M03"/></load></loads>
+        </operation>
+        <operation name="J06T05" xsi:type="operation_fixed_time" duration="PT48H">
+        <loads><load><resource name="M08"/></load></loads>
+        </operation>
+        <operation name="J06T06" xsi:type="operation_fixed_time" duration="PT72H">
+        <loads><load><resource name="M09"/></load></loads>
+        </operation>
+        <operation name="J06T07" xsi:type="operation_fixed_time" duration="PT47H">
+        <loads><load><resource name="M00"/></load></loads>
+        </operation>
+        <operation name="J06T08" xsi:type="operation_fixed_time" duration="PT65H">
+        <loads><load><resource name="M06"/></load></loads>
+        </operation>
+        <operation name="J06T09" xsi:type="operation_fixed_time" duration="PT06H">
+        <loads><load><resource name="M04"/></load></loads>
+        </operation>
+        <operation name="J06T10" xsi:type="operation_fixed_time" duration="PT25H">
+        <loads><load><resource name="M07"/></load></loads>
+        </operation>
+	    </steps>
+	    </operation>
+	  </demand>
+
+	  <!-- Job 7 -->
+	  <demand name="job 07">
+	    <item name="job 07"/>
+	    <due>2009-02-08T18:00:00</due>
+	    <quantity>1</quantity>
+	    <category>416</category>
+	    <operation name="job 7 routing" xsi:type="operation_routing">
+	    <steps>
+        <operation name="J07T01" xsi:type="operation_fixed_time" duration="PT46H">
+        <loads><load><resource name="M01"/></load></loads>
+        </operation>
+        <operation name="J07T02" xsi:type="operation_fixed_time" duration="PT37H">
+        <loads><load><resource name="M00"/></load></loads>
+        </operation>
+        <operation name="J07T03" xsi:type="operation_fixed_time" duration="PT61H">
+        <loads><load><resource name="M03"/></load></loads>
+        </operation>
+        <operation name="J07T04" xsi:type="operation_fixed_time" duration="PT13H">
+        <loads><load><resource name="M02"/></load></loads>
+        </operation>
+        <operation name="J07T05" xsi:type="operation_fixed_time" duration="PT32H">
+        <loads><load><resource name="M06"/></load></loads>
+        </operation>
+        <operation name="J07T06" xsi:type="operation_fixed_time" duration="PT21H">
+        <loads><load><resource name="M05"/></load></loads>
+        </operation>
+        <operation name="J07T07" xsi:type="operation_fixed_time" duration="PT32H">
+        <loads><load><resource name="M09"/></load></loads>
+        </operation>
+        <operation name="J07T08" xsi:type="operation_fixed_time" duration="PT89H">
+        <loads><load><resource name="M08"/></load></loads>
+        </operation>
+        <operation name="J07T09" xsi:type="operation_fixed_time" duration="PT30H">
+        <loads><load><resource name="M07"/></load></loads>
+        </operation>
+        <operation name="J07T10" xsi:type="operation_fixed_time" duration="PT55H">
+        <loads><load><resource name="M04"/></load></loads>
+        </operation>
+	    </steps>
+	    </operation>
+	  </demand>
+
+	  <!-- Job 8 -->
+	  <demand name="job 08">
+	    <item name="job 08"/>
+	    <due>2009-02-08T18:00:00</due>
+	    <quantity>1</quantity>
+	    <category>539</category>
+	    <operation name="job 8 routing" xsi:type="operation_routing">
+	    <steps>
+        <operation name="J08T01" xsi:type="operation_fixed_time" duration="PT31H">
+        <loads><load><resource name="M02"/></load></loads>
+        </operation>
+        <operation name="J08T02" xsi:type="operation_fixed_time" duration="PT86H">
+        <loads><load><resource name="M00"/></load></loads>
+        </operation>
+        <operation name="J08T03" xsi:type="operation_fixed_time" duration="PT46H">
+        <loads><load><resource name="M01"/></load></loads>
+        </operation>
+        <operation name="J08T04" xsi:type="operation_fixed_time" duration="PT74H">
+        <loads><load><resource name="M05"/></load></loads>
+        </operation>
+        <operation name="J08T05" xsi:type="operation_fixed_time" duration="PT32H">
+        <loads><load><resource name="M04"/></load></loads>
+        </operation>
+        <operation name="J08T06" xsi:type="operation_fixed_time" duration="PT88H">
+        <loads><load><resource name="M06"/></load></loads>
+        </operation>
+        <operation name="J08T07" xsi:type="operation_fixed_time" duration="PT19H">
+        <loads><load><resource name="M08"/></load></loads>
+        </operation>
+        <operation name="J08T08" xsi:type="operation_fixed_time" duration="PT48H">
+        <loads><load><resource name="M09"/></load></loads>
+        </operation>
+        <operation name="J08T09" xsi:type="operation_fixed_time" duration="PT36H">
+        <loads><load><resource name="M07"/></load></loads>
+        </operation>
+        <operation name="J08T10" xsi:type="operation_fixed_time" duration="PT79H">
+        <loads><load><resource name="M03"/></load></loads>
+        </operation>
+	    </steps>
+	    </operation>
+	  </demand>
+
+	  <!-- Job 9 -->
+	  <demand name="job 09">
+	    <item name="job 09"/>
+	    <due>2009-02-08T18:00:00</due>
+	    <quantity>1</quantity>
+	    <category>597</category>
+	    <operation name="job 9 routing" xsi:type="operation_routing">
+	    <steps>
+        <operation name="J09T01" xsi:type="operation_fixed_time" duration="PT76H">
+        <loads><load><resource name="M00"/></load></loads>
+        </operation>
+        <operation name="J09T02" xsi:type="operation_fixed_time" duration="PT69H">
+        <loads><load><resource name="M01"/></load></loads>
+        </operation>
+        <operation name="J09T03" xsi:type="operation_fixed_time" duration="PT76H">
+        <loads><load><resource name="M03"/></load></loads>
+        </operation>
+        <operation name="J09T04" xsi:type="operation_fixed_time" duration="PT51H">
+        <loads><load><resource name="M05"/></load></loads>
+        </operation>
+        <operation name="J09T05" xsi:type="operation_fixed_time" duration="PT85H">
+        <loads><load><resource name="M02"/></load></loads>
+        </operation>
+        <operation name="J09T06" xsi:type="operation_fixed_time" duration="PT11H">
+        <loads><load><resource name="M09"/></load></loads>
+        </operation>
+        <operation name="J09T07" xsi:type="operation_fixed_time" duration="PT40H">
+        <loads><load><resource name="M06"/></load></loads>
+        </operation>
+        <operation name="J09T08" xsi:type="operation_fixed_time" duration="PT89H">
+        <loads><load><resource name="M07"/></load></loads>
+        </operation>
+        <operation name="J09T09" xsi:type="operation_fixed_time" duration="PT26H">
+        <loads><load><resource name="M04"/></load></loads>
+        </operation>
+        <operation name="J09T10" xsi:type="operation_fixed_time" duration="PT74H">
+        <loads><load><resource name="M08"/></load></loads>
+        </operation>
+	    </steps>
+	    </operation>
+	  </demand>
+
+	  <!-- Job 10 -->
+	  <demand name="job 10">
+	    <item name="job 10"/>
+	    <due>2009-02-08T18:00:00</due>
+	    <quantity>1</quantity>
+	    <category>540</category>
+	    <operation name="job 10 routing" xsi:type="operation_routing">
+	    <steps>
+        <operation name="J10T01" xsi:type="operation_fixed_time" duration="PT85H">
+        <loads><load><resource name="M01"/></load></loads>
+        </operation>
+        <operation name="J10T02" xsi:type="operation_fixed_time" duration="PT13H">
+        <loads><load><resource name="M00"/></load></loads>
+        </operation>
+        <operation name="J10T03" xsi:type="operation_fixed_time" duration="PT61H">
+        <loads><load><resource name="M02"/></load></loads>
+        </operation>
+        <operation name="J10T04" xsi:type="operation_fixed_time" duration="PT07H">
+        <loads><load><resource name="M06"/></load></loads>
+        </operation>
+        <operation name="J10T05" xsi:type="operation_fixed_time" duration="PT64H">
+        <loads><load><resource name="M08"/></load></loads>
+        </operation>
+        <operation name="J10T06" xsi:type="operation_fixed_time" duration="PT76H">
+        <loads><load><resource name="M09"/></load></loads>
+        </operation>
+        <operation name="J10T07" xsi:type="operation_fixed_time" duration="PT47H">
+        <loads><load><resource name="M05"/></load></loads>
+        </operation>
+        <operation name="J10T08" xsi:type="operation_fixed_time" duration="PT52H">
+        <loads><load><resource name="M03"/></load></loads>
+        </operation>
+        <operation name="J10T09" xsi:type="operation_fixed_time" duration="PT90H">
+        <loads><load><resource name="M04"/></load></loads>
+        </operation>
+        <operation name="J10T10" xsi:type="operation_fixed_time" duration="PT45H">
+        <loads><load><resource name="M07"/></load></loads>
+        </operation>
+	    </steps>
+	    </operation>
+	  </demand>
+
+</demands>
+
+<!-- Solve and save the plan -->
+<?python
+
+from datetime import timedelta
+solver = frepple.solver_mrp(name="MRP", constraints=7, loglevel=0)
+bestSolution = None
+
+# The heuristic of the default solver is no match for this very complex
+# combinatorial problem. We ned to solve many times with different due dates
+# and priorities to search for good solutions.
+
+# Try different due dates - This is because the heuristic plans ASAP after the
+# due date, which is not a good strategy for filling gaps in the available
+# capacity. We try different due dates.
+iterations = 0
+anybodylate = True
+while anybodylate:
+  # Try different priorities - This is because the heuristic plans order by
+  # order and locks the plan of an order when moving to the next one. The
+  # greedy heuristic doesn't allow trade-offs between orders. We try different
+  # priorities to get closer
+  anybodylate = False
+  for x in range(0,20):
+    # Create the plan
+    solver.solve()
+    iterations += 1
+    # Find the latest demand
+    sortfield=lambda x: x[1]
+    end = []
+    max = frepple.settings.current
+    for i in frepple.demands():
+      for j in i.operationplans:
+        if j.end > max:
+          max = j.end
+          latestOrder = i
+        if j.end > i.due: anybodylate = True
+        end.append( (i, j.end) )
+    # Keep track of the best solution
+    if bestSolution == None or max < bestSolution:
+      bestSolution = max
+      best = []
+      for i in frepple.demands():
+        best.append( (i, i.priority, i.due) )
+      best.sort(None, sortfield)
+      timespan = (bestSolution - frepple.settings.current).days * 24
+      print "\nBest solution: %d, %d%% over the optimum solution" % \
+        ( timespan, (timespan - 930) / 9.30)
+      for l in best:
+        print "   ", l[0].name, l[1], l[2]
+    # Updates the priorities. The logic we use assure the critical
+    # jobs keep the highest priority, while we allow the priorities
+    # of the less critical jobs to change more.
+    end.sort(None, sortfield, True)
+    prio = 0
+    for l in end:
+      l[0].priority += prio
+      prio += 1
+  # Due date could be met for all orders and we can stop our search.
+  if not anybodylate: break
+  # Increment the due date for the next iteration, and reset priorities
+  for i in frepple.demands():
+    i.due += timedelta(0,3600)
+    i.priority = 0
+
+print "\nTotal %d iterations" % iterations
+
+# Restore the input used to generate the best solution
+for i in best:
+  (i[0].priority, i[0].due) = (i[1], i[2])
+
+# Solve a last time to recreate the best solution
+solver.solve()
+
+# Save
+frepple.saveplan("output.1.xml")
+
+?>
+
+</plan>

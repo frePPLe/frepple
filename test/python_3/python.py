@@ -75,6 +75,10 @@ def printModel(filename):
       print >>output, "    Load:", l.resource.name, l.quantity, l.effective_start, l.effective_end
     for l in b.flows:
       print >>output, "    Flow:", l.buffer.name, l.quantity, l.effective_start, l.effective_end
+    if isinstance(b, frepple.operation_alternate):
+      for l in b.alternates:
+        print >>output, "    Alternate:", l.name
+
 
   # Demands
   print >>output, "\nEchoing demands:"
@@ -125,40 +129,6 @@ def printExtensions():
     print "    %s: %s" % (name, o)
 
 
-# Load a file - These things can't be done yet from Python
-frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
-<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <resources>
-    <resource name="Resource">
-      <maximum name="Capacity" xsi:type="calendar_double">
-        <buckets>
-          <bucket start="2009-01-01T00:00:00">
-            <value>1</value>
-          </bucket>
-        </buckets>
-      </maximum>
-      <loads>
-        <load>
-          <operation name="make end item" />
-        </load>
-      </loads>
-    </resource>
-  </resources>
-  <flows>
-    <flow xsi:type="flow_start">
-      <operation name="delivery end item" />
-      <buffer name="end item" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="make end item" />
-      <buffer name="end item" />
-      <quantity>1</quantity>
-    </flow>
-  </flows>
-</plan>
-''')
-
 ###
 print "\nUpdating global settings"
 frepple.settings.name = "demo model"
@@ -177,12 +147,50 @@ frepple.calendar(name="boolcal", action="R")
 
 ###
 print "\nCreating operations"
-makeoper = frepple.operation_fixed_time(name="make end item", duration=86400)
 shipoper = frepple.operation_fixed_time(name="delivery end item", duration=86400)
+choice = frepple.operation_alternate(name="make or buy item")
+makeoper = frepple.operation_fixed_time(name="make item", duration=7*86400)
+buyoper = frepple.operation_fixed_time(name="buy item", duration=86400)
+choice.addAlternate(operation=makeoper, priority=1)
+choice.addAlternate(operation=buyoper, priority=2)
+
+# Load some data - These things can't be done yet from Python
+frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <resources>
+    <resource name="Resource">
+      <maximum name="Capacity" xsi:type="calendar_double">
+        <buckets>
+          <bucket start="2009-01-01T00:00:00">
+            <value>1</value>
+          </bucket>
+        </buckets>
+      </maximum>
+      <loads>
+        <load>
+          <operation name="make item" />
+        </load>
+      </loads>
+    </resource>
+  </resources>
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="delivery end item" />
+      <buffer name="end item" />
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="make or buy item" />
+      <buffer name="end item" />
+      <quantity>1</quantity>
+    </flow>
+  </flows>
+</plan>
+''')
 
 ###
 print "\nCreating operationplans"
-opplan = frepple.operationplan(operation="make end item", quantity=9, start=datetime.datetime(2011,1,1))
+opplan = frepple.operationplan(operation="make item", quantity=9, start=datetime.datetime(2011,1,1))
 opplan.locked = True
 
 ###
@@ -216,7 +224,7 @@ locA = frepple.location(name="locA")
 locB = frepple.location(name="locB")
 
 ###
-buf = frepple.buffer(name="end item", producing=makeoper, item=item)
+buf = frepple.buffer(name="end item", producing=choice, item=item)
 
 print "\nCreating some buffers"
 buf1 = frepple.buffer_procure(name="buffer1", description="pol", category="tttt", location=locA, item=itemlist[1])
@@ -259,7 +267,7 @@ order3 = frepple.demand(name="order 3", item=item, quantity=10, priority=3, \
 
 ###
 print "\nCreating a solver and running it"
-frepple.solver_mrp(name="MRP", constraints=7).solve()
+frepple.solver_mrp(name="MRP", constraints=7, loglevel=0).solve()
 
 ###
 print "\nEchoing the model to a file"

@@ -838,7 +838,15 @@ DECLARE_EXPORT int PythonOperationTimePer::setattro(const Attribute& attr, const
 
 DECLARE_EXPORT PyObject* PythonOperationAlternate::getattro(const Attribute& attr)
 {
-  // @todo alternates
+  if (!obj) return Py_BuildValue("");
+  if (attr.isA(Tags::tag_alternates))
+  {
+    PyObject* result = PyTuple_New(obj->getSubOperations().size());
+    int count = 0;
+    for (Operation::Operationlist::const_iterator i = obj->getSubOperations().begin(); i != obj->getSubOperations().end(); ++i)
+      PyTuple_SetItem(result, count++, PythonObject(*i));
+    return result;
+  }
   return PythonOperation(obj).getattro(attr); 
 }
 

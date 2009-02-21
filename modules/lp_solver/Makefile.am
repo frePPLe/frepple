@@ -13,7 +13,7 @@ usrlib_LTLIBRARIES = mod_lpsolver.la
 mod_lpsolver_la_SOURCES = $(sources)
 mod_lpsolverdir = $(datadir)
 mod_lpsolver_DATA = mod_lpsolver.xsd
-mod_lpsolver_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
+mod_lpsolver_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null -lfrepple
 
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll

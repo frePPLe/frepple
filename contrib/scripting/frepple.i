@@ -30,7 +30,8 @@
 //
 %module frepple
 %{
-	#include "freppleinterface.h"
+  #include "frepple.h"
+  #include "freppleinterface.h"
 	#include <stdexcept>
 %}
 
@@ -103,18 +104,16 @@ typedef boolean ff;
 // DEFINE THE EXPOSED API
 //
 #ifdef SWIGJAVA
-  void FreppleInitialize(const char* x) throw (std::exception);
+  void FreppleInitialize() throw (std::exception);
   void FreppleReadXMLData(char* x, bool a, bool b) throw (std::exception);
   void FreppleReadXMLFile(char* x, bool a, bool b) throw (std::exception);
   void FreppleSaveFile(char* x) throw (std::exception);
-  std::string FreppleSaveString() throw (std::exception);
   void FreppleExit() throw (std::exception);
 #else
-  void FreppleInitialize(const char* x);
+  void FreppleInitialize();
   void FreppleReadXMLData(char* x, bool a, bool b);
   void FreppleReadXMLFile(char* x, bool a, bool b);
   void FreppleSaveFile(char* x);
-  std::string FreppleSaveString();
   void FreppleExit();
 #endif
 

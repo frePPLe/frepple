@@ -36,11 +36,11 @@ endif
 python: frepple.i
 	$(SWIG) -c++ -python -o wrapper_python.cpp frepple.i
 if CYGWIN
-	$(CXX) -c wrapper_python.cpp -fPIC -I../../include -I/usr/include/python2.5
-	$(CXX) -shared wrapper_python.o -L/lib/python2.4/config -L../../src/.libs -lpython2.5 -lfrepple -Wl,--add-stdcall-alias -o _frepple.dll
+	$(CXX) -c wrapper_python.cpp -fPIC -I../../include -I/usr/include/python$(PYTHON_VERSION)
+	$(CXX) -shared wrapper_python.o -L/lib/python$(PYTHON_VERSION)/config -L../../src/.libs -lpython$(PYTHON_VERSION) -lfrepple -Wl,--add-stdcall-alias -o _frepple.dll
 else
-	$(CXX) -c wrapper_python.cpp -fPIC -I../../include -I/usr/include/python2.4
-	$(CXX) -shared wrapper_python.o -L/lib/python2.4/config -L../../src/.libs -lpython2.4 -lfrepple -lxerces-c -o _frepple.so
+	$(CXX) -c wrapper_python.cpp -fPIC -I../../include -I/usr/include/python$(PYTHON_VERSION)
+	$(CXX) -shared wrapper_python.o -L/lib/python$(PYTHON_VERSION)/config -L../../src/.libs -lpython$(PYTHON_VERSION) -lfrepple -lxerces-c -o _frepple.so
 endif
 	-python frepple_python.py
 

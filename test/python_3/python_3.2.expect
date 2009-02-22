@@ -44,13 +44,22 @@
 		<operation name="delivery end item" xsi:type="operation_fixed_time">
 			<duration>P1D</duration>
 		</operation>
-		<operation name="make item" xsi:type="operation_fixed_time">
-			<duration>P7D</duration>
+		<operation name="make item" xsi:type="operation_routing">
+			<steps>
+				<operation name="make item - step 1" xsi:type="operation_fixed_time"/>
+				<operation name="make item - step 2" xsi:type="operation_fixed_time"/>
+			</steps>
+		</operation>
+		<operation name="make item - step 1" xsi:type="operation_fixed_time">
+			<duration>P4D</duration>
+		</operation>
+		<operation name="make item - step 2" xsi:type="operation_fixed_time">
+			<duration>P3D</duration>
 		</operation>
 		<operation name="make or buy item" xsi:type="operation_alternate">
 			<alternates>
 				<alternate>
-					<operation name="make item" xsi:type="operation_fixed_time"/>
+					<operation name="make item" xsi:type="operation_routing"/>
 					<priority>1</priority>
 				</alternate>
 				<alternate>
@@ -87,8 +96,8 @@
 	</items>
 	<buffers>
 		<buffer name="buffer1" xsi:type="buffer_procure">
-			<category>tttt</category>
-			<description>pol</description>
+			<category>My category</category>
+			<description>My description</description>
 			<members>
 				<buffer name="buffer2"/>
 			</members>
@@ -144,7 +153,10 @@
 			<maximum name="Capacity" xsi:type="calendar_double"/>
 			<loads>
 				<load>
-					<operation name="make item" xsi:type="operation_fixed_time"/>
+					<operation name="make item - step 2" xsi:type="operation_fixed_time"/>
+				</load>
+				<load>
+					<operation name="make item - step 1" xsi:type="operation_fixed_time"/>
 				</load>
 			</loads>
 		</resource>
@@ -153,59 +165,109 @@
 		</resource>
 	</resources>
 	<operationplans>
-		<operationplan id="5" operation="delivery end item">
+		<operationplan id="9" operation="delivery end item">
 			<demand name="order 2"/>
 			<start>2009-03-01T08:30:00</start>
 			<end>2009-03-02T08:30:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="2" operation="delivery end item">
+		<operationplan id="4" operation="delivery end item">
 			<demand name="order 1"/>
 			<start>2009-03-01T09:00:00</start>
 			<end>2009-03-02T09:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="8" operation="delivery end item">
+		<operationplan id="14" operation="delivery end item">
 			<demand name="order 3"/>
 			<start>2009-03-01T20:00:00</start>
 			<end>2009-03-02T20:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="9" operation="make item">
+		<operationplan id="17" operation="make item">
 			<start>2009-02-08T09:00:00</start>
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
-			<owner id="10" operation="make or buy item"/>
+			<owner id="18" operation="make or buy item"/>
 		</operationplan>
-		<operationplan id="6" operation="make item">
+		<operationplan id="12" operation="make item">
 			<start>2009-02-15T09:00:00</start>
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
-			<owner id="7" operation="make or buy item"/>
+			<owner id="13" operation="make or buy item"/>
 		</operationplan>
-		<operationplan id="3" operation="make item">
+		<operationplan id="7" operation="make item">
 			<start>2009-02-22T09:00:00</start>
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
-			<owner id="4" operation="make or buy item"/>
+			<owner id="8" operation="make or buy item"/>
 		</operationplan>
-		<operationplan id="1" operation="make item">
-			<start>2011-01-01T00:00:00</start>
-			<end>2011-01-08T00:00:00</end>
+		<operationplan id="3" operation="make item">
+			<start>2010-12-25T00:00:00</start>
+			<end>2011-01-01T00:00:00</end>
 			<quantity>9</quantity>
 			<locked>true</locked>
 		</operationplan>
-		<operationplan id="10" operation="make or buy item">
+		<operationplan id="15" operation="make item - step 1">
+			<start>2009-02-08T09:00:00</start>
+			<end>2009-02-12T09:00:00</end>
+			<quantity>10</quantity>
+			<owner id="17" operation="make item"/>
+		</operationplan>
+		<operationplan id="10" operation="make item - step 1">
+			<start>2009-02-15T09:00:00</start>
+			<end>2009-02-19T09:00:00</end>
+			<quantity>10</quantity>
+			<owner id="12" operation="make item"/>
+		</operationplan>
+		<operationplan id="5" operation="make item - step 1">
+			<start>2009-02-22T09:00:00</start>
+			<end>2009-02-26T09:00:00</end>
+			<quantity>10</quantity>
+			<owner id="7" operation="make item"/>
+		</operationplan>
+		<operationplan id="1" operation="make item - step 1">
+			<start>2010-12-25T00:00:00</start>
+			<end>2010-12-29T00:00:00</end>
+			<quantity>9</quantity>
+			<locked>true</locked>
+			<owner id="3" operation="make item"/>
+		</operationplan>
+		<operationplan id="16" operation="make item - step 2">
+			<start>2009-02-12T09:00:00</start>
+			<end>2009-02-15T09:00:00</end>
+			<quantity>10</quantity>
+			<owner id="17" operation="make item"/>
+		</operationplan>
+		<operationplan id="11" operation="make item - step 2">
+			<start>2009-02-19T09:00:00</start>
+			<end>2009-02-22T09:00:00</end>
+			<quantity>10</quantity>
+			<owner id="12" operation="make item"/>
+		</operationplan>
+		<operationplan id="6" operation="make item - step 2">
+			<start>2009-02-26T09:00:00</start>
+			<end>2009-03-01T09:00:00</end>
+			<quantity>10</quantity>
+			<owner id="7" operation="make item"/>
+		</operationplan>
+		<operationplan id="2" operation="make item - step 2">
+			<start>2010-12-29T00:00:00</start>
+			<end>2011-01-01T00:00:00</end>
+			<quantity>9</quantity>
+			<locked>true</locked>
+			<owner id="3" operation="make item"/>
+		</operationplan>
+		<operationplan id="18" operation="make or buy item">
 			<start>2009-02-08T09:00:00</start>
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="7" operation="make or buy item">
+		<operationplan id="13" operation="make or buy item">
 			<start>2009-02-15T09:00:00</start>
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="4" operation="make or buy item">
+		<operationplan id="8" operation="make or buy item">
 			<start>2009-02-22T09:00:00</start>
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>

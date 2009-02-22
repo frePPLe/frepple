@@ -78,6 +78,9 @@ def printModel(filename):
     if isinstance(b, frepple.operation_alternate):
       for l in b.alternates:
         print >>output, "    Alternate:", l.name
+    if isinstance(b, frepple.operation_routing):
+      for l in b.steps:
+        print >>output, "    Step:", l.name
 
 
   # Demands
@@ -149,7 +152,9 @@ frepple.calendar(name="boolcal", action="R")
 print "\nCreating operations"
 shipoper = frepple.operation_fixed_time(name="delivery end item", duration=86400)
 choice = frepple.operation_alternate(name="make or buy item")
-makeoper = frepple.operation_fixed_time(name="make item", duration=7*86400)
+makeoper = frepple.operation_routing(name="make item")
+makeoper.addStep(frepple.operation_fixed_time(name="make item - step 1", duration=4*86400))
+makeoper.addStep(frepple.operation_fixed_time(name="make item - step 2", duration=3*86400))
 buyoper = frepple.operation_fixed_time(name="buy item", duration=86400)
 choice.addAlternate(operation=makeoper, priority=1)
 choice.addAlternate(operation=buyoper, priority=2)
@@ -168,7 +173,10 @@ frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
       </maximum>
       <loads>
         <load>
-          <operation name="make item" />
+          <operation name="make item - step 1" />
+        </load>
+        <load>
+          <operation name="make item - step 2" />
         </load>
       </loads>
     </resource>
@@ -190,7 +198,7 @@ frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
 
 ###
 print "\nCreating operationplans"
-opplan = frepple.operationplan(operation="make item", quantity=9, start=datetime.datetime(2011,1,1))
+opplan = frepple.operationplan(operation="make item", quantity=9, end=datetime.datetime(2011,1,1))
 opplan.locked = True
 
 ###
@@ -224,10 +232,15 @@ locA = frepple.location(name="locA")
 locB = frepple.location(name="locB")
 
 ###
+print "\nCreating some buffers"
+
 buf = frepple.buffer(name="end item", producing=choice, item=item)
 
-print "\nCreating some buffers"
-buf1 = frepple.buffer_procure(name="buffer1", description="pol", category="tttt", location=locA, item=itemlist[1])
+buf1 = frepple.buffer_procure(name="buffer1",
+  description="My description",
+  category="My category",
+  location=locA,
+  item=itemlist[1])
 print buf1, buf1.__class__, buf1.location, isinstance(buf1, frepple.buffer), \
   isinstance(buf1, frepple.buffer_default), \
   isinstance(buf1, frepple.buffer_procure), \

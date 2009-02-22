@@ -16,13 +16,13 @@ usrlibdir = $(libdir)/frepple
 usrlib_LTLIBRARIES = mod_forecast.la
 mod_forecastdir = $(datadir)
 mod_forecast_DATA = mod_forecast.xsd
-mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null -lfrepple
+mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
 mod_forecast_la_SOURCES = $(sources)
+mod_forecast_la_LIBADD = ../../src/libfrepple.la
 
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
 mod_forecast_la_LDFLAGS += -no-undefined
-mod_forecast_la_LIBADD = ../../src/libfrepple.la
 endif
 
 # A convenience copy to quickly collect the results

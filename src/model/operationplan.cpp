@@ -777,7 +777,7 @@ DECLARE_EXPORT void OperationPlanRouting::setEnd(Date d)
 
 DECLARE_EXPORT void OperationPlanRouting::setStart(Date d)
 {
-  if (step_opplans.empty())
+  if (step_opplans.empty()) 
     OperationPlan::setStart(d);
   else
   {
@@ -836,7 +836,8 @@ DECLARE_EXPORT bool OperationPlanRouting::initialize()
   {
     Date d = getDates().getEnd();
     OperationPlan *p = NULL;
-    if (d)
+    // @todo not possible to initialize a routing oplan based on a start date
+    if (d != Date::infiniteFuture)
     {
       // Using the end date
       for (Operation::Operationlist::const_reverse_iterator e =
@@ -868,10 +869,10 @@ DECLARE_EXPORT bool OperationPlanRouting::initialize()
   // Initialize the suboperationplans
   for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
       i != step_opplans.end(); ++i)
-    (*i)->initialize();
+      if (!(*i)->getIdentifier()) (*i)->initialize();
 
   // Initialize myself
-  return OperationPlan::initialize();
+  return getIdentifier() ? true : OperationPlan::initialize();
 }
 
 
@@ -960,8 +961,8 @@ DECLARE_EXPORT bool OperationPlanAlternate::initialize()
   }
 
   // Initialize this operationplan and its child
-  if (altopplan) altopplan->initialize();
-  return OperationPlan::initialize();
+  if (altopplan && !altopplan->getIdentifier()) altopplan->initialize();
+  return getIdentifier() ? true : OperationPlan::initialize();
 }
 
 

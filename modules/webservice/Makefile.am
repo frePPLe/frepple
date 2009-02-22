@@ -23,11 +23,11 @@ mod_webservice_DATA = mod_webservice.xsd
 #mod_webservice_la_LIBADD = -lgsoap++
 #mod_webservice_la_SOURCES = faultC.cpp module_webserviceServerLib.cpp $(sources) /home/frepple/workspace/gsoap-2.7/soapcpp2/stdsoap2.cpp
 mod_webservice_la_SOURCES = $(sources)
-mod_webservice_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null -lfrepple
+mod_webservice_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
+mod_webservice_la_LIBADD = ../../src/libfrepple.la
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
 mod_webservice_la_LDFLAGS += -no-undefined
-#mod_webservice_la_LIBADD += ../../src/libfrepple.la
 endif
 
 module_webserviceServerLib.cpp: webservice.h

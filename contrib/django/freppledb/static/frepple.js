@@ -26,15 +26,14 @@ var upload = {
       + '\r\n\r\n--7d79--\r\n'
     new Ajax.Request("/edit/", {
         method: 'post',
-        asynchroneous: false,
+        asynchronous: false,
         contentType: 'multipart/form-data; boundary=7d79',
         postBody: payload,
-        onSuccess: function(transport) {},
-        onFailure: function(transport) {}
+        onComplete: function(transport) {
+          // Refresh the page
+          window.location.href=window.location.href;
+          }
         });
-
-    // Refresh the page
-    window.location.href=window.location.href;
   }
 }
 

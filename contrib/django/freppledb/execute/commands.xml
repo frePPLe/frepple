@@ -2,6 +2,7 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <?python
 import os
+from datetime import datetime
 
 from freppledb.execute.export_database import exportfrepple as export_to_database
 from freppledb.execute.export_file import exportfrepple as export_to_file
@@ -31,26 +32,26 @@ else:
     settings.DATABASE_NAME, settings.DATABASE_USER, settings.DATABASE_HOST, \
     settings.DATABASE_PORT)
 
-print "\nStart loading data from the database"
+print "\nStart loading data from the database at", datetime.now().strftime("%H:%M:%S")
 frepple.printsize()
 loadfrepple()
 frepple.printsize()
 
-print "\nStart plan generation"
+print "\nStart plan generation at", datetime.now().strftime("%H:%M:%S")
 frepple.solver_forecast(name="Netting orders from forecast",loglevel=0).solve()
 frepple.solver_mrp(name="MRP",loglevel=0).solve()
 frepple.printsize()
 
-print "\nStart exporting plan to the database"
+print "\nStart exporting plan to the database at", datetime.now().strftime("%H:%M:%S")
 export_to_database()
 
-#print "\nStart saving the plan to flat files"
+#print "\nStart saving the plan to flat files at", datetime.now().strftime("%H:%M:%S")
 #export_to_file()
 
-#print "\nStart saving the plan to an XML file"
+#print "\nStart saving the plan to an XML file at", datetime.now().strftime("%H:%M:%S")
 #frepple.saveXMLfile("output.1.xml")
 
-#print "Start deleting model data"
+#print "Start deleting model data at", datetime.now().strftime("%H:%M:%S")
 #frepple.erase(True)
 #frepple.printsize()
 ?>

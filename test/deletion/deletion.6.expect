@@ -159,6 +159,7 @@
 			<maximum name="assembly capacity" xsi:type="calendar_double"/>
 		</resource>
 		<resource name="transport">
+			<location name="Sublocation 1"/>
 		</resource>
 	</resources>
 	<operationplans>

@@ -111,6 +111,7 @@
 	</demands>
 	<resources>
 		<resource name="transport">
+			<location name="Sublocation 1"/>
 		</resource>
 	</resources>
 	<problems>

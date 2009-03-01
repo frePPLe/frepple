@@ -140,6 +140,8 @@ DECLARE_EXPORT void Resource::beginElement (XMLInput& pIn, const Attribute& pAtt
     pIn.readto( Calendar::reader(Calendar::metadata,pIn.getAttributes()) );
   else if (pAttr.isA(Tags::tag_loadplans))
     pIn.IgnoreElement();
+  else if (pAttr.isA(Tags::tag_location))
+    pIn.readto( Location::reader(Location::metadata,pIn.getAttributes()) );
   else
     HasHierarchy<Resource>::beginElement(pIn, pAttr);
 }
@@ -166,6 +168,12 @@ DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, const Attribute& pAttr,
   }
   else if (pAttr.isA (Tags::tag_cost))
     setCost(pElement.getDouble());
+  else if (pAttr.isA(Tags::tag_location))
+  {
+    Location * d = dynamic_cast<Location*>(pIn.getPreviousObject());
+    if (d) setLocation(d);
+    else throw LogicException("Incorrect object type during read operation");
+  }
   else
   {
     Plannable::endElement(pIn, pAttr, pElement);

@@ -176,6 +176,7 @@
 	<resources>
 		<resource name="assemble">
 			<maximum name="assembly capacity" xsi:type="calendar_double"/>
+			<location name="Location 1"/>
 			<loads>
 				<load>
 					<operation name="make item 1" xsi:type="operation_fixed_time"/>
@@ -183,6 +184,7 @@
 			</loads>
 		</resource>
 		<resource name="transport">
+			<location name="Sublocation 1"/>
 		</resource>
 	</resources>
 	<problems>

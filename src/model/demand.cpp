@@ -130,6 +130,23 @@ DECLARE_EXPORT const Demand::OperationPlan_list& Demand::getDelivery() const
   return deli;
 }
 
+    
+DECLARE_EXPORT OperationPlan* Demand::getLatestDelivery() const
+{
+  const Demand::OperationPlan_list& l = getDelivery();
+  return l.empty() ? NULL : *(l.begin());
+}
+
+
+DECLARE_EXPORT OperationPlan* Demand::getEarliestDelivery() const
+{
+  const Demand::OperationPlan_list& l = getDelivery();
+  OperationPlan *last = NULL;
+  for (Demand::OperationPlan_list::const_iterator i = l.begin(); i!=l.end(); ++i)
+    last = *i;
+  return last;
+}
+
 
 DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
 {

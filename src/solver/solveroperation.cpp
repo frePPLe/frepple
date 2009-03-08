@@ -535,25 +535,48 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
     }
   }
 
-  // Try all alternates
+  // Try all alternates:
+  // - First, all alternates that are fully effective in the order of priority.
+  // - Next, the alternates beyond their effectivity date.
+  //   We loop through these since they can help in meeting a demand on time, 
+  //   but using them will also create extra inventory or delays.
   double a_qty = Solver->q_qty;
+  bool effectiveOnly = true;
   Date a_date = Date::infiniteFuture;
+  Date ask_date;
   for (Operation::Operationlist::const_iterator altIter
       = oper->getSubOperations().begin();
-      altIter != oper->getSubOperations().end(); ++altIter)
+      altIter != oper->getSubOperations().end(); )
   {
     // Operations with 0 priority are considered unavailable
     const OperationAlternate::alternateProperty& props 
       = oper->getProperties(*altIter);
-    if (props.first == 0.0 || !props.second.within(Solver->q_date)) // @todo logic is to be owned by the operation?
+
+    // Filter out alternates that are not suitable
+    if (props.first == 0.0
+      || (effectiveOnly && !props.second.within(Solver->q_date))
+      || (!effectiveOnly && props.second.getEnd() > Solver->q_date)
+      )
+    {
+      ++altIter;
+      if (altIter == oper->getSubOperations().end() && effectiveOnly)
+      {
+        // Prepare for a second iteration over all alternates
+        effectiveOnly = false;
+        altIter = oper->getSubOperations().begin();
+      }
       continue;
+    }
+
+    // Establish the ask date
+    ask_date = effectiveOnly ? origQDate : props.second.getEnd(); 
 
     // Find the flow into the requesting buffer. It may or may not exist, since
     // the flow could already exist on the top operationplan
     double sub_flow_qty_per = 0.0;
     if (buf)
     {
-      Flow* f = (*altIter)->findFlow(buf, Solver->q_date);
+      Flow* f = (*altIter)->findFlow(buf, ask_date);
       if (f && f->getQuantity() > 0.0)
         sub_flow_qty_per = f->getQuantity();
       else if (!top_flow_exists)
@@ -570,10 +593,10 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
     // Note that both the top- and the sub-operation can have a flow in the
     // requested buffer
     Solver->q_qty = a_qty / (sub_flow_qty_per + top_flow_qty_per);
-    Solver->q_date = origQDate;
+    Solver->q_date = ask_date;
     Solver->curDemand = const_cast<Demand*>(d);
     CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
-        oper, a_qty, Date::infinitePast, origQDate,
+        oper, a_qty, Date::infinitePast, ask_date,
         Solver->curDemand, prev_owner_opplan, false
         );
     Solver->add(a);
@@ -587,8 +610,8 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
     // Solve constraints
     (*altIter)->solve(*this,v);
 
-    // Keep the lowest of all next-date answers
-    if (Solver->a_date < a_date && Solver->a_date > origQDate)
+    // Keep the lowest of all next-date answers on the effective alternates
+    if (effectiveOnly && Solver->a_date < a_date && Solver->a_date > ask_date)
       a_date = Solver->a_date;
 
     // Process the result
@@ -613,7 +636,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
       // Combine the reply date of the top-opplan with the alternate check: we
       // need to return the minimum next-date.
-      if (Solver->a_date < a_date && Solver->a_date > origQDate)
+      if (Solver->a_date < a_date && Solver->a_date > ask_date)
         a_date = Solver->a_date;
 
       // Are we at the end already?
@@ -623,7 +646,17 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         break;
       }
     }
-  }
+
+    // Select the next alternate
+    ++altIter;
+    if (altIter == oper->getSubOperations().end() && effectiveOnly)
+    {
+      // Prepare for a second iteration over all alternates
+      effectiveOnly = false;
+      altIter = oper->getSubOperations().begin();
+    }
+
+  } // End loop over all alternates
   Solver->a_qty = origQqty - a_qty;
   Solver->a_date = a_date;
 

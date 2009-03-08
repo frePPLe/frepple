@@ -127,7 +127,8 @@ DECLARE_EXPORT void Demand::updateProblems()
 
 DECLARE_EXPORT string ProblemLate::getDescription() const
 {
-  TimePeriod t((*(getDemand()->getDelivery().begin()))->getDates().getEnd()
+  assert(getDemand() && !getDemand()->getDelivery().empty());
+  TimePeriod t(getDemand()->getLatestDelivery()->getDates().getEnd()
                - getDemand()->getDue());
   return string("Demand '") + getDemand()->getName() + "' planned "
          + string(t) + " after its due date";
@@ -136,8 +137,9 @@ DECLARE_EXPORT string ProblemLate::getDescription() const
 
 DECLARE_EXPORT string ProblemEarly::getDescription() const
 {
-  TimePeriod t(getDemand()->getDue()
-               - (*(getDemand()->getDelivery().begin()))->getDates().getEnd());
+  assert(getDemand() && !getDemand()->getDelivery().empty());
+  TimePeriod t(getDemand()->getDue() 
+               - getDemand()->getEarliestDelivery()->getDates().getEnd());
   return string("Demand '") + getDemand()->getName() + "' planned "
          + string(t) + " before its due date";
 }

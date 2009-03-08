@@ -3895,10 +3895,13 @@ class Demand
     /** Returns the delivery operationplan list. */
     DECLARE_EXPORT const OperationPlan_list& getDelivery() const;
 
-    /** Adds a delivery operationplan for this demand. If the policy
-      * SINGLEDELIVERY is set, any previous delivery operationplan is
-      * unregistered first.
-      */
+    /** Returns the latest delivery operationplan. */
+    DECLARE_EXPORT OperationPlan* getLatestDelivery() const;
+
+    /** Returns the earliest delivery operationplan. */
+    DECLARE_EXPORT OperationPlan* getEarliestDelivery() const;
+
+    /** Adds a delivery operationplan for this demand. */
     DECLARE_EXPORT void addDelivery(OperationPlan *o);
 
     /** Removes a delivery operationplan for this demand. */
@@ -4305,9 +4308,10 @@ class ProblemLate : public Problem
       */
     double getWeight() const
     {
+      assert(getDemand() && !getDemand()->getDelivery().empty());
       return static_cast<double>(DateRange(
         getDemand()->getDue(),
-        (*(getDemand()->getDelivery().begin()))->getDates().getEnd()
+        getDemand()->getLatestDelivery()->getDates().getEnd()
         ).getDuration()) / 86400;
     }
     explicit ProblemLate(Demand* d) : Problem(d) {addProblem();}
@@ -4316,7 +4320,7 @@ class ProblemLate : public Problem
     {
       assert(getDemand() && !getDemand()->getDelivery().empty());
       return DateRange(getDemand()->getDue(),
-          (*(getDemand()->getDelivery().begin()))->getDates().getEnd());
+          getDemand()->getLatestDelivery()->getDates().getEnd());
     }
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemLate);} 
@@ -4339,17 +4343,19 @@ class ProblemEarly : public Problem
     bool isFeasible() const {return true;}
     double getWeight() const 
     {
+      assert(getDemand() && !getDemand()->getDelivery().empty());
       return static_cast<double>(DateRange(
         getDemand()->getDue(),
-        (*(getDemand()->getDelivery().begin()))->getDates().getEnd()
+        getDemand()->getEarliestDelivery()->getDates().getEnd()
         ).getDuration()) / 86400;
     }
     explicit ProblemEarly(Demand* d) : Problem(d) {addProblem();}
     ~ProblemEarly() {removeProblem();}
     const DateRange getDateRange() const
     {
+      assert(getDemand() && !getDemand()->getDelivery().empty());
       return DateRange(getDemand()->getDue(),
-          (*(getDemand()->getDelivery().begin()))->getDates().getEnd());
+          getDemand()->getEarliestDelivery()->getDates().getEnd());
     }
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemEarly);} 

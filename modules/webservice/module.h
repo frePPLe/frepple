@@ -40,8 +40,8 @@
 #include "freppleinterface.h"
 using namespace frepple;
 
-// Include auto-generated header file
-#include "module_webserviceH.h"
+#include "soapH.h" 
+
 
 // Settings specific to gsoap
 #define BACKLOG (100) // Max. number of backlog requests
@@ -94,13 +94,14 @@ class CommandWebservice : public Command
     pthread_cond_t queue_cv;
 
   public:
-    /** Runs the webservice server. 
-      * @todo need python executor instead.
-      */
+    /** Python interface for the webservice server. */
+    static PyObject* pythonService(PyObject*, PyObject*);
+
+    /** Runs the webservice server. */
     void execute();
 
     /** Returns a descriptive string. */
-    string getDescription() const {return "Webservice";}
+    string getDescription() const {return "frePPLe webservice";}
 
     /** Default constructor. */
     explicit CommandWebservice() : head(0), tail(0) {}

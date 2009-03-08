@@ -31,11 +31,6 @@
 
 #ifndef DOXYGEN
 
-#ifndef SOAP_OK
-namespace module_webservice
-{
-#endif
-
 /* Typedefs to help gsoap map the types to XML data types. */
 typedef double xsd__double;
 typedef long int xsd__int;
@@ -45,11 +40,11 @@ typedef time_t 	xsd__dateTime;
 
 //gsoap frepple service name: frepple
 //gsoap frepple service namespace: urn:frepple
-//gsoap frepple service style:	rpc
-//gsoap frepple service encoding:	encoded
-//gsoap frepple service namespace:	http://192.168.0.137/static/frepple.wsdl
+//gsoap frepple service style: rpc
+//gsoap frepple service encoding: encoded
+//gsoap frepple service namespace: http://192.168.0.137/static/frepple.wsdl
 //gsoap frepple service location: http://192.168.0.137:6262
-//gsoap frepple service documentation: frePPLe - free Production Planning Library
+//gsoap frepple service documentation: frePPLe - a free Production Planning Library
 
 class frepple__DemandInfo
 {
@@ -57,6 +52,7 @@ class frepple__DemandInfo
     xsd__string name;
     xsd__string item;
     xsd__int priority;
+    xsd__double quantity;
     xsd__dateTime due;
 };
 struct frepple__DemandInfoResponse {frepple__DemandInfo _return;};
@@ -64,6 +60,9 @@ struct frepple__DemandInfoResponse {frepple__DemandInfo _return;};
 //gsoap frepple service method-action: demand ""
 int frepple__demand(xsd__string name, struct frepple__DemandInfoResponse &result);
 
-//}
+struct frepple__PostResponse {xsd__int _return;};
+
+//gsoap frepple service method-action: post ""
+int frepple__post(xsd__string data, struct frepple__PostResponse &result);
 
 #endif

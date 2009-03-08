@@ -61,10 +61,9 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   }
 
   // Initialize the metadata.
-  CommandWebservice::metadata.registerClass(
-    "command",
-    "command_webservice",
-    Object::createDefault<CommandWebservice>);
+  PythonInterpreter::registerGlobalMethod(
+    "webservice", CommandWebservice::pythonService, METH_NOARGS,
+    "Starts the webservice to listen for HTTP requests");
 
   // Return the name of the module
   return name;

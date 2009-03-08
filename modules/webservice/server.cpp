@@ -31,24 +31,29 @@
 #include "module.h"
 #include <pthread.h>
 
-// Include the namespace map
-#include "frepple.nsmap"
-
-
 namespace module_webservice
 {
 
 
+PyObject* CommandWebservice::pythonService(PyObject* self, PyObject* args)
+{
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try { 
+    CommandWebservice().execute();	
+  }
+  catch (...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");
+}
+
+
 void CommandWebservice::execute()
 {
-  // Log
-  if (getVerbose())
-  {
-    logger << "Start running the web service with " << threads
-      << " threads on port " << port << " at " << Date::now() << endl;
-  }
-  Timer t;
-
   // Initialize
   thread_data threadinfo[threads];
   struct soap soap;
@@ -58,7 +63,7 @@ void CommandWebservice::execute()
   // Bind to a port on the local machine.
   mastersocket = soap_bind(&soap, NULL, port, BACKLOG);
   if (!soap_valid_socket(mastersocket))
-    throw frepple::RuntimeException("Can't bind to port " + port);
+    throw RuntimeException("Can't bind to port " + port);
 
   // Creating execution threads in the pool
   pthread_mutex_init(&queue_cs, NULL);
@@ -70,10 +75,6 @@ void CommandWebservice::execute()
     threadinfo[i].soap_thr = soap_copy(&soap);
     pthread_create(&threadinfo[i].tid, NULL, (void*(*)(void*))process_queue, static_cast<void*>(&threadinfo[i]));
   }
-
-  // Message
-  if (getVerbose())
-    logger << "Read to serve incoming requests" << endl;
 
   // Loop forever
   for (;;)
@@ -93,7 +94,7 @@ void CommandWebservice::execute()
         break;
       }
     }
-    logger << "Connection " << ((soap.ip >> 24)&0xFF) << "."
+    logger << "Connection from " << ((soap.ip >> 24)&0xFF) << "."
       << ((soap.ip >> 16)&0xFF) << "." << ((soap.ip >> 8)&0xFF) << "."
       << (soap.ip&0xFF) << endl;
 
@@ -101,10 +102,6 @@ void CommandWebservice::execute()
     while (enqueue(slavesocket) == SOAP_EOM)
       sleep(1);
   }
-
-  // Message
-  if (getVerbose())
-    logger << "Start shutting down the server at " << Date::now() << endl;
 
   // Send termination signal to all threads
   for (int i = 0; i < threads; i++)
@@ -126,10 +123,6 @@ void CommandWebservice::execute()
   pthread_mutex_destroy(&queue_cs);
   pthread_cond_destroy(&queue_cv);
   soap_done(&soap);
-
-  // Log
-  if (getVerbose())
-    logger << "Finished web service at " << Date::now() << " : " << t << endl;
 }
 
 

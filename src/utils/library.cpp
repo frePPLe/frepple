@@ -455,7 +455,7 @@ Object* MetaCategory::ControllerDefault (const MetaClass& cat, const AttributeLi
       // Creation accepted
       return result;
   }
-  assert("Unreachable code reached");
+  throw LogicException("Unreachable code reached");
   return NULL;
 }
 

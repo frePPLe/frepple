@@ -3409,7 +3409,10 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * @exception DataException Thrown when the data can't be processed
       *   normally by the objects being created or updated.
       */
-    virtual void parse(Object* s, bool b=false) {assert(false);}
+    virtual void parse(Object* s, bool b=false) 
+    {
+      throw LogicException("Unreachable code reached");
+    }
 
     /** Execute the commands that have been read from the input stream. */
     DECLARE_EXPORT void executeCommands();

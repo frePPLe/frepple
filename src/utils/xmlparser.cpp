@@ -631,10 +631,8 @@ DECLARE_EXPORT void XMLOutput::writeElementWithHeader(const Keyword& tag, const 
 DECLARE_EXPORT void XMLOutput::writeHeader(const Keyword& tag)
 {
   // There should not be any saved objects yet
-  if (numObjects > 0)
-    throw LogicException("Can't have multiple headers in a document");
-  assert(!parentObject);
-  assert(!currentObject);
+  if (numObjects > 0 || !parentObject || !currentObject)
+    throw LogicException("Writing invalid header to XML document");
 
   // Write the first line and the opening tag
   writeString(getHeaderStart());

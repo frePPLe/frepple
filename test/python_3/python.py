@@ -82,7 +82,6 @@ def printModel(filename):
       for l in b.steps:
         print >>output, "    Step:", l.name
 
-
   # Demands
   print >>output, "\nEchoing demands:"
   for b in frepple.demands():
@@ -139,16 +138,6 @@ frepple.settings.description = unicode("demo description in unicode object")
 frepple.settings.current = datetime.datetime(2009,1,1)
 
 ###
-print "\nCreating calendars"
-frepple.calendar_boolean(name="boolcal", default=False)
-frepple.calendar(name="doublecal", default=1.23)
-frepple.calendar_void(name="voidcal")
-
-###
-print "\nDeleting a calendar"
-frepple.calendar(name="boolcal", action="R")
-
-###
 print "\nCreating operations"
 shipoper = frepple.operation_fixed_time(name="delivery end item", duration=86400)
 choice = frepple.operation_alternate(name="make or buy item")
@@ -158,6 +147,22 @@ makeoper.addStep(frepple.operation_fixed_time(name="make item - step 2", duratio
 buyoper = frepple.operation_fixed_time(name="buy item", duration=86400)
 choice.addAlternate(operation=makeoper, priority=1)
 choice.addAlternate(operation=buyoper, priority=2)
+
+###
+print "\nCreating calendars"
+c = frepple.calendar_boolean(name="boolcal", default=False)
+c.setValue(datetime.datetime(2009,1,1), datetime.datetime(2009,3,1), True)
+c.setValue(datetime.datetime(2009,2,1), datetime.datetime(2009,5,1), True)
+c.setValue(datetime.datetime(2009,2,1), datetime.datetime(2009,3,1), False)
+frepple.calendar(name="doublecal", default=1.23)
+frepple.calendar_void(name="voidcal")
+c = frepple.calendar_operation(name="operationcal", default=choice)
+c.setValue(datetime.datetime(2009,1,1), datetime.datetime(2009,3,1), makeoper)
+c.setValue(datetime.datetime(2009,6,1), datetime.datetime(2009,9,1), buyoper)
+
+###
+print "\nDeleting a calendar"
+frepple.calendar(name="voidcal", action="R")
 
 # Load some data - These things can't be done yet from Python
 frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>

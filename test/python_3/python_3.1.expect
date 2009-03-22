@@ -9,8 +9,14 @@ Echoing solvers:
 Echoing calendars:
   Calendar: Capacity 0.0
     Bucket: 1.0 2009-01-01 00:00:00 2030-12-31 00:00:00 0
+  Calendar: boolcal False
+    Bucket: True 2009-01-01 00:00:00 2009-03-01 00:00:00 -1
+    Bucket: False 2009-02-01 00:00:00 2009-03-01 00:00:00 -3
+    Bucket: True 2009-02-01 00:00:00 2009-05-01 00:00:00 -2
   Calendar: doublecal 1.23
-  Calendar: voidcal None
+  Calendar: operationcal make or buy item
+    Bucket: make item 2009-01-01 00:00:00 2009-03-01 00:00:00 -1
+    Bucket: buy item 2009-06-01 00:00:00 2009-09-01 00:00:00 -2
 
 Echoing customers:
   Customer: client None None None None

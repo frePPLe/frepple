@@ -332,6 +332,16 @@ class Calendar : public HasName<Calendar>, public Object
       return i;
     }
 
+  protected:
+    /** Find the lowest priority of any bucket. */
+    int lowestPriority() const
+    {
+      int min = 0;
+      for (BucketIterator i = beginBuckets(); i != endBuckets(); ++i)
+        if (i->getPriority() < min) min = i->getPriority();
+      return min;
+    }
+
   private:
     /** A pointer to the first bucket. The buckets are stored in a doubly
       * linked list. */
@@ -432,10 +442,20 @@ template <typename T> class CalendarValue : public Calendar
       return x ? x->getValue() : defaultValue;
     }
 
-    /** Updates the value in a certain time bucket. */
+    /** Updates the value in a certain date range.<br>
+      * This will create a new bucket if required. */
     void setValue(Date start, Date end, const T& v)
     {
-      // @todo logic for setValue(start,end,value) not implemented - see python implementation
+      BucketValue* x = static_cast<BucketValue*>(findBucket(start));
+      if (x && x->getStart() == start && x->getEnd() <= end) 
+        // We can update an existing bucket: it has the same start date
+        // and ends before the new effective period ends.
+        x->setEnd(end);
+      else
+        // Creating a new bucket
+        x = static_cast<BucketValue*>(addBucket(start,end,""));
+      x->setValue(v);
+      x->setPriority(lowestPriority()-1);
     }
 
     virtual const MetaClass& getType() const = 0;
@@ -591,6 +611,7 @@ template <typename T> class CalendarPointer : public Calendar
             static_cast<const calendarpointertype*>(theCalendar)->getDefault();
         }
     };
+
     /** Default constructor. */
     CalendarPointer(const string& n) : Calendar(n), defaultValue(NULL) {}
 
@@ -601,12 +622,20 @@ template <typename T> class CalendarPointer : public Calendar
       return x ? x->getValue() : defaultValue;
     }
 
-    /** Updates the value in a certain time bucket. */
-    void setValue(const Date d, T* v)
+    /** Updates the value in a certain date range.<br>
+      * This will create a new bucket if required. */
+    void setValue(Date start, Date end, T* v)
     {
-      BucketPointer* x = static_cast<BucketPointer*>(findBucket(d));
-      if (x) x->setValue(v);
-      else defaultValue = x;
+      BucketPointer* x = static_cast<BucketPointer*>(findBucket(start));
+      if (x && x->getStart() == start && x->getEnd() <= end) 
+        // We can update an existing bucket: it has the same start date
+        // and ends before the new effective period ends.
+        x->setEnd(end);
+      else
+        // Creating a new bucket
+        x = static_cast<BucketPointer*>(addBucket(start,end,""));
+      x->setValue(v);
+      x->setPriority(lowestPriority()-1);
     }
 
     /** Returns the default calendar value when no entry is matching. */
@@ -5450,7 +5479,6 @@ class PythonCalendarBucket
     Calendar* cal;
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    // @todo static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 };
 
 
@@ -5461,6 +5489,13 @@ class PythonCalendarVoid : public FreppleClass<PythonCalendarVoid,PythonCalendar
       : FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>(p) {}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m)
+    {
+      getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
+      return FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>::initialize(m);
+    }
+  private:
+    static DECLARE_EXPORT PyObject* setValue(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -5471,6 +5506,13 @@ class PythonCalendarBool : public FreppleClass<PythonCalendarBool,PythonCalendar
       : FreppleClass<PythonCalendarBool,PythonCalendar,CalendarBool>(p) {}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m)
+    {
+      getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
+      return FreppleClass<PythonCalendarBool,PythonCalendar,CalendarBool>::initialize(m);
+    }
+  private:
+    static DECLARE_EXPORT PyObject* setValue(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -5481,6 +5523,64 @@ class PythonCalendarDouble : public FreppleClass<PythonCalendarDouble,PythonCale
       : FreppleClass<PythonCalendarDouble,PythonCalendar,CalendarDouble>(p) {}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m)
+    {
+      getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
+      return FreppleClass<PythonCalendarDouble,PythonCalendar,CalendarDouble>::initialize(m);
+    }
+  private:
+    static DECLARE_EXPORT PyObject* setValue(PyObject*, PyObject*, PyObject*);
+};
+
+
+class PythonCalendarString : public FreppleClass<PythonCalendarString,PythonCalendar,CalendarString>
+{
+  public:
+    PythonCalendarString(CalendarString* p)
+      : FreppleClass<PythonCalendarString,PythonCalendar,CalendarString>(p) {}
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m)
+    {
+      getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
+      return FreppleClass<PythonCalendarString,PythonCalendar,CalendarString>::initialize(m);
+    }
+  private:
+    static DECLARE_EXPORT PyObject* setValue(PyObject*, PyObject*, PyObject*);
+};
+
+
+class PythonCalendarInt : public FreppleClass<PythonCalendarInt,PythonCalendar,CalendarInt>
+{
+  public:
+    PythonCalendarInt(CalendarInt* p)
+      : FreppleClass<PythonCalendarInt,PythonCalendar,CalendarInt>(p) {}
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m)
+    {
+      getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
+      return FreppleClass<PythonCalendarInt,PythonCalendar,CalendarInt>::initialize(m);
+    }
+  private:
+    static DECLARE_EXPORT PyObject* setValue(PyObject*, PyObject*, PyObject*);
+};
+
+
+class PythonCalendarOperation : public FreppleClass<PythonCalendarOperation,PythonCalendar,CalendarOperation>
+{
+  public:
+    PythonCalendarOperation(CalendarOperation* p)
+      : FreppleClass<PythonCalendarOperation,PythonCalendar,CalendarOperation>(p) {}
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m)
+    {
+      getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
+      return FreppleClass<PythonCalendarOperation,PythonCalendar,CalendarOperation>::initialize(m);
+    }
+  private:
+    static DECLARE_EXPORT PyObject* setValue(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -5583,7 +5683,7 @@ class PythonOperationAlternate : public FreppleClass<PythonOperationAlternate,Py
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize(PyObject* m)
     {
-      getType().addMethod("addAlternate", addAlternate, METH_KEYWORDS, "add and alternate");
+      getType().addMethod("addAlternate", addAlternate, METH_KEYWORDS, "add an alternate");
       return FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>::initialize(m);
     }
   private:

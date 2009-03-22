@@ -312,6 +312,9 @@ void LibraryModel::initialize()
   nok += PythonCalendarBool::initialize(PythonInterpreter::getModule());
   nok += PythonCalendarVoid::initialize(PythonInterpreter::getModule());
   nok += PythonCalendarDouble::initialize(PythonInterpreter::getModule());
+  nok += PythonCalendarString::initialize(PythonInterpreter::getModule());
+  nok += PythonCalendarInt::initialize(PythonInterpreter::getModule());
+  nok += PythonCalendarOperation::initialize(PythonInterpreter::getModule());
   nok += PythonCustomer::initialize(PythonInterpreter::getModule());
   nok += PythonCustomerDefault::initialize(PythonInterpreter::getModule());
   nok += PythonCustomerIterator::initialize(PythonInterpreter::getModule());

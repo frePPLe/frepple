@@ -29,7 +29,7 @@
 using namespace frepple;
 
 /** Print the content of the list, and also verify its integrity. */
-void printlist(char* msg)
+void printlist(const char* msg)
 {
   logger << msg << ":";
   for (Customer::iterator i = Customer::begin(); i != Customer::end(); ++i)

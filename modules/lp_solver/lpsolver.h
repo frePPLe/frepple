@@ -83,7 +83,13 @@ using namespace frepple;
 
 extern "C"
 {
+#ifdef HAVE_GLPK_H
 #include "glpk.h"
+#else
+#ifdef HAVE_GLPK_GLPK_H
+#include "glpk/glpk.h"
+#endif
+#endif
 }
 
 namespace module_lp_solver

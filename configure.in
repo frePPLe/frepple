@@ -142,7 +142,7 @@ AC_HELP_STRING([--enable-lp_solver],
   yes) lp=true ;;
   no)  lp=false ;;
   *) AC_MSG_ERROR([bad value ${enableval} for --enable-python]) ;;
-esac], [AC_CHECK_PROG(lp, [glpsol], aatrue, aafalse)])
+esac], [AC_CHECK_PROG(lp, [glpsol], true, false)])
 AM_CONDITIONAL(LP, test x$lp = xtrue)
 
 #
@@ -230,12 +230,13 @@ AC_CHECK_LIB(glpk, glp_simplex, [],
   This package requires the GLPK linear programming solver.
   Install its development library, or reconfigure with the option '--disable-lp_solver'
 ])])
-AC_CHECK_HEADER(glpk.h, [],
+AC_CHECK_HEADERS([glpk.h], [], 
+[AC_CHECK_HEADERS([glpk/glpk.h], [],
 [AC_MSG_ERROR([
   The glpk libray has been installed, but its header file could not be found
   This package requires the GLPK linear programming solver.
   Install its development library, or reconfigure with the option '--disable-lp_solver'
-])])
+])])])
 fi
 
 #

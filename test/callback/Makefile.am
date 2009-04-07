@@ -4,8 +4,6 @@
 
 check_PROGRAMS = callback
 
-AM_CPPFLAGS=-I@top_builddir@/include -I/usr/include/python$(PYTHON_VERSION)
-
 callback_SOURCES = main.cpp
 callback_LDADD   = ../../src/libfrepple.la
 EXTRA_DIST = callback.xml callback.expect

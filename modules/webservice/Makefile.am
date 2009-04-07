@@ -4,8 +4,6 @@
 
 sources = module.cpp server.cpp webservice.cpp
 
-AM_CPPFLAGS=-I@top_builddir@/include -I/usr/include/python$(PYTHON_VERSION)
-
 EXTRA_DIST = $(sources) module.h webservice.h client.cpp
 
 CLEANFILES = client$(EXEEXT) *.gcda *.gcov *.gcno module_webservice* *.req.xml *.res.xml *.nsmap *.xsd *.wsdl soap*

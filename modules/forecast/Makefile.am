@@ -10,8 +10,6 @@ CLEANFILES = *.gcda *.gcov *.gcno
 
 if FORECAST
 
-AM_CPPFLAGS=-I@top_builddir@/include -I/usr/include/python$(PYTHON_VERSION)
-
 usrlibdir = $(libdir)/frepple
 usrlib_LTLIBRARIES = mod_forecast.la
 mod_forecastdir = $(datadir)

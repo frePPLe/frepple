@@ -11,8 +11,10 @@ CLEANFILES = client$(EXEEXT) *.gcda *.gcov *.gcno module_webservice* *.req.xml *
 
 if WEBSERVICE
 
-serverstubs:
+soapC.cpp:
 	@SOAPCPP2@ -S webservice.h
+
+BUILT_SOURCES = soapC.cpp soapServer.cpp
 
 lib_LTLIBRARIES = mod_webservice.la
 mod_webservicedir = $(datadir)
@@ -21,7 +23,6 @@ dist_mod_webservice_la_SOURCES = $(sources)
 nodist_mod_webservice_la_SOURCES = soapC.cpp soapServer.cpp
 mod_webservice_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null -lgsoap++
 mod_webservice_la_LIBADD = ../../src/libfrepple.la 
-mod_webservice_la_DEPENDENCIES = serverstubs
 
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll

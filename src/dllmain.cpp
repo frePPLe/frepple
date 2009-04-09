@@ -134,11 +134,11 @@ DECLARE_EXPORT(void) FreppleSaveFile(const char* x)
 }
 
 
+/** Closing any resources still used by frePPle. */
 DECLARE_EXPORT(void) FreppleExit()
 {
-  // Shut down the application that loaded frePPLe as a dynamic library
-  Environment::setLogFile(""); // Close the log file
-  std::exit(EXIT_SUCCESS);
+  // Close the log file
+  Environment::setLogFile(""); 
 }
 
 

@@ -83,7 +83,7 @@ using namespace frepple;
 
 extern "C"
 {
-#ifdef HAVE_GLPK_H
+#if defined HAVE_GLPK_H || !defined HAVE_GLPK_GLPK_H
 #include "glpk.h"
 #else
 #ifdef HAVE_GLPK_GLPK_H

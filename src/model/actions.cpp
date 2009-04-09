@@ -579,11 +579,13 @@ DECLARE_EXPORT string CommandDeleteOperationPlan::getDescription() const
 DECLARE_EXPORT void CommandErase::execute()
 {
   // Starting message
-  if (getVerbose())
+  if (getVerbose()) 
+  {
     if (deleteStaticModel)
       logger << "Start model erase command at " << Date::now() << endl;
     else
       logger << "Start plan erase command at " << Date::now() << endl;
+  }
   Timer t;
 
   if (deleteStaticModel)

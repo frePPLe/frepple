@@ -477,6 +477,7 @@ DECLARE_EXPORT PyObject* CommandLoadLibrary::executePython
   // Create the command
   char *data = NULL;
   int ok = PyArg_ParseTuple(args, "s", &data);
+  if (!ok) return NULL;
   CommandLoadLibrary cmd(data);
 
   // Load parameters for the module

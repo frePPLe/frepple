@@ -754,7 +754,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
         Object* x = PROXY::reader(PROXY::metadata,atts);
 
         // Create a python proxy
-        PythonExtensionBase* pr = static_cast<PythonExtensionBase*>(static_cast<PyObject*>(*(new PythonObject(x))));
+        PythonExtensionBase* pr = static_cast<PythonExtensionBase*>(static_cast<PyObject*>(*(new PythonObject(x)))); // xxx memory leak?
 
         // Iterate over extra keywords, and set attributes.   @todo move this responsability to the readers...
         PyObject *key, *value;

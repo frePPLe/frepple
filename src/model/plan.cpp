@@ -120,7 +120,8 @@ int PythonPlan::initialize(PyObject* m)
   x.supportsetattro();
   int tmp =x.typeReady(m);
 
-  // Add access to the information with a global attribute
+  // Add access to the information with a global attribute.
+  // A pythonplan object is leaking.
   return PyModule_AddObject(m, "settings", new PythonPlan) + tmp;
 }
 

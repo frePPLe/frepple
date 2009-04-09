@@ -167,7 +167,7 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   else
     threads.setMaxParallel( cl > getMaxParallel() ? getMaxParallel() : cl);
 
-  // Make sure a problem in a single cluster could spoil it all
+  // Make sure a problem in a single cluster doesn't spoil it all
   threads.setAbortOnError(false);
   for (classified_demand::iterator j = demands_per_cluster.begin();
       j != demands_per_cluster.end(); ++j)

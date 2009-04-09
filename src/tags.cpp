@@ -33,7 +33,6 @@ namespace frepple
 namespace utils
 {
 
-DECLARE_EXPORT const Keyword Tags::tag_abortonerror("abortonerror");
 DECLARE_EXPORT const Keyword Tags::tag_action("action");
 DECLARE_EXPORT const Keyword Tags::tag_after("after");
 DECLARE_EXPORT const Keyword Tags::tag_alternate("alternate");

@@ -144,16 +144,16 @@ class LPSolver : public Solver
     /** Append a new objective to the list. */
     void addObjective(string c) { objectives.push_back(c); }
 
-	/** Return a reference to the list of objectives. */
-	const list<string>& getObjectives() const {return objectives;}
+	  /** Return a reference to the list of objectives. */
+	  const list<string>& getObjectives() const {return objectives;}
 	
     virtual void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
 
-	/** Constructor. */
+	  /** Constructor. */
     LPSolver(const string n) : Solver(n), minimum(true) {};
 	
-	/** Destructor. */
+	  /** Destructor. */
     ~LPSolver() {};
 
     virtual const MetaClass& getType() const {return metadata;}

@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="module_lp_solver"
+	Name="module_lpsolver"
 	ProjectGUID="{7DB29B15-8CA4-4BAF-B696-697EA30FD67D}"
 	TargetFrameworkVersion="131072"
 	>
@@ -79,7 +79,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies=" xerces-c_static_2.lib glpk.lib"
-				OutputFile="../../bin/mod_lp_solver.so"
+				OutputFile="../../bin/mod_lpsolver.so"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../../src"
@@ -188,7 +188,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies=" xerces-c_static_2.lib glpk.lib"
-				OutputFile="../../bin/mod_lp_solver.so"
+				OutputFile="../../bin/mod_lpsolver.so"
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

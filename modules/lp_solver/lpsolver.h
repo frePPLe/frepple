@@ -217,8 +217,8 @@ class PythonLPSolver : public FreppleClass<PythonLPSolver,PythonSolver,LPSolver>
   public:
     PythonLPSolver(LPSolver* p)
       : FreppleClass<PythonLPSolver,PythonSolver,LPSolver>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 }  // End namespace

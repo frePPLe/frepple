@@ -57,7 +57,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
   // Register the Python extension
   if (PythonLPSolver::initialize(PythonInterpreter::getModule()))
-    throw RuntimeException("Error registering solver_lp Python type");
+    logger << "Error registering Python solver_lp extension" << endl;
 
   // Return the name of the module
   return name;
@@ -233,7 +233,7 @@ void LPSolver::endElement(XMLInput& pIn, const Attribute& pAttr, const DataEleme
 }
 
 
-DECLARE_EXPORT PyObject* PythonLPSolver::getattro(const Attribute& attr)
+PyObject* PythonLPSolver::getattro(const Attribute& attr)
 {
   if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_minimum))
@@ -259,7 +259,7 @@ DECLARE_EXPORT PyObject* PythonLPSolver::getattro(const Attribute& attr)
 }
 
 
-DECLARE_EXPORT int PythonLPSolver::setattro(const Attribute& attr, const PythonObject& field)
+int PythonLPSolver::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_minimum))
 	obj->setMinimum(field.getBool());

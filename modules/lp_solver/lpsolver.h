@@ -144,10 +144,16 @@ class LPSolver : public Solver
     /** Append a new objective to the list. */
     void addObjective(string c) { objectives.push_back(c); }
 
+	/** Return a reference to the list of objectives. */
+	const list<string>& getObjectives() const {return objectives;}
+	
     virtual void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
 
+	/** Constructor. */
     LPSolver(const string n) : Solver(n), minimum(true) {};
+	
+	/** Destructor. */
     ~LPSolver() {};
 
     virtual const MetaClass& getType() const {return metadata;}
@@ -158,9 +164,9 @@ class LPSolver : public Solver
     /** This is an auxilary function. GLPK requires names to contain only
       * "graphic" characters. A space isn't one of those. Since our model
       * can contain HasHierarchy names with a space, we call this function to
-      * replace the spaces with underscores.
-     * Note however that we can't garantuee that the updated strings are
-     * all unique after the replacement!
+      * replace the spaces with underscores.<br>
+      * Note however that we can't garantuee that the updated strings are
+      * all unique after the replacement!
       */
     static string replaceSpaces(string);
 
@@ -203,7 +209,16 @@ class LPSolver : public Solver
 
     /** Solve for a goal in a hierarchical sequence. */
     void solveObjective(string);
+};
 
+
+class PythonLPSolver : public FreppleClass<PythonLPSolver,PythonSolver,LPSolver>
+{
+  public:
+    PythonLPSolver(LPSolver* p)
+      : FreppleClass<PythonLPSolver,PythonSolver,LPSolver>(p) {}
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 }  // End namespace

@@ -434,10 +434,12 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
   }
 
 #else
-  // Load the library - The unix way
+  // Load the library - The UNIX way
 
   // Search the frePPLe directories for the library
   string fullpath = Environment::searchFile(lib);
+  if (fullpath.empty())
+	throw RuntimeException("Module '" + lib + "' not found");
   dlerror(); // Clear the previous error
   void *handle = dlopen(fullpath.c_str(), RTLD_NOW | RTLD_GLOBAL);
   const char *err = dlerror();  // Pick up the error string
@@ -449,7 +451,7 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
      err = dlerror();  // Pick up the error string
      if (err) throw RuntimeException(err);
   }
-
+  
   // Find the initialization routine
   func inithandle = (func)(dlsym(handle, "initialize"));
   err = dlerror(); // Pick up the error string

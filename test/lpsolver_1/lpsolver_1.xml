@@ -221,7 +221,7 @@
 <?python
 
 # Load the module
-frepple.loadmodule("mod_lp_solver.so")
+frepple.loadmodule("mod_lpsolver.so")
 
 # Export the model data
 exportData('output.dat')
@@ -235,16 +235,18 @@ lp = frepple.solver_lp(name="LP",
   solutionfile="output.sol",
   loglevel=3,
   minimum=True,
-  objective="goalshortage[1]",
-  objective="goallate[1]",
-  objective="goalshortage[2]",
-  objective="goallate[2]",
-  objective="goalshortage[3]",
-  objective="goallate[3]",
-  objective="goalearly[1]",
-  objective="goalearly[2]",
-  objective="goalearly[3]")
+  objective=["goalshortage[1]",
+             "goallate[1]",
+             "goalshortage[2]",
+             "goallate[2]",
+             "goalshortage[3]",
+             "goallate[3]",
+             "goalearly[1]",
+             "goalearly[2]",
+             "goalearly[3]"])
+print "objective: ", lp.objective
 lp.solve()
+
 
 # Load the LP solution
 importSolution('output.sol')

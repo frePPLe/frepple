@@ -55,6 +55,10 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     "solver_lp",
     Object::createString<LPSolver>);
 
+  // Register the Python extension
+  if (PythonLPSolver::initialize(PythonInterpreter::getModule()))
+    throw RuntimeException("Error registering solver_lp Python type");
+
   // Return the name of the module
   return name;
 }
@@ -209,7 +213,6 @@ void LPSolver::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 }
 
 
-/** @todo Need a Python api for the class too. Objectives may be a bit tricky for the implementation. */
 void LPSolver::endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
 {
   if (pAttr.isA(Tags::tag_minimum))
@@ -227,6 +230,67 @@ void LPSolver::endElement(XMLInput& pIn, const Attribute& pAttr, const DataEleme
   else
     // The standard fields of a solver...
     Solver::endElement(pIn, pAttr, pElement);
+}
+
+
+DECLARE_EXPORT PyObject* PythonLPSolver::getattro(const Attribute& attr)
+{
+  if (!obj) return Py_BuildValue("");
+  if (attr.isA(Tags::tag_minimum))
+    return PythonObject(obj->getMinimum());
+  else if (attr.isA(Tags::tag_maximum))
+    return PythonObject(!(obj->getMinimum()));
+  else if (attr.isA(tag_datafile))
+    return PythonObject(obj->getDataFile());
+  else if (attr.isA(tag_modelfile))
+    return PythonObject(obj->getModelFile());
+  else if (attr.isA(tag_solutionfile))
+    return PythonObject(obj->getSolutionFile());
+  else if (attr.isA(tag_objective))
+  {
+	// The list of objectives is returned as a list of strings
+    PyObject* result = PyList_New(obj->getObjectives().size());
+    int count = 0;
+    for (list<string>::const_iterator i = obj->getObjectives().begin(); i != obj->getObjectives().end(); ++i)
+      PyList_SetItem(result, count++, PythonObject(*i));
+    return result;
+  }
+  return PythonSolver(obj).getattro(attr); 
+}
+
+
+DECLARE_EXPORT int PythonLPSolver::setattro(const Attribute& attr, const PythonObject& field)
+{
+  if (attr.isA(Tags::tag_minimum))
+	obj->setMinimum(field.getBool());
+  else if (attr.isA(Tags::tag_maximum))
+	obj->setMinimum(!field.getBool());
+  else if (attr.isA(tag_datafile))
+	obj->setDataFile(field.getString());
+  else if (attr.isA(tag_modelfile))
+	obj->setModelFile(field.getString());
+  else if (attr.isA(tag_solutionfile))
+	obj->setSolutionFile(field.getString());
+  else if (attr.isA(tag_objective))
+  {
+	// The objective argument is a list of strings
+	PyObject* seq = PySequence_Fast(static_cast<PyObject*>(field), "expected a list");
+	if (!PyList_Check(seq))
+	{
+	  PyErr_SetString(PythonDataException, "expected a list");
+	  return -1; // Error
+	}
+	int len = PySequence_Size(static_cast<PyObject*>(field));
+	PythonObject item;
+    for (int i = 0; i < len; i++) 
+    {
+	  item = PyList_GET_ITEM(seq, i);
+	  obj->addObjective(item.getString());
+    }
+  }
+  else
+	return PythonSolver(obj).setattro(attr, field);
+  return 0; // OK
 }
 
 }  // End namespace

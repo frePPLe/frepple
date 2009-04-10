@@ -41,7 +41,7 @@ frepple.loadmodule("mod_forecast.so",
   Net_NetLate="P4W")
   
 ## Linear Programming solver module  
-#frepple.loadmodule("mod_lp_solver.so")
+#frepple.loadmodule("mod_lpsolver.so")
 
 ## Webservice module -->
 #frepple.loadmodule("mod_webservice.so", port=6262, threads=5)

@@ -817,7 +817,7 @@ class ForecastBucket : public Demand
     /** Return a pointer to the previous forecast bucket. */
     ForecastBucket* getPreviousBucket() const { return prev; }
 
-private:
+  private:
     double weight;
     double consumed;
     double total;

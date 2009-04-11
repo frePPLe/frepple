@@ -1,9 +1,9 @@
 {% extends "admin/base.html" %}
 {% load i18n %}
-{% block title %}frePPLe{% if title %} - {{title|escape}}{% endif %}{% endblock %}
+{% block title %}frePPLe{% if title %} - {{title}}{% endif %}{% endblock %}
 {% block branding %}<h1 id="site-name">frePPLe {% version %}</h1>{% endblock %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="/static/styles.css" />{% endblock %}
 {% block extrahead %}{{ block.super }}
-<link rel="stylesheet" type="text/css" href="/static/styles.css" />
 <script type="text/javascript" src="/static/prototype.js"></script>
 <script type="text/javascript" src="/static/frepple.js"></script>
 {% endblock %}

@@ -484,6 +484,8 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   if (Solver->a_date > max_Date && Solver->a_date != Date::infiniteFuture)
     max_Date = Solver->a_date;
   Solver->a_date = (max_Date ? max_Date : Date::infiniteFuture);
+  if (Solver->a_date < Solver->q_date)
+    Solver->a_date = Solver->q_date;
 
   // Add to the list (even if zero-quantity!)
   Solver->add(a);

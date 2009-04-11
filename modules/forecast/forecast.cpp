@@ -57,7 +57,7 @@ Forecast::~Forecast()
     if (x->second == this)
     {
       ForecastDictionary.erase(x);
-      return;
+      break;
     }
 
   // Delete all children demands

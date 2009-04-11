@@ -1,9 +1,14 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
-{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css" />{% endblock %}
+
 {% block coltype %}colMS{% endblock %}
+
 {% block bodyclass %}dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
 {% block content %}
 <div id="content-main">
 
@@ -15,16 +20,17 @@
         {% for model in app.models %}
             <tr>
             {% if model.perms.change %}
-                <th scope="row"><a href="{{ model.admin_url }}">{{ model.name|escape }}</a></th>
+                <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
             {% else %}
-                <th scope="row">{{ model.name|escape }}</th>
+                <th scope="row">{{ model.name }}</th>
             {% endif %}
 
             {%ifnotequal app.name "Output"%}{% if model.perms.add %}
                 <td><a href="{{ model.admin_url }}add/" class="addlink">{% trans 'Add' %}</a></td>
             {% else %}
                 <td>&nbsp;</td>
-            {% endif %}{% else %}
+            {% endif %}
+            {% else %}
                 <td>&nbsp;</td>
             {% endifnotequal %}
             <td><a href="{{ model.admin_url }}?reporttype=csv" class="changelink">csv</a></td>
@@ -88,6 +94,7 @@
 
 </div>
 {% endblock %}
+
 {% block sidebar %}
 <div id="content-related">
     <div class="module" id="recent-actions-module">
@@ -100,7 +107,7 @@
             {% else %}
             <ul class="actionlist">
             {% for entry in admin_log %}
-                <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">{% if not entry.is_deletion %}<a href="{{ entry.get_admin_url }}">{% endif %}{{ entry.object_repr|escape }}{% if not entry.is_deletion %}</a>{% endif %}<br /><span class="mini quiet">{{ entry.content_type.name|capfirst|escape }}</span></li>
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">{% if not entry.is_deletion %}<a href="{{ entry.get_admin_url }}">{% endif %}{{ entry.object_repr }}{% if not entry.is_deletion %}</a>{% endif %}<br /><span class="mini quiet">{% filter capfirst %}{% trans entry.content_type.name %}{% endfilter %}</span></li>
             {% endfor %}
             </ul>
             {% endif %}

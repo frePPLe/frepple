@@ -49,17 +49,40 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   }
   init = true;
 
-  // Initialize the metadata.
-  LPSolver::metadata.registerClass(
-    "solver",
-    "solver_lp",
-    Object::createString<LPSolver>);
+  try 
+  {
+    // Initialize the metadata.
+    LPSolver::metadata.registerClass(
+      "solver",
+      "solver_lp",
+      Object::createString<LPSolver>);
 
-  // Register the Python extension
-  if (!Py_IsInitialized())
-    logger << "Python isn't initialized correctly" << endl;
-  else if (PythonLPSolver::initialize(PythonInterpreter::getModule()))
-    logger << "Error registering Python solver_lp extension" << endl;
+    // Register the Python extension
+    if (!Py_IsInitialized())
+      throw RuntimeException("Python isn't initialized correctly");
+    PyEval_AcquireLock();
+    try
+    {
+      if (PythonLPSolver::initialize(PythonInterpreter::getModule()))
+        throw RuntimeException("Error registering Python solver_lp extension");
+    }
+    // Release the global lock when leaving the function
+    catch (...)
+    {
+      PyEval_ReleaseLock();
+      throw;  // Rethrow the exception
+    }
+    PyEval_ReleaseLock();
+  }
+  catch (exception &e) 
+  {
+    // Avoid throwing errors during the initialization!
+    logger << "Error: " << e.what() << endl;
+  }
+  catch (...)
+  {
+    logger << "Error: unknown exception" << endl;
+  }
 
   // Return the name of the module
   return name;

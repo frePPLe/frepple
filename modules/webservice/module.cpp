@@ -48,23 +48,47 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   }
   init = true;
 
-  // Process the module parameters
-  for (CommandLoadLibrary::ParameterList::const_iterator x = z.begin();
-    x != z.end(); ++x)
+  try
   {
-    if (x->first == "port")
-      CommandWebservice::setPort(x->second.getInt());
-    else if (x->first == "threads")
-      CommandWebservice::setThreads(x->second.getInt());
-    else
-      logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
+    // Process the module parameters
+    for (CommandLoadLibrary::ParameterList::const_iterator x = z.begin();
+      x != z.end(); ++x)
+    {
+      if (x->first == "port")
+        CommandWebservice::setPort(x->second.getInt());
+      else if (x->first == "threads")
+        CommandWebservice::setThreads(x->second.getInt());
+      else
+        logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
+    }
+
+    // Initialize the metadata.
+    if (!Py_IsInitialized())
+      throw RuntimeException("Python isn't initialized correctly");
+    PyEval_AcquireLock();
+    try 
+    {
+      PythonInterpreter::registerGlobalMethod(
+        "webservice", CommandWebservice::pythonService, METH_NOARGS,
+        "Starts the webservice to listen for HTTP requests");
+    }
+    // Release the global lock when leaving the function
+    catch (...)
+    {
+      PyEval_ReleaseLock();
+      throw;  // Rethrow the exception
+    }
+    PyEval_ReleaseLock();
   }
-
-  // Initialize the metadata.
-  PythonInterpreter::registerGlobalMethod(
-    "webservice", CommandWebservice::pythonService, METH_NOARGS,
-    "Starts the webservice to listen for HTTP requests");
-
+  catch (exception &e) 
+  {
+    // Avoid throwing errors during the initialization!
+    logger << "Error: " << e.what() << endl;
+  }
+  catch (...)
+  {
+    logger << "Error: unknown exception" << endl;
+  }
   // Return the name of the module
   return name;
 }

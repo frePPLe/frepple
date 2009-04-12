@@ -76,7 +76,7 @@
           <loads><load><resource name="M06"/></load></loads>
         </operation>
         <operation name="J01T08" xsi:type="operation_fixed_time" duration="PT56H">
-          <loads><load><resource name="M08"/></load></loads>
+          <loads><load><resource name="M07"/></load></loads>
         </operation>
         <operation name="J01T09" xsi:type="operation_fixed_time" duration="PT44H">
           <loads><load><resource name="M08"/></load></loads>
@@ -136,7 +136,7 @@
 	    <due>2009-02-08T18:00:00</due>
 	    <quantity>1</quantity>
 	    <category>568</category>
-	    <operation name="job 3 routing" xsi:type="operation_routing">
+ 	    <operation name="job 3 routing" xsi:type="operation_routing">
 	    <steps>
         <operation name="J03T01" xsi:type="operation_fixed_time" duration="PT91H">
         <loads><load><resource name="M01"/></load></loads>
@@ -471,32 +471,122 @@
 <!-- Solve and save the plan -->
 <?python
 
-from datetime import timedelta
-solver = frepple.solver_mrp(name="MRP", constraints=7, loglevel=0)
-bestSolution = None
-
 # The heuristic of the default solver is no match for this very complex
-# combinatorial problem. We ned to solve many times with different due dates
-# and priorities to search for good solutions.
+# combinatorial problem. 
+# We need to solve many times with different due dates and priorities to 
+# search for good solutions. The loop searching for better solutions is a 
+# (pimitive) genetic algorithm.
 
-# Try different due dates - This is because the heuristic plans ASAP after the
-# due date, which is not a good strategy for filling gaps in the available
-# capacity. We try different due dates.
+# Todo:
+# - detect when the solution doesn't improve and then go back to a previous
+#   best solution.
+# - smarter update of due date after plan: if the planned date is less than the
+#   due date.
+# - more dynamic size of the mutations, ie not only move the due date with 1 
+#   hour or 1 day but allow anything in between.
+
+from datetime import timedelta
+import random
+
+# Create a solver
+solver = frepple.solver_mrp(name="MRP", constraints=7, loglevel=0)
+
+# Make the results reproducible
+random.seed(8)
+
+# Initialize variables
+bestSolution = None
 iterations = 0
+end = []
 anybodylate = True
-while anybodylate:
+noimprovement = 0
+initialscan = True
+noimprovement = 0
+max = frepple.settings.current
+sortfield=lambda x: x[1]
+
+# Initial "best" solution
+best = []
+for i in frepple.demands():
+  best.append( (i, i.priority, i.due) )
+
+# Main loop.
+# Increase the max iterations on the next line to get even better solutions.
+# With each additional
+while noimprovement < 5000 and iterations < 5000:
+
+  # Rescale the priorities
+  best.sort(None, sortfield)
+  prio = 1
+  for i in best: 
+    i[0].priority = prio
+    prio += 1
+
+  # Choose a mutation to the plan
+  if initialscan:
+    # To speed up conversion we do a deterministic increase of the due date
+    # of all demands. After this initial scan we do have already a pretty 
+    # acceptable solution.
+    mutation = 8
+  else:
+    # An optimization run where we fine tune our best solution by trying out
+    # various mutations of the best solution found so far.
+    mutation = random.choice([0,1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11,12])
+ 
+  # Implement the mutation
+  if mutation == 0:
+    # reset to the best solution, an choose another mutation
+    for i in best: (i[0].priority, i[0].due) = (i[1], i[2])
+    mutation = random.choice([1,2,3,4,5,6,7,8,9,10,11,12])
+  if mutation == 1:
+    # reset all priorities to the optimal solution
+    for i in best: i[0].priority = i[1]
+  elif mutation == 2:
+    # reset all due dates to the optimal solution
+    for i in best: i[0].due = i[2]
+  elif mutation == 3:
+    # decrease the priority of an arbitrary demand
+  	random.choice(best)[0].priority -= 2
+  elif mutation == 4:
+    # increase the priority of an arbitrary demand
+  	random.choice(best)[0].priority += 2
+  elif mutation == 5:
+    # decrease the due date of an arbitrary demand by 1 hour
+  	random.choice(best)[0].due -= timedelta(0,3600)
+  elif mutation == 6:
+    # increase the due date of an arbitrary demand by 1 hour
+  	random.choice(best)[0].due += timedelta(0,3600)
+  elif mutation == 7:
+    # decrease the due date of all demands
+    for i in best: i[0].due -= timedelta(0,3600)
+  elif mutation == 8:
+    # increase the due date of all demands
+    for i in best: i[0].due += timedelta(0,3600)
+  elif mutation == 9:
+    # decrease the due date of an arbitrary demand by 1 day
+  	random.choice(best)[0].due -= timedelta(0,24*3600)
+  elif mutation == 10:
+    # decrease the due date of an arbitrary demand by 1 day
+  	random.choice(best)[0].due += timedelta(0,24*3600)
+  elif mutation == 11:
+    # decrease the due date of all demands by 1 day
+    for i in best: i[0].due -= timedelta(0,24*3600)
+  elif mutation == 12:
+    # increase the due date of all demands by 1 day
+    for i in best: i[0].due += timedelta(0,24*3600)
+
   # Try different priorities - This is because the heuristic plans order by
   # order and locks the plan of an order when moving to the next one. The
   # greedy heuristic doesn't allow trade-offs between orders. We try different
-  # priorities to get closer
-  anybodylate = False
+  # priorities to get closer.
   for x in range(0,20):
-    # Create the plan
+    # Create a new plan
     solver.solve()
     iterations += 1
+    noimprovement += 1
     # Find the latest demand
-    sortfield=lambda x: x[1]
     end = []
+    anybodylate = False
     max = frepple.settings.current
     for i in frepple.demands():
       for j in i.operationplans:
@@ -504,19 +594,24 @@ while anybodylate:
           max = j.end
           latestOrder = i
         if j.end > i.due: anybodylate = True
-        end.append( (i, j.end) )
+        end.append( (i, j.end, i.priority) )
+    if not anybodylate: 
+      initialscan = False
     # Keep track of the best solution
-    if bestSolution == None or max < bestSolution:
+    if bestSolution == None or max <= bestSolution:
+      if bestSolution == None or max < bestSolution: 
+        noimprovement = 0
       bestSolution = max
       best = []
       for i in frepple.demands():
         best.append( (i, i.priority, i.due) )
       best.sort(None, sortfield)
-      timespan = (bestSolution - frepple.settings.current).days * 24
-      print "\nBest solution: %d, %d%% over the optimum solution" % \
-        ( timespan, (timespan - 930) / 9.30)
+      timespan = bestSolution - frepple.settings.current
+      timespan = timespan.days *24 + timespan.seconds / 3600
+      print "\nBest solution: %d, %d%% over the optimal solution, %d iterations" % \
+        ( timespan, (timespan - 930) / 9.30, iterations)
       for l in best:
-        print "   ", l[0].name, l[1], l[2]
+        print "   '%s' %s %s" % (l[0].name, l[1], l[2])
     # Updates the priorities. The logic we use assure the critical
     # jobs keep the highest priority, while we allow the priorities
     # of the less critical jobs to change more.
@@ -525,14 +620,9 @@ while anybodylate:
     for l in end:
       l[0].priority += prio
       prio += 1
-  # Due date could be met for all orders and we can stop our search.
-  if not anybodylate: break
-  # Increment the due date for the next iteration, and reset priorities
-  for i in frepple.demands():
-    i.due += timedelta(0,3600)
-    i.priority = 0
 
 print "\nTotal %d iterations" % iterations
+
 
 # Restore the input used to generate the best solution
 for i in best:
@@ -543,7 +633,6 @@ solver.solve()
 
 # Save
 frepple.saveplan("output.1.xml")
-
 ?>
 
 </plan>

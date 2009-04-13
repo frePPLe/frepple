@@ -554,21 +554,26 @@ class Keyword : public NonCopyable
       * 954991 as the hash modulus (954991 being the first prime number lower
       * than 1000000)
       */
-    static hashtype hash(const char* c) {return xercesc::XMLString::hash(c,954991);}
+    static DECLARE_EXPORT hashtype hash(const char* c) 
+      {return xercesc::XMLString::hash(c,954991);}
 
-    /** This is the hash function. */
-    static hashtype hash(string c) {return xercesc::XMLString::hash(c.c_str(),954991);}
+    /** This is the hash function. 
+      * @see hash(const char*)
+      */
+    static DECLARE_EXPORT hashtype hash(string c) 
+      {return xercesc::XMLString::hash(c.c_str(),954991);}
 
     /** This is the hash function taken an XML character string as input.<br>
       * The function is expected to return exactly the same result as when a
       * character pointer is passed as argument.
       * @see hash(const char*)
       */
-    static hashtype hash(const XMLCh* c) {return xercesc::XMLString::hash(c,954991);}
+    static DECLARE_EXPORT hashtype hash(const XMLCh* c) 
+      {return xercesc::XMLString::hash(c,954991);}
 
     /** Finds a tag when passed a certain string. If no tag exists yet, it
       * will be created. */
-    static DECLARE_EXPORT const Keyword& find(char const*);
+    static DECLARE_EXPORT const Keyword& find(const char*);
 
 	  /** Return a reference to a table with all defined tags. */
 	  static DECLARE_EXPORT tagtable& getTags();
@@ -817,7 +822,6 @@ class MetaCategory;
   */
 class MetaClass : public NonCopyable
 {
-
   friend class MetaCategory;
   template <class T, class U> friend class FunctorStatic;
   template <class T, class U> friend class FunctorInstance;

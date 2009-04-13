@@ -745,7 +745,7 @@ DECLARE_EXPORT Keyword::~Keyword()
 }
 
 
-DECLARE_EXPORT const Keyword& Keyword::find(char const* name)
+DECLARE_EXPORT const Keyword& Keyword::find(const char* name)
 {
   tagtable::const_iterator i = getTags().find(hash(name));
   return *(i!=getTags().end() ? i->second : new Keyword(name));

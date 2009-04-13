@@ -109,6 +109,10 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     // Avoid throwing errors during the initialization!
     logger << "Error: " << e.what() << endl;
   }
+  catch (...)
+  {
+    logger << "Error: unknown exception" << endl;
+  }
 
   try
   {
@@ -155,6 +159,10 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   {
     // Avoid throwing errors during the initialization!
     logger << "Error: " << e.what() << endl;
+  }
+  catch (...)
+  {
+    logger << "Error: unknown exception" << endl;
   }
 
   // Return the name of the module

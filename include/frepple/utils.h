@@ -980,12 +980,20 @@ class MetaClass : public NonCopyable
     DECLARE_EXPORT bool raiseEvent(Object* v, Signal a) const;
 
     /** Connect a new subscriber to the class. */
+    #if !defined(WIN32) || defined(FREPPLE_CORE)
     DECLARE_EXPORT void connect(Functor *c, Signal a) const
       {const_cast<MetaClass*>(this)->subscribers[a].push_front(c);}
-
+    #else
+    DECLARE_EXPORT void connect(Functor *c, Signal a) const;
+    #endif
+    
     /** Disconnect a subscriber from the class. */
+    #if !defined(WIN32) || defined(FREPPLE_CORE)
     DECLARE_EXPORT void disconnect(Functor *c, Signal a) const
       {const_cast<MetaClass*>(this)->subscribers[a].remove(c);}
+    #else
+    DECLARE_EXPORT void disconnect(Functor *c, Signal a) const;
+    #endif
 
     /** Print all registered factory methods to the standard output for
       * debugging purposes. */

@@ -535,23 +535,21 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
 }
 
 
-DECLARE_EXPORT string XMLOutput::XMLEscape(const char *p)
+DECLARE_EXPORT ostream& operator << (ostream& os, const XMLEscape& x)
 {
-  string ret(p);
-  for (string::size_type pos = ret.find_first_of("&<>\"\'", 0);
-      pos < string::npos;
-      pos = ret.find_first_of("&<>\"\'", pos))
+  for (const char* p = x.data; *p; ++p)
   {
-    switch (ret[pos])
+    switch (*p)
     {
-      case '&': ret.replace(pos,1,"&amp;",5); pos+=5; break;
-      case '<': ret.replace(pos,1,"&lt;",4); pos+=4; break;
-      case '>': ret.replace(pos,1,"&gt;",4); pos+=4; break;
-      case '"': ret.replace(pos,1,"&quot;",6); pos+=6; break;
-      case '\'': ret.replace(pos,1,"&apos;",6); pos+=6;
+      case '&': os << "&amp;"; break;
+      case '<': os << "&lt;"; break;
+      case '>': os << "&gt;"; break;
+      case '"': os << "&quot;"; break;
+      case '\'': os << "&apos;"; break;
+      default: os << *p;
     }
   }
-  return ret;
+  return os;
 }
 
 

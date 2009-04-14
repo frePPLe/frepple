@@ -132,7 +132,7 @@ DECLARE_EXPORT(void) FreppleExit();
   * This function is only available when using C++. The same functionality
   * is available to C with the function FreppleLog(const char*).
   */
-DECLARE_EXPORT(void) FreppleLog(const std::string);
+DECLARE_EXPORT(void) FreppleLog(const std::string&);
 
 /* The functions listed below can be called from C. */
 extern "C"

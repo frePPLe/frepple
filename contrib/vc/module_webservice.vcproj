@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory=".\module_webservice\Debug"
+			IntermediateDirectory=".\module_webservice\Debug"
 			ConfigurationType="1"
 			CharacterSet="0"
 			>
@@ -43,7 +43,7 @@
 				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
@@ -59,9 +59,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="xerces-c_static_2.lib"
 				OutputFile="../../bin/mod_webservice.so"
+				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
+				ProgramDatabaseFile=".\module_webservice\Debug\module_webservice.pdb"
 				SubSystem="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -144,7 +145,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="xerces-c_static_2.lib"
 				OutputFile="../../bin/mod_webservice.so"
 				GenerateDebugInformation="true"
 				SubSystem="0"

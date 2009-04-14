@@ -29,9 +29,9 @@
 namespace module_forecast
 {
 
-const MetaClass Forecast::metadata;
-const MetaClass ForecastBucket::metadata;
-const MetaClass ForecastSolver::metadata;
+const MetaClass Forecast::metadata("demand_forecast");
+const MetaClass ForecastBucket::metadata("demand_forecastbucket");
+const MetaClass ForecastSolver::metadata("solver_forecast");
 
 
 Forecast::MapOfForecasts Forecast::ForecastDictionary;

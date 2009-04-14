@@ -131,7 +131,7 @@ void LibraryModel::initialize()
   Plan::thePlan = new Plan();
 
   // Initialize the plan metadata.
-  Plan::metadata.registerCategory("plan");
+  Plan::metadata.registerCategory("plan","");
 
   // Initialize the solver metadata.
   Solver::metadata.registerCategory

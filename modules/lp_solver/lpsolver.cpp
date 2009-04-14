@@ -29,7 +29,7 @@
 namespace module_lp_solver
 {
 
-const MetaClass LPSolver::metadata;
+const MetaClass LPSolver::metadata("solver_lp");
 
 const Keyword tag_datafile("datafile");
 const Keyword tag_modelfile("modelfile");

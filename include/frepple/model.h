@@ -4343,8 +4343,13 @@ class ProblemLate : public Problem
         getDemand()->getLatestDelivery()->getDates().getEnd()
         ).getDuration()) / 86400;
     }
+
+    /** Constructor. */
     explicit ProblemLate(Demand* d) : Problem(d) {addProblem();}
+
+    /** Destructor. */
     ~ProblemLate() {removeProblem();}
+
     const DateRange getDateRange() const
     {
       assert(getDemand() && !getDemand()->getDelivery().empty());

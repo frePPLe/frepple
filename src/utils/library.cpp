@@ -191,7 +191,7 @@ void LibraryUtils::initialize()
 
   // Initialize the processing instruction metadata.
   Command::metadataInstruction.registerCategory
-    ("instruction", NULL);
+    ("instruction", "");
 
   // Register Python as a processing instruction.
   CommandPython::metadata2.registerClass(
@@ -214,7 +214,7 @@ void LibraryUtils::initialize()
 }
 
 
-DECLARE_EXPORT void MetaClass::registerClass (const char* a, const char* b, bool def) const
+DECLARE_EXPORT void MetaClass::registerClass (const string& a, const string& b, bool def) const
 {
   // Re-initializing isn't okay
   if (category)
@@ -222,17 +222,17 @@ DECLARE_EXPORT void MetaClass::registerClass (const char* a, const char* b, bool
 
   // Find or create the category
   MetaCategory* cat
-    = const_cast<MetaCategory*>(MetaCategory::findCategoryByTag(a));
+    = const_cast<MetaCategory*>(MetaCategory::findCategoryByTag(a.c_str()));
 
   // Check for a valid category
   if (!cat)
-    throw LogicException("Category " + string(a)
-        + " not found when registering class " + string(b));
+    throw LogicException("Category " + a
+        + " not found when registering class " + b);
 
   // Update fields
   MetaClass& me = const_cast<MetaClass&>(*this);
-  me.type = b;
-  me.typetag = &Keyword::find(b);
+  if (me.type == "unspecified") me.type = b;
+  me.typetag = &Keyword::find(b.c_str());
   me.category = cat;
 
   // Update the metadata table
@@ -243,7 +243,7 @@ DECLARE_EXPORT void MetaClass::registerClass (const char* a, const char* b, bool
 }
 
 
-DECLARE_EXPORT void MetaCategory::registerCategory (const char* a, const char* gr,
+DECLARE_EXPORT void MetaCategory::registerCategory (const string& a, const string& gr,
     readController f, writeController w) const
 {
   // Initialize only once
@@ -251,24 +251,24 @@ DECLARE_EXPORT void MetaCategory::registerCategory (const char* a, const char* g
     throw LogicException("Reinitializing category " + type + " isn't allowed");
 
   // Update registry
-  if (a) categoriesByTag[Keyword::hash(a)] = this;
-  if (gr) categoriesByGroupTag[Keyword::hash(gr)] = this;
+  if (!a.empty()) categoriesByTag[Keyword::hash(a)] = this;
+  if (!gr.empty()) categoriesByGroupTag[Keyword::hash(gr)] = this;
 
   // Update fields
   MetaCategory& me = const_cast<MetaCategory&>(*this);
   me.readFunction = f;
   me.writeFunction = w;
-  if (a)
+  if (!a.empty())
   {
     // Type tag
     me.type = a;
-    me.typetag = &Keyword::find(a);
+    me.typetag = &Keyword::find(a.c_str());
   }
-  if (gr)
+  if (!gr.empty())
   {
     // Group tag
     me.group = gr;
-    me.grouptag = &Keyword::find(gr);
+    me.grouptag = &Keyword::find(gr.c_str());
   }
 
   // Maintain a linked list of all registered categories

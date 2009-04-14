@@ -554,22 +554,34 @@ class Keyword : public NonCopyable
       * 954991 as the hash modulus (954991 being the first prime number lower
       * than 1000000)
       */
+    #if !defined(WIN32) || defined(FREPPLE_CORE)
     static DECLARE_EXPORT hashtype hash(const char* c) 
       {return xercesc::XMLString::hash(c,954991);}
+    #else
+    static DECLARE_EXPORT hashtype hash(const char* c);
+    #endif
 
     /** This is the hash function. 
       * @see hash(const char*)
       */
+    #if !defined(WIN32) || defined(FREPPLE_CORE)
     static DECLARE_EXPORT hashtype hash(string c) 
       {return xercesc::XMLString::hash(c.c_str(),954991);}
+    #else
+    static DECLARE_EXPORT hashtype hash(string c);
+    #endif
 
     /** This is the hash function taken an XML character string as input.<br>
       * The function is expected to return exactly the same result as when a
       * character pointer is passed as argument.
       * @see hash(const char*)
       */
+    #if !defined(WIN32) || defined(FREPPLE_CORE)
     static DECLARE_EXPORT hashtype hash(const XMLCh* c) 
       {return xercesc::XMLString::hash(c,954991);}
+    #else
+    static DECLARE_EXPORT hashtype hash(const XMLCh* c);
+    #endif
 
     /** Finds a tag when passed a certain string. If no tag exists yet, it
       * will be created. */
@@ -833,7 +845,7 @@ class MetaClass : public NonCopyable
 
     /** Type definition for a factory method calling the constructor that
       * takes a string as argument. */
-    typedef Object* (*creatorString)(string);
+    typedef Object* (*creatorString)(const string&);
 
     /** Type definition for a method called to process an XML processing
       * instruction. */
@@ -872,15 +884,19 @@ class MetaClass : public NonCopyable
     MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")),
       category(NULL), factoryMethodDefault(NULL), factoryPythonProxy(NULL) {}
 
+    /** Constructor. */
+    MetaClass(const string& t) : type(t), typetag(&Keyword::find("unspecified")),
+      category(NULL), factoryMethodDefault(NULL), factoryPythonProxy(NULL) {}
+
     /** Destructor. */
     virtual ~MetaClass() {}
 
     /** This constructor registers the metadata of a class. */
-    DECLARE_EXPORT void registerClass(const char*, const char*, bool = false) const;
+    DECLARE_EXPORT void registerClass(const string&, const string&, bool = false) const;
 
     /** This constructor registers the metadata of a class, with a factory
       * method that uses the default constructor of the class. */
-    void registerClass (const char* cat, const char* cls, creatorDefault f,
+    void registerClass (const string& cat, const string& cls, creatorDefault f,
       bool def = false) const
     {
       const_cast<MetaClass*>(this)->factoryMethodDefault = f;
@@ -889,7 +905,7 @@ class MetaClass : public NonCopyable
 
     /** This constructor registers the metadata of a class, with a factory
       * method that uses a constructor with a string argument. */
-    void registerClass (const char* cat, const char* cls, creatorString f,
+    void registerClass (const string& cat, const string& cls, creatorString f,
       bool def = false) const
     {
       const_cast<MetaClass*>(this)->factoryMethodString = f;
@@ -898,7 +914,7 @@ class MetaClass : public NonCopyable
 
     /** This constructor registers the metadata of a class as an XML processing
       * instruction. */
-    void registerClass (const char* cat, const char* cls, 
+    void registerClass (const string& cat, const string& cls, 
       processorXMLInstruction f, bool def = false) const
     {
       const_cast<MetaClass*>(this)->processingInstruction = f;
@@ -964,11 +980,11 @@ class MetaClass : public NonCopyable
     DECLARE_EXPORT bool raiseEvent(Object* v, Signal a) const;
 
     /** Connect a new subscriber to the class. */
-    void connect(Functor *c, Signal a) const
+    DECLARE_EXPORT void connect(Functor *c, Signal a) const
       {const_cast<MetaClass*>(this)->subscribers[a].push_front(c);}
 
     /** Disconnect a subscriber from the class. */
-    void disconnect(Functor *c, Signal a) const
+    DECLARE_EXPORT void disconnect(Functor *c, Signal a) const
       {const_cast<MetaClass*>(this)->subscribers[a].remove(c);}
 
     /** Print all registered factory methods to the standard output for
@@ -1044,7 +1060,7 @@ class MetaCategory : public MetaClass
     virtual ~MetaCategory() {}
 
     /** This method is required to register the category of classes. */
-    DECLARE_EXPORT void registerCategory (const char* t, const char* g = NULL,
+    DECLARE_EXPORT void registerCategory (const string& t, const string& g,
       readController = NULL, writeController = NULL) const;
 
     /** Type definition for the map of all registered classes. */
@@ -1725,6 +1741,36 @@ enum mode
 };
 
 
+/** @ brief This utility class escapes special characters from a string.
+  * 
+  *  The following characters are replaced:
+  *    - &: replaced with &amp;
+  *    - <: replaced with &lt;
+  *    - >: replaced with &gt;
+  *    - ": replaced with &quot;
+  *    - ': replaced with &apos;
+  *    - all other characters are left unchanged
+  * The reverse process of un-escaping the special character sequences is 
+  * taken care of by the Xerces library.
+  *
+  * This class works fine with utf-8 and single-byte encodings, but will
+  * NOT work with other multibyte encodings (such as utf-116 or utf-32).
+  */
+class XMLEscape
+{
+  friend DECLARE_EXPORT ostream& operator << (ostream&, const XMLEscape&);
+  private:
+    const char* data;
+  public:
+    XMLEscape(const char* p) {data = p;}
+    XMLEscape(const string& p) {data = p.c_str();}
+};
+
+
+/** Prints the escaped value of the string to the outputstream. */
+DECLARE_EXPORT ostream & operator << (ostream&, const XMLEscape&);
+
+
 /** @brief Base class for writing XML formatted data to an output stream.
   *
   * Subclasses implement writing to specific stream types, such as files
@@ -1817,18 +1863,6 @@ class XMLOutput
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
     {m_fp = &logger; indentstring[0] = '\0';}
 
-    /** Escape a char string - remove the characters & < > " ' and replace with
-      * the proper escape codes. The reverse process of un-escaping the special
-      * character sequences is taken care of by the xml library.
-      *
-      * This method works fine with utf-8 and single-byte encodings, but will
-      * NOT work with other multibyte encodings (such as utf-116 or utf-32).
-      *
-      * @param  pstr character pointer to a the character string to be processed
-      * @return string with escaped characters
-      */
-    DECLARE_EXPORT string XMLEscape(const char *pstr);
-
     /** Start writing a new object. This method will open a new XML-tag.
       * Output: \<TAG_T\> */
     void BeginObject(const Keyword& t)
@@ -1842,7 +1876,7 @@ class XMLOutput
     void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1)
     {
       *m_fp << indentstring << t.stringStartElement()
-      << attr1.stringAttribute() << XMLEscape(val1.c_str()) << "\">\n";
+      << attr1.stringAttribute() << XMLEscape(val1) << "\">\n";
       incIndent();
     }
 
@@ -1852,8 +1886,8 @@ class XMLOutput
                      const Keyword& attr2, const string& val2)
     {
       *m_fp << indentstring << t.stringStartElement()
-      << attr1.stringAttribute() << XMLEscape(val1.c_str()) << "\""
-      << attr2.stringAttribute() << XMLEscape(val2.c_str()) << "\">\n";
+      << attr1.stringAttribute() << XMLEscape(val1) << "\""
+      << attr2.stringAttribute() << XMLEscape(val2) << "\">\n";
       incIndent();
     }
 
@@ -1864,9 +1898,9 @@ class XMLOutput
       const Keyword& attr3, const string& val3)
     {
       *m_fp << indentstring << t.stringStartElement()
-      << attr1.stringAttribute() << XMLEscape(val1.c_str()) << "\""
-      << attr2.stringAttribute() << XMLEscape(val2.c_str()) << "\""
-      << attr3.stringAttribute() << XMLEscape(val3.c_str()) << "\">\n";
+      << attr1.stringAttribute() << XMLEscape(val1) << "\""
+      << attr2.stringAttribute() << XMLEscape(val2) << "\""
+      << attr3.stringAttribute() << XMLEscape(val3) << "\">\n";
       incIndent();
     }
 
@@ -1893,7 +1927,7 @@ class XMLOutput
     {
       *m_fp << indentstring << t.stringStartElement()
       << attr1.stringAttribute() << val1 << "\""
-      << attr2.stringAttribute() << XMLEscape(val2.c_str()) << "\">\n";
+      << attr2.stringAttribute() << XMLEscape(val2) << "\">\n";
       incIndent();
     }
 
@@ -1952,7 +1986,7 @@ class XMLOutput
     {
       if (!val.empty())
         *m_fp << indentstring << t.stringElement()
-        << XMLEscape(val.c_str()).c_str() << t.stringEndElement();
+        << XMLEscape(val) << t.stringEndElement();
     }
 
     /** Writes an element with a string attribute.
@@ -1963,7 +1997,7 @@ class XMLOutput
         *m_fp << indentstring << u.stringStartElement() << "/>\n";
       else
         *m_fp << indentstring << u.stringStartElement()
-        << t.stringAttribute() << XMLEscape(val.c_str())
+        << t.stringAttribute() << XMLEscape(val)
         << "\"/>\n";
     }
 
@@ -2014,7 +2048,7 @@ class XMLOutput
     {
       if (val)
         *m_fp << indentstring << t.stringElement()
-        << XMLEscape(val).c_str() << t.stringEndElement();
+        << XMLEscape(val) << t.stringEndElement();
     }
 
     /** Writes an timeperiod element.
@@ -2492,7 +2526,7 @@ class Object
 
     /** This template function can generate a factory method for objects that
       * need a string argument in their constructor. */
-    template <class T> static Object* createString(string n)
+    template <class T> static Object* createString(const string& n)
       {return new T(n);}
 };
 

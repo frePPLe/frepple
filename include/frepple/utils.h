@@ -3158,7 +3158,7 @@ class CommandLoadLibrary : public Command
     string tempValue;
 
     /** A map of all modules that have been dynamically loaded. */
-    static DECLARE_EXPORT set<string> registry;
+    static set<string> registry;
 };
 
 

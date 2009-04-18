@@ -40,7 +40,7 @@ DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByTag;
 DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 
 // Repository of loaded modules
-DECLARE_EXPORT set<string> CommandLoadLibrary::registry; // xxx
+set<string> CommandLoadLibrary::registry;
 
 // Processing instruction metadata
 DECLARE_EXPORT const MetaCategory* Command::metadataInstruction;

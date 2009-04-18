@@ -130,10 +130,6 @@ class CommandWebservice : public Command
         throw DataException("Invalid number of threads: valid range is 1 - 100");
       threads = i;
     }
-
-    virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
-    virtual size_t getSize() const {return sizeof(CommandWebservice);}
 };
 
 

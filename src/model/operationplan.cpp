@@ -48,7 +48,7 @@ void DECLARE_EXPORT OperationPlan::setChanged(bool b)
 
 
 DECLARE_EXPORT Object* OperationPlan::createOperationPlan
-(const MetaClass& cat, const AttributeList& in)
+(const MetaClass* cat, const AttributeList& in)
 {
   // Pick up the action attribute
   Action action = MetaClass::decodeAction(in);
@@ -191,7 +191,7 @@ DECLARE_EXPORT bool OperationPlan::initialize()
   //   - both operationplans have no owner
   //   - start and end date of both operationplans are the same
   //   - demand of both operationplans are the same
-  if (!id && getOperation()->getType() == OperationFixedTime::metadata 
+  if (!id && getOperation()->getType() == *OperationFixedTime::metadata 
     && !getLocked() && !getOwner() && getOperation()->getLoads().empty())
   {
     // Loop through candidates
@@ -555,14 +555,14 @@ DECLARE_EXPORT void OperationPlan::deleteOperationPlans(Operation* o, bool delet
 }
 
 
-DECLARE_EXPORT void OperationPlan::writer(const MetaCategory& c, XMLOutput* o)
+DECLARE_EXPORT void OperationPlan::writer(const MetaCategory* c, XMLOutput* o)
 {
   if (!empty())
   {
-    o->BeginObject(*c.grouptag);
+    o->BeginObject(*c->grouptag);
     for (iterator i=begin(); i!=end(); ++i)
-      o->writeElement(*c.typetag, *i);
-    o->EndObject(*c.grouptag);
+      o->writeElement(*c->typetag, *i);
+    o->EndObject(*c->grouptag);
   }
 }
 
@@ -1000,7 +1000,7 @@ int PythonOperationPlan::initialize(PyObject* m)
   x.supportgetattro();
   x.supportsetattro();
   x.supportcreate(create);
-  const_cast<MetaCategory&>(OperationPlan::metadata).factoryPythonProxy = proxy;
+  const_cast<MetaCategory*>(OperationPlan::metadata)->factoryPythonProxy = proxy;
   return x.typeReady(m);
 }
 

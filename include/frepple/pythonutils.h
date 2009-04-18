@@ -233,7 +233,7 @@ class CommandPython : public Command
     void setFileName(string s) {filename = s; cmd.clear();}
 
     /** Metadata for registration as an XML instruction. */
-    static const MetaClass metadata2;
+    static const MetaClass *metadata2;
 
     /** This method is called when a processing instruction is read. */
     static void processorXMLInstruction(const char *d)
@@ -619,14 +619,14 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
     {
       // Initialize the type
       PythonType& x = PythonExtension< FreppleCategory<ME,PROXY> >::getType();
-      x.setName(PROXY::metadata.type);
-      x.setDoc("frePPLe " + PROXY::metadata.type);
+      x.setName(PROXY::metadata->type);
+      x.setDoc("frePPLe " + PROXY::metadata->type);
       x.supportgetattro();
       x.supportsetattro();
       x.supportstr();
       x.supportcompare();
       x.supportcreate(create);
-      const_cast<MetaCategory&>(PROXY::metadata).factoryPythonProxy = proxy;
+      const_cast<MetaCategory*>(PROXY::metadata)->factoryPythonProxy = proxy;
       return x.typeReady(m);
     }
 
@@ -710,15 +710,15 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
     {
       // Initialize the type
       PythonType& x = PythonExtension< FreppleClass<ME,BASE,PROXY> >::getType();
-      x.setName(PROXY::metadata.type);
-      x.setDoc("frePPLe " + PROXY::metadata.type);
+      x.setName(PROXY::metadata->type);
+      x.setDoc("frePPLe " + PROXY::metadata->type);
       x.supportgetattro();
       x.supportsetattro();
       x.supportstr();
       x.supportcompare();
       x.supportcreate(create);
       x.setBase(BASE::getType());
-      const_cast<MetaClass&>(PROXY::metadata).factoryPythonProxy = proxy;
+      const_cast<MetaClass*>(PROXY::metadata)->factoryPythonProxy = proxy;
       return x.typeReady(m);
     }
 
@@ -802,8 +802,8 @@ class FreppleIterator : public PythonExtension<ME>
     {
       // Initialize the type
       PythonType& x = PythonExtension<ME>::getType();
-      x.setName(DATACLASS::metadata.type + "Iterator");
-      x.setDoc("frePPLe iterator for " + DATACLASS::metadata.type);
+      x.setName(DATACLASS::metadata->type + "Iterator");
+      x.setDoc("frePPLe iterator for " + DATACLASS::metadata->type);
       x.supportiter();
       return x.typeReady(m);
     }

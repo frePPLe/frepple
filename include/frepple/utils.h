@@ -813,11 +813,11 @@ class MetaCategory;
   *    class X : public Object
   *    {
   *      public:
-  *        virtual const MetaClass& getType() {return metadata;}
-  *        static const MetaClass metadata;
+  *        virtual const MetaClass& getType() {return *metadata;}
+  *        static const MetaClass *metadata;
   *    }
   *  In the implementation file:
-  *    const MetaClass X::metadata;
+  *    const MetaClass *X::metadata;
   * @endcode
   * Creating a MetaClass object isn't sufficient. It needs to be registered,
   * typically in an initialization method:
@@ -825,8 +825,8 @@ class MetaCategory;
   *    void initialize()
   *    {
   *      ...
-  *      Y::metadata.registerCategory("Y","Ys", reader_method, writer_method);
-  *      X::metadata.registerClass("Y","X", factory_method);
+  *      Y::metadata = new MetaCategory("Y","Ys", reader_method, writer_method);
+  *      X::metadata = new MetaClass("Y","X", factory_method);
   *      ...
   *    }
   * @endcode
@@ -880,45 +880,44 @@ class MetaClass : public NonCopyable
       */
     creatorPythonProxy factoryPythonProxy;
 
-    /** Default constructor. */
-    MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")),
-      category(NULL), factoryMethodDefault(NULL), factoryPythonProxy(NULL) {}
-
-    /** Constructor. */
-    MetaClass(const string& t) : type(t), typetag(&Keyword::find("unspecified")),
-      category(NULL), factoryMethodDefault(NULL), factoryPythonProxy(NULL) {}
-
     /** Destructor. */
     virtual ~MetaClass() {}
 
+    /** Initialize the data structure and register the class. */
+    DECLARE_EXPORT void registerClass(const string&, const string&, 
+      bool = false, creatorDefault = NULL);
+
     /** This constructor registers the metadata of a class. */
-    DECLARE_EXPORT void registerClass(const string&, const string&, bool = false) const;
+    MetaClass (const string& cat, const string& cls, bool def = false)
+    {
+      registerClass(cat,cls,def);
+    }
 
     /** This constructor registers the metadata of a class, with a factory
       * method that uses the default constructor of the class. */
-    void registerClass (const string& cat, const string& cls, creatorDefault f,
-      bool def = false) const
+    MetaClass (const string& cat, const string& cls, creatorDefault f,
+      bool def = false)
     {
-      const_cast<MetaClass*>(this)->factoryMethodDefault = f;
       registerClass(cat,cls,def);
+      factoryMethodDefault = f;
     }
 
     /** This constructor registers the metadata of a class, with a factory
       * method that uses a constructor with a string argument. */
-    void registerClass (const string& cat, const string& cls, creatorString f,
-      bool def = false) const
+    MetaClass (const string& cat, const string& cls, creatorString f,
+      bool def = false)
     {
-      const_cast<MetaClass*>(this)->factoryMethodString = f;
       registerClass(cat,cls,def);
+      factoryMethodString = f;
     }
 
     /** This constructor registers the metadata of a class as an XML processing
       * instruction. */
-    void registerClass (const string& cat, const string& cls, 
-      processorXMLInstruction f, bool def = false) const
+    MetaClass (const string& cat, const string& cls, 
+      processorXMLInstruction f, bool def = false)
     {
-      const_cast<MetaClass*>(this)->processingInstruction = f;
       registerClass(cat,cls,def);
+      processingInstruction = f;
     }
 
     /** This function will analyze the string being passed, and return the
@@ -980,20 +979,12 @@ class MetaClass : public NonCopyable
     DECLARE_EXPORT bool raiseEvent(Object* v, Signal a) const;
 
     /** Connect a new subscriber to the class. */
-    #if !defined(WIN32) || defined(FREPPLE_CORE)
-    DECLARE_EXPORT void connect(Functor *c, Signal a) const
+    void connect(Functor *c, Signal a) const
       {const_cast<MetaClass*>(this)->subscribers[a].push_front(c);}
-    #else
-    DECLARE_EXPORT void connect(Functor *c, Signal a) const;
-    #endif
     
     /** Disconnect a subscriber from the class. */
-    #if !defined(WIN32) || defined(FREPPLE_CORE)
-    DECLARE_EXPORT void disconnect(Functor *c, Signal a) const
+    void disconnect(Functor *c, Signal a) const
       {const_cast<MetaClass*>(this)->subscribers[a].remove(c);}
-    #else
-    DECLARE_EXPORT void disconnect(Functor *c, Signal a) const;
-    #endif
 
     /** Print all registered factory methods to the standard output for
       * debugging purposes. */
@@ -1002,6 +993,11 @@ class MetaClass : public NonCopyable
     /** Find a particular class by its name. If it can't be located the return
       * value is NULL. */
     static DECLARE_EXPORT const MetaClass* findClass(const char*);
+
+  protected:
+    /** Default constructor. */
+    MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")),
+      category(NULL), factoryMethodDefault(NULL), factoryPythonProxy(NULL) {}
 
   private:
     /** This is a list of objects that will receive a callback when the call
@@ -1045,31 +1041,22 @@ class MetaCategory : public MetaClass
     const Keyword* grouptag;
 
     /** Type definition for the read control function. */
-    typedef Object* (*readController)(const MetaClass&, const AttributeList&);
+    typedef Object* (*readController)(const MetaClass*, const AttributeList&);
 
     /** Type definition for the write control function. */
-    typedef void (*writeController)(const MetaCategory&, XMLOutput *o);
+    typedef void (*writeController)(const MetaCategory*, XMLOutput *o);
 
     /** This template method is available as a object creation factory for
       * classes without key fields and which rely on a default constructor.
       */
-    static Object* ControllerDefault (const MetaClass&, const AttributeList&);
-
-    /** Default constructor. <br>
-      * Calling the registerCategory method is required after creating a
-      * category object.
-      * @see registerCategory
-      */
-    MetaCategory() : group("unspecified"),
-      grouptag(&Keyword::find("unspecified")), nextCategory(NULL),
-      writeFunction(NULL) {};
+    static Object* ControllerDefault (const MetaClass*, const AttributeList&);
 
     /** Destructor. */
     virtual ~MetaCategory() {}
 
-    /** This method is required to register the category of classes. */
-    DECLARE_EXPORT void registerCategory (const string& t, const string& g,
-      readController = NULL, writeController = NULL) const;
+    /** Constructor. */
+    DECLARE_EXPORT MetaCategory (const string& t, const string& g,
+      readController = NULL, writeController = NULL);
 
     /** Type definition for the map of all registered classes. */
     typedef map < hashtype, const MetaClass*, less<hashtype> > ClassMap;
@@ -1137,7 +1124,10 @@ class MetaCategory : public MetaClass
       */
     writeController writeFunction;
 
+    /** A map of all categories by their name. */
     static DECLARE_EXPORT CategoryMap categoriesByTag;
+
+    /** A map of all categories by their group name. */
     static DECLARE_EXPORT CategoryMap categoriesByGroupTag;
 };
 
@@ -1153,13 +1143,13 @@ template <class T, class U> class FunctorStatic : public Functor
   public:
     /** Add a signal subscriber. */
     static void connect(const Signal a)
-      {T::metadata.connect(new FunctorStatic<T,U>(), a);}
+      {T::metadata->connect(new FunctorStatic<T,U>(), a);}
 
     /** Remove a signal subscriber. */
     static void disconnect(const Signal a)
     {
       MetaClass &t =
-        const_cast<MetaClass&>(static_cast<const MetaClass&>(T::metadata));
+        const_cast<MetaClass&>(static_cast<const MetaClass&>(*T::metadata));
       // Loop through all subscriptions
       for (list<Functor*>::iterator i = t.subscribers[a].begin();
         i != t.subscribers[a].end(); ++i)
@@ -2910,7 +2900,7 @@ class Command
     void setVerbose(bool b) {verbose = (b ? YES : NO);}
 
     /** A second metadata object for registering XML processing instructions. */
-    static DECLARE_EXPORT const MetaCategory metadataInstruction;
+    static DECLARE_EXPORT const MetaCategory* metadataInstruction;
 
   private:
     /** Specifies whether the execution of the command should remain silent
@@ -3707,7 +3697,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
       *   'add_change' is the default value.
       * @see HasName
       */
-    static Object* reader (const MetaClass& cat, const AttributeList& in)
+    static Object* reader (const MetaClass* cat, const AttributeList& in)
     {
       // Pick up the action attribute
       Action act = MetaClass::decodeAction(in);
@@ -3764,18 +3754,18 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 
       // Lookup the type in the map
       const MetaClass* j;
-      if (cat.category)
+      if (cat->category)
         // Class metadata passed: we already know what type to create
-        j = &cat;
+        j = cat;
       else
       {
         // Category metadata passed: we need to look up the type
         const DataElement* type = in.get(Tags::tag_type);
-        j = static_cast<const MetaCategory&>(cat).findClass(*type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash);
+        j = static_cast<const MetaCategory&>(*cat).findClass(*type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash);
         if (!j)
         {
           string t(*type ? type->getString() : "default");
-          throw DataException("No type " + t + " registered for category " + cat.type);
+          throw DataException("No type " + t + " registered for category " + cat->type);
         }
       }
 
@@ -3800,13 +3790,13 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
     }
 
     /** A handler that is used to persist the tree. */
-    static void writer(const MetaCategory& c, XMLOutput* o)
+    static void writer(const MetaCategory* c, XMLOutput* o)
     {
       if (empty()) return;
-      o->BeginObject(*(c.grouptag));
+      o->BeginObject(*(c->grouptag));
       for (iterator i = begin(); i != end(); ++i)
-          o->writeElement(*(c.typetag), *i);
-      o->EndObject(*(c.grouptag));
+          o->writeElement(*(c->typetag), *i);
+      o->EndObject(*(c->grouptag));
     }
 };
 

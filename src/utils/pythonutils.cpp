@@ -44,7 +44,7 @@ DECLARE_EXPORT PyObject* PythonLogicException = NULL;
 DECLARE_EXPORT PyObject* PythonDataException = NULL;
 DECLARE_EXPORT PyObject* PythonRuntimeException = NULL;
 
-const MetaClass CommandPython::metadata2;
+const MetaClass* CommandPython::metadata2;
 
 PyThreadState *PythonInterpreter::mainThreadState = NULL;
 DECLARE_EXPORT PyObject *PythonInterpreter::module = NULL;

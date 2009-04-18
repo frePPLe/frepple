@@ -156,8 +156,8 @@ class LPSolver : public Solver
 	  /** Destructor. */
     ~LPSolver() {};
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static const MetaClass *metadata;
     virtual size_t getSize() const {return sizeof(LPSolver);}
 
   private:

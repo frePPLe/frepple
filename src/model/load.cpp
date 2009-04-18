@@ -212,7 +212,7 @@ int PythonLoad::initialize(PyObject* m)
   x.supportgetattro();
   x.supportsetattro();
   x.supportcreate(create);
-  const_cast<MetaCategory&>(Load::metadata).factoryPythonProxy = proxy;
+  const_cast<MetaCategory*>(Load::metadata)->factoryPythonProxy = proxy;
   return x.typeReady(m);
 }
 

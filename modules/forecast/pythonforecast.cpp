@@ -146,7 +146,7 @@ int PythonForecastBucket::initialize(PyObject* m)
   x.setDoc("frePPLe forecastbucket");
   x.supportgetattro();
   x.supportsetattro();
-  const_cast<MetaCategory&>(Demand::metadata).factoryPythonProxy = proxy;
+  const_cast<MetaCategory*>(Demand::metadata)->factoryPythonProxy = proxy;
   return x.typeReady(m);
 }
 

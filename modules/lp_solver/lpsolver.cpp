@@ -29,7 +29,7 @@
 namespace module_lp_solver
 {
 
-const MetaClass LPSolver::metadata("solver_lp");
+const MetaClass *LPSolver::metadata;
 
 const Keyword tag_datafile("datafile");
 const Keyword tag_modelfile("modelfile");
@@ -52,7 +52,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   try 
   {
     // Initialize the metadata.
-    LPSolver::metadata.registerClass(
+    LPSolver::metadata = new MetaClass(
       "solver",
       "solver_lp",
       Object::createString<LPSolver>);

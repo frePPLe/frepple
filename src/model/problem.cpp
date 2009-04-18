@@ -208,18 +208,18 @@ DECLARE_EXPORT void Problem::clearProblems(HasProblems& p, bool setchanged)
 }
 
 
-DECLARE_EXPORT void Problem::writer(const MetaCategory& c, XMLOutput* o)
+DECLARE_EXPORT void Problem::writer(const MetaCategory* c, XMLOutput* o)
 {
   const_iterator piter = begin();
   if (piter != end())
   {
-    o->BeginObject(*c.grouptag);
+    o->BeginObject(*c->grouptag);
     for (; piter!=end(); ++piter)
       // Note: not the regular write, but a fast write to speed things up.
       // This is possible since problems aren't nested and are never
       // referenced.
-      piter->writeElement(o, *c.typetag);
-    o->EndObject(*c.grouptag);
+      piter->writeElement(o, *c->typetag);
+    o->EndObject(*c->grouptag);
   }
 }
 
@@ -482,7 +482,7 @@ int PythonProblem::initialize(PyObject* m)
   x.setDoc("frePPLe problem");
   x.supportgetattro();
   x.supportstr();
-  const_cast<MetaCategory&>(Problem::metadata).factoryPythonProxy = proxy;
+  const_cast<MetaCategory*>(Problem::metadata)->factoryPythonProxy = proxy;
   return x.typeReady(m);
 }
 

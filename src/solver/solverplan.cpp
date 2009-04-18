@@ -29,7 +29,7 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaClass SolverMRP::metadata;
+DECLARE_EXPORT const MetaClass* SolverMRP::metadata;
 
 const short SolverMRP::LEADTIME = 1;
 const short SolverMRP::MATERIAL = 2;
@@ -50,7 +50,7 @@ void LibrarySolver::initialize()
   init = true;
 
   // Register all classes.
-  SolverMRP::metadata.registerClass(
+  SolverMRP::metadata = new MetaClass(
     "solver",
     "solver_mrp",
     Object::createString<SolverMRP>,

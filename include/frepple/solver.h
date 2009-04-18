@@ -195,8 +195,8 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const {return sizeof(SolverMRP);}
 
     /** Static constant for the LEADTIME constraint type.<br>
@@ -356,7 +356,7 @@ class SolverMRP : public Solver
           */
         virtual DECLARE_EXPORT void execute();
 
-        virtual const MetaClass& getType() const {return SolverMRP::metadata;}
+        virtual const MetaClass& getType() const {return *SolverMRP::metadata;}
         virtual size_t getSize() const {return sizeof(SolverMRPdata);}
 
         bool getVerbose() const 

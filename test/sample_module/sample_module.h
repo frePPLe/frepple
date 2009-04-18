@@ -102,13 +102,13 @@ class OperationTransport : public OperationFixedTime
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
 
     /** Returns a reference to this class' metadata. */
-    virtual const MetaClass& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return *metadata;}
 
     /** A static metadata object. */
-    static const MetaClass metadata;
+    static const MetaClass *metadata;
 
     /** This callback will automatically be called when a buffer is deleted. */
-    static bool callback(Buffer*, Signal);
+    static bool callback(Buffer*, const Signal);
 };
 
 } // End namespace

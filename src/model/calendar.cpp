@@ -731,17 +731,17 @@ DECLARE_EXPORT PyObject* PythonCalendarBucket::getattro(const Attribute& attr)
     return PythonObject(obj->getEnd());
   if (attr.isA(Tags::tag_value))
   {
-    if (cal->getType() == CalendarDouble::metadata)
+    if (cal->getType() == *CalendarDouble::metadata)
       return PythonObject(dynamic_cast< CalendarValue<double>::BucketValue* >(obj)->getValue());
-    if (cal->getType() == CalendarBool::metadata)
+    if (cal->getType() == *CalendarBool::metadata)
       return PythonObject(dynamic_cast< CalendarValue<bool>::BucketValue* >(obj)->getValue());
-    if (cal->getType() == CalendarInt::metadata)
+    if (cal->getType() == *CalendarInt::metadata)
       return PythonObject(dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->getValue());
-    if (cal->getType() == CalendarString::metadata)
+    if (cal->getType() == *CalendarString::metadata)
       return PythonObject(dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->getValue());
-    if (cal->getType() == CalendarOperation::metadata)
+    if (cal->getType() == *CalendarOperation::metadata)
       return PythonObject(dynamic_cast< CalendarPointer<Operation>::BucketPointer* >(obj)->getValue());
-    if (cal->getType() == CalendarVoid::metadata) 
+    if (cal->getType() == *CalendarVoid::metadata) 
       return Py_BuildValue("");
     PyErr_SetString(PythonLogicException, "calendar type not recognized");
     return NULL;
@@ -766,15 +766,15 @@ DECLARE_EXPORT int PythonCalendarBucket::setattro(const Attribute& attr, const P
     obj->setPriority(field.getInt());
   else if (attr.isA(Tags::tag_value))
   {
-    if (cal->getType() == CalendarDouble::metadata)
+    if (cal->getType() == *CalendarDouble::metadata)
       dynamic_cast< CalendarValue<double>::BucketValue* >(obj)->setValue(field.getDouble());
-    else if (cal->getType() == CalendarBool::metadata)
+    else if (cal->getType() == *CalendarBool::metadata)
       dynamic_cast< CalendarValue<bool>::BucketValue* >(obj)->setValue(field.getBool());
-    else if (cal->getType() == CalendarInt::metadata)
+    else if (cal->getType() == *CalendarInt::metadata)
       dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->setValue(field.getInt());
-    else if (cal->getType() == CalendarString::metadata)
+    else if (cal->getType() == *CalendarString::metadata)
       dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->setValue(field.getString());
-    else if (cal->getType() == CalendarOperation::metadata)
+    else if (cal->getType() == *CalendarOperation::metadata)
     {
       if (!field.check(PythonOperation::getType())) 
       {
@@ -784,7 +784,7 @@ DECLARE_EXPORT int PythonCalendarBucket::setattro(const Attribute& attr, const P
       Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
       dynamic_cast< CalendarPointer<Operation>::BucketPointer* >(obj)->setValue(y);
     }
-    else if (cal->getType() == CalendarVoid::metadata) 
+    else if (cal->getType() == *CalendarVoid::metadata) 
       return -1;
     else
     {

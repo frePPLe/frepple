@@ -31,82 +31,82 @@
 namespace frepple
 {
 // Solver metadata
-DECLARE_EXPORT const MetaCategory Solver::metadata;
+DECLARE_EXPORT const MetaCategory* Solver::metadata;
 
 // Load metadata
-DECLARE_EXPORT const MetaCategory Load::metadata;
+DECLARE_EXPORT const MetaCategory* Load::metadata;
 
 // Location metadata
-DECLARE_EXPORT const MetaCategory Location::metadata;
-DECLARE_EXPORT const MetaClass LocationDefault::metadata;
+DECLARE_EXPORT const MetaCategory* Location::metadata;
+DECLARE_EXPORT const MetaClass* LocationDefault::metadata;
 
 // Buffer metadata
-DECLARE_EXPORT const MetaCategory Buffer::metadata;
-DECLARE_EXPORT const MetaClass BufferDefault::metadata,
-  BufferInfinite::metadata,
-  BufferProcure::metadata;
+DECLARE_EXPORT const MetaCategory* Buffer::metadata;
+DECLARE_EXPORT const MetaClass* BufferDefault::metadata,
+  *BufferInfinite::metadata,
+  *BufferProcure::metadata;
 
 // Calendar metadata
-DECLARE_EXPORT const MetaCategory Calendar::metadata;
-DECLARE_EXPORT const MetaCategory Calendar::Bucket::metadata;
-DECLARE_EXPORT const MetaClass CalendarVoid::metadata,
-  CalendarDouble::metadata,
-  CalendarInt::metadata,
-  CalendarBool::metadata,
-  CalendarString::metadata,
-  CalendarOperation::metadata;
+DECLARE_EXPORT const MetaCategory* Calendar::metadata;
+DECLARE_EXPORT const MetaCategory* Calendar::Bucket::metadata;
+DECLARE_EXPORT const MetaClass *CalendarVoid::metadata,
+  *CalendarDouble::metadata,
+  *CalendarInt::metadata,
+  *CalendarBool::metadata,
+  *CalendarString::metadata,
+  *CalendarOperation::metadata;
 
 // Flow metadata
-DECLARE_EXPORT const MetaCategory Flow::metadata;
-DECLARE_EXPORT const MetaClass FlowStart::metadata,
-  FlowEnd::metadata;
+DECLARE_EXPORT const MetaCategory* Flow::metadata;
+DECLARE_EXPORT const MetaClass* FlowStart::metadata,
+  *FlowEnd::metadata;
 
 // Operation metadata
-DECLARE_EXPORT const MetaCategory Operation::metadata;
-DECLARE_EXPORT const MetaClass OperationFixedTime::metadata,
-  OperationTimePer::metadata,
-  OperationRouting::metadata,
-  OperationAlternate::metadata;
+DECLARE_EXPORT const MetaCategory* Operation::metadata;
+DECLARE_EXPORT const MetaClass* OperationFixedTime::metadata,
+  *OperationTimePer::metadata,
+  *OperationRouting::metadata,
+  *OperationAlternate::metadata;
 
 // OperationPlan metadata
-DECLARE_EXPORT const MetaCategory OperationPlan::metadata;
+DECLARE_EXPORT const MetaCategory* OperationPlan::metadata;
 
 // Resource metadats
-DECLARE_EXPORT const MetaCategory Resource::metadata;
-DECLARE_EXPORT const MetaClass ResourceDefault::metadata;
-DECLARE_EXPORT const MetaClass ResourceInfinite::metadata;
+DECLARE_EXPORT const MetaCategory* Resource::metadata;
+DECLARE_EXPORT const MetaClass* ResourceDefault::metadata;
+DECLARE_EXPORT const MetaClass* ResourceInfinite::metadata;
 
 // Item metadata
-DECLARE_EXPORT const MetaCategory Item::metadata;
-DECLARE_EXPORT const MetaClass ItemDefault::metadata;
+DECLARE_EXPORT const MetaCategory* Item::metadata;
+DECLARE_EXPORT const MetaClass* ItemDefault::metadata;
 
 // Customer metadata
-DECLARE_EXPORT const MetaCategory Customer::metadata;
-DECLARE_EXPORT const MetaClass CustomerDefault::metadata;
+DECLARE_EXPORT const MetaCategory* Customer::metadata;
+DECLARE_EXPORT const MetaClass* CustomerDefault::metadata;
 
 // Demand metadata
-DECLARE_EXPORT const MetaCategory Demand::metadata;
-DECLARE_EXPORT const MetaClass DemandDefault::metadata;
+DECLARE_EXPORT const MetaCategory* Demand::metadata;
+DECLARE_EXPORT const MetaClass* DemandDefault::metadata;
 
 // Plan metadata
-DECLARE_EXPORT const MetaCategory Plan::metadata;
+DECLARE_EXPORT const MetaCategory* Plan::metadata;
 
 // Problem metadata
-DECLARE_EXPORT const MetaCategory Problem::metadata;
-DECLARE_EXPORT const MetaClass ProblemMaterialExcess::metadata,
-  ProblemMaterialShortage::metadata,
-  ProblemExcess::metadata,
-  ProblemShort::metadata,
-  ProblemEarly::metadata,
-  ProblemLate::metadata,
-  ProblemDemandNotPlanned::metadata,
-  ProblemPlannedEarly::metadata,
-  ProblemPlannedLate::metadata,
-  ProblemPrecedence::metadata,
-  ProblemBeforeFence::metadata,
-  ProblemBeforeCurrent::metadata,
-  ProblemCapacityUnderload::metadata,
-  ProblemCapacityOverload::metadata;
+DECLARE_EXPORT const MetaCategory* Problem::metadata;
+DECLARE_EXPORT const MetaClass* ProblemMaterialExcess::metadata,
+  *ProblemMaterialShortage::metadata,
+  *ProblemExcess::metadata,
+  *ProblemShort::metadata,
+  *ProblemEarly::metadata,
+  *ProblemLate::metadata,
+  *ProblemDemandNotPlanned::metadata,
+  *ProblemPlannedEarly::metadata,
+  *ProblemPlannedLate::metadata,
+  *ProblemPrecedence::metadata,
+  *ProblemBeforeFence::metadata,
+  *ProblemBeforeCurrent::metadata,
+  *ProblemCapacityUnderload::metadata,
+  *ProblemCapacityOverload::metadata;
 
 
 void LibraryModel::initialize()
@@ -131,170 +131,171 @@ void LibraryModel::initialize()
   Plan::thePlan = new Plan();
 
   // Initialize the plan metadata.
-  Plan::metadata.registerCategory("plan","");
+  Plan::metadata = new MetaCategory("plan","");
 
   // Initialize the solver metadata.
-  Solver::metadata.registerCategory
+  Solver::metadata = new MetaCategory
     ("solver", "solvers", Solver::reader, Solver::writer);
 
   // Initialize the location metadata.
-  Location::metadata.registerCategory
+  Location::metadata = new MetaCategory
     ("location", "locations", Location::reader, Location::writer);
-  LocationDefault::metadata.registerClass("location", "location_default",
+  LocationDefault::metadata = new MetaClass("location", "location_default",
     Object::createString<LocationDefault>, true);
 
   // Initialize the customer metadata.
-  Customer::metadata.registerCategory
+  Customer::metadata = new MetaCategory
     ("customer", "customers", Customer::reader, Customer::writer);
-  CustomerDefault::metadata.registerClass(
+  CustomerDefault::metadata = new MetaClass(
     "customer",
     "customer_default",
     Object::createString<CustomerDefault>, true);
 
   // Initialize the calendar metadata.
-  Calendar::Bucket::metadata.registerCategory("bucket", "buckets");
-  Calendar::metadata.registerCategory
+  Calendar::Bucket::metadata = new MetaCategory("bucket", "buckets");
+  Calendar::metadata = new MetaCategory
     ("calendar", "calendars", Calendar::reader, Calendar::writer);
-  CalendarVoid::metadata.registerClass(
+  CalendarVoid::metadata = new MetaClass(
     "calendar",
     "calendar_void",
     Object::createString<CalendarVoid>);
-  CalendarDouble::metadata.registerClass(
+  CalendarDouble::metadata = new MetaClass(
     "calendar",
     "calendar_double",
     Object::createString<CalendarDouble>, true);
-  CalendarInt::metadata.registerClass(
+  CalendarInt::metadata = new MetaClass(
     "calendar",
     "calendar_integer",
     Object::createString<CalendarInt>);
-  CalendarBool::metadata.registerClass(
+  CalendarBool::metadata = new MetaClass(
     "calendar",
     "calendar_boolean",
     Object::createString<CalendarBool>);
-  CalendarString::metadata.registerClass(
+  CalendarString::metadata = new MetaClass(
     "calendar",
     "calendar_string",
     Object::createString<CalendarString>);
-  CalendarOperation::metadata.registerClass(
+  CalendarOperation::metadata = new MetaClass(
     "calendar",
     "calendar_operation",
     Object::createString<CalendarOperation>);
 
   // Initialize the operation metadata.
-  Operation::metadata.registerCategory
+  Operation::metadata = new MetaCategory
     ("operation", "operations", Operation::reader, Operation::writer);
-  OperationFixedTime::metadata.registerClass(
+  OperationFixedTime::metadata = new MetaClass(
     "operation",
     "operation_fixed_time",
     Object::createString<OperationFixedTime>, true);
-  OperationTimePer::metadata.registerClass(
+  OperationTimePer::metadata = new MetaClass(
     "operation",
     "operation_time_per",
     Object::createString<OperationTimePer>);
-  OperationRouting::metadata.registerClass(
+  OperationRouting::metadata = new MetaClass(
     "operation",
     "operation_routing",
     Object::createString<OperationRouting>);
-  OperationAlternate::metadata.registerClass(
+  OperationAlternate::metadata = new MetaClass(
     "operation",
     "operation_alternate",
     Object::createString<OperationAlternate>);
 
   // Initialize the item metadata.
-  Item::metadata.registerCategory
+  Item::metadata = new MetaCategory
     ("item", "items", Item::reader, Item::writer);
-  ItemDefault::metadata.registerClass("item", "item_default",
+  ItemDefault::metadata = new MetaClass("item", "item_default",
     Object::createString<ItemDefault>, true);
 
   // Initialize the buffer metadata.
-  Buffer::metadata.registerCategory
+  Buffer::metadata = new MetaCategory
     ("buffer", "buffers", Buffer::reader, Buffer::writer);
-  BufferDefault::metadata.registerClass(
+  BufferDefault::metadata = new MetaClass(
     "buffer",
     "buffer_default",
     Object::createString<BufferDefault>, true);
-  BufferInfinite::metadata.registerClass(
+  BufferInfinite::metadata = new MetaClass(
     "buffer",
     "buffer_infinite",
     Object::createString<BufferInfinite>);
-  BufferProcure::metadata.registerClass(
+  BufferProcure::metadata = new MetaClass(
     "buffer",
     "buffer_procure",
     Object::createString<BufferProcure>);
 
   // Initialize the demand metadata.
-  Demand::metadata.registerCategory
+  Demand::metadata = new MetaCategory
     ("demand", "demands", Demand::reader, Demand::writer);
-  DemandDefault::metadata.registerClass(
+  DemandDefault::metadata = new MetaClass(
     "demand",
     "demand_default",
     Object::createString<DemandDefault>, true);
 
   // Initialize the resource metadata.
-  Resource::metadata.registerCategory
+  Resource::metadata = new MetaCategory
     ("resource", "resources", Resource::reader, Resource::writer);
-  ResourceDefault::metadata.registerClass(
+  ResourceDefault::metadata = new MetaClass(
     "resource",
     "resource_default",
     Object::createString<ResourceDefault>,
     true);
-  ResourceInfinite::metadata.registerClass(
+  ResourceInfinite::metadata = new MetaClass(
     "resource",
     "resource_infinite",
     Object::createString<ResourceInfinite>);
 
   // Initialize the load metadata.
-  Load::metadata.registerCategory
+  Load::metadata = new MetaCategory
     ("load", "loads", MetaCategory::ControllerDefault, NULL);
-  Load::metadata.registerClass
-    ("load", "load", Object::createDefault<Load>, true);
+  const_cast<MetaCategory*>(Load::metadata)->registerClass(
+    "load","load",true,Object::createDefault<Load>
+    );
 
   // Initialize the flow metadata.
-  Flow::metadata.registerCategory
+  Flow::metadata = new MetaCategory
     ("flow", "flows", MetaCategory::ControllerDefault);
-  FlowStart::metadata.registerClass(
+  FlowStart::metadata = new MetaClass(
     "flow",
     "flow_start",
     Object::createDefault<FlowStart>, true);
-  FlowEnd::metadata.registerClass(
+  FlowEnd::metadata = new MetaClass(
     "flow",
     "flow_end",
     Object::createDefault<FlowEnd>);
 
   // Initialize the operationplan metadata.
-  OperationPlan::metadata.registerCategory("operationplan", "operationplans",
+  OperationPlan::metadata = new MetaCategory("operationplan", "operationplans",
     OperationPlan::createOperationPlan, OperationPlan::writer);
 
   // Initialize the problem metadata.
-  Problem::metadata.registerCategory
+  Problem::metadata = new MetaCategory
     ("problem", "problems", NULL, Problem::writer);
-  ProblemMaterialExcess::metadata.registerClass
+  ProblemMaterialExcess::metadata = new MetaClass
     ("problem","material excess");
-  ProblemMaterialShortage::metadata.registerClass
+  ProblemMaterialShortage::metadata = new MetaClass
     ("problem","material shortage");
-  ProblemExcess::metadata.registerClass
+  ProblemExcess::metadata = new MetaClass
     ("problem","excess");
-  ProblemShort::metadata.registerClass
+  ProblemShort::metadata = new MetaClass
     ("problem","short");
-  ProblemEarly::metadata.registerClass
+  ProblemEarly::metadata = new MetaClass
     ("problem","early");
-  ProblemLate::metadata.registerClass
+  ProblemLate::metadata = new MetaClass
     ("problem","late");
-  ProblemDemandNotPlanned::metadata.registerClass
+  ProblemDemandNotPlanned::metadata = new MetaClass
     ("problem","unplanned");
-  ProblemPlannedEarly::metadata.registerClass
+  ProblemPlannedEarly::metadata = new MetaClass
     ("problem","planned early");
-  ProblemPlannedLate::metadata.registerClass
+  ProblemPlannedLate::metadata = new MetaClass
     ("problem","planned late");
-  ProblemPrecedence::metadata.registerClass
+  ProblemPrecedence::metadata = new MetaClass
     ("problem","precedence");
-  ProblemBeforeFence::metadata.registerClass
+  ProblemBeforeFence::metadata = new MetaClass
     ("problem","before fence");
-  ProblemBeforeCurrent::metadata.registerClass
+  ProblemBeforeCurrent::metadata = new MetaClass
     ("problem","before current");
-  ProblemCapacityUnderload::metadata.registerClass
+  ProblemCapacityUnderload::metadata = new MetaClass
     ("problem","underload");
-  ProblemCapacityOverload::metadata.registerClass
+  ProblemCapacityOverload::metadata = new MetaClass
     ("problem","overload");
 
   // Register new types in Python

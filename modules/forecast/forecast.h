@@ -569,8 +569,8 @@ class Forecast : public Demand
     virtual void setDue(const Date& d)
     {throw DataException("Can't set due date of a forecast");}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static const MetaClass *metadata;
     virtual size_t getSize() const
     {
       return sizeof(Forecast) + Demand::extrasize()
@@ -716,7 +716,7 @@ class Forecast : public Demand
       * These periods are used for the initialization of the algorithm
       * and don't count towards measuring the forecast error.<br>
       * The default value is 5.
-      **/
+      */
     static unsigned long Forecast_Skip;
 };
 
@@ -743,8 +743,8 @@ class ForecastBucket : public Demand
       setMinShipment(f->getMinShipment());
       setOperation(&*(f->getOperation()));
     }
-    virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static const MetaClass *metadata;
     virtual size_t getSize() const
     {
       return sizeof(ForecastBucket) + Demand::extrasize();
@@ -867,8 +867,8 @@ class ForecastSolver : public Solver
       */
     void solve(void *v = NULL);
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static const MetaClass *metadata;
     virtual size_t getSize() const {return sizeof(ForecastSolver);}
     void writeElement(XMLOutput*, const Keyword&, mode) const;
 

@@ -75,8 +75,8 @@ void 	XMLInput::processingInstruction
   try
   {
     // Look up the class
-    const MetaClass* j = Command::metadataInstruction.findClass(type);
-    if (!j || !j->factoryMethodDefault)
+    const MetaClass* j = Command::metadataInstruction->findClass(type);
+    if (!j || !j->processingInstruction)
     {
       string msg = string("Unknown processing instruction ") + type;
       xercesc::XMLString::release(&type);

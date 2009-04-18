@@ -99,7 +99,7 @@ template <class T> void HasHierarchy<T>::writeElement
   {
     o->BeginObject (Tags::tag_members);
     for (T *i = first_child; i; i=i->next_brother)
-      o->writeElement(*(T::metadata.typetag), i);
+      o->writeElement(*(T::metadata->typetag), i);
     o->EndObject (Tags::tag_members);
   }
 }
@@ -110,7 +110,7 @@ template <class T> void HasHierarchy<T>::beginElement
 {
   if (pAttr.isA(Tags::tag_owner) ||
       (pIn.getParentElement().first.isA(Tags::tag_members)
-       && pAttr.isA(T::metadata.typetag)))
+       && pAttr.isA(T::metadata->typetag)))
     // Start reading a member of the parent
     pIn.readto( T::reader(T::metadata,pIn.getAttributes()) );
 }
@@ -125,7 +125,7 @@ template <class T> void HasHierarchy<T>::endElement (XMLInput& pIn,
     T* o = dynamic_cast<T*>(pIn.getPreviousObject());
     if (o) setOwner(o);
   }
-  else if (pAttr.isA(T::metadata.typetag)
+  else if (pAttr.isA(T::metadata->typetag)
      && pIn.getParentElement().first.isA(Tags::tag_members)
      && pIn.isObjectEnd() )
   {

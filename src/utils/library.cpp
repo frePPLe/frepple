@@ -40,10 +40,10 @@ DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByTag;
 DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 
 // Repository of loaded modules
-DECLARE_EXPORT set<string> CommandLoadLibrary::registry;
+DECLARE_EXPORT set<string> CommandLoadLibrary::registry; // xxx
 
 // Processing instruction metadata
-DECLARE_EXPORT const MetaCategory Command::metadataInstruction;
+DECLARE_EXPORT const MetaCategory* Command::metadataInstruction;
 
 // Number of processors.
 // The value initialized here is overwritten in the library initialization.
@@ -190,11 +190,11 @@ void LibraryUtils::initialize()
   xercesc::XMLPlatformUtils::Initialize();
 
   // Initialize the processing instruction metadata.
-  Command::metadataInstruction.registerCategory
+  Command::metadataInstruction = new MetaCategory
     ("instruction", "");
 
   // Register Python as a processing instruction.
-  CommandPython::metadata2.registerClass(
+  CommandPython::metadata2 = new MetaClass(
     "instruction", "python", CommandPython::processorXMLInstruction);
 
   // Initialize the Python interpreter
@@ -214,12 +214,9 @@ void LibraryUtils::initialize()
 }
 
 
-DECLARE_EXPORT void MetaClass::registerClass (const string& a, const string& b, bool def) const
+DECLARE_EXPORT void MetaClass::registerClass (const string& a, const string& b, 
+  bool def, creatorDefault f)
 {
-  // Re-initializing isn't okay
-  if (category)
-    throw LogicException("Reinitializing class '" + type + "' isn't allowed");
-
   // Find or create the category
   MetaCategory* cat
     = const_cast<MetaCategory*>(MetaCategory::findCategoryByTag(a.c_str()));
@@ -230,48 +227,39 @@ DECLARE_EXPORT void MetaClass::registerClass (const string& a, const string& b, 
         + " not found when registering class " + b);
 
   // Update fields
-  MetaClass& me = const_cast<MetaClass&>(*this);
-  if (me.type == "unspecified") me.type = b;
-  me.typetag = &Keyword::find(b.c_str());
-  me.category = cat;
+  type = b.empty() ? "unspecified" : b;
+  typetag = &Keyword::find(type.c_str());
+  category = cat;
 
   // Update the metadata table
   cat->classes[Keyword::hash(b)] = this;
 
   // Register this tag also as the default one, if requested
   if (def) cat->classes[Keyword::hash("default")] = this;
+
+  // Set method pointers to NULL
+  factoryMethodDefault = f;
+  factoryPythonProxy = NULL;
 }
 
 
-DECLARE_EXPORT void MetaCategory::registerCategory (const string& a, const string& gr,
-    readController f, writeController w) const
+DECLARE_EXPORT MetaCategory::MetaCategory (const string& a, const string& gr,
+  readController f, writeController w) 
 {
-  // Initialize only once
-  if (type != "unspecified")
-    throw LogicException("Reinitializing category " + type + " isn't allowed");
-
   // Update registry
-  if (!a.empty()) categoriesByTag[Keyword::hash(a)] = this;
+  if (!a.empty()) categoriesByTag[Keyword::hash(a)] = this; 
   if (!gr.empty()) categoriesByGroupTag[Keyword::hash(gr)] = this;
 
   // Update fields
-  MetaCategory& me = const_cast<MetaCategory&>(*this);
-  me.readFunction = f;
-  me.writeFunction = w;
-  if (!a.empty())
-  {
-    // Type tag
-    me.type = a;
-    me.typetag = &Keyword::find(a.c_str());
-  }
-  if (!gr.empty())
-  {
-    // Group tag
-    me.group = gr;
-    me.grouptag = &Keyword::find(gr.c_str());
-  }
+  readFunction = f;
+  writeFunction = w;
+  type = a.empty() ? "unspecified" : a;
+  typetag = &Keyword::find(type.c_str());
+  group = gr.empty() ? "unspecified" : gr;
+  grouptag = &Keyword::find(group.c_str());
 
   // Maintain a linked list of all registered categories
+  nextCategory = NULL;
   if (!firstCategory)
     firstCategory = this;
   else
@@ -334,7 +322,7 @@ DECLARE_EXPORT const MetaClass* MetaCategory::findClass(const hashtype h) const
 DECLARE_EXPORT void MetaCategory::persist(XMLOutput *o)
 {
   for (const MetaCategory *i = firstCategory; i; i = i->nextCategory)
-    if (i->writeFunction) i->writeFunction(*i, o);
+    if (i->writeFunction) i->writeFunction(i, o);
 }
 
 
@@ -412,32 +400,32 @@ DECLARE_EXPORT bool MetaClass::raiseEvent(Object* v, Signal a) const
 }
 
 
-Object* MetaCategory::ControllerDefault (const MetaClass& cat, const AttributeList& in)
+Object* MetaCategory::ControllerDefault (const MetaClass* cat, const AttributeList& in)
 {
   Action act = ADD;
   switch (act)
   {
     case REMOVE:
       throw DataException
-      ("Entity " + cat.type + " doesn't support REMOVE action.");
+      ("Entity " + cat->type + " doesn't support REMOVE action.");
     case CHANGE:
       throw DataException
-      ("Entity " + cat.type + " doesn't support CHANGE action.");
+      ("Entity " + cat->type + " doesn't support CHANGE action.");
     default:
       /* Lookup for the class in the map of registered classes. */
       const MetaClass* j;
-      if (cat.category)
+      if (cat->category)
         // Class metadata passed: we already know what type to create
-        j = &cat;
+        j = cat;
       else
       {
         // Category metadata passed: we need to look up the type
         const DataElement* type = in.get(Tags::tag_type);
-        j = static_cast<const MetaCategory&>(cat).findClass(*type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash);
+        j = static_cast<const MetaCategory&>(*cat).findClass(*type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash);
         if (!j)
         {
           string t(*type ? type->getString() : "default");
-          throw LogicException("No type " + t + " registered for category " + cat.type);
+          throw LogicException("No type " + t + " registered for category " + cat->type);
         }
       }
 

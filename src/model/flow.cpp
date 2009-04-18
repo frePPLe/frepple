@@ -239,7 +239,7 @@ int PythonFlow::initialize(PyObject* m)
   x.supportgetattro();
   x.supportsetattro();
   x.supportcreate(create);
-  const_cast<MetaCategory&>(Flow::metadata).factoryPythonProxy = proxy;
+  const_cast<MetaCategory*>(Flow::metadata)->factoryPythonProxy = proxy;
   return x.typeReady(m);
 }
 

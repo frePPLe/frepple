@@ -29,7 +29,7 @@
 namespace sample_module
 {
 
-const MetaClass OperationTransport::metadata;
+const MetaClass *OperationTransport::metadata;
 const Keyword tag_from("from");
 const Keyword tag_to("to");
 
@@ -38,7 +38,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 {
   static const char* name = "sample";
   // Register the new class
-  OperationTransport::metadata.registerClass(
+  OperationTransport::metadata = new MetaClass(
     "operation",
     "operation_transport",
     Object::createString<OperationTransport>);
@@ -118,7 +118,7 @@ void OperationTransport::endElement(XMLInput& pIn, const Attribute& pAttr, const
 // Note:
 // The use of a static subscription keeps the memory overhead of the cleanup
 // method to a handfull of bytes, regardless of the model size.
-bool OperationTransport::callback(Buffer* l, Signal a)
+bool OperationTransport::callback(Buffer* l, const Signal a)
 {
   // Loop over all transport operations
   for (Operation::iterator i = Operation::begin(); i != Operation::end(); )

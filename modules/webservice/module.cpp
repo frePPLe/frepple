@@ -30,8 +30,6 @@
 namespace module_webservice
 {
 
-const MetaClass CommandWebservice::metadata;
-
 unsigned int CommandWebservice::port = 6262;
 unsigned int CommandWebservice::threads = 10;
 
@@ -62,7 +60,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
         logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
     }
 
-    // Initialize the metadata.
+    // Initialize the Python extension.
     if (!Py_IsInitialized())
       throw RuntimeException("Python isn't initialized correctly");
     PyEval_AcquireLock();

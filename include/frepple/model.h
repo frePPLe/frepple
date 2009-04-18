@@ -219,10 +219,10 @@ class Calendar : public HasName<Calendar>, public Object
         DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
 
         virtual const MetaClass& getType() const
-          {return metadata;}
+          {return *metadata;}
         virtual size_t getSize() const
           {return sizeof(Bucket) + nm.size();}
-        static DECLARE_EXPORT const MetaCategory metadata;
+        static DECLARE_EXPORT const MetaCategory* metadata;
     };
 
     /** Default constructor. */
@@ -321,8 +321,8 @@ class Calendar : public HasName<Calendar>, public Object
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement) {}
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaCategory metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
 
     virtual size_t getSize() const
     {
@@ -406,7 +406,7 @@ template <typename T> class CalendarValue : public Calendar
         }
 
         virtual const MetaClass& getType() const
-          {return Calendar::Bucket::metadata;}
+          {return *Calendar::Bucket::metadata;}
 
         virtual size_t getSize() const
           {return sizeof(typename CalendarValue<T>::BucketValue) + getName().size();}
@@ -586,7 +586,7 @@ template <typename T> class CalendarPointer : public Calendar
         }
 
         virtual const MetaClass& getType() const
-          {return Calendar::Bucket::metadata;}
+          {return *Calendar::Bucket::metadata;}
 
         virtual size_t getSize() const
           {return sizeof(typename CalendarPointer<T>::BucketPointer) + getName().size();}
@@ -714,8 +714,8 @@ class CalendarVoid : public Calendar
 {
   public:
     CalendarVoid(const string& n) : Calendar(n) {}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -726,8 +726,8 @@ class CalendarDouble : public CalendarValue<double>
     CalendarDouble(const string& n) : CalendarValue<double>(n) 
       { setDefault(0.0); }
     DECLARE_EXPORT ~CalendarDouble();
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -737,8 +737,8 @@ class CalendarInt : public CalendarValue<int>
   public:
     CalendarInt(const string& n) : CalendarValue<int>(n)
       { setDefault(0); }
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -749,8 +749,8 @@ class CalendarBool : public CalendarValue<bool>
     CalendarBool(const string& n) : CalendarValue<bool>(n) 
       { setDefault(false); }
     DECLARE_EXPORT ~CalendarBool();
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -759,8 +759,8 @@ class CalendarString : public CalendarValue<string>
 {
   public:
     CalendarString(const string& n) : CalendarValue<string>(n) {}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {
       size_t i = sizeof(CalendarString);
@@ -777,8 +777,8 @@ class CalendarOperation : public CalendarPointer<Operation>
 {
   public:
     CalendarOperation(const string& n) : CalendarPointer<Operation>(n) {}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -843,7 +843,7 @@ class Problem : public NonCopyable, public Object
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput&, const Attribute&, const DataElement&) {}
-    static DECLARE_EXPORT void writer(const MetaCategory&, XMLOutput*);
+    static DECLARE_EXPORT void writer(const MetaCategory*, XMLOutput*);
 
     /** Returns an iterator to the very first problem. The iterator can be
       * incremented till it points past the very last problem. */
@@ -876,10 +876,10 @@ class Problem : public NonCopyable, public Object
     HasProblems* getOwner() const {return owner;}
 
     /** Return a reference to the metadata structure. */
-    virtual const MetaClass& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory* metadata;
 
   protected:
     /** Each Problem object references a HasProblem object as its owner. */
@@ -1037,8 +1037,8 @@ class Solver : public Object, public HasName<Solver>
     /** Controls whether verbose output will be generated. */
     void setLogLevel(unsigned short v) {loglevel = v;}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaCategory metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
 
   protected:
     /** Controls the amount of tracing and debugging messages. */
@@ -1318,8 +1318,8 @@ class Location
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaCategory metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
 
   private:
     /** The availability calendar models the working hours and holidays. It 
@@ -1334,8 +1334,8 @@ class LocationDefault : public Location
 {
   public:
     explicit LocationDefault(const string& str) : Location(str) {}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(LocationDefault) + Location::extrasize();}
 };
@@ -1357,8 +1357,8 @@ class Customer
     {return getName().size() + HasDescription::extrasize();}
     Customer(const string& n) : HasHierarchy<Customer>(n) {}
     virtual DECLARE_EXPORT ~Customer();
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaCategory metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
 };
 
 
@@ -1367,8 +1367,8 @@ class CustomerDefault : public Customer
 {
   public:
     explicit CustomerDefault(const string& str) : Customer(str) {}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(CustomerDefault) + Customer::extrasize();}
 };
@@ -1601,7 +1601,7 @@ class Operation : public HasName<Operation>,
     void setHidden(bool b) {if (hidden!=b) setChanged(); hidden = b;}
     bool getHidden() const {return hidden;}
 
-    static DECLARE_EXPORT const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory* metadata;
 
   protected:
     void initOperationPlan (OperationPlan*, double, const Date&, const Date&,
@@ -1852,7 +1852,7 @@ class OperationPlan
       * This method is intended to be used to create objects when reading
       * XML input data.
       */
-    static DECLARE_EXPORT Object* createOperationPlan (const MetaClass&, const AttributeList&);
+    static DECLARE_EXPORT Object* createOperationPlan (const MetaClass*, const AttributeList&);
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~OperationPlan();
@@ -2056,15 +2056,15 @@ class OperationPlan
     /** Return the metadata. We return the metadata of the operation class,
       * not the one of the operationplan class!
       */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
-    static DECLARE_EXPORT const MetaCategory metadata;
+    static DECLARE_EXPORT const MetaCategory* metadata;
 
     virtual size_t getSize() const
       {return sizeof(OperationPlan);}
 
     /** Handles the persistence of operationplan objects. */
-    static DECLARE_EXPORT void writer(const MetaCategory&, XMLOutput*);
+    static DECLARE_EXPORT void writer(const MetaCategory*, XMLOutput*);
 
     /** Comparison of 2 OperationPlans.
       * To garantuee that the problems are sorted in a consistent and stable
@@ -2190,8 +2190,8 @@ class OperationFixedTime : public Operation
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(OperationFixedTime) + Operation::extrasize();}
 
@@ -2270,8 +2270,8 @@ class OperationTimePer : public Operation
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(OperationTimePer) + Operation::extrasize();}
 
@@ -2350,8 +2350,8 @@ class OperationRouting : public Operation
       Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {
       return sizeof(OperationRouting) + Operation::extrasize()
@@ -2481,8 +2481,8 @@ class OperationAlternate : public Operation
       Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {
       return sizeof(OperationAlternate) + Operation::extrasize()
@@ -2598,8 +2598,8 @@ class Item
     /** Destructor. */
     virtual DECLARE_EXPORT ~Item();
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaCategory metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
 
   private:
     /** This is the operation used to satisfy a demand for this item.
@@ -2618,8 +2618,8 @@ class ItemDefault : public Item
 {
   public:
     explicit ItemDefault(const string& str) : Item(str) {}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {
       return sizeof(ItemDefault) + getName().size() 
@@ -2746,8 +2746,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     void setHidden(bool b) {if (hidden!=b) setChanged(); hidden = b;}
     bool getHidden() const {return hidden;}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaCategory metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
 
     /** This function matches producing and consuming operationplans
       * with each other, and updates the pegging iterator accordingly.
@@ -2806,10 +2806,10 @@ class BufferDefault : public Buffer
 {
   public:
     explicit BufferDefault(const string& str) : Buffer(str) {}
-    virtual const MetaClass& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return *metadata;}
     virtual size_t getSize() const
     {return sizeof(BufferDefault) + Buffer::extrasize();}
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -2824,12 +2824,12 @@ class BufferInfinite : public Buffer
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
-    virtual const MetaClass& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return *metadata;}
     virtual size_t getSize() const
       {return sizeof(BufferInfinite) + Buffer::extrasize();}
     explicit BufferInfinite(const string& c) : Buffer(c)
       {setDetectProblems(false);}
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -2890,13 +2890,13 @@ class BufferProcure : public Buffer
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
-    virtual const MetaClass& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return *metadata;}
     virtual size_t getSize() const
       {return sizeof(BufferProcure) + Buffer::extrasize();}
     explicit BufferProcure(const string& c) : Buffer(c), min_inventory(0),
       max_inventory(0), size_minimum(0), size_maximum(DBL_MAX), size_multiple(0),
       oper(NULL) {}
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 
     /** Return the purchasing leadtime. */
     TimePeriod getLeadtime() const {return leadtime;}
@@ -3139,8 +3139,8 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaCategory metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
     virtual size_t getSize() const {return sizeof(Flow);}
 
   protected:
@@ -3169,8 +3169,8 @@ class FlowStart : public Flow
     /** This constructor is called from the plan begin_element function. */
     explicit FlowStart() {}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const {return sizeof(FlowStart);}
 };
 
@@ -3195,8 +3195,8 @@ class FlowEnd : public Flow
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const {return sizeof(FlowEnd);}
 };
 
@@ -3368,8 +3368,8 @@ class Resource : public HasHierarchy<Resource>,
     void setHidden(bool b) {if (hidden!=b) setChanged(); hidden = b;}
     bool getHidden() const {return hidden;}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaCategory metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
 
   private:
     /** This calendar is used to updates to the resource size. */
@@ -3400,8 +3400,8 @@ class ResourceDefault : public Resource
 {
   public:
     explicit ResourceDefault(const string& str) : Resource(str) {}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(ResourceDefault) + Resource::extrasize();}
 };
@@ -3414,10 +3414,10 @@ class ResourceInfinite : public Resource
   public:
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
-    virtual const MetaClass& getType() const {return metadata;}
+    virtual const MetaClass& getType() const {return *metadata;}
     explicit ResourceInfinite(const string& c) : Resource(c)
       {setDetectProblems(false);}
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(ResourceInfinite) + Resource::extrasize();}
 };
@@ -3487,8 +3487,8 @@ class Load
     }
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaCategory metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
     virtual size_t getSize() const {return sizeof(Load);}
 
     /** Default constructor. */
@@ -3589,8 +3589,8 @@ class Plan : public Plannable
     /** This method basically solves the whole planning problem. */
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
-    const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaCategory metadata;
+    const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
     virtual size_t getSize() const
       {return sizeof(Plan) + name.size() + descr.size();}
 };
@@ -4011,8 +4011,8 @@ class Demand
     /** Returns true if this demand is to be hidden from serialization. */
     bool getHidden() const {return hidden;}
 
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaCategory metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
 
   private:
     /** Requested item. */
@@ -4056,8 +4056,8 @@ class DemandDefault : public Demand
 {
   public:
     explicit DemandDefault(const string& str) : Demand(str) {}
-    virtual const MetaClass& getType() const {return metadata;}
-    static DECLARE_EXPORT const MetaClass metadata;
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(DemandDefault) + Demand::extrasize();}
 };
@@ -4202,10 +4202,10 @@ class ProblemBeforeCurrent : public Problem
     size_t getSize() const {return sizeof(ProblemBeforeCurrent);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -4244,10 +4244,10 @@ class ProblemBeforeFence : public Problem
     size_t getSize() const {return sizeof(ProblemBeforeFence);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -4282,10 +4282,10 @@ class ProblemPrecedence : public Problem
     OperationPlan* getSecondOperationPlan() const {return opplan2;}
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
     size_t getSize() const {return sizeof(ProblemPrecedence);} 
 
   private:
@@ -4316,10 +4316,10 @@ class ProblemDemandNotPlanned : public Problem
     size_t getSize() const {return sizeof(ProblemDemandNotPlanned);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -4360,10 +4360,10 @@ class ProblemLate : public Problem
     size_t getSize() const {return sizeof(ProblemLate);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -4395,10 +4395,10 @@ class ProblemEarly : public Problem
     size_t getSize() const {return sizeof(ProblemEarly);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -4427,10 +4427,10 @@ class ProblemShort : public Problem
     size_t getSize() const {return sizeof(ProblemShort);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -4459,10 +4459,10 @@ class ProblemExcess : public Problem
     size_t getSize() const {return sizeof(ProblemExcess);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 };
 
 
@@ -4497,10 +4497,10 @@ class ProblemPlannedLate : public Problem
     size_t getSize() const {return sizeof(ProblemPlannedLate);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 
   private:
     /** This is the time that is allowed between the lpst date and the start
@@ -4541,10 +4541,10 @@ class ProblemPlannedEarly : public Problem
     size_t getSize() const {return sizeof(ProblemPlannedEarly);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 
   private:
     /** This is the time that is allowed between the epst date and the start
@@ -4571,10 +4571,10 @@ class ProblemCapacityOverload : public Problem
     size_t getSize() const {return sizeof(ProblemCapacityOverload);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 
   private:
     /** Overload quantity. */
@@ -4602,10 +4602,10 @@ class ProblemCapacityUnderload : public Problem
     size_t getSize() const {return sizeof(ProblemCapacityUnderload);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 
   private:
     /** Underload quantity. */
@@ -4633,10 +4633,10 @@ class ProblemMaterialShortage : public Problem
     size_t getSize() const {return sizeof(ProblemMaterialShortage);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 
   private:
     /** Shortage quantity. */
@@ -4664,10 +4664,10 @@ class ProblemMaterialExcess : public Problem
     size_t getSize() const {return sizeof(ProblemMaterialExcess);} 
 
     /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return metadata;}
+    const MetaClass& getType() const {return *metadata;}
 
     /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
 
   private:
     /** Excess quantity. */

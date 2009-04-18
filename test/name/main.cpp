@@ -26,7 +26,9 @@
 
 
 #include "frepple.h"
+#include "freppleinterface.h"
 using namespace frepple;
+
 
 /** Print the content of the list, and also verify its integrity. */
 void printlist(const char* msg)
@@ -217,7 +219,7 @@ int main (int argc, char *argv[])
 {
   try
   {
-    xercesc::XMLPlatformUtils::Initialize();
+    FreppleInitialize();
     logger << endl << "FUNCTIONAL TEST:" << endl << endl;
     functionality_test();
     // The scalability test shows that the tree operations scale

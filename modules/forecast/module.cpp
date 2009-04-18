@@ -29,9 +29,9 @@
 namespace module_forecast
 {
 
-const MetaClass Forecast::metadata("demand_forecast");
-const MetaClass ForecastBucket::metadata("demand_forecastbucket");
-const MetaClass ForecastSolver::metadata("solver_forecast");
+const MetaClass *Forecast::metadata;
+const MetaClass *ForecastBucket::metadata;
+const MetaClass *ForecastSolver::metadata;
 
 
 Forecast::MapOfForecasts Forecast::ForecastDictionary;
@@ -117,14 +117,14 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   try
   {
     // Initialize the metadata.
-    Forecast::metadata.registerClass(
+    Forecast::metadata = new MetaClass(
       "demand",
       "demand_forecast",
       Object::createString<Forecast>);
-    ForecastBucket::metadata.registerClass(  // No factory method for this class
+    ForecastBucket::metadata = new MetaClass(  // No factory method for this class
       "demand",
       "demand_forecastbucket");
-    ForecastSolver::metadata.registerClass(
+    ForecastSolver::metadata = new MetaClass(
       "solver",
       "solver_forecast",
       Object::createString<ForecastSolver>);

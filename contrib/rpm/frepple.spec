@@ -22,7 +22,7 @@
 
 Summary: Free Production Planning Library
 Name: frepple
-Version: 0.6.2.beta
+Version: 0.6.2
 Release: 1
 License: GLPL
 Group: Office/Productivity

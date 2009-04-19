@@ -1,12 +1,12 @@
 Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 ===================================================================
---- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 9524)
+--- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 10600)
 +++ django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(working copy)
 @@ -92,7 +92,7 @@
      openClock: function(num) {
          var clock_box = document.getElementById(DateTimeShortcuts.clockDivName+num)
          var clock_link = document.getElementById(DateTimeShortcuts.clockLinkName+num)
--
+-    
 +
          // Recalculate the clockbox position
          // is it left-to-right or right-to-left layout ?
@@ -15,11 +15,11 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
              clock_box.style.left = findPosX(clock_link) - 110 + 'px';
          }
          clock_box.style.top = findPosY(clock_link) - 30 + 'px';
--
+-    
 +
          // Show the clock box
          clock_box.style.display = 'block';
-         addEvent(window, 'click', function() { DateTimeShortcuts.dismissClock(num); return true; });
+         addEvent(window.document, 'click', function() { DateTimeShortcuts.dismissClock(num); return true; });
 @@ -128,16 +128,19 @@
          // Shortcut links (calendar icon and "Today" link)
          var shortcuts_span = document.createElement('span');
@@ -43,42 +43,31 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 +        //shortcuts_span.appendChild(today_link);
 +        //shortcuts_span.appendChild(document.createTextNode('\240|\240'));
          shortcuts_span.appendChild(cal_link);
-
+ 
          // Create calendarbox div.
-@@ -208,21 +211,14 @@
+@@ -208,7 +211,7 @@
  	    }
  	}
-
--
+ 
+-    
 +
          // Recalculate the clockbox position
--        // is it left-to-right or right-to-left layout ?
--        if (getStyle(document.body,'direction')!='rtl') {
--            cal_box.style.left = findPosX(cal_link) + 17 + 'px';
--        }
--        else {
--            // since style's width is in em, it'd be tough to calculate
--            // px value of it. let's use an estimated px for now
--            // TODO: IE returns wrong value for findPosX when in rtl mode
--            //       (it returns as it was left aligned), needs to be fixed.
--            cal_box.style.left = findPosX(cal_link) - 180 + 'px';
--        }
--        cal_box.style.top = findPosY(cal_link) - 75 + 'px';
--
-+        //
-+        // I want to see the date popup below the icon
-+        //
-+        cal_box.style.left = findPosX(cal_link) - 90 + 'px';
-+        cal_box.style.top = findPosY(cal_link) + 17 + 'px';
+         // is it left-to-right or right-to-left layout ?
+         if (getStyle(document.body,'direction')!='rtl') {
+@@ -222,7 +225,7 @@
+             cal_box.style.left = findPosX(cal_link) - 180 + 'px';
+         }
+         cal_box.style.top = findPosY(cal_link) - 75 + 'px';
+-    
 +
          cal_box.style.display = 'block';
-         addEvent(window, 'click', function() { DateTimeShortcuts.dismissCalendar(num); return true; });
+         addEvent(window.document, 'click', function() { DateTimeShortcuts.dismissCalendar(num); return true; });
      },
 Index: django/contrib/admin/sites.py
 ===================================================================
---- django/contrib/admin/sites.py	(revision 9524)
+--- django/contrib/admin/sites.py	(revision 10600)
 +++ django/contrib/admin/sites.py	(working copy)
-@@ -240,20 +240,7 @@
+@@ -292,20 +292,7 @@
          password = request.POST.get('password', None)
          user = authenticate(username=username, password=password)
          if user is None:
@@ -97,45 +86,17 @@ Index: django/contrib/admin/sites.py
 -                        message = _("Usernames cannot contain the '@' character.")
 -            return self.display_login_form(request, message)
 +            return self.display_login_form(request, ERROR_MESSAGE)
-
+ 
          # The user data is correct; log in the user in and continue.
          else:
-Index: django/contrib/admin/widgets.py
-===================================================================
---- django/contrib/admin/widgets.py	(revision 9524)
-+++ django/contrib/admin/widgets.py	(working copy)
-@@ -121,10 +121,11 @@
-         output.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> ' % \
-             (related_url, url, name))
-         output.append('<img src="%simg/admin/selector-search.gif" width="16" height="16" alt="%s" /></a>' % (settings.ADMIN_MEDIA_PREFIX, _('Lookup')))
--        if value:
--            output.append(self.label_for_value(value))
-+        ## SKIP SHOWING THE CURRENT VALUE
-+        #if value:
-+        #    output.append(self.label_for_value(value))
-         return mark_safe(u''.join(output))
--
-+
-     def base_url_parameters(self):
-         params = {}
-         if self.rel.limit_choices_to:
-@@ -164,7 +165,7 @@
-         else:
-             value = ''
-         return super(ManyToManyRawIdWidget, self).render(name, value, attrs)
--
-+
-     def url_parameters(self):
-         return self.base_url_parameters()
-
 Index: django/core/management/__init__.py
 ===================================================================
---- django/core/management/__init__.py	(revision 9524)
+--- django/core/management/__init__.py	(revision 10600)
 +++ django/core/management/__init__.py	(working copy)
-@@ -13,50 +13,80 @@
+@@ -14,50 +14,80 @@
  # doesn't have to reload every time it's called.
  _commands = None
-
+ 
 -def find_commands(management_dir):
 -    """
 -    Given a path to a management directory, returns a list of all the command
@@ -143,7 +104,7 @@ Index: django/core/management/__init__.py
 +try:
 +    from pkgutil import iter_modules
 +except:
-
+ 
 -    Returns an empty list if no commands are defined.
 -    """
 -    command_dir = os.path.join(management_dir, 'commands')
@@ -153,7 +114,7 @@ Index: django/core/management/__init__.py
 -    except OSError:
 -        return []
 +    # Python versions earlier than 2.5 don't have the iter_modules function
-
+ 
 -def find_management_module(app_name):
 -    """
 -    Determines the path to the management module for the given app_name,
@@ -162,7 +123,7 @@ Index: django/core/management/__init__.py
 +        """
 +        Determines the path to the management module for the given app_name,
 +        without actually importing the application or the management module.
-
+ 
 -    Raises ImportError if the management module cannot be found for any reason.
 -    """
 -    parts = app_name.split('.')
@@ -177,7 +138,7 @@ Index: django/core/management/__init__.py
 +        parts.reverse()
 +        part = parts.pop()
 +        path = None
-
+ 
 -    # When using manage.py, the project module is added to the path,
 -    # loaded, then removed from the path. This means that
 -    # testproject.testapp.models can be loaded in future, even if
@@ -200,7 +161,7 @@ Index: django/core/management/__init__.py
 +        except ImportError,e:
 +            if os.path.basename(os.getcwd()) != part:
 +                raise e
-
+ 
 -    while parts:
 -        part = parts.pop()
 -        f, path, descr = imp.find_module(part, path and [path] or None)
@@ -209,7 +170,7 @@ Index: django/core/management/__init__.py
 +            part = parts.pop()
 +            f, path, descr = imp.find_module(part, path and [path] or None)
 +        return path
-
+ 
 +    def find_commands(app_name):
 +        """
 +        Given a path to a management directory, returns a list of all the command
@@ -251,16 +212,16 @@ Index: django/core/management/__init__.py
  def load_command_class(app_name, name):
      """
      Given a command name and an application name, returns the Command
-@@ -92,7 +122,7 @@
+@@ -93,7 +123,7 @@
      """
      global _commands
      if _commands is None:
 -        _commands = dict([(name, 'django.core') for name in find_commands(__path__[0])])
 +        _commands = dict([(name, 'django.core') for name in find_commands('django.core')])
-
+ 
          # Find the installed apps
          try:
-@@ -116,9 +146,8 @@
+@@ -114,9 +144,8 @@
          # Find and load the management module for each installed app.
          for app_name in apps:
              try:
@@ -270,12 +231,12 @@ Index: django/core/management/__init__.py
 +                                       for name in find_commands(app_name)]))
              except ImportError:
                  pass # No management module - ignore this app
-
+ 
 Index: django/db/backends/sqlite3/base.py
 ===================================================================
---- django/db/backends/sqlite3/base.py	(revision 9524)
+--- django/db/backends/sqlite3/base.py	(revision 10600)
 +++ django/db/backends/sqlite3/base.py	(working copy)
-@@ -86,7 +86,11 @@
+@@ -90,7 +90,11 @@
          # NB: The generated SQL below is specific to SQLite
          # Note: The DELETE FROM... SQL generated below works for SQLite databases
          # because constraints don't exist
@@ -290,24 +251,10 @@ Index: django/db/backends/sqlite3/base.py
                   style.SQL_FIELD(self.quote_name(table))
 Index: django/db/models/sql/query.py
 ===================================================================
---- django/db/models/sql/query.py	(revision 9524)
+--- django/db/models/sql/query.py	(revision 10600)
 +++ django/db/models/sql/query.py	(working copy)
-@@ -436,8 +436,11 @@
-             for col in self.select:
-                 if isinstance(col, (list, tuple)):
-                     r = '%s.%s' % (qn(col[0]), qn(col[1]))
--                    if with_aliases and col[1] in col_aliases:
--                        c_alias = 'Col%d' % len(col_aliases)
-+                    if with_aliases:
-+                        if col[1] in col_aliases:
-+                            c_alias = 'Col%d' % len(col_aliases)
-+                        else:
-+                            c_alias = col[1]
-                         result.append('%s AS %s' % (r, c_alias))
-                         aliases.add(c_alias)
-                         col_aliases.add(c_alias)
-@@ -457,8 +460,11 @@
-             aliases.update(new_aliases)
+@@ -727,8 +727,11 @@
+ 
          for table, col in self.related_select_cols:
              r = '%s.%s' % (qn(table), qn(col))
 -            if with_aliases and col in col_aliases:
@@ -320,9 +267,9 @@ Index: django/db/models/sql/query.py
                  result.append('%s AS %s' % (r, c_alias))
                  aliases.add(c_alias)
                  col_aliases.add(c_alias)
-@@ -503,8 +509,11 @@
-             if as_pairs:
+@@ -787,8 +790,11 @@
                  result.append((alias, field.column))
+                 aliases.add(alias)
                  continue
 -            if with_aliases and field.column in col_aliases:
 -                c_alias = 'Col%d' % len(col_aliases)
@@ -336,9 +283,9 @@ Index: django/db/models/sql/query.py
                  col_aliases.add(c_alias)
 Index: django/views/i18n.py
 ===================================================================
---- django/views/i18n.py	(revision 9524)
+--- django/views/i18n.py	(revision 10600)
 +++ django/views/i18n.py	(working copy)
-@@ -189,5 +189,8 @@
+@@ -190,5 +190,8 @@
      src.extend(csrc)
      src.append(LibFoot)
      src.append(InterPolate)

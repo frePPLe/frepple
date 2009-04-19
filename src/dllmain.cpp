@@ -137,13 +137,6 @@ DECLARE_EXPORT(void) FreppleSaveFile(const char* x)
 /** Closing any resources still used by frePPle. */
 DECLARE_EXPORT(void) FreppleExit()
 {
-  // Shut down the Python interpreter
-  if (Py_IsInitialized())
-  {
-    PyEval_AcquireLock();
-    Py_Finalize();
-  }
-
   // Close the log file
   Environment::setLogFile(""); 
 }

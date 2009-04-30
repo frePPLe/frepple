@@ -586,8 +586,9 @@ function syncInitialize()
   // Resize the available size for the table.
   syncResize();
 
-  // Watch all changes in window size
-  Event.observe(window, 'resize', syncResize);
+  // Watch all changes in window size (except in broken IE6)
+  if (navigator.userAgent.toUpperCase().indexOf('MSIE 6') == -1)
+    Event.observe(window, 'resize', syncResize);
 }
 
 

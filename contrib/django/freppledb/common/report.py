@@ -581,7 +581,6 @@ def _get_javascript_imports(reportclass):
         add = True
   if add:
     return reportclass.javascript_imports + [
-      "/admin/jsi18n/",
       "/media/js/core.js",
       "/media/js/calendar.js",
       "/media/js/admin/DateTimeShortcuts.js",

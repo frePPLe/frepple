@@ -135,6 +135,7 @@ INSTALLED_APPS = (
     'output',
     'execute',
     'common',
+    'freppledb',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

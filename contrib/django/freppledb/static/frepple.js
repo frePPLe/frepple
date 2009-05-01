@@ -309,13 +309,13 @@ function filterform()
 function import_show(list_or_table)
 {
   var element = $('popup');
-  element.innerHTML = '<h2>Import data</h2><br/>'+
+  element.innerHTML = '<h2>' + gettext("Import data") + '</h2><br/>' +
     '<form enctype="multipart/form-data" method="post" action="' + location.href + '"><table><tr>'+
-    '<td colspan="2">Load data from a CSV-formatted text file in the database.<br/>'+
-    'The first row should contain the field names.</td></tr>'+
-    '<tr><td>Data file:</td><td><input type="file" id="csv_file" name="csv_file"/></td></tr>'+
-    '<tr><td><input id="upload" type="submit" value="Upload"/></td>'+
-    '<td><input type="button" value="Close" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
+    '<td colspan="2">' + gettext('Load data from a CSV-formatted text file in the database.') + '<br/>'+
+    gettext('The first row should contain the field names.') + '</td></tr>'+
+    '<tr><td>'+gettext('Data file') + ':</td><td><input type="file" id="csv_file" name="csv_file"/></td></tr>'+
+    '<tr><td><input id="upload" type="submit" value="' + gettext('Upload') + '"/></td>'+
+    '<td><input type="button" value="' + gettext('Cancel') + '" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
     '</table></form>';
   var position = $('csvexport').cumulativeOffset();
   position[0] -= 252;
@@ -333,13 +333,13 @@ function export_show(list_or_table)
   // The argument is true when we show a "list" report.
   // It is false for "table" reports.
   var element = $('popup');
-  element.innerHTML = '<h2>Export data</h2><br/>'+
+  element.innerHTML = '<h2>' + gettext("Export data") +'</h2><br/>'+
     '<form method="get" action="javascript:export_close()"><table>'+
-    '<tr><th>CSV style:</th><td><select name="csvformat" id="csvformat"' + (list_or_table ? ' disabled="true"' : '')+ '>'+
-    '<option value="csv"' + (list_or_table ? '' : ' selected="selected"') + '>Table</option>'+
-    '<option value="csvlist"' + (list_or_table ?  ' selected="selected"' : '') + '>List</option></select></td></tr>'+
-    '<tr><td><input type="submit" value="Export"/></td>'+
-    '<td><input type="button" value="Close" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
+    '<tr><th>' + gettext("CSV style") + ':</th><td><select name="csvformat" id="csvformat"' + (list_or_table ? ' disabled="true"' : '')+ '>'+
+    '<option value="csv"' + (list_or_table ? '' : ' selected="selected"') + '>' + gettext("Table") +'</option>'+
+    '<option value="csvlist"' + (list_or_table ?  ' selected="selected"' : '') + '>' + gettext("List") +'</option></select></td></tr>'+
+    '<tr><td><input type="submit" value="' + gettext("Export") +'"/></td>'+
+    '<td><input type="button" value="' + gettext("Cancel") +'" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
     '</table></form>';
   var position = $('csvexport').cumulativeOffset();
   position[0] -= 202;
@@ -374,20 +374,20 @@ function bucket_show()
   var buckets = $('timebuckets').innerHTML.split(',');
   // Show popup
   var element = $('popup');
-  element.innerHTML = '<h2>Time buckets</h2><br/>'+
+  element.innerHTML = '<h2>' + gettext("Time buckets") + '</h2><br/>'+
     '<form method="get" action="javascript:bucket_close()"><table>'+
-    '<tr><th>Buckets:</th><td><select name="buckets" id="reportbucket">'+
-    '<option value="standard"' + (buckets[0]=='standard' ? 'selected="selected"' : '') + '>Standard</option>'+
-    '<option value="day"' + (buckets[0]=='day' ? 'selected="selected"' : '') + '>Day</option>'+
-    '<option value="week"' + (buckets[0]=='week' ? 'selected="selected"' : '') + '>Week</option>'+
-    '<option value="month"' + (buckets[0]=='month' ? 'selected="selected"' : '') + '>Month</option>'+
-    '<option value="quarter"' + (buckets[0]=='quarter' ? 'selected="selected"' : '') + '>Quarter</option>'+
-    '<option value="year"' + (buckets[0]=='year' ? 'selected="selected"' : '') + '>Year</option>'+
+    '<tr><th>' + gettext("Buckets") + ':</th><td><select name="buckets" id="reportbucket">'+
+    '<option value="standard"' + (buckets[0]=='standard' ? 'selected="selected"' : '') + '>' + gettext("Standard") + '</option>'+
+    '<option value="day"' + (buckets[0]=='day' ? 'selected="selected"' : '') + '>' + gettext("Day") + '</option>'+
+    '<option value="week"' + (buckets[0]=='week' ? 'selected="selected"' : '') + '>' + gettext("Week") + '</option>'+
+    '<option value="month"' + (buckets[0]=='month' ? 'selected="selected"' : '') + '>' + gettext("Month") + '</option>'+
+    '<option value="quarter"' + (buckets[0]=='quarter' ? 'selected="selected"' : '') + '>' + gettext("Quarter") + '</option>'+
+    '<option value="year"' + (buckets[0]=='year' ? 'selected="selected"' : '') + '>' + gettext("Year") + '</option>'+
     '</select></td></tr>'+
-    '<tr><th>Start&nbsp;date:</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="' + buckets[1] + '" name="startdate"/></td></tr>'+
-    '<tr><th>End&nbsp;date:</th><td><input id="reportend" type="text" size="10" class="vDateField" value="' + buckets[2] + '" name="enddate" /></td></tr>'+
-    '<tr><td><input type="submit" value="OK"/></td>'+
-    '<td><input type="button" value="Cancel" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
+    '<tr><th>' + gettext("Start&nbsp;date") + ':</th><td><input id="reportstart" type="text" size="10" class="vDateField" value="' + buckets[1] + '" name="startdate"/></td></tr>'+
+    '<tr><th>' + gettext("End&nbsp;date") + ':</th><td><input id="reportend" type="text" size="10" class="vDateField" value="' + buckets[2] + '" name="enddate" /></td></tr>'+
+    '<tr><td><input type="submit" value="' + gettext("OK") + '"/></td>'+
+    '<td><input type="button" value="' + gettext("Cancel") + '" onclick="$(\'popup\').style.display = \'none\';"/></td></tr>'+
     '</table></form>';
   var position = $('csvexport').cumulativeOffset();
   position[0] -= 202;
@@ -400,6 +400,7 @@ function bucket_show()
   DateTimeShortcuts.addCalendar($('reportend'));
   element.style.display  = "block";
 }
+
 
 function bucket_close()
 {

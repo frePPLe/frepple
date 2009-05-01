@@ -55,6 +55,7 @@ urlpatterns += common.urls.urlpatterns
 # It needs to be added as the last item since the applications can
 # hide/override some admin urls.
 urlpatterns += patterns('',
+    (r'^admin/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf','freppledb'),}),
     (r'^admin/(.*)', admin.site.root),
 )
 

@@ -63,6 +63,10 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     PyEval_AcquireLock();
     try
     {
+      // Assure we have the proper Python state
+      PyThreadState *myThreadState = PyGILState_GetThisThreadState();
+      if (myThreadState) PyThreadState_Swap(myThreadState);
+      // Register new Python data types
       if (PythonLPSolver::initialize(PythonInterpreter::getModule()))
         throw RuntimeException("Error registering Python solver_lp extension");
     }

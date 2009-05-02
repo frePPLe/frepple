@@ -134,7 +134,11 @@ DECLARE_EXPORT(void) FreppleSaveFile(const char* x)
 }
 
 
-/** Closing any resources still used by frePPle. */
+/** Closing any resources still used by frePPle.<br>
+  * Allocated memory is not freed up with this call - for performance
+  * reasons it is easier to "leak" the memory. The memory is freed when
+  * the process exits.
+  */
 DECLARE_EXPORT(void) FreppleExit()
 {
   // Close the log file

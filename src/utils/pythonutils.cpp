@@ -46,7 +46,6 @@ DECLARE_EXPORT PyObject* PythonRuntimeException = NULL;
 
 const MetaClass* CommandPython::metadata2;
 
-PyThreadState *PythonInterpreter::mainThreadState = NULL;
 DECLARE_EXPORT PyObject *PythonInterpreter::module = NULL;
 DECLARE_EXPORT string PythonInterpreter::encoding;
 
@@ -127,10 +126,7 @@ void PythonInterpreter::initialize()
 
   // Add a string constant for the version
   nok += PyModule_AddStringConstant(module, "version", PACKAGE_VERSION);
-
-  // Capture the main trhead state, for use during threaded execution
-  mainThreadState = PyThreadState_Get();
-
+  
   // Redirect the stderr and stdout streams of Python
   registerGlobalMethod("log", python_log, METH_VARARGS,
     "Prints a string to the frePPLe log file.", false);
@@ -166,8 +162,7 @@ void PythonInterpreter::initialize()
   PyEval_ReleaseLock();
 
   // A final check...
-  if (nok || !mainThreadState)
-    throw RuntimeException("Can't initialize Python interpreter");
+  if (nok) throw RuntimeException("Can't initialize Python interpreter");
 }
 
 
@@ -177,30 +172,23 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
   // After this command we are the only thread executing Python code.
   PyEval_AcquireLock();
 
-  // Initialize this thread for execution
-  PyInterpreterState *mainInterpreterState = mainThreadState->interp;
-  PyThreadState *myThreadState = PyThreadState_New(mainInterpreterState);
-  PyThreadState *prevThreadState = PyThreadState_Swap(myThreadState);
+  // Swap the correct Python thread for execution
+  PyThreadState *myThreadState = PyGILState_GetThisThreadState();
+  if (myThreadState) PyThreadState_Swap(myThreadState);
 
   // Execute the command
   PyObject *m = PyImport_AddModule("__main__");
   if (!m)
   {
-    // Clean up the thread and release the global python lock
-    myThreadState = PyThreadState_Swap(prevThreadState);
-    PyThreadState_Clear(myThreadState);
+    // Release the global python lock
     PyEval_ReleaseLock();
-    PyThreadState_Delete(myThreadState);
     throw RuntimeException("Can't initialize Python interpreter");
   }
   PyObject *d = PyModule_GetDict(m);
   if (!d)
   {
-    // Clean up the thread and release the global python lock
-    myThreadState = PyThreadState_Swap(prevThreadState);
-    PyThreadState_Clear(myThreadState);
+    // Release the global python lock
     PyEval_ReleaseLock();
-    PyThreadState_Delete(myThreadState);
     throw RuntimeException("Can't initialize Python interpreter");
   }
 
@@ -211,21 +199,15 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
   {
     // Print the error message
     PyErr_Print();
-    // Clean up the thread and release the global python lock
-    myThreadState = PyThreadState_Swap(prevThreadState);
-    PyThreadState_Clear(myThreadState);
+    // Release the global python lock
     PyEval_ReleaseLock();
-    PyThreadState_Delete(myThreadState);
     throw RuntimeException("Error executing python command");
   }
   Py_DECREF(v);
   if (Py_FlushLine()) PyErr_Clear();
 
-  // Clean up the thread and release the global python lock
-  myThreadState = PyThreadState_Swap(prevThreadState);
-  PyThreadState_Clear(myThreadState);
+  // Release the global python lock
   PyEval_ReleaseLock();
-  PyThreadState_Delete(myThreadState);
 }
 
 

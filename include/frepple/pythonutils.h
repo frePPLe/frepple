@@ -170,9 +170,6 @@ class PythonInterpreter
     /** A pointer to the frePPLe extension module. */  
     static DECLARE_EXPORT PyObject *module;
 
-    /** This is the thread state of the main execution thread. */
-    static PyThreadState *mainThreadState;
-
     /** Python API: Used for redirecting the Python output to the same file
       * as the applciation. <br>
       * Arguments: data (string)

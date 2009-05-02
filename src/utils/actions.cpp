@@ -337,6 +337,8 @@ void* CommandList::wrapper(void *arg)
 unsigned __stdcall CommandList::wrapper(void *arg)
 #endif
 {
+  // @TODO Each OS-level thread needs to initialize a Python thread as well
+
   CommandList *l = static_cast<CommandList*>(arg);
   for (Command *c = l->selectCommand(); c; c = l->selectCommand())
   {

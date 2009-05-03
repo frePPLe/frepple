@@ -61,14 +61,13 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     }
 
     // Initialize the Python extension.
-    if (!Py_IsInitialized())
+    PyThreadState *myThreadState = PyGILState_GetThisThreadState();
+    if (!Py_IsInitialized() || !myThreadState)
       throw RuntimeException("Python isn't initialized correctly");
-    PyEval_AcquireLock();
     try 
     {
-      // Assure we have the proper Python state
-      PyThreadState *myThreadState = PyGILState_GetThisThreadState();
-      if (myThreadState) PyThreadState_Swap(myThreadState);
+      // Get the global lock.
+      PyEval_RestoreThread(myThreadState);
       // Register new Python data types
       PythonInterpreter::registerGlobalMethod(
         "webservice", CommandWebservice::pythonService, METH_NOARGS,

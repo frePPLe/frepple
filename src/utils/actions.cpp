@@ -337,9 +337,12 @@ void* CommandList::wrapper(void *arg)
 unsigned __stdcall CommandList::wrapper(void *arg)
 #endif
 {
-  // @TODO Each OS-level thread needs to initialize a Python thread as well
-
+  // Each OS-level thread needs to initialize a Python thread state.
   CommandList *l = static_cast<CommandList*>(arg);
+  bool threaded = l->getMaxParallel() > 1 && l->getNumberOfCommands() > 1;
+  if (threaded) PythonInterpreter::addThread();
+
+  // Execute the commands
   for (Command *c = l->selectCommand(); c; c = l->selectCommand())
   {
 #if defined(HAVE_PTHREAD_H) || !defined(MT)
@@ -357,6 +360,9 @@ unsigned __stdcall CommandList::wrapper(void *arg)
       catch (...) {logger << "  Unknown type" << endl;}
     }
   }
+
+  // Finalize the Python thread state
+  if (threaded) PythonInterpreter::deleteThread();
   return 0;
 }
 

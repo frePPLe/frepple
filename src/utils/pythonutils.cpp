@@ -166,15 +166,43 @@ void PythonInterpreter::initialize()
 }
 
 
+DECLARE_EXPORT void PythonInterpreter::addThread()
+{
+  // Check whether the thread already has a Python state
+  PyThreadState * myThreadState = PyGILState_GetThisThreadState();
+  if (myThreadState) return;
+
+  // Create a new state  
+  PyThreadState *tcur = PyThreadState_New(PyInterpreterState_Head());
+  if (!tcur) throw RuntimeException("Can't create new thread state");
+
+  // Make the new state current
+  PyEval_RestoreThread(tcur); 
+  PyEval_ReleaseLock();
+}
+
+
+DECLARE_EXPORT void PythonInterpreter::deleteThread()
+{
+  // Check whether the thread already has a Python state
+  PyThreadState * tcur = PyGILState_GetThisThreadState();
+  if (!tcur) return;
+
+  // Delete the current Python thread state
+  PyEval_RestoreThread(tcur); 
+  PyThreadState_Clear(tcur);
+  PyThreadState_DeleteCurrent(); // This releases the GIL too!
+}
+
+
 DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
 {
   // Get the global lock.
   // After this command we are the only thread executing Python code.
-  PyEval_AcquireLock();
-
-  // Swap the correct Python thread for execution
   PyThreadState *myThreadState = PyGILState_GetThisThreadState();
-  if (myThreadState) PyThreadState_Swap(myThreadState);
+  if (!myThreadState) 
+    throw RuntimeException("No Python thread state for this thread");
+  PyEval_RestoreThread(myThreadState);
 
   // Execute the command
   PyObject *m = PyImport_AddModule("__main__");

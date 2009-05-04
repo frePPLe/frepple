@@ -1,11 +1,15 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n admin_modify adminmedia %}
+
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="../../../jsi18n/"></script>
 {{ media }}
 {% endblock %}
-{% block stylesheet %}{% admin_media_prefix %}css/forms.css{% endblock %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/forms.css" />{% endblock %}
+
 {% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
 {% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
 {% block breadcrumbs %}{% if not is_popup %}{{ block.super }}{% endif %}{% endblock %}
 {% block content %}<div id="content-main">
@@ -22,7 +26,7 @@
 {% if save_on_top %}{% submit_row %}{% endif %}
 {% if errors %}
     <p class="errornote">
-    {% blocktrans count errors.items|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+    {% blocktrans count errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
     </p>
     <ul class="errorlist">{% for error in adminform.form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
 {% endif %}
@@ -46,20 +50,7 @@
 {% endif %}
 
 {# JavaScript for prepopulated fields #}
-
-{% if add %}
-<script type="text/javascript">
-{% for field in adminform.prepopulated_fields %}
-    document.getElementById("{{ field.field.auto_id }}").onchange = function() { this._changed = true; };
-    {% for dependency in field.dependencies %}
-    document.getElementById("{{ dependency.auto_id }}").onkeyup = function() {
-        var e = document.getElementById("{{ field.field.auto_id }}");
-        if (!e._changed) { e.value = URLify({% for innerdep in field.dependencies %}document.getElementById("{{ innerdep.auto_id }}").value{% if not forloop.last %} + ' ' + {% endif %}{% endfor %}, {{ field.field.field.max_length }}); }
-    }
-    {% endfor %}
-{% endfor %}
-</script>
-{% endif %}
+{% prepopulated_fields_js %}
 
 </div>
 </form></div>

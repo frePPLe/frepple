@@ -1,6 +1,6 @@
 Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 ===================================================================
---- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 10600)
+--- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 10673)
 +++ django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(working copy)
 @@ -92,7 +92,7 @@
      openClock: function(num) {
@@ -45,27 +45,37 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
          shortcuts_span.appendChild(cal_link);
  
          // Create calendarbox div.
-@@ -208,7 +211,7 @@
+@@ -208,21 +211,13 @@
  	    }
  	}
  
 -    
-+
          // Recalculate the clockbox position
-         // is it left-to-right or right-to-left layout ?
-         if (getStyle(document.body,'direction')!='rtl') {
-@@ -222,7 +225,7 @@
-             cal_box.style.left = findPosX(cal_link) - 180 + 'px';
-         }
-         cal_box.style.top = findPosY(cal_link) - 75 + 'px';
+-        // is it left-to-right or right-to-left layout ?
+-        if (getStyle(document.body,'direction')!='rtl') {
+-            cal_box.style.left = findPosX(cal_link) + 17 + 'px';
+-        }
+-        else {
+-            // since style's width is in em, it'd be tough to calculate
+-            // px value of it. let's use an estimated px for now
+-            // TODO: IE returns wrong value for findPosX when in rtl mode
+-            //       (it returns as it was left aligned), needs to be fixed.
+-            cal_box.style.left = findPosX(cal_link) - 180 + 'px';
+-        }
+-        cal_box.style.top = findPosY(cal_link) - 75 + 'px';
 -    
++        //
++        // frePPLe wants to have the date popup below the icon
++        //
++        cal_box.style.left = findPosX(cal_link) - 90 + 'px';
++        cal_box.style.top = findPosY(cal_link) + 17 + 'px';
 +
          cal_box.style.display = 'block';
          addEvent(window.document, 'click', function() { DateTimeShortcuts.dismissCalendar(num); return true; });
      },
 Index: django/contrib/admin/sites.py
 ===================================================================
---- django/contrib/admin/sites.py	(revision 10600)
+--- django/contrib/admin/sites.py	(revision 10673)
 +++ django/contrib/admin/sites.py	(working copy)
 @@ -292,20 +292,7 @@
          password = request.POST.get('password', None)
@@ -89,9 +99,25 @@ Index: django/contrib/admin/sites.py
  
          # The user data is correct; log in the user in and continue.
          else:
+Index: django/contrib/admin/widgets.py
+===================================================================
+--- django/contrib/admin/widgets.py	(revision 10673)
++++ django/contrib/admin/widgets.py	(working copy)
+@@ -122,8 +122,9 @@
+         output.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> ' % \
+             (related_url, url, name))
+         output.append('<img src="%simg/admin/selector-search.gif" width="16" height="16" alt="%s" /></a>' % (settings.ADMIN_MEDIA_PREFIX, _('Lookup')))
+-        if value:
+-            output.append(self.label_for_value(value))
++        # frePPLe DOES NOT SHOW THE CURRENT VALUE
++        #if value:
++        #    output.append(self.label_for_value(value))
+         return mark_safe(u''.join(output))
+     
+     def base_url_parameters(self):
 Index: django/core/management/__init__.py
 ===================================================================
---- django/core/management/__init__.py	(revision 10600)
+--- django/core/management/__init__.py	(revision 10673)
 +++ django/core/management/__init__.py	(working copy)
 @@ -14,50 +14,80 @@
  # doesn't have to reload every time it's called.
@@ -234,7 +260,7 @@ Index: django/core/management/__init__.py
  
 Index: django/db/backends/sqlite3/base.py
 ===================================================================
---- django/db/backends/sqlite3/base.py	(revision 10600)
+--- django/db/backends/sqlite3/base.py	(revision 10673)
 +++ django/db/backends/sqlite3/base.py	(working copy)
 @@ -90,7 +90,11 @@
          # NB: The generated SQL below is specific to SQLite
@@ -251,9 +277,9 @@ Index: django/db/backends/sqlite3/base.py
                   style.SQL_FIELD(self.quote_name(table))
 Index: django/db/models/sql/query.py
 ===================================================================
---- django/db/models/sql/query.py	(revision 10600)
+--- django/db/models/sql/query.py	(revision 10673)
 +++ django/db/models/sql/query.py	(working copy)
-@@ -727,8 +727,11 @@
+@@ -745,8 +745,11 @@
  
          for table, col in self.related_select_cols:
              r = '%s.%s' % (qn(table), qn(col))
@@ -267,7 +293,7 @@ Index: django/db/models/sql/query.py
                  result.append('%s AS %s' % (r, c_alias))
                  aliases.add(c_alias)
                  col_aliases.add(c_alias)
-@@ -787,8 +790,11 @@
+@@ -805,8 +808,11 @@
                  result.append((alias, field.column))
                  aliases.add(alias)
                  continue
@@ -283,7 +309,7 @@ Index: django/db/models/sql/query.py
                  col_aliases.add(c_alias)
 Index: django/views/i18n.py
 ===================================================================
---- django/views/i18n.py	(revision 10600)
+--- django/views/i18n.py	(revision 10673)
 +++ django/views/i18n.py	(working copy)
 @@ -190,5 +190,8 @@
      src.extend(csrc)

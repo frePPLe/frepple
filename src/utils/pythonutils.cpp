@@ -255,7 +255,13 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
   newMethod->ml_doc = leakingDoc->c_str();	
 
   // Lock the interpreter
-  if (lock) PyEval_AcquireLock();
+  if (lock) 
+  {
+    PyThreadState *myThreadState = PyGILState_GetThisThreadState();
+    if (!Py_IsInitialized() || !myThreadState)
+      throw RuntimeException("Python isn't initialized correctly");
+      PyEval_RestoreThread(myThreadState);
+  }
 
   // Register a new C function in Python
   PyObject* mod = PyString_FromString("frepple");

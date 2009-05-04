@@ -244,6 +244,8 @@ DECLARE_EXPORT PyObject* PythonResource::getattro(const Attribute& attr)
     return PythonObject(obj->getLocation());
   if (attr.isA(Tags::tag_maximum))
     return PythonObject(obj->getMaximum());
+  if (attr.isA(Tags::tag_cost))
+    return PythonObject(obj->getCost());
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
   if (attr.isA(Tags::tag_loadplans))
@@ -301,6 +303,8 @@ DECLARE_EXPORT int PythonResource::setattro(const Attribute& attr, const PythonO
   }
   else if (attr.isA(Tags::tag_hidden))
     obj->setHidden(field.getBool());
+  else if (attr.isA(Tags::tag_cost))
+    obj->setCost(field.getDouble());
   else
     return -1;  // Error
   return 0;  // OK

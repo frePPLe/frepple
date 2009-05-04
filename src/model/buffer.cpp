@@ -690,6 +690,8 @@ DECLARE_EXPORT PyObject* PythonBuffer::getattro(const Attribute& attr)
     return PythonObject(obj->getMaximum());
   if (attr.isA(Tags::tag_minimum))
     return PythonObject(obj->getMinimum());
+  if (attr.isA(Tags::tag_carrying_cost))
+    return PythonObject(obj->getCarryingCost());
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(obj->getHidden());
   if (attr.isA(Tags::tag_flows))
@@ -767,6 +769,8 @@ DECLARE_EXPORT int PythonBuffer::setattro(const Attribute& attr, const PythonObj
   }
   else if (attr.isA(Tags::tag_onhand))
     obj->setOnHand(field.getDouble());
+  else if (attr.isA(Tags::tag_carrying_cost))
+    obj->setCarryingCost(field.getDouble());
   else if (attr.isA(Tags::tag_producing))
   {
     if (!field.check(PythonOperation::getType())) 

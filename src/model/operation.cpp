@@ -734,6 +734,8 @@ DECLARE_EXPORT PyObject* PythonOperation::getattro(const Attribute& attr)
     return PythonObject(obj->getSizeMinimum());
   if (attr.isA(Tags::tag_size_multiple))
     return PythonObject(obj->getSizeMultiple());
+  if (attr.isA(Tags::tag_cost))
+    return PythonObject(obj->getCost());
   if (attr.isA(Tags::tag_pretime))
     return PythonObject(obj->getPreTime());
   if (attr.isA(Tags::tag_posttime))
@@ -780,6 +782,8 @@ DECLARE_EXPORT int PythonOperation::setattro(const Attribute& attr, const Python
     obj->setSizeMinimum(field.getDouble());
   else if (attr.isA(Tags::tag_size_multiple))
     obj->setSizeMultiple(field.getDouble());
+  else if (attr.isA(Tags::tag_cost))
+    obj->setCost(field.getDouble());
   else if (attr.isA(Tags::tag_pretime))
     obj->setPreTime(field.getTimeperiod());
   else if (attr.isA(Tags::tag_posttime))

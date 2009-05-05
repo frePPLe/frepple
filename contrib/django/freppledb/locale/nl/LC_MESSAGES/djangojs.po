@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-01 07:49+0200\n"
+"POT-Creation-Date: 2009-05-05 09:23+0200\n"
 "PO-Revision-Date: 2009-05-01 07:56+0100\n"
 "Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,103 +31,96 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/frepple.js:279
-msgid "  "
-msgstr ""
-
-#: static/frepple.js:279
-msgid "Close"
-msgstr "Sluit"
-
-#: static/frepple.js:280
+#: static/frepple.js:277
 msgid "Import data"
 msgstr "Importeer gegevens"
 
-#: static/frepple.js:282
+#: static/frepple.js:279
 msgid "Load data from a CSV-formatted text file in the database."
 msgstr "Laad een bestand in CSV-formaat in de database."
 
-#: static/frepple.js:283
+#: static/frepple.js:280
 msgid "The first row should contain the field names."
 msgstr "De eerste rij moet de veldnamen bevatten."
 
-#: static/frepple.js:284
+#: static/frepple.js:281
 msgid "Data file"
 msgstr "Gegevensbestand"
 
-#: static/frepple.js:285
+#: static/frepple.js:282
 msgid "Upload"
 msgstr "Laad"
 
-#: static/frepple.js:286
-#: static/frepple.js.py:310
-#: static/frepple.js.py:358
+#: static/frepple.js:283 static/frepple.js.py:307 static/frepple.js.py:355
 msgid "Cancel"
 msgstr "Annuleer"
 
-#: static/frepple.js:304
+#: static/frepple.js:301
 msgid "Export data"
 msgstr "Exporteer gegevens"
 
-#: static/frepple.js:306
+#: static/frepple.js:303
 msgid "CSV style"
 msgstr "CSV stijl"
 
-#: static/frepple.js:307
+#: static/frepple.js:304
 msgid "Table"
 msgstr "Tabel"
 
-#: static/frepple.js:308
+#: static/frepple.js:305
 msgid "List"
 msgstr "Lijst"
 
-#: static/frepple.js:309
+#: static/frepple.js:306
 msgid "Export"
 msgstr "Exporteer "
 
-#: static/frepple.js:345
+#: static/frepple.js:342
 msgid "Time buckets"
 msgstr "Tijdsindeling"
 
-#: static/frepple.js:347
+#: static/frepple.js:344
 msgid "Buckets"
 msgstr "Tijdsindeling"
 
-#: static/frepple.js:348
+#: static/frepple.js:345
 msgid "Standard"
 msgstr "Standaard"
 
-#: static/frepple.js:349
+#: static/frepple.js:346
 msgid "Day"
 msgstr "Dag"
 
-#: static/frepple.js:350
+#: static/frepple.js:347
 msgid "Week"
 msgstr "Week"
 
-#: static/frepple.js:351
+#: static/frepple.js:348
 msgid "Month"
 msgstr "Maand"
 
-#: static/frepple.js:352
+#: static/frepple.js:349
 msgid "Quarter"
 msgstr "Kwartaal"
 
-#: static/frepple.js:353
+#: static/frepple.js:350
 msgid "Year"
 msgstr "Jaar"
 
-#: static/frepple.js:355
+#: static/frepple.js:352
 msgid "Start&nbsp;date"
 msgstr "Startdatum"
 
-#: static/frepple.js:356
+#: static/frepple.js:353
 msgid "End&nbsp;date"
 msgstr "Einddatum"
 
-#: static/frepple.js:357
+#: static/frepple.js:354
 msgid "OK"
 msgstr "OK"
+
+#~ msgid "Close"
+#~ msgstr "Sluit"
 
 #~ msgid ""
 #~ "<h2>Import data</h2><br/><form enctype=\"multipart/form-data\" method="
@@ -147,4 +140,3 @@ msgstr "OK"
 #~ "type=\"submit\" value=\"Laad\"/></td><td><input type=\"button\" value="
 #~ "\"Sluit\" onclick=\"$('popup').style.display = 'none';\"/></td></tr></"
 #~ "table></form>"
-

@@ -16,7 +16,7 @@
     {% for app in app_list %}{%ifnotequal app.name "Execute"%}
         <div class="module">
         <table summary="{% blocktrans with app.name as name %}Models available in the {{ name }} application.{% endblocktrans %}">
-        <caption>{% blocktrans with app.name as name %}{{ name }}{% endblocktrans %}</caption>
+        <caption>{% trans app.name %}</caption>
         {% for model in app.models %}
             <tr>
             {% if model.perms.change %}
@@ -45,8 +45,8 @@
 
 {% if perms.execute %}
 <div class="module">
-<table summary="Extra commands.">
-<caption>Run</caption>
+<table summary="{% trans "Extra commands" %}">
+<caption>{% trans "Extra commands" %}</caption>
 <tr>
 <th scope="row"><a href="/execute/execute.html">{% trans "Execute" %}</a></th>
 <td>&nbsp;</td><td>&nbsp;</td>
@@ -61,7 +61,7 @@
 
 <div class="module">
 <table summary="{% trans "Reports" %}">
-<caption>Reports</caption>
+<caption>{% trans "Reports" %}</caption>
 <tr>
 <th scope="row"><a href="/problem/">{% trans "Problem Report" %}</a></th>
 <td>&nbsp;</td><td><a href="/problem/?reporttype=csv" class="changelink">csv</a></td>

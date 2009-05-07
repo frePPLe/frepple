@@ -113,7 +113,7 @@ void Forecast::initialize()
       bool prevValueBool = false;
       if (c)
         // Boolean calendar
-        for (CalendarBool::EventIterator i(c); i.getDate()<=Date::infiniteFuture; ++i)
+        for (CalendarBool::EventIterator i(c); true; ++i)
         {
           if ((prevDate || i.getDate() == Date::infiniteFuture) && prevValueBool)
           {
@@ -128,7 +128,7 @@ void Forecast::initialize()
       else
       {
         // Other calendar
-        for (Calendar::EventIterator i(calptr); i.getDate()<=Date::infiniteFuture; ++i)
+        for (Calendar::EventIterator i(calptr); true; ++i)
         {
           if (prevDate || i.getDate() == Date::infiniteFuture)
           {

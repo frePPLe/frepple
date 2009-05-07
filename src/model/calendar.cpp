@@ -141,7 +141,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d) const
   {
     if (b->getStart() > d) 
       // Buckets are sorted by the start date. Other entries definately 
-      // won't be effective
+      // won't be effective.
       break;
     else if (curPriority > b->getPriority()
       && d >= b->getStart() && d < b->getEnd()
@@ -374,23 +374,24 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
     // Priority isn't low enough to overrule current date
     return;
 
-  if (refDate >= enddate && enddate > iter->curDate)
+  if (refDate > enddate && enddate >= iter->curDate)
   {
     // Previous event is the end date of the bucket
     iter->curDate = enddate;
-    iter->curBucket = iter->theCalendar->findBucket(enddate);
-    iter->curPriority = priority;
-    return;
-  }
-
-  if (refDate >= startdate && startdate >= iter->curDate)
-  {
-    // Previous event is the start date of the bucket
-    iter->curDate = startdate;   
     iter->curBucket = this;
     iter->curPriority = priority;
     return;
   }
+
+  if (refDate > startdate && startdate > iter->curDate)
+  {
+    // Previous event is the start date of the bucket
+    iter->curDate = startdate;   
+    iter->curBucket = iter->theCalendar->findBucket(startdate - TimePeriod(1L)); // @TODO 1 second trick is not nice
+    iter->curPriority = priority;
+    return;
+  }
+
 }
 
 

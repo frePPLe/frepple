@@ -660,7 +660,7 @@
       <xsd:extension base="calendar">
         <xsd:sequence>
           <xsd:element name="default" type="xsd:boolean" minOccurs="0"/>
-          <xsd:element name="Buckets" minOccurs="0">
+          <xsd:element name="buckets" minOccurs="0">
             <xsd:complexType>
               <xsd:sequence>
                 <xsd:element name="bucket" minOccurs="0" maxOccurs="unbounded">

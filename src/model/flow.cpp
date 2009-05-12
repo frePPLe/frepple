@@ -66,7 +66,7 @@ DECLARE_EXPORT void Flow::validate(Action action)
       {
         delete this;
         throw DataException("Flow of '" + oper->getName() + "' and '" +
-            buf->getName() + "' already exists.");
+            buf->getName() + "' already exists");
       }
       break;
     case CHANGE:

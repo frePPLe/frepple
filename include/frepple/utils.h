@@ -1513,7 +1513,7 @@ class Date
       return d;
     }
 
-    /** Subtracting a time to a date returns a new date. */
+    /** Subtracting a time from a date returns a new date. */
     Date operator - (const TimePeriod& l) const
     {
       Date d;
@@ -1829,7 +1829,7 @@ class XMLOutput
     void setContentType(content_type c) {content = c;}
 
     /** Updates the string that is printed as the first line of each XML
-      * document.
+      * document.<br>
       * The default value is:
       *   <?xml version="1.0" encoding="UTF-8"?>
       */
@@ -1840,7 +1840,9 @@ class XMLOutput
     const string& getHeaderStart() {return headerStart;}
 
     /** Updates the attributes that are written for the root element of each
-      * XML document. The default value is an empty string. */
+      * XML document.<br>
+      * The default value is an empty string. 
+      */
     void setHeaderAtts(const string& s) {headerAtts = s;}
 
     /** Returns the attributes that are written for the root element of each
@@ -1861,7 +1863,7 @@ class XMLOutput
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
     {m_fp = &logger; indentstring[0] = '\0';}
 
-    /** Start writing a new object. This method will open a new XML-tag.
+    /** Start writing a new object. This method will open a new XML-tag.<br>
       * Output: \<TAG_T\> */
     void BeginObject(const Keyword& t)
     {
@@ -1869,7 +1871,7 @@ class XMLOutput
       incIndent();
     }
 
-    /** Start writing a new object. This method will open a new XML-tag.
+    /** Start writing a new object. This method will open a new XML-tag.<br>
       * Output: \<TAG_T TAG_U="val1"\> */
     void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1)
     {
@@ -1878,7 +1880,7 @@ class XMLOutput
       incIndent();
     }
 
-    /** Start writing a new object. This method will open a new XML-tag.
+    /** Start writing a new object. This method will open a new XML-tag.<br>
       * Output: \<TAG_T TAG_T1="val1" TAG_T2="val2"\> */
     void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1,
                      const Keyword& attr2, const string& val2)
@@ -1889,7 +1891,7 @@ class XMLOutput
       incIndent();
     }
 
-    /** Start writing a new object. This method will open a new XML-tag.
+    /** Start writing a new object. This method will open a new XML-tag.<br>
       * Output: \<TAG_T TAG_U="val1" TAG_V="val2" TAG_W="val3"\> */
     void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1,
       const Keyword& attr2, const string& val2,
@@ -1909,7 +1911,7 @@ class XMLOutput
       incIndent();
     }
 
-    /** Start writing a new object. This method will open a new XML-tag.
+    /** Start writing a new object. This method will open a new XML-tag.<br>
       * Output: \<TAG_T TAG_U="long"\> */
     void BeginObject(const Keyword& t, const Keyword& attr1, const long val1)
     {
@@ -1918,7 +1920,7 @@ class XMLOutput
       incIndent();
     }
 
-    /** Start writing a new object. This method will open a new XML-tag.
+    /** Start writing a new object. This method will open a new XML-tag.<br>
       * Output: \<TAG_T TAG_T1="val1" TAG_T2="val2"\> */
     void BeginObject(const Keyword& t, const Keyword& attr1, unsigned long val1,
                      const Keyword& attr2, const string& val2)
@@ -1930,7 +1932,7 @@ class XMLOutput
     }
 
     /** Write the closing tag of this object and decrease the indentation
-      * level.
+      * level.<br>
       * Output: \</TAG_T\>
       */
     void EndObject(const Keyword& t)
@@ -1946,21 +1948,21 @@ class XMLOutput
       *m_fp << indentstring << c << "\n";
     }
 
-    /** Write an unsigned long value enclosed opening and closing tags.
+    /** Write an unsigned long value enclosed opening and closing tags.<br>
       * Output: \<TAG_T\>uint\</TAG_T\> */
     void writeElement(const Keyword& t, const long unsigned int val)
     {
       *m_fp << indentstring << t.stringElement() << val << t.stringEndElement();
     }
 
-    /** Write an integer value enclosed opening and closing tags.
+    /** Write an integer value enclosed opening and closing tags.<br>
       * Output: \<TAG_T\>integer\</TAG_T\> */
     void writeElement(const Keyword& t, const int val)
     {
       *m_fp << indentstring << t.stringElement() << val << t.stringEndElement();
     }
 
-    /** Write a double value enclosed opening and closing tags.
+    /** Write a double value enclosed opening and closing tags.<br>
       * Output: \<TAG_T\>double\</TAG_T\> */
     void writeElement(const Keyword& t, const double val)
     {
@@ -1968,7 +1970,7 @@ class XMLOutput
     }
 
     /** Write a boolean value enclosed opening and closing tags. The boolean
-      * is written out as the string 'true' or 'false'.
+      * is written out as the string 'true' or 'false'.<br>
       * Output: \<TAG_T\>true\</TAG_T\>
       */
     void writeElement(const Keyword& t, const bool val)
@@ -1978,7 +1980,7 @@ class XMLOutput
     }
 
     /** Write a string value enclosed opening and closing tags. Special
-      * characters (i.e. & < > " ' ) are appropriately escaped.
+      * characters (i.e. & < > " ' ) are appropriately escaped.<br>
       * Output: \<TAG_T\>val\</TAG_T\> */
     void writeElement(const Keyword& t, const string& val)
     {
@@ -1987,7 +1989,7 @@ class XMLOutput
         << XMLEscape(val) << t.stringEndElement();
     }
 
-    /** Writes an element with a string attribute.
+    /** Writes an element with a string attribute.<br>
       * Output: \<TAG_U TAG_T="string"/\> */
     void writeElement(const Keyword& u, const Keyword& t, const string& val)
     {
@@ -1999,7 +2001,7 @@ class XMLOutput
         << "\"/>\n";
     }
 
-    /** Writes an element with a long attribute.
+    /** Writes an element with a long attribute.<br>
       * Output: \<TAG_U TAG_T="val"/\> */
     void writeElement(const Keyword& u, const Keyword& t, const long val)
     {
@@ -2007,7 +2009,7 @@ class XMLOutput
       << t.stringAttribute() << val << "\"/>\n";
     }
 
-    /** Writes an element with a date attribute.
+    /** Writes an element with a date attribute.<br>
       * Output: \<TAG_U TAG_T="val"/\> */
     void writeElement(const Keyword& u, const Keyword& t, const Date& val)
     {
@@ -2015,7 +2017,7 @@ class XMLOutput
       << t.stringAttribute() << string(val) << "\"/>\n";
     }
 
-    /** Writes an element with 2 string attributes.
+    /** Writes an element with 2 string attributes.<br>
       * Output: \<TAG_U TAG_T1="val1" TAG_T2="val2"/\> */
     void writeElement(const Keyword& u, const Keyword& t1, const string& val1,
       const Keyword& t2, const string& val2)
@@ -2029,7 +2031,7 @@ class XMLOutput
         << "\"/>\n";
     }
 
-    /** Writes an element with a string and a long attribute.
+    /** Writes an element with a string and a long attribute.<br>
       * Output: \<TAG_U TAG_T1="val1" TAG_T2="val2"/\> */
     void writeElement(const Keyword& u, const Keyword& t1, unsigned long val1,
       const Keyword& t2, const string& val2)
@@ -2040,7 +2042,7 @@ class XMLOutput
       << "\"/>\n";
     }
 
-    /** Writes a C-type character string.
+    /** Writes a C-type character string.<br>
       * Output: \<TAG_T\>val\</TAG_T\> */
     void writeElement(const Keyword& t, const char* val)
     {
@@ -2049,21 +2051,21 @@ class XMLOutput
         << XMLEscape(val) << t.stringEndElement();
     }
 
-    /** Writes an timeperiod element.
+    /** Writes an timeperiod element.<br>
       * Output: \<TAG_T\>d\</TAG_T\> /> */
     void writeElement(const Keyword& t, const TimePeriod d)
     {
       *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
     }
 
-    /** Writes an date element.
+    /** Writes an date element.<br>
       * Output: \<TAG_T\>d\</TAG_T\> /> */
     void writeElement(const Keyword& t, const Date d)
     {
       *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
     }
 
-    /** Writes an daterange element.
+    /** Writes an daterange element.<br>
       * Output: \<TAG_T\>d\</TAG_T\> */
     void writeElement(const Keyword& t, const DateRange& d)
     {
@@ -2085,7 +2087,7 @@ class XMLOutput
       {writeElement(t,&o,m);}
 
     /** This method writes a serializable object with a complete XML compliant
-      * header.
+      * header.<br>
       * You should call this method for the root object of your xml document,
       * and writeElement for all objects nested in it.
       * @see writeElement(const Keyword&, Object*)
@@ -2095,9 +2097,9 @@ class XMLOutput
       */
     DECLARE_EXPORT void writeElementWithHeader(const Keyword& tag, const Object* object);
 
-    /** This method writes the opening tag for an XML output.
+    /** This method writes the opening tag for an XML output.<br>
       * You should call this method or writeElementWithHeader() when writing
-      * the first element of an xml document,
+      * the first element of an xml document.
       * @see writeElementWithHeader
       * @exception RuntimeException Generated when multiple root elements
       *    are available for the output document.
@@ -2486,20 +2488,16 @@ class Object
     virtual void writeElement(XMLOutput *, const Keyword &, mode=DEFAULT) const
       {throw LogicException("Class can't be persisted");}
 
-    /** Called while restoring the model from an XML-file.
+    /** Called while restoring the model from an XML-file.<br>
       * This is called for each element within the "this" element,
-      * for which the "this" element is immediate parent.
+      * for which the "this" element is immediate parent.<br>
       * It is called when the open element tag is encountered.
       */
     virtual void beginElement(XMLInput&, const Attribute&) {}
 
-    /** Called while restoring the model from an XML-file.
-      * This is called when the corresponding close element
-      * tag is encountered, and the Data() member of pElement is
-      * also valid.
-      * NOTE: each object receives both its own beginElement so it can
-      * process its own element tag attributes, and its own endElement
-      * so it can process its own character data.
+    /** Called while restoring the model from an XML-file.<br>
+      * This is called when the corresponding close element tag
+      * is encountered, and the Data() member of pElement is valid.
       */
     virtual void endElement(XMLInput&, const Attribute&, const DataElement&) = 0;
 
@@ -2544,7 +2542,7 @@ class Tree : public NonCopyable
 {
   public:
     /** The algorithm assigns a color to each node in the tree. The color is
-      * used to keep the tree balanced.
+      * used to keep the tree balanced.<br>
       * A node with color 'none' is a node that hasn't been inserted yet in
       * the tree.
       */
@@ -2673,7 +2671,7 @@ class Tree : public NonCopyable
       */
     TreeNode* end() const {return const_cast<TreeNode*>(&header);}
 
-    /** Returns true if the list is empty.
+    /** Returns true if the list is empty.<br>
       * Its complexity is O(1). */
     bool empty() const
     {
@@ -2717,9 +2715,10 @@ class Tree : public NonCopyable
     /** Remove a node from the tree. */
     DECLARE_EXPORT void erase(TreeNode* x);
 
-    /** Search for an element in the tree. Profiling shows this function has
-      * a significant impact on the cpu time (mainly because of the string
-      * comparisons), and has been optimized as much as possible.
+    /** Search for an element in the tree.<br> 
+      * Profiling shows this function has a significant impact on the CPU 
+      * time (mainly because of the string comparisons), and has been 
+      * optimized as much as possible.
       */
     TreeNode* find(const string& k) const
     {
@@ -2763,7 +2762,7 @@ class Tree : public NonCopyable
     TreeNode* insert(TreeNode* v) {return insert(v, NULL);}
 
     /** Insert a new node in the tree. The second argument is a hint on
-      * the proper location in the tree.
+      * the proper location in the tree.<br>
       * Profiling shows this function has a significant impact on the cpu
       * time (mainly because of the string comparisons), and has been
       * optimized as much as possible.
@@ -2905,7 +2904,7 @@ class Command
   private:
     /** Specifies whether the execution of the command should remain silent
       * (which is the default), or whether verbose output on the command
-      * execution is requested.
+      * execution is requested.<br>
       * The default value is to inherit from a higher level, and false if
       * unspecified.
       */
@@ -3082,9 +3081,10 @@ class CommandList : public Command
       curCommand(NULL), can_undo(true), maxparallel(1),
       abortOnError(INHERIT) {}
 
-    /** Destructor. An actionlist should only be deleted when all of its
-      * actions have been committed or undone. If this is not the case a
-      * warning will be printed.
+    /** Destructor.<br>
+      * A commandlist should only be deleted when all of its commands
+      * have been committed or undone. If this is not the case a warning 
+      * will be printed.
       */
     virtual DECLARE_EXPORT ~CommandList();
 };
@@ -3229,8 +3229,8 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       */
     vector< pair<Object*,void*> > m_EHStack;
 
-    /** Stack of elements.
-      * The expression m_EStack[numElements+1] returns the current element.
+    /** Stack of elements.<br>
+      * The expression m_EStack[numElements+1] returns the current element.<br>
       * The expression m_EStack[numElements] returns the parent element.
       * @see numElements
       */
@@ -3263,7 +3263,7 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       *  - Setting the flag to false is appropriate for processing large
       *    amounts of a bulk-load operation. In this mode a single, potentially
       *    minor, data problem won't abort the complete process.
-      *  - Setting the flag to true is most appropriate to process smal and
+      *  - Setting the flag to true is most appropriate to process small and
       *    frequent messages from client applications. In this mode client
       *    applications are notified about data problems.
       *  - The default setting is true, in order to provide a maximum level of
@@ -3717,13 +3717,13 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
         case ADD:
           // Only additions are allowed
           if (found)
-            throw DataException("Object '" + name + "' already exists.");
+            throw DataException("Object '" + name + "' already exists");
           break;
 
         case CHANGE:
           // Only changes are allowed
           if (!found)
-            throw DataException("Object '" + name + "' doesn't exist.");
+            throw DataException("Object '" + name + "' doesn't exist");
           return i;
 
         case REMOVE:

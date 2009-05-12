@@ -340,7 +340,7 @@ class Forecast : public Demand
         static void setInitialAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter SingleExponential.initialAlfa must be between 0 and 1.");
+            "Parameter SingleExponential.initialAlfa must be between 0 and 1");
          initial_alfa = x;
         }
 
@@ -348,7 +348,7 @@ class Forecast : public Demand
         static void setMinAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter SingleExponential.minAlfa must be between 0 and 1.");
+            "Parameter SingleExponential.minAlfa must be between 0 and 1");
           min_alfa = x;
         }
 
@@ -356,7 +356,7 @@ class Forecast : public Demand
         static void setMaxAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter SingleExponential.maxAlfa must be between 0 and 1.");
+            "Parameter SingleExponential.maxAlfa must be between 0 and 1");
           max_alfa = x;
         }
 
@@ -431,7 +431,7 @@ class Forecast : public Demand
         static void setInitialAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.initialAlfa must be between 0 and 1.");
+            "Parameter DoubleExponential.initialAlfa must be between 0 and 1");
           initial_alfa = x;
         }
 
@@ -439,7 +439,7 @@ class Forecast : public Demand
         static void setMinAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.minAlfa must be between 0 and 1.");
+            "Parameter DoubleExponential.minAlfa must be between 0 and 1");
           min_alfa = x;
         }
 
@@ -447,7 +447,7 @@ class Forecast : public Demand
         static void setMaxAlfa(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.maxAlfa must be between 0 and 1.");
+            "Parameter DoubleExponential.maxAlfa must be between 0 and 1");
           max_alfa = x;
         }
 
@@ -461,7 +461,7 @@ class Forecast : public Demand
         static void setInitialGamma(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.initialGamma must be between 0 and 1.");
+            "Parameter DoubleExponential.initialGamma must be between 0 and 1");
           initial_gamma = x;
         }
 
@@ -469,7 +469,7 @@ class Forecast : public Demand
         static void setMinGamma(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.minGamma must be between 0 and 1.");
+            "Parameter DoubleExponential.minGamma must be between 0 and 1");
           min_gamma = x;
         }
 
@@ -477,7 +477,7 @@ class Forecast : public Demand
         static void setMaxGamma(double x)
         {
           if (x<0 || x>1.0) throw DataException(
-            "Parameter DoubleExponential.maxGamma must be between 0 and 1.");
+            "Parameter DoubleExponential.maxGamma must be between 0 and 1");
           max_gamma = x;
         }
 
@@ -613,7 +613,7 @@ class Forecast : public Demand
     static void setForecastMadAlfa(double t)
     {
       if (t<=0.5 || t>1.0) throw DataException(
-        "Parameter Forecast.madAlfa must be between 0.5 and 1.0."
+        "Parameter Forecast.madAlfa must be between 0.5 and 1.0"
         );
       Forecast_MadAlfa = t;
     }
@@ -625,7 +625,7 @@ class Forecast : public Demand
     static void setForecastIterations(unsigned long t)
     {
       if (t<=0) throw DataException(
-        "Parameter Forecast.Iterations must be bigger than 0."
+        "Parameter Forecast.Iterations must be bigger than 0"
         );
       Forecast_Iterations = t;
     }
@@ -637,7 +637,7 @@ class Forecast : public Demand
     static void setForecastSkip(unsigned int t)
     {
       if (t<0) throw DataException(
-        "Parameter Forecast.Skip must be bigger than or equal to 0."
+        "Parameter Forecast.Skip must be bigger than or equal to 0"
         );
       Forecast_Skip = t;
     }

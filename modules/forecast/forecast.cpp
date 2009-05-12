@@ -346,7 +346,7 @@ void Forecast::setCalendar(Calendar* c)
 {
   if (isGroup())
     throw DataException(
-      "Changing the calendar of an initialized forecast isn't allowed.");
+      "Changing the calendar of an initialized forecast isn't allowed");
   calptr = c;
 }
 

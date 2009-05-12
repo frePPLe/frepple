@@ -209,6 +209,9 @@ class Calendar : public HasName<Calendar>, public Object
           return true;
         }
 
+        /** Convert the value of the bucket to a boolean value. */
+        virtual bool getBool() const { return true; }
+
         virtual DECLARE_EXPORT void writeElement
           (XMLOutput*, const Keyword&, mode=DEFAULT) const;
 
@@ -233,6 +236,9 @@ class Calendar : public HasName<Calendar>, public Object
       */
     DECLARE_EXPORT ~Calendar();
 
+    /** Convert the value of the calendar to a boolean value. */
+    virtual bool getBool() const { return false; }
+
     /** This is a factory method that creates a new bucket using the start
       * date as the key field. The fields are passed as an array of character
       * pointers.<br>
@@ -252,7 +258,7 @@ class Calendar : public HasName<Calendar>, public Object
       * that we all dates between infinitePast and infiniteFuture match
       * with one (and only one) bucket.
       */
-    DECLARE_EXPORT Bucket* findBucket(Date d) const;
+    DECLARE_EXPORT Bucket* findBucket(Date d, bool fwd = true) const;
 
     /** Returns the bucket with a certain name.
       * A NULL pointer is returned in case no bucket can be found with the
@@ -273,12 +279,13 @@ class Calendar : public HasName<Calendar>, public Object
       public:
         const Date& getDate() const {return curDate;}
         const Bucket* getBucket() const {return curBucket;}
-        EventIterator(const Calendar* c, Date d = Date::infinitePast) 
-          : theCalendar(c), curDate(d) 
+        const Calendar* getCalendar() const {return theCalendar;}
+        EventIterator(const Calendar* c, Date d = Date::infinitePast, 
+          bool forward = true) : theCalendar(c), curDate(d) 
         {
           if (!c) 
-            throw LogicException("Creating iterator for NULL calendar.");
-          curBucket = c->findBucket(d);
+            throw LogicException("Creating iterator for NULL calendar");
+          curBucket = c->findBucket(d,forward);
         };
         DECLARE_EXPORT EventIterator& operator++();
         DECLARE_EXPORT EventIterator& operator--();
@@ -384,6 +391,9 @@ template <typename T> class CalendarValue : public Calendar
         /** Returns the value of this bucket. */
         const T& getValue() const {return val;}
 
+        /** Convert the value of the bucket to a boolean value. */
+        bool getBool() const { return val != 0; }
+
         /** Updates the value of this bucket. */
         void setValue(const T& v) {val = v;}
 
@@ -466,6 +476,9 @@ template <typename T> class CalendarValue : public Calendar
     /** Returns the default calendar value when no entry is matching. */
     virtual T getDefault() const {return defaultValue;}
   
+    /** Convert the value of the calendar to a boolean value. */
+    virtual bool getBool() const { return defaultValue != 0; }
+
     /** Update the default calendar value when no entry is matching. */
     virtual void setDefault(const T v) {defaultValue = v;}
 
@@ -517,6 +530,11 @@ template <typename T> class CalendarValue : public Calendar
 };
 
 
+/* Declaration of specialized template functions. */
+template <> DECLARE_EXPORT bool CalendarValue<string>::getBool() const; 
+template <> DECLARE_EXPORT bool CalendarValue<string>::BucketValue::getBool() const; 
+
+
 /** @brief This calendar type is used to store object pointers in its buckets.
   *
   * The template type must statisfy the following requirements:
@@ -547,6 +565,9 @@ template <typename T> class CalendarPointer : public Calendar
       public:
         /** Returns the value stored in this bucket. */
         T* getValue() const {return val;}
+
+        /** Convert the value of the bucket to a boolean value. */
+        bool getBool() const { return val != NULL; }
 
         /** Updates the value of this bucket. */
         void setValue(T* v) {val = v;}
@@ -621,6 +642,9 @@ template <typename T> class CalendarPointer : public Calendar
       BucketPointer* x = static_cast<BucketPointer*>(findBucket(d));
       return x ? x->getValue() : defaultValue;
     }
+
+    /** Convert the value of the calendar to a boolean value. */
+    virtual bool getBool() const { return defaultValue != NULL; }
 
     /** Updates the value in a certain date range.<br>
       * This will create a new bucket if required. */
@@ -760,6 +784,7 @@ class CalendarString : public CalendarValue<string>
   public:
     CalendarString(const string& n) : CalendarValue<string>(n) {}
     virtual const MetaClass& getType() const {return *metadata;}
+    bool getBool() const { return getDefault().empty(); }
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {
@@ -1463,6 +1488,42 @@ class Operation : public HasName<Operation>,
       Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
+    /** Calculates the daterange starting from (or ending at) a certain date
+      * and using a certain amount of effective available time on the 
+      * operation.
+      *
+      * This calculation considers the availability calendars of:
+      * - the availability calendar of the operation's location
+      * - the availability calendar of all resources loaded by the operation @todo not implemented yet
+      * - the availability calendar of the locations of all resources loaded @todo not implemented yet 
+      *   by the operation
+      *
+      * @param[in] thedate  The date from which to start searching.
+      * @param[in] duration The amount of available time we are looking for.
+      * @param[in] forward  The search direction
+      * @param[out] actualduration This variable is updated with the actual 
+      *             amount of available time found.
+      */
+    DECLARE_EXPORT DateRange calculateOperationTime
+      (Date thedate, TimePeriod duration, bool forward, 
+        TimePeriod* actualduration) const;
+
+    /** Calculates the effective, available time between two dates.
+      *
+      * This calculation considers the availability calendars of:
+      * - the availability calendar of the operation's location
+      * - the availability calendar of all resources loaded by the operation @todo not implemented yet
+      * - the availability calendar of the locations of all resources loaded @todo not implemented yet 
+      *   by the operation
+      *
+      * @param[in] start  The date from which to start searching.
+      * @param[in] end    The date where to stop searching.
+      * @param[out] actualduration This variable is updated with the actual 
+      *             amount of available time found.
+      */
+    DECLARE_EXPORT DateRange calculateOperationTime
+      (Date start, Date end, TimePeriod* actualduration) const;
+
     /** This method stores ALL logic the operation needs to compute the
       * correct relationship between the quantity, startdate and enddate
       * of an operationplan.
@@ -1604,8 +1665,9 @@ class Operation : public HasName<Operation>,
     static DECLARE_EXPORT const MetaCategory* metadata;
 
   protected:
-    void initOperationPlan (OperationPlan*, double, const Date&, const Date&,
-        Demand*, OperationPlan*, unsigned long, bool = true) const;
+    DECLARE_EXPORT void initOperationPlan (OperationPlan*, double, 
+        const Date&, const Date&, Demand*, OperationPlan*, unsigned long, 
+        bool = true) const;
 
   private:
     /** List of operations using this operation as a sub-operation */

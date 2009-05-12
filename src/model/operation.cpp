@@ -94,8 +94,299 @@ DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (double q, Date s, 
 }
 
 
-void Operation::initOperationPlan (OperationPlan* opplan, double q,
-    const Date& s, const Date& e, Demand* l, OperationPlan* ow,
+DECLARE_EXPORT DateRange Operation::calculateOperationTime
+  (Date thedate, TimePeriod duration, bool forward, 
+    TimePeriod *actualduration) const
+{
+  // Validate arguments
+  if (!actualduration) 
+    throw LogicException("Null argument in calculateOperationTime function");
+
+  int calcount = 0;
+  // Initial size of 10 should do for 99.99% of all cases
+  vector<Calendar::EventIterator*> cals(10); 
+
+  // Default actual duration
+  *actualduration = duration;
+
+  try
+  {
+    // Step 1: Create an iterator on each of the calendars
+    // a) operation's location
+    if (loc && loc->getAvailable())
+      cals[calcount++] = new Calendar::EventIterator(loc->getAvailable(), thedate, forward);
+    /* @todo multiple availability calendars are not implmented yet
+      for (Operation::loadlist::const_iterator g=loaddata.begin();
+        g!=loaddata.end(); ++g)
+    {
+      Resource* res = g->getResource();
+      if (res->getMaximum())
+        // b) resource size calendar
+        cals[calcount++] = new Calendar::EventIterator(
+          res->getMaximum(), 
+          thedate
+          );
+      if (res->getLocation() && res->getLocation()->getAvailable())
+        // c) resource location 
+        cals[calcount++] = new Calendar::EventIterator(
+          res->getLocation()->getAvailable(), 
+          thedate
+          );
+    }
+    */ 
+
+    // Special case: no calendars at all
+    if (calcount == 0) 
+      return forward ? 
+        DateRange(thedate, thedate+duration) :
+        DateRange(thedate-duration, thedate);
+
+    // Step 2: Iterate over the calendar dates to find periods where all 
+    // calendars are simultaneously effective.
+    DateRange result;
+    Date curdate = thedate;
+    bool status = false;
+    TimePeriod curduration = duration;
+    while (true)
+    {
+      // Check whether all calendars are available
+      bool available = true;
+      for (int c = 0; c < calcount && available; c++)
+      {
+        if (cals[c]->getBucket())
+          available = cals[c]->getBucket()->getBool();
+        else
+          available = cals[c]->getCalendar()->getBool();
+      }
+      curdate = cals[0]->getDate();
+
+      if (available && !status)
+      {
+        // Becoming available after unavailable period
+        thedate = curdate;
+        status = true;
+        if (forward && result.getStart() == Date::infinitePast)
+          // First available time - make operation start at this time
+          result.setStart(curdate);
+        else if (!forward && result.getEnd() == Date::infiniteFuture)
+          // First available time - make operation end at this time
+          result.setEnd(curdate);
+      }
+      else if (!available && status)
+      {
+        // Becoming unavailable after available period
+        status = false;
+        if (forward)
+        {
+          // Forward
+          TimePeriod delta = curdate - thedate;
+          if (delta >= curduration)
+          {
+            result.setEnd(thedate + curduration);
+            break;
+          }
+          else 
+            curduration -= delta;
+        }
+        else
+        {
+          // Backward
+          TimePeriod delta = thedate - curdate;
+          if (delta >= curduration)
+          {
+            result.setStart(thedate - curduration);
+            break;
+          }
+          else 
+            curduration -= delta;
+        }
+      }
+      else if (forward && curdate == Date::infiniteFuture)
+      {
+        // End of forward iteration
+        if (available)
+        {
+          TimePeriod delta = curdate - thedate;
+          if (delta >= curduration)
+            result.setEnd(thedate + curduration);
+          else
+            *actualduration = duration - curduration;
+        }
+        else 
+          *actualduration = duration - curduration;
+        break;
+      }
+      else if (!forward && curdate == Date::infinitePast)
+      {
+        // End of backward iteration
+        if (available)
+        {
+          TimePeriod delta = thedate - curdate;
+          if (delta >= curduration)
+            result.setStart(thedate - curduration);
+          else 
+            *actualduration = duration - curduration;
+        }
+        else
+          *actualduration = duration - curduration;
+        break;
+      }
+
+      // Advance to the next event
+      if (forward) ++(*cals[0]);
+      else --(*cals[0]);
+    }
+
+    // Step 3: Clean up 
+    while (calcount) delete cals[--calcount];
+    return result;
+  }
+  catch (...)
+  {
+    // Clean up
+    while (calcount) delete cals[calcount--];
+    // Rethrow the exception
+    throw;
+  }
+}
+
+
+DECLARE_EXPORT DateRange Operation::calculateOperationTime
+  (Date start, Date end, TimePeriod *actualduration) const
+{
+  // Validate arguments
+  if (!actualduration) 
+    throw LogicException("Null argument in calculateOperationTime function");
+
+  // Switch start and end if required
+  if (end < start)
+  {
+    Date tmp = start;
+    start = end;
+    end = tmp;
+  }
+
+  int calcount = 0;
+  // Initial size of 10 should do for 99.99% of all cases
+  vector<Calendar::EventIterator*> cals(10); 
+
+  // Default actual duration
+  *actualduration = 0L;
+
+  try
+  {
+    // Step 1: Create an iterator on each of the calendars
+    // a) operation's location
+    if (loc && loc->getAvailable())
+      cals[calcount++] = new Calendar::EventIterator(loc->getAvailable(), start);
+    /* @todo multiple availability calendars are not implmented yet
+      for (Operation::loadlist::const_iterator g=loaddata.begin();
+        g!=loaddata.end(); ++g)
+    {
+      Resource* res = g->getResource();
+      if (res->getMaximum())
+        // b) resource size calendar
+        cals[calcount++] = new Calendar::EventIterator(
+          res->getMaximum(), 
+          start
+          );
+      if (res->getLocation() && res->getLocation()->getAvailable())
+        // c) resource location 
+        cals[calcount++] = new Calendar::EventIterator(
+          res->getLocation()->getAvailable(), 
+          start
+          );
+    }
+    */ 
+
+    // Special case: no calendars at all
+    if (calcount == 0) 
+    {
+      *actualduration = end - start;
+      return DateRange(start, end);
+    }
+
+    // Step 2: Iterate over the calendar dates to find periods where all 
+    // calendars are simultaneously effective.
+    DateRange result;
+    Date curdate = start;
+    bool status = false;
+    while (true)
+    {
+      // Check whether all calendar are available
+      bool available = true;
+      for (int c = 0; c < calcount && available; c++)
+      {
+        if (cals[c]->getBucket())
+          available = cals[c]->getBucket()->getBool();
+        else
+          available = cals[c]->getCalendar()->getBool();
+      }
+      curdate = cals[0]->getDate();
+
+      if (available && !status)
+      {
+        // Becoming available after unavailable period
+        if (curdate >= end)
+        {
+          // Leaving the desired date range
+          result.setEnd(start);
+          break;
+        }
+        start = curdate;
+        status = true;
+        if (result.getStart() == Date::infinitePast)
+          // First available time - make operation start at this time
+          result.setStart(curdate);
+      }
+      else if (!available && status)
+      {
+        // Becoming unavailable after available period
+        if (curdate >= end)
+        {
+          // Leaving the desired date range
+          *actualduration += end - start;
+          result.setEnd(end);
+          break;
+        }
+        status = false;
+        *actualduration += curdate - start;
+        start = curdate;
+      }
+      else if (curdate >= end)
+      {
+        // Leaving the desired date range
+        if (available)
+        {
+          *actualduration += end - start;
+          result.setEnd(end);
+          break;
+        }
+        else
+          result.setEnd(start);
+        break;
+      }
+
+      // Advance to the next event
+      ++(*cals[0]);
+    }
+
+    // Step 3: Clean up 
+    while (calcount) delete cals[--calcount];
+    return result;
+  }
+  catch (...)
+  {
+    // Clean up
+    while (calcount) delete cals[calcount--];
+    // Rethrow the exception
+    throw;
+  }
+}
+
+
+DECLARE_EXPORT void Operation::initOperationPlan (OperationPlan* opplan, 
+    double q, const Date& s, const Date& e, Demand* l, OperationPlan* ow,
     unsigned long i, bool makeflowsloads) const
 {
   opplan->oper = const_cast<Operation*>(this);
@@ -215,20 +506,30 @@ DECLARE_EXPORT void OperationFixedTime::setOperationPlanParameters
 (OperationPlan* oplan, double q, Date s, Date e, bool preferEnd) const
 {
   // Invalid call to the function, or locked operationplan.
-  if (!oplan || q<0 || oplan->getLocked()) return;
+  if (!oplan || q<0)
+    throw LogicException("Incorrect parameters for fixedtime operationplan");
+  if (oplan->getLocked()) return;
 
-  // All quantities are valid
+  // All quantities are valid, as long as they are bigger than the minimum size
+  if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
   if (fabs(q - oplan->getQuantity()) > ROUNDING_ERROR)
     oplan->setQuantity(q, false, false);
 
   // Set the start and end date.
+  DateRange x;
+  TimePeriod actualduration;
   if (e && s)
-  {
-    if (preferEnd) oplan->setStartAndEnd(e - duration, e);
-    else oplan->setStartAndEnd(s, s + duration);
+  {    
+    if (preferEnd) x = calculateOperationTime(e, duration, false, &actualduration);
+    else x = calculateOperationTime(s, duration, true, &actualduration);
   }
-  else if (s) oplan->setStartAndEnd(s, s + duration);
-  else oplan->setStartAndEnd(e - duration, e);
+  else if (s) x = calculateOperationTime(s, duration, true, &actualduration);
+  else x = calculateOperationTime(e, duration, false, &actualduration);
+  if (actualduration == duration)
+    oplan->setStartAndEnd(x.getStart(), x.getEnd());
+  else
+    // Not enough available time
+    oplan->setQuantity(0);
 }
 
 
@@ -267,35 +568,35 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
 (OperationPlan* oplan, double q, Date s, Date e, bool preferEnd) const
 {
   // Invalid call to the function.
-  if (!oplan || q<0) return;
+  if (!oplan || q<0)
+    throw LogicException("Incorrect parameters for timeper operationplan");
+  if (oplan->getLocked()) return;
 
   // Respect minimum size
-  if (q < getSizeMinimum() && q>0) q = getSizeMinimum();
+  if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
 
   // The logic depends on which dates are being passed along
+  DateRange x;
+  TimePeriod actual;
   if (s && e)
   {
-    if (s > e)
-    {
-      // End date is later than the start. Swap the dates.
-      Date tmp = s;
-      s = e;
-      e = tmp;
-    }
     // Case 1: Both the start and end date are specified: Compute the quantity
-    if (e - s < duration)
+
+    // Calculate the available time between those dates
+    x = calculateOperationTime(s,e,&actual);
+    if (actual < duration)
     {
       // Start and end aren't far enough from each other to fit the constant
       // part of the operation duration. This is infeasible.
-      oplan->setQuantity(0,false,false);
+      oplan->setQuantity(0,true,false);
       oplan->setEnd(e);
     }
     else
     {
       // Divide the variable duration by the duration_per time, to compute the
       // maximum number of pieces that can be produced in the timeframe
-      double max_q = duration_per ?
-        static_cast<double>(e - s - duration) / duration_per :
+      double max_q = duration_per ? 
+        static_cast<double>(actual - duration) / duration_per : 
         q;
 
       // Set the quantity to either the maximum or the requested quantity,
@@ -303,37 +604,72 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
       oplan->setQuantity(q < max_q ? q : max_q, true, false);
 
       // Updates the dates
-      TimePeriod d = static_cast<long>(oplan->getQuantity()*static_cast<long>(duration_per)) + duration;
-      if (preferEnd) oplan->setStartAndEnd(e-d, e);
-      else oplan->setStartAndEnd(s, s+d);
+      TimePeriod wanted(
+        duration + static_cast<long>(duration_per * oplan->getQuantity())
+        );      
+      if (preferEnd) x = calculateOperationTime(e, wanted, false, &actual);
+      else x = calculateOperationTime(s, wanted, true, &actual);
+      oplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
   }
-  else if (e)
+  else if (e || !s)
   {
     // Case 2: Only an end date is specified. Respect the quantity and
     // compute the start date
-    oplan->setQuantity(q,true,false);
-    TimePeriod t(static_cast<long>(duration_per * oplan->getQuantity()));
-    oplan->setStartAndEnd(e - duration - t, e);
-  }
-  else if (s)
-  {
-    // Case 3: Only a start date is specified. Respect the quantity and compute
-    // the end date
-    oplan->setQuantity(q,true,false);
-    TimePeriod t(static_cast<long>(duration_per * oplan->getQuantity()));
-    oplan->setStartAndEnd(s, s + duration + t);
+    // Case 4: No date was given at all. Respect the quantity and the 
+    // existing end date of the operationplan.
+    oplan->setQuantity(q,true,false); // Round and size the quantity
+    TimePeriod wanted(
+      duration + static_cast<long>(duration_per * oplan->getQuantity())
+      );
+    x = calculateOperationTime(e, wanted, false, &actual);
+    if (actual == wanted)
+      // Size is as desired
+      oplan->setStartAndEnd(x.getStart(),x.getEnd());
+    else if (actual < duration)
+    {
+      // Not feasible
+      oplan->setQuantity(0,true,false);
+      oplan->setStartAndEnd(e,e);
+    }
+    else
+    {
+      // Resize the quantity to be feasible 
+      double max_q = duration_per ? 
+        static_cast<double>(actual-duration) / duration_per : 
+        q;
+      oplan->setQuantity(q < max_q ? q : max_q, true, false);
+      oplan->setStartAndEnd(x.getStart(),x.getEnd());
+    }
   }
   else
   {
-    // Case 4: No date was given at all. Respect the quantity and the existing
-    // end date of the operationplan.
-    oplan->setQuantity(q,true,false);
-    TimePeriod t(static_cast<long>(duration_per * oplan->getQuantity()));
-    oplan->setStartAndEnd(
-      oplan->getDates().getEnd() - duration - t,
-      oplan->getDates().getEnd()
-    );
+    // Case 3: Only a start date is specified. Respect the quantity and 
+    // compute the end date
+    oplan->setQuantity(q,true,false); // Round and size the quantity
+    TimePeriod wanted(
+      duration + static_cast<long>(duration_per * oplan->getQuantity())
+      );
+    TimePeriod actual;
+    x = calculateOperationTime(s, wanted, true, &actual);
+    if (actual == wanted)
+      // Size is as desired
+      oplan->setStartAndEnd(x.getStart(),x.getEnd());
+    else if (actual < duration)
+    {
+      // Not feasible
+      oplan->setQuantity(0,true,false);
+      oplan->setStartAndEnd(s,s);
+    }
+    else
+    {
+      // Resize the quantity to be feasible 
+      double max_q = duration_per ? 
+        static_cast<double>(actual-duration) / duration_per : 
+        q;
+      oplan->setQuantity(q < max_q ? q : max_q, true, false);
+      oplan->setStartAndEnd(x.getStart(),x.getEnd());
+    }
   }
 }
 
@@ -430,6 +766,7 @@ DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
   // Invalid call to the function
   if (!op || q<0)
     throw LogicException("Incorrect parameters for routing operationplan");
+  if (op->getLocked()) return;
 
   if (op->step_opplans.empty())
   {
@@ -678,6 +1015,7 @@ DECLARE_EXPORT void OperationAlternate::setOperationPlanParameters
   // Invalid calls to this function
   if (!oa || q<0)
     throw LogicException("Incorrect parameters for alternate operationplan");
+  if (oa->getLocked()) return;
 
   if (!oa->altopplan)
   {

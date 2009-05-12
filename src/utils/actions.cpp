@@ -107,7 +107,7 @@ DECLARE_EXPORT void CommandList::undo(Command *c)
   // Don't even try to undo a list which can't be undone.
   if (!c && !undoable(c))
     throw RuntimeException("Trying to undo a CommandList which " \
-        "contains non-undoable actions or is executed in parallel.");
+        "contains non-undoable actions or is executed in parallel");
 
   // Undo all commands and delete them.
   // Note that undoing an operation that hasn't been executed yet or has been
@@ -468,7 +468,7 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
 
   // Call the initialization routine with the parameter list
   string x = (inithandle)(parameters);
-  if (x.empty()) throw DataException("Invalid module name returned.");
+  if (x.empty()) throw DataException("Invalid module name returned");
 
   // Insert the new module in the registry
   registry.insert(x);

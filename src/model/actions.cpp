@@ -312,7 +312,7 @@ DECLARE_EXPORT void CommandSavePlan::execute()
 
   // Output steam
   if (getFileName().empty())
-    throw RuntimeException("No file specified for export.");
+    throw RuntimeException("No file specified for export");
   ofstream textoutput;
 
   // Open the file, write to it and close it. Catch exceptions all along...
@@ -528,7 +528,7 @@ DECLARE_EXPORT CommandDeleteOperationPlan::CommandDeleteOperationPlan
 
   // Avoid deleting locked operationplans
   if (o->getLocked())
-    throw DataException("Can't delete a locked operationplan.");
+    throw DataException("Can't delete a locked operationplan");
 
   // Register the fields of the operationplan before deletion
   oper = o->getOperation();

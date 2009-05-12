@@ -184,7 +184,9 @@ void LibraryUtils::initialize()
   // represented.
   // On Windows, the default is the system-default ANSI code page. The number
   // of characters that frePPLe supports on Windows is constrained by this...
+  #if defined(HAVE_SETLOCALE) || defined(_MSC_VER)
   setlocale(LC_ALL, "" );
+  #endif
 
   // Initialize Xerces parser
   xercesc::XMLPlatformUtils::Initialize();
@@ -407,10 +409,10 @@ Object* MetaCategory::ControllerDefault (const MetaClass* cat, const AttributeLi
   {
     case REMOVE:
       throw DataException
-      ("Entity " + cat->type + " doesn't support REMOVE action.");
+      ("Entity " + cat->type + " doesn't support REMOVE action");
     case CHANGE:
       throw DataException
-      ("Entity " + cat->type + " doesn't support CHANGE action.");
+      ("Entity " + cat->type + " doesn't support CHANGE action");
     default:
       /* Lookup for the class in the map of registered classes. */
       const MetaClass* j;

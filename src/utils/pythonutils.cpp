@@ -268,14 +268,14 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
 	if (!mod)
   {
     if (lock) PyEval_ReleaseLock();
-    throw RuntimeException("Error registering a new Python method.");
+    throw RuntimeException("Error registering a new Python method");
   }
   PyObject* func = PyCFunction_NewEx(newMethod, NULL, mod);
   Py_DECREF(mod);
   if (!func)
   {
     if (lock) PyEval_ReleaseLock();
-    throw RuntimeException("Error registering a new Python method.");
+    throw RuntimeException("Error registering a new Python method");
   }
 
   // Add the method to the module dictionary
@@ -284,13 +284,13 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
   {
     Py_DECREF(func);
     if (lock) PyEval_ReleaseLock();
-    throw RuntimeException("Error registering a new Python method.C");
+    throw RuntimeException("Error registering a new Python method");
   }
   if (PyDict_SetItemString(moduledict ,leakingName->c_str(), func) < 0)
   {
     Py_DECREF(func);
     if (lock) PyEval_ReleaseLock();
-    throw RuntimeException("Error registering a new Python method.");
+    throw RuntimeException("Error registering a new Python method");
   }
   Py_DECREF(func);
 

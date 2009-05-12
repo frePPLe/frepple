@@ -67,6 +67,25 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
   data.a_date = Date::infiniteFuture;
   data.a_qty = data.q_qty;
 
+  // Handle unavailable time.
+  // Note that this unavailable time is checked also in an unconstrained plan.
+  // This means that also an unconstrained plan can plan demand late!
+  if (opplan->getQuantity() == 0.0)
+  {
+    // It is possible that the operation could not be created properly.
+    // This happens when the operation is not available for enough time.
+    // Eg. A fixed time operation needs 10 days on jan 20 on an operation
+    //     that is only available only 2 days since the start of the horizon.
+    // Resize to the minimum quantity
+    opplan->setQuantity(0.0001,false);
+    // Move to the earliest start date
+    opplan->setStart(Plan::instance().getCurrent());
+    // Pick up the earliest date we can reply back
+    data.a_date = opplan->getDates().getEnd();
+    data.a_qty = 0.0;
+    return false;
+  }
+
   // Store the last command in the list, in order to undo the following
   // commands if required.
   Command* topcommand = data.getLastCommand();
@@ -313,7 +332,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
     data.a_qty = 0.0;
     // Resize to the minimum quantity
     if (opplan->getQuantity() + ROUNDING_ERROR < opplan->getOperation()->getSizeMinimum())
-      opplan->setQuantity(1,false);
+      opplan->setQuantity(0.0001,false);
     // Move to the earliest start date
     opplan->setStart(Plan::instance().getCurrent() + delta);
     // Pick up the earliest date we can reply back
@@ -477,12 +496,14 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   // in the routing!
   /** @todo moving routing opplan doesn't recheck for feasibility of steps... */
   Solver->curOwnerOpplan->createFlowLoads();
-  Solver->getSolver()->checkOperation(Solver->curOwnerOpplan,*Solver);
-
-  // The reply date is the combination of the reply date of all steps and the
-  // reply date of the top operationplan.
-  if (Solver->a_date > max_Date && Solver->a_date != Date::infiniteFuture)
-    max_Date = Solver->a_date;
+  if (Solver->curOwnerOpplan->getQuantity() > 0.0)
+  {
+    Solver->getSolver()->checkOperation(Solver->curOwnerOpplan,*Solver);
+    // The reply date is the combination of the reply date of all steps and the
+    // reply date of the top operationplan.
+    if (Solver->a_date > max_Date && Solver->a_date != Date::infiniteFuture)
+      max_Date = Solver->a_date;
+  }
   Solver->a_date = (max_Date ? max_Date : Date::infiniteFuture);
   if (Solver->a_date < Solver->q_date)
     Solver->a_date = Solver->q_date;

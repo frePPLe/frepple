@@ -32,6 +32,12 @@ namespace frepple
 
 template<class Calendar> DECLARE_EXPORT Tree utils::HasName<Calendar>::st;
 
+// Specialised template functions
+template <> DECLARE_EXPORT bool CalendarValue<string>::getBool() const
+  { return defaultValue.empty(); }
+template <> DECLARE_EXPORT bool CalendarValue<string>::BucketValue::getBool() const
+  { return val.empty(); }
+
 
 DECLARE_EXPORT Calendar::~Calendar()
 {
@@ -133,7 +139,7 @@ DECLARE_EXPORT void Calendar::removeBucket(Calendar::Bucket* bkt)
 }
 
 
-DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d) const
+DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d, bool fwd) const
 {
   Calendar::Bucket *curBucket = NULL;
   double curPriority = DBL_MAX;
@@ -143,9 +149,10 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::findBucket(Date d) const
       // Buckets are sorted by the start date. Other entries definately 
       // won't be effective.
       break;
-    else if (curPriority > b->getPriority()
-      && d >= b->getStart() && d < b->getEnd()
-      && b->checkValid(d) )
+    else if (curPriority > b->getPriority() && b->checkValid(d)
+      && ( (fwd && d >= b->getStart() && d < b->getEnd()) ||
+           (!fwd && d > b->getStart() && d <= b->getEnd())
+      ))
     {
       // Bucket is effective and has lower priority than other effective ones.
       curPriority = b->getPriority();
@@ -387,7 +394,7 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
   {
     // Previous event is the start date of the bucket
     iter->curDate = startdate;   
-    iter->curBucket = iter->theCalendar->findBucket(startdate - TimePeriod(1L)); // @TODO 1 second trick is not nice
+    iter->curBucket = iter->theCalendar->findBucket(startdate,false);
     iter->curPriority = priority;
     return;
   }

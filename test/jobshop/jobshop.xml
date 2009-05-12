@@ -475,157 +475,137 @@
 # combinatorial problem. 
 # We need to solve many times with different due dates and priorities to 
 # search for good solutions. The loop searching for better solutions is a 
-# (pimitive) genetic algorithm.
-
-# Todo:
-# - detect when the solution doesn't improve and then go back to a previous
-#   best solution.
-# - smarter update of due date after plan: if the planned date is less than the
-#   due date.
-# - more dynamic size of the mutations, ie not only move the due date with 1 
-#   hour or 1 day but allow anything in between.
+# simulated annealing algorithm.
 
 from datetime import timedelta
-import random
+import random, math, os
 
 # Create a solver
 solver = frepple.solver_mrp(name="MRP", constraints=7, loglevel=0)
 
 # Make the results reproducible
-random.seed(8)
+if 'seed' in os.environ:
+  random.seed(os.environ['seed'])
+else:
+  random.seed(108)
 
 # Initialize variables
-bestSolution = None
 iterations = 0
-end = []
-anybodylate = True
 noimprovement = 0
-initialscan = True
-noimprovement = 0
-max = frepple.settings.current
-sortfield=lambda x: x[1]
+verybest = None
+verybestSolution = None
+result = []
+oldresult = result
+temperaturemin = 500.0
+temperaturemax = 1000.0
+temperature = temperaturemax
+    
+# Auxilary functions to sort the results
+sortpriority = lambda x: x[1]
+sortenddate = lambda x: x[3]
 
-# Initial "best" solution
-best = []
-for i in frepple.demands():
-  best.append( (i, i.priority, i.due) )
+# A function to plan 1 iteration
+def replan(allow = True):
+  global result, verybest, verybestSolution, iterations, noimprovement
+  
+  # Create a new plan
+  solver.solve()
+  
+  # Increment iterations
+  iterations += 1
+  noimprovement += 1
+  
+  # Summarize the results
+  result = []
+  anybodylate = False
+  max = frepple.settings.current
+  for i in frepple.demands():
+    for j in i.operationplans:
+      if j.end > max:
+        max = j.end
+      result.append( (i, i.priority, i.due, j.end) )
+  timespan = max - frepple.settings.current
+  timespan = timespan.days * 24 + timespan.seconds / 3600  
 
+  # Detect if it is better than what any other solution we had before
+  if allow and (verybestSolution == None or timespan <= verybest):
+    if verybestSolution == None or timespan < verybest:
+      print "\nBest solution: %d, %d%% over the optimal solution, %d iterations, %f" % \
+        ( timespan, (timespan - 930) / 9.30, iterations, temperature)
+      result.sort(None, sortpriority)
+      noimprovement = 0
+      for l in result:
+        print "   '%s' %s %s %s" % (l[0].name, l[1], l[2], l[3])
+    verybest = timespan
+    verybestSolution = result  
+
+  # return the latest date
+  return timespan
+
+
+# Create an initial result 
+# Rescale the priorities with it: latest end date gives highest priority
+replan(False)
+result.sort(None, sortenddate)
+prio = 1
+for i in result: 
+  i[0].priority = prio
+  prio += 1
+curspan = replan(True)
+  
 # Main loop.
 # Increase the max iterations on the next line to get even better solutions.
-# With each additional
-while noimprovement < 5000 and iterations < 5000:
-
-  # Rescale the priorities
-  best.sort(None, sortfield)
-  prio = 1
-  for i in best: 
-    i[0].priority = prio
-    prio += 1
+while noimprovement < 5000 and iterations < 10000:
 
   # Choose a mutation to the plan
-  if initialscan:
-    # To speed up conversion we do a deterministic increase of the due date
-    # of all demands. After this initial scan we do have already a pretty 
-    # acceptable solution.
-    mutation = 8
-  else:
-    # An optimization run where we fine tune our best solution by trying out
-    # various mutations of the best solution found so far.
-    mutation = random.choice([0,1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11,12])
- 
+  mutation = random.choice([0,0,1,1,1])
+  
   # Implement the mutation
   if mutation == 0:
-    # reset to the best solution, an choose another mutation
-    for i in best: (i[0].priority, i[0].due) = (i[1], i[2])
-    mutation = random.choice([1,2,3,4,5,6,7,8,9,10,11,12])
-  if mutation == 1:
-    # reset all priorities to the optimal solution
-    for i in best: i[0].priority = i[1]
-  elif mutation == 2:
-    # reset all due dates to the optimal solution
-    for i in best: i[0].due = i[2]
-  elif mutation == 3:
-    # decrease the priority of an arbitrary demand
-  	random.choice(best)[0].priority -= 2
-  elif mutation == 4:
-    # increase the priority of an arbitrary demand
-  	random.choice(best)[0].priority += 2
-  elif mutation == 5:
-    # decrease the due date of an arbitrary demand by 1 hour
-  	random.choice(best)[0].due -= timedelta(0,3600)
-  elif mutation == 6:
-    # increase the due date of an arbitrary demand by 1 hour
-  	random.choice(best)[0].due += timedelta(0,3600)
-  elif mutation == 7:
-    # decrease the due date of all demands
-    for i in best: i[0].due -= timedelta(0,3600)
-  elif mutation == 8:
-    # increase the due date of all demands
-    for i in best: i[0].due += timedelta(0,3600)
-  elif mutation == 9:
-    # decrease the due date of an arbitrary demand by 1 day
-  	random.choice(best)[0].due -= timedelta(0,24*3600)
-  elif mutation == 10:
-    # decrease the due date of an arbitrary demand by 1 day
-  	random.choice(best)[0].due += timedelta(0,24*3600)
-  elif mutation == 11:
-    # decrease the due date of all demands by 1 day
-    for i in best: i[0].due -= timedelta(0,24*3600)
-  elif mutation == 12:
-    # increase the due date of all demands by 1 day
-    for i in best: i[0].due += timedelta(0,24*3600)
+    # Swap the priority of two arbitrary demands
+    result.sort(None, sortenddate)
+    d1 = random.choice(result)
+    d2 = random.choice(result)
+    while d1[0] == d2[0]:
+      d1 = random.choice(result)
+      d2 = random.choice(result)    
+    temp = d1[0].priority
+    d1[0].priority = d2[0].priority
+    d2[0].priority = temp
+  elif mutation == 1:
+    # Change the due date of an arbitrary demand 
+    mmm = frepple.settings.current + timedelta(0,curspan*3600)
+    d1 = random.choice(result)
+    delta = int(random.uniform(-temperature,temperature)*30.0/temperaturemax)
+    while delta == 0 or d1[3] + timedelta(0,delta*3600) > mmm:
+      delta = int(random.uniform(-temperature,temperature)*30.0/temperaturemax)
+    d1[0].due = d1[3] + timedelta(0,delta*3600)
 
-  # Try different priorities - This is because the heuristic plans order by
-  # order and locks the plan of an order when moving to the next one. The
-  # greedy heuristic doesn't allow trade-offs between orders. We try different
-  # priorities to get closer.
-  for x in range(0,20):
-    # Create a new plan
-    solver.solve()
-    iterations += 1
-    noimprovement += 1
-    # Find the latest demand
-    end = []
-    anybodylate = False
-    max = frepple.settings.current
-    for i in frepple.demands():
-      for j in i.operationplans:
-        if j.end > max:
-          max = j.end
-          latestOrder = i
-        if j.end > i.due: anybodylate = True
-        end.append( (i, j.end, i.priority) )
-    if not anybodylate: 
-      initialscan = False
-    # Keep track of the best solution
-    if bestSolution == None or max <= bestSolution:
-      if bestSolution == None or max < bestSolution: 
-        noimprovement = 0
-      bestSolution = max
-      best = []
-      for i in frepple.demands():
-        best.append( (i, i.priority, i.due) )
-      best.sort(None, sortfield)
-      timespan = bestSolution - frepple.settings.current
-      timespan = timespan.days *24 + timespan.seconds / 3600
-      print "\nBest solution: %d, %d%% over the optimal solution, %d iterations" % \
-        ( timespan, (timespan - 930) / 9.30, iterations)
-      for l in best:
-        print "   '%s' %s %s" % (l[0].name, l[1], l[2])
-    # Updates the priorities. The logic we use assure the critical
-    # jobs keep the highest priority, while we allow the priorities
-    # of the less critical jobs to change more.
-    end.sort(None, sortfield, True)
-    prio = 0
-    for l in end:
-      l[0].priority += prio
-      prio += 1
-
+  # Replan
+  newspan = replan()
+  
+  # Evaluate whether we accept the solution or not
+  if newspan > curspan and math.exp((curspan - newspan)/temperature*65) < random.random():
+     # Reject the change
+     result = oldresult
+     for i in result: (i[0].priority, i[0].due) = (i[1], i[2])
+  else:
+     # Accept the change
+     oldresult = result
+     curspan = newspan
+     
+  if noimprovement > 2000:
+    temperature += 1
+  else:
+    temperature *= 0.9999
+  if temperature < temperaturemin: temperature = temperaturemin
+  if temperature > temperaturemax: temperature = temperaturemax
+    
 print "\nTotal %d iterations" % iterations
 
 
 # Restore the input used to generate the best solution
-for i in best:
+for i in verybestSolution:
   (i[0].priority, i[0].due) = (i[1], i[2])
 
 # Solve a last time to recreate the best solution

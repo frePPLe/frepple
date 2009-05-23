@@ -13,18 +13,25 @@ To run the installer, the following steps are required:
    shell. The installer will create the distribution too but I found this
    method is not reliable.
 
-3) Compile the execuatbles with Microsoft C++ compiler
-   We distribute the executables created by the microsoft compilers.
+3) Compile the executables with Microsoft C++ compiler.
+   We distribute the executables created by the Microsoft compilers.
    You'll need to compile before creating the installer.
 
-4) Install python
+4) Install Python
    Make sure to use the Windows version of Python, rather than the one included
    with Cygwin.
    Adjust the path appropriately, if required.
 
-5) Install the python modules py2exe and cherrypy.
-   The installer uses py2exe to create a directory including python, django
-   and the frepple web user interface.
+5) Install the following Python extensions:
+      - py2exe
+      - django (needs patching!)
+      - cherrypy
+      - cx_oracle
+      - MySQLdb
+      - psycopg2
+   The installer uses py2exe to create a directory containing the Python 
+   language (with its libaries and extensions) and the frePPLe web user 
+   interface.
    As the standalone web server we use WSGIServer that is provided by the
    CherryPy project. It is a bit more scalable and robust than the Django
    development server.

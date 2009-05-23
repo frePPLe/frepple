@@ -104,7 +104,7 @@ DECLARE_EXPORT(void) FreppleInitialize()
     try 
     { 
       CommandPython cmd;
-      cmd.setFileName("init.py");
+      cmd.setFileName(init);
       cmd.execute(); 
     }
     catch (...)

@@ -83,7 +83,7 @@ void CommandPython::execute()
       c.replace(pos,1,"\\'",2); // Replacing ' with \'
       pos+=2;
     }
-    c = "execfile(u'" + c + "')\n";
+    c = "execfile(ur'" + c + "')\n";
   }
   else throw DataException("Python command without statement or filename");
 

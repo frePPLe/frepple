@@ -786,7 +786,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
       x.supportcompare();
       x.supportcreate(create);
       x.setBase(BASE::getType());
-      x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
+      x.addMethod("toXML", ME::toXML, METH_VARARGS, "return a XML representation");
       const_cast<MetaClass*>(PROXY::metadata)->factoryPythonProxy = proxy;
       return x.typeReady(m);
     }

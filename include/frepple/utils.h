@@ -1850,14 +1850,14 @@ class XMLOutput
     string getHeaderAtts() const {return headerAtts;}
 
     /** Constructor with a given stream. */
-    DECLARE_EXPORT XMLOutput(ostream& os) : m_nIndent(0), numObjects(0), 
+    XMLOutput(ostream& os) : m_nIndent(0), numObjects(0), 
       numParents(0), currentObject(NULL), parentObject(NULL), content(STANDARD),
       headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
       {m_fp = &os; indentstring[0] = '\0';}
 
     /** Default constructor. */
-    DECLARE_EXPORT XMLOutput() : m_nIndent(0), numObjects(0), numParents(0),
+    XMLOutput() : m_nIndent(0), numObjects(0), numParents(0),
       currentObject(NULL), parentObject(NULL), content(STANDARD),
       headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")

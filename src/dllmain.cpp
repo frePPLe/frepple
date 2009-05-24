@@ -31,41 +31,6 @@ using namespace frepple;
 #include <sys/stat.h>
 
 
-#if defined(WIN32)
-// This function is only applicable for the windows operating systems, 
-// including CygWin.
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
-BOOL APIENTRY DllMain(HANDLE hInst, DWORD ul_reason_for_call, LPVOID lpReserved)
-{
-  switch (ul_reason_for_call)
-  {
-    case DLL_PROCESS_ATTACH:
-      // Loading the library
-      try { FreppleInitialize(); }
-      catch (exception& e)
-      {
-        logger << "Error: " << e.what() << endl;
-        return FALSE;
-      }
-      catch (...)
-      {
-        logger << "Error: Unknown exception type" << endl;
-        return FALSE;
-      }
-      return TRUE;
-
-    case DLL_PROCESS_DETACH:
-      // Unloading the library
-      FreppleWrapperExit();
-      return TRUE;
-  }
-  return TRUE;
-}
-#endif
-
-
 DECLARE_EXPORT(const char*) FreppleVersion()
 {
   return PACKAGE_VERSION;

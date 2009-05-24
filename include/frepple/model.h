@@ -6000,13 +6000,14 @@ class PythonLoad : public PythonExtension<PythonLoad>
 {
   public:
     static int initialize(PyObject* m);
-    PythonLoad(Load* p) : ld(p) {}
+    PythonLoad(Load* p) : obj(p) {}
+  public: // @todo should not be public
+    Load* obj;
   private:
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
     static PyObject* proxy(Object* p) {return static_cast<PyObject*>(new PythonLoad(static_cast<Load*>(p)));}
-    Load* ld;
 };
 
 
@@ -6047,13 +6048,14 @@ class PythonFlow : public PythonExtension<PythonFlow>
 {
   public:
     static int initialize(PyObject* m);
-    PythonFlow(Flow* p) : fl(p) {}
+    PythonFlow(Flow* p) : obj(p) {}
+  public: // @todo should not be public
+    Flow* obj;
   private:
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static PyObject* proxy(Object* p) {return static_cast<PyObject*>(new PythonFlow(static_cast<Flow*>(p)));}
-    Flow* fl;
 };
 
 

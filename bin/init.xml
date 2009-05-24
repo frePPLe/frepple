@@ -43,7 +43,11 @@ frepple.loadmodule("mod_forecast.so",
 ## Linear Programming solver module  
 #frepple.loadmodule("mod_lpsolver.so")
 
-## Webservice module -->
+## SOAP Webservice module
 #frepple.loadmodule("mod_webservice.so", port=6262, threads=5)
+
+## REST webservice
+#RESTwebservice()
+
 ?>
 </plan>

@@ -3,7 +3,7 @@
 #
 
 nobasedir = $(datadir)
-nobase_DATA = frepple.xsd frepple_core.xsd init.xml
+nobase_DATA = frepple.xsd frepple_core.xsd init.xml init.py
 
 EXTRA_DIST = $(nobase_DATA)
 

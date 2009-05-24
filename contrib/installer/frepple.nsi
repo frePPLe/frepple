@@ -152,6 +152,7 @@ Section "Application" SecAppl
   ; Copy configuration files
   File "..\bin\*.xsd"
   File "..\bin\init.xml"
+  File "..\bin\init.py"
 
   ; Copy sqlite database if there is one
   File /nonfatal "..\bin\frepple.sqlite"

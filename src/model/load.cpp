@@ -212,6 +212,7 @@ int PythonLoad::initialize(PyObject* m)
   x.supportgetattro();
   x.supportsetattro();
   x.supportcreate(create);
+  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(Load::metadata)->factoryPythonProxy = proxy;
   return x.typeReady(m);
 }
@@ -219,17 +220,17 @@ int PythonLoad::initialize(PyObject* m)
 
 DECLARE_EXPORT PyObject* PythonLoad::getattro(const Attribute& attr)
 {
-  if (!ld) return Py_BuildValue("");
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_resource))
-    return PythonObject(ld->getResource());
+    return PythonObject(obj->getResource());
   if (attr.isA(Tags::tag_operation))
-    return PythonObject(ld->getOperation());
+    return PythonObject(obj->getOperation());
   if (attr.isA(Tags::tag_quantity))
-    return PythonObject(ld->getQuantity());
+    return PythonObject(obj->getQuantity());
   if (attr.isA(Tags::tag_effective_end))
-    return PythonObject(ld->getEffective().getEnd());
+    return PythonObject(obj->getEffective().getEnd());
   if (attr.isA(Tags::tag_effective_start))
-    return PythonObject(ld->getEffective().getStart());
+    return PythonObject(obj->getEffective().getStart());
   return NULL;
 }
 
@@ -244,7 +245,7 @@ DECLARE_EXPORT int PythonLoad::setattro(const Attribute& attr, const PythonObjec
       return -1;
     }
     Resource* y = static_cast<PythonResource*>(static_cast<PyObject*>(field))->obj;
-    ld->setResource(y);
+    obj->setResource(y);
   }
   else if (attr.isA(Tags::tag_operation))
   {
@@ -254,14 +255,14 @@ DECLARE_EXPORT int PythonLoad::setattro(const Attribute& attr, const PythonObjec
       return -1;
     }
     Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
-    ld->setOperation(y);
+    obj->setOperation(y);
   }
   else if (attr.isA(Tags::tag_quantity))
-    ld->setQuantity(field.getDouble());
+    obj->setQuantity(field.getDouble());
   else if (attr.isA(Tags::tag_effective_end))
-    ld->setEffectiveEnd(field.getDate());
+    obj->setEffectiveEnd(field.getDate());
   else if (attr.isA(Tags::tag_effective_start))
-    ld->setEffectiveStart(field.getDate());
+    obj->setEffectiveStart(field.getDate());
   else
     return -1;
   return 0;

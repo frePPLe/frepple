@@ -54,8 +54,10 @@ namespace utils
   *
   * The following frePPLe functions are available from within Python.<br>
   * All of these are in the module called frePPLe.
-  *   - The following <b>classes</b> and their attributes are accessible for reading
-  *     and writing.
+  *   - The following <b>classes</b> and their attributes are accessible for 
+  *     reading and writing.<br>
+  *     Each object has a toXML() method that returns its XML representation
+  *     as a string, or writes it to a file is a file is passed as argument.
   *       - buffer
   *       - buffer_default
   *       - buffer_infinite
@@ -618,6 +620,59 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
       */
     static void deallocator(PyObject* o) {delete static_cast<T*>(o);}
 
+  protected:
+    /** Return an XML representation of the object.<br>
+      * If a file object is passed as argument, the representation is directly
+      * written to it.<br>
+      * If no argument is given the representation is returned as a string.
+      */
+    static PyObject* toXML(PyObject* self, PyObject* args)
+    {
+      try
+      {
+        // Check the self argument
+        logger << self->ob_type->tp_name << endl;
+        Object *o = static_cast<T*>(self)->obj;
+        logger << o->getType().type << endl;
+        if (!o) throw LogicException("Can't generate a XML representation");
+
+        // Parse the argument
+        PyObject *filearg = NULL;
+        if (PyArg_UnpackTuple(args, "toXML", 0, 1, &filearg))
+        {
+          ostringstream ch;
+          XMLOutput x(ch);
+          if (filearg)          
+          {
+            if (PyFile_Check(filearg))
+            {
+              // Write to a file
+              o->writeElement(&x, *(o->getType().category->typetag));
+              return PyFile_WriteString(ch.str().c_str(), filearg) ?
+                NULL : // Error writing to the file
+                Py_BuildValue("");
+            }
+            else
+              // The argument is not a file
+              throw LogicException("Expecting a file argument");
+          }
+          else
+          {
+            // Return a string
+        logger << "before" << endl;
+            o->writeElement(&x, *(o->getType().category->typetag));
+        logger << ch.str() << endl;
+            return PythonObject(ch.str());
+          }
+        }
+      }
+      catch(...)
+      {
+        PythonType::evalException();
+        return NULL;
+      }
+      throw LogicException("Unreachable code reached");
+    }
 };
 
 
@@ -731,6 +786,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
       x.supportcompare();
       x.supportcreate(create);
       x.setBase(BASE::getType());
+      x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
       const_cast<MetaClass*>(PROXY::metadata)->factoryPythonProxy = proxy;
       return x.typeReady(m);
     }
@@ -758,6 +814,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
       return PythonObject(obj ? obj->getName() : "None");
     }
 
+    /** Generator function. */
     static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     {
       try

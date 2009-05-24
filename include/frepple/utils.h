@@ -1794,7 +1794,7 @@ class XMLOutput
       * @see PLAN
       * @see PLANDETAIL
       */
-    static const content_type STANDARD;
+    static DECLARE_EXPORT const content_type STANDARD;
 
     /** Constant to mark an export of the standard information plus the plan
       * information. In this format, every entity is saved with the details
@@ -1804,14 +1804,14 @@ class XMLOutput
       * @see STANDARD
       * @see PLANDETAIL
       */
-    static const content_type PLAN;
+    static DECLARE_EXPORT const content_type PLAN;
 
     /** Constant to mark an export of the lowest level of plan information.
       * In addition to the plan information pegging information is now saved.
       * @see STANDARD
       * @see PLAN
       */
-    static const content_type PLANDETAIL;
+    static DECLARE_EXPORT const content_type PLANDETAIL;
 
     /** Returns which type of export is requested.
       * Constants have been defined for each type.
@@ -1837,7 +1837,7 @@ class XMLOutput
 
     /** Returns the string that is printed as the first line of each XML
       * document. */
-    const string& getHeaderStart() {return headerStart;}
+    string getHeaderStart() const {return headerStart;}
 
     /** Updates the attributes that are written for the root element of each
       * XML document.<br>
@@ -1847,17 +1847,17 @@ class XMLOutput
 
     /** Returns the attributes that are written for the root element of each
       * XML document. */
-    const string& getHeaderAtts() {return headerAtts;}
+    string getHeaderAtts() const {return headerAtts;}
 
     /** Constructor with a given stream. */
-    XMLOutput(ostream& os) : m_nIndent(0), numObjects(0), numParents(0),
-      currentObject(NULL), parentObject(NULL), content(STANDARD),
+    DECLARE_EXPORT XMLOutput(ostream& os) : m_nIndent(0), numObjects(0), 
+      numParents(0), currentObject(NULL), parentObject(NULL), content(STANDARD),
       headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
       {m_fp = &os; indentstring[0] = '\0';}
 
     /** Default constructor. */
-    XMLOutput() : m_nIndent(0), numObjects(0), numParents(0),
+    DECLARE_EXPORT XMLOutput() : m_nIndent(0), numObjects(0), numParents(0),
       currentObject(NULL), parentObject(NULL), content(STANDARD),
       headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")

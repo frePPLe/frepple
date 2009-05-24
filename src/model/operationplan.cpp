@@ -1000,6 +1000,7 @@ int PythonOperationPlan::initialize(PyObject* m)
   x.supportgetattro();
   x.supportsetattro();
   x.supportcreate(create);
+  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(OperationPlan::metadata)->factoryPythonProxy = proxy;
   return x.typeReady(m);
 }

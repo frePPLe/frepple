@@ -482,7 +482,7 @@ template <typename T> class CalendarValue : public Calendar
     /** Update the default calendar value when no entry is matching. */
     virtual void setDefault(const T v) {defaultValue = v;}
 
-    void writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+    void writeElement(XMLOutput *o, const Keyword& tag, mode m=DEFAULT) const
     {
       // Writing a reference
       if (m == REFERENCE)
@@ -670,7 +670,7 @@ template <typename T> class CalendarPointer : public Calendar
 
     virtual const MetaClass& getType() const = 0;
 
-    void writeElement(XMLOutput *o, const Keyword& tag, mode m) const
+    void writeElement(XMLOutput *o, const Keyword& tag, mode m=DEFAULT) const
     {
       // Writing a reference
       if (m == REFERENCE)
@@ -840,7 +840,7 @@ class Problem : public NonCopyable, public Object
       * @see addProblem
       */
     explicit Problem(HasProblems *p) : owner(p)
-      { if (!owner) throw LogicException("Invalid problem creation");}
+      { if (!owner) throw LogicException("Invalid problem creation"); }
 
     /** Destructor.
       * @see removeProblem
@@ -3804,20 +3804,58 @@ class CommandReadXMLString : public Command
 class CommandSave : public Command
 {
   public:
+    /** Constructor. */
     CommandSave(const string& v = "plan.out")
         : filename(v), content(XMLOutput::STANDARD) {};
+
+    /** Destructor. */
     virtual ~CommandSave() {};
+
+    /** Return the name of the output file. */
     string getFileName() const {return filename;}
+
+    /** Update the name of the output file. */
     void setFileName(const string& v) {filename = v;}
+
+    /** Execute the command, ie write the data into XML format. */
     DECLARE_EXPORT void execute();
 
     /** Python interface to this command. */
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
 
+    /** Return a description of the command. */
     string getDescription() const
       {return "saving the complete model into file '" + filename + "'";}
+
+    /** Return the type of output. */
     XMLOutput::content_type getContent() const {return content;}
+
+    /** Update the type of output.
+      * @see XMLOutput::content_type
+      */
     void setContent(XMLOutput::content_type t) {content = t;}
+
+    /** Updates the string that is printed as the first line of each XML
+      * document.<br>
+      * The default value is:
+      *   <?xml version="1.0" encoding="UTF-8"?>
+      */
+    void setHeaderStart(const string& s) {headerstart = s;}
+
+    /** Returns the string that is printed as the first line of each XML
+      * document. */
+    string getHeaderStart() const {return headerstart;}
+
+    /** Updates the attributes that are written for the root element of each
+      * XML document.<br>
+      * The default value is an empty string. 
+      */
+    void setHeaderAtts(const string& s) {headeratts = s;}
+
+    /** Returns the attributes that are written for the root element of each
+      * XML document. */
+    string getHeaderAtts() const {return headeratts;}
+
   private:
     string filename;
     string headerstart;
@@ -5336,16 +5374,17 @@ class PythonProblem : public PythonExtension<PythonProblem>
 {
   public:
     static int initialize(PyObject* m);
-    PythonProblem(Problem* p) : prob(p) {}
+    PythonProblem(Problem* p) : obj(p) {}
     static PyObject* proxy(Object* p)
       {return static_cast<PyObject*>(new PythonProblem(static_cast<Problem*>(p)));}
     PyObject* str()
     {
-      return PythonObject(prob ? prob->getDescription() : "None");
+      return PythonObject(obj ? obj->getDescription() : "None");
     }
+  public: // @TODO should not be public
+    Problem* obj;
   private:
     PyObject* getattro(const Attribute&);
-    Problem* prob;
 };
 
 
@@ -5812,8 +5851,9 @@ class PythonOperationPlan : public PythonExtension<PythonOperationPlan>
     PythonOperationPlan(OperationPlan* p) : obj(p) {}
     static PyObject* proxy(Object* p)
       {return static_cast<PyObject*>(new PythonOperationPlan(static_cast<OperationPlan*>(p)));}
-  private:
+  public: // @TODO should not be public
     OperationPlan* obj;
+  private:
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);

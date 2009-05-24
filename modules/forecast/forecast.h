@@ -870,7 +870,7 @@ class ForecastSolver : public Solver
     virtual const MetaClass& getType() const {return *metadata;}
     static const MetaClass *metadata;
     virtual size_t getSize() const {return sizeof(ForecastSolver);}
-    void writeElement(XMLOutput*, const Keyword&, mode) const;
+    void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
 
     /** Callback function, used for netting orders against the forecast. */
     bool callback(Demand* l, const Signal a);

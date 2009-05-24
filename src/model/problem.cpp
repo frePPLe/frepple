@@ -482,6 +482,7 @@ int PythonProblem::initialize(PyObject* m)
   x.setDoc("frePPLe problem");
   x.supportgetattro();
   x.supportstr();
+  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(Problem::metadata)->factoryPythonProxy = proxy;
   return x.typeReady(m);
 }
@@ -489,19 +490,19 @@ int PythonProblem::initialize(PyObject* m)
 
 PyObject* PythonProblem::getattro(const Attribute& attr)
 {
-  if (!prob) return Py_BuildValue("");
+  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
-    return PythonObject(prob->getType().type);
+    return PythonObject(obj->getType().type);
   if (attr.isA(Tags::tag_description))
-    return PythonObject(prob->getDescription());
+    return PythonObject(obj->getDescription());
   if (attr.isA(Tags::tag_entity))
-    return PythonObject(prob->getOwner()->getEntity()->getType().category->group);
+    return PythonObject(obj->getOwner()->getEntity()->getType().category->group);
   if (attr.isA(Tags::tag_start))
-    return PythonObject(prob->getDateRange().getStart());
+    return PythonObject(obj->getDateRange().getStart());
   if (attr.isA(Tags::tag_end))
-    return PythonObject(prob->getDateRange().getEnd());
+    return PythonObject(obj->getDateRange().getEnd());
   if (attr.isA(Tags::tag_weight))
-    return PythonObject(prob->getWeight());
+    return PythonObject(obj->getWeight());
   return NULL;
 }
 

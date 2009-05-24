@@ -1,0 +1,63 @@
+<customer name="client">
+</customer>
+
+<location name="locA">
+</location>
+
+<item name="end item">
+	<operation name="delivery end item" xsi:type="operation_fixed_time">
+		<duration>P1D</duration>
+	</operation>
+</item>
+
+<demand name="order 1">
+	<customer name="client">
+	</customer>
+	<quantity>10</quantity>
+	<item name="end item">
+		<operation name="delivery end item" xsi:type="operation_fixed_time">
+			<duration>P1D</duration>
+		</operation>
+	</item>
+	<due>2009-03-02T09:00:00</due>
+	<priority>1</priority>
+	<maxlateness>P0D</maxlateness>
+</demand>
+
+<buffer name="buffer1" xsi:type="buffer_procure">
+	<category>My category</category>
+	<description>My description</description>
+	<members>
+		<buffer name="buffer2">
+			<owner name="buffer1" xsi:type="buffer_procure">
+				<category>My category</category>
+				<description>My description</description>
+				<members>
+					<buffer name="buffer2"/>
+				</members>
+				<item name="item 1"/>
+				<location name="locA"/>
+			</owner>
+		</buffer>
+	</members>
+	<item name="item 1">
+	</item>
+	<location name="locA">
+	</location>
+</buffer>
+
+<operation name="make item" xsi:type="operation_routing">
+	<steps>
+		<operation name="make item - step 1" xsi:type="operation_fixed_time"/>
+		<operation name="make item - step 2" xsi:type="operation_fixed_time"/>
+	</steps>
+</operation>
+
+<problem>
+	<name>material excess</name>
+	<description>Buffer &apos;end item&apos; has material excess of 20</description>
+	<start>2009-02-15T09:00:00</start>
+	<end>2009-03-01T20:00:00</end>
+	<weight>20</weight>
+</problem>
+

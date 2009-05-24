@@ -296,5 +296,30 @@ print "\nSaving the model to an XML-file"
 frepple.saveXMLfile("output.2.xml")
 
 ###
+print "\nPrinting some models in XML format"
+print mycustomer.toXML()
+print locA.toXML()
+print opplan.toXML()
+print item.toXML()
+print order1.toXML()
+print buf1.toXML()
+print makeoper.toXML()
+for i in frepple.problems():
+  print i.toXML()
+
+###
+print "\nPrinting some models in XML format to a file"
+output = open("output.3.xml","wt")
+print >>output, mycustomer.toXML()
+print >>output, locA.toXML()
+print >>output, opplan.toXML()
+print >>output, item.toXML()
+print >>output, order1.toXML()
+print >>output, buf1.toXML()
+print >>output, makeoper.toXML()
+for i in frepple.problems():
+  print >>output, i.toXML()
+
+###
 print "\nDocumenting all available Python entities defined by frePPLe:"
 printExtensions()

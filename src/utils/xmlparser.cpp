@@ -62,9 +62,9 @@ namespace frepple
 namespace utils
 {
 
-const XMLOutput::content_type XMLOutput::STANDARD = 1;
-const XMLOutput::content_type XMLOutput::PLAN = 2;
-const XMLOutput::content_type XMLOutput::PLANDETAIL = 4;
+DECLARE_EXPORT const XMLOutput::content_type XMLOutput::STANDARD = 1;
+DECLARE_EXPORT const XMLOutput::content_type XMLOutput::PLAN = 2;
+DECLARE_EXPORT const XMLOutput::content_type XMLOutput::PLANDETAIL = 4;
 
 
 void 	XMLInput::processingInstruction

@@ -631,9 +631,7 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
       try
       {
         // Check the self argument
-        logger << self->ob_type->tp_name << endl;
         Object *o = static_cast<T*>(self)->obj;
-        logger << o->getType().type << endl;
         if (!o) throw LogicException("Can't generate a XML representation");
 
         // Parse the argument
@@ -659,9 +657,7 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
           else
           {
             // Return a string
-        logger << "before" << endl;
             o->writeElement(&x, *(o->getType().category->typetag));
-        logger << ch.str() << endl;
             return PythonObject(ch.str());
           }
         }

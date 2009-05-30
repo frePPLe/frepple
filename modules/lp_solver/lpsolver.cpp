@@ -92,7 +92,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 }
 
 
-void LPSolver::solveObjective(string colname)
+void LPSolver::solveObjective(const string& colname)
 {
   // Set the objective coefficient
   if (colname.empty()) throw DataException("Empty objective name");
@@ -204,7 +204,7 @@ void LPSolver::solve(void *v)
 }
 
 
-string LPSolver::replaceSpaces(string input)
+string LPSolver::replaceSpaces(const string& input)
 {
   string x = input;
   for (string::iterator i = x.begin(); i != x.end(); ++i)

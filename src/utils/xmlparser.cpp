@@ -668,7 +668,7 @@ DECLARE_EXPORT const char* Attribute::getName() const
 }
 
 
-DECLARE_EXPORT Keyword::Keyword(string name) : strName(name)
+DECLARE_EXPORT Keyword::Keyword(const string& name) : strName(name)
 {
   // Error condition: name is empty
   if (name.empty()) throw LogicException("Creating keyword without name");
@@ -691,11 +691,14 @@ DECLARE_EXPORT Keyword::Keyword(string name) : strName(name)
 }
 
 
-DECLARE_EXPORT Keyword::Keyword(string name, string nspace) : strName(name)
+DECLARE_EXPORT Keyword::Keyword(const string& name, const string& nspace) 
+  : strName(name)
 {
   // Error condition: name is empty
-  if (name.empty()) throw LogicException("Creating keyword without name");
-  if (nspace.empty()) throw LogicException("Creating keyword with empty namespace");
+  if (name.empty()) 
+    throw LogicException("Creating keyword without name");
+  if (nspace.empty()) 
+    throw LogicException("Creating keyword with empty namespace");
 
   // Create a number of variations of the tag name
   strStartElement = string("<") + nspace + ":" + name;

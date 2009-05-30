@@ -37,6 +37,7 @@ namespace utils
 
 DECLARE_EXPORT string Date::format("%Y-%m-%dT%H:%M:%S");
 DECLARE_EXPORT string DateRange::separator = " / ";
+DECLARE_EXPORT size_t DateRange::separatorlength = 3;
 
 /* This is the earliest date that we can represent. This not the
  * traditional epcoh start, but a year later. 1/1/1970 gave troubles
@@ -106,18 +107,20 @@ DECLARE_EXPORT void TimePeriod::toCharBuffer(char* t) const
 DECLARE_EXPORT DateRange::operator string() const
 {
   // Start date
-  string r(start);
+  char r[65];
+  char *pos = r + start.toCharBuffer(r);
 
   // Append the separator
-  r.append(separator);
+  strcat(pos, separator.c_str());
+  pos += separatorlength;
 
   // Append the end date
-  r.append(string(end));
+  end.toCharBuffer(pos);
   return r;
 }
 
 
-DECLARE_EXPORT void Date::toCharBuffer(char* str) const
+DECLARE_EXPORT size_t Date::toCharBuffer(char* str) const
 {
   // The standard library function localtime() is not re-entrant: the same
   // static structure is used for all calls. In a multi-threaded environment
@@ -132,7 +135,7 @@ DECLARE_EXPORT void Date::toCharBuffer(char* str) const
 #else
   struct tm timeStruct = *localtime(&lval);
 #endif
-  strftime(str, 30,  format.c_str(), &timeStruct);
+  return strftime(str, 30,  format.c_str(), &timeStruct);
 }
 
 

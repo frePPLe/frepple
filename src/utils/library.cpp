@@ -121,7 +121,7 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
 }
 
 
-DECLARE_EXPORT void Environment::setLogFile(string x)
+DECLARE_EXPORT void Environment::setLogFile(const string& x)
 {
   // Bye bye message
   if (!logfilename.empty())

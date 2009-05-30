@@ -189,8 +189,7 @@ class PythonInterpreter
     static DECLARE_EXPORT PyObject *module;
 
     /** Python API: Used for redirecting the Python output to the same file
-      * as the applciation. <br>
-      * Arguments: data (string)
+      * as the application.
       */
     static DECLARE_EXPORT PyObject *python_log(PyObject*, PyObject*);
 
@@ -236,7 +235,7 @@ class CommandPython : public Command
     virtual ~CommandPython() {}
 
     /** Update the commandline field and clears the filename field. */
-    void setCommandLine(string s) {cmd = s; filename.clear();}
+    void setCommandLine(const string& s) {cmd = s; filename.clear();}
 
     /** Return the command line. */
     string getCommandLine() const {return cmd;}
@@ -245,7 +244,7 @@ class CommandPython : public Command
     string getFileName() const {return filename;}
 
     /** Update the filename field and clear the filename field. */
-    void setFileName(string s) {filename = s; cmd.clear();}
+    void setFileName(const string& s) {filename = s; cmd.clear();}
 
     /** Metadata for registration as an XML instruction. */
     static const MetaClass *metadata2;

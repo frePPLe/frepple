@@ -117,13 +117,13 @@ class LPSolver : public Solver
     string getModelFile() const {return modelfilename;}
 
     /** Update the name of the GNU MathProg model file. */
-    void setModelFile(string c) {modelfilename = c;}
+    void setModelFile(const string& c) {modelfilename = c;}
 
     /** Return the name of the GNU MathProg data file. */
     string getDataFile() const {return datafilename;}
 
     /** Update the name of the GNU MathProg data file. */
-    void setDataFile(string c) {datafilename = c;}
+    void setDataFile(const string& c) {datafilename = c;}
 
     /** Return the name of the solution file. */
     string getSolutionFile() const {return solutionfilename;}
@@ -131,7 +131,7 @@ class LPSolver : public Solver
     /** Update the name of the solution file. <br>
       * After running the solver the solution is written to this flat file.
       */
-    void setSolutionFile(string c) {solutionfilename = c;}
+    void setSolutionFile(const string& c) {solutionfilename = c;}
 
     /** Returns true when the solver needs to minimize the objective(s).<br>
       * Returns false when the solver needs to maximize the objective(s).
@@ -142,7 +142,7 @@ class LPSolver : public Solver
     void setMinimum(bool m) {minimum = m;}
 
     /** Append a new objective to the list. */
-    void addObjective(string c) { objectives.push_back(c); }
+    void addObjective(const string& c) { objectives.push_back(c); }
 
 	  /** Return a reference to the list of objectives. */
 	  const list<string>& getObjectives() const {return objectives;}
@@ -151,7 +151,7 @@ class LPSolver : public Solver
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
 
 	  /** Constructor. */
-    LPSolver(const string n) : Solver(n), minimum(true) {};
+    LPSolver(const string& n) : Solver(n), minimum(true) {};
 	
 	  /** Destructor. */
     ~LPSolver() {};
@@ -168,7 +168,7 @@ class LPSolver : public Solver
       * Note however that we can't garantuee that the updated strings are
       * all unique after the replacement!
       */
-    static string replaceSpaces(string);
+    static string replaceSpaces(const string&);
 
     /** This object is the interface with the GLPK structures. */
     LPX* lp;
@@ -208,7 +208,7 @@ class LPSolver : public Solver
     }
 
     /** Solve for a goal in a hierarchical sequence. */
-    void solveObjective(string);
+    void solveObjective(const string&);
 };
 
 

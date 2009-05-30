@@ -330,7 +330,7 @@ class Environment
       * If the filename starts with '+' the log file is appended to
       * instead of being overwritten.
       */
-    static DECLARE_EXPORT void setLogFile(string x);
+    static DECLARE_EXPORT void setLogFile(const string& x);
 };
 
 
@@ -513,14 +513,14 @@ class Keyword : public NonCopyable
 
     /** This is the constructor.<br>
       * The tag doesn't belong to an XML namespace. */
-    DECLARE_EXPORT Keyword(string);
+    DECLARE_EXPORT Keyword(const string&);
 
     /** This is the constructor. The tag belongs to the XML namespace passed
       * as second argument.<br>
       * Note that we still require the first argument to be unique, since it
       * is used as a keyword for the Python extensions.
       */
-    DECLARE_EXPORT Keyword(string, string);
+    DECLARE_EXPORT Keyword(const string&, const string&);
 
     /** Destructor. */
     DECLARE_EXPORT ~Keyword();
@@ -565,10 +565,10 @@ class Keyword : public NonCopyable
       * @see hash(const char*)
       */
     #if !defined(WIN32) || defined(FREPPLE_CORE)
-    static DECLARE_EXPORT hashtype hash(string c) 
+    static DECLARE_EXPORT hashtype hash(const string& c) 
       {return xercesc::XMLString::hash(c.c_str(),954991);}
     #else
-    static DECLARE_EXPORT hashtype hash(string c);
+    static DECLARE_EXPORT hashtype hash(const string& c);
     #endif
 
     /** This is the hash function taken an XML character string as input.<br>
@@ -1441,14 +1441,6 @@ class Date
     /** Checks whether we stay within the boundaries of finite Dates. */
     DECLARE_EXPORT void checkFinite(long long);
 
-    /** This function fills a character buffer with a text representation of
-      * the date.<br>
-      * The character buffer passed is expected to have room for
-      * at least 30 characters. 30 characters should be sufficient for even
-      * the most funky date format.
-      */
-    DECLARE_EXPORT void toCharBuffer(char*) const;
-
     /** A private constructor used to create the infinitePast and
       * infiniteFuture constants. */
     Date(const char* s, bool dummy) {parse(s);}
@@ -1545,6 +1537,14 @@ class Date
       return string(str);
     }
 
+    /** This function fills a character buffer with a text representation of
+      * the date.<br>
+      * The character buffer passed is expected to have room for
+      * at least 30 characters. 30 characters should be sufficient for even
+      * the most funky date format.
+      */
+    DECLARE_EXPORT size_t toCharBuffer(char*) const;
+
     /** Return the seconds since the epoch, which is also the internal
       * representation of a date. */
     time_t getTicks() const {return lval;}
@@ -1553,7 +1553,7 @@ class Date
     DECLARE_EXPORT void parse(const char*, const string& = format);
 
     /** Updates the default date format. */
-    static void setFormat(string& n) {format = n;}
+    static void setFormat(const string& n) {format = n;}
 
     /** Retrieves the default date format. */
     static string getFormat() {return format;}
@@ -1681,7 +1681,11 @@ class DateRange
     DECLARE_EXPORT operator string() const;
 
     /** Updates the default seperator. */
-    static void setSeparator(const string& n) {separator = n;}
+    static void setSeparator(const string& n) 
+    {
+      separator = n;
+      separatorlength = n.size();
+    }
 
     /** Retrieves the default seperator. */
     static const string& getSeparator() {return separator;}
@@ -1695,6 +1699,9 @@ class DateRange
 
     /** Separator to be used when printing this string. */
     static DECLARE_EXPORT string separator;
+
+    /** Separator to be used when printing this string. */
+    static DECLARE_EXPORT size_t separatorlength;
 };
 
 
@@ -2242,7 +2249,7 @@ class Attribute
     explicit Attribute() : hash(0), ch(NULL) {}
 
     /** Constructor. */
-    explicit Attribute(string n)
+    explicit Attribute(const string& n)
       : hash(Keyword::hash(n)), ch(n.c_str()) {}
 
     /** Constructor. */
@@ -2365,7 +2372,7 @@ class XMLElement : public DataElement
     XMLElement() {}
 
     /** Constructor. */
-    XMLElement(string v) : m_strData(v) {}
+    XMLElement(const string& v) : m_strData(v) {}
 
    /** Destructor. */
    virtual ~XMLElement() {}
@@ -3139,10 +3146,12 @@ class CommandLoadLibrary : public Command
     string getDescription() const {return "Loading shared library " + lib;}
 
     /** Add a parameter for the module. */
-    void addParameter(string name, string value) {parameters[name] = value;}
+    void addParameter(const string& name, const string& value) 
+    { parameters[name] = value; }
 
     /** Returns true if a module with this name has been loaded. */
-    static bool isLoaded(string s) {return registry.find(s) != registry.end();}
+    static bool isLoaded(const string& s) 
+    { return registry.find(s) != registry.end(); }
 
   private:
     /** Name of the library to be loaded. */
@@ -3460,7 +3469,7 @@ class XMLInputString : public XMLInput
 {
   public:
     /** Default constructor. */
-    XMLInputString(string& s) : data(s) {};
+    XMLInputString(const string& s) : data(s) {};
 
     /** Parse the specified string. */
     void parse(Object* pRoot, bool v = false)

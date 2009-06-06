@@ -247,17 +247,17 @@ AC_CHECK_LIB([xerces-c], [main], [],
   Check out http://xml.apache.org/xerces-c for more information.
 ])])
 
-AC_CHECKING([for xerces version >= 2.7 ])
+AC_CHECKING([for xerces-c version >= 2.7 ])
 AC_COMPILE_IFELSE([
   #include "xercesc/util/XercesVersion.hpp"
-  #if XERCES_VERSION_MAJOR>=2 && XERCES_VERSION_MINOR>=7
+  #if (XERCES_VERSION_MAJOR==2 && XERCES_VERSION_MINOR>=7) || XERCES_VERSION_MAJOR==3
     int main (void) {return 1;}
   #else
     force compile error;
   #endif
   ], [],
   [AC_MSG_ERROR([
-  This package requires Xerces 2.7 or later. Your version is older...
+  This package requires Xerces-C 2.7 or later. Your version is older...
   ])])
 
 #
@@ -281,7 +281,7 @@ AC_CHECK_HEADERS([glpk.h], [],
 fi
 
 #
-# Verify installation of Python
+# Verify installation of PYTHON
 #
 AC_CHECK_PROGS(PYTHON,python,nopython)
 if test x$PYTHON = xnopython

@@ -449,7 +449,6 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
     // on whether we want to validate the input or not.
     parser->setProperty(xercesc::XMLUni::fgXercesScannerName, const_cast<XMLCh*>
         (validate ? xercesc::XMLUni::fgSGXMLScanner : xercesc::XMLUni::fgWFXMLScanner));
-    parser->setFeature(xercesc::XMLUni::fgSAX2CoreNameSpaces, validate);
     parser->setFeature(xercesc::XMLUni::fgSAX2CoreValidation, validate);
     parser->setFeature(xercesc::XMLUni::fgSAX2CoreNameSpacePrefixes, false);
     parser->setFeature(xercesc::XMLUni::fgXercesIdentityConstraintChecking, false);
@@ -586,8 +585,9 @@ DECLARE_EXPORT void XMLOutput::writeElement
     // Mode is overwritten
     object->writeElement(this, tag, m);
   else
-    // Choose wether to save a reference of the object
-    object->writeElement(this, tag, numParents>2 ? REFERENCE : DEFAULT);  // @todo not nice and generic
+    // Choose wether to save a reference of the object.
+    // The root object can't be saved as a reference.
+    object->writeElement(this, tag, numParents>2 ? REFERENCE : DEFAULT);
 
   // Adjust current and parent object pointer
   --numParents;
@@ -637,7 +637,7 @@ DECLARE_EXPORT void XMLOutput::writeHeader(const Keyword& tag)
   BeginObject(tag, getHeaderAtts());
 
   // Fake a dummy parent
-  numParents += 2;   // @todo not nice and generic
+  numParents += 2;
 }
 
 

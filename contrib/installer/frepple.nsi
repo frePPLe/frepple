@@ -28,6 +28,8 @@
 ; To run this script successfully, you'll therefore need to have the cygwin
 ; system up and running on your machine.
 
+; THIS FILE NEEDS TO BE EDITED IN UTF-8 ENCODING
+
 ; Make sure that this variable points to the windows version of Python, not
 ; the one that is part of cygwin.
 !ifndef PYTHON
@@ -45,6 +47,7 @@
 
 ; Select compressor
 SetCompressor /SOLID lzma
+CRCCheck on
 
 ;Include for Modern UI and library installation
 !include "MUI.nsh"
@@ -85,6 +88,7 @@ Page custom database database_leave
 
 ; Language files
 !insertmacro MUI_LANGUAGE "English"
+!insertmacro MUI_LANGUAGE "TradChinese" 
 
 ;Version Information
 VIProductVersion "0.6.2.0"
@@ -152,7 +156,6 @@ Section "Application" SecAppl
   ; Copy configuration files
   File "..\bin\*.xsd"
   File "..\bin\init.xml"
-  File "..\bin\init.py"
 
   ; Copy sqlite database if there is one
   File /nonfatal "..\bin\frepple.sqlite"
@@ -175,8 +178,11 @@ Section "Application" SecAppl
   StrCmp $6 "English" 0 +3
     StrCpy $6 "en-us"
     Goto ok2
-  StrCmp $6 "Dutch" 0 +3
+  StrCmp $6 "Dutch Nederlands" 0 +3
     StrCpy $6 "nl"
+    Goto ok2
+  StrCmp $6 "Traditional Chinese 中文" 0 +3
+    StrCpy $6 "zh_tw"
     Goto ok2
   MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid language selection $6!"
   ok2:
@@ -195,8 +201,8 @@ Section "Application" SecAppl
     Goto ok
   MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid database type $0!"
   ok:
-  ReadINIStr $1 "$PLUGINSDIR\parameters.ini" "Field 10" "State"   # DB name
-  ReadINIStr $2 "$PLUGINSDIR\parameters.ini" "Field 11" "State"   # DB user
+  ReadINIStr $1 "$PLUGINSDIR\parameters.ini" "Field 10" "State"  # DB name
+  ReadINIStr $2 "$PLUGINSDIR\parameters.ini" "Field 11" "State"  # DB user
   ReadINIStr $3 "$PLUGINSDIR\parameters.ini" "Field 12" "State"  # DB password
   ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 13" "State"  # DB host
   ReadINIStr $5 "$PLUGINSDIR\parameters.ini" "Field 14" "State"  # DB port

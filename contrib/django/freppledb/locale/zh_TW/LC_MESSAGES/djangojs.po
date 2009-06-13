@@ -33,91 +33,91 @@ msgstr ""
 
 #: static/frepple.js:277
 msgid "Import data"
-msgstr "Importeer gegevens"
+msgstr ""
 
 #: static/frepple.js:279
 msgid "Load data from a CSV-formatted text file in the database."
-msgstr "Laad een bestand in CSV-formaat in de database."
+msgstr ""
 
 #: static/frepple.js:280
 msgid "The first row should contain the field names."
-msgstr "De eerste rij moet de veldnamen bevatten."
+msgstr ""
 
 #: static/frepple.js:281
 msgid "Data file"
-msgstr "Gegevensbestand"
+msgstr ""
 
 #: static/frepple.js:282
 msgid "Upload"
-msgstr "Laad"
+msgstr ""
 
 #: static/frepple.js:283 static/frepple.js.py:307 static/frepple.js.py:355
 msgid "Cancel"
-msgstr "Annuleer"
+msgstr ""
 
 #: static/frepple.js:301
 msgid "Export data"
-msgstr "Exporteer gegevens"
+msgstr ""
 
 #: static/frepple.js:303
 msgid "CSV style"
-msgstr "CSV stijl"
+msgstr ""
 
 #: static/frepple.js:304
 msgid "Table"
-msgstr "Tabel"
+msgstr ""
 
 #: static/frepple.js:305
 msgid "List"
-msgstr "Lijst"
+msgstr ""
 
 #: static/frepple.js:306
 msgid "Export"
-msgstr "Exporteer "
+msgstr ""
 
 #: static/frepple.js:342
 msgid "Time buckets"
-msgstr "Tijdsindeling"
+msgstr ""
 
 #: static/frepple.js:344
 msgid "Buckets"
-msgstr "Tijdsindeling"
+msgstr ""
 
 #: static/frepple.js:345
 msgid "Standard"
-msgstr "Standaard"
+msgstr ""
 
 #: static/frepple.js:346
 msgid "Day"
-msgstr "Dag"
+msgstr ""
 
 #: static/frepple.js:347
 msgid "Week"
-msgstr "Week"
+msgstr ""
 
 #: static/frepple.js:348
 msgid "Month"
-msgstr "Maand"
+msgstr ""
 
 #: static/frepple.js:349
 msgid "Quarter"
-msgstr "Kwartaal"
+msgstr ""
 
 #: static/frepple.js:350
 msgid "Year"
-msgstr "Jaar"
+msgstr ""
 
 #: static/frepple.js:352
 msgid "Start&nbsp;date"
-msgstr "Startdatum"
+msgstr ""
 
 #: static/frepple.js:353
 msgid "End&nbsp;date"
-msgstr "Einddatum"
+msgstr ""
 
 #: static/frepple.js:354
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #~ msgid "Close"
 #~ msgstr "Sluit"

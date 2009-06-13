@@ -7,5 +7,8 @@ EXTRA_DIST = frepple.nsi README.txt frepple.bmp frepple.ico manage.py setup.py p
 clean-local:
 	-rm -rf dist build
 
+contrib:
+	"/c/Program Files/NSIS/makensis.exe" /DPYTHON='c:\develop\python26' frepple.nsi
+  
 py2exe:
 	setup.py

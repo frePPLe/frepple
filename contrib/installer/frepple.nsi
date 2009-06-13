@@ -178,10 +178,10 @@ Section "Application" SecAppl
   StrCmp $6 "English" 0 +3
     StrCpy $6 "en-us"
     Goto ok2
-  StrCmp $6 "Dutch Nederlands" 0 +3
+  StrCmp $6 "Dutch" 0 +3
     StrCpy $6 "nl"
     Goto ok2
-  StrCmp $6 "Traditional Chinese 中文" 0 +3
+  StrCmp $6 "Traditional Chinese" 0 +3
     StrCpy $6 "zh_tw"
     Goto ok2
   MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid language selection $6!"

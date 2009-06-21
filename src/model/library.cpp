@@ -69,7 +69,8 @@ DECLARE_EXPORT const MetaClass* OperationFixedTime::metadata,
   *OperationAlternate::metadata;
 
 // OperationPlan metadata
-DECLARE_EXPORT const MetaCategory* OperationPlan::metadata;
+DECLARE_EXPORT const MetaClass* OperationPlan::metadata;
+DECLARE_EXPORT const MetaCategory* OperationPlan::metacategory;
 
 // Resource metadats
 DECLARE_EXPORT const MetaCategory* Resource::metadata;
@@ -263,8 +264,9 @@ void LibraryModel::initialize()
     Object::createDefault<FlowEnd>);
 
   // Initialize the operationplan metadata.
-  OperationPlan::metadata = new MetaCategory("operationplan", "operationplans",
+  OperationPlan::metacategory = new MetaCategory("operationplan", "operationplans",
     OperationPlan::createOperationPlan, OperationPlan::writer);
+  OperationPlan::metadata = new MetaClass("operationplan", "operationplan");
 
   // Initialize the problem metadata.
   Problem::metadata = new MetaCategory

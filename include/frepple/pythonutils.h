@@ -639,12 +639,14 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
         {
           ostringstream ch;
           XMLOutput x(ch);
+          // Create the XML string
+          o->writeElement(&x, *(o->getType().category->typetag));
+          // Write the output...
           if (filearg)          
           {
             if (PyFile_Check(filearg))
             {
-              // Write to a file
-              o->writeElement(&x, *(o->getType().category->typetag));
+              // ... to a file
               return PyFile_WriteString(ch.str().c_str(), filearg) ?
                 NULL : // Error writing to the file
                 Py_BuildValue("");
@@ -654,11 +656,8 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
               throw LogicException("Expecting a file argument");
           }
           else
-          {
-            // Return a string
-            o->writeElement(&x, *(o->getType().category->typetag));
+            // ... to a string
             return PythonObject(ch.str());
-          }
         }
       }
       catch(...)
@@ -693,7 +692,9 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
       return x.typeReady(m);
     }
 
-    static PyObject* proxy(Object* p) {return static_cast<PyObject*>(new ME(static_cast<PROXY*>(p)));}
+    static PyObject* proxy(Object* p) {
+      return static_cast<PyObject*>(new ME(static_cast<PROXY*>(p)));
+    }
 
     /** Constructor. */
     FreppleCategory(PROXY* x = NULL) : obj(x) {}

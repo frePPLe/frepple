@@ -4,6 +4,13 @@
 <location name="locA">
 </location>
 
+<operationplan id="3" operation="make item">
+	<start>2010-12-25T00:00:00</start>
+	<end>2011-01-01T00:00:00</end>
+	<quantity>9</quantity>
+	<locked>true</locked>
+</operationplan>
+
 <item name="end item">
 	<operation name="delivery end item" xsi:type="operation_fixed_time">
 		<duration>P1D</duration>

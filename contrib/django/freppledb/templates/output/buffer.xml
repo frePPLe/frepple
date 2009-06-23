@@ -2,23 +2,23 @@
 <graph shownames='1' showvalues='0'  
   decimalPrecision='2' limitsDecimalPrecision='0' showShadow='0'
   divLineDecimalPrecision='0' connectNullData='0' numDivLines='4' 
-  PYAxisName='{% trans "Produced and consumed" %}' 
-  SYAxisName='{% trans "End Inventory" %}' 
+  PYAxisName='{% trans "produced and consumed" %}' 
+  SYAxisName='{% trans "end inventory" %}' 
   formatNumberScale='1' bgcolor='f1f1f1' animation='0' 
   showalternateHGridColor='1' alternateHGridColor='eeeeee'>
 <categories>
 {% for j in buckets %}<category name='{{j.name}}' />
 {% endfor %}
 </categories>
-<dataset seriesName='{% trans "Produced" %}' parentYAxis='P' color='AFD8F8' showValues='0'>
+<dataset seriesName='{% trans "produced" %}' parentYAxis='P' color='AFD8F8' showValues='0'>
 {% for j in produced %}<set value='{{j}}' />
 {% endfor %}
 </dataset>
-<dataset seriesName='{% trans "Consumed" %}' parentYAxis='P'  color='F6BD0F' showValues='0'>
+<dataset seriesName='{% trans "consumed" %}' parentYAxis='P'  color='F6BD0F' showValues='0'>
 {% for j in consumed %}<set value='{{j}}' />
 {% endfor %}
 </dataset>
-<dataset seriesName='{% trans "End inventory" %}' color='8BBA00' showValues='0' 
+<dataset seriesName='{% trans "end inventory" %}' color='8BBA00' showValues='0' 
   parentYAxis='S' anchorSides='10' anchorBorderColor='8BBA00'>
 {% for j in endoh %}<set value='{{j}}' />
 {% endfor %}

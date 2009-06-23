@@ -1,16 +1,16 @@
 {% load i18n %}
-<graph yAxisName='{% trans "Units" %}' 
+<graph yAxisName='{% trans "units" %}' 
  decimalPrecision='0' numDivLines='4' 
  showValues='0' formatNumberScale='0' animation='0'>
 <categories>
 {% for j in buckets %}<category name='{{j.name}}' />
 {% endfor %}
 </categories>
-<dataset seriesName='{% trans "Total starts" %}' color='AFD8F8' showValues='0'>
+<dataset seriesName='{% trans "total starts" %}' color='AFD8F8' showValues='0'>
 {% for j in total_start %}<set value='{{j}}' />
 {% endfor %}
 </dataset>
-<dataset seriesName='{% trans "Total ends" %}'  color='F6BD0F' showValues='0'>
+<dataset seriesName='{% trans "total ends" %}'  color='F6BD0F' showValues='0'>
 {% for j in total_end %}<set value='{{j}}' />
 {% endfor %}
 </dataset>

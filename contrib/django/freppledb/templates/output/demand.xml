@@ -10,15 +10,15 @@
 {% for j in buckets %}<category name='{{j.name}}' />
 {% endfor %}
 </categories>
-<dataset seriesName='{% trans "Demand" %}' parentYAxis='P' color='AFD8F8' showValues='0'>
+<dataset seriesName='{% trans "demand" %}' parentYAxis='P' color='AFD8F8' showValues='0'>
 {% for j in demand %}<set value='{{j}}' />
 {% endfor %}
 </dataset>
-<dataset seriesName='{% trans "Supply" %}' parentYAxis='P'  color='F6BD0F' showValues='0'>
+<dataset seriesName='{% trans "supply" %}' parentYAxis='P'  color='F6BD0F' showValues='0'>
 {% for j in supply %}<set value='{{j}}' />
 {% endfor %}
 </dataset>
-<dataset seriesName='{% trans "Backlog" %}' color='8BBA00' showValues='0' 
+<dataset seriesName='{% trans "backlog" %}' color='8BBA00' showValues='0' 
   parentYAxis='S' anchorSides='10' anchorBorderColor='8BBA00'>
 {% for j in backlog %}<set value='{{j}}' />
 {% endfor %}

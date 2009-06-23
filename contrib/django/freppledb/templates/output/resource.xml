@@ -1,5 +1,5 @@
 {% load i18n %}
-<graph yAxisName='{% trans "Days" %}' 
+<graph yAxisName='{% trans "days" %}' 
  decimalPrecision='0' numDivLines='4' 
  showValues='0' formatNumberScale='0' animation='0'>
 <categories>

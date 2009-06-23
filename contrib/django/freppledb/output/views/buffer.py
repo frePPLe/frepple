@@ -188,6 +188,7 @@ class DetailReport(ListReport):
     )
 
 
+@staff_member_required
 def GraphData(request, entity):
   basequery = Buffer.objects.filter(pk__exact=entity)
   (bucket,start,end,bucketlist) = getBuckets(request)

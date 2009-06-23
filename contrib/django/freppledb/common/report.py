@@ -223,7 +223,7 @@ def view_report(request, entity=None, **args):
   '''
 
   # Pick up the report class
-  global reservedParameters;
+  global reservedParameters
   reportclass = args['report']
   model = reportclass.model
 

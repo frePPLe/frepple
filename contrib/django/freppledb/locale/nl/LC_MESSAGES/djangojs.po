@@ -21,11 +21,11 @@
 # date : $LastChangedDate$.
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.6.2\n"
+"Project-Id-Version: 0.7.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-06-23 11:01+0200\n"
-"PO-Revision-Date: 2009-06-12 18:27+0100\n"
-"Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
+"PO-Revision-Date: 2009-06-23 22:38+0100\n"
+"Last-Translator: \n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -51,7 +51,9 @@ msgstr "Gegevensbestand"
 msgid "Upload"
 msgstr "Laad"
 
-#: static/frepple.js:283 static/frepple.js.py:307 static/frepple.js.py:355
+#: static/frepple.js:283
+#: static/frepple.js.py:307
+#: static/frepple.js.py:355
 msgid "Cancel"
 msgstr "Annuleer"
 
@@ -121,7 +123,6 @@ msgstr "OK"
 
 #~ msgid "Close"
 #~ msgstr "Sluit"
-
 #~ msgid ""
 #~ "<h2>Import data</h2><br/><form enctype=\"multipart/form-data\" method="
 #~ "\"post\" action=\"%s\"><table><tr><td colspan=\"2\">Load data from a CSV-"
@@ -140,3 +141,4 @@ msgstr "OK"
 #~ "type=\"submit\" value=\"Laad\"/></td><td><input type=\"button\" value="
 #~ "\"Sluit\" onclick=\"$('popup').style.display = 'none';\"/></td></tr></"
 #~ "table></form>"
+

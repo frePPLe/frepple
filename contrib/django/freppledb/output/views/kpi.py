@@ -106,7 +106,3 @@ class Report(ListReport):
         'name': row[2],
         'value': row[3],
         }
-
-  @staticmethod
-  def lastmodified():
-    return Plan.objects.all()[0].lastmodified

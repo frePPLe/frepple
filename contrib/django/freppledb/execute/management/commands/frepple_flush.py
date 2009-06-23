@@ -71,8 +71,8 @@ class Command(BaseCommand):
       cursor = connection.cursor()
 
       # SQLite specials
-      if settings.DATABASE_ENGINE == 'sqlite3':
-        cursor.execute('PRAGMA synchronous = OFF')  # Performance improvement
+      #if settings.DATABASE_ENGINE == 'sqlite3':
+      #  cursor.execute('PRAGMA synchronous = OFF')  # Performance improvement
 
       # Delete all records from the tables
       sql_list = connection.ops.sql_flush(no_style(), [

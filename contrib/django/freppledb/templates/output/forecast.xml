@@ -1,0 +1,18 @@
+{% load i18n %}
+<graph yAxisName='{% trans "Units" %}' 
+ decimalPrecision='0' numDivLines='4' 
+ showValues='0' formatNumberScale='0' animation='0'>
+<categories>
+{% for j in buckets %}<category name='{{j.name}}' />
+{% endfor %}
+</categories>
+<dataset seriesName='{% trans "Orders" %}' color='AFD8F8' showValues='0'>
+{% for j in orders %}<set value='{{j}}' />
+{% endfor %}
+</dataset>
+<dataset seriesName='{% trans "Net forecast" %}'  color='F6BD0F' showValues='0'>
+{% for j in net %}<set value='{{j}}' />
+{% endfor %}
+</dataset>
+</graph>
+

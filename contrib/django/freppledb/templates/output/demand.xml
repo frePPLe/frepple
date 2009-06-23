@@ -1,0 +1,26 @@
+{% load i18n %}
+<graph shownames='1' showvalues='0'  
+  decimalPrecision='2' limitsDecimalPrecision='0' 
+  divLineDecimalPrecision='0' connectNullData='0' 
+  PYAxisName='Demand and supply' SYAxisName='Backlog' numDivLines='4' 
+  formatNumberScale='1' showShadow='0' bgColor='f1f1f1' 
+  showalternateHGridColor='1' alternateHGridColor='eeeeee'
+  animation='0' >
+<categories>
+{% for j in buckets %}<category name='{{j.name}}' />
+{% endfor %}
+</categories>
+<dataset seriesName='{% trans "Demand" %}' parentYAxis='P' color='AFD8F8' showValues='0'>
+{% for j in demand %}<set value='{{j}}' />
+{% endfor %}
+</dataset>
+<dataset seriesName='{% trans "Supply" %}' parentYAxis='P'  color='F6BD0F' showValues='0'>
+{% for j in supply %}<set value='{{j}}' />
+{% endfor %}
+</dataset>
+<dataset seriesName='{% trans "Backlog" %}' color='8BBA00' showValues='0' 
+  parentYAxis='S' anchorSides='10' anchorBorderColor='8BBA00'>
+{% for j in backlog %}<set value='{{j}}' />
+{% endfor %}
+</dataset>
+</graph>

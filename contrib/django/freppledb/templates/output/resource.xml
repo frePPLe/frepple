@@ -1,0 +1,26 @@
+{% load i18n %}
+<graph yAxisName='{% trans "Days" %}' 
+ decimalPrecision='0' numDivLines='4' 
+ showValues='0' formatNumberScale='0' animation='0'>
+<categories>
+{% for j in buckets %}<category name='{{j.name}}' />
+{% endfor %}
+</categories>
+<dataset seriesName='{% trans "load" %}' color='AFD8F8' showValues='0'>
+{% for j in load %}<set value='{{j}}' />
+{% endfor %}
+</dataset>
+<dataset seriesName='{% trans "unavailable" %}'  color='F6BD0F' showValues='0'>
+{% for j in unavailable %}<set value='{{j}}' />
+{% endfor %}
+</dataset>
+<dataset seriesName='{% trans "free" %}' color='8BBA00' showValues='0'>
+{% for j in free %}<set value='{{j}}' />
+{% endfor %}
+</dataset>
+<dataset seriesName='{% trans "overload" %}' color='FF0000' showValues='0'>
+{% for j in overload %}<set value='{{j}}' />
+{% endfor %}
+</dataset>
+</graph>
+

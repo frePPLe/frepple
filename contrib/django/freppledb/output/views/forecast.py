@@ -22,8 +22,9 @@
 
 from django.db import connection
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.admin.views.decorators import staff_member_required
 
-from input.models import Forecast, Plan
+from input.models import Forecast
 from common.db import *
 from common.report import *
 
@@ -59,6 +60,8 @@ class OverviewReport(TableReport):
   columns = (
     ('bucket',{'title': _('bucket')}),
     )
+
+  javascript_imports = ['/static/FusionCharts.js',]
 
   @staticmethod
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
@@ -146,3 +149,29 @@ class OverviewReport(TableReport):
         'net': row[8],
         'planned': row[9],
         }
+        
+        
+@staff_member_required
+def GraphData(request, entity):
+  basequery = Forecast.objects.filter(pk__exact=entity)
+  (bucket,start,end,bucketlist) = getBuckets(request)
+  total = []
+  net = []
+  orders = []
+  planned = []
+  for x in OverviewReport.resultlist2(basequery, bucket, start, end):
+    total.append(x['total'])
+    net.append(x['net'])
+    orders.append(x['orders'])
+    planned.append(x['planned'])
+  context = { 
+    'buckets': bucketlist, 
+    'total': total, 
+    'net': net, 
+    'orders': orders, 
+    'planned': planned,
+    }
+  return HttpResponse(
+    loader.render_to_string("output/forecast.xml", context, context_instance=RequestContext(request)),
+    )
+    

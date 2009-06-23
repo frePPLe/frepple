@@ -31,7 +31,6 @@ It provides the following functionality:
  - Import CSV formatted data files.
  - Show time buckets to show data by time buckets.
    The time buckets and time boundaries can easily be updated.
- - Support for efficient caching by the client browser.
 '''
 
 from datetime import date, datetime
@@ -131,9 +130,6 @@ class ListReport(Report):
   Row definitions.
 
   Supported class methods:
-    - lastmodified():
-      Returns a datetime object representing the last time the report content
-      was updated.
     - resultlist1():
       Returns an iterable that returns the FROZEN data to be displayed.
       If not specified, the basequeryset is used.
@@ -167,9 +163,6 @@ class TableReport(Report):
   Row definitions.
 
   Supported class methods:
-    - lastmodified():
-      Returns a datetime object representing the last time the report content
-      was updated.
     - resultlist1():
       Returns an iterable that returns the data to be displayed.
       If not specified, the basequeryset is used.
@@ -252,21 +245,6 @@ def view_report(request, entity=None, **args):
     else:
       request.user.message_set.create(message=_('Uploaded data successfully'))
     return HttpResponseRedirect(request.get_full_path())
-
-  # Verify if the page has changed since the previous request
-  lastmodifiedrequest = request.META.get('HTTP_IF_MODIFIED_SINCE', None)
-  try:
-    lastmodifiedresponse = reportclass.lastmodified().replace(microsecond=0)
-    lastmodifieduser = request.user.get_profile().lastmodified.replace(microsecond=0)
-    if lastmodifieduser and lastmodifieduser > lastmodifiedresponse:
-      # A change of user or user preferences must trigger recomputation
-      lastmodifiedresponse = lastmodifieduser
-    lastmodifiedresponse = (formatdate(timegm(lastmodifiedresponse.utctimetuple()))[:26] + 'GMT')
-    if lastmodifiedrequest and lastmodifiedrequest.startswith(lastmodifiedresponse):
-      # The report hasn't modified since the previous request
-      return HttpResponseNotModified()
-  except:
-    lastmodifiedresponse = None
 
   # Verify the user is authorirzed to view the report
   for perm in reportclass.permissions:
@@ -434,6 +412,7 @@ def view_report(request, entity=None, **args):
        'hasaddperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())),
        'haschangeperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_change_permission())),
        'request': request,
+       'object': entity, # TODO NOT SUFFICIENT
        'objectlist1': objectlist1,
        'objectlist2': objectlist2,
        'reportbucket': bucket,
@@ -458,11 +437,9 @@ def view_report(request, entity=None, **args):
   if 'extra_context' in args: context.update(args['extra_context'])
 
   # Render the view, optionally setting the last-modified http header
-  response = HttpResponse(
+  return HttpResponse(
     loader.render_to_string(reportclass.template, context, context_instance=RequestContext(request)),
     )
-  if lastmodifiedresponse: response['Last-Modified'] = lastmodifiedresponse
-  return response
 
 
 def _create_columnheader(req, cls, bucketlist):

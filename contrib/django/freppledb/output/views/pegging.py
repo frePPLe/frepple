@@ -74,7 +74,3 @@ class Report(ListReport):
       'filter': FilterBool(),
       }),
     )
-
-  @staticmethod
-  def lastmodified():
-    return Plan.objects.all()[0].lastmodified

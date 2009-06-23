@@ -1,4 +1,5 @@
 {% extends "admin/base_site_table.html" %}
+{% load i18n %}
 
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript">
@@ -18,6 +19,23 @@
 {% include "forecastcontext.html" %}
 {% include "customercontext.html" %}
 {% endblock %}
+
+{% block before_table %}
+{% ifequal hits 1 %}<div id="chart1div" style="z-index: 1000;">
+	  <p>&nbsp;</p>
+	  <p>{% blocktrans %}frePPLe needs Adobe Flash Player to display graphs. If you're unable to see 
+	  the chart here, it means that your browser does not seem to have the Flash Player 
+	  installed.<br/>
+	  You can downloaded it <a href="http://www.adobe.com/products/flashplayer/" target="_blank"><u>here</u></a> for free.{% endblocktrans %}</p>
+	</div>
+	<script language="javascript" type="text/javascript">
+	   var totalAvailable = document.viewport.getDimensions();
+	   var chart1 = new FusionCharts("/static/FCF_StackedColumn2D.swf", "sampleChart", totalAvailable.width, 350);
+	   chart1.addParam("wmode","transparent");
+	   chart1.setDataURL(escape("/forecastgraph/{{object}}/?reportbucket={{reportbucket}}&reportstart={{reportstart}}&reportend={{reportend}}"));	   	   
+	   chart1.render("chart1div");
+	</script>
+{% endifequal %}{% endblock %}
 
 {% block frozendata %}{% for j in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
@@ -48,3 +66,5 @@
 {% if forloop.last %}</tr>{% endif %}{% endfor %}
 {% endif %}
 {% endblock %}
+
+{% block pagination %}{% ifnotequal hits 1 %}{{ block.super }}{% endifnotequal %}{% endblock %}

@@ -199,7 +199,6 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
 {
   // Get the global lock.
   // After this command we are the only thread executing Python code.
-  //xxxPyGILState_STATE gstate = PyGILState_Ensure();
   PyThreadState *myThreadState = PyGILState_GetThisThreadState();
   if (!myThreadState) 
     throw RuntimeException("No Python thread state for this thread");
@@ -211,7 +210,6 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
   {
     // Release the global python lock
     PyEval_ReleaseLock();
-    //xxxPyGILState_Release(gstate);
     throw RuntimeException("Can't initialize Python interpreter");
   }
   PyObject *d = PyModule_GetDict(m);
@@ -219,7 +217,6 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
   {
     // Release the global python lock
     PyEval_ReleaseLock();
-    //xxxPyGILState_Release(gstate);
     throw RuntimeException("Can't initialize Python interpreter");
   }
 
@@ -231,7 +228,6 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
     // Print the error message
     PyErr_Print();
     // Release the global python lock
-    //xxxPyGILState_Release(gstate);
     PyEval_ReleaseLock();
     throw RuntimeException("Error executing Python command");
   }
@@ -239,7 +235,6 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
   if (Py_FlushLine()) PyErr_Clear();
 
   // Release the global python lock
-  //xxxPyGILState_Release(gstate);
   PyEval_ReleaseLock();
 }
 

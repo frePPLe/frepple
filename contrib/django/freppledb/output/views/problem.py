@@ -63,7 +63,3 @@ class Report(ListReport):
       'filter': FilterNumber(size=5, operator="lt"),
       }),
     )
-
-  @staticmethod
-  def lastmodified():
-    return Plan.objects.all()[0].lastmodified

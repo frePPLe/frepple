@@ -1,10 +1,28 @@
 {% extends "admin/base_site_table.html" %}
+{% load i18n %}
 
 {% block contextmenus %}
 {% include "buffercontext.html" %}
 {% include "itemcontext.html" %}
 {% include "locationcontext.html" %}
 {% endblock %}
+
+{% block before_table %}
+{% ifequal hits 1 %}<div id="chart1div" style="z-index: 1000;">
+	  <p>&nbsp;</p>
+	  <p>{% blocktrans %}frePPLe needs Adobe Flash Player to display graphs. If you're unable to see 
+	  the chart here, it means that your browser does not seem to have the Flash Player 
+	  installed.<br/>
+	  You can downloaded it <a href="http://www.adobe.com/products/flashplayer/" target="_blank"><u>here</u></a> for free.{% endblocktrans %}</p>
+	</div>
+	<script language="javascript" type="text/javascript">
+	   var totalAvailable = document.viewport.getDimensions();
+	   var chart1 = new FusionCharts("/static/FCF_MSColumn2DLineDY.swf", "sampleChart", totalAvailable.width, 350);
+	   chart1.addParam("wmode","transparent");
+	   chart1.setDataURL(escape("/buffergraph/{{object}}/?reportbucket={{reportbucket}}&reportstart={{reportstart}}&reportend={{reportend}}"));	   	   
+	   chart1.render("chart1div");
+	</script>
+{% endifequal %}{% endblock %}
 
 {% block frozendata %}
 {% for j in objectlist1 %}
@@ -25,3 +43,5 @@
 {% if j.consumed or j.produced %}<a href="/flowplan/?thebuffer={{j.buffer|urlencode}}&amp;o=4a&amp;flowdate__gte={{j.startdate}}&amp;flowdate__lt={{j.enddate}}">{{j.endoh|floatformat:1}}</a>{% else %}{{j.endoh|floatformat:1}}{% endif %}</td>
 {% if forloop.last %}</tr>{% endif %}{% endfor %}
 {% endblock %}
+
+{% block pagination %}{% ifnotequal hits 1 %}{{ block.super }}{% endifnotequal %}{% endblock %}

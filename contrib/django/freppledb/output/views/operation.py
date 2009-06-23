@@ -22,8 +22,9 @@
 
 from django.db import connection
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.admin.views.decorators import staff_member_required
 
-from input.models import Operation, Plan
+from input.models import Operation
 from output.models import OperationPlan
 from common.db import *
 from common.report import *
@@ -58,9 +59,7 @@ class OverviewReport(TableReport):
     ('bucket',{'title': _('bucket')}),
     )
 
-  @staticmethod
-  def lastmodified():
-    return Plan.objects.all()[0].lastmodified
+  javascript_imports = ['/static/FusionCharts.js',]
 
   @staticmethod
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
@@ -167,7 +166,22 @@ class DetailReport(ListReport):
       }),
     ('owner', {'title': _('owner')}),
     )
-
-  @staticmethod
-  def lastmodified():
-    return Plan.objects.all()[0].lastmodified
+    
+    
+@staff_member_required
+def GraphData(request, entity):
+  basequery = Operation.objects.filter(pk__exact=entity)
+  (bucket,start,end,bucketlist) = getBuckets(request)
+  total_start = []
+  total_end = []
+  for x in OverviewReport.resultlist2(basequery, bucket, start, end):
+    total_start.append(x['total_start'])
+    total_end.append(x['total_end'])
+  context = { 
+    'buckets': bucketlist, 
+    'total_end': total_end, 
+    'total_start': total_start, 
+    }
+  return HttpResponse(
+    loader.render_to_string("output/operation.xml", context, context_instance=RequestContext(request)),
+    )

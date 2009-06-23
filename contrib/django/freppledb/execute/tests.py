@@ -23,13 +23,14 @@
 import os
 
 from django.core import management
-from django.test import TestCase
+from django.test import TransactionTestCase
+from django.test.testcases import restore_transaction_methods, disable_transaction_methods
 from django.conf import settings
 
 import output.models
 import input.models
 
-class execute_from_user_interface(TestCase):
+class execute_from_user_interface(TransactionTestCase):
 
   def setUp(self):
     # Login
@@ -72,7 +73,7 @@ class execute_from_user_interface(TestCase):
     self.failUnlessEqual(output.models.OperationPlan.objects.count(),135)
 
 
-class execute_with_commands(TestCase):
+class execute_with_commands(TransactionTestCase):
 
   def test_run_cmd(self):
     # Empty the database tables
@@ -95,7 +96,9 @@ class execute_with_commands(TestCase):
     except: pass
     try: os.environ['FREPPLE_DATABASE_USER'] = settings.TEST_DATABASE_USER
     except: pass
+    print "test case before checking", input.models.Plan.objects.all()[0].lastmodified, output.models.Problem.objects.count()
     management.call_command('frepple_run', type='7')
+    print "test case checking", input.models.Plan.objects.all()[0].lastmodified, output.models.Problem.objects.count()
     self.failIfEqual(output.models.Problem.objects.count(),0)
     self.failIfEqual(output.models.FlowPlan.objects.count(),0)
     self.failIfEqual(output.models.LoadPlan.objects.count(),0)

@@ -30,7 +30,7 @@
 	</div>
 	<script language="javascript" type="text/javascript">
 	   var totalAvailable = document.viewport.getDimensions();
-	   var chart1 = new FusionCharts("/static/FCF_StackedColumn2D.swf", "sampleChart", totalAvailable.width, 350);
+	   var chart1 = new FusionCharts("/static/FCF_MSColumn2D.swf", "sampleChart", totalAvailable.width, 350);
 	   chart1.addParam("wmode","transparent");
 	   chart1.setDataURL(escape("/forecastgraph/{{object}}/?reportbucket={{reportbucket}}&reportstart={{reportstart}}&reportend={{reportend}}"));	   	   
 	   chart1.render("chart1div");

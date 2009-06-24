@@ -6,12 +6,16 @@
 {% for j in buckets %}<category name='{{j.name}}' />
 {% endfor %}
 </categories>
-<dataset seriesName='{% trans "orders" %}' color='AFD8F8' showValues='0'>
-{% for j in orders %}<set value='{{j}}' />
+<dataset seriesName='{% trans "total forecast" %}'  color='F6BD0F' showValues='0'>
+{% for j in total %}<set value='{{j}}' />
 {% endfor %}
 </dataset>
-<dataset seriesName='{% trans "net forecast" %}'  color='F6BD0F' showValues='0'>
-{% for j in net %}<set value='{{j}}' />
+<dataset seriesName='{% trans "planned net forecast" %}'  color='8BBA00' showValues='0'>
+{% for j in planned %}<set value='{{j}}' />
+{% endfor %}
+</dataset>
+<dataset seriesName='{% trans "orders" %}' color='AFD8F8' showValues='0'>
+{% for j in orders %}<set value='{{j}}' />
 {% endfor %}
 </dataset>
 </graph>

@@ -96,9 +96,7 @@ class execute_with_commands(TransactionTestCase):
     except: pass
     try: os.environ['FREPPLE_DATABASE_USER'] = settings.TEST_DATABASE_USER
     except: pass
-    print "test case before checking", input.models.Plan.objects.all()[0].lastmodified, output.models.Problem.objects.count()
     management.call_command('frepple_run', type='7')
-    print "test case checking", input.models.Plan.objects.all()[0].lastmodified, output.models.Problem.objects.count()
     self.failIfEqual(output.models.Problem.objects.count(),0)
     self.failIfEqual(output.models.FlowPlan.objects.count(),0)
     self.failIfEqual(output.models.LoadPlan.objects.count(),0)

@@ -375,8 +375,9 @@ def view_report(request, entity=None, **args):
   page = int(request.GET.get('p', '1'))
   paginator = QuerySetPaginator(counter, reportclass.paginate_by)
   if paginator.page(page).start_index():
-    counter = counter[paginator.page(page).start_index()-1:paginator.page(page).end_index()]
-
+    counter = counter[paginator.page(page).start_index()-1:paginator.page(page).end_index()]    
+  hits = paginator.count
+    
   # Calculate the content of the page
   if hasattr(reportclass,'resultlist1'):
     # SQL override provided
@@ -412,14 +413,14 @@ def view_report(request, entity=None, **args):
        'hasaddperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())),
        'haschangeperm': reportclass.editable and model and request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_change_permission())),
        'request': request,
-       'object': entity, # TODO NOT SUFFICIENT
+       'object': entity or (hits == 1 and counter[0].pk) or None,
        'objectlist1': objectlist1,
        'objectlist2': objectlist2,
        'reportbucket': bucket,
        'reportstart': start,
        'reportend': end,
        'paginator': paginator,
-       'hits' : paginator.count,
+       'hits' : hits,
        'fullhits': fullhits,
        'is_popup': is_popup,
        'base_request_path': base_request_path,

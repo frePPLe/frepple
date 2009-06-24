@@ -257,24 +257,7 @@ Index: django/core/management/__init__.py
 +                                       for name in find_commands(app_name)]))
              except ImportError:
                  pass # No management module - ignore this app
- 
-Index: django/db/backends/sqlite3/base.py
-===================================================================
---- django/db/backends/sqlite3/base.py	(revision 10673)
-+++ django/db/backends/sqlite3/base.py	(working copy)
-@@ -90,7 +90,11 @@
-         # NB: The generated SQL below is specific to SQLite
-         # Note: The DELETE FROM... SQL generated below works for SQLite databases
-         # because constraints don't exist
--        sql = ['%s %s %s;' % \
-+        sql = ['%s %s = %s' % \
-+                (style.SQL_KEYWORD('PRAGMA'),
-+                 style.SQL_KEYWORD('SYNCHRONOUS'),
-+                 style.SQL_KEYWORD('OFF'))] + \
-+               ['%s %s %s;' % \
-                 (style.SQL_KEYWORD('DELETE'),
-                  style.SQL_KEYWORD('FROM'),
-                  style.SQL_FIELD(self.quote_name(table))
+
 Index: django/db/models/sql/query.py
 ===================================================================
 --- django/db/models/sql/query.py	(revision 10673)

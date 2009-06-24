@@ -61,7 +61,7 @@ class OutputTest(TestCase):
   def test_output_demand(self):
     response = self.client.get('/demand/')
     self.failUnlessEqual(response.status_code, 200)
-    self.assertContains(response, '1 items')
+    self.assertContains(response, 'Demand Report')
 
   def test_output_demand_csvlist(self):
     response = self.client.get('/demand/', {'reporttype':'csvlist'})

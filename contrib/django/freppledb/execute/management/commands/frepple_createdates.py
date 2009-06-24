@@ -83,10 +83,6 @@ class Command(BaseCommand):
       log( category='CREATE', theuser=user,
         message = _('Start initializing dates')).save()
 
-      # Performance improvement for sqlite during the bulky creation transactions
-      if settings.DATABASE_ENGINE == 'sqlite3':
-        connection.cursor().execute('PRAGMA synchronous=OFF')
-
       # Delete the previous set of records
       connection.cursor().execute('DELETE FROM dates')
       transaction.commit()

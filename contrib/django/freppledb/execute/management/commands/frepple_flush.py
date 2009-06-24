@@ -70,10 +70,6 @@ class Command(BaseCommand):
         message=_('Start erasing the database')).save()
       cursor = connection.cursor()
 
-      # SQLite specials
-      #if settings.DATABASE_ENGINE == 'sqlite3':
-      #  cursor.execute('PRAGMA synchronous = OFF')  # Performance improvement
-
       # Delete all records from the tables
       sql_list = connection.ops.sql_flush(no_style(), [
         'out_problem','out_flowplan','out_loadplan','out_demandpegging',

@@ -153,10 +153,6 @@ class Command(BaseCommand):
              procure_lt)
         ).save()
 
-      # Performance improvement for sqlite during the bulky creation transactions
-      if settings.DATABASE_ENGINE == 'sqlite3':
-        connection.cursor().execute('PRAGMA synchronous=OFF')
-
       # Plan start date
       if verbosity>0: print "Updating plan..."
       try:
@@ -388,9 +384,6 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40):
   tmp_debug = settings.DEBUG
   settings.DEBUG = False
 
-  # Performance improvement for sqlite during the bulky creation transactions
-  if settings.DATABASE_ENGINE == 'sqlite3':
-    connection.cursor().execute('PRAGMA synchronous=OFF')
   first_date = Dates.objects.all()[0].day
   current_date = Plan.objects.all()[0].currentdate
   limit = (current_date + timedelta(min_day_horizon)).date()

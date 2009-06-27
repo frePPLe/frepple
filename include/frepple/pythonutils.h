@@ -343,6 +343,17 @@ class PythonObject : public DataElement
     /** Extract an unsigned long from the Python object. */
     unsigned long getUnsignedLong() const
     {
+      if (obj == Py_None) return 0;
+      if (PyString_Check(obj))
+      {
+        PyObject* t = PyFloat_FromString(obj, NULL);
+        if (!t) throw DataException("Invalid number");
+        double x = PyFloat_AS_DOUBLE(t);
+        Py_DECREF(t);
+        if (x < ULONG_MIN || x > ULONG_MIN)
+          throw DataException("Invalid number");
+        return static_cast<unsigned long>(x);
+      }
       return PyLong_AsUnsignedLong(obj);
     }
 
@@ -350,16 +361,34 @@ class PythonObject : public DataElement
       * frePPLe date. */
     DECLARE_EXPORT Date getDate() const;
 
-    /** Convert a Python number into a C++ double. */
+    /** Convert a Python number or string into a C++ double. */
     inline double getDouble() const
     {
       if (obj == Py_None) return 0;
-      return PyFloat_AsDouble(obj);
+	    if (PyString_Check(obj))
+      {
+        PyObject* t = PyFloat_FromString(obj, NULL);
+        if (!t) throw DataException("Invalid number");
+        double x = PyFloat_AS_DOUBLE(t);
+        Py_DECREF(t);
+        return x;
+      }
+	    return PyFloat_AsDouble(obj);
     }
 
-    /** Convert a Python number into a C++ integer. */
+    /** Convert a Python number or string into a C++ integer. */
     inline int getInt() const
     {
+      if (PyString_Check(obj))
+      {
+        PyObject* t = PyFloat_FromString(obj, NULL);
+        if (!t) throw DataException("Invalid number");
+        double x = PyFloat_AS_DOUBLE(t);
+        Py_DECREF(t);
+        if (x < INT_MIN || x > INT_MAX)
+          throw DataException("Invalid number");
+        return static_cast<int>(x);
+      }
       int result = PyInt_AsLong(obj);
 	    if (result == -1 && PyErr_Occurred())
 		    throw DataException("Invalid number");
@@ -369,6 +398,16 @@ class PythonObject : public DataElement
     /** Convert a Python number into a C++ long. */
     inline long getLong() const
     {
+      if (PyString_Check(obj))
+      {
+        PyObject* t = PyFloat_FromString(obj, NULL);
+        if (!t) throw DataException("Invalid number");
+        double x = PyFloat_AS_DOUBLE(t);
+        Py_DECREF(t);
+        if (x < LONG_MIN || x > LONG_MIN)
+          throw DataException("Invalid number");
+        return static_cast<long>(x);
+      }
       int result = PyInt_AsLong(obj);
 	    if (result == -1 && PyErr_Occurred())
 		    throw DataException("Invalid number");
@@ -383,10 +422,20 @@ class PythonObject : public DataElement
 
     /** Convert a Python number as a number of seconds into a frePPLe
       * TimePeriod.<br>
-	  * A TimePeriod is represented as a number of seconds in Python.
-	  */
+	    * A TimePeriod is represented as a number of seconds in Python.
+	    */
     TimePeriod getTimeperiod() const
     {
+      if (PyString_Check(obj))
+      {
+        if (PyUnicode_Check(obj))
+        {
+          // Replace the unicode object with a string encoded in the correct locale
+          const_cast<PyObject*&>(obj) =
+            PyUnicode_AsEncodedString(obj, PythonInterpreter::getPythonEncoding(), "ignore");
+        }
+        return TimePeriod(PyString_AsString(PyObject_Str(obj)));
+      }
       int result = PyInt_AsLong(obj);
 	    if (result == -1 && PyErr_Occurred())
 		    throw DataException("Invalid number");

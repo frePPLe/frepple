@@ -130,23 +130,24 @@ else:
         res.append('<customers>\n')
         for f in frepple.customers(): res.append(f.toXML())        
         res.append('</customers>\n')
+        res.append('<calendars>\n')
+        for f in frepple.calendars(): res.append(f.toXML())        
+        res.append('</calendars>\n')
         res.append('<operations>\n')
         for f in frepple.operations(): res.append(f.toXML())        
         res.append('</operations>\n')
-        res.append('<buffers>\n')
-        for f in frepple.buffers(): res.append(f.toXML())        
-        res.append('</buffers>\n')
         res.append('<items>\n')
         for f in frepple.items(): res.append(f.toXML())        
         res.append('</items>\n')
-        res.append('<flows>\n')
-        for b in frepple.buffers():      
-          for f in b.flows: res.append(f.toXML())        
-        res.append('</flows>\n')
-        res.append('<loads>\n')
-        for b in frepple.resources():      
-          for f in b.loads: res.append(f.toXML())        
-        res.append('</loads>\n')
+        res.append('<buffers>\n')
+        for f in frepple.buffers(): res.append(f.toXML())        
+        res.append('</buffers>\n')
+        res.append('<demands>\n')
+        for f in frepple.demands(): res.append(f.toXML())        
+        res.append('</demands>\n')
+        res.append('<resources>\n')
+        for f in frepple.resources(): res.append(f.toXML())        
+        res.append('</resources>\n')
         res.append('<problems>\n')
         for f in frepple.problems(): res.append(f.toXML())        
         res.append('</problems>\n')
@@ -168,166 +169,340 @@ else:
     # Use this decorator function to decorate a generator function. 
     def simpleXMLdata(gen):
       @cherrypy.expose
-      def decorator(self, *__args,**__kw):
+      def decorator(self, *__args, **__kw):
         cherrypy.response.headers['server'] = 'frepple/%s' % frepple.version
-        if cherrypy.request.method != 'GET': 
+        if cherrypy.request.method == 'GET': 
+          # Get requests
+          cherrypy.response.headers['content-type'] = 'application/xml'
+          res = []
+          for i in self.top: res.append(i)
+          for i in gen(self, *__args): res.append(i)
+          for i in self.bottom: res.append(i)
+          return "".join(res)
+        elif cherrypy.request.method  == 'POST' or cherrypy.request.method == 'PUT': 
+          # Post and put requests
+          cherrypy.response.headers['content-type'] = 'application/xml'
+          res = []
+          for i in gen(self, *__args): res.append(i)
+          return "".join(res)
+        else:
+          # Other HTTP verbs (such as head, delete, ...) are not supported
           raise cherrypy.HTTPError(404,"Not found")
-        cherrypy.response.headers['content-type'] = 'application/xml'
-        res = []
-        for i in self.top: res.append(i)
-        for i in gen(__args,__kw): res.append(i)
-        for i in self.bottom: res.append(i)
-        return "".join(res)
       return decorator
       
     # Interface for locations handling URLs of the format:
     #    GET /location/
     #    GET /location/<name>/
+    #    POST /location/<name>/?<parameter>=<value>
     @simpleXMLdata
     def location(self, name=None):
-      yield '<locations>\n'
-      if name:
-        # Return a single location
+      if cherrypy.request.method == 'GET':
+        # GET information
+        yield '<locations>\n'
+        if name:
+          # Return a single location
+          try:
+            yield frepple.location(name=name,action="C").toXML()
+          except:
+            # Location not found
+            raise cherrypy.HTTPError(404,"Entity not found")
+        else:
+          # Return all locations
+          for f in frepple.locations(): yield f.toXML()        
+        yield '</locations>\n'          
+      else:
+        # Create or update a location
+        if name == None: raise cherrypy.HTTPError(404,"Entity not found")
         try:
-          yield frepple.location(name=name,action="C").toXML()
+          loc = frepple.location(name=name)
         except:
           # Location not found
           raise cherrypy.HTTPError(404,"Entity not found")
-      else:
-        # Return all locations
-        for f in frepple.locations(): yield f.toXML()        
-      yield '</locations>\n'    
+        ok = True
+        for i in cherrypy.request.params:
+          try:
+            setattr(loc, i, cherrypy.request.params[i])
+          except Exception, e:
+            yield "Error: %s\n" % e
+            ok = False
+        if ok: yield "OK\n"
         
     # Interface for buffers handling URLs of the format:
     #    GET /buffer/
     #    GET /buffer/<name>/
     @simpleXMLdata
     def buffer(self, name=None):
-      yield '<buffers>\n'
-      if name:
-        # Return a single buffer
+      if cherrypy.request.method == 'GET':
+        yield '<buffers>\n'
+        if name:
+          # Return a single buffer
+          try:
+            yield frepple.buffer(name=name,action="C").toXML()
+          except:
+            # Buffer not found
+            raise cherrypy.HTTPError(404,"Entity not found")
+        else:
+          # Return all buffers
+          for f in frepple.locations(): yield f.toXML()
+        yield '</buffers>\n'
+      else:
+        # Create or update a buffer
+        if name == None: raise cherrypy.HTTPError(404,"Entity not found")
         try:
-          yield frepple.buffer(name=name,action="C").toXML()
+          loc = frepple.buffer(name=name)
         except:
           # Buffer not found
           raise cherrypy.HTTPError(404,"Entity not found")
-      else:
-        # Return all buffers
-        for f in frepple.locations(): yield f.toXML()
-      yield '</buffers>\n'
+        ok = True
+        for i in cherrypy.request.params:
+          try:
+            setattr(loc, i, cherrypy.request.params[i])
+          except Exception, e:
+            yield "Error: %s\n" % e
+            ok = False
+        if ok: yield "OK\n"
         
     # Interface for items handling URLs of the format:
     #    GET /item/
     #    GET /item/<name>/
     @simpleXMLdata
     def item(self, name=None):
-      yield '<items>\n'
-      if name:
-        # Return a single item
+      if cherrypy.request.method == 'GET':
+        yield '<items>\n'
+        if name:
+          # Return a single item
+          try:
+            yield frepple.item(name=name,action="C").toXML()
+          except:
+            # Item not found
+            raise cherrypy.HTTPError(404,"Entity not found")
+        else:
+          # Return all items
+          for f in frepple.items(): yield f.toXML()
+        yield '</items>\n'
+      else:
+        # Create or update an item
+        if name == None: raise cherrypy.HTTPError(404,"Entity not found")
         try:
-          yield frepple.item(name=name,action="C").toXML()
+          loc = frepple.item(name=name)
         except:
           # Item not found
           raise cherrypy.HTTPError(404,"Entity not found")
+        ok = True
+        for i in cherrypy.request.params:
+          try:
+            setattr(loc, i, cherrypy.request.params[i])
+          except Exception, e:
+            yield "Error: %s\n" % e
+            ok = False
+        if ok: yield "OK\n"
+          
+    # Interface for operations handling URLs of the format:
+    #    GET /operation/
+    #    GET /operation/<name>/
+    @simpleXMLdata
+    def operation(self, name=None):
+      if cherrypy.request.method == 'GET':
+        yield '<operations>\n'
+        if name:
+          # Return a single operation
+          try:
+            yield frepple.operation(name=name,action="C").toXML()
+          except:
+            # Item not found
+            raise cherrypy.HTTPError(404,"Entity not found")
+        else:
+          # Return all items
+          for f in frepple.operations(): yield f.toXML()
+        yield '</operations>\n'
       else:
-        # Return all items
-        for f in frepple.items(): yield f.toXML()
-      yield '</items>\n'
+        # Create or update an operation
+        if name == None: raise cherrypy.HTTPError(404,"Entity not found")
+        try:
+          loc = frepple.operation(name=name)
+        except:
+          # Operation not found
+          raise cherrypy.HTTPError(404,"Entity not found")
+        ok = True
+        for i in cherrypy.request.params:
+          try:
+            setattr(loc, i, cherrypy.request.params[i])
+          except Exception, e:
+            yield "Error: %s\n" % e
+            ok = False
+        if ok: yield "OK\n"
         
     # Interface for demands handling URLs of the format:
     #    GET /demand/
     #    GET /demand/<name>/
     @simpleXMLdata
     def demand(self, name=None):
-      yield '<demands>\n'
-      if name:
-        # Return a single demand
+      if cherrypy.request.method == 'GET':
+        yield '<demands>\n'
+        if name:
+          # Return a single demand
+          try:
+            yield frepple.demand(name=name,action="C").toXML()
+          except:
+            # Demand not found
+            raise cherrypy.HTTPError(404,"Entity not found")
+        else:
+          # Return all locations
+          for f in frepple.demands(): yield f.toXML()
+        yield '</demands>\n'
+      else:
+        # Create or update a demand
+        if name == None: raise cherrypy.HTTPError(404,"Entity not found")
         try:
-          yield frepple.demand(name=name,action="C").toXML()
+          loc = frepple.demand(name=name)
         except:
           # Demand not found
           raise cherrypy.HTTPError(404,"Entity not found")
-      else:
-        # Return all locations
-        for f in frepple.demands(): yield f.toXML()
-      yield '</demands>\n'
+        ok = True
+        for i in cherrypy.request.params:
+          try:
+            setattr(loc, i, cherrypy.request.params[i])
+          except Exception, e:
+            yield "Error: %s\n" % e
+            ok = False
+        if ok: yield "OK\n"
         
     # Interface for resources handling URLs of the format:
     #    GET /resource/
     #    GET /resource/<name>/
     @simpleXMLdata
     def resource(self, name=None):
-      yield '<resources>\n'
-      if name:
-        # Return a single resource
+      if cherrypy.request.method == 'GET':
+        yield '<resources>\n'
+        if name:
+          # Return a single resource
+          try:
+            yield frepple.resource(name=name,action="C").toXML()
+          except:
+            # Resource not found
+            raise cherrypy.HTTPError(404,"Entity not found")
+        else:
+          # Return all resources
+          for f in frepple.resources(): yield f.toXML()
+        yield '</resources>\n'
+      else:
+        # Create or update a resource
+        if name == None: raise cherrypy.HTTPError(404,"Entity not found")
         try:
-          yield frepple.resource(name=name,action="C").toXML()
+          loc = frepple.resource(name=name)
         except:
           # Resource not found
           raise cherrypy.HTTPError(404,"Entity not found")
-      else:
-        # Return all resources
-        for f in frepple.resources(): yield f.toXML()
-      yield '</resources>\n'
+        ok = True
+        for i in cherrypy.request.params:
+          try:
+            setattr(loc, i, cherrypy.request.params[i])
+          except Exception, e:
+            yield "Error: %s\n" % e
+            ok = False
+        if ok: yield "OK\n"
         
     # Interface for calendars handling URLs of the format:
     #    GET /calendar/
     #    GET /calendar/<name>/
     @simpleXMLdata
     def calendar(self, name=None):
-      yield '<calendars>\n'
-      if name:
-        # Return a single calendar
+      if cherrypy.request.method == 'GET':
+        yield '<calendars>\n'
+        if name:
+          # Return a single calendar
+          try:
+            yield frepple.calendar(name=name,action="C").toXML()
+          except:
+            # Calendar not found
+            raise cherrypy.HTTPError(404,"Entity not found")
+        else:
+          # Return all calendars
+          for f in frepple.calendars(): yield f.toXML()
+        yield '</calendars>\n'
+      else:
+        # Create or update a calendar
+        if name == None: raise cherrypy.HTTPError(404,"Entity not found")
         try:
-          yield frepple.calendar(name=name,action="C").toXML()
+          loc = frepple.calendar(name=name)
         except:
           # Calendar not found
           raise cherrypy.HTTPError(404,"Entity not found")
-      else:
-        # Return all calendars
-        for f in frepple.calendars(): yield f.toXML()
-      yield '</calendars>\n'
+        ok = True
+        for i in cherrypy.request.params:
+          try:
+            setattr(loc, i, cherrypy.request.params[i])
+          except Exception, e:
+            yield "Error: %s\n" % e
+            ok = False
+        if ok: yield "OK\n"
         
     # Interface for customers handling URLs of the format:
     #    GET /customer/
     #    GET /customer/<name>/
     @simpleXMLdata
     def customer(self, name=None):
-      yield '<customers>\n'
-      if name:
-        # Return a single customer
+      if cherrypy.request.method == 'GET':
+        yield '<customers>\n'
+        if name:
+          # Return a single customer
+          try:
+            yield frepple.customer(name=name,action="C").toXML()
+          except:
+            # Customer not found
+            raise cherrypy.HTTPError(404,"Entity not found")
+        else:
+          # Return all customers
+          for f in frepple.customers(): yield f.toXML()
+        yield '</customers>\n'
+      else:
+        # Create or update a customer
+        if name == None: raise cherrypy.HTTPError(404,"Entity not found")
         try:
-          yield frepple.customer(name=name,action="C").toXML()
+          loc = frepple.customer(name=name)
         except:
           # Customer not found
           raise cherrypy.HTTPError(404,"Entity not found")
-      else:
-        # Return all customers
-        for f in frepple.customers(): yield f.toXML()
-      yield '</customers>\n'
+        ok = True
+        for i in cherrypy.request.params:
+          try:
+            setattr(loc, i, cherrypy.request.params[i])
+          except Exception, e:
+            yield "Error: %s\n" % e
+            ok = False
+        if ok: yield "OK\n"
         
     # Interface for flows handling URLs of the format:
     #    GET /flow/
     @simpleXMLdata
     def flow(self):
-      yield '<flows>\n'
-      for b in frepple.buffers():      
-        for f in b.flows: yield f.toXML()
-      yield '</flows>\n'
+      if cherrypy.request.method == 'GET':
+        yield '<flows>\n'
+        for b in frepple.buffers():      
+          for f in b.flows: yield f.toXML()
+        yield '</flows>\n'
+      else:
+        raise cherrypy.HTTPError(404,"Not supported")
         
     # Interface for loads handling URLs of the format:
     #    GET /load/
     @simpleXMLdata
     def load(self):
-      yield '<loads>\n'
-      for b in frepple.resources():      
-        for f in b.loads: yield f.toXML()
-      yield '</loads>\n'
+      if cherrypy.request.method == 'GET':
+        yield '<loads>\n'
+        for b in frepple.resources():      
+          for f in b.loads: yield f.toXML()
+        yield '</loads>\n'
+      else:
+        raise cherrypy.HTTPError(404,"Not supported")
         
     # Interface for problems handling URLs of the format:
     #    GET /problem/
     @simpleXMLdata
     def problem(self):
-      yield '<problems>\n'
-      for f in frepple.problems(): yield f.toXML()
-      yield '</problems>\n'
+      if cherrypy.request.method == 'GET':
+        yield '<problems>\n'
+        for f in frepple.problems(): yield f.toXML()
+        yield '</problems>\n'
+      else:
+        raise cherrypy.HTTPError(404,"Not supported")

@@ -408,9 +408,19 @@ DECLARE_EXPORT Date PythonObject::getDate() const
       PyDateTime_GET_MONTH(obj),
       PyDateTime_GET_DAY(obj)
       );
+  else if (PyString_Check(obj))
+  {
+    if (PyUnicode_Check(obj))
+    {
+      // Replace the unicode object with a string encoded in the correct locale
+      const_cast<PyObject*&>(obj) =
+        PyUnicode_AsEncodedString(obj, PythonInterpreter::getPythonEncoding(), "ignore");
+    }
+    return Date(PyString_AsString(PyObject_Str(obj)));
+  }
   else
    throw DataException(
-    "Invalid data type. Expecting datetime.date or datetime.datetime"
+    "Invalid data type. Expecting datetime.date, datetime.datetime or string"
     );
 }
 

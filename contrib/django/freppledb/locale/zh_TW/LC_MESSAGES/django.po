@@ -23,9 +23,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-23 11:01+0200\n"
-"PO-Revision-Date: 2009-06-23 22:39+0100\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2009-06-28 12:50+0200\n"
+"PO-Revision-Date: 2009-06-28 12:56+0100\n"
+"Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -223,76 +223,76 @@ msgstr "結束標準"
 msgid "dates"
 msgstr "日期"
 
-#: common/report.py:233
+#: common/report.py:234
 msgid "Invalid upload request"
 msgstr "無效的上傳請求"
 
-#: common/report.py:236
+#: common/report.py:237
 msgid "Not authorized"
 msgstr "未授權"
 
-#: common/report.py:240
+#: common/report.py:241
 msgid "File upload aborted with errors"
 msgstr "上傳檔案失敗的錯誤訊息"
 
-#: common/report.py:243
+#: common/report.py:244
 msgid "Uploaded file processed with warnings"
 msgstr "上傳檔案有警告訊息"
 
-#: common/report.py:246
+#: common/report.py:247
 msgid "Uploaded data successfully"
 msgstr "上傳資料成功"
 
-#: common/report.py:252
+#: common/report.py:253
 msgid "Permission denied"
 msgstr "權限不足"
 
-#: common/report.py:431
+#: common/report.py:433
 msgid "for"
 msgstr "for"
 
 # Translation included with django
-#: common/report.py:583
-#: common/report.py:586
-#: common/report.py:587
-#: common/report.py:646
-#: common/report.py:658
+#: common/report.py:585
+#: common/report.py:588
+#: common/report.py:589
+#: common/report.py:648
+#: common/report.py:660
 msgid "title"
 msgstr ""
 
-#: common/report.py:589
+#: common/report.py:591
 msgid "data field"
 msgstr "資料欄位"
 
 # Translation included with django
-#: common/report.py:957
+#: common/report.py:959
 msgid "All"
 msgstr ""
 
-#: common/report.py:976
+#: common/report.py:978
 msgid "False"
 msgstr "偽"
 
-#: common/report.py:976
+#: common/report.py:978
 msgid "True"
 msgstr "真"
 
-#: common/report.py:1017
+#: common/report.py:1022
 #, python-format
 msgid "Incorrect field %(column)s"
 msgstr "錯誤欄位 %(column)s"
 
-#: common/report.py:1023
+#: common/report.py:1028
 #, python-format
 msgid "Missing primary key field %(key)s"
 msgstr "錯誤的主鍵欄位 %(key)s"
 
-#: common/report.py:1073
+#: common/report.py:1078
 #, python-format
 msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
 msgstr "第%(rownum)s列第%(field)s欄：%(data)s：%(message)s"
 
-#: common/report.py:1081
+#: common/report.py:1086
 #, python-format
 msgid "Exception during upload: %(message)s"
 msgstr "上傳時發生例外： %(message)s"
@@ -456,11 +456,11 @@ msgstr "命令紀錄"
 msgid "Start initializing dates"
 msgstr "啟動初始化日期"
 
-#: execute/management/commands/frepple_createdates.py:126
+#: execute/management/commands/frepple_createdates.py:122
 msgid "Finished initializing dates"
 msgstr "完成初始化日期"
 
-#: execute/management/commands/frepple_createdates.py:131
+#: execute/management/commands/frepple_createdates.py:127
 msgid "Failure initializing dates"
 msgstr "初始化日期失敗"
 
@@ -468,11 +468,11 @@ msgstr "初始化日期失敗"
 msgid "Start creating sample model with parameters"
 msgstr "啟動建立帶參數之樣本模式"
 
-#: execute/management/commands/frepple_createmodel.py:357
+#: execute/management/commands/frepple_createmodel.py:353
 msgid "Finished creating sample model"
 msgstr "完成建立樣本模式"
 
-#: execute/management/commands/frepple_createmodel.py:362
+#: execute/management/commands/frepple_createmodel.py:358
 msgid "Failure creating sample model"
 msgstr "建立樣本模式失敗"
 
@@ -480,11 +480,11 @@ msgstr "建立樣本模式失敗"
 msgid "Start erasing the database"
 msgstr "開始清除資料庫"
 
-#: execute/management/commands/frepple_flush.py:98
+#: execute/management/commands/frepple_flush.py:94
 msgid "Finished erasing the database"
 msgstr "結束清除資料庫"
 
-#: execute/management/commands/frepple_flush.py:101
+#: execute/management/commands/frepple_flush.py:97
 msgid "Failed erasing the database"
 msgstr "資料庫清除失敗"
 
@@ -1481,13 +1481,12 @@ msgstr "需求報告"
 
 #: output/views/demand.py:49
 #: output/views/forecast.py:57
-#: templates/output/forecast.xml:13
 msgid "net forecast"
 msgstr "net forecast"
 
 #: output/views/demand.py:50
 #: output/views/forecast.py:56
-#: templates/output/forecast.xml:9
+#: templates/output/forecast.xml:17
 msgid "orders"
 msgstr "orders"
 
@@ -1515,10 +1514,12 @@ msgid "Forecast Report"
 msgstr "預測報告"
 
 #: output/views/forecast.py:55
+#: templates/output/forecast.xml:9
 msgid "total forecast"
 msgstr "total forecast"
 
 #: output/views/forecast.py:58
+#: templates/output/forecast.xml:13
 msgid "planned net forecast"
 msgstr "planned net forecast"
 
@@ -1633,6 +1634,7 @@ msgid "Where Used"
 msgstr "哪裡使用"
 
 #: templates/buffercontext.html:6
+#: templates/demandcontext.html:4
 #: templates/forecastcontext.html:5
 #: templates/itemcontext.html:6
 #: templates/operationcontext.html:6
@@ -1652,14 +1654,13 @@ msgstr "顧客"
 msgid "Demand"
 msgstr "需求"
 
-#: templates/demandcontext.html:4
-#: templates/forecastcontext.html:4
-msgid "Pegging"
-msgstr "Pegging"
-
 #: templates/forecastcontext.html:3
 msgid "Forecast"
 msgstr "預測"
+
+#: templates/forecastcontext.html:4
+msgid "Pegging"
+msgstr "Pegging"
 
 #: templates/itemcontext.html:3
 msgid "Item"
@@ -1852,6 +1853,7 @@ msgid ""
 "Available datasets: <select name=\"datafile\" id=\"entity\">\n"
 "<option value=\"-\" selected=\"selected\">-</option>\n"
 "<option value=\"small_demo\">Small demo dataset</option>\n"
+"<option value=\"jobshop\">Jobshop</option>\n"
 "<option value=\"dates\">Dates</option>\n"
 "<option value=\"unicode_test\">Unicode test</option>\n"
 "</select>\n"
@@ -1863,17 +1865,18 @@ msgstr ""
 "可用資料集：<select name=\"datafile\" id=\"entity\">\n"
 "<option value=\"-\" selected=\"selected\">-</option>\n"
 "<option value=\"small_demo\">Small demo dataset</option>\n"
+"<option value=\"jobshop\">Jobshop</option>\n"
 "<option value=\"dates\">Dates</option>\n"
 "<option value=\"unicode_test\">Unicode test</option>\n"
 "</select>\n"
 "</td>\n"
 "<td><input id=\"load\" type=\"submit\" value=\"載入\"/></td>"
 
-#: templates/execute/execute.html:83
+#: templates/execute/execute.html:84
 msgid "Model generator"
 msgstr "模式產生器"
 
-#: templates/execute/execute.html:86
+#: templates/execute/execute.html:87
 msgid ""
 "<th scope=\"row\"><a>Create a model</a></th>\n"
 "<td>Create a sample model in the database.<br/>\n"
@@ -1915,7 +1918,7 @@ msgstr ""
 "</td>\n"
 "<td><input id=\"create\" type=\"submit\" value=\"新增\"/></td> "
 
-#: templates/execute/execute.html:112
+#: templates/execute/execute.html:113
 msgid "Sorry, You don't have any execute permissions..."
 msgstr "對不起，您沒有任何執行權限..."
 
@@ -1936,35 +1939,29 @@ msgid "produced and consumed"
 msgstr ""
 
 #: templates/output/demand.xml:17
-#, fuzzy
 msgid "supply"
-msgstr "供應路徑"
+msgstr ""
 
 #: templates/output/forecast.xml:2
 #: templates/output/operation.xml:2
-#, fuzzy
 msgid "units"
-msgstr "項目"
+msgstr ""
 
 #: templates/output/resource.xml:2
-#, fuzzy
 msgid "days"
-msgstr "天"
+msgstr ""
 
 #: templates/output/resource.xml:13
-#, fuzzy
 msgid "unavailable"
-msgstr "可用"
+msgstr ""
 
 #: templates/output/resource.xml:17
-#, fuzzy
 msgid "free"
-msgstr "fence"
+msgstr ""
 
 #: templates/output/resource.xml:21
-#, fuzzy
 msgid "overload"
-msgstr "負荷"
+msgstr ""
 
 # Translation included with django
 #: templates/registration/password_change_done.html:8

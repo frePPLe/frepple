@@ -23,9 +23,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-23 11:01+0200\n"
-"PO-Revision-Date: 2009-06-23 22:38+0100\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2009-06-28 12:50+0200\n"
+"PO-Revision-Date: 2009-06-28 12:53+0100\n"
+"Last-Translator: jdetaeye <jdetaeye@frepple.com>\n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -223,76 +223,76 @@ msgstr "einde standaard"
 msgid "dates"
 msgstr "data"
 
-#: common/report.py:233
+#: common/report.py:234
 msgid "Invalid upload request"
 msgstr "Ongeldige oplaadopdracht"
 
-#: common/report.py:236
+#: common/report.py:237
 msgid "Not authorized"
 msgstr "Geen permissie"
 
-#: common/report.py:240
+#: common/report.py:241
 msgid "File upload aborted with errors"
 msgstr "File opladen onderbroken met fouten"
 
-#: common/report.py:243
+#: common/report.py:244
 msgid "Uploaded file processed with warnings"
 msgstr "File opgeladen met verwittigingen"
 
-#: common/report.py:246
+#: common/report.py:247
 msgid "Uploaded data successfully"
 msgstr "File correct opgeladen"
 
-#: common/report.py:252
+#: common/report.py:253
 msgid "Permission denied"
 msgstr "Toegang geweigerd"
 
-#: common/report.py:431
+#: common/report.py:433
 msgid "for"
 msgstr "voor"
 
 # Translation included with django
-#: common/report.py:583
-#: common/report.py:586
-#: common/report.py:587
-#: common/report.py:646
-#: common/report.py:658
+#: common/report.py:585
+#: common/report.py:588
+#: common/report.py:589
+#: common/report.py:648
+#: common/report.py:660
 msgid "title"
 msgstr ""
 
-#: common/report.py:589
+#: common/report.py:591
 msgid "data field"
 msgstr "dataveld"
 
 # Translation included with django
-#: common/report.py:957
+#: common/report.py:959
 msgid "All"
 msgstr ""
 
-#: common/report.py:976
+#: common/report.py:978
 msgid "False"
 msgstr "Onwaar"
 
-#: common/report.py:976
+#: common/report.py:978
 msgid "True"
 msgstr "Waar"
 
-#: common/report.py:1017
+#: common/report.py:1022
 #, python-format
 msgid "Incorrect field %(column)s"
 msgstr "Foute veldnaam %(column)s"
 
-#: common/report.py:1023
+#: common/report.py:1028
 #, python-format
 msgid "Missing primary key field %(key)s"
 msgstr "Primary key %(key)s ontbreekt"
 
-#: common/report.py:1073
+#: common/report.py:1078
 #, python-format
 msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
 msgstr "Rij %(rownum)s veld %(field)s: %(data)s: %(message)s"
 
-#: common/report.py:1081
+#: common/report.py:1086
 #, python-format
 msgid "Exception during upload: %(message)s"
 msgstr "Fout tijdens laden: %(message)s"
@@ -456,11 +456,11 @@ msgstr "Historiek opdrachten"
 msgid "Start initializing dates"
 msgstr "Probleem tijdens initialisatie datums"
 
-#: execute/management/commands/frepple_createdates.py:126
+#: execute/management/commands/frepple_createdates.py:122
 msgid "Finished initializing dates"
 msgstr "Einde initialisatie datums"
 
-#: execute/management/commands/frepple_createdates.py:131
+#: execute/management/commands/frepple_createdates.py:127
 msgid "Failure initializing dates"
 msgstr "Probleem tijdens initialisatie datums"
 
@@ -468,11 +468,11 @@ msgstr "Probleem tijdens initialisatie datums"
 msgid "Start creating sample model with parameters"
 msgstr "Start creatie voorbeeldmodel met parameters"
 
-#: execute/management/commands/frepple_createmodel.py:357
+#: execute/management/commands/frepple_createmodel.py:353
 msgid "Finished creating sample model"
 msgstr "Einde creatie voorbeeldmodel"
 
-#: execute/management/commands/frepple_createmodel.py:362
+#: execute/management/commands/frepple_createmodel.py:358
 msgid "Failure creating sample model"
 msgstr "Probleem tijdens creatie voorbeeldmodel"
 
@@ -480,11 +480,11 @@ msgstr "Probleem tijdens creatie voorbeeldmodel"
 msgid "Start erasing the database"
 msgstr "Start leegmaken van de database"
 
-#: execute/management/commands/frepple_flush.py:98
+#: execute/management/commands/frepple_flush.py:94
 msgid "Finished erasing the database"
 msgstr "Einde leegmaken van de database"
 
-#: execute/management/commands/frepple_flush.py:101
+#: execute/management/commands/frepple_flush.py:97
 msgid "Failed erasing the database"
 msgstr "Probleem tijdens het leegmaken van de database"
 
@@ -1481,13 +1481,12 @@ msgstr "Vraag Rapport"
 
 #: output/views/demand.py:49
 #: output/views/forecast.py:57
-#: templates/output/forecast.xml:13
 msgid "net forecast"
 msgstr "net forecast"
 
 #: output/views/demand.py:50
 #: output/views/forecast.py:56
-#: templates/output/forecast.xml:9
+#: templates/output/forecast.xml:17
 msgid "orders"
 msgstr "orders"
 
@@ -1515,10 +1514,12 @@ msgid "Forecast Report"
 msgstr "Forecast Rapport"
 
 #: output/views/forecast.py:55
+#: templates/output/forecast.xml:9
 msgid "total forecast"
 msgstr "totale forecast"
 
 #: output/views/forecast.py:58
+#: templates/output/forecast.xml:13
 msgid "planned net forecast"
 msgstr "ingeplande netto forecast"
 
@@ -1633,6 +1634,7 @@ msgid "Where Used"
 msgstr "Waar Gebruikt"
 
 #: templates/buffercontext.html:6
+#: templates/demandcontext.html:4
 #: templates/forecastcontext.html:5
 #: templates/itemcontext.html:6
 #: templates/operationcontext.html:6
@@ -1652,14 +1654,13 @@ msgstr "Klant"
 msgid "Demand"
 msgstr "Demand"
 
-#: templates/demandcontext.html:4
-#: templates/forecastcontext.html:4
-msgid "Pegging"
-msgstr "Pegging"
-
 #: templates/forecastcontext.html:3
 msgid "Forecast"
 msgstr "Forecast"
+
+#: templates/forecastcontext.html:4
+msgid "Pegging"
+msgstr "Pegging"
 
 #: templates/itemcontext.html:3
 msgid "Item"
@@ -1852,6 +1853,7 @@ msgid ""
 "Available datasets: <select name=\"datafile\" id=\"entity\">\n"
 "<option value=\"-\" selected=\"selected\">-</option>\n"
 "<option value=\"small_demo\">Small demo dataset</option>\n"
+"<option value=\"jobshop\">Jobshop</option>\n"
 "<option value=\"dates\">Dates</option>\n"
 "<option value=\"unicode_test\">Unicode test</option>\n"
 "</select>\n"
@@ -1863,17 +1865,18 @@ msgstr ""
 "Beschikbare datasets: <select name=\"datafile\" id=\"entity\">\n"
 "<option value=\"-\" selected=\"selected\">-</option>\n"
 "<option value=\"small_demo\">Kleine demo dataset</option>\n"
+"<option value=\"small_demo\">Jobshop dataset</option>\n"
 "<option value=\"dates\">Datums</option>\n"
 "<option value=\"unicode_test\">Unicode testdata</option>\n"
 "</select>\n"
 "</td>\n"
 "<td><input id=\"load\" type=\"submit\" value=\"Laad\"/></td>"
 
-#: templates/execute/execute.html:83
+#: templates/execute/execute.html:84
 msgid "Model generator"
 msgstr "Model generator"
 
-#: templates/execute/execute.html:86
+#: templates/execute/execute.html:87
 msgid ""
 "<th scope=\"row\"><a>Create a model</a></th>\n"
 "<td>Create a sample model in the database.<br/>\n"
@@ -1915,7 +1918,7 @@ msgstr ""
 "</td>\n"
 "<td><input id=\"create\" type=\"submit\" value=\"Genereer\"/></td> "
 
-#: templates/execute/execute.html:112
+#: templates/execute/execute.html:113
 msgid "Sorry, You don't have any execute permissions..."
 msgstr "Sorry, U heeft geen gebruikersrechten om opdrachten uit te voeren..."
 
@@ -1936,7 +1939,7 @@ msgstr ""
 
 #: templates/output/buffer.xml:5
 msgid "produced and consumed"
-msgstr ""
+msgstr "geproduceerd en verbruikt"
 
 #: templates/output/demand.xml:17
 msgid "supply"

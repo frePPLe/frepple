@@ -49,7 +49,9 @@ export_to_database()
 #export_to_file()
 
 #print "\nStart saving the plan to an XML file at", datetime.now().strftime("%H:%M:%S")
-#frepple.saveXMLfile("output.1.xml")
+#frepple.saveXMLfile("output.1.xml","PLANDETAIL")
+#frepple.saveXMLfile("output.1.xml","PLAN")
+#frepple.saveXMLfile("output.1.xml","STANDARD")
 
 #print "Start deleting model data at", datetime.now().strftime("%H:%M:%S")
 #frepple.erase(True)

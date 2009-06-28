@@ -104,6 +104,8 @@ DECLARE_EXPORT PyObject* PythonItem::getattro(const Attribute& attr)
     return PythonObject(obj->getCategory());
   if (attr.isA(Tags::tag_subcategory))
     return PythonObject(obj->getSubCategory());
+  if (attr.isA(Tags::tag_price))
+    return PythonObject(obj->getPrice());
   if (attr.isA(Tags::tag_owner))
     return PythonObject(obj->getOwner());
   if (attr.isA(Tags::tag_operation))
@@ -124,6 +126,8 @@ DECLARE_EXPORT int PythonItem::setattro(const Attribute& attr, const PythonObjec
     obj->setCategory(field.getString());
   else if (attr.isA(Tags::tag_subcategory))
     obj->setSubCategory(field.getString());
+  else if (attr.isA(Tags::tag_price))
+    obj->setPrice(field.getDouble());
   else if (attr.isA(Tags::tag_owner))
   {
     if (!field.check(PythonItem::getType())) 

@@ -350,7 +350,7 @@ class PythonObject : public DataElement
         if (!t) throw DataException("Invalid number");
         double x = PyFloat_AS_DOUBLE(t);
         Py_DECREF(t);
-        if (x < ULONG_MIN || x > ULONG_MIN)
+        if (x < 0 || x > ULONG_MAX)
           throw DataException("Invalid number");
         return static_cast<unsigned long>(x);
       }

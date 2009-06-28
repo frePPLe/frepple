@@ -5039,12 +5039,14 @@ class Problem::const_iterator
 
 /** @brief This class allows upstream and downstream navigation through
   * the plan.
-  *
-  * Downstream navigation follows the material stream from raw materials
-  * towards the end item demand.<br>
-  * Upstream navigation traces back the material flow from the end item till
-  * the raw materials.<br>
+  * 
+  * Downstream navigation follows the material flow from raw materials
+  * towards the produced end item.<br>
+  * Upstream navigation traces back the material flow from the end item up to
+  * the consumed raw materials.<br>
   * The class is implemented as an STL-like iterator.
+  *
+  * @todo does not support sub-operationplans
   */
 class PeggingIterator
 {

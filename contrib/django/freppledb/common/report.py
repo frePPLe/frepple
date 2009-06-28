@@ -43,6 +43,7 @@ from django.core.paginator import QuerySetPaginator, InvalidPage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import models, transaction, connection
+from django.db.models.fields import Field
 from django.db.models.fields.related import ForeignKey, AutoField
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotModified
 from django.forms.models import ModelForm
@@ -1009,6 +1010,9 @@ def parseUpload(request, reportclass, data):
       if rownumber == 1:
         for col in row:
           col = col.strip().strip('#').lower()
+          if col == "": 
+            headers.append(None)
+            continue
           ok = False
           for i in entityclass._meta.fields:
             if col == i.name.lower() or col == i.verbose_name.lower():
@@ -1027,7 +1031,7 @@ def parseUpload(request, reportclass, data):
         # Create a form class that will be used to validate the data
         UploadMeta = type("UploadMeta", (), {
           'model': entityclass,
-          'fields': tuple([i.name for i in headers])
+          'fields': tuple([i.name for i in headers if isinstance(i,Field)])
           })
         UploadForm = type("UploadForm", (ModelForm,), {
           "Meta": UploadMeta
@@ -1046,7 +1050,7 @@ def parseUpload(request, reportclass, data):
           for col in row:
             # More fields in data row than headers. Move on to the next row.
             if colnum >= len(headers): break
-            d[headers[colnum].name] = col.strip()
+            if isinstance(headers[colnum],Field): d[headers[colnum].name] = col.strip()
             colnum += 1
 
           # Step 2: Fill the form with data, either updating an existing

@@ -166,28 +166,33 @@ def loadSuboperations(cursor):
   cnt = 0
   starttime = time()
   cursor.execute('''
-    SELECT operation_id, suboperation_id, priority, effective_start, effective_end
+    SELECT operation_id, suboperation_id, priority, effective_start, effective_end, operation.type
     FROM suboperation, operation
     WHERE suboperation.operation_id = operation.name
-    AND operation.type = 'operation_alternate'
     ORDER BY operation_id, priority
     ''')
   curopername = None
-  for i, j, k, l, m in cursor.fetchall():
+  for i, j, k, l, m, n in cursor.fetchall():
     cnt += 1
     try:
       if i != curopername:
         curopername = i
-        curoper = frepple.operation_alternate(name=curopername)
-      if l:
-        if m:
-          curoper.addAlternate(operation=frepple.operation(name=j),priority=k,effective_start=l,effective_end=m)
+        if n == 'operation_alternate':
+          curoper = frepple.operation_alternate(name=curopername)
         else:
-          curoper.addAlternate(operation=frepple.operation(name=j),priority=k,effective_start=l)
-      elif m:
-          curoper.addAlternate(priority=k,effective_end=m)
+          curoper = frepple.operation_routing(name=curopername)
+      if isinstance(curoper,frepple.operation_routing):
+        curoper.addStep(frepple.operation(name=j))
       else:
-        curoper.addAlternate(operation=frepple.operation(name=j),priority=k)
+        if l:
+          if m:
+            curoper.addAlternate(operation=frepple.operation(name=j),priority=k,effective_start=l,effective_end=m)
+          else:
+            curoper.addAlternate(operation=frepple.operation(name=j),priority=k,effective_start=l)
+        elif m:
+            curoper.addAlternate(operation=frepple.operation(name=j),priority=k,effective_end=m)
+        else:
+          curoper.addAlternate(operation=frepple.operation(name=j),priority=k)
     except Exception, e: print "Error:", e
   print 'Loaded %d suboperations in %.2f seconds' % (cnt, time() - starttime)
 

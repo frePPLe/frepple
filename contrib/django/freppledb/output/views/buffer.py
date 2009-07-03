@@ -204,6 +204,7 @@ def GraphData(request, entity):
     'consumed': consumed, 
     'produced': produced, 
     'endoh': endoh, 
+    'axis_nth': len(bucketlist) / 20 + 1,
     }
   return HttpResponse(
     loader.render_to_string("output/buffer.xml", context, context_instance=RequestContext(request)),

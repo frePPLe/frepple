@@ -3,7 +3,7 @@
  decimalPrecision='0' numDivLines='4' 
  showValues='0' formatNumberScale='0' animation='0'>
 <categories>
-{% for j in buckets %}<category name='{{j.name}}' />
+{% for j in buckets %}<category name='{{j.name}}' {% if not forloop.counter|divisibleby:axis_nth %}showName="0"{% endif %}/>
 {% endfor %}
 </categories>
 <dataset seriesName='{% trans "load" %}' color='AFD8F8' showValues='0'>

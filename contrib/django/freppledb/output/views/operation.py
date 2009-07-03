@@ -181,6 +181,7 @@ def GraphData(request, entity):
     'buckets': bucketlist, 
     'total_end': total_end, 
     'total_start': total_start, 
+    'axis_nth': len(bucketlist) / 20 + 1,
     }
   return HttpResponse(
     loader.render_to_string("output/operation.xml", context, context_instance=RequestContext(request)),

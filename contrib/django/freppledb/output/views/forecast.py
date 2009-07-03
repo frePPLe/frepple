@@ -170,6 +170,7 @@ def GraphData(request, entity):
     'net': net, 
     'orders': orders, 
     'planned': planned,
+    'axis_nth': len(bucketlist) / 20 + 1,
     }
   return HttpResponse(
     loader.render_to_string("output/forecast.xml", context, context_instance=RequestContext(request)),

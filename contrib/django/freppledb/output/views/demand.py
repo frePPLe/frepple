@@ -212,11 +212,13 @@ def GraphData(request, entity):
     demand.append(x['demand'])
     supply.append(x['supply'])
     backlog.append(x['backlog'])
+  print len(bucketlist) / 20 + 1
   context = { 
     'buckets': bucketlist, 
     'demand': demand, 
     'supply': supply, 
     'backlog': backlog, 
+    'axis_nth': len(bucketlist) / 20 + 1,
     }
   return HttpResponse(
     loader.render_to_string("output/demand.xml", context, context_instance=RequestContext(request)),

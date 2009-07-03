@@ -102,7 +102,7 @@ DECLARE_EXPORT void CommandList::undo(Command *c)
 {
   // Check validity of argument
   if (c && c->owner != this)
-    throw LogicException("Invalid call to CommandList::undoable(Command*)");
+    throw LogicException("Invalid call to CommandList::undo(Command*)");
 
   // Don't even try to undo a list which can't be undone.
   if (!c && !undoable(c))

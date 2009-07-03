@@ -7,7 +7,7 @@
   showalternateHGridColor='1' alternateHGridColor='eeeeee'
   animation='0' >
 <categories>
-{% for j in buckets %}<category name='{{j.name}}' />
+{% for j in buckets %}<category name='{{j.name}}' {% if not forloop.counter|divisibleby:axis_nth %}showName="0"{% endif %}/>
 {% endfor %}
 </categories>
 <dataset seriesName='{% trans "demand" %}' parentYAxis='P' color='AFD8F8' showValues='0'>

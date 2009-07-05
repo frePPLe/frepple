@@ -54,6 +54,7 @@ from django.utils.translation import ugettext as _
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
+from django.utils.encoding import iri_to_uri
 
 from input.models import Plan, Buffer
 from common.db import python_date
@@ -359,7 +360,7 @@ def view_report(request, entity=None, **args):
   if type[:3] == 'csv':
     # CSV output
     response = HttpResponse(mimetype='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=%s.csv' % reportclass.title.lower()
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % iri_to_uri(reportclass.title.lower())
     if hasattr(reportclass,'resultlist2'):
       # SQL override provided of type 2
       response._container = _generate_csv(reportclass, reportclass.resultlist2(counter, bucket, start, end, sortsql=sortsql), type, bucketlist)

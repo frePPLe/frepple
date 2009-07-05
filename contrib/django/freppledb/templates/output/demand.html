@@ -15,8 +15,8 @@
 	</div>
 	<script language="javascript" type="text/javascript">
 	   var totalAvailable = document.viewport.getDimensions();
-	   var chart1 = new FusionCharts("/static/FCF_MSColumn2DLineDY.swf", "sampleChart", totalAvailable.width, 350);
-	   chart1.addParam("wmode","transparent");
+	   var chart1 = new FusionCharts("/static/FCF_MSColumn2DLineDY.swf", "sampleChart", totalAvailable.width-35, 350);
+	   chart1.setTransparent();
 	   chart1.setDataURL(escape("/demandgraph/{{object}}/?reportbucket={{reportbucket}}&reportstart={{reportstart}}&reportend={{reportend}}"));	   	   
 	   chart1.render("chart1div");
 	</script>

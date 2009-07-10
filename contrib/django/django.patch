@@ -1,6 +1,6 @@
 Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 ===================================================================
---- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 10673)
+--- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 11211)
 +++ django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(working copy)
 @@ -92,7 +92,7 @@
      openClock: function(num) {
@@ -75,7 +75,7 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
      },
 Index: django/contrib/admin/sites.py
 ===================================================================
---- django/contrib/admin/sites.py	(revision 10673)
+--- django/contrib/admin/sites.py	(revision 11211)
 +++ django/contrib/admin/sites.py	(working copy)
 @@ -292,20 +292,7 @@
          password = request.POST.get('password', None)
@@ -101,7 +101,7 @@ Index: django/contrib/admin/sites.py
          else:
 Index: django/contrib/admin/widgets.py
 ===================================================================
---- django/contrib/admin/widgets.py	(revision 10673)
+--- django/contrib/admin/widgets.py	(revision 11211)
 +++ django/contrib/admin/widgets.py	(working copy)
 @@ -122,8 +122,9 @@
          output.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> ' % \
@@ -117,7 +117,7 @@ Index: django/contrib/admin/widgets.py
      def base_url_parameters(self):
 Index: django/core/management/__init__.py
 ===================================================================
---- django/core/management/__init__.py	(revision 10673)
+--- django/core/management/__init__.py	(revision 11211)
 +++ django/core/management/__init__.py	(working copy)
 @@ -14,50 +14,80 @@
  # doesn't have to reload every time it's called.
@@ -247,7 +247,7 @@ Index: django/core/management/__init__.py
  
          # Find the installed apps
          try:
-@@ -114,9 +144,8 @@
+@@ -113,9 +143,8 @@
          # Find and load the management module for each installed app.
          for app_name in apps:
              try:
@@ -257,12 +257,12 @@ Index: django/core/management/__init__.py
 +                                       for name in find_commands(app_name)]))
              except ImportError:
                  pass # No management module - ignore this app
-
+ 
 Index: django/db/models/sql/query.py
 ===================================================================
---- django/db/models/sql/query.py	(revision 10673)
+--- django/db/models/sql/query.py	(revision 11211)
 +++ django/db/models/sql/query.py	(working copy)
-@@ -745,8 +745,11 @@
+@@ -751,8 +751,11 @@
  
          for table, col in self.related_select_cols:
              r = '%s.%s' % (qn(table), qn(col))
@@ -276,7 +276,7 @@ Index: django/db/models/sql/query.py
                  result.append('%s AS %s' % (r, c_alias))
                  aliases.add(c_alias)
                  col_aliases.add(c_alias)
-@@ -805,8 +808,11 @@
+@@ -813,8 +816,11 @@
                  result.append((alias, field.column))
                  aliases.add(alias)
                  continue
@@ -292,7 +292,7 @@ Index: django/db/models/sql/query.py
                  col_aliases.add(c_alias)
 Index: django/views/i18n.py
 ===================================================================
---- django/views/i18n.py	(revision 10673)
+--- django/views/i18n.py	(revision 11211)
 +++ django/views/i18n.py	(working copy)
 @@ -190,5 +190,8 @@
      src.extend(csrc)

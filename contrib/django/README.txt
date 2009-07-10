@@ -8,7 +8,7 @@ The basic steps to set up a development environment:
   Lower versions may work, but are not tested...
 
 - Install django
-  FREPPLE NEEDS THE VERSION 1.0.2 OF DJANGO.
+  FREPPLE IS BASED ON A BETA VERSION OF DJANGO 1.1 - revision 11211.
   Later versions of django may or may not work with frePPLe...
 
 - Some patches are required to django. To apply the patches, use the commands below

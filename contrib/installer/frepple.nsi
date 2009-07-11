@@ -117,6 +117,7 @@ ReserveFile "parameters.ini"
 Function .onInit
   ;Extract InstallOptions INI file
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "parameters.ini"
+  SetShellVarContext all
 FunctionEnd
 
 Section -Start
@@ -381,6 +382,7 @@ FunctionEnd
 
 Section Uninstall
   ; Remove the entries from the start menu
+  SetShellVarContext all
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Uninstall.lnk"
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Documentation.lnk"
   Delete "$SMPROGRAMS\frePPLe ${PRODUCT_VERSION}\Run server.lnk"

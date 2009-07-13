@@ -17,7 +17,7 @@ dist-hook:
 create:
 	cd freppledb; ./manage.py syncdb
 
-check:
+contrib-check:
 	cd freppledb; ./manage.py test
 
 runserver:

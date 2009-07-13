@@ -17,11 +17,11 @@ soapC.cpp:
 BUILT_SOURCES = soapC.cpp soapServer.cpp
 
 lib_LTLIBRARIES = mod_webservice.la
-mod_webservicedir = $(datadir)
+mod_webservicedir = $(datadir)/frepple
 
 dist_mod_webservice_la_SOURCES = $(sources)
 nodist_mod_webservice_la_SOURCES = soapC.cpp soapServer.cpp
-mod_webservice_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null -lgsoap++
+mod_webservice_la_LDFLAGS = -module -shrext .so -avoid-version -lgsoap++
 mod_webservice_la_LIBADD = ../../src/libfrepple.la 
 
 if CYGWIN

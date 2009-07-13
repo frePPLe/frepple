@@ -13,4 +13,3 @@ feedback with other distributions.
 
 NOTE:
 The RPM does not install or configure the Django user interface yet.
-

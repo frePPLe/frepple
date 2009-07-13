@@ -12,9 +12,9 @@ if FORECAST
 
 usrlibdir = $(libdir)/frepple
 usrlib_LTLIBRARIES = mod_forecast.la
-mod_forecastdir = $(datadir)
+mod_forecastdir = $(datadir)/frepple
 mod_forecast_DATA = mod_forecast.xsd
-mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
+mod_forecast_la_LDFLAGS = -module -shrext .so -avoid-version
 mod_forecast_la_SOURCES = $(sources)
 mod_forecast_la_LIBADD = ../../src/libfrepple.la
 

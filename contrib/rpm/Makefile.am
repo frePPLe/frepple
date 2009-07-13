@@ -5,21 +5,29 @@
 EXTRA_DIST = README.txt frepple.spec 
 CLEANFILES = *.rpm
 
+# This make target builds the RPMs on Fedora.
+#
+# You need to have the "rpmdevtools" package installed and you need to 
+# initialize your build environment with the command "rpmdev-setuptree".
+#
+# See http://fedoraproject.org/wiki/PackageMaintainers/CreatingPackageHowTo
+#
 contrib: 
 	cd ../..; make dist
-	sudo cp ../../frepple-$(VERSION).tar.gz /usr/src/redhat/SOURCES
-	sudo cp frepple.spec /usr/src/redhat/SPECS/frepple-$(VERSION).spec
-	sudo rpmbuild -ba /usr/src/redhat/SPECS/frepple-$(VERSION).spec
-	cp /usr/src/redhat/RPMS/*/frepple-*$(VERSION)*rpm .
-	cp /usr/src/redhat/SRPMS/frepple-$(VERSION)* .
+	cp ../../frepple-$(VERSION).tar.gz ~/rpmbuild/SOURCES
+	rm -fr ~/rpmbuild/BUILD/frepple-*$(VERSION) 
+	rm -fr ~/rpmbuild/BUILDROOT/frepple-*$(VERSION) 
+	cp frepple.spec ~/rpmbuild/SPECS/frepple-$(VERSION).spec
+	rpmbuild -ba ~/rpmbuild/SPECS/frepple-$(VERSION).spec
+	cp ~/rpmbuild/RPMS/*/frepple-*$(VERSION)*rpm .
+	cp ~/rpmbuild/SRPMS/frepple-$(VERSION)* .
 
-# Review the resulting RPMs: list the content, show dependencies
-inspect-rpm:
-	rpm -qpil *.rpm
-	rpm -qpR *.rpm
-
-install-rpm:
-	sudo rpm --nodeps --install frepple-$(VERSION)-1.i386.rpm
-
-uninstall-rpm:
-	sudo rpm --erase frepple
+# Additional handy commands
+# - Install an RPM
+#    sudo rpm --nodeps --install frepple-$(VERSION)-1.*.rpm
+# - Uninstall an RPM
+#    sudo rpm --erase frepple
+# - List the content of an RPM
+#    rpm -qpil *.rpm
+# - Show the dependencies of an RPM
+#    rpm -qpR *.rpm

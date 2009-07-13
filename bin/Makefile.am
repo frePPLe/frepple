@@ -2,7 +2,7 @@
 # Process this file with automake to produce Makefile.in
 #
 
-nobasedir = $(datadir)
+nobasedir = $(datadir)/frepple
 nobase_DATA = frepple.xsd frepple_core.xsd init.xml init.py
 
 EXTRA_DIST = $(nobase_DATA)

@@ -11,9 +11,9 @@ if LP
 usrlibdir = $(libdir)/frepple
 usrlib_LTLIBRARIES = mod_lpsolver.la
 mod_lpsolver_la_SOURCES = $(sources)
-mod_lpsolverdir = $(datadir)
+mod_lpsolverdir = $(datadir)/frepple
 mod_lpsolver_DATA = mod_lpsolver.xsd
-mod_lpsolver_la_LDFLAGS = -module -shrext .so -avoid-version -rpath /dev/null
+mod_lpsolver_la_LDFLAGS = -module -shrext .so -avoid-version
 mod_lpsolver_la_LIBADD = ../../src/libfrepple.la
 
 if CYGWIN

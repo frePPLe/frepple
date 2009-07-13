@@ -21,20 +21,20 @@ if DOC
 man_MANS = frepple.1
 
 install-data-local:
-	echo "installing documentation in $(docdir)"; \
-	$(mkinstalldirs) $(docdir)/reference; \
+	echo "installing documentation in $(DESTDIR)$(docdir)"; \
+	$(mkinstalldirs) "$(DESTDIR)$(docdir)/reference"; \
 	for p in $(EXTRA_DIST); do \
 	  if test -d $$p; \
-	  then $(mkinstalldirs) $(docdir)/$$p; \
-	       $(INSTALL_DATA) $$p/* $(docdir)/$$p; \
-	  else $(INSTALL_DATA) $$p $(docdir)/$$p; \
+	  then $(mkinstalldirs) "$(DESTDIR)$(docdir)/$$p"; \
+	       $(INSTALL_DATA) $$p/* "$(DESTDIR)$(docdir)/$$p"; \
+	  else $(INSTALL_DATA) $$p "$(DESTDIR)$(docdir)/$$p"; \
 	  fi; \
 	done
 
 endif
 
 uninstall-local:
-	rm -rf $(docdir)
+	rm -rf "$(DESTDIR)$(docdir)
 
 .PHONY: reference clean-local uninstall-local install-data-local all-local
 

@@ -60,7 +60,7 @@ testdir = os.getcwd()
 def usage():
   # Print help information and exit
   print '\nUsage to run all tests:'
-  print '  ./runtest.py [-d|--debug|-v|--vcc]\n'
+  print '  ./runtest.py [-d|--debug|-v|--vcc|--exclude a]\n'
   print 'Usage with list of tests to run:'
   print '  ./runtest.py [-d|--debug|-v|--vcc] {test1} {test2} ...\n'
   print 'Flags:'
@@ -83,8 +83,9 @@ def runTestSuite():
     # Parse the command line
     opts = []
     tests = []
+    excluded = []
     try:
-        opts, tests = getopt.getopt(sys.argv[1:], "dvh", ["debug", "vcc", "help"])
+        opts, tests = getopt.getopt(sys.argv[1:], "dvhe:", ["debug", "vcc", "help", "exclude="])
     except getopt.GetoptError:
       usage()
       sys.exit(1)
@@ -94,6 +95,8 @@ def runTestSuite():
         platform = 'VCC'
       elif o in ("-d", "--debug"):
         debug = True
+      elif o in ("-e", "--exclude"):
+        excluded.append(a)
       elif o in ("-h", "--help"):
         # Print help information and exit
         usage()
@@ -149,6 +152,10 @@ def runTestSuite():
             if not os.path.isdir(os.path.join(testdir, i)):
                 print "Warning: Test directory " + i + " doesn't exist"
                 tests.remove(i)
+
+    # Remove any excluded tests
+    for i in tests:
+      if i in excluded: tests.remove(i)
 
     # Now define the test suite
     AllTests = unittest.TestSuite()

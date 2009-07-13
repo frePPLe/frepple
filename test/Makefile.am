@@ -6,4 +6,10 @@ SUBDIRS = cluster scalability_1 scalability_2 scalability_3 datetime constraints
 
 EXTRA_DIST = runtest.py
 
-TESTS = runtest.py
+if LP 
+check:
+	./runtest.py
+else
+check:
+	./runtest.py --exclude lpsolver_1
+endif

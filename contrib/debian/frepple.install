@@ -1,0 +1,5 @@
+usr/bin
+usr/lib/lib*.so.*
+usr/lib/frepple/mod*.so
+usr/share/frepple
+usr/share/man/man1/*

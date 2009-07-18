@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+
+# Uncomment to see verbose output
+# export DH_VERBOSE=1
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
+
+DEB_MAKE_CHECK_TARGET = check
+DEB_CONFIGURE_EXTRA_FLAGS = --disable-static --disable-dependency-tracking --enable-doc --enable-forecast --disable-lp_solver --disable-webservice

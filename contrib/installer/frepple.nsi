@@ -28,8 +28,6 @@
 ; To run this script successfully, you'll therefore need to have the cygwin
 ; system up and running on your machine.
 
-; THIS FILE NEEDS TO BE EDITED IN UTF-8 ENCODING
-
 ; Make sure that this variable points to the windows version of Python, not
 ; the one that is part of cygwin.
 !ifndef PYTHON

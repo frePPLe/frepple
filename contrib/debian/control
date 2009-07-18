@@ -1,0 +1,34 @@
+Source: frepple
+Section: science
+Priority: optional
+Maintainer: Johan De Taeye <jdetaeye@users.sourceforge.net>
+Build-Depends: debhelper (>= 7), cdbs, autotools-dev, doxygen, python-dev (< 3), libxerces-c2-dev
+Build-Conflicts: autoconf2.13, automake1.4
+Standards-Version: 3.8.0
+Homepage: http://www.frepple.com
+Vcs-Browser: http://frepple.svn.sourceforge.net/viewvc/frepple/trunk
+Vcs-Svn: https://frepple.svn.sourceforge.net/svnroot/frepple/trunk
+
+Package: frepple
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, python (< 3), libxerces-c28
+Description: Free Production Planning Library
+ FrePPLe stands for "Free Production Planning Library". It is a toolkit/
+ framework for modeling and solving production planning problems, targetted
+ primarily at discrete manufacturing industries.
+
+Package: frepple-dev
+Section: libdevel
+Architecture: any
+Depends: frepple (= ${binary:Version}), ${misc:Depends}
+Suggests: frepple-doc
+Description: Free Production Planning Library - development headers 
+ These are the libraries and header files need for developing plug-ins and
+ extensions of frePPLe - the Free Production Planning Library.
+
+Package: frepple-doc
+Section: doc
+Depends: ${misc:Depends}
+Architecture: all
+Description: Free Production Planning Library - documentation
+ Documentation for frePPLe - the Free Production Planning Library.

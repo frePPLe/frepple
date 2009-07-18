@@ -189,8 +189,9 @@ def runTestSuite():
     else:
       print "Running", AllTests.countTestCases(), \
          "tests from directory", testdir
-    unittest.TextTestRunner(verbosity=2).run(AllTests)
-
+    result = unittest.TextTestRunner(verbosity=2).run(AllTests)
+    if not result.wasSuccessful(): sys.exit(1)
+    
 
 class freppleTest (unittest.TestCase):
     def __init__(self, directoryname, methodName):

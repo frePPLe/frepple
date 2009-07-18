@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Johan De Taeye
+# Copyright (C) 2007-2009 by Johan De Taeye
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -25,7 +25,7 @@ Name: frepple
 Version: 0.7.1.beta
 Release: 1%{?dist}
 # Note on the license: frePPle is released with the LGPL license. 
-# The optional plugin module mod_lpsolverdepends on the GLPK package which is 
+# The optional plugin module mod_lpsolver depends on the GLPK package which is 
 # licensed under GPL. That module is therefore disabled in this build.
 License: LGPLv2.1
 Group: Applications/Productivity

@@ -1,0 +1,20 @@
+#
+# Process this file with automake to produce Makefile.in
+#
+
+DEBIANFILES = changelog compat control copyright frepple*.install rules watch
+EXTRA_DIST = README.txt $(DEBIANFILES)
+
+clean-local:
+	-rm -rf frepple_* frepple-$(VERSION) *.deb
+	
+# This make target builds a Debian distribution file, suitable for Ubuntu.
+contrib: 
+	cd ../..; make dist
+	cp ../../frepple-$(VERSION).tar.gz frepple_$(VERSION).orig.tar.gz
+	-rm -rf frepple-$(VERSION)
+	tar -xzf frepple_$(VERSION).orig.tar.gz
+	mkdir frepple-$(VERSION)/debian
+	cp $(DEBIANFILES) frepple-$(VERSION)/debian
+	cd frepple-$(VERSION)/debian && debuild -S 
+	cd frepple-$(VERSION) && sudo pbuilder build --buildresult .. ../*.dsc

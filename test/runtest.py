@@ -153,13 +153,14 @@ def runTestSuite():
                 print "Warning: Test directory " + i + " doesn't exist"
                 tests.remove(i)
 
-    # Remove any excluded tests
-    for i in tests:
-      if i in excluded: tests.remove(i)
-
     # Now define the test suite
     AllTests = unittest.TestSuite()
     for i in tests:
+        
+        # Skip excluded tests
+        if i in excluded: continue
+        
+        # Expand to directory names
         i = os.path.normpath(i)
         tmp = os.path.join(testdir, i, i)
 

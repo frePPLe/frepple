@@ -24,7 +24,7 @@ r'''
 Main Django configuration file.
 '''
 
-# frePPLe specific variables
+# frePPLe specific variables  # TODO remove these
 import os, os.path, sys
 try:
   FREPPLE_HOME = os.environ['FREPPLE_HOME']
@@ -188,7 +188,8 @@ DEFAULT_CHARSET = 'utf-8'
 # This is useful for the py2exe distribution: this settings file will be
 # compiled and included in a compressed zip-file, and we need to give users a
 # way to pass parameters and settings to Django.
-if os.path.normcase(os.path.abspath(os.path.dirname(__file__))) != os.path.normcase(FREPPLE_APP):
+if os.path.normcase(os.path.abspath(os.path.dirname(__file__))) != os.path.normcase(FREPPLE_APP) and not 'localsettings' in vars():
+  localsettings = True
   try: execfile(os.path.join(FREPPLE_APP,'settings.py'))
   except IOError:
     pass

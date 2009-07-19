@@ -10,8 +10,11 @@ With a little effort it should work fine for Mandrake, SUSE... etc
 Debian and derived distributions (such as Ubuntu) use a different packaging
 mechanism, but can still install a RPM-file as an 'alien' package.
 
-NOTE:
-The RPM does not install or configure the Django user interface yet.
+The RPM installs the Django-based web application as a Python package,
+but no web server is configured automatically.
+The Django documentation describes different deployment options for the 
+web application:
+  See http://docs.djangoproject.com/en/dev/howto/deployment/#howto-deployment-index
 
 Build instructions:
  - You need to have the "rpmdevtools" package installed.

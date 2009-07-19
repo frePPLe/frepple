@@ -20,6 +20,8 @@
 # revision : $LastChangedRevision: 105 $  $LastChangedBy$
 # date : $LastChangedDate$
 
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+
 Summary: Free Production Planning Library
 Name: frepple
 Version: 0.7.1.beta
@@ -27,14 +29,14 @@ Release: 1%{?dist}
 # Note on the license: frePPle is released with the LGPL license. 
 # The optional plugin module mod_lpsolver depends on the GLPK package which is 
 # licensed under GPL. That module is therefore disabled in this build.
-License: LGPLv2.1
+License: LGPL, v2.1 or greater
 Group: Applications/Productivity
 Source: http://downloads.sourceforge.net/sourceforge/frepple/%{name}-%{version}.tar.gz
 Source1: %{name}-%{version}.tar.gz
 URL: http://www.frepple.com
 Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
-Requires: python xerces-c
-BuildRequires: doxygen python-devel xerces-c-devel automake autoconf libtool
+Requires: python, xerces-c
+BuildRequires: doxygen, python-devel, xerces-c-devel, automake, autoconf, libtool, django
 
 %description
 FrePPLe stands for "Free Production Planning Library". It is a toolkit/
@@ -54,6 +56,7 @@ extensions of frePPLe - the Free Production Planning Library.
 %setup -q
 
 %build
+# Configure
 %configure \
   --disable-static \
   --disable-dependency-tracking \
@@ -61,21 +64,30 @@ extensions of frePPLe - the Free Production Planning Library.
   --enable-forecast \
   --disable-lp_solver \
   --disable-webservice 
-# Remove rpath
+# Remove rpath from libtool
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
+# Compile
 make all
 
 %check
+# Run test suite
 make check
 
 %install
 rm -rf %{buildroot}
 make install DESTDIR=%{buildroot} 
 # Do not package .la files created by libtool
-rm -f %{buildroot}%{_libdir}/*.la %{buildroot}%{_libdir}/frepple/*.la
+find %{buildroot} -name '*.la' -exec rm {} \;
 # Use %doc instead of install to create the documentation
 rm -rf %{buildroot}%{_docdir}/%{name}
+# Install the user interface as a Python package
+export FREPPLE_HOME=%{buildroot}
+export FREPPLE_APP=%{buildroot}%{python_sitelib}/freppledb
+export DJANGO_SETTINGS_MODULE=freppledb.settings
+cd contrib/django
+%{__python} setup.py install --root %{buildroot}
+cd -
 
 %clean
 rm -rf %{buildroot}
@@ -94,8 +106,9 @@ rm -rf %{buildroot}
 %dir %{_datadir}/frepple
 %{_datadir}/frepple/*.xsd
 %{_datadir}/frepple/*.xml
-%{_datadir}/frepple/*.py
+%{_datadir}/frepple/*.py*
 %{_mandir}/man1/frepple.1.gz
+%{python_sitelib}
 %doc COPYING doc/reference doc/*.pdf doc/favicon.ico doc/*.html doc/*.css doc/*.gif doc/*.bmp
 
 %files devel

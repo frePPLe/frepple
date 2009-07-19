@@ -2,12 +2,12 @@
 # Process this file with automake to produce Makefile.in
 #
 
-EXTRA_DIST = freppledb django.patch README.txt httpd.conf
+EXTRA_DIST = freppledb django.patch README.txt httpd.conf setup.py
 
 clean-local:
 	-rm -rf `find . -name '*.pyc'`
 	-rm -rf `find . -name '*.pyo'`
-	-rm -rf doc
+	-rm -rf build dist doc
 
 # Avoid packaging python bytecode files from the subdirectories
 dist-hook:

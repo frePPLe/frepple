@@ -38,7 +38,7 @@ BuildRequires: doxygen python-devel xerces-c-devel automake autoconf libtool
 
 %description
 FrePPLe stands for "Free Production Planning Library". It is a toolkit/
-framework for modeling and solving production planning problems, targetted
+framework for modeling and solving production planning problems, targeted
 primarily at discrete manufacturing industries.
 
 %package devel

@@ -113,7 +113,7 @@ for srcdir, targetdir in [
    (os.path.join(freppledirectory,'locale'), 'locale'),
    (os.path.join(freppledirectory,'execute'), 'execute'),
    (os.path.join(freppledirectory,'input','fixtures'), os.path.join('fixtures','input')),
-   (os.path.join(freppledirectory,'user','fixtures'), os.path.join('fixtures','user')),
+   (os.path.join(freppledirectory,'common','fixtures'), os.path.join('fixtures','common')),
    ]:
    root_path_length = len(srcdir) + 1
    for dirpath, dirnames, filenames in os.walk(os.path.join(srcdir)):
@@ -143,8 +143,8 @@ setup(
     data_files = data_files,
     # Attributes
     version = settings.FREPPLE_VERSION.split('-',1)[0].split(' ',1)[0],
-    description = "Frepple web server application",
-    name = "Frepple",
+    description = "frePPLe web application",
+    name = "frePPLe",
     author = "www.frepple.com",
     url = "http://www.frepple.com",
     # Targets to build
@@ -156,5 +156,5 @@ setup(
     # This zip file with the name mentioned below is automatically included
     # in the Python search path (while the default output file "library.zip"
     # isn't)
-    zipfile = "python26.zip"
+    zipfile = "python%d%d.zip" % (sys.version_info[0], sys.version_info[1])
     )

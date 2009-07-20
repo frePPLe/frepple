@@ -34,7 +34,7 @@ install-data-local:
 endif
 
 uninstall-local:
-	rm -rf "$(DESTDIR)$(docdir)
+	-rm -rf "$(DESTDIR)$(docdir)"
 
 .PHONY: reference clean-local uninstall-local install-data-local all-local
 

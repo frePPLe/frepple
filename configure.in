@@ -283,33 +283,17 @@ fi
 #
 # Verify installation of PYTHON
 #
-AC_CHECK_PROGS(PYTHON,python,nopython)
-if test x$PYTHON = xnopython
-then
-AC_MSG_ERROR([
+AM_PATH_PYTHON([2.4], [],
+[AC_MSG_ERROR([
   This package requires Python 2.4 or higher.
-])
-else
-changequote(<<, >>)
-PYTHON_VERSION=`$PYTHON -c 'import sys; print sys.version[:3]'`
-VERSIONNUMBER=`$PYTHON -c 'import sys; print int(float(sys.version[:3]) * 10)'`
-changequote([, ])
-if test $VERSIONNUMBER -le 23
-then
-AC_MSG_ERROR([
-  This package requires Python 2.4 or higher.
-])
-fi
-PYTHON_PREFIX=`$PYTHON -c 'import sys; print sys.prefix'`
+])])
 LIBS="-L/lib/python$PYTHON_VERSION/config $LIBS"
 CPPFLAGS="-I/usr/include/python$PYTHON_VERSION $CPPFLAGS"
 AC_CHECK_LIB(python$PYTHON_VERSION, PyModule_GetDict, [],
 [AC_MSG_ERROR([
-  Can't link with the python library.
-  This package requires the python development libraries.
+  Can't link with the Python library.
+  This package requires the Python development libraries.
 ])])
-AC_SUBST(PYTHON_VERSION)
-fi
 AC_CHECK_HEADER([Python.h], [],
 [AC_MSG_ERROR([
   This package requires Python.

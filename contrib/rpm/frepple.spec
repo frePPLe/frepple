@@ -81,13 +81,6 @@ make install DESTDIR=%{buildroot}
 find %{buildroot} -name '*.la' -exec rm {} \;
 # Use %doc instead of install to create the documentation
 rm -rf %{buildroot}%{_docdir}/%{name}
-# Install the user interface as a Python package
-export FREPPLE_HOME=%{buildroot}
-export FREPPLE_APP=%{buildroot}%{python_sitelib}/freppledb
-export DJANGO_SETTINGS_MODULE=freppledb.settings
-cd contrib/django
-%{__python} setup.py install --root %{buildroot}
-cd -
 
 %clean
 rm -rf %{buildroot}

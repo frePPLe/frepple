@@ -17,7 +17,7 @@ clean-local:
 	
 # Remove our custom subdirectories
 uninstall-local:
-	-rm -rf $(datadir)/frepple $(libdir)/frepple
+	-rm -rf $(DESTDIR)$(datadir)/frepple $(DESTDIR)$(libdir)/frepple
 
 # Avoid packaging any subversion subdirectories that may be left over
 dist-hook:

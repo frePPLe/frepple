@@ -12,8 +12,8 @@ install-data-local:
 	$(PYTHON) setup.py install --prefix $(DESTDIR)$(prefix)
 	
 uninstall-local:
-	-rm -rf $(pythondir)/freppledb 
-	-rm -rf $(pythondir)/freppledb-$(PACKAGE_VERSION)*.egg-info
+	-rm -rf $(DESTDIR)$(pythondir)/freppledb 
+	-rm -rf $(DESTDIR)$(pythondir)/freppledb-$(PACKAGE_VERSION)*.egg-info
 
 clean-local:
 	-rm -rf `find . -name '*.pyc'`

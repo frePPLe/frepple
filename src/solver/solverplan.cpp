@@ -31,12 +31,6 @@ namespace frepple
 
 DECLARE_EXPORT const MetaClass* SolverMRP::metadata;
 
-const short SolverMRP::LEADTIME = 1;
-const short SolverMRP::MATERIAL = 2;
-const short SolverMRP::CAPACITY = 4;
-const short SolverMRP::FENCE = 8;
-
-
 void LibrarySolver::initialize()
 {
   // Initialize only once
@@ -90,8 +84,19 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
     // Loop through the list of all demands in this planning problem
     for (deque<Demand*>::const_iterator i = demands.begin();
         i != demands.end(); ++i)
-      // Plan the demand
-      try { (*i)->solve(*Solver,this); }
+      // Plan the demand      
+      try 
+      { 
+        State* mystate = state;
+        push();
+        try { (*i)->solve(*Solver,this); }
+        catch (...) 
+        { 
+          while (state > mystate) pop(); 
+          throw; 
+        }
+        while (state > mystate) pop();
+      }
       catch (...)
       {
         // Error message

@@ -200,7 +200,7 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
   // Minimum and maximum inventory targets, carrying cost
   o->writeElement(Tags::tag_minimum, min_cal);
   o->writeElement(Tags::tag_maximum, max_cal);
-  if (getCarryingCost()!= 1.0) 
+  if (getCarryingCost()!= 0.0) 
     o->writeElement(Tags::tag_carrying_cost, getCarryingCost());
   
   // Write extra plan information

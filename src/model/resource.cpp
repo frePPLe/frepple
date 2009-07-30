@@ -86,7 +86,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
   HasDescription::writeElement(o, tag);
   HasHierarchy<Resource>::writeElement(o, tag);
   o->writeElement(Tags::tag_maximum, max_cal);
-  if (getCost() != 1.0) o->writeElement(Tags::tag_cost, getCost());
+  if (getCost() != 0.0) o->writeElement(Tags::tag_cost, getCost());
   o->writeElement(Tags::tag_location, loc);
   Plannable::writeElement(o, tag);
 

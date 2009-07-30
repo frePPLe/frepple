@@ -171,7 +171,7 @@
       <xsd:element name="fence" type="xsd:duration" />
       <xsd:element name="size_minimum" type="positiveDouble" />
       <xsd:element name="size_multiple" type="positiveDouble" />
-      <xsd:element name="cost" type="xsd:double" />
+      <xsd:element name="cost" type="positiveDouble" />
       <xsd:element name="loads" type="loadlist" />
       <xsd:element name="flows" type="flowlist" />
       <xsd:element name="operationplans" type="operationplanlist" />
@@ -184,7 +184,7 @@
     <xsd:attribute name="fence" type="xsd:duration" />
     <xsd:attribute name="size_minimum" type="positiveDouble" />
     <xsd:attribute name="size_multiple" type="positiveDouble" />
-    <xsd:attribute name="cost" type="xsd:double" />
+    <xsd:attribute name="cost" type="positiveDouble" />
   </xsd:complexType>
 
   <xsd:complexType name="operationlist">
@@ -277,10 +277,10 @@
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="operation" type="operation" />
-      <xsd:element name="price" type="xsd:double" />
+      <xsd:element name="price" type="positiveDouble" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
-    <xsd:attribute name="price" type="xsd:double" />
+    <xsd:attribute name="price" type="positiveDouble" />
   </xsd:complexType>
 
   <xsd:complexType name="itemlist">
@@ -301,7 +301,7 @@
       <xsd:group ref="common_fields" />
       <xsd:element name="location" type="location" />
       <xsd:element name="maximum" type="calendar_double" />
-      <xsd:element name="cost" type="xsd:double" />
+      <xsd:element name="cost" type="positiveDouble" />
       <xsd:element name="owner" type="resource" />
       <xsd:element name="members">
         <xsd:complexType>
@@ -316,7 +316,7 @@
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
-    <xsd:attribute name="cost" type="xsd:double" />
+    <xsd:attribute name="cost" type="positiveDouble" />
   </xsd:complexType>
 
   <xsd:complexType name="resourcelist">
@@ -353,7 +353,7 @@
       <xsd:element name="location" type="location" />
       <xsd:element name="item" type="item" />
       <xsd:element name="onhand" type="xsd:double" />
-      <xsd:element name="carrying_cost" type="xsd:double" />
+      <xsd:element name="carrying_cost" type="positiveDouble" />
       <xsd:element name="minimum" type="calendar" />
       <xsd:element name="maximum" type="calendar" />
       <xsd:element name="producing" type="operation" />
@@ -363,7 +363,7 @@
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="onhand" type="xsd:double" />
-    <xsd:attribute name="carrying_cost" type="xsd:double" />
+    <xsd:attribute name="carrying_cost" type="positiveDouble" />
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
   </xsd:complexType>
 

@@ -427,7 +427,7 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const Keyword& tag, mo
     o->writeElement(Tags::tag_posttime, post_time);
   if (pre_time)
     o->writeElement(Tags::tag_pretime, pre_time);
-  if (getCost() != 1.0)
+  if (getCost() != 0.0)
     o->writeElement(Tags::tag_cost, getCost());
   if (fence)
     o->writeElement(Tags::tag_fence, fence);

@@ -1,6 +1,6 @@
 Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
 ===================================================================
---- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 11211)
+--- django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(revision 11368)
 +++ django/contrib/admin/media/js/admin/DateTimeShortcuts.js	(working copy)
 @@ -92,7 +92,7 @@
      openClock: function(num) {
@@ -75,9 +75,9 @@ Index: django/contrib/admin/media/js/admin/DateTimeShortcuts.js
      },
 Index: django/contrib/admin/sites.py
 ===================================================================
---- django/contrib/admin/sites.py	(revision 11211)
+--- django/contrib/admin/sites.py	(revision 11368)
 +++ django/contrib/admin/sites.py	(working copy)
-@@ -292,20 +292,7 @@
+@@ -299,20 +299,7 @@
          password = request.POST.get('password', None)
          user = authenticate(username=username, password=password)
          if user is None:
@@ -101,7 +101,7 @@ Index: django/contrib/admin/sites.py
          else:
 Index: django/contrib/admin/widgets.py
 ===================================================================
---- django/contrib/admin/widgets.py	(revision 11211)
+--- django/contrib/admin/widgets.py	(revision 11368)
 +++ django/contrib/admin/widgets.py	(working copy)
 @@ -122,8 +122,9 @@
          output.append('<a href="%s%s" class="related-lookup" id="lookup_id_%s" onclick="return showRelatedObjectLookupPopup(this);"> ' % \
@@ -113,11 +113,11 @@ Index: django/contrib/admin/widgets.py
 +        #if value:
 +        #    output.append(self.label_for_value(value))
          return mark_safe(u''.join(output))
-     
+ 
      def base_url_parameters(self):
 Index: django/core/management/__init__.py
 ===================================================================
---- django/core/management/__init__.py	(revision 11211)
+--- django/core/management/__init__.py	(revision 11368)
 +++ django/core/management/__init__.py	(working copy)
 @@ -14,50 +14,80 @@
  # doesn't have to reload every time it's called.
@@ -260,7 +260,7 @@ Index: django/core/management/__init__.py
  
 Index: django/db/models/sql/query.py
 ===================================================================
---- django/db/models/sql/query.py	(revision 11211)
+--- django/db/models/sql/query.py	(revision 11368)
 +++ django/db/models/sql/query.py	(working copy)
 @@ -751,8 +751,11 @@
  
@@ -292,7 +292,7 @@ Index: django/db/models/sql/query.py
                  col_aliases.add(c_alias)
 Index: django/views/i18n.py
 ===================================================================
---- django/views/i18n.py	(revision 11211)
+--- django/views/i18n.py	(revision 11368)
 +++ django/views/i18n.py	(working copy)
 @@ -190,5 +190,8 @@
      src.extend(csrc)

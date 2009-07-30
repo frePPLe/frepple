@@ -1,14 +1,31 @@
 
 The primary authors of frePPLe are:
 
- Johan De Taeye (jdetaeye at users.sourceforge.net)
+* Johan De Taeye (jdetaeye at users.sourceforge.net)
+
 
 And here is an inevitably incomplete list of MUCH-APPRECIATED CONTRIBUTORS --
 people who have submitted patches, reported bugs, and generally made
 frePPLe that much better:
 
- Tom Vergote (tom at think-wize dot com)
- Tobias Schlemmer (the_tsc at users dot sourceforge dot net)
- J K (e_k at users dot sourceforge dot net)
- Stephen Liu (2notebook at yahoo dot com dot tw, http://job.achi.idv.tw)
+* Tom Vergote (tom at think-wize dot com)
+* Tobias Schlemmer (the_tsc at users dot sourceforge dot net)
+* J K (e_k at users dot sourceforge dot net)
+* Stephen Liu (2notebook at yahoo dot com dot tw, http://job.achi.idv.tw)
  
+
+FrePPLe redistributes parts of the following third party software components:
+
+* contrib\django\freppledb\static\prototype.js 
+     Redistributed from Prototype JavaScript framework
+     Licensed under an MIT-style license
+     Copyright with Sam Stephenson
+     See http://www.prototypejs.org/
+
+* contrib\django\freppledb\static\FusionCharts.js
+  contrib\django\freppledb\static\FCF_*.swf
+     Redistributed components of FusionCharts Free
+     Licensed allows free use http://www.fusioncharts.com/free/TermsOfUse.asp
+     Copyright with InfoSoft Global
+     See http://www.fusioncharts.com/free/
+  

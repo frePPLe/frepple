@@ -205,7 +205,7 @@ class SolverMRP : public Solver
       * @see CAPACITY
       * @see FENCE
       */
-    static const short LEADTIME;
+    static const short LEADTIME = 1;
 
     /** Static constant for the MATERIAL constraint type.<br>
       * The numeric value is 2.
@@ -213,7 +213,7 @@ class SolverMRP : public Solver
       * @see CAPACITY
       * @see FENCE
       */
-    static const short MATERIAL;
+    static const short MATERIAL = 2;
 
     /** Static constant for the CAPACITY constraint type.<br>
       * The numeric value is 4.
@@ -221,7 +221,7 @@ class SolverMRP : public Solver
       * @see LEADTIME
       * @see FENCE
       */
-    static const short CAPACITY;
+    static const short CAPACITY = 4;
 
     /** Static constant for the FENCE constraint type.<br>
       * The numeric value is 8.
@@ -229,7 +229,7 @@ class SolverMRP : public Solver
       * @see CAPACITY
       * @see LEADTIME
       */
-    static const short FENCE;
+    static const short FENCE = 8;
 
     /** Update the constraints to be considered by this solver. This field may
       * not be applicable for all solvers. */
@@ -323,51 +323,12 @@ class SolverMRP : public Solver
     TimePeriod lazydelay;      
 
   protected:
-    /** @brief This class is a helper class of the SolverMRP class.
-      *
-      * It stores the solver state maintained by each solver thread.
-      * @see SolverMRP
+    /** @brief This class is used to store the solver status during the 
+      * ask-reply calls of the solver.
+      * 
       */
-    class SolverMRPdata : public CommandList
+    struct State
     {
-        friend class SolverMRP;
-      public:
-        SolverMRP* getSolver() const {return sol;}
-        SolverMRPdata(SolverMRP* s, int c, deque<Demand*>& d)
-            : sol(s), curOwnerOpplan(NULL), q_loadplan(NULL), q_flowplan(NULL),
-            q_operationplan(NULL), cluster(c), demands(d) {}
-
-        /** Verbose mode is inherited from the solver. */
-        unsigned short getLogLevel() const {return sol ? sol->getLogLevel() : 0;}
-
-        /** This function runs a single planning thread. Such a thread will loop
-          * through the following steps:
-          *    - Use the method next_cluster() to find another unplanned cluster.
-          *    - Exit the thread if no more cluster is found.
-          *    - Sort all demands in the cluster, using the demand_comparison()
-          *      method.
-          *    - Loop through the sorted list of demands and plan each of them.
-          *      During planning the demands exceptions are caught, and the
-          *      planning loop will simply move on to the next demand.
-          *      In this way, an error in a part of the model doesn't ruin the
-          *      complete plan.
-          * @see demand_comparison
-          * @see next_cluster
-          */
-        virtual DECLARE_EXPORT void execute();
-
-        virtual const MetaClass& getType() const {return *SolverMRP::metadata;}
-        virtual size_t getSize() const {return sizeof(SolverMRPdata);}
-
-        bool getVerbose() const 
-        {
-          throw LogicException("Use the method SolverMRPdata::getLogLevel() instead of SolverMRPdata::getVerbose()");
-        }
-
-      private:
-        /** Points to the solver. */
-        SolverMRP* sol;
-
         /** Points to the demand being planned. */
         Demand* curDemand;
 
@@ -413,6 +374,99 @@ class SolverMRP : public Solver
         /** A pointer to an operationplan currently being solved. */
         OperationPlan* q_operationplan;
 
+        /** Cost of the reply.<br>
+          * Only the direct cost should be returned in this field.
+          */
+        double a_cost;
+
+        /** Penalty associated with the reply.<br>
+          * This field contains indirect costs and other penalties that are
+          * not strictly related to the request. Examples are setup costs, 
+          * inventory carrying costs, ...
+          */
+        double a_penalty;
+    };
+
+    /** @brief This class is a helper class of the SolverMRP class.
+      *
+      * It stores the solver state maintained by each solver thread.
+      * @see SolverMRP
+      */
+    class SolverMRPdata : public CommandList
+    {
+        friend class SolverMRP;
+      public:
+        SolverMRP* getSolver() const {return sol;}
+
+        /** Constructor. */
+        SolverMRPdata(SolverMRP* s, int c, deque<Demand*>& d)
+          : sol(s), cluster(c), demands(d), 
+          state(statestack), prevstate(statestack-1) {}
+
+        /** Verbose mode is inherited from the solver. */
+        unsigned short getLogLevel() const {return sol ? sol->getLogLevel() : 0;}
+
+        /** This function runs a single planning thread. Such a thread will loop
+          * through the following steps:
+          *    - Use the method next_cluster() to find another unplanned cluster.
+          *    - Exit the thread if no more cluster is found.
+          *    - Sort all demands in the cluster, using the demand_comparison()
+          *      method.
+          *    - Loop through the sorted list of demands and plan each of them.
+          *      During planning the demands exceptions are caught, and the
+          *      planning loop will simply move on to the next demand.
+          *      In this way, an error in a part of the model doesn't ruin the
+          *      complete plan.
+          * @see demand_comparison
+          * @see next_cluster
+          */
+        virtual DECLARE_EXPORT void execute();
+
+        virtual const MetaClass& getType() const {return *SolverMRP::metadata;}
+        virtual size_t getSize() const {return sizeof(SolverMRPdata);}
+
+        bool getVerbose() const 
+        {
+          throw LogicException("Use the method SolverMRPdata::getLogLevel() instead of SolverMRPdata::getVerbose()");
+        }
+
+        /** Add a new state to the status stack. */
+        inline void push(double q = 0.0, Date d = Date::infiniteFuture)
+        {
+          if (state >= statestack + MAXSTATES) 
+            throw RuntimeException("Maximum recursion depth exceeded");
+          ++state;
+          ++prevstate;
+          state->q_qty = q;
+          state->q_date = d;
+          state->curOwnerOpplan = NULL;
+          state->q_loadplan = NULL;
+          state->q_flowplan = NULL;
+          state->q_operationplan = NULL;
+          state->a_cost = 0.0;
+          state->a_penalty = 0.0;
+        }
+
+        /** Removes a state from the status stack. */
+        inline void pop()
+        {
+          if (--state < statestack) 
+            throw LogicException("State stack empty");
+          --prevstate;
+        }
+
+        /** Pointer to the current solver status. */
+        State* state; 
+
+        /** Pointer to the solver status one level higher on the stack. */
+        State* prevstate; 
+
+      private:
+        static const int MAXSTATES = 256;
+
+        /** Points to the solver. */
+        SolverMRP* sol;
+
         /** An identifier of the cluster being replanned. Note that it isn't
           * always the complete cluster that is being planned.
           */
@@ -420,6 +474,9 @@ class SolverMRP : public Solver
 
         /** A deque containing all demands to be (re-)planned. */
         deque<Demand*>& demands;
+
+        /** Stack of solver status information. */
+        State statestack[MAXSTATES];
     };
 
     /** This function will check all constraints for an operationplan

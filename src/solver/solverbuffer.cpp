@@ -40,19 +40,19 @@ namespace frepple
   */
 DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
 {
-  SolverMRPdata* Solver = static_cast<SolverMRPdata*>(v);
-  Date requested_date(Solver->q_date);
-  double requested_qty(Solver->q_qty);
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  Date requested_date(data->state->q_date);
+  double requested_qty(data->state->q_qty);
   bool tried_requested_date(false);
 
   // Message
-  if (Solver->getSolver()->getLogLevel()>1)
+  if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName() 
-      << "' is asked: " << Solver->q_qty << "  " << Solver->q_date << endl;
+      << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Store the last command in the list, in order to undo the following
   // commands if required.
-  Command* topcommand = Solver->getLastCommand();
+  Command* topcommand = data->getLastCommand();
 
   // Make sure the new operationplans don't inherit an owner.
   // When an operation calls the solve method of suboperations, this field is
@@ -60,8 +60,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   // solving for buffers we must make sure NOT to pass owner information.
   // At the end of solving for a buffer we need to restore the original
   // settings...
-  OperationPlan *prev_owner_opplan = Solver->curOwnerOpplan;
-  Solver->curOwnerOpplan = NULL;
+  OperationPlan *prev_owner_opplan = data->state->curOwnerOpplan;
+  data->state->curOwnerOpplan = NULL;
 
   // Evaluate the buffer profile and solve shortages by asking more material.
   // The loop goes from the requested date till the very end. Whenever the
@@ -71,6 +71,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   double shortage(0.0);
   Date extraSupplyDate(Date::infiniteFuture);
   Date extraInventoryDate(Date::infiniteFuture);
+  double cumproduced = b->getFlowPlans().rbegin()->getCumulativeProduced();
   double current_minimum(0.0);
   for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
       ; ++cur)
@@ -100,13 +101,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
         while (b->getProducingOperation() && theDate >= requested_date && loop)
         {
           // Create supply
-          Solver->curBuffer = const_cast<Buffer*>(b);
-          Solver->q_qty = -theDelta;
-          Solver->q_date = prev->getDate();  
+          data->state->curBuffer = const_cast<Buffer*>(b);
+          data->state->q_qty = -theDelta;
+          data->state->q_date = prev->getDate();  
 
           // Check whether this date doesn't match with the requested date.
           // See a bit further why this is required.
-          if (Solver->q_date == requested_date) tried_requested_date = true;
+          if (data->state->q_date == requested_date) tried_requested_date = true;
 
           // Note that the supply created with the next line changes the
           // onhand value at all later dates!
@@ -115,14 +116,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           // Evaluate the reply date. The variable extraSupplyDate will store
           // the date when the producing operation tells us it can get extra
           // supply.
-          if (Solver->a_date < extraSupplyDate)
-            extraSupplyDate = Solver->a_date;
+          if (data->state->a_date < extraSupplyDate)
+            extraSupplyDate = data->state->a_date;
 
           // If we got some extra supply, we retry to get some more supply.
           // Only when no extra material is obtained, we give up.
-          if (Solver->a_qty > ROUNDING_ERROR 
-            && Solver->a_qty < -theDelta - ROUNDING_ERROR)
-            theDelta += Solver->a_qty;
+          if (data->state->a_qty > ROUNDING_ERROR 
+            && data->state->a_qty < -theDelta - ROUNDING_ERROR)
+            theDelta += data->state->a_qty;
           else
             loop = false;
         }
@@ -192,33 +193,33 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
       && b->getProducingOperation() && !tried_requested_date)
   {
     // Create supply at the requested date
-    Solver->curBuffer = const_cast<Buffer*>(b);
-    Solver->q_qty = shortage;
-    Solver->q_date = requested_date;
+    data->state->curBuffer = const_cast<Buffer*>(b);
+    data->state->q_qty = shortage;
+    data->state->q_date = requested_date;
     // Note that the supply created with the next line changes the onhand value
     // at all later dates!
     // Note that asking at the requested date doesn't keep the material on
     // stock to a minimum.
     b->getProducingOperation()->solve(*this,v);
     // Evaluate the reply
-    if (Solver->a_date < extraSupplyDate) extraSupplyDate = Solver->a_date;
-    if (Solver->a_qty > ROUNDING_ERROR) 
-      shortage -= Solver->a_qty;
+    if (data->state->a_date < extraSupplyDate) extraSupplyDate = data->state->a_date;
+    if (data->state->a_qty > ROUNDING_ERROR) 
+      shortage -= data->state->a_qty;
     else
       tried_requested_date = true;
   }
 
   // Final evaluation of the replenishment
-  if (Solver->getSolver()->isConstrained())
+  if (data->getSolver()->isConstrained())
   {
     // Use the constrained planning result
-    Solver->a_qty = requested_qty - shortage;
-    if (Solver->a_qty < ROUNDING_ERROR)
+    data->state->a_qty = requested_qty - shortage;
+    if (data->state->a_qty < ROUNDING_ERROR)
     {
-      Solver->undo(topcommand);
-      Solver->a_qty = 0.0;
+      data->undo(topcommand);
+      data->state->a_qty = 0.0;
     }
-    Solver->a_date = (extraInventoryDate < extraSupplyDate) ?
+    data->state->a_date = (extraInventoryDate < extraSupplyDate) ?
         extraInventoryDate :
         extraSupplyDate;
   }
@@ -229,32 +230,44 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     // solve for shortages as good as possible. Only in the end we 'lie' about
     // the result to the calling function. Material shortages will then remain
     // in the buffer.
-    Solver->a_qty = requested_qty;
-    Solver->a_date = Date::infiniteFuture;
+    data->state->a_qty = requested_qty;
+    data->state->a_date = Date::infiniteFuture;
   }
 
   // Restore the owning operationplan.
-  Solver->curOwnerOpplan = prev_owner_opplan;
+  data->state->curOwnerOpplan = prev_owner_opplan;
 
   // Reply quantity must be greater than 0
-  assert( Solver->a_qty >= 0 );
+  assert( data->state->a_qty >= 0 );
+
+  // Increment the cost
+  // Only the quantity consumed directly from the buffer is counted.
+  // The cost of the material supply taken from producing operations is 
+  // computed seperately and not considered here.
+  if (b->getItem() && data->state->a_qty > 0)
+  {
+    cumproduced = b->getFlowPlans().rbegin()->getCumulativeProduced() - cumproduced;
+    if (data->state->a_qty > cumproduced)
+      data->state->a_cost += (data->state->a_qty - cumproduced) * b->getItem()->getPrice();
+  }
 
   // Message
-  if (Solver->getSolver()->getLogLevel()>1)
+  if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName() 
-    << "' answers: " << Solver->a_qty << "  " << Solver->a_date << endl;
+    << "' answers: " << data->state->a_qty << "  " << data->state->a_date << "  "
+    << data->state->a_cost << "  " << data->state->a_penalty << endl;
 }
 
 
 DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
-  data->q_qty = - data->q_flowplan->getQuantity();
-  data->q_date = data->q_flowplan->getDate();
-  if (data->q_qty != 0.0)
+  data->state->q_qty = - data->state->q_flowplan->getQuantity();
+  data->state->q_date = data->state->q_flowplan->getDate();
+  if (data->state->q_qty != 0.0)
   {
     fl->getBuffer()->solve(*this,data);
-    if (data->a_date > fl->getEffective().getEnd())
+    if (data->state->a_date > fl->getEffective().getEnd())
     {
       // The reply date must be less than the effectivity end date: after 
       // that date the flow in question won't consume any material any more.
@@ -263,37 +276,40 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
           << fl->getBuffer()->getName() << "' answer date is adjusted to " 
           << fl->getEffective().getEnd() 
           << " because of a date effective flow" << endl;
-      data->a_date = fl->getEffective().getEnd();
+      data->state->a_date = fl->getEffective().getEnd();
     }
   }
   else
   {
     // It's a zero quantity flowplan. 
     // E.g. because it is not effective.
-    data->a_date = data->q_date;
-    data->a_qty = 0.0; 
+    data->state->a_date = data->state->q_date;
+    data->state->a_qty = 0.0; 
   }
 }
 
 
 DECLARE_EXPORT void SolverMRP::solve(const BufferInfinite* b, void* v)
 {
-  SolverMRPdata* Solver = (SolverMRPdata*)v;
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Message
-  if (Solver->getSolver()->getLogLevel()>1)
+  if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Buffer '" << b << "' is asked: "
-    << Solver->q_qty << "  " << Solver->q_date << endl;
+    << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Reply whatever is requested, regardless of date, quantity or supply.
   // The demand is not propagated upstream either.
-  Solver->a_qty = Solver->q_qty;
-  Solver->a_date = Solver->q_date;
+  data->state->a_qty = data->state->q_qty;
+  data->state->a_date = data->state->q_date;
+  if (b->getItem())
+    data->state->a_cost += data->state->q_qty * b->getItem()->getPrice();
 
   // Message
-  if (Solver->getSolver()->getLogLevel()>1)
+  if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Buffer '" << b << "' answers: "
-    << Solver->a_qty << "  " << Solver->a_date << endl;
+    << data->state->a_qty << "  " << data->state->a_date << "  "
+    << data->state->a_cost << "  " << data->state->a_penalty << endl;
 }
 
 

@@ -61,7 +61,7 @@ DECLARE_EXPORT void Item::writeElement(XMLOutput *o, const Keyword& tag, mode m)
   HasDescription::writeElement(o, tag);
   HasHierarchy<Item>::writeElement(o, tag);
   o->writeElement(Tags::tag_operation, deliveryOperation);
-  if (getPrice() != 1.0) o->writeElement(Tags::tag_price, getPrice());
+  if (getPrice() != 0.0) o->writeElement(Tags::tag_price, getPrice());
   o->EndObject(tag);
 }
 

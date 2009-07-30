@@ -82,15 +82,15 @@ double suggestQuantity(const BufferProcure* b, double f)
 
 DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 {
-  SolverMRPdata* Solver = static_cast<SolverMRPdata*>(v);
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   // Message
-  if (Solver->getSolver()->getLogLevel()>1)
+  if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Procurement buffer '" << b->getName() 
-    << "' is asked: " << Solver->q_qty << "  " << Solver->q_date << endl;
+    << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Standard reply date
-  Solver->a_date = Date::infiniteFuture;
+  data->state->a_date = Date::infiniteFuture;
 
   // Initialize an iterator over reusable existing procurements
   OperationPlan *last_operationplan = NULL;
@@ -114,10 +114,10 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     latest_next = earliest_next + b->getMaximumInterval();
   if (earliest_next && b->getMinimumInterval())
     earliest_next += b->getMinimumInterval();
-  if (Solver->getSolver()->isLeadtimeConstrained()
+  if (data->getSolver()->isLeadtimeConstrained()
     && earliest_next < Plan::instance().getCurrent() + b->getLeadtime())
     earliest_next = Plan::instance().getCurrent() + b->getLeadtime();
-  if (Solver->getSolver()->isFenceConstrained()
+  if (data->getSolver()->isFenceConstrained()
     && earliest_next < Plan::instance().getCurrent() + b->getFence())
     earliest_next = Plan::instance().getCurrent() + b->getFence();
 
@@ -184,13 +184,13 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     if (current_date < earliest_next)
     {
       if (current_inventory < -ROUNDING_ERROR
-        && current_date >= Solver->q_date
+        && current_date >= data->state->q_date
         && b->getMinimumInterval()
-        && Solver->a_date > earliest_next
-        && Solver->getSolver()->isMaterialConstrained())
+        && data->state->a_date > earliest_next
+        && data->getSolver()->isMaterialConstrained())
           // The inventory goes negative here and we can't procure more
           // material because of the minimum interval...
-          Solver->a_date = earliest_next;
+          data->state->a_date = earliest_next;
       continue;
     }
 
@@ -215,11 +215,11 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
       produced += last_operationplan->getQuantity() - origqty;
       current_inventory = produced - consumed;
       if (current_inventory < -ROUNDING_ERROR
-        && Solver->a_date > earliest_next + b->getMinimumInterval()
-        && earliest_next + b->getMinimumInterval() > Solver->q_date
-        && Solver->getSolver()->isMaterialConstrained())
+        && data->state->a_date > earliest_next + b->getMinimumInterval()
+        && earliest_next + b->getMinimumInterval() > data->state->q_date
+        && data->getSolver()->isMaterialConstrained())
           // Resizing didn't work, and we still have shortage
-          Solver->a_date = earliest_next + b->getMinimumInterval();
+          data->state->a_date = earliest_next + b->getMinimumInterval();
     }
 
     // At this point, we know we need to reorder...
@@ -234,10 +234,10 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         // No existing procurement can be reused. Create a new one.
         CommandCreateOperationPlan *a =
           new CommandCreateOperationPlan(b->getOperation(), order_qty,
-            Date::infinitePast, current_date, Solver->curDemand);
+            Date::infinitePast, current_date, data->state->curDemand);
         last_operationplan = a->getOperationPlan();
         produced += last_operationplan->getQuantity();
-        Solver->add(a);
+        data->add(a);
       }
       else if (curProcure->getDates().getEnd() == current_date
         && curProcure->getQuantity() == order_qty)
@@ -258,7 +258,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
           new CommandMoveOperationPlan(&*curProcure, current_date, true, order_qty);
         last_operationplan = a->getOperationPlan();
         moved.insert(last_operationplan);
-        Solver->add(a);
+        data->add(a);
         produced += last_operationplan->getQuantity();
         do
           ++curProcure;
@@ -286,53 +286,58 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   {
     OperationPlan *opplan = &*(curProcure++);
     if (!opplan->getLocked() && moved.find(opplan)!=moved.end())
-      Solver->add(new CommandDeleteOperationPlan(opplan));
+      data->add(new CommandDeleteOperationPlan(opplan));
   }
 
   // Create the answer
-  if (Solver->getSolver()->isFenceConstrained()
-    || Solver->getSolver()->isLeadtimeConstrained()
-    || Solver->getSolver()->isMaterialConstrained())
+  if (data->getSolver()->isFenceConstrained()
+    || data->getSolver()->isLeadtimeConstrained()
+    || data->getSolver()->isMaterialConstrained())
   {
     // Check if the inventory drops below zero somewhere
     double shortage = 0;
     for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
       cur != b->getFlowPlans().end(); ++cur)
-      if (cur->getDate() >= Solver->q_date
+      if (cur->getDate() >= data->state->q_date
         && cur->getOnhand() < -ROUNDING_ERROR
         && cur->getOnhand() < shortage)
       {
         shortage = cur->getOnhand();
-        if (-shortage >= Solver->q_qty) break;
+        if (-shortage >= data->state->q_qty) break;
       }
     if (shortage < 0)
     {
       // Answer a shorted quantity
-      Solver->a_qty = Solver->q_qty + shortage;
+      data->state->a_qty = data->state->q_qty + shortage;
       // Nothing to promise...
-      if (Solver->a_qty < 0) Solver->a_qty = 0;
+      if (data->state->a_qty < 0) data->state->a_qty = 0;
       // Check the reply date
-      if (Solver->getSolver()->isFenceConstrained()
-        && Solver->q_date < Plan::instance().getCurrent() + b->getFence()
-        && Solver->a_date > Plan::instance().getCurrent() + b->getFence())
-        Solver->a_date = Plan::instance().getCurrent() + b->getFence();
-      if (Solver->getSolver()->isLeadtimeConstrained()
-        && Solver->q_date < Plan::instance().getCurrent() + b->getLeadtime()
-        && Solver->a_date > Plan::instance().getCurrent() + b->getLeadtime())
-        Solver->a_date = Plan::instance().getCurrent() + b->getLeadtime();
+      if (data->getSolver()->isFenceConstrained()
+        && data->state->q_date < Plan::instance().getCurrent() + b->getFence()
+        && data->state->a_date > Plan::instance().getCurrent() + b->getFence())
+        data->state->a_date = Plan::instance().getCurrent() + b->getFence();
+      if (data->getSolver()->isLeadtimeConstrained()
+        && data->state->q_date < Plan::instance().getCurrent() + b->getLeadtime()
+        && data->state->a_date > Plan::instance().getCurrent() + b->getLeadtime())
+        data->state->a_date = Plan::instance().getCurrent() + b->getLeadtime();
     }
     else
       // Answer the full quantity
-      Solver->a_qty = Solver->q_qty;
+      data->state->a_qty = data->state->q_qty;
   }
   else
     // Answer the full quantity
-    Solver->a_qty = Solver->q_qty;
+    data->state->a_qty = data->state->q_qty;
+
+  // Increment the cost 
+  if (b->getItem() && data->state->a_qty > 0.0)
+    data->state->a_cost += data->state->a_qty * b->getItem()->getPrice();
 
   // Message
-  if (Solver->getSolver()->getLogLevel()>1)
-    logger << indent(b->getLevel()) << "  Procurement buffer '" << b->getName() 
-    << "' answers: " << Solver->a_qty << "  " << Solver->a_date << endl;
+  if (data->getSolver()->getLogLevel()>1)
+    logger << indent(b->getLevel()) << "  Procurement buffer '" << b 
+    << "' answers: " << data->state->a_qty << "  " << data->state->a_date 
+    << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
 }
 
 

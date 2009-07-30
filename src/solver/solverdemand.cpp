@@ -32,13 +32,16 @@ namespace frepple
 {
 
 
-DECLARE_EXPORT void SolverMRP::solve (const Demand* l, void* v)
+DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 {
-  SolverMRPdata* Solver = static_cast<SolverMRPdata*>(v);
-  unsigned int loglevel = Solver->getSolver()->getLogLevel();
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  unsigned int loglevel = data->getSolver()->getLogLevel();
+  
+  // Note: This solver method does not push/pop states on the stack.
+  // We continue to work on the top element of the stack.
 
   // Message
-  if (loglevel>0)
+  if (data->getSolver()->getLogLevel()>0)
     logger << "Planning demand '" << l->getName() << "' (" << l->getPriority()
     << ", " << l->getDue() << ", " << l->getQuantity() << ")" << endl;
 
@@ -73,22 +76,23 @@ DECLARE_EXPORT void SolverMRP::solve (const Demand* l, void* v)
     // Message
     if (loglevel>0)
       logger << "Demand '" << l << "' asks: "
-      << plan_qty << " - " << plan_date << endl;
+      << plan_qty << "  " << plan_date << endl;
 
     // Check whether the action list is empty
-    assert( Solver->empty() );
+    assert( data->empty() );
 
     // Plan the demand by asking the delivery operation to plan
-    Solver->curBuffer = NULL;
-    Solver->q_qty = plan_qty;
-    Solver->q_date = plan_date;
-    Solver->curDemand = const_cast<Demand*>(l);
+    data->state->curBuffer = NULL;
+    data->state->q_qty = plan_qty;
+    data->state->q_date = plan_date;
+    data->state->curDemand = const_cast<Demand*>(l);
     deliveryoper->solve(*this,v);
 
     // Message
     if (loglevel>0)
       logger << "Demand '" << l << "' gets answer: "
-      << Solver->a_qty << " - " << Solver->a_date << endl;
+      << data->state->a_qty << "  " << data->state->a_date << "  "
+      << data->state->a_cost << "  " << data->state->a_penalty << endl;
 
     // Update the date to plan in the next loop
     Date copy_plan_date = plan_date;
@@ -99,66 +103,66 @@ DECLARE_EXPORT void SolverMRP::solve (const Demand* l, void* v)
     // 2) The planned quantity is less than the minimum shipment quantity
     // 3) The remaining quantity after accepting this answer is less than
     //    the minimum quantity. 
-    if (Solver->a_qty < ROUNDING_ERROR 
-      || Solver->a_qty + ROUNDING_ERROR < l->getMinShipment()
-      || (plan_qty - Solver->a_qty < l->getMinShipment()
-          && plan_qty - Solver->a_qty > ROUNDING_ERROR))
+    if (data->state->a_qty < ROUNDING_ERROR 
+      || data->state->a_qty + ROUNDING_ERROR < l->getMinShipment()
+      || (plan_qty - data->state->a_qty < l->getMinShipment()
+          && plan_qty - data->state->a_qty > ROUNDING_ERROR))
     {
-      if (plan_qty - Solver->a_qty < l->getMinShipment()
+      if (plan_qty - data->state->a_qty < l->getMinShipment()
         
-        && Solver->a_qty + ROUNDING_ERROR >= l->getMinShipment()
-        && Solver->a_qty > best_a_qty )
+        && data->state->a_qty + ROUNDING_ERROR >= l->getMinShipment()
+        && data->state->a_qty > best_a_qty )
       {
         // The remaining quantity after accepting this answer is less than
         // the minimum quantity. Therefore, we delay accepting it now, but
         // still keep track of this best offer.
-        best_a_qty = Solver->a_qty;
+        best_a_qty = data->state->a_qty;
         best_q_qty = plan_qty;
         best_q_date = plan_date;
       }
 
       // Delete operationplans - Undo all changes
-      Solver->undo();
+      data->undo();
 
       // Set the ask date for the next pass through the loop
-      if (Solver->a_date <= copy_plan_date)
+      if (data->state->a_date <= copy_plan_date)
       {
         // Oops, we didn't get a proper answer we can use for the next loop.
         // Print a warning and simply try one day later.
         if (loglevel>0)
           logger << "Warning: Demand '" << l << "': Lazy retry" << endl;
-        plan_date = copy_plan_date + Solver->sol->getLazyDelay();
+        plan_date = copy_plan_date + data->sol->getLazyDelay();
       }
       else 
         // Use the next-date answer from the solver
-        plan_date = Solver->a_date;
+        plan_date = data->state->a_date;
     }    
     else
     {
       // Accepting this answer
-      if (Solver->a_qty + ROUNDING_ERROR < plan_qty)
+      if (data->state->a_qty + ROUNDING_ERROR < plan_qty)
       {
         // The demand was only partially planned. We need to do a new
         // 'coordinated' planning run.
 
         // Delete operationplans created in the 'testing round'
-        Solver->undo();
+        data->undo();
 
         // Create the correct operationplans
         if (loglevel>=2) logger << "Demand '" << l << "' plans coordination." << endl;
-        Solver->getSolver()->setLogLevel(0);
-        double tmpresult = Solver->a_qty;
+        data->getSolver()->setLogLevel(0);
+        double tmpresult = data->state->a_qty;
         try
         {
-          for(double remainder = Solver->a_qty;
-            remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
+          for(double remainder = data->state->a_qty;
+            remainder > ROUNDING_ERROR; remainder -= data->state->a_qty)
           {
-            Solver->q_qty = remainder;
-            Solver->q_date = copy_plan_date;
-            Solver->curDemand = const_cast<Demand*>(l);
-            Solver->curBuffer = NULL;
+            data->state->q_qty = remainder;
+            data->state->q_date = copy_plan_date;
+            data->state->curDemand = const_cast<Demand*>(l);
+            data->state->curBuffer = NULL;
             deliveryoper->solve(*this,v);
-            if (Solver->a_qty < ROUNDING_ERROR)
+            if (data->state->a_qty < ROUNDING_ERROR)
             {
               logger << "Warning: Demand '" << l << "': Failing coordination" << endl;
               break;
@@ -167,19 +171,19 @@ DECLARE_EXPORT void SolverMRP::solve (const Demand* l, void* v)
         }
         catch (...)
         {
-          Solver->getSolver()->setLogLevel(loglevel);
+          data->getSolver()->setLogLevel(loglevel);
           throw;
         }
-        Solver->getSolver()->setLogLevel(loglevel);
-        Solver->a_qty = tmpresult;
+        data->getSolver()->setLogLevel(loglevel);
+        data->state->a_qty = tmpresult;
       }
 
       // Register the new operationplans. We need to make sure that the
       // correct execute method is called!
-      Solver->CommandList::execute();
+      data->CommandList::execute();
 
       // Update the quantity to plan in the next loop
-      plan_qty -= Solver->a_qty;
+      plan_qty -= data->state->a_qty;
       best_a_qty = 0.0;  // Reset 'best-answer' remember
     }
 
@@ -194,31 +198,31 @@ DECLARE_EXPORT void SolverMRP::solve (const Demand* l, void* v)
   if (best_a_qty > 0.0)
   {
     if (loglevel>=2) logger << "Demand '" << l << "' accepts a best answer." << endl;
-    Solver->getSolver()->setLogLevel(0);
+    data->getSolver()->setLogLevel(0);
     try
     {
       for(double remainder = best_q_qty;
-        remainder > ROUNDING_ERROR; remainder -= Solver->a_qty)
+        remainder > ROUNDING_ERROR; remainder -= data->state->a_qty)
       {
-        Solver->q_qty = remainder;
-        Solver->q_date = best_q_date;
-        Solver->curDemand = const_cast<Demand*>(l);
-        Solver->curBuffer = NULL;
+        data->state->q_qty = remainder;
+        data->state->q_date = best_q_date;
+        data->state->curDemand = const_cast<Demand*>(l);
+        data->state->curBuffer = NULL;
         deliveryoper->solve(*this,v);
-        if (Solver->a_qty < ROUNDING_ERROR)
+        if (data->state->a_qty < ROUNDING_ERROR)
         {
           logger << "Warning: Demand '" << l << "': Failing accepting best answer" << endl;
           break;
         }
       }
-      Solver->CommandList::execute();
+      data->CommandList::execute();
     }
     catch (...)
     {
-      Solver->getSolver()->setLogLevel(loglevel);
+      data->getSolver()->setLogLevel(loglevel);
       throw;
     }
-    Solver->getSolver()->setLogLevel(loglevel);
+    data->getSolver()->setLogLevel(loglevel);
   }
 }
 

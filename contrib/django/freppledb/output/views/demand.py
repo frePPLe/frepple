@@ -212,7 +212,6 @@ def GraphData(request, entity):
     demand.append(x['demand'])
     supply.append(x['supply'])
     backlog.append(x['backlog'])
-  print len(bucketlist) / 20 + 1
   context = { 
     'buckets': bucketlist, 
     'demand': demand, 

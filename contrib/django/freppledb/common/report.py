@@ -53,8 +53,10 @@ from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
-from django.utils.text import capfirst
-from django.utils.encoding import iri_to_uri
+from django.utils.text import capfirst, get_text_list
+from django.utils.encoding import iri_to_uri, force_unicode
+from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
+from django.contrib.contenttypes.models import ContentType
 
 from input.models import Plan, Buffer
 from common.db import python_date
@@ -237,15 +239,21 @@ def view_report(request, entity=None, **args):
     if not reportclass.editable or not request.user.has_perm('%s.%s' % (model._meta.app_label, model._meta.get_add_permission())):
       request.user.message_set.create(message=_('Not authorized'))
       return HttpResponseRedirect(request.get_full_path())
-    (warnings,errors) = parseUpload(request, reportclass, request.FILES['csv_file'].read())
+    (warnings,errors,changed,added) = parseUpload(request, reportclass, request.FILES['csv_file'].read())
     if len(errors) > 0:
-      request.user.message_set.create(message=_('File upload aborted with errors'))
+      request.user.message_set.create(
+        message=_('File upload aborted with errors: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+        )
       for i in errors: request.user.message_set.create(message=i)
     elif len(warnings) > 0:
-      request.user.message_set.create(message=_('Uploaded file processed with warnings'))
+      request.user.message_set.create(
+        message=_('Uploaded file processed with warnings: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+        )
       for i in warnings: request.user.message_set.create(message=i)
     else:
-      request.user.message_set.create(message=_('Uploaded data successfully'))
+      request.user.message_set.create(
+        message=_('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+        )
     return HttpResponseRedirect(request.get_full_path())
 
   # Verify the user is authorirzed to view the report
@@ -999,9 +1007,12 @@ def parseUpload(request, reportclass, data):
     entityclass = reportclass.model
     headers = []
     rownumber = 0
+    changed = 0
+    added = 0
     warnings = []
     errors = []
-
+    content_type_id = ContentType.objects.get_for_model(entityclass).pk
+    
     # Loop through the data records
     has_pk_field = False
     for row in csv.reader(data.splitlines()):
@@ -1028,7 +1039,7 @@ def parseUpload(request, reportclass, data):
           # The primary key is not an auto-generated id and it is not mapped in the input...
           errors.append(_('Missing primary key field %(key)s') % {'key': entityclass._meta.pk.name})
         # Abort when there are errors
-        if len(errors) > 0: return (warnings,errors)
+        if len(errors) > 0: return (warnings,errors,0,0)
         # Create a form class that will be used to validate the data
         UploadMeta = type("UploadMeta", (), {
           'model': entityclass,
@@ -1064,22 +1075,42 @@ def parseUpload(request, reportclass, data):
               form = UploadForm(d,instance=it)
             except entityclass.DoesNotExist:
               form = UploadForm(d)
+              it = None
           else:
             # No primary key required for this model
             form = UploadForm(d)
+            it = None
 
           # Step 3: Validate the data and save to the database
-          try:
-            form.save()
-          except:
-            # Validation fails
-            for field in form:
-              for err in field.errors:
+          if form.has_changed():
+            try:
+              obj = form.save()
+              LogEntry(
+                  user_id         = request.user.pk,
+                  content_type_id = content_type_id,
+                  object_id       = obj.pk,
+                  object_repr     = force_unicode(obj),
+                  action_flag     = it and CHANGE or ADDITION,
+                  change_message  = _('Changed %s.') % get_text_list(form.changed_data, _('and'))
+              ).save()
+              if it:
+                changed += 1
+              else: 
+                added += 1
+            except Exception, e:
+              # Validation fails
+              for error in form.non_field_errors():
                 warnings.append(
-                  _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
-                    'rownum': rownumber, 'data': d[field.name],
-                    'field': field.name, 'message': err
+                  _('Row %(rownum)s: %(message)s') % {
+                    'rownum': rownumber, 'message': error
                   })
+              for field in form:
+                for error in field.errors:
+                  warnings.append(
+                    _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
+                      'rownum': rownumber, 'data': d[field.name],
+                      'field': field.name, 'message': error
+                    })
 
           # Step 4: Commit the database changes from time to time
           if rownumber % 500 == 0: transaction.commit()
@@ -1089,4 +1120,4 @@ def parseUpload(request, reportclass, data):
     transaction.commit()
 
     # Report all failed records
-    return (warnings,errors)
+    return (warnings, errors, changed, added)

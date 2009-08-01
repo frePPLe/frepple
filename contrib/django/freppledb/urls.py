@@ -56,7 +56,7 @@ urlpatterns += common.urls.urlpatterns
 # hide/override some admin urls.
 urlpatterns += patterns('',
     (r'^admin/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf','freppledb'),}),
-    (r'^admin/(.*)', admin.site.root),
+    (r'^admin/', include(admin.site.urls)),
 )
 
 # Allows the standalone development server (and the py2exe executable) to serve

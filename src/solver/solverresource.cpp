@@ -238,12 +238,11 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
           // Break out of loop if no overload and we're beyond the 
           // operationplan end date.
           break;
-        else if (!newDate && loadpl->getDate()!=data->state->q_loadplan->getDate())
+        else if (!newDate && loadpl->getDate()!=data->state->q_loadplan->getDate() && curMax >= fabs(loadpl->getQuantity()))
         {
           // We are below the max limit for the first time now.
           // This means that the previous date may be a proper start.
           newDate = loadpl->getDate();
-          //break;
         }
       }
 

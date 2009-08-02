@@ -560,11 +560,14 @@ extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, P
     // Call the object to update the attribute
     int result = static_cast<PythonExtensionBase*>(self)->setattro(Attribute(PyString_AsString(name)), field);
 
-    // Process result
+    // Process 'OK' result
     if (!result) return 0;
-    PyErr_Format(PyExc_AttributeError,
-      "attribute '%s' on '%s' can't be updated",
-      PyString_AsString(name), self->ob_type->tp_name);
+
+    // Process 'not OK' result - set python error string if it isn't set yet
+    if (!PyErr_Occurred())
+      PyErr_Format(PyExc_AttributeError,
+        "attribute '%s' on '%s' can't be updated",
+        PyString_AsString(name), self->ob_type->tp_name);
 		return -1;
   }
   catch (...)

@@ -67,12 +67,13 @@ def loadLocations(cursor):
   print 'Importing locations...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, description, owner_id FROM location")
-  for i,j,k in cursor.fetchall():
+  cursor.execute("SELECT name, description, owner_id, available_id FROM location")
+  for i,j,k,l in cursor.fetchall():
     cnt += 1
     try:
       x = frepple.location(name=i, description=j)
-      if k: x.owner=frepple.location(name=k)
+      if k: x.owner = frepple.location(name=k)
+      if l: x.available = frepple.calendar(name=l)
     except Exception, e: print "Error:", e
   print 'Loaded %d locations in %.2f seconds' % (cnt, time() - starttime)
 
@@ -81,10 +82,14 @@ def loadCalendars(cursor):
   print 'Importing calendars...'
   cnt = 0
   starttime = time()
-  cursor.execute("SELECT name, defaultvalue FROM calendar")
-  for i, j in cursor.fetchall():
+  cursor.execute("SELECT name, defaultvalue, type FROM calendar")
+  for i, j, k in cursor.fetchall():
     cnt += 1
-    try: frepple.calendar(name=i, default=j)
+    try: 
+      if k == "calendar_boolean":
+        frepple.calendar_boolean(name=i, default=j)
+      else:
+        frepple.calendar_double(name=i, default=j)
     except Exception, e: print "Error:", e
   print 'Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime)
 

@@ -800,6 +800,10 @@ class CalendarList(ListReport):
       'title': _('name'),
       'filter': FilterText(),
       }),
+    ('type', {
+      'title': _('type'),
+      'filter': FilterText(),
+      }),
     ('description', {
       'title': _('description'),
       'filter': FilterText(),

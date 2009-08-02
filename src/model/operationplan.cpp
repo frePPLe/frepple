@@ -1029,7 +1029,7 @@ PyObject* PythonOperationPlan::create(PyTypeObject* pytype, PyObject* args, PyOb
         if (!attr.isA(Tags::tag_operation) && !attr.isA(Tags::tag_id) && !attr.isA(Tags::tag_action))
         {
           int result = pr->setattro(attr, field);
-          if (result)
+          if (result && !PyErr_Occurred())
             PyErr_Format(PyExc_AttributeError,
               "attribute '%s' on '%s' can't be updated",
               PyString_AsString(key), pr->ob_type->tp_name);

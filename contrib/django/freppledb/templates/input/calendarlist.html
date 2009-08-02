@@ -14,6 +14,7 @@
 {% block data %}
 {% for i in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
+<td>{{i.type}}</td>
 <td>{{i.description}}</td>
 <td>{{i.category}}</td>
 <td>{{i.subcategory}}</td>

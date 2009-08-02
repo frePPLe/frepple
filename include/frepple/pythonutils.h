@@ -796,7 +796,7 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
           if (!attr.isA(Tags::tag_name) && !attr.isA(Tags::tag_type) && !attr.isA(Tags::tag_action))
           {
             int result = pr->setattro(attr, field);
-            if (result)
+            if (result && !PyErr_Occurred())
               PyErr_Format(PyExc_AttributeError,
                 "attribute '%s' on '%s' can't be updated",
                 PyString_AsString(key), pr->ob_type->tp_name);
@@ -881,7 +881,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
           if (!attr.isA(Tags::tag_name) && !attr.isA(Tags::tag_type) && !attr.isA(Tags::tag_action))
           {
             int result = pr->setattro(attr, field);
-            if (result)
+            if (result && !PyErr_Occurred())
               PyErr_Format(PyExc_AttributeError,
                 "attribute '%s' on '%s' can't be updated",
                 PyString_AsString(key), pr->ob_type->tp_name);

@@ -173,9 +173,9 @@ class DetailReport(ListReport):
       'title': _('quantity'),
       'filter': FilterNumber(),
       }),
-    ('flowdatetime', {
+    ('flowdate', {
       'title': _('date'),
-      'filter': FilterDate(field='flowdate'),
+      'filter': FilterDate(),
       }),
     ('onhand', {
       'title': _('onhand'),

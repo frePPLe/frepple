@@ -36,13 +36,12 @@ enhance others.
   - sql_max:
     Returns the minimum of 2 numbers.
   - python_date:
-    A date database field is represented differently by the different
+    A datetime database field is represented differently by the different
     database connectors.
-    Oracle returns a python datetime object.
+    Oracle, PostgreSQL and mySQL return a python datetime object.
     SQLite returns a string.
-    PostgreSQL and mySQL both return a date object.
-    This method does what one might intuitively expect: a date field in the
-    database is always returned as a python date object.
+    This method does what one might intuitively expect: a python date object
+    is always returned.
 '''
 
 from django.conf import settings
@@ -70,8 +69,8 @@ if settings.DATABASE_ENGINE == 'sqlite3':
     return "min(%s,%s)" % (d1,d2)
 
   def python_date(d):
-    if isinstance(d,date): return d
-    return datetime.strptime(d,'%Y-%m-%d').date()
+    if isinstance(d,datetime): return d.date()
+    return datetime.strptime(d,'%Y-%m-%d %H:%M:%S').date()
 
 # Functions for POSTGRESQL
 elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
@@ -94,7 +93,7 @@ elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
     return "least(%s,%s)" % (d1,d2)
 
   def python_date(d):
-    return d
+    return d.date()
 
 # Functions for MYSQL
 elif settings.DATABASE_ENGINE == 'mysql':
@@ -115,7 +114,7 @@ elif settings.DATABASE_ENGINE == 'mysql':
     return "least(%s,%s)" % (d1,d2)
 
   def python_date(d):
-    return d
+    return d.date()
 
 # Functions for ORACLE
 elif settings.DATABASE_ENGINE == 'oracle':

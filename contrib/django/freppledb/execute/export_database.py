@@ -69,11 +69,11 @@ def exportProblems(cursor):
   starttime = time()
   cursor.executemany(
     "insert into out_problem \
-    (entity,name,description,startdatetime,enddatetime,startdate,enddate,weight) \
-    values(%s,%s,%s,%s,%s,%s,%s,%s)",
+    (entity,name,description,startdate,enddate,weight) \
+    values(%s,%s,%s,%s,%s,%s)",
     [(
        i.entity, i.name, i.description[0:79], str(i.start), str(i.end),
-       str(i.start.date()), str(i.end.date()), round(i.weight,ROUNDING_DECIMALS)
+       round(i.weight,ROUNDING_DECIMALS)
      ) for i in frepple.problems()
     ])
   transaction.commit()
@@ -89,12 +89,11 @@ def exportOperationplans(cursor):
   for i in frepple.operations():
     cursor.executemany(
       "insert into out_operationplan \
-       (id,operation,quantity,startdatetime,enddatetime,startdate, \
-       enddate,demand,locked,owner) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+       (id,operation,quantity,startdate,enddate,demand,locked,owner) \
+       values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
         j.id, i.name.replace("'","''"),
         round(j.quantity,ROUNDING_DECIMALS), str(j.start), str(j.end),
-        str(j.start.date()), str(j.end.date()),
         j.demand and j.demand.name or None, j.locked,
         j.owner and j.owner.id or None
        ) for j in i.operationplans ])
@@ -113,11 +112,11 @@ def exportFlowplans(cursor):
   for i in frepple.buffers():
     cursor.executemany(
       "insert into out_flowplan \
-      (operationplan, thebuffer, quantity, flowdate, flowdatetime, onhand) \
-      values (%s,%s,%s,%s,%s,%s)",
+      (operationplan, thebuffer, quantity, flowdate, onhand) \
+      values (%s,%s,%s,%s,%s)",
       [(
-         j.operationplan.id, j.buffer.name,
-         round(j.quantity,ROUNDING_DECIMALS), str(j.date.date()),
+         j.operationplan.id, j.buffer.name, 
+         round(j.quantity,ROUNDING_DECIMALS),
          str(j.date), round(j.onhand,ROUNDING_DECIMALS)
        ) for j in i.flowplans
       ])
@@ -136,14 +135,12 @@ def exportLoadplans(cursor):
   for i in frepple.resources():
     cursor.executemany(
       "insert into out_loadplan \
-      (operationplan, theresource, quantity, startdate, \
-      startdatetime, enddate, enddatetime) values \
-      (%s,%s,%s,%s,%s,%s,%s)",
+      (operationplan, theresource, quantity, startdate, enddate) \
+      values (%s,%s,%s,%s,%s)",
       [(
          j.operationplan.id, j.resource.name,
          round(j.quantity,ROUNDING_DECIMALS),
-         str(j.startdate.date()), str(j.startdate),
-         str(j.enddate.date()), str(j.enddate),
+         str(j.startdate), str(j.enddate),
        ) for j in i.loadplans
       ])
     cnt += 1
@@ -168,15 +165,15 @@ def exportDemand(cursor):
         cur -= cumplanned - d.quantity
         if cur < 0: cur = 0
       yield (
-        n, d.item.name, str(d.due.date()), str(d.due),
-        round(cur,ROUNDING_DECIMALS), str(i.end.date()), str(i.end),
+        n, d.item.name, str(d.due), 
+        round(cur,ROUNDING_DECIMALS), str(i.end),
         round(i.quantity,ROUNDING_DECIMALS), i.id
         )
     # Extra record if planned short
     if cumplanned < d.quantity:
       yield (
-        n, d.item.name, str(d.due.date()), str(d.due),
-        round(d.quantity - cumplanned,ROUNDING_DECIMALS), None, None,
+        n, d.item.name, str(d.due), 
+        round(d.quantity - cumplanned,ROUNDING_DECIMALS), None,
         None, None
         )
 
@@ -188,8 +185,8 @@ def exportDemand(cursor):
     if i.quantity == 0: continue
     cursor.executemany(
       "insert into out_demand \
-      (demand,item,duedate,duedatetime,quantity,plandate,plandatetime,planquantity,operationplan) \
-      values (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+      (demand,item,due,quantity,plandate,planquantity,operationplan) \
+      values (%s,%s,%s,%s,%s,%s,%s)",
       [ j for j in deliveries(i) ] )
     cnt += 1
     if cnt % 500 == 0: transaction.commit()
@@ -246,7 +243,7 @@ def exportForecast(cursor):
       (forecast,startdate,enddate,total,net,consumed) \
       values (%s,%s,%s,%s,%s,%s)",
       [(
-         i.owner.name, str(i.startdate.date()), str(i.enddate.date()),
+         i.owner.name, str(i.startdate), str(i.enddate),
          round(i.total,ROUNDING_DECIMALS),
          round(i.quantity,ROUNDING_DECIMALS),
          round(i.consumed,ROUNDING_DECIMALS)

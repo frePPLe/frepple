@@ -98,21 +98,21 @@ class OverviewReport(TableReport):
        ) x
        -- Load data
        left join (
-         select theresource as resource_id, startdatetime, enddatetime, quantity
+         select theresource as resource_id, startdate, enddate, quantity
          from out_loadplan
          ) loaddata
        on x.name = loaddata.resource_id
-       and x.startdate <= loaddata.enddatetime
-       and x.enddate >= loaddata.startdatetime
+       and x.startdate <= loaddata.enddate
+       and x.enddate >= loaddata.startdate
        -- Grouping and ordering
        group by x.name, x.location_id, x.bucket, x.startdate, x.enddate
        order by %s, x.startdate
-       ''' % ( sql_overlap('loaddata.startdatetime','loaddata.enddatetime','x.startdate','x.enddate'),
+       ''' % ( sql_overlap('loaddata.startdate','loaddata.enddate','x.startdate','x.enddate'),
          sql_overlap('bucket.startdate','bucket.enddate','d.startdate','d.enddate'),
          basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
          connection.ops.quote_name(bucket),bucket,bucket,sortsql)
     cursor.execute(query, baseparams)
-
+    
     # Build the python result
     for row in cursor.fetchall():
       if row[5] != 0: util = row[6] * 100 / row[5]
@@ -152,13 +152,13 @@ class DetailReport(ListReport):
     ('operation', {
       'title': _('operation'),
       }),
-    ('startdatetime', {
+    ('startdate', {
       'title': _('startdate'),
-      'filter': FilterDate(field='startdate'),
+      'filter': FilterDate(),
       }),
-    ('enddatetime', {
+    ('enddate', {
       'title': _('enddate'),
-      'filter': FilterDate(field='enddate'),
+      'filter': FilterDate(),
       }),
     ('quantity', {
       'title': _('quantity'),

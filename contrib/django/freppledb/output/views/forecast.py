@@ -119,8 +119,8 @@ class OverviewReport(TableReport):
         -- Planned quantity
         left join out_demand
         on y.name = out_demand.demand
-        and y.startdate <= out_demand.plandatetime
-        and y.enddate > out_demand.plandatetime
+        and y.startdate <= out_demand.plandate
+        and y.enddate > out_demand.plandate
         -- Ordering and grouping
         group by y.name, y.item_id, y.customer_id,
            y.bucket, y.startdate, y.enddate

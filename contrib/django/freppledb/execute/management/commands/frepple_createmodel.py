@@ -57,9 +57,6 @@ class Command(BaseCommand):
     '''
 
   option_list = BaseCommand.option_list + (
-      make_option('--verbosity', dest='verbosity', type='choice',
-        choices=['0', '1', '2'],
-        help='Verbosity level; 0=minimal output, 1=normal output, 2=all output'),
       make_option('--user', dest='user', type='string',
         help='User running the command'),
       make_option('--cluster', dest='cluster', type="int",
@@ -183,7 +180,7 @@ class Command(BaseCommand):
       workingdays = Calendar.objects.create(name="Working Days")
       cur = None
       for i in Dates.objects.all():
-        curdate = datetime(i.day.year, i.day.month, i.day.day)
+        curdate = datetime(i.day_start.year, i.day_start.month, i.day_start.day)
         dayofweek = int(curdate.strftime("%w")) # day of the week, 0 = sunday, 1 = monday, ...
         if dayofweek == 1:
           # A bucket for the working week: monday through friday
@@ -384,28 +381,28 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40):
   tmp_debug = settings.DEBUG
   settings.DEBUG = False
 
-  first_date = Dates.objects.all()[0].day
+  first_date = Dates.objects.all()[0].day_start
   current_date = Plan.objects.all()[0].currentdate
-  limit = (current_date + timedelta(min_day_horizon)).date()
+  limit = current_date + timedelta(min_day_horizon)
   mode = 'day'
   try:
     m = []
     for i in Dates.objects.all():
-      if i.day < current_date.date():
+      if i.day_start < current_date:
         # A single bucket for all dates in the past
         i.standard = 'past'
         i.standard_start = first_date
-        i.standard_end = current_date.date()
+        i.standard_end = current_date
       elif mode == 'day':
         # Daily buckets
-        i.standard = str(i.day)[2:]  # Leave away the leading century, ie "20"
+        i.standard = str(i.day_start.date())[2:]  # Leave away the leading century, ie "20"
         i.standard_start = i.day_start
         i.standard_end = i.day_end
-        if i.day >= limit and i.dayofweek == 0:
+        if i.day_start >= limit and i.dayofweek == 0:
           mode = 'week'
           limit = (current_date + timedelta(min_week_horizon)).date()
-          limit =  date(limit.year+limit.month/12, limit.month+1-12*(limit.month/12), 1)
-      elif i.day < limit:
+          limit = datetime(limit.year+limit.month/12, limit.month+1-12*(limit.month/12), 1)
+      elif i.day_start < limit:
         # Weekly buckets
         i.standard = i.week
         i.standard_start = i.week_start

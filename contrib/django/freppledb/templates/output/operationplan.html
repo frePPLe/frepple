@@ -13,8 +13,8 @@
 <td>{% if i.fcst_or_actual %}{% superlink i.demand forecast %}{% else %}{% superlink i.demand demand %}{% endif %}</td>
 <td>{% superlink i.operation operation %}</td>
 <td>{{i.quantity}}</td>
-<td>{{i.startdatetime}}</td>
-<td>{{i.enddatetime}}</td>
+<td>{{i.startdate}}</td>
+<td>{{i.enddate}}</td>
 <td>{{i.locked}}</td>
 <td>{{i.owner}}</td>
 </tr>{% endfor %}

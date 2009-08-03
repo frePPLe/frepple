@@ -50,11 +50,11 @@ class Report(ListReport):
       'title': _('description'),
       'filter': FilterText(size=30),
       }),
-    ('startdatetime', {
+    ('startdate', {
       'title': _('startdate'),
       'filter': FilterDate(),
       }),
-    ('enddatetime', {
+    ('enddate', {
       'title': _('enddate'),
       'filter': FilterDate(),
       }),

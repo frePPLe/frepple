@@ -75,7 +75,7 @@ class OverviewReport(TableReport):
       from out_demand
       where item in (select items.name from (%s) items)
         and (plandate is null or plandate >= '%s')
-        and duedate < '%s'
+        and due < '%s'
       group by item
       ''' % (basesql, startdate, startdate)
     cursor.execute(query, baseparams)
@@ -189,11 +189,11 @@ class DetailReport(ListReport):
       'title': _('planned quantity'),
       'filter': FilterNumber(),
       }),
-    ('duedatetime', {
+    ('due', {
       'title': _('due date'),
-      'filter': FilterDate(field='duedate'),
+      'filter': FilterDate(field='due'),
       }),
-    ('plandatetime', {
+    ('plandate', {
       'title': _('planned date'),
       'filter': FilterDate(field='plandate'),
       }),

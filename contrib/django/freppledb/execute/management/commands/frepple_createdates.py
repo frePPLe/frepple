@@ -96,7 +96,7 @@ class Command(BaseCommand):
 
         # Main entry
         Dates(
-          day = curdate,
+          day = str(curdate.date()),
           day_start = curdate,
           day_end = curdate + timedelta(1),
           dayofweek = dayofweek,

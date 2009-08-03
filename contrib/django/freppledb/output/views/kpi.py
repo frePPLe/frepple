@@ -63,7 +63,7 @@ class Report(ListReport):
       union
       select 203, 'Demand', 'Planned late', coalesce(round(sum(planquantity)),0)
       from out_demand
-      where plandatetime > duedatetime and plandatetime is not null
+      where plandate > due and plandate is not null
       union
       select 204, 'Demand', 'Unplanned', coalesce(round(sum(quantity)),0)
       from out_demand
@@ -71,7 +71,7 @@ class Report(ListReport):
       union
       select 205, 'Demand', 'Total lateness', coalesce(round(sum(planquantity * %s)),0)
       from out_demand
-      where plandatetime > duedatetime and plandatetime is not null
+      where plandate > due and plandate is not null
       union
       select 301, 'Operation', 'Count', count(*)
       from out_operationplan
@@ -94,8 +94,8 @@ class Report(ListReport):
         # (in 'national character set') to the database 'character set'.
         settings.DATABASE_ENGINE == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
         settings.DATABASE_ENGINE == 'oracle' and "csconvert(name,'CHAR_CS')" or 'name',
-        sql_datediff('plandatetime','duedatetime'),
-        sql_datediff('enddatetime','startdatetime')
+        sql_datediff('plandate','due'),
+        sql_datediff('enddate','startdate')
         )
     cursor.execute(query)
 

@@ -741,7 +741,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
   if not bucket in datelist:
     # Read the buckets from the database if the data isn't available yet
     cursor = connection.cursor()
-    field = (bucket=='day' and 'day_start') or bucket
+    field = bucket
     cursor.execute('''
       select %s, min(day_start), max(day_start)
       from dates
@@ -750,7 +750,7 @@ def getBuckets(request, bucket=None, start=None, end=None):
       % (connection.ops.quote_name(field),connection.ops.quote_name(field)))
     # Compute the data to store in memory
     datelist[bucket] = [{'name': i, 'start': python_date(j), 'end': python_date(k)} for i,j,k in cursor.fetchall()]
-
+    
   # Filter based on the start and end date
   if start and end:
     res = filter(lambda b: b['start'] < end and b['end'] >= start, datelist[bucket])

@@ -30,10 +30,8 @@ class OperationPlan(models.Model):
   demand = models.CharField(_('demand'), max_length=60, null=True, db_index=True)
   operation = models.CharField(_('operation'), max_length=60, db_index=True, null=True)
   quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4, default='1.00')
-  startdatetime = models.DateTimeField(_('start datetime'), )
-  enddatetime = models.DateTimeField(_('end datetime'), )
-  startdate = models.DateField(_('start date'), db_index=True)
-  enddate = models.DateField(_('end date'), db_index=True)
+  startdate = models.DateTimeField(_('startdate'), db_index=True)
+  enddate = models.DateTimeField(_('enddate'), db_index=True)
   locked = models.BooleanField(_('locked'), default=True)
   owner = models.IntegerField(_('owner'), null=True, blank=True, db_index=True)
 
@@ -51,10 +49,8 @@ class Problem(models.Model):
   entity = models.CharField(_('entity'), max_length=10, db_index=True)
   name = models.CharField(_('name'), max_length=20, db_index=True)
   description = models.CharField(_('description'), max_length=80)
-  startdatetime = models.DateTimeField(_('start datetime'))
-  enddatetime = models.DateTimeField(_('end datetime'))
-  startdate = models.DateField(_('start date'), db_index=True)
-  enddate = models.DateField(_('end date'), db_index=True)
+  startdate = models.DateTimeField(_('start date'), db_index=True)
+  enddate = models.DateTimeField(_('end date'), db_index=True)
   weight = models.DecimalField(_('weight'), max_digits=15, decimal_places=4)
 
   def __unicode__(self): return str(self.name)
@@ -62,7 +58,7 @@ class Problem(models.Model):
   class Meta:
     db_table = 'out_problem'
     permissions = (("view_problem", "Can view problems"),)
-    ordering = ['startdatetime']
+    ordering = ['startdate']
     verbose_name = _('problem')
     verbose_name_plural = _('problems')
 
@@ -71,19 +67,17 @@ class LoadPlan(models.Model):
   # Database fields
   theresource = models.CharField(_('resource'), max_length=60, db_index=True)
   quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4)
-  startdatetime = models.DateTimeField(_('start datetime'))
-  startdate = models.DateField(_('start date'), db_index=True)
-  enddatetime = models.DateTimeField(_('end datetime'))
-  enddate = models.DateField(_('end date'), db_index=True)
+  startdate = models.DateTimeField(_('startdate'), db_index=True)
+  enddate = models.DateTimeField(_('enddate'), db_index=True)
   operationplan = models.IntegerField(_('operationplan'), db_index=True)
 
   def __unicode__(self):
-      return self.resource.name + ' ' + str(self.startdatetime) + ' ' + str(self.enddatetime)
+      return self.resource.name + ' ' + str(self.startdate) + ' ' + str(self.enddate)
 
   class Meta:
     db_table = 'out_loadplan'
     permissions = (("view_loadplans", "Can view load plans"),)
-    ordering = ['theresource','startdatetime']
+    ordering = ['theresource','startdate']
     verbose_name = _('loadplan')
     verbose_name_plural = _('loadplans')
 
@@ -93,17 +87,16 @@ class FlowPlan(models.Model):
   thebuffer = models.CharField(_('buffer'), max_length=60, db_index=True)
   operationplan = models.IntegerField(_('operationplan'), db_index=True)
   quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4)
-  flowdatetime = models.DateTimeField(_('datetime'))
-  flowdate = models.DateField(_('date'), db_index=True)
+  flowdate = models.DateTimeField(_('date'), db_index=True)
   onhand = models.DecimalField(_('onhand'), max_digits=15, decimal_places=4)
 
   def __unicode__(self):
-    return self.thebuffer.name + str(self.flowdatetime)
+    return self.thebuffer.name + str(self.flowdate)
 
   class Meta:
     db_table = 'out_flowplan'
     permissions = (("view_flowplans", "Can view flow plans"),)
-    ordering = ['thebuffer','flowdatetime']
+    ordering = ['thebuffer','flowdate']
     verbose_name = _('flowplan')
     verbose_name_plural = _('flowplans')
 
@@ -112,12 +105,10 @@ class Demand(models.Model):
   # Database fields
   demand = models.CharField(_('demand'), max_length=60, db_index=True, null=True)
   item = models.CharField(_('item'), max_length=60, db_index=True, null=True)
-  duedate = models.DateField(_('due date'))
-  duedatetime = models.DateTimeField(_('due datetime'))
+  due = models.DateTimeField(_('due'), db_index=True)
   quantity = models.DecimalField(_('demand quantity'), max_digits=15, decimal_places=4, default='0.00')
   planquantity = models.DecimalField(_('planned quantity'), max_digits=15, decimal_places=4, default='0.00', null=True)
-  plandate = models.DateField(_('planned date'), null=True)
-  plandatetime = models.DateTimeField(_('planned datetime'), null=True)
+  plandate = models.DateTimeField(_('planned date'), null=True, db_index=True)
   operationplan = models.IntegerField(_('operationplan'), null=True, db_index=True)
 
   def __unicode__(self):
@@ -158,8 +149,8 @@ class DemandPegging(models.Model):
 class Forecast(models.Model):
   # Database fields
   forecast = models.CharField(_('forecast'), max_length=60, db_index=True)
-  startdate = models.DateField(_('start date'), null=False)
-  enddate = models.DateField(_('end date'), null=False)
+  startdate = models.DateTimeField(_('start date'), null=False, db_index=True)
+  enddate = models.DateTimeField(_('end date'), null=False)
   total = models.DecimalField(_('total quantity'), max_digits=15, decimal_places=4, default='0.00')
   net = models.DecimalField(_('net quantity'), max_digits=15, decimal_places=4, default='0.00')
   consumed = models.DecimalField(_('consumed quantity'), max_digits=15, decimal_places=4, default='0.00')

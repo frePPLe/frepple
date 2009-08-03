@@ -34,7 +34,7 @@
 {% for j in objectlist2 %}{% ifchanged j.item %}{% if not forloop.first %}</tr>{% endif %}
 <tr class="{% cycle row1,row2 %}" id="{{j.item|urlencode}}">{% endifchanged %}
 <td>{% if j.forecast %}<a href="/forecast/?o=5a&amp;item={{j.item|urlencode}}">{{j.forecast|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
-{% if j.orders %}<a href="/demandplan/?o=5a&amp;item={{j.item|urlencode}}&amp;duedate__gte={{j.startdate}}&amp;duedate__lt={{j.enddate}}">{{j.orders|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
+{% if j.orders %}<a href="/demandplan/?o=5a&amp;item={{j.item|urlencode}}&amp;due__gte={{j.startdate}}&amp;due__lt={{j.enddate}}">{{j.orders|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
 {{j.demand|floatformat:1}}<br/>
 {% if j.supply %}<a href="/demandplan/?o=5a&amp;item={{j.item|urlencode}}&amp;plandate__gte={{j.startdate}}&amp;plandate__lt={{j.enddate}}">{{j.supply|floatformat:1}}</a>{% else %}0.0{% endif %}<br/>
 {{j.backlog|floatformat:1}}</td>

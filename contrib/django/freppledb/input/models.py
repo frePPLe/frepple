@@ -56,10 +56,6 @@ class AuditModel(models.Model):
 
 class Plan(AuditModel):
   # Database fields
-  # The lastmodified field of this model is important. It is always updated to
-  # the last date a frePPLe plan was successfully generated. The field allows
-  # us to return a 'not-modified' response when a client asks the same report
-  # about plan results when the plan data haven't changed.
   name = models.CharField(_('name'), max_length=60, null=True, blank=True)
   description = models.CharField(_('description'), max_length=60, null=True, blank=True)
   currentdate = models.DateTimeField(_('current date'))

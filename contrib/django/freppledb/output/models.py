@@ -13,7 +13,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
-# Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
+# Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
 # file : $URL$
@@ -126,18 +126,18 @@ class DemandPegging(models.Model):
   demand = models.CharField(_('demand'), max_length=60, db_index=True)
   depth = models.IntegerField(_('depth'))
   cons_operationplan = models.IntegerField(_('consuming operationplan'), db_index=True, null=True)
-  cons_date = models.DateTimeField(_('consuming datetime'))
+  cons_date = models.DateTimeField(_('consuming date'))
   prod_operationplan = models.IntegerField(_('producing operationplan'), db_index=True, null=True)
-  prod_date = models.DateTimeField(_('producing datetime'))
+  prod_date = models.DateTimeField(_('producing date'))
   buffer = models.CharField(_('buffer'), max_length=60, db_index=True, null=True)
   quantity_demand = models.DecimalField(_('quantity demand'), max_digits=15, decimal_places=4, default='0.00')
   quantity_buffer = models.DecimalField(_('quantity buffer'), max_digits=15, decimal_places=4, default='0.00')
   pegged = models.BooleanField(_('pegged'), default=True)
 
   def __unicode__(self):
-    return self.demand.name \
-      + ' - ' + str(self.depth) + ' - ' + str(self.operationplan or 'None') \
-      + ' - ' + self.buffer.name
+    return self.demand \
+      + ' - ' + str(self.depth) + ' - ' + str(self.cons_operationplan or 'None') \
+      + ' - ' + self.buffer
 
   class Meta:
     db_table = 'out_demandpegging'

@@ -21,6 +21,7 @@
 {% include "datefilter.html" %}
 {% block contextmenus %}{% endblock %}
 
+{% block before_table %}{% endblock %}
 <table><tr>{% if reportclass.frozenColumns %}<td style="padding:0px;"><div id="ul" class="gridupleft"><table id="ult">
 <thead><tr>{{ rowheaderfrozen }}</tr></thead>
 </table></div></td>{% endif %}
@@ -42,5 +43,6 @@
 {% block pagination %}<p class="paginator">
 {{paginator_html}}&nbsp;&nbsp;{{hits}} {% if reportclass.model %}{% trans reportclass.model._meta.verbose_name_plural %} {% endif %}{% ifnotequal hits fullhits %} (total <a class="showall" href="{{base_request_path}}{% if is_popup %}?pop=1{% endif %}">{{fullhits}}</a>){% endifnotequal %}
 {% endblock %}
+{% block after_table %}{% endblock %}
 
 {% endblock %}

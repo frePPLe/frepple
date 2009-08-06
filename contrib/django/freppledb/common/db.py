@@ -62,6 +62,12 @@ if settings.DATABASE_ENGINE == 'sqlite3':
       "max(strftime('%%%%s',%s),strftime('%%%%s',%s)) " \
       ")) / 86400.0)" % (e1,e2,s1,s2)
 
+  def sql_overlap3(s1, e1, s2, e2, s3, e3):
+    return "max(0,((" \
+      "min(strftime('%%%%s',%s),strftime('%%%%s',%s),strftime('%%%%s',%s)) - " \
+      "max(strftime('%%%%s',%s),strftime('%%%%s',%s),strftime('%%%%s',%s)) " \
+      ")) / 86400.0)" % (e1,e2,e3,s1,s2,s3)
+
   def sql_max(d1, d2):
     return "max(%s,%s)" % (d1,d2)
 
@@ -86,6 +92,11 @@ elif settings.DATABASE_ENGINE == 'postgresql_psycopg2':
       '(least(cast(%s as timestamp),cast(%s as timestamp)) ' \
       ' - greatest(cast(%s as timestamp),cast(%s as timestamp)))) / 86400)' % (e1,e2,s1,s2)
 
+  def sql_overlap3(s1, e1, s2, e2, s3, e3):
+    return 'greatest(0,extract(epoch from ' \
+      '(least(cast(%s as timestamp),cast(%s as timestamp),cast(%s as timestamp)) ' \
+      ' - greatest(cast(%s as timestamp),cast(%s as timestamp),cast(%s as timestamp)))) / 86400)' % (e1,e2,e3,s1,s2,s3)
+
   def sql_max(d1, d2):
     return "greatest(%s,%s)" % (d1,d2)
 
@@ -106,6 +117,9 @@ elif settings.DATABASE_ENGINE == 'mysql':
 
   def sql_overlap(s1,e1,s2,e2):
     return 'greatest(0,datediff(least(%s,%s), greatest(%s,%s)))' % (e1,e2,s1,s2)
+
+  def sql_overlap3(s1,e1,s2,e2,s3,e3):
+    return 'greatest(0,datediff(least(%s,%s,%s), greatest(%s,%s,%s)))' % (e1,e2,e3,s1,s2,s3)
 
   def sql_max(d1, d2):
     return "greatest(%s,%s)" % (d1,d2)
@@ -131,6 +145,10 @@ elif settings.DATABASE_ENGINE == 'oracle':
   def sql_overlap(s1,e1,s2,e2):
     # Ridiculously complex code. Bad marks for Oracle!
     return "greatest(0,to_date(to_char(least(%s,%s),'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS') - to_date(to_char(greatest(%s,%s),'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS') )" % (e1,e2,s1,s2)
+
+  def sql_overlap3(s1,e1,s2,e2,s3,e3):
+    # Ridiculously complex code. Bad marks for Oracle!
+    return "greatest(0,to_date(to_char(least(%s,%s,%s),'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS') - to_date(to_char(greatest(%s,%s,%s),'MM/DD/YYYY HH:MI:SS'),'MM/DD/YYYY HH:MI:SS') )" % (e1,e2,e3,s1,s2,s3)
 
   def sql_max(d1, d2):
     return "greatest(%s,%s)" % (d1,d2)

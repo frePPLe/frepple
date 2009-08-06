@@ -52,6 +52,7 @@ class OverviewReport(TableReport):
     )
   crosses = (
     ('available',{'title': _('available'), 'editable': lambda req: req.user.has_perm('input.change_resource'),}),
+    ('unavailable',{'title': _('unavailable')}),
     ('load',{'title': _('load')}),
     ('utilization',{'title': _('utilization %'),}),
     )
@@ -74,12 +75,14 @@ class OverviewReport(TableReport):
     query = '''
        select x.name as row1, x.location_id as row2,
              x.bucket as col1, x.startdate as col2, x.enddate as col3,
-             min(x.available),
+             min(x.real_available), 
+             min(x.total_available) - min(x.real_available) as unavailable,
              coalesce(sum(loaddata.quantity * %s), 0) as loading
        from (
          select res.name as name, res.location_id as location_id,
                d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
-               coalesce(sum(bucket.value * %s),0) as available
+               coalesce(sum(bucket.value * %s),0) as total_available,
+               coalesce(sum(bucket.value * %s * coalesce(bucket2.value,1)),0) as real_available
          from (%s) res
          -- Multiply with buckets
          cross join (
@@ -93,29 +96,49 @@ class OverviewReport(TableReport):
          on res.maximum_id = bucket.calendar_id
          and d.startdate <= bucket.enddate
          and d.enddate >= bucket.startdate
+         -- Unavailable capacity
+         left join location on res.location_id = location.name
+         left join calendar on location.available_id = calendar.name
+         left join bucket bucket2 on calendar.name = bucket2.calendar_id
+         and bucket.startdate <= bucket2.enddate
+         and bucket.enddate >= bucket2.startdate
          -- Grouping
          group by res.name, res.location_id, d.bucket, d.startdate, d.enddate
        ) x
        -- Load data
        left join (
-         select theresource as resource_id, startdate, enddate, quantity
+         select theresource as resource_id, 
+           out_loadplan.startdate as start1, out_loadplan.enddate as end1, 
+           bucket.startdate as start2, bucket.enddate as end2,
+           out_loadplan.quantity
          from out_loadplan
+         -- Unavailable capacity
+         inner join out_operationplan on out_loadplan.operationplan = out_operationplan.id
+         inner join operation on out_operationplan.operation = operation.name
+         left join location on operation.location_id = location.name
+         left join calendar on location.available_id = calendar.name
+         left join bucket bucket on calendar.name = bucket.calendar_id
+         and out_loadplan.startdate <= bucket.enddate
+         and out_loadplan.enddate >= bucket.startdate
+         and bucket.value > 0
          ) loaddata
        on x.name = loaddata.resource_id
-       and x.startdate <= loaddata.enddate
-       and x.enddate >= loaddata.startdate
+       and x.startdate <= loaddata.end1
+       and x.enddate >= loaddata.start1
        -- Grouping and ordering
        group by x.name, x.location_id, x.bucket, x.startdate, x.enddate
        order by %s, x.startdate
-       ''' % ( sql_overlap('loaddata.startdate','loaddata.enddate','x.startdate','x.enddate'),
-         sql_overlap('bucket.startdate','bucket.enddate','d.startdate','d.enddate'),
+       ''' % ( sql_overlap3('loaddata.start1','loaddata.end1','x.startdate','x.enddate','loaddata.start2','loaddata.end2'),
+         sql_overlap3('bucket.startdate','bucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
+         sql_overlap3('bucket.startdate','bucket.enddate','d.startdate','d.enddate','bucket2.startdate','bucket2.enddate'),
          basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
          connection.ops.quote_name(bucket),bucket,bucket,sortsql)
     cursor.execute(query, baseparams)
+    print query, baseparams
     
     # Build the python result
     for row in cursor.fetchall():
-      if row[5] != 0: util = row[6] * 100 / row[5]
+      if row[5] != 0: util = row[7] * 100 / row[5]
       else: util = 0
       yield {
         'resource': row[0],
@@ -124,7 +147,8 @@ class OverviewReport(TableReport):
         'startdate': python_date(row[3]),
         'enddate': python_date(row[4]),
         'available': row[5],
-        'load': row[6],
+        'unavailable': row[6],
+        'load': row[7],
         'utilization': util,
         }
 
@@ -188,7 +212,7 @@ def GraphData(request, entity):
       load.append(x['available'])
       free.append(0)
       overload.append(x['load'] - x['available'])
-    unavailable.append(0)
+    unavailable.append(x['unavailable'])
   context = { 
     'buckets': bucketlist, 
     'load': load, 

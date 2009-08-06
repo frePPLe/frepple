@@ -13,7 +13,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
-# Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
+# Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
 # file : $URL$
@@ -127,6 +127,9 @@ class Report(object):
 
   # Number of columns frozen in the report
   frozenColumns = 0
+  
+  # Time buckets in this report
+  timebuckets = False
 
 
 class ListReport(Report):
@@ -209,6 +212,8 @@ class TableReport(Report):
   permissions = []
 
   frozenColumns = 1000
+  
+  timebuckets = True
 
 
 @staff_member_required
@@ -262,7 +267,7 @@ def view_report(request, entity=None, **args):
       return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
 
   # Pick up the list of time buckets
-  if issubclass(reportclass, TableReport):
+  if reportclass.timebuckets:
     (bucket,start,end,bucketlist) = getBuckets(request)
   else:
     bucket = start = end = bucketlist = None

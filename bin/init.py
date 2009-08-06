@@ -16,9 +16,9 @@
 # Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-# file : $URL: https://frepple.svn.sourceforge.net/svnroot/frepple/trunk/contrib/django/freppledb/admin.py $
-# revision : $LastChangedRevision: 879 $  $LastChangedBy: jdetaeye $
-# date : $LastChangedDate: 2008-12-30 12:07:36 +0100 (Tue, 30 Dec 2008) $
+# file : $URL$
+# revision : $LastChangedRevision$  $LastChangedBy$
+# date : $LastChangedDate$
 
 try:
   import cherrypy

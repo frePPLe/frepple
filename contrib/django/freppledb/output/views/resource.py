@@ -134,7 +134,6 @@ class OverviewReport(TableReport):
          basesql,connection.ops.quote_name(bucket),bucket,bucket,startdate,enddate,
          connection.ops.quote_name(bucket),bucket,bucket,sortsql)
     cursor.execute(query, baseparams)
-    print query, baseparams
     
     # Build the python result
     for row in cursor.fetchall():

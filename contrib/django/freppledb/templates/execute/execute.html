@@ -5,12 +5,12 @@
 <script type="text/javascript">
   function calcUtil()
   {
-    var clusters = parseInt(document.getElementById("0").value);
-    var fcst = parseInt(document.getElementById("1").value);
-    var demands = parseInt(document.getElementById("2").value);
-    var levels = parseInt(document.getElementById("3").value);
-    var rsrc_number = parseInt(document.getElementById("4").value);
-    var rsrc_size = parseInt(document.getElementById("5").value);
+    var clusters = parseInt(document.getElementById("create0").value);
+    var fcst = parseInt(document.getElementById("create1").value);
+    var demands = parseInt(document.getElementById("create2").value);
+    var levels = parseInt(document.getElementById("create3").value);
+    var rsrc_number = parseInt(document.getElementById("create8").value);
+    var rsrc_size = parseInt(document.getElementById("create9").value);
     // Available capacity:  rsrc_number * rsrc_size * 365 days/year
     // Required capacity: clusters * fcst * 12 months/day * 1 day/unit
     // Levels has no influence since we load a resource only at 1 step

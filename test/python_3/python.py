@@ -181,6 +181,12 @@ c = frepple.calendar_operation(name="operationcal", default=choice)
 c.setValue(datetime.datetime(2009,1,1), datetime.datetime(2009,3,1), makeoper)
 c.setValue(datetime.datetime(2009,6,1), datetime.datetime(2009,9,1), buyoper)
 
+### 
+print "\nTesting the calendar iterator"
+print"calendar events:"
+for date, value in c.events():
+  print "  ", date, value
+
 ###
 print "\nDeleting a calendar"
 frepple.calendar(name="voidcal", action="R")

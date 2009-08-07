@@ -151,7 +151,7 @@ class Calendar : public HasName<Calendar>, public Object
 
       public:
         /** This method is here only to keep the API of all calendar classes
-          * consistent.
+          * consistent.<br>
           * Note that this isn't exactly a virtual method, since the return
           * value is different for different calendar types.
           */
@@ -164,7 +164,7 @@ class Calendar : public HasName<Calendar>, public Object
 
         /** Returns the name of the bucket. If no name was ever explicitly
           * specified with the setName() method, a default name is generated
-          * by converting the start date into a string.
+          * by converting the start date into a string.<br>
           * To reduce the memory needs, this default string is computed with
           * every call to the getName() method and never stored internally.
           * Only explicitly specified names are kept in memory.
@@ -319,10 +319,10 @@ class Calendar : public HasName<Calendar>, public Object
         Bucket& operator *() const {return *curBucket;}
     };
 
-    /** Returns an iterator to go through the list of buffers. */
+    /** Returns an iterator to go through the list of buckets. */
     BucketIterator beginBuckets() const { return BucketIterator(firstBucket); }
 
-    /** Returns an iterator to go through the list of buffers. */
+    /** Returns an iterator to go through the list of buckets. */
     BucketIterator endBuckets() const {return BucketIterator(NULL);}
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
@@ -429,8 +429,8 @@ template <typename T> class CalendarValue : public Calendar
     {
       public:
         /** Constructor. */
-        EventIterator(const Calendar* c, Date d = Date::infinitePast) 
-          : Calendar::EventIterator(c,d) {}
+        EventIterator(const Calendar* c, Date d = Date::infinitePast, 
+          bool f = true) : Calendar::EventIterator(c,d,f) {}
 
         /** Return the current value of the iterator at this date. */
         T getValue() 
@@ -620,8 +620,8 @@ template <typename T> class CalendarPointer : public Calendar
     {
       public:
         /** Constructor. */
-        EventIterator(const Calendar* c, Date d = Date::infinitePast) 
-          : Calendar::EventIterator(c,d) {}
+        EventIterator(const Calendar* c, Date d = Date::infinitePast,
+          bool f = true) : Calendar::EventIterator(c,d,f) {}
 
         /** Return the current value of the iterator at this date. */
         const T* getValue() 
@@ -5566,6 +5566,7 @@ class PythonCalendar : public FreppleCategory<PythonCalendar,Calendar>
     PythonCalendar(Calendar* p) : FreppleCategory<PythonCalendar,Calendar>(p) {}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static DECLARE_EXPORT PyObject* getEvents(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -5609,6 +5610,23 @@ class PythonCalendarBucket
 };
 
 
+class PythonCalendarEventIterator
+  : public PythonExtension<PythonCalendarEventIterator>
+{
+  public:
+    static int initialize(PyObject* m);
+
+    PythonCalendarEventIterator(Calendar* c, Date d=Date::infinitePast, bool f=true) 
+      : cal(c), eventiter(c,d,f), forward(f) {}
+
+  private:
+    Calendar* cal;
+    Calendar::EventIterator eventiter;
+    bool forward;
+    PyObject *iternext();
+};
+
+
 class PythonCalendarVoid : public FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>
 {
   public:
@@ -5619,6 +5637,7 @@ class PythonCalendarVoid : public FreppleClass<PythonCalendarVoid,PythonCalendar
     static int initialize(PyObject* m)
     {
       getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
+      getType().addMethod("events", PythonCalendar::getEvents, METH_VARARGS, "return an event iterator");
       return FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>::initialize(m);
     }
   private:
@@ -5636,6 +5655,7 @@ class PythonCalendarBool : public FreppleClass<PythonCalendarBool,PythonCalendar
     static int initialize(PyObject* m)
     {
       getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
+      getType().addMethod("events", PythonCalendar::getEvents, METH_VARARGS, "return an event iterator");
       return FreppleClass<PythonCalendarBool,PythonCalendar,CalendarBool>::initialize(m);
     }
   private:
@@ -5653,6 +5673,7 @@ class PythonCalendarDouble : public FreppleClass<PythonCalendarDouble,PythonCale
     static int initialize(PyObject* m)
     {
       getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
+      getType().addMethod("events", PythonCalendar::getEvents, METH_VARARGS, "return an event iterator");
       return FreppleClass<PythonCalendarDouble,PythonCalendar,CalendarDouble>::initialize(m);
     }
   private:
@@ -5670,6 +5691,7 @@ class PythonCalendarString : public FreppleClass<PythonCalendarString,PythonCale
     static int initialize(PyObject* m)
     {
       getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
+      getType().addMethod("events", PythonCalendar::getEvents, METH_VARARGS, "return an event iterator");
       return FreppleClass<PythonCalendarString,PythonCalendar,CalendarString>::initialize(m);
     }
   private:
@@ -5687,6 +5709,7 @@ class PythonCalendarInt : public FreppleClass<PythonCalendarInt,PythonCalendar,C
     static int initialize(PyObject* m)
     {
       getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
+      getType().addMethod("events", PythonCalendar::getEvents, METH_VARARGS, "return an event iterator");
       return FreppleClass<PythonCalendarInt,PythonCalendar,CalendarInt>::initialize(m);
     }
   private:
@@ -5704,6 +5727,7 @@ class PythonCalendarOperation : public FreppleClass<PythonCalendarOperation,Pyth
     static int initialize(PyObject* m)
     {
       getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
+      getType().addMethod("events", PythonCalendar::getEvents, METH_VARARGS, "return an event iterator");
       return FreppleClass<PythonCalendarOperation,PythonCalendar,CalendarOperation>::initialize(m);
     }
   private:

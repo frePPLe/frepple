@@ -807,4 +807,110 @@ DECLARE_EXPORT int PythonCalendarBucket::setattro(const Attribute& attr, const P
 }
 
 
+DECLARE_EXPORT PyObject* PythonCalendar::getEvents(
+  PyObject* self, PyObject* args, PyObject* kwdict
+  )
+{
+  try
+  {
+    // Pick up the calendar
+    Calendar *cal = NULL;
+    PythonObject c(self);
+    if (c.check(PythonCalendarBool::getType())) 
+      cal = static_cast<PythonCalendarBool*>(self)->obj;
+    else if (c.check(PythonCalendarDouble::getType())) 
+      cal = static_cast<PythonCalendarDouble*>(self)->obj;
+    else if (c.check(PythonCalendarInt::getType())) 
+      cal = static_cast<PythonCalendarInt*>(self)->obj;
+    else if (c.check(PythonCalendarOperation::getType())) 
+      cal = static_cast<PythonCalendarOperation*>(self)->obj;
+    else if (c.check(PythonCalendarString::getType())) 
+      cal = static_cast<PythonCalendarString*>(self)->obj;
+    else if (c.check(PythonCalendarVoid::getType())) 
+      cal = static_cast<PythonCalendarVoid*>(self)->obj;
+    else
+      throw LogicException("Invalid calendar type");
+
+    // Parse the arguments
+    PyObject* pystart = NULL;
+    PyObject* pydirection = NULL;
+	  if (!PyArg_ParseTuple(args, "|OO", &pystart, &pydirection))
+      return NULL;
+    Date startdate = pystart ? PythonObject(pystart).getDate() : Date::infinitePast;
+    bool forward = pydirection ? PythonObject(pydirection).getBool() : true;
+
+    // Return the iterator
+    return new PythonCalendarEventIterator(cal, startdate, forward);
+  }
+  catch(...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
+}
+
+
+int PythonCalendarEventIterator::initialize(PyObject* m)
+{
+  // Initialize the type
+  PythonType& x = PythonExtension<PythonCalendarEventIterator>::getType();
+  x.setName("calendarEventIterator");
+  x.setDoc("frePPLe iterator for calendar events");
+  x.supportiter();
+  return x.typeReady(m);
+}
+
+
+PyObject* PythonCalendarEventIterator::iternext()
+{  
+  if ((forward && eventiter.getDate() == Date::infiniteFuture)
+   || (!forward && eventiter.getDate() == Date::infinitePast)) 
+   return NULL;
+  PythonObject x;
+  if (dynamic_cast<CalendarBool*>(cal))
+  {
+    if (eventiter.getBucket())
+      x = PythonObject(dynamic_cast<const CalendarBool::BucketValue*>(eventiter.getBucket())->getValue());
+    else
+      x = PythonObject(dynamic_cast<CalendarBool*>(cal)->getDefault());
+  }
+  else if (dynamic_cast<CalendarDouble*>(cal))
+  {
+    if (eventiter.getBucket())
+      x = PythonObject(dynamic_cast<const CalendarDouble::BucketValue*>(eventiter.getBucket())->getValue());
+    else
+      x = PythonObject(dynamic_cast<CalendarDouble*>(cal)->getDefault());
+  }
+  else if (dynamic_cast<CalendarInt*>(cal))
+  {
+    if (eventiter.getBucket())
+      x = PythonObject(dynamic_cast<const CalendarInt::BucketValue*>(eventiter.getBucket())->getValue());
+    else
+      x = PythonObject(dynamic_cast<CalendarInt*>(cal)->getDefault());
+  }
+  else if (dynamic_cast<CalendarOperation*>(cal))
+  {
+    if (eventiter.getBucket())
+      x = PythonObject(dynamic_cast<const CalendarOperation::BucketPointer*>(eventiter.getBucket())->getValue());
+    else
+      x = PythonObject(dynamic_cast<CalendarOperation*>(cal)->getDefault());
+  }
+  else if (dynamic_cast<CalendarString*>(cal))
+  {
+    if (eventiter.getBucket())
+      x = PythonObject(dynamic_cast<const CalendarString::BucketValue*>(eventiter.getBucket())->getValue());
+    else
+      x = PythonObject(dynamic_cast<CalendarString*>(cal)->getDefault());
+  }
+  PyObject* result = Py_BuildValue("(N,N)",
+    static_cast<PyObject*>(PythonObject(eventiter.getDate())),
+    static_cast<PyObject*>(x)
+    );
+  if (forward)  
+    ++eventiter;
+  else
+    --eventiter;
+  return result;
+}
+
 } // end namespace

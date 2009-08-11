@@ -35,8 +35,8 @@ Source: http://downloads.sourceforge.net/sourceforge/frepple/%{name}-%{version}.
 Source1: %{name}-%{version}.tar.gz
 URL: http://www.frepple.com
 Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
-Requires: python, xerces-c
-BuildRequires: doxygen, python-devel, xerces-c-devel, automake, autoconf, libtool, django
+Requires: python, xerces-c, Django
+BuildRequires: doxygen, python-devel, xerces-c-devel, automake, autoconf, libtool, Django
 
 %description
 FrePPLe stands for "Free Production Planning Library". It is a toolkit/

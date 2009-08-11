@@ -25,14 +25,17 @@ An reusable application that contains common functionality of different
 frePPLe data models.
 
 The common functionality handles:
-  - breadcrumbs
   - user preferences: reporting buckets, report start and end dates, report output type
+  - breadcrumbs
   - login using the e-mail address
+  - generic report framework
+  - database utility functions, mainly to handle SQL dates in a portable way
   - date and time bucket definition
+  - extra template tags ifgreaterthan, iflessthan, ifgreaterthanorequal, iflessthanorequal
 '''
 
 from django import template
 
 # Make our tags built-in, so we don't have to load them any more in our
 # templates with a 'load' tag.
-template.add_to_builtins('common.templatetags.breadcrumbs')
+template.add_to_builtins('common.templatetags.base_utils')

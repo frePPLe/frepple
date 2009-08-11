@@ -60,7 +60,6 @@ class OverviewReport(TableReport):
 
   @staticmethod
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
-    basesql, baseparams = basequery.query.as_sql(with_col_aliases=True)
     return basequery.values('name')
 
   @staticmethod
@@ -179,6 +178,10 @@ class DetailReport(ListReport):
       }),
     ('item', {
       'title': _('item'),
+      'filter': FilterText(),
+      }),
+    ('customer', {
+      'title': _('customer'),
       'filter': FilterText(),
       }),
     ('quantity', {

@@ -1816,19 +1816,15 @@ class OperationPlan
           * of the operation passed. */
         iterator(const Operation* x) : op(Operation::end())
         {
-          if (x && !x->getHidden())
-            opplan = x->getFirstOpPlan();
-          else
-            opplan = NULL;
+          opplan = x ? x->getFirstOpPlan() : NULL;
         }
 
         /** Constructor. The iterator will loop over all operationplans. */
         iterator() : op(Operation::begin())
         {
           // The while loop is required since the first operation might not
-          // have any operationplans at all or can be hidden
-          while (op!=Operation::end()
-            && (!op->getFirstOpPlan() || op->getHidden())) ++op;
+          // have any operationplans at all
+          while (op!=Operation::end() && !op->getFirstOpPlan()) ++op;
           if (op!=Operation::end())
             opplan = op->getFirstOpPlan();
           else

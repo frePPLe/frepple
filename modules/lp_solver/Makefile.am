@@ -14,7 +14,7 @@ mod_lpsolver_la_SOURCES = $(sources)
 mod_lpsolverdir = $(datadir)/frepple
 mod_lpsolver_DATA = mod_lpsolver.xsd
 mod_lpsolver_la_LDFLAGS = -module -shrext .so -avoid-version
-mod_lpsolver_la_LIBADD = ../../src/libfrepple.la
+mod_lpsolver_la_LIBADD = ../../src/libfrepple.la -lglpk
 
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll

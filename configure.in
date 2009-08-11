@@ -265,9 +265,10 @@ AC_COMPILE_IFELSE([
 #
 if test x$lp = xtrue
 then
-AC_CHECK_LIB(glpk, glp_simplex, [],
+AC_CHECK_LIB(glpk, glp_simplex, 
+[ true ], # dummy action to avoid that glpk is added to the list list of required libraries
 [AC_MSG_ERROR([
-  Can't link with the glpk library.
+  Can't link with the glpk library.en
   This package requires the GLPK linear programming solver.
   Install its development library, or reconfigure with the option '--disable-lp_solver'
 ])])

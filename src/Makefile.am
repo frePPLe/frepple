@@ -14,11 +14,10 @@ all-local: frepple$(EXEEXT)
 # Shared library
 lib_LTLIBRARIES = libfrepple.la
 libfrepple_la_SOURCES = dllmain.cpp tags.cpp
+libfrepple_la_LDFLAGS = -release $(PACKAGE_VERSION) -version-info @LIBRARY_VERSION@ -no-undefined
 if CYGWIN
 # Cygwin doesn't like undefined symbols in a windows dll
-libfrepple_la_LDFLAGS = -version-info @LIBRARY_VERSION@ -no-undefined -Wl,--export-all-symbols
-else
-libfrepple_la_LDFLAGS = -version-info @LIBRARY_VERSION@ -no-undefined
+libfrepple_la_LDFLAGS += -Wl,--export-all-symbols
 endif
 libfrepple_la_LIBADD = ./solver/libsolver.la ./model/libmodel.la ./utils/libutils.la
 

@@ -105,6 +105,7 @@ class Demand(models.Model):
   # Database fields
   demand = models.CharField(_('demand'), max_length=60, db_index=True, null=True)
   item = models.CharField(_('item'), max_length=60, db_index=True, null=True)
+  customer = models.CharField(_('customer'), max_length=60, db_index=True, null=True)
   due = models.DateTimeField(_('due'), db_index=True)
   quantity = models.DecimalField(_('demand quantity'), max_digits=15, decimal_places=4, default='0.00')
   planquantity = models.DecimalField(_('planned quantity'), max_digits=15, decimal_places=4, default='0.00', null=True)
@@ -130,6 +131,7 @@ class DemandPegging(models.Model):
   prod_operationplan = models.IntegerField(_('producing operationplan'), db_index=True, null=True)
   prod_date = models.DateTimeField(_('producing date'))
   buffer = models.CharField(_('buffer'), max_length=60, db_index=True, null=True)
+  item = models.CharField(_('item'), max_length=60, null=True)
   quantity_demand = models.DecimalField(_('quantity demand'), max_digits=15, decimal_places=4, default='0.00')
   quantity_buffer = models.DecimalField(_('quantity buffer'), max_digits=15, decimal_places=4, default='0.00')
   pegged = models.BooleanField(_('pegged'), default=True)

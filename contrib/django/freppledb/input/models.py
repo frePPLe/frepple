@@ -82,10 +82,16 @@ class Calendar(AuditModel):
     null=True, blank=True, choices=calendartypes,
     help_text= _('Type of data values stored in the calendar')
     )
-  description = models.CharField(_('description'), max_length=200, null=True, blank=True)
-  category = models.CharField(_('category'), max_length=20, null=True, blank=True, db_index=True)
-  subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
-  defaultvalue = models.DecimalField(_('default value'), max_digits=15, decimal_places=4, default='0.00')
+  description = models.CharField(_('description'), max_length=200, null=True, 
+    blank=True)
+  category = models.CharField(_('category'), max_length=20, null=True, 
+    blank=True, db_index=True)
+  subcategory = models.CharField(_('subcategory'), max_length=20, 
+    null=True, blank=True, db_index=True)
+  defaultvalue = models.DecimalField(_('default value'), max_digits=15, 
+    decimal_places=4, default='0.00',
+    help_text= _('Value to be used when no entry is effective')
+    )
 
   def currentvalue(self):
     ''' Returns the value of the calendar on this moment.'''
@@ -500,9 +506,16 @@ class Flow(AuditModel):
     choices=flowtypes,
     help_text=_('Consume/produce material at the start or the end of the operationplan'),
     )
-  effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
-  effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
-  quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
+  effective_start = models.DateTimeField(_('effective start'), null=True, blank=True,
+    help_text=_('Validity start date')
+    )
+  effective_end = models.DateTimeField(_('effective end'), null=True, blank=True,
+    help_text=_('Validity end date')
+    )
+  quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, 
+    default='1.00',
+    help_text=_('Quantity to consume or produce per operationplan unit')
+    )
 
   def __unicode__(self):
     return '%s - %s' % (self.operation.name, self.thebuffer.name)
@@ -570,7 +583,7 @@ class Demand(AuditModel):
   subcategory = models.CharField(_('subcategory'), max_length=20, null=True, blank=True, db_index=True)
   customer = models.ForeignKey(Customer, verbose_name=_('customer'), null=True, db_index=True)
   item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True)
-  due = models.DateTimeField(_('due'))
+  due = models.DateTimeField(_('due'),help_text=_('Due date of the demand'))
   operation = models.ForeignKey(Operation,
     verbose_name=_('delivery operation'), null=True, blank=True,
     related_name='used_demand',

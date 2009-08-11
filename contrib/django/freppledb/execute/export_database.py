@@ -165,14 +165,14 @@ def exportDemand(cursor):
         cur -= cumplanned - d.quantity
         if cur < 0: cur = 0
       yield (
-        n, d.item.name, str(d.due), 
+        n, d.item.name, d.customer and d.customer.name or None, str(d.due), 
         round(cur,ROUNDING_DECIMALS), str(i.end),
         round(i.quantity,ROUNDING_DECIMALS), i.id
         )
     # Extra record if planned short
     if cumplanned < d.quantity:
       yield (
-        n, d.item.name, str(d.due), 
+        n, d.item.name, d.customer and d.customer.name or None, str(d.due), 
         round(d.quantity - cumplanned,ROUNDING_DECIMALS), None,
         None, None
         )
@@ -185,8 +185,8 @@ def exportDemand(cursor):
     if i.quantity == 0: continue
     cursor.executemany(
       "insert into out_demand \
-      (demand,item,due,quantity,plandate,planquantity,operationplan) \
-      values (%s,%s,%s,%s,%s,%s,%s)",
+      (demand,item,customer,due,quantity,plandate,planquantity,operationplan) \
+      values (%s,%s,%s,%s,%s,%s,%s,%s)",
       [ j for j in deliveries(i) ] )
     cnt += 1
     if cnt % 500 == 0: transaction.commit()
@@ -209,12 +209,13 @@ def exportPegging(cursor):
     cursor.executemany(
       "insert into out_demandpegging \
       (demand,depth,cons_operationplan,cons_date,prod_operationplan,prod_date, \
-       buffer,quantity_demand,quantity_buffer,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+       buffer,item,quantity_demand,quantity_buffer,pegged) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
       [(
          n, str(j['level']),
          j['consuming'] and j['consuming'].id or 0, str(j['cons_date']),
          j['producing'] and j['producing'].id or 0, str(j['prod_date']),
          j['buffer'] and j['buffer'].name or '',
+         (j['buffer'] and j['buffer'].item and j['buffer'].item.name) or '',
          round(j['quantity_demand'],ROUNDING_DECIMALS),
          round(j['quantity_buffer'],ROUNDING_DECIMALS), str(j['pegged'])
        ) for j in i.pegging

@@ -44,6 +44,7 @@ def exportProblems():
   print "Exporting problems..."
   starttime = time()
   writer = csv.writer(open("problems.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer.writerow(('#entity','name','description','start date','end date','weight'))
   for i in frepple.problems():
     writer.writerow(
       (i.entity, i.name, i.description, i.start, i.end, i.weight)
@@ -55,6 +56,7 @@ def exportOperationplans():
   print "Exporting operationplans..."
   starttime = time()
   writer = csv.writer(open("operations.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer.writerow(('#id','operation','quantity','start date','end date','demand','locked'))
   for i in frepple.operationplans():
     writer.writerow(
      ( i.id, i.operation.name, i.quantity, i.start, i.end,
@@ -67,6 +69,7 @@ def exportFlowplans():
   print "Exporting flowplans..."
   starttime = time()
   writer = csv.writer(open("buffers.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer.writerow(('#operationplan id','buffer','quantity','date','on hand'))
   for i in frepple.buffers():
     for j in i.flowplans:
       writer.writerow(
@@ -80,6 +83,7 @@ def exportLoadplans():
   print "Exporting loadplans..."
   starttime = time()
   writer = csv.writer(open("resources.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer.writerow(('#operationplan id','resource','quantity','start date','end date'))
   for i in frepple.resources():
     for j in i.loadplans:
       writer.writerow(
@@ -106,11 +110,14 @@ def exportDemand():
       yield (n, d.item.name, d.due, cur, i.end, i.quantity, i.id)
     # Extra record if planned short
     if cumplanned < d.quantity:
-      yield (n, d.item.name, d.due, d.quantity - cumplanned, None, None, None)
+      yield (n, d.item.name, d.customer and c.customer.name or None, d.due, 
+        d.quantity - cumplanned, None, None, None)
 
   print "Exporting demand plans..."
   starttime = time()
   writer = csv.writer(open("demands.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer.writerow(('#demand','item','customer','due date','requested quantity',
+    'plan date','plan quantity','operationplan id'))
   for i in frepple.demands():
     if i.quantity == 0: continue
     for j in deliveries(i):
@@ -122,6 +129,9 @@ def exportPegging():
   print "Exporting pegging..."
   starttime = time()
   writer = csv.writer(open("demand_pegging.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer.writerow(('#demand','level','consuming operationplan id','consuming date',
+    'producing operationplan id','producing date','buffer','item','quantity demand',
+    'quantity buffer','pegged'))
   for i in frepple.demands():
     # Find non-hidden demand owner
     n = i
@@ -134,6 +144,7 @@ def exportPegging():
         j['cons_date'],
         j['producing'] and j['producing'].id or '', j['prod_date'],
         j['buffer'] and j['buffer'].name or '',
+        (j['buffer'] and j['buffer'].item and j['buffer'].item.name) or '',
         j['quantity_demand'], j['quantity_buffer'], j['pegged']
        ))
   print 'Exported pegging in %.2f seconds' % (time() - starttime)
@@ -147,6 +158,8 @@ def exportForecast():
   print "Exporting forecast plans..."
   starttime = time()
   writer = csv.writer(open("forecast.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer.writerow(('#forecast','start date','end date','total quantity',
+    'net quantity','consumed quantity'))
   for i in frepple.demands():
     if not isinstance(i, frepple.demand_forecastbucket) or i.total <= 0.0:
       continue

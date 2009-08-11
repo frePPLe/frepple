@@ -321,3 +321,9 @@ div.griddownright
   z-index: 0;
   /* height and width are set dynamically from javascript */
 }
+
+.highutil 
+{
+  color: red;
+  font-weight: bold;
+}

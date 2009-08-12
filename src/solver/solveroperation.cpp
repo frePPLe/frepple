@@ -161,10 +161,10 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
           // Jump out of the loop if the answered quantity is 0. 
           if (a_qty <= ROUNDING_ERROR) 
           {
-            // To speed up the planning the constraining flow is moved up a
+            // @TODO disabled To speed up the planning the constraining flow is moved up a
             // position in the list of flows. It'll thus be checked earlier 
             // when this operation is asked again
-            const_cast<Operation::flowlist&>(g->getFlow()->getOperation()->getFlows()).promote(g->getFlow());
+            //const_cast<Operation::flowlist&>(g->getFlow()->getOperation()->getFlows()).promote(g->getFlow());
             // There is absolutely no need to check other flowplans if the 
             // operationplan quantity is already at 0.
             break;

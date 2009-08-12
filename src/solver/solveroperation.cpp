@@ -158,9 +158,17 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
           // for capacity constraints, this is not included.
           delay = data.state->a_date - q_date_Flow;
 
-          // Jump out of the loop if the answered quantity is 0. There is
-          // absolutely no need to check other flowplans.
-          if (a_qty <= ROUNDING_ERROR) break;
+          // Jump out of the loop if the answered quantity is 0. 
+          if (a_qty <= ROUNDING_ERROR) 
+          {
+            // To speed up the planning the constraining flow is moved up a
+            // position in the list of flows. It'll thus be checked earlier 
+            // when this operation is asked again
+            const_cast<Operation::flowlist&>(g->getFlow()->getOperation()->getFlows()).promote(g->getFlow());
+            // There is absolutely no need to check other flowplans if the 
+            // operationplan quantity is already at 0.
+            break;
+          }
         }
         else if (data.state->a_qty >+ q_qty_Flow + ROUNDING_ERROR)
           // Never answer more than asked.

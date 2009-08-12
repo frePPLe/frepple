@@ -4074,6 +4074,8 @@ template <class A, class B, class C> class Association
         const_iterator begin() const {return const_iterator(this->first);}
         iterator end() {return iterator(NULL);}
         const_iterator end() const {return const_iterator(NULL);}
+
+        /** Destructor. */
         ~ListA()
         {
           C* next;
@@ -4083,6 +4085,8 @@ template <class A, class B, class C> class Association
             delete p;
           }
         }
+
+        /** Remove an association. */
         void erase(const C* n)
         {
           if (!n) return;
@@ -4096,17 +4100,46 @@ template <class A, class B, class C> class Association
                 return;
               }
         }
+
+        /** Return the number of associations. */
         size_t size() const
         {
           size_t i(0);
           for (C* p = this->first; p; p=p->nextA) ++i;
           return i;
         }
+
+        /** Search for the association effective at a certain date. */
         C* find(const B* b, Date d = Date::infinitePast) const
         {
           for (C* p=this->first; p; p=p->nextA)
             if (p->ptrB == b && p->effectivity.within(d)) return p;
           return NULL;
+        }
+
+        /** Move an association a position up in the list of associations. */
+        void promote(C* p) 
+        {
+          // Already at the head
+          if (p == first) return;
+
+          // Scan the list
+          C* prev = NULL;
+          for (C* ptr = first; ptr; ptr = ptr->nextA)
+          {
+            if (ptr->nextA == p)
+            {
+              if (prev) 
+                prev->nextA = p;
+              else
+                first = p;
+              ptr->nextA = p->nextA;
+              p->nextA = ptr;
+              return;
+            }
+            prev = ptr;
+          }
+          throw LogicException("Association not found in the list");
         }
     };
 
@@ -4159,6 +4192,8 @@ template <class A, class B, class C> class Association
               return j;
             }
         };
+
+        /** Destructor. */
         ~ListB()
         {
           C* next;
@@ -4172,6 +4207,8 @@ template <class A, class B, class C> class Association
         const_iterator begin() const {return const_iterator(this->first);}
         iterator end() {return iterator(NULL);}
         const_iterator end() const {return const_iterator(NULL);}
+
+        /** Remove an association. */
         void erase(const C* n)
         {
           if (!n) return;
@@ -4185,17 +4222,46 @@ template <class A, class B, class C> class Association
                 return;
               }
         }
+
+        /** Return the number of associations. */
         size_t size() const
         {
           size_t i(0);
           for (C* p=this->first; p; p=p->nextB) ++i;
           return i;
         }
+
+        /** Search for the association effective at a certain date. */
         C* find(const A* b, Date d = Date::infinitePast) const
         {
           for (C* p=this->first; p; p=p->nextB)
             if (p->ptrA == b && p->effectivity.within(d)) return p;
           return NULL;
+        }
+
+        /** Move an association a position up in the list of associations. */
+        void promote(C* p) 
+        {
+          // Already at the head
+          if (p == first) return;
+
+          // Scan the list
+          C* prev = NULL;
+          for (C* ptr = first; ptr; ptr = ptr->nextB)
+          {
+            if (ptr->nextB == p)
+            {
+              if (prev) 
+                prev->nextB = p;
+              else
+                first = p;
+              ptr->nextB = p->nextB;
+              p->nextB = ptr;
+              return;
+            }
+            prev = ptr;
+          }
+          throw LogicException("Association not found in the list");
         }
     };
 

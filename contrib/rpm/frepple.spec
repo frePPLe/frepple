@@ -26,17 +26,17 @@ Summary: Free Production Planning Library
 Name: frepple
 Version: 0.7.2.beta
 Release: 1%{?dist}
-# Note on the license: frePPle is released with the LGPL license. 
+# Note on the license: frePPle is released with the LGPL license, version 2.1 or higher. 
 # The optional plugin module mod_lpsolver depends on the GLPK package which is 
 # licensed under GPL. That module is therefore disabled in this build.
-License: LGPL, v2.1 or greater
+License: LGPLv2+
 Group: Applications/Productivity
-Source: http://downloads.sourceforge.net/sourceforge/frepple/%{name}-%{version}.tar.gz
+Source: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source1: %{name}-%{version}.tar.gz
 URL: http://www.frepple.com
 Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
-Requires: python, xerces-c, Django
-BuildRequires: doxygen, python-devel, xerces-c-devel, automake, autoconf, libtool, Django
+Requires: xerces-c, Django
+BuildRequires: doxygen, python-devel, xerces-c-devel, Django
 
 %description
 FrePPLe stands for "Free Production Planning Library". It is a toolkit/

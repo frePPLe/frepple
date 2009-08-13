@@ -1090,37 +1090,6 @@ class Solvable
 };
 
 
-/** @brief This command runs a specific solver. */
-class CommandSolve : public Command
-{
-  private:
-    /** Pointer to the solver being used. */
-    Solver *sol;
-
-  public:
-    /** Constructor. */
-    CommandSolve() : sol(NULL) {};
-
-    /** The core of the execute method is a call to the solve() method of the
-      * solver. */
-    DECLARE_EXPORT void execute();
-
-    /** This type of command can't be undone. */
-    void undo() {}
-
-    /** Running a solver can't be undone. */
-    bool undoable() const {return false;}
-
-    string getDescription() const {return "running a solver";}
-
-    /** Returns the solver being run. */
-    Solver* getSolver() const {return sol;}
-
-    /** Updates the solver being used. */
-    void setSolver(Solver* s) {sol = s;}
-};
-
-
 /** @brief This class needs to be implemented by all classes that implement
   * dynamic behavior in the plan.
   *

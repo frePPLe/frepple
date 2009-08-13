@@ -38,27 +38,6 @@ template<class Solver> DECLARE_EXPORT Tree utils::HasName<Solver>::st;
 //
 
 
-DECLARE_EXPORT void CommandSolve::execute()
-{
-  // Make sure the solver field is specified
-  if (!sol) throw RuntimeException("Solve command with unspecified solver");
-
-  // Start message
-  if (getVerbose())
-    logger << "Started running the solver '" << sol->getName()
-    << "' at " << Date::now() << endl;
-  Timer t;
-
-  // Running the solver now
-  sol->solve();
-
-  // Ending message
-  if (getVerbose())
-    logger << "Finished running the solver '" << sol->getName()
-    << "' at " << Date::now()  << " : " << t << endl;
-}
-
-
 DECLARE_EXPORT void Solver::writeElement
 (XMLOutput *o, const Keyword &tag, mode m) const
 {

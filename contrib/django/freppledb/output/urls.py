@@ -13,7 +13,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
-# Foundation Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
+# Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
 # file : $URL$
@@ -58,8 +58,9 @@ urlpatterns = patterns('',
     (r'^forecastgraph/([^/]+)/$', 'output.views.forecast.GraphData'),
     (r'^forecast/$', 'common.report.view_report',
       {'report': output.views.forecast.OverviewReport,}),
-    (r'^pegging/$', 'common.report.view_report',
+    (r'^pegging/([^/]+)/$', 'common.report.view_report',
       {'report': output.views.pegging.Report,}),
+    (r'^pegginggraph/([^/]+)/$', 'output.views.pegging.GraphData'),
     (r'^flowplan/$', 'common.report.view_report',
       {'report': output.views.buffer.DetailReport,}),
     (r'^problem/$', 'common.report.view_report',

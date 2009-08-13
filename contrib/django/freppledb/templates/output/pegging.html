@@ -1,26 +1,52 @@
 {% extends "admin/base_site_list.html" %}
+{% load i18n adminmedia %}
 
-{% block contextmenus %}
-{% include "buffercontext.html" %}
-{% include "demandcontext.html" %}
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="/static/FusionCharts.js"></script>
 {% endblock %}
 
-{% block frozendata %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}"><td>{% superlink i.demand demand %}</td></tr>{% endfor %}
+{% block contextmenus %}
+{% include "operationcontext.html" %}
+{% include "itemcontext.html" %}
+{% include "buffercontext.html" %}
+{% include "demandcontext.html" %}
+{% include "resourcecontext.html" %}
+{% endblock %}
+
+{% block tools %}<div class="tools">
+<form><input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px;" type="button" id="save" value="{% trans 'Save' %}" onclick="upload.save();"/>
+<input style="display:none; font-weight:bold; padding-top:3px; padding-bottom:3px; margin-right: 10px; margin-left:10px;" type="button" id="undo" value="{% trans 'Undo' %}" onclick="upload.undo();"/>
+<a href="javascript:bucket_show();" id="bucketconfig"><img src="{% admin_media_prefix %}img/admin/icon_clock.gif"/>{% trans 'Time' %}</a><span id="timebuckets">{{ reportbucket }},{{ reportstart}},{{ reportend }}</span>
+<a href="javascript:export_show(false);" id="csvexport"><img src="/static/csv.png"/>{% trans 'Export' %}</a>
+</form><div id="popup"></div></div>{% endblock %}
+
+{% block before_table %}
+<div id="chart1div" style="z-index: 1000;">
+	  <p>&nbsp;</p>
+	  <p>{% blocktrans %}frePPLe needs Adobe Flash Player to display graphs. If you're unable to see 
+	  the chart here, it means that your browser does not seem to have the Flash Player 
+	  installed.<br/>
+	  You can downloaded it <a href="http://www.adobe.com/products/flashplayer/" target="_blank"><u>here</u></a> for free.{% endblocktrans %}</p>
+	</div>
+	<script language="javascript" type="text/javascript">
+	   var totalAvailable = document.viewport.getDimensions();
+	   var chart1 = new FusionCharts("/static/FCF_Gantt.swf", "sampleChart", totalAvailable.width-35, 500);
+	   chart1.setTransparent();
+	   chart1.setDataURL(escape("/pegginggraph/{{ object }}/"));
+	   chart1.render("chart1div");
+	</script>
 {% endblock %}
 
 {% block data %}
-{% for i in objectlist1 %}
-<tr class="{% cycle row1,row2 %}">
-<td>{% superlink i.buffer buffer %}</td>
+{% for i in objectlist1 %}<tr class="{% cycle row1,row2 %}">
 <td>{{i.depth}}</td>
-<td>{{i.cons_date}}</td>
-<td>{{i.prod_date}}</td>
-<td>{{i.cons_operationplan}}</td>
-<td>{{i.prod_operationplan}}</td>
-<td>{{i.quantity_demand}}</td>
-<td>{{i.quantity_buffer}}</td>
-<td>{{i.pegged}}</td>
+<td>{% if i.hidden %}{{i.operation}}{% else %}{% superlink i.operation operation %}{% endif %}</td>
+<td>{% superlink i.buffer buffer %}</td>
+<td>{% superlink i.item item %}</td>
+<td>{% for j in i.resource %}{% superlink j resource %}<br/>{% endfor %}</td>
+<td>{{i.startdate}} {{i.id}}</td>
+<td>{{i.enddate}}</td>
+<td>{{i.quantity}}</td>
+<td>{{i.percent_used|floatformat:1}}</td>
 </tr>{% endfor %}
 {% endblock %}

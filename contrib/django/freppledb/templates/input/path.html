@@ -27,7 +27,7 @@
 <tbody>{% for i in supplypath %}
 <tr class="level{{i.level}}">
 <td class="level{{i.level}}">{% ifchanged i.level i.operation %}{% superlink i.operation operation %}{% endifchanged %}</td>
-<td>{% ifchanged i.level i.operation %}{% if i.operation %}{% for j in i.operation.loads.all %}{% superlink j.resource resource %} {% endfor %}{% endif %}{% endifchanged %}</td>
+<td>{% ifchanged i.level i.operation %}{% if i.operation %}{% for j in i.operation.loads.all %}{% superlink j.resource resource %}<br/>{% endfor %}{% endif %}{% endifchanged %}</td>
 {% if i.buffer %}<td>{% superlink i.buffer buffer %}</td>
 <td>{% superlink i.buffer.location location %}</td>
 <td>{% superlink i.buffer.item item %}</td>

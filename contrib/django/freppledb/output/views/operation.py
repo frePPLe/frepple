@@ -130,7 +130,7 @@ class DetailReport(ListReport):
   A list report to show operationplans.
   '''
   template = 'output/operationplan.html'
-  title = _("Operationplan Detail Report")
+  title = _("Operationplan List")
   reset_crumbs = False
   basequeryset = OperationPlan.objects.all()
   model = OperationPlan

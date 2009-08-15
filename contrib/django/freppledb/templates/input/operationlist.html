@@ -17,9 +17,9 @@
 <tr class="{% cycle row1,row2 %}">
 <td>{{i.type}}</td>
 <td>{% superlink i.location location %}</td>
-<td>{{i.fence}}</td>
-<td>{{i.pretime}}</td>
-<td>{{i.posttime}}</td>
+<td>{{i.fence|duration}}</td>
+<td>{{i.pretime|duration}}</td>
+<td>{{i.posttime|duration}}</td>
 <td>{{i.sizeminimum}}</td>
 <td>{{i.sizemultiple}}</td>
 <td>{{i.cost}}</td>

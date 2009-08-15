@@ -20,6 +20,8 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
+from decimal import Decimal
+
 from django.template import Library, Node, NodeList, Variable, resolve_variable
 from django.template import VariableDoesNotExist, TemplateSyntaxError
 from django.template.defaultfilters import stringfilter
@@ -255,6 +257,29 @@ def version():
   '''
   return settings.FREPPLE_VERSION
 
+version.is_safe = True
+
+
+#
+# A filter to format a duration 
+#
+
+def duration(value): 
+  try:
+    if value == None: return ''
+    value = Decimal(force_unicode(value))  
+    if value == 0: return '0 s'
+    if value % 604800 == 0: return '%.2f w' % (value/Decimal('604800.0'))
+    if value % 3600 != 0 and value < 86400: return '%.2f s' % value
+    if value % 86400 != 0 and value < 604800: return '%.2f h' % (value/Decimal('3600'))
+    return '%.2f d' % (value/Decimal('86400'))
+  except Exception, e:
+    print e
+    return ''
+    
+duration.is_safe = True
+register.filter('duration', duration)
+
 
 #
 # Output the contents of the block if depending on how two objects compare 
@@ -347,3 +372,4 @@ register.tag('iflessthanorequal', iflessthanorequal)
 def ifgreaterthanorequal(parser, token):
     return do_compare(parser, token, False, True)
 register.tag('ifgreaterthanorequal', ifgreaterthanorequal)
+

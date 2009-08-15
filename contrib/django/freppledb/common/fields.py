@@ -44,7 +44,7 @@ class DurationWidget(MultiWidget):
             ("hours",_("hours")),
             ("days",_("days")),
             ("weeks",_("weeks"))
-            ), attrs={'onbeforeactivate': 'getUnits(this)', 'onchange':'setUnits(this)'} ),
+            ), attrs={'onclick': 'getUnits(this)', 'onchange':'setUnits(this)'} ),
       )
     super(DurationWidget, self).__init__(widgets, attrs)
 

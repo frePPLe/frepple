@@ -110,7 +110,7 @@ class OverviewReport(TableReport):
          select theresource as resource_id, 
            out_loadplan.startdate as start1, out_loadplan.enddate as end1, 
            bucket.startdate as start2, bucket.enddate as end2,
-           out_loadplan.quantity
+           out_loadplan.quantity as quantity
          from out_loadplan
          -- Unavailable capacity
          inner join out_operationplan on out_loadplan.operationplan = out_operationplan.id

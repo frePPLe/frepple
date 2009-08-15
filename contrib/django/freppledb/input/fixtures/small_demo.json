@@ -7,7 +7,7 @@
 {"pk": "factory 2", "model": "input.location", "fields": { "description": "A factory that stores and packages products", "category": "", "available": "Working Days"}},
 {"pk": 1000, "model": "input.bucket", "fields": {"value": "1.00", "startdate": "2009-01-01 00:00:00", "calendar": "pack capacity factory 1"}},
 {"pk": 1001, "model": "input.bucket", "fields": {"value": "1.00", "startdate": "2009-01-01 00:00:00", "calendar": "pack capacity factory 2"}},
-{"pk": 1002, "model": "input.bucket", "fields": {"value": "0.00", "startdate": "2009-02-01 00:00:00", "calendar": "pack capacity factory 1"}},
+{"pk": 1002, "model": "input.bucket", "fields": {"value": "2.00", "startdate": "2009-02-01 00:00:00", "calendar": "pack capacity factory 1"}},
 {"pk": "Customer near factory 1", "model": "input.customer", "fields": {}},
 {"pk": "Customer near factory 2", "model": "input.customer", "fields": {}},
 {"pk": 1, "model": "input.bucket", "fields": {"startdate": "2008-01-05 00:00:00", "enddate": "2008-01-07 00:00:00", "value": "0", "calendar": "Working Days"}},

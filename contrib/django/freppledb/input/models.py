@@ -31,6 +31,8 @@ from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 
+from freppledb.common.fields import DurationField
+
 
 CALENDARID = None
 
@@ -323,11 +325,11 @@ class Operation(AuditModel):
   type = models.CharField(_('type'), _('type'), max_length=20, null=True, blank=True, choices=operationtypes)
   location = models.ForeignKey(Location, verbose_name=_('location'), null=True,
     blank=True, db_index=True)
-  fence = models.DecimalField(_('release fence'), max_digits=15, decimal_places=4, null=True, blank=True,
+  fence = DurationField(_('release fence'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("Operationplans within this time window from the current day are expected to be released to production ERP"))
-  pretime = models.DecimalField(_('pre-op time'), max_digits=15, decimal_places=4, null=True, blank=True,
+  pretime = DurationField(_('pre-op time'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("A delay time to be respected as a soft constraint before starting the operation"))
-  posttime = models.DecimalField(_('post-op time'), max_digits=15, decimal_places=4, null=True, blank=True,
+  posttime = DurationField(_('post-op time'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("A delay time to be respected as a soft constraint after ending the operation"))
   sizeminimum = models.DecimalField(_('size minimum'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("A minimum lotsize quantity for operationplans"))
@@ -335,9 +337,9 @@ class Operation(AuditModel):
     help_text=_("A multiple quantity for operationplans"))
   cost = models.DecimalField(_('cost'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("Cost per operationplan unit"))
-  duration = models.DecimalField(_('duration'), max_digits=15, decimal_places=4, null=True, blank=True,
+  duration = DurationField(_('duration'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("A fixed duration for the operation"))
-  duration_per = models.DecimalField(_('duration per unit'), max_digits=15, decimal_places=4, null=True, blank=True,
+  duration_per = DurationField(_('duration per unit'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("A variable duration for the operation"))
 
   def __unicode__(self): return self.name
@@ -407,17 +409,17 @@ class Buffer(AuditModel):
   carrying_cost = models.DecimalField(_('carrying cost'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("Cost of holding inventory in this buffer, expressed as an annual percentage of the item price."))
   # Extra fields for procurement buffers
-  leadtime = models.DecimalField(_('leadtime'),max_digits=15, decimal_places=0, null=True, blank=True,
+  leadtime = DurationField(_('leadtime'),max_digits=15, decimal_places=0, null=True, blank=True,
     help_text=_('Leadtime for supplier of a procure buffer'))
-  fence = models.DecimalField(_('fence'),max_digits=15, decimal_places=0, null=True, blank=True,
+  fence = DurationField(_('fence'),max_digits=15, decimal_places=0, null=True, blank=True,
     help_text=_('Frozen fence for creating new procurements'))
   min_inventory = models.DecimalField(_('min_inventory'),max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_('Inventory level that triggers replenishment of a procure buffer'))
   max_inventory = models.DecimalField(_('max_inventory'),max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_('Inventory level to which a procure buffer is replenished'))
-  min_interval = models.DecimalField(_('min_interval'),max_digits=15, decimal_places=0, null=True, blank=True,
+  min_interval = DurationField(_('min_interval'),max_digits=15, decimal_places=0, null=True, blank=True,
     help_text=_('Minimum time interval between replenishments of a procure buffer'))
-  max_interval = models.DecimalField(_('max_interval'),max_digits=15, decimal_places=0, null=True, blank=True,
+  max_interval = DurationField(_('max_interval'),max_digits=15, decimal_places=0, null=True, blank=True,
     help_text=_('Maximum time interval between replenishments of a procure buffer'))
   size_minimum = models.DecimalField(_('size_minimum'),max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_('Minimum size of replenishments of a procure buffer'))

@@ -659,3 +659,35 @@ function syncScroll(left_or_right)
   ContextMenu.hide();
 
 }
+
+
+//
+// Functions to convert units for the duration fields
+//
+
+var _currentunits = null;
+
+var _factors = {
+  'seconds': 1,
+	'hours': 3600,
+	'days': 86400,
+	'weeks': 604800
+};
+	
+function getUnits(unitselector)
+{
+  _currentunits = unitselector.value;
+}
+
+function setUnits(unitselector)
+{
+  var field = $(unitselector).previous();
+  if (field.value) 
+  {
+    var val = parseFloat(field.value);
+    val *= _factors[_currentunits];
+    val /= _factors[unitselector.value];
+    field.value = val;
+  }
+  _currentunits = unitselector.value;
+}

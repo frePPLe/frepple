@@ -428,17 +428,8 @@ DECLARE_EXPORT Date PythonObject::getDate() const
 
 DECLARE_EXPORT PythonObject::PythonObject(Object* p)
 {
-  if (!p)
-  {
-    obj = Py_None;
-    Py_INCREF(obj);
-  }
-  else if (p->getType().factoryPythonProxy)
-    obj = reinterpret_cast<PyObject*>(p->getType().factoryPythonProxy(p));
-  else if (p->getType().category->factoryPythonProxy)
-    obj = reinterpret_cast<PyObject*>(p->getType().category->factoryPythonProxy(p));
-  else
-    throw LogicException("Can't create a Python proxy for " + p->getType().type);
+  obj = p ? static_cast<PyObject*>(p) : Py_None;
+  Py_INCREF(obj);
 }
 
 

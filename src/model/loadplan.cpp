@@ -64,6 +64,10 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r, LoadPlan *lp
   nextLoadPlan = o->firstloadplan;
   o->firstloadplan = this;
 
+  // Initialize the Python type
+  //xxxinitType(PythonFlowPlan::getType());
+
+  // Insert in the timeline
   r->getResource()->loadplans.insert(
     this,
     ld->getLoadplanQuantity(this),

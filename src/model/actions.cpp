@@ -64,37 +64,34 @@ DECLARE_EXPORT void Solver::endElement(XMLInput& pIn, const Attribute& pAttr, co
 }
 
 
-DECLARE_EXPORT PyObject* PythonSolver::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* Solver::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
-    return PythonObject(obj->getName());
+    return PythonObject(getName());
   if (attr.isA(Tags::tag_loglevel))
-    return PythonObject(obj->getLogLevel());
+    return PythonObject(getLogLevel());
 	return NULL;
 }
 
 
-DECLARE_EXPORT int PythonSolver::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int Solver::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
-    obj->setName(field.getString());
+    setName(field.getString());
   else if (attr.isA(Tags::tag_loglevel))
-    obj->setLogLevel(field.getInt());
+    setLogLevel(field.getInt());
   else
     return -1;  // Error
   return 0;  // OK
 }
 
 
-DECLARE_EXPORT PyObject *PythonSolver::solve(PyObject *self, PyObject *args)
+DECLARE_EXPORT PyObject *Solver::solve(PyObject *self, PyObject *args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
   {
-    Solver *sol = static_cast<PythonSolver*>(self)->obj;
-    if (!sol) throw LogicException("Can't run NULL solver");
-    sol->solve();    
+    static_cast<Solver*>(self)->solve();    
   }
   catch(...)
   {

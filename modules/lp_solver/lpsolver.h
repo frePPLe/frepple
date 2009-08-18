@@ -150,9 +150,11 @@ class LPSolver : public Solver
 	
     virtual void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 
 	  /** Constructor. */
-    LPSolver(const string& n) : Solver(n), minimum(true) {};
+    LPSolver(const string& n) : Solver(n), minimum(true) {initType(metadata);};
 	
 	  /** Destructor. */
     ~LPSolver() {};
@@ -215,11 +217,6 @@ class LPSolver : public Solver
 
 class PythonLPSolver : public FreppleClass<PythonLPSolver,PythonSolver,LPSolver>
 {
-  public:
-    PythonLPSolver(LPSolver* p)
-      : FreppleClass<PythonLPSolver,PythonSolver,LPSolver>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 }  // End namespace

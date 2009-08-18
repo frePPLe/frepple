@@ -218,25 +218,24 @@ DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr,
 }
 
 
-DECLARE_EXPORT PyObject* PythonSolverMRP::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_constraints))
-    return PythonObject(obj->getConstraints());
+    return PythonObject(getConstraints());
   if (attr.isA(Tags::tag_maxparallel))
-    return PythonObject(obj->getMaxParallel());
-  return PythonSolver(obj).getattro(attr); 
+    return PythonObject(getMaxParallel());
+  return Solver::getattro(attr); 
 }
 
 
-DECLARE_EXPORT int PythonSolverMRP::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_constraints))
-    obj->setConstraints(field.getInt());
+    setConstraints(field.getInt());
   else if (attr.isA(Tags::tag_maxparallel))
-    obj->setMaxParallel(field.getInt());
+    setMaxParallel(field.getInt());
   else
-    return PythonSolver(obj).setattro(attr, field);
+    return Solver::setattro(attr, field);
   return 0;
 }
 

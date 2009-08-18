@@ -214,29 +214,28 @@ int PythonLoad::initialize(PyObject* m)
   x.supportsetattro();
   x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
-  const_cast<MetaCategory*>(Load::metadata)->factoryPythonProxy = proxy;
+  const_cast<MetaCategory*>(Load::metadata)->pythonClass = x.type_object();
   return x.typeReady(m);
 }
 
 
-DECLARE_EXPORT PyObject* PythonLoad::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* Load::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_resource))
-    return PythonObject(obj->getResource());
+    return PythonObject(getResource());
   if (attr.isA(Tags::tag_operation))
-    return PythonObject(obj->getOperation());
+    return PythonObject(getOperation());
   if (attr.isA(Tags::tag_quantity))
-    return PythonObject(obj->getQuantity());
+    return PythonObject(getQuantity());
   if (attr.isA(Tags::tag_effective_end))
-    return PythonObject(obj->getEffective().getEnd());
+    return PythonObject(getEffective().getEnd());
   if (attr.isA(Tags::tag_effective_start))
-    return PythonObject(obj->getEffective().getStart());
+    return PythonObject(getEffective().getStart());
   return NULL;
 }
 
 
-DECLARE_EXPORT int PythonLoad::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int Load::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_resource))
   {
@@ -245,8 +244,8 @@ DECLARE_EXPORT int PythonLoad::setattro(const Attribute& attr, const PythonObjec
       PyErr_SetString(PythonDataException, "load resource must be of type resource");
       return -1;
     }
-    Resource* y = static_cast<PythonResource*>(static_cast<PyObject*>(field))->obj;
-    obj->setResource(y);
+    Resource* y = static_cast<Resource*>(static_cast<PyObject*>(field));
+    setResource(y);
   }
   else if (attr.isA(Tags::tag_operation))
   {
@@ -255,15 +254,15 @@ DECLARE_EXPORT int PythonLoad::setattro(const Attribute& attr, const PythonObjec
       PyErr_SetString(PythonDataException, "load operation must be of type operation");
       return -1;
     }
-    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
-    obj->setOperation(y);
+    Operation* y = static_cast<Operation*>(static_cast<PyObject*>(field));
+    setOperation(y);
   }
   else if (attr.isA(Tags::tag_quantity))
-    obj->setQuantity(field.getDouble());
+    setQuantity(field.getDouble());
   else if (attr.isA(Tags::tag_effective_end))
-    obj->setEffectiveEnd(field.getDate());
+    setEffectiveEnd(field.getDate());
   else if (attr.isA(Tags::tag_effective_start))
-    obj->setEffectiveStart(field.getDate());
+    setEffectiveStart(field.getDate());
   else
     return -1;
   return 0;
@@ -291,8 +290,8 @@ PyObject* PythonLoad::create(PyTypeObject* pytype, PyObject* args, PyObject* kwd
 
     // Create the load
     Load *l = new Load(
-      static_cast<PythonOperation*>(oper)->obj,
-      static_cast<PythonResource*>(res)->obj,
+      static_cast<Operation*>(oper),
+      static_cast<Resource*>(res),
       q2
       );
 
@@ -312,8 +311,9 @@ PyObject* PythonLoad::create(PyTypeObject* pytype, PyObject* args, PyObject* kwd
       l->setEffectiveEnd(d.getDate());
     }
 
-    // Return a proxy
-    return static_cast<PyObject*>(*(new PythonObject(l)));
+    // Return the object
+    Py_INCREF(l);
+    return static_cast<PyObject*>(l);
   }
   catch (...)
   {

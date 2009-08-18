@@ -1054,57 +1054,56 @@ DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
 }
 
 
-DECLARE_EXPORT PyObject* PythonOperation::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* Operation::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
-    return PythonObject(obj->getName());
+    return PythonObject(getName());
   if (attr.isA(Tags::tag_description))
-    return PythonObject(obj->getDescription());
+    return PythonObject(getDescription());
   if (attr.isA(Tags::tag_category))
-    return PythonObject(obj->getCategory());
+    return PythonObject(getCategory());
   if (attr.isA(Tags::tag_subcategory))
-    return PythonObject(obj->getSubCategory());
+    return PythonObject(getSubCategory());
   if (attr.isA(Tags::tag_location))
-    return PythonObject(obj->getLocation());
+    return PythonObject(getLocation());
   if (attr.isA(Tags::tag_fence))
-    return PythonObject(obj->getFence());
+    return PythonObject(getFence());
   if (attr.isA(Tags::tag_size_minimum))
-    return PythonObject(obj->getSizeMinimum());
+    return PythonObject(getSizeMinimum());
   if (attr.isA(Tags::tag_size_multiple))
-    return PythonObject(obj->getSizeMultiple());
+    return PythonObject(getSizeMultiple());
   if (attr.isA(Tags::tag_cost))
-    return PythonObject(obj->getCost());
+    return PythonObject(getCost());
   if (attr.isA(Tags::tag_pretime))
-    return PythonObject(obj->getPreTime());
+    return PythonObject(getPreTime());
   if (attr.isA(Tags::tag_posttime))
-    return PythonObject(obj->getPostTime());
+    return PythonObject(getPostTime());
   if (attr.isA(Tags::tag_hidden))
-    return PythonObject(obj->getHidden());
+    return PythonObject(getHidden());
   if (attr.isA(Tags::tag_loads))
-    return new PythonLoadIterator(obj);
+    return new PythonLoadIterator(this);
   if (attr.isA(Tags::tag_flows))
-    return new PythonFlowIterator(obj);
+    return new PythonFlowIterator(this);
   if (attr.isA(Tags::tag_operationplans))
-    return new PythonOperationPlanIterator(obj);
+    return new PythonOperationPlanIterator(this);
   if (attr.isA(Tags::tag_level))
-    return PythonObject(obj->getLevel());
+    return PythonObject(getLevel());
   if (attr.isA(Tags::tag_cluster))
-    return PythonObject(obj->getCluster());
+    return PythonObject(getCluster());
 	return NULL;
 }
 
 
-DECLARE_EXPORT int PythonOperation::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int Operation::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
-    obj->setName(field.getString());
+    setName(field.getString());
   else if (attr.isA(Tags::tag_description))
-    obj->setDescription(field.getString());
+    setDescription(field.getString());
   else if (attr.isA(Tags::tag_category))
-    obj->setCategory(field.getString());
+    setCategory(field.getString());
   else if (attr.isA(Tags::tag_subcategory))
-    obj->setSubCategory(field.getString());
+    setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_location))
   {
     if (!field.check(PythonLocation::getType())) 
@@ -1112,100 +1111,95 @@ DECLARE_EXPORT int PythonOperation::setattro(const Attribute& attr, const Python
       PyErr_SetString(PythonDataException, "buffer location must be of type location");
       return -1;
     }
-    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(field))->obj;
-    obj->setLocation(y);
+    Location* y = static_cast<Location*>(static_cast<PyObject*>(field));
+    setLocation(y);
   }
   else if (attr.isA(Tags::tag_fence))
-    obj->setFence(field.getTimeperiod());
+    setFence(field.getTimeperiod());
   else if (attr.isA(Tags::tag_size_minimum))
-    obj->setSizeMinimum(field.getDouble());
+    setSizeMinimum(field.getDouble());
   else if (attr.isA(Tags::tag_size_multiple))
-    obj->setSizeMultiple(field.getDouble());
+    setSizeMultiple(field.getDouble());
   else if (attr.isA(Tags::tag_cost))
-    obj->setCost(field.getDouble());
+    setCost(field.getDouble());
   else if (attr.isA(Tags::tag_pretime))
-    obj->setPreTime(field.getTimeperiod());
+    setPreTime(field.getTimeperiod());
   else if (attr.isA(Tags::tag_posttime))
-    obj->setPostTime(field.getTimeperiod());
+    setPostTime(field.getTimeperiod());
   else if (attr.isA(Tags::tag_hidden))
-    obj->setHidden(field.getBool());
+    setHidden(field.getBool());
   else
     return -1;  // Error
   return 0;  // OK
 }
 
 
-DECLARE_EXPORT PyObject* PythonOperationFixedTime::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* OperationFixedTime::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_duration))
-    return PythonObject(obj->getDuration());
-  return PythonOperation(obj).getattro(attr); 
+    return PythonObject(getDuration());
+  return Operation::getattro(attr); 
 }
 
 
-DECLARE_EXPORT int PythonOperationFixedTime::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int OperationFixedTime::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (!obj) return -1;
   if (attr.isA(Tags::tag_duration))
-    obj->setDuration(field.getTimeperiod());
+    setDuration(field.getTimeperiod());
   else
-    return PythonOperation(obj).setattro(attr, field);
+    return Operation::setattro(attr, field);
   return 0;
 }
 
 
-DECLARE_EXPORT PyObject* PythonOperationTimePer::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* OperationTimePer::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_duration))
-    return PythonObject(obj->getDuration());
+    return PythonObject(getDuration());
   if (attr.isA(Tags::tag_duration))
-    return PythonObject(obj->getDurationPer());
-  return PythonOperation(obj).getattro(attr); 
+    return PythonObject(getDurationPer());
+  return Operation::getattro(attr); 
 }
 
 
-DECLARE_EXPORT int PythonOperationTimePer::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int OperationTimePer::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (!obj) return -1;
   if (attr.isA(Tags::tag_duration))
-    obj->setDuration(field.getTimeperiod());
+    setDuration(field.getTimeperiod());
   else if (attr.isA(Tags::tag_duration_per))
-    obj->setDurationPer(field.getTimeperiod());
+    setDurationPer(field.getTimeperiod());
   else
-    return PythonOperation(obj).setattro(attr, field);
+    return Operation::setattro(attr, field);
   return 0;
 }
 
 
-DECLARE_EXPORT PyObject* PythonOperationAlternate::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* OperationAlternate::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_alternates))
   {
-    PyObject* result = PyTuple_New(obj->getSubOperations().size());
+    PyObject* result = PyTuple_New(getSubOperations().size());
     int count = 0;
-    for (Operation::Operationlist::const_iterator i = obj->getSubOperations().begin(); i != obj->getSubOperations().end(); ++i)
+    for (Operation::Operationlist::const_iterator i = getSubOperations().begin(); i != getSubOperations().end(); ++i)
       PyTuple_SetItem(result, count++, PythonObject(*i));
     return result;
   }
-  return PythonOperation(obj).getattro(attr); 
+  return Operation::getattro(attr); 
 }
 
 
-DECLARE_EXPORT int PythonOperationAlternate::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int OperationAlternate::setattro(const Attribute& attr, const PythonObject& field)
 {
-  return PythonOperation(obj).setattro(attr, field);
+  return Operation::setattro(attr, field);
 }
 
 
-DECLARE_EXPORT PyObject* PythonOperationAlternate::addAlternate(PyObject* self, PyObject* args, PyObject* kwdict)
+DECLARE_EXPORT PyObject* OperationAlternate::addAlternate(PyObject* self, PyObject* args, PyObject* kwdict)
 {
   try
   {
     // Pick up the alternate operation
-    OperationAlternate *altoper = static_cast<PythonOperationAlternate*>(self)->obj;
+    OperationAlternate *altoper = static_cast<OperationAlternate*>(self);
     if (!altoper) throw LogicException("Can't add alternates to NULL alternate");
   
     // Parse the arguments
@@ -1233,7 +1227,7 @@ DECLARE_EXPORT PyObject* PythonOperationAlternate::addAlternate(PyObject* self, 
     }
 
     // Add the alternate
-    altoper->addAlternate(static_cast<PythonOperation*>(oper)->obj, prio, eff);
+    altoper->addAlternate(static_cast<Operation*>(oper), prio, eff);
  }
   catch(...)
   {
@@ -1244,33 +1238,32 @@ DECLARE_EXPORT PyObject* PythonOperationAlternate::addAlternate(PyObject* self, 
 }
 
 
-DECLARE_EXPORT PyObject* PythonOperationRouting::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* OperationRouting::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_steps))
   {
-    PyObject* result = PyTuple_New(obj->getSubOperations().size());
+    PyObject* result = PyTuple_New(getSubOperations().size());
     int count = 0;
-    for (Operation::Operationlist::const_iterator i = obj->getSubOperations().begin(); i != obj->getSubOperations().end(); ++i)
+    for (Operation::Operationlist::const_iterator i = getSubOperations().begin(); i != getSubOperations().end(); ++i)
       PyTuple_SetItem(result, count++, PythonObject(*i));
     return result;
   }
-  return PythonOperation(obj).getattro(attr); 
+  return Operation::getattro(attr); 
 }
 
 
-DECLARE_EXPORT int PythonOperationRouting::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int OperationRouting::setattro(const Attribute& attr, const PythonObject& field)
 {
-  return PythonOperation(obj).setattro(attr, field);
+  return Operation::setattro(attr, field);
 } 
 
 
-PyObject *PythonOperationRouting::addStep(PyObject *self, PyObject *args)
+PyObject *OperationRouting::addStep(PyObject *self, PyObject *args)
 {
   try
   {
     // Pick up the routing operation
-    OperationRouting *oper = static_cast<PythonOperationRouting*>(self)->obj;
+    OperationRouting *oper = static_cast<OperationRouting*>(self);
     if (!oper) throw LogicException("Can't add steps to NULL routing");
 
     // Parse the arguments
@@ -1281,7 +1274,7 @@ PyObject *PythonOperationRouting::addStep(PyObject *self, PyObject *args)
       {
         if (!PyObject_TypeCheck(steps[i], PythonOperation::getType().type_object())) 
           throw DataException("routing steps must be of type operation");
-        oper->addStepBack(static_cast<PythonOperation*>(steps[i])->obj);
+        oper->addStepBack(static_cast<Operation*>(steps[i]));
       }
   }
   catch(...)

@@ -128,6 +128,9 @@ class Calendar : public HasName<Calendar>, public Object
           * at a certain time. 
           */
         int priority;
+
+        /** A pointer to the owning calendar. */
+        Calendar *cal;
         
         /** Increments an iterator to the next change event.<br>
           * A bucket will evaluate the current state of the iterator, and
@@ -143,13 +146,17 @@ class Calendar : public HasName<Calendar>, public Object
 
       protected:
         /** Constructor. */
-        Bucket(Date start, Date end, string name) : nm(name), startdate(start),
-          enddate(end), nextBucket(NULL), prevBucket(NULL), priority(0) {}
+        Bucket(Calendar *c, Date start, Date end, string name) : nm(name), 
+          startdate(start), enddate(end), nextBucket(NULL), prevBucket(NULL), 
+          priority(0), cal(c) {initType(metadata);}
         
         /** Auxilary function to write out the start of the XML. */
         DECLARE_EXPORT void writeHeader(XMLOutput *) const;
 
       public:
+        /** Return the calendar to whom the bucket belongs. */
+        Calendar* getCalendar() const { return cal; }
+
         /** This method is here only to keep the API of all calendar classes
           * consistent.<br>
           * Note that this isn't exactly a virtual method, since the return
@@ -227,6 +234,8 @@ class Calendar : public HasName<Calendar>, public Object
         virtual size_t getSize() const
           {return sizeof(Bucket) + nm.size();}
         static DECLARE_EXPORT const MetaCategory* metadata;
+        virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+        virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     };
 
     /** Default constructor. */
@@ -328,6 +337,10 @@ class Calendar : public HasName<Calendar>, public Object
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement) {}
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+
+    static DECLARE_EXPORT PyObject* getEvents(PyObject*, PyObject*, PyObject*);
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
@@ -358,7 +371,7 @@ class Calendar : public HasName<Calendar>, public Object
     /** This is the factory method used to generate new buckets. Each subclass
       * should provide an override for this function. */
     virtual Bucket* createNewBucket(Date start, Date end, string name) 
-      {return new Bucket(start,end,name);}
+      {return new Bucket(this, start,end,name);}
 };
 
 
@@ -385,8 +398,8 @@ template <typename T> class CalendarValue : public Calendar
         T val;
 
         /** Constructor. */
-        BucketValue(Date start, Date end, string name, T& v) 
-          : Bucket(start,end,name) {val = v;};
+        BucketValue(CalendarValue<T> *c, Date start, Date end, string name) 
+          : Bucket(c,start,end,name), val(c->getDefault()) {}
 
       public:
         /** Returns the value of this bucket. */
@@ -524,7 +537,7 @@ template <typename T> class CalendarValue : public Calendar
       * @see Calendar::addBucket()
       */
     Bucket* createNewBucket(Date start, Date end, string name) 
-      {return new BucketValue(start,end,name,defaultValue);}
+      {return new BucketValue(this,start,end,name);}
 
     /** Value when no bucket is matching a certain date. */
     T defaultValue;
@@ -560,8 +573,8 @@ template <typename T> class CalendarPointer : public Calendar
         T* val;
 
         /** Constructor. */
-        BucketPointer(Date start, Date end, string name, T* v) 
-          : Bucket(start,end,name), val(v) {};
+        BucketPointer(CalendarPointer<T> *c, Date start, Date end, string name) 
+          : Bucket(c,start,end,name), val(c->getDefault()) {};
 
       public:
         /** Returns the value stored in this bucket. */
@@ -726,7 +739,7 @@ template <typename T> class CalendarPointer : public Calendar
       * @see Calendar::addBucket()
       */
     Bucket* createNewBucket(Date start, Date end, string name) 
-      {return new BucketPointer(start,end,name,defaultValue);}
+      {return new BucketPointer(this,start,end,name);}
 
     /** Value when no bucket is matching a certain date. */
     T* defaultValue;
@@ -738,9 +751,10 @@ template <typename T> class CalendarPointer : public Calendar
 class CalendarVoid : public Calendar
 {
   public:
-    CalendarVoid(const string& n) : Calendar(n) {}
+    CalendarVoid(const string& n) : Calendar(n) { initType(metadata); }
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
+    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -749,10 +763,14 @@ class CalendarDouble : public CalendarValue<double>
 {
   public:
     CalendarDouble(const string& n) : CalendarValue<double>(n) 
-      { setDefault(0.0); }
+      { setDefault(0.0); initType(metadata); }
     DECLARE_EXPORT ~CalendarDouble();
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+
+    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -761,9 +779,13 @@ class CalendarInt : public CalendarValue<int>
 {
   public:
     CalendarInt(const string& n) : CalendarValue<int>(n)
-      { setDefault(0); }
+      { setDefault(0); initType(metadata); }
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+
+    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -772,10 +794,14 @@ class CalendarBool : public CalendarValue<bool>
 {
   public:
     CalendarBool(const string& n) : CalendarValue<bool>(n) 
-      { setDefault(false); }
+      { setDefault(false); initType(metadata); }
     DECLARE_EXPORT ~CalendarBool();
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+
+    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -783,7 +809,7 @@ class CalendarBool : public CalendarValue<bool>
 class CalendarString : public CalendarValue<string>
 {
   public:
-    CalendarString(const string& n) : CalendarValue<string>(n) {}
+    CalendarString(const string& n) : CalendarValue<string>(n) { initType(metadata); }
     virtual const MetaClass& getType() const {return *metadata;}
     bool getBool() const { return getDefault().empty(); }
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -795,6 +821,10 @@ class CalendarString : public CalendarValue<string>
             + static_cast<CalendarValue<string>::BucketValue&>(*j).getValue().size();
       return i;
     }
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+
+    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -802,9 +832,14 @@ class CalendarString : public CalendarValue<string>
 class CalendarOperation : public CalendarPointer<Operation>
 {
   public:
-    CalendarOperation(const string& n) : CalendarPointer<Operation>(n) {}
+    CalendarOperation(const string& n) : CalendarPointer<Operation>(n) 
+      { initType(metadata); }
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+
+    static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -841,7 +876,10 @@ class Problem : public NonCopyable, public Object
       * @see addProblem
       */
     explicit Problem(HasProblems *p) : owner(p)
-      { if (!owner) throw LogicException("Invalid problem creation"); }
+    { 
+      if (!owner) throw LogicException("Invalid problem creation");
+      initType(metadata); 
+    }
 
     /** Destructor.
       * @see removeProblem
@@ -870,6 +908,13 @@ class Problem : public NonCopyable, public Object
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput&, const Attribute&, const DataElement&) {}
     static DECLARE_EXPORT void writer(const MetaCategory*, XMLOutput*);
+
+    PyObject* getattro(const Attribute&);
+
+    PyObject* str()
+    {
+      return PythonObject(getDescription());
+    }
 
     /** Returns an iterator to the very first problem. The iterator can be
       * incremented till it points past the very last problem. */
@@ -1012,6 +1057,10 @@ class Solver : public Object, public HasName<Solver>
 
     virtual DECLARE_EXPORT void writeElement (XMLOutput*, const Keyword&, mode=DEFAULT) const;
     virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+
+    static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
 
     virtual void solve(void* = NULL) = 0;
     virtual void solve(const Demand*,void* = NULL)
@@ -1311,6 +1360,8 @@ class Location
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
     virtual const MetaClass& getType() const {return *metadata;}
@@ -1328,7 +1379,7 @@ class Location
 class LocationDefault : public Location
 {
   public:
-    explicit LocationDefault(const string& str) : Location(str) {}
+    explicit LocationDefault(const string& str) : Location(str) {initType(metadata);}
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
@@ -1348,6 +1399,8 @@ class Customer
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
     Customer(const string& n) : HasHierarchy<Customer>(n) {}
@@ -1361,7 +1414,7 @@ class Customer
 class CustomerDefault : public Customer
 {
   public:
-    explicit CustomerDefault(const string& str) : Customer(str) {}
+    explicit CustomerDefault(const string& str) : Customer(str) {initType(metadata);}
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
@@ -1597,6 +1650,8 @@ class Operation : public HasName<Operation>,
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
@@ -2021,6 +2076,10 @@ class OperationPlan
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+
+    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
     /** Initialize the operationplan. The initialization function should be
       * called when the operationplan is ready to be 'officially' added. The
@@ -2139,7 +2198,7 @@ class OperationPlan
       */
     OperationPlan() : owner(NULL), quantity(0.0), locked(false), dmd(NULL),
       id(0), oper(NULL), firstflowplan(NULL), firstloadplan(NULL),
-      prev(NULL), next(NULL) {}
+      prev(NULL), next(NULL) {initType(metadata);}
 
   private:
     /** Empty list of operationplans.<br>
@@ -2205,7 +2264,7 @@ class OperationFixedTime : public Operation
 {
   public:
     /** Constructor. */
-    explicit OperationFixedTime(const string& s) : Operation(s) {}
+    explicit OperationFixedTime(const string& s) : Operation(s) {initType(metadata);}
 
     /** Returns the length of the operation. */
     const TimePeriod getDuration() const {return duration;}
@@ -2221,6 +2280,8 @@ class OperationFixedTime : public Operation
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -2258,7 +2319,7 @@ class OperationTimePer : public Operation
 {
   public:
     /** Constructor. */
-    explicit OperationTimePer(const string& s) : Operation(s) {}
+    explicit OperationTimePer(const string& s) : Operation(s) {initType(metadata);}
 
     /** Returns the constant part of the operation time. */
     TimePeriod getDuration() const {return duration;}
@@ -2301,6 +2362,8 @@ class OperationTimePer : public Operation
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -2325,7 +2388,7 @@ class OperationRouting : public Operation
 {
   public:
     /** Constructor. */
-    explicit OperationRouting(const string& c) : Operation(c) {};
+    explicit OperationRouting(const string& c) : Operation(c) {initType(metadata);};
 
     /** Destructor. */
     DECLARE_EXPORT ~OperationRouting();
@@ -2346,6 +2409,10 @@ class OperationRouting : public Operation
       o->addSuperOperation(this);
     }
 
+    /** Add one or more steps to a routing. */
+    static DECLARE_EXPORT PyObject* addStep(PyObject*, PyObject*);
+
+    /** Remove a step from a routing. */
     void removeSubOperation(Operation *o)
     { steps.remove(o); o->superoplist.remove(this); }
 
@@ -2370,6 +2437,8 @@ class OperationRouting : public Operation
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -2454,7 +2523,7 @@ class OperationAlternate : public Operation
     typedef pair<int,DateRange> alternateProperty;
 
     /** Constructor. */
-    explicit OperationAlternate(const string& c) : Operation(c) {};
+    explicit OperationAlternate(const string& c) : Operation(c) {initType(metadata);};
 
     /** Destructor. */
     DECLARE_EXPORT ~OperationAlternate();
@@ -2504,8 +2573,16 @@ class OperationAlternate : public Operation
     DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual const Operationlist& getSubOperations() const {return alternates;}
+
+    /** Add an alternate to the operation.<br>
+      * The keyword arguments are "operation", "priority", "effective_start" 
+      * and "effective_end"
+      */
+    static DECLARE_EXPORT PyObject* addAlternate(PyObject*, PyObject*, PyObject*);
 
     /** This is the factory method which creates all operationplans of the
       * operation.
@@ -2591,7 +2668,7 @@ class Item
 {
   public:
     /** Constructor. Don't use this directly! */
-    explicit Item(const string& str) : HasHierarchy<Item> (str), 
+    explicit Item(const string& str) : HasHierarchy<Item>(str), 
       deliveryOperation(NULL), price(0.0) {}
 
     /** Returns the delivery operation.<br>
@@ -2632,6 +2709,8 @@ class Item
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Item();
@@ -2655,7 +2734,7 @@ class Item
 class ItemDefault : public Item
 {
   public:
-    explicit ItemDefault(const string& str) : Item(str) {}
+    explicit ItemDefault(const string& str) : Item(str) {initType(metadata);}
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
@@ -2663,6 +2742,8 @@ class ItemDefault : public Item
       return sizeof(ItemDefault) + getName().size() 
         + HasDescription::extrasize();
     }
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -2739,6 +2820,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     DECLARE_EXPORT virtual void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT virtual void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT virtual void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
@@ -2847,7 +2930,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 class BufferDefault : public Buffer
 {
   public:
-    explicit BufferDefault(const string& str) : Buffer(str) {}
+    explicit BufferDefault(const string& str) : Buffer(str) {initType(metadata);}
     virtual const MetaClass& getType() const {return *metadata;}
     virtual size_t getSize() const
     {return sizeof(BufferDefault) + Buffer::extrasize();}
@@ -2870,7 +2953,7 @@ class BufferInfinite : public Buffer
     virtual size_t getSize() const
       {return sizeof(BufferInfinite) + Buffer::extrasize();}
     explicit BufferInfinite(const string& c) : Buffer(c)
-      {setDetectProblems(false);}
+      { setDetectProblems(false); initType(metadata); }
     static DECLARE_EXPORT const MetaClass* metadata;
 };
 
@@ -2935,9 +3018,13 @@ class BufferProcure : public Buffer
     virtual const MetaClass& getType() const {return *metadata;}
     virtual size_t getSize() const
       {return sizeof(BufferProcure) + Buffer::extrasize();}
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+
+    /** Constructor. */
     explicit BufferProcure(const string& c) : Buffer(c), min_inventory(0),
       max_inventory(0), size_minimum(0), size_maximum(DBL_MAX), size_multiple(0),
-      oper(NULL) {}
+      oper(NULL) {initType(metadata);}
     static DECLARE_EXPORT const MetaClass* metadata;
 
     /** Return the purchasing leadtime. */
@@ -3125,6 +3212,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       setOperation(o);
       setBuffer(b);
       validate(ADD);
+      initType(metadata);
     }
 
     /** Returns the operation. */
@@ -3178,6 +3266,8 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -3187,7 +3277,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
   protected:
     /** Default constructor. */
-    explicit Flow() : quantity(0.0) {}
+    explicit Flow() : quantity(0.0) {initType(metadata);}
 
   private:
     /** Verifies whether a flow meets all requirements to be valid. */
@@ -3391,6 +3481,8 @@ class Resource : public HasHierarchy<Resource>,
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
@@ -3445,7 +3537,7 @@ class Resource : public HasHierarchy<Resource>,
 class ResourceDefault : public Resource
 {
   public:
-    explicit ResourceDefault(const string& str) : Resource(str) {}
+    explicit ResourceDefault(const string& str) : Resource(str) {initType(metadata);}
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
@@ -3462,7 +3554,7 @@ class ResourceInfinite : public Resource
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     virtual const MetaClass& getType() const {return *metadata;}
     explicit ResourceInfinite(const string& c) : Resource(c)
-      {setDetectProblems(false);}
+      { setDetectProblems(false); initType(metadata); }
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(ResourceInfinite) + Resource::extrasize();}
@@ -3485,6 +3577,7 @@ class Load
       setResource(r);
       setQuantity(u);
       validate(ADD);
+      initType(metadata);
     }
 
     /** Destructor. */
@@ -3526,6 +3619,9 @@ class Load
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+
     bool getHidden() const
      {
       return (getResource() && getResource()->getHidden())
@@ -3538,7 +3634,7 @@ class Load
     virtual size_t getSize() const {return sizeof(Load);}
 
     /** Default constructor. */
-    Load() : qty(1.0) {}
+    Load() : qty(1.0) {initType(metadata);}
 
   private:
     /** This method is called to check the validity of the object. It will
@@ -3554,7 +3650,6 @@ class Load
 
 
 
-
 /** @brief This is the (logical) top class of the complete model.
   *
   * This is a singleton class: only a single instance can be created.
@@ -3566,7 +3661,7 @@ class Load
   */
 class Plan : public Plannable
 {
-    friend void LibraryModel::initialize();
+    friend class PythonPlan;
   private:
     /** Current Date of this plan. */
     Date cur_Date;
@@ -3583,7 +3678,7 @@ class Plan : public Plannable
     /** The only constructor of this class is made private. An object of this
       * class is created by the instance() member function.
       */
-    Plan() : cur_Date(Date::now()) {}
+    Plan() : cur_Date(Date::now()) {initType(metadata);}
 
   public:
     /** Return a pointer to the singleton plan object.
@@ -3629,6 +3724,8 @@ class Plan : public Plannable
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     virtual void updateProblems() {};
 
@@ -4043,6 +4140,8 @@ class Demand
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     size_t extrasize() const 
     {
@@ -4139,7 +4238,7 @@ class Demand
 class DemandDefault : public Demand
 {
   public:
-    explicit DemandDefault(const string& str) : Demand(str) {}
+    explicit DemandDefault(const string& str) : Demand(str) {initType(metadata);}
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
@@ -5345,9 +5444,6 @@ class PythonPlan : public PythonExtension<PythonPlan>
 {
   public:
     static int initialize(PyObject* m);
-  private:
-    DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5360,17 +5456,6 @@ class PythonProblem : public PythonExtension<PythonProblem>
 {
   public:
     static int initialize(PyObject* m);
-    PythonProblem(Problem* p) : obj(p) {}
-    static PyObject* proxy(Object* p)
-      {return static_cast<PyObject*>(new PythonProblem(static_cast<Problem*>(p)));}
-    PyObject* str()
-    {
-      return PythonObject(obj ? obj->getDescription() : "None");
-    }
-  public: // @TODO should not be public
-    Problem* obj;
-  private:
-    PyObject* getattro(const Attribute&);
 };
 
 
@@ -5387,10 +5472,6 @@ class PythonProblemIterator
 
 class PythonBuffer : public FreppleCategory<PythonBuffer,Buffer>
 {
-  public:
-    PythonBuffer(Buffer* p) : FreppleCategory<PythonBuffer,Buffer>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5402,31 +5483,16 @@ class PythonBufferIterator
 
 class PythonBufferDefault : public FreppleClass<PythonBufferDefault,PythonBuffer,BufferDefault>
 {
-  public:
-    PythonBufferDefault(BufferDefault* p)
-      : FreppleClass<PythonBufferDefault,PythonBuffer,BufferDefault>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
 class PythonBufferInfinite : public FreppleClass<PythonBufferInfinite,PythonBuffer,BufferInfinite>
 {
-  public:
-    PythonBufferInfinite(BufferInfinite* p)
-      : FreppleClass<PythonBufferInfinite,PythonBuffer,BufferInfinite>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
 class PythonBufferProcure : public FreppleClass<PythonBufferProcure,PythonBuffer,BufferProcure>
 {
-  public:
-    PythonBufferProcure(BufferProcure* p)
-      : FreppleClass<PythonBufferProcure,PythonBuffer,BufferProcure>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5437,10 +5503,6 @@ class PythonBufferProcure : public FreppleClass<PythonBufferProcure,PythonBuffer
 
 class PythonLocation : public FreppleCategory<PythonLocation,Location>
 {
-  public:
-    PythonLocation(Location* p) : FreppleCategory<PythonLocation,Location>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5452,11 +5514,6 @@ class PythonLocationIterator
 
 class PythonLocationDefault : public FreppleClass<PythonLocationDefault,PythonLocation,LocationDefault>
 {
-  public:
-    PythonLocationDefault(LocationDefault* p)
-      : FreppleClass<PythonLocationDefault,PythonLocation,LocationDefault>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5467,10 +5524,6 @@ class PythonLocationDefault : public FreppleClass<PythonLocationDefault,PythonLo
 
 class PythonCustomer : public FreppleCategory<PythonCustomer,Customer>
 {
-  public:
-    PythonCustomer(Customer* p) : FreppleCategory<PythonCustomer,Customer>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5482,11 +5535,6 @@ class PythonCustomerIterator
 
 class PythonCustomerDefault : public FreppleClass<PythonCustomerDefault,PythonCustomer,CustomerDefault>
 {
-  public:
-    PythonCustomerDefault(CustomerDefault* p)
-      : FreppleClass<PythonCustomerDefault,PythonCustomer,CustomerDefault>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5497,10 +5545,6 @@ class PythonCustomerDefault : public FreppleClass<PythonCustomerDefault,PythonCu
 
 class PythonItem : public FreppleCategory<PythonItem,Item>
 {
-  public:
-    PythonItem(Item* p) : FreppleCategory<PythonItem,Item>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5512,11 +5556,6 @@ class PythonItemIterator
 
 class PythonItemDefault : public FreppleClass<PythonItemDefault,PythonItem,ItemDefault>
 {
-  public:
-    PythonItemDefault(ItemDefault* p)
-      : FreppleClass<PythonItemDefault,PythonItem,ItemDefault>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5527,11 +5566,6 @@ class PythonItemDefault : public FreppleClass<PythonItemDefault,PythonItem,ItemD
 
 class PythonCalendar : public FreppleCategory<PythonCalendar,Calendar>
 {
-  public:
-    PythonCalendar(Calendar* p) : FreppleCategory<PythonCalendar,Calendar>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static DECLARE_EXPORT PyObject* getEvents(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -5566,12 +5600,6 @@ class PythonCalendarBucket
 {
   public:
     static int initialize(PyObject* m);
-    PythonCalendarBucket(Calendar* c, Calendar::Bucket* b) : obj(b), cal(c) {}
-  private:
-    Calendar::Bucket* obj;
-    Calendar* cal;
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5595,108 +5623,72 @@ class PythonCalendarEventIterator
 class PythonCalendarVoid : public FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>
 {
   public:
-    PythonCalendarVoid(CalendarVoid* p)
-      : FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize(PyObject* m)
     {
-      getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
-      getType().addMethod("events", PythonCalendar::getEvents, METH_VARARGS, "return an event iterator");
+      getType().addMethod("setValue", CalendarVoid::setPythonValue, METH_KEYWORDS, "update the value in a date range");
+      getType().addMethod("events", Calendar::getEvents, METH_VARARGS, "return an event iterator");
       return FreppleClass<PythonCalendarVoid,PythonCalendar,CalendarVoid>::initialize(m);
     }
-  private:
-    static DECLARE_EXPORT PyObject* setValue(PyObject*, PyObject*, PyObject*);
 };
 
 
 class PythonCalendarBool : public FreppleClass<PythonCalendarBool,PythonCalendar,CalendarBool>
 {
   public:
-    PythonCalendarBool(CalendarBool* p)
-      : FreppleClass<PythonCalendarBool,PythonCalendar,CalendarBool>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize(PyObject* m)
     {
-      getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
-      getType().addMethod("events", PythonCalendar::getEvents, METH_VARARGS, "return an event iterator");
+      getType().addMethod("setValue", CalendarBool::setPythonValue, METH_KEYWORDS, "update the value in a date range");
+      getType().addMethod("events", Calendar::getEvents, METH_VARARGS, "return an event iterator");
       return FreppleClass<PythonCalendarBool,PythonCalendar,CalendarBool>::initialize(m);
     }
-  private:
-    static DECLARE_EXPORT PyObject* setValue(PyObject*, PyObject*, PyObject*);
 };
 
 
 class PythonCalendarDouble : public FreppleClass<PythonCalendarDouble,PythonCalendar,CalendarDouble>
 {
   public:
-    PythonCalendarDouble(CalendarDouble* p)
-      : FreppleClass<PythonCalendarDouble,PythonCalendar,CalendarDouble>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize(PyObject* m)
     {
-      getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
-      getType().addMethod("events", PythonCalendar::getEvents, METH_VARARGS, "return an event iterator");
+      getType().addMethod("setValue", CalendarDouble::setPythonValue, METH_KEYWORDS, "update the value in a date range");
+      getType().addMethod("events", Calendar::getEvents, METH_VARARGS, "return an event iterator");
       return FreppleClass<PythonCalendarDouble,PythonCalendar,CalendarDouble>::initialize(m);
     }
-  private:
-    static DECLARE_EXPORT PyObject* setValue(PyObject*, PyObject*, PyObject*);
 };
 
 
 class PythonCalendarString : public FreppleClass<PythonCalendarString,PythonCalendar,CalendarString>
 {
   public:
-    PythonCalendarString(CalendarString* p)
-      : FreppleClass<PythonCalendarString,PythonCalendar,CalendarString>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize(PyObject* m)
     {
-      getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
-      getType().addMethod("events", PythonCalendar::getEvents, METH_VARARGS, "return an event iterator");
+      getType().addMethod("setValue", CalendarString::setPythonValue, METH_KEYWORDS, "update the value in a date range");
+      getType().addMethod("events", Calendar::getEvents, METH_VARARGS, "return an event iterator");
       return FreppleClass<PythonCalendarString,PythonCalendar,CalendarString>::initialize(m);
     }
-  private:
-    static DECLARE_EXPORT PyObject* setValue(PyObject*, PyObject*, PyObject*);
 };
 
 
 class PythonCalendarInt : public FreppleClass<PythonCalendarInt,PythonCalendar,CalendarInt>
 {
   public:
-    PythonCalendarInt(CalendarInt* p)
-      : FreppleClass<PythonCalendarInt,PythonCalendar,CalendarInt>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize(PyObject* m)
     {
-      getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
-      getType().addMethod("events", PythonCalendar::getEvents, METH_VARARGS, "return an event iterator");
+      getType().addMethod("setValue", CalendarInt::setPythonValue, METH_KEYWORDS, "update the value in a date range");
+      getType().addMethod("events", Calendar::getEvents, METH_VARARGS, "return an event iterator");
       return FreppleClass<PythonCalendarInt,PythonCalendar,CalendarInt>::initialize(m);
     }
-  private:
-    static DECLARE_EXPORT PyObject* setValue(PyObject*, PyObject*, PyObject*);
 };
 
 
 class PythonCalendarOperation : public FreppleClass<PythonCalendarOperation,PythonCalendar,CalendarOperation>
 {
   public:
-    PythonCalendarOperation(CalendarOperation* p)
-      : FreppleClass<PythonCalendarOperation,PythonCalendar,CalendarOperation>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize(PyObject* m)
     {
-      getType().addMethod("setValue", setValue, METH_KEYWORDS, "update the value in a date range");
-      getType().addMethod("events", PythonCalendar::getEvents, METH_VARARGS, "return an event iterator");
+      getType().addMethod("setValue", CalendarOperation::setPythonValue, METH_KEYWORDS, "update the value in a date range");
+      getType().addMethod("events", Calendar::getEvents, METH_VARARGS, "return an event iterator");
       return FreppleClass<PythonCalendarOperation,PythonCalendar,CalendarOperation>::initialize(m);
     }
-  private:
-    static DECLARE_EXPORT PyObject* setValue(PyObject*, PyObject*, PyObject*);
 };
 
 
@@ -5707,10 +5699,6 @@ class PythonCalendarOperation : public FreppleClass<PythonCalendarOperation,Pyth
 
 class PythonDemand : public FreppleCategory<PythonDemand,Demand>
 {
-  public:
-    PythonDemand(Demand* p) : FreppleCategory<PythonDemand,Demand>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5722,11 +5710,6 @@ class PythonDemandIterator
 
 class PythonDemandDefault : public FreppleClass<PythonDemandDefault,PythonDemand,DemandDefault>
 {
-  public:
-    PythonDemandDefault(DemandDefault* p)
-      : FreppleClass<PythonDemandDefault,PythonDemand,DemandDefault>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5737,10 +5720,6 @@ class PythonDemandDefault : public FreppleClass<PythonDemandDefault,PythonDemand
 
 class PythonResource : public FreppleCategory<PythonResource,Resource>
 {
-  public:
-    PythonResource(Resource* p) : FreppleCategory<PythonResource,Resource>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5752,21 +5731,11 @@ class PythonResourceIterator
 
 class PythonResourceDefault : public FreppleClass<PythonResourceDefault,PythonResource,ResourceDefault>
 {
-  public:
-    PythonResourceDefault(ResourceDefault* p)
-      : FreppleClass<PythonResourceDefault,PythonResource,ResourceDefault>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
 class PythonResourceInfinite : public FreppleClass<PythonResourceInfinite,PythonResource,ResourceInfinite>
 {
-  public:
-    PythonResourceInfinite(ResourceInfinite* p)
-      : FreppleClass<PythonResourceInfinite,PythonResource,ResourceInfinite>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5777,10 +5746,6 @@ class PythonResourceInfinite : public FreppleClass<PythonResourceInfinite,Python
 
 class PythonOperation : public FreppleCategory<PythonOperation,Operation>
 {
-  public:
-    PythonOperation(Operation* p) : FreppleCategory<PythonOperation,Operation>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5793,41 +5758,21 @@ class PythonOperationIterator
 class PythonOperationAlternate : public FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>
 {
   public:
-    PythonOperationAlternate(OperationAlternate* p)
-      : FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize(PyObject* m)
     {
-      getType().addMethod("addAlternate", addAlternate, METH_KEYWORDS, "add an alternate");
+      getType().addMethod("addAlternate", OperationAlternate::addAlternate, METH_KEYWORDS, "add an alternate");
       return FreppleClass<PythonOperationAlternate,PythonOperation,OperationAlternate>::initialize(m);
     }
-  private:
-    /** Add an alternate to the operation.<br>
-      * The keyword arguments are "operation", "priority", "effective_start" 
-      * and "effective_end"
-      */
-    static DECLARE_EXPORT PyObject* addAlternate(PyObject*, PyObject*, PyObject*);
 };
 
 
 class PythonOperationFixedTime : public FreppleClass<PythonOperationFixedTime,PythonOperation,OperationFixedTime>
 {
-  public:
-    PythonOperationFixedTime(OperationFixedTime* p)
-      : FreppleClass<PythonOperationFixedTime,PythonOperation,OperationFixedTime>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
 class PythonOperationTimePer : public FreppleClass<PythonOperationTimePer,PythonOperation,OperationTimePer>
 {
-  public:
-    PythonOperationTimePer(OperationTimePer* p)
-      : FreppleClass<PythonOperationTimePer,PythonOperation,OperationTimePer>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5836,16 +5781,9 @@ class PythonOperationRouting : public FreppleClass<PythonOperationRouting,Python
   public:
     static int initialize(PyObject* m)
     {
-      getType().addMethod("addStep", addStep, METH_VARARGS , "add steps to the routing");
+      getType().addMethod("addStep", OperationRouting::addStep, METH_VARARGS , "add steps to the routing");
       return FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>::initialize(m);
     }
-    PythonOperationRouting(OperationRouting* p)
-      : FreppleClass<PythonOperationRouting,PythonOperation,OperationRouting>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-  private:
-    /** Add one or more steps to a routing. */
-    static DECLARE_EXPORT PyObject* addStep(PyObject*, PyObject*);
 };
 
 
@@ -5858,15 +5796,6 @@ class PythonOperationPlan : public PythonExtension<PythonOperationPlan>
 {
   public:
     static int initialize(PyObject* m);
-    PythonOperationPlan(OperationPlan* p) : obj(p) {}
-    static PyObject* proxy(Object* p)
-      {return static_cast<PyObject*>(new PythonOperationPlan(static_cast<OperationPlan*>(p)));}
-  public: // @TODO should not be public
-    OperationPlan* obj;
-  private:
-    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -5889,7 +5818,7 @@ class PythonOperationPlanIterator
 //
 
 
-class PythonFlowPlan : public PythonExtension<PythonFlowPlan>
+class PythonFlowPlan : public PythonExtension<PythonFlowPlan>   // xxx
 {
   public:
     static int initialize(PyObject* m);
@@ -5924,7 +5853,7 @@ class PythonFlowPlanIterator : public PythonExtension<PythonFlowPlanIterator>
 //
 
 
-class PythonLoadPlan : public PythonExtension<PythonLoadPlan>
+class PythonLoadPlan : public PythonExtension<PythonLoadPlan> // xxx
 {
   public:
     static int initialize(PyObject* m);
@@ -6010,14 +5939,8 @@ class PythonLoad : public PythonExtension<PythonLoad>
 {
   public:
     static int initialize(PyObject* m);
-    PythonLoad(Load* p) : obj(p) {}
-  public: // @todo should not be public
-    Load* obj;
   private:
-    DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
-    static PyObject* proxy(Object* p) {return static_cast<PyObject*>(new PythonLoad(static_cast<Load*>(p)));}
 };
 
 
@@ -6058,14 +5981,8 @@ class PythonFlow : public PythonExtension<PythonFlow>
 {
   public:
     static int initialize(PyObject* m);
-    PythonFlow(Flow* p) : obj(p) {}
-  public: // @todo should not be public
-    Flow* obj;
   private:
-    DECLARE_EXPORT PyObject* getattro(const Attribute&);
     static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
-    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static PyObject* proxy(Object* p) {return static_cast<PyObject*>(new PythonFlow(static_cast<Flow*>(p)));}
 };
 
 
@@ -6107,13 +6024,9 @@ class PythonSolver : public FreppleCategory<PythonSolver,Solver>
   public:
     static int initialize(PyObject* m)
     {
-      getType().addMethod("solve", solve, METH_NOARGS, "run the solver");
+      getType().addMethod("solve", Solver::solve, METH_NOARGS, "run the solver");
       return FreppleCategory<PythonSolver,Solver>::initialize(m);
     }
-    PythonSolver(Solver* p) : FreppleCategory<PythonSolver,Solver>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
 };
 
 

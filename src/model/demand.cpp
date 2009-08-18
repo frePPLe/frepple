@@ -308,55 +308,54 @@ DECLARE_EXPORT void Demand::endElement(XMLInput& pIn, const Attribute& pAttr, co
 }
 
 
-DECLARE_EXPORT PyObject* PythonDemand::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* Demand::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
-    return PythonObject(obj->getName());
+    return PythonObject(getName());
   if (attr.isA(Tags::tag_quantity))
-    return PythonObject(obj->getQuantity());
+    return PythonObject(getQuantity());
   if (attr.isA(Tags::tag_due))
-    return PythonObject(obj->getDue());
+    return PythonObject(getDue());
   if (attr.isA(Tags::tag_priority))
-    return PythonObject(obj->getPriority());
+    return PythonObject(getPriority());
   if (attr.isA(Tags::tag_owner))
-    return PythonObject(obj->getOwner());
+    return PythonObject(getOwner());
   if (attr.isA(Tags::tag_item))
-    return PythonObject(obj->getItem());
+    return PythonObject(getItem());
   if (attr.isA(Tags::tag_customer))
-    return PythonObject(obj->getCustomer());
+    return PythonObject(getCustomer());
   if (attr.isA(Tags::tag_operation))
-    return PythonObject(obj->getOperation());
+    return PythonObject(getOperation());
   if (attr.isA(Tags::tag_description))
-    return PythonObject(obj->getDescription());
+    return PythonObject(getDescription());
   if (attr.isA(Tags::tag_category))
-    return PythonObject(obj->getCategory());
+    return PythonObject(getCategory());
   if (attr.isA(Tags::tag_subcategory))
-    return PythonObject(obj->getSubCategory());
+    return PythonObject(getSubCategory());
   if (attr.isA(Tags::tag_minshipment))
-    return PythonObject(obj->getMinShipment());
+    return PythonObject(getMinShipment());
   if (attr.isA(Tags::tag_maxlateness))
-    return PythonObject(obj->getMaxLateness());
+    return PythonObject(getMaxLateness());
   if (attr.isA(Tags::tag_hidden))
-    return PythonObject(obj->getHidden());
+    return PythonObject(getHidden());
   if (attr.isA(Tags::tag_operationplans))
-    return new PythonDemandPlanIterator(obj);
+    return new PythonDemandPlanIterator(this);
   if (attr.isA(Tags::tag_pegging))
-    return new PythonPeggingIterator(obj);
+    return new PythonPeggingIterator(this);
   return NULL;
 }
 
 
-DECLARE_EXPORT int PythonDemand::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int Demand::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
-    obj->setName(field.getString());
+    setName(field.getString());
   else if (attr.isA(Tags::tag_priority))
-    obj->setPriority(field.getInt());
+    setPriority(field.getInt());
   else if (attr.isA(Tags::tag_quantity))
-    obj->setQuantity(field.getDouble());
+    setQuantity(field.getDouble());
   else if (attr.isA(Tags::tag_due))
-    obj->setDue(field.getDate());
+    setDue(field.getDate());
   else if (attr.isA(Tags::tag_item))
   {
     if (!field.check(PythonItem::getType())) 
@@ -364,8 +363,8 @@ DECLARE_EXPORT int PythonDemand::setattro(const Attribute& attr, const PythonObj
       PyErr_SetString(PythonDataException, "demand item must be of type item");
       return -1;
     }
-    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(field))->obj;
-    obj->setItem(y);
+    Item* y = static_cast<Item*>(static_cast<PyObject*>(field));
+    setItem(y);
   }
   else if (attr.isA(Tags::tag_customer))
   {
@@ -374,19 +373,19 @@ DECLARE_EXPORT int PythonDemand::setattro(const Attribute& attr, const PythonObj
       PyErr_SetString(PythonDataException, "demand customer must be of type customer");
       return -1;
     }
-    Customer* y = static_cast<PythonCustomer*>(static_cast<PyObject*>(field))->obj;
-    obj->setCustomer(y);
+    Customer* y = static_cast<Customer*>(static_cast<PyObject*>(field));
+    setCustomer(y);
   }
   else if (attr.isA(Tags::tag_description))
-    obj->setDescription(field.getString());
+    setDescription(field.getString());
   else if (attr.isA(Tags::tag_category))
-    obj->setCategory(field.getString());
+    setCategory(field.getString());
   else if (attr.isA(Tags::tag_subcategory))
-    obj->setSubCategory(field.getString());
+    setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_minshipment))
-    obj->setMinShipment(field.getDouble());
+    setMinShipment(field.getDouble());
   else if (attr.isA(Tags::tag_maxlateness))
-    obj->setMaxLateness(field.getTimeperiod());
+    setMaxLateness(field.getTimeperiod());
   else if (attr.isA(Tags::tag_owner))
   {
     if (!field.check(PythonDemand::getType()))
@@ -394,8 +393,8 @@ DECLARE_EXPORT int PythonDemand::setattro(const Attribute& attr, const PythonObj
       PyErr_SetString(PythonDataException, "demand owner must be of type demand");
       return -1;
     }
-    Demand* y = static_cast<PythonDemand*>(static_cast<PyObject*>(field))->obj;
-    obj->setOwner(y);
+    Demand* y = static_cast<Demand*>(static_cast<PyObject*>(field));
+    setOwner(y);
   }
   else if (attr.isA(Tags::tag_operation))
   {
@@ -404,26 +403,14 @@ DECLARE_EXPORT int PythonDemand::setattro(const Attribute& attr, const PythonObj
       PyErr_SetString(PythonDataException, "demand operation must be of type operation");
       return -1;
     }
-    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
-    obj->setOperation(y);
+    Operation* y = static_cast<Operation*>(static_cast<PyObject*>(field));
+    setOperation(y);
   }
   else if (attr.isA(Tags::tag_hidden))
-    obj->setHidden(field.getBool());
+    setHidden(field.getBool());
   else
     return -1;  // Error
   return 0;  // OK
-}
-
-
-DECLARE_EXPORT PyObject* PythonDemandDefault::getattro(const Attribute& attr)
-{
-  return PythonDemand(obj).getattro(attr); 
-}
-
-
-DECLARE_EXPORT int PythonDemandDefault::setattro(const Attribute& attr, const PythonObject& field)
-{
-  return PythonDemand(obj).setattro(attr, field);
 }
 
 
@@ -441,7 +428,9 @@ int PythonDemandPlanIterator::initialize(PyObject* m)
 PyObject* PythonDemandPlanIterator::iternext()
 {  
   if (i == dem->getDelivery().end()) return NULL;
-  return new PythonOperationPlan(const_cast<OperationPlan*>(&**(i++)));
+  PyObject* result = const_cast<OperationPlan*>(&**(i++));
+  Py_INCREF(result);
+  return result;
 }
 
 } // end namespace

@@ -74,35 +74,34 @@ DECLARE_EXPORT Customer::~Customer()
 }
 
 
-DECLARE_EXPORT PyObject* PythonCustomer::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* Customer::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
-    return PythonObject(obj->getName());
+    return PythonObject(getName());
   if (attr.isA(Tags::tag_description))
-    return PythonObject(obj->getDescription());
+    return PythonObject(getDescription());
   if (attr.isA(Tags::tag_category))
-    return PythonObject(obj->getCategory());
+    return PythonObject(getCategory());
   if (attr.isA(Tags::tag_subcategory))
-    return PythonObject(obj->getSubCategory());
+    return PythonObject(getSubCategory());
   if (attr.isA(Tags::tag_owner))
-    return PythonObject(obj->getOwner());
+    return PythonObject(getOwner());
   if (attr.isA(Tags::tag_hidden))
-    return PythonObject(obj->getHidden());
+    return PythonObject(getHidden());
 	return NULL;
 }
 
 
-DECLARE_EXPORT int PythonCustomer::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int Customer::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
-    obj->setName(field.getString());
+    setName(field.getString());
   else if (attr.isA(Tags::tag_description))
-    obj->setDescription(field.getString());
+    setDescription(field.getString());
   else if (attr.isA(Tags::tag_category))
-    obj->setCategory(field.getString());
+    setCategory(field.getString());
   else if (attr.isA(Tags::tag_subcategory))
-    obj->setSubCategory(field.getString());
+    setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_owner))
   {
     if (!field.check(PythonCustomer::getType())) 
@@ -110,26 +109,14 @@ DECLARE_EXPORT int PythonCustomer::setattro(const Attribute& attr, const PythonO
       PyErr_SetString(PythonDataException, "customer owner must be of type customer");
       return -1;
     }
-    Customer* y = static_cast<PythonCustomer*>(static_cast<PyObject*>(field))->obj;
-    obj->setOwner(y);
+    Customer* y = static_cast<Customer*>(static_cast<PyObject*>(field));
+    setOwner(y);
   }
   else if (attr.isA(Tags::tag_hidden))
-    obj->setHidden(field.getBool());
+    setHidden(field.getBool());
   else
     return -1;
   return 0;
-}
-
-
-DECLARE_EXPORT PyObject* PythonCustomerDefault::getattro(const Attribute& attr)
-{
-  return PythonCustomer(obj).getattro(attr);
-}
-
-
-DECLARE_EXPORT int PythonCustomerDefault::setattro(const Attribute& attr, const PythonObject& field)
-{
- return PythonCustomer(obj).setattro(attr, field);
 }
 
 

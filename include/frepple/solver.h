@@ -188,13 +188,15 @@ class SolverMRP : public Solver
 
     /** Constructor. */
     SolverMRP(const string& n) : 
-      Solver(n), constrts(0), maxparallel(0), lazydelay(86400L) {}
+      Solver(n), constrts(0), maxparallel(0), lazydelay(86400L) {initType(metadata);}
 
     /** Destructor. */
     virtual ~SolverMRP() {}
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -503,11 +505,6 @@ class SolverMRP : public Solver
 
 class PythonSolverMRP : public FreppleClass<PythonSolverMRP,PythonSolver,SolverMRP>
 {
-  public:
-    PythonSolverMRP(SolverMRP* p)
-      : FreppleClass<PythonSolverMRP,PythonSolver,SolverMRP>(p) {}
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 

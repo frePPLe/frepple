@@ -94,41 +94,40 @@ DECLARE_EXPORT void Item::endElement(XMLInput& pIn, const Attribute& pAttr, cons
 }
 
 
-DECLARE_EXPORT PyObject* PythonItem::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* Item::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
-    return PythonObject(obj->getName());
+    return PythonObject(getName());
   if (attr.isA(Tags::tag_description))
-    return PythonObject(obj->getDescription());
+    return PythonObject(getDescription());
   if (attr.isA(Tags::tag_category))
-    return PythonObject(obj->getCategory());
+    return PythonObject(getCategory());
   if (attr.isA(Tags::tag_subcategory))
-    return PythonObject(obj->getSubCategory());
+    return PythonObject(getSubCategory());
   if (attr.isA(Tags::tag_price))
-    return PythonObject(obj->getPrice());
+    return PythonObject(getPrice());
   if (attr.isA(Tags::tag_owner))
-    return PythonObject(obj->getOwner());
+    return PythonObject(getOwner());
   if (attr.isA(Tags::tag_operation))
-    return PythonObject(obj->getOperation());
+    return PythonObject(getOperation());
   if (attr.isA(Tags::tag_hidden))
-    return PythonObject(obj->getHidden());
+    return PythonObject(getHidden());
 	return NULL;
 }
 
 
-DECLARE_EXPORT int PythonItem::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int Item::setattro(const Attribute& attr, const PythonObject& field) 
 {
   if (attr.isA(Tags::tag_name))
-    obj->setName(field.getString());
+    setName(field.getString());
   else if (attr.isA(Tags::tag_description))
-    obj->setDescription(field.getString());
+    setDescription(field.getString());
   else if (attr.isA(Tags::tag_category))
-    obj->setCategory(field.getString());
+    setCategory(field.getString());
   else if (attr.isA(Tags::tag_subcategory))
-    obj->setSubCategory(field.getString());
+    setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_price))
-    obj->setPrice(field.getDouble());
+    setPrice(field.getDouble());
   else if (attr.isA(Tags::tag_owner))
   {
     if (!field.check(PythonItem::getType())) 
@@ -136,8 +135,8 @@ DECLARE_EXPORT int PythonItem::setattro(const Attribute& attr, const PythonObjec
       PyErr_SetString(PythonDataException, "item owner must be of type item");
       return -1;
     }
-    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(field))->obj;
-    obj->setOwner(y);
+    Item* y = static_cast<Item*>(static_cast<PyObject*>(field));
+    setOwner(y);
   }
   else if (attr.isA(Tags::tag_operation))
   {
@@ -146,26 +145,27 @@ DECLARE_EXPORT int PythonItem::setattro(const Attribute& attr, const PythonObjec
       PyErr_SetString(PythonDataException, "item operation must be of type operation");
       return -1;
     }
-    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
-    obj->setOperation(y);
+    Operation* y = static_cast<Operation*>(static_cast<PyObject*>(field));
+    setOperation(y);
   }
   else if (attr.isA(Tags::tag_hidden))
-    obj->setHidden(field.getBool());
+    setHidden(field.getBool());
   else
     return -1;
   return 0;
 }
 
 
-DECLARE_EXPORT PyObject* PythonItemDefault::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* ItemDefault::getattro(const Attribute& attr)
 {
-  return PythonItem(obj).getattro(attr);
+  return Item::getattro(attr);
 }
 
 
-DECLARE_EXPORT int PythonItemDefault::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int ItemDefault::setattro(const Attribute& attr, const PythonObject& field)
 {
- return PythonItem(obj).setattro(attr, field);
+ return Item::setattro(attr, field);
 }
+
 
 } // end namespace

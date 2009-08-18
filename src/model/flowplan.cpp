@@ -35,6 +35,9 @@ DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
 {
   assert(opplan && f);
   fl = const_cast<Flow*>(f);
+
+  // Initialize the Python type
+  // xxxinitType(PythonFlowPlan::getType());
   
   // Link the flowplan to the operationplan
   oper = opplan;

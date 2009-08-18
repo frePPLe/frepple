@@ -484,26 +484,25 @@ int PythonProblem::initialize(PyObject* m)
   x.supportgetattro();
   x.supportstr();
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
-  const_cast<MetaCategory*>(Problem::metadata)->factoryPythonProxy = proxy;
+  const_cast<MetaCategory*>(Problem::metadata)->pythonClass = x.type_object();
   return x.typeReady(m);
 }
 
 
-PyObject* PythonProblem::getattro(const Attribute& attr)
+PyObject* Problem::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
-    return PythonObject(obj->getType().type);
+    return PythonObject(getType().type);
   if (attr.isA(Tags::tag_description))
-    return PythonObject(obj->getDescription());
+    return PythonObject(getDescription());
   if (attr.isA(Tags::tag_entity))
-    return PythonObject(obj->getOwner()->getEntity()->getType().category->group);
+    return PythonObject(getOwner()->getEntity()->getType().category->group);
   if (attr.isA(Tags::tag_start))
-    return PythonObject(obj->getDateRange().getStart());
+    return PythonObject(getDateRange().getStart());
   if (attr.isA(Tags::tag_end))
-    return PythonObject(obj->getDateRange().getEnd());
+    return PythonObject(getDateRange().getEnd());
   if (attr.isA(Tags::tag_weight))
-    return PythonObject(obj->getWeight());
+    return PythonObject(getWeight());
   return NULL;
 }
 

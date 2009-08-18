@@ -262,45 +262,44 @@ void LPSolver::endElement(XMLInput& pIn, const Attribute& pAttr, const DataEleme
 }
 
 
-PyObject* PythonLPSolver::getattro(const Attribute& attr)
+PyObject* LPSolver::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_minimum))
-    return PythonObject(obj->getMinimum());
+    return PythonObject(getMinimum());
   else if (attr.isA(Tags::tag_maximum))
-    return PythonObject(!(obj->getMinimum()));
+    return PythonObject(!(getMinimum()));
   else if (attr.isA(tag_datafile))
-    return PythonObject(obj->getDataFile());
+    return PythonObject(getDataFile());
   else if (attr.isA(tag_modelfile))
-    return PythonObject(obj->getModelFile());
+    return PythonObject(getModelFile());
   else if (attr.isA(tag_solutionfile))
-    return PythonObject(obj->getSolutionFile());
+    return PythonObject(getSolutionFile());
   else if (attr.isA(tag_objective))
   {
 	  // The list of objectives is returned as a list of strings
-    PyObject* result = PyList_New(obj->getObjectives().size());
+    PyObject* result = PyList_New(getObjectives().size());
     int count = 0;
-    for (list<string>::const_iterator i = obj->getObjectives().begin(); 
-        i != obj->getObjectives().end(); ++i)
+    for (list<string>::const_iterator i = getObjectives().begin(); 
+        i != getObjectives().end(); ++i)
       PyList_SetItem(result, count++, PythonObject(*i));
     return result;
   }
-  return PythonSolver(obj).getattro(attr); 
+  return Solver::getattro(attr); 
 }
 
 
-int PythonLPSolver::setattro(const Attribute& attr, const PythonObject& field)
+int LPSolver::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_minimum))
-    obj->setMinimum(field.getBool());
+    setMinimum(field.getBool());
   else if (attr.isA(Tags::tag_maximum))
-	  obj->setMinimum(!field.getBool());
+	  setMinimum(!field.getBool());
   else if (attr.isA(tag_datafile))
-	  obj->setDataFile(field.getString());
+	  setDataFile(field.getString());
   else if (attr.isA(tag_modelfile))
-	  obj->setModelFile(field.getString());
+	  setModelFile(field.getString());
   else if (attr.isA(tag_solutionfile))
-	  obj->setSolutionFile(field.getString());
+	  setSolutionFile(field.getString());
   else if (attr.isA(tag_objective))
   {
 	  // The objective argument is a list of strings
@@ -315,11 +314,11 @@ int PythonLPSolver::setattro(const Attribute& attr, const PythonObject& field)
     for (int i = 0; i < len; i++) 
     {
 	    item = PyList_GET_ITEM(seq, i);
-	    obj->addObjective(item.getString());
+	    addObjective(item.getString());
     }
   }
   else
-	  return PythonSolver(obj).setattro(attr, field);
+    return Solver::setattro(attr, field);
   return 0; // OK
 }
 

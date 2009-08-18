@@ -242,7 +242,6 @@ DECLARE_EXPORT void MetaClass::registerClass (const string& a, const string& b,
 
   // Set method pointers to NULL
   factoryMethodDefault = f;
-  factoryPythonProxy = NULL;
 }
 
 

@@ -20,7 +20,7 @@
       <buckets>
         <!--
           The value for saturday and sunday is set to zero.
-          The forecast is only alllowed on weekdays.
+          The forecast is only allowed on weekdays.
         -->
         <!--
           The weight for a monday is higher than a friday.

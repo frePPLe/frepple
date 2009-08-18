@@ -488,7 +488,7 @@ class Forecast : public Demand
   public:
     /** Constructor. */
     explicit Forecast(const string& nm)
-      : Demand(nm), calptr(NULL), discrete(true) {}
+      : Demand(nm), calptr(NULL), discrete(true) {initType(metadata);}
 
     /** Destructor. */
     ~Forecast();
@@ -658,6 +658,10 @@ class Forecast : public Demand
     /** Return a reference to a dictionary with all forecast objects. */
     static const MapOfForecasts& getForecasts() {return ForecastDictionary;}
 
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+    static PyObject* timeseries(PyObject *, PyObject *);
+
   private:
     /** Initializion of a forecast.<br>
       * It creates demands for each bucket of the calendar.
@@ -743,6 +747,7 @@ class ForecastBucket : public Demand
       setMaxLateness(f->getMaxLateness());
       setMinShipment(f->getMinShipment());
       setOperation(&*(f->getOperation()));
+      initType(metadata);
     }
     virtual const MetaClass& getType() const {return *metadata;}
     static const MetaClass *metadata;
@@ -818,6 +823,9 @@ class ForecastBucket : public Demand
     /** Return a pointer to the previous forecast bucket. */
     ForecastBucket* getPreviousBucket() const { return prev; }
 
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
+
   private:
     double weight;
     double consumed;
@@ -856,7 +864,7 @@ class ForecastSolver : public Solver
     friend class Forecast;
   public:
     /** Constructor. */
-    ForecastSolver(const string& n) : Solver(n) {}
+    ForecastSolver(const string& n) : Solver(n) {initType(metadata);}
 
     /** This method handles the search for a matching forecast, followed
       * by decreasing the net forecast.
@@ -872,6 +880,8 @@ class ForecastSolver : public Solver
     static const MetaClass *metadata;
     virtual size_t getSize() const {return sizeof(ForecastSolver);}
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    virtual PyObject* getattro(const Attribute&);
+    virtual int setattro(const Attribute&, const PythonObject&);
 
     /** Callback function, used for netting orders against the forecast. */
     bool callback(Demand* l, const Signal a);
@@ -902,35 +912,19 @@ class ForecastSolver : public Solver
 class PythonForecast : public FreppleClass<PythonForecast,PythonDemand,Forecast>
 {
   public:
-    PythonForecast(Forecast* p)
-      : FreppleClass<PythonForecast,PythonDemand,Forecast>(p) {}
     static int initialize(PyObject*);
-  private:
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
-    static PyObject* timeseries(PyObject *, PyObject *);
 };
 
 
 class PythonForecastBucket : public FreppleClass<PythonForecastBucket,PythonDemand,ForecastBucket>
 {
   public:
-    PythonForecastBucket(ForecastBucket* p)
-      : FreppleClass<PythonForecastBucket,PythonDemand,ForecastBucket>(p) {}
     static int initialize(PyObject*);
-  private:
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 
 class PythonForecastSolver : public FreppleClass<PythonForecastSolver,PythonSolver,ForecastSolver>
 {
-  public:
-    PythonForecastSolver(ForecastSolver* p)
-      : FreppleClass<PythonForecastSolver,PythonSolver,ForecastSolver>(p) {}
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
 };
 
 

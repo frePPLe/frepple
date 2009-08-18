@@ -106,37 +106,36 @@ DECLARE_EXPORT Location::~Location()
 }
 
 
-DECLARE_EXPORT PyObject* PythonLocation::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* Location::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
-    return PythonObject(obj->getName());
+    return PythonObject(getName());
   if (attr.isA(Tags::tag_description))
-    return PythonObject(obj->getDescription());
+    return PythonObject(getDescription());
   if (attr.isA(Tags::tag_category))
-    return PythonObject(obj->getCategory());
+    return PythonObject(getCategory());
   if (attr.isA(Tags::tag_subcategory))
-    return PythonObject(obj->getSubCategory());
+    return PythonObject(getSubCategory());
   if (attr.isA(Tags::tag_owner))
-    return PythonObject(obj->getOwner());
+    return PythonObject(getOwner());
   if (attr.isA(Tags::tag_available))
-    return PythonObject(obj->getAvailable());
+    return PythonObject(getAvailable());
   if (attr.isA(Tags::tag_hidden))
-    return PythonObject(obj->getHidden());
+    return PythonObject(getHidden());
 	return NULL;
 }
 
 
-DECLARE_EXPORT int PythonLocation::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int Location::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
-    obj->setName(field.getString());
+    setName(field.getString());
   else if (attr.isA(Tags::tag_description))
-    obj->setDescription(field.getString());
+    setDescription(field.getString());
   else if (attr.isA(Tags::tag_category))
-    obj->setCategory(field.getString());
+    setCategory(field.getString());
   else if (attr.isA(Tags::tag_subcategory))
-    obj->setSubCategory(field.getString());
+    setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_owner))
   {
     if (!field.check(PythonLocation::getType())) 
@@ -144,8 +143,8 @@ DECLARE_EXPORT int PythonLocation::setattro(const Attribute& attr, const PythonO
       PyErr_SetString(PythonDataException, "location owner must be of type location");
       return -1;
     }
-    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(field))->obj;
-    obj->setOwner(y);
+    Location* y = static_cast<Location*>(static_cast<PyObject*>(field));
+    setOwner(y);
   }
   else if (attr.isA(Tags::tag_available))
   {
@@ -154,26 +153,14 @@ DECLARE_EXPORT int PythonLocation::setattro(const Attribute& attr, const PythonO
       PyErr_SetString(PythonDataException, "location calendar must be of type calendar_bool");
       return -1;
     }
-    CalendarBool* y = static_cast<PythonCalendarBool*>(static_cast<PyObject*>(field))->obj;
-    obj->setAvailable(y);
+    CalendarBool* y = static_cast<CalendarBool*>(static_cast<PyObject*>(field));
+    setAvailable(y);
   }
   else if (attr.isA(Tags::tag_hidden))
-    obj->setHidden(field.getBool());
+    setHidden(field.getBool());
   else
     return -1;
   return 0;
-}
-
-
-DECLARE_EXPORT PyObject* PythonLocationDefault::getattro(const Attribute& attr)
-{
-  return PythonLocation(obj).getattro(attr);
-}
-
-
-DECLARE_EXPORT int PythonLocationDefault::setattro(const Attribute& attr, const PythonObject& field)
-{
- return PythonLocation(obj).setattro(attr, field);
 }
 
 } // end namespace

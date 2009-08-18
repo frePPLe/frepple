@@ -33,7 +33,7 @@ namespace module_forecast
 int PythonForecast::initialize(PyObject* m)
 {
   // Add a method for forecast generation
-  getType().addMethod("timeseries", timeseries, METH_VARARGS,
+  getType().addMethod("timeseries", Forecast::timeseries, METH_VARARGS,
      "Set the future based on the timeseries of historical data");
 
   // Normal initialization for the rest
@@ -41,18 +41,17 @@ int PythonForecast::initialize(PyObject* m)
 }
 
 
-PyObject* PythonForecast::getattro(const Attribute& attr)
+PyObject* Forecast::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_calendar))
-    return PythonObject(obj->getCalendar());
+    return PythonObject(getCalendar());
   else if (attr.isA(Tags::tag_discrete))
-    return PythonObject(obj->getDiscrete());
-  return PythonDemand(obj).getattro(attr); 
+    return PythonObject(getDiscrete());
+  return Demand::getattro(attr); 
 }
 
 
-int PythonForecast::setattro(const Attribute& attr, const PythonObject& field)
+int Forecast::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_calendar))
   {
@@ -61,21 +60,21 @@ int PythonForecast::setattro(const Attribute& attr, const PythonObject& field)
       PyErr_SetString(PythonDataException, "forecast calendar must be of type calendar");
       return -1;
     }
-    Calendar* y = static_cast<PythonCalendar*>(static_cast<PyObject*>(field))->obj;
-    obj->setCalendar(y);
+    Calendar* y = static_cast<Calendar*>(static_cast<PyObject*>(field));
+    setCalendar(y);
   }  
   else if (attr.isA(Tags::tag_discrete))
-    obj->setDiscrete(field.getBool());
+    setDiscrete(field.getBool());
   else
-    return PythonDemand(obj).setattro(attr, field);  
+    return Demand::setattro(attr, field);  
   return 0; // OK
 }
 
 
-extern "C" PyObject* PythonForecast::timeseries(PyObject *self, PyObject *args)
+extern "C" PyObject* Forecast::timeseries(PyObject *self, PyObject *args)
 {
   // Get the forecast model
-  Forecast* forecast = static_cast<PythonForecast*>(self)->obj;
+  Forecast* forecast = static_cast<Forecast*>(self);
 
   // Parse the Python arguments
   PyObject* history;
@@ -147,52 +146,50 @@ int PythonForecastBucket::initialize(PyObject* m)
   x.setDoc("frePPLe forecastbucket");
   x.supportgetattro();
   x.supportsetattro();
-  const_cast<MetaCategory*>(Demand::metadata)->factoryPythonProxy = proxy;
+  const_cast<MetaClass*>(ForecastBucket::metadata)->pythonClass = x.type_object();
   return x.typeReady(m);
 }
 
 
-PyObject* PythonForecastBucket::getattro(const Attribute& attr)
+PyObject* ForecastBucket::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_startdate))
-    return PythonObject(obj->getDueRange().getStart());
+    return PythonObject(getDueRange().getStart());
   if (attr.isA(Tags::tag_enddate))
-    return PythonObject(obj->getDueRange().getEnd());
+    return PythonObject(getDueRange().getEnd());
   if (attr.isA(Forecast::tag_total))
-    return PythonObject(obj->getTotal());
+    return PythonObject(getTotal());
   if (attr.isA(Forecast::tag_consumed))
-    return PythonObject(obj->getConsumed());
+    return PythonObject(getConsumed());
   if (attr.isA(Tags::tag_weight))
-    return PythonObject(obj->getWeight());
-  return PythonDemand(obj).getattro(attr); 
+    return PythonObject(getWeight());
+  return Demand::getattro(attr); 
 }
 
 
-int PythonForecastBucket::setattro(const Attribute& attr, const PythonObject& field)
+int ForecastBucket::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Forecast::tag_total))
-    obj->setTotal(field.getDouble());
+    setTotal(field.getDouble());
   else if (attr.isA(Forecast::tag_consumed))
-    obj->setConsumed(field.getDouble());
+    setConsumed(field.getDouble());
   else if (attr.isA(Tags::tag_weight))
-    obj->setWeight(field.getDouble());
+    setWeight(field.getDouble());
   else
-    return PythonDemand(obj).setattro(attr, field);  
+    return Demand::setattro(attr, field);  
   return 0;  // OK
 }
 
 
-PyObject* PythonForecastSolver::getattro(const Attribute& attr)
+PyObject* ForecastSolver::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
-  return PythonSolver(obj).getattro(attr); 
+  return Solver::getattro(attr); 
 }
 
 
-int PythonForecastSolver::setattro(const Attribute& attr, const PythonObject& field)
+int ForecastSolver::setattro(const Attribute& attr, const PythonObject& field)
 {
-  return PythonSolver(obj).setattro(attr, field);
+  return Solver::setattro(attr, field);
 }
 
 

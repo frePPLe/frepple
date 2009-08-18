@@ -228,50 +228,48 @@ DECLARE_EXPORT void ResourceInfinite::writeElement
 }
 
 
-DECLARE_EXPORT PyObject* PythonResource::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* Resource::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
-    return PythonObject(obj->getName());
+    return PythonObject(getName());
   if (attr.isA(Tags::tag_description))
-    return PythonObject(obj->getDescription());
+    return PythonObject(getDescription());
   if (attr.isA(Tags::tag_category))
-    return PythonObject(obj->getCategory());
+    return PythonObject(getCategory());
   if (attr.isA(Tags::tag_subcategory))
-    return PythonObject(obj->getSubCategory());
+    return PythonObject(getSubCategory());
   if (attr.isA(Tags::tag_owner))
-    return PythonObject(obj->getOwner());
+    return PythonObject(getOwner());
   if (attr.isA(Tags::tag_location))
-    return PythonObject(obj->getLocation());
+    return PythonObject(getLocation());
   if (attr.isA(Tags::tag_maximum))
-    return PythonObject(obj->getMaximum());
+    return PythonObject(getMaximum());
   if (attr.isA(Tags::tag_cost))
-    return PythonObject(obj->getCost());
+    return PythonObject(getCost());
   if (attr.isA(Tags::tag_hidden))
-    return PythonObject(obj->getHidden());
+    return PythonObject(getHidden());
   if (attr.isA(Tags::tag_loadplans))
-    return new PythonLoadPlanIterator(obj);
+    return new PythonLoadPlanIterator(this);
   if (attr.isA(Tags::tag_loads))
-    return new PythonLoadIterator(obj);
+    return new PythonLoadIterator(this);
   if (attr.isA(Tags::tag_level))
-    return PythonObject(obj->getLevel());
+    return PythonObject(getLevel());
   if (attr.isA(Tags::tag_cluster))
-    return PythonObject(obj->getCluster());
+    return PythonObject(getCluster());
 	return NULL;
 }
 
 
-DECLARE_EXPORT int PythonResource::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (!obj) return -1;
   if (attr.isA(Tags::tag_name))
-    obj->setName(field.getString());
+    setName(field.getString());
   else if (attr.isA(Tags::tag_description))
-    obj->setDescription(field.getString());
+    setDescription(field.getString());
   else if (attr.isA(Tags::tag_category))
-    obj->setCategory(field.getString());
+    setCategory(field.getString());
   else if (attr.isA(Tags::tag_subcategory))
-    obj->setSubCategory(field.getString());
+    setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_owner))
   {
     if (!field.check(PythonResource::getType()))
@@ -279,8 +277,8 @@ DECLARE_EXPORT int PythonResource::setattro(const Attribute& attr, const PythonO
       PyErr_SetString(PythonDataException, "resource owner must be of type resource");
       return -1;
     }
-    Resource* y = static_cast<PythonResource*>(static_cast<PyObject*>(field))->obj;
-    obj->setOwner(y);
+    Resource* y = static_cast<Resource*>(static_cast<PyObject*>(field));
+    setOwner(y);
   }
   else if (attr.isA(Tags::tag_location))
   {
@@ -289,8 +287,8 @@ DECLARE_EXPORT int PythonResource::setattro(const Attribute& attr, const PythonO
       PyErr_SetString(PythonDataException, "buffer location must be of type location");
       return -1;
     }
-    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(field))->obj;
-    obj->setLocation(y);
+    Location* y = static_cast<Location*>(static_cast<PyObject*>(field));
+    setLocation(y);
   }
   else if (attr.isA(Tags::tag_maximum))
   {
@@ -299,40 +297,16 @@ DECLARE_EXPORT int PythonResource::setattro(const Attribute& attr, const PythonO
       PyErr_SetString(PythonDataException, "resource maximum must be of type calendar_double");
       return -1;
     }
-    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(field))->obj;
-    obj->setMaximum(y);
+    CalendarDouble* y = static_cast<CalendarDouble*>(static_cast<PyObject*>(field));
+    setMaximum(y);
   }
   else if (attr.isA(Tags::tag_hidden))
-    obj->setHidden(field.getBool());
+    setHidden(field.getBool());
   else if (attr.isA(Tags::tag_cost))
-    obj->setCost(field.getDouble());
+    setCost(field.getDouble());
   else
     return -1;  // Error
   return 0;  // OK
-}
-
-
-DECLARE_EXPORT PyObject* PythonResourceDefault::getattro(const Attribute& attr)
-{
-  return PythonResource(obj).getattro(attr); 
-}
-
-
-DECLARE_EXPORT int PythonResourceDefault::setattro(const Attribute& attr, const PythonObject& field)
-{
-  return PythonResource(obj).setattro(attr, field);
-}
-
-
-DECLARE_EXPORT PyObject* PythonResourceInfinite::getattro(const Attribute& attr)
-{
-  return PythonResource(obj).getattro(attr);
-}
-
-
-DECLARE_EXPORT int PythonResourceInfinite::setattro(const Attribute& attr, const PythonObject& field)
-{
-  return PythonResource(obj).setattro(attr, field);
 }
 
 }

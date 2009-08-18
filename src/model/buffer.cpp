@@ -664,43 +664,42 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
 }
 
 
-DECLARE_EXPORT PyObject* PythonBuffer::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* Buffer::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
-    return PythonObject(obj->getName());
+    return PythonObject(getName());
   if (attr.isA(Tags::tag_description))
-    return PythonObject(obj->getDescription());
+    return PythonObject(getDescription());
   if (attr.isA(Tags::tag_category))
-    return PythonObject(obj->getCategory());
+    return PythonObject(getCategory());
   if (attr.isA(Tags::tag_subcategory))
-    return PythonObject(obj->getSubCategory());
+    return PythonObject(getSubCategory());
   if (attr.isA(Tags::tag_owner))
-    return PythonObject(obj->getOwner());
+    return PythonObject(getOwner());
   if (attr.isA(Tags::tag_location))
-    return PythonObject(obj->getLocation());
+    return PythonObject(getLocation());
   if (attr.isA(Tags::tag_producing))
-    return PythonObject(obj->getProducingOperation());
+    return PythonObject(getProducingOperation());
   if (attr.isA(Tags::tag_item))
-    return PythonObject(obj->getItem());
+    return PythonObject(getItem());
   if (attr.isA(Tags::tag_onhand))
-    return PythonObject(obj->getOnHand());
+    return PythonObject(getOnHand());
   if (attr.isA(Tags::tag_flowplans))
-    return new PythonFlowPlanIterator(obj);
+    return new PythonFlowPlanIterator(this);
   if (attr.isA(Tags::tag_maximum))
-    return PythonObject(obj->getMaximum());
+    return PythonObject(getMaximum());
   if (attr.isA(Tags::tag_minimum))
-    return PythonObject(obj->getMinimum());
+    return PythonObject(getMinimum());
   if (attr.isA(Tags::tag_carrying_cost))
-    return PythonObject(obj->getCarryingCost());
+    return PythonObject(getCarryingCost());
   if (attr.isA(Tags::tag_hidden))
-    return PythonObject(obj->getHidden());
+    return PythonObject(getHidden());
   if (attr.isA(Tags::tag_flows))
-    return new PythonFlowIterator(obj);
+    return new PythonFlowIterator(this);
   if (attr.isA(Tags::tag_level))
-    return PythonObject(obj->getLevel());
+    return PythonObject(getLevel());
   if (attr.isA(Tags::tag_cluster))
-    return PythonObject(obj->getCluster());
+    return PythonObject(getCluster());
   // @todo support member iteration for buffer, res, dem, item, ...
   // PythonBufferIterator becomes an abstract class: defines the pytype and an abstract iternext.
   // 2 subclasses then implement it: an iterator over all buffers, and another one over all members.
@@ -708,16 +707,16 @@ DECLARE_EXPORT PyObject* PythonBuffer::getattro(const Attribute& attr)
 }
 
 
-DECLARE_EXPORT int PythonBuffer::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
-    obj->setName(field.getString());
+    setName(field.getString());
   else if (attr.isA(Tags::tag_description))
-    obj->setDescription(field.getString());
+    setDescription(field.getString());
   else if (attr.isA(Tags::tag_category))
-    obj->setCategory(field.getString());
+    setCategory(field.getString());
   else if (attr.isA(Tags::tag_subcategory))
-    obj->setSubCategory(field.getString());
+    setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_owner))
   {
     if (!field.check(PythonBuffer::getType()))
@@ -725,8 +724,8 @@ DECLARE_EXPORT int PythonBuffer::setattro(const Attribute& attr, const PythonObj
       PyErr_SetString(PythonDataException, "buffer owner must be of type buffer");
       return -1;
     }
-    Buffer* y = static_cast<PythonBuffer*>(static_cast<PyObject*>(field))->obj;
-    obj->setOwner(y);
+    Buffer* y = static_cast<Buffer*>(static_cast<PyObject*>(field));
+    setOwner(y);
   }
   else if (attr.isA(Tags::tag_location))
   {
@@ -735,8 +734,8 @@ DECLARE_EXPORT int PythonBuffer::setattro(const Attribute& attr, const PythonObj
       PyErr_SetString(PythonDataException, "buffer location must be of type location");
       return -1;
     }
-    Location* y = static_cast<PythonLocation*>(static_cast<PyObject*>(field))->obj;
-    obj->setLocation(y);
+    Location* y = static_cast<Location*>(static_cast<PyObject*>(field));
+    setLocation(y);
   }
   else if (attr.isA(Tags::tag_item))
   {
@@ -745,8 +744,8 @@ DECLARE_EXPORT int PythonBuffer::setattro(const Attribute& attr, const PythonObj
       PyErr_SetString(PythonDataException, "buffer item must be of type item");
       return -1;
     }
-    Item* y = static_cast<PythonItem*>(static_cast<PyObject*>(field))->obj;
-    obj->setItem(y);
+    Item* y = static_cast<Item*>(static_cast<PyObject*>(field));
+    setItem(y);
   }
   else if (attr.isA(Tags::tag_maximum))
   {
@@ -755,8 +754,8 @@ DECLARE_EXPORT int PythonBuffer::setattro(const Attribute& attr, const PythonObj
       PyErr_SetString(PythonDataException, "buffer maximum must be of type calendar_double");
       return -1;
     }
-    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(field))->obj;
-    obj->setMaximum(y);
+    CalendarDouble* y = static_cast<CalendarDouble*>(static_cast<PyObject*>(field));
+    setMaximum(y);
   }
   else if (attr.isA(Tags::tag_minimum))
   {
@@ -765,13 +764,13 @@ DECLARE_EXPORT int PythonBuffer::setattro(const Attribute& attr, const PythonObj
       PyErr_SetString(PythonDataException, "buffer minimum must be of type calendar_double");
       return -1;
     }
-    CalendarDouble* y = static_cast<PythonCalendarDouble*>(static_cast<PyObject*>(field))->obj;
-    obj->setMinimum(y);
+    CalendarDouble* y = static_cast<CalendarDouble*>(static_cast<PyObject*>(field));
+    setMinimum(y);
   }
   else if (attr.isA(Tags::tag_onhand))
-    obj->setOnHand(field.getDouble());
+    setOnHand(field.getDouble());
   else if (attr.isA(Tags::tag_carrying_cost))
-    obj->setCarryingCost(field.getDouble());
+    setCarryingCost(field.getDouble());
   else if (attr.isA(Tags::tag_producing))
   {
     if (!field.check(PythonOperation::getType())) 
@@ -779,93 +778,63 @@ DECLARE_EXPORT int PythonBuffer::setattro(const Attribute& attr, const PythonObj
       PyErr_SetString(PythonDataException, "buffer producing must be of type operation");
       return -1;
     }
-    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
-    obj->setProducingOperation(y);
+    Operation* y = static_cast<Operation*>(static_cast<PyObject*>(field));
+    setProducingOperation(y);
   }
   else if (attr.isA(Tags::tag_hidden))
-    obj->setHidden(field.getBool());
+    setHidden(field.getBool());
   else
     return -1;  // Error
   return 0;  // OK
 }
 
 
-DECLARE_EXPORT PyObject* PythonBufferDefault::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* BufferProcure::getattro(const Attribute& attr)
 {
-  return PythonBuffer(obj).getattro(attr); 
-}
-
-
-DECLARE_EXPORT int PythonBufferDefault::setattro(const Attribute& attr, const PythonObject& field)
-{
-  // @todo avoid constructing a PythonBuffer object to call the base class
-  // This is currently not really feasible (no casting between the classes is possible)
-  // When the XML and Python framework will be unified, this will be solved: we'll basically
-  // have a single call to the getAttribute() method of the default buffer, which can call
-  // the getAttribute function of the parent class.
-  return PythonBuffer(obj).setattro(attr, field);  
-}
-
-
-DECLARE_EXPORT PyObject* PythonBufferInfinite::getattro(const Attribute& attr)
-{
-  return PythonBuffer(obj).getattro(attr);
-}
-
-
-DECLARE_EXPORT int PythonBufferInfinite::setattro(const Attribute& attr, const PythonObject& field)
-{
-  return PythonBuffer(obj).setattro(attr, field);
-}
-
-
-DECLARE_EXPORT PyObject* PythonBufferProcure::getattro(const Attribute& attr)
-{
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_leadtime))
-    return PythonObject(obj->getLeadtime());
+    return PythonObject(getLeadtime());
   if (attr.isA(Tags::tag_mininventory))
-    return PythonObject(obj->getMinimumInventory());
+    return PythonObject(getMinimumInventory());
   if (attr.isA(Tags::tag_maxinventory))
-    return PythonObject(obj->getMaximumInventory());
+    return PythonObject(getMaximumInventory());
   if (attr.isA(Tags::tag_mininterval))
-    return PythonObject(obj->getMinimumInterval());
+    return PythonObject(getMinimumInterval());
   if (attr.isA(Tags::tag_maxinterval))
-    return PythonObject(obj->getMaximumInterval());
+    return PythonObject(getMaximumInterval());
   if (attr.isA(Tags::tag_fence))
-    return PythonObject(obj->getFence());
+    return PythonObject(getFence());
   if (attr.isA(Tags::tag_size_minimum))
-    return PythonObject(obj->getSizeMinimum());
+    return PythonObject(getSizeMinimum());
   if (attr.isA(Tags::tag_size_multiple))
-    return PythonObject(obj->getSizeMultiple());
+    return PythonObject(getSizeMultiple());
   if (attr.isA(Tags::tag_size_maximum))
-    return PythonObject(obj->getSizeMaximum());
-  return PythonBuffer(obj).getattro(attr);
+    return PythonObject(getSizeMaximum());
+  return Buffer::getattro(attr);
 }
 
 
-DECLARE_EXPORT int PythonBufferProcure::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int BufferProcure::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_leadtime))
-    obj->setLeadtime(field.getTimeperiod());
+    setLeadtime(field.getTimeperiod());
   else if (attr.isA(Tags::tag_mininventory))
-    obj->setMinimumInventory(field.getDouble());
+    setMinimumInventory(field.getDouble());
   else if (attr.isA(Tags::tag_maxinventory))
-    obj->setMaximumInventory(field.getDouble());
+    setMaximumInventory(field.getDouble());
   else if (attr.isA(Tags::tag_mininterval))
-    obj->setMinimumInterval(field.getTimeperiod());
+    setMinimumInterval(field.getTimeperiod());
   else if (attr.isA(Tags::tag_maxinterval))
-    obj->setMaximumInterval(field.getTimeperiod());
+    setMaximumInterval(field.getTimeperiod());
   else if (attr.isA(Tags::tag_size_minimum))
-    obj->setSizeMinimum(field.getDouble());
+    setSizeMinimum(field.getDouble());
   else if (attr.isA(Tags::tag_size_multiple))
-    obj->setSizeMultiple(field.getDouble());
+    setSizeMultiple(field.getDouble());
   else if (attr.isA(Tags::tag_size_maximum))
-    obj->setSizeMaximum(field.getDouble());
+    setSizeMaximum(field.getDouble());
   else if (attr.isA(Tags::tag_fence))
-    obj->setFence(field.getTimeperiod());
+    setFence(field.getTimeperiod());
   else
-    return PythonBuffer(obj).setattro(attr, field);
+    return Buffer::setattro(attr, field);
   return 0;
 }
 

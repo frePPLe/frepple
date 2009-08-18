@@ -403,45 +403,32 @@ DECLARE_EXPORT void Calendar::Bucket::prevEvent(EventIterator* iter, Date refDat
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendar::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* Calendar::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_name))
-    return PythonObject(obj->getName());
+    return PythonObject(getName());
   if (attr.isA(Tags::tag_buckets))
-    return new PythonCalendarBucketIterator(obj);
+    return new PythonCalendarBucketIterator(this);
 	return NULL;
 }
 
 
-DECLARE_EXPORT int PythonCalendar::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int Calendar::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
-    obj->setName(field.getString());
+    setName(field.getString());
   else
     return -1;  // Error
   return 0;  // OK
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendarVoid::getattro(const Attribute& attr)
-{
-  return PythonCalendar(obj).getattro(attr); 
-}
-
-
-DECLARE_EXPORT int PythonCalendarVoid::setattro(const Attribute& attr, const PythonObject& field)
-{
-   return PythonCalendar(obj).setattro(attr, field);
-}
-
-
-DECLARE_EXPORT PyObject* PythonCalendarVoid::setValue(PyObject* self, PyObject* args, PyObject* kwdict)
+DECLARE_EXPORT PyObject* CalendarVoid::setPythonValue(PyObject* self, PyObject* args, PyObject* kwdict)
 {
   try
   {
     // Pick up the calendar
-    CalendarVoid *cal = static_cast<PythonCalendarVoid*>(self)->obj;
+    CalendarVoid *cal = static_cast<CalendarVoid*>(self);
     if (!cal) throw LogicException("Can't set value of a NULL calendar");
   
     // Parse the arguments
@@ -462,31 +449,30 @@ DECLARE_EXPORT PyObject* PythonCalendarVoid::setValue(PyObject* self, PyObject* 
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendarBool::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* CalendarBool::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_default))
-    return PythonObject(obj->getDefault());
-  return PythonCalendar(obj).getattro(attr); 
+    return PythonObject(getDefault());
+  return Calendar::getattro(attr); 
 }
 
 
-DECLARE_EXPORT int PythonCalendarBool::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int CalendarBool::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_default))
-    obj->setDefault(field.getBool());
+    setDefault(field.getBool());
   else
-    return PythonCalendar(obj).setattro(attr, field);
+    return Calendar::setattro(attr, field);
   return 0;
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendarBool::setValue(PyObject* self, PyObject* args, PyObject* kwdict)
+DECLARE_EXPORT PyObject* CalendarBool::setPythonValue(PyObject* self, PyObject* args, PyObject* kwdict)
 {
   try
   {
     // Pick up the calendar
-    CalendarBool *cal = static_cast<PythonCalendarBool*>(self)->obj;
+    CalendarBool *cal = static_cast<CalendarBool*>(self);
     if (!cal) throw LogicException("Can't set value of a NULL calendar");
   
     // Parse the arguments
@@ -507,31 +493,30 @@ DECLARE_EXPORT PyObject* PythonCalendarBool::setValue(PyObject* self, PyObject* 
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendarDouble::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* CalendarDouble::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_default))
-    return PythonObject(obj->getDefault());
-  return PythonCalendar(obj).getattro(attr); 
+    return PythonObject(getDefault());
+  return Calendar::getattro(attr); 
 }
 
 
-DECLARE_EXPORT int PythonCalendarDouble::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int CalendarDouble::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_default))
-    obj->setDefault(field.getDouble());
+    setDefault(field.getDouble());
   else
-    return PythonCalendar(obj).setattro(attr, field);
+    return Calendar::setattro(attr, field);
   return 0;
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendarDouble::setValue(PyObject* self, PyObject* args, PyObject* kwdict)
+DECLARE_EXPORT PyObject* CalendarDouble::setPythonValue(PyObject* self, PyObject* args, PyObject* kwdict)
 {
   try
   {
     // Pick up the calendar
-    CalendarDouble *cal = static_cast<PythonCalendarDouble*>(self)->obj;
+    CalendarDouble *cal = static_cast<CalendarDouble*>(self);
     if (!cal) throw LogicException("Can't set value of a NULL calendar");
   
     // Parse the arguments
@@ -552,31 +537,30 @@ DECLARE_EXPORT PyObject* PythonCalendarDouble::setValue(PyObject* self, PyObject
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendarString::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* CalendarString::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_default))
-    return PythonObject(obj->getDefault());
-  return PythonCalendar(obj).getattro(attr); 
+    return PythonObject(getDefault());
+  return Calendar::getattro(attr); 
 }
 
 
-DECLARE_EXPORT int PythonCalendarString::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int CalendarString::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_default))
-    obj->setDefault(field.getString());
+    setDefault(field.getString());
   else
-    return PythonCalendar(obj).setattro(attr, field);
+    return Calendar::setattro(attr, field);
   return 0;
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendarString::setValue(PyObject* self, PyObject* args, PyObject* kwdict)
+DECLARE_EXPORT PyObject* CalendarString::setPythonValue(PyObject* self, PyObject* args, PyObject* kwdict)
 {
   try
   {
     // Pick up the calendar
-    CalendarString *cal = static_cast<PythonCalendarString*>(self)->obj;
+    CalendarString *cal = static_cast<CalendarString*>(self);
     if (!cal) throw LogicException("Can't set value of a NULL calendar");
   
     // Parse the arguments
@@ -597,31 +581,30 @@ DECLARE_EXPORT PyObject* PythonCalendarString::setValue(PyObject* self, PyObject
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendarInt::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* CalendarInt::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_default))
-    return PythonObject(obj->getDefault());
-  return PythonCalendar(obj).getattro(attr); 
+    return PythonObject(getDefault());
+  return Calendar::getattro(attr); 
 }
 
 
-DECLARE_EXPORT int PythonCalendarInt::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int CalendarInt::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_default))
-    obj->setDefault(field.getInt());
+    setDefault(field.getInt());
   else
-    return PythonCalendar(obj).setattro(attr, field);
+    return Calendar::setattro(attr, field);
   return 0;
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendarInt::setValue(PyObject* self, PyObject* args, PyObject* kwdict)
+DECLARE_EXPORT PyObject* CalendarInt::setPythonValue(PyObject* self, PyObject* args, PyObject* kwdict)
 {
   try
   {
     // Pick up the calendar
-    CalendarInt *cal = static_cast<PythonCalendarInt*>(self)->obj;
+    CalendarInt *cal = static_cast<CalendarInt*>(self);
     if (!cal) throw LogicException("Can't set value of a NULL calendar");
   
     // Parse the arguments
@@ -642,16 +625,15 @@ DECLARE_EXPORT PyObject* PythonCalendarInt::setValue(PyObject* self, PyObject* a
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendarOperation::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* CalendarOperation::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_default))
-    return PythonObject(obj->getDefault());
-  return PythonCalendar(obj).getattro(attr); 
+    return PythonObject(getDefault());
+  return Calendar::getattro(attr); 
 }
 
 
-DECLARE_EXPORT int PythonCalendarOperation::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int CalendarOperation::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_default))
   {
@@ -660,21 +642,21 @@ DECLARE_EXPORT int PythonCalendarOperation::setattro(const Attribute& attr, cons
       PyErr_SetString(PythonDataException, "calendar_operation stores values of type operation");
       return -1;
     }
-    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
-    obj->setDefault(y);
+    Operation* y = static_cast<Operation*>(static_cast<PyObject*>(field));
+    setDefault(y);
   }
   else
-    return PythonCalendar(obj).setattro(attr, field);
+    return Calendar::setattro(attr, field);
   return 0;
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendarOperation::setValue(PyObject* self, PyObject* args, PyObject* kwdict)
+DECLARE_EXPORT PyObject* CalendarOperation::setPythonValue(PyObject* self, PyObject* args, PyObject* kwdict)
 {
   try
   {
     // Pick up the calendar
-    CalendarOperation *cal = static_cast<PythonCalendarOperation*>(self)->obj;
+    CalendarOperation *cal = static_cast<CalendarOperation*>(self);
     if (!cal) throw LogicException("Can't set value of a NULL calendar");
   
     // Parse the arguments
@@ -689,7 +671,7 @@ DECLARE_EXPORT PyObject* PythonCalendarOperation::setValue(PyObject* self, PyObj
       PyErr_SetString(PythonDataException, "calendar_operation stores values of type operation");
       return NULL;
     }
-    Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(val))->obj;
+    Operation* y = static_cast<Operation*>(static_cast<PyObject*>(val));
     cal->setValue(start.getDate(), end.getDate(), y);
   }
   catch(...)
@@ -715,7 +697,9 @@ int PythonCalendarBucketIterator::initialize(PyObject* m)
 PyObject* PythonCalendarBucketIterator::iternext()
 {  
   if (i == cal->endBuckets()) return NULL;
-  return new PythonCalendarBucket(cal, &*(i++));
+  PyObject *result = &*(i++);
+  Py_INCREF(result);
+  return result;
 }
 
 
@@ -727,62 +711,62 @@ int PythonCalendarBucket::initialize(PyObject* m)
   x.setDoc("frePPLe calendar bucket");
   x.supportgetattro();
   x.supportsetattro();
+  const_cast<MetaCategory*>(Calendar::Bucket::metadata)->pythonClass = x.type_object();
   return x.typeReady(m);
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendarBucket::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* Calendar::Bucket::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_start))
-    return PythonObject(obj->getStart());
+    return PythonObject(getStart());
   if (attr.isA(Tags::tag_end))
-    return PythonObject(obj->getEnd());
+    return PythonObject(getEnd());
   if (attr.isA(Tags::tag_value))
   {
     if (cal->getType() == *CalendarDouble::metadata)
-      return PythonObject(dynamic_cast< CalendarValue<double>::BucketValue* >(obj)->getValue());
+      return PythonObject(dynamic_cast< CalendarValue<double>::BucketValue* >(this)->getValue());
     if (cal->getType() == *CalendarBool::metadata)
-      return PythonObject(dynamic_cast< CalendarValue<bool>::BucketValue* >(obj)->getValue());
+      return PythonObject(dynamic_cast< CalendarValue<bool>::BucketValue* >(this)->getValue());
     if (cal->getType() == *CalendarInt::metadata)
-      return PythonObject(dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->getValue());
+      return PythonObject(dynamic_cast< CalendarValue<int>::BucketValue* >(this)->getValue());
     if (cal->getType() == *CalendarString::metadata)
-      return PythonObject(dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->getValue());
+      return PythonObject(dynamic_cast< CalendarValue<string>::BucketValue* >(this)->getValue());
     if (cal->getType() == *CalendarOperation::metadata)
-      return PythonObject(dynamic_cast< CalendarPointer<Operation>::BucketPointer* >(obj)->getValue());
+      return PythonObject(dynamic_cast< CalendarPointer<Operation>::BucketPointer* >(this)->getValue());
     if (cal->getType() == *CalendarVoid::metadata) 
       return Py_BuildValue("");
     PyErr_SetString(PythonLogicException, "calendar type not recognized");
     return NULL;
   }
   if (attr.isA(Tags::tag_priority))
-    return PythonObject(obj->getPriority());
+    return PythonObject(getPriority());
   if (attr.isA(Tags::tag_name))
-    return PythonObject(obj->getName());
+    return PythonObject(getName());
   return NULL; 
 }
 
 
-DECLARE_EXPORT int PythonCalendarBucket::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int Calendar::Bucket::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
-    obj->setName(field.getString());
+    setName(field.getString());
   else if (attr.isA(Tags::tag_start))
-    obj->setStart(field.getDate());
+    setStart(field.getDate());
   else if (attr.isA(Tags::tag_end))
-    obj->setEnd(field.getDate());
+    setEnd(field.getDate());
   else if (attr.isA(Tags::tag_priority))
-    obj->setPriority(field.getInt());
+    setPriority(field.getInt());
   else if (attr.isA(Tags::tag_value))
   {
     if (cal->getType() == *CalendarDouble::metadata)
-      dynamic_cast< CalendarValue<double>::BucketValue* >(obj)->setValue(field.getDouble());
+      dynamic_cast< CalendarValue<double>::BucketValue* >(this)->setValue(field.getDouble());
     else if (cal->getType() == *CalendarBool::metadata)
-      dynamic_cast< CalendarValue<bool>::BucketValue* >(obj)->setValue(field.getBool());
+      dynamic_cast< CalendarValue<bool>::BucketValue* >(this)->setValue(field.getBool());
     else if (cal->getType() == *CalendarInt::metadata)
-      dynamic_cast< CalendarValue<int>::BucketValue* >(obj)->setValue(field.getInt());
+      dynamic_cast< CalendarValue<int>::BucketValue* >(this)->setValue(field.getInt());
     else if (cal->getType() == *CalendarString::metadata)
-      dynamic_cast< CalendarValue<string>::BucketValue* >(obj)->setValue(field.getString());
+      dynamic_cast< CalendarValue<string>::BucketValue* >(this)->setValue(field.getString());
     else if (cal->getType() == *CalendarOperation::metadata)
     {
       if (!field.check(PythonOperation::getType())) 
@@ -790,8 +774,8 @@ DECLARE_EXPORT int PythonCalendarBucket::setattro(const Attribute& attr, const P
         PyErr_SetString(PythonDataException, "calendar_operation stores values of type operation");
         return -1;
       }
-      Operation* y = static_cast<PythonOperation*>(static_cast<PyObject*>(field))->obj;
-      dynamic_cast< CalendarPointer<Operation>::BucketPointer* >(obj)->setValue(y);
+      Operation* y = static_cast<Operation*>(static_cast<PyObject*>(field));
+      dynamic_cast< CalendarPointer<Operation>::BucketPointer* >(this)->setValue(y);
     }
     else if (cal->getType() == *CalendarVoid::metadata) 
       return -1;
@@ -807,7 +791,7 @@ DECLARE_EXPORT int PythonCalendarBucket::setattro(const Attribute& attr, const P
 }
 
 
-DECLARE_EXPORT PyObject* PythonCalendar::getEvents(
+DECLARE_EXPORT PyObject* Calendar::getEvents(
   PyObject* self, PyObject* args, PyObject* kwdict
   )
 {
@@ -817,17 +801,17 @@ DECLARE_EXPORT PyObject* PythonCalendar::getEvents(
     Calendar *cal = NULL;
     PythonObject c(self);
     if (c.check(PythonCalendarBool::getType())) 
-      cal = static_cast<PythonCalendarBool*>(self)->obj;
+      cal = static_cast<CalendarBool*>(self);
     else if (c.check(PythonCalendarDouble::getType())) 
-      cal = static_cast<PythonCalendarDouble*>(self)->obj;
+      cal = static_cast<CalendarDouble*>(self);
     else if (c.check(PythonCalendarInt::getType())) 
-      cal = static_cast<PythonCalendarInt*>(self)->obj;
+      cal = static_cast<CalendarInt*>(self);
     else if (c.check(PythonCalendarOperation::getType())) 
-      cal = static_cast<PythonCalendarOperation*>(self)->obj;
+      cal = static_cast<CalendarOperation*>(self);
     else if (c.check(PythonCalendarString::getType())) 
-      cal = static_cast<PythonCalendarString*>(self)->obj;
+      cal = static_cast<CalendarString*>(self);
     else if (c.check(PythonCalendarVoid::getType())) 
-      cal = static_cast<PythonCalendarVoid*>(self)->obj;
+      cal = static_cast<CalendarVoid*>(self);
     else
       throw LogicException("Invalid calendar type");
 

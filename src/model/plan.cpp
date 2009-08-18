@@ -120,14 +120,20 @@ int PythonPlan::initialize(PyObject* m)
   x.supportgetattro();
   x.supportsetattro();
   int tmp =x.typeReady(m);
+  const_cast<MetaCategory*>(Plan::metadata)->pythonClass = x.type_object();
+
+  // Create a singleton plan object
+  // Since we can count on the initialization being executed only once, also
+  // in a multi-threaded configuration, we don't need a more advanced mechanism
+  // to protect the singleton plan.
+  Plan::thePlan = new Plan();
 
   // Add access to the information with a global attribute.
-  // A pythonplan object is leaking.
-  return PyModule_AddObject(m, "settings", new PythonPlan) + tmp;
+  return PyModule_AddObject(m, "settings", &Plan::instance()) + tmp;
 }
 
 
-DECLARE_EXPORT PyObject* PythonPlan::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* Plan::getattro(const Attribute& attr)
 {
   if (attr.isA(Tags::tag_name))
     return PythonObject(Plan::instance().getName());
@@ -141,7 +147,7 @@ DECLARE_EXPORT PyObject* PythonPlan::getattro(const Attribute& attr)
 }
 
 
-DECLARE_EXPORT int PythonPlan::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int Plan::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
     Plan::instance().setName(field.getString());  

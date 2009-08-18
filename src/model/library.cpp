@@ -126,12 +126,6 @@ void LibraryModel::initialize()
   // Initialize the utilities library
   LibraryUtils::initialize();
 
-  // Create a singleton plan object
-  // Since we can count on the initialization being executed only once, also
-  // in a multi-threaded configuration, we don't need a more advanced mechanism
-  // to protect the singleton plan.
-  Plan::thePlan = new Plan();
-
   // Initialize the plan metadata.
   Plan::metadata = new MetaCategory("plan","");
 

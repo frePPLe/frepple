@@ -179,6 +179,12 @@ PyObject* PythonPeggingIterator::iternext()
 {
   if (!i) return NULL;
 
+  // @todo Make the pegging object a Python object directly, instead of the 
+  // performance killer of creating/destroying this kind of dictionaries
+  // There is a difference however with the other iterators: this pegging 
+  // object doesn't live long, while the other objects referenced by iterators
+  // have a long life.
+
   // Pass the result to Python.
   // This is different than the other iterators! We need to capture the
   // current state of the iterator before decrementing it. For other iterators

@@ -1000,23 +1000,20 @@ int PythonOperationPlan::initialize(PyObject* m)
   x.setDoc("frePPLe operationplan");
   x.supportgetattro();
   x.supportsetattro();
-  x.supportcreate(create);
+  x.supportcreate(OperationPlan::create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
-  const_cast<MetaClass*>(OperationPlan::metadata)->factoryPythonProxy = proxy;
+  const_cast<MetaClass*>(OperationPlan::metadata)->pythonClass = x.type_object();
   return x.typeReady(m);
 }
 
 
-PyObject* PythonOperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 {
   try
   {
     // Find or create the C++ object
     PythonAttributeList atts(kwds);
-    Object* x = OperationPlan::createOperationPlan(OperationPlan::metadata,atts);
-
-    // Create a python proxy
-    PythonExtensionBase* pr = static_cast<PythonExtensionBase*>(static_cast<PyObject*>(*(new PythonObject(x))));
+    Object* x = createOperationPlan(OperationPlan::metadata,atts);
 
     // Iterate over extra keywords, and set attributes.   @todo move this responsability to the readers...
     if (x) 
@@ -1029,18 +1026,18 @@ PyObject* PythonOperationPlan::create(PyTypeObject* pytype, PyObject* args, PyOb
         Attribute attr(PyString_AsString(key));
         if (!attr.isA(Tags::tag_operation) && !attr.isA(Tags::tag_id) && !attr.isA(Tags::tag_action))
         {
-          int result = pr->setattro(attr, field);
+          int result = x->setattro(attr, field);
           if (result && !PyErr_Occurred())
             PyErr_Format(PyExc_AttributeError,
               "attribute '%s' on '%s' can't be updated",
-              PyString_AsString(key), pr->ob_type->tp_name);
+              PyString_AsString(key), x->ob_type->tp_name);
         }
       };
     }
 
     if (x && !static_cast<OperationPlan*>(x)->initialize()) 
-      static_cast<PythonOperationPlan*>(pr)->obj = NULL;
-    return pr;
+      return NULL;
+    return x;
   }
   catch (...)
   {
@@ -1050,42 +1047,40 @@ PyObject* PythonOperationPlan::create(PyTypeObject* pytype, PyObject* args, PyOb
 }
 
 
-DECLARE_EXPORT PyObject* PythonOperationPlan::getattro(const Attribute& attr)
+DECLARE_EXPORT PyObject* OperationPlan::getattro(const Attribute& attr)
 {
-  if (!obj) return Py_BuildValue("");
   if (attr.isA(Tags::tag_id))
-    return PythonObject(obj->getIdentifier());
+    return PythonObject(getIdentifier());
   if (attr.isA(Tags::tag_operation))
-    return PythonObject(obj->getOperation());
+    return PythonObject(getOperation());
   if (attr.isA(Tags::tag_quantity))
-    return PythonObject(obj->getQuantity());
+    return PythonObject(getQuantity());
   if (attr.isA(Tags::tag_start))
-    return PythonObject(obj->getDates().getStart());
+    return PythonObject(getDates().getStart());
   if (attr.isA(Tags::tag_end))
-    return PythonObject(obj->getDates().getEnd());
+    return PythonObject(getDates().getEnd());
   if (attr.isA(Tags::tag_demand))
-    return PythonObject(obj->getDemand());
+    return PythonObject(getDemand());
   if (attr.isA(Tags::tag_locked))
-    return PythonObject(obj->getLocked());
+    return PythonObject(getLocked());
   if (attr.isA(Tags::tag_owner))
-    return PythonObject(obj->getOwner());
+    return PythonObject(getOwner());
   if (attr.isA(Tags::tag_hidden))
-    return PythonObject(obj->getHidden());
+    return PythonObject(getHidden());
   return NULL;
 }
 
 
-DECLARE_EXPORT int PythonOperationPlan::setattro(const Attribute& attr, const PythonObject& field)
+DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonObject& field)
 {
-  if (!obj) return -1;
   if (attr.isA(Tags::tag_quantity))
-    obj->setQuantity(field.getDouble());
+    setQuantity(field.getDouble());
   else if (attr.isA(Tags::tag_start))
-    obj->setStart(field.getDate());
+    setStart(field.getDate());
   else if (attr.isA(Tags::tag_end))
-    obj->setEnd(field.getDate());
+    setEnd(field.getDate());
   else if (attr.isA(Tags::tag_locked))
-    obj->setLocked(field.getBool());
+    setLocked(field.getBool());
   else if (attr.isA(Tags::tag_demand))
   {
     if (!field.check(PythonDemand::getType())) 
@@ -1093,8 +1088,8 @@ DECLARE_EXPORT int PythonOperationPlan::setattro(const Attribute& attr, const Py
       PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
       return -1;
     }
-    Demand* y = static_cast<PythonDemand*>(static_cast<PyObject*>(field))->obj;
-    obj->setDemand(y);
+    Demand* y = static_cast<Demand*>(static_cast<PyObject*>(field));
+    setDemand(y);
   }
   else if (attr.isA(Tags::tag_owner))
   {
@@ -1103,8 +1098,8 @@ DECLARE_EXPORT int PythonOperationPlan::setattro(const Attribute& attr, const Py
       PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
       return -1;
     }
-    OperationPlan* y = static_cast<PythonOperationPlan*>(static_cast<PyObject*>(field))->obj;
-    obj->setOwner(y);
+    OperationPlan* y = static_cast<OperationPlan*>(static_cast<PyObject*>(field));
+    setOwner(y);
   }
   else
     return -1;

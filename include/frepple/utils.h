@@ -2904,11 +2904,7 @@ class PythonExtensionBase : public PyObject
 {
   public:
     /** Default constructor */
-    PythonExtensionBase() 
-    {
-      //PyObject::ob_refcnt = 1;
-      //xxxPyObject::ob_type = NULL;
-    }
+    PythonExtensionBase() {}
 
     /** Destructor. */
     virtual ~PythonExtensionBase() 

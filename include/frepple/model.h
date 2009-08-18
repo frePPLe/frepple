@@ -5128,6 +5128,7 @@ class Problem::const_iterator
   * The class is implemented as an STL-like iterator.
   *
   * @todo does not support sub-operationplans
+  * @todo make this class a Python object as well
   */
 class PeggingIterator
 {

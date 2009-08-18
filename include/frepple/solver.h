@@ -126,6 +126,12 @@ class SolverMRP : public Solver
       *  - No propagation to upstream buffers at all, even if a producing
       *    operation has been specified.
       *  - The minimum calendar isn't used by the solver.
+      *
+      * @TODO Optimize the solver method as follows for the common case of infinite
+      * buying capability (ie no max quantity + min time):
+      *  - beyond lead time: always reply OK, without rearranging the operation plans
+      *  - at the end of the solver loop, we revisit the procurement buffers to establish
+      *    the final purchasing profile
       */
     DECLARE_EXPORT void solve(const BufferProcure*, void* = NULL);
 

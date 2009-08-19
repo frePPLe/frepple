@@ -341,7 +341,7 @@ DECLARE_EXPORT PyObject* Demand::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_operationplans))
     return new PythonDemandPlanIterator(this);
   if (attr.isA(Tags::tag_pegging))
-    return new PythonPeggingIterator(this);
+    return new PeggingIterator(this);
   return NULL;
 }
 

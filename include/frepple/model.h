@@ -1152,7 +1152,7 @@ class Plannable : public Object, public HasProblems, public Solvable
   public:
     /** Constructor. */
     Plannable() : useProblemDetection(true), changed(true)
-     {anyChange = true;};
+     {anyChange = true;}
 
     /** Specify whether this entity reports problems. */
     DECLARE_EXPORT void setDetectProblems(bool b);
@@ -2388,7 +2388,7 @@ class OperationRouting : public Operation
 {
   public:
     /** Constructor. */
-    explicit OperationRouting(const string& c) : Operation(c) {initType(metadata);};
+    explicit OperationRouting(const string& c) : Operation(c) {initType(metadata);}
 
     /** Destructor. */
     DECLARE_EXPORT ~OperationRouting();
@@ -2523,7 +2523,7 @@ class OperationAlternate : public Operation
     typedef pair<int,DateRange> alternateProperty;
 
     /** Constructor. */
-    explicit OperationAlternate(const string& c) : Operation(c) {initType(metadata);};
+    explicit OperationAlternate(const string& c) : Operation(c) {initType(metadata);}
 
     /** Destructor. */
     DECLARE_EXPORT ~OperationAlternate();
@@ -5130,20 +5130,22 @@ class Problem::const_iterator
   * @todo does not support sub-operationplans
   * @todo make this class a Python object as well
   */
-class PeggingIterator
+class PeggingIterator : public Object
 {
   public:
     /** Constructor. */
     DECLARE_EXPORT PeggingIterator(const Demand* e);
 
     /** Constructor. */
-    PeggingIterator(const FlowPlan* e, bool b = true) : downstream(b)
+    PeggingIterator(const FlowPlan* e, bool b = true) 
+      : downstream(b), firstIteration(true)
     {
       if (!e) return;
       if (downstream)
         states.push(state(0,abs(e->getQuantity()),1.0,e,NULL));
       else
         states.push(state(0,abs(e->getQuantity()),1.0,NULL,e));
+      initType(metadata);
     }
 
     /** Return the operationplan consuming the material. */
@@ -5251,6 +5253,17 @@ class PeggingIterator
     /** Returns true if this is a downstream iterator. */
     bool isDownstream() {return downstream;}
 
+    /** Initialize the class. */
+    static int initialize(PyObject* m);
+
+    virtual void endElement(XMLInput& i, const Attribute& a, const DataElement& d)
+    {
+      throw LogicException("Pegging can't be read");
+    }
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
+    size_t getSize() const {return sizeof(PeggingIterator);} 
+
   private:
     /** This structure is used to keep track of the iterator states during the
       * iteration. */
@@ -5307,6 +5320,11 @@ class PeggingIterator
     /** A stack is used to store the iterator state. */
     statestack states;
 
+    /** Iterate over the pegging in Python. */
+    DECLARE_EXPORT PyObject *iternext();
+
+    DECLARE_EXPORT PyObject* getattro(const Attribute&);
+
     /* Auxilary function to make recursive code possible. */
     DECLARE_EXPORT void followPegging(const OperationPlan*, short, double, double);
 
@@ -5318,6 +5336,11 @@ class PeggingIterator
 
     /** Downstream or upstream iterator. */
     bool downstream;
+
+    /** A flag used by the Python iterators. 
+      * @see iternext()
+      */
+    bool firstIteration;
 };
 
 
@@ -5904,29 +5927,6 @@ class PythonDemandPlanIterator : public PythonExtension<PythonDemandPlanIterator
   private:
     Demand* dem;
     Demand::OperationPlan_list::const_iterator i;
-    PyObject *iternext();
-};
-
-
-//
-// DEMAND PEGGING
-//
-
-
-class PythonPeggingIterator : public PythonExtension<PythonPeggingIterator>
-{
-  public:
-    static int initialize(PyObject* m);
-
-    PythonPeggingIterator(Demand* r) : dem(r), i(r)
-    {
-      if (!r)
-        throw LogicException("Creating pegging iterator for NULL demand");
-    }
-
-  private:
-    Demand* dem;
-    PeggingIterator i;
     PyObject *iternext();
 };
 

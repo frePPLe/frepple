@@ -79,8 +79,11 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
       
       // Not found in the vector, so create a new one
       cachedTypePtr = new PythonType(sizeof(T), &typeid(T));
-      cachedTypePtr->supportdealloc( deallocator );
       table.push_back(cachedTypePtr);
+
+      // Using our own memory deallocator
+      cachedTypePtr->supportdealloc( deallocator );
+
       return *cachedTypePtr;
     }
 

@@ -35,7 +35,6 @@
 class Tags
 {
   public:
-    static DECLARE_EXPORT const Keyword tag_abortonerror;
     static DECLARE_EXPORT const Keyword tag_action;
     static DECLARE_EXPORT const Keyword tag_after;
     static DECLARE_EXPORT const Keyword tag_alternate;
@@ -56,6 +55,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_commands;
     static DECLARE_EXPORT const Keyword tag_constraints;
     static DECLARE_EXPORT const Keyword tag_consuming;
+    static DECLARE_EXPORT const Keyword tag_consuming_date;
     static DECLARE_EXPORT const Keyword tag_content;
     static DECLARE_EXPORT const Keyword tag_cost;
     static DECLARE_EXPORT const Keyword tag_current;
@@ -123,6 +123,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_operations;
     static DECLARE_EXPORT const Keyword tag_owner;
     static DECLARE_EXPORT const Keyword tag_parameter;
+    static DECLARE_EXPORT const Keyword tag_pegged;
     static DECLARE_EXPORT const Keyword tag_pegging;
     static DECLARE_EXPORT const Keyword tag_plan;
     static DECLARE_EXPORT const Keyword tag_posttime;
@@ -132,7 +133,10 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_problem;
     static DECLARE_EXPORT const Keyword tag_problems;
     static DECLARE_EXPORT const Keyword tag_producing;
+    static DECLARE_EXPORT const Keyword tag_producing_date;
     static DECLARE_EXPORT const Keyword tag_quantity;
+    static DECLARE_EXPORT const Keyword tag_quantity_buffer;
+    static DECLARE_EXPORT const Keyword tag_quantity_demand;
     static DECLARE_EXPORT const Keyword tag_resource;
     static DECLARE_EXPORT const Keyword tag_resources;
     static DECLARE_EXPORT const Keyword tag_size_maximum;

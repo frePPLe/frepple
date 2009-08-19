@@ -31,14 +31,36 @@
 namespace frepple
 {
 
+DECLARE_EXPORT const MetaCategory* PeggingIterator::metadata;
 
-DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d) : downstream(false)
+
+int PeggingIterator::initialize(PyObject* m)
+{
+  // Initialize the pegging metadata
+  PeggingIterator::metadata = new MetaCategory("pegging","peggings");
+
+  // Initialize the Python type
+  PythonType& x = PythonExtension<PeggingIterator>::getType();
+  x.setName("peggingIterator");
+  x.setDoc("frePPLe iterator for demand pegging");
+  x.supportgetattro();
+  x.supportiter();
+  const_cast<MetaCategory*>(PeggingIterator::metadata)->pythonClass = x.type_object();
+  return x.typeReady(m);
+}
+
+
+DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d) 
+  : downstream(false), firstIteration(true)
 {
   // Loop through all delivery operationplans
   first = false;  // ... because the stack is still empty
   for (Demand::OperationPlan_list::const_iterator opplaniter = d->getDelivery().begin();
     opplaniter != d->getDelivery().end(); ++opplaniter)
     followPegging(*opplaniter, 0, (*opplaniter)->getQuantity(), 1.0);
+
+  // Initialize Python type information
+  initType(metadata);
 }
 
 
@@ -164,46 +186,39 @@ DECLARE_EXPORT void PeggingIterator::followPegging
 }
 
 
-int PythonPeggingIterator::initialize(PyObject* m)
+DECLARE_EXPORT PyObject* PeggingIterator::iternext()
 {
-  // Initialize the type
-  PythonType& x = PythonExtension<PythonPeggingIterator>::getType();
-  x.setName("peggingIterator");
-  x.setDoc("frePPLe iterator for demand pegging");
-  x.supportiter();
-  return x.typeReady(m);
+  if (firstIteration) 
+    firstIteration = false;
+  else
+    operator--();
+  if (!operator bool()) return NULL;
+  Py_INCREF(this);
+  return static_cast<PyObject*>(this);
 }
 
 
-PyObject* PythonPeggingIterator::iternext()
+DECLARE_EXPORT PyObject* PeggingIterator::getattro(const Attribute& attr)
 {
-  if (!i) return NULL;
-
-  // @todo Make the pegging object a Python object directly, instead of the 
-  // performance killer of creating/destroying this kind of dictionaries
-  // There is a difference however with the other iterators: this pegging 
-  // object doesn't live long, while the other objects referenced by iterators
-  // have a long life.
-
-  // Pass the result to Python.
-  // This is different than the other iterators! We need to capture the
-  // current state of the iterator before decrementing it. For other iterators
-  // we can create a proxy object meeting this requirement, but not for the
-  // pegging iterator.
-  PyObject* result = Py_BuildValue("{s:i,s:N,s:N,s:N,s:N,s:N,s:f,s:f,s:i}",
-    "level", i.getLevel(),
-    "consuming", static_cast<PyObject*>(PythonObject(i.getConsumingOperationplan())),
-    "cons_date", static_cast<PyObject*>(PythonObject(i.getConsumingDate())),
-    "producing", static_cast<PyObject*>(PythonObject(i.getProducingOperationplan())),
-    "prod_date", static_cast<PyObject*>(PythonObject(i.getProducingDate())),
-    "buffer", static_cast<PyObject*>(PythonObject(i.getBuffer())),
-    "quantity_demand", i.getQuantityDemand(),
-    "quantity_buffer", i.getQuantityBuffer(),
-    "pegged", i.getPegged() ? 1 : 0
-    );
-
-  --i;
-  return result;
+  if (attr.isA(Tags::tag_level))
+    return PythonObject(getLevel());
+  if (attr.isA(Tags::tag_consuming))
+    return PythonObject(getConsumingOperationplan());
+  if (attr.isA(Tags::tag_producing))
+    return PythonObject(getProducingOperationplan());
+  if (attr.isA(Tags::tag_buffer))
+    return PythonObject(getBuffer());
+  if (attr.isA(Tags::tag_quantity_demand))
+    return PythonObject(getQuantityDemand());
+  if (attr.isA(Tags::tag_quantity_buffer))
+    return PythonObject(getQuantityBuffer());
+  if (attr.isA(Tags::tag_pegged))
+    return PythonObject(getPegged());
+  if (attr.isA(Tags::tag_consuming_date))
+    return PythonObject(getConsumingDate());
+  if (attr.isA(Tags::tag_producing_date))
+    return PythonObject(getProducingDate());
+	return NULL;
 }
 
 

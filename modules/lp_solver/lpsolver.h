@@ -154,7 +154,7 @@ class LPSolver : public Solver
     virtual int setattro(const Attribute&, const PythonObject&);
 
 	  /** Constructor. */
-    LPSolver(const string& n) : Solver(n), minimum(true) {initType(metadata);};
+    LPSolver(const string& n) : Solver(n), minimum(true) {initType(metadata);}
 	
 	  /** Destructor. */
     ~LPSolver() {};

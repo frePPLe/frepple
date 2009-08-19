@@ -322,7 +322,7 @@ void LibraryModel::initialize()
   nok += PythonDemandIterator::initialize(module);
   nok += PythonDemandDefault::initialize(module);
   nok += PythonDemandPlanIterator::initialize(module);
-  nok += PythonPeggingIterator::initialize(module);
+  nok += PeggingIterator::initialize(module);
   nok += PythonFlow::initialize(module);
   nok += PythonFlowIterator::initialize(module);
   nok += PythonFlowPlan::initialize(module);

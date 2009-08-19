@@ -2624,13 +2624,13 @@ class PythonObject : public DataElement
     /** Constructor from an existing Python object.<br>
       * The reference count isn't increased.
       */
-    PythonObject(PyObject* o) : obj(o) {}
+    PythonObject(PyObject* o) : obj(o ? o : Py_None) {}
 
     /** This conversion operator casts the object back to a PyObject pointer. */
     operator PyObject*() const {return obj;}
 
     /** Check for null value. */
-    operator bool() const {return obj != NULL;}
+    operator bool() const {return obj != NULL && obj != Py_None;}
 
     /** Assignment operator. */
     PythonObject& operator = (const PythonObject& o) { obj = o.obj; return *this; }

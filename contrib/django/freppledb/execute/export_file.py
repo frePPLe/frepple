@@ -140,12 +140,12 @@ def exportPegging():
     # Export pegging
     for j in i.pegging:
       writer.writerow((
-        n, j['level'], j['consuming'] and j['consuming'].id or '',
-        j['cons_date'],
-        j['producing'] and j['producing'].id or '', j['prod_date'],
-        j['buffer'] and j['buffer'].name or '',
-        (j['buffer'] and j['buffer'].item and j['buffer'].item.name) or '',
-        j['quantity_demand'], j['quantity_buffer'], j['pegged']
+       n, j.level, j.consuming and j.consuming.id or '',
+       j.consuming_date,
+       j.producing and j.producing.id or '', j.producing_date,
+       j.buffer and j.buffer.name or '',
+       (j.buffer and j.buffer.item and j.buffer.item.name) or '',
+       j.quantity_demand, j.quantity_buffer, j.pegged
        ))
   print 'Exported pegging in %.2f seconds' % (time() - starttime)
 

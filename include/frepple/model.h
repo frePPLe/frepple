@@ -3295,8 +3295,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-    DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m);
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -3314,6 +3313,10 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** Quantity of the flow. */
     double quantity;
+
+    static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
+    DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 };
 
 
@@ -3655,6 +3658,7 @@ class Load
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m);
 
     bool getHidden() const
      {
@@ -3680,6 +3684,9 @@ class Load
     /** Stores how much capacity is consumed during the duration of an
       * operationplan. */
     double qty;
+  
+    /** Factory method. */
+    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 };
 
 
@@ -5713,15 +5720,6 @@ class DemandPlanIterator : public PythonExtension<DemandPlanIterator>
 //
 
 
-class PythonLoad : public PythonExtension<PythonLoad>
-{
-  public:
-    static int initialize(PyObject* m);
-  private:
-    static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
-};
-
-
 class PythonLoadIterator : public PythonExtension<PythonLoadIterator>
 {
   public:
@@ -5753,15 +5751,6 @@ class PythonLoadIterator : public PythonExtension<PythonLoadIterator>
 //
 // FLOW
 //
-
-
-class PythonFlow : public PythonExtension<PythonFlow>
-{
-  public:
-    static int initialize(PyObject* m);
-  private:
-    static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
-};
 
 
 class PythonFlowIterator : public PythonExtension<PythonFlowIterator>

@@ -31,14 +31,6 @@
 
 namespace frepple
 {
-// Load metadata
-DECLARE_EXPORT const MetaCategory* Load::metadata;
-
-// Flow metadata
-DECLARE_EXPORT const MetaCategory* Flow::metadata;
-DECLARE_EXPORT const MetaClass* FlowStart::metadata,
-  *FlowEnd::metadata;
-
 
 void LibraryModel::initialize()
 {
@@ -119,23 +111,10 @@ void LibraryModel::initialize()
   nok += ResourceIterator::initialize(module);
 
   // Initialize the load metadata.
-  Load::metadata = new MetaCategory
-    ("load", "loads", MetaCategory::ControllerDefault, NULL);
-  const_cast<MetaCategory*>(Load::metadata)->registerClass(
-    "load","load",true,Object::createDefault<Load>
-    );
+  nok += Load::initialize(module);  
 
   // Initialize the flow metadata.
-  Flow::metadata = new MetaCategory
-    ("flow", "flows", MetaCategory::ControllerDefault);
-  FlowStart::metadata = new MetaClass(
-    "flow",
-    "flow_start",
-    Object::createDefault<FlowStart>, true);
-  FlowEnd::metadata = new MetaClass(
-    "flow",
-    "flow_end",
-    Object::createDefault<FlowEnd>);
+  nok += Flow::initialize(module);
 
   // Initialize the operationplan metadata.
   nok += OperationPlan::initialize(module);
@@ -148,11 +127,9 @@ void LibraryModel::initialize()
   // Initialize the pegging metadata.
   nok += PeggingIterator::initialize(module);
 
-  nok += PythonFlow::initialize(module);  // xxx
   nok += PythonFlowIterator::initialize(module); // xxx
   nok += PythonFlowPlan::initialize(module);  // xxx
   nok += PythonFlowPlanIterator::initialize(module);  // xxx
-  nok += PythonLoad::initialize(module);  // xxx
   nok += PythonLoadIterator::initialize(module);  // xxx
   nok += PythonLoadPlan::initialize(module);  // xxx
   nok += PythonLoadPlanIterator::initialize(module);  // xxx

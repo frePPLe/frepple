@@ -30,6 +30,33 @@
 namespace frepple
 {
 
+DECLARE_EXPORT const MetaCategory* Flow::metadata;
+DECLARE_EXPORT const MetaClass* FlowStart::metadata,
+  *FlowEnd::metadata;
+
+
+int Flow::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaCategory
+    ("flow", "flows", MetaCategory::ControllerDefault);
+  FlowStart::metadata = new MetaClass("flow", "flow_start",
+    Object::createDefault<FlowStart>, true);
+  FlowEnd::metadata = new MetaClass("flow", "flow_end",
+    Object::createDefault<FlowEnd>);
+
+  // Initialize the type
+  PythonType& x = FreppleCategory<Flow,Flow>::getType();
+  x.setName("flow");
+  x.setDoc("frePPLe flow");
+  x.supportgetattro();
+  x.supportsetattro();
+  x.supportcreate(create);
+  x.addMethod("toXML", FreppleCategory<Flow,Flow>::toXML, METH_VARARGS, "return a XML representation");
+  const_cast<MetaCategory*>(Flow::metadata)->pythonClass = x.type_object();
+  return x.typeReady(m);
+}
+
 
 DECLARE_EXPORT void Flow::validate(Action action)
 {
@@ -231,21 +258,6 @@ DECLARE_EXPORT void FlowEnd::writeElement
 }
 
 
-int PythonFlow::initialize(PyObject* m)
-{
-  // Initialize the type
-  PythonType& x = getType();
-  x.setName("flow");
-  x.setDoc("frePPLe flow");
-  x.supportgetattro();
-  x.supportsetattro();
-  x.supportcreate(create);
-  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
-  const_cast<MetaCategory*>(Flow::metadata)->pythonClass = x.type_object();
-  return x.typeReady(m);
-}
-
-
 DECLARE_EXPORT PyObject* Flow::getattro(const Attribute& attr)
 {
   if (attr.isA(Tags::tag_buffer))
@@ -297,7 +309,7 @@ DECLARE_EXPORT int Flow::setattro(const Attribute& attr, const PythonObject& fie
 
 
 /** @todo method implementation not generic and doesn't support clean subclassing. */
-PyObject* PythonFlow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 {
   try
   {

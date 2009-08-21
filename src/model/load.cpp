@@ -30,6 +30,30 @@
 namespace frepple
 {
 
+DECLARE_EXPORT const MetaCategory* Load::metadata;
+
+
+int Load::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaCategory
+    ("load", "loads", MetaCategory::ControllerDefault, NULL);
+  const_cast<MetaCategory*>(metadata)->registerClass(
+    "load","load",true,Object::createDefault<Load>
+    );
+
+  // Initialize the Python class
+  PythonType& x = FreppleCategory<Load,Load>::getType();
+  x.setName("load");
+  x.setDoc("frePPLe load");
+  x.supportgetattro();
+  x.supportsetattro();
+  x.supportcreate(create);
+  x.addMethod("toXML", FreppleCategory<Load,Load>::toXML, METH_VARARGS, "return a XML representation");
+  const_cast<MetaCategory*>(Load::metadata)->pythonClass = x.type_object();
+  return x.typeReady(m);
+}
+
 
 DECLARE_EXPORT void Load::validate(Action action)
 {
@@ -204,21 +228,6 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, con
 }
 
 
-int PythonLoad::initialize(PyObject* m)
-{
-  // Initialize the type
-  PythonType& x = getType();
-  x.setName("load");
-  x.setDoc("frePPLe load");
-  x.supportgetattro();
-  x.supportsetattro();
-  x.supportcreate(create);
-  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
-  const_cast<MetaCategory*>(Load::metadata)->pythonClass = x.type_object();
-  return x.typeReady(m);
-}
-
-
 DECLARE_EXPORT PyObject* Load::getattro(const Attribute& attr)
 {
   if (attr.isA(Tags::tag_resource))
@@ -270,7 +279,7 @@ DECLARE_EXPORT int Load::setattro(const Attribute& attr, const PythonObject& fie
 
 
 /** @todo this method implementation is not generic enough and not extendible by subclasses. */
-PyObject* PythonLoad::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 {
   try
   {

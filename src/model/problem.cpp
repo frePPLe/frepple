@@ -33,6 +33,67 @@ namespace frepple
 
 DECLARE_EXPORT bool Plannable::anyChange = false;
 DECLARE_EXPORT bool Plannable::computationBusy = false;
+DECLARE_EXPORT const MetaCategory* Problem::metadata;
+DECLARE_EXPORT const MetaClass* ProblemMaterialExcess::metadata,
+  *ProblemMaterialShortage::metadata,
+  *ProblemExcess::metadata,
+  *ProblemShort::metadata,
+  *ProblemEarly::metadata,
+  *ProblemLate::metadata,
+  *ProblemDemandNotPlanned::metadata,
+  *ProblemPlannedEarly::metadata,
+  *ProblemPlannedLate::metadata,
+  *ProblemPrecedence::metadata,
+  *ProblemBeforeFence::metadata,
+  *ProblemBeforeCurrent::metadata,
+  *ProblemCapacityUnderload::metadata,
+  *ProblemCapacityOverload::metadata;
+
+
+int Problem::initialize(PyObject* m)
+{
+  // Initialize the problem metadata.
+  Problem::metadata = new MetaCategory
+    ("problem", "problems", NULL, Problem::writer);
+  ProblemMaterialExcess::metadata = new MetaClass
+    ("problem","material excess");
+  ProblemMaterialShortage::metadata = new MetaClass
+    ("problem","material shortage");
+  ProblemExcess::metadata = new MetaClass
+    ("problem","excess");
+  ProblemShort::metadata = new MetaClass
+    ("problem","short");
+  ProblemEarly::metadata = new MetaClass
+    ("problem","early");
+  ProblemLate::metadata = new MetaClass
+    ("problem","late");
+  ProblemDemandNotPlanned::metadata = new MetaClass
+    ("problem","unplanned");
+  ProblemPlannedEarly::metadata = new MetaClass
+    ("problem","planned early");
+  ProblemPlannedLate::metadata = new MetaClass
+    ("problem","planned late");
+  ProblemPrecedence::metadata = new MetaClass
+    ("problem","precedence");
+  ProblemBeforeFence::metadata = new MetaClass
+    ("problem","before fence");
+  ProblemBeforeCurrent::metadata = new MetaClass
+    ("problem","before current");
+  ProblemCapacityUnderload::metadata = new MetaClass
+    ("problem","underload");
+  ProblemCapacityOverload::metadata = new MetaClass
+    ("problem","overload");
+
+  // Initialize the Python type
+  PythonType& x = PythonExtension<Problem>::getType();
+  x.setName("problem");
+  x.setDoc("frePPLe problem");
+  x.supportgetattro();
+  x.supportstr();
+  x.addMethod("toXML", PythonExtension<Problem>::toXML, METH_VARARGS, "return a XML representation");
+  const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady(m);
+}
 
 
 DECLARE_EXPORT bool Problem::operator < (const Problem& a) const
@@ -472,20 +533,6 @@ DECLARE_EXPORT Problem::const_iterator Problem::begin(HasProblems* i, bool refre
 DECLARE_EXPORT const Problem::const_iterator Problem::end()
 {
   return const_iterator(NULL);
-}
-
-
-int PythonProblem::initialize(PyObject* m)
-{
-  // Initialize the type
-  PythonType& x = getType();
-  x.setName("problem");
-  x.setDoc("frePPLe problem");
-  x.supportgetattro();
-  x.supportstr();
-  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
-  const_cast<MetaCategory*>(Problem::metadata)->pythonClass = x.type_object();
-  return x.typeReady(m);
 }
 
 

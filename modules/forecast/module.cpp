@@ -30,11 +30,6 @@
 namespace module_forecast
 {
 
-const MetaClass *Forecast::metadata;
-const MetaClass *ForecastBucket::metadata;
-const MetaClass *ForecastSolver::metadata;
-
-
 Forecast::MapOfForecasts Forecast::ForecastDictionary;
 bool Forecast::Customer_Then_Item_Hierarchy = true;
 bool Forecast::Match_Using_Delivery_Operation = true;
@@ -117,22 +112,6 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
   try
   {
-    // Initialize the metadata.
-    Forecast::metadata = new MetaClass(
-      "demand",
-      "demand_forecast",
-      Object::createString<Forecast>);
-    ForecastBucket::metadata = new MetaClass(  // No factory method for this class
-      "demand",
-      "demand_forecastbucket");
-    ForecastSolver::metadata = new MetaClass(
-      "solver",
-      "solver_forecast",
-      Object::createString<ForecastSolver>);
-
-    // Get notified when a calendar is deleted
-    FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
-
     // Register the Python extensions
     PyThreadState *myThreadState = PyGILState_GetThisThreadState();
     if (!Py_IsInitialized() || !myThreadState)
@@ -142,12 +121,12 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
       // Get the global lock.
       PyEval_RestoreThread(myThreadState);
       // Register new Python data types
-      if (PythonForecast::initialize(PythonInterpreter::getModule()))
-        throw RuntimeException("Error registering Python forecast extension");
-      if (PythonForecastBucket::initialize(PythonInterpreter::getModule()))
-        throw RuntimeException("Error registering Python forecastbucket extension");
-      if (PythonForecastSolver::initialize(PythonInterpreter::getModule()))
-        throw RuntimeException("Error registering Python forecastsolver extension");
+      if (Forecast::initialize(PythonInterpreter::getModule()))
+        throw RuntimeException("Error registering forecast");
+      if (ForecastBucket::initialize(PythonInterpreter::getModule()))
+        throw RuntimeException("Error registering forecastbucket");
+      if (ForecastSolver::initialize(PythonInterpreter::getModule()))
+        throw RuntimeException("Error registering forecastsolver");
     }
     // Release the global lock when leaving the function
     catch (...)

@@ -31,84 +31,13 @@
 
 namespace frepple
 {
-// Solver metadata
-DECLARE_EXPORT const MetaCategory* Solver::metadata;
-
 // Load metadata
 DECLARE_EXPORT const MetaCategory* Load::metadata;
-
-// Location metadata
-DECLARE_EXPORT const MetaCategory* Location::metadata;
-DECLARE_EXPORT const MetaClass* LocationDefault::metadata;
-
-// Buffer metadata
-DECLARE_EXPORT const MetaCategory* Buffer::metadata;
-DECLARE_EXPORT const MetaClass* BufferDefault::metadata,
-  *BufferInfinite::metadata,
-  *BufferProcure::metadata;
-
-// Calendar metadata
-DECLARE_EXPORT const MetaCategory* Calendar::metadata;
-DECLARE_EXPORT const MetaCategory* Calendar::Bucket::metadata;
-DECLARE_EXPORT const MetaClass *CalendarVoid::metadata,
-  *CalendarDouble::metadata,
-  *CalendarInt::metadata,
-  *CalendarBool::metadata,
-  *CalendarString::metadata,
-  *CalendarOperation::metadata;
 
 // Flow metadata
 DECLARE_EXPORT const MetaCategory* Flow::metadata;
 DECLARE_EXPORT const MetaClass* FlowStart::metadata,
   *FlowEnd::metadata;
-
-// Operation metadata
-DECLARE_EXPORT const MetaCategory* Operation::metadata;
-DECLARE_EXPORT const MetaClass* OperationFixedTime::metadata,
-  *OperationTimePer::metadata,
-  *OperationRouting::metadata,
-  *OperationAlternate::metadata;
-
-// OperationPlan metadata
-DECLARE_EXPORT const MetaClass* OperationPlan::metadata;
-DECLARE_EXPORT const MetaCategory* OperationPlan::metacategory;
-
-// Resource metadats
-DECLARE_EXPORT const MetaCategory* Resource::metadata;
-DECLARE_EXPORT const MetaClass* ResourceDefault::metadata;
-DECLARE_EXPORT const MetaClass* ResourceInfinite::metadata;
-
-// Item metadata
-DECLARE_EXPORT const MetaCategory* Item::metadata;
-DECLARE_EXPORT const MetaClass* ItemDefault::metadata;
-
-// Customer metadata
-DECLARE_EXPORT const MetaCategory* Customer::metadata;
-DECLARE_EXPORT const MetaClass* CustomerDefault::metadata;
-
-// Demand metadata
-DECLARE_EXPORT const MetaCategory* Demand::metadata;
-DECLARE_EXPORT const MetaClass* DemandDefault::metadata;
-
-// Plan metadata
-DECLARE_EXPORT const MetaCategory* Plan::metadata;
-
-// Problem metadata
-DECLARE_EXPORT const MetaCategory* Problem::metadata;
-DECLARE_EXPORT const MetaClass* ProblemMaterialExcess::metadata,
-  *ProblemMaterialShortage::metadata,
-  *ProblemExcess::metadata,
-  *ProblemShort::metadata,
-  *ProblemEarly::metadata,
-  *ProblemLate::metadata,
-  *ProblemDemandNotPlanned::metadata,
-  *ProblemPlannedEarly::metadata,
-  *ProblemPlannedLate::metadata,
-  *ProblemPrecedence::metadata,
-  *ProblemBeforeFence::metadata,
-  *ProblemBeforeCurrent::metadata,
-  *ProblemCapacityUnderload::metadata,
-  *ProblemCapacityOverload::metadata;
 
 
 void LibraryModel::initialize()
@@ -126,118 +55,68 @@ void LibraryModel::initialize()
   // Initialize the utilities library
   LibraryUtils::initialize();
 
-  // Initialize the plan metadata.
-  Plan::metadata = new MetaCategory("plan","");
+  // Register new types in Python
+  int nok = 0;
+  PyObject* module = PythonInterpreter::getModule();
+  nok += Plan::initialize(module);
 
   // Initialize the solver metadata.
-  Solver::metadata = new MetaCategory
-    ("solver", "solvers", Solver::reader, Solver::writer);
+  nok += Solver::initialize(module);
+  nok += SolverIterator::initialize(module);
 
   // Initialize the location metadata.
-  Location::metadata = new MetaCategory
-    ("location", "locations", Location::reader, Location::writer);
-  LocationDefault::metadata = new MetaClass("location", "location_default",
-    Object::createString<LocationDefault>, true);
+  nok += Location::initialize(module);
+  nok += LocationDefault::initialize(module);
+  nok += LocationIterator::initialize(module);
 
   // Initialize the customer metadata.
-  Customer::metadata = new MetaCategory
-    ("customer", "customers", Customer::reader, Customer::writer);
-  CustomerDefault::metadata = new MetaClass(
-    "customer",
-    "customer_default",
-    Object::createString<CustomerDefault>, true);
+  nok += Customer::initialize(module);
+  nok += CustomerDefault::initialize(module);
+  nok += CustomerIterator::initialize(module);
 
   // Initialize the calendar metadata.
-  Calendar::Bucket::metadata = new MetaCategory("bucket", "buckets");
-  Calendar::metadata = new MetaCategory
-    ("calendar", "calendars", Calendar::reader, Calendar::writer);
-  CalendarVoid::metadata = new MetaClass(
-    "calendar",
-    "calendar_void",
-    Object::createString<CalendarVoid>);
-  CalendarDouble::metadata = new MetaClass(
-    "calendar",
-    "calendar_double",
-    Object::createString<CalendarDouble>, true);
-  CalendarInt::metadata = new MetaClass(
-    "calendar",
-    "calendar_integer",
-    Object::createString<CalendarInt>);
-  CalendarBool::metadata = new MetaClass(
-    "calendar",
-    "calendar_boolean",
-    Object::createString<CalendarBool>);
-  CalendarString::metadata = new MetaClass(
-    "calendar",
-    "calendar_string",
-    Object::createString<CalendarString>);
-  CalendarOperation::metadata = new MetaClass(
-    "calendar",
-    "calendar_operation",
-    Object::createString<CalendarOperation>);
+  nok += Calendar::initialize(module);
+  nok += CalendarBucketIterator::initialize(module);  // xxx remove
+  nok += CalendarEventIterator::initialize(module);   // xxx remove
+  nok += CalendarBool::initialize(module);
+  nok += CalendarVoid::initialize(module);
+  nok += CalendarDouble::initialize(module);
+  nok += CalendarString::initialize(module);
+  nok += CalendarInt::initialize(module);
+  nok += CalendarOperation::initialize(module);
+  nok += CalendarIterator::initialize(module);
 
   // Initialize the operation metadata.
-  Operation::metadata = new MetaCategory
-    ("operation", "operations", Operation::reader, Operation::writer);
-  OperationFixedTime::metadata = new MetaClass(
-    "operation",
-    "operation_fixed_time",
-    Object::createString<OperationFixedTime>, true);
-  OperationTimePer::metadata = new MetaClass(
-    "operation",
-    "operation_time_per",
-    Object::createString<OperationTimePer>);
-  OperationRouting::metadata = new MetaClass(
-    "operation",
-    "operation_routing",
-    Object::createString<OperationRouting>);
-  OperationAlternate::metadata = new MetaClass(
-    "operation",
-    "operation_alternate",
-    Object::createString<OperationAlternate>);
+  nok += Operation::initialize(module);
+  nok += OperationAlternate::initialize(module);
+  nok += OperationFixedTime::initialize(module);
+  nok += OperationTimePer::initialize(module);
+  nok += OperationRouting::initialize(module);
+  nok += OperationIterator::initialize(module);
 
   // Initialize the item metadata.
-  Item::metadata = new MetaCategory
-    ("item", "items", Item::reader, Item::writer);
-  ItemDefault::metadata = new MetaClass("item", "item_default",
-    Object::createString<ItemDefault>, true);
+  nok += Item::initialize(module);
+  nok += ItemDefault::initialize(module);
+  nok += ItemIterator::initialize(module);
 
   // Initialize the buffer metadata.
-  Buffer::metadata = new MetaCategory
-    ("buffer", "buffers", Buffer::reader, Buffer::writer);
-  BufferDefault::metadata = new MetaClass(
-    "buffer",
-    "buffer_default",
-    Object::createString<BufferDefault>, true);
-  BufferInfinite::metadata = new MetaClass(
-    "buffer",
-    "buffer_infinite",
-    Object::createString<BufferInfinite>);
-  BufferProcure::metadata = new MetaClass(
-    "buffer",
-    "buffer_procure",
-    Object::createString<BufferProcure>);
+  nok += Buffer::initialize(module);
+  nok += BufferDefault::initialize(module);
+  nok += BufferInfinite::initialize(module);
+  nok += BufferProcure::initialize(module);
+  nok += BufferIterator::initialize(module);
 
   // Initialize the demand metadata.
-  Demand::metadata = new MetaCategory
-    ("demand", "demands", Demand::reader, Demand::writer);
-  DemandDefault::metadata = new MetaClass(
-    "demand",
-    "demand_default",
-    Object::createString<DemandDefault>, true);
+  nok += Demand::initialize(module);
+  nok += DemandIterator::initialize(module);
+  nok += DemandDefault::initialize(module);
+  nok += DemandPlanIterator::initialize(module);
 
   // Initialize the resource metadata.
-  Resource::metadata = new MetaCategory
-    ("resource", "resources", Resource::reader, Resource::writer);
-  ResourceDefault::metadata = new MetaClass(
-    "resource",
-    "resource_default",
-    Object::createString<ResourceDefault>,
-    true);
-  ResourceInfinite::metadata = new MetaClass(
-    "resource",
-    "resource_infinite",
-    Object::createString<ResourceInfinite>);
+  nok += Resource::initialize(module);
+  nok += ResourceDefault::initialize(module);
+  nok += ResourceInfinite::initialize(module);
+  nok += ResourceIterator::initialize(module);
 
   // Initialize the load metadata.
   Load::metadata = new MetaCategory
@@ -259,100 +138,26 @@ void LibraryModel::initialize()
     Object::createDefault<FlowEnd>);
 
   // Initialize the operationplan metadata.
-  OperationPlan::metacategory = new MetaCategory("operationplan", "operationplans",
-    OperationPlan::createOperationPlan, OperationPlan::writer);
-  OperationPlan::metadata = new MetaClass("operationplan", "operationplan");
+  nok += OperationPlan::initialize(module);
+  nok += OperationPlanIterator::initialize(module);
 
   // Initialize the problem metadata.
-  Problem::metadata = new MetaCategory
-    ("problem", "problems", NULL, Problem::writer);
-  ProblemMaterialExcess::metadata = new MetaClass
-    ("problem","material excess");
-  ProblemMaterialShortage::metadata = new MetaClass
-    ("problem","material shortage");
-  ProblemExcess::metadata = new MetaClass
-    ("problem","excess");
-  ProblemShort::metadata = new MetaClass
-    ("problem","short");
-  ProblemEarly::metadata = new MetaClass
-    ("problem","early");
-  ProblemLate::metadata = new MetaClass
-    ("problem","late");
-  ProblemDemandNotPlanned::metadata = new MetaClass
-    ("problem","unplanned");
-  ProblemPlannedEarly::metadata = new MetaClass
-    ("problem","planned early");
-  ProblemPlannedLate::metadata = new MetaClass
-    ("problem","planned late");
-  ProblemPrecedence::metadata = new MetaClass
-    ("problem","precedence");
-  ProblemBeforeFence::metadata = new MetaClass
-    ("problem","before fence");
-  ProblemBeforeCurrent::metadata = new MetaClass
-    ("problem","before current");
-  ProblemCapacityUnderload::metadata = new MetaClass
-    ("problem","underload");
-  ProblemCapacityOverload::metadata = new MetaClass
-    ("problem","overload");
+  nok += Problem::initialize(module);
+  nok += ProblemIterator::initialize(module);
 
-  // Register new types in Python
-  int nok = 0;
-  PyObject* module = PythonInterpreter::getModule();
-  nok += PythonPlan::initialize(module);
-  nok += PythonBuffer::initialize(module);
-  nok += PythonBufferDefault::initialize(module);
-  nok += PythonBufferInfinite::initialize(module);
-  nok += PythonBufferProcure::initialize(module);
-  nok += PythonBufferIterator::initialize(module);
-  nok += PythonCalendar::initialize(module);
-  nok += PythonCalendarIterator::initialize(module);
-  nok += PythonCalendarBucket::initialize(module);
-  nok += PythonCalendarBucketIterator::initialize(module);
-  nok += PythonCalendarEventIterator::initialize(module);
-  nok += PythonCalendarBool::initialize(module);
-  nok += PythonCalendarVoid::initialize(module);
-  nok += PythonCalendarDouble::initialize(module);
-  nok += PythonCalendarString::initialize(module);
-  nok += PythonCalendarInt::initialize(module);
-  nok += PythonCalendarOperation::initialize(module);
-  nok += PythonCustomer::initialize(module);
-  nok += PythonCustomerDefault::initialize(module);
-  nok += PythonCustomerIterator::initialize(module);
-  nok += PythonDemand::initialize(module);
-  nok += PythonDemandIterator::initialize(module);
-  nok += PythonDemandDefault::initialize(module);
-  nok += PythonDemandPlanIterator::initialize(module);
+  // Initialize the pegging metadata.
   nok += PeggingIterator::initialize(module);
-  nok += PythonFlow::initialize(module);
-  nok += PythonFlowIterator::initialize(module);
-  nok += PythonFlowPlan::initialize(module);
-  nok += PythonFlowPlanIterator::initialize(module);
-  nok += PythonItem::initialize(module);
-  nok += PythonItemDefault::initialize(module);
-  nok += PythonItemIterator::initialize(module);
-  nok += PythonLoad::initialize(module);
-  nok += PythonLoadIterator::initialize(module);
-  nok += PythonLoadPlan::initialize(module);
-  nok += PythonLoadPlanIterator::initialize(module);
-  nok += PythonLocation::initialize(module);
-  nok += PythonLocationDefault::initialize(module);
-  nok += PythonLocationIterator::initialize(module);
-  nok += PythonOperation::initialize(module);
-  nok += PythonOperationAlternate::initialize(module);
-  nok += PythonOperationFixedTime::initialize(module);
-  nok += PythonOperationTimePer::initialize(module);
-  nok += PythonOperationRouting::initialize(module);
-  nok += PythonOperationIterator::initialize(module);
-  nok += PythonOperationPlan::initialize(module);
-  nok += PythonOperationPlanIterator::initialize(module);
-  nok += PythonProblem::initialize(module);
-  nok += PythonProblemIterator::initialize(module);
-  nok += PythonResource::initialize(module);
-  nok += PythonResourceDefault::initialize(module);
-  nok += PythonResourceInfinite::initialize(module);
-  nok += PythonResourceIterator::initialize(module);
-  nok += PythonSolver::initialize(module);
-  nok += PythonSolverIterator::initialize(module);
+
+  nok += PythonFlow::initialize(module);  // xxx
+  nok += PythonFlowIterator::initialize(module); // xxx
+  nok += PythonFlowPlan::initialize(module);  // xxx
+  nok += PythonFlowPlanIterator::initialize(module);  // xxx
+  nok += PythonLoad::initialize(module);  // xxx
+  nok += PythonLoadIterator::initialize(module);  // xxx
+  nok += PythonLoadPlan::initialize(module);  // xxx
+  nok += PythonLoadPlanIterator::initialize(module);  // xxx
+
+  // Exit if errors were found
   if (nok) throw RuntimeException("Error registering new Python types");
 
   // Register new methods in Python
@@ -378,37 +183,37 @@ void LibraryModel::initialize()
     "saveplan", CommandSavePlan::executePython, METH_VARARGS,
     "Save the main plan information to a file.");
   PythonInterpreter::registerGlobalMethod(
-    "buffers", PythonBufferIterator::create, METH_NOARGS,
+    "buffers", BufferIterator::create, METH_NOARGS,
     "Returns an iterator over the buffers.");
   PythonInterpreter::registerGlobalMethod(
-    "locations", PythonLocationIterator::create, METH_NOARGS,
+    "locations", LocationIterator::create, METH_NOARGS,
     "Returns an iterator over the locations.");
   PythonInterpreter::registerGlobalMethod(
-    "customers", PythonCustomerIterator::create, METH_NOARGS,
+    "customers", CustomerIterator::create, METH_NOARGS,
     "Returns an iterator over the customer.");
   PythonInterpreter::registerGlobalMethod(
-    "items", PythonItemIterator::create, METH_NOARGS,
+    "items", ItemIterator::create, METH_NOARGS,
     "Returns an iterator over the items.");
   PythonInterpreter::registerGlobalMethod(
-    "calendars", PythonCalendarIterator::create, METH_NOARGS,
+    "calendars", CalendarIterator::create, METH_NOARGS,
     "Returns an iterator over the calendars.");
   PythonInterpreter::registerGlobalMethod(
-    "demands", PythonDemandIterator::create, METH_NOARGS,
+    "demands", DemandIterator::create, METH_NOARGS,
     "Returns an iterator over the demands.");
   PythonInterpreter::registerGlobalMethod(
-    "resources", PythonResourceIterator::create, METH_NOARGS,
+    "resources", ResourceIterator::create, METH_NOARGS,
     "Returns an iterator over the resources.");
   PythonInterpreter::registerGlobalMethod(
-    "operations", PythonOperationIterator::create, METH_NOARGS,
+    "operations", OperationIterator::create, METH_NOARGS,
     "Returns an iterator over the operations.");
   PythonInterpreter::registerGlobalMethod(
-    "operationplans", PythonOperationPlanIterator::create, METH_NOARGS,
+    "operationplans", OperationPlanIterator::create, METH_NOARGS,
     "Returns an iterator over the operationplans.");
   PythonInterpreter::registerGlobalMethod(
-    "problems", PythonProblemIterator::create, METH_NOARGS,
+    "problems", ProblemIterator::create, METH_NOARGS,
     "Returns an iterator over the problems.");
   PythonInterpreter::registerGlobalMethod(
-    "solvers", PythonSolverIterator::create, METH_NOARGS,
+    "solvers", SolverIterator::create, METH_NOARGS,
     "Returns an iterator over the solvers.");
 }
 

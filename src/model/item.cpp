@@ -32,6 +32,29 @@ namespace frepple
 {
 
 template<class Item> DECLARE_EXPORT Tree utils::HasName<Item>::st;
+DECLARE_EXPORT const MetaCategory* Item::metadata;
+DECLARE_EXPORT const MetaClass* ItemDefault::metadata;
+
+
+int Item::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaCategory("item", "items", reader, writer);
+
+  // Initialize the Python class
+  return FreppleCategory<Item,Item>::initialize(m);
+}
+
+
+int ItemDefault::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  ItemDefault::metadata = new MetaClass("item", "item_default",
+    Object::createString<ItemDefault>, true);
+
+  // Initialize the Python class
+  return FreppleClass<ItemDefault,Item,ItemDefault>::initialize(m);
+}
 
 
 DECLARE_EXPORT Item::~Item()
@@ -130,7 +153,7 @@ DECLARE_EXPORT int Item::setattro(const Attribute& attr, const PythonObject& fie
     setPrice(field.getDouble());
   else if (attr.isA(Tags::tag_owner))
   {
-    if (!field.check(PythonItem::getType())) 
+    if (!field.check(Item::metadata)) 
     {
       PyErr_SetString(PythonDataException, "item owner must be of type item");
       return -1;
@@ -140,7 +163,7 @@ DECLARE_EXPORT int Item::setattro(const Attribute& attr, const PythonObject& fie
   }
   else if (attr.isA(Tags::tag_operation))
   {
-    if (!field.check(PythonOperation::getType())) 
+    if (!field.check(Operation::metadata)) 
     {
       PyErr_SetString(PythonDataException, "item operation must be of type operation");
       return -1;

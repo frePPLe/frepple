@@ -33,6 +33,32 @@ namespace frepple
 
 
 DECLARE_EXPORT Plan* Plan::thePlan;
+DECLARE_EXPORT const MetaCategory* Plan::metadata;
+
+
+int Plan::initialize(PyObject* m)
+{
+  // Initialize the plan metadata.
+  metadata = new MetaCategory("plan","");
+
+  // Initialize the Python type
+  PythonType& x = PythonExtension<Plan>::getType();
+  x.setName("parameters");
+  x.setDoc("frePPLe global settings");
+  x.supportgetattro();
+  x.supportsetattro();
+  int tmp =x.typeReady(m);
+  const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
+
+  // Create a singleton plan object
+  // Since we can count on the initialization being executed only once, also
+  // in a multi-threaded configuration, we don't need a more advanced mechanism
+  // to protect the singleton plan.
+  thePlan = new Plan();
+
+  // Add access to the information with a global attribute.
+  return PyModule_AddObject(m, "settings", &Plan::instance()) + tmp;
+}
 
 
 DECLARE_EXPORT Plan::~Plan()
@@ -108,28 +134,6 @@ DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, const Attribute& pAttr)
       // Frepple doesn't need to be understand
       pIn.IgnoreElement();
   }
-}
-
-
-int PythonPlan::initialize(PyObject* m)
-{
-  // Initialize the type
-  PythonType& x = getType();
-  x.setName("parameters");
-  x.setDoc("frePPLe global settings");
-  x.supportgetattro();
-  x.supportsetattro();
-  int tmp =x.typeReady(m);
-  const_cast<MetaCategory*>(Plan::metadata)->pythonClass = x.type_object();
-
-  // Create a singleton plan object
-  // Since we can count on the initialization being executed only once, also
-  // in a multi-threaded configuration, we don't need a more advanced mechanism
-  // to protect the singleton plan.
-  Plan::thePlan = new Plan();
-
-  // Add access to the information with a global attribute.
-  return PyModule_AddObject(m, "settings", &Plan::instance()) + tmp;
 }
 
 

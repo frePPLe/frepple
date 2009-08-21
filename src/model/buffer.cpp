@@ -40,6 +40,59 @@ namespace frepple
 {
 
 template<class Buffer> DECLARE_EXPORT Tree utils::HasName<Buffer>::st;
+DECLARE_EXPORT const MetaCategory* Buffer::metadata;
+DECLARE_EXPORT const MetaClass* BufferDefault::metadata,
+  *BufferInfinite::metadata,
+  *BufferProcure::metadata;
+
+
+int Buffer::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaCategory("buffer", "buffers", reader, writer);
+
+  // Initialize the Python class
+  return FreppleCategory<Buffer,Buffer>::initialize(m);
+}
+
+
+int BufferDefault::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  BufferDefault::metadata = new MetaClass(
+    "buffer",
+    "buffer_default",
+    Object::createString<BufferDefault>, true);
+
+  // Initialize the Python class
+  return FreppleClass<BufferDefault,Buffer,BufferDefault>::initialize(m);
+}
+
+
+int BufferInfinite::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  BufferInfinite::metadata = new MetaClass(
+    "buffer",
+    "buffer_infinite",
+    Object::createString<BufferInfinite>);
+
+  // Initialize the Python class
+  return FreppleClass<BufferInfinite,Buffer,BufferInfinite>::initialize(m);
+}
+
+
+int BufferProcure::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  BufferProcure::metadata = new MetaClass(
+    "buffer",
+    "buffer_procure",
+    Object::createString<BufferProcure>);
+
+  // Initialize the Python class
+  return FreppleClass<BufferProcure,Buffer,BufferProcure>::initialize(m);
+}
 
 
 DECLARE_EXPORT void Buffer::setOnHand(double f)
@@ -719,7 +772,7 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
     setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_owner))
   {
-    if (!field.check(PythonBuffer::getType()))
+    if (!field.check(Buffer::metadata))
     {
       PyErr_SetString(PythonDataException, "buffer owner must be of type buffer");
       return -1;
@@ -729,7 +782,7 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
   }
   else if (attr.isA(Tags::tag_location))
   {
-    if (!field.check(PythonLocation::getType())) 
+    if (!field.check(Location::metadata)) 
     {
       PyErr_SetString(PythonDataException, "buffer location must be of type location");
       return -1;
@@ -739,7 +792,7 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
   }
   else if (attr.isA(Tags::tag_item))
   {
-    if (!field.check(PythonItem::getType())) 
+    if (!field.check(Item::metadata)) 
     {
       PyErr_SetString(PythonDataException, "buffer item must be of type item");
       return -1;
@@ -749,7 +802,7 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
   }
   else if (attr.isA(Tags::tag_maximum))
   {
-    if (!field.check(PythonCalendarDouble::getType())) 
+    if (!field.check(CalendarDouble::metadata)) 
     {
       PyErr_SetString(PythonDataException, "buffer maximum must be of type calendar_double");
       return -1;
@@ -759,7 +812,7 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
   }
   else if (attr.isA(Tags::tag_minimum))
   {
-    if (!field.check(PythonCalendarDouble::getType())) 
+    if (!field.check(CalendarDouble::metadata)) 
     {
       PyErr_SetString(PythonDataException, "buffer minimum must be of type calendar_double");
       return -1;
@@ -773,7 +826,7 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
     setCarryingCost(field.getDouble());
   else if (attr.isA(Tags::tag_producing))
   {
-    if (!field.check(PythonOperation::getType())) 
+    if (!field.check(Operation::metadata)) 
     {
       PyErr_SetString(PythonDataException, "buffer producing must be of type operation");
       return -1;

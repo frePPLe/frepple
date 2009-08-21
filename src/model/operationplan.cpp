@@ -31,9 +31,30 @@
 namespace frepple
 {
 
+DECLARE_EXPORT const MetaClass* OperationPlan::metadata;
+DECLARE_EXPORT const MetaCategory* OperationPlan::metacategory;
 DECLARE_EXPORT unsigned long OperationPlan::counter = 1;
-
 OperationPlan::OperationPlanList OperationPlan::nosubOperationPlans;
+
+
+int OperationPlan::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  OperationPlan::metacategory = new MetaCategory("operationplan", "operationplans",
+    OperationPlan::createOperationPlan, OperationPlan::writer);
+  OperationPlan::metadata = new MetaClass("operationplan", "operationplan");
+
+  // Initialize the Python type
+  PythonType& x = FreppleCategory<OperationPlan,OperationPlan>::getType();
+  x.setName("operationplan");
+  x.setDoc("frePPLe operationplan");
+  x.supportgetattro();
+  x.supportsetattro();
+  x.supportcreate(create);
+  x.addMethod("toXML", FreppleCategory<OperationPlan,OperationPlan>::toXML, METH_VARARGS, "return a XML representation");
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady(m);
+}
 
 
 void DECLARE_EXPORT OperationPlan::setChanged(bool b)
@@ -992,21 +1013,6 @@ DECLARE_EXPORT void OperationPlanAlternate::eraseSubOperationPlan(OperationPlan*
 }
 
 
-int PythonOperationPlan::initialize(PyObject* m)
-{
-  // Initialize the type
-  PythonType& x = getType();
-  x.setName("operationplan");
-  x.setDoc("frePPLe operationplan");
-  x.supportgetattro();
-  x.supportsetattro();
-  x.supportcreate(OperationPlan::create);
-  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
-  const_cast<MetaClass*>(OperationPlan::metadata)->pythonClass = x.type_object();
-  return x.typeReady(m);
-}
-
-
 PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 {
   try
@@ -1083,7 +1089,7 @@ DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonOb
     setLocked(field.getBool());
   else if (attr.isA(Tags::tag_demand))
   {
-    if (!field.check(PythonDemand::getType())) 
+    if (!field.check(Demand::metadata)) 
     {
       PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
       return -1;
@@ -1093,7 +1099,7 @@ DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonOb
   }
   else if (attr.isA(Tags::tag_owner))
   {
-    if (!field.check(PythonOperationPlan::getType())) 
+    if (!field.check(OperationPlan::metadata)) 
     {
       PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
       return -1;

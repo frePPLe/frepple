@@ -52,12 +52,6 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
   try 
   {
-    // Initialize the metadata.
-    LPSolver::metadata = new MetaClass(
-      "solver",
-      "solver_lp",
-      Object::createString<LPSolver>);
-
     // Register the Python extension
     PyThreadState *myThreadState = PyGILState_GetThisThreadState();
     if (!Py_IsInitialized() || !myThreadState)
@@ -67,7 +61,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
       // Get the global lock.
       PyEval_RestoreThread(myThreadState);
       // Register new Python data types
-      if (PythonLPSolver::initialize(PythonInterpreter::getModule()))
+      if (LPSolver::initialize(PythonInterpreter::getModule()))
         throw RuntimeException("Error registering Python solver_lp extension");
     }
     // Release the global lock when leaving the function
@@ -90,6 +84,17 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
 
   // Return the name of the module
   return name;
+}
+
+
+int LPSolver::initialize(PyObject* m)
+{
+  // Initialize the metadata.
+  metadata = new MetaClass("solver", "solver_lp",
+    Object::createString<LPSolver>);
+
+  // Initialize the Python class
+  return FreppleClass<LPSolver,Solver,LPSolver>::initialize(m);
 }
 
 

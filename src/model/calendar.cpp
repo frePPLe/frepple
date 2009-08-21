@@ -32,6 +32,120 @@ namespace frepple
 {
 
 template<class Calendar> DECLARE_EXPORT Tree utils::HasName<Calendar>::st;
+DECLARE_EXPORT const MetaCategory* Calendar::metadata;
+DECLARE_EXPORT const MetaCategory* Calendar::Bucket::metadata;
+DECLARE_EXPORT const MetaClass *CalendarVoid::metadata,
+  *CalendarDouble::metadata,
+  *CalendarInt::metadata,
+  *CalendarBool::metadata,
+  *CalendarString::metadata,
+  *CalendarOperation::metadata;
+
+
+int Calendar::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaCategory("calendar", "calendars", reader, writer);
+
+  // Initialize the Python class
+  return Calendar::Bucket::initialize(m) +
+    FreppleCategory<Calendar,Calendar>::initialize(m);
+}
+
+
+int Calendar::Bucket::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  Bucket::metadata = new MetaCategory("bucket", "buckets");
+
+  // Initialize the Python class
+  PythonType& x = PythonExtension<Calendar::Bucket>::getType();
+  x.setName("calendarBucket");
+  x.setDoc("frePPLe calendar bucket");
+  x.supportgetattro();
+  x.supportsetattro();
+  const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady(m);
+}
+
+
+int CalendarVoid::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass("calendar", "calendar_void",
+    Object::createString<CalendarVoid>);
+
+  // Initialize the Python class
+  FreppleClass<CalendarVoid,Calendar,CalendarVoid>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarVoid,Calendar,CalendarVoid>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  return FreppleClass<CalendarVoid,Calendar,CalendarVoid>::initialize(m);
+}
+
+
+int CalendarDouble::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass("calendar", "calendar_double",
+    Object::createString<CalendarDouble>, true);
+
+  // Initialize the Python class
+  FreppleClass<CalendarDouble,Calendar,CalendarDouble>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarDouble,Calendar,CalendarDouble>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  return FreppleClass<CalendarDouble,Calendar,CalendarDouble>::initialize(m);
+}
+
+
+int CalendarInt::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass("calendar", "calendar_integer",
+    Object::createString<CalendarInt>);
+
+  // Initialize the Python class
+  FreppleClass<CalendarInt,Calendar,CalendarInt>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarInt,Calendar,CalendarInt>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  return FreppleClass<CalendarInt,Calendar,CalendarInt>::initialize(m);
+}
+
+
+int CalendarBool::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass("calendar", "calendar_boolean",
+    Object::createString<CalendarBool>);
+
+  // Initialize the Python class
+  FreppleClass<CalendarBool,Calendar,CalendarBool>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarBool,Calendar,CalendarBool>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  return FreppleClass<CalendarBool,Calendar,CalendarBool>::initialize(m);
+}
+
+
+int CalendarString::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass("calendar", "calendar_string",
+    Object::createString<CalendarString>);
+
+  // Initialize the Python class
+  FreppleClass<CalendarString,Calendar,CalendarString>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarString,Calendar,CalendarString>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  return FreppleClass<CalendarString,Calendar,CalendarString>::initialize(m);
+}
+
+
+int CalendarOperation::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass("calendar", "calendar_operation",
+    Object::createString<CalendarOperation>);
+
+  // Initialize the Python class
+  FreppleClass<CalendarOperation,Calendar,CalendarOperation>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarOperation,Calendar,CalendarOperation>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  return FreppleClass<CalendarOperation,Calendar,CalendarOperation>::initialize(m);
+}
+
 
 // Specialised template functions
 template <> DECLARE_EXPORT bool CalendarValue<string>::getBool() const
@@ -408,7 +522,7 @@ DECLARE_EXPORT PyObject* Calendar::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_name))
     return PythonObject(getName());
   if (attr.isA(Tags::tag_buckets))
-    return new PythonCalendarBucketIterator(this);
+    return new CalendarBucketIterator(this);
 	return NULL;
 }
 
@@ -637,7 +751,7 @@ DECLARE_EXPORT int CalendarOperation::setattro(const Attribute& attr, const Pyth
 {
   if (attr.isA(Tags::tag_default))
   {
-    if (!field.check(PythonOperation::getType())) 
+    if (!field.check(Operation::metadata)) 
     {
       PyErr_SetString(PythonDataException, "calendar_operation stores values of type operation");
       return -1;
@@ -666,7 +780,7 @@ DECLARE_EXPORT PyObject* CalendarOperation::setPythonValue(PyObject* self, PyObj
 
     // Update the calendar
     PythonObject start(pystart), end(pyend), val(pyval);
-    if (!val.check(PythonOperation::getType())) 
+    if (!val.check(Operation::metadata)) 
     {
       PyErr_SetString(PythonDataException, "calendar_operation stores values of type operation");
       return NULL;
@@ -683,10 +797,10 @@ DECLARE_EXPORT PyObject* CalendarOperation::setPythonValue(PyObject* self, PyObj
 }
 
 
-int PythonCalendarBucketIterator::initialize(PyObject* m)
+int CalendarBucketIterator::initialize(PyObject* m)
 {
   // Initialize the type
-  PythonType& x = PythonExtension<PythonCalendarBucketIterator>::getType();
+  PythonType& x = PythonExtension<CalendarBucketIterator>::getType();
   x.setName("calendarBucketIterator");
   x.setDoc("frePPLe iterator for calendar buckets");
   x.supportiter();
@@ -694,25 +808,12 @@ int PythonCalendarBucketIterator::initialize(PyObject* m)
 }
 
 
-PyObject* PythonCalendarBucketIterator::iternext()
+PyObject* CalendarBucketIterator::iternext()
 {  
   if (i == cal->endBuckets()) return NULL;
   PyObject *result = &*(i++);
   Py_INCREF(result);
   return result;
-}
-
-
-int PythonCalendarBucket::initialize(PyObject* m)
-{
-  // Initialize the type
-  PythonType& x = PythonExtension<PythonCalendarBucket>::getType();
-  x.setName("calendarBucket");
-  x.setDoc("frePPLe calendar bucket");
-  x.supportgetattro();
-  x.supportsetattro();
-  const_cast<MetaCategory*>(Calendar::Bucket::metadata)->pythonClass = x.type_object();
-  return x.typeReady(m);
 }
 
 
@@ -769,7 +870,7 @@ DECLARE_EXPORT int Calendar::Bucket::setattro(const Attribute& attr, const Pytho
       dynamic_cast< CalendarValue<string>::BucketValue* >(this)->setValue(field.getString());
     else if (cal->getType() == *CalendarOperation::metadata)
     {
-      if (!field.check(PythonOperation::getType())) 
+      if (!field.check(Operation::metadata)) 
       {
         PyErr_SetString(PythonDataException, "calendar_operation stores values of type operation");
         return -1;
@@ -800,17 +901,17 @@ DECLARE_EXPORT PyObject* Calendar::getEvents(
     // Pick up the calendar
     Calendar *cal = NULL;
     PythonObject c(self);
-    if (c.check(PythonCalendarBool::getType())) 
+    if (c.check(CalendarBool::metadata)) 
       cal = static_cast<CalendarBool*>(self);
-    else if (c.check(PythonCalendarDouble::getType())) 
+    else if (c.check(CalendarDouble::metadata)) 
       cal = static_cast<CalendarDouble*>(self);
-    else if (c.check(PythonCalendarInt::getType())) 
+    else if (c.check(CalendarInt::metadata)) 
       cal = static_cast<CalendarInt*>(self);
-    else if (c.check(PythonCalendarOperation::getType())) 
+    else if (c.check(CalendarOperation::metadata)) 
       cal = static_cast<CalendarOperation*>(self);
-    else if (c.check(PythonCalendarString::getType())) 
+    else if (c.check(CalendarString::metadata)) 
       cal = static_cast<CalendarString*>(self);
-    else if (c.check(PythonCalendarVoid::getType())) 
+    else if (c.check(CalendarVoid::metadata)) 
       cal = static_cast<CalendarVoid*>(self);
     else
       throw LogicException("Invalid calendar type");
@@ -824,7 +925,7 @@ DECLARE_EXPORT PyObject* Calendar::getEvents(
     bool forward = pydirection ? PythonObject(pydirection).getBool() : true;
 
     // Return the iterator
-    return new PythonCalendarEventIterator(cal, startdate, forward);
+    return new CalendarEventIterator(cal, startdate, forward);
   }
   catch(...)
   {
@@ -834,10 +935,10 @@ DECLARE_EXPORT PyObject* Calendar::getEvents(
 }
 
 
-int PythonCalendarEventIterator::initialize(PyObject* m)
+int CalendarEventIterator::initialize(PyObject* m)
 {
   // Initialize the type
-  PythonType& x = PythonExtension<PythonCalendarEventIterator>::getType();
+  PythonType& x = PythonExtension<CalendarEventIterator>::getType();
   x.setName("calendarEventIterator");
   x.setDoc("frePPLe iterator for calendar events");
   x.supportiter();
@@ -845,7 +946,7 @@ int PythonCalendarEventIterator::initialize(PyObject* m)
 }
 
 
-PyObject* PythonCalendarEventIterator::iternext()
+PyObject* CalendarEventIterator::iternext()
 {  
   if ((forward && eventiter.getDate() == Date::infiniteFuture)
    || (!forward && eventiter.getDate() == Date::infinitePast)) 

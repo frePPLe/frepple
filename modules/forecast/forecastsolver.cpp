@@ -30,6 +30,18 @@
 namespace module_forecast
 {
 
+const MetaClass *ForecastSolver::metadata;
+
+int ForecastSolver::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass("solver", "solver_forecast",
+    Object::createString<ForecastSolver>);
+
+  // Initialize the Python class
+  return FreppleClass<ForecastSolver,Solver,ForecastSolver>::initialize(m);
+}
+
 
 bool ForecastSolver::callback(Demand* l, const Signal a)
 {

@@ -266,7 +266,7 @@ DECLARE_EXPORT int Flow::setattro(const Attribute& attr, const PythonObject& fie
 {
   if (attr.isA(Tags::tag_buffer))
   {
-    if (!field.check(PythonBuffer::getType())) 
+    if (!field.check(Buffer::metadata)) 
     {
       PyErr_SetString(PythonDataException, "flow buffer must be of type buffer");
       return -1;
@@ -276,7 +276,7 @@ DECLARE_EXPORT int Flow::setattro(const Attribute& attr, const PythonObject& fie
   }
   else if (attr.isA(Tags::tag_operation))
   {
-    if (!field.check(PythonOperation::getType())) 
+    if (!field.check(Operation::metadata)) 
     {
       PyErr_SetString(PythonDataException, "flow operation must be of type operation");
       return -1;
@@ -303,12 +303,12 @@ PyObject* PythonFlow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwd
   {
     // Pick up the operation
     PyObject* oper = PyDict_GetItemString(kwds,"operation");
-    if (!PyObject_TypeCheck(oper, PythonOperation::getType().type_object())) 
+    if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass)) 
       throw DataException("flow operation must be of type operation");
 
     // Pick up the resource
     PyObject* buf = PyDict_GetItemString(kwds,"buffer");
-    if (!PyObject_TypeCheck(buf, PythonBuffer::getType().type_object())) 
+    if (!PyObject_TypeCheck(buf, Buffer::metadata->pythonClass)) 
       throw DataException("flow buffer must be of type buffer");
    
     // Pick up the quantity

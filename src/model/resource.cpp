@@ -32,6 +32,46 @@ namespace frepple
 {
 
 template<class Resource> DECLARE_EXPORT Tree utils::HasName<Resource>::st;
+DECLARE_EXPORT const MetaCategory* Resource::metadata;
+DECLARE_EXPORT const MetaClass* ResourceDefault::metadata;
+DECLARE_EXPORT const MetaClass* ResourceInfinite::metadata;
+
+
+int Resource::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaCategory("resource", "resources", reader, writer);
+
+  // Initialize the Python class
+  return FreppleCategory<Resource,Resource>::initialize(m);
+}
+
+
+int ResourceDefault::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  ResourceDefault::metadata = new MetaClass(
+    "resource",
+    "resource_default",
+    Object::createString<ResourceDefault>,
+    true);
+
+  // Initialize the Python class
+  return FreppleClass<ResourceDefault,Resource,ResourceDefault>::initialize(m);
+}
+
+
+int ResourceInfinite::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  ResourceInfinite::metadata = new MetaClass(
+    "resource",
+    "resource_infinite",
+    Object::createString<ResourceInfinite>);
+
+  // Initialize the Python class
+  return FreppleClass<ResourceInfinite,Resource,ResourceInfinite>::initialize(m);
+}
 
 
 DECLARE_EXPORT void Resource::setMaximum(CalendarDouble* c)
@@ -272,7 +312,7 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
     setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_owner))
   {
-    if (!field.check(PythonResource::getType()))
+    if (!field.check(PythonExtension<Resource>::getType()))
     {
       PyErr_SetString(PythonDataException, "resource owner must be of type resource");
       return -1;
@@ -282,7 +322,7 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
   }
   else if (attr.isA(Tags::tag_location))
   {
-    if (!field.check(PythonLocation::getType())) 
+    if (!field.check(Location::metadata)) 
     {
       PyErr_SetString(PythonDataException, "buffer location must be of type location");
       return -1;
@@ -292,7 +332,7 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
   }
   else if (attr.isA(Tags::tag_maximum))
   {
-    if (!field.check(PythonCalendarDouble::getType())) 
+    if (!field.check(CalendarDouble::metadata)) 
     {
       PyErr_SetString(PythonDataException, "resource maximum must be of type calendar_double");
       return -1;

@@ -30,16 +30,6 @@
 namespace module_forecast
 {
 
-int PythonForecast::initialize(PyObject* m)
-{
-  // Add a method for forecast generation
-  getType().addMethod("timeseries", Forecast::timeseries, METH_VARARGS,
-     "Set the future based on the timeseries of historical data");
-
-  // Normal initialization for the rest
-  return FreppleClass<PythonForecast,PythonDemand,Forecast>::initialize(m);
-}
-
 
 PyObject* Forecast::getattro(const Attribute& attr)
 {
@@ -55,7 +45,7 @@ int Forecast::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_calendar))
   {
-    if (!field.check(PythonCalendar::getType())) 
+    if (!field.check(Calendar::metadata)) 
     {
       PyErr_SetString(PythonDataException, "forecast calendar must be of type calendar");
       return -1;
@@ -135,21 +125,6 @@ extern "C" PyObject* Forecast::timeseries(PyObject *self, PyObject *args)
   Py_END_ALLOW_THREADS   // Release the Python interpreter
   return Py_BuildValue("");
 }
-
-
-int PythonForecastBucket::initialize(PyObject* m)
-{
-  // Initialize the type
-  // Note: No support for creation
-  PythonType& x = getType();
-  x.setName("demand_forecastbucket");
-  x.setDoc("frePPLe forecastbucket");
-  x.supportgetattro();
-  x.supportsetattro();
-  const_cast<MetaClass*>(ForecastBucket::metadata)->pythonClass = x.type_object();
-  return x.typeReady(m);
-}
-
 
 PyObject* ForecastBucket::getattro(const Attribute& attr)
 {

@@ -32,7 +32,68 @@ namespace frepple
 {
 
 template<class Operation> DECLARE_EXPORT Tree utils::HasName<Operation>::st;
+DECLARE_EXPORT const MetaCategory* Operation::metadata;
+DECLARE_EXPORT const MetaClass* OperationFixedTime::metadata,
+  *OperationTimePer::metadata,
+  *OperationRouting::metadata,
+  *OperationAlternate::metadata;
 DECLARE_EXPORT Operation::Operationlist Operation::nosubOperations;
+
+
+int Operation::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaCategory("operation", "operations", reader, writer);
+
+  // Initialize the Python class
+  return FreppleCategory<Operation,Operation>::initialize(m);
+}
+
+
+int OperationFixedTime::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass("operation", "operation_fixed_time",
+    Object::createString<OperationFixedTime>, true);
+
+  // Initialize the Python class
+  return FreppleClass<OperationFixedTime,Operation,OperationFixedTime>::initialize(m);
+}
+
+
+int OperationTimePer::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass("operation", "operation_time_per",
+    Object::createString<OperationTimePer>);
+
+  // Initialize the Python class
+  return FreppleClass<OperationTimePer,Operation,OperationTimePer>::initialize(m);
+}
+
+
+int OperationAlternate::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass("operation", "operation_alternate",
+    Object::createString<OperationAlternate>);
+
+  // Initialize the Python class
+  FreppleClass<OperationAlternate,Operation,OperationAlternate>::getType().addMethod("addAlternate", OperationAlternate::addAlternate, METH_KEYWORDS, "add an alternate");
+  return FreppleClass<OperationAlternate,Operation,OperationAlternate>::initialize(m);
+}
+
+
+int OperationRouting::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass("operation", "operation_routing",
+    Object::createString<OperationRouting>);
+
+  // Initialize the Python class
+  FreppleClass<OperationRouting,Operation,OperationRouting>::getType().addMethod("addStep", OperationRouting::addStep, METH_VARARGS , "add steps to the routing");
+  return FreppleClass<OperationRouting,Operation,OperationRouting>::initialize(m);
+}
 
 
 DECLARE_EXPORT Operation::~Operation()
@@ -1085,7 +1146,7 @@ DECLARE_EXPORT PyObject* Operation::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_flows))
     return new PythonFlowIterator(this);
   if (attr.isA(Tags::tag_operationplans))
-    return new PythonOperationPlanIterator(this);
+    return new OperationPlanIterator(this);
   if (attr.isA(Tags::tag_level))
     return PythonObject(getLevel());
   if (attr.isA(Tags::tag_cluster))
@@ -1106,7 +1167,7 @@ DECLARE_EXPORT int Operation::setattro(const Attribute& attr, const PythonObject
     setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_location))
   {
-    if (!field.check(PythonLocation::getType())) 
+    if (!field.check(Location::metadata)) 
     {
       PyErr_SetString(PythonDataException, "buffer location must be of type location");
       return -1;
@@ -1212,7 +1273,7 @@ DECLARE_EXPORT PyObject* OperationAlternate::addAlternate(PyObject* self, PyObje
       "O|iOO:addAlternate", 
       const_cast<char**>(kwlist), &oper, &prio, &eff_start, &eff_end))
         return NULL;
-    if (!PyObject_TypeCheck(oper, PythonOperation::getType().type_object())) 
+    if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass)) 
       throw DataException("alternate operation must be of type operation");
     DateRange eff;
     if (eff_start)
@@ -1272,7 +1333,7 @@ PyObject *OperationRouting::addStep(PyObject *self, PyObject *args)
     if (PyArg_UnpackTuple(args, "addStep", 1, 4, &steps[0], &steps[1], &steps[2], &steps[3]))
       for (unsigned int i=0; i<4 && steps[i]; ++i) 
       {
-        if (!PyObject_TypeCheck(steps[i], PythonOperation::getType().type_object())) 
+        if (!PyObject_TypeCheck(steps[i], Operation::metadata->pythonClass)) 
           throw DataException("routing steps must be of type operation");
         oper->addStepBack(static_cast<Operation*>(steps[i]));
       }

@@ -239,7 +239,7 @@ DECLARE_EXPORT int Load::setattro(const Attribute& attr, const PythonObject& fie
 {
   if (attr.isA(Tags::tag_resource))
   {
-    if (!field.check(PythonResource::getType()))
+    if (!field.check(Resource::metadata))
     {
       PyErr_SetString(PythonDataException, "load resource must be of type resource");
       return -1;
@@ -249,7 +249,7 @@ DECLARE_EXPORT int Load::setattro(const Attribute& attr, const PythonObject& fie
   }
   else if (attr.isA(Tags::tag_operation))
   {
-    if (!field.check(PythonOperation::getType()))
+    if (!field.check(Operation::metadata))
     {
       PyErr_SetString(PythonDataException, "load operation must be of type operation");
       return -1;
@@ -276,12 +276,12 @@ PyObject* PythonLoad::create(PyTypeObject* pytype, PyObject* args, PyObject* kwd
   {
     // Pick up the operation
     PyObject* oper = PyDict_GetItemString(kwds,"operation");
-    if (!PyObject_TypeCheck(oper, PythonOperation::getType().type_object()))
+    if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
       throw DataException("load operation must be of type operation");
 
     // Pick up the resource
     PyObject* res = PyDict_GetItemString(kwds,"resource");
-    if (!PyObject_TypeCheck(res, PythonResource::getType().type_object()))
+    if (!PyObject_TypeCheck(res, Resource::metadata->pythonClass))
       throw DataException("load resource must be of type resource");
 
     // Pick up the quantity

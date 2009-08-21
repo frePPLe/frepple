@@ -273,6 +273,10 @@
 				RelativePath="..\..\src\model\resource.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\model\solver.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

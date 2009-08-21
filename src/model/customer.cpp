@@ -32,6 +32,31 @@ namespace frepple
 {
 
 template<class Customer> DECLARE_EXPORT Tree utils::HasName<Customer>::st;
+DECLARE_EXPORT const MetaCategory* Customer::metadata;
+DECLARE_EXPORT const MetaClass* CustomerDefault::metadata;
+
+
+int Customer::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaCategory("customer", "customers", reader, writer);
+
+  // Initialize the Python class
+  return FreppleCategory<Customer,Customer>::initialize(m);
+}
+
+
+int CustomerDefault::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  CustomerDefault::metadata = new MetaClass(
+    "customer",
+    "customer_default",
+    Object::createString<CustomerDefault>, true);
+
+  // Initialize the Python class
+  return FreppleClass<CustomerDefault,Customer,CustomerDefault>::initialize(m);
+}
 
 
 DECLARE_EXPORT void Customer::writeElement(XMLOutput* o, const Keyword& tag, mode m) const
@@ -104,7 +129,7 @@ DECLARE_EXPORT int Customer::setattro(const Attribute& attr, const PythonObject&
     setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_owner))
   {
-    if (!field.check(PythonCustomer::getType())) 
+    if (!field.check(Customer::metadata)) 
     {
       PyErr_SetString(PythonDataException, "customer owner must be of type customer");
       return -1;

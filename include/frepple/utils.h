@@ -819,6 +819,9 @@ extern "C"
   * In the Python C API this is represented by the PyTypeObject structure.
   * This class defines a number of convenience functions to update and maintain
   * the type information.
+  *
+  * The structure of the class is heavily inspired on the design of PyCXX.<br>
+  * More information can be found on http://cxx.sourceforge.net
   */
 class PythonType : public NonCopyable
 {
@@ -869,9 +872,9 @@ class PythonType : public NonCopyable
     }
 
     /** Updates tp_base. */
-    void setBase(PythonType& b)
+    void setBase(PyTypeObject* b)
     {
-      table.tp_base = &b.table;
+      table.tp_base = b;
     }
 
     /** Updates the deallocator. */
@@ -2634,6 +2637,16 @@ class PythonObject : public DataElement
 
     /** Assignment operator. */
     PythonObject& operator = (const PythonObject& o) { obj = o.obj; return *this; }
+
+    /** Check whether the Python object is of a certain type.<br>
+      * Subclasses of the argument type will also give a true return value.
+      */
+    bool check(const MetaClass* c) const
+    {
+      return obj ?
+        PyObject_TypeCheck(obj, c->pythonClass) :
+        false;
+    }
 
     /** Check whether the Python object is of a certain type.<br>
       * Subclasses of the argument type will also give a true return value.

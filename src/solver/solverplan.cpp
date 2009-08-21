@@ -45,14 +45,20 @@ void LibrarySolver::initialize()
   init = true;
 
   // Register all classes.
-  SolverMRP::metadata = new MetaClass(
-    "solver",
-    "solver_mrp",
-    Object::createString<SolverMRP>,
-    true);
 
-  if (PythonSolverMRP::initialize(PythonInterpreter::getModule()))
+  if (SolverMRP::initialize(PythonInterpreter::getModule()))
     throw RuntimeException("Error registering solver_mrp Python type");
+}
+
+
+int SolverMRP::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass
+    ("solver","solver_mrp",Object::createString<SolverMRP>,true);
+
+  // Initialize the Python class
+  return FreppleClass<SolverMRP,Solver,SolverMRP>::initialize(m);
 }
 
 

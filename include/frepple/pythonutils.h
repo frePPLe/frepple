@@ -93,7 +93,6 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
       */
     static void deallocator(PyObject* o) {delete static_cast<T*>(o);}
 
-  protected:
     /** Return an XML representation of the object.<br>
       * If a file object is passed as argument, the representation is directly
       * written to it.<br>
@@ -239,8 +238,8 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
       //x.supportstr();xxx
      // x.supportcompare();xxx
       x.supportcreate(create);
-      x.setBase(BASE::getType());
-      x.addMethod("toXML", ME::toXML, METH_VARARGS, "return a XML representation");
+      x.setBase(BASE::metadata->pythonClass);
+      x.addMethod("toXML", PythonExtension< FreppleClass<ME,BASE,PROXY> >::toXML, METH_VARARGS, "return a XML representation");
       const_cast<MetaClass*>(PROXY::metadata)->pythonClass = x.type_object();
       return x.typeReady(m);
     }

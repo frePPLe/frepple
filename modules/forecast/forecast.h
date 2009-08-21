@@ -519,6 +519,7 @@ class Forecast : public Demand
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     void beginElement(XMLInput& pIn, const Attribute& pAttr);
+    static int initialize(PyObject* m);
 
     /** Returns whether fractional forecasts are allowed or not.<br>
       * The default is true.
@@ -825,6 +826,7 @@ class ForecastBucket : public Demand
 
     virtual PyObject* getattro(const Attribute&);
     virtual int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m);
 
   private:
     double weight;
@@ -882,6 +884,7 @@ class ForecastSolver : public Solver
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     virtual PyObject* getattro(const Attribute&);
     virtual int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m);
 
     /** Callback function, used for netting orders against the forecast. */
     bool callback(Demand* l, const Signal a);
@@ -907,26 +910,6 @@ class ForecastSolver : public Solver
     /** Used for sorting demands during netting. */
     typedef multiset < Demand*, sorter > sortedDemandList;
 };
-
-
-class PythonForecast : public FreppleClass<PythonForecast,PythonDemand,Forecast>
-{
-  public:
-    static int initialize(PyObject*);
-};
-
-
-class PythonForecastBucket : public FreppleClass<PythonForecastBucket,PythonDemand,ForecastBucket>
-{
-  public:
-    static int initialize(PyObject*);
-};
-
-
-class PythonForecastSolver : public FreppleClass<PythonForecastSolver,PythonSolver,ForecastSolver>
-{
-};
-
 
 }   // End namespace
 

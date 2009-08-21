@@ -152,6 +152,7 @@ class LPSolver : public Solver
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     virtual PyObject* getattro(const Attribute&);
     virtual int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m);
 
 	  /** Constructor. */
     LPSolver(const string& n) : Solver(n), minimum(true) {initType(metadata);}
@@ -212,11 +213,6 @@ class LPSolver : public Solver
 
     /** Solve for a goal in a hierarchical sequence. */
     void solveObjective(const string&);
-};
-
-
-class PythonLPSolver : public FreppleClass<PythonLPSolver,PythonSolver,LPSolver>
-{
 };
 
 }  // End namespace

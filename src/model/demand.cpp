@@ -32,6 +32,31 @@ namespace frepple
 {
 
 template<class Demand> DECLARE_EXPORT Tree utils::HasName<Demand>::st;
+DECLARE_EXPORT const MetaCategory* Demand::metadata;
+DECLARE_EXPORT const MetaClass* DemandDefault::metadata;
+
+
+int Demand::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaCategory("demand", "demands", reader, writer);
+
+  // Initialize the Python class
+  return FreppleCategory<Demand,Demand>::initialize(m);
+}
+
+
+int DemandDefault::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  DemandDefault::metadata = new MetaClass(
+    "demand",
+    "demand_default",
+    Object::createString<DemandDefault>, true);
+
+  // Initialize the Python class
+  return FreppleClass<DemandDefault,Demand,DemandDefault>::initialize(m);
+}
 
 
 DECLARE_EXPORT void Demand::setQuantity(double f)
@@ -339,7 +364,7 @@ DECLARE_EXPORT PyObject* Demand::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_operationplans))
-    return new PythonDemandPlanIterator(this);
+    return new DemandPlanIterator(this);
   if (attr.isA(Tags::tag_pegging))
     return new PeggingIterator(this);
   return NULL;
@@ -358,7 +383,7 @@ DECLARE_EXPORT int Demand::setattro(const Attribute& attr, const PythonObject& f
     setDue(field.getDate());
   else if (attr.isA(Tags::tag_item))
   {
-    if (!field.check(PythonItem::getType())) 
+    if (!field.check(Item::metadata)) 
     {
       PyErr_SetString(PythonDataException, "demand item must be of type item");
       return -1;
@@ -368,7 +393,7 @@ DECLARE_EXPORT int Demand::setattro(const Attribute& attr, const PythonObject& f
   }
   else if (attr.isA(Tags::tag_customer))
   {
-    if (!field.check(PythonCustomer::getType())) 
+    if (!field.check(Customer::metadata)) 
     {
       PyErr_SetString(PythonDataException, "demand customer must be of type customer");
       return -1;
@@ -388,7 +413,7 @@ DECLARE_EXPORT int Demand::setattro(const Attribute& attr, const PythonObject& f
     setMaxLateness(field.getTimeperiod());
   else if (attr.isA(Tags::tag_owner))
   {
-    if (!field.check(PythonDemand::getType()))
+    if (!field.check(Demand::metadata))
     {
       PyErr_SetString(PythonDataException, "demand owner must be of type demand");
       return -1;
@@ -398,7 +423,7 @@ DECLARE_EXPORT int Demand::setattro(const Attribute& attr, const PythonObject& f
   }
   else if (attr.isA(Tags::tag_operation))
   {
-    if (!field.check(PythonOperation::getType()))
+    if (!field.check(Operation::metadata))
     {
       PyErr_SetString(PythonDataException, "demand operation must be of type operation");
       return -1;
@@ -414,10 +439,10 @@ DECLARE_EXPORT int Demand::setattro(const Attribute& attr, const PythonObject& f
 }
 
 
-int PythonDemandPlanIterator::initialize(PyObject* m)
+int DemandPlanIterator::initialize(PyObject* m)
 {
   // Initialize the type
-  PythonType& x = PythonExtension<PythonDemandPlanIterator>::getType();
+  PythonType& x = PythonExtension<DemandPlanIterator>::getType();
   x.setName("demandplanIterator");
   x.setDoc("frePPLe iterator for demand delivery operationplans");
   x.supportiter();
@@ -425,7 +450,7 @@ int PythonDemandPlanIterator::initialize(PyObject* m)
 }
 
 
-PyObject* PythonDemandPlanIterator::iternext()
+PyObject* DemandPlanIterator::iternext()
 {  
   if (i == dem->getDelivery().end()) return NULL;
   PyObject* result = const_cast<OperationPlan*>(&**(i++));

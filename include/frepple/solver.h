@@ -127,7 +127,7 @@ class SolverMRP : public Solver
       *    operation has been specified.
       *  - The minimum calendar isn't used by the solver.
       *
-      * @TODO Optimize the solver method as follows for the common case of infinite
+      * @todo Optimize the solver method as follows for the common case of infinite
       * buying capability (ie no max quantity + min time):
       *  - beyond lead time: always reply OK, without rearranging the operation plans
       *  - at the end of the solver loop, we revisit the procurement buffers to establish
@@ -203,6 +203,7 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize(PyObject* m);
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -506,11 +507,6 @@ class SolverMRP : public Solver
       * feasible date.
       */
     DECLARE_EXPORT void checkOperationCapacity(OperationPlan*, SolverMRPdata&);
-};
-
-
-class PythonSolverMRP : public FreppleClass<PythonSolverMRP,PythonSolver,SolverMRP>
-{
 };
 
 

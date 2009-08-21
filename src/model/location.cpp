@@ -32,6 +32,29 @@ namespace frepple
 {
 
 template<class Location> DECLARE_EXPORT Tree utils::HasName<Location>::st;
+DECLARE_EXPORT const MetaCategory* Location::metadata;
+DECLARE_EXPORT const MetaClass* LocationDefault::metadata;
+
+
+int Location::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaCategory("location", "locations", reader, writer);
+
+  // Initialize the Python class
+  return FreppleCategory<Location,Location>::initialize(m);
+}
+
+
+int LocationDefault::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  LocationDefault::metadata = new MetaClass("location", "location_default",
+    Object::createString<LocationDefault>, true);
+
+  // Initialize the Python class
+  return FreppleClass<LocationDefault,Location,LocationDefault>::initialize(m);
+}
 
 
 DECLARE_EXPORT void Location::writeElement(XMLOutput* o, const Keyword& tag, mode m) const
@@ -138,7 +161,7 @@ DECLARE_EXPORT int Location::setattro(const Attribute& attr, const PythonObject&
     setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_owner))
   {
-    if (!field.check(PythonLocation::getType())) 
+    if (!field.check(Location::metadata)) 
     {
       PyErr_SetString(PythonDataException, "location owner must be of type location");
       return -1;
@@ -148,7 +171,7 @@ DECLARE_EXPORT int Location::setattro(const Attribute& attr, const PythonObject&
   }
   else if (attr.isA(Tags::tag_available))
   {
-    if (!field.check(PythonCalendarBool::getType())) 
+    if (!field.check(CalendarBool::metadata)) 
     {
       PyErr_SetString(PythonDataException, "location calendar must be of type calendar_bool");
       return -1;

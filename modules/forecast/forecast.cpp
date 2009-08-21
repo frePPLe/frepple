@@ -33,6 +33,42 @@ namespace module_forecast
 const Keyword Forecast::tag_total("total");
 const Keyword Forecast::tag_net("net");
 const Keyword Forecast::tag_consumed("consumed");
+const MetaClass *Forecast::metadata;
+const MetaClass *ForecastBucket::metadata;
+
+
+int Forecast::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  metadata = new MetaClass("demand", "demand_forecast",
+    Object::createString<Forecast>);
+
+  // Get notified when a calendar is deleted
+  FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
+
+  // Initialize the Python class
+  FreppleClass<Forecast,Demand,Forecast>::getType().addMethod("timeseries", Forecast::timeseries, METH_VARARGS,
+     "Set the future based on the timeseries of historical data");
+  return FreppleClass<Forecast,Demand,Forecast>::initialize(m);
+}
+
+
+int ForecastBucket::initialize(PyObject* m)
+{
+  // Initialize the metadata
+  // No factory method for this class
+  metadata = new MetaClass("demand", "demand_forecastbucket");
+
+  // Initialize the Python class
+  // No support for creation
+  PythonType& x = FreppleClass<ForecastBucket,Demand,ForecastBucket>::getType();
+  x.setName("demand_forecastbucket");
+  x.setDoc("frePPLe forecastbucket");
+  x.supportgetattro();
+  x.supportsetattro();
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady(m);
+}
 
 
 bool Forecast::callback(Calendar* l, const Signal a)

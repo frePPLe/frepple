@@ -5503,60 +5503,60 @@ inline int OperationPlan::sizeLoadPlans() const
 
 
 class ProblemIterator
-  : public FreppleIterator<ProblemIterator,Problem::const_iterator,Problem,Problem>
+  : public FreppleIterator<ProblemIterator,Problem::const_iterator,Problem>
 {
 };
 
 
 class BufferIterator
-  : public FreppleIterator<BufferIterator,Buffer::iterator,Buffer,Buffer>
+  : public FreppleIterator<BufferIterator,Buffer::iterator,Buffer>
 {
 };
 
 
 class LocationIterator
-  : public FreppleIterator<LocationIterator,Location::iterator,Location,Location>
+  : public FreppleIterator<LocationIterator,Location::iterator,Location>
 {
 };
 
 
 class CustomerIterator
-  : public FreppleIterator<CustomerIterator,Customer::iterator,Customer,Customer>
+  : public FreppleIterator<CustomerIterator,Customer::iterator,Customer>
 {
 };
 
 
 class ItemIterator
-  : public FreppleIterator<ItemIterator,Item::iterator,Item,Item>
+  : public FreppleIterator<ItemIterator,Item::iterator,Item>
 {
 };
 
 class DemandIterator
-  : public FreppleIterator<DemandIterator,Demand::iterator,Demand,Demand>
+  : public FreppleIterator<DemandIterator,Demand::iterator,Demand>
 {
 };
 
 
 class ResourceIterator
-  : public FreppleIterator<ResourceIterator,Resource::iterator,Resource,Resource>
+  : public FreppleIterator<ResourceIterator,Resource::iterator,Resource>
 {
 };
 
 
 class SolverIterator
-  : public FreppleIterator<SolverIterator,Solver::iterator,Solver,Solver>
+  : public FreppleIterator<SolverIterator,Solver::iterator,Solver>
 {
 };
 
 
 class OperationIterator
-  : public FreppleIterator<OperationIterator,Operation::iterator,Operation,Operation>
+  : public FreppleIterator<OperationIterator,Operation::iterator,Operation>
 {
 };
 
 
 class CalendarIterator
-  : public FreppleIterator<CalendarIterator,Calendar::iterator,Calendar,Calendar>
+  : public FreppleIterator<CalendarIterator,Calendar::iterator,Calendar>
 {
 };
 
@@ -5608,7 +5608,7 @@ class CalendarEventIterator
 
 
 class OperationPlanIterator
-  : public FreppleIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan,OperationPlan>
+  : public FreppleIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>
 {
   public:
     /** Constructor to iterate over all operationplans. */
@@ -5616,7 +5616,7 @@ class OperationPlanIterator
 
     /** Constructor to iterate over the operationplans of a single operation. */
     OperationPlanIterator(Operation* o)
-      : FreppleIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan,OperationPlan>(o)
+      : FreppleIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>(o)
     {}
 };
 

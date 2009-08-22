@@ -125,7 +125,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE> >
 
 
 /** @brief A template class to expose iterators to Python. */
-template <class ME, class ITERCLASS, class DATACLASS, class PROXYCLASS>
+template <class ME, class ITERCLASS, class DATACLASS>
 class FreppleIterator : public PythonExtension<ME>
 {
   public:

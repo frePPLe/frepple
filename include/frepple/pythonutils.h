@@ -38,82 +38,25 @@ namespace frepple
 namespace utils
 {
 
-
-/** @brief Template class to define Python extensions.
-  *
-  * The template argument should be your extension class, inheriting from
-  * this template class:
-  *   class MyClass : PythonExtension<MyClass>
-  *
-  * The structure of the C++ wrappers around the C Python API is heavily
-  * inspired on the design of PyCXX.<br>
-  * More information can be found on http://cxx.sourceforge.net
-  */
-template<class T>
-class PythonExtension: public PythonExtensionBase, public NonCopyable
-{
-  public:
-    /** Constructor. */
-    explicit PythonExtension()
-    {
-      PyObject_Init(this, getType().type_object());
-    }
-
-    /** Destructor. */
-    virtual ~PythonExtension() {}
-
-    /** This method keeps the type information object for your extension. */
-    static PythonType& getType() 
-    {
-      static PythonType* cachedTypePtr = NULL;
-      if (cachedTypePtr) return *cachedTypePtr;
-      
-      // Scan the vector
-      for (vector<PythonType*>::const_iterator i = table.begin(); i != table.end(); ++i)
-        if (**i==typeid(T))
-        {
-          // Found...
-          cachedTypePtr = *i;
-          return *cachedTypePtr;
-        }
-      
-      // Not found in the vector, so create a new one
-      cachedTypePtr = new PythonType(sizeof(T), &typeid(T));
-      table.push_back(cachedTypePtr);
-
-      // Using our own memory deallocator
-      cachedTypePtr->supportdealloc( deallocator );
-
-      return *cachedTypePtr;
-    }
-
-    /** Free the memory.<br>
-      * See the note on the memory management in the class documentation
-      * for PythonExtensionBase.
-      */
-    static void deallocator(PyObject* o) {delete static_cast<T*>(o);}
-};
-
-
 /** @brief A template class to expose category classes which use a string
   * as the key to Python . */
-template <class ME, class PROXY>
-class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
+template <class T>
+class FreppleCategory : public PythonExtension< FreppleCategory<T> >
 {
   public:
     /** Initialization method. */
     static int initialize(PyObject* m)
     {
       // Initialize the type
-      PythonType& x = PythonExtension< FreppleCategory<ME,PROXY> >::getType();
-      x.setName(PROXY::metadata->type);
-      x.setDoc("frePPLe " + PROXY::metadata->type);
+      PythonType& x = PythonExtension< FreppleCategory<T> >::getType();
+      x.setName(T::metadata->type);
+      x.setDoc("frePPLe " + T::metadata->type);
       x.supportgetattro();
       x.supportsetattro();
       //x.supportstr();
       //x.supportcompare();xxx
-      x.supportcreate(create);
-      const_cast<MetaCategory*>(PROXY::metadata)->pythonClass = x.type_object();
+      x.supportcreate(Object::create<T>);
+      const_cast<MetaCategory*>(T::metadata)->pythonClass = x.type_object();
       return x.typeReady(m);
     }
 
@@ -130,69 +73,28 @@ class FreppleCategory : public PythonExtension< FreppleCategory<ME,PROXY> >
       PROXY* y = static_cast<PROXY*>(static_cast<PyObject*>(other));
       return obj->getName().compare(y->getName());
     }*/
-
-    static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
-    {
-      try
-      {
-        // Find or create the C++ object
-        PythonAttributeList atts(kwds);
-        Object* x = PROXY::reader(PROXY::metadata,atts);
-        
-        // Object was deleted
-        if (!x)       
-        {
-          Py_INCREF(Py_None);
-          return Py_None;
-        }
-
-        // Iterate over extra keywords, and set attributes. @todo move this responsability to the readers...
-        PyObject *key, *value;
-        Py_ssize_t pos = 0;
-        while (PyDict_Next(kwds, &pos, &key, &value))
-        {
-          PythonObject field(value);
-          Attribute attr(PyString_AsString(key));
-          if (!attr.isA(Tags::tag_name) && !attr.isA(Tags::tag_type) && !attr.isA(Tags::tag_action))
-          {
-            int result = x->setattro(attr, field);
-            if (result && !PyErr_Occurred())
-              PyErr_Format(PyExc_AttributeError,
-                "attribute '%s' on '%s' can't be updated",
-                PyString_AsString(key), x->ob_type->tp_name);
-          }
-        };
-        Py_INCREF(x);
-        return x;
-      }
-      catch (...)
-      {
-        PythonType::evalException();
-        return NULL;
-      }
-    }
 };
 
 
 /** @brief A template class to expose classes to Python. */
-template <class ME, class BASE, class PROXY>
-class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
+template <class ME, class BASE>
+class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE> >
 {
   public:
     static int initialize(PyObject* m)
     {
       // Initialize the type
-      PythonType& x = PythonExtension< FreppleClass<ME,BASE,PROXY> >::getType();
-      x.setName(PROXY::metadata->type);
-      x.setDoc("frePPLe " + PROXY::metadata->type);
+      PythonType& x = PythonExtension< FreppleClass<ME,BASE> >::getType();
+      x.setName(ME::metadata->type);
+      x.setDoc("frePPLe " + ME::metadata->type);
       x.supportgetattro();
       x.supportsetattro();
       //x.supportstr();xxx
-     // x.supportcompare();xxx
-      x.supportcreate(create);
+      // x.supportcompare();xxx
+      x.supportcreate(Object::create<ME>);
       x.setBase(BASE::metadata->pythonClass);
-      x.addMethod("toXML", PROXY::toXML, METH_VARARGS, "return a XML representation");
-      const_cast<MetaClass*>(PROXY::metadata)->pythonClass = x.type_object();
+      x.addMethod("toXML", ME::toXML, METH_VARARGS, "return a XML representation");
+      const_cast<MetaClass*>(ME::metadata)->pythonClass = x.type_object();
       return x.typeReady(m);
     }
 
@@ -219,48 +121,6 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
       return obj->getName().compare(y->getName());
     }
     */
-
-    /** Generator function. */
-    static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
-    {
-      try
-      {
-        // Find or create the C++ object
-        PythonAttributeList atts(kwds);
-        Object* x = PROXY::reader(PROXY::metadata,atts);
-        
-        // Object was deleted
-        if (!x)       
-        {
-          Py_INCREF(Py_None);
-          return Py_None;
-        }
-
-        // Iterate over extra keywords, and set attributes.   @todo move this responsability to the readers...
-        PyObject *key, *value;
-        Py_ssize_t pos = 0;
-        while (PyDict_Next(kwds, &pos, &key, &value))
-        {
-          PythonObject field(value);
-          Attribute attr(PyString_AsString(key));
-          if (!attr.isA(Tags::tag_name) && !attr.isA(Tags::tag_type) && !attr.isA(Tags::tag_action))
-          {
-            int result = x->setattro(attr, field);
-            if (result && !PyErr_Occurred())
-              PyErr_Format(PyExc_AttributeError,
-                "attribute '%s' on '%s' can't be updated",
-                PyString_AsString(key), x->ob_type->tp_name);
-          }
-        };
-        Py_INCREF(x);
-        return x;
-      }
-      catch (...)
-      {
-        PythonType::evalException();
-        return NULL;
-      }
-    }
 };
 
 

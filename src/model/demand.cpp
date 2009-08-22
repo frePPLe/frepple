@@ -42,7 +42,7 @@ int Demand::initialize(PyObject* m)
   metadata = new MetaCategory("demand", "demands", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Demand,Demand>::initialize(m);
+  return FreppleCategory<Demand>::initialize(m);
 }
 
 
@@ -55,7 +55,7 @@ int DemandDefault::initialize(PyObject* m)
     Object::createString<DemandDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<DemandDefault,Demand,DemandDefault>::initialize(m);
+  return FreppleClass<DemandDefault,Demand>::initialize(m);
 }
 
 

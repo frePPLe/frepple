@@ -42,7 +42,7 @@ int Item::initialize(PyObject* m)
   metadata = new MetaCategory("item", "items", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Item,Item>::initialize(m);
+  return FreppleCategory<Item>::initialize(m);
 }
 
 
@@ -53,7 +53,7 @@ int ItemDefault::initialize(PyObject* m)
     Object::createString<ItemDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<ItemDefault,Item,ItemDefault>::initialize(m);
+  return FreppleClass<ItemDefault,Item>::initialize(m);
 }
 
 

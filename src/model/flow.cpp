@@ -46,7 +46,7 @@ int Flow::initialize(PyObject* m)
     Object::createDefault<FlowEnd>);
 
   // Initialize the type
-  PythonType& x = FreppleCategory<Flow,Flow>::getType();
+  PythonType& x = FreppleCategory<Flow>::getType();
   x.setName("flow");
   x.setDoc("frePPLe flow");
   x.supportgetattro();

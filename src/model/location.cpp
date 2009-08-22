@@ -42,7 +42,7 @@ int Location::initialize(PyObject* m)
   metadata = new MetaCategory("location", "locations", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Location,Location>::initialize(m);
+  return FreppleCategory<Location>::initialize(m);
 }
 
 
@@ -53,7 +53,7 @@ int LocationDefault::initialize(PyObject* m)
     Object::createString<LocationDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<LocationDefault,Location,LocationDefault>::initialize(m);
+  return FreppleClass<LocationDefault,Location>::initialize(m);
 }
 
 

@@ -45,7 +45,7 @@ int OperationPlan::initialize(PyObject* m)
   OperationPlan::metadata = new MetaClass("operationplan", "operationplan");
 
   // Initialize the Python type
-  PythonType& x = FreppleCategory<OperationPlan,OperationPlan>::getType();
+  PythonType& x = FreppleCategory<OperationPlan>::getType();
   x.setName("operationplan");
   x.setDoc("frePPLe operationplan");
   x.supportgetattro();

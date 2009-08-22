@@ -42,7 +42,7 @@ int Customer::initialize(PyObject* m)
   metadata = new MetaCategory("customer", "customers", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Customer,Customer>::initialize(m);
+  return FreppleCategory<Customer>::initialize(m);
 }
 
 
@@ -55,7 +55,7 @@ int CustomerDefault::initialize(PyObject* m)
     Object::createString<CustomerDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<CustomerDefault,Customer,CustomerDefault>::initialize(m);
+  return FreppleClass<CustomerDefault,Customer>::initialize(m);
 }
 
 

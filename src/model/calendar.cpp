@@ -49,7 +49,7 @@ int Calendar::initialize(PyObject* m)
 
   // Initialize the Python class
   return Calendar::Bucket::initialize(m) +
-    FreppleCategory<Calendar,Calendar>::initialize(m);
+    FreppleCategory<Calendar>::initialize(m);
 }
 
 
@@ -76,9 +76,9 @@ int CalendarVoid::initialize(PyObject* m)
     Object::createString<CalendarVoid>);
 
   // Initialize the Python class
-  FreppleClass<CalendarVoid,Calendar,CalendarVoid>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
-  FreppleClass<CalendarVoid,Calendar,CalendarVoid>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
-  return FreppleClass<CalendarVoid,Calendar,CalendarVoid>::initialize(m);
+  FreppleClass<CalendarVoid,Calendar>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarVoid,Calendar>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  return FreppleClass<CalendarVoid,Calendar>::initialize(m);
 }
 
 
@@ -89,9 +89,9 @@ int CalendarDouble::initialize(PyObject* m)
     Object::createString<CalendarDouble>, true);
 
   // Initialize the Python class
-  FreppleClass<CalendarDouble,Calendar,CalendarDouble>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
-  FreppleClass<CalendarDouble,Calendar,CalendarDouble>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
-  return FreppleClass<CalendarDouble,Calendar,CalendarDouble>::initialize(m);
+  FreppleClass<CalendarDouble,Calendar>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarDouble,Calendar>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  return FreppleClass<CalendarDouble,Calendar>::initialize(m);
 }
 
 
@@ -102,9 +102,9 @@ int CalendarInt::initialize(PyObject* m)
     Object::createString<CalendarInt>);
 
   // Initialize the Python class
-  FreppleClass<CalendarInt,Calendar,CalendarInt>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
-  FreppleClass<CalendarInt,Calendar,CalendarInt>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
-  return FreppleClass<CalendarInt,Calendar,CalendarInt>::initialize(m);
+  FreppleClass<CalendarInt,Calendar>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarInt,Calendar>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  return FreppleClass<CalendarInt,Calendar>::initialize(m);
 }
 
 
@@ -115,9 +115,9 @@ int CalendarBool::initialize(PyObject* m)
     Object::createString<CalendarBool>);
 
   // Initialize the Python class
-  FreppleClass<CalendarBool,Calendar,CalendarBool>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
-  FreppleClass<CalendarBool,Calendar,CalendarBool>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
-  return FreppleClass<CalendarBool,Calendar,CalendarBool>::initialize(m);
+  FreppleClass<CalendarBool,Calendar>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarBool,Calendar>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  return FreppleClass<CalendarBool,Calendar>::initialize(m);
 }
 
 
@@ -128,9 +128,9 @@ int CalendarString::initialize(PyObject* m)
     Object::createString<CalendarString>);
 
   // Initialize the Python class
-  FreppleClass<CalendarString,Calendar,CalendarString>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
-  FreppleClass<CalendarString,Calendar,CalendarString>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
-  return FreppleClass<CalendarString,Calendar,CalendarString>::initialize(m);
+  FreppleClass<CalendarString,Calendar>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarString,Calendar>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  return FreppleClass<CalendarString,Calendar>::initialize(m);
 }
 
 
@@ -141,9 +141,9 @@ int CalendarOperation::initialize(PyObject* m)
     Object::createString<CalendarOperation>);
 
   // Initialize the Python class
-  FreppleClass<CalendarOperation,Calendar,CalendarOperation>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
-  FreppleClass<CalendarOperation,Calendar,CalendarOperation>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
-  return FreppleClass<CalendarOperation,Calendar,CalendarOperation>::initialize(m);
+  FreppleClass<CalendarOperation,Calendar>::getType().addMethod("setValue", setPythonValue, METH_KEYWORDS, "update the value in a date range");
+  FreppleClass<CalendarOperation,Calendar>::getType().addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
+  return FreppleClass<CalendarOperation,Calendar>::initialize(m);
 }
 
 

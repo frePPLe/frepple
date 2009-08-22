@@ -47,9 +47,9 @@ int Forecast::initialize(PyObject* m)
   FunctorStatic<Calendar,Forecast>::connect(SIG_REMOVE);
 
   // Initialize the Python class
-  FreppleClass<Forecast,Demand,Forecast>::getType().addMethod("timeseries", Forecast::timeseries, METH_VARARGS,
+  FreppleClass<Forecast,Demand>::getType().addMethod("timeseries", Forecast::timeseries, METH_VARARGS,
      "Set the future based on the timeseries of historical data");
-  return FreppleClass<Forecast,Demand,Forecast>::initialize(m);
+  return FreppleClass<Forecast,Demand>::initialize(m);
 }
 
 
@@ -61,7 +61,7 @@ int ForecastBucket::initialize(PyObject* m)
 
   // Initialize the Python class
   // No support for creation
-  PythonType& x = FreppleClass<ForecastBucket,Demand,ForecastBucket>::getType();
+  PythonType& x = FreppleClass<ForecastBucket,Demand>::getType();
   x.setName("demand_forecastbucket");
   x.setDoc("frePPLe forecastbucket");
   x.supportgetattro();

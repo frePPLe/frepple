@@ -52,7 +52,7 @@ int Buffer::initialize(PyObject* m)
   metadata = new MetaCategory("buffer", "buffers", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Buffer,Buffer>::initialize(m);
+  return FreppleCategory<Buffer>::initialize(m);
 }
 
 
@@ -65,7 +65,7 @@ int BufferDefault::initialize(PyObject* m)
     Object::createString<BufferDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<BufferDefault,Buffer,BufferDefault>::initialize(m);
+  return FreppleClass<BufferDefault,Buffer>::initialize(m);
 }
 
 
@@ -78,7 +78,7 @@ int BufferInfinite::initialize(PyObject* m)
     Object::createString<BufferInfinite>);
 
   // Initialize the Python class
-  return FreppleClass<BufferInfinite,Buffer,BufferInfinite>::initialize(m);
+  return FreppleClass<BufferInfinite,Buffer>::initialize(m);
 }
 
 
@@ -91,7 +91,7 @@ int BufferProcure::initialize(PyObject* m)
     Object::createString<BufferProcure>);
 
   // Initialize the Python class
-  return FreppleClass<BufferProcure,Buffer,BufferProcure>::initialize(m);
+  return FreppleClass<BufferProcure,Buffer>::initialize(m);
 }
 
 

@@ -3003,6 +3003,62 @@ class PythonExtensionBase : public PyObject
 };
 
 
+/** @brief Template class to define Python extensions.
+  *
+  * The template argument should be your extension class, inheriting from
+  * this template class:
+  *   class MyClass : PythonExtension<MyClass>
+  *
+  * The structure of the C++ wrappers around the C Python API is heavily
+  * inspired on the design of PyCXX.<br>
+  * More information can be found on http://cxx.sourceforge.net
+  */
+template<class T>
+class PythonExtension: public PythonExtensionBase, public NonCopyable
+{
+  public:
+    /** Constructor. */
+    explicit PythonExtension()
+    {
+      PyObject_Init(this, getType().type_object());
+    }
+
+    /** Destructor. */
+    virtual ~PythonExtension() {}
+
+    /** This method keeps the type information object for your extension. */
+    static PythonType& getType() 
+    {
+      static PythonType* cachedTypePtr = NULL;
+      if (cachedTypePtr) return *cachedTypePtr;
+      
+      // Scan the vector
+      for (vector<PythonType*>::const_iterator i = table.begin(); i != table.end(); ++i)
+        if (**i==typeid(T))
+        {
+          // Found...
+          cachedTypePtr = *i;
+          return *cachedTypePtr;
+        }
+      
+      // Not found in the vector, so create a new one
+      cachedTypePtr = new PythonType(sizeof(T), &typeid(T));
+      table.push_back(cachedTypePtr);
+
+      // Using our own memory deallocator
+      cachedTypePtr->supportdealloc( deallocator );
+
+      return *cachedTypePtr;
+    }
+
+    /** Free the memory.<br>
+      * See the note on the memory management in the class documentation
+      * for PythonExtensionBase.
+      */
+    static void deallocator(PyObject* o) {delete static_cast<T*>(o);}
+};
+
+
 /** @brief Object is the abstract base class for the main entities.
   *
   * It handles to following capabilities:
@@ -3065,15 +3121,66 @@ class Object : public PythonExtensionBase
 
     /** This template function can generate a factory method for objects that
       * can be constructed with their default constructor.  */
-    template <class T> static Object* createDefault()
-      {return new T();}
+    template <class T> 
+    static Object* createDefault()
+    {
+      return new T();
+    }
 
     /** This template function can generate a factory method for objects that
       * need a string argument in their constructor. */
-    template <class T> static Object* createString(const string& n)
-      {return new T(n);}
+    template <class T> 
+    static Object* createString(const string& n)
+    {
+      return new T(n);
+    }
 
   //protected: @todo should be protected - only reason why this isn't possible yet is the freppleClass::initialize implementation
+    /** Template function that generates a factory method callable 
+      * from Python. */
+    template<class T> 
+    static PyObject* create
+      (PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+    {
+      try
+      {
+        // Find or create the C++ object
+        PythonAttributeList atts(kwds);
+        Object* x = T::reader(T::metadata, atts);
+        
+        // Object was deleted
+        if (!x)       
+        {
+          Py_INCREF(Py_None);
+          return Py_None;
+        }
+
+        // Iterate over extra keywords, and set attributes.   @todo move this responsability to the readers...
+        PyObject *key, *value;
+        Py_ssize_t pos = 0;
+        while (PyDict_Next(kwds, &pos, &key, &value))
+        {
+          PythonObject field(value);
+          Attribute attr(PyString_AsString(key));
+          if (!attr.isA(Tags::tag_name) && !attr.isA(Tags::tag_type) && !attr.isA(Tags::tag_action))
+          {
+            int result = x->setattro(attr, field);
+            if (result && !PyErr_Occurred())
+              PyErr_Format(PyExc_AttributeError,
+                "attribute '%s' on '%s' can't be updated",
+                PyString_AsString(key), x->ob_type->tp_name);
+          }
+        };
+        Py_INCREF(x);
+        return x;
+      }
+      catch (...)
+      {
+        PythonType::evalException();
+        return NULL;
+      }
+    }
+
     /** Return an XML representation of the object.<br>
       * If a file object is passed as argument, the representation is directly
       * written to it.<br>

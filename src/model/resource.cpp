@@ -43,7 +43,7 @@ int Resource::initialize(PyObject* m)
   metadata = new MetaCategory("resource", "resources", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Resource,Resource>::initialize(m);
+  return FreppleCategory<Resource>::initialize(m);
 }
 
 
@@ -57,7 +57,7 @@ int ResourceDefault::initialize(PyObject* m)
     true);
 
   // Initialize the Python class
-  return FreppleClass<ResourceDefault,Resource,ResourceDefault>::initialize(m);
+  return FreppleClass<ResourceDefault,Resource>::initialize(m);
 }
 
 
@@ -70,7 +70,7 @@ int ResourceInfinite::initialize(PyObject* m)
     Object::createString<ResourceInfinite>);
 
   // Initialize the Python class
-  return FreppleClass<ResourceInfinite,Resource,ResourceInfinite>::initialize(m);
+  return FreppleClass<ResourceInfinite,Resource>::initialize(m);
 }
 
 

@@ -46,7 +46,7 @@ int Operation::initialize(PyObject* m)
   metadata = new MetaCategory("operation", "operations", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Operation,Operation>::initialize(m);
+  return FreppleCategory<Operation>::initialize(m);
 }
 
 
@@ -57,7 +57,7 @@ int OperationFixedTime::initialize(PyObject* m)
     Object::createString<OperationFixedTime>, true);
 
   // Initialize the Python class
-  return FreppleClass<OperationFixedTime,Operation,OperationFixedTime>::initialize(m);
+  return FreppleClass<OperationFixedTime,Operation>::initialize(m);
 }
 
 
@@ -68,7 +68,7 @@ int OperationTimePer::initialize(PyObject* m)
     Object::createString<OperationTimePer>);
 
   // Initialize the Python class
-  return FreppleClass<OperationTimePer,Operation,OperationTimePer>::initialize(m);
+  return FreppleClass<OperationTimePer,Operation>::initialize(m);
 }
 
 
@@ -79,8 +79,8 @@ int OperationAlternate::initialize(PyObject* m)
     Object::createString<OperationAlternate>);
 
   // Initialize the Python class
-  FreppleClass<OperationAlternate,Operation,OperationAlternate>::getType().addMethod("addAlternate", OperationAlternate::addAlternate, METH_KEYWORDS, "add an alternate");
-  return FreppleClass<OperationAlternate,Operation,OperationAlternate>::initialize(m);
+  FreppleClass<OperationAlternate,Operation>::getType().addMethod("addAlternate", OperationAlternate::addAlternate, METH_KEYWORDS, "add an alternate");
+  return FreppleClass<OperationAlternate,Operation>::initialize(m);
 }
 
 
@@ -91,8 +91,8 @@ int OperationRouting::initialize(PyObject* m)
     Object::createString<OperationRouting>);
 
   // Initialize the Python class
-  FreppleClass<OperationRouting,Operation,OperationRouting>::getType().addMethod("addStep", OperationRouting::addStep, METH_VARARGS , "add steps to the routing");
-  return FreppleClass<OperationRouting,Operation,OperationRouting>::initialize(m);
+  FreppleClass<OperationRouting,Operation>::getType().addMethod("addStep", OperationRouting::addStep, METH_VARARGS , "add steps to the routing");
+  return FreppleClass<OperationRouting,Operation>::initialize(m);
 }
 
 

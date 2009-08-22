@@ -94,7 +94,7 @@ int LPSolver::initialize(PyObject* m)
     Object::createString<LPSolver>);
 
   // Initialize the Python class
-  return FreppleClass<LPSolver,Solver,LPSolver>::initialize(m);
+  return FreppleClass<LPSolver,Solver>::initialize(m);
 }
 
 

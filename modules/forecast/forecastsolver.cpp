@@ -39,7 +39,7 @@ int ForecastSolver::initialize(PyObject* m)
     Object::createString<ForecastSolver>);
 
   // Initialize the Python class
-  return FreppleClass<ForecastSolver,Solver,ForecastSolver>::initialize(m);
+  return FreppleClass<ForecastSolver,Solver>::initialize(m);
 }
 
 

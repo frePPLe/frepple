@@ -58,7 +58,7 @@ int SolverMRP::initialize(PyObject* m)
     ("solver","solver_mrp",Object::createString<SolverMRP>,true);
 
   // Initialize the Python class
-  return FreppleClass<SolverMRP,Solver,SolverMRP>::initialize(m);
+  return FreppleClass<SolverMRP,Solver>::initialize(m);
 }
 
 

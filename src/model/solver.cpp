@@ -41,8 +41,8 @@ int Solver::initialize(PyObject* m)
   metadata = new MetaCategory("solver", "solvers", reader, writer);
 
   // Initialize the Python class
-  FreppleCategory<Solver,Solver>::getType().addMethod("solve", solve, METH_NOARGS, "run the solver");
-  return FreppleCategory<Solver,Solver>::initialize(m);
+  FreppleCategory<Solver>::getType().addMethod("solve", solve, METH_NOARGS, "run the solver");
+  return FreppleCategory<Solver>::initialize(m);
 }
 
 

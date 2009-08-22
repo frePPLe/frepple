@@ -52,7 +52,7 @@ int Flow::initialize(PyObject* m)
   x.supportgetattro();
   x.supportsetattro();
   x.supportcreate(create);
-  x.addMethod("toXML", FreppleCategory<Flow,Flow>::toXML, METH_VARARGS, "return a XML representation");
+  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(Flow::metadata)->pythonClass = x.type_object();
   return x.typeReady(m);
 }

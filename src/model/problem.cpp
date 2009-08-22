@@ -90,7 +90,7 @@ int Problem::initialize(PyObject* m)
   x.setDoc("frePPLe problem");
   x.supportgetattro();
   x.supportstr();
-  x.addMethod("toXML", PythonExtension<Problem>::toXML, METH_VARARGS, "return a XML representation");
+  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
   return x.typeReady(m);
 }

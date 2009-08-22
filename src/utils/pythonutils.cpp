@@ -442,6 +442,49 @@ DECLARE_EXPORT PythonType::PythonType(size_t base_size, const type_info* tp)
 }
 
 
+DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
+{
+  try
+  {
+    // Parse the argument
+    PyObject *filearg = NULL;
+    if (PyArg_UnpackTuple(args, "toXML", 0, 1, &filearg))
+    {
+      ostringstream ch;
+      XMLOutput x(ch);
+      // Create the XML string.
+      // The next call only works if the self argument is effectively an
+      // instance of the Object base class! We don't check this.
+      static_cast<Object*>(self)->writeElement
+        (&x, *(static_cast<Object*>(self)->getType().category->typetag));
+      // Write the output...
+      if (filearg)          
+      {
+        if (PyFile_Check(filearg))
+        {
+          // ... to a file
+          return PyFile_WriteString(ch.str().c_str(), filearg) ?
+            NULL : // Error writing to the file
+            Py_BuildValue("");
+        }
+        else
+          // The argument is not a file
+          throw LogicException("Expecting a file argument");
+      }
+      else
+        // ... to a string
+        return PythonObject(ch.str());
+    }
+  }
+  catch(...)
+  {
+    PythonType::evalException();
+    return NULL;
+  }
+  throw LogicException("Unreachable code reached");
+}
+
+
 DECLARE_EXPORT void PythonType::addMethod
   (const char* method_name, PyCFunction f, int flags, const char* doc )
 {

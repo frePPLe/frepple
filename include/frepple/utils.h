@@ -3072,6 +3072,14 @@ class Object : public PythonExtensionBase
       * need a string argument in their constructor. */
     template <class T> static Object* createString(const string& n)
       {return new T(n);}
+
+  //protected: @todo should be protected - only reason why this isn't possible yet is the freppleClass::initialize implementation
+    /** Return an XML representation of the object.<br>
+      * If a file object is passed as argument, the representation is directly
+      * written to it.<br>
+      * If no argument is given the representation is returned as a string.
+      */
+    static DECLARE_EXPORT PyObject* toXML(PyObject*, PyObject*);
 };
 
 

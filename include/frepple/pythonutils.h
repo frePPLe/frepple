@@ -92,54 +92,6 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
       * for PythonExtensionBase.
       */
     static void deallocator(PyObject* o) {delete static_cast<T*>(o);}
-
-    /** Return an XML representation of the object.<br>
-      * If a file object is passed as argument, the representation is directly
-      * written to it.<br>
-      * If no argument is given the representation is returned as a string.
-      */
-    static PyObject* toXML(PyObject* self, PyObject* args)
-    {
-      try
-      {
-        // Check the self argument
-        Object *o = static_cast<Object*>(self);
-        if (!o) throw LogicException("Can't generate a XML representation");
-
-        // Parse the argument
-        PyObject *filearg = NULL;
-        if (PyArg_UnpackTuple(args, "toXML", 0, 1, &filearg))
-        {
-          ostringstream ch;
-          XMLOutput x(ch);
-          // Create the XML string
-          o->writeElement(&x, *(o->getType().category->typetag));
-          // Write the output...
-          if (filearg)          
-          {
-            if (PyFile_Check(filearg))
-            {
-              // ... to a file
-              return PyFile_WriteString(ch.str().c_str(), filearg) ?
-                NULL : // Error writing to the file
-                Py_BuildValue("");
-            }
-            else
-              // The argument is not a file
-              throw LogicException("Expecting a file argument");
-          }
-          else
-            // ... to a string
-            return PythonObject(ch.str());
-        }
-      }
-      catch(...)
-      {
-        PythonType::evalException();
-        return NULL;
-      }
-      throw LogicException("Unreachable code reached");
-    }
 };
 
 
@@ -239,7 +191,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE,PROXY> >
      // x.supportcompare();xxx
       x.supportcreate(create);
       x.setBase(BASE::metadata->pythonClass);
-      x.addMethod("toXML", PythonExtension< FreppleClass<ME,BASE,PROXY> >::toXML, METH_VARARGS, "return a XML representation");
+      x.addMethod("toXML", PROXY::toXML, METH_VARARGS, "return a XML representation");
       const_cast<MetaClass*>(PROXY::metadata)->pythonClass = x.type_object();
       return x.typeReady(m);
     }

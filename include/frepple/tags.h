@@ -114,7 +114,6 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_mininterval;
     static DECLARE_EXPORT const Keyword tag_mininventory;
     static DECLARE_EXPORT const Keyword tag_minshipment;
-    static DECLARE_EXPORT const Keyword tag_mode;
     static DECLARE_EXPORT const Keyword tag_name;
     static DECLARE_EXPORT const Keyword tag_onhand;
     static DECLARE_EXPORT const Keyword tag_operation;
@@ -139,6 +138,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_quantity_demand;
     static DECLARE_EXPORT const Keyword tag_resource;
     static DECLARE_EXPORT const Keyword tag_resources;
+    static DECLARE_EXPORT const Keyword tag_search;
     static DECLARE_EXPORT const Keyword tag_size_maximum;
     static DECLARE_EXPORT const Keyword tag_size_minimum;
     static DECLARE_EXPORT const Keyword tag_size_multiple;

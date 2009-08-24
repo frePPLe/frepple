@@ -59,20 +59,6 @@ class FreppleCategory : public PythonExtension< FreppleCategory<T> >
       const_cast<MetaCategory*>(T::metadata)->pythonClass = x.type_object();
       return x.typeReady(m);
     }
-
-  private:
-    /** Comparison operator. xxx
-    int compare(const PythonObject& other)
-    {
-      if (!obj || !other.check(ME::getType()))
-      {
-        // Different type
-        PyErr_SetString(PythonDataException, "Wrong type in comparison");
-        return -1;
-      }
-      PROXY* y = static_cast<PROXY*>(static_cast<PyObject*>(other));
-      return obj->getName().compare(y->getName());
-    }*/
 };
 
 

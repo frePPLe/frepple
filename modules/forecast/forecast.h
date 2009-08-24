@@ -882,8 +882,6 @@ class ForecastSolver : public Solver
     static const MetaClass *metadata;
     virtual size_t getSize() const {return sizeof(ForecastSolver);}
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
-    virtual PyObject* getattro(const Attribute&);
-    virtual int setattro(const Attribute&, const PythonObject&);
     static int initialize(PyObject* m);
 
     /** Callback function, used for netting orders against the forecast. */

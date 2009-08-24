@@ -523,7 +523,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     data->state->a_date = data->state->q_date;
 
   // Add to the list (even if zero-quantity!)
-  data->add(a);
+  if (!prev_owner_opplan) data->add(a);
 
   // Increment the cost
   if (data->state->a_qty > 0.0)
@@ -553,16 +553,19 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   SolverMRPdata *data = static_cast<SolverMRPdata*>(v);
   Date origQDate = data->state->q_date;
   double origQqty = data->state->q_qty;
-  const Buffer *buf = data->state->curBuffer;
+  Buffer *buf = data->state->curBuffer;
+  Demand *d = data->state->curDemand;
+  unsigned int loglevel = data->getSolver()->getLogLevel();
+
+  SearchMode search = oper->getSearch();
 
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (loglevel>1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName() 
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Make sure sub-operationplans know their owner & store the previous value
   OperationPlan *prev_owner_opplan = data->state->curOwnerOpplan;
-  const Demand *d = data->state->curDemand;
 
   // Find the flow into the requesting buffer for the quantity-per
   double top_flow_qty_per = 0.0;
@@ -586,20 +589,167 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   bool effectiveOnly = true;
   Date a_date = Date::infiniteFuture;
   Date ask_date;
-  for (Operation::Operationlist::const_iterator altIter
-      = oper->getSubOperations().begin();
-      altIter != oper->getSubOperations().end(); )
+  while (a_qty > 0)
   {
-    // Operations with 0 priority are considered unavailable
-    const OperationAlternate::alternateProperty& props 
-      = oper->getProperties(*altIter);
-
-    // Filter out alternates that are not suitable
-    if (props.first == 0.0
-      || (effectiveOnly && !props.second.within(data->state->q_date))
-      || (!effectiveOnly && props.second.getEnd() > data->state->q_date)
-      )
+    // Evaluate all alternates
+    bool plannedAlternate = false;
+    double bestAlternateValue = DBL_MAX;
+    double bestAlternateQuantity = 0;
+    Operation* bestAlternateSelection = NULL;
+    double bestFlowPer;
+    Date bestQDate;
+    for (Operation::Operationlist::const_iterator altIter
+        = oper->getSubOperations().begin();
+        altIter != oper->getSubOperations().end(); )
     {
+      // Store the last command in the list, in order to undo the following
+      // commands if required.
+      Command* topcommand = data->getLastCommand();
+
+      // Operations with 0 priority are considered unavailable
+      const OperationAlternate::alternateProperty& props 
+        = oper->getProperties(*altIter);
+
+      // Filter out alternates that are not suitable
+      if (props.first == 0.0
+        || (effectiveOnly && !props.second.within(data->state->q_date))
+        || (!effectiveOnly && props.second.getEnd() > data->state->q_date)
+        )
+      {
+        ++altIter;
+        if (altIter == oper->getSubOperations().end() && effectiveOnly)
+        {
+          // Prepare for a second iteration over all alternates
+          effectiveOnly = false;
+          altIter = oper->getSubOperations().begin();
+        }
+        continue;
+      }
+
+      // Establish the ask date
+      ask_date = effectiveOnly ? origQDate : props.second.getEnd(); 
+
+      // Find the flow into the requesting buffer. It may or may not exist, since
+      // the flow could already exist on the top operationplan
+      double sub_flow_qty_per = 0.0;
+      if (buf)
+      {
+        Flow* f = (*altIter)->findFlow(buf, ask_date);
+        if (f && f->getQuantity() > 0.0)
+          sub_flow_qty_per = f->getQuantity();
+        else if (!top_flow_exists)
+          // Neither the top nor the sub operation have a flow in the buffer,
+          // we're in trouble...
+          throw DataException("Invalid producing operation '" + oper->getName()
+              + "' for buffer '" + buf->getName() + "'");
+      }
+      else
+        // Default value is 1.0, if no matching flow is required
+        sub_flow_qty_per = 1.0;
+
+      // Create the top operationplan.
+      // Note that both the top- and the sub-operation can have a flow in the
+      // requested buffer
+      CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
+          oper, a_qty, Date::infinitePast, ask_date,
+          d, prev_owner_opplan, false
+          );
+      if (!prev_owner_opplan) data->add(a);
+
+      // Create a sub operationplan
+      data->state->q_date = ask_date;
+      data->state->curDemand = NULL;
+      data->state->curOwnerOpplan = a->getOperationPlan();
+      data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
+      data->state->q_qty = a_qty / (sub_flow_qty_per + top_flow_qty_per);
+
+      // Solve constraints on the sub operationplan
+      double beforeCost = data->state->a_cost;
+      double beforePenalty = data->state->a_penalty;
+      if (search != PRIORITY) data->getSolver()->setLogLevel(0);
+      (*altIter)->solve(*this,v);
+      if (search != PRIORITY) data->getSolver()->setLogLevel(loglevel);
+      double afterCost = data->state->a_cost;
+      double afterPenalty = data->state->a_penalty;
+      data->state->a_cost = beforeCost;
+      data->state->a_penalty = beforePenalty;
+      double deltaCost = afterCost - beforeCost;
+      double deltaPenalty = afterPenalty - beforePenalty;
+
+      // Keep the lowest of all next-date answers on the effective alternates
+      if (effectiveOnly && data->state->a_date < a_date && data->state->a_date > ask_date)
+        a_date = data->state->a_date;
+
+      // Now solve for loads and flows of the top operationplan.
+      // Only now we know how long that top-operation lasts in total.
+      if (data->state->a_qty > ROUNDING_ERROR)
+      {
+        // Multiply the operation reply with the flow quantity to obtain the
+        // reply to return
+        data->state->a_qty *= (sub_flow_qty_per + top_flow_qty_per);
+        data->state->q_qty = data->state->a_qty;
+        data->state->q_date = origQDate;
+        data->state->curOwnerOpplan->createFlowLoads();
+        data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
+
+        // Combine the reply date of the top-opplan with the alternate check: we
+        // need to return the minimum next-date.
+        if (data->state->a_date < a_date && data->state->a_date > ask_date)
+          a_date = data->state->a_date;
+      }
+
+      // Message
+      if (loglevel && search != PRIORITY)
+        logger << indent(oper->getLevel()) << "   Operation '" << oper->getName() 
+          << "' evaluates alternate '" << *altIter << "': quantity " << data->state->a_qty
+          << ", cost " << deltaCost << ", penalty " << deltaPenalty << endl;
+
+      // Process the result
+      if (search == PRIORITY)
+      {
+        // Prepare for the next loop
+        a_qty -= data->state->a_qty;
+        plannedAlternate = true;
+
+        // Are we at the end already?
+        if (a_qty < ROUNDING_ERROR)
+        {
+          a_qty = 0.0;
+          break;
+        }
+      }
+      else
+      {
+        double val;
+        switch (search)
+        {
+          case MINCOST: 
+            val = deltaCost / data->state->a_qty; 
+            break;
+          case MINPENALTY: 
+            val = deltaPenalty / data->state->a_qty;
+            break;
+          case MINCOSTPENALTY: 
+            val = (deltaCost + deltaPenalty) / data->state->a_qty; 
+            break;
+          default: 
+            LogicException("Unsupported search mode for alternate operation '"
+              +  oper->getName() + "'");
+        }
+        if (data->state->a_qty > ROUNDING_ERROR && val < bestAlternateValue )
+        {
+          // Found a better alternate
+          bestAlternateValue = val;
+          bestAlternateSelection = *altIter;
+          bestAlternateQuantity = data->state->a_qty;
+          bestFlowPer = sub_flow_qty_per + top_flow_qty_per;
+          bestQDate = ask_date;
+        }
+        // This was only an evaluation
+        data->undo(topcommand);      
+      }
+
+      // Select the next alternate
       ++altIter;
       if (altIter == oper->getSubOperations().end() && effectiveOnly)
       {
@@ -607,67 +757,40 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         effectiveOnly = false;
         altIter = oper->getSubOperations().begin();
       }
-      continue;
-    }
 
-    // Establish the ask date
-    ask_date = effectiveOnly ? origQDate : props.second.getEnd(); 
+    } // End loop over all alternates
 
-    // Find the flow into the requesting buffer. It may or may not exist, since
-    // the flow could already exist on the top operationplan
-    double sub_flow_qty_per = 0.0;
-    if (buf)
+    // Replan on the best alternate
+    if (bestAlternateQuantity > ROUNDING_ERROR && search != PRIORITY)
     {
-      Flow* f = (*altIter)->findFlow(buf, ask_date);
-      if (f && f->getQuantity() > 0.0)
-        sub_flow_qty_per = f->getQuantity();
-      else if (!top_flow_exists)
-        // Neither the top nor the sub operation have a flow in the buffer,
-        // we're in trouble...
-        throw DataException("Invalid producing operation '" + oper->getName()
-            + "' for buffer '" + buf->getName() + "'");
-    }
-    else
-      // Default value is 1.0, if no matching flow is required
-      sub_flow_qty_per = 1.0;
+      // Message
+      if (loglevel)
+        logger << indent(oper->getLevel()) << "   Operation '" << oper->getName() 
+          << "' chooses alternate '" << bestAlternateSelection << "' " << search << endl;
 
-    // Create the top operationplan.
-    // Note that both the top- and the sub-operation can have a flow in the
-    // requested buffer
-    data->state->q_qty = a_qty / (sub_flow_qty_per + top_flow_qty_per);
-    data->state->q_date = ask_date;
-    data->state->curDemand = const_cast<Demand*>(d);
-    CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
-        oper, a_qty, Date::infinitePast, ask_date,
-        data->state->curDemand, prev_owner_opplan, false
-        );
-    data->add(a);
-    data->state->curDemand = NULL;
-    data->state->curOwnerOpplan = a->getOperationPlan();
+      // Create the top operationplan.
+      // Note that both the top- and the sub-operation can have a flow in the
+      // requested buffer
+      CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
+          oper, a_qty, Date::infinitePast, bestQDate,
+          d, prev_owner_opplan, false
+          );
+      if (!prev_owner_opplan) data->add(a);
 
-    // Create a sub operationplan
-    data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
-    data->state->q_qty = a_qty / (sub_flow_qty_per + top_flow_qty_per);
+      // Recreate the ask
+      data->state->q_qty = a_qty / bestFlowPer;
+      data->state->q_date = bestQDate;
+      data->state->curDemand = const_cast<Demand*>(d);
+      data->state->curDemand = NULL;
+      data->state->curOwnerOpplan = a->getOperationPlan();
+      data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
 
-    // Solve constraints
-    (*altIter)->solve(*this,v);
+      // Create a sub operationplan and solve constraints
+      bestAlternateSelection->solve(*this,v);
 
-    // Keep the lowest of all next-date answers on the effective alternates
-    if (effectiveOnly && data->state->a_date < a_date && data->state->a_date > ask_date)
-      a_date = data->state->a_date;
-
-    // Process the result
-    if (data->state->a_qty < ROUNDING_ERROR)
-      // Undo all operationplans along this alternate
-      data->undo(a);
-    else
-    {
       // Multiply the operation reply with the flow quantity to obtain the
       // reply to return
-      data->state->a_qty *= (sub_flow_qty_per + top_flow_qty_per);
-
-      // Prepare for the next loop
-      a_qty -= data->state->a_qty;
+      data->state->a_qty *= bestFlowPer;
 
       // Now solve for loads and flows of the top operationplan.
       // Only now we know how long that top-operation lasts in total.
@@ -681,6 +804,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       if (data->state->a_date < a_date && data->state->a_date > ask_date)
         a_date = data->state->a_date;
 
+      // Prepare for the next loop
+      a_qty -= data->state->a_qty;
+
       // Are we at the end already?
       if (a_qty < ROUNDING_ERROR)
       {
@@ -688,19 +814,17 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         break;
       }
     }
+    else
+      // No alternate can plan anything any more
+      break;
 
-    // Select the next alternate
-    ++altIter;
-    if (altIter == oper->getSubOperations().end() && effectiveOnly)
-    {
-      // Prepare for a second iteration over all alternates
-      effectiveOnly = false;
-      altIter = oper->getSubOperations().begin();
-    }
+  } // End while loop until the a_qty > 0
 
-  } // End loop over all alternates
-  data->state->a_qty = origQqty - a_qty;
+  // Set up the reply
+  data->state->a_qty = origQqty - a_qty; // a_qty is the unplanned quantity
   data->state->a_date = a_date;
+  assert(data->state->a_qty >= 0);
+  assert(data->state->a_date >= data->state->q_date);
 
   // Increment the cost
   if (data->state->a_qty > 0.0)
@@ -710,14 +834,8 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   // We restore the previous owner, which could be NULL.
   data->state->curOwnerOpplan = prev_owner_opplan;
 
-  // Check positive reply quantity
-  assert(data->state->a_qty >= 0);
-
-  // Check reply date is later than requested date
-  assert(data->state->a_date >= data->state->q_date);
-
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (loglevel>1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName() 
       << "' answers: " << data->state->a_qty << "  " << data->state->a_date 
       << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;

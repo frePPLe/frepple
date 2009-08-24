@@ -156,16 +156,4 @@ int ForecastBucket::setattro(const Attribute& attr, const PythonObject& field)
 }
 
 
-PyObject* ForecastSolver::getattro(const Attribute& attr)
-{
-  return Solver::getattro(attr); 
-}
-
-
-int ForecastSolver::setattro(const Attribute& attr, const PythonObject& field)
-{
-  return Solver::setattro(attr, field);
-}
-
-
 } // end namespace

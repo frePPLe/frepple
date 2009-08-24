@@ -283,10 +283,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
     // respects this answer.
     data->state->q_operationplan->setQuantity(0.0);
 
-  // Increment the cost
+  // Increment the cost  @todo also during unavailable time the cost is incremented
   if (data->state->a_qty > 0.0)
     data->state->a_cost += data->state->a_qty * res->getCost()
-       * data->state->q_operationplan->getDates().getDuration();
+       * data->state->q_operationplan->getDates().getDuration() / 3600.0;
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
@@ -316,8 +316,8 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
   // Reply whatever is requested, regardless of date and quantity.
   data->state->a_qty = data->state->q_qty;
   data->state->a_date = data->state->q_date;
-  data->state->a_cost += data->state->a_qty * res->getCost()
-    * data->state->q_operationplan->getDates().getDuration();
+  data->state->a_cost += data->state->a_qty * res->getCost() // @todo also during unavailable time the cost is incremented
+    * data->state->q_operationplan->getDates().getDuration() / 3600.0;  
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)

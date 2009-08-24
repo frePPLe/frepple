@@ -895,6 +895,16 @@ DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan
 }
 
 
+DECLARE_EXPORT SearchMode decodeSearchMode(string& c)
+{
+  if (c == "PRIORITY") return PRIORITY;
+  if (c == "MINCOST") return MINCOST;
+  if (c == "MINPENALTY") return MINPENALTY;
+  if (c == "MINCOSTPENALTY") return MINCOSTPENALTY;
+  throw DataException("Invalid search mode " + c);
+}
+
+
 DECLARE_EXPORT void OperationAlternate::addAlternate
   (Operation* o, int prio, DateRange eff)
 {
@@ -984,6 +994,8 @@ DECLARE_EXPORT void OperationAlternate::writeElement
 
   // Write the standard fields
   Operation::writeElement(o, tag, NOHEADER);
+  if (search != PRIORITY)
+    o->writeElement(Tags::tag_search, search);
 
   // Write the extra fields
   o->BeginObject(Tags::tag_alternates);
@@ -1037,6 +1049,8 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, const Attribu
   }
   else if (pAttr.isA(Tags::tag_priority))
     tmp->second.first = pElement.getInt();
+  else if (pAttr.isA(Tags::tag_search))
+    setSearch(pElement.getString());
   else if (pAttr.isA(Tags::tag_effective_start))
     tmp->second.second.setStart(pElement.getDate());
   else if (pAttr.isA(Tags::tag_effective_end))
@@ -1245,13 +1259,23 @@ DECLARE_EXPORT PyObject* OperationAlternate::getattro(const Attribute& attr)
       PyTuple_SetItem(result, count++, PythonObject(*i));
     return result;
   }
+  else if (attr.isA(Tags::tag_search))
+  {
+    ostringstream ch;
+    ch << getSearch();
+    return PythonObject(ch.str());
+  }
   return Operation::getattro(attr); 
 }
 
 
 DECLARE_EXPORT int OperationAlternate::setattro(const Attribute& attr, const PythonObject& field)
 {
-  return Operation::setattro(attr, field);
+  if (attr.isA(Tags::tag_search))
+    setSearch(field.getString());
+  else
+    return Operation::setattro(attr, field);
+  return 0;
 }
 
 
@@ -1311,12 +1335,6 @@ DECLARE_EXPORT PyObject* OperationRouting::getattro(const Attribute& attr)
   }
   return Operation::getattro(attr); 
 }
-
-
-DECLARE_EXPORT int OperationRouting::setattro(const Attribute& attr, const PythonObject& field)
-{
-  return Operation::setattro(attr, field);
-} 
 
 
 PyObject *OperationRouting::addStep(PyObject *self, PyObject *args)

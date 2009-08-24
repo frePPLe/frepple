@@ -179,16 +179,4 @@ DECLARE_EXPORT int Item::setattro(const Attribute& attr, const PythonObject& fie
 }
 
 
-DECLARE_EXPORT PyObject* ItemDefault::getattro(const Attribute& attr)
-{
-  return Item::getattro(attr);
-}
-
-
-DECLARE_EXPORT int ItemDefault::setattro(const Attribute& attr, const PythonObject& field)
-{
- return Item::setattro(attr, field);
-}
-
-
 } // end namespace

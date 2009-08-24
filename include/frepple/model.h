@@ -2457,7 +2457,6 @@ class OperationRouting : public Operation
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize(PyObject* m);
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
@@ -2533,6 +2532,40 @@ class OperationPlanRouting : public OperationPlan
 };
 
 
+/** This type defines what mode used to search the alternates. */
+enum SearchMode
+{
+  /** Select the alternate with the lowest priority number.<br>
+    * This is the default. 
+    */
+  PRIORITY = 0,
+  /** Select the alternate which gives the lowest cost. */
+  MINCOST = 1,
+  /** Select the alternate which gives the lowest penalty. */
+  MINPENALTY = 2,
+  /** Select the alternate which gives the lowest sum of the cost and 
+    * penalty. */
+  MINCOSTPENALTY = 3
+};
+
+
+/** Writes a search mode to an output stream. */
+inline ostream & operator << (ostream & os, const SearchMode & d)
+{
+  switch (d)
+  {
+    case PRIORITY: os << "PRIORITY"; return os;
+    case MINCOST: os << "MINCOST"; return os;
+    case MINPENALTY: os << "MINPENALTY"; return os;
+    case MINCOSTPENALTY: os << "MINCOSTPENALTY"; return os;
+    default: assert(false); return os;
+  }
+}
+
+
+/** Translate a string to an searc mode value. */
+DECLARE_EXPORT SearchMode decodeSearchMode(string& c);
+
 
 /** @brief This class represents a choice between multiple operations. The
   * alternates are sorted in order of priority.
@@ -2543,7 +2576,8 @@ class OperationAlternate : public Operation
     typedef pair<int,DateRange> alternateProperty;
 
     /** Constructor. */
-    explicit OperationAlternate(const string& c) : Operation(c) {initType(metadata);}
+    explicit OperationAlternate(const string& c) 
+      : Operation(c), search(PRIORITY) {initType(metadata);}
 
     /** Destructor. */
     DECLARE_EXPORT ~OperationAlternate();
@@ -2580,6 +2614,12 @@ class OperationAlternate : public Operation
       *     not null and not a sub-operation of this alternate.
       */
     DECLARE_EXPORT void setEffective(Operation*, DateRange);
+
+    /** Return the search mode. */
+    SearchMode getSearch() const {return search;}
+
+    /** Update the search mode. */
+    void setSearch(string& a) {search = decodeSearchMode(a);}
 
     /** A operation of this type enforces the following rules on its
       * operationplans:
@@ -2635,6 +2675,9 @@ class OperationAlternate : public Operation
       * elements is matching in both lists.
       */
     Operationlist alternates;
+
+    /** Mode to select the preferred alternates. */
+    SearchMode search; 
 };
 
 
@@ -2764,8 +2807,6 @@ class ItemDefault : public Item
       return sizeof(ItemDefault) + getName().size() 
         + HasDescription::extrasize();
     }
-    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize(PyObject* m);
 };
 

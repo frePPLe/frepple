@@ -68,6 +68,14 @@
       <xsd:enumeration value="R" />
     </xsd:restriction>
   </xsd:simpleType>
+  <xsd:simpleType name="search">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="PRIORITY" />
+      <xsd:enumeration value="MINCOST" />
+      <xsd:enumeration value="MINPENALTY" />
+      <xsd:enumeration value="MINCOSTPENALTY" />
+    </xsd:restriction>
+  </xsd:simpleType>
   <xsd:simpleType name="positiveDouble">
     <xsd:restriction base="xsd:double">
       <xsd:minInclusive value="0" />
@@ -237,6 +245,7 @@
     <xsd:complexContent>
       <xsd:extension base="operation">
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="search" type="search" />
           <xsd:element name="alternates">
             <xsd:complexType>
               <xsd:sequence>
@@ -254,6 +263,7 @@
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
+        <xsd:attribute name="search" type="search" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

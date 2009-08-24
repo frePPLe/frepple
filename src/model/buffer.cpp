@@ -777,7 +777,7 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
       PyErr_SetString(PythonDataException, "buffer owner must be of type buffer");
       return -1;
     }
-    Buffer* y = static_cast<Buffer*>(static_cast<PyObject*>(field));
+    Buffer* y = static_cast<Buffer*>(static_cast<PyObject*>(field));  
     setOwner(y);
   }
   else if (attr.isA(Tags::tag_location))

@@ -41,9 +41,9 @@
    mode.
 */
 #if defined(_DEBUG) && defined(_MSC_VER)
-#undef _DEBUG
+//#undef _DEBUG
 #include "Python.h"
-#define _DEBUG
+//#define _DEBUG
 #else
 #include "Python.h"
 #endif
@@ -2923,7 +2923,8 @@ class PythonExtensionBase : public PyObject
     virtual ~PythonExtensionBase() 
     {
       if (PyObject::ob_refcnt > 1)
-        logger << "Warning: Deleting object still referenced" << endl;
+        logger << "Warning: Deleting " << PyObject::ob_type->tp_name 
+          << " object that is still referenced" << endl;
     }
 
     /** Initialize the object to a certain Python type. */

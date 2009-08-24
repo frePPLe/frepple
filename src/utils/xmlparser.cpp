@@ -148,7 +148,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
       // STATE: The only time the parser comes in this state is when we read
       // opening tag of the ROOT tag.
 #ifdef PARSE_DEBUG
-      if (getCurrentObject())
+      if (!m_EHStack.empty())
         logger << "Initialize root tag for reading object "
         << getCurrentObject() << " ("
         << typeid(*getCurrentObject()).name() << ")" << endl;

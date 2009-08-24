@@ -41,9 +41,9 @@
    mode.
 */
 #if defined(_DEBUG) && defined(_MSC_VER)
-//#undef _DEBUG
+#undef _DEBUG
 #include "Python.h"
-//#define _DEBUG
+#define _DEBUG
 #else
 #include "Python.h"
 #endif
@@ -4041,6 +4041,9 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * a new document. */
     void reset();
 
+    /** Return a pointer to the current object being read in.  */
+    inline Object* getCurrentObject() const {return m_EHStack.back().first;}
+
   public:
     /** Constructor.
       * @param maxNestedElmnts Defines the maximum depth of elements an XML
@@ -4082,10 +4085,6 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     /** Returns true if the current object is finishing with the current
       * tag. This method should only be used in the endElement() method. */
     bool isObjectEnd() {return objectEnded;}
-
-    /** Return a pointer to the current object being read in.  */
-    Object* getCurrentObject() const
-      {return m_EHStack.empty() ? NULL : m_EHStack.back().first;}
 
     /** Invalidates the current object.<br>
       * This method is useful when, for instance, the object being parsed

@@ -289,9 +289,9 @@ DECLARE_EXPORT PyObject* Resource::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_loadplans))
-    return new PythonLoadPlanIterator(this);
+    return new LoadPlanIterator(this);
   if (attr.isA(Tags::tag_loads))
-    return new PythonLoadIterator(this);
+    return new LoadIterator(this);
   if (attr.isA(Tags::tag_level))
     return PythonObject(getLevel());
   if (attr.isA(Tags::tag_cluster))

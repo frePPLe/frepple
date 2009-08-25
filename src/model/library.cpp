@@ -111,9 +111,15 @@ void LibraryModel::initialize()
 
   // Initialize the load metadata.
   nok += Load::initialize();  
+  nok += LoadIterator::initialize();
+  nok += LoadPlan::initialize();
+  nok += LoadPlanIterator::initialize();
 
   // Initialize the flow metadata.
   nok += Flow::initialize();
+  nok += FlowIterator::initialize();
+  nok += FlowPlan::initialize();  
+  nok += FlowPlanIterator::initialize();
 
   // Initialize the operationplan metadata.
   nok += OperationPlan::initialize();
@@ -125,13 +131,6 @@ void LibraryModel::initialize()
 
   // Initialize the pegging metadata.
   nok += PeggingIterator::initialize();
-
-  nok += PythonFlowIterator::initialize(); // xxx
-  nok += PythonFlowPlan::initialize();  // xxx
-  nok += PythonFlowPlanIterator::initialize();  // xxx
-  nok += PythonLoadIterator::initialize();  // xxx
-  nok += PythonLoadPlan::initialize();  // xxx
-  nok += PythonLoadPlanIterator::initialize();  // xxx
 
   // Exit if errors were found
   if (nok) throw RuntimeException("Error registering new Python types");

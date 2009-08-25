@@ -3411,12 +3411,14 @@ class FlowEnd : public Flow
   * Flowplans are owned by operationplans, which manage a container to store
   * them.
   */
-class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
+class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public PythonExtensionBase
 {
     friend class OperationPlan::FlowPlanIterator;
   private:
     /** Points to the flow instantiated by this flowplan. */
     Flow *fl;
+
+    PyObject* getattro(const Attribute&);
 
     /** Points to the operationplan owning this flowplan. */
     OperationPlan *oper;
@@ -3425,6 +3427,10 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     FlowPlan *nextFlowPlan;
 
   public:
+
+    static DECLARE_EXPORT const MetaCategory* metadata;
+    static int initialize();
+
     /** Constructor. */
     explicit DECLARE_EXPORT FlowPlan(OperationPlan*, const Flow*);
 
@@ -4338,7 +4344,7 @@ class DemandDefault : public Demand
   * object is created. These are then inserted in the timeline structure
   * associated with a resource.
   */
-class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
+class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExtensionBase
 {
     friend class OperationPlan::LoadPlanIterator;
   public:
@@ -4388,6 +4394,10 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       * on the resource.
       */
     DECLARE_EXPORT LoadPlan* getOtherLoadPlan() const;
+
+    static int initialize();
+    static DECLARE_EXPORT const MetaCategory* metadata;
+    PyObject* getattro(const Attribute&);
 
   private:
     /** Private constructor. It is called from the public constructor.<br>
@@ -5667,23 +5677,12 @@ class OperationPlanIterator
 //
 
 
-class PythonFlowPlan : public PythonExtension<PythonFlowPlan>   // xxx
-{
-  public:
-    static int initialize();
-    PythonFlowPlan(FlowPlan* p) : fl(p) {}
-  private:
-    PyObject* getattro(const Attribute&);
-    FlowPlan* fl;
-};
-
-
-class PythonFlowPlanIterator : public PythonExtension<PythonFlowPlanIterator> 
+class FlowPlanIterator : public PythonExtension<FlowPlanIterator> 
 {
   public:
     static int initialize();
 
-    PythonFlowPlanIterator(Buffer* b) : buf(b)
+    FlowPlanIterator(Buffer* b) : buf(b)
     {
       if (!b)
         throw LogicException("Creating flowplan iterator for NULL buffer");
@@ -5702,23 +5701,12 @@ class PythonFlowPlanIterator : public PythonExtension<PythonFlowPlanIterator>
 //
 
 
-class PythonLoadPlan : public PythonExtension<PythonLoadPlan> // xxx
-{
-  public:
-    static int initialize();
-    PythonLoadPlan(LoadPlan* p) : fl(p) {}
-  private:
-    PyObject* getattro(const Attribute&);
-    LoadPlan* fl;
-};
-
-
-class PythonLoadPlanIterator : public PythonExtension<PythonLoadPlanIterator>
+class LoadPlanIterator : public PythonExtension<LoadPlanIterator>
 {
   public:
     static int initialize();
 
-    PythonLoadPlanIterator(Resource* r) : res(r)
+    LoadPlanIterator(Resource* r) : res(r)
     {
       if (!r)
         throw LogicException("Creating loadplan iterator for NULL resource");
@@ -5761,19 +5749,19 @@ class DemandPlanIterator : public PythonExtension<DemandPlanIterator>
 //
 
 
-class PythonLoadIterator : public PythonExtension<PythonLoadIterator>
+class LoadIterator : public PythonExtension<LoadIterator>
 {
   public:
     static int initialize();
 
-    PythonLoadIterator(Resource* r)
+    LoadIterator(Resource* r)
       : res(r), ir(r ? r->getLoads().begin() : NULL), oper(NULL), io(NULL)
     {
       if (!r)
         throw LogicException("Creating loadplan iterator for NULL resource");
     }
 
-    PythonLoadIterator(Operation* o)
+    LoadIterator(Operation* o)
       : res(NULL), ir(NULL), oper(o), io(o ? o->getLoads().begin() : NULL)
     {
       if (!o)
@@ -5794,19 +5782,19 @@ class PythonLoadIterator : public PythonExtension<PythonLoadIterator>
 //
 
 
-class PythonFlowIterator : public PythonExtension<PythonFlowIterator>
+class FlowIterator : public PythonExtension<FlowIterator>
 {
   public:
     static int initialize();
 
-    PythonFlowIterator(Buffer* b)
+    FlowIterator(Buffer* b)
       : buf(b), ib(b ? b->getFlows().begin() : NULL), oper(NULL), io(NULL)
     {
       if (!b)
         throw LogicException("Creating flowplan iterator for NULL buffer");
     }
 
-    PythonFlowIterator(Operation* o)
+    FlowIterator(Operation* o)
       : buf(NULL), ib(NULL), oper(o), io(o ? o->getFlows().begin() : NULL)
     {
       if (!o)

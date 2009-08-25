@@ -738,7 +738,7 @@ DECLARE_EXPORT PyObject* Buffer::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_onhand))
     return PythonObject(getOnHand());
   if (attr.isA(Tags::tag_flowplans))
-    return new PythonFlowPlanIterator(this);
+    return new FlowPlanIterator(this);
   if (attr.isA(Tags::tag_maximum))
     return PythonObject(getMaximum());
   if (attr.isA(Tags::tag_minimum))
@@ -748,7 +748,7 @@ DECLARE_EXPORT PyObject* Buffer::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_flows))
-    return new PythonFlowIterator(this);
+    return new FlowIterator(this);
   if (attr.isA(Tags::tag_level))
     return PythonObject(getLevel());
   if (attr.isA(Tags::tag_cluster))

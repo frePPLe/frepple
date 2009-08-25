@@ -31,6 +31,23 @@
 namespace frepple
 {
 
+DECLARE_EXPORT const MetaCategory* LoadPlan::metadata;
+
+
+int LoadPlan::initialize()
+{
+  // Initialize the metadata
+  metadata = new MetaCategory("loadplan", "loadplans");
+
+  // Initialize the Python type
+  PythonType& x = FreppleCategory<LoadPlan>::getType();
+  x.setName("loadplan");
+  x.setDoc("frePPLe loadplan");
+  x.supportgetattro();
+  const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady(PythonInterpreter::getModule());
+}
+
 
 DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
 {
@@ -45,6 +62,9 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
     ld->getLoadplanQuantity(this),
     ld->getLoadplanDate(this)
     );
+
+  // Initialize the Python type
+  initType(metadata);
 
   // Create a loadplan to mark the end of the operationplan.
   new LoadPlan(o, r, this);
@@ -65,7 +85,7 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r, LoadPlan *lp
   o->firstloadplan = this;
 
   // Initialize the Python type
-  //xxxinitType(PythonFlowPlan::getType());
+  initType(metadata);
 
   // Insert in the timeline
   r->getResource()->loadplans.insert(
@@ -100,38 +120,26 @@ DECLARE_EXPORT void LoadPlan::update()
 }
 
 
-int PythonLoadPlan::initialize()
+PyObject* LoadPlan::getattro(const Attribute& attr)
 {
-  // Initialize the type
-  PythonType& x = getType();
-  x.setName("loadplan");
-  x.setDoc("frePPLe loadplan");
-  x.supportgetattro();
-  return x.typeReady(PythonInterpreter::getModule());
-}
-
-
-PyObject* PythonLoadPlan::getattro(const Attribute& attr)
-{
-  if (!fl) return Py_BuildValue("");
   if (attr.isA(Tags::tag_operationplan))
-    return PythonObject(fl->getOperationPlan());
+    return PythonObject(getOperationPlan());
   if (attr.isA(Tags::tag_quantity))
-    return PythonObject(fl->getQuantity());
+    return PythonObject(getQuantity());
   if (attr.isA(Tags::tag_startdate))
-    return PythonObject(fl->getDate());
+    return PythonObject(getDate());
   if (attr.isA(Tags::tag_enddate))
-    return PythonObject(fl->getOtherLoadPlan()->getDate());
+    return PythonObject(getOtherLoadPlan()->getDate());
   if (attr.isA(Tags::tag_resource))
-    return PythonObject(fl->getLoad()->getResource());
+    return PythonObject(getLoad()->getResource());
   return NULL;
 }
 
 
-int PythonLoadPlanIterator::initialize()
+int LoadPlanIterator::initialize()
 {
   // Initialize the type
-  PythonType& x = PythonExtension<PythonLoadPlanIterator>::getType();
+  PythonType& x = PythonExtension<LoadPlanIterator>::getType();
   x.setName("loadplanIterator");
   x.setDoc("frePPLe iterator for loadplan");
   x.supportiter();
@@ -139,7 +147,7 @@ int PythonLoadPlanIterator::initialize()
 }
 
 
-PyObject* PythonLoadPlanIterator::iternext()
+PyObject* LoadPlanIterator::iternext()
 {
   // Skip zero quantity loadplans and load ends
   while (i != res->getLoadPlans().end() && i->getQuantity()<=0.0)
@@ -147,7 +155,9 @@ PyObject* PythonLoadPlanIterator::iternext()
   if (i == res->getLoadPlans().end()) return NULL;
 
   // Return result
-  return new PythonLoadPlan(const_cast<LoadPlan*>(dynamic_cast<const LoadPlan*>(&*(i++))));
+  const LoadPlan* ld = static_cast<const LoadPlan*>(&*(i++));
+  Py_INCREF(ld);
+  return const_cast<LoadPlan*>(ld);
 }
 
 } // end namespace

@@ -53,7 +53,7 @@ int Flow::initialize()
   x.supportsetattro();
   x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
-  const_cast<MetaCategory*>(Flow::metadata)->pythonClass = x.type_object();
+  const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
   return x.typeReady(PythonInterpreter::getModule());
 }
 
@@ -381,10 +381,10 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 }
 
 
-int PythonFlowIterator::initialize()
+int FlowIterator::initialize()
 {
   // Initialize the type
-  PythonType& x = PythonExtension<PythonFlowIterator>::getType();
+  PythonType& x = PythonExtension<FlowIterator>::getType();
   x.setName("flowIterator");
   x.setDoc("frePPLe iterator for flows");
   x.supportiter();
@@ -392,7 +392,7 @@ int PythonFlowIterator::initialize()
 }
 
 
-PyObject* PythonFlowIterator::iternext()
+PyObject* FlowIterator::iternext()
 {  
   if (buf) 
   {

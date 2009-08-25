@@ -332,10 +332,10 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 }
 
 
-int PythonLoadIterator::initialize()
+int LoadIterator::initialize()
 {
   // Initialize the type
-  PythonType& x = PythonExtension<PythonLoadIterator>::getType();
+  PythonType& x = PythonExtension<LoadIterator>::getType();
   x.setName("loadIterator");
   x.setDoc("frePPLe iterator for loads");
   x.supportiter();
@@ -343,7 +343,7 @@ int PythonLoadIterator::initialize()
 }
 
 
-PyObject* PythonLoadIterator::iternext()
+PyObject* LoadIterator::iternext()
 {
   if (res)
   {

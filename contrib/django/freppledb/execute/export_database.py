@@ -217,7 +217,7 @@ def exportPegging(cursor):
          j.buffer and j.buffer.name or '',
          (j.buffer and j.buffer.item and j.buffer.item.name) or '',
          round(j.quantity_demand,ROUNDING_DECIMALS),
-         round(j.quantity_buffer,ROUNDING_DECIMALS), str(j.pegged)
+         round(j.quantity_buffer,ROUNDING_DECIMALS), j.pegged and 1 or 0
        ) for j in i.pegging
       ])
     cnt += 1

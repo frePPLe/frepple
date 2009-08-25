@@ -1156,16 +1156,16 @@ DECLARE_EXPORT PyObject* Operation::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(getHidden());
   if (attr.isA(Tags::tag_loads))
-    return new PythonLoadIterator(this);
+    return new LoadIterator(this);
   if (attr.isA(Tags::tag_flows))
-    return new PythonFlowIterator(this);
+    return new FlowIterator(this);
   if (attr.isA(Tags::tag_operationplans))
     return new OperationPlanIterator(this);
   if (attr.isA(Tags::tag_level))
     return PythonObject(getLevel());
   if (attr.isA(Tags::tag_cluster))
     return PythonObject(getCluster());
-	return NULL;
+  return NULL;
 }
 
 

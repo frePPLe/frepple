@@ -2923,8 +2923,9 @@ class PythonExtensionBase : public PyObject
     virtual ~PythonExtensionBase() 
     {
       if (PyObject::ob_refcnt > 1)
-        logger << "Warning: Deleting " << PyObject::ob_type->tp_name 
-          << " object that is still referenced" << endl;
+        logger << "Warning: Deleting " << this << PyObject::ob_type->tp_name 
+          << " object that is still referenced " 
+          << (PyObject::ob_refcnt-1) << " times" << endl;
     }
 
     /** Initialize the object to a certain Python type. */

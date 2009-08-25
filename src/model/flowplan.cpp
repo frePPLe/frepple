@@ -30,6 +30,23 @@
 namespace frepple
 {
 
+DECLARE_EXPORT const MetaCategory* FlowPlan::metadata;
+
+
+int FlowPlan::initialize()
+{
+  // Initialize the metadata
+  metadata = new MetaCategory("flowplan", "flowplans");
+
+  // Initialize the Python type
+  PythonType& x = FreppleCategory<FlowPlan>::getType();
+  x.setName("flowplan");
+  x.setDoc("frePPLe flowplan");
+  x.supportgetattro();
+  const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady(PythonInterpreter::getModule());
+}
+
 
 DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
 {
@@ -37,7 +54,7 @@ DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
   fl = const_cast<Flow*>(f);
 
   // Initialize the Python type
-  // xxxinitType(PythonFlowPlan::getType());
+  initType(metadata);
   
   // Link the flowplan to the operationplan
   oper = opplan;
@@ -139,38 +156,26 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const Keyword& tag, mod
 }
 
 
-int PythonFlowPlan::initialize()
+PyObject* FlowPlan::getattro(const Attribute& attr)
 {
-  // Initialize the type
-  PythonType& x = getType();
-  x.setName("flowplan");
-  x.setDoc("frePPLe flowplan");
-  x.supportgetattro();
-  return x.typeReady(PythonInterpreter::getModule());
-}
-
-
-PyObject* PythonFlowPlan::getattro(const Attribute& attr)
-{
-  if (!fl) return Py_BuildValue("");
   if (attr.isA(Tags::tag_operationplan))
-    return PythonObject(fl->getOperationPlan());
+    return PythonObject(getOperationPlan());
   if (attr.isA(Tags::tag_quantity))
-    return PythonObject(fl->getQuantity());
+    return PythonObject(getQuantity());
   if (attr.isA(Tags::tag_date))
-    return PythonObject(fl->getDate());
+    return PythonObject(getDate());
   if (attr.isA(Tags::tag_onhand))
-    return PythonObject(fl->getOnhand());
+    return PythonObject(getOnhand());
   if (attr.isA(Tags::tag_buffer))
-    return PythonObject(fl->getFlow()->getBuffer());
+    return PythonObject(getFlow()->getBuffer());
   return NULL;
 }
 
 
-int PythonFlowPlanIterator::initialize()
+int FlowPlanIterator::initialize()
 {
   // Initialize the type
-  PythonType& x = PythonExtension<PythonFlowPlanIterator>::getType();
+  PythonType& x = PythonExtension<FlowPlanIterator>::getType();
   x.setName("flowplanIterator");
   x.setDoc("frePPLe iterator for flowplan");
   x.supportiter();
@@ -178,7 +183,7 @@ int PythonFlowPlanIterator::initialize()
 }
 
 
-PyObject* PythonFlowPlanIterator::iternext()
+PyObject* FlowPlanIterator::iternext()
 {
   // Skip uninteresting entries
   while (i != buf->getFlowPlans().end() && i->getQuantity()==0.0) 
@@ -186,7 +191,9 @@ PyObject* PythonFlowPlanIterator::iternext()
   if (i == buf->getFlowPlans().end()) return NULL;
 
   // Return result
-  return new PythonFlowPlan(const_cast<FlowPlan*>(dynamic_cast<const FlowPlan*>(&*(i++))));
+  const FlowPlan* fl = static_cast<const FlowPlan*>(&*(i++));
+  Py_INCREF(fl);
+  return const_cast<FlowPlan*>(fl);
 }
 
 } // end namespace

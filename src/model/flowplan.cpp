@@ -191,7 +191,7 @@ PyObject* FlowPlanIterator::iternext()
   if (i == buf->getFlowPlans().end()) return NULL;
 
   // Return result
-  const FlowPlan* fl = static_cast<const FlowPlan*>(&*(i++));
+  FlowPlan* fl = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*(i++)));
   Py_INCREF(fl);
   return const_cast<FlowPlan*>(fl);
 }

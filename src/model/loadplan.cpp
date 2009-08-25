@@ -155,7 +155,7 @@ PyObject* LoadPlanIterator::iternext()
   if (i == res->getLoadPlans().end()) return NULL;
 
   // Return result
-  const LoadPlan* ld = static_cast<const LoadPlan*>(&*(i++));
+  LoadPlan* ld = const_cast<LoadPlan*>(static_cast<const LoadPlan*>(&*(i++)));
   Py_INCREF(ld);
   return const_cast<LoadPlan*>(ld);
 }

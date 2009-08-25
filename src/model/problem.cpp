@@ -543,7 +543,7 @@ PyObject* Problem::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_description))
     return PythonObject(getDescription());
   if (attr.isA(Tags::tag_entity))
-    return PythonObject(getOwner()->getEntity()->getType().category->group);
+    return PythonObject(getEntity());
   if (attr.isA(Tags::tag_start))
     return PythonObject(getDateRange().getStart());
   if (attr.isA(Tags::tag_end))

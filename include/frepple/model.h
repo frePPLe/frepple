@@ -91,7 +91,7 @@ class LibraryModel
   *  - The minimum inventory desired in a buffer week by week.
   *  - The working hours and holidays at a certain location.
   */
-class Calendar : public HasName<Calendar>, public Object
+class Calendar : public HasName<Calendar>
 {
   public:
     class BucketIterator; // Forward declaration
@@ -903,6 +903,9 @@ class Problem : public NonCopyable, public Object
     /** Returns a text description of this problem. */
     virtual string getDescription() const = 0;
 
+    /** Returns the object type having this problem. */
+    virtual string getEntity() const = 0;
+
     /** Returns true if the plan remains feasible even if it contains this
       * problem, i.e. if the problems flags only a warning.
       * Returns false if a certain problem points at an infeasibility of the
@@ -922,7 +925,7 @@ class Problem : public NonCopyable, public Object
 
     PyObject* getattro(const Attribute&);
 
-    PyObject* str()
+    PyObject* str() const
     {
       return PythonObject(getDescription());
     }
@@ -1060,7 +1063,7 @@ class HasProblems
   * representation. Different solvers can be easily be plugged in to work on
   * the same data.
   */
-class Solver : public Object, public HasName<Solver>
+class Solver : public HasName<Solver>
 {
   public:
     explicit Solver(const string& n) : HasName<Solver>(n), loglevel(0) {}
@@ -1159,7 +1162,7 @@ class Solvable
   * computed only when somebody really needs the access to the list of
   * problems.
   */
-class Plannable : public Object, public HasProblems, public Solvable
+class Plannable : public HasProblems, public Solvable
 {
   public:
     /** Constructor. */
@@ -1349,8 +1352,7 @@ class HasLevel
   * The 'available' calendar is used to model the working hours and holidays 
   * of resources, buffers and operations.
   */
-class Location
-      : public HasHierarchy<Location>, public HasDescription, public Object
+class Location : public HasHierarchy<Location>, public HasDescription
 {
   public:
     /** Constructor. */
@@ -1405,8 +1407,7 @@ class LocationDefault : public Location
   * Demands can be associated with a customer, but there is no planning
   * behavior directly linked to customers.
   */
-class Customer
-      : public HasHierarchy<Customer>, public HasDescription, public Object
+class Customer : public HasHierarchy<Customer>, public HasDescription
 {
   public:
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
@@ -2727,8 +2728,7 @@ class OperationPlanAlternate : public OperationPlan
   *
   * This is an abstract class.
   */
-class Item
-      : public HasHierarchy<Item>, public HasDescription, public Object
+class Item : public HasHierarchy<Item>, public HasDescription
 {
   public:
     /** Constructor. Don't use this directly! */
@@ -3747,7 +3747,7 @@ class Load
   * implemented in static, global lists. An entity can't be simply linked with
   * a particular plan if multiple ones would exist.
   */
-class Plan : public Plannable
+class Plan : public Plannable, public Object
 {
   private:
     /** Current Date of this plan. */
@@ -4468,6 +4468,7 @@ class ProblemBeforeCurrent : public Problem
     explicit ProblemBeforeCurrent(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemBeforeCurrent() {removeProblem();}
+    string getEntity() const {return "operationplan";}
     const DateRange getDateRange() const
     {
       OperationPlan *o = dynamic_cast<OperationPlan*>(getOwner());
@@ -4509,6 +4510,7 @@ class ProblemBeforeFence : public Problem
     explicit ProblemBeforeFence(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemBeforeFence() {removeProblem();}
+    string getEntity() const {return "operationplan";}
     const DateRange getDateRange() const
     {
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
@@ -4552,6 +4554,7 @@ class ProblemPrecedence : public Problem
     (Operation* o, OperationPlan* op1, OperationPlan* op2)
         : Problem(o), opplan1(op1), opplan2(op2) {addProblem();}
     ~ProblemPrecedence() {removeProblem();}
+    string getEntity() const {return "operationplans";}
     const DateRange getDateRange() const
     {
       return DateRange(opplan2->getDates().getStart(),
@@ -4589,6 +4592,7 @@ class ProblemDemandNotPlanned : public Problem
     double getWeight() const {return getDemand()->getQuantity();}
     explicit ProblemDemandNotPlanned(Demand* d) : Problem(d) {addProblem();}
     ~ProblemDemandNotPlanned() {removeProblem();}
+    string getEntity() const {return "demands";}
     const DateRange getDateRange() const
       {return DateRange(getDemand()->getDue(),getDemand()->getDue());}
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
@@ -4637,6 +4641,7 @@ class ProblemLate : public Problem
     }
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemLate);} 
+    string getEntity() const {return "demands";}
 
     /** Return a reference to the metadata structure. */
     const MetaClass& getType() const {return *metadata;}
@@ -4664,6 +4669,7 @@ class ProblemEarly : public Problem
     }
     explicit ProblemEarly(Demand* d) : Problem(d) {addProblem();}
     ~ProblemEarly() {removeProblem();}
+    string getEntity() const {return "demands";}
     const DateRange getDateRange() const
     {
       assert(getDemand() && !getDemand()->getDelivery().empty());
@@ -4700,6 +4706,7 @@ class ProblemShort : public Problem
       {return getDemand()->getQuantity() - getDemand()->getPlannedQuantity();}
     explicit ProblemShort(Demand* d) : Problem(d) {addProblem();}
     ~ProblemShort() {removeProblem();}
+    string getEntity() const {return "demands";}
     const DateRange getDateRange() const
       {return DateRange(getDemand()->getDue(), getDemand()->getDue());}
     Demand* getDemand() const {return dynamic_cast<Demand*>(getOwner());}
@@ -4731,6 +4738,7 @@ class ProblemExcess : public Problem
     double getWeight() const
       {return getDemand()->getPlannedQuantity() - getDemand()->getQuantity();}
     explicit ProblemExcess(Demand* d) : Problem(d) {addProblem();}
+    string getEntity() const {return "demands";}
     ~ProblemExcess() {removeProblem();}
     const DateRange getDateRange() const
       {return DateRange(getDemand()->getDue(), getDemand()->getDue());}
@@ -4762,6 +4770,7 @@ class ProblemPlannedLate : public Problem
     explicit ProblemPlannedLate(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemPlannedLate() {removeProblem();}
+    string getEntity() const {return "operationplans";}
     const DateRange getDateRange() const
       {return dynamic_cast<OperationPlan*>(getOwner())->getDates();}
 
@@ -4806,6 +4815,7 @@ class ProblemPlannedEarly : public Problem
     explicit ProblemPlannedEarly(OperationPlan* o) : Problem(o)
       {addProblem();}
     ~ProblemPlannedEarly() {removeProblem();}
+    string getEntity() const {return "operationplans";}
     const DateRange getDateRange() const
       {return dynamic_cast<OperationPlan*>(getOwner())->getDates();}
 
@@ -4845,6 +4855,7 @@ class ProblemCapacityOverload : public Problem
     ProblemCapacityOverload(Resource* r, DateRange d, double q)
         : Problem(r), qty(q), dr(d) {addProblem();}
     ~ProblemCapacityOverload() {removeProblem();}
+    string getEntity() const {return "resources";}
     const DateRange getDateRange() const {return dr;}
     Resource* getResource() const {return dynamic_cast<Resource*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemCapacityOverload);} 
@@ -4876,6 +4887,7 @@ class ProblemCapacityUnderload : public Problem
     ProblemCapacityUnderload(Resource* r, DateRange d, double q)
         : Problem(r), qty(q), dr(d) {addProblem();}
     ~ProblemCapacityUnderload() {removeProblem();}
+    string getEntity() const {return "resources";}
     const DateRange getDateRange() const {return dr;}
     Resource* getResource() const {return dynamic_cast<Resource*>(getOwner());}
     size_t getSize() const {return sizeof(ProblemCapacityUnderload);} 
@@ -4906,6 +4918,7 @@ class ProblemMaterialShortage : public Problem
     double getWeight() const {return qty;}
     ProblemMaterialShortage(Buffer* b, Date st, Date nd, double q)
         : Problem(b), qty(q), dr(st,nd) {addProblem();}
+    string getEntity() const {return "buffers";}
     ~ProblemMaterialShortage() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}
@@ -4937,6 +4950,7 @@ class ProblemMaterialExcess : public Problem
     double getWeight() const {return qty;}
     ProblemMaterialExcess(Buffer* b, Date st, Date nd, double q)
         : Problem(b), qty(q), dr(st,nd) {addProblem();}
+    string getEntity() const {return "buffers";}
     ~ProblemMaterialExcess() {removeProblem();}
     const DateRange getDateRange() const {return dr;}
     Buffer* getBuffer() const {return dynamic_cast<Buffer*>(getOwner());}

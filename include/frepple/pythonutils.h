@@ -75,7 +75,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE> >
       x.setDoc("frePPLe " + ME::metadata->type);
       x.supportgetattro();
       x.supportsetattro();
-      //x.supportstr();xxx
+      x.supportstr();
       // x.supportcompare();xxx
       x.supportcreate(Object::create<ME>);
       x.setBase(BASE::metadata->pythonClass);
@@ -83,15 +83,6 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE> >
       const_cast<MetaClass*>(ME::metadata)->pythonClass = x.type_object();
       return x.typeReady(PythonInterpreter::getModule());
     }
-
-    
-    /** Return the name as the string representation in Python. xxx */  
-    /*
-    PyObject* str()
-    {
-      return PythonObject(string("test"));
-    }
-    */
 
     /** Comparison operator. */
     /*

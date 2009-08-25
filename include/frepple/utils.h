@@ -2994,7 +2994,7 @@ class PythonExtensionBase : public PyObject
       * Subclasses are expected to implement an override if the type supports
       * conversion to a string.
       */
-    virtual PyObject* str()
+    virtual PyObject* str() const
     {
       PyErr_SetString(PythonLogicException, "Missing method 'str'");
       return NULL;
@@ -4261,7 +4261,7 @@ class XMLInputFile : public XMLInput
   *   - A hashtable (keyed on the name) is maintained as a container with
   *     all active instances.
   */
-template <class T> class HasName : public NonCopyable, public Tree::TreeNode
+template <class T> class HasName : public NonCopyable, public Tree::TreeNode, public Object
 {
   private:
     /** Maintains a global list of all created entities. The list is keyed
@@ -4357,6 +4357,9 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode
 
     /** Destructor. */
     ~HasName() {st.erase(this);}
+
+    /** Return the name as the string representation in Python. */  
+    PyObject* str() const {return PythonObject(getName());}
 
     /** Find an entity given its name. In case it can't be found, a NULL
       * pointer is returned. */

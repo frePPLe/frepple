@@ -37,17 +37,17 @@ DECLARE_EXPORT const MetaClass* ResourceDefault::metadata;
 DECLARE_EXPORT const MetaClass* ResourceInfinite::metadata;
 
 
-int Resource::initialize(PyObject* m)
+int Resource::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory("resource", "resources", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Resource>::initialize(m);
+  return FreppleCategory<Resource>::initialize();
 }
 
 
-int ResourceDefault::initialize(PyObject* m)
+int ResourceDefault::initialize()
 {
   // Initialize the metadata
   ResourceDefault::metadata = new MetaClass(
@@ -57,11 +57,11 @@ int ResourceDefault::initialize(PyObject* m)
     true);
 
   // Initialize the Python class
-  return FreppleClass<ResourceDefault,Resource>::initialize(m);
+  return FreppleClass<ResourceDefault,Resource>::initialize();
 }
 
 
-int ResourceInfinite::initialize(PyObject* m)
+int ResourceInfinite::initialize()
 {
   // Initialize the metadata
   ResourceInfinite::metadata = new MetaClass(
@@ -70,7 +70,7 @@ int ResourceInfinite::initialize(PyObject* m)
     Object::createString<ResourceInfinite>);
 
   // Initialize the Python class
-  return FreppleClass<ResourceInfinite,Resource>::initialize(m);
+  return FreppleClass<ResourceInfinite,Resource>::initialize();
 }
 
 

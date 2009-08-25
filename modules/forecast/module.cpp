@@ -121,11 +121,11 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
       // Get the global lock.
       PyEval_RestoreThread(myThreadState);
       // Register new Python data types
-      if (Forecast::initialize(PythonInterpreter::getModule()))
+      if (Forecast::initialize())
         throw RuntimeException("Error registering forecast");
-      if (ForecastBucket::initialize(PythonInterpreter::getModule()))
+      if (ForecastBucket::initialize())
         throw RuntimeException("Error registering forecastbucket");
-      if (ForecastSolver::initialize(PythonInterpreter::getModule()))
+      if (ForecastSolver::initialize())
         throw RuntimeException("Error registering forecastsolver");
     }
     // Release the global lock when leaving the function

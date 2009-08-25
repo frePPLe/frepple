@@ -100,14 +100,14 @@ DECLARE_EXPORT void LoadPlan::update()
 }
 
 
-int PythonLoadPlan::initialize(PyObject* m)
+int PythonLoadPlan::initialize()
 {
   // Initialize the type
   PythonType& x = getType();
   x.setName("loadplan");
   x.setDoc("frePPLe loadplan");
   x.supportgetattro();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 
@@ -128,14 +128,14 @@ PyObject* PythonLoadPlan::getattro(const Attribute& attr)
 }
 
 
-int PythonLoadPlanIterator::initialize(PyObject* m)
+int PythonLoadPlanIterator::initialize()
 {
   // Initialize the type
   PythonType& x = PythonExtension<PythonLoadPlanIterator>::getType();
   x.setName("loadplanIterator");
   x.setDoc("frePPLe iterator for loadplan");
   x.supportiter();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 

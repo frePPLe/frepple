@@ -40,39 +40,39 @@ DECLARE_EXPORT const MetaClass* OperationFixedTime::metadata,
 DECLARE_EXPORT Operation::Operationlist Operation::nosubOperations;
 
 
-int Operation::initialize(PyObject* m)
+int Operation::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory("operation", "operations", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Operation>::initialize(m);
+  return FreppleCategory<Operation>::initialize();
 }
 
 
-int OperationFixedTime::initialize(PyObject* m)
+int OperationFixedTime::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass("operation", "operation_fixed_time",
     Object::createString<OperationFixedTime>, true);
 
   // Initialize the Python class
-  return FreppleClass<OperationFixedTime,Operation>::initialize(m);
+  return FreppleClass<OperationFixedTime,Operation>::initialize();
 }
 
 
-int OperationTimePer::initialize(PyObject* m)
+int OperationTimePer::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass("operation", "operation_time_per",
     Object::createString<OperationTimePer>);
 
   // Initialize the Python class
-  return FreppleClass<OperationTimePer,Operation>::initialize(m);
+  return FreppleClass<OperationTimePer,Operation>::initialize();
 }
 
 
-int OperationAlternate::initialize(PyObject* m)
+int OperationAlternate::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass("operation", "operation_alternate",
@@ -80,11 +80,11 @@ int OperationAlternate::initialize(PyObject* m)
 
   // Initialize the Python class
   FreppleClass<OperationAlternate,Operation>::getType().addMethod("addAlternate", OperationAlternate::addAlternate, METH_KEYWORDS, "add an alternate");
-  return FreppleClass<OperationAlternate,Operation>::initialize(m);
+  return FreppleClass<OperationAlternate,Operation>::initialize();
 }
 
 
-int OperationRouting::initialize(PyObject* m)
+int OperationRouting::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass("operation", "operation_routing",
@@ -92,7 +92,7 @@ int OperationRouting::initialize(PyObject* m)
 
   // Initialize the Python class
   FreppleClass<OperationRouting,Operation>::getType().addMethod("addStep", OperationRouting::addStep, METH_VARARGS , "add steps to the routing");
-  return FreppleClass<OperationRouting,Operation>::initialize(m);
+  return FreppleClass<OperationRouting,Operation>::initialize();
 }
 
 
@@ -895,7 +895,7 @@ DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan
 }
 
 
-DECLARE_EXPORT SearchMode decodeSearchMode(string& c)
+DECLARE_EXPORT SearchMode decodeSearchMode(const string& c)
 {
   if (c == "PRIORITY") return PRIORITY;
   if (c == "MINCOST") return MINCOST;

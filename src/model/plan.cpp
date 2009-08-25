@@ -36,7 +36,7 @@ DECLARE_EXPORT Plan* Plan::thePlan;
 DECLARE_EXPORT const MetaCategory* Plan::metadata;
 
 
-int Plan::initialize(PyObject* m)
+int Plan::initialize()
 {
   // Initialize the plan metadata.
   metadata = new MetaCategory("plan","");
@@ -47,7 +47,7 @@ int Plan::initialize(PyObject* m)
   x.setDoc("frePPLe global settings");
   x.supportgetattro();
   x.supportsetattro();
-  int tmp =x.typeReady(m);
+  int tmp =x.typeReady(PythonInterpreter::getModule());
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
 
   // Create a singleton plan object
@@ -57,7 +57,8 @@ int Plan::initialize(PyObject* m)
   thePlan = new Plan();
 
   // Add access to the information with a global attribute.
-  return PyModule_AddObject(m, "settings", &Plan::instance()) + tmp;
+  return PyModule_AddObject(PythonInterpreter::getModule(), 
+    "settings", &Plan::instance()) + tmp;
 }
 
 

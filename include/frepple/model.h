@@ -236,7 +236,7 @@ class Calendar : public HasName<Calendar>, public Object
         static DECLARE_EXPORT const MetaCategory* metadata;
         virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
         virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-        static int initialize(PyObject* m);
+        static int initialize();
     };
 
     /** Default constructor. */
@@ -340,7 +340,7 @@ class Calendar : public HasName<Calendar>, public Object
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     static DECLARE_EXPORT PyObject* getEvents(PyObject*, PyObject*, PyObject*);
 
@@ -757,7 +757,7 @@ class CalendarVoid : public Calendar
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
-    static int initialize(PyObject* m);
+    static int initialize();
 };
 
 
@@ -772,7 +772,7 @@ class CalendarDouble : public CalendarValue<double>
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 };
@@ -788,7 +788,7 @@ class CalendarInt : public CalendarValue<int>
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 };
@@ -805,7 +805,7 @@ class CalendarBool : public CalendarValue<bool>
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 };
@@ -829,7 +829,7 @@ class CalendarString : public CalendarValue<string>
     }
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 };
@@ -845,7 +845,7 @@ class CalendarOperation : public CalendarPointer<Operation>
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     static DECLARE_EXPORT PyObject* setPythonValue(PyObject*, PyObject*, PyObject*);
 };
@@ -890,7 +890,7 @@ class Problem : public NonCopyable, public Object
     }
 
     /** Initialize the class. */
-    static int initialize(PyObject* m);
+    static int initialize();
 
     /** Destructor.
       * @see removeProblem
@@ -1070,7 +1070,7 @@ class Solver : public Object, public HasName<Solver>
     virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
 
@@ -1377,7 +1377,7 @@ class Location
     {return getName().size() + HasDescription::extrasize();}
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
-    static int initialize(PyObject* m);
+    static int initialize();
 
   private:
     /** The availability calendar models the working hours and holidays. It 
@@ -1396,7 +1396,7 @@ class LocationDefault : public Location
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(LocationDefault) + Location::extrasize();}
-    static int initialize(PyObject* m);
+    static int initialize();
 };
 
 
@@ -1420,7 +1420,7 @@ class Customer
     virtual DECLARE_EXPORT ~Customer();
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
-    static int initialize(PyObject* m);
+    static int initialize();
 };
 
 
@@ -1433,7 +1433,7 @@ class CustomerDefault : public Customer
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(CustomerDefault) + Customer::extrasize();}
-    static int initialize(PyObject* m);
+    static int initialize();
 };
 
 
@@ -1667,7 +1667,7 @@ class Operation : public HasName<Operation>,
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
@@ -2073,7 +2073,7 @@ class OperationPlan
       * The identifier can be specified in the data input (in which case
       * we check for the uniqueness during the read operation).<br>
       * For operationplans created during a solver run, the identifier is
-      * assigned in the initialize() function. The numbering starts with the
+      * assigned in the instantiate() function. The numbering starts with the
       * highest identifier read in from the input and is then incremented
       * for every operationplan that is registered.
       */
@@ -2094,7 +2094,7 @@ class OperationPlan
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
@@ -2116,7 +2116,7 @@ class OperationPlan
       * If the operationplan is invalid, it will be DELETED and the return value 
       * is 'false'. 
       */
-    virtual DECLARE_EXPORT bool initialize();
+    virtual DECLARE_EXPORT bool instantiate();
 
     /** Add a sub-operationplan to the list. For normal operationplans this
       * is only a dummy function. For alternates and routing operationplans
@@ -2299,7 +2299,7 @@ class OperationFixedTime : public Operation
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -2382,7 +2382,7 @@ class OperationTimePer : public Operation
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -2457,7 +2457,7 @@ class OperationRouting : public Operation
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -2523,7 +2523,7 @@ class OperationPlanRouting : public OperationPlan
       * step operationplans are created the start date of the routing will be
       * equal to the start of the first step.
       */
-    DECLARE_EXPORT bool initialize();
+    DECLARE_EXPORT bool instantiate();
 
     void updateProblems();
 
@@ -2563,8 +2563,8 @@ inline ostream & operator << (ostream & os, const SearchMode & d)
 }
 
 
-/** Translate a string to an searc mode value. */
-DECLARE_EXPORT SearchMode decodeSearchMode(string& c);
+/** Translate a string to a search mode value. */
+DECLARE_EXPORT SearchMode decodeSearchMode(const string& c);
 
 
 /** @brief This class represents a choice between multiple operations. The
@@ -2619,7 +2619,7 @@ class OperationAlternate : public Operation
     SearchMode getSearch() const {return search;}
 
     /** Update the search mode. */
-    void setSearch(string& a) {search = decodeSearchMode(a);}
+    void setSearch(const string a) {search = decodeSearchMode(a);}
 
     /** A operation of this type enforces the following rules on its
       * operationplans:
@@ -2637,7 +2637,7 @@ class OperationAlternate : public Operation
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
     virtual const Operationlist& getSubOperations() const {return alternates;}
-    static int initialize(PyObject* m);
+    static int initialize();
 
     /** Add an alternate to the operation.<br>
       * The keyword arguments are "operation", "priority", "effective_start" 
@@ -2718,7 +2718,7 @@ class OperationPlanAlternate : public OperationPlan
     /** Initializes the operationplan. If no suboperationplan was created
       * yet this method will create one, using the highest priority alternate.
       */
-    DECLARE_EXPORT bool initialize();
+    DECLARE_EXPORT bool instantiate();
 };
 
 
@@ -2775,7 +2775,7 @@ class Item
     DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Item();
@@ -2807,7 +2807,7 @@ class ItemDefault : public Item
       return sizeof(ItemDefault) + getName().size() 
         + HasDescription::extrasize();
     }
-    static int initialize(PyObject* m);
+    static int initialize();
 };
 
 
@@ -2891,7 +2891,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     {return getName().size() + HasDescription::extrasize();}
 
     /** Initialize the class. */
-    static int initialize(PyObject* m);
+    static int initialize();
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Buffer();
@@ -3002,7 +3002,7 @@ class BufferDefault : public Buffer
     virtual size_t getSize() const
     {return sizeof(BufferDefault) + Buffer::extrasize();}
     static DECLARE_EXPORT const MetaClass* metadata;
-    static int initialize(PyObject* m);
+    static int initialize();
 };
 
 
@@ -3023,7 +3023,7 @@ class BufferInfinite : public Buffer
     explicit BufferInfinite(const string& c) : Buffer(c)
       { setDetectProblems(false); initType(metadata); }
     static DECLARE_EXPORT const MetaClass* metadata;
-    static int initialize(PyObject* m);
+    static int initialize();
 };
 
 
@@ -3089,7 +3089,7 @@ class BufferProcure : public Buffer
       {return sizeof(BufferProcure) + Buffer::extrasize();}
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     /** Constructor. */
     explicit BufferProcure(const string& c) : Buffer(c), min_inventory(0),
@@ -3336,7 +3336,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -3558,7 +3558,7 @@ class Resource : public HasHierarchy<Resource>,
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     /** Initialize the class. */
-    static int initialize(PyObject* m);
+    static int initialize();
 
     size_t extrasize() const 
     {return getName().size() + HasDescription::extrasize();}
@@ -3618,7 +3618,7 @@ class ResourceDefault : public Resource
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(ResourceDefault) + Resource::extrasize();}
-    static int initialize(PyObject* m);
+    static int initialize();
 };
 
 
@@ -3635,7 +3635,7 @@ class ResourceInfinite : public Resource
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(ResourceInfinite) + Resource::extrasize();}
-    static int initialize(PyObject* m);
+    static int initialize();
 };
 
 
@@ -3699,7 +3699,7 @@ class Load
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     bool getHidden() const
      {
@@ -3809,7 +3809,7 @@ class Plan : public Plannable
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
     /** Initialize the class. */
-    static int initialize(PyObject* m);
+    static int initialize();
 
     virtual void updateProblems() {};
 
@@ -4226,7 +4226,7 @@ class Demand
     virtual DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     size_t extrasize() const 
     {
@@ -4328,7 +4328,7 @@ class DemandDefault : public Demand
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
     {return sizeof(DemandDefault) + Demand::extrasize();}
-    static int initialize(PyObject* m);
+    static int initialize();
 };
 
 
@@ -4969,7 +4969,7 @@ class CommandCreateOperationPlan : public Command
     {
       if (opplan)
       {
-        opplan->initialize();
+        opplan->instantiate();
         opplan = NULL; // Avoid executing / initializing more than once
       }
     }
@@ -5339,7 +5339,7 @@ class PeggingIterator : public Object
     bool isDownstream() {return downstream;}
 
     /** Initialize the class. */
-    static int initialize(PyObject* m);
+    static int initialize();
 
     virtual void endElement(XMLInput& i, const Attribute& a, const DataElement& d)
     {
@@ -5610,7 +5610,7 @@ class CalendarBucketIterator
   : public PythonExtension<CalendarBucketIterator>
 {
   public:
-    static int initialize(PyObject* m);
+    static int initialize();
 
     CalendarBucketIterator(Calendar* c) : cal(c)
     {
@@ -5630,7 +5630,7 @@ class CalendarEventIterator
   : public PythonExtension<CalendarEventIterator>
 {
   public:
-    static int initialize(PyObject* m);
+    static int initialize();
 
     CalendarEventIterator(Calendar* c, Date d=Date::infinitePast, bool f=true) 
       : cal(c), eventiter(c,d,f), forward(f) {}
@@ -5670,7 +5670,7 @@ class OperationPlanIterator
 class PythonFlowPlan : public PythonExtension<PythonFlowPlan>   // xxx
 {
   public:
-    static int initialize(PyObject* m);
+    static int initialize();
     PythonFlowPlan(FlowPlan* p) : fl(p) {}
   private:
     PyObject* getattro(const Attribute&);
@@ -5681,7 +5681,7 @@ class PythonFlowPlan : public PythonExtension<PythonFlowPlan>   // xxx
 class PythonFlowPlanIterator : public PythonExtension<PythonFlowPlanIterator> 
 {
   public:
-    static int initialize(PyObject* m);
+    static int initialize();
 
     PythonFlowPlanIterator(Buffer* b) : buf(b)
     {
@@ -5705,7 +5705,7 @@ class PythonFlowPlanIterator : public PythonExtension<PythonFlowPlanIterator>
 class PythonLoadPlan : public PythonExtension<PythonLoadPlan> // xxx
 {
   public:
-    static int initialize(PyObject* m);
+    static int initialize();
     PythonLoadPlan(LoadPlan* p) : fl(p) {}
   private:
     PyObject* getattro(const Attribute&);
@@ -5716,7 +5716,7 @@ class PythonLoadPlan : public PythonExtension<PythonLoadPlan> // xxx
 class PythonLoadPlanIterator : public PythonExtension<PythonLoadPlanIterator>
 {
   public:
-    static int initialize(PyObject* m);
+    static int initialize();
 
     PythonLoadPlanIterator(Resource* r) : res(r)
     {
@@ -5740,7 +5740,7 @@ class PythonLoadPlanIterator : public PythonExtension<PythonLoadPlanIterator>
 class DemandPlanIterator : public PythonExtension<DemandPlanIterator> 
 {
   public:
-    static int initialize(PyObject* m);
+    static int initialize();
 
     DemandPlanIterator(Demand* r) : dem(r)
     {
@@ -5764,7 +5764,7 @@ class DemandPlanIterator : public PythonExtension<DemandPlanIterator>
 class PythonLoadIterator : public PythonExtension<PythonLoadIterator>
 {
   public:
-    static int initialize(PyObject* m);
+    static int initialize();
 
     PythonLoadIterator(Resource* r)
       : res(r), ir(r ? r->getLoads().begin() : NULL), oper(NULL), io(NULL)
@@ -5797,7 +5797,7 @@ class PythonLoadIterator : public PythonExtension<PythonLoadIterator>
 class PythonFlowIterator : public PythonExtension<PythonFlowIterator>
 {
   public:
-    static int initialize(PyObject* m);
+    static int initialize();
 
     PythonFlowIterator(Buffer* b)
       : buf(b), ib(b ? b->getFlows().begin() : NULL), oper(NULL), io(NULL)

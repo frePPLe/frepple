@@ -37,7 +37,7 @@ const MetaClass *Forecast::metadata;
 const MetaClass *ForecastBucket::metadata;
 
 
-int Forecast::initialize(PyObject* m)
+int Forecast::initialize()
 {
   // Initialize the metadata
   metadata = new MetaClass("demand", "demand_forecast",
@@ -49,11 +49,11 @@ int Forecast::initialize(PyObject* m)
   // Initialize the Python class
   FreppleClass<Forecast,Demand>::getType().addMethod("timeseries", Forecast::timeseries, METH_VARARGS,
      "Set the future based on the timeseries of historical data");
-  return FreppleClass<Forecast,Demand>::initialize(m);
+  return FreppleClass<Forecast,Demand>::initialize();
 }
 
 
-int ForecastBucket::initialize(PyObject* m)
+int ForecastBucket::initialize()
 {
   // Initialize the metadata
   // No factory method for this class
@@ -67,7 +67,7 @@ int ForecastBucket::initialize(PyObject* m)
   x.supportgetattro();
   x.supportsetattro();
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 
@@ -103,7 +103,7 @@ Forecast::~Forecast()
 }
 
 
-void Forecast::initialize()
+void Forecast::instantiate()
 {
   if (!calptr) throw DataException("Missing forecast calendar");
 
@@ -196,7 +196,7 @@ void Forecast::setDiscrete(const bool b)
 void Forecast::setTotalQuantity(const DateRange& d, double f)
 {
   // Initialize, if not done yet
-  if (!isGroup()) initialize();
+  if (!isGroup()) instantiate();
 
   // Find all forecast demands, and sum their weights
   double weights = 0.0;

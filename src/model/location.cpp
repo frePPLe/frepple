@@ -36,24 +36,24 @@ DECLARE_EXPORT const MetaCategory* Location::metadata;
 DECLARE_EXPORT const MetaClass* LocationDefault::metadata;
 
 
-int Location::initialize(PyObject* m)
+int Location::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory("location", "locations", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Location>::initialize(m);
+  return FreppleCategory<Location>::initialize();
 }
 
 
-int LocationDefault::initialize(PyObject* m)
+int LocationDefault::initialize()
 {
   // Initialize the metadata
   LocationDefault::metadata = new MetaClass("location", "location_default",
     Object::createString<LocationDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<LocationDefault,Location>::initialize(m);
+  return FreppleClass<LocationDefault,Location>::initialize();
 }
 
 

@@ -50,7 +50,7 @@ DECLARE_EXPORT const MetaClass* ProblemMaterialExcess::metadata,
   *ProblemCapacityOverload::metadata;
 
 
-int Problem::initialize(PyObject* m)
+int Problem::initialize()
 {
   // Initialize the problem metadata.
   Problem::metadata = new MetaCategory
@@ -92,7 +92,7 @@ int Problem::initialize(PyObject* m)
   x.supportstr();
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 

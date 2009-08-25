@@ -37,7 +37,7 @@ DECLARE_EXPORT unsigned long OperationPlan::counter = 1;
 OperationPlan::OperationPlanList OperationPlan::nosubOperationPlans;
 
 
-int OperationPlan::initialize(PyObject* m)
+int OperationPlan::initialize()
 {
   // Initialize the metadata
   OperationPlan::metacategory = new MetaCategory("operationplan", "operationplans",
@@ -53,7 +53,7 @@ int OperationPlan::initialize(PyObject* m)
   x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 
@@ -180,7 +180,7 @@ DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
 {
   // We are garantueed that there are no operationplans that have an id equal
   // or higher than the current counter. This is garantueed by the
-  // initialize() method.
+  // instantiate() method.
   if (l >= counter) return NULL;
 
   // Loop through all operationplans.
@@ -192,7 +192,7 @@ DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
 }
 
 
-DECLARE_EXPORT bool OperationPlan::initialize()
+DECLARE_EXPORT bool OperationPlan::instantiate()
 {
   // At least a valid operation pointer must exist
   if (!oper) throw LogicException("Initializing an invalid operationplan");
@@ -435,7 +435,7 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
 
   // The following actions are only required for registered operation plans.
   // Only those are linked in the list and can have problems: see the
-  // documentation in the initialize() method.
+  // documentation in the instantiate() method.
   if (getIdentifier())
   {
     // Delete from the list of deliveries
@@ -663,7 +663,7 @@ DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, const Attribute& p
   else if (pIn.isObjectEnd())
   {
     // Initialize the operationplan
-    if (!initialize())
+    if (!instantiate())
       // Initialization failed and the operationplan is deleted
       pIn.invalidateCurrentObject();
   }
@@ -851,7 +851,7 @@ DECLARE_EXPORT void OperationPlanRouting::update()
 }
 
 
-DECLARE_EXPORT bool OperationPlanRouting::initialize()
+DECLARE_EXPORT bool OperationPlanRouting::instantiate()
 {
   // Create step suboperationplans if they don't exist yet.
   if (step_opplans.empty())
@@ -891,10 +891,10 @@ DECLARE_EXPORT bool OperationPlanRouting::initialize()
   // Initialize the suboperationplans
   for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
       i != step_opplans.end(); ++i)
-      if (!(*i)->getIdentifier()) (*i)->initialize();
+      if (!(*i)->getIdentifier()) (*i)->instantiate();
 
   // Initialize myself
-  return getIdentifier() ? true : OperationPlan::initialize();
+  return getIdentifier() ? true : OperationPlan::instantiate();
 }
 
 
@@ -971,7 +971,7 @@ DECLARE_EXPORT void OperationPlanAlternate::update()
 }
 
 
-DECLARE_EXPORT bool OperationPlanAlternate::initialize()
+DECLARE_EXPORT bool OperationPlanAlternate::instantiate()
 {
   // Create an alternate suboperationplan if one doesn't exist yet.
   // We use the first alternate by default.
@@ -983,8 +983,8 @@ DECLARE_EXPORT bool OperationPlanAlternate::initialize()
   }
 
   // Initialize this operationplan and its child
-  if (altopplan && !altopplan->getIdentifier()) altopplan->initialize();
-  return getIdentifier() ? true : OperationPlan::initialize();
+  if (altopplan && !altopplan->getIdentifier()) altopplan->instantiate();
+  return getIdentifier() ? true : OperationPlan::instantiate();
 }
 
 
@@ -1041,7 +1041,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
       };
     }
 
-    if (x && !static_cast<OperationPlan*>(x)->initialize()) 
+    if (x && !static_cast<OperationPlan*>(x)->instantiate()) 
       return NULL;
     return x;
   }

@@ -36,17 +36,17 @@ DECLARE_EXPORT const MetaCategory* Customer::metadata;
 DECLARE_EXPORT const MetaClass* CustomerDefault::metadata;
 
 
-int Customer::initialize(PyObject* m)
+int Customer::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory("customer", "customers", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Customer>::initialize(m);
+  return FreppleCategory<Customer>::initialize();
 }
 
 
-int CustomerDefault::initialize(PyObject* m)
+int CustomerDefault::initialize()
 {
   // Initialize the metadata
   CustomerDefault::metadata = new MetaClass(
@@ -55,7 +55,7 @@ int CustomerDefault::initialize(PyObject* m)
     Object::createString<CustomerDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<CustomerDefault,Customer>::initialize(m);
+  return FreppleClass<CustomerDefault,Customer>::initialize();
 }
 
 

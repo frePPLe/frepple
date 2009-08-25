@@ -33,7 +33,7 @@ namespace frepple
 DECLARE_EXPORT const MetaCategory* Load::metadata;
 
 
-int Load::initialize(PyObject* m)
+int Load::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory
@@ -51,7 +51,7 @@ int Load::initialize(PyObject* m)
   x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(Load::metadata)->pythonClass = x.type_object();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 
@@ -332,14 +332,14 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 }
 
 
-int PythonLoadIterator::initialize(PyObject* m)
+int PythonLoadIterator::initialize()
 {
   // Initialize the type
   PythonType& x = PythonExtension<PythonLoadIterator>::getType();
   x.setName("loadIterator");
   x.setDoc("frePPLe iterator for loads");
   x.supportiter();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 

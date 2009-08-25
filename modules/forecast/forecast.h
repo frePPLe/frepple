@@ -519,7 +519,7 @@ class Forecast : public Demand
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     void beginElement(XMLInput& pIn, const Attribute& pAttr);
-    static int initialize(PyObject* m);
+    static int initialize();
 
     /** Returns whether fractional forecasts are allowed or not.<br>
       * The default is true.
@@ -667,7 +667,7 @@ class Forecast : public Demand
     /** Initializion of a forecast.<br>
       * It creates demands for each bucket of the calendar.
       */
-    void initialize();
+    void instantiate();
 
     /** A void calendar to define the time buckets. */
     Calendar* calptr;
@@ -826,7 +826,7 @@ class ForecastBucket : public Demand
 
     virtual PyObject* getattro(const Attribute&);
     virtual int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
   private:
     double weight;
@@ -882,7 +882,7 @@ class ForecastSolver : public Solver
     static const MetaClass *metadata;
     virtual size_t getSize() const {return sizeof(ForecastSolver);}
     void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
-    static int initialize(PyObject* m);
+    static int initialize();
 
     /** Callback function, used for netting orders against the forecast. */
     bool callback(Demand* l, const Signal a);

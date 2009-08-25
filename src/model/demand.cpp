@@ -36,17 +36,17 @@ DECLARE_EXPORT const MetaCategory* Demand::metadata;
 DECLARE_EXPORT const MetaClass* DemandDefault::metadata;
 
 
-int Demand::initialize(PyObject* m)
+int Demand::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory("demand", "demands", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Demand>::initialize(m);
+  return FreppleCategory<Demand>::initialize();
 }
 
 
-int DemandDefault::initialize(PyObject* m)
+int DemandDefault::initialize()
 {
   // Initialize the metadata
   DemandDefault::metadata = new MetaClass(
@@ -55,7 +55,7 @@ int DemandDefault::initialize(PyObject* m)
     Object::createString<DemandDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<DemandDefault,Demand>::initialize(m);
+  return FreppleClass<DemandDefault,Demand>::initialize();
 }
 
 
@@ -439,14 +439,14 @@ DECLARE_EXPORT int Demand::setattro(const Attribute& attr, const PythonObject& f
 }
 
 
-int DemandPlanIterator::initialize(PyObject* m)
+int DemandPlanIterator::initialize()
 {
   // Initialize the type
   PythonType& x = PythonExtension<DemandPlanIterator>::getType();
   x.setName("demandplanIterator");
   x.setDoc("frePPLe iterator for demand delivery operationplans");
   x.supportiter();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 

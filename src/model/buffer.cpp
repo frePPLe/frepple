@@ -46,17 +46,17 @@ DECLARE_EXPORT const MetaClass* BufferDefault::metadata,
   *BufferProcure::metadata;
 
 
-int Buffer::initialize(PyObject* m)
+int Buffer::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory("buffer", "buffers", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Buffer>::initialize(m);
+  return FreppleCategory<Buffer>::initialize();
 }
 
 
-int BufferDefault::initialize(PyObject* m)
+int BufferDefault::initialize()
 {
   // Initialize the metadata
   BufferDefault::metadata = new MetaClass(
@@ -65,11 +65,11 @@ int BufferDefault::initialize(PyObject* m)
     Object::createString<BufferDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<BufferDefault,Buffer>::initialize(m);
+  return FreppleClass<BufferDefault,Buffer>::initialize();
 }
 
 
-int BufferInfinite::initialize(PyObject* m)
+int BufferInfinite::initialize()
 {
   // Initialize the metadata
   BufferInfinite::metadata = new MetaClass(
@@ -78,11 +78,11 @@ int BufferInfinite::initialize(PyObject* m)
     Object::createString<BufferInfinite>);
 
   // Initialize the Python class
-  return FreppleClass<BufferInfinite,Buffer>::initialize(m);
+  return FreppleClass<BufferInfinite,Buffer>::initialize();
 }
 
 
-int BufferProcure::initialize(PyObject* m)
+int BufferProcure::initialize()
 {
   // Initialize the metadata
   BufferProcure::metadata = new MetaClass(
@@ -91,7 +91,7 @@ int BufferProcure::initialize(PyObject* m)
     Object::createString<BufferProcure>);
 
   // Initialize the Python class
-  return FreppleClass<BufferProcure,Buffer>::initialize(m);
+  return FreppleClass<BufferProcure,Buffer>::initialize();
 }
 
 
@@ -130,7 +130,7 @@ DECLARE_EXPORT void Buffer::setOnHand(double f)
     OperationPlan *opplan = o->createOperationPlan(
       fabs(f), Date::infinitePast, Date::infinitePast);
     opplan->setLocked(true);
-    opplan->initialize();
+    opplan->instantiate();
   }
   else
   {

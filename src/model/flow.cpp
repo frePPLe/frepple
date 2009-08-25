@@ -35,7 +35,7 @@ DECLARE_EXPORT const MetaClass* FlowStart::metadata,
   *FlowEnd::metadata;
 
 
-int Flow::initialize(PyObject* m)
+int Flow::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory
@@ -54,7 +54,7 @@ int Flow::initialize(PyObject* m)
   x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(Flow::metadata)->pythonClass = x.type_object();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 
@@ -381,14 +381,14 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 }
 
 
-int PythonFlowIterator::initialize(PyObject* m)
+int PythonFlowIterator::initialize()
 {
   // Initialize the type
   PythonType& x = PythonExtension<PythonFlowIterator>::getType();
   x.setName("flowIterator");
   x.setDoc("frePPLe iterator for flows");
   x.supportiter();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 

@@ -34,7 +34,7 @@ namespace frepple
 DECLARE_EXPORT const MetaCategory* PeggingIterator::metadata;
 
 
-int PeggingIterator::initialize(PyObject* m)
+int PeggingIterator::initialize()
 {
   // Initialize the pegging metadata
   PeggingIterator::metadata = new MetaCategory("pegging","peggings");
@@ -46,7 +46,7 @@ int PeggingIterator::initialize(PyObject* m)
   x.supportgetattro();
   x.supportiter();
   const_cast<MetaCategory*>(PeggingIterator::metadata)->pythonClass = x.type_object();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 

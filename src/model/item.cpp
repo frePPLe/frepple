@@ -36,24 +36,24 @@ DECLARE_EXPORT const MetaCategory* Item::metadata;
 DECLARE_EXPORT const MetaClass* ItemDefault::metadata;
 
 
-int Item::initialize(PyObject* m)
+int Item::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory("item", "items", reader, writer);
 
   // Initialize the Python class
-  return FreppleCategory<Item>::initialize(m);
+  return FreppleCategory<Item>::initialize();
 }
 
 
-int ItemDefault::initialize(PyObject* m)
+int ItemDefault::initialize()
 {
   // Initialize the metadata
   ItemDefault::metadata = new MetaClass("item", "item_default",
     Object::createString<ItemDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<ItemDefault,Item>::initialize(m);
+  return FreppleClass<ItemDefault,Item>::initialize();
 }
 
 

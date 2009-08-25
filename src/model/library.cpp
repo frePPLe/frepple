@@ -49,90 +49,89 @@ void LibraryModel::initialize()
 
   // Register new types in Python
   int nok = 0;
-  PyObject* module = PythonInterpreter::getModule();
-  nok += Plan::initialize(module);
+  nok += Plan::initialize();
 
   // Initialize the solver metadata.
-  nok += Solver::initialize(module);
-  nok += SolverIterator::initialize(module);
+  nok += Solver::initialize();
+  nok += SolverIterator::initialize();
 
   // Initialize the location metadata.
-  nok += Location::initialize(module);
-  nok += LocationDefault::initialize(module);
-  nok += LocationIterator::initialize(module);
+  nok += Location::initialize();
+  nok += LocationDefault::initialize();
+  nok += LocationIterator::initialize();
 
   // Initialize the customer metadata.
-  nok += Customer::initialize(module);
-  nok += CustomerDefault::initialize(module);
-  nok += CustomerIterator::initialize(module);
+  nok += Customer::initialize();
+  nok += CustomerDefault::initialize();
+  nok += CustomerIterator::initialize();
 
   // Initialize the calendar metadata.
-  nok += Calendar::initialize(module);
-  nok += CalendarBucketIterator::initialize(module);  // xxx remove
-  nok += CalendarEventIterator::initialize(module);   // xxx remove
-  nok += CalendarBool::initialize(module);
-  nok += CalendarVoid::initialize(module);
-  nok += CalendarDouble::initialize(module);
-  nok += CalendarString::initialize(module);
-  nok += CalendarInt::initialize(module);
-  nok += CalendarOperation::initialize(module);
-  nok += CalendarIterator::initialize(module);
+  nok += Calendar::initialize();
+  nok += CalendarBucketIterator::initialize();  // xxx remove
+  nok += CalendarEventIterator::initialize();   // xxx remove
+  nok += CalendarBool::initialize();
+  nok += CalendarVoid::initialize();
+  nok += CalendarDouble::initialize();
+  nok += CalendarString::initialize();
+  nok += CalendarInt::initialize();
+  nok += CalendarOperation::initialize();
+  nok += CalendarIterator::initialize();
 
   // Initialize the operation metadata.
-  nok += Operation::initialize(module);
-  nok += OperationAlternate::initialize(module);
-  nok += OperationFixedTime::initialize(module);
-  nok += OperationTimePer::initialize(module);
-  nok += OperationRouting::initialize(module);
-  nok += OperationIterator::initialize(module);
+  nok += Operation::initialize();
+  nok += OperationAlternate::initialize();
+  nok += OperationFixedTime::initialize();
+  nok += OperationTimePer::initialize();
+  nok += OperationRouting::initialize();
+  nok += OperationIterator::initialize();
 
   // Initialize the item metadata.
-  nok += Item::initialize(module);
-  nok += ItemDefault::initialize(module);
-  nok += ItemIterator::initialize(module);
+  nok += Item::initialize();
+  nok += ItemDefault::initialize();
+  nok += ItemIterator::initialize();
 
   // Initialize the buffer metadata.
-  nok += Buffer::initialize(module);
-  nok += BufferDefault::initialize(module);
-  nok += BufferInfinite::initialize(module);
-  nok += BufferProcure::initialize(module);
-  nok += BufferIterator::initialize(module);
+  nok += Buffer::initialize();
+  nok += BufferDefault::initialize();
+  nok += BufferInfinite::initialize();
+  nok += BufferProcure::initialize();
+  nok += BufferIterator::initialize();
 
   // Initialize the demand metadata.
-  nok += Demand::initialize(module);
-  nok += DemandIterator::initialize(module);
-  nok += DemandDefault::initialize(module);
-  nok += DemandPlanIterator::initialize(module);
+  nok += Demand::initialize();
+  nok += DemandIterator::initialize();
+  nok += DemandDefault::initialize();
+  nok += DemandPlanIterator::initialize();
 
   // Initialize the resource metadata.
-  nok += Resource::initialize(module);
-  nok += ResourceDefault::initialize(module);
-  nok += ResourceInfinite::initialize(module);
-  nok += ResourceIterator::initialize(module);
+  nok += Resource::initialize();
+  nok += ResourceDefault::initialize();
+  nok += ResourceInfinite::initialize();
+  nok += ResourceIterator::initialize();
 
   // Initialize the load metadata.
-  nok += Load::initialize(module);  
+  nok += Load::initialize();  
 
   // Initialize the flow metadata.
-  nok += Flow::initialize(module);
+  nok += Flow::initialize();
 
   // Initialize the operationplan metadata.
-  nok += OperationPlan::initialize(module);
-  nok += OperationPlanIterator::initialize(module);
+  nok += OperationPlan::initialize();
+  nok += OperationPlanIterator::initialize();
 
   // Initialize the problem metadata.
-  nok += Problem::initialize(module);
-  nok += ProblemIterator::initialize(module);
+  nok += Problem::initialize();
+  nok += ProblemIterator::initialize();
 
   // Initialize the pegging metadata.
-  nok += PeggingIterator::initialize(module);
+  nok += PeggingIterator::initialize();
 
-  nok += PythonFlowIterator::initialize(module); // xxx
-  nok += PythonFlowPlan::initialize(module);  // xxx
-  nok += PythonFlowPlanIterator::initialize(module);  // xxx
-  nok += PythonLoadIterator::initialize(module);  // xxx
-  nok += PythonLoadPlan::initialize(module);  // xxx
-  nok += PythonLoadPlanIterator::initialize(module);  // xxx
+  nok += PythonFlowIterator::initialize(); // xxx
+  nok += PythonFlowPlan::initialize();  // xxx
+  nok += PythonFlowPlanIterator::initialize();  // xxx
+  nok += PythonLoadIterator::initialize();  // xxx
+  nok += PythonLoadPlan::initialize();  // xxx
+  nok += PythonLoadPlanIterator::initialize();  // xxx
 
   // Exit if errors were found
   if (nok) throw RuntimeException("Error registering new Python types");

@@ -152,7 +152,7 @@ class LPSolver : public Solver
     void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
     virtual PyObject* getattro(const Attribute&);
     virtual int setattro(const Attribute&, const PythonObject&);
-    static int initialize(PyObject* m);
+    static int initialize();
 
 	  /** Constructor. */
     LPSolver(const string& n) : Solver(n), minimum(true) {initType(metadata);}

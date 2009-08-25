@@ -139,14 +139,14 @@ DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const Keyword& tag, mod
 }
 
 
-int PythonFlowPlan::initialize(PyObject* m)
+int PythonFlowPlan::initialize()
 {
   // Initialize the type
   PythonType& x = getType();
   x.setName("flowplan");
   x.setDoc("frePPLe flowplan");
   x.supportgetattro();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 
@@ -167,14 +167,14 @@ PyObject* PythonFlowPlan::getattro(const Attribute& attr)
 }
 
 
-int PythonFlowPlanIterator::initialize(PyObject* m)
+int PythonFlowPlanIterator::initialize()
 {
   // Initialize the type
   PythonType& x = PythonExtension<PythonFlowPlanIterator>::getType();
   x.setName("flowplanIterator");
   x.setDoc("frePPLe iterator for flowplan");
   x.supportiter();
-  return x.typeReady(m);
+  return x.typeReady(PythonInterpreter::getModule());
 }
 
 

@@ -45,7 +45,7 @@ class FreppleCategory : public PythonExtension< FreppleCategory<T> >
 {
   public:
     /** Initialization method. */
-    static int initialize(PyObject* m)
+    static int initialize()
     {
       // Initialize the type
       PythonType& x = PythonExtension< FreppleCategory<T> >::getType();
@@ -57,7 +57,7 @@ class FreppleCategory : public PythonExtension< FreppleCategory<T> >
       //x.supportcompare();xxx
       x.supportcreate(Object::create<T>);
       const_cast<MetaCategory*>(T::metadata)->pythonClass = x.type_object();
-      return x.typeReady(m);
+      return x.typeReady(PythonInterpreter::getModule());
     }
 };
 
@@ -67,7 +67,7 @@ template <class ME, class BASE>
 class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE> >
 {
   public:
-    static int initialize(PyObject* m)
+    static int initialize()
     {
       // Initialize the type
       PythonType& x = PythonExtension< FreppleClass<ME,BASE> >::getType();
@@ -81,7 +81,7 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE> >
       x.setBase(BASE::metadata->pythonClass);
       x.addMethod("toXML", ME::toXML, METH_VARARGS, "return a XML representation");
       const_cast<MetaClass*>(ME::metadata)->pythonClass = x.type_object();
-      return x.typeReady(m);
+      return x.typeReady(PythonInterpreter::getModule());
     }
 
     
@@ -115,14 +115,14 @@ template <class ME, class ITERCLASS, class DATACLASS>
 class FreppleIterator : public PythonExtension<ME>
 {
   public:
-    static int initialize(PyObject* m)
+    static int initialize()
     {
       // Initialize the type
       PythonType& x = PythonExtension<ME>::getType();
       x.setName(DATACLASS::metadata->type + "Iterator");
       x.setDoc("frePPLe iterator for " + DATACLASS::metadata->type);
       x.supportiter();
-      return x.typeReady(m);
+      return x.typeReady(PythonInterpreter::getModule());
     }
 
     FreppleIterator() : i(DATACLASS::begin()) {initType(PythonExtension<ME>::getType().type_object());}

@@ -35,14 +35,14 @@ template<class Solver> DECLARE_EXPORT Tree utils::HasName<Solver>::st;
 DECLARE_EXPORT const MetaCategory* Solver::metadata;
 
 
-int Solver::initialize(PyObject* m)
+int Solver::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory("solver", "solvers", reader, writer);
 
   // Initialize the Python class
   FreppleCategory<Solver>::getType().addMethod("solve", solve, METH_NOARGS, "run the solver");
-  return FreppleCategory<Solver>::initialize(m);
+  return FreppleCategory<Solver>::initialize();
 }
 
 

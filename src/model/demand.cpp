@@ -446,7 +446,7 @@ int DemandPlanIterator::initialize()
   x.setName("demandplanIterator");
   x.setDoc("frePPLe iterator for demand delivery operationplans");
   x.supportiter();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 

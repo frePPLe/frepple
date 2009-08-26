@@ -814,14 +814,12 @@ extern "C"
 }
 
 
-/** @brief This class is a wrapper around the type information in Python.
+/** @brief This class is a thin wrapper around the type information in Python.
   *
-  * In the Python C API this is represented by the PyTypeObject structure.
-  * This class defines a number of convenience functions to update and maintain
-  * the type information.
+  * This class defines a number of convenience functions to interact with the
+  * PyTypeObject struct of the Python C API.
   *
-  * The structure of the class is heavily inspired on the design of PyCXX.<br>
-  * More information can be found on http://cxx.sourceforge.net
+  * @todo avoid hardcoding of the module name frepple
   */
 class PythonType : public NonCopyable
 {
@@ -831,11 +829,14 @@ class PythonType : public NonCopyable
       */
     static const PyTypeObject PyTypeObjectTemplate;
 
-    /** Accumulator of method definitions. */
-    vector<PyMethodDef> methodvector;
+    /** Incremental size of the method table.
+      * We allocate memory for the method definitions per block, not 
+      * one-by-one.
+      */
+    static const unsigned short methodArraySize = 5;
 
-    /** Real method table created after initialization. */
-    PyMethodDef *methods;
+    /** The Python type object which this class is wrapping. */
+    PyTypeObject* table;
 
   public:
    /** A static function that evaluates an exception and sets the Python
@@ -846,10 +847,10 @@ class PythonType : public NonCopyable
     static DECLARE_EXPORT void evalException();
 
     /** Constructor, sets the tp_base_size member. */
-    DECLARE_EXPORT PythonType(size_t base_size, const type_info*);
+    DECLARE_EXPORT PythonType(size_t, const type_info*);
 
     /** Return a pointer to the actual Python PyTypeObject. */
-    PyTypeObject* type_object() const {return const_cast<PyTypeObject*>(&table);}
+    PyTypeObject* type_object() const {return table;}
 
     /** Add a new method. */
     DECLARE_EXPORT void addMethod(const char*, PyCFunction, int, const char*);
@@ -860,27 +861,27 @@ class PythonType : public NonCopyable
     /** Updates tp_name. */
     void setName (const string n)
     {
-      name = "frepple." + n;
-      table.tp_name = const_cast<char*>(name.c_str());
+      string *name = new string("frepple." + n);
+      table->tp_name = const_cast<char*>(name->c_str());
     }
 
     /** Updates tp_doc. */
     void setDoc (const string n)
     {
-      doc = n;
-      table.tp_doc = const_cast<char*>(doc.c_str());
+      string *doc = new string(n);
+      table->tp_doc = const_cast<char*>(doc->c_str());
     }
 
     /** Updates tp_base. */
     void setBase(PyTypeObject* b)
     {
-      table.tp_base = b;
+      table->tp_base = b;
     }
 
     /** Updates the deallocator. */
     void supportdealloc(void (*f)(PyObject*))
     {
-      table.tp_dealloc = f;
+      table->tp_dealloc = f;
     }
 
     /** Updates tp_getattro.<br>
@@ -889,7 +890,7 @@ class PythonType : public NonCopyable
       *   PythonObject getattro(const XMLElement& name)
       */
     void supportgetattro() 
-      {table.tp_getattro = getattro_handler;}
+      {table->tp_getattro = getattro_handler;}
 
     /** Updates tp_setattro.<br>
       * The extension class will need to define a member function with this
@@ -897,15 +898,15 @@ class PythonType : public NonCopyable
       *   int setattro(const Attribute& attr, const PythonObject& field)
       */
     void supportsetattro() 
-      {table.tp_setattro = setattro_handler;}
+      {table->tp_setattro = setattro_handler;}
 
     /** Updates tp_compare.<br>
       * The extension class will need to define a member function with this
       * prototype:<br>
-      *   int compare(const PythonObject& other)
+      *   int compare(const PyObject* other) const
       */
     void supportcompare() 
-      {table.tp_compare = compare_handler;}
+      {table->tp_compare = compare_handler;}
 
     /** Updates tp_iter and tp_iternext.<br>
       * The extension class will need to define a member function with this
@@ -914,8 +915,8 @@ class PythonType : public NonCopyable
       */
     void supportiter()
     {
-      table.tp_iter = PyObject_SelfIter;
-      table.tp_iternext = iternext_handler;
+      table->tp_iter = PyObject_SelfIter;
+      table->tp_iternext = iternext_handler;
     }
 
     /** Updates tp_call.<br>
@@ -924,7 +925,7 @@ class PythonType : public NonCopyable
       *   PyObject* call(const PythonObject& args, const PythonObject& kwds)
       */
     void supportcall() 
-      {table.tp_call = call_handler;}
+      {table->tp_call = call_handler;}
 
     /** Updates tp_str.<br>
       * The extension class will need to define a member function with this
@@ -932,19 +933,17 @@ class PythonType : public NonCopyable
       *   PyObject* str()
       */
     void supportstr() 
-      {table.tp_str = str_handler;}
+      {table->tp_str = str_handler;}
 
     /** Type definition for create functions. */
     typedef PyObject* (*createfunc)(PyTypeObject*, PyObject*, PyObject*);
 
     /** Updates tp_new with the function passed as argument. */
-    void supportcreate(createfunc c) {table.tp_new = c;}
+    void supportcreate(createfunc c) {table->tp_new = c;}
 
     /** This method needs to be called after the type information has all
-      * been updated. It adds the type to the module that is passed as
-      * argument. */
-    DECLARE_EXPORT int typeReady(PyObject* m);
-
+      * been updated. It adds the type to the frepple module. */
+    DECLARE_EXPORT int typeReady();
     /** Comparison operator. */
     bool operator == (const PythonType& i) const
     { 
@@ -956,16 +955,6 @@ class PythonType : public NonCopyable
     { 
       return *cppClass == i;
     }
-
-  private:
-    /** The type object, as it is used by Python. */
-    PyTypeObject table;
-
-    /** Class name. */
-    string name;
-
-    /** Documentation string. */
-    string doc;
 
     /** Type info of the registering class. */
     const type_info* cppClass;
@@ -1058,6 +1047,7 @@ class MetaClass : public NonCopyable
 
     /** This constructor registers the metadata of a class. */
     MetaClass (const string& cat, const string& cls, bool def = false)
+       : pythonClass(NULL)
     {
       registerClass(cat,cls,def);
     }
@@ -1065,7 +1055,7 @@ class MetaClass : public NonCopyable
     /** This constructor registers the metadata of a class, with a factory
       * method that uses the default constructor of the class. */
     MetaClass (const string& cat, const string& cls, creatorDefault f,
-      bool def = false)
+      bool def = false) : pythonClass(NULL)
     {
       registerClass(cat,cls,def);
       factoryMethodDefault = f;
@@ -1074,7 +1064,7 @@ class MetaClass : public NonCopyable
     /** This constructor registers the metadata of a class, with a factory
       * method that uses a constructor with a string argument. */
     MetaClass (const string& cat, const string& cls, creatorString f,
-      bool def = false)
+      bool def = false) : pythonClass(NULL)
     {
       registerClass(cat,cls,def);
       factoryMethodString = f;
@@ -1083,7 +1073,7 @@ class MetaClass : public NonCopyable
     /** This constructor registers the metadata of a class as an XML processing
       * instruction. */
     MetaClass (const string& cat, const string& cls, 
-      processorXMLInstruction f, bool def = false)
+      processorXMLInstruction f, bool def = false) : pythonClass(NULL)
     {
       registerClass(cat,cls,def);
       processingInstruction = f;
@@ -1166,7 +1156,7 @@ class MetaClass : public NonCopyable
   protected:
     /** Default constructor. */
     MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")),
-      category(NULL), factoryMethodDefault(NULL) {}
+      category(NULL), factoryMethodDefault(NULL), pythonClass(NULL) {}
 
   private:
     /** This is a list of objects that will receive a callback when the call
@@ -2964,7 +2954,7 @@ class PythonExtensionBase : public PyObject
       * Subclasses are expected to implement an override if the type supports
       * compare.
       */
-    virtual int compare(const PythonObject& other)
+    virtual int compare(const PyObject* other) const
     {
       PyErr_SetString(PythonLogicException, "Missing method 'compare'");
       return -1;
@@ -4359,7 +4349,21 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
     ~HasName() {st.erase(this);}
 
     /** Return the name as the string representation in Python. */  
-    PyObject* str() const {return PythonObject(getName());}
+    virtual PyObject* str() const {return PythonObject(getName());}
+
+    /** Comparison operator for Python. */
+    int compare(const PyObject* other) const
+    {
+      if (this->ob_type == other->ob_type
+        || this->ob_type->tp_base == other->ob_type->tp_base)
+        return getName().compare(static_cast<const T*>(other)->getName());
+      else
+      {
+        // Different types
+        PyErr_SetString(PythonDataException, "Wrong type in comparison");
+        return -1;
+      }
+    }
 
     /** Find an entity given its name. In case it can't be found, a NULL
       * pointer is returned. */
@@ -5065,6 +5069,40 @@ class LibraryUtils
     static void initialize();
 };
 
+/** @brief A template class to expose iterators to Python. */
+template <class ME, class ITERCLASS, class DATACLASS>
+class FreppleIterator : public PythonExtension<ME>
+{
+  public:
+    static int initialize()
+    {
+      // Initialize the type
+      PythonType& x = PythonExtension<ME>::getType();
+      x.setName(DATACLASS::metadata->type + "Iterator");
+      x.setDoc("frePPLe iterator for " + DATACLASS::metadata->type);
+      x.supportiter();
+      return x.typeReady();
+    }
+
+    FreppleIterator() : i(DATACLASS::begin()) {initType(PythonExtension<ME>::getType().type_object());}
+
+    template <class OTHER> FreppleIterator(const OTHER *o) : i(o) {}
+
+    static PyObject* create(PyObject* self, PyObject* args)
+     {return new ME();}
+
+  private:
+    ITERCLASS i;
+
+    virtual PyObject* iternext()
+    {
+      if (i == DATACLASS::end()) return NULL;
+      PyObject* result = &*i;
+      ++i;
+      Py_INCREF(result);
+      return result;
+    }
+};
 
 } // end namespace
 } // end namespace

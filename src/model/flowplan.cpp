@@ -44,7 +44,7 @@ int FlowPlan::initialize()
   x.setDoc("frePPLe flowplan");
   x.supportgetattro();
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 
@@ -179,7 +179,7 @@ int FlowPlanIterator::initialize()
   x.setName("flowplanIterator");
   x.setDoc("frePPLe iterator for flowplan");
   x.supportiter();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 

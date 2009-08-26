@@ -54,7 +54,7 @@ int Flow::initialize()
   x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 
@@ -388,7 +388,7 @@ int FlowIterator::initialize()
   x.setName("flowIterator");
   x.setDoc("frePPLe iterator for flows");
   x.supportiter();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 

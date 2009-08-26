@@ -53,11 +53,11 @@ class FreppleCategory : public PythonExtension< FreppleCategory<T> >
       x.setDoc("frePPLe " + T::metadata->type);
       x.supportgetattro();
       x.supportsetattro();
-      //x.supportstr();
-      //x.supportcompare();xxx
+      x.supportstr();
+      x.supportcompare();
       x.supportcreate(Object::create<T>);
       const_cast<MetaCategory*>(T::metadata)->pythonClass = x.type_object();
-      return x.typeReady(PythonInterpreter::getModule());
+      return x.typeReady();
     }
 };
 
@@ -76,63 +76,12 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE> >
       x.supportgetattro();
       x.supportsetattro();
       x.supportstr();
-      // x.supportcompare();xxx
+      x.supportcompare();
       x.supportcreate(Object::create<ME>);
       x.setBase(BASE::metadata->pythonClass);
       x.addMethod("toXML", ME::toXML, METH_VARARGS, "return a XML representation");
       const_cast<MetaClass*>(ME::metadata)->pythonClass = x.type_object();
-      return x.typeReady(PythonInterpreter::getModule());
-    }
-
-    /** Comparison operator. */
-    /*
-    xxx int compare(const PythonObject& other)
-    {
-      if (!obj || !other.check(BASE::getType()))
-      {
-        // Different type
-        PyErr_SetString(PythonDataException, "Wrong type in comparison");
-        return -1;
-      }
-      BASE* y = static_cast<BASE*>(static_cast<PyObject*>(other));
-      return obj->getName().compare(y->getName());
-    }
-    */
-};
-
-
-/** @brief A template class to expose iterators to Python. */
-template <class ME, class ITERCLASS, class DATACLASS>
-class FreppleIterator : public PythonExtension<ME>
-{
-  public:
-    static int initialize()
-    {
-      // Initialize the type
-      PythonType& x = PythonExtension<ME>::getType();
-      x.setName(DATACLASS::metadata->type + "Iterator");
-      x.setDoc("frePPLe iterator for " + DATACLASS::metadata->type);
-      x.supportiter();
-      return x.typeReady(PythonInterpreter::getModule());
-    }
-
-    FreppleIterator() : i(DATACLASS::begin()) {initType(PythonExtension<ME>::getType().type_object());}
-
-    template <class OTHER> FreppleIterator(const OTHER *o) : i(o) {}
-
-    static PyObject* create(PyObject* self, PyObject* args)
-     {return new ME();}
-
-  private:
-    ITERCLASS i;
-
-    virtual PyObject* iternext()
-    {
-      if (i == DATACLASS::end()) return NULL;
-      PyObject* result = &*i;
-      ++i;
-      Py_INCREF(result);
-      return result;
+      return x.typeReady();
     }
 };
 

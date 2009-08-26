@@ -434,11 +434,12 @@ DECLARE_EXPORT PythonObject::PythonObject(Object* p)
 
 
 DECLARE_EXPORT PythonType::PythonType(size_t base_size, const type_info* tp) 
-  : methods(NULL), cppClass(tp)
+  : cppClass(tp)
 {
-  // Copy a standard info type to start with
-  memcpy(&table, &PyTypeObjectTemplate, sizeof(PyTypeObject));
-  table.tp_basicsize = base_size;
+  // Allocate a new type object if it doesn't exist yet.
+  // We copy from a template type definition.
+  table = new PyTypeObject(PyTypeObjectTemplate);
+  table->tp_basicsize = base_size;
 }
 
 
@@ -488,16 +489,38 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
 DECLARE_EXPORT void PythonType::addMethod
   (const char* method_name, PyCFunction f, int flags, const char* doc )
 {
-  // The type is already registered
-  if (methods) throw LogicException("Too late to add a method");
+  unsigned short i = 0;
 
+  // Create a method table array
+  if (!table->tp_methods)
+    // Allocate a first block
+    table->tp_methods = new PyMethodDef[methodArraySize];
+  else
+  {
+    // Find the first non-empty method record
+    while (table->tp_methods[i].ml_name) i++;
+    if (i % methodArraySize == methodArraySize - 1)
+    {
+      // Allocation of a bigger buffer is required
+      PyMethodDef* tmp = new PyMethodDef[i + 1 + methodArraySize];
+      for(unsigned short j = 0; j < i; j++)
+        tmp[j] = table->tp_methods[j];
+      delete [] table->tp_methods;
+      table->tp_methods = tmp;
+    }
+  }
+  
   // Populate a method definition struct
-  PyMethodDef m;
-  m.ml_name = method_name;
-  m.ml_meth = f;
-  m.ml_flags = flags;
-  m.ml_doc = doc;
-  methodvector.push_back(m);
+  table->tp_methods[i].ml_name = method_name;
+  table->tp_methods[i].ml_meth = f;
+  table->tp_methods[i].ml_flags = flags;
+  table->tp_methods[i].ml_doc = doc;
+  
+  // Append an empty terminator record
+  table->tp_methods[++i].ml_name = NULL;
+  table->tp_methods[i].ml_meth = NULL;
+  table->tp_methods[i].ml_flags = 0;
+  table->tp_methods[i].ml_doc = NULL;
 }
 
 
@@ -508,25 +531,17 @@ DECLARE_EXPORT void PythonType::addMethod
 }
 
 
-DECLARE_EXPORT int PythonType::typeReady(PyObject* m)
+DECLARE_EXPORT int PythonType::typeReady()
 {
-  // Fill the method table
-  if (!methodvector.empty())
-  {
-    addMethod(NULL, static_cast<PyCFunction>(NULL), 0, NULL);  // Terminator
-    methods = new PyMethodDef[methodvector.size()];
-    int j = 0;
-    for(vector<PyMethodDef>::iterator i = methodvector.begin(); i != methodvector.end(); i++ )
-      methods[j++] = *i;
-    table.tp_methods = methods;
-  }
-
   // Register the new type in the module
-  if (PyType_Ready(&table) < 0)
-    throw RuntimeException("Can't register python type " + name);
-  Py_INCREF(&table);
-  // Note: +8 is to skip the "frepple." characters in the name
-  return PyModule_AddObject(m, const_cast<char*>(name.c_str()) + 8, reinterpret_cast<PyObject*>(&table));
+  if (PyType_Ready(table) < 0)
+    throw RuntimeException(string("Can't register python type ") + table->tp_name);
+  Py_INCREF(table);
+  return PyModule_AddObject(
+    PythonInterpreter::getModule(), 
+    table->tp_name + 8, // Note: +8 is to skip the "frepple." characters in the name
+    reinterpret_cast<PyObject*>(table)
+    );
 }
 
 

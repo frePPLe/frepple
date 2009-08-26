@@ -47,7 +47,7 @@ int Plan::initialize()
   x.setDoc("frePPLe global settings");
   x.supportgetattro();
   x.supportsetattro();
-  int tmp =x.typeReady(PythonInterpreter::getModule());
+  int tmp =x.typeReady();
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
 
   // Create a singleton plan object

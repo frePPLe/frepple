@@ -46,7 +46,7 @@ int PeggingIterator::initialize()
   x.supportgetattro();
   x.supportiter();
   const_cast<MetaCategory*>(PeggingIterator::metadata)->pythonClass = x.type_object();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 

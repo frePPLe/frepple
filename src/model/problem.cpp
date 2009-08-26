@@ -92,7 +92,7 @@ int Problem::initialize()
   x.supportstr();
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 

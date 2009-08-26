@@ -51,7 +51,7 @@ int Load::initialize()
   x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(Load::metadata)->pythonClass = x.type_object();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 
@@ -339,7 +339,7 @@ int LoadIterator::initialize()
   x.setName("loadIterator");
   x.setDoc("frePPLe iterator for loads");
   x.supportiter();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 

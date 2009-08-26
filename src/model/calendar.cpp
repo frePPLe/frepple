@@ -65,7 +65,7 @@ int Calendar::Bucket::initialize()
   x.supportgetattro();
   x.supportsetattro();
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 
@@ -804,7 +804,7 @@ int CalendarBucketIterator::initialize()
   x.setName("calendarBucketIterator");
   x.setDoc("frePPLe iterator for calendar buckets");
   x.supportiter();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 
@@ -942,7 +942,7 @@ int CalendarEventIterator::initialize()
   x.setName("calendarEventIterator");
   x.setDoc("frePPLe iterator for calendar events");
   x.supportiter();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 

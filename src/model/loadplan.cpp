@@ -45,7 +45,7 @@ int LoadPlan::initialize()
   x.setDoc("frePPLe loadplan");
   x.supportgetattro();
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 
@@ -143,7 +143,7 @@ int LoadPlanIterator::initialize()
   x.setName("loadplanIterator");
   x.setDoc("frePPLe iterator for loadplan");
   x.supportiter();
-  return x.typeReady(PythonInterpreter::getModule());
+  return x.typeReady();
 }
 
 

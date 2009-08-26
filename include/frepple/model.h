@@ -5630,8 +5630,7 @@ class CalendarIterator
 //
 
 
-class CalendarBucketIterator
-  : public PythonExtension<CalendarBucketIterator>
+class CalendarBucketIterator : public PythonExtension<CalendarBucketIterator>
 {
   public:
     static int initialize();

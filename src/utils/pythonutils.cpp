@@ -311,7 +311,7 @@ PyObject* PythonInterpreter::python_log(PyObject *self, PyObject *args)
 {
   // Pick up arguments
   char *data;
-  int ok = PyArg_ParseTuple(args, "s", &data);
+  int ok = PyArg_ParseTuple(args, "s:log", &data);
   if (!ok) return NULL;
 
   // Print and flush the output stream

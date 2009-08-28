@@ -72,7 +72,7 @@ DECLARE_EXPORT PyObject* CommandReadXMLFile::executePython(PyObject* self, PyObj
   // Pick up arguments
   char *data;
   int i1(1), i2(0);
-  int ok = PyArg_ParseTuple(args, "s|ii", &data, &i1, &i2);
+  int ok = PyArg_ParseTuple(args, "s|ii:readXMLfile", &data, &i1, &i2);
   if (!ok) return NULL;
 
   // Execute and catch exceptions
@@ -120,7 +120,7 @@ PyObject* CommandReadXMLString::executePython(PyObject *self, PyObject *args)
   // Pick up arguments
   char *data;
   int i1(1), i2(0);
-  int ok = PyArg_ParseTuple(args, "s|ii", &data, &i1, &i2);
+  int ok = PyArg_ParseTuple(args, "s|ii:readXMLdata", &data, &i1, &i2);
   if (!ok) return NULL;
 
   // Execute and catch exceptions
@@ -171,7 +171,7 @@ PyObject* CommandSave::executePython(PyObject* self, PyObject* args)
   // Pick up arguments
   char *data;
   char *content = NULL;
-  int ok = PyArg_ParseTuple(args, "s|s", &data, &content);
+  int ok = PyArg_ParseTuple(args, "s|s:save", &data, &content);
   if (!ok) return NULL;
 
   // Execute and catch exceptions
@@ -323,7 +323,7 @@ PyObject* CommandSavePlan::executePython(PyObject* self, PyObject* args)
 {
   // Pick up arguments
   char *data;
-  int ok = PyArg_ParseTuple(args, "s", &data);
+  int ok = PyArg_ParseTuple(args, "s:saveplan", &data);
   if (!ok) return NULL;
 
   // Execute and catch exceptions
@@ -525,7 +525,7 @@ PyObject* CommandErase::executePython(PyObject* self, PyObject* args)
 {
   // Pick up arguments
   PyObject *obj = NULL;
-  int ok = PyArg_ParseTuple(args, "|O", &obj);
+  int ok = PyArg_ParseTuple(args, "|O:erase", &obj);
   if (!ok) return NULL;
 
   // Validate the argument

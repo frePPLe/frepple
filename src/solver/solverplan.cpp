@@ -32,6 +32,7 @@ namespace frepple
 
 DECLARE_EXPORT const MetaClass* SolverMRP::metadata;
 
+
 void LibrarySolver::initialize()
 {
   // Initialize only once
@@ -45,7 +46,6 @@ void LibrarySolver::initialize()
   init = true;
 
   // Register all classes.
-
   if (SolverMRP::initialize())
     throw RuntimeException("Error registering solver_mrp Python type");
 }
@@ -58,6 +58,9 @@ int SolverMRP::initialize()
     ("solver","solver_mrp",Object::createString<SolverMRP>,true);
 
   // Initialize the Python class
+  FreppleClass<SolverMRP,Solver>::getType().addMethod("solve", solve, METH_VARARGS, "run the solver");
+  FreppleClass<SolverMRP,Solver>::getType().addMethod("commit", commit, METH_NOARGS, "commit the plan changes");
+  FreppleClass<SolverMRP,Solver>::getType().addMethod("undo", undo, METH_NOARGS, "undo the plan changes");
   return FreppleClass<SolverMRP,Solver>::initialize();
 }
 
@@ -75,6 +78,10 @@ DECLARE_EXPORT bool SolverMRP::demand_comparison(const Demand* l1, const Demand*
 
 DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
 {
+  // Check
+  if (!demands || !getSolver()) 
+    throw LogicException("Missing demands or solver.");
+
   // Message
   SolverMRP* Solver = getSolver();
   if (Solver->getLogLevel()>0)
@@ -86,11 +93,13 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
     // Sort the demands of this problem.
     // We use a stable sort to get reproducible results between platforms
     // and STL implementations.
-    stable_sort(demands.begin(), demands.end(), demand_comparison);
+    stable_sort(demands->begin(), demands->end(), demand_comparison);
 
     // Loop through the list of all demands in this planning problem
-    for (deque<Demand*>::const_iterator i = demands.begin();
-        i != demands.end(); ++i)
+    for (deque<Demand*>::const_iterator i = demands->begin();
+        i != demands->end(); ++i)
+    {
+      Command* topcommand = getLastCommand();
       // Plan the demand      
       try 
       { 
@@ -115,11 +124,12 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
         catch (...) {logger << "  Unknown type" << endl;}
 
         // Cleaning up
-        undo();
+        undo(topcommand);
       }
+    }
 
     // Clean the list of demands of this problem
-    demands.clear();
+    demands->clear();
   }
   catch (...)
   {
@@ -173,8 +183,10 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   // Create the command list to control the execution
   CommandList threads;
 
-  // Solve in parallel threads, if not in verbose mode
-  if (getLogLevel()>0)
+  // Solve in parallel threads.
+  // When not solving in silent and autocommit mode, we only use a single
+  // solver thread.
+  if (getLogLevel()>0 || !getAutocommit())
     threads.setMaxParallel(1);
   else
     threads.setMaxParallel( cl > getMaxParallel() ? getMaxParallel() : cl);
@@ -183,7 +195,7 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   threads.setAbortOnError(false);
   for (classified_demand::iterator j = demands_per_cluster.begin();
       j != demands_per_cluster.end(); ++j)
-    threads.add(new SolverMRPdata(this, j->first, j->second));
+    threads.add(new SolverMRPdata(this, j->first, &(j->second)));
 
   // Run the planning command threads and wait for them to exit
   threads.execute();
@@ -207,6 +219,7 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
   // Write the fields
   if (constrts) o->writeElement(Tags::tag_constraints, constrts);
   if (maxparallel) o->writeElement(Tags::tag_maxparallel, maxparallel);
+  if (!autocommit) o->writeElement(Tags::tag_autocommit, autocommit);
 
   // Write the parent class
   Solver::writeElement(o, tag, NOHEADER);
@@ -219,6 +232,8 @@ DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr,
     setConstraints(pElement.getInt());
   else if (pAttr.isA(Tags::tag_maxparallel))
     setMaxParallel(pElement.getInt());
+  else if (pAttr.isA(Tags::tag_autocommit))
+    setAutocommit(pElement.getBool());
   else
     Solver::endElement(pIn, pAttr, pElement);
 }
@@ -230,6 +245,8 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
     return PythonObject(getConstraints());
   if (attr.isA(Tags::tag_maxparallel))
     return PythonObject(getMaxParallel());
+  if (attr.isA(Tags::tag_autocommit))
+    return PythonObject(getAutocommit());
   return Solver::getattro(attr); 
 }
 
@@ -240,9 +257,84 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
     setConstraints(field.getInt());
   else if (attr.isA(Tags::tag_maxparallel))
     setMaxParallel(field.getInt());
+  else if (attr.isA(Tags::tag_autocommit))
+    setAutocommit(field.getBool());
   else
     return Solver::setattro(attr, field);
   return 0;
+}
+
+
+DECLARE_EXPORT PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
+{
+  // Parse the argument
+  PyObject *dem = NULL;
+  if (args && !PyArg_ParseTuple(args, "|O:solve", &dem)) return NULL;
+  if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass)) 
+    throw DataException("solver argument must be a demand");
+
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try
+  {
+    SolverMRP* sol = static_cast<SolverMRP*>(self);
+    if (!dem)
+    {
+      // Complete replan
+      sol->setAutocommit(true);
+      sol->solve();    
+    }
+    else
+    {
+      // Incrementally plan a single demand
+      sol->setAutocommit(false);
+      sol->commands.sol = sol;
+      static_cast<Demand*>(dem)->solve(*sol, &(sol->commands));
+    }
+  }
+  catch(...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");
+}
+
+
+DECLARE_EXPORT PyObject* SolverMRP::commit(PyObject *self, PyObject *args)
+{
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try
+  {
+    static_cast<SolverMRP*>(self)->commands.CommandList::execute();
+  }
+  catch(...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");
+}
+
+
+DECLARE_EXPORT PyObject* SolverMRP::undo(PyObject *self, PyObject *args)
+{
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try
+  {
+    static_cast<SolverMRP*>(self)->commands.undo();
+  }
+  catch(...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return NULL;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");
 }
 
 } // end namespace

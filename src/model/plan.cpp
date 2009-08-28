@@ -132,7 +132,7 @@ DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, const Attribute& pAttr)
     else
       // There is no controller available.
       // This piece of code will be used to skip pieces of the XML file that
-      // Frepple doesn't need to be understand
+      // frePPLe doesn't need to be understand.
       pIn.IgnoreElement();
   }
 }

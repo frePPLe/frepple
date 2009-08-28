@@ -193,8 +193,8 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    SolverMRP(const string& n) : 
-      Solver(n), constrts(0), maxparallel(0), lazydelay(86400L) {initType(metadata);}
+    SolverMRP(const string& n) : Solver(n), constrts(0), maxparallel(0), 
+      lazydelay(86400L), autocommit(true) {initType(metadata);}
 
     /** Destructor. */
     virtual ~SolverMRP() {}
@@ -308,6 +308,23 @@ class SolverMRP : public Solver
       else throw DataException("Invalid lazy delay");      
     }
 
+    /** Return whether or not we automatically commit the changes after
+      * planning a demand. */
+    bool getAutocommit() const {return autocommit;}
+
+    /** Update whether or not we automatically commit the changes after
+      * planning a demand. */
+    void setAutocommit(const bool b) {autocommit = b;}
+
+    /** Python method for running the solver. */
+    static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
+
+    /** Python method for commiting the plan changes. */
+    static DECLARE_EXPORT PyObject* commit(PyObject*, PyObject*);
+
+    /** Python method for undoing the plan changes. */
+    static DECLARE_EXPORT PyObject* undo(PyObject*, PyObject*);
+
   private:
     typedef map < int, deque<Demand*>, less<int> > classified_demand;
     typedef classified_demand::iterator cluster_iterator;
@@ -330,7 +347,14 @@ class SolverMRP : public Solver
       * request with a request date incremented by this value.<br>
       * The default value is 1 day.
       */
-    TimePeriod lazydelay;      
+    TimePeriod lazydelay;    
+
+    /** Enable or disable automatically committing the changes in the plan 
+      * after planning each demand.<br>
+      * The flag is only respected when planning incremental changes, and
+      * is ignored when doing a complete replan. 
+      */
+    bool autocommit;
 
   protected:
     /** @brief This class is used to store the solver status during the 
@@ -406,10 +430,11 @@ class SolverMRP : public Solver
     {
         friend class SolverMRP;
       public:
+        /** Return the solver. */
         SolverMRP* getSolver() const {return sol;}
 
         /** Constructor. */
-        SolverMRPdata(SolverMRP* s, int c, deque<Demand*>& d)
+        SolverMRPdata(SolverMRP* s = NULL, int c = 0, deque<Demand*>* d = NULL)
           : sol(s), cluster(c), demands(d), 
           state(statestack), prevstate(statestack-1) {}
 
@@ -477,7 +502,7 @@ class SolverMRP : public Solver
         int cluster;
 
         /** A deque containing all demands to be (re-)planned. */
-        deque<Demand*>& demands;
+        deque<Demand*>* demands;
 
         /** Stack of solver status information. */
         State statestack[MAXSTATES];
@@ -489,6 +514,11 @@ class SolverMRP : public Solver
         /** Pointer to the solver status one level higher on the stack. */
         State* prevstate; 
     };
+
+    /** When autocommit is switched off, this command structure will contain 
+      * all plan changes.
+      */
+    SolverMRPdata commands;
 
     /** This function will check all constraints for an operationplan
       * and propagate it upstream. The check does NOT check eventual

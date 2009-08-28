@@ -39,6 +39,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_after;
     static DECLARE_EXPORT const Keyword tag_alternate;
     static DECLARE_EXPORT const Keyword tag_alternates;
+    static DECLARE_EXPORT const Keyword tag_autocommit;
     static DECLARE_EXPORT const Keyword tag_available;
     static DECLARE_EXPORT const Keyword tag_before;
     static DECLARE_EXPORT const Keyword tag_bucket;

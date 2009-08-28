@@ -49,7 +49,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
   // Unattach previous delivery operationplans.
   // Locked operationplans will NOT be deleted, and a part of the demand can
   // still remain planned.
-  const_cast<Demand*>(l)->deleteOperationPlans();
+  const_cast<Demand*>(l)->deleteOperationPlans();  // xxx should use a delete command instead, in order to be undoable!!!
 
   // Determine the quantity to be planned and the date for the planning loop
   double plan_qty = l->getQuantity() - l->getPlannedQuantity();
@@ -79,8 +79,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       logger << "Demand '" << l << "' asks: "
       << plan_qty << "  " << plan_date << endl;
 
-    // Check whether the action list is empty
-    assert( data->empty() );
+    // Store the last command in the list, in order to undo the following
+    // commands if required.
+    Command* topcommand = data->getLastCommand();
 
     // Plan the demand by asking the delivery operation to plan
     data->state->curBuffer = NULL;
@@ -123,7 +124,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       }
 
       // Delete operationplans - Undo all changes
-      data->undo();
+      data->undo(topcommand);
 
       // Set the ask date for the next pass through the loop
       if (data->state->a_date <= copy_plan_date)
@@ -147,7 +148,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
         // 'coordinated' planning run.
 
         // Delete operationplans created in the 'testing round'
-        data->undo();
+        data->undo(topcommand);
 
         // Create the correct operationplans
         if (loglevel>=2) logger << "Demand '" << l << "' plans coordination." << endl;
@@ -181,7 +182,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 
       // Register the new operationplans. We need to make sure that the
       // correct execute method is called!
-      data->CommandList::execute();
+      if (data->getSolver()->getAutocommit())
+        data->CommandList::execute();
 
       // Update the quantity to plan in the next loop
       plan_qty -= data->state->a_qty;
@@ -216,7 +218,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
           break;
         }
       }
-      data->CommandList::execute();
+      if (data->getSolver()->getAutocommit())
+        data->CommandList::execute();
     }
     catch (...)
     {

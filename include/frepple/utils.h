@@ -829,7 +829,7 @@ class PythonType : public NonCopyable
       */
     static const PyTypeObject PyTypeObjectTemplate;
 
-    /** Incremental size of the method table.
+    /** Incremental size of the method table.<br>
       * We allocate memory for the method definitions per block, not 
       * one-by-one.
       */
@@ -1917,8 +1917,8 @@ enum mode
   * The reverse process of un-escaping the special character sequences is 
   * taken care of by the Xerces library.
   *
-  * This class works fine with utf-8 and single-byte encodings, but will
-  * NOT work with other multibyte encodings (such as utf-116 or utf-32).
+  * This class works fine with UTF-8 and single-byte encodings, but will
+  * NOT work with other multibyte encodings (such as UTF-116 or UTF-32).
   */
 class XMLEscape
 {
@@ -2913,7 +2913,7 @@ class PythonExtensionBase : public PyObject
     virtual ~PythonExtensionBase() 
     {
       if (PyObject::ob_refcnt > 1)
-        logger << "Warning: Deleting " << this << PyObject::ob_type->tp_name 
+        logger << "Warning: Deleting " << PyObject::ob_type->tp_name 
           << " object that is still referenced " 
           << (PyObject::ob_refcnt-1) << " times" << endl;
     }
@@ -4033,7 +4033,7 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     void reset();
 
     /** Return a pointer to the current object being read in.  */
-    inline Object* getCurrentObject() const {return m_EHStack.back().first;}
+    inline Object* getCurrentObject() const {return m_EHStack[m_EHStack.size()-1].first;}
 
   public:
     /** Constructor.

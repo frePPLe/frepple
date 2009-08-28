@@ -848,10 +848,12 @@
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
           <xsd:element name="constraints" type="xsd:unsignedShort" />
           <xsd:element name="maxparallel" type="xsd:positiveInteger" />
+          <xsd:element name="autocommit" type="xsd:boolean" />
           <xsd:element name="loglevel" type="loglevel" />
         </xsd:choice>
         <xsd:attribute name="constraints" type="xsd:unsignedShort" />
         <xsd:attribute name="maxparallel" type="xsd:positiveInteger" />
+        <xsd:attribute name="autocommit" type="xsd:boolean" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

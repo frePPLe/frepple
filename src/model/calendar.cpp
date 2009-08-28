@@ -547,7 +547,7 @@ DECLARE_EXPORT PyObject* CalendarVoid::setPythonValue(PyObject* self, PyObject* 
   
     // Parse the arguments
     PyObject *pystart, *pyend, *pyval = NULL;
-	  if (!PyArg_ParseTuple(args, "OO|O", &pystart, &pyend, &pyval))
+    if (!PyArg_ParseTuple(args, "OO|O:setvalue", &pystart, &pyend, &pyval))
       return NULL;
 
     // Update the calendar
@@ -591,7 +591,7 @@ DECLARE_EXPORT PyObject* CalendarBool::setPythonValue(PyObject* self, PyObject* 
   
     // Parse the arguments
     PyObject *pystart, *pyend, *pyval;
-	  if (!PyArg_ParseTuple(args, "OOO", &pystart, &pyend, &pyval))
+    if (!PyArg_ParseTuple(args, "OOO:setvalue", &pystart, &pyend, &pyval))
       return NULL;
 
     // Update the calendar
@@ -635,7 +635,7 @@ DECLARE_EXPORT PyObject* CalendarDouble::setPythonValue(PyObject* self, PyObject
   
     // Parse the arguments
     PyObject *pystart, *pyend, *pyval;
-	  if (!PyArg_ParseTuple(args, "OOO", &pystart, &pyend, &pyval))
+	  if (!PyArg_ParseTuple(args, "OOO:setvalue", &pystart, &pyend, &pyval))
       return NULL;
 
     // Update the calendar
@@ -679,7 +679,7 @@ DECLARE_EXPORT PyObject* CalendarString::setPythonValue(PyObject* self, PyObject
   
     // Parse the arguments
     PyObject *pystart, *pyend, *pyval;
-	  if (!PyArg_ParseTuple(args, "OOO", &pystart, &pyend, &pyval))
+	  if (!PyArg_ParseTuple(args, "OOO:setvalue", &pystart, &pyend, &pyval))
       return NULL;
 
     // Update the calendar
@@ -723,7 +723,7 @@ DECLARE_EXPORT PyObject* CalendarInt::setPythonValue(PyObject* self, PyObject* a
   
     // Parse the arguments
     PyObject *pystart, *pyend, *pyval;
-	  if (!PyArg_ParseTuple(args, "OOO", &pystart, &pyend, &pyval))
+	  if (!PyArg_ParseTuple(args, "OOO:setvalue", &pystart, &pyend, &pyval))
       return NULL;
 
     // Update the calendar
@@ -775,7 +775,7 @@ DECLARE_EXPORT PyObject* CalendarOperation::setPythonValue(PyObject* self, PyObj
   
     // Parse the arguments
     PyObject *pystart, *pyend, *pyval;
-	  if (!PyArg_ParseTuple(args, "OOO", &pystart, &pyend, &pyval))
+	  if (!PyArg_ParseTuple(args, "OOO:setvalue", &pystart, &pyend, &pyval))
       return NULL;
 
     // Update the calendar
@@ -919,7 +919,7 @@ DECLARE_EXPORT PyObject* Calendar::getEvents(
     // Parse the arguments
     PyObject* pystart = NULL;
     PyObject* pydirection = NULL;
-	  if (!PyArg_ParseTuple(args, "|OO", &pystart, &pydirection))
+	  if (!PyArg_ParseTuple(args, "|OO:setvalue", &pystart, &pydirection))
       return NULL;
     Date startdate = pystart ? PythonObject(pystart).getDate() : Date::infinitePast;
     bool forward = pydirection ? PythonObject(pydirection).getBool() : true;

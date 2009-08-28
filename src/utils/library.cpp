@@ -181,7 +181,7 @@ void LibraryUtils::initialize()
   // ascii data in the input.
   // For Posix platforms the environment variable LC_ALL controls the locale.
   // Most Linux distributions these days have a default locale that supports
-  // utf-8 encoding, meaning that every unicode character can be
+  // UTF-8 encoding, meaning that every unicode character can be
   // represented.
   // On Windows, the default is the system-default ANSI code page. The number
   // of characters that frePPLe supports on Windows is constrained by this...

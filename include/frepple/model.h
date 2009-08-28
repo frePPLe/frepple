@@ -1130,7 +1130,7 @@ class Solver : public HasName<Solver>
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
 
-  protected:
+  private:
     /** Controls the amount of tracing and debugging messages. */
     unsigned short loglevel;
 };
@@ -2487,7 +2487,9 @@ class OperationRouting : public Operation
 
 
 /** @brief OperationPlans for routing operation uses this subclass for
-  * the instances. */
+  * the instances. 
+  * @todo reading operationplans for the steps is not working well
+  */
 class OperationPlanRouting : public OperationPlan
 {
     friend class OperationRouting;
@@ -5016,7 +5018,7 @@ class CommandCreateOperationPlan : public Command
 
 /** @brief This command is used to delete an operationplan.
   *
-  * The operationplan will be deleted when the .
+  * The operationplan will be deleted when the command is created.
   */
 class CommandDeleteOperationPlan : public Command
 {

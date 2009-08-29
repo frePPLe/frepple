@@ -4084,7 +4084,7 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     void invalidateCurrentObject()
     {
       if (!m_EHStack.empty())
-        m_EHStack.back().first = NULL;
+        m_EHStack[m_EHStack.size()-1].first = NULL;
     }
 
     /** Return a pointer to the previous object being read in.<br>
@@ -4124,11 +4124,11 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
     /** Updates the user definable pointer. This pointer is used to store
       * status information between handler calls. */
     void setUserArea(void* v)
-      {if (!m_EHStack.empty()) m_EHStack.back().second = v;}
+      {if (!m_EHStack.empty()) m_EHStack[m_EHStack.size()-1].second = v;}
 
     /** Returns the user definable pointer. */
     void* getUserArea() const
-      {return m_EHStack.empty() ? NULL : m_EHStack.back().second;}
+      {return m_EHStack.empty() ? NULL : m_EHStack[m_EHStack.size()-1].second;}
 
     /** Updates whether we ignore data exceptions or whether we abort the
       * processing of the XML data stream. */

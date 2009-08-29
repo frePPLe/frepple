@@ -4209,10 +4209,14 @@ class Demand
     /** Removes a delivery operationplan for this demand. */
     DECLARE_EXPORT void removeDelivery(OperationPlan *o);
 
-    /** Deletes all delivery operationplans of this demand. The boolean
-      * parameter controls whether we delete also locked operationplans or not.
+    /** Deletes all delivery operationplans of this demand.<br>
+      * The (optional) boolean parameter controls whether we delete also locked
+      * operationplans or not.<br>
+      * The second (optional) argument is a command list that can be used to
+      * remove the operationplans in an undo-able way.
       */
-    DECLARE_EXPORT void deleteOperationPlans(bool deleteLockedOpplans = false);
+    DECLARE_EXPORT void deleteOperationPlans
+      (bool deleteLockedOpplans = false, CommandList* = NULL);
 
     /** Returns the due date of the demand. */
     const Date& getDue() const {return dueDate;}

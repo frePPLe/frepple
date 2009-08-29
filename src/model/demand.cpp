@@ -71,24 +71,30 @@ DECLARE_EXPORT void Demand::setQuantity(double f)
 }
 
 
-DECLARE_EXPORT void Demand::deleteOperationPlans (bool deleteLockedOpplans)
+DECLARE_EXPORT void Demand::deleteOperationPlans 
+  (bool deleteLocked, CommandList* cmds)
 {
   // Delete all opplans
-  for (OperationPlan_list::iterator i = deli.begin(); i!=deli.end(); )
-    if (deleteLockedOpplans || !(*i)->getLocked())
-    {
-      // Setting the demand pointer to NULL is required to prevent the
-      // deletion of the operationplan calling the function removeDelivery.
-      // We can't use the regular method setDemand() to do this!
-      (*i)->dmd = NULL;
-      delete *i;
-      // Remove from the list - while trying to maintain a valid iterator to
-      // the next element.
-      OperationPlan_list::iterator todelete = i;
-      ++i;
-      deli.erase(todelete);
-    }
-    else ++i;
+  // Note that an extra loop is used to assure that our iterator doesn't get
+  // invalidated during the deletion.
+  while (true)  
+  {
+    // Find a candidate to delete
+    OperationPlan *candidate = NULL;
+    for (OperationPlan_list::iterator i = deli.begin(); i!=deli.end(); ++i)
+      if (deleteLocked || !(*i)->getLocked())
+      {
+        candidate = *i;
+        break;
+      }
+    if (!candidate) break;
+    if (cmds)
+      // Use delete command
+      cmds->add(new CommandDeleteOperationPlan(candidate));
+    else
+      // Delete immediately
+      delete candidate;
+  }
 
   // Mark the demand as being changed, so the problems can be redetected
   setChanged();

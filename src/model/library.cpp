@@ -67,8 +67,6 @@ void LibraryModel::initialize()
 
   // Initialize the calendar metadata.
   nok += Calendar::initialize();
-  nok += CalendarBucketIterator::initialize();  // xxx remove
-  nok += CalendarEventIterator::initialize();   // xxx remove
   nok += CalendarBool::initialize();
   nok += CalendarVoid::initialize();
   nok += CalendarDouble::initialize();

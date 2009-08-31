@@ -20,7 +20,7 @@
 # revision : $LastChangedRevision$  $LastChangedBy$
 # date : $LastChangedDate$
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Min, Max
@@ -142,7 +142,7 @@ class Report(ListReport):
           'item': row[8],
           'id': row[9],
           'due': row[10],
-          'percent_used': row[11],
+          'percent_used': row[11] or 100.0,
           'resource': row[9] in resource and resource[row[9]] or None,
           }
 
@@ -150,10 +150,8 @@ class Report(ListReport):
 @staff_member_required
 def GraphData(request, entity):
   basequery = Demand.objects.filter(name__exact=entity).values('name')
-  (bucket,start,end,bucketlist) = getBuckets(request)
   current = Plan.objects.get(pk="1").currentdate
-  total_start = []
-  total_end = []
+  (bucket,start,end,bucketlist) = getBuckets(request)  
   result = [ i for i in Report.resultlist1(basequery,bucket,start,end) ]
   min = None
   max = None
@@ -175,13 +173,13 @@ def GraphData(request, entity):
       i['enddate'] = i['startdate']
     else:
       i['enddate'] = i['enddate'] - timedelta(1)
-    if i['startdate'] < current: i['startdate'] = current
-    if i['enddate'] < current: i['enddate'] = current
+    if i['startdate'] <= datetime(1971,1,1): i['startdate'] = current
+    if i['enddate'] <= datetime(1971,1,1): i['enddate'] = current
     if min == None or i['startdate'] < min: min = i['startdate']  
     if max == None or i['enddate'] > max: max = i['enddate']
     if min == None or i['due'] and i['due'] < min: min = i['due']
     if max == None or i['due'] and i['due'] > max: max = i['due']
-  
+
   # Add a line to mark the current date
   if min <= current and max >= current:
     todayline = current
@@ -190,12 +188,18 @@ def GraphData(request, entity):
 
   # Snap to dates
   min = min.date()
-  max = max.date()
+  max = max.date() + timedelta(1)
   
+  # Get the time buckets
+  (bucket,start,end,bucketlist) = getBuckets(request, start=min, end=max)  
   buckets = []
   for i in bucketlist:
-    if i['end'] > min and i['start'] < max:
-      buckets.append( {'start': i['start'], 'end': i['end'] - timedelta(1), 'name': i['name']} )
+    if i['end'] >= min and i['start'] <= max:
+      if i['end'] - timedelta(1) >= i['start']:
+        buckets.append( {'start': i['start'], 'end': i['end'] - timedelta(1), 'name': i['name']} )
+      else:
+        buckets.append( {'start': i['start'], 'end': i['start'], 'name': i['name']} )
+        
   context = { 
     'buckets': buckets, 
     'reportbucket': bucket,

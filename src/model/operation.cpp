@@ -160,16 +160,12 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
   (Date thedate, TimePeriod duration, bool forward, 
     TimePeriod *actualduration) const
 {
-  // Validate arguments
-  if (!actualduration) 
-    throw LogicException("Null argument in calculateOperationTime function");
-
   int calcount = 0;
   // Initial size of 10 should do for 99.99% of all cases
   vector<Calendar::EventIterator*> cals(10); 
 
   // Default actual duration
-  *actualduration = duration;
+  if (actualduration) *actualduration = duration;
 
   try
   {
@@ -271,10 +267,10 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
           TimePeriod delta = curdate - thedate;
           if (delta >= curduration)
             result.setEnd(thedate + curduration);
-          else
+          else if (actualduration)
             *actualduration = duration - curduration;
         }
-        else 
+        else  if (actualduration)
           *actualduration = duration - curduration;
         break;
       }
@@ -286,10 +282,10 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
           TimePeriod delta = thedate - curdate;
           if (delta >= curduration)
             result.setStart(thedate - curduration);
-          else 
+          else if (actualduration)
             *actualduration = duration - curduration;
         }
-        else
+        else if (actualduration)
           *actualduration = duration - curduration;
         break;
       }
@@ -316,10 +312,6 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
 DECLARE_EXPORT DateRange Operation::calculateOperationTime
   (Date start, Date end, TimePeriod *actualduration) const
 {
-  // Validate arguments
-  if (!actualduration) 
-    throw LogicException("Null argument in calculateOperationTime function");
-
   // Switch start and end if required
   if (end < start)
   {
@@ -333,7 +325,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
   vector<Calendar::EventIterator*> cals(10); 
 
   // Default actual duration
-  *actualduration = 0L;
+   if (actualduration) *actualduration = 0L;
 
   try
   {
@@ -364,7 +356,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
     // Special case: no calendars at all
     if (calcount == 0) 
     {
-      *actualduration = end - start;
+       if (actualduration) *actualduration = end - start;
       return DateRange(start, end);
     }
 
@@ -407,12 +399,12 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
         if (curdate >= end)
         {
           // Leaving the desired date range
-          *actualduration += end - start;
+           if (actualduration) *actualduration += end - start;
           result.setEnd(end);
           break;
         }
         status = false;
-        *actualduration += curdate - start;
+         if (actualduration) *actualduration += curdate - start;
         start = curdate;
       }
       else if (curdate >= end)
@@ -420,7 +412,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
         // Leaving the desired date range
         if (available)
         {
-          *actualduration += end - start;
+           if (actualduration) *actualduration += end - start;
           result.setEnd(end);
           break;
         }

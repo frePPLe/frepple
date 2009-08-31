@@ -1549,7 +1549,7 @@ class Operation : public HasName<Operation>,
       */
     DECLARE_EXPORT DateRange calculateOperationTime
       (Date thedate, TimePeriod duration, bool forward, 
-        TimePeriod* actualduration) const;
+        TimePeriod* actualduration = NULL) const;
 
     /** Calculates the effective, available time between two dates.
       *
@@ -1565,7 +1565,7 @@ class Operation : public HasName<Operation>,
       *             amount of available time found.
       */
     DECLARE_EXPORT DateRange calculateOperationTime
-      (Date start, Date end, TimePeriod* actualduration) const;
+      (Date start, Date end, TimePeriod* actualduration = NULL) const;
 
     /** This method stores ALL logic the operation needs to compute the
       * correct relationship between the quantity, startdate and enddate

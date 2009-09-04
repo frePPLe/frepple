@@ -79,6 +79,7 @@ LANGUAGE_CODE = 'en-us'
 LANGUAGES = (
   ('nl', ugettext('Dutch')),
   ('en', ugettext('English')),
+  ('it', ugettext('Italian')),
   ('zh-tw', ugettext('Traditional Chinese')),
 )
 if (STANDALONE):

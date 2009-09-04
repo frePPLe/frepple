@@ -87,6 +87,7 @@ Page custom database database_leave
 ; Language files
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "TradChinese" 
+!insertmacro MUI_LANGUAGE "Italian" 
 
 ;Version Information
 VIProductVersion "0.7.2.0"
@@ -179,6 +180,9 @@ Section "Application" SecAppl
     Goto ok2
   StrCmp $6 "Dutch" 0 +3
     StrCpy $6 "nl"
+    Goto ok2
+  StrCmp $6 "Italian" 0 +3
+    StrCpy $6 "it"
     Goto ok2
   StrCmp $6 "Traditional Chinese" 0 +3
     StrCpy $6 "zh_tw"

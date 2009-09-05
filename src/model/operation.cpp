@@ -556,18 +556,20 @@ DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, const Attribute& pAttr
 }
 
 
-DECLARE_EXPORT void OperationFixedTime::setOperationPlanParameters
-(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd) const
+DECLARE_EXPORT pair<DateRange,double>
+OperationFixedTime::setOperationPlanParameters
+(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
   // Invalid call to the function, or locked operationplan.
   if (!oplan || q<0)
     throw LogicException("Incorrect parameters for fixedtime operationplan");
-  if (oplan->getLocked()) return;
+  if (oplan->getLocked()) 
+    return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
 
   // All quantities are valid, as long as they are bigger than the minimum size
   if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
   if (fabs(q - oplan->getQuantity()) > ROUNDING_ERROR)
-    oplan->setQuantity(q, false, false);
+    q = oplan->setQuantity(q, false, false, execute);
 
   // Set the start and end date.
   DateRange x;
@@ -579,11 +581,18 @@ DECLARE_EXPORT void OperationFixedTime::setOperationPlanParameters
   }
   else if (s) x = calculateOperationTime(s, duration, true, &actualduration);
   else x = calculateOperationTime(e, duration, false, &actualduration);
-  if (actualduration == duration)
+  if (!execute)
+    // Simulation only
+    return pair<DateRange,double>(x, actualduration == duration ? q : 0);
+  else if (actualduration == duration)
+    // Update succeeded
     oplan->setStartAndEnd(x.getStart(), x.getEnd());
   else
-    // Not enough available time
+    // Update failed - Not enough available time
     oplan->setQuantity(0);
+
+  // Return value
+  return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
 }
 
 
@@ -618,32 +627,34 @@ DECLARE_EXPORT void OperationFixedTime::endElement (XMLInput& pIn, const Attribu
 }
 
 
-DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
-(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd) const
+DECLARE_EXPORT pair<DateRange,double> 
+OperationTimePer::setOperationPlanParameters
+(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
   // Invalid call to the function.
   if (!oplan || q<0)
     throw LogicException("Incorrect parameters for timeper operationplan");
-  if (oplan->getLocked()) return;
+  if (oplan->getLocked()) 
+    return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
 
   // Respect minimum size
-  if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
+  if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum(); 
 
   // The logic depends on which dates are being passed along
   DateRange x;
   TimePeriod actual;
   if (s && e)
   {
-    // Case 1: Both the start and end date are specified: Compute the quantity
-
+    // Case 1: Both the start and end date are specified: Compute the quantity.
     // Calculate the available time between those dates
     x = calculateOperationTime(s,e,&actual);
     if (actual < duration)
     {
       // Start and end aren't far enough from each other to fit the constant
-      // part of the operation duration. This is infeasible.
-      oplan->setQuantity(0,true,false);
-      oplan->setEnd(e);
+      // part of the operation duration. This is infeasible.      
+      if (!execute) return pair<DateRange,double>(x,0);
+      oplan->setQuantity(0,true,false,execute);
+      oplan->setEnd(e);   // xxx Does this create a recursive call to this same function???
     }
     else
     {
@@ -655,14 +666,15 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
 
       // Set the quantity to either the maximum or the requested quantity,
       // depending on which one is smaller.
-      oplan->setQuantity(q < max_q ? q : max_q, true, false);
+      q = oplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
 
       // Updates the dates
       TimePeriod wanted(
-        duration + static_cast<long>(duration_per * oplan->getQuantity())
+        duration + static_cast<long>(duration_per * q)
         );      
       if (preferEnd) x = calculateOperationTime(e, wanted, false, &actual);
       else x = calculateOperationTime(s, wanted, true, &actual);
+      if (!execute) return pair<DateRange,double>(x,q);
       oplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
   }
@@ -672,17 +684,19 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
     // compute the start date
     // Case 4: No date was given at all. Respect the quantity and the 
     // existing end date of the operationplan.
-    oplan->setQuantity(q,true,false); // Round and size the quantity
-    TimePeriod wanted(
-      duration + static_cast<long>(duration_per * oplan->getQuantity())
-      );
+    q = oplan->setQuantity(q,true,false,execute); // Round and size the quantity
+    TimePeriod wanted(duration + static_cast<long>(duration_per * q));
     x = calculateOperationTime(e, wanted, false, &actual);
     if (actual == wanted)
+    {
       // Size is as desired
+      if (!execute) return pair<DateRange,double>(x, q);
       oplan->setStartAndEnd(x.getStart(),x.getEnd());
+    }
     else if (actual < duration)
     {
       // Not feasible
+      if (!execute) return pair<DateRange,double>(x, 0);
       oplan->setQuantity(0,true,false);
       oplan->setStartAndEnd(e,e);
     }
@@ -692,7 +706,10 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
       double max_q = duration_per ? 
         static_cast<double>(actual-duration) / duration_per : 
         q;
-      oplan->setQuantity(q < max_q ? q : max_q, true, false);
+      q = oplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
+      wanted = duration + static_cast<long>(duration_per * q);
+      x = calculateOperationTime(e, wanted, false, &actual);
+      if (!execute) return pair<DateRange,double>(x, q);
       oplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
   }
@@ -700,18 +717,22 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
   {
     // Case 3: Only a start date is specified. Respect the quantity and 
     // compute the end date
-    oplan->setQuantity(q,true,false); // Round and size the quantity
+    q = oplan->setQuantity(q,true,false,execute); // Round and size the quantity
     TimePeriod wanted(
-      duration + static_cast<long>(duration_per * oplan->getQuantity())
+      duration + static_cast<long>(duration_per * q)
       );
     TimePeriod actual;
     x = calculateOperationTime(s, wanted, true, &actual);
     if (actual == wanted)
+    {
       // Size is as desired
+      if (!execute) return pair<DateRange,double>(x, q);
       oplan->setStartAndEnd(x.getStart(),x.getEnd());
+    }
     else if (actual < duration)
     {
       // Not feasible
+      if (!execute) return pair<DateRange,double>(x, 0);
       oplan->setQuantity(0,true,false);
       oplan->setStartAndEnd(s,s);
     }
@@ -721,10 +742,16 @@ DECLARE_EXPORT void OperationTimePer::setOperationPlanParameters
       double max_q = duration_per ? 
         static_cast<double>(actual-duration) / duration_per : 
         q;
-      oplan->setQuantity(q < max_q ? q : max_q, true, false);
+      q = oplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
+      wanted = duration + static_cast<long>(duration_per * q);
+      x = calculateOperationTime(e, wanted, false, &actual);
+      if (!execute) return pair<DateRange,double>(x, q);
       oplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
   }
+
+  // Return value
+  return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
 }
 
 
@@ -812,31 +839,36 @@ DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, const Attribute
 }
 
 
-DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
-(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd) const
+DECLARE_EXPORT pair<DateRange,double>
+OperationRouting::setOperationPlanParameters
+(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
   OperationPlanRouting *op = dynamic_cast<OperationPlanRouting*>(oplan);
 
   // Invalid call to the function
   if (!op || q<0)
     throw LogicException("Incorrect parameters for routing operationplan");
-  if (op->getLocked()) return;
+  if (op->getLocked()) 
+    return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
 
   if (op->step_opplans.empty())
   {
     // No step operationplans to work with. Just apply the requested quantity
     // and dates.
-    oplan->setQuantity(q,false,false);
+    q = oplan->setQuantity(q,false,false,execute);
     if (!s && e) s = e;
     if (s && !e) e = s;
+    if (!execute) return pair<DateRange,double>(DateRange(s,e), q);
     oplan->setStartAndEnd(s,e);
-    return;
+    return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
   }
 
   // Behavior depends on the dates being passed.
   // Move all sub-operationplans in an orderly fashion, either starting from
   // the specified end date or the specified start date.
   bool firstOp = true;
+  pair<DateRange,double> x;
+  Date y;
   if (e)
   {
     // Case 1: an end date is specified
@@ -845,17 +877,19 @@ DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
     {
       if ((*i)->getDates().getEnd() > e || firstOp)
       {
-        (*i)->getOperation()->setOperationPlanParameters(*i,q,Date::infinitePast,e,preferEnd);
-        e = (*i)->getDates().getStart();
+        x = (*i)->getOperation()->setOperationPlanParameters(*i,q,Date::infinitePast,e,preferEnd,execute);
+        e = x.first.getStart();
+        if (firstOp) y = x.first.getEnd();
         firstOp = false;
       }
       else
         // There is sufficient slack in the routing, and the start
         // date doesn't need to be changed
-        return;
+        return pair<DateRange,double>(DateRange(oplan->getDates().getStart(),y), x.second);
     }
+    return pair<DateRange,double>(DateRange(x.first.getStart(),y), x.second);
   }
-  else
+  else if (s)
   {
     // Case 2: a start date is specified
     for (list<OperationPlan*>::const_iterator i = op->step_opplans.begin();
@@ -863,16 +897,22 @@ DECLARE_EXPORT void OperationRouting::setOperationPlanParameters
     {
       if ((*i)->getDates().getStart() < s || firstOp)
       {
-        (*i)->getOperation()->setOperationPlanParameters(*i,q,s,Date::infinitePast,preferEnd);
-        s = (*i)->getDates().getEnd();
+        x = (*i)->getOperation()->setOperationPlanParameters(*i,q,s,Date::infinitePast,preferEnd,execute);
+        s = x.first.getEnd();
+        if (firstOp) y = x.first.getStart();
         firstOp = false;
       }
       else
         // There is sufficient slack in the routing, and the start
         // date doesn't need to be changed
-        return;
+        return pair<DateRange,double>(DateRange(y,oplan->getDates().getEnd()), x.second);
     }
+    return pair<DateRange,double>(DateRange(y,x.first.getEnd()), x.second);
   }
+  else
+    throw LogicException(
+      "Updating a routing operationplan without start or end date"
+    );
 }
 
 
@@ -1074,8 +1114,10 @@ DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (double q,
 }
 
 
-DECLARE_EXPORT void OperationAlternate::setOperationPlanParameters
-(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd) const
+DECLARE_EXPORT pair<DateRange,double> 
+OperationAlternate::setOperationPlanParameters
+  (OperationPlan* oplan, double q, Date s, Date e, bool preferEnd, 
+  bool execute) const
 {
   // Argument passed must be a alternate operationplan
   OperationPlanAlternate *oa = dynamic_cast<OperationPlanAlternate*>(oplan);
@@ -1083,18 +1125,25 @@ DECLARE_EXPORT void OperationAlternate::setOperationPlanParameters
   // Invalid calls to this function
   if (!oa || q<0)
     throw LogicException("Incorrect parameters for alternate operationplan");
-  if (oa->getLocked()) return;
+  if (oa->getLocked())
+    return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
 
   if (!oa->altopplan)
   {
     // Blindly accept the parameters if there is no suboperationplan
-    oplan->setQuantity(q,false,false);
-    oplan->setStartAndEnd(s, e);
+    if (execute)
+    {
+      oplan->setQuantity(q,false,false);
+      oplan->setStartAndEnd(s, e);
+      return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
+    }
+    else
+      return pair<DateRange,double>(DateRange(s,e), oplan->setQuantity(q,false,false,false));
   }
   else
     // Pass the call to the sub-operation
-    oa->altopplan->getOperation()
-      ->setOperationPlanParameters(oa->altopplan,q,s,e,preferEnd);
+    return oa->altopplan->getOperation()
+      ->setOperationPlanParameters(oa->altopplan,q,s,e,preferEnd, execute);  
 }
 
 

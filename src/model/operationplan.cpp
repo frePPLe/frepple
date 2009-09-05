@@ -483,21 +483,17 @@ void DECLARE_EXPORT OperationPlan::setEnd (Date d)
 }
 
 
-DECLARE_EXPORT void OperationPlan::setQuantity (double f, bool roundDown, bool upd)
+DECLARE_EXPORT double OperationPlan::setQuantity (double f, bool roundDown, bool upd, bool execute)
 {
   // No impact on locked operationplans
-  if (getLocked()) return;
+  if (getLocked()) return quantity;
 
   // Invalid operationplan: the quantity must be >= 0.
   if (f < 0)
     throw DataException("Operationplans can't have negative quantities");
 
   // Setting a quantity is only allowed on a top operationplan
-  if (owner)
-  {
-    owner->setQuantity(f,roundDown,upd);
-    return;
-  }
+  if (owner) return owner->setQuantity(f,roundDown,upd,execute);
 
   // Compute the correct size for the operationplan
   if (f!=0.0 && getOperation()->getSizeMinimum()>0.0
@@ -506,10 +502,11 @@ DECLARE_EXPORT void OperationPlan::setQuantity (double f, bool roundDown, bool u
     if (roundDown)
     {
       // Smaller than the minimum quantity, rounding down means... nothing
+      if (!execute) return 0.0;
       quantity = 0.0;
       // Update the flow and loadplans, and mark for problem detection
       if (upd) update();
-      return;
+      return 0.0;
     }
     f = getOperation()->getSizeMinimum();
   }
@@ -517,13 +514,18 @@ DECLARE_EXPORT void OperationPlan::setQuantity (double f, bool roundDown, bool u
   {
     int mult = static_cast<int> (f / getOperation()->getSizeMultiple()
         + (roundDown ? 0.0 : 0.99999999));
+    if (!execute) return mult * getOperation()->getSizeMultiple();
     quantity = mult * getOperation()->getSizeMultiple();
   }
   else
+  {
+    if (!execute) return f;
     quantity = f;
+  }
 
   // Update the flow and loadplans, and mark for problem detection
   if (upd) update();
+  return quantity;
 }
 
 
@@ -737,18 +739,20 @@ DECLARE_EXPORT OperationPlanRouting::~OperationPlanRouting()
 }
 
 
-DECLARE_EXPORT void OperationPlanRouting::setQuantity (double f, bool roundDown, bool update)
+DECLARE_EXPORT double OperationPlanRouting::setQuantity (double f, bool roundDown, bool update, bool execute)
 {
   // First the normal resizing
-  OperationPlan::setQuantity(f,roundDown,update);
+  double x = OperationPlan::setQuantity(f,roundDown,update,execute);
 
   // Apply the same size also to its children
-  for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
-      i != step_opplans.end(); ++i)
-  {
-    (*i)->quantity = quantity;
-    if (update) (*i)->resizeFlowLoadPlans();
-  }
+  if (execute)
+    for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
+        i != step_opplans.end(); ++i)
+    {
+      (*i)->quantity = quantity;
+      if (update) (*i)->resizeFlowLoadPlans();
+    }
+  return x;
 }
 
 
@@ -988,17 +992,18 @@ DECLARE_EXPORT bool OperationPlanAlternate::instantiate()
 }
 
 
-DECLARE_EXPORT void OperationPlanAlternate::setQuantity(double f, bool roundDown, bool update)
+DECLARE_EXPORT double OperationPlanAlternate::setQuantity(double f, bool roundDown, bool update, bool execute)
 {
   // First the normal resizing
-  OperationPlan::setQuantity(f,roundDown,update);
+  f = OperationPlan::setQuantity(f, roundDown, update, execute);
 
   // Apply the same size also to the children operationplan
-  if (altopplan)
+  if (altopplan && execute)
   {
-    altopplan->quantity = quantity;
+    altopplan->quantity = f;
     if (update) altopplan->resizeFlowLoadPlans();
   }
+  return f;
 }
 
 

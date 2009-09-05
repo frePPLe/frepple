@@ -1605,8 +1605,8 @@ class Operation : public HasName<Operation>,
       * Subclasses need to override this method to implement the correct
       * logic.
       */
-    virtual void setOperationPlanParameters
-      (OperationPlan*, double, Date, Date, bool = true) const = 0;
+    virtual pair<DateRange,double> setOperationPlanParameters
+      (OperationPlan*, double, Date, Date, bool=true, bool=true) const = 0;
 
     /** Returns the location of the operation, which is used to model the 
       * working hours and holidays. */
@@ -1979,8 +1979,8 @@ class OperationPlan
       * This method can only be called on top operationplans. Sub operation
       * plans should pass on a call to the parent operationplan.
       */
-    virtual DECLARE_EXPORT void setQuantity
-      (double f, bool roundDown = false, bool update = true);
+    virtual DECLARE_EXPORT double setQuantity (double f, 
+      bool roundDown = false, bool update = true, bool execute = true);
 
     /** Returns a pointer to the demand for which this operation is a delivery.
       * If the operationplan isn't a delivery operation, this is a NULL pointer.
@@ -2322,8 +2322,8 @@ class OperationFixedTime : public Operation
       *  - Locked operationplans can't be updated.
       * @see Operation::setOperationPlanParameters
       */
-    DECLARE_EXPORT void setOperationPlanParameters
-      (OperationPlan*, double, Date, Date, bool=true) const;
+    DECLARE_EXPORT pair<DateRange,double> setOperationPlanParameters
+      (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
   private:
     /** Stores the lengh of the Operation. */
@@ -2376,8 +2376,8 @@ class OperationTimePer : public Operation
       *     date of the operation. A new start date is being computed.
       * @see Operation::setOperationPlanParameters
       */
-    DECLARE_EXPORT void setOperationPlanParameters
-      (OperationPlan*, double, Date, Date, bool=true) const;
+    DECLARE_EXPORT pair<DateRange,double> setOperationPlanParameters
+      (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
@@ -2451,8 +2451,8 @@ class OperationRouting : public Operation
       *    blindly.
       * @see Operation::setOperationPlanParameters
       */
-    DECLARE_EXPORT void setOperationPlanParameters
-      (OperationPlan*, double, Date, Date, bool=true) const;
+    DECLARE_EXPORT pair<DateRange,double> setOperationPlanParameters
+      (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
@@ -2510,7 +2510,7 @@ class OperationPlanRouting : public OperationPlan
     virtual DECLARE_EXPORT void update();
     DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
     DECLARE_EXPORT ~OperationPlanRouting();
-    DECLARE_EXPORT void setQuantity(double f, bool roundDown = false, bool update = true);
+    DECLARE_EXPORT double setQuantity(double f, bool roundDown = false, bool update = true, bool execute = true);
     DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
     virtual const OperationPlan::OperationPlanList& getSubOperationPlans() const {return step_opplans;}
 
@@ -2630,8 +2630,8 @@ class OperationAlternate : public Operation
       *    suboperationplan.
       * @see Operation::setOperationPlanParameters
       */
-    DECLARE_EXPORT void setOperationPlanParameters
-      (OperationPlan*, double, Date, Date, bool=true) const;
+    DECLARE_EXPORT pair<DateRange,double> setOperationPlanParameters
+      (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
     DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
@@ -2704,7 +2704,7 @@ class OperationPlanAlternate : public OperationPlan
     /** Destructor. */
     DECLARE_EXPORT ~OperationPlanAlternate();
     DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
-    DECLARE_EXPORT void setQuantity(double f, bool roundDown = false, bool update = true);
+    DECLARE_EXPORT double setQuantity(double f, bool roundDown = false, bool update = true, bool execute = true);
     DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
     DECLARE_EXPORT void setEnd(Date d);
     DECLARE_EXPORT void setStart(Date d);
@@ -3379,6 +3379,7 @@ class FlowStart : public Flow
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const {return sizeof(FlowStart);}
+    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 };
 
 
@@ -3460,8 +3461,8 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public PythonExte
 
     /** Updates the quantity of the flowplan by changing the quantity of the
       * operationplan owning this flowplan.<br>
-      * The boolean parameter is used to control whether to round up or down
-      * in case the operation quantity must be a multiple.
+      * The boolean parameter is used to control whether to round up (false) 
+      * or down (true) in case the operation quantity must be a multiple.
       */
     void setQuantity(double qty, bool b=false, bool u = true)
     {

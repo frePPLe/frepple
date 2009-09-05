@@ -87,23 +87,20 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
     return false;
   }
 
-  // Store the last command in the list, in order to undo the following
-  // commands if required.
-  Command* topcommand = data.getLastCommand();
-
   // Check the leadtime constraints
   if (!checkOperationLeadtime(opplan,data,true))
     // This operationplan is a wreck. It is impossible to make it meet the
     // leadtime constraints
     return false;
 
-  // Loop till everything is okay. During this loop the operationplan can be
-  // moved early or late, and its quantity can be changed.
-  // However, it cannot be split.
+  // Store the last command in the list, in order to undo the following
+  // commands if required.
+  Command* topcommand = data.getLastCommand();
+
+  // Temporary variables
   DateRange orig_dates = opplan->getDates();
   bool okay = true;
   Date a_date;
-  Date prev_a_date;
   double a_qty;
   Date orig_q_date = data.state->q_date;
   double orig_opplan_qty = data.state->q_qty;
@@ -112,8 +109,11 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
   TimePeriod delay;
   bool incomplete;
   bool tmp_forceLate = data.state->forceLate;
-  data.state->forceLate = false;
   bool isPlannedEarly;
+
+  // Loop till everything is okay. During this loop the quanity and date of the
+  // operationplan can be updated, but it cannot be split or deleted.
+  data.state->forceLate = false;
   do
   {
     if (isCapacityConstrained())

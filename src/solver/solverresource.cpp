@@ -250,13 +250,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       // Found a date with available capacity
       if (HasOverload && newDate)
       {
-        // Multiple operations could be executed in parallel
+        // Multiple operations could be executed in parallel   
         int parallelOps = static_cast<int>((curMax - curOnhand) / data->state->q_loadplan->getQuantity());
         if (parallelOps <= 0) parallelOps = 1;
         // Move the operationplan to the new date
         data->state->q_operationplan->getOperation()->setOperationPlanParameters(
             data->state->q_operationplan,
-            currentQuantity / parallelOps,
+            currentQuantity / parallelOps, // 0.001  @todo this calculation doesn't give minimization of the lateness
             newDate,
             Date::infinitePast
             );  

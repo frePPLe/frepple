@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>consrtraints_combined_1</name>
+	<description>
+	  A model showing a complex interaction between material, lead time and capacity 
+	  constraints, combined with unavailable time during the weekends.	  
+	</description>
+	<current>2009-01-01T00:00:00</current>
+	<locations>
+		<location name="factory 1">
+			<description>A factory that manufactures, stores and packages products</description>
+			<available name="Working Days" xsi:type="calendar_boolean"/>
+		</location>
+		<location name="factory 2">
+			<description>A factory that stores and packages products</description>
+			<available name="Working Days" xsi:type="calendar_boolean"/>
+		</location>
+	</locations>
+	<calendars>
+		<calendar name="Working Days" xsi:type="calendar_boolean">
+			<default>true</default>
+			<buckets>
+				<bucket start="2009-01-03T00:00:00" end="2009-01-05T00:00:00">
+					<value>false</value>
+				</bucket>
+				<bucket start="2009-01-10T00:00:00" end="2009-01-12T00:00:00">
+					<value>false</value>
+				</bucket>
+				<bucket start="2009-01-17T00:00:00" end="2009-01-19T00:00:00">
+					<value>false</value>
+				</bucket>
+				<bucket start="2009-01-24T00:00:00" end="2009-01-26T00:00:00">
+					<value>false</value>
+				</bucket>
+				<bucket start="2009-01-31T00:00:00" end="2009-02-02T00:00:00">
+					<value>false</value>
+				</bucket>
+				<bucket start="2009-02-07T00:00:00" end="2009-02-09T00:00:00">
+					<value>false</value>
+				</bucket>
+				<bucket start="2009-02-14T00:00:00" end="2009-02-16T00:00:00">
+					<value>false</value>
+				</bucket>
+				<bucket start="2009-02-21T00:00:00" end="2009-02-23T00:00:00">
+					<value>false</value>
+				</bucket>
+				<bucket start="2009-02-28T00:00:00" end="2009-03-02T00:00:00">
+					<value>false</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar name="pack capacity factory 1" xsi:type="calendar_double">
+			<default>0</default>
+			<buckets>
+				<bucket start="2008-01-01T00:00:00" end="2009-02-01T00:00:00">
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar name="pack capacity factory 2" xsi:type="calendar_double">
+			<default>0</default>
+			<buckets>
+				<bucket start="2008-01-01T00:00:00">
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar name="weave capacity factory 1" xsi:type="calendar_double">
+			<default>0</default>
+			<buckets>
+				<bucket start="2008-01-01T00:00:00">
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+	</calendars>
+	<operations>
+		<operation name="Deliver product from factory 1 - 1 day" xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<location name="factory 1"/>
+			<duration>P1D</duration>
+		</operation>
+		<operation name="Deliver product from factory 1 - 7 day" xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<location name="factory 1"/>
+			<duration>P7D</duration>
+		</operation>
+		<operation name="Deliver product from factory 1 or 2" xsi:type="operation_alternate">
+			<size_multiple>1</size_multiple>
+			<alternates>
+				<alternate>
+					<operation name="Deliver product from factory 1 - 1 day" xsi:type="operation_fixed_time"/>
+					<priority>1</priority>
+				</alternate>
+				<alternate>
+					<operation name="Deliver product from factory 2 - 7 day" xsi:type="operation_fixed_time"/>
+					<priority>2</priority>
+				</alternate>
+			</alternates>
+		</operation>
+		<operation name="Deliver product from factory 2 - 1 day" xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<location name="factory 2"/>
+			<duration>P1D</duration>
+		</operation>
+		<operation name="Deliver product from factory 2 - 7 day" xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<location name="factory 2"/>
+			<duration>P7D</duration>
+		</operation>
+		<operation name="Deliver product from factory 2 or 1" xsi:type="operation_alternate">
+			<size_multiple>1</size_multiple>
+			<alternates>
+				<alternate>
+					<operation name="Deliver product from factory 2 - 1 day" xsi:type="operation_fixed_time"/>
+					<priority>1</priority>
+				</alternate>
+				<alternate>
+					<operation name="Deliver product from factory 1 - 7 day" xsi:type="operation_fixed_time"/>
+					<priority>2</priority>
+				</alternate>
+			</alternates>
+		</operation>
+		<operation name="Make fabric @ factory 1" xsi:type="operation_time_per">
+			<size_multiple>1</size_multiple>
+			<location name="factory 1"/>
+			<duration>P0D</duration>
+			<duration_per>PT1H</duration_per>
+		</operation>
+		<operation name="Pack product @ factory 1" xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<location name="factory 1"/>
+			<duration>P1D</duration>
+		</operation>
+		<operation name="Pack product @ factory 2" xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<location name="factory 2"/>
+			<duration>P1D</duration>
+		</operation>
+		<operation name="Purchase box @ factory 1" xsi:type="operation_fixed_time">
+			<size_minimum>400</size_minimum>
+			<size_multiple>50</size_multiple>
+			<location name="factory 1"/>
+			<duration>P7D</duration>
+		</operation>
+		<operation name="Purchase box @ factory 2" xsi:type="operation_fixed_time">
+			<size_minimum>400</size_minimum>
+			<size_multiple>50</size_multiple>
+			<location name="factory 2"/>
+			<duration>P7D</duration>
+		</operation>
+		<operation name="Purchase ink @ factory 1" xsi:type="operation_fixed_time">
+			<size_multiple>50</size_multiple>
+			<location name="factory 1"/>
+			<duration>P7D</duration>
+		</operation>
+		<operation name="Purchase thread @ factory 1" xsi:type="operation_fixed_time">
+			<size_minimum>500</size_minimum>
+			<size_multiple>1</size_multiple>
+			<location name="factory 1"/>
+			<duration>P14D</duration>
+		</operation>
+		<operation name="Transport fabric from factory 1 to 2" xsi:type="operation_fixed_time">
+			<size_minimum>1000</size_minimum>
+			<size_multiple>1</size_multiple>
+			<duration>P2D</duration>
+		</operation>
+	</operations>
+	<items>
+		<item name="box">
+		</item>
+		<item name="fabric">
+		</item>
+		<item name="ink">
+		</item>
+		<item name="product">
+			<operation name="Deliver product from factory 1 or 2" xsi:type="operation_alternate"/>
+		</item>
+		<item name="thread">
+		</item>
+	</items>
+	<buffers>
+		<buffer name="box @ factory 1" xsi:type="buffer_infinite">
+			<item name="box"/>
+			<location name="factory 1"/>
+			<detectproblems>false</detectproblems>
+			<flows>
+				<flow xsi:type="flow_end">
+					<operation name="Purchase box @ factory 1" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="Pack product @ factory 1" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<onhand>30</onhand>
+		</buffer>
+		<buffer name="box @ factory 2" xsi:type="buffer_infinite">
+			<item name="box"/>
+			<location name="factory 2"/>
+			<detectproblems>false</detectproblems>
+			<flows>
+				<flow xsi:type="flow_end">
+					<operation name="Purchase box @ factory 2" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="Pack product @ factory 2" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<onhand>40</onhand>
+		</buffer>
+		<buffer name="fabric @ factory 1">
+			<producing name="Make fabric @ factory 1" xsi:type="operation_time_per"/>
+			<item name="fabric"/>
+			<location name="factory 1"/>
+			<flows>
+				<flow xsi:type="flow_start">
+					<operation name="Transport fabric from factory 1 to 2" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="Pack product @ factory 1" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<operation name="Make fabric @ factory 1" xsi:type="operation_time_per"/>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+		</buffer>
+		<buffer name="fabric @ factory 2">
+			<producing name="Transport fabric from factory 1 to 2" xsi:type="operation_fixed_time"/>
+			<item name="fabric"/>
+			<location name="factory 2"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<operation name="Transport fabric from factory 1 to 2" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="Pack product @ factory 2" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</buffer>
+		<buffer name="ink @ factory 1">
+			<producing name="Purchase ink @ factory 1" xsi:type="operation_fixed_time"/>
+			<item name="ink"/>
+			<location name="factory 1"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<operation name="Purchase ink @ factory 1" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="Make fabric @ factory 1" xsi:type="operation_time_per"/>
+					<quantity>-2</quantity>
+				</flow>
+			</flows>
+		</buffer>
+		<buffer name="product @ factory 1">
+			<producing name="Pack product @ factory 1" xsi:type="operation_fixed_time"/>
+			<item name="product"/>
+			<location name="factory 1"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<operation name="Pack product @ factory 1" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="Deliver product from factory 1 - 7 day" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="Deliver product from factory 1 - 1 day" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</buffer>
+		<buffer name="product @ factory 2">
+			<producing name="Pack product @ factory 2" xsi:type="operation_fixed_time"/>
+			<item name="product"/>
+			<location name="factory 2"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<operation name="Pack product @ factory 2" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="Deliver product from factory 2 - 7 day" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="Deliver product from factory 2 - 1 day" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<onhand>10</onhand>
+		</buffer>
+		<buffer name="thread @ factory 1">
+			<producing name="Purchase thread @ factory 1" xsi:type="operation_fixed_time"/>
+			<item name="thread"/>
+			<location name="factory 1"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<operation name="Purchase thread @ factory 1" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<operation name="Make fabric @ factory 1" xsi:type="operation_time_per"/>
+					<quantity>-3</quantity>
+				</flow>
+			</flows>
+			<onhand>50</onhand>
+		</buffer>
+	</buffers>
+	<demands>
+		<demand name="Demand 1">
+			<operation name="Deliver product from factory 1 or 2" xsi:type="operation_alternate"/>
+			<customer name="Customer near factory 1"/>
+			<quantity>100</quantity>
+			<item name="product"/>
+			<due>2009-01-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+  </demands>
+	<resources>
+		<resource name="pack in factory 1">
+			<maximum name="pack capacity factory 1" xsi:type="calendar_double"/>
+			<location name="factory 1"/>
+			<loads>
+				<load>
+					<operation name="Pack product @ factory 1" xsi:type="operation_fixed_time"/>
+				</load>
+			</loads>
+		</resource>
+		<resource name="pack in factory 2">
+			<maximum name="pack capacity factory 2" xsi:type="calendar_double"/>
+			<location name="factory 2"/>
+			<loads>
+				<load>
+					<operation name="Pack product @ factory 2" xsi:type="operation_fixed_time"/>
+				</load>
+			</loads>
+		</resource>
+		<resource name="weave in factory 1">
+			<maximum name="weave capacity factory 1" xsi:type="calendar_double"/>
+			<location name="factory 1"/>
+			<loads>
+				<load>
+					<operation name="Make fabric @ factory 1" xsi:type="operation_time_per"/>
+				</load>
+			</loads>
+		</resource>
+	</resources>
+	<operationplans>
+		<operationplan id="1000" operation="Purchase box @ factory 1">
+			<start>2009-01-02T00:00:00</start>
+			<end>2009-01-02T00:00:00</end>
+			<quantity>100</quantity>
+			<locked>true</locked>
+		</operationplan>
+		<operationplan id="1001" operation="Purchase box @ factory 2">
+			<start>2009-01-09T00:00:00</start>
+			<end>2009-01-09T00:00:00</end>
+			<quantity>100</quantity>
+			<locked>true</locked>
+		</operationplan>
+		<operationplan id="1002" operation="Purchase ink @ factory 1">
+			<start>2009-01-02T00:00:00</start>
+			<end>2009-01-02T00:00:00</end>
+			<quantity>100</quantity>
+			<locked>true</locked>
+		</operationplan>
+		<operationplan id="1003" operation="Purchase thread @ factory 1">
+			<start>2009-01-02T00:00:00</start>
+			<end>2009-01-02T00:00:00</end>
+			<quantity>100</quantity>
+			<locked>true</locked>
+		</operationplan>
+	</operationplans>
+	
+<?python
+frepple.solver_mrp(name="MRP", constraints=7, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+?>
+
+</plan>

@@ -277,10 +277,10 @@ void Forecast::writeElement(XMLOutput *o, const Keyword &tag, mode m) const
     (tag, Tags::tag_name, getName(), Tags::tag_type, getType().type);
 
   o->writeElement(Tags::tag_item, &*getItem());
+  o->writeElement(Tags::tag_operation, &*getOperation());
   if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
   o->writeElement(Tags::tag_calendar, calptr);
   if (!getDiscrete()) o->writeElement(Tags::tag_discrete, getDiscrete());
-  o->writeElement(Tags::tag_operation, &*getOperation());
 
   // Write all entries
   o->BeginObject (Tags::tag_buckets);

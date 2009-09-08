@@ -28,8 +28,9 @@
 #ifndef TIMELINE
 #define TIMELINE
 
-#include "frepple/utils.h"
+#ifndef DOXYGEN
 #include <cmath>
+#endif
 
 namespace frepple
 {

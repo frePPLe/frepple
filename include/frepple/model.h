@@ -39,7 +39,6 @@
 
 #include "frepple/utils.h"
 #include "frepple/timeline.h"
-#include <float.h>
 using namespace frepple::utils;
 
 namespace frepple

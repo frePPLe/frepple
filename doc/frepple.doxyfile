@@ -40,6 +40,8 @@ STRIP_FROM_PATH        =
 
 INTERNAL_DOCS          = NO
 
+SHOW_DIRECTORIES       = YES
+
 STRIP_CODE_COMMENTS    = NO
 
 CASE_SENSE_NAMES       = NO
@@ -112,7 +114,7 @@ FILE_PATTERNS          = *.h *.cpp
 
 RECURSIVE              = YES
 
-EXCLUDE                = ../include/frepple/entity.h ../src/tags.cpp
+EXCLUDE                = ../include/frepple/entity.h
 
 EXCLUDE_SYMLINKS       = NO
 
@@ -312,19 +314,25 @@ CLASS_DIAGRAMS         = YES
 
 HIDE_UNDOC_RELATIONS   = YES
 
-HAVE_DOT               = NO
+HAVE_DOT               = $(HAVE_DOT)
 
 CLASS_GRAPH            = YES
 
-COLLABORATION_GRAPH    = YES
+# Collaboration graph gets too complex
+COLLABORATION_GRAPH    = NO 
 
-TEMPLATE_RELATIONS     = YES
+TEMPLATE_RELATIONS     = NO
 
 INCLUDE_GRAPH          = YES
 
 INCLUDED_BY_GRAPH      = YES
 
-GRAPHICAL_HIERARCHY    = YES
+DIRECTORY_GRAPH        = NO
+
+GRAPHICAL_HIERARCHY    = NO
+
+# UML look is nice and complete, but overloaded
+UML_LOOK = NO
 
 DOT_IMAGE_FORMAT       = png
 

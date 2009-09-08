@@ -29,7 +29,7 @@
   * @brief Header file for auxilary classes.
   *
   * @namespace frepple::utils
-  * @brief Core namespace
+  * @brief Utilities for the frePPle core
   */
 
 #ifndef FREPPLE_UTILS_H
@@ -56,6 +56,7 @@ typedef int Py_ssize_t;
 #define PY_SSIZE_T_MIN INT_MIN
 #endif
 
+#ifndef DOXYGEN
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -63,6 +64,8 @@ typedef int Py_ssize_t;
 #include <ctime>
 #include <assert.h>
 #include <typeinfo>
+#include <float.h>
+#endif
 
 // We want to use singly linked lists, but these are not part of the C++
 // standard though. Sigh...
@@ -83,6 +86,7 @@ using namespace gnu_cxx;
 #endif
 
 // STL include files
+#ifndef DOXYGEN
 #include <list>
 #include <map>
 #include <set>
@@ -90,6 +94,7 @@ using namespace gnu_cxx;
 #include <stack>
 #include <vector>
 #include <algorithm>
+#endif
 using namespace std;
 
 // Configuration file created by autoconf

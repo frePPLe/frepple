@@ -5,7 +5,7 @@ if DOC
 EXTRA_DIST += reference
 reference: clean frepple.doxyfile
 	-rm -rf reference frepple.tags
-	export PACKAGE_VERSION=$(PACKAGE_VERSION); @DOXYGEN@ frepple.doxyfile
+	export PACKAGE_VERSION=$(PACKAGE_VERSION) HAVE_DOT=${HAVE_DOT}; @DOXYGEN@ frepple.doxyfile
 else
 reference:
 	-echo Skipping generation of documentation...

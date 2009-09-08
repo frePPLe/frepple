@@ -190,6 +190,7 @@ AC_HELP_STRING([--enable-doc],
   *) AC_MSG_ERROR([bad value ${enableval} for --enable-doc]) ;;
 esac],[builddoc=false])
 AM_CONDITIONAL(DOC, test x$builddoc = xtrue)
+AC_CHECK_PROG(HAVE_DOT, dot, [YES], [NO])
 
 # Check the availability of the SWIG programs
 AC_CHECK_PROGS(SWIG, swig, noswig)

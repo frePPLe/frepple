@@ -26,7 +26,7 @@ except:
   # Alternative definitions when cherrypy is not available.
   # We only want to report the missing module when the REST web service is 
   # really used.
-  def RESTwebservice(address=None, port=8080):
+  def RESTwebservice(address=None, port=None):
     raise ImportError, "no module named cherrypy"    
 else:  
   import os

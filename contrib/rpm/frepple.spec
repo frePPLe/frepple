@@ -31,10 +31,9 @@ Release: 1%{?dist}
 # licensed under GPL. That module is therefore disabled in this build.
 License: LGPLv2+
 Group: Applications/Productivity
-Source: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
-Source1: %{name}-%{version}.tar.gz
 URL: http://www.frepple.com
-Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
+Source: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
+BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
 Requires: xerces-c, Django
 BuildRequires: doxygen, python-devel, xerces-c-devel, Django
 
@@ -44,13 +43,24 @@ framework for modeling and solving production planning problems, targeted
 primarily at discrete manufacturing industries.
 
 %package devel
-Summary: The libraries and header files needed for frePPLe development.
+Summary: The libraries and header files needed for frePPLe development
 Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
 %description devel
 These are the libraries and header files need for developing plug-ins and
 extensions of frePPLe - the Free Production Planning Library.
+
+%package doc
+Summary: Documentation subpackage for frePPLe
+Group: Documentation
+Requires: %{name} = %{version}-%{release}
+%if 0%{?fedora} || 0%{?rhel} > 5
+BuildArch: noarch
+%endif
+
+%description doc
+Documentation subpackage for frePPLe - the Free Production Planning Library.
 
 %prep
 %setup -q
@@ -67,11 +77,15 @@ extensions of frePPLe - the Free Production Planning Library.
 # Remove rpath from libtool
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
+# Avoid linking against unused libraries
+sed -i -e 's| -shared | -Wl,--as-needed\0|g' libtool
 # Compile
-make all
+make %{?_smp_mflags} all
 
 %check
-# Run test suite
+# Run test suite, skipping some long and less interesting tests
+TESTARGS="-e xml_remote -e scalability_1 -e scalability_2 -e scalability_3 -e jobshop"
+export TESTARGS
 make check
 
 %install
@@ -81,6 +95,10 @@ make install DESTDIR=%{buildroot}
 find %{buildroot} -name '*.la' -exec rm {} \;
 # Use %doc instead of install to create the documentation
 rm -rf %{buildroot}%{_docdir}/%{name}
+# Language files; not under /usr/share, need to be handled manually
+(cd $RPM_BUILD_ROOT && find . -name 'django*.mo') | %{__sed} -e 's|^.||' | %{__sed} -e \
+  's:\(.*/locale/\)\([^/_]\+\)\(.*\.mo$\):%lang(\2) \1\2\3:' \
+  >> %{name}.lang
 
 %clean
 rm -rf %{buildroot}
@@ -89,8 +107,8 @@ rm -rf %{buildroot}
 
 %postun -p /sbin/ldconfig
 
-%files
-%defattr(-,root,root)
+%files -f %{name}.lang
+%defattr(-,root,root,-)
 %{_bindir}/frepple
 %dir %{_libdir}/frepple
 %{_libdir}/frepple/mod_forecast.so
@@ -100,14 +118,20 @@ rm -rf %{buildroot}
 %{_datadir}/frepple/*.xsd
 %{_datadir}/frepple/*.xml
 %{_datadir}/frepple/*.py*
-%{_mandir}/man1/frepple.1.gz
-%{python_sitelib}
-%doc COPYING doc/reference doc/*.pdf doc/favicon.ico doc/*.html doc/*.css doc/*.gif doc/*.bmp
+%{_mandir}/man1/frepple.1.*
+%attr(0755,root,root) %{python_sitelib}/freppledb/manage.py
+%{python_sitelib}/freppledb*
+%doc COPYING 
 
 %files devel
-%defattr(-,root,root)
+%defattr(-,root,root,-)
 %{_libdir}/libfrepple.so
 %dir %{_includedir}/frepple
 %{_includedir}/frepple/*
 %{_includedir}/frepple.h
 %{_includedir}/freppleinterface.h
+
+%files doc
+%defattr(-,root,root,-)
+%doc doc/reference doc/*.pdf doc/favicon.ico doc/*.html doc/*.css doc/*.gif doc/*.bmp
+

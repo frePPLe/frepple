@@ -26,8 +26,8 @@
  ***************************************************************************/
 
 
-#include "freppleinterface.h"
 #include "frepple.h"
+#include "freppleinterface.h"
 using namespace frepple;
 
 

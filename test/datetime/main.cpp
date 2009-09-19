@@ -26,8 +26,8 @@
  ***************************************************************************/
 
 
-#include "frepple/utils.h"
-using namespace frepple::utils;
+#include "frepple.h"
+using namespace frepple;
 
 
 int main (int argc, char *argv[])

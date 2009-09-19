@@ -104,6 +104,7 @@ DECLARE_EXPORT const Keyword Tags::tag_locked("locked");
 DECLARE_EXPORT const Keyword Tags::tag_logfile("logfile");
 DECLARE_EXPORT const Keyword Tags::tag_loglevel("loglevel");
 DECLARE_EXPORT const Keyword Tags::tag_lpst("lpst");
+DECLARE_EXPORT const Keyword Tags::tag_maxearly("maxearly");
 DECLARE_EXPORT const Keyword Tags::tag_maximum("maximum");
 DECLARE_EXPORT const Keyword Tags::tag_maxinterval("maxinterval");
 DECLARE_EXPORT const Keyword Tags::tag_maxinventory("maxinventory");

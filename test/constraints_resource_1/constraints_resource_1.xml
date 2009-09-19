@@ -33,6 +33,7 @@
           </bucket>
         </buckets>
       </maximum>
+      <maxearly>P4D</maxearly>
       <loads>
         <load>
           <operation name="make end item" />
@@ -75,6 +76,15 @@
       <quantity>10</quantity>
       <due>2009-01-20T00:00:00</due>
       <priority>4</priority>
+      <item name="end item" />
+    </demand>
+    <demand name="order 5">
+      <description>This demand can't be planned in time since there is no 
+        capacity in the acceptable time window before the ask date.
+      </description>
+      <quantity>10</quantity>
+      <due>2009-01-20T00:00:00</due>
+      <priority>5</priority>
       <item name="end item" />
     </demand>
   </demands>

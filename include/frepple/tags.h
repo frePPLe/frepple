@@ -105,6 +105,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_logfile;
     static DECLARE_EXPORT const Keyword tag_loglevel;
     static DECLARE_EXPORT const Keyword tag_lpst;
+    static DECLARE_EXPORT const Keyword tag_maxearly;
     static DECLARE_EXPORT const Keyword tag_maximum;
     static DECLARE_EXPORT const Keyword tag_maxinterval;
     static DECLARE_EXPORT const Keyword tag_maxinventory;

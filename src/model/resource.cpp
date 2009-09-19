@@ -127,6 +127,8 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
   HasDescription::writeElement(o, tag);
   HasHierarchy<Resource>::writeElement(o, tag);
   o->writeElement(Tags::tag_maximum, max_cal);
+  if (getMaxEarly() != TimePeriod(defaultMaxEarly)) 
+    o->writeElement(Tags::tag_maxearly, getMaxEarly());
   if (getCost() != 0.0) o->writeElement(Tags::tag_cost, getCost());
   o->writeElement(Tags::tag_location, loc);
   Plannable::writeElement(o, tag);
@@ -207,6 +209,8 @@ DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, const Attribute& pAttr,
           "' has invalid type for use as resource max calendar");
     }
   }
+  else if (pAttr.isA (Tags::tag_maxearly))
+    setMaxEarly(pElement.getTimeperiod());
   else if (pAttr.isA (Tags::tag_cost))
     setCost(pElement.getDouble());
   else if (pAttr.isA(Tags::tag_location))
@@ -284,6 +288,8 @@ DECLARE_EXPORT PyObject* Resource::getattro(const Attribute& attr)
     return PythonObject(getLocation());
   if (attr.isA(Tags::tag_maximum))
     return PythonObject(getMaximum());
+  if (attr.isA(Tags::tag_maxearly))
+    return PythonObject(getMaxEarly());
   if (attr.isA(Tags::tag_cost))
     return PythonObject(getCost());
   if (attr.isA(Tags::tag_hidden))
@@ -344,6 +350,8 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
     setHidden(field.getBool());
   else if (attr.isA(Tags::tag_cost))
     setCost(field.getDouble());
+  else if (attr.isA(Tags::tag_maxearly))
+    setMaxEarly(field.getTimeperiod());
   else
     return -1;  // Error
   return 0;  // OK

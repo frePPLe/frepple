@@ -153,7 +153,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         curMax = cur->getMax(false);
         prevMax = curMax;
         curdate = cur->getDate();
-        for (; cur!=res->getLoadPlans().end(); --cur)
+        for (; cur!=res->getLoadPlans().end() && curdate > currentOpplanEnd - res->getMaxEarly(); --cur)
         {
           // A change in the maximum capacity          
           prevMax = curMax;          
@@ -172,7 +172,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         // At this point:
         //  - curdate is a latest date where we drop below the maximum
         //  - cur is the first loadplan where we are below the max
-        if (cur != res->getLoadPlans().end())
+        if (cur != res->getLoadPlans().end() && curdate > currentOpplanEnd - res->getMaxEarly())
         {
           // Move the operationplan
           data->state->q_operationplan->setEnd(curdate);

@@ -3515,9 +3515,13 @@ class Resource : public HasHierarchy<Resource>,
     friend class LoadPlan;
 
   public:
+    /** The default time window before the ask date where we look for 
+      * available capacity. */
+    static const long defaultMaxEarly = 100*86400L;
+
     /** Constructor. */
     explicit Resource(const string& str) : HasHierarchy<Resource>(str),
-        max_cal(NULL), loc(NULL), cost(0.0), hidden(false) {};
+      max_cal(NULL), loc(NULL), cost(0.0), hidden(false), maxearly(defaultMaxEarly) {};
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Resource();
@@ -3537,7 +3541,7 @@ class Resource : public HasHierarchy<Resource>,
     void setCost(const double c) 
     {
       if (c >= 0) cost = c;
-      else throw DataException("Operation cost must be positive");
+      else throw DataException("Resource cost must be positive");
     }
 
     typedef Association<Operation,Resource,Load>::ListB loadlist;
@@ -3593,6 +3597,18 @@ class Resource : public HasHierarchy<Resource>,
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
 
+    /** Returns the maximum inventory buildup allowed in case of capacity 
+      * shortages. */
+    TimePeriod getMaxEarly() const {return maxearly;}
+
+    /** Updates the maximum inventory buildup allowed in case of capacity 
+      * shortages. */
+    void setMaxEarly(TimePeriod c) 
+    {
+      if (c >= 0L) maxearly = c;
+      else throw DataException("MaxEarly must be positive");
+    }
+
   private:
     /** This calendar is used to updates to the resource size. */
     CalendarDouble* max_cal;
@@ -3612,6 +3628,9 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Specifies whether this resource is hidden for serialization. */
     bool hidden;
+
+    /** Maximum inventory buildup allowed in case of capacity shortages. */
+    TimePeriod maxearly;
 };
 
 

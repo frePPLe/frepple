@@ -311,6 +311,7 @@
       <xsd:group ref="common_fields" />
       <xsd:element name="location" type="location" />
       <xsd:element name="maximum" type="calendar_double" />
+      <xsd:element name="maxearly" type="xsd:duration" />
       <xsd:element name="cost" type="positiveDouble" />
       <xsd:element name="owner" type="resource" />
       <xsd:element name="members">
@@ -325,6 +326,7 @@
       <xsd:element name="loadplans" type="loadplanlist"/>
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
+    <xsd:attribute name="maxearly" type="xsd:duration" />
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
     <xsd:attribute name="cost" type="positiveDouble" />
   </xsd:complexType>

@@ -487,7 +487,7 @@ solver = frepple.solver_mrp(name="MRP", constraints=7, loglevel=0)
 if 'seed' in os.environ:
   random.seed(os.environ['seed'])
 else:
-  random.seed(108)
+  random.seed('1')
 
 # Initialize variables
 iterations = 0
@@ -495,7 +495,7 @@ noimprovement = 0
 verybest = None
 verybestSolution = None
 result = []
-oldresult = result
+oldresult = None
 temperaturemin = 500.0
 temperaturemax = 1000.0
 temperature = temperaturemax
@@ -505,7 +505,7 @@ sortpriority = lambda x: x[1]
 sortenddate = lambda x: x[3]
 
 # A function to plan 1 iteration
-def replan(allow = True):
+def replan():
   global result, verybest, verybestSolution, iterations, noimprovement
   
   # Create a new plan
@@ -528,7 +528,7 @@ def replan(allow = True):
   timespan = timespan.days * 24 + timespan.seconds / 3600  
 
   # Detect if it is better than what any other solution we had before
-  if allow and (verybestSolution == None or timespan <= verybest):
+  if verybestSolution == None or timespan <= verybest:
     if verybestSolution == None or timespan < verybest:
       print "\nBest solution: %d, %d%% over the optimal solution, %d iterations, %f" % \
         ( timespan, (timespan - 930) / 9.30, iterations, temperature)
@@ -545,13 +545,13 @@ def replan(allow = True):
 
 # Create an initial result 
 # Rescale the priorities with it: latest end date gives highest priority
-replan(False)
+replan()
 result.sort(None, sortenddate)
 prio = 1
 for i in result: 
   i[0].priority = prio
   prio += 1
-curspan = replan(True)
+curspan = replan()
   
 # Main loop.
 # Increase the max iterations on the next line to get even better solutions.

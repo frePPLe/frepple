@@ -166,7 +166,7 @@ double Forecast::SingleExponential::generateForecast
   bool upperboundarytested = false;
   bool lowerboundarytested = false;
   double error_mad = 0.0, delta, df_dalfa_i, sum_11, sum_12;
-  double best_error_mad = DBL_MAX, best_alfa, best_f_i;
+  double best_error_mad = DBL_MAX, best_alfa = initial_alfa, best_f_i = 0.0;
   for (; iteration <= Forecast::getForecastIterations(); ++iteration)
   {
     // Initialize the iteration
@@ -278,7 +278,8 @@ double Forecast::DoubleExponential::generateForecast
     d_constant_d_alfa_prev, d_constant_d_alfa, d_constant_d_gamma,	
     d_trend_d_alfa, d_trend_d_gamma, d_forecast_d_alfa, d_forecast_d_gamma,
     sum11, sum12, sum22, sum13, sum23;
-  double best_error_mad = DBL_MAX, best_alfa, best_gamma, best_constant_i, best_trend_i;
+  double best_error_mad = DBL_MAX, best_alfa = initial_alfa, 
+    best_gamma = initial_gamma, best_constant_i = 0.0, best_trend_i = 0.0;
 
   // Iterations
   unsigned int iteration = 1, boundarytested = 0;

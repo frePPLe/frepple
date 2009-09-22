@@ -11,7 +11,7 @@ contrib:
 	cp ../../frepple-$(VERSION).tar.gz ~/rpmbuild/SOURCES
 	rm -fr ~/rpmbuild/BUILD/frepple-*$(VERSION) 
 	rm -fr ~/rpmbuild/BUILDROOT/frepple-*$(VERSION) 
-	cp frepple.spec ~/rpmbuild/SPECS/frepple-$(VERSION).spec
-	rpmbuild -ba ~/rpmbuild/SPECS/frepple-$(VERSION).spec
+	cp frepple.spec ~/rpmbuild/SPECS/frepple.spec
+	rpmbuild -ba ~/rpmbuild/SPECS/frepple.spec
 	cp ~/rpmbuild/RPMS/*/frepple-*$(VERSION)*rpm .
 	cp ~/rpmbuild/SRPMS/frepple-$(VERSION)* .

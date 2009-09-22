@@ -485,9 +485,9 @@ solver = frepple.solver_mrp(name="MRP", constraints=7, loglevel=0)
 
 # Make the results reproducible
 if 'seed' in os.environ:
-  random.seed(os.environ['seed'])
+  random.seed(int(os.environ['seed']))
 else:
-  random.seed('1')
+  random.seed(1977051568)
 
 # Initialize variables
 iterations = 0
@@ -585,7 +585,7 @@ while noimprovement < 5000 and iterations < 10000:
   newspan = replan()
   
   # Evaluate whether we accept the solution or not
-  if newspan > curspan and math.exp((curspan - newspan)/temperature*65) < random.random():
+  if newspan > curspan and oldresult != None and math.exp((curspan - newspan)/temperature*65) < random.random():
      # Reject the change
      result = oldresult
      for i in result: (i[0].priority, i[0].due) = (i[1], i[2])

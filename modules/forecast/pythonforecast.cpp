@@ -91,7 +91,7 @@ extern "C" PyObject* Forecast::timeseries(PyObject *self, PyObject *args)
   double data[300];
   unsigned int historycount = 0;
   PyObject *item;
-  while (item = PyIter_Next(historyiterator))
+  while ((item = PyIter_Next(historyiterator)))
   {
     data[historycount++] = PyFloat_AsDouble(item);
     Py_DECREF(item);
@@ -102,7 +102,7 @@ extern "C" PyObject* Forecast::timeseries(PyObject *self, PyObject *args)
   // Copy the bucket data into a C++ data structure
   Date bucketdata[300];
   unsigned int bucketcount = 0;
-  while (item = PyIter_Next(bucketiterator))
+  while ((item = PyIter_Next(bucketiterator)))
   {
     bucketdata[bucketcount++] = PythonObject(item).getDate();
     Py_DECREF(item);

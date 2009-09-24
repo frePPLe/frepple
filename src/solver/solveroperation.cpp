@@ -106,10 +106,10 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
   double orig_opplan_qty = data.state->q_qty;
   double q_qty_Flow;
   Date q_date_Flow;
-  TimePeriod delay;
   bool incomplete;
   bool tmp_forceLate = data.state->forceLate;
   bool isPlannedEarly;
+  DateRange matnext;
 
   // Loop till everything is okay. During this loop the quanity and date of the
   // operationplan can be updated, but it cannot be split or deleted.
@@ -130,7 +130,8 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
     a_qty = opplan->getQuantity();
     a_date = data.state->q_date;
     incomplete = false;
-    delay = 0L;
+    matnext.setStart(Date::infinitePast);
+    matnext.setEnd(Date::infinitePast);
 
     // Loop through all flowplans
     for (OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
@@ -156,7 +157,11 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
           // Note that the delay variable only reflects the delay due to
           // material constraints. If the operationplan is moved early or late
           // for capacity constraints, this is not included.
-          delay = data.state->a_date - q_date_Flow;
+          pair<DateRange,double> at = opplan->getOperation()->setOperationPlanParameters(
+            opplan, 0.01, data.state->a_date, Date::infinitePast, false, false
+            );
+          matnext = at.first;
+          if (matnext.getEnd() <= orig_q_date) logger << "STRANGE" << matnext << "  " << orig_q_date << "  " << at.second << "  " << opplan->getQuantity() << endl;
 
           // Jump out of the loop if the answered quantity is 0. 
           if (a_qty <= ROUNDING_ERROR) 
@@ -178,18 +183,18 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
 
     isPlannedEarly = opplan->getDates().getEnd() < orig_dates.getEnd();
 
-    if (delay>0L && a_qty <= ROUNDING_ERROR
-      && a_date + delay <= data.state->q_date_max && a_date + delay > orig_q_date)
+    if (matnext.getEnd() != Date::infinitePast && a_qty <= ROUNDING_ERROR
+      && matnext.getEnd() <= data.state->q_date_max && matnext.getEnd() > orig_q_date)
     {
       // The reply is 0, but the next-date is still less than the maximum
       // ask date. In this case we will violate the post-operation -soft-
       // constraint.
-      data.state->q_date = a_date + delay;
+      data.state->q_date = matnext.getEnd();
       data.state->q_qty = orig_opplan_qty;
       data.state->a_date = Date::infiniteFuture;
       data.state->a_qty = data.state->q_qty;
       opplan->getOperation()->setOperationPlanParameters(
-        opplan, orig_opplan_qty, Date::infinitePast, a_date + delay
+        opplan, orig_opplan_qty, Date::infinitePast, matnext.getEnd()
         );
       okay = false;
       // Pop actions from the command "stack" in the command list
@@ -199,24 +204,24 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
         logger << indent(opplan->getOperation()->getLevel()) 
           << "   Retrying new date." << endl;
     }
-    else if (delay>0L && a_qty <= ROUNDING_ERROR
-      && delay < orig_dates.getDuration())
+    else if (matnext.getEnd() != Date::infinitePast && a_qty <= ROUNDING_ERROR
+      && matnext.getStart() < a_date)
     {
       // The reply is 0, but the next-date is not too far out.
       // If the operationplan would fit in a smaller timeframe we can potentially
       // create a non-zero reply...
       // Resize the operationplan
       opplan->getOperation()->setOperationPlanParameters(
-        opplan, orig_opplan_qty, orig_dates.getStart() + delay, 
-        orig_dates.getEnd()
+        opplan, orig_opplan_qty, matnext.getStart(), 
+        a_date
         );
-      if (opplan->getDates().getStart() >= orig_dates.getStart() + delay
-        && opplan->getDates().getEnd() <= orig_dates.getEnd()
+      if (opplan->getDates().getStart() >= matnext.getStart()
+        && opplan->getDates().getEnd() <= a_date
         && opplan->getQuantity() > ROUNDING_ERROR)
       {
         // It worked
         orig_dates = opplan->getDates();
-        data.state->q_date = a_date;
+        data.state->q_date = a_date; //xxxorig_dates.getEnd();
         data.state->q_qty = opplan->getQuantity();
         data.state->a_date = Date::infiniteFuture;
         data.state->a_qty = data.state->q_qty;
@@ -252,7 +257,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
 
       // Move the operationplan to the next date where the material is feasible
       opplan->getOperation()->setOperationPlanParameters
-        (opplan, orig_opplan_qty, a_date + delay, Date::infinitePast);
+        (opplan, orig_opplan_qty, matnext.getStart(), Date::infinitePast);
 
       // Move the operationplan to a later date where it is feasible.
       data.state->forceLate = true;
@@ -260,12 +265,11 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
 
       // Reply of this function
       a_qty = 0.0;
-      delay = 0L;
-      a_date = opplan->getDates().getEnd();
+      matnext.setEnd(opplan->getDates().getEnd());
     }
 
   // Compute the final reply
-  data.state->a_date = incomplete ? (a_date + delay) : Date::infiniteFuture;
+  data.state->a_date = incomplete ? matnext.getEnd() : Date::infiniteFuture;
   data.state->a_qty = a_qty;
   data.state->forceLate = tmp_forceLate;
   if (a_qty > ROUNDING_ERROR)
@@ -494,9 +498,16 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     a_qty = data->state->a_qty;
     // Update the top operationplan
     data->state->curOwnerOpplan->setQuantity(a_qty,true);
-    // Maximum for the next date
-    if (data->state->a_date > max_Date && data->state->a_date != Date::infiniteFuture)
-      max_Date = data->state->a_date;
+    // Maximum for the next date  
+    if (data->state->a_date != Date::infiniteFuture)
+    {
+      pair<DateRange,double> at = data->state->curOwnerOpplan->getOperation()->setOperationPlanParameters(
+        data->state->curOwnerOpplan, 0.01, //data->state->curOwnerOpplan->getQuantity(), 
+        data->state->a_date, Date::infinitePast, false, false
+        );
+      if (at.first.getEnd() > max_Date)
+        max_Date = at.first.getEnd();
+    }
   }
 
   // Multiply the operationplan quantity with the flow quantity to get the

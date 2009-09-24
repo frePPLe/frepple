@@ -5262,7 +5262,7 @@ class Problem::const_iterator
   * the consumed raw materials.<br>
   * The class is implemented as an STL-like iterator.
   *
-  * @todo does not support sub-operationplans
+  * @todo operationplans without flowplans are skipped by the iterator - not correct!
   */
 class PeggingIterator : public Object
 {
@@ -5318,9 +5318,9 @@ class PeggingIterator : public Object
       return x ? x->getDate() : Date::infinitePast;
     }
 
-    /** Returns the recursion depth of the iterator. The original flowplan
-      * is at level 0, and each level (either upstream or downstream)
-      * increments the value by 1.
+    /** Returns the recursion depth of the iterator.<br>
+      * The original flowplan is at level 0, and each level (either upstream 
+      * or downstream) increments the value by 1.
       */
     short getLevel() const {return states.top().level;}
 

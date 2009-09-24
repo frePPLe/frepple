@@ -117,7 +117,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           // Evaluate the reply date. The variable extraSupplyDate will store
           // the date when the producing operation tells us it can get extra
           // supply.
-          if (data->state->a_date < extraSupplyDate)
+          if (data->state->a_date < extraSupplyDate 
+            && data->state->a_date > requested_date)
             extraSupplyDate = data->state->a_date;
 
           // If we got some extra supply, we retry to get some more supply.
@@ -203,7 +204,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     // stock to a minimum.
     b->getProducingOperation()->solve(*this,v);
     // Evaluate the reply
-    if (data->state->a_date < extraSupplyDate) extraSupplyDate = data->state->a_date;
+    if (data->state->a_date < extraSupplyDate 
+      && data->state->a_date > requested_date)
+      extraSupplyDate = data->state->a_date;
     if (data->state->a_qty > ROUNDING_ERROR) 
       shortage -= data->state->a_qty;
     else

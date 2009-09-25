@@ -487,7 +487,7 @@ solver = frepple.solver_mrp(name="MRP", constraints=7, loglevel=0)
 if 'seed' in os.environ:
   random.seed(int(os.environ['seed']))
 else:
-  random.seed(1977051568)
+  random.seed(1079)
 
 # Initialize variables
 iterations = 0

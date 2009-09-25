@@ -35,7 +35,7 @@ if 'FREPPLE_APP' in os.environ:
   FREPPLE_APP = os.environ['FREPPLE_APP']
 else:
   FREPPLE_APP = os.path.abspath(os.path.join(FREPPLE_HOME,'..','contrib','django','freppledb'))
-FREPPLE_VERSION = '0.7.2.beta'
+FREPPLE_VERSION = '0.8.0.beta'
 
 # Determing whether Django runs as a standalone application or is deployed
 # on a web server

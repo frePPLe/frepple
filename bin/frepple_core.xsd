@@ -430,10 +430,12 @@
       <xsd:element name="operation" type="operation" minOccurs="0" />
       <xsd:element name="buffer" type="buffer" minOccurs="0" />
       <xsd:element name="quantity" type="xsd:double" minOccurs="0" />
+      <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
       <xsd:element name="effective_start" type="xsd:dateTime" minOccurs="0" />
       <xsd:element name="effective_end" type="xsd:dateTime" minOccurs="0" />
     </xsd:choice>
     <xsd:attribute name="quantity" type="xsd:double" />
+    <xsd:attribute name="priority" type="xsd:integer" />
     <xsd:attribute name="effective_start" type="xsd:dateTime" />
     <xsd:attribute name="effective_end" type="xsd:dateTime" />
     <xsd:attribute name="action" type="action" />

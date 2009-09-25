@@ -2599,20 +2599,14 @@ class OperationAlternate : public Operation
       */
     DECLARE_EXPORT const alternateProperty& getProperties(Operation* o) const;
 
-    /** Updates the properties of a certain suboperation.
-      * @exception LogicException Generated when the argument operation is
-      *     not null and not a sub-operation of this alternate.
-      */
-    DECLARE_EXPORT void setProperties(Operation*, int, DateRange);
-
     /** Updates the priority of a certain suboperation.
-      * @exception LogicException Generated when the argument operation is
+      * @exception DataException Generated when the argument operation is
       *     not null and not a sub-operation of this alternate.
       */
     DECLARE_EXPORT void setPriority(Operation*, int);
 
     /** Updates the effective daterange of a certain suboperation.
-      * @exception LogicException Generated when the argument operation is
+      * @exception DataException Generated when the argument operation is
       *     not null and not a sub-operation of this alternate.
       */
     DECLARE_EXPORT void setEffective(Operation*, DateRange);
@@ -3278,7 +3272,8 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     virtual DECLARE_EXPORT ~Flow();
 
     /** Constructor. */
-    explicit Flow(Operation* o, Buffer* b, double q) : quantity(q)
+    explicit Flow(Operation* o, Buffer* b, double q) 
+      : quantity(q), priority(1), hasAlts(false), altFlow(NULL)
     {
       setOperation(o);
       setBuffer(b);
@@ -3320,6 +3315,23 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       */
     void setBuffer(Buffer* b) { if (b) setPtrB(b,b->getFlows());}
 
+    /** Update the priority of a flow. */
+    void setPriority(int i) {priority = i;}
+
+    /** Return the priority of a flow. */
+    int getPriority() const {return priority;}
+
+    /** Returns true if there are alternates for this flow. */
+    bool hasAlternates() const {return hasAlts;}
+
+    /** Returns the flow of which this one is an alternate.<br>
+      * NULL is return where there is none.
+      */
+    Flow* getAlternateOf() const {return altFlow;}
+
+    /** Define the flow of which this one is an alternate. */
+    DECLARE_EXPORT void setAlternateOf(Flow *);
+
     /** A flow is considered hidden when either its buffer or operation
       * are hidden. */
     virtual bool getHidden() const
@@ -3347,7 +3359,8 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
   protected:
     /** Default constructor. */
-    explicit Flow() : quantity(0.0) {initType(metadata);}
+    explicit Flow() : quantity(0.0), priority(1), hasAlts(false), altFlow(NULL)
+      {initType(metadata);}
 
   private:
     /** Verifies whether a flow meets all requirements to be valid. */
@@ -3355,6 +3368,15 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** Quantity of the flow. */
     double quantity;
+
+    /** Priority of the flow - used in case of alternate flows. */
+    int priority;
+
+    /** Flag that is set to true when a flow has alternates. */
+    bool hasAlts;
+
+    /** A flow representing the main flow of a set of alternate flows. */
+    Flow* altFlow;
 
     static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
     DECLARE_EXPORT PyObject* getattro(const Attribute&);

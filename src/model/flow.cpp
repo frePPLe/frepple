@@ -144,6 +144,73 @@ DECLARE_EXPORT Flow::~Flow()
   // Delete the flow from the operation and the buffer
   if (getOperation()) getOperation()->flowdata.erase(this);
   if (getBuffer()) getBuffer()->flows.erase(this);
+
+  // Clean up alternate flows
+  if (hasAlts)
+  {
+    // The flow has alternates.
+    // Make a new flow the leading one. Or if there is only one alternate 
+    // present it is not marked as an alternate any more.
+    unsigned short cnt = 0;
+    int minprio = INT_MAX;
+    Flow* newLeader = NULL;
+    for (Operation::flowlist::iterator i = getOperation()->flowdata.begin();
+      i != getOperation()->flowdata.end(); ++i)
+      if (i->altFlow == this) 
+      {
+        cnt++;
+        if (i->priority < minprio)
+        {
+          newLeader = &*i;
+          minprio = i->priority;
+        }
+      }
+    if (cnt < 1) 
+      throw LogicException("Alternate flows update failure");
+    else if (cnt == 1)
+      // No alternate any more
+      newLeader->altFlow = NULL;
+    else
+    {
+      // Mark a new leader flow
+      newLeader->hasAlts = true;
+      newLeader->altFlow = NULL;
+      for (Operation::flowlist::iterator i = getOperation()->flowdata.begin();
+        i != getOperation()->flowdata.end(); ++i)
+        if (i->altFlow == this) i->altFlow = newLeader;
+    }
+  }
+  if (altFlow)
+  {
+    // The flow is an alternate of another one.
+    // If it was the only alternate, then the hasAlts flag on the parent 
+    // flow needs to be set back to false
+    bool only_one = true;
+    for (Operation::flowlist::iterator i = getOperation()->flowdata.begin(); 
+      i != getOperation()->flowdata.end(); ++i)
+      if (i->altFlow == altFlow) 
+      {
+        only_one = false;
+        break;
+      }
+    if (only_one) altFlow->hasAlts = false;
+  }
+}
+
+
+DECLARE_EXPORT void Flow::setAlternateOf(Flow *f)
+{
+  // Validate the argument
+  if (!f) 
+    throw DataException("Setting NULL alternate flow");
+  if (hasAlts || f->altFlow) 
+    throw DataException("Nested alternate flows are not allowed");
+  if (!f->isConsumer() || !isConsumer())
+    throw DataException("Only consuming alternate flows are supported");
+
+  // Update both flows
+  f->hasAlts = true;
+  altFlow = f;
 }
 
 
@@ -167,8 +234,9 @@ DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const Keyword& tag, mode m
   if (!dynamic_cast<Buffer*>(o->getPreviousObject()))
     o->writeElement(Tags::tag_buffer, getBuffer());
 
-  // Write the quantity
-  o->writeElement(Tags::tag_quantity, quantity);
+  // Write the quantity and priority
+  o->writeElement(Tags::tag_quantity, getQuantity());
+  if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
 
   // Write the effective daterange
   if (getEffective().getStart() != Date::infinitePast)
@@ -206,6 +274,8 @@ DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, const Attribute& pAttr, con
   }
   else if (pAttr.isA(Tags::tag_quantity))
     setQuantity(pElement.getDouble());
+  else if (pAttr.isA(Tags::tag_priority))
+    setPriority(pElement.getInt());
   else if (pAttr.isA(Tags::tag_action))
   {
     delete static_cast<Action*>(pIn.getUserArea());
@@ -250,8 +320,15 @@ DECLARE_EXPORT void FlowEnd::writeElement
   if (!dynamic_cast<Buffer*>(o->getPreviousObject()))
     o->writeElement(Tags::tag_buffer, getBuffer());
 
-  // Write the quantity
+  // Write the quantity and priority
   o->writeElement(Tags::tag_quantity, getQuantity());
+  if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
+
+  // Write the effective daterange
+  if (getEffective().getStart() != Date::infinitePast)
+    o->writeElement(Tags::tag_effective_start, getEffective().getStart());
+  if (getEffective().getEnd() != Date::infiniteFuture)
+    o->writeElement(Tags::tag_effective_end, getEffective().getEnd());
 
   // End of flow object
   o->EndObject(tag);
@@ -266,6 +343,8 @@ DECLARE_EXPORT PyObject* Flow::getattro(const Attribute& attr)
     return PythonObject(getOperation());
   if (attr.isA(Tags::tag_quantity))
     return PythonObject(getQuantity());
+  if (attr.isA(Tags::tag_priority))
+    return PythonObject(getPriority());
   if (attr.isA(Tags::tag_effective_end))
     return PythonObject(getEffective().getEnd());
   if (attr.isA(Tags::tag_effective_start))
@@ -298,6 +377,8 @@ DECLARE_EXPORT int Flow::setattro(const Attribute& attr, const PythonObject& fie
   }
   else if (attr.isA(Tags::tag_quantity))
     setQuantity(field.getDouble());
+  else if (attr.isA(Tags::tag_priority))
+    setPriority(field.getInt());
   else if (attr.isA(Tags::tag_effective_end))
     setEffectiveEnd(field.getDate());
   else if (attr.isA(Tags::tag_effective_start))

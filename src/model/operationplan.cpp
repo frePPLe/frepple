@@ -408,10 +408,10 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
       g!=oper->getLoads().end(); ++g)
     new LoadPlan(this, &*g);
 
-  // Create flowplans
+  // Create flowplans for flows that are not alternates of another one
   for (Operation::flowlist::const_iterator h=oper->getFlows().begin();
       h!=oper->getFlows().end(); ++h)
-    new FlowPlan(this, &*h);
+    if (!h->getAlternateOf()) new FlowPlan(this, &*h);
 }
 
 

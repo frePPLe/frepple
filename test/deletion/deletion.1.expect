@@ -110,13 +110,13 @@
 			<item name="item 1"/>
 			<location name="Location 1"/>
 			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="make item 1" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
 				<flow xsi:type="flow_start">
 					<operation name="delivery 1" xsi:type="operation_fixed_time"/>
 					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<operation name="make item 1" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
 				</flow>
 			</flows>
 		</buffer>
@@ -125,17 +125,17 @@
 			<item name="component A"/>
 			<location name="Location 1"/>
 			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
+				<flow xsi:type="flow_start">
+					<operation name="make item 1" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
 				</flow>
 				<flow xsi:type="flow_end">
 					<operation name="supply component A from supplier 1" xsi:type="operation_fixed_time"/>
 					<quantity>1</quantity>
 				</flow>
-				<flow xsi:type="flow_start">
-					<operation name="make item 1" xsi:type="operation_fixed_time"/>
-					<quantity>-1</quantity>
+				<flow xsi:type="flow_end">
+					<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
 				</flow>
 			</flows>
 		</buffer>

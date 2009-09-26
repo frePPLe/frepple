@@ -3327,10 +3327,18 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     /** Returns the flow of which this one is an alternate.<br>
       * NULL is return where there is none.
       */
-    Flow* getAlternateOf() const {return altFlow;}
+    Flow* getAlternate() const {return altFlow;}
 
     /** Define the flow of which this one is an alternate. */
-    DECLARE_EXPORT void setAlternateOf(Flow *);
+    DECLARE_EXPORT void setAlternate(Flow *);
+
+    /** Define the flow of which this one is an alternate. */
+    void setAlternate(string n)
+    {
+      Flow *x = getOperation()->flowdata.find(n);
+      if (!x) throw DataException("Can't find flow with name '" + n + "'");
+      setAlternate(x);
+    }
 
     /** A flow is considered hidden when either its buffer or operation
       * are hidden. */

@@ -74,13 +74,13 @@
 			<producing name="make end item" xsi:type="operation_fixed_time"/>
 			<item name="end item"/>
 			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="make end item" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
 				<flow xsi:type="flow_start">
 					<operation name="delivery end item" xsi:type="operation_fixed_time"/>
 					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<operation name="make end item" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
 				</flow>
 			</flows>
 		</buffer>

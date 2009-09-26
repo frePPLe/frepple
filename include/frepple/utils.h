@@ -4840,6 +4840,14 @@ template <class A, class B, class C> class Association
           return NULL;
         }
 
+        /** Search for the association with a certain name. */
+        C* find(string n) const
+        {
+          for (C* p=this->first; p; p=p->nextA)
+            if (p->name == n) return p;
+          return NULL;
+        }
+
         /** Move an association a position up in the list of associations. */
         void promote(C* p) 
         {
@@ -4962,6 +4970,14 @@ template <class A, class B, class C> class Association
           return NULL;
         }
 
+        /** Search for the association with a certain name. */
+        C* find(string n) const
+        {
+          for (C* p=this->first; p; p=p->nextB)
+            if (p->name == n) return p;
+          return NULL;
+        }
+
         /** Move an association a position up in the list of associations. */
         void promote(C* p) 
         {
@@ -4999,14 +5015,35 @@ template <class A, class B, class C> class Association
         C* nextA;
         C* nextB;
         DateRange effectivity;
+        string name;
       public:
+        /** Constructor. */
         Node() : ptrA(NULL), ptrB(NULL), nextA(NULL), nextB(NULL) {};
 
+        /** Constructor. */
         Node(A* a, B* b, const ListA& al, const ListB& bl)
-            : ptrA(a), ptrB(b), nextA(al.first), nextB(bl.first)
+            : ptrA(a), ptrB(b), nextA(NULL), nextB(NULL)
         {
-          ((ListA&)al).first = static_cast<C*>(this);
-          ((ListB&)bl).first = static_cast<C*>(this);
+          if (al.first)
+          {
+            // Append at the end of the A-list
+            C* x = al.first;
+            while (x->nextA) x = x->nextA;
+            x->nextA = static_cast<C*>(this);
+          }
+          else
+            // New start of the A-list
+            const_cast<ListA&>(al).first = static_cast<C*>(this);
+          if (bl.first)
+          {
+            // Append at the end of the B-list
+            C* x = bl.first;
+            while (x->nextB) x = x->nextB;
+            x->nextB = static_cast<C*>(this);
+          }
+          else
+            // New start of the B-list
+            const_cast<ListB&>(bl).first = static_cast<C*>(this);
         }
 
         void setPtrA(A* a, const ListA& al)
@@ -5014,8 +5051,16 @@ template <class A, class B, class C> class Association
           // Don't allow updating an already valid link
           if (ptrA) throw DataException("Can't update existing entity");
           ptrA = a;
-          nextA = al.first;
-          ((ListA&)al).first = static_cast<C*>(this);
+          if (al.first)
+          {
+            // Append at the end of the A-list
+            C* x = al.first;
+            while (x->nextA) x = x->nextA;
+            x->nextA = static_cast<C*>(this);
+          }
+          else
+            // New start of the A-list
+            const_cast<ListA&>(al).first = static_cast<C*>(this);
         }
 
         void setPtrB(B* b, const ListB& bl)
@@ -5023,8 +5068,16 @@ template <class A, class B, class C> class Association
           // Don't allow updating an already valid link
           if (ptrB) throw DataException("Can't update existing entity");
           ptrB = b;
-          nextB = bl.first;
-          ((ListB&)bl).first = static_cast<C*>(this);
+          if (bl.first)
+          {
+            // Append at the end of the B-list
+            C* x = bl.first;
+            while (x->nextB) x = x->nextB;
+            x->nextB = static_cast<C*>(this);
+          }
+          else
+            // New start of the B-list
+            const_cast<ListB&>(bl).first = static_cast<C*>(this);
         }
 
         void setPtrAB(A* a, B* b, const ListA& al, const ListB& bl)
@@ -5050,6 +5103,14 @@ template <class A, class B, class C> class Association
           * The default covers the complete time horizon.
           */
         DateRange getEffective() const { return effectivity; }
+
+        /** Sets an optional name for the association.<br>
+          * There is no garantuee of the uniqueness of this name. 
+          */
+        void setName(const string x) { name = x; }
+
+        /** Return the optional name of the association. */
+        const string& getName() const { return name; }
     };
 };
 

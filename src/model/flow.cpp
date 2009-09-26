@@ -198,7 +198,7 @@ DECLARE_EXPORT Flow::~Flow()
 }
 
 
-DECLARE_EXPORT void Flow::setAlternateOf(Flow *f)
+DECLARE_EXPORT void Flow::setAlternate(Flow *f)
 {
   // Validate the argument
   if (!f) 
@@ -234,9 +234,12 @@ DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const Keyword& tag, mode m
   if (!dynamic_cast<Buffer*>(o->getPreviousObject()))
     o->writeElement(Tags::tag_buffer, getBuffer());
 
-  // Write the quantity and priority
+  // Write the quantity, priority name and alternate
   o->writeElement(Tags::tag_quantity, getQuantity());
   if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
+  if (!getName().empty()) o->writeElement(Tags::tag_name, getName());
+  if (getAlternate()) 
+    o->writeElement(Tags::tag_alternate, getAlternate()->getName());
 
   // Write the effective daterange
   if (getEffective().getStart() != Date::infinitePast)
@@ -276,6 +279,10 @@ DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, const Attribute& pAttr, con
     setQuantity(pElement.getDouble());
   else if (pAttr.isA(Tags::tag_priority))
     setPriority(pElement.getInt());
+  else if (pAttr.isA(Tags::tag_name))
+    setName(pElement.getString());
+  else if (pAttr.isA(Tags::tag_alternate))
+    setAlternate(pElement.getString());
   else if (pAttr.isA(Tags::tag_action))
   {
     delete static_cast<Action*>(pIn.getUserArea());
@@ -320,9 +327,12 @@ DECLARE_EXPORT void FlowEnd::writeElement
   if (!dynamic_cast<Buffer*>(o->getPreviousObject()))
     o->writeElement(Tags::tag_buffer, getBuffer());
 
-  // Write the quantity and priority
+  // Write the quantity, priority name and alternate
   o->writeElement(Tags::tag_quantity, getQuantity());
   if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
+  if (!getName().empty()) o->writeElement(Tags::tag_name, getName());
+  if (getAlternate()) 
+    o->writeElement(Tags::tag_alternate, getAlternate()->getName());
 
   // Write the effective daterange
   if (getEffective().getStart() != Date::infinitePast)
@@ -349,6 +359,10 @@ DECLARE_EXPORT PyObject* Flow::getattro(const Attribute& attr)
     return PythonObject(getEffective().getEnd());
   if (attr.isA(Tags::tag_effective_start))
     return PythonObject(getEffective().getStart());
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(getName());
+  if (attr.isA(Tags::tag_alternate))
+    return PythonObject(getAlternate());
   return NULL;
 }
 
@@ -383,6 +397,18 @@ DECLARE_EXPORT int Flow::setattro(const Attribute& attr, const PythonObject& fie
     setEffectiveEnd(field.getDate());
   else if (attr.isA(Tags::tag_effective_start))
     setEffectiveStart(field.getDate());
+  else if (attr.isA(Tags::tag_name))
+    setName(field.getString());
+  else if (attr.isA(Tags::tag_alternate))
+  {
+    if (!field.check(Flow::metadata)) 
+      setAlternate(field.getString());
+    else
+    {
+      Flow *y = static_cast<Flow*>(static_cast<PyObject*>(field));
+      setAlternate(y);
+    }
+  }
   else
     return -1;
   return 0;
@@ -475,18 +501,23 @@ int FlowIterator::initialize()
 
 PyObject* FlowIterator::iternext()
 {  
+  PyObject* result;
   if (buf) 
   {
     // Iterate over flows on a buffer 
     if (ib == buf->getFlows().end()) return NULL;
-    return PythonObject(const_cast<Flow*>(&*(ib++)));
+    result = const_cast<Flow*>(&*ib);
+    ++ib;
   }
   else
   {
     // Iterate over flows on an operation 
     if (io == oper->getFlows().end()) return NULL;
-    return PythonObject(const_cast<Flow*>(&*(io++)));
+    result = const_cast<Flow*>(&*io);
+    ++io;
   }
+  Py_INCREF(result);
+  return result;
 }
 
 } // end namespace

@@ -345,18 +345,23 @@ int LoadIterator::initialize()
 
 PyObject* LoadIterator::iternext()
 {
+  PyObject* result;
   if (res)
   {
     // Iterate over loads on a resource
     if (ir == res->getLoads().end()) return NULL;
-    return PythonObject(const_cast<Load*>(&*(ir++)));
+    result = const_cast<Load*>(&*ir);
+    ++ir;
   }
   else
   {
     // Iterate over loads on an operation
     if (io == oper->getLoads().end()) return NULL;
-    return PythonObject(const_cast<Load*>(&*(io++)));
+    result = const_cast<Load*>(&*io);
+    ++io;
   }
+  Py_INCREF(result);
+  return result;
 }
 
 } // end namespace

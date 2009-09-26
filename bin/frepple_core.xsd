@@ -433,11 +433,15 @@
       <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
       <xsd:element name="effective_start" type="xsd:dateTime" minOccurs="0" />
       <xsd:element name="effective_end" type="xsd:dateTime" minOccurs="0" />
+      <xsd:element name="name" type="non-empty-string" minOccurs="0" />
+      <xsd:element name="alternate" type="non-empty-string" minOccurs="0" />
     </xsd:choice>
     <xsd:attribute name="quantity" type="xsd:double" />
     <xsd:attribute name="priority" type="xsd:integer" />
     <xsd:attribute name="effective_start" type="xsd:dateTime" />
     <xsd:attribute name="effective_end" type="xsd:dateTime" />
+    <xsd:attribute name="name" type="non-empty-string" />
+    <xsd:attribute name="alternate" type="non-empty-string" />
     <xsd:attribute name="action" type="action" />
   </xsd:complexType>
 

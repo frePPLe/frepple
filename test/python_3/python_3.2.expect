@@ -137,13 +137,13 @@
 			<producing name="make or buy item" xsi:type="operation_alternate"/>
 			<item name="end item"/>
 			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="make or buy item" xsi:type="operation_alternate"/>
-					<quantity>1</quantity>
-				</flow>
 				<flow xsi:type="flow_start">
 					<operation name="delivery end item" xsi:type="operation_fixed_time"/>
 					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<operation name="make or buy item" xsi:type="operation_alternate"/>
+					<quantity>1</quantity>
 				</flow>
 			</flows>
 		</buffer>
@@ -179,10 +179,10 @@
 			<maximum name="Capacity" xsi:type="calendar_double"/>
 			<loads>
 				<load>
-					<operation name="make item - step 2" xsi:type="operation_fixed_time"/>
+					<operation name="make item - step 1" xsi:type="operation_fixed_time"/>
 				</load>
 				<load>
-					<operation name="make item - step 1" xsi:type="operation_fixed_time"/>
+					<operation name="make item - step 2" xsi:type="operation_fixed_time"/>
 				</load>
 			</loads>
 		</resource>

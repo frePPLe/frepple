@@ -35,12 +35,10 @@ namespace utils
 {
 
 DECLARE_EXPORT const Keyword Tags::tag_action("action");
-DECLARE_EXPORT const Keyword Tags::tag_after("after");
 DECLARE_EXPORT const Keyword Tags::tag_alternate("alternate");
 DECLARE_EXPORT const Keyword Tags::tag_alternates("alternates");
 DECLARE_EXPORT const Keyword Tags::tag_autocommit("autocommit");
 DECLARE_EXPORT const Keyword Tags::tag_available("available");
-DECLARE_EXPORT const Keyword Tags::tag_before("before");
 DECLARE_EXPORT const Keyword Tags::tag_bucket("bucket");
 DECLARE_EXPORT const Keyword Tags::tag_buckets("buckets");
 DECLARE_EXPORT const Keyword Tags::tag_buffer("buffer");

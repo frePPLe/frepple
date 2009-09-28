@@ -168,7 +168,7 @@ DECLARE_EXPORT Flow::~Flow()
     if (cnt < 1) 
       throw LogicException("Alternate flows update failure");
     else if (cnt == 1)
-      // No alternate any more
+      // No longer an alternate any more
       newLeader->altFlow = NULL;
     else
     {
@@ -214,6 +214,16 @@ DECLARE_EXPORT void Flow::setAlternate(Flow *f)
 }
 
 
+DECLARE_EXPORT void Flow::setAlternate(string n)
+{
+  if (!getOperation())
+    throw LogicException("Can't set an alternate flow before setting the operation");
+  Flow *x = getOperation()->flowdata.find(n);
+  if (!x) throw DataException("Can't find flow with name '" + n + "'");
+  setAlternate(x);
+}
+
+
 DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const Keyword& tag, mode m) const
 {
   // If the flow has already been saved, no need to repeat it again
@@ -234,7 +244,7 @@ DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const Keyword& tag, mode m
   if (!dynamic_cast<Buffer*>(o->getPreviousObject()))
     o->writeElement(Tags::tag_buffer, getBuffer());
 
-  // Write the quantity, priority name and alternate
+  // Write the quantity, priority, name and alternate
   o->writeElement(Tags::tag_quantity, getQuantity());
   if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
   if (!getName().empty()) o->writeElement(Tags::tag_name, getName());

@@ -3333,12 +3333,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     DECLARE_EXPORT void setAlternate(Flow *);
 
     /** Define the flow of which this one is an alternate. */
-    void setAlternate(string n)
-    {
-      Flow *x = getOperation()->flowdata.find(n);
-      if (!x) throw DataException("Can't find flow with name '" + n + "'");
-      setAlternate(x);
-    }
+    DECLARE_EXPORT void setAlternate(string n);
 
     /** A flow is considered hidden when either its buffer or operation
       * are hidden. */
@@ -3448,8 +3443,9 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public PythonExte
     friend class OperationPlan::FlowPlanIterator;
   private:
     /** Points to the flow instantiated by this flowplan. */
-    Flow *fl;
+    const Flow *fl;
 
+    /** Python interface method. */
     PyObject* getattro(const Attribute&);
 
     /** Points to the operationplan owning this flowplan. */
@@ -3467,7 +3463,12 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand, public PythonExte
     explicit DECLARE_EXPORT FlowPlan(OperationPlan*, const Flow*);
 
     /** Returns the flow of which this is an plan instance. */
-    Flow* getFlow() const {return fl;}
+    const Flow* getFlow() const {return fl;}
+
+    /** Update the flow of an already existing flowplan.<br>
+      * The new flow must belong to the same operation. 
+      */
+    DECLARE_EXPORT void setFlow(const Flow*);
 
     /** Returns the operationplan owning this flowplan. */
     OperationPlan* getOperationPlan() const {return oper;}
@@ -3707,6 +3708,7 @@ class Load
   public:
     /** Constructor. */
     explicit Load(Operation* o, Resource* r, double u)
+      : priority(1), hasAlts(false), altLoad(NULL)
     {
       setOperation(o);
       setResource(r);
@@ -3745,6 +3747,26 @@ class Load
       qty = f;
     }
 
+    /** Update the priority of a load. */
+    void setPriority(int i) {priority = i;}
+
+    /** Return the priority of a load. */
+    int getPriority() const {return priority;}
+
+    /** Returns true if there are alternates for this load. */
+    bool hasAlternates() const {return hasAlts;}
+
+    /** Returns the load of which this one is an alternate.<br>
+      * NULL is return where there is none.
+      */
+    Load* getAlternate() const {return altLoad;}
+
+    /** Define the load of which this one is an alternate. */
+    DECLARE_EXPORT void setAlternate(Load *);
+
+    /** Define the load of which this one is an alternate. */
+    DECLARE_EXPORT void setAlternate(string n);
+
     /** This method holds the logic the compute the date of a loadplan. */
     virtual Date getLoadplanDate(const LoadPlan*) const;
 
@@ -3770,7 +3792,8 @@ class Load
     virtual size_t getSize() const {return sizeof(Load);}
 
     /** Default constructor. */
-    Load() : qty(1.0) {initType(metadata);}
+    Load() : qty(1.0), priority(1), hasAlts(false), altLoad(NULL) 
+      { initType(metadata); }
 
   private:
     /** This method is called to check the validity of the object. It will
@@ -3782,7 +3805,16 @@ class Load
     /** Stores how much capacity is consumed during the duration of an
       * operationplan. */
     double qty;
-  
+
+    /** Priority of the load - used in case of alternate loads. */
+    int priority;
+
+    /** Flag that is set to true when a load has alternates. */
+    bool hasAlts;
+
+    /** A load representing the main load of a set of alternates. */
+    Load* altLoad;
+
     /** Factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 };
@@ -4415,7 +4447,12 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
     OperationPlan* getOperationPlan() const {return oper;}
 
     /** Return the load of which this is a plan instance. */
-    Load* getLoad() const {return ld;}
+    const Load* getLoad() const {return ld;}
+
+    /** Update the load of an already existing flowplan.<br>
+      * The new load must belong to the same operation. 
+      */
+    DECLARE_EXPORT void setLoad(const Load*);
 
     /** Return true when this loadplan marks the start of an operationplan. */
     bool isStart() const {return start_or_end == START;}
@@ -4469,7 +4506,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
     type start_or_end;
 
     /** A pointer to the load model. */
-    Load *ld;
+    const Load *ld;
 
     /** A pointer to the operationplan owning this loadplan. */
     OperationPlan *oper;

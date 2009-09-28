@@ -120,6 +120,39 @@ DECLARE_EXPORT void LoadPlan::update()
 }
 
 
+DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
+{
+  // No change
+  if (newld == ld) return;
+
+  // Verify the data
+  if (!newld) throw LogicException("Can't switch to NULL load");
+
+  // Remove from the old resource, if there is one
+  if (ld)
+  {
+    if (ld->getOperation() != newld->getOperation())
+      throw LogicException("Only switching to a load on the same operation is allowed");
+    ld->getResource()->loadplans.erase(this);
+    ld->getResource()->setChanged();
+  }
+
+  // Insert in the new resource
+  ld = newld;
+  ld->getResource()->loadplans.insert(
+    this,
+    ld->getLoadplanQuantity(this),
+    ld->getLoadplanDate(this)
+    );
+  ld->getResource()->setChanged();
+  ld->getResource()->setChanged();
+
+  // Switch also the brother-loadplan
+  LoadPlan *o = getOtherLoadPlan();
+  if (o->ld != newld) o->setLoad(newld);
+}
+
+
 PyObject* LoadPlan::getattro(const Attribute& attr)
 {
   if (attr.isA(Tags::tag_operationplan))

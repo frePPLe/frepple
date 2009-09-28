@@ -131,7 +131,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
     a_date = data.state->q_date;
     incomplete = false;
     matnext.setStart(Date::infinitePast);
-    matnext.setEnd(Date::infinitePast);
+    matnext.setEnd(Date::infiniteFuture);
 
     // Loop through all flowplans
     for (OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
@@ -160,7 +160,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
           pair<DateRange,double> at = opplan->getOperation()->setOperationPlanParameters(
             opplan, 0.01, data.state->a_date, Date::infinitePast, false, false
             );
-          matnext = at.first;
+          if (at.first.getEnd() < matnext.getEnd()) matnext = at.first;
           if (matnext.getEnd() <= orig_q_date) logger << "STRANGE" << matnext << "  " << orig_q_date << "  " << at.second << "  " << opplan->getQuantity() << endl;
 
           // Jump out of the loop if the answered quantity is 0. 
@@ -183,7 +183,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
 
     isPlannedEarly = opplan->getDates().getEnd() < orig_dates.getEnd();
 
-    if (matnext.getEnd() != Date::infinitePast && a_qty <= ROUNDING_ERROR
+    if (matnext.getEnd() != Date::infiniteFuture && a_qty <= ROUNDING_ERROR
       && matnext.getEnd() <= data.state->q_date_max && matnext.getEnd() > orig_q_date)
     {
       // The reply is 0, but the next-date is still less than the maximum
@@ -204,7 +204,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
         logger << indent(opplan->getOperation()->getLevel()) 
           << "   Retrying new date." << endl;
     }
-    else if (matnext.getEnd() != Date::infinitePast && a_qty <= ROUNDING_ERROR
+    else if (matnext.getEnd() != Date::infiniteFuture && a_qty <= ROUNDING_ERROR
       && matnext.getStart() < a_date)
     {
       // The reply is 0, but the next-date is not too far out.

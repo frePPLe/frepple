@@ -91,6 +91,35 @@ DECLARE_EXPORT void FlowPlan::update()
 }
 
 
+DECLARE_EXPORT void FlowPlan::setFlow(const Flow* newfl)
+{
+  // No change
+  if (newfl == fl) return;
+
+  // Verify the data  
+  if (!newfl) throw LogicException("Can't switch to NULL flow");
+
+  // Remove from the old buffer, if there is one
+  if (fl)
+  {
+    if (fl->getOperation() != newfl->getOperation())
+      throw LogicException("Only switching to a flow on the same operation is allowed");
+    fl->getBuffer()->flowplans.erase(this);
+    fl->getBuffer()->setChanged();
+  }
+
+  // Insert in the new buffer
+  fl = newfl;
+  fl->getBuffer()->flowplans.insert(
+    this,
+    fl->getFlowplanQuantity(this),
+    fl->getFlowplanDate(this)
+    );
+  fl->getBuffer()->setChanged();
+  fl->getOperation()->setChanged();
+}
+
+
 // Remember that this method only superficially looks like a normal
 // writeElement() method.
 DECLARE_EXPORT void FlowPlan::writeElement(XMLOutput *o, const Keyword& tag, mode m) const

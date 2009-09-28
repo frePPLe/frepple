@@ -145,6 +145,81 @@ DECLARE_EXPORT Load::~Load()
   // Delete the load from the operation and resource
   if (getOperation()) getOperation()->loaddata.erase(this);
   if (getResource()) getResource()->loads.erase(this);
+
+  // Clean up alternate loads
+  if (hasAlts)
+  {
+    // The load has alternates.
+    // Make a new load the leading one. Or if there is only one alternate 
+    // present it is not marked as an alternate any more.
+    unsigned short cnt = 0;
+    int minprio = INT_MAX;
+    Load* newLeader = NULL;
+    for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
+      i != getOperation()->loaddata.end(); ++i)
+      if (i->altLoad == this) 
+      {
+        cnt++;
+        if (i->priority < minprio)
+        {
+          newLeader = &*i;
+          minprio = i->priority;
+        }
+      }
+    if (cnt < 1) 
+      throw LogicException("Alternate loads update failure");
+    else if (cnt == 1)
+      // No longer an alternate any more
+      newLeader->altLoad = NULL;
+    else
+    {
+      // Mark a new leader load
+      newLeader->hasAlts = true;
+      newLeader->altLoad = NULL;
+      for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
+        i != getOperation()->loaddata.end(); ++i)
+        if (i->altLoad == this) i->altLoad = newLeader;
+    }
+  }
+  if (altLoad)
+  {
+    // The load is an alternate of another one.
+    // If it was the only alternate, then the hasAlts flag on the parent 
+    // load needs to be set back to false
+    bool only_one = true;
+    for (Operation::loadlist::iterator i = getOperation()->loaddata.begin(); 
+      i != getOperation()->loaddata.end(); ++i)
+      if (i->altLoad == altLoad) 
+      {
+        only_one = false;
+        break;
+      }
+    if (only_one) altLoad->hasAlts = false;
+  }
+}
+
+
+DECLARE_EXPORT void Load::setAlternate(Load *f)
+{
+  // Validate the argument
+  if (!f) 
+    throw DataException("Setting NULL alternate load");
+  if (hasAlts || f->altLoad) 
+    throw DataException("Nested alternate loads are not allowed");
+
+  // Update both flows
+  f->hasAlts = true;
+  altLoad = f;
+}
+
+
+DECLARE_EXPORT void Load::setAlternate(string n)
+{
+  if (!getOperation())
+    throw LogicException("Can't set an alternate load before setting the operation");
+  Load *x = getOperation()->loaddata.find(n);
+  if (!x) throw DataException("Can't find load with name '" + n + "'");
+  setAlternate(x);
 }
 
 
@@ -167,8 +242,12 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m)
   if (!dynamic_cast<Resource*>(o->getPreviousObject()))
     o->writeElement(Tags::tag_resource, getResource());
 
-  // Write the quantity
+  // Write the quantity, priority, name and alternate
   if (qty != 1.0) o->writeElement(Tags::tag_quantity, qty);
+  if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
+  if (!getName().empty()) o->writeElement(Tags::tag_name, getName());
+  if (getAlternate()) 
+    o->writeElement(Tags::tag_alternate, getAlternate()->getName());
 
   // Write the effective daterange
   if (getEffective().getStart() != Date::infinitePast)
@@ -205,6 +284,12 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, con
   }
   else if (pAttr.isA(Tags::tag_quantity))
     setQuantity(pElement.getDouble());
+  else if (pAttr.isA(Tags::tag_priority))
+    setPriority(pElement.getInt());
+  else if (pAttr.isA(Tags::tag_name))
+    setName(pElement.getString());
+  else if (pAttr.isA(Tags::tag_alternate))
+    setAlternate(pElement.getString());
   else if (pAttr.isA(Tags::tag_action))
   {
     delete static_cast<Action*>(pIn.getUserArea());
@@ -236,10 +321,16 @@ DECLARE_EXPORT PyObject* Load::getattro(const Attribute& attr)
     return PythonObject(getOperation());
   if (attr.isA(Tags::tag_quantity))
     return PythonObject(getQuantity());
+  if (attr.isA(Tags::tag_priority))
+    return PythonObject(getPriority());
   if (attr.isA(Tags::tag_effective_end))
     return PythonObject(getEffective().getEnd());
   if (attr.isA(Tags::tag_effective_start))
     return PythonObject(getEffective().getStart());
+  if (attr.isA(Tags::tag_name))
+    return PythonObject(getName());
+  if (attr.isA(Tags::tag_alternate))
+    return PythonObject(getAlternate());
   return NULL;
 }
 
@@ -268,10 +359,24 @@ DECLARE_EXPORT int Load::setattro(const Attribute& attr, const PythonObject& fie
   }
   else if (attr.isA(Tags::tag_quantity))
     setQuantity(field.getDouble());
+  else if (attr.isA(Tags::tag_priority))
+    setPriority(field.getInt());
   else if (attr.isA(Tags::tag_effective_end))
     setEffectiveEnd(field.getDate());
   else if (attr.isA(Tags::tag_effective_start))
     setEffectiveStart(field.getDate());
+  else if (attr.isA(Tags::tag_name))
+    setName(field.getString());
+  else if (attr.isA(Tags::tag_alternate))
+  {
+    if (!field.check(Load::metadata)) 
+      setAlternate(field.getString());
+    else
+    {
+      Load *y = static_cast<Load*>(static_cast<PyObject*>(field));
+      setAlternate(y);
+    }
+  }
   else
     return -1;
   return 0;

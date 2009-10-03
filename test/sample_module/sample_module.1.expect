@@ -76,17 +76,17 @@
 			<item name="product"/>
 			<location name="distribution centre"/>
 			<flows>
-				<flow xsi:type="flow_start">
-					<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time"/>
-					<quantity>-1</quantity>
+				<flow xsi:type="flow_end">
+					<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
+					<quantity>1</quantity>
 				</flow>
 				<flow xsi:type="flow_end">
 					<operation name="transport supply from factory 2" xsi:type="operation_transport"/>
 					<quantity>1</quantity>
 				</flow>
-				<flow xsi:type="flow_end">
-					<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
-					<quantity>1</quantity>
+				<flow xsi:type="flow_start">
+					<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time"/>
+					<quantity>-1</quantity>
 				</flow>
 			</flows>
 			<onhand>5</onhand>
@@ -96,13 +96,13 @@
 			<item name="product"/>
 			<location name="factory 1"/>
 			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
 				<flow xsi:type="flow">
 					<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
 					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
 				</flow>
 			</flows>
 		</buffer>
@@ -111,13 +111,13 @@
 			<item name="product"/>
 			<location name="factory 2"/>
 			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
 				<flow xsi:type="flow">
 					<operation name="transport supply from factory 2" xsi:type="operation_transport"/>
 					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
+					<quantity>1</quantity>
 				</flow>
 			</flows>
 		</buffer>

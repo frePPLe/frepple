@@ -555,7 +555,7 @@ class LoadList(ListReport):
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'id','operation','resource','quantity','effective_start','effective_end',
-      'lastmodified'
+      'name','alternate','lastmodified'
       )
 
   rows = (
@@ -583,6 +583,14 @@ class LoadList(ListReport):
       'title': _('effective end'),
       'filter': FilterDate(),
       }),
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('alternate', {
+      'title': _('alternate'),
+      'filter': FilterText(),
+      }),
     ('lastmodified', {
       'title': _('last modified'),
       'filter': FilterDate(),
@@ -604,7 +612,7 @@ class FlowList(ListReport):
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'id','operation','thebuffer','type','quantity','effective_start',
-      'effective_end','lastmodified'
+      'effective_end','name','alternate','lastmodified'
       )
 
   rows = (
@@ -635,6 +643,14 @@ class FlowList(ListReport):
     ('effective_end', {
       'title': _('effective end'),
       'filter': FilterDate(),
+      }),
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('alternate', {
+      'title': _('alternate'),
+      'filter': FilterText(),
       }),
     ('lastmodified', {
       'title': _('last modified'),

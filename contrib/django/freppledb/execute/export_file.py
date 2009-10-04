@@ -110,7 +110,7 @@ def exportDemand():
       yield (n, d.item.name, d.due, cur, i.end, i.quantity, i.id)
     # Extra record if planned short
     if cumplanned < d.quantity:
-      yield (n, d.item.name, d.customer and c.customer.name or None, d.due, 
+      yield (n, d.item.name, d.customer and d.customer.name or None, d.due, 
         d.quantity - cumplanned, None, None, None)
 
   print "Exporting demand plans..."

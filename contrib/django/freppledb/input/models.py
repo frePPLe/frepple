@@ -518,6 +518,8 @@ class Flow(AuditModel):
     default='1.00',
     help_text=_('Quantity to consume or produce per operationplan unit')
     )
+  name = models.CharField(_('name'), max_length=60, null=True, blank=True)
+  alternate = models.CharField(_('alternate'), max_length=60, null=True, blank=True)
 
   def __unicode__(self):
     return '%s - %s' % (self.operation.name, self.thebuffer.name)
@@ -537,6 +539,8 @@ class Load(AuditModel):
   quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
   effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
   effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
+  name = models.CharField(_('name'), max_length=60, null=True, blank=True)
+  alternate = models.CharField(_('alternate'), max_length=60, null=True, blank=True)
 
   def __unicode__(self):
     return '%s - %s' % (self.operation.name, self.resource.name)

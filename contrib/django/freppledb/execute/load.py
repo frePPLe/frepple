@@ -56,14 +56,6 @@ def loadPlan(cursor):
 
 
 def loadLocations(cursor):
-  '''
-  Importing locations happens in a different way than the other entities.
-  Rather than preparing an XML document, the python code is directly interacting
-  with the C++ frePPLe API.
-  This interaction is at least 2-3 times faster than the XML way. It also
-  allows much more flexibility to interact with the objects in a more
-  productive and more complex way.
-  '''
   print 'Importing locations...'
   cnt = 0
   starttime = time()
@@ -295,12 +287,14 @@ def loadFlows(cursor):
   # Note: The sorting of the flows is not really necessary, but helps to make
   # the planning progress consistent across runs and database engines.
   cursor.execute('''
-    SELECT operation_id, thebuffer_id, quantity, type, effective_start, effective_end
+    SELECT 
+      operation_id, thebuffer_id, quantity, type, effective_start, 
+      effective_end, name, alternate
     FROM flow
-    ORDER BY thebuffer_id, operation_id
+    ORDER BY operation_id, name, thebuffer_id, alternate
     ''')
   curbufname = None
-  for i, j, k, l, m, n in cursor.fetchall():
+  for i, j, k, l, m, n, o, p in cursor.fetchall():
     cnt += 1
     try:
       if j != curbufname:
@@ -309,6 +303,8 @@ def loadFlows(cursor):
       curflow = frepple.flow(operation=frepple.operation(name=i), type=l, buffer=curbuf, quantity=k)
       if m: curflow.effective_start = m
       if n: curflow.effective_end = n
+      if o: curflow.name = o
+      if p: curflow.alternate = p
     except Exception, e: print "Error:", e
   print 'Loaded %d flows in %.2f seconds' % (cnt, time() - starttime)
 
@@ -320,12 +316,14 @@ def loadLoads(cursor):
   # Note: The sorting of the loads is not really necessary, but helps to make
   # the planning progress consistent across runs and database engines.
   cursor.execute('''
-    SELECT operation_id, resource_id, quantity, effective_start, effective_end
+    SELECT 
+      operation_id, resource_id, quantity, effective_start, effective_end, 
+      name, alternate
     FROM resourceload
-    ORDER BY resource_id, operation_id
+    ORDER BY operation_id, name, resource_id, alternate
     ''')
   curresname = None
-  for i, j, k, l, m in cursor.fetchall():
+  for i, j, k, l, m, n, o in cursor.fetchall():
     cnt += 1
     try:
       if j != curresname:
@@ -334,6 +332,8 @@ def loadLoads(cursor):
       curload = frepple.load(operation=frepple.operation(name=i), resource=curres, quantity=k)
       if l: curload.effective_start = l
       if m: curload.effective_end = m
+      if n: curflow.name = n
+      if o: curflow.alternate = o
       # todo: duplicate load crashes the application
       #curload2 = frepple.load(operation=frepple.operation(name=i), resource=curres, quantity=k)
     except Exception, e: print "Error:", e

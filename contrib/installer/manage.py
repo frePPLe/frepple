@@ -49,7 +49,7 @@ settings.TEMPLATE_DEBUG = False
 # Update the directories where fixtures are searched
 settings.FIXTURE_DIRS = (
   os.path.join(settings.FREPPLE_APP,'fixtures','input').replace('\\','/'),
-  os.path.join(settings.FREPPLE_APP,'fixtures','user').replace('\\','/'),
+  os.path.join(settings.FREPPLE_APP,'fixtures','common').replace('\\','/'),
 )
 
 # Update the template dirs
@@ -89,14 +89,10 @@ if noDatabaseSchema:
   confirm = raw_input("Do you want to create it now? (yes/no): ")
   while confirm not in ('yes', 'no'):
     confirm = raw_input('Please enter either "yes" or "no": ')
-  if confirm == 'no':
-    # Honourable exit
-    print "Exiting..."
-    raw_input("Hit any key to continue...")
-    sys.exit(0)
-  # Create the database
-  print "\nCreating database scheme"
-  call_command('syncdb', verbosity=1)
+  if confirm == 'yes':
+    # Create the database
+    print "\nCreating database scheme"
+    call_command('syncdb', verbosity=1)
 
 # Execute the command
 import freppledb.settings

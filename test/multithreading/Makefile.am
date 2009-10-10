@@ -4,4 +4,4 @@
 
 CLEANFILES =
 
-EXTRA_DIST = runtest.py
+EXTRA_DIST = multithreading.xml

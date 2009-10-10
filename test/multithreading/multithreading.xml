@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <description>
+    In this test a number of threads are simultaneously operating in frePPLe.
+    Each thread repeats some model changes with a specific delay between the 
+    changes.
+    The test reports the min, max and average time taken by each action, 
+    and the number of executions (successful or failed).
+    The test has a predefined time duration.
+    
+    The test is disabled by default!
+    
+    The conclusions in summary:
+    - When creating frePPLe objects only 1 cpu is used.
+      if multiple such threads are active only one can be actively working while 
+      the others are queueing. This is due to the Python threading architecture.
+      Creating multiple creator threads only makes sense if the threads also 
+      have to wait from time to time for eg file or database retrieval.
+    - FrePPLe can use multiple cpus when non-Python operations are run.
+      Eg during a save operation the Python interpreter is available to do
+      other work. multiple save operations can thus run in parallel on 
+      multiple cpus.
+      Eg the solve operation doesn't keep Python locked either and internally
+      creates its own threads to run on multiple cpus.
+    - Not all actions in frePPLe are safe to be run in parallel.
+      Eg delete a demand while the solver is solving it: can crash frePPLe
+      Eg save the plan while the solver is recreating the plan: can crash frePPLe      
+  </description>
+  <current>2009-01-01T00:00:00</current>
+  <operations>
+    <operation name="make end item" xsi:type="operation_fixed_time" duration="P1D"/>
+  </operations>
+  <items>
+    <item name="end item">
+      <operation name="delivery end item" xsi:type="operation_fixed_time" duration="P1D"/>
+    </item>
+  </items> 
+  <buffers>
+    <buffer name="end item">
+      <producing name="make end item"/> <item name="end item"/>
+    </buffer>
+  </buffers>
+  <resources>
+    <resource name="Resource">
+      <maximum name="Capacity" xsi:type="calendar_double">
+        <buckets>
+          <bucket start="2009-01-01T00:00:00" value="1" />
+        </buckets>
+      </maximum>
+      <loads>
+        <load><operation name="make end item"/></load>
+      </loads>
+  </resource>
+  </resources>
+  <flows>
+    <flow xsi:type="flow_start">
+      <operation name="delivery end item"/>
+      <buffer name="end item"/> 
+      <quantity>-1</quantity>
+    </flow>
+    <flow xsi:type="flow_end"> 
+      <operation name="make end item"/>
+      <buffer name="end item"/>
+      <quantity>1</quantity>
+    </flow>
+  </flows>
+  <demands>
+    <demand name="order 1" quantity="10" due="2009-01-04T09:00:00" priority="1"> 
+       <item name="end item"/>
+    </demand>
+  </demands>
+  
+<?python
+
+# Skip this test by default!!!
+sys.exit(0)
+
+import datetime, time, threading, random, sys
+
+def funcSleep (id,cnt):
+  '''
+  A thread command to sleep for a second.
+  '''
+  time.sleep(1)
+
+
+def funcIdleLoop (id,cnt):
+  '''
+  A thread command that keeps Python buys for a while.
+  '''
+  cnt = 1;
+  while cnt < 100000:
+    sysiphus = "sisyphus string %d" % cnt
+    cnt += 1
+
+
+def funcSolve(id,cnt):
+  '''
+  A thread command to solve the plan.
+  '''
+  frepple.solver_mrp(name="MRP", constraints=7).solve()
+
+
+def funcSave(id,cnt):
+  '''
+  A thread command to save the model.
+  '''
+  frepple.saveXMLfile("output.%d.xml" % id)
+
+
+def funcAddDemand(id,cnt):
+  '''
+  A thread command to create a demand.
+  '''
+  global theItem
+  frepple.demand(name="order_%d_%d" % (id,cnt), 
+     quantity=10, 
+     item=frepple.item(name="end item"),
+     due=datetime.datetime(2009, int(random.uniform(0,12))+1, int(random.uniform(0,28))+1), 
+     priority=1)
+
+def funcDeleteDemand(id,cnt):
+  '''
+  A thread command to delete a demand.
+  We assume the demand is created with funcAddDemand, which is executed by
+  a preceding threadid.
+  '''
+  frepple.demand(name="order_%d_%d" % (1,cnt), action="R")
+  
+  
+def funcAddItem(id,cnt):
+  '''
+  A thread command to create an item.
+  '''
+  frepple.item(name="item_%d_%d" % (id,cnt))
+
+
+class Worker (threading.Thread):
+  '''
+  This is the routine executed by each of the threads.
+  It will execute the specified function repeatedly with a delay between calls.
+  Statistics about the timing are gathered.
+  '''
+  __threadid = 0
+
+  def __init__(self, name, method, delay=0, maxcount=0):
+    threading.Thread.__init__(self)
+    Worker.__threadid += 1
+    self.id = Worker.__threadid
+    self.name = name
+    self.setDaemon(1)
+    self.delay = delay
+    self.maxcount = maxcount
+    self.method = method
+    self.sumtime = 0
+    self.mintime = 1e9
+    self.maxtime = -1
+    self.count = 0
+    self.fail = 0
+    self.finished = False
+
+  def run(self):
+    while self.count<self.maxcount or self.maxcount <= 0:
+      # Initialize timer
+      starttime = time.clock()
+
+      # Execute the command
+      try: self.method(self.id,self.count)
+      except Exception, e:
+        print "Exception in thread", self.name, ":", e
+        self.fail += 1
+      else: 
+        # Collect statistics
+        timer = time.clock() - starttime
+        self.sumtime += timer
+        if (timer < self.mintime): self.mintime = timer
+        if (timer > self.maxtime): self.maxtime = timer
+      self.count += 1
+
+      # Sleep a bit between 2 calls to the xml
+      if self.delay > 0: time.sleep(self.delay * random.uniform(0.8,1.2))
+
+# Define the test threads and the duration of the test
+threads = [
+     Worker("thread1", funcAddDemand, 0, 1000000),
+     Worker("thread2", funcAddDemand, 0, 1000000),
+     #Worker("thread3", funcAddDemand, 0, 1000000),
+     #Worker("thread4", funcAddDemand, 0, 1000000),
+     Worker("thread5", funcSleep, 0, 1000000),
+     Worker("thread6", funcAddItem, 0, 1000000),
+     #Worker("thread7", funcAddItem, 0, 1000000),
+     #Worker("thread8", funcIdleLoop, 0, 100000),
+     #Worker("thread9", funcIdleLoop, 0, 100000),
+     #Worker("thread10", funcDeleteDemand, 0.01, 10000),
+     Worker("thread11", funcSave, 0.3, 1000),
+     #Worker("thread12", funcSave, 0.3, 1000),
+     #Worker("thread13", funcSolve, 0.5, 1000),
+     ]
+maxRunTime = 20
+
+# Run the threads
+starttime = time.clock()
+try:
+  for t in threads: t.start()
+  # Wait for the total duration of the test
+  time.sleep(maxRunTime)
+  #Alternative: Wait for all threads to reach their message count
+  #for t in threads: t.join()
+except KeyboardInterrupt:
+  # The test has been interupted, which counts as a failure
+  print "Interrupted test"
+
+totaltime = time.clock() - starttime
+
+# The final results
+print "\n  Thread    #execs(failures)  TotTime  Avg Time  Min Time  Max Time"
+for t in threads:
+  if t.count > 0:
+    print "%10s %6u(%u) %8.3f %9.3f %9.3f %9.3f" % (t.name, t.count, t.fail, t.sumtime, t.sumtime/t.count, t.mintime, t.maxtime)
+  else:
+    print "%10s %6u(%u) %8.3f %9.3f %9.3f %9.3f" % (t.name, 0, 0, 0, 0, 0, 0)
+print "total time %.3f" % totaltime
+
+frepple.printsize()
+
+print "\nTest passed"
+sys.exit(0)
+?>
+</plan>

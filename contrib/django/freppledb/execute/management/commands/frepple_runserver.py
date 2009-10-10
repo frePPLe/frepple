@@ -79,7 +79,7 @@ class Command(BaseCommand):
       raise Exception("Invalid address '%s' and/or port '%s': %s" % (address, port, e))
 
     # Print a header message
-    print 'Running Frepple %s with database %s\n' % (settings.FREPPLE_VERSION,settings.DATABASE_NAME)
+    print 'Running frePPLe %s with database %s\n' % (settings.FREPPLE_VERSION,settings.DATABASE_NAME)
     print 'To access the server, point your browser to http://%s:%s/' % (address, port)
     print 'Three users are created by default: "admin", "frepple" and "guest" (the password is equal to the user name)\n'
     print 'Quit the server with CTRL-C.\n'

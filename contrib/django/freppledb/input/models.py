@@ -332,9 +332,11 @@ class Operation(AuditModel):
   posttime = DurationField(_('post-op time'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("A delay time to be respected as a soft constraint after ending the operation"))
   sizeminimum = models.DecimalField(_('size minimum'), max_digits=15, decimal_places=4, null=True, blank=True,
-    help_text=_("A minimum lotsize quantity for operationplans"))
+    help_text=_("A minimum quantity for operationplans"))
   sizemultiple = models.DecimalField(_('size multiple'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("A multiple quantity for operationplans"))
+  sizemaximum = models.DecimalField(_('size maximum'), max_digits=15, decimal_places=4, null=True, blank=True,
+    help_text=_("A maximum quantity for operationplans"))
   cost = models.DecimalField(_('cost'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("Cost per operationplan unit"))
   duration = DurationField(_('duration'), max_digits=15, decimal_places=4, null=True, blank=True,
@@ -473,6 +475,8 @@ class Resource(AuditModel):
     null=True, blank=True, db_index=True)
   cost = models.DecimalField(_('cost'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("Cost for using 1 unit of the resource for 1 hour"))
+  maxearly = DurationField(_('max early'),max_digits=15, decimal_places=0, null=True, blank=True,
+    help_text=_('Time window before the ask date where we look for available capacity'))
 
   # Methods
   def __unicode__(self): return self.name
@@ -481,6 +485,7 @@ class Resource(AuditModel):
     if self.type == 'resource_infinite':
         # These fields are not relevant for infinite resources
         self.maximum = None
+        self.maxearly = None
     # Call the real save() method
     super(Resource, self).save(*args, **kwargs)
 

@@ -127,11 +127,11 @@ def loadOperations(cursor):
   starttime = time()
   cursor.execute('''
     SELECT
-      name, fence, pretime, posttime, sizeminimum, sizemultiple, type,
-      duration, duration_per, location_id, cost
+      name, fence, pretime, posttime, sizeminimum, sizemultiple, sizemaximum, 
+      type, duration, duration_per, location_id, cost
     FROM operation
     ''')
-  for i, j, k, l, m, n, p, q, r, s, t in cursor.fetchall():
+  for i, j, k, l, m, n, o, p, q, r, s, t in cursor.fetchall():
     cnt += 1
     try:
       if not p or p == "operation_fixed_time":
@@ -152,6 +152,7 @@ def loadOperations(cursor):
       if l: x.posttime = l
       if m: x.size_minimum = m
       if n: x.size_multiple = n
+      if o: x.size_maximum = o
       if s: x.location = frepple.location(name=s)
       if t: x.cost = t
     except Exception, e: print "Error:", e
@@ -256,8 +257,8 @@ def loadResources(cursor):
   print 'Importing resources...'
   cnt = 0
   starttime = time()
-  cursor.execute('SELECT name, description, maximum_id, location_id, type, cost FROM %s' % connection.ops.quote_name('resource'))
-  for i, j, k, l, m, n in cursor.fetchall():
+  cursor.execute('SELECT name, description, maximum_id, location_id, type, cost, maxearly FROM %s' % connection.ops.quote_name('resource'))
+  for i, j, k, l, m, n, o in cursor.fetchall():
     cnt += 1
     try:
       if m == "resource_infinite":
@@ -273,6 +274,7 @@ def loadResources(cursor):
           maximum=frepple.calendar(name=k),
           location=frepple.location(name=l),
           )
+        if o: x.maxearly = o
       else:
         raise ValueError("Resource type '%s' not recognized" % m)
       if n: x.cost = n

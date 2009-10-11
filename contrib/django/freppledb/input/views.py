@@ -352,7 +352,7 @@ class ResourceList(ListReport):
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','location','type',
-      'maximum','cost','lastmodified'
+      'maximum','cost','maxearly','lastmodified'
       )
 
   rows = (
@@ -387,6 +387,10 @@ class ResourceList(ListReport):
     ('cost', {
       'title': _('cost'),
       'filter': FilterNumber(size=5, operator="lt"),
+      }),
+    ('maxearly', {
+      'title': _('maxearly'),
+      'filter': FilterNumber(),
       }),
     ('lastmodified', {
       'title': _('last modified'),
@@ -673,7 +677,8 @@ class DemandList(ListReport):
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','item','customer','description','category','subcategory',
-      'due','quantity','operation','priority','owner','lastmodified'
+      'due','quantity','operation','priority','owner','maxlateness',
+      'minshipment','lastmodified'
       )
 
   rows = (
@@ -720,6 +725,14 @@ class DemandList(ListReport):
     ('owner', {
       'title': _('owner'),
       'filter': FilterText(field='owner__name'),
+      }),
+    ('maxlateness', {
+      'title': _('maximum lateness'),
+      'filter': FilterNumber(),
+      }),
+    ('minshipment', {
+      'title': _('minimum shipment'),
+      'filter': FilterNumber(),
       }),
     ('lastmodified', {
       'title': _('last modified'),
@@ -861,7 +874,7 @@ class OperationList(ListReport):
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','type','location','fence','pretime','posttime','sizeminimum',
-      'sizemultiple','cost','lastmodified'
+      'sizemultiple','sizemaximum','cost','lastmodified'
       )
 
   rows = (
@@ -895,6 +908,10 @@ class OperationList(ListReport):
       }),
     ('sizemultiple', {
       'title': _('size multiple'),
+      'filter': FilterNumber(),
+      }),
+    ('sizemaximum', {
+      'title': _('size maximum'),
       'filter': FilterNumber(),
       }),
     ('cost', {

@@ -179,6 +179,7 @@
       <xsd:element name="fence" type="xsd:duration" />
       <xsd:element name="size_minimum" type="positiveDouble" />
       <xsd:element name="size_multiple" type="positiveDouble" />
+      <xsd:element name="size_maximum" type="positiveDouble" />
       <xsd:element name="cost" type="positiveDouble" />
       <xsd:element name="loads" type="loadlist" />
       <xsd:element name="flows" type="flowlist" />
@@ -192,6 +193,7 @@
     <xsd:attribute name="fence" type="xsd:duration" />
     <xsd:attribute name="size_minimum" type="positiveDouble" />
     <xsd:attribute name="size_multiple" type="positiveDouble" />
+    <xsd:attribute name="size_maximum" type="positiveDouble" />
     <xsd:attribute name="cost" type="positiveDouble" />
   </xsd:complexType>
 

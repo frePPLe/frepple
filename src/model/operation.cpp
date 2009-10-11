@@ -489,6 +489,8 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const Keyword& tag, mo
     o->writeElement(Tags::tag_size_minimum, size_minimum);
   if (size_multiple > 0.0)
     o->writeElement(Tags::tag_size_multiple, size_multiple);
+  if (size_maximum < DBL_MAX)
+    o->writeElement(Tags::tag_size_maximum, size_maximum);
   if (loc)
     o->writeElement(Tags::tag_location, loc);
 
@@ -538,6 +540,8 @@ DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, const Attribute& pAttr
     setCost(pElement.getDouble());
   else if (pAttr.isA (Tags::tag_size_multiple))
     setSizeMultiple(pElement.getDouble());
+  else if (pAttr.isA (Tags::tag_size_maximum))
+    setSizeMaximum(pElement.getDouble());
   else if (pAttr.isA (Tags::tag_pretime))
     setPreTime(pElement.getTimeperiod());
   else if (pAttr.isA (Tags::tag_posttime))
@@ -1188,6 +1192,8 @@ DECLARE_EXPORT PyObject* Operation::getattro(const Attribute& attr)
     return PythonObject(getSizeMinimum());
   if (attr.isA(Tags::tag_size_multiple))
     return PythonObject(getSizeMultiple());
+  if (attr.isA(Tags::tag_size_maximum))
+    return PythonObject(getSizeMaximum());
   if (attr.isA(Tags::tag_cost))
     return PythonObject(getCost());
   if (attr.isA(Tags::tag_pretime))
@@ -1236,6 +1242,8 @@ DECLARE_EXPORT int Operation::setattro(const Attribute& attr, const PythonObject
     setSizeMinimum(field.getDouble());
   else if (attr.isA(Tags::tag_size_multiple))
     setSizeMultiple(field.getDouble());
+  else if (attr.isA(Tags::tag_size_maximum))
+    setSizeMaximum(field.getDouble());
   else if (attr.isA(Tags::tag_cost))
     setCost(field.getDouble());
   else if (attr.isA(Tags::tag_pretime))

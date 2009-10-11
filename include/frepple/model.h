@@ -1457,8 +1457,8 @@ class Operation : public HasName<Operation>,
   protected:
     /** Constructor. Don't use it directly. */
     explicit Operation(const string& str) : HasName<Operation>(str),
-        loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0), 
-        hidden(false), first_opplan(NULL), last_opplan(NULL) {}
+      loc(NULL), size_minimum(1.0), size_multiple(0.0), size_maximum(DBL_MAX),
+      cost(0.0), hidden(false), first_opplan(NULL), last_opplan(NULL) {}
 
   public:
     /** Destructor. */
@@ -1659,8 +1659,22 @@ class Operation : public HasName<Operation>,
       setChanged();
     }
 
-    /** Returns the minimum size for operationplans. */
+    /** Returns the mutiple size for operationplans. */
     double getSizeMultiple() const {return size_multiple;}
+
+    /** Sets the maximum size of operationplans. */
+    void setSizeMaximum(double f)
+    {
+      if (f < size_minimum)
+        throw DataException("Operation maximum size must be higher than the minimum size");
+      if (f <= 0)
+        throw DataException("Operation maximum size must be greater than 0");
+      size_maximum = f;
+      setChanged();
+    }
+
+    /** Returns the maximum size for operationplans. */
+    double getSizeMaximum() const {return size_maximum;}
 
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
@@ -1753,6 +1767,9 @@ class Operation : public HasName<Operation>,
 
     /** Multiple size for operationplans. */
     double size_multiple;
+
+    /** Maximum size for operationplans. */
+    double size_maximum;
 
     /** Cost of the operation.<br>
       * The default value is 0.0.
@@ -1967,14 +1984,15 @@ class OperationPlan
 
     /** Updates the quantity.<br>
       * The operationplan quantity is subject to the following rules:
-      *  - The quantity must be greater than the minimum size.<br>
-      *    The value is rounded up to the minimum size ir required,
-      *    or rounded down to 0.
+      *  - The quantity must be greater than or equal to the minimum size.<br>
+      *    The value is rounded up to the smallest multiple above the minimum
+      *    size if required, or rounded down to 0.
       *  - The quantity must be a multiple of the multiple_size field.<br>
       *    The value is rounded up or down to meet this constraint.
-      *  - There is no maximum size to an operationplan.
+      *  - The quantity must be smaller than or equal to the maximum size.<br>
+      *    The value is limited to the smallest multiple below this limit.
       *  - Setting the quantity of an operationplan to 0 is always possible,
-      *    regardless of the minimum and multiples values.
+      *    regardless of the minimum, multiple and maximum values.
       * This method can only be called on top operationplans. Sub operation
       * plans should pass on a call to the parent operationplan.
       */

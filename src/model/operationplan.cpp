@@ -213,6 +213,7 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
   //   - both operationplans have no owner
   //   - start and end date of both operationplans are the same
   //   - demand of both operationplans are the same
+  //   - maximum operation size is not exceeded
   if (!id && getOperation()->getType() == *OperationFixedTime::metadata 
     && !getLocked() && !getOwner() && getOperation()->getLoads().empty())
   {
@@ -225,7 +226,8 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
       x = x->prev;
     }
     if (y && y->getDates() == getDates() && !y->getOwner() 
-      && y->getDemand() == getDemand() && !y->getLocked())
+      && y->getDemand() == getDemand() && !y->getLocked()
+      && y->getQuantity() + getQuantity() < getOperation()->getSizeMaximum())
     {
       // Merging with the 'next' operationplan
       y->setQuantity(y->getQuantity() + getQuantity());
@@ -233,7 +235,8 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
       return false;
     }
     if (x && x->getDates() == getDates() && !x->getOwner() 
-      && x->getDemand() == getDemand() && !x->getLocked())
+      && x->getDemand() == getDemand() && !x->getLocked()
+      && x->getQuantity() + getQuantity() < getOperation()->getSizeMaximum())
     {
       // Merging with the 'previous' operationplan
       x->setQuantity(x->getQuantity() + getQuantity());
@@ -509,6 +512,11 @@ DECLARE_EXPORT double OperationPlan::setQuantity (double f, bool roundDown, bool
       return 0.0;
     }
     f = getOperation()->getSizeMinimum();
+  }
+  if (f!=0.0 && f > getOperation()->getSizeMaximum())
+  {
+    roundDown = true; // force rounddown to stay below the limit
+    f = getOperation()->getSizeMaximum();
   }
   if (f!=0.0 && getOperation()->getSizeMultiple()>0.0)
   {

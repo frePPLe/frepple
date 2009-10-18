@@ -206,7 +206,8 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
 
   // See if we can consolidate this operationplan with an existing one.
   // Merging is possible only when all the following conditions are met:
-  //   - id is not set
+  //   - id of the new opplan is not set
+  //   - id of the old opplan is set
   //   - it is a fixedtime operation
   //   - it doesn't load any resources
   //   - both operationplans aren't locked
@@ -214,6 +215,7 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
   //   - start and end date of both operationplans are the same
   //   - demand of both operationplans are the same
   //   - maximum operation size is not exceeded
+  //   - @todo need to check that all flowplans are on the same alternate!!!
   if (!id && getOperation()->getType() == *OperationFixedTime::metadata 
     && !getLocked() && !getOwner() && getOperation()->getLoads().empty())
   {
@@ -226,7 +228,7 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
       x = x->prev;
     }
     if (y && y->getDates() == getDates() && !y->getOwner() 
-      && y->getDemand() == getDemand() && !y->getLocked()
+      && y->getDemand() == getDemand() && !y->getLocked() && y->id
       && y->getQuantity() + getQuantity() < getOperation()->getSizeMaximum())
     {
       // Merging with the 'next' operationplan
@@ -235,7 +237,7 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
       return false;
     }
     if (x && x->getDates() == getDates() && !x->getOwner() 
-      && x->getDemand() == getDemand() && !x->getLocked()
+      && x->getDemand() == getDemand() && !x->getLocked() && x->id
       && x->getQuantity() + getQuantity() < getOperation()->getSizeMaximum())
     {
       // Merging with the 'previous' operationplan
@@ -285,6 +287,35 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
   }
 
   // Insert into the doubly linked list of operationplans.
+  insertInOperationplanList();
+
+  // If we used the lazy creator, the flow- and loadplans have not been
+  // created yet. We do it now...
+  createFlowLoads();
+
+  // Extra registration step if this is a delivery operation
+  if (getDemand() && getDemand()->getDeliveryOperation() == oper)
+    dmd->addDelivery(this);
+
+  // Mark the operation to detect its problems
+  // Note that a single operationplan thus retriggers the problem computation
+  // for all operationplans of this operation. For models with 1) a large
+  // number of operationplans per operation and 2) very frequent problem
+  // detection, this could constitute a scalability problem. This combination
+  // is expected to be unusual and rare, justifying this design choice.
+  oper->setChanged();
+
+  // The operationplan is valid
+  return true;
+}
+
+
+DECLARE_EXPORT void OperationPlan::insertInOperationplanList()
+{
+
+  // Check if already linked
+  if (prev || oper->first_opplan == this) return;
+
   if (!oper->first_opplan)
   {
     // First operationplan in the list
@@ -320,25 +351,6 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
     if (x) x->next = this;
     if (y) y->prev = this;
   }
-
-  // If we used the lazy creator, the flow- and loadplans have not been
-  // created yet. We do it now...
-  createFlowLoads();
-
-  // Extra registration step if this is a delivery operation
-  if (getDemand() && getDemand()->getDeliveryOperation() == oper)
-    dmd->addDelivery(this);
-
-  // Mark the operation to detect its problems
-  // Note that a single operationplan thus retriggers the problem computation
-  // for all operationplans of this operation. For models with 1) a large
-  // number of operationplans per operation and 2) very frequent problem
-  // detection, this could constitute a scalability problem. This combination
-  // is expected to be unusual and rare, justifying this design choice.
-  oper->setChanged();
-
-  // The operationplan is valid
-  return true;
 }
 
 
@@ -436,20 +448,22 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
     delete o;
   }
 
-  // The following actions are only required for registered operation plans.
-  // Only those are linked in the list and can have problems: see the
-  // documentation in the instantiate() method.
-  if (getIdentifier())
-  {
-    // Delete from the list of deliveries
-    if (dmd) dmd->removeDelivery(this);
+  // Delete from the list of deliveries
+  if (id && dmd) dmd->removeDelivery(this);
 
-    // Delete from the operationplan list
-    if (prev) prev->next = next;
-    else oper->first_opplan = next; // First opplan in the list of this operation
-    if (next) next->prev = prev;
-    else oper->last_opplan = prev; // Last opplan in the list of this operation
-  }
+  // Delete from the operationplan list
+  if (prev) 
+    // In the middle
+    prev->next = next;
+  else if (oper->first_opplan == this) 
+    // First opplan in the list of this operation
+    oper->first_opplan = next; 
+  if (next) 
+    // In the middle
+    next->prev = prev;
+  else if (oper->last_opplan == this)  
+    // Last opplan in the list of this operation
+    oper->last_opplan = prev;
 }
 
 

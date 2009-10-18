@@ -138,6 +138,11 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
         g!=opplan->endFlowPlans(); ++g)
       if (g->getFlow()->isConsumer())
       {
+        // Switch back to the main alternate if this flowplan was already 
+        // planned on an alternate
+        if (g->getFlow()->getAlternate()) 
+          g->setFlow(g->getFlow()->getAlternate());
+
         // Trigger the flow solver, which will call the buffer solver
         data.state->q_flowplan = &*g;
         q_qty_Flow = - data.state->q_flowplan->getQuantity();
@@ -161,7 +166,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
             opplan, 0.01, data.state->a_date, Date::infinitePast, false, false
             );
           if (at.first.getEnd() < matnext.getEnd()) matnext = at.first;
-          if (matnext.getEnd() <= orig_q_date) logger << "STRANGE" << matnext << "  " << orig_q_date << "  " << at.second << "  " << opplan->getQuantity() << endl;
+          //xxxif (matnext.getEnd() <= orig_q_date) logger << "STRANGE" << matnext << "  " << orig_q_date << "  " << at.second << "  " << opplan->getQuantity() << endl;
 
           // Jump out of the loop if the answered quantity is 0. 
           if (a_qty <= ROUNDING_ERROR) 
@@ -221,7 +226,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
       {
         // It worked
         orig_dates = opplan->getDates();
-        data.state->q_date = a_date; //xxxorig_dates.getEnd();
+        data.state->q_date = orig_dates.getEnd();
         data.state->q_qty = opplan->getQuantity();
         data.state->a_date = Date::infiniteFuture;
         data.state->a_qty = data.state->q_qty;

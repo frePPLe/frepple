@@ -32,23 +32,6 @@ namespace frepple
 {
 
 
-void SolverMRP::solve(const Load* l, void* v)
-{
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
-  if (data->state->q_qty >= 0.0)
-  {
-    // The loadplan is an increase in size, and the resource solver only needs
-    // the decreases.
-    // Or, it's a zero quantity loadplan. E.g. because it is not effective.
-    data->state->a_qty = data->state->q_qty;
-    data->state->a_date = data->state->q_date;
-  }
-  else
-    // Delegate the answer to the resource
-    l->getResource()->solve(*this,v);
-}
-
-
 /** @todo resource solver should be using a move command rather than direct move */
 DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 {

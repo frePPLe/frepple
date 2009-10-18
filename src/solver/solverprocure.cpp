@@ -237,6 +237,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
           new CommandCreateOperationPlan(b->getOperation(), order_qty,
             Date::infinitePast, current_date, data->state->curDemand);
         last_operationplan = a->getOperationPlan();
+        last_operationplan->insertInOperationplanList();
         produced += last_operationplan->getQuantity();
         data->add(a);
       }

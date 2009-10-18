@@ -263,36 +263,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
 }
 
 
-DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
-{
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
-  data->state->q_qty = - data->state->q_flowplan->getQuantity();
-  data->state->q_date = data->state->q_flowplan->getDate();
-  if (data->state->q_qty != 0.0)
-  {
-    fl->getBuffer()->solve(*this,data);
-    if (data->state->a_date > fl->getEffective().getEnd())
-    {
-      // The reply date must be less than the effectivity end date: after 
-      // that date the flow in question won't consume any material any more.
-      if (data->getSolver()->getLogLevel()>1)
-        logger << indent(fl->getBuffer()->getLevel()) << "  Buffer '" 
-          << fl->getBuffer()->getName() << "' answer date is adjusted to " 
-          << fl->getEffective().getEnd() 
-          << " because of a date effective flow" << endl;
-      data->state->a_date = fl->getEffective().getEnd();
-    }
-  }
-  else
-  {
-    // It's a zero quantity flowplan. 
-    // E.g. because it is not effective.
-    data->state->a_date = data->state->q_date;
-    data->state->a_qty = 0.0; 
-  }
-}
-
-
 DECLARE_EXPORT void SolverMRP::solve(const BufferInfinite* b, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);

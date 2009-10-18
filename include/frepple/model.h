@@ -2136,6 +2136,16 @@ class OperationPlan
       */
     virtual DECLARE_EXPORT bool instantiate();
 
+    /** This method links the operationplan in the list of all operationplans
+      * maintained on the operation.<br>
+      * In most cases calling this method is not required since it included 
+      * in the instantiate method. In exceptional cases the solver already 
+      * needs to see uncommitted operationplans in the list - eg for the 
+      * procurement buffer.
+      * @see instantiate
+      */
+    DECLARE_EXPORT void insertInOperationplanList();
+
     /** Add a sub-operationplan to the list. For normal operationplans this
       * is only a dummy function. For alternates and routing operationplans
       * it does have a meaning.
@@ -3376,7 +3386,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
-    virtual size_t getSize() const {return sizeof(Flow);}
+    virtual size_t getSize() const {return sizeof(Flow) + getName().size();}
 
   protected:
     /** Default constructor. */
@@ -3807,7 +3817,7 @@ class Load
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
-    virtual size_t getSize() const {return sizeof(Load);}
+    virtual size_t getSize() const {return sizeof(Load) + getName().size();}
 
     /** Default constructor. */
     Load() : qty(1.0), priority(1), hasAlts(false), altLoad(NULL) 
@@ -5103,7 +5113,7 @@ class CommandCreateOperationPlan : public Command
     {
       if (opplan)
       {
-        opplan->instantiate();
+       opplan->instantiate();
         opplan = NULL; // Avoid executing / initializing more than once
       }
     }

@@ -191,6 +191,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\solver\solverflow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\solver\solverload.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\solver\solveroperation.cpp"
 				>
 			</File>

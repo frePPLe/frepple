@@ -127,18 +127,20 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
 
   // Verify the data
   if (!newld) throw LogicException("Can't switch to NULL load");
+  if (ld && ld->getOperation() != newld->getOperation())
+    throw LogicException("Only switching to a load on the same operation is allowed");
+
+  // Mark entities as changed
+  if (oper) oper->getOperation()->setChanged();
+  if (ld) ld->getResource()->setChanged();
+  newld->getResource()->setChanged();
 
   // Change this loadplan and its brother
   for (LoadPlan *ldplan = getOtherLoadPlan(); true; )
   {
     // Remove from the old resource, if there is one
     if (ldplan->ld)
-    {
-      if (ldplan->ld->getOperation() != newld->getOperation())
-        throw LogicException("Only switching to a load on the same operation is allowed");
       ldplan->ld->getResource()->loadplans.erase(this);
-      ldplan->ld->getResource()->setChanged();
-    }
 
     // Insert in the new resource
     ldplan->ld = newld;
@@ -147,13 +149,10 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
       ld->getLoadplanQuantity(this),
       ld->getLoadplanDate(this)
       );
-    ldplan->ld->getResource()->setChanged();
 
     // Repeat for the brother loadplan or exit
-    if (ldplan != this)
-      ldplan = this;
-    else
-      return;
+    if (ldplan != this) ldplan = this;
+    else return;
   }
 }
 

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for effective operations</name>
+  <description>
+  This model verifies the behavior of alternate loads.
+  An assembly operation needs 2 resources each of which have alternates:
+    * Resource A or resource B are loaded.
+      Resource A is the preferred one, and resource B is only used when 
+      constraints are found on A. 
+    * Resource C can be replaced by resource D till a certain date, or by 
+      resource E valid from a date. 
+  </description>
+  <current>2009-01-01T00:00:00</current>
+
+  <buffers>
+    <buffer name="end item">
+      <item name="end item" />
+      <producing name="make end item" xsi:type="operation_time_per"
+        duration="P1D" duration_per="P1D">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="end item" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+        <loads>
+          <load>
+            <resource name="Resource A"/>
+            <quantity>1.5</quantity>
+            <name>group1</name>
+          </load>          
+          <load>
+            <resource name="Resource B"/>
+            <quantity>2</quantity>
+            <alternate>group1</alternate>
+          </load>
+          <load>
+            <resource name="Resource C"/>
+            <quantity>1</quantity>
+            <name>group2</name>
+            <!--
+            <effective_start>2009-01-10T00:00:00</effective_start>
+            <effective_end>2009-01-20T00:00:00</effective_end>
+            -->
+          </load>
+          <load>
+            <resource name="Resource D"/>
+            <quantity>1</quantity>
+            <priority>2</priority>
+            <alternate>group2</alternate>
+            <!--
+            <effective_start>2009-01-10T00:00:00</effective_start>
+            <effective_end>2009-01-20T00:00:00</effective_end>
+            -->
+          </load>
+        </loads>
+      </producing>
+    </buffer>
+  </buffers>
+  <items>
+    <item name="end item">
+      <operation name="deliver end item" xsi:type="operation_fixed_time"
+        duration="P1D">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="end item" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </operation>
+    </item>
+  </items>
+  <resources>
+    <resource name="Resource A">
+      <maximum name="Capacity A" xsi:type="calendar_double">
+        <buckets>
+          <bucket start="2009-01-01T00:00:00" value="1" />
+        </buckets>
+      </maximum>
+    </resource>
+    <resource name="Resource B">
+      <maximum name="Capacity B" xsi:type="calendar_double">
+        <buckets>
+          <bucket start="2009-01-01T00:00:00" value="1" />
+          <bucket start="2009-01-10T00:00:00" value="3" />
+        </buckets>
+      </maximum>
+    </resource>
+    <resource name="Resource C">
+      <maximum name="Capacity C" xsi:type="calendar_double">
+        <buckets>
+          <bucket start="2009-01-01T00:00:00" value="1" />
+        </buckets>
+      </maximum>
+    </resource>
+    <resource name="Resource D">
+      <maximum name="Capacity D" xsi:type="calendar_double">
+        <buckets>
+          <bucket start="2009-01-01T00:00:00" value="1" />
+        </buckets>
+      </maximum>
+    </resource>
+  </resources>
+  <items>
+    <item name="1. end item">
+      <operation name="1. deliver end item" />
+    </item>
+  </items>
+  <demands>
+    <demand name="order 1">
+      <quantity>1</quantity>
+      <due>2009-01-25T00:00:00</due>
+      <priority>11</priority>
+      <item name="end item" />
+    </demand>
+    <!--
+    <demand name="1. order 2">
+      <quantity>10</quantity>
+      <due>2009-01-25T00:00:00</due>
+      <priority>12</priority>
+      <item name="1. end item" />
+    </demand>
+    <demand name="1. order 3">
+      <quantity>20</quantity>
+      <due>2009-01-25T00:00:00</due>
+      <priority>13</priority>
+      <item name="1. end item" />
+    </demand>
+    <demand name="1. order 4">
+      <quantity>1</quantity>
+      <due>2009-01-15T00:00:00</due>
+      <priority>14</priority>
+      <item name="1. end item" />
+    </demand>
+    <demand name="1. order 5">
+      <quantity>10</quantity>
+      <due>2009-01-15T00:00:00</due>
+      <priority>15</priority>
+      <item name="1. end item" />
+    </demand>
+    <demand name="1. order 6">
+      <quantity>1</quantity>
+      <due>2009-01-09T00:00:00</due>
+      <priority>16</priority>
+      <item name="1. end item" />
+    </demand>
+    -->
+  </demands>
+
+<?python
+frepple.solver_mrp(name="MRP", constraints=7, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+frepple.solver_mrp(name="MRP", constraints=0, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+?>
+
+</plan>

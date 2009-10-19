@@ -418,10 +418,10 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
   // Has been initialized already, it seems
   if (firstflowplan || firstloadplan) return;
 
-  // Create loadplans
+  // Create loadplans for the leading loads
   for (Operation::loadlist::const_iterator g=oper->getLoads().begin();
       g!=oper->getLoads().end(); ++g)
-    new LoadPlan(this, &*g);
+    if (!g->getAlternate()) new LoadPlan(this, &*g);
 
   // Create flowplans for flows that are not alternates of another one
   for (Operation::flowlist::const_iterator h=oper->getFlows().begin();

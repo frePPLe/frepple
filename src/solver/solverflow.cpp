@@ -31,7 +31,7 @@
 namespace frepple
 {
 
-bool sort(const Flow* lhs, const Flow* rhs)
+bool sortFlow(const Flow* lhs, const Flow* rhs)
 {
   return lhs->getPriority() < rhs->getPriority();
 }
@@ -46,7 +46,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
   if (fl->hasAlternates())
   {
     // CASE I: It is an alternate flow.
-    // We ask each alternate flows in order of priority till we find a flow
+    // We ask each alternate flow in order of priority till we find a flow
     // that has a non-zero reply.
     // 1) collect a list of alternates
     list<const Flow*> thealternates;
@@ -57,7 +57,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
         && i->getEffective().within(data->state->q_flowplan->getDate()))
         thealternates.push_front(&*i);
     // 2) Sort the list
-    thealternates.sort(sort);
+    thealternates.sort(sortFlow);
     // 3) Loop through the alternates till we find a non-zero reply
     Date min_next_date(Date::infiniteFuture);
     for (list<const Flow*>::const_iterator i = thealternates.begin();

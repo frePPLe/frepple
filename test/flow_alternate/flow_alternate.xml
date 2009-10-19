@@ -14,17 +14,6 @@
       used. The validity periods of the components can overlap. 
   </description>
   <current>2009-01-01T00:00:00</current>
-
-  <!--
-    Case 1: Effectivity on the consuming flow of an operation
-    In this example the flow is on a delivery operation, but it could be any
-    operation.
-    The scenario models a situation where an old product is being replaced
-    by a new version of it.
-    Note that in this case the effectivity dates should not overlap. In case
-    they do, we would consume both the old and new product! If such an
-    overlapping period is required, an alternate operation or flows needs to be used.
-  -->
   <buffers>
     <buffer name="component A" xsi:type="buffer_procure">
       <item name="component A" />

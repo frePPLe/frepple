@@ -321,6 +321,7 @@ template <class type> void TimeLine<type>::insert (Event* e)
     first = e;
     e->oh = qty;
     if (qty>0) e->cum_prod = qty;
+    else e->cum_prod = 0;
   }
   else
   {
@@ -334,10 +335,8 @@ template <class type> void TimeLine<type>::insert (Event* e)
       last = e;
     i->next = e;
     e->oh = i->oh + qty;
-    if (qty>0)
-      e->cum_prod = i->cum_prod + qty;
-    else
-      e->cum_prod = i->cum_prod;
+    if (qty>0) e->cum_prod = i->cum_prod + qty;
+    else e->cum_prod = i->cum_prod;
   }
 
   if (e->getType() == 3)

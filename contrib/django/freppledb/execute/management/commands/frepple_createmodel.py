@@ -111,10 +111,10 @@ class Command(BaseCommand):
     else: forecast_per_item = 50
     if 'level' in options: level = int(options['level'] or '5')
     else: level = 5
-    if 'resource' in options: resource = int(options['resource'] or '50')
-    else: resource = 50
-    if 'resource_size' in options: resource_size = int(options['resource_size'] or '4')
-    else: resource_size = 4
+    if 'resource' in options: resource = int(options['resource'] or '60')
+    else: resource = 60
+    if 'resource_size' in options: resource_size = int(options['resource_size'] or '5')
+    else: resource_size = 5
     if 'components' in options: components = int(options['components'] or '200')
     else: components = 200
     if 'components_per' in options: components_per = int(options['components_per'] or '5')
@@ -177,8 +177,10 @@ class Command(BaseCommand):
 
       # Working days calendar
       if verbosity>0: print "Creating working days..."
-      workingdays = Calendar.objects.create(name="Working Days")
+      workingdays = Calendar.objects.create(name="Working Days",type= "calendar_boolean")
+      weeks = Calendar.objects.create(name="Weeks")
       cur = None
+      cur2 = None
       for i in Dates.objects.all():
         curdate = datetime(i.day_start.year, i.day_start.month, i.day_start.day)
         dayofweek = int(curdate.strftime("%w")) # day of the week, 0 = sunday, 1 = monday, ...
@@ -187,14 +189,23 @@ class Command(BaseCommand):
           if cur:
             cur.enddate = curdate
             cur.save()
+          if cur2:
+            cur2.enddate = curdate
+            cur2.save()
           cur = Bucket(startdate=curdate, value=1, calendar=workingdays)
+          cur2 = Bucket(startdate=curdate, value=1, calendar=weeks)
         elif dayofweek == 6:
           # A bucket for the weekend
           if cur:
             cur.enddate = curdate
             cur.save()
+          if cur2:
+            cur2.enddate = curdate
+            cur2.save()
           cur = Bucket(startdate=curdate, value=0, calendar=workingdays)
+          cur2 = Bucket(startdate=curdate, value=0, calendar=weeks)
       if cur: cur.save()
+      if cur2: cur2.save()
       transaction.commit()
 
       # Create a random list of categories to choose from
@@ -251,9 +262,11 @@ class Command(BaseCommand):
 
         # location
         loc, created = Location.objects.get_or_create(name='Loc %05d' % i)
-
+        loc.available = workingdays
+        loc.save()
+        
         # Item and delivery operation
-        oper = Operation.objects.create(name='Del %05d' % i, sizemultiple=1)
+        oper = Operation.objects.create(name='Del %05d' % i, sizemultiple=1, location=loc)
         it = Item.objects.create(name='Itm %05d' % i, operation=oper, category=random.choice(categories))
 
         # Forecast
@@ -297,6 +310,7 @@ class Command(BaseCommand):
             # Create a resource load for operations on level 1
             oper = Operation.objects.create(name='Oper %05d L%02d' % (i,k),
               type='operation_time_per',
+              location=loc,
               duration_per=86400,
               sizemultiple=1,
               )
@@ -311,6 +325,7 @@ class Command(BaseCommand):
               name='Oper %05d L%02d' % (i,k),
               duration=random.choice(durations),
               sizemultiple=1,
+              location=loc,
               )
           ops.append(oper)
           buf.producing = oper

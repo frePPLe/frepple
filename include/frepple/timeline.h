@@ -408,6 +408,10 @@ template <class type> void TimeLine<type>::erase (Event* e)
   else
     // Erasing the tail
     last = e->prev;
+  
+  // Clear prev and next pointers
+  e->prev = NULL;
+  e->next = NULL;
 
   // Final debugging check
   assert(check());

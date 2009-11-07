@@ -138,14 +138,14 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
         g!=opplan->endFlowPlans(); ++g)
       if (g->getFlow()->isConsumer())
       {
-        // Switch back to the main alternate if this flowplan was already 
+        // Switch back to the main alternate if this flowplan was already    // @todo is this really required? If yes, in this place?
         // planned on an alternate
         if (g->getFlow()->getAlternate()) 
           g->setFlow(g->getFlow()->getAlternate());
 
         // Trigger the flow solver, which will call the buffer solver
         data.state->q_flowplan = &*g;
-        q_qty_Flow = - data.state->q_flowplan->getQuantity();
+        q_qty_Flow = - data.state->q_flowplan->getQuantity(); // @todo flow quantity can change when using alternate flows -> move to flow solver!
         q_date_Flow = data.state->q_flowplan->getDate();
         g->getFlow()->solve(*this,&data);
 

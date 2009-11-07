@@ -158,9 +158,20 @@
     -->
   </demands>
 
-<?python    
+<?python
+
+forbidden = frepple.buffer(name="component F")
+
+# This function is called by the solver to verify whether a certain alternate
+# flow is acceptable or not.
+# In our example we disallow the use of the component F.
+def checkAlternate(flplan):
+  global forbidden
+  print "Checking %s on %s" % (flplan.buffer.name, flplan.flow.operation.name)
+  return flplan.buffer != forbidden
+
 print "Creating constrained plan"
-sol = frepple.solver_mrp(name="MRP", constraints=7, loglevel=2)
+sol = frepple.solver_mrp(name="MRP", constraints=7, loglevel=2, userexit_flow=checkAlternate)
 sol.solve()
 frepple.saveplan("output.1.xml")
 print "Creating unconstrained plan"

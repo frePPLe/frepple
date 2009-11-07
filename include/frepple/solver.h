@@ -196,10 +196,11 @@ class SolverMRP : public Solver
 
     /** Constructor. */
     SolverMRP(const string& n) : Solver(n), constrts(0), maxparallel(0), 
-      lazydelay(86400L), autocommit(true) {initType(metadata);}
+      lazydelay(86400L), autocommit(true), userexit_flow(NULL) 
+        {initType(metadata);}
 
     /** Destructor. */
-    virtual ~SolverMRP() {}
+    virtual ~SolverMRP() {if (userexit_flow) Py_DECREF(userexit_flow);}
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
@@ -318,6 +319,15 @@ class SolverMRP : public Solver
       * planning a demand. */
     void setAutocommit(const bool b) {autocommit = b;}
 
+    /** Specify a Python function that is called before solving a flow. */
+    DECLARE_EXPORT void setUserExitFlow(string);
+
+    /** Specify a Python function that is called before solving a flow. */
+    DECLARE_EXPORT void setUserExitFlow(PyObject*);
+
+    /** Return the Python function that is called before solving a flow. */
+    PyObject* getUserExitFlow() const {return userexit_flow;}
+
     /** Python method for running the solver. */
     static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
 
@@ -357,6 +367,12 @@ class SolverMRP : public Solver
       * is ignored when doing a complete replan. 
       */
     bool autocommit;
+
+    /** A Python callback function that is called for each alternate
+      * flow. If the callback function returns false, that alternate 
+      * flow is an invalid choice.
+      */
+    PyObject* userexit_flow;
 
   protected:
     /** @brief This class is used to store the solver status during the 

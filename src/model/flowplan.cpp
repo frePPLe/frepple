@@ -191,6 +191,8 @@ PyObject* FlowPlan::getattro(const Attribute& attr)
     return PythonObject(getOperationPlan());
   if (attr.isA(Tags::tag_quantity))
     return PythonObject(getQuantity());
+  if (attr.isA(Tags::tag_flow))
+    return PythonObject(getFlow());
   if (attr.isA(Tags::tag_date))
     return PythonObject(getDate());
   if (attr.isA(Tags::tag_onhand))

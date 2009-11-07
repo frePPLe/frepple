@@ -509,8 +509,11 @@ DECLARE_EXPORT double OperationPlan::setQuantity (double f, bool roundDown, bool
   if (f < 0)
     throw DataException("Operationplans can't have negative quantities");
 
-  // Setting a quantity is only allowed on a top operationplan
-  if (owner) return owner->setQuantity(f,roundDown,upd,execute);
+  // Setting a quantity is only allowed on a top operationplan.
+  // One exception: on alternate operations the sizing on the sub-operations is
+  // respected.
+  if (owner && owner->getOperation()->getType() != *OperationAlternate::metadata) 
+    return owner->setQuantity(f,roundDown,upd,execute);
 
   // Compute the correct size for the operationplan
   if (f!=0.0 && getOperation()->getSizeMinimum()>0.0
@@ -543,6 +546,14 @@ DECLARE_EXPORT double OperationPlan::setQuantity (double f, bool roundDown, bool
   {
     if (!execute) return f;
     quantity = f;
+  }
+
+  // Update the parent of an alternate operationplan
+  if (execute && owner
+    && owner->getOperation()->getType() == *OperationAlternate::metadata) 
+  {
+    owner->quantity = quantity;
+    if (upd) owner->resizeFlowLoadPlans();
   }
 
   // Update the flow and loadplans, and mark for problem detection
@@ -1016,15 +1027,19 @@ DECLARE_EXPORT bool OperationPlanAlternate::instantiate()
 
 DECLARE_EXPORT double OperationPlanAlternate::setQuantity(double f, bool roundDown, bool update, bool execute)
 {
-  // First the normal resizing
-  f = OperationPlan::setQuantity(f, roundDown, update, execute);
-
-  // Apply the same size also to the children operationplan
-  if (altopplan && execute)
+  if (altopplan)
   {
-    altopplan->quantity = f;
-    if (update) altopplan->resizeFlowLoadPlans();
+    // Use the sizing from the sub-operation
+    f = altopplan->setQuantity(f, roundDown, update, execute);
+    if (execute)
+    {
+      quantity = f;
+      if (update) resizeFlowLoadPlans();
+    }
   }
+  else
+    // Use the sizing of the top-operation
+    f = OperationPlan::setQuantity(f, roundDown, update, execute);
   return f;
 }
 

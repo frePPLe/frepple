@@ -48,6 +48,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
     // CASE I: It is an alternate flow.
     // We ask each alternate flow in order of priority till we find a flow
     // that has a non-zero reply.
+
     // 1) collect a list of alternates
     list<const Flow*> thealternates;
     const Flow *x = fl->hasAlternates() ? fl : fl->getAlternate();
@@ -56,27 +57,69 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
       if ((i->getAlternate() == x || &*i == x) 
         && i->getEffective().within(data->state->q_flowplan->getDate()))
         thealternates.push_front(&*i);
+
     // 2) Sort the list
     thealternates.sort(sortFlow);
+
     // 3) Loop through the alternates till we find a non-zero reply
     Date min_next_date(Date::infiniteFuture);
     for (list<const Flow*>::const_iterator i = thealternates.begin();
       i != thealternates.end();)
     {
       const Flow *curflow = *i;
+
       // 3a) Switch to this flow
       if (data->state->q_flowplan->getFlow() != curflow) 
         data->state->q_flowplan->setFlow(curflow);
-      // 3b) Ask the buffer
+
+      // 3b) Call the Python user exit if there is one
+      if (userexit_flow)
+      {
+        PyGILState_STATE pythonstate = PyGILState_Ensure();
+        PyObject* result = PyEval_CallFunction(userexit_flow, 
+          "(O)", static_cast<PyObject*>(data->state->q_flowplan));
+        if (!result)
+        {
+          // User exit, case 1: exception thrown, and continue as accept
+          logger << "Error: Exception caught in the flow user exit" << endl;
+          if (PyErr_Occurred()) PyErr_PrintEx(0);
+        }
+        else if (PyObject_IsTrue(result)) 
+          // User exit, case 2: return value is true, alternate accepted 
+          Py_DECREF(result);          
+        else 
+        {
+          // User exit, case 1: return value is false, alternate rejected
+          Py_DECREF(result);
+          if (data->getSolver()->getLogLevel()>1)
+            logger << indent(curflow->getOperation()->getLevel()) 
+              << "   User exit disallows consumption from '" 
+              << (*i)->getBuffer()->getName() << "'" << endl;
+          // Release Python interpreter
+          PyGILState_Release(pythonstate);
+          // Move to the next alternate
+          if (++i != thealternates.end() && data->getSolver()->getLogLevel()>1)
+            logger << indent(curflow->getOperation()->getLevel()) << "   Alternate flow switches from '" 
+                  << curflow->getBuffer()->getName() << "' to '" 
+                  << (*i)->getBuffer()->getName() << "'" << endl;
+          continue;
+        }
+        PyGILState_Release(pythonstate);
+      }
+
+      // 3c) Ask the buffer
       data->state->q_qty = - data->state->q_flowplan->getQuantity();
       data->state->q_date = data->state->q_flowplan->getDate();
       Command* topcommand = data->getLastCommand();
       curflow->getBuffer()->solve(*this,data);
-      // 3c) A positive reply: exit the loop
+
+      // 3d) A positive reply: exit the loop
       if (data->state->a_qty > ROUNDING_ERROR) return;
-      // 3d) Undo the plan on the alternate
+
+      // 3e) Undo the plan on the alternate
       data->undo(topcommand);
-      // 3e) Prepare for the next alternate
+
+      // 3f) Prepare for the next alternate
       if (data->state->a_date < min_next_date)
         min_next_date = data->state->a_date;
       if (++i != thealternates.end() && data->getSolver()->getLogLevel()>1)
@@ -84,6 +127,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
               << curflow->getBuffer()->getName() << "' to '" 
               << (*i)->getBuffer()->getName() << "'" << endl;
     }
+
     // 4) No alternate gave a good result     
     data->state->a_date = min_next_date;
     data->state->a_qty = 0;    

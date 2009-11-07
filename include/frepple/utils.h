@@ -2622,7 +2622,8 @@ class PythonObject : public DataElement
     /** Constructor from an existing Python object.<br>
       * The reference count isn't increased.
       */
-    PythonObject(PyObject* o) : obj(o ? o : Py_None) {}
+    PythonObject(const PyObject* o) 
+      : obj(o ? const_cast<PyObject*>(o) : Py_None) {Py_INCREF(obj);}
 
     /** This conversion operator casts the object back to a PyObject pointer. */
     operator PyObject*() const {return obj;}

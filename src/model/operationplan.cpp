@@ -1101,6 +1101,10 @@ DECLARE_EXPORT PyObject* OperationPlan::getattro(const Attribute& attr)
     return PythonObject(getIdentifier());
   if (attr.isA(Tags::tag_operation))
     return PythonObject(getOperation());
+  if (attr.isA(Tags::tag_flowplans))
+    return new frepple::FlowPlanIterator(this);
+  if (attr.isA(Tags::tag_loadplans))
+    return new frepple::LoadPlanIterator(this);
   if (attr.isA(Tags::tag_quantity))
     return PythonObject(getQuantity());
   if (attr.isA(Tags::tag_start))

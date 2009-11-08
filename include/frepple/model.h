@@ -5815,16 +5815,43 @@ class FlowPlanIterator : public PythonExtension<FlowPlanIterator>
   public:
     static int initialize();
 
-    FlowPlanIterator(Buffer* b) : buf(b)
+    FlowPlanIterator(Buffer* b) : buf(b), buffer_or_opplan(true)
     {
       if (!b)
         throw LogicException("Creating flowplan iterator for NULL buffer");
-      i = b->getFlowPlans().begin();
+      bufiter = new Buffer::flowplanlist::const_iterator(b->getFlowPlans().begin());
+    }
+
+    FlowPlanIterator(OperationPlan* o) : opplan(o), buffer_or_opplan(false)
+    {
+      if (!o)
+        throw LogicException("Creating flowplan iterator for NULL operationplan");
+      opplaniter = new OperationPlan::FlowPlanIterator(o->beginFlowPlans());
+    }
+
+    ~FlowPlanIterator()
+    {
+      if (buffer_or_opplan) delete bufiter;
+      else delete opplaniter;
     }
 
   private:
-    Buffer* buf;
-    Buffer::flowplanlist::const_iterator i;
+    union
+    {
+      Buffer* buf;
+      OperationPlan* opplan;
+    };
+
+    union
+    {
+      Buffer::flowplanlist::const_iterator *bufiter;
+      OperationPlan::FlowPlanIterator *opplaniter;
+    };
+
+    /** Flags whether we are browsing over the flowplans in a buffer or in an
+      * operationplan. */
+    bool buffer_or_opplan;
+
     PyObject *iternext();
 };
 
@@ -5839,16 +5866,43 @@ class LoadPlanIterator : public PythonExtension<LoadPlanIterator>
   public:
     static int initialize();
 
-    LoadPlanIterator(Resource* r) : res(r)
+    LoadPlanIterator(Resource* r) : res(r), resource_or_opplan(true)
     {
       if (!r)
         throw LogicException("Creating loadplan iterator for NULL resource");
-      i = r->getLoadPlans().begin();
+      resiter = new Resource::loadplanlist::const_iterator(r->getLoadPlans().begin());
+    }
+
+    LoadPlanIterator(OperationPlan* o) : opplan(o), resource_or_opplan(false)
+    {
+      if (!opplan)
+        throw LogicException("Creating loadplan iterator for NULL operationplan");
+      opplaniter = new OperationPlan::LoadPlanIterator(o->beginLoadPlans());
+    }
+
+    ~LoadPlanIterator()
+    {
+      if (resource_or_opplan) delete resiter;
+      else delete opplaniter;
     }
 
   private:
-    Resource* res;
-    Resource::loadplanlist::const_iterator i;
+    union
+    {
+      Resource* res;
+      OperationPlan* opplan;
+    };
+
+    union
+    {
+      Resource::loadplanlist::const_iterator *resiter;
+      OperationPlan::LoadPlanIterator *opplaniter;
+    };
+
+    /** Flags whether we are browsing over the flowplans in a buffer or in an
+      * operationplan. */
+    bool resource_or_opplan;
+
     PyObject *iternext();
 };
 

@@ -225,13 +225,23 @@ int FlowPlanIterator::initialize()
 
 PyObject* FlowPlanIterator::iternext()
 {
-  // Skip uninteresting entries
-  while (i != buf->getFlowPlans().end() && i->getQuantity()==0.0) 
-    ++i;
-  if (i == buf->getFlowPlans().end()) return NULL;
-
-  // Return result
-  FlowPlan* fl = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*(i++)));
+  FlowPlan* fl;
+  if (buffer_or_opplan)
+  {
+    // Skip uninteresting entries
+    while (*bufiter != buf->getFlowPlans().end() && (*bufiter)->getQuantity()==0.0) 
+      ++(*bufiter);
+    if (*bufiter == buf->getFlowPlans().end()) return NULL;
+    fl = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*((*bufiter)++)));
+  }
+  else
+  {
+    // Skip uninteresting entries
+    while (*opplaniter != opplan->endFlowPlans() && (*opplaniter)->getQuantity()==0.0) 
+      ++(*opplaniter);
+    if (*opplaniter == opplan->endFlowPlans()) return NULL;
+    fl = static_cast<FlowPlan*>(&*((*opplaniter)++));
+  }
   Py_INCREF(fl);
   return const_cast<FlowPlan*>(fl);
 }

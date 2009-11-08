@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for alternate flows</name>
+  <description>
+  This test verifies the behavior of alternate flows.
+  An assembly operation is modeled which has alternate components:
+    * Component A or component B can be used in the assembly.
+      Component A is the preferred one, and Component B is only used 
+      when constraints are found on A. 
+    * Component C can be replaced by component D till a certain date, or by 
+      component E valid from a date. 
+      The validity periods of the components D and E can overlap. 
+    * Component F is used till a certain date, after which the component G is 
+      used. The validity periods of the components can overlap. 
+  </description>
+  <current>2009-01-01T00:00:00</current>
+  <buffers>
+    <buffer name="component A" xsi:type="buffer_procure">
+      <item name="component A" />
+	    <onhand>1</onhand>
+	    <leadtime>P7D</leadtime>
+	    <mininventory>20</mininventory>
+	    <maxinventory>70</maxinventory>      
+    </buffer>
+    <buffer name="component B" xsi:type="buffer_procure">
+      <item name="component B" />
+	    <onhand>4</onhand>
+	    <leadtime>P5D</leadtime>
+	    <mininventory>20</mininventory>
+	    <maxinventory>70</maxinventory>      
+    </buffer>
+    <buffer name="component C" xsi:type="buffer_procure">
+      <item name="component C" />
+	    <onhand>5</onhand>
+	    <leadtime>P7D</leadtime>
+	    <mininventory>20</mininventory>
+	    <maxinventory>70</maxinventory>      
+    </buffer>
+    <buffer name="component D" xsi:type="buffer_procure">
+      <item name="component D" />
+	    <onhand>0</onhand>
+	    <leadtime>P7D</leadtime>
+	    <mininventory>20</mininventory>
+	    <maxinventory>70</maxinventory>      
+    </buffer>
+    <buffer name="component E" xsi:type="buffer_procure">
+      <item name="component E" />
+	    <onhand>0</onhand>
+	    <leadtime>P7D</leadtime>
+	    <mininventory>20</mininventory>
+	    <maxinventory>70</maxinventory>      
+    </buffer>
+    <buffer name="component F" xsi:type="buffer_procure">
+      <item name="component F" />
+	    <onhand>5</onhand>
+	    <leadtime>P7D</leadtime>
+	    <mininventory>20</mininventory>
+	    <maxinventory>70</maxinventory>      
+    </buffer>
+    <buffer name="component G" xsi:type="buffer_procure">
+      <item name="component G" />
+	    <onhand>5</onhand>
+	    <leadtime>P5D</leadtime>
+	    <mininventory>20</mininventory>
+	    <maxinventory>70</maxinventory>      
+    </buffer>
+    <buffer name="product">
+      <item name="product" />
+      <producing name="assembly" xsi:type="operation_time_per"
+        duration_per="P1D" duration="P1D">
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="product" />
+            <quantity>1</quantity>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="component A" />
+            <quantity>-1</quantity>
+            <priority>1</priority>
+            <name>group1</name>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="component B" />
+            <quantity>-2</quantity>
+            <priority>2</priority>
+            <alternate>group1</alternate>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="component C" />
+            <quantity>-1</quantity>
+            <priority>1</priority>
+            <name>group2</name>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="component D" />
+            <quantity>-1</quantity>
+            <!--<effective_end>2009-02-01T00:00:00</effective_end>-->
+            <priority>2</priority>
+            <alternate>group2</alternate>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="component E" />
+            <quantity>-1</quantity>
+            <!--<effective_start>2009-01-10T00:00:00</effective_start>-->
+            <priority>3</priority>
+            <alternate>group2</alternate>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="component F" />
+            <quantity>-1</quantity>
+            <priority>1</priority>
+            <!--<effective_end>2009-02-01T00:00:00</effective_end>-->
+            <name>group3</name>
+          </flow>
+          <flow xsi:type="flow_start">
+            <buffer name="component G" />
+            <!--<effective_start>2009-02-01T00:00:00</effective_start>-->
+            <quantity>-1</quantity>
+            <priority>2</priority>
+            <alternate>group3</alternate>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+  </buffers>
+  <items>
+    <item name="product">
+      <operation name="deliver product">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="product" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </operation>
+    </item>
+  </items>
+  <demands>
+    <demand name="order 1">
+      <quantity>10</quantity>
+      <due>2009-01-04T00:00:00</due>
+      <priority>11</priority>
+      <item name="product" />
+    </demand>
+    <!--
+    <demand name="order 2">
+      <quantity>10</quantity>
+      <due>2009-02-02T00:00:00</due>
+      <priority>12</priority>
+      <item name="product" />
+    </demand>
+    <demand name="order 3">
+      <quantity>10</quantity>
+      <due>2009-02-20T00:00:00</due>
+      <priority>13</priority>
+      <item name="product" />
+    </demand>
+    -->
+  </demands>
+
+<?python
+print "Creating constrained plan"
+sol = frepple.solver_mrp(name="MRP", constraints=7, loglevel=2)
+sol.solve()
+frepple.saveplan("output.1.xml")
+print "Creating unconstrained plan"
+sol.constraints = 0
+sol.solve()
+frepple.saveplan("output.2.xml")
+?>
+
+</plan>

@@ -76,8 +76,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
       if (userexit_flow)
       {
         PyGILState_STATE pythonstate = PyGILState_Ensure();
-        PyObject* result = PyEval_CallFunction(userexit_flow, 
-          "(O)", static_cast<PyObject*>(data->state->q_flowplan));
+        PyObject* result = PyEval_CallFunction(
+          userexit_flow, "(O)", 
+          static_cast<PyObject*>(data->state->q_flowplan)
+          );
         if (!result)
         {
           // User exit, case 1: exception thrown, and continue as accept

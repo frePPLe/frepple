@@ -210,13 +210,24 @@ int LoadPlanIterator::initialize()
 
 PyObject* LoadPlanIterator::iternext()
 {
-  // Skip zero quantity loadplans and load ends
-  while (i != res->getLoadPlans().end() && i->getQuantity()<=0.0)
-    ++i;
-  if (i == res->getLoadPlans().end()) return NULL;
+  LoadPlan* ld;
+  if (resource_or_opplan)
+  {
+    // Skip zero quantity loadplans and load ends
+    while (*resiter != res->getLoadPlans().end() && (*resiter)->getQuantity()<=0.0)
+      ++(*resiter);
+    if (*resiter == res->getLoadPlans().end()) return NULL;
 
-  // Return result
-  LoadPlan* ld = const_cast<LoadPlan*>(static_cast<const LoadPlan*>(&*(i++)));
+    // Return result
+    ld = const_cast<LoadPlan*>(static_cast<const LoadPlan*>(&*((*resiter)++)));
+  }
+  else
+  {
+    while (*opplaniter != opplan->endLoadPlans() && (*opplaniter)->getQuantity()==0.0) 
+      ++(*opplaniter);
+    if (*opplaniter == opplan->endLoadPlans()) return NULL;
+    ld = static_cast<LoadPlan*>(&*((*opplaniter)++));
+  }
   Py_INCREF(ld);
   return const_cast<LoadPlan*>(ld);
 }

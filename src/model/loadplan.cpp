@@ -55,8 +55,21 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
   ld = const_cast<Load*>(r);
   oper = o;
   start_or_end = START;
-  nextLoadPlan = o->firstloadplan;
-  o->firstloadplan = this;
+
+  // Add to the operationplan
+  nextLoadPlan = NULL;
+  if (o->firstloadplan)
+  {
+    // Append to the end
+    LoadPlan *c = o->firstloadplan;
+    while (c->nextLoadPlan) c = c->nextLoadPlan;
+    c->nextLoadPlan = this;
+  }
+  else
+    // First in the list
+    o->firstloadplan = this;
+
+  // Insert in the resource timeline
   r->getResource()->loadplans.insert(
     this,
     ld->getLoadplanQuantity(this),
@@ -81,18 +94,29 @@ DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r, LoadPlan *lp
   ld = const_cast<Load*>(r);
   oper = o;
   start_or_end = END;
-  nextLoadPlan = o->firstloadplan;
-  o->firstloadplan = this;
 
-  // Initialize the Python type
-  initType(metadata);
+  // Add to the operationplan
+  nextLoadPlan = NULL;
+  if (o->firstloadplan)
+  {
+    // Append to the end
+    LoadPlan *c = o->firstloadplan;
+    while (c->nextLoadPlan) c = c->nextLoadPlan;
+    c->nextLoadPlan = this;
+  }
+  else
+    // First in the list
+    o->firstloadplan = this;
 
-  // Insert in the timeline
+  // Insert in the resource timeline
   r->getResource()->loadplans.insert(
     this,
     ld->getLoadplanQuantity(this),
     ld->getLoadplanDate(this)
     );
+
+  // Initialize the Python type
+  initType(metadata);
 }
 
 

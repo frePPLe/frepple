@@ -58,8 +58,17 @@ DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
   
   // Link the flowplan to the operationplan
   oper = opplan;
-  nextFlowPlan = opplan->firstflowplan;
-  opplan->firstflowplan = this;
+  nextFlowPlan = NULL;
+  if (opplan->firstflowplan)
+  {
+    // Append to the end
+    FlowPlan *c = opplan->firstflowplan;
+    while (c->nextFlowPlan) c = c->nextFlowPlan;
+    c->nextFlowPlan = this;
+  }
+  else
+    // First in the list
+    opplan->firstflowplan = this;
 
   // Compute the flowplan quantity 
   fl->getBuffer()->flowplans.insert(

@@ -404,9 +404,9 @@
 					<flowplans>
 						<flowplan>
 							<date>2009-01-10T00:00:00</date>
-							<quantity>-100</quantity>
-							<onhand>0</onhand>
-							<minimum>0</minimum>
+							<quantity>100</quantity>
+							<onhand>100</onhand>
+							<minimum>4</minimum>
 							<maximum>0</maximum>
 							<pegging level="1">
 								<quantity>100</quantity>
@@ -427,9 +427,9 @@
 						</flowplan>
 						<flowplan>
 							<date>2009-01-10T00:00:00</date>
-							<quantity>100</quantity>
-							<onhand>100</onhand>
-							<minimum>4</minimum>
+							<quantity>-100</quantity>
+							<onhand>0</onhand>
+							<minimum>0</minimum>
 							<maximum>0</maximum>
 							<pegging level="1">
 								<quantity>100</quantity>
@@ -457,9 +457,9 @@
 					<flowplans>
 						<flowplan>
 							<date>2009-01-17T00:00:00</date>
-							<quantity>-94</quantity>
-							<onhand>106</onhand>
-							<minimum>0</minimum>
+							<quantity>94</quantity>
+							<onhand>94</onhand>
+							<minimum>4</minimum>
 							<maximum>0</maximum>
 							<pegging level="1">
 								<quantity>94</quantity>
@@ -488,9 +488,9 @@
 						</flowplan>
 						<flowplan>
 							<date>2009-01-17T00:00:00</date>
-							<quantity>94</quantity>
-							<onhand>94</onhand>
-							<minimum>4</minimum>
+							<quantity>-94</quantity>
+							<onhand>106</onhand>
+							<minimum>0</minimum>
 							<maximum>0</maximum>
 							<pegging level="1">
 								<quantity>94</quantity>
@@ -530,9 +530,9 @@
 					<flowplans>
 						<flowplan>
 							<date>2009-01-10T00:00:00</date>
-							<quantity>-100</quantity>
-							<onhand>0</onhand>
-							<minimum>0</minimum>
+							<quantity>100</quantity>
+							<onhand>100</onhand>
+							<minimum>4</minimum>
 							<maximum>0</maximum>
 							<pegging level="1">
 								<quantity>100</quantity>
@@ -553,9 +553,9 @@
 						</flowplan>
 						<flowplan>
 							<date>2009-01-10T00:00:00</date>
-							<quantity>100</quantity>
-							<onhand>100</onhand>
-							<minimum>4</minimum>
+							<quantity>-100</quantity>
+							<onhand>0</onhand>
+							<minimum>0</minimum>
 							<maximum>0</maximum>
 							<pegging level="1">
 								<quantity>100</quantity>
@@ -583,9 +583,9 @@
 					<flowplans>
 						<flowplan>
 							<date>2009-01-17T00:00:00</date>
-							<quantity>-50</quantity>
-							<onhand>0</onhand>
-							<minimum>0</minimum>
+							<quantity>50</quantity>
+							<onhand>50</onhand>
+							<minimum>4</minimum>
 							<maximum>0</maximum>
 							<pegging level="1">
 								<quantity>50</quantity>
@@ -606,9 +606,9 @@
 						</flowplan>
 						<flowplan>
 							<date>2009-01-17T00:00:00</date>
-							<quantity>50</quantity>
-							<onhand>50</onhand>
-							<minimum>4</minimum>
+							<quantity>-50</quantity>
+							<onhand>0</onhand>
+							<minimum>0</minimum>
 							<maximum>0</maximum>
 							<pegging level="1">
 								<quantity>50</quantity>
@@ -640,37 +640,6 @@
 					<flowplans>
 						<flowplan>
 							<date>2009-01-15T00:00:00</date>
-							<quantity>-184</quantity>
-							<onhand>816</onhand>
-							<minimum>0</minimum>
-							<maximum>0</maximum>
-							<pegging level="1">
-								<quantity>184</quantity>
-								<factor>0.184</factor>
-								<buffer name="constraint buffer 3"/>
-								<consuming id="4014" operation="make 3"/>
-								<producing id="3001" operation="supply 3"/>
-								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
-							</pegging>
-							<pegging level="-1">
-								<quantity>4</quantity>
-								<factor>1</factor>
-								<id>unpegged</id>
-								<buffer name="buffer 3"/>
-								<producing id="4014" operation="make 3"/>
-								<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
-							</pegging>
-							<pegging level="-1">
-								<quantity>180</quantity>
-								<factor>1</factor>
-								<buffer name="buffer 3"/>
-								<consuming id="4013" operation="delivery 3"/>
-								<producing id="4014" operation="make 3"/>
-								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
-							</pegging>
-						</flowplan>
-						<flowplan>
-							<date>2009-01-15T00:00:00</date>
 							<quantity>92</quantity>
 							<onhand>92</onhand>
 							<minimum>2</minimum>
@@ -700,6 +669,37 @@
 								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 							</pegging>
 						</flowplan>
+						<flowplan>
+							<date>2009-01-15T00:00:00</date>
+							<quantity>-184</quantity>
+							<onhand>816</onhand>
+							<minimum>0</minimum>
+							<maximum>0</maximum>
+							<pegging level="1">
+								<quantity>184</quantity>
+								<factor>0.184</factor>
+								<buffer name="constraint buffer 3"/>
+								<consuming id="4014" operation="make 3"/>
+								<producing id="3001" operation="supply 3"/>
+								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
+							</pegging>
+							<pegging level="-1">
+								<quantity>4</quantity>
+								<factor>1</factor>
+								<id>unpegged</id>
+								<buffer name="buffer 3"/>
+								<producing id="4014" operation="make 3"/>
+								<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
+							</pegging>
+							<pegging level="-1">
+								<quantity>180</quantity>
+								<factor>1</factor>
+								<buffer name="buffer 3"/>
+								<consuming id="4013" operation="delivery 3"/>
+								<producing id="4014" operation="make 3"/>
+								<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
+							</pegging>
+						</flowplan>
 					</flowplans>
 				</operationplan>
 			</operationplans>
@@ -713,9 +713,9 @@
 					<flowplans>
 						<flowplan>
 							<date>2009-01-15T00:00:00</date>
-							<quantity>-196</quantity>
-							<onhand>804</onhand>
-							<minimum>0</minimum>
+							<quantity>196</quantity>
+							<onhand>196</onhand>
+							<minimum>6</minimum>
 							<maximum>0</maximum>
 							<pegging level="1">
 								<quantity>196</quantity>
@@ -744,9 +744,9 @@
 						</flowplan>
 						<flowplan>
 							<date>2009-01-15T00:00:00</date>
-							<quantity>196</quantity>
-							<onhand>196</onhand>
-							<minimum>6</minimum>
+							<quantity>-196</quantity>
+							<onhand>804</onhand>
+							<minimum>0</minimum>
 							<maximum>0</maximum>
 							<pegging level="1">
 								<quantity>196</quantity>
@@ -782,9 +782,9 @@
 					<flowplans>
 						<flowplan>
 							<date>2009-06-18T00:00:00</date>
-							<quantity>-200</quantity>
-							<onhand>604</onhand>
-							<minimum>0</minimum>
+							<quantity>200</quantity>
+							<onhand>206</onhand>
+							<minimum>6</minimum>
 							<maximum>0</maximum>
 							<pegging level="1">
 								<quantity>200</quantity>
@@ -813,9 +813,9 @@
 						</flowplan>
 						<flowplan>
 							<date>2009-06-18T00:00:00</date>
-							<quantity>200</quantity>
-							<onhand>206</onhand>
-							<minimum>6</minimum>
+							<quantity>-200</quantity>
+							<onhand>604</onhand>
+							<minimum>0</minimum>
 							<maximum>0</maximum>
 							<pegging level="1">
 								<quantity>200</quantity>
@@ -2877,9 +2877,9 @@
 			<flowplans>
 				<flowplan>
 					<date>2009-01-10T00:00:00</date>
-					<quantity>-100</quantity>
-					<onhand>0</onhand>
-					<minimum>0</minimum>
+					<quantity>100</quantity>
+					<onhand>100</onhand>
+					<minimum>4</minimum>
 					<maximum>0</maximum>
 					<pegging level="1">
 						<quantity>100</quantity>
@@ -2900,9 +2900,9 @@
 				</flowplan>
 				<flowplan>
 					<date>2009-01-10T00:00:00</date>
-					<quantity>100</quantity>
-					<onhand>100</onhand>
-					<minimum>4</minimum>
+					<quantity>-100</quantity>
+					<onhand>0</onhand>
+					<minimum>0</minimum>
 					<maximum>0</maximum>
 					<pegging level="1">
 						<quantity>100</quantity>
@@ -2930,9 +2930,9 @@
 			<flowplans>
 				<flowplan>
 					<date>2009-01-17T00:00:00</date>
-					<quantity>-94</quantity>
-					<onhand>106</onhand>
-					<minimum>0</minimum>
+					<quantity>94</quantity>
+					<onhand>94</onhand>
+					<minimum>4</minimum>
 					<maximum>0</maximum>
 					<pegging level="1">
 						<quantity>94</quantity>
@@ -2961,9 +2961,9 @@
 				</flowplan>
 				<flowplan>
 					<date>2009-01-17T00:00:00</date>
-					<quantity>94</quantity>
-					<onhand>94</onhand>
-					<minimum>4</minimum>
+					<quantity>-94</quantity>
+					<onhand>106</onhand>
+					<minimum>0</minimum>
 					<maximum>0</maximum>
 					<pegging level="1">
 						<quantity>94</quantity>
@@ -2999,9 +2999,9 @@
 			<flowplans>
 				<flowplan>
 					<date>2009-01-10T00:00:00</date>
-					<quantity>-100</quantity>
-					<onhand>0</onhand>
-					<minimum>0</minimum>
+					<quantity>100</quantity>
+					<onhand>100</onhand>
+					<minimum>4</minimum>
 					<maximum>0</maximum>
 					<pegging level="1">
 						<quantity>100</quantity>
@@ -3022,9 +3022,9 @@
 				</flowplan>
 				<flowplan>
 					<date>2009-01-10T00:00:00</date>
-					<quantity>100</quantity>
-					<onhand>100</onhand>
-					<minimum>4</minimum>
+					<quantity>-100</quantity>
+					<onhand>0</onhand>
+					<minimum>0</minimum>
 					<maximum>0</maximum>
 					<pegging level="1">
 						<quantity>100</quantity>
@@ -3052,9 +3052,9 @@
 			<flowplans>
 				<flowplan>
 					<date>2009-01-17T00:00:00</date>
-					<quantity>-50</quantity>
-					<onhand>0</onhand>
-					<minimum>0</minimum>
+					<quantity>50</quantity>
+					<onhand>50</onhand>
+					<minimum>4</minimum>
 					<maximum>0</maximum>
 					<pegging level="1">
 						<quantity>50</quantity>
@@ -3075,9 +3075,9 @@
 				</flowplan>
 				<flowplan>
 					<date>2009-01-17T00:00:00</date>
-					<quantity>50</quantity>
-					<onhand>50</onhand>
-					<minimum>4</minimum>
+					<quantity>-50</quantity>
+					<onhand>0</onhand>
+					<minimum>0</minimum>
 					<maximum>0</maximum>
 					<pegging level="1">
 						<quantity>50</quantity>
@@ -3103,37 +3103,6 @@
 			<end>2009-01-15T00:00:00</end>
 			<quantity>92</quantity>
 			<flowplans>
-				<flowplan>
-					<date>2009-01-15T00:00:00</date>
-					<quantity>-184</quantity>
-					<onhand>816</onhand>
-					<minimum>0</minimum>
-					<maximum>0</maximum>
-					<pegging level="1">
-						<quantity>184</quantity>
-						<factor>0.184</factor>
-						<buffer name="constraint buffer 3"/>
-						<consuming id="4014" operation="make 3"/>
-						<producing id="3001" operation="supply 3"/>
-						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
-					</pegging>
-					<pegging level="-1">
-						<quantity>4</quantity>
-						<factor>1</factor>
-						<id>unpegged</id>
-						<buffer name="buffer 3"/>
-						<producing id="4014" operation="make 3"/>
-						<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
-					</pegging>
-					<pegging level="-1">
-						<quantity>180</quantity>
-						<factor>1</factor>
-						<buffer name="buffer 3"/>
-						<consuming id="4013" operation="delivery 3"/>
-						<producing id="4014" operation="make 3"/>
-						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
-					</pegging>
-				</flowplan>
 				<flowplan>
 					<date>2009-01-15T00:00:00</date>
 					<quantity>92</quantity>
@@ -3165,6 +3134,37 @@
 						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
 					</pegging>
 				</flowplan>
+				<flowplan>
+					<date>2009-01-15T00:00:00</date>
+					<quantity>-184</quantity>
+					<onhand>816</onhand>
+					<minimum>0</minimum>
+					<maximum>0</maximum>
+					<pegging level="1">
+						<quantity>184</quantity>
+						<factor>0.184</factor>
+						<buffer name="constraint buffer 3"/>
+						<consuming id="4014" operation="make 3"/>
+						<producing id="3001" operation="supply 3"/>
+						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
+					</pegging>
+					<pegging level="-1">
+						<quantity>4</quantity>
+						<factor>1</factor>
+						<id>unpegged</id>
+						<buffer name="buffer 3"/>
+						<producing id="4014" operation="make 3"/>
+						<dates>1971-01-01T00:00:00 / 2009-01-15T00:00:00</dates>
+					</pegging>
+					<pegging level="-1">
+						<quantity>180</quantity>
+						<factor>1</factor>
+						<buffer name="buffer 3"/>
+						<consuming id="4013" operation="delivery 3"/>
+						<producing id="4014" operation="make 3"/>
+						<dates>2009-01-15T00:00:00 / 2009-01-15T00:00:00</dates>
+					</pegging>
+				</flowplan>
 			</flowplans>
 		</operationplan>
 		<operationplan id="4017" operation="make 4">
@@ -3174,9 +3174,9 @@
 			<flowplans>
 				<flowplan>
 					<date>2009-01-15T00:00:00</date>
-					<quantity>-196</quantity>
-					<onhand>804</onhand>
-					<minimum>0</minimum>
+					<quantity>196</quantity>
+					<onhand>196</onhand>
+					<minimum>6</minimum>
 					<maximum>0</maximum>
 					<pegging level="1">
 						<quantity>196</quantity>
@@ -3205,9 +3205,9 @@
 				</flowplan>
 				<flowplan>
 					<date>2009-01-15T00:00:00</date>
-					<quantity>196</quantity>
-					<onhand>196</onhand>
-					<minimum>6</minimum>
+					<quantity>-196</quantity>
+					<onhand>804</onhand>
+					<minimum>0</minimum>
 					<maximum>0</maximum>
 					<pegging level="1">
 						<quantity>196</quantity>
@@ -3243,9 +3243,9 @@
 			<flowplans>
 				<flowplan>
 					<date>2009-06-18T00:00:00</date>
-					<quantity>-200</quantity>
-					<onhand>604</onhand>
-					<minimum>0</minimum>
+					<quantity>200</quantity>
+					<onhand>206</onhand>
+					<minimum>6</minimum>
 					<maximum>0</maximum>
 					<pegging level="1">
 						<quantity>200</quantity>
@@ -3274,9 +3274,9 @@
 				</flowplan>
 				<flowplan>
 					<date>2009-06-18T00:00:00</date>
-					<quantity>200</quantity>
-					<onhand>206</onhand>
-					<minimum>6</minimum>
+					<quantity>-200</quantity>
+					<onhand>604</onhand>
+					<minimum>0</minimum>
 					<maximum>0</maximum>
 					<pegging level="1">
 						<quantity>200</quantity>

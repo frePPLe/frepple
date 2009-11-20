@@ -114,8 +114,7 @@ DECLARE_EXPORT Operation::~Operation()
 
   // Remove the reference to this operation from all buffers
   for (Buffer::iterator m = Buffer::begin(); m != Buffer::end(); ++m)
-    if (m->getProducingOperation() == this)
-      m->setProducingOperation(NULL);
+    if (m->getProducingOperation() == this) m->setProducingOperation(NULL);
 
   // Remove the operation from its super-operations and sub-operations
   // Note that we are not using a for-loop since our function is actually

@@ -69,6 +69,7 @@
         <xsd:element name="flows" type="flowlist" />
         <xsd:element name="loads" type="loadlist" />
         <xsd:element name="demands" type="demandlist" />
+        <xsd:element name="setupmatrices" type="setupmatrixlist" />
         <xsd:element name="resources" type="resourcelist" />
         <xsd:element name="operationplans" type="operationplanlist" />
         <xsd:element name="problems" type="problemlist" />

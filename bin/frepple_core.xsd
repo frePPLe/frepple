@@ -301,6 +301,46 @@
     </xsd:sequence>
   </xsd:complexType>
 
+  <!-- SETUP MATRIX -->
+  <xsd:complexType name="setupmatrix">
+    <xsd:annotation>
+      <xsd:documentation>
+        A setup matrix defines the conversion between different resource
+        setups.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="rules">
+        <xsd:complexType>
+          <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="rule">
+              <xsd:complexType>
+                <xsd:all>
+                  <xsd:element name="fromsetup" type="xsd:normalizedString" minOccurs="0" />
+                  <xsd:element name="tosetup" type="xsd:normalizedString" minOccurs="0" />
+                  <xsd:element name="duration" type="xsd:duration" minOccurs="0" />
+                  <xsd:element name="cost" type="xsd:double" minOccurs="0" />
+                </xsd:all>
+                <xsd:attribute name="priority" type="xsd:integer" use="required" />
+                <xsd:attribute name="fromsetup" type="xsd:normalizedString" />
+                <xsd:attribute name="tosetup" type="xsd:normalizedString" />
+                <xsd:attribute name="duration" type="xsd:duration" />
+                <xsd:attribute name="cost" type="xsd:double" />
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:choice>
+    <xsd:attribute name="name" type="non-empty-string" use="required" />    
+  </xsd:complexType>
+  
+  <xsd:complexType name="setupmatrixlist">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="setupmatrix" type="setupmatrix" />
+    </xsd:sequence>
+  </xsd:complexType>
+
   <!-- RESOURCE -->
   <xsd:complexType name="resource">
     <xsd:annotation>
@@ -326,11 +366,15 @@
       <xsd:element name="detectproblems" type="xsd:boolean" />
       <xsd:element name="loads" type="loadlist" />
       <xsd:element name="loadplans" type="loadplanlist"/>
+      <xsd:element name="setup" type="non-empty-string" minOccurs="0" />
+      <xsd:element name="setupmatrix" type="setupmatrix" minOccurs="0" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="maxearly" type="xsd:duration" />
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
     <xsd:attribute name="cost" type="positiveDouble" />
+    <xsd:attribute name="setup" type="non-empty-string" />
+    <xsd:attribute name="setupmatrix" type="non-empty-string" />
   </xsd:complexType>
 
   <xsd:complexType name="resourcelist">
@@ -498,6 +542,7 @@
       <xsd:element name="effective_end" type="xsd:dateTime" minOccurs="0" />
       <xsd:element name="name" type="non-empty-string" minOccurs="0" />
       <xsd:element name="alternate" type="non-empty-string" minOccurs="0" />
+      <xsd:element name="setup" type="non-empty-string" minOccurs="0" />
     </xsd:all>
     <xsd:attribute name="quantity" type="xsd:double" />
     <xsd:attribute name="priority" type="xsd:integer" />
@@ -505,6 +550,7 @@
     <xsd:attribute name="effective_end" type="xsd:dateTime" />
     <xsd:attribute name="name" type="non-empty-string" />
     <xsd:attribute name="alternate" type="non-empty-string" />
+    <xsd:attribute name="setup" type="non-empty-string" />
     <xsd:attribute name="action" type="action" />
   </xsd:complexType>
 

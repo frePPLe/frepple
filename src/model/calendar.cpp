@@ -58,7 +58,7 @@ int Calendar::initialize()
 int Calendar::Bucket::initialize()
 {
   // Initialize the metadata
-  Bucket::metadata = new MetaCategory("bucket", "buckets");
+  metadata = new MetaCategory("bucket", "buckets");
 
   // Initialize the Python class
   PythonType& x = PythonExtension<Calendar::Bucket>::getType();
@@ -341,7 +341,8 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const AttributeList& att
     case ADD:
       // Only additions are allowed
       if (result)
-        throw("Bucket " + string(startdate) + " " + string(enddate) + " " + name
+        throw DataException("Bucket " + string(startdate) + " " 
+            + string(enddate) + " " + name
             + " already exists in calendar '" + getName() + "'");
       result = addBucket(startdate, enddate, name);
       return result;
@@ -383,7 +384,7 @@ DECLARE_EXPORT void Calendar::beginElement (XMLInput& pIn, const Attribute& pAtt
 }
 
 
-DECLARE_EXPORT void Calendar::Bucket::writeHeader(XMLOutput *o) const
+DECLARE_EXPORT void Calendar::Bucket::writeHeader(XMLOutput *o, const Keyword& tag) const
 {
   // The header line has a variable number of attributes: start, end and/or name
   if (startdate != Date::infinitePast)
@@ -391,16 +392,16 @@ DECLARE_EXPORT void Calendar::Bucket::writeHeader(XMLOutput *o) const
     if (enddate != Date::infiniteFuture)
     {
       if (!nm.empty())
-        o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(startdate), Tags::tag_end, string(enddate), Tags::tag_name, nm);
+        o->BeginObject(tag, Tags::tag_start, string(startdate), Tags::tag_end, string(enddate), Tags::tag_name, nm);
       else
-        o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(startdate), Tags::tag_end, string(enddate));
+        o->BeginObject(tag, Tags::tag_start, string(startdate), Tags::tag_end, string(enddate));
     }
     else
     {
       if (!nm.empty())
-        o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(startdate), Tags::tag_name, nm);
+        o->BeginObject(tag, Tags::tag_start, string(startdate), Tags::tag_name, nm);
       else
-        o->BeginObject(Tags::tag_bucket, Tags::tag_start, string(startdate));
+        o->BeginObject(tag, Tags::tag_start, string(startdate));
     }
   }
   else
@@ -408,16 +409,16 @@ DECLARE_EXPORT void Calendar::Bucket::writeHeader(XMLOutput *o) const
     if (enddate != Date::infiniteFuture)
     {
       if (!nm.empty())
-        o->BeginObject(Tags::tag_bucket, Tags::tag_end, string(enddate), Tags::tag_name, nm);
+        o->BeginObject(tag, Tags::tag_end, string(enddate), Tags::tag_name, nm);
       else
-        o->BeginObject(Tags::tag_bucket, Tags::tag_end, string(enddate));
+        o->BeginObject(tag, Tags::tag_end, string(enddate));
     }
     else
     {
       if (!nm.empty())
-        o->BeginObject(Tags::tag_bucket, Tags::tag_name, nm);
+        o->BeginObject(tag, Tags::tag_name, nm);
       else
-        o->BeginObject(Tags::tag_bucket);
+        o->BeginObject(tag);
     }
   }  
 }
@@ -427,7 +428,7 @@ DECLARE_EXPORT void Calendar::Bucket::writeElement
 (XMLOutput *o, const Keyword& tag, mode m) const
 {
   assert(m == DEFAULT || m == FULL);
-  writeHeader(o);
+  writeHeader(o,tag);
   if (priority) o->writeElement(Tags::tag_priority, priority);
   o->EndObject(tag);
 }

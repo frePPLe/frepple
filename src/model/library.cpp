@@ -101,6 +101,11 @@ void LibraryModel::initialize()
   nok += DemandDefault::initialize();
   nok += DemandPlanIterator::initialize();
 
+  // Initialize the setupmatrix metadata.
+  nok += SetupMatrix::initialize();
+  nok += SetupMatrixDefault::initialize();
+  nok += SetupMatrixIterator::initialize();
+
   // Initialize the resource metadata.
   nok += Resource::initialize();
   nok += ResourceDefault::initialize();
@@ -186,6 +191,9 @@ void LibraryModel::initialize()
     "problems", ProblemIterator::create, METH_NOARGS,
     "Returns an iterator over the problems.");
   PythonInterpreter::registerGlobalMethod(
+    "setupmatrices", SetupMatrixIterator::create, METH_NOARGS,
+    "Returns an iterator over the setup matrices.");
+  PythonInterpreter::registerGlobalMethod(
     "solvers", SolverIterator::create, METH_NOARGS,
     "Returns an iterator over the solvers.");
 }
@@ -247,6 +255,13 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
     memsize += b->getSize();
   logger << "Buffer       \t" << Buffer::size() << "\t" << memsize << endl;
+  total += memsize;
+
+  // Setup matrices
+  memsize = 0;
+  for (SetupMatrix::iterator s = SetupMatrix::begin(); s != SetupMatrix::end(); ++s)
+    memsize += s->getSize();
+  logger << "Setup matrix \t" << SetupMatrix::size() << "\t" << memsize << endl;
   total += memsize;
 
   // Resources

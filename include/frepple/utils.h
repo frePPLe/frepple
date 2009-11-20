@@ -65,11 +65,6 @@ typedef int Py_ssize_t;
 #include <assert.h>
 #include <typeinfo>
 #include <float.h>
-#ifdef _MSC_VER
-#include <regex>
-#else
-#include <regex.h>
-#endif
 #endif
 
 // We want to use singly linked lists, but these are not part of the C++
@@ -504,6 +499,8 @@ class NonCopyable
   *       - resource
   *       - resource_default
   *       - resource_infinite
+  *       - setup_matrix
+  *       - setup_matrix_default
   *       - solver
   *           - solve()
   *       - solver_mrp
@@ -528,6 +525,7 @@ class NonCopyable
   *       - resources()
   *       - resource.loads
   *       - resource.loadplans
+  *       - setup_matrices()
   *       - solvers()
   *   - <b>printsize()</b>:<br>
   *     Prints information about the memory consumption.
@@ -612,71 +610,16 @@ class PythonInterpreter
 };
 
 
-//
-// UTILITY CLASS FOR REGULAR EXPRESSIONS
-//
-
-
-/** @brief A utility class for representing regular expressions.
-  *
-  * On Linux this class is implemented as a thin wrapper around the POSIX 
-  * regular expression functions.<br>
-  * On Windows we use the regular expression provided by the "C++ Technical 
-  * Report 1". Some other C++ compilers may already implemented this upcoming
-  * standard, but for reasons of portability and ease of use we choose 
-  * to stick with the "old" API.
+/** A utility function to do wildcard matching in strings.<br>
+  * The function recognizes two wildcard characaters:
+  *   - ?: matches any single character
+  *   - *: matches any sequence of characters
+  * 
+  * The code is written by Jack Handy (jakkhandy@hotmail.com) and published
+  * on http://www.codeproject.com/KB/string/wildcmp.aspx. No specific license
+  * constraints apply on using the code.
   */
-class RegularExpression : public NonCopyable
-{
-#ifdef _MSC_VER
-  public:
-    /** Constructor. */
-    RegularExpression(const char* x) 
-      : rx(x, tr1::regex::extended | tr1::regex::nosubs | tr1::regex::optimize) {}
-
-    /** Cosntructor. */
-    RegularExpression(string x) 
-      : rx(x, tr1::regex::extended | tr1::regex::nosubs | tr1::regex::optimize) {}
-
-    /** Matching function. */
-    bool match(const string y)
-    {
-      return regex_search(y.begin(), y.end(), rx); 
-    }
-
-  private:
-    /** Regular expression in compiled form. */
-    tr1::regex rx;
-#else
-  public:
-    /** Constructor. */
-    RegularExpression(const char* x) 
-    {
-      if (regcomp(&rx, x, REG_EXTENDED|REG_NOSUB))
-        throw DataException("Invalid regular expression");
-    }
-
-    /** Constructor. */
-    RegularExpression(string x) 
-    {
-      if (regcomp(&rx, x.c_str(), REG_EXTENDED|REG_NOSUB))
-        throw DataException("Invalid regular expression");
-    }
-
-    /** Destructor. */
-    ~RegularExpression() { regfree(&rx); }
-
-    /** Matching function. */
-    bool match(const char* y)
-    {
-      return !regexec(&rx, y, 0, NULL, 0); 
-    }
-
-  private:
-    /** Regular expression in compiled form. */
-    regex_t rx;
-#endif
-};
+DECLARE_EXPORT bool matchWildcard(const char*, const char*);
 
 
 //

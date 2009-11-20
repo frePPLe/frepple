@@ -84,6 +84,7 @@ DECLARE_EXPORT const Keyword Tags::tag_flow("flow");
 DECLARE_EXPORT const Keyword Tags::tag_flowplan("flowplan");
 DECLARE_EXPORT const Keyword Tags::tag_flowplans("flowplans");
 DECLARE_EXPORT const Keyword Tags::tag_flows("flows");
+DECLARE_EXPORT const Keyword Tags::tag_fromsetup("fromsetup");
 DECLARE_EXPORT const Keyword Tags::tag_headeratts("headeratts");
 DECLARE_EXPORT const Keyword Tags::tag_headerstart("headerstart");
 DECLARE_EXPORT const Keyword Tags::tag_hidden("hidden");
@@ -137,7 +138,12 @@ DECLARE_EXPORT const Keyword Tags::tag_quantity_buffer("quantity_buffer");
 DECLARE_EXPORT const Keyword Tags::tag_quantity_demand("quantity_demand");
 DECLARE_EXPORT const Keyword Tags::tag_resource("resource");
 DECLARE_EXPORT const Keyword Tags::tag_resources("resources");
+DECLARE_EXPORT const Keyword Tags::tag_rule("rule");
+DECLARE_EXPORT const Keyword Tags::tag_rules("rules");
 DECLARE_EXPORT const Keyword Tags::tag_search("search");
+DECLARE_EXPORT const Keyword Tags::tag_setup("setup");
+DECLARE_EXPORT const Keyword Tags::tag_setupmatrices("setupmatrices");
+DECLARE_EXPORT const Keyword Tags::tag_setupmatrix("setupmatrix");
 DECLARE_EXPORT const Keyword Tags::tag_size_maximum("size_maximum");
 DECLARE_EXPORT const Keyword Tags::tag_size_minimum("size_minimum");
 DECLARE_EXPORT const Keyword Tags::tag_size_multiple("size_multiple");
@@ -149,6 +155,7 @@ DECLARE_EXPORT const Keyword Tags::tag_startdate("startdate");
 DECLARE_EXPORT const Keyword Tags::tag_steps("steps");
 DECLARE_EXPORT const Keyword Tags::tag_subcategory("subcategory");
 DECLARE_EXPORT const Keyword Tags::tag_supply("supply");
+DECLARE_EXPORT const Keyword Tags::tag_tosetup("tosetup"); 
 // The next line requires the namespace "xsi" to be defined. 
 // It must refer to "http://www.w3.org/2001/XMLSchema-instance"
 // This is required to support subclassing in the XML schema.

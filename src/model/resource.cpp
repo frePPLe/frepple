@@ -131,6 +131,9 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
     o->writeElement(Tags::tag_maxearly, getMaxEarly());
   if (getCost() != 0.0) o->writeElement(Tags::tag_cost, getCost());
   o->writeElement(Tags::tag_location, loc);
+  if (!getSetup().empty()) o->writeElement(Tags::tag_setup, getSetup());
+  if (getSetupMatrix()) 
+    o->writeElement(Tags::tag_setupmatrix, getSetupMatrix());
   Plannable::writeElement(o, tag);
 
   // Write the loads
@@ -185,6 +188,8 @@ DECLARE_EXPORT void Resource::beginElement (XMLInput& pIn, const Attribute& pAtt
     pIn.IgnoreElement();
   else if (pAttr.isA(Tags::tag_location))
     pIn.readto( Location::reader(Location::metadata,pIn.getAttributes()) );
+  else if (pAttr.isA(Tags::tag_setupmatrix))
+    pIn.readto( SetupMatrix::reader(SetupMatrix::metadata,pIn.getAttributes()) );
   else
     HasHierarchy<Resource>::beginElement(pIn, pAttr);
 }
@@ -217,6 +222,14 @@ DECLARE_EXPORT void Resource::endElement (XMLInput& pIn, const Attribute& pAttr,
   {
     Location * d = dynamic_cast<Location*>(pIn.getPreviousObject());
     if (d) setLocation(d);
+    else throw LogicException("Incorrect object type during read operation");
+  }
+  else if (pAttr.isA (Tags::tag_setup))
+    setSetup(pElement.getString());
+  else if (pAttr.isA(Tags::tag_setupmatrix))
+  {
+    SetupMatrix * d = dynamic_cast<SetupMatrix*>(pIn.getPreviousObject());
+    if (d) setSetupMatrix(d);
     else throw LogicException("Incorrect object type during read operation");
   }
   else
@@ -298,6 +311,10 @@ DECLARE_EXPORT PyObject* Resource::getattro(const Attribute& attr)
     return new LoadPlanIterator(this);
   if (attr.isA(Tags::tag_loads))
     return new LoadIterator(this);
+  if (attr.isA(Tags::tag_setup))
+    return PythonObject(getSetup());
+  if (attr.isA(Tags::tag_setupmatrix))
+    return PythonObject(getSetupMatrix());
   if (attr.isA(Tags::tag_level))
     return PythonObject(getLevel());
   if (attr.isA(Tags::tag_cluster))
@@ -352,6 +369,18 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
     setCost(field.getDouble());
   else if (attr.isA(Tags::tag_maxearly))
     setMaxEarly(field.getTimeperiod());
+  else if (attr.isA(Tags::tag_setup))
+    setSetup(field.getString());
+  else if (attr.isA(Tags::tag_setupmatrix))
+  {
+    if (!field.check(SetupMatrix::metadata)) 
+    {
+      PyErr_SetString(PythonDataException, "resource setup_matrix must be of type setup_matrix");
+      return -1;
+    }
+    SetupMatrix* y = static_cast<SetupMatrix*>(static_cast<PyObject*>(field));
+    setSetupMatrix(y);
+  }
   else
     return -1;  // Error
   return 0;  // OK

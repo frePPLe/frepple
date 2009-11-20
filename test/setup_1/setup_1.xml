@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <description>
+    Verifies the resource setup functionality.    
+    This model contains a number of painting lines, which take considerable
+    time to change between colors.     
+  </description>
+  <current>2009-01-01T00:00:00</current>
+  <resources>
+    <resource name="Painting line">
+      <maximum name="Capacity" xsi:type="calendar_double">
+        <buckets>
+          <bucket start="2009-01-01T00:00:00">
+            <value>1</value>
+          </bucket>
+        </buckets>
+      </maximum>
+      <setupmatrix name="Painting line changeover">
+        <rules>
+          <rule priority="1" fromsetup="*green" tosetup="*green" duration="P0D" cost="10" />
+          <rule priority="2" fromsetup="*red" tosetup="*red" duration="P0D" cost="10" />
+          <rule priority="3" fromsetup="*green" tosetup="*red" duration="P1D" cost="50"/>
+          <rule priority="4" fromsetup="*red" duration="P2D" cost="90"/>
+          <rule priority="5" duration="P3D" />
+        </rules>
+      </setupmatrix>
+      <setup>green</setup>
+    </resource>
+  </resources>
+  <items>
+    <item name="red stuff">
+      <operation name="delivery red stuff" xsi:type="operation_fixed_time" duration="P1D" />
+    </item>
+    <item name="green stuff">
+      <operation name="delivery green stuff" xsi:type="operation_fixed_time" duration="P1D" />
+    </item>
+    <item name="white stuff">
+      <operation name="delivery white stuff" xsi:type="operation_fixed_time" duration="P1D" />
+    </item>
+    <item name="blue stuff">
+      <operation name="delivery blue stuff" xsi:type="operation_fixed_time" duration="P1D" />
+    </item>    
+    <item name="black stuff">
+      <operation name="delivery black stuff" xsi:type="operation_fixed_time" duration="P1D" />
+    </item>
+    <item name="yellow stuff">
+      <operation name="delivery yellow stuff" xsi:type="operation_fixed_time" duration="P1D" />
+    </item>
+  </items>
+  <buffers>
+    <buffer name="red stuff">
+      <producing name="make red stuff" xsi:type="operation_time_per" duration_per="P1D">
+        <loads>
+          <load>
+            <resource name="Painting line"/>
+            <setup>red</setup>
+          </load>
+        </loads>
+      </producing>      
+      <item name="red stuff" />
+      <flows>
+        <flow xsi:type="flow_start">
+          <operation name="delivery red stuff" />
+           <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+          <operation name="make red stuff" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </buffer>
+    <buffer name="green stuff">
+      <producing name="make green stuff" xsi:type="operation_time_per" duration_per="P1D">
+        <loads>
+          <load>
+            <resource name="Painting line"/>
+            <setup>green</setup>
+          </load>
+        </loads>
+      </producing>
+      <item name="green stuff" />
+      <flows>
+        <flow xsi:type="flow_start">
+          <operation name="delivery green stuff" />
+           <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+          <operation name="make green stuff" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </buffer>
+    <buffer name="white stuff">
+      <producing name="make white stuff" xsi:type="operation_time_per" duration_per="P1D">
+        <loads>
+          <load>
+            <resource name="Painting line"/>
+            <setup>white</setup>
+          </load>
+        </loads>
+      </producing>      
+      <item name="white stuff" />
+      <flows>
+        <flow xsi:type="flow_start">
+          <operation name="delivery white stuff" />
+           <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+          <operation name="make white stuff" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </buffer>
+    <buffer name="blue stuff">
+      <producing name="make blue stuff" xsi:type="operation_time_per" duration_per="P1D">
+        <loads>
+          <load>
+            <resource name="Painting line"/>
+            <setup>blue</setup>
+          </load>
+        </loads>
+      </producing>      
+      <item name="blue stuff" />
+      <flows>
+        <flow xsi:type="flow_start">
+          <operation name="delivery blue stuff" />
+           <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+          <operation name="make blue stuff" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </buffer>
+    <buffer name="black stuff">
+      <producing name="make black stuff" xsi:type="operation_time_per" duration_per="P1D">
+        <loads>
+          <load>
+            <resource name="Painting line"/>
+            <setup>black</setup>
+          </load>
+        </loads>
+      </producing>      
+      <item name="black stuff" />
+      <flows>
+        <flow xsi:type="flow_start">
+          <operation name="delivery black stuff" />
+           <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+          <operation name="make black stuff" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </buffer>
+    <buffer name="yellow stuff">
+      <producing name="make yellow stuff" xsi:type="operation_time_per" duration_per="P1D">
+        <loads>
+          <load>
+            <resource name="Painting line"/>
+            <setup>yellow</setup>
+          </load>
+        </loads>
+      </producing>
+      <item name="yellow stuff" />
+      <flows>
+        <flow xsi:type="flow_start">
+          <operation name="delivery yellow stuff" />
+           <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+          <operation name="make yellow stuff" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </buffer>
+  </buffers>
+  <demands>
+    <demand name="order 1 red">
+      <quantity>3</quantity>
+      <due>2009-01-30T00:00:00</due>
+      <priority>1</priority>
+      <item name="red stuff" />
+    </demand>
+    <demand name="order 2 green">
+      <quantity>3</quantity>
+      <due>2009-01-30T00:00:00</due>
+      <priority>2</priority>
+      <item name="green stuff" />
+    </demand>
+    <demand name="order 1 white">
+      <quantity>3</quantity>
+      <due>2009-01-30T00:00:00</due>
+      <priority>3</priority>
+      <item name="white stuff" />
+    </demand>
+    <demand name="order 1 black">
+      <quantity>3</quantity>
+      <due>2009-01-30T00:00:00</due>
+      <priority>4</priority>
+      <item name="black stuff" />
+    </demand>
+  </demands>
+
+<?python
+# Testing the Python API of the setup matrix
+print ""
+for m in frepple.setupmatrices():
+  print "Matrix '%s' has the following rules:" % m.name
+  for i in m.rules:
+    print "   ", i.priority, i.tosetup, i.fromsetup, i.duration, i.cost
+print ""   
+for r in frepple.resources():
+  print "Resource '%s' uses matrix '%s'" % (r, r.setupmatrix)
+print ""
+        
+# Create a plan
+frepple.solver_mrp(name="MRP", constraints=7, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+frepple.saveXMLfile("output.2.xml")
+?>
+
+</plan>

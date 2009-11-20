@@ -85,6 +85,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_flowplan;
     static DECLARE_EXPORT const Keyword tag_flowplans;
     static DECLARE_EXPORT const Keyword tag_flows;
+    static DECLARE_EXPORT const Keyword tag_fromsetup;
     static DECLARE_EXPORT const Keyword tag_headeratts;
     static DECLARE_EXPORT const Keyword tag_headerstart;
     static DECLARE_EXPORT const Keyword tag_hidden;
@@ -138,7 +139,12 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_quantity_demand;
     static DECLARE_EXPORT const Keyword tag_resource;
     static DECLARE_EXPORT const Keyword tag_resources;
+    static DECLARE_EXPORT const Keyword tag_rule;
+    static DECLARE_EXPORT const Keyword tag_rules;
     static DECLARE_EXPORT const Keyword tag_search;
+    static DECLARE_EXPORT const Keyword tag_setup;
+    static DECLARE_EXPORT const Keyword tag_setupmatrices;
+    static DECLARE_EXPORT const Keyword tag_setupmatrix;  
     static DECLARE_EXPORT const Keyword tag_size_maximum;
     static DECLARE_EXPORT const Keyword tag_size_minimum;
     static DECLARE_EXPORT const Keyword tag_size_multiple;
@@ -150,6 +156,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_steps;
     static DECLARE_EXPORT const Keyword tag_subcategory;
     static DECLARE_EXPORT const Keyword tag_supply;
+    static DECLARE_EXPORT const Keyword tag_tosetup;
     static DECLARE_EXPORT const Keyword tag_type;
     static DECLARE_EXPORT const Keyword tag_userexit_flow;
     static DECLARE_EXPORT const Keyword tag_validate;

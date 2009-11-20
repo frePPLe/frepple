@@ -148,9 +148,9 @@ class Calendar : public HasName<Calendar>
         Bucket(Calendar *c, Date start, Date end, string name) : nm(name), 
           startdate(start), enddate(end), nextBucket(NULL), prevBucket(NULL), 
           priority(0), cal(c) {initType(metadata);}
-        
+
         /** Auxilary function to write out the start of the XML. */
-        DECLARE_EXPORT void writeHeader(XMLOutput *) const;
+        DECLARE_EXPORT void writeHeader(XMLOutput *, const Keyword&) const;
 
       public:
         /** Return the calendar to whom the bucket belongs. */
@@ -416,7 +416,7 @@ template <typename T> class CalendarValue : public Calendar
         (XMLOutput *o, const Keyword& tag, mode m = DEFAULT) const
         {
           assert(m == DEFAULT || m == FULL);
-          writeHeader(o);
+          writeHeader(o, tag);
           if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
           o->writeElement(Tags::tag_value, val);
           o->EndObject(tag);
@@ -591,7 +591,7 @@ template <typename T> class CalendarPointer : public Calendar
         (XMLOutput *o, const Keyword& tag, mode m = DEFAULT) const
         {
           assert(m == DEFAULT || m == FULL);
-          writeHeader(o);
+          writeHeader(o, tag);
           if (getPriority()) o->writeElement(Tags::tag_priority, getPriority());
           if (val) o->writeElement(Tags::tag_value, val);
           o->EndObject(tag);
@@ -727,8 +727,7 @@ template <typename T> class CalendarPointer : public Calendar
       {
         T *o = dynamic_cast<T*>(pIn.getPreviousObject());
         if (!o)
-          throw LogicException
-            ("Incorrect object type during read operation");
+          throw LogicException("Incorrect object type during read operation");
         defaultValue = o;
       }
       else
@@ -3564,6 +3563,169 @@ inline Date FlowEnd::getFlowplanDate(const FlowPlan* fl) const
 }
 
 
+/** @brief This class is used to represent a matrix defining the changeover
+  * times between setups. 
+  */
+class SetupMatrix : public HasName<SetupMatrix>
+{
+  public:
+    class RuleIterator; // Forward declaration
+   /** @brief An specific changeover rule in a setup matrix. */
+   class Rule : public Object
+    {
+      friend class RuleIterator;
+      friend class SetupMatrix;
+      public:
+        /** Constructor. */
+        DECLARE_EXPORT Rule(SetupMatrix *s, int p = 0);
+        
+        /** Destructor. */
+        DECLARE_EXPORT ~Rule();
+
+        virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+        DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+        virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+        virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+        static int initialize();
+
+        virtual const MetaClass& getType() const {return *metadata;}
+        static DECLARE_EXPORT const MetaCategory* metadata;
+        virtual size_t getSize() const {return 0;} //xxx
+
+        size_t extrasize() const 
+        {return from.size() + to.size();}
+
+        /** Update the priority.<br>
+          * The priority value is a key field. If multiple rules have the 
+          * same priority a data exception is thrown.
+          */
+        DECLARE_EXPORT void setPriority(const int);
+
+        /** Return the priority. */
+        double getPriority() const { return priority; }
+
+        /** Update the from setup. */
+        void setFrom(const string f) { from = f; };
+
+        /** Return the from setup. */
+        string getFrom() const { return from; }
+
+        /** Update the from setup. */
+        void setTo(const string f) { to = f; }
+
+        /** Return the from setup. */
+        string getTo() const {return to;}
+
+        /** Update the conversion duration. */
+        void setDuration(const TimePeriod p) {duration = p;}
+
+        /** Return the conversion duration. */
+        TimePeriod getDuration() const {return duration;}
+
+        /** Update the conversion cost. */
+        void setCost(const double p) {cost = p;}
+
+        /** Return the conversion cost. */
+        double getCost() const {return cost;}
+
+      private:
+        string from;
+        string to;
+        TimePeriod duration;
+        double cost;
+        int priority;
+        SetupMatrix *matrix;
+        Rule *nextRule;
+        Rule *prevRule;
+    };
+
+    /** @brief An iterator class to go through all rules of a setup matrix. */
+    class RuleIterator
+    {
+      private:
+        Rule* curRule;
+      public:
+        /** Constructor. */
+        RuleIterator(Rule* c = NULL) : curRule(c) {}
+        bool operator != (const RuleIterator &b) const
+          {return b.curRule != curRule;}
+        bool operator == (const RuleIterator &b) const
+          {return b.curRule == curRule;}
+        RuleIterator& operator++()
+          { if (curRule) curRule = curRule->nextRule; return *this; }
+        RuleIterator operator++(int)
+          {RuleIterator tmp = *this; ++*this; return tmp;}
+        RuleIterator& operator--()
+          { if(curRule) curRule = curRule->prevRule; return *this; }
+        RuleIterator operator--(int)
+          {RuleIterator tmp = *this; --*this; return tmp;}
+        Rule* operator ->() const {return curRule;}
+        Rule& operator *() const {return *curRule;}
+    };
+
+  public:
+    /** Default constructor. */
+    SetupMatrix(const string& n) : HasName<SetupMatrix>(n) {}
+    
+    /** Destructor. */
+    DECLARE_EXPORT ~SetupMatrix();
+
+    /** This is a factory method that creates a new rule<br>
+      * This method is intended to be used to create objects when reading
+      * XML input data.
+      */
+    DECLARE_EXPORT Rule* createRule(const AttributeList&);
+
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
+    DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
+    virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
+    virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
+    static int initialize();
+
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaCategory* metadata;
+
+    virtual DECLARE_EXPORT size_t getSize() const
+    {
+      size_t i = sizeof(SetupMatrix);
+      for (RuleIterator j = beginRules(); j!= endRules(); ++j)
+        i += j->getSize();
+      return i;
+    }
+
+    size_t extrasize() const {return getName().size();}
+
+    /** Returns an iterator to go through the list of buckets. */
+    RuleIterator beginRules() const { return RuleIterator(firstRule); }
+
+    /** Returns an iterator to go through the list of buckets. */
+    RuleIterator endRules() const { return RuleIterator(NULL); }
+
+    /** Python interface to add a new rule. */
+    static DECLARE_EXPORT PyObject* addPythonRule(PyObject*, PyObject*, PyObject*);
+
+  private:
+    /** Head of the list of rules. */
+    Rule *firstRule;
+};
+
+
+/** @brief This class is the default implementation of the abstract
+  * SetupMatrix class.
+  */
+class SetupMatrixDefault : public SetupMatrix
+{
+  public:
+    explicit SetupMatrixDefault(const string& str) : SetupMatrix(str) {initType(metadata);}
+    virtual const MetaClass& getType() const {return *metadata;}
+    static DECLARE_EXPORT const MetaClass* metadata;
+    virtual size_t getSize() const
+    {return sizeof(SetupMatrixDefault) + SetupMatrix::extrasize();}
+    static int initialize();
+};
+
+
 /** @brief This class represents a workcentre, a physical or logical
   * representation of capacity.
   */
@@ -3580,7 +3742,8 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Constructor. */
     explicit Resource(const string& str) : HasHierarchy<Resource>(str),
-      max_cal(NULL), loc(NULL), cost(0.0), hidden(false), maxearly(defaultMaxEarly) {};
+      max_cal(NULL), loc(NULL), cost(0.0), hidden(false), maxearly(defaultMaxEarly),
+      setupmatrix(NULL) {};
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Resource();
@@ -3632,7 +3795,7 @@ class Resource : public HasHierarchy<Resource>,
     static int initialize();
 
     size_t extrasize() const 
-    {return getName().size() + HasDescription::extrasize();}
+    {return getName().size() + HasDescription::extrasize() + setup.size();}
 
     /** Returns the location of this resource. */
     Location* getLocation() const {return loc;}
@@ -3668,6 +3831,18 @@ class Resource : public HasHierarchy<Resource>,
       else throw DataException("MaxEarly must be positive");
     }
 
+    /** Return a pointer to the setup matrix. */
+    SetupMatrix* getSetupMatrix() const {return setupmatrix;}
+
+    /** Update the reference to the setup matrix. */
+    void setSetupMatrix(SetupMatrix *s) {setupmatrix = s;}
+
+    /** Return the current setup. */
+    string getSetup() const {return setup;}
+
+    /** Update the current setup. */
+    void setSetup(const string s) {setup = s;}
+
   private:
     /** This calendar is used to updates to the resource size. */
     CalendarDouble* max_cal;
@@ -3690,6 +3865,12 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Maximum inventory buildup allowed in case of capacity shortages. */
     TimePeriod maxearly;
+
+    /** Reference to the setup matrix. */
+    SetupMatrix *setupmatrix;
+
+    /** Current setup. */
+    string setup;
 };
 
 
@@ -3795,6 +3976,12 @@ class Load
     /** Define the load of which this one is an alternate. */
     DECLARE_EXPORT void setAlternate(string n);
 
+    /** Update the required resource setup. */
+    void setSetup(const string n) {setup = n;}
+
+    /** Return the required resource setup. */
+    string getSetup() const {return setup;}
+
     /** This method holds the logic the compute the date of a loadplan. */
     virtual Date getLoadplanDate(const LoadPlan*) const;
 
@@ -3842,6 +4029,9 @@ class Load
 
     /** A load representing the main load of a set of alternates. */
     Load* altLoad;
+
+    /** Required setup. */
+    string setup;
 
     /** Factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
@@ -5744,6 +5934,37 @@ class CalendarIterator
   : public FreppleIterator<CalendarIterator,Calendar::iterator,Calendar>
 {
 };
+
+
+class SetupMatrixIterator
+  : public FreppleIterator<SetupMatrixIterator,SetupMatrix::iterator,SetupMatrix>
+{
+};
+
+
+//
+// SETUP MATRIX RULES
+//
+
+
+class SetupMatrixRuleIterator : public PythonExtension<SetupMatrixRuleIterator>
+{
+  public:
+    static int initialize();
+
+    SetupMatrixRuleIterator(SetupMatrix* c) : matrix(c)
+    {
+      if (!c)
+        throw LogicException("Creating rule iterator for NULL matrix");
+      currule = c->beginRules();
+    }
+
+  private:
+    SetupMatrix* matrix;
+    SetupMatrix::RuleIterator currule;
+    PyObject *iternext();
+};
+
 
 //
 // CALENDARS

@@ -274,6 +274,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\model\setupmatrix.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\model\solver.cpp"
 				>
 			</File>

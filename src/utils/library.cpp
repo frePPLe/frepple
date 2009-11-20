@@ -471,6 +471,47 @@ void HasDescription::endElement (XMLInput& pIn, const Attribute& pAttr, const Da
     setDescription(pElement.getString());
 }
 
+
+DECLARE_EXPORT bool matchWildcard(const char* wild, const char *str) 
+{
+  // Empty arguments: always return a match
+  if (!wild || !str) return 1;
+
+  const char *cp = NULL, *mp = NULL;
+
+  while ((*str) && *wild != '*') 
+  {    
+    if (*wild != *str && *wild != '?') 
+      // Does not match
+      return 0;
+    wild++;
+    str++;
+  }
+
+  while (*str) 
+  {
+    if (*wild == '*') 
+    {
+      if (!*++wild) return 1;
+      mp = wild;
+      cp = str+1;
+    } 
+    else if (*wild == *str || *wild == '?') 
+    {
+      wild++;
+      str++;
+    } 
+    else 
+    {
+      wild = mp;
+      str = cp++;
+    }
+  }
+
+  while (*wild == '*') wild++;
+  return !*wild;
+}
+
 } // end namespace
 } // end namespace
 

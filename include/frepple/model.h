@@ -3604,16 +3604,16 @@ class SetupMatrix : public HasName<SetupMatrix>
         double getPriority() const { return priority; }
 
         /** Update the from setup. */
-        void setFrom(const string f) { from = f; };
+        void setFromSetup(const string f) { from = f; };
 
         /** Return the from setup. */
-        string getFrom() const { return from; }
+        string getFromSetup() const { return from; }
 
         /** Update the from setup. */
-        void setTo(const string f) { to = f; }
+        void setToSetup(const string f) { to = f; }
 
         /** Return the from setup. */
-        string getTo() const {return to;}
+        string getToSetup() const {return to;}
 
         /** Update the conversion duration. */
         void setDuration(const TimePeriod p) {duration = p;}
@@ -3721,6 +3721,25 @@ class SetupMatrix : public HasName<SetupMatrix>
 
     /** Python interface to add a new rule. */
     static DECLARE_EXPORT PyObject* addPythonRule(PyObject*, PyObject*, PyObject*);
+
+    /** Computes the changeover time and cost between 2 setup values. 
+      *
+      * To compute the time of a changeover the algorithm will evaluate all 
+      * rules in sequence (in order of priority).<br>
+      * For a rule to match the changeover between the original setup X to 
+      * a new setup Y, two conditions need to be fulfilled: 
+      *  - The original setup X must match with the fromsetup of the rule.<br>
+      *    If the fromsetup field is empty, it is considered a match. 
+      *  - The new setup Y must match with the tosetup of the rule.<br>
+      *    If the tosetup field is empty, it is considered a match. 
+      * The wildcard characters * and ? can be used in the fromsetup and 
+      * tosetup fields.<br>
+      * As soon as a matching rule is found, it is applied and subsequent 
+      * rules are not evaluated.<br>
+      * If no matching rule is found, the changeover is not allowed: a NULL 
+      * pointer is returned.
+      */ 
+    DECLARE_EXPORT Rule* calculateSetup(const string, const string) const;
 
   private:
     /** Head of the list of rules. */

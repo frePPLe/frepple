@@ -348,7 +348,7 @@ class Calendar : public HasName<Calendar>
 
     virtual size_t getSize() const
     {
-      size_t i = sizeof(Calendar);
+      size_t i = sizeof(Calendar) + getName().size();
       for (BucketIterator j = beginBuckets(); j!= endBuckets(); ++j)
         i += j->getSize();
       return i;
@@ -3590,10 +3590,9 @@ class SetupMatrix : public HasName<SetupMatrix>
 
         virtual const MetaClass& getType() const {return *metadata;}
         static DECLARE_EXPORT const MetaCategory* metadata;
-        virtual size_t getSize() const {return 0;} //xxx
-
-        size_t extrasize() const 
-        {return from.size() + to.size();}
+    
+        size_t getSize() const 
+          { return sizeof(Rule) + from.size() + to.size(); }
 
         /** Update the priority.<br>
           * The priority value is a key field. If multiple rules have the 
@@ -3629,13 +3628,31 @@ class SetupMatrix : public HasName<SetupMatrix>
         double getCost() const {return cost;}
 
       private:
+        /** Original setup. */
         string from;
+
+        /** New setup. */
         string to;
+
+        /** Changeover time. */
         TimePeriod duration;
+
+        /** Changeover cost. */
         double cost;
+
+        /** Priority of the rule.<br>
+          * This field is the key field, i.e. within a setup matrix all rules
+          * need to have different priorities. 
+          */
         int priority;
+
+        /** Pointer to the owning matrix. */
         SetupMatrix *matrix;
+
+        /** Pointer to the next rule in this matrix. */
         Rule *nextRule;
+
+        /** Pointer to the previous rule in this matrix. */
         Rule *prevRule;
     };
 
@@ -3686,9 +3703,9 @@ class SetupMatrix : public HasName<SetupMatrix>
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
 
-    virtual DECLARE_EXPORT size_t getSize() const
+    virtual size_t getSize() const
     {
-      size_t i = sizeof(SetupMatrix);
+      size_t i = sizeof(SetupMatrix) + getName().size();
       for (RuleIterator j = beginRules(); j!= endRules(); ++j)
         i += j->getSize();
       return i;

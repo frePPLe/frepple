@@ -502,6 +502,7 @@ DECLARE_EXPORT void CommandErase::execute()
     Operation::clear();
     Buffer::clear();
     Resource::clear();
+    SetupMatrix::clear();
     Location::clear();
     Customer::clear();
     Calendar::clear();

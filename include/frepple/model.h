@@ -3665,7 +3665,7 @@ class SetupMatrix : public HasName<SetupMatrix>
 
   public:
     /** Default constructor. */
-    SetupMatrix(const string& n) : HasName<SetupMatrix>(n) {}
+    SetupMatrix(const string& n) : HasName<SetupMatrix>(n), firstRule(NULL) {}
     
     /** Destructor. */
     DECLARE_EXPORT ~SetupMatrix();

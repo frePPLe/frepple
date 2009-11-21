@@ -173,10 +173,29 @@
 			<priority>1</priority>
 		</demand>
 	</demands>
+	<setupmatrices>
+		<setupmatrix name="assembly setup" xsi:type="setupmatrix_default">
+			<rules>
+				<rule priority="1">
+					<fromsetup>product family 1</fromsetup>
+					<tosetup>product family 2</tosetup>
+					<duration>P10D</duration>
+					<cost>10</cost>
+				</rule>
+				<rule priority="2">
+					<fromsetup>product family 2</fromsetup>
+					<tosetup>product family 1</tosetup>
+					<duration>P10D</duration>
+					<cost>10</cost>
+				</rule>
+			</rules>
+		</setupmatrix>
+	</setupmatrices>
 	<resources>
 		<resource name="assemble">
 			<maximum name="assembly capacity" xsi:type="calendar_double"/>
 			<location name="Location 1"/>
+			<setupmatrix name="assembly setup" xsi:type="setupmatrix_default"/>
 			<loads>
 				<load>
 					<operation name="make item 1" xsi:type="operation_fixed_time"/>

@@ -99,6 +99,14 @@
       <quantity>1</quantity>
     </flow>
   </flows>
+  <setupmatrices>
+    <setupmatrix name="assembly setup">
+      <rules>
+        <rule priority="1" fromsetup="product family 1" tosetup="product family 2" duration="P10D" cost="10" />
+        <rule priority="2" fromsetup="product family 2" tosetup="product family 1" duration="P10D" cost="10" />
+      </rules>
+    </setupmatrix>
+  </setupmatrices>
   <resources>
     <resource name="assemble">
       <location name="Location 1" />
@@ -115,6 +123,7 @@
           <operation name="make item 1" />
         </load>
       </loads>
+      <setupmatrix name="assembly setup" />
     </resource>
     <resource name="transport">
       <location name="Sublocation 1" />
@@ -199,6 +208,8 @@ frepple.readXMLdata(r'''
           <operationplan id="27" action="R"/>
         </operationplans>
       </plan>''')
+# Now we delete a setup matrix.
+frepple.setupmatrix(name="assembly setup", action="R")
 frepple.saveXMLfile("output.7.xml")
 
 # Now we delete a resource. operationsplans are being deleted of

@@ -91,6 +91,7 @@ class DurationFormField(fields.MultiValueField):
     self.required = kwargs.get('required',False)
   
   def compress(self, data_list):
+    if len(data_list) == 0: return None
     val, unit = data_list 
     if val == None or val == u'': return None    
     elif unit == 'hours': val = val * Decimal(3600)

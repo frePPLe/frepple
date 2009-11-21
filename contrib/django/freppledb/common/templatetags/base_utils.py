@@ -372,4 +372,3 @@ register.tag('iflessthanorequal', iflessthanorequal)
 def ifgreaterthanorequal(parser, token):
     return do_compare(parser, token, False, True)
 register.tag('ifgreaterthanorequal', ifgreaterthanorequal)
-

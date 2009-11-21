@@ -40,6 +40,7 @@ class DurationWidget(MultiWidget):
     widgets = (
       TextInput(attrs), 
       Select(choices=(
+            ("",""),
             ("seconds",_("seconds")),
             ("hours",_("hours")),
             ("days",_("days")),
@@ -49,7 +50,7 @@ class DurationWidget(MultiWidget):
     super(DurationWidget, self).__init__(widgets, attrs)
 
   def decompress(self, value):
-    if value == None or value == 0: return [value, 'hours']
+    if value == None or value == 0: return [value, '']
     if value % 604800 == 0: return [value/Decimal(604800), 'weeks']
     if value % 3600 != 0 and value < 86400: return [value, 'seconds']
     if value % 86400 != 0 and value < 604800: return [value/Decimal(3600), 'hours']

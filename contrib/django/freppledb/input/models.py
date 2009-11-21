@@ -456,6 +456,47 @@ class Buffer(AuditModel):
     ordering = ['name']
 
 
+class SetupMatrix(AuditModel):
+  # Database fields
+  name = models.CharField(_('name'), max_length=60, primary_key=True)
+
+  # Methods
+  def __unicode__(self): return self.name
+
+  class Meta(AuditModel.Meta):
+    db_table = 'setupmatrix'
+    verbose_name = _('setup matrix')
+    verbose_name_plural = _('setup matrices')
+    ordering = ['name']
+
+
+class SetupRule(AuditModel):
+  '''
+  A rule that is part of a setup matrix.
+  '''
+  # Database fields
+  setupmatrix = models.ForeignKey(SetupMatrix, verbose_name=_('setup matrix'), related_name='rules')
+  priority = models.IntegerField(_('priority'))
+  fromsetup = models.CharField(_('from setup'), max_length=60, blank=True, null=True,
+    help_text=_("Wildcard description of the original setup"))
+  tosetup = models.CharField(_('to setup'), max_length=60, blank=True, null=True,
+    help_text=_("Wildcard description of the destination setup"))
+  duration = DurationField(_('duration'), max_digits=15, decimal_places=4, null=True, blank=True,
+    help_text=_("Duration of the changeover"))
+  cost = models.DecimalField(_('cost'), max_digits=15, decimal_places=4, null=True, blank=True,
+    help_text=_("Cost of the conversion"))
+
+  def __unicode__(self):
+    return u"%s - %s" % (self.setupmatrix.name, self.priority)
+
+  class Meta(AuditModel.Meta):
+    ordering = ['priority',]
+    db_table = 'setuprule'
+    unique_together = (('setupmatrix', 'priority'),)
+    verbose_name = _('setup matrix rule')
+    verbose_name_plural = _('setup matrix rules')
+        
+
 class Resource(AuditModel):
   # Types of resources
   resourcetypes = (
@@ -477,6 +518,11 @@ class Resource(AuditModel):
     help_text=_("Cost for using 1 unit of the resource for 1 hour"))
   maxearly = DurationField(_('max early'),max_digits=15, decimal_places=0, null=True, blank=True,
     help_text=_('Time window before the ask date where we look for available capacity'))
+  setupmatrix = models.ForeignKey(SetupMatrix, verbose_name=_('setup matrix'),
+    null=True, blank=True, db_index=True, 
+    help_text=_('Setup matrix defining the conversion time and cost'))
+  setup = models.CharField(_('setup'), max_length=60, null=True, blank=True,
+    help_text=_('Setup of the resource at the start of the plan'))
 
   # Methods
   def __unicode__(self): return self.name

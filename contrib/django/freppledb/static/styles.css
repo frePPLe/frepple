@@ -138,6 +138,12 @@ a.calendar {
   background: url(/static/context.gif) 100% 100% no-repeat;
   white-space: nowrap;
 }
+a.setupmatrix {
+  margin-right: 17px;
+  padding-right: 17px;
+  background: url(/static/context.gif) 100% 100% no-repeat;
+  white-space: nowrap;
+}
 
 
 /* Style for main navigation menu */

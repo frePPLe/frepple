@@ -17,11 +17,13 @@
       </maximum>
       <setupmatrix name="Painting line changeover">
         <rules>
-          <rule priority="1" fromsetup="*green" tosetup="*green" duration="P0D" cost="10" />
-          <rule priority="2" fromsetup="*red" tosetup="*red" duration="P0D" cost="10" />
-          <rule priority="3" fromsetup="*green" tosetup="*red" duration="P1D" cost="50"/>
-          <rule priority="4" fromsetup="*red" duration="P2D" cost="90"/>
-          <rule priority="5" duration="P3D" />
+          <rule priority="1" fromsetup="green" tosetup="red" duration="P0D" cost="10" />
+          <rule priority="2" fromsetup="red" tosetup="green" duration="P0D" cost="10" />
+          <rule priority="3" fromsetup="white" tosetup="black" duration="P10D" cost="50"/>
+          <rule priority="4" fromsetup="black" tosetup="white" duration="P10D" cost="50"/>
+          <rule priority="5" fromsetup="yellow" duration="P2D" cost="20"/>
+          <rule priority="6" tosetup="yellow" duration="P2D" cost="20"/>
+          <rule priority="6" duration="P3D" />
         </rules>
       </setupmatrix>
       <setup>green</setup>
@@ -217,7 +219,6 @@ print ""
 # Create a plan
 frepple.solver_mrp(name="MRP", constraints=7, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
-frepple.saveXMLfile("output.2.xml")
 ?>
 
 </plan>

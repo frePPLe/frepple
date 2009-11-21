@@ -111,9 +111,21 @@ class Buffer_admin(admin.ModelAdmin):
 site.register(Buffer,Buffer_admin)
 
 
+class SetupRule_inline(admin.TabularInline):
+  model = SetupRule
+  extra = 3
+
+
+class SetupMatrix_admin(admin.ModelAdmin):
+  model = SetupMatrix
+  save_as = True
+  inlines = [ SetupRule_inline, ]
+site.register(SetupMatrix,SetupMatrix_admin)
+
+
 class Resource_admin(admin.ModelAdmin):
   model = Resource
-  raw_id_fields = ('maximum', 'location',)
+  raw_id_fields = ('maximum', 'location', 'setupmatrix')
   save_as = True
 site.register(Resource,Resource_admin)
 

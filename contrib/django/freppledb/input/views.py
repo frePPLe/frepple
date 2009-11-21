@@ -338,6 +338,32 @@ class BufferList(ListReport):
     )
 
 
+class SetupMatrixList(ListReport):
+  '''
+  A list report to show setup matrices.
+  '''
+  template = 'input/setupmatrixlist.html'
+  title = _("Setup Matrix List")
+  basequeryset = SetupMatrix.objects.all()
+  model = SetupMatrix
+  frozenColumns = 1
+
+  @staticmethod
+  def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
+    return basequery.values('name','lastmodified')
+
+  rows = (
+    ('name', {
+      'title': _('name'),
+      'filter': FilterText(),
+      }),
+    ('lastmodified', {
+      'title': _('last modified'),
+      'filter': FilterDate(),
+      }),
+    )
+     
+
 class ResourceList(ListReport):
   '''
   A list report to show resources.
@@ -352,7 +378,7 @@ class ResourceList(ListReport):
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','description','category','subcategory','location','type',
-      'maximum','cost','maxearly','lastmodified'
+      'maximum','cost','maxearly','setupmatrix','setup','lastmodified'
       )
 
   rows = (
@@ -391,6 +417,14 @@ class ResourceList(ListReport):
     ('maxearly', {
       'title': _('maxearly'),
       'filter': FilterNumber(),
+      }),
+    ('setupmatrix', {
+      'title': _('setup matrix'),
+      'filter': FilterText(),
+      }),
+    ('setup', {
+      'title': _('setup'),
+      'filter': FilterText(),
       }),
     ('lastmodified', {
       'title': _('last modified'),

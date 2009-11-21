@@ -55,6 +55,7 @@ var ContextMenu = {
 		'forecast': 'forecastcontext',
 		'customer': 'customercontext',
 		'calendar': 'calendarcontext',
+		'setupmatrix': 'setupmatrixcontext',
 		'numfilteroper': 'datefilter',
     'datefilteroper': 'datefilter',
     'textfilteroper': 'textfilter'
@@ -682,7 +683,7 @@ function getUnits(unitselector)
 function setUnits(unitselector)
 {
   var field = $(unitselector).previous();
-  if (field.value) 
+  if (field.value && _currentunits!="" && unitselector.value!="") 
   {
     var val = parseFloat(field.value);
     val *= _factors[_currentunits];

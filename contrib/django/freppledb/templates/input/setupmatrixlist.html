@@ -1,0 +1,19 @@
+{% extends "admin/base_site_list.html" %}
+
+{% block contextmenus %}
+{% include "setupmatrixcontext.html" %}
+{% endblock %}
+
+{% block frozendata %}
+{% for i in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
+<td>{% superlink i.name setupmatrix key %}</td>
+</tr>{% endfor %}
+{% endblock %}
+
+{% block data %}
+{% for i in objectlist1 %}
+<tr class="{% cycle row1,row2 %}">
+<td>{{i.lastmodified}}</td>
+</tr>{% endfor %}
+{% endblock %}

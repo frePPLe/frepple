@@ -478,10 +478,10 @@ class SetupRule(AuditModel):
   setupmatrix = models.ForeignKey(SetupMatrix, verbose_name=_('setup matrix'), related_name='rules')
   priority = models.IntegerField(_('priority'))
   fromsetup = models.CharField(_('from setup'), max_length=60, blank=True, null=True,
-    help_text=_("Wildcard description of the original setup"))
+    help_text=_("Name of the old setup (wildcard characters are supported)"))
   tosetup = models.CharField(_('to setup'), max_length=60, blank=True, null=True,
-    help_text=_("Wildcard description of the destination setup"))
-  duration = DurationField(_('duration'), max_digits=15, decimal_places=4, null=True, blank=True,
+    help_text=_("Name of the new setup (wildcard characters are supported)"))
+  duration = DurationField(_('duration'), max_digits=15, decimal_places=0, null=True, blank=True,
     help_text=_("Duration of the changeover"))
   cost = models.DecimalField(_('cost'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("Cost of the conversion"))

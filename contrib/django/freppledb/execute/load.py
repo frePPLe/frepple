@@ -253,12 +253,31 @@ def loadBuffers(cursor):
   print 'Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime)
 
 
+def loadSetupMatrices(cursor):
+  print 'Importing setup matrix rules...'
+  cnt = 0
+  starttime = time()
+  cursor.execute('''SELECT setupmatrix_id, priority, fromsetup, tosetup, duration, cost
+    FROM setuprule
+    order by setupmatrix_id, priority desc''')
+  for i, j, k, l, m, n in cursor.fetchall():
+    cnt += 1
+    try:
+      r = frepple.setupmatrix(name=i).addRule(priority=j)
+      if k: r.fromsetup = k
+      if l: r.tosetup = l
+      if m: r.duration = m
+      if n: r.cost = n
+    except Exception, e: print "Error:", e
+  print 'Loaded %d setup matrix rules in %.2f seconds' % (cnt, time() - starttime)
+
+
 def loadResources(cursor):
   print 'Importing resources...'
   cnt = 0
   starttime = time()
-  cursor.execute('SELECT name, description, maximum_id, location_id, type, cost, maxearly FROM %s' % connection.ops.quote_name('resource'))
-  for i, j, k, l, m, n, o in cursor.fetchall():
+  cursor.execute('SELECT name, description, maximum_id, location_id, type, cost, maxearly, setup, setupmatrix_id FROM %s' % connection.ops.quote_name('resource'))
+  for i, j, k, l, m, n, o, p, q in cursor.fetchall():
     cnt += 1
     try:
       if m == "resource_infinite":
@@ -278,6 +297,8 @@ def loadResources(cursor):
       else:
         raise ValueError("Resource type '%s' not recognized" % m)
       if n: x.cost = n
+      if p: x.setup = p
+      if q: x.setupmatrix = frepple.setupmatrix(name=q)
     except Exception, e: print "Error:", e
   print 'Loaded %d resources in %.2f seconds' % (cnt, time() - starttime)
 
@@ -460,6 +481,7 @@ def loadfrepple():
     loadSuboperations(cursor)
     loadItems(cursor)
     loadBuffers(cursor)
+    loadSetupMatrices(cursor)
     loadResources(cursor)
     loadFlows(cursor)
     loadLoads(cursor)
@@ -494,7 +516,7 @@ def loadfrepple():
     loadItems(cursor)
     tasks = (
       DatabaseTask(loadBuffers,loadFlows),
-      DatabaseTask(loadResources, loadLoads),
+      DatabaseTask(loadSetupMatrices, loadResources, loadLoads),
       )
     for i in tasks: i.start()
     for i in tasks: i.join()

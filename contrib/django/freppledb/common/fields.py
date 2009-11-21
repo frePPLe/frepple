@@ -42,6 +42,7 @@ class DurationWidget(MultiWidget):
       Select(choices=(
             ("",""),
             ("seconds",_("seconds")),
+            ("minutes",_("minutes")),
             ("hours",_("hours")),
             ("days",_("days")),
             ("weeks",_("weeks"))
@@ -52,6 +53,7 @@ class DurationWidget(MultiWidget):
   def decompress(self, value):
     if value == None or value == 0: return [value, '']
     if value % 604800 == 0: return [value/Decimal(604800), 'weeks']
+    if value % 60 == 0 and value < 3600: return [value/Decimal(60), 'minutes']
     if value % 3600 != 0 and value < 86400: return [value, 'seconds']
     if value % 86400 != 0 and value < 604800: return [value/Decimal(3600), 'hours']
     return [value/Decimal(86400), u"days"]
@@ -76,6 +78,7 @@ class DurationFormField(fields.MultiValueField):
         fields.ChoiceField(
           choices=(
             ("seconds",_("seconds")),
+            ("minutes",_("minutes")),
             ("hours",_("hours")),
             ("days",_("days")),
             ("weeks",_("weeks")),
@@ -91,6 +94,7 @@ class DurationFormField(fields.MultiValueField):
     val, unit = data_list 
     if val == None or val == u'': return None    
     elif unit == 'hours': val = val * Decimal(3600)
+    elif unit == 'minutes': val = val * Decimal(60)
     elif unit == 'days': val = val * Decimal(86400)
     elif unit != 'seconds': val = val * Decimal(604800)
     return format_number(float(val), self.max_digits, self.decimal_places)

@@ -670,6 +670,7 @@ var _currentunits = null;
 
 var _factors = {
   'seconds': 1,
+  'minutes': 60,
 	'hours': 3600,
 	'days': 86400,
 	'weeks': 604800

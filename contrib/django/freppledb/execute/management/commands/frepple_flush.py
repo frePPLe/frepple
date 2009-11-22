@@ -74,8 +74,9 @@ class Command(BaseCommand):
       sql_list = connection.ops.sql_flush(no_style(), [
         'out_problem','out_flowplan','out_loadplan','out_demandpegging',
         'out_operationplan','demand','forecastdemand','forecast','flow',
-        'resourceload','buffer','resource','operationplan','item','suboperation',
-        'operation','location','bucket','calendar','customer'
+        'resourceload','buffer','resource','setuprule','setupmatrix',
+        'operationplan','item','suboperation','operation','location',
+        'bucket','calendar','customer'
         ], [] )
       for sql in sql_list:
         cursor.execute(sql)

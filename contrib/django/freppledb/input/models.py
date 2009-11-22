@@ -546,6 +546,7 @@ class Flow(AuditModel):
   # Types of flow
   flowtypes = (
     ('',_('Start')),
+    ('flow_start',_('Start')),
     ('flow_end',_('End')),
   )
 

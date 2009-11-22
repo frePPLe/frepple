@@ -62,7 +62,7 @@ class DurationWidget(MultiWidget):
     return "%s&nbsp;%s" % (rendered_widgets[0], rendered_widgets[1])
     
   def value_from_datadict(self, data, files, name):
-    return [data.get(name,data.get('%s_0' % name,0)), data.get('%s_1' % name,'hours')]
+    return [data.get(name,data.get('%s_0' % name,0)), data.get('%s_1' % name,'seconds')]
       
 
 class DurationFormField(fields.MultiValueField):

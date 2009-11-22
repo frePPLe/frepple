@@ -91,6 +91,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     int cur_cluster;
     numberOfClusters = 0;
     numberOfHangingClusters = 0;
+    set<Operation*> visited;
     for (Operation::iterator g = Operation::begin();
         g != Operation::end(); ++g)
     {
@@ -157,6 +158,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
       // cluster and/or level. This is avoid that operations are needlessly
       // pushed a second time on the stack.
       stack.push(make_pair(&*g, search_level ? 0 : -1));
+      visited.clear();
       g->cluster = cur_cluster;
       if (search_level) g->lvl = 0;
       while (!stack.empty())
@@ -170,6 +172,13 @@ DECLARE_EXPORT void HasLevel::computeLevels()
         logger << "    Recursing in Operation '" << *(cur_oper)
         << "' - current level " << cur_level << endl;
 #endif
+        // Detect loops in the supply chain
+        if (visited.find(cur_oper) != visited.end())
+          // Already visited this operation - don't repeat
+          continue;
+        else
+          // Keep track of operations already visited
+          visited.insert(cur_oper);
 
         // Push sub operations on the stack
         for (Operation::Operationlist::const_reverse_iterator

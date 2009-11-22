@@ -2,6 +2,7 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <?python
 import os
+import inspect
 from datetime import datetime
 
 from freppledb.execute.export_database import exportfrepple as export_to_database
@@ -37,8 +38,11 @@ frepple.printsize()
 loadfrepple()
 frepple.printsize()
 
+if 'solver_forecast' in [ a for a, b in inspect.getmembers(frepple) ]:
+  # The forecast module is available
+  print "\nStart forecast netting at", datetime.now().strftime("%H:%M:%S")
+  frepple.solver_forecast(name="Netting orders from forecast",loglevel=0).solve()
 print "\nStart plan generation at", datetime.now().strftime("%H:%M:%S")
-frepple.solver_forecast(name="Netting orders from forecast",loglevel=0).solve()
 frepple.solver_mrp(name="MRP",loglevel=0).solve()
 frepple.printsize()
 

@@ -312,29 +312,9 @@ def loadFlows(cursor):
   cursor.execute('''
     SELECT 
       operation_id, thebuffer_id, quantity, type, effective_start, 
-      effective_end, name
+      effective_end, name, priority
     FROM flow
     WHERE alternate IS NULL OR alternate = ''
-    ORDER BY operation_id, thebuffer_id
-    ''')
-  curbufname = None
-  for i, j, k, l, m, n, o in cursor.fetchall():
-    cnt += 1
-    try:
-      if j != curbufname:
-        curbufname = j
-        curbuf = frepple.buffer(name=curbufname)
-      curflow = frepple.flow(operation=frepple.operation(name=i), type=l, buffer=curbuf, quantity=k)
-      if m: curflow.effective_start = m
-      if n: curflow.effective_end = n
-      if o: curflow.name = o
-    except Exception, e: print "Error:", e
-  cursor.execute('''
-    SELECT 
-      operation_id, thebuffer_id, quantity, type, effective_start, 
-      effective_end, name, alternate
-    FROM flow
-    WHERE alternate IS NOT NULL AND alternate <> ''
     ORDER BY operation_id, thebuffer_id
     ''')
   curbufname = None
@@ -348,7 +328,29 @@ def loadFlows(cursor):
       if m: curflow.effective_start = m
       if n: curflow.effective_end = n
       if o: curflow.name = o
+      if p: curflow.priority = p
+    except Exception, e: print "Error:", e
+  cursor.execute('''
+    SELECT 
+      operation_id, thebuffer_id, quantity, type, effective_start, 
+      effective_end, name, alternate, priority
+    FROM flow
+    WHERE alternate IS NOT NULL AND alternate <> ''
+    ORDER BY operation_id, thebuffer_id
+    ''')
+  curbufname = None
+  for i, j, k, l, m, n, o, p, q in cursor.fetchall():
+    cnt += 1
+    try:
+      if j != curbufname:
+        curbufname = j
+        curbuf = frepple.buffer(name=curbufname)
+      curflow = frepple.flow(operation=frepple.operation(name=i), type=l, buffer=curbuf, quantity=k)
+      if m: curflow.effective_start = m
+      if n: curflow.effective_end = n
+      if o: curflow.name = o
       if p: curflow.alternate = p
+      if q: curflow.priority = q
     except Exception, e: print "Error:", e
   print 'Loaded %d flows in %.2f seconds' % (cnt, time() - starttime)
 

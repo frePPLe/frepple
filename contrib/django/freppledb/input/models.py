@@ -570,8 +570,12 @@ class Flow(AuditModel):
     default='1.00',
     help_text=_('Quantity to consume or produce per operationplan unit')
     )
-  name = models.CharField(_('name'), max_length=60, null=True, blank=True)
-  alternate = models.CharField(_('alternate'), max_length=60, null=True, blank=True)
+  name = models.CharField(_('name'), max_length=60, null=True, blank=True, 
+    help_text=_('Name of a group of alternate flows'))
+  alternate = models.CharField(_('alternate'), max_length=60, null=True, blank=True,
+    help_text=_('Puts the flows in a group of alternate flows'))
+  priority = models.IntegerField(_('priority'), default=1, null=True, blank=True,
+    help_text=_('Priority of this flow in a group of alternate flows'))
 
   def __unicode__(self):
     return '%s - %s' % (self.operation.name, self.thebuffer.name)

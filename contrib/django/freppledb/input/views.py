@@ -650,7 +650,7 @@ class FlowList(ListReport):
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'id','operation','thebuffer','type','quantity','effective_start',
-      'effective_end','name','alternate','lastmodified'
+      'effective_end','name','alternate','priority','lastmodified'
       )
 
   rows = (
@@ -689,6 +689,10 @@ class FlowList(ListReport):
     ('alternate', {
       'title': _('alternate'),
       'filter': FilterText(),
+      }),
+    ('priority', {
+      'title': _('priority'),
+      'filter': FilterNumber(),
       }),
     ('lastmodified', {
       'title': _('last modified'),

@@ -100,34 +100,10 @@
 		<buffer name="buffer 1">
 			<producing name="make item 1" xsi:type="operation_fixed_time"/>
 			<item name="item 1"/>
-			<flows>
-				<flow xsi:type="flow_start">
-					<operation name="delivery 1" xsi:type="operation_fixed_time"/>
-					<quantity>-1</quantity>
-				</flow>
-				<flow xsi:type="flow_end">
-					<operation name="make item 1" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
 		</buffer>
 		<buffer name="buffer A">
 			<producing name="supply component A" xsi:type="operation_alternate"/>
 			<item name="component A"/>
-			<flows>
-				<flow xsi:type="flow_start">
-					<operation name="make item 1" xsi:type="operation_fixed_time"/>
-					<quantity>-1</quantity>
-				</flow>
-				<flow xsi:type="flow_end">
-					<operation name="supply component A from supplier 1" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-				<flow xsi:type="flow_end">
-					<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
 		</buffer>
 		<buffer name="buffer B">
 			<item name="component B"/>
@@ -162,6 +138,35 @@
 			<location name="Sublocation 1"/>
 		</resource>
 	</resources>
+	<loads>
+	</loads>
+	<flows>
+		<flow xsi:type="flow_start">
+			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer 1"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="make item 1" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer 1"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="make item 1" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer A"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="supply component A from supplier 1" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer A"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer A"/>
+			<quantity>1</quantity>
+		</flow>
+	</flows>
 	<operationplans>
 		<operationplan id="25" operation="delivery 1">
 			<demand name="order 2"/>

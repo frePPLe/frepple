@@ -3380,6 +3380,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     static int initialize();
+    static void writer(const MetaCategory*, XMLOutput*);
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
 
@@ -4030,6 +4031,7 @@ class Load
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
     DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
+    static void writer(const MetaCategory*, XMLOutput*);
 
     bool getHidden() const
      {

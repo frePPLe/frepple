@@ -1139,16 +1139,6 @@
 		<buffer name="buffer 1">
 			<producing name="make 1" xsi:type="operation_fixed_time"/>
 			<item name="item 1"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="make 1" xsi:type="operation_fixed_time"/>
-					<quantity>2</quantity>
-				</flow>
-				<flow xsi:type="flow_start">
-					<operation name="delivery 1" xsi:type="operation_fixed_time"/>
-					<quantity>-2</quantity>
-				</flow>
-			</flows>
 			<onhand>10</onhand>
 			<minimum name="min inv for buffer 1" xsi:type="calendar_double"/>
 			<flowplans>
@@ -1292,16 +1282,6 @@
 		<buffer name="buffer 2">
 			<producing name="make 2" xsi:type="operation_fixed_time"/>
 			<item name="item 2"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="make 2" xsi:type="operation_fixed_time"/>
-					<quantity>2</quantity>
-				</flow>
-				<flow xsi:type="flow_start">
-					<operation name="delivery 2" xsi:type="operation_fixed_time"/>
-					<quantity>-2</quantity>
-				</flow>
-			</flows>
 			<onhand>10</onhand>
 			<minimum name="min inv for buffer 2" xsi:type="calendar_double"/>
 			<flowplans>
@@ -1437,16 +1417,6 @@
 		<buffer name="buffer 3">
 			<producing name="make 3" xsi:type="operation_fixed_time"/>
 			<item name="item 3"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="make 3" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-				<flow xsi:type="flow_start">
-					<operation name="delivery 3" xsi:type="operation_fixed_time"/>
-					<quantity>-1</quantity>
-				</flow>
-			</flows>
 			<onhand>10</onhand>
 			<minimum name="min inv for buffer 3" xsi:type="calendar_double"/>
 			<flowplans>
@@ -1542,16 +1512,6 @@
 		<buffer name="buffer 4">
 			<producing name="make 4" xsi:type="operation_fixed_time"/>
 			<item name="item 4"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="make 4" xsi:type="operation_fixed_time"/>
-					<quantity>2</quantity>
-				</flow>
-				<flow xsi:type="flow_start">
-					<operation name="delivery 4" xsi:type="operation_fixed_time"/>
-					<quantity>-2</quantity>
-				</flow>
-			</flows>
 			<onhand>10</onhand>
 			<minimum name="min inv for buffer 4" xsi:type="calendar_double"/>
 			<flowplans>
@@ -1718,16 +1678,6 @@
 		</buffer>
 		<buffer name="constraint buffer 1">
 			<item name="item 1"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="supply 1" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-				<flow xsi:type="flow_start">
-					<operation name="make 1" xsi:type="operation_fixed_time"/>
-					<quantity>-2</quantity>
-				</flow>
-			</flows>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-10T00:00:00</date>
@@ -1853,16 +1803,6 @@
 		</buffer>
 		<buffer name="constraint buffer 2">
 			<item name="item 2"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="supply 2" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-				<flow xsi:type="flow_start">
-					<operation name="make 2" xsi:type="operation_fixed_time"/>
-					<quantity>-2</quantity>
-				</flow>
-			</flows>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-10T00:00:00</date>
@@ -1964,16 +1904,6 @@
 		</buffer>
 		<buffer name="constraint buffer 3">
 			<item name="item 3"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="supply 3" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-				<flow xsi:type="flow_start">
-					<operation name="make 3" xsi:type="operation_fixed_time"/>
-					<quantity>-2</quantity>
-				</flow>
-			</flows>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-15T00:00:00</date>
@@ -2051,16 +1981,6 @@
 		</buffer>
 		<buffer name="constraint buffer 4">
 			<item name="item 4"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="supply 4" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-				<flow xsi:type="flow_start">
-					<operation name="make 4" xsi:type="operation_fixed_time"/>
-					<quantity>-2</quantity>
-				</flow>
-			</flows>
 			<flowplans>
 				<flowplan>
 					<date>2009-01-15T00:00:00</date>
@@ -2544,6 +2464,90 @@
 			</operationplans>
 		</demand>
 	</demands>
+	<loads>
+	</loads>
+	<flows>
+		<flow xsi:type="flow_start">
+			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer 1"/>
+			<quantity>-2</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="delivery 2" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer 2"/>
+			<quantity>-2</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="delivery 3" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer 3"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="delivery 4" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer 4"/>
+			<quantity>-2</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="make 1" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer 1"/>
+			<quantity>2</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="make 1" xsi:type="operation_fixed_time"/>
+			<buffer name="constraint buffer 1"/>
+			<quantity>-2</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="make 2" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer 2"/>
+			<quantity>2</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="make 2" xsi:type="operation_fixed_time"/>
+			<buffer name="constraint buffer 2"/>
+			<quantity>-2</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="make 3" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer 3"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="make 3" xsi:type="operation_fixed_time"/>
+			<buffer name="constraint buffer 3"/>
+			<quantity>-2</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="make 4" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer 4"/>
+			<quantity>2</quantity>
+		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="make 4" xsi:type="operation_fixed_time"/>
+			<buffer name="constraint buffer 4"/>
+			<quantity>-2</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="supply 1" xsi:type="operation_fixed_time"/>
+			<buffer name="constraint buffer 1"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="supply 2" xsi:type="operation_fixed_time"/>
+			<buffer name="constraint buffer 2"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="supply 3" xsi:type="operation_fixed_time"/>
+			<buffer name="constraint buffer 3"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="supply 4" xsi:type="operation_fixed_time"/>
+			<buffer name="constraint buffer 4"/>
+			<quantity>1</quantity>
+		</flow>
+	</flows>
 	<operationplans>
 		<operationplan id="4002" operation="delivery 1">
 			<demand name="order for item 1"/>

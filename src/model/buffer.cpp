@@ -226,17 +226,6 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
   o->writeElement(Tags::tag_location, loc);
   Plannable::writeElement(o, tag);
 
-  // Flows
-  if (!flows.empty())
-  {
-    o->BeginObject (Tags::tag_flows);
-    for (flowlist::const_iterator i = flows.begin(); i != flows.end(); ++i)
-      // We use the FULL mode, to force the flows being written regardless
-      // of the depth in the XML tree.
-      o->writeElement(Tags::tag_flow, &*i, FULL);
-    o->EndObject (Tags::tag_flows);
-  }
-
   // Onhand
   flowplanlist::const_iterator i = flowplans.begin();
   // Loop through the flowplans at the start of the horizon

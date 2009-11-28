@@ -136,17 +136,6 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
     o->writeElement(Tags::tag_setupmatrix, getSetupMatrix());
   Plannable::writeElement(o, tag);
 
-  // Write the loads
-  if (!loads.empty())
-  {
-    o->BeginObject (Tags::tag_loads);
-    for (loadlist::const_iterator i = loads.begin(); i != loads.end(); ++i)
-      // We use the FULL mode, to force the loads being written regardless
-      // of the depth in the XML tree.
-      o->writeElement(Tags::tag_load, &*i, FULL);
-    o->EndObject (Tags::tag_loads);
-  }
-
   // Write extra plan information
   loadplanlist::const_iterator i = loadplans.begin();
   if (o->getContentType() == XMLOutput::PLAN  && i!=loadplans.end())

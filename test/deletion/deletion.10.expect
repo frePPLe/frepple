@@ -96,12 +96,6 @@
 	<buffers>
 		<buffer name="buffer 1">
 			<item name="item 1"/>
-			<flows>
-				<flow xsi:type="flow_start">
-					<operation name="delivery 1" xsi:type="operation_fixed_time"/>
-					<quantity>-1</quantity>
-				</flow>
-			</flows>
 		</buffer>
 		<buffer name="buffer B">
 			<item name="component B"/>
@@ -133,6 +127,15 @@
 			<location name="Sublocation 1"/>
 		</resource>
 	</resources>
+	<loads>
+	</loads>
+	<flows>
+		<flow xsi:type="flow_start">
+			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
+			<buffer name="buffer 1"/>
+			<quantity>-1</quantity>
+		</flow>
+	</flows>
 	<operationplans>
 		<operationplan id="67" operation="delivery 1">
 			<demand name="order 2"/>

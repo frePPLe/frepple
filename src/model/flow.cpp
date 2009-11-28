@@ -39,7 +39,7 @@ int Flow::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory
-    ("flow", "flows", MetaCategory::ControllerDefault);
+    ("flow", "flows", MetaCategory::ControllerDefault, writer);
   FlowStart::metadata = new MetaClass("flow", "flow_start",
     Object::createDefault<FlowStart>, true);
   FlowEnd::metadata = new MetaClass("flow", "flow_end",
@@ -55,6 +55,18 @@ int Flow::initialize()
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
+}
+
+
+void Flow::writer(const MetaCategory* c, XMLOutput* o)
+{
+  o->BeginObject(Tags::tag_flows);
+  for (Operation::iterator i = Operation::begin(); i != Operation::end(); ++i)
+    for (Operation::flowlist::const_iterator j = i->getFlows().begin(); j != i->getFlows().end(); ++j)
+      // We use the FULL mode, to force the flows being written regardless
+      // of the depth in the XML tree.
+      o->writeElement(Tags::tag_flow, &*j, FULL);
+  o->EndObject(Tags::tag_flows);
 }
 
 

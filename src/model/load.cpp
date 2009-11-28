@@ -37,7 +37,7 @@ int Load::initialize()
 {
   // Initialize the metadata
   metadata = new MetaCategory
-    ("load", "loads", MetaCategory::ControllerDefault, NULL);
+    ("load", "loads", MetaCategory::ControllerDefault, writer);
   const_cast<MetaCategory*>(metadata)->registerClass(
     "load","load",true,Object::createDefault<Load>
     );
@@ -52,6 +52,18 @@ int Load::initialize()
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(Load::metadata)->pythonClass = x.type_object();
   return x.typeReady();
+}
+
+
+void Load::writer(const MetaCategory* c, XMLOutput* o)
+{
+  o->BeginObject(Tags::tag_loads);
+  for (Operation::iterator i = Operation::begin(); i != Operation::end(); ++i)
+    for (Operation::loadlist::const_iterator j = i->getLoads().begin(); j != i->getLoads().end(); ++j)
+      // We use the FULL mode, to force the loads being written regardless
+      // of the depth in the XML tree.
+      o->writeElement(Tags::tag_load, &*j, FULL);
+  o->EndObject(Tags::tag_loads);
 }
 
 

@@ -96,7 +96,6 @@ DECLARE_EXPORT void Plan::writeElement (XMLOutput *o, const Keyword& tag, mode m
   o->writeElement(Tags::tag_name, name);
   o->writeElement(Tags::tag_description, descr);
   o->writeElement(Tags::tag_current, cur_Date);
-  o->writeElement(Tags::tag_logfile, Environment::getLogFile());
   Plannable::writeElement(o, tag);
 
   // Persist all categories

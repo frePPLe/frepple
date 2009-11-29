@@ -28,16 +28,19 @@
             <resource name="Resource A"/>
             <quantity>1.5</quantity>
             <name>group1</name>
+            <priority>1</priority>
           </load>          
           <load>
             <resource name="Resource B"/>
             <quantity>2</quantity>
             <alternate>group1</alternate>
+            <priority>2</priority>
           </load>
           <load>
             <resource name="Resource C"/>
             <quantity>1</quantity>
             <name>group2</name>
+            <priority>1</priority>
             <!--
             <effective_start>2009-01-10T00:00:00</effective_start>
             <effective_end>2009-01-20T00:00:00</effective_end>
@@ -109,7 +112,7 @@
   <demands>
     <demand name="order 1">
       <quantity>1</quantity>
-      <due>2009-01-25T00:00:00</due>
+      <due>2009-01-01T00:00:00</due>
       <priority>11</priority>
       <item name="end item" />
     </demand>

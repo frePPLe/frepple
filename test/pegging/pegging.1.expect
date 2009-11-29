@@ -2464,8 +2464,6 @@
 			</operationplans>
 		</demand>
 	</demands>
-	<loads>
-	</loads>
 	<flows>
 		<flow xsi:type="flow_start">
 			<operation name="delivery 1" xsi:type="operation_fixed_time"/>

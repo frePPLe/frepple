@@ -73,16 +73,6 @@
 		<buffer name="end item">
 			<producing name="make end item" xsi:type="operation_fixed_time"/>
 			<item name="end item"/>
-			<flows>
-				<flow xsi:type="flow_start">
-					<operation name="delivery end item" xsi:type="operation_fixed_time"/>
-					<quantity>-1</quantity>
-				</flow>
-				<flow xsi:type="flow_end">
-					<operation name="make end item" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
 		</buffer>
 	</buffers>
 	<demands>
@@ -112,13 +102,26 @@
 	<resources>
 		<resource name="Resource">
 			<maximum name="Capacity" xsi:type="calendar_double"/>
+		</resource>
+	</resources>
 			<loads>
 				<load>
 					<operation name="make end item" xsi:type="operation_fixed_time"/>
+			<resource name="Resource"/>
 				</load>
 			</loads>
-		</resource>
-	</resources>
+	<flows>
+		<flow xsi:type="flow_start">
+			<operation name="delivery end item" xsi:type="operation_fixed_time"/>
+			<buffer name="end item"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="make end item" xsi:type="operation_fixed_time"/>
+			<buffer name="end item"/>
+			<quantity>1</quantity>
+		</flow>
+	</flows>
 	<operationplans>
 		<operationplan id="3" operation="delivery end item">
 			<demand name="order 2"/>

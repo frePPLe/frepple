@@ -70,7 +70,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         cur!=res->getLoadPlans().end() && cur->getDate()>=earliestdate; 
         --cur)
       {
-        // A change in the maximum capacity        
+        // A change in the maximum capacity  
         prevMax = curMax;
         if (cur->getType() == 4) 
           curMax = cur->getMax(false);
@@ -189,6 +189,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
     // Moving an operation earlier is driven by the ending loadplan,
     // while searching for later capacity is driven from the starting loadplan.
+    LoadPlan* old_q_loadplan = data->state->q_loadplan;
     data->state->q_loadplan = data->state->q_loadplan->getOtherLoadPlan();
 
     // Loop to find a later date where the operationplan will fit
@@ -247,6 +248,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       }
     }
     while (HasOverload && newDate);
+    data->state->q_loadplan = old_q_loadplan;
 
     // Set the date where a next trial date can happen
     if (HasOverload)
@@ -258,13 +260,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
     // Create a zero quantity reply
     data->state->a_qty = 0.0;
   }
-
-  if (data->state->a_qty == 0.0 
-    && data->state->q_operationplan->getQuantity() != 0.0)
-    // In case of a zero reply, we resize the operationplan to 0 right away.
-    // This is required to make sure that the buffer inventory profile also
-    // respects this answer.
-    data->state->q_operationplan->setQuantity(0.0);
 
   // Increment the cost  @todo also during unavailable time the cost is incremented
   if (data->state->a_qty > 0.0)

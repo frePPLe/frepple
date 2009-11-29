@@ -57,13 +57,20 @@ int Load::initialize()
 
 void Load::writer(const MetaCategory* c, XMLOutput* o)
 {
-  o->BeginObject(Tags::tag_loads);
+  bool firstload = true;
   for (Operation::iterator i = Operation::begin(); i != Operation::end(); ++i)
     for (Operation::loadlist::const_iterator j = i->getLoads().begin(); j != i->getLoads().end(); ++j)
+    {
+      if (firstload)
+      {
+        o->BeginObject(Tags::tag_loads);
+        firstload = false;
+      }
       // We use the FULL mode, to force the loads being written regardless
       // of the depth in the XML tree.
       o->writeElement(Tags::tag_load, &*j, FULL);
-  o->EndObject(Tags::tag_loads);
+    }
+  if (!firstload) o->EndObject(Tags::tag_loads);
 }
 
 

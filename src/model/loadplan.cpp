@@ -162,16 +162,16 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
   // Change this loadplan and its brother
   for (LoadPlan *ldplan = getOtherLoadPlan(); true; )
   {
-    // Remove from the old resource, if there is one
+   // Remove from the old resource, if there is one
     if (ldplan->ld)
       ldplan->ld->getResource()->loadplans.erase(this);
 
     // Insert in the new resource
     ldplan->ld = newld;
-    ldplan->ld->getResource()->loadplans.insert(
-      this,
-      ld->getLoadplanQuantity(this),
-      ld->getLoadplanDate(this)
+    newld->getResource()->loadplans.insert(
+      ldplan,
+      newld->getLoadplanQuantity(ldplan),
+      newld->getLoadplanDate(ldplan)
       );
 
     // Repeat for the brother loadplan or exit

@@ -75,51 +75,17 @@
 			<producing name="supply distribution centre" xsi:type="operation_alternate"/>
 			<item name="product"/>
 			<location name="distribution centre"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
-					<quantity>1</quantity>
-				</flow>
-				<flow xsi:type="flow_end">
-					<operation name="transport supply from factory 2" xsi:type="operation_transport"/>
-					<quantity>1</quantity>
-				</flow>
-				<flow xsi:type="flow_start">
-					<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time"/>
-					<quantity>-1</quantity>
-				</flow>
-			</flows>
 			<onhand>5</onhand>
 		</buffer>
 		<buffer name="product in factory 1">
 			<producing name="make product in factory 1" xsi:type="operation_fixed_time"/>
 			<item name="product"/>
 			<location name="factory 1"/>
-			<flows>
-				<flow xsi:type="flow">
-					<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
-					<quantity>-1</quantity>
-				</flow>
-				<flow xsi:type="flow_end">
-					<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
 		</buffer>
 		<buffer name="product in factory 2">
 			<producing name="make product in factory 2" xsi:type="operation_fixed_time"/>
 			<item name="product"/>
 			<location name="factory 2"/>
-			<flows>
-				<flow xsi:type="flow">
-					<operation name="transport supply from factory 2" xsi:type="operation_transport"/>
-					<quantity>-1</quantity>
-				</flow>
-				<flow xsi:type="flow_end">
-					<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
 		</buffer>
 	</buffers>
 	<demands>
@@ -141,21 +107,58 @@
 	<resources>
 		<resource name="capacity of factory 1">
 			<maximum name="capacity factory 1" xsi:type="calendar_double"/>
-			<loads>
-				<load>
-					<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
-				</load>
-			</loads>
 		</resource>
 		<resource name="capacity of factory 2">
 			<maximum name="capacity factory 2" xsi:type="calendar_double"/>
-			<loads>
-				<load>
-					<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
-				</load>
-			</loads>
 		</resource>
 	</resources>
+	<loads>
+		<load>
+			<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
+			<resource name="capacity of factory 1"/>
+		</load>
+		<load>
+			<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
+			<resource name="capacity of factory 2"/>
+		</load>
+	</loads>
+	<flows>
+		<flow xsi:type="flow_start">
+			<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time"/>
+			<buffer name="product in distribution centre"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
+			<buffer name="product in factory 1"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
+			<buffer name="product in factory 2"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow">
+			<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
+			<buffer name="product in factory 1"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
+			<buffer name="product in distribution centre"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow">
+			<operation name="transport supply from factory 2" xsi:type="operation_transport"/>
+			<buffer name="product in factory 2"/>
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="transport supply from factory 2" xsi:type="operation_transport"/>
+			<buffer name="product in distribution centre"/>
+			<quantity>1</quantity>
+		</flow>
+	</flows>
 	<operationplans>
 		<operationplan id="6" operation="delivery product from distribution centre">
 			<demand name="order 2"/>
@@ -174,12 +177,12 @@
 			<end>2009-01-02T12:00:00</end>
 			<quantity>5</quantity>
 		</operationplan>
-		<operationplan id="10" operation="make product in factory 2">
+		<operationplan id="9" operation="make product in factory 2">
 			<start>2009-01-01T12:00:00</start>
 			<end>2009-01-02T12:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
-		<operationplan id="9" operation="supply distribution centre">
+		<operationplan id="8" operation="supply distribution centre">
 			<start>2009-01-02T12:00:00</start>
 			<end>2009-01-03T12:00:00</end>
 			<quantity>10</quantity>
@@ -195,11 +198,11 @@
 			<quantity>5</quantity>
 			<owner id="4" operation="supply distribution centre"/>
 		</operationplan>
-		<operationplan id="8" operation="transport supply from factory 2">
+		<operationplan id="7" operation="transport supply from factory 2">
 			<start>2009-01-02T12:00:00</start>
 			<end>2009-01-03T12:00:00</end>
 			<quantity>10</quantity>
-			<owner id="9" operation="supply distribution centre"/>
+			<owner id="8" operation="supply distribution centre"/>
 		</operationplan>
 	</operationplans>
 	<problems>

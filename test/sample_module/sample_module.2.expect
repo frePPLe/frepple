@@ -57,23 +57,11 @@
 			<producing name="make product in factory 1" xsi:type="operation_fixed_time"/>
 			<item name="product"/>
 			<location name="factory 1"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
 		</buffer>
 		<buffer name="product in factory 2">
 			<producing name="make product in factory 2" xsi:type="operation_fixed_time"/>
 			<item name="product"/>
 			<location name="factory 2"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
 		</buffer>
 	</buffers>
 	<demands>
@@ -95,28 +83,40 @@
 	<resources>
 		<resource name="capacity of factory 1">
 			<maximum name="capacity factory 1" xsi:type="calendar_double"/>
-			<loads>
-				<load>
-					<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
-				</load>
-			</loads>
 		</resource>
 		<resource name="capacity of factory 2">
 			<maximum name="capacity factory 2" xsi:type="calendar_double"/>
-			<loads>
-				<load>
-					<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
-				</load>
-			</loads>
 		</resource>
 	</resources>
+	<loads>
+		<load>
+			<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
+			<resource name="capacity of factory 1"/>
+		</load>
+		<load>
+			<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
+			<resource name="capacity of factory 2"/>
+		</load>
+	</loads>
+	<flows>
+		<flow xsi:type="flow_end">
+			<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
+			<buffer name="product in factory 1"/>
+			<quantity>1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
+			<buffer name="product in factory 2"/>
+			<quantity>1</quantity>
+		</flow>
+	</flows>
 	<operationplans>
 		<operationplan id="5" operation="make product in factory 1">
 			<start>2009-01-01T12:00:00</start>
 			<end>2009-01-02T12:00:00</end>
 			<quantity>5</quantity>
 		</operationplan>
-		<operationplan id="10" operation="make product in factory 2">
+		<operationplan id="9" operation="make product in factory 2">
 			<start>2009-01-01T12:00:00</start>
 			<end>2009-01-02T12:00:00</end>
 			<quantity>10</quantity>

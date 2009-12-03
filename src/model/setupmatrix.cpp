@@ -413,9 +413,12 @@ PyObject* SetupMatrixRuleIterator::iternext()
 }
 
 
-DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::calculateSetup
+DECLARE_EXPORT pair<TimePeriod,double> SetupMatrix::calculateSetup
   (const string oldsetup, const string newsetup) const
 {
+  // No need to look
+  if (oldsetup == newsetup) return pair<TimePeriod,double>(TimePeriod(0L),0);
+
   // Loop through all rules
   for (Rule *curRule = firstRule; curRule; curRule = curRule->nextRule)
   {
@@ -428,11 +431,35 @@ DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::calculateSetup
       && !matchWildcard(curRule->getToSetup().c_str(), newsetup.c_str()))
         continue;
     // Found a match
-    return curRule;
+    return pair<TimePeriod,double>(curRule->duration, curRule->cost);
   }
   // No matching rule was found
-  return NULL;
+  return pair<TimePeriod,double>(9999999, 9999999); // xxx
 }
 
+
+DECLARE_EXPORT DateRange SetupMatrix::calculateSetup
+  (OperationPlan* oplan, const Load* ld, Date s, Date e, bool preferend, bool execute) const
+{
+  // xxx TODO should this method scan for the setup optimization window??? Maybe, as long as the solver can specify the window
+
+  // xxx TODO selecting a setup also requires updating a later operationplan on the resource!
+
+  // Find the current setup of the resource
+  const Load* lastld = NULL;
+  for (TimeLine<LoadPlan>::iterator i = ld->getResource()->getLoadPlans().begin(); 
+    i != ld->getResource()->getLoadPlans().end() && i->getDate() < s; ++i)
+    if (i->getQuantity() != 0.0 && !static_cast<LoadPlan*>(&*i)->getLoad()->getSetup().empty())
+      lastld = static_cast<LoadPlan*>(&*i)->getLoad();
+
+  // Calculate the conversion of the current setup to the required setup
+  string lastsetup = lastld ? lastld->getSetup() : ld->getResource()->getSetup();
+  pair<TimePeriod,double> c = calculateSetup(lastsetup,ld->getSetup());
+  logger << "calculating conversion on " << ld->getResource() 
+    //<< " on " << s << "  " << e 
+    << " from " << lastsetup << " to " << ld->getSetup() << ": " << c.first << " " << c.second << endl;
+
+  return DateRange(s,s);
+}
 
 } // end namespace

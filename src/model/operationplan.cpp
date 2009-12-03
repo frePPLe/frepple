@@ -247,6 +247,10 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
     }
   }
 
+  // Instantiate all suboperationplans as well
+  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+    x->instantiate();
+
   // Create unique identifier
   // Having an identifier assigned is an important flag.
   // Only operation plans with an id :
@@ -354,6 +358,81 @@ DECLARE_EXPORT void OperationPlan::insertInOperationplanList()
 }
 
 
+DECLARE_EXPORT void OperationPlan::addSubOperationPlan(OperationPlan* o)
+{
+  // Check
+  if (!o) throw LogicException("Adding null suboperationplan");
+
+  // Adding a suboperationplan that was already added
+  if (o->owner == this)  return;
+
+  // Clear the previous owner, if there is one
+  if (o->owner) o->owner->eraseSubOperationPlan(o);
+
+  // Link in the list, keeping the right ordering
+  if (!firstsubopplan)
+  {
+    // First element
+    firstsubopplan = o;
+    lastsubopplan = o;
+  }
+  else if (*o < *firstsubopplan)
+  {
+    // New head
+    o->nextsubopplan = firstsubopplan;
+    firstsubopplan->prevsubopplan = o;
+    firstsubopplan = o;
+  }
+  else
+  {
+    // Insert in the middle or at the end
+    OperationPlan *x = firstsubopplan;
+    while (x->nextsubopplan && *(x->nextsubopplan) < *o) x = x->nextsubopplan;
+    o->nextsubopplan = x->nextsubopplan;
+    o->prevsubopplan = x;
+    if (x->nextsubopplan) 
+      x->nextsubopplan->prevsubopplan = o;    
+    else
+      lastsubopplan = o; // New tail
+    x->nextsubopplan = o;
+  }
+  o->owner = this;
+
+  // Update the top operationplan
+  setStartAndEnd(
+    firstsubopplan->getDates().getStart(),
+    lastsubopplan->getDates().getEnd()
+  );
+
+  // Update the flow and loadplans
+  update();
+}
+
+
+DECLARE_EXPORT void OperationPlan::eraseSubOperationPlan(OperationPlan* o)
+{
+  // Check
+  if (!o) return;
+
+  // Adding a suboperationplan that was already added
+  if (o->owner != this)
+    throw LogicException("Operationplan isn't a suboperationplan");
+  
+  // Clear owner field
+  o->owner = NULL;
+
+  // Remove from the list
+  if (o->prevsubopplan) 
+    o->prevsubopplan->nextsubopplan = o->nextsubopplan;
+  else
+    firstsubopplan = o->nextsubopplan;
+  if (o->nextsubopplan) 
+    o->nextsubopplan->prevsubopplan = o->prevsubopplan;
+  else
+    lastsubopplan = o->prevsubopplan;
+};
+
+
 DECLARE_EXPORT bool OperationPlan::operator < (const OperationPlan& a) const
 {
   // Different operations
@@ -440,6 +519,15 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
   for (LoadPlanIterator f = beginLoadPlans(); f != endLoadPlans();)
     delete &*(f++);
 
+  // Delete the sub operationplans
+  for (OperationPlan *x = firstsubopplan; x; )
+  {
+    OperationPlan *y = x->nextsubopplan;
+    x->owner = NULL; // Need to clear before destroying the suboperationplan
+    delete x;
+    x = y;
+  }
+
   // Delete also the owner
   if (owner)
   {
@@ -473,17 +561,41 @@ void DECLARE_EXPORT OperationPlan::setOwner(OperationPlan* o)
   if (owner == o) return;
   // Erase the previous owner if there is one
   if (owner) owner->eraseSubOperationPlan(this);
-  // Set new owner
-  owner = o;
   // Register with the new owner
-  if (owner) owner->addSubOperationPlan(this);
+  if (o) o->addSubOperationPlan(this);
 }
 
 
 void DECLARE_EXPORT OperationPlan::setStart (Date d)
 {
+  // Locked opplans don't move
   if (getLocked()) return;
-  oper->setOperationPlanParameters(this,quantity,d,Date::infinitePast);
+
+  if (!firstsubopplan)   //xxx will need to skip setups
+    // No sub operationplans
+    oper->setOperationPlanParameters(this,quantity,d,Date::infinitePast);
+  else
+  {
+    // Move all sub-operationplans in an orderly fashion
+    bool firstMove = true;
+    for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
+    {
+      if (i->getDates().getStart() < d || firstMove)
+      {
+        i->setStart(d);
+        firstMove = false;
+        d = i->getDates().getEnd();
+      }
+      else
+        // There is sufficient slack between the suboperation plans
+        break;
+    }
+    // Set the dates on the top operationplan
+    setStartAndEnd(
+      firstsubopplan->getDates().getStart(),
+      lastsubopplan->getDates().getEnd()
+    );
+  }
 
   // Update flow and loadplans
   update();
@@ -492,8 +604,34 @@ void DECLARE_EXPORT OperationPlan::setStart (Date d)
 
 void DECLARE_EXPORT OperationPlan::setEnd (Date d)
 {
+  // Locked opplans don't move
   if (getLocked()) return;
-  oper->setOperationPlanParameters(this,quantity,Date::infinitePast,d);
+
+  if (!firstsubopplan)   //xxx will need to skip setups
+    // No sub operationplans
+    oper->setOperationPlanParameters(this,quantity,Date::infinitePast,d);
+  else
+  {
+    // Move all sub-operationplans in an orderly fashion
+    bool firstMove = true;
+    for (OperationPlan* i = lastsubopplan; i; i = i->prevsubopplan)
+    {
+      if (i->getDates().getEnd() > d || firstMove)
+      {
+        i->setEnd(d);
+        firstMove = false;
+        d = i->getDates().getStart();
+      }
+      else
+        // There is sufficient slack between the suboperations
+        break;
+    }
+    // Set the dates on the top operationplan
+    setStartAndEnd(
+      firstsubopplan->getDates().getStart(),
+      lastsubopplan->getDates().getEnd()
+    );
+  }
 
   // Update flow and loadplans
   update();
@@ -556,6 +694,14 @@ DECLARE_EXPORT double OperationPlan::setQuantity (double f, bool roundDown, bool
     if (upd) owner->resizeFlowLoadPlans();
   }
 
+  // Apply the same size also to its children
+  if (execute && firstsubopplan)
+    for (OperationPlan *i = firstsubopplan; i; i = i->nextsubopplan)
+    {
+      i->quantity = quantity;
+      if (upd) i->resizeFlowLoadPlans();
+    }
+
   // Update the flow and loadplans, and mark for problem detection
   if (upd) update();
   return quantity;
@@ -588,6 +734,23 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 
 DECLARE_EXPORT void OperationPlan::update()
 {
+  if (firstsubopplan)  // xxx will need to change for setups
+  {
+    // Inherit the start and end date of the child operationplans
+    dates.setStartAndEnd(
+      firstsubopplan->getDates().getStart(),
+      lastsubopplan->getDates().getEnd()
+    );
+    // If at least 1 sub-operationplan is locked, the parent must be locked
+    flags &= ~IS_LOCKED; // Clear is_locked flag
+    for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
+        if (i->flags & IS_LOCKED) 
+        {
+          flags |= IS_LOCKED;  // Set is_locked flag
+          break;
+        }
+  }
+
   // Update the flow and loadplans
   resizeFlowLoadPlans();
 
@@ -650,8 +813,6 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag
   o->writeElement(Tags::tag_end, dates.getEnd());
   o->writeElement(Tags::tag_quantity, quantity);
   if (getLocked()) o->writeElement (Tags::tag_locked, getLocked());
-  if (epst) o->writeElement(Tags::tag_epst, epst);
-  if (lpst) o->writeElement(Tags::tag_lpst, lpst);
   o->writeElement(Tags::tag_owner, owner);
 
   // Write out the flowplans and their pegging
@@ -710,16 +871,17 @@ DECLARE_EXPORT void OperationPlan::endElement (XMLInput& pIn, const Attribute& p
   }
   else if (pAttr.isA(Tags::tag_locked))
     setLocked(pElement.getBool());
-  else if (pAttr.isA(Tags::tag_epst))
-    pElement >> epst;
-  else if (pAttr.isA(Tags::tag_lpst))
-    pElement >> lpst;
 }
 
 
 DECLARE_EXPORT void OperationPlan::setLocked(bool b)
 {
-  locked = b;
+  if (b)
+    flags |= IS_LOCKED;
+  else
+    flags &= ~IS_LOCKED;
+  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+    x->setLocked(b);
   update();
 }
 
@@ -737,322 +899,6 @@ DECLARE_EXPORT void OperationPlan::setDemand(Demand* l)
   if (l) l->setChanged();
 }
 
-
-DECLARE_EXPORT void OperationPlanRouting::addSubOperationPlan(OperationPlan* o)
-{
-  // The sub opplan must point to this operationplan
-  assert(o->getOwner() == this);
-
-  // Add in the list
-  step_opplans.push_front(o);
-
-  // Update the top operationplan
-  setStartAndEnd(
-    step_opplans.front()->getDates().getStart(),
-    step_opplans.back()->getDates().getEnd()
-  );
-
-  // Update the flow and loadplans
-  update();
-}
-
-
-DECLARE_EXPORT OperationPlanRouting::~OperationPlanRouting()
-{
-  // Delete all children
-  for (list<OperationPlan*>::iterator i = step_opplans.begin();
-      i != step_opplans.end(); ++i)
-  {
-    // We need to set the owner to NULL first to prevent the sub-operationplan
-    // from RE-deleting its parent.
-    (*i)->owner = NULL;
-    delete (*i);
-  }
-  step_opplans.clear();
-}
-
-
-DECLARE_EXPORT double OperationPlanRouting::setQuantity (double f, bool roundDown, bool update, bool execute)
-{
-  // First the normal resizing
-  double x = OperationPlan::setQuantity(f,roundDown,update,execute);
-
-  // Apply the same size also to its children
-  if (execute)
-    for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
-        i != step_opplans.end(); ++i)
-    {
-      (*i)->quantity = quantity;
-      if (update) (*i)->resizeFlowLoadPlans();
-    }
-  return x;
-}
-
-
-DECLARE_EXPORT void OperationPlanRouting::eraseSubOperationPlan(OperationPlan* o)
-{
-  step_opplans.remove(o);
-}
-
-
-DECLARE_EXPORT void OperationPlanRouting::setLocked(bool b)
-{
-  for (list<OperationPlan*>::iterator i = step_opplans.begin();
-      i != step_opplans.end(); ++i)
-      (*i)->setLocked(b);
-  update();
-}
-
-
-DECLARE_EXPORT void OperationPlanRouting::setEnd(Date d)
-{
-  if (step_opplans.empty())
-    OperationPlan::setEnd(d);
-  else
-  {
-    // Move all sub-operationplans in an orderly fashion
-    bool firstMove = true;
-    for (list<OperationPlan*>::reverse_iterator i = step_opplans.rbegin();
-        i != step_opplans.rend(); ++i)
-    {
-      if ((*i)->getDates().getEnd() > d || firstMove)
-      {
-        (*i)->setEnd(d);
-        firstMove = false;
-        d = (*i)->getDates().getStart();
-      }
-      else
-        // There is sufficient slack in the routing
-        break;
-    }
-    // Set the dates on the top operationplan
-    setStartAndEnd(
-      step_opplans.front()->getDates().getStart(),
-      step_opplans.back()->getDates().getEnd()
-    );
-  }
-}
-
-
-DECLARE_EXPORT void OperationPlanRouting::setStart(Date d)
-{
-  if (step_opplans.empty()) 
-    OperationPlan::setStart(d);
-  else
-  {
-    // Move all sub-operationplans in an orderly fashion
-    bool firstMove = true;
-    for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
-        i != step_opplans.end(); ++i)
-    {
-      if ((*i)->getDates().getStart() < d || firstMove)
-      {
-        (*i)->setStart(d);
-        firstMove = false;
-        d = (*i)->getDates().getEnd();
-      }
-      else
-        // There is sufficient slack in the routing
-        break;
-    }
-    // Set the dates on the top operationplan
-    setStartAndEnd(
-      step_opplans.front()->getDates().getStart(),
-      step_opplans.back()->getDates().getEnd()
-    );
-  }
-}
-
-
-DECLARE_EXPORT void OperationPlanRouting::update()
-{
-  if (!step_opplans.empty())
-  {
-    // Set the dates on the top operationplan
-    setStartAndEnd(
-      step_opplans.front()->getDates().getStart(),
-      step_opplans.back()->getDates().getEnd()
-    );
-    // If at least 1 sub-operationplan is locked, the whole routing is
-    // considered locked.
-    locked = false;
-    for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
-        i != step_opplans.end(); ++i)
-        if ((*i)->locked) 
-        {
-          locked = true;
-          break;
-        }
-  }
-  OperationPlan::update();
-}
-
-
-DECLARE_EXPORT bool OperationPlanRouting::instantiate()
-{
-  // Create step suboperationplans if they don't exist yet.
-  if (step_opplans.empty())
-  {
-    Date d = getDates().getEnd();
-    OperationPlan *p = NULL;
-    // @todo not possible to initialize a routing oplan based on a start date
-    if (d != Date::infiniteFuture)
-    {
-      // Using the end date
-      for (Operation::Operationlist::const_reverse_iterator e =
-            getOperation()->getSubOperations().rbegin();
-          e != getOperation()->getSubOperations().rend(); ++e)
-      {
-        p = (*e)->createOperationPlan(getQuantity(), Date::infinitePast,
-            d, NULL, this, 0, true);
-        d = p->getDates().getStart();
-      }
-    }
-    else
-    {
-      // Using the start date when there is no end date
-      d = getDates().getStart();
-      // Using the current date when both the start and end date are missing
-      if (!d) d = Plan::instance().getCurrent();
-      for (Operation::Operationlist::const_iterator e =
-            getOperation()->getSubOperations().begin();
-          e != getOperation()->getSubOperations().end(); ++e)
-      {
-        p = (*e)->createOperationPlan(getQuantity(), d,
-            Date::infinitePast, NULL, this, 0, true);
-        d = p->getDates().getEnd();
-      }
-    }
-  }
-
-  // Initialize the suboperationplans
-  for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
-      i != step_opplans.end(); ++i)
-      if (!(*i)->getIdentifier()) (*i)->instantiate();
-
-  // Initialize myself
-  return getIdentifier() ? true : OperationPlan::instantiate();
-}
-
-
-DECLARE_EXPORT void OperationPlanAlternate::addSubOperationPlan(OperationPlan* o)
-{
-  // The sub opplan must point to this operationplan
-  assert(o->getOwner() == this);
-
-  // Add in the list
-  altopplan = o;
-
-  // Update the top operationplan
-  setStartAndEnd(
-    altopplan->getDates().getStart(),
-    altopplan->getDates().getEnd()
-  );
-
-  // Update the flow and loadplans
-  update();
-}
-
-
-DECLARE_EXPORT OperationPlanAlternate::~OperationPlanAlternate()
-{
-  if (!altopplan) return;
-  altopplan->owner = NULL;
-  delete altopplan;
-}
-
-
-DECLARE_EXPORT void OperationPlanAlternate::setEnd(Date d)
-{
-  if (!altopplan) return;
-  altopplan->setEnd(d);
-  setStartAndEnd(
-    altopplan->getDates().getStart(),
-    altopplan->getDates().getEnd()
-  );
-}
-
-
-DECLARE_EXPORT void OperationPlanAlternate::setStart(Date d)
-{
-  if (!altopplan) return;
-  altopplan->setStart(d);
-  setStartAndEnd(
-    altopplan->getDates().getStart(),
-    altopplan->getDates().getEnd()
-  );
-}
-
-
-DECLARE_EXPORT void OperationPlanAlternate::setLocked(bool b)
-{
-  if (altopplan) altopplan->setLocked(b);
-  else locked = b;
-  OperationPlan::update();
-}
-
-
-DECLARE_EXPORT void OperationPlanAlternate::update()
-{
-  if (altopplan)
-  {
-    // Inherit the start and end date of the child operationplan
-    setStartAndEnd(
-      altopplan->getDates().getStart(),
-      altopplan->getDates().getEnd()
-    );
-    // Inherit the locked status of my child
-    locked = altopplan->locked;
-  }
-  OperationPlan::update();
-}
-
-
-DECLARE_EXPORT bool OperationPlanAlternate::instantiate()
-{
-  // Create an alternate suboperationplan if one doesn't exist yet.
-  // We use the first alternate by default.
-  if (!altopplan && !getOperation()->getSubOperations().empty())
-  {
-    altopplan = getOperation()->getSubOperations().front()->
-      createOperationPlan(getQuantity(), getDates().getStart(),
-      getDates().getEnd(), NULL, this, 0, true);
-  }
-
-  // Initialize this operationplan and its child
-  if (altopplan && !altopplan->getIdentifier()) altopplan->instantiate();
-  return getIdentifier() ? true : OperationPlan::instantiate();
-}
-
-
-DECLARE_EXPORT double OperationPlanAlternate::setQuantity(double f, bool roundDown, bool update, bool execute)
-{
-  if (altopplan)
-  {
-    // Use the sizing from the sub-operation
-    f = altopplan->setQuantity(f, roundDown, update, execute);
-    if (execute)
-    {
-      quantity = f;
-      if (update) resizeFlowLoadPlans();
-    }
-  }
-  else
-    // Use the sizing of the top-operation
-    f = OperationPlan::setQuantity(f, roundDown, update, execute);
-  return f;
-}
-
-
-DECLARE_EXPORT void OperationPlanAlternate::eraseSubOperationPlan(OperationPlan* o)
-{
-  if (altopplan == o)
-    altopplan = NULL;
-  else if (o)
-    logger << "Warning: Trying to remove a sub operationplan '"
-      << *(o->getOperation()) << "' that is not registered with"
-      << " its parent '" << *getOperation() << "'" << endl;
-}
 
 
 PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)

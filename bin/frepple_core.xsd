@@ -830,8 +830,6 @@
       <xsd:element name="demand" type="demand" minOccurs="0" />
       <xsd:element name="start" type="xsd:dateTime" minOccurs="0" />
       <xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
-      <xsd:element name="epst" type="xsd:dateTime" minOccurs="0" />
-      <xsd:element name="lpst" type="xsd:dateTime" minOccurs="0" />
       <xsd:element name="quantity" type="positiveDouble" minOccurs="0" />
       <xsd:element name="locked" type="xsd:boolean" minOccurs="0" />
       <xsd:element name="owner" type="operationplan" minOccurs="0" />
@@ -840,8 +838,6 @@
     <xsd:attribute name="operation" type="non-empty-string" />
     <xsd:attribute name="start" type="xsd:dateTime" />
     <xsd:attribute name="end" type="xsd:dateTime" />
-    <xsd:attribute name="epst" type="xsd:dateTime" />
-    <xsd:attribute name="lpst" type="xsd:dateTime" />
     <xsd:attribute name="quantity" type="positiveDouble" />
     <xsd:attribute name="locked" type="xsd:boolean" />
     <xsd:attribute name="action" type="action" />

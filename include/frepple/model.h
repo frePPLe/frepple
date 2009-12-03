@@ -1525,7 +1525,7 @@ class Operation : public HasName<Operation>,
 
     /** This is the factory method which creates all operationplans of the
       * operation. */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (double, Date,
+    DECLARE_EXPORT OperationPlan* createOperationPlan (double, Date,
       Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
@@ -1802,13 +1802,15 @@ class Operation : public HasName<Operation>,
   *  - The createLoadAndFlowplans() can optionally be called to also create
   *    the loadplans and flowplans, to take care of the material and
   *    capacity consumption.
-  *  - Once you're sure about creating the operationplan, the initialize()
+  *  - Once you're sure about creating the operationplan, the instantiate()
   *    method should be called. It will assign the operationplan a unique
   *    numeric identifier, register the operationplan in a container owned
   *    by the operation instance, and also create loadplans and flowplans
   *    if this hasn't been done yet.<br>
   *  - Operationplans can be organized in hierarchical structure, matching
   *    the operation hierarchies they belong to.
+  *
+  * @TODO reading suboperationplans can be improved
   */
 class OperationPlan
       : public Object, public HasProblems, public NonCopyable
@@ -1817,8 +1819,8 @@ class OperationPlan
     friend class LoadPlan;
     friend class Demand;
     friend class Operation;
-    friend class OperationPlanAlternate;
-    friend class OperationPlanRouting;
+    friend class OperationAlternate;
+    friend class OperationRouting;
 
   public:
     class FlowPlanIterator;
@@ -2009,7 +2011,7 @@ class OperationPlan
     /** Returns whether the operationplan is locked. A locked operationplan
       * is never changed. 
       */
-    bool getLocked() const {return locked;}
+    bool getLocked() const {return flags & IS_LOCKED;}
 
     /** Deletes all operationplans of a certain operation. A boolean flag
       * allows to specify whether locked operationplans are to be deleted too.
@@ -2023,18 +2025,6 @@ class OperationPlan
 
     /** Returns a pointer to the operation being instantiated. */
     Operation* getOperation() const {return oper;}
-
-    /** Sets the earliest possible start time (epst) of the operationplan. */
-    void setEpst(Date d) {epst = d; setChanged();}
-
-    /** Returns the earliest possible start time (epst) of the operationplan. */
-    Date getEpst() const {return epst;}
-
-    /** Sets the latest possible start time (lpst) of the operationplan. */
-    void setLpst(Date d) {lpst = d; setChanged();}
-
-    /** Returns the latest possible start time (lpst) of the operationplan. */
-    Date getLpst() const {return lpst;}
 
     /** Fixes the start and end Date of an operationplan. Note that this
       * overrules the standard duration given on the operation, i.e. no logic
@@ -2096,13 +2086,21 @@ class OperationPlan
       */
     unsigned long getIdentifier() const {return id;}
 
-    /** Updates the end date of the operationplan. The start date is computed.
-      * Locked operationplans are not updated by this function.
+    /** Updates the end date of the operationplan and compute the start 
+      * date.<br>
+      * Locked operationplans are not updated by this function.<br>
+      * Slack can be introduced between sub operationaplans by this method, 
+      * i.e. the sub operationplans are only moved if required to meet the 
+      * end date.
       */
     virtual DECLARE_EXPORT void setEnd(Date);
 
-    /** Updates the start date of the operationplan. The end date is computed.
-      * Locked operation_plans are not updated by this function.
+    /** Updates the start date of the operationplan and compute the end 
+      * date.<br>
+      * Locked operation_plans are not updated by this function.<br>
+      * Slack can be introduced between sub operationaplans by this method, 
+      * i.e. the sub operationplans are only moved if required to meet the 
+      * start date.
       */
     virtual DECLARE_EXPORT void setStart(Date);
 
@@ -2145,25 +2143,11 @@ class OperationPlan
       */
     DECLARE_EXPORT void insertInOperationplanList();
 
-    /** Add a sub-operationplan to the list. For normal operationplans this
-      * is only a dummy function. For alternates and routing operationplans
-      * it does have a meaning.
-      */
-    virtual void addSubOperationPlan(OperationPlan* o)
-    {
-      throw LogicException("Adding a sub operationplan to "
-          + oper->getName() + " not supported");
-    };
+    /** Add a sub-operationplan to the list. */
+    virtual DECLARE_EXPORT void addSubOperationPlan(OperationPlan*);
 
-    /** Remove a sub-operation_plan from the list. For normal operation_plans
-      * this is only a dummy function. For alternates and routing
-      * operationplans it does have a meaning.
-      */
-    virtual void eraseSubOperationPlan(OperationPlan* o)
-    {
-      throw LogicException("Removing a sub operationplan from "
-          + oper->getName() + " not supported");
-    };
+    /** Remove a sub-operation_plan from the list. */
+    virtual DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan*);
 
     /** This function is used to create the proper loadplan and flowplan
       * objects associated with the operation. */
@@ -2240,11 +2224,17 @@ class OperationPlan
       * own override of the createOperationPlan method.
       * @see Operation::createOperationPlan
       */
-    OperationPlan() : owner(NULL), quantity(0.0), locked(false), dmd(NULL),
+    OperationPlan() : owner(NULL), quantity(0.0), flags(0), dmd(NULL),
       id(0), oper(NULL), firstflowplan(NULL), firstloadplan(NULL),
-      prev(NULL), next(NULL) {initType(metadata);}
+      prev(NULL), next(NULL), firstsubopplan(NULL), lastsubopplan(NULL), 
+      nextsubopplan(NULL), prevsubopplan(NULL)
+        {initType(metadata);}
 
   private:
+    static const short IS_LOCKED = 1;
+    static const short IS_SETUP = 2;
+    static const short HAS_SETUP = 4;
+
     /** Empty list of operationplans.<br>
       * For operationplan types without suboperationplans this list is used
       * as the list of suboperationplans.
@@ -2253,7 +2243,7 @@ class OperationPlan
 
     /** Is this operationplan locked? A locked operationplan doesn't accept
       * any changes. This field is only relevant for top-operationplans. */
-    bool locked;
+    short flags;
 
     /** Counter of OperationPlans, which is used to automatically assign a
       * unique identifier for each operationplan.<br>
@@ -2276,12 +2266,6 @@ class OperationPlan
     /** Pointer to the operation. */
     Operation *oper;
 
-    /** Earliest possible start time. */
-    Date epst;
-
-    /** Earliest possible start time. */
-    Date lpst;
-
     /** Root of a single linked list of flowplans. */
     FlowPlan* firstflowplan;
 
@@ -2299,6 +2283,18 @@ class OperationPlan
       * @see prev
       */
     OperationPlan* next;
+
+    /** Pointer to the first suboperationplan of this operationplan. */
+    OperationPlan* firstsubopplan;
+
+    /** Pointer to the last suboperationplan of this operationplan. */
+    OperationPlan* lastsubopplan;
+
+    /** Pointer to the next suboperationplan of the parent operationplan. */
+    OperationPlan* nextsubopplan;
+
+    /** Pointer to the previous suboperationplan of the parent operationplan. */
+    OperationPlan* prevsubopplan;
 };
 
 
@@ -2491,14 +2487,6 @@ class OperationRouting : public Operation
     /** Return a list of all sub-operationplans. */
     virtual const Operationlist& getSubOperations() const {return steps;}
 
-    /** This is the factory method which creates all operationplans of the
-      * operation.
-      * @see Operation::createOperationPlan
-      */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (double, Date,
-      Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
-      bool makeflowsloads=true) const;
-
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
@@ -2509,55 +2497,6 @@ class OperationRouting : public Operation
 
   private:
     Operationlist steps;
-};
-
-
-/** @brief OperationPlans for routing operation uses this subclass for
-  * the instances. 
-  * @todo reading operationplans for the steps is not working well
-  */
-class OperationPlanRouting : public OperationPlan
-{
-    friend class OperationRouting;
-  private:
-    OperationPlan::OperationPlanList step_opplans;
-    OperationPlanRouting() {};
-  public:
-    /** Updates the end date of the operation. Slack can be introduced in the
-      * routing by this method, i.e. the sub operationplans are only moved if
-      * required to meet the end date. */
-    DECLARE_EXPORT void setEnd(Date d);
-
-    /** Updates the start date of the operation. Slack can be introduced in the
-      * routing by this method, i.e. the sub operationplans are only moved if
-      * required to meet the start date.
-      */
-    DECLARE_EXPORT void setStart(Date d);
-    virtual DECLARE_EXPORT void update();
-    DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
-    DECLARE_EXPORT ~OperationPlanRouting();
-    DECLARE_EXPORT double setQuantity(double f, bool roundDown = false, bool update = true, bool execute = true);
-    DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
-    virtual const OperationPlan::OperationPlanList& getSubOperationPlans() const {return step_opplans;}
-
-    /** Locks/unlocks an operationplan. A locked operationplan is never
-      * changed.
-      */
-    virtual DECLARE_EXPORT void setLocked(bool b = true);
-
-    /** Initializes the operationplan and all steps in it.
-      * If no step operationplans had been created yet this method will create
-      * them. During this type of creation the end date of the routing
-      * operationplan is used and step operationplans are created. After the
-      * step operationplans are created the start date of the routing will be
-      * equal to the start of the first step.
-      */
-    DECLARE_EXPORT bool instantiate();
-
-    void updateProblems();
-
-    virtual size_t getSize() const
-      {return sizeof(OperationPlanRouting) + step_opplans.size() * 2 * sizeof(OperationPlan*);}
 };
 
 
@@ -2668,14 +2607,6 @@ class OperationAlternate : public Operation
       */
     static DECLARE_EXPORT PyObject* addAlternate(PyObject*, PyObject*, PyObject*);
 
-    /** This is the factory method which creates all operationplans of the
-      * operation.
-      * @see Operation::createOperationPlan
-      */
-    virtual DECLARE_EXPORT OperationPlan* createOperationPlan (double, Date,
-      Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
-      bool makeflowsloads=true) const;
-
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     virtual size_t getSize() const
@@ -2701,47 +2632,6 @@ class OperationAlternate : public Operation
 
     /** Mode to select the preferred alternates. */
     SearchMode search; 
-};
-
-
-/** @brief This class subclasses the OperationPlan class for operations of type
-  * OperationAlternate.
-  *
-  * Such operationplans need an extra field to point to the suboperationplan.
-  * @see OperationPlan, OperationAlternate
-  */
-class OperationPlanAlternate : public OperationPlan
-{
-    friend class OperationAlternate;
-
-  private:
-    OperationPlan* altopplan;
-
-  public:
-    /* Constructor. */
-    OperationPlanAlternate() : altopplan(NULL) {};
-
-    /** Destructor. */
-    DECLARE_EXPORT ~OperationPlanAlternate();
-    DECLARE_EXPORT void addSubOperationPlan(OperationPlan* o);
-    DECLARE_EXPORT double setQuantity(double f, bool roundDown = false, bool update = true, bool execute = true);
-    DECLARE_EXPORT void eraseSubOperationPlan(OperationPlan* o);
-    DECLARE_EXPORT void setEnd(Date d);
-    DECLARE_EXPORT void setStart(Date d);
-    DECLARE_EXPORT void update();
-
-    /** Returns the sub-operationplan. */
-    virtual OperationPlan* getSubOperationPlan() const {return altopplan;}
-
-    /** Locks/unlocks an operationplan. A locked operationplan is never
-      * changed.
-      */
-    virtual DECLARE_EXPORT void setLocked(bool b = true);
-
-    /** Initializes the operationplan. If no suboperationplan was created
-      * yet this method will create one, using the highest priority alternate.
-      */
-    DECLARE_EXPORT bool instantiate();
 };
 
 
@@ -3740,7 +3630,11 @@ class SetupMatrix : public HasName<SetupMatrix>
       * If no matching rule is found, the changeover is not allowed: a NULL 
       * pointer is returned.
       */ 
-    DECLARE_EXPORT Rule* calculateSetup(const string, const string) const;
+    DECLARE_EXPORT pair<TimePeriod,double> calculateSetup(const string, const string) const;
+
+    /** Compute the setup time for a certain loadplan. */
+    virtual DECLARE_EXPORT DateRange calculateSetup
+      (OperationPlan*, const Load*, Date, Date, bool, bool) const;
 
   private:
     /** Head of the list of rules. */
@@ -4042,7 +3936,8 @@ class Load
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
-    virtual size_t getSize() const {return sizeof(Load) + getName().size();}
+    virtual size_t getSize() const 
+      {return sizeof(Load) + getName().size() + getSetup().size();}
 
     /** Default constructor. */
     Load() : qty(1.0), priority(1), hasAlts(false), altLoad(NULL) 
@@ -5101,96 +4996,6 @@ class ProblemExcess : public Problem
 };
 
 
-/** @brief A problem of this class is created when an OperationPlan is planned
-  * later than the accepted tolerance after its lpst Date.
-  */
-class ProblemPlannedLate : public Problem
-{
-  public:
-    string getDescription() const
-      {return "Operationplan planned after its lpst date";}
-    bool isFeasible() const {return false;}
-    /** The weight of the problem is equal to the duration in days. */
-    double getWeight() const 
-    {
-      return static_cast<double>(getDateRange().getDuration()) / 86400;
-    }
-    explicit ProblemPlannedLate(OperationPlan* o) : Problem(o)
-      {addProblem();}
-    ~ProblemPlannedLate() {removeProblem();}
-    string getEntity() const {return "operationplans";}
-    const DateRange getDateRange() const
-      {return dynamic_cast<OperationPlan*>(getOwner())->getDates();}
-
-    /** Return the tolerance limit for problem detection. */
-    static TimePeriod getAllowedLate() {return allowedLate;}
-
-    /** Update the tolerance limit. Note that this will trigger re-evaluation of
-      * all operationplans and existing problems, which can be expensive in a
-      * big plan. */
-    static void setAllowedLate(TimePeriod p);
-
-    size_t getSize() const {return sizeof(ProblemPlannedLate);} 
-
-    /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return *metadata;}
-
-    /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass* metadata;
-
-  private:
-    /** This is the time that is allowed between the lpst date and the start
-      * date of an operation before a problem is created.
-      * The default value is 0. */
-    static DECLARE_EXPORT TimePeriod allowedLate;
-};
-
-
-/** @brief A problem of this class is created when a demand is planned earlier
-  * than the accepted tolerance before its epst date.
-  */
-class ProblemPlannedEarly : public Problem
-{
-  public:
-    string getDescription() const
-      {return "Operationplan planned before its epst date";}
-    bool isFeasible() const {return false;}
-    /** The weight of the problem is equal to the duration in days. */
-    double getWeight() const 
-    {
-      return static_cast<double>(getDateRange().getDuration()) / 86400;
-    }
-    explicit ProblemPlannedEarly(OperationPlan* o) : Problem(o)
-      {addProblem();}
-    ~ProblemPlannedEarly() {removeProblem();}
-    string getEntity() const {return "operationplans";}
-    const DateRange getDateRange() const
-      {return dynamic_cast<OperationPlan*>(getOwner())->getDates();}
-
-    /** Return the tolerance limit for problem detection. */
-    static TimePeriod getAllowedEarly() {return allowedEarly;}
-
-    /** Update the tolerance limit. Note that this will trigger re-evaluation of
-      * all operationplans and existing problems, which can be expensive in a
-      * big plan. */
-    static void setAllowedEarly(TimePeriod p);
-
-    size_t getSize() const {return sizeof(ProblemPlannedEarly);} 
-
-    /** Return a reference to the metadata structure. */
-    const MetaClass& getType() const {return *metadata;}
-
-    /** Storing metadata on this class. */
-    static DECLARE_EXPORT const MetaClass* metadata;
-
-  private:
-    /** This is the time that is allowed between the epst date and the start
-      * date of an operation before a problem is created.
-      * The default value is 0. */
-    static DECLARE_EXPORT TimePeriod allowedEarly;
-};
-
-
 /** @brief A problem of this class is created when a resource is being
   * overloaded during a certain period of time.
   */
@@ -6061,6 +5866,8 @@ class OperationPlanIterator
     OperationPlanIterator(Operation* o)
       : FreppleIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>(o)
     {}
+
+    /** TODO add iterator to iterate over suboperationplans. */
 };
 
 

@@ -41,8 +41,6 @@ DECLARE_EXPORT const MetaClass* ProblemMaterialExcess::metadata,
   *ProblemEarly::metadata,
   *ProblemLate::metadata,
   *ProblemDemandNotPlanned::metadata,
-  *ProblemPlannedEarly::metadata,
-  *ProblemPlannedLate::metadata,
   *ProblemPrecedence::metadata,
   *ProblemBeforeFence::metadata,
   *ProblemBeforeCurrent::metadata,
@@ -69,10 +67,6 @@ int Problem::initialize()
     ("problem","late");
   ProblemDemandNotPlanned::metadata = new MetaClass
     ("problem","unplanned");
-  ProblemPlannedEarly::metadata = new MetaClass
-    ("problem","planned early");
-  ProblemPlannedLate::metadata = new MetaClass
-    ("problem","planned late");
   ProblemPrecedence::metadata = new MetaClass
     ("problem","precedence");
   ProblemBeforeFence::metadata = new MetaClass

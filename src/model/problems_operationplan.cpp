@@ -39,17 +39,15 @@ DECLARE_EXPORT void Operation::updateProblems()
 
 
 //
-// BEFORECURRENT, BEFOREFENCE, PLANNEDEARLY, PLANNEDLATE
+// BEFORECURRENT, BEFOREFENCE, PLANNEDEARLY, PLANNEDLATE, PRECEDENCE
 //
 
 
-void OperationPlan::updateProblems()
+void OperationPlan::updateProblems()  // @todo test precedence problems: may well be broken
 {
   // A flag for each problem type that may need to be created
   bool needsBeforeCurrent(false);
   bool needsBeforeFence(false);
-  bool needsEarly(false);
-  bool needsLate(false);
 
   // The following categories of operation plans can't have problems:
   //  - locked opplans
@@ -67,18 +65,6 @@ void OperationPlan::updateProblems()
     else if
     (dates.getStart() < Plan::instance().getCurrent() + oper->getFence())
       needsBeforeFence = true;
-
-    // Check if a PlannedEarly problem is required
-    if (getEpst()
-        && getDates().getStart()
-           < getEpst() - ProblemPlannedEarly::getAllowedEarly())
-      needsEarly = true;
-
-    // Check if a PlannedLate problem is required
-    if (getLpst()
-        && getDates().getStart()
-           > getLpst() + ProblemPlannedLate::getAllowedLate())
-      needsLate = true;
   }
 
   // Loop through the existing problems
@@ -105,16 +91,6 @@ void OperationPlan::updateProblems()
       if (needsBeforeFence) needsBeforeFence = false;
       else delete &curprob;
     }
-    else if (typeid(curprob) == typeid(ProblemPlannedEarly))
-    {
-      if (needsEarly) needsEarly = false;
-      else delete &curprob;
-    }
-    else if (typeid(curprob) == typeid(ProblemPlannedLate))
-    {
-      if (needsLate) needsLate = false;
-      else delete &curprob;
-    }
   }
 
   // Create the problems that are required but aren't existing yet.
@@ -123,88 +99,44 @@ void OperationPlan::updateProblems()
   // Plannable, so we need a dirty cast.
   if (needsBeforeCurrent) new ProblemBeforeCurrent(this);
   if (needsBeforeFence) new ProblemBeforeFence(this);
-  if (needsEarly) new ProblemPlannedEarly(this);
-  if (needsLate) new ProblemPlannedLate(this);
-}
 
-
-DECLARE_EXPORT TimePeriod ProblemPlannedEarly::allowedEarly;
-DECLARE_EXPORT TimePeriod ProblemPlannedLate::allowedLate;
-
-
-void ProblemPlannedEarly::setAllowedEarly(TimePeriod p)
-{
-  allowedEarly = p;
-
-  // Let all operationplans check for new problems
-  // Note that ProblemPlannedEarly problems are subscribing to their
-  // operationplan and the update() method is notifying them.
-  for (OperationPlan::iterator i = OperationPlan::begin();
-      i != OperationPlan::end(); ++i)
-    i->getOperation()->setChanged();
-}
-
-
-void ProblemPlannedLate::setAllowedLate(TimePeriod p)
-{
-  allowedLate = p;
-
-  // Let all operationplans check for new problems
-  // Note that ProblemPlannedLate problems are subscribing to their
-  // operationplan and the update() method is notifying them.
-  for (OperationPlan::iterator i = OperationPlan::begin();
-      i != OperationPlan::end(); ++i)
-    i->getOperation()->setChanged();
-}
-
-
-//
-// PRECEDENCE
-//
-
-
-void OperationPlanRouting::updateProblems()  // @todo test! may well be broken
-{
   // Make a list of all existing precedence problems
-  list<ProblemPrecedence*> currentproblems;
-  for (Problem::const_iterator j = Problem::begin(this, false);
-      j!=Problem::end(); ++j)
-    if (typeid(*j) == typeid(ProblemPrecedence))
-      currentproblems.push_front(static_cast<ProblemPrecedence*>(&*j));
-
-  // Problem detection: Check for new precedence_before problem
-  OperationPlan* prev = NULL;
-  for (list<OperationPlan*>::const_iterator i = step_opplans.begin();
-      i != step_opplans.end(); ++i)
+  if (firstsubopplan && getOperation()->getType() == *OperationRouting::metadata)
   {
-    if (prev && prev->getDates().getEnd() > (*i)->getDates().getStart())
+    // Collect current precedence problems
+    list<ProblemPrecedence*> currentproblems;
+    for (Problem::const_iterator j = Problem::begin(this, false);
+        j!=Problem::end(); ++j)
+      if (typeid(*j) == typeid(ProblemPrecedence))
+        currentproblems.push_front(static_cast<ProblemPrecedence*>(&*j));
+
+    // Check for precedence_before problems
+    for (OperationPlan* x = firstsubopplan; x && x->nextsubopplan; x = x->nextsubopplan)
+      if (x->getDates().getEnd() > x->nextsubopplan->getDates().getStart())
+      {
+        // We need a precedence problem. It could already exist or we need a
+        // new one...
+        list<ProblemPrecedence*>::iterator l;
+        for (l = currentproblems.begin(); l != currentproblems.end(); ++l)
+          if ((*l)->getFirstOperationPlan() == x)
+          {
+            // It already exists
+            currentproblems.erase(l);
+            break;
+          }
+        if (l == currentproblems.end())
+          // It is a new problem
+          new ProblemPrecedence (getOperation(), x, x->nextsubopplan);
+      }
+
+    // Erase old problems that have now become obsolete
+    while (!currentproblems.empty())
     {
-      // We need a precedence problem. It could already exist or we need a
-      // new one...
-      list<ProblemPrecedence*>::iterator l;
-      for (l = currentproblems.begin(); l != currentproblems.end(); ++l)
-        if ((*l)->getFirstOperationPlan() == prev)
-        {
-          // It already exists
-          currentproblems.erase(l);
-          break;
-        }
-      if (l == currentproblems.end())
-        // It is a new problem
-        new ProblemPrecedence (getOperation(), prev, *i);
+      delete currentproblems.front();
+      currentproblems.pop_front();
     }
-    prev = *i;
   }
-
-  // Erase old problems that have now become obsolete
-  while (!currentproblems.empty())
-  {
-    delete currentproblems.front();
-    currentproblems.pop_front();
-  }
-
-  // Continue with the normal problem detection
-  OperationPlan::updateProblems();
+      
 }
 
 }

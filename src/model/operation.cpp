@@ -643,8 +643,22 @@ OperationTimePer::setOperationPlanParameters
   // Respect minimum size
   if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum(); 
 
-  // The logic depends on which dates are being passed along
+  // Calculate the setup time
   DateRange x;
+  for (loadlist::const_iterator g=getLoads().begin(); g!=getLoads().end(); ++g)
+    if (g->getResource()->getSetupMatrix() && !g->getSetup().empty()) 
+    {
+      DateRange x2 = g->getResource()->getSetupMatrix()->calculateSetup(oplan,&*g,s,e,preferEnd,execute);
+      if (x.getStart() == Date::infinitePast || x2.getStart() < x.getStart()) 
+        x.setStart(x2.getStart());
+      if (x.getEnd() == Date::infiniteFuture ||x2.getEnd() > x.getEnd()) 
+        x.setEnd(x2.getEnd());
+    }
+  //xxxlogger << "setup " << x << endl; //xxx  
+  x = DateRange();
+
+  // The logic depends on which dates are being passed along
+  // xxx DateRange x;
   TimePeriod actual;
   if (s && e)
   {
@@ -846,15 +860,13 @@ DECLARE_EXPORT pair<DateRange,double>
 OperationRouting::setOperationPlanParameters
 (OperationPlan* oplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
-  OperationPlanRouting *op = dynamic_cast<OperationPlanRouting*>(oplan);
-
   // Invalid call to the function
-  if (!op || q<0)
+  if (!oplan || q<0)
     throw LogicException("Incorrect parameters for routing operationplan");
-  if (op->getLocked()) 
+  if (oplan->getLocked()) 
     return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
 
-  if (op->step_opplans.empty())
+  if (!oplan->firstsubopplan) // xx need to change for setups?
   {
     // No step operationplans to work with. Just apply the requested quantity
     // and dates.
@@ -875,12 +887,11 @@ OperationRouting::setOperationPlanParameters
   if (e)
   {
     // Case 1: an end date is specified
-    for (list<OperationPlan*>::reverse_iterator i = op->step_opplans.rbegin();
-        i != op->step_opplans.rend(); ++i)
+    for (OperationPlan* i = oplan->lastsubopplan; i; i = i->prevsubopplan)
     {
-      if ((*i)->getDates().getEnd() > e || firstOp)
+      if (i->getDates().getEnd() > e || firstOp)
       {
-        x = (*i)->getOperation()->setOperationPlanParameters(*i,q,Date::infinitePast,e,preferEnd,execute);
+        x = i->getOperation()->setOperationPlanParameters(i,q,Date::infinitePast,e,preferEnd,execute);
         e = x.first.getStart();
         if (firstOp) y = x.first.getEnd();
         firstOp = false;
@@ -895,12 +906,11 @@ OperationRouting::setOperationPlanParameters
   else if (s)
   {
     // Case 2: a start date is specified
-    for (list<OperationPlan*>::const_iterator i = op->step_opplans.begin();
-        i != op->step_opplans.end(); ++i)
+    for (OperationPlan *i = oplan->firstsubopplan; i; i = i->nextsubopplan)
     {
-      if ((*i)->getDates().getStart() < s || firstOp)
+      if (i->getDates().getStart() < s || firstOp)
       {
-        x = (*i)->getOperation()->setOperationPlanParameters(*i,q,s,Date::infinitePast,preferEnd,execute);
+        x = i->getOperation()->setOperationPlanParameters(i,q,s,Date::infinitePast,preferEnd,execute);
         s = x.first.getEnd();
         if (firstOp) y = x.first.getStart();
         firstOp = false;
@@ -916,17 +926,6 @@ OperationRouting::setOperationPlanParameters
     throw LogicException(
       "Updating a routing operationplan without start or end date"
     );
-}
-
-
-DECLARE_EXPORT OperationPlan* OperationRouting::createOperationPlan 
-  (double q, Date s, Date e, Demand* l, OperationPlan* ow, 
-    unsigned long i, bool makeflowsloads) const
-{
-  // Note that the created operationplan is of a specific subclass
-  OperationPlan *opplan = new OperationPlanRouting();
-  initOperationPlan(opplan,q,s,e,l,ow,i,makeflowsloads);
-  return opplan;
 }
 
 
@@ -1104,34 +1103,20 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, const Attribu
 }
 
 
-DECLARE_EXPORT OperationPlan* OperationAlternate::createOperationPlan (double q,
-    Date s, Date e, Demand* l, OperationPlan* ow,
-    unsigned long i, bool makeflowsloads) const
-{
-  // Note that the operationplan created is of a different subclass.
-  OperationPlan *opplan = new OperationPlanAlternate();
-  if (!s) s = e;
-  if (!e) e = s;
-  initOperationPlan(opplan,q,s,e,l,ow,i,makeflowsloads);
-  return opplan;
-}
-
-
 DECLARE_EXPORT pair<DateRange,double> 
 OperationAlternate::setOperationPlanParameters
   (OperationPlan* oplan, double q, Date s, Date e, bool preferEnd, 
   bool execute) const
 {
-  // Argument passed must be a alternate operationplan
-  OperationPlanAlternate *oa = dynamic_cast<OperationPlanAlternate*>(oplan);
-
   // Invalid calls to this function
-  if (!oa || q<0)
+  if (!oplan || q<0)
     throw LogicException("Incorrect parameters for alternate operationplan");
-  if (oa->getLocked())
+  if (oplan->getLocked())
     return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
 
-  if (!oa->altopplan)
+  OperationPlan *x = oplan->firstsubopplan;
+  // xxx need to skip setup operationplans while (x) x = x->nextsubopplan;  
+  if (!x)
   {
     // Blindly accept the parameters if there is no suboperationplan
     if (execute)
@@ -1145,8 +1130,8 @@ OperationAlternate::setOperationPlanParameters
   }
   else
     // Pass the call to the sub-operation
-    return oa->altopplan->getOperation()
-      ->setOperationPlanParameters(oa->altopplan,q,s,e,preferEnd, execute);  
+    return x->getOperation()
+      ->setOperationPlanParameters(x,q,s,e,preferEnd, execute);
 }
 
 

@@ -77,7 +77,6 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_end;
     static DECLARE_EXPORT const Keyword tag_enddate;
     static DECLARE_EXPORT const Keyword tag_entity;
-    static DECLARE_EXPORT const Keyword tag_epst;
     static DECLARE_EXPORT const Keyword tag_fence;
     static DECLARE_EXPORT const Keyword tag_factor;
     static DECLARE_EXPORT const Keyword tag_filename;
@@ -103,7 +102,6 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_locked;
     static DECLARE_EXPORT const Keyword tag_logfile;
     static DECLARE_EXPORT const Keyword tag_loglevel;
-    static DECLARE_EXPORT const Keyword tag_lpst;
     static DECLARE_EXPORT const Keyword tag_maxearly;
     static DECLARE_EXPORT const Keyword tag_maximum;
     static DECLARE_EXPORT const Keyword tag_maxinterval;

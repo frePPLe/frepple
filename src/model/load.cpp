@@ -242,6 +242,21 @@ DECLARE_EXPORT void Load::setAlternate(string n)
 }
 
 
+DECLARE_EXPORT void Load::setSetup(const string n) 
+{
+  setup = n;
+
+  if (!setup.empty())
+  {
+    // Guarantuee that only a single load has a setup
+    for (Operation::loadlist::iterator i = getOperation()->loaddata.begin(); 
+      i != getOperation()->loaddata.end(); ++i)
+      if (&*i != this && !i->setup.empty()) 
+        throw DataException("Only a single load of an operation can specify a setup");
+  }
+}
+
+
 DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
 {
   // If the load has already been saved, no need to repeat it again

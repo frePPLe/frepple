@@ -433,8 +433,9 @@ DECLARE_EXPORT pair<TimePeriod,double> SetupMatrix::calculateSetup
     // Found a match
     return pair<TimePeriod,double>(curRule->duration, curRule->cost);
   }
-  // No matching rule was found
-  return pair<TimePeriod,double>(9999999, 9999999); // xxx
+
+  // No matching rule was found: very very long and very very expensive
+  return pair<TimePeriod,double>(LONG_MAX, DBL_MAX);
 }
 
 

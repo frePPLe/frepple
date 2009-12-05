@@ -3908,7 +3908,7 @@ class Load
     DECLARE_EXPORT void setAlternate(string n);
 
     /** Update the required resource setup. */
-    void setSetup(const string n) {setup = n;}
+    DECLARE_EXPORT void setSetup(const string);
 
     /** Return the required resource setup. */
     string getSetup() const {return setup;}

@@ -49,7 +49,7 @@ DECLARE_EXPORT void Resource::updateProblems()
   double shortageQty(0.0);
   double curMin(0.0);
   double excessQty(0.0);
-  for (loadplanlist::const_iterator iter = loadplans.begin(); 
+  for (loadplanlist::const_iterator iter = loadplans.begin();
     iter != loadplans.end(); )
   {
     // Process changes in the maximum or minimum targets

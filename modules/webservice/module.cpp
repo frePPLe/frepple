@@ -65,7 +65,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     PyThreadState *myThreadState = PyGILState_GetThisThreadState();
     if (!Py_IsInitialized() || !myThreadState)
       throw RuntimeException("Python isn't initialized correctly");
-    try 
+    try
     {
       // Get the global lock.
       PyEval_RestoreThread(myThreadState);
@@ -82,7 +82,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     }
     PyEval_ReleaseLock();
   }
-  catch (exception &e) 
+  catch (exception &e)
   {
     // Avoid throwing errors during the initialization!
     logger << "Error: " << e.what() << endl;

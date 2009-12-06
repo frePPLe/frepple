@@ -106,6 +106,8 @@
 			</buckets>
 		</calendar>
 	</calendars>
+	<operations>
+	</operations>
 	<items>
 		<item name="Product 1">
 		</item>

@@ -87,7 +87,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(b->getLevel()) << "  Procurement buffer '" << b->getName() 
+    logger << indent(b->getLevel()) << "  Procurement buffer '" << b->getName()
     << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Standard reply date
@@ -157,7 +157,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
       bool noConsumers = true;
       do
       {
-        if (cur->getType() != 1) 
+        if (cur->getType() != 1)
         {
           cur++;
           continue;
@@ -225,7 +225,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
 
     // At this point, we know we need to reorder...
     earliest_next = Date::infinitePast;
-    double order_qty = suggestQuantity(b, 
+    double order_qty = suggestQuantity(b,
       b->getMaximumInventory() - current_inventory);
     if (order_qty > 0)
     {
@@ -331,14 +331,14 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     // Answer the full quantity
     data->state->a_qty = data->state->q_qty;
 
-  // Increment the cost 
+  // Increment the cost
   if (b->getItem() && data->state->a_qty > 0.0)
     data->state->a_cost += data->state->a_qty * b->getItem()->getPrice();
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(b->getLevel()) << "  Procurement buffer '" << b 
-    << "' answers: " << data->state->a_qty << "  " << data->state->a_date 
+    logger << indent(b->getLevel()) << "  Procurement buffer '" << b
+    << "' answers: " << data->state->a_qty << "  " << data->state->a_date
     << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
 }
 

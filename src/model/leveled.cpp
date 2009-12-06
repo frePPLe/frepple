@@ -111,7 +111,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
           throw LogicException("Too many clusters");
 
         // Detect hanging operations
-        if (g->getFlows().empty() && g->getLoads().empty() 
+        if (g->getFlows().empty() && g->getLoads().empty()
           && g->getSuperOperations().empty()
           && g->getSubOperations().empty()
           )

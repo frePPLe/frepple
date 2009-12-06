@@ -129,7 +129,7 @@ DECLARE_EXPORT int Customer::setattro(const Attribute& attr, const PythonObject&
     setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_owner))
   {
-    if (!field.check(Customer::metadata)) 
+    if (!field.check(Customer::metadata))
     {
       PyErr_SetString(PythonDataException, "customer owner must be of type customer");
       return -1;

@@ -39,7 +39,7 @@ namespace module_webservice
 PyObject* CommandWebservice::pythonService(PyObject* self, PyObject* args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try { 
+  try {
     CommandWebservice().execute();	
   }
   catch (...)

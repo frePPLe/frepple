@@ -156,7 +156,7 @@ void Forecast::instantiate()
           {
             prev = new ForecastBucket
                 (this, prevDate, i.getDate(), 1.0, prev);
-            Demand::add(prev);         
+            Demand::add(prev);
             }
           if (i.getDate() == Date::infiniteFuture) break;
           prevDate = i.getDate();

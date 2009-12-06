@@ -99,7 +99,7 @@ DECLARE_EXPORT PyObject *Solver::solve(PyObject *self, PyObject *args)
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
   {
-    static_cast<Solver*>(self)->solve();    
+    static_cast<Solver*>(self)->solve();
   }
   catch(...)
   {

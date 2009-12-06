@@ -79,7 +79,7 @@ DECLARE_EXPORT bool SolverMRP::demand_comparison(const Demand* l1, const Demand*
 DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
 {
   // Check
-  if (!demands || !getSolver()) 
+  if (!demands || !getSolver())
     throw LogicException("Missing demands or solver.");
 
   // Message
@@ -100,16 +100,16 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
         i != demands->end(); ++i)
     {
       Command* topcommand = getLastCommand();
-      // Plan the demand      
-      try 
-      { 
+      // Plan the demand
+      try
+      {
         State* mystate = state;
         push();
-        try { (*i)->solve(*Solver,this); }
-        catch (...) 
-        { 
-          while (state > mystate) pop(); 
-          throw; 
+        try {(*i)->solve(*Solver,this);}
+        catch (...)
+        {
+          while (state > mystate) pop();
+          throw;
         }
         while (state > mystate) pop();
       }
@@ -118,7 +118,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
         // Error message
         logger << "Error: Caught an exception while solving demand '"
           << (*i)->getName() << "':" << endl;
-        try { throw; }
+        try {throw;}
         catch (bad_exception&) {logger << "  bad exception" << endl;}
         catch (exception& e) {logger << "  " << e.what() << endl;}
         catch (...) {logger << "  Unknown type" << endl;}
@@ -141,7 +141,7 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::execute()
     // Error message
     logger << "Error: Caught an exception while solving cluster "
     << cluster << ":" << endl;
-    try { throw; }
+    try {throw;}
     catch (bad_exception&){logger << "  bad exception" << endl;}
     catch (exception& e) {logger << "  " << e.what() << endl;}
     catch (...) {logger << "  Unknown type" << endl;}
@@ -220,7 +220,7 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
   if (constrts) o->writeElement(Tags::tag_constraints, constrts);
   if (maxparallel) o->writeElement(Tags::tag_maxparallel, maxparallel);
   if (!autocommit) o->writeElement(Tags::tag_autocommit, autocommit);
-  if (userexit_flow) 
+  if (userexit_flow)
     o->writeElement(Tags::tag_userexit_flow, PyEval_GetFuncName(userexit_flow));
 
   // Write the parent class
@@ -253,7 +253,7 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
     return PythonObject(getAutocommit());
   if (attr.isA(Tags::tag_userexit_flow))
     return PythonObject(getUserExitFlow());
-  return Solver::getattro(attr); 
+  return Solver::getattro(attr);
 }
 
 
@@ -276,7 +276,7 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
 DECLARE_EXPORT void SolverMRP::setUserExitFlow(string n)
 {
   PyGILState_STATE pythonstate = PyGILState_Ensure();
-  if (n.empty()) 
+  if (n.empty())
   {
     // Resetting to NULL when the string is empty
     if (userexit_flow) Py_DECREF(userexit_flow);
@@ -285,10 +285,10 @@ DECLARE_EXPORT void SolverMRP::setUserExitFlow(string n)
     return;
   }
 
-  // Find the Python function 
-  PyObject* obj = PyRun_String(n.c_str(), Py_eval_input, 
+  // Find the Python function
+  PyObject* obj = PyRun_String(n.c_str(), Py_eval_input,
     PyEval_GetGlobals(), PyEval_GetLocals() );
-  if (!obj) 
+  if (!obj)
   {
     PyGILState_Release(pythonstate);
     throw DataException("Python function '" + n + "' not defined");
@@ -311,12 +311,12 @@ DECLARE_EXPORT void SolverMRP::setUserExitFlow(PyObject* p)
 {
   if (!p || p == Py_None)
   {
-    if (userexit_flow) Py_DECREF(userexit_flow); 
+    if (userexit_flow) Py_DECREF(userexit_flow);
     userexit_flow = NULL;
   }
   else if (!PyCallable_Check(p))
     return setUserExitFlow(PythonObject(p).getString());
-  if (userexit_flow) Py_DECREF(userexit_flow); 
+  if (userexit_flow) Py_DECREF(userexit_flow);
   userexit_flow = p;
   Py_INCREF(userexit_flow);
 }
@@ -327,7 +327,7 @@ DECLARE_EXPORT PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
   // Parse the argument
   PyObject *dem = NULL;
   if (args && !PyArg_ParseTuple(args, "|O:solve", &dem)) return NULL;
-  if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass)) 
+  if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass))
     throw DataException("solver argument must be a demand");
 
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
@@ -338,7 +338,7 @@ DECLARE_EXPORT PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
     {
       // Complete replan
       sol->setAutocommit(true);
-      sol->solve();    
+      sol->solve();
     }
     else
     {

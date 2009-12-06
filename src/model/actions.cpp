@@ -77,8 +77,8 @@ DECLARE_EXPORT PyObject* CommandReadXMLFile::executePython(PyObject* self, PyObj
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try { 
-    CommandReadXMLFile(data, i1!=0, i2!=0).execute(); 
+  try {
+    CommandReadXMLFile(data, i1!=0, i2!=0).execute();
   }
   catch (...)
   {
@@ -125,7 +125,7 @@ PyObject* CommandReadXMLString::executePython(PyObject *self, PyObject *args)
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try { 
+  try {
     if (data) CommandReadXMLString(string(data), i1!=0, i2!=0).execute();
   }
   catch (...)
@@ -176,7 +176,7 @@ PyObject* CommandSave::executePython(PyObject* self, PyObject* args)
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try { 
+  try {
     CommandSave cmd(data);
     if (content)
     {
@@ -184,9 +184,9 @@ PyObject* CommandSave::executePython(PyObject* self, PyObject* args)
         cmd.setContent(XMLOutput::STANDARD);
       else if (!strcmp(content,"PLAN"))
         cmd.setContent(XMLOutput::PLAN);
-      else if (!strcmp(content,"PLANDETAIL")) 
+      else if (!strcmp(content,"PLANDETAIL"))
         cmd.setContent(XMLOutput::PLANDETAIL);
-      else 
+      else
         throw DataException("Invalid content type '" + string(content) + "'");
     }
     cmd.execute();
@@ -328,7 +328,7 @@ PyObject* CommandSavePlan::executePython(PyObject* self, PyObject* args)
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try { 
+  try {
     CommandSavePlan(data).execute();
   }
   catch (...)
@@ -483,7 +483,7 @@ DECLARE_EXPORT string CommandDeleteOperationPlan::getDescription() const
 DECLARE_EXPORT void CommandErase::execute()
 {
   // Starting message
-  if (getVerbose()) 
+  if (getVerbose())
   {
     if (deleteStaticModel)
       logger << "Start model erase command at " << Date::now() << endl;
@@ -535,7 +535,7 @@ PyObject* CommandErase::executePython(PyObject* self, PyObject* args)
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try { 
+  try {
     CommandErase(staticalso).execute();
   }
   catch (...)

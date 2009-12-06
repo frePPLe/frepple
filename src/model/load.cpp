@@ -169,14 +169,14 @@ DECLARE_EXPORT Load::~Load()
   if (hasAlts)
   {
     // The load has alternates.
-    // Make a new load the leading one. Or if there is only one alternate 
+    // Make a new load the leading one. Or if there is only one alternate
     // present it is not marked as an alternate any more.
     unsigned short cnt = 0;
     int minprio = INT_MAX;
     Load* newLeader = NULL;
     for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
       i != getOperation()->loaddata.end(); ++i)
-      if (i->altLoad == this) 
+      if (i->altLoad == this)
       {
         cnt++;
         if (i->priority < minprio)
@@ -185,7 +185,7 @@ DECLARE_EXPORT Load::~Load()
           minprio = i->priority;
         }
       }
-    if (cnt < 1) 
+    if (cnt < 1)
       throw LogicException("Alternate loads update failure");
     else if (cnt == 1)
       // No longer an alternate any more
@@ -203,12 +203,12 @@ DECLARE_EXPORT Load::~Load()
   if (altLoad)
   {
     // The load is an alternate of another one.
-    // If it was the only alternate, then the hasAlts flag on the parent 
+    // If it was the only alternate, then the hasAlts flag on the parent
     // load needs to be set back to false
     bool only_one = true;
-    for (Operation::loadlist::iterator i = getOperation()->loaddata.begin(); 
+    for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
       i != getOperation()->loaddata.end(); ++i)
-      if (i->altLoad == altLoad) 
+      if (i->altLoad == altLoad)
       {
         only_one = false;
         break;
@@ -221,9 +221,9 @@ DECLARE_EXPORT Load::~Load()
 DECLARE_EXPORT void Load::setAlternate(Load *f)
 {
   // Validate the argument
-  if (!f) 
+  if (!f)
     throw DataException("Setting NULL alternate load");
-  if (hasAlts || f->altLoad) 
+  if (hasAlts || f->altLoad)
     throw DataException("Nested alternate loads are not allowed");
 
   // Update both flows
@@ -242,16 +242,16 @@ DECLARE_EXPORT void Load::setAlternate(string n)
 }
 
 
-DECLARE_EXPORT void Load::setSetup(const string n) 
+DECLARE_EXPORT void Load::setSetup(const string n)
 {
   setup = n;
 
   if (!setup.empty())
   {
     // Guarantuee that only a single load has a setup
-    for (Operation::loadlist::iterator i = getOperation()->loaddata.begin(); 
+    for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
       i != getOperation()->loaddata.end(); ++i)
-      if (&*i != this && !i->setup.empty()) 
+      if (&*i != this && !i->setup.empty())
         throw DataException("Only a single load of an operation can specify a setup");
   }
 }
@@ -280,7 +280,7 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m)
   if (qty != 1.0) o->writeElement(Tags::tag_quantity, qty);
   if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
   if (!getName().empty()) o->writeElement(Tags::tag_name, getName());
-  if (getAlternate()) 
+  if (getAlternate())
     o->writeElement(Tags::tag_alternate, getAlternate()->getName());
 
   // Write the effective daterange
@@ -410,7 +410,7 @@ DECLARE_EXPORT int Load::setattro(const Attribute& attr, const PythonObject& fie
     setName(field.getString());
   else if (attr.isA(Tags::tag_alternate))
   {
-    if (!field.check(Load::metadata)) 
+    if (!field.check(Load::metadata))
       setAlternate(field.getString());
     else
     {

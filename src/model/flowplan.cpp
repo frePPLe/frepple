@@ -55,7 +55,7 @@ DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
 
   // Initialize the Python type
   initType(metadata);
-  
+
   // Link the flowplan to the operationplan
   oper = opplan;
   nextFlowPlan = NULL;
@@ -70,7 +70,7 @@ DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
     // First in the list
     opplan->firstflowplan = this;
 
-  // Compute the flowplan quantity 
+  // Compute the flowplan quantity
   fl->getBuffer()->flowplans.insert(
     this,
     fl->getFlowplanQuantity(this),
@@ -105,7 +105,7 @@ DECLARE_EXPORT void FlowPlan::setFlow(const Flow* newfl)
   // No change
   if (newfl == fl) return;
 
-  // Verify the data  
+  // Verify the data
   if (!newfl) throw LogicException("Can't switch to NULL flow");
 
   // Remove from the old buffer, if there is one
@@ -229,7 +229,7 @@ PyObject* FlowPlanIterator::iternext()
   if (buffer_or_opplan)
   {
     // Skip uninteresting entries
-    while (*bufiter != buf->getFlowPlans().end() && (*bufiter)->getQuantity()==0.0) 
+    while (*bufiter != buf->getFlowPlans().end() && (*bufiter)->getQuantity()==0.0)
       ++(*bufiter);
     if (*bufiter == buf->getFlowPlans().end()) return NULL;
     fl = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*((*bufiter)++)));
@@ -237,7 +237,7 @@ PyObject* FlowPlanIterator::iternext()
   else
   {
     // Skip uninteresting entries
-    while (*opplaniter != opplan->endFlowPlans() && (*opplaniter)->getQuantity()==0.0) 
+    while (*opplaniter != opplan->endFlowPlans() && (*opplaniter)->getQuantity()==0.0)
       ++(*opplaniter);
     if (*opplaniter == opplan->endFlowPlans()) return NULL;
     fl = static_cast<FlowPlan*>(&*((*opplaniter)++));

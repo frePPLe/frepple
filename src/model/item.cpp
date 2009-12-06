@@ -139,7 +139,7 @@ DECLARE_EXPORT PyObject* Item::getattro(const Attribute& attr)
 }
 
 
-DECLARE_EXPORT int Item::setattro(const Attribute& attr, const PythonObject& field) 
+DECLARE_EXPORT int Item::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
     setName(field.getString());
@@ -153,7 +153,7 @@ DECLARE_EXPORT int Item::setattro(const Attribute& attr, const PythonObject& fie
     setPrice(field.getDouble());
   else if (attr.isA(Tags::tag_owner))
   {
-    if (!field.check(Item::metadata)) 
+    if (!field.check(Item::metadata))
     {
       PyErr_SetString(PythonDataException, "item owner must be of type item");
       return -1;
@@ -163,7 +163,7 @@ DECLARE_EXPORT int Item::setattro(const Attribute& attr, const PythonObject& fie
   }
   else if (attr.isA(Tags::tag_operation))
   {
-    if (!field.check(Operation::metadata)) 
+    if (!field.check(Operation::metadata))
     {
       PyErr_SetString(PythonDataException, "item operation must be of type operation");
       return -1;

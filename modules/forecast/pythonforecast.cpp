@@ -37,7 +37,7 @@ PyObject* Forecast::getattro(const Attribute& attr)
     return PythonObject(getCalendar());
   else if (attr.isA(Tags::tag_discrete))
     return PythonObject(getDiscrete());
-  return Demand::getattro(attr); 
+  return Demand::getattro(attr);
 }
 
 
@@ -45,18 +45,18 @@ int Forecast::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_calendar))
   {
-    if (!field.check(Calendar::metadata)) 
+    if (!field.check(Calendar::metadata))
     {
       PyErr_SetString(PythonDataException, "forecast calendar must be of type calendar");
       return -1;
     }
     Calendar* y = static_cast<Calendar*>(static_cast<PyObject*>(field));
     setCalendar(y);
-  }  
+  }
   else if (attr.isA(Tags::tag_discrete))
     setDiscrete(field.getBool());
   else
-    return Demand::setattro(attr, field);  
+    return Demand::setattro(attr, field);
   return 0; // OK
 }
 
@@ -138,7 +138,7 @@ PyObject* ForecastBucket::getattro(const Attribute& attr)
     return PythonObject(getConsumed());
   if (attr.isA(Tags::tag_weight))
     return PythonObject(getWeight());
-  return Demand::getattro(attr); 
+  return Demand::getattro(attr);
 }
 
 
@@ -151,7 +151,7 @@ int ForecastBucket::setattro(const Attribute& attr, const PythonObject& field)
   else if (attr.isA(Tags::tag_weight))
     setWeight(field.getDouble());
   else
-    return Demand::setattro(attr, field);  
+    return Demand::setattro(attr, field);
   return 0;  // OK
 }
 

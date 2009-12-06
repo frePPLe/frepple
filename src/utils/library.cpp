@@ -86,7 +86,7 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
   if (envvar)
   {
     fullname = envvar;
-    if (*fullname.rbegin() != pathseperator) 
+    if (*fullname.rbegin() != pathseperator)
       fullname += pathseperator;
     fullname += filename;
     result = stat(fullname.c_str(), &stat_p);
@@ -97,7 +97,7 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
 #ifdef DATADIRECTORY
   // Third: check the data directory
   fullname = DATADIRECTORY;
-  if (*fullname.rbegin() != pathseperator) 
+  if (*fullname.rbegin() != pathseperator)
     fullname += pathseperator;
   fullname.append(filename);
   result = stat(fullname.c_str(), &stat_p);
@@ -108,7 +108,7 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
 #ifdef LIBDIRECTORY
   // Fourth: check the lib directory
   fullname = LIBDIRECTORY;
-  if (*fullname.rbegin() != pathseperator) 
+  if (*fullname.rbegin() != pathseperator)
     fullname += pathseperator;
   fullname += "frepple/";
   fullname += filename;
@@ -217,7 +217,7 @@ void LibraryUtils::initialize()
 }
 
 
-DECLARE_EXPORT void MetaClass::registerClass (const string& a, const string& b, 
+DECLARE_EXPORT void MetaClass::registerClass (const string& a, const string& b,
   bool def, creatorDefault f)
 {
   // Find or create the category
@@ -246,10 +246,10 @@ DECLARE_EXPORT void MetaClass::registerClass (const string& a, const string& b,
 
 
 DECLARE_EXPORT MetaCategory::MetaCategory (const string& a, const string& gr,
-  readController f, writeController w) 
+  readController f, writeController w)
 {
   // Update registry
-  if (!a.empty()) categoriesByTag[Keyword::hash(a)] = this; 
+  if (!a.empty()) categoriesByTag[Keyword::hash(a)] = this;
   if (!gr.empty()) categoriesByGroupTag[Keyword::hash(gr)] = this;
 
   // Update fields
@@ -472,36 +472,36 @@ void HasDescription::endElement (XMLInput& pIn, const Attribute& pAttr, const Da
 }
 
 
-DECLARE_EXPORT bool matchWildcard(const char* wild, const char *str) 
+DECLARE_EXPORT bool matchWildcard(const char* wild, const char *str)
 {
   // Empty arguments: always return a match
   if (!wild || !str) return 1;
 
   const char *cp = NULL, *mp = NULL;
 
-  while ((*str) && *wild != '*') 
-  {    
-    if (*wild != *str && *wild != '?') 
+  while ((*str) && *wild != '*')
+  {
+    if (*wild != *str && *wild != '?')
       // Does not match
       return 0;
     wild++;
     str++;
   }
 
-  while (*str) 
+  while (*str)
   {
-    if (*wild == '*') 
+    if (*wild == '*')
     {
       if (!*++wild) return 1;
       mp = wild;
       cp = str+1;
-    } 
-    else if (*wild == *str || *wild == '?') 
+    }
+    else if (*wild == *str || *wild == '?')
     {
       wild++;
       str++;
-    } 
-    else 
+    }
+    else
     {
       wild = mp;
       str = cp++;

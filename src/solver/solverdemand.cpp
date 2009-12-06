@@ -37,7 +37,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   unsigned int loglevel = data->getSolver()->getLogLevel();
-  
+
   // Note: This solver method does not push/pop states on the stack.
   // We continue to work on the top element of the stack.
 
@@ -104,14 +104,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     // 1) Nothing is planned
     // 2) The planned quantity is less than the minimum shipment quantity
     // 3) The remaining quantity after accepting this answer is less than
-    //    the minimum quantity. 
-    if (data->state->a_qty < ROUNDING_ERROR 
+    //    the minimum quantity.
+    if (data->state->a_qty < ROUNDING_ERROR
       || data->state->a_qty + ROUNDING_ERROR < l->getMinShipment()
       || (plan_qty - data->state->a_qty < l->getMinShipment()
           && plan_qty - data->state->a_qty > ROUNDING_ERROR))
     {
       if (plan_qty - data->state->a_qty < l->getMinShipment()
-        
+
         && data->state->a_qty + ROUNDING_ERROR >= l->getMinShipment()
         && data->state->a_qty > best_a_qty )
       {
@@ -135,10 +135,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
           logger << "Warning: Demand '" << l << "': Lazy retry" << endl;
         plan_date = copy_plan_date + data->sol->getLazyDelay();
       }
-      else 
+      else
         // Use the next-date answer from the solver
         plan_date = data->state->a_date;
-    }    
+    }
     else
     {
       // Accepting this answer

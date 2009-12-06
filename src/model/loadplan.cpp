@@ -223,7 +223,7 @@ PyObject* LoadPlanIterator::iternext()
   }
   else
   {
-    while (*opplaniter != opplan->endLoadPlans() && (*opplaniter)->getQuantity()==0.0) 
+    while (*opplaniter != opplan->endLoadPlans() && (*opplaniter)->getQuantity()==0.0)
       ++(*opplaniter);
     if (*opplaniter == opplan->endLoadPlans()) return NULL;
     ld = static_cast<LoadPlan*>(&*((*opplaniter)++));

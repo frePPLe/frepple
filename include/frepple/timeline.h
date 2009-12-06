@@ -159,7 +159,7 @@ template <class type> class TimeLine
         EventMinQuantity *prevMin;
       public:
         EventMinQuantity(Date d, double f=0.0) : newMin(f), prevMin(NULL)
-          { this->dt = d; }
+          {this->dt = d;}
         void setMin(double f) {newMin = f;}
         virtual double getMin(bool inclusive = true) const 
         {
@@ -210,7 +210,7 @@ template <class type> class TimeLine
         const_iterator& operator++() {cur = cur->next; return *this;}
         const_iterator operator++(int)
           {const_iterator tmp = *this; ++*this; return tmp;}
-        const_iterator& operator--() {cur = cur->prev; return *this; }
+        const_iterator& operator--() {cur = cur->prev; return *this;}
         const_iterator operator--(int)
           {const_iterator tmp = *this; --*this; return tmp;}
         bool operator==(const const_iterator& x) const {return cur == x.cur;}
@@ -227,7 +227,7 @@ template <class type> class TimeLine
         Event* operator->() const {return const_cast<Event*>(this->cur);}
         iterator& operator++() {this->cur = this->cur->next; return *this;}
         iterator operator++(int) {iterator tmp = *this; ++*this; return tmp;}
-        iterator& operator--() {this->cur = this->cur->prev; return *this; }
+        iterator& operator--() {this->cur = this->cur->prev; return *this;}
         iterator operator--(int) {iterator tmp = *this; --*this; return tmp;}
         bool operator==(const iterator& x) const {return this->cur == x.cur;}
         bool operator!=(const iterator& x) const {return this->cur != x.cur;}

@@ -54,7 +54,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
     const Flow *x = fl->hasAlternates() ? fl : fl->getAlternate();
     for (Operation::flowlist::const_iterator i = fl->getOperation()->getFlows().begin();
       i != fl->getOperation()->getFlows().end(); ++i)
-      if ((i->getAlternate() == x || &*i == x) 
+      if ((i->getAlternate() == x || &*i == x)
         && i->getEffective().within(data->state->q_flowplan->getDate()))
         thealternates.push_front(&*i);
 
@@ -69,7 +69,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
       const Flow *curflow = *i;
 
       // 3a) Switch to this flow
-      if (data->state->q_flowplan->getFlow() != curflow) 
+      if (data->state->q_flowplan->getFlow() != curflow)
         data->state->q_flowplan->setFlow(curflow);
 
       // 3b) Call the Python user exit if there is one
@@ -77,7 +77,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
       {
         PyGILState_STATE pythonstate = PyGILState_Ensure();
         PyObject* result = PyEval_CallFunction(
-          userexit_flow, "(O)", 
+          userexit_flow, "(O)",
           static_cast<PyObject*>(data->state->q_flowplan)
           );
         if (!result)
@@ -86,23 +86,23 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
           logger << "Error: Exception caught in the flow user exit" << endl;
           if (PyErr_Occurred()) PyErr_PrintEx(0);
         }
-        else if (PyObject_IsTrue(result)) 
-          // User exit, case 2: return value is true, alternate accepted 
-          Py_DECREF(result);          
-        else 
+        else if (PyObject_IsTrue(result))
+          // User exit, case 2: return value is true, alternate accepted
+          Py_DECREF(result);
+        else
         {
           // User exit, case 1: return value is false, alternate rejected
           Py_DECREF(result);
           if (data->getSolver()->getLogLevel()>1)
-            logger << indent(curflow->getOperation()->getLevel()) 
-              << "   User exit disallows consumption from '" 
+            logger << indent(curflow->getOperation()->getLevel())
+              << "   User exit disallows consumption from '"
               << (*i)->getBuffer()->getName() << "'" << endl;
           // Release Python interpreter
           PyGILState_Release(pythonstate);
           // Move to the next alternate
           if (++i != thealternates.end() && data->getSolver()->getLogLevel()>1)
-            logger << indent(curflow->getOperation()->getLevel()) << "   Alternate flow switches from '" 
-                  << curflow->getBuffer()->getName() << "' to '" 
+            logger << indent(curflow->getOperation()->getLevel()) << "   Alternate flow switches from '"
+                  << curflow->getBuffer()->getName() << "' to '"
                   << (*i)->getBuffer()->getName() << "'" << endl;
           continue;
         }
@@ -125,17 +125,17 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
       if (data->state->a_date < min_next_date)
         min_next_date = data->state->a_date;
       if (++i != thealternates.end() && data->getSolver()->getLogLevel()>1)
-        logger << indent(curflow->getOperation()->getLevel()) << "   Alternate flow switches from '" 
-              << curflow->getBuffer()->getName() << "' to '" 
+        logger << indent(curflow->getOperation()->getLevel()) << "   Alternate flow switches from '"
+              << curflow->getBuffer()->getName() << "' to '"
               << (*i)->getBuffer()->getName() << "'" << endl;
     }
 
-    // 4) No alternate gave a good result     
+    // 4) No alternate gave a good result
     data->state->a_date = min_next_date;
-    data->state->a_qty = 0;    
+    data->state->a_qty = 0;
     if (data->getSolver()->getLogLevel()>1)
-      logger << indent(data->state->q_flowplan->getFlow()->getOperation()->getLevel()) << 
-        "   Alternate flow doesn't find supply on any alternate : " 
+      logger << indent(data->state->q_flowplan->getFlow()->getOperation()->getLevel()) <<
+        "   Alternate flow doesn't find supply on any alternate : "
         << data->state->a_qty << "  " << data->state->a_date << endl;
   }
   else
@@ -149,23 +149,23 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
       fl->getBuffer()->solve(*this,data);
       if (data->state->a_date > fl->getEffective().getEnd())
       {
-        // The reply date must be less than the effectivity end date: after 
+        // The reply date must be less than the effectivity end date: after
         // that date the flow in question won't consume any material any more.
-        if (data->getSolver()->getLogLevel()>1 
+        if (data->getSolver()->getLogLevel()>1
           && data->state->a_qty < ROUNDING_ERROR)
-          logger << indent(fl->getBuffer()->getLevel()) << "  Buffer '" 
-            << fl->getBuffer()->getName() << "' answer date is adjusted to " 
-            << fl->getEffective().getEnd() 
+          logger << indent(fl->getBuffer()->getLevel()) << "  Buffer '"
+            << fl->getBuffer()->getName() << "' answer date is adjusted to "
+            << fl->getEffective().getEnd()
             << " because of a date effective flow" << endl;
         data->state->a_date = fl->getEffective().getEnd();
       }
     }
     else
     {
-      // It's a zero quantity flowplan. 
+      // It's a zero quantity flowplan.
       // E.g. because it is not effective.
       data->state->a_date = data->state->q_date;
-      data->state->a_qty = 0.0; 
+      data->state->a_qty = 0.0;
     }
   }
 }

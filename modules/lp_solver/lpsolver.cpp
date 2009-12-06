@@ -50,7 +50,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   }
   init = true;
 
-  try 
+  try
   {
     // Register the Python extension
     PyThreadState *myThreadState = PyGILState_GetThisThreadState();
@@ -72,7 +72,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     }
     PyEval_ReleaseLock();
   }
-  catch (exception &e) 
+  catch (exception &e)
   {
     // Avoid throwing errors during the initialization!
     logger << "Error: " << e.what() << endl;
@@ -103,12 +103,12 @@ void LPSolver::solveObjective(const string& colname)
   // Set the objective coefficient
   if (colname.empty()) throw DataException("Empty objective name");
   int col = glp_find_col(lp, colname.c_str());
-  if (!col) 
+  if (!col)
     throw DataException("Unknown objective name '" + string(colname) + "'");
   lpx_set_obj_coef(lp, col, 1.0);
 
   // Message
-  if (getLogLevel()>0) 
+  if (getLogLevel()>0)
     logger << "Solving for " << colname << "..." << endl;
 
   // Solve
@@ -116,7 +116,7 @@ void LPSolver::solveObjective(const string& colname)
 
   // Echo the result
   double val = lpx_get_obj_val(lp);
-  if (getLogLevel()>0) 
+  if (getLogLevel()>0)
   {
     if (result)
       logger << "  Error " << result << endl;
@@ -125,15 +125,15 @@ void LPSolver::solveObjective(const string& colname)
   }
 
   // Freeze the column bounds
-  lpx_set_col_bnds(lp, col, LPX_DB, 
-    val>=ROUNDING_ERROR ? val-ROUNDING_ERROR : 0.0, 
+  lpx_set_col_bnds(lp, col, LPX_DB,
+    val>=ROUNDING_ERROR ? val-ROUNDING_ERROR : 0.0,
     val>=-ROUNDING_ERROR ? val+ROUNDING_ERROR : 0.0);
 
-  // Remove from the objective 
+  // Remove from the objective
   lpx_set_obj_coef(lp, col, 0.0);
 
   // No more presolving required after 1 objective
-  if (parameters.presolve) parameters.presolve = 0; 
+  if (parameters.presolve) parameters.presolve = 0;
 }
 
 
@@ -163,13 +163,13 @@ void LPSolver::solve(void *v)
     lp = lpx_read_model(modelfilename.c_str(), NULL, NULL);
   else
     lp = lpx_read_model(modelfilename.c_str(), datafilename.c_str(), NULL);
-  if (lp == NULL) 
+  if (lp == NULL)
     throw RuntimeException("Cannot read model file '" + modelfilename + "'");
 
-  // Optinally, write the model in MPS format. This format can be read 
+  // Optinally, write the model in MPS format. This format can be read
   // directly by other Linear Programming packages.
   if (getLogLevel()>2)
-  { 
+  {
     string c = modelfilename + ".mps";
     lpx_write_mps(lp,c.c_str());
   }
@@ -193,14 +193,14 @@ void LPSolver::solve(void *v)
   // Solving...
   if (objectives.empty())
     throw DataException("No solver objectives are specified");
-  for (list<string>::const_iterator i = objectives.begin(); 
+  for (list<string>::const_iterator i = objectives.begin();
     i != objectives.end(); ++i)
       solveObjective(*i);
 
-  // Write solution 
+  // Write solution
   if (!solutionfilename.empty())
     lpx_print_sol(lp,solutionfilename.c_str());
-  
+
   // Cleanup
   lpx_delete_prob(lp);
   glp_term_hook(NULL,NULL);
@@ -240,7 +240,7 @@ void LPSolver::writeElement(XMLOutput *o, const Keyword& tag, mode m) const
   o->writeElement(tag_modelfile, getModelFile());
   o->writeElement(tag_datafile, getDataFile());
   o->writeElement(tag_solutionfile, getSolutionFile());
-  for (list<string>::const_iterator i = objectives.begin(); 
+  for (list<string>::const_iterator i = objectives.begin();
     i != objectives.end(); ++i)
       o->writeElement(tag_objective, *i);
   Solver::writeElement(o, tag, NOHEADER);
@@ -284,12 +284,12 @@ PyObject* LPSolver::getattro(const Attribute& attr)
 	  // The list of objectives is returned as a list of strings
     PyObject* result = PyList_New(getObjectives().size());
     int count = 0;
-    for (list<string>::const_iterator i = getObjectives().begin(); 
+    for (list<string>::const_iterator i = getObjectives().begin();
         i != getObjectives().end(); ++i)
       PyList_SetItem(result, count++, PythonObject(*i));
     return result;
   }
-  return Solver::getattro(attr); 
+  return Solver::getattro(attr);
 }
 
 
@@ -316,7 +316,7 @@ int LPSolver::setattro(const Attribute& attr, const PythonObject& field)
 	  }
 	  int len = PySequence_Size(static_cast<PyObject*>(field));
 	  PythonObject item;
-    for (int i = 0; i < len; i++) 
+    for (int i = 0; i < len; i++)
     {
 	    item = PyList_GET_ITEM(seq, i);
 	    addObjective(item.getString());

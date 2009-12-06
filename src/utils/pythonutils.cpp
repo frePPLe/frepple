@@ -173,12 +173,12 @@ DECLARE_EXPORT void PythonInterpreter::addThread()
   PyThreadState * myThreadState = PyGILState_GetThisThreadState();
   if (myThreadState) return;
 
-  // Create a new state  
+  // Create a new state
   PyThreadState *tcur = PyThreadState_New(PyInterpreterState_Head());
   if (!tcur) throw RuntimeException("Can't create new thread state");
 
   // Make the new state current
-  PyEval_RestoreThread(tcur); 
+  PyEval_RestoreThread(tcur);
   PyEval_ReleaseLock();
 }
 
@@ -190,7 +190,7 @@ DECLARE_EXPORT void PythonInterpreter::deleteThread()
   if (!tcur) return;
 
   // Delete the current Python thread state
-  PyEval_RestoreThread(tcur); 
+  PyEval_RestoreThread(tcur);
   PyThreadState_Clear(tcur);
   PyThreadState_DeleteCurrent(); // This releases the GIL too!
 }
@@ -201,7 +201,7 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
   // Get the global lock.
   // After this command we are the only thread executing Python code.
   PyThreadState *myThreadState = PyGILState_GetThisThreadState();
-  if (!myThreadState) 
+  if (!myThreadState)
     throw RuntimeException("No Python thread state for this thread");
   PyEval_RestoreThread(myThreadState);
 
@@ -256,7 +256,7 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
   newMethod->ml_doc = leakingDoc->c_str();	
 
   // Lock the interpreter
-  if (lock) 
+  if (lock)
   {
     PyThreadState *myThreadState = PyGILState_GetThisThreadState();
     if (!Py_IsInitialized() || !myThreadState)
@@ -433,7 +433,7 @@ DECLARE_EXPORT PythonObject::PythonObject(Object* p)
 }
 
 
-DECLARE_EXPORT PythonType::PythonType(size_t base_size, const type_info* tp) 
+DECLARE_EXPORT PythonType::PythonType(size_t base_size, const type_info* tp)
   : cppClass(tp)
 {
   // Allocate a new type object if it doesn't exist yet.
@@ -459,7 +459,7 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
       static_cast<Object*>(self)->writeElement
         (&x, *(static_cast<Object*>(self)->getType().category->typetag));
       // Write the output...
-      if (filearg)          
+      if (filearg)
       {
         if (PyFile_Check(filearg))
         {
@@ -509,13 +509,13 @@ DECLARE_EXPORT void PythonType::addMethod
       table->tp_methods = tmp;
     }
   }
-  
+
   // Populate a method definition struct
   table->tp_methods[i].ml_name = method_name;
   table->tp_methods[i].ml_meth = f;
   table->tp_methods[i].ml_flags = flags;
   table->tp_methods[i].ml_doc = doc;
-  
+
   // Append an empty terminator record
   table->tp_methods[++i].ml_name = NULL;
   table->tp_methods[i].ml_meth = NULL;
@@ -538,7 +538,7 @@ DECLARE_EXPORT int PythonType::typeReady()
     throw RuntimeException(string("Can't register python type ") + table->tp_name);
   Py_INCREF(table);
   return PyModule_AddObject(
-    PythonInterpreter::getModule(), 
+    PythonInterpreter::getModule(),
     table->tp_name + 8, // Note: +8 is to skip the "frepple." characters in the name
     reinterpret_cast<PyObject*>(table)
     );
@@ -550,15 +550,15 @@ DECLARE_EXPORT void PythonType::evalException()
   // Rethrowing the exception to catch its type better
   try {throw;}
   catch (DataException e)
-    { PyErr_SetString(PythonDataException, e.what()); }
+    {PyErr_SetString(PythonDataException, e.what());}
   catch (LogicException e)
-    { PyErr_SetString(PythonLogicException, e.what()); }
+    {PyErr_SetString(PythonLogicException, e.what());}
   catch (RuntimeException e)
-    { PyErr_SetString(PythonRuntimeException, e.what()); }
+    {PyErr_SetString(PythonRuntimeException, e.what());}
   catch (exception e)
-    { PyErr_SetString(PyExc_Exception, e.what()); }
+    {PyErr_SetString(PyExc_Exception, e.what());}
   catch (...)
-    { PyErr_SetString(PyExc_Exception, "Unidentified exception"); }
+    {PyErr_SetString(PyExc_Exception, "Unidentified exception");}
 }
 
 
@@ -658,9 +658,9 @@ extern "C" DECLARE_EXPORT PyObject* iternext_handler(PyObject *self)
 
 extern "C" DECLARE_EXPORT PyObject* call_handler(PyObject* self, PyObject* args, PyObject* kwds)
 {
-  try 
-  { 
-    return static_cast<PythonExtensionBase*>(self)->call(args, kwds); 
+  try
+  {
+    return static_cast<PythonExtensionBase*>(self)->call(args, kwds);
   }
   catch (...)
   {

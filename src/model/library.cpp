@@ -81,6 +81,7 @@ void LibraryModel::initialize()
   nok += OperationFixedTime::initialize();
   nok += OperationTimePer::initialize();
   nok += OperationRouting::initialize();
+  nok += OperationSetup::initialize();
   nok += OperationIterator::initialize();
 
   // Initialize the item metadata.
@@ -113,7 +114,7 @@ void LibraryModel::initialize()
   nok += ResourceIterator::initialize();
 
   // Initialize the load metadata.
-  nok += Load::initialize();  
+  nok += Load::initialize();
   nok += LoadIterator::initialize();
   nok += LoadPlan::initialize();
   nok += LoadPlanIterator::initialize();
@@ -121,7 +122,7 @@ void LibraryModel::initialize()
   // Initialize the flow metadata.
   nok += Flow::initialize();
   nok += FlowIterator::initialize();
-  nok += FlowPlan::initialize();  
+  nok += FlowPlan::initialize();
   nok += FlowPlanIterator::initialize();
 
   // Initialize the operationplan metadata.
@@ -223,8 +224,8 @@ DECLARE_EXPORT void CommandPlanSize::execute()
   CommandLoadLibrary::printModules();
 
   // Print the number of clusters
-  logger << "Clusters: " << HasLevel::getNumberOfClusters() 
-    << " (hanging: " << HasLevel::getNumberOfHangingClusters() << ")" 
+  logger << "Clusters: " << HasLevel::getNumberOfClusters()
+    << " (hanging: " << HasLevel::getNumberOfHangingClusters() << ")"
     << endl << endl;
 
   // Header for memory size

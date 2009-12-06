@@ -71,13 +71,13 @@ DECLARE_EXPORT void Demand::setQuantity(double f)
 }
 
 
-DECLARE_EXPORT void Demand::deleteOperationPlans 
+DECLARE_EXPORT void Demand::deleteOperationPlans
   (bool deleteLocked, CommandList* cmds)
 {
   // Delete all opplans
   // Note that an extra loop is used to assure that our iterator doesn't get
   // invalidated during the deletion.
-  while (true)  
+  while (true)
   {
     // Find a candidate to delete
     OperationPlan *candidate = NULL;
@@ -162,7 +162,7 @@ DECLARE_EXPORT const Demand::OperationPlan_list& Demand::getDelivery() const
   return deli;
 }
 
-    
+
 DECLARE_EXPORT OperationPlan* Demand::getLatestDelivery() const
 {
   const Demand::OperationPlan_list& l = getDelivery();
@@ -389,7 +389,7 @@ DECLARE_EXPORT int Demand::setattro(const Attribute& attr, const PythonObject& f
     setDue(field.getDate());
   else if (attr.isA(Tags::tag_item))
   {
-    if (!field.check(Item::metadata)) 
+    if (!field.check(Item::metadata))
     {
       PyErr_SetString(PythonDataException, "demand item must be of type item");
       return -1;
@@ -399,7 +399,7 @@ DECLARE_EXPORT int Demand::setattro(const Attribute& attr, const PythonObject& f
   }
   else if (attr.isA(Tags::tag_customer))
   {
-    if (!field.check(Customer::metadata)) 
+    if (!field.check(Customer::metadata))
     {
       PyErr_SetString(PythonDataException, "demand customer must be of type customer");
       return -1;
@@ -457,7 +457,7 @@ int DemandPlanIterator::initialize()
 
 
 PyObject* DemandPlanIterator::iternext()
-{  
+{
   if (i == dem->getDelivery().end()) return NULL;
   PyObject* result = const_cast<OperationPlan*>(&**(i++));
   Py_INCREF(result);

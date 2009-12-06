@@ -38,16 +38,16 @@
   * solve the LP model.<br>
   * The solver works as follows:
   * - The solver expects a <b>model file</b> and a <b>data file</b> as input.<br>
-  *   The model file represents the mathematical representation of the 
+  *   The model file represents the mathematical representation of the
   *   problem to solve.<br>
   *   The data file holds the data to be loaded into the problem. If no
-  *   data file is specified, the data section in the model file is used 
+  *   data file is specified, the data section in the model file is used
   *   instead.<br>
   *   The user is responsible for creating these files. See the unit test
   *   lp_solver1 for an example.
   * - The solver solves for a number of objectives in sequence.<br>
-  *   After solving an objective's optimal value, the solver freezes the 
-  *   value as a constraint and start for the next objective. Subsequent 
+  *   After solving an objective's optimal value, the solver freezes the
+  *   value as a constraint and start for the next objective. Subsequent
   *   objectives can thus never yield a solution that is suboptimal for the
   *   previous objectives.
   * - After solving for all objectives the solution is written to a solution
@@ -143,7 +143,7 @@ class LPSolver : public Solver
     void setMinimum(bool m) {minimum = m;}
 
     /** Append a new objective to the list. */
-    void addObjective(const string& c) { objectives.push_back(c); }
+    void addObjective(const string& c) {objectives.push_back(c);}
 
 	  /** Return a reference to the list of objectives. */
 	  const list<string>& getObjectives() const {return objectives;}
@@ -202,7 +202,7 @@ class LPSolver : public Solver
     string solutionfilename;
 
     /** A hook to intercept the terminal output of the solver library, and
-      * redirect it into the frePPLe log file. 
+      * redirect it into the frePPLe log file.
       */
     static int solveroutputredirect(void* info, const char* msg)
     {

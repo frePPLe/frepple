@@ -236,7 +236,7 @@ void Tree::erase(TreeNode* z)
       // y now points to node to be actually deleted
     }
     else
-    {                        // y == z
+    {                      // y == z
       x_parent = y->parent;
       if (x) x->parent = y->parent;
       if (header.parent == z) header.parent = x;

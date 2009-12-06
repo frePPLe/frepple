@@ -77,7 +77,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
 
   // Decode the attributes
   const DataElement* opnameElement = in.get(Tags::tag_operation);
-  if (!*opnameElement && action!=REMOVE) 
+  if (!*opnameElement && action!=REMOVE)
     throw DataException("Missing operation attribute");
   string opname = *opnameElement ? opnameElement->getString() : "";
 
@@ -216,7 +216,7 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
   //   - demand of both operationplans are the same
   //   - maximum operation size is not exceeded
   //   - @todo need to check that all flowplans are on the same alternate!!!
-  if (!id && getOperation()->getType() == *OperationFixedTime::metadata 
+  if (!id && getOperation()->getType() == *OperationFixedTime::metadata
     && !getLocked() && !getOwner() && getOperation()->getLoads().empty())
   {
     // Loop through candidates
@@ -227,7 +227,7 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
       y = x;
       x = x->prev;
     }
-    if (y && y->getDates() == getDates() && !y->getOwner() 
+    if (y && y->getDates() == getDates() && !y->getOwner()
       && y->getDemand() == getDemand() && !y->getLocked() && y->id
       && y->getQuantity() + getQuantity() < getOperation()->getSizeMaximum())
     {
@@ -236,7 +236,7 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
       delete this;
       return false;
     }
-    if (x && x->getDates() == getDates() && !x->getOwner() 
+    if (x && x->getDates() == getDates() && !x->getOwner()
       && x->getDemand() == getDemand() && !x->getLocked() && x->id
       && x->getQuantity() + getQuantity() < getOperation()->getSizeMaximum())
     {
@@ -249,7 +249,10 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
 
   // Instantiate all suboperationplans as well
   for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+  {
+    logger << " Instant " << x->getOperation() << endl;
     x->instantiate();
+  }
 
   // Create unique identifier
   // Having an identifier assigned is an important flag.
@@ -275,7 +278,7 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
         ch << "Operationplan id " << id
           << " defined multiple times with different operations: '"
           << opplan->getOperation() << "' & '" << oper << "'";
-        delete this;   
+        delete this;
         throw DataException(ch.str());
       }
     }
@@ -390,8 +393,8 @@ DECLARE_EXPORT void OperationPlan::addSubOperationPlan(OperationPlan* o)
     while (x->nextsubopplan && *(x->nextsubopplan) < *o) x = x->nextsubopplan;
     o->nextsubopplan = x->nextsubopplan;
     o->prevsubopplan = x;
-    if (x->nextsubopplan) 
-      x->nextsubopplan->prevsubopplan = o;    
+    if (x->nextsubopplan)
+      x->nextsubopplan->prevsubopplan = o;
     else
       lastsubopplan = o; // New tail
     x->nextsubopplan = o;
@@ -417,16 +420,16 @@ DECLARE_EXPORT void OperationPlan::eraseSubOperationPlan(OperationPlan* o)
   // Adding a suboperationplan that was already added
   if (o->owner != this)
     throw LogicException("Operationplan isn't a suboperationplan");
-  
+
   // Clear owner field
   o->owner = NULL;
 
   // Remove from the list
-  if (o->prevsubopplan) 
+  if (o->prevsubopplan)
     o->prevsubopplan->nextsubopplan = o->nextsubopplan;
   else
     firstsubopplan = o->nextsubopplan;
-  if (o->nextsubopplan) 
+  if (o->nextsubopplan)
     o->nextsubopplan->prevsubopplan = o->prevsubopplan;
   else
     lastsubopplan = o->prevsubopplan;
@@ -497,10 +500,15 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
   // Has been initialized already, it seems
   if (firstflowplan || firstloadplan) return;
 
-  // Create loadplans for the leading loads
+  // Create setup suboperationplans and loadplans
   for (Operation::loadlist::const_iterator g=oper->getLoads().begin();
       g!=oper->getLoads().end(); ++g)
+  {
     if (!g->getAlternate()) new LoadPlan(this, &*g);
+    if (!g->getSetup().empty() && g->getResource()->getSetupMatrix())
+      OperationSetup::setupoperation->createOperationPlan(
+      getQuantity(),Date::infinitePast,getDates().getStart(),NULL,this);
+  }
 
   // Create flowplans for flows that are not alternates of another one
   for (Operation::flowlist::const_iterator h=oper->getFlows().begin();
@@ -540,16 +548,16 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
   if (id && dmd) dmd->removeDelivery(this);
 
   // Delete from the operationplan list
-  if (prev) 
+  if (prev)
     // In the middle
     prev->next = next;
-  else if (oper->first_opplan == this) 
+  else if (oper->first_opplan == this)
     // First opplan in the list of this operation
-    oper->first_opplan = next; 
-  if (next) 
+    oper->first_opplan = next;
+  if (next)
     // In the middle
     next->prev = prev;
-  else if (oper->last_opplan == this)  
+  else if (oper->last_opplan == this)
     // Last opplan in the list of this operation
     oper->last_opplan = prev;
 }
@@ -650,7 +658,7 @@ DECLARE_EXPORT double OperationPlan::setQuantity (double f, bool roundDown, bool
   // Setting a quantity is only allowed on a top operationplan.
   // One exception: on alternate operations the sizing on the sub-operations is
   // respected.
-  if (owner && owner->getOperation()->getType() != *OperationAlternate::metadata) 
+  if (owner && owner->getOperation()->getType() != *OperationAlternate::metadata)
     return owner->setQuantity(f,roundDown,upd,execute);
 
   // Compute the correct size for the operationplan
@@ -688,7 +696,7 @@ DECLARE_EXPORT double OperationPlan::setQuantity (double f, bool roundDown, bool
 
   // Update the parent of an alternate operationplan
   if (execute && owner
-    && owner->getOperation()->getType() == *OperationAlternate::metadata) 
+    && owner->getOperation()->getType() == *OperationAlternate::metadata)
   {
     owner->quantity = quantity;
     if (upd) owner->resizeFlowLoadPlans();
@@ -744,7 +752,7 @@ DECLARE_EXPORT void OperationPlan::update()
     // If at least 1 sub-operationplan is locked, the parent must be locked
     flags &= ~IS_LOCKED; // Clear is_locked flag
     for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
-        if (i->flags & IS_LOCKED) 
+        if (i->flags & IS_LOCKED)
         {
           flags |= IS_LOCKED;  // Set is_locked flag
           break;
@@ -910,7 +918,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
     Object* x = createOperationPlan(OperationPlan::metadata,atts);
 
     // Iterate over extra keywords, and set attributes.   @todo move this responsability to the readers...
-    if (x) 
+    if (x)
     {
       PyObject *key, *value;
       Py_ssize_t pos = 0;
@@ -929,7 +937,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
       };
     }
 
-    if (x && !static_cast<OperationPlan*>(x)->instantiate()) 
+    if (x && !static_cast<OperationPlan*>(x)->instantiate())
       return NULL;
     return x;
   }
@@ -981,7 +989,7 @@ DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonOb
     setLocked(field.getBool());
   else if (attr.isA(Tags::tag_demand))
   {
-    if (!field.check(Demand::metadata)) 
+    if (!field.check(Demand::metadata))
     {
       PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
       return -1;
@@ -991,7 +999,7 @@ DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonOb
   }
   else if (attr.isA(Tags::tag_owner))
   {
-    if (!field.check(OperationPlan::metadata)) 
+    if (!field.check(OperationPlan::metadata))
     {
       PyErr_SetString(PythonDataException, "operationplan demand must be of type demand");
       return -1;
@@ -1001,7 +1009,7 @@ DECLARE_EXPORT int OperationPlan::setattro(const Attribute& attr, const PythonOb
   }
   else
     return -1;
-  return 0;  
+  return 0;
 }
 
 } // end namespace

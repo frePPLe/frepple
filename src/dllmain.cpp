@@ -54,11 +54,11 @@ DECLARE_EXPORT(void) FreppleInitialize()
   if (!init.empty())
   {
     // Execute the commands in the file
-    try 
-    { 
+    try
+    {
       CommandPython cmd;
       cmd.setFileName(init);
-      cmd.execute(); 
+      cmd.execute();
     }
     catch (...)
     {
@@ -72,7 +72,7 @@ DECLARE_EXPORT(void) FreppleInitialize()
   if (!init.empty())
   {
     // Execute the commands in the file
-    try { CommandReadXMLFile(init).execute(); }
+    try {CommandReadXMLFile(init).execute();}
     catch (...)
     {
       logger << "Exception caught during execution of 'init.xml'" << endl;
@@ -108,7 +108,7 @@ DECLARE_EXPORT(void) FreppleSaveFile(const char* x)
 DECLARE_EXPORT(void) FreppleExit()
 {
   // Close the log file
-  Environment::setLogFile(""); 
+  Environment::setLogFile("");
 }
 
 

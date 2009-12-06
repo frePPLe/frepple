@@ -195,8 +195,8 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    SolverMRP(const string& n) : Solver(n), constrts(0), maxparallel(0), 
-      lazydelay(86400L), autocommit(true), userexit_flow(NULL) 
+    SolverMRP(const string& n) : Solver(n), constrts(0), maxparallel(0),
+      lazydelay(86400L), autocommit(true), userexit_flow(NULL)
         {initType(metadata);}
 
     /** Destructor. */
@@ -305,10 +305,10 @@ class SolverMRP : public Solver
 
     /** Update the time increment between requests when the answered reply
       * date isn't usable. */
-    void setLazyDelay(TimePeriod l) 
+    void setLazyDelay(TimePeriod l)
     {
       if (l > 0L) lazydelay = l;
-      else throw DataException("Invalid lazy delay");      
+      else throw DataException("Invalid lazy delay");
     }
 
     /** Return whether or not we automatically commit the changes after
@@ -352,32 +352,32 @@ class SolverMRP : public Solver
     int maxparallel;
 
     /** Time increments for a lazy replan.<br>
-      * The solver is expected to return always a next-feasible date when the 
-      * request can't be met. The solver can then retry the request with an 
+      * The solver is expected to return always a next-feasible date when the
+      * request can't be met. The solver can then retry the request with an
       * updated request date. In some corner cases and in case of a bug it is
       * possible that no valid date is returned. The solver will then try the
       * request with a request date incremented by this value.<br>
       * The default value is 1 day.
       */
-    TimePeriod lazydelay;    
+    TimePeriod lazydelay;
 
-    /** Enable or disable automatically committing the changes in the plan 
+    /** Enable or disable automatically committing the changes in the plan
       * after planning each demand.<br>
       * The flag is only respected when planning incremental changes, and
-      * is ignored when doing a complete replan. 
+      * is ignored when doing a complete replan.
       */
     bool autocommit;
 
     /** A Python callback function that is called for each alternate
-      * flow. If the callback function returns false, that alternate 
+      * flow. If the callback function returns false, that alternate
       * flow is an invalid choice.
       */
     PyObject* userexit_flow;
 
   protected:
-    /** @brief This class is used to store the solver status during the 
+    /** @brief This class is used to store the solver status during the
       * ask-reply calls of the solver.
-      * 
+      *
       */
     struct State
     {
@@ -433,7 +433,7 @@ class SolverMRP : public Solver
 
         /** Penalty associated with the reply.<br>
           * This field contains indirect costs and other penalties that are
-          * not strictly related to the request. Examples are setup costs, 
+          * not strictly related to the request. Examples are setup costs,
           * inventory carrying costs, ...
           */
         double a_penalty;
@@ -453,7 +453,7 @@ class SolverMRP : public Solver
 
         /** Constructor. */
         SolverMRPdata(SolverMRP* s = NULL, int c = 0, deque<Demand*>* d = NULL)
-          : sol(s), cluster(c), demands(d), 
+          : sol(s), cluster(c), demands(d),
           state(statestack), prevstate(statestack-1) {}
 
         /** Verbose mode is inherited from the solver. */
@@ -478,7 +478,7 @@ class SolverMRP : public Solver
         virtual const MetaClass& getType() const {return *SolverMRP::metadata;}
         virtual size_t getSize() const {return sizeof(SolverMRPdata);}
 
-        bool getVerbose() const 
+        bool getVerbose() const
         {
           throw LogicException("Use the method SolverMRPdata::getLogLevel() instead of SolverMRPdata::getVerbose()");
         }
@@ -486,7 +486,7 @@ class SolverMRP : public Solver
         /** Add a new state to the status stack. */
         inline void push(double q = 0.0, Date d = Date::infiniteFuture)
         {
-          if (state >= statestack + MAXSTATES) 
+          if (state >= statestack + MAXSTATES)
             throw RuntimeException("Maximum recursion depth exceeded");
           ++state;
           ++prevstate;
@@ -503,7 +503,7 @@ class SolverMRP : public Solver
         /** Removes a state from the status stack. */
         inline void pop()
         {
-          if (--state < statestack) 
+          if (--state < statestack)
             throw LogicException("State stack empty");
           --prevstate;
         }
@@ -527,13 +527,13 @@ class SolverMRP : public Solver
 
       public:
         /** Pointer to the current solver status. */
-        State* state; 
+        State* state;
 
         /** Pointer to the solver status one level higher on the stack. */
-        State* prevstate; 
+        State* prevstate;
     };
 
-    /** When autocommit is switched off, this command structure will contain 
+    /** When autocommit is switched off, this command structure will contain
       * all plan changes.
       */
     SolverMRPdata commands;

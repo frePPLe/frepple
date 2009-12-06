@@ -197,7 +197,7 @@ DECLARE_EXPORT void CommandList::execute()
       // wait for all of them to finish.
       pthread_t threads[numthreads];     // holds thread info
       int errcode;                       // holds pthread error code
- 
+
       // Create the threads
       for (; worker<numthreads; ++worker)
       {
@@ -221,7 +221,7 @@ DECLARE_EXPORT void CommandList::execute()
 
       // Wait for the threads as they exit
       for (--worker; worker>=0; --worker)
-        // Wait for thread to terminate. 
+        // Wait for thread to terminate.
         // The second arg is NULL, since we don't care about the return status
         // of the finished threads.
         if ((errcode=pthread_join(threads[worker],NULL)))
@@ -303,7 +303,7 @@ DECLARE_EXPORT void CommandList::execute()
     {
       logger << "Error: Caught an exception while executing command '"
       << curCommand->getDescription() << "':" <<  endl;
-      try { throw; }
+      try {throw;}
       catch (exception& e) {logger << "  " << e.what() << endl;}
       catch (...) {logger << "  Unknown type" << endl;}
       // Undo all commands executed so far
@@ -350,13 +350,13 @@ unsigned __stdcall CommandList::wrapper(void *arg)
     // Verfiy whether there has been a cancellation request in the meantime
     pthread_testcancel();
 #endif
-    try { c->execute(); }
+    try {c->execute();}
     catch (...)
     {
       // Error message
       logger << "Error: Caught an exception while executing command '"
       << c->getDescription() << "':" << endl;
-      try { throw; }
+      try {throw;}
       catch (exception& e) {logger << "  " << e.what() << endl;}
       catch (...) {logger << "  Unknown type" << endl;}
     }
@@ -452,15 +452,15 @@ DECLARE_EXPORT void CommandLoadLibrary::execute()
   dlerror(); // Clear the previous error
   void *handle = dlopen(fullpath.c_str(), RTLD_NOW | RTLD_GLOBAL);
   const char *err = dlerror();  // Pick up the error string
-  if (err) 
+  if (err)
   {
-     // Search the normal path for the library   
+     // Search the normal path for the library
      dlerror(); // Clear the previous error
      handle = dlopen(lib.c_str(), RTLD_NOW | RTLD_GLOBAL);
      err = dlerror();  // Pick up the error string
      if (err) throw RuntimeException(err);
   }
-  
+
   // Find the initialization routine
   func inithandle = (func)(dlsym(handle, "initialize"));
   err = dlerror(); // Pick up the error string
@@ -498,7 +498,7 @@ DECLARE_EXPORT PyObject* CommandLoadLibrary::executePython
     Py_ssize_t pos = 0;
     while (PyDict_Next(kwds, &pos, &key, &value))
       cmd.addParameter(
-        PythonObject(key).getString(), 
+        PythonObject(key).getString(),
         PythonObject(value).getString()
         );
   }
@@ -506,8 +506,8 @@ DECLARE_EXPORT PyObject* CommandLoadLibrary::executePython
   // Free Python interpreter for other threads.
   // This is important since the module may also need access to Python
   // during its initialization...
-  Py_BEGIN_ALLOW_THREADS   
-  try { 
+  Py_BEGIN_ALLOW_THREADS
+  try {
     // Load the library
     cmd.execute();
   }

@@ -164,16 +164,16 @@ DECLARE_EXPORT void TimePeriod::parse (const char* s)
   {
     switch (*c)
     {
-      case '0': case '1': case '2': case '3': case '4': 
+      case '0': case '1': case '2': case '3': case '4':
       case '5': case '6': case '7': case '8': case '9':
-        value = value * 10 + (*c - '0'); 
+        value = value * 10 + (*c - '0');
         break;
       case 'Y':
         totalvalue += value * 31536000L;
         value = 0;
         break;
       case 'M':
-        // 1 Month = 1 Year / 12 = 365 days / 12 
+        // 1 Month = 1 Year / 12 = 365 days / 12
         totalvalue += value * 2628000L;
         value = 0;
         break;
@@ -197,9 +197,9 @@ DECLARE_EXPORT void TimePeriod::parse (const char* s)
     {
       switch (*c)
       {
-        case '0': case '1': case '2': case '3': case '4':  
+        case '0': case '1': case '2': case '3': case '4':
         case '5': case '6': case '7': case '8': case '9':
-          value = value * 10 + (*c - '0'); 
+          value = value * 10 + (*c - '0');
           break;
         case 'H':
           totalvalue += value * 3600L;
@@ -223,13 +223,13 @@ DECLARE_EXPORT void TimePeriod::parse (const char* s)
   if (value) throw DataException("Invalid time string '" + string(s) + "'");
 
   // If no exceptions where thrown we can now store the value
-  lval = negative ? -totalvalue : totalvalue; 
+  lval = negative ? -totalvalue : totalvalue;
 }
 
 
 DECLARE_EXPORT void Date::parse (const char* s, const string& fmt)
 {
-  if (!s) 
+  if (!s)
   {
     // Null string passed - default value is infinite past
     lval = infinitePast.lval;

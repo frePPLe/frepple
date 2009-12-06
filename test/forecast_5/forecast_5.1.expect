@@ -42,6 +42,8 @@
 			</buckets>
 		</calendar>
 	</calendars>
+	<operations>
+	</operations>
 	<items>
 		<item name="item">
 		</item>

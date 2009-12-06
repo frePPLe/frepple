@@ -59,7 +59,7 @@ void SolverMRP::solve(const Load* l, void* v)
     // CASE I: It is not an alternate load.
     // Delegate the answer to the resource
     l->getResource()->solve(*this,v);
-    if (data->state->a_qty == 0.0 
+    if (data->state->a_qty == 0.0
       && data->state->q_operationplan->getQuantity() != 0.0)
       // In case of a zero reply, we resize the operationplan to 0 right away.
       // This is required to make sure that the buffer inventory profile also
@@ -77,7 +77,7 @@ void SolverMRP::solve(const Load* l, void* v)
   const Load *x = l->hasAlternates() ? l : l->getAlternate();
   for (Operation::loadlist::const_iterator i = l->getOperation()->getLoads().begin();
     i != l->getOperation()->getLoads().end(); ++i)
-    if ((i->getAlternate() == x || &*i == x) 
+    if ((i->getAlternate() == x || &*i == x)
       && i->getEffective().within(data->state->q_loadplan->getDate()))
       thealternates.push_front(&*i);
 
@@ -94,7 +94,7 @@ void SolverMRP::solve(const Load* l, void* v)
     const Load *curload = *i;
     data->state->q_loadplan = lplan; // because q_loadplan can change!
     // 3a) Switch to this load
-    if (data->state->q_loadplan->getLoad() != curload) 
+    if (data->state->q_loadplan->getLoad() != curload)
     {
       data->state->q_loadplan->setLoad(curload);
       data->state->q_qty = data->state->q_loadplan->getQuantity();
@@ -111,23 +111,23 @@ void SolverMRP::solve(const Load* l, void* v)
     if (data->state->a_date < min_next_date)
       min_next_date = data->state->a_date;
     if (++i != thealternates.end() && data->getSolver()->getLogLevel()>1)
-      logger << indent(curload->getOperation()->getLevel()) << "   Alternate load switches from '" 
-            << curload->getResource()->getName() << "' to '" 
+      logger << indent(curload->getOperation()->getLevel()) << "   Alternate load switches from '"
+            << curload->getResource()->getName() << "' to '"
             << (*i)->getResource()->getName() << "'" << endl;
   }
 
-  // 4) No alternate gave a good result     
+  // 4) No alternate gave a good result
   data->state->a_date = min_next_date;
-  data->state->a_qty = 0;    
+  data->state->a_qty = 0;
   if (data->state->q_operationplan->getQuantity() != 0.0)
     // In case of a zero reply, we resize the operationplan to 0 right away.
     // This is required to make sure that the buffer inventory profile also
     // respects this answer.
     data->state->q_operationplan->setQuantity(0.0);
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(data->state->q_loadplan->getLoad()->getOperation()->getLevel()) << 
-      "   Alternate load doesn't find supply on any alternate : " 
-      << data->state->a_qty << "  " << data->state->a_date << endl;    
+    logger << indent(data->state->q_loadplan->getLoad()->getOperation()->getLevel()) <<
+      "   Alternate load doesn't find supply on any alternate : "
+      << data->state->a_qty << "  " << data->state->a_date << endl;
 }
 
 

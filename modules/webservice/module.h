@@ -33,7 +33,7 @@
   *
   * The gSOAP toolkit is used to create a SOAP service for frePPLe.
   *
-  * A new Python extension is added to run a multi-threaded SOAP webservice 
+  * A new Python extension is added to run a multi-threaded SOAP webservice
   * server.
   */
 
@@ -41,7 +41,7 @@
 #include "freppleinterface.h"
 using namespace frepple;
 
-#include "soapH.h" 
+#include "soapH.h"
 
 
 // Settings specific to gsoap

@@ -48,7 +48,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(b->getLevel()) << "  Buffer '" << b->getName() 
+    logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
   // Store the last command in the list, in order to undo the following
@@ -104,7 +104,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           // Create supply
           data->state->curBuffer = const_cast<Buffer*>(b);
           data->state->q_qty = -theDelta;
-          data->state->q_date = prev->getDate();  
+          data->state->q_date = prev->getDate();
 
           // Check whether this date doesn't match with the requested date.
           // See a bit further why this is required.
@@ -117,13 +117,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           // Evaluate the reply date. The variable extraSupplyDate will store
           // the date when the producing operation tells us it can get extra
           // supply.
-          if (data->state->a_date < extraSupplyDate 
+          if (data->state->a_date < extraSupplyDate
             && data->state->a_date > requested_date)
             extraSupplyDate = data->state->a_date;
 
           // If we got some extra supply, we retry to get some more supply.
           // Only when no extra material is obtained, we give up.
-          if (data->state->a_qty > ROUNDING_ERROR 
+          if (data->state->a_qty > ROUNDING_ERROR
             && data->state->a_qty < -theDelta - ROUNDING_ERROR)
             theDelta += data->state->a_qty;
           else
@@ -204,10 +204,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     // stock to a minimum.
     b->getProducingOperation()->solve(*this,v);
     // Evaluate the reply
-    if (data->state->a_date < extraSupplyDate 
+    if (data->state->a_date < extraSupplyDate
       && data->state->a_date > requested_date)
       extraSupplyDate = data->state->a_date;
-    if (data->state->a_qty > ROUNDING_ERROR) 
+    if (data->state->a_qty > ROUNDING_ERROR)
       shortage -= data->state->a_qty;
     else
       tried_requested_date = true;
@@ -246,7 +246,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
 
   // Increment the cost
   // Only the quantity consumed directly from the buffer is counted.
-  // The cost of the material supply taken from producing operations is 
+  // The cost of the material supply taken from producing operations is
   // computed seperately and not considered here.
   if (b->getItem() && data->state->a_qty > 0)
   {
@@ -257,7 +257,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(b->getLevel()) << "  Buffer '" << b->getName() 
+    logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
     << "' answers: " << data->state->a_qty << "  " << data->state->a_date << "  "
     << data->state->a_cost << "  " << data->state->a_penalty << endl;
 }

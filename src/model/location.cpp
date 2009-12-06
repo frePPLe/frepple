@@ -161,7 +161,7 @@ DECLARE_EXPORT int Location::setattro(const Attribute& attr, const PythonObject&
     setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_owner))
   {
-    if (!field.check(Location::metadata)) 
+    if (!field.check(Location::metadata))
     {
       PyErr_SetString(PythonDataException, "location owner must be of type location");
       return -1;
@@ -171,7 +171,7 @@ DECLARE_EXPORT int Location::setattro(const Attribute& attr, const PythonObject&
   }
   else if (attr.isA(Tags::tag_available))
   {
-    if (!field.check(CalendarBool::metadata)) 
+    if (!field.check(CalendarBool::metadata))
     {
       PyErr_SetString(PythonDataException, "location calendar must be of type calendar_bool");
       return -1;

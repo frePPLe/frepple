@@ -96,13 +96,13 @@ DECLARE_EXPORT void Flow::validate(Action action)
           + oper->getName() + "'");
   }
 
-  // Check if a flow with 1) identical buffer, 2) identical operation and 
+  // Check if a flow with 1) identical buffer, 2) identical operation and
   // 3) overlapping effectivity dates already exists
   Operation::flowlist::const_iterator i = oper->getFlows().begin();
   for (; i != oper->getFlows().end(); ++i)
-    if (i->getBuffer() == buf 
-      && i->getEffective().overlap(getEffective()) 
-      && &*i != this) 
+    if (i->getBuffer() == buf
+      && i->getEffective().overlap(getEffective())
+      && &*i != this)
         break;
 
   // Apply the appropriate action
@@ -168,14 +168,14 @@ DECLARE_EXPORT Flow::~Flow()
   if (hasAlts)
   {
     // The flow has alternates.
-    // Make a new flow the leading one. Or if there is only one alternate 
+    // Make a new flow the leading one. Or if there is only one alternate
     // present it is not marked as an alternate any more.
     unsigned short cnt = 0;
     int minprio = INT_MAX;
     Flow* newLeader = NULL;
     for (Operation::flowlist::iterator i = getOperation()->flowdata.begin();
       i != getOperation()->flowdata.end(); ++i)
-      if (i->altFlow == this) 
+      if (i->altFlow == this)
       {
         cnt++;
         if (i->priority < minprio)
@@ -184,7 +184,7 @@ DECLARE_EXPORT Flow::~Flow()
           minprio = i->priority;
         }
       }
-    if (cnt < 1) 
+    if (cnt < 1)
       throw LogicException("Alternate flows update failure");
     else if (cnt == 1)
       // No longer an alternate any more
@@ -202,12 +202,12 @@ DECLARE_EXPORT Flow::~Flow()
   if (altFlow)
   {
     // The flow is an alternate of another one.
-    // If it was the only alternate, then the hasAlts flag on the parent 
+    // If it was the only alternate, then the hasAlts flag on the parent
     // flow needs to be set back to false
     bool only_one = true;
-    for (Operation::flowlist::iterator i = getOperation()->flowdata.begin(); 
+    for (Operation::flowlist::iterator i = getOperation()->flowdata.begin();
       i != getOperation()->flowdata.end(); ++i)
-      if (i->altFlow == altFlow) 
+      if (i->altFlow == altFlow)
       {
         only_one = false;
         break;
@@ -220,9 +220,9 @@ DECLARE_EXPORT Flow::~Flow()
 DECLARE_EXPORT void Flow::setAlternate(Flow *f)
 {
   // Validate the argument
-  if (!f) 
+  if (!f)
     throw DataException("Setting NULL alternate flow");
-  if (hasAlts || f->altFlow) 
+  if (hasAlts || f->altFlow)
     throw DataException("Nested alternate flows are not allowed");
   if (!f->isConsumer() || !isConsumer())
     throw DataException("Only consuming alternate flows are supported");
@@ -267,7 +267,7 @@ DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const Keyword& tag, mode m
   o->writeElement(Tags::tag_quantity, getQuantity());
   if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
   if (!getName().empty()) o->writeElement(Tags::tag_name, getName());
-  if (getAlternate()) 
+  if (getAlternate())
     o->writeElement(Tags::tag_alternate, getAlternate()->getName());
 
   // Write the effective daterange
@@ -360,7 +360,7 @@ DECLARE_EXPORT void FlowEnd::writeElement
   o->writeElement(Tags::tag_quantity, getQuantity());
   if (getPriority()!=1) o->writeElement(Tags::tag_priority, getPriority());
   if (!getName().empty()) o->writeElement(Tags::tag_name, getName());
-  if (getAlternate()) 
+  if (getAlternate())
     o->writeElement(Tags::tag_alternate, getAlternate()->getName());
 
   // Write the effective daterange
@@ -400,7 +400,7 @@ DECLARE_EXPORT int Flow::setattro(const Attribute& attr, const PythonObject& fie
 {
   if (attr.isA(Tags::tag_buffer))
   {
-    if (!field.check(Buffer::metadata)) 
+    if (!field.check(Buffer::metadata))
     {
       PyErr_SetString(PythonDataException, "flow buffer must be of type buffer");
       return -1;
@@ -410,7 +410,7 @@ DECLARE_EXPORT int Flow::setattro(const Attribute& attr, const PythonObject& fie
   }
   else if (attr.isA(Tags::tag_operation))
   {
-    if (!field.check(Operation::metadata)) 
+    if (!field.check(Operation::metadata))
     {
       PyErr_SetString(PythonDataException, "flow operation must be of type operation");
       return -1;
@@ -430,7 +430,7 @@ DECLARE_EXPORT int Flow::setattro(const Attribute& attr, const PythonObject& fie
     setName(field.getString());
   else if (attr.isA(Tags::tag_alternate))
   {
-    if (!field.check(Flow::metadata)) 
+    if (!field.check(Flow::metadata))
       setAlternate(field.getString());
     else
     {
@@ -451,14 +451,14 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
   {
     // Pick up the operation
     PyObject* oper = PyDict_GetItemString(kwds,"operation");
-    if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass)) 
+    if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
       throw DataException("flow operation must be of type operation");
 
     // Pick up the resource
     PyObject* buf = PyDict_GetItemString(kwds,"buffer");
-    if (!PyObject_TypeCheck(buf, Buffer::metadata->pythonClass)) 
+    if (!PyObject_TypeCheck(buf, Buffer::metadata->pythonClass))
       throw DataException("flow buffer must be of type buffer");
-   
+
     // Pick up the quantity
     PyObject* q1 = PyDict_GetItemString(kwds,"quantity");
     double q2 = q1 ? PythonObject(q1).getDouble() : 1.0;
@@ -471,20 +471,20 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
       PythonObject d(t);
       if (d.getString() == "flow_end")
         l = new FlowEnd(
-          static_cast<Operation*>(oper), 
+          static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
           q2
           );
       else
         l = new FlowStart(
-          static_cast<Operation*>(oper), 
+          static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
           q2
           );
     }
     else
       l = new FlowStart(
-        static_cast<Operation*>(oper), 
+        static_cast<Operation*>(oper),
         static_cast<Buffer*>(buf),
         q2
         );
@@ -529,18 +529,18 @@ int FlowIterator::initialize()
 
 
 PyObject* FlowIterator::iternext()
-{  
+{
   PyObject* result;
-  if (buf) 
+  if (buf)
   {
-    // Iterate over flows on a buffer 
+    // Iterate over flows on a buffer
     if (ib == buf->getFlows().end()) return NULL;
     result = const_cast<Flow*>(&*ib);
     ++ib;
   }
   else
   {
-    // Iterate over flows on an operation 
+    // Iterate over flows on an operation
     if (io == oper->getFlows().end()) return NULL;
     result = const_cast<Flow*>(&*io);
     ++io;

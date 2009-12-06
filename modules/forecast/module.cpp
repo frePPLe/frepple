@@ -55,9 +55,9 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
   // Process the module parameters
   for (CommandLoadLibrary::ParameterList::const_iterator x = z.begin();
     x != z.end(); ++x)
-  try 
+  try
   {
-    // Netting 
+    // Netting
     if (x->first == "Net_CustomerThenItemHierarchy")
       Forecast::setCustomerThenItemHierarchy(x->second.getBool());
     else if (x->first == "Net_MatchUsingDeliveryOperation")
@@ -75,7 +75,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
       Forecast::setForecastSkip(x->second.getUnsignedLong());
     // Moving average forecast method
     else if (x->first == "MovingAverage_buckets")
-      Forecast::MovingAverage::setDefaultBuckets(x->second.getUnsignedLong());    
+      Forecast::MovingAverage::setDefaultBuckets(x->second.getUnsignedLong());
     // Single exponential forecast method
     else if (x->first == "Forecast_SingleExponential_initialAlfa")
       Forecast::SingleExponential::setInitialAlfa(x->second.getDouble());
@@ -100,7 +100,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     else
       logger << "Warning: Unrecognized parameter '" << x->first << "'" << endl;
   }
-  catch (exception &e) 
+  catch (exception &e)
   {
     // Avoid throwing errors during the initialization!
     logger << "Error: " << e.what() << endl;
@@ -136,7 +136,7 @@ MODULE_EXPORT const char* initialize(const CommandLoadLibrary::ParameterList& z)
     }
     PyEval_ReleaseLock();
   }
-  catch (exception &e) 
+  catch (exception &e)
   {
     // Avoid throwing errors during the initialization!
     logger << "Error: " << e.what() << endl;

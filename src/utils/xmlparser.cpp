@@ -84,7 +84,7 @@ void 	XMLInput::processingInstruction
       xercesc::XMLString::release(&value);
       throw LogicException(msg);
     }
-    try 
+    try
     {
       // Execute the processing instruction
       j->processingInstruction(value);
@@ -170,7 +170,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
 
       // Call the handler of the object
       assert(!m_EHStack.empty());
-      try { getCurrentObject()->beginElement(*this, pElement->first); }
+      try {getCurrentObject()->beginElement(*this, pElement->first);}
       catch (DataException e)
       {
         if (abortOnDataException) throw;
@@ -192,7 +192,7 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const n,
           << " - object " << getCurrentObject() << endl;
           xercesc::XMLString::release(&attname);
           #endif
-          try { getCurrentObject()->endElement(*this, m_EStack[numElements+1].first, m_EStack[numElements+1].second); }
+          try {getCurrentObject()->endElement(*this, m_EStack[numElements+1].first, m_EStack[numElements+1].second);}
           catch (DataException e)
           {
             if (abortOnDataException) throw;
@@ -267,7 +267,7 @@ void XMLInput::endElement(const XMLCh* const uri,
         // Call the ending handler of the Object, with a special
         // flag to specify that this object is now ended
         objectEnded = true;
-        try { getCurrentObject()->endElement(*this, pElement->first, pElement->second); }
+        try {getCurrentObject()->endElement(*this, pElement->first, pElement->second);}
         catch (DataException e)
         {
           if (abortOnDataException) throw;
@@ -289,7 +289,7 @@ void XMLInput::endElement(const XMLCh* const uri,
         else
         {
           // Call also the endElement function on the owning object
-          try { getCurrentObject()->endElement(*this, pElement->first, pElement->second); }
+          try {getCurrentObject()->endElement(*this, pElement->first, pElement->second);}
           catch (DataException e)
           {
             if (abortOnDataException) throw;
@@ -304,7 +304,7 @@ void XMLInput::endElement(const XMLCh* const uri,
       else
         // This tag is not the ending tag of an object
         // Call the function of the Object
-        try { getCurrentObject()->endElement(*this, pElement->first, pElement->second); }
+        try {getCurrentObject()->endElement(*this, pElement->first, pElement->second);}
         catch (DataException e)
         {
           if (abortOnDataException) throw;
@@ -386,7 +386,7 @@ void XMLInput::shutdown()
   m_EStack[numElements].second.reset();
   while (!m_EHStack.empty())
   {
-    try { getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second); }
+    try {getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second);}
     catch (DataException e)
     {
       if (abortOnDataException) throw;
@@ -417,7 +417,7 @@ void XMLInput::reset()
     m_EStack[++numElements].second.reset();
     while (!m_EHStack.empty())
     {
-      try { getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second); }
+      try {getCurrentObject()->endElement(*this, m_EStack[numElements].first, m_EStack[numElements].second);}
       catch (DataException e)
       {
         if (abortOnDataException) throw;
@@ -692,13 +692,13 @@ DECLARE_EXPORT Keyword::Keyword(const string& name) : strName(name)
 }
 
 
-DECLARE_EXPORT Keyword::Keyword(const string& name, const string& nspace) 
+DECLARE_EXPORT Keyword::Keyword(const string& name, const string& nspace)
   : strName(name)
 {
   // Error condition: name is empty
-  if (name.empty()) 
+  if (name.empty())
     throw LogicException("Creating keyword without name");
-  if (nspace.empty()) 
+  if (nspace.empty())
     throw LogicException("Creating keyword with empty namespace");
 
   // Create a number of variations of the tag name
@@ -770,10 +770,10 @@ DECLARE_EXPORT void Keyword::printTags()
 
 DECLARE_EXPORT void XMLInput::executeCommands()
 {
-  try { cmds.execute(); }
+  try {cmds.execute();}
   catch (...)
   {
-    try { throw; }
+    try {throw;}
     catch (exception& e)
     {logger << "Error executing commands: " << e.what() << endl;}
     catch (...)

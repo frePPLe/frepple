@@ -36,8 +36,10 @@ DECLARE_EXPORT const MetaCategory* Operation::metadata;
 DECLARE_EXPORT const MetaClass* OperationFixedTime::metadata,
   *OperationTimePer::metadata,
   *OperationRouting::metadata,
-  *OperationAlternate::metadata;
+  *OperationAlternate::metadata,
+  *OperationSetup::metadata;
 DECLARE_EXPORT Operation::Operationlist Operation::nosubOperations;
+DECLARE_EXPORT const Operation* OperationSetup::setupoperation;
 
 
 int Operation::initialize()
@@ -93,6 +95,23 @@ int OperationRouting::initialize()
   // Initialize the Python class
   FreppleClass<OperationRouting,Operation>::getType().addMethod("addStep", OperationRouting::addStep, METH_VARARGS , "add steps to the routing");
   return FreppleClass<OperationRouting,Operation>::initialize();
+}
+
+
+int OperationSetup::initialize()
+{
+  // Initialize the metadata.
+  // There is NO factory method
+  metadata = new MetaClass("operation", "operation_setup");
+
+  // Initialize the Python class
+  int tmp = FreppleClass<OperationSetup,Operation>::initialize();
+
+  // Create a generic setup operation.
+  // This will be the only instance of this class.
+  setupoperation = add(new OperationSetup("setup operation"));
+
+  return tmp;
 }
 
 
@@ -156,12 +175,12 @@ DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (double q, Date s, 
 
 
 DECLARE_EXPORT DateRange Operation::calculateOperationTime
-  (Date thedate, TimePeriod duration, bool forward, 
+  (Date thedate, TimePeriod duration, bool forward,
     TimePeriod *actualduration) const
 {
   int calcount = 0;
   // Initial size of 10 should do for 99.99% of all cases
-  vector<Calendar::EventIterator*> cals(10); 
+  vector<Calendar::EventIterator*> cals(10);
 
   // Default actual duration
   if (actualduration) *actualduration = duration;
@@ -180,25 +199,25 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
       if (res->getMaximum())
         // b) resource size calendar
         cals[calcount++] = new Calendar::EventIterator(
-          res->getMaximum(), 
+          res->getMaximum(),
           thedate
           );
       if (res->getLocation() && res->getLocation()->getAvailable())
-        // c) resource location 
+        // c) resource location
         cals[calcount++] = new Calendar::EventIterator(
-          res->getLocation()->getAvailable(), 
+          res->getLocation()->getAvailable(),
           thedate
           );
     }
-    */ 
+    */
 
     // Special case: no calendars at all
-    if (calcount == 0) 
-      return forward ? 
+    if (calcount == 0)
+      return forward ?
         DateRange(thedate, thedate+duration) :
         DateRange(thedate-duration, thedate);
 
-    // Step 2: Iterate over the calendar dates to find periods where all 
+    // Step 2: Iterate over the calendar dates to find periods where all
     // calendars are simultaneously effective.
     DateRange result;
     Date curdate = thedate;
@@ -242,7 +261,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
             result.setEnd(thedate + curduration);
             break;
           }
-          else 
+          else
             curduration -= delta;
         }
         else
@@ -254,7 +273,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
             result.setStart(thedate - curduration);
             break;
           }
-          else 
+          else
             curduration -= delta;
         }
       }
@@ -294,7 +313,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
       else --(*cals[0]);
     }
 
-    // Step 3: Clean up 
+    // Step 3: Clean up
     while (calcount) delete cals[--calcount];
     return result;
   }
@@ -321,7 +340,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
 
   int calcount = 0;
   // Initial size of 10 should do for 99.99% of all cases
-  vector<Calendar::EventIterator*> cals(10); 
+  vector<Calendar::EventIterator*> cals(10);
 
   // Default actual duration
    if (actualduration) *actualduration = 0L;
@@ -340,26 +359,26 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
       if (res->getMaximum())
         // b) resource size calendar
         cals[calcount++] = new Calendar::EventIterator(
-          res->getMaximum(), 
+          res->getMaximum(),
           start
           );
       if (res->getLocation() && res->getLocation()->getAvailable())
-        // c) resource location 
+        // c) resource location
         cals[calcount++] = new Calendar::EventIterator(
-          res->getLocation()->getAvailable(), 
+          res->getLocation()->getAvailable(),
           start
           );
     }
-    */ 
+    */
 
     // Special case: no calendars at all
-    if (calcount == 0) 
+    if (calcount == 0)
     {
        if (actualduration) *actualduration = end - start;
       return DateRange(start, end);
     }
 
-    // Step 2: Iterate over the calendar dates to find periods where all 
+    // Step 2: Iterate over the calendar dates to find periods where all
     // calendars are simultaneously effective.
     DateRange result;
     Date curdate = start;
@@ -424,7 +443,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
       ++(*cals[0]);
     }
 
-    // Step 3: Clean up 
+    // Step 3: Clean up
     while (calcount) delete cals[--calcount];
     return result;
   }
@@ -438,7 +457,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
 }
 
 
-DECLARE_EXPORT void Operation::initOperationPlan (OperationPlan* opplan, 
+DECLARE_EXPORT void Operation::initOperationPlan (OperationPlan* opplan,
     double q, const Date& s, const Date& e, Demand* l, OperationPlan* ow,
     unsigned long i, bool makeflowsloads) const
 {
@@ -561,24 +580,24 @@ DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, const Attribute& pAttr
 
 DECLARE_EXPORT pair<DateRange,double>
 OperationFixedTime::setOperationPlanParameters
-(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd, bool execute) const
+(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
   // Invalid call to the function, or locked operationplan.
-  if (!oplan || q<0)
+  if (!opplan || q<0)
     throw LogicException("Incorrect parameters for fixedtime operationplan");
-  if (oplan->getLocked()) 
-    return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
+  if (opplan->getLocked())
+    return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
 
   // All quantities are valid, as long as they are bigger than the minimum size
   if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
-  if (fabs(q - oplan->getQuantity()) > ROUNDING_ERROR)
-    q = oplan->setQuantity(q, false, false, execute);
+  if (fabs(q - opplan->getQuantity()) > ROUNDING_ERROR)
+    q = opplan->setQuantity(q, false, false, execute);
 
   // Set the start and end date.
   DateRange x;
   TimePeriod actualduration;
   if (e && s)
-  {    
+  {
     if (preferEnd) x = calculateOperationTime(e, duration, false, &actualduration);
     else x = calculateOperationTime(s, duration, true, &actualduration);
   }
@@ -589,13 +608,13 @@ OperationFixedTime::setOperationPlanParameters
     return pair<DateRange,double>(x, actualduration == duration ? q : 0);
   else if (actualduration == duration)
     // Update succeeded
-    oplan->setStartAndEnd(x.getStart(), x.getEnd());
+    opplan->setStartAndEnd(x.getStart(), x.getEnd());
   else
     // Update failed - Not enough available time
-    oplan->setQuantity(0);
+    opplan->setQuantity(0);
 
   // Return value
-  return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
+  return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
 }
 
 
@@ -630,35 +649,21 @@ DECLARE_EXPORT void OperationFixedTime::endElement (XMLInput& pIn, const Attribu
 }
 
 
-DECLARE_EXPORT pair<DateRange,double> 
+DECLARE_EXPORT pair<DateRange,double>
 OperationTimePer::setOperationPlanParameters
-(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd, bool execute) const
+(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
   // Invalid call to the function.
-  if (!oplan || q<0)
+  if (!opplan || q<0)
     throw LogicException("Incorrect parameters for timeper operationplan");
-  if (oplan->getLocked()) 
-    return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
+  if (opplan->getLocked())
+    return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
 
   // Respect minimum size
-  if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum(); 
-
-  // Calculate the setup time
-  DateRange x;
-  for (loadlist::const_iterator g=getLoads().begin(); g!=getLoads().end(); ++g)
-    if (g->getResource()->getSetupMatrix() && !g->getSetup().empty()) 
-    {
-      DateRange x2 = g->getResource()->getSetupMatrix()->calculateSetup(oplan,&*g,s,e,preferEnd,execute);
-      if (x.getStart() == Date::infinitePast || x2.getStart() < x.getStart()) 
-        x.setStart(x2.getStart());
-      if (x.getEnd() == Date::infiniteFuture ||x2.getEnd() > x.getEnd()) 
-        x.setEnd(x2.getEnd());
-    }
-  //xxxlogger << "setup " << x << endl; //xxx  
-  x = DateRange();
+  if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
 
   // The logic depends on which dates are being passed along
-  // xxx DateRange x;
+  DateRange x;
   TimePeriod actual;
   if (s && e)
   {
@@ -668,73 +673,73 @@ OperationTimePer::setOperationPlanParameters
     if (actual < duration)
     {
       // Start and end aren't far enough from each other to fit the constant
-      // part of the operation duration. This is infeasible.      
+      // part of the operation duration. This is infeasible.
       if (!execute) return pair<DateRange,double>(x,0);
-      oplan->setQuantity(0,true,false,execute);
-      oplan->setEnd(e);   // xxx Does this create a recursive call to this same function???
+      opplan->setQuantity(0,true,false,execute);
+      opplan->setEnd(e);   // xxx Does this create a recursive call to this same function???
     }
     else
     {
       // Divide the variable duration by the duration_per time, to compute the
       // maximum number of pieces that can be produced in the timeframe
-      double max_q = duration_per ? 
-        static_cast<double>(actual - duration) / duration_per : 
+      double max_q = duration_per ?
+        static_cast<double>(actual - duration) / duration_per :
         q;
 
       // Set the quantity to either the maximum or the requested quantity,
       // depending on which one is smaller.
-      q = oplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
+      q = opplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
 
       // Updates the dates
       TimePeriod wanted(
         duration + static_cast<long>(duration_per * q)
-        );      
+        );
       if (preferEnd) x = calculateOperationTime(e, wanted, false, &actual);
       else x = calculateOperationTime(s, wanted, true, &actual);
       if (!execute) return pair<DateRange,double>(x,q);
-      oplan->setStartAndEnd(x.getStart(),x.getEnd());
+      opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
   }
   else if (e || !s)
   {
     // Case 2: Only an end date is specified. Respect the quantity and
     // compute the start date
-    // Case 4: No date was given at all. Respect the quantity and the 
+    // Case 4: No date was given at all. Respect the quantity and the
     // existing end date of the operationplan.
-    q = oplan->setQuantity(q,true,false,execute); // Round and size the quantity
+    q = opplan->setQuantity(q,true,false,execute); // Round and size the quantity
     TimePeriod wanted(duration + static_cast<long>(duration_per * q));
     x = calculateOperationTime(e, wanted, false, &actual);
     if (actual == wanted)
     {
       // Size is as desired
       if (!execute) return pair<DateRange,double>(x, q);
-      oplan->setStartAndEnd(x.getStart(),x.getEnd());
+      opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
     else if (actual < duration)
     {
       // Not feasible
       if (!execute) return pair<DateRange,double>(x, 0);
-      oplan->setQuantity(0,true,false);
-      oplan->setStartAndEnd(e,e);
+      opplan->setQuantity(0,true,false);
+      opplan->setStartAndEnd(e,e);
     }
     else
     {
-      // Resize the quantity to be feasible 
-      double max_q = duration_per ? 
-        static_cast<double>(actual-duration) / duration_per : 
+      // Resize the quantity to be feasible
+      double max_q = duration_per ?
+        static_cast<double>(actual-duration) / duration_per :
         q;
-      q = oplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
+      q = opplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
       wanted = duration + static_cast<long>(duration_per * q);
       x = calculateOperationTime(e, wanted, false, &actual);
       if (!execute) return pair<DateRange,double>(x, q);
-      oplan->setStartAndEnd(x.getStart(),x.getEnd());
+      opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
   }
   else
   {
-    // Case 3: Only a start date is specified. Respect the quantity and 
+    // Case 3: Only a start date is specified. Respect the quantity and
     // compute the end date
-    q = oplan->setQuantity(q,true,false,execute); // Round and size the quantity
+    q = opplan->setQuantity(q,true,false,execute); // Round and size the quantity
     TimePeriod wanted(
       duration + static_cast<long>(duration_per * q)
       );
@@ -744,31 +749,31 @@ OperationTimePer::setOperationPlanParameters
     {
       // Size is as desired
       if (!execute) return pair<DateRange,double>(x, q);
-      oplan->setStartAndEnd(x.getStart(),x.getEnd());
+      opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
     else if (actual < duration)
     {
       // Not feasible
       if (!execute) return pair<DateRange,double>(x, 0);
-      oplan->setQuantity(0,true,false);
-      oplan->setStartAndEnd(s,s);
+      opplan->setQuantity(0,true,false);
+      opplan->setStartAndEnd(s,s);
     }
     else
     {
-      // Resize the quantity to be feasible 
-      double max_q = duration_per ? 
-        static_cast<double>(actual-duration) / duration_per : 
+      // Resize the quantity to be feasible
+      double max_q = duration_per ?
+        static_cast<double>(actual-duration) / duration_per :
         q;
-      q = oplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
+      q = opplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
       wanted = duration + static_cast<long>(duration_per * q);
       x = calculateOperationTime(e, wanted, false, &actual);
       if (!execute) return pair<DateRange,double>(x, q);
-      oplan->setStartAndEnd(x.getStart(),x.getEnd());
+      opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
   }
 
   // Return value
-  return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
+  return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
 }
 
 
@@ -858,24 +863,24 @@ DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, const Attribute
 
 DECLARE_EXPORT pair<DateRange,double>
 OperationRouting::setOperationPlanParameters
-(OperationPlan* oplan, double q, Date s, Date e, bool preferEnd, bool execute) const
+(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
   // Invalid call to the function
-  if (!oplan || q<0)
+  if (!opplan || q<0)
     throw LogicException("Incorrect parameters for routing operationplan");
-  if (oplan->getLocked()) 
-    return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
+  if (opplan->getLocked())
+    return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
 
-  if (!oplan->firstsubopplan) // xx need to change for setups?
+  if (!opplan->firstsubopplan) // xxx need to change for setups?
   {
     // No step operationplans to work with. Just apply the requested quantity
     // and dates.
-    q = oplan->setQuantity(q,false,false,execute);
+    q = opplan->setQuantity(q,false,false,execute);
     if (!s && e) s = e;
     if (s && !e) e = s;
     if (!execute) return pair<DateRange,double>(DateRange(s,e), q);
-    oplan->setStartAndEnd(s,e);
-    return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
+    opplan->setStartAndEnd(s,e);
+    return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
   }
 
   // Behavior depends on the dates being passed.
@@ -887,7 +892,7 @@ OperationRouting::setOperationPlanParameters
   if (e)
   {
     // Case 1: an end date is specified
-    for (OperationPlan* i = oplan->lastsubopplan; i; i = i->prevsubopplan)
+    for (OperationPlan* i = opplan->lastsubopplan; i; i = i->prevsubopplan)
     {
       if (i->getDates().getEnd() > e || firstOp)
       {
@@ -899,14 +904,14 @@ OperationRouting::setOperationPlanParameters
       else
         // There is sufficient slack in the routing, and the start
         // date doesn't need to be changed
-        return pair<DateRange,double>(DateRange(oplan->getDates().getStart(),y), x.second);
+        return pair<DateRange,double>(DateRange(opplan->getDates().getStart(),y), x.second);
     }
     return pair<DateRange,double>(DateRange(x.first.getStart(),y), x.second);
   }
   else if (s)
   {
     // Case 2: a start date is specified
-    for (OperationPlan *i = oplan->firstsubopplan; i; i = i->nextsubopplan)
+    for (OperationPlan *i = opplan->firstsubopplan; i; i = i->nextsubopplan)
     {
       if (i->getDates().getStart() < s || firstOp)
       {
@@ -918,7 +923,7 @@ OperationRouting::setOperationPlanParameters
       else
         // There is sufficient slack in the routing, and the start
         // date doesn't need to be changed
-        return pair<DateRange,double>(DateRange(y,oplan->getDates().getEnd()), x.second);
+        return pair<DateRange,double>(DateRange(y,opplan->getDates().getEnd()), x.second);
     }
     return pair<DateRange,double>(DateRange(y,x.first.getEnd()), x.second);
   }
@@ -956,7 +961,7 @@ DECLARE_EXPORT void OperationAlternate::addAlternate
 }
 
 
-DECLARE_EXPORT const OperationAlternate::alternateProperty& 
+DECLARE_EXPORT const OperationAlternate::alternateProperty&
   OperationAlternate::getProperties(Operation* o) const
 {
   if (!o)
@@ -1069,7 +1074,7 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, const Attribu
   typedef pair<Operation*,alternateProperty> tempData;
 
   // Create a temporary object
-  if (!pIn.getUserArea()) 
+  if (!pIn.getUserArea())
     pIn.setUserArea(new tempData(NULL,alternateProperty(1,DateRange())));
   tempData* tmp = static_cast<tempData*>(pIn.getUserArea());
 
@@ -1103,30 +1108,30 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, const Attribu
 }
 
 
-DECLARE_EXPORT pair<DateRange,double> 
+DECLARE_EXPORT pair<DateRange,double>
 OperationAlternate::setOperationPlanParameters
-  (OperationPlan* oplan, double q, Date s, Date e, bool preferEnd, 
+  (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
   bool execute) const
 {
   // Invalid calls to this function
-  if (!oplan || q<0)
+  if (!opplan || q<0)
     throw LogicException("Incorrect parameters for alternate operationplan");
-  if (oplan->getLocked())
-    return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
+  if (opplan->getLocked())
+    return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
 
-  OperationPlan *x = oplan->firstsubopplan;
-  // xxx need to skip setup operationplans while (x) x = x->nextsubopplan;  
+  OperationPlan *x = opplan->firstsubopplan;
+  // xxx need to skip setup operationplans while (x) x = x->nextsubopplan;
   if (!x)
   {
     // Blindly accept the parameters if there is no suboperationplan
     if (execute)
     {
-      oplan->setQuantity(q,false,false);
-      oplan->setStartAndEnd(s, e);
-      return pair<DateRange,double>(oplan->getDates(), oplan->getQuantity());
+      opplan->setQuantity(q,false,false);
+      opplan->setStartAndEnd(s, e);
+      return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
     }
     else
-      return pair<DateRange,double>(DateRange(s,e), oplan->setQuantity(q,false,false,false));
+      return pair<DateRange,double>(DateRange(s,e), opplan->setQuantity(q,false,false,false));
   }
   else
     // Pass the call to the sub-operation
@@ -1212,7 +1217,7 @@ DECLARE_EXPORT int Operation::setattro(const Attribute& attr, const PythonObject
     setSubCategory(field.getString());
   else if (attr.isA(Tags::tag_location))
   {
-    if (!field.check(Location::metadata)) 
+    if (!field.check(Location::metadata))
     {
       PyErr_SetString(PythonDataException, "buffer location must be of type location");
       return -1;
@@ -1246,7 +1251,7 @@ DECLARE_EXPORT PyObject* OperationFixedTime::getattro(const Attribute& attr)
 {
   if (attr.isA(Tags::tag_duration))
     return PythonObject(getDuration());
-  return Operation::getattro(attr); 
+  return Operation::getattro(attr);
 }
 
 
@@ -1266,7 +1271,7 @@ DECLARE_EXPORT PyObject* OperationTimePer::getattro(const Attribute& attr)
     return PythonObject(getDuration());
   if (attr.isA(Tags::tag_duration))
     return PythonObject(getDurationPer());
-  return Operation::getattro(attr); 
+  return Operation::getattro(attr);
 }
 
 
@@ -1298,7 +1303,7 @@ DECLARE_EXPORT PyObject* OperationAlternate::getattro(const Attribute& attr)
     ch << getSearch();
     return PythonObject(ch.str());
   }
-  return Operation::getattro(attr); 
+  return Operation::getattro(attr);
 }
 
 
@@ -1319,18 +1324,18 @@ DECLARE_EXPORT PyObject* OperationAlternate::addAlternate(PyObject* self, PyObje
     // Pick up the alternate operation
     OperationAlternate *altoper = static_cast<OperationAlternate*>(self);
     if (!altoper) throw LogicException("Can't add alternates to NULL alternate");
-  
+
     // Parse the arguments
     PyObject *oper = NULL;
     int prio = 1;
     PyObject *eff_start = NULL;
     PyObject *eff_end = NULL;
     static const char *kwlist[] = {"operation", "priority", "effective_start", "effective_end", NULL};
-	  if (!PyArg_ParseTupleAndKeywords(args, kwdict, 
-      "O|iOO:addAlternate", 
+	  if (!PyArg_ParseTupleAndKeywords(args, kwdict,
+      "O|iOO:addAlternate",
       const_cast<char**>(kwlist), &oper, &prio, &eff_start, &eff_end))
         return NULL;
-    if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass)) 
+    if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
       throw DataException("alternate operation must be of type operation");
     DateRange eff;
     if (eff_start)
@@ -1366,7 +1371,7 @@ DECLARE_EXPORT PyObject* OperationRouting::getattro(const Attribute& attr)
       PyTuple_SetItem(result, count++, PythonObject(*i));
     return result;
   }
-  return Operation::getattro(attr); 
+  return Operation::getattro(attr);
 }
 
 
@@ -1382,9 +1387,9 @@ PyObject *OperationRouting::addStep(PyObject *self, PyObject *args)
     PyObject *steps[4];
     for (unsigned int i=0; i<4; ++i) steps[i] = NULL;
     if (PyArg_UnpackTuple(args, "addStep", 1, 4, &steps[0], &steps[1], &steps[2], &steps[3]))
-      for (unsigned int i=0; i<4 && steps[i]; ++i) 
+      for (unsigned int i=0; i<4 && steps[i]; ++i)
       {
-        if (!PyObject_TypeCheck(steps[i], Operation::metadata->pythonClass)) 
+        if (!PyObject_TypeCheck(steps[i], Operation::metadata->pythonClass))
           throw DataException("routing steps must be of type operation");
         oper->addStepBack(static_cast<Operation*>(steps[i]));
       }

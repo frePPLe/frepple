@@ -136,7 +136,7 @@ void OperationPlan::updateProblems()  // @todo test precedence problems: may wel
       currentproblems.pop_front();
     }
   }
-      
+
 }
 
 }

@@ -33,14 +33,14 @@ namespace module_forecast
 #define ACCURACY 0.01
 
 void Forecast::generateFutureValues(
-  const double history[], unsigned int historycount, 
-  const Date buckets[], unsigned int bucketcount, 
+  const double history[], unsigned int historycount,
+  const Date buckets[], unsigned int bucketcount,
   bool debug)
 {
   // Validate the input
-  if (!history || !buckets) 
+  if (!history || !buckets)
     throw RuntimeException("Null argument to forecast function");
-  if (bucketcount < 2) 
+  if (bucketcount < 2)
     throw DataException("Need at least 2 forecast dates");
 
   // Create a list of forecasting methods.
@@ -64,12 +64,12 @@ void Forecast::generateFutureValues(
   double best_error = DBL_MAX;
   int best_method = -1;
   double error;
-  try 
+  try
   {
     for (int i=0; i<numberOfMethods; ++i)
-    {    
-      error = methods[i]->generateForecast(this, history, historycount, madWeight, debug);  
-      if (error<best_error) 
+    {
+      error = methods[i]->generateForecast(this, history, historycount, madWeight, debug);
+      if (error<best_error)
       {
         best_error = error;
         best_method = i;
@@ -82,7 +82,7 @@ void Forecast::generateFutureValues(
     throw;
   }
   delete madWeight;
-  
+
   // Apply the most appropriate forecasting method
   if (best_method >= 0)
   {
@@ -111,7 +111,7 @@ double Forecast::MovingAverage::generateForecast
   for (unsigned int i = 1; i <= count; ++i)
   {
     sum += history[i-1];
-    if (i>buckets) 
+    if (i>buckets)
     {
       sum -= history[i-1-buckets];
       avg = sum / buckets;
@@ -124,21 +124,21 @@ double Forecast::MovingAverage::generateForecast
 
   // Echo the result
   if (debug)
-    logger << (fcst ? fcst->getName() : "") << ": moving average : " 
-      << "mad " << error_mad 
+    logger << (fcst ? fcst->getName() : "") << ": moving average : "
+      << "mad " << error_mad
       << ", forecast " << avg << endl;
   return error_mad;
 }
 
 
-void Forecast::MovingAverage::applyForecast 
+void Forecast::MovingAverage::applyForecast
   (Forecast* forecast, const Date buckets[], unsigned int bucketcount, bool debug)
 {
   // Loop over all buckets and set the forecast to a constant value
   if (avg < 0) return;
   for (unsigned int i = 1; i < bucketcount; ++i)
     forecast->setTotalQuantity(
-      DateRange(buckets[i-1], buckets[i]), 
+      DateRange(buckets[i-1], buckets[i]),
       avg
       );
 }
@@ -182,7 +182,7 @@ double Forecast::SingleExponential::generateForecast
       if (i == count) break;
       sum_12 += df_dalfa_i * (history[i] - f_i) * madWeight[i];
       sum_11 += df_dalfa_i * df_dalfa_i * madWeight[i];
-      if (i >= fcst->getForecastSkip()) 
+      if (i >= fcst->getForecastSkip())
         error_mad += fabs(f_i - history[i]) * madWeight[i];
     }
 
@@ -197,7 +197,7 @@ double Forecast::SingleExponential::generateForecast
     // Add Levenberg - Marquardt damping factor
     if (fabs(sum_11 + error_mad / iteration) > ROUNDING_ERROR)
       sum_11 += error_mad / iteration;
- 
+
     // Calculate a delta for the alfa parameter
     if (fabs(sum_11) < ROUNDING_ERROR) break;
     delta = sum_12 / sum_11;
@@ -210,18 +210,18 @@ double Forecast::SingleExponential::generateForecast
 
     // Stop when we repeatedly bounce against the limits.
     // Testing a limits once is allowed.
-    if (alfa > max_alfa) 
-    { 
-      alfa = max_alfa; 
-      if (upperboundarytested) break; 
+    if (alfa > max_alfa)
+    {
+      alfa = max_alfa;
+      if (upperboundarytested) break;
       upperboundarytested = true;
     }
     else if (alfa < min_alfa)
-    { 
-      alfa = min_alfa; 
-      if (lowerboundarytested) break; 
+    {
+      alfa = min_alfa;
+      if (lowerboundarytested) break;
       lowerboundarytested = true;
-    }    
+    }
   }
 
   // Keep the best result
@@ -229,23 +229,23 @@ double Forecast::SingleExponential::generateForecast
 
   // Echo the result
   if (debug)
-    logger << (fcst ? fcst->getName() : "") << ": single exponential : " 
-      << "alfa " << best_alfa 
-      << ", mad " << best_error_mad 
+    logger << (fcst ? fcst->getName() : "") << ": single exponential : "
+      << "alfa " << best_alfa
+      << ", mad " << best_error_mad
       << ", " << iteration << " iterations"
       << ", forecast " << f_i << endl;
   return best_error_mad;
 }
 
 
-void Forecast::SingleExponential::applyForecast 
+void Forecast::SingleExponential::applyForecast
   (Forecast* forecast, const Date buckets[], unsigned int bucketcount, bool debug)
 {
   // Loop over all buckets and set the forecast to a constant value
   if (f_i < 0) return;
   for (unsigned int i = 1; i < bucketcount; ++i)
     forecast->setTotalQuantity(
-      DateRange(buckets[i-1], buckets[i]), 
+      DateRange(buckets[i-1], buckets[i]),
       f_i
       );
 }
@@ -278,7 +278,7 @@ double Forecast::DoubleExponential::generateForecast
     d_constant_d_alfa_prev, d_constant_d_alfa, d_constant_d_gamma,	
     d_trend_d_alfa, d_trend_d_gamma, d_forecast_d_alfa, d_forecast_d_gamma,
     sum11, sum12, sum22, sum13, sum23;
-  double best_error_mad = DBL_MAX, best_alfa = initial_alfa, 
+  double best_error_mad = DBL_MAX, best_alfa = initial_alfa,
     best_gamma = initial_gamma, best_constant_i = 0.0, best_trend_i = 0.0;
 
   // Iterations
@@ -287,7 +287,7 @@ double Forecast::DoubleExponential::generateForecast
   {
     // Initialize the iteration
     constant_i = history[0];
-    trend_i = history[1] - history[0]; 
+    trend_i = history[1] - history[0];
     error_mad = sum11 = sum12 = sum22 = sum13 = sum23 = 0.0;
     d_constant_d_alfa =	d_constant_d_gamma = d_trend_d_alfa = d_trend_d_gamma = 0.0;
     d_forecast_d_alfa = d_forecast_d_gamma = 0.0;
@@ -303,12 +303,12 @@ double Forecast::DoubleExponential::generateForecast
       if (i == count) break;
       d_constant_d_gamma_prev = d_constant_d_gamma;
       d_constant_d_alfa_prev = d_constant_d_alfa;
-      d_constant_d_alfa = history[i-1] - constant_i_prev - trend_i_prev 
+      d_constant_d_alfa = history[i-1] - constant_i_prev - trend_i_prev
         + (1 - alfa) * d_forecast_d_alfa;
       d_constant_d_gamma = (1 - alfa) * d_forecast_d_gamma;
       d_trend_d_alfa = gamma * (d_constant_d_alfa - d_constant_d_alfa_prev)
         + (1 - gamma) * d_trend_d_alfa;
-      d_trend_d_gamma = constant_i - constant_i_prev - trend_i_prev 
+      d_trend_d_gamma = constant_i - constant_i_prev - trend_i_prev
         + gamma * (d_constant_d_gamma - d_constant_d_gamma_prev)
         + (1 - gamma) * d_trend_d_gamma;
       d_forecast_d_alfa = d_constant_d_alfa + d_trend_d_alfa;
@@ -338,7 +338,7 @@ double Forecast::DoubleExponential::generateForecast
 
     // Calculate a delta for the alfa and gamma parameters
     determinant = sum11 * sum22 - sum12 * sum12;
-    if (fabs(determinant) < ROUNDING_ERROR) 
+    if (fabs(determinant) < ROUNDING_ERROR)
     {
       // Almost singular matrix. Try without the damping factor.
       sum11 -= error_mad / iteration;
@@ -350,7 +350,7 @@ double Forecast::DoubleExponential::generateForecast
     delta_gamma = (sum23 * sum11 - sum13 * sum12) / determinant;
 
     // Stop when we are close enough and have tried hard enough
-    if (fabs(delta_alfa) + fabs(delta_gamma) < ACCURACY && iteration > 3) 
+    if (fabs(delta_alfa) + fabs(delta_gamma) < ACCURACY && iteration > 3)
       break;
 
     // New values for the next iteration
@@ -358,17 +358,17 @@ double Forecast::DoubleExponential::generateForecast
     gamma += delta_gamma;
 
     // Limit the parameters in their allowed range.
-    if (alfa > max_alfa) 
-      alfa = max_alfa; 
+    if (alfa > max_alfa)
+      alfa = max_alfa;
     else if (alfa < min_alfa)
-      alfa = min_alfa; 
-    if (gamma > max_gamma) 
-      gamma = max_gamma; 
+      alfa = min_alfa;
+    if (gamma > max_gamma)
+      gamma = max_gamma;
     else if (gamma < min_gamma)
-      gamma = min_gamma;    
+      gamma = min_gamma;
 
     // Verify repeated running with both parameters at the boundary
-    if ((gamma == min_gamma || gamma == max_gamma) 
+    if ((gamma == min_gamma || gamma == max_gamma)
       && (alfa == min_alfa || alfa == max_alfa))
     {
       if (boundarytested++ > 2) break;
@@ -381,10 +381,10 @@ double Forecast::DoubleExponential::generateForecast
 
   // Echo the result
   if (debug)
-    logger << (fcst ? fcst->getName() : "") << ": double exponential : " 
-      << "alfa " << best_alfa 
-      << ", gamma " << best_gamma 
-      << ", mad " << best_error_mad 
+    logger << (fcst ? fcst->getName() : "") << ": double exponential : "
+      << "alfa " << best_alfa
+      << ", gamma " << best_gamma
+      << ", mad " << best_error_mad
       << ", " << iteration << " iterations"
       << ", constant " << constant_i
       << ", trend " << trend_i
@@ -400,7 +400,7 @@ void Forecast::DoubleExponential::applyForecast
   for (unsigned int i = 1; i < bucketcount; ++i)
     if (constant_i + i * trend_i > 0)
       forecast->setTotalQuantity(
-        DateRange(buckets[i-1], buckets[i]), 
+        DateRange(buckets[i-1], buckets[i]),
         constant_i + i * trend_i
         );
 }

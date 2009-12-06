@@ -39,8 +39,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
-    logger << indent(res->getLevel()) << "   Resource '" << res->getName() 
-      << "' is asked: " << (-data->state->q_qty) << "  " 
+    logger << indent(res->getLevel()) << "   Resource '" << res->getName()
+      << "' is asked: " << (-data->state->q_qty) << "  "
       << data->state->q_operationplan->getDates() << endl;
 
   // Initialize some variables
@@ -51,7 +51,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   Date curdate;
   double curMax, prevMax;
   bool HasOverload;
-  
+
   // Initialize the default reply
   data->state->a_date = data->state->q_date;
   data->state->a_qty = orig_q_qty;
@@ -67,12 +67,12 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       curMax = data->state->q_loadplan->getMax(false);
       prevMax = curMax;
       for (cur = res->getLoadPlans().begin(data->state->q_loadplan);
-        cur!=res->getLoadPlans().end() && cur->getDate()>=earliestdate; 
+        cur!=res->getLoadPlans().end() && cur->getDate()>=earliestdate;
         --cur)
       {
-        // A change in the maximum capacity  
+        // A change in the maximum capacity
         prevMax = curMax;
-        if (cur->getType() == 4) 
+        if (cur->getType() == 4)
           curMax = cur->getMax(false);
 
         // Not interested if date doesn't change
@@ -91,8 +91,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       }
 
       // Try solving the overload by resizing the operationplan.
-      // The capacity isn't overloaded in the time between "curdate" and 
-      // "current end of the operationplan". We can try to resize the 
+      // The capacity isn't overloaded in the time between "curdate" and
+      // "current end of the operationplan". We can try to resize the
       // operationplan to fit in this time period...
       if (HasOverload && curdate < data->state->q_loadplan->getDate())
       {
@@ -116,7 +116,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         else
         {
           // It didn't work. Restore the original operationplan.
-          // @todo this undoing is a performance bottleneck: trying to resize 
+          // @todo this undoing is a performance bottleneck: trying to resize
           // and restoring the original are causing lots of updates in the
           // buffer and resource timelines...
           // We need an api that only checks the resizing.
@@ -125,7 +125,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
             currentQuantity,
             Date::infinitePast,
             currentEnd
-            );          
+            );
         }
       }
 
@@ -138,9 +138,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         curdate = cur->getDate();
         for (; cur!=res->getLoadPlans().end() && curdate > currentOpplanEnd - res->getMaxEarly(); --cur)
         {
-          // A change in the maximum capacity          
-          prevMax = curMax;          
-          if (cur->getType() == 4) 
+          // A change in the maximum capacity
+          prevMax = curMax;
+          if (cur->getType() == 4)
             curMax = cur->getMax(false);
 
           // Not interested if date doesn't change
@@ -183,7 +183,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
     // Put the operationplan back at its original end date
     if (!data->state->forceLate)
     {
-      data->state->q_operationplan->setQuantity(currentQuantity); 
+      data->state->q_operationplan->setQuantity(currentQuantity);
       data->state->q_operationplan->setEnd(currentOpplanEnd);
     }
 
@@ -211,16 +211,16 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
         // Only consider the last loadplan for a certain date
         const TimeLine<LoadPlan>::Event *loadpl = &*(cur++);
-        if (cur!=res->getLoadPlans().end() && cur->getDate()==loadpl->getDate()) 
+        if (cur!=res->getLoadPlans().end() && cur->getDate()==loadpl->getDate())
           continue;
         curOnhand = loadpl->getOnhand();
 
         // Check if overloaded
         if (loadpl->getOnhand() > curMax + ROUNDING_ERROR)
           // There is still a capacity problem
-          HasOverload = true;   
+          HasOverload = true;
         else if (!HasOverload && loadpl->getDate() > data->state->q_operationplan->getDates().getEnd())
-          // Break out of loop if no overload and we're beyond the 
+          // Break out of loop if no overload and we're beyond the
           // operationplan end date.
           break;
         else if (!newDate && loadpl->getDate()!=data->state->q_loadplan->getDate() && curMax >= fabs(loadpl->getQuantity()))
@@ -234,7 +234,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       // Found a date with available capacity
       if (HasOverload && newDate)
       {
-        // Multiple operations could be executed in parallel   
+        // Multiple operations could be executed in parallel
         int parallelOps = static_cast<int>((curMax - curOnhand) / data->state->q_loadplan->getQuantity());
         if (parallelOps <= 0) parallelOps = 1;
         // Move the operationplan to the new date
@@ -243,7 +243,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
             currentQuantity / parallelOps, // 0.001  @todo this calculation doesn't give minimization of the lateness
             newDate,
             Date::infinitePast
-            );  
+            );
         HasOverload = true;
       }
     }
@@ -295,7 +295,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
   data->state->a_qty = data->state->q_qty;
   data->state->a_date = data->state->q_date;
   data->state->a_cost += data->state->a_qty * res->getCost() // @todo also during unavailable time the cost is incremented
-    * data->state->q_operationplan->getDates().getDuration() / 3600.0;  
+    * data->state->q_operationplan->getDates().getDuration() / 3600.0;
 
   // Message
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)

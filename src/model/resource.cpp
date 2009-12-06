@@ -127,12 +127,12 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
   HasDescription::writeElement(o, tag);
   HasHierarchy<Resource>::writeElement(o, tag);
   o->writeElement(Tags::tag_maximum, max_cal);
-  if (getMaxEarly() != TimePeriod(defaultMaxEarly)) 
+  if (getMaxEarly() != TimePeriod(defaultMaxEarly))
     o->writeElement(Tags::tag_maxearly, getMaxEarly());
   if (getCost() != 0.0) o->writeElement(Tags::tag_cost, getCost());
   o->writeElement(Tags::tag_location, loc);
   if (!getSetup().empty()) o->writeElement(Tags::tag_setup, getSetup());
-  if (getSetupMatrix()) 
+  if (getSetupMatrix())
     o->writeElement(Tags::tag_setupmatrix, getSetupMatrix());
   Plannable::writeElement(o, tag);
 
@@ -334,7 +334,7 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
   }
   else if (attr.isA(Tags::tag_location))
   {
-    if (!field.check(Location::metadata)) 
+    if (!field.check(Location::metadata))
     {
       PyErr_SetString(PythonDataException, "buffer location must be of type location");
       return -1;
@@ -344,7 +344,7 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
   }
   else if (attr.isA(Tags::tag_maximum))
   {
-    if (!field.check(CalendarDouble::metadata)) 
+    if (!field.check(CalendarDouble::metadata))
     {
       PyErr_SetString(PythonDataException, "resource maximum must be of type calendar_double");
       return -1;
@@ -362,7 +362,7 @@ DECLARE_EXPORT int Resource::setattro(const Attribute& attr, const PythonObject&
     setSetup(field.getString());
   else if (attr.isA(Tags::tag_setupmatrix))
   {
-    if (!field.check(SetupMatrix::metadata)) 
+    if (!field.check(SetupMatrix::metadata))
     {
       PyErr_SetString(PythonDataException, "resource setup_matrix must be of type setup_matrix");
       return -1;

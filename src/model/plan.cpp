@@ -57,7 +57,7 @@ int Plan::initialize()
   thePlan = new Plan();
 
   // Add access to the information with a global attribute.
-  return PyModule_AddObject(PythonInterpreter::getModule(), 
+  return PyModule_AddObject(PythonInterpreter::getModule(),
     "settings", &Plan::instance()) + tmp;
 }
 
@@ -154,11 +154,11 @@ DECLARE_EXPORT PyObject* Plan::getattro(const Attribute& attr)
 DECLARE_EXPORT int Plan::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_name))
-    Plan::instance().setName(field.getString());  
+    Plan::instance().setName(field.getString());
   else if (attr.isA(Tags::tag_description))
     Plan::instance().setDescription(field.getString());
   else if (attr.isA(Tags::tag_current))
-    Plan::instance().setCurrent(field.getDate()); 
+    Plan::instance().setCurrent(field.getDate());
   else if (attr.isA(Tags::tag_logfile))
     Environment::setLogFile(field.getString());
   else

@@ -35,7 +35,7 @@
 #ifndef FREPPLE_UTILS_H
 #define FREPPLE_UTILS_H
 
-/* Python.h has to be included first. 
+/* Python.h has to be included first.
    For a debugging build on windows we avoid using the debug version of Python
    since that also requires Python and all its modules to be compiled in debug
    mode.
@@ -312,7 +312,7 @@ class Environment
     /** Search for a file with a given name.<br>
       * The following directories are searched in sequence to find a match:
       *   - The current directory.
-      *   - The directory reffered to by the variable FREPPLE_HOME, if it 
+      *   - The directory reffered to by the variable FREPPLE_HOME, if it
       *     is defined.
       *   - The data directory as configured during the compilation.
       *     This applies only to linux / unix.
@@ -451,7 +451,7 @@ class NonCopyable
   * The implementation is implemented in a thread-safe way (within the
   * limitations of the Python threading model, of course).
   *
-  * During the initialization the code checks for a file 'init.py' in its 
+  * During the initialization the code checks for a file 'init.py' in its
   * search path and, if it does exist, the statements in the file will be
   * executed. In this way a library of globally available functions
   * can easily be initialized.
@@ -461,7 +461,7 @@ class NonCopyable
   *
   * The following frePPLe functions are available from within Python.<br>
   * All of these are in the module called frePPLe.
-  *   - The following <b>classes</b> and their attributes are accessible for 
+  *   - The following <b>classes</b> and their attributes are accessible for
   *     reading and writing.<br>
   *     Each object has a toXML() method that returns its XML representation
   *     as a string, or writes it to a file is a file is passed as argument.
@@ -560,7 +560,7 @@ class PythonInterpreter
       * Arguments:
       * - The name of the built-in function/method
       * - The function that implements it.
-      * - Combination of METH_* flags, which mostly describe the args 
+      * - Combination of METH_* flags, which mostly describe the args
       *   expected by the C func.
       * - The __doc__ attribute, or NULL.
       */
@@ -573,10 +573,10 @@ class PythonInterpreter
       (const char*, PyCFunctionWithKeywords, int, const char*);
 
     /** Return a pointer to the main extension module. */
-    static PyObject* getModule() { return module; }
+    static PyObject* getModule() {return module;}
 
     /** Return the preferred encoding of the Python interpreter. */
-    static const char* getPythonEncoding() { return encoding.c_str(); }
+    static const char* getPythonEncoding() {return encoding.c_str();}
 
     /** Create a new Python thread state.<br>
       * Each OS-level thread needs to initialize a Python thread state as well.
@@ -587,7 +587,7 @@ class PythonInterpreter
     static DECLARE_EXPORT void addThread();
 
     /** Delete a Python thread state.<br>
-      * Each OS-level thread has a Python thread state. 
+      * Each OS-level thread has a Python thread state.
       * When an OS thread is deleted, this method should be called
       * to delete the Python thread state as well.<br>
       * See the Python PyGILState_Release API.
@@ -595,7 +595,7 @@ class PythonInterpreter
     static DECLARE_EXPORT void deleteThread();
 
   private:
-    /** A pointer to the frePPLe extension module. */  
+    /** A pointer to the frePPLe extension module. */
     static DECLARE_EXPORT PyObject *module;
 
     /** Python API: Used for redirecting the Python output to the same file
@@ -614,7 +614,7 @@ class PythonInterpreter
   * The function recognizes two wildcard characaters:
   *   - ?: matches any single character
   *   - *: matches any sequence of characters
-  * 
+  *
   * The code is written by Jack Handy (jakkhandy@hotmail.com) and published
   * on http://www.codeproject.com/KB/string/wildcmp.aspx. No specific license
   * constraints apply on using the code.
@@ -638,18 +638,18 @@ class Mutex: public NonCopyable
     void unlock() {}
 #elif defined(HAVE_PTHREAD_H)
     // Pthreads
-    Mutex()         { pthread_mutex_init(&mtx, 0); }
-    ~Mutex()        { pthread_mutex_destroy(&mtx); }
-    void lock()    { pthread_mutex_lock(&mtx); }
-    void unlock()    { pthread_mutex_unlock(&mtx); }
+    Mutex()         {pthread_mutex_init(&mtx, 0);}
+    ~Mutex()        {pthread_mutex_destroy(&mtx);}
+    void lock()     {pthread_mutex_lock(&mtx);}
+    void unlock()   {pthread_mutex_unlock(&mtx);}
   private:
     pthread_mutex_t mtx;
 #else
     // Windows critical section
-    Mutex() { InitializeCriticalSection(&critsec); }
-    ~Mutex()  { DeleteCriticalSection(&critsec); }
-    void lock() { EnterCriticalSection(&critsec); }
-    void unlock() { LeaveCriticalSection(&critsec); }
+    Mutex() {InitializeCriticalSection(&critsec);}
+    ~Mutex()  {DeleteCriticalSection(&critsec);}
+    void lock() {EnterCriticalSection(&critsec);}
+    void unlock() {LeaveCriticalSection(&critsec);}
   private:
     CRITICAL_SECTION critsec;
 #endif
@@ -664,8 +664,8 @@ class ScopeMutexLock: public NonCopyable
   protected:
     Mutex& mtx;
   public:
-    ScopeMutexLock(Mutex& imtx): mtx(imtx) { mtx.lock (); }
-    ~ScopeMutexLock() { mtx.unlock(); }
+    ScopeMutexLock(Mutex& imtx): mtx(imtx) {mtx.lock ();}
+    ~ScopeMutexLock() {mtx.unlock();}
 };
 
 
@@ -749,17 +749,17 @@ class Keyword : public NonCopyable
       * than 1000000)
       */
     #if !defined(WIN32) || defined(FREPPLE_CORE)
-    static DECLARE_EXPORT hashtype hash(const char* c) 
+    static DECLARE_EXPORT hashtype hash(const char* c)
       {return xercesc::XMLString::hash(c,954991);}
     #else
     static DECLARE_EXPORT hashtype hash(const char* c);
     #endif
 
-    /** This is the hash function. 
+    /** This is the hash function.
       * @see hash(const char*)
       */
     #if !defined(WIN32) || defined(FREPPLE_CORE)
-    static DECLARE_EXPORT hashtype hash(const string& c) 
+    static DECLARE_EXPORT hashtype hash(const string& c)
       {return xercesc::XMLString::hash(c.c_str(),954991);}
     #else
     static DECLARE_EXPORT hashtype hash(const string& c);
@@ -771,7 +771,7 @@ class Keyword : public NonCopyable
       * @see hash(const char*)
       */
     #if !defined(WIN32) || defined(FREPPLE_CORE)
-    static DECLARE_EXPORT hashtype hash(const XMLCh* c) 
+    static DECLARE_EXPORT hashtype hash(const XMLCh* c)
       {return xercesc::XMLString::hash(c,954991);}
     #else
     static DECLARE_EXPORT hashtype hash(const XMLCh* c);
@@ -850,7 +850,7 @@ class PythonType : public NonCopyable
     static const PyTypeObject PyTypeObjectTemplate;
 
     /** Incremental size of the method table.<br>
-      * We allocate memory for the method definitions per block, not 
+      * We allocate memory for the method definitions per block, not
       * one-by-one.
       */
     static const unsigned short methodArraySize = 5;
@@ -909,7 +909,7 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   PythonObject getattro(const XMLElement& name)
       */
-    void supportgetattro() 
+    void supportgetattro()
       {table->tp_getattro = getattro_handler;}
 
     /** Updates tp_setattro.<br>
@@ -917,7 +917,7 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   int setattro(const Attribute& attr, const PythonObject& field)
       */
-    void supportsetattro() 
+    void supportsetattro()
       {table->tp_setattro = setattro_handler;}
 
     /** Updates tp_compare.<br>
@@ -925,7 +925,7 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   int compare(const PyObject* other) const
       */
-    void supportcompare() 
+    void supportcompare()
       {table->tp_compare = compare_handler;}
 
     /** Updates tp_iter and tp_iternext.<br>
@@ -944,7 +944,7 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   PyObject* call(const PythonObject& args, const PythonObject& kwds)
       */
-    void supportcall() 
+    void supportcall()
       {table->tp_call = call_handler;}
 
     /** Updates tp_str.<br>
@@ -952,7 +952,7 @@ class PythonType : public NonCopyable
       * prototype:<br>
       *   PyObject* str()
       */
-    void supportstr() 
+    void supportstr()
       {table->tp_str = str_handler;}
 
     /** Type definition for create functions. */
@@ -966,13 +966,13 @@ class PythonType : public NonCopyable
     DECLARE_EXPORT int typeReady();
     /** Comparison operator. */
     bool operator == (const PythonType& i) const
-    { 
+    {
       return *cppClass == *(i.cppClass);
     }
 
     /** Comparison operator. */
     bool operator == (const type_info& i) const
-    { 
+    {
       return *cppClass == i;
     }
 
@@ -1055,14 +1055,14 @@ class MetaClass : public NonCopyable
     {
       creatorDefault factoryMethodDefault;
       creatorString factoryMethodString;
-      processorXMLInstruction processingInstruction; 
+      processorXMLInstruction processingInstruction;
     };
 
     /** Destructor. */
     virtual ~MetaClass() {}
 
     /** Initialize the data structure and register the class. */
-    DECLARE_EXPORT void registerClass(const string&, const string&, 
+    DECLARE_EXPORT void registerClass(const string&, const string&,
       bool = false, creatorDefault = NULL);
 
     /** This constructor registers the metadata of a class. */
@@ -1092,7 +1092,7 @@ class MetaClass : public NonCopyable
 
     /** This constructor registers the metadata of a class as an XML processing
       * instruction. */
-    MetaClass (const string& cat, const string& cls, 
+    MetaClass (const string& cat, const string& cls,
       processorXMLInstruction f, bool def = false) : pythonClass(NULL)
     {
       registerClass(cat,cls,def);
@@ -1160,7 +1160,7 @@ class MetaClass : public NonCopyable
     /** Connect a new subscriber to the class. */
     void connect(Functor *c, Signal a) const
       {const_cast<MetaClass*>(this)->subscribers[a].push_front(c);}
-    
+
     /** Disconnect a subscriber from the class. */
     void disconnect(Functor *c, Signal a) const
       {const_cast<MetaClass*>(this)->subscribers[a].remove(c);}
@@ -1370,7 +1370,7 @@ template <class T, class U> class FunctorInstance : public Functor
       * will crash.
       */
     static void connect(U* u, const Signal a)
-      { if (u) T::metadata.connect(new FunctorInstance(u), a);}
+      {if (u) T::metadata.connect(new FunctorInstance(u), a);}
 
     /** Disconnect from a signal. */
     static void disconnect(U *u, const Signal a)
@@ -1401,7 +1401,7 @@ template <class T, class U> class FunctorInstance : public Functor
   private:
     /** This is the callback method. */
     virtual bool callback(Object* v, const Signal a) const
-    { return instance ? instance->callback(static_cast<T*>(v),a) : true; }
+    {return instance ? instance->callback(static_cast<T*>(v),a) : true;}
 
     /** The object whose callback method will be called. */
     U* instance;
@@ -1435,7 +1435,7 @@ class Timer
     explicit Timer() : start_time(clock()) {}
 
     /** Reset the time counter to 0. */
-    void restart() { start_time = clock(); }
+    void restart() {start_time = clock();}
 
     /** Return the cpu-time in seconds consumed since the creation or the last
       * reset of the timer. */
@@ -1860,7 +1860,7 @@ class DateRange
     DECLARE_EXPORT operator string() const;
 
     /** Updates the default seperator. */
-    static void setSeparator(const string& n) 
+    static void setSeparator(const string& n)
     {
       separator = n;
       separatorlength = n.size();
@@ -1926,7 +1926,7 @@ enum mode
 
 
 /** @ brief This utility class escapes special characters from a string.
-  * 
+  *
   *  The following characters are replaced:
   *    - &: replaced with &amp;
   *    - <: replaced with &lt;
@@ -1934,7 +1934,7 @@ enum mode
   *    - ": replaced with &quot;
   *    - ': replaced with &apos;
   *    - all other characters are left unchanged
-  * The reverse process of un-escaping the special character sequences is 
+  * The reverse process of un-escaping the special character sequences is
   * taken care of by the Xerces library.
   *
   * This class works fine with UTF-8 and single-byte encodings, but will
@@ -2027,7 +2027,7 @@ class XMLOutput
 
     /** Updates the attributes that are written for the root element of each
       * XML document.<br>
-      * The default value is an empty string. 
+      * The default value is an empty string.
       */
     void setHeaderAtts(const string& s) {headerAtts = s;}
 
@@ -2036,7 +2036,7 @@ class XMLOutput
     string getHeaderAtts() const {return headerAtts;}
 
     /** Constructor with a given stream. */
-    XMLOutput(ostream& os) : m_nIndent(0), numObjects(0), 
+    XMLOutput(ostream& os) : m_nIndent(0), numObjects(0),
       numParents(0), currentObject(NULL), parentObject(NULL), content(STANDARD),
       headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
       headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
@@ -2416,10 +2416,10 @@ class Attribute
   private:
     /** This string stores the hash value of the element. */
     hashtype hash;
-    
+
     /** A pointer to the string representation of the keyword.<br>
       * The string buffer is to be managed by the code creating this
-      * instance. 
+      * instance.
       */
     const char* ch;
 
@@ -2441,19 +2441,19 @@ class Attribute
     hashtype getHash() const {return hash;}
 
     /** Returns this tag. */
-    void reset(const char *const c) 
+    void reset(const char *const c)
     {
-      hash = Keyword::hash(c); 
+      hash = Keyword::hash(c);
       ch = c;
     }
 
     /** Returns this tag. */
-    void reset(const XMLCh *const c) 
+    void reset(const XMLCh *const c)
     {
-      hash = Keyword::hash(c); 
+      hash = Keyword::hash(c);
       // An XMLCh is normally a wchar, and would need to be transcoded
       // to a char. We won't bother...
-      ch = NULL;  
+      ch = NULL;
     }
 
     /** Return the element name. Since this method involves a lookup in a
@@ -2479,16 +2479,16 @@ class Attribute
 };
 
 
-/** @brief This abstract class represents a attribute and value pair for 
+/** @brief This abstract class represents a attribute and value pair for
   * updating objects in frePPLe.
-  * 
+  *
   * It is instantiated in the XMLElement and PythonObject classes.
   * @todo only takes care of transformation from external format to C++. Not the C++ to external format yet.
   */
 class DataElement
 {
   public:
-    virtual operator bool() const 
+    virtual operator bool() const
       {throw LogicException("DataElement is an abstract class");}
 
    /** Destructor. */
@@ -2510,7 +2510,7 @@ class DataElement
 
     void operator >> (string& val) const {val = getString();}
 
-    virtual long getLong() const 
+    virtual long getLong() const
       {throw LogicException("DataElement is an abstract class");}
 
     virtual unsigned long getUnsignedLong() const
@@ -2637,7 +2637,7 @@ class PythonObject : public DataElement
     /** Constructor from an existing Python object.<br>
       * The reference count isn't increased.
       */
-    PythonObject(const PyObject* o) 
+    PythonObject(const PyObject* o)
       : obj(o ? const_cast<PyObject*>(o) : Py_None) {Py_INCREF(obj);}
 
     /** This conversion operator casts the object back to a PyObject pointer. */
@@ -2647,7 +2647,7 @@ class PythonObject : public DataElement
     operator bool() const {return obj != NULL && obj != Py_None;}
 
     /** Assignment operator. */
-    PythonObject& operator = (const PythonObject& o) { obj = o.obj; return *this; }
+    PythonObject& operator = (const PythonObject& o) {obj = o.obj; return *this;}
 
     /** Check whether the Python object is of a certain type.<br>
       * Subclasses of the argument type will also give a true return value.
@@ -2846,15 +2846,15 @@ class PythonObject : public DataElement
 };
 
 
-/** @brief This class represents a dictionary of keyword + value pairs. 
+/** @brief This class represents a dictionary of keyword + value pairs.
   *
-  * This abstract class can be instantiated as XML attributes, or as a 
+  * This abstract class can be instantiated as XML attributes, or as a
   * Python keyword dictionary.
   *  - XML:<br>
   *    &lt;buffer name="a" onhand="10" category="A" /&gt;
   *  - Python:<br>
   *    buffer(name="a", onhand="10", category="A")
-  */ 
+  */
 class AttributeList
 {
   public:
@@ -2866,7 +2866,7 @@ class AttributeList
 };
 
 
-/** @brief This class represents a list of XML attributes. */ 
+/** @brief This class represents a list of XML attributes. */
 class XMLAttributeList : public AttributeList
 {
   private:
@@ -2878,7 +2878,7 @@ class XMLAttributeList : public AttributeList
     const XMLElement* get(const Keyword& key) const
     {
       char* s = xercesc::XMLString::transcode(atts->getValue(key.getXMLCharacters()));
-      const_cast<XMLAttributeList*>(this)->result.setData(s ? s : ""); 
+      const_cast<XMLAttributeList*>(this)->result.setData(s ? s : "");
       xercesc::XMLString::release(&s);
       return &result;
     }
@@ -2931,11 +2931,11 @@ class PythonExtensionBase : public PyObject
     PythonExtensionBase() {}
 
     /** Destructor. */
-    virtual ~PythonExtensionBase() 
+    virtual ~PythonExtensionBase()
     {
       if (PyObject::ob_refcnt > 1)
-        logger << "Warning: Deleting " << PyObject::ob_type->tp_name 
-          << " object that is still referenced " 
+        logger << "Warning: Deleting " << PyObject::ob_type->tp_name
+          << " object that is still referenced "
           << (PyObject::ob_refcnt-1) << " times" << endl;
     }
 
@@ -3040,11 +3040,11 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
     virtual ~PythonExtension() {}
 
     /** This method keeps the type information object for your extension. */
-    static PythonType& getType() 
+    static PythonType& getType()
     {
       static PythonType* cachedTypePtr = NULL;
       if (cachedTypePtr) return *cachedTypePtr;
-      
+
       // Scan the vector
       for (vector<PythonType*>::const_iterator i = table.begin(); i != table.end(); ++i)
         if (**i==typeid(T))
@@ -3053,7 +3053,7 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
           cachedTypePtr = *i;
           return *cachedTypePtr;
         }
-      
+
       // Not found in the vector, so create a new one
       cachedTypePtr = new PythonType(sizeof(T), &typeid(T));
       table.push_back(cachedTypePtr);
@@ -3134,7 +3134,7 @@ class Object : public PythonExtensionBase
 
     /** This template function can generate a factory method for objects that
       * can be constructed with their default constructor.  */
-    template <class T> 
+    template <class T>
     static Object* createDefault()
     {
       return new T();
@@ -3142,16 +3142,16 @@ class Object : public PythonExtensionBase
 
     /** This template function can generate a factory method for objects that
       * need a string argument in their constructor. */
-    template <class T> 
+    template <class T>
     static Object* createString(const string& n)
     {
       return new T(n);
     }
 
   //protected: @todo should be protected - only reason why this isn't possible yet is the freppleClass::initialize implementation
-    /** Template function that generates a factory method callable 
+    /** Template function that generates a factory method callable
       * from Python. */
-    template<class T> 
+    template<class T>
     static PyObject* create
       (PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     {
@@ -3160,9 +3160,9 @@ class Object : public PythonExtensionBase
         // Find or create the C++ object
         PythonAttributeList atts(kwds);
         Object* x = T::reader(T::metadata, atts);
-        
+
         // Object was deleted
-        if (!x)       
+        if (!x)
         {
           Py_INCREF(Py_None);
           return Py_None;
@@ -3222,14 +3222,14 @@ class Tree : public NonCopyable
       * A node with color 'none' is a node that hasn't been inserted yet in
       * the tree.
       */
-    enum NodeColor { red, black, none };
+    enum NodeColor {red, black, none };
 
     /** @brief This class represents a node in the tree.
       *
       * Elements which we want to represent in the tree will need to inherit
       * from this class, since this tree container is intrusive.
       */
-    class TreeNode 
+    class TreeNode
     {
       friend class Tree;
 
@@ -3333,7 +3333,7 @@ class Tree : public NonCopyable
       * is deleted. This is done for performance reasons: the program can shut
       * down faster.
       */
-    ~Tree() { if(clearOnDestruct) clear(); }
+    ~Tree() {if(clearOnDestruct) clear();}
 
     /** Returns an iterator to the start of the list.<br>
       * The user will need to take care of properly acquiring a read lock on
@@ -3391,9 +3391,9 @@ class Tree : public NonCopyable
     /** Remove a node from the tree. */
     DECLARE_EXPORT void erase(TreeNode* x);
 
-    /** Search for an element in the tree.<br> 
-      * Profiling shows this function has a significant impact on the CPU 
-      * time (mainly because of the string comparisons), and has been 
+    /** Search for an element in the tree.<br>
+      * Profiling shows this function has a significant impact on the CPU
+      * time (mainly because of the string comparisons), and has been
       * optimized as much as possible.
       */
     TreeNode* find(const string& k) const
@@ -3517,7 +3517,7 @@ class Tree : public NonCopyable
   * appropriately.<br>
   * Command objects can't be persisted.
   */
-class Command 
+class Command
 {
   friend class CommandList;
   public:
@@ -3759,7 +3759,7 @@ class CommandList : public Command
 
     /** Destructor.<br>
       * A commandlist should only be deleted when all of its commands
-      * have been committed or undone. If this is not the case a warning 
+      * have been committed or undone. If this is not the case a warning
       * will be printed.
       */
     virtual DECLARE_EXPORT ~CommandList();
@@ -3815,12 +3815,12 @@ class CommandLoadLibrary : public Command
     string getDescription() const {return "Loading shared library " + lib;}
 
     /** Add a parameter for the module. */
-    void addParameter(const string& name, const string& value) 
-    { parameters[name] = value; }
+    void addParameter(const string& name, const string& value)
+    {parameters[name] = value;}
 
     /** Returns true if a module with this name has been loaded. */
-    static bool isLoaded(const string& s) 
-    { return registry.find(s) != registry.end(); }
+    static bool isLoaded(const string& s)
+    {return registry.find(s) != registry.end();}
 
   private:
     /** Name of the library to be loaded. */
@@ -4177,7 +4177,7 @@ class XMLInput : public NonCopyable,  private xercesc::DefaultHandler
       * @exception DataException Thrown when the data can't be processed
       *   normally by the objects being created or updated.
       */
-    virtual void parse(Object* s, bool b=false) 
+    virtual void parse(Object* s, bool b=false)
     {
       throw LogicException("Unreachable code reached");
     }
@@ -4369,7 +4369,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
     /** Destructor. */
     ~HasName() {st.erase(this);}
 
-    /** Return the name as the string representation in Python. */  
+    /** Return the name as the string representation in Python. */
     virtual PyObject* str() const {return PythonObject(getName());}
 
     /** Comparison operator for Python. */
@@ -4865,7 +4865,7 @@ template <class A, class B, class C> class Association
         }
 
         /** Move an association a position up in the list of associations. */
-        void promote(C* p) 
+        void promote(C* p)
         {
           // Already at the head
           if (p == this->first) return;
@@ -4876,7 +4876,7 @@ template <class A, class B, class C> class Association
           {
             if (ptr->nextA == p)
             {
-              if (prev) 
+              if (prev)
                 prev->nextA = p;
               else
                 this->first = p;
@@ -4995,7 +4995,7 @@ template <class A, class B, class C> class Association
         }
 
         /** Move an association a position up in the list of associations. */
-        void promote(C* p) 
+        void promote(C* p)
         {
           // Already at the head
           if (p == this->first) return;
@@ -5006,7 +5006,7 @@ template <class A, class B, class C> class Association
           {
             if (ptr->nextB == p)
             {
-              if (prev) 
+              if (prev)
                 prev->nextB = p;
               else
                 this->first = p;
@@ -5107,26 +5107,26 @@ template <class A, class B, class C> class Association
         B* getPtrB() const {return ptrB;}
 
         /** Update the start date of the effectivity range. */
-        void setEffectiveStart(Date d) { effectivity.setStart(d); }
+        void setEffectiveStart(Date d) {effectivity.setStart(d);}
 
         /** Update the end date of the effectivity range. */
-        void setEffectiveEnd(Date d) { effectivity.setEnd(d); }
+        void setEffectiveEnd(Date d) {effectivity.setEnd(d);}
 
         /** Update the effectivity range. */
-        void setEffective(DateRange dr) { effectivity = dr; }
+        void setEffective(DateRange dr) {effectivity = dr;}
 
         /** Return the effectivity daterange.<br>
           * The default covers the complete time horizon.
           */
-        DateRange getEffective() const { return effectivity; }
+        DateRange getEffective() const {return effectivity;}
 
         /** Sets an optional name for the association.<br>
-          * There is no garantuee of the uniqueness of this name. 
+          * There is no garantuee of the uniqueness of this name.
           */
-        void setName(const string x) { name = x; }
+        void setName(const string x) {name = x;}
 
         /** Return the optional name of the association. */
-        const string& getName() const { return name; }
+        const string& getName() const {return name;}
     };
 };
 

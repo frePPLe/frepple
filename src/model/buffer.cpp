@@ -243,9 +243,9 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
   // Minimum and maximum inventory targets, carrying cost
   o->writeElement(Tags::tag_minimum, min_cal);
   o->writeElement(Tags::tag_maximum, max_cal);
-  if (getCarryingCost()!= 0.0) 
+  if (getCarryingCost()!= 0.0)
     o->writeElement(Tags::tag_carrying_cost, getCarryingCost());
-  
+
   // Write extra plan information
   i = flowplans.begin();
   if ((o->getContentType() == XMLOutput::PLAN
@@ -766,12 +766,12 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
       PyErr_SetString(PythonDataException, "buffer owner must be of type buffer");
       return -1;
     }
-    Buffer* y = static_cast<Buffer*>(static_cast<PyObject*>(field));  
+    Buffer* y = static_cast<Buffer*>(static_cast<PyObject*>(field));
     setOwner(y);
   }
   else if (attr.isA(Tags::tag_location))
   {
-    if (!field.check(Location::metadata)) 
+    if (!field.check(Location::metadata))
     {
       PyErr_SetString(PythonDataException, "buffer location must be of type location");
       return -1;
@@ -781,7 +781,7 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
   }
   else if (attr.isA(Tags::tag_item))
   {
-    if (!field.check(Item::metadata)) 
+    if (!field.check(Item::metadata))
     {
       PyErr_SetString(PythonDataException, "buffer item must be of type item");
       return -1;
@@ -791,7 +791,7 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
   }
   else if (attr.isA(Tags::tag_maximum))
   {
-    if (!field.check(CalendarDouble::metadata)) 
+    if (!field.check(CalendarDouble::metadata))
     {
       PyErr_SetString(PythonDataException, "buffer maximum must be of type calendar_double");
       return -1;
@@ -801,7 +801,7 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
   }
   else if (attr.isA(Tags::tag_minimum))
   {
-    if (!field.check(CalendarDouble::metadata)) 
+    if (!field.check(CalendarDouble::metadata))
     {
       PyErr_SetString(PythonDataException, "buffer minimum must be of type calendar_double");
       return -1;
@@ -815,7 +815,7 @@ DECLARE_EXPORT int Buffer::setattro(const Attribute& attr, const PythonObject& f
     setCarryingCost(field.getDouble());
   else if (attr.isA(Tags::tag_producing))
   {
-    if (!field.check(Operation::metadata)) 
+    if (!field.check(Operation::metadata))
     {
       PyErr_SetString(PythonDataException, "buffer producing must be of type operation");
       return -1;

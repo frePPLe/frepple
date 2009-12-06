@@ -145,7 +145,7 @@ DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::createRule(const AttributeList& a
       if (result)
       {
         ostringstream o;
-        o << "Rule with priority "  << priority 
+        o << "Rule with priority "  << priority
           << " already exists in setup matrix '" << getName() << "'";
         throw DataException(o.str());
       }
@@ -156,7 +156,7 @@ DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::createRule(const AttributeList& a
       if (!result)
       {
         ostringstream o;
-        o << "No rule with priority " << priority 
+        o << "No rule with priority " << priority
           << " exists in setup matrix '" << getName() << "'";
         throw DataException(o.str());
       }
@@ -166,7 +166,7 @@ DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::createRule(const AttributeList& a
       if (!result)
       {
         ostringstream o;
-        o << "No rule with priority " << priority 
+        o << "No rule with priority " << priority
           << " exists in setup matrix '" << getName() << "'";
         throw DataException(o.str());
       }
@@ -219,7 +219,7 @@ DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* ar
     // Pick up the setup matrix
     SetupMatrix *matrix = static_cast<SetupMatrix*>(self);
     if (!matrix) throw LogicException("Can't add a rule to a NULL setupmatrix");
-  
+
     // Parse the arguments
     int prio = 0;
     PyObject *pyfrom = NULL;
@@ -227,8 +227,8 @@ DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* ar
     long duration = 0;
     double cost = 0;
     static const char *kwlist[] = {"priority", "fromsetup", "tosetup", "duration", "cost", NULL};
-	  if (!PyArg_ParseTupleAndKeywords(args, kwdict, 
-      "i|ssld:addRule", 
+	  if (!PyArg_ParseTupleAndKeywords(args, kwdict,
+      "i|ssld:addRule",
       const_cast<char**>(kwlist), &prio, &pyfrom, &pyto, &duration, &cost))
         return NULL;
 
@@ -248,9 +248,9 @@ DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* ar
 }
 
 
-DECLARE_EXPORT SetupMatrix::Rule::Rule(SetupMatrix *s, int p) 
-  : cost(0), priority(p), matrix(s), nextRule(NULL), prevRule(NULL) 
-{ 
+DECLARE_EXPORT SetupMatrix::Rule::Rule(SetupMatrix *s, int p)
+  : cost(0), priority(p), matrix(s), nextRule(NULL), prevRule(NULL)
+{
   // Validate the arguments
   if (!matrix) throw DataException("Can't add a rule to NULL setup matrix");
 
@@ -333,7 +333,7 @@ DECLARE_EXPORT PyObject* SetupMatrix::Rule::getattro(const Attribute& attr)
 DECLARE_EXPORT int SetupMatrix::Rule::setattro(const Attribute& attr, const PythonObject& field)
 {
   if (attr.isA(Tags::tag_priority))
-    setPriority(field.getInt());  
+    setPriority(field.getInt());
   else if (attr.isA(Tags::tag_fromsetup))
     setFromSetup(field.getString());
   else if (attr.isA(Tags::tag_tosetup))
@@ -386,7 +386,7 @@ DECLARE_EXPORT void SetupMatrix::Rule::setPriority(const int n)
     || (nextRule && nextRule->priority == priority))
   {
     ostringstream o;
-    o << "Duplicate priority " << priority << " in setup matrix '" 
+    o << "Duplicate priority " << priority << " in setup matrix '"
       << matrix->getName() << "'";
     throw DataException(o.str());
   }
@@ -405,7 +405,7 @@ int SetupMatrixRuleIterator::initialize()
 
 
 PyObject* SetupMatrixRuleIterator::iternext()
-{  
+{
   if (currule == matrix->endRules()) return NULL;
   PyObject *result = &*(currule++);
   Py_INCREF(result);
@@ -423,11 +423,11 @@ DECLARE_EXPORT pair<TimePeriod,double> SetupMatrix::calculateSetup
   for (Rule *curRule = firstRule; curRule; curRule = curRule->nextRule)
   {
     // Need a match on the fromsetup
-    if (!curRule->getFromSetup().empty() 
+    if (!curRule->getFromSetup().empty()
       && !matchWildcard(curRule->getFromSetup().c_str(), oldsetup.c_str()))
         continue;
     // Need a match on the tosetup
-    if (!curRule->getToSetup().empty() 
+    if (!curRule->getToSetup().empty()
       && !matchWildcard(curRule->getToSetup().c_str(), newsetup.c_str()))
         continue;
     // Found a match
@@ -439,28 +439,79 @@ DECLARE_EXPORT pair<TimePeriod,double> SetupMatrix::calculateSetup
 }
 
 
-DECLARE_EXPORT DateRange SetupMatrix::calculateSetup
-  (OperationPlan* oplan, const Load* ld, Date s, Date e, bool preferend, bool execute) const
+DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
+(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
-  // xxx TODO should this method scan for the setup optimization window??? Maybe, as long as the solver can specify the window
-
-  // xxx TODO selecting a setup also requires updating a later operationplan on the resource!
+  // Find or create a loadplan
+  OperationPlan::LoadPlanIterator i = opplan->beginLoadPlans();
+  LoadPlan *ldplan = NULL;
+  if (i != opplan->endLoadPlans())
+    // Already exists
+    ldplan = &*i;
+  else
+  {
+    // Create a new one
+    if (!opplan->getOwner())
+      throw LogicException("Setup operationplan always must have an owner");
+    for (loadlist::const_iterator g=opplan->getOwner()->getOperation()->getLoads().begin(); 
+      g!=opplan->getOwner()->getOperation()->getLoads().end(); ++g)
+      if (g->getResource()->getSetupMatrix() && !g->getSetup().empty())
+      {
+        ldplan = new LoadPlan(opplan, &*g);
+        break;
+      }
+    if (!ldplan)
+      throw LogicException("Can't find a setup on operation '" 
+        + opplan->getOwner()->getOperation()->getName() + "'");
+  }  
 
   // Find the current setup of the resource
   const Load* lastld = NULL;
-  for (TimeLine<LoadPlan>::iterator i = ld->getResource()->getLoadPlans().begin(); 
-    i != ld->getResource()->getLoadPlans().end() && i->getDate() < s; ++i)
-    if (i->getQuantity() != 0.0 && !static_cast<LoadPlan*>(&*i)->getLoad()->getSetup().empty())
-      lastld = static_cast<LoadPlan*>(&*i)->getLoad();
+  for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin();
+    i != ldplan->getResource()->getLoadPlans().end() && (e ? e : s); ++i)
+    if (i->getQuantity() != 0.0 
+      && !static_cast<const LoadPlan*>(&*i)->getLoad()->getSetup().empty() 
+      && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan)
+    {
+      lastld = static_cast<const LoadPlan*>(&*i)->getLoad();
+      break;
+    }
+  string lastsetup = lastld ? lastld->getSetup() : ldplan->getResource()->getSetup();
 
-  // Calculate the conversion of the current setup to the required setup
-  string lastsetup = lastld ? lastld->getSetup() : ld->getResource()->getSetup();
-  pair<TimePeriod,double> c = calculateSetup(lastsetup,ld->getSetup());
-  logger << "calculating conversion on " << ld->getResource() 
-    //<< " on " << s << "  " << e 
-    << " from " << lastsetup << " to " << ld->getSetup() << ": " << c.first << " " << c.second << endl;
+  // Calculate the setup time
+  // xxx TODO should this method scan for the setup optimization window??? Maybe, as long as the solver can specify the window
 
-  return DateRange(s,s);
+  // xxx TODO selecting a setup also requires checking and updating a later operationplan on the resource!
+
+  // xxx TODO what is the expected behavior in the unconstrained plan. Different operations can 
+  // require a different setup - should the plan be made "setup-feasible"?
+
+  // Set the start and end date.
+  DateRange x;
+  TimePeriod duration = 86400L;
+  TimePeriod actualduration;
+  if (e && s)
+  {
+    if (preferEnd) x = calculateOperationTime(e, duration, false, &actualduration);
+    else x = calculateOperationTime(s, duration, true, &actualduration);
+  }
+  else if (s) x = calculateOperationTime(s, duration, true, &actualduration);
+  else x = calculateOperationTime(e, duration, false, &actualduration);
+  if (!execute)
+    // Simulation only
+    return pair<DateRange,double>(x, actualduration == duration ? q : 0);
+  else if (actualduration == duration)
+    // Update succeeded
+    opplan->setStartAndEnd(x.getStart(), x.getEnd());
+  else
+    // Update failed - Not enough available time
+    opplan->setQuantity(0);
+
+  logger << "creating setup operation plan " << opplan->getOwner()->getOperation() 
+    <<  s << "  " << e << "   " 
+    << " from " << lastsetup << "  to " << opplan->getDates() << " " << ldplan->getLoad()->getSetup() << endl;
+
+  return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
 }
 
 } // end namespace

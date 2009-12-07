@@ -96,8 +96,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   // Initialize an iterator over reusable existing procurements
   OperationPlan *last_operationplan = NULL;
   OperationPlan::iterator curProcure(b->getOperation());
-  while (curProcure != OperationPlan::iterator(NULL)
-    && curProcure->getLocked())
+  while (curProcure != OperationPlan::end() && curProcure->getLocked())
       ++curProcure;
   set<OperationPlan*> moved;
 
@@ -105,7 +104,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   // the earliest date is for a new procurement.
   Date earliest_next;
   for (OperationPlan::iterator procs(b->getOperation());
-    procs != OperationPlan::iterator(NULL); ++procs)
+    procs != OperationPlan::end(); ++procs)
       if (procs->getLocked())
         earliest_next = procs->getDates().getEnd();
   Date latest_next = Date::infiniteFuture;
@@ -230,7 +229,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
     if (order_qty > 0)
     {
       // Create a procurement or update an existing one
-      if (curProcure == OperationPlan::iterator(NULL))
+      if (curProcure == OperationPlan::end())
       {
         // No existing procurement can be reused. Create a new one.
         CommandCreateOperationPlan *a =
@@ -250,7 +249,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         moved.insert(last_operationplan);
         do
           ++curProcure;
-        while (curProcure != OperationPlan::iterator(NULL)
+        while (curProcure != OperationPlan::end()
           && curProcure->getLocked() && moved.find(&*curProcure)!=moved.end());
       }
       else
@@ -264,7 +263,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
         produced += last_operationplan->getQuantity();
         do
           ++curProcure;
-        while (curProcure != OperationPlan::iterator(NULL)
+        while (curProcure != OperationPlan::end()
           && curProcure->getLocked() && moved.find(&*curProcure)!=moved.end());
       }
       if (b->getMinimumInterval())
@@ -284,7 +283,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   }
 
   // Get rid of extra procurements that have become redundant
-  while (curProcure != OperationPlan::iterator(NULL))
+  while (curProcure != OperationPlan::end())
   {
     OperationPlan *opplan = &*(curProcure++);
     if (!opplan->getLocked() && moved.find(opplan)!=moved.end())

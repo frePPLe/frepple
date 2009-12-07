@@ -34,7 +34,6 @@ namespace frepple
 DECLARE_EXPORT const MetaClass* OperationPlan::metadata;
 DECLARE_EXPORT const MetaCategory* OperationPlan::metacategory;
 DECLARE_EXPORT unsigned long OperationPlan::counter = 1;
-OperationPlan::OperationPlanList OperationPlan::nosubOperationPlans;
 
 
 int OperationPlan::initialize()
@@ -971,6 +970,8 @@ DECLARE_EXPORT PyObject* OperationPlan::getattro(const Attribute& attr)
     return PythonObject(getLocked());
   if (attr.isA(Tags::tag_owner))
     return PythonObject(getOwner());
+  if (attr.isA(Tags::tag_operationplans))
+    return new OperationPlanIterator(this);
   if (attr.isA(Tags::tag_hidden))
     return PythonObject(getHidden());
   return NULL;

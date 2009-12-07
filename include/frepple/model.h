@@ -1825,23 +1825,6 @@ class OperationPlan
   public:
     class FlowPlanIterator;
 
-    typedef list<OperationPlan*> OperationPlanList;
-
-    /** Returns a reference to the list of sub-operationplans.<br>
-      * Subclasses where multiple sub-operationplans exist must override this
-      * method.
-      * @see getSubOperationPlan
-      */
-    virtual const OperationPlanList& getSubOperationPlans() const
-      {return nosubOperationPlans;}
-
-    /** Returns a reference to the list of sub-operationplans.<br>
-      * Subclasses having only a single sub-operationplan must override this
-      * method.
-      * @see getSubOperationPlans
-      */
-    virtual OperationPlan* getSubOperationPlan() const {return NULL;}
-
     /** Returns an iterator pointing to the first flowplan. */
     FlowPlanIterator beginFlowPlans() const;
 
@@ -1872,13 +1855,20 @@ class OperationPlan
       public:
         /** Constructor. The iterator will loop only over the operationplans
           * of the operation passed. */
-        iterator(const Operation* x) : op(Operation::end())
+        iterator(const Operation* x) : op(Operation::end()), mode(1)
         {
           opplan = x ? x->getFirstOpPlan() : NULL;
         }
 
+        /** Constructor. The iterator will loop only over the suboperationplans
+          * of the operationplan passed. */
+        iterator(const OperationPlan* x) : op(Operation::end()), mode(2)
+        {
+          opplan = x ? x->firstsubopplan : NULL;
+        }
+
         /** Constructor. The iterator will loop over all operationplans. */
-        iterator() : op(Operation::begin())
+        iterator() : op(Operation::begin()), mode(3)
         {
           // The while loop is required since the first operation might not
           // have any operationplans at all
@@ -1890,7 +1880,7 @@ class OperationPlan
         }
 
         /** Copy constructor. */
-        iterator(const iterator& it) : opplan(it.opplan), op(it.op) {}
+        iterator(const iterator& it) : opplan(it.opplan), op(it.op), mode(it.mode) {}
 
         /** Return the content of the current node. */
         OperationPlan& operator*() const {return *opplan;}
@@ -1902,9 +1892,12 @@ class OperationPlan
           * element. */
         iterator& operator++()
         {
-          opplan = opplan->next;
+          if (mode == 2)
+            opplan = opplan->nextsubopplan;
+          else
+            opplan = opplan->next;
           // Move to a new operation
-          if (!opplan && op!=Operation::end())
+          if (!opplan && mode == 3)
           {
             do ++op;
             while (op!=Operation::end() && (!op->getFirstOpPlan() || op->getHidden()));
@@ -1921,9 +1914,12 @@ class OperationPlan
         iterator operator++(int)
         {
           iterator tmp(*this);
-          opplan = opplan->next;
+          if (mode == 2)
+            opplan = opplan->nextsubopplan;
+          else
+            opplan = opplan->next;
           // Move to a new operation
-          if (!opplan && op!=Operation::end())
+          if (!opplan && mode==3)
           {
             do ++op; while (op!=Operation::end() && !op->getFirstOpPlan());
             if (op!=Operation::end())
@@ -1946,11 +1942,18 @@ class OperationPlan
 
         /** An iterator over the operations. */
         Operation::iterator op;
+
+        /** Describes the type of iterator.<br>
+          * 1) iterate over operationplan instances of operation
+          * 2) iterate over suboperationplans of an operationplan
+          * 3) iterate over all operationplans
+          */
+        short mode;
     };
 
     friend class iterator;
 
-    static iterator end() {return iterator(NULL);}
+    static iterator end() {return iterator(static_cast<Operation*>(NULL));}
 
     static iterator begin() {return iterator();}
 
@@ -2235,12 +2238,6 @@ class OperationPlan
     static const short IS_SETUP = 2;
     static const short HAS_SETUP = 4;
 
-    /** Empty list of operationplans.<br>
-      * For operationplan types without suboperationplans this list is used
-      * as the list of suboperationplans.
-      */
-    static OperationPlanList nosubOperationPlans;
-
     /** Is this operationplan locked? A locked operationplan doesn't accept
       * any changes. This field is only relevant for top-operationplans. */
     short flags;
@@ -2362,7 +2359,6 @@ class OperationSetup : public Operation
 
     // Never write the setup operation
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const {}
-    //xxx DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     static int initialize();
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
@@ -5900,7 +5896,10 @@ class OperationPlanIterator
       : FreppleIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>(o)
     {}
 
-    /** TODO add iterator to iterate over suboperationplans. */
+    /** Constructor to iterate over the suboperationplans of an operationplans. */
+    OperationPlanIterator(OperationPlan* opplan)
+      : FreppleIterator<OperationPlanIterator,OperationPlan::iterator,OperationPlan>(opplan)
+    {}
 };
 
 

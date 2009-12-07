@@ -114,7 +114,9 @@ def printModel(filename):
   print >>output, "\nEchoing operationplans:"
   for b in frepple.operationplans():
     print >>output, "  Operationplan:", b.operation.name, b.quantity, b.start, b.end
-
+    for s in b.operationplans:
+      print >>output, "       ", s.operation.name, s.quantity, s.start, s.end
+      
   # Problems
   print >>output, "\nPrinting problems"
   for i in frepple.problems():

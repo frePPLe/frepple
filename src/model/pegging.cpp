@@ -50,7 +50,7 @@ int PeggingIterator::initialize()
 }
 
 
-DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d) 
+DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
   : downstream(false), firstIteration(true)
 {
   // Loop through all delivery operationplans
@@ -155,6 +155,7 @@ DECLARE_EXPORT void PeggingIterator::followPegging
 {
   // For each flowplan (producing or consuming depending on whether we go
   // upstream or downstream) ask the buffer to give us the pegged flowplans.
+  bool noFlowPlans = true;
   if (downstream)
     for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans();
         i != op->endFlowPlans(); ++i)
@@ -162,7 +163,10 @@ DECLARE_EXPORT void PeggingIterator::followPegging
       // We're interested in consuming flowplans of an operationplan when
       // walking upstream.
       if (i->getQuantity()>ROUNDING_ERROR)
+      {
         i->getFlow()->getBuffer()->followPegging(*this, &*i, nextlevel, qty, factor);
+        noFlowPlans = false;
+      }
     }
   else
     for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans();
@@ -171,24 +175,24 @@ DECLARE_EXPORT void PeggingIterator::followPegging
       // We're interested in consuming flowplans of an operationplan when
       // walking upstream.
       if (i->getQuantity()<-ROUNDING_ERROR)
+      {
         i->getFlow()->getBuffer()->followPegging(*this, &*i, nextlevel, qty, factor);
+        noFlowPlans = false;
+      }
     }
 
+  // Special case: the operationplan doesn't have flowplans
+  //xxx todo if (noFlowPlans) updateStack(nextlevel, qty, factor, NULL, NULL);
+
   // Recursively call this function for all sub-operationplans.
-  if (op->getSubOperationPlan())
-    // There is only a single suboperationplan
-    followPegging(op->getSubOperationPlan(), nextlevel, qty, factor);
-  for (OperationPlan::OperationPlanList::const_iterator
-      j = op->getSubOperationPlans().begin();
-      j != op->getSubOperationPlans().end(); ++j)
-    // There is a linked list of suboperationplans
-    followPegging(*j, nextlevel, qty, factor);
+  for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j)
+    followPegging(&*j, nextlevel, qty, factor);
 }
 
 
 DECLARE_EXPORT PyObject* PeggingIterator::iternext()
 {
-  if (firstIteration) 
+  if (firstIteration)
     firstIteration = false;
   else
     operator--();

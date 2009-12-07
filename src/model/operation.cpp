@@ -871,7 +871,10 @@ OperationRouting::setOperationPlanParameters
   if (opplan->getLocked())
     return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
 
-  if (!opplan->firstsubopplan) // xxx need to change for setups?
+  OperationPlan *tmp = opplan->firstsubopplan;
+  while (tmp && tmp->getOperation() == OperationSetup::setupoperation) 
+    tmp = tmp->nextsubopplan;
+  if (!tmp)
   {
     // No step operationplans to work with. Just apply the requested quantity
     // and dates.
@@ -1120,7 +1123,8 @@ OperationAlternate::setOperationPlanParameters
     return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
 
   OperationPlan *x = opplan->firstsubopplan;
-  // xxx need to skip setup operationplans while (x) x = x->nextsubopplan;
+  while (x && x->getOperation() == OperationSetup::setupoperation) 
+    x = x->nextsubopplan;
   if (!x)
   {
     // Blindly accept the parameters if there is no suboperationplan

@@ -838,8 +838,6 @@ extern "C"
   *
   * This class defines a number of convenience functions to interact with the
   * PyTypeObject struct of the Python C API.
-  *
-  * @todo avoid hardcoding of the module name frepple
   */
 class PythonType : public NonCopyable
 {
@@ -3148,7 +3146,6 @@ class Object : public PythonExtensionBase
       return new T(n);
     }
 
-  //protected: @todo should be protected - only reason why this isn't possible yet is the freppleClass::initialize implementation
     /** Template function that generates a factory method callable
       * from Python. */
     template<class T>

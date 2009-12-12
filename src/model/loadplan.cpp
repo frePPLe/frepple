@@ -49,7 +49,7 @@ int LoadPlan::initialize()
 }
 
 
-DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r)
+DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
 {
   assert(o);
   ld = const_cast<Load*>(r);

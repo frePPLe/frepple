@@ -248,10 +248,7 @@ DECLARE_EXPORT bool OperationPlan::instantiate()
 
   // Instantiate all suboperationplans as well
   for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
-  {
-    logger << " Instant " << x->getOperation() << endl;
     x->instantiate();
-  }
 
   // Create unique identifier
   // Having an identifier assigned is an important flag.
@@ -506,7 +503,7 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
     if (!g->getAlternate()) new LoadPlan(this, &*g);
     if (!g->getSetup().empty() && g->getResource()->getSetupMatrix())
       OperationSetup::setupoperation->createOperationPlan(
-      getQuantity(),Date::infinitePast,getDates().getStart(),NULL,this);
+      getQuantity(),getDates().getStart(),getDates().getStart(),NULL,this);
   }
 
   // Create flowplans for flows that are not alternates of another one

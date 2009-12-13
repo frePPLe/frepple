@@ -162,7 +162,7 @@ DECLARE_EXPORT void Resource::writeElement(XMLOutput *o, const Keyword& tag, mod
 }
 
 
-DECLARE_EXPORT void Resource::beginElement (XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Resource::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_load)
       && pIn.getParentElement().first.isA(Tags::tag_loads))
@@ -244,13 +244,28 @@ DECLARE_EXPORT void Resource::deleteOperationPlans(bool deleteLocked)
 DECLARE_EXPORT Resource::~Resource()
 {
   // Delete all operationplans
-  // An alternative logic would be to delete only the loadwplans for this
+  // An alternative logic would be to delete only the loadplans for this
   // resource and leave the rest of the plan untouched. The currently
   // implemented method is way more drastic...
   deleteOperationPlans(true);
 
   // The Load objects are automatically deleted by the destructor
   // of the Association list class.
+}
+
+
+DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
+{
+  // No updating required this resource
+  if (!getSetupMatrix() || (ldplan && ldplan->getLoad()->getSetup().empty())) 
+    return;
+
+  // @TODO xxx Need update scan for setup opplans
+  /* scan forward in time (starting from arg flowplan or from the start) to find next setup. 
+     If found check/update their duration (no feasibility check)
+       -> Keep end the same
+       (as a result the start date may become before the argument ldplan's date -> need extra correction loop)
+   */
 }
 
 

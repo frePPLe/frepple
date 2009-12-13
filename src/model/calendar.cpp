@@ -375,7 +375,7 @@ DECLARE_EXPORT Calendar::Bucket* Calendar::createBucket(const AttributeList& att
 }
 
 
-DECLARE_EXPORT void Calendar::beginElement (XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Calendar::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_bucket)
       && pIn.getParentElement().first.isA(Tags::tag_buckets))

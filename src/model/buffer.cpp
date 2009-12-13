@@ -263,7 +263,7 @@ DECLARE_EXPORT void Buffer::writeElement(XMLOutput *o, const Keyword &tag, mode 
 }
 
 
-DECLARE_EXPORT void Buffer::beginElement (XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Buffer::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_flow)
       && pIn.getParentElement().first.isA(Tags::tag_flows))

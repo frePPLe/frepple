@@ -413,11 +413,11 @@ PyObject* SetupMatrixRuleIterator::iternext()
 }
 
 
-DECLARE_EXPORT pair<TimePeriod,double> SetupMatrix::calculateSetup
+DECLARE_EXPORT SetupMatrix::Rule* SetupMatrix::calculateSetup
   (const string oldsetup, const string newsetup) const
 {
   // No need to look
-  if (oldsetup == newsetup) return pair<TimePeriod,double>(TimePeriod(0L),0);
+  if (oldsetup == newsetup) return NULL;
 
   // Loop through all rules
   for (Rule *curRule = firstRule; curRule; curRule = curRule->nextRule)
@@ -431,87 +431,11 @@ DECLARE_EXPORT pair<TimePeriod,double> SetupMatrix::calculateSetup
       && !matchWildcard(curRule->getToSetup().c_str(), newsetup.c_str()))
         continue;
     // Found a match
-    return pair<TimePeriod,double>(curRule->duration, curRule->cost);
+    return curRule;
   }
 
-  // No matching rule was found: very very long and very very expensive
-  return pair<TimePeriod,double>(LONG_MAX, DBL_MAX);
-}
-
-
-DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
-(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
-{
-  // Find or create a loadplan
-  OperationPlan::LoadPlanIterator i = opplan->beginLoadPlans();
-  LoadPlan *ldplan = NULL;
-  if (i != opplan->endLoadPlans())
-    // Already exists
-    ldplan = &*i;
-  else
-  {
-    // Create a new one
-    if (!opplan->getOwner())
-      throw LogicException("Setup operationplan always must have an owner");
-    for (loadlist::const_iterator g=opplan->getOwner()->getOperation()->getLoads().begin(); 
-      g!=opplan->getOwner()->getOperation()->getLoads().end(); ++g)
-      if (g->getResource()->getSetupMatrix() && !g->getSetup().empty())
-      {
-        ldplan = new LoadPlan(opplan, &*g);
-        break;
-      }
-    if (!ldplan)
-      throw LogicException("Can't find a setup on operation '" 
-        + opplan->getOwner()->getOperation()->getName() + "'");
-  }  
-
-  // Find the current setup of the resource
-  const Load* lastld = NULL;
-  for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin();
-    i != ldplan->getResource()->getLoadPlans().end() && (e ? e : s); ++i)
-    if (i->getQuantity() != 0.0 
-      && !static_cast<const LoadPlan*>(&*i)->getLoad()->getSetup().empty() 
-      && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan)
-    {
-      lastld = static_cast<const LoadPlan*>(&*i)->getLoad();
-      break;
-    }
-  string lastsetup = lastld ? lastld->getSetup() : ldplan->getResource()->getSetup();
-
-  // Calculate the setup time
-  // xxx TODO should this method scan for the setup optimization window??? Maybe, as long as the solver can specify the window
-
-  // xxx TODO selecting a setup also requires checking and updating a later operationplan on the resource!
-
-  // xxx TODO what is the expected behavior in the unconstrained plan. Different operations can 
-  // require a different setup - should the plan be made "setup-feasible"?
-
-  // Set the start and end date.
-  DateRange x;
-  TimePeriod duration = 86400L;
-  TimePeriod actualduration;
-  if (e && s)
-  {
-    if (preferEnd) x = calculateOperationTime(e, duration, false, &actualduration);
-    else x = calculateOperationTime(s, duration, true, &actualduration);
-  }
-  else if (s) x = calculateOperationTime(s, duration, true, &actualduration);
-  else x = calculateOperationTime(e, duration, false, &actualduration);
-  if (!execute)
-    // Simulation only
-    return pair<DateRange,double>(x, actualduration == duration ? q : 0);
-  else if (actualduration == duration)
-    // Update succeeded
-    opplan->setStartAndEnd(x.getStart(), x.getEnd());
-  else
-    // Update failed - Not enough available time
-    opplan->setQuantity(0);
-
-  logger << "creating setup operation plan " << opplan->getOwner()->getOperation() 
-    <<  s << "  " << e << "   " 
-    << " from " << lastsetup << "  to " << opplan->getDates() << " " << ldplan->getLoad()->getSetup() << endl;
-
-  return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
+  // No matching rule was found
+  return NULL;
 }
 
 } // end namespace

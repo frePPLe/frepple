@@ -120,7 +120,7 @@ DECLARE_EXPORT void Plan::endElement (XMLInput& pIn, const Attribute& pAttr, con
 }
 
 
-DECLARE_EXPORT void Plan::beginElement (XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Plan::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   const MetaCategory *cat = MetaCategory::findCategoryByGroupTag(pIn.getParentElement().first.getHash());
   if (cat)

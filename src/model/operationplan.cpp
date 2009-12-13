@@ -503,7 +503,7 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
     if (!g->getAlternate()) new LoadPlan(this, &*g);
     if (!g->getSetup().empty() && g->getResource()->getSetupMatrix())
       OperationSetup::setupoperation->createOperationPlan(
-      getQuantity(),getDates().getStart(),getDates().getStart(),NULL,this);
+      1, getDates().getStart(), getDates().getStart(), NULL, this);
   }
 
   // Create flowplans for flows that are not alternates of another one
@@ -575,7 +575,7 @@ void DECLARE_EXPORT OperationPlan::setStart (Date d)
   // Locked opplans don't move
   if (getLocked()) return;
 
-  if (!firstsubopplan)   //xxx will need to skip setups
+  if (!firstsubopplan || firstsubopplan->getOperation() == OperationSetup::setupoperation) // @TODO also need to handle routing or altopplans which have extra setup
     // No sub operationplans
     oper->setOperationPlanParameters(this,quantity,d,Date::infinitePast);
   else
@@ -606,12 +606,12 @@ void DECLARE_EXPORT OperationPlan::setStart (Date d)
 }
 
 
-void DECLARE_EXPORT OperationPlan::setEnd (Date d)
+void DECLARE_EXPORT OperationPlan::setEnd(Date d)
 {
   // Locked opplans don't move
   if (getLocked()) return;
 
-  if (!firstsubopplan)   //xxx will need to skip setups
+  if (!firstsubopplan || firstsubopplan->getOperation() == OperationSetup::setupoperation)  // @TODO also need to handle routing or altopplans which have extra setup at the top level
     // No sub operationplans
     oper->setOperationPlanParameters(this,quantity,Date::infinitePast,d);
   else
@@ -630,7 +630,7 @@ void DECLARE_EXPORT OperationPlan::setEnd (Date d)
         // There is sufficient slack between the suboperations
         break;
     }
-    // Set the dates on the top operationplan
+    // Set the dates on the top operationplan   
     setStartAndEnd(
       firstsubopplan->getDates().getStart(),
       lastsubopplan->getDates().getEnd()
@@ -701,10 +701,11 @@ DECLARE_EXPORT double OperationPlan::setQuantity (double f, bool roundDown, bool
   // Apply the same size also to its children
   if (execute && firstsubopplan)
     for (OperationPlan *i = firstsubopplan; i; i = i->nextsubopplan)
-    {
-      i->quantity = quantity;
-      if (upd) i->resizeFlowLoadPlans();
-    }
+      if (i->getOperation() != OperationSetup::setupoperation)
+      {
+        i->quantity = quantity;
+        if (upd) i->resizeFlowLoadPlans();
+      }
 
   // Update the flow and loadplans, and mark for problem detection
   if (upd) update();
@@ -738,7 +739,7 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 
 DECLARE_EXPORT void OperationPlan::update()
 {
-  if (firstsubopplan)  // xxx will need to change for setups
+  if (firstsubopplan && firstsubopplan->getOperation() != OperationSetup::setupoperation)  // TODO also something required to update setup opplans
   {
     // Inherit the start and end date of the child operationplans
     dates.setStartAndEnd(
@@ -832,7 +833,7 @@ DECLARE_EXPORT void OperationPlan::writeElement(XMLOutput *o, const Keyword& tag
 }
 
 
-DECLARE_EXPORT void OperationPlan::beginElement (XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void OperationPlan::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_demand))
     pIn.readto( Demand::reader(Demand::metadata,pIn.getAttributes()) );

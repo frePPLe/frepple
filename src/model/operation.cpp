@@ -480,7 +480,7 @@ DECLARE_EXPORT void Operation::initOperationPlan (OperationPlan* opplan,
 }
 
 
-void Operation::deleteOperationPlans(bool deleteLockedOpplans)
+DECLARE_EXPORT void Operation::deleteOperationPlans(bool deleteLockedOpplans)
 {
   OperationPlan::deleteOperationPlans(this, deleteLockedOpplans);
 }
@@ -524,7 +524,7 @@ DECLARE_EXPORT void Operation::writeElement(XMLOutput *o, const Keyword& tag, mo
 }
 
 
-DECLARE_EXPORT void Operation::beginElement (XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Operation::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_flow)
       && pIn.getParentElement().first.isA(Tags::tag_flows))
@@ -676,7 +676,7 @@ OperationTimePer::setOperationPlanParameters
       // part of the operation duration. This is infeasible.
       if (!execute) return pair<DateRange,double>(x,0);
       opplan->setQuantity(0,true,false,execute);
-      opplan->setEnd(e);   // xxx Does this create a recursive call to this same function???
+      opplan->setEnd(e);  
     }
     else
     {
@@ -839,7 +839,7 @@ DECLARE_EXPORT void OperationRouting::writeElement
 }
 
 
-DECLARE_EXPORT void OperationRouting::beginElement (XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void OperationRouting::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
@@ -1062,7 +1062,7 @@ DECLARE_EXPORT void OperationAlternate::writeElement
 }
 
 
-DECLARE_EXPORT void OperationAlternate::beginElement (XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void OperationAlternate::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA(Tags::tag_operation))
     pIn.readto( Operation::reader(Operation::metadata,pIn.getAttributes()) );
@@ -1164,6 +1164,100 @@ DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
     logger << "Warning: operation '" << *o
     << "' isn't a suboperation of alternate operation '" << *this
     << "'" << endl;
+}
+
+
+DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
+(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
+{
+  // Find or create a loadplan
+  OperationPlan::LoadPlanIterator i = opplan->beginLoadPlans();
+  LoadPlan *ldplan = NULL;
+  if (i != opplan->endLoadPlans())
+    // Already exists
+    ldplan = &*i;
+  else
+  {
+    // Create a new one
+    if (!opplan->getOwner())
+      throw LogicException("Setup operationplan always must have an owner");
+    for (loadlist::const_iterator g=opplan->getOwner()->getOperation()->getLoads().begin(); 
+      g!=opplan->getOwner()->getOperation()->getLoads().end(); ++g)
+      if (g->getResource()->getSetupMatrix() && !g->getSetup().empty())
+      {
+        ldplan = new LoadPlan(opplan, &*g);
+        break;
+      }
+    if (!ldplan)
+      throw LogicException("Can't find a setup on operation '" 
+        + opplan->getOwner()->getOperation()->getName() + "'");
+  }
+
+  // Find the setup of the resource at the start of the conversion
+  //xxxlogger << "TEST " << ldplan->getDate() << "  " << opplan->getOwner()->getDates() << "  " << s << "   " << e << endl;
+  const Load* lastld = NULL;
+  for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin();
+    i != ldplan->getResource()->getLoadPlans().end() && i->getDate() <= (s ? s : e); ++i)
+    if (i->getQuantity() != 0.0 
+      && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan
+      && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan->getOwner()
+      && !static_cast<const LoadPlan*>(&*i)->getLoad()->getSetup().empty())
+        lastld = static_cast<const LoadPlan*>(&*i)->getLoad();
+  string lastsetup = lastld ? lastld->getSetup() : ldplan->getResource()->getSetup();
+
+  TimePeriod duration(0L);
+  if (lastsetup != ldplan->getLoad()->getSetup())
+  {
+    // Calculate the setup time
+    SetupMatrix::Rule *conversionrule = ldplan->getLoad()->getResource()->getSetupMatrix()
+      ->calculateSetup(lastsetup, ldplan->getLoad()->getSetup());
+    duration = conversionrule ? conversionrule->getDuration() : 365L*86400L;
+  }
+
+  // xxx TODO should this method scan for the setup optimization window??? Maybe, as long as the solver can specify the window
+
+  // xxx TODO selecting a setup also requires checking and updating a later operationplan on the resource!
+
+  // xxx TODO what is the expected behavior in the unconstrained plan. Different operations can 
+  // require a different setup - should the plan be made "setup-feasible"?
+
+  // Set the start and end date.
+  DateRange x;
+  TimePeriod actualduration;
+  if (e && s)
+  {
+    if (preferEnd) x = calculateOperationTime(e, duration, false, &actualduration);
+    else x = calculateOperationTime(s, duration, true, &actualduration);
+  }
+  else if (s) x = calculateOperationTime(s, duration, true, &actualduration);
+  else x = calculateOperationTime(e, duration, false, &actualduration);
+  if (!execute)
+    // Simulation only
+    return pair<DateRange,double>(x, actualduration == duration ? q : 0);
+  else if (actualduration == duration)
+    // Update succeeded
+    opplan->setStartAndEnd(x.getStart(), x.getEnd());
+  //elsexxx
+    // Update failed - Not enough available time
+    
+
+  logger << "setup resource '" << ldplan->getResource()
+    << "' from " << lastsetup << "  to " <<  ldplan->getLoad()->getSetup() << "  " << opplan->getDates() << endl;
+
+
+  /* xxx
+  for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin();
+    i != ldplan->getResource()->getLoadPlans().end(); ++i)
+  {
+    const LoadPlan* ppp = dynamic_cast<const LoadPlan*>(&*i);
+    logger << "    -- " << i->getDate() << "  " << i->getQuantity() << "  " << i->getOnhand() << "  " << (&*i == ldplan ? "T" : "F") << "  "  ;
+    if (ppp)
+      logger << ppp->getOperationPlan()->getOperation()->getName() << "  " << ppp->getLoad()->getSetup();
+    logger << endl;
+  }
+  */
+
+  return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
 }
 
 

@@ -89,7 +89,7 @@ DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
 }
 
 
-DECLARE_EXPORT LoadPlan::LoadPlan (OperationPlan *o, const Load *r, LoadPlan *lp)
+DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
 {
   ld = const_cast<Load*>(r);
   oper = o;
@@ -136,6 +136,9 @@ DECLARE_EXPORT void LoadPlan::update()
     ld->getLoadplanQuantity(this),
     ld->getLoadplanDate(this)
     );
+
+  // Review adjacent setups
+  ld->getResource()->updateSetups(this);
 
   // Mark the operation and resource as being changed. This will trigger
   // the recomputation of their problems

@@ -383,7 +383,7 @@ template <class type> void TimeLine<type>::insert (Event* e)
 }
 
 
-template <class type> void TimeLine<type>::erase (Event* e)
+template <class type> void TimeLine<type>::erase(Event* e)
 {
   // Update later entries
   double qty = e->getQuantity();

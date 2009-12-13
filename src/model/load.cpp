@@ -296,7 +296,7 @@ DECLARE_EXPORT void Load::writeElement(XMLOutput *o, const Keyword& tag, mode m)
 }
 
 
-DECLARE_EXPORT void Load::beginElement (XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Load::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_resource))
     pIn.readto( Resource::reader(Resource::metadata,pIn.getAttributes()) );

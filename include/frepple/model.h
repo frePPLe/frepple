@@ -607,7 +607,7 @@ template <typename T> class CalendarPointer : public Calendar
             Bucket::beginElement(pIn, pAttr);
         }
 
-        void endElement (XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
+        void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement)
         {
           if (pAttr.isA(Tags::tag_value))
           {
@@ -713,7 +713,7 @@ template <typename T> class CalendarPointer : public Calendar
       o->EndObject(tag);
     }
 
-    void beginElement (XMLInput& pIn, const Attribute& pAttr)
+    void beginElement(XMLInput& pIn, const Attribute& pAttr)
     {
       if (pAttr.isA (Tags::tag_default))
         pIn.readto(T::reader(T::metadata,pIn.getAttributes()));
@@ -1067,7 +1067,7 @@ class Solver : public HasName<Solver>
     explicit Solver(const string& n) : HasName<Solver>(n), loglevel(0) {}
     virtual ~Solver() {}
 
-    virtual DECLARE_EXPORT void writeElement (XMLOutput*, const Keyword&, mode=DEFAULT) const;
+    virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
@@ -1525,7 +1525,7 @@ class Operation : public HasName<Operation>,
 
     /** This is the factory method which creates all operationplans of the
       * operation. */
-    DECLARE_EXPORT OperationPlan* createOperationPlan (double, Date,
+    DECLARE_EXPORT OperationPlan* createOperationPlan(double, Date,
       Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
       bool makeflowsloads=true) const;
 
@@ -1633,7 +1633,7 @@ class Operation : public HasName<Operation>,
     /** Deletes all operationplans of this operation. The boolean parameter
       * controls whether we delete also locked operationplans or not.
       */
-    void deleteOperationPlans(bool deleteLockedOpplans = false);
+    DECLARE_EXPORT void deleteOperationPlans(bool deleteLockedOpplans = false);
 
     /** Sets the minimum size of operationplans.<br>
       * The default value is 1.0
@@ -1723,7 +1723,7 @@ class Operation : public HasName<Operation>,
     static DECLARE_EXPORT const MetaCategory* metadata;
 
   protected:
-    DECLARE_EXPORT void initOperationPlan (OperationPlan*, double,
+    DECLARE_EXPORT void initOperationPlan(OperationPlan*, double,
         const Date&, const Date&, Demand*, OperationPlan*, unsigned long,
         bool = true) const;
 
@@ -1731,8 +1731,9 @@ class Operation : public HasName<Operation>,
     /** List of operations using this operation as a sub-operation */
     Operationlist superoplist;
 
-    /** Empty list of operations. For operation types which have no
-      * suboperations this list is used as the list of suboperations.
+    /** Empty list of operations.<br>
+      * For operation types which have no suboperations this list is 
+      * used as the list of suboperations.
       */
     static DECLARE_EXPORT Operationlist nosubOperations;
 
@@ -1976,7 +1977,7 @@ class OperationPlan
       * This method is intended to be used to create objects when reading
       * XML input data.
       */
-    static DECLARE_EXPORT Object* createOperationPlan (const MetaClass*, const AttributeList&);
+    static DECLARE_EXPORT Object* createOperationPlan(const MetaClass*, const AttributeList&);
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~OperationPlan();
@@ -2000,7 +2001,7 @@ class OperationPlan
       * This method can only be called on top operationplans. Sub operation
       * plans should pass on a call to the parent operationplan.
       */
-    virtual DECLARE_EXPORT double setQuantity (double f,
+    virtual DECLARE_EXPORT double setQuantity(double f,
       bool roundDown = false, bool update = true, bool execute = true);
 
     /** Returns a pointer to the demand for which this operation is a delivery.
@@ -2209,8 +2210,17 @@ class OperationPlan
 
   protected:
     /** Updates the operationplan based on the latest information of quantity,
-      * date and locked flag. */
+      * date and locked flag.<br>
+      * This method will also update parent and child operationplans.
+      * @see resizeFlowLoadPlans
+      */
     virtual DECLARE_EXPORT void update();
+
+    /** Update the loadplans and flowplans of the operationplan based on the 
+      * latest information of quantity, date and locked flag.<br>
+      * This method will NOT update parent or child operationplans. 
+      * @see update
+      */
     DECLARE_EXPORT void resizeFlowLoadPlans();
 
     /** Pointer to a higher level OperationPlan. */
@@ -2219,7 +2229,7 @@ class OperationPlan
     /** Quantity. */
     double quantity;
 
-    /** Default constructor.
+    /** Default constructor.<br>
       * This way of creating operationplan objects is not intended for use by
       * any client applications. Client applications should use the factory
       * method on the operation class instead.<br>
@@ -2250,11 +2260,15 @@ class OperationPlan
       */
     static DECLARE_EXPORT unsigned long counter;
 
-    /** Pointer to the demand. Only delivery operationplans have this field
-      * set. The field is NULL for all other operationplans. */
+    /** Pointer to the demand.<br>
+      * Only delivery operationplans have this field set. The field is NULL 
+      * for all other operationplans. 
+      */
     Demand *dmd;
 
-    /** Unique identifier. */
+    /** Unique identifier.<br>
+      * The field is 0 while the operationplan is not fully registered yet.
+      */
     unsigned long id;
 
     /** Start and end date. */
@@ -2619,7 +2633,7 @@ class OperationAlternate : public Operation
     DECLARE_EXPORT pair<DateRange,double> setOperationPlanParameters
       (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
-    DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
@@ -2711,7 +2725,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-    DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -3660,7 +3674,7 @@ class SetupMatrix : public HasName<SetupMatrix>
       * If no matching rule is found, the changeover is not allowed: a NULL
       * pointer is returned.
       */
-    DECLARE_EXPORT pair<TimePeriod,double> calculateSetup(const string, const string) const;
+    DECLARE_EXPORT Rule* calculateSetup(const string, const string) const;
 
   private:
     /** Head of the list of rules. */
@@ -3744,7 +3758,7 @@ class Resource : public HasHierarchy<Resource>,
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-    DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
+    DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
 
@@ -3769,6 +3783,9 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Recompute the problems of this resource. */
     virtual DECLARE_EXPORT void updateProblems();
+
+    /** Scan the setups of this resource. */
+    virtual DECLARE_EXPORT void updateSetups(const LoadPlan* = NULL);
 
     void setHidden(bool b) {if (hidden!=b) setChanged(); hidden = b;}
     bool getHidden() const {return hidden;}
@@ -4493,7 +4510,7 @@ class Demand
 
     virtual DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     virtual DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-    virtual DECLARE_EXPORT void beginElement (XMLInput&, const Attribute&);
+    virtual DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
     virtual DECLARE_EXPORT PyObject* getattro(const Attribute&);
     virtual DECLARE_EXPORT int setattro(const Attribute&, const PythonObject&);
     static int initialize();
@@ -4642,6 +4659,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
     {
       ld->getResource()->setChanged();
       ld->getResource()->loadplans.erase(this);
+      ld->getResource()->updateSetups(); // @TODO Optimize the method to rescan only part of the timeline
     }
 
     /** This function needs to be called whenever the loadplan date or
@@ -5252,7 +5270,7 @@ class CommandMoveOperationPlan : public Command
       * @param newQty New quantity of the operationplan.The default is -1,
       * which indicates to leave the quantity unchanged.
       */
-    DECLARE_EXPORT CommandMoveOperationPlan (OperationPlan* opplanptr,
+    DECLARE_EXPORT CommandMoveOperationPlan(OperationPlan* opplanptr,
       Date newDate, bool startOrEnd=true, double newQty = -1.0);
     void execute() {opplan=NULL;}
     DECLARE_EXPORT void undo();

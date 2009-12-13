@@ -281,7 +281,7 @@ DECLARE_EXPORT void Flow::writeElement (XMLOutput *o, const Keyword& tag, mode m
 }
 
 
-DECLARE_EXPORT void Flow::beginElement (XMLInput& pIn, const Attribute& pAttr)
+DECLARE_EXPORT void Flow::beginElement(XMLInput& pIn, const Attribute& pAttr)
 {
   if (pAttr.isA (Tags::tag_buffer))
     pIn.readto( Buffer::reader(Buffer::metadata,pIn.getAttributes()) );

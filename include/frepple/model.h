@@ -4730,8 +4730,12 @@ inline Date Load::getLoadplanDate(const LoadPlan* lp) const
 
 inline double Load::getLoadplanQuantity(const LoadPlan* lp) const
 {
-  if (!lp->getOperationPlan()->getDates().overlap(getEffective()))
-    // Load is not effective during this time
+  if (!lp->getOperationPlan()->getDates().overlap(getEffective()) 
+    && (lp->getOperationPlan()->getDates().getDuration() 
+         || !getEffective().within(lp->getOperationPlan()->getDates().getStart())))
+    // Load is not effective during this time.
+    // The extra check is required to make sure that zero duration operationplans
+    // operationplans don't get resized to 0
     return 0.0;
   return lp->isStart() ? getQuantity() : -getQuantity();
 }

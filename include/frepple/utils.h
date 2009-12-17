@@ -1842,7 +1842,7 @@ class DateRange
     bool intersect(const DateRange& dr) const
       {return dr.start<=end && dr.end>start;}
 
-    /** Returns the number of seconds the 2 dateranges overlap. */
+    /** Returns the number of seconds the two dateranges overlap. */
     TimePeriod overlap(const DateRange& dr) const
     {
       long x = (dr.end<end ? dr.end : end)

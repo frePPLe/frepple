@@ -46,7 +46,7 @@ class OperationPlan(models.Model):
 
 class Problem(models.Model):
   # Database fields
-  entity = models.CharField(_('entity'), max_length=10, db_index=True)
+  entity = models.CharField(_('entity'), max_length=15, db_index=True)
   name = models.CharField(_('name'), max_length=20, db_index=True)
   description = models.CharField(_('description'), max_length=80)
   startdate = models.DateTimeField(_('start date'), db_index=True)

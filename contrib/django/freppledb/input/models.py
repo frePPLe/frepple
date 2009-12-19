@@ -575,7 +575,7 @@ class Flow(AuditModel):
   alternate = models.CharField(_('alternate'), max_length=60, null=True, blank=True,
     help_text=_('Puts the flows in a group of alternate flows'))
   priority = models.IntegerField(_('priority'), default=1, null=True, blank=True,
-    help_text=_('Priority of this flow in a group of alternate flows'))
+    help_text=_('Priority of this flow in a group of alternates'))
 
   def __unicode__(self):
     return '%s - %s' % (self.operation.name, self.thebuffer.name)
@@ -597,6 +597,8 @@ class Load(AuditModel):
   effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
   name = models.CharField(_('name'), max_length=60, null=True, blank=True)
   alternate = models.CharField(_('alternate'), max_length=60, null=True, blank=True)
+  priority = models.IntegerField(_('priority'), default=1, null=True, blank=True,
+    help_text=_('Priority of this load in a group of alternates'))
 
   def __unicode__(self):
     return '%s - %s' % (self.operation.name, self.resource.name)

@@ -273,7 +273,7 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
 }
 
 
-DECLARE_EXPORT void SolverMRP::setUserExitFlow(string n)
+DECLARE_EXPORT void SolverMRP::setUserExitFlow(const string& n)
 {
   PyGILState_STATE pythonstate = PyGILState_Ensure();
   if (n.empty())

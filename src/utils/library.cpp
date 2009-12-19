@@ -63,7 +63,7 @@ DECLARE_EXPORT string Environment::logfilename;
 // Hash value computed only once
 DECLARE_EXPORT const hashtype MetaCategory::defaultHash(Keyword::hash("default"));
 
-DECLARE_EXPORT vector<PythonType*> PythonExtensionBase::table;
+vector<PythonType*> PythonExtensionBase::table;
 
 
 DECLARE_EXPORT string Environment::searchFile(const string filename)

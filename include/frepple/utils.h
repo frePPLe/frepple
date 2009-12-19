@@ -3010,7 +3010,10 @@ class PythonExtensionBase : public PyObject
     }
 
   protected:
-    DECLARE_EXPORT static vector<PythonType*> table;
+    static vector<PythonType*> table;
+
+    DECLARE_EXPORT static PythonType* registerPythonType(int, const type_info*);
+
 };
 
 
@@ -3043,18 +3046,8 @@ class PythonExtension: public PythonExtensionBase, public NonCopyable
       static PythonType* cachedTypePtr = NULL;
       if (cachedTypePtr) return *cachedTypePtr;
 
-      // Scan the vector
-      for (vector<PythonType*>::const_iterator i = table.begin(); i != table.end(); ++i)
-        if (**i==typeid(T))
-        {
-          // Found...
-          cachedTypePtr = *i;
-          return *cachedTypePtr;
-        }
-
-      // Not found in the vector, so create a new one
-      cachedTypePtr = new PythonType(sizeof(T), &typeid(T));
-      table.push_back(cachedTypePtr);
+      // Register a new type
+      cachedTypePtr = registerPythonType(sizeof(T), &typeid(T));
 
       // Using our own memory deallocator
       cachedTypePtr->supportdealloc( deallocator );
@@ -4854,7 +4847,7 @@ template <class A, class B, class C> class Association
         }
 
         /** Search for the association with a certain name. */
-        C* find(string n) const
+        C* find(const string& n) const
         {
           for (C* p=this->first; p; p=p->nextA)
             if (p->name == n) return p;
@@ -4984,7 +4977,7 @@ template <class A, class B, class C> class Association
         }
 
         /** Search for the association with a certain name. */
-        C* find(string n) const
+        C* find(const string& n) const
         {
           for (C* p=this->first; p; p=p->nextB)
             if (p->name == n) return p;

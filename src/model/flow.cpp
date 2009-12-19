@@ -233,7 +233,7 @@ DECLARE_EXPORT void Flow::setAlternate(Flow *f)
 }
 
 
-DECLARE_EXPORT void Flow::setAlternate(string n)
+DECLARE_EXPORT void Flow::setAlternate(const string& n)
 {
   if (!getOperation())
     throw LogicException("Can't set an alternate flow before setting the operation");

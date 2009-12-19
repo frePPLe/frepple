@@ -3291,7 +3291,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     DECLARE_EXPORT void setAlternate(Flow *);
 
     /** Define the flow of which this one is an alternate. */
-    DECLARE_EXPORT void setAlternate(string n);
+    DECLARE_EXPORT void setAlternate(const string& n);
 
     /** A flow is considered hidden when either its buffer or operation
       * are hidden. */
@@ -3948,7 +3948,7 @@ class Load
     DECLARE_EXPORT void setAlternate(Load *);
 
     /** Define the load of which this one is an alternate. */
-    DECLARE_EXPORT void setAlternate(string n);
+    DECLARE_EXPORT void setAlternate(const string& n);
 
     /** Update the required resource setup. */
     DECLARE_EXPORT void setSetup(const string);

@@ -263,7 +263,7 @@ template <class type> class TimeLine
       * It prints a header line, followed by the date, quantity and on_hand
       * of all events in the timeline.
       */
-    void inspect(string name) const
+    void inspect(const string& name) const
     {
       logger << "Inspecting  " << this << ": \"" << name << "\":" << endl;
       for (const_iterator oo=begin(); oo!=end(); ++oo)

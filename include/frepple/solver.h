@@ -320,7 +320,7 @@ class SolverMRP : public Solver
     void setAutocommit(const bool b) {autocommit = b;}
 
     /** Specify a Python function that is called before solving a flow. */
-    DECLARE_EXPORT void setUserExitFlow(string);
+    DECLARE_EXPORT void setUserExitFlow(const string&);
 
     /** Specify a Python function that is called before solving a flow. */
     DECLARE_EXPORT void setUserExitFlow(PyObject*);

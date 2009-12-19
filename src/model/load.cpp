@@ -232,7 +232,7 @@ DECLARE_EXPORT void Load::setAlternate(Load *f)
 }
 
 
-DECLARE_EXPORT void Load::setAlternate(string n)
+DECLARE_EXPORT void Load::setAlternate(const string& n)
 {
   if (!getOperation())
     throw LogicException("Can't set an alternate load before setting the operation");

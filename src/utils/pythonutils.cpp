@@ -443,6 +443,19 @@ DECLARE_EXPORT PythonType::PythonType(size_t base_size, const type_info* tp)
 }
 
 
+DECLARE_EXPORT PythonType* PythonExtensionBase::registerPythonType(int size, const type_info *t)
+{
+  // Scan the types already registered
+  for (vector<PythonType*>::const_iterator i = table.begin(); i != table.end(); ++i)
+    if (**i==*t) return *i;
+
+  // Not found in the vector, so create a new one
+  PythonType *cachedTypePtr = new PythonType(size, t);
+  table.push_back(cachedTypePtr);
+  return cachedTypePtr;
+}
+
+
 DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
 {
   try

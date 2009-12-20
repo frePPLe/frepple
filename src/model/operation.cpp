@@ -1211,7 +1211,7 @@ DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
     // Calculate the setup time
     SetupMatrix::Rule *conversionrule = ldplan->getLoad()->getResource()->getSetupMatrix()
       ->calculateSetup(lastsetup, ldplan->getLoad()->getSetup());
-    duration = conversionrule ? conversionrule->getDuration() : 365L*86400L;
+    duration = conversionrule ? conversionrule->getDuration() : TimePeriod(365L*86400L);
   }
 
   // xxx TODO should this method scan for the setup optimization window??? Maybe, as long as the solver can specify the window

@@ -147,6 +147,28 @@ DECLARE_EXPORT void LoadPlan::update()
 }
 
 
+DECLARE_EXPORT string LoadPlan::getSetup() const
+{
+  // This resource has no setupmatrix
+  if (!ld->getResource()->getSetupMatrix()) return string();
+
+  // Current load has a setup
+  if (!ld->getSetup().empty()) return ld->getSetup();
+
+  // Scan earlier setups
+  for (Resource::loadplanlist::const_iterator i(this); 
+    i != getResource()->getLoadPlans().end(); --i)
+  {
+    const LoadPlan* j = dynamic_cast<const LoadPlan*>(&*i);
+    if (j && !j->getLoad()->getSetup().empty())
+      return j->getLoad()->getSetup();
+  }
+
+  // No conversions found - return the original setup
+  return ld->getResource()->getSetup();
+}
+
+
 DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
 {
   // No change
@@ -196,6 +218,8 @@ PyObject* LoadPlan::getattro(const Attribute& attr)
     return PythonObject(getOtherLoadPlan()->getDate());
   if (attr.isA(Tags::tag_resource))
     return PythonObject(getLoad()->getResource());
+  if (attr.isA(Tags::tag_setup))
+    return PythonObject(getSetup());
   return NULL;
 }
 

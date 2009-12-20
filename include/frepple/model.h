@@ -4671,6 +4671,9 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
     TimeLine<LoadPlan>* getTimeLine() const
     {return &(ld->getResource()->loadplans);}
 
+    /** Returns the current setup of the resource. */
+    DECLARE_EXPORT string getSetup() const;
+
     /** Returns true when the loadplan is hidden.<br>
       * This is determined by looking at whether the load is hidden or not.
       */

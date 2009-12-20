@@ -397,12 +397,13 @@ DECLARE_EXPORT void OperationPlan::addSubOperationPlan(OperationPlan* o)
   }
   o->owner = this;
 
-  // Update the top operationplan
+  // Update the date of the top operationplan
+  /*XXX
   setStartAndEnd(
     firstsubopplan->getDates().getStart(),
     lastsubopplan->getDates().getEnd()
   );
-
+  */
   // Update the flow and loadplans
   update();
 }
@@ -499,12 +500,15 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
   // Create setup suboperationplans and loadplans
   for (Operation::loadlist::const_iterator g=oper->getLoads().begin();
       g!=oper->getLoads().end(); ++g)
-  {
-    if (!g->getAlternate()) new LoadPlan(this, &*g);
-    if (!g->getSetup().empty() && g->getResource()->getSetupMatrix())
-      OperationSetup::setupoperation->createOperationPlan(
-      1, getDates().getStart(), getDates().getStart(), NULL, this);
-  }
+    if (!g->getAlternate())
+    {
+      new LoadPlan(this, &*g);
+      if (!g->getSetup().empty() && g->getResource()->getSetupMatrix())
+      {
+        OperationSetup::setupoperation->createOperationPlan(
+        1, getDates().getStart(), getDates().getStart(), NULL, this);
+      }
+    }
 
   // Create flowplans for flows that are not alternates of another one
   for (Operation::flowlist::const_iterator h=oper->getFlows().begin();

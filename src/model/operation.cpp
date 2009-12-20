@@ -1216,11 +1216,6 @@ DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
 
   // xxx TODO should this method scan for the setup optimization window??? Maybe, as long as the solver can specify the window
 
-  // xxx TODO selecting a setup also requires checking and updating a later operationplan on the resource!
-
-  // xxx TODO what is the expected behavior in the unconstrained plan. Different operations can 
-  // require a different setup - should the plan be made "setup-feasible"?
-
   // Set the start and end date.
   DateRange x;
   TimePeriod actualduration;

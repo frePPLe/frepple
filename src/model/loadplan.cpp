@@ -184,6 +184,8 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
   if (ld) ld->getResource()->setChanged();
   newld->getResource()->setChanged();
 
+  // xxx @TODO when switching to an alternate the setup operationplan (if any) needs changing as well
+
   // Change this loadplan and its brother
   for (LoadPlan *ldplan = getOtherLoadPlan(); true; )
   {

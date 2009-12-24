@@ -265,7 +265,6 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
   loadplanlist::const_iterator i = ldplan ? 
     getLoadPlans().begin(ldplan) :
     getLoadPlans().begin();
-  if (ldplan && i != getLoadPlans().end()) ++i;
   string prevsetup = ldplan ? ldplan->getSetup() : getSetup();
   for (; i != getLoadPlans().end(); ++i)
   {
@@ -276,7 +275,6 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
     {
       // Next conversion operation
       SetupMatrix::Rule *x = getSetupMatrix()->calculateSetup(prevsetup, l->getLoad()->getSetup());
-      logger << "  After " << prevsetup << "  " << l->getLoad()->getSetup() << "  " << l->getOperationPlan()->getDates() << "  " << x->getDuration() << "  " << l->getOperationPlan()->getDates().getDuration() << endl;
       if (l->getOperationPlan()->getDates().getDuration() != x->getDuration())
         l->getOperationPlan()->setEnd(l->getOperationPlan()->getDates().getEnd());
       prevsetup = l->getLoad()->getSetup();

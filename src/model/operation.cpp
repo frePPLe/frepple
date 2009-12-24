@@ -1196,7 +1196,7 @@ DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
   // Find the setup of the resource at the start of the conversion
   const Load* lastld = NULL;
   for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin();
-    i != ldplan->getResource()->getLoadPlans().end() && i->getDate() <= (s ? s : e); ++i)
+    i != ldplan->getResource()->getLoadPlans().end() && i->getDate() < (s ? s : e); ++i)
     if (i->getQuantity() != 0.0 
       && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan
       && static_cast<const LoadPlan*>(&*i)->getOperationPlan() != opplan->getOwner()

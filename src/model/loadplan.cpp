@@ -184,7 +184,53 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
   if (ld) ld->getResource()->setChanged();
   newld->getResource()->setChanged();
 
-  // xxx @TODO when switching to an alternate the setup operationplan (if any) needs changing as well
+  // Update also the setup operationplan
+  bool oldHasSetup = !ld->getSetup().empty() && ld->getResource()->getSetupMatrix();
+  bool newHasSetup = !newld->getSetup().empty() && newld->getResource()->getSetupMatrix();
+  if (oldHasSetup)
+  {
+    OperationPlan *setupOpplan = NULL;
+    for (OperationPlan::iterator i(getOperationPlan()); i != getOperationPlan()->end(); ++i)
+      if (i->getOperation() == OperationSetup::setupoperation)
+      {
+        setupOpplan = &*i;
+        break;
+      }
+    if (!setupOpplan)
+      throw LogicException("Can't find setup suboperationplan");
+    if (newHasSetup)
+    {
+      // Case 1: Both the old and new load require a setup
+      LoadPlan *setupLdplan = NULL;
+      for (OperationPlan::LoadPlanIterator j = setupOpplan->beginLoadPlans();
+        j != setupOpplan->beginLoadPlans(); ++j)
+        if (j->getLoad() == ld)
+        {
+          setupLdplan = &*j;
+          break;
+        }
+      if (!setupLdplan)
+        throw LogicException("Can't find loadplan on setup operationplan");
+      // Update the loadplan
+      setupLdplan->setLoad(newld);
+    }
+    else
+    {
+      // Case 2: Delete the old setup which is not required any more
+      getOperationPlan()->eraseSubOperationPlan(setupOpplan);
+    }
+  }
+  else
+  {
+    if (newHasSetup)
+    {
+      // Case 3: Create a new setup operationplan
+      OperationSetup::setupoperation->createOperationPlan(
+        1, Date::infinitePast, getOperationPlan()->getDates().getEnd(), NULL, getOperationPlan());
+    }
+    //else: 
+    // Case 4: No setup for the old or new load
+  }
 
   // Change this loadplan and its brother
   for (LoadPlan *ldplan = getOtherLoadPlan(); true; )

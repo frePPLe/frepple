@@ -18,11 +18,11 @@
       <setupmatrix name="Painting line changeover">
         <rules>
           <rule priority="1" fromsetup="green" tosetup="*" duration="P1D" cost="10" />
-          <rule priority="2" fromsetup="red" tosetup="*" duration="P1D" cost="10" />
-          <rule priority="3" fromsetup="white" tosetup="*" duration="P2D" cost="50"/>
-          <rule priority="4" fromsetup="black" tosetup="*" duration="P2D" cost="50"/>
-          <rule priority="5" fromsetup="yellow" duration="P2D" cost="20"/>
-          <rule priority="6" tosetup="yellow" duration="P2D" cost="20"/>
+          <rule priority="2" fromsetup="red" tosetup="*" duration="P2D" cost="10" />
+          <rule priority="3" fromsetup="white" tosetup="*" duration="P3D" cost="50"/>
+          <rule priority="4" fromsetup="black" tosetup="*" duration="P4D" cost="50"/>
+          <rule priority="5" fromsetup="yellow" duration="P5D" cost="20"/>
+          <rule priority="6" tosetup="yellow" duration="P6D" cost="20"/>
           <rule priority="7" duration="P3D" />
         </rules>
       </setupmatrix>
@@ -245,11 +245,12 @@ for r in frepple.resources():
   print "Resource '%s' uses matrix '%s'" % (r, r.setupmatrix)
 print ""
         
-# Create a plan
+# Create an unconstrained plan
+print "Creating unconstrained plan"
 frepple.solver_mrp(name="MRP", constraints=0, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
 
-# Report resource conversions
+# Report resource conversions in the unconstrained plan
 for i in frepple.resources():
   print "Loading of resource '%s'" % i.name
   for j in i.loadplans:

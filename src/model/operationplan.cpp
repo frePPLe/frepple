@@ -504,10 +504,8 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
     {
       new LoadPlan(this, &*g);
       if (!g->getSetup().empty() && g->getResource()->getSetupMatrix())
-      {
         OperationSetup::setupoperation->createOperationPlan(
-        1, getDates().getStart(), getDates().getStart(), NULL, this);
-      }
+          1, getDates().getStart(), getDates().getStart(), NULL, this);
     }
 
   // Create flowplans for flows that are not alternates of another one

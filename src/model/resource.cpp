@@ -257,15 +257,32 @@ DECLARE_EXPORT Resource::~Resource()
 DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
 {
   // No updating required this resource
-  if (!getSetupMatrix() || (ldplan && ldplan->getLoad()->getSetup().empty())) 
+  if (!getSetupMatrix() || (ldplan && ldplan->getOperationPlan()->getOperation() != OperationSetup::setupoperation)) 
     return;
 
-  // @TODO xxx Need update scan for setup opplans
-  /* scan forward in time (starting from arg flowplan or from the start) to find next setup. 
-     If found check/update their duration (no feasibility check)
-       -> Keep end the same
-       (as a result the start date may become before the argument ldplan's date -> need extra correction loop)
-   */
+  // Update later setup opplans
+  OperationPlan *opplan = ldplan ? ldplan->getOperationPlan() : NULL;
+  loadplanlist::const_iterator i = ldplan ? 
+    getLoadPlans().begin(ldplan) :
+    getLoadPlans().begin();
+  if (ldplan && i != getLoadPlans().end()) ++i;
+  string prevsetup = ldplan ? ldplan->getSetup() : getSetup();
+  for (; i != getLoadPlans().end(); ++i)
+  {
+    const LoadPlan* l = dynamic_cast<const LoadPlan*>(&*i);
+    if (l && !l->getLoad()->getSetup().empty() 
+      && l->getOperationPlan()->getOperation() == OperationSetup::setupoperation
+      && l->getOperationPlan() != opplan)
+    {
+      // Next conversion operation
+      SetupMatrix::Rule *x = getSetupMatrix()->calculateSetup(prevsetup, l->getLoad()->getSetup());
+      logger << "  After " << prevsetup << "  " << l->getLoad()->getSetup() << "  " << l->getOperationPlan()->getDates() << "  " << x->getDuration() << "  " << l->getOperationPlan()->getDates().getDuration() << endl;
+      if (l->getOperationPlan()->getDates().getDuration() != x->getDuration())
+        l->getOperationPlan()->setEnd(l->getOperationPlan()->getDates().getEnd());
+      prevsetup = l->getLoad()->getSetup();
+      if (ldplan) return;
+    }
+  }
 }
 
 

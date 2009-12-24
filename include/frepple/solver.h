@@ -540,7 +540,7 @@ class SolverMRP : public Solver
 
     /** This function will check all constraints for an operationplan
       * and propagate it upstream. The check does NOT check eventual
-      * sub operationplans.
+      * sub operationplans.<br>
       * The return value is a flag whether the operationplan is
       * acceptable (sometimes in reduced quantity) or not.
       */
@@ -550,7 +550,7 @@ class SolverMRP : public Solver
       * constraints. */
     DECLARE_EXPORT bool checkOperationLeadtime(OperationPlan*, SolverMRPdata&, bool);
 
-    /** Verifies whether this operationplan violates the capacity constraint.
+    /** Verifies whether this operationplan violates the capacity constraint.<br>
       * In case it does the operationplan is moved to an earlier or later
       * feasible date.
       */

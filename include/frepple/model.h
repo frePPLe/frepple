@@ -3231,7 +3231,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** Constructor. */
     explicit Flow(Operation* o, Buffer* b, double q)
-      : quantity(q), priority(1), hasAlts(false), altFlow(NULL)
+      : quantity(q), priority(1), hasAlts(false), altFlow(NULL), search(PRIORITY)
     {
       setOperation(o);
       setBuffer(b);
@@ -3293,6 +3293,12 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     /** Define the flow of which this one is an alternate. */
     DECLARE_EXPORT void setAlternate(const string& n);
 
+    /** Return the search mode. */
+    SearchMode getSearch() const {return search;}
+
+    /** Update the search mode. */
+    void setSearch(const string a) {search = decodeSearchMode(a);}
+
     /** A flow is considered hidden when either its buffer or operation
       * are hidden. */
     virtual bool getHidden() const
@@ -3321,8 +3327,8 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
   protected:
     /** Default constructor. */
-    explicit Flow() : quantity(0.0), priority(1), hasAlts(false), altFlow(NULL)
-      {initType(metadata);}
+    explicit Flow() : quantity(0.0), priority(1), hasAlts(false), 
+      altFlow(NULL), search(PRIORITY) {initType(metadata);}
 
   private:
     /** Verifies whether a flow meets all requirements to be valid. */
@@ -3339,6 +3345,9 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** A flow representing the main flow of a set of alternate flows. */
     Flow* altFlow;
+
+    /** Mode to select the preferred alternates. */
+    SearchMode search;
 
     static PyObject* create(PyTypeObject* pytype, PyObject* args, PyObject* kwds);
     DECLARE_EXPORT PyObject* getattro(const Attribute&);
@@ -3891,7 +3900,7 @@ class Load
   public:
     /** Constructor. */
     explicit Load(Operation* o, Resource* r, double u)
-      : priority(1), hasAlts(false), altLoad(NULL)
+      : priority(1), hasAlts(false), altLoad(NULL), search(PRIORITY)
     {
       setOperation(o);
       setResource(r);
@@ -3983,8 +3992,14 @@ class Load
       {return sizeof(Load) + getName().size() + getSetup().size();}
 
     /** Default constructor. */
-    Load() : qty(1.0), priority(1), hasAlts(false), altLoad(NULL)
+    Load() : qty(1.0), priority(1), hasAlts(false), altLoad(NULL), search(PRIORITY)
       {initType(metadata);}
+
+    /** Return the search mode. */
+    SearchMode getSearch() const {return search;}
+
+    /** Update the search mode. */
+    void setSearch(const string a) {search = decodeSearchMode(a);}
 
   private:
     /** This method is called to check the validity of the object. It will
@@ -4008,6 +4023,9 @@ class Load
 
     /** Required setup. */
     string setup;
+
+    /** Mode to select the preferred alternates. */
+    SearchMode search;
 
     /** Factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);

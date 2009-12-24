@@ -312,6 +312,8 @@ DECLARE_EXPORT void Flow::endElement (XMLInput& pIn, const Attribute& pAttr, con
     setName(pElement.getString());
   else if (pAttr.isA(Tags::tag_alternate))
     setAlternate(pElement.getString());
+  else if (pAttr.isA(Tags::tag_search))
+    setSearch(pElement.getString());
   else if (pAttr.isA(Tags::tag_action))
   {
     delete static_cast<Action*>(pIn.getUserArea());
@@ -392,6 +394,12 @@ DECLARE_EXPORT PyObject* Flow::getattro(const Attribute& attr)
     return PythonObject(getName());
   if (attr.isA(Tags::tag_alternate))
     return PythonObject(getAlternate());
+  if (attr.isA(Tags::tag_search))
+  {
+    ostringstream ch;
+    ch << getSearch();
+    return PythonObject(ch.str());
+  }
   return NULL;
 }
 
@@ -438,6 +446,8 @@ DECLARE_EXPORT int Flow::setattro(const Attribute& attr, const PythonObject& fie
       setAlternate(y);
     }
   }
+  else if (attr.isA(Tags::tag_search))
+    setSearch(field.getString());
   else
     return -1;
   return 0;

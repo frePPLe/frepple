@@ -1194,7 +1194,6 @@ DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
   }
 
   // Find the setup of the resource at the start of the conversion
-  //xxxlogger << "TEST " << ldplan->getDate() << "  " << opplan->getOwner()->getDates() << "  " << s << "   " << e << endl;
   const Load* lastld = NULL;
   for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin();
     i != ldplan->getResource()->getLoadPlans().end() && i->getDate() <= (s ? s : e); ++i)
@@ -1214,8 +1213,6 @@ DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
     duration = conversionrule ? conversionrule->getDuration() : TimePeriod(365L*86400L);
   }
 
-  // xxx TODO should this method scan for the setup optimization window??? Maybe, as long as the solver can specify the window
-
   // Set the start and end date.
   DateRange x;
   TimePeriod actualduration;
@@ -1234,23 +1231,8 @@ DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
     opplan->setStartAndEnd(x.getStart(), x.getEnd());
   //elsexxx
     // Update failed - Not enough available time
-    
-
   logger << "setup resource '" << ldplan->getResource()
     << "' from " << lastsetup << "  to " <<  ldplan->getLoad()->getSetup() << "  " << opplan->getDates() << endl;
-
-
-  /* xxx
-  for (TimeLine<LoadPlan>::const_iterator i = ldplan->getResource()->getLoadPlans().begin();
-    i != ldplan->getResource()->getLoadPlans().end(); ++i)
-  {
-    const LoadPlan* ppp = dynamic_cast<const LoadPlan*>(&*i);
-    logger << "    -- " << i->getDate() << "  " << i->getQuantity() << "  " << i->getOnhand() << "  " << (&*i == ldplan ? "T" : "F") << "  "  ;
-    if (ppp)
-      logger << ppp->getOperationPlan()->getOperation()->getName() << "  " << ppp->getLoad()->getSetup();
-    logger << endl;
-  }
-  */
 
   return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
 }
@@ -1390,7 +1372,7 @@ DECLARE_EXPORT PyObject* OperationAlternate::getattro(const Attribute& attr)
       PyTuple_SetItem(result, count++, PythonObject(*i));
     return result;
   }
-  else if (attr.isA(Tags::tag_search))
+  if (attr.isA(Tags::tag_search))
   {
     ostringstream ch;
     ch << getSearch();

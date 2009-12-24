@@ -327,6 +327,8 @@ DECLARE_EXPORT void Load::endElement (XMLInput& pIn, const Attribute& pAttr, con
     setName(pElement.getString());
   else if (pAttr.isA(Tags::tag_alternate))
     setAlternate(pElement.getString());
+  else if (pAttr.isA(Tags::tag_search))
+    setSearch(pElement.getString());
   else if (pAttr.isA(Tags::tag_setup))
     setSetup(pElement.getString());
   else if (pAttr.isA(Tags::tag_action))
@@ -370,6 +372,12 @@ DECLARE_EXPORT PyObject* Load::getattro(const Attribute& attr)
     return PythonObject(getName());
   if (attr.isA(Tags::tag_alternate))
     return PythonObject(getAlternate());
+  if (attr.isA(Tags::tag_search))
+  {
+    ostringstream ch;
+    ch << getSearch();
+    return PythonObject(ch.str());
+  }
   if (attr.isA(Tags::tag_setup))
     return PythonObject(getSetup());
   return NULL;
@@ -418,6 +426,8 @@ DECLARE_EXPORT int Load::setattro(const Attribute& attr, const PythonObject& fie
       setAlternate(y);
     }
   }
+  else if (attr.isA(Tags::tag_search))
+    setSearch(field.getString());
   else if (attr.isA(Tags::tag_setup))
     setSetup(field.getString());
   else

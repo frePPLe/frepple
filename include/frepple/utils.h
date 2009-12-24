@@ -4664,7 +4664,7 @@ template <class T> class HasHierarchy : public HasName<T>
 
     memberIterator endMember() const {return NULL;}
 
-    /** Returns true if this entity belongs to a higher hierarchical level.
+    /** Returns true if this entity belongs to a higher hierarchical level.<br>
       * An entity can have only a single owner, and can't belong to multiple
       * hierarchies.
       */
@@ -4674,9 +4674,9 @@ template <class T> class HasHierarchy : public HasName<T>
       * it. */
     bool isGroup() const {return first_child!=NULL;}
 
-    /** Changes the owner of the entity.
-      * The argument must be a valid pointer to an entity of the same type.
-      * A NULL pointer can be passe to clear the existing owner.
+    /** Changes the owner of the entity.<br>
+      * The argument must be a valid pointer to an entity of the same type.<br>
+      * A NULL pointer can be passed to clear the existing owner.<br>
       */
     void setOwner(T* f);
 

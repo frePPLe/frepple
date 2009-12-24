@@ -63,7 +63,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       // Check if this operation overloads the resource at its current time
       HasOverload = false;
       Date earliestdate = data->state->q_operationplan->getDates().getStart();
-      curdate = data->state->q_loadplan->getDate(); //Date::infiniteFuture;
+      curdate = data->state->q_loadplan->getDate();
       curMax = data->state->q_loadplan->getMax(false);
       prevMax = curMax;
       for (cur = res->getLoadPlans().begin(data->state->q_loadplan);

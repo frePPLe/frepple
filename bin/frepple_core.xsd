@@ -473,14 +473,15 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="operation" type="operation" minOccurs="0" />
-      <xsd:element name="buffer" type="buffer" minOccurs="0" />
-      <xsd:element name="quantity" type="xsd:double" minOccurs="0" />
-      <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
-      <xsd:element name="effective_start" type="xsd:dateTime" minOccurs="0" />
-      <xsd:element name="effective_end" type="xsd:dateTime" minOccurs="0" />
-      <xsd:element name="name" type="non-empty-string" minOccurs="0" />
-      <xsd:element name="alternate" type="non-empty-string" minOccurs="0" />
+      <xsd:element name="operation" type="operation" />
+      <xsd:element name="buffer" type="buffer" />
+      <xsd:element name="quantity" type="xsd:double" />
+      <xsd:element name="priority" type="xsd:integer" />
+      <xsd:element name="effective_start" type="xsd:dateTime" />
+      <xsd:element name="effective_end" type="xsd:dateTime" />
+      <xsd:element name="name" type="non-empty-string" />
+      <xsd:element name="alternate" type="non-empty-string" />
+      <xsd:element name="search" type="search" />
     </xsd:choice>
     <xsd:attribute name="quantity" type="xsd:double" />
     <xsd:attribute name="priority" type="xsd:integer" />
@@ -488,6 +489,7 @@
     <xsd:attribute name="effective_end" type="xsd:dateTime" />
     <xsd:attribute name="name" type="non-empty-string" />
     <xsd:attribute name="alternate" type="non-empty-string" />
+    <xsd:attribute name="search" type="search" />
     <xsd:attribute name="action" type="action" />
   </xsd:complexType>
 
@@ -533,23 +535,25 @@
         A load links a resource to a certain operation.
       </xsd:documentation>
     </xsd:annotation>
-    <xsd:all>
-      <xsd:element name="operation" type="operation" minOccurs="0" />
-      <xsd:element name="resource" type="resource" minOccurs="0" />
-      <xsd:element name="quantity" type="xsd:double" minOccurs="0" />
-      <xsd:element name="priority" type="xsd:integer" minOccurs="0" />
-      <xsd:element name="effective_start" type="xsd:dateTime" minOccurs="0" />
-      <xsd:element name="effective_end" type="xsd:dateTime" minOccurs="0" />
-      <xsd:element name="name" type="non-empty-string" minOccurs="0" />
-      <xsd:element name="alternate" type="non-empty-string" minOccurs="0" />
-      <xsd:element name="setup" type="non-empty-string" minOccurs="0" />
-    </xsd:all>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="operation" type="operation" />
+      <xsd:element name="resource" type="resource" />
+      <xsd:element name="quantity" type="xsd:double" />
+      <xsd:element name="priority" type="xsd:integer" />
+      <xsd:element name="effective_start" type="xsd:dateTime" />
+      <xsd:element name="effective_end" type="xsd:dateTime" />
+      <xsd:element name="name" type="non-empty-string" />
+      <xsd:element name="alternate" type="non-empty-string" />
+      <xsd:element name="search" type="search" />
+      <xsd:element name="setup" type="non-empty-string" />
+    </xsd:choice>
     <xsd:attribute name="quantity" type="xsd:double" />
     <xsd:attribute name="priority" type="xsd:integer" />
     <xsd:attribute name="effective_start" type="xsd:dateTime" />
     <xsd:attribute name="effective_end" type="xsd:dateTime" />
     <xsd:attribute name="name" type="non-empty-string" />
     <xsd:attribute name="alternate" type="non-empty-string" />
+    <xsd:attribute name="search" type="search" />
     <xsd:attribute name="setup" type="non-empty-string" />
     <xsd:attribute name="action" type="action" />
   </xsd:complexType>

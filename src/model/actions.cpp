@@ -499,8 +499,8 @@ DECLARE_EXPORT void CommandErase::execute()
     // E.g. the destructor of the item class recurses over all demands and
     // all buffers. It is much faster if there are none already.
     Demand::clear();
-    Operation::clear();
-    Buffer::clear();
+    Operation::clear();  // @TODO the setup operation should not be deleted
+    Buffer::clear();     // @TODO the buffer onhand operations should not be deleted
     Resource::clear();
     SetupMatrix::clear();
     Location::clear();

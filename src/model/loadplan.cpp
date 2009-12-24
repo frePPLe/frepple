@@ -203,7 +203,7 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
       // Case 1: Both the old and new load require a setup
       LoadPlan *setupLdplan = NULL;
       for (OperationPlan::LoadPlanIterator j = setupOpplan->beginLoadPlans();
-        j != setupOpplan->beginLoadPlans(); ++j)
+        j != setupOpplan->endLoadPlans(); ++j)
         if (j->getLoad() == ld)
         {
           setupLdplan = &*j;

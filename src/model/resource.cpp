@@ -271,11 +271,12 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
     const LoadPlan* l = dynamic_cast<const LoadPlan*>(&*i);
     if (l && !l->getLoad()->getSetup().empty() 
       && l->getOperationPlan()->getOperation() == OperationSetup::setupoperation
-      && l->getOperationPlan() != opplan)
+      && l->getOperationPlan() != opplan
+      && !l->isStart())
     {
       // Next conversion operation
       SetupMatrix::Rule *x = getSetupMatrix()->calculateSetup(prevsetup, l->getLoad()->getSetup());
-      if (l->getOperationPlan()->getDates().getDuration() != x->getDuration())
+      if (x && l->getOperationPlan()->getDates().getDuration() != x->getDuration())
         l->getOperationPlan()->setEnd(l->getOperationPlan()->getDates().getEnd());
       prevsetup = l->getLoad()->getSetup();
       if (ldplan) return;

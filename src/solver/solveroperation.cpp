@@ -298,17 +298,31 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
   // fence window, while a leadtimeconstrained constraint has an offset of 0.
   // If both constraints apply, we need the bigger of the two (since it is the
   // most constraining date.
-  TimePeriod delta;
-  if (isFenceConstrained())
-  {
-    delta = opplan->getOperation()->getFence();
-    // Both constraints are used, and the fence is negative (which is an
-    // unusual value for a fence)
-    if (isLeadtimeConstrained() && delta<0L) delta = 0L;
-  }
+  Date threshold = Plan::instance().getCurrent();
+  if (isFenceConstrained() 
+    && !(isLeadtimeConstrained() && opplan->getOperation()->getFence()<0L))
+    threshold += opplan->getOperation()->getFence();
+
+  // Check the setup operationplan
+  Date currentOpplanEnd = opplan->getDates().getEnd();
+  bool ok = true;
+  for (OperationPlan::iterator i(opplan); i != OperationPlan::end(); ++i)
+    if (i->getOperation() == OperationSetup::setupoperation)
+    {
+      if (i->getDates().getStart() < threshold)
+      {
+        // The setup operationplan is violating the lead time and/or fence 
+        // constraint. We move it to start on the earliest allowed date,
+        // which automatically also moves the owner operationplan.
+        i->setStart(threshold);
+        threshold = i->getDates().getEnd();
+        ok = false;
+      }
+      break;
+    }
 
   // Compare the operation plan start with the threshold date
-  if (opplan->getDates().getStart() >= Plan::instance().getCurrent() + delta)
+  if (ok && opplan->getDates().getStart() >= threshold)
     // There is no problem
     return true;
 
@@ -320,21 +334,21 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
     // Leadtime check during operation resolver
     opplan->getOperation()->setOperationPlanParameters(
       opplan, opplan->getQuantity(),
-      Plan::instance().getCurrent() + delta,
-      opplan->getDates().getEnd() + opplan->getOperation()->getPostTime(),
+      threshold,
+      currentOpplanEnd + opplan->getOperation()->getPostTime(),
       false
     );
   else
     // Leadtime check during capacity resolver
     opplan->getOperation()->setOperationPlanParameters(
       opplan, opplan->getQuantity(),
-      Plan::instance().getCurrent() + delta,
-      opplan->getDates().getEnd(),
+      threshold,
+      currentOpplanEnd,
       true
     );
 
   // Check the result of the resize
-  if (opplan->getDates().getStart() >= Plan::instance().getCurrent() + delta
+  if (opplan->getDates().getStart() >= threshold
     && (!extra || opplan->getDates().getEnd() <= data.state->q_date_max)
     && opplan->getQuantity() > ROUNDING_ERROR)
   {
@@ -352,7 +366,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
     if (opplan->getQuantity() + ROUNDING_ERROR < opplan->getOperation()->getSizeMinimum())
       opplan->setQuantity(0.0001,false);
     // Move to the earliest start date
-    opplan->setStart(Plan::instance().getCurrent() + delta);
+    opplan->setStart(threshold);
     // Pick up the earliest date we can reply back
     data.state->a_date = opplan->getDates().getEnd();
     // Set the quantity to 0 (to make sure the buffer doesn't see the supply).

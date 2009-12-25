@@ -1227,8 +1227,11 @@ DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
     // Simulation only
     return pair<DateRange,double>(x, actualduration == duration ? q : 0);
   else if (actualduration == duration)
+  {
     // Update succeeded
     opplan->setStartAndEnd(x.getStart(), x.getEnd());
+    opplan->getOwner()->setStart(opplan->getDates().getEnd());
+  }
   //elsexxx
     // Update failed - Not enough available time
   return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());

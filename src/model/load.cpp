@@ -248,7 +248,8 @@ DECLARE_EXPORT void Load::setSetup(const string n)
 
   if (!setup.empty())
   {
-    // Guarantuee that only a single load has a setup
+    // Guarantuee that only a single load has a setup.
+    // Alternates of that load can have a setup as well.
     for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
       i != getOperation()->loaddata.end(); ++i)
       if (&*i != this && !i->setup.empty() 

@@ -185,19 +185,25 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
   newld->getResource()->setChanged();
 
   // Update also the setup operationplan
-  bool oldHasSetup = !ld->getSetup().empty() && ld->getResource()->getSetupMatrix();
-  bool newHasSetup = !newld->getSetup().empty() && newld->getResource()->getSetupMatrix();
+  bool oldHasSetup = !ld->getSetup().empty() 
+    && ld->getResource()->getSetupMatrix() 
+    && getOperationPlan()->getOperation() != OperationSetup::setupoperation;
+  bool newHasSetup = !newld->getSetup().empty() 
+    && newld->getResource()->getSetupMatrix() 
+    && getOperationPlan()->getOperation() != OperationSetup::setupoperation;
+  OperationPlan *setupOpplan = NULL;
   if (oldHasSetup)
   {
-    OperationPlan *setupOpplan = NULL;
     for (OperationPlan::iterator i(getOperationPlan()); i != getOperationPlan()->end(); ++i)
       if (i->getOperation() == OperationSetup::setupoperation)
       {
         setupOpplan = &*i;
         break;
       }
-    if (!setupOpplan)
-      throw LogicException("Can't find setup suboperationplan");
+    if (!setupOpplan) oldHasSetup = false;
+  }
+  if (oldHasSetup)
+  {
     if (newHasSetup)
     {
       // Case 1: Both the old and new load require a setup

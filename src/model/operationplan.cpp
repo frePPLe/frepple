@@ -782,6 +782,21 @@ DECLARE_EXPORT void OperationPlan::deleteOperationPlans(Operation* o, bool delet
 }
 
 
+DECLARE_EXPORT double OperationPlan::getPenalty() const
+{
+  double penalty = 0;
+  for (OperationPlan::LoadPlanIterator i = beginLoadPlans();
+    i != endLoadPlans(); ++i)
+    if (i->isStart() && !i->getLoad()->getSetup().empty() && i->getResource()->getSetupMatrix())
+    {
+      SetupMatrix::Rule *rule = i->getResource()->getSetupMatrix()
+        ->calculateSetup(i->getSetup(false), i->getSetup(true));
+      if (rule) penalty += rule->getCost();
+    }
+  return penalty;
+}
+
+
 DECLARE_EXPORT void OperationPlan::writer(const MetaCategory* c, XMLOutput* o)
 {
   if (!empty())

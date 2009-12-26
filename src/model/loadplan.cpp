@@ -147,20 +147,20 @@ DECLARE_EXPORT void LoadPlan::update()
 }
 
 
-DECLARE_EXPORT string LoadPlan::getSetup() const
+DECLARE_EXPORT string LoadPlan::getSetup(bool current) const
 {
   // This resource has no setupmatrix
   if (!ld->getResource()->getSetupMatrix()) return string();
 
   // Current load has a setup
-  if (!ld->getSetup().empty()) return ld->getSetup();
+  if (!ld->getSetup().empty() && current) return ld->getSetup();
 
   // Scan earlier setups
   for (Resource::loadplanlist::const_iterator i(this); 
     i != getResource()->getLoadPlans().end(); --i)
   {
     const LoadPlan* j = dynamic_cast<const LoadPlan*>(&*i);
-    if (j && !j->getLoad()->getSetup().empty())
+    if (j && !j->getLoad()->getSetup().empty() && (current || j != this))
       return j->getLoad()->getSetup();
   }
 

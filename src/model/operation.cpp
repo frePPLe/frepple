@@ -1232,8 +1232,10 @@ DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
     opplan->setStartAndEnd(x.getStart(), x.getEnd());
     opplan->getOwner()->setStart(opplan->getDates().getEnd());
   }
-  //elsexxx
+  else
     // Update failed - Not enough available time
+    opplan->setQuantity(0);
+
   return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
 }
 

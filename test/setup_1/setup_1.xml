@@ -10,8 +10,8 @@
     <resource name="Painting line">
       <maximum name="Capacity" xsi:type="calendar_double">
         <buckets>
-          <bucket start="2009-01-01T00:00:00">
-            <value>1</value>
+          <bucket start="2000-01-01T00:00:00">
+            <value>2</value>
           </bucket>
         </buckets>
       </maximum>
@@ -220,8 +220,8 @@
       <item name="white product" />
     </demand>
     <demand name="order 1 black">
-      <quantity>3</quantity>
-      <due>2009-01-10T00:00:00</due>
+      <quantity>7</quantity>
+      <due>2009-01-05T00:00:00</due>
       <priority>4</priority>
       <item name="black product" />
     </demand>
@@ -247,10 +247,22 @@ print ""
         
 # Create an unconstrained plan
 print "Creating unconstrained plan"
-frepple.solver_mrp(name="MRP", constraints=0, loglevel=2).solve()
+frepple.solver_mrp(name="MRP unconstrained", constraints=0, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
 
 # Report resource conversions in the unconstrained plan
+for i in frepple.resources():
+  print "Loading of resource '%s'" % i.name
+  for j in i.loadplans:
+    print "  %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name)
+j = None  # Removes the Python reference to the last loadplan
+       
+# Create a constrained plan
+print "\n\nCreating constrained plan"
+frepple.solver_mrp(name="MRP constrained", constraints=7, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+
+# Report resource conversions in the constrained plan
 for i in frepple.resources():
   print "Loading of resource '%s'" % i.name
   for j in i.loadplans:

@@ -42,6 +42,28 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
     logger << indent(res->getLevel()) << "   Resource '" << res->getName()
       << "' is asked: " << (-data->state->q_qty) << "  "
       << data->state->q_operationplan->getDates() << endl;
+  
+  // Find the setup operationplan
+  OperationPlan *setupOpplan = NULL;
+  DateRange currentSetupOpplanDates;
+  LoadPlan *setupLdplan = NULL;
+  if (res->getSetupMatrix() && !data->state->q_loadplan->getLoad()->getSetup().empty())
+    for (OperationPlan::iterator i(data->state->q_operationplan); i != OperationPlan::end(); ++i)
+      if (i->getOperation() == OperationSetup::setupoperation)
+      {
+        setupOpplan = &*i;
+        currentSetupOpplanDates = i->getDates();
+        for (OperationPlan::LoadPlanIterator j = setupOpplan->beginLoadPlans();
+          j != setupOpplan->endLoadPlans(); ++j)
+          if (j->getLoad()->getResource() == res && !j->isStart())
+          {
+            setupLdplan = &*j;
+            break;
+          }
+        if (!setupLdplan)
+          throw LogicException("Can't find loadplan on setup operationplan");
+        break;
+      }
 
   // Initialize some variables
   double orig_q_qty = -data->state->q_qty;
@@ -51,6 +73,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   Date curdate;
   double curMax, prevMax;
   bool HasOverload;
+  bool HasSetupOverload;
 
   // Initialize the default reply
   data->state->a_date = data->state->q_date;
@@ -62,6 +85,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
     {
       // Check if this operation overloads the resource at its current time
       HasOverload = false;
+      HasSetupOverload = false;
       Date earliestdate = data->state->q_operationplan->getDates().getStart();
       curdate = data->state->q_loadplan->getDate();
       curMax = data->state->q_loadplan->getMax(false);
@@ -90,11 +114,52 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         curdate = cur->getDate();
       }
 
+      // Check if the setup operationplan overloads the resource or if a 
+      // different setup is already active on the resource.
+      if (setupOpplan)
+      {
+        earliestdate = setupOpplan->getDates().getStart();
+        for (cur = res->getLoadPlans().begin(setupLdplan);
+          cur!=res->getLoadPlans().end() && cur->getDate()>=earliestdate;
+          --cur)
+        {
+          // A change in the maximum capacity
+          prevMax = curMax;
+          if (cur->getType() == 4)
+            curMax = cur->getMax(false);
+
+          // Must be same setup
+          const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
+          if (ldplan && ldplan->getSetup() != setupLdplan->getSetup())
+          {
+            HasOverload = true;
+            HasSetupOverload = true;
+            break;
+          }
+
+          // Not interested if date doesn't change
+          if (cur->getDate() == curdate) continue;
+          if (cur->getOnhand() > prevMax + ROUNDING_ERROR)
+          {
+            // Overload: We are exceeding the limit!
+            // At this point:
+            //  - cur points to a loadplan where we exceed the capacity
+            //  - curdate points to the latest date without overload
+            //  - curdate != cur->getDate()
+            HasOverload = true;
+            HasSetupOverload = true;
+            break;
+          }
+          curdate = cur->getDate();
+        }
+      }
+
       // Try solving the overload by resizing the operationplan.
       // The capacity isn't overloaded in the time between "curdate" and
       // "current end of the operationplan". We can try to resize the
       // operationplan to fit in this time period...
-      if (HasOverload && curdate < data->state->q_loadplan->getDate())
+      if (HasOverload && !HasSetupOverload 
+        && curdate < data->state->q_loadplan->getDate())
       {
         Date currentEnd = data->state->q_operationplan->getDates().getEnd();
         data->state->q_operationplan->getOperation()->setOperationPlanParameters(
@@ -159,6 +224,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         {
           // Move the operationplan
           data->state->q_operationplan->setEnd(curdate);
+
+          // Move the setup operationplan
+          if (setupOpplan) 
+            setupOpplan->setEnd(data->state->q_operationplan->getDates().getStart());
 
           // Check the leadtime constraints after the move
           if (isLeadtimeConstrained() || isFenceConstrained())
@@ -263,8 +332,18 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
   // Increment the cost  @todo also during unavailable time the cost is incremented
   if (data->state->a_qty > 0.0)
+  {
+    // Resource usage
     data->state->a_cost += data->state->a_qty * res->getCost()
        * data->state->q_operationplan->getDates().getDuration() / 3600.0;
+    // Setup penalty and cost
+    if (setupOpplan)
+    {
+      data->state->a_cost += data->state->a_qty * res->getCost()
+       * setupOpplan->getDates().getDuration() / 3600.0;
+      data->state->a_penalty += setupOpplan->getPenalty();
+    }
+  }
 
   // Message
   if (data->getSolver()->getLogLevel()>1)

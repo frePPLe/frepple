@@ -2012,6 +2012,9 @@ class OperationPlan
     /** Updates the demand to which this operationplan is a solution. */
     DECLARE_EXPORT void setDemand(Demand* l);
 
+    /** Calculate the penalty of an operationplan. */
+    DECLARE_EXPORT double getPenalty() const;
+
     /** Returns whether the operationplan is locked. A locked operationplan
       * is never changed.
       */
@@ -4689,8 +4692,11 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
     TimeLine<LoadPlan>* getTimeLine() const
     {return &(ld->getResource()->loadplans);}
 
-    /** Returns the current setup of the resource. */
-    DECLARE_EXPORT string getSetup() const;
+    /** Returns the current setup of the resource.<br> 
+      * When the argument is true (= default) the current setup is returned.<br>
+      * When the argument is false the setup just before the loadplan is returned.
+      */
+    DECLARE_EXPORT string getSetup(bool = true) const;
 
     /** Returns true when the loadplan is hidden.<br>
       * This is determined by looking at whether the load is hidden or not.

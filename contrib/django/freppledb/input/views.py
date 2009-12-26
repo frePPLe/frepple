@@ -593,7 +593,7 @@ class LoadList(ListReport):
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'id','operation','resource','quantity','effective_start','effective_end',
-      'name','alternate','priority','lastmodified'
+      'name','alternate','priority','setup','lastmodified'
       )
 
   rows = (
@@ -632,6 +632,10 @@ class LoadList(ListReport):
     ('priority', {
       'title': _('priority'),
       'filter': FilterNumber(),
+      }),
+    ('setup', {
+      'title': _('setup'),
+      'filter': FilterText(),
       }),
     ('lastmodified', {
       'title': _('last modified'),

@@ -696,15 +696,23 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Solve constraints on the sub operationplan
       double beforeCost = data->state->a_cost;
       double beforePenalty = data->state->a_penalty;
-      if (search != PRIORITY) data->getSolver()->setLogLevel(0);
-      (*altIter)->solve(*this,v);
-      if (search != PRIORITY) data->getSolver()->setLogLevel(loglevel);
-      double afterCost = data->state->a_cost;
-      double afterPenalty = data->state->a_penalty;
+      if (search == PRIORITY) 
+        (*altIter)->solve(*this,v);
+      else
+      {
+        data->getSolver()->setLogLevel(0);
+        try {(*altIter)->solve(*this,v);}
+        catch (...)
+        {
+          data->getSolver()->setLogLevel(loglevel);
+          throw;
+        }
+        data->getSolver()->setLogLevel(loglevel);
+      }
+      double deltaCost = data->state->a_cost - beforeCost;
+      double deltaPenalty = data->state->a_penalty - beforePenalty;
       data->state->a_cost = beforeCost;
       data->state->a_penalty = beforePenalty;
-      double deltaCost = afterCost - beforeCost;
-      double deltaPenalty = afterPenalty - beforePenalty;
 
       // Keep the lowest of all next-date answers on the effective alternates
       if (effectiveOnly && data->state->a_date < a_date && data->state->a_date > ask_date)
@@ -766,14 +774,14 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
             LogicException("Unsupported search mode for alternate operation '"
               +  oper->getName() + "'");
         }
-        if (data->state->a_qty > ROUNDING_ERROR && val < bestAlternateValue )
+        if (data->state->a_qty > ROUNDING_ERROR && val < bestAlternateValue)
         {
           // Found a better alternate
           bestAlternateValue = val;
           bestAlternateSelection = *altIter;
           bestAlternateQuantity = data->state->a_qty;
           bestFlowPer = sub_flow_qty_per + top_flow_qty_per;
-          bestQDate = ask_date;
+          bestQDate = ask_date;  
         }
         // This was only an evaluation
         data->undo(topcommand);

@@ -370,6 +370,8 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
     logger << indent(res->getLevel()) << "  Resource '" << res << "' is asked: "
     << (-data->state->q_qty) << "  " << data->state->q_operationplan->getDates() << endl;
 
+  // TODO xxx Need to make the setups feasible - move to earlier dates till max_early fence is reached
+
   // Reply whatever is requested, regardless of date and quantity.
   data->state->a_qty = data->state->q_qty;
   data->state->a_date = data->state->q_date;

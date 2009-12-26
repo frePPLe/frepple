@@ -251,7 +251,9 @@ DECLARE_EXPORT void Load::setSetup(const string n)
     // Guarantuee that only a single load has a setup
     for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
       i != getOperation()->loaddata.end(); ++i)
-      if (&*i != this && !i->setup.empty())
+      if (&*i != this && !i->setup.empty() 
+        && i->getAlternate() != this && getAlternate() != &*i 
+        && i->getAlternate() != getAlternate())
         throw DataException("Only a single load of an operation can specify a setup");
   }
 }

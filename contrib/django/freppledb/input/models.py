@@ -571,9 +571,9 @@ class Flow(AuditModel):
     help_text=_('Quantity to consume or produce per operationplan unit')
     )
   name = models.CharField(_('name'), max_length=60, null=True, blank=True, 
-    help_text=_('Name of a group of alternate flows'))
+    help_text=_('Optional name of this flow'))
   alternate = models.CharField(_('alternate'), max_length=60, null=True, blank=True,
-    help_text=_('Puts the flows in a group of alternate flows'))
+    help_text=_('Puts the flow in a group of alternate flows'))
   priority = models.IntegerField(_('priority'), default=1, null=True, blank=True,
     help_text=_('Priority of this flow in a group of alternates'))
 
@@ -593,12 +593,24 @@ class Load(AuditModel):
   operation = models.ForeignKey(Operation, verbose_name=_('operation'), db_index=True, related_name='loads')
   resource = models.ForeignKey(Resource, verbose_name=_('resource'), db_index=True, related_name='loads')
   quantity = models.DecimalField(_('quantity'),max_digits=15, decimal_places=4, default='1.00')
-  effective_start = models.DateTimeField(_('effective start'), null=True, blank=True)
-  effective_end = models.DateTimeField(_('effective end'), null=True, blank=True)
-  name = models.CharField(_('name'), max_length=60, null=True, blank=True)
-  alternate = models.CharField(_('alternate'), max_length=60, null=True, blank=True)
+  effective_start = models.DateTimeField(_('effective start'), null=True, blank=True,
+    help_text=_('Validity start date')
+    )
+  effective_end = models.DateTimeField(_('effective end'), null=True, blank=True,
+    help_text=_('Validity end date')
+    )
+  name = models.CharField(_('name'), max_length=60, null=True, blank=True,
+    help_text=_('Optional name of this load')
+    )
+  alternate = models.CharField(_('alternate'), max_length=60, null=True, blank=True,
+    help_text=_('Puts the load in a group of alternate loads')
+    )
   priority = models.IntegerField(_('priority'), default=1, null=True, blank=True,
-    help_text=_('Priority of this load in a group of alternates'))
+    help_text=_('Priority of this load in a group of alternates')
+    )
+  setup = models.CharField(_('setup'), max_length=60, null=True, blank=True,
+    help_text=_('Setup required on the resource for this operation')
+    )
 
   def __unicode__(self):
     return '%s - %s' % (self.operation.name, self.resource.name)

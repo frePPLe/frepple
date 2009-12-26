@@ -128,10 +128,10 @@ def loadOperations(cursor):
   cursor.execute('''
     SELECT
       name, fence, pretime, posttime, sizeminimum, sizemultiple, sizemaximum, 
-      type, duration, duration_per, location_id, cost
+      type, duration, duration_per, location_id, cost, search
     FROM operation
     ''')
-  for i, j, k, l, m, n, o, p, q, r, s, t in cursor.fetchall():
+  for i, j, k, l, m, n, o, p, q, r, s, t, u in cursor.fetchall():
     cnt += 1
     try:
       if not p or p == "operation_fixed_time":
@@ -155,6 +155,7 @@ def loadOperations(cursor):
       if o: x.size_maximum = o
       if s: x.location = frepple.location(name=s)
       if t: x.cost = t
+      if u: x.search = u
     except Exception, e: print "Error:", e
   print 'Loaded %d operations in %.2f seconds' % (cnt, time() - starttime)
 
@@ -312,30 +313,9 @@ def loadFlows(cursor):
   cursor.execute('''
     SELECT 
       operation_id, thebuffer_id, quantity, type, effective_start, 
-      effective_end, name, priority
+      effective_end, name, priority, search
     FROM flow
     WHERE alternate IS NULL OR alternate = ''
-    ORDER BY operation_id, thebuffer_id
-    ''')
-  curbufname = None
-  for i, j, k, l, m, n, o, p in cursor.fetchall():
-    cnt += 1
-    try:
-      if j != curbufname:
-        curbufname = j
-        curbuf = frepple.buffer(name=curbufname)
-      curflow = frepple.flow(operation=frepple.operation(name=i), type=l, buffer=curbuf, quantity=k)
-      if m: curflow.effective_start = m
-      if n: curflow.effective_end = n
-      if o: curflow.name = o
-      if p: curflow.priority = p
-    except Exception, e: print "Error:", e
-  cursor.execute('''
-    SELECT 
-      operation_id, thebuffer_id, quantity, type, effective_start, 
-      effective_end, name, alternate, priority
-    FROM flow
-    WHERE alternate IS NOT NULL AND alternate <> ''
     ORDER BY operation_id, thebuffer_id
     ''')
   curbufname = None
@@ -349,8 +329,31 @@ def loadFlows(cursor):
       if m: curflow.effective_start = m
       if n: curflow.effective_end = n
       if o: curflow.name = o
+      if p: curflow.priority = p
+      if q: curflow.search = q
+    except Exception, e: print "Error:", e
+  cursor.execute('''
+    SELECT 
+      operation_id, thebuffer_id, quantity, type, effective_start, 
+      effective_end, name, alternate, priority, search
+    FROM flow
+    WHERE alternate IS NOT NULL AND alternate <> ''
+    ORDER BY operation_id, thebuffer_id
+    ''')
+  curbufname = None
+  for i, j, k, l, m, n, o, p, q, r in cursor.fetchall():
+    cnt += 1
+    try:
+      if j != curbufname:
+        curbufname = j
+        curbuf = frepple.buffer(name=curbufname)
+      curflow = frepple.flow(operation=frepple.operation(name=i), type=l, buffer=curbuf, quantity=k)
+      if m: curflow.effective_start = m
+      if n: curflow.effective_end = n
+      if o: curflow.name = o
       if p: curflow.alternate = p
       if q: curflow.priority = q
+      if r: curflow.search = r
     except Exception, e: print "Error:", e
   print 'Loaded %d flows in %.2f seconds' % (cnt, time() - starttime)
 
@@ -363,33 +366,10 @@ def loadLoads(cursor):
   # the planning progress consistent across runs and database engines.
   cursor.execute('''
     SELECT 
-      operation_id, resource_id, quantity, effective_start, effective_end, name, priority, setup
+      operation_id, resource_id, quantity, effective_start, effective_end, name, 
+      priority, setup, search
     FROM resourceload
     WHERE alternate IS NULL OR alternate = ''
-    ORDER BY operation_id, resource_id
-    ''')
-  curresname = None
-  for i, j, k, l, m, n, o, p in cursor.fetchall():
-    cnt += 1
-    try:
-      if j != curresname:
-        curresname = j
-        curres = frepple.resource(name=curresname)
-      curload = frepple.load(operation=frepple.operation(name=i), resource=curres, quantity=k)
-      if l: curload.effective_start = l
-      if m: curload.effective_end = m
-      if n: curload.name = n
-      if o: curload.priority = o
-      if p: curload.setup = p
-      # todo: duplicate load crashes the application
-      #curload2 = frepple.load(operation=frepple.operation(name=i), resource=curres, quantity=k)
-    except Exception, e: print "Error:", e
-  cursor.execute('''
-    SELECT 
-      operation_id, resource_id, quantity, effective_start, effective_end, 
-      name, alternate, priority, setup
-    FROM resourceload
-    WHERE alternate IS NOT NULL AND alternate <> ''
     ORDER BY operation_id, resource_id
     ''')
   curresname = None
@@ -403,9 +383,35 @@ def loadLoads(cursor):
       if l: curload.effective_start = l
       if m: curload.effective_end = m
       if n: curload.name = n
+      if o: curload.priority = o
+      if p: curload.setup = p
+      if q: curflow.search = q
+      # todo: duplicate load crashes the application
+      #curload2 = frepple.load(operation=frepple.operation(name=i), resource=curres, quantity=k)
+    except Exception, e: print "Error:", e
+  cursor.execute('''
+    SELECT 
+      operation_id, resource_id, quantity, effective_start, effective_end, 
+      name, alternate, priority, setup
+    FROM resourceload
+    WHERE alternate IS NOT NULL AND alternate <> ''
+    ORDER BY operation_id, resource_id
+    ''')
+  curresname = None
+  for i, j, k, l, m, n, o, p, q, r in cursor.fetchall():
+    cnt += 1
+    try:
+      if j != curresname:
+        curresname = j
+        curres = frepple.resource(name=curresname)
+      curload = frepple.load(operation=frepple.operation(name=i), resource=curres, quantity=k)
+      if l: curload.effective_start = l
+      if m: curload.effective_end = m
+      if n: curload.name = n
       if o: curload.alternate = o
       if p: curload.priority = p
       if q: curload.setup = q
+      if r: curflow.search = r
     except Exception, e: print "Error:", e
   print 'Loaded %d loads in %.2f seconds' % (cnt, time() - starttime)
 

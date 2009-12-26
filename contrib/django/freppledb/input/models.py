@@ -56,6 +56,15 @@ class AuditModel(models.Model):
     abstract = True
 
 
+searchmode = (
+  ('',_('priority')),
+  ('PRIORITY',_('priority')),
+  ('MINCOST',_('minimum cost')),
+  ('MINPENALTY',_('minimum penalty')),
+  ('MINCOSTPENALTY',_('minimum cost plus penalty'))
+)
+
+
 class Plan(AuditModel):
   # Database fields
   name = models.CharField(_('name'), max_length=60, null=True, blank=True)
@@ -343,15 +352,25 @@ class Operation(AuditModel):
     help_text=_("A fixed duration for the operation"))
   duration_per = DurationField(_('duration per unit'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("A variable duration for the operation"))
+  search = models.CharField(_('search mode'), _('search mode'), max_length=20, 
+    null=True, blank=True, choices=searchmode,
+    help_text=_('Method to select prefered alternate')
+    )
 
   def __unicode__(self): return self.name
 
   def save(self, *args, **kwargs):
     if self.type is None or self.type == '' or self.type == 'operation_fixed_time':
       self.duration_per = None
+      self.search = None
+    elif self.type == 'operation_alternate':
+      self.duration = None
+      self.duration_per = None      
     elif self.type != 'operation_time_per':
       self.duration = None
       self.duration_per = None
+      self.search = None
+      
     # Call the real save() method
     super(Operation, self).save(*args, **kwargs)
 
@@ -576,6 +595,10 @@ class Flow(AuditModel):
     help_text=_('Puts the flow in a group of alternate flows'))
   priority = models.IntegerField(_('priority'), default=1, null=True, blank=True,
     help_text=_('Priority of this flow in a group of alternates'))
+  search = models.CharField(_('search mode'), _('search mode'), max_length=20, 
+    null=True, blank=True, choices=searchmode,
+    help_text=_('Method to select prefered alternate')
+    )
 
   def __unicode__(self):
     return '%s - %s' % (self.operation.name, self.thebuffer.name)
@@ -610,6 +633,10 @@ class Load(AuditModel):
     )
   setup = models.CharField(_('setup'), max_length=60, null=True, blank=True,
     help_text=_('Setup required on the resource for this operation')
+    )
+  search = models.CharField(_('search mode'), _('search mode'), max_length=20, 
+    null=True, blank=True, choices=searchmode,
+    help_text=_('Method to select prefered alternate')
     )
 
   def __unicode__(self):

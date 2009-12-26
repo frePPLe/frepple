@@ -593,7 +593,7 @@ class LoadList(ListReport):
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'id','operation','resource','quantity','effective_start','effective_end',
-      'name','alternate','priority','setup','lastmodified'
+      'name','alternate','priority','setup','search','lastmodified'
       )
 
   rows = (
@@ -637,6 +637,10 @@ class LoadList(ListReport):
       'title': _('setup'),
       'filter': FilterText(),
       }),
+    ('search', {
+      'title': _('search mode'),
+      'filter': FilterText(),
+      }),
     ('lastmodified', {
       'title': _('last modified'),
       'filter': FilterDate(),
@@ -658,7 +662,7 @@ class FlowList(ListReport):
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'id','operation','thebuffer','type','quantity','effective_start',
-      'effective_end','name','alternate','priority','lastmodified'
+      'effective_end','name','alternate','priority','search','lastmodified'
       )
 
   rows = (
@@ -701,6 +705,10 @@ class FlowList(ListReport):
     ('priority', {
       'title': _('priority'),
       'filter': FilterNumber(),
+      }),
+    ('search', {
+      'title': _('search mode'),
+      'filter': FilterText(),
       }),
     ('lastmodified', {
       'title': _('last modified'),
@@ -920,7 +928,7 @@ class OperationList(ListReport):
   def resultlist1(basequery, bucket, startdate, enddate, sortsql='1 asc'):
     return basequery.values(
       'name','type','location','fence','pretime','posttime','sizeminimum',
-      'sizemultiple','sizemaximum','cost','lastmodified'
+      'sizemultiple','sizemaximum','cost','search','lastmodified'
       )
 
   rows = (
@@ -963,6 +971,10 @@ class OperationList(ListReport):
     ('cost', {
       'title': _('cost'),
       'filter': FilterNumber(size=5, operator="lt"),
+      }),
+    ('search', {
+      'title': _('search mode'),
+      'filter': FilterText(),
       }),
     ('lastmodified', {
       'title': _('last modified'),

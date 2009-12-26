@@ -80,7 +80,7 @@ class Operation_admin(admin.ModelAdmin):
   fieldsets = (
           (None, {'fields': ('name', 'type', 'location')}),
           (_('Planning parameters'), {
-             'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per'),
+             'fields': ('fence', 'pretime', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per','search'),
              'classes': ('collapse',)
              }),
       )

@@ -166,9 +166,9 @@ void SolverMRP::solve(const Load* l, void* v)
         // Message
         if (loglevel>1 && search != PRIORITY)
           logger << indent(l->getOperation()->getLevel()) << "   Operation '" 
-            << l->getOperation()->getName()
-            << "' evaluates alternate '" << curload->getResource() 
-            << "': cost " << deltaCost << ", penalty " << deltaPenalty << endl;
+            << l->getOperation()->getName() << "' evaluates alternate '"
+            << curload->getResource() << "': cost " << deltaCost
+            << ", penalty " << deltaPenalty << endl;
       }
     }
 
@@ -190,9 +190,8 @@ void SolverMRP::solve(const Load* l, void* v)
     // Message
     if (loglevel)
       logger << indent(l->getOperation()->getLevel()) << "   Operation '" 
-        << l->getOperation()->getName()
-        << "' chooses alternate '" << bestAlternateSelection->getResource() 
-        << "' " << search << endl;
+        << l->getOperation()->getName() << "' chooses alternate '"
+        << bestAlternateSelection->getResource() << "' " << search << endl;
 
     // Switch back
     data->state->q_loadplan = lplan; // because q_loadplan can change!

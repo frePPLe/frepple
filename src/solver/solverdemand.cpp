@@ -151,7 +151,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
         data->undo(topcommand);
 
         // Create the correct operationplans
-        if (loglevel>=2) logger << "Demand '" << l << "' plans coordination." << endl;
+        if (loglevel>=2) 
+          logger << "Demand '" << l << "' plans coordination." << endl;
         data->getSolver()->setLogLevel(0);
         double tmpresult = data->state->a_qty;
         try

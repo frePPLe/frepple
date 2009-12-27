@@ -185,57 +185,59 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
   newld->getResource()->setChanged();
 
   // Update also the setup operationplan
-  bool oldHasSetup = !ld->getSetup().empty() 
-    && ld->getResource()->getSetupMatrix() 
-    && getOperationPlan()->getOperation() != OperationSetup::setupoperation;
-  bool newHasSetup = !newld->getSetup().empty() 
-    && newld->getResource()->getSetupMatrix() 
-    && getOperationPlan()->getOperation() != OperationSetup::setupoperation;
-  OperationPlan *setupOpplan = NULL;
-  if (oldHasSetup)
+  if (oper && oper->getOperation() != OperationSetup::setupoperation)
   {
-    for (OperationPlan::iterator i(getOperationPlan()); i != getOperationPlan()->end(); ++i)
-      if (i->getOperation() == OperationSetup::setupoperation)
-      {
-        setupOpplan = &*i;
-        break;
-      }
-    if (!setupOpplan) oldHasSetup = false;
-  }
-  if (oldHasSetup)
-  {
-    if (newHasSetup)
+    bool oldHasSetup = ld && !ld->getSetup().empty() 
+      && ld->getResource()->getSetupMatrix();
+    bool newHasSetup = !newld->getSetup().empty() 
+      && newld->getResource()->getSetupMatrix();
+    OperationPlan *setupOpplan = NULL;
+    if (oldHasSetup)
     {
-      // Case 1: Both the old and new load require a setup
-      LoadPlan *setupLdplan = NULL;
-      for (OperationPlan::LoadPlanIterator j = setupOpplan->beginLoadPlans();
-        j != setupOpplan->endLoadPlans(); ++j)
-        if (j->getLoad() == ld)
+      for (OperationPlan::iterator i(oper); i != oper->end(); ++i)
+        if (i->getOperation() == OperationSetup::setupoperation)
         {
-          setupLdplan = &*j;
+          setupOpplan = &*i;
           break;
         }
-      if (!setupLdplan)
-        throw LogicException("Can't find loadplan on setup operationplan");
-      // Update the loadplan
-      setupLdplan->setLoad(newld);
+      if (!setupOpplan) oldHasSetup = false;
+    }
+    if (oldHasSetup)
+    {
+      if (newHasSetup)
+      {
+        // Case 1: Both the old and new load require a setup
+        LoadPlan *setupLdplan = NULL;
+        for (OperationPlan::LoadPlanIterator j = setupOpplan->beginLoadPlans();
+          j != setupOpplan->endLoadPlans(); ++j)
+          if (j->getLoad() == ld)
+          {
+            setupLdplan = &*j;
+            break;
+          }
+        if (!setupLdplan)
+          throw LogicException("Can't find loadplan on setup operationplan");
+        // Update the loadplan
+        setupLdplan->setLoad(newld);
+        setupOpplan->setEnd(setupOpplan->getDates().getEnd());
+      }
+      else
+      {
+        // Case 2: Delete the old setup which is not required any more
+        oper->eraseSubOperationPlan(setupOpplan);
+      }
     }
     else
     {
-      // Case 2: Delete the old setup which is not required any more
-      getOperationPlan()->eraseSubOperationPlan(setupOpplan);
+      if (newHasSetup)
+      {
+        // Case 3: Create a new setup operationplan
+        OperationSetup::setupoperation->createOperationPlan(
+          1, Date::infinitePast, oper->getDates().getEnd(), NULL, oper);
+      }
+      //else: 
+      // Case 4: No setup for the old or new load
     }
-  }
-  else
-  {
-    if (newHasSetup)
-    {
-      // Case 3: Create a new setup operationplan
-      OperationSetup::setupoperation->createOperationPlan(
-        1, Date::infinitePast, getOperationPlan()->getDates().getEnd(), NULL, getOperationPlan());
-    }
-    //else: 
-    // Case 4: No setup for the old or new load
   }
 
   // Change this loadplan and its brother
@@ -243,7 +245,7 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
   {
    // Remove from the old resource, if there is one
     if (ldplan->ld)
-      ldplan->ld->getResource()->loadplans.erase(this);
+      ldplan->ld->getResource()->loadplans.erase(ldplan);
 
     // Insert in the new resource
     ldplan->ld = newld;

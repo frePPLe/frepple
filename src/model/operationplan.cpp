@@ -517,16 +517,22 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
 
 DECLARE_EXPORT OperationPlan::~OperationPlan()
 {
-  // Delete the flowplans
-  for (FlowPlanIterator e = beginFlowPlans(); e != endFlowPlans();)
-    delete &*(e++);
+  // Initialize
+  FlowPlanIterator e = beginFlowPlans();
+  LoadPlanIterator f = beginLoadPlans(); 
+  OperationPlan *x = firstsubopplan;
 
-  // Delete the loadplans
-  for (LoadPlanIterator f = beginLoadPlans(); f != endLoadPlans();)
-    delete &*(f++);
+  // Reset to avoid extra updates during the destruction
+  firstflowplan = NULL;
+  firstloadplan = NULL;
+  firstsubopplan = NULL;
+
+  // Delete the flowplans and loadplan
+  while (e != endFlowPlans()) delete &*(e++);
+  while (f != endLoadPlans()) delete &*(f++);
 
   // Delete the sub operationplans
-  for (OperationPlan *x = firstsubopplan; x; )
+  while (x)
   {
     OperationPlan *y = x->nextsubopplan;
     x->owner = NULL; // Need to clear before destroying the suboperationplan

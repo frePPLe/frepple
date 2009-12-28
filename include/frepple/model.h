@@ -4680,7 +4680,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
     {
       ld->getResource()->setChanged();
       ld->getResource()->loadplans.erase(this);
-      ld->getResource()->updateSetups(); // @TODO Optimize the method to rescan only part of the timeline
+      if (!isStart()) ld->getResource()->updateSetups(); // @TODO Optimize the method to rescan only part of the timeline
     }
 
     /** This function needs to be called whenever the loadplan date or

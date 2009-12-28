@@ -171,6 +171,10 @@ void SolverMRP::solve(const Load* l, void* v)
             << ", penalty " << deltaPenalty << endl;
       }
     }
+    else if (loglevel>1 && search != PRIORITY)
+      logger << indent(l->getOperation()->getLevel()) << "   Operation '" 
+        << l->getOperation()->getName() << "' evaluates alternate '"
+        << curload->getResource() << "': not available" << endl;
 
     // 3d) Undo the plan on the alternate
     data->undo(topcommand);

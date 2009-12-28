@@ -306,20 +306,34 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
   // Check the setup operationplan
   Date currentOpplanEnd = opplan->getDates().getEnd();
   bool ok = true;
-  for (OperationPlan::iterator i(opplan); i != OperationPlan::end(); ++i)
-    if (i->getOperation() == OperationSetup::setupoperation)
-    {
-      if (i->getDates().getStart() < threshold)
+  bool checkSetup = true;
+  // If there are alternate loads we take the best case and assume that
+  // at least one of those can give us a zero-time setup.
+  // When evaluating the leadtime when solving for capacity we don't use
+  // this assumption. The resource solver takes care of the constraints.
+  if (extra && isCapacityConstrained())
+    for (Operation::loadlist::const_iterator j = opplan->getOperation()->getLoads().begin();
+      j != opplan->getOperation()->getLoads().end(); ++j)  
+      if (j->hasAlternates())
       {
-        // The setup operationplan is violating the lead time and/or fence 
-        // constraint. We move it to start on the earliest allowed date,
-        // which automatically also moves the owner operationplan.
-        i->setStart(threshold);
-        threshold = i->getDates().getEnd();
-        ok = false;
+        checkSetup = false;
+        break;
       }
-      break;
-    }
+  if (checkSetup)
+    for (OperationPlan::iterator i(opplan); i != OperationPlan::end(); ++i)
+      if (i->getOperation() == OperationSetup::setupoperation)
+      {
+        if (i->getDates().getStart() < threshold)
+        {
+          // The setup operationplan is violating the lead time and/or fence 
+          // constraint. We move it to start on the earliest allowed date,
+          // which automatically also moves the owner operationplan.
+          i->setStart(threshold);
+          threshold = i->getDates().getEnd();
+          ok = false;
+        }
+        break;
+      }
 
   // Compare the operation plan start with the threshold date
   if (ok && opplan->getDates().getStart() >= threshold)

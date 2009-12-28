@@ -74,6 +74,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   double curMax, prevMax;
   bool HasOverload;
   bool HasSetupOverload;
+  bool noRestore;
 
   // Initialize the default reply
   data->state->a_date = data->state->q_date;
@@ -83,6 +84,17 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   if (!data->state->forceLate)
     do
     {
+      // Check the leadtime constraints
+      noRestore = data->state->forceLate;
+      if (isLeadtimeConstrained() || isFenceConstrained())
+        // Note that the check function can update the answered date and quantity
+         if (!checkOperationLeadtime(data->state->q_operationplan,*data,false))
+         {
+           // Operationplan violates the lead time and/or fence constraint
+           noRestore = true;
+           break;
+         }
+
       // Check if this operation overloads the resource at its current time
       HasOverload = false;
       HasSetupOverload = false;
@@ -205,13 +217,12 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         {
           // A change in the maximum capacity
           prevMax = curMax;
-          if (cur->getType() == 4)
-            curMax = cur->getMax(false);
+          if (cur->getType() == 4) curMax = cur->getMax(false);
 
           // Not interested if date doesn't change
           if (cur->getDate() == curdate) continue;
 
-          // Stop if a new date reached and we are below the max limit now
+          // We are below the max limit now.
           if (cur->getOnhand() < prevMax + ROUNDING_ERROR) break;
           curdate = cur->getDate();
         }
@@ -225,7 +236,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
           // Move the operationplan
           data->state->q_operationplan->setEnd(curdate);
 
-          // Move the setup operationplan
+          // Move the setup operationplan  @todo setup operationplan should move automatically!!!
           if (setupOpplan) 
             setupOpplan->setEnd(data->state->q_operationplan->getDates().getStart());
 
@@ -250,7 +261,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   if (data->state->a_qty == 0.0 || data->state->forceLate)
   {
     // Put the operationplan back at its original end date
-    if (!data->state->forceLate)
+    if (!noRestore)
     {
       data->state->q_operationplan->setQuantity(currentQuantity);
       data->state->q_operationplan->setEnd(currentOpplanEnd);

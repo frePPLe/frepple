@@ -106,9 +106,9 @@ void SolverMRP::solve(const Load* l, void* v)
    // 3a) Switch to this load
     if (data->state->q_loadplan->getLoad() != curload)
     {
+      data->state->q_loadplan->setLoad(curload);
       lplan->getOperationPlan()->setQuantity(originalQuantity);
       lplan->getOperationPlan()->setStartAndEnd(originalDates.getStart(),originalDates.getEnd());
-      data->state->q_loadplan->setLoad(curload);
       data->state->q_qty = data->state->q_loadplan->getQuantity();
       data->state->q_date = data->state->q_loadplan->getDate();
     }
@@ -174,7 +174,8 @@ void SolverMRP::solve(const Load* l, void* v)
     else if (loglevel>1 && search != PRIORITY)
       logger << indent(l->getOperation()->getLevel()) << "   Operation '" 
         << l->getOperation()->getName() << "' evaluates alternate '"
-        << curload->getResource() << "': not available" << endl;
+        << curload->getResource() << "': not available before " 
+        << data->state->a_date << endl;
 
     // 3d) Undo the plan on the alternate
     data->undo(topcommand);
@@ -201,10 +202,10 @@ void SolverMRP::solve(const Load* l, void* v)
     data->state->q_loadplan = lplan; // because q_loadplan can change!
     data->state->a_cost = beforeCost;
     data->state->a_penalty = beforePenalty;
-    lplan->getOperationPlan()->setQuantity(originalQuantity);
-    lplan->getOperationPlan()->setStartAndEnd(originalDates.getStart(),originalDates.getEnd());
     if (data->state->q_loadplan->getLoad() != bestAlternateSelection)
       data->state->q_loadplan->setLoad(bestAlternateSelection);
+    lplan->getOperationPlan()->setQuantity(originalQuantity);
+    lplan->getOperationPlan()->setStartAndEnd(originalDates.getStart(),originalDates.getEnd());
     data->state->q_qty = data->state->q_loadplan->getQuantity();
     data->state->q_date = data->state->q_loadplan->getDate();
     bestAlternateSelection->getResource()->solve(*this,data);

@@ -913,11 +913,13 @@
           <xsd:element name="autocommit" type="xsd:boolean" />
           <xsd:element name="loglevel" type="loglevel" />
           <xsd:element name="userexit_flow" type="non-empty-string" />
+          <xsd:element name="userexit_demand" type="non-empty-string" />
         </xsd:choice>
         <xsd:attribute name="constraints" type="xsd:unsignedShort" />
         <xsd:attribute name="maxparallel" type="xsd:positiveInteger" />
         <xsd:attribute name="autocommit" type="xsd:boolean" />
         <xsd:attribute name="userexit_flow" type="non-empty-string" />
+        <xsd:attribute name="userexit_demand" type="non-empty-string" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

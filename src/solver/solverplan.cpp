@@ -238,6 +238,8 @@ DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr,
     setAutocommit(pElement.getBool());
   else if (pAttr.isA(Tags::tag_userexit_flow))
     setUserExitFlow(pElement.getString());
+  else if (pAttr.isA(Tags::tag_userexit_demand))
+    setUserExitDemand(pElement.getString());
   else
     Solver::endElement(pIn, pAttr, pElement);
 }
@@ -253,6 +255,8 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
     return PythonObject(getAutocommit());
   if (attr.isA(Tags::tag_userexit_flow))
     return PythonObject(getUserExitFlow());
+  if (attr.isA(Tags::tag_userexit_demand))
+    return PythonObject(getUserExitDemand());
   return Solver::getattro(attr);
 }
 
@@ -267,6 +271,8 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
     setAutocommit(field.getBool());
   else if (attr.isA(Tags::tag_userexit_flow))
     setUserExitFlow(field);
+  else if (attr.isA(Tags::tag_userexit_demand))
+    setUserExitDemand(field);
   else
     return Solver::setattro(attr, field);
   return 0;
@@ -319,6 +325,55 @@ DECLARE_EXPORT void SolverMRP::setUserExitFlow(PyObject* p)
   if (userexit_flow) Py_DECREF(userexit_flow);
   userexit_flow = p;
   Py_INCREF(userexit_flow);
+}
+
+
+DECLARE_EXPORT void SolverMRP::setUserExitDemand(const string& n)
+{
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  if (n.empty())
+  {
+    // Resetting to NULL when the string is empty
+    if (userexit_demand) Py_DECREF(userexit_demand);
+    userexit_demand = NULL;
+    PyGILState_Release(pythonstate);
+    return;
+  }
+
+  // Find the Python function
+  PyObject* obj = PyRun_String(n.c_str(), Py_eval_input,
+    PyEval_GetGlobals(), PyEval_GetLocals() );
+  if (!obj)
+  {
+    PyGILState_Release(pythonstate);
+    throw DataException("Python function '" + n + "' not defined");
+  }
+  if (!PyCallable_Check(obj))
+  {
+    PyGILState_Release(pythonstate);
+    throw DataException("Python object '" + n + "' is not a function");
+  }
+
+  // Store the Python function
+  if (userexit_demand) Py_DECREF(userexit_demand);
+  userexit_demand = obj;
+  Py_INCREF(userexit_demand);
+  PyGILState_Release(pythonstate);
+}
+
+
+DECLARE_EXPORT void SolverMRP::setUserExitDemand(PyObject* p)
+{
+  if (!p || p == Py_None)
+  {
+    if (userexit_demand) Py_DECREF(userexit_demand);
+    userexit_demand = NULL;
+  }
+  else if (!PyCallable_Check(p))
+    return setUserExitDemand(PythonObject(p).getString());
+  if (userexit_demand) Py_DECREF(userexit_demand);
+  userexit_demand = p;
+  Py_INCREF(userexit_demand);
 }
 
 

@@ -159,6 +159,7 @@ DECLARE_EXPORT const Keyword Tags::tag_tosetup("tosetup");
 // This is required to support subclassing in the XML schema.
 DECLARE_EXPORT const Keyword Tags::tag_type("type","xsi");
 DECLARE_EXPORT const Keyword Tags::tag_userexit_flow("userexit_flow");
+DECLARE_EXPORT const Keyword Tags::tag_userexit_demand("userexit_demand");
 DECLARE_EXPORT const Keyword Tags::tag_validate("validate");
 DECLARE_EXPORT const Keyword Tags::tag_value("value");
 DECLARE_EXPORT const Keyword Tags::tag_variable("variable");

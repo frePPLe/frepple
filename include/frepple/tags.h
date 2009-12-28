@@ -157,6 +157,7 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_tosetup;
     static DECLARE_EXPORT const Keyword tag_type;
     static DECLARE_EXPORT const Keyword tag_userexit_flow;
+    static DECLARE_EXPORT const Keyword tag_userexit_demand;
     static DECLARE_EXPORT const Keyword tag_validate;
     static DECLARE_EXPORT const Keyword tag_value;
     static DECLARE_EXPORT const Keyword tag_variable;

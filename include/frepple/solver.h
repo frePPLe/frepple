@@ -196,7 +196,8 @@ class SolverMRP : public Solver
 
     /** Constructor. */
     SolverMRP(const string& n) : Solver(n), constrts(0), maxparallel(0),
-      lazydelay(86400L), autocommit(true), userexit_flow(NULL)
+      lazydelay(86400L), autocommit(true), 
+      userexit_flow(NULL), userexit_demand(NULL)
         {initType(metadata);}
 
     /** Destructor. */
@@ -328,6 +329,15 @@ class SolverMRP : public Solver
     /** Return the Python function that is called before solving a flow. */
     PyObject* getUserExitFlow() const {return userexit_flow;}
 
+    /** Specify a Python function that is called before solving a demand. */
+    DECLARE_EXPORT void setUserExitDemand(const string&);
+
+    /** Specify a Python function that is called before solving a demand. */
+    DECLARE_EXPORT void setUserExitDemand(PyObject*);
+
+    /** Return the Python function that is called before solving a demand. */
+    PyObject* getUserExitDemand() const {return userexit_demand;}
+
     /** Python method for running the solver. */
     static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
 
@@ -373,6 +383,11 @@ class SolverMRP : public Solver
       * flow is an invalid choice.
       */
     PyObject* userexit_flow;
+
+    /** A Python callback function that is called for each demand. The return
+      * value is not used.
+      */
+    PyObject* userexit_demand;
 
   protected:
     /** @brief This class is used to store the solver status during the

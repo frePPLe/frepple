@@ -731,6 +731,14 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
   for (LoadPlanIterator e = beginLoadPlans(); e != endLoadPlans(); ++e)
     e->update();
 
+  // Align the end of the setup operationplan with the start of the operation
+  if (firstsubopplan && firstsubopplan->getOperation() == OperationSetup::setupoperation
+    && firstsubopplan->getDates().getEnd() != getDates().getStart()) 
+    firstsubopplan->setEnd(getDates().getStart());
+  else if (getOperation() == OperationSetup::setupoperation
+    && getDates().getEnd() != getOwner()->getDates().getStart())
+    getOwner()->setStart(getDates().getEnd());
+
   // Allow the operation length to be changed now that the quantity has changed
   // Note that we assume that the end date remains fixed. This assumption makes
   // sense if the operationplan was created to satisfy a demand.
@@ -748,20 +756,20 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 DECLARE_EXPORT void OperationPlan::update()
 {
   if (firstsubopplan && firstsubopplan->getOperation() != OperationSetup::setupoperation)  // TODO also something required to update setup opplans
-  {
-    // Inherit the start and end date of the child operationplans
-    dates.setStartAndEnd(
-      firstsubopplan->getDates().getStart(),
-      lastsubopplan->getDates().getEnd()
-    );
-    // If at least 1 sub-operationplan is locked, the parent must be locked
-    flags &= ~IS_LOCKED; // Clear is_locked flag
-    for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
-        if (i->flags & IS_LOCKED)
-        {
-          flags |= IS_LOCKED;  // Set is_locked flag
-          break;
-        }
+    {
+      // Inherit the start and end date of the child operationplans
+      dates.setStartAndEnd(
+        firstsubopplan->getDates().getStart(),
+        lastsubopplan->getDates().getEnd()
+      );
+      // If at least 1 sub-operationplan is locked, the parent must be locked
+      flags &= ~IS_LOCKED; // Clear is_locked flag
+      for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
+          if (i->flags & IS_LOCKED)
+          {
+            flags |= IS_LOCKED;  // Set is_locked flag
+            break;
+          }
   }
 
   // Update the flow and loadplans

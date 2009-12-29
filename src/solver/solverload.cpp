@@ -103,12 +103,11 @@ void SolverMRP::solve(const Load* l, void* v)
     const Load *curload = *i;
     data->state->q_loadplan = lplan; // because q_loadplan can change!
 
-   // 3a) Switch to this load
+    // 3a) Switch to this load
     if (data->state->q_loadplan->getLoad() != curload)
     {
       data->state->q_loadplan->setLoad(curload);
-      lplan->getOperationPlan()->setQuantity(originalQuantity);
-      lplan->getOperationPlan()->setStartAndEnd(originalDates.getStart(),originalDates.getEnd());
+      lplan->getOperationPlan()->restore(originalDates.getStart(),originalDates.getEnd(),originalQuantity);
       data->state->q_qty = data->state->q_loadplan->getQuantity();
       data->state->q_date = data->state->q_loadplan->getDate();
     }
@@ -204,8 +203,7 @@ void SolverMRP::solve(const Load* l, void* v)
     data->state->a_penalty = beforePenalty;
     if (data->state->q_loadplan->getLoad() != bestAlternateSelection)
       data->state->q_loadplan->setLoad(bestAlternateSelection);
-    lplan->getOperationPlan()->setQuantity(originalQuantity);
-    lplan->getOperationPlan()->setStartAndEnd(originalDates.getStart(),originalDates.getEnd());
+    lplan->getOperationPlan()->restore(originalDates.getStart(),originalDates.getEnd(),originalQuantity);
     data->state->q_qty = data->state->q_loadplan->getQuantity();
     data->state->q_date = data->state->q_loadplan->getDate();
     bestAlternateSelection->getResource()->solve(*this,data);

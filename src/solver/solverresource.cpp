@@ -110,9 +110,19 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         prevMax = curMax;
         if (cur->getType() == 4)
           curMax = cur->getMax(false);
+        const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
 
         // Not interested if date doesn't change
         if (cur->getDate() == curdate) continue;
+
+        if (ldplan && ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation
+          && ldplan->getOperationPlan()->getDates().getDuration() > 0L)
+        {
+          // Ongoing setup
+          HasOverload = true;
+          break;
+        }
+
         if (cur->getOnhand() > prevMax + ROUNDING_ERROR)
         {
           // Overload: We are exceeding the limit!

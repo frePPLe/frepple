@@ -10,12 +10,12 @@
     <setupmatrix name="Painting line changeover">
       <rules>
         <rule priority="1" fromsetup="green" tosetup="*" duration="P1D" cost="10" />
-        <rule priority="2" fromsetup="red" tosetup="*" duration="P2D" cost="10" />
-        <rule priority="3" fromsetup="white" tosetup="*" duration="P3D" cost="50"/>
-        <rule priority="4" fromsetup="black" tosetup="*" duration="P4D" cost="50"/>
-        <rule priority="5" fromsetup="yellow" duration="P5D" cost="20"/>
-        <rule priority="6" tosetup="yellow" duration="P6D" cost="20"/>
-        <rule priority="7" duration="P3D" />
+        <rule priority="2" fromsetup="red" tosetup="*" duration="P2D" cost="20" />
+        <rule priority="3" fromsetup="white" tosetup="*" duration="P3D" cost="30"/>
+        <rule priority="4" fromsetup="black" tosetup="*" duration="P4D" cost="40"/>
+        <rule priority="5" fromsetup="yellow" duration="P5D" cost="50"/>
+        <rule priority="6" tosetup="yellow" duration="P6D" cost="60"/>
+        <rule priority="7" duration="P3D" cost="70"/>
       </rules>
     </setupmatrix>
   </setupmatrices>
@@ -24,7 +24,7 @@
       <maximum name="Capacity line A" xsi:type="calendar_double">
         <buckets>
           <bucket start="2000-01-01T00:00:00">
-            <value>2</value>
+            <value>1</value>
           </bucket>
         </buckets>
       </maximum>
@@ -341,7 +341,17 @@
   </demands>
 
 <?python
+
+def printStatus(d = None):
+  print "\nCurrent status:"
+  for i in frepple.resources():
+    print "  Loading of resource '%s' (initial setup %s)" % (i.name, i.setup)
+    for j in i.loadplans:
+      print "    %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name)
+  print ""
+  
 # Testing the Python API of the setup matrix
+from datetime import timedelta
 print ""
 for m in frepple.setupmatrices():
   print "Matrix '%s' has the following rules:" % m.name
@@ -352,28 +362,24 @@ for r in frepple.resources():
   print "Resource '%s' uses matrix '%s'" % (r, r.setupmatrix)
 print ""
         
-# Create an unconstrained plan
-print "Creating unconstrained plan"
-frepple.solver_mrp(name="MRP unconstrained", constraints=0, loglevel=2).solve()
-frepple.saveplan("output.1.xml")
+solver = frepple.solver_mrp(name="MRP", constraints=7, loglevel=2, userexit_demand=printStatus)
 
-# Report resource conversions in the unconstrained plan
-for i in frepple.resources():
-  print "Loading of resource '%s'" % i.name
-  for j in i.loadplans:
-    print "  %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name)
-j = None  # Removes the Python reference to the last loadplan
+# Create an unconstrained plan
+print "Creating plan 1"
+for d in frepple.demands():
+  d.due = frepple.settings.current
+solver.solve()
+frepple.saveplan("output.1.xml")
+printStatus()
        
 # Create a constrained plan
-print "\n\nCreating constrained plan"
-frepple.solver_mrp(name="MRP constrained", constraints=7, loglevel=2).solve()
+print "\n\nCreating plan 2"
+for d in frepple.demands():
+  d.due = frepple.settings.current + timedelta(10)
+solver.solve()
 frepple.saveplan("output.2.xml")
+printStatus()
 
-# Report resource conversions in the constrained plan
-for i in frepple.resources():
-  print "Loading of resource '%s'" % i.name
-  for j in i.loadplans:
-    print "  %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name)
 ?>
 
 </plan>

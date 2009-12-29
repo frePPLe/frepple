@@ -2046,6 +2046,16 @@ class OperationPlan
       OperationPlan::update();
     }
 
+    /** A method to restore a previous state of an operationplan.<br>
+      * NO validity checks are done on the parameters.
+      */
+    void restore(Date st, Date nd, double qty)
+    {
+      quantity = qty;
+      dates.setStartAndEnd(st,nd);
+      OperationPlan::update();
+    }
+
     /** Updates the operationplan owning this operationplan. In case of
       * a OperationRouting steps this will be the operationplan representing the
       * complete routing. */

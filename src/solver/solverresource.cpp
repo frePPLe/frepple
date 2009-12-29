@@ -110,11 +110,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         prevMax = curMax;
         if (cur->getType() == 4)
           curMax = cur->getMax(false);
+
+        /* xxx
         const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
-
-        // Not interested if date doesn't change
-        if (cur->getDate() == curdate) continue;
-
         if (ldplan && ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation
           && ldplan->getOperationPlan()->getDates().getDuration() > 0L)
         {
@@ -122,6 +120,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
           HasOverload = true;
           break;
         }
+        */
+
+        // Not interested if date doesn't change
+        if (cur->getDate() == curdate) continue;
 
         if (cur->getOnhand() > prevMax + ROUNDING_ERROR)
         {
@@ -298,6 +300,18 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         // New maximum
         if (cur->getType() == 4)
           curMax = cur->getMax();
+
+        /* xxx
+        const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*cur);
+        if (ldplan && ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation
+          && ldplan->getOperationPlan()->getDates().getDuration() > 0L)
+        {
+          // Ongoing setup
+          HasOverload = true;
+          ++cur;
+          continue;
+        }
+        */
 
         // Only consider the last loadplan for a certain date
         const TimeLine<LoadPlan>::Event *loadpl = &*(cur++);

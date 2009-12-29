@@ -51,9 +51,10 @@ void OperationPlan::updateProblems()  // @todo test precedence problems: may wel
 
   // The following categories of operation plans can't have problems:
   //  - locked opplans
-  //  - opplans having an owner
+  //  - opplans having an owner (except setup operationplans)
   //  - opplans of hidden operations
-  if (!getOwner() && !getLocked() && getOperation()->getDetectProblems())
+  if ((!getOwner() || getOperation() == OperationSetup::setupoperation) 
+    && !getLocked() && getOperation()->getDetectProblems())
   {
     // Check if a BeforeCurrent problem is required.
     if (dates.getStart() < Plan::instance().getCurrent())

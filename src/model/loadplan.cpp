@@ -138,7 +138,7 @@ DECLARE_EXPORT void LoadPlan::update()
     );
 
   // Review adjacent setups
-  ld->getResource()->updateSetups(this);
+  if (!isStart()) ld->getResource()->updateSetups(this);
 
   // Mark the operation and resource as being changed. This will trigger
   // the recomputation of their problems

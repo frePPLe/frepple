@@ -95,8 +95,7 @@ void SolverMRP::solve(const Load* l, void* v)
   const Load* bestAlternateSelection = NULL;
   double beforeCost = data->state->a_cost;
   double beforePenalty = data->state->a_penalty;
-  DateRange originalDates = data->state->q_operationplan->getDates();
-  double originalQuantity = data->state->q_operationplan->getQuantity();
+  OperationPlanState originalOpplan(data->state->q_operationplan);
 
   for (list<const Load*>::const_iterator i = thealternates.begin();
     i != thealternates.end();)
@@ -108,7 +107,7 @@ void SolverMRP::solve(const Load* l, void* v)
     if (data->state->q_loadplan->getLoad() != curload)
     {
       data->state->q_loadplan->setLoad(curload);
-      lplan->getOperationPlan()->restore(originalDates.getStart(),originalDates.getEnd(),originalQuantity);
+      lplan->getOperationPlan()->restore(originalOpplan);
       data->state->q_qty = data->state->q_loadplan->getQuantity();
       data->state->q_date = data->state->q_loadplan->getDate();
     }
@@ -208,7 +207,7 @@ void SolverMRP::solve(const Load* l, void* v)
     data->state->a_penalty = beforePenalty;
     if (data->state->q_loadplan->getLoad() != bestAlternateSelection)
       data->state->q_loadplan->setLoad(bestAlternateSelection);
-    lplan->getOperationPlan()->restore(originalDates.getStart(),originalDates.getEnd(),originalQuantity);
+    lplan->getOperationPlan()->restore(originalOpplan);
     data->state->q_qty = data->state->q_loadplan->getQuantity();
     data->state->q_date = data->state->q_loadplan->getDate();
     bestAlternateSelection->getResource()->solve(*this,data);

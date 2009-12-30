@@ -162,10 +162,10 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
           // Note that the delay variable only reflects the delay due to
           // material constraints. If the operationplan is moved early or late
           // for capacity constraints, this is not included.
-          pair<DateRange,double> at = opplan->getOperation()->setOperationPlanParameters(
+          OperationPlanState at = opplan->getOperation()->setOperationPlanParameters(
             opplan, 0.01, data.state->a_date, Date::infinitePast, false, false
             );
-          if (at.first.getEnd() < matnext.getEnd()) matnext = at.first;
+          if (at.end < matnext.getEnd()) matnext = DateRange(at.start, at.end);
           //xxxif (matnext.getEnd() <= orig_q_date) logger << "STRANGE" << matnext << "  " << orig_q_date << "  " << at.second << "  " << opplan->getQuantity() << endl;
 
           // Jump out of the loop if the answered quantity is 0.
@@ -534,12 +534,11 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     // Maximum for the next date
     if (data->state->a_date != Date::infiniteFuture)
     {
-      pair<DateRange,double> at = data->state->curOwnerOpplan->getOperation()->setOperationPlanParameters(
+      OperationPlanState at = data->state->curOwnerOpplan->getOperation()->setOperationPlanParameters(
         data->state->curOwnerOpplan, 0.01, //data->state->curOwnerOpplan->getQuantity(),
         data->state->a_date, Date::infinitePast, false, false
         );
-      if (at.first.getEnd() > max_Date)
-        max_Date = at.first.getEnd();
+      if (at.end > max_Date) max_Date = at.end;
     }
   }
 

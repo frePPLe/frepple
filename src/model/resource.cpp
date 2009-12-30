@@ -259,6 +259,7 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
   // No updating required this resource
   if (!getSetupMatrix() || (ldplan && ldplan->getOperationPlan()->getOperation() != OperationSetup::setupoperation)) 
     return;
+  ldplan = NULL;
 
   // Update later setup opplans
   OperationPlan *opplan = ldplan ? ldplan->getOperationPlan() : NULL;
@@ -275,11 +276,17 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
       && !l->isStart())
     {
       // Next conversion operation
-      SetupMatrix::Rule *x = getSetupMatrix()->calculateSetup(prevsetup, l->getLoad()->getSetup());
-      if (x && l->getOperationPlan()->getDates().getDuration() != x->getDuration())
-        l->getOperationPlan()->setEnd(l->getOperationPlan()->getDates().getEnd());
-      prevsetup = l->getLoad()->getSetup();
-      if (ldplan) return;
+      OperationPlanState x = l->getOperationPlan()->getOperation()->setOperationPlanParameters( l->getOperationPlan(),
+        l->getOperationPlan()->getQuantity(),
+        Date::infinitePast,
+        l->getOperationPlan()->getDates().getEnd(),
+        true,
+        false);
+      if (x.start != l->getOperationPlan()->getDates().getStart())
+      {
+        l->getOperationPlan()->restore(x);
+        if (ldplan) return;
+      }
     }
   }
 }

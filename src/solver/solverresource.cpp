@@ -67,15 +67,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
   // Initialize some variables
   double orig_q_qty = -data->state->q_qty;
-  Date currentOpplanStart = data->state->q_operationplan->getDates().getStart();
-  Date currentOpplanEnd = data->state->q_operationplan->getDates().getEnd();
-  double currentQuantity = data->state->q_operationplan->getQuantity();
+  OperationPlanState currentOpplan(data->state->q_operationplan);
   Resource::loadplanlist::const_iterator cur = res->getLoadPlans().end();
   Date curdate;
   double curMax, prevMax;
   bool HasOverload;
   bool HasSetupOverload;
-  bool noRestore;
+  bool noRestore = data->state->forceLate;
 
   // Initialize the default reply
   data->state->a_date = data->state->q_date;
@@ -189,7 +187,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         Date currentEnd = data->state->q_operationplan->getDates().getEnd();
         data->state->q_operationplan->getOperation()->setOperationPlanParameters(
           data->state->q_operationplan,
-          currentQuantity,
+          currentOpplan.quantity,
           curdate,
           currentEnd
           );
@@ -212,7 +210,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
           // We need an api that only checks the resizing.
           data->state->q_operationplan->getOperation()->setOperationPlanParameters(
             data->state->q_operationplan,
-            currentQuantity,
+            currentOpplan.quantity,
             Date::infinitePast,
             currentEnd
             );
@@ -226,7 +224,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         curMax = cur->getMax(false);
         prevMax = curMax;
         curdate = cur->getDate();
-        for (; cur!=res->getLoadPlans().end() && curdate > currentOpplanEnd - res->getMaxEarly(); --cur)
+        for (; cur!=res->getLoadPlans().end() && curdate > currentOpplan.end - res->getMaxEarly(); --cur)
         {
           // A change in the maximum capacity
           prevMax = curMax;
@@ -244,7 +242,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         // At this point:
         //  - curdate is a latest date where we drop below the maximum
         //  - cur is the first loadplan where we are below the max
-        if (cur != res->getLoadPlans().end() && curdate > currentOpplanEnd - res->getMaxEarly())
+        if (cur != res->getLoadPlans().end() && curdate > currentOpplan.end - res->getMaxEarly())
         {
           // Move the operationplan
           data->state->q_operationplan->setEnd(curdate);
@@ -275,7 +273,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   {
     // Put the operationplan back at its original end date
     if (!noRestore)
-      data->state->q_operationplan->restore(currentOpplanStart, currentOpplanEnd, currentQuantity);
+      data->state->q_operationplan->restore(currentOpplan);
 
     // Moving an operation earlier is driven by the ending loadplan,
     // while searching for later capacity is driven from the starting loadplan.
@@ -342,7 +340,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         // Move the operationplan to the new date
         data->state->q_operationplan->getOperation()->setOperationPlanParameters(
             data->state->q_operationplan,
-            currentQuantity / parallelOps, // 0.001  @todo this calculation doesn't give minimization of the lateness
+            currentOpplan.quantity / parallelOps, // 0.001  @todo this calculation doesn't give minimization of the lateness
             newDate,
             Date::infinitePast
             );
@@ -383,10 +381,10 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   {
     logger << indent(res->getLevel()) << "   Resource '" << res << "' answers: "
       << data->state->a_qty << "  " << data->state->a_date;
-    if (currentOpplanEnd > data->state->q_operationplan->getDates().getEnd())
+    if (currentOpplan.end > data->state->q_operationplan->getDates().getEnd())
       logger << " using earlier capacity "
         << data->state->q_operationplan->getDates().getEnd();
-    if (data->state->a_qty>0.0 && data->state->q_operationplan->getQuantity() < currentQuantity)
+    if (data->state->a_qty>0.0 && data->state->q_operationplan->getQuantity() < currentOpplan.quantity)
       logger << " with reduced quantity " << data->state->q_operationplan->getQuantity();
     logger << endl;
   }

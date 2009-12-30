@@ -578,7 +578,7 @@ DECLARE_EXPORT void Operation::endElement (XMLInput& pIn, const Attribute& pAttr
 }
 
 
-DECLARE_EXPORT pair<DateRange,double>
+DECLARE_EXPORT OperationPlanState
 OperationFixedTime::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
@@ -586,7 +586,7 @@ OperationFixedTime::setOperationPlanParameters
   if (!opplan || q<0)
     throw LogicException("Incorrect parameters for fixedtime operationplan");
   if (opplan->getLocked())
-    return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
+    return OperationPlanState(opplan);
 
   // All quantities are valid, as long as they are bigger than the minimum size
   if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
@@ -605,7 +605,7 @@ OperationFixedTime::setOperationPlanParameters
   else x = calculateOperationTime(e, duration, false, &actualduration);
   if (!execute)
     // Simulation only
-    return pair<DateRange,double>(x, actualduration == duration ? q : 0);
+    return OperationPlanState(x, actualduration == duration ? q : 0);
   else if (actualduration == duration)
     // Update succeeded
     opplan->setStartAndEnd(x.getStart(), x.getEnd());
@@ -614,7 +614,7 @@ OperationFixedTime::setOperationPlanParameters
     opplan->setQuantity(0);
 
   // Return value
-  return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
+  return OperationPlanState(opplan);
 }
 
 
@@ -649,7 +649,7 @@ DECLARE_EXPORT void OperationFixedTime::endElement (XMLInput& pIn, const Attribu
 }
 
 
-DECLARE_EXPORT pair<DateRange,double>
+DECLARE_EXPORT OperationPlanState
 OperationTimePer::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
@@ -657,7 +657,7 @@ OperationTimePer::setOperationPlanParameters
   if (!opplan || q<0)
     throw LogicException("Incorrect parameters for timeper operationplan");
   if (opplan->getLocked())
-    return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
+    return OperationPlanState(opplan);
 
   // Respect minimum size
   if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
@@ -674,7 +674,7 @@ OperationTimePer::setOperationPlanParameters
     {
       // Start and end aren't far enough from each other to fit the constant
       // part of the operation duration. This is infeasible.
-      if (!execute) return pair<DateRange,double>(x,0);
+      if (!execute) return OperationPlanState(x,0);
       opplan->setQuantity(0,true,false,execute);
       opplan->setEnd(e);  
     }
@@ -696,7 +696,7 @@ OperationTimePer::setOperationPlanParameters
         );
       if (preferEnd) x = calculateOperationTime(e, wanted, false, &actual);
       else x = calculateOperationTime(s, wanted, true, &actual);
-      if (!execute) return pair<DateRange,double>(x,q);
+      if (!execute) return OperationPlanState(x,q);
       opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
   }
@@ -712,13 +712,13 @@ OperationTimePer::setOperationPlanParameters
     if (actual == wanted)
     {
       // Size is as desired
-      if (!execute) return pair<DateRange,double>(x, q);
+      if (!execute) return OperationPlanState(x, q);
       opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
     else if (actual < duration)
     {
       // Not feasible
-      if (!execute) return pair<DateRange,double>(x, 0);
+      if (!execute) return OperationPlanState(x, 0);
       opplan->setQuantity(0,true,false);
       opplan->setStartAndEnd(e,e);
     }
@@ -731,7 +731,7 @@ OperationTimePer::setOperationPlanParameters
       q = opplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
       wanted = duration + static_cast<long>(duration_per * q);
       x = calculateOperationTime(e, wanted, false, &actual);
-      if (!execute) return pair<DateRange,double>(x, q);
+      if (!execute) return OperationPlanState(x, q);
       opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
   }
@@ -748,13 +748,13 @@ OperationTimePer::setOperationPlanParameters
     if (actual == wanted)
     {
       // Size is as desired
-      if (!execute) return pair<DateRange,double>(x, q);
+      if (!execute) return OperationPlanState(x, q);
       opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
     else if (actual < duration)
     {
       // Not feasible
-      if (!execute) return pair<DateRange,double>(x, 0);
+      if (!execute) return OperationPlanState(x, 0);
       opplan->setQuantity(0,true,false);
       opplan->setStartAndEnd(s,s);
     }
@@ -767,13 +767,13 @@ OperationTimePer::setOperationPlanParameters
       q = opplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
       wanted = duration + static_cast<long>(duration_per * q);
       x = calculateOperationTime(e, wanted, false, &actual);
-      if (!execute) return pair<DateRange,double>(x, q);
+      if (!execute) return OperationPlanState(x, q);
       opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
   }
 
   // Return value
-  return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
+  return OperationPlanState(opplan);
 }
 
 
@@ -861,7 +861,7 @@ DECLARE_EXPORT void OperationRouting::endElement (XMLInput& pIn, const Attribute
 }
 
 
-DECLARE_EXPORT pair<DateRange,double>
+DECLARE_EXPORT OperationPlanState
 OperationRouting::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
@@ -869,7 +869,7 @@ OperationRouting::setOperationPlanParameters
   if (!opplan || q<0)
     throw LogicException("Incorrect parameters for routing operationplan");
   if (opplan->getLocked())
-    return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
+    return OperationPlanState(opplan);
 
   OperationPlan *tmp = opplan->firstsubopplan;
   while (tmp && tmp->getOperation() == OperationSetup::setupoperation) 
@@ -881,16 +881,16 @@ OperationRouting::setOperationPlanParameters
     q = opplan->setQuantity(q,false,false,execute);
     if (!s && e) s = e;
     if (s && !e) e = s;
-    if (!execute) return pair<DateRange,double>(DateRange(s,e), q);
+    if (!execute) return OperationPlanState(s, e, q);
     opplan->setStartAndEnd(s,e);
-    return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
+    return OperationPlanState(opplan);
   }
 
   // Behavior depends on the dates being passed.
   // Move all sub-operationplans in an orderly fashion, either starting from
   // the specified end date or the specified start date.
   bool firstOp = true;
-  pair<DateRange,double> x;
+  OperationPlanState x;
   Date y;
   if (e)
   {
@@ -900,16 +900,16 @@ OperationRouting::setOperationPlanParameters
       if (i->getDates().getEnd() > e || firstOp)
       {
         x = i->getOperation()->setOperationPlanParameters(i,q,Date::infinitePast,e,preferEnd,execute);
-        e = x.first.getStart();
-        if (firstOp) y = x.first.getEnd();
+        e = x.start;
+        if (firstOp) y = x.end;
         firstOp = false;
       }
       else
         // There is sufficient slack in the routing, and the start
         // date doesn't need to be changed
-        return pair<DateRange,double>(DateRange(opplan->getDates().getStart(),y), x.second);
+        return OperationPlanState(opplan->getDates().getStart(), y, x.quantity);
     }
-    return pair<DateRange,double>(DateRange(x.first.getStart(),y), x.second);
+    return OperationPlanState(x.start, y, x.quantity);
   }
   else if (s)
   {
@@ -919,16 +919,16 @@ OperationRouting::setOperationPlanParameters
       if (i->getDates().getStart() < s || firstOp)
       {
         x = i->getOperation()->setOperationPlanParameters(i,q,s,Date::infinitePast,preferEnd,execute);
-        s = x.first.getEnd();
-        if (firstOp) y = x.first.getStart();
+        s = x.end;
+        if (firstOp) y = x.start;
         firstOp = false;
       }
       else
         // There is sufficient slack in the routing, and the start
         // date doesn't need to be changed
-        return pair<DateRange,double>(DateRange(y,opplan->getDates().getEnd()), x.second);
+        return OperationPlanState(y, opplan->getDates().getEnd(), x.quantity);
     }
-    return pair<DateRange,double>(DateRange(y,x.first.getEnd()), x.second);
+    return OperationPlanState(y, x.end, x.quantity);
   }
   else
     throw LogicException(
@@ -1111,7 +1111,7 @@ DECLARE_EXPORT void OperationAlternate::endElement (XMLInput& pIn, const Attribu
 }
 
 
-DECLARE_EXPORT pair<DateRange,double>
+DECLARE_EXPORT OperationPlanState
 OperationAlternate::setOperationPlanParameters
   (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
   bool execute) const
@@ -1120,7 +1120,7 @@ OperationAlternate::setOperationPlanParameters
   if (!opplan || q<0)
     throw LogicException("Incorrect parameters for alternate operationplan");
   if (opplan->getLocked())
-    return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
+    return OperationPlanState(opplan);
 
   OperationPlan *x = opplan->firstsubopplan;
   while (x && x->getOperation() == OperationSetup::setupoperation) 
@@ -1132,10 +1132,10 @@ OperationAlternate::setOperationPlanParameters
     {
       opplan->setQuantity(q,false,false);
       opplan->setStartAndEnd(s, e);
-      return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
+      return OperationPlanState(opplan);
     }
     else
-      return pair<DateRange,double>(DateRange(s,e), opplan->setQuantity(q,false,false,false));
+      return OperationPlanState(s, e, opplan->setQuantity(q,false,false,false));
   }
   else
     // Pass the call to the sub-operation
@@ -1167,7 +1167,7 @@ DECLARE_EXPORT void OperationAlternate::removeSubOperation(Operation *o)
 }
 
 
-DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
+DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
   // Find or create a loadplan
@@ -1225,7 +1225,7 @@ DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
   else x = calculateOperationTime(e, duration, false, &actualduration);
   if (!execute)
     // Simulation only
-    return pair<DateRange,double>(x, actualduration == duration ? q : 0);
+    return OperationPlanState(x, actualduration == duration ? q : 0);
   else if (actualduration == duration)
   {
     // Update succeeded
@@ -1234,10 +1234,10 @@ DECLARE_EXPORT pair<DateRange,double> OperationSetup::setOperationPlanParameters
       opplan->getOwner()->setStart(opplan->getDates().getEnd());
   }
   else
-    // Update failed - Not enough available time
+    // Update failed - Not enough available time @todo setting the qty to 0 is not enough
     opplan->setQuantity(0);
 
-  return pair<DateRange,double>(opplan->getDates(), opplan->getQuantity());
+  return OperationPlanState(opplan);
 }
 
 

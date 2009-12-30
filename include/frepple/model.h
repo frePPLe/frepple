@@ -55,6 +55,7 @@ class Demand;
 class OperationPlan;
 class Item;
 class Operation;
+class OperationPlanState;
 class OperationFixedTime;
 class OperationTimePer;
 class OperationRouting;
@@ -1603,7 +1604,7 @@ class Operation : public HasName<Operation>,
       * Subclasses need to override this method to implement the correct
       * logic.
       */
-    virtual pair<DateRange,double> setOperationPlanParameters
+    virtual OperationPlanState setOperationPlanParameters
       (OperationPlan*, double, Date, Date, bool=true, bool=true) const = 0;
 
     /** Returns the location of the operation, which is used to model the
@@ -2049,12 +2050,7 @@ class OperationPlan
     /** A method to restore a previous state of an operationplan.<br>
       * NO validity checks are done on the parameters.
       */
-    void restore(Date st, Date nd, double qty)
-    {
-      quantity = qty;
-      dates.setStartAndEnd(st,nd);
-      OperationPlan::update();
-    }
+    void restore(const OperationPlanState& x);
 
     /** Updates the operationplan owning this operationplan. In case of
       * a OperationRouting steps this will be the operationplan representing the
@@ -2221,7 +2217,7 @@ class OperationPlan
       */
     DECLARE_EXPORT void updateSorting();
 
-  protected:
+  private:
     /** Updates the operationplan based on the latest information of quantity,
       * date and locked flag.<br>
       * This method will also update parent and child operationplans.
@@ -2322,6 +2318,52 @@ class OperationPlan
 };
 
 
+/** @brief A simple class to easily remember the date and quantity of
+  * an operationplan. */
+class OperationPlanState
+{
+  public:
+    Date start;
+    Date end;
+    double quantity;
+
+    /** Default constructor. */
+    OperationPlanState() : quantity(0.0) {}
+
+    /** Constructor. */
+    OperationPlanState(const OperationPlan* x)
+    {
+      if (!x) 
+      {
+        quantity = 0.0;
+        return;
+      }
+      else
+      {
+        start = x->getDates().getStart();
+        end = x->getDates().getEnd();
+        quantity = x->getQuantity();
+      }
+    }
+
+    /** Constructor. */
+    OperationPlanState(const Date x, const Date y, double q) 
+      : start(x), end(y), quantity(q) {}
+
+    /** Constructor. */
+    OperationPlanState(const DateRange& x, double q) 
+      : start(x.getStart()), end(x.getEnd()), quantity(q) {}
+};
+
+
+inline void OperationPlan::restore(const OperationPlanState& x)
+{
+  quantity = x.quantity;
+  dates.setStartAndEnd(x.start,x.end);
+  OperationPlan::update();
+}
+
+
 /** @brief Models an operation that takes a fixed amount of time, independent
   * of the quantity. */
 class OperationFixedTime : public Operation
@@ -2368,7 +2410,7 @@ class OperationFixedTime : public Operation
       *  - Locked operationplans can't be updated.
       * @see Operation::setOperationPlanParameters
       */
-    DECLARE_EXPORT pair<DateRange,double> setOperationPlanParameters
+    DECLARE_EXPORT OperationPlanState setOperationPlanParameters
       (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
   private:
@@ -2399,7 +2441,7 @@ class OperationSetup : public Operation
       * operationplans:
       *  - The duration is calculated based on the conversion type.
       */
-    DECLARE_EXPORT pair<DateRange,double> setOperationPlanParameters
+    DECLARE_EXPORT OperationPlanState setOperationPlanParameters
       (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
     /** A pointer to the operation that is instantiated for all conversions. */
@@ -2452,7 +2494,7 @@ class OperationTimePer : public Operation
       *     date of the operation. A new start date is being computed.
       * @see Operation::setOperationPlanParameters
       */
-    DECLARE_EXPORT pair<DateRange,double> setOperationPlanParameters
+    DECLARE_EXPORT OperationPlanState setOperationPlanParameters
       (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
@@ -2527,7 +2569,7 @@ class OperationRouting : public Operation
       *    blindly.
       * @see Operation::setOperationPlanParameters
       */
-    DECLARE_EXPORT pair<DateRange,double> setOperationPlanParameters
+    DECLARE_EXPORT OperationPlanState setOperationPlanParameters
       (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);
@@ -2643,7 +2685,7 @@ class OperationAlternate : public Operation
       *    suboperationplan.
       * @see Operation::setOperationPlanParameters
       */
-    DECLARE_EXPORT pair<DateRange,double> setOperationPlanParameters
+    DECLARE_EXPORT OperationPlanState setOperationPlanParameters
       (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
     DECLARE_EXPORT void beginElement(XMLInput&, const Attribute&);

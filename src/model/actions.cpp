@@ -499,8 +499,8 @@ DECLARE_EXPORT void CommandErase::execute()
     // E.g. the destructor of the item class recurses over all demands and
     // all buffers. It is much faster if there are none already.
     Demand::clear();
-    Operation::clear();  // @TODO the setup operation should not be deleted
-    Buffer::clear();     // @TODO the buffer onhand operations should not be deleted
+    Operation::clear();  
+    Buffer::clear();     
     Resource::clear();
     SetupMatrix::clear();
     Location::clear();
@@ -508,6 +508,8 @@ DECLARE_EXPORT void CommandErase::execute()
     Calendar::clear();
     Solver::clear();
     Item::clear();
+    // The setup operation is a static singleton and should always be around
+    OperationSetup::setupoperation = Operation::add(new OperationSetup("setup operation"));
   }
   else
     // Delete the operationplans only

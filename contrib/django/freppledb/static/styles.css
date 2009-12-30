@@ -29,6 +29,11 @@ div.ContextMenu a {
   background: #cccccc;
 }
 
+/* Raw id fields are too small by default. */
+.vForeignKeyRawIdAdminField {
+    width: 20em;
+}
+
 /* Style when hovering over links in the context menus. */
 div.ContextMenu a:hover {
   text-decoration: none;

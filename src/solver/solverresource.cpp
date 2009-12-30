@@ -67,6 +67,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
   // Initialize some variables
   double orig_q_qty = -data->state->q_qty;
+  Date currentOpplanStart = data->state->q_operationplan->getDates().getStart();
   Date currentOpplanEnd = data->state->q_operationplan->getDates().getEnd();
   double currentQuantity = data->state->q_operationplan->getQuantity();
   Resource::loadplanlist::const_iterator cur = res->getLoadPlans().end();
@@ -274,10 +275,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   {
     // Put the operationplan back at its original end date
     if (!noRestore)
-    {
-      data->state->q_operationplan->setQuantity(currentQuantity);
-      data->state->q_operationplan->setEnd(currentOpplanEnd);
-    }
+      data->state->q_operationplan->restore(currentOpplanStart, currentOpplanEnd, currentQuantity);
 
     // Moving an operation earlier is driven by the ending loadplan,
     // while searching for later capacity is driven from the starting loadplan.

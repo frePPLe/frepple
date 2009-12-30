@@ -788,7 +788,11 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
             LogicException("Unsupported search mode for alternate operation '"
               +  oper->getName() + "'");
         }
-        if (data->state->a_qty > ROUNDING_ERROR && val < bestAlternateValue)
+        if (data->state->a_qty > ROUNDING_ERROR && (
+          val + ROUNDING_ERROR < bestAlternateValue
+          || (fabs(val - bestAlternateValue) < ROUNDING_ERROR 
+              && data->state->a_qty > bestAlternateQuantity)
+          ))
         {
           // Found a better alternate
           bestAlternateValue = val;

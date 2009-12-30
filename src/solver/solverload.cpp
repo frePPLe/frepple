@@ -91,6 +91,7 @@ void SolverMRP::solve(const Load* l, void* v)
   Date min_next_date(Date::infiniteFuture);
   LoadPlan *lplan = data->state->q_loadplan;
   double bestAlternateValue = DBL_MAX;
+  double bestAlternateQuantity = DBL_MIN;
   const Load* bestAlternateSelection = NULL;
   double beforeCost = data->state->a_cost;
   double beforePenalty = data->state->a_penalty;
@@ -129,7 +130,8 @@ void SolverMRP::solve(const Load* l, void* v)
     }
 
     // 3c) Evaluate the result
-    if (data->state->a_qty > ROUNDING_ERROR) 
+    if (data->state->a_qty > ROUNDING_ERROR 
+      && data->state->q_operationplan->getQuantity() > 0) 
     {
       if (search == PRIORITY)
         // Priority search: accept any non-zero reply
@@ -145,22 +147,25 @@ void SolverMRP::solve(const Load* l, void* v)
         switch (search)
         {
           case MINCOST:
-            val = deltaCost / data->state->a_qty;
+            val = deltaCost / data->state->q_operationplan->getQuantity();
             break;
           case MINPENALTY:
-            val = deltaPenalty / data->state->a_qty;
+            val = deltaPenalty / data->state->q_operationplan->getQuantity();
             break;
           case MINCOSTPENALTY:
-            val = (deltaCost + deltaPenalty) / data->state->a_qty;
+            val = (deltaCost + deltaPenalty) / data->state->q_operationplan->getQuantity();
             break;
           default:
             LogicException("Unsupported search mode for alternate load");
         }    
-        if (val < bestAlternateValue)
+        if (val + ROUNDING_ERROR < bestAlternateValue 
+          || (fabs(val - bestAlternateValue) < ROUNDING_ERROR 
+              && data->state->q_operationplan->getQuantity() > bestAlternateQuantity))
         {
           // Found a better alternate
           bestAlternateValue = val;
           bestAlternateSelection = curload;
+          bestAlternateQuantity = data->state->q_operationplan->getQuantity();
         }
         // Message
         if (loglevel>1 && search != PRIORITY)

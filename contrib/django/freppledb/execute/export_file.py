@@ -83,12 +83,12 @@ def exportLoadplans():
   print "Exporting loadplans..."
   starttime = time()
   writer = csv.writer(open("resources.csv", "wb"), quoting=csv.QUOTE_ALL)
-  writer.writerow(('#operationplan id','resource','quantity','start date','end date'))
+  writer.writerow(('#operationplan id','resource','quantity','start date','end date','setup'))
   for i in frepple.resources():
     for j in i.loadplans:
       writer.writerow(
        (j.operationplan.id, j.resource.name, j.quantity,
-        j.startdate, j.enddate)
+        j.startdate, j.enddate, j.setup)
        )
   print 'Exported loadplans in %.2f seconds' % (time() - starttime)
 

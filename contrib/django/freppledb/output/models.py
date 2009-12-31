@@ -70,7 +70,8 @@ class LoadPlan(models.Model):
   startdate = models.DateTimeField(_('startdate'), db_index=True)
   enddate = models.DateTimeField(_('enddate'), db_index=True)
   operationplan = models.IntegerField(_('operationplan'), db_index=True)
-
+  setup = models.CharField(_('setup'), max_length=60, null=True)
+  
   def __unicode__(self):
       return self.resource.name + ' ' + str(self.startdate) + ' ' + str(self.enddate)
 

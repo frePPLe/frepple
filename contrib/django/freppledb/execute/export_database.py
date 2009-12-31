@@ -135,12 +135,12 @@ def exportLoadplans(cursor):
   for i in frepple.resources():
     cursor.executemany(
       "insert into out_loadplan \
-      (operationplan, theresource, quantity, startdate, enddate) \
-      values (%s,%s,%s,%s,%s)",
+      (operationplan, theresource, quantity, startdate, enddate, setup) \
+      values (%s,%s,%s,%s,%s,%s)",
       [(
          j.operationplan.id, j.resource.name,
          round(j.quantity,ROUNDING_DECIMALS),
-         str(j.startdate), str(j.enddate),
+         str(j.startdate), str(j.enddate), j.setup
        ) for j in i.loadplans
       ])
     cnt += 1

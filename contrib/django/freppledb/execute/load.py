@@ -224,8 +224,7 @@ def loadBuffers(cursor):
     cnt += 1
     if q == "buffer_procure":
       b = frepple.buffer_procure(
-        name=i, description=j, location=frepple.location(name=k),
-        item=frepple.item(name=l), onhand=m
+        name=i, description=j, item=frepple.item(name=l), onhand=m
         )
       if f1: b.leadtime = f1
       if f2: b.mininventory = f2
@@ -238,16 +237,15 @@ def loadBuffers(cursor):
       if f9: b.fence = f9
     elif q == "buffer_infinite":
       b = frepple.buffer_infinite(
-        name=i, description=j, location=frepple.location(name=k),
-        item=frepple.item(name=l), onhand=m
+        name=i, description=j, item=frepple.item(name=l), onhand=m
         )
     elif not q:
       b = frepple.buffer(
-        name=i, description=j, location=frepple.location(name=k),
-        item=frepple.item(name=l), onhand=m
+        name=i, description=j, item=frepple.item(name=l), onhand=m
         )
     else:
       raise ValueError("Buffer type '%s' not recognized" % q)
+    if k: b.location = frepple.location(name=k)
     if n: b.minimum = frepple.calendar(name=n)
     if o: b.producing = frepple.operation(name=o)
     if p: b.carrying_cost = p
@@ -282,21 +280,13 @@ def loadResources(cursor):
     cnt += 1
     try:
       if m == "resource_infinite":
-        x = frepple.resource_infinite(
-          name=i,
-          description=j,
-          location=frepple.location(name=l),
-          )
+        x = frepple.resource_infinite(name=i,description=j)
       elif not m:
-        x = frepple.resource(
-          name=i,
-          description=j,
-          maximum=frepple.calendar(name=k),
-          location=frepple.location(name=l),
-          )
+        x = frepple.resource(name=i,description=j,maximum=frepple.calendar(name=k))
         if o: x.maxearly = o
       else:
         raise ValueError("Resource type '%s' not recognized" % m)
+      if l: x.location = frepple.location(name=l)
       if n: x.cost = n
       if p: x.setup = p
       if q: x.setupmatrix = frepple.setupmatrix(name=q)
@@ -385,14 +375,14 @@ def loadLoads(cursor):
       if n: curload.name = n
       if o: curload.priority = o
       if p: curload.setup = p
-      if q: curflow.search = q
+      if q: curload.search = q
       # todo: duplicate load crashes the application
       #curload2 = frepple.load(operation=frepple.operation(name=i), resource=curres, quantity=k)
     except Exception, e: print "Error:", e
   cursor.execute('''
     SELECT 
       operation_id, resource_id, quantity, effective_start, effective_end, 
-      name, alternate, priority, setup
+      name, alternate, priority, setup, search
     FROM resourceload
     WHERE alternate IS NOT NULL AND alternate <> ''
     ORDER BY operation_id, resource_id
@@ -411,7 +401,7 @@ def loadLoads(cursor):
       if o: curload.alternate = o
       if p: curload.priority = p
       if q: curload.setup = q
-      if r: curflow.search = r
+      if r: curload.search = r
     except Exception, e: print "Error:", e
   print 'Loaded %d loads in %.2f seconds' % (cnt, time() - starttime)
 

@@ -220,8 +220,10 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
   if (constrts) o->writeElement(Tags::tag_constraints, constrts);
   if (maxparallel) o->writeElement(Tags::tag_maxparallel, maxparallel);
   if (!autocommit) o->writeElement(Tags::tag_autocommit, autocommit);
-  if (userexit_flow)
-    o->writeElement(Tags::tag_userexit_flow, PyEval_GetFuncName(userexit_flow));
+  if (userexit_flow) 
+    o->writeElement(Tags::tag_userexit_flow, static_cast<string>(userexit_flow));
+  if (userexit_demand) 
+    o->writeElement(Tags::tag_userexit_demand, static_cast<string>(userexit_demand));
 
   // Write the parent class
   Solver::writeElement(o, tag, NOHEADER);
@@ -254,9 +256,9 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
   if (attr.isA(Tags::tag_autocommit))
     return PythonObject(getAutocommit());
   if (attr.isA(Tags::tag_userexit_flow))
-    return PythonObject(getUserExitFlow());
+    return getUserExitFlow();
   if (attr.isA(Tags::tag_userexit_demand))
-    return PythonObject(getUserExitDemand());
+    return getUserExitDemand();
   return Solver::getattro(attr);
 }
 
@@ -276,104 +278,6 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
   else
     return Solver::setattro(attr, field);
   return 0;
-}
-
-
-DECLARE_EXPORT void SolverMRP::setUserExitFlow(const string& n)
-{
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
-  if (n.empty())
-  {
-    // Resetting to NULL when the string is empty
-    if (userexit_flow) Py_DECREF(userexit_flow);
-    userexit_flow = NULL;
-    PyGILState_Release(pythonstate);
-    return;
-  }
-
-  // Find the Python function
-  PyObject* obj = PyRun_String(n.c_str(), Py_eval_input,
-    PyEval_GetGlobals(), PyEval_GetLocals() );
-  if (!obj)
-  {
-    PyGILState_Release(pythonstate);
-    throw DataException("Python function '" + n + "' not defined");
-  }
-  if (!PyCallable_Check(obj))
-  {
-    PyGILState_Release(pythonstate);
-    throw DataException("Python object '" + n + "' is not a function");
-  }
-
-  // Store the Python function
-  if (userexit_flow) Py_DECREF(userexit_flow);
-  userexit_flow = obj;
-  Py_INCREF(userexit_flow);
-  PyGILState_Release(pythonstate);
-}
-
-
-DECLARE_EXPORT void SolverMRP::setUserExitFlow(PyObject* p)
-{
-  if (!p || p == Py_None)
-  {
-    if (userexit_flow) Py_DECREF(userexit_flow);
-    userexit_flow = NULL;
-  }
-  else if (!PyCallable_Check(p))
-    return setUserExitFlow(PythonObject(p).getString());
-  if (userexit_flow) Py_DECREF(userexit_flow);
-  userexit_flow = p;
-  Py_INCREF(userexit_flow);
-}
-
-
-DECLARE_EXPORT void SolverMRP::setUserExitDemand(const string& n)
-{
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
-  if (n.empty())
-  {
-    // Resetting to NULL when the string is empty
-    if (userexit_demand) Py_DECREF(userexit_demand);
-    userexit_demand = NULL;
-    PyGILState_Release(pythonstate);
-    return;
-  }
-
-  // Find the Python function
-  PyObject* obj = PyRun_String(n.c_str(), Py_eval_input,
-    PyEval_GetGlobals(), PyEval_GetLocals() );
-  if (!obj)
-  {
-    PyGILState_Release(pythonstate);
-    throw DataException("Python function '" + n + "' not defined");
-  }
-  if (!PyCallable_Check(obj))
-  {
-    PyGILState_Release(pythonstate);
-    throw DataException("Python object '" + n + "' is not a function");
-  }
-
-  // Store the Python function
-  if (userexit_demand) Py_DECREF(userexit_demand);
-  userexit_demand = obj;
-  Py_INCREF(userexit_demand);
-  PyGILState_Release(pythonstate);
-}
-
-
-DECLARE_EXPORT void SolverMRP::setUserExitDemand(PyObject* p)
-{
-  if (!p || p == Py_None)
-  {
-    if (userexit_demand) Py_DECREF(userexit_demand);
-    userexit_demand = NULL;
-  }
-  else if (!PyCallable_Check(p))
-    return setUserExitDemand(PythonObject(p).getString());
-  if (userexit_demand) Py_DECREF(userexit_demand);
-  userexit_demand = p;
-  Py_INCREF(userexit_demand);
 }
 
 

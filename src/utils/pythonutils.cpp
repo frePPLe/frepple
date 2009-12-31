@@ -575,6 +575,122 @@ DECLARE_EXPORT void PythonType::evalException()
 }
 
 
+DECLARE_EXPORT PythonFunction::PythonFunction(const string& n)
+{
+  if (n.empty())
+  {
+    // Resetting to NULL when the string is empty
+    func = NULL;
+    return;
+  }
+
+  // Find the Python function
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyObject* obj = PyRun_String(n.c_str(), Py_eval_input,
+    PyEval_GetGlobals(), PyEval_GetLocals() );
+  if (!obj)
+  {
+    PyGILState_Release(pythonstate);
+    throw DataException("Python function '" + n + "' not defined");
+  }
+  if (!PyCallable_Check(obj))
+  {
+    PyGILState_Release(pythonstate);
+    throw DataException("Python object '" + n + "' is not a function");
+  }
+
+  // Store the Python function
+  if (func) Py_DECREF(func);
+  func = obj;
+  Py_INCREF(func);
+  PyGILState_Release(pythonstate);
+}
+
+
+DECLARE_EXPORT PythonFunction::PythonFunction(PyObject* p)
+{
+  if (!p || p == Py_None)
+  {
+    // Resetting to null
+    func = NULL;
+    return;
+  }
+  
+  if (!PyCallable_Check(p))
+  {
+    // It's not a callable object. Interprete it as a function name and 
+    // look it up.
+    string n = PythonObject(p).getString();
+    PyGILState_STATE pythonstate = PyGILState_Ensure();
+    p = PyRun_String(n.c_str(), Py_eval_input, 
+      PyEval_GetGlobals(), PyEval_GetLocals() );
+    if (!p)
+    {
+      PyGILState_Release(pythonstate);
+      throw DataException("Python function '" + n + "' not defined");
+    }
+    if (!PyCallable_Check(p))
+    {
+      PyGILState_Release(pythonstate);
+      throw DataException("Python object '" + n + "' is not a function");
+    }
+    PyGILState_Release(pythonstate);
+  }
+
+  // Store the Python function
+  func = p;
+  Py_INCREF(func);
+}
+
+
+DECLARE_EXPORT PythonObject PythonFunction::call() const
+{
+  if (!func) return PythonObject();
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyObject* result = PyEval_CallFunction(func, "()");
+  if (!result)
+  {
+    logger << "Error: Exception caught when calling Python function '" 
+      << (func ? PyEval_GetFuncName(func) : "NULL") << "'" << endl;
+    if (PyErr_Occurred()) PyErr_PrintEx(0);
+  }
+  PyGILState_Release(pythonstate);
+  return PythonObject(result);
+}
+
+
+DECLARE_EXPORT PythonObject PythonFunction::call(const PyObject* p) const
+{
+  if (!func) return PythonObject();
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyObject* result = PyEval_CallFunction(func, "(O)", p);
+  if (!result)
+  {
+    logger << "Error: Exception caught when calling Python function '" 
+      << (func ? PyEval_GetFuncName(func) : "NULL") << "'" << endl;
+    if (PyErr_Occurred()) PyErr_PrintEx(0);
+  }
+  PyGILState_Release(pythonstate);
+  return PythonObject(result);
+}
+
+
+DECLARE_EXPORT PythonObject PythonFunction::call(const PyObject* p, const PyObject* q) const
+{
+  if (!func) return PythonObject();
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyObject* result = PyEval_CallFunction(func, "(OO)", p, q);
+  if (!result)
+  {
+    logger << "Error: Exception caught when calling Python function '" 
+      << (func ? PyEval_GetFuncName(func) : "NULL") << "'" << endl;
+    if (PyErr_Occurred()) PyErr_PrintEx(0);
+  }
+  PyGILState_Release(pythonstate);
+  return PythonObject(result);
+}
+
+
 extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *name)
 {
   try

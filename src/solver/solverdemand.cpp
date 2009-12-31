@@ -47,21 +47,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
     << ", " << l->getDue() << ", " << l->getQuantity() << ")" << endl;
 
   // Call the user exit
-  if (userexit_demand)
-  {
-    PyGILState_STATE pythonstate = PyGILState_Ensure();
-    PyObject* result = PyEval_CallFunction(
-      userexit_demand, "(O)",
-      static_cast<const PyObject*>(l)
-      );
-    if (!result)
-    {
-      // Catch exceptions
-      logger << "Error: Exception caught in the demand user exit" << endl;
-      if (PyErr_Occurred()) PyErr_PrintEx(0);
-    }
-    PyGILState_Release(pythonstate);
-  }
+  if (userexit_demand) userexit_demand.call(l);
 
   // Unattach previous delivery operationplans.
   // Locked operationplans will NOT be deleted, and a part of the demand can

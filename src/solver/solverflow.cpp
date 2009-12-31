@@ -75,30 +75,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
       // 3b) Call the Python user exit if there is one
       if (userexit_flow)
       {
-        PyGILState_STATE pythonstate = PyGILState_Ensure();
-        PyObject* result = PyEval_CallFunction(
-          userexit_flow, "(O)",
-          static_cast<PyObject*>(data->state->q_flowplan)
-          );
-        if (!result)
+        PythonObject result = userexit_flow.call(data->state->q_flowplan);
+        if (!result.getBool())
         {
-          // User exit, case 1: exception thrown, and continue as accept
-          logger << "Error: Exception caught in the flow user exit" << endl;
-          if (PyErr_Occurred()) PyErr_PrintEx(0);
-        }
-        else if (PyObject_IsTrue(result))
-          // User exit, case 2: return value is true, alternate accepted
-          Py_DECREF(result);
-        else
-        {
-          // User exit, case 1: return value is false, alternate rejected
-          Py_DECREF(result);
+          // Return value is false, alternate rejected
           if (data->getSolver()->getLogLevel()>1)
             logger << indent(curflow->getOperation()->getLevel())
               << "   User exit disallows consumption from '"
               << (*i)->getBuffer()->getName() << "'" << endl;
-          // Release Python interpreter
-          PyGILState_Release(pythonstate);
           // Move to the next alternate
           if (++i != thealternates.end() && data->getSolver()->getLogLevel()>1)
             logger << indent(curflow->getOperation()->getLevel()) << "   Alternate flow switches from '"
@@ -106,7 +90,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
                   << (*i)->getBuffer()->getName() << "'" << endl;
           continue;
         }
-        PyGILState_Release(pythonstate);
       }
 
       // 3c) Ask the buffer

@@ -201,7 +201,7 @@ class SolverMRP : public Solver
         {initType(metadata);}
 
     /** Destructor. */
-    virtual ~SolverMRP() {if (userexit_flow) Py_DECREF(userexit_flow);}
+    virtual ~SolverMRP() {}
 
     DECLARE_EXPORT void writeElement(XMLOutput*, const Keyword&, mode=DEFAULT) const;
     DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
@@ -321,22 +321,22 @@ class SolverMRP : public Solver
     void setAutocommit(const bool b) {autocommit = b;}
 
     /** Specify a Python function that is called before solving a flow. */
-    DECLARE_EXPORT void setUserExitFlow(const string&);
+    DECLARE_EXPORT void setUserExitFlow(const string& n) {userexit_flow = n;}
 
     /** Specify a Python function that is called before solving a flow. */
-    DECLARE_EXPORT void setUserExitFlow(PyObject*);
+    DECLARE_EXPORT void setUserExitFlow(PyObject* p) {userexit_flow = p;}
 
     /** Return the Python function that is called before solving a flow. */
-    PyObject* getUserExitFlow() const {return userexit_flow;}
+    PythonFunction getUserExitFlow() const {return userexit_flow;}
 
     /** Specify a Python function that is called before solving a demand. */
-    DECLARE_EXPORT void setUserExitDemand(const string&);
+    DECLARE_EXPORT void setUserExitDemand(const string& n) {userexit_demand = n;}
 
     /** Specify a Python function that is called before solving a demand. */
-    DECLARE_EXPORT void setUserExitDemand(PyObject*);
+    DECLARE_EXPORT void setUserExitDemand(PyObject* p) {userexit_demand = p;}
 
     /** Return the Python function that is called before solving a demand. */
-    PyObject* getUserExitDemand() const {return userexit_demand;}
+    PythonFunction getUserExitDemand() const {return userexit_demand;}
 
     /** Python method for running the solver. */
     static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
@@ -382,12 +382,12 @@ class SolverMRP : public Solver
       * flow. If the callback function returns false, that alternate
       * flow is an invalid choice.
       */
-    PyObject* userexit_flow;
+    PythonFunction userexit_flow;
 
     /** A Python callback function that is called for each demand. The return
       * value is not used.
       */
-    PyObject* userexit_demand;
+    PythonFunction userexit_demand;
 
   protected:
     /** @brief This class is used to store the solver status during the

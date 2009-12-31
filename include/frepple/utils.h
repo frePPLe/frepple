@@ -2645,7 +2645,13 @@ class PythonObject : public DataElement
     operator bool() const {return obj != NULL && obj != Py_None;}
 
     /** Assignment operator. */
-    PythonObject& operator = (const PythonObject& o) {obj = o.obj; return *this;}
+    PythonObject& operator = (const PythonObject& o) 
+    {
+      if (obj) Py_DECREF(obj);
+      obj = o.obj; 
+      if (obj) Py_INCREF(obj);
+      return *this;
+    }
 
     /** Check whether the Python object is of a certain type.<br>
       * Subclasses of the argument type will also give a true return value.
@@ -2841,6 +2847,63 @@ class PythonObject : public DataElement
 
     /** Convert a frePPLe date into a Python datetime.datetime object. */
     DECLARE_EXPORT PythonObject(const Date& val);
+};
+
+
+/** @brief This call is a wrapper around a Python function that can be
+  * called from the C++ code.
+  */
+class PythonFunction : public PythonObject
+{
+  public:
+    /** Default constructor. */
+    PythonFunction() : func(NULL) {}
+
+    /** Constructor. */
+    DECLARE_EXPORT PythonFunction(const string&);
+
+    /** Constructor. */
+    DECLARE_EXPORT PythonFunction(PyObject*);
+
+    /** Copy constructor. */
+    PythonFunction(const PythonFunction& o) : func(o.func) 
+    {
+      if (func) Py_INCREF(func);
+    }
+
+    /** Assignment operator. */
+    PythonFunction& operator= (const PythonFunction& o) 
+    {
+      if (func) Py_DECREF(func);
+      func = o.func;
+      if (func) Py_INCREF(func);
+      return *this;
+    }
+
+    /** Destructor. */
+    ~PythonFunction() {if (func) Py_DECREF(func);}
+
+    /** Conversion operator to a Python pointer. */
+    operator const PyObject*() const {return func;}
+
+    /** Conversion operator to a string. */
+    operator string() const {return func ? PyEval_GetFuncName(func) : "NULL";}
+
+    /** Conversion operator to bool. */
+    operator bool() const {return func != NULL;}
+
+    /** Call the Python function without arguments. */
+    DECLARE_EXPORT PythonObject call() const;
+
+    /** Call the Python function with one argument. */
+    DECLARE_EXPORT PythonObject call(const PyObject*) const;
+
+    /** Call the Python function with two arguments. */
+    DECLARE_EXPORT PythonObject call(const PyObject*, const PyObject*) const;
+
+  private:
+    /** A pointer to the Python object. */
+    PyObject* func; 
 };
 
 

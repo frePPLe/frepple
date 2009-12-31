@@ -586,23 +586,21 @@ DECLARE_EXPORT PythonFunction::PythonFunction(const string& n)
 
   // Find the Python function
   PyGILState_STATE pythonstate = PyGILState_Ensure();
-  PyObject* obj = PyRun_String(n.c_str(), Py_eval_input,
+  func = PyRun_String(n.c_str(), Py_eval_input,
     PyEval_GetGlobals(), PyEval_GetLocals() );
-  if (!obj)
+  if (!func)
   {
     PyGILState_Release(pythonstate);
     throw DataException("Python function '" + n + "' not defined");
   }
-  if (!PyCallable_Check(obj))
+  if (!PyCallable_Check(func))
   {
     PyGILState_Release(pythonstate);
     throw DataException("Python object '" + n + "' is not a function");
   }
+  Py_INCREF(func);
 
   // Store the Python function
-  if (func) Py_DECREF(func);
-  func = obj;
-  Py_INCREF(func);
   PyGILState_Release(pythonstate);
 }
 

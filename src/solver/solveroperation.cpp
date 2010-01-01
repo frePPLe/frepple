@@ -542,10 +542,6 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     }
   }
 
-  // Multiply the operationplan quantity with the flow quantity to get the
-  // final reply quantity
-  data->state->a_qty = a_qty * flow_qty;
-
   // Check the flows and loads on the top operationplan.
   // This can happen only after the suboperations have been dealt with
   // because only now we know how long the operation lasts in total.
@@ -555,7 +551,10 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   data->state->curOwnerOpplan->createFlowLoads();
   if (data->state->curOwnerOpplan->getQuantity() > 0.0)
   {
+    data->state->q_qty = a_qty;
+    data->state->q_date = data->state->curOwnerOpplan->getDates().getEnd();
     data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
+    a_qty = data->state->a_qty;
     // The reply date is the combination of the reply date of all steps and the
     // reply date of the top operationplan.
     if (data->state->a_date > max_Date && data->state->a_date != Date::infiniteFuture)
@@ -564,6 +563,10 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   data->state->a_date = (max_Date ? max_Date : Date::infiniteFuture);
   if (data->state->a_date < data->state->q_date)
     data->state->a_date = data->state->q_date;
+
+  // Multiply the operationplan quantity with the flow quantity to get the
+  // final reply quantity
+  data->state->a_qty = a_qty * flow_qty;
 
   // Add to the list (even if zero-quantity!)
   if (!prev_owner_opplan) data->add(a);
@@ -648,6 +651,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Store the last command in the list, in order to undo the following
       // commands if required.
       Command* topcommand = data->getLastCommand();
+      bool nextalternate = true;
 
       // Operations with 0 priority are considered unavailable
       const OperationAlternate::alternateProperty& props
@@ -737,11 +741,11 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       {
         // Multiply the operation reply with the flow quantity to obtain the
         // reply to return
-        data->state->a_qty *= (sub_flow_qty_per + top_flow_qty_per);
         data->state->q_qty = data->state->a_qty;
         data->state->q_date = origQDate;
         data->state->curOwnerOpplan->createFlowLoads();
         data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
+        data->state->a_qty *= (sub_flow_qty_per + top_flow_qty_per);
 
         // Combine the reply date of the top-opplan with the alternate check: we
         // need to return the minimum next-date.
@@ -761,6 +765,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         // Prepare for the next loop
         a_qty -= data->state->a_qty;
         plannedAlternate = true;
+
+        // As long as we get a positive reply we replan on this alternate
+        if (data->state->a_qty > 0) nextalternate = false;
 
         // Are we at the end already?
         if (a_qty < ROUNDING_ERROR)
@@ -805,14 +812,16 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       }
 
       // Select the next alternate
-      ++altIter;
-      if (altIter == oper->getSubOperations().end() && effectiveOnly)
+      if (nextalternate)
       {
-        // Prepare for a second iteration over all alternates
-        effectiveOnly = false;
-        altIter = oper->getSubOperations().begin();
+        ++altIter;
+        if (altIter == oper->getSubOperations().end() && effectiveOnly)
+        {
+          // Prepare for a second iteration over all alternates
+          effectiveOnly = false;
+          altIter = oper->getSubOperations().begin();
+        }
       }
-
     } // End loop over all alternates
 
     // Replan on the best alternate
@@ -843,16 +852,16 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Create a sub operationplan and solve constraints
       bestAlternateSelection->solve(*this,v);
 
-      // Multiply the operation reply with the flow quantity to obtain the
-      // reply to return
-      data->state->a_qty *= bestFlowPer;
-
       // Now solve for loads and flows of the top operationplan.
       // Only now we know how long that top-operation lasts in total.
       data->state->q_qty = data->state->a_qty;
       data->state->q_date = origQDate;
       data->state->curOwnerOpplan->createFlowLoads();
       data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
+
+      // Multiply the operation reply with the flow quantity to obtain the
+      // reply to return
+      data->state->a_qty *= bestFlowPer;
 
       // Combine the reply date of the top-opplan with the alternate check: we
       // need to return the minimum next-date.

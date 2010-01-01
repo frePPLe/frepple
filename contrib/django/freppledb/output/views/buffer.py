@@ -37,7 +37,7 @@ class OverviewReport(TableReport):
   A report showing the inventory profile of buffers.
   '''
   template = 'output/buffer.html'
-  title = _('Inventory Report')
+  title = _('Inventory report')
   basequeryset = Buffer.objects.all()
   model = Buffer
   rows = (

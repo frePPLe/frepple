@@ -246,6 +246,10 @@ DECLARE_EXPORT void LoadPlan::setLoad(const Load* newld)
    // Remove from the old resource, if there is one
     if (ldplan->ld)
       ldplan->ld->getResource()->loadplans.erase(ldplan);
+    
+    // Update the setups on the old resource
+    if (ldplan == this && ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation)
+      ld->getResource()->updateSetups();
 
     // Insert in the new resource
     ldplan->ld = newld;

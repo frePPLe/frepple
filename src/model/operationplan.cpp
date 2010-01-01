@@ -583,7 +583,7 @@ void DECLARE_EXPORT OperationPlan::setStart (Date d)
   // Locked opplans don't move
   if (getLocked()) return;
 
-  if (!firstsubopplan || firstsubopplan->getOperation() == OperationSetup::setupoperation) // @TODO also need to handle routing or altopplans which have extra setup
+  if (!lastsubopplan || lastsubopplan->getOperation() == OperationSetup::setupoperation)
     // No sub operationplans
     oper->setOperationPlanParameters(this,quantity,d,Date::infinitePast);
   else
@@ -592,6 +592,7 @@ void DECLARE_EXPORT OperationPlan::setStart (Date d)
     bool firstMove = true;
     for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
     {
+      if (i->getOperation() == OperationSetup::setupoperation) continue;
       if (i->getDates().getStart() < d || firstMove)
       {
         i->setStart(d);
@@ -619,7 +620,7 @@ void DECLARE_EXPORT OperationPlan::setEnd(Date d)
   // Locked opplans don't move
   if (getLocked()) return;
 
-  if (!firstsubopplan || firstsubopplan->getOperation() == OperationSetup::setupoperation)  // @TODO also need to handle routing or altopplans which have extra setup at the top level
+  if (!lastsubopplan || lastsubopplan->getOperation() == OperationSetup::setupoperation)
     // No sub operationplans
     oper->setOperationPlanParameters(this,quantity,Date::infinitePast,d);
   else
@@ -628,6 +629,7 @@ void DECLARE_EXPORT OperationPlan::setEnd(Date d)
     bool firstMove = true;
     for (OperationPlan* i = lastsubopplan; i; i = i->prevsubopplan)
     {
+      if (i->getOperation() == OperationSetup::setupoperation) break;
       if (i->getDates().getEnd() > d || firstMove)
       {
         i->setEnd(d);

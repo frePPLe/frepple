@@ -2034,7 +2034,7 @@ class OperationPlan
     /** Returns a pointer to the operation being instantiated. */
     Operation* getOperation() const {return oper;}
 
-    /** Fixes the start and end Date of an operationplan. Note that this
+    /** Fixes the start and end date of an operationplan. Note that this
       * overrules the standard duration given on the operation, i.e. no logic
       * kicks in to verify the data makes sense. This is up to the user to
       * take care of.<br>
@@ -2044,7 +2044,7 @@ class OperationPlan
     void setStartAndEnd(Date st, Date nd)
     {
       dates.setStartAndEnd(st,nd);
-      OperationPlan::update();
+      update();
     }
 
     /** A method to restore a previous state of an operationplan.<br>
@@ -2320,7 +2320,7 @@ class OperationPlan
 
 /** @brief A simple class to easily remember the date and quantity of
   * an operationplan. */
-class OperationPlanState
+class OperationPlanState  // @todo should also restore suboperationplans!!!  replace by move command???
 {
   public:
     Date start;
@@ -2354,14 +2354,6 @@ class OperationPlanState
     OperationPlanState(const DateRange& x, double q) 
       : start(x.getStart()), end(x.getEnd()), quantity(q) {}
 };
-
-
-inline void OperationPlan::restore(const OperationPlanState& x)
-{
-  quantity = x.quantity;
-  dates.setStartAndEnd(x.start,x.end);
-  OperationPlan::update();
-}
 
 
 /** @brief Models an operation that takes a fixed amount of time, independent
@@ -2595,6 +2587,12 @@ class OperationRouting : public Operation
   private:
     Operationlist steps;
 };
+
+
+inline void OperationPlan::restore(const OperationPlanState& x)
+{
+  getOperation()->setOperationPlanParameters(this,x.quantity, x.start, x.end, true);
+}
 
 
 /** This type defines what mode used to search the alternates. */

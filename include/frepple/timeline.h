@@ -116,15 +116,15 @@ template <class type> class TimeLine
 
         virtual unsigned short getType() const = 0;
 
-        /** First criterion is date: earlier Dates come first.
-          * Second criterion is the size: big events come first.
-          * As a third tie-breaking criterion, we use a pointer comparison.
-          * This garantuees us a fixed and unambiguous ordering.
+        /** First criterion is date: earlier dates come first.<br>
+          * Second criterion is the size: big events come first.<br>
+          * As a third tie-breaking criterion, we use a pointer comparison.<br>
+          * This garantuees us a fixed and unambiguous ordering.<br>
           * As a side effect, this makes sure that producers come before
           * consumers. This feature is required to avoid zero-time
           * material shortages.
           */
-        bool operator < (Event const& fl2) const
+        bool operator < (const Event& fl2) const
         {
           assert (&fl2);
           if (getDate() != fl2.getDate())
@@ -269,7 +269,7 @@ template <class type> class TimeLine
       for (const_iterator oo=begin(); oo!=end(); ++oo)
         logger << "  " << oo->getDate() << "   "
         << oo->getQuantity() << "    " << oo->getOnhand()
-        << "    " << oo->getCumulativeProduced()  << endl;
+        << "    " << oo->getCumulativeProduced() <<  &*oo << endl;
     }
 
     /** This function is used to trace the consistency of the data structure. */

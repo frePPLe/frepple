@@ -897,6 +897,8 @@ OperationRouting::setOperationPlanParameters
     // Case 1: an end date is specified
     for (OperationPlan* i = opplan->lastsubopplan; i; i = i->prevsubopplan)
     {
+      if (i->getOperation() == OperationSetup::setupoperation)
+        continue;
       if (i->getDates().getEnd() > e || firstOp)
       {
         x = i->getOperation()->setOperationPlanParameters(i,q,Date::infinitePast,e,preferEnd,execute);
@@ -916,6 +918,8 @@ OperationRouting::setOperationPlanParameters
     // Case 2: a start date is specified
     for (OperationPlan *i = opplan->firstsubopplan; i; i = i->nextsubopplan)
     {
+      if (i->getOperation() == OperationSetup::setupoperation)
+        continue;
       if (i->getDates().getStart() < s || firstOp)
       {
         x = i->getOperation()->setOperationPlanParameters(i,q,s,Date::infinitePast,preferEnd,execute);
@@ -1122,9 +1126,9 @@ OperationAlternate::setOperationPlanParameters
   if (opplan->getLocked())
     return OperationPlanState(opplan);
 
-  OperationPlan *x = opplan->firstsubopplan;
+  OperationPlan *x = opplan->lastsubopplan;
   while (x && x->getOperation() == OperationSetup::setupoperation) 
-    x = x->nextsubopplan;
+    x = x->prevsubopplan;
   if (!x)
   {
     // Blindly accept the parameters if there is no suboperationplan

@@ -36,7 +36,7 @@ class OverviewReport(TableReport):
   A report showing the loading of each resource.
   '''
   template = 'output/resource.html'
-  title = _('Resource Report')
+  title = _('Resource report')
   basequeryset = Resource.objects.all()
   model = Resource
   rows = (
@@ -157,7 +157,7 @@ class DetailReport(ListReport):
   A list report to show loadplans.
   '''
   template = 'output/loadplan.html'
-  title = _("Resource Load Detail")
+  title = _("Resource detail report")
   reset_crumbs = False
   basequeryset = LoadPlan.objects.extra(
     select={'operation':'out_operationplan.operation'},
@@ -186,6 +186,10 @@ class DetailReport(ListReport):
     ('quantity', {
       'title': _('quantity'),
       'filter': FilterNumber(),
+      }),
+    ('setup', {
+      'title': _('setup'),
+      'filter': FilterText(),
       }),
     ('operationplan', {
       'filter': FilterNumber(),

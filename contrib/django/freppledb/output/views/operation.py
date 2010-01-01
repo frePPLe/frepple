@@ -35,7 +35,7 @@ class OverviewReport(TableReport):
   A report showing the planned starts of each operation.
   '''
   template = 'output/operation.html'
-  title = _('Operation Report')
+  title = _('Operation report')
   basequeryset = Operation.objects.all()
   model = Operation
   rows = (
@@ -130,7 +130,7 @@ class DetailReport(ListReport):
   A list report to show operationplans.
   '''
   template = 'output/operationplan.html'
-  title = _("Operationplan List")
+  title = _("Operation detail report")
   reset_crumbs = False
   basequeryset = OperationPlan.objects.all()
   model = OperationPlan

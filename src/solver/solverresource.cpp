@@ -83,7 +83,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
   if (!data->state->forceLate)
     do
     {
-      // Check the leadtime constraints
+     // Check the leadtime constraints
       noRestore = data->state->forceLate;
       if (isLeadtimeConstrained() || isFenceConstrained())
         // Note that the check function can update the answered date and quantity
@@ -375,6 +375,8 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
       data->state->a_penalty += setupOpplan->getPenalty();
     }
   }
+  else if (data->state->q_operationplan->getQuantity() > 0.0)
+    data->state->q_operationplan->setQuantity(0.0);
 
   // Message
   if (data->getSolver()->getLogLevel()>1)

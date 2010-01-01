@@ -35,7 +35,7 @@ class OverviewReport(TableReport):
   A report showing the independent demand for each item.
   '''
   template = 'output/demand.html'
-  title = _('Demand Report')
+  title = _('Demand report')
   basequeryset = Item.objects.extra(where=('name in (select distinct item_id from demand union select distinct item_id from forecast)',))
   model = Item
   rows = (
@@ -165,7 +165,7 @@ class DetailReport(ListReport):
   A list report to show delivery plans for demand.
   '''
   template = 'output/demandplan.html'
-  title = _("Demand Plan Detail")
+  title = _("Demand plan detail")
   reset_crumbs = False
   basequeryset = Demand.objects.all()
   model = Demand

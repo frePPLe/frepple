@@ -63,10 +63,12 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
 
     // 3) Loop through the alternates till we find a non-zero reply
     Date min_next_date(Date::infiniteFuture);
+    FlowPlan *flplan = data->state->q_flowplan;
     for (list<const Flow*>::const_iterator i = thealternates.begin();
       i != thealternates.end();)
     {
       const Flow *curflow = *i;
+      data->state->q_flowplan = flplan; // because q_flowplan can change
 
       // 3a) Switch to this flow
       if (data->state->q_flowplan->getFlow() != curflow)
@@ -117,7 +119,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)
     data->state->a_date = min_next_date;
     data->state->a_qty = 0;
     if (data->getSolver()->getLogLevel()>1)
-      logger << indent(data->state->q_flowplan->getFlow()->getOperation()->getLevel()) <<
+      logger << indent(fl->getOperation()->getLevel()) <<
         "   Alternate flow doesn't find supply on any alternate : "
         << data->state->a_qty << "  " << data->state->a_date << endl;
   }

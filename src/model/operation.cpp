@@ -871,10 +871,7 @@ OperationRouting::setOperationPlanParameters
   if (opplan->getLocked())
     return OperationPlanState(opplan);
 
-  OperationPlan *tmp = opplan->firstsubopplan;
-  while (tmp && tmp->getOperation() == OperationSetup::setupoperation) 
-    tmp = tmp->nextsubopplan;
-  if (!tmp)
+  if (!opplan->lastsubopplan || opplan->lastsubopplan->getOperation() == OperationSetup::setupoperation) // @todo replace with proper iterator
   {
     // No step operationplans to work with. Just apply the requested quantity
     // and dates.
@@ -897,14 +894,16 @@ OperationRouting::setOperationPlanParameters
     // Case 1: an end date is specified
     for (OperationPlan* i = opplan->lastsubopplan; i; i = i->prevsubopplan)
     {
-      if (i->getOperation() == OperationSetup::setupoperation)
-        continue;
+      if (i->getOperation() == OperationSetup::setupoperation) continue;
       if (i->getDates().getEnd() > e || firstOp)
       {
         x = i->getOperation()->setOperationPlanParameters(i,q,Date::infinitePast,e,preferEnd,execute);
         e = x.start;
-        if (firstOp) y = x.end;
-        firstOp = false;
+        if (firstOp) 
+        {
+          y = x.end;
+          //xxx todo firstOp = false;
+        }
       }
       else
         // There is sufficient slack in the routing, and the start
@@ -918,14 +917,16 @@ OperationRouting::setOperationPlanParameters
     // Case 2: a start date is specified
     for (OperationPlan *i = opplan->firstsubopplan; i; i = i->nextsubopplan)
     {
-      if (i->getOperation() == OperationSetup::setupoperation)
-        continue;
+      if (i->getOperation() == OperationSetup::setupoperation) continue;
       if (i->getDates().getStart() < s || firstOp)
       {
         x = i->getOperation()->setOperationPlanParameters(i,q,s,Date::infinitePast,preferEnd,execute);
         s = x.end;
-        if (firstOp) y = x.start;
-        firstOp = false;
+        if (firstOp)
+        {
+          y = x.start;
+          //xxx todo firstOp = false;
+        }
       }
       else
         // There is sufficient slack in the routing, and the start
@@ -936,7 +937,7 @@ OperationRouting::setOperationPlanParameters
   }
   else
     throw LogicException(
-      "Updating a routing operationplan without start or end date"
+      "Updating a routing operationplan without start or end date argument"
     );
 }
 

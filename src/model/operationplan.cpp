@@ -757,21 +757,24 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 
 DECLARE_EXPORT void OperationPlan::update()
 {
-  if (firstsubopplan && firstsubopplan->getOperation() != OperationSetup::setupoperation)  // TODO also something required to update setup opplans
-    {
-      // Inherit the start and end date of the child operationplans
-      dates.setStartAndEnd(
-        firstsubopplan->getDates().getStart(),
-        lastsubopplan->getDates().getEnd()
-      );
-      // If at least 1 sub-operationplan is locked, the parent must be locked
-      flags &= ~IS_LOCKED; // Clear is_locked flag
-      for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
-          if (i->flags & IS_LOCKED)
-          {
-            flags |= IS_LOCKED;  // Set is_locked flag
-            break;
-          }
+  if (lastsubopplan && lastsubopplan->getOperation() != OperationSetup::setupoperation)  
+  {
+    // Inherit the start and end date of the child operationplans
+    OperationPlan *tmp = firstsubopplan;
+    if (tmp->getOperation() == OperationSetup::setupoperation)
+      tmp = tmp->nextsubopplan;
+    dates.setStartAndEnd(
+      tmp->getDates().getStart(),
+      lastsubopplan->getDates().getEnd()
+    );
+    // If at least 1 sub-operationplan is locked, the parent must be locked
+    flags &= ~IS_LOCKED; // Clear is_locked flag
+    for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
+        if (i->flags & IS_LOCKED)
+        {
+          flags |= IS_LOCKED;  // Set is_locked flag
+          break;
+        }
   }
 
   // Update the flow and loadplans

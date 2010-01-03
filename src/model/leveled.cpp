@@ -125,7 +125,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
       // Do we need to activate the level search?
       // Criterion are:
       //   - Not used in a super operation
-      //   - Have at no producing Flow on the Operation itself
+      //   - Have a producing flow on the operation itself
       //     or on any of its sub operations
       search_level = false;
       if (g->getSuperOperations().empty())
@@ -236,7 +236,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
           if (!resptr->cluster)
           {
             resptr->cluster = cur_cluster;
-            // Find more operations connected to this cluster by the Resource
+            // Find more operations connected to this cluster by the resource
             for (Resource::loadlist::const_iterator resops =
                   resptr->getLoads().begin();
                 resops != resptr->getLoads().end(); ++resops)
@@ -260,7 +260,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
           // Check whether the level search needs to continue
           search_level = cur_level!=-1 && cur_buf->lvl<cur_level+1;
 
-          // Check if the Buffer needs processing
+          // Check if the buffer needs processing
           if (search_level || !cur_buf->cluster)
           {
             // Update the cluster of the current buffer

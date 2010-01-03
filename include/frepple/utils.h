@@ -272,15 +272,15 @@ extern DECLARE_EXPORT ostream logger;
 /** Auxilary structure for easy indenting in the log stream. */
 struct indent
 {
-  unsigned short level;
-  indent(unsigned short l) : level(l) {}
-  indent operator() (unsigned short l) {return indent(l);}
+  short level;
+  indent(short l) : level(l) {}
+  indent operator() (short l) {return indent(l);}
 };
 
 /** Print a number of spaces to the output stream. */
 inline ostream& operator <<(ostream &os, const indent& i)
 {
-  for (unsigned int c = i.level; c; --c) os << ' ';
+  for (short c = i.level; c>0; --c) os << ' ';
   return os;
 }
 
@@ -3573,6 +3573,7 @@ class Tree : public NonCopyable
 class Command
 {
   friend class CommandList;
+  friend class CommandMoveOperationPlan;
   public:
     /** This structure defines a boolean value that can be set to TRUE,
       * FALSE or INHERITed from a higher level.

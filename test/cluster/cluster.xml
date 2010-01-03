@@ -306,7 +306,8 @@ def verifyOne(i):
   ok = True
 
   # The entity name also encodes the expected level and cluster
-  name, expectedlevel, expectedcluster = i.name.split(":")
+  try: name, expectedlevel, expectedcluster = i.name.split(":")
+  except: return
   name = i.__class__.__name__ + " " + name.strip()
   expectedlevel = int(expectedlevel.strip())
   expectedcluster = int(expectedcluster.strip())

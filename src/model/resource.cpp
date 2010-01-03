@@ -262,6 +262,7 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
   ldplan = NULL;
 
   // Update later setup opplans
+  static const Resource* tmp = NULL;  // xxx @todo dirty hack to avoid endless loop!!!
   OperationPlan *opplan = ldplan ? ldplan->getOperationPlan() : NULL;
   loadplanlist::const_iterator i = ldplan ? 
     getLoadPlans().begin(ldplan) :
@@ -282,10 +283,12 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
         l->getOperationPlan()->getDates().getEnd(),
         true,
         false);
-      if (x.start != l->getOperationPlan()->getDates().getStart())
+      if (x.start != l->getOperationPlan()->getDates().getStart() && l->getResource() != tmp)
       {
+        tmp = l->getResource();
         l->getOperationPlan()->restore(x);
         if (ldplan) return;
+        tmp = NULL;
       }
     }
   }

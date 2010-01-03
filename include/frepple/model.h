@@ -1696,7 +1696,7 @@ class Operation : public HasName<Operation>,
     /** Returns a reference to the list of super-operations, i.e. operations
       * using the current Operation as a sub-Operation.
       */
-    const Operationlist& getSuperOperations() {return superoplist;}
+    const Operationlist& getSuperOperations() const {return superoplist;}
 
     /** Register a super-operation, i.e. an operation having this one as a
       * sub-operation. */
@@ -2585,16 +2585,19 @@ class OperationRouting : public Operation
     }
 
   private:
+    /** Stores a double linked list of all step operations. */
     Operationlist steps;
 };
 
 
 inline void OperationPlan::restore(const OperationPlanState& x)
 {
-  getOperation()->setOperationPlanParameters(this,x.quantity, x.start, x.end, true);
-  assert(quantity == x.quantity);
-  assert(dates.getStart() == x.start);
-  assert(dates.getEnd() == x.end);
+  getOperation()->setOperationPlanParameters(this, x.quantity, x.start, x.end, true);
+  //assert(quantity == x.quantity);
+  //assert(dates.getStart() == x.start && x.start!=x.end);
+  //assert(dates.getEnd() == x.end && x.start!=x.end);
+  if (quantity != x.quantity || ((dates.getStart() != x.start || dates.getEnd() != x.end) && x.start!=x.end))
+    logger << "SHIT " << getOperation() << "  " << x.quantity << " " << x.start <<"  " << x.end << " but " << dates << "  " << quantity << endl;
 }
 
 
@@ -3608,13 +3611,13 @@ class SetupMatrix : public HasName<SetupMatrix>
         void setFromSetup(const string f) {from = f;}
 
         /** Return the from setup. */
-        string getFromSetup() const {return from;}
+        const string& getFromSetup() const {return from;}
 
         /** Update the from setup. */
         void setToSetup(const string f) {to = f;}
 
         /** Return the from setup. */
-        string getToSetup() const {return to;}
+        const string& getToSetup() const {return to;}
 
         /** Update the conversion duration. */
         void setDuration(const TimePeriod p) {duration = p;}
@@ -3878,7 +3881,7 @@ class Resource : public HasHierarchy<Resource>,
     void setSetupMatrix(SetupMatrix *s) {setupmatrix = s;}
 
     /** Return the current setup. */
-    string getSetup() const {return setup;}
+    const string& getSetup() const {return setup;}
 
     /** Update the current setup. */
     void setSetup(const string s) {setup = s;}
@@ -4020,7 +4023,7 @@ class Load
     DECLARE_EXPORT void setSetup(const string);
 
     /** Return the required resource setup. */
-    string getSetup() const {return setup;}
+    const string& getSetup() const {return setup;}
 
     /** This method holds the logic the compute the date of a loadplan. */
     virtual Date getLoadplanDate(const LoadPlan*) const;
@@ -4750,7 +4753,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand, public PythonExte
       * When the argument is true (= default) the current setup is returned.<br>
       * When the argument is false the setup just before the loadplan is returned.
       */
-    DECLARE_EXPORT string getSetup(bool = true) const;
+    DECLARE_EXPORT const string& getSetup(bool = true) const;
 
     /** Returns true when the loadplan is hidden.<br>
       * This is determined by looking at whether the load is hidden or not.
@@ -5349,38 +5352,49 @@ class CommandMoveOperationPlan : public Command
     /** Constructor.<br>
       * Unlike most other commands the constructor already executes the change.
       * @param opplanptr Pointer to the operationplan being moved.
-      * @param newDate New date of the operationplan.
-      * @param startOrEnd Specifies whether the new date is the start (=false)
-      * or end date (=true). By default we use the end date.
+      * @param newStart New start date of the operationplan.
+      * @param newEnd New end date of the operationplan.
       * @param newQty New quantity of the operationplan.The default is -1,
       * which indicates to leave the quantity unchanged.
       */
     DECLARE_EXPORT CommandMoveOperationPlan(OperationPlan* opplanptr,
-      Date newDate, bool startOrEnd=true, double newQty = -1.0);
+      Date newStart, Date newEnd, double newQty = -1.0);
+
+    /** Default constructor. */
+    DECLARE_EXPORT CommandMoveOperationPlan(OperationPlan*);
+
+    /** Commit the changes. */
     void execute() {opplan=NULL;}
-    DECLARE_EXPORT void undo();
+
+    /** Undo the changes. */
+    void undo() {restore(); opplan = NULL;}
+
+    /** Undo the changes. */
+    DECLARE_EXPORT void restore();
+
     bool undoable() const {return true;}
     ~CommandMoveOperationPlan() {if (opplan) undo();}
     OperationPlan* getOperationPlan() const {return opplan;}
     DECLARE_EXPORT string getDescription() const;
 
-    /** Set another date for the operationplan.
-      * @param newdate New start- or end date.
-      */
-    DECLARE_EXPORT void setDate(Date newdate);
+    /** Set another start date for the operationplan. */
+    void setStart(Date d) {if (opplan) opplan->setStart(d);}
 
-    /** Set another quantity for the operationplan.
-      * @param newqty New quantity.
-      */
-    DECLARE_EXPORT void setQuantity(double newqty);
+    /** Set another start date for the operationplan. */
+    void setEnd(Date d) {if (opplan) opplan->setEnd(d);}
+
+    /** Set another quantity for the operationplan. */
+    void setQuantity(double q) {if (opplan) opplan->setQuantity(q);}
+
+    /** Return the quantity of the original operationplan. */
+    double getQuantity() const {return originalqty; }
+
+    /** Return the dates of the original operationplan. */
+    DateRange getDates() const {return originaldates;}
 
   private:
     /** This is a pointer to the operationplan being moved. */
     OperationPlan *opplan;
-
-    /** This flag specifies whether we keep the new date is a new start or a
-      * new end date for the operationplan. */
-    bool prefer_end;
 
     /** These are the original dates of the operationplan before its move. */
     DateRange originaldates;

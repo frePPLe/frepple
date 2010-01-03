@@ -147,10 +147,12 @@ DECLARE_EXPORT void LoadPlan::update()
 }
 
 
-DECLARE_EXPORT string LoadPlan::getSetup(bool current) const
+DECLARE_EXPORT const string& LoadPlan::getSetup(bool current) const
 {
   // This resource has no setupmatrix
-  if (!ld->getResource()->getSetupMatrix()) return string();
+  static string nosetup;
+  assert(ld);
+  if (!ld->getResource()->getSetupMatrix()) return nosetup;
 
   // Current load has a setup
   if (!ld->getSetup().empty() && current) return ld->getSetup();

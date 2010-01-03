@@ -375,7 +375,8 @@ DECLARE_EXPORT void OperationPlan::addSubOperationPlan(OperationPlan* o)
     firstsubopplan = o;
     lastsubopplan = o;
   }
-  else if (*o < *firstsubopplan)
+  else if (*o < *firstsubopplan 
+    || o->getOperation() == OperationSetup::setupoperation)
   {
     // New head
     o->nextsubopplan = firstsubopplan;
@@ -596,18 +597,13 @@ void DECLARE_EXPORT OperationPlan::setStart (Date d)
       if (i->getDates().getStart() < d || firstMove)
       {
         i->setStart(d);
-        firstMove = false;
+        //xxx todo firstMove = false;
         d = i->getDates().getEnd();
       }
       else
         // There is sufficient slack between the suboperation plans
         break;
     }
-    // Set the dates on the top operationplan
-    setStartAndEnd(
-      firstsubopplan->getDates().getStart(),
-      lastsubopplan->getDates().getEnd()
-    );
   }
 
   // Update flow and loadplans
@@ -633,18 +629,13 @@ void DECLARE_EXPORT OperationPlan::setEnd(Date d)
       if (i->getDates().getEnd() > d || firstMove)
       {
         i->setEnd(d);
-        firstMove = false;
+        //xxx todo firstMove = false;
         d = i->getDates().getStart();
       }
       else
         // There is sufficient slack between the suboperations
         break;
     }
-    // Set the dates on the top operationplan   
-    setStartAndEnd(
-      firstsubopplan->getDates().getStart(),
-      lastsubopplan->getDates().getEnd()
-    );
   }
 
   // Update flow and loadplans

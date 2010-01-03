@@ -320,20 +320,20 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadtime
         break;
       }
   if (checkSetup)
-    for (OperationPlan::iterator i(opplan); i != OperationPlan::end(); ++i)
-      if (i->getOperation() == OperationSetup::setupoperation)
-      {
-        if (i->getDates().getStart() < threshold)
-        {
-          // The setup operationplan is violating the lead time and/or fence 
-          // constraint. We move it to start on the earliest allowed date,
-          // which automatically also moves the owner operationplan.
-          i->setStart(threshold);
-          threshold = i->getDates().getEnd();
-          ok = false;
-        }
-        break;
-      }
+  {
+    OperationPlan::iterator i(opplan);
+    if (i != opplan->end() 
+      && i->getOperation() == OperationSetup::setupoperation 
+      && i->getDates().getStart() < threshold)
+    {
+      // The setup operationplan is violating the lead time and/or fence 
+      // constraint. We move it to start on the earliest allowed date,
+      // which automatically also moves the owner operationplan.
+      i->setStart(threshold);
+      threshold = i->getDates().getEnd();
+      ok = false;
+    }
+  }
 
   // Compare the operation plan start with the threshold date
   if (ok && opplan->getDates().getStart() >= threshold)

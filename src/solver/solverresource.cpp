@@ -139,7 +139,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 
       // Check if the setup operationplan overloads the resource or if a 
       // different setup is already active on the resource.
-      if (setupOpplan)
+      if (setupOpplan && !HasOverload)
       {
         earliestdate = setupOpplan->getDates().getStart();
         for (cur = res->getLoadPlans().begin(setupLdplan);
@@ -246,10 +246,6 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
         {
           // Move the operationplan
           data->state->q_operationplan->setEnd(curdate);
-
-          // Move the setup operationplan  @todo setup operationplan should move automatically!!!
-          if (setupOpplan) 
-            setupOpplan->setEnd(data->state->q_operationplan->getDates().getStart());
 
           // Check the leadtime constraints after the move
           if (isLeadtimeConstrained() || isFenceConstrained())

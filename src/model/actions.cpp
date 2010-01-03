@@ -347,59 +347,38 @@ PyObject* CommandSavePlan::executePython(PyObject* self, PyObject* args)
 //
 
 DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
-(OperationPlan* o, Date newdate, bool pref_end, double newQty)
-    : opplan(o), prefer_end(pref_end)
+  (OperationPlan* o) : opplan(o)
+{
+  if (!o) 
+  {
+    originalqty = 0;
+    return;
+  }
+  originalqty = opplan->getQuantity();
+  originaldates = opplan->getDates();
+  // XXX construct a subcommand for all suboperationplans
+}
+
+
+DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
+(OperationPlan* o, Date newstart, Date newend, double newQty) : opplan(o)
 {
   if (!opplan) return;
   originalqty = opplan->getQuantity();
   if (newQty == -1.0) newQty = originalqty;
   originaldates = opplan->getDates();
-  if (prefer_end)
-    opplan->getOperation()->setOperationPlanParameters(
-      opplan, newQty, Date::infinitePast, newdate, prefer_end
-    );
-  else
-    opplan->getOperation()->setOperationPlanParameters(
-      opplan, newQty, newdate, Date::infiniteFuture, prefer_end
-    );
+  opplan->getOperation()->setOperationPlanParameters(
+    opplan, newQty, newstart, newend
+  );
 }
 
 
-DECLARE_EXPORT void CommandMoveOperationPlan::undo()
+DECLARE_EXPORT void CommandMoveOperationPlan::restore()
 {
   if (!opplan) return;
   opplan->getOperation()->setOperationPlanParameters(
-    opplan, originalqty, originaldates.getStart(), originaldates.getEnd(), prefer_end
+    opplan, originalqty, originaldates.getStart(), originaldates.getEnd()
   );
-  opplan = NULL;
-}
-
-
-DECLARE_EXPORT void CommandMoveOperationPlan::setDate(Date newdate)
-{
-  if (!opplan) return;
-  if (prefer_end)
-    opplan->getOperation()->setOperationPlanParameters(
-      opplan, opplan->getQuantity(), Date::infinitePast, newdate, prefer_end
-    );
-  else
-    opplan->getOperation()->setOperationPlanParameters(
-      opplan, opplan->getQuantity(), newdate, Date::infiniteFuture, prefer_end
-    );
-}
-
-
-DECLARE_EXPORT void CommandMoveOperationPlan::setQuantity(double newqty)
-{
-  if (!opplan) return;
-  if (prefer_end)
-    opplan->getOperation()->setOperationPlanParameters(
-      opplan, newqty, opplan->getDates().getStart(), opplan->getDates().getEnd(), prefer_end
-    );
-  else
-    opplan->getOperation()->setOperationPlanParameters(
-      opplan, newqty, opplan->getDates().getStart(), opplan->getDates().getEnd(), prefer_end
-    );
 }
 
 

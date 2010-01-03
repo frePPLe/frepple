@@ -256,7 +256,7 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
       {
         // Update an existing procurement to meet current needs
         CommandMoveOperationPlan *a =
-          new CommandMoveOperationPlan(&*curProcure, current_date, true, order_qty);
+          new CommandMoveOperationPlan(&*curProcure, Date::infinitePast, current_date, order_qty);
         last_operationplan = a->getOperationPlan();
         moved.insert(last_operationplan);
         data->add(a);

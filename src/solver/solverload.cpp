@@ -201,11 +201,11 @@ void SolverMRP::solve(const Load* l, void* v)
     data->state->q_loadplan = lplan; // because q_loadplan can change!
     data->state->a_cost = beforeCost;
     data->state->a_penalty = beforePenalty;
-    if (data->state->q_loadplan->getLoad() != bestAlternateSelection)
-      data->state->q_loadplan->setLoad(bestAlternateSelection);
+    if (lplan->getLoad() != bestAlternateSelection)
+      lplan->setLoad(bestAlternateSelection);
     lplan->getOperationPlan()->restore(originalOpplan);
-    data->state->q_qty = data->state->q_loadplan->getQuantity();
-    data->state->q_date = data->state->q_loadplan->getDate();
+    data->state->q_qty = lplan->getQuantity();
+    data->state->q_date = lplan->getDate();
     bestAlternateSelection->getResource()->solve(*this,data);
     return;
   }

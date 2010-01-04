@@ -301,8 +301,7 @@ DECLARE_EXPORT void CommandList::execute()
     }
     catch (...)
     {
-      logger << "Error: Caught an exception while executing command '"
-      << curCommand->getDescription() << "':" <<  endl;
+      logger << "Error: Caught an exception while executing command:" << endl;
       try {throw;}
       catch (exception& e) {logger << "  " << e.what() << endl;}
       catch (...) {logger << "  Unknown type" << endl;}
@@ -354,8 +353,7 @@ unsigned __stdcall CommandList::wrapper(void *arg)
     catch (...)
     {
       // Error message
-      logger << "Error: Caught an exception while executing command '"
-      << c->getDescription() << "':" << endl;
+      logger << "Error: Caught an exception while executing command:" << endl;
       try {throw;}
       catch (exception& e) {logger << "  " << e.what() << endl;}
       catch (...) {logger << "  Unknown type" << endl;}

@@ -345,9 +345,9 @@ PyObject* CommandSavePlan::executePython(PyObject* self, PyObject* args)
 //
 // MOVE OPERATIONPLAN
 //
-
+               
 DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
-  (OperationPlan* o) : opplan(o)
+  (OperationPlan* o) : opplan(o), firstCommand(NULL)
 {
   if (!o) 
   {
@@ -356,42 +356,72 @@ DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
   }
   originalqty = opplan->getQuantity();
   originaldates = opplan->getDates();
-  // XXX construct a subcommand for all suboperationplans
+
+  // Construct a subcommand for all suboperationplans
+  for (OperationPlan::iterator x(o); x != o->end(); ++x)
+    if (x->getOperation() != OperationSetup::setupoperation)
+    {
+      CommandMoveOperationPlan *n = new CommandMoveOperationPlan(o);
+      n->owner = this;
+      if (firstCommand)
+      {
+        n->next = firstCommand;
+        firstCommand->prev = n;
+      }
+      firstCommand = n;
+    }
 }
 
 
 DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
-(OperationPlan* o, Date newstart, Date newend, double newQty) : opplan(o)
+(OperationPlan* o, Date newstart, Date newend, double newQty) 
+  : opplan(o), firstCommand(NULL)
 {
   if (!opplan) return;
+
+  // Store current settings
   originalqty = opplan->getQuantity();
   if (newQty == -1.0) newQty = originalqty;
   originaldates = opplan->getDates();
+
+  // Update the settings
+  assert(opplan->getOperation());
   opplan->getOperation()->setOperationPlanParameters(
     opplan, newQty, newstart, newend
   );
+
+  // Construct a subcommand for all suboperationplans
+  for (OperationPlan::iterator x(o); x != o->end(); ++x)
+    if (x->getOperation() != OperationSetup::setupoperation)
+    {
+      CommandMoveOperationPlan *n = new CommandMoveOperationPlan(o);
+      n->owner = this;
+      if (firstCommand)
+      {
+        n->next = firstCommand;
+        firstCommand->prev = n;
+      }
+      firstCommand = n;
+    }
 }
 
 
-DECLARE_EXPORT void CommandMoveOperationPlan::restore()
+DECLARE_EXPORT void CommandMoveOperationPlan::restore(bool del)
 {
+  // Restore all suboperationplans and (optionally) delete the subcommands
+  for (Command *c = firstCommand; c; )
+  {
+    CommandMoveOperationPlan *tmp = static_cast<CommandMoveOperationPlan*>(c);
+    tmp->restore(del);
+    c = c->next;
+    if (del) delete tmp;
+  }
+
+  // Restore the original dates
   if (!opplan) return;
   opplan->getOperation()->setOperationPlanParameters(
     opplan, originalqty, originaldates.getStart(), originaldates.getEnd()
   );
-}
-
-
-DECLARE_EXPORT string CommandMoveOperationPlan::getDescription() const
-{
-  ostringstream ch;
-  ch << "updating operationplan ";
-  if (opplan)
-    ch << "of operation '" << opplan->getOperation()
-    << "' with identifier " << opplan->getIdentifier();
-  else
-    ch << "NULL";
-  return ch.str();
 }
 
 
@@ -441,16 +471,6 @@ DECLARE_EXPORT void CommandDeleteOperationPlan::undo()
 
   // Avoid undoing multiple times!
   oper = NULL;
-}
-
-
-DECLARE_EXPORT string CommandDeleteOperationPlan::getDescription() const
-{
-  ostringstream ch;
-  ch << "deleting operationplan";
-  if (oper) ch << " for operation '" << oper->getName() << "'";
-  if (id) ch << " with identifier " << id;
-  return ch.str();
 }
 
 

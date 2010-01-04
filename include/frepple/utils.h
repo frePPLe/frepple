@@ -193,6 +193,10 @@ using namespace std;
 
 namespace frepple
 {
+
+// Forward declarations
+class CommandMoveOperationPlan;
+
 namespace utils
 {
 
@@ -3573,7 +3577,7 @@ class Tree : public NonCopyable
 class Command
 {
   friend class CommandList;
-  friend class CommandMoveOperationPlan;
+  friend class frepple::CommandMoveOperationPlan;
   public:
     /** This structure defines a boolean value that can be set to TRUE,
       * FALSE or INHERITed from a higher level.
@@ -3613,12 +3617,12 @@ class Command
       *     in the same state change as calling it only once.
       */
     virtual void undo()
-    {logger << "Warning: Can't undo command" << getDescription() << endl;}
+    {logger << "Warning: Can't undo command" << endl;}
 
     /** Returns true if the execution of this command can be undone. */
     virtual bool undoable() const {return false;}
 
-    virtual string getDescription() const {return "No description available";}
+    /** Destructor. */
     virtual ~Command() {};
 
     /** Returns whether verbose output is required during the execution of
@@ -3733,7 +3737,7 @@ class CommandList : public Command
     int getNumberOfCommands() const
     {
       int cnt = 0;
-      for(Command *i=firstCommand; i; i=i->next) ++cnt;
+      for(Command *i = firstCommand; i; i = i->next) ++cnt;
       return cnt;
     }
 
@@ -3800,9 +3804,6 @@ class CommandList : public Command
     /** Returns true when all commands beyond the argument can be undone. */
     DECLARE_EXPORT bool undoable(const Command *c) const;
 
-    /** Returns a descriptive string on the command list. */
-    string getDescription() const {return "Command list";}
-
     /** Returns true if no commands have been added yet to the list. */
     bool empty() const {return firstCommand==NULL;}
 
@@ -3866,7 +3867,6 @@ class CommandLoadLibrary : public Command
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*, PyObject*);
 
     DECLARE_EXPORT void endElement(XMLInput& pIn, const Attribute& pAttr, const DataElement& pElement);
-    string getDescription() const {return "Loading shared library " + lib;}
 
     /** Add a parameter for the module. */
     void addParameter(const string& name, const string& value)
@@ -3918,9 +3918,6 @@ class CommandPython : public Command
   public:
     /** Executes the python command or source file. */
     void execute();
-
-    /** Returns a descriptive string. */
-    string getDescription() const {return "Python interpreter";}
 
     /** Default constructor. */
     explicit CommandPython() {}

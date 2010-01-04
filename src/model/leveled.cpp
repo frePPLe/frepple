@@ -91,7 +91,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     int cur_cluster;
     numberOfClusters = 0;
     numberOfHangingClusters = 0;
-    set<Operation*> visited;
+    map<Operation*,short> visited;
     for (Operation::iterator g = Operation::begin();
         g != Operation::end(); ++g)
     {
@@ -173,12 +173,13 @@ DECLARE_EXPORT void HasLevel::computeLevels()
         << "' - current level " << cur_level << endl;
 #endif
         // Detect loops in the supply chain
-        if (visited.find(cur_oper) != visited.end())
-          // Already visited this operation - don't repeat
-          continue;
-        else
+        map<Operation*,short>::iterator detectloop = visited.find(cur_oper);
+        if (detectloop == visited.end())
           // Keep track of operations already visited
-          visited.insert(cur_oper);
+          visited.insert(make_pair(cur_oper,0));
+        else if (++(detectloop->second) > 1)
+          // Already visited this operation enough times - don't repeat
+          continue;
 
         // Push sub operations on the stack
         for (Operation::Operationlist::const_reverse_iterator

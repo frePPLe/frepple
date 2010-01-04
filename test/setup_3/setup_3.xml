@@ -30,7 +30,6 @@
       </maximum>
       <setupmatrix name="Painting line changeover"/>
       <setup>green</setup>
-      <maxearly>P14D</maxearly>
     </resource>
     <resource name="Painting line B">
       <maximum name="Capacity line B" xsi:type="calendar_double">
@@ -42,7 +41,6 @@
       </maximum>
       <setupmatrix name="Painting line changeover"/>
       <setup>red</setup>
-      <maxearly>P14D</maxearly>
     </resource>
     <resource name="Painting line C">
       <maximum name="Capacity line C" xsi:type="calendar_double">
@@ -54,7 +52,6 @@
       </maximum>
       <setupmatrix name="Painting line changeover"/>
       <setup>black</setup>
-      <maxearly>P14D</maxearly>
     </resource>
   </resources>
   <items>
@@ -82,7 +79,7 @@
   </items>
   <buffers>
     <buffer name="red product">
-      <producing name="make red product" xsi:type="operation_time_per" duration_per="P1D">
+      <producing name="make red product" xsi:type="operation_routing">
         <loads>
           <load>
             <resource name="Painting line A"/>
@@ -101,6 +98,11 @@
             <setup>red</setup>
           </load>
         </loads>
+        <steps>
+          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+        </steps>
       </producing>      
       <item name="red product" />
       <flows>
@@ -115,7 +117,7 @@
       </flows>
     </buffer>
     <buffer name="green product">
-      <producing name="make green product" xsi:type="operation_time_per" duration_per="P1D">
+      <producing name="make green product" xsi:type="operation_routing">
         <loads>
           <load>
             <resource name="Painting line A"/>
@@ -134,6 +136,11 @@
             <setup>green</setup>
           </load>        
         </loads>
+        <steps>
+          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+        </steps>
       </producing>
       <item name="green product" />
       <flows>
@@ -148,7 +155,7 @@
       </flows>
     </buffer>
     <buffer name="white product">
-      <producing name="make white product" xsi:type="operation_time_per" duration_per="P1D">
+      <producing name="make white product" xsi:type="operation_routing">
         <loads>
           <load>
             <resource name="Painting line A"/>
@@ -167,6 +174,11 @@
             <setup>white</setup>
           </load>
         </loads>
+        <steps>
+          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+        </steps>
       </producing>      
       <item name="white product" />
       <flows>
@@ -181,7 +193,7 @@
       </flows>
     </buffer>
     <buffer name="blue product">
-      <producing name="make blue product" xsi:type="operation_time_per" duration_per="P1D">
+      <producing name="make blue product" xsi:type="operation_routing">
         <loads>
           <load>
             <resource name="Painting line A"/>
@@ -200,6 +212,11 @@
             <setup>blue</setup>
           </load>
         </loads>
+        <steps>
+          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+        </steps>
       </producing>      
       <item name="blue product" />
       <flows>
@@ -214,7 +231,7 @@
       </flows>
     </buffer>
     <buffer name="black product">
-      <producing name="make black product" xsi:type="operation_time_per" duration_per="P1D">
+      <producing name="make black product" xsi:type="operation_routing">
         <loads>
           <load>
             <resource name="Painting line A"/>
@@ -233,6 +250,11 @@
             <setup>black</setup>
           </load>
         </loads>
+        <steps>
+          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+        </steps>
       </producing>      
       <item name="black product" />
       <flows>
@@ -247,7 +269,7 @@
       </flows>
     </buffer>
     <buffer name="yellow product">
-      <producing name="make yellow product" xsi:type="operation_time_per" duration_per="P1D">
+      <producing name="make yellow product" xsi:type="operation_routing">
         <loads>
           <load>
             <resource name="Painting line A"/>
@@ -266,6 +288,11 @@
             <setup>yellow</setup>
           </load>
         </loads>
+        <steps>
+          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+        </steps>
       </producing>
       <item name="yellow product" />
       <flows>
@@ -280,7 +307,7 @@
       </flows>
     </buffer>
     <buffer name="colorless product">
-      <producing name="make colorless product" xsi:type="operation_time_per" duration_per="P1D">
+      <producing name="make colorless product" xsi:type="operation_routing">
         <loads>
           <load>
             <resource name="Painting line A"/>
@@ -296,6 +323,11 @@
             <alternate>paint</alternate>
           </load>
         </loads>
+        <steps>
+          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+        </steps>
       </producing>
       <item name="colorless product" />
       <flows>
@@ -347,14 +379,13 @@
 from datetime import timedelta
 
 def printStatus(d = None):
-  print "\nCurrent status:", d
+  print "\nCurrent status:"
   for i in frepple.resources():
     print "  Loading of resource '%s' (initial setup %s)" % (i.name, i.setup)
     for j in i.loadplans:
       print "    %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name)
   print ""
-  
-        
+          
 solver = frepple.solver_mrp(name="MRP", constraints=7, loglevel=2, userexit_demand=printStatus)
 
 # Create an unconstrained plan

@@ -4227,14 +4227,6 @@ class CommandReadXMLFile : public Command
     /** Python interface for this command. */
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
 
-    string getDescription() const
-    {
-      if (filename.empty())
-        return "parsing xml input from standard input";
-      else
-        return "parsing xml input from file '" + filename + "'";
-    }
-
   private:
     /** Name of the input to be read. An empty string means that we want to
       * read from standard input rather than a file. */
@@ -4295,7 +4287,6 @@ class CommandReadXMLString : public Command
     static DECLARE_EXPORT PyObject* executePython(PyObject *, PyObject *);
 
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-    string getDescription() const {return "parsing xml input string";}
 
   private:
     /** Name of the input to be read. An empty string means that we want to
@@ -4346,10 +4337,6 @@ class CommandSave : public Command
 
     /** Python interface to this command. */
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
-
-    /** Return a description of the command. */
-    string getDescription() const
-      {return "saving the complete model into file '" + filename + "'";}
 
     /** Return the type of output. */
     XMLOutput::content_type getContent() const {return content;}
@@ -4411,8 +4398,6 @@ class CommandSavePlan : public Command
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
 
     DECLARE_EXPORT void endElement(XMLInput&, const Attribute&, const DataElement&);
-    string getDescription() const
-      {return "saving the plan into text file '" + filename + "'";}
   private:
     string filename;
 };
@@ -4435,7 +4420,6 @@ class CommandPlanSize : public Command
       {CommandPlanSize x;x.execute(); return Py_BuildValue("");}
     void undo() {}
     bool undoable() const {return true;}
-    string getDescription() const {return "printing the model size";}
 };
 
 
@@ -4464,10 +4448,6 @@ class CommandErase : public Command
     /** Python interface to this command. */
     static DECLARE_EXPORT PyObject* executePython(PyObject*, PyObject*);
 
-    string getDescription() const
-    {
-      return deleteStaticModel ? "Erasing the model" : "Erasing the plan";
-    }
     bool getDeleteStaticModel() const {return deleteStaticModel;}
     void setDeleteStaticModel(bool b) {deleteStaticModel = b;}
   private:
@@ -5287,12 +5267,6 @@ class CommandCreateOperationPlan : public Command
     bool undoable() const {return true;}
     ~CommandCreateOperationPlan() {if (opplan) delete opplan;}
     OperationPlan *getOperationPlan() const {return opplan;}
-    string getDescription() const
-    {
-      return "creating a new operationplan for operation '"
-          + (opplan ? string(opplan->getOperation()->getName()) : string("NULL"))
-          + "'";
-    }
 
   private:
     /** Pointer to the newly created operationplan. */
@@ -5315,7 +5289,6 @@ class CommandDeleteOperationPlan : public Command
     DECLARE_EXPORT void undo();
     bool undoable() const {return true;}
     ~CommandDeleteOperationPlan() {if (oper) undo();}
-    DECLARE_EXPORT string getDescription() const;
 
   private:
     /** Operation pointer of the original operationplan. */
@@ -5365,18 +5338,29 @@ class CommandMoveOperationPlan : public Command
     void execute() {opplan=NULL;}
 
     /** Undo the changes. */
-    void undo() {restore(); opplan = NULL;}
+    void undo() {restore(true); opplan = NULL;}
 
     /** Undo the changes. */
-    DECLARE_EXPORT void restore();
+    DECLARE_EXPORT void restore(bool = false);
 
     bool undoable() const {return true;}
+
+    /** Destructor. */
     ~CommandMoveOperationPlan() {if (opplan) undo();}
+
+    /** Returns the operationplan being manipulated. */
     OperationPlan* getOperationPlan() const {return opplan;}
-    DECLARE_EXPORT string getDescription() const;
 
     /** Set another start date for the operationplan. */
     void setStart(Date d) {if (opplan) opplan->setStart(d);}
+
+    /** Set another start date, end date and quantity for the operationplan. */
+    void setParameters(Date s, Date e, double q, bool b) 
+    {
+      assert(opplan->getOperation());
+      if (opplan) 
+        opplan->getOperation()->setOperationPlanParameters(opplan, q, s, e, b);
+    }
 
     /** Set another start date for the operationplan. */
     void setEnd(Date d) {if (opplan) opplan->setEnd(d);}
@@ -5399,6 +5383,9 @@ class CommandMoveOperationPlan : public Command
 
     /** This is the quantity of the operationplan before the command. */
     double originalqty;
+
+    /** A pointer to a list of suboperationplan commands. */
+    Command* firstCommand;
 };
 
 

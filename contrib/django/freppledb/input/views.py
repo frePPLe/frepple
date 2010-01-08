@@ -415,7 +415,7 @@ class ResourceList(ListReport):
       'filter': FilterNumber(size=5, operator="lt"),
       }),
     ('maxearly', {
-      'title': _('maxearly'),
+      'title': _('max early'),
       'filter': FilterNumber(),
       }),
     ('setupmatrix', {

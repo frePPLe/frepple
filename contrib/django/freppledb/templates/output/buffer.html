@@ -24,8 +24,7 @@
 	</script>
 {% endifequal %}{% endblock %}
 
-{% block frozendata %}
-{% for j in objectlist1 %}
+{% block frozendata %}{% for j in objectlist1 %}
 <tr class="{% cycle row1,row2 %}">
 <td>{% superlink j.name buffer %}</td>
 <td>{% superlink j.item item %}</td>

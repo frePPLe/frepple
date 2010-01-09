@@ -501,8 +501,8 @@ function syncInitialize()
     // First step: Measure the dimensions of the rows and columns
 
     // Measure cell width
-    var columnheaders = urt.getElementsBySelector('th');
-    var columndata = drt.down('tr').getElementsBySelector('td');
+    var columnheaders = urt.select('th');
+    var columndata = drt.down('tr').select('td');
     var left;
     var right;
     i = 0;
@@ -517,8 +517,8 @@ function syncInitialize()
     if (hasFrozenColumns)
     {
       // Measure frozen cell width
-      var columnheaders = ult.getElementsBySelector('th');
-      var columndata = dlt.down('tr').getElementsBySelector('td');
+      var columnheaders = ult.select('th');
+      var columndata = dlt.down('tr').select('td');
       i = 0;
       columndata.each(function(s) {
         left = s.getWidth();
@@ -528,8 +528,8 @@ function syncInitialize()
         });
 
       // Sync cell height
-      var rowheaders = dlt.getElementsBySelector('tr');
-      var rowdata = drt.getElementsBySelector('tr');
+      var rowheaders = dlt.select('tr');
+      var rowdata = drt.select('tr');
       i = 0;
       rowheaders.each(function(s) {
         left = s.getHeight();
@@ -545,8 +545,8 @@ function syncInitialize()
     var cellPadding = 10; // Hardcoded... I know it is 10.
 
     // Resize the width of the scrollable columns, up and down.
-    var columnheaders = urt.getElementsBySelector('th');
-    var columndata = drt.down('tr').getElementsBySelector('td');
+    var columnheaders = urt.select('th');
+    var columndata = drt.down('tr').select('td');
     i = 0;
     columndata.each(function(s) {
       columnheaders[i].style.width = (CellWidth[i]-cellPadding) + 'px';
@@ -565,8 +565,8 @@ function syncInitialize()
 
       // Resize the width of the frozen columns, up and down.
       // The constant 10 is taking into account the padding... Ugly hardcode.
-      var columnheaders = ult.getElementsBySelector('th');
-      var columndata = dlt.down('tr').getElementsBySelector('td');
+      var columnheaders = ult.select('th');
+      var columndata = dlt.down('tr').select('td');
       i = 0;
       columndata.each(function(s) {
         columnheaders[i].style.width = (CellFrozenWidth[i]-cellPadding) + 'px';
@@ -575,8 +575,8 @@ function syncInitialize()
       dlt.style.width = ult.style.width = TotalFrozenWidth + 'px';
 
       // Resize the height of the data rows, frozen and scrolling sides
-      var rowheaders = dlt.getElementsBySelector('tr');
-      var rowdata = drt.getElementsBySelector('tr');
+      var rowheaders = dlt.select('tr');
+      var rowdata = drt.select('tr');
       i = 0;
       rowheaders.each(function(s) {
         rowdata[i].style.height = CellHeight[i] + 'px';
@@ -620,7 +620,7 @@ function syncResize()
     $(document.documentElement).style.overflowX = 'auto';
   if (width > dr.scrollWidth + scrollbarSize)
     width = dr.scrollWidth + scrollbarSize;
-
+  
   // Calculate height
   var height = currentResizable.height + totalAvailable.height - totalResizableY;
   if (height < 150)
@@ -631,7 +631,7 @@ function syncResize()
   else
     $(document.documentElement).style.overflowY = 'auto';
   if (height > dr.scrollHeight) height = dr.scrollHeight;
-
+  
   // Update the size of the grid
   ur.style.width = dr.style.width = width + "px";
   if (dl) dl.style.height = dr.style.height = height + "px";

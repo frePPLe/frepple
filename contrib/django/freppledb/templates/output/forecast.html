@@ -48,7 +48,7 @@
 {% block data %}
 {% if perms.input.change_forecastdemand %}
 {% for j in objectlist2 %}{% ifchanged j.forecast %}{% if not forloop.first %}</form></tr>{% endif %}
-<tr class="{% cycle row1,row2 %}" id="{{j.forecast|urlencode}}"><form name="{{j.forecast|escape}}">
+<tr class="{% cycle row1,row2 %}"><form name="{{j.forecast|escape}}">
 {% endifchanged %}
 <td><input type="text" name="{{j.startdate}}" id="{{j.enddate}}" value="{{j.total|floatformat:0}}" size="5" onchange="onChange(this)"/><br/>
 {{j.orders|floatformat:1}}<br/>
@@ -57,7 +57,7 @@
 {% if forloop.last %}</form></tr>{% endif %}{% endfor %}
 {% else %}
 {% for j in objectlist2 %}{% ifchanged j.forecast %}{% if not forloop.first %}</form></tr>{% endif %}
-<tr class="{% cycle row1,row2 %}" id="{{j.forecast|urlencode}}">
+<tr class="{% cycle row1,row2 %}">
 {% endifchanged %}
 <td>{{j.total|floatformat:0}}<br/>
 {{j.orders|floatformat:1}}<br/>

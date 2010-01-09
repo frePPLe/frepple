@@ -889,6 +889,7 @@ OperationRouting::setOperationPlanParameters
   bool firstOp = true;
   OperationPlanState x;
   Date y;
+  bool realfirst = true;
   if (e)
   {
     // Case 1: an end date is specified
@@ -899,10 +900,11 @@ OperationRouting::setOperationPlanParameters
       {
         x = i->getOperation()->setOperationPlanParameters(i,q,Date::infinitePast,e,preferEnd,execute);
         e = x.start;
-        if (firstOp) 
+        if (firstOp && realfirst) 
         {
           y = x.end;
           //xxx todo firstOp = false;
+          realfirst = false;
         }
       }
       else
@@ -922,10 +924,11 @@ OperationRouting::setOperationPlanParameters
       {
         x = i->getOperation()->setOperationPlanParameters(i,q,s,Date::infinitePast,preferEnd,execute);
         s = x.end;
-        if (firstOp)
+        if (firstOp && realfirst)
         {
           y = x.start;
           //xxx todo firstOp = false;
+          realfirst = false;
         }
       }
       else

@@ -313,6 +313,7 @@ div.gridupright
   position: relative;
   overflow: hidden;
   z-index: 0;
+  min-width: 150px;
   /* height and width are set dynamically from javascript */
 }
 
@@ -322,6 +323,7 @@ div.griddownleft
   float: left;
   overflow: hidden;
   z-index: 0;
+  min-height: 150px;
   /* height and width are set dynamically from javascript */
 }
 
@@ -330,6 +332,8 @@ div.griddownright
   position: relative;
   overflow: auto;
   z-index: 0;
+  min-height: 150px;
+  min-width: 150px;
   /* height and width are set dynamically from javascript */
 }
 

@@ -42,6 +42,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
     logger << indent(res->getLevel()) << "   Resource '" << res->getName()
       << "' is asked: " << (-data->state->q_qty) << "  "
       << data->state->q_operationplan->getDates() << endl;
+
+  // Call the user exit
+  if (userexit_resource) userexit_resource.call(res);
   
   // Find the setup operationplan
   OperationPlan *setupOpplan = NULL;
@@ -398,6 +401,9 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
   if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
     logger << indent(res->getLevel()) << "  Resource '" << res << "' is asked: "
     << (-data->state->q_qty) << "  " << data->state->q_operationplan->getDates() << endl;
+
+  // Call the user exit
+  if (userexit_resource) userexit_resource.call(res);
 
   // TODO xxx Need to make the setups feasible - move to earlier dates till max_early fence is reached
 

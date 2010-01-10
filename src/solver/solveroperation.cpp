@@ -419,6 +419,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
+  // Call the user exit
+  if (userexit_operation) userexit_operation.call(oper);
+
   // Subtract the post-operation time
   Date prev_q_date_max = data->state->q_date_max;
   data->state->q_date_max = data->state->q_date;
@@ -481,6 +484,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
+
+  // Call the user exit
+  if (userexit_operation) userexit_operation.call(oper);
 
   // Find the total quantity to flow into the buffer.
   // Multiple suboperations can all produce into the buffer.
@@ -609,6 +615,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   if (loglevel>1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
+
+  // Call the user exit
+  if (userexit_operation) userexit_operation.call(oper);
 
   // Make sure sub-operationplans know their owner & store the previous value
   OperationPlan *prev_owner_opplan = data->state->curOwnerOpplan;

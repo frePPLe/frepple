@@ -196,9 +196,7 @@ class SolverMRP : public Solver
 
     /** Constructor. */
     SolverMRP(const string& n) : Solver(n), constrts(0), maxparallel(0),
-      lazydelay(86400L), autocommit(true), 
-      userexit_flow(NULL), userexit_demand(NULL)
-        {initType(metadata);}
+      lazydelay(86400L), autocommit(true) {initType(metadata);}
 
     /** Destructor. */
     virtual ~SolverMRP() {}
@@ -338,6 +336,33 @@ class SolverMRP : public Solver
     /** Return the Python function that is called before solving a demand. */
     PythonFunction getUserExitDemand() const {return userexit_demand;}
 
+    /** Specify a Python function that is called before solving a buffer. */
+    DECLARE_EXPORT void setUserExitBuffer(const string& n) {userexit_buffer = n;}
+
+    /** Specify a Python function that is called before solving a buffer. */
+    DECLARE_EXPORT void setUserExitBuffer(PyObject* p) {userexit_buffer = p;}
+
+    /** Return the Python function that is called before solving a buffer. */
+    PythonFunction getUserExitBuffer() const {return userexit_buffer;}
+
+    /** Specify a Python function that is called before solving a resource. */
+    DECLARE_EXPORT void setUserExitResource(const string& n) {userexit_resource = n;}
+
+    /** Specify a Python function that is called before solving a resource. */
+    DECLARE_EXPORT void setUserExitResource(PyObject* p) {userexit_resource = p;}
+
+    /** Return the Python function that is called before solving a resource. */
+    PythonFunction getUserExitResource() const {return userexit_resource;}
+
+    /** Specify a Python function that is called before solving a operation. */
+    DECLARE_EXPORT void setUserExitOperation(const string& n) {userexit_operation = n;}
+
+    /** Specify a Python function that is called before solving a operation. */
+    DECLARE_EXPORT void setUserExitOperation(PyObject* p) {userexit_operation = p;}
+
+    /** Return the Python function that is called before solving a operation. */
+    PythonFunction getUserExitOperation() const {return userexit_operation;}
+
     /** Python method for running the solver. */
     static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
 
@@ -388,6 +413,21 @@ class SolverMRP : public Solver
       * value is not used.
       */
     PythonFunction userexit_demand;
+
+    /** A Python callback function that is called for each buffer. The return
+      * value is not used.
+      */
+    PythonFunction userexit_buffer;
+
+    /** A Python callback function that is called for each resource. The return
+      * value is not used.
+      */
+    PythonFunction userexit_resource;
+
+    /** A Python callback function that is called for each operation. The return
+      * value is not used.
+      */
+    PythonFunction userexit_operation;
 
   protected:
     /** @brief This class is used to store the solver status during the

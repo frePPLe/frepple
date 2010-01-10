@@ -156,13 +156,15 @@ class Tags
     static DECLARE_EXPORT const Keyword tag_supply;
     static DECLARE_EXPORT const Keyword tag_tosetup;
     static DECLARE_EXPORT const Keyword tag_type;
-    static DECLARE_EXPORT const Keyword tag_userexit_flow;
+    static DECLARE_EXPORT const Keyword tag_userexit_buffer;
     static DECLARE_EXPORT const Keyword tag_userexit_demand;
+    static DECLARE_EXPORT const Keyword tag_userexit_flow;
+    static DECLARE_EXPORT const Keyword tag_userexit_operation;
+    static DECLARE_EXPORT const Keyword tag_userexit_resource;
     static DECLARE_EXPORT const Keyword tag_validate;
     static DECLARE_EXPORT const Keyword tag_value;
     static DECLARE_EXPORT const Keyword tag_variable;
     static DECLARE_EXPORT const Keyword tag_verbose;
     static DECLARE_EXPORT const Keyword tag_weight;
-
 };
 

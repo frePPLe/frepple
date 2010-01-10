@@ -141,7 +141,7 @@ def runfrepple(request):
     management.call_command('frepple_run', user=request.user.username, type=type, nonfatal=True)
     request.user.message_set.create(message='Successfully ran frepple')
   except Exception, e:
-    request.user.message_set.create(message='Failure when running frepple: %s' % e)
+    request.user.message_set.create(message='Failure when running frePPLe: %s' % e)
   # Redirect the page such that reposting the doc is prevented and refreshing the page doesn't give errors
   return HttpResponseRedirect('/execute/execute.html')
 

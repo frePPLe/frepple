@@ -224,6 +224,12 @@ DECLARE_EXPORT void SolverMRP::writeElement(XMLOutput *o, const Keyword& tag, mo
     o->writeElement(Tags::tag_userexit_flow, static_cast<string>(userexit_flow));
   if (userexit_demand) 
     o->writeElement(Tags::tag_userexit_demand, static_cast<string>(userexit_demand));
+  if (userexit_buffer) 
+    o->writeElement(Tags::tag_userexit_buffer, static_cast<string>(userexit_buffer));
+  if (userexit_resource) 
+    o->writeElement(Tags::tag_userexit_resource, static_cast<string>(userexit_resource));
+  if (userexit_operation) 
+    o->writeElement(Tags::tag_userexit_operation, static_cast<string>(userexit_operation));
 
   // Write the parent class
   Solver::writeElement(o, tag, NOHEADER);
@@ -242,6 +248,12 @@ DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr,
     setUserExitFlow(pElement.getString());
   else if (pAttr.isA(Tags::tag_userexit_demand))
     setUserExitDemand(pElement.getString());
+  else if (pAttr.isA(Tags::tag_userexit_buffer))
+    setUserExitBuffer(pElement.getString());
+  else if (pAttr.isA(Tags::tag_userexit_resource))
+    setUserExitResource(pElement.getString());
+  else if (pAttr.isA(Tags::tag_userexit_operation))
+    setUserExitOperation(pElement.getString());
   else
     Solver::endElement(pIn, pAttr, pElement);
 }
@@ -259,6 +271,12 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
     return getUserExitFlow();
   if (attr.isA(Tags::tag_userexit_demand))
     return getUserExitDemand();
+  if (attr.isA(Tags::tag_userexit_buffer))
+    return getUserExitBuffer();
+  if (attr.isA(Tags::tag_userexit_resource))
+    return getUserExitResource();
+  if (attr.isA(Tags::tag_userexit_operation))
+    return getUserExitOperation();
   return Solver::getattro(attr);
 }
 
@@ -275,6 +293,12 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
     setUserExitFlow(field);
   else if (attr.isA(Tags::tag_userexit_demand))
     setUserExitDemand(field);
+  else if (attr.isA(Tags::tag_userexit_buffer))
+    setUserExitBuffer(field);
+  else if (attr.isA(Tags::tag_userexit_resource))
+    setUserExitResource(field);
+  else if (attr.isA(Tags::tag_userexit_operation))
+    setUserExitOperation(field);
   else
     return Solver::setattro(attr, field);
   return 0;

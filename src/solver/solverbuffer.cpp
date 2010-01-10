@@ -51,6 +51,9 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
+  // Call the user exit
+  if (userexit_buffer) userexit_buffer.call(b);
+
   // Store the last command in the list, in order to undo the following
   // commands if required.
   Command* topcommand = data->getLastCommand();
@@ -74,9 +77,16 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   Date extraInventoryDate(Date::infiniteFuture);
   double cumproduced = b->getFlowPlans().rbegin()->getCumulativeProduced();
   double current_minimum(0.0);
+  double unconfirmed_supply(0.0);
   for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
       ; ++cur)
   {
+    const FlowPlan* fplan = dynamic_cast<const FlowPlan*>(&*cur);
+    if (fplan && !fplan->getOperationPlan()->getIdentifier() 
+      && fplan->getQuantity()>0 
+      && fplan->getOperationPlan()->getOperation() != b->getProducingOperation())
+      unconfirmed_supply += fplan->getQuantity();
+
     // Iterator has now changed to a new date or we have arrived at the end.
     // If multiple flows are at the same moment in time, we are not interested
     // in the inventory changes. It gets interesting only when a certain
@@ -144,10 +154,13 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           extraInventoryDate = Date::infiniteFuture;
         }
       }
-      else if (theDelta > ROUNDING_ERROR)
+      else if (theDelta > unconfirmed_supply + ROUNDING_ERROR)
         // There is excess material at this date (coming from planned/frozen
         // material arrivals, surplus material created by lotsized operations,
         // etc...)
+        // The unconfirmed_supply element is required to exclude any of the
+        // excess inventory we may have caused ourselves. Such situations are 
+        // possible when there are loops in the supply chain.
         if (theDate > requested_date
             && extraInventoryDate == Date::infiniteFuture)
           extraInventoryDate = theDate;
@@ -271,6 +284,9 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferInfinite* b, void* v)
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Buffer '" << b << "' is asked: "
     << data->state->q_qty << "  " << data->state->q_date << endl;
+
+  // Call the user exit
+  if (userexit_buffer) userexit_buffer.call(b);
 
   // Reply whatever is requested, regardless of date, quantity or supply.
   // The demand is not propagated upstream either.

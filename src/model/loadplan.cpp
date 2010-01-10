@@ -280,6 +280,8 @@ PyObject* LoadPlan::getattro(const Attribute& attr)
     return PythonObject(getOtherLoadPlan()->getDate());
   if (attr.isA(Tags::tag_resource))
     return PythonObject(getLoad()->getResource());
+  if (attr.isA(Tags::tag_load))
+    return PythonObject(getLoad());
   if (attr.isA(Tags::tag_setup))
     return PythonObject(getSetup());
   return NULL;

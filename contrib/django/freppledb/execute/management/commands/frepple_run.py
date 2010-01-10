@@ -39,6 +39,8 @@ class Command(BaseCommand):
     make_option('--type', dest='type', type='choice',
       choices=['0','1','2','3','4','5','6','7'], default='7',
       help='Plan type: 0=unconstrained, 7=fully constrained'),
+    make_option('--nonfatal', action="store_true", dest='nonfatal', 
+      default=False, help='Dont abort the execution upon an error'),
   )
   help = "Runs frePPLe to generate a plan"
 
@@ -46,6 +48,7 @@ class Command(BaseCommand):
 
   @transaction.autocommit
   def handle(self, **options):
+    nonfatal = False
     try:
       # Pick up the options
       if 'user' in options: user = options['user'] or ''
@@ -55,7 +58,8 @@ class Command(BaseCommand):
         if type < 0 or type > 7:
           raise ValueError("Invalid plan type: %s" % options['type'])
       else: type = 7
-
+      if 'nonfatal' in options: nonfatal = options['nonfatal']
+      
       # Log message
       log(category='RUN', theuser=user,
         message=_('Start creating frePPLe plan of type ') + str(type)).save()
@@ -87,4 +91,6 @@ class Command(BaseCommand):
       try: log(category='RUN', theuser=user,
         message=u'%s: %s' % (_('Failure when creating frePPLe plan'),e)).save()
       except: pass
-      raise CommandError(e)
+      if nonfatal: raise e
+      else: raise CommandError(e)
+      

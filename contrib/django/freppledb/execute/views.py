@@ -58,7 +58,7 @@ def erase(request):
 
   # Erase the database contents
   try:
-    management.call_command('frepple_flush', user=request.user.username)
+    management.call_command('frepple_flush', user=request.user.username, nonfatal=True)
     request.user.message_set.create(message='Erased the database')
   except Exception, e:
     request.user.message_set.create(message='Failure during database erasing:%s' % e)
@@ -106,13 +106,14 @@ def create(request):
   else:
     # Execute
     try:
-      management.call_command('frepple_flush', user=request.user.username)
+      management.call_command('frepple_flush', user=request.user.username, nonfatal=True)
       management.call_command('frepple_createmodel',
         verbosity=0, cluster=clusters, demand=demands,
         forecast_per_item=fcstqty, level=levels, resource=resources,
         resource_size=resource_size, components=components,
         components_per=components_per, deliver_lt=deliver_lt,
-        procure_lt=procure_lt, user=request.user.username
+        procure_lt=procure_lt, user=request.user.username,
+        nonfatal=True
         )
       request.user.message_set.create(message='Created sample model in the database')
     except Exception, e:
@@ -137,7 +138,7 @@ def runfrepple(request):
 
   # Run frepple
   try:
-    management.call_command('frepple_run', user=request.user.username, type=type)
+    management.call_command('frepple_run', user=request.user.username, type=type, nonfatal=True)
     request.user.message_set.create(message='Successfully ran frepple')
   except Exception, e:
     request.user.message_set.create(message='Failure when running frepple: %s' % e)

@@ -1,0 +1,27 @@
+digraph G {
+  rankdir=LR;
+	graph [bgcolor=white];
+	edge [color=black];
+	node[style=filled,fontsize=8,label=""];
+	subgraph buffers {
+		node[shape=triangle,color=red];{% for b in supplypath.buffers %}
+		"B{{b.name}}" [label="{{b.name}}",tooltip="{{b.name}}"];{% endfor %}
+	}
+	subgraph operations {
+		node[shape=rectangle,color=green];{% for o in supplypath.operations %}
+		"O{{o.name}}" [label="{{o.name}}",tooltip="{{o.name}}"];{% endfor %}
+	}
+	subgraph resources {
+		node[shape=circle,color=blue];{% for r in supplypath.resources %}
+		"R{{r.name}}" [label="{{r.name}}",tooltip="{{r.name}}"];{% endfor %}
+	}
+	subgraph flows {
+		edge[weight=100];{% for f in supplypath.flows %}{% ifgreaterthan f.quantity 0 %}
+		"O{{f.operation.name}}"->"B{{f.thebuffer.name}}";{% else %}
+		"B{{f.thebuffer.name}}"->"O{{f.operation.name}}";{% endifgreaterthan %}{% endfor %}     
+	}
+	subgraph loads {
+		edge[style=dashed,dir=none,weight=100];{% for l in supplypath.loads %}
+		"O{{l.operation.name}}"->"R{{l.resource.name}}";{% endfor %}                       
+	}
+}

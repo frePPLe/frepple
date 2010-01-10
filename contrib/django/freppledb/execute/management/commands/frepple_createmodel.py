@@ -81,6 +81,8 @@ class Command(BaseCommand):
         help='Average procurement lead time'),
       make_option('--currentdate', dest='currentdate', type="string",
         help='Current date of the plan in YYYY-MM-DD format')
+      make_option('--nonfatal', action="store_true", dest='nonfatal', 
+        default=False, help='Dont abort the execution upon an error'),
   )
 
   requires_model_validation = False
@@ -125,6 +127,8 @@ class Command(BaseCommand):
     else: procure_lt = 40
     if 'currentdate' in options: currentdate = options['currentdate'] or '2009-01-01'
     else: currentdate = '2009-01-01'
+    nonfatal = False
+    if 'nonfatal' in options: nonfatal = options['nonfatal']
 
     random.seed(100) # Initialize random seed to get reproducible results
     cnt = 100000     # A counter for operationplan identifiers
@@ -369,8 +373,9 @@ class Command(BaseCommand):
       try: log(category='CREATE', theuser=user,
         message=u'%s: %s' % (_('Failure creating sample model'),e)).save()
       except: pass
-      raise CommandError(e)
-
+      if nonfatal: raise e
+      else: raise CommandError(e)
+            
     finally:
       # Commit it all, even in case of exceptions
       transaction.commit()

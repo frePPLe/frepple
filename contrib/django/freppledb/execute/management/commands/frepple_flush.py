@@ -44,6 +44,8 @@ class Command(BaseCommand):
   option_list = BaseCommand.option_list + (
       make_option('--user', dest='user', type='string',
         help='User running the command'),
+      make_option('--nonfatal', action="store_true", dest='nonfatal', 
+        default=False, help='Dont abort the execution upon an error'),
       )
 
   requires_model_validation = False
@@ -63,6 +65,8 @@ class Command(BaseCommand):
     # Pick up options
     if 'user' in options: user = options['user'] or ''
     else: user = ''
+    nonfatal = False
+    if 'nonfatal' in options: nonfatal = options['nonfatal']
 
     try:
       # Logging message
@@ -93,11 +97,14 @@ class Command(BaseCommand):
       # Logging message
       log(category='ERASE', theuser=user,
         message=_('Finished erasing the database')).save()
+        
     except Exception, e:
       try: log(category='RUN', theuser=user,
         message=u'%s: %s' % (_('Failed erasing the database'),e)).save()
       except: pass
-      raise CommandError(e)
+      if nonfatal: raise e
+      else: raise CommandError(e)
+      
     finally:
       transaction.commit()
       settings.DEBUG = tmp_debug

@@ -46,6 +46,8 @@ class Command(BaseCommand):
           help='End date in YYYY-MM-DD format'),
       make_option('--user', dest='user', type='string',
           help='User running the command'),
+      make_option('--nonfatal', action="store_true", dest='nonfatal', 
+        default=False, help='Dont abort the execution upon an error'),
   )
 
   requires_model_validation = False
@@ -70,6 +72,8 @@ class Command(BaseCommand):
     else: end = '2012-1-1'
     if 'user' in options: user = options['user'] or ''
     else: user = ''
+    nonfatal = False
+    if 'nonfatal' in options: nonfatal = options['nonfatal']
 
     # Validate the date arguments
     try:
@@ -126,8 +130,9 @@ class Command(BaseCommand):
       try: log(category='CREATE', theuser=user,
         message=u'%s: %s' % (_('Failure initializing dates'),e)).save()
       except: pass
-      raise CommandError(e)
-
+      if nonfatal: raise e
+      else: raise CommandError(e)
+      
     finally:
       # Commit it all, even in case of exceptions
       try: transaction.commit()

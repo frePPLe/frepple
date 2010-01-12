@@ -64,6 +64,7 @@ DATABASE_USER = 'frepple'      # Not used with sqlite3.
 DATABASE_PASSWORD = 'frepple'  # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASE_OPTIONS = ''          # Backend specific configuration parameters.
 
 # Local time zone for this installation. All choices can be found here:
 # http://www.postgresql.org/docs/current/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
@@ -206,13 +207,15 @@ if DATABASE_ENGINE == 'sqlite3':
   TEST_DATABASE_NAME = os.path.join(FREPPLE_HOME,'test_%s.sqlite' % DATABASE_NAME)
   # Path to sqlite3 database file
   DATABASE_NAME = os.path.join(FREPPLE_HOME,'%s.sqlite' % DATABASE_NAME)
-  # Extra settings for SQLITE
-  DATABASE_OPTIONS = {"timeout": 10, "check_same_thread": False}
+  # Extra default settings for SQLITE
+  if len(DATABASE_OPTIONS) == 0:
+    DATABASE_OPTIONS = {"timeout": 10, "check_same_thread": False}
 elif DATABASE_ENGINE == 'mysql':
-  # Extra settings for MYSQL
+  # Extra default settings for MYSQL
   # InnoDB has the proper support for transactions that is required for
   # frePPLe in a production environment.
-  DATABASE_OPTIONS = {"init_command": "SET storage_engine=INNODB"}
+  if len(DATABASE_OPTIONS) == 0:
+    DATABASE_OPTIONS = {"init_command": "SET storage_engine=INNODB"}
   TEST_DATABASE_NAME = 'test_%s' % DATABASE_NAME
 elif DATABASE_ENGINE == 'oracle':
   TEST_DATABASE_NAME = DATABASE_NAME

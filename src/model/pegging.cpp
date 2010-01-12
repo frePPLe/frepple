@@ -68,7 +68,7 @@ DECLARE_EXPORT void PeggingIterator::updateStack
   (short l, double q, double f, const FlowPlan* fc, const FlowPlan* fp, bool p)
 {
   // Avoid very small pegging quantities
-  if (q < ROUNDING_ERROR) return;
+  if (q < 0.1) return;
 
   if (first)
   {
@@ -160,8 +160,8 @@ DECLARE_EXPORT void PeggingIterator::followPegging
     for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans();
         i != op->endFlowPlans(); ++i)
     {
-      // We're interested in consuming flowplans of an operationplan when
-      // walking upstream.
+      // We're interested in producing flowplans of an operationplan when
+      // walking downstream.
       if (i->getQuantity()>ROUNDING_ERROR)
       {
         i->getFlow()->getBuffer()->followPegging(*this, &*i, nextlevel, qty, factor);

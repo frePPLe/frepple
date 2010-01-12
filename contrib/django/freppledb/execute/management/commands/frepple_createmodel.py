@@ -80,7 +80,7 @@ class Command(BaseCommand):
       make_option('--procure_lt', dest='procure_lt', type="int",
         help='Average procurement lead time'),
       make_option('--currentdate', dest='currentdate', type="string",
-        help='Current date of the plan in YYYY-MM-DD format')
+        help='Current date of the plan in YYYY-MM-DD format'),
       make_option('--nonfatal', action="store_true", dest='nonfatal', 
         default=False, help='Dont abort the execution upon an error'),
   )

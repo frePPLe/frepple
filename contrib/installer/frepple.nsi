@@ -213,9 +213,8 @@ Section "Application" SecAppl
   ; Create a settings file for the server
   StrCpy $9 "$INSTDIR\bin\settings.py"
   FileOpen $9 $9 w
-  FileWrite $9 "# Django supports the following database engines: 'oracle', 'postgresql_psycopg2',$\r$\n"
-  FileWrite $9 "# 'postgresql', 'mysql', 'sqlite3' 'oracle' or 'ado_mssql'.$\r$\n"
-  FileWrite $9 "# FrePPLe supports only 'postgresql_psycopg2', 'mysql' and 'sqlite3'$\r$\n"
+  FileWrite $9 "# Django and frePPLe support the following database engines: $\r$\n"
+  FileWrite $9 "#  'oracle', 'postgresql_psycopg2', 'mysql' and 'sqlite3'.$\r$\n"
   FileWrite $9 "DATABASE_ENGINE = '$0'$\r$\n"
   FileWrite $9 "DATABASE_NAME = '$1'  # Database name$\r$\n"
   FileWrite $9 "DATABASE_USER = '$2'  # Not used with sqlite3.$\r$\n"
